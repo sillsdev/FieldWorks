@@ -22,7 +22,7 @@ namespace SIL.SilSidePane
 		[Test]
 		public void IsButtonItemArea()
 		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.Buttons);
+			Assert.That(SidePaneItemAreaStyle.Buttons, Is.EqualTo(_sidePane.ItemAreaStyle));
 
 			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
@@ -30,7 +30,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 		#endregion ButtonItemArea
 	}
@@ -48,7 +48,7 @@ namespace SIL.SilSidePane
 		[Test]
 		public void IsListItemArea()
 		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.List);
+			Assert.That(SidePaneItemAreaStyle.List, Is.EqualTo(_sidePane.ItemAreaStyle));
 
 			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
@@ -56,7 +56,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ListView>(area);
+				Assert.That(area, Is.InstanceOf<ListView>());
 		}
 		#endregion ListItemArea
 	}
@@ -74,7 +74,7 @@ namespace SIL.SilSidePane
 		[Test]
 		public void IsStripListItemArea()
 		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.StripList);
+			Assert.That(SidePaneItemAreaStyle.StripList, Is.EqualTo(_sidePane.ItemAreaStyle));
 
 			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
@@ -82,7 +82,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 		#endregion StripListItemArea
 	}
@@ -118,7 +118,7 @@ namespace SIL.SilSidePane
 		[Test]
 		public void IsButtonItemAreaByDefault()
 		{
-			Assert.AreEqual(_sidePane.ItemAreaStyle, SidePaneItemAreaStyle.Buttons);
+			Assert.That(SidePaneItemAreaStyle.Buttons, Is.EqualTo(_sidePane.ItemAreaStyle));
 
 			var tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
@@ -126,7 +126,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 	}
 
@@ -164,7 +164,7 @@ namespace SIL.SilSidePane
 		{
 			Control containingControl = _sidePane.ContainingControl;
 			Assert.That(containingControl, Is.Not.Null);
-			Assert.AreSame(containingControl, _parent);
+			Assert.That(_parent, Is.SameAs(containingControl));
 		}
 		#endregion ContainingControl
 
@@ -210,8 +210,8 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			using (var button = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
 			{
-				Assert.AreEqual(tab.Name, button.Name, "Tab Name and underlying button Name should be the same.");
-				Assert.AreEqual(tab.Text, button.Text, "Tab Text and underlying button Text should be the same.");
+				Assert.That(button.Name, Is.EqualTo(tab.Name), "Tab Name and underlying button Name should be the same.");
+				Assert.That(button.Text, Is.EqualTo(tab.Text), "Tab Text and underlying button Text should be the same.");
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			using (var button = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
 			{
-				Assert.AreSame(tab.Icon, button.Image, "Tab Icon and underlying button Image should be the same.");
+				Assert.That(button.Image, Is.SameAs(tab.Icon), "Tab Icon and underlying button Image should be the same.");
 			}
 		}
 		#endregion AddTab
@@ -345,10 +345,10 @@ namespace SIL.SilSidePane
 			Tab tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			bool successful1 = _sidePane.SelectTab(tab);
-			Assert.IsTrue(successful1);
+			Assert.That(successful1, Is.True);
 			_sidePane.SelectTab(tab, true);
 			bool successful2 = _sidePane.SelectTab(tab, false);
-			Assert.IsTrue(successful2);
+			Assert.That(successful2, Is.True);
 		}
 
 		[Test]
@@ -358,7 +358,7 @@ namespace SIL.SilSidePane
 			tab.Text = "tabtext";
 			_sidePane.AddTab(tab);
 			bool successful = _sidePane.SelectTab(tab);
-			Assert.IsTrue(successful);
+			Assert.That(successful, Is.True);
 		}
 
 		[Test]
@@ -410,7 +410,7 @@ namespace SIL.SilSidePane
 			string itemName = "non-existent itemname";
 			_sidePane.AddTab(tab);
 			var result = _sidePane.SelectItem(tab, itemName);
-			Assert.IsFalse(result);
+			Assert.That(result, Is.False);
 		}
 
 		[Test]
@@ -421,7 +421,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
 			var result = _sidePane.SelectItem(tab, item.Name);
-			Assert.IsTrue(result);
+			Assert.That(result, Is.True);
 		}
 		#endregion SelectItem
 
@@ -433,7 +433,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			_sidePane.SelectTab(tab);
 			Tab result = _sidePane.CurrentTab;
-			Assert.AreSame(tab, result);
+			Assert.That(result, Is.SameAs(tab));
 		}
 
 		[Test]
@@ -454,7 +454,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddItem(tab, item);
 			_sidePane.SelectItem(tab, item.Name);
 			Item currentItem = _sidePane.CurrentItem;
-			Assert.AreSame(item, currentItem);
+			Assert.That(currentItem, Is.SameAs(item));
 		}
 		#endregion
 
@@ -465,7 +465,7 @@ namespace SIL.SilSidePane
 			Tab tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			Tab result = _sidePane.GetTabByName(tab.Name);
-			Assert.AreSame(tab, result);
+			Assert.That(result, Is.SameAs(tab));
 		}
 
 		[Test]
@@ -497,9 +497,9 @@ namespace SIL.SilSidePane
 			Item item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
-			Assert.IsFalse(_itemClickedHappened);
+			Assert.That(_itemClickedHappened, Is.False);
 			_sidePane.SelectItem(tab, item.Name);
-			Assert.IsTrue(_itemClickedHappened);
+			Assert.That(_itemClickedHappened, Is.True);
 		}
 		#endregion ItemClickEvent
 
@@ -516,9 +516,9 @@ namespace SIL.SilSidePane
 			Tab tab = new Tab("tabname");
 			_sidePane.AddTab(tab);
 			_sidePane.TabClicked += TabClickedHandler;
-			Assert.IsFalse(_tabClickedHappened);
+			Assert.That(_tabClickedHappened, Is.False);
 			_sidePane.SelectTab(tab);
-			Assert.IsTrue(_tabClickedHappened);
+			Assert.That(_tabClickedHappened, Is.True);
 		}
 		#endregion TabClickEvent
 
@@ -530,9 +530,9 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			tab.Enabled = false;
 			bool success = _sidePane.SelectTab(tab);
-			Assert.IsFalse(success);
+			Assert.That(success, Is.False);
 			Tab currentTab = _sidePane.CurrentTab;
-			Assert.AreNotSame(tab, currentTab);
+			Assert.That(currentTab, Is.Not.SameAs(tab));
 		}
 
 		[Test]
@@ -550,9 +550,9 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 			using (var underlyingButton = TestUtilities.GetUnderlyingButtonCorrespondingToTab(tab))
 			{
-				Assert.IsTrue(underlyingButton.Enabled);
+				Assert.That(underlyingButton.Enabled, Is.True);
 				tab.Enabled = false;
-				Assert.IsFalse(underlyingButton.Enabled);
+				Assert.That(underlyingButton.Enabled, Is.False);
 			}
 		}
 		#endregion
@@ -587,7 +587,7 @@ namespace SIL.SilSidePane
 						// Display the window and its contents
 						window.Show();
 						Application.DoEvents();
-						Assert.IsTrue(window.Visible);
+						Assert.That(window.Visible, Is.True);
 					}
 					finally
 					{

@@ -1826,7 +1826,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							typeFlid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(items[i + 1].Trim());
 							return true;
 						}
-						catch(Exception e)
+						catch (Exception)
 						{
 							//we can't deal with this class, but no need to give up now
 							//we won't create a custom field for it, but let's not crash (our bogus cache in the tests crashed here)
@@ -1938,7 +1938,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				m_mapIdObject.Add(id, cmo);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
 				// presumably duplicate id.
 				ICmObject cmo2;
@@ -5801,7 +5801,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					File.Copy(sPath, fwPath, true);
 				}
-				catch (IOException e)
+				catch (IOException)
 				{
 					// We will get an IOException if Flex has an open entry displaying a picture we are trying to copy.
 					// Ignore the copy in this case assuming the picture probably didn't change anyway.
@@ -6103,7 +6103,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IReversalIndex FindOrCreateReversalIndex(LiftMultiText contents, string type)
 		{
-			IReversalIndex riOwning = null;
 			// For now, fudge "type" as the basic writing system associated with the reversal.
 			string sWs = type;
 			if (String.IsNullOrEmpty(sWs))

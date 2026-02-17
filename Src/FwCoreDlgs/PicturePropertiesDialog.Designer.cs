@@ -52,26 +52,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.panelFileName.SuspendLayout();
 			this.panelButtons.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// lblFile
-			// 
+			//
 			resources.ApplyResources(lblFile, "lblFile");
 			lblFile.Name = "lblFile";
-			// 
+			//
 			// btnCancel
-			// 
+			//
 			resources.ApplyResources(btnCancel, "btnCancel");
 			btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			btnCancel.Name = "btnCancel";
-			// 
+			//
 			// m_btnHelp
-			// 
+			//
 			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
 			this.m_btnHelp.Name = "m_btnHelp";
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
-			// 
+			//
 			// m_grpFileLocOptions
-			// 
+			//
 			resources.ApplyResources(this.m_grpFileLocOptions, "m_grpFileLocOptions");
 			this.m_grpFileLocOptions.Controls.Add(lblFileName);
 			this.m_grpFileLocOptions.Controls.Add(this.txtFileName);
@@ -83,76 +83,76 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_grpFileLocOptions.Controls.Add(this.m_rbCopy_rbSave);
 			this.m_grpFileLocOptions.Name = "m_grpFileLocOptions";
 			this.m_grpFileLocOptions.TabStop = false;
-			// 
+			//
 			// m_btnBrowseDest
-			// 
+			//
 			resources.ApplyResources(this.m_btnBrowseDest, "m_btnBrowseDest");
 			this.m_btnBrowseDest.Name = "m_btnBrowseDest";
 			this.m_btnBrowseDest.UseVisualStyleBackColor = true;
 			this.m_btnBrowseDest.Click += new System.EventHandler(this.m_btnBrowseDest_Click);
-			// 
+			//
 			// m_txtDestination
-			// 
+			//
 			resources.ApplyResources(this.m_txtDestination, "m_txtDestination");
 			this.m_txtDestination.Name = "m_txtDestination";
-			// 
+			//
 			// m_lblDestination
-			// 
+			//
 			resources.ApplyResources(this.m_lblDestination, "m_lblDestination");
 			this.m_lblDestination.Name = "m_lblDestination";
-			// 
+			//
 			// m_rbLeave
-			// 
+			//
 			resources.ApplyResources(this.m_rbLeave, "m_rbLeave");
 			this.m_rbLeave.Name = "m_rbLeave";
 			this.m_rbLeave.UseVisualStyleBackColor = true;
 			this.m_rbLeave.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			// 
+			//
 			// m_rbMove_rbSaveAs
-			// 
+			//
 			resources.ApplyResources(this.m_rbMove_rbSaveAs, "m_rbMove_rbSaveAs");
 			this.m_rbMove_rbSaveAs.Name = "m_rbMove_rbSaveAs";
 			this.m_rbMove_rbSaveAs.UseVisualStyleBackColor = true;
 			this.m_rbMove_rbSaveAs.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			// 
+			//
 			// m_rbCopy_rbSave
-			// 
+			//
 			resources.ApplyResources(this.m_rbCopy_rbSave, "m_rbCopy_rbSave");
 			this.m_rbCopy_rbSave.Checked = true;
 			this.m_rbCopy_rbSave.Name = "m_rbCopy_rbSave";
 			this.m_rbCopy_rbSave.TabStop = true;
 			this.m_rbCopy_rbSave.UseVisualStyleBackColor = true;
 			this.m_rbCopy_rbSave.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			// 
+			//
 			// panelFileName
-			// 
+			//
 			resources.ApplyResources(this.panelFileName, "panelFileName");
 			this.panelFileName.Controls.Add(this.lblSourcePath);
 			this.panelFileName.Controls.Add(lblFile);
 			this.panelFileName.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.panelFileName.Name = "panelFileName";
-			// 
+			//
 			// txtFileName
-			// 
+			//
 			resources.ApplyResources(this.txtFileName, "txtFileName");
 			this.txtFileName.Name = "txtFileName";
-			// 
+			//
 			// panelButtons
-			// 
+			//
 			resources.ApplyResources(this.panelButtons, "panelButtons");
 			this.panelButtons.Controls.Add(btnCancel);
 			this.panelButtons.Controls.Add(this.m_btnHelp);
 			this.panelButtons.Controls.Add(m_btnOK);
 			this.panelButtons.Name = "panelButtons";
-			// 
+			//
 			// m_btnOK
-			// 
+			//
 			resources.ApplyResources(m_btnOK, "m_btnOK");
 			m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			m_btnOK.Name = "m_btnOK";
-			// 
+			//
 			// imageToolbox
-			// 
+			//
 			resources.ApplyResources(this.imageToolbox, "imageToolbox");
 			this.imageToolbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.imageToolbox.EditMetadataActionOverride = null;
@@ -174,19 +174,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.imageToolbox.MetadataChanged += new System.EventHandler(this.ImageToolbox_MetadataChanged);
 			this.imageToolbox.Enter += new System.EventHandler(ImageToolbox_Enter);
 			this.imageToolbox.Leave += new System.EventHandler(ImageToolbox_Leave);
-			// 
+			//
 			// lblFileName
-			// 
+			//
 			resources.ApplyResources(lblFileName, "lblFileName");
 			this.lblFileName.Name = "lblFileName";
-			// 
+			//
 			// lblSourcePath
-			// 
+			//
 			resources.ApplyResources(this.lblSourcePath, "lblSourcePath");
 			this.lblSourcePath.Name = "lblSourcePath";
-			// 
+			//
 			// PicturePropertiesDialog
-			// 
+			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
@@ -208,10 +208,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		}
 
-		private IContainer components;
+		private IContainer components = null;
 		private Button m_btnOK;
 		private Button m_btnHelp;
-		private LabeledMultiStringControl m_lmscCaption;
 		private ToolTip m_tooltip;
 		private GroupBox m_grpFileLocOptions;
 		private RadioButton m_rbMove_rbSaveAs;

@@ -576,7 +576,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 
 				XmlNode configurationNode;
-				RecordClerk clerk;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
 				switch (selObj.ClassID)
 				{

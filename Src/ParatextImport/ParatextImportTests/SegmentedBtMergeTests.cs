@@ -131,7 +131,7 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private static void VerifyDel(ICmObject obj)
 		{
-			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, obj.Hvo, "object should have been deleted " + obj);
+			Assert.That(obj.Hvo, Is.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted), "object should have been deleted " + obj);
 		}
 
 		void AddVerseSegment(IScrTxtPara para, int chapter, int verse, string verseText, string freeTrans)
@@ -239,7 +239,7 @@ namespace ParatextImport
 		private void VerifyTranslations(IScrTxtPara para, IList<string> translations,
 			IList<int> lengths, IList<int> segNotes, IList<int> expectedWordforms, string label)
 		{
-			Assert.AreEqual(translations.Count, para.SegmentsOS.Count);
+			Assert.That(para.SegmentsOS.Count, Is.EqualTo(translations.Count));
 			foreach (CoreWritingSystemDefinition ws in Cache.LanguageProject.AnalysisWritingSystems)
 			{
 				int cumLength = 0;
@@ -247,24 +247,23 @@ namespace ParatextImport
 				for (int i = 0; i < translations.Count; i++)
 				{
 					ISegment seg = para.SegmentsOS[i];
-					Assert.AreEqual(cumLength, seg.BeginOffset, label + " - beginOffset " + i);
+					Assert.That(seg.BeginOffset, Is.EqualTo(cumLength), label + " - beginOffset " + i);
 					cumLength += lengths[i];
-					Assert.AreEqual(cumLength, seg.EndOffset, label + " - endOffset " + i);
+					Assert.That(seg.EndOffset, Is.EqualTo(cumLength), label + " - endOffset " + i);
 
 					string expectedBt = translations[i];
 					if (translations[i] != null && ws.Handle != Cache.DefaultAnalWs)
 						expectedBt = expectedBt.Replace("Trans", "Trans " + ws.IcuLocale);
-					Assert.AreEqual(expectedBt, seg.FreeTranslation.get_String(ws.Handle).Text, label + " - free translation " + i);
+					Assert.That(seg.FreeTranslation.get_String(ws.Handle).Text, Is.EqualTo(expectedBt), label + " - free translation " + i);
 					string expectedLiteralTrans = (expectedBt == null) ? null : expectedBt.Replace("Trans", "Literal");
-					Assert.AreEqual(expectedLiteralTrans, seg.LiteralTranslation.get_String(ws.Handle).Text,
-						label + " - literal translation " + i);
+					Assert.That(seg.LiteralTranslation.get_String(ws.Handle).Text, Is.EqualTo(expectedLiteralTrans), label + " - literal translation " + i);
 
 					if (!seg.IsLabel)
 					{
 						// Verify note added to first segment.
-						Assert.AreEqual(segNotes[i], seg.NotesOS.Count, label + " - Wrong number of notes");
+						Assert.That(seg.NotesOS.Count, Is.EqualTo(segNotes[i]), label + " - Wrong number of notes");
 						foreach (INote note in seg.NotesOS)
-							Assert.AreEqual("Note" + ws.IcuLocale, note.Content.get_String(ws.Handle).Text);
+							Assert.That(note.Content.get_String(ws.Handle).Text, Is.EqualTo("Note" + ws.IcuLocale));
 					}
 
 					if (expectedBt == null)
@@ -276,7 +275,7 @@ namespace ParatextImport
 							btBuilder.Append(" ");
 					}
 				}
-				Assert.AreEqual(btBuilder.ToString(), para.GetBT().Translation.get_String(ws.Handle).Text);
+				Assert.That(para.GetBT().Translation.get_String(ws.Handle).Text, Is.EqualTo(btBuilder.ToString()));
 			}
 
 			if (para.ParseIsCurrent)
@@ -349,7 +348,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// quick check of the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
@@ -359,12 +358,12 @@ namespace ParatextImport
 
 			// Do the "ReplaceCurrentWithRevision" action
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed paragraph
 			IScrTxtPara paraNew = diff.ParaCurr;
-			Assert.AreEqual(para1Curr, paraNew);
-			Assert.AreEqual("1Rev.", paraNew.Contents.Text);
+			Assert.That(paraNew, Is.EqualTo(para1Curr));
+			Assert.That(paraNew.Contents.Text, Is.EqualTo("1Rev."));
 			// verify segment Bt also updated
 			VerifyTranslations(para1Curr, new []{null, "Revised Trans"}, new []{1, para1Curr.Contents.Length - 1},
 				new []{0, 1}, "simple text");
@@ -416,7 +415,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// quick check of the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
@@ -426,12 +425,12 @@ namespace ParatextImport
 
 			// Do the "ReplaceCurrentWithRevision" action
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed paragraph
 			IScrTxtPara paraNew = diff.ParaCurr;
-			Assert.AreEqual(para1Curr, paraNew);
-			Assert.AreEqual("1Rev.", paraNew.Contents.Text);
+			Assert.That(paraNew, Is.EqualTo(para1Curr));
+			Assert.That(paraNew.Contents.Text, Is.EqualTo("1Rev."));
 			// verify segment Bt also updated
 			VerifyTranslations(para1Curr, new []{ null, "Current Trans" }, new []{ 1, para1Curr.Contents.Length - 1 },
 				new []{0, 0}, "simple text");
@@ -492,7 +491,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// quick check of the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
@@ -501,12 +500,12 @@ namespace ParatextImport
 
 			// Do the "ReplaceCurrentWithRevision" action
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed paragraph
 			IScrTxtPara paraNew = diff.ParaCurr;
-			Assert.AreEqual(para1Curr, paraNew);
-			Assert.AreEqual("1Ouch! It got hit.2By a ball.", paraNew.Contents.Text);
+			Assert.That(paraNew, Is.EqualTo(para1Curr));
+			Assert.That(paraNew.Contents.Text, Is.EqualTo("1Ouch! It got hit.2By a ball."));
 			// verify segment Bt also updated
 			VerifyTranslations(para1Curr, new []{ null, "Ouch Trans", "It got hit Trans", null, "By a ball Trans" },
 				new []{ 1, ouch.Length, hit.Length, 1, ball.Length }, new []{0, 1, 1, 0, 1}, "extra segment");
@@ -567,7 +566,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// quick check of the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
@@ -577,12 +576,12 @@ namespace ParatextImport
 
 			// Do the "ReplaceCurrentWithRevision" action
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed paragraph
 			IScrTxtPara paraNew = diff.ParaCurr;
-			Assert.AreEqual(para1Curr, paraNew);
-			Assert.AreEqual("1It got hit.2By a ball.", paraNew.Contents.Text);
+			Assert.That(paraNew, Is.EqualTo(para1Curr));
+			Assert.That(paraNew.Contents.Text, Is.EqualTo("1It got hit.2By a ball."));
 			// verify segment Bt also updated
 			VerifyTranslations(para1Curr, new []{ null, "It got hit Trans", null, "By a ball Trans" },
 				new []{ 1, hit.Length, 1, ball.Length }, new [] {0, 1, 0, 1}, "removed segment");
@@ -647,7 +646,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 
@@ -656,7 +655,7 @@ namespace ParatextImport
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
 
 			// We expect that the second para in the revision will be added to the current.
-			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			VerifyTranslations(para1Curr, new []{ null, "one trans", null, "two trans", null, "three trans", null,
 				"four trans", null, "four again trans", null,  "five trans"},
 				new []{ 2, "one ".Length, 1, "two ".Length, 1, "three ".Length, 1, "four ".Length, 1,
@@ -718,14 +717,14 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			// quick check of the diffs
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
 
 			//Verify the changed Current paragraph
-			Assert.AreEqual("1Before Rev" + StringUtils.kChObject + "After fn", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("1Before Rev" + StringUtils.kChObject + "After fn"));
 
 			// the new footnote should have the same content as the original Rev footnote
 			IScrFootnote footnoteNew = m_genesis.FootnotesOS[0];
@@ -788,13 +787,13 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			// quick check of the diffs
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
 			//Verify the changed Current paragraph
-			Assert.AreEqual("1Before fn. " + StringUtils.kChObject + "After fn", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("1Before fn. " + StringUtils.kChObject + "After fn"));
 
 			IScrFootnote footnoteNew = m_genesis.FootnotesOS[0];
 			IScrTxtPara paraFn = ((IScrTxtPara)footnoteNew[0]);
@@ -857,13 +856,13 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			// quick check of the diffs
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
 			//Verify the changed Current paragraph
-			Assert.AreEqual("1Before fn. Inserted before. " + StringUtils.kChObject + "Inserted after. After fn", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("1Before fn. Inserted before. " + StringUtils.kChObject + "Inserted after. After fn"));
 
 			IScrFootnote footnoteNew = m_genesis.FootnotesOS[0];
 			IScrTxtPara paraFn = ((IScrTxtPara)footnoteNew[0]);
@@ -923,13 +922,13 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			// quick check of the diffs
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
 			//Verify the changed Current paragraph
-			Assert.AreEqual("1Before fn " + StringUtils.kChObject + "After fn", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("1Before fn " + StringUtils.kChObject + "After fn"));
 
 			IScrFootnote footnoteNew = m_genesis.FootnotesOS[0];
 			IScrTxtPara paraFn = ((IScrTxtPara)footnoteNew[0]);
@@ -991,7 +990,7 @@ namespace ParatextImport
 
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(3, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(3));
 
 			// The actual diffs are verified by a similar non-BT test.
 
@@ -1003,10 +1002,10 @@ namespace ParatextImport
 			// Do the "ReplaceCurrentWithRevision" action on middle diff
 			// and verify its result
 			m_bookMerger.ReplaceCurrentWithRevision(secondDiff);
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 
 			IScrTxtPara paraCurr = para1Curr;
-			Assert.AreEqual("1Current2Abc3Current", paraCurr.Contents.Text);
+			Assert.That(paraCurr.Contents.Text, Is.EqualTo("1Current2Abc3Current"));
 
 			VerifyTranslations(para1Curr, new []{ null, "Current Trans", null, "Abc Trans", null, "Current Trans"},
 				new[] { 1, current.Length, 1, "Abc".Length, 1, current.Length }, new[] { 0, 1, 0, 1, 0, 1 }, "middle of 3 diffs");
@@ -1068,7 +1067,7 @@ namespace ParatextImport
 
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 
 			// Verse 2 is missing in the current
 			Difference firstDiff = m_bookMerger.Differences.MoveFirst();
@@ -1081,7 +1080,7 @@ namespace ParatextImport
 
 			// Verify the changed paragraph
 			IScrTxtPara paraCurr = para1Curr;
-			Assert.AreEqual("1Verse12Verse23Verse>", paraCurr.Contents.Text);
+			Assert.That(paraCurr.Contents.Text, Is.EqualTo("1Verse12Verse23Verse>"));
 
 			//We expect to have 6 segments in each call to VerifyTranslations
 			//They alternate between either a chapter or verse number (no notes or 0), and a section with translation (one translation, 1)
@@ -1154,7 +1153,7 @@ namespace ParatextImport
 
 			// Do the "ReplaceCurrentWithRevision" action on diff
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed paragraph
 			VerifyTranslations(para1Curr, new []{ null, "Verse1 Trans", null, "Verse2 Trans", null, "Verse3 Trans" },
@@ -1220,7 +1219,7 @@ namespace ParatextImport
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
 			// Verify the changed paragraph
-			Assert.AreEqual("My Genesis title", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("My Genesis title"));
 
 			VerifyTranslations(para1Curr, new []{ "My Genesis title Trans" },
 				new[] { "My Genesis title".Length }, new[] { 1 }, "book title");
@@ -1272,16 +1271,15 @@ namespace ParatextImport
 
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			// Do the "ReplaceCurrentWithRevision" action
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// Verify the changed section head
-			Assert.AreEqual("My aching head!An unchanged sentence",
-				((IScrTxtPara)sectionCurr.HeadingOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)sectionCurr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My aching head!An unchanged sentence"));
 
 			// We used to revise the BT of the unchanged sentence, since it is part of a single segment sequence with
 			// the one we are replacing. We had to change this behavior when moving the segmenting code to
@@ -1338,14 +1336,14 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Get the first difference, verify it, and do a ReplaceCurrentWithRevision
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to merge the current paras
-			Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			VerifyTranslations(para1Curr, new []{null, "verse one Trans. ", null, "verse two Trans. ", null, "verse three Trans. "},
 				new[] { 1, "verse one. ".Length, 1, "verse two. ".Length, 1, "verse three.".Length }, new[] { 0, 1, 0, 1, 0, 1 }, "merge paras");
@@ -1400,14 +1398,14 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Get the first difference, verify it, and do a ReplaceCurrentWithRevision
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to merge the current paras
-			Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			VerifyTranslations(para1Curr,
 				new[]{null, "verse one Trans. ", null, "verse two Trans. ", "more Trans", null, "verse three Trans. "},
@@ -1464,13 +1462,13 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Get the first difference and do a ReplaceCurrentWithRevision to simulate clicking the "Use this Version" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to merge the current paras
-			Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			VerifyTranslations(para1Curr, new[] { null, "verse one Trans. ", null, "verse two Trans. more Trans", null, "verse three Trans. " },
 				new[] { 1, "verse one. ".Length, 1, "verse two more of verse 2. ".Length, 1, "verse three.".Length },
@@ -1503,13 +1501,13 @@ namespace ParatextImport
 
 //            // Detect differences
 //            m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-//            Assert.AreEqual(1, m_bookMerger.Differences.Count);
+//            Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 //            // Get the first difference, and do a ReplaceCurrentWithRevision to simulate clicking the "Use this Version" button
 //            Difference diff = m_bookMerger.Differences.MoveFirst();
 
 //            m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to merge the current paras
-//            Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
+//            Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 //            VerifyBt(para1Curr, new[] { null, "verse one Trans. more Trans" },
 //                new[] { 2, "verse one more of verse 1. ".Length }, "merge paras");
@@ -1593,17 +1591,16 @@ namespace ParatextImport
 			// Revert text difference in verse 1.
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
 			para1Curr = (IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("201They were all together. ", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("201They were all together. "));
 
 			VerifyTranslations(para1Curr, new []{null, "They together Trans"},
 				new []{ 3, "They were all together. ".Length }, new[] { 0, 1 }, "v1 text");
 
 			// Revert paragraph split at end of verse 1.
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("201They were all together. 2Suddenly there was a strong wind noise. " +
-				"3They saw tongues of fire. ",
-				((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("201They were all together. 2Suddenly there was a strong wind noise. " +
+				"3They saw tongues of fire. "));
 
 			VerifyTranslations(para1Curr, new []{null, "They together Trans", null, "Suddenly strong wind Trans", null, "Tongues fire Trans"},
 				new []{ 3, "They were all together. ".Length, 1, "Suddenly there was a strong wind noise. ".Length,
@@ -1611,17 +1608,17 @@ namespace ParatextImport
 
 			// Revert text difference in verse 2.
 			m_bookMerger.ReplaceCurrentWithRevision(diff3);
-			Assert.AreEqual("201They were all together. 2Suddenly there was a violent wind sound. " +
-				"3They saw tongues of fire. ", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("201They were all together. 2Suddenly there was a violent wind sound. " +
+				"3They saw tongues of fire. "));
 			VerifyTranslations(para1Curr, new []{null, "They together Trans", null, "Suddenly violent wind Trans", null, "Tongues fire Trans"},
 				new []{ 3, "They were all together. ".Length, 1, "Suddenly there was a violent wind sound. ".Length,
 				1, "They saw tongues of fire. ".Length}, new[] { 0, 1, 0, 1, 0, 1 }, "v2 text");
 
 			// Revert missing paragraph (verse 4).
 			m_bookMerger.ReplaceCurrentWithRevision(diff4);
-			Assert.AreEqual(2, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IScrTxtPara newParaCurr = (IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("4They were filled with the Holy Spirit and spoke in tongues.", newParaCurr.Contents.Text);
+			Assert.That(newParaCurr.Contents.Text, Is.EqualTo("4They were filled with the Holy Spirit and spoke in tongues."));
 			VerifyTranslations(newParaCurr, new []{ null, "Filled Trans" },
 				new[] { 1, "They were filled with the Holy Spirit and spoke in tongues.".Length }, new[] { 0, 1 }, "add para 2");
 
@@ -1682,19 +1679,18 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null);
 
 			// We expect one paragraph structure difference with three subdifferences.
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			// Revert the difference in verse 33: para split, and text changes in three
 			// ScrVerses in the current
 			IScrSection sectionCurr = (IScrSection)para1Curr.Owner.Owner;
-			Assert.AreEqual(3, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(3));
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("3033For as churning the milk produces butter, and as twisting "
-				+ "the nose produces blood, so stirring up anger produces strife.",
-				((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("3033For as churning the milk produces butter, and as twisting "
+				+ "the nose produces blood, so stirring up anger produces strife."));
 			VerifyTranslations(para1Curr, new[] { null, "churning and twisting and stirring trans" },
 				new []{ 4, ("For as churning the milk produces butter, and as twisting "
 				+ "the nose produces blood, so stirring up anger produces strife.").Length },
@@ -1755,19 +1751,18 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null);
 
 			// We expect one paragraph structure difference with three subdifferences.
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			// Revert the difference in verse 33: para split, and text changes in three
 			// ScrVerses in the current
 			IScrSection sectionCurr = (IScrSection)para1Curr.Owner.Owner;
-			Assert.AreEqual(2, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("3033For as churning the cream produces butter, "
-				+ "and as twisting the nose produces blood, then stirring up anger produces strife.",
-				((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("3033For as churning the cream produces butter, "
+				+ "and as twisting the nose produces blood, then stirring up anger produces strife."));
 			VerifyTranslations(para1Curr, new[] { null, "churning trans twisting and stirring trans" },
 				new[]{ 4, ("For as churning the cream produces butter, "
 				+ "and as twisting the nose produces blood, then stirring up anger produces strife.").Length },
@@ -1827,19 +1822,18 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null);
 
 			// We expect one paragraph structure difference with three subdifferences.
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			// Revert the difference in verse 33: para split, and text changes in three
 			// ScrVerses in the current
 			IScrSection sectionCurr = (IScrSection)para1Curr.Owner.Owner;
-			Assert.AreEqual(2, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("3033For as churning the cream produces butter"
-				+ "and as twisting the nose produces blood, then stirring up anger produces strife.",
-				((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("3033For as churning the cream produces butter"
+				+ "and as twisting the nose produces blood, then stirring up anger produces strife."));
 			VerifyTranslations(para1Curr, new[] { null, "churning trans twisting and stirring trans" },
 				new[]{ 4, ("For as churning the cream produces butter"
 				+ "and as twisting the nose produces blood, then stirring up anger produces strife.").Length },
@@ -1904,7 +1898,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Revert
 			Difference diff = m_bookMerger.Differences.MoveFirst();
@@ -1936,14 +1930,14 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Revert
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to split the current para
 
 			//verify the revert
-			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para1Curr = (IScrTxtPara)sectionCur.ContentOA[0];
 			IScrTxtPara para2Curr = (IScrTxtPara)sectionCur.ContentOA[1];
 
@@ -2005,14 +1999,14 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// Revert
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to split the current para
 
 			//verify the revert
-			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para1Curr = (IScrTxtPara)sectionCur.ContentOA[0];
 			IScrTxtPara para2Curr = (IScrTxtPara)sectionCur.ContentOA[1];
 
@@ -2105,7 +2099,7 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 
@@ -2113,7 +2107,7 @@ namespace ParatextImport
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
 			IScrSection section = m_genesis.SectionsOS[0];
 			IScrTxtPara para1 = ((IScrTxtPara) section.ContentOA.ParagraphsOS[0]);
-			Assert.AreEqual("11This is the first section", para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo("11This is the first section"));
 
 			VerifyTranslations(para1, new []{ null, "first section trans" },
 				new[] { 2, "This is the first section".Length }, new[] { 0, 1 }, "insert section");
@@ -2123,9 +2117,9 @@ namespace ParatextImport
 			section = m_genesis.SectionsOS[2];
 
 			IScrTxtPara para2 = ((IScrTxtPara)section.ContentOA.ParagraphsOS[0]);
-			Assert.AreEqual("31This is the third section", para2.Contents.Text);
+			Assert.That(para2.Contents.Text, Is.EqualTo("31This is the third section"));
 			IScrTxtPara para3 = ((IScrTxtPara)section.ContentOA.ParagraphsOS[1]);
-			Assert.AreEqual("2This is the second para of the third section", para3.Contents.Text);
+			Assert.That(para3.Contents.Text, Is.EqualTo("2This is the second para of the third section"));
 			VerifyTranslations(para2, new []{ null, "3rd section trans" },
 				new[] { 2, "This is the third section".Length }, new[] { 0, 1 }, "insert 3rd section p1");
 			VerifyTranslations(para3, new []{ null, "p2 s3 trans" },
@@ -2218,20 +2212,20 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 
 			ISegment segS1 = para1Curr.SegmentsOS[0];
 			ISegment segS2 = para2Curr.SegmentsOS[1];
 			ISegment segS2b = para2b.SegmentsOS[1];
-			Assert.AreNotEqual((int)SpecialHVOValues.kHvoObjectDeleted, segS1.Hvo, "segment should have known class before deletion");
+			Assert.That(segS1.Hvo, Is.Not.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted), "segment should have known class before deletion");
 
 			// Revert all the "added in current" diffs, to delete them from the current
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
 
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
 
 			// Verify that the relevant segments got deleted. (There are others, but this is a good
 			// representative sample.)
@@ -2299,7 +2293,7 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null);
 
-			Assert.AreEqual(5, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(5));
 
 			// text diff in Verse 32
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
@@ -2315,17 +2309,17 @@ namespace ParatextImport
 			// Revert text change in verse 32
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
 			IScrTxtPara para1 = ((IScrTxtPara) sectionCurr.ContentOA.ParagraphsOS[0]);
-			Assert.AreEqual("3032Versie 3. 33For as churning the milk produces good butter, "
-				+ "34Verse 34.", para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo("3032Versie 3. 33For as churning the milk produces good butter, "
+				+ "34Verse 34."));
 			VerifyTranslations(para1, new string[] { null, "Versie 3@ trans", null, "Churning milk trans",  null, "V34 trans"},
 				new int[] { 4, "Versie 3. ".Length, 2, "For as churning the milk produces good butter, ".Length, 2, "Verse 34.".Length },
 				new[] { 0, 1, 0, 1, 0, 1 }, "revert 32");
 
 			// Revert text change in verse 33
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("3032Versie 3. 33For as churning the cream produces good butter, "
-				+ "34Verse 34.", para1.Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(para1.Contents.Text, Is.EqualTo("3032Versie 3. 33For as churning the cream produces good butter, "
+				+ "34Verse 34."));
 			VerifyTranslations(para1, new string[] { null, "Versie 3@ trans", null, "Churning cream trans",  null, "V34 trans"},
 				new int[] { 4, "Versie 3. ".Length, 2, "For as churning the cream produces good butter, ".Length, 2,  "Verse 34.".Length},
 				new[] { 0, 1, 0, 1, 0, 1 }, "revert 33");
@@ -2335,10 +2329,10 @@ namespace ParatextImport
 			// We expect the one paragraph to be split into three paragraphs and text changes to be made.
 			IScrTxtPara para2 = ((IScrTxtPara) sectionCurr.ContentOA.ParagraphsOS[1]);
 			IScrTxtPara para3 = ((IScrTxtPara) sectionCurr.ContentOA.ParagraphsOS[2]);
-			Assert.AreEqual(3, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("3032Versie 3. 33For as churning the cream produces good butter, ", para1.Contents.Text);
-			Assert.AreEqual("and as twisting the nose produces blood,", para2.Contents.Text);
-			Assert.AreEqual("then stirring up anger produces strife. 34Verse 34.", para3.Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(3));
+			Assert.That(para1.Contents.Text, Is.EqualTo("3032Versie 3. 33For as churning the cream produces good butter, "));
+			Assert.That(para2.Contents.Text, Is.EqualTo("and as twisting the nose produces blood,"));
+			Assert.That(para3.Contents.Text, Is.EqualTo("then stirring up anger produces strife. 34Verse 34."));
 			VerifyTranslations(para1, new []{ null, "Versie 3@ trans", null, "Churning cream trans"},
 				new []{ 4, "Versie 3. ".Length, 2, "For as churning the cream produces good butter, ".Length},
 				new[] { 0, 1, 0, 1 }, "revert paras 1");
@@ -2350,18 +2344,16 @@ namespace ParatextImport
 
 			// Revert text change in verse 34
 			m_bookMerger.ReplaceCurrentWithRevision(diff4);
-			Assert.AreEqual("then stirring up anger produces strife. 34Versify thirty-four.",
-				para3.Contents.Text);
+			Assert.That(para3.Contents.Text, Is.EqualTo("then stirring up anger produces strife. 34Versify thirty-four."));
 			VerifyTranslations(para3, new []{ "Stirring trans", null, "Versify 34 trans"},
 				new []{"then stirring up anger produces strife. ".Length, 2, "Versify thirty-four.".Length},
 				new[] { 1, 0, 1 }, "revert 34");
 
 			// Revert missing para in current
 			m_bookMerger.ReplaceCurrentWithRevision(diff5);
-			Assert.AreEqual(4, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(4));
 			IScrTxtPara para4 = ((IScrTxtPara) sectionCurr.ContentOA.ParagraphsOS[3]);
-			Assert.AreEqual("35Verse 35.",
-				((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[3]).Contents.Text);
+			Assert.That(((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[3]).Contents.Text, Is.EqualTo("35Verse 35."));
 			VerifyTranslations(para4, new []{ null, "V35 trans"},
 				new[] { 2, "Verse 35.".Length }, new[] { 0, 1 }, "insert para");
 
@@ -2417,7 +2409,7 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null);
 
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// We expect one paragraph structure difference with three subdifferences.
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
@@ -2428,10 +2420,10 @@ namespace ParatextImport
 			IScrTxtPara para1 = (IScrTxtPara)sectionCurr.ContentOA[0];
 			IScrTxtPara para2 = ((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[1]);
 			IScrTxtPara para3 = ((IScrTxtPara)sectionCurr.ContentOA.ParagraphsOS[2]);
-			Assert.AreEqual(3, sectionCurr.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual("33For as churning the cream produces a sensible ", para1.Contents.Text);
-			Assert.AreEqual("cropping of normal stuff when added ", para2.Contents.Text);
-			Assert.AreEqual("to the stirring up anger produces strife.", para3.Contents.Text);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(3));
+			Assert.That(para1.Contents.Text, Is.EqualTo("33For as churning the cream produces a sensible "));
+			Assert.That(para2.Contents.Text, Is.EqualTo("cropping of normal stuff when added "));
+			Assert.That(para3.Contents.Text, Is.EqualTo("to the stirring up anger produces strife."));
 			// We aren't really sure whether the BT for para 1 should only have the BT from
 			// the rev or have them concatenated. We used to expect only the rev BT, but now
 			// the code combines them and keeps both. Bryan said he thought it was okay.
@@ -2496,7 +2488,7 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null);
 
-			Assert.AreEqual(2, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(2));
 
 			// We expect a simple text difference for the space at the end of verse 1.
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
@@ -2510,9 +2502,9 @@ namespace ParatextImport
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
 
 			// We expect the one paragraph to be split into three paragraphs and text changes to be made.
-			Assert.AreEqual(1, sectionCurr.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCurr.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IScrTxtPara para1 = (IScrTxtPara)sectionCurr.ContentOA[0];
-			Assert.AreEqual("11For as churning the cream produces butter. 2Stirring up anger produces strife.", para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo("11For as churning the cream produces butter. 2Stirring up anger produces strife."));
 
 			VerifyTranslations(para1, new[] { null, "Churning cream trans", null, "Stirring trans" },
 				new[] { 2, "For as churning the cream produces butter. ".Length, 1, "Stirring up anger produces strife.".Length },
@@ -2585,11 +2577,11 @@ namespace ParatextImport
 			}
 			while (diff != null);
 
-			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
+			Assert.That(sectionCur.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IScrTxtPara para1 = (IScrTxtPara)sectionCur.ContentOA[0];
-			Assert.AreEqual("1verse one.", para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo("1verse one."));
 			IScrTxtPara para2 = (IScrTxtPara)sectionCur.ContentOA[1];
-			Assert.AreEqual("2verse two.", para2.Contents.Text);
+			Assert.That(para2.Contents.Text, Is.EqualTo("2verse two."));
 
 			VerifyTranslations(para1, new[] { null, "versiculo uno." },
 				new [] { 1, "verse one.".Length },

@@ -84,8 +84,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of the client rectangle. To speed things up we store it here, but it needs to be
 		/// updated if the zoom, width or horizontal margin changes.</summary>
 		protected int m_ParaHeightInPoints;
-		/// <summary>Used to keep from updating the selection on every keystroke.</summary>
-		private Rect m_prevParaRectangle;
 		/// <summary>
 		/// True to enable spell-checking.
 		/// </summary>
@@ -396,7 +394,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 
 				string bestStyle = null;
-				int hvoBestStyle = -1;
 
 				if (EditingHelper.CurrentSelection == null || EditingHelper.Editable == false)
 				{

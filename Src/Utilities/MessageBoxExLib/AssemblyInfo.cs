@@ -5,4 +5,4 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("")]
+// [assembly: AssemblyTitle("")] // Sanitized by convert_generate_assembly_info

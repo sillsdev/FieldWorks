@@ -74,18 +74,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
-			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId, CellarPropertyType.String, Guid.Empty);
-
-
-				NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
-			{
-				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
-				// We set both alternatives because currently the default part for Bibliography uses vernacular,
-				// but I think this will probably get fixed. Anyway, this way the test is robust.
-				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
-				m_entry.Bibliography.SetVernacularDefaultWritingSystem("My rubbishy bibliography");
-			});
 		}
 		#endregion
 
@@ -98,6 +86,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void TestSetup()
 		{
 			base.TestSetup();
+
+			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId,
+				CellarPropertyType.String, Guid.Empty);
+			// base.TestSetup() may already start a unit-of-work; avoid nesting NonUndoable tasks.
+			m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
+			// We set both alternatives because currently the default part for Bibliography uses vernacular,
+			// but I think this will probably get fixed. Anyway, this way the test is robust.
+			m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
+			m_entry.Bibliography.SetVernacularDefaultWritingSystem("My rubbishy bibliography");
+
 			m_dtree = new DataTree();
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
@@ -113,6 +112,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
+			if (m_customField != null && Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+			{
+				m_customField.Dispose();
+				m_customField = null;
+			}
+
 			// m_dtree gets disposed from m_parent because it's part of its Controls
 			if (m_parent != null)
 			{
@@ -132,13 +137,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			base.TestTearDown();
 		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			if(Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
-				m_customField.Dispose();
-		}
 		#endregion
 
 		/// <summary></summary>
@@ -147,8 +145,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
-			Assert.AreEqual(1, m_dtree.Controls.Count);
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(1));
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
 			// Enhance JohnT: there are more things we could test about this slice,
 			// such as the presence and contents and initial selection of the view,
 			// but this round of tests is mainly aimed at the process of interpreting
@@ -161,9 +159,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
-			Assert.AreEqual(2, m_dtree.Controls.Count);
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Bibliography", (m_dtree.Controls[1] as Slice).Label);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(2));
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
 		}
 
 		/// <summary></summary>
@@ -173,22 +171,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Abbrs", null, m_entry, false);
 
-			Assert.AreEqual(3, m_dtree.Controls.Count);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(3));
 			// 1) Test that labels that are not in "LabelAbbreviations" stringTable
 			//		are abbreviated by being truncated to 4 characters.
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
 			string abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
-			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");	// verify it's not in the table.
-			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);		// verify truncation took place.
+			Assert.That(abbr1, Is.EqualTo("*" + (m_dtree.Controls[0] as Slice).Label + "*"));	// verify it's not in the table.
+			Assert.That((m_dtree.Controls[0] as Slice).Abbreviation, Is.EqualTo("Cita"));		// verify truncation took place.
 			// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
-			Assert.AreEqual("Citation Form", (m_dtree.Controls[1] as Slice).Label);
+			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Citation Form"));
 			string abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, "LabelAbbreviations");
-			Assert.IsFalse(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*"); // verify it IS in the table
-			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);		// should be identical
+			Assert.That(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*", Is.False); // verify it IS in the table
+			Assert.That((m_dtree.Controls[1] as Slice).Abbreviation, Is.EqualTo(abbr2));		// should be identical
 			// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
-			Assert.AreEqual("Citation Form", (m_dtree.Controls[2] as Slice).Label);
-			Assert.AreEqual((m_dtree.Controls[2] as Slice).Abbreviation, "!?");
-			Assert.IsFalse(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation);
+			Assert.That((m_dtree.Controls[2] as Slice).Label, Is.EqualTo("Citation Form"));
+			Assert.That((m_dtree.Controls[2] as Slice).Abbreviation, Is.EqualTo("!?"));
+			Assert.That(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation, Is.False);
 		}
 
 		/// <summary></summary>
@@ -203,8 +201,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
 				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
-				Assert.AreEqual(1, m_dtree.Controls.Count);
-				Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(1));
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
 			}
 			finally
 			{
@@ -219,11 +217,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Nested-Expanded", null, m_entry, false);
-			Assert.AreEqual(3, m_dtree.Controls.Count);
-			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Citation form", (m_dtree.Controls[1] as Slice).Label);
-			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
-			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(3));
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("Header"));
+			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Citation form"));
+			Assert.That((m_dtree.Controls[2] as Slice).Label, Is.EqualTo("Bibliography"));
+			Assert.That((m_dtree.Controls[1] as Slice).Indent, Is.EqualTo(0)); // was 1, but indent currently suppressed.
 		}
 
 		/// <summary>Remove duplicate custom field placeholder parts</summary>
@@ -234,7 +232,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
 			var template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
 			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
-			Assert.AreEqual(template.OuterXml, expected, "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
+			Assert.That(expected, Is.EqualTo(template.OuterXml), "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
 		}
 
 		[Test]
@@ -244,7 +242,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.ShowObject(m_entry, "NoRef", null, m_entry, false);
 			var template = m_dtree.GetTemplateForObjLayout(m_entry, "NoRef", null);
 			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"NoRef\"><part customFields=\"here\" ref=\"_CustomFieldPlaceholder\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
-			Assert.AreEqual(template.OuterXml, expected, "The previously empty ref on the customFields=\"here\" part should be _CustomFieldPlaceholder.");
+			Assert.That(expected, Is.EqualTo(template.OuterXml), "The previously empty ref on the customFields=\"here\" part should be _CustomFieldPlaceholder.");
 		}
 
 		/// <summary></summary>
@@ -254,8 +252,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Nested-Collapsed", null, m_entry, false);
-			Assert.AreEqual(1, m_dtree.Controls.Count);
-			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(1));
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("Header"));
 		}
 
 		[Test]
@@ -284,7 +282,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
 			// With no etymology or senses, this view contains nothing at all.
-			Assert.AreEqual(0, m_dtree.Controls.Count);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(0));
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
@@ -310,11 +308,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// With two senses, we get a header slice, a gloss slice for
 			// sense 1 (not optional), and both gloss and Scientific name
 			// slices for sense 2.
-			Assert.AreEqual(3, m_dtree.Controls.Count);
-			//Assert.AreEqual("Senses", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Gloss", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Gloss", (m_dtree.Controls[1] as Slice).Label);
-			Assert.AreEqual("ScientificName", (m_dtree.Controls[2] as Slice).Label);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(3));
+			//Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("Senses"));
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("Gloss"));
+			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Gloss"));
+			Assert.That((m_dtree.Controls[2] as Slice).Label, Is.EqualTo("ScientificName"));
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
@@ -334,7 +332,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
 			// Adding an etymology gets us just no more slices so far,
 			// because it doesn't have a form or source
-			Assert.AreEqual(3, m_dtree.Controls.Count);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(3));
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
@@ -353,9 +351,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
 			// When the etymology has something we get two more.
-			Assert.AreEqual(5, m_dtree.Controls.Count);
-			Assert.AreEqual("Form", (m_dtree.Controls[3] as Slice).Label);
-			Assert.AreEqual("Source Language Notes", (m_dtree.Controls[4] as Slice).Label);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(5));
+			Assert.That((m_dtree.Controls[3] as Slice).Label, Is.EqualTo("Form"));
+			Assert.That((m_dtree.Controls[4] as Slice).Label, Is.EqualTo("Source Language Notes"));
 		}
 	}
 }

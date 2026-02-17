@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-
-	<UsingTask TaskName="CopyLocale" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="PoToXml" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XliffToGoldEtic" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XliffToLists" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XmlToPo" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
-
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''">
+			$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll
+		</FwBuildTasksAssembly>
+	</PropertyGroup>
+	<UsingTask TaskName="CopyLocale" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="ListsToXliff" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="NormalizeLocales" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="PoToXml" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="XliffToGoldEtic" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="XliffToLists" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="XmlToPo" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<!-- Localize strings-en.xml, lists, and all resx files -->
-	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;copyLocales;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
-	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
-
+	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries" />
+	<Target
+		Name="localize-source"
+		DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;copyLocales;zipLocalizedLists;processLanguages-source"
+		Condition="'$(DisableLocalization)'!='true'"
+	/>
+	<Target
+		Name="localize-binaries"
+		DependsOnTargets="Initialize;processLanguages-binaries"
+		Condition="'$(DisableLocalization)'!='true'"
+	/>
 	<PropertyGroup>
 		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
 		<L10nsBaseDir>$(fwrt)/Localizations</L10nsBaseDir>
@@ -27,82 +37,161 @@
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
-		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')">WarnAndContinue</OnFailedCrowdinDownload>
-		<OnFailedCrowdinDownload Condition="!Exists('$(CrowdinZip)')">ErrorAndStop</OnFailedCrowdinDownload>
+		<CrowdinApiKey>$(CROWDIN_API_KEY)</CrowdinApiKey>
+		<DisableLocalization Condition="'$(DisableLocalization)'=='' and '$(CrowdinApiKey)'==''">true</DisableLocalization>
+		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')"
+			>WarnAndContinue</OnFailedCrowdinDownload
+		>
+		<OnFailedCrowdinDownload Condition="!Exists('$(CrowdinZip)')"
+			>ErrorAndStop</OnFailedCrowdinDownload
+		>
 	</PropertyGroup>
-
+	<Target Name="ValidateCrowdinApiKey" Condition="'$(DisableLocalization)'!='true'">
+		<Error
+			Condition="'$(CrowdinApiKey)'==''"
+			Text="Localization is enabled but CROWDIN_API_KEY is not set. Set CROWDIN_API_KEY or pass /p:DisableLocalization=true to skip localization for local builds."
+		/>
+	</Target>
 	<Target Name="InstallOvercrowdin">
 		<!-- Install overcrowdin, or update if already installed. -->
-		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
+		<Exec
+			WorkingDirectory="$(fwrt)"
+			Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"
+		/>
 	</Target>
-	<Target Name="copyLocales"  DependsOnTargets="VerifyLcmCloned"> <!-- Copy locales to alternate ws identifiers -->
-		<CopyLocale SourceL10n="$(L10nsDirectory)/ms" DestL10n="$(L10nsDirectory)/zlm" LcmDir="$(LcmSrcDir)" />
+	<Target Name="copyLocales" DependsOnTargets="VerifyLcmCloned">
+		<!-- Copy locales to alternate ws identifiers -->
+		<CopyLocale
+			SourceL10n="$(L10nsDirectory)/ms"
+			DestL10n="$(L10nsDirectory)/zlm"
+			LcmDir="$(LcmSrcDir)"
+		/>
 	</Target>
-
 	<!-- Update localizable files in Crowdin -->
-	<Target Name="uploadUpdatesForTranslation" DependsOnTargets="CopyLcmResxFiles;InstallOvercrowdin">
+	<Target
+		Name="uploadUpdatesForTranslation"
+		DependsOnTargets="CopyLcmResxFiles;InstallOvercrowdin"
+	>
 		<ItemGroup>
-			<OldXliffs Include="$(ListsDirectory)/*.xlf"/>
+			<OldXliffs Include="$(ListsDirectory)/*.xlf" />
 		</ItemGroup>
-		<ForceDelete Files="@(OldXliffs)"/>
-		<GoldEticToXliff SourceXml="$(LcmSrcDir)/SIL.LCModel/Templates/GOLDEtic.xml" XliffOutputDir="$(ListsDirectory)"/>
-		<ListsToXliff SourceXml="$(ListsDirectory)/LocalizableLists.xml" XliffOutputDir="$(ListsDirectory)"/>
-		<ForceDelete Files="$(MessagesPot)"/>
-		<XmlToPo FwRoot="$(fwrt)" Output="$(MessagesPot)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v"/>
+		<ForceDelete Files="@(OldXliffs)" />
+		<GoldEticToXliff
+			SourceXml="$(LcmSrcDir)/SIL.LCModel/Templates/GOLDEtic.xml"
+			XliffOutputDir="$(ListsDirectory)"
+		/>
+		<ListsToXliff
+			SourceXml="$(ListsDirectory)/LocalizableLists.xml"
+			XliffOutputDir="$(ListsDirectory)"
+		/>
+		<ForceDelete Files="$(MessagesPot)" />
+		<XmlToPo FwRoot="$(fwrt)" Output="$(MessagesPot)" />
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v" />
 	</Target>
-
 	<Target Name="CopyLcmResxFiles" DependsOnTargets="VerifyLcmCloned">
-		<ForceDelete Files="$(L10nsBaseDir)/LCM"/>
+		<ForceDelete Files="$(L10nsBaseDir)/LCM" />
 		<ItemGroup>
-			<LcmResxFiles Include="$(LcmSrcDir)/**/*.resx"/>
+			<LcmResxFiles Include="$(LcmSrcDir)/**/*.resx" />
 		</ItemGroup>
 		<Message Text="@(LcmResxFiles)" />
-		<Copy SourceFiles="@(LcmResxFiles)"
-			DestinationFiles="@(LcmResxFiles->'$(L10nsBaseDir)/LCM/%(RecursiveDir)%(Filename)%(Extension)')"/>
+		<Copy
+			SourceFiles="@(LcmResxFiles)"
+			DestinationFiles="@(LcmResxFiles-&gt;'$(L10nsBaseDir)/LCM/%(RecursiveDir)%(Filename)%(Extension)')"
+		/>
 	</Target>
-
 	<Target Name="VerifyLcmCloned">
-		<Error Text="LcmSrcDir '$(LcmSrcDir)' was not found.
-			To update localizations, liblcm must be cloned locally to the location specified by %24LcmRootDir
-			(historically set in $(MSBuildThisFileDirectory)LibraryDevelopment.properties; now an environment variable)."
-			Condition="!Exists('$(LcmSrcDir)')"/>
+		<Error
+			Text="LcmSrcDir '$(LcmSrcDir)' was not found.
+To update localizations, liblcm must be cloned locally to the location specified by %24LcmRootDir
+(historically set in $(MSBuildThisFileDirectory)LibraryDevelopment.properties; now an environment variable)."
+			Condition="!Exists('$(LcmSrcDir)')"
+		/>
 	</Target>
-
 	<!-- Download translations from Crowdin (and LDML files from SLDR) -->
-	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'" DependsOnTargets="InstallOvercrowdin">
-		<ForceDelete Files="$(L10nsDirectory)"/>
-		<MakeDir Directories="$(DownloadsDir)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
-		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
-		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
+	<Target
+		Name="downloadTranslatedFiles"
+		Condition="'$(disableDownloads)'!='true'"
+		DependsOnTargets="ValidateCrowdinApiKey;InstallOvercrowdin"
+	>
+		<ForceDelete Files="$(L10nsDirectory)" />
+		<MakeDir Directories="$(DownloadsDir)" />
+		<Exec
+			WorkingDirectory="$(fwrt)"
+			Command="overcrowdin download -v -f $(CrowdinZip)"
+			ContinueOnError="$(OnFailedCrowdinDownload)"
+		/>
+		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)" />
+		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)" />
 		<ItemGroup>
-			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))"/>
+			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))" />
 		</ItemGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="postProcessDownloadedTranslation"
-			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
-			Properties="Locale=%(LocaleDirs.Filename)"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
-			Properties="Locale=en"/>
+		<MSBuild
+			Projects="$(MSBuildProjectFullPath)"
+			Targets="postProcessDownloadedTranslation"
+			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"
+		/>
+		<MSBuild
+			Projects="$(MSBuildProjectFullPath)"
+			Targets="updateOneTemplateLdmlFile"
+			Properties="Locale=%(LocaleDirs.Filename)"
+		/>
+		<MSBuild
+			Projects="$(MSBuildProjectFullPath)"
+			Targets="updateOneTemplateLdmlFile"
+			Properties="Locale=en"
+		/>
 	</Target>
-
 	<Target Name="copyLibL10ns">
-	<PropertyGroup>
-		<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.3.0.1</ChorusL10nsNugetDir>
-		<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.6.0.0</PalasoL10nsNugetDir>
-	</PropertyGroup>
-	<Error Text="Chorus L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists('$(ChorusL10nsNugetDir)')" />
-	<Error Text="Palaso L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists('$(PalasoL10nsNugetDir)')" />
-	<ItemGroup>
-		<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"/>
-		<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"/>
-	</ItemGroup>
-	  <Copy SourceFiles="@(XliffFiles)"
-			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"/>
+		<Message
+			Text="Skipping lib localization copy for worktree build. Host Release builds should run with full packages restored."
+			Importance="low"
+			Condition="'$(SkipWorktreeL10n)'=='true'"
+		/>
+		<PropertyGroup Condition="'$(SkipWorktreeL10n)'!='true'">
+			<!-- Get packages directory path with proper separators -->
+			<L10nsPackagesDir>$([System.IO.Path]::Combine('$(fwrt)', 'packages'))</L10nsPackagesDir>
+			<ChorusL10nsBaseDir>$(L10nsPackagesDir)\sil.chorus.l10ns</ChorusL10nsBaseDir>
+			<PalasoL10nsBaseDir>$(L10nsPackagesDir)\sil.libpalaso.l10ns</PalasoL10nsBaseDir>
+		</PropertyGroup>
+		<ItemGroup Condition="'$(SkipWorktreeL10n)'!='true' AND Exists('$(ChorusL10nsBaseDir)')">
+			<!-- Use GetDirectories to find version subdirectories -->
+			<ChorusL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(ChorusL10nsBaseDir)'))" />
+		</ItemGroup>
+		<ItemGroup Condition="'$(SkipWorktreeL10n)'!='true' AND Exists('$(PalasoL10nsBaseDir)')">
+			<PalasoL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(PalasoL10nsBaseDir)'))" />
+		</ItemGroup>
+		<PropertyGroup Condition="'$(SkipWorktreeL10n)'!='true'">
+			<!-- Use the first (and typically only) version found -->
+			<ChorusL10nsNugetDir>@(ChorusL10nsDirs)</ChorusL10nsNugetDir>
+			<PalasoL10nsNugetDir>@(PalasoL10nsDirs)</PalasoL10nsNugetDir>
+		</PropertyGroup>
+		<Warning
+			Text="Chorus L10ns package missing - localization files will not be copied. Install via: dotnet restore"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '$(ChorusL10nsNugetDir)' == ''"
+		/>
+		<Warning
+			Text="Palaso L10ns package missing - localization files will not be copied. Install via: dotnet restore"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '$(PalasoL10nsNugetDir)' == ''"
+		/>
+		<CreateItem
+			Include="@(ChorusL10nsDirs-&gt;'%(Identity)\content\**\*.xlf')"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(ChorusL10nsDirs)' != ''"
+		>
+			<Output TaskParameter="Include" ItemName="XliffFiles" />
+		</CreateItem>
+		<CreateItem
+			Include="@(PalasoL10nsDirs-&gt;'%(Identity)\content\**\*.xlf')"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(PalasoL10nsDirs)' != ''"
+		>
+			<Output TaskParameter="Include" ItemName="XliffFiles" />
+		</CreateItem>
+		<Copy
+			SourceFiles="@(XliffFiles)"
+			DestinationFiles="@(XliffFiles-&gt;'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(XliffFiles)' != ''"
+		/>
 	</Target>
-
 	<!-- Each downloaded translation needs the following post-processing:
 			* Insert strings from messages.*.po into strings-*.xml
 			* Verify that translated resx files are where we expect them
@@ -110,103 +199,136 @@
 			  because of the folder structure we use to upload them) -->
 	<Target Name="postProcessDownloadedTranslation">
 		<Message Text="Converting po file and relocating LCM .resx files for $(Locale)" />
-		<PoToXml PoFile="$(LocaleDir)/messages.$(Locale).po" StringsXml="$(LocaleDir)/strings-$(Locale).xml"/>
+		<PoToXml
+			PoFile="$(LocaleDir)/messages.$(Locale).po"
+			StringsXml="$(LocaleDir)/strings-$(Locale).xml"
+		/>
 		<PropertyGroup>
 			<FwResxDir>$(LocaleDir)/Src</FwResxDir>
 			<LcmResxDir>$(LocaleDir)/Localizations/LCM</LcmResxDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<FwResxFiles Include="$(FwResxDir)/**/*.resx"/>
-			<LcmResxFiles Include="$(LcmResxDir)/**/*.resx"/>
+			<FwResxFiles Include="$(FwResxDir)/**/*.resx" />
+			<LcmResxFiles Include="$(LcmResxDir)/**/*.resx" />
 		</ItemGroup>
-		<Error Text="No localized resx files found in '$(FwResxDir)'" Condition="'@(FwResxFiles)' == ''"/>
-		<Error Text="No localized resx files found in '$(LcmResxDir)'" Condition="'@(LcmResxFiles)' == ''"/>
-		<Move SourceFiles="@(LcmResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
+		<Error
+			Text="No localized resx files found in '$(FwResxDir)'"
+			Condition="'@(FwResxFiles)' == ''"
+		/>
+		<Error
+			Text="No localized resx files found in '$(LcmResxDir)'"
+			Condition="'@(LcmResxFiles)' == ''"
+		/>
+		<Move
+			SourceFiles="@(LcmResxFiles)"
+			DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)"
+		/>
 	</Target>
-
 	<Target Name="combineGOLDEtic">
 		<PropertyGroup>
 			<OutputXml>$(fwrt)/DistFiles/Templates/GOLDEtic.xml</OutputXml>
 		</PropertyGroup>
 		<ItemGroup>
-			<GEXliffFiles Include="$(L10nsDirectory)/*/Lists/GOLDEtic/GOLDEtic.*.xlf"/>
+			<GEXliffFiles Include="$(L10nsDirectory)/*/Lists/GOLDEtic/GOLDEtic.*.xlf" />
 		</ItemGroup>
-		<XliffToGoldEtic XliffSourceFiles="@(GEXliffFiles)" OutputXml="$(OutputXml)"/>
+		<XliffToGoldEtic XliffSourceFiles="@(GEXliffFiles)" OutputXml="$(OutputXml)" />
 	</Target>
-
 	<Target Name="updateOneTemplateLdmlFile">
-		<DownloadFile Address="$(SldrUrl)$(Locale)" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="$(Locale).ldml"/>
+		<DownloadFile
+			Address="$(SldrUrl)$(Locale)"
+			DownloadsDir="$(fwrt)/DistFiles/Templates"
+			LocalFilename="$(Locale).ldml"
+		/>
 	</Target>
-
 	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
 	<Target Name="zipLocalizedLists">
 		<ItemGroup>
-			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))"/>
+			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))" />
 		</ItemGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="combineAndZipListsForOneLocale"
-			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"/>
+		<MSBuild
+			Projects="$(MSBuildProjectFullPath)"
+			Targets="combineAndZipListsForOneLocale"
+			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"
+		/>
 	</Target>
-
 	<!-- Combine list *.xlf files into a single .xml file for one `LocaleDir` and zip into DistFiles/Templates -->
 	<Target Name="combineAndZipListsForOneLocale">
 		<PropertyGroup>
 			<OutputXml>$(LocaleDir)/Lists/LocalizedLists-$(Locale).xml</OutputXml>
 		</PropertyGroup>
 		<ItemGroup>
-			<XliffFiles Include="$(LocaleDir)/Lists/*.xlf"/>
+			<XliffFiles Include="$(LocaleDir)/Lists/*.xlf" />
 		</ItemGroup>
-		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
+		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)" />
 		<!-- To support varied windows locale options for Malay we copy ms to zlm, adjust the xml contents -->
-		<Message Text="Making zlm adjustments to the ms LocalizedLists copy" Condition="'$(Locale)'=='zlm'" />
-		<XmlPoke XmlInputPath="$(OutputXml)"
+		<Message
+			Text="Making zlm adjustments to the ms LocalizedLists copy"
+			Condition="'$(Locale)'=='zlm'"
+		/>
+		<XmlPoke
+			XmlInputPath="$(OutputXml)"
 			Query="//*[@ws='ms']/@ws"
-			Value="zlm" Condition="'$(Locale)'=='zlm'"/>
-		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
+			Value="zlm"
+			Condition="'$(Locale)'=='zlm'"
+		/>
+		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates" />
 	</Target>
-
 	<!-- Use this when we want to export a single locale xml file to process for import to The Combine -->
 	<!-- Usage build /t:PrepareSemanticDomainForTheCombine /p:Locale=es -->
 	<Target Name="PrepareSemanticDomainForTheCombine" DependsOnTargets="">
 		<ItemGroup>
-			<XliffFiles Include="$(fwrt)/Localizations/l10ns/$(Locale)/Lists/SemanticDomains.$(Locale).xlf"/>
+			<XliffFiles Include="$(fwrt)/Localizations/l10ns/$(Locale)/Lists/SemanticDomains.$(Locale).xlf" />
 		</ItemGroup>
-		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="SemanticDomains-$(Locale).xml"/>
+		<XliffToLists
+			XliffSourceFiles="@(XliffFiles)"
+			OutputXml="SemanticDomains-$(Locale).xml"
+		/>
 	</Target>
-
 	<!-- Convert LocalizedLists-*.xml files from Localizations to xliff to upload as completed translations -->
 	<Target Name="convertLocalizedListsToXliff">
 		<ItemGroup>
-			<ListsXmlFiles Include="$(L10nsBaseDir)/LocalizedLists-*.xml"/>
-			<OldXliffFiles Include="$(ListsDirectory)/*/*.xlf"/>
+			<ListsXmlFiles Include="$(L10nsBaseDir)/LocalizedLists-*.xml" />
+			<OldXliffFiles Include="$(ListsDirectory)/*/*.xlf" />
 		</ItemGroup>
-		<ForceDelete Files="@(OldXliffFiles)"/><!-- delete early to prevent race conditions during creation -->
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="splitListsForOneLocale"
-			Properties="ListsXml=%(ListsXmlFiles.Identity);BareFilename=%(Filename)"/>
+		<ForceDelete Files="@(OldXliffFiles)" />
+		<!-- delete early to prevent race conditions during creation -->
+		<MSBuild
+			Projects="$(MSBuildProjectFullPath)"
+			Targets="splitListsForOneLocale"
+			Properties="ListsXml=%(ListsXmlFiles.Identity);BareFilename=%(Filename)"
+		/>
 	</Target>
-
 	<Target Name="splitListsForOneLocale">
 		<PropertyGroup>
-			<Locale>$(BareFilename.Substring(15))</Locale><!-- there are 15 chars in 'LocalizedLists-' -->
+			<Locale>$(BareFilename.Substring(15))</Locale>
+			<!-- there are 15 chars in 'LocalizedLists-' -->
 			<XliffOutputDir>$(ListsDirectory)/$(Locale)</XliffOutputDir>
 		</PropertyGroup>
-		<MakeDir Directories="$(XliffOutputDir)"/>
-		<ListsToXliff SourceXml="$(ListsXml)" XliffOutputDir="$(XliffOutputDir)" TargetLocale="$(Locale)"/>
+		<MakeDir Directories="$(XliffOutputDir)" />
+		<ListsToXliff
+			SourceXml="$(ListsXml)"
+			XliffOutputDir="$(XliffOutputDir)"
+			TargetLocale="$(Locale)"
+		/>
 	</Target>
-
 	<!-- Call with the /p:ListsXml with translated SemanticDomains list and /p:Locale for the locale -->
 	<Target Name="prepareSemanticDomainForCrowdin">
 		<PropertyGroup>
 			<XliffOutputDir>$(ListsDirectory)/$(Locale)</XliffOutputDir>
 		</PropertyGroup>
-		<MakeDir Directories="$(XliffOutputDir)"/>
-		<ListsToXliff SourceXml="$(ListsXml)" XliffOutputDir="$(XliffOutputDir)" TargetLocale="$(Locale)" ListsToInclude="SemanticDomains.xlf" />
+		<MakeDir Directories="$(XliffOutputDir)" />
+		<ListsToXliff
+			SourceXml="$(ListsXml)"
+			XliffOutputDir="$(XliffOutputDir)"
+			TargetLocale="$(Locale)"
+			ListsToInclude="SemanticDomains.xlf"
+		/>
 	</Target>
-
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
 	<Target Name="processLanguages-source" DependsOnTargets="VerifyLcmCloned">
-	<!-- Process source for liblcm -->
-	<Message Text="LcmRootDir = $(LcmRootDir)" />
-	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
+		<!-- Process source for liblcm -->
+		<Message Text="LcmRootDir = $(LcmRootDir)" />
+		<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
@@ -214,8 +336,9 @@
 			InformationVersion="$(LcmNugetVersion)"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
-			Build="SourceOnly"/>
-	<!-- Process source for fieldworks -->
+			Build="SourceOnly"
+		/>
+		<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
@@ -223,21 +346,25 @@
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
 			CopyStringsXml="true"
-			Build="SourceOnly"/>
+			Build="SourceOnly"
+		/>
 	</Target>
-
 	<!-- Build localized dll's -->
 	<Target Name="processLanguages-binaries" DependsOnTargets="VerifyLcmCloned">
 		<!-- REVIEW (Hasso) 2020.01: what does this copy? -->
 		<ItemGroup>
-			<LocalizationFiles Include="$(fwrt)/Localizations/Output/**/*.*" Condition="Exists('$(fwrt)/Localizations/Output')"/>
+			<LocalizationFiles
+				Include="$(fwrt)/Localizations/Output/**/*.*"
+				Condition="Exists('$(fwrt)/Localizations/Output')"
+			/>
 		</ItemGroup>
-		<Copy SourceFiles="@(LocalizationFiles)"
-			DestinationFiles="@(LocalizationFiles->'$(fwrt)/Output/%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"/>
-
-	<!-- Process source for liblcm -->
-	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
+		<Copy
+			SourceFiles="@(LocalizationFiles)"
+			DestinationFiles="@(LocalizationFiles-&gt;'$(fwrt)/Output/%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+		/>
+		<!-- Process source for liblcm -->
+		<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
@@ -245,8 +372,9 @@
 			InformationVersion="$(LcmNugetVersion)"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
-			Build="BinaryOnly"/>
-	<!-- Process source for fieldworks -->
+			Build="BinaryOnly"
+		/>
+		<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
@@ -254,7 +382,7 @@
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
 			CopyStringsXml="true"
-			Build="BinaryOnly"/>
+			Build="BinaryOnly"
+		/>
 	</Target>
-
 </Project>

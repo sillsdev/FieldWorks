@@ -28,22 +28,21 @@ namespace LexEdDllTests
 				changeHandler.Fixup(false); // SUT
 			}
 			var remainingRefs = a.EntryRefsOS;
-			Assert.AreEqual(2, remainingRefs.Count, "Dangling References should be removed");
+			Assert.That(remainingRefs.Count, Is.EqualTo(2), "Dangling References should be removed");
 
 			var referees = remainingRefs.First().ComponentLexemesRS;
-			Assert.AreEqual(1, referees.Count, "The remaining typeless LexEntryRef should have a Component");
-			Assert.AreSame(b, referees.First(), "The remaining typeless ref should still point to the same Component");
+			Assert.That(referees.Count, Is.EqualTo(1), "The remaining typeless LexEntryRef should have a Component");
+			Assert.That(referees.First(), Is.SameAs(b), "The remaining typeless ref should still point to the same Component");
 			var complexEntryTypes = remainingRefs.First().ComplexEntryTypesRS;
-			Assert.AreEqual(1, complexEntryTypes.Count, "The remaining typeless ref should have been given Unspecified Complex Form Type");
-			Assert.AreEqual(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Cast<ILexEntryType>()
-					.First(u => u.Guid == LexEntryTypeTags.kguidLexTypeUnspecifiedComplexForm),
-				complexEntryTypes.First(), "The remaining typeless ref should have been given Unspecified Complex Form Type");
+			Assert.That(complexEntryTypes.Count, Is.EqualTo(1), "The remaining typeless ref should have been given Unspecified Complex Form Type");
+			Assert.That(complexEntryTypes.First(), Is.EqualTo(Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Cast<ILexEntryType>()
+					.First(u => u.Guid == LexEntryTypeTags.kguidLexTypeUnspecifiedComplexForm)), "The remaining typeless ref should have been given Unspecified Complex Form Type");
 
 			referees = remainingRefs.ElementAt(1).ComponentLexemesRS;
-			Assert.AreEqual(0, referees.Count, "The remaining componentless LexEntryRef should not have a Component");
+			Assert.That(referees.Count, Is.EqualTo(0), "The remaining componentless LexEntryRef should not have a Component");
 			complexEntryTypes = remainingRefs.ElementAt(1).ComplexEntryTypesRS;
-			Assert.AreEqual(1, complexEntryTypes.Count, "The remaining componentless ref should still point to a Complex Entry Type");
-			Assert.AreEqual(t, complexEntryTypes.First(), "The remaining componentles ref should still point to the same Complex Entry Type");
+			Assert.That(complexEntryTypes.Count, Is.EqualTo(1), "The remaining componentless ref should still point to a Complex Entry Type");
+			Assert.That(complexEntryTypes.First(), Is.EqualTo(t), "The remaining componentles ref should still point to the same Complex Entry Type");
 		}
 
 		[Test]
@@ -57,7 +56,7 @@ namespace LexEdDllTests
 				changeHandler.Fixup(false); // SUT
 			}
 			var remainingRefs = a.EntryRefsOS;
-			Assert.AreEqual(0, remainingRefs.Count, "Dangling References should have been removed");
+			Assert.That(remainingRefs.Count, Is.EqualTo(0), "Dangling References should have been removed");
 		}
 	}
 }

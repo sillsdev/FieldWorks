@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.Controls
 	public class DummyPersistedFormWinDef : Form, ISettings
 	{
 		private SIL.FieldWorks.Common.Controls.Persistence m_persistence;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

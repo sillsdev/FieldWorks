@@ -61,7 +61,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private bool m_isDisposed = false;
 
+#pragma warning disable CS0414 // Field is assigned but its value is never used
 		private int instanceID = 0x00000F0;
+#pragma warning restore CS0414
 
 		/// <summary>
 		/// See if the object has been disposed.

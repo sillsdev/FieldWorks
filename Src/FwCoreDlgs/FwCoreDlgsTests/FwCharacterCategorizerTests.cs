@@ -37,8 +37,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ValidCharacters validChars = ValidCharacters.Load(ws);
 
 			var categorizer = new FwCharacterCategorizer(validChars);
-			Assert.IsTrue(categorizer.IsPunctuation('#'));
-			Assert.IsFalse(categorizer.IsWordFormingCharacter('#'));
+			Assert.That(categorizer.IsPunctuation('#'), Is.True);
+			Assert.That(categorizer.IsWordFormingCharacter('#'), Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -61,8 +61,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 
 			// We expect one word to be returned.
-			Assert.AreEqual(1, wordsAndPunc.Count);
-			Assert.AreEqual("abc.de", wordsAndPunc[0].Word);
+			Assert.That(wordsAndPunc.Count, Is.EqualTo(1));
+			Assert.That(wordsAndPunc[0].Word, Is.EqualTo("abc.de"));
 		}
 
 
@@ -84,10 +84,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var categorizer = new FwCharacterCategorizer(validChars);
 
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts(" ");
-			Assert.AreEqual(0, wordsAndPunc.Count);
+			Assert.That(wordsAndPunc.Count, Is.EqualTo(0));
 
 			wordsAndPunc = categorizer.WordAndPuncts("   ");
-			Assert.AreEqual(0, wordsAndPunc.Count);
+			Assert.That(wordsAndPunc.Count, Is.EqualTo(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("");
 
 			// We expect one word to be returned.
-			Assert.AreEqual(0, wordsAndPunc.Count);
+			Assert.That(wordsAndPunc.Count, Is.EqualTo(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -133,9 +133,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			List<WordAndPunct> wordsAndPunc = categorizer.WordAndPuncts("abc.de");
 
 			// We expect two words to be returned.
-			Assert.AreEqual(2, wordsAndPunc.Count);
-			Assert.AreEqual("abc", wordsAndPunc[0].Word);
-			Assert.AreEqual("de", wordsAndPunc[1].Word);
+			Assert.That(wordsAndPunc.Count, Is.EqualTo(2));
+			Assert.That(wordsAndPunc[0].Word, Is.EqualTo("abc"));
+			Assert.That(wordsAndPunc[1].Word, Is.EqualTo("de"));
 		}
 		#endregion
 	}

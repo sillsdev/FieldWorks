@@ -289,7 +289,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				var type = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				int ws;
 				ITsString tssString;
-				String sLang;
 				switch (type)
 				{
 					case CellarPropertyType.MultiUnicode:

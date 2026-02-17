@@ -21,7 +21,7 @@ function display_usage {
 	echo "  -p, --libpalaso <directory>   Specify libpalaso directory path and delete specified files, then run 'dotnet pack'"
 	echo "  -l, --liblcm <directory>	  Specify liblcm directory path and run 'dotnet pack'"
 	echo "  -c, --chorus <directory>	  Specify chorus directory path and delete specified files, then run 'dotnet pack'"
-	echo "  -v, --version <version #>	  Set version numbers for the selected library in the mkall.targets and packages.config (does not delete packages or run pack)"
+	echo "  -v, --version <version #>	  Set version numbers for the selected library in mkall.targets and Directory.Packages.props (does not delete packages or run pack)"
 	echo "  -h, --help					  Display this help message"
 	exit 1
 }
@@ -62,8 +62,8 @@ function delete_and_pack_liblcm {
 		# Update LcmNugetVersion in mkall.targets
 		update_mkall_targets "LcmNugetVersion" "$version_number"
 
-		# Update packages.config with extracted version
-		update_packages_config "SIL.LCModel" "$version_number"
+		# Update Directory.Packages.props with extracted version
+		update_directory_packages_props "SIL.LCModel" "$version_number"
 
 	fi
 }
@@ -106,9 +106,9 @@ function delete_and_pack_chorus {
 
 		# Update ChorusNugetVersion in mkall.targets
 		update_mkall_targets "ChorusNugetVersion" "$version_number"
-		# Update packages.config with extracted version
+		# Update Directory.Packages.props with extracted version
 		for prefix in "${prefixes[@]}"; do
-			update_packages_config "$prefix" "$version_number"
+			update_directory_packages_props "$prefix" "$version_number"
 		done
 	fi
 }
@@ -152,9 +152,9 @@ function delete_and_pack_libpalaso {
 		# Update PalasoNugetVersion in mkall.targets
 		update_mkall_targets "PalasoNugetVersion" "$version_number"
 
-		# Update packages.config with extracted version for each prefix
+		# Update Directory.Packages.props with extracted version for each prefix
 		for prefix in "${prefixes[@]}"; do
-			update_packages_config "$prefix" "$version_number"
+			update_directory_packages_props "$prefix" "$version_number"
 		done
 	fi
 }
@@ -171,18 +171,18 @@ function update_mkall_targets {
 		exit 1
 	fi
 }
-# Function to update packages.config with extracted version for a given package ID prefix
-function update_packages_config {
+# Function to update Directory.Packages.props with extracted version for a given package ID prefix
+function update_directory_packages_props {
 	local id_prefix="$1"
 	local version_number="$2"
-	local packages_config_file="nuget-common/packages.config"
-	if [ -f "$packages_config_file" ]; then
-		echo "Updating $packages_config_file with version $version_number for packages with ID starting with $id_prefix"
+	local props_file="../Directory.Packages.props"
+	if [ -f "$props_file" ]; then
+		echo "Updating $props_file with version $version_number for packages with ID starting with $id_prefix"
 
-		# Use sed to modify lines starting with the specified package ID
-		sed -i 's/\(package id="'$id_prefix'[\.a-zA-Z0-9]*" \)version="[0-9\.]*[-a-zA-Z0-9]*"/\1version="'$version_number'"/' "$packages_config_file"
+		# Update PackageVersion entries matching the package ID prefix
+		sed -i 's/\(<PackageVersion Include="'$id_prefix'[\.a-zA-Z0-9]*" Version="\)[0-9\.]*[-a-zA-Z0-9]*"/\1'$version_number'"/' "$props_file"
 	else
-		echo "Error: $packages_config_file not found."
+		echo "Error: $props_file not found."
 		exit 1
 	fi
 }

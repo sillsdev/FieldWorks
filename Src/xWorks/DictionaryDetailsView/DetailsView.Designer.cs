@@ -129,7 +129,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.ComboBox dropDownStyle;
 		private System.Windows.Forms.Label labelStyle;
 		private System.Windows.Forms.Button buttonStyles;
-		private System.Windows.Forms.UserControl optionsView;
 		private System.Windows.Forms.Panel panelOptions;
 	}
 }

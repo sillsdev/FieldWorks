@@ -45,19 +45,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void LoadTest()
 		{
 			Assert.That(m_pairList, Is.Not.Null);
-			Assert.AreEqual(3, m_pairList.Count);
+			Assert.That(m_pairList.Count, Is.EqualTo(3));
 
-			Assert.AreEqual("[", m_pairList[0].Open);
-			Assert.AreEqual("]", m_pairList[0].Close);
-			Assert.IsTrue(m_pairList[0].PermitParaSpanning);
+			Assert.That(m_pairList[0].Open, Is.EqualTo("["));
+			Assert.That(m_pairList[0].Close, Is.EqualTo("]"));
+			Assert.That(m_pairList[0].PermitParaSpanning, Is.True);
 
-			Assert.AreEqual("{", m_pairList[1].Open);
-			Assert.AreEqual("}", m_pairList[1].Close);
-			Assert.IsFalse(m_pairList[1].PermitParaSpanning);
+			Assert.That(m_pairList[1].Open, Is.EqualTo("{"));
+			Assert.That(m_pairList[1].Close, Is.EqualTo("}"));
+			Assert.That(m_pairList[1].PermitParaSpanning, Is.False);
 
-			Assert.AreEqual("(", m_pairList[2].Open);
-			Assert.AreEqual(")", m_pairList[2].Close);
-			Assert.IsTrue(m_pairList[2].PermitParaSpanning);
+			Assert.That(m_pairList[2].Open, Is.EqualTo("("));
+			Assert.That(m_pairList[2].Close, Is.EqualTo(")"));
+			Assert.That(m_pairList[2].PermitParaSpanning, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			xml = xml.Replace(Environment.NewLine + " ", string.Empty);
 			xml = xml.Replace(Environment.NewLine, string.Empty);
 
-			Assert.AreEqual(kXml, xml);
+			Assert.That(xml, Is.EqualTo(kXml));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -86,14 +86,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void BelongsToPairTest()
 		{
-			Assert.IsTrue(m_pairList.BelongsToPair("{"));
-			Assert.IsTrue(m_pairList.BelongsToPair("["));
-			Assert.IsTrue(m_pairList.BelongsToPair("("));
-			Assert.IsTrue(m_pairList.BelongsToPair("}"));
-			Assert.IsTrue(m_pairList.BelongsToPair("]"));
-			Assert.IsTrue(m_pairList.BelongsToPair(")"));
-			Assert.IsFalse(m_pairList.BelongsToPair("<"));
-			Assert.IsFalse(m_pairList.BelongsToPair("."));
+			Assert.That(m_pairList.BelongsToPair("{"), Is.True);
+			Assert.That(m_pairList.BelongsToPair("["), Is.True);
+			Assert.That(m_pairList.BelongsToPair("("), Is.True);
+			Assert.That(m_pairList.BelongsToPair("}"), Is.True);
+			Assert.That(m_pairList.BelongsToPair("]"), Is.True);
+			Assert.That(m_pairList.BelongsToPair(")"), Is.True);
+			Assert.That(m_pairList.BelongsToPair("<"), Is.False);
+			Assert.That(m_pairList.BelongsToPair("."), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -104,13 +104,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void IsMatchedPairTest()
 		{
-			Assert.IsTrue(m_pairList.IsMatchedPair("[", "]"));
-			Assert.IsTrue(m_pairList.IsMatchedPair("{", "}"));
-			Assert.IsTrue(m_pairList.IsMatchedPair("(", ")"));
+			Assert.That(m_pairList.IsMatchedPair("[", "]"), Is.True);
+			Assert.That(m_pairList.IsMatchedPair("{", "}"), Is.True);
+			Assert.That(m_pairList.IsMatchedPair("(", ")"), Is.True);
 
-			Assert.IsFalse(m_pairList.IsMatchedPair(")", "("));
-			Assert.IsFalse(m_pairList.IsMatchedPair("[", ")"));
-			Assert.IsFalse(m_pairList.IsMatchedPair(".", "]"));
+			Assert.That(m_pairList.IsMatchedPair(")", "("), Is.False);
+			Assert.That(m_pairList.IsMatchedPair("[", ")"), Is.False);
+			Assert.That(m_pairList.IsMatchedPair(".", "]"), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -121,13 +121,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetPairForOpenTest()
 		{
-			Assert.AreEqual(m_pairList[0], m_pairList.GetPairForOpen("["));
+			Assert.That(m_pairList.GetPairForOpen("["), Is.EqualTo(m_pairList[0]));
 			Assert.That(m_pairList.GetPairForOpen("]"), Is.Null);
 
-			Assert.AreEqual(m_pairList[1], m_pairList.GetPairForOpen("{"));
+			Assert.That(m_pairList.GetPairForOpen("{"), Is.EqualTo(m_pairList[1]));
 			Assert.That(m_pairList.GetPairForOpen("}"), Is.Null);
 
-			Assert.AreEqual(m_pairList[2], m_pairList.GetPairForOpen("("));
+			Assert.That(m_pairList.GetPairForOpen("("), Is.EqualTo(m_pairList[2]));
 			Assert.That(m_pairList.GetPairForOpen(")"), Is.Null);
 		}
 
@@ -139,13 +139,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetPairForCloseTest()
 		{
-			Assert.AreEqual(m_pairList[0], m_pairList.GetPairForClose("]"));
+			Assert.That(m_pairList.GetPairForClose("]"), Is.EqualTo(m_pairList[0]));
 			Assert.That(m_pairList.GetPairForClose("["), Is.Null);
 
-			Assert.AreEqual(m_pairList[1], m_pairList.GetPairForClose("}"));
+			Assert.That(m_pairList.GetPairForClose("}"), Is.EqualTo(m_pairList[1]));
 			Assert.That(m_pairList.GetPairForClose("{"), Is.Null);
 
-			Assert.AreEqual(m_pairList[2], m_pairList.GetPairForClose(")"));
+			Assert.That(m_pairList.GetPairForClose(")"), Is.EqualTo(m_pairList[2]));
 			Assert.That(m_pairList.GetPairForClose("("), Is.Null);
 		}
 
@@ -157,16 +157,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void IsOpenTest()
 		{
-			Assert.IsTrue(m_pairList.IsOpen("["));
-			Assert.IsTrue(m_pairList.IsOpen("{"));
-			Assert.IsTrue(m_pairList.IsOpen("("));
+			Assert.That(m_pairList.IsOpen("["), Is.True);
+			Assert.That(m_pairList.IsOpen("{"), Is.True);
+			Assert.That(m_pairList.IsOpen("("), Is.True);
 
-			Assert.IsFalse(m_pairList.IsOpen("]"));
-			Assert.IsFalse(m_pairList.IsOpen("}"));
-			Assert.IsFalse(m_pairList.IsOpen(")"));
+			Assert.That(m_pairList.IsOpen("]"), Is.False);
+			Assert.That(m_pairList.IsOpen("}"), Is.False);
+			Assert.That(m_pairList.IsOpen(")"), Is.False);
 
-			Assert.IsFalse(m_pairList.IsOpen("."));
-			Assert.IsFalse(m_pairList.IsOpen(";"));
+			Assert.That(m_pairList.IsOpen("."), Is.False);
+			Assert.That(m_pairList.IsOpen(";"), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -177,16 +177,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void IsCloseTest()
 		{
-			Assert.IsTrue(m_pairList.IsClose("]"));
-			Assert.IsTrue(m_pairList.IsClose("}"));
-			Assert.IsTrue(m_pairList.IsClose(")"));
+			Assert.That(m_pairList.IsClose("]"), Is.True);
+			Assert.That(m_pairList.IsClose("}"), Is.True);
+			Assert.That(m_pairList.IsClose(")"), Is.True);
 
-			Assert.IsFalse(m_pairList.IsClose("["));
-			Assert.IsFalse(m_pairList.IsClose("{"));
-			Assert.IsFalse(m_pairList.IsClose("("));
+			Assert.That(m_pairList.IsClose("["), Is.False);
+			Assert.That(m_pairList.IsClose("{"), Is.False);
+			Assert.That(m_pairList.IsClose("("), Is.False);
 
-			Assert.IsFalse(m_pairList.IsClose("."));
-			Assert.IsFalse(m_pairList.IsClose(";"));
+			Assert.That(m_pairList.IsClose("."), Is.False);
+			Assert.That(m_pairList.IsClose(";"), Is.False);
 		}
 	}
 }

@@ -27,15 +27,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			IEnumerable<WordAndPunct> words = cat.WordAndPuncts("This is my test.");
 			using (IEnumerator<WordAndPunct> wordCollection = words.GetEnumerator())
 			{
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "This", " ", 0);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "is", " ", 5);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "my", " ", 8);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "test", ".", 11);
-				Assert.IsFalse(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.False);
 			}
 		}
 
@@ -51,13 +51,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			IEnumerable<WordAndPunct> words = cat.WordAndPuncts("This is test1.");
 			using (IEnumerator<WordAndPunct> wordCollection = words.GetEnumerator())
 			{
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "This", " ", 0);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "is", " ", 5);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "test1", ".", 8);
-				Assert.IsFalse(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.False);
 			}
 		}
 
@@ -74,9 +74,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			IEnumerable<WordAndPunct> words = cat.WordAndPuncts(" Dude ");
 			using (IEnumerator<WordAndPunct> wordCollection = words.GetEnumerator())
 			{
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "Dude", " ", 1);
-				Assert.IsFalse(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.False);
 			}
 		}
 
@@ -93,22 +93,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			IEnumerable<WordAndPunct> words = cat.WordAndPuncts("1 2 3");
 			using (IEnumerator<WordAndPunct> wordCollection = words.GetEnumerator())
 			{
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "1", " ", 0);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "2", " ", 2);
-				Assert.IsTrue(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.True);
 				CheckWordAndPunct(wordCollection.Current, "3", "", 4);
-				Assert.IsFalse(wordCollection.MoveNext());
+				Assert.That(wordCollection.MoveNext(), Is.False);
 			}
 		}
 
 		#region Helper methods
 		private void CheckWordAndPunct(WordAndPunct wordAndPunct, string word, string punct, int offset)
 		{
-			Assert.AreEqual(word, wordAndPunct.Word, "The word is not correct");
-			Assert.AreEqual(punct, wordAndPunct.Punct, "The punctuation is not correct");
-			Assert.AreEqual(offset, wordAndPunct.Offset, "The offset is not correct");
+			Assert.That(wordAndPunct.Word, Is.EqualTo(word), "The word is not correct");
+			Assert.That(wordAndPunct.Punct, Is.EqualTo(punct), "The punctuation is not correct");
+			Assert.That(wordAndPunct.Offset, Is.EqualTo(offset), "The offset is not correct");
 		}
 		#endregion
 	}

@@ -14,6 +14,7 @@ Last reviewed:
 #endif
 #include "testViews.h"
 #include "RedirectHKCU.h"
+#include "DebugProcs.h"
 #if !defined(WIN32) && !defined(_M_X64)
 // These define GUIDs that we need to define globally somewhere
 #include "TestVwTxtSrc.h"
@@ -24,12 +25,25 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+		printf("DEBUG: Entering GlobalSetup\n");
+		fflush(stdout);
+		ShowAssertMessageBox(0); // Disable assertion dialogs
+		printf("DEBUG: After ShowAssertMessageBox\n");
+		fflush(stdout);
 #if defined(WIN32) || defined(_M_X64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
+		printf("DEBUG: After DllMain\n");
+		fflush(stdout);
 #endif
-		::OleInitialize(NULL);
+		auto hr = ::OleInitialize(NULL);
+		printf("DEBUG: After OleInitialize (hr=0x%08X)\n", hr);
+		fflush(stdout);
 		RedirectRegistry();
+		printf("DEBUG: After RedirectRegistry\n");
+		fflush(stdout);
 		StrUtil::InitIcuDataDir();
+		printf("DEBUG: After InitIcuDataDir\n");
+		fflush(stdout);
 
 	}
 	void GlobalTeardown()

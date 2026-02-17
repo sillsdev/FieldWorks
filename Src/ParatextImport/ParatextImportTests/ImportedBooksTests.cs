@@ -77,9 +77,9 @@ namespace ParatextImport
 			var importedBooks = new Dictionary<int, bool>();
 			importedBooks[m_importedVersion.BooksOS[0].CanonicalNum] = true;
 
-			Assert.AreEqual(0, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(0));
 			ImportedBooks.SaveImportedBooks(Cache, m_importedVersion, m_savedVersion, importedBooks.Keys, null);
-			Assert.AreEqual(1, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(1));
 		}
 		#endregion
 
@@ -97,7 +97,7 @@ namespace ParatextImport
 			AddVerse(para, 1, 1, "first verse in Genesis");
 			AddVerse(para, 50, 26, "last verse in Genesis");
 			//SUT
-			Assert.AreEqual("1:1-50:26", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("1:1-50:26"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ namespace ParatextImport
 			AddVerse(para, 1, 1, "first verse in Genesis");
 			AddVerse(para, 50, 26, "last verse in Genesis");
 
-			Assert.AreEqual("1:1-50:26 (with intro)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("1:1-50:26 (with intro)"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ namespace ParatextImport
 			AddVerse(para, 1, 2, "NOT the first verse in Genesis");
 			AddVerse(para, 50, 26, "last verse in Genesis");
 
-			Assert.AreEqual("1:2-50:26", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("1:2-50:26"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ namespace ParatextImport
 			AddVerse(para, 1, 1, "first verse in Genesis");
 			AddVerse(para, 50, 25, "NOT the last verse in Genesis");
 
-			Assert.AreEqual("1:1-50:25", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("1:1-50:25"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ namespace ParatextImport
 			AddVerse(para, 1, 2, "NOT the first verse in Genesis");
 			AddVerse(para, 50, 25, "NOT the last verse in Genesis");
 
-			Assert.AreEqual("1:2-50:25 (with intro)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("1:2-50:25 (with intro)"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ namespace ParatextImport
 			var introSection = AddSectionToMockedBook(m_importedVersion.BooksOS[0], true);
 #pragma warning restore 219
 
-			Assert.AreEqual("(intro only)", ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]));
+			Assert.That(ImportedBooks.GetBookInfo(m_importedVersion.BooksOS[0]), Is.EqualTo("(intro only)"));
 		}
 		#endregion
 

@@ -76,19 +76,19 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(2, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(2), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			ITsString tss = ((IStTxtPara)footnote.ParagraphsOS[0]).Contents;
-			Assert.AreEqual(1, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tss, 0, "This is a footnote", null, Cache.DefaultVernWs);
 
 			// verify the intro section content text
 			IScrTxtPara para = (IScrTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("intro" + StringUtils.kChObject + " paragraph", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("intro" + StringUtils.kChObject + " paragraph"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -137,8 +137,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -147,16 +147,15 @@ namespace ParatextImport.ImportTests
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -199,8 +198,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -209,16 +208,15 @@ namespace ParatextImport.ImportTests
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "A big footnote issue", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -259,26 +257,25 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			ITsString tss = ((IStTxtPara)footnote.ParagraphsOS[0]).Contents;
-			Assert.AreEqual(2, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tss, 0, "This is a ", null, Cache.DefaultVernWs);
 			AssertEx.RunIsCorrect(tss, 1, "footnote", "Emphasis", Cache.DefaultVernWs);
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,26 +316,25 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			ITsString tss = ((IStTxtPara)footnote.ParagraphsOS[0]).Contents;
-			Assert.AreEqual(1, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tss, 0, "footnote", null, Cache.DefaultVernWs);
-			Assert.AreNotEqual("footnote", m_scr.GeneralFootnoteMarker);
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.GeneralFootnoteMarker, Is.Not.EqualTo("footnote"));
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject,
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -381,8 +377,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -391,17 +387,16 @@ namespace ParatextImport.ImportTests
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
-			Assert.AreEqual(FootnoteMarkerTypes.SymbolicFootnoteMarker, m_scr.FootnoteMarkerType);
-			Assert.AreEqual("q", m_scr.GeneralFootnoteMarker);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.SymbolicFootnoteMarker));
+			Assert.That(m_scr.GeneralFootnoteMarker, Is.EqualTo("q"));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -443,8 +438,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -453,16 +448,15 @@ namespace ParatextImport.ImportTests
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "I wish This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -509,8 +503,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -523,16 +517,15 @@ namespace ParatextImport.ImportTests
 			bldr.Replace(0, 0, "This ", StyleUtils.CharStyleTextProps("Quoted Text", Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -579,14 +572,14 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the section content text
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			ITsString tssPara = para.Contents;
-			Assert.AreEqual(5, tssPara.RunCount);
+			Assert.That(tssPara.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tssPara, 0, "1", ScrStyleNames.ChapterNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tssPara, 1, "1", ScrStyleNames.VerseNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tssPara, 2, "paragraph", null, m_wsVern);
@@ -596,7 +589,7 @@ namespace ParatextImport.ImportTests
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -642,8 +635,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -654,16 +647,15 @@ namespace ParatextImport.ImportTests
 			bldr.Replace(0, 0, "This is ", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -709,8 +701,8 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
@@ -722,16 +714,15 @@ namespace ParatextImport.ImportTests
 			bldr.Replace(0, 0, "This is ", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
 			AssertEx.AreTsStringsEqual(bldr.GetString(), para.Contents);
 
-			Assert.AreEqual(FootnoteMarkerTypes.AutoFootnoteMarker, m_scr.FootnoteMarkerType);
+			Assert.That(m_scr.FootnoteMarkerType, Is.EqualTo(FootnoteMarkerTypes.AutoFootnoteMarker));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11paragraph" + StringUtils.kChObject + " one",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11paragraph" + StringUtils.kChObject + " one"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -796,11 +787,10 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
+			Assert.That(para.Contents.Text, Is.EqualTo("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
 				"2Verse 2 start..." + StringUtils.kChObject + " ...verse 2 end. " +
 				"3Verse 3 start..." + StringUtils.kChObject + " ...verse 3 end. " +
-				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end.",
-				para.Contents.Text);
+				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end."));
 			Assert.That(m_scr.GeneralFootnoteMarker, Is.Null);
 			VerifySimpleFootnote(0, "Footnote 1 text", string.Empty);
 			VerifySimpleFootnote(1, "Footnote 2 text", string.Empty);
@@ -870,12 +860,11 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
+			Assert.That(para.Contents.Text, Is.EqualTo("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
 				"2Verse 2 start..." + StringUtils.kChObject + " ...verse 2 end. " +
 				"3Verse 3 start..." + StringUtils.kChObject + " ...verse 3 end. " +
-				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end.",
-				para.Contents.Text);
-			Assert.AreEqual("a", m_scr.GeneralFootnoteMarker);
+				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end."));
+			Assert.That(m_scr.GeneralFootnoteMarker, Is.EqualTo("a"));
 			VerifySimpleFootnote(0, "Footnote 1 text", "a");
 			VerifySimpleFootnote(1, "Footnote 2 text", "a");
 			VerifySimpleFootnote(2, "Footnote 3 text", "a");
@@ -944,12 +933,11 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
+			Assert.That(para.Contents.Text, Is.EqualTo("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
 				"2Verse 2 start..." + StringUtils.kChObject + " ...verse 2 end. " +
 				"3Verse 3 start..." + StringUtils.kChObject + " ...verse 3 end. " +
-				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end.",
-				para.Contents.Text);
-			Assert.AreEqual("*", m_scr.GeneralFootnoteMarker);
+				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end."));
+			Assert.That(m_scr.GeneralFootnoteMarker, Is.EqualTo("*"));
 			VerifySimpleFootnote(0, "Footnote 1 text", "*");
 			VerifySimpleFootnote(1, "Footnote 2 text", "*");
 			VerifySimpleFootnote(2, "Footnote 3 text", "*");
@@ -1018,11 +1006,10 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
+			Assert.That(para.Contents.Text, Is.EqualTo("11Verse 1 start..." + StringUtils.kChObject + " ...verse 1 end. " +
 				"2Verse 2 start..." + StringUtils.kChObject + " ...verse 2 end. " +
 				"3Verse 3 start..." + StringUtils.kChObject + " ...verse 3 end. " +
-				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end.",
-				para.Contents.Text);
+				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end."));
 			VerifySimpleFootnote(0, "Footnote 1 text", "a");
 			VerifySimpleFootnote(1, "Footnote 2 text", "a");
 			VerifySimpleFootnote(2, "Footnote 3 text", "a");
@@ -1083,10 +1070,9 @@ namespace ParatextImport.ImportTests
 			IScrSection section = exodus.SectionsOS[1];
 			IStTxtPara paraHead = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			IStTxtPara paraContents = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("This is a foot-washing ceremony like you've never seen before" + StringUtils.kChObject,
-				paraHead.Contents.Text);
+			Assert.That(paraHead.Contents.Text, Is.EqualTo("This is a foot-washing ceremony like you've never seen before" + StringUtils.kChObject));
 			VerifySimpleFootnote(0, "footnote text", "v");
-			Assert.AreEqual("131Verse one", paraContents.Contents.Text);
+			Assert.That(paraContents.Contents.Text, Is.EqualTo("131Verse one"));
 		}
 		#endregion
 
@@ -1141,11 +1127,11 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 6);
 			m_importer.ProcessSegment("Sexto versiculo ", @"\v");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// make sure there are no notes before we start importing them
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
-			Assert.AreEqual(0, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(0));
 
 			// Now test ability to import a non-interleaved Annotation stream
 			m_importer.CurrentImportDomain = ImportDomain.Annotations;
@@ -1153,10 +1139,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 
-			Assert.AreEqual(genesis.Hvo, m_importer.UndoInfo.ImportedVersion.BooksOS[0].Hvo,
-				"The id line in the notes file should not cause a new ScrBook to get created.");
-			Assert.AreEqual(1, m_importer.UndoInfo.ImportedVersion.BooksOS.Count,
-				"The id line in the notes file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.UndoInfo.ImportedVersion.BooksOS[0].Hvo, Is.EqualTo(genesis.Hvo), "The id line in the notes file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.UndoInfo.ImportedVersion.BooksOS.Count, Is.EqualTo(1), "The id line in the notes file should not cause a new ScrBook to get created.");
 			m_importer.ProcessSegment("Note before Scripture text", @"\rem");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
@@ -1187,77 +1171,77 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// minor sanity checks
-			Assert.AreEqual(2, genesis.SectionsOS.Count);
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(genesis.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual("Primera Seccion", ((IStTxtPara)section.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IStTxtPara)section.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IStTxtPara para11 = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo", para11.Contents.Text);
+			Assert.That(para11.Contents.Text, Is.EqualTo("11Primer versiculo 2Segundo versiculo"));
 			IStTxtPara para12 = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("3Tercer versiculo", para12.Contents.Text);
+			Assert.That(para12.Contents.Text, Is.EqualTo("3Tercer versiculo"));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual("Segunda Seccion", ((IStTxtPara)section.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(((IStTxtPara)section.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IStTxtPara para21 = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("4Cuarto versiculo", para21.Contents.Text);
+			Assert.That(para21.Contents.Text, Is.EqualTo("4Cuarto versiculo"));
 			IStTxtPara para22 = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("5Quinto versiculo 6Sexto versiculo", para22.Contents.Text);
+			Assert.That(para22.Contents.Text, Is.EqualTo("5Quinto versiculo 6Sexto versiculo"));
 
 			// look at the annotations and see if they are associated to the correct paragraphs
 			//notes = m_scr.BookAnnotationsOS[0].NotesOS;
-			Assert.AreEqual(7, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(7));
 
 			// Check stuff that's common to all notes
 			foreach (IScrScriptureNote annotation in notes)
 			{
-				Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
-				Assert.AreEqual(annotation.BeginObjectRA, annotation.EndObjectRA);
+				Assert.That(annotation.AnnotationType, Is.EqualTo(NoteType.Translator));
+				Assert.That(annotation.EndObjectRA, Is.EqualTo(annotation.BeginObjectRA));
 				// REVIEW: Should we try to find the actual offset of the annotated verse in the para?
-				Assert.AreEqual(0, annotation.BeginOffset);
-				Assert.AreEqual(annotation.BeginOffset, annotation.EndOffset);
-				Assert.AreEqual(annotation.BeginRef, annotation.EndRef);
+				Assert.That(annotation.BeginOffset, Is.EqualTo(0));
+				Assert.That(annotation.EndOffset, Is.EqualTo(annotation.BeginOffset));
+				Assert.That(annotation.EndRef, Is.EqualTo(annotation.BeginRef));
 			}
 			IScrScriptureNote note = notes[0];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Note before Scripture text", m_wsAnal);
-			Assert.AreEqual(genesis, note.BeginObjectRA);
-			Assert.AreEqual(1001000, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(genesis));
+			Assert.That(note.BeginRef, Is.EqualTo(1001000));
 
 			note = notes[1];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Note for verse 1", m_wsAnal);
-			Assert.AreEqual(para11, note.BeginObjectRA);
-			Assert.AreEqual(1001001, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para11));
+			Assert.That(note.BeginRef, Is.EqualTo(1001001));
 
 			note = notes[2];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "First note for verse 2", m_wsAnal);
-			Assert.AreEqual(para11, note.BeginObjectRA);
-			Assert.AreEqual(1001002, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para11));
+			Assert.That(note.BeginRef, Is.EqualTo(1001002));
 
 			note = notes[3];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Second note for verse 2", m_wsAnal);
-			Assert.AreEqual(para11, note.BeginObjectRA);
-			Assert.AreEqual(1001002, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para11));
+			Assert.That(note.BeginRef, Is.EqualTo(1001002));
 
 			note = notes[4];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Note for verse 4", m_wsAnal);
-			Assert.AreEqual(para21, note.BeginObjectRA);
-			Assert.AreEqual(1001004, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para21));
+			Assert.That(note.BeginRef, Is.EqualTo(1001004));
 
 			note = notes[5];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Note for verse 5", m_wsAnal);
-			Assert.AreEqual(para22, note.BeginObjectRA);
-			Assert.AreEqual(1001005, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para22));
+			Assert.That(note.BeginRef, Is.EqualTo(1001005));
 
 			note = notes[6];
 			m_importer.VerifyAnnotationText(note.DiscussionOA, "Discussion", "Note for verse 6", m_wsAnal);
-			Assert.AreEqual(para22, note.BeginObjectRA);
-			Assert.AreEqual(1001006, note.BeginRef);
+			Assert.That(note.BeginObjectRA, Is.EqualTo(para22));
+			Assert.That(note.BeginRef, Is.EqualTo(1001006));
 
 		}
 
@@ -1301,31 +1285,31 @@ namespace ParatextImport.ImportTests
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
-			Assert.AreEqual(2, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(2));
 
 			IScrScriptureNote annotation = notes[0];
-			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
+			Assert.That(annotation.AnnotationType, Is.EqualTo(NoteType.Translator));
 			Assert.That(annotation.BeginObjectRA, Is.Null);
 			Assert.That(annotation.EndObjectRA, Is.Null);
-			Assert.AreEqual(0, annotation.BeginOffset);
-			Assert.AreEqual(0, annotation.EndOffset);
-			Assert.AreEqual(1001001, annotation.BeginRef);
-			Assert.AreEqual(1001001, annotation.EndRef);
-			Assert.AreEqual(1, annotation.DiscussionOA.ParagraphsOS.Count);
+			Assert.That(annotation.BeginOffset, Is.EqualTo(0));
+			Assert.That(annotation.EndOffset, Is.EqualTo(0));
+			Assert.That(annotation.BeginRef, Is.EqualTo(1001001));
+			Assert.That(annotation.EndRef, Is.EqualTo(1001001));
+			Assert.That(annotation.DiscussionOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)annotation.DiscussionOA.ParagraphsOS[0];
 			ITsString tssDiscussionP1 = para.Contents;
-			Assert.AreEqual(2, tssDiscussionP1.RunCount);
+			Assert.That(tssDiscussionP1.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssDiscussionP1, 0, "Emphatically first note", "Emphasis", m_wsAnal);
 			AssertEx.RunIsCorrect(tssDiscussionP1, 1, " remaining text", null, m_wsAnal);
 
 			annotation = notes[1];
-			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
+			Assert.That(annotation.AnnotationType, Is.EqualTo(NoteType.Translator));
 			Assert.That(annotation.BeginObjectRA, Is.Null);
 			Assert.That(annotation.EndObjectRA, Is.Null);
-			Assert.AreEqual(0, annotation.BeginOffset);
-			Assert.AreEqual(0, annotation.EndOffset);
-			Assert.AreEqual(1001002, annotation.BeginRef);
-			Assert.AreEqual(1001002, annotation.EndRef);
+			Assert.That(annotation.BeginOffset, Is.EqualTo(0));
+			Assert.That(annotation.EndOffset, Is.EqualTo(0));
+			Assert.That(annotation.BeginRef, Is.EqualTo(1001002));
+			Assert.That(annotation.EndRef, Is.EqualTo(1001002));
 			m_importer.VerifyAnnotationText(annotation.DiscussionOA, "Discussion", "Second note", m_wsAnal);
 		}
 
@@ -1373,16 +1357,16 @@ namespace ParatextImport.ImportTests
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
-			Assert.AreEqual(1, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(1));
 
 			IScrScriptureNote annotation = notes[0];
-			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
+			Assert.That(annotation.AnnotationType, Is.EqualTo(NoteType.Translator));
 			Assert.That(annotation.BeginObjectRA, Is.Null);
 			Assert.That(annotation.EndObjectRA, Is.Null);
-			Assert.AreEqual(0, annotation.BeginOffset);
-			Assert.AreEqual(0, annotation.EndOffset);
-			Assert.AreEqual(1001001, annotation.BeginRef);
-			Assert.AreEqual(1001001, annotation.EndRef);
+			Assert.That(annotation.BeginOffset, Is.EqualTo(0));
+			Assert.That(annotation.EndOffset, Is.EqualTo(0));
+			Assert.That(annotation.BeginRef, Is.EqualTo(1001001));
+			Assert.That(annotation.EndRef, Is.EqualTo(1001001));
 			m_importer.VerifyAnnotationText(annotation.DiscussionOA, "Discussion", "Note for verse 1", m_wsAnal);
 		}
 		#endregion
@@ -1433,13 +1417,12 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 4);
 			m_importer.ProcessSegment("Cuarto versiculo ", @"\v");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("Title ", @"\mt");
@@ -1468,60 +1451,53 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
+			Assert.That(genesis.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
+			Assert.That(titlePara.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation titleTranslation = titlePara.GetBT();
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(titleTranslation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Title"));
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo 2Segundo versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse 2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse 2Second verse"));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("3Tercer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("3Tercer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("3Third verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("3Third verse"));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(2, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Segunda Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second Section",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second Section"));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[1];
-			Assert.AreEqual("(Algunos manuscritos no conienen este pasaje.)", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("(Algunos manuscritos no conienen este pasaje.)"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("(Some manuscripts don't have this passage.)",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("(Some manuscripts don't have this passage.)"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("4Cuarto versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("4Cuarto versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("4Fourth verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("4Fourth verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1562,13 +1538,12 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
 			m_importer.ProcessSegment("Segundo versiculo ", @"\v");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
@@ -1615,13 +1590,12 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
 			m_importer.ProcessSegment("Primer versiculo ", @"\v");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("Title ", @"\mt");
@@ -1638,37 +1612,33 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
+			Assert.That(genesis.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
+			Assert.That(titlePara.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation titleTranslation = titlePara.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(titleTranslation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Title"));
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(2, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[1];
-			Assert.AreEqual("(Lc. 3.23-38)", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("(Lc. 3.23-38)"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("(Lc. 3.23-38)",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("(Lc. 3.23-38)"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1712,15 +1682,14 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
 			m_importer.ProcessSegment("Primer versiculo ", @"\v");
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("Title ", @"\mt");
@@ -1737,37 +1706,33 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
+			Assert.That(genesis.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
+			Assert.That(titlePara.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation titleTranslation = titlePara.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(titleTranslation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Title"));
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(2, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(2));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[1];
-			Assert.AreEqual("(Lc. 3.23-38)", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("(Lc. 3.23-38)"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("(Lc. 3.23-38)",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("(Lc. 3.23-38)"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1838,27 +1803,24 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
 			//m_importer.ProcessSegment("2", @"\v");
 			m_importer.ProcessSegment("Second verse ", @"\v");
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
 			// Check section contents
-			Assert.AreEqual(1, genesis.SectionsOS.Count);
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			Assert.That(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text, Is.Null);
 
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("1Primer versiculo 2Segundo versiculo",
-				para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("1Primer versiculo 2Segundo versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("1First verse 2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("1First verse 2Second verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1903,8 +1865,7 @@ namespace ParatextImport.ImportTests
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
@@ -1927,19 +1888,17 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check section contents
-			Assert.AreEqual(1, genesis.SectionsOS.Count);
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			Assert.That(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo 3Tercer versiculo 4Cuarto versiculo",
-				para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo 2Segundo versiculo 3Tercer versiculo 4Cuarto versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("11First verse 2Second verse 3Third verse 4Fourth verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse 2Second verse 3Third verse 4Fourth verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1981,8 +1940,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(63, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(63, 1, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(john2.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(john2.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(63, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(63, 1, 1);
 			m_importer.ProcessSegment("First verse ", @"\v");
@@ -1991,8 +1949,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(64, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(64, 1, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(john3.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(john3.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(64, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(64, 1, 1);
 			m_importer.ProcessSegment("First verse ", @"\v");
@@ -2001,30 +1958,30 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check II John
-			Assert.AreEqual(1, john2.SectionsOS.Count);
+			Assert.That(john2.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = john2.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("1Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("1Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("1First verse", translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("1First verse"));
 
 			// Check III John
-			Assert.AreEqual(1, john3.SectionsOS.Count);
+			Assert.That(john3.SectionsOS.Count, Is.EqualTo(1));
 			section = john3.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("1Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("1Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("1First verse", translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("1First verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2061,7 +2018,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
 			m_importer.ProcessSegment("Primer versiculo ", @"\v");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
@@ -2083,49 +2040,44 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // insanity check?
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // insanity check?
 
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
+			Assert.That(genesis.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("Que bueno que decidiste leer este libro de la Biblia.", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Que bueno que decidiste leer este libro de la Biblia."));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("How good that you decided to read this book of the Bible.",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("How good that you decided to read this book of the Bible."));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("A mi me gusta este libro tambien.", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("A mi me gusta este libro tambien."));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("I like this book, too.",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("I like this book, too."));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Segunda Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2164,7 +2116,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\c");
 			m_importer.ProcessSegment("Segunda Seccion", @"\s");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
@@ -2188,40 +2140,36 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("Segunda estrofa", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda estrofa"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second stanza",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second stanza"));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Segunda Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second Section",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second Section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2268,7 +2216,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\c");
 			m_importer.ProcessSegment("Segunda Seccion", @"\s");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
@@ -2300,63 +2248,56 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(5, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(5));
 			// paragraph 1
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 			// paragraph 2
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("2Segunda versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("2Segunda versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("2Second verse"));
 			// paragraph 3
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[2];
-			Assert.AreEqual("Segunda estrofa", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda estrofa"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second stanza",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second stanza"));
 			// paragraph 4
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[3];
-			Assert.AreEqual("Dritte Strophe", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Dritte Strophe"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("next part of verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("next part of verse"));
 			// paragraph 5
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[4];
-			Assert.AreEqual("Vierte Strophe", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Vierte Strophe"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("last part of verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("last part of verse"));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Segunda Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second Section",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second Section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2396,7 +2337,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Segunda versiculo ", @"\v");
 			m_importer.ProcessSegment("", @"\q");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
@@ -2421,38 +2362,34 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(3, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(3));
 
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse"));
 
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("Segunda estrofa", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda estrofa"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second stanza",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second stanza"));
 
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[2];
-			Assert.AreEqual("2Segunda versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("2Segunda versiculo"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("2Second verse"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2505,13 +2442,12 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Cuarto versiculo", @"\v");
 			m_importer.ProcessSegment("Ultima pata nota", @"\f");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("First Section ", @"\s");
@@ -2544,54 +2480,50 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(2, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(2)); // minor sanity check
 
 			// Check first section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo" + StringUtils.kChObject +
-				" 2Segundo versiculo" + StringUtils.kChObject, para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo" + StringUtils.kChObject +
+				" 2Segundo versiculo" + StringUtils.kChObject));
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "First footnote", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 			VerifyFootnoteWithTranslation(1, "Segunda pata nota", "Second footnote", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse" + StringUtils.kChObject +
-				" 2Second verse" + StringUtils.kChObject,
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse" + StringUtils.kChObject +
+				" 2Second verse" + StringUtils.kChObject));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-			Assert.AreEqual("3Tercer versiculo" + StringUtils.kChObject, para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("3Tercer versiculo" + StringUtils.kChObject));
 			VerifyFootnoteWithTranslation(2, "Gal 3:2", null, string.Empty,
 				"Note Cross-Reference Paragraph");
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("3Third verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("3Third verse"));
 
 			// Check second section
 			section = genesis.SectionsOS[1];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Segunda Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Segunda Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("Second Section", translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("Second Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("4Cuarto versiculo" + StringUtils.kChObject, para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("4Cuarto versiculo" + StringUtils.kChObject));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("4Fourth verse" + StringUtils.kChObject,
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("4Fourth verse" + StringUtils.kChObject));
 			VerifyFootnoteWithTranslation(3, "Ultima pata nota", "Last footnote", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 		}
@@ -2634,10 +2566,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -2662,7 +2594,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -2684,19 +2616,18 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT of these two paragraphs
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans1 = para.GetBT();
 			Assert.That(trans1, Is.Not.Null);
 			ITsString tssBt = trans1.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(5, tssBt.RunCount);
+			Assert.That(tssBt.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tssBt, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBt, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBt, 2, "verse one BT text", null, m_wsAnal);
 
 			Guid guid1 = TsStringUtils.GetGuidFromRun(tssBt, 3);
 			IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(guid1);
-			Assert.AreEqual(noteOneTrans.Owner, footnote.ParagraphsOS[0],
-				"The first imported BT footnote should be owned by paragraph in the first footnote but isn't");
+			Assert.That(footnote.ParagraphsOS[0], Is.EqualTo(noteOneTrans.Owner), "The first imported BT footnote should be owned by paragraph in the first footnote but isn't");
 
 			VerifyFootnoteWithTranslation(0, "vernacular text for footnote",
 				"BT text for footnote one.", "a", ScrStyleNames.NormalFootnoteParagraph);
@@ -2737,10 +2668,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process an intro section *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -2775,7 +2706,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 
 			// ************** process an intro section *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -2807,11 +2738,11 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT of these two paragraphs
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans1 = para.GetBT();
 			Assert.That(trans1, Is.Not.Null);
 			ITsString tssBt = trans1.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(5, tssBt.RunCount);
+			Assert.That(tssBt.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tssBt, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBt, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBt, 2, "verse one BT text", null, m_wsAnal);
@@ -2851,8 +2782,7 @@ namespace ParatextImport.ImportTests
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.ProcessSegment("Beginning ", @"\mt");
 			m_importer.ProcessSegment("Div One ", @"\s");
 			m_importer.ProcessSegment("", @"\p");
@@ -2870,24 +2800,24 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Check BT
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
 			ITsString tssTrans = translation.Translation.get_String(m_wsAnal);
-			Assert.AreEqual(5, tssTrans.RunCount);
+			Assert.That(tssTrans.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tssTrans, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssTrans, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssTrans, 2, "In the beginning ", null, m_wsAnal);
 			AssertEx.RunIsCorrect(tssTrans, 3, "2", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssTrans, 4, "Then came the end", null, m_wsAnal);
 
-			Assert.AreEqual(1, m_scr.BookAnnotationsOS[0].NotesOS.Count);
+			Assert.That(m_scr.BookAnnotationsOS[0].NotesOS.Count, Is.EqualTo(1));
 			ILcmOwningSequence<IStPara> discParas =
 				m_scr.BookAnnotationsOS[0].NotesOS[0].DiscussionOA.ParagraphsOS;
-			Assert.AreEqual(1, discParas.Count);
-			Assert.AreEqual("This is my discussion of the first verse.", ((IStTxtPara)discParas[0]).Contents.Text);
+			Assert.That(discParas.Count, Is.EqualTo(1));
+			Assert.That(((IStTxtPara)discParas[0]).Contents.Text, Is.EqualTo("This is my discussion of the first verse."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2937,13 +2867,12 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("User-supplied picture|" + filemaker.Filename +
 					"|col|EXO 1--1||Tercer subtitulo para junk1.jpg|", @"\fig");
 				IScrBook genesis = m_importer.ScrBook;
-				Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+				Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 				// Now test ability to import a non-interleaved BT
 				m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 				m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-				Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-					"The id line in the BT file should not cause a new ScrBook to get created.");
+				Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 				m_importer.ProcessSegment("First Section ", @"\s");
@@ -2969,37 +2898,34 @@ namespace ParatextImport.ImportTests
 				// ************** finalize **************
 				m_importer.FinalizeImport();
 
-				Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+				Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 				// Check first section
 				IScrSection section = genesis.SectionsOS[0];
-				Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+				Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 				IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-				Assert.AreEqual("Primera Seccion", para.Contents.Text);
-				Assert.AreEqual(1, para.TranslationsOC.Count);
+				Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+				Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 				ICmTranslation translation = para.GetBT();
-				Assert.AreEqual("First Section",
-					translation.Translation.get_String(m_wsAnal).Text);
-				Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+				Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+				Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 				para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-				Assert.AreEqual("11Primer versiculo" + StringUtils.kChObject +
-					"2Segundo versiculo" + StringUtils.kChObject, para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo" + StringUtils.kChObject +
+					"2Segundo versiculo" + StringUtils.kChObject));
 				VerifyPictureWithTranslation(para, 0, "Primer subtitulo para junk1.jpg",
 					Path.Combine(Path.GetTempPath(), "BT for first photo"));
 				VerifyPictureWithTranslation(para, 1, "Segunda subtitulo para junk1.jpg",
 					Path.Combine(Path.GetTempPath(), "BT for second photo"));
-				Assert.AreEqual(1, para.TranslationsOC.Count);
+				Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 				translation = para.GetBT();
-				Assert.AreEqual("11First verse" + " 2Second verse",
-					translation.Translation.get_String(m_wsAnal).Text);
+				Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse" + " 2Second verse"));
 				para = (IStTxtPara)section.ContentOA.ParagraphsOS[1];
-				Assert.AreEqual("3Tercer versiculo" + StringUtils.kChObject, para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("3Tercer versiculo" + StringUtils.kChObject));
 				VerifyPictureWithTranslation(para, 0, "Tercer subtitulo para junk1.jpg",
 					Path.Combine(Path.GetTempPath(), "BT for third photo"));
-				Assert.AreEqual(1, para.TranslationsOC.Count);
+				Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 				translation = para.GetBT();
-				Assert.AreEqual("3Third verse",
-					translation.Translation.get_String(m_wsAnal).Text);
+				Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("3Third verse"));
 			}
 		}
 
@@ -3038,15 +2964,14 @@ namespace ParatextImport.ImportTests
 				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
 				m_importer.ProcessSegment("Primer versiculo", @"\v");
 				IScrBook genesis = m_importer.ScrBook;
-				Assert.AreEqual(1, genesis.SectionsOS.Count);
+				Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1));
 				// minor sanity check
 
 				// Now test the missing picture in a non-interleaved BT
 				m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 				m_importer.ProcessSegment("", @"\id");
 				// no text provided in segment, just the refs
-				Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-					"The id line in the BT file should not cause a new ScrBook to get created.");
+				Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 				m_importer.ProcessSegment("First Section ", @"\s");
@@ -3104,13 +3029,12 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("- Primer pata nota", @"\f");
 			m_importer.ProcessSegment(" ", @"\f*");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-				"The id line in the BT file should not cause a new ScrBook to get created.");
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(genesis.Hvo), "The id line in the BT file should not cause a new ScrBook to get created.");
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("First Section ", @"\s");
@@ -3127,26 +3051,24 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Check section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("First Section"));
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo" + StringUtils.kChObject, para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Primer versiculo" + StringUtils.kChObject));
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", string.Empty, string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			translation = para.GetBT();
-			Assert.AreEqual("11First verse" + StringUtils.kChObject,
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(translation.Translation.get_String(m_wsAnal).Text, Is.EqualTo("11First verse" + StringUtils.kChObject));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3176,7 +3098,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("- Primer pata nota", @"\f");
 			m_importer.ProcessSegment(" ", @"\f*");
 			IScrBook genesis = m_importer.ScrBook;
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Now test ability to import a non-interleaved BT
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
@@ -3188,17 +3110,17 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
+			Assert.That(genesis.SectionsOS.Count, Is.EqualTo(1)); // minor sanity check
 
 			// Check section
 			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion" + StringUtils.kChObject, para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Primera Seccion" + StringUtils.kChObject));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation translation = para.GetBT();
 			ITsString tss = translation.Translation.get_String(m_wsAnal);
-			Assert.AreEqual(1, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(1));
 			VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "Hi mom", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);

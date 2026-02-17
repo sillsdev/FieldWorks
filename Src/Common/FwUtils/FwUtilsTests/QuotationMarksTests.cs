@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList.RemoveLastLevel();
 			m_qmList[0].Opening = "<<";
 			m_qmList[0].Closing = ">>";
-			Assert.AreEqual(1, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[0].Closing = ">>";
 			m_qmList[1].Opening = "<";
 			m_qmList[1].Closing = ">";
-			Assert.AreEqual(2, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "<<";
 			m_qmList[2].Closing = ">>";
-			Assert.AreEqual(2, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = ">>";
-			Assert.AreEqual(3, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "<<";
 			m_qmList[2].Closing = "]";
-			Assert.AreEqual(3, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = "]";
-			Assert.AreEqual(3, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = ">>";
 			m_qmList[3].Opening = "<";
 			m_qmList[3].Closing = ">";
-			Assert.AreEqual(2, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			m_qmList[3].Opening = "<";
 			m_qmList[3].Closing = ">";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			m_qmList[3].Opening = "<<";
 			m_qmList[3].Closing = ">>";
-			Assert.AreEqual(3, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = ">>";
 			m_qmList[3].Opening = "<";
 			m_qmList[3].Closing = ">";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			m_qmList[3].Opening = "<";
 			m_qmList[3].Closing = ">";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			m_qmList[3].Opening = "{";
 			m_qmList[3].Closing = "}";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = ">";
 			m_qmList[4].Opening = "<<";
 			m_qmList[4].Closing = ">>";
-			Assert.AreEqual(2, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = ">>";
 			m_qmList[4].Opening = "<";
 			m_qmList[4].Closing = ">";
-			Assert.AreEqual(3, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(3));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = "}";
 			m_qmList[4].Opening = "<<";
 			m_qmList[4].Closing = ">>";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = "}";
 			m_qmList[4].Opening = "<";
 			m_qmList[4].Closing = ">";
-			Assert.AreEqual(5, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(5));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = "}";
 			m_qmList[4].Opening = "[";
 			m_qmList[4].Closing = "]";
-			Assert.AreEqual(5, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(5));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = ">";
 			m_qmList[4].Opening = "<<";
 			m_qmList[4].Closing = ">>";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = ">";
 			m_qmList[4].Opening = "<<";
 			m_qmList[4].Closing = ">>";
-			Assert.AreEqual(4, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -421,7 +421,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = "}";
 			m_qmList[4].Opening = "*";
 			m_qmList[4].Closing = "*";
-			Assert.AreEqual(5, m_qmList.DistinctLevels);
+			Assert.That(m_qmList.DistinctLevels, Is.EqualTo(5));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -459,11 +459,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.That(result, Is.Not.Null);
-			Assert.AreEqual(0, result.LowerLevel);
-			Assert.IsFalse(result.LowerLevelIsOpener);
-			Assert.AreEqual(2, result.UpperLevel);
-			Assert.IsTrue(result.UpperLevelIsOpener);
-			Assert.AreEqual(">>", result.QMark);
+			Assert.That(result.LowerLevel, Is.EqualTo(0));
+			Assert.That(result.LowerLevelIsOpener, Is.False);
+			Assert.That(result.UpperLevel, Is.EqualTo(2));
+			Assert.That(result.UpperLevelIsOpener, Is.True);
+			Assert.That(result.QMark, Is.EqualTo(">>"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -483,11 +483,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "<<";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.That(result, Is.Not.Null);
-			Assert.AreEqual(0, result.LowerLevel);
-			Assert.IsTrue(result.LowerLevelIsOpener);
-			Assert.AreEqual(2, result.UpperLevel);
-			Assert.IsFalse(result.UpperLevelIsOpener);
-			Assert.AreEqual("<<", result.QMark);
+			Assert.That(result.LowerLevel, Is.EqualTo(0));
+			Assert.That(result.LowerLevelIsOpener, Is.True);
+			Assert.That(result.UpperLevel, Is.EqualTo(2));
+			Assert.That(result.UpperLevelIsOpener, Is.False);
+			Assert.That(result.QMark, Is.EqualTo("<<"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -525,11 +525,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.That(result, Is.Not.Null);
-			Assert.AreEqual(0, result.LowerLevel);
-			Assert.IsTrue(result.LowerLevelIsOpener);
-			Assert.AreEqual(1, result.UpperLevel);
-			Assert.IsFalse(result.UpperLevelIsOpener);
-			Assert.AreEqual("!", result.QMark);
+			Assert.That(result.LowerLevel, Is.EqualTo(0));
+			Assert.That(result.LowerLevelIsOpener, Is.True);
+			Assert.That(result.UpperLevel, Is.EqualTo(1));
+			Assert.That(result.UpperLevelIsOpener, Is.False);
+			Assert.That(result.QMark, Is.EqualTo("!"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -549,11 +549,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "!";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
 			Assert.That(result, Is.Not.Null);
-			Assert.AreEqual(0, result.LowerLevel);
-			Assert.IsTrue(result.LowerLevelIsOpener);
-			Assert.AreEqual(1, result.UpperLevel);
-			Assert.IsFalse(result.UpperLevelIsOpener);
-			Assert.AreEqual("!", result.QMark);
+			Assert.That(result.LowerLevel, Is.EqualTo(0));
+			Assert.That(result.LowerLevelIsOpener, Is.True);
+			Assert.That(result.UpperLevel, Is.EqualTo(1));
+			Assert.That(result.UpperLevelIsOpener, Is.False);
+			Assert.That(result.QMark, Is.EqualTo("!"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -584,9 +584,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			m_qmList.Clear();
 			m_qmList.AddLevel();
-			Assert.AreEqual(1, m_qmList.Levels);
-			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[0].Opening));
-			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[0].Closing));
+			Assert.That(m_qmList.Levels, Is.EqualTo(1));
+			Assert.That(string.IsNullOrEmpty(m_qmList[0].Opening), Is.True);
+			Assert.That(string.IsNullOrEmpty(m_qmList[0].Closing), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -602,9 +602,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[0].Closing = ">>";
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(2, m_qmList.Levels);
-			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[1].Opening));
-			Assert.IsTrue(string.IsNullOrEmpty(m_qmList[1].Closing));
+			Assert.That(m_qmList.Levels, Is.EqualTo(2));
+			Assert.That(string.IsNullOrEmpty(m_qmList[1].Opening), Is.True);
+			Assert.That(string.IsNullOrEmpty(m_qmList[1].Closing), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -621,19 +621,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(3, m_qmList.Levels);
-			Assert.AreEqual("<<", m_qmList[2].Opening);
-			Assert.AreEqual(">>", m_qmList[2].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(3));
+			Assert.That(m_qmList[2].Opening, Is.EqualTo("<<"));
+			Assert.That(m_qmList[2].Closing, Is.EqualTo(">>"));
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(4, m_qmList.Levels);
-			Assert.AreEqual("<", m_qmList[3].Opening);
-			Assert.AreEqual(">", m_qmList[3].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(4));
+			Assert.That(m_qmList[3].Opening, Is.EqualTo("<"));
+			Assert.That(m_qmList[3].Closing, Is.EqualTo(">"));
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(5, m_qmList.Levels);
-			Assert.AreEqual("<<", m_qmList[4].Opening);
-			Assert.AreEqual(">>", m_qmList[4].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(5));
+			Assert.That(m_qmList[4].Opening, Is.EqualTo("<<"));
+			Assert.That(m_qmList[4].Closing, Is.EqualTo(">>"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -650,9 +650,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			for (int i = 2; i < 5; i++)
 			{
 				m_qmList.AddLevel();
-				Assert.AreEqual(i + 1, m_qmList.Levels);
-				Assert.IsTrue(string.IsNullOrEmpty(m_qmList[i].Opening));
-				Assert.IsTrue(string.IsNullOrEmpty(m_qmList[i].Closing));
+				Assert.That(m_qmList.Levels, Is.EqualTo(i + 1));
+				Assert.That(string.IsNullOrEmpty(m_qmList[i].Opening), Is.True);
+				Assert.That(string.IsNullOrEmpty(m_qmList[i].Closing), Is.True);
 			}
 		}
 
@@ -673,14 +673,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Closing = "]";
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(4, m_qmList.Levels);
-			Assert.AreEqual("<<", m_qmList[3].Opening);
-			Assert.AreEqual(">>", m_qmList[3].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(4));
+			Assert.That(m_qmList[3].Opening, Is.EqualTo("<<"));
+			Assert.That(m_qmList[3].Closing, Is.EqualTo(">>"));
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(5, m_qmList.Levels);
-			Assert.AreEqual("<", m_qmList[4].Opening);
-			Assert.AreEqual(">", m_qmList[4].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(5));
+			Assert.That(m_qmList[4].Opening, Is.EqualTo("<"));
+			Assert.That(m_qmList[4].Closing, Is.EqualTo(">"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -702,9 +702,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[3].Closing = ">";
 
 			m_qmList.AddLevel();
-			Assert.AreEqual(5, m_qmList.Levels);
-			Assert.AreEqual("<<", m_qmList[4].Opening);
-			Assert.AreEqual(">>", m_qmList[4].Closing);
+			Assert.That(m_qmList.Levels, Is.EqualTo(5));
+			Assert.That(m_qmList[4].Opening, Is.EqualTo("<<"));
+			Assert.That(m_qmList[4].Closing, Is.EqualTo(">>"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -715,23 +715,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestIsEmpty()
 		{
-			Assert.IsTrue(m_qmList.IsEmpty);
+			Assert.That(m_qmList.IsEmpty, Is.True);
 
 			m_qmList[0].Opening = "[";
-			Assert.IsFalse(m_qmList.IsEmpty);
+			Assert.That(m_qmList.IsEmpty, Is.False);
 
 			m_qmList[0].Opening = string.Empty;
 			m_qmList[0].Closing = "[";
-			Assert.IsFalse(m_qmList.IsEmpty);
+			Assert.That(m_qmList.IsEmpty, Is.False);
 
 			m_qmList[0].Opening = string.Empty;
 			m_qmList[0].Closing = string.Empty;
 			m_qmList[1].Opening = "[";
-			Assert.IsFalse(m_qmList.IsEmpty);
+			Assert.That(m_qmList.IsEmpty, Is.False);
 
 			m_qmList[1].Opening = string.Empty;
 			m_qmList[1].Closing = "[";
-			Assert.IsFalse(m_qmList.IsEmpty);
+			Assert.That(m_qmList.IsEmpty, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -742,21 +742,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestIsComplete()
 		{
-			Assert.IsTrue(m_qmList.IsEmpty);
-			Assert.IsFalse(m_qmList[0].IsComplete);
-			Assert.IsFalse(m_qmList[1].IsComplete);
+			Assert.That(m_qmList.IsEmpty, Is.True);
+			Assert.That(m_qmList[0].IsComplete, Is.False);
+			Assert.That(m_qmList[1].IsComplete, Is.False);
 
 			m_qmList[0].Opening = "[";
 			m_qmList[0].Closing = string.Empty;
-			Assert.IsFalse(m_qmList[0].IsComplete);
+			Assert.That(m_qmList[0].IsComplete, Is.False);
 
 			m_qmList[0].Opening = string.Empty;
 			m_qmList[0].Closing = "]";
-			Assert.IsFalse(m_qmList[0].IsComplete);
+			Assert.That(m_qmList[0].IsComplete, Is.False);
 
 			m_qmList[0].Opening = "[";
 			m_qmList[0].Closing = "[";
-			Assert.IsTrue(m_qmList[0].IsComplete);
+			Assert.That(m_qmList[0].IsComplete, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -768,13 +768,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TestFindGap()
 		{
 			m_qmList.AddLevel();
-			Assert.AreEqual(3, m_qmList.Levels);
+			Assert.That(m_qmList.Levels, Is.EqualTo(3));
 
-			Assert.AreEqual(0, m_qmList.FindGap());
+			Assert.That(m_qmList.FindGap(), Is.EqualTo(0));
 
 			m_qmList[1].Opening = "[";
 			m_qmList[1].Closing = string.Empty;
-			Assert.AreEqual(1, m_qmList.FindGap());
+			Assert.That(m_qmList.FindGap(), Is.EqualTo(1));
 
 			m_qmList[0].Opening = "[";
 			m_qmList[0].Closing = "]";
@@ -782,7 +782,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = string.Empty;
 			m_qmList[2].Opening = "{";
 			m_qmList[2].Closing = string.Empty;
-			Assert.AreEqual(2, m_qmList.FindGap());
+			Assert.That(m_qmList.FindGap(), Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -794,21 +794,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TestTrimmedList()
 		{
 			m_qmList.AddLevel();
-			Assert.AreEqual(3, m_qmList.Levels);
+			Assert.That(m_qmList.Levels, Is.EqualTo(3));
 
 			m_qmList[0].Opening = "[";
 			m_qmList[0].Closing = "]";
-			Assert.AreEqual(1, m_qmList.TrimmedList.Levels);
+			Assert.That(m_qmList.TrimmedList.Levels, Is.EqualTo(1));
 
 			m_qmList[1].Opening = string.Empty;
 			m_qmList[1].Closing = "}";
-			Assert.AreEqual(2, m_qmList.TrimmedList.Levels);
+			Assert.That(m_qmList.TrimmedList.Levels, Is.EqualTo(2));
 
 			QuotationMarksList qmTrimmed = m_qmList.TrimmedList;
-			Assert.AreEqual(m_qmList[0].Opening, qmTrimmed[0].Opening);
-			Assert.AreEqual(m_qmList[0].Closing, qmTrimmed[0].Closing);
-			Assert.AreEqual(m_qmList[1].Opening, qmTrimmed[1].Opening);
-			Assert.AreEqual(m_qmList[1].Closing, qmTrimmed[1].Closing);
+			Assert.That(qmTrimmed[0].Opening, Is.EqualTo(m_qmList[0].Opening));
+			Assert.That(qmTrimmed[0].Closing, Is.EqualTo(m_qmList[0].Closing));
+			Assert.That(qmTrimmed[1].Opening, Is.EqualTo(m_qmList[1].Opening));
+			Assert.That(qmTrimmed[1].Closing, Is.EqualTo(m_qmList[1].Closing));
 		}
 	}
 }

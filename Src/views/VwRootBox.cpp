@@ -1,4 +1,4 @@
-/*--------------------------------------------------------------------*//*:Ignore this sentence.
+﻿/*--------------------------------------------------------------------*//*:Ignore this sentence.
 Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -4885,22 +4885,33 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	IVwGraphicsWin32Ptr qvg32;
 	Rect rcp(rcpDraw);
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-	BOOL fSuccess;
+
+	// Clean up any previous cached bitmap and DC
 	if (m_hdcMem)
 	{
-		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
-		Assert(fSuccess);
-		fSuccess = AfGdi::DeleteDC(m_hdcMem);
-		Assert(fSuccess);
+		HBITMAP hbmpCached = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
+		if (hbmpCached)
+		{
+			BOOL fSuccessBitmap = AfGdi::DeleteObjectBitmap(hbmpCached);
+			Assert(fSuccessBitmap);
+			(void)fSuccessBitmap; // Suppress C4189 warning in Release builds
+		}
+		BOOL fSuccessDC = AfGdi::DeleteDC(m_hdcMem);
+		Assert(fSuccessDC);
+		(void)fSuccessDC; // Suppress C4189 warning in Release builds
+		m_hdcMem = 0;
 	}
+
+	// Create a new memory DC and bitmap for double buffering
 	m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
 	HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
 	Assert(hbmp);
 	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
-	fSuccess = AfGdi::DeleteObjectBitmap(hbmpOld);
-	Assert(fSuccess);
+	(void)hbmpOld; // Suppress C4189 warning in Release builds (variable only used in Assert)
+	// We don't delete hbmpOld (the stock bitmap from the DC)
+	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
+
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
@@ -4971,9 +4982,11 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 		throw;
 	}
 	CheckHr(qvg->ReleaseDC());
+
 	if (xpdr != kxpdrInvalidate)
 	{
 		// We drew something...now blast it onto the screen.
+		// The bitmap in m_hdcMem is kept around for potential ReDrawLastDraw calls.
 		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), m_hdcMem, 0, 0, SRCCOPY);
 	}
 
@@ -4999,30 +5012,25 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	rcp.bottom = rcpDraw.right;
 	rcp.right = rcpDraw.bottom;
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-	BOOL fSuccess;
-	if (m_hdcMem)
-	{
-		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
-		Assert(fSuccess);
-		fSuccess = AfGdi::DeleteDC(m_hdcMem);
-		Assert(fSuccess);
-	}
-	m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
+
+	// For rotated views, use a local DC/bitmap since rotation makes caching for ReDrawLastDraw impractical
+	// Create a temporary memory DC and bitmap for double buffering
+	HDC hdcMem = AfGdi::CreateCompatibleDC(hdc);
 	HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
 	Assert(hbmp);
-	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
+	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(hdcMem, hbmp);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
-	fSuccess = AfGdi::DeleteObjectBitmap(hbmpOld);
-	Assert(fSuccess);
+	// We don't delete hbmpOld (the stock bitmap from the DC)
+	// We'll restore it before cleanup
+
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
 		// REVIEW: do we need to rotate the screen area?
-		::BitBlt(m_hdcMem, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
+		::BitBlt(hdcMem, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
 	else
-		AfGfx::FillSolidRect(m_hdcMem, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
-	CheckHr(qvg32->Initialize(m_hdcMem));
+		AfGfx::FillSolidRect(hdcMem, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
+	CheckHr(qvg32->Initialize(hdcMem));
 	IVwGraphicsPtr qvgDummy; // Required for GetGraphics calls to get transform rects
 
 	try
@@ -5053,9 +5061,15 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 		if (qvgDummy)
 			CheckHr(pvrs->ReleaseGraphics(prootb, qvgDummy));
 		CheckHr(qvg->ReleaseDC());
+
+		// Clean up GDI resources before rethrowing
+		AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD);
+		AfGdi::DeleteObjectBitmap(hbmp);
+		AfGdi::DeleteDC(hdcMem);
 		throw;
 	}
 	CheckHr(qvg->ReleaseDC());
+
 	POINT rgptTransform[3];
 	rgptTransform[0].x = rcpDraw.right; // upper left of actual drawing maps to top right of rotated drawing
 	rgptTransform[0].y = rcpDraw.top;
@@ -5064,7 +5078,14 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	rgptTransform[2].x = rcpDraw.left;
 	rgptTransform[2].y = rcpDraw.top; // bottom left of actual drawing maps to top left of rotated drawing.
 		// We drew something...now blast it onto the screen.
-	::PlgBlt(hdc, rgptTransform, m_hdcMem, 0, 0, rcp.Width(), rcp.Height(), 0, 0, 0);
+	::PlgBlt(hdc, rgptTransform, hdcMem, 0, 0, rcp.Width(), rcp.Height(), 0, 0, 0);
+
+	// Clean up memory DC and bitmap
+	AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD);
+	BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+	Assert(fSuccess);
+	fSuccess = AfGdi::DeleteDC(hdcMem);
+	Assert(fSuccess);
 
 	END_COM_METHOD(g_factVDRB, IID_IVwRootBox);
 }

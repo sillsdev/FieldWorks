@@ -1,0 +1,50 @@
+name: Agent analysis (stub)
+
+on:
+    pull_request:
+        types: [opened, synchronize]
+
+# This workflow is a stub for running agentic analysis against PRs.
+# It is disabled by default and gated by a repository variable.
+# To enable, set repository variable ENABLE_AGENT_ANALYSIS=true.
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    test-failure-analysis:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: write
+            # models: read   # required when using an agent CLI
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Explain
+              run: |
+                  echo "This is a stub workflow for Option 3."
+                  echo "Intended action: run .github/prompts/test-failure-debug.prompt.md in analysis-only mode"
+                  echo "on PR #${{ github.event.pull_request.number }} and post results as a comment."
+                  echo "When enabling Option 3, wire to an agent CLI/APM as shown in .github/option3-plan.md."
+
+            # Example future step using APM CLI (disabled until Option 3 is enabled)
+            # - name: Run Test Failure Analysis (agent CLI via APM)
+            #   uses: danielmeppiel/action-apm-cli@v1
+            #   with:
+            #     script: copilot-test-failure-debug
+            #     parameters: |
+            #       { "testLog": "${{ github.event.pull_request.number }}" }
+            #   env:
+            #     AGENT_CLI_PAT: ${{ secrets.AGENT_CLI_PAT }}
+
+            - name: Post stub comment
+              uses: marocchino/sticky-pull-request-comment@v2
+              with:
+                  header: agent-analysis-stub
+                  message: |
+                      Agent analysis is currently a stub and does not execute prompts.
+                      Intended workflow: run `.github/prompts/test-failure-debug.prompt.md` in analysis-only mode and post findings.
+                      See `.github/option3-plan.md` for enablement steps.

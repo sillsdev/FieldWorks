@@ -57,21 +57,21 @@ namespace SIL.FieldWorks.Common.RootSites
 							filemaker.Filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
 							CmFolderTags.LocalPictures);
 						Assert.That(pict, Is.Not.Null);
-						Assert.IsTrue(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath);
+						Assert.That(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath, Is.True);
 						string sTextRepOfObject = editHelper.TextRepOfObj(Cache, pict.Guid);
 						int objectDataType;
 						Guid guid = editHelper.MakeObjFromText(Cache, sTextRepOfObject, null,
 							out objectDataType);
 						ICmPicture pictNew = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
-						Assert.IsTrue(pict != pictNew);
+						Assert.That(pict != pictNew, Is.True);
 						internalPathOrig = pict.PictureFileRA.AbsoluteInternalPath;
 						internalPathNew = pictNew.PictureFileRA.AbsoluteInternalPath;
-						Assert.AreEqual(internalPathOrig, internalPathNew);
-						Assert.AreEqual(internalPathOrig.IndexOf("junk"), internalPathNew.IndexOf("junk"));
-						Assert.IsTrue(internalPathNew.EndsWith(".jpg"));
+						Assert.That(internalPathNew, Is.EqualTo(internalPathOrig));
+						Assert.That(internalPathNew.IndexOf("junk"), Is.EqualTo(internalPathOrig.IndexOf("junk")));
+						Assert.That(internalPathNew.EndsWith(".jpg"), Is.True);
 						AssertEx.AreTsStringsEqual(pict.Caption.VernacularDefaultWritingSystem,
 							pictNew.Caption.VernacularDefaultWritingSystem);
-						Assert.AreEqual(pict.PictureFileRA.Owner, pictNew.PictureFileRA.Owner);
+						Assert.That(pictNew.PictureFileRA.Owner, Is.EqualTo(pict.PictureFileRA.Owner));
 					}
 				}
 			}

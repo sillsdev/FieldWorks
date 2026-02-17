@@ -1,4 +1,4 @@
-﻿namespace LCMBrowser
+﻿namespace SIL.ObjectBrowser
 {
 	partial class ClassPropertySelector
 	{

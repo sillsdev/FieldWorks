@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using Rhino.Mocks;
+using Moq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -21,6 +21,9 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
+	// Delegate for PropInfo callback in Moq
+	internal delegate void PropInfoCallback(bool fEndPoint, int ilev, out int ihvoRoot, out int tag, out int ihvo, out int cpropPrevious, out IVwPropertyStore pvps);
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// More unit tests for <see cref="RootSite">RootSite</see> that use
@@ -58,10 +61,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
 
 			Point pt = m_basicView.IPLocation;
-			Assert.IsTrue(m_basicView.ClientRectangle.Contains(pt),
-				"IP is not in Draft View's client area.");
+			Assert.That(m_basicView.ClientRectangle.Contains(pt), Is.True, "IP is not in Draft View's client area.");
 
-			Assert.IsFalse(pt == new Point(0, 0), "IP is at 0, 0");
+			Assert.That(pt == new Point(0, 0), Is.False, "IP is at 0, 0");
 		}
 
 		#endregion
@@ -90,14 +92,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			int expectedHeight = 2 * (6 * m_basicView.SelectionHeight
 				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch)
 				+ 2 * (2 * DummyBasicViewVc.kEstimatedParaHeight * rcSrcRoot.Height / 72);
-			Assert.AreEqual(expectedHeight, currentHeight, "Unexpected initial height");
+			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected initial height");
 
 			m_basicView.ScrollToEnd();
 			currentHeight = m_basicView.RootBox.Height;
 			// we have 4 paragraphs with 6 lines each, and a margin before each paragraph
 			expectedHeight = 4 * (6 * m_basicView.SelectionHeight
 				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch);
-			Assert.AreEqual(expectedHeight, currentHeight, "Unexpected height after scrolling");
+			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected height after scrolling");
 
 			// Determine width of one line, so that we can make the window smaller.
 			m_basicView.ScrollToTop();
@@ -115,7 +117,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// we have 4 paragraphs with 12 lines each, and a margin before each paragraph
 			expectedHeight = 4 * (12 * m_basicView.SelectionHeight
 				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch);
-			Assert.AreEqual(expectedHeight, currentHeight, "Unexpected height after resizing");
+			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected height after resizing");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -131,8 +133,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			Point pt = m_basicView.ScrollPosition;
 			Rectangle rect = m_basicView.DisplayRectangle;
-			Assert.AreEqual(-pt.Y + m_basicView.ClientRectangle.Height, rect.Height,
-				"Scroll position is not at the very end");
+			Assert.That(rect.Height, Is.EqualTo(-pt.Y + m_basicView.ClientRectangle.Height), "Scroll position is not at the very end");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,14 +160,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nHeight = view.DisplayRectangle.Height;
 
 			bool fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 10);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, 0);
 			// JohnT: AdjustScrollRange now adjust the view height to the current actual height;
@@ -174,21 +175,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Review TE team (JohnT): should this test be enhanced to actually resize some
 			// internal box?
 			//nHeight += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			fRet = view.AdjustScrollRange(0, 0, -30, 0);
 			//nHeight -= 30; // JohnT: see above.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, 10);
 			//nHeight += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -215,47 +216,47 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nHeight = view.DisplayRectangle.Height;
 
 			bool fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 10);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, 0);
 			//nHeight += 30; // JohnT: see above
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, -30, 0);
 			//nHeight -= 30; // JohnT: see above
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos - 1);
 			//nHeight += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos);
 			//nHeight += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos + 1);
 			//nHeight += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -283,72 +284,72 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nHeight = view.DisplayRectangle.Height;
 
 			bool fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 10);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, 0);
 			//nHeight += 30;
 			// nPos += 30;
 			nPos = maxScrollPos; // JohnT: since we didn't really increase the range, the position can't be more than this.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsTrue(fRet, "3. test"); // JohnT: because scroll pos change was impossible
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.True, "3. test"); // JohnT: because scroll pos change was impossible
 
 			fRet = view.AdjustScrollRange(0, 0, -30, 0);
 			//nHeight -= 30;
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos - 1);
 			//nHeight += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos);
 			//nHeight += 30;
 			// JohnT: originally, I think, meant to test that it won't increase scroll position
 			// if the fourth argument is large enough. Now, however, it won't anyway because
 			// it's already at max for the fixed view size.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, dydWindheight + 30, 0);
 			//nHeight += dydWindheight + 30;
 			// nPos += dydWindheight + 30; //JohnT: can't exceed height.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsTrue(fRet, "3. test"); // JohnT; because adjust scroll pos suppressed.
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.True, "3. test"); // JohnT; because adjust scroll pos suppressed.
 
 			fRet = view.AdjustScrollRange(0, 0, - (dydWindheight + 30), 0);
 			//nHeight -= dydWindheight + 30;
 			nPos = Math.Max(0, nPos - dydWindheight - 30); // JohnT: also can't be less than zero.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, dydWindheight + 30, nPos - 1);
 			//nHeight += dydWindheight + 30;
 			nPos = maxScrollPos; // nPos += dydWindheight + 30; // JohnT: can't exceed max.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 0, dydWindheight + 30, nPos);
 			//nHeight += dydWindheight + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "3. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -376,48 +377,48 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nHeight = view.DisplayRectangle.Height;
 
 			bool fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 10);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, 0);
 			//nHeight += 30;
 			// nPos += 30; // JohnT: can't exceed max
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsTrue(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.True, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, -30, 0);
 			//nHeight -= 30;
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos - 1);
 			//nHeight += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos);
 			//nHeight += 30;
 			// JohnT: again increase is blocked by max as well as intended limit.
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, dydWindheight + 30, nPos);
 			//nHeight += dydWindheight + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -447,10 +448,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			bool fRet = view.AdjustScrollRange(0, 0, -nChange, 0);
 			int nPos = 0;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "5. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "5. test");
-			Assert.IsFalse(fRet, "5. test: scroll position not forced to change"); // JohnT: no problem since window didn't shrink.
-			Assert.IsTrue(view.VScroll, "5. test: scrollbar still visible"); // JohnT: we don't change the range.
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "5. test");
+			Assert.That(fRet, Is.False, "5. test: scroll position not forced to change"); // JohnT: no problem since window didn't shrink.
+			Assert.That(view.VScroll, Is.True, "5. test: scrollbar still visible"); // JohnT: we don't change the range.
 
 			RestorePreviousYScrollRange(nChange, dydSomewhere);
 			nChange = view.DisplayRectangle.Height - dydWindheight;
@@ -458,29 +459,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			fRet = view.AdjustScrollRange(0, 0, -nChange, 0);
 			//nHeight = dydWindheight;
 			nPos = 0;
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "5. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "5. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "5. test");
 			// JohnT: fiddled with next two lines because height does not change.
-			Assert.IsFalse(fRet, "5. test: scroll position has not changed");
-			Assert.IsTrue(view.VScroll, "5. test: scrollbar still visible");
+			Assert.That(fRet, Is.False, "5. test: scroll position has not changed");
+			Assert.That(view.VScroll, Is.True, "5. test: scrollbar still visible");
 
 			RestorePreviousYScrollRange(nChange, maxScrollPos);
 			nChange = view.DisplayRectangle.Height - dydWindheight / 2;
 
 			fRet = view.AdjustScrollRange(0, 0, -nChange, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "5. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "5. test");
-			Assert.IsTrue(fRet, "5. test: scroll position has not changed");
-			Assert.IsTrue(view.VScroll, "5. test: scrollbar still visible"); // JohnT: no change to height.
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position has not changed");
+			Assert.That(view.VScroll, Is.True, "5. test: scrollbar still visible"); // JohnT: no change to height.
 
 			RestorePreviousYScrollRange(nChange, dydSomewhere);
 			nChange = view.DisplayRectangle.Height - dydWindheight / 2;
 
 			fRet = view.AdjustScrollRange(0, 0, -nChange, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "5. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "5. test");
-			Assert.IsTrue(fRet, "5. test: scroll position has not changed");
-			Assert.IsTrue(view.VScroll, "5. test: scrollbar still visible");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position has not changed");
+			Assert.That(view.VScroll, Is.True, "5. test: scrollbar still visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -505,38 +506,38 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nWidth = view.DisplayRectangle.Width;
 
 			bool fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
-			Assert.IsFalse(fRet, "1. test");
-			Assert.IsFalse(view.HScroll, "1. test: Scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
+			Assert.That(view.HScroll, Is.False, "1. test: Scrollbar still visible");
 
 			view.HScroll = true;
 			fRet = view.AdjustScrollRange(0, 10, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
-			Assert.IsFalse(fRet, "1. test");
-			Assert.IsFalse(view.HScroll, "1. test: Scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
+			Assert.That(view.HScroll, Is.False, "1. test: Scrollbar still visible");
 
 			view.HScroll = true;
 			fRet = view.AdjustScrollRange(2 * dxdWindwidth, 0, 0, 0);
 			nWidth += 2 * dxdWindwidth;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
 
-			Assert.IsFalse(fRet, "1. test");
-			Assert.IsTrue(view.HScroll, "1. test: Scrollbar not visible");
+			Assert.That(fRet, Is.False, "1. test");
+			Assert.That(view.HScroll, Is.True, "1. test: Scrollbar not visible");
 
 			fRet = view.AdjustScrollRange(-30, 0, 0, 0);
 			nWidth -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			fRet = view.AdjustScrollRange(30, 10, 0, 0);
 			nWidth += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
-			Assert.IsFalse(fRet, "1. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
 
 			// Thumb position is somewhere in the middle
 			view.ScrollPosition = new Point(100, 0);
@@ -544,47 +545,47 @@ namespace SIL.FieldWorks.Common.RootSites
 			nWidth = view.DisplayRectangle.Width;
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(0, 10, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(30, 0, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(-30, 0, 0, 0);
 			nWidth -= 30;
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(30, nPos - 1, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(30, nPos, 0, 0);
 			nWidth += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			fRet = view.AdjustScrollRange(30, nPos + 1, 0, 0);
 			nWidth += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.IsFalse(fRet, "2. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
 
 			int scrollMax = view.DisplayRectangle.Width - dxdWindwidth;
 
@@ -594,68 +595,68 @@ namespace SIL.FieldWorks.Common.RootSites
 			nWidth = view.DisplayRectangle.Width;
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(0, 10, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(30, 0, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(-30, 0, 0, 0);
 			nWidth -= 30;
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(30, nPos - 1, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(30, nPos, 0, 0);
 			nWidth += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(dxdWindwidth + 30, 0, 0, 0);
 			nWidth += dxdWindwidth + 30;
 			nPos += dxdWindwidth + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(- (dxdWindwidth + 30), 0, 0, 0);
 			nWidth -= dxdWindwidth + 30;
 			nPos -= dxdWindwidth + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(dxdWindwidth + 30, nPos - 1, 0, 0);
 			nWidth += dxdWindwidth + 30;
 			nPos += dxdWindwidth + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			fRet = view.AdjustScrollRange(dxdWindwidth + 30, nPos, 0, 0);
 			nWidth += dxdWindwidth + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "3. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "3. test");
-			Assert.IsFalse(fRet, "3. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
+			Assert.That(fRet, Is.False, "3. test");
 
 			// Thumb position is at the far right
 			view.ScrollPosition = new Point(scrollMax, 0);
@@ -663,47 +664,47 @@ namespace SIL.FieldWorks.Common.RootSites
 			nWidth = view.DisplayRectangle.Width;
 
 			fRet = view.AdjustScrollRange(0, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 10, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(30, 0, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(-30, 0, 0, 0);
 			nWidth -= 30;
 			nPos -= 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(30, nPos - 1, 0, 0);
 			nWidth += 30;
 			nPos += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(30, nPos, 0, 0);
 			nWidth += 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			fRet = view.AdjustScrollRange(dxdWindwidth + 30, nPos, 0, 0);
 			nWidth += dxdWindwidth + 30;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "4. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "4. test");
-			Assert.IsFalse(fRet, "4. test");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "4. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "4. test");
+			Assert.That(fRet, Is.False, "4. test");
 
 			// Now test scroll range < ClientRectangle
 			int dxdSomewhere = nPos;
@@ -712,10 +713,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
 			nWidth = dxdWindwidth;
 			nPos = 0;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position forced to change");
-			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position forced to change");
+			Assert.That(view.HScroll, Is.False, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, dxdSomewhere);
 			nChange = view.DisplayRectangle.Width - dxdWindwidth;
@@ -723,28 +724,28 @@ namespace SIL.FieldWorks.Common.RootSites
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
 			nWidth = dxdWindwidth;
 			nPos = 0;
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
-			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position has not changed");
+			Assert.That(view.HScroll, Is.False, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, view.DisplayRectangle.Width);
 			nChange = view.DisplayRectangle.Width - dxdWindwidth / 2;
 
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
-			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position has not changed");
+			Assert.That(view.HScroll, Is.False, "5. test: scrollbar still visible");
 
 			RestorePreviousXScrollRange(nChange, dxdSomewhere);
 			nChange = view.DisplayRectangle.Width - dxdWindwidth / 2;
 
 			fRet = view.AdjustScrollRange(-nChange, 0, 0, 0);
-			Assert.AreEqual(nPos, -view.ScrollPosition.X, "5. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "5. test");
-			Assert.IsTrue(fRet,"5. test: scroll position has not changed");
-			Assert.IsFalse(view.HScroll, "5. test: scrollbar still visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "5. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "5. test");
+			Assert.That(fRet, Is.True, "5. test: scroll position has not changed");
+			Assert.That(view.HScroll, Is.False, "5. test: scrollbar still visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -780,12 +781,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			nXPos += 30;
 			//nHeight -= 40; JohnT: height doesn't really change.
 			nYPos -= 40;
-			Assert.AreEqual(nXPos, -view.ScrollPosition.X, "1. test");
-			Assert.AreEqual(nYPos, -view.ScrollPosition.Y, "1. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "1. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "1. test");
-			Assert.IsFalse(fRet, "1. test");
-			Assert.IsTrue(view.HScroll, "1. test: Scrollbar not visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nXPos), "1. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nYPos), "1. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "1. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "1. test");
+			Assert.That(fRet, Is.False, "1. test");
+			Assert.That(view.HScroll, Is.True, "1. test: Scrollbar not visible");
 
 			// 2. Test: Thumb position is at top right
 			view.ScrollPosition = new Point(maxXScroll, 10);
@@ -796,12 +797,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			nXPos -= 30;
 			//nHeight += 40;
 			nYPos += 40;
-			Assert.AreEqual(nXPos, -view.ScrollPosition.X, "2. test");
-			Assert.AreEqual(nYPos, -view.ScrollPosition.Y, "2. test");
-			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
-			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "2. test");
-			Assert.IsFalse(fRet, "2. test");
-			Assert.IsTrue(view.HScroll, "2. test: Scrollbar not visible");
+			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nXPos), "2. test");
+			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nYPos), "2. test");
+			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "2. test");
+			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "2. test");
+			Assert.That(fRet, Is.False, "2. test");
+			Assert.That(view.HScroll, Is.True, "2. test: Scrollbar not visible");
 		}
 		#endregion
 
@@ -850,8 +851,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
 					out vqvps, out ihvoAnchor, out ihvoEnd);
 
-				Assert.AreEqual(true, fRet, "1. test:");
-				Assert.AreEqual(ihvoAnchor, ihvoEnd, "1. test:");
+				Assert.That(fRet, Is.EqualTo(true), "1. test:");
+				Assert.That(ihvoEnd, Is.EqualTo(ihvoAnchor), "1. test:");
 
 				// Test 2: selection across two sections
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
@@ -864,7 +865,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
 					out vqvps, out ihvoAnchor, out ihvoEnd);
 
-				Assert.AreEqual(false, fRet, "2. test:");
+				Assert.That(fRet, Is.EqualTo(false), "2. test:");
 			}
 		}
 
@@ -889,8 +890,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwSelection selEnd = rootBox.Selection;
 			rootBox.MakeRangeSelection(selAnchor, selEnd, true);
 
-			Assert.IsTrue(m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
-				out vqvps, out ihvoAnchor, out ihvoEnd));
+			Assert.That(m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
+				out vqvps, out ihvoAnchor, out ihvoEnd), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -938,9 +939,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
 					out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
 
-				Assert.IsTrue(fRet, "Test 1 ");
-				Assert.AreEqual(ihvoFirst, ihvoLast, "Test 1 ");
-				Assert.AreEqual(1, vqttp.Length, "Test 1 ");
+				Assert.That(fRet, Is.True, "Test 1 ");
+				Assert.That(ihvoLast, Is.EqualTo(ihvoFirst), "Test 1 ");
+				Assert.That(vqttp.Length, Is.EqualTo(1), "Test 1 ");
 
 				// Test 2: selection across two sections
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
@@ -953,7 +954,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
 					out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
 
-				Assert.IsFalse(fRet, "Test 2 ");
+				Assert.That(fRet, Is.False, "Test 2 ");
 			}
 		}
 
@@ -977,27 +978,40 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.That(pict, Is.Not.Null);
 
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
-			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
-			mockedSelection.Expect(s => s.IsValid).Return(true);
+			var mockedSelectionMock = new Mock<IVwSelection>();
+			mockedSelectionMock.Setup(s => s.IsValid).Returns(true);
 			VwChangeInfo changeInfo = new VwChangeInfo();
 			changeInfo.hvo = 0;
-			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
-			mockedSelection.Expect(s => s.CLevels(true)).Return(2);
-			mockedSelection.Expect(s => s.CLevels(false)).Return(2);
-			string sIntType = typeof(int).FullName;
-			string intRef = sIntType + "&";
-			int ignoreOut;
-			IVwPropertyStore outPropStore;
-			mockedSelection.Expect(s => s.PropInfo(false, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(
-				s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
+			mockedSelectionMock.Setup(s => s.CompleteEdits(out changeInfo)).Returns(true);
+			mockedSelectionMock.Setup(s => s.CLevels(true)).Returns(2);
+			mockedSelectionMock.Setup(s => s.CLevels(false)).Returns(2);
+			int ignoreOut = 0;
+			IVwPropertyStore outPropStore = null;
+			mockedSelectionMock
+				.Setup(s => s.PropInfo(false, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
+				.Callback(new PropInfoCallback((bool fEndPoint, int ilev, out int ihvoRoot, out int tag, out int ihvo, out int cpropPrevious, out IVwPropertyStore pvps) =>
+				{
+					ihvoRoot = pict.Hvo;
+					tag = CmPictureTags.kflidCaption;
+					ihvo = 0;
+					cpropPrevious = 0;
+					pvps = null;
+				}));
+			mockedSelectionMock
+				.Setup(s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
+				.Callback(new PropInfoCallback((bool fEndPoint, int ilev, out int ihvoRoot, out int tag, out int ihvo, out int cpropPrevious, out IVwPropertyStore pvps) =>
+				{
+					ihvoRoot = pict.Hvo;
+					tag = CmPictureTags.kflidCaption;
+					ihvo = 0;
+					cpropPrevious = 0;
+					pvps = null;
+				}));
+			mockedSelectionMock.Setup(s => s.EndBeforeAnchor).Returns(false);
 
 			DummyBasicView.DummyEditingHelper editingHelper =
 				(DummyBasicView.DummyEditingHelper)m_basicView.EditingHelper;
-			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection;
+			editingHelper.m_mockedSelection = mockedSelectionMock.Object;
 			editingHelper.m_fOverrideGetParaPropStores = true;
 
 			IVwSelection vwsel;
@@ -1005,13 +1019,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwPropertyStore[] vvps;
 			ITsTextProps[] vttp;
 
-			Assert.IsTrue(m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
-				out vvps, out ihvoFirst, out ihvoLast, out vttp));
+			Assert.That(m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
+				out vvps, out ihvoFirst, out ihvoLast, out vttp), Is.True);
 
-			Assert.AreEqual(CmPictureTags.kflidCaption, tagText);
-			Assert.AreEqual(1, vttp.Length);
-			Assert.AreEqual("Figure caption",
-				vttp[0].GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
+			Assert.That(tagText, Is.EqualTo(CmPictureTags.kflidCaption));
+			Assert.That(vttp.Length, Is.EqualTo(1));
+			Assert.That(vttp[0].GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Figure caption"));
 		}
 		#endregion
 
@@ -1059,9 +1072,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", bt1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(bt1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1103,10 +1115,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
 			ICmTranslation bt1 = para1.GetBT();
-			Assert.AreEqual("BT2", bt1.Translation.get_String(m_wsEng).Text);
+			Assert.That(bt1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT2"));
 		}
 		#endregion
 
@@ -1149,10 +1160,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = (IStTxtPara)text1.ParagraphsOS[1];
-			Assert.AreEqual(DummyBasicView.kFirstParaEng, para1.Contents.Text);
-			Assert.AreEqual(DummyBasicView.kSecondParaEng, para2.Contents.Text);
-			Assert.AreEqual("BT1", para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("BT2", para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
+			Assert.That(para2.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng));
+			Assert.That(para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT1"));
+			Assert.That(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1195,14 +1206,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = (IStTxtPara)text1.ParagraphsOS[1];
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng.Substring(0, 5),
-				para1.Contents.Text);
-			Assert.AreEqual(DummyBasicView.kSecondParaEng.Substring(5) + DummyBasicView.kSecondParaEng,
-				para2.Contents.Text);
-			Assert.AreEqual("BT1", para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("BT2", para1.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng.Substring(0, 5)));
+			Assert.That(para2.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng.Substring(5) + DummyBasicView.kSecondParaEng));
+			Assert.That(para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT1"));
+			Assert.That(para1.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT2"));
 			Assert.That(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual("BT3", para2.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para2.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT3"));
 		}
 		#endregion
 
@@ -1249,9 +1258,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1294,13 +1302,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
 			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
-				Assert.AreEqual("BT2", transl.Translation.get_String(m_wsEng).Text);
+				Assert.That(transl.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT2"));
 			}
 		}
 
@@ -1344,9 +1351,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1397,10 +1403,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
-			Assert.AreEqual("BT1fr BT2fr", trans1.Translation.get_String(wsfr).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
+			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT1fr BT2fr"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1450,10 +1455,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
-			Assert.AreEqual("BT2fr", trans1.Translation.get_String(wsfr).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
+			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT2fr"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1502,10 +1506,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
-			Assert.AreEqual("BT1fr", trans1.Translation.get_String(wsfr).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
+			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT1fr"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1551,8 +1554,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				ichEndPara2, 0, true, 1, null, true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng, para1.Contents.Text);
-			Assert.AreEqual("BT1", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1599,8 +1602,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				ichEndPara1, 0, true, 0, null, true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng, para1.Contents.Text);
-			Assert.AreEqual("BT1", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1647,12 +1650,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			// we don't know which paragraph survived, so get it from text
 			para1 = (IStTxtPara)text1.ParagraphsOS[0];
 
-			Assert.AreEqual(DummyBasicView.kSecondParaEng, para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng));
 			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
-				Assert.AreEqual("BT2", transl.Translation.get_String(m_wsEng).Text);
+				Assert.That(transl.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT2"));
 			}
 		}
 
@@ -1701,9 +1704,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			// we don't know which paragraph survived, so get it from text
 			para1 = (IStTxtPara)text1.ParagraphsOS[0];
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1754,9 +1756,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT3", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT3"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1811,9 +1812,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) +
-				DummyBasicView.kSecondParaEng.Substring(ichEnd), para1.Contents.Text);
-			Assert.AreEqual("BT1 BT3", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) +
+				DummyBasicView.kSecondParaEng.Substring(ichEnd)));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT3"));
 		}
 		#endregion
 
@@ -1862,9 +1863,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeDelete();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1907,13 +1907,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				true);
 			TypeDelete();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng,
-				para1.Contents.Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
 			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
-				Assert.AreEqual("BT2", transl.Translation.get_String(m_wsEng).Text);
+				Assert.That(transl.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT2"));
 			}
 		}
 		#endregion
@@ -1966,9 +1965,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				StTxtParaTags.kflidContents, 0, ichAnchor, ichEnd, 0, true, 1, null, true);
 			TypeChar('a');
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) + "a" +
-				DummyBasicView.kSecondParaEng.Substring(ichEnd), para1.Contents.Text);
-			Assert.AreEqual("BT1 BT2", trans1.Translation.get_String(m_wsEng).Text);
+			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) + "a" +
+				DummyBasicView.kSecondParaEng.Substring(ichEnd)));
+			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 		#endregion
 
@@ -2011,8 +2010,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Lets pretend we a non-view gets the focus (although it's the same)
 				m_basicView.KillFocus(control);
 
-				Assert.IsTrue(rootBox.Selection.IsEnabled,
-					"Selection should still be enabled if non-view window got focus");
+				Assert.That(rootBox.Selection.IsEnabled, Is.True, "Selection should still be enabled if non-view window got focus");
 			}
 		}
 
@@ -2044,8 +2042,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.IsFalse(rootBox.Selection.IsEnabled,
-				"Selection should not be enabled if other view window got focus");
+			Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if other view window got focus");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2077,8 +2074,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.IsTrue(rootBox.Selection.IsEnabled,
-				"Selection should still be enabled if the ShowRangeSelAfterLostFocus flag is set");
+			Assert.That(rootBox.Selection.IsEnabled, Is.True, "Selection should still be enabled if the ShowRangeSelAfterLostFocus flag is set");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2108,8 +2104,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Lets pretend we a non-view gets the focus (although it's the same)
 				m_basicView.KillFocus(control);
 
-				Assert.IsFalse(rootBox.Selection.IsEnabled,
-					"Selection should not be enabled if non-view window got focus if we have an IP");
+				Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if non-view window got focus if we have an IP");
 			}
 		}
 
@@ -2132,8 +2127,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.IsFalse(rootBox.Selection.IsEnabled,
-				"Selection should not be enabled if other view window got focus");
+			Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if other view window got focus");
 		}
 		#endregion
 

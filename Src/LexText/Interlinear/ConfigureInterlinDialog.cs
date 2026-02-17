@@ -71,10 +71,13 @@ namespace SIL.FieldWorks.IText
 			InitColumnDictionary();
 			InitColumns();
 
-			if (!(mainBrowser.NativeBrowser is GeckoWebBrowser))
-				return;
+			if (!(mainBrowser.NativeBrowser is GeckoWebBrowser browser))
+			{
+				throw new InvalidOperationException(
+					"ConfigureInterlinDialog requires GeckoWebBrowser. " +
+					"Ensure XulRunner/Gecko is properly installed and configured.");
+			}
 
-			var browser = (GeckoWebBrowser) mainBrowser.NativeBrowser;
 			var htmlPath = SaveHtmlToTemp();
 			mainBrowser.Url = new Uri(htmlPath);
 			browser.DomContentChanged += Browser_DomContentChanged;

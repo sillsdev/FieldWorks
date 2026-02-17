@@ -22,11 +22,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void NumToAlphaOutline()
 		{
-			Assert.AreEqual("A", AlphaOutline.NumToAlphaOutline(1));
-			Assert.AreEqual("Z", AlphaOutline.NumToAlphaOutline(26));
-			Assert.AreEqual("AA", AlphaOutline.NumToAlphaOutline(27));
-			Assert.AreEqual("ZZ", AlphaOutline.NumToAlphaOutline(52));
-			Assert.AreEqual("AAA", AlphaOutline.NumToAlphaOutline(53));
+			Assert.That(AlphaOutline.NumToAlphaOutline(1), Is.EqualTo("A"));
+			Assert.That(AlphaOutline.NumToAlphaOutline(26), Is.EqualTo("Z"));
+			Assert.That(AlphaOutline.NumToAlphaOutline(27), Is.EqualTo("AA"));
+			Assert.That(AlphaOutline.NumToAlphaOutline(52), Is.EqualTo("ZZ"));
+			Assert.That(AlphaOutline.NumToAlphaOutline(53), Is.EqualTo("AAA"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -37,12 +37,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void AlphaToOutlineNum_Valid()
 		{
-			Assert.AreEqual(1, AlphaOutline.AlphaOutlineToNum("A"));
-			Assert.AreEqual(1, AlphaOutline.AlphaOutlineToNum("a"));
-			Assert.AreEqual(26, AlphaOutline.AlphaOutlineToNum("Z"));
-			Assert.AreEqual(27, AlphaOutline.AlphaOutlineToNum("AA"));
-			Assert.AreEqual(52, AlphaOutline.AlphaOutlineToNum("ZZ"));
-			Assert.AreEqual(53, AlphaOutline.AlphaOutlineToNum("AAA"));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("A"), Is.EqualTo(1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("a"), Is.EqualTo(1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("Z"), Is.EqualTo(26));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("AA"), Is.EqualTo(27));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("ZZ"), Is.EqualTo(52));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("AAA"), Is.EqualTo(53));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -53,13 +53,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void AlphaToOutlineNum_Invalid()
 		{
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum(string.Empty));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum(null));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum("7"));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum("A1"));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum("AB"));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum("AAC"));
-			Assert.AreEqual(-1, AlphaOutline.AlphaOutlineToNum("?"));
+			Assert.That(AlphaOutline.AlphaOutlineToNum(string.Empty), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum(null), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("7"), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("A1"), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("AB"), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("AAC"), Is.EqualTo(-1));
+			Assert.That(AlphaOutline.AlphaOutlineToNum("?"), Is.EqualTo(-1));
 		}
 	}
 }

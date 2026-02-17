@@ -39,8 +39,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			char[] expected = new char[] { '\u0201', '\u0003' };
 			int i = 0;
 			foreach (char ch in array)
-				Assert.AreEqual(expected[i++], ch);
-			Assert.AreEqual(2, i);
+				Assert.That(ch, Is.EqualTo(expected[i++]));
+			Assert.That(i, Is.EqualTo(2));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			char[] expected = new char[] { '\u0201', '\u0603' };
 			int i = 0;
 			foreach (char ch in array)
-				Assert.AreEqual(expected[i++], ch);
-			Assert.AreEqual(2, i);
+				Assert.That(ch, Is.EqualTo(expected[i++]));
+			Assert.That(i, Is.EqualTo(2));
 		}
 
 		///--------------------------------------------------------------------------------------

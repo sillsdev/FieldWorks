@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -106,12 +106,12 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndStayPut(undoRedoText);
 
 			// expect no change to the first occurrence.
-			Assert.AreEqual(initialAnalysisObj, ocurrences[0].Analysis);
+			Assert.That(ocurrences[0].Analysis, Is.EqualTo(initialAnalysisObj));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(ocurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(ocurrences[0]));
 
 			// nothing to undo.
-			Assert.AreEqual(0, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -130,16 +130,16 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndStayPut(undoRedoText);
 
 			// expect change to the first occurrence.
-			Assert.AreEqual(m_focusBox.NewAnalysisTree.Gloss, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(m_focusBox.NewAnalysisTree.Gloss));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(occurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[0]));
 
 			// test undo.
-			Assert.AreEqual(1, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(1));
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(initialAnalysisTree.Analysis, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(initialAnalysisTree.Analysis));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(occurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[0]));
 		}
 
 		/// <summary>
@@ -162,12 +162,12 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndMoveNext(undoRedoText);
 
 			// expect no change to the first occurrence.
-			Assert.AreEqual(initialAnalysisTree.Analysis, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(initialAnalysisTree.Analysis));
 			// expect the focus box to be on the next occurrence.
-			Assert.AreEqual(occurrences[1], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[1]));
 
 			// nothing to undo.
-			Assert.AreEqual(0, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(0));
 
 			// Restore the InterlinVc for other tests.
 			m_interlinDoc.InterlinVc = origVc;
@@ -191,16 +191,16 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndMoveNext(undoRedoText);
 
 			// expect change to the first wfic.
-			Assert.AreEqual(newAnalysisTree_wfic0.Gloss, xfics[0].Analysis);
+			Assert.That(xfics[0].Analysis, Is.EqualTo(newAnalysisTree_wfic0.Gloss));
 			// expect the focus box to be on the next wfic.
-			Assert.AreEqual(xfics[1], m_focusBox.SelectedWfic);
+			Assert.That(m_focusBox.SelectedWfic, Is.EqualTo(xfics[1]));
 
 			// test undo.
-			Assert.AreEqual(1, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(1));
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(initialAnalysisTree_wfic0.Object, xfics[0].Analysis);
+			Assert.That(xfics[0].Analysis, Is.EqualTo(initialAnalysisTree_wfic0.Object));
 			// expect the focus box to be back on the first wfic.
-			Assert.AreEqual(xfics[0], m_focusBox.SelectedWfic);
+			Assert.That(m_focusBox.SelectedWfic, Is.EqualTo(xfics[0]));
 #endif
 		}
 
@@ -259,19 +259,38 @@ namespace SIL.FieldWorks.IText
 		#region Helper methods
 		private void SetUpMocksForTest(ISegment seg)
 		{
-			IVwRootBox rootb = MockRepository.GenerateMock<IVwRootBox>();
-			m_interlinDoc.MockedRootBox = rootb;
-			IVwSelection vwsel = MockRepository.GenerateMock<IVwSelection>();
-			rootb.Stub(x => x.Selection).Return(vwsel);
-			rootb.Stub(x => x.DataAccess).Return(Cache.DomainDataByFlid);
-			vwsel.Stub(x => x.TextSelInfo(Arg<bool>.Is.Equal(false), out Arg<ITsString>.Out(null).Dummy,
-				out Arg<int>.Out(0).Dummy, out Arg<bool>.Out(false).Dummy, out Arg<int>.Out(seg.Hvo).Dummy,
-				out Arg<int>.Out(SimpleRootSite.kTagUserPrompt).Dummy, out Arg<int>.Out(Cache.DefaultAnalWs).Dummy));
-			vwsel.Stub(x => x.IsValid).Return(true);
-			vwsel.Stub(x => x.CLevels(Arg<bool>.Is.Anything)).Return(0);
-			vwsel.Stub(x => x.AllSelEndInfo(Arg<bool>.Is.Anything, out Arg<int>.Out(0).Dummy, Arg<int>.Is.Equal(0),
-				Arg<ArrayPtr>.Is.Null, out Arg<int>.Out(0).Dummy, out Arg<int>.Out(0).Dummy, out Arg<int>.Out(0).Dummy,
-				out Arg<int>.Out(0).Dummy, out Arg<bool>.Out(true).Dummy, out Arg<ITsTextProps>.Out(null).Dummy));
+			var rootbMock = new Mock<IVwRootBox>();
+			var vwselMock = new Mock<IVwSelection>();
+			m_interlinDoc.MockedRootBox = rootbMock.Object;
+			rootbMock.Setup(x => x.Selection).Returns(vwselMock.Object);
+			rootbMock.Setup(x => x.DataAccess).Returns(Cache.DomainDataByFlid);
+
+			// Setup TextSelInfo with out parameters - use Callback to set out values
+			ITsString tssOut = null;
+			int ichOut = 0;
+			bool fAssocPrevOut = false;
+			int hvoObjOut = seg.Hvo;
+			int tagOut = SimpleRootSite.kTagUserPrompt;
+			int wsOut = Cache.DefaultAnalWs;
+			vwselMock.Setup(x => x.TextSelInfo(false, out tssOut, out ichOut, out fAssocPrevOut, out hvoObjOut, out tagOut, out wsOut));
+
+			vwselMock.Setup(x => x.IsValid).Returns(true);
+			vwselMock.Setup(x => x.CLevels(It.IsAny<bool>())).Returns(0);
+
+			// Setup AllSelEndInfo with out parameters
+			int ihvoRootOut = 0;
+			int cpvsOut = 0;
+			int tagTextPropOut = 0;
+			int cpropPreviousOut = 0;
+			int ichAnchorOut = 0;
+			int ichEndOut = 0;
+			int wsAltOut = 0;
+			bool fAssocPrevOut2 = true;
+			ITsTextProps ttpOut = null;
+			vwselMock.Setup(x => x.AllSelEndInfo(It.IsAny<bool>(), out ihvoRootOut, 0,
+				ArrayPtr.Null, out cpvsOut, out tagTextPropOut, out cpropPreviousOut,
+				out ichAnchorOut, out fAssocPrevOut2, out ttpOut));
+
 			m_interlinDoc.CallSetActiveFreeform(seg.Hvo, Cache.DefaultAnalWs);
 		}
 

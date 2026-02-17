@@ -72,11 +72,10 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> tts =
 				check.GetReferences(source.TextTokens());
 
-			Assert.AreEqual(result.Length, tts.Count,
-				"A different number of results was returned from what was expected." );
+			Assert.That(tts.Count, Is.EqualTo(result.Length), "A different number of results was returned from what was expected.");
 
 			for (int i = 0; i < result.Length; i++)
-				Assert.AreEqual(result[i], tts[i].InventoryText, "Result number: " + i);
+				Assert.That(tts[i].InventoryText, Is.EqualTo(result[i]), "Result number: " + i);
 		}
 
 		#region Test capitalization of styles

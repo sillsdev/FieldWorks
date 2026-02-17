@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <!--
+    Installer Build Project for FieldWorks
+
+    Hosts the BuildInstaller target and its .targets imports. Invoked by build.ps1
+    after the main traversal build to produce WiX MSI/bundle installers.
+
+    Usage (from build.ps1):
+      msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:InstallerToolset=Wix3
+
+    Uses traditional MSBuild format (non-SDK) to centralise .targets imports
+    needed by the installer pipeline without SDK package resolution overhead.
+  -->
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <InstallerToolset Condition="'$(InstallerToolset)'==''">Wix3</InstallerToolset>
+  </PropertyGroup>
+
+  <!-- Import build infrastructure (installer targets depend on these for paths, tasks, and items) -->
+  <Import Project="$(MSBuildThisFileDirectory)FwBuildTasks.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)SetupInclude.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Localize.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)mkall.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Windows.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)RegFree.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.Wix3.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix3'"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix6'"/>
+  <Import Project="$(MSBuildThisFileDirectory)LocalLibrary.targets"/>
+
+  <!-- BuildInstaller target is imported from Installer.Wix3.targets or Installer.targets (Wix6) -->
+
+</Project>

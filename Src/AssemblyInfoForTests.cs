@@ -43,5 +43,4 @@ using System.Reflection;
 // Allow creating COM objects from manifest file important that it comes after InitializeIcu
 [assembly: CreateComObjectsFromManifest]
 
-// This is for testing VersionInfoProvider in FwUtils
-[assembly: AssemblyInformationalVersion("9.0.6 45470 Alpha")]
+// CommonAssemblyInfo.cs now provides the informational version for all assemblies.

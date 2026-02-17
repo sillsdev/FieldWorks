@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("FieldWorks Common Framework")]
+// [assembly: AssemblyTitle("FieldWorks Common Framework")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly:InternalsVisibleTo("FrameworkTests")]

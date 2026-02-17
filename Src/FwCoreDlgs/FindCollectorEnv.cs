@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
@@ -42,6 +43,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected IVwTxtSrcInit2 m_textSourceInit;
 		/// <summary></summary>
 		protected IVwSearchKiller m_searchKiller;
+		/// <summary>
+		/// True once we've reached the start location during the current find.
+		/// Once true, we should stop filtering objects (DisplayThisObject) so traversal
+		/// can continue normally beyond the start point.
+		/// </summary>
+		private bool m_fReachedStartLocation;
 		#endregion
 
 		#region Constructor
@@ -88,6 +95,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_StartLocation = startLocation;
 			m_LocationFound = null;
 			m_fHitLimit = false;
+			m_fReachedStartLocation = false;
 
 			Reset(); // Just in case
 			// Enhance JohnT: if we need to handle more than one root object, this would
@@ -102,6 +110,48 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
+		private bool StartLocationAppliesToCurrentProp(int tag)
+		{
+			// Apply the start offset only to the exact occurrence of the string property the
+			// selection is in (tag + cpropPrev). Subsequent occurrences (different cpropPrev)
+			// should search from the start of their own string.
+			return m_StartLocation != null
+				&& m_StartLocation.TopLevelHvo == m_hvoCurr
+				&& m_StartLocation.m_tag == tag
+				&& m_StartLocation.m_cpropPrev == CPropPrev(tag);
+		}
+
+		/// <summary>
+		/// Returns true if we should skip searching this property because we haven't reached the
+		/// start location yet.
+		/// </summary>
+		private bool ShouldSkipBecauseStartNotReached(int tag)
+		{
+			if (m_StartLocation == null)
+				return false;
+
+			if (m_fReachedStartLocation && !StartLocationAppliesToCurrentProp(tag))
+			{
+				// We've already applied the start offset; once we move past the start property,
+				// clear it so normal searching resumes.
+				m_StartLocation = null;
+				return false;
+			}
+
+			if (StartLocationAppliesToCurrentProp(tag))
+			{
+				m_fReachedStartLocation = true;
+				return false;
+			}
+
+			// Still looking for the exact starting location.
+			if (!CurrentLocationIsStartLocation(tag))
+				return true;
+
+			m_fReachedStartLocation = true;
+			return false;
+		}
+
 		#region Overrides
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -115,7 +165,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override bool DisplayThisObject(int hvoItem, int tag)
 		{
 			// We want to skip the beginning until we reach our start location.
-			if (m_StartLocation == null || Finished)
+			if (m_StartLocation == null || Finished || m_fReachedStartLocation)
 				return true;
 
 			int cPropPrev = CPropPrev(tag);
@@ -165,12 +215,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.AddString(tss);
 
+			if (Finished)
+				return;
+
 			if (!m_fGotNonPropInfo)
 			{
-				// We actually had a prop open already, but we still need to do the checks for
-				// this string. In this case m_tagCurrent should hold the tag that belongs to
-				// the open property.
-				CheckForStartLocationAndLimit(m_tagCurrent);
+				// We actually had a prop open already. In this case m_tagCurrent should hold
+				// the tag that belongs to the open property. Some VCs output the contents of
+				// a string property via AddString (e.g., around ORCs). We need to search those
+				// strings too, not just AddStringProp/AddStringAltMember.
+				if (ShouldSkipBecauseStartNotReached(m_tagCurrent))
+					return;
+
+				DoFind(tss, m_tagCurrent);
 			}
 		}
 
@@ -190,13 +247,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.AddStringProp(tag, vwvc);
 
-			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
+			if (ShouldSkipBecauseStartNotReached(tag))
 				return;
 
 			DoFind(m_sda.get_StringProp(m_hvoCurr, tag), tag);
-
-			// We now processed the start location, so continue normally
-			m_StartLocation = null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -216,13 +270,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			base.AddStringAltMember(tag, ws, vwvc);
 
-			if (m_StartLocation != null && !CurrentLocationIsStartLocation(tag))
+			if (ShouldSkipBecauseStartNotReached(tag))
 				return;
 
 			DoFind(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws), tag);
-
-			// We now processed the start location, so continue normally
-			m_StartLocation = null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -388,7 +439,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			IVwTextSource textSource = m_textSourceInit as IVwTextSource;
 			int ichBegin = 0;
-			if (m_StartLocation != null)
+			if (StartLocationAppliesToCurrentProp(tag))
 			{
 				Debug.Assert(m_StartLocation.TopLevelHvo == m_hvoCurr && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichLim;
@@ -408,8 +459,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			if (ichMin >= 0)
-				m_LocationFound = new LocationInfo(m_stack, CountOfPrevPropAtRoot, tag,
-					ichMin, ichLim);
+			{
+				var cpropPrevRootLevel = m_stack.Count > 0
+					? m_cpropPrev.GetCount(m_stack[0].m_tag)
+					: CPropPrev(tag);
+				var ws = m_ws;
+				if (ws == 0)
+					ws = GetWsAtOffset(tss, ichMin);
+				m_LocationFound = new LocationInfo(m_stack, cpropPrevRootLevel, tag, ichMin, ichLim, ws);
+				m_LocationFound.m_cpropPrev = CPropPrev(tag);
+			}
+		}
+
+		protected static int GetWsAtOffset(ITsString tss, int ich)
+		{
+			if (tss == null)
+				return 0;
+			if (tss.Length == 0)
+				return 0;
+			if (ich < 0)
+				ich = 0;
+			if (ich >= tss.Length)
+				ich = tss.Length - 1;
+			var props = tss.get_PropertiesAt(ich);
+			if (props == null)
+				return 0;
+			return props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -574,6 +649,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 		}
 
+		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
+		{
+			base.AddReversedObjVecItems(tag, vc, frag);
+		}
+
 		#region Overriden protected methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -607,7 +687,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			if (ichMin >= 0)
-				m_LocationFound = new LocationInfo(m_stack, CPropPrev(tag), tag, ichMin, ichLim);
+			{
+				var cpropPrevRootLevel = m_stack.Count > 0
+					? m_cpropPrev.GetCount(m_stack[0].m_tag)
+					: CPropPrev(tag);
+				var ws = m_ws;
+				if (ws == 0)
+					ws = GetWsAtOffset(tss, ichMin);
+				m_LocationFound = new LocationInfo(m_stack, cpropPrevRootLevel, tag, ichMin, ichLim, ws);
+				m_LocationFound.m_cpropPrev = CPropPrev(tag);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

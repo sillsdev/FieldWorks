@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("ParatextImport")]
+// [assembly: AssemblyTitle("ParatextImport")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ParatextImportTests")]

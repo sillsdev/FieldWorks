@@ -1,134 +1,266 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TestGeneric - Native C++ Unit Tests for Generic Library
+
+  This is a true MSBuild C++ project (not a Makefile wrapper).
+  Converted from nmake-based build to enable:
+  - Direct VS/VS Code builds without VsDevCmd.bat
+  - vcpkg integration for GoogleTest
+  - IntelliSense support
+  - Parallel compilation
+
+  Original Makefile wrapper backed up as TestGeneric.vcxproj.makefile.bak
+-->
 <Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Build configurations -->
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
+  <!-- Project identity -->
   <PropertyGroup Label="Globals">
-    <ProjectName>TestGeneric</ProjectName>
     <ProjectGuid>{C644C392-FB14-4DF1-9989-897E182D3849}</ProjectGuid>
+    <ProjectName>TestGeneric</ProjectName>
     <RootNamespace>TestGeneric</RootNamespace>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
-    <Keyword>MakeFileProj</Keyword>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <!-- vcpkg integration (when vcpkg.json manifest is present) -->
+    <VcpkgEnabled>true</VcpkgEnabled>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
+
+  <!-- Configuration type: Console Application (EXE) -->
+  <!-- CharacterSet is NotSet because common.h defines _UNICODE and UNICODE itself -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\output\debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\obj\debug\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkGenLib-tst.bat DONTRUN</NMakeBuildCommandLine>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkGenLib-tst.bat DONTRUN</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkGenLib-tst.bat DONTRUN cc</NMakeReBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkGenLib-tst.bat DONTRUN cc</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkGenLib-tst.bat DONTRUN ec</NMakeCleanCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkGenLib-tst.bat DONTRUN ec</NMakeCleanCommandLine>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\output\debug\TestGenericLib.exe</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\output\debug\TestGenericLib.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">x64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\Include;..\;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\Include;..\;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TestGeneric.exe</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestGeneric.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+
+  <PropertyGroup Label="UserMacros">
+    <!-- Repository root for include/lib paths -->
+    <FwRoot>$(ProjectDir)..\..\..</FwRoot>
   </PropertyGroup>
-  <ItemDefinitionGroup>
+
+  <!-- Output directories -->
+  <PropertyGroup>
+    <OutDir>$(FwRoot)\Output\$(Configuration)\</OutDir>
+    <IntDir>$(FwRoot)\Obj\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>testGenericLib</TargetName>
+  </PropertyGroup>
+
+  <!-- Debug configuration compiler/linker settings -->
+  <!-- Matches settings from Bld/_init.mak: /W4 /WX /EHa /GR /GF /Zm400 /MDd /RTC1 /Zi /Od -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>
+        $(FwRoot)\Include\unit++;
+        $(FwRoot)\Include;
+        $(FwRoot)\Src\Generic;
+        $(FwRoot)\Src\Generic\Test;
+        $(FwRoot)\Output\$(Configuration);
+        $(FwRoot)\Output\$(Configuration)\Common;
+        $(IntDir);
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        WIN32=1;
+        _DEBUG=1;
+        DEBUG=1;
+        _WINDOWS=1;
+        _AFXDLL=1;
+        _WIN32_WINNT=0x0A00;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <StringPooling>true</StringPooling>
+      <!-- /EHa for async exception handling (required for C exception conversion) -->
+      <!-- /GR for RTTI (required for dynamic_cast) -->
+      <!-- /GF for string pooling -->
+    </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)..\..\..\scripts\regfree\FieldWorks.regfree.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>
+        $(FwRoot)\Lib\$(Configuration);
+        $(FwRoot)\Lib;
+        $(FwRoot)\Output\$(Configuration)\lib\x64;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+        unit++.lib;
+        Generic.lib;
+        DebugProcs.lib;
+        icuin.lib;
+        icudt.lib;
+        icuuc.lib;
+        uuid.lib;
+        advapi32.lib;
+        kernel32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        gdi32.lib;
+        comctl32.lib;
+        comdlg32.lib;
+        shell32.lib;
+        imm32.lib;
+        ImageHlp.lib;
+        Version.lib;
+        winspool.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
+
+  <!-- Release configuration compiler/linker settings -->
+  <!-- Matches settings from Bld/_init.mak: /W4 /WX /EHa /GR /GF /MD /Zi /O2 /Ob1 /Gy -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>
+        $(FwRoot)\Include\unit++;
+        $(FwRoot)\Include;
+        $(FwRoot)\Src\Generic;
+        $(FwRoot)\Src\Generic\Test;
+        $(FwRoot)\Src\DebugProcs;
+        $(FwRoot)\Output\$(Configuration);
+        $(FwRoot)\Output\$(Configuration)\Common;
+        $(IntDir);
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        WIN32=1;
+        NDEBUG=1;
+        _WINDOWS=1;
+        _AFXDLL=1;
+        _WIN32_WINNT=0x0A00;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)..\..\..\scripts\regfree\FieldWorks.regfree.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>
+        $(FwRoot)\Lib\$(Configuration);
+        $(FwRoot)\Lib;
+        $(FwRoot)\Output\$(Configuration)\lib\x64;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+        unit++.lib;
+        Generic.lib;
+        icuin.lib;
+        icudt.lib;
+        icuuc.lib;
+        uuid.lib;
+        advapi32.lib;
+        kernel32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        gdi32.lib;
+        comctl32.lib;
+        comdlg32.lib;
+        shell32.lib;
+        imm32.lib;
+        ImageHlp.lib;
+        Version.lib;
+        winspool.lib;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- Source files -->
   <ItemGroup>
-    <ClCompile Include="Collection.cpp" />
+    <!-- Main test entry point and collection -->
     <ClCompile Include="testGeneric.cpp" />
+    <ClCompile Include="Collection.cpp" />
+    <!-- ModuleEntry from Generic (needed for DLL initialization) -->
+    <ClCompile Include="..\ModuleEntry.cpp" />
   </ItemGroup>
+
+  <!-- Header files -->
   <ItemGroup>
-    <ClInclude Include="TestErrorHandling.h" />
-    <ClInclude Include="TestFwSettings.h" />
     <ClInclude Include="testGenericLib.h" />
     <ClInclude Include="TestSmartBstr.h" />
     <ClInclude Include="TestUtil.h" />
-    <ClInclude Include="TestUtilString.h" />
     <ClInclude Include="TestUtilXml.h" />
+    <ClInclude Include="TestUtilString.h" />
+    <ClInclude Include="TestErrorHandling.h" />
+    <ClInclude Include="TestFwSettings.h" />
   </ItemGroup>
+
+  <!-- Build tool reference files -->
   <ItemGroup>
     <None Include="testGenericLib.mak" />
   </ItemGroup>
+
+  <!-- Pre-build: Generate Collection.cpp from test headers (same as makefile) -->
+  <Target Name="GenerateCollection" BeforeTargets="ClCompile"
+          Inputs="testGenericLib.h;TestSmartBstr.h;TestUtil.h;TestUtilXml.h;TestUtilString.h;TestErrorHandling.h;TestFwSettings.h"
+          Outputs="Collection.cpp">
+    <Message Text="Generating Collection.cpp from test headers..." Importance="high" />
+    <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Generic testGenericLib.h TestSmartBstr.h TestUtil.h TestUtilXml.h TestUtilString.h TestErrorHandling.h TestFwSettings.h Collection.cpp"
+          WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
 </Project>

@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.Language
 	/// Direct port of the C++ class LgIcuCollator
 	/// </summary>
 	[Serializable]
+	[ComVisible(true)]
 	[ClassInterface(ClassInterfaceType.None)]
 	[Guid("e771361c-ff54-4120-9525-98a0b7a9accf")]
 	public class ManagedLgIcuCollator : ILgCollatingEngine, IDisposable
@@ -82,7 +83,18 @@ namespace SIL.FieldWorks.Language
 		#region ILgCollatingEngine implementation
 		public string get_SortKey(string bstrValue, LgCollatingOptions colopt)
 		{
-			throw new NotImplementedException();
+			// FieldWorks' native collators expose sort keys as BSTRs which may contain embedded NULs.
+			// In managed code we represent this as a .NET string whose chars are the sort-key bytes.
+			// This preserves the exact byte sequence without requiring any encoding assumptions.
+			if (bstrValue == null)
+				bstrValue = string.Empty;
+			var keyBytes = (byte[])get_SortKeyVariant(bstrValue, colopt);
+			if (keyBytes == null || keyBytes.Length == 0)
+				return string.Empty;
+			var chars = new char[keyBytes.Length];
+			for (int i = 0; i < keyBytes.Length; i++)
+				chars[i] = (char)keyBytes[i];
+			return new string(chars);
 		}
 
 		public void SortKeyRgch(string _ch, int cchIn, LgCollatingOptions colopt, int cchMaxOut, ArrayPtr _chKey, out int _cchOut)
@@ -130,21 +142,18 @@ namespace SIL.FieldWorks.Language
 				return -1;
 			}
 
-			int maxlen = key1.Length > key2.Length ? key1.Length : key2.Length;
+			// Sort keys are NUL-terminated byte arrays. Compare like strcmp for stability and performance.
+			int maxlen = Math.Min(key1.Length, key2.Length);
 			for (int i = 0; i < maxlen; ++i)
 			{
-				if (key1[i] > key2[i])
-					return 1;
-				if (key2[i] > key1[i])
-					return -1;
+				if (key1[i] != key2[i] || key1[i] == 0)
+					return key1[i] - key2[i];
 			}
 
-			if (key1.Length > key2.Length)
-				return 1;
-			if (key2.Length > key1.Length)
-				return -1;
-
-			return 0;
+			// Equal as far as we could compare.
+			if (key1.Length == key2.Length)
+				return 0;
+			return key1.Length > key2.Length ? 1 : -1;
 		}
 
 

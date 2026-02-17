@@ -267,28 +267,28 @@ namespace SIL.FieldWorks.IText
 			ConfigureInterlinDialog.OrderAllSpecs(choices, orderedFlids, newLineSpecsUnordered);
 
 			// Validate that the order of the flid's in choices is the new order.
-			Assert.AreEqual(InterlinLineChoices.kflidWord, choices.AllLineSpecs[0].Flid); // 0
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices.AllLineSpecs[1].Flid); // 1
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices.AllLineSpecs[2].Flid); // 2
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices.AllLineSpecs[3].Flid); // 3
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices.AllLineSpecs[4].Flid); // 4
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices.AllLineSpecs[5].Flid); // 5
-			Assert.AreEqual(InterlinLineChoices.kflidLexPos, choices.AllLineSpecs[6].Flid); // 6
-			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices.AllLineSpecs[7].Flid); // 7
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices.AllLineSpecs[8].Flid); // 8
-			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices.AllLineSpecs[9].Flid); // 9
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices.AllLineSpecs[10].Flid); // 10
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices.AllLineSpecs[11].Flid); // 11
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices.AllLineSpecs[12].Flid); // 12
-			Assert.AreEqual(InterlinLineChoices.kflidNote, choices.AllLineSpecs[13].Flid); // 13
+			Assert.That(choices.AllLineSpecs[0].Flid, Is.EqualTo(InterlinLineChoices.kflidWord)); // 0
+			Assert.That(choices.AllLineSpecs[1].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes)); // 1
+			Assert.That(choices.AllLineSpecs[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries)); // 2
+			Assert.That(choices.AllLineSpecs[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss)); // 3
+			Assert.That(choices.AllLineSpecs[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss)); // 4
+			Assert.That(choices.AllLineSpecs[5].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss)); // 5
+			Assert.That(choices.AllLineSpecs[6].Flid, Is.EqualTo(InterlinLineChoices.kflidLexPos)); // 6
+			Assert.That(choices.AllLineSpecs[7].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos)); // 7
+			Assert.That(choices.AllLineSpecs[8].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss)); // 8
+			Assert.That(choices.AllLineSpecs[9].Flid, Is.EqualTo(InterlinLineChoices.kflidLitTrans)); // 9
+			Assert.That(choices.AllLineSpecs[10].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans)); // 10
+			Assert.That(choices.AllLineSpecs[11].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans)); // 11
+			Assert.That(choices.AllLineSpecs[12].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans)); // 12
+			Assert.That(choices.AllLineSpecs[13].Flid, Is.EqualTo(InterlinLineChoices.kflidNote)); // 13
 
 			// Valiate that the original order of the ws is preserved.
-			Assert.AreEqual(wsEng, choices.AllLineSpecs[3].WritingSystem); // 3
-			Assert.AreEqual(wsFrn, choices.AllLineSpecs[4].WritingSystem); // 4
-			Assert.AreEqual(wsGer, choices.AllLineSpecs[5].WritingSystem); // 5
-			Assert.AreEqual(wsGer, choices.AllLineSpecs[10].WritingSystem); // 10
-			Assert.AreEqual(wsFrn, choices.AllLineSpecs[11].WritingSystem); // 11
-			Assert.AreEqual(wsEng, choices.AllLineSpecs[12].WritingSystem); // 12
+			Assert.That(choices.AllLineSpecs[3].WritingSystem, Is.EqualTo(wsEng)); // 3
+			Assert.That(choices.AllLineSpecs[4].WritingSystem, Is.EqualTo(wsFrn)); // 4
+			Assert.That(choices.AllLineSpecs[5].WritingSystem, Is.EqualTo(wsGer)); // 5
+			Assert.That(choices.AllLineSpecs[10].WritingSystem, Is.EqualTo(wsGer)); // 10
+			Assert.That(choices.AllLineSpecs[11].WritingSystem, Is.EqualTo(wsFrn)); // 11
+			Assert.That(choices.AllLineSpecs[12].WritingSystem, Is.EqualTo(wsEng)); // 12
 		}
 	}
 }

@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+	<!--
+		Package Restoration & Dependency Management for FieldWorks
+
+		Handles NuGet package restoration, external dependency downloads, and copying
+		native/special-case artifacts to the output directory.
+
+		Consumers:
+		  - build.ps1 calls `dotnet restore FieldWorks.sln` directly for package restore
+		  - mkall.targets (native C++ builds depend on CopyDlls for ICU libs, LCM headers)
+
+		Key Targets:
+		  - RestorePackages: Runs dotnet restore on FieldWorks.sln (all projects now in sln)
+		  - DefineNugetPackages: Declares NuGet packages requiring manual copy (native deps)
+		  - downloadDlls: Copies NuGet contentFiles to Downloads/
+		  - CopyDlls: Copies native binaries, ICU libs, LCM data to Output directory
+	-->
+
+	<!-- ======================================================================================== -->
+	<!-- Version & Path Properties                                                                -->
+	<!-- ======================================================================================== -->
+	<PropertyGroup>
+		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
+
+		<!-- SIL ecosystem versions: imported from Build/SilVersions.props (shared with Directory.Packages.props) -->
+	</PropertyGroup>
+	<Import Project="$(MSBuildThisFileDirectory)SilVersions.props" />
+	<PropertyGroup>
+		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
+		<!-- GeckofxHtmlToPdf: download from GitHub release (https://github.com/sillsdev/geckofxHtmlToPdf/releases) -->
+		<GeckofxHtmlToPdfVersion>1.1.0</GeckofxHtmlToPdfVersion>
+		<!-- PackagesDir: Use local packages folder. -->
+		<PackagesDir>$(fwrt)/packages</PackagesDir>
+	</PropertyGroup>
+
+	<!-- ======================================================================================== -->
+	<!-- Dependency File Lists                                                                     -->
+	<!-- ======================================================================================== -->
+	<ItemGroup>
+		<!-- NOTE: Most managed DLLs are now handled automatically by PackageReference.
+		     Only native dependencies and special cases remain here. -->
+		<!-- Native Keyman interop DLLs (from KeymanLegacyBundle package) -->
+		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<!-- Platform-specific irrKlang native DLL (from SIL.Media package contentFiles) -->
+		<PalasoFiles
+			Include="lib/win-x86/irrKlang.NET4.dll"
+			Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"
+		/>
+		<PalasoFiles
+			Include="lib/win-x64/irrKlang.NET4.dll"
+			Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+		/>
+		<!-- Platform-specific Interop.WIA.dll (from SIL.Windows.Forms package) -->
+		<PalasoFiles Include="Interop.WIA.dll" />
+		<!-- NDesk.DBus.dll.config file (config files not auto-copied by NuGet) -->
+		<PalasoFiles Include="NDesk.DBus.dll.config" />
+		<!-- Chorus.exe application (entry point, not just a library) -->
+		<ChorusFiles Include="Chorus.exe" />
+		<!-- ICU native binaries and static libraries -->
+		<IcuFiles Include="gennorm2.exe" />
+		<IcuFiles Include="icudt$(IcuVersion).dll" />
+		<IcuFiles Include="icuin$(IcuVersion).dll" />
+		<IcuFiles Include="icutu$(IcuVersion).dll" />
+		<IcuFiles Include="icuuc$(IcuVersion).dll" />
+		<IcuFiles Include="icudt.lib" />
+		<IcuFiles Include="icuin.lib" />
+		<IcuFiles Include="icuuc.lib" />
+		<!-- LCM data files and headers (contentFiles from SIL.LCModel packages) -->
+		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.json" />
+		<LcmFwKernelFiles Include="KernelInterfaces/common.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernel.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/Language.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/TextServ.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernelTlb.idl" />
+		<LcmDistFiles Include="Styles.dtd" />
+		<!-- GOLDEtic.xml is copied so that developers can use grammatical categories without building localizations.
+			Building localizations will overwrite this file with the latest translations. -->
+		<LcmTemplatesFiles Include="Templates/GOLDEtic.xml" />
+		<LcmTemplatesFiles Include="Templates/NewLangProj.fwdata" />
+		<LcmTemplatesFiles Include="Templates/POS.xml" />
+		<LcmTemplatesFiles Include="Templates/SemDom.xml" />
+		<LcmIcuDataFiles Include="IcuData/data/nfc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcHebrew.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/UnicodeDataOverrides.txt" />
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+		<LcmMissingFiles Include="SIL.LCModel.dll.config" />
+	</ItemGroup>
+
+	<!-- ======================================================================================== -->
+	<!-- RestorePackages Target                                                                    -->
+	<!-- ======================================================================================== -->
+	<!-- Restore NuGet packages -->
+	<Target Name="RestorePackages">
+		<Message Text="Restoring NuGet packages..." />
+		<MakeDir Directories="$(PackagesDir)" />
+		<!--
+			Restore via FieldWorks.sln to ensure all projects get restored.
+			DisableWarnForInvalidRestoreProjects=true suppresses NU1503 warnings for
+			vcxproj files (C++ projects don't use NuGet restore, which is expected).
+			See: https://stackoverflow.com/a/76173374
+
+			NOTE: We do NOT use the - -packages flag here. Package location is controlled by:
+			- nuget.config (globalPackagesFolder) for host builds -> packages/
+
+			All projects (including FxtExe and InstallerArtifactsTests) are now part of
+			FieldWorks.sln, so a single solution restore covers everything.
+		-->
+		<Exec
+			Command='dotnet restore "$(fwrt)\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true /p:Configuration=$(Configuration) /p:Platform=$(Platform)'
+			ContinueOnError="false"
+		/>
+	</Target>
+
+	<!-- ======================================================================================== -->
+	<!-- DefineNugetPackages Target                                                                -->
+	<!-- ======================================================================================== -->
+	<Target Name="DefineNugetPackages">
+		<ItemGroup>
+			<!-- NOTE: Most managed DLLs are now handled automatically by PackageReference in .csproj files.
+			     This section now only handles native dependencies and special cases that require manual copying. -->
+			<!-- ICU native binaries: x64 only for 64-bit builds -->
+			<SILNugetPackages
+				Include="Icu4c.Win.Fw.Bin"
+				Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+			>
+				<Version>$(IcuNugetVersion)</Version>
+				<Path>build/win-x64/*.*</Path>
+			</SILNugetPackages>
+			<!-- ICU DLLs: x64 runtime files -->
+			<SILNugetPackages
+				Include="Icu4c.Win.Fw.Lib"
+				Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+			>
+				<Version>$(IcuNugetVersion)</Version>
+				<Path>runtimes/win7-x64/native/*.*</Path>
+			</SILNugetPackages>
+			<!-- ICU static libraries: x64 lib files for linking -->
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(Platform)'=='x64'">
+				<Version>$(IcuNugetVersion)</Version>
+				<Path>build/native/lib/win7-x64/*.*</Path>
+			</SILNugetPackages>
+			<!-- ICU headers: platform-independent -->
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib">
+				<Version>$(IcuNugetVersion)</Version>
+				<Path>build/native/include/**/*.*</Path>
+			</SILNugetPackages>
+			<!-- IPCFramework DLL (may be needed for FLExBridge communication) -->
+			<SILNugetPackages Include="SIL.FLExBridge.IPCFramework">
+				<Version>$(SilIPCFrameworkVersion)</Version>
+				<Path>lib/net461/*.*</Path>
+			</SILNugetPackages>
+			<!-- LCM contentFiles (data files, headers, build tasks) that aren't auto-deployed -->
+			<SILNugetPackages Include="SIL.LCModel">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Build.Tasks">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>tools/net462/*.*</Path>
+			</SILNugetPackages>
+			<!-- Copy contentFiles with explicit patterns to preserve directory structure -->
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>contentFiles/KernelInterfaces/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>contentFiles/IcuData/data/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(SilLcmVersion)</Version>
+				<Path>contentFiles/IcuData/icudt70l/*.*</Path>
+			</SILNugetPackages>
+			<!-- Palaso contentFiles (irrKlang, Keyman interop, platform-specific files) -->
+			<SILNugetPackages Include="SIL.Media">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>build/**/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Media">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Archiving">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'!='x64'">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>build/Interop.WIA.dll</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'=='x64'">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>build/x64/Interop.WIA.dll</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Archiving">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>build/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding">
+				<Version>$(SilLibPalasoVersion)</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<!-- Enchant.Net contentFiles (native spell-checking binaries) -->
+			<SILNugetPackages Include="Enchant.Net">
+				<Version>1.4.3-beta0010</Version>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<!-- KeymanLegacyBundle (native interop DLLs) -->
+			<SILNugetPackages Include="KeymanLegacyBundle">
+				<Version>1.0.0</Version>
+				<Path>lib/*.*</Path>
+			</SILNugetPackages>
+			<!-- Chorus.App (contains Chorus.exe, an application entry point) -->
+			<SILNugetPackages Include="SIL.Chorus.App">
+				<Version>$(SilChorusVersion)</Version>
+				<Path>lib/net462/*.*</Path>
+			</SILNugetPackages>
+			<!-- SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj -->
+		</ItemGroup>
+	</Target>
+
+	<!-- ======================================================================================== -->
+	<!-- downloadDlls Target                                                                      -->
+	<!-- ======================================================================================== -->
+	<Target
+		Name="downloadDlls"
+		DependsOnTargets="RestorePackages;DefineNugetPackages"
+		Condition="'$(disableDownloads)'!='true'"
+	>
+		<MakeDir Directories="$(DownloadsDir)" />
+		<MakeDir Directories="$(DownloadsDir)/lib" />
+		<MakeDir Directories="$(DownloadsDir)/lib/x64" />
+		<MakeDir Directories="$(DownloadsDir)/lib/x86" />
+		<!-- Collect NuGet package files (must be done after DefineNugetPackages dependency) -->
+		<ItemGroup>
+			<SILNugetFiles Include="$(PackagesDir)/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
+		</ItemGroup>
+		<!-- TODO (Hasso) 2011.11: copy on Condition="'$(UseLocalLibraries)'!='Y'" -->
+		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads." />
+		<Copy
+			SourceFiles="@(SILNugetFiles)"
+			DestinationFolder="$(DownloadsDir)/%(RecursiveDir)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Message
+			Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)"
+			Condition="'$(UseLocalLibraries)'=='Y'"
+		/>
+		<!-- ExCss.dll is now provided by the SIL.ExCSS NuGet package (no TeamCity download needed). -->
+		<!-- GeckofxHtmlToPdf binaries downloaded from GitHub release (replaces decommissioned TeamCity server). -->
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/GeckofxHtmlToPdf.exe"
+			LocalFilename="GeckofxHtmlToPdf.exe"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
+		/>
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/GeckofxHtmlToPdf.exe.config"
+			LocalFilename="GeckofxHtmlToPdf.exe.config"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
+		/>
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/Args.dll"
+			LocalFilename="Args.dll"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/Args.dll')"
+		/>
+	</Target>
+
+	<!-- ======================================================================================== -->
+	<!-- Artifact Source Directories                                                               -->
+	<!-- ======================================================================================== -->
+	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
+	<PropertyGroup>
+		<PalasoArtifactsDir Condition="'$(PalasoArtifactsDir)'==''"
+			>$(DownloadsDir)</PalasoArtifactsDir
+		>
+		<ChorusArtifactsDir Condition="'$(ChorusArtifactsDir)'==''"
+			>$(DownloadsDir)</ChorusArtifactsDir
+		>
+		<!-- LCM Core artifacts (native interfaces, ICU data) from sil.lcmodel.core NuGet package -->
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'=='' AND '$(PkgSIL_LCModel_Core)'!=''"
+			>$(PkgSIL_LCModel_Core)/contentFiles</LcmArtifactsDir
+		>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''"
+			>$(PackagesDir)/sil.lcmodel.core/$(SilLcmVersion)/contentFiles</LcmArtifactsDir
+		>
+		<!-- LCM Model artifacts (MasterLCModel.xml, Styles.dtd, templates) from sil.lcmodel NuGet package -->
+		<LcmModelArtifactsDir Condition="'$(LcmModelArtifactsDir)'==''"
+			>$(PackagesDir)/sil.lcmodel/$(SilLcmVersion)/contentFiles</LcmModelArtifactsDir
+		>
+		<!-- LCM Build Tasks DLL from separate package -->
+		<LcmBuildTasksDir Condition="'$(LcmBuildTasksDir)'==''"
+			>$(PackagesDir)/sil.lcmodel.build.tasks/$(SilLcmVersion)/tools/net462</LcmBuildTasksDir
+		>
+	</PropertyGroup>
+	<!-- Item group for pre-populated binaries in Downloads/ that need copying to output.
+	     ExCss.dll is now provided by the SIL.ExCSS NuGet package.
+	     IPCFramework.dll, SIL.Machine.dll, Sandwych.Quickgraph.Core.dll, and
+	     SIL.Machine.Morphology.HermitCrab.dll are now provided by NuGet PackageReference. -->
+	<ItemGroup>
+		<!-- GeckofxHtmlToPdf dependency (shipped alongside FieldWorksPdfMaker.exe) -->
+		<DownloadedFiles
+			Include="$(DownloadsDir)/Args.dll"
+			Condition="Exists('$(DownloadsDir)/Args.dll')"
+		/>
+	</ItemGroup>
+
+	<!-- ======================================================================================== -->
+	<!-- CopyDlls Target                                                                          -->
+	<!-- ======================================================================================== -->
+	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
+		<!-- .Net assemblies -->
+		<Copy
+			SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="$(fwrt)/DistFiles/log4net.dll"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="$(fwrt)/Lib/Common/Interop.ResourceDriver.dll"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Windows dynamically loaded libraries (x64 only) -->
+		<Copy
+			SourceFiles="$(fwrt)/DistFiles/xample64.dll"
+			DestinationFiles="$(dir-outputBase)/xample.dll"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<!-- ICU libs - copy directly from NuGet packages (x64 only) -->
+		<Copy
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icudt.lib"
+			DestinationFolder="$(fwrt)/Lib"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<Copy
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icuin.lib"
+			DestinationFolder="$(fwrt)/Lib"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<Copy
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icuuc.lib"
+			DestinationFolder="$(fwrt)/Lib"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<!-- ICU headers - copy directly from NuGet package -->
+		<ItemGroup>
+			<IcuHeaders Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/include/unicode/*.h" />
+		</ItemGroup>
+		<!-- ICU sources -->
+		<Copy
+			Sourcefiles="@(IcuHeaders)"
+			DestinationFolder="$(fwrt)/Include/unicode"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86 - copy directly from NuGet packages -->
+		<ItemGroup>
+			<IcuFileSet32 Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/runtimes/win7-x86/native/icu*.dll" />
+			<IcuFileSet32 Include="$(PackagesDir)/icu4c.win.fw.bin/$(IcuNugetVersion)/build/win-x86/gennorm2.exe" />
+		</ItemGroup>
+		<ItemGroup>
+			<IcuFileSet64 Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/runtimes/win7-x64/native/icu*.dll" />
+			<IcuFileSet64 Include="$(PackagesDir)/icu4c.win.fw.bin/$(IcuNugetVersion)/build/win-x64/gennorm2.exe" />
+		</ItemGroup>
+		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
+		<Copy
+			SourceFiles="@(IcuFileSet32)"
+			DestinationFolder="$(dir-outputBase)/lib/x86"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<Copy
+			SourceFiles="@(IcuFileSet64)"
+			DestinationFolder="$(dir-outputBase)/lib/x64"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<!-- LCM data files and headers (from contentFiles, not auto-deployed by NuGet) -->
+		<!-- NOTE: LCM DLLs are now handled automatically by PackageReference -->
+		<Copy
+			SourceFiles="@(LcmOutputCommonFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(dir-fwoutputCommon)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="@(LcmFwKernelFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(fwrt)/Src/Kernel"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="@(LcmDistFiles -&gt; '$(LcmModelArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(fwrt)/DistFiles"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="@(LcmTemplatesFiles -&gt; '$(LcmModelArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(fwrt)/DistFiles/Templates"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="@(LcmIcuDataFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/data"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<Copy
+			SourceFiles="@(LcmIcuNrmFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Copy native/special-case artifacts that PackageReference doesn't handle automatically -->
+		<ItemGroup>
+			<ExistingPalasoFiles
+				Include="@(PalasoFiles)"
+				Condition="Exists('$(PalasoArtifactsDir)/%(Identity)')"
+			/>
+			<ExistingChorusFiles
+				Include="@(ChorusFiles)"
+				Condition="Exists('$(ChorusArtifactsDir)/%(Identity)')"
+			/>
+			<ExistingDownloadedFiles
+				Include="@(DownloadedFiles)"
+				Condition="Exists('%(Identity)')"
+			/>
+		</ItemGroup>
+		<!--
+			Expected Warning: "Missing Palaso native files"
+			These are Windows-only native interop DLLs for optional features:
+			- Keyman*Interop.dll, KeymanLink.dll: Keyman keyboard integration
+			- irrKlang.NET4.dll: Audio playback via irrKlang engine
+			- Interop.WIA.dll: Windows Image Acquisition for scanning
+			- NDesk.DBus.dll.config: Linux D-Bus configuration (not needed on Windows)
+
+			This warning is EXPECTED in CI environments where:
+			1. These optional native dependencies aren't installed
+			2. The NuGet packages don't include all platform-specific files
+			3. Full functionality requires a complete Windows development environment
+
+			The warning does NOT fail the build. Features using these DLLs will gracefully
+			degrade or show appropriate error messages at runtime if the files are missing.
+		-->
+		<Message
+			Text="Missing Palaso native files (skipping): @(PalasoFiles)"
+			Importance="low"
+			Condition="'@(ExistingPalasoFiles)'!='' AND '@(PalasoFiles)'!='@(ExistingPalasoFiles)'"
+		/>
+		<Message
+			Text="Missing Chorus application files (skipping): @(ChorusFiles)"
+			Importance="low"
+			Condition="'@(ExistingChorusFiles)'!='' AND '@(ChorusFiles)'!='@(ExistingChorusFiles)'"
+		/>
+		<!-- Copy native Keyman/irrKlang/Interop.WIA files from Palaso packages -->
+		<Copy
+			SourceFiles="@(ExistingPalasoFiles -&gt; '$(PalasoArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Copy Chorus.exe application -->
+		<Copy
+			SourceFiles="@(ExistingChorusFiles -&gt; '$(ChorusArtifactsDir)/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Copy pre-populated binaries (Args.dll for GeckofxHtmlToPdf) -->
+		<Copy
+			SourceFiles="@(ExistingDownloadedFiles)"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so its origin is clear in case a user needs to release it from antivirus quarantine -->
+		<!-- GeckofxHtmlToPdf must be built from https://github.com/sillsdev/geckofxHtmlToPdf and placed in Downloads/ -->
+		<Copy
+			SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe"
+			DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
+		/>
+		<Copy
+			SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe.config"
+			DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe.config"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
+		/>
+		<!-- Encoding Converters Files (x64 only) -->
+		<!-- Note: encoding-converters-core package doesn't follow standard NuGet runtime conventions
+		     (has extra EcDistFiles folder), so automatic runtime asset copying doesn't work.
+		     Manual copying required until package structure is fixed. -->
+		<Copy
+			SourceFiles="@(ECWindowsFiles -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/win-x64/native/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<Copy
+			SourceFiles="@(ECPlugins -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/redist/EC/Plugins/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)/EC/Plugins"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<!-- Native Geckofx package (complex multi-file layout requires manual copying) -->
+		<PropertyGroup>
+			<Architecture>64</Architecture>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'"
+				>$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir
+			>
+		</PropertyGroup>
+		<ItemGroup>
+			<!-- Geckofx native browser engine (managed wrapper + native XULRunner files) -->
+			<NuGottenFiles
+				Include="$(GeckoDir)/lib/net45/*.*"
+				Condition="'$(OS)'=='Windows_NT'"
+			/>
+			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*" />
+			<!-- NOTE: All other managed DLLs are now handled automatically by PackageReference.
+			     MSBuild's automatic assembly resolution copies them to the output directory.
+			     SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj. -->
+		</ItemGroup>
+		<Copy
+			SourceFiles="@(NuGottenFiles)"
+			DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+		/>
+	</Target>
+</Project>

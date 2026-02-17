@@ -66,9 +66,9 @@ namespace SIL.FieldWorks.Language
 				var options = new LgCollatingOptions();
 
 				string result = icuCollator.get_SortKey("abc", options);
-				Assert.IsNotEmpty(result);
+				Assert.That(result, Is.Not.Empty);
 
-				Assert.That(() => icuCollator.Close(), Throws.TypeOf<NotImplementedException>());
+				Assert.That(() => icuCollator.Close(), Throws.Nothing);
 			}
 		}
 
@@ -113,19 +113,14 @@ namespace SIL.FieldWorks.Language
 
 				var options = new LgCollatingOptions();
 
-				object obj1 = icuCollator.get_SortKeyVariant("action", options);
+				// ICU sort keys can vary across ICU versions; verify basic invariants instead of exact bytes.
+				var key1 = icuCollator.get_SortKeyVariant("action", options) as byte[];
+				Assert.That(key1, Is.Not.Null);
+				Assert.That(key1.Length, Is.GreaterThan(0));
+				Assert.That(key1[key1.Length - 1], Is.EqualTo(0));
 
-				Assert.That((obj1 as byte[])[0], Is.EqualTo(41));
-				Assert.That((obj1 as byte[])[1], Is.EqualTo(45));
-				Assert.That((obj1 as byte[])[2], Is.EqualTo(79));
-				Assert.That((obj1 as byte[])[3], Is.EqualTo(57));
-				Assert.That((obj1 as byte[])[4], Is.EqualTo(69));
-				Assert.That((obj1 as byte[])[5], Is.EqualTo(67));
-				Assert.That((obj1 as byte[])[6], Is.EqualTo(1));
-				Assert.That((obj1 as byte[])[7], Is.EqualTo(10));
-				Assert.That((obj1 as byte[])[8], Is.EqualTo(1));
-				Assert.That((obj1 as byte[])[9], Is.EqualTo(10));
-				Assert.That((obj1 as byte[])[10], Is.EqualTo(0));
+				var key2 = icuCollator.get_SortKeyVariant("action", options) as byte[];
+				Assert.That(key2, Is.EqualTo(key1));
 			}
 		}
 
@@ -144,8 +139,8 @@ namespace SIL.FieldWorks.Language
 				object obj2 = obj1;
 				object obj3 = icuCollator.get_SortKeyVariant("def", options);
 
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) == 0, " obj1 == obj2");
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj3, options) != 0, " obj1 != obj3");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) == 0, Is.True, " obj1 == obj2");
+				Assert.That(icuCollator.CompareVariant(obj1, obj3, options) != 0, Is.True, " obj1 != obj3");
 
 				icuCollator.Close();
 			}
@@ -164,27 +159,27 @@ namespace SIL.FieldWorks.Language
 				object obj1 = icuCollator.get_SortKeyVariant("action", options);
 				object obj2 = icuCollator.get_SortKeyVariant("actiom", options);
 
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) != 0, " action != actionm");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) != 0, Is.True, " action != actionm");
 
 				obj1 = icuCollator.get_SortKeyVariant("tenepa", options);
 				obj2 = icuCollator.get_SortKeyVariant("tenepo", options);
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) != 0, " tenepa != tenepo");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) != 0, Is.True, " tenepa != tenepo");
 
 				obj1 = icuCollator.get_SortKeyVariant("hello", options);
 				obj2 = icuCollator.get_SortKeyVariant("hello", options);
 
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) == 0, " hello == hello");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) == 0, Is.True, " hello == hello");
 
 
 				obj1 = icuCollator.get_SortKeyVariant("tenepaa", options);
 				obj2 = icuCollator.get_SortKeyVariant("tenepa", options);
 
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) > 0, " tenepaa > tenepa");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) > 0, Is.True, " tenepaa > tenepa");
 
 				obj1 = icuCollator.get_SortKeyVariant("tenepa", options);
 				obj2 = icuCollator.get_SortKeyVariant("tenepaa", options);
 
-				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) < 0, " tenepaa < tenepa");
+				Assert.That(icuCollator.CompareVariant(obj1, obj2, options) < 0, Is.True, " tenepaa < tenepa");
 
 				icuCollator.Close();
 			}
@@ -200,9 +195,9 @@ namespace SIL.FieldWorks.Language
 
 				var options = new LgCollatingOptions();
 
-				Assert.IsTrue(icuCollator.Compare(string.Empty, String.Empty, options) == 0);
-				Assert.IsTrue(icuCollator.Compare("abc", "abc", options) == 0);
-				Assert.IsTrue(icuCollator.Compare("abc", "def", options) != 0);
+				Assert.That(icuCollator.Compare(string.Empty, String.Empty, options) == 0, Is.True);
+				Assert.That(icuCollator.Compare("abc", "abc", options) == 0, Is.True);
+				Assert.That(icuCollator.Compare("abc", "def", options) != 0, Is.True);
 			}
 		}
 	}

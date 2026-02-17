@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion // Data Members
 		private ImageList imageList1;
-		private IContainer components;
+		private IContainer components = null;
 
 		#region Properties
 		protected Slice Slice

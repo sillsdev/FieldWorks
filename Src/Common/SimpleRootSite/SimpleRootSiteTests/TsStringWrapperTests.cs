@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			var tsString2 = strWrapper.GetTsString(wsFact);
 
-			Assert.AreEqual(tsString1.Text, tsString2.Text);
+			Assert.That(tsString2.Text, Is.EqualTo(tsString1.Text));
 		}
 	}
 }

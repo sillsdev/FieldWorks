@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Basic()
 		{
 			using (var window = new RealSplashScreen(false))
-				Assert.NotNull(window);
+				Assert.That(window, Is.Not.Null);
 		}
 
 		/// <summary>

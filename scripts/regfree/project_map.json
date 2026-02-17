@@ -1,0 +1,68 @@
+[
+  {
+    "Id": "FieldWorks",
+    "ProjectPath": "Src/Common/FieldWorks/FieldWorks.csproj",
+    "OutputPath": "Output/{configuration}/FieldWorks.exe",
+    "Priority": "P0"
+  },
+  {
+    "Id": "ComManifestTestHost",
+    "ProjectPath": "Src/Utilities/ComManifestTestHost/ComManifestTestHost.csproj",
+    "OutputPath": "Output/{configuration}/ComManifestTestHost.exe",
+    "Priority": "Test"
+  },
+  {
+    "Id": "LCMBrowser",
+    "ProjectPath": "Src/LCMBrowser/LCMBrowser.csproj",
+    "OutputPath": "Output/{configuration}/LCMBrowser.exe",
+    "Priority": "P1"
+  },
+  {
+    "Id": "UnicodeCharEditor",
+    "ProjectPath": "Src/UnicodeCharEditor/UnicodeCharEditor.csproj",
+    "OutputPath": "Output/{configuration}/UnicodeCharEditor.exe",
+    "Priority": "P1"
+  },
+  {
+    "Id": "MigrateSqlDbs",
+    "ProjectPath": "Src/MigrateSqlDbs/MigrateSqlDbs.csproj",
+    "OutputPath": "Output/{configuration}/MigrateSqlDbs.exe",
+    "Priority": "P2"
+  },
+  {
+    "Id": "FixFwData",
+    "ProjectPath": "Src/Utilities/FixFwData/FixFwData.csproj",
+    "OutputPath": "Output/{configuration}/FixFwData.exe",
+    "Priority": "P2"
+  },
+  {
+    "Id": "FxtExe",
+    "ProjectPath": "Src/FXT/FxtExe/FxtExe.csproj",
+    "OutputPath": "Output/{configuration}/FxtExe.exe",
+    "Priority": "P2"
+  },
+  {
+    "Id": "ConverterConsole",
+    "ProjectPath": "Lib/src/Converter/ConvertConsole/ConverterConsole.csproj",
+    "OutputPath": "Output/{configuration}/ConverterConsole.exe",
+    "Priority": "P3"
+  },
+  {
+    "Id": "Converter",
+    "ProjectPath": "Lib/src/Converter/Converter/Converter.csproj",
+    "OutputPath": "Output/{configuration}/Converter.exe",
+    "Priority": "P3"
+  },
+  {
+    "Id": "ConvertSFM",
+    "ProjectPath": "Src/Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj",
+    "OutputPath": "Output/{configuration}/ConvertSFM.exe",
+    "Priority": "P3"
+  },
+  {
+    "Id": "SfmStats",
+    "ProjectPath": "Src/Utilities/SfmStats/SfmStats.csproj",
+    "OutputPath": "Output/{configuration}/SfmStats.exe",
+    "Priority": "P3"
+  }
+]

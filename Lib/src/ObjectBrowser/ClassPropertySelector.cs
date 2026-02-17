@@ -10,10 +10,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
-namespace FDOBrowser
+namespace SIL.ObjectBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -45,7 +45,8 @@ namespace FDOBrowser
 		/// Initializes a new instance of the <see cref="ClassPropertySelector"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ClassPropertySelector(ICmObject obj)	: this()
+		public ClassPropertySelector(ICmObject obj)
+			: this()
 		{
 			if (obj == null)
 				return;
@@ -74,10 +75,15 @@ namespace FDOBrowser
 
 			foreach (FDOClassProperty prop in clsProps.Properties)
 			{
-				bool fIsDisplayedCmObjProp =
-					(m_showCmObjProps || !FDOClassList.IsCmObjectProperty(prop.Name));
+				bool fIsDisplayedCmObjProp = (
+					m_showCmObjProps || !FDOClassList.IsCmObjectProperty(prop.Name)
+				);
 
-				int i = gridProperties.Rows.Add(prop.Displayed && fIsDisplayedCmObjProp, prop.Name, prop);
+				int i = gridProperties.Rows.Add(
+					prop.Displayed && fIsDisplayedCmObjProp,
+					prop.Name,
+					prop
+				);
 				gridProperties.Rows[i].ReadOnly = !fIsDisplayedCmObjProp;
 			}
 
@@ -106,7 +112,10 @@ namespace FDOBrowser
 		/// Handles the CellFormatting event of the gridProperties control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void gridProperties_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void gridProperties_CellFormatting(
+			object sender,
+			DataGridViewCellFormattingEventArgs e
+		)
 		{
 			if (e.ColumnIndex == 1 && e.RowIndex >= 0 && !m_showCmObjProps)
 			{
@@ -122,7 +131,10 @@ namespace FDOBrowser
 		/// Handles the CellPainting event of the gridProperties control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void gridProperties_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		private void gridProperties_CellPainting(
+			object sender,
+			DataGridViewCellPaintingEventArgs e
+		)
 		{
 			DataGridViewPaintParts parts = e.PaintParts;
 			parts &= ~DataGridViewPaintParts.Focus;
@@ -139,8 +151,12 @@ namespace FDOBrowser
 		private void gridProperties_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			Point cell = gridProperties.CurrentCellAddress;
-			if (e.KeyChar == (char)Keys.Space && cell.X == 1 && cell.Y >= 0 &&
-				!gridProperties.Rows[cell.Y].ReadOnly)
+			if (
+				e.KeyChar == (char)Keys.Space
+				&& cell.X == 1
+				&& cell.Y >= 0
+				&& !gridProperties.Rows[cell.Y].ReadOnly
+			)
 			{
 				gridProperties[0, cell.Y].Value = !(bool)gridProperties[0, cell.Y].Value;
 			}

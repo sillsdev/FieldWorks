@@ -87,6 +87,15 @@ namespace FwBuildTasks
 				regex = new Regex("\\$BUILDNUMBER");
 				fileContents = regex.Replace(fileContents, buildNumber);
 
+				// Optional display label (used in informational version strings)
+				var buildLabel = Environment.GetEnvironmentVariable("FW_BUILD_LABEL");
+				if (string.IsNullOrEmpty(buildLabel))
+				{
+					buildLabel = buildNumber;
+				}
+				regex = new Regex("\\$BUILDLABEL");
+				fileContents = regex.Replace(fileContents, buildLabel);
+
 				// If BASE_BUILD_NUMBER is set, this is a patch build: use BASE_BUILD_NUMBER;
 				// otherwise, this is a base build: use buildNumber
 				var baseBuildNumber = Environment.GetEnvironmentVariable("BASE_BUILD_NUMBER");

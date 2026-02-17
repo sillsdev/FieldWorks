@@ -27,7 +27,7 @@ using WordAnalysis = Paratext.LexicalContracts.WordAnalysis;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange, LexiconV2, WordAnalysesV2
+	internal class FdoLexicon : DisposableBase, Paratext.LexicalContracts.Lexicon, WordAnalyses, IVwNotifyChange, LexiconV2, WordAnalysesV2
 	{
 		internal const string AddedByParatext = "Added by Paratext";
 		private IParser m_parser;

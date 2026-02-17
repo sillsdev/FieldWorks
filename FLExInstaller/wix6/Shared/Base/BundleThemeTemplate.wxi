@@ -1,0 +1,11 @@
+  <!-- Background template: Header (dark blue) + Body (white) -->
+  <ImageControl Name="WindowBg_$(var.TemplatePageName)" X="0" Y="0" Width="-1" Height="-1" ImageFile="bg.png" />
+  <ImageControl Name="HeaderBg_$(var.TemplatePageName)" X="0" Y="0" Width="-1" Height="146" ImageFile="header-bg.png" />
+
+  <!-- Use the staged/flat-named logo payload (see StageBundlePayloads) -->
+  <ImageControl Name="Logo_$(var.TemplatePageName)" X="82" Y="23" Width="163" Height="93" ImageFile="fw-logo.png" />
+
+    <!-- Text for "Language Software Development" (to the right of the logo) -->
+    <Label Name="LangDev1_$(var.TemplatePageName)" X="270" Y="32" Width="200" Height="26" FontId="$(var.FontHeader)" Visible="yes">Language</Label>
+    <Label Name="LangDev2_$(var.TemplatePageName)" X="270" Y="57" Width="200" Height="26" FontId="$(var.FontHeader)" Visible="yes">Software</Label>
+    <Label Name="LangDev3_$(var.TemplatePageName)" X="270" Y="82" Width="200" Height="26" FontId="$(var.FontHeader)" Visible="yes">Development</Label>

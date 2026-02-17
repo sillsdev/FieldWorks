@@ -327,8 +327,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
-			Assert.True(result.DocBody.OuterXml.Contains("Gloss[lang=en]"));
-			Assert.True(result.DocBody.OuterXml.Contains("Gloss2[lang=en]"));
+			Assert.That(result.DocBody.OuterXml.Contains("Gloss[lang=en]"), Is.True);
+			Assert.That(result.DocBody.OuterXml.Contains("Gloss2[lang=en]"), Is.True);
 		}
 
 		[Test]
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			// 3. Sense number:					2
 			// 4. Sense number after text:		AFT
 			const string senseNumberTwoRun = "<w:t xml:space=\"preserve\">BEF</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number-Context[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
-			Assert.True(result.DocBody.OuterXml.Contains(senseNumberTwoRun));
+			Assert.That(result.DocBody.OuterXml.Contains(senseNumberTwoRun), Is.True);
 		}
 
 		[Test]
@@ -443,32 +443,32 @@ namespace SIL.FieldWorks.XWorks
 			// Before text 'BE1' is before sense number '1' for 'gloss'.
 			const string beforeFirstSense =
 				"<w:t xml:space=\"preserve\">BE1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
-			Assert.True(outXml.Contains(beforeFirstSense));
+			Assert.That(outXml.Contains(beforeFirstSense), Is.True);
 
 			// Between text 'TW1' is before sense number '2' for 'second gloss'.
 			const string betweenSenses =
 				"<w:t xml:space=\"preserve\">TW1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss</w:t>";
-			Assert.True(outXml.Contains(betweenSenses));
+			Assert.That(outXml.Contains(betweenSenses), Is.True);
 
 			// Before text 'BE2' is before sense number '2' for 'second gloss2.1'.
 			const string beforeFirstSubSense =
 				"<w:t xml:space=\"preserve\">BE2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.1</w:t>";
-			Assert.True(outXml.Contains(beforeFirstSubSense));
+			Assert.That(outXml.Contains(beforeFirstSubSense), Is.True);
 
 			// Between text 'TW2' is before sense number '2' for 'second gloss2.2'.
 			const string betweenSubSenses =
 				"<w:t xml:space=\"preserve\">TW2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.2</w:t>";
-			Assert.True(outXml.Contains(betweenSubSenses));
+			Assert.That(outXml.Contains(betweenSubSenses), Is.True);
 
 			// After text 'AF2' is after 'second gloss2.2'.
 			const string afterSubSenses =
 				"<w:t xml:space=\"preserve\">second gloss2.2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"SensesOS-Context\" /></w:rPr><w:t xml:space=\"preserve\">AF2</w:t>";
-			Assert.True(outXml.Contains(afterSubSenses));
+			Assert.That(outXml.Contains(afterSubSenses), Is.True);
 
 			// After text 'AF1' is after 'AF2'.
 			const string afterSenses =
 				"<w:t xml:space=\"preserve\">AF2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"SensesOS-Context2\" /></w:rPr><w:t xml:space=\"preserve\">AF1</w:t>";
-			Assert.True(outXml.Contains(afterSenses));
+			Assert.That(outXml.Contains(afterSenses), Is.True);
 		}
 
 		[Test]
@@ -525,17 +525,17 @@ namespace SIL.FieldWorks.XWorks
 			// Before text 'BE3' is after the sense number '1' and before the english abbreviation, which is before 'gloss'.
 			const string beforeAbbreviation =
 				"<w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss-Context\" /></w:rPr><w:t xml:space=\"preserve\">BE3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">Eng </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
-			Assert.True(outXml.Contains(beforeAbbreviation));
+			Assert.That(outXml.Contains(beforeAbbreviation), Is.True);
 
 			// Between text 'TW3' is before the french abbreviation, which is before 'glossFR'.
 			const string betweenAbbreviation =
 				"<w:t xml:space=\"preserve\">TW3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation[lang=fr]\" /></w:rPr><w:t xml:space=\"preserve\">Fre </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=fr]\" /></w:rPr><w:t xml:space=\"preserve\">glossFR</w:t>";
-			Assert.True(outXml.Contains(betweenAbbreviation));
+			Assert.That(outXml.Contains(betweenAbbreviation), Is.True);
 
 			// After text 'AF3' is after 'glossFR'.
 			const string afterAbbreviation =
 				"<w:t xml:space=\"preserve\">glossFR</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss-Context\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
-			Assert.True(outXml.Contains(afterAbbreviation));
+			Assert.That(outXml.Contains(afterAbbreviation), Is.True);
 		}
 
 		[Test]
@@ -580,10 +580,10 @@ namespace SIL.FieldWorks.XWorks
 
 			// The property before text 'BE4' is first, followed by the style that is applied to the property, 'DisplayNameBase'.
 			const string beforeAndStyle = "<w:t xml:space=\"preserve\">BE4</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"DisplayNameBase[lang=en]\" /></w:rPr>";
-			Assert.True(outXml.Contains(beforeAndStyle));
+			Assert.That(outXml.Contains(beforeAndStyle), Is.True);
 
 			// The property after text 'AF4' was written.
-			Assert.True(outXml.Contains("AF4"));
+			Assert.That(outXml.Contains("AF4"), Is.True);
 		}
 		[Test]
 		public void EmbeddedStylesHaveNoExtraSpace()
@@ -688,8 +688,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			// Assert that the references to the paragraph styles use the display names, not the style names.
-			Assert.True(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName));
-			Assert.True(result.DocBody.OuterXml.Contains(SensesParagraphDisplayName));
+			Assert.That(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName), Is.True);
+			Assert.That(result.DocBody.OuterXml.Contains(SensesParagraphDisplayName), Is.True);
 		}
 
 		[Test]
@@ -823,23 +823,23 @@ namespace SIL.FieldWorks.XWorks
 			if (count1 == 2)
 			{
 				bulletId = 1;
-				Assert.True(count2 == 1 && count3 == 1);
+				Assert.That(count2 == 1 && count3 == 1, Is.True);
 			}
 			else if (count2 == 2)
 			{
 				bulletId = 2;
-				Assert.True(count1 == 1 && count3 == 1);
+				Assert.That(count1 == 1 && count3 == 1, Is.True);
 			}
 			else if (count3 == 2)
 			{
 				bulletId = 3;
-				Assert.True(count1 == 1 && count2 == 1);
+				Assert.That(count1 == 1 && count2 == 1, Is.True);
 			}
-			Assert.True(bulletId != 0);
+			Assert.That(bulletId != 0, Is.True);
 
 			// Make sure both instances of the bulletId are associated with the bullet style.
 			string bulletStyleStr = "w:pStyle w:val=\"Bullet Display Name\" /><w:numPr><w:ilvl w:val=\"0\" /><w:numId w:val=\"" + bulletId;
-			Assert.True(Regex.Matches(resultStr, bulletStyleStr).Count == 2);
+			Assert.That(Regex.Matches(resultStr, bulletStyleStr).Count == 2, Is.True);
 		}
 
 		[Test]
@@ -894,7 +894,7 @@ namespace SIL.FieldWorks.XWorks
 				WordNamespaceManager);
 
 			// Assert that the continuation paragraph uses the continuation style.
-			Assert.True(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue));
+			Assert.That(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue), Is.True);
 		}
 
 		[Test]
@@ -929,7 +929,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			string firstHeadwordStyle = LcmWordGenerator.GetFirstGuidewordStyle(result, DictionaryConfigurationModel.ConfigType.Root);
 
-			Assert.True(firstHeadwordStyle == "Headword[lang=en]");
+			Assert.That(firstHeadwordStyle == "Headword[lang=en]", Is.True);
 		}
 		private ITsString MakeMuliStyleTss(IEnumerable<string> content)
 		{

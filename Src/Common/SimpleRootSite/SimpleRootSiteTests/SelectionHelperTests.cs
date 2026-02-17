@@ -119,31 +119,22 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			bool fAssocPrev, int nLevels, int tag1, int cpropPrev1, int ihvo1, int tag0,
 			int cpropPrev0, int ihvo0)
 		{
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection not visible");
-			Assert.AreEqual(ihvoRoot, selectionHelper.GetIhvoRoot(type), "ihvoRoot differs");
-			Assert.AreEqual(nPrevProps, selectionHelper.GetNumberOfPreviousProps(type),
-				"nPrevProps differs");
-			Assert.AreEqual(ich, selectionHelper.GetIch(type), "ich differs");
-			Assert.AreEqual(nWs, selectionHelper.GetWritingSystem(type), "ws differs");
-			Assert.AreEqual(fAssocPrev, selectionHelper.GetAssocPrev(type),
-				"fAssocPrev differs");
-			Assert.AreEqual(nLevels, selectionHelper.GetNumberOfLevels(type),
-				"Number of levels differs");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection not visible");
+			Assert.That(selectionHelper.GetIhvoRoot(type), Is.EqualTo(ihvoRoot), "ihvoRoot differs");
+			Assert.That(selectionHelper.GetNumberOfPreviousProps(type), Is.EqualTo(nPrevProps), "nPrevProps differs");
+			Assert.That(selectionHelper.GetIch(type), Is.EqualTo(ich), "ich differs");
+			Assert.That(selectionHelper.GetWritingSystem(type), Is.EqualTo(nWs), "ws differs");
+			Assert.That(selectionHelper.GetAssocPrev(type), Is.EqualTo(fAssocPrev), "fAssocPrev differs");
+			Assert.That(selectionHelper.GetNumberOfLevels(type), Is.EqualTo(nLevels), "Number of levels differs");
 			if (nLevels >= 2)
 			{
-				Assert.AreEqual(tag1, selectionHelper.GetLevelInfo(type)[1].tag,
-					"tag (level 1) differs");
-				Assert.AreEqual(cpropPrev1, selectionHelper.GetLevelInfo(type)[1].cpropPrevious,
-					"cpropPrev (level 1) differs");
-				Assert.AreEqual(ihvo1, selectionHelper.GetLevelInfo(type)[1].ihvo,
-					"ihvo (level 1) differs");
+				Assert.That(selectionHelper.GetLevelInfo(type)[1].tag, Is.EqualTo(tag1), "tag (level 1) differs");
+				Assert.That(selectionHelper.GetLevelInfo(type)[1].cpropPrevious, Is.EqualTo(cpropPrev1), "cpropPrev (level 1) differs");
+				Assert.That(selectionHelper.GetLevelInfo(type)[1].ihvo, Is.EqualTo(ihvo1), "ihvo (level 1) differs");
 			}
-			Assert.AreEqual(tag0, selectionHelper.GetLevelInfo(type)[0].tag,
-				"tag (level 0) differs");
-			Assert.AreEqual(cpropPrev0, selectionHelper.GetLevelInfo(type)[0].cpropPrevious,
-				"cpropPrev (level 0) differs");
-			Assert.AreEqual(ihvo0, selectionHelper.GetLevelInfo(type)[0].ihvo,
-				"ihvo (level 0) differs");
+			Assert.That(selectionHelper.GetLevelInfo(type)[0].tag, Is.EqualTo(tag0), "tag (level 0) differs");
+			Assert.That(selectionHelper.GetLevelInfo(type)[0].cpropPrevious, Is.EqualTo(cpropPrev0), "cpropPrev (level 0) differs");
+			Assert.That(selectionHelper.GetLevelInfo(type)[0].ihvo, Is.EqualTo(ihvo0), "ihvo (level 0) differs");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -229,29 +220,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// ------------------------------------------------------------------------------------
 		protected void AssertSameAnchorAndEnd(SelectionHelper selHelper)
 		{
-			Assert.AreEqual(selHelper.IchAnchor, selHelper.IchEnd,
-				"Selection spans multiple characters");
-			Assert.AreEqual(selHelper.GetIhvoRoot(SelectionHelper.SelLimitType.Anchor),
-				selHelper.GetIhvoRoot(SelectionHelper.SelLimitType.End),
-				"Different root objects for anchor and end");
-			Assert.AreEqual(
-				selHelper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor),
-				selHelper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End),
-				"Different number of previous props for anchor and end");
-			Assert.AreEqual(
-				selHelper.GetAssocPrev(SelectionHelper.SelLimitType.Anchor),
-				selHelper.GetAssocPrev(SelectionHelper.SelLimitType.End),
-				"Different association with previous character");
-			Assert.AreEqual(
-				selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.Anchor),
-				selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End),
-				"Different number of levels");
-			Assert.AreEqual(
-				selHelper.GetWritingSystem(SelectionHelper.SelLimitType.Anchor),
-				selHelper.GetWritingSystem(SelectionHelper.SelLimitType.End),
-				"Different writing system");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null),
-				"Selection not visible");
+			Assert.That(selHelper.IchEnd, Is.EqualTo(selHelper.IchAnchor), "Selection spans multiple characters");
+			Assert.That(selHelper.GetIhvoRoot(SelectionHelper.SelLimitType.End), Is.EqualTo(selHelper.GetIhvoRoot(SelectionHelper.SelLimitType.Anchor)), "Different root objects for anchor and end");
+			Assert.That(selHelper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End), Is.EqualTo(selHelper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor)), "Different number of previous props for anchor and end");
+			Assert.That(selHelper.GetAssocPrev(SelectionHelper.SelLimitType.End), Is.EqualTo(selHelper.GetAssocPrev(SelectionHelper.SelLimitType.Anchor)), "Different association with previous character");
+			Assert.That(selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End), Is.EqualTo(selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.Anchor)), "Different number of levels");
+			Assert.That(selHelper.GetWritingSystem(SelectionHelper.SelLimitType.End), Is.EqualTo(selHelper.GetWritingSystem(SelectionHelper.SelLimitType.Anchor)), "Different writing system");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection not visible");
 		}
 	}
 	#endregion
@@ -306,17 +281,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null,
 				m_basicView);
 
-			Assert.AreEqual(2, selectionHelper.NumberOfLevels);
-			Assert.AreEqual(0, selectionHelper.IhvoRoot);
-			Assert.AreEqual(0, selectionHelper.NumberOfPreviousProps);
-			Assert.AreEqual(0, selectionHelper.IchAnchor);
-			Assert.AreEqual(0, selectionHelper.IchEnd);
-			Assert.AreEqual(0, selectionHelper.Ws);
-			Assert.AreEqual(false, selectionHelper.AssocPrev);
-			//Assert.AreEqual(-1, selectionHelper.IhvoEndPara);
-			Assert.AreEqual(SimpleRootsiteTestsConstants.kflidDocFootnotes, selectionHelper.LevelInfo[1].tag);
-			Assert.AreEqual(0, selectionHelper.LevelInfo[1].cpropPrevious);
-			Assert.AreEqual(0, selectionHelper.LevelInfo[1].ihvo);
+			Assert.That(selectionHelper.NumberOfLevels, Is.EqualTo(2));
+			Assert.That(selectionHelper.IhvoRoot, Is.EqualTo(0));
+			Assert.That(selectionHelper.NumberOfPreviousProps, Is.EqualTo(0));
+			Assert.That(selectionHelper.IchAnchor, Is.EqualTo(0));
+			Assert.That(selectionHelper.IchEnd, Is.EqualTo(0));
+			Assert.That(selectionHelper.Ws, Is.EqualTo(0));
+			Assert.That(selectionHelper.AssocPrev, Is.EqualTo(false));
+			//Assert.That(selectionHelper.IhvoEndPara, Is.EqualTo(-1));
+			Assert.That(selectionHelper.LevelInfo[1].tag, Is.EqualTo(SimpleRootsiteTestsConstants.kflidDocFootnotes));
+			Assert.That(selectionHelper.LevelInfo[1].cpropPrevious, Is.EqualTo(0));
+			Assert.That(selectionHelper.LevelInfo[1].ihvo, Is.EqualTo(0));
 
 		}
 		#endregion
@@ -385,7 +360,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
@@ -415,7 +390,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
@@ -436,7 +411,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void GetFirstWsOfSelection_NullSel()
 		{
-			Assert.AreEqual(0, SelectionHelper.GetFirstWsOfSelection(null));
+			Assert.That(SelectionHelper.GetFirstWsOfSelection(null), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -451,15 +426,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			IVwSelection vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
 			int ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			Assert.AreEqual(m_wsEng, ws);
+			Assert.That(ws, Is.EqualTo(m_wsEng));
 
 			vwsel = MakeSelection(0, 2, 0, 0, 0, 3);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			Assert.AreEqual(m_wsFrn, ws);
+			Assert.That(ws, Is.EqualTo(m_wsFrn));
 
 			vwsel = MakeSelection(0, 4, 0, 0, 0, 3);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			Assert.AreEqual(m_wsUser, ws);		// was 0 in the past.
+			Assert.That(ws, Is.EqualTo(m_wsUser));		// was 0 in the past.
 
 			// now try a selection that spans multiple writing systems
 			IVwSelection vwselEng = MakeSelection(0, 1, 1, 0, 0, 0);
@@ -468,12 +443,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// first try with anchor in English paragraph
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			Assert.AreEqual(m_wsEng, ws);
+			Assert.That(ws, Is.EqualTo(m_wsEng));
 
 			// then with anchor in French paragraph
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
-			Assert.AreEqual(m_wsEng, ws);
+			Assert.That(ws, Is.EqualTo(m_wsEng));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -484,7 +459,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void GetWsOfEntireSelection_NullSel()
 		{
-			Assert.AreEqual(0, SelectionHelper.GetWsOfEntireSelection(null));
+			Assert.That(SelectionHelper.GetWsOfEntireSelection(null), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -501,7 +476,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper helper = SelectionHelper.Create(m_basicView);
 			helper.AssocPrev = true;
 			int ws = SelectionHelper.GetWsOfEntireSelection(helper.Selection);
-			Assert.AreEqual(m_wsEng, ws);
+			Assert.That(ws, Is.EqualTo(m_wsEng));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -519,7 +494,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			helper.AssocPrev = false;
 			vwsel = helper.SetSelection(false);
 			int ws = SelectionHelper.GetWsOfEntireSelection(vwsel);
-			Assert.AreEqual(m_wsDeu, ws);
+			Assert.That(ws, Is.EqualTo(m_wsDeu));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -534,7 +509,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			IVwSelection vwsel = MakeSelection(0, 0, 0, 0, 0, 9);
 			int ws = SelectionHelper.GetWsOfEntireSelection(vwsel);
-			Assert.AreEqual(0, ws, "GetWsOfEntireSelection should return 0 when multiple writing systems in selection");
+			Assert.That(ws, Is.EqualTo(0), "GetWsOfEntireSelection should return 0 when multiple writing systems in selection");
 		}
 		#endregion
 
@@ -556,28 +531,28 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
 			SelectionHelper selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.End, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the anchor
 			vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Anchor, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top (same as anchor)
 			vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Top, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom (same as end)
 			vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Bottom, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// now try a selection that spans multiple writing systems
@@ -588,28 +563,28 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Anchor, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the end
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.End, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Top, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Bottom, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// now test with reverse selection made from bottom to top
@@ -617,28 +592,28 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Anchor, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the end
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.End, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Top, true);
-			Assert.AreEqual(0, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(0));
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom
 			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView,
 				SelectionHelper.SelLimitType.Bottom, true);
-			Assert.AreEqual(3, selHelper.IchAnchor);
+			Assert.That(selHelper.IchAnchor, Is.EqualTo(3));
 			AssertSameAnchorAndEnd(selHelper);
 		}
 		#endregion
@@ -666,9 +641,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			// Verify results
 			DummySelectionHelper newSelection = new DummySelectionHelper(null, m_basicView);
-			Assert.IsTrue(fRet);
-			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(0, m_basicView.ScrollPosition.Y);
+			Assert.That(fRet, Is.True);
+			Assert.That(newSelection.IPTopY, Is.EqualTo(dyIpTopOri));
+			Assert.That(m_basicView.ScrollPosition.Y, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -696,9 +671,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			// Verify results
 			DummySelectionHelper newSelection = DummySelectionHelper.Create(m_basicView);
-			Assert.IsTrue(fRet);
-			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(yScrollOri, m_basicView.ScrollPosition.Y);
+			Assert.That(fRet, Is.True);
+			Assert.That(newSelection.IPTopY, Is.EqualTo(dyIpTopOri));
+			Assert.That(m_basicView.ScrollPosition.Y, Is.EqualTo(yScrollOri));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -727,9 +702,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			// Verify results
 			DummySelectionHelper newSelection = new DummySelectionHelper(null, m_basicView);
-			Assert.IsTrue(fRet);
-			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(yScrollOri, m_basicView.ScrollPosition.Y);
+			Assert.That(fRet, Is.True);
+			Assert.That(newSelection.IPTopY, Is.EqualTo(dyIpTopOri));
+			Assert.That(m_basicView.ScrollPosition.Y, Is.EqualTo(yScrollOri));
 		}
 		#endregion
 
@@ -803,8 +778,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(2, newSel.IchAnchor);
-			Assert.AreEqual(2, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(2));
+			Assert.That(newSel.IchEnd, Is.EqualTo(2));
 
 		}
 
@@ -825,8 +800,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			int nExpected = SimpleBasicView.kSecondParaEng.Length;
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(nExpected, newSel.IchAnchor);
-			Assert.AreEqual(nExpected, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(nExpected));
+			Assert.That(newSel.IchEnd, Is.EqualTo(nExpected));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -845,8 +820,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(0, newSel.IchAnchor);
-			Assert.AreEqual(0, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(0));
+			Assert.That(newSel.IchEnd, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -865,8 +840,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(2, newSel.IchAnchor);
-			Assert.AreEqual(5, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(2));
+			Assert.That(newSel.IchEnd, Is.EqualTo(5));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -885,8 +860,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(3, newSel.IchAnchor);
-			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(3));
+			Assert.That(newSel.IchEnd, Is.EqualTo(SimpleBasicView.kSecondParaEng.Length));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -905,8 +880,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(5, newSel.IchAnchor);
-			Assert.AreEqual(4, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(5));
+			Assert.That(newSel.IchEnd, Is.EqualTo(4));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -925,8 +900,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchAnchor);
-			Assert.AreEqual(2, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(SimpleBasicView.kSecondParaEng.Length));
+			Assert.That(newSel.IchEnd, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1099,8 +1074,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(3, newSel.IchAnchor);
-			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(3));
+			Assert.That(newSel.IchEnd, Is.EqualTo(SimpleBasicView.kSecondParaEng.Length));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1119,8 +1094,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchAnchor);
-			Assert.AreEqual(2, newSel.IchEnd);
+			Assert.That(newSel.IchAnchor, Is.EqualTo(SimpleBasicView.kSecondParaEng.Length));
+			Assert.That(newSel.IchEnd, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------

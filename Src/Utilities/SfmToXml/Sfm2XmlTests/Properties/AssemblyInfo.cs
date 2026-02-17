@@ -5,13 +5,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+// Only AssemblyTitle and Guid are kept here - other attributes come from CommonAssemblyInfo.cs
 [assembly: AssemblyTitle("Sfm2XmlTests")]
-[assembly: AssemblyProduct("Sfm2XmlTests")]
-[assembly: AssemblyCopyright("Copyright © 2017 SIL International")]
-
-[assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("2d5aa481-d5c5-45b8-9a6f-32164086c035")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]

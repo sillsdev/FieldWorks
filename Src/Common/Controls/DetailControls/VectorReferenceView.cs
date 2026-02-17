@@ -49,8 +49,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		internal XmlNode ConfigurationNode { get; set; }
 
-		private string m_textStyle;
-
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>

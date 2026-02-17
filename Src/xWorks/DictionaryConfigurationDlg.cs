@@ -41,6 +41,17 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = propertyTable;
 			InitializeComponent();
 
+			// Validate that Gecko browser is available - this dialog requires GeckoWebBrowser for preview functionality
+			if (!(m_preview.NativeBrowser is GeckoWebBrowser))
+			{
+				var browserType = m_preview.NativeBrowser?.GetType().FullName ?? "null";
+				throw new InvalidOperationException(
+					$"DictionaryConfigurationDlg requires GeckoWebBrowser but got {browserType}. " +
+					"This usually indicates XulRunner/Firefox failed to initialize. " +
+					"Ensure the Firefox or Firefox64 folder exists in the application directory and contains valid GeckoFx binaries. " +
+					$"Xpcom.IsInitialized={Xpcom.IsInitialized}");
+			}
+
 			m_preview.Dock = DockStyle.Fill;
 			m_preview.Location = new Point(0, 0);
 			previewDetailSplit.Panel1.Controls.Add(m_preview);
@@ -120,7 +131,12 @@ namespace SIL.FieldWorks.XWorks
 					// Since we are handling this delayed the dialog may have been closed before we get around to it
 					if(!m_preview.IsDisposed)
 					{
-						var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+						if (!(m_preview.NativeBrowser is GeckoWebBrowser browser))
+						{
+							throw new InvalidOperationException(
+								$"DictionaryConfigurationDlg requires GeckoWebBrowser but got {m_preview.NativeBrowser?.GetType().FullName ?? "null"}. " +
+								"Ensure XulRunner/Firefox is properly installed in the application directory.");
+						}
 						// Workaround to prevent the Gecko browser from stealing focus each time we set the PreviewData
 						browser.WebBrowserFocus.Deactivate();
 						// The second parameter is used only if the string data in the first parameter is unusable,
@@ -188,7 +204,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (configNode == null)
 				return;
-			var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
+			// Require GeckoWebBrowser for highlighting functionality
+			if (!(m_preview.NativeBrowser is GeckoWebBrowser browser))
+			{
+				throw new InvalidOperationException(
+					$"DictionaryConfigurationDlg requires GeckoWebBrowser but got {m_preview.NativeBrowser?.GetType().FullName ?? "null"}. " +
+					"Ensure XulRunner/Firefox is properly installed in the application directory.");
+			}
 			// Surprisingly, xpath does not work for xml documents in geckofx, so we need to search manually for the node we want.
 			_highlightedElements = FindConfiguredItem(configNode, browser, cache);
 			foreach (var element in _highlightedElements)

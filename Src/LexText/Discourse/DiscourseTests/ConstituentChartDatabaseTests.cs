@@ -54,9 +54,9 @@ namespace SIL.FieldWorks.Discourse
 			out ChartLocation precCell, out ChartLocation follCell)
 		{
 			var iPara = m_ccl.CallGetParaIndexForOccurrence(occurrence);
-			Assert.Greater(iPara, -1, "Can't get ChOrph paragraph index.");
+			Assert.That(iPara, Is.GreaterThan(-1), "Can't get ChOrph paragraph index.");
 			var offset = occurrence.GetMyBeginOffsetInPara();
-			Assert.Greater(offset, -1, "Can't get ChOrph offset.");
+			Assert.That(offset, Is.GreaterThan(-1), "Can't get ChOrph offset.");
 			m_ccl.GetWordGroupCellsBorderingChOrph(iPara, offset, out precCell, out follCell);
 		}
 
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Discourse
 		public void NextUnusedInEmptyText()
 		{
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(0, result.Length);
+			Assert.That(result.Length, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			MakeParagraphSpecificContent("");
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(0, result.Length);
+			Assert.That(result.Length, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Discourse
 			var para = MakeParagraphSpecificContent("flabbergast");
 			var firstWord = new AnalysisOccurrence(para.SegmentsOS[0], 0);
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(new [] { firstWord }, result);
+			Assert.That(result, Is.EqualTo(new [] { firstWord }));
 		}
 
 		/// <summary>
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.Discourse
 			var row = m_helper.MakeFirstRow();
 			var wordGrp = m_helper.MakeWordGroup(row, 0, firstWord, firstWord);
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(0, result.Length);
+			Assert.That(result.Length, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Discourse
 								new AnalysisOccurrence(seg, 2)
 							};
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(expected, result);
+			Assert.That(result, Is.EqualTo(expected));
 		}
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Discourse
 							};
 			// SUT
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(expected, result);
+			Assert.That(result, Is.EqualTo(expected));
 		}
 
 		/// <summary>
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Discourse
 			MakeWordGroup(row0, 1, new AnalysisOccurrence(seg, 2), new AnalysisOccurrence(seg, 2));
 			MakeWordGroup(row1, 0, new AnalysisOccurrence(seg, 3), new AnalysisOccurrence(seg, 4));
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(new AnalysisOccurrence[0], result);
+			Assert.That(result, Is.EqualTo(new AnalysisOccurrence[0]));
 		}
 
 		/// <summary>
@@ -245,13 +245,13 @@ namespace SIL.FieldWorks.Discourse
 							};
 			// SUT
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
-			Assert.AreEqual(expected.ToArray(), result);
+			Assert.That(result, Is.EqualTo(expected.ToArray()));
 
 			// OK, two things in this test :-)
 			expected.RemoveRange(7, 2);
 			// SUT2
 			var result2 = m_ccl.NextUnchartedInput(7);
-			Assert.AreEqual(expected.ToArray(), result2, "length limit failed");
+			Assert.That(result2, Is.EqualTo(expected.ToArray()), "length limit failed");
 		}
 
 		/// <summary>
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 
 			// Verification
-			Assert.AreEqual(expected.ToArray(), result);
+			Assert.That(result, Is.EqualTo(expected.ToArray()));
 		}
 
 		/// <summary>
@@ -334,7 +334,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 
 			// Verification
-			Assert.AreEqual(new AnalysisOccurrence[0], result);
+			Assert.That(result, Is.EqualTo(new AnalysisOccurrence[0]));
 		}
 
 		/// <summary>
@@ -423,11 +423,9 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w1);
 
 			// Verification
-			Assert.IsNotNull(result,
-				"We should return a valid location.");
-			Assert.IsTrue(result.IsValidLocation,
-				"We should return a valid location.");
-			Assert.IsTrue(result.IsSameLocation(new ChartLocation(row1, 0)));
+			Assert.That(result, Is.Not.Null, "We should return a valid location.");
+			Assert.That(result.IsValidLocation, Is.True, "We should return a valid location.");
+			Assert.That(result.IsSameLocation(new ChartLocation(row1, 0)), Is.True);
 		}
 
 		/// <summary>
@@ -460,12 +458,9 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w0);
 
 			// Verification
-			Assert.IsNotNull(result,
-				"We should return a valid location (i.e. chart beginning).");
-			Assert.AreEqual(row.Hvo, result.HvoRow,
-				"We should return chart beginning (i.e. the first row).");
-			Assert.AreEqual(0, result.ColIndex,
-				"We should return chart beginning (i.e. column zero).");
+			Assert.That(result, Is.Not.Null, "We should return a valid location (i.e. chart beginning).");
+			Assert.That(result.HvoRow, Is.EqualTo(row.Hvo), "We should return chart beginning (i.e. the first row).");
+			Assert.That(result.ColIndex, Is.EqualTo(0), "We should return chart beginning (i.e. column zero).");
 		}
 
 		/// <summary>
@@ -500,12 +495,9 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w2);
 
 			// Verification (s/b Row2, iCol==1)
-			Assert.IsNotNull(result,
-				"We should return a valid location (i.e. Row2, iCol==1).");
-			Assert.AreEqual(row2.Hvo, result.HvoRow,
-				"We should return a valid location (i.e. Row2).");
-			Assert.AreEqual(1, result.ColIndex,
-				"We should return a valid location (i.e. 2nd column).");
+			Assert.That(result, Is.Not.Null, "We should return a valid location (i.e. Row2, iCol==1).");
+			Assert.That(result.HvoRow, Is.EqualTo(row2.Hvo), "We should return a valid location (i.e. Row2).");
+			Assert.That(result.ColIndex, Is.EqualTo(1), "We should return a valid location (i.e. 2nd column).");
 		}
 
 		/// <summary>
@@ -545,7 +537,7 @@ namespace SIL.FieldWorks.Discourse
 			MakeWordGroup(row3, 2, w6, w8);
 
 			// SUT
-			Assert.IsTrue(m_ccl.IsChartComplete, "IsChartComplete() failed.");
+			Assert.That(m_ccl.IsChartComplete, Is.True, "IsChartComplete() failed.");
 		}
 
 		/// <summary>
@@ -582,7 +574,7 @@ namespace SIL.FieldWorks.Discourse
 			MakeWordGroup(row3, 1, w5, w5);
 
 			// SUT
-			Assert.IsFalse(m_ccl.IsChartComplete, "IsChartComplete() failed.");
+			Assert.That(m_ccl.IsChartComplete, Is.False, "IsChartComplete() failed.");
 		}
 
 		/// <summary>
@@ -614,10 +606,10 @@ namespace SIL.FieldWorks.Discourse
 
 			// Leaves 2 wordforms uncharted (in the ribbon), but no ChOrphs
 			var nextUnchartedWord = m_ccl.NextUnchartedInput(1)[0];
-			Assert.AreEqual(w5, nextUnchartedWord);
+			Assert.That(nextUnchartedWord, Is.EqualTo(w5));
 
 			// SUT; this one should be in the normal Ribbon List.
-			Assert.IsFalse(m_ccl.CallIsChOrph(nextUnchartedWord));
+			Assert.That(m_ccl.CallIsChOrph(nextUnchartedWord), Is.False);
 		}
 
 		/// <summary>
@@ -648,10 +640,10 @@ namespace SIL.FieldWorks.Discourse
 
 			// Leaves 2 wordforms uncharted (in the ribbon), the first is a ChOrph
 			var nextUnchartedWord = m_ccl.NextUnchartedInput(1)[0];
-			Assert.AreEqual(w1, nextUnchartedWord);
+			Assert.That(nextUnchartedWord, Is.EqualTo(w1));
 
 			// SUT
-			Assert.IsTrue(m_ccl.CallIsChOrph(nextUnchartedWord));
+			Assert.That(m_ccl.CallIsChOrph(nextUnchartedWord), Is.True);
 		}
 
 		/// <summary>
@@ -683,10 +675,10 @@ namespace SIL.FieldWorks.Discourse
 			// Leaves 2 wordforms uncharted (in the ribbon);
 			// they are w3 above (ChOrph) and one normal uncharted.
 			var nextUnchartedWord = m_ccl.NextUnchartedInput(1)[0];
-			Assert.AreEqual(w3, nextUnchartedWord);
+			Assert.That(nextUnchartedWord, Is.EqualTo(w3));
 
 			// SUT
-			Assert.IsTrue(m_ccl.CallIsChOrph(nextUnchartedWord));
+			Assert.That(m_ccl.CallIsChOrph(nextUnchartedWord), Is.True);
 		}
 
 		/// <summary>
@@ -722,8 +714,8 @@ namespace SIL.FieldWorks.Discourse
 			CallGetWordGroupCellsBorderingChOrph(w1, out result1, out result2);
 
 			// Test results
-			Assert.IsTrue(precCell.IsSameLocation(result1));
-			Assert.IsTrue(follCell.IsSameLocation(result2));
+			Assert.That(precCell.IsSameLocation(result1), Is.True);
+			Assert.That(follCell.IsSameLocation(result2), Is.True);
 		}
 
 		/// <summary>
@@ -759,8 +751,8 @@ namespace SIL.FieldWorks.Discourse
 			CallGetWordGroupCellsBorderingChOrph(w3, out result1, out result2);
 
 			// Test results
-			Assert.IsTrue(precCell.IsSameLocation(result1));
-			Assert.IsTrue(follCell.IsSameLocation(result2));
+			Assert.That(precCell.IsSameLocation(result1), Is.True);
+			Assert.That(follCell.IsSameLocation(result2), Is.True);
 		}
 
 		/// <summary>
@@ -801,8 +793,8 @@ namespace SIL.FieldWorks.Discourse
 			CallGetWordGroupCellsBorderingChOrph(w5, out result1, out result2);
 
 			// Test results
-			Assert.IsTrue(precCell.IsSameLocation(result1));
-			Assert.IsTrue(follCell.IsSameLocation(result2));
+			Assert.That(precCell.IsSameLocation(result1), Is.True);
+			Assert.That(follCell.IsSameLocation(result2), Is.True);
 		}
 
 		/// <summary>
@@ -839,8 +831,8 @@ namespace SIL.FieldWorks.Discourse
 			CallGetWordGroupCellsBorderingChOrph(w0, out result1, out result2);
 
 			// Test results
-			Assert.IsTrue(precCell.IsSameLocation(result1));
-			Assert.IsTrue(follCell.IsSameLocation(result2));
+			Assert.That(precCell.IsSameLocation(result1), Is.True);
+			Assert.That(follCell.IsSameLocation(result2), Is.True);
 		}
 
 		/// <summary>
@@ -880,9 +872,9 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
-			Assert.AreEqual(2, whereToInsertActual);
-			Assert.AreEqual(wg1_2.Hvo, existingWordGroupActual.Hvo);
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting));
+			Assert.That(whereToInsertActual, Is.EqualTo(2));
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg1_2.Hvo));
 		}
 
 		/// <summary>
@@ -919,10 +911,9 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result,
-				"Wrong enum result.");
-			Assert.AreEqual(2, whereToInsertActual, "The index whereToInsert is wrong.");
-			Assert.AreEqual(wg1_2.Hvo, existingWordGroupActual.Hvo, "Wrong WordGroup.");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting), "Wrong enum result.");
+			Assert.That(whereToInsertActual, Is.EqualTo(2), "The index whereToInsert is wrong.");
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg1_2.Hvo), "Wrong WordGroup.");
 		}
 
 		/// <summary>
@@ -963,9 +954,9 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp, result);
-			Assert.AreEqual(0, whereToInsertActual);
-			Assert.AreEqual(wg2_0.Hvo, existingWordGroupActual.Hvo);
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp));
+			Assert.That(whereToInsertActual, Is.EqualTo(0));
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg2_0.Hvo));
 		}
 
 		/// <summary>
@@ -999,8 +990,8 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(1, whereToInsertActual); // index in Row.Cells!
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsertActual, Is.EqualTo(1)); // index in Row.Cells!
 			Assert.That(existingWordGroupActual, Is.Null);
 		}
 
@@ -1038,8 +1029,8 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
-			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting));
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg1_1.Hvo));
 		}
 
 		/// <summary>
@@ -1075,9 +1066,9 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting, result);
-			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
-			Assert.AreEqual(1, whereToInsertActual); // not used, but it should be this value anyway.
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kAppendToExisting));
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg1_1.Hvo));
+			Assert.That(whereToInsertActual, Is.EqualTo(1)); // not used, but it should be this value anyway.
 		}
 
 		/// <summary>
@@ -1112,9 +1103,9 @@ namespace SIL.FieldWorks.Discourse
 				out whereToInsertActual, out existingWordGroupActual);
 
 			// Test results
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp, result);
-			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
-			Assert.AreEqual(0, whereToInsertActual, "Should insert at beginning of WordGroup"); // insert at beginning
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertChOrphInWordGrp));
+			Assert.That(existingWordGroupActual.Hvo, Is.EqualTo(wg1_1.Hvo));
+			Assert.That(whereToInsertActual, Is.EqualTo(0), "Should insert at beginning of WordGroup"); // insert at beginning
 		}
 
 		/// <summary>
@@ -1147,8 +1138,8 @@ namespace SIL.FieldWorks.Discourse
 			// and test the default Ribbon vars.
 
 			// Test results
-			Assert.IsFalse(m_ccl.NextInputIsChOrph(), "Next word in Ribbon should not be a Chorph.");
-			Assert.AreEqual(-1, m_ccl.Ribbon.EndSelLimitIndex, "Default Ribbon selection limit.");
+			Assert.That(m_ccl.NextInputIsChOrph(), Is.False, "Next word in Ribbon should not be a Chorph.");
+			Assert.That(m_ccl.Ribbon.EndSelLimitIndex, Is.EqualTo(-1), "Default Ribbon selection limit.");
 			Assert.That(m_ccl.Ribbon.SelLimOccurrence, Is.Null);
 		}
 
@@ -1185,8 +1176,8 @@ namespace SIL.FieldWorks.Discourse
 			m_ccl.SetRibbonLimits(follCell);
 
 			// Test results
-			Assert.AreEqual(0, m_ccl.Ribbon.EndSelLimitIndex, "Ribbon should only select first word");
-			Assert.AreEqual(w0, m_ccl.Ribbon.SelLimOccurrence);
+			Assert.That(m_ccl.Ribbon.EndSelLimitIndex, Is.EqualTo(0), "Ribbon should only select first word");
+			Assert.That(m_ccl.Ribbon.SelLimOccurrence, Is.EqualTo(w0));
 		}
 
 		/// <summary>
@@ -1220,8 +1211,8 @@ namespace SIL.FieldWorks.Discourse
 			m_ccl.SetRibbonLimits(follCell);
 
 			// Test results
-			Assert.AreEqual(1, m_ccl.Ribbon.EndSelLimitIndex, "Ribbon should be able to select through 2nd word");
-			Assert.AreEqual(w2, m_ccl.Ribbon.SelLimOccurrence);
+			Assert.That(m_ccl.Ribbon.EndSelLimitIndex, Is.EqualTo(1), "Ribbon should be able to select through 2nd word");
+			Assert.That(m_ccl.Ribbon.SelLimOccurrence, Is.EqualTo(w2));
 		}
 
 		/// <summary>
@@ -1256,8 +1247,8 @@ namespace SIL.FieldWorks.Discourse
 			m_ccl.SetRibbonLimits(follCell);
 
 			// Test results
-			Assert.AreEqual(0, m_ccl.Ribbon.EndSelLimitIndex, "Ribbon should only select first word");
-			Assert.AreEqual(w1, m_ccl.Ribbon.SelLimOccurrence);
+			Assert.That(m_ccl.Ribbon.EndSelLimitIndex, Is.EqualTo(0), "Ribbon should only select first word");
+			Assert.That(m_ccl.Ribbon.SelLimOccurrence, Is.EqualTo(w1));
 		}
 	}
 }

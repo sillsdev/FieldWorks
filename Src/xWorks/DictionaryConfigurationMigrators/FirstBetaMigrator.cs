@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				wsName = string.Empty;
 			}

@@ -1,0 +1,20 @@
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "oraios-serena",
+        "--project-root",
+        "${workspaceFolder}"
+      ],
+      "env": {
+        "SERENA_API_KEY": "${env:SERENA_API_KEY}"
+      }
+    }
+  }
+}

@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 			// The rest should be character styles
 			for (int i = 1; i < styles.Count; i++)
 			{
-				Assert.IsTrue(styles[i].Style.IsCharacterStyle);
+				Assert.That(styles[i].Style.IsCharacterStyle, Is.True);
 			}
 		}
 
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var style in GetAvailableStyles(view))
 			{
-				Assert.IsTrue(style.Style.IsParagraphStyle);
+				Assert.That(style.Style.IsParagraphStyle, Is.True);
 			}
 		}
 		#endregion Helpers
@@ -302,14 +302,14 @@ namespace SIL.FieldWorks.XWorks
 			using (var view = controller.View)
 			{
 				var optionsView = GetListOptionsView(view);
-				Assert.IsTrue(optionsView.DisplayOptionCheckBox2Checked, "'Display each Note in a separate paragraph' should be checked.");
+				Assert.That(optionsView.DisplayOptionCheckBox2Checked, Is.True, "'Display each Note in a separate paragraph' should be checked.");
 				//// Events are not actually fired during tests, so they must be run manually
 				AssertShowingParagraphStyles(view);
 
 				optionsView.DisplayOptionCheckBox2Checked = false;
 				ReflectionHelper.CallMethod(controller, "DisplayInParaChecked", GetListOptionsView(view), wsOptions);
 
-				Assert.IsFalse(wsOptions.DisplayEachInAParagraph, "DisplayEachInAParagraph should be false.");
+				Assert.That(wsOptions.DisplayEachInAParagraph, Is.False, "DisplayEachInAParagraph should be false.");
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.XWorks
 				var optionsView = GetListOptionsView(view);
 				optionsView.DisplayOptionCheckBoxChecked = false;
 
-				Assert.False(parentSenseOptions.ShowSharedGrammarInfoFirst, "ShowSharedGrammarInfoFirst should have been updated");
+				Assert.That(parentSenseOptions.ShowSharedGrammarInfoFirst, Is.False, "ShowSharedGrammarInfoFirst should have been updated");
 			}
 		}
 
@@ -512,28 +512,26 @@ namespace SIL.FieldWorks.XWorks
 			var variantCount = Cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Count;
 
 			var listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Complex, complexCount + 1); // +1 for <None> element
-			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[0].Text);
-			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), listItems[0].Tag);
+			Assert.That(listItems[0].Text, Does.Contain(xWorksStrings.ksNoComplexFormType));
+			Assert.That(listItems[0].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()));
 
 			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Variant, variantCount + 1); // +1 for <None> element
-			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
-			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
+			Assert.That(listItems[0].Text, Does.Contain(xWorksStrings.ksNoVariantType));
+			Assert.That(listItems[0].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()));
 
 			listItems = VerifyGetListItems(DictionaryNodeListOptions.ListIds.Minor, complexCount + variantCount + 2); // Minor has 2 <None> elements
-			StringAssert.Contains(xWorksStrings.ksNoVariantType, listItems[0].Text);
-			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listItems[0].Tag);
-			StringAssert.Contains(xWorksStrings.ksNoComplexFormType, listItems[variantCount + 1].Text,
-				"<No Complex Form Type> should immediately follow the Variant Types");
-			Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString(), listItems[variantCount + 1].Tag,
-				"<No Complex Form Type> should immediately follow the Variant Types");
+			Assert.That(listItems[0].Text, Does.Contain(xWorksStrings.ksNoVariantType));
+			Assert.That(listItems[0].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()));
+			Assert.That(listItems[variantCount + 1].Text, Does.Contain(xWorksStrings.ksNoComplexFormType), "<No Complex Form Type> should immediately follow the Variant Types");
+			Assert.That(listItems[variantCount + 1].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedComplexFormType().ToString()), "<No Complex Form Type> should immediately follow the Variant Types");
 		}
 
 		private List<ListViewItem> VerifyGetListItems(DictionaryNodeListOptions.ListIds listId, int expectedCount)
 		{
 			string label;
 			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
-			Assert.AreEqual(expectedCount, result.Count, String.Format("Incorrect number of {0} Types", listId));
-			StringAssert.Contains(listId.ToString(), label);
+			Assert.That(result.Count, Is.EqualTo(expectedCount), String.Format("Incorrect number of {0} Types", listId));
+			Assert.That(label, Does.Contain(listId.ToString()));
 			return result;
 		}
 
@@ -560,20 +558,18 @@ namespace SIL.FieldWorks.XWorks
 				controller.LoadNode(null, node);
 				var listViewItems = GetListViewItems(view);
 
-				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
-					"The saved selection should be first");
-				Assert.AreEqual(listViewItems.Count, listViewItems.Count(item => item.Checked), "All items should be checked");
-				Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
+				Assert.That(listViewItems[0].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()), "The saved selection should be first");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(listViewItems.Count), "All items should be checked");
+				Assert.That(listOptions.Options.Count, Is.EqualTo(1), "Loading the node should not affect the original list");
 
 				listOptions.Options[0].IsEnabled = false;
 				// SUT
 				controller.LoadNode(null, node);
 				listViewItems = GetListViewItems(view);
 
-				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
-					"The saved item should be first");
-				Assert.False(listViewItems[0].Checked, "This item was saved as unchecked");
-				Assert.AreEqual(listViewItems.Count - 1, listViewItems.Count(item => item.Checked), "All new items should be checked");
+				Assert.That(listViewItems[0].Tag, Is.EqualTo(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString()), "The saved item should be first");
+				Assert.That(listViewItems[0].Checked, Is.False, "This item was saved as unchecked");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(listViewItems.Count - 1), "All new items should be checked");
 			}
 		}
 
@@ -586,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
-			Assert.False(controller.View.SurroundingCharsVisible, "Context should start hidden");
+			Assert.That(controller.View.SurroundingCharsVisible, Is.False, "Context should start hidden");
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
@@ -594,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 				Parent = testNode
 			};
 			controller.LoadNode(null, testNode);
-			Assert.True(controller.View.SurroundingCharsVisible, "Context should now be visible");
+			Assert.That(controller.View.SurroundingCharsVisible, Is.True, "Context should now be visible");
 			controller.View.Dispose();
 		}
 
@@ -607,14 +603,14 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
-			Assert.True(controller.View.SurroundingCharsVisible, "Context should start visible");
+			Assert.That(controller.View.SurroundingCharsVisible, Is.True, "Context should start visible");
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
 			};
 			controller.LoadNode(null, testNode);
-			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
+			Assert.That(controller.View.SurroundingCharsVisible, Is.False, "Context should now be hidden");
 			controller.View.Dispose();
 		}
 
@@ -629,10 +625,10 @@ namespace SIL.FieldWorks.XWorks
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, node);
-			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Test setup failed, OptionsView shoud not be null");
+			Assert.That(((TestDictionaryDetailsView)controller.View).OptionsView, Is.Not.Null, "Test setup failed, OptionsView shoud not be null");
 			var optionlessNode = new ConfigurableDictionaryNode();
 			controller.LoadNode(null, optionlessNode);
-			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
+			Assert.That(((TestDictionaryDetailsView)controller.View).OptionsView, Is.Null, "OptionsView should be set to null after loading a node without options");
 			controller.View.Dispose();
 		}
 
@@ -648,9 +644,8 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular
 			};
 			VerifyCannotUncheckOnlyCheckedItemInList(wsOptions);
-			Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern),
-				wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
+			Assert.That(wsOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(1), "There should be exactly one enabled option in the model");
+			Assert.That(wsOptions.Options.First(option => option.IsEnabled).Id, Is.EqualTo(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern)), "The same item should still be enabled");
 
 			string label;
 			var listOptions = new DictionaryNodeListOptions
@@ -663,8 +658,8 @@ namespace SIL.FieldWorks.XWorks
 			listOptions.Options.Last().IsEnabled = true;
 			var selectedId = listOptions.Options.Last().Id;
 			VerifyCannotUncheckOnlyCheckedItemInList(listOptions);
-			Assert.AreEqual(1, listOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-			Assert.AreEqual(selectedId, listOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
+			Assert.That(listOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(1), "There should be exactly one enabled option in the model");
+			Assert.That(listOptions.Options.First(option => option.IsEnabled).Id, Is.EqualTo(selectedId), "The same item should still be enabled");
 		}
 
 		private void VerifyCannotUncheckOnlyCheckedItemInList(DictionaryNodeOptions options)
@@ -675,7 +670,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked initially");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should be exactly one item checked initially");
 
 				var checkedItem = listViewItems.First(item => item.Checked);
 				checkedItem.Checked = false;
@@ -684,8 +679,8 @@ namespace SIL.FieldWorks.XWorks
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), options as DictionaryNodeWritingSystemOptions, new ItemCheckedEventArgs(checkedItem));
 
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
-				Assert.AreEqual(checkedItem, listViewItems.First(item => item.Checked), "The same item should be checked");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should still be exactly one item checked");
+				Assert.That(listViewItems.First(item => item.Checked), Is.EqualTo(checkedItem), "The same item should be checked");
 			}
 		}
 
@@ -719,10 +714,10 @@ namespace SIL.FieldWorks.XWorks
 					controller.Reorder(listViewItems.First(), DictionaryConfigurationController.Direction.Up),
 					"Should not be able to move the top item up");
 
-				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
+				Assert.That(listViewItems.Count, Is.EqualTo(originalListViewItems.Count), "Number of items definitely should not have changed");
 				for (int i = 0; i < listViewItems.Count; i++)
 				{
-					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
+					Assert.That(listViewItems[i], Is.EqualTo(originalListViewItems[i]), "Order should not have changed");
 				}
 			}
 		}
@@ -757,10 +752,10 @@ namespace SIL.FieldWorks.XWorks
 					controller.Reorder(listViewItems.Last(), DictionaryConfigurationController.Direction.Down),
 					"Should not be able to move the bottom item down");
 
-				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
+				Assert.That(listViewItems.Count, Is.EqualTo(originalListViewItems.Count), "Number of items definitely should not have changed");
 				for (int i = 0; i < listViewItems.Count; i++)
 				{
-					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
+					Assert.That(listViewItems[i], Is.EqualTo(originalListViewItems[i]), "Order should not have changed");
 				}
 			}
 		}
@@ -781,9 +776,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
-				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should be exactly two items checked initially");
-				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
-				Assert.AreEqual("fr", listViewItems.Last(item => item.Checked).Tag, "French should be checked.");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(2), "There should be exactly two items checked initially");
+				Assert.That(listViewItems.First(item => item.Checked).Tag, Is.EqualTo("en"), "English should be checked.");
+				Assert.That(listViewItems.Last(item => item.Checked).Tag, Is.EqualTo("fr"), "French should be checked.");
 
 				var defaultItem = listViewItems.First(item => item.Tag is int);
 				defaultItem.Checked = true;
@@ -792,11 +787,10 @@ namespace SIL.FieldWorks.XWorks
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(defaultItem));
 
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked");
-				Assert.AreEqual(defaultItem, listViewItems.First(item => item.Checked), "The default WS should be checked");
-				Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-				Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId((int)defaultItem.Tag),
-					wsOptions.Options.First(option => option.IsEnabled).Id, "The default WS should be enabled");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should be exactly one item checked");
+				Assert.That(listViewItems.First(item => item.Checked), Is.EqualTo(defaultItem), "The default WS should be checked");
+				Assert.That(wsOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(1), "There should be exactly one enabled option in the model");
+				Assert.That(wsOptions.Options.First(option => option.IsEnabled).Id, Is.EqualTo(WritingSystemServices.GetMagicWsNameFromId((int)defaultItem.Tag)), "The default WS should be enabled");
 			}
 		}
 
@@ -815,9 +809,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
-				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should be exactly two items checked initially");
-				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
-				Assert.AreEqual("fr", listViewItems.Last(item => item.Checked).Tag, "French should be checked.");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(2), "There should be exactly two items checked initially");
+				Assert.That(listViewItems.First(item => item.Checked).Tag, Is.EqualTo("en"), "English should be checked.");
+				Assert.That(listViewItems.Last(item => item.Checked).Tag, Is.EqualTo("fr"), "French should be checked.");
 
 				var optionsView = GetListOptionsView(view);
 
@@ -828,8 +822,8 @@ namespace SIL.FieldWorks.XWorks
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged", GetListOptionsView(view), wsOptions,
 					new ItemCheckedEventArgs(otherNamedItem));
 
-				Assert.IsTrue(optionsView.DisplayOptionCheckBoxChecked, "DisplayOption checkbox should be checked.");
-				Assert.IsTrue(optionsView.DisplayOptionCheckBoxEnabled, "DisplayOption checkbox should be enabled.");
+				Assert.That(optionsView.DisplayOptionCheckBoxChecked, Is.True, "DisplayOption checkbox should be checked.");
+				Assert.That(optionsView.DisplayOptionCheckBoxEnabled, Is.True, "DisplayOption checkbox should be enabled.");
 			}
 		}
 
@@ -877,13 +871,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var optionsView = GetSenseOptionsView(view);
 				Assert.That(optionsView, Is.Not.Null, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
-				Assert.IsTrue(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Sense");
-				Assert.IsTrue(optionsView.FirstSenseInline, "checkbox for showing first senses in line with the entry");
-				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Sense");
-				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Sense");
-				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
-				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Sense");
-				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for show common gram info first for Senses");
+				Assert.That(optionsView.SenseInPara, Is.True, "checkbox set properly for showing senses in paragraph for Sense");
+				Assert.That(optionsView.FirstSenseInline, Is.True, "checkbox for showing first senses in line with the entry");
+				Assert.That(optionsView.BeforeText, Is.EqualTo(""), "proper text before number loads for Sense");
+				Assert.That(optionsView.AfterText, Is.EqualTo(") "), "proper text after number loads for Sense");
+				Assert.That(optionsView.NumberingStyle, Is.EqualTo("%d"), "proper numbering style loads for Sense");
+				Assert.That(optionsView.NumberSingleSense, Is.True, "checkbox set properly for numbering even single Sense");
+				Assert.That(optionsView.ShowGrammarFirst, Is.True, "checkbox set properly for show common gram info first for Senses");
 				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
 				ValidateSenseControls(optionsView, false);
 			}
@@ -894,12 +888,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var optionsView = GetSenseOptionsView(view);
 				Assert.That(optionsView, Is.Not.Null, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
-				Assert.IsFalse(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Subsense");
-				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Subsense");
-				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Subsense");
-				Assert.AreEqual("%A", optionsView.NumberingStyle, "proper numbering style loads for Subsense");
-				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Subsense");
-				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for hide common gram info for Subsenses");
+				Assert.That(optionsView.SenseInPara, Is.False, "checkbox set properly for showing senses in paragraph for Subsense");
+				Assert.That(optionsView.BeforeText, Is.EqualTo(""), "proper text before number loads for Subsense");
+				Assert.That(optionsView.AfterText, Is.EqualTo(") "), "proper text after number loads for Subsense");
+				Assert.That(optionsView.NumberingStyle, Is.EqualTo("%A"), "proper numbering style loads for Subsense");
+				Assert.That(optionsView.NumberSingleSense, Is.True, "checkbox set properly for numbering even single Subsense");
+				Assert.That(optionsView.ShowGrammarFirst, Is.True, "checkbox set properly for hide common gram info for Subsenses");
 				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
 				ValidateSenseControls(optionsView, true);
 			}
@@ -911,15 +905,14 @@ namespace SIL.FieldWorks.XWorks
 		private static void ValidateSenseControls(object iView, bool isSubsense)
 		{
 			var label = isSubsense ? "Subsense" : "sense";
-			Assert.AreEqual(typeof(SenseOptionsView), iView.GetType());
+			Assert.That(iView.GetType(), Is.EqualTo(typeof(SenseOptionsView)));
 			var view = (Control)iView;
 			var controlsChecked = 0;
 			foreach (Control control in view.Controls)
 			{
 				if (control is GroupBox && control.Name == "groupBoxSenseNumber")
 				{
-					Assert.AreEqual(isSubsense ? xWorksStrings.ksSubsenseNumberConfig : "Sense Number Configuration",
-						control.Text, "groupBoxSenseNumber has incorrect Text");
+					Assert.That(control.Text, Is.EqualTo(isSubsense ? xWorksStrings.ksSubsenseNumberConfig : "Sense Number Configuration"), "groupBoxSenseNumber has incorrect Text");
 					++controlsChecked;
 				}
 				else if (control is FlowLayoutPanel && control.Name == "senseStructureVerticalFlow")
@@ -929,28 +922,28 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
 						{
-							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, $"checkBoxShowGrammarFirst should be enabled and visible for {label}");
 							++innerControls;
 						}
 						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
 						{
-							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, $"checkBoxSenseInPara should be enabled and visible for {label}");
 							++innerControls;
 						}
 						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
 						{
 							if (isSubsense)
-								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+								Assert.That(innerControl.Enabled || innerControl.Visible, Is.False, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
 							else
-								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+								Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, "checkBoxFirstSenseInline should be enabled and visible when paras");
 							++innerControls;
 						}
 					}
-					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
+					Assert.That(innerControls, Is.EqualTo(3), $"Matched incorrect number of controls within senseStructureVerticalFlow for {label}");
 					++controlsChecked;
 				}
 			}
-			Assert.AreEqual(2, controlsChecked, "Matched incorrect number of controls for {0}", label);
+			Assert.That(controlsChecked, Is.EqualTo(2), $"Matched incorrect number of controls for {label}");
 		}
 
 		[Test]
@@ -1015,9 +1008,9 @@ namespace SIL.FieldWorks.XWorks
 				var realView = optionsView as SenseOptionsView;
 				Assert.That(realView, Is.Not.Null);
 				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
-				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "Sense number's numbering style should be same count.");
-				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "Sense number's numbering style should have 'none' option.");
-				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "Sense number's numbering style should be same.");
+				Assert.That(outputNumberingStyle.Count, Is.EqualTo(expectedNumberingStyle.Count()), "Sense number's numbering style should be same count.");
+				Assert.That(outputNumberingStyle.First().Label, Is.EqualTo(expectedNumberingStyle.First().Label), "Sense number's numbering style should have 'none' option.");
+				Assert.That(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), Is.True, "Sense number's numbering style should be same.");
 
 				controller.LoadNode(null, subSenseConfig);
 
@@ -1027,9 +1020,9 @@ namespace SIL.FieldWorks.XWorks
 				realView = optionsView as SenseOptionsView;
 				Assert.That(realView, Is.Not.Null);
 				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
-				Assert.AreEqual(expectedNumberingStyle.Count, outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
-				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSense number's numbering style should have 'none' option.");
-				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSense number's numbering style should be same.");
+				Assert.That(outputNumberingStyle.Count, Is.EqualTo(expectedNumberingStyle.Count), "SubSense number's numbering style should be same count.");
+				Assert.That(outputNumberingStyle.First().Label, Is.EqualTo(expectedNumberingStyle.First().Label), "SubSense number's numbering style should have 'none' option.");
+				Assert.That(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), Is.True, "SubSense number's numbering style should be same.");
 
 				controller.LoadNode(null, subSubSenseConfig);
 
@@ -1039,9 +1032,9 @@ namespace SIL.FieldWorks.XWorks
 				realView = optionsView as SenseOptionsView;
 				Assert.That(realView, Is.Not.Null);
 				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
-				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSubSense number's numbering style should be same count.");
-				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSubSense number's numbering style should have 'none' option.");
-				Assert.IsTrue(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), "SubSubSense number's numbering style should be same.");
+				Assert.That(outputNumberingStyle.Count, Is.EqualTo(expectedNumberingStyle.Count()), "SubSubSense number's numbering style should be same count.");
+				Assert.That(outputNumberingStyle.First().Label, Is.EqualTo(expectedNumberingStyle.First().Label), "SubSubSense number's numbering style should have 'none' option.");
+				Assert.That(expectedNumberingStyle.All(c => outputNumberingStyle.Count(p => p.Label == c.Label) == 1), Is.True, "SubSubSense number's numbering style should be same.");
 			}
 		}
 
@@ -1056,9 +1049,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked initially");
-				Assert.AreEqual(WritingSystemServices.kwsVern, listViewItems.First(item => item.Checked).Tag,
-					"Default should be checked by default.");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should be exactly one item checked initially");
+				Assert.That(listViewItems.First(item => item.Checked).Tag, Is.EqualTo(WritingSystemServices.kwsVern), "Default should be checked by default.");
 
 				var namedItem = listViewItems.First(item => !(item.Tag is int));
 				namedItem.Checked = true;
@@ -1067,10 +1059,10 @@ namespace SIL.FieldWorks.XWorks
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(namedItem));
 
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should still be exactly one item checked");
-				Assert.AreEqual(namedItem, listViewItems.First(item => item.Checked), "The named WS should be checked");
-				Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
-				Assert.AreEqual(namedItem.Tag, wsOptions.Options.First(option => option.IsEnabled).Id, "The named WS should be enabled");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should still be exactly one item checked");
+				Assert.That(listViewItems.First(item => item.Checked), Is.EqualTo(namedItem), "The named WS should be checked");
+				Assert.That(wsOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(1), "There should be exactly one enabled option in the model");
+				Assert.That(wsOptions.Options.First(option => option.IsEnabled).Id, Is.EqualTo(namedItem.Tag), "The named WS should be enabled");
 			}
 		}
 
@@ -1088,8 +1080,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Verify setup
 				var listViewItems = GetListViewItems(view);
-				Assert.AreEqual(1, listViewItems.Count(item => item.Checked), "There should be exactly one item checked initially");
-				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should be checked.");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(1), "There should be exactly one item checked initially");
+				Assert.That(listViewItems.First(item => item.Checked).Tag, Is.EqualTo("en"), "English should be checked.");
 
 				var otherNamedItem = listViewItems.First(item => !(item.Checked || item.Tag is int));
 				otherNamedItem.Checked = true;
@@ -1098,12 +1090,12 @@ namespace SIL.FieldWorks.XWorks
 				ReflectionHelper.CallMethod(controller, "ListItemCheckedChanged",
 					GetListOptionsView(view), wsOptions, new ItemCheckedEventArgs(otherNamedItem));
 
-				Assert.AreEqual(2, listViewItems.Count(item => item.Checked), "There should now be two items checked");
-				Assert.AreEqual("en", listViewItems.First(item => item.Checked).Tag, "English should still be the first checked item");
-				Assert.AreEqual(otherNamedItem, listViewItems.Last(item => item.Checked), "The other named WS should be checked");
-				Assert.AreEqual(2, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly two enabled options in the model");
-				Assert.AreEqual("en", wsOptions.Options.First(option => option.IsEnabled).Id, "English should still be saved first");
-				Assert.AreEqual(otherNamedItem.Tag, wsOptions.Options.Last(option => option.IsEnabled).Id, "The other named WS should be enabled");
+				Assert.That(listViewItems.Count(item => item.Checked), Is.EqualTo(2), "There should now be two items checked");
+				Assert.That(listViewItems.First(item => item.Checked).Tag, Is.EqualTo("en"), "English should still be the first checked item");
+				Assert.That(listViewItems.Last(item => item.Checked), Is.EqualTo(otherNamedItem), "The other named WS should be checked");
+				Assert.That(wsOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(2), "There should be exactly two enabled options in the model");
+				Assert.That(wsOptions.Options.First(option => option.IsEnabled).Id, Is.EqualTo("en"), "English should still be saved first");
+				Assert.That(wsOptions.Options.Last(option => option.IsEnabled).Id, Is.EqualTo(otherNamedItem.Tag), "The other named WS should be enabled");
 			}
 		}
 
@@ -1131,10 +1123,10 @@ namespace SIL.FieldWorks.XWorks
 					controller.Reorder(listViewItems.Last(item => item.Tag is int), DictionaryConfigurationController.Direction.Up),
 					"Should not be able to reorder default writing systems");
 
-				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
+				Assert.That(listViewItems.Count, Is.EqualTo(originalListViewItems.Count), "Number of items definitely should not have changed");
 				for (int i = 0; i < listViewItems.Count; i++)
 				{
-					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
+					Assert.That(listViewItems[i], Is.EqualTo(originalListViewItems[i]), "Order should not have changed");
 				}
 			}
 		}
@@ -1160,10 +1152,10 @@ namespace SIL.FieldWorks.XWorks
 					listViewItems[listViewItems.Last(item => item.Tag is int).Index + 1], DictionaryConfigurationController.Direction.Up),
 					"Should not be able to move a named writing system above a default writing systems");
 
-				Assert.AreEqual(originalListViewItems.Count, listViewItems.Count, "Number of items definitely should not have changed");
+				Assert.That(listViewItems.Count, Is.EqualTo(originalListViewItems.Count), "Number of items definitely should not have changed");
 				for (int i = 0; i < listViewItems.Count; i++)
 				{
-					Assert.AreEqual(originalListViewItems[i], listViewItems[i], "Order should not have changed");
+					Assert.That(listViewItems[i], Is.EqualTo(originalListViewItems[i]), "Order should not have changed");
 				}
 			}
 		}
@@ -1217,23 +1209,23 @@ namespace SIL.FieldWorks.XWorks
 
 				controller.LoadNode(model, subentries); // SUT (Master Parent)
 				var tooltip = view.GetTooltipFromOverPanel();
-				StringAssert.Contains("LexEntry > SensesOS > Subentries", tooltip);
-				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip);
-				StringAssert.DoesNotContain("LexEntry > Subentries" + Environment.NewLine, tooltip, "The Master Parent itself shouldn't be listed");
-				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries > Subentries", tooltip, "Node finder shouldn't recurse indefinitely");
-				StringAssert.DoesNotContain("SharedSubentries", tooltip, "The SharedItem's name should not be in the path");
+				Assert.That(tooltip, Does.Contain("LexEntry > SensesOS > Subentries"));
+				Assert.That(tooltip, Does.Contain("LexEntry > Subentries > Subentries"));
+				Assert.That(tooltip, Does.Not.Contain("LexEntry > Subentries" + Environment.NewLine), "The Master Parent itself shouldn't be listed");
+				Assert.That(tooltip, Does.Not.Contain("LexEntry > Subentries > Subentries > Subentries"), "Node finder shouldn't recurse indefinitely");
+				Assert.That(tooltip, Does.Not.Contain("SharedSubentries"), "The SharedItem's name should not be in the path");
 
 				controller.LoadNode(model, subsubEntries); // SUT (Subordinate Parent)
 				tooltip = view.GetTooltipFromOverPanel();
-				StringAssert.Contains("LexEntry > Subentries.", tooltip, "Tooltip should indicate the Master Parent's location");
-				StringAssert.Contains("LexEntry > Subentries > Subentries", tooltip, "Tooltip should indicate the node's full path");
-				StringAssert.DoesNotContain("LexEntry > Senses", tooltip, "No other nodes should be listed");
-				StringAssert.DoesNotContain("LexEntry > Subentries > Subentries >", tooltip, "No other nodes should be listed");
+				Assert.That(tooltip, Does.Contain("LexEntry > Subentries."), "Tooltip should indicate the Master Parent's location");
+				Assert.That(tooltip, Does.Contain("LexEntry > Subentries > Subentries"), "Tooltip should indicate the node's full path");
+				Assert.That(tooltip, Does.Not.Contain("LexEntry > Senses"), "No other nodes should be listed");
+				Assert.That(tooltip, Does.Not.Contain("LexEntry > Subentries > Subentries >"), "No other nodes should be listed");
 
 				controller.LoadNode(model, subEntryHeadword); // SUT (shared child)
 				tooltip = view.GetTooltipFromOverPanel();
-				StringAssert.Contains("LexEntry > Subentries", tooltip, "Tooltip should indicate the Master Parent's location");
-				StringAssert.DoesNotContain("LexEntry > Subentries > ", tooltip, "No other nodes should be listed");
+				Assert.That(tooltip, Does.Contain("LexEntry > Subentries"), "Tooltip should indicate the Master Parent's location");
+				Assert.That(tooltip, Does.Not.Contain("LexEntry > Subentries > "), "No other nodes should be listed");
 			}
 		}
 		#endregion SharedItem tests
@@ -1263,7 +1255,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var view = controller.View)
 			{
 				var optionsView = GetGroupingOptionsView(view);
-				Assert.IsTrue(optionsView.DisplayInParagraph);
+				Assert.That(optionsView.DisplayInParagraph, Is.True);
 				Assert.That(optionsView.Description, Does.Match("Test"));
 			}
 		}

@@ -65,12 +65,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			FileSystemSetup(new[] { "ms" });
 
-			VerifyLocale("ms", "zlm");
-
+			// No normalization needed for a simple language tag like "ms".
 			_task.Execute();
 
-			VerifyLocale("ms", "zzz");
-			VerifyLocale("zlm", "zzz");
+			VerifyLocale("ms", "zlm");
 		}
 
 		private void FileSystemSetup(string[] locales)

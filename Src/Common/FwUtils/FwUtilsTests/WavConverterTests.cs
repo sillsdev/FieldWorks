@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ReadWavFile_ConvertSingleFile()
 		{
 			byte[] result = WavConverter.ReadWavFile(_goodWavFile);
-			Assert.IsNotEmpty(result, "ReadWavFile did not read the bytes of a file into a byte array.");
+			Assert.That(result, Is.Not.Empty, "ReadWavFile did not read the bytes of a file into a byte array.");
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
 				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu3.mp3");
 				WavConverter.SaveBytes(fakeFile, bytes);
-				Assert.IsTrue(File.Exists(fakeFile), "SaveFile did not successfully save the bytes into a file.");
+				Assert.That(File.Exists(fakeFile), Is.True, "SaveFile did not successfully save the bytes into a file.");
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
 				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.abc");
 				WavConverter.SaveBytes(fakeFile, bytes);
-				Assert.IsTrue(File.Exists(Path.ChangeExtension(fakeFile, ".mp3")), "SaveBytes did not change the extension of the SaveFile to .mp3.");
+				Assert.That(File.Exists(Path.ChangeExtension(fakeFile, ".mp3")), Is.True, "SaveBytes did not change the extension of the SaveFile to .mp3.");
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				string destination = tempDirPath.Combine(tempDirPath.Path, file);
 				WavConverter.WavToMp3(_goodWavFile, destination);
-				Assert.IsTrue(File.Exists(destination), "WavConverter did not successfully convert the wav file and save it as an mp3 file.");
+				Assert.That(File.Exists(destination), Is.True, "WavConverter did not successfully convert the wav file and save it as an mp3 file.");
 			}
 		}
 
@@ -111,8 +111,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				var destination = tempDirPath.Combine(tempDirPath.Path, file);
 				Assert.DoesNotThrow(()=>WavConverter.WavToMp3(_badWavFile, destination));
-				Assert.IsFalse(File.Exists(destination), "WavConverter should not have created an mp3 file.");
-				Assert.AreEqual(1, messageBoxAdapter.MessagesDisplayed.Count);
+				Assert.That(File.Exists(destination), Is.False, "WavConverter should not have created an mp3 file.");
+				Assert.That(messageBoxAdapter.MessagesDisplayed.Count, Is.EqualTo(1));
 				Assert.That(messageBoxAdapter.MessagesDisplayed[0],
 					Does.StartWith(string.Format(FwUtilsStrings.ConvertBytesToMp3_BadWavFile, file, string.Empty, string.Empty)));
 			}
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string newDestination = tempDirPath.Combine(tempDirPath.Path, "New/new/abu2.mp3");
 				string directory = tempDirPath.Combine(tempDirPath.Path, "New");
 				WavConverter.WavToMp3(_goodWavFile, newDestination);
-				Assert.IsTrue(Directory.Exists(directory), "SaveBytes did not create the previously nonexistent folder.");
+				Assert.That(Directory.Exists(directory), Is.True, "SaveBytes did not create the previously nonexistent folder.");
 			}
 		}
 
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				string destination = tempDirPath.Combine(tempDirPath.Path, file);
 				var ex = Assert.Throws<Exception>(() => WavConverter.WavToMp3(Path.Combine(_goodWavFile, "abcde.wav"), destination));
-				Assert.IsTrue(ex.Message.Equals("The source file path is invalid."), "WavToMp3 does not fail when it was given a nonexistent source.");
+				Assert.That(ex.Message.Equals("The source file path is invalid."), Is.True, "WavToMp3 does not fail when it was given a nonexistent source.");
 			}
 		}
 
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string destination = tempDirPath.Combine(tempDirPath.Path, file);
 				WavConverter.WavToMp3(_goodWavFile, destination);
 				var ex = Assert.Throws<Exception>(() => WavConverter.WavToMp3(destination, destination));
-				Assert.IsTrue(ex.Message.Equals("Source file is not a .wav file."), "WavToMp3 did not fail when the source was not a .wav file.");
+				Assert.That(ex.Message.Equals("Source file is not a .wav file."), Is.True, "WavToMp3 did not fail when the source was not a .wav file.");
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				string destination = tempDirPath.Combine(tempDirPath.Path, file);
-				Assert.IsTrue(WavConverter.AlreadyExists(_goodWavFile, destination) == SaveFile.DoesNotExist, "AlreadyExists did not recognize that the destination does not already exist.");
+				Assert.That(WavConverter.AlreadyExists(_goodWavFile, destination) == SaveFile.DoesNotExist, Is.True, "AlreadyExists did not recognize that the destination does not already exist.");
 			}
 		}
 
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				string destination = tempDirPath.Combine(tempDirPath.Path, file);
 				WavConverter.WavToMp3(_goodWavFile, destination);
-				Assert.IsTrue(WavConverter.AlreadyExists(_goodWavFile, destination) == SaveFile.IdenticalExists, "AlreadyExists did not recognize that the converted file already exists.");
+				Assert.That(WavConverter.AlreadyExists(_goodWavFile, destination) == SaveFile.IdenticalExists, Is.True, "AlreadyExists did not recognize that the converted file already exists.");
 			}
 		}
 
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				byte[] bytes = { 177, 209, 137, 61, 204, 127, 103, 88 };
 				string fakeFile = tempDirPath.Combine(tempDirPath.Path, "abu2.mp3");
 				WavConverter.SaveBytes(fakeFile, bytes);
-				Assert.IsTrue(WavConverter.AlreadyExists(_goodWavFile, fakeFile) == SaveFile.NotIdenticalExists, "AlreadyExists did not recognize that the destination exists but is not the converted version of the source.");
+				Assert.That(WavConverter.AlreadyExists(_goodWavFile, fakeFile) == SaveFile.NotIdenticalExists, Is.True, "AlreadyExists did not recognize that the destination exists but is not the converted version of the source.");
 			}
 		}
 

@@ -16,6 +16,9 @@ Last reviewed:
 
 #include "testViews.h"
 #include "TestLazyBox.h"
+#include "TsStrFactory.h"
+#include "VwCacheDa.h"
+#include "VwGraphics.h"
 
 namespace TestViews
 {
@@ -59,32 +62,38 @@ namespace TestViews
 		// correctly (i.e. should point to DivBox).
 		void testDeleteAllParasWithDivs()
 		{
-			// Create one book with 16 sections, each section with 16 paragraphs
-			HVO rghvoSec[16];
-			TestLazyBox::CreateTestBooksWithSections(m_qcda, rghvoSec, kflidStTxtPara_Contents, 1);
+			try {
+				// Create one book with 16 sections, each section with 16 paragraphs
+				HVO rghvoSec[16];
+				TestLazyBox::CreateTestBooksWithSections(m_qcda, rghvoSec, kflidStTxtPara_Contents, 1);
 
-			m_qvc.Attach(NewObj DummyVcBkSecParaDiv(kflidStTxtPara_Contents, false, false));
-			m_qrootb->SetRootObject(khvoBook, m_qvc, kfragBook, NULL);
-			HRESULT hr;
-			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
-			unitpp::assert_true("Layout succeeded", hr == S_OK);
+				m_qvc.Attach(NewObj DummyVcBkSecParaDiv(kflidStTxtPara_Contents, false, false));
+				m_qrootb->SetRootObject(khvoBook, m_qvc, kfragBook, NULL);
+				HRESULT hr;
+				CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
+				unitpp::assert_true("Layout succeeded", hr == S_OK);
 
-			// Delete all of the paragraphs of the first section in the first book
-			CheckHr(m_qcda->CacheReplace(rghvoSec[0], kflidParas, 0, 16, NULL, 0));
-			CheckHr(m_qsda->PropChanged(NULL, kpctNotifyAll, rghvoSec[0], kflidParas, 0, 0, 16));
+				// Delete all of the paragraphs of the first section in the first book
+				CheckHr(m_qcda->CacheReplace(rghvoSec[0], kflidParas, 0, 16, NULL, 0));
+				CheckHr(m_qsda->PropChanged(NULL, kpctNotifyAll, rghvoSec[0], kflidParas, 0, 0, 16));
 
-			// Verify that the notifier has correct last box
-			VwDivBox* pboxBook = dynamic_cast<VwDivBox*>(m_qrootb->FirstBox());
-			VwDivBox* pboxFirstSection = dynamic_cast<VwDivBox*>(pboxBook->FirstBox());
-			NotifierVec vpanote;
-			pboxBook->GetNotifiers(pboxFirstSection, vpanote);
-			unitpp::assert_eq("Unexpected number of notifiers", 2, vpanote.Size());
+				// Verify that the notifier has correct last box
+				VwDivBox* pboxBook = dynamic_cast<VwDivBox*>(m_qrootb->FirstBox());
+				VwDivBox* pboxFirstSection = dynamic_cast<VwDivBox*>(pboxBook->FirstBox());
+				NotifierVec vpanote;
+				pboxBook->GetNotifiers(pboxFirstSection, vpanote);
+				unitpp::assert_eq("Unexpected number of notifiers", 2, vpanote.Size());
 
-			VwNotifier * pnote = dynamic_cast<VwNotifier *>(vpanote[0].Ptr());
-			unitpp::assert_true("Didn't find a VwNotifier", pnote);
+				VwNotifier * pnote = dynamic_cast<VwNotifier *>(vpanote[0].Ptr());
+				unitpp::assert_true("Didn't find a VwNotifier", pnote);
 
-			unitpp::assert_eq("Last box of notifier doesn't point to first section",
-				pboxFirstSection, pnote->LastTopLevelBox());
+				unitpp::assert_eq("Last box of notifier doesn't point to first section",
+					pboxFirstSection, pnote->LastTopLevelBox());
+			} catch (Throwable& t) {
+				StrAnsi sta;
+				sta.Format("Caught Throwable: %S", t.Message());
+				unitpp::assert_true(sta.Chars(), false);
+			}
 		}
 
 		// This test pounds on the special case in PropChanged where the property is a lazy
@@ -349,40 +358,65 @@ namespace TestViews
 
 		virtual void Setup()
 		{
-			CreateTestWritingSystemFactory();
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
-			m_qcda.CreateInstance(CLSID_VwCacheDa);
-			m_qcda->putref_TsStrFactory(m_qtsf);
-			CheckHr(m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda));
-			CheckHr(m_qsda->putref_WritingSystemFactory(g_qwsf));
+			printf("DEBUG: TestNotifier::Setup\n");
+			fflush(stdout);
+			try {
+				CreateTestWritingSystemFactory();
+				//m_qtsf.CreateInstance(CLSID_TsStrFactory);
+				TsStrFact::CreateCom(NULL, IID_ITsStrFactory, (void**)&m_qtsf);
+				printf("DEBUG: Created TsStrFactory\n");
+				fflush(stdout);
+				//m_qcda.CreateInstance(CLSID_VwCacheDa);
+				VwCacheDa::CreateCom(NULL, IID_IVwCacheDa, (void**)&m_qcda);
+				printf("DEBUG: Created VwCacheDa\n");
+				fflush(stdout);
+				m_qcda->putref_TsStrFactory(m_qtsf);
+				CheckHr(m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda));
+				CheckHr(m_qsda->putref_WritingSystemFactory(g_qwsf));
 
-			m_qref.Attach(NewObj MockRenderEngineFactory);
+				m_qref.Attach(NewObj MockRenderEngineFactory);
 
-			IVwRootBoxPtr qrootb;
-			// When we create the root box with CreateInstance, it is created by the actual
-			// views DLL. This results in a heap validation failure: some memory allocated
-			// on the Views DLL heap gets freed by a method that is somehow linke as part of the
-			// test program heap. (Each link that includes the C runtime memory allocation
-			// code creates a separate heap.) By calling CreateCom directly, the root box
-			// is created using the copy of the code linked into the test program, and all
-			// memory allocation and deallocation takes place in the test program's copy of
-			// the C runtime.
-			//qrootb.CreateInstance(CLSID_VwRootBox);
-			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &qrootb);
+				IVwRootBoxPtr qrootb;
+				// When we create the root box with CreateInstance, it is created by the actual
+				// views DLL. This results in a heap validation failure: some memory allocated
+				// on the Views DLL heap gets freed by a method that is somehow linke as part of the
+				// test program heap. (Each link that includes the C runtime memory allocation
+				// code creates a separate heap.) By calling CreateCom directly, the root box
+				// is created using the copy of the code linked into the test program, and all
+				// memory allocation and deallocation takes place in the test program's copy of
+				// the C runtime.
+				//qrootb.CreateInstance(CLSID_VwRootBox);
+				printf("DEBUG: Creating VwRootBox\n");
+				fflush(stdout);
+				VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &qrootb);
+				printf("DEBUG: Created VwRootBox\n");
+				fflush(stdout);
 
-			m_qrootb = dynamic_cast<VwRootBox *>(qrootb.Ptr());
-			m_hdc = 0; // So we know not to release it if something goes wrong.
-			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-			m_hdc = GetTestDC();
-			CheckHr(m_qvg32->Initialize(m_hdc));
-			CheckHr(m_qrootb->putref_DataAccess(m_qsda));
-			CheckHr(m_qrootb->putref_RenderEngineFactory(m_qref));
-			CheckHr(m_qrootb->putref_TsStrFactory(m_qtsf));
-			m_qdrs.Attach(NewObj DummyRootSite());
-			m_rcSrc = Rect(0, 0, 96, 96);
-			m_qdrs->SetRects(m_rcSrc, m_rcSrc);
-			m_qdrs->SetGraphics(m_qvg32);
-			CheckHr(m_qrootb->SetSite(m_qdrs));
+				m_qrootb = dynamic_cast<VwRootBox *>(qrootb.Ptr());
+				m_hdc = 0; // So we know not to release it if something goes wrong.
+				//m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				VwGraphics::CreateCom(NULL, IID_IVwGraphicsWin32, (void**)&m_qvg32);
+				printf("DEBUG: Created VwGraphics\n");
+				fflush(stdout);
+				m_hdc = GetTestDC();
+				CheckHr(m_qvg32->Initialize(m_hdc));
+				CheckHr(m_qrootb->putref_DataAccess(m_qsda));
+				CheckHr(m_qrootb->putref_RenderEngineFactory(m_qref));
+				CheckHr(m_qrootb->putref_TsStrFactory(m_qtsf));
+				m_qdrs.Attach(NewObj DummyRootSite());
+				m_rcSrc = Rect(0, 0, 96, 96);
+				m_qdrs->SetRects(m_rcSrc, m_rcSrc);
+				m_qdrs->SetGraphics(m_qvg32);
+				CheckHr(m_qrootb->SetSite(m_qdrs));
+				printf("DEBUG: TestNotifier::Setup done\n");
+				fflush(stdout);
+			} catch (Throwable& t) {
+				StrAnsi sta;
+				sta.Format("Setup failed: %S", t.Message());
+				printf("DEBUG: Setup failed: %s\n", sta.Chars());
+				fflush(stdout);
+				unitpp::assert_true(sta.Chars(), false);
+			}
 		}
 		virtual void Teardown()
 		{

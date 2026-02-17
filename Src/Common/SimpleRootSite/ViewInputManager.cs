@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Connects a view (rootbox) with keyboards. This class gets created by the VwRootBox on
 	/// Linux. Windows uses an unmanaged implementation (VwTextStore).
 	/// </summary>
+	[ComVisible(true)]
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
 	public class ViewInputManager: IViewInputMgr
 	{

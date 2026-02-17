@@ -1,0 +1,17 @@
+name: OpenSpec Validation
+
+on:
+  pull_request:
+    paths:
+      - 'openspec/**'
+      - '**/AGENTS.md'
+
+jobs:
+  validate-refs:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate OpenSpec cross-references
+        shell: pwsh
+        run: |
+          ./scripts/openspec/Validate-OpenSpecRefs.ps1

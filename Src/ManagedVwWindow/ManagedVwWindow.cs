@@ -13,6 +13,7 @@ namespace SIL.FieldWorks.Views
 	/// This class wrapps a hwnd to allow cross platform access to
 	/// window properties.
 	/// </summary>
+	[ComVisible(true)]
 	[Guid("3fb0fcd2-ac55-42a8-b580-73b89a2b6215")]
 	public class ManagedVwWindow : IVwWindow
 	{

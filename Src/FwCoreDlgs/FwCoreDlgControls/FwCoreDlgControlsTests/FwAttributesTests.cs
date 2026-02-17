@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox), Is.False);
 				}
 			}
 		}
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox), Is.False);
 				}
 			}
 		}
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = true;
-					Assert.IsTrue(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox), Is.True);
 				}
 			}
 		}
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = false;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", checkBox), Is.False);
 				}
 			}
 		}
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = true;
-					Assert.IsFalse(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo), Is.False);
 				}
 			}
 		}
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				using (var t = new FwFontAttributes())
 				{
 					t.ShowingInheritedProperties = true;
-					Assert.IsTrue(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo));
+					Assert.That(ReflectionHelper.GetBoolResult(t, "IsInherited", colorCombo), Is.True);
 				}
 			}
 		}

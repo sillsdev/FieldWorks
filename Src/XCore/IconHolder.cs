@@ -13,7 +13,7 @@ namespace XCore
 	public class IconHolder : UserControl
 	{
 		public System.Windows.Forms.ImageList largeImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

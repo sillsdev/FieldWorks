@@ -1,24 +1,41 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+// DISABLED: Tests are for obsolete dialog API - FwWritingSystemSetupDlg was refactored to use FwWritingSystemSetupModel
 
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.FwUtils.Attributes;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.WritingSystems;
-
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+	[TestFixture]
+	[Ignore("Obsolete: FwWritingSystemSetupDlg API was refactored to FwWritingSystemSetupModel.")]
+	public class FwWritingSystemSetupDlgTests
+	{
+		[Test]
+		public void ObsoleteDialogApi_Disabled()
+		{
+			Assert.Ignore(
+				"Obsolete: legacy dialog API tests are archived behind RUN_LW_LEGACY_TESTS " +
+				"and need a rewrite against FwWritingSystemSetupModel."
+			);
+		}
+	}
+}
+
+#if RUN_LW_LEGACY_TESTS
+namespace SIL.FieldWorks.FwCoreDlgs
+{
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Windows.Forms;
+	using SIL.FieldWorks.Common.FwUtils;
+	using SIL.FieldWorks.Common.FwUtils.Attributes;
+	using SIL.LCModel;
+	using SIL.LCModel.Core.WritingSystems;
+	using SIL.LCModel.DomainServices;
+	using SIL.LCModel.Infrastructure;
+	using SIL.WritingSystems;
 	#region Dummy WritingSystemPropertiesDlg
 	/// <summary>
 	///
@@ -114,12 +131,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="wsnames">The wsnames.</param>
 		internal void VerifyListBox(string[] wsnames)
 		{
-			Assert.AreEqual(wsnames.Length, WsList.Items.Count,
-				"Number of writing systems in list is incorrect.");
+			Assert.That(WsList.Items.Count, Is.EqualTo(wsnames.Length), "Number of writing systems in list is incorrect.");
 
 			for (int i = 0; i < wsnames.Length; i++)
 			{
-				Assert.AreEqual(wsnames[i], WsList.Items[i].ToString());
+				Assert.That(WsList.Items[i].ToString(), Is.EqualTo(wsnames[i]));
 			}
 		}
 
@@ -129,8 +145,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyWsId(string wsId)
 		{
 			//Ensure the writing system identifier is set correctly
-			Assert.AreEqual(IetfLanguageTag.Create(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
-				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags), wsId);
+			Assert.That(wsId, Is.EqualTo(IetfLanguageTag.Create(CurrentWritingSystem.Language, m_regionVariantControl.ScriptSubtag,
+				m_regionVariantControl.RegionSubtag, m_regionVariantControl.VariantSubtags)));
 		}
 
 		/// <summary>
@@ -140,13 +156,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyRelatedWritingSystem(string langAbbr)
 		{
 			foreach (CoreWritingSystemDefinition ws in WsList.Items)
-				Assert.AreEqual(langAbbr, ws.Language.Code);
+				Assert.That(ws.Language.Code, Is.EqualTo(langAbbr));
 		}
 
 
 		internal void VerifyLoadedForListBoxSelection(string expectedItemName)
 		{
-			Assert.AreEqual(expectedItemName, WsList.SelectedItem.ToString());
+			Assert.That(WsList.SelectedItem.ToString(), Is.EqualTo(expectedItemName));
 			int selectedIndex = WsList.SelectedIndex;
 			VerifyLoadedForListBoxSelection(expectedItemName, selectedIndex);
 		}
@@ -154,7 +170,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void VerifyLoadedForListBoxSelection(string expectedItemName, int selectedIndex)
 		{
 			ValidateGeneralInfo();
-			Assert.AreEqual(selectedIndex, WsList.SelectedIndex, "The wrong ws is selected.");
+			Assert.That(WsList.SelectedIndex, Is.EqualTo(selectedIndex), "The wrong ws is selected.");
 			// Validate each tab is setup to match the current language definition info.
 			ValidateGeneralTab();
 			ValidateFontsTab();
@@ -165,9 +181,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		internal void VerifyWritingSystemsAreEqual(int indexA, int indexB)
 		{
-			Assert.Less(indexA, WsList.Items.Count);
-			Assert.Less(indexB, WsList.Items.Count);
-			Assert.AreEqual(((CoreWritingSystemDefinition) WsList.Items[indexA]).Id, ((CoreWritingSystemDefinition) WsList.Items[indexB]).Id);
+			Assert.That(indexA, Is.LessThan(WsList.Items.Count));
+			Assert.That(indexB, Is.LessThan(WsList.Items.Count));
+			Assert.That(((CoreWritingSystemDefinition) WsList.Items[indexB]).Id, Is.EqualTo(((CoreWritingSystemDefinition) WsList.Items[indexA]).Id));
 		}
 
 		private ContextMenuStrip PopulateAddWsContextMenu()
@@ -184,15 +200,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (expectedItems != null)
 				{
-					Assert.AreEqual(expectedItems.Length, cms.Items.Count);
+					Assert.That(cms.Items.Count, Is.EqualTo(expectedItems.Length));
 					List<string> actualItems = (from ToolStripItem item in cms.Items select item.ToString()).ToList();
 					foreach (string item in expectedItems)
-						Assert.Contains(item, actualItems);
+						Assert.That(actualItems, Does.Contain(item));
 				}
 				else
 				{
 					// don't expect a context menu
-					Assert.AreEqual(0, cms.Items.Count);
+					Assert.That(cms.Items.Count, Is.EqualTo(0));
 				}
 			}
 		}
@@ -203,33 +219,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal void ValidateGeneralInfo()
 		{
 			// Check Language Name & EthnologueCode
-			Assert.AreEqual(CurrentWritingSystem.Language.Name, m_tbLanguageName.Text);
+			Assert.That(m_tbLanguageName.Text, Is.EqualTo(CurrentWritingSystem.Language.Name));
 			// make sure LocaleName is properly setup as Language name, not as DisplayName.
-			Assert.IsTrue(CurrentWritingSystem.Language.Name.IndexOf("(", StringComparison.Ordinal) == -1);
-			Assert.AreEqual(!string.IsNullOrEmpty(CurrentWritingSystem.Language.Iso3Code) ? CurrentWritingSystem.Language.Iso3Code : "<None>", m_LanguageCode.Text);
+			Assert.That(CurrentWritingSystem.Language.Name.IndexOf("(", StringComparison.Ordinal) == -1, Is.True);
+			Assert.That(m_LanguageCode.Text, Is.EqualTo(!string.IsNullOrEmpty(CurrentWritingSystem.Language.Iso3Code) ? CurrentWritingSystem.Language.Iso3Code : "<None>"));
 		}
 
 		internal void ValidateGeneralTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.Abbreviation, m_ShortWsName.Text);
+			Assert.That(m_ShortWsName.Text, Is.EqualTo(CurrentWritingSystem.Abbreviation));
 			// TODO: need something to internally validate the Region Variant Control.
-			Assert.AreEqual(CurrentWritingSystem, m_regionVariantControl.WritingSystem);
-			Assert.AreEqual(CurrentWritingSystem.RightToLeftScript, rbRightToLeft.Checked);
+			Assert.That(m_regionVariantControl.WritingSystem, Is.EqualTo(CurrentWritingSystem));
+			Assert.That(rbRightToLeft.Checked, Is.EqualTo(CurrentWritingSystem.RightToLeftScript));
 		}
 
 		internal void ValidateFontsTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem, m_defaultFontsControl.WritingSystem);
+			Assert.That(m_defaultFontsControl.WritingSystem, Is.EqualTo(CurrentWritingSystem));
 		}
 
 		internal void ValidateKeyboardTab()
 		{
-			Assert.AreEqual(CurrentWritingSystem.LanguageTag, m_modelForKeyboard.CurrentLanguageTag);
+			Assert.That(m_modelForKeyboard.CurrentLanguageTag, Is.EqualTo(CurrentWritingSystem.LanguageTag));
 		}
 
 		internal void ValidateConvertersTab()
 		{
-			Assert.AreEqual(string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? "<None>" : CurrentWritingSystem.LegacyMapping, cbEncodingConverter.SelectedItem.ToString());
+			Assert.That(cbEncodingConverter.SelectedItem.ToString(), Is.EqualTo(string.IsNullOrEmpty(CurrentWritingSystem.LegacyMapping) ? "<None>" : CurrentWritingSystem.LegacyMapping));
 		}
 		internal void ValidateSortingTab()
 		{
@@ -290,9 +306,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			try
 			{
 				btnModifyEthnologueInfo_Click(this, null);
-				Assert.AreEqual(0, m_expectedMsgBoxes.Count);
-				Assert.AreEqual(0, m_expectedOrigWsIds.Count);
-				Assert.AreEqual(0, m_resultsToEnforce.Count);
+				Assert.That(m_expectedMsgBoxes.Count, Is.EqualTo(0));
+				Assert.That(m_expectedOrigWsIds.Count, Is.EqualTo(0));
+				Assert.That(m_resultsToEnforce.Count, Is.EqualTo(0));
 			}
 			finally
 			{
@@ -312,15 +328,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal DialogResult DoExpectedMsgBoxResult(ShowMsgBoxStatus encountered, string origWsId)
 		{
 			// we always expect message boxes.
-			Assert.Greater(m_expectedMsgBoxes.Count, 0,
-				string.Format("Didn't expect dialog {0}", encountered));
-			Assert.AreEqual(m_expectedMsgBoxes[0], encountered);
+			Assert.That(m_expectedMsgBoxes.Count, Is.GreaterThan(0), string.Format("Didn't expect dialog {0}", encountered));
+			Assert.That(encountered, Is.EqualTo(m_expectedMsgBoxes[0]));
 			m_expectedMsgBoxes.RemoveAt(0);
 			DialogResult result = m_resultsToEnforce[0];
 			m_resultsToEnforce.RemoveAt(0);
 			if (origWsId != null && m_expectedOrigWsIds.Count > 0)
 			{
-				Assert.AreEqual(m_expectedOrigWsIds[0], origWsId);
+				Assert.That(origWsId, Is.EqualTo(m_expectedOrigWsIds[0]));
 				m_expectedOrigWsIds.RemoveAt(0);
 			}
 			return result;
@@ -395,12 +410,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				base.SwitchTab(index);
 				tabControl_SelectedIndexChanged(this, EventArgs.Empty);
 			}
-			Assert.AreEqual(0, m_expectedMsgBoxes.Count);
+			Assert.That(m_expectedMsgBoxes.Count, Is.EqualTo(0));
 		}
 
 		internal void VerifyTab(int index)
 		{
-			Assert.AreEqual(index, tabControl.SelectedIndex);
+			Assert.That(tabControl.SelectedIndex, Is.EqualTo(index));
 		}
 
 		internal bool PressBtnAdd(string item)
@@ -558,9 +573,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void VerifyNewlyAddedWritingSystems(string[] newExpectedWsIds)
 		{
 			List<string> actualWsIds = m_dlg.NewWritingSystems.Select(ws => ws.LanguageTag).ToList();
-			Assert.AreEqual(newExpectedWsIds.Length, actualWsIds.Count);
+			Assert.That(actualWsIds.Count, Is.EqualTo(newExpectedWsIds.Length));
 			foreach (string expectedWsId in newExpectedWsIds)
-				Assert.Contains(expectedWsId, actualWsIds);
+				Assert.That(actualWsIds, Does.Contain(expectedWsId));
 		}
 
 		private void VerifyWsNames(int[] hvoWss, string[] wsNames, string[] wsIds)
@@ -569,8 +584,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (int hvoWs in hvoWss)
 			{
 				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs);
-				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
-				Assert.AreEqual(wsIds[i], ws.Id);
+				Assert.That(ws.DisplayLabel, Is.EqualTo(wsNames[i]));
+				Assert.That(ws.Id, Is.EqualTo(wsIds[i]));
 				i++;
 			}
 		}
@@ -581,8 +596,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string wsId in wsIds)
 			{
 				CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystemManager.Get(wsId);
-				Assert.AreEqual(wsNames[i], ws.DisplayLabel);
-				Assert.AreEqual(wsIds[i], ws.Id);
+				Assert.That(ws.DisplayLabel, Is.EqualTo(wsNames[i]));
+				Assert.That(ws.Id, Is.EqualTo(wsIds[i]));
 				i++;
 			}
 		}
@@ -617,8 +632,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyListBox(new[] { "Kalab", "Kalab (International Phonetic Alphabet)" });
 			m_dlg.VerifyLoadedForListBoxSelection("Kalab");
 			m_dlg.PressOk();
-			Assert.AreEqual(DialogResult.OK, m_dlg.DialogResult);
-			Assert.AreEqual(true, m_dlg.IsChanged);
+			Assert.That(m_dlg.DialogResult, Is.EqualTo(DialogResult.OK));
+			Assert.That(m_dlg.IsChanged, Is.EqualTo(true));
 			VerifyWsNames(
 				new[] { m_wsKalaba.Handle, m_wsKalabaIpa.Handle },
 				new[] { "Kalab", "Kalab (International Phonetic Alphabet)" },
@@ -781,7 +796,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyRelatedWritingSystem("xxx");
 			m_dlg.VerifyLoadedForListBoxSelection("Silly");
 			m_dlg.PressCancel();
-			Assert.AreEqual(false, m_dlg.IsChanged);
+			Assert.That(m_dlg.IsChanged, Is.EqualTo(false));
 			VerifyWsNames(
 				new[] { m_wsKalaba.Handle, m_wsKalabaIpa.Handle },
 				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)" },
@@ -804,7 +819,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.VerifyRelatedWritingSystem("xxx");
 			m_dlg.VerifyLoadedForListBoxSelection("Silly");
 			m_dlg.PressOk();
-			Assert.AreEqual(true, m_dlg.IsChanged);
+			Assert.That(m_dlg.IsChanged, Is.EqualTo(true));
 			VerifyWsNames(
 				new[] { m_wsKalaba.Handle, m_wsKalabaIpa.Handle },
 				new[] { "Silly", "Silly (International Phonetic Alphabet)" },
@@ -934,3 +949,4 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 	}
 }
+#endif

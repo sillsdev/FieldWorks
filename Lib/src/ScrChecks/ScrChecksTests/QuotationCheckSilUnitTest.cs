@@ -94,8 +94,8 @@ namespace SILUBS.ScriptureChecks
 				true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[2]));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ namespace SILUBS.ScriptureChecks
 				true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -217,9 +217,9 @@ namespace SILUBS.ScriptureChecks
 				true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("Para2", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[2]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("Para2"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -253,9 +253,9 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[5], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("qux", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[5]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("qux"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Line1"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph", "Verse Number"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -394,7 +394,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -432,7 +432,7 @@ namespace SILUBS.ScriptureChecks
 				true, false, "Line2"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -460,10 +460,10 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(3, m_errors.Count);
-			Assert.AreEqual("»", m_errors[0].Tts.Text);
-			Assert.AreEqual("\u203A", m_errors[1].Tts.Text);
-			Assert.AreEqual("»", m_errors[2].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("»"));
+			Assert.That(m_errors[1].Tts.Text, Is.EqualTo("\u203A"));
+			Assert.That(m_errors[2].Tts.Text, Is.EqualTo("»"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -511,7 +511,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -592,13 +592,13 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph", "Verse Number"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(2, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[2], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("1", m_errors[0].Tts.Text);
-			Assert.AreEqual(0, m_errors[0].Tts.Offset);
-			Assert.AreEqual(m_dataSource.m_tokens[0], m_errors[1].Tts.FirstToken);
-			Assert.AreEqual("<", m_errors[1].Tts.Text);
-			Assert.AreEqual(6, m_errors[1].Tts.Offset);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[2]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("1"));
+			Assert.That(m_errors[0].Tts.Offset, Is.EqualTo(0));
+			Assert.That(m_errors[1].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[0]));
+			Assert.That(m_errors[1].Tts.Text, Is.EqualTo("<"));
+			Assert.That(m_errors[1].Tts.Offset, Is.EqualTo(6));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -649,7 +649,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -700,9 +700,9 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("\u2018", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[8]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("\u2018"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -753,9 +753,9 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("\u2019", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[8]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("\u2019"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -806,7 +806,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -857,9 +857,9 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("\u201C", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[8]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("\u201C"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -910,9 +910,9 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[8], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("\u201C", m_errors[0].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[8]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("\u201C"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -960,7 +960,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -995,19 +995,19 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Line1"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(6, m_errors.Count);
-			Assert.AreEqual(m_dataSource.m_tokens[1], m_errors[0].Tts.FirstToken);
-			Assert.AreEqual("<<", m_errors[0].Tts.Text);
-			Assert.AreEqual(m_dataSource.m_tokens[1], m_errors[1].Tts.FirstToken);
-			Assert.AreEqual("<", m_errors[1].Tts.Text);
-			Assert.AreEqual(m_dataSource.m_tokens[3], m_errors[2].Tts.FirstToken);
-			Assert.AreEqual("<<", m_errors[2].Tts.Text);
-			Assert.AreEqual(m_dataSource.m_tokens[3], m_errors[3].Tts.FirstToken);
-			Assert.AreEqual("<", m_errors[3].Tts.Text);
-			Assert.AreEqual(m_dataSource.m_tokens[5], m_errors[4].Tts.FirstToken);
-			Assert.AreEqual(">", m_errors[4].Tts.Text);
-			Assert.AreEqual(m_dataSource.m_tokens[5], m_errors[5].Tts.FirstToken);
-			Assert.AreEqual(">>", m_errors[5].Tts.Text);
+			Assert.That(m_errors.Count, Is.EqualTo(6));
+			Assert.That(m_errors[0].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[1]));
+			Assert.That(m_errors[0].Tts.Text, Is.EqualTo("<<"));
+			Assert.That(m_errors[1].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[1]));
+			Assert.That(m_errors[1].Tts.Text, Is.EqualTo("<"));
+			Assert.That(m_errors[2].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[3]));
+			Assert.That(m_errors[2].Tts.Text, Is.EqualTo("<<"));
+			Assert.That(m_errors[3].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[3]));
+			Assert.That(m_errors[3].Tts.Text, Is.EqualTo("<"));
+			Assert.That(m_errors[4].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[5]));
+			Assert.That(m_errors[4].Tts.Text, Is.EqualTo(">"));
+			Assert.That(m_errors[5].Tts.FirstToken, Is.EqualTo(m_dataSource.m_tokens[5]));
+			Assert.That(m_errors[5].Tts.Text, Is.EqualTo(">>"));
 		}
 	}
 }

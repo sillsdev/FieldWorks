@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Theme xmlns="http://wixtoolset.org/schemas/v4/thmutil">
+  <?define FontDefault = 0 ?>
+  <?define FontTitle = 1 ?>
+  <?define FontHeader = 2 ?>
+  <?define FontText = 3 ?>
+  <?define FontVersion = 4 ?>
+  <!-- Font 0: Default UI font (buttons, etc.) - black for white body area -->
+  <Font Id="0" Height="-12" Weight="500" Foreground="000000" Background="ffffff">Segoe UI</Font>
+  <!-- Font 1: Large header text - white for blue header -->
+  <Font Id="1" Height="-24" Weight="500" Foreground="ffffff">Segoe UI</Font>
+  <!-- Font 2: Medium header ("Welcome", etc.) - white for blue header -->
+  <Font Id="2" Height="-22" Weight="500" Foreground="ffffff">Segoe UI</Font>
+  <!-- Font 3: Body text - black for white body area -->
+  <Font Id="3" Height="-12" Weight="500" Foreground="000000" Background="ffffff">Segoe UI</Font>
+  <!-- Font 4: Version label - white for blue header -->
+  <Font Id="4" Height="-12" Weight="500" Foreground="ffffff">Segoe UI</Font>
+  <Window
+    Width="494"
+    Height="313"
+    HexStyle="100a0000"
+    FontId="$(var.FontDefault)"
+    Caption="#(loc.Caption)"
+    Background="FFFFFF"
+  >
+    <!-- ==================== Help Page ==================== -->
+    <Page Name="Help">
+      <?define TemplatePageName = Help ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="HelpTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.HelpHeader)</Label
+      >
+      <Label X="175" Y="112" Width="-11" Height="-35" FontId="3" DisablePrefix="yes"
+        >#(loc.HelpText)</Label
+      >
+      <Button
+        Name="HelpCloseButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.HelpCloseButton)</Text>
+        <CloseWindowAction />
+      </Button>
+    </Page>
+    <!-- ==================== Loading Page ==================== -->
+    <Page Name="Loading">
+      <?define TemplatePageName = Loading ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="LoadingTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.OverallProgressPackageText)</Label
+      >
+    </Page>
+    <!-- ==================== Install Page ==================== -->
+    <Page Name="Install">
+      <?define TemplatePageName = Install ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="InstallTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.InstallHeader)</Label
+      >
+      <!-- License link and checkbox in body area -->
+      <Hypertext
+        Name="EulaHyperlink"
+        X="11"
+        Y="156"
+        Width="-11"
+        Height="51"
+        TabStop="yes"
+        FontId="$(var.FontText)"
+        HideWhenDisabled="yes"
+        >#(loc.InstallLicenseLinkText)</Hypertext
+      >
+      <Checkbox
+        Name="EulaAcceptCheckbox"
+        X="11"
+        Y="210"
+        Width="300"
+        Height="17"
+        TabStop="yes"
+        FontId="$(var.FontText)"
+      >
+        <Text>#(loc.InstallAcceptCheckbox)</Text>
+      </Checkbox>
+      <!-- Version label in the header area -->
+      <Label
+        Name="InstallVersion"
+        X="11"
+        Y="-25"
+        Width="55"
+        Height="17"
+        FontId="$(var.FontText)"
+        DisablePrefix="yes"
+        >#(loc.InstallVersion)</Label
+      >
+      <Label
+        Name="WixBundleVersion"
+        X="66"
+        Y="-25"
+        Width="100"
+        Height="17"
+        FontId="$(var.FontText)"
+        DisablePrefix="yes"
+      />
+      <!-- Buttons -->
+      <Button
+        Name="OptionsButton"
+        X="-171"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+        VisibleCondition="NOT WixStdBASuppressOptionsUI"
+      >
+        <Text>#(loc.InstallOptionsButton)</Text>
+        <ChangePageAction Page="Options" />
+      </Button>
+      <Button
+        Name="InstallButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.InstallInstallButton)</Text>
+      </Button>
+      <Button
+        Name="InstallCancelButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.InstallCancelButton)</Text>
+        <CloseWindowAction />
+      </Button>
+    </Page>
+    <!-- ==================== Options Page ==================== -->
+    <Page Name="Options">
+      <?define TemplatePageName = Options ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="OptionsTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.OptionsHeader)</Label
+      >
+      <Label X="11" Y="156" Width="-11" Height="17" FontId="3" DisablePrefix="yes"
+        >#(loc.OptionsLocationLabel)</Label
+      >
+      <Editbox
+        Name="InstallFolder"
+        X="11"
+        Y="178"
+        Width="-91"
+        Height="21"
+        TabStop="yes"
+        FontId="3"
+        FileSystemAutoComplete="yes"
+      />
+      <Button Name="BrowseButton" X="-11" Y="177" Width="75" Height="23" TabStop="yes" FontId="0">
+        <Text>#(loc.OptionsBrowseButton)</Text>
+        <BrowseDirectoryAction VariableName="InstallFolder" />
+      </Button>
+      <Button
+        Name="OptionsOkButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.OptionsOkButton)</Text>
+        <ChangePageAction Page="Install" />
+      </Button>
+      <Button
+        Name="OptionsCancelButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.OptionsCancelButton)</Text>
+        <ChangePageAction Page="Install" Cancel="yes" />
+      </Button>
+    </Page>
+    <!-- ==================== Progress Page ==================== -->
+    <Page Name="Progress">
+      <?define TemplatePageName = Progress ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="ProgressTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.ProgressHeader)</Label
+      >
+      <Label X="11" Y="156" Width="70" Height="17" FontId="3" DisablePrefix="yes"
+        >#(loc.ProgressLabel)</Label
+      >
+      <Label
+        Name="OverallProgressPackageText"
+        X="81"
+        Y="156"
+        Width="-11"
+        Height="17"
+        FontId="3"
+        DisablePrefix="yes"
+        >#(loc.OverallProgressPackageText)</Label
+      >
+      <Progressbar Name="OverallCalculatedProgressbar" X="11" Y="178" Width="-11" Height="15" />
+      <Button
+        Name="ProgressCancelButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.ProgressCancelButton)</Text>
+      </Button>
+    </Page>
+    <!-- ==================== Modify Page ==================== -->
+    <Page Name="Modify">
+      <?define TemplatePageName = Modify ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="ModifyTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.ModifyHeader)</Label
+      >
+      <Button
+        Name="RepairButton"
+        X="-171"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+        HideWhenDisabled="yes"
+      >
+        <Text>#(loc.ModifyRepairButton)</Text>
+      </Button>
+      <Button
+        Name="UninstallButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.ModifyUninstallButton)</Text>
+      </Button>
+      <Button
+        Name="ModifyCancelButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.ModifyCancelButton)</Text>
+        <CloseWindowAction />
+      </Button>
+    </Page>
+    <!-- ==================== Success Page ==================== -->
+    <Page Name="Success">
+      <?define TemplatePageName = Success ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="SuccessTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.SuccessHeader)</Label
+      >
+      <Label
+        Name="SuccessRestartText"
+        X="11"
+        Y="156"
+        Width="-11"
+        Height="34"
+        FontId="3"
+        HideWhenDisabled="yes"
+        DisablePrefix="yes"
+        VisibleCondition="WixStdBARestartRequired"
+        >#(loc.SuccessRestartText)</Label
+      >
+      <Button
+        Name="LaunchButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+        HideWhenDisabled="yes"
+      >
+        <Text>#(loc.SuccessLaunchButton)</Text>
+      </Button>
+      <Button
+        Name="SuccessRestartButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+        HideWhenDisabled="yes"
+        VisibleCondition="WixStdBARestartRequired"
+      >
+        <Text>#(loc.SuccessRestartButton)</Text>
+      </Button>
+      <Button
+        Name="SuccessCloseButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.SuccessCloseButton)</Text>
+        <CloseWindowAction />
+      </Button>
+    </Page>
+    <!-- ==================== Failure Page ==================== -->
+    <Page Name="Failure">
+      <?define TemplatePageName = Failure ?>
+      <?include BundleThemeTemplate.wxi?>
+      <Label
+        Name="FailureTitle"
+        X="0"
+        Y="116"
+        Width="-1"
+        Height="26"
+        FontId="$(var.FontTitle)"
+        DisablePrefix="yes"
+        Center="yes"
+        >#(loc.FailureHeader)</Label
+      >
+      <Hypertext
+        Name="FailureLogFileLink"
+        X="11"
+        Y="156"
+        Width="-11"
+        Height="80"
+        FontId="3"
+        TabStop="yes"
+        HideWhenDisabled="yes"
+        >#(loc.FailureHyperlinkLogText)</Hypertext
+      >
+      <Label
+        Name="FailureRestartText"
+        X="11"
+        Y="240"
+        Width="-11"
+        Height="34"
+        FontId="3"
+        HideWhenDisabled="yes"
+        DisablePrefix="yes"
+        VisibleCondition="WixStdBARestartRequired"
+        >#(loc.FailureRestartText)</Label
+      >
+      <Button
+        Name="FailureRestartButton"
+        X="-91"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+        HideWhenDisabled="yes"
+        VisibleCondition="WixStdBARestartRequired"
+      >
+        <Text>#(loc.FailureRestartButton)</Text>
+      </Button>
+      <Button
+        Name="FailureCloseButton"
+        X="-11"
+        Y="-11"
+        Width="75"
+        Height="23"
+        TabStop="yes"
+        FontId="0"
+      >
+        <Text>#(loc.FailureCloseButton)</Text>
+        <CloseWindowAction />
+      </Button>
+    </Page>
+  </Window>
+</Theme>

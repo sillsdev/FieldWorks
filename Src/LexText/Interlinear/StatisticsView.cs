@@ -21,7 +21,9 @@ namespace SIL.FieldWorks.IText
 {
 	public partial class StatisticsView : UserControl, IxCoreContentControl
 	{
+#pragma warning disable CS0649 // Field is never assigned to
 		private bool _shouldNotCall;
+#pragma warning restore CS0649
 
 		private string _areaName;
 		private Mediator _mediator;

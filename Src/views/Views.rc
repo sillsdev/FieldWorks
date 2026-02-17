@@ -22,8 +22,9 @@ Description:
 // Version: bldinc.h holds the current version number and it is created by executing
 // bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
 // numbers are hard-coded in mk*.bat.
+// Note: bldinc.h is found via the /I$(COM_OUT_DIR) include path set in _rule.mak
 #if defined(WIN32) || defined(WIN64)
-#include "..\..\Output\Common\bldinc.h"
+#include "bldinc.h"
 #include "..\..\Src\AppCore\Res\AfApp.rc"
 #include "..\Generic\Generic.rc"
 #else

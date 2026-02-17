@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.ImageList m_imageList;
 		private System.Windows.Forms.ImageList m_imageListPictures;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private const string s_helpTopic = "khtpAddFromCatalog";
 		private System.Windows.Forms.HelpProvider helpProvider;

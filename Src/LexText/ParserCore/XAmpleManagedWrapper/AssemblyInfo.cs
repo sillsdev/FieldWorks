@@ -7,7 +7,7 @@ using System.Reflection;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("XAmpleManagedWrapper")]
+// [assembly: AssemblyTitle("XAmpleManagedWrapper")] // Sanitized by convert_generate_assembly_info
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
