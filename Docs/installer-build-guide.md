@@ -62,10 +62,10 @@ git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
 # & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64
 
 # Restore packages
-msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
 
 # Build base installer (x64 only)
-msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
 ```
 
 ### Output Location
@@ -89,10 +89,10 @@ These can be downloaded from GitHub Releases (e.g., `build-1188`).
 
 ```powershell
 # Restore packages
-msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
 
 # Build patch installer (x64 only)
-msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
 ```
 
 ### Output Location
@@ -114,7 +114,7 @@ The automated build process is defined in two GitHub Actions workflows:
 1. Checkout main repo and helper repositories (FwHelps, FwLocalizations, liblcm)
 2. Install .NET 4.8.1 targeting pack
 3. Setup MSBuild environment
-4. Build base installer using `msbuild Build/Orchestrator.proj /t:BuildBaseInstaller`
+4. Build base installer using `msbuild Build/InstallerBuild.proj /t:BuildBaseInstaller`
 5. Extract burn engines using `insignia -ib` for code signing
 6. Sign engines and bundles using Azure Trusted Signing
 7. Reattach engines using `insignia -ab`
@@ -137,7 +137,7 @@ The automated build process is defined in two GitHub Actions workflows:
 1. Checkout repos (same as base installer)
 2. Download base build artifacts from GitHub Release
 3. Set registry key for WiX temp file handling
-4. Build patch using `msbuild Build/Orchestrator.proj /t:BuildPatchInstaller`
+4. Build patch using `msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller`
 5. Sign patch using Azure Trusted Signing
 6. Upload to S3 (if `make_release: true`)
 
@@ -157,7 +157,7 @@ Workflows should use **WiX Toolset v6** via `WixToolset.Sdk` restored from NuGet
 **Cause**: NuGet restore/build tools not fully restored, or missing VS build prerequisites.
 
 **Fix**:
-1. Ensure `msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64` succeeds.
+1. Ensure `msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64` succeeds.
 2. Re-run `\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly` and resolve any reported issues.
 2. Add WiX bin directory to PATH: `C:\Program Files (x86)\WiX Toolset v3.14\bin`
 

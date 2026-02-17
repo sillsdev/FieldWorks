@@ -86,10 +86,10 @@ Installer builds use traversal internally but are invoked via MSBuild targets:
 
 ```powershell
 # Base installer (calls traversal build via Installer.targets)
-msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
+msbuild Build/InstallerBuild.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 
 # Patch installer (calls traversal build via Installer.targets)
-msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
+msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 ```
 
 Note: The installer targets in `Build/Installer.targets` have been modernized to call `FieldWorks.proj` instead of the old `remakefw` target.

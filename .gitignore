@@ -2,7 +2,6 @@
 GeneratedAssemblyInfo.cs
 Collection.cpp
 .vs/
-Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
 Build/NuGet.exe

@@ -89,7 +89,6 @@ The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **Native Crash**: Native tests are fragile. Use `printf` debugging if the debugger is unavailable.
 
 ## References
--   **Build Infrastructure**: `Build/FieldWorks.targets` for MSBuild test tasks
 -   **Test Configuration**: `Test.runsettings` for VSTest settings
 -   **Test Data**: `TestLangProj/` for integration test data
 -   **Quickstart**: `specs/007-test-modernization-vstest/quickstart.md` for detailed instructions

@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
@@ -221,11 +221,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xWorksTests", "Src\xWorks\x
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Generic", "Src\Generic\Generic.vcxproj", "{7F6B25EE-CD22-4E4C-898D-A0F846E6E9D4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FwKernel", "Src\Kernel\Kernel.vcxproj", "{6396B488-4D34-48B2-8639-EEB90707405B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Kernel", "Src\Kernel\Kernel.vcxproj", "{6396B488-4D34-48B2-8639-EEB90707405B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "views", "Src\views\views.vcxproj", "{C86CA2EB-81B5-4411-B5B7-E983314E02DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CacheLight", "Src\CacheLight\CacheLight.csproj", "{34442A32-31DE-45A8-AD36-0ECFE4095523}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FXT", "FXT", "{6D69D131-C928-6A46-F508-A4A608CBE30A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxtExe", "Src\FXT\FxtExe\FxtExe.csproj", "{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerArtifactsTests", "Src\InstallValidator\InstallerArtifactsTests\InstallerArtifactsTests.csproj", "{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -906,9 +914,26 @@ Global
 		{34442A32-31DE-45A8-AD36-0ECFE4095523}.Debug|x64.Build.0 = Debug|x64
 		{34442A32-31DE-45A8-AD36-0ECFE4095523}.Release|x64.ActiveCfg = Release|x64
 		{34442A32-31DE-45A8-AD36-0ECFE4095523}.Release|x64.Build.0 = Release|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Bounds|x64.ActiveCfg = Debug|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Bounds|x64.Build.0 = Debug|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Debug|x64.ActiveCfg = Debug|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Debug|x64.Build.0 = Debug|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Release|x64.ActiveCfg = Release|x64
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5}.Release|x64.Build.0 = Release|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Bounds|x64.ActiveCfg = Debug|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Bounds|x64.Build.0 = Debug|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Debug|x64.ActiveCfg = Debug|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Debug|x64.Build.0 = Debug|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Release|x64.ActiveCfg = Release|x64
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6D69D131-C928-6A46-F508-A4A608CBE30A} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{8D3F63D3-8EF8-43FD-B5C1-4DF686A242D5} = {6D69D131-C928-6A46-F508-A4A608CBE30A}
+		{8AC88510-3A3E-4AD0-B64D-C83AC81AD8FE} = {6D69D131-C928-6A46-F508-A4A608CBE30A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9F385E4A-ED83-4896-ADB8-335A2065B865}

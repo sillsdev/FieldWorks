@@ -18,6 +18,8 @@ Localization relies on .resx resources and shared resource assemblies. Component
 
 - Use .resx resource files for UI strings and assets.
 - Shared resources live in FwResources for consistent localization.
+- Build-time localization is handled by `Build/Localize.targets` (Crowdin integration).
+- `crowdin.json` at the repo root defines file mappings for the Crowdin translation platform.
 
 ### References
 

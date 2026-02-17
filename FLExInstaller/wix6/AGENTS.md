@@ -25,7 +25,7 @@ Preferred entrypoint:
 Equivalent MSBuild entrypoint (what `build.ps1` dispatches to):
 
 ```powershell
-msbuild Build\Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:InstallerToolset=Wix6
+msbuild Build\InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:InstallerToolset=Wix6
 ```
 
 Notes:

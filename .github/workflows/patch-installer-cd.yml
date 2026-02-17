@@ -201,8 +201,8 @@ jobs:
           $ErrorActionPreference = 'Stop'
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
           # Build patch installer (uses traversal build internally via Installer.targets)
-          msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
-          msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
+          dotnet restore FieldWorks.sln /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true
+          msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Set-Location BuildDir
 

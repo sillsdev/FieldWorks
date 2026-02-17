@@ -243,9 +243,9 @@ With CPM ensuring all projects resolve to the same package version, most manual 
    - Declarative dependency ordering
    - 110+ projects organized by dependency layer
 
-2. **`Build/Orchestrator.proj`** - SDK-style build entry point (NEW)
-   - Replaces legacy `Build/FieldWorks.proj`
-   - Provides RestorePackages, BuildBaseInstaller, BuildPatchInstaller targets
+2. **`Build/InstallerBuild.proj`** - Installer build entry point (NEW)
+   - Hosts BuildInstaller target for WiX MSI/bundle builds
+   - Package restore is now handled directly by build.ps1 (`dotnet restore`)
 
 3. **`Build/Src/NativeBuild/NativeBuild.csproj`** - Native build wrapper (NEW)
    - Bridges traversal SDK and native C++ builds
@@ -269,7 +269,7 @@ With CPM ensuring all projects resolve to the same package version, most manual 
 
 **Removed Parameters**:
 - `-UseTraversal` (now always on)
-- `-Targets` (use `msbuild Build/Orchestrator.proj /t:TargetName`)
+- `-Targets` (use `msbuild Build/InstallerBuild.proj /t:TargetName`)
 
 #### **Updated Build Targets**
 
@@ -439,7 +439,7 @@ The SDK migration exposed several latent bugs and dependency conflicts that were
   - Replaced by modern SDK tooling or NuGet packages
 
 #### **Obsolete Projects** (3 files)
-- `Build/FieldWorks.proj` (non-SDK) - Replaced by `Build/Orchestrator.proj`
+- `Build/FieldWorks.proj` (non-SDK) - Replaced by `Build/InstallerBuild.proj` for installer targets; package restore moved to build.ps1
 - `Build/native.proj` - Optional wrapper (removed)
 - Legacy project files from non-SDK era
 

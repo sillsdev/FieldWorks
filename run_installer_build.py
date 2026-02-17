@@ -21,4 +21,4 @@ run_command("powershell.exe -ExecutionPolicy Bypass -File Build\\Agent\\Setup-In
 
 print("Building installer (Release)...")
 # Using the command from instructions
-run_command("msbuild Build\\Orchestrator.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m")
+run_command("msbuild Build\\InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m")

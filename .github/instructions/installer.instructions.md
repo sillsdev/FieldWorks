@@ -14,7 +14,7 @@ Guidance for building, validating, and debugging the FieldWorks installer for bo
 	- `FieldWorks.Installer.wixproj` (MSI)
 	- `FieldWorks.Bundle.wixproj` (bundle)
 - WiX 3 builds require the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under the MSBuild extensions path.
-- Builds are orchestrated via `Build/Orchestrator.proj` (preferred entrypoints are `./build.ps1` and `./test.ps1`).
+- Builds are orchestrated via `Build/InstallerBuild.proj` (preferred entrypoints are `./build.ps1` and `./test.ps1`).
 - Default installer artifacts (Debug) land under:
 	- WiX 3: `FLExInstaller\bin\x64\Debug\en-US\FieldWorks.msi`
 	- WiX 3: `FLExInstaller\bin\x64\Debug\FieldWorksBundle.exe`
@@ -30,10 +30,10 @@ Guidance for building, validating, and debugging the FieldWorks installer for bo
 ./build.ps1 -BuildInstaller -InstallerToolset Wix6
 
 # Direct MSBuild (equivalent to the orchestration target)
-msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64
+msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64
 
 # Direct MSBuild (WiX 6 opt-in)
-msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:InstallerToolset=Wix6
+msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:InstallerToolset=Wix6
 ```
 
 ## Debugging flow: “double-click does nothing”

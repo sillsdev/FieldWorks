@@ -163,12 +163,6 @@
 		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
 			<ToolsVersion>Current</ToolsVersion>
 		</PropertyGroup>
-		<!-- refresh the FieldWorks.targets file that gets loaded -->
-		<GenerateFwTargets
-			ToolsVersion="$(ToolsVersion)"
-			FwRoot="$(fwrt)"
-			Condition="'$(SkipGenerateFwTargets)' != 'true'"
-		/>
 		<CpuArchitecture>
 			<Output TaskParameter="Value" PropertyName="arch" />
 		</CpuArchitecture>

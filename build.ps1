@@ -48,7 +48,7 @@
     Additional arguments to pass directly to MSBuild.
 
 .PARAMETER BuildInstaller
-    If set, builds the installer via Build/Orchestrator.proj after the main build.
+    If set, builds the installer via Build/InstallerBuild.proj after the main build.
     This automatically enables -BuildAdditionalApps unless explicitly disabled.
 
 .PARAMETER InstallerToolset
@@ -392,9 +392,16 @@ try {
 
         # Restore packages
         if (-not $SkipRestore) {
-            Invoke-MSBuild `
-                -Arguments @('Build/Orchestrator.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform", "/v:quiet", "/nologo") `
-                -Description 'RestorePackages'
+            Write-Host "Restoring NuGet packages..." -ForegroundColor Cyan
+            $packagesDir = Join-Path $PSScriptRoot "packages"
+            if (-not (Test-Path $packagesDir)) {
+                New-Item -Path $packagesDir -ItemType Directory -Force | Out-Null
+            }
+            & dotnet restore "$PSScriptRoot\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$Platform" --verbosity quiet
+            if ($LASTEXITCODE -ne 0) {
+                throw "NuGet package restore failed for FieldWorks.sln"
+            }
+            Write-Host "Package restore complete." -ForegroundColor Green
         } else {
             Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
         }
@@ -502,7 +509,7 @@ try {
             }
 
             Invoke-MSBuild `
-                -Arguments @('Build/Orchestrator.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
+                -Arguments @('Build/InstallerBuild.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
                 -Description 'Installer Build'
 
             Write-Host "[OK] Installer build complete!" -ForegroundColor Green
