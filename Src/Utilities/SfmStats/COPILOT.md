@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: 21276ebc360840097a54dc037be9cd230a22c03262dc075dd198bfb93941163b
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/SfmStats. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 9be40fcf0586972031abe58bc18e05fb49c961b114494509a3fb1f1b4dc9df3c
-status: production
----
 
 # SfmStats
 
@@ -40,77 +36,38 @@ Simple command-line tool (~299 lines, single Program.cs) for SFM file analysis. 
 - Excludes inline SFMs from counts
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Application type**: Console executable
-- **Key libraries**: Sfm2Xml (SFM parsing), System.IO, System.Text.Encoding
-- **Output format**: Plain text statistical reports
+Language - C#
 
 ## Dependencies
-- **Sfm2Xml**: SFM parsing classes (Utilities/SfmToXml or external library)
-- **Consumer**: Data migration specialists analyzing legacy SFM files before import
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **Command-line**: `SfmStats.exe <inputfile> [outputfile]`
-- **Input**: SFM file path (required)
-- **Output**: Statistical reports to file or console
-- **Reports**: 1) Byte count histogram, 2) SFM usage frequency, 3) SFM pair patterns
-- **Exit code**: 0 = success, non-zero = error
+- Command-line: `SfmStats.exe <inputfile> [outputfile]`
 
 ## Threading & Performance
-- **Single-threaded**: Synchronous file processing
-- **Performance**: Fast for typical SFM files (<1 second for most files)
-- **Memory**: Loads entire file into memory for analysis
-- **No caching**: One-pass analysis per execution
+- Single-threaded: Synchronous file processing
 
 ## Config & Feature Flags
-- **No configuration files**: All behavior from command-line arguments
-- **Inline SFM exclusion**: Automatically excludes inline markers from byte counts
-- **Output destination**: Console (default) or file (optional second argument)
+- No configuration files: All behavior from command-line arguments
 
 ## Build Information
-- **Project**: SfmStats.csproj
-- **Type**: Console (.NET Framework 4.8.x)
-- **Output**: SfmStats.exe
-- **Namespace**: SfmStats
-- **Source files**: Program.cs, AssemblyInfo.cs (2 files, ~299 lines)
+- Project: SfmStats.csproj
 
 ## Interfaces and Data Models
-- **Main(string[] args)**: Entry point parsing command-line arguments
-- **Usage()**: Prints command-line help
-- **Statistical reports**: Hashtables for counts, console output formatting
+See Key Components section above.
 
 ## Entry Points
-- **Command-line**: `SfmStats.exe myfile.sfm` (console output)
-- **With output file**: `SfmStats.exe myfile.sfm stats.txt`
-- **Typical usage**: Analyze SFM before import to understand structure
-- **Import Wizard workflow**: Run SfmStats → review reports → configure import mapping
+- Command-line: `SfmStats.exe myfile.sfm` (console output)
 
 ## Test Index
 No test project found.
 
 ## Usage Hints
-- **Basic**: `SfmStats.exe mydata.sfm` shows stats on console
-- **Save output**: `SfmStats.exe mydata.sfm report.txt`
-- **Interpreting results**:
-  - Byte histogram shows character distribution
-  - SFM frequency shows which markers are used most
-  - SFM pairs show common marker sequences (helps understand structure)
-- **Best practice**: Run before import to validate SFM structure matches expectations
+- Basic: `SfmStats.exe mydata.sfm` shows stats on console
 
 ## Related Folders
-- **Utilities/SfmToXml/**: SFM to XML conversion (uses shared Sfm2Xml parsing)
-- **LexText/LexTextControls/**: LexImportWizard (SFM import functionality)
-- **ParatextImport/**: USFM/SFM parsing
+- Utilities/SfmToXml/: SFM to XML conversion (uses shared Sfm2Xml parsing)
 
 ## References
-- **Sfm2Xml namespace**: SFM parsing infrastructure
-- **System.IO.File**: File reading
-- **System.Text.Encoding**: Character encoding analysis
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/SfmStats/SfmStats.csproj
-- Key C# files:
-  - Utilities/SfmStats/Program.cs
-  - Utilities/SfmStats/Properties/AssemblyInfo.cs
+See `.cache/copilot/diff-plan.json` for file details.

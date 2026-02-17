@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: a486b8c52d33bd2fde61d14b6fc651d9d308fe0acbb590c43e673a7b6ee64039
+last-reviewed-tree: 40947eb2517b52a47348601f466166915ba1c66369b07378d44191e713efc61a
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/FwParatextLexiconPlugin. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # FwParatextLexiconPlugin COPILOT summary
 
@@ -61,114 +57,38 @@ C# class library (.NET Framework 4.8.x) implementing Paratext plugin contracts. 
 - **Event args**: FdoLexemeAddedEventArgs, FdoLexiconGlossAddedEventArgs, FdoLexiconSenseAddedEventArgs
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library (plugin DLL)
-- **Paratext.LexicalContracts**: Paratext plugin interfaces
-- **SIL.LCModel**: FieldWorks data model access
-- **COM activation context**: For FDO COM object loading
-- **ILRepack**: Merges dependencies into single plugin DLL
-- Windows Forms for UI dialogs
+C# .NET Framework 4.8.x, Paratext.LexicalContracts, COM activation context, ILRepack.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **Paratext.LexicalContracts**: Plugin interfaces (LexiconPlugin, LexiconPluginV2, Lexicon, etc.)
-- **SIL.LCModel**: FieldWorks data model (LcmCache, ILexEntry)
-- **Common/FwUtils**: Utilities (FwRegistryHelper, FwUtils.InitializeIcu)
-- **SIL.WritingSystems**: Writing system support
-- **Windows Forms**: Dialog UI
-
-### Downstream (consumed by)
-- **Paratext**: Loads plugin to access FLEx lexicons
-- Translators using Paratext with FLEx lexical resources
+- Upstream: Paratext.LexicalContracts, SIL.LCModel, Common/FwUtils
+- Downstream: Paratext loads plugin, translators access FLEx lexicons
 
 ## Interop & Contracts
-- **LexiconPlugin interface**: Paratext contract for lexicon plugins
-- **LexiconPluginV2 interface**: V2 Paratext contract
-- **[LexiconPlugin] attribute**: Paratext plugin discovery
-- **COM activation context**: Critical for FDO COM object loading
-  - All public methods must activate context before FDO calls
-  - Avoid deferred execution (LINQ, yield) crossing context boundaries
-- **Events**: LexemeAdded, SenseAdded, GlossAdded for Paratext notifications
+[LexiconPlugin] attribute for discovery, LexiconPlugin/V2 interfaces, COM activation context required for FDO, Events (LexemeAdded, SenseAdded, GlossAdded).
 
 ## Threading & Performance
-- **Thread-safe**: m_syncRoot lock for cache access
-- **Caching**: CacheSize=5 for lexicons and LCM caches
-- **Performance**: Cache hits avoid repeated FLEx project loading
-- **COM threading**: Activation context management
+Thread-safe (m_syncRoot), CacheSize=5 for lexicons/caches, cache hits avoid project reloading.
 
 ## Config & Feature Flags
-- **CacheSize**: 5 lexicons/caches maintained
-- Registry settings via ParatextLexiconPluginRegistryHelper
-- Directory locations via ParatextLexiconPluginDirectoryFinder
+CacheSize=5, registry settings via ParatextLexiconPluginRegistryHelper.
 
 ## Build Information
-- **Project file**: FwParatextLexiconPlugin.csproj (net48, OutputType=Library)
-- **Test project**: FwParatextLexiconPluginTests/
-- **ILRepack**: ILRepack.targets merges dependencies into single DLL
-- **Output**: FwParatextLexiconPlugin.dll (deployed to Paratext plugins)
-- **Build**: Via top-level FieldWorks.sln
-- **Run tests**: `dotnet test FwParatextLexiconPluginTests/`
+FwParatextLexiconPlugin.csproj (net48) → merged DLL via ILRepack.
 
 ## Interfaces and Data Models
-
-- **FwLexiconPlugin** (FwLexiconPlugin.cs)
-  - Purpose: Main Paratext plugin entry point
-  - Inputs: ValidateLexicalProject(projectId, langId), GetLexicon(scrTextName, projectId, langId)
-  - Outputs: LexicalProjectValidationResult, Lexicon/LexiconV2
-  - Notes: Thread-safe; COM activation context required for FDO; caches 5 lexicons
-
-- **LexiconPlugin, LexiconPluginV2 interfaces** (Paratext.LexicalContracts)
-  - Purpose: Paratext contracts for lexicon access
-  - Inputs: Project/language identifiers
-  - Outputs: Lexicon objects
-  - Notes: Implemented by FwLexiconPlugin
-
-- **FdoLexicon** (FdoLexicon.cs)
-  - Purpose: Exposes FLEx lexicon to Paratext as Lexicon/LexiconV2
-  - Inputs: LcmCache
-  - Outputs: Lexical entries, senses, glosses
-  - Notes: Raises events when lexicon changes
-
-- **FdoLexEntryLexeme** (FdoLexEntryLexeme.cs)
-  - Purpose: Represents lexical entry for Paratext
-  - Inputs: ILexEntry from FLEx
-  - Outputs: Lexeme data (senses, glosses, analyses)
-  - Notes: Implements Paratext Lexeme interface
-
-- **ChooseFdoProjectForm** (ChooseFdoProjectForm.cs)
-  - Purpose: UI for selecting FLEx project in Paratext
-  - Inputs: Available FLEx projects
-  - Outputs: Selected project ID
-  - Notes: Dialog shown to Paratext users
+FwLexiconPlugin (plugin entry), LexiconPlugin/V2, FdoLexicon, FdoLexEntryLexeme, ChooseFdoProjectForm.
 
 ## Entry Points
-- **Paratext loads plugin**: FwLexiconPlugin discovered via [LexiconPlugin] attribute
-- Translators access via Paratext UI (Tools > Lexicons or similar)
+FwLexiconPlugin discovered via [LexiconPlugin] attribute, accessed via Paratext UI.
 
 ## Test Index
-- **Test project**: FwParatextLexiconPluginTests/
-- **Run tests**: `dotnet test FwParatextLexiconPluginTests/`
-- **Coverage**: Plugin initialization, lexicon access, caching
+FwParatextLexiconPluginTests validates plugin, lexicon access, caching.
 
 ## Usage Hints
-- **Installation**: Deploy FwParatextLexiconPlugin.dll to Paratext plugins folder
-- **Paratext workflow**: Translator opens Paratext project, accesses FLEx lexicon via plugin
-- **COM context**: All FDO operations must occur within activated activation context
-- **Caching**: Plugin caches up to 5 lexicons; manage cache appropriately
-- **Events**: Paratext receives notifications when FLEx lexicon changes
-- **ILRepack**: Dependencies merged into single DLL for easy deployment
+Deploy DLL to Paratext plugins folder, COM context required for FDO operations, caches 5 lexicons.
 
 ## Related Folders
-- **Paratext8Plugin/**: Newer Paratext 8-specific integration
-- **ParatextImport/**: Import Paratext data into FLEx (reverse direction)
-- **Common/ScriptureUtils**: Paratext utilities
+Paratext8Plugin, ParatextImport, Common/ScriptureUtils.
 
 ## References
-- **Project files**: FwParatextLexiconPlugin.csproj (net48), FwParatextLexiconPluginTests/, ILRepack.targets
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: FwLexiconPlugin.cs, FwLexiconPluginV2.cs, FdoLexicon.cs, FdoLexEntryLexeme.cs, FdoWordAnalysis.cs, and others
-- **Total lines of code**: 4026
-- **Output**: FwParatextLexiconPlugin.dll (plugin for Paratext)
-- **Namespace**: SIL.FieldWorks.ParatextLexiconPlugin
-- **Icon**: question.ico
+See `.cache/copilot/diff-plan.json` for file details.

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 468415808efe7dbff1e68b85e0763a09bae887aafb4741349bc09cdce292f659
+last-reviewed-tree: 0757bbbaaff5bc9955aa7b4ae78c8dab29ad614626296c6de00f72aade14ff77
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/ViewsInterfaces. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # ViewsInterfaces COPILOT summary
 
@@ -56,46 +52,22 @@ C# interface library (.NET Framework 4.8.x) with COM interop interface definitio
   - Note: Full interface declarations in C++ headers; C# side uses COM interop attributes
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- COM interop (Runtime.InteropServices)
-- Interfaces for native Views C++ engine
+C# .NET Framework 4.8.x, COM interop (Runtime.InteropServices) for native Views C++ engine.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **views**: Native C++ Views rendering engine (COM server)
-- **System.Runtime.InteropServices**: COM marshaling
-- Native Views type libraries for COM interface definitions
-
-### Downstream (consumed by)
-- **Common/SimpleRootSite**: Implements IVwRootSite, uses Views interfaces
-- **Common/RootSite**: Advanced root site using Views interfaces
-- **All text display components**: Use Views via these interfaces
-- Any managed code interfacing with Views rendering
+Consumes: views (native C++ COM server), System.Runtime.InteropServices. Used by: Common/SimpleRootSite, Common/RootSite, all text display components.
 
 ## Interop & Contracts
-- **COM interop**: All interfaces designed for COM marshaling to native Views
-- **IUnknown**: COM interface lifetime management
-- **ComWrapper**: Ensures proper COM reference counting
-- **Marshaling attributes**: Control data marshaling between managed and native
-- Critical bridge enabling managed FieldWorks to use native Views engine
+COM interop for native Views. IUnknown lifetime, ComWrapper reference counting, marshaling attributes. Critical bridge for managed-to-native Views.
 
 ## Threading & Performance
-- **COM threading**: Views interfaces follow COM threading model
-- **STA threads**: Views typically requires STA (Single-Threaded Apartment) threads
-- **Reference counting**: ComWrapper ensures proper COM object lifetime
-- **Performance**: Interface layer; performance determined by native Views implementation
+COM threading model, STA threads required. ComWrapper ensures proper COM object lifetime.
 
 ## Config & Feature Flags
-No configuration. Interface definitions only.
+Interface definitions only; no configuration.
 
 ## Build Information
-- **Project file**: ViewsInterfaces.csproj (net48, OutputType=Library)
-- **Test project**: ViewsInterfacesTests/ViewsInterfacesTests.csproj
-- **Output**: ViewsInterfaces.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild ViewsInterfaces.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test ViewsInterfacesTests/ViewsInterfacesTests.csproj`
+ViewsInterfaces.csproj (net48), output: ViewsInterfaces.dll. Tests: `dotnet test ViewsInterfacesTests/`.
 
 ## Interfaces and Data Models
 
@@ -146,31 +118,16 @@ No configuration. Interface definitions only.
   - Many others defined in native Views headers
 
 ## Entry Points
-Referenced by all FieldWorks components using Views rendering. Interface library - no executable entry point.
+Interface library - no executable entry point. Referenced by all Views-using components.
 
 ## Test Index
-- **Test project**: ViewsInterfacesTests
-- **Run tests**: `dotnet test ViewsInterfacesTests/ViewsInterfacesTests.csproj`
-- **Coverage**: COM wrapper behavior, property stores, utilities
+ViewsInterfacesTests project. Run: `dotnet test ViewsInterfacesTests/`.
 
 ## Usage Hints
-- Use ComWrapper for COM object lifetime management - always Dispose()
-- Views interfaces accessed via COM interop to native Views.dll
-- VwPropertyStoreManaged for managed-side property storage
-- Critical infrastructure - changes affect all text rendering
-- STA thread required for Views COM calls
-- Reference counting via ComWrapper prevents leaks
+Use ComWrapper for COM lifetime - always Dispose(). STA thread required. VwPropertyStoreManaged for managed property storage. Critical infrastructure affecting all text rendering.
 
 ## Related Folders
-- **views/**: Native C++ Views rendering engine (COM server)
-- **Common/SimpleRootSite**: Implements IVwRootSite using these interfaces
-- **Common/RootSite**: Advanced root site using Views interfaces
-- All FieldWorks text display components depend on ViewsInterfaces
+views (native C++ COM server), Common/SimpleRootSite, Common/RootSite, all text display components.
 
 ## References
-- **Project files**: ViewsInterfaces.csproj (net48), ViewsInterfacesTests/ViewsInterfacesTests.csproj
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: ComWrapper.cs, ComUtils.cs, VwPropertyStoreManaged.cs, DispPropOverrideFactory.cs, IPicture.cs, Rect.cs, AssemblyInfo.cs
-- **Total lines of code**: 863
-- **Output**: Output/Debug/ViewsInterfaces.dll
-- **Namespace**: SIL.FieldWorks.Common.ViewsInterfaces
+ViewsInterfaces.csproj (net48), 863 lines. Key files: ComWrapper.cs, ComUtils.cs, VwPropertyStoreManaged.cs. See `.cache/copilot/diff-plan.json` for file inventory.

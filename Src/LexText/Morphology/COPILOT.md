@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 36dbed2fa5cc3fe62df4442a9cf6dcf87af17afc85572ad00a4df20d41937349
+last-reviewed-tree: bc58db0bdef56c69ed19c8cd2613479a8dd45cfc84dfe07c67e02fe96a7fab2b
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/Morphology. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # Morphology COPILOT summary
 
@@ -76,48 +72,22 @@ C# library (net48, OutputType=Library) with morphology UI components. Slice/cont
   - Embedded icons/images for morphology UI
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (slices, controls, dialogs)
-- LCModel (data model)
-- Views (rendering)
-- XCore (framework)
+C# .NET Framework 4.8.x, Windows Forms, LCModel, Views (rendering), XCore.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **LCModel**: Data model (IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme, IPhFeatureConstraint)
-- **Views**: Rendering engine (view constructors)
-- **XCore**: Application framework (Mediator, IxCoreColleague)
-- **LexTextControls/**: Shared lexicon controls
-- **Common/FwUtils**: Utilities
-- **Interlinear/**: Interlinear text support
-
-### Downstream (consumed by)
-- **xWorks**: Main application shell (Grammar area, morphology tools)
-- **FieldWorks.exe**: FLEx application host
+Consumes: LCModel (IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme), Views, XCore, LexTextControls, Interlinear. Used by: xWorks (Grammar area), FieldWorks.exe.
 
 ## Interop & Contracts
-- **IMoAffixAllomorph**: Affix allomorph object
-- **IMoInflAffixTemplate**: Inflectional affix template
-- **IPhEnvironment**: Phonological environment
-- **IPhoneme**: Phoneme object
-- **IPhFeatureConstraint**: Phonological feature constraint
-- **IxCoreColleague**: XCore colleague pattern (master list listeners)
+IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme, IPhFeatureConstraint, IxCoreColleague (master list listeners).
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **Concordance**: May be slow on large corpora
+UI thread. Concordance may be slow on large corpora.
 
 ## Config & Feature Flags
-No specific feature flags. Configuration via LCModel morphology settings.
+Configuration via LCModel morphology settings.
 
 ## Build Information
-- **Project file**: Morphology.csproj (net48, OutputType=Library)
-- **Test project**: MorphologyTests/
-- **Output**: SIL.FieldWorks.XWorks.Morphology.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild Morphology.csproj`
-- **Run tests**: `dotnet test MorphologyTests/`
+Morphology.csproj (net48), output: SIL.FieldWorks.XWorks.Morphology.dll. Tests: `dotnet test MorphologyTests/`.
 
 ## Interfaces and Data Models
 
@@ -149,34 +119,16 @@ No specific feature flags. Configuration via LCModel morphology settings.
   - Notes: MasterCatDlgListener (categories), MasterInflFeatDlgListener (inflectional features), MasterPhonFeatDlgListener (phonological features)
 
 ## Entry Points
-Loaded by xWorks main application shell. Slices/controls instantiated by data entry framework for Grammar area.
+Loaded by xWorks. Slices/controls instantiated by data entry framework for Grammar area.
 
 ## Test Index
-- **Test project**: MorphologyTests/
-- **Run tests**: `dotnet test MorphologyTests/`
-- **Coverage**: Affix templates, rule formulas, phoneme editing
+MorphologyTests project. Run: `dotnet test MorphologyTests/`.
 
 ## Usage Hints
-- **Affix templates**: Grammar → Inflectional Affix Templates (InflAffixTemplateControl)
-- **Rule formulas**: Edit affix processes (AffixRuleFormulaControl)
-- **Phonemes**: Edit phoneme inventory with IPA symbols
-- **Environments**: Define phonological environments
-- **Concordance**: Search morpheme occurrences (ConcordanceDlg)
-- **MGA subfolder**: Additional morphology-grammar area components
-- **Master lists**: Category, feature list editing coordinated by listeners
+Grammar → Inflectional Affix Templates (InflAffixTemplateControl), rule formulas (AffixRuleFormulaControl), phoneme editing, concordance (ConcordanceDlg). MGA/ subfolder contains additional components.
 
 ## Related Folders
-- **MGA/**: Morphology-Grammar Area components (COPILOT.md)
-- **LexTextControls/**: Shared lexicon controls
-- **Interlinear/**: Interlinear text integration
-- **xWorks/**: Main application shell
+MGA (Morphology-Grammar Area, see MGA/COPILOT.md), LexTextControls, Interlinear, xWorks.
 
 ## References
-- **Project file**: Morphology.csproj (net48, OutputType=Library)
-- **Key C# files**: InflAffixTemplateControl.cs (1.3K), MEStrings.Designer.cs (1.2K), ConcordanceDlg.cs (816), AffixRuleFormulaControl.cs (824), AffixRuleFormulaVc.cs (566), InflAffixTemplateMenuHandler.cs (460), AnalysisInterlinearRS.cs (434), and 55+ more files
-- **MGA/ subfolder**: Additional components (see MGA/COPILOT.md)
-- **Resources**: MEStrings.resx (19.2KB), ImageHolder.resx (20.2KB), MEImages.resx (14.4KB)
-- **Test project**: MorphologyTests/
-- **Total lines of code**: 16917
-- **Output**: SIL.FieldWorks.XWorks.Morphology.dll
-- **Namespace**: Various (SIL.FieldWorks.XWorks.Morphology, SIL.FieldWorks.XWorks.MGA, etc.)
+Morphology.csproj (net48), 16.9K lines. Key files: InflAffixTemplateControl.cs (1.3K), MEStrings.Designer.cs (1.2K), ConcordanceDlg.cs (816). See `.cache/copilot/diff-plan.json` for file inventory.

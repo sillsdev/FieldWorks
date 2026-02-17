@@ -1,0 +1,438 @@
+{
+  "summary": {
+    "total_files": 61,
+    "total_before": 11406,
+    "total_after": 6320,
+    "total_saved": 5086,
+    "avg_reduction": 44.590566368577946
+  },
+  "files": [
+    {
+      "path": "Src/AppCore/COPILOT.md",
+      "original": 221,
+      "current": 125,
+      "reduction": 43.43891402714932,
+      "lines_saved": 96
+    },
+    {
+      "path": "Src/CacheLight/COPILOT.md",
+      "original": 183,
+      "current": 140,
+      "reduction": 23.497267759562842,
+      "lines_saved": 43
+    },
+    {
+      "path": "Src/Cellar/COPILOT.md",
+      "original": 130,
+      "current": 77,
+      "reduction": 40.76923076923077,
+      "lines_saved": 53
+    },
+    {
+      "path": "Src/Common/COPILOT.md",
+      "original": 116,
+      "current": 45,
+      "reduction": 61.206896551724135,
+      "lines_saved": 71
+    },
+    {
+      "path": "Src/Common/Controls/COPILOT.md",
+      "original": 101,
+      "current": 40,
+      "reduction": 60.396039603960396,
+      "lines_saved": 61
+    },
+    {
+      "path": "Src/Common/FieldWorks/COPILOT.md",
+      "original": 233,
+      "current": 142,
+      "reduction": 39.05579399141631,
+      "lines_saved": 91
+    },
+    {
+      "path": "Src/Common/Filters/COPILOT.md",
+      "original": 238,
+      "current": 138,
+      "reduction": 42.016806722689076,
+      "lines_saved": 100
+    },
+    {
+      "path": "Src/Common/Framework/COPILOT.md",
+      "original": 207,
+      "current": 123,
+      "reduction": 40.57971014492754,
+      "lines_saved": 84
+    },
+    {
+      "path": "Src/Common/FwUtils/COPILOT.md",
+      "original": 114,
+      "current": 84,
+      "reduction": 26.31578947368421,
+      "lines_saved": 30
+    },
+    {
+      "path": "Src/Common/RootSite/COPILOT.md",
+      "original": 145,
+      "current": 80,
+      "reduction": 44.827586206896555,
+      "lines_saved": 65
+    },
+    {
+      "path": "Src/Common/ScriptureUtils/COPILOT.md",
+      "original": 172,
+      "current": 92,
+      "reduction": 46.51162790697674,
+      "lines_saved": 80
+    },
+    {
+      "path": "Src/Common/SimpleRootSite/COPILOT.md",
+      "original": 202,
+      "current": 154,
+      "reduction": 23.762376237623762,
+      "lines_saved": 48
+    },
+    {
+      "path": "Src/Common/UIAdapterInterfaces/COPILOT.md",
+      "original": 148,
+      "current": 90,
+      "reduction": 39.189189189189186,
+      "lines_saved": 58
+    },
+    {
+      "path": "Src/Common/ViewsInterfaces/COPILOT.md",
+      "original": 172,
+      "current": 133,
+      "reduction": 22.674418604651162,
+      "lines_saved": 39
+    },
+    {
+      "path": "Src/DbExtend/COPILOT.md",
+      "original": 130,
+      "current": 77,
+      "reduction": 40.76923076923077,
+      "lines_saved": 53
+    },
+    {
+      "path": "Src/DebugProcs/COPILOT.md",
+      "original": 170,
+      "current": 96,
+      "reduction": 43.529411764705884,
+      "lines_saved": 74
+    },
+    {
+      "path": "Src/DocConvert/COPILOT.md",
+      "original": 68,
+      "current": 63,
+      "reduction": 7.352941176470589,
+      "lines_saved": 5
+    },
+    {
+      "path": "Src/FXT/COPILOT.md",
+      "original": 167,
+      "current": 85,
+      "reduction": 49.101796407185624,
+      "lines_saved": 82
+    },
+    {
+      "path": "Src/FdoUi/COPILOT.md",
+      "original": 169,
+      "current": 91,
+      "reduction": 46.15384615384615,
+      "lines_saved": 78
+    },
+    {
+      "path": "Src/FwCoreDlgs/COPILOT.md",
+      "original": 153,
+      "current": 80,
+      "reduction": 47.712418300653596,
+      "lines_saved": 73
+    },
+    {
+      "path": "Src/FwParatextLexiconPlugin/COPILOT.md",
+      "original": 170,
+      "current": 94,
+      "reduction": 44.70588235294118,
+      "lines_saved": 76
+    },
+    {
+      "path": "Src/FwResources/COPILOT.md",
+      "original": 151,
+      "current": 85,
+      "reduction": 43.70860927152318,
+      "lines_saved": 66
+    },
+    {
+      "path": "Src/GenerateHCConfig/COPILOT.md",
+      "original": 145,
+      "current": 79,
+      "reduction": 45.51724137931035,
+      "lines_saved": 66
+    },
+    {
+      "path": "Src/Generic/COPILOT.md",
+      "original": 163,
+      "current": 100,
+      "reduction": 38.65030674846626,
+      "lines_saved": 63
+    },
+    {
+      "path": "Src/InstallValidator/COPILOT.md",
+      "original": 133,
+      "current": 71,
+      "reduction": 46.616541353383454,
+      "lines_saved": 62
+    },
+    {
+      "path": "Src/Kernel/COPILOT.md",
+      "original": 141,
+      "current": 84,
+      "reduction": 40.42553191489361,
+      "lines_saved": 57
+    },
+    {
+      "path": "Src/LCMBrowser/COPILOT.md",
+      "original": 174,
+      "current": 124,
+      "reduction": 28.735632183908045,
+      "lines_saved": 50
+    },
+    {
+      "path": "Src/LexText/COPILOT.md",
+      "original": 230,
+      "current": 45,
+      "reduction": 80.43478260869566,
+      "lines_saved": 185
+    },
+    {
+      "path": "Src/LexText/Discourse/COPILOT.md",
+      "original": 203,
+      "current": 152,
+      "reduction": 25.12315270935961,
+      "lines_saved": 51
+    },
+    {
+      "path": "Src/LexText/FlexPathwayPlugin/COPILOT.md",
+      "original": 143,
+      "current": 77,
+      "reduction": 46.15384615384615,
+      "lines_saved": 66
+    },
+    {
+      "path": "Src/LexText/Interlinear/COPILOT.md",
+      "original": 202,
+      "current": 144,
+      "reduction": 28.71287128712871,
+      "lines_saved": 58
+    },
+    {
+      "path": "Src/LexText/LexTextControls/COPILOT.md",
+      "original": 206,
+      "current": 145,
+      "reduction": 29.61165048543689,
+      "lines_saved": 61
+    },
+    {
+      "path": "Src/LexText/LexTextDll/COPILOT.md",
+      "original": 162,
+      "current": 93,
+      "reduction": 42.592592592592595,
+      "lines_saved": 69
+    },
+    {
+      "path": "Src/LexText/Lexicon/COPILOT.md",
+      "original": 179,
+      "current": 137,
+      "reduction": 23.463687150837988,
+      "lines_saved": 42
+    },
+    {
+      "path": "Src/LexText/Morphology/COPILOT.md",
+      "original": 178,
+      "current": 134,
+      "reduction": 24.719101123595504,
+      "lines_saved": 44
+    },
+    {
+      "path": "Src/LexText/ParserCore/COPILOT.md",
+      "original": 342,
+      "current": 153,
+      "reduction": 55.26315789473685,
+      "lines_saved": 189
+    },
+    {
+      "path": "Src/LexText/ParserUI/COPILOT.md",
+      "original": 353,
+      "current": 144,
+      "reduction": 59.20679886685553,
+      "lines_saved": 209
+    },
+    {
+      "path": "Src/ManagedLgIcuCollator/COPILOT.md",
+      "original": 242,
+      "current": 123,
+      "reduction": 49.17355371900827,
+      "lines_saved": 119
+    },
+    {
+      "path": "Src/ManagedVwDrawRootBuffered/COPILOT.md",
+      "original": 225,
+      "current": 97,
+      "reduction": 56.888888888888886,
+      "lines_saved": 128
+    },
+    {
+      "path": "Src/ManagedVwWindow/COPILOT.md",
+      "original": 210,
+      "current": 93,
+      "reduction": 55.714285714285715,
+      "lines_saved": 117
+    },
+    {
+      "path": "Src/MigrateSqlDbs/COPILOT.md",
+      "original": 293,
+      "current": 157,
+      "reduction": 46.41638225255973,
+      "lines_saved": 136
+    },
+    {
+      "path": "Src/Paratext8Plugin/COPILOT.md",
+      "original": 281,
+      "current": 167,
+      "reduction": 40.569395017793596,
+      "lines_saved": 114
+    },
+    {
+      "path": "Src/ParatextImport/COPILOT.md",
+      "original": 307,
+      "current": 101,
+      "reduction": 67.10097719869707,
+      "lines_saved": 206
+    },
+    {
+      "path": "Src/ProjectUnpacker/COPILOT.md",
+      "original": 258,
+      "current": 104,
+      "reduction": 59.68992248062015,
+      "lines_saved": 154
+    },
+    {
+      "path": "Src/Transforms/COPILOT.md",
+      "original": 311,
+      "current": 151,
+      "reduction": 51.446945337620576,
+      "lines_saved": 160
+    },
+    {
+      "path": "Src/UnicodeCharEditor/COPILOT.md",
+      "original": 310,
+      "current": 107,
+      "reduction": 65.48387096774194,
+      "lines_saved": 203
+    },
+    {
+      "path": "Src/Utilities/COPILOT.md",
+      "original": 245,
+      "current": 42,
+      "reduction": 82.85714285714286,
+      "lines_saved": 203
+    },
+    {
+      "path": "Src/Utilities/FixFwData/COPILOT.md",
+      "original": 192,
+      "current": 95,
+      "reduction": 50.520833333333336,
+      "lines_saved": 97
+    },
+    {
+      "path": "Src/Utilities/FixFwDataDll/COPILOT.md",
+      "original": 236,
+      "current": 164,
+      "reduction": 30.508474576271187,
+      "lines_saved": 72
+    },
+    {
+      "path": "Src/Utilities/MessageBoxExLib/COPILOT.md",
+      "original": 193,
+      "current": 108,
+      "reduction": 44.04145077720207,
+      "lines_saved": 85
+    },
+    {
+      "path": "Src/Utilities/Reporting/COPILOT.md",
+      "original": 116,
+      "current": 82,
+      "reduction": 29.310344827586203,
+      "lines_saved": 34
+    },
+    {
+      "path": "Src/Utilities/SfmStats/COPILOT.md",
+      "original": 105,
+      "current": 73,
+      "reduction": 30.476190476190478,
+      "lines_saved": 32
+    },
+    {
+      "path": "Src/Utilities/SfmToXml/COPILOT.md",
+      "original": 218,
+      "current": 80,
+      "reduction": 63.30275229357798,
+      "lines_saved": 138
+    },
+    {
+      "path": "Src/Utilities/XMLUtils/COPILOT.md",
+      "original": 139,
+      "current": 83,
+      "reduction": 40.28776978417266,
+      "lines_saved": 56
+    },
+    {
+      "path": "Src/XCore/COPILOT.md",
+      "original": 144,
+      "current": 98,
+      "reduction": 31.944444444444443,
+      "lines_saved": 46
+    },
+    {
+      "path": "Src/XCore/FlexUIAdapter/COPILOT.md",
+      "original": 138,
+      "current": 78,
+      "reduction": 43.47826086956522,
+      "lines_saved": 60
+    },
+    {
+      "path": "Src/XCore/SilSidePane/COPILOT.md",
+      "original": 118,
+      "current": 81,
+      "reduction": 31.35593220338983,
+      "lines_saved": 37
+    },
+    {
+      "path": "Src/XCore/xCoreInterfaces/COPILOT.md",
+      "original": 127,
+      "current": 101,
+      "reduction": 20.47244094488189,
+      "lines_saved": 26
+    },
+    {
+      "path": "Src/XCore/xCoreTests/COPILOT.md",
+      "original": 100,
+      "current": 73,
+      "reduction": 27.0,
+      "lines_saved": 27
+    },
+    {
+      "path": "Src/views/COPILOT.md",
+      "original": 143,
+      "current": 120,
+      "reduction": 16.083916083916083,
+      "lines_saved": 23
+    },
+    {
+      "path": "Src/xWorks/COPILOT.md",
+      "original": 241,
+      "current": 126,
+      "reduction": 47.71784232365145,
+      "lines_saved": 115
+    }
+  ]
+}

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: fd48d4d12ff66731f0299c2c03fb169e6418ec5e4c698429feacecf10f3ce67e
+last-reviewed-tree: 0e6c1fb90b9acd157bd784e82d4850c6ae2209a41ebb28982ba1d71c0e51be99
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/MessageBoxExLib. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # MessageBoxExLib
 
@@ -57,61 +53,22 @@ Original source: CodeProject (http://www.codeproject.com/cs/miscctrl/MessageBoxE
 - **MessageBoxExManager**: Manages saved responses (registry or config)
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Library type**: Class library (DLL)
-- **UI framework**: System.Windows.Forms
-- **Key libraries**: System.Drawing (icons, fonts), System.Media (sound playback)
-- **Resources**: StandardButtonsText.resx (localized button text), MessageBoxExForm.resx (dialog layout), custom icons (Icon_2.ico through Icon_5.ico)
-- **Namespace**: Utils.MessageBoxExLib
+C# .NET Framework 4.8.x class library. System.Windows.Forms (UI), System.Drawing (icons), System.Media (sound). Resources: StandardButtonsText.resx (localization), custom icons.
 
 ## Dependencies
-- **System.Windows.Forms**: Dialog infrastructure
-- **Consumer**: All FieldWorks applications (FwCoreDlgs, xWorks, LexText, etc.) for user notifications
+Consumes: System.Windows.Forms. Used by: All FieldWorks applications (FwCoreDlgs, xWorks, LexText) for user notifications.
 
 ## Interop & Contracts
-- **MessageBox replacement**: Static Show() methods compatible with System.Windows.Forms.MessageBox
-  - Returns: string (button text clicked) or MessageBoxExResult struct
-  - Overloads: Various combinations of text, caption, buttons, icon, owner window
-- **Custom buttons**: AddButton(string text, string value) for non-standard button sets
-- **Saved responses**: "Don't show again" checkbox with MessageBoxExManager persistence
-  - Storage: Registry or app config (configurable)
-  - Key: Caption + Text hash for unique identification
-- **Timeout support**: Timeout property (milliseconds) auto-closes dialog
-  - Returns: TimeoutResult.Timeout or TimeoutResult.Default
-- **Sound playback**: PlayAlertSound property triggers system sounds (Exclamation, Question, etc.)
-- **Custom icons**: CustomIcon property for application-specific icons
-- **Owner window**: IWin32Window parameter for modal dialog parenting
+MessageBox replacement with static Show() methods. Returns string or MessageBoxExResult. Custom buttons via AddButton(). Saved responses ("don't show again") via MessageBoxExManager (registry/config storage). Timeout support auto-closes dialog. Sound playback via PlayAlertSound.
 
 ## Threading & Performance
-- **UI thread required**: Must call from UI thread (WinForms requirement)
-- **Modal dialog**: Show() blocks until user responds or timeout
-- **Timeout timer**: System.Windows.Forms.Timer for auto-close (no background thread)
-- **Performance**: Lightweight (dialog construction <50ms)
-- **Saved response lookup**: Fast (in-memory cache after first load from registry/config)
-- **Sound playback**: Asynchronous (System.Media.SoundPlayer)
-- **Button layout**: Dynamic sizing based on text length and button count
-- **Memory**: Minimal overhead (dialog disposed after Show())
+UI thread required (WinForms). Modal dialog blocks until response/timeout. Lightweight construction (<50ms). Saved response cache fast after first load.
 
 ## Config & Feature Flags
-- **AllowSaveResponse**: Enable "Don't show again" checkbox (default: false)
-- **SaveResponseText**: Checkbox label text (default: "Don't show this message again")
-- **UseSavedResponse**: Check saved responses before showing dialog (default: true)
-- **PlayAlertSound**: Play system sound for icon type (default: true)
-- **Timeout**: Auto-close after milliseconds (default: 0 = no timeout)
-- **MessageBoxExManager settings**:
-  - Storage location: Registry vs config file
-  - Saved responses indexed by caption+text hash
-- **Button text localization**: StandardButtonsText.resx for OK/Cancel/Yes/No/etc.
-- **Custom font**: Font property for dialog text (default: system font)
+AllowSaveResponse (enable "don't show again"), SaveResponseText (checkbox label), UseSavedResponse, PlayAlertSound, Timeout (milliseconds), Custom font. MessageBoxExManager stores responses by caption+text hash.
 
 ## Build Information
-- **Project**: MessageBoxExLib.csproj
-- **Type**: Library (.NET Framework 4.8.x)
-- **Output**: MessageBoxExLib.dll
-- **Namespace**: Utils.MessageBoxExLib
-- **Source files**: 10 files (~1646 lines)
-- **Resources**: MessageBoxExForm.resx, StandardButtonsText.resx, Icon_2.ico through Icon_5.ico
+MessageBoxExLib.csproj (net48, Library). Output: MessageBoxExLib.dll. 10 files (~1646 lines).
 
 ## Interfaces and Data Models
 
@@ -136,62 +93,16 @@ Original source: CodeProject (http://www.codeproject.com/cs/miscctrl/MessageBoxE
 - **MessageBoxExResult**: Value (string), Saved (bool)
 
 ## Entry Points
-- **MessageBoxEx.Show()**: Primary entry point (static methods)
-  - Basic: `MessageBoxEx.Show("Message", "Caption")`
-  - With buttons: `MessageBoxEx.Show("Message", "Caption", MessageBoxExButtons.YesNo)`
-  - Custom buttons: `var mb = new MessageBoxEx(); mb.AddButton("Custom", "value"); mb.Show();`
-  - With timeout: `mb.Timeout = 5000; mb.Show();` (5 second timeout)
-- **Saved responses**: `mb.AllowSaveResponse = true; mb.UseSavedResponse = true;`
-- **Common usage patterns**:
-  - Confirmation: `MessageBoxEx.Show("Confirm?", "Title", MessageBoxExButtons.YesNo)`
-  - Error: `MessageBoxEx.Show("Error!", "Error", MessageBoxExButtons.OK, MessageBoxExIcon.Error)`
-  - Custom: Create instance, configure, call Show()
+MessageBoxEx.Show() static methods: basic `Show("Message", "Caption")`, with buttons/icons, custom buttons via instance + AddButton(), timeout support.
 
 ## Test Index
-Test project: MessageBoxExLibTests with Tests.cs. Run via Test Explorer or `dotnet test`.
+MessageBoxExLibTests/Tests.cs. Run via Test Explorer or `dotnet test`.
 
 ## Usage Hints
-- **Drop-in replacement**: Replace `MessageBox.Show()` with `MessageBoxEx.Show()`
-- **Custom buttons**: `var mb = new MessageBoxEx(); mb.AddButton("Option 1", "opt1"); mb.AddButton("Option 2", "opt2"); string result = mb.Show();`
-- **"Don't show again"**: `mb.AllowSaveResponse = true;` (checkbox appears automatically)
-- **Timeout**: `mb.Timeout = 10000;` (closes after 10 seconds)
-- **Saved response check**: If user checked "don't show again", Show() returns saved value without displaying
-- **Clear saved**: `MessageBoxExManager.ClearSavedResponses()` to reset all saved responses
-- **Common pitfalls**:
-  - Forgetting to dispose custom instance (use `using` or call Dispose())
-  - Not checking for TimeoutResult.Timeout return value
-  - Saved responses persist across sessions (clear if behavior changes)
-- **Best practices**:
-  - Use static Show() for simple cases
-  - Use instance + AddButton() for custom scenarios
-  - Test timeout behavior (ensure graceful handling)
-- **Localization**: Button text from StandardButtonsText.resx (supports multiple languages)
+Drop-in MessageBox.Show() replacement. Custom buttons: create instance, AddButton(), Show(). Enable "don't show again" via AllowSaveResponse. Set Timeout for auto-close. Saved responses persist (clear with MessageBoxExManager.ClearSavedResponses()). Localized button text in StandardButtonsText.resx. Dispose custom instances.
 
 ## Related Folders
-- **FwCoreDlgs/**: Standard FieldWorks dialogs (uses MessageBoxEx)
-- **Common/FwUtils/**: General utilities
-- Used throughout FieldWorks applications
+FwCoreDlgs/ (uses MessageBoxEx), Common/FwUtils/. Used throughout FieldWorks.
 
 ## References
-- **System.Windows.Forms.Form**: Base dialog class
-- **System.Windows.Forms.IWin32Window**: Owner window interface
-- **Utils.MessageBoxExLib.MessageBoxExManager**: Saved response persistence
-
-## Auto-Generated Project and File References
-- Project files:
-  - Utilities/MessageBoxExLib/MessageBoxExLib.csproj
-  - Utilities/MessageBoxExLib/MessageBoxExLibTests/MessageBoxExLibTests.csproj
-- Key C# files:
-  - Utilities/MessageBoxExLib/AssemblyInfo.cs
-  - Utilities/MessageBoxExLib/MessageBoxEx.cs
-  - Utilities/MessageBoxExLib/MessageBoxExButton.cs
-  - Utilities/MessageBoxExLib/MessageBoxExButtons.cs
-  - Utilities/MessageBoxExLib/MessageBoxExForm.cs
-  - Utilities/MessageBoxExLib/MessageBoxExIcon.cs
-  - Utilities/MessageBoxExLib/MessageBoxExLibTests/Tests.cs
-  - Utilities/MessageBoxExLib/MessageBoxExManager.cs
-  - Utilities/MessageBoxExLib/MessageBoxExResult.cs
-  - Utilities/MessageBoxExLib/TimeoutResult.cs
-- Data contracts/transforms:
-  - Utilities/MessageBoxExLib/MessageBoxExForm.resx
-  - Utilities/MessageBoxExLib/Resources/StandardButtonsText.resx
+MessageBoxExLib.csproj (net48). Key files: MessageBoxEx.cs, MessageBoxExForm.cs (~700 lines), MessageBoxExManager.cs. Original source: CodeProject. See `.cache/copilot/diff-plan.json` for complete file listing.

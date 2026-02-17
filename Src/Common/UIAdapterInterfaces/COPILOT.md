@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 9fb3484707f47751de0d86f2fc785d5dae8fbd879dac2621e2453e0fbfcfcedd
+last-reviewed-tree: a6f7b672b53b6c5e4e93be09912da26037f2e287b213af0e06f6da32d6155e27
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/UIAdapterInterfaces. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # UIAdapterInterfaces COPILOT summary
 
@@ -58,28 +54,13 @@ C# interface library (.NET Framework 4.8.x) defining UI adapter contracts. Pure 
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Interface definitions only (no UI framework dependency)
-- XCore integration (Mediator references)
 
 ## Dependencies
-
-### Upstream (consumes)
-- **XCore**: Mediator for command routing
-- **System.Windows.Forms**: Control references (containers)
-- Minimal dependencies (interface library)
-
-### Downstream (consumed by)
-- **XCore**: Provides concrete adapter implementations (SIBAdapter, etc.)
-- **UI components**: Implement these interfaces for testability
-- **Test projects**: Use test doubles implementing these interfaces
-- Any component requiring adaptable UI patterns
+- Upstream: Mediator for command routing
+- Downstream: Provides concrete adapter implementations (SIBAdapter, etc.)
 
 ## Interop & Contracts
 - **ISIBInterface**: Contract for side bar and information bar adapters
-- **ITMInterface**: Contract for tool manager adapters
-- Enables test doubles and dependency injection
-- Decouples UI component selection from business logic
 
 ## Threading & Performance
 Interface definitions have no threading implications. Implementations must handle threading appropriately.
@@ -89,41 +70,9 @@ No configuration in interface library. Behavior determined by implementations.
 
 ## Build Information
 - **Project file**: UIAdapterInterfaces.csproj (net48, OutputType=Library)
-- **Output**: UIAdapterInterfaces.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
-- **No test project**: Interface library; implementations tested in consuming projects
 
 ## Interfaces and Data Models
-
-- **ISIBInterface** (SIBInterface.cs)
-  - Purpose: Contract for side bar and information bar UI components
-  - Inputs: Container controls, mediator, tab/item properties
-  - Outputs: Tab management, item selection, menu setup
-  - Notes: Enables different side bar implementations (e.g., native, cross-platform, test doubles)
-
-- **ITMInterface** (TMInterface.cs)
-  - Purpose: Contract for tool manager UI components
-  - Inputs: Container controls, mediator, tool specifications
-  - Outputs: Tool management, tool selection
-  - Notes: Abstracts tool window management for testing and flexibility
-
-- **SBTabProperties** (HelperClasses.cs)
-  - Purpose: Data class for sidebar tab configuration
-  - Inputs: Name, Text, ImageList, DefaultIconIndex
-  - Outputs: Property values for tab creation
-  - Notes: DTO for tab properties
-
-- **SBTabItemProperties** (HelperClasses.cs)
-  - Purpose: Data class for sidebar tab item configuration
-  - Inputs: Name, Text, Tag, IconIndex, Message
-  - Outputs: Property values for tab item creation
-  - Notes: DTO for tab item properties
-
-- **ITMAdapter** (HelperClasses.cs)
-  - Purpose: Contract for tool manager adapter retrieval
-  - Inputs: Tool identifier
-  - Outputs: Adapter instance for tool
-  - Notes: Supports tool-specific adapters
+ISIBInterface, ITMInterface, SBTabProperties, SBTabItemProperties, ITMAdapter.
 
 ## Entry Points
 Referenced by UI components and XCore for adapter pattern implementation. No executable entry point.
@@ -133,20 +82,9 @@ No test project for interface library. Implementations tested in consuming proje
 
 ## Usage Hints
 - Define ISIBInterface and ITMInterface in business logic for dependency injection
-- XCore provides concrete implementations (SIBAdapter, TMAdapter)
-- Create test doubles implementing these interfaces for unit testing
-- Use SBTabProperties and SBTabItemProperties for property transfer
-- Adapter pattern enables UI flexibility and testability
 
 ## Related Folders
 - **XCore/**: Provides concrete adapter implementations
-- **XCore/SilSidePane/**: Side pane UI using these adapters
-- Test projects: Use test doubles implementing these interfaces
 
 ## References
-- **Project files**: UIAdapterInterfaces.csproj (net48)
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: SIBInterface.cs, TMInterface.cs, HelperClasses.cs, UIAdapterInterfacesStrings.Designer.cs, AssemblyInfo.cs
-- **Total lines of code**: 1395
-- **Output**: Output/Debug/UIAdapterInterfaces.dll
-- **Namespace**: SIL.FieldWorks.Common.UIAdapters
+See `.cache/copilot/diff-plan.json` for file details.

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: c38cd359eff69d8d84f82db36ee336cdc669664ffdab4a099b584757f686fe3c
+last-reviewed-tree: 2d8a7d9e0ef0899cbb02f6011d6f779dfdcded66364eccfb19a7daf1211aec78
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/SimpleRootSite. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # SimpleRootSite COPILOT summary
 
@@ -75,55 +71,22 @@ C# class library (.NET Framework 4.8.x) with simplified root site implementation
 - **RenderEngineFactory** (RenderEngineFactory.cs): Rendering engine creation
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (UserControl base)
-- COM interop for Views engine (IVwRootSite, IVwRootBox)
-- Accessibility APIs (IAccessible)
-- IBus support for Linux keyboard input
-- XCore for command routing (IxCoreColleague)
+C# .NET Framework 4.8.x, Windows Forms (UserControl), COM interop for Views engine, Accessibility APIs, IBus (Linux), XCore.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **views**: Native rendering engine (IVwRootBox, IVwGraphics)
-- **Common/ViewsInterfaces**: View interfaces (IVwRootSite, IVwSelection)
-- **Common/FwUtils**: Utilities (Win32, ThreadHelper)
-- **SIL.LCModel**: Data model
-- **SIL.LCModel.Application**: Application services
-- **SIL.Keyboarding**: Keyboard management
-- **XCore**: Command routing (IxCoreColleague)
-- **Windows Forms**: UI framework
-
-### Downstream (consumed by)
-- **xWorks**: Extensively uses SimpleRootSite for views
-- **LexText**: Lexicon editing views
-- **Common/RootSite**: Advanced root site extends SimpleRootSite
-- Most FieldWorks components displaying text
+Consumes: views (native rendering), ViewsInterfaces, FwUtils, LCModel, Keyboarding, XCore. Used by: xWorks, LexText, RootSite (extends SimpleRootSite), most text display components.
 
 ## Interop & Contracts
-- **IVwRootSite**: COM interface for Views engine callbacks
-- **IRootSite**: FieldWorks root site contract
-- **IxCoreColleague**: XCore command routing
-- **IEditingCallbacks**: Editing operation notifications
-- **IAccessible**: Windows accessibility
-- COM marshaling for Views engine integration
+IVwRootSite (COM Views callbacks), IRootSite (FW contract), IxCoreColleague (XCore), IEditingCallbacks, IAccessible, COM marshaling.
 
 ## Threading & Performance
-- **UI thread requirement**: All view operations must be on UI thread
-- **DataUpdateMonitor**: Prevents reentrant updates
-- **UpdateSemaphore**: Synchronization primitive
-- **Performance**: Efficient view hosting; 17K lines indicates comprehensive functionality
+UI thread required. DataUpdateMonitor prevents reentrant updates. UpdateSemaphore for synchronization. Efficient view hosting (17K+ lines comprehensive).
 
 ## Config & Feature Flags
-No explicit configuration. Behavior controlled by View specifications and data.
+Behavior controlled by View specifications and data. No explicit configuration.
 
 ## Build Information
-- **Project file**: SimpleRootSite.csproj (net48, OutputType=Library)
-- **Test project**: SimpleRootSiteTests/SimpleRootSiteTests.csproj
-- **Output**: SimpleRootSite.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
+SimpleRootSite.csproj (net48, Library). Test project: SimpleRootSiteTests/. Output: SimpleRootSite.dll.
 
 ## Interfaces and Data Models
 
@@ -176,31 +139,16 @@ No explicit configuration. Behavior controlled by View specifications and data.
   - Notes: Implements IPrintRootSite
 
 ## Entry Points
-Extended by view hosting controls throughout FieldWorks. SimpleRootSite is base class for most text display components.
+Base class for view hosting controls throughout FieldWorks. Extend and override MakeRoot() to construct views.
 
 ## Test Index
-- **Test project**: SimpleRootSiteTests
-- **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
-- **Coverage**: Root site functionality, editing, selection, updates
+SimpleRootSiteTests/ covers root site functionality, editing, selection, updates.
 
 ## Usage Hints
-- Extend SimpleRootSite for view hosting controls
-- Override MakeRoot() to construct view
-- Use EditingHelper for clipboard operations
-- Use SelectionHelper for selection analysis
-- Use DataUpdateMonitor.BeginUpdate/EndUpdate for coordinated updates
-- Simpler than RootSite; prefer SimpleRootSite unless advanced features needed
+Extend SimpleRootSite for view hosting. Override MakeRoot() for view construction. Use EditingHelper (clipboard), SelectionHelper (analysis), DataUpdateMonitor.BeginUpdate/EndUpdate (coordinated updates). Prefer over RootSite unless advanced features needed.
 
 ## Related Folders
-- **Common/RootSite**: Advanced root site infrastructure (SimpleRootSite uses some RootSite classes)
-- **Common/ViewsInterfaces**: Interfaces implemented by SimpleRootSite
-- **views/**: Native rendering engine
-- **xWorks, LexText**: Major consumers of SimpleRootSite
+Common/RootSite (advanced infrastructure), ViewsInterfaces/, views/ (native engine), xWorks/ and LexText/ (major consumers).
 
 ## References
-- **Project files**: SimpleRootSite.csproj (net48), SimpleRootSiteTests/SimpleRootSiteTests.csproj
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: SimpleRootSite.cs (massive, 17K+ lines), ActiveViewHelper.cs, DataUpdateMonitor.cs, EditingHelper.cs, SelectionHelper.cs, SelectionRestorer.cs, PrintRootSite.cs, and others
-- **Total lines of code**: 17073+ (SimpleRootSite.cs alone)
-- **Output**: Output/Debug/SimpleRootSite.dll
-- **Namespace**: SIL.FieldWorks.Common.RootSites
+SimpleRootSite.csproj (net48). Key file: SimpleRootSite.cs (17K+ lines alone). Helper classes: ActiveViewHelper, DataUpdateMonitor, EditingHelper, SelectionHelper, PrintRootSite. See `.cache/copilot/diff-plan.json` for complete file listing.

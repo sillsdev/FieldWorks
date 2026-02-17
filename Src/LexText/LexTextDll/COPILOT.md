@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 5fb18d420689e7a9b8e79f067a7e3252fcd5fabf5ac3c68213d66ef4e0ad07c5
+last-reviewed-tree: 2814f4356b54b9a12a970508d40ba3d5887bd059ef7ab9e0acb18f4af88eb223
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/LexTextDll. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # LexTextDll COPILOT summary
 
@@ -61,106 +57,37 @@ C# library (net48, OutputType=Library) with application infrastructure classes. 
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- XCore (application framework)
-- LCModel (data model)
-- Windows Forms (dialogs)
-- Resource files (.resx) for localization and resources
 
 ## Dependencies
-
-### Upstream (consumes)
-- **Common/Framework**: FwXApp base class
-- **XCore**: Mediator, IxCoreColleague, IApp
-- **LCModel**: Data model
-- **Common/FwUtils**: Utilities
-- **Common/Controls**: UI controls
-- **Common/RootSites**: Root site infrastructure
-- **Interlinear/**: IText namespace
-- **LexTextControls/**: Dialog controls
-
-### Downstream (consumed by)
-- **FieldWorks.exe**: FLEx application host (instantiates LexTextApp)
-- **Lexicon/**: Lexicon editing UI
-- **Interlinear/**: Text analysis UI
-- **Morphology/**: Morphology UI
-- **xWorks/**: Application shell
+- Upstream: FwXApp base class
+- Downstream: FLEx application host (instantiates LexTextApp)
 
 ## Interop & Contracts
 - **IApp**: Application interface (XCore)
-- **IxCoreColleague**: XCore colleague pattern
-- **FwXApp**: FieldWorks application base class
-- **IFieldWorksManager**: FieldWorks manager interface
-- **IHelpTopicProvider**: Help topic provider interface
-- **Mediator**: XCore mediation pattern
 
 ## Threading & Performance
 - **UI thread**: All operations on UI thread
-- **Splash screen operations**: DoApplicationInitialization() runs during splash
 
 ## Config & Feature Flags
 - **webBrowserProgramLinux**: Configurable Linux web browser (default: "firefox")
-- **Area configuration**: AreaListener manages list area customization
 
 ## Build Information
 - **Project file**: LexTextDll.csproj (net48, OutputType=Library)
-- **Test project**: LexTextDllTests/
-- **Output**: SIL.FieldWorks.XWorks.LexText.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextDll.csproj`
-- **Run tests**: `dotnet test LexTextDllTests/`
 
 ## Interfaces and Data Models
-
-- **LexTextApp** (LexTextApp.cs)
-  - Purpose: Main application class for FLEx lexicon/text features
-  - Base: FwXApp
-  - Interfaces: IApp, IxCoreColleague
-  - Key methods: DoApplicationInitialization(), InitializeMessageDialogs()
-  - Notes: Coordinates XCore framework with lexicon/text functionality
-
-- **AreaListener** (AreaListener.cs)
-  - Purpose: Manage list area configuration
-  - Interfaces: IxCoreColleague, IDisposable
-  - Properties: m_ctotalLists (total list count), m_ccustomLists (custom list count)
-  - Notes: XCore colleague for area customization
-
-- **FlexHelpTopicProvider** (FlexHelpTopicProvider.cs)
-  - Purpose: Context-sensitive help
-  - Interface: IHelpTopicProvider
-  - Notes: Maps UI contexts to help topics in HelpTopicPaths.resx
-
-- **RestoreDefaultsDlg** (RestoreDefaultsDlg.cs)
-  - Purpose: Confirm restoration of default settings
-  - Notes: Simple confirmation dialog
+LexTextApp, AreaListener, FlexHelpTopicProvider, RestoreDefaultsDlg.
 
 ## Entry Points
 Loaded by the FieldWorks.exe host (LexTextExe stub removed). LexTextApp is instantiated as the FLEx application class.
 
 ## Test Index
 - **Test project**: LexTextDllTests/
-- **Run tests**: `dotnet test LexTextDllTests/`
-- **Coverage**: Application initialization, area listener logic
 
 ## Usage Hints
 - **LexTextApp**: Main application class instantiated by FieldWorks.exe
-- **AreaListener**: Manages list area configuration (XCore colleague)
-- **FlexHelpTopicProvider**: Provides context-sensitive help
-- **Resources**: LexTextStrings for localized UI strings, ImageHolder for icons
-- **Small library**: 2.8K lines, focused on application infrastructure
-- **Business logic elsewhere**: Heavy UI and business logic in Lexicon/, Interlinear/, etc.
 
 ## Related Folders
 - **Common/FieldWorks/**: FieldWorks.exe host
-- **LexTextControls/**: Shared UI controls
-- **Lexicon/**: Lexicon editing UI
-- **Interlinear/**: Text analysis UI
-- **Common/Framework**: FwXApp base class
 
 ## References
-- **Project file**: LexTextDll.csproj (net48, OutputType=Library)
-- **Key C# files**: AreaListener.cs (1113 lines), LexTextApp.cs (955 lines), LexTextStrings.Designer.cs (530 lines), ImageHolder.cs (156 lines), TransductionSample.cs (114 lines), FlexHelpTopicProvider.cs (29 lines), RestoreDefaultsDlg.cs (26 lines), AssemblyInfo.cs (14 lines)
-- **Resources**: LexTextStrings.resx (13.6KB), HelpTopicPaths.resx (215KB), ImageHolder.resx (23.6KB)
-- **Test project**: LexTextDllTests/
-- **Total lines of code**: 2800
-- **Output**: SIL.FieldWorks.XWorks.LexText.dll
-- **Namespace**: SIL.FieldWorks.XWorks.LexText
+See `.cache/copilot/diff-plan.json` for file details.

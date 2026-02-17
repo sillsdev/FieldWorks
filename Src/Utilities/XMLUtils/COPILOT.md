@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: c4dabaab932c5c8839a003cb0c26dfa70f6ee4c1e70cf1f07e62c6558ec001f7
+last-reviewed-tree: 45264aa52a130d0ada04e62bc7c52a5fca0e5e5cc7994855047cd3f4b2067c7e
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/XMLUtils. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # XMLUtils
 
@@ -47,15 +43,11 @@ Core XML utility library with 1) XmlUtils (~600 lines) static helpers for XML ma
 - **IPersistAsXml, IResolvePath**: Persistence interfaces
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Library type**: Core utility DLL
-- **Key libraries**: System.Xml (XmlDocument, XmlNode, XPath), System.Reflection (dynamic loading)
-- **Used by**: XCore Inventory, configuration systems, plugin loaders throughout FieldWorks
+Language - C#
 
 ## Dependencies
-- Depends on: System.Xml, Common utilities
-- Used by: Many FieldWorks components for XML processing
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
 Uses COM for cross-boundary calls.
@@ -68,52 +60,12 @@ No explicit configuration or feature flags detected.
 
 ## Build Information
 - C# class library project
-- Build via: `dotnet build XMLUtils.csproj`
-- Includes test suite
 
 ## Interfaces and Data Models
-
-- **IAttributeVisitor** (interface)
-  - Path: `XmlUtils.cs`
-  - Public interface definition
-
-- **IPersistAsXml** (interface)
-  - Path: `DynamicLoader.cs`
-  - Public interface definition
-
-- **IResolvePath** (interface)
-  - Path: `ResolveDirectory.cs`
-  - Public interface definition
-
-- **ConfigurationException** (class)
-  - Path: `SILExceptions.cs`
-  - Public class implementation
-
-- **DynamicLoader** (class)
-  - Path: `DynamicLoader.cs`
-  - Public class implementation
-
-- **ReplaceSubstringInAttr** (class)
-  - Path: `XmlUtils.cs`
-  - Public class implementation
-
-- **RuntimeConfigurationException** (class)
-  - Path: `SILExceptions.cs`
-  - Public class implementation
-
-- **SimpleResolver** (class)
-  - Path: `ResolveDirectory.cs`
-  - Public class implementation
-
-- **XmlUtils** (class)
-  - Path: `XmlUtils.cs`
-  - Public class implementation
+IAttributeVisitor, IPersistAsXml, IResolvePath, ConfigurationException, DynamicLoader, ReplaceSubstringInAttr, RuntimeConfigurationException, SimpleResolver, XmlUtils.
 
 ## Entry Points
 - XML utility methods
-- Dynamic loader for plugins
-- Path resolution utilities
-- Custom exceptions
 
 ## Test Index
 Test projects: XMLUtilsTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -122,37 +74,10 @@ Test projects: XMLUtilsTests. 2 test files. Run via: `dotnet test` or Test Explo
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **Utilities/SfmToXml/** - Uses XML utilities
-- **Cellar/** - XML serialization using these utilities
-- **Transforms/** - XSLT processing with XML utilities
-- **FXT/** - Transform tool using XML utilities
+- Utilities/SfmToXml/ - Uses XML utilities
 
 ## References
+See `.cache/copilot/diff-plan.json` for file details.
 
-- **Project files**: XMLUtils.csproj, XMLUtilsTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, DynamicLoader.cs, DynamicLoaderTests.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs, XmlUtilsStrings.Designer.cs, XmlUtilsTest.cs
-- **Source file count**: 8 files
-- **Data file count**: 1 files
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/XMLUtils/XMLUtils.csproj
-  - Utilities/XMLUtils/XMLUtilsTests/XMLUtilsTests.csproj
-- Key C# files:
-  - Utilities/XMLUtils/AssemblyInfo.cs
-  - Utilities/XMLUtils/DynamicLoader.cs
-  - Utilities/XMLUtils/ResolveDirectory.cs
-  - Utilities/XMLUtils/SILExceptions.cs
-  - Utilities/XMLUtils/XMLUtilsTests/DynamicLoaderTests.cs
-  - Utilities/XMLUtils/XMLUtilsTests/XmlUtilsTest.cs
-  - Utilities/XMLUtils/XmlUtils.cs
-  - Utilities/XMLUtils/XmlUtilsStrings.Designer.cs
-- Data contracts/transforms:
-  - Utilities/XMLUtils/XmlUtilsStrings.resx
 ## Code Evidence
 *Analysis based on scanning 7 source files*
-
-- **Classes found**: 10 public classes
-- **Interfaces found**: 4 public interfaces
-- **Namespaces**: SIL.Utils
