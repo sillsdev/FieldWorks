@@ -20,7 +20,9 @@ namespace SIL.FieldWorks.IText
 		int m_iParagraph;
 		int m_BeginOffset;
 		int m_EndOffset;
+#pragma warning disable CS0649 // Field is never assigned to
 		private string m_bookmarkId;
+#pragma warning restore CS0649
 		private int m_textIndex;
 
 		internal InterAreaBookmark()

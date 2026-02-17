@@ -109,7 +109,7 @@ namespace ParatextImport
 		public void DetectDifferences_ReCheck()
 		{
 			// the caller should have already reviewed all diffs
-			Assert.AreEqual(0, Differences.Count);
+			Assert.That(Differences.Count, Is.EqualTo(0));
 
 			// re-init our output list, for a fresh start
 			Differences.Clear();

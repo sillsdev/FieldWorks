@@ -441,7 +441,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly Form m_parentOfPopupMgr;
 		private readonly Mediator m_mediator;
 		private readonly XCore.PropertyTable m_propertyTable;
-		private readonly string m_field;
 
 		public MasterCategoryListChooserLauncher(Form popupMgrParent, Mediator mediator, XCore.PropertyTable propertyTable,
 			ICmPossibilityList possibilityList, string fieldName, ILexSense sense)

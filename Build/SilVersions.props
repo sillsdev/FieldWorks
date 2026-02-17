@@ -1,0 +1,22 @@
+<Project>
+	<!--
+		=============================================================
+		SIL ECOSYSTEM VERSION PROPERTIES
+		Single source of truth for all SIL dependency versions.
+
+		Imported by:
+		  - Directory.Packages.props  (managed NuGet CPM)
+		  - Build/mkall.targets       (native C++ build)
+
+		Update a version here to update ALL consumers automatically.
+		=============================================================
+	-->
+	<PropertyGroup Label="SIL Ecosystem Versions">
+		<SilLcmVersion>11.0.0-beta0156</SilLcmVersion>
+		<SilLibPalasoVersion>17.0.0</SilLibPalasoVersion>
+		<SilChorusVersion>6.0.0-beta0063</SilChorusVersion>
+		<SilMachineVersion>3.7.13</SilMachineVersion>
+		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
+		<IcuNugetVersion>70.1.152</IcuNugetVersion>
+	</PropertyGroup>
+</Project>

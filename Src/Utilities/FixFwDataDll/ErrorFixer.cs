@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.FixData
 			get
 			{
 				Debug.Assert(m_dlg != null);
-				return Strings.ksFindAndFixErrors;
+				return FixFwDataStrings.ksFindAndFixErrors;
 			}
 		}
 
@@ -81,9 +81,9 @@ namespace SIL.FieldWorks.FixData
 		public void OnSelection()
 		{
 			Debug.Assert(m_dlg != null);
-			m_dlg.WhenDescription = Strings.ksErrorFixerUseThisWhen;
-			m_dlg.WhatDescription = Strings.ksErrorFixerThisUtilityAttemptsTo;
-			m_dlg.RedoDescription = Strings.ksErrorFixerCannotUndo;
+			m_dlg.WhenDescription = FixFwDataStrings.ksErrorFixerUseThisWhen;
+			m_dlg.WhatDescription = FixFwDataStrings.ksErrorFixerThisUtilityAttemptsTo;
+			m_dlg.RedoDescription = FixFwDataStrings.ksErrorFixerCannotUndo;
 		}
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.FixData
 									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 									if (fixes.Length > 0)
 									{
-										MessageBox.Show(fixes, Strings.ksErrorsFoundOrFixed);
+										MessageBox.Show(fixes, FixFwDataStrings.ksErrorsFoundOrFixed);
 										File.WriteAllText(pathname.Replace(LcmFileHelper.ksFwDataXmlFileExtension, "fixes"), fixes);
 									}
 								}

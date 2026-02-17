@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.IText
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
 
 				bool result = li.ImportInterlinear(options, ref text);
-				Assert.True(result, "ImportInterlinear was not successful.");
+				Assert.That(result, Is.True, "ImportInterlinear was not successful.");
 			}
 		}
 
@@ -388,7 +388,7 @@ namespace SIL.FieldWorks.IText
 				LCModel.IText importedText = null;
 				var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 				var result = li.ImportInterlinear(options, ref importedText);
-				Assert.True(result, "ImportInterlinear was not successful.");
+				Assert.That(result, Is.True, "ImportInterlinear was not successful.");
 				Assert.That(importedText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
 				var paraImported = importedText.ContentsOA[0];
 				var testPara = paraImported.Contents;
@@ -439,16 +439,16 @@ namespace SIL.FieldWorks.IText
 					var imported = firstEntry.Current;
 					//The title imported
 					ITsString comment = imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle);
-					Assert.True(comment.Text.Equals("english french"));
-					Assert.True(comment.RunCount == 3);
-					Assert.True(comment.get_RunText(0) == "english");
-					Assert.True(comment.get_WritingSystem(0) == wsEn);
-					Assert.True(comment.Style(0) == null);
-					Assert.True(comment.get_RunText(1) == " ");
-					Assert.True(comment.Style(1) == null);
-					Assert.True(comment.get_RunText(2) == "french");
-					Assert.True(comment.get_WritingSystem(2) == wsFr);
-					Assert.True(comment.Style(2) == "style1");
+					Assert.That(comment.Text.Equals("english french"), Is.True);
+					Assert.That(comment.RunCount == 3, Is.True);
+					Assert.That(comment.get_RunText(0) == "english", Is.True);
+					Assert.That(comment.get_WritingSystem(0) == wsEn, Is.True);
+					Assert.That(comment.Style(0) == null, Is.True);
+					Assert.That(comment.get_RunText(1) == " ", Is.True);
+					Assert.That(comment.Style(1) == null, Is.True);
+					Assert.That(comment.get_RunText(2) == "french", Is.True);
+					Assert.That(comment.get_WritingSystem(2) == wsFr, Is.True);
+					Assert.That(comment.Style(2) == "style1", Is.True);
 				}
 			}
 		}
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.IText
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
 					//The empty ugly text imported as its empty ugly self
-					Assert.AreEqual(imported.Guid.ToString(), textGuid);
+					Assert.That(textGuid, Is.EqualTo(imported.Guid.ToString()));
 				}
 			}
 		}
@@ -584,8 +584,8 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
 				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.True(result);
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(result, Is.True);
 				var contentGuid = text.ContentsOA.Guid;
 				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				var paraGuid = para.Guid;
@@ -593,19 +593,19 @@ namespace SIL.FieldWorks.IText
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
 					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
-					Assert.True(mergeResult);
-					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
-					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "The user should have been prompted to merge the text with the same Guid.");
+					Assert.That(mergeResult, Is.True);
+					Assert.That(text.ContentsOA.Guid.Equals(contentGuid), Is.True, "The merge should not have changed the content objects.");
+					Assert.That(text.ContentsOA.ParagraphsOS.Count.Equals(1), Is.True);
 					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-					Assert.True(mergedPara.Guid.Equals(paraGuid));
-					Assert.True(mergedPara.SegmentsOS.Count.Equals(1));
-					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(new Guid(phraseGuid)));
+					Assert.That(mergedPara.Guid.Equals(paraGuid), Is.True);
+					Assert.That(mergedPara.SegmentsOS.Count.Equals(1), Is.True);
+					Assert.That(mergedPara.SegmentsOS[0].Guid.Equals(new Guid(phraseGuid)), Is.True);
 					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
 					// There should be two analyses, the first should match the guid created on the original import
-					Assert.True(analyses.Count.Equals(2));
-					Assert.True(analyses[0].Guid.Equals(wordGuid));
-					Assert.AreEqual("pus yalola", mergedPara.Contents.Text, "The contents of the paragraph do not match the words.");
+					Assert.That(analyses.Count.Equals(2), Is.True);
+					Assert.That(analyses[0].Guid.Equals(wordGuid), Is.True);
+					Assert.That(mergedPara.Contents.Text, Is.EqualTo("pus yalola"), "The contents of the paragraph do not match the words.");
 				}
 			}
 		}
@@ -645,33 +645,33 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
 				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.True(result);
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(result, Is.True);
 				var contentGuid = text.ContentsOA.Guid;
 				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.AreEqual("hesyla\x00a7 pus", para.Contents.Text, "The contents of the paragraph does not match the words.");
+				Assert.That(para.Contents.Text, Is.EqualTo("hesyla\x00a7 pus"), "The contents of the paragraph does not match the words.");
 				var paraGuid = para.Guid;
-				Assert.True(para.SegmentsOS.Count.Equals(2));
+				Assert.That(para.SegmentsOS.Count.Equals(2), Is.True);
 				var createdSegmentGuid = para.SegmentsOS[0].Guid;
 				var segGuid = para.SegmentsOS[1].Guid;
 				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
 					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
-					Assert.True(mergeResult);
-					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
-					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "The user should have been prompted to merge the text with the same Guid.");
+					Assert.That(mergeResult, Is.True);
+					Assert.That(text.ContentsOA.Guid.Equals(contentGuid), Is.True, "The merge should not have changed the content objects.");
+					Assert.That(text.ContentsOA.ParagraphsOS.Count.Equals(1), Is.True);
 					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-					Assert.True(mergedPara.Guid.Equals(paraGuid));
-					Assert.True(mergedPara.SegmentsOS.Count.Equals(3));
-					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(createdSegmentGuid));
-					Assert.True(mergedPara.SegmentsOS[1].Guid.Equals(segGuid));
-					Assert.False(mergedPara.SegmentsOS[2].Guid.Equals(segGuid));
+					Assert.That(mergedPara.Guid.Equals(paraGuid), Is.True);
+					Assert.That(mergedPara.SegmentsOS.Count.Equals(3), Is.True);
+					Assert.That(mergedPara.SegmentsOS[0].Guid.Equals(createdSegmentGuid), Is.True);
+					Assert.That(mergedPara.SegmentsOS[1].Guid.Equals(segGuid), Is.True);
+					Assert.That(mergedPara.SegmentsOS[2].Guid.Equals(segGuid), Is.False);
 					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
-					Assert.True(analyses.Count.Equals(1));
-					Assert.True(analyses[0].Guid.Equals(wordGuid));
-					Assert.AreEqual("hesyla\x00a7 pus\x00A7 nihimbilira", para.Contents.Text, "The contents of the paragraph does not match the words.");
+					Assert.That(analyses.Count.Equals(1), Is.True);
+					Assert.That(analyses[0].Guid.Equals(wordGuid), Is.True);
+					Assert.That(para.Contents.Text, Is.EqualTo("hesyla\x00a7 pus\x00A7 nihimbilira"), "The contents of the paragraph does not match the words.");
 				}
 			}
 		}
@@ -707,8 +707,8 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
 				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.True(result);
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(result, Is.True);
 				var contentGuid = text.ContentsOA.Guid;
 				var originalPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 				var originalParaGuid = originalPara.Guid;
@@ -716,28 +716,28 @@ namespace SIL.FieldWorks.IText
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
 					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
-					Assert.True(mergeResult);
-					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
-					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(2));
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "The user should have been prompted to merge the text with the same Guid.");
+					Assert.That(mergeResult, Is.True);
+					Assert.That(text.ContentsOA.Guid.Equals(contentGuid), Is.True, "The merge should not have changed the content objects.");
+					Assert.That(text.ContentsOA.ParagraphsOS.Count.Equals(2), Is.True);
 					// Check that the first paragraph remains unchanged
 					var firstPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-					Assert.True(firstPara.Guid.Equals(originalParaGuid));
-					Assert.True(firstPara.SegmentsOS.Count.Equals(1));
-					Assert.True(firstPara.SegmentsOS[0].Guid.Equals(new Guid(firstPhraseGuid)));
+					Assert.That(firstPara.Guid.Equals(originalParaGuid), Is.True);
+					Assert.That(firstPara.SegmentsOS.Count.Equals(1), Is.True);
+					Assert.That(firstPara.SegmentsOS[0].Guid.Equals(new Guid(firstPhraseGuid)), Is.True);
 					var firstAnalyses = firstPara.SegmentsOS[0].AnalysesRS;
-					Assert.True(firstAnalyses.Count.Equals(1));
-					Assert.True(firstAnalyses[0].Guid.Equals(originalWordGuid));
-					Assert.AreEqual("pus", firstPara.Contents.Text, "The contents of the first paragraph do not match the words.");
+					Assert.That(firstAnalyses.Count.Equals(1), Is.True);
+					Assert.That(firstAnalyses[0].Guid.Equals(originalWordGuid), Is.True);
+					Assert.That(firstPara.Contents.Text, Is.EqualTo("pus"), "The contents of the first paragraph do not match the words.");
 					// Check that the second paragraph was merged correctly
 					var secondPara = text.ContentsOA.ParagraphsOS[1] as IStTxtPara;
-					Assert.False(secondPara.Guid.Equals(originalParaGuid));
-					Assert.True(secondPara.SegmentsOS.Count.Equals(1));
-					Assert.True(secondPara.SegmentsOS[0].Guid.Equals(new Guid(secondPhraseGuid)));
+					Assert.That(secondPara.Guid.Equals(originalParaGuid), Is.False);
+					Assert.That(secondPara.SegmentsOS.Count.Equals(1), Is.True);
+					Assert.That(secondPara.SegmentsOS[0].Guid.Equals(new Guid(secondPhraseGuid)), Is.True);
 					var secondAnalyses = secondPara.SegmentsOS[0].AnalysesRS;
-					Assert.True(secondAnalyses.Count.Equals(1));
-					Assert.False(secondAnalyses[0].Guid.Equals(originalWordGuid));
-					Assert.AreEqual("nihimbilira", secondPara.Contents.Text, "The contents of the second paragraph do not match the words.");
+					Assert.That(secondAnalyses.Count.Equals(1), Is.True);
+					Assert.That(secondAnalyses[0].Guid.Equals(originalWordGuid), Is.False);
+					Assert.That(secondPara.Contents.Text, Is.EqualTo("nihimbilira"), "The contents of the second paragraph do not match the words.");
 				}
 			}
 		}
@@ -770,33 +770,33 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
 			{
 				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.True(result);
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(result, Is.True);
 				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.AreEqual(3, para.SegmentsOS[0].NotesOS.Count);
-				Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
-				Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text);
-				Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text);
+				Assert.That(para.SegmentsOS[0].NotesOS.Count, Is.EqualTo(3));
+				Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, Is.EqualTo(commonNote));
+				Assert.That(para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text, Is.EqualTo("Note in first xml."));
+				Assert.That(para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text, Is.EqualTo("Une note pour le premier xml."));
 
 				// Put some French content into the first note. Doing it here instead of in the above xml will update
 				// the first note to have both languages, rather than creating a new note with French content.
 				ITsString tss = TsStringUtils.MakeString("Une note pour les deux xml.", wsFr);
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
 					() => { para.SegmentsOS[0].NotesOS[0].Content.set_String(wsFr, tss); });
-				Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+				Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, Is.EqualTo("Une note pour les deux xml."));
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
 				{
 					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "User should have been prompted to merge the text.");
-					Assert.True(mergeResult);
-					Assert.AreEqual(4, para.SegmentsOS[0].NotesOS.Count);
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "User should have been prompted to merge the text.");
+					Assert.That(mergeResult, Is.True);
+					Assert.That(para.SegmentsOS[0].NotesOS.Count, Is.EqualTo(4));
 					// The first three notes should remain unchanged.
-					Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, "The first note's Eng content should not have changed.");
-					Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, "The first note's Fr content should not have changed.");
-					Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text, "The second note should not have changed.");
-					Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text, "The third note should note have changed.");
+					Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, Is.EqualTo(commonNote), "The first note's Eng content should not have changed.");
+					Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, Is.EqualTo("Une note pour les deux xml."), "The first note's Fr content should not have changed.");
+					Assert.That(para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text, Is.EqualTo("Note in first xml."), "The second note should not have changed.");
+					Assert.That(para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text, Is.EqualTo("Une note pour le premier xml."), "The third note should note have changed.");
 					// The addition of a fourth note should be the only change.
-					Assert.AreEqual("Note in second xml.", para.SegmentsOS[0].NotesOS[3].Content.get_String(wsEng).Text, "A new note should have been added.");
+					Assert.That(para.SegmentsOS[0].NotesOS[3].Content.get_String(wsEng).Text, Is.EqualTo("Note in second xml."), "A new note should have been added.");
 				}
 			}
 		}
@@ -826,9 +826,9 @@ namespace SIL.FieldWorks.IText
 			{
 				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
 				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.AreEqual(1, para.SegmentsOS[0].NotesOS.Count);
-				Assert.AreEqual(EnglishNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
-				Assert.AreEqual(FrenchNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+				Assert.That(para.SegmentsOS[0].NotesOS.Count, Is.EqualTo(1));
+				Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, Is.EqualTo(EnglishNote));
+				Assert.That(para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, Is.EqualTo(FrenchNote));
 			}
 		}
 
@@ -867,20 +867,20 @@ namespace SIL.FieldWorks.IText
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
 					//The title imported
-					Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
+					Assert.That(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title), Is.True);
 					//The title abbreviation imported
-					Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+					Assert.That(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr), Is.True);
 					//The source imported
-					Assert.True(imported.Source.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(source));
+					Assert.That(imported.Source.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(source), Is.True);
 					//The description imported
-					Assert.True(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description));
+					Assert.That(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description), Is.True);
 					//The isTranslated imported
-					Assert.True(imported.IsTranslated);
+					Assert.That(imported.IsTranslated, Is.True);
 					//The Dates imported
 					string importedDateCreated = imported.DateCreated.ToLCMTimeFormatWithMillisString();
-					Assert.True(importedDateCreated.Equals(dateCreated));
+					Assert.That(importedDateCreated.Equals(dateCreated), Is.True);
 					string importedDateModified = imported.DateModified.ToLCMTimeFormatWithMillisString();
-					Assert.True(importedDateModified.Equals(dateModified));
+					Assert.That(importedDateModified.Equals(dateModified), Is.True);
 				}
 			}
 		}
@@ -921,17 +921,17 @@ namespace SIL.FieldWorks.IText
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
-					Assert.AreEqual(2, imported.GenresRC.Count);
-					Assert.AreEqual(genre1Guid, imported.GenresRC.First().Guid.ToString());
-					Assert.AreEqual(genre1Name, imported.GenresRC.First().Name.BestAnalysisAlternative.Text);
-					Assert.AreEqual(genre2Guid, imported.GenresRC.Last().Guid.ToString());
-					Assert.AreEqual(genre2Name, imported.GenresRC.Last().Name.BestAnalysisAlternative.Text);
+					Assert.That(imported.GenresRC.Count, Is.EqualTo(2));
+					Assert.That(imported.GenresRC.First().Guid.ToString(), Is.EqualTo(genre1Guid));
+					Assert.That(imported.GenresRC.First().Name.BestAnalysisAlternative.Text, Is.EqualTo(genre1Name));
+					Assert.That(imported.GenresRC.Last().Guid.ToString(), Is.EqualTo(genre2Guid));
+					Assert.That(imported.GenresRC.Last().Name.BestAnalysisAlternative.Text, Is.EqualTo(genre2Name));
 					ILcmOwningSequence<ICmPossibility> genres = imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS;
-					Assert.AreEqual(2, genres.Count);
-					Assert.AreEqual(genre1Guid, genres.First().Guid.ToString());
-					Assert.AreEqual(genre1Name, genres.First().Name.BestAnalysisAlternative.Text);
-					Assert.AreEqual(genre2Guid, genres.Last().Guid.ToString());
-					Assert.AreEqual(genre2Name, genres.Last().Name.BestAnalysisAlternative.Text);
+					Assert.That(genres.Count, Is.EqualTo(2));
+					Assert.That(genres.First().Guid.ToString(), Is.EqualTo(genre1Guid));
+					Assert.That(genres.First().Name.BestAnalysisAlternative.Text, Is.EqualTo(genre1Name));
+					Assert.That(genres.Last().Guid.ToString(), Is.EqualTo(genre2Guid));
+					Assert.That(genres.Last().Name.BestAnalysisAlternative.Text, Is.EqualTo(genre2Name));
 				}
 			}
 		}
@@ -1071,8 +1071,8 @@ namespace SIL.FieldWorks.IText
 					var imported = firstEntry.Current;
 					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
 					// Verify that we created a category.
-					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Name.BestAnalysisAlternative.Text.Equals("X"));
-					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Abbreviation.BestAnalysisAlternative.Text.Equals("X"));
+					Assert.That(segment.AnalysesRS[0].Analysis.CategoryRA.Name.BestAnalysisAlternative.Text.Equals("X"), Is.True);
+					Assert.That(segment.AnalysesRS[0].Analysis.CategoryRA.Abbreviation.BestAnalysisAlternative.Text.Equals("X"), Is.True);
 				}
 			}
 		}
@@ -1120,10 +1120,9 @@ namespace SIL.FieldWorks.IText
 					var spaceFour = para.Contents.Text.Substring(13, 1);
 					var spaceFive = para.Contents.Text.Substring(15, 1);
 					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-					Assert.AreEqual(6, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					Assert.That(para.Contents.Text.Split(spaceArray).Length, Is.EqualTo(6)); //capture correct number of spaces, and no double spaces
 					//test to make sure spaces were inserted in each expected place
-					CollectionAssert.AreEqual(new [] {" ", " ", " ", " ", " "},
-						new [] {spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive});
+					Assert.That(new [] {spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive}, Is.EqualTo(new [] {" ", " ", " ", " ", " "}));
 				}
 			}
 		}
@@ -1175,10 +1174,9 @@ namespace SIL.FieldWorks.IText
 					var spaceFive = para.Contents.Text.Substring(17, 1);
 					var spaceSix = para.Contents.Text.Substring(21, 1);
 					//test to make sure no space was inserted before the comma, this is probably captured by the other assert
-					Assert.AreEqual(7, para.Contents.Text.Split(spaceArray).Length); //capture correct number of spaces, and no double spaces
+					Assert.That(para.Contents.Text.Split(spaceArray).Length, Is.EqualTo(7)); //capture correct number of spaces, and no double spaces
 					//test to make sure spaces were inserted in each expected place
-					CollectionAssert.AreEqual(new[] { " ", " ", " ", " ", " ", " " },
-						new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix });
+					Assert.That(new[] { spaceOne, spaceTwo, spaceThree, spaceFour, spaceFive, spaceSix }, Is.EqualTo(new[] { " ", " ", " ", " ", " ", " " }));
 				}
 			}
 		}
@@ -1211,11 +1209,11 @@ namespace SIL.FieldWorks.IText
 					var wordAfter = para.Contents.Text.Substring(2, 5); //should be: "space"
 					var spaceTwo = para.Contents.Text.Substring(7, 1); //should be: " "
 					//test to make sure no space was inserted before the first word.
-					Assert.IsFalse(" ".Equals(para.Contents.GetSubstring(0, 1)));
+					Assert.That(" ".Equals(para.Contents.GetSubstring(0, 1)), Is.False);
 					//test to make sure spaces were inserted between "a" and "space", and between "space" and "space"
 					//any extra spaces would result in the "space" word looking like " spac"
-					Assert.IsTrue(spaceOne.Equals(spaceTwo));
-					Assert.IsTrue(wordAfter.Equals("space"));
+					Assert.That(spaceOne.Equals(spaceTwo), Is.True);
+					Assert.That(wordAfter.Equals("space"), Is.True);
 				}
 			}
 		}
@@ -1244,7 +1242,7 @@ namespace SIL.FieldWorks.IText
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
 					var para = imported.ContentsOA[0];
-					Assert.IsTrue(para.Contents.Text.Equals("Text not built from words."));
+					Assert.That(para.Contents.Text.Equals("Text not built from words."), Is.True);
 				}
 			}
 		}
@@ -1266,9 +1264,9 @@ namespace SIL.FieldWorks.IText
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
-					Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Empty paragraph was not imported as text content.");
+					Assert.That(imported.ContentsOA.ParagraphsOS.Count > 0, Is.True, "Empty paragraph was not imported as text content.");
 					var para = imported.ContentsOA[0];
-					Assert.NotNull(para, "The imported paragraph is null?");
+					Assert.That(para, Is.Not.Null, "The imported paragraph is null?");
 				}
 			}
 		}
@@ -1294,10 +1292,10 @@ namespace SIL.FieldWorks.IText
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
-					Assert.True(imported.ContentsOA.ParagraphsOS.Count > 0, "Paragraph was not imported as text content.");
+					Assert.That(imported.ContentsOA.ParagraphsOS.Count > 0, Is.True, "Paragraph was not imported as text content.");
 					var para = imported.ContentsOA[0];
-					Assert.NotNull(para, "The imported paragraph is null?");
-					Assert.AreEqual(new Guid("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"), para.SegmentsOS[0].Guid, "Segment guid not maintained on import.");
+					Assert.That(para, Is.Not.Null, "The imported paragraph is null?");
+					Assert.That(para.SegmentsOS[0].Guid, Is.EqualTo(new Guid("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")), "Segment guid not maintained on import.");
 					VerifyMediaLink(imported);
 				}
 			}
@@ -1322,34 +1320,32 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(text.Guid, Is.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Guid not maintained during import.");
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.ToCharArray())))
 				{
 					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
-					Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
-					Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Second text not merged with the first.");
-					Assert.AreEqual(1, text.ContentsOA.ParagraphsOS.Count, "Paragraph from second import not merged with the first.");
-					Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from second import not merged with the first.");
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "The user should have been prompted to merge the text with the same Guid.");
+					Assert.That(text.Guid, Is.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Guid not maintained during import.");
+					Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1), "Second text not merged with the first.");
+					Assert.That(text.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "Paragraph from second import not merged with the first.");
+					Assert.That(text.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "Segment from second import not merged with the first.");
 					VerifyMediaLink(text);
 					var mediaContainerGuid = text.MediaFilesOA.Guid;
-					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
-						"Guid not maintained during import.");
-					Assert.AreEqual(@"file:\\test.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+					Assert.That(text.MediaFilesOA.MediaURIsOC.First().Guid, Is.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "Guid not maintained during import.");
+					Assert.That(text.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\test.wav"), "URI was not imported correctly.");
 					using (var thirdStream = new MemoryStream(Encoding.ASCII.GetBytes(secondxml.Replace("test.wav", "retest.wav").ToCharArray())))
 					{
 						li.ImportInterlinear(new DummyProgressDlg(), thirdStream, 0, ref text);
-						Assert.AreEqual(2, li.NumTimesDlgShown, "The user should have been prompted again to merge the text with the same Guid.");
-						Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), text.Guid, "Guid not maintained during import.");
-						Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Duplicate text not merged with extant.");
-						Assert.AreEqual(1, text.ContentsOA.ParagraphsOS.Count, "Paragraph from third import not merged with the extant.");
-						Assert.AreEqual(1, text.ContentsOA[0].SegmentsOS.Count, "Segment from third import not merged with the extant.");
+						Assert.That(li.NumTimesDlgShown, Is.EqualTo(2), "The user should have been prompted again to merge the text with the same Guid.");
+						Assert.That(text.Guid, Is.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Guid not maintained during import.");
+						Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1), "Duplicate text not merged with extant.");
+						Assert.That(text.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "Paragraph from third import not merged with the extant.");
+						Assert.That(text.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "Segment from third import not merged with the extant.");
 						VerifyMediaLink(text);
-						Assert.AreEqual(mediaContainerGuid, text.MediaFilesOA.Guid, "Merging should not replace the media container.");
-						Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), text.MediaFilesOA.MediaURIsOC.First().Guid,
-							"Guid not maintained during import.");
-						Assert.AreEqual(@"file:\\retest.wav", text.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not updated.");
+						Assert.That(text.MediaFilesOA.Guid, Is.EqualTo(mediaContainerGuid), "Merging should not replace the media container.");
+						Assert.That(text.MediaFilesOA.MediaURIsOC.First().Guid, Is.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "Guid not maintained during import.");
+						Assert.That(text.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\retest.wav"), "URI was not updated.");
 					}
 				}
 			}
@@ -1370,40 +1366,37 @@ namespace SIL.FieldWorks.IText
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref firstText);
-				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
-				Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), firstText.Guid, "Guid not maintained during import.");
-				Assert.AreEqual(1, Cache.LanguageProject.Texts.Count, "Text not imported properly.");
-				Assert.AreEqual(1, firstText.ContentsOA.ParagraphsOS.Count, "Text not imported properly.");
-				Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "Text not imported properly.");
-				//Assert.AreEqual("TODO: B", firstText.ContentsOA.ParagraphsOS.);
+				Assert.That(li.NumTimesDlgShown, Is.EqualTo(0), "The user should not have been prompted to merge on the initial import.");
+				Assert.That(firstText.Guid, Is.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Guid not maintained during import.");
+				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1), "Text not imported properly.");
+				Assert.That(firstText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "Text not imported properly.");
+				Assert.That(firstText.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "Text not imported properly.");
+				//Assert.That(firstText.ContentsOA.ParagraphsOS., Is.EqualTo("TODO: B"));
 				VerifyMediaLink(firstText);
 				var mediaContainerGuid = firstText.MediaFilesOA.Guid;
-				Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
-					"Guid not maintained during import.");
-				Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+				Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().Guid, Is.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "Guid not maintained during import.");
+				Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\test.wav"), "URI was not imported correctly.");
 				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.Replace("test.wav", "retest.wav").ToCharArray())))
 				{
 					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref secondText);
-					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
-					Assert.AreEqual(2, Cache.LanguageProject.Texts.Count, "We imported twice and didn't merge; there should be two texts.");
+					Assert.That(li.NumTimesDlgShown, Is.EqualTo(1), "The user should have been prompted to merge the text with the same Guid.");
+					Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(2), "We imported twice and didn't merge; there should be two texts.");
 
-					Assert.AreEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), firstText.Guid, "First text should remain unchanged.");
-					Assert.AreEqual(1, firstText.ContentsOA.ParagraphsOS.Count, "First text should remain unchanged.");
-					Assert.AreEqual(1, firstText.ContentsOA[0].SegmentsOS.Count, "First text should remain unchanged.");
+					Assert.That(firstText.Guid, Is.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "First text should remain unchanged.");
+					Assert.That(firstText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "First text should remain unchanged.");
+					Assert.That(firstText.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "First text should remain unchanged.");
 					VerifyMediaLink(firstText);
-					Assert.AreEqual(mediaContainerGuid, firstText.MediaFilesOA.Guid, "First text should remain unchanged.");
-					Assert.AreEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), firstText.MediaFilesOA.MediaURIsOC.First().Guid,
-						"First text should remain unchanged.");
-					Assert.AreEqual(@"file:\\test.wav", firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, "First text should remain unchanged.");
+					Assert.That(firstText.MediaFilesOA.Guid, Is.EqualTo(mediaContainerGuid), "First text should remain unchanged.");
+					Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().Guid, Is.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "First text should remain unchanged.");
+					Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\test.wav"), "First text should remain unchanged.");
 
-					Assert.AreNotEqual(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), secondText.Guid, "Second text should have a unique Guid.");
-					Assert.AreEqual(1, secondText.ContentsOA.ParagraphsOS.Count, "Second text not imported properly.");
-					Assert.AreEqual(1, secondText.ContentsOA[0].SegmentsOS.Count, "Second text not imported properly.");
+					Assert.That(secondText.Guid, Is.Not.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Second text should have a unique Guid.");
+					Assert.That(secondText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "Second text not imported properly.");
+					Assert.That(secondText.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "Second text not imported properly.");
 					VerifyMediaLink(secondText);
-					Assert.AreNotEqual(mediaContainerGuid, secondText.MediaFilesOA.Guid, "Second text's media container should have a unique Guid.");
-					Assert.AreNotEqual(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), secondText.MediaFilesOA.MediaURIsOC.First().Guid,
-						"Second text's media URI should have a unique Guid.");
-					Assert.AreEqual(@"file:\\retest.wav", secondText.MediaFilesOA.MediaURIsOC.First().MediaURI, "URI was not imported correctly.");
+					Assert.That(secondText.MediaFilesOA.Guid, Is.Not.EqualTo(mediaContainerGuid), "Second text's media container should have a unique Guid.");
+					Assert.That(secondText.MediaFilesOA.MediaURIsOC.First().Guid, Is.Not.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "Second text's media URI should have a unique Guid.");
+					Assert.That(secondText.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\retest.wav"), "URI was not imported correctly.");
 				}
 			}
 		}
@@ -1470,9 +1463,7 @@ namespace SIL.FieldWorks.IText
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
 
-				Assert.AreEqual("Jimmy Dorante",
-					(Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text,
-					"Speaker was not created during the import.");
+				Assert.That((Cache.LanguageProject.PeopleOA.PossibilitiesOS[0] as ICmPerson).Name.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("Jimmy Dorante"), "Speaker was not created during the import.");
 			}
 		}
 
@@ -1497,7 +1488,7 @@ namespace SIL.FieldWorks.IText
 				Cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
 				newPerson.Name.set_String(Cache.DefaultVernWs, "Jimmy Dorante");
 			});
-			Assert.NotNull(newPerson);
+			Assert.That(newPerson, Is.Not.Null);
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
 			LCModel.IText text = null;
@@ -1506,7 +1497,7 @@ namespace SIL.FieldWorks.IText
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
 
 				//If the import sets the speaker in the segment to our Jimmy, and not a new Jimmy then all is well
-				Assert.AreEqual(newPerson, text.ContentsOA[0].SegmentsOS[0].SpeakerRA, "Speaker not reused.");
+				Assert.That(text.ContentsOA[0].SegmentsOS[0].SpeakerRA, Is.EqualTo(newPerson), "Speaker not reused.");
 			}
 		}
 
@@ -1514,15 +1505,15 @@ namespace SIL.FieldWorks.IText
 		{
 			var mediaFilesContainer = imported.MediaFilesOA;
 			var para = imported.ContentsOA[0];
-			Assert.NotNull(mediaFilesContainer, "Media Files not being imported.");
-			Assert.AreEqual(1, mediaFilesContainer.MediaURIsOC.Count, "Media file not imported.");
+			Assert.That(mediaFilesContainer, Is.Not.Null, "Media Files not being imported.");
+			Assert.That(mediaFilesContainer.MediaURIsOC.Count, Is.EqualTo(1), "Media file not imported.");
 			using (var enumerator = para.SegmentsOS.GetEnumerator())
 			{
 				enumerator.MoveNext();
 				var seg = enumerator.Current;
-				Assert.AreEqual("1", seg.BeginTimeOffset, "Begin offset not imported correctly");
-				Assert.AreEqual("2", seg.EndTimeOffset, "End offset not imported correctly");
-				Assert.AreEqual(seg.MediaURIRA, mediaFilesContainer.MediaURIsOC.First(), "Media not correctly linked to segment.");
+				Assert.That(seg.BeginTimeOffset, Is.EqualTo("1"), "Begin offset not imported correctly");
+				Assert.That(seg.EndTimeOffset, Is.EqualTo("2"), "End offset not imported correctly");
+				Assert.That(mediaFilesContainer.MediaURIsOC.First(), Is.EqualTo(seg.MediaURIRA), "Media not correctly linked to segment.");
 			}
 		}
 	}

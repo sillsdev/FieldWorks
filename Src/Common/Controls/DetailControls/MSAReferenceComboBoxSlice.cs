@@ -37,7 +37,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		//private bool m_processSelectionEvent = true;
 		private bool m_handlingMessage = false;
+#pragma warning disable CS0414 // Field is assigned but never used - retained for refresh state tracking
 		private bool m_forceRefresh = false;
+#pragma warning restore CS0414
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.IText
 				{
 					propValue = propInfo.GetValue(m_cache.LangProject, null);
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 
 				}

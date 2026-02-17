@@ -1,0 +1,80 @@
+# Context7 Auto-Approval Configuration for FieldWorks
+# This file defines Context7 libraries that should be auto-approved for use in the FieldWorks repository
+
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/context7/main/schemas/context7-configuration.schema.json",
+  "version": "1.0.0",
+  "libraries": [
+    {
+      "name": "microsoft/dotnet",
+      "description": "Official .NET documentation and API references",
+      "reason": "FieldWorks is a .NET application using C# and WPF. This is essential for all managed code development.",
+      "autoApprove": true
+    },
+    {
+      "name": "dotnet/wpf",
+      "description": "Windows Presentation Foundation (WPF) framework documentation",
+      "reason": "FieldWorks uses WPF for its UI components. Critical for UI development and XAML patterns.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/csharp",
+      "description": "C# language specification and best practices",
+      "reason": "Primary language for FieldWorks managed code. Essential for all C# development.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/visualstudio",
+      "description": "Visual Studio IDE and development tools documentation",
+      "reason": "FieldWorks uses Visual Studio 2022 for development. Useful for IDE configuration and debugging.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/msbuild",
+      "description": "MSBuild build system documentation",
+      "reason": "FieldWorks uses MSBuild for its complex build system with traversal SDK. Essential for build configuration.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/wix",
+      "description": "WiX Toolset documentation for Windows installer creation",
+      "reason": "FieldWorks uses WiX for installer packaging. Critical for installer development.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/powershell",
+      "description": "PowerShell scripting and automation documentation",
+      "reason": "FieldWorks uses PowerShell extensively for build scripts and automation. Essential for script development.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/git",
+      "description": "Git version control documentation",
+      "reason": "FieldWorks uses Git for source control. Useful for Git operations and workflows.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/nunit",
+      "description": "NUnit testing framework documentation",
+      "reason": "FieldWorks uses NUnit for unit testing. Essential for test development.",
+      "autoApprove": true
+    },
+    {
+      "name": "microsoft/vstest",
+      "description": "Visual Studio Test platform documentation",
+      "reason": "FieldWorks uses VSTest for running tests. Useful for test execution and configuration.",
+      "autoApprove": true
+    },
+    {
+      "name": "avaloniaui/avalonia-docs",
+      "description": "Avalonia UI framework documentation for cross-platform .NET applications",
+      "reason": "FieldWorks has future plans for Avalonia UI. Essential for upcoming Avalonia development.",
+      "autoApprove": true
+    }
+  ],
+  "notes": {
+    "lastUpdated": "2025-12-16",
+    "maintainer": "FieldWorks Development Team",
+    "purpose": "These libraries are essential for FieldWorks development and are considered safe for auto-approval."
+  }
+}

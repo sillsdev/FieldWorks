@@ -1436,7 +1436,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		private void CoreDoIt(ProgressDialogWorkingOn progress, Mediator mediator)
 		{
-			var specialMdc = m_specialSda.MetaDataCache;
+			var specialMdc = m_specialSda?.MetaDataCache;
+			if (specialMdc == null)
+			{
+				var managedMdc = m_cache?.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
+				if (managedMdc != null)
+					specialMdc = new RespellingMdc(managedMdc);
+			}
+			if (specialMdc == null)
+				throw new InvalidOperationException("RespellUndoAction requires a MetaDataCache.");
+
 			int flidOccurrences = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 
 			using (UndoableUnitOfWorkHelper uuow = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,

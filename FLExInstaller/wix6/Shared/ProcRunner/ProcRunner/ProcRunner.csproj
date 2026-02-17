@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>ProcRunner_5.0</AssemblyName>
+    <Version>5.0.0</Version>
+    <Description>ProcRunner runs an installer and then restarts the application so that running processes do not block the installer from updating files.</Description>
+  </PropertyGroup>
+</Project>

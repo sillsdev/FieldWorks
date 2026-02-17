@@ -30,8 +30,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IDictConfigViewer m_viewer;
 
-		private Inventory m_layouts;
-		private Inventory m_parts;
 		protected Dictionary<string, DictConfigItem> m_configList;
 
 		protected string m_originalView;
@@ -252,7 +250,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Do not allow protected configurations to be renamed.
-			// This is now checked before the edit is allowed! Nevermind!
+			// The UI prevents this edit, but keep the presenter defensive for direct callers/tests.
+			if (item.IsProtected)
+			{
+				// Because the Presenter won't change, so the View needs to revert.
+				RefreshView();
+				return;
+			}
 
 			var filteredName = MiscUtils.FilterForFileName(newName, MiscUtils.FilenameFilterStrength.kFilterBackup);
 

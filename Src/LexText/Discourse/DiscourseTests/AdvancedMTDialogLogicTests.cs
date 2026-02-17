@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			SetupParamObjBase();
 			Assert.That(affectedGroupsArray, Is.Not.Null, "Empty parameter array.");
-			Assert.Greater(affectedGroupsArray.Length, 0, "No CCWordGroups to add.");
+			Assert.That(affectedGroupsArray.Length, Is.GreaterThan(0), "No CCWordGroups to add.");
 			foreach (var group in affectedGroupsArray)
 			{
 				m_sentElem.AffectedWordGroups.Add(group);
@@ -151,8 +151,8 @@ namespace SIL.FieldWorks.Discourse
 			var expected = new ICmPossibility[cnewArray];
 			for (var i = 0; i < cnewArray; i++)
 				expected[i] = m_eligCols[i + 1];
-			Assert.AreEqual(expected, result1, "Prepose within same row should give all following columns.");
-			Assert.AreEqual(new ICmPossibility[0], result2, "Postpose within same row should give empty list of columns.");
+			Assert.That(result1, Is.EqualTo(expected), "Prepose within same row should give all following columns.");
+			Assert.That(result2, Is.EqualTo(new ICmPossibility[0]), "Postpose within same row should give empty list of columns.");
 		}
 
 		[Test]
@@ -176,8 +176,8 @@ namespace SIL.FieldWorks.Discourse
 			var expected = new ICmPossibility[cnewArray];
 			for (var i = 0; i < cnewArray; i++)
 				expected[i] = m_eligCols[i];
-			Assert.AreEqual(expected, result2, "Postpose within same row should give all preceding columns.");
-			Assert.AreEqual(new ICmPossibility[0], result1, "Prepose within same row should give empty list of columns.");
+			Assert.That(result2, Is.EqualTo(expected), "Postpose within same row should give all preceding columns.");
+			Assert.That(result1, Is.EqualTo(new ICmPossibility[0]), "Prepose within same row should give empty list of columns.");
 		}
 
 		[Test]
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Discourse
 			//result2 = m_dlgLogicPostpose.GetColumnChoices(row1);
 
 			// Verify changes
-			Assert.AreEqual(m_eligCols, result1, "All columns should be eligible if we choose a different row.");
+			Assert.That(result1, Is.EqualTo(m_eligCols), "All columns should be eligible if we choose a different row.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -234,8 +234,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0 };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the first WordGroup.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should only affect the first WordGroup.");
 		}
 
 		[Test]
@@ -264,8 +263,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the first 2 WordGroups.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should only affect the first 2 WordGroups.");
 		}
 
 		[Test]
@@ -294,8 +292,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b, cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the 2nd and 3rd WordGroups.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should only affect the 2nd and 3rd WordGroups.");
 		}
 
 		[Test]
@@ -324,8 +321,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the last WordGroup.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should only affect the last WordGroup.");
 		}
 
 		[Test]
@@ -354,8 +350,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should only affect the second WordGroup.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should only affect the second WordGroup.");
 		}
 
 		[Test]
@@ -385,8 +380,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b, cellPart0_0c };
-			Assert.AreEqual(expected, m_dlgLogicPrepose.SentElem.AffectedWordGroups,
-				"Should affect all of the WordGroups.");
+			Assert.That(m_dlgLogicPrepose.SentElem.AffectedWordGroups, Is.EqualTo(expected), "Should affect all of the WordGroups.");
 		}
 	}
 }

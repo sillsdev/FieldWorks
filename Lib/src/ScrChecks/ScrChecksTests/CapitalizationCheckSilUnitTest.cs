@@ -96,7 +96,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("Yes, this is nice.",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Sentence should begin with a capital letter");
 		}
@@ -119,7 +119,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u00FC is small latin 'u' with diaeresis, my friend! ",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(5, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(5));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "e\u0301", "Sentence should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 66, "a\u0301", "Sentence should begin with a capital letter");
@@ -146,7 +146,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u00FC is small latin 'u' with diaeresis, my friend! ",
 				TextType.Verse, true, false, "Line1"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(5, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(5));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "e\u0301", "Sentence should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 66, "a\u0301", "Sentence should begin with a capital letter");
@@ -170,7 +170,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 1, "e\u0301", "Sentence should begin with a capital letter");
 		}
 
@@ -189,7 +189,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "u\u0301\u0302\u0327",
 				"Sentence should begin with a capital letter");
 		}
@@ -207,7 +207,7 @@ namespace SILUBS.ScriptureChecks
 				"\u0061\u0301 is small latin a with a combining acute accent, my friend! ",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "\u0061\u0301", "Sentence should begin with a capital letter");
 		}
@@ -224,7 +224,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u0E01 is the Thai letter Ko Kai.",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ namespace SILUBS.ScriptureChecks
 				"Character in next sentence is no case PUA character. \uEE00",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -255,7 +255,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("\u01C5 is a latin extended capital.",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -275,7 +275,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -354,7 +354,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			// Check when the footnote marker run is not considered
 			// a run that starts a paragraph.
@@ -368,7 +368,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			// Check when the footnote marker run is not considered
 			// a run that starts a paragraph.
@@ -403,7 +403,7 @@ namespace SILUBS.ScriptureChecks
 				false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -420,7 +420,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse one", TextType.Verse,
 				true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -437,7 +437,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("footnote two", TextType.Note,
 				true, false, "Note General Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -454,7 +454,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse one", TextType.Verse,
 				true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("verse one", TextType.Verse,
 				false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -493,7 +493,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("this is after a footnote marker",
 				TextType.Verse,	false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -513,7 +513,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("this is after the picture",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -533,7 +533,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("this is after a verse",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -554,7 +554,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("this is verse two.",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[3].Text, 0, "t", "Sentence should begin with a capital letter");
 		}
 
@@ -573,7 +573,7 @@ namespace SILUBS.ScriptureChecks
 				"\u201C \u2018this is an uncaptialized para with quotes, my friend! ",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 3, "t", "Sentence should begin with a capital letter");
 		}
@@ -591,7 +591,7 @@ namespace SILUBS.ScriptureChecks
 				"Yes! 'tis an uncaptialized sentence with apostrophe before the first lowercase letter!",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 6, "t", "Sentence should begin with a capital letter");
 		}
@@ -609,7 +609,7 @@ namespace SILUBS.ScriptureChecks
 				"Yes! 'Tis an uncaptialized sentence with apostrophe before the first lowercase letter!",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -627,7 +627,7 @@ namespace SILUBS.ScriptureChecks
 				"\u201C \u2018This is an uncaptialized para with quotes, my friend! ",
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -645,7 +645,7 @@ namespace SILUBS.ScriptureChecks
 				" is a proper name, my friend! ",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 
@@ -664,7 +664,7 @@ namespace SILUBS.ScriptureChecks
 				" is a proper name, my friend! ",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			// This word should be capitalized for two reasons: it occurs sentence initially and it
 			// is a proper noun.
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Sentence should begin with a capital letter");
@@ -686,7 +686,7 @@ namespace SILUBS.ScriptureChecks
 				" is a proper name, my friend! ",
 				TextType.Verse, false, false, "UncapitalizedParaStyle"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			// This word should be capitalized for two reasons: it occurs sentence initially and it
 			// is a proper noun.
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Proper nouns should begin with a capital letter");
@@ -710,7 +710,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("God!",
 				TextType.Verse, false, false, "Paragraph", "Name Of God"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -732,7 +732,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph", "Name Of God"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, m_dataSource.m_tokens[1].Text, 0, "l", "Proper nouns should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[3].Text, 0, "g", "Proper nouns should begin with a capital letter");
 		}
@@ -756,7 +756,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph", "Name Of God"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Sentence should begin with a capital letter");
 		}
 
@@ -779,7 +779,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph", "Name Of God"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Sentence should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[1].Text, 0, "l", "Proper nouns should begin with a capital letter");
 			CheckError(2, m_dataSource.m_tokens[3].Text, 0, "g", "Proper nouns should begin with a capital letter");
@@ -799,7 +799,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Sentence should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 33, "t", "Sentence should begin with a capital letter");
 		}
@@ -823,7 +823,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "a", "Sentence should begin with a capital letter");
 			CheckError(1, m_dataSource.m_tokens[1].Text, 1, "i", "Sentence should begin with a capital letter");
 		}
@@ -841,7 +841,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Section Head"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -857,7 +857,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Section Head"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Heading should begin with a capital letter");
 		}
 
@@ -874,7 +874,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Title Main"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -890,7 +890,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Title Main"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "t", "Title should begin with a capital letter");
 		}
 
@@ -907,7 +907,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "List Item1"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -923,7 +923,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "List Item1"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "a", "List paragraphs should begin with a capital letter");
 		}
 
@@ -940,7 +940,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Table Cell Head"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -956,7 +956,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Other, true, false, "Table Cell Head"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "a", "Table contents should begin with a capital letter");
 		}
 
@@ -970,18 +970,18 @@ namespace SILUBS.ScriptureChecks
 		{
 			CapitalizationProcessor processor = new CapitalizationProcessor(m_dataSource, null);
 
-			Assert.AreEqual(1, ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
+			Assert.That(ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
 				new DummyTextToken("a has no diacritics.", TextType.Verse, true, false,
-				"Paragraph"), 0));
-			Assert.AreEqual(2, ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
+				"Paragraph"), 0), Is.EqualTo(1));
+			Assert.That(ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
 				new DummyTextToken("a\u0303 has a tilde.", TextType.Verse, true, false,
-				"Paragraph"), 0));
-			Assert.AreEqual(3, ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
+				"Paragraph"), 0), Is.EqualTo(2));
+			Assert.That(ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
 				new DummyTextToken("a\u0303\u0301 has a tilde and grave accent.",
-				TextType.Verse, true, false, "Paragraph"), 0));
-			Assert.AreEqual(4, ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
+				TextType.Verse, true, false, "Paragraph"), 0), Is.EqualTo(3));
+			Assert.That(ReflectionHelper.GetIntResult(processor, "GetLengthOfChar",
 				new DummyTextToken("a\u0303\u0301\u0302 has a tilde, grave accent and circumflex accent.",
-				TextType.Verse, true, false, "Paragraph"), 0));
+				TextType.Verse, true, false, "Paragraph"), 0), Is.EqualTo(4));
 		}
 		#endregion
 	}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<!--<DirectoryRef Id='FontsFolder'>
+	  <Component Id='Font1' Guid='*' Permanent='yes'>
+		<Condition>DOULOS_INSTALLED="False"</Condition>
+		<File Id='DoulosFont' Source='..\resources\DoulosSIL-R.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font2' Guid='*' Permanent='yes'>
+		<Condition>SBLHEB_INSTALLED="False"</Condition>
+		<File Id='HebrewFont' Source='..\resources\SBL_Hbrw.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font3' Guid='*' Permanent='yes'>
+		<Condition>CHARIS_INSTALLED="False"</Condition>
+		<File Id='CharisBoldFont' Source='..\resources\CharisSIL-B.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font4' Guid='*' Permanent='yes'>
+		<Condition>CHARIS_INSTALLED="False"</Condition>
+		<File Id='CharisBoldItalicFont' Source='..\resources\CharisSIL-BI.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font5' Guid='*' Permanent='yes'>
+		<Condition>CHARIS_INSTALLED="False"</Condition>
+		<File Id='CharisItalicFont' Source='..\resources\CharisSIL-I.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font6' Guid='*' Permanent='yes'>
+		<Condition>CHARIS_INSTALLED="False"</Condition>
+		<File Id='CharisFont' Source='..\resources\CharisSIL-R.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font7' Guid='*' Permanent='yes'>
+		<Condition>APPARATUS_INSTALLED="False"</Condition>
+		<File Id='ApparatusFont' Source='..\resources\AppSILR.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font8' Guid='*' Permanent='yes'>
+		<Condition>APPARATUS_INSTALLED="False"</Condition>
+		<File Id='ApparatusBoldFont' Source='..\resources\AppSILB.TTF' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font9' Guid='*' Permanent='yes'>
+		<Condition>APPARATUS_INSTALLED="False"</Condition>
+		<File Id='ApparatusItalicFont' Source='..\resources\AppSILI.TTF' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font10' Guid='*' Permanent='yes'>
+		<Condition>APPARATUS_INSTALLED="False"</Condition>
+		<File Id='ApparatusItalicBoldFont' Source='..\resources\AppSILBI.TTF' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font11' Guid='*' Permanent='yes'>
+		<Condition>GALATIA_INSTALLED="False"</Condition>
+		<File Id='GalatiaSIL' Source='..\resources\GalSILR.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font12' Guid='*' Permanent='yes'>
+		<Condition>GALATIA_INSTALLED="False"</Condition>
+		<File Id='GalatiaSILBold' Source='..\resources\GalSILB.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font13' Guid='*' Permanent='yes'>
+		<Condition>EZRA_INSTALLED="False"</Condition>
+		<File Id='SILEzraOT' Source='..\resources\SILEOT.ttf' TrueType='yes'/>
+	  </Component>
+	  <Component Id='Font14' Guid='*' Permanent='yes'>
+		<Condition>EZRA_INSTALLED="False"</Condition>
+		<File Id='SILEzraOTSR' Source='..\resources\SILEOTSR.ttf' TrueType='yes'/>
+	  </Component>
+	</DirectoryRef>-->
+</Include>

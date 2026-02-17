@@ -1,0 +1,150 @@
+%% DetailControls Class Hierarchy — Slices, Launchers, Views
+%% Maintained as part of the detail-controls-testability openspec change.
+%% Render with: mmdc -i detail-controls-class-diagram.mmd -o detail-controls-class-diagram.svg
+
+classDiagram
+    direction TB
+
+    class UserControl {
+        &lt;&lt;WinForms&gt;&gt;
+    }
+
+    class Slice {
+        +Install(DataTree)
+        +FinishInit()
+        +Expand()
+        +Collapse()
+        +HandleDeleteCommand()
+        +ContainingDataTree
+    }
+
+    class FieldSlice {
+        &lt;&lt;abstract&gt;&gt;
+        +UpdateDisplayFromDatabase()
+    }
+
+    class ViewSlice
+
+    class ReferenceSlice {
+        &lt;&lt;abstract&gt;&gt;
+        +FinishInit()
+        +Install(DataTree)
+        +DisplayNameProperty
+    }
+
+    class AtomicReferenceSlice {
+        +FinishInit()
+        +ShowSubControls()
+        +RefreshTree()
+    }
+
+    class ReferenceVectorSlice
+
+    class PossibilityAtomicReferenceSlice
+    class MorphTypeAtomicReferenceSlice
+    class DerivMSAReferenceSlice
+    class InflMSAReferenceSlice
+    class PossibilityReferenceVectorSlice
+    class PhoneEnvReferenceSlice
+    class SemanticDomainReferenceVectorSlice
+
+    class ButtonLauncher {
+        +Initialize(cache, obj, flid)
+        #HandleChooser()
+        #OnClick()
+        +MainControl
+        +Slice
+    }
+
+    class ReferenceLauncher {
+        #HandleChooser()
+        #GetChooser() SimpleListChooser
+        +AddItem(ICmObject)
+        +SetItems(IEnumerable)
+        +UpdateDisplayFromDatabase()
+    }
+
+    class AtomicReferenceLauncher {
+        +Target ICmObject
+        +AddItem()
+        #GetChooser()
+        #CreateAtomicReferenceView()
+    }
+
+    class VectorReferenceLauncher {
+        +AddItem()
+        +SetItems()
+        #CreateVectorReferenceView()
+    }
+
+    class PossibilityAtomicReferenceLauncher
+    class PossibilityVectorReferenceLauncher
+
+    class MorphTypeAtomicLauncher {
+        +SwapValues()
+        +IsStemType()
+        +HandleChooser()
+    }
+
+    class PhoneEnvReferenceLauncher
+    class SemanticDomainReferenceLauncher
+    class GenDateLauncher
+
+    class ReferenceViewBase {
+        &lt;&lt;RootSiteControl&gt;&gt;
+    }
+
+    class AtomicReferenceView
+    class VectorReferenceView
+    class PossibilityAtomicReferenceView
+    class PossibilityVectorReferenceView
+    class PhoneEnvReferenceView
+
+    class DataTree {
+        +ShowObject()
+        +DoNotRefresh
+        +RefreshListNeeded
+        +RefreshList()
+        +PropChanged()
+        +Slices
+    }
+
+    %% Slice hierarchy
+    UserControl <|-- Slice
+    Slice <|-- FieldSlice
+    Slice <|-- ViewSlice
+    FieldSlice <|-- ReferenceSlice
+    ReferenceSlice <|-- AtomicReferenceSlice
+    ReferenceSlice <|-- ReferenceVectorSlice
+    AtomicReferenceSlice <|-- PossibilityAtomicReferenceSlice
+    AtomicReferenceSlice <|-- DerivMSAReferenceSlice
+    AtomicReferenceSlice <|-- InflMSAReferenceSlice
+    PossibilityAtomicReferenceSlice <|-- MorphTypeAtomicReferenceSlice
+    ReferenceVectorSlice <|-- PossibilityReferenceVectorSlice
+    ReferenceVectorSlice <|-- PhoneEnvReferenceSlice
+    PossibilityReferenceVectorSlice <|-- SemanticDomainReferenceVectorSlice
+
+    %% Launcher hierarchy
+    UserControl <|-- ButtonLauncher
+    ButtonLauncher <|-- ReferenceLauncher
+    ButtonLauncher <|-- GenDateLauncher
+    ReferenceLauncher <|-- AtomicReferenceLauncher
+    ReferenceLauncher <|-- VectorReferenceLauncher
+    AtomicReferenceLauncher <|-- PossibilityAtomicReferenceLauncher
+    PossibilityAtomicReferenceLauncher <|-- MorphTypeAtomicLauncher
+    VectorReferenceLauncher <|-- PossibilityVectorReferenceLauncher
+    PossibilityVectorReferenceLauncher <|-- SemanticDomainReferenceLauncher
+    ReferenceLauncher <|-- PhoneEnvReferenceLauncher
+
+    %% View hierarchy
+    ReferenceViewBase <|-- AtomicReferenceView
+    ReferenceViewBase <|-- VectorReferenceView
+    AtomicReferenceView <|-- PossibilityAtomicReferenceView
+    VectorReferenceView <|-- PossibilityVectorReferenceView
+
+    %% Composition
+    DataTree *-- Slice : hosts
+    AtomicReferenceSlice *-- AtomicReferenceLauncher : creates
+    ReferenceVectorSlice *-- VectorReferenceLauncher : creates
+    AtomicReferenceLauncher *-- AtomicReferenceView : MainControl
+    VectorReferenceLauncher *-- VectorReferenceView : MainControl

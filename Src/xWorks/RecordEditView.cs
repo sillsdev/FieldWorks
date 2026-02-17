@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		private ImageList buttonImages;
 		protected Panel m_panel;
 		protected DataTree m_dataEntryForm;
-		private IContainer components;
+		private IContainer components = null;
 		private string m_layoutName;
 		private string m_layoutChoiceField;
 		private string m_titleField;
@@ -654,7 +654,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				docView = (XmlDocView)DynamicLoader.CreateObjectUsingLoaderNode(parentConfigNode);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				return null;
 			}

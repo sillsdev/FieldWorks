@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var alphaModel = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionAlpha1, Parts = new List<ConfigurableDictionaryNode>() };
 			m_migrator.MigrateFrom83Alpha(alphaModel); // SUT
-			Assert.AreEqual(FirstAlphaMigrator.VersionAlpha3, alphaModel.Version);
+			Assert.That(alphaModel.Version, Is.EqualTo(FirstAlphaMigrator.VersionAlpha3));
 		}
 
 		[Test]
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { configParent }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+			Assert.That(configChild.ReferenceItem, Is.Null, "Unused ReferenceItem should have been removed");
 		}
 
 		[Test]
@@ -89,10 +89,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { main }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("GlossOrSummary", configGlossOrSummDefn.FieldDescription,
-				"'Gloss (or Summary Definition)' Field Description should have been updated");
-			Assert.AreEqual("DefinitionOrGloss", configDefnOrGloss.FieldDescription,
-				"'Definition (or Gloss)' should not change fields");
+			Assert.That(configGlossOrSummDefn.FieldDescription, Is.EqualTo("GlossOrSummary"), "'Gloss (or Summary Definition)' Field Description should have been updated");
+			Assert.That(configDefnOrGloss.FieldDescription, Is.EqualTo("DefinitionOrGloss"), "'Definition (or Gloss)' should not change fields");
 		}
 
 		[Test]
@@ -102,7 +100,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configChild } };
 			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+			Assert.That(configChild.ReferenceItem, Is.Null, "Unused ReferenceItem should have been removed");
 		}
 
 		[Test]
@@ -113,7 +111,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Example Sentence", configExampleChild.Label);
+			Assert.That(configExampleChild.Label, Is.EqualTo("Example Sentence"));
 		}
 
 		[Test]
@@ -126,7 +124,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel); // SUT
 			for (var node = examplesOS; !configModel.SharedItems.Contains(node); node = node.Parent)
-				Assert.NotNull(node, "ExamplesOS should be freshly-shared (under subsenses)");
+				Assert.That(node, Is.Not.Null, "ExamplesOS should be freshly-shared (under subsenses)");
 			Assert.That(examplesOS.DictionaryNodeOptions, Is.TypeOf(typeof(DictionaryNodeListAndParaOptions)), "Freshly-shared nodes should be included");
 		}
 
@@ -138,10 +136,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Children = new List<ConfigurableDictionaryNode> { configExamplesNode } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Character, configExamplesNode.StyleType);
-			Assert.IsTrue(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			Assert.That(configExamplesNode.StyleType, Is.EqualTo(ConfigurableDictionaryNode.StyleTypes.Character));
+			Assert.That(configExamplesNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, Is.True, "wrong type");
 			var options = (DictionaryNodeListAndParaOptions)configExamplesNode.DictionaryNodeOptions;
-			Assert.IsFalse(options.DisplayEachInAParagraph, "Default is *not* in paragraph");
+			Assert.That(options.DisplayEachInAParagraph, Is.False, "Default is *not* in paragraph");
 		}
 
 		[Test]
@@ -154,8 +152,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Children = new List<ConfigurableDictionaryNode> { configBiblioParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("Bibliography (Entry)", configBiblioEntryNode.Label);
-			Assert.AreEqual("Bibliography (Sense)", configBiblioSenseNode.Label);
+			Assert.That(configBiblioEntryNode.Label, Is.EqualTo("Bibliography (Entry)"));
+			Assert.That(configBiblioSenseNode.Label, Is.EqualTo("Bibliography (Sense)"));
 		}
 
 		[Test]
@@ -167,8 +165,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild } };
 			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("HeadWordRef", referenceHwChild.FieldDescription);
-			Assert.AreEqual("HeadWordRef", cpFormChild.SubField);
+			Assert.That(referenceHwChild.FieldDescription, Is.EqualTo("HeadWordRef"));
+			Assert.That(cpFormChild.SubField, Is.EqualTo("HeadWordRef"));
 		}
 
 		[Test]
@@ -185,8 +183,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("ReversalIndex", "English.fwdictconfig")
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
-			Assert.AreEqual("ReversalName", cpFormChild.SubField);
+			Assert.That(referenceHwChild.FieldDescription, Is.EqualTo("ReversalName"));
+			Assert.That(cpFormChild.SubField, Is.EqualTo("ReversalName"));
 		}
 
 		[Test]
@@ -221,8 +219,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				SharedItems = new List<ConfigurableDictionaryNode> { configParent }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("ReversalName", referenceHwChild.FieldDescription);
-			Assert.AreEqual("ReversalName", cpFormChild.SubField);
+			Assert.That(referenceHwChild.FieldDescription, Is.EqualTo("ReversalName"));
+			Assert.That(cpFormChild.SubField, Is.EqualTo("ReversalName"));
 		}
 
 		[Test]
@@ -246,9 +244,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("ReversalIndex", "Tamil.fwdictconfig")
 			};
 			m_migrator.MigrateFrom83Alpha(configModelEn);
-			Assert.AreEqual("en", configModelEn.WritingSystem);
+			Assert.That(configModelEn.WritingSystem, Is.EqualTo("en"));
 			m_migrator.MigrateFrom83Alpha(configModelTamil);
-			Assert.AreEqual("ta__IPA", configModelTamil.WritingSystem);
+			Assert.That(configModelTamil.WritingSystem, Is.EqualTo("ta__IPA"));
 		}
 
 		[Test]
@@ -263,7 +261,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("NotReversalIndex", "English.fwdictconfig")
 			};
 			m_migrator.MigrateFrom83Alpha(configModelRoot);
-			Assert.Null(configModelRoot.WritingSystem, "The WritingSystem should not be filled in for configurations that aren't for reversal");
+			Assert.That(configModelRoot.WritingSystem, Is.Null, "The WritingSystem should not be filled in for configurations that aren't for reversal");
 		}
 
 		[Test]
@@ -278,7 +276,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("ReversalIndex", "My Copy-English-#Engl464.fwdictconfig")
 			};
 			m_migrator.MigrateFrom83Alpha(configModelRoot);
-			Assert.AreEqual("en", configModelRoot.WritingSystem, "English should have been parsed out of the filename and used to set the WritingSystem");
+			Assert.That(configModelRoot.WritingSystem, Is.EqualTo("en"), "English should have been parsed out of the filename and used to set the WritingSystem");
 		}
 
 		[Test]
@@ -303,13 +301,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// SUT
 			m_migrator.MigrateFrom83Alpha(model);
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeWritingSystemOptions)));
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
-			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
-			Assert.AreEqual(1, wsOptions.Options.Count);
-			Assert.AreEqual("vernacular", wsOptions.Options[0].Id);
-			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
+			Assert.That(wsOptions.DisplayWritingSystemAbbreviations, Is.True);
+			Assert.That(wsOptions.WsType, Is.EqualTo(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular));
+			Assert.That(wsOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(wsOptions.Options[0].Id, Is.EqualTo("vernacular"));
+			Assert.That(wsOptions.Options[0].IsEnabled, Is.True);
 		}
 
 		[Test]
@@ -349,12 +347,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
-			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
-			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
-			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
+			Assert.That(subsenses.Children, Is.Null, "Children not removed from shared nodes");
+			Assert.That(subsubsenses.Children, Is.Null, "Children not removed from shared nodes");
+			Assert.That(subentriesUnderSenses.Children, Is.Null, "Children not removed from shared nodes");
 			var sharedSubsenses = model.SharedItems.FirstOrDefault(si => si.Label == "MainEntrySubsenses");
-			Assert.NotNull(sharedSubsenses, "No Subsenses in SharedItems");
-			Assert.AreEqual(1, sharedSubsenses.Children.Count(n => n.FieldDescription == "SensesOS"), "Should have exactly one Subsubsenses node");
+			Assert.That(sharedSubsenses, Is.Not.Null, "No Subsenses in SharedItems");
+			Assert.That(sharedSubsenses.Children.Count(n => n.FieldDescription == "SensesOS"), Is.EqualTo(1), "Should have exactly one Subsubsenses node");
 		}
 
 		[Test]
@@ -422,10 +420,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
-			Assert.NotNull(subSenses);
-			Assert.AreEqual(2, subSenses.Children.Count, "Subsenses children were not moved to shared");
+			Assert.That(subSenses, Is.Not.Null);
+			Assert.That(subSenses.Children.Count, Is.EqualTo(2), "Subsenses children were not moved to shared");
 			Assert.That(subSenses.Children[1].Label, Does.Match("Subsubsenses"), "Subsubsenses not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children[0].Children, Is.Null, "Subsenses children were left in non-shared node");
 		}
 
 		[Test]
@@ -501,15 +499,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var subGramInfo =
 				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGramInfoNode.Label);
 			var subEntries = model.SharedItems.Find(node => node.Label == "MainEntrySubentries");
-			Assert.NotNull(subSenseGloss, "Subsenses did not get moved into the shared node");
-			Assert.Null(model.Parts[0].Children[1].Children, "Subsenses children were left in non-shared node");
-			Assert.IsTrue(subSenseGloss.IsEnabled, "Enabled not migrated into shared nodes for direct children");
-			Assert.NotNull(subGramInfo, "Subsense children were not moved into the shared node");
-			Assert.IsTrue(subGramInfo.IsEnabled, "Enabled not migrated into shared nodes for descendents");
-			Assert.NotNull(subEntries);
-			Assert.AreEqual(1, subEntries.Children.Count, "Subentries children were not moved to shared");
-			Assert.Null(model.Parts[0].Children[1].Children, "Subentries children were left in non-shared node");
-			Assert.NotNull(model.Parts[0].Children[1].DictionaryNodeOptions, "Subentries complex form options not added in migration");
+			Assert.That(subSenseGloss, Is.Not.Null, "Subsenses did not get moved into the shared node");
+			Assert.That(model.Parts[0].Children[1].Children, Is.Null, "Subsenses children were left in non-shared node");
+			Assert.That(subSenseGloss.IsEnabled, Is.True, "Enabled not migrated into shared nodes for direct children");
+			Assert.That(subGramInfo, Is.Not.Null, "Subsense children were not moved into the shared node");
+			Assert.That(subGramInfo.IsEnabled, Is.True, "Enabled not migrated into shared nodes for descendents");
+			Assert.That(subEntries, Is.Not.Null);
+			Assert.That(subEntries.Children.Count, Is.EqualTo(1), "Subentries children were not moved to shared");
+			Assert.That(model.Parts[0].Children[1].Children, Is.Null, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[1].DictionaryNodeOptions, Is.Not.Null, "Subentries complex form options not added in migration");
 		}
 
 		[Test]
@@ -537,10 +535,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
-			Assert.NotNull(subEntries);
-			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
+			Assert.That(subEntries, Is.Not.Null);
+			Assert.That(subEntries.Children.Count, Is.EqualTo(2), "Subentries children were not moved to shared");
 			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children, Is.Null, "Subentries children were left in non-shared node");
 		}
 
 		[Test]
@@ -572,10 +570,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
-			Assert.NotNull(subEntries);
-			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
+			Assert.That(subEntries, Is.Not.Null);
+			Assert.That(subEntries.Children.Count, Is.EqualTo(2), "Subentries children were not moved to shared");
 			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children, Is.Null, "Subentries children were left in non-shared node");
 		}
 
 		[Test]
@@ -586,7 +584,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configExampleParent } };
 			var configModel = new DictionaryConfigurationModel { Version = 3, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.AreEqual("translationcontents", configTranslationsChild.CSSClassNameOverride);
+			Assert.That(configTranslationsChild.CSSClassNameOverride, Is.EqualTo("translationcontents"));
 		}
 
 		[Test]
@@ -648,26 +646,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var varTypeNode = variantsNode.Children.First();
-			Assert.AreEqual(2, varTypeNode.Children.Count, "'Variant Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.That(varTypeNode.Children.Count, Is.EqualTo(2), "'Variant Forms' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
 			varTypeNode = variantOfSenseNode.Children.First();
-			Assert.AreEqual(2, varTypeNode.Children.Count,
-				"'Variants of Sense' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
-			Assert.AreEqual("Variant of", variantOfNode.Label, "'Variant Of' should have gotten a lowercase 'o'");
+			Assert.That(varTypeNode.Children.Count, Is.EqualTo(2), "'Variants of Sense' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
+			Assert.That(variantOfNode.Label, Is.EqualTo("Variant of"), "'Variant Of' should have gotten a lowercase 'o'");
 			varTypeNode = variantOfNode.Children.First();
-			Assert.AreEqual(2, varTypeNode.Children.Count,
-				"'Variant of' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(varTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.That(varTypeNode.Children.Count, Is.EqualTo(2), "'Variant of' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), Is.Not.Null, "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.That(varTypeNode.Children.Find(node => node.Label == "Reverse Name"), Is.Not.Null, "Name should be changed to ReverseName");
 		}
 
 		[Test]
@@ -765,47 +755,29 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = otherRefCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Other Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'Other Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
 			cfTypeNode = refCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'Referenced Complex Forms' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
 			cfTypeNode = mainEntrySubentriesNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'MainEntrySubentries' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'MainEntrySubentries' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
 			cfTypeNode = minorSubentriesNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Minor Subentries' grandchildren should only be 'Abbreviation' and 'Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Name should not be changed");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'Minor Subentries' grandchildren should only be 'Abbreviation' and 'Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Name should not be changed");
 			cfTypeNode = componentsCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Components' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'Components' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), Is.Not.Null, "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"), Is.Not.Null, "Name should be changed to ReverseName");
 			cfTypeNode = componentRefsCFNode.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count,
-				"'Component References' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"),
-				"Abbreviation should be changed to Reverse Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"),
-				"Name should be changed to ReverseName");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "'Component References' grandchildren should only be 'Reverse Abbreviation' and 'Reverse Name'");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Reverse Abbreviation"), Is.Not.Null, "Abbreviation should be changed to Reverse Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Reverse Name"), Is.Not.Null, "Name should be changed to ReverseName");
 		}
 
 		[Test]
@@ -834,7 +806,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("Referenced Headword", headwordNode.Label);
+			Assert.That(headwordNode.Label, Is.EqualTo("Referenced Headword"));
 		}
 
 		[Test]
@@ -870,7 +842,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { minorEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("Referenced Headword", headwordNode.Label);
+			Assert.That(headwordNode.Label, Is.EqualTo("Referenced Headword"));
 		}
 
 		[Test]
@@ -905,17 +877,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var cfTypeNode = fakeNodeForMinTest.Children.First();
-			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Reverse Name should be changed to Name");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "Should only have two children, Abbreviation and Name");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Reverse Name should be changed to Name");
 			cfTypeNode = fakeNodeForMinTest.Children[1];
-			Assert.AreEqual(2, cfTypeNode.Children.Count, "Should only have two children, Abbreviation and Name");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"),
-				"Reverse Abbreviation should be changed to Abbreviation");
-			Assert.IsNotNull(cfTypeNode.Children.Find(node => node.Label == "Name"),
-				"Reverse Name should be changed to Name");
+			Assert.That(cfTypeNode.Children.Count, Is.EqualTo(2), "Should only have two children, Abbreviation and Name");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Abbreviation"), Is.Not.Null, "Reverse Abbreviation should be changed to Abbreviation");
+			Assert.That(cfTypeNode.Children.Find(node => node.Label == "Name"), Is.Not.Null, "Reverse Name should be changed to Name");
 		}
 
 		[Test]
@@ -933,7 +901,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = "./Lexeme" + DictionaryConfigurationModel.FileExtension
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.IsFalse(model.IsRootBased);
+			Assert.That(model.IsRootBased, Is.False);
 		}
 
 		[Test]
@@ -951,7 +919,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = "./Root" + DictionaryConfigurationModel.FileExtension
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.IsTrue(model.IsRootBased);
+			Assert.That(model.IsRootBased, Is.True);
 		}
 
 		[Test]
@@ -984,8 +952,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("Entry", AllomorphNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
-			Assert.AreEqual("AlternateFormsOS", AllomorphNode.SubField, "Should have changed to a sequence.");
+			Assert.That(AllomorphNode.FieldDescription, Is.EqualTo("Entry"), "Should have changed 'Owner' field for reversal to 'Entry'");
+			Assert.That(AllomorphNode.SubField, Is.EqualTo("AlternateFormsOS"), "Should have changed to a sequence.");
 		}
 
 		[Test]
@@ -1030,12 +998,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.AreEqual("[", pronunciationsNode.Before, "Should have set Before to '['.");
-			Assert.AreEqual("] ", pronunciationsNode.After, "Should have set After to '] '.");
-			Assert.AreEqual(" ", pronunciationsNode.Between, "Should have set Between to one space.");
-			Assert.AreEqual("", formNode.Before, "Should have set Before to empty string.");
-			Assert.AreEqual(" ", formNode.After, "Should have set After to one space.");
-			Assert.AreEqual("", formNode.Between, "Should have set Between to empty string.");
+			Assert.That(pronunciationsNode.Before, Is.EqualTo("["), "Should have set Before to '['.");
+			Assert.That(pronunciationsNode.After, Is.EqualTo("] "), "Should have set After to '] '.");
+			Assert.That(pronunciationsNode.Between, Is.EqualTo(" "), "Should have set Between to one space.");
+			Assert.That(formNode.Before, Is.EqualTo(""), "Should have set Before to empty string.");
+			Assert.That(formNode.After, Is.EqualTo(" "), "Should have set After to one space.");
+			Assert.That(formNode.Between, Is.EqualTo(""), "Should have set Between to empty string.");
 		}
 
 		/// <summary>

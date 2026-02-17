@@ -26,8 +26,6 @@ namespace SIL.FieldWorks.XWorks
 		public const string LexemeFileName = "Lexeme";
 		public const string ReversalFileName = "AllReversalIndexes";
 
-		private readonly Inventory m_layoutInventory;
-		private readonly Inventory m_partInventory;
 		private Mediator m_mediator;
 		private readonly PropertyTable m_propertyTable;
 		private SimpleLogger m_logger;

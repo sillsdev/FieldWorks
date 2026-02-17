@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	[Guid("17a2e876-2968-11e0-8046-0019dbf4566e")]
 	[ClassInterface(ClassInterfaceType.None)]
+	[ComVisible(true)]
 	[TypeLibType(TypeLibTypeFlags.FCanCreate)]
 	public class ManagedPictureFactory : IPictureFactory
 	{

@@ -20,41 +20,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CorrelationFactor()
 		{
 			ParagraphCorrelation pc = new ParagraphCorrelation("Hello", "Hello");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation("Hello", "Hello ");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation(" Hello", "Hello");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation("Hello", "Hello there");
-			Assert.AreEqual(0.5, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.5));
 
 			pc = new ParagraphCorrelation("Hello over there", "Hello over here");
-			Assert.AreEqual(0.5, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.5));
 
 			pc = new ParagraphCorrelation("Hello there", "there Hello");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation("I am really excited",
 				"I am really really really really excited");
-			Assert.AreEqual(0.8125, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.8125));
 
 			pc = new ParagraphCorrelation(string.Empty, "What will happen here?");
-			Assert.AreEqual(0.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.0));
 
 			pc = new ParagraphCorrelation(string.Empty, string.Empty);
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation(null, null);
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation(null, "what?");
-			Assert.AreEqual(0.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.0));
 
 			pc = new ParagraphCorrelation("what?", null);
-			Assert.AreEqual(0.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -67,20 +67,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CorrelationFactor_WithDigitsAndPunc()
 		{
 			ParagraphCorrelation pc = new ParagraphCorrelation("Hello!", "2Hello.");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation("Hello", "Hello, there");
-			Assert.AreEqual(0.5, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.5));
 
 			pc = new ParagraphCorrelation("3Hello over there", "Hello over here");
-			Assert.AreEqual(0.5, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.5));
 
 			pc = new ParagraphCorrelation("Hello there?", "4there Hello!");
-			Assert.AreEqual(1.0, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(1.0));
 
 			pc = new ParagraphCorrelation("5I am really excited!",
 				"6I am really really really really excited.");
-			Assert.AreEqual(0.8125, pc.CorrelationFactor);
+			Assert.That(pc.CorrelationFactor, Is.EqualTo(0.8125));
 		}
 	}
 }

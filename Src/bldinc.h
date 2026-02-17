@@ -3,8 +3,8 @@
 #define SUITE_REVISION $!{FWREVISION:0}
 #define YEAR $YEAR
 #define BUILD_NUMBER $BUILDNUMBER
-#define STR_PRODUCT "$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER\0"
+#define STR_PRODUCT "$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDLABEL\0"
 #define FWSUITE_VERSION "$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.0\0"
-#define COPYRIGHT "Copyright © 2002-$YEAR SIL International\0"
-#define COPYRIGHTRESERVED "Copyright © 2002-$YEAR SIL International. All rights reserved."
+#define COPYRIGHT "Copyright ï¿½ 2002-$YEAR SIL International\0"
+#define COPYRIGHTRESERVED "Copyright ï¿½ 2002-$YEAR SIL International. All rights reserved."
 #define REGISTRYPATHWITHVERSION _T("Software\\SIL\\FieldWorks\\$!{FWMAJOR:0}")

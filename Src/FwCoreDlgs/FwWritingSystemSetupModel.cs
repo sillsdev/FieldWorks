@@ -1205,8 +1205,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				dictionaries.Add(new SpellingDictionaryItem(_currentWs.LanguageTag, _currentWs.LanguageTag.Replace('-', '_')));
 			}
 
-			bool fDictionaryExistsForLanguage = false;
-			bool fAlternateDictionaryExistsForLanguage = false;
 			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
 			{
 				dictionaries.Add(new SpellingDictionaryItem(GetDictionaryName(languageId), languageId));

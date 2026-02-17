@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.IText
 	{
 		private System.Windows.Forms.Button button1;
 		public ImageList buttonImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

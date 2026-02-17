@@ -27,7 +27,6 @@ namespace SIL.FieldWorks.IText
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
 		ICmObject m_objRoot;
 		InterlinVc m_vc;
-		LCModel.IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
 
 		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc)

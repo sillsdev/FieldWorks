@@ -132,21 +132,20 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("11In the beginning God made everything. 31It was all good.",
-				((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[1]);
+			Assert.That(((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("11In the beginning God made everything. 31It was all good."));
+			Assert.That(m_genesis.SectionsOS[1], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -174,21 +173,20 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("All About Genesis",
-				((IScrTxtPara)newSection1Curr.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[1]);
+			Assert.That(((IScrTxtPara)newSection1Curr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("All About Genesis"));
+			Assert.That(m_genesis.SectionsOS[1], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -217,16 +215,15 @@ namespace ParatextImport
 			// Detect differences
 			m_bookMerger.UseFilteredDiffList = true;
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("Chapter Two",
-				((IScrTxtPara)newSection2Curr.HeadingOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Chapter Two"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -282,20 +279,19 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(section1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(section1Curr));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("21There was a vast array (how geeky). 25They were naked, but no biggie.",
-				((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array (how geeky). 25They were naked, but no biggie."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -329,22 +325,21 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(1, m_bookMerger.Differences.Count, "Should still be a difference (which we can ignore) for the book title.");
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1), "Should still be a difference (which we can ignore) for the book title.");
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(section1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(section1Curr));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("21There was a vast array (how geeky). 25They were naked, but no biggie.",
-				((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("Genesis", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array (how geeky). 25They were naked, but no biggie."));
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Genesis"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -379,22 +374,21 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(2, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(2));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("11In the beginning God made everything. 31It was all good.",
-				((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[1]);
-			Assert.AreEqual("Genesis", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("11In the beginning God made everything. 31It was all good."));
+			Assert.That(m_genesis.SectionsOS[1], Is.EqualTo(origSection1Curr));
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Genesis"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -449,32 +443,27 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(5, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(5));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("21There was a vast array (how geeky). 25They were naked, but no biggie.",
-				((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection2Curr, m_genesis.SectionsOS[2]);
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array (how geeky). 25They were naked, but no biggie."));
+			Assert.That(m_genesis.SectionsOS[2], Is.EqualTo(origSection2Curr));
 			IScrSection newSection4Curr = m_genesis.SectionsOS[3];
-			Assert.AreEqual("61Men++ led to Daughters++",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("71Noah, you're a good guy, so you can get into the boat.",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[1]).Contents.Text);
-			Assert.AreEqual("81God didn't forget Noah or the cute little puppy dogs.",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[2]).Contents.Text);
-			Assert.AreEqual("22Now you get to have summer and winter and stuff.",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[3]).Contents.Text);
-			Assert.AreEqual(origSection3Curr, m_genesis.SectionsOS[4]);
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("61Men++ led to Daughters++"));
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[1]).Contents.Text, Is.EqualTo("71Noah, you're a good guy, so you can get into the boat."));
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[2]).Contents.Text, Is.EqualTo("81God didn't forget Noah or the cute little puppy dogs."));
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[3]).Contents.Text, Is.EqualTo("22Now you get to have summer and winter and stuff."));
+			Assert.That(m_genesis.SectionsOS[4], Is.EqualTo(origSection3Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -525,28 +514,25 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsTrue(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.True);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// In real life, the import code would set the filter on before calling
 			// DetectDifferences, but for the test we do it here to prove that the
 			// auto-merge functionality is not dependent on the filter.
 			m_bookMerger.UseFilteredDiffList = true;
-			Assert.AreEqual(0, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(0));
 
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(5, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(5));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("11In the beginning God made everything. 31It was all good.",
-				((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[1]);
+			Assert.That(((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("11In the beginning God made everything. 31It was all good."));
+			Assert.That(m_genesis.SectionsOS[1], Is.EqualTo(origSection1Curr));
 			IScrSection newSection3Curr = m_genesis.SectionsOS[2];
-			Assert.AreEqual("218Poor Adam! All alone with no wife. 36Wow! Nummy fruit! Adam, you want some?",
-				((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual(origSection2Curr, m_genesis.SectionsOS[3]);
+			Assert.That(((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("218Poor Adam! All alone with no wife. 36Wow! Nummy fruit! Adam, you want some?"));
+			Assert.That(m_genesis.SectionsOS[3], Is.EqualTo(origSection2Curr));
 			IScrSection newSection5Curr = m_genesis.SectionsOS[4];
-			Assert.AreEqual("111There was one world-wide language and only one verse in this chapter to boot.",
-				((IScrTxtPara)newSection5Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection5Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("111There was one world-wide language and only one verse in this chapter to boot."));
 		}
 		#endregion
 
@@ -582,12 +568,12 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.IsTrue(m_bookMerger.Differences.Count > 0);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookMerger.Differences.Count > 0, Is.True);
 
 			// The current version should not have changed.
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -619,12 +605,12 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.IsTrue(m_bookMerger.Differences.Count > 0);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookMerger.Differences.Count > 0, Is.True);
 
 			// The current version should not have changed.
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -671,12 +657,12 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.AreEqual(1, m_bookMerger.Differences.Count);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookMerger.Differences.Count, Is.EqualTo(1));
 
 			// The current version should not have changed.
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -717,12 +703,12 @@ namespace ParatextImport
 			// Detect differences
 			m_bookMerger.UseFilteredDiffList = true;
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.IsTrue(m_bookMerger.Differences.Count > 1);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookMerger.Differences.Count > 1, Is.True);
 
 			// The current version should not have changed.
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(origSection1Curr, m_genesis.SectionsOS[0]);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(origSection1Curr));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -757,13 +743,13 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.IsTrue(m_bookMerger.Differences.Count > 1);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookMerger.Differences.Count > 1, Is.True);
 
 			// The current version should not have changed.
-			Assert.AreEqual(1, m_genesis.SectionsOS.Count);
-			Assert.AreEqual(section1Curr, m_genesis.SectionsOS[0]);
-			Assert.AreEqual("First Book of the Bible", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(m_genesis.SectionsOS[0], Is.EqualTo(section1Curr));
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("First Book of the Bible"));
 		}
 		#endregion
 
@@ -821,28 +807,24 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.AreEqual(0, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(0));
 
 			m_bookMerger.DoPartialOverwrite(sectionsToRemove);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// The title should not have changed
-			Assert.AreEqual("Genesis", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Genesis"));
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(4, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(4));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("Twenty-one monkeys",
-				((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Twenty-one monkeys"));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("Hey, the frogs don't come in until Exodus!",
-				((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Hey, the frogs don't come in until Exodus!"));
 			IScrSection newSection3Curr = m_genesis.SectionsOS[2];
-			Assert.AreEqual("11In the beginning God made everything. 31It was all good.",
-				((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("11In the beginning God made everything. 31It was all good."));
 			IScrSection newSection4Curr = m_genesis.SectionsOS[3];
-			Assert.AreEqual("21There was a vast array of stuff. 25Adam and the wife were naked as jay birds, but no biggie.",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array of stuff. 25Adam and the wife were naked as jay birds, but no biggie."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -899,29 +881,25 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.AreEqual(0, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(0));
 
 			m_bookVersionAgent.MakeBackupCalled += new DummyBookVersionAgent.MakeBackupHandler(m_bookVersionAgent_MakeBackupCalled_DoPartialOverwrite_TitleInRevision);
 			m_bookMerger.DoPartialOverwrite(sectionsToRemove);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// The title should not have changed
-			Assert.AreEqual("The Start of Everything", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("The Start of Everything"));
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(4, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(4));
 			IScrSection newSection1Curr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("Twenty-one monkeys",
-				((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Twenty-one monkeys"));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("Hey, the frogs don't come in until Exodus!",
-				((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Hey, the frogs don't come in until Exodus!"));
 			IScrSection newSection3Curr = m_genesis.SectionsOS[2];
-			Assert.AreEqual("11In the beginning God made everything. 31It was all good.",
-				((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("11In the beginning God made everything. 31It was all good."));
 			IScrSection newSection4Curr = m_genesis.SectionsOS[3];
-			Assert.AreEqual("21There was a vast array of stuff. 25Adam and the wife were naked as jay birds, but no biggie.",
-				((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection4Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array of stuff. 25Adam and the wife were naked as jay birds, but no biggie."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -987,41 +965,35 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.AreEqual(0, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(0));
 
 			m_bookVersionAgent.MakeBackupCalled += new DummyBookVersionAgent.MakeBackupHandler(m_bookVersionAgent_MakeBackupCalled_DoPartialOverwrite_TitleInRevision);
 			m_bookMerger.DoPartialOverwrite(sectionsToRemove);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// The title should not have changed
-			Assert.AreEqual("The Start of Everything", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("The Start of Everything"));
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(4, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(4));
 			IScrSection newIntroSectionCurr = m_genesis.SectionsOS[0];
-			Assert.AreEqual("Genesis Background",
-				((IScrTxtPara)newIntroSectionCurr.HeadingOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newIntroSectionCurr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("Genesis Background"));
 			IScrTxtPara paraIntroCurr = (IScrTxtPara)newIntroSectionCurr.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("Forty-seven" + StringUtils.kChObject + " llamas (and two ducks).",
-				paraIntroCurr.Contents.Text);
+			Assert.That(paraIntroCurr.Contents.Text, Is.EqualTo("Forty-seven" + StringUtils.kChObject + " llamas (and two ducks)."));
 			VerifyFootnote(m_genesis.FootnotesOS[0], paraIntroCurr, 11);
 			IScrSection newSection1Curr = m_genesis.SectionsOS[1];
-			Assert.AreEqual("My First Chapter",
-				((IScrTxtPara)newSection1Curr.HeadingOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection1Curr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My First Chapter"));
 			IScrTxtPara para1Curr = (IScrTxtPara)newSection1Curr.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11In the beginning God made everything. " +
-				"31It couldn't have been better.", para1Curr.Contents.Text);
+			Assert.That(para1Curr.Contents.Text, Is.EqualTo("11In the beginning God made everything. " +
+				"31It couldn't have been better."));
 			IScrSection newSection2Curr = m_genesis.SectionsOS[2];
-			Assert.AreEqual("My Second Chapter",
-				((IScrTxtPara)newSection2Curr.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("21There was a vast array of stuff. 25Adam and the wife were naked as jay " +
-				"birds, but no biggie.", ((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection2Curr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My Second Chapter"));
+			Assert.That(((IScrTxtPara)newSection2Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array of stuff. 25Adam and the wife were naked as jay " +
+				"birds, but no biggie."));
 			IScrSection newSection3Curr = m_genesis.SectionsOS[3];
-			Assert.AreEqual("My Third Chapter",
-				((IScrTxtPara)newSection3Curr.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("31The snake, now, he was a bad guy. " +
-				"24The angel stood watch over Eden.",
-				((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)newSection3Curr.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My Third Chapter"));
+			Assert.That(((IScrTxtPara)newSection3Curr.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("31The snake, now, he was a bad guy. " +
+				"24The angel stood watch over Eden."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1085,40 +1057,36 @@ namespace ParatextImport
 
 			// Detect differences
 			m_bookMerger.DetectDifferences(null);
-			Assert.IsFalse(m_bookMerger.AutoMerged);
-			Assert.AreEqual(0, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookMerger.AutoMerged, Is.False);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(0));
 
 			m_bookVersionAgent.MakeBackupCalled += new DummyBookVersionAgent.MakeBackupHandler(m_bookVersionAgent_MakeBackupCalled_DoPartialOverwrite_TitleInRevision);
 			m_bookMerger.DoPartialOverwrite(sectionsToRemove);
-			Assert.AreEqual(1, m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded);
+			Assert.That(m_bookVersionAgent.m_NumberOfCallsToMakeBackupIfNeeded, Is.EqualTo(1));
 
 			// The title should not have changed
-			Assert.AreEqual("The Start of Everything", ((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)m_genesis.TitleOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("The Start of Everything"));
 			// The current should now contain the contents of the revision.
-			Assert.AreEqual(3, m_genesis.SectionsOS.Count);
+			Assert.That(m_genesis.SectionsOS.Count, Is.EqualTo(3));
 			IScrSection revisedSection1 = m_genesis.SectionsOS[0];
-			Assert.AreEqual("My First Chapter",
-				((IScrTxtPara)revisedSection1.HeadingOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)revisedSection1.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My First Chapter"));
 			paraCurr = (IScrTxtPara)revisedSection1.ContentOA.ParagraphsOS[0];
 			AddVerse(paraRev, 1, 1, "In the beginning God created everything. ");
 			AddVerse(paraRev, 0, 19, "He made light shine out. ");
 			AddVerse(paraRev, 0, 20, "Then came the fish and other swimming things. ");
 			AddVerse(paraRev, 0, 31, "It was all extremely good.");
-			Assert.AreEqual("11In the beginning God created everything. " +
+			Assert.That(paraCurr.Contents.Text, Is.EqualTo("11In the beginning God created everything. " +
 				"19He made light shine out. " +
 				"20Then came the fish and other swimming things. " +
-				"31It was all extremely good.", paraCurr.Contents.Text);
+				"31It was all extremely good."));
 			IScrSection revisedSection2a = m_genesis.SectionsOS[1];
-			Assert.AreEqual("My Second Chapter",
-				((IScrTxtPara)revisedSection2a.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("21There was a vast array of stuff. " +
-				"9There was a tree in the middle of the garden.", ((IScrTxtPara)revisedSection2a.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)revisedSection2a.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My Second Chapter"));
+			Assert.That(((IScrTxtPara)revisedSection2a.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("21There was a vast array of stuff. " +
+				"9There was a tree in the middle of the garden."));
 			IScrSection unchangedSection2b = m_genesis.SectionsOS[2];
-			Assert.AreEqual("My Second Section - Part 2",
-				((IScrTxtPara)unchangedSection2b.HeadingOA.ParagraphsOS[0]).Contents.Text);
-			Assert.AreEqual("10There was a river. " +
-				"25They were naked, but no biggie.",
-				((IScrTxtPara)unchangedSection2b.ContentOA.ParagraphsOS[0]).Contents.Text);
+			Assert.That(((IScrTxtPara)unchangedSection2b.HeadingOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("My Second Section - Part 2"));
+			Assert.That(((IScrTxtPara)unchangedSection2b.ContentOA.ParagraphsOS[0]).Contents.Text, Is.EqualTo("10There was a river. " +
+				"25They were naked, but no biggie."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1130,9 +1098,9 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		private void m_bookVersionAgent_MakeBackupCalled_DoPartialOverwrite_TitleInRevision(BookMerger bookMerger)
 		{
-			Assert.AreEqual(1, bookMerger.BookCurr.TitleOA.ParagraphsOS.Count);
+			Assert.That(bookMerger.BookCurr.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IScrTxtPara title = (IScrTxtPara)bookMerger.BookCurr.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual("Genesis", title.Contents.Text);
+			Assert.That(title.Contents.Text, Is.EqualTo("Genesis"));
 		}
 		#endregion
 	}

@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using Rhino.Mocks;
+using Moq;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -43,36 +43,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test]
 		public void AdjustScrollRange()
 		{
-			var rootBox = MockRepository.GenerateMock<IVwRootBox>();
+			var rootBoxMock = new Mock<IVwRootBox>();
 			// This was taken out because it doesn't seem like the views code does this
 			// anymore. It just calls AdjustScrollRange for the original view that changed.
 			// Done as a part of TE-3576
-			//// result for style pane
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//// result for draft pane
-			//rootBox.ExpectAndReturn("Height", 950);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 1000);
-			//rootBox.ExpectAndReturn("Width", 100);
 			// result for bt pane
-			rootBox.Expect(r => r.Height).Return(1100);
-			rootBox.Expect(r => r.Width).Return(100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.ExpectAndReturn("Height", 1100);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 900);
-			//rootBox.ExpectAndReturn("Width", 100);
-			//rootBox.ExpectAndReturn("Height", 950);
-			//rootBox.ExpectAndReturn("Width", 100);
+			rootBoxMock.Setup(r => r.Height).Returns(1100);
+			rootBoxMock.Setup(r => r.Width).Returns(100);
 
 			using (DummyBasicView stylePane = new DummyBasicView(),
 				draftPane = new DummyBasicView(),
@@ -80,9 +57,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (RootSiteGroup group = new RootSiteGroup())
 				{
-					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox);
-					PrepareView(draftPane, 150, 300, (IVwRootBox)rootBox);
-					PrepareView(btPane, 150, 300, (IVwRootBox)rootBox);
+					PrepareView(stylePane, 50, 300, rootBoxMock.Object);
+					PrepareView(draftPane, 150, 300, rootBoxMock.Object);
+					PrepareView(btPane, 150, 300, rootBoxMock.Object);
 
 					group.AddToSyncGroup(stylePane);
 					group.AddToSyncGroup(draftPane);
@@ -98,12 +75,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					// This was taken out because it doesn't seem like the views code does this
 					// anymore. It just calls AdjustScrollRange for the original view that changed.
 					// Done as a part of TE-3576
-					//stylePane.AdjustScrollRange(null, 0, 0, -100, 500);
-					//draftPane.AdjustScrollRange(null, 0, 0, -50, 500);
 					btPane.AdjustScrollRange(null, 0, 0, 100, 500);
 
-					Assert.AreEqual(1108, btPane.ScrollMinSize.Height, "Wrong ScrollMinSize");
-					Assert.AreEqual(800, -btPane.ScrollPosition.Y, "Wrong scroll position");
+					Assert.That(btPane.ScrollMinSize.Height, Is.EqualTo(1108), "Wrong ScrollMinSize");
+					Assert.That(-btPane.ScrollPosition.Y, Is.EqualTo(800), "Wrong scroll position");
 				}
 			}
 		}

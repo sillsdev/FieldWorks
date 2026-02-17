@@ -5,7 +5,7 @@
 // File: SimpleRootSiteTests_IsSelectionVisibleTests.cs
 // Responsibility:
 
-using Rhino.Mocks;
+using Moq;
 using System.Drawing;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -97,6 +97,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	{
 		internal IVwRootBox m_rootb;
 		internal DummyRootSite m_site;
+		internal Mock<IVwSelection> m_selectionMock;
 		internal IVwSelection m_selection;
 
 		/// ------------------------------------------------------------------------------------
@@ -109,15 +110,16 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_site = new DummyRootSite();
 
-			var rootb = MockRepository.GenerateMock<IVwRootBox>();
-			rootb.Expect(rb => rb.Height).Return(10000);
-			rootb.Expect(rb => rb.Width).Return(m_site.ClientRectangle.X);
-			rootb.Expect(rb => rb.IsPropChangedInProgress).Return(false);
+			var rootbMock = new Mock<IVwRootBox>();
+			rootbMock.Setup(rb => rb.Height).Returns(10000);
+			rootbMock.Setup(rb => rb.Width).Returns(m_site.ClientRectangle.X);
+			rootbMock.Setup(rb => rb.IsPropChangedInProgress).Returns(false);
 
-			m_site.RootBox = rootb;
+			m_site.RootBox = rootbMock.Object;
 
-			m_selection = MockRepository.GenerateMock<IVwSelection>();
-			m_selection.Expect(s => s.IsValid).Return(true);
+			m_selectionMock = new Mock<IVwSelection>();
+			m_selectionMock.Setup(s => s.IsValid).Returns(true);
+			m_selection = m_selectionMock.Object;
 			m_site.CreateControl();
 			m_site.ScrollMinSize = new Size(m_site.ClientRectangle.Width, 10000);
 		}
@@ -145,19 +147,39 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		protected void SetLocation(Rect rcPrimary, bool fEndBeforeAnchor, Point scrollPos,
 			bool fIsRange)
 		{
-			m_selection.Expect(s =>
-			{
-				Rect outRect;
-				bool outJunk;
-				s.Location(null, new Rect(), new Rect(), out rcPrimary, out outRect, out outJunk,
-					out fEndBeforeAnchor);
-			}).IgnoreArguments().OutRef(new Rect(rcPrimary.left - scrollPos.X, rcPrimary.top - scrollPos.Y, rcPrimary.right - scrollPos.X,
-								rcPrimary.bottom - scrollPos.Y), new Rect(0, 0, 0, 0), false, fEndBeforeAnchor);
-			m_selection.Expect(s => s.IsRange).Return(fIsRange);
-			m_selection.Expect(s => s.SelType).Return(VwSelType.kstText);
-			m_selection.Expect(s => s.EndBeforeAnchor).Return(fEndBeforeAnchor);
+			// Setup Location method with out parameters using Moq callback
+			var adjustedPrimary = new Rect(
+				rcPrimary.left - scrollPos.X,
+				rcPrimary.top - scrollPos.Y,
+				rcPrimary.right - scrollPos.X,
+				rcPrimary.bottom - scrollPos.Y);
+
+			m_selectionMock.Setup(s => s.Location(
+				It.IsAny<IVwGraphics>(),
+				It.IsAny<Rect>(),
+				It.IsAny<Rect>(),
+				out It.Ref<Rect>.IsAny,
+				out It.Ref<Rect>.IsAny,
+				out It.Ref<bool>.IsAny,
+				out It.Ref<bool>.IsAny))
+				.Callback(new LocationCallback((IVwGraphics vg, Rect rcSrc, Rect rcDst,
+					out Rect rcPrimaryOut, out Rect rcSecondary, out bool fSplit, out bool fEndBeforeAnchorOut) =>
+				{
+					rcPrimaryOut = adjustedPrimary;
+					rcSecondary = new Rect(0, 0, 0, 0);
+					fSplit = false;
+					fEndBeforeAnchorOut = fEndBeforeAnchor;
+				}));
+
+			m_selectionMock.Setup(s => s.IsRange).Returns(fIsRange);
+			m_selectionMock.Setup(s => s.SelType).Returns(VwSelType.kstText);
+			m_selectionMock.Setup(s => s.EndBeforeAnchor).Returns(fEndBeforeAnchor);
 			m_site.ScrollPosition = scrollPos;
 		}
+
+		// Delegate for Location callback with out parameters
+		private delegate void LocationCallback(IVwGraphics vg, Rect rcSrc, Rect rcDst,
+			out Rect rcPrimary, out Rect rcSecondary, out bool fSplit, out bool fEndBeforeAnchor);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -199,7 +221,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(0, 0, 0, m_site.LineHeight), false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsTrue(visible, "Selection should be visible");
+			Assert.That(visible, Is.True, "Selection should be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -214,7 +236,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(0, 0, 0, m_site.LineHeight), false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection, true);
-			Assert.IsFalse(visible, "Selection should not be visible if flag is set");
+			Assert.That(visible, Is.False, "Selection should not be visible if flag is set");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -229,7 +251,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsTrue(visible, "Selection should be visible");
+			Assert.That(visible, Is.True, "Selection should be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -245,7 +267,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection, true);
-			Assert.IsFalse(visible, "Selection should not be visible if flag is set");
+			Assert.That(visible, Is.False, "Selection should not be visible if flag is set");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -260,7 +282,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(0, 50, 0, 50 + m_site.LineHeight), false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection, true);
-			Assert.IsTrue(visible, "Selection should be visible if in the middle of the window");
+			Assert.That(visible, Is.True, "Selection should be visible if in the middle of the window");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -274,7 +296,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(0, 5000, 0, 5000 + m_site.LineHeight), false, new Point(0, 0), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -289,7 +311,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				new Point(0, 5001), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -304,7 +326,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				new Point(0, 4999 + m_site.LineHeight), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -318,7 +340,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(0, 1000, 0, 1000 + m_site.LineHeight), false, new Point(0, 2000), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -333,7 +355,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				new Point(0, 1001), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -348,7 +370,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				new Point(0, 999 + m_site.LineHeight), false);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -362,7 +384,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 1020, 60, 1100), false, new Point(0, 1000), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsTrue(visible, "Selection should be all visible");
+			Assert.That(visible, Is.True, "Selection should be all visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -380,7 +402,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollPosition = new Point(0, 400);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -398,7 +420,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollPosition = new Point(0, 400);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be visible");
+			Assert.That(visible, Is.False, "Selection should not be visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -413,7 +435,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 900, 60, 1100), false, new Point(0, 1000), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsTrue(visible, "Selection should be considered visible if end is showing");
+			Assert.That(visible, Is.True, "Selection should be considered visible if end is showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -428,7 +450,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 900, 60, 1100), true, new Point(0, 1000), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be considered visible if end is not showing");
+			Assert.That(visible, Is.False, "Selection should not be considered visible if end is not showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -443,7 +465,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 900, 60, 1100), true, new Point(0, 850), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsTrue(visible, "Selection should be considered visible if end is showing");
+			Assert.That(visible, Is.True, "Selection should be considered visible if end is showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -458,7 +480,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 900, 60, 1100), false, new Point(0, 850), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be considered visible if end is not showing");
+			Assert.That(visible, Is.False, "Selection should not be considered visible if end is not showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -473,7 +495,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetLocation(new Rect(30, 900, 60, 1300), false, new Point(0, 1000), true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be considered visible if end is not showing");
+			Assert.That(visible, Is.False, "Selection should not be considered visible if end is not showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -489,7 +511,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be considered visible if end is not completely showing");
+			Assert.That(visible, Is.False, "Selection should not be considered visible if end is not completely showing");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -505,7 +527,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				true);
 
 			bool visible = m_site.IsSelectionVisible(m_selection);
-			Assert.IsFalse(visible, "Selection should not be considered visible if end is not completely showing");
+			Assert.That(visible, Is.False, "Selection should not be considered visible if end is not completely showing");
 		}
 	}
 	#endregion IsSelectionVisibleTests

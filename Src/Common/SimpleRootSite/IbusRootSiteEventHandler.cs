@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_ActionHandler != null)
 			{
 				m_Depth = m_ActionHandler.CurrentDepth;
-				m_ActionHandler.BeginUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+				m_ActionHandler.BeginUndoTask(Properties.Resources.ksUndoTyping, Properties.Resources.ksRedoTyping);
 			}
 			return selHelper;
 		}

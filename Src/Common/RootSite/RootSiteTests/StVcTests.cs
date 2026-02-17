@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -24,6 +25,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Summary description for StVcTests.
 	/// </summary>
 	[TestFixture]
+	[Apartment(ApartmentState.STA)]
 	public class StVcTests : ScrInMemoryLcmTestBase
 	{
 		#region Dummy Footnote view
@@ -265,17 +267,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Call to GetStrForGuid doesn't generate a footnote marker based on the
 			// Scripture Footnote properties since the method to do that is in TeStVc.
 			int dummy;
-			Assert.AreEqual(StringUtils.kszObject, footnoteMarker.Text);
+			Assert.That(footnoteMarker.Text, Is.EqualTo(StringUtils.kszObject));
 			ITsTextProps props = footnoteMarker.get_Properties(0);
-			Assert.AreEqual(2, props.IntPropCount);
-			Assert.AreEqual(Cache.DefaultUserWs, props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy));
-			Assert.AreEqual(0, props.GetIntPropValues((int)FwTextPropType.ktptEditable, out dummy));
-			Assert.AreEqual(1, props.StrPropCount);
+			Assert.That(props.IntPropCount, Is.EqualTo(2));
+			Assert.That(props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy), Is.EqualTo(Cache.DefaultUserWs));
+			Assert.That(props.GetIntPropValues((int)FwTextPropType.ktptEditable, out dummy), Is.EqualTo(0));
+			Assert.That(props.StrPropCount, Is.EqualTo(1));
 
 			FwObjDataTypes odt;
 			Guid footnoteGuid = TsStringUtils.GetGuidFromProps(props, null, out odt);
-			Assert.IsTrue(odt == FwObjDataTypes.kodtPictEvenHot || odt == FwObjDataTypes.kodtPictOddHot);
-			Assert.AreEqual(footnote.Guid, footnoteGuid);
+			Assert.That(odt == FwObjDataTypes.kodtPictEvenHot || odt == FwObjDataTypes.kodtPictOddHot, Is.True);
+			Assert.That(footnoteGuid, Is.EqualTo(footnote.Guid));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -309,7 +311,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				selHelper.IchAnchor = 0;
 				selHelper.IchEnd = 5;
 				SelLevInfo[] selLevInfo = new SelLevInfo[3];
-				Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
+				Assert.That(selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End), Is.EqualTo(4));
 				Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
 				selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
 				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
@@ -320,7 +322,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				IVwSelection sel = footnoteView.RootBox.Selection;
 				ITsString tss;
 				sel.GetSelectionString(out tss, string.Empty);
-				Assert.AreEqual("a ", tss.Text.Substring(0, 2));
+				Assert.That(tss.Text.Substring(0, 2), Is.EqualTo("a "));
 
 				// make sure the marker and the space are read-only (maybe have to select each run
 				// separately to make this test truly correct)
@@ -328,11 +330,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				IVwPropertyStore[] vvps;
 				int cttp;
 				SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
-				Assert.IsTrue(cttp >= 2);
-				Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
-					"Footnote marker is not read-only");
-				Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
-					"Space after marker is not read-only");
+				Assert.That(cttp >= 2, Is.True);
+				Assert.That(SelectionHelper.IsEditable(vttp[0], vvps[0]), Is.False, "Footnote marker is not read-only");
+				Assert.That(SelectionHelper.IsEditable(vttp[1], vvps[1]), Is.False, "Space after marker is not read-only");
 			}
 		}
 
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				IVwSelection sel = footnoteView.RootBox.Selection.GrowToWord();
 				ITsString tss;
 				sel.GetSelectionString(out tss, string.Empty);
-				Assert.AreEqual("abcde", tss.Text);
+				Assert.That(tss.Text, Is.EqualTo("abcde"));
 			}
 		}
 
@@ -404,6 +404,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				form.Controls.Add(footnoteView);
 				form.Show();
 
+				// Ensure the root box exists and is laid out before we try to create selections.
+				footnoteView.MakeRoot();
+				footnoteView.CallLayout();
+
 				try
 				{
 					// Select the footnote marker and some characters of the footnote paragraph
@@ -412,7 +416,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					selHelper.IchAnchor = 0;
 					selHelper.IchEnd = 5;
 					SelLevInfo[] selLevInfo = new SelLevInfo[3];
-					Assert.AreEqual(4, selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End));
+					Assert.That(selHelper.GetNumberOfLevels(SelectionHelper.SelLimitType.End), Is.EqualTo(4));
 					Array.Copy(selHelper.GetLevelInfo(SelectionHelper.SelLimitType.End), 1, selLevInfo, 0, 3);
 					selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, selLevInfo);
 					selHelper.SetTextPropId(SelectionHelper.SelLimitType.End,
@@ -423,22 +427,18 @@ namespace SIL.FieldWorks.Common.RootSites
 					IVwSelection sel = footnoteView.RootBox.Selection;
 					ITsString tss;
 					sel.GetSelectionString(out tss, string.Empty);
-					Assert.AreEqual("a ", tss.Text.Substring(0, 2));
+					Assert.That(tss.Text.Substring(0, 2), Is.EqualTo("a "));
 
 					// make sure the marker and the space are read-only and the paragraph not.
 					ITsTextProps[] vttp;
 					IVwPropertyStore[] vvps;
 					int cttp;
 					SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
-					Assert.IsTrue(cttp >= 3);
-					Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]),
-						"Footnote marker is not read-only");
-					Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]),
-						"Space after marker is not read-only");
-					Assert.IsTrue(SelectionHelper.IsEditable(vttp[2], vvps[2]),
-						"Footnote text is read-only");
-					Assert.IsTrue(SelectionHelper.IsEditable(vttp[3], vvps[3]),
-						"Footnote text is read-only");
+					Assert.That(cttp >= 3, Is.True);
+					Assert.That(SelectionHelper.IsEditable(vttp[0], vvps[0]), Is.False, "Footnote marker is not read-only");
+					Assert.That(SelectionHelper.IsEditable(vttp[1], vvps[1]), Is.False, "Space after marker is not read-only");
+					Assert.That(SelectionHelper.IsEditable(vttp[2], vvps[2]), Is.True, "Footnote text is read-only");
+					Assert.That(SelectionHelper.IsEditable(vttp[3], vvps[3]), Is.True, "Footnote text is read-only");
 				}
 				finally
 				{

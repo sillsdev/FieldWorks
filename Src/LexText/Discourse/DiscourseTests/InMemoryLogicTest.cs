@@ -45,8 +45,8 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var item = item1 as ToolStripMenuItem;
 			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
-			Assert.AreEqual(text, item.Text);
-			Assert.AreEqual(fIsChecked, item.Checked, text + " should be in the expected check state");
+			Assert.That(item.Text, Is.EqualTo(text));
+			Assert.That(item.Checked, Is.EqualTo(fIsChecked), text + " should be in the expected check state");
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Discourse
 				var item = item1 as ToolStripMenuItem;
 				if (item == null || item.Text != text)
 					continue;
-				Assert.AreEqual(cSubMenuItems, item.DropDownItems.Count, "item " + text + " has wrong number of items");
+				Assert.That(item.DropDownItems.Count, Is.EqualTo(cSubMenuItems), "item " + text + " has wrong number of items");
 				return item;
 			}
 			Assert.Fail("menu should contain item " + text);
@@ -87,22 +87,20 @@ namespace SIL.FieldWorks.Discourse
 		private static void AssertExpectedMoveClauseSubItems(ContextMenuStrip strip, int index, string label)
 		{
 			var itemMDC = strip.Items[index] as ToolStripMenuItem;
-			Assert.AreEqual(label, itemMDC.Text);
-			Assert.AreEqual(6, itemMDC.DropDownItems.Count); // 4 following clauses available, plus 'other'
-			Assert.AreEqual(ConstituentChartLogic.FTO_PreviousClauseMenuItem, itemMDC.DropDownItems[0].Text, "first subitem should be previous clause");
-			Assert.AreEqual(ConstituentChartLogic.FTO_NextClauseMenuItem, itemMDC.DropDownItems[1].Text, "2nd subitem should be next clause");
-			Assert.AreEqual(ConstituentChartLogic.FTO_NextTwoClausesMenuItem, itemMDC.DropDownItems[2].Text, "3nd subitem should be next 2 clauses");
-			Assert.AreEqual(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "3"),
-				itemMDC.DropDownItems[3].Text, "4th subitem should be next 3 clauses");
-			Assert.AreEqual(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "4"),
-				itemMDC.DropDownItems[4].Text, "5th subitem should be next 4 clauses");
-			Assert.AreEqual(ConstituentChartLogic.FTO_OtherMenuItem, itemMDC.DropDownItems[5].Text, "5th subitem should be next 4 clauses");
+			Assert.That(itemMDC.Text, Is.EqualTo(label));
+			Assert.That(itemMDC.DropDownItems.Count, Is.EqualTo(6)); // 4 following clauses available, plus 'other'
+			Assert.That(itemMDC.DropDownItems[0].Text, Is.EqualTo(ConstituentChartLogic.FTO_PreviousClauseMenuItem), "first subitem should be previous clause");
+			Assert.That(itemMDC.DropDownItems[1].Text, Is.EqualTo(ConstituentChartLogic.FTO_NextClauseMenuItem), "2nd subitem should be next clause");
+			Assert.That(itemMDC.DropDownItems[2].Text, Is.EqualTo(ConstituentChartLogic.FTO_NextTwoClausesMenuItem), "3nd subitem should be next 2 clauses");
+			Assert.That(itemMDC.DropDownItems[3].Text, Is.EqualTo(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "3")), "4th subitem should be next 3 clauses");
+			Assert.That(itemMDC.DropDownItems[4].Text, Is.EqualTo(String.Format(ConstituentChartLogic.FTO_NextNClausesMenuItem, "4")), "5th subitem should be next 4 clauses");
+			Assert.That(itemMDC.DropDownItems[5].Text, Is.EqualTo(ConstituentChartLogic.FTO_OtherMenuItem), "5th subitem should be next 4 clauses");
 		}
 
 		private static void AssertMergeItem(ContextMenuStrip strip, string name, bool fExpected, string message)
 		{
 			var fFoundIt = strip.Items.Cast<ToolStripItem>().Any(item => item.Text == name);
-			Assert.AreEqual(fExpected, fFoundIt, message);
+			Assert.That(fFoundIt, Is.EqualTo(fExpected), message);
 		}
 
 		#endregion verification helpers
@@ -120,19 +118,19 @@ namespace SIL.FieldWorks.Discourse
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
 			Assert.That(m_template, Is.Not.Null);
-			Assert.AreEqual(3, m_template.SubPossibilitiesOS.Count);
-			Assert.AreEqual(2, m_template.SubPossibilitiesOS[0].SubPossibilitiesOS.Count);
-			Assert.AreEqual("default", m_template.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("prenuc1", m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(m_template.SubPossibilitiesOS.Count, Is.EqualTo(3));
+			Assert.That(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS.Count, Is.EqualTo(2));
+			Assert.That(m_template.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("default"));
+			Assert.That(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("prenuc1"));
 		}
 
 		[Test]
 		public void AllMyColumns()
 		{
 			var cols = m_logic.AllMyColumns;
-			Assert.AreEqual(6, cols.Length);
-			Assert.AreEqual(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Hvo, cols[0].Hvo);
-			Assert.AreEqual(m_template.SubPossibilitiesOS[2].Hvo, cols[5].Hvo);
+			Assert.That(cols.Length, Is.EqualTo(6));
+			Assert.That(cols[0].Hvo, Is.EqualTo(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Hvo));
+			Assert.That(cols[5].Hvo, Is.EqualTo(m_template.SubPossibilitiesOS[2].Hvo));
 		}
 
 		[Test]
@@ -147,16 +145,16 @@ namespace SIL.FieldWorks.Discourse
 				//		Col3
 				//		Col4...
 				//	Insert as new clause
-				Assert.AreEqual(2, strip.Items.Count);
+				Assert.That(strip.Items.Count, Is.EqualTo(2));
 
 				// Check the moved text item and subitems
 				var itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
-				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
+				Assert.That(itemMT.Text, Is.EqualTo(ConstituentChartLogic.FTO_MovedTextMenuText));
+				Assert.That(itemMT.DropDownItems.Count, Is.EqualTo(m_allColumns.Count - 1));
 				// can't move from itself
-				Assert.AreEqual(m_logic.GetColumnLabel(1), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
-				Assert.AreEqual(m_logic.GetColumnLabel(2), itemMT.DropDownItems[1].Text, "second label for col0 menu should different");
-				Assert.AreEqual(ConstituentChartLogic.FTO_InsertAsClauseMenuText, (strip.Items[0] as ToolStripMenuItem).Text);
+				Assert.That(itemMT.DropDownItems[0].Text, Is.EqualTo(m_logic.GetColumnLabel(1)), "first label for col0 menu should be col1");
+				Assert.That(itemMT.DropDownItems[1].Text, Is.EqualTo(m_logic.GetColumnLabel(2)), "second label for col0 menu should different");
+				Assert.That((strip.Items[0] as ToolStripMenuItem).Text, Is.EqualTo(ConstituentChartLogic.FTO_InsertAsClauseMenuText));
 			}
 		}
 
@@ -171,16 +169,16 @@ namespace SIL.FieldWorks.Discourse
 				//		Col1
 				//		Col2
 				//		Col4...
-				Assert.AreEqual(2, strip.Items.Count);
+				Assert.That(strip.Items.Count, Is.EqualTo(2));
 
 				// Check the moved text item and subitems
 				ToolStripMenuItem itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
-				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
+				Assert.That(itemMT.Text, Is.EqualTo(ConstituentChartLogic.FTO_MovedTextMenuText));
+				Assert.That(itemMT.DropDownItems.Count, Is.EqualTo(m_allColumns.Count - 1));
 				// can't move from itself
-				Assert.AreEqual(m_logic.GetColumnLabel(0), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
-				Assert.AreEqual(m_logic.GetColumnLabel(1), itemMT.DropDownItems[1].Text, "second label for col0 menu should different");
-				Assert.AreEqual(m_logic.GetColumnLabel(3), itemMT.DropDownItems[2].Text, "col3 menu should skip column 2");
+				Assert.That(itemMT.DropDownItems[0].Text, Is.EqualTo(m_logic.GetColumnLabel(0)), "first label for col0 menu should be col1");
+				Assert.That(itemMT.DropDownItems[1].Text, Is.EqualTo(m_logic.GetColumnLabel(1)), "second label for col0 menu should different");
+				Assert.That(itemMT.DropDownItems[2].Text, Is.EqualTo(m_logic.GetColumnLabel(3)), "col3 menu should skip column 2");
 			}
 		}
 
@@ -234,7 +232,7 @@ namespace SIL.FieldWorks.Discourse
 				var itemG1 = AssertHasMenuWithText(strip.Items, "Mark Group1", 1);
 				var itemG2 = AssertHasMenuWithText(strip.Items, "Mark Group2", 2);
 				var itemG1_1 = itemG1.DropDownItems[0] as ToolStripMenuItem;
-				Assert.AreEqual("Group1.1", itemG1_1.Text);
+				Assert.That(itemG1_1.Text, Is.EqualTo("Group1.1"));
 				VerifyMenuItemTextAndChecked(itemG1_1.DropDownItems[0] as ToolStripMenuItem, "Item1 (I1)", true);
 				VerifyMenuItemTextAndChecked(itemG2.DropDownItems[0] as ToolStripMenuItem, "Item2 (I2)", false);
 				VerifyMenuItemTextAndChecked(itemG2.DropDownItems[1] as ToolStripMenuItem, "Item3 (I3)", true);
@@ -296,7 +294,7 @@ namespace SIL.FieldWorks.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
-					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
+					Assert.That(itemMissing.Checked, Is.True, "Missing item in cell with missing marker should be checked.");
 				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
 				// can't move missing marker
 			}
@@ -314,7 +312,7 @@ namespace SIL.FieldWorks.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(cloc))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
-					Assert.IsFalse(itemMissing.Checked, "Missing item in cell with other marker should not be checked.");
+					Assert.That(itemMissing.Checked, Is.False, "Missing item in cell with other marker should not be checked.");
 				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
 				// can't move possibility markers
 			}
@@ -338,7 +336,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Verify
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
-					Assert.IsTrue(itemMissing.Checked, "Missing item in cell with missing marker should be checked.");
+					Assert.That(itemMissing.Checked, Is.True, "Missing item in cell with missing marker should be checked.");
 				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
 				// can't move possibility markers
 			}
@@ -380,7 +378,7 @@ namespace SIL.FieldWorks.Discourse
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, icol)))
 			{
 				using (var itemMissing = AssertHasMenuWithText(strip.Items, DiscourseStrings.ksMarkMissingItem, 0))
-					Assert.IsFalse(itemMissing.Checked, "missing item in empty cell should not be checked");
+					Assert.That(itemMissing.Checked, Is.False, "missing item in empty cell should not be checked");
 				AssertHasNoMenuWithText(strip.Items, DiscourseStrings.ksMoveMenuItem);
 				// can't move empty cell
 			}
@@ -539,12 +537,12 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void GetColumnPosition()
 		{
-			Assert.AreEqual(0, m_logic.GetColumnFromPosition(1, new [] { 0, 5 }), "GCP(1, [0,5])=0");
-			Assert.AreEqual(0, m_logic.GetColumnFromPosition(-1, new [] { 0, 5 }), "GCP(-1, [0,5])=0");
-			Assert.AreEqual(1, m_logic.GetColumnFromPosition(6, new [] { 0, 5 }), "GCP(6, [0,5])=1");
-			Assert.AreEqual(1, m_logic.GetColumnFromPosition(6, new [] { 0, 5, 10 }), "GCP(6, [0,5,10])=1");
+			Assert.That(m_logic.GetColumnFromPosition(1, new [] { 0, 5 }), Is.EqualTo(0), "GCP(1, [0,5])=0");
+			Assert.That(m_logic.GetColumnFromPosition(-1, new [] { 0, 5 }), Is.EqualTo(0), "GCP(-1, [0,5])=0");
+			Assert.That(m_logic.GetColumnFromPosition(6, new [] { 0, 5 }), Is.EqualTo(1), "GCP(6, [0,5])=1");
+			Assert.That(m_logic.GetColumnFromPosition(6, new [] { 0, 5, 10 }), Is.EqualTo(1), "GCP(6, [0,5,10])=1");
 			// Arbitrary, but may as well make sure it doesn't crash.
-			Assert.AreEqual(-1, m_logic.GetColumnFromPosition(6, new int[0]), "GCP(6, [])=-1");
+			Assert.That(m_logic.GetColumnFromPosition(6, new int[0]), Is.EqualTo(-1), "GCP(6, [])=-1");
 		}
 
 		[Test]
@@ -555,8 +553,8 @@ namespace SIL.FieldWorks.Discourse
 			var row1 = m_helper.MakeSecondRow();
 			m_helper.MakeDependentClauseMarker(row0, 1, new [] { row1 }, ClauseTypes.Dependent);
 
-			Assert.IsFalse(m_logic.IsDepClause(row0), "unexpected success on dep clause");
-			Assert.IsTrue(m_logic.IsDepClause(row1), "target of dep clause marker should be dep clause");
+			Assert.That(m_logic.IsDepClause(row0), Is.False, "unexpected success on dep clause");
+			Assert.That(m_logic.IsDepClause(row1), Is.True, "target of dep clause marker should be dep clause");
 		}
 
 		/// <summary>
@@ -583,8 +581,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(1, whereToInsert, "should insert at end, after 1 existing wordform");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsert, Is.EqualTo(1), "should insert at end, after 1 existing wordform");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -599,8 +597,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(2, whereToInsert, "should insert at end, after 2 existing wordforms");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsert, Is.EqualTo(2), "should insert at end, after 2 existing wordforms");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -618,8 +616,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
-			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow));
+			Assert.That(whereToInsert, Is.EqualTo(0), "should insert at start of new row");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -634,8 +632,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(4, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
-			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow));
+			Assert.That(whereToInsert, Is.EqualTo(0), "should insert at start of new row");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -650,8 +648,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsert, Is.EqualTo(row0.CellsOS.Count), "should insert at end of row");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -666,8 +664,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsert, Is.EqualTo(row0.CellsOS.Count), "should insert at end of row");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -682,8 +680,8 @@ namespace SIL.FieldWorks.Discourse
 			int whereToInsert;
 			IConstChartWordGroup existingWordGroupToAppendTo;
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
-			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
-			Assert.AreEqual(0, whereToInsert, "should insert at start of row");
+			Assert.That(result, Is.EqualTo(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow));
+			Assert.That(whereToInsert, Is.EqualTo(0), "should insert at start of row");
 			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
@@ -692,15 +690,15 @@ namespace SIL.FieldWorks.Discourse
 		{
 			m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
-			Assert.IsTrue(m_logic.IsCellEmpty(MakeLocObj(row0, 0)), "cell zero of empty row should be empty");
-			Assert.IsTrue(m_logic.IsCellEmpty(MakeLocObj(row0, 4)), "cell four of empty row should be empty");
+			Assert.That(m_logic.IsCellEmpty(MakeLocObj(row0, 0)), Is.True, "cell zero of empty row should be empty");
+			Assert.That(m_logic.IsCellEmpty(MakeLocObj(row0, 4)), Is.True, "cell four of empty row should be empty");
 
 			m_helper.MakeMissingMarker(row0, 2); // IsCellEmpty looks for any IConstituentChartCellPart
 			m_helper.MakeMissingMarker(row0, 4);
 
-			Assert.IsTrue(m_logic.IsCellEmpty(MakeLocObj(row0, 0)), "cell zero should be empty with 2,4 occupied");
-			Assert.IsFalse(m_logic.IsCellEmpty(MakeLocObj(row0, 4)), "cell four should not be empty with 2,4 occupied");
-			Assert.IsTrue(m_logic.IsCellEmpty(MakeLocObj(row0, 5)), "cell five should be empty with 2,4 occupied");
+			Assert.That(m_logic.IsCellEmpty(MakeLocObj(row0, 0)), Is.True, "cell zero should be empty with 2,4 occupied");
+			Assert.That(m_logic.IsCellEmpty(MakeLocObj(row0, 4)), Is.False, "cell four should not be empty with 2,4 occupied");
+			Assert.That(m_logic.IsCellEmpty(MakeLocObj(row0, 5)), Is.True, "cell five should be empty with 2,4 occupied");
 		}
 
 		[Test]
@@ -708,20 +706,20 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var row0 = m_helper.MakeFirstRow();
 
-			Assert.IsFalse(row0.EndParagraph, "unmarked ann should have false properties");
+			Assert.That(row0.EndParagraph, Is.False, "unmarked ann should have false properties");
 
 			row0.EndParagraph = true;
-			Assert.IsTrue(row0.EndParagraph, "EndPara property should be true");
+			Assert.That(row0.EndParagraph, Is.True, "EndPara property should be true");
 
-			Assert.IsFalse(row0.ClauseType == ClauseTypes.Speech, "ClauseType property should not be affected");
+			Assert.That(row0.ClauseType == ClauseTypes.Speech, Is.False, "ClauseType property should not be affected");
 
 			row0.ClauseType = ClauseTypes.Speech;
-			Assert.IsTrue(row0.EndParagraph, "EndPara property should still be true");
-			Assert.IsTrue(row0.ClauseType == ClauseTypes.Speech, "ClauseType property should now be speech type");
+			Assert.That(row0.EndParagraph, Is.True, "EndPara property should still be true");
+			Assert.That(row0.ClauseType == ClauseTypes.Speech, Is.True, "ClauseType property should now be speech type");
 
 			row0.EndParagraph = false;
-			Assert.IsFalse(row0.EndParagraph, "EndPara property should now be false");
-			Assert.IsTrue(row0.ClauseType == ClauseTypes.Speech, "ClauseType property should still be speech type");
+			Assert.That(row0.EndParagraph, Is.False, "EndPara property should now be false");
+			Assert.That(row0.ClauseType == ClauseTypes.Speech, Is.True, "ClauseType property should still be speech type");
 		}
 
 		[Test]
@@ -740,15 +738,15 @@ namespace SIL.FieldWorks.Discourse
 
 			// SUT; mostly interested in the index, but verify that the list is empty too.
 			var cellPartList = m_logic.CellPartsInCell(cell, out index_actual);
-			Assert.AreEqual(3, index_actual, "Should be at index 3 in row.Cells.");
-			Assert.IsEmpty(cellPartList, "Shouldn't be any CellParts in this cell (should be empty list).");
+			Assert.That(index_actual, Is.EqualTo(3), "Should be at index 3 in row.Cells.");
+			Assert.That(cellPartList, Is.Empty, "Shouldn't be any CellParts in this cell (should be empty list).");
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_SamePrecFoll()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 2;
 			const int irowPrec = 0;
@@ -762,15 +760,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_MultipleRows()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 2;
 			const int irowPrec = 0;
@@ -784,15 +782,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_SameRow()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 1;
 			const int irowPrec = 0;
@@ -806,15 +804,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_SameRowLastCol()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 2;
 			const int irowPrec = 0;
@@ -828,15 +826,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_SameRowFirstCol()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 0;
 			const int irowPrec = 0;
@@ -850,15 +848,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_FollIndexLTPrec()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 3;
 			const int irowPrec = 0;
@@ -872,15 +870,15 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
 		public void TestChOrphHighlightLogic_FollIndexGTPrec()
 		{
 			// These tests depend on the test template having 6 columns!
-			Assert.AreEqual(6, m_logic.AllMyColumns.Length);
+			Assert.That(m_logic.AllMyColumns.Length, Is.EqualTo(6));
 			// Setup data to feed to highlighting logic
 			const int icolPrec = 0;
 			const int irowPrec = 0;
@@ -894,8 +892,8 @@ namespace SIL.FieldWorks.Discourse
 			var highlighted = m_logic.CurrHighlightCells;
 
 			// verify results
-			Assert.AreEqual(expectedCols, goodCols);
-			Assert.AreEqual(expectedHL, highlighted);
+			Assert.That(goodCols, Is.EqualTo(expectedCols));
+			Assert.That(highlighted, Is.EqualTo(expectedHL));
 		}
 
 		[Test]
@@ -952,7 +950,7 @@ namespace SIL.FieldWorks.Discourse
 			var cell = MakeLocObj(row0, 2);
 
 			var ihvoResult = m_logic.CallFindIndexOfCellPartInLaterColumn(cell);
-			Assert.AreEqual(3, ihvoResult);
+			Assert.That(ihvoResult, Is.EqualTo(3));
 		}
 
 		#region RTL Script tests
@@ -970,16 +968,16 @@ namespace SIL.FieldWorks.Discourse
 				//		Col3
 				//		Col4...
 				//	Insert as new clause
-				Assert.AreEqual(2, strip.Items.Count);
+				Assert.That(strip.Items.Count, Is.EqualTo(2));
 
 				// Check the moved text item and subitems
 				var itemMT = strip.Items[1] as ToolStripMenuItem;
-				Assert.AreEqual(ConstituentChartLogic.FTO_MovedTextMenuText, itemMT.Text);
-				Assert.AreEqual(m_allColumns.Count - 1, itemMT.DropDownItems.Count);
+				Assert.That(itemMT.Text, Is.EqualTo(ConstituentChartLogic.FTO_MovedTextMenuText));
+				Assert.That(itemMT.DropDownItems.Count, Is.EqualTo(m_allColumns.Count - 1));
 				// can't move from itself
-				Assert.AreEqual(m_logic.GetColumnLabel(1), itemMT.DropDownItems[0].Text, "first label for col0 menu should be col1");
-				Assert.AreEqual(m_logic.GetColumnLabel(2), itemMT.DropDownItems[1].Text, "second label for col0 menu should different");
-				Assert.AreEqual(ConstituentChartLogic.FTO_InsertAsClauseMenuText, (strip.Items[0] as ToolStripMenuItem).Text);
+				Assert.That(itemMT.DropDownItems[0].Text, Is.EqualTo(m_logic.GetColumnLabel(1)), "first label for col0 menu should be col1");
+				Assert.That(itemMT.DropDownItems[1].Text, Is.EqualTo(m_logic.GetColumnLabel(2)), "second label for col0 menu should different");
+				Assert.That((strip.Items[0] as ToolStripMenuItem).Text, Is.EqualTo(ConstituentChartLogic.FTO_InsertAsClauseMenuText));
 			}
 		}
 
@@ -987,77 +985,77 @@ namespace SIL.FieldWorks.Discourse
 		public void TestConvertColumnIndex_FirstOfFive()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 4);
-			Assert.AreEqual(4, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(4), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfFive()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(4, 4);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(0), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_ThirdOfFive()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(2, 4);
-			Assert.AreEqual(2, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(2), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_FourthOfFive()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(3, 4);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(1), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_FirstOfFour()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 3);
-			Assert.AreEqual(3, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(3), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_SecondOfFour()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(1, 3);
-			Assert.AreEqual(2, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(2), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_ThirdOfFour()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(2, 3);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(1), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfFour()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(3, 3);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(0), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_OnlyOne()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 0);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(0), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_FirstOfTwo()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 1);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(1), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfTwo()
 		{
 			var actual = m_logic.ConvertColumnIndexToFromRtL(1, 1);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.That(actual, Is.EqualTo(0), "RTL column index conversion failed.");
 		}
 
 		#endregion

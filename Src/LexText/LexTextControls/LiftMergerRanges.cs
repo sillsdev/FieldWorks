@@ -887,8 +887,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void StoreStandardListsWithGuids()
 		{
-			Guid guid;
-
 			AddListNameAndGuid(m_cache.LanguageProject.AffixCategoriesOA, RangeNames.sAffixCategoriesOA);
 
 			AddListNameAndGuid(m_cache.LanguageProject.AnnotationDefsOA, RangeNames.sAnnotationDefsOA);
@@ -1127,10 +1125,10 @@ namespace SIL.FieldWorks.LexText.Controls
 						//}
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// not a fatal error
-					//NotifyFormatError(e);
+					//NotifyFormatError(e)
 				}
 			}
 		}

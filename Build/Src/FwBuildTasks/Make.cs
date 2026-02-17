@@ -12,9 +12,7 @@ namespace FwBuildTasks
 {
 	public class Make : ToolTask
 	{
-		public Make()
-		{
-		}
+		public Make() { }
 
 		/// <summary>
 		/// Gets or sets the path to the makefile.
@@ -35,9 +33,33 @@ namespace FwBuildTasks
 		public string BuildRoot { get; set; }
 
 		/// <summary>
+		/// Optional override for build output root (BUILD_OUTPUT in makefiles).
+		/// </summary>
+		public string BuildOutput { get; set; }
+
+		/// <summary>
+		/// Optional override for final output directory (OUT_DIR in makefiles).
+		/// When provided, this takes precedence over the makefile's default OUT_DIR.
+		/// </summary>
+		public string OutDir { get; set; }
+
+		/// <summary>
 		/// The build architecture (x86 or x64)
 		/// </summary>
 		public string BuildArch { get; set; }
+
+		/// <summary>
+		/// Gets or sets the intermediate output directory.
+		/// When specified, this overrides the makefile's default INT_DIR.
+		/// </summary>
+		public string IntDir { get; set; }
+
+		/// <summary>
+		/// Gets or sets the object output directory.
+		/// When specified, this overrides the makefile's default OBJ_DIR.
+		/// Takes precedence over IntDir since OBJ_DIR is the parent of INT_DIR.
+		/// </summary>
+		public string ObjDir { get; set; }
 
 		/// <summary>
 		/// Gets or sets the target inside the Makefile.
@@ -106,7 +128,7 @@ namespace FwBuildTasks
 				if (File.Exists(Path.Combine(ToolPath, ToolName)))
 					return;
 			}
-			string[] splitPath = path.Split(new char[] {Path.PathSeparator});
+			string[] splitPath = path.Split(new char[] { Path.PathSeparator });
 			foreach (var dir in splitPath)
 			{
 				if (File.Exists(Path.Combine(dir, ToolName)))
@@ -115,8 +137,17 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Fall Back to the install directory
-			ToolPath = Path.Combine(vcInstallDir, "bin");
+			// Fall Back to the install directory (if VCINSTALLDIR is set)
+			if (!String.IsNullOrEmpty(vcInstallDir))
+			{
+				ToolPath = Path.Combine(vcInstallDir, "bin");
+			}
+			else
+			{
+				// VCINSTALLDIR not set - likely not in a VS Developer environment
+				// Let MSBuild try to find the tool in PATH
+				ToolPath = String.Empty;
+			}
 		}
 
 		protected override string GenerateFullPathToTool()
@@ -134,6 +165,10 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
+				bldr.AppendSwitchIfNotNull("BUILD_OUTPUT=", BuildOutput);
+				bldr.AppendSwitchIfNotNull("OUT_DIR=", OutDir);
+				bldr.AppendSwitchIfNotNull("OBJ_DIR=", ObjDir);
+				bldr.AppendSwitchIfNotNull("INT_DIR=", IntDir);
 				bldr.AppendSwitchIfNotNull("-C", Path.GetDirectoryName(Makefile));
 				if (String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch("all");
@@ -147,6 +182,10 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
+				bldr.AppendSwitchIfNotNull("BUILD_OUTPUT=", BuildOutput);
+				bldr.AppendSwitchIfNotNull("OUT_DIR=", OutDir);
+				bldr.AppendSwitchIfNotNull("OBJ_DIR=", ObjDir);
+				bldr.AppendSwitchIfNotNull("INT_DIR=", IntDir);
 				bldr.AppendSwitchIfNotNull("/f ", Makefile);
 				if (!String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch(Target);
@@ -159,7 +198,9 @@ namespace FwBuildTasks
 		/// </summary>
 		protected override string GetWorkingDirectory()
 		{
-			return String.IsNullOrEmpty(WorkingDirectory) ? base.GetWorkingDirectory() : WorkingDirectory;
+			return String.IsNullOrEmpty(WorkingDirectory)
+				? base.GetWorkingDirectory()
+				: WorkingDirectory;
 		}
 		#endregion
 	}

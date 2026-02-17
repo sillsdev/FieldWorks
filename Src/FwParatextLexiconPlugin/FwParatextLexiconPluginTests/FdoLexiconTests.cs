@@ -76,11 +76,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Word, "a");
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Word, "a");
-			Assert.AreEqual(lex.Id, lex2.Id);
-			Assert.AreEqual(LexemeType.Word, lex.Type);
-			Assert.AreEqual("a", lex.LexicalForm);
-			Assert.AreEqual(LexemeType.Word, lex2.Type);
-			Assert.AreEqual("a", lex2.LexicalForm);
+			Assert.That(lex2.Id, Is.EqualTo(lex.Id));
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"));
+			Assert.That(lex2.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex2.LexicalForm, Is.EqualTo("a"));
 		}
 
 		/// <summary>
@@ -96,15 +96,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			LexiconSense sense = lex.AddSense();
 			sense.AddGloss("en", "test");
 
-			Assert.AreEqual(1, lex2.Senses.Count());
+			Assert.That(lex2.Senses.Count(), Is.EqualTo(1));
 
 			// Make sure the one that was added has the right sense now
 			lex = m_lexicon[lex.Id];
-			Assert.AreEqual(LexemeType.Word, lex.Type);
-			Assert.AreEqual("a", lex.LexicalForm);
-			Assert.AreEqual(1, lex.Senses.Count());
-			Assert.AreEqual("en", lex.Senses.First().Glosses.First().Language);
-			Assert.AreEqual("test", lex.Senses.First().Glosses.First().Text);
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"));
+			Assert.That(lex.Senses.Count(), Is.EqualTo(1));
+			Assert.That(lex.Senses.First().Glosses.First().Language, Is.EqualTo("en"));
+			Assert.That(lex.Senses.First().Glosses.First().Text, Is.EqualTo("test"));
 		}
 
 		/// <summary>
@@ -117,14 +117,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			LexiconSense sense = lex.AddSense(); // SUT: Lexeme is added by adding the Sense
 			sense.AddGloss("en", "test");
 
-			Assert.AreEqual(1, m_lexicon.Lexemes.Count());
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
 
 			lex = m_lexicon[lex.Id]; // Make sure we're using the one stored in the lexicon
-			Assert.AreEqual(LexemeType.Word, lex.Type);
-			Assert.AreEqual("a", lex.LexicalForm);
-			Assert.AreEqual(1, lex.Senses.Count());
-			Assert.AreEqual("en", lex.Senses.First().Glosses.First().Language);
-			Assert.AreEqual("test", lex.Senses.First().Glosses.First().Text);
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"));
+			Assert.That(lex.Senses.Count(), Is.EqualTo(1));
+			Assert.That(lex.Senses.First().Glosses.First().Language, Is.EqualTo("en"));
+			Assert.That(lex.Senses.First().Glosses.First().Text, Is.EqualTo("test"));
 		}
 
 		/// <summary>
@@ -142,11 +142,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			var sense = lex.AddSense(); // SUT: Lexeme is added by adding the Sense
 			sense.AddGloss("en", "test");
 
-			Assert.AreEqual(1, m_lexicon.Lexemes.Count());
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
 
 			lex = m_lexicon[lex.Id]; // Make sure we're using the one stored in the lexicon
-			Assert.AreEqual("a", lex.LexicalForm, "Failure in test setup");
-			Assert.AreEqual(1, lex.Senses.Count(), "Failure in test setup");
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"), "Failure in test setup");
+			Assert.That(lex.Senses.Count(), Is.EqualTo(1), "Failure in test setup");
 			Assert.That(lexEntry.ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
 			Assert.That(lexEntry.SensesOS[0].ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
 		}
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			m_lexicon.AddLexeme(lex);
 			// lex2 should be identical to lex since there aren't any in the cache yet
-			Assert.AreEqual(lex.Id, lex2.Id);
+			Assert.That(lex2.Id, Is.EqualTo(lex.Id));
 
 			// This lexeme should have a new homograph number since lex has been added to the cache
 			Lexeme lex3 = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
@@ -183,12 +183,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
 			m_lexicon.AddLexeme(lex2);
-			Assert.AreNotEqual(lex.Id, lex2.Id);
+			Assert.That(lex2.Id, Is.Not.EqualTo(lex.Id));
 
 			List<Lexeme> found = new List<Lexeme>(m_lexicon.Lexemes);
-			Assert.AreEqual(2, found.Count);
-			Assert.AreEqual(lex.Id, found[0].Id);
-			Assert.AreEqual(lex2.Id, found[1].Id);
+			Assert.That(found.Count, Is.EqualTo(2));
+			Assert.That(found[0].Id, Is.EqualTo(lex.Id));
+			Assert.That(found[1].Id, Is.EqualTo(lex2.Id));
 		}
 
 		/// <summary>
@@ -202,20 +202,20 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			sense.AddGloss("en", "monkey");
 
 			Lexeme lex2 = m_lexicon.FindOrCreateLexeme(LexemeType.Word, "a");
-			Assert.AreEqual(lex.Id, lex2.Id);
-			Assert.AreEqual(LexemeType.Word, lex2.Type);
-			Assert.AreEqual("a", lex2.LexicalForm);
-			Assert.AreEqual(1, lex2.Senses.Count());
-			Assert.AreEqual(1, lex2.Senses.First().Glosses.Count());
-			Assert.AreEqual("en", lex2.Senses.First().Glosses.First().Language);
-			Assert.AreEqual("monkey", lex2.Senses.First().Glosses.First().Text);
+			Assert.That(lex2.Id, Is.EqualTo(lex.Id));
+			Assert.That(lex2.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex2.LexicalForm, Is.EqualTo("a"));
+			Assert.That(lex2.Senses.Count(), Is.EqualTo(1));
+			Assert.That(lex2.Senses.First().Glosses.Count(), Is.EqualTo(1));
+			Assert.That(lex2.Senses.First().Glosses.First().Language, Is.EqualTo("en"));
+			Assert.That(lex2.Senses.First().Glosses.First().Text, Is.EqualTo("monkey"));
 
 			Lexeme lex3 = m_lexicon.FindOrCreateLexeme(LexemeType.Suffix, "bob");
-			Assert.AreNotEqual(lex.Id, lex3.Id);
-			Assert.AreNotEqual(lex2.Id, lex3.Id);
-			Assert.AreEqual(LexemeType.Suffix, lex3.Type);
-			Assert.AreEqual("bob", lex3.LexicalForm);
-			Assert.AreEqual(0, lex3.Senses.Count());
+			Assert.That(lex3.Id, Is.Not.EqualTo(lex.Id));
+			Assert.That(lex3.Id, Is.Not.EqualTo(lex2.Id));
+			Assert.That(lex3.Type, Is.EqualTo(LexemeType.Suffix));
+			Assert.That(lex3.LexicalForm, Is.EqualTo("bob"));
+			Assert.That(lex3.Senses.Count(), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -229,8 +229,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			lex = m_lexicon[lex.Id];
 			Assert.That(lex, Is.Not.Null);
-			Assert.AreEqual(LexemeType.Stem, lex.Type);
-			Assert.AreEqual("a", lex.LexicalForm);
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Stem));
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"));
 
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Suffix, "monkey");
 			Assert.That(m_lexicon[lex2.Id], Is.Null);
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void CreatingDoesNotAdd()
 		{
 			m_lexicon.CreateLexeme(LexemeType.Word, "a");
-			Assert.AreEqual(0, m_lexicon.Lexemes.Count());
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			Lexeme lexeme = m_lexicon.CreateLexeme(LexemeType.Word, "a");
 			lexeme.Senses.Count();
-			Assert.AreEqual(0, m_lexicon.Lexemes.Count());
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -265,11 +265,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Word, "a");
 			m_lexicon.AddLexeme(lex);
-			Assert.AreEqual(1, m_lexicon.Lexemes.Count());
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(1));
 
 			lex = m_lexicon[lex.Id]; // Make sure we're using the one stored in the lexicon
-			Assert.AreEqual(LexemeType.Word, lex.Type);
-			Assert.AreEqual("a", lex.LexicalForm);
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Word));
+			Assert.That(lex.LexicalForm, Is.EqualTo("a"));
 		}
 
 		/// <summary>
@@ -296,21 +296,21 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			sense.AddGloss("en", "glossen");
 			sense.AddGloss("fr", "glossfr");
 
-			Assert.AreEqual(1, lex.Senses.Count());
-			Assert.AreEqual(2, lex.Senses.First().Glosses.Count());
+			Assert.That(lex.Senses.Count(), Is.EqualTo(1));
+			Assert.That(lex.Senses.First().Glosses.Count(), Is.EqualTo(2));
 
 			sense = m_lexicon[lex.Id].Senses.First(); // Make sure we're working with the one stored in the lexicon
-			Assert.AreEqual("en", sense.Glosses.First().Language);
-			Assert.AreEqual("glossen", sense.Glosses.First().Text);
-			Assert.AreEqual("fr", sense.Glosses.ElementAt(1).Language);
-			Assert.AreEqual("glossfr", sense.Glosses.ElementAt(1).Text);
+			Assert.That(sense.Glosses.First().Language, Is.EqualTo("en"));
+			Assert.That(sense.Glosses.First().Text, Is.EqualTo("glossen"));
+			Assert.That(sense.Glosses.ElementAt(1).Language, Is.EqualTo("fr"));
+			Assert.That(sense.Glosses.ElementAt(1).Text, Is.EqualTo("glossfr"));
 
 			sense.RemoveGloss("en");
 
 			sense = m_lexicon[lex.Id].Senses.First(); // Make sure we're working with the one stored in the lexicon
-			Assert.AreEqual(1, sense.Glosses.Count());
-			Assert.AreEqual("fr", sense.Glosses.First().Language);
-			Assert.AreEqual("glossfr", sense.Glosses.First().Text);
+			Assert.That(sense.Glosses.Count(), Is.EqualTo(1));
+			Assert.That(sense.Glosses.First().Language, Is.EqualTo("fr"));
+			Assert.That(sense.Glosses.First().Text, Is.EqualTo("glossfr"));
 		}
 
 		/// <summary>
@@ -328,11 +328,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Lexeme lex4 = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
 			m_lexicon.AddLexeme(lex4);
 
-			Assert.AreEqual(4, m_lexicon.Lexemes.Count());
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex));
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex2));
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex3));
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex4));
+			Assert.That(m_lexicon.Lexemes.Count(), Is.EqualTo(4));
+			Assert.That(m_lexicon.Lexemes.Contains(lex), Is.True);
+			Assert.That(m_lexicon.Lexemes.Contains(lex2), Is.True);
+			Assert.That(m_lexicon.Lexemes.Contains(lex3), Is.True);
+			Assert.That(m_lexicon.Lexemes.Contains(lex4), Is.True);
 		}
 
 		/// <summary>
@@ -345,22 +345,22 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Prefix, "a");
 
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex));
-			Assert.IsFalse(m_lexicon.Lexemes.Contains(lex2));
+			Assert.That(m_lexicon.Lexemes.Contains(lex), Is.True);
+			Assert.That(m_lexicon.Lexemes.Contains(lex2), Is.False);
 
 			m_lexicon.RemoveLexeme(lex);
-			Assert.IsFalse(m_lexicon.Lexemes.Contains(lex));
+			Assert.That(m_lexicon.Lexemes.Contains(lex), Is.False);
 
 			m_lexicon.RemoveLexeme(lex2);
-			Assert.IsFalse(m_lexicon.Lexemes.Contains(lex2));
+			Assert.That(m_lexicon.Lexemes.Contains(lex2), Is.False);
 
 			m_lexicon.AddLexeme(lex2);
 			Lexeme lex3 = m_lexicon.CreateLexeme(LexemeType.Prefix, "a");
 			m_lexicon.AddLexeme(lex3);
 
 			m_lexicon.RemoveLexeme(lex2);
-			Assert.IsFalse(m_lexicon.Lexemes.Contains(lex2));
-			Assert.IsTrue(m_lexicon.Lexemes.Contains(lex3));
+			Assert.That(m_lexicon.Lexemes.Contains(lex2), Is.False);
+			Assert.That(m_lexicon.Lexemes.Contains(lex3), Is.True);
 		}
 
 		/// <summary>
@@ -381,8 +381,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			// Test remove at
 			lex.RemoveSense(sense2);
 
-			Assert.AreEqual(1, lex.Senses.Count());
-			Assert.AreEqual(sense, lex.Senses.First());
+			Assert.That(lex.Senses.Count(), Is.EqualTo(1));
+			Assert.That(lex.Senses.First(), Is.EqualTo(sense));
 		}
 
 		/// <summary>
@@ -396,15 +396,15 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			foreach (string stem in stems)
 			{
 				Lexeme lexeme = m_lexicon.FindOrCreateLexeme(LexemeType.Stem, stem);
-				Assert.IsFalse(m_lexicon.Lexemes.Contains(lexeme));
+				Assert.That(m_lexicon.Lexemes.Contains(lexeme), Is.False);
 				m_lexicon.AddLexeme(lexeme);
-				Assert.IsTrue(m_lexicon.Lexemes.Contains(lexeme));
+				Assert.That(m_lexicon.Lexemes.Contains(lexeme), Is.True);
 
 				// Add homomorph
 				Lexeme lexeme2 = m_lexicon.CreateLexeme(LexemeType.Stem, stem);
-				Assert.IsFalse(m_lexicon.Lexemes.Contains(lexeme2));
+				Assert.That(m_lexicon.Lexemes.Contains(lexeme2), Is.False);
 				m_lexicon.AddLexeme(lexeme2);
-				Assert.IsTrue(m_lexicon.Lexemes.Contains(lexeme2));
+				Assert.That(m_lexicon.Lexemes.Contains(lexeme2), Is.True);
 			}
 		}
 
@@ -419,8 +419,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			lex = m_lexicon[new LexemeKey(LexemeType.Stem, "Vacaci\u00f3n").Id];
 			Assert.That(lex, Is.Not.Null);
-			Assert.AreEqual(LexemeType.Stem, lex.Type);
-			Assert.AreEqual("Vacaci\u00f3n", lex.LexicalForm);
+			Assert.That(lex.Type, Is.EqualTo(LexemeType.Stem));
+			Assert.That(lex.LexicalForm, Is.EqualTo("Vacaci\u00f3n"));
 
 			LexiconSense sense = lex.AddSense();
 			Assert.That(sense, Is.Not.Null);
@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			LanguageText gloss = sense.AddGloss("en", "D\u00f3nde");
 
 			Lexeme reGetLex = m_lexicon[lex.Id];
-			Assert.AreEqual(gloss.Text, reGetLex.Senses.First().Glosses.First().Text);
+			Assert.That(reGetLex.Senses.First().Glosses.First().Text, Is.EqualTo(gloss.Text));
 		}
 
 		#region Lexicon Events
@@ -448,17 +448,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.LexiconGlossAdded += (sender, e) => glossAddedCount++;
 
 			Lexeme lexeme = m_lexicon.FindOrCreateLexeme(LexemeType.Word, "word");
-			Assert.AreEqual(0, lexemeAddedCount);
+			Assert.That(lexemeAddedCount, Is.EqualTo(0));
 
 			m_lexicon.AddLexeme(lexeme);
-			Assert.AreEqual(1, lexemeAddedCount);
-			Assert.AreEqual(0, senseAddedCount);
-			Assert.AreEqual(0, glossAddedCount);
+			Assert.That(lexemeAddedCount, Is.EqualTo(1));
+			Assert.That(senseAddedCount, Is.EqualTo(0));
+			Assert.That(glossAddedCount, Is.EqualTo(0));
 
 			// Adding sense adds lexeme
 			Lexeme lexeme2 = m_lexicon.FindOrCreateLexeme(LexemeType.Word, "word2");
 			lexeme2.AddSense();
-			Assert.AreEqual(2, lexemeAddedCount);
+			Assert.That(lexemeAddedCount, Is.EqualTo(2));
 		}
 
 		/// <summary>
@@ -478,7 +478,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Lexeme lexeme = m_lexicon.FindOrCreateLexeme(LexemeType.Word, "word");
 			m_lexicon.AddLexeme(lexeme);
 			lexeme.AddSense();
-			Assert.AreEqual(1, senseAddedCount);
+			Assert.That(senseAddedCount, Is.EqualTo(1));
 		}
 
 		/// <summary>
@@ -505,8 +505,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			LexiconSense sense = lexeme.AddSense();
 			sense.AddGloss("en", "somegloss");
 
-			Assert.AreEqual(1, glossAddedCount);
-			Assert.AreEqual("somegloss", glossText);
+			Assert.That(glossAddedCount, Is.EqualTo(1));
+			Assert.That(glossText, Is.EqualTo("somegloss"));
 		}
 
 		#endregion
@@ -534,9 +534,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddWordAnalysis(m_lexicon.CreateWordAnalysis("preasuf", new[] { lexemePre, lexemeA, lexemeSuf }));
 			matchingLexemes = m_lexicon.FindMatchingLexemes("preasuf").ToArray();
 			Assert.That(matchingLexemes.Length, Is.EqualTo(3));
-			Assert.IsTrue(matchingLexemes.Contains(lexemePre));
-			Assert.IsTrue(matchingLexemes.Contains(lexemeA));
-			Assert.IsTrue(matchingLexemes.Contains(lexemeSuf));
+			Assert.That(matchingLexemes.Contains(lexemePre), Is.True);
+			Assert.That(matchingLexemes.Contains(lexemeA), Is.True);
+			Assert.That(matchingLexemes.Contains(lexemeSuf), Is.True);
 		}
 
 		/// <summary>
@@ -553,13 +553,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Lexeme lexeme = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
 			m_lexicon.AddLexeme(lexeme);
 			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("a");
-			Assert.IsTrue(matchingLexeme.LexicalForm == "a");
+			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 
 			// Found by parser
 			lexeme = m_lexicon.CreateLexeme(LexemeType.Prefix, "pre");
 			m_lexicon.AddLexeme(lexeme);
 			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("prea");
-			Assert.IsTrue(matchingLexeme.LexicalForm == "a");
+			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 
 			// Found by unsupervised stemmer
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "b"));
@@ -569,7 +569,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "cpos"));
 			m_lexicon.AddLexeme(m_lexicon.CreateLexeme(LexemeType.Stem, "dpos"));
 			matchingLexeme = m_lexicon.FindClosestMatchingLexeme("apos");
-			Assert.IsTrue(matchingLexeme.LexicalForm == "a");
+			Assert.That(matchingLexeme.LexicalForm == "a", Is.True);
 		}
 
 		/// <summary>

@@ -118,8 +118,6 @@ namespace SIL.FieldWorks.Resources
 		internal static ResourceManager s_helpResources;
 		/// <summary/>
 		internal static readonly Dictionary<FileFilterType, string> s_fileFilterExtensions;
-		/// <summary/>
-		internal static string s_defParaChars;
 		#endregion
 
 		#region Construction and destruction

@@ -50,10 +50,10 @@ namespace ParatextImport
 
 			// Verify section 1 heading
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(section1.HeadingOA[0], scrVerse.Para);
+			Assert.That(scrVerse.Para, Is.EqualTo(section1.HeadingOA[0]));
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
-			Assert.AreEqual("My aching head!", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("My aching head!"));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
 			// Verify there are no more scrVerses
@@ -65,23 +65,23 @@ namespace ParatextImport
 
 			// Verify section 1 content
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(hvoS1Para, scrVerse.Para);
+			Assert.That(scrVerse.Para, Is.EqualTo(hvoS1Para));
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
-			Assert.AreEqual("2Verse 1. ", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("2Verse 1. "));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 			Assert.That(scrVerse.TextStartIndex, Is.EqualTo(1));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002002));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002002));
-			Assert.AreEqual("2Verse 2. ", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("2Verse 2. "));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(10));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002003));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002004));
-			Assert.AreEqual("3-4Verse 3-4.", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("3-4Verse 3-4."));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(20));
 
 			// Verify there are no more scrVerses
@@ -118,17 +118,17 @@ namespace ParatextImport
 
 			// Verify section 1 content
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(hvoS1Para, scrVerse.Para);
+			Assert.That(scrVerse.Para, Is.EqualTo(hvoS1Para));
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001001));
-			Assert.AreEqual("Some initial text. ", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("Some initial text. "));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(hvoS1Para, scrVerse.Para);
+			Assert.That(scrVerse.Para, Is.EqualTo(hvoS1Para));
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001005));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001006));
-			Assert.AreEqual("5-6Verses 5-6.", scrVerse.Text.Text);
+			Assert.That(scrVerse.Text.Text, Is.EqualTo("5-6Verses 5-6."));
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(19));
 
 			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
@@ -155,9 +155,9 @@ namespace ParatextImport
 			ScrVerse verse = m_bookMerger.NextVerseInStText();
 			DiffTestHelper.VerifyScrVerse(verse, null, ScrStyleNames.StanzaBreak,
 										 01001001, 01001001);
-			Assert.AreEqual(stanzaPara, verse.Para);
-			Assert.IsTrue(verse.IsStanzaBreak);
-			Assert.AreEqual(0, verse.VerseStartIndex);
+			Assert.That(verse.Para, Is.EqualTo(stanzaPara));
+			Assert.That(verse.IsStanzaBreak, Is.True);
+			Assert.That(verse.VerseStartIndex, Is.EqualTo(0));
 
 			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
@@ -188,8 +188,8 @@ namespace ParatextImport
 			ScrVerse verse = m_bookMerger.NextVerseInStText();
 			DiffTestHelper.VerifyScrVerse(verse, "2First verse after empty paragraphs.",
 				ScrStyleNames.NormalParagraph, 01001002, 01001002);
-			Assert.AreEqual(contentPara, verse.Para);
-			Assert.AreEqual(0, verse.VerseStartIndex);
+			Assert.That(verse.Para, Is.EqualTo(contentPara));
+			Assert.That(verse.VerseStartIndex, Is.EqualTo(0));
 
 			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}

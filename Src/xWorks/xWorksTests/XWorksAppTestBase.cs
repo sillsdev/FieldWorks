@@ -1,12 +1,14 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
@@ -14,8 +16,8 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -540,6 +542,8 @@ namespace SIL.FieldWorks.XWorks
 		[OneTimeSetUp]
 		public virtual void FixtureInit()
 		{
+			EnsureIcuDataIsConfiguredForTests();
+
 			FwRegistrySettings.Init();
 			SetupEverythingButBase();
 			Init(); // subclass version must create and set m_application
@@ -559,9 +563,52 @@ namespace SIL.FieldWorks.XWorks
 			Application.DoEvents();//without this, tests may fail non-deterministically
 		}
 
+		private static void EnsureIcuDataIsConfiguredForTests()
+		{
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+				return;
+
+			try
+			{
+				var testAssemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				if (string.IsNullOrEmpty(testAssemblyDir))
+					return;
+
+				// When running tests from Output/<Configuration>, DistFiles is typically at ../../DistFiles
+				var distFiles = Path.GetFullPath(Path.Combine(testAssemblyDir, "..", "..", "DistFiles"));
+				if (!Directory.Exists(distFiles))
+					return;
+
+				string icuDataDir = null;
+				foreach (var icuRoot in Directory.GetDirectories(distFiles, "Icu*", SearchOption.TopDirectoryOnly))
+				{
+					icuDataDir = Directory.GetDirectories(icuRoot, "icudt*l", SearchOption.TopDirectoryOnly)
+						.FirstOrDefault();
+					if (!string.IsNullOrEmpty(icuDataDir))
+						break;
+				}
+
+				if (string.IsNullOrEmpty(icuDataDir))
+				{
+					icuDataDir = Directory.GetDirectories(distFiles, "icudt*l", SearchOption.TopDirectoryOnly)
+						.FirstOrDefault();
+				}
+
+				if (string.IsNullOrEmpty(icuDataDir))
+					return;
+
+				Environment.SetEnvironmentVariable("FW_ICU_DATA_DIR", icuDataDir);
+				Environment.SetEnvironmentVariable("ICU_DATA", icuDataDir);
+			}
+			catch
+			{
+				// Best-effort: tests will still run on machines where ICU_DATA is already configured.
+			}
+		}
+
 		private void SetupFactoriesAndRepositories()
 		{
-			Assert.True(Cache != null, "No cache yet!?");
+			Assert.That(Cache != null, Is.True, "No cache yet!?");
 			var servLoc = Cache.ServiceLocator;
 			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
 			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
@@ -738,8 +785,8 @@ namespace SIL.FieldWorks.XWorks
 		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList,
 			IPartOfSpeech owningCategory)
 		{
-			Assert.True(m_posFact != null, "Fixture Initialization is not complete.");
-			Assert.True(m_window != null, "No window.");
+			Assert.That(m_posFact != null, Is.True, "Fixture Initialization is not complete.");
+			Assert.That(m_window != null, Is.True, "No window.");
 			var category = m_posRepo.AllInstances().Where(
 				someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == catName).FirstOrDefault();
 			if (category != null)

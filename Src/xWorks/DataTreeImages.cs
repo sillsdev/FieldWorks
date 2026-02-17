@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	public class DataTreeImages : UserControl
 	{
 		public System.Windows.Forms.ImageList nodeImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		public DataTreeImages()
 		{

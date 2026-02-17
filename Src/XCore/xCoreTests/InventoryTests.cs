@@ -50,7 +50,7 @@ namespace XCore
 			XmlNode match = node.Attributes["match"];
 			if (match == null)
 				Assert.That(match, Is.Not.Null, "expected node lacks match attr: " + target);
-			Assert.AreEqual(target, node.Attributes["match"].Value);
+			Assert.That(node.Attributes["match"].Value, Is.EqualTo(target));
 		}
 		XmlNode CheckBaseNode(string name, string[] keyvals, string target)
 		{
@@ -88,14 +88,14 @@ namespace XCore
 
 		void VerifyAttr(XmlNode node, string attr, string val)
 		{
-			Assert.AreEqual(val, XmlUtils.GetOptionalAttributeValue(node, attr));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(node, attr), Is.EqualTo(val));
 		}
 
 		// Verifies that parent's index'th child has the specified value for the specified attribute.
 		// Returns the child.
 		XmlNode VerifyChild(XmlNode parent, int index, string attr, string val)
 		{
-			Assert.IsTrue(parent.ChildNodes.Count > index);
+			Assert.That(parent.ChildNodes.Count > index, Is.True);
 			XmlNode child = parent.ChildNodes[index];
 			VerifyAttr(child, attr, val);
 			return child;
@@ -112,16 +112,14 @@ namespace XCore
 			XmlNode unified = CheckNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // unified
 			CheckBaseNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test3"); // baseNode
 			CheckAlterationNode("layout", new string[] {"LexEntry", "jtview", null, "Test1D"}, "test1D"); // derived
-			Assert.IsNull(m_inventory.GetAlteration("layout", new string[] {"LexEntry", "jtview", null, "Test1"}),
-				"GetAlteration should be null for non-derived node.");
+			Assert.That(m_inventory.GetAlteration("layout", new string[] {"LexEntry", "jtview", null, "Test1"}), Is.Null, "GetAlteration should be null for non-derived node.");
 
 			// Check correct working of unification:
 			// - first main child is present as expected
 			XmlNode groupMain = unified.ChildNodes[0];
-			Assert.AreEqual("group", groupMain.Name, "first child of unified should be a group");
-			Assert.AreEqual(3, groupMain.ChildNodes.Count, "main group should have three chidren");
-			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
-				"first child should be group 'main'");
+			Assert.That(groupMain.Name, Is.EqualTo("group"), "first child of unified should be a group");
+			Assert.That(groupMain.ChildNodes.Count, Is.EqualTo(3), "main group should have three chidren");
+			Assert.That(XmlUtils.GetOptionalAttributeValue(groupMain, "label"), Is.EqualTo("main"), "first child should be group 'main'");
 			// - added elements are added. (Also checks default order: original plus extras.)
 			// - unmatched original elements are left alone.
 			XmlNode part0M = VerifyChild(groupMain, 0, "ref", "LexEntry-Jt-Citationform"); // part0M
@@ -130,20 +128,18 @@ namespace XCore
 
 			// - child elements are correctly ordered when 'reorder' is true.
 			XmlNode groupSecond = unified.ChildNodes[1];
-			Assert.AreEqual("group", groupSecond.Name, "second child of unified should be a group");
-			Assert.AreEqual(3, groupSecond.ChildNodes.Count, "main group should have three chidren");
-			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
-				"second child should be group 'second'");
+			Assert.That(groupSecond.Name, Is.EqualTo("group"), "second child of unified should be a group");
+			Assert.That(groupSecond.ChildNodes.Count, Is.EqualTo(3), "main group should have three chidren");
+			Assert.That(XmlUtils.GetOptionalAttributeValue(groupSecond, "label"), Is.EqualTo("second"), "second child should be group 'second'");
 			VerifyChild(groupSecond, 0, "ref", "LexEntry-Jt-Forms"); // part0S
 			XmlNode part1S = VerifyChild(groupSecond, 1, "ref", "LexEntry-Jt-Citationform"); // part1S
 			VerifyChild(groupSecond, 2, "ref", "LexEntry-Jt-Senses"); // part2S
 
 			// - check no reordering when no element added, and reorder is false
 			XmlNode groupThird = unified.ChildNodes[2];
-			Assert.AreEqual("group", groupThird.Name, "Third child of unified should be a group");
-			Assert.AreEqual(3, groupThird.ChildNodes.Count, "main group should have three chidren");
-			Assert.AreEqual("third", XmlUtils.GetOptionalAttributeValue(groupThird, "label"),
-				"third child should be group 'Third'");
+			Assert.That(groupThird.Name, Is.EqualTo("group"), "Third child of unified should be a group");
+			Assert.That(groupThird.ChildNodes.Count, Is.EqualTo(3), "main group should have three chidren");
+			Assert.That(XmlUtils.GetOptionalAttributeValue(groupThird, "label"), Is.EqualTo("third"), "third child should be group 'Third'");
 			VerifyChild(groupThird, 0, "ref", "LexEntry-Jt-Citationform");
 			VerifyChild(groupThird, 1, "ref", "LexEntry-Jt-Senses");
 			VerifyChild(groupThird, 2, "ref", "LexEntry-Jt-Forms");
@@ -187,10 +183,9 @@ namespace XCore
 			CheckAlterationNode("layout", new string[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
 			XmlNode unified = CheckNode("layout", new string[] {"LexSense", "jtview", null, "Test8D"}, "test8D");
 			XmlNode groupMain = unified.ChildNodes[0];
-			Assert.AreEqual("group", groupMain.Name, "first child of unified should be a group");
-			Assert.AreEqual(0, groupMain.ChildNodes.Count, "main group should have no chidren");
-			Assert.AreEqual("main", XmlUtils.GetOptionalAttributeValue(groupMain, "label"),
-				"first child should be group 'main'");
+			Assert.That(groupMain.Name, Is.EqualTo("group"), "first child of unified should be a group");
+			Assert.That(groupMain.ChildNodes.Count, Is.EqualTo(0), "main group should have no chidren");
+			Assert.That(XmlUtils.GetOptionalAttributeValue(groupMain, "label"), Is.EqualTo("main"), "first child should be group 'main'");
 
 			VerifyAttr(groupMain, "ws", "analysis"); // inherited from override.
 			VerifyAttr(groupMain, "rubbish", "goodstuff"); // overridden.
@@ -205,10 +200,9 @@ namespace XCore
 			CheckAlterationNode("layout", new string[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
 			XmlNode unified = CheckNode("layout", new string[] {"LexEntry", "jtview", null, "DerivedForOverride"}, "DO3");
 			XmlNode groupSecond = unified.ChildNodes[1];
-			Assert.AreEqual("group", groupSecond.Name, "first child of unified should be a group");
-			Assert.AreEqual(2, groupSecond.ChildNodes.Count, "main group should have two chidren");
-			Assert.AreEqual("second", XmlUtils.GetOptionalAttributeValue(groupSecond, "label"),
-				"second child should be group 'second'");
+			Assert.That(groupSecond.Name, Is.EqualTo("group"), "first child of unified should be a group");
+			Assert.That(groupSecond.ChildNodes.Count, Is.EqualTo(2), "main group should have two chidren");
+			Assert.That(XmlUtils.GetOptionalAttributeValue(groupSecond, "label"), Is.EqualTo("second"), "second child should be group 'second'");
 
 			VerifyAttr(groupSecond, "ws", "vernacular"); // inherited from derived element.
 			VerifyAttr(groupSecond, "rubbish", "nonsense"); // from override.
@@ -222,12 +216,12 @@ namespace XCore
 			XmlNode alteration = m_inventory.GetElement("layout",
 				new string[] {"LexEntry", "detail", null, "TestGetUnify2"});
 			XmlNode unified = m_inventory.GetUnified(baseNode, alteration);
-			Assert.AreEqual(3, unified.ChildNodes.Count);
-			Assert.AreEqual("main", unified.ChildNodes[0].Attributes["label"].Value);
-			Assert.AreEqual("second", unified.ChildNodes[1].Attributes["label"].Value);
-			Assert.AreEqual("third", unified.ChildNodes[2].Attributes["label"].Value);
+			Assert.That(unified.ChildNodes.Count, Is.EqualTo(3));
+			Assert.That(unified.ChildNodes[0].Attributes["label"].Value, Is.EqualTo("main"));
+			Assert.That(unified.ChildNodes[1].Attributes["label"].Value, Is.EqualTo("second"));
+			Assert.That(unified.ChildNodes[2].Attributes["label"].Value, Is.EqualTo("third"));
 			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
-			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
+			Assert.That(repeat, Is.SameAs(unified)); // ensure not generating repeatedly.
 		}
 
 		[Test]
@@ -238,9 +232,9 @@ namespace XCore
 			XmlNode alteration = m_inventory.GetElement("layout",
 				new string[] { "MoAffixProcess", "detail", null, "TestGetUnify4" });
 			XmlNode unified = m_inventory.GetUnified(baseNode, alteration);
-			Assert.AreEqual(1, unified.ChildNodes.Count);
+			Assert.That(unified.ChildNodes.Count, Is.EqualTo(1));
 			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
-			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
+			Assert.That(repeat, Is.SameAs(unified)); // ensure not generating repeatedly.
 		}
 	}
 
@@ -269,10 +263,10 @@ namespace XCore
 			object[] path = {rootLayout, cfPartRef};
 			XmlNode finalPartref;
 			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
+			Assert.That(result.ChildNodes.Count, Is.EqualTo(rootLayout.ChildNodes.Count));
 			XmlNode cfNewPartRef =  result.SelectSingleNode("part[@ref=\"CitationForm\"]");
-			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(cfNewPartRef, "visibility"));
-			Assert.AreEqual("7", XmlUtils.GetOptionalAttributeValue(result, "version"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(cfNewPartRef, "visibility"), Is.EqualTo("ifdata"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(result, "version"), Is.EqualTo("7"));
 		}
 
 		[Test]
@@ -285,15 +279,15 @@ namespace XCore
 			object[] path = {rootLayout, 1, sensesPartRef, 2, glossPartRef};
 			XmlNode finalPartref;
 			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
+			Assert.That(result.ChildNodes.Count, Is.EqualTo(rootLayout.ChildNodes.Count));
 			XmlNode glossNewPartRef =  result.SelectSingleNode("//part[@ref=\"Gloss\"]");
-			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"), Is.EqualTo("ifdata"));
 			XmlNode sensesNewPartRef = glossNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
-			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
+			Assert.That(sensesNewPartRef.Name, Is.EqualTo("part"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"), Is.EqualTo("Senses"));
 			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
-			Assert.AreEqual(result, rootNewLayout);
+			Assert.That(rootNewLayout.Name, Is.EqualTo("layout"));
+			Assert.That(rootNewLayout, Is.EqualTo(result));
 		}
 
 		[Test]
@@ -309,20 +303,20 @@ namespace XCore
 			object[] path = {rootLayout, 1, sensesPartRef, blahPart, nonsenceLayout, synPartRef, 2, glossPartRef};
 			XmlNode finalPartref;
 			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
+			Assert.That(result.ChildNodes.Count, Is.EqualTo(rootLayout.ChildNodes.Count));
 			XmlNode glossNewPartRef =  result.SelectSingleNode("//part[@ref=\"Gloss\"]");
-			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"), Is.EqualTo("ifdata"));
 			XmlNode synNewPartRef = glossNewPartRef.ParentNode;
-			Assert.AreEqual("part", synNewPartRef.Name);
-			Assert.AreEqual("Synonyms", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "ref"));
+			Assert.That(synNewPartRef.Name, Is.EqualTo("part"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(synNewPartRef, "ref"), Is.EqualTo("Synonyms"));
 			// Should have kept unmodified attributes of this element.
-			Assert.AreEqual("TestingParam", XmlUtils.GetOptionalAttributeValue(synNewPartRef, "param"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(synNewPartRef, "param"), Is.EqualTo("TestingParam"));
 			XmlNode sensesNewPartRef = synNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
-			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
+			Assert.That(sensesNewPartRef.Name, Is.EqualTo("part"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"), Is.EqualTo("Senses"));
 			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
-			Assert.AreEqual(result, rootNewLayout);
+			Assert.That(rootNewLayout.Name, Is.EqualTo("layout"));
+			Assert.That(rootNewLayout, Is.EqualTo(result));
 		}
 
 		[Test]
@@ -335,17 +329,17 @@ namespace XCore
 			object[] path = {rootLayout, 1, sensesPartRef, 2, antonymnPartRef};
 			XmlNode finalPartref;
 			XmlNode result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
-			Assert.AreEqual(rootLayout.ChildNodes.Count, result.ChildNodes.Count);
+			Assert.That(result.ChildNodes.Count, Is.EqualTo(rootLayout.ChildNodes.Count));
 			XmlNode antonymNewPartRef =  result.SelectSingleNode("//part[@ref=\"Antonymns\"]");
-			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(antonymNewPartRef, "visibility"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(antonymNewPartRef, "visibility"), Is.EqualTo("ifdata"));
 			XmlNode indentNewPartRef = antonymNewPartRef.ParentNode;
-			Assert.AreEqual("indent", indentNewPartRef.Name);
+			Assert.That(indentNewPartRef.Name, Is.EqualTo("indent"));
 			XmlNode sensesNewPartRef = indentNewPartRef.ParentNode;
-			Assert.AreEqual("part", sensesNewPartRef.Name);
-			Assert.AreEqual("Senses", XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"));
+			Assert.That(sensesNewPartRef.Name, Is.EqualTo("part"));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(sensesNewPartRef, "ref"), Is.EqualTo("Senses"));
 			XmlNode rootNewLayout = sensesNewPartRef.ParentNode;
-			Assert.AreEqual("layout", rootNewLayout.Name);
-			Assert.AreEqual(result, rootNewLayout);
+			Assert.That(rootNewLayout.Name, Is.EqualTo("layout"));
+			Assert.That(rootNewLayout, Is.EqualTo(result));
 		}
 	}
 }
