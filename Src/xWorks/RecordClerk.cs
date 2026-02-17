@@ -3649,7 +3649,7 @@ namespace SIL.FieldWorks.XWorks
 			string clerk = XmlUtils.GetMandatoryAttributeValue(parameterNode, "clerk");
 			// REVIEW (Hasso) 2014.02: while //clerks is probably an improvement over ancestors::parameters/clerks, this XPath should be
 			// either thorouhly reviewed or reverted before merging with our main codebase.
-			string xpath = "//clerks/clerk[@id=" + XmlUtils.MakeSafeXml(clerk) + "]";
+			string xpath = "//clerks/clerk[@id=" + XmlUtils.MakeSafeXPathLiteral(clerk) + "]";
 			XmlNode clerkNode = parameterNode.SelectSingleNode(xpath);
 			if (clerkNode == null)
 				clerkNode = FindClerkNode(parameterNode, clerk);

@@ -6,19 +6,23 @@
 		<_OrchestratorProj>$([System.IO.Path]::Combine('$(_TransformRoot)','Build','Orchestrator.proj'))</_OrchestratorProj>
 	</PropertyGroup>
 
+	<!--
+		EnsureTransformsForManagedBuilds — guarantee XSL transform DLLs are up-to-date
+		before any managed project resolves assembly references.
+
+		We always invoke BuildWindowsXslAssemblies and let MSBuild's native
+		Inputs/Outputs incremental system decide whether recompilation is needed.
+		Previously this target gated on !Exists(), which meant a stale DLL (older
+		than source .xsl files) was never recompiled.
+	-->
 	<Target Name="EnsureTransformsForManagedBuilds"
 		BeforeTargets="ResolveAssemblyReferences"
 		Condition="!$([System.String]::IsNullOrEmpty('$(_TransformRoot)')) and '$(BuildingTransforms)'!='true' and '$(OS)'=='Windows_NT' and $([System.IO.Path]::GetFullPath('$(MSBuildProjectFullPath)'))!='$(_OrchestratorProj)'">
-		<PropertyGroup>
-			<_ApplicationTransforms>$(_TransformOutputBase)ApplicationTransforms.dll</_ApplicationTransforms>
-			<_PresentationTransforms>$(_TransformOutputBase)PresentationTransforms.dll</_PresentationTransforms>
-			<_TransformsMissing Condition="!Exists('$(_ApplicationTransforms)') or !Exists('$(_PresentationTransforms)')">true</_TransformsMissing>
-		</PropertyGroup>
 
 		<MSBuild
 			Projects="$(_OrchestratorProj)"
 			Targets="BuildWindowsXslAssemblies"
 			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true;dir-outputBase=$(_TransformOutputBase)"
-			Condition="Exists('$(_OrchestratorProj)') and '$(_TransformsMissing)'=='true'" />
+			Condition="Exists('$(_OrchestratorProj)')" />
 	</Target>
 </Project>

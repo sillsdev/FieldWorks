@@ -518,6 +518,54 @@ finally {
     Stop-ConflictingProcesses @cleanupArgs
 }
 
+# =============================================================================
+# Failure Summary (always print to terminal when there are failures)
+# =============================================================================
+
+$vstestLogPath = Join-Path $PSScriptRoot "Output/$Configuration/TestResults/vstest.console.log"
+if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
+    Write-Host ""
+    Write-Host "========== FAILURE SUMMARY ==========" -ForegroundColor Red
+
+    $logLines = Get-Content $vstestLogPath
+    $failedTests = @()
+    for ($i = 0; $i -lt $logLines.Count; $i++) {
+        if ($logLines[$i] -match '^\s+Failed\s+(\S.*)') {
+            $testName = $Matches[1].Trim()
+            $errorMsg = ""
+            # Look ahead for "Error Message:" line
+            if ($i + 2 -lt $logLines.Count -and $logLines[$i + 1] -match '^\s+Error Message:') {
+                $errorMsg = $logLines[$i + 2].Trim()
+            }
+            $failedTests += [PSCustomObject]@{ Test = $testName; Error = $errorMsg }
+        }
+    }
+
+    if ($failedTests.Count -gt 0) {
+        # Group by error message for a compact summary
+        $groups = $failedTests | Group-Object Error | Sort-Object Count -Descending
+        foreach ($grp in $groups) {
+            Write-Host ""
+            Write-Host "  [$($grp.Count) failure(s)] $($grp.Name)" -ForegroundColor Yellow
+            # Show up to 5 test names per group
+            $shown = 0
+            foreach ($item in $grp.Group) {
+                if ($shown -ge 5) {
+                    Write-Host "    ... and $($grp.Count - 5) more" -ForegroundColor DarkGray
+                    break
+                }
+                Write-Host "    - $($item.Test)" -ForegroundColor Gray
+                $shown++
+            }
+        }
+        Write-Host ""
+        Write-Host "  Total: $($failedTests.Count) failed test(s)" -ForegroundColor Red
+    }
+
+    Write-Host "=====================================" -ForegroundColor Red
+    Write-Host "  Full log: $vstestLogPath" -ForegroundColor Gray
+}
+
 if ($testExitCode -eq 0) {
     Write-Host ""
     Write-Host "[PASS] All tests passed" -ForegroundColor Green

@@ -520,6 +520,36 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
+		/// <summary>
+		/// Return an XPath 1.0 string literal for <paramref name="value"/>,
+		/// properly quoted so it is safe to embed in a predicate expression.
+		/// Handles values containing single quotes, double quotes, or both.
+		/// </summary>
+		/// <remarks>
+		/// This is the canonical implementation. A private copy also exists in
+		/// <c>StringTable</c> (FwUtils.csproj) because FwUtils cannot reference XMLUtils
+		/// (circular dependency), and SIL.Core's <c>SIL.Xml.XmlUtils</c> does not yet
+		/// include this method.
+		///
+		/// TODO: Upstream into SIL.Core's SIL.Xml.XmlUtils, then remove the StringTable copy.
+		///
+		/// Neither <see cref="MakeSafeXml"/> nor <see cref="MakeSafeXmlAttribute"/> are suitable
+		/// for XPath predicates: MakeSafeXml does not add quotes, and MakeSafeXmlAttribute uses
+		/// XML entity escaping (&amp;apos;) which XPath 1.0 does not understand.
+		/// </remarks>
+		public static string MakeSafeXPathLiteral(string value)
+		{
+			if (value == null)
+				return "''";
+			if (!value.Contains("'"))
+				return "'" + value + "'";
+			if (!value.Contains("\""))
+				return "\"" + value + "\"";
+			// Contains both: use concat()
+			var parts = value.Split('\'');
+			return "concat('" + string.Join("',\"'\"','", parts) + "')";
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the index of the node in nodes that 'matches' the target node.
