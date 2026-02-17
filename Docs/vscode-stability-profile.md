@@ -5,7 +5,7 @@ This repository is a mixed native + managed solution (C++ + .NET Framework `net4
 ## Supported inner-loop in VS Code
 
 - Use ReSharper for VS Code (`jetbrains.resharper-code`) as the default C# experience in VS Code.
-- C# Dev Kit (`ms-dotnettools.csdevkit`) is discouraged in this workspace.
+- C# Dev Kit (`ms-dotnettools.csdevkit`) and C# (`ms-dotnettools.csharp`) are discouraged in this workspace.
 - Use `ms-vscode.cpptools` for C/C++ editing and IntelliSense.
 - Build and test through repo scripts/tasks:
   - `./build.ps1`
@@ -15,6 +15,11 @@ This repository is a mixed native + managed solution (C++ + .NET Framework `net4
 
 - `dotnet.preferCSharpExtension=true` avoids activating C# Dev Kit as the default C# experience.
 - `dotnet.automaticallyBuildProjects=false` avoids background build churn/conflicts in large mixed-language solutions.
+- ReSharper build settings in `.vscode/settings.json` are pinned for stability:
+  - `resharper.build.useResharperBuild=false` (delegates full build to MSBuild.exe)
+  - `resharper.build.restorePackagesOnBuild=true`
+  - `resharper.build.smartNugetRestore=true`
+  - `resharper.build.customMsbuildPath` points to `...\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe`
 
 ## Test/build authority
 

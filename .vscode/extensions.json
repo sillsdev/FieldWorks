@@ -15,7 +15,8 @@
     "atlassian.atlassian-vscode"
   ],
   "unwantedRecommendations": [
-    // This workspace is ReSharper-first; C# Dev Kit is discouraged.
-    "ms-dotnettools.csdevkit"
+    // This workspace is ReSharper-first; dotnet test providers are discouraged.
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp"
   ]
 }

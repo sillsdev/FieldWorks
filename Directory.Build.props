@@ -35,6 +35,12 @@
 		<!-- Default all managed projects to x64 unless explicitly overridden -->
 		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
 		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
+		<!--
+			ReSharper test/build controller can invoke SDK-style net48 projects with RuntimeIdentifier=win-x64.
+			If restore only produced net48 (no RID graph), ResolvePackageAssets fails with NETSDK1005/NETSDK1047.
+			Restore win-x64 runtime targets by default so both plain net48 and net48/win-x64 builds succeed.
+		-->
+		<RuntimeIdentifiers Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(RuntimeIdentifiers)' == ''">win-x64</RuntimeIdentifiers>
 		<!-- Force 64-bit MSBuild host to avoid crashes loading 64-bit native DLLs in build tasks -->
 		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
 		<!-- Disable determinism to allow wildcard versions in CommonAssemblyInfo.cs -->

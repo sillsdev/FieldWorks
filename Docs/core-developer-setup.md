@@ -123,7 +123,7 @@ git checkout release/9.3
 
 Recommended VS Code extensions for daily development:
 - **ReSharper for VS Code** (`jetbrains.resharper-code`) for C# editing, navigation, refactoring, and test explorer
-- **C# Dev Kit** (`ms-dotnettools.csdevkit`) is discouraged in this workspace
+- **C# Dev Kit** (`ms-dotnettools.csdevkit`) and **C#** (`ms-dotnettools.csharp`) are discouraged in this workspace
 - **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
 - **PowerShell** (`ms-vscode.powershell`) for build/test scripts
 

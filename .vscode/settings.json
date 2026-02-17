@@ -74,6 +74,10 @@
   "dotnet.preferCSharpExtension": true,
   "dotnet.automaticallyBuildProjects": false,
   "resharper.solution.autoOpenLastSolution": true,
+  "resharper.build.useResharperBuild": false,
+  "resharper.build.restorePackagesOnBuild": true,
+  "resharper.build.smartNugetRestore": true,
+  "resharper.build.customMsbuildPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe",
   // Git Graph extension settings
   "git-graph.dialog.merge.noFastForward": false,
   "git-graph.dialog.merge.squashCommits": false,
