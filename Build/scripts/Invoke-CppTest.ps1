@@ -148,9 +148,8 @@ function Build-FwBuildTasks {
         '/p:Platform=x64',
         '/nologo'
     )
-    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
-    cmd /c $cmd
-    if ($LASTEXITCODE -ne 0) { throw "FwBuildTasks build failed with exit code $LASTEXITCODE" }
+    $process = Start-Process -FilePath $msbuild -ArgumentList $args -WorkingDirectory $WorktreePath -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) { throw "FwBuildTasks build failed with exit code $($process.ExitCode)" }
 }
 
 function Build-NativeArtifacts {
@@ -165,9 +164,8 @@ function Build-NativeArtifacts {
         '/nologo',
         '/m'
     )
-    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
-    cmd /c $cmd
-    if ($LASTEXITCODE -ne 0) { throw "Native build failed with exit code $LASTEXITCODE" }
+    $process = Start-Process -FilePath $msbuild -ArgumentList $args -WorkingDirectory $WorktreePath -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) { throw "Native build failed with exit code $($process.ExitCode)" }
 }
 
 function Build-ViewsInterfacesArtifacts {
@@ -182,9 +180,8 @@ function Build-ViewsInterfacesArtifacts {
         '/nologo',
         '/v:minimal'
     )
-    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
-    cmd /c $cmd
-    if ($LASTEXITCODE -ne 0) { throw "ViewsInterfaces build failed with exit code $LASTEXITCODE" }
+    $process = Start-Process -FilePath $msbuild -ArgumentList $args -WorkingDirectory $WorktreePath -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) { throw "ViewsInterfaces build failed with exit code $($process.ExitCode)" }
 }
 
 function Ensure-TestViewsPrerequisites {
@@ -251,9 +248,8 @@ function Invoke-Build {
         $msbuildCmd = "$msbuild $($msbuildArgs -join ' ')"
         Write-Host "(cd $WorktreePath) $msbuildCmd" -ForegroundColor Gray
 
-        $cmdLine = "cd /d `\"$WorktreePath`\" && $msbuildCmd"
-        cmd /c $cmdLine
-        if ($LASTEXITCODE -ne 0) { throw "MSBuild failed with exit code $LASTEXITCODE" }
+        $process = Start-Process -FilePath $msbuild -ArgumentList $msbuildArgs -WorkingDirectory $WorktreePath -NoNewWindow -Wait -PassThru
+        if ($process.ExitCode -ne 0) { throw "MSBuild failed with exit code $($process.ExitCode)" }
 
         if ($localOutDir) {
             $script:LastLocalOutDir = $localOutDir
@@ -307,10 +303,18 @@ function Invoke-Build {
 
         # VsDevCmd is already initialized by Initialize-VsDevEnvironment
 
-        $cmd = "cd /d `\"$makeDir`\" && nmake /nologo BUILD_CONFIG=$Configuration BUILD_TYPE=$buildType BUILD_ROOT=$WorktreePath\ BUILD_ARCH=x64 /f $makefile"
-        Write-Host "cmd /c `\"$cmd`\"" -ForegroundColor Gray
-        cmd /c $cmd
-        if ($LASTEXITCODE -ne 0) { throw "NMake failed with exit code $LASTEXITCODE" }
+        $nmakeArgs = @(
+            '/nologo',
+            "BUILD_CONFIG=$Configuration",
+            "BUILD_TYPE=$buildType",
+            "BUILD_ROOT=$WorktreePath\",
+            'BUILD_ARCH=x64',
+            '/f',
+            $makefile
+        )
+        Write-Host "(cd $makeDir) nmake $($nmakeArgs -join ' ')" -ForegroundColor Gray
+        $process = Start-Process -FilePath 'nmake' -ArgumentList $nmakeArgs -WorkingDirectory $makeDir -NoNewWindow -Wait -PassThru
+        if ($process.ExitCode -ne 0) { throw "NMake failed with exit code $($process.ExitCode)" }
     }
 
     Write-Host "`nBuild completed successfully." -ForegroundColor Green
