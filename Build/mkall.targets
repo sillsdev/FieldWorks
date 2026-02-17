@@ -269,23 +269,11 @@
 	</Target>
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
-		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
 		<!-- SIL ecosystem versions: imported from Build/SilVersions.props (shared with Directory.Packages.props) -->
 	</PropertyGroup>
 	<Import Project="$(MSBuildThisFileDirectory)SilVersions.props" />
 	<PropertyGroup>
-		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
-		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
-		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
-		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
-		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"
-			>GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType
-		>
-		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
-			>GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType
-		>
-		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 		<!-- PackagesDir: Use local packages folder. -->
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
@@ -402,37 +390,12 @@
 			Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)"
 			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
-		<Message
-			Text="Downloading artifacts for $(ExCss)."
-			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
-		/>
-		<DownloadFilesFromTeamCity
-			Address="$(TeamCityUrl)"
-			BuildType="$(ExCssBuildType)"
-			Tag="$(ExCssBuildTag)"
-			Artifacts="$(ExCss).dll"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
-		/>
-		<Message
-			Text="Downloading artifacts for geckofxHtmlToPdf."
-			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
-		/>
-		<DownloadFilesFromTeamCity
-			Address="$(TeamCityUrl)"
-			BuildType="$(GeckoFxHtmlToPdfBuildType)"
-			Tag="$(GeckoFxHtmlToPdfBuildTag)"
-			Artifacts="GeckofxHtmlToPdf.exe;GeckofxHtmlToPdf.exe.config;Args.dll"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
-		/>
-		<Message
-			Text="Using pre-populated downloads directory for ExCss and GeckofxHtmlToPdf artifacts."
-			Condition="'$(TeamCityUrl)'==''"
-		/>
-		<Error
-			Text="GeckofxHtmlToPdf.exe not found - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
-			Condition="!Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
+		<!-- ExCss.dll is now provided by the SIL.ExCSS NuGet package (no TeamCity download needed). -->
+		<!-- GeckofxHtmlToPdf binaries must be pre-populated in Downloads/ (TeamCity server decommissioned).
+		     Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory. -->
+		<Warning
+			Text="GeckofxHtmlToPdf.exe not found in $(DownloadsDir) - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
 		/>
 	</Target>
 	<Target Name="DefineNugetPackages">
@@ -571,28 +534,16 @@
 			>$(PackagesDir)/sil.lcmodel.build.tasks/$(SilLcmVersion)/tools/net462</LcmBuildTasksDir
 		>
 	</PropertyGroup>
-	<!-- item group for downloads, to allow easy copying -->
-	<!-- wildcards don't work unless the files have already been downloaded once -->
+	<!-- Item group for pre-populated binaries in Downloads/ that need copying to output.
+	     ExCss.dll is now provided by the SIL.ExCSS NuGet package.
+	     IPCFramework.dll, SIL.Machine.dll, Sandwych.Quickgraph.Core.dll, and
+	     SIL.Machine.Morphology.HermitCrab.dll are now provided by NuGet PackageReference. -->
 	<ItemGroup>
-		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
-		if they don't exist by the time this ItemGroup is read -->
-		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll" />
+		<!-- GeckofxHtmlToPdf dependency (shipped alongside FieldWorksPdfMaker.exe) -->
 		<DownloadedFiles
 			Include="$(DownloadsDir)/Args.dll"
 			Condition="Exists('$(DownloadsDir)/Args.dll')"
 		/>
-		<DownloadedFiles
-			Include="$(DownloadsDir)/ExCss.dll"
-			Condition="Exists('$(DownloadsDir)/ExCss.dll')"
-		/>
-		<DownloadedFiles
-			Include="$(DownloadsDir)/ExCSS.dll"
-			Condition="Exists('$(DownloadsDir)/ExCSS.dll')"
-		/>
-		<!-- PDB files for ExCss are now handled by SDK, no longer copied manually -->
-		<DownloadedFiles Include="$(DownloadsDir)/Sandwych.Quickgraph.Core.dll" />
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll" />
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.Morphology.HermitCrab.dll" />
 	</ItemGroup>
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
 		<!-- .Net assemblies -->
@@ -772,15 +723,15 @@
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
-		<!-- Copy TeamCity artifacts (ExCss, GeckofxHtmlToPdf, HermitCrab, IPCFramework) -->
+		<!-- Copy pre-populated binaries (Args.dll for GeckofxHtmlToPdf) -->
 		<Copy
 			SourceFiles="@(ExistingDownloadedFiles)"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
-		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so it its origin is clear in case a user needs to release it from antivirus quarantine -->
-		<!-- TODO: GeckofxHtmlToPdf needs to be built from https://github.com/sillsdev/geckofxHtmlToPdf and binaries placed in Downloads or DistFiles/Windows -->
+		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so its origin is clear in case a user needs to release it from antivirus quarantine -->
+		<!-- GeckofxHtmlToPdf must be built from https://github.com/sillsdev/geckofxHtmlToPdf and placed in Downloads/ -->
 		<Copy
 			SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe"
 			DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe"
