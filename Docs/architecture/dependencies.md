@@ -24,12 +24,12 @@ Most dependencies are automatically downloaded as NuGet packages during the buil
 
 ## Default Dependency Source
 
-By default, dependencies are downloaded as NuGet packages during the build. The version numbers are specified in `Build/mkall.targets`:
+By default, dependencies are downloaded as NuGet packages during the build. The version numbers are specified once in `Build/SilVersions.props` and shared by both the managed build (`Directory.Packages.props`) and the native build (`Build/mkall.targets`):
 
 ```xml
-<ChorusNugetVersion>...</ChorusNugetVersion>
-<PalasoNugetVersion>...</PalasoNugetVersion>
-<LcmNugetVersion>...</LcmNugetVersion>
+<SilChorusVersion>...</SilChorusVersion>
+<SilLibPalasoVersion>...</SilLibPalasoVersion>
+<SilLcmVersion>...</SilLcmVersion>
 ```
 
 ## Building Dependencies Locally
@@ -101,7 +101,7 @@ Update the NuGet versions in FieldWorks to use your local packages:
    - `packages\` (solution packages)
    - Your local NuGet folder
 
-2. Update version numbers in `Build/mkall.targets`
+2. Update version numbers in `Build/SilVersions.props`
 
 3. Build FieldWorks
 

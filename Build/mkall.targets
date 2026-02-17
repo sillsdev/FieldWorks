@@ -271,14 +271,10 @@
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
-		<!-- Versions of NuGet packages. These should match the versions in Directory.Packages.props (CPM). -->
-		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
-		<PalasoNugetVersion>17.0.0-beta0089</PalasoNugetVersion>
-		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0154</LcmNugetVersion>
-		<IcuNugetVersion>70.1.152</IcuNugetVersion>
-		<HermitCrabNugetVersion>3.7.13</HermitCrabNugetVersion>
-		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
+		<!-- SIL ecosystem versions: imported from Build/SilVersions.props (shared with Directory.Packages.props) -->
+	</PropertyGroup>
+	<Import Project="$(MSBuildThisFileDirectory)SilVersions.props" />
+	<PropertyGroup>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
@@ -471,66 +467,66 @@
 			</SILNugetPackages>
 			<!-- IPCFramework DLL (may be needed for FLExBridge communication) -->
 			<SILNugetPackages Include="SIL.FLExBridge.IPCFramework">
-				<Version>$(IPCFrameworkVersion)</Version>
+				<Version>$(SilIPCFrameworkVersion)</Version>
 				<Path>lib/net461/*.*</Path>
 			</SILNugetPackages>
 			<!-- LCM contentFiles (data files, headers, build tasks) that aren't auto-deployed -->
 			<SILNugetPackages Include="SIL.LCModel">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Build.Tasks">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>tools/net462/*.*</Path>
 			</SILNugetPackages>
 			<!-- Copy contentFiles with explicit patterns to preserve directory structure -->
 			<SILNugetPackages Include="SIL.LCModel.Core">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Core">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>contentFiles/KernelInterfaces/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Core">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>contentFiles/IcuData/data/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Core">
-				<Version>$(LcmNugetVersion)</Version>
+				<Version>$(SilLcmVersion)</Version>
 				<Path>contentFiles/IcuData/icudt70l/*.*</Path>
 			</SILNugetPackages>
 			<!-- Palaso contentFiles (irrKlang, Keyman interop, platform-specific files) -->
 			<SILNugetPackages Include="SIL.Media">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>build/**/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Media">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Archiving">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'!='x64'">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>build/Interop.WIA.dll</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'=='x64'">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>build/x64/Interop.WIA.dll</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Archiving">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>build/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding">
-				<Version>$(PalasoNugetVersion)</Version>
+				<Version>$(SilLibPalasoVersion)</Version>
 				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<!-- Enchant.Net contentFiles (native spell-checking binaries) -->
@@ -545,7 +541,7 @@
 			</SILNugetPackages>
 			<!-- Chorus.App (contains Chorus.exe, an application entry point) -->
 			<SILNugetPackages Include="SIL.Chorus.App">
-				<Version>$(ChorusNugetVersion)</Version>
+				<Version>$(SilChorusVersion)</Version>
 				<Path>lib/net462/*.*</Path>
 			</SILNugetPackages>
 			<!-- SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj -->
@@ -564,15 +560,15 @@
 			>$(PkgSIL_LCModel_Core)/contentFiles</LcmArtifactsDir
 		>
 		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''"
-			>$(PackagesDir)/sil.lcmodel.core/$(LcmNugetVersion)/contentFiles</LcmArtifactsDir
+			>$(PackagesDir)/sil.lcmodel.core/$(SilLcmVersion)/contentFiles</LcmArtifactsDir
 		>
 		<!-- LCM Model artifacts (MasterLCModel.xml, Styles.dtd, templates) from sil.lcmodel NuGet package -->
 		<LcmModelArtifactsDir Condition="'$(LcmModelArtifactsDir)'==''"
-			>$(PackagesDir)/sil.lcmodel/$(LcmNugetVersion)/contentFiles</LcmModelArtifactsDir
+			>$(PackagesDir)/sil.lcmodel/$(SilLcmVersion)/contentFiles</LcmModelArtifactsDir
 		>
 		<!-- LCM Build Tasks DLL from separate package -->
 		<LcmBuildTasksDir Condition="'$(LcmBuildTasksDir)'==''"
-			>$(PackagesDir)/sil.lcmodel.build.tasks/$(LcmNugetVersion)/tools/net462</LcmBuildTasksDir
+			>$(PackagesDir)/sil.lcmodel.build.tasks/$(SilLcmVersion)/tools/net462</LcmBuildTasksDir
 		>
 	</PropertyGroup>
 	<!-- item group for downloads, to allow easy copying -->

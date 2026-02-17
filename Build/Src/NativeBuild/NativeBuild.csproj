@@ -43,7 +43,7 @@
   </PropertyGroup>
   <!-- Reference to sil.lcmodel.core package for contentFiles. -->
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel.Core" Version="$(LcmNugetVersion)" GeneratePathProperty="true">
+    <PackageReference Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" GeneratePathProperty="true">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -57,7 +57,7 @@
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SIL.LibPalaso.L10ns" Version="17.0.0">
+    <PackageReference Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -2,12 +2,6 @@
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!--
-			Floating Versions: Allow floating pre-release versions like 11.0.0-* and 17.0.0-*
-			used by SIL LCModel and LibPalaso ecosystem packages.
-			Requires NuGet 6.4+ / .NET SDK 7.0.200+.
-		-->
-		<CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
-		<!--
 			Transitive Pinning: When a package is declared here but only consumed
 			transitively (not directly referenced by a project), NuGet still pins it
 			to the version below. This prevents the "last writer wins" problem in our
@@ -16,6 +10,9 @@
 		-->
 		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 	</PropertyGroup>
+
+	<!-- SIL ecosystem version properties: single source of truth in Build/SilVersions.props -->
+	<Import Project="Build/SilVersions.props" />
 
 	<!--
 		=============================================================
@@ -46,39 +43,39 @@
 
 	<!--
 		=============================================================
-		SIL LCModel Ecosystem (floating pre-release)
+		SIL LCModel Ecosystem
 		=============================================================
 	-->
 	<ItemGroup Label="SIL LCModel Ecosystem">
-		<PackageVersion Include="SIL.LCModel" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.Core" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.FixData" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.Tests" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-		<PackageVersion Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" />
+		<PackageVersion Include="SIL.LCModel" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Core.Tests" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.FixData" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Tests" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Utils" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Utils.Tests" Version="$(SilLcmVersion)" />
 	</ItemGroup>
 
 	<!--
 		=============================================================
-		SIL LibPalaso Ecosystem (floating pre-release)
+		SIL LibPalaso Ecosystem
 		=============================================================
 	-->
 	<ItemGroup Label="SIL LibPalaso Ecosystem">
-		<PackageVersion Include="SIL.Core" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Core.Desktop" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Archiving" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Lexicon" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Lift" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Media" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Scripture" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.TestUtilities" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Windows.Forms" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Windows.Forms.Archiving" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Windows.Forms.Keyboarding" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.Windows.Forms.WritingSystems" Version="17.0.0-*" />
-		<PackageVersion Include="SIL.WritingSystems" Version="17.0.0-*" />
+		<PackageVersion Include="SIL.Core" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Core.Desktop" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Archiving" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Lexicon" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Lift" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Media" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Scripture" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.TestUtilities" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.Archiving" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.Keyboarding" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.WritingSystems" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.WritingSystems" Version="$(SilLibPalasoVersion)" />
 		<!-- Pinned version used by FwCoreDlgsTests only -->
 		<PackageVersion Include="SIL.WritingSystems.Tests" Version="15.0.0-beta0117" />
 	</ItemGroup>
@@ -89,9 +86,9 @@
 		=============================================================
 	-->
 	<ItemGroup Label="SIL Localization">
-		<PackageVersion Include="L10NSharp" Version="9.0.0-*" />
+		<PackageVersion Include="L10NSharp" Version="9.0.0" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
-		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="17.0.0-*" />
+		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)" />
 	</ItemGroup>
 
 	<!--
@@ -100,14 +97,14 @@
 		=============================================================
 	-->
 	<ItemGroup Label="SIL Tools">
-		<PackageVersion Include="SIL.Chorus.App" Version="6.0.0-beta0063" />
-		<PackageVersion Include="SIL.Chorus.LibChorus" Version="6.0.0-beta0063" />
+		<PackageVersion Include="SIL.Chorus.App" Version="$(SilChorusVersion)" />
+		<PackageVersion Include="SIL.Chorus.LibChorus" Version="$(SilChorusVersion)" />
 		<PackageVersion Include="SIL.DesktopAnalytics" Version="4.0.0" />
 		<PackageVersion Include="SIL.ExCSS" Version="2.0.2" />
-		<PackageVersion Include="SIL.FLExBridge.IPCFramework" Version="1.1.1-beta0001" />
+		<PackageVersion Include="SIL.FLExBridge.IPCFramework" Version="$(SilIPCFrameworkVersion)" />
 		<PackageVersion Include="SIL.IdlImporter" Version="4.0.0-beta0052" />
-		<PackageVersion Include="SIL.Machine" Version="3.7.4" />
-		<PackageVersion Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
+		<PackageVersion Include="SIL.Machine" Version="$(SilMachineVersion)" />
+		<PackageVersion Include="SIL.Machine.Morphology.HermitCrab" Version="$(SilMachineVersion)" />
 		<PackageVersion Include="SIL.Paradigm.GAFAWSAnalysis" Version="1.0.2" />
 		<PackageVersion Include="SIL.ParatextShared" Version="7.4.0.1" />
 	</ItemGroup>
