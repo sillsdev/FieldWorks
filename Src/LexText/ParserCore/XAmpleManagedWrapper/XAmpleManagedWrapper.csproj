@@ -15,7 +15,7 @@
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Core" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

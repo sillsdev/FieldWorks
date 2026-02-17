@@ -21,12 +21,12 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
+    <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

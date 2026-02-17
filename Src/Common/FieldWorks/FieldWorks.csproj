@@ -7,6 +7,12 @@
     <OutputType>WinExe</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <!--
+      System.Net.Http: .NET Framework 4.8 ships assembly 4.2.0.0, but netstandard NuGet packages
+      reference 4.3.4. This is a known platform mismatch resolved at runtime by binding redirects.
+      Cannot be fixed at build time. All other projects still fail on MSB3277.
+    -->
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <ApplicationIcon>Branding\LT.ico</ApplicationIcon>
@@ -27,23 +33,23 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="icu.net" Version="3.0.1" />
-    <PackageReference Include="L10NSharp" Version="9.0.0-*" />
-    <PackageReference Include="mixpanel-csharp" Version="6.0.0" />
-    <PackageReference Include="SharpZipLib" Version="1.4.2" Exclude="Build,Analyzers" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
-    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.Lexicon" Version="17.0.0-*" />
-    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
-    <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="17.0.0-*" />
-    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.56" />
+    <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <PackageReference Include="icu.net" />
+    <PackageReference Include="L10NSharp" />
+    <PackageReference Include="mixpanel-csharp" />
+    <PackageReference Include="SharpZipLib" Exclude="Build,Analyzers" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.Core.Desktop" />
+    <PackageReference Include="SIL.DesktopAnalytics" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.Lexicon" />
+    <PackageReference Include="SIL.ParatextShared" />
+    <PackageReference Include="SIL.Windows.Forms" />
+    <PackageReference Include="SIL.Windows.Forms.Keyboarding" />
+    <PackageReference Include="SIL.WritingSystems" />
+    <PackageReference Include="Geckofx60.64" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />

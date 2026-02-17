@@ -22,18 +22,18 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
-    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="encoding-converters-core" Version="0.9.7" />
+    <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" />
+    <PackageReference Include="SIL.WritingSystems" />
+    <PackageReference Include="encoding-converters-core" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />

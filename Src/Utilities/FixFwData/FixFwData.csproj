@@ -21,11 +21,11 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
-    <PackageReference Include="SIL.LCModel.FixData" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.Core.Desktop" />
+    <PackageReference Include="SIL.LCModel.FixData" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

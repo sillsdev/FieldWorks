@@ -23,9 +23,9 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.Core.Desktop" />
+    <PackageReference Include="SIL.LCModel.Utils" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />

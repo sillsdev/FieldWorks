@@ -21,9 +21,9 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SharpZipLib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

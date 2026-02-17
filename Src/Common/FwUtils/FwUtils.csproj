@@ -21,19 +21,19 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="icu.net" Version="3.0.1" />
-    <PackageReference Include="NAudio" Version="1.10.0" />
-    <PackageReference Include="NAudio.Lame" Version="1.1.5" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
-    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
-    <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.1-beta0001" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
-    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
+    <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <PackageReference Include="icu.net" />
+    <PackageReference Include="NAudio" />
+    <PackageReference Include="NAudio.Lame" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.Core.Desktop" />
+    <PackageReference Include="SIL.DesktopAnalytics" />
+    <PackageReference Include="SIL.FLExBridge.IPCFramework" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.Windows.Forms" />
+    <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />

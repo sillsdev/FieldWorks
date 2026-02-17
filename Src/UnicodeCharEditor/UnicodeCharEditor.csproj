@@ -20,10 +20,10 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineArgumentsParser" Version="3.0.22" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="CommandLineArgumentsParser" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />

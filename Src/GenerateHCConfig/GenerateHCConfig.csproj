@@ -21,12 +21,12 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.Machine" Version="3.7.4" />
-    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
-    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.Machine" />
+    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" />
+    <PackageReference Include="SIL.WritingSystems" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />

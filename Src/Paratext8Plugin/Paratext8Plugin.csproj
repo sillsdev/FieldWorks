@@ -20,8 +20,8 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ParatextData" Version="9.5.0.20" />
-    <PackageReference Include="SIL.Scripture" Version="16.2.0" />
+    <PackageReference Include="ParatextData" />
+    <PackageReference Include="SIL.Scripture" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

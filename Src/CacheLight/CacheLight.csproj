@@ -41,8 +41,8 @@
     <None Remove="CacheLightTests\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\ViewsInterfaces\ViewsInterfaces.csproj" />

@@ -271,7 +271,7 @@
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
-		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
+		<!-- Versions of NuGet packages. These should match the versions in Directory.Packages.props (CPM). -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0089</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
@@ -352,20 +352,7 @@
 	<!-- Restore NuGet packages -->
 	<Target Name="RestorePackages">
 		<Message Text="Restoring NuGet packages..." />
-		<!-- Restore legacy packages.config dependencies required by mkall before traversal restore -->
-		<PropertyGroup>
-			<NuGetExePath Condition="'$(NuGetExePath)'==''">$(PackagesDir)\nuget.exe</NuGetExePath>
-			<NuGetExeUri Condition="'$(NuGetExeUri)'==''">https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetExeUri>
-		</PropertyGroup>
 		<MakeDir Directories="$(PackagesDir)" />
-		<Exec
-			Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "if (-not (Test-Path \"$(NuGetExePath)\")) { Write-Host \"Downloading nuget.exe to $(NuGetExePath)\"; Invoke-WebRequest -UseBasicParsing -Uri $(NuGetExeUri) -OutFile \"$(NuGetExePath)\" }"'
-			ContinueOnError="false"
-		/>
-		<Exec
-			Command='"$(NuGetExePath)" restore "$(fwrt)\Build\nuget-common\packages.config" -PackagesDirectory "$(PackagesDir)" -NonInteractive'
-			ContinueOnError="false"
-		/>
 		<!--
 			Restore via FieldWorks.sln to ensure all projects get restored.
 			DisableWarnForInvalidRestoreProjects=true suppresses NU1503 warnings for

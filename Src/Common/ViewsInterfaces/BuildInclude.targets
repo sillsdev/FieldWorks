@@ -3,7 +3,6 @@
 	<ItemGroup>
 		<PackageReference
 			Include="SIL.IdlImporter"
-			Version="4.0.0-beta0052"
 			PrivateAssets="All"
 			GeneratePathProperty="true"
 		/>

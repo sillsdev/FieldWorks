@@ -21,15 +21,15 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ParatextData" Version="9.5.0.20" />
-    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
-    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
-    <PackageReference Include="encoding-converters-core" Version="0.9.7" />
+    <PackageReference Include="ParatextData" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.Core.Desktop" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.ParatextShared" />
+    <PackageReference Include="System.ValueTuple" />
+    <PackageReference Include="encoding-converters-core" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
