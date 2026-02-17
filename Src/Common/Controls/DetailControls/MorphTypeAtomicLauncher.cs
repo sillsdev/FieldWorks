@@ -380,11 +380,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
+		internal void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{
 			DataTree dtree = Slice.ContainingDataTree;
-			int idx = Slice.IndexInContainer;
 			dtree.DoNotRefresh = true;	// don't let the datatree repeatedly redraw itself...
 			entry.ReplaceMoForm(origForm, newForm);
 			newForm.MorphTypeRA = type;
@@ -402,16 +401,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			// now fix the record list, since it may be showing MoForm dependent columns (e.g. MorphType, Homograph, etc...)
 			dtree.FixRecordList();
+			// When PropChanged is deferred via BeginInvoke (m_postponePropChanged),
+			// RefreshListNeeded is never set during the DoNotRefresh window. Ensure it
+			// is set so that the DoNotRefresh=false setter triggers a synchronous refresh
+			// and the new slices (including Morph Type) are properly rebuilt. (LT-22414)
+			dtree.RefreshListNeeded = true;
 			dtree.DoNotRefresh = false;
-			Slice sliceT = dtree.Slices[idx];
-			if (sliceT != null && sliceT is MorphTypeAtomicReferenceSlice)
+			// After the refresh, find the new MorphType slice by type rather than
+			// relying on the pre-swap index which may be stale.
+			for (int i = 0; i < dtree.Slices.Count; i++)
 			{
-				// When the new slice is created, the launch button is placed in the middle of
-				// the slice rather than at the end.  This fiddling with the slice width seems
-				// to fix that.  Then setting the index restores focus to the new slice.
-				sliceT.Width += 1;
-				sliceT.Width -= 1;
-				dtree.GotoNextSliceAfterIndex(idx - 1);
+				Slice sliceT = dtree.Slices[i];
+				if (sliceT is MorphTypeAtomicReferenceSlice)
+				{
+					// When the new slice is created, the launch button is placed in the middle of
+					// the slice rather than at the end.  This fiddling with the slice width seems
+					// to fix that.  Then setting the index restores focus to the new slice.
+					sliceT.Width += 1;
+					sliceT.Width -= 1;
+					dtree.GotoNextSliceAfterIndex(i - 1);
+					break;
+				}
 			}
 		}
 
