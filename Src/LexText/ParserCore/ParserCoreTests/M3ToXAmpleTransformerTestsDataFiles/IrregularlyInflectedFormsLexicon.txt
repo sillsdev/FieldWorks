@@ -55,7 +55,7 @@
 \eType prefix
  
 
-\lx 4157
+\lx 4157.0.3193
 \g believe.pst.pl
 \c W
 \wc root
@@ -67,7 +67,7 @@
 \mp IrregInflForm6652
 
 
-\lx 4157.0
+\lx 4157.0.9872
 \g seek.pst.pl
 \c W
 \wc root
@@ -161,7 +161,7 @@
 \a bos {9892}
  
 
-\lx 8236
+\lx 8236.0.3193
 \g believe.prs
 \c W
 \wc root
@@ -226,7 +226,7 @@
 \a mot {9698}
  
 
-\lx 10257
+\lx 10257.0.4664
 \g second sense.pst
 \c W
 \wc root
