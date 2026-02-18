@@ -4,7 +4,7 @@ This folder contains the WiX 3 installer inputs restored from release/9.3. The d
 
 ## Referenced By
 
-- [Installer](../openspec/specs/architecture/build-deploy/installer.md#installer-patterns) — WiX 3 installer pipeline
+- [Installer](../openspec/specs/architecture/build-deploy/installer.md#installer-pipeline) — WiX 3 installer pipeline
 
 ## Build (local)
 
