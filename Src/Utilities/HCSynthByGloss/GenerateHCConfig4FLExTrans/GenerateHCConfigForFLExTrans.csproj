@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{39D15298-8C61-48F6-91CB-2809531CC94F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SIL.GenerateHCConfigForFLExTrans</RootNamespace>
+    <AssemblyName>GenerateHCConfigForFLExTrans</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="HCSynthByGlossLib">
+      <HintPath>..\..\..\..\..\..\Users\Andy Black\Documents\FieldWorks\FLExTrans\HCSynthByGloss\HCSynthByGlossLib\bin\x64\Debug\HCSynthByGlossLib.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net, Version=2.9.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\icu.net.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Archiving">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.Archiving.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=11.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.LCModel.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.Machine.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine.Morphology.HermitCrab">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.Machine.Morphology.HermitCrab.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems">
+      <HintPath>..\..\..\..\..\..\..\fwrepo\fw\Output\Debug\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="xWorks">
+      <HintPath>..\..\..\..\Output\Debug\xWorks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="DuplicateGlossChecker.cs" />
+    <Compile Include="DuplicateGlossInfo.cs" />
+    <Compile Include="HCLoaderForFLExTrans.cs" />
+    <Compile Include="IHCLoadErrorLogger.cs" />
+    <Compile Include="InvalidAffixProcessException.cs" />
+    <Compile Include="InvalidReduplicationFormException.cs" />
+    <Compile Include="NullFdoDirectories.cs" />
+    <Compile Include="NullThreadedProgress.cs" />
+    <Compile Include="GenerateHCConfigForFLExTrans.cs" />
+    <Compile Include="ProjectIdentifier.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
