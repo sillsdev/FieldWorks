@@ -12,6 +12,7 @@
 		<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
 			<parameters className="LexEntry"/>
 		</command>
+		<command id="CmdAdvancedNewEntry" label="Advanced New _Entry..." message="AdvancedNewEntry" icon="majorEntry"/>
 		<command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries"/>
 		<command id="CmdMergeEntry" label="_Merge with entry..." message="MergeEntry">
 			<parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
@@ -180,6 +181,7 @@
 	<menuAddOn>
 		<menu id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdAdvancedNewEntry" defaultVisible="false"/>
 			<item command="CmdInsertSense" defaultVisible="false"/>
 			<item command="CmdInsertVariant" defaultVisible="false"/>
 			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
@@ -275,6 +277,7 @@
 		<!--    <include query="window/toolbars/*"/> -->
 		<toolbar id="Insert">
 			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdAdvancedNewEntry" defaultVisible="false"/>
 			<item command="CmdGoToEntry" defaultVisible="false"/>
 			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
 			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
@@ -293,6 +296,7 @@
 	<listeners>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener"/>
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.AdvancedNewEntryListener"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener"/>
 		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener"/>
 		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalListener">

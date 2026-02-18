@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdvancedEntry.Avalonia.csproj" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless.NUnit" Version="11.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+    <Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+  </ItemGroup>
+</Project>

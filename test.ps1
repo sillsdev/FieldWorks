@@ -402,7 +402,7 @@ try {
         $runSettingsPath = Join-Path $PSScriptRoot "Test.runsettings"
 
         $vstestArgs = @()
-        $vstestArgs += $testDlls
+		$vstestArgs += $effectiveTestDlls
         $vstestArgs += "/Platform:x64"
         $vstestArgs += "/Settings:$runSettingsPath"
         $vstestArgs += "/ResultsDirectory:$resultsDir"

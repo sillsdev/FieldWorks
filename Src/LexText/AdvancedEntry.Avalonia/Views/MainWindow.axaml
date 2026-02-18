@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pg="clr-namespace:Avalonia.PropertyGrid.Controls;assembly=Avalonia.PropertyGrid"
+        mc:Ignorable="d"
+        x:Class="SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.Views.MainWindow"
+        Width="900" Height="700"
+        Title="Advanced New Entry (Avalonia)"
+        WindowStartupLocation="CenterScreen">
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+    <KeyBinding Gesture="Escape" Command="{Binding CancelCommand}" />
+  </Window.KeyBindings>
+  <Grid>
+    <pg:PropertyGrid DataContext="{Binding Entry}" />
+  </Grid>
+</Window>

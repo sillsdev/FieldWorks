@@ -139,5 +139,3 @@ See `/AGENTS.md` → "Atlassian / JIRA Skills" section for full configuration an
 - [ ] Record uncertainties with `FIXME(<topic>)` and resolve them when evidence is available.
 - [ ] Refer back to this guide whenever you need repo-wide ground truth.
 
-
-

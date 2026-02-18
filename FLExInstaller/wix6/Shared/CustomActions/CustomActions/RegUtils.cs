@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Text;
 using Microsoft.Win32;
@@ -10,7 +10,7 @@ namespace CustomActions
 	/// Slightly simplified registry utilities.
 	/// </summary>
 	public static class RegistryU
-	{		
+	{
 		public static RegistryKey ParseBaseKey(string baseKey)
 		{
 			switch (baseKey.ToLowerInvariant())
@@ -106,7 +106,7 @@ namespace CustomActions
 		/// Checks if a registry value exists.
 		/// </summary>
 		/// <param name="key">The base registry key of the key to check</param>
-		/// <param name="subKey">Name of the group key, or string.Empty if there is no 
+		/// <param name="subKey">Name of the group key, or string.Empty if there is no
 		/// groupKeyName.</param>
 		/// <param name="regEntry">The name of the registry entry.</param>
 		/// <param name="value">[out] value of the registry entry if it exists; null otherwise.</param>
@@ -141,7 +141,7 @@ namespace CustomActions
 
 				return false;
 			}
-		}	
+		}
 
 		public static object GetVal(string baseKey, string subKey, string key)
 		{
