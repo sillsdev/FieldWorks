@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			SomeRandomMessageSubscriber.DoSubscriptions();
 
 			// Run test.
-			Assert.IsTrue(subscriber.One);
+			Assert.That(subscriber.One, Is.True);
 			Assert.DoesNotThrow(() => TestPublisher.PublishMessageOne());
 			subscriber.DoUnsubscriptions();
 			SomeRandomMessageSubscriber.DoUnsubscriptions();
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			niceGuyMultipleSubscriber.DoSubscriptions();
 
 			// Run test.
-			Assert.IsTrue(subscriber.One);
+			Assert.That(subscriber.One, Is.True);
 			Assert.DoesNotThrow(() => FwUtils.Publisher.Publish(new PublisherParameterObject("BadBoy", false)));
 			subscriber.DoUnsubscriptions();
 			SomeRandomMessageSubscriber.DoUnsubscriptions();
@@ -97,18 +97,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			subscriber.DoSubscriptions();
 
 			// Run test.
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 			TestPublisher.PublishBothMessages();
-			Assert.IsFalse(subscriber.One);
-			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			Assert.That(subscriber.One, Is.False);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MaxValue));
 			subscriber.DoUnsubscriptions();
 
 			subscriber.One = true;
 			subscriber.Two = int.MinValue;
 			TestPublisher.PublishBothMessages();
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 		}
 
 		/// <summary>
@@ -126,18 +126,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			subscriber.DoSubscriptions();
 
 			// Run tests
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(1, subscriber.Two);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(1));
 			TestPublisher.PublishMessageOne();
-			Assert.IsFalse(subscriber.One); // Did change.
-			Assert.AreEqual(1, subscriber.Two); // Did not change.
+			Assert.That(subscriber.One, Is.False); // Did change.
+			Assert.That(subscriber.Two, Is.EqualTo(1)); // Did not change.
 
 			subscriber.One = true;
-			Assert.IsTrue(subscriber.One);
+			Assert.That(subscriber.One, Is.True);
 			subscriber.DoUnsubscriptions();
 			TestPublisher.PublishMessageOne();
-			Assert.IsTrue(subscriber.One); // Did not change.
-			Assert.AreEqual(1, subscriber.Two); // Did not change.
+			Assert.That(subscriber.One, Is.True); // Did not change.
+			Assert.That(subscriber.Two, Is.EqualTo(1)); // Did not change.
 		}
 
 		/// <summary>
@@ -155,19 +155,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			subscriber.DoSubscriptions();
 
 			// Run tests
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(1, subscriber.Two);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(1));
 
 			TestPublisher.PublishMessageTwo();
-			Assert.IsTrue(subscriber.One); // Did not change.
-			Assert.AreEqual(2, subscriber.Two); // Did change.
+			Assert.That(subscriber.One, Is.True); // Did not change.
+			Assert.That(subscriber.Two, Is.EqualTo(2)); // Did change.
 
 			subscriber.Two = 1;
-			Assert.AreEqual(1, subscriber.Two);
+			Assert.That(subscriber.Two, Is.EqualTo(1));
 			subscriber.DoUnsubscriptions();
 			TestPublisher.PublishMessageTwo();
-			Assert.IsTrue(subscriber.One); // Did not change.
-			Assert.AreEqual(1, subscriber.Two); // Did not change.
+			Assert.That(subscriber.One, Is.True); // Did not change.
+			Assert.That(subscriber.Two, Is.EqualTo(1)); // Did not change.
 		}
 
 		/// <summary>
@@ -189,20 +189,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			subscriber2.DoSubscriptions();
 
 			// Run tests
-			Assert.IsTrue(subscriber.One);
-			Assert.IsTrue(subscriber2.One);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber2.One, Is.True);
 
 			TestPublisher.PublishMessageOne();
-			Assert.IsFalse(subscriber.One); // Did change.
-			Assert.IsFalse(subscriber2.One); // Did change.
+			Assert.That(subscriber.One, Is.False); // Did change.
+			Assert.That(subscriber2.One, Is.False); // Did change.
 
 			subscriber.One = true;
 			subscriber2.One = true;
 			subscriber.DoUnsubscriptions();
 			subscriber2.DoUnsubscriptions();
 			TestPublisher.PublishMessageOne();
-			Assert.IsTrue(subscriber.One); // Did not change.
-			Assert.IsTrue(subscriber2.One); // Did not change.
+			Assert.That(subscriber.One, Is.True); // Did not change.
+			Assert.That(subscriber2.One, Is.True); // Did not change.
 		}
 
 		[Test]
@@ -245,24 +245,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			};
 			subscriber.DoSubscriptions();
 
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
 
 			// Confirm that nothing changed.
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			// SUT - Process the EndOfActionManager IdleQueue.
 			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 
-			Assert.AreEqual(EventConstants.RecordNavigation, subscriber.First);
-			Assert.IsFalse(subscriber.One);
-			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.EqualTo(EventConstants.RecordNavigation));
+			Assert.That(subscriber.One, Is.False);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MaxValue));
 			subscriber.DoUnsubscriptions();
 		}
 
@@ -281,24 +281,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			};
 			subscriber.DoSubscriptions();
 
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
 
 			// Confirm that nothing changed.
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			// SUT - Process the EndOfActionManager IdleQueue.
 			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 
-			Assert.AreEqual(EventConstants.RecordNavigation, subscriber.First);
-			Assert.IsFalse(subscriber.One);
-			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.EqualTo(EventConstants.RecordNavigation));
+			Assert.That(subscriber.One, Is.False);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MaxValue));
 			subscriber.DoUnsubscriptions();
 		}
 
@@ -317,23 +317,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			};
 			subscriber.DoSubscriptions();
 
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
 
 			// Confirm that nothing changed.
-			Assert.IsNull(subscriber.First);
-			Assert.IsTrue(subscriber.One);
-			Assert.AreEqual(int.MinValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.Null);
+			Assert.That(subscriber.One, Is.True);
+			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
 			// SUT - Process the EndOfActionManager IdleQueue.
 			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 
-			Assert.AreEqual(EventConstants.SelectionChanged, subscriber.First);
-			Assert.IsTrue(subscriber.One);	// Doesn't change.
-			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			Assert.That(subscriber.First, Is.EqualTo(EventConstants.SelectionChanged));
+			Assert.That(subscriber.One, Is.True);	// Doesn't change.
+			Assert.That(subscriber.Two, Is.EqualTo(int.MaxValue));
 			subscriber.DoUnsubscriptions();
 		}
 

@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt,
 			bool fAssocPrev, ITsTextProps selProps)
 		{
-			Assert.AreEqual(RootBox, rootb);
+			Assert.That(rootb, Is.EqualTo(RootBox));
 			Assert.That(RequestedSelectionAtEndOfUow, Is.Null);
 
 			RequestedSelectionAtEndOfUow = new SelectionHelper();

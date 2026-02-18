@@ -96,8 +96,7 @@ failure, see the Visual C++ documentation on asserts
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed", "bla.cpp", 583));
+				Assert.That(debugProcs.CallGetMessage("The expression that failed", "bla.cpp", 583), Is.EqualTo(expectedMsg));
 			}
 		}
 
@@ -126,9 +125,8 @@ failure, see the Visual C++ documentation on asserts
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/this/is/a/very/long/path/that/extends/beyond/sixty/characters/so/that/we/have/to/truncate.cpp", 583));
+				Assert.That(debugProcs.CallGetMessage("The expression that failed",
+					"/this/is/a/very/long/path/that/extends/beyond/sixty/characters/so/that/we/have/to/truncate.cpp", 583), Is.EqualTo(expectedMsg));
 			}
 		}
 
@@ -157,9 +155,8 @@ failure, see the Visual C++ documentation on asserts
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/path/with_a_very_long_filename_that_we_have_to_truncate_before_it_fits.cpp", 583));
+				Assert.That(debugProcs.CallGetMessage("The expression that failed",
+					"/path/with_a_very_long_filename_that_we_have_to_truncate_before_it_fits.cpp", 583), Is.EqualTo(expectedMsg));
 			}
 		}
 
@@ -188,9 +185,8 @@ failure, see the Visual C++ documentation on asserts
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
-				Assert.AreEqual(expectedMsg,
-					debugProcs.CallGetMessage("The expression that failed",
-					"/path/that/has/too/many/characters/in/it/with_long_filename.cpp", 123));
+				Assert.That(debugProcs.CallGetMessage("The expression that failed",
+					"/path/that/has/too/many/characters/in/it/with_long_filename.cpp", 123), Is.EqualTo(expectedMsg));
 			}
 		}
 	}

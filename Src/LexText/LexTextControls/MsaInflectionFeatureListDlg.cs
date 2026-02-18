@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ImageList m_imageListPictures;
 		protected FeatureStructureTreeView m_tvMsaFeatureList;
 		protected Label labelPrompt;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private const string m_helpTopic = "khtpChoose-lexiconEdit-InflFeats";
 		private HelpProvider helpProvider;

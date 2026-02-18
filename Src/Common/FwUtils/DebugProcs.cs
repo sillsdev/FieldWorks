@@ -37,10 +37,44 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public DebugProcs()
 		{
 #if DEBUG
-			m_DebugReport = DebugReportClass.Create();
-			m_DebugReport.SetSink(this);
+			try
+			{
+				m_DebugReport = TryCreateDebugReport();
+				m_DebugReport?.SetSink(this);
+			}
+			catch (COMException ex)
+			{
+				Debug.WriteLine($"DebugProcs: DebugReport COM activation failed ({ex.Message})");
+				m_DebugReport = null;
+			}
+			catch (InvalidCastException ex)
+			{
+				Debug.WriteLine($"DebugProcs: DebugReport COM activation returned unexpected type ({ex.Message})");
+				m_DebugReport = null;
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"DebugProcs: unexpected failure wiring DebugReport ({ex.Message})");
+				m_DebugReport = null;
+			}
 #endif
 		}
+
+#if DEBUG
+		private static IDebugReport TryCreateDebugReport()
+		{
+			if (!Platform.IsWindows)
+				return null;
+
+			// Reg-free COM activation: prefer CLSID over ProgID (ProgID would require registry).
+			var clsidDebugReport = new Guid("24636FD1-DB8D-4B2C-B4C0-44C2592CA482");
+			var comType = Type.GetTypeFromCLSID(clsidDebugReport, throwOnError: false);
+			if (comType == null)
+				return null;
+
+			return Activator.CreateInstance(comType) as IDebugReport;
+		}
+#endif
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never

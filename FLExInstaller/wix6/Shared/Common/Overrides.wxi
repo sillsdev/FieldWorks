@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<!-- the app's registry key (under HKLM) -->
+	<!--Property Id="REGISTRYKEY" Value="$(var.SafeManufacturer)\$(var.ApplicationName)\9W"/-->
+	<!-- the name of registry value containing the installation directory (APPFOLDER) -->
+	<!--Property Id="APPFOLDERREGSZNAME" Value="InstallationDir"/-->
+	<!-- the name of registry value containing the user data directory (APPFOLDER) -->
+	<!--Property Id="DATAFOLDERREGSZNAME" Value="DataDir"/-->
+	<!-- the name of registry value containing the harvested user data directory (if applicable) (APPFOLDER) -->
+	<!--Property Id="HARVESTDATAFOLDERREGSZNAME" Value="OtherDataDir"/-->
+	<!-- the folder in which the app is installed -->
+	<!--SetProperty Id="OVRAPPFOLDER" Value="[ProgramFilesFolder]\$(var.SafeManufacturer)\$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch"/-->
+	<!-- the folder in which the user's data will be kept (the user will be able to change this) -->
+	<!--SetProperty Id="OVRDATAFOLDER" Value="[PersonalFolder]\My$(var.SafeApplicationName)Files" Before="AppSearch"/-->
+	<!-- the folder in which the shipping (harvested) data will be installed (default is the same as the user-selected data directory) -->
+	<!--SetProperty Id="OVRHARVESTDATAFOLDER" Value="[LocalAppDataFolder]\$(var.SafeManufacturer)\$(var.SafeApplicationName)\$(var.VersionNumber)" Before="AppSearch"/-->
+
+	<!-- Install a merge module -->
+	<!--DirectoryRef Id='APPFOLDER'>
+		<Merge Id="ChorusMergeModule" Language="1033" SourceFile="..\..\..\lib\Release\ChorusMergeModule.msm" DiskId="1"/>
+	</DirectoryRef-->
+	<!-- Add a custom action
+		<CustomAction Id='LaunchFile' FileKey='FoobarEXE' ExeCommand='' Return='asyncNoWait' />
+	-->
+</Include>

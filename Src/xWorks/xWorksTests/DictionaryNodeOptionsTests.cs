@@ -29,16 +29,16 @@ namespace SIL.FieldWorks.XWorks
 			var genericClone = orig.DeepClone();
 
 			var clone = genericClone as DictionaryNodeSenseOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeSenseOptions");
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.BeforeNumber, clone.BeforeNumber);
-			Assert.AreEqual(orig.NumberingStyle, clone.NumberingStyle);
-			Assert.AreEqual(orig.AfterNumber, clone.AfterNumber);
-			Assert.AreEqual(orig.NumberStyle, clone.NumberStyle);
-			Assert.AreEqual(orig.NumberEvenASingleSense, clone.NumberEvenASingleSense);
-			Assert.AreEqual(orig.ShowSharedGrammarInfoFirst, clone.ShowSharedGrammarInfoFirst);
-			Assert.AreEqual(orig.DisplayEachSenseInAParagraph, clone.DisplayEachSenseInAParagraph);
-			Assert.AreEqual(orig.DisplayFirstSenseInline, clone.DisplayFirstSenseInline);
+			Assert.That(clone, Is.Not.Null, "Incorrect subclass returned; expected DictionaryNodeSenseOptions");
+			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
+			Assert.That(clone.BeforeNumber, Is.EqualTo(orig.BeforeNumber));
+			Assert.That(clone.NumberingStyle, Is.EqualTo(orig.NumberingStyle));
+			Assert.That(clone.AfterNumber, Is.EqualTo(orig.AfterNumber));
+			Assert.That(clone.NumberStyle, Is.EqualTo(orig.NumberStyle));
+			Assert.That(clone.NumberEvenASingleSense, Is.EqualTo(orig.NumberEvenASingleSense));
+			Assert.That(clone.ShowSharedGrammarInfoFirst, Is.EqualTo(orig.ShowSharedGrammarInfoFirst));
+			Assert.That(clone.DisplayEachSenseInAParagraph, Is.EqualTo(orig.DisplayEachSenseInAParagraph));
+			Assert.That(clone.DisplayFirstSenseInline, Is.EqualTo(orig.DisplayFirstSenseInline));
 		}
 
 		[Test]
@@ -59,10 +59,10 @@ namespace SIL.FieldWorks.XWorks
 			var genericClone = orig.DeepClone();
 
 			var clone = genericClone as DictionaryNodeListOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeListOptions");
-			Assert.Null(clone as DictionaryNodeListAndParaOptions, "Incorrect subclass returned; did not expect DictionaryNodeListAndParaOptions");
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.ListId, clone.ListId);
+			Assert.That(clone, Is.Not.Null, "Incorrect subclass returned; expected DictionaryNodeListOptions");
+			Assert.That(clone as DictionaryNodeListAndParaOptions, Is.Null, "Incorrect subclass returned; did not expect DictionaryNodeListAndParaOptions");
+			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
+			Assert.That(clone.ListId, Is.EqualTo(orig.ListId));
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
@@ -85,10 +85,10 @@ namespace SIL.FieldWorks.XWorks
 			var genericClone = orig.DeepClone();
 
 			var clone = genericClone as DictionaryNodeListAndParaOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeListAndParaOptions");
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.ListId, clone.ListId);
-			Assert.AreEqual(orig.DisplayEachInAParagraph, clone.DisplayEachInAParagraph);
+			Assert.That(clone, Is.Not.Null, "Incorrect subclass returned; expected DictionaryNodeListAndParaOptions");
+			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
+			Assert.That(clone.ListId, Is.EqualTo(orig.ListId));
+			Assert.That(clone.DisplayEachInAParagraph, Is.EqualTo(orig.DisplayEachInAParagraph));
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
@@ -111,23 +111,23 @@ namespace SIL.FieldWorks.XWorks
 			var genericClone = orig.DeepClone();
 
 			var clone = genericClone as DictionaryNodeWritingSystemOptions;
-			Assert.NotNull(clone, "Incorrect subclass returned; expected DictionaryNodeWritingSystemOptions");
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.WsType, clone.WsType);
-			Assert.AreEqual(orig.DisplayWritingSystemAbbreviations, clone.DisplayWritingSystemAbbreviations);
+			Assert.That(clone, Is.Not.Null, "Incorrect subclass returned; expected DictionaryNodeWritingSystemOptions");
+			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
+			Assert.That(clone.WsType, Is.EqualTo(orig.WsType));
+			Assert.That(clone.DisplayWritingSystemAbbreviations, Is.EqualTo(orig.DisplayWritingSystemAbbreviations));
 			AssertListWasDeepCloned(orig.Options, clone.Options);
 		}
 
 		internal static void AssertListWasDeepCloned(List<DictionaryNodeListOptions.DictionaryNodeOption> orig,
 			List<DictionaryNodeListOptions.DictionaryNodeOption> clone)
 		{
-			Assert.AreNotSame(orig, clone, "Not deep cloned; shallow cloned");
-			Assert.AreEqual(orig.Count, clone.Count);
+			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
+			Assert.That(clone.Count, Is.EqualTo(orig.Count));
 			for (int i = 0; i < orig.Count; i++)
 			{
-				Assert.AreNotSame(orig[i], clone[i], "Not deep cloned; shallow cloned");
-				Assert.AreEqual(orig[i].Id, clone[i].Id);
-				Assert.AreEqual(orig[i].IsEnabled, clone[i].IsEnabled);
+				Assert.That(clone[i], Is.Not.SameAs(orig[i]), "Not deep cloned; shallow cloned");
+				Assert.That(clone[i].Id, Is.EqualTo(orig[i].Id));
+				Assert.That(clone[i].IsEnabled, Is.EqualTo(orig[i].IsEnabled));
 			}
 		}
 	}

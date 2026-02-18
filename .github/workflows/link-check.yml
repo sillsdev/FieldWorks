@@ -1,0 +1,23 @@
+name: Link check (docs)
+
+on:
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    lychee:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Link check with lychee (non-blocking)
+              uses: lycheeverse/lychee-action@v1
+              with:
+                  # Limit concurrency and accept 429 (rate-limited) as non-fatal
+                  args: >-
+                      --verbose --no-progress --exclude-mail
+                      --max-concurrency 3 --accept 200,429,0
+                      .
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              continue-on-error: true

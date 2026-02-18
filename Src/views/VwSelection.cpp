@@ -15,6 +15,7 @@ Description:
 //:>	Include files
 //:>********************************************************************************************
 #include "Main.h"
+#include "TsTextProps.h"
 #pragma hdrstop
 // any other headers (not precompiled)
 
@@ -4455,7 +4456,7 @@ public:
 			if (qttp)
 				qttp->GetBldr(&qtpb);
 			else
-				qtpb.CreateInstance(CLSID_TsPropsBldr);
+				TsPropsBldr::CreateCom(NULL, IID_ITsPropsBldr, (void**)&qtpb);
 			CheckHr(qtpb->SetIntPropValues(ktptWs, ktpvDefault, ws));
 			CheckHr(qtpb->GetTextProps(&qttp));
 		}
@@ -6562,7 +6563,7 @@ protected:
 		CheckHr(qwsf->get_UserWs(&wsUser));
 		ITsTextPropsPtr qttpTmp;
 		ITsPropsBldrPtr qtpb;
-		qtpb.CreateInstance(CLSID_TsPropsBldr);
+		TsPropsBldr::CreateCom(NULL, IID_ITsPropsBldr, (void**)&qtpb);
 		CheckHr(qtpb->SetIntPropValues(ktptWs, ktpvDefault, wsUser));
 		CheckHr(qtpb->GetTextProps(&qttpTmp));
 
@@ -13092,7 +13093,7 @@ void VwTextSelection::GetHardAndSoftPropsOneRun(ITsTextProps * pttp,
 	int ws, nVar;
 	CheckHr(pttp->GetIntPropValues(ktptWs, &nVar, &ws));
 	ITsPropsBldrPtr qtpb;
-	qtpb.CreateInstance(CLSID_TsPropsBldr);
+	TsPropsBldr::CreateCom(NULL, IID_ITsPropsBldr, (void**)&qtpb);
 	CheckHr(qtpb->SetIntPropValues(ktptWs, nVar, ws));
 	CheckHr(qtpb->GetTextProps(&qttpTmp));
 	IVwPropertyStorePtr qvpsTmp;
@@ -13165,14 +13166,14 @@ STDMETHODIMP VwTextSelection::GetHardAndSoftParaProps(int cttpMax, ITsTextProps 
 		if (prgpttpPara[ittp])
 			CheckHr(prgpttpPara[ittp]->GetBldr(&qtpbHard));
 		else
-			qtpbHard.CreateInstance(CLSID_TsPropsBldr);
+			TsPropsBldr::CreateCom(NULL, IID_ITsPropsBldr, (void**)&qtpbHard);
 		SmartBstr sbstrEmpty;
 		CheckHr(qtpbHard->SetStrPropValue(ktptNamedStyle, sbstrEmpty));
 		CheckHr(qtpbHard->GetTextProps(prgpttpHard + ittp));
 
 		// Apply the named style to the parent, which gives the soft formatting.
 		ITsPropsBldrPtr qtpbStyle;
-		qtpbStyle.CreateInstance(CLSID_TsPropsBldr);
+		TsPropsBldr::CreateCom(NULL, IID_ITsPropsBldr, (void**)&qtpbStyle);
 		if (prgpttpPara[ittp])
 		{
 			SmartBstr sbstrStyleName;

@@ -32,27 +32,27 @@ namespace FwBuildTasks
 		public void ProperlyImplementedIDisposable_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(ProperlyImplementedIDisposable));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.LessOrEqual(_tbi.Messages.Count, 1, string.Join(Environment.NewLine, _tbi.Messages));
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages.Count, Is.LessThanOrEqualTo(1), string.Join(Environment.NewLine, _tbi.Messages));
 		}
 
 		[Test]
 		public void ProperlyImplementedIFWDisposable_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(ProperlyImplementedIFWDisposable));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.LessOrEqual(_tbi.Messages.Count, 1, string.Join(Environment.NewLine, _tbi.Messages));
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages.Count, Is.LessThanOrEqualTo(1), string.Join(Environment.NewLine, _tbi.Messages));
 		}
 
 		[Test]
 		public void ProperlyImplementedWindowsForm_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(ProperlyImplementedWindowsForm));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.LessOrEqual(_tbi.Messages.Count, 1, string.Join(Environment.NewLine, _tbi.Messages));
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages.Count, Is.LessThanOrEqualTo(1), string.Join(Environment.NewLine, _tbi.Messages));
 		}
 
 		[Test]
@@ -60,8 +60,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(NoProtectedDisposeBool);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -69,8 +69,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(WindowsFormWithoutDisposeBool);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -78,8 +78,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(WindowsFormWithoutBaseDispose);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -87,10 +87,10 @@ namespace FwBuildTasks
 		{
 			var type = typeof(DisposeBoolDoesNotWriteWarning);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
 			var error = _tbi.Errors[0];
-			StringAssert.Contains(type.FullName, error);
-			StringAssert.Contains("Missing Dispose() call", error);
+			Assert.That(error, Does.Contain(type.FullName));
+			Assert.That(error, Does.Contain("Missing Dispose() call"));
 		}
 
 		[Test]
@@ -98,8 +98,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(NoFinalizer);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -107,8 +107,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(FinalizerDoesntCallDispose);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -116,37 +116,37 @@ namespace FwBuildTasks
 		{
 			var type = typeof(FinalizerCallsDisposeTrue);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
 		public void NonDisposable_LogsNeitherErrorsNorWarnings() {
 			_task.InspectType(typeof(NonDisposable));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
 		public void ILReader_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(ILReader));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
 		public void IEnumeratorT_LogsNoErrors()
 		{
 			_task.InspectType(typeof(ImplIEnumerator<>));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsNotEmpty(_tbi.Warnings, "Have you checked IEnumerator<T>'s more rigorously? Please update this test.");
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Not.Empty, "Have you checked IEnumerator<T>'s more rigorously? Please update this test.");
 			_tbi.Warnings.Clear();
 			_task.InspectType(typeof(ImplIEnumerator<Type>));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsNotEmpty(_tbi.Warnings, "Have you checked IEnumerator<T>'s more rigorously? Please update this test.");
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Not.Empty, "Have you checked IEnumerator<T>'s more rigorously? Please update this test.");
 		}
 
 		[Test]
@@ -154,26 +154,26 @@ namespace FwBuildTasks
 		{
 			_task.InspectType(Assembly.GetAssembly(typeof(ILReader)).DefinedTypes.First(
 				t => t.FullName == "FwBuildTasks.ILReader+<GetEnumerator>d__6"));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
 		public void ImplIEnumerator_LogsOnlyWarnings()
 		{
 			_task.InspectType(Assembly.GetAssembly(typeof(ImplIEnumerator<Type>)).DefinedTypes.First(t => t.Name == "ImplIEnumerator`1"));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsNotEmpty(_tbi.Warnings);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Not.Empty);
 		}
 
 		[Test]
 		public void NotDisposable_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(NotDisposable));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
@@ -181,26 +181,26 @@ namespace FwBuildTasks
 		{
 			var type = typeof(StaticDispose);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
 		public void Derived_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(Derived));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
 		public void DerivedWithoutMethod_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(DerivedWithoutMethod));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
@@ -208,17 +208,17 @@ namespace FwBuildTasks
 		{
 			var type = typeof(DerivedWithoutBaseCall);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
 		public void DerivedDerived_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(DerivedDerived));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
@@ -226,8 +226,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(DerivedControlWithoutMessage);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -235,8 +235,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(OtherDerivedControlWithoutMethod);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -244,17 +244,17 @@ namespace FwBuildTasks
 		{
 			var type = typeof(OtherDerivedControlWithoutBaseCall);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
 		public void Empty_LogsNeitherErrorsNorWarnings()
 		{
 			_task.InspectType(typeof(Empty));
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		[Test]
@@ -262,8 +262,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(DisposableWithoutMessageDerivedFromEmpty);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -271,8 +271,8 @@ namespace FwBuildTasks
 		{
 			var type = typeof(NoBody);
 			_task.InspectType(type);
-			Assert.IsNotEmpty(_tbi.Errors, "abstract classes are not excused from implementing our boilerplate Disposable requirements");
-			StringAssert.Contains(type.FullName, _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty, "abstract classes are not excused from implementing our boilerplate Disposable requirements");
+			Assert.That(_tbi.Errors[0], Does.Contain(type.FullName));
 		}
 
 		[Test]
@@ -280,9 +280,9 @@ namespace FwBuildTasks
 		{
 			var type = typeof(DerivedFromBadImpl);
 			_task.InspectType(type);
-			Assert.IsEmpty(_tbi.Errors, "Derived classes should not be reprimanded for their base classes' errors. The base classes should be fixed");
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty, "Derived classes should not be reprimanded for their base classes' errors. The base classes should be fixed");
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 		}
 
 		#region test types

@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 		private Button m_BackBtn;
 		private Button m_ForwardBtn;
 		private ToolTip toolTip1;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private const string m_skExtensionUri = "urn:xsltExtension-DateTime";
 

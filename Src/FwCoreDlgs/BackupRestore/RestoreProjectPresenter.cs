@@ -24,7 +24,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#region Data members
 		private readonly RestoreProjectDlg m_restoreProjectView;
 		private readonly string m_defaultProjectName;
+#pragma warning disable CS0649 // Field is never assigned to - used by NewProjectNameAlreadyExists property, assignment may be planned for future use
 		private bool m_newProjectNameAlreadyExists;
+#pragma warning restore CS0649
 		private readonly BackupFileRepository m_backupFiles;
 		private bool m_fEmptyProjectName;
 		#endregion

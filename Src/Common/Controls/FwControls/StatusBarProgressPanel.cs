@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_drawPosition;
 
 		private System.Windows.Forms.Timer timer1;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		#endregion
 
 		#region Construction / Destruction

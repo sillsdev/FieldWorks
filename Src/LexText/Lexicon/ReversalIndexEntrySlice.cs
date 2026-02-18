@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			#region Data members
 
-			private IContainer components;
+			private IContainer components = null;
 			protected int m_dummyId;
 			/// <summary>
 			/// A decorated ISilDataAccess for use with the Views code.

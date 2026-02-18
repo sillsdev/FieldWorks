@@ -24,6 +24,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private StringTable m_parent;
 		private XmlDocument m_document;
 		private string m_sWsLoaded;
+
+		/// <summary>
+		/// Return an XPath 1.0 string literal for <paramref name="value"/>,
+		/// properly quoted so it is safe to embed in a predicate expression.
+		/// </summary>
+		/// <remarks>
+		/// TEMPORARY DUPLICATION: This is a copy of <c>SIL.Utils.XmlUtils.MakeSafeXPathLiteral</c>
+		/// (in XMLUtils.csproj). It cannot be referenced directly because XMLUtils.csproj depends
+		/// on FwUtils.csproj, which would create a circular dependency. The NuGet SIL.Core package
+		/// (which provides <c>SIL.Xml.XmlUtils</c>) does not yet include this method.
+		///
+		/// TODO: Upstream MakeSafeXPathLiteral into SIL.Core's SIL.Xml.XmlUtils, then delete this copy.
+		///
+		/// Why MakeSafeXml / MakeSafeXmlAttribute are NOT sufficient for XPath:
+		/// - <c>MakeSafeXml</c> escapes &amp;, &lt;, &gt; but does NOT wrap in quotes.
+		///   XPath requires string literals to be quoted; <c>[@id=entries]</c> treats "entries"
+		///   as a node name, not a string value.
+		/// - <c>MakeSafeXmlAttribute</c> adds &amp;quot; / &amp;apos; escaping, but XPath 1.0
+		///   does NOT understand XML entities — <c>&amp;apos;</c> is literal text, not a quote.
+		/// - This method wraps values in the correct XPath quote style (<c>'...'</c>, <c>"..."</c>,
+		///   or <c>concat()</c> for values containing both).
+		/// </remarks>
+		private static string MakeSafeXPathLiteral(string value)
+		{
+			if (value == null)
+				return "''";
+			if (!value.Contains("'"))
+				return "'" + value + "'";
+			if (!value.Contains("\""))
+				return "\"" + value + "\"";
+			// Contains both: use concat()
+			var parts = value.Split('\'');
+			return "concat('" + string.Join("','\"'\"','", parts) + "')";
+		}
+
 		/// <summary>
 		/// This table is keyed by the groupXPathFragment passed to GetStringWithXPath.
 		/// The value is another Dictioanry, from the id string to the string value we want.
@@ -119,7 +154,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 			}
-			catch (FileNotFoundException ex)
+			catch (FileNotFoundException)
 			{
 				throw;
 			}
@@ -166,7 +201,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (XmlNode customGroupNode in customGroupNodeList)
 			{
 				string customGroupId = XmlUtils.GetMandatoryAttributeValue(customGroupNode, "id");
-				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id='" + customGroupId + "']");
+				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id=" + MakeSafeXPathLiteral(customGroupId) + "]");
 				if (srcMatchingGroupNode == null)
 				{
 					// Import the entire custom node.
@@ -180,7 +215,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						var customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
 						var customTxt = GetTxtAtributeValue(customStringNode);
 						// escape customId for use in XPath query, in case it contains characters that are not valid in XPath queries.
-						var srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id='" + XmlUtils.MakeSafeXml(customId) + "']");
+						var srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id=" + MakeSafeXPathLiteral(customId) + "]");
 						if (srcMatchingStringNode == null)
 						{
 							// Import the new string into the extant group.
@@ -346,7 +381,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string GetStringWithXPath(string id, string groupXPathFragment)
 		{
 			id = id.Trim();
-			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id='" + id + "']");
+			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id=" + MakeSafeXPathLiteral(id) + "]");
 			if (node == null)
 			{
 				if (m_parent != null)
@@ -423,7 +458,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string[] names = simplePath.Split('/');
 			foreach(string name in names)
 			{
-				path += "group[@id = '" + name.Trim() + "']/";
+				path += "group[@id = " + MakeSafeXPathLiteral(name.Trim()) + "]/";
 			}
 			return path;
 		}

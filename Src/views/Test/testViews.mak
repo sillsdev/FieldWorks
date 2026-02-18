@@ -21,7 +21,7 @@ GR2_INC=$(BUILD_ROOT)\Lib\src\graphite2\include
 DEBUGPROCS_SRC=$(BUILD_ROOT)\src\DebugProcs
 
 # Set the USER_INCLUDE environment variable.
-UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GR2_INC);$(DEBUGPROCS_SRC)
+UI=$(UNITPP_INC);$(VIEWSTEST_SRC);$(VIEWS_SRC);$(VIEWS_LIB_SRC);$(GENERIC_SRC);$(APPCORE_SRC);$(GR2_INC);$(DEBUGPROCS_SRC);$(BUILD_ROOT)\Lib\src\xmlparse
 
 !IF "$(USER_INCLUDE)"!=""
 USER_INCLUDE=$(UI);$(USER_INCLUDE)
@@ -38,7 +38,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib graphite2.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib Usp10.lib graphite2.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -46,6 +46,9 @@ OBJ_VIEWSTESTSUITE=\
 	$(INT_DIR)\genpch\testViews.obj\
 	$(INT_DIR)\genpch\Collection.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
+	$(INT_DIR)\autopch\xmlparse.obj\
+	$(INT_DIR)\autopch\xmlrole.obj\
+	$(INT_DIR)\autopch\xmltok.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwAccessRoot.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwOverlay.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwPropertyStore.obj\
@@ -104,6 +107,13 @@ ARG_SRCDIR=$(VIEWS_LIB_SRC)
 
 ARG_SRCDIR=$(GENERIC_SRC)
 !INCLUDE "$(BUILD_ROOT)\bld\_rule.mak"
+
+# Build expat (xmlparse) sources directly to avoid missing xmlparse.lib in Debug
+SAVE_CL_OPTS=$(CL_OPTS)
+CL_OPTS=$(CL_OPTS:/WX=) /TC /wd4100 /wd4127 /wd4244 /wd4431
+ARG_SRCDIR=$(BUILD_ROOT)\Lib\src\xmlparse
+!INCLUDE "$(BUILD_ROOT)\bld\_rule.mak"
+CL_OPTS=$(SAVE_CL_OPTS)
 
 # === Custom Rules ===
 

@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ContextMenuStrip m_cmnuAddWs;
 		private ToolStripMenuItem menuItem2;
 		private TextBox txtExtLnkEdit;
-		private IContainer components;
+		private IContainer components = null;
 		/// <summary>A change in writing systems has been made that may affect
 		/// current displays.</summary>
 		protected bool m_fWsChanged;

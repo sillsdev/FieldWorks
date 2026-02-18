@@ -32,7 +32,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		ICmObject m_obj;		// item clicked
 		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
 		IMoInflAffixTemplate m_template;
-		IMoInflAffixSlot m_newSlot;
 		int m_flid;
 		int m_ihvo;
 		string m_sStem;

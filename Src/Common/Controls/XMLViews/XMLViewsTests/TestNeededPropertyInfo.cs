@@ -22,27 +22,27 @@ namespace XMLViewsTests
 			NeededPropertyInfo info1 = new NeededPropertyInfo(1);
 			NeededPropertyInfo info2 = info1.AddObjField(2, true);
 			NeededPropertyInfo info2b = info1.AddObjField(2, true);
-			Assert.AreSame(info2, info2b); // did't make a duplicate
+			Assert.That(info2b, Is.SameAs(info2)); // did't make a duplicate
 
 			NeededPropertyInfo info3 = info1.AddObjField(3, true);
 			info2b = info1.AddObjField(2, true);
-			Assert.AreSame(info2, info2b); // can still find (2)
+			Assert.That(info2b, Is.SameAs(info2)); // can still find (2)
 
 			NeededPropertyInfo info3b = info1.AddObjField(3, true);
-			Assert.AreSame(info3, info3b); // also rediscovers ones that aren't first
+			Assert.That(info3b, Is.SameAs(info3)); // also rediscovers ones that aren't first
 
 			NeededPropertyInfo info4 = info1.AddObjField(4, true);
 			info2b = info1.AddObjField(2, true);
-			Assert.AreSame(info2, info2b); // can still find (2) with 3 items
+			Assert.That(info2b, Is.SameAs(info2)); // can still find (2) with 3 items
 			info3b = info1.AddObjField(3, true);
-			Assert.AreSame(info3, info3b); // can rediscover mid-seq
+			Assert.That(info3b, Is.SameAs(info3)); // can rediscover mid-seq
 			NeededPropertyInfo info4b = info1.AddObjField(4, true);
-			Assert.AreSame(info4, info4b); // also rediscovers ones that aren't first
+			Assert.That(info4b, Is.SameAs(info4)); // also rediscovers ones that aren't first
 
 			// Now recursive
 			NeededPropertyInfo info5 = info2.AddObjField(5, true);
 			NeededPropertyInfo info5b = info1.AddObjField(2, true).AddObjField(5, true);
-			Assert.AreSame(info5, info5b); // recursive works too.
+			Assert.That(info5b, Is.SameAs(info5)); // recursive works too.
 		}
 	}
 }

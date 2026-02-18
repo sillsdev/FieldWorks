@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Language Explorer")]
+// [assembly: AssemblyTitle("Language Explorer")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("LexTextDllTests")]

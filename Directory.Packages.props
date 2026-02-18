@@ -1,0 +1,156 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<!--
+			Transitive Pinning: When a package is declared here but only consumed
+			transitively (not directly referenced by a project), NuGet still pins it
+			to the version below. This prevents the "last writer wins" problem in our
+			shared Output/ directory, which is the root cause of assembly-version
+			mismatch crashes like System.Drawing.Common 9.0 vs 6.0 (LT-22382 class).
+		-->
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+	</PropertyGroup>
+
+	<!-- SIL ecosystem version properties: single source of truth in Build/SilVersions.props -->
+	<Import Project="Build/SilVersions.props" />
+
+	<!--
+		=============================================================
+		TRANSITIVE PINS
+		Packages not directly referenced by any project, but whose
+		transitive versions must be forced to a single value across
+		all projects sharing Output/{Configuration}/.
+		=============================================================
+	-->
+	<ItemGroup Label="Transitive Pins">
+		<!-- System.Drawing.Common: SIL.LCModel.Core pulls 6.0.0 transitively,
+		     but ParatextData 9.5.x requires >= 9.0.9. Pin to 9.0.9. -->
+		<PackageVersion Include="System.Drawing.Common" Version="9.0.9" />
+		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
+		     in .NET Framework SDK-style projects. -->
+		<PackageVersion Include="System.Resources.Extensions" Version="9.0.0" />
+		<!-- DependencyModel: icu.net wants 2.0.4, ParatextData wants 9.0.9.
+		     9.0.9 is backward compatible with 2.0.4 API surface. -->
+		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
+		<!-- System.Memory: ParatextData requires 4.6.3; other packages want 4.5.0–4.6.0. -->
+		<PackageVersion Include="System.Memory" Version="4.6.3" />
+		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions 9.0.0 requires HashCode. -->
+		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
+		     System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.9. -->
+		<PackageVersion Include="System.Security.Permissions" Version="9.0.9" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		SIL LCModel Ecosystem
+		=============================================================
+	-->
+	<ItemGroup Label="SIL LCModel Ecosystem">
+		<PackageVersion Include="SIL.LCModel" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Core.Tests" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.FixData" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Tests" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Utils" Version="$(SilLcmVersion)" />
+		<PackageVersion Include="SIL.LCModel.Utils.Tests" Version="$(SilLcmVersion)" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		SIL LibPalaso Ecosystem
+		=============================================================
+	-->
+	<ItemGroup Label="SIL LibPalaso Ecosystem">
+		<PackageVersion Include="SIL.Core" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Core.Desktop" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Archiving" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Lexicon" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Lift" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Media" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Scripture" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.TestUtilities" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.Archiving" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.Keyboarding" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.Windows.Forms.WritingSystems" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.WritingSystems" Version="$(SilLibPalasoVersion)" />
+		<!-- Pinned version used by FwCoreDlgsTests only -->
+		<PackageVersion Include="SIL.WritingSystems.Tests" Version="15.0.0-beta0117" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		SIL Localization (ExcludeAssets=all; consumed by Build/Localize.targets)
+		=============================================================
+	-->
+	<ItemGroup Label="SIL Localization">
+		<PackageVersion Include="L10NSharp" Version="9.0.0" />
+		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
+		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		SIL Tools
+		=============================================================
+	-->
+	<ItemGroup Label="SIL Tools">
+		<PackageVersion Include="SIL.Chorus.App" Version="$(SilChorusVersion)" />
+		<PackageVersion Include="SIL.Chorus.LibChorus" Version="$(SilChorusVersion)" />
+		<PackageVersion Include="SIL.DesktopAnalytics" Version="4.0.0" />
+		<PackageVersion Include="SIL.ExCSS" Version="2.0.2" />
+		<PackageVersion Include="SIL.FLExBridge.IPCFramework" Version="$(SilIPCFrameworkVersion)" />
+		<PackageVersion Include="SIL.IdlImporter" Version="4.0.0-beta0052" />
+		<PackageVersion Include="SIL.Machine" Version="$(SilMachineVersion)" />
+		<PackageVersion Include="SIL.Machine.Morphology.HermitCrab" Version="$(SilMachineVersion)" />
+		<PackageVersion Include="SIL.Paradigm.GAFAWSAnalysis" Version="1.0.2" />
+		<PackageVersion Include="SIL.ParatextShared" Version="7.4.0.1" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		Third-Party Runtime
+		=============================================================
+	-->
+	<ItemGroup Label="Third-Party Runtime">
+		<PackageVersion Include="AdamsLair.TreeViewAdv" Version="1.7.7" />
+		<PackageVersion Include="CommandLineArgumentsParser" Version="3.0.22" />
+		<PackageVersion Include="CommonServiceLocator" Version="2.0.7" />
+		<PackageVersion Include="CsvHelper" Version="33.1.0" />
+		<PackageVersion Include="DialogAdapters" Version="0.1.11" />
+		<PackageVersion Include="DocumentFormat.OpenXml" Version="2.20.0" />
+		<PackageVersion Include="encoding-converters-core" Version="0.9.7" />
+		<PackageVersion Include="Geckofx60.64" Version="60.0.56" />
+		<PackageVersion Include="Geckofx60.64.Windows" Version="0.19.0" />
+		<PackageVersion Include="ibusdotnet" Version="2.0.3" />
+		<PackageVersion Include="icu.net" Version="3.0.1" />
+		<PackageVersion Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
+		<PackageVersion Include="mixpanel-csharp" Version="6.0.0" />
+		<PackageVersion Include="NAudio" Version="1.10.0" />
+		<PackageVersion Include="NAudio.Lame" Version="1.1.5" />
+		<PackageVersion Include="NDesk.DBus" Version="0.15.0" />
+		<PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageVersion Include="ParatextData" Version="9.5.0.20" />
+		<PackageVersion Include="ProDotNetZip" Version="1.20.0" />
+		<PackageVersion Include="SharpZipLib" Version="1.4.2" />
+		<PackageVersion Include="System.Net.Http" Version="4.3.4" />
+		<PackageVersion Include="System.ValueTuple" Version="4.6.1" />
+		<PackageVersion Include="TagLibSharp" Version="2.3.0" />
+		<PackageVersion Include="WeifenLuo.WinFormsUI.Docking" Version="2.1.0" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		Test Infrastructure
+		=============================================================
+	-->
+	<ItemGroup Label="Test Infrastructure">
+		<PackageVersion Include="Moq" Version="4.20.70" />
+		<PackageVersion Include="NUnit" Version="3.13.3" />
+		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageVersion Include="NUnitForms" Version="1.3.1" />
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+	</ItemGroup>
+</Project>

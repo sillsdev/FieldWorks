@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (item.Length > 0 && (item[0] is string) && name == (string)(item[0]))
 				{
-					Assert.AreEqual(cargs, item.Length - 1, name + " event should have " + cargs + " arguments");
+					Assert.That(item.Length - 1, Is.EqualTo(cargs), name + " event should have " + cargs + " arguments");
 					return item;
 				}
 			}
@@ -171,14 +171,14 @@ namespace SIL.FieldWorks.Discourse
 		{
 			//m_events.Add(new object[] { "merge cell contents", srcCell, dstCell, forward });
 			object[] event1 = VerifyEventExists("merge cell contents", 3);
-			Assert.IsTrue(srcCell.IsSameLocation(event1[1]));
-			Assert.IsTrue(dstCell.IsSameLocation(event1[2]));
-			Assert.AreEqual(forward, event1[3]);
+			Assert.That(srcCell.IsSameLocation(event1[1]), Is.True);
+			Assert.That(dstCell.IsSameLocation(event1[2]), Is.True);
+			Assert.That(event1[3], Is.EqualTo(forward));
 		}
 
 		internal void VerifyEventCount(int count)
 		{
-			Assert.AreEqual(count, m_events.Count, "Wrong number of events logged");
+			Assert.That(m_events.Count, Is.EqualTo(count), "Wrong number of events logged");
 		}
 
 		#endregion

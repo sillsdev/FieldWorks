@@ -5,8 +5,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FieldWorks Core Dialogs")]
+// [assembly: AssemblyTitle("FieldWorks Core Dialogs")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: Guid("329E5A7A-1135-4adc-9D39-06EE87A1F7DD")]	// Type library guid.
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgsTests")]

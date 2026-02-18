@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.IText
 			m_sttNoExplicitWs = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			Cache.ServiceLocator.GetInstance<ITextFactory>().Create().ContentsOA = m_sttNoExplicitWs;
 			m_sttNoExplicitWs.AddNewTextPara(null);
-			Assert.AreEqual(m_wsEn.Handle, m_sttNoExplicitWs.MainWritingSystem, "Our code counts on English being the defualt WS for very empty texts");
+			Assert.That(m_sttNoExplicitWs.MainWritingSystem, Is.EqualTo(m_wsEn.Handle), "Our code counts on English being the defualt WS for very empty texts");
 
 			// set up an StText with an empty paragraph with an empty TsString in a non-default vernacular
 			m_sttEmptyButWithWs = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.IText
 				interlinMaster.TestShowRecord(); // SUT
 			}
 			Assert.That(m_sttNoExplicitWs.IsEmpty, "Our text should still be empty");
-			Assert.AreEqual(m_wsDefaultVern.Handle, m_sttNoExplicitWs.MainWritingSystem, "The WS for the text should now be the default vernacular");
+			Assert.That(m_sttNoExplicitWs.MainWritingSystem, Is.EqualTo(m_wsDefaultVern.Handle), "The WS for the text should now be the default vernacular");
 		}
 
 		[Test]
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.IText
 				interlinMaster.TestShowRecord(); // SUT
 			}
 			Assert.That(m_sttEmptyButWithWs.IsEmpty, "Our text should still be empty");
-			Assert.AreEqual(m_wsOtherVern.Handle, m_sttEmptyButWithWs.MainWritingSystem, "The WS for the text should still be the other vernacular");
+			Assert.That(m_sttEmptyButWithWs.MainWritingSystem, Is.EqualTo(m_wsOtherVern.Handle), "The WS for the text should still be the other vernacular");
 		}
 
 		#region Test Classes
@@ -165,8 +165,8 @@ namespace SIL.FieldWorks.IText
 			protected override void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, String.Format(
-					"****** Missing Dispose call for a {0} whose current StText's WS is {1}. ******",
-					GetType().Name, Cache.ServiceLocator.WritingSystemManager.Get(m_stText.MainWritingSystem).Id));
+					"****** Missing Dispose call for a {0}. ******",
+					GetType().Name));
 				base.Dispose(disposing);
 			}
 

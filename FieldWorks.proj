@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.Build.Traversal/4.1.0">
+  <!--
+    FieldWorks Traversal Build Project
+
+    This file defines the traversal project set for FieldWorks using
+    Microsoft.Build.Traversal. Build order is dependency-driven.
+
+    Usage:
+      dotnet build FieldWorks.proj
+      msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64
+  -->
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <!-- Suppress warnings about missing projects during restore -->
+    <ReportAnalyzer>false</ReportAnalyzer>
+  </PropertyGroup>
+
+  <!-- FwBuildTasks is excluded; build.ps1 bootstraps it separately to avoid locking/cycles. -->
+  <ItemGroup>
+    <ProjectReference Include="Build\Src\NativeBuild\NativeBuild.csproj;Src\**\*.csproj;Lib\src\**\*.csproj"
+                      Exclude="Src\**\*Tests.csproj;Lib\src\**\*Tests.csproj" />
+    <ProjectReference Include="Src\**\*Tests.csproj;Lib\src\**\*Tests.csproj"
+                      Condition="'$(BuildTests)'=='true'"
+                      Exclude="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" />
+  </ItemGroup>
+
+  <!-- Traversal-native aggregates for managed builds -->
+  <Target Name="AllManaged" DependsOnTargets="Build">
+    <!-- Build target already executes traversal order with BuildTests default (false) -->
+  </Target>
+
+  <Target Name="AllManagedWithTests">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)"
+             Targets="Build"
+             Properties="Configuration=$(Configuration);Platform=$(Platform);BuildTests=true" />
+  </Target>
+
+  <Target Name="allCsharp" DependsOnTargets="AllManagedWithTests" />
+
+  <Target Name="allCsharpNoTests" DependsOnTargets="AllManaged" />
+
+  <!-- Import shared build properties if they exist -->
+  <!-- <Import Project="Directory.Build.props" Condition="Exists('Directory.Build.props')" /> -->
+
+  <!-- Enforce NativeBuild completion before traversal starts for codegen prerequisites. -->
+  <Target Name="BuildNativeFirst" BeforeTargets="Build;allCsharp;allCsharpNoTests">
+    <Message Text="Building Native C++ components explicitly..." Importance="high" />
+    <MSBuild Projects="Build\Src\NativeBuild\NativeBuild.csproj"
+             Properties="Configuration=$(Configuration);Platform=$(Platform)"
+             BuildInParallel="true" />
+  </Target>
+
+</Project>

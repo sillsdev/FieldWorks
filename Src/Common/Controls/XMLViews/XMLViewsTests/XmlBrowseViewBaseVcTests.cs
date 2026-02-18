@@ -175,7 +175,7 @@ namespace XMLViewsTests
 
 			var columnLabels = XmlBrowseViewBaseVc.GetHeaderLabels(testVc);
 
-			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
+			Assert.That(columnLabels, Is.EqualTo(new List<string> { "Ref", "Occurrence" }));
 		}
 
 		/// <summary>

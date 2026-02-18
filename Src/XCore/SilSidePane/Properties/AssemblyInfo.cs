@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SIL.Acknowledgements;
 
-[assembly: AssemblyTitle("SilSidePane")]
+// [assembly: AssemblyTitle("SilSidePane")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 
 // Expose IItemArea to unit tests
 [assembly: InternalsVisibleTo("SilSidePaneTests")]

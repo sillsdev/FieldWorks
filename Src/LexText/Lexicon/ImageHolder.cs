@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	public class ImageHolder : UserControl
 	{
 		public ImageList buttonImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

@@ -336,11 +336,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-#if defined(WIN32) || defined(_M_X64)
-			qrootb.CreateInstance(CLSID_VwRootBox);
-#else
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
-#endif
 			IVwGraphicsWin32Ptr qvg32;
 			HDC hdc = 0;
 			try
@@ -468,11 +464,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-#if defined(WIN32) || defined(_M_X64)
-			qrootb.CreateInstance(CLSID_VwRootBox);
-#else
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
-#endif
 			IVwGraphicsWin32Ptr qvg32;
 			HDC hdc = 0;
 			try
@@ -614,7 +606,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-			qrootb.CreateInstance(CLSID_VwRootBox);
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
 			IVwGraphicsWin32Ptr qvg32;
 			HDC hdc = 0;
 			try
@@ -1033,7 +1025,7 @@ namespace TestViews
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
-			qrootb.CreateInstance(CLSID_VwRootBox);
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
 			IVwGraphicsWin32Ptr qvg32;
 			HDC hdc = 0;
 			try

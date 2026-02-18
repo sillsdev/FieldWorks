@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(id, out var ws);
 			var testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Analysis, Cache);
-			Assert.AreEqual($"[{ws.Abbreviation}] {ws.DisplayLabel}", testModel.IntToListItem(ws.Handle).FormatDisplayLabel(null));
+			Assert.That(testModel.IntToListItem(ws.Handle).FormatDisplayLabel(null), Is.EqualTo($"[{ws.Abbreviation}] {ws.DisplayLabel}"));
 		}
 
 		[Test]
@@ -87,14 +87,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var ws = GetOrSetWs("en-CA");
 			var wsAbbrAndLabel = $"[{ws.Abbreviation}] {ws.DisplayLabel}";
-			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeAdded, wsAbbrAndLabel),
-				new HiddenWSListItemModel(ws, false) { WillAdd = true }.FormatDisplayLabel(null));
-			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeDeleted, wsAbbrAndLabel),
-				new HiddenWSListItemModel(ws, false) { WillDelete = true }.FormatDisplayLabel(null));
-			Assert.AreEqual(string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Analysis"),
-				new HiddenWSListItemModel(ws, true).FormatDisplayLabel("Analysis"));
-			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeAdded, string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Vernacular")),
-				new HiddenWSListItemModel(ws, true) { WillAdd = true }.FormatDisplayLabel("Vernacular"));
+			Assert.That(new HiddenWSListItemModel(ws, false) { WillAdd = true }.FormatDisplayLabel(null), Is.EqualTo(string.Format(FwCoreDlgs.XWillBeAdded, wsAbbrAndLabel)));
+			Assert.That(new HiddenWSListItemModel(ws, false) { WillDelete = true }.FormatDisplayLabel(null), Is.EqualTo(string.Format(FwCoreDlgs.XWillBeDeleted, wsAbbrAndLabel)));
+			Assert.That(new HiddenWSListItemModel(ws, true).FormatDisplayLabel("Analysis"), Is.EqualTo(string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Analysis")));
+			Assert.That(new HiddenWSListItemModel(ws, true) { WillAdd = true }.FormatDisplayLabel("Vernacular"), Is.EqualTo(string.Format(FwCoreDlgs.XWillBeAdded, string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Vernacular"))));
 		}
 
 		[Test]
@@ -104,12 +100,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out var wsFr);
 
 			var testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Analysis, Cache);
-			Assert.True(testModel.IntToListItem(wsFr.Handle).InOppositeList, "French is in the Vernacular list");
-			Assert.False(testModel.IntToListItem(wsEn.Handle).InOppositeList, "English is not in the Vernacular list");
+			Assert.That(testModel.IntToListItem(wsFr.Handle).InOppositeList, Is.True, "French is in the Vernacular list");
+			Assert.That(testModel.IntToListItem(wsEn.Handle).InOppositeList, Is.False, "English is not in the Vernacular list");
 
 			testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Vernacular, Cache);
-			Assert.False(testModel.IntToListItem(wsFr.Handle).InOppositeList, "French is not in the Analysis list");
-			Assert.True(testModel.IntToListItem(wsEn.Handle).InOppositeList, "English is in the Analysis list");
+			Assert.That(testModel.IntToListItem(wsFr.Handle).InOppositeList, Is.False, "French is not in the Analysis list");
+			Assert.That(testModel.IntToListItem(wsEn.Handle).InOppositeList, Is.True, "English is in the Analysis list");
 		}
 
 		[Test]

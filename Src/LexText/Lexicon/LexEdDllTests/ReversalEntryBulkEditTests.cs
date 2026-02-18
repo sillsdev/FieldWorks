@@ -25,8 +25,8 @@ namespace LexEdDllTests
 				propertyTable.SetProperty("ReversalIndexPublicationLayout", "publishReversal" + wsId, false);
 
 				var propTableId = recordList.GetPropertyTableId(FieldName);
-				StringAssert.Contains(FieldName, propTableId);
-				StringAssert.Contains(wsId, propTableId);
+				Assert.That(propTableId, Does.Contain(FieldName));
+				Assert.That(propTableId, Does.Contain(wsId));
 			}
 		}
 
@@ -38,7 +38,7 @@ namespace LexEdDllTests
 			{
 				using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 				{
-					Assert.Null(recordList.GetPropertyTableId(FieldName));
+					Assert.That(recordList.GetPropertyTableId(FieldName), Is.Null);
 				}
 			}
 		}

@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.FixData
 			return Label;
 		}
 
-		public string Label => Strings.WriteEverything;
+		public string Label => FixFwDataStrings.WriteEverything;
 
 		public UtilityDlg Dialog
 		{
@@ -33,9 +33,9 @@ namespace SIL.FieldWorks.FixData
 
 		public void OnSelection()
 		{
-			Dialog.WhenDescription = Strings.WriteEverythingUseThisWhen;
-			Dialog.WhatDescription = Strings.WriteEverythingThisUtilityAttemptsTo;
-			Dialog.RedoDescription = Strings.WriteEverythingCannotUndo;
+			Dialog.WhenDescription = FixFwDataStrings.WriteEverythingUseThisWhen;
+			Dialog.WhatDescription = FixFwDataStrings.WriteEverythingThisUtilityAttemptsTo;
+			Dialog.RedoDescription = FixFwDataStrings.WriteEverythingCannotUndo;
 		}
 
 		public void Process()

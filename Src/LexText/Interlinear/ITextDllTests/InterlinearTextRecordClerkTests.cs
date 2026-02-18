@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.IText
 				var discourseData = Cache.LangProject.DiscourseDataOA;
 				Assert.That(discourseData, Is.Null);
 				interlinTextRecordClerk.CreateStText(Cache);
-				Assert.True(Cache.LangProject.DiscourseDataOA.ChartsOC.Any());
+				Assert.That(Cache.LangProject.DiscourseDataOA.ChartsOC.Any(), Is.True);
 			}
 		}
 

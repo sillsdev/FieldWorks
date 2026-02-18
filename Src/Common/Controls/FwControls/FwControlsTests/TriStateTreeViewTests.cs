@@ -99,11 +99,11 @@ namespace SIL.FieldWorks.Common.Controls
 		[Test]
 		public void InitiallyUnchecked()
 		{
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_aNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_bNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c1Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c2Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_dNode));
+			Assert.That(m_treeView.GetChecked(m_aNode), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_bNode), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_c2Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_dNode), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -117,10 +117,10 @@ namespace SIL.FieldWorks.Common.Controls
 			// Check a node -> should check all children
 			m_treeView.SetChecked(m_bNode, TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_bNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c1Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c2Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_dNode));
+			Assert.That(m_treeView.GetChecked(m_bNode), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_c2Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_dNode), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -134,10 +134,10 @@ namespace SIL.FieldWorks.Common.Controls
 			// uncheck a node -> should uncheck all children
 			m_treeView.SetChecked(m_bNode, TriStateTreeView.CheckState.Unchecked);
 
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_bNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c1Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c2Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_dNode));
+			Assert.That(m_treeView.GetChecked(m_bNode), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_c2Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_dNode), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -151,10 +151,10 @@ namespace SIL.FieldWorks.Common.Controls
 			// check child -> grey check all parents
 			m_treeView.SetChecked(m_c2Node, TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(TriStateTreeView.CheckState.GreyChecked, m_treeView.GetChecked(m_aNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.GreyChecked, m_treeView.GetChecked(m_bNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c1Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c2Node));
+			Assert.That(m_treeView.GetChecked(m_aNode), Is.EqualTo(TriStateTreeView.CheckState.GreyChecked));
+			Assert.That(m_treeView.GetChecked(m_bNode), Is.EqualTo(TriStateTreeView.CheckState.GreyChecked));
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
+			Assert.That(m_treeView.GetChecked(m_c2Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -169,10 +169,10 @@ namespace SIL.FieldWorks.Common.Controls
 			m_treeView.SetChecked(m_c2Node, TriStateTreeView.CheckState.Checked);
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_aNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_bNode));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c1Node));
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c2Node));
+			Assert.That(m_treeView.GetChecked(m_aNode), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_bNode), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
+			Assert.That(m_treeView.GetChecked(m_c2Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -186,8 +186,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_treeView.BeforeCheck += OnBeforeCheck;
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 
-			Assert.IsTrue(m_fBeforeCheck);
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c1Node));
+			Assert.That(m_fBeforeCheck, Is.True);
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -200,8 +200,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_treeView.BeforeCheck += OnBeforeCheck;
 			ReflectionHelper.CallMethod(m_treeView, "ChangeNodeState", m_aNode);
-			Assert.IsTrue(m_fBeforeCheck);
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_aNode));
+			Assert.That(m_fBeforeCheck, Is.True);
+			Assert.That(m_treeView.GetChecked(m_aNode), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -214,8 +214,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_treeView.AfterCheck += OnAfterCheck;
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
-			Assert.IsTrue(m_fAfterCheck);
-			Assert.AreEqual(TriStateTreeView.CheckState.Checked, m_treeView.GetChecked(m_c1Node));
+			Assert.That(m_fAfterCheck, Is.True);
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Checked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -233,9 +233,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 
-			Assert.IsTrue(m_fBeforeCheck);
-			Assert.IsFalse(m_fAfterCheck);
-			Assert.AreEqual(TriStateTreeView.CheckState.Unchecked, m_treeView.GetChecked(m_c1Node));
+			Assert.That(m_fBeforeCheck, Is.True);
+			Assert.That(m_fAfterCheck, Is.False);
+			Assert.That(m_treeView.GetChecked(m_c1Node), Is.EqualTo(TriStateTreeView.CheckState.Unchecked));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -248,24 +248,24 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_Checked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(2, list.Length);
-			Assert.AreEqual(m_c1Node, list[0]);
-			Assert.AreEqual(m_dNode, list[1]);
+			Assert.That(list.Length, Is.EqualTo(2));
+			Assert.That(list[0], Is.EqualTo(m_c1Node));
+			Assert.That(list[1], Is.EqualTo(m_dNode));
 
 			m_treeView.SetChecked(m_bNode, TriStateTreeView.CheckState.Checked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(5, list.Length);
-			Assert.AreEqual(m_aNode, list[0]);
-			Assert.AreEqual(m_bNode, list[1]);
-			Assert.AreEqual(m_c1Node, list[2]);
-			Assert.AreEqual(m_dNode, list[3]);
-			Assert.AreEqual(m_c2Node, list[4]);
+			Assert.That(list.Length, Is.EqualTo(5));
+			Assert.That(list[0], Is.EqualTo(m_aNode));
+			Assert.That(list[1], Is.EqualTo(m_bNode));
+			Assert.That(list[2], Is.EqualTo(m_c1Node));
+			Assert.That(list[3], Is.EqualTo(m_dNode));
+			Assert.That(list[4], Is.EqualTo(m_c2Node));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -278,19 +278,19 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_Unchecked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			// Check all nodes.
 			m_treeView.SetChecked(m_aNode, TriStateTreeView.CheckState.Checked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Unchecked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Unchecked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Unchecked);
 
-			Assert.AreEqual(2, list.Length);
-			Assert.AreEqual(m_c1Node, list[0]);
-			Assert.AreEqual(m_dNode, list[1]);
+			Assert.That(list.Length, Is.EqualTo(2));
+			Assert.That(list[0], Is.EqualTo(m_c1Node));
+			Assert.That(list[1], Is.EqualTo(m_dNode));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_GreyChecked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 			// TomB: I have redefined GreyChecked to be synonymous with Unchecked | Checked, so
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// GreyCecked nodes, and it seems unlikely we'll ever care.
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.GreyChecked);
 
-			Assert.AreEqual(5, list.Length);
+			Assert.That(list.Length, Is.EqualTo(5));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -345,16 +345,16 @@ namespace SIL.FieldWorks.Common.Controls
 			TreeNode[] list = m_treeView.GetNodesOfTypeWithState(typeof(DummyTreeNode1),
 				TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(1, list.Length);
-			Assert.AreEqual(list[0], dNode);
+			Assert.That(list.Length, Is.EqualTo(1));
+			Assert.That(dNode, Is.EqualTo(list[0]));
 			Assert.That(list[0], Is.TypeOf<DummyTreeNode1>());
 
 			// Get Unchecked nodes of type DummyTreeNode2.
 			list = m_treeView.GetNodesOfTypeWithState(typeof(DummyTreeNode2),
 				TriStateTreeView.CheckState.Unchecked);
 
-			Assert.AreEqual(1, list.Length);
-			Assert.AreEqual(list[0], c2Node);
+			Assert.That(list.Length, Is.EqualTo(1));
+			Assert.That(c2Node, Is.EqualTo(list[0]));
 			Assert.That(list[0], Is.TypeOf<DummyTreeNode2>());
 
 			// Get nodes of type DummyTreeNode2 regardless of check state (Unchecked, Checked or Greyed).
@@ -362,9 +362,9 @@ namespace SIL.FieldWorks.Common.Controls
 				TriStateTreeView.CheckState.Unchecked |
 				TriStateTreeView.CheckState.Checked);
 
-			Assert.AreEqual(2, list.Length);
-			Assert.AreEqual(list[0], c1Node);
-			Assert.AreEqual(list[1], c2Node);
+			Assert.That(list.Length, Is.EqualTo(2));
+			Assert.That(c1Node, Is.EqualTo(list[0]));
+			Assert.That(c2Node, Is.EqualTo(list[1]));
 			Assert.That(list[0], Is.TypeOf<DummyTreeNode2>());
 			Assert.That(list[1], Is.TypeOf<DummyTreeNode2>());
 
@@ -372,9 +372,9 @@ namespace SIL.FieldWorks.Common.Controls
 			list = m_treeView.GetNodesOfTypeWithState(typeof(TreeNode),
 				TriStateTreeView.CheckState.GreyChecked);
 
-			Assert.AreEqual(2, list.Length);
-			Assert.AreEqual(list[0], m_aNode);
-			Assert.AreEqual(list[1], m_bNode);
+			Assert.That(list.Length, Is.EqualTo(2));
+			Assert.That(m_aNode, Is.EqualTo(list[0]));
+			Assert.That(m_bNode, Is.EqualTo(list[1]));
 			Assert.That(list[0], Is.TypeOf<TreeNode>());
 			Assert.That(list[1], Is.TypeOf<TreeNode>());
 		}
@@ -396,9 +396,9 @@ namespace SIL.FieldWorks.Common.Controls
 					m_treeView.SetChecked(m_bNode, TriStateTreeView.CheckState.Checked);
 					System.Collections.ArrayList list = m_treeView.GetCheckedTagData();
 
-					Assert.AreEqual(2, list.Count);
-					Assert.AreEqual(dummyButton, list[0]);
-					Assert.AreEqual(dummyLabel, list[1]);
+					Assert.That(list.Count, Is.EqualTo(2));
+					Assert.That(list[0], Is.EqualTo(dummyButton));
+					Assert.That(list[1], Is.EqualTo(dummyLabel));
 				}
 			}
 		}

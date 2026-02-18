@@ -47,15 +47,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void InBaseFile()
 		{
-			Assert.AreEqual("orng", m_table.GetString("orange"));
+			Assert.That(m_table.GetString("orange"), Is.EqualTo("orng"));
 		}
 
 		/// <summary />
 		[Test]
 		public void InParentFile()
 		{
-			Assert.AreEqual("pssnfrt", m_table.GetString("passion fruit"));
-			Assert.AreEqual("ppy", m_table.GetString("papaya"));
+			Assert.That(m_table.GetString("passion fruit"), Is.EqualTo("pssnfrt"));
+			Assert.That(m_table.GetString("papaya"), Is.EqualTo("ppy"));
 		}
 
 		/// <summary />
@@ -65,14 +65,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/* 		<!-- this one demonstrates that omiting the txt attribute just means that we should return the id value -->
 					<string id="Banana"/>
 			*/
-			Assert.AreEqual("Banana", m_table.GetString("Banana"));
+			Assert.That(m_table.GetString("Banana"), Is.EqualTo("Banana"));
 		}
 
 		/// <summary />
 		[Test]
 		public void WithPath()
 		{
-			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
+			Assert.That(m_table.GetString("MyPineapple", "InPng/InMyYard"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			//the leading '/' here will lead to a double slash,
 			//	something like strings//group,
 			//meaning that this can be found in any group.
-			Assert.AreEqual(m_table.GetStringWithXPath("MyPineapple", "/group/"), "pnppl");
+			Assert.That(m_table.GetStringWithXPath("MyPineapple", "/group/"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
@@ -91,20 +91,53 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void WithRootXPathFragment()
 		{
 			// Give the path of groups explicitly in a compact form.
-			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
+			Assert.That(m_table.GetString("MyPineapple", "InPng/InMyYard"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
 		[Test]
 		public void StringListXmlNode()
 		{
-			XmlDocument doc =  new XmlDocument();
+			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(@"<stringList group='InPng/InMyYard' ids='   MyPapaya, MyPineapple  '/>");
 			XmlNode node = doc.FirstChild;
 			string[] strings = m_table.GetStringsFromStringListNode(node);
-			Assert.AreEqual(2, strings.Length);
-			Assert.AreEqual(strings[1], "pnppl");
+			Assert.That(strings.Length, Is.EqualTo(2));
+			Assert.That(strings[1], Is.EqualTo("pnppl"));
 		}
+
+		/// <summary>
+		/// LT-22392: Merging French localization strings whose IDs contain
+		/// apostrophes (e.g. "Forme d'affixe") must not throw an XPathException.
+		/// The original code naively wraps IDs in single quotes for XPath,
+		/// so an apostrophe in the ID breaks the XPath predicate.
+		/// </summary>
+		[Test]
+		public void MergeCustomTable_WithApostropheInId_DoesNotCrash()
+		{
+			// First merge: add a group so it exists in the in-memory document.
+			XmlDocument setup = new XmlDocument();
+			setup.LoadXml(
+				"<strings><group id='TestGroup'>"
+					+ "<string id='existing' txt='ok'/>"
+					+ "</group></strings>"
+			);
+			m_table.MergeCustomTable(setup);
+
+			// Second merge: merge a string whose ID has an apostrophe
+			// into the EXISTING group. This forces the code into the
+			// string-level SelectSingleNode path that produces
+			//   string[@id='Forme d'affixe']  -> XPathException
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(
+				"<strings><group id='TestGroup'>"
+					+ "<string id=\"Forme d'affixe\" txt='Affix Form (fr)' />"
+					+ "</group></strings>"
+			);
+
+			Assert.DoesNotThrow(() => m_table.MergeCustomTable(doc));
+		}
+
 
 		/// <summary />
 		public static string CreateTestResourceFiles(Type resourcesType, string folderName)

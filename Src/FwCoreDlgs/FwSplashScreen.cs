@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Public properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
+		/// The assembly of the product-specific EXE (e.g., TE.exe or the unified FieldWorks.exe that replaced the FLEx.exe stub).
 		/// .Net callers should set this.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

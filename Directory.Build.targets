@@ -1,0 +1,28 @@
+<Project>
+	<PropertyGroup>
+		<_TransformRoot Condition="'$(_TransformRoot)'==''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</_TransformRoot>
+		<_TransformOutputBase Condition="'$(_TransformOutputBase)'=='' and '$(dir-outputBase)'!=''">$(dir-outputBase)</_TransformOutputBase>
+		<_TransformOutputBase Condition="'$(_TransformOutputBase)'==''">$([System.IO.Path]::Combine('$(_TransformRoot)','Output','$(Configuration)'))\</_TransformOutputBase>
+		<_InstallerBuildProj>$([System.IO.Path]::Combine('$(_TransformRoot)','Build','InstallerBuild.proj'))</_InstallerBuildProj>
+	</PropertyGroup>
+
+	<!--
+		EnsureTransformsForManagedBuilds — guarantee XSL transform DLLs are up-to-date
+		before any managed project resolves assembly references.
+
+		We always invoke BuildWindowsXslAssemblies and let MSBuild's native
+		Inputs/Outputs incremental system decide whether recompilation is needed.
+		Previously this target gated on !Exists(), which meant a stale DLL (older
+		than source .xsl files) was never recompiled.
+	-->
+	<Target Name="EnsureTransformsForManagedBuilds"
+		BeforeTargets="ResolveAssemblyReferences"
+		Condition="!$([System.String]::IsNullOrEmpty('$(_TransformRoot)')) and '$(BuildingTransforms)'!='true' and '$(DesignTimeBuild)'!='true' and '$(OS)'=='Windows_NT' and $([System.IO.Path]::GetFullPath('$(MSBuildProjectFullPath)'))!='$(_InstallerBuildProj)'">
+
+		<MSBuild
+			Projects="$(_InstallerBuildProj)"
+			Targets="BuildWindowsXslAssemblies"
+			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true;dir-outputBase=$(_TransformOutputBase)"
+			Condition="Exists('$(_InstallerBuildProj)')" />
+	</Target>
+</Project>

@@ -1,0 +1,12 @@
+<Project>
+	<PropertyGroup>
+		<!--
+			Build infrastructure projects (FwBuildTasks, NativeBuild) manage their own
+			package versions independently. They do not contribute assemblies to the
+			shared Output/ directory, so CPM transitive pinning does not apply here.
+			FwBuildTasks also requires different versions of test infrastructure packages
+			(NUnit3TestAdapter 5.2.0, SIL.TestUtilities 12.0.0-*) than the main codebase.
+		-->
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+</Project>

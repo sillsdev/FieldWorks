@@ -23,10 +23,10 @@ namespace SIL.FieldWorks.Language
 				Rect temp;
 				wrappedWindow.GetClientRectangle(out temp);
 
-				Assert.AreEqual(c.ClientRectangle.Left, temp.left, "Left not the same");
-				Assert.AreEqual(c.ClientRectangle.Right, temp.right, "Right not the same");
-				Assert.AreEqual(c.ClientRectangle.Top, temp.top, "Top not the same");
-				Assert.AreEqual(c.ClientRectangle.Bottom, temp.bottom, "Bottom not the same");
+				Assert.That(temp.left, Is.EqualTo(c.ClientRectangle.Left), "Left not the same");
+				Assert.That(temp.right, Is.EqualTo(c.ClientRectangle.Right), "Right not the same");
+				Assert.That(temp.top, Is.EqualTo(c.ClientRectangle.Top), "Top not the same");
+				Assert.That(temp.bottom, Is.EqualTo(c.ClientRectangle.Bottom), "Bottom not the same");
 			}
 		}
 

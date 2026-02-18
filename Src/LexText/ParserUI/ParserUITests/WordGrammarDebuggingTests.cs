@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			XElement xeActual = XElement.Parse(sActual, LoadOptions.None);
 			XElement xeExpected = XElement.Parse(sExpected, LoadOptions.None);
 			bool ok = XmlHelper.EqualXml(xeExpected, xeActual, sb);
-			Assert.IsTrue(ok, sb.ToString());
+			Assert.That(ok, Is.True, sb.ToString());
 		}
 		#endregion
 

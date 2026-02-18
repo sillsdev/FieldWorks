@@ -4,6 +4,6 @@
 // --------------------------------------------------------------------------------------------
 using System.Reflection;
 
-[assembly: AssemblyTitle("ManagedVwDrawRootBuffered")]
+// [assembly: AssemblyTitle("ManagedVwDrawRootBuffered")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info

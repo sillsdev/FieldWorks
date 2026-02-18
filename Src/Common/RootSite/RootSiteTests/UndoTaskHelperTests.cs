@@ -162,10 +162,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			int nUndoTasks = 0;
 			while (m_actionHandler.CanUndo())
 			{
-				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
+				Assert.That(m_actionHandler.Undo(), Is.EqualTo(UndoResult.kuresSuccess));
 				nUndoTasks++;
 			}
-			Assert.AreEqual(1, nUndoTasks);
+			Assert.That(nUndoTasks, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -194,8 +194,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				// just catch the exception so that we can test if undo task was ended
 			}
 
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackAction);
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackAction, Is.True);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackCalled, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -223,8 +223,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				// just catch the exception so that we can test if undo task was ended
 			}
 
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackAction);
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackAction, Is.True);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackCalled, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -252,8 +252,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				// just catch the exception so that we can test if undo task was ended
 			}
 
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackAction);
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackAction, Is.True);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackCalled, Is.True);
 
 			// This re-runs the test to make sure that the undo task was ended properly
 			DummyUndoTaskHelper.m_fRollbackAction = true;
@@ -270,8 +270,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// just catch the exception so that we can test if undo task was ended
 			}
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackAction);
-			Assert.IsTrue(DummyUndoTaskHelper.m_fRollbackCalled);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackAction, Is.True);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackCalled, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -294,8 +294,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				helper.RollBack = false;
 			}
 
-			Assert.IsFalse(DummyUndoTaskHelper.m_fRollbackAction);
-			Assert.IsFalse(DummyUndoTaskHelper.m_fRollbackCalled);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackAction, Is.False);
+			Assert.That(DummyUndoTaskHelper.m_fRollbackCalled, Is.False);
 		}
 	}
 }

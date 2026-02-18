@@ -361,30 +361,35 @@ namespace SIL.FieldWorks.XWorks
 			{
 				view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName, WebonaryStatusCondition.Error);
 			}
-			else if (responseText.Contains("Upload successful"))
+			else if (!string.IsNullOrEmpty(responseText))
 			{
-				if (!responseText.Contains("error"))
+				var responseLower = responseText.ToLowerInvariant();
+				if (responseLower.Contains("upload successful"))
 				{
-					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful, WebonaryStatusCondition.Success);
-					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
-					return;
+					if (!ContainsNonNegatedError(responseLower))
+					{
+						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful, WebonaryStatusCondition.Success);
+						TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
+						return;
+					}
+
+					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing, WebonaryStatusCondition.Error);
 				}
 
-				view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing, WebonaryStatusCondition.Error);
-			}
-
-			if (responseText.Contains("Wrong username or password"))
-			{
-				view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword, WebonaryStatusCondition.Error);
-			}
-			else if (responseText.Contains("User doesn't have permission to import data"))
-			{
-				view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData, WebonaryStatusCondition.Error);
-			}
-			else if(!string.IsNullOrEmpty(responseText))// Unknown error or debug info. Display the server response, but cut it off at 100 characters
-			{
-				view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
-					responseText.Substring(0, Math.Min(100, responseText.Length))), WebonaryStatusCondition.Error);
+				if (responseLower.Contains("wrong username or password"))
+				{
+					view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword, WebonaryStatusCondition.Error);
+				}
+				else if (responseLower.Contains("user doesn't have permission to import data"))
+				{
+					view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData, WebonaryStatusCondition.Error);
+				}
+				else
+				{
+					// Unknown error or debug info. Display the server response, but cut it off at 100 characters.
+					view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
+						responseText.Substring(0, Math.Min(100, responseText.Length))), WebonaryStatusCondition.Error);
+				}
 			}
 			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed,
 				new Dictionary<string, string>
@@ -393,6 +398,17 @@ namespace SIL.FieldWorks.XWorks
 						"statusCode", Enum.GetName(typeof(HttpStatusCode), client.ResponseStatusCode)
 					}
 				});
+		}
+
+		private static bool ContainsNonNegatedError(string responseLower)
+		{
+			if (string.IsNullOrEmpty(responseLower) || !responseLower.Contains("error"))
+				return false;
+
+			return !responseLower.Contains("no error")
+				&& !responseLower.Contains("no errors")
+				&& !responseLower.Contains("0 error")
+				&& !responseLower.Contains("0 errors");
 		}
 
 		///<summary>This stub is intended for other files related to front- and backmatter (things not really managed by FLEx itself)</summary>

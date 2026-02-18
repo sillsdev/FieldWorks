@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -175,11 +175,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				return readAllowed && writeAllowed;
 			}
-
-			// Linux
-			var ufi = new UnixDirectoryInfo(pathToTest);
-			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) &&
-				ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
+			else
+			{
+				throw new ApplicationException("Dialog only supported on windows.");
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

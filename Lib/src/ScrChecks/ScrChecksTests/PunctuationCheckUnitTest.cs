@@ -71,19 +71,19 @@ namespace SILUBS.ScriptureChecks
 		/// ------------------------------------------------------------------------------------
 		void TestGetReferences(string[] expectedPunctPatterns, int[] expectedOffsets, string text)
 		{
-			Assert.AreEqual(expectedPunctPatterns.Length, expectedOffsets.Length, "Poorly defined expected test results.");
+			Assert.That(expectedOffsets.Length, Is.EqualTo(expectedPunctPatterns.Length), "Poorly defined expected test results.");
 			m_dataSource.Text = text;
 
 			PunctuationCheck check = new PunctuationCheck(m_dataSource);
 			List<TextTokenSubstring> tts =
 				check.GetReferences(m_dataSource.TextTokens(), String.Empty);
 
-			Assert.AreEqual(expectedPunctPatterns.Length, tts.Count, "Unexpected number of punctuation patterns." );
+			Assert.That(tts.Count, Is.EqualTo(expectedPunctPatterns.Length), "Unexpected number of punctuation patterns.");
 
 			for (int i = 0; i < expectedPunctPatterns.Length; i++ )
 			{
-				Assert.AreEqual(expectedPunctPatterns[i], tts[i].InventoryText, "Result number: " + i);
-				Assert.AreEqual(expectedOffsets[i], tts[i].Offset, "Result number: " + i);
+				Assert.That(tts[i].InventoryText, Is.EqualTo(expectedPunctPatterns[i]), "Result number: " + i);
+				Assert.That(tts[i].Offset, Is.EqualTo(expectedOffsets[i]), "Result number: " + i);
 			}
 		}
 		#endregion
@@ -146,15 +146,15 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(2, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(2));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(3, tokens[0].Offset);
-			Assert.AreEqual("Wow.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(3));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("Wow."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"Word", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"Word"));
 		}
 
 		[Test]
@@ -172,15 +172,15 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(2, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(2));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(3, tokens[0].Offset);
-			Assert.AreEqual("Wow.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(3));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("Wow."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"Word", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"Word"));
 		}
 
 		[Test]
@@ -198,15 +198,15 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(2, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(2));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(3, tokens[0].Offset);
-			Assert.AreEqual("Wow.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(3));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("Wow."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"Word", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"Word"));
 		}
 
 		[Test]
@@ -226,23 +226,23 @@ namespace SILUBS.ScriptureChecks
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(4, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(4));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(11, tokens[0].Offset);
-			Assert.AreEqual("I am a note.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(11));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("I am a note."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 
-			Assert.AreEqual("!_", tokens[2].InventoryText);
-			Assert.AreEqual(18, tokens[2].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[2].FirstToken.Text);
+			Assert.That(tokens[2].InventoryText, Is.EqualTo("!_"));
+			Assert.That(tokens[2].Offset, Is.EqualTo(18));
+			Assert.That(tokens[2].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 
-			Assert.AreEqual("\"_", tokens[3].InventoryText);
-			Assert.AreEqual(19, tokens[3].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[3].FirstToken.Text);
+			Assert.That(tokens[3].InventoryText, Is.EqualTo("\"_"));
+			Assert.That(tokens[3].Offset, Is.EqualTo(19));
+			Assert.That(tokens[3].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 		}
 
 		[Test]
@@ -262,19 +262,19 @@ namespace SILUBS.ScriptureChecks
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(3, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(3));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(11, tokens[0].Offset);
-			Assert.AreEqual("I am a note.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(11));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("I am a note."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 
-			Assert.AreEqual("!\"_", tokens[2].InventoryText);
-			Assert.AreEqual(18, tokens[2].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[2].FirstToken.Text);
+			Assert.That(tokens[2].InventoryText, Is.EqualTo("!\"_"));
+			Assert.That(tokens[2].Offset, Is.EqualTo(18));
+			Assert.That(tokens[2].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 		}
 
 		[Test]
@@ -294,19 +294,19 @@ namespace SILUBS.ScriptureChecks
 				TextType.Note, true, true, "Note General Paragraph"));
 			List<TextTokenSubstring> tokens =
 				check.GetReferences(dataSource.TextTokens(), string.Empty);
-			Assert.AreEqual(3, tokens.Count);
+			Assert.That(tokens.Count, Is.EqualTo(3));
 
-			Assert.AreEqual("._", tokens[0].InventoryText);
-			Assert.AreEqual(11, tokens[0].Offset);
-			Assert.AreEqual("I am a note.", tokens[0].FirstToken.Text);
+			Assert.That(tokens[0].InventoryText, Is.EqualTo("._"));
+			Assert.That(tokens[0].Offset, Is.EqualTo(11));
+			Assert.That(tokens[0].FirstToken.Text, Is.EqualTo("I am a note."));
 
-			Assert.AreEqual("_\"", tokens[1].InventoryText);
-			Assert.AreEqual(0, tokens[1].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[1].FirstToken.Text);
+			Assert.That(tokens[1].InventoryText, Is.EqualTo("_\""));
+			Assert.That(tokens[1].Offset, Is.EqualTo(0));
+			Assert.That(tokens[1].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 
-			Assert.AreEqual("!\"_", tokens[2].InventoryText);
-			Assert.AreEqual(18, tokens[2].Offset);
-			Assert.AreEqual("\"I am a quote note!\"", tokens[2].FirstToken.Text);
+			Assert.That(tokens[2].InventoryText, Is.EqualTo("!\"_"));
+			Assert.That(tokens[2].Offset, Is.EqualTo(18));
+			Assert.That(tokens[2].FirstToken.Text, Is.EqualTo("\"I am a quote note!\""));
 		}
 
 		[Test]
@@ -739,7 +739,7 @@ namespace SILUBS.ScriptureChecks
 
 			check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, "This is nice. By nice,I mean really nice!", 21, ",", "Invalid punctuation pattern");
 			CheckError(1, "This is nice. By nice,I mean really nice!", 40, "!", "Unspecified use of punctuation pattern");
 		}
@@ -762,7 +762,7 @@ namespace SILUBS.ScriptureChecks
 
 			check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, "This _> is!?.", 5, "_>", "Unspecified use of punctuation pattern");
 			CheckError(1, "This _> is!?.", 10, "!?.", "Unspecified use of punctuation pattern");
 		}
@@ -802,7 +802,7 @@ namespace SILUBS.ScriptureChecks
 
 			check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, "Tom replied, \u201CBill said, \u2018Yes!\u2019\u202F\u201D", 29, "!\u2019\u202F\u201D", "Unspecified use of punctuation pattern");
 		}
 
@@ -829,7 +829,7 @@ namespace SILUBS.ScriptureChecks
 
 			check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, "wow\u201D", 3, "\u201D", "Unspecified use of punctuation pattern");
 			CheckError(1, "\u2019", 0, "\u2019", "Unspecified use of punctuation pattern");
 		}

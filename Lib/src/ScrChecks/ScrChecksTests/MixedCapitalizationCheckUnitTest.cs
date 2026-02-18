@@ -43,78 +43,77 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> tts =
 				check.GetReferences(m_source.TextTokens(), desiredKey);
 
-			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
-				"A different number of results was returned than what was expected." );
+			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0)+1), "A different number of results was returned than what was expected.");
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
-				Assert.AreEqual(result[i], tts[i].InventoryText, "Result number: " + i.ToString());
+				Assert.That(tts[i].InventoryText, Is.EqualTo(result[i]), "Result number: " + i.ToString());
 		}
 
 		[Test]
 		public void WordNoPrefixLower()
 		{
 			AWord word = new AWord("bat", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo(""));
 		}
 		[Test]
 		public void WordNoSuffixLower()
 		{
 			AWord word = new AWord("bat", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Suffix);
+			Assert.That(word.Suffix, Is.EqualTo(""));
 		}
 
 		[Test]
 		public void WordNoPrefixUpper()
 		{
 			AWord word = new AWord("BAT", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo(""));
 		}
 		[Test]
 		public void WordNoSuffixUpper()
 		{
 			AWord word = new AWord("BAT", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Suffix);
+			Assert.That(word.Suffix, Is.EqualTo(""));
 		}
 
 		[Test]
 		public void WordPrefixLower()
 		{
 			AWord word = new AWord("caBat", m_source.CharacterCategorizer);
-			Assert.AreEqual("ca", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo("ca"));
 		}
 
 		[Test]
 		public void WordPrefixLowerWithTitle()
 		{
 			AWord word = new AWord("ca\u01C5at", m_source.CharacterCategorizer);
-			Assert.AreEqual("ca", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo("ca"));
 		}
 
 		[Test]
 		public void WordPrefixUpper()
 		{
 			AWord word = new AWord("CaBat", m_source.CharacterCategorizer);
-			Assert.AreEqual("Ca", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo("Ca"));
 		}
 
 		[Test]
 		public void WordSuffix()
 		{
 			AWord word = new AWord("DavidBen", m_source.CharacterCategorizer);
-			Assert.AreEqual("Ben", word.Suffix);
+			Assert.That(word.Suffix, Is.EqualTo("Ben"));
 		}
 
 		[Test]
 		public void WordWithNumberNoPrefix()
 		{
 			AWord word = new AWord("1Co", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Prefix);
+			Assert.That(word.Prefix, Is.EqualTo(""));
 		}
 		[Test]
 		public void WordWithNumberNoSuffix()
 		{
 			AWord word = new AWord("1Co", m_source.CharacterCategorizer);
-			Assert.AreEqual("", word.Suffix);
+			Assert.That(word.Suffix, Is.EqualTo(""));
 		}
 
 		[Test]
@@ -305,14 +304,14 @@ namespace SILUBS.ScriptureChecks
 
 			List<TextTokenSubstring> tts = check.GetReferences(m_source.TextTokens(), null);
 
-			Assert.AreEqual(0, tts.Count);
+			Assert.That(tts.Count, Is.EqualTo(0));
 
 			m_source.m_extraWordFormingCharacters = "!";
 
 			tts = check.GetReferences(m_source.TextTokens(), null);
 
-			Assert.AreEqual(1, tts.Count);
-			Assert.AreEqual("w!Forming", tts[0].Text);
+			Assert.That(tts.Count, Is.EqualTo(1));
+			Assert.That(tts[0].Text, Is.EqualTo("w!Forming"));
 		}
 	}
 }

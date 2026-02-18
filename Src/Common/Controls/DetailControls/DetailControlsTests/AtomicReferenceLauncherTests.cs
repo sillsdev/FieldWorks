@@ -87,8 +87,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ILexEntryRef AddComponentEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.That(secondaryEntry.EntryRefsOS, Is.Not.Null, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
@@ -155,7 +154,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
 			Assert.That(obj, Is.Not.Null, "Must initialize with an object and flid.");
-			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+			Assert.That(flid, Is.GreaterThan(0), "Must initialize with an object and flid.");
 			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
 			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
 		}

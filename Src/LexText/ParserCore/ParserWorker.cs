@@ -47,7 +47,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly PropertyTable m_propertyTable;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly ParseFiler m_parseFiler;
-		private int m_numberOfWordForms;
 		private IParser m_parser;
 
 		/// -----------------------------------------------------------------------------------
@@ -128,7 +127,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckDisposed();
 
 			ITsString form = null;
-			int hvo = 0;
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				if (wordform.IsValidObject)

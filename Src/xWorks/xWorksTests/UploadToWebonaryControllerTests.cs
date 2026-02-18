@@ -294,47 +294,66 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UploadToWebonaryDoesNotFlagNoErrorsResponse()
+		{
+			var response = Encoding.UTF8.GetBytes("Upload successful. No errors.");
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var mockView = SetUpView();
+				var model = mockView.Model;
+				model.UserName = "webonary";
+				model.Password = "webonary";
+				//SUT
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
+				Assert.That(!mockView.StatusConditions.Contains(WebonaryStatusCondition.Error),
+					"Unexpected error status was reported. Status log:\r\n" + string.Join("\r\n", mockView.StatusStrings));
+				Assert.That(mockView.StatusConditions.Contains(WebonaryStatusCondition.Success),
+					"Expected a success status for 'Upload successful. No errors.'. Status log:\r\n" + string.Join("\r\n", mockView.StatusStrings));
+			}
+		}
+
+		[Test]
 		public void IsSupportedWebonaryFile_reportsAccurately()
 		{
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.css"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.html"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.htm"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.json"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xml"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.css"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.html"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.htm"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.json"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xml"), Is.True);
 
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpg"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.gif"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.png"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpg"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.jpeg"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.gif"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.png"), Is.True);
 
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
-			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.webm"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4"), Is.True); // avoid failure because of capitalization
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.webm"), Is.True);
 
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tiff"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.ico"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tif"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tiff"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.ico"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.pcx"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.cgm"), Is.False);
 
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.au"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aifc"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wma"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.snd"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.au"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aif"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aifc"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wma"), Is.False);
 
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.avi"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmv"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wvx"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpg"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpe"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.m1v"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp2"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"));
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpa"));
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.avi"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmv"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wvx"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpg"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpe"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.m1v"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp2"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"), Is.False);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpa"), Is.False);
 		}
 
 		[Test]
@@ -430,9 +449,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Collect the status messages that are generated during the export
 			public List<string> StatusStrings = new List<string>();
+			public List<WebonaryStatusCondition> StatusConditions = new List<WebonaryStatusCondition>();
 			public void UpdateStatus(string statusString, WebonaryStatusCondition condition)
 			{
 				StatusStrings.Add(statusString);
+				StatusConditions.Add(condition);
 			}
 
 			public void UploadCompleted()

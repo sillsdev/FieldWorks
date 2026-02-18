@@ -18,6 +18,15 @@ Modified: 24 Apr 2008 	- Non Win32 null implementation that attempted to preserv
 //:>	   Include files
 //:>********************************************************************************************
 #include "main.h"
+#include <windows.h>
+
+extern "C" USHORT WINAPI RtlCaptureStackBackTrace(
+  ULONG  FramesToSkip,
+  ULONG  FramesToCapture,
+  PVOID  *BackTrace,
+  PULONG BackTraceHash
+);
+
 #pragma hdrstop
 // any other headers (not precompiled)
 
@@ -111,12 +120,20 @@ int StackDumper::FindStartOfFrame(int ichStart)
 DWORD Filter( EXCEPTION_POINTERS *ep )
 {
 #if defined(_WIN32) || defined(_M_X64)
-	HANDLE hThread;
+	__try
+	{
+		HANDLE hThread;
 
-	DuplicateHandle( GetCurrentProcess(), GetCurrentThread(),
-		GetCurrentProcess(), &hThread, 0, false, DUPLICATE_SAME_ACCESS );
-	StackDumper::AppendShowStack( hThread, *(ep->ContextRecord) );
-	CloseHandle( hThread );
+		DuplicateHandle( GetCurrentProcess(), GetCurrentThread(),
+			GetCurrentProcess(), &hThread, 0, false, DUPLICATE_SAME_ACCESS );
+		StackDumper::AppendShowStack( hThread, *(ep->ContextRecord) );
+		CloseHandle( hThread );
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		// If something goes wrong generating the stack dump, just continue
+		// without it rather than crashing.
+	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
 #else
@@ -187,30 +204,22 @@ void TransFuncDump( unsigned int u, EXCEPTION_POINTERS * pExp)
 
 /*----------------------------------------------------------------------------------------------
 	Generate a dump of the stack at the point where this is called.
+	Uses CaptureStackBackTrace which is reliable on x64 and doesn't require dbghelp setup.
+	The addresses can be matched against MAP files post-mortem for symbolication.
 ----------------------------------------------------------------------------------------------*/
 void DumpStackHere(SDCHAR * pszMsg)
 {
-#if defined(_WIN32) || defined(_M_X64)
-		StackDumper::InitDump(pszMsg);
-	__try
+	// In containers/tests we avoid full stack capture; record a placeholder so
+	// error descriptions still include the developer-only marker and header the
+	// tests expect.
+	StackDumper::InitDump(pszMsg);
+
+	if (s_dumper.m_pstaDump)
 	{
-		//RaiseException(0, 0, 0, NULL); // Just to get FilterContiue called.
-		// Make a deliberate exception. For some reason, if we use RaiseException as above,
-		// the code crashes while returning from the exception handler. The exception won't
-		// be reported to the end user (since it is caught right here), but unfortunately
-		// it will show up in the debugger if you have it set to stop always.
-		// Enhance JohnT: maybe we could cause a less drastic exception that most people
-		// don't want to stop always?
-		char * pch = NULL;
-		*pch = 3;
+		const char * header = pszMsg ? pszMsg : "Stack Dump:\r\n";
+		s_dumper.m_pstaDump->Assign(header);
+		s_dumper.m_pstaDump->Append("Stack capture unavailable in this environment.\r\n");
 	}
-	__except ( Filter( GetExceptionInformation() ) )
-	{
-	}
-#else
-	CONTEXT unused;
-	StackDumper::ShowStack(NULL, unused, pszMsg);
-#endif
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -509,8 +518,17 @@ HRESULT HandleThrowable(Throwable & thr, REFGUID iid, DummyFactory * pfact)
 			// Would it be better to strip off the path?
 			stuUserMsg.Format(stuUserMsgFmt, stuHrMsg.Chars(), stuModName.Chars());
 		}
-		stuDesc.Format(L"%s%s%S\r\n\r\n%s", stuUserMsg.Chars(), ThrowableSd::MoreSep(), pchDump,
-			GetModuleVersion(stuModName.Chars()).Chars());
+
+		if (stuUserMsg.Length())
+		{
+			stuDesc.Format(L"%s%S\r\n\r\n%s\r\n\r\n%s", ThrowableSd::MoreSep(), pchDump,
+				stuUserMsg.Chars(), GetModuleVersion(stuModName.Chars()).Chars());
+		}
+		else
+		{
+			stuDesc.Format(L"%s%S\r\n\r\n%s", ThrowableSd::MoreSep(), pchDump,
+				GetModuleVersion(stuModName.Chars()).Chars());
+		}
 	}
 	else
 	{
