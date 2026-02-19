@@ -4,9 +4,9 @@
 # flowchart TD
 #   A[Checkout] --> B[Detect native-related changes]
 #   B --> C[Build Debug x64 with tests]
-#   C --> D[Run managed tests]
+#   C --> D[Run managed tests wrapper]
 #   C --> E{Native changes?}
-#   E -->|yes| F[Build native test exes in parallel with managed tests]
+#   E -->|yes| F[Wrapper starts native build in parallel]
 #   D --> G{Native changes?}
 #   F --> G
 #   G -->|yes| H[Run native tests -NoBuild]
@@ -42,26 +42,17 @@ jobs:
       - name: Checkout Files
         uses: actions/checkout@v4
         id: checkout
-
-      - name: Detect native-related changes
-        id: changes
-        uses: dorny/paths-filter@v3
         with:
-          filters: |
-            native:
-              - 'Src/**/*.cpp'
-              - 'Src/**/*.h'
-              - 'Src/**/*.hpp'
-              - 'Src/**/*.cc'
-              - 'Src/**/*.ixx'
-              - 'Src/**/*.def'
-              - 'Src/**/*.vcxproj'
-              - 'Src/**/*.vcxproj.filters'
-              - 'Src/**/*.mak'
-              - 'Lib/src/unit++/**'
-              - 'Build/Src/NativeBuild/**'
-              - 'Build/scripts/Invoke-CppTest.ps1'
-              - 'test.ps1'
+          fetch-depth: 0
+
+      - name: Detect native source changes
+        id: changes
+        shell: powershell
+        run: |
+          .\Build\Agent\Detect-NativeChanges.ps1 `
+            -EventName '${{ github.event_name }}' `
+            -PullRequestBaseRef '${{ github.event.pull_request.base.ref }}' `
+            -EventBefore '${{ github.event.before }}'
 
       - name: Build Debug x64 (with tests)
         id: build_debug
@@ -74,49 +65,9 @@ jobs:
         id: test_managed
         shell: powershell
         run: |
-          $nativeChanged = '${{ steps.changes.outputs.native }}' -eq 'true'
-          $nativeBuildJob = $null
-
-          if ($nativeChanged) {
-            Write-Host "Native-related changes detected; building native test executables in parallel." -ForegroundColor Cyan
-            $repoRoot = $PWD.Path
-            $nativeBuildJob = Start-Job -Name NativeBuild -ScriptBlock {
-              param($repoRoot)
-              Set-Location $repoRoot
-
-              .\Build\scripts\Invoke-CppTest.ps1 -Action Build -TestProject TestGeneric -Configuration Debug
-              if ($LASTEXITCODE -ne 0) {
-                throw "TestGeneric native build failed with exit code $LASTEXITCODE"
-              }
-
-              .\Build\scripts\Invoke-CppTest.ps1 -Action Build -TestProject TestViews -Configuration Debug
-              if ($LASTEXITCODE -ne 0) {
-                throw "TestViews native build failed with exit code $LASTEXITCODE"
-              }
-            } -ArgumentList $repoRoot
-          }
-          else {
-            Write-Host "No native-related changes detected; running managed tests only." -ForegroundColor Cyan
-          }
-
-          .\test.ps1 -Configuration Debug -NoBuild -TestFilter "TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired"
-          $managedExitCode = $LASTEXITCODE
-
-          if ($nativeBuildJob) {
-            Wait-Job -Job $nativeBuildJob | Out-Null
-            Receive-Job -Job $nativeBuildJob
-            $nativeBuildCompleted = $nativeBuildJob.State -eq 'Completed'
-            Remove-Job -Job $nativeBuildJob -Force
-
-            if (-not $nativeBuildCompleted) {
-              Write-Host "[ERROR] Native test executable build did not complete successfully." -ForegroundColor Red
-              exit 1
-            }
-          }
-
-          if ($managedExitCode -ne 0) {
-            exit $managedExitCode
-          }
+          .\Build\Agent\Invoke-ManagedTestsWithOptionalNativeBuild.ps1 `
+            -Configuration Debug `
+            -NativeChanged '${{ steps.changes.outputs.native }}'
 
       - name: Run native tests
         id: test_native
@@ -138,52 +89,7 @@ jobs:
         if: ${{ always() && steps.changes.outputs.native == 'true' }}
         shell: powershell
         run: |
-          $nativeLogs = @(
-            'Output/Debug/testGenericLib.exe.log',
-            'Output/Debug/TestViews.exe.log'
-          )
-
-          $tableRows = @()
-          foreach ($logPath in $nativeLogs) {
-            if (-not (Test-Path $logPath)) {
-              Write-Host "::warning title=Native log missing::$logPath not found"
-              $tableRows += "| $logPath | - | - | - | MISSING |"
-              continue
-            }
-
-            $summaryLine = Get-Content -Path $logPath -ErrorAction SilentlyContinue |
-              Select-String -Pattern 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]' |
-              Select-Object -Last 1
-
-            if (-not $summaryLine) {
-              Write-Host "::warning title=Native summary missing::$logPath does not contain Unit++ summary line"
-              $tableRows += "| $logPath | - | - | - | UNKNOWN |"
-              continue
-            }
-
-            $match = [regex]::Match($summaryLine.Line, 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]')
-            $okCount = [int]$match.Groups[1].Value
-            $failCount = [int]$match.Groups[2].Value
-            $errorCount = [int]$match.Groups[3].Value
-            $status = if ($failCount -gt 0 -or $errorCount -gt 0) { 'FAIL' } else { 'PASS' }
-
-            if ($status -eq 'FAIL') {
-              Write-Host "::error title=Native test failure::$logPath => Ok=$okCount Fail=$failCount Error=$errorCount"
-            }
-            else {
-              Write-Host "::notice title=Native test pass::$logPath => Ok=$okCount Fail=$failCount Error=$errorCount"
-            }
-
-            $tableRows += "| $logPath | $okCount | $failCount | $errorCount | $status |"
-          }
-
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '### Native test summary'
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value ''
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '| Log | Ok | Fail | Error | Status |'
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '|---|---:|---:|---:|---|'
-          foreach ($row in $tableRows) {
-            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $row
-          }
+          .\Build\Agent\Summarize-NativeTestResults.ps1 -Configuration Debug
 
       - name: Upload TRX test results
         if: ${{ !cancelled() }}
