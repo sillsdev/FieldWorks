@@ -59,6 +59,11 @@ jobs:
     if: ${{ !cancelled() }}
     needs: debug_build_and_test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
     steps:
       - name: Download TRX artifacts
         uses: actions/download-artifact@v4
@@ -71,6 +76,6 @@ jobs:
         with:
           files: 'test-results/**/*.trx'
           check_name: NUnit Tests
-          comment_mode: off
+          comment_mode: always
           job_summary: true
           fail_on: test failures
