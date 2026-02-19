@@ -186,6 +186,36 @@ function Build-ViewsInterfacesArtifacts {
     if ($process.ExitCode -ne 0) { throw "ViewsInterfaces build failed with exit code $($process.ExitCode)" }
 }
 
+function Ensure-UnitPlusPlusLibrary {
+    $unitLibPath = Join-Path $WorktreePath "Lib\$($Configuration.ToLower())\unit++.lib"
+    if (Test-Path $unitLibPath) {
+        return
+    }
+
+    Write-Host "[INFO] Missing unit++.lib; building Unit++ library..." -ForegroundColor Yellow
+    $unitProj = Join-Path $WorktreePath 'Lib\src\unit++\VS\unit++.vcxproj'
+    if (-not (Test-Path $unitProj)) {
+        throw "Unit++ project not found: $unitProj"
+    }
+
+    $msbuild = Get-MsBuildExecutable
+    $msbuildArgs = @(
+        $unitProj,
+        '/p:Configuration={0}' -f $Configuration,
+        '/p:Platform=x64',
+        '/v:minimal',
+        '/nologo'
+    )
+    $process = Start-Process -FilePath $msbuild -ArgumentList $msbuildArgs -WorkingDirectory $WorktreePath -NoNewWindow -Wait -PassThru
+    if ($process.ExitCode -ne 0) {
+        throw "Unit++ build failed with exit code $($process.ExitCode)"
+    }
+
+    if (-not (Test-Path $unitLibPath)) {
+        throw "Unit++ build completed but library is still missing: $unitLibPath"
+    }
+}
+
 function Ensure-TestViewsPrerequisites {
     if ($TestProject -ne 'TestViews') { return }
     $fwKernelHeader = Join-Path $WorktreePath "Output\$Configuration\Common\FwKernelTlb.h"
@@ -203,11 +233,13 @@ function Invoke-Build {
         (Test-Path (Join-Path $outputDir 'DebugProcs.dll')),
         (Test-Path (Join-Path $outputDir 'icuin70.dll')),
         (Test-Path (Join-Path $outputDir 'icuuc70.dll'))
-    ) -notcontains $true
+    ) -contains $false
     if ($needsNative) {
         Write-Host "[INFO] Native runtime artifacts missing for $TestProject; building NativeBuild.csproj..." -ForegroundColor Yellow
         Build-NativeArtifacts
     }
+
+    Ensure-UnitPlusPlusLibrary
 
     if ($BuildSystem -eq 'MSBuild') {
         $vcxproj = Join-Path $WorktreePath $config.VcxprojPath
