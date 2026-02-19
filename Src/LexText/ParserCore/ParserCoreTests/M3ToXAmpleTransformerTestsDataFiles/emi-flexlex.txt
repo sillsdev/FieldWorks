@@ -556,7 +556,7 @@
 \a maghuighuina {26872}
  
 
-\lx 4115
+\lx 4115.0.81036
 \g defecate
 \c W
 \wc root
@@ -3919,7 +3919,7 @@
 \a angalua {81043}
  
 
-\lx 23464
+\lx 23464.0.61372
 \g laugh.RDP
 \c W
 \wc root
@@ -3928,7 +3928,7 @@
 \mp IrregInflForm71052
 
 
-\lx 23464
+\lx 23464.0.120453
 \g laugh.RDP
 \c W
 \wc root
@@ -5990,7 +5990,7 @@
 \a apere {75597}
  
 
-\lx 33818
+\lx 33818.0.76068
 \g POSS.3SG
 \c W
 \wc root
@@ -7132,7 +7132,7 @@
 \a natuena {72026}
  
 
-\lx 39937
+\lx 39937.0.57373
 \g body
 \c W
 \wc root
@@ -8150,7 +8150,7 @@
 \eType suffix
  
 
-\lx 45889
+\lx 45889.0.92329
 \g wife
 \c W
 \wc root
@@ -9443,7 +9443,7 @@
 \a sausaukaa {115103}
  
 
-\lx 53296
+\lx 53296.0.35188
 \g 1PAU.EXCL
 \c W
 \wc root
@@ -12726,7 +12726,7 @@
 \a palepale {67250}
  
 
-\lx 70895
+\lx 70895.0.148174
 \g handle
 \c W
 \wc root
@@ -14191,7 +14191,7 @@
 \a tumtumlana {51181}
 
 
-\lx 78967
+\lx 78967.0.119135
 \g end
 \c W
 \wc root
@@ -14815,7 +14815,7 @@
 \a parroe {84866}
  
 
-\lx 82227
+\lx 82227.0.106969
 \g push.aside.RDP
 \c W
 \wc root
@@ -15728,7 +15728,7 @@
 \a kotolungaulu {46644}
  
 
-\lx 87184
+\lx 87184.0.32313
 \g sleep.RDP
 \c W
 \wc root
@@ -15737,7 +15737,7 @@
 \mp IrregInflForm71052
 
 
-\lx 87184
+\lx 87184.0.90982
 \g sleep.RDP
 \c W
 \wc root
@@ -21412,7 +21412,7 @@
 \a tuvu {11507}
  
 
-\lx 117012
+\lx 117012.0.49223
 \g our
 \c W
 \wc root
@@ -24079,7 +24079,7 @@
 \a aippetana {137436}
  
 
-\lx 129944
+\lx 129944.0.78733
 \g taste
 \c W
 \wc root

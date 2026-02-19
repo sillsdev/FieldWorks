@@ -179,11 +179,16 @@
 		<xsl:param name="msa"/>
 		<xsl:value-of select="$lexEntry/@Id"/>
 		<xsl:variable name="iPos" select="count($lexEntryRef/preceding-sibling::LexEntryRef)"/>
-		<xsl:if test="$iPos &gt; 0">
-			<xsl:text>.</xsl:text>
-			<!-- Subtracting 1 to account for 0-indexing in C# -->
-			<xsl:value-of select="$iPos - 1"/>
-		</xsl:if>
+		<xsl:text>.</xsl:text>
+		<xsl:choose>
+			<xsl:when test="$iPos &gt; 0">
+				<!-- Subtracting 1 to account for 0-indexing in C# -->
+				<xsl:value-of select="$iPos - 1"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>0</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 		<xsl:call-template name="AppendAnyMsaCountNumber">
 			<xsl:with-param name="msa" select="$msa"/>
 		</xsl:call-template>
