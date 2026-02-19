@@ -152,7 +152,7 @@ Build via FieldWorks.sln or `msbuild Framework.csproj`. Test project: FrameworkT
 
 ### Referenced By
 
-- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-ordering) — Managed build targets
+- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-entry-points) — Managed build targets
 
 ## Interfaces and Data Models
 FwApp (application base), IFieldWorksManager (manager contract), IFwMainWnd (main window contract), IRecordListUpdater/Owner/ChangeHandler (list management), IPublicationView/IPageSetupDialog (print/publish), MainWindowDelegate (delegation pattern).

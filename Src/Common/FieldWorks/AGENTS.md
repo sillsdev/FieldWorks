@@ -149,7 +149,7 @@ Build via FieldWorks.sln or `msbuild FieldWorks.csproj`. Test project: FieldWork
 
 ### Referenced By
 
-- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-ordering) — Traversal build expectations
+- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-entry-points) — Traversal build expectations
 
 ## Interfaces and Data Models
 IFieldWorksManager (pass-through facade), IProjectIdentifier (project identity), ProjectId (serializable project ID), ILexicalProvider/ILexicalServiceProvider (lexicon service contracts), PaObjects namespace (Phonology Assistant DTOs), ApplicationBusyDialog (busy indicator), WindowsInstallerQuery (installer checks).

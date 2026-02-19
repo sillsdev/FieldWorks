@@ -23,6 +23,11 @@ FieldWorks uses the MSBuild Traversal SDK (`Microsoft.Build.Traversal/4.1.0`) fo
 
 ## Build Entry Points
 
+### References
+
+- [FieldWorks entry point](../../../../Src/Common/FieldWorks/AGENTS.md#build-information) — Traversal build expectations
+- [Framework managed targets](../../../../Src/Common/Framework/AGENTS.md#build-information) — Managed build targets
+
 ### build.ps1 (PowerShell orchestrator)
 
 The top-level entry point. Accepts parameters for configuration, platform, installer, tests, and local library overrides. Executes in this order:
