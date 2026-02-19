@@ -6,7 +6,10 @@ description: "Terminal command patterns for auto-approval in FieldWorks"
 
 # Terminal Commands
 
-Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts/Agent/` wrappers instead.
+Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use repository wrapper scripts instead.
+
+Placement policy for wrappers:
+- Prefer `Build/Agent/` for new build/test/CI orchestration scripts.
 
 **MCP-first:** When the `ps-tools` MCP server is running, prefer MCP tools (`Git-Search`, `Read-FileContent`, `Invoke-AgentTask`, `build`, `test`, agent tools) instead of direct terminal commands. Use wrappers only when MCP is unavailable.
 

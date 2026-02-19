@@ -9,8 +9,7 @@ This document explains how AI agents (coding and chat modes) should operate insi
 - Run on Windows (`windows-latest` runners or local VS Code workspaces). Do not create new worktrees or branches unless explicitly requested.
 - Always build through the traversal script: `.\build.ps1` (sets configuration, cleans stale obj, enforces native-first order).
 - Always test through `.\test.ps1` (dispatches managed/natives tests, applies VS test settings).
-- Use `scripts/Agent/*.ps1` wrappers whenever a command would normally need pipes/filters (`Git-Search`, `Read-FileContent`, etc.).
-- Keep localization in `.resx` and respect `crowdin.json`; do not introduce new ad-hoc localization flows.
+- Use repository wrapper scripts whenever a command would normally need pipes/filters (`Git-Search`, `Read-FileContent`, etc.); prefer `Build/Agent/*.ps1` for new build/test/CI wrappers.- Keep localization in `.resx` and respect `crowdin.json`; do not introduce new ad-hoc localization flows.
 
 ## Agent Catalog
 
