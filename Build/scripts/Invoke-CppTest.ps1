@@ -464,6 +464,8 @@ function Invoke-Run {
     $summarySeenAt = $null
     $startTime = Get-Date
     $summaryPattern = 'Tests \[Ok-Fail-Error\]: \[\d+-\d+-\d+\]'
+    $heartbeatIntervalSeconds = 30
+    $nextHeartbeatAt = $startTime.AddSeconds($heartbeatIntervalSeconds)
 
     while ($true) {
         $process.Refresh()
@@ -477,6 +479,11 @@ function Invoke-Run {
             Write-Host "Test run exceeded timeout (${TimeoutSeconds}s); terminating process..." -ForegroundColor Red
             try { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue } catch {}
             break
+        }
+
+        if ((Get-Date) -ge $nextHeartbeatAt) {
+            Write-Host ("[HEARTBEAT] {0} still running after {1:N0}s (pid {2})" -f $config.ExeName, $elapsedSeconds, $process.Id) -ForegroundColor DarkGray
+            $nextHeartbeatAt = (Get-Date).AddSeconds($heartbeatIntervalSeconds)
         }
 
         if (Test-Path $LogPath) {
