@@ -23,11 +23,18 @@ jobs:
         uses: actions/checkout@v4
         id: checkout
 
-      - name: Run managed CI pipeline
-        id: managed_ci
+      - name: Build managed (with tests)
+        id: managed_build
         shell: powershell
         run: |
-          .\Build\Agent\Run-ManagedCi.ps1 -Configuration Debug -Platform x64
+          .\build.ps1 -Configuration Debug -Platform x64 -BuildTests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run managed tests
+        id: managed_test
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Debug -NoBuild -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload TRX test results

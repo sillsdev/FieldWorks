@@ -65,7 +65,14 @@ jobs:
         id: native_ci
         shell: powershell
         run: |
-          .\Build\Agent\Run-NativeCi.ps1 -Configuration Debug -Platform x64
+          .\build.ps1 -Configuration Debug -Platform x64 -Project Build/Src/NativeBuild/NativeBuild.csproj
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build and run native tests
+        id: native_test
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Debug -Native
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Summarize native test results
