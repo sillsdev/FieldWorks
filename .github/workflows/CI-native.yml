@@ -61,13 +61,6 @@ jobs:
         uses: actions/checkout@v4
         id: checkout
 
-      - name: Run native CI pipeline
-        id: native_ci
-        shell: powershell
-        run: |
-          .\build.ps1 -Configuration Debug -Platform x64 -Project Build/Src/NativeBuild/NativeBuild.csproj
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
       - name: Build and run native tests
         id: native_test
         shell: powershell
