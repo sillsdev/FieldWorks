@@ -11,9 +11,9 @@ PowerShell scripts for build, test, and CI orchestration.
 
 | Script | Purpose |
 |--------|---------|
-| `Detect-NativeChanges.ps1` | Detects native-related changes using git diff (PR merge-base aware) and writes `native=true/false` to GitHub step outputs. |
+| `Run-ManagedCi.ps1` | Orchestrates managed CI path: build (`build.ps1 -BuildTests`) then filtered managed tests (`test.ps1 -NoBuild`). |
+| `Run-NativeCi.ps1` | Orchestrates native CI path: build (`build.ps1 -BuildTests`), build native test exes, then run native tests (`test.ps1 -Native -NoBuild`). |
 | `Build-NativeTestExecutables.ps1` | Builds native test executables (`TestGeneric`, `TestViews`) via `Build/scripts/Invoke-CppTest.ps1`. |
-| `Invoke-ManagedTestsWithOptionalNativeBuild.ps1` | Runs managed tests and, when native changes are present, builds native test executables in parallel in a separate process. |
 | `Summarize-NativeTestResults.ps1` | Parses native Unit++ logs and appends a pass/fail summary table to GitHub step summary. |
 
 ## GitHub Actions usage
