@@ -1,6 +1,7 @@
 <Project>
 	<PropertyGroup>
-
+		<!-- Disable Visual Studio's project up to date checking so that a build with build.ps1 will not result in a re-build -->
+		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
 		<!--
 			MSB3277/MSB3243: Assembly version conflicts are BUILD ERRORS.
 			CPM + transitive pinning (Directory.Packages.props) prevents version drift.
@@ -66,7 +67,7 @@
 		Version declarations are centrally managed in Directory.Packages.props.
 	-->
 	<PropertyGroup Label="AssemblyInfo Policy">
-		<!--
+		<!-- TODO: Fix the location of the Include and remove the CommonAssemblyInfo from all .csproj files
 			CommonAssemblyInfoTemplate Policy:
 			All managed projects must link Src/CommonAssemblyInfo.cs to ensure consistent versioning and metadata.
 			When linking the template, disable SDK auto-generation to prevent CS0579 duplicate attribute errors.
@@ -117,40 +118,8 @@
 
 	<ItemGroup>
 		<Compile Remove="**/*.template.cs" />
-		<!--
-			Test Exclusion Policy (Pattern A):
-			All test code must be explicitly excluded using the pattern:
-			<Compile Remove="<ProjectName>Tests/**" />
-			<None Remove="<ProjectName>Tests/**" />
-
-			Wildcards (e.g. *Tests/**) are NOT allowed.
-			Nested test folders must also be explicitly excluded.
-		-->
 	</ItemGroup>
 
-	<!--
-		Stale obj/ Folder Policy:
-		Since SDK migration, intermediate output uses centralized location: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
-
-		Old per-project obj/ folders (Src/**/obj/) should not exist.
-		If they do, build.ps1 automatically removes them before building.
-
-		IMPORTANT: Do NOT use ItemGroup Remove patterns here to exclude stale files.
-		The SDK's GenerateTargetFrameworkMonikerAttribute target adds files AFTER
-		Directory.Build.props is evaluated, so such patterns are ineffective.
-		The cleanup in build.ps1 is the correct solution.
-
-		If you encounter CS0579 duplicate attribute errors, run:
-		  Get-ChildItem -Path Src -Filter obj -Directory -Recurse | Remove-Item -Recurse -Force
-		Or simply run .\build.ps1 which does this automatically.
-	-->
-	<!--
-		WPF/XAML Compilation Memory Optimization:
-		XAML compilation can cause OOM errors in memory-constrained builds (parallel builds).
-		These settings help reduce memory pressure:
-		- XamlDebuggingInformation: Disable extra debugging info in Release (smaller assemblies)
-		- UseRidGraph: Use RID graph directly instead of creating temp projects
-	-->
 	<PropertyGroup Condition="'$(UseWPF)' == 'true'">
 		<XamlDebuggingInformation Condition="'$(Configuration)' == 'Release'">false</XamlDebuggingInformation>
 		<UseRidGraph>true</UseRidGraph>
@@ -177,13 +146,6 @@
 		-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS0168;CS0169;CS0219;CS0414;CS0649;168;169;219;414;649</WarningsNotAsErrors>
 	</PropertyGroup>
-
-	<!--
-		Test infrastructure PackageReferences have moved to Src/Directory.Build.props
-		to scope them to Src/ projects only (Build/Src FwBuildTasks manages its own test versions).
-		Version declarations are centrally managed in Directory.Packages.props.
-	-->
-
 	<!--
 		Shared test assembly attributes: SLDR offline mode, ICU initialization, registry redirect, etc.
 		This is applied to all test projects that don't already include the file.
