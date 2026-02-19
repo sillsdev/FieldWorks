@@ -51,6 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
 		[Test]
+		[Timeout(180000)]
 		public void FontsAreAlphabeticallySorted()
 		{
 			ComboBox.ObjectCollection fontNamesNormal = m_fontsControl.DefaultFontComboBox.Items;

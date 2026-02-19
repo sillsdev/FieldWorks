@@ -52,6 +52,8 @@ param(
 
     [int]$TimeoutSeconds = 300,
 
+    [int]$PostCompletionGraceSeconds = 5,
+
     [string[]]$TestArguments,
 
     [string]$LogPath
@@ -458,13 +460,45 @@ function Invoke-Run {
 
     $process = Start-Process @startInfo
     $timedOut = $false
-    try {
-        Wait-Process -Id $process.Id -Timeout $TimeoutSeconds -ErrorAction Stop
-    }
-    catch {
-        $timedOut = $true
-        Write-Host "Test run exceeded timeout (${TimeoutSeconds}s); terminating process..." -ForegroundColor Red
-        try { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue } catch {}
+    $terminatedAfterCompletion = $false
+    $summarySeenAt = $null
+    $startTime = Get-Date
+    $summaryPattern = 'Tests \[Ok-Fail-Error\]: \[\d+-\d+-\d+\]'
+
+    while ($true) {
+        $process.Refresh()
+        if ($process.HasExited) {
+            break
+        }
+
+        $elapsedSeconds = ((Get-Date) - $startTime).TotalSeconds
+        if ($elapsedSeconds -ge $TimeoutSeconds) {
+            $timedOut = $true
+            Write-Host "Test run exceeded timeout (${TimeoutSeconds}s); terminating process..." -ForegroundColor Red
+            try { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue } catch {}
+            break
+        }
+
+        if (Test-Path $LogPath) {
+            $recentOutput = Get-Content -Path $LogPath -Tail 25 -ErrorAction SilentlyContinue
+            if (($recentOutput -join "`n") -match $summaryPattern) {
+                if (-not $summarySeenAt) {
+                    $summarySeenAt = Get-Date
+                    Write-Host "Detected Unit++ completion summary; waiting up to ${PostCompletionGraceSeconds}s for process exit..." -ForegroundColor Yellow
+                }
+                elseif (((Get-Date) - $summarySeenAt).TotalSeconds -ge $PostCompletionGraceSeconds) {
+                    $terminatedAfterCompletion = $true
+                    Write-Host "Process did not exit ${PostCompletionGraceSeconds}s after completion summary; terminating hung process..." -ForegroundColor Yellow
+                    try { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue } catch {}
+                    break
+                }
+            }
+            else {
+                $summarySeenAt = $null
+            }
+        }
+
+        Start-Sleep -Milliseconds 250
     }
 
     $process.Refresh()
@@ -485,6 +519,9 @@ function Invoke-Run {
     Write-Host ""
     if ($timedOut) {
         Write-Host "Tests terminated due to timeout (${TimeoutSeconds}s)." -ForegroundColor Red
+    }
+    elseif ($terminatedAfterCompletion) {
+        Write-Host "Tests reported completion but process hung; terminated after ${PostCompletionGraceSeconds}s grace period." -ForegroundColor Yellow
     }
     elseif ($exitCode -eq 0) {
         Write-Host "All tests passed! (exit code: 0)" -ForegroundColor Green

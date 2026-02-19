@@ -16,35 +16,67 @@ concurrency:
 
 jobs:
   debug_build_and_test:
-    name: Build Debug and run Tests
+    name: Build Debug and run managed/native tests
     runs-on: windows-latest
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
         id: checkout
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: | 
-            5.0.x
-          
-      - name: Build Debug and run tests
-        id: build_and_test
+      - name: Build Debug x64 (with tests)
+        id: build_debug
         shell: powershell
-        run: .\test.ps1 -TestFilter "TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired" | tee-object -FilePath build.log
+        run: |
+          .\build.ps1 -Configuration Debug -Platform x64 -BuildTests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f
+      - name: Run managed tests (filtered)
+        id: test_managed
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Debug -NoBuild -TestFilter "TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run native tests
+        id: test_native
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Debug -Native
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload TRX test results
         if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
         with:
-          files: '**/*.trx'
-          check_name: NUnit Tests
-          comment_mode: always
-          job_summary: true
-          fail_on: test failures
+          name: trx-results
+          path: |
+            **/*.trx
+          if-no-files-found: warn
 
       - uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: ./*.log
+          path: |
+            ./*.log
+            ./Output/**/*.log
+
+  publish_test_results:
+    name: Publish Test Results
+    if: ${{ !cancelled() }}
+    needs: debug_build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download TRX artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: trx-results
+          path: test-results
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f
+        with:
+          files: 'test-results/**/*.trx'
+          check_name: NUnit Tests
+          comment_mode: always
+          job_summary: true
+          fail_on: test failures
