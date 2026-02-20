@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IWfiWordform wf = FindOrCreateWordform(form);
 			int actualSize = wf.AnalysesOC.Count;
 			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 			return wf;
 		}
 
@@ -106,12 +106,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void TryAWord()
 		{
 			XDocument lowerXDoc = new XDocument(new XComment("cats"));
-			var parserWorker = new ParserWorker(Cache, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(null, lowerXDoc);
 
 			// SUT
 			parserWorker.TryAWord("cats", false, null);
-			Assert.AreEqual(m_taskDetailsString, lowerXDoc.ToString());
+			Assert.That(lowerXDoc.ToString(), Is.EqualTo(m_taskDetailsString));
 		}
 
 		[Test]
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				});
 			});
 
-			var parserWorker = new ParserWorker(Cache, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(lowerResult, null);
 
 			// SUT
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// The uppercase wordform doesn't get a parse.
 			var bVal = parserWorker.ParseAndUpdateWordform(catsUpperTest, ParserPriority.Low);
 			ExecuteIdleQueue();
-			Assert.IsTrue(bVal);
+			Assert.That(bVal, Is.True);
 			CheckAnalysisSize("Cats", 0, false);
 			CheckAnalysisSize("cats", 1, false);
 
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// The lowercase wordform has already been parsed.
 			bVal = parserWorker.ParseAndUpdateWordform(catsLowerTest, ParserPriority.Low);
 			ExecuteIdleQueue();
-			Assert.IsTrue(bVal);
+			Assert.That(bVal, Is.True);
 			CheckAnalysisSize("Cats", 0, false);
 			CheckAnalysisSize("cats", 1, false);
 		}

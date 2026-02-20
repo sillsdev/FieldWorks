@@ -519,7 +519,6 @@ namespace SIL.FieldWorks.Common.Framework
 			Guid factoryGuid)
 		{
 			IStStyle style;
-			bool fUsingExistingStyle = false;
 			// EnsureCompatibleFactoryStyle will rename an incompatible user style to prevent collisions,
 			// but it is our responsibility to update the GUID on a compatible user style.
 			if (m_htOrigStyles.TryGetValue(styleName, out style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function, factoryGuid))
@@ -637,7 +636,10 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			catch (Exception ex)
 			{
-				throw new Exception($"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}", ex);
+				throw new Exception(
+					$"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}",
+					ex
+				);
 			}
 		}
 

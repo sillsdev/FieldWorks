@@ -63,11 +63,11 @@ namespace SIL.FieldWorks.Common.Controls
 					dpi = graphics.DpiX;
 				}
 				form.Close();
-				Assert.AreEqual(FormWindowState.Normal, state);
-				Assert.AreEqual(rectOrig.Location, rcForm.Location);
+				Assert.That(state, Is.EqualTo(FormWindowState.Normal));
+				Assert.That(rcForm.Location, Is.EqualTo(rectOrig.Location));
 				// At any other DPI, DotNet resizes the window for us!
 				if (dpi == 96)
-					Assert.AreEqual(rectOrig, rcForm);
+					Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -97,8 +97,8 @@ namespace SIL.FieldWorks.Common.Controls
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
 
-				Assert.AreEqual(FormWindowState.Normal, state);
-				Assert.AreEqual(rectOrig, rcForm);
+				Assert.That(state, Is.EqualTo(FormWindowState.Normal));
+				Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -134,8 +134,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
 				if (!Platform.IsMono)
-					Assert.AreEqual(FormWindowState.Maximized, state);
-				Assert.AreEqual(rectOrig, rcForm);
+					Assert.That(state, Is.EqualTo(FormWindowState.Maximized));
+				Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -168,8 +168,8 @@ namespace SIL.FieldWorks.Common.Controls
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
 
-				Assert.AreEqual(FormWindowState.Normal, state);
-				Assert.AreEqual(rectOrig, rcForm);
+				Assert.That(state, Is.EqualTo(FormWindowState.Normal));
+				Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -209,8 +209,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
 				if (!Platform.IsMono)
-					Assert.AreEqual(FormWindowState.Maximized, state);
-				Assert.AreEqual(rectOrig, rcForm);
+					Assert.That(state, Is.EqualTo(FormWindowState.Maximized));
+				Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -240,8 +240,8 @@ namespace SIL.FieldWorks.Common.Controls
 				Rectangle rcForm = form.DesktopBounds;
 				form.Close();
 
-				Assert.AreEqual(FormWindowState.Normal, state);
-				Assert.AreEqual(rectOrig, rcForm);
+				Assert.That(state, Is.EqualTo(FormWindowState.Normal));
+				Assert.That(rcForm, Is.EqualTo(rectOrig));
 			}
 		}
 
@@ -281,8 +281,8 @@ namespace SIL.FieldWorks.Common.Controls
 				form.Close();
 				// TODO-Linux: probably fails because of this bug https://bugzilla.novell.com/show_bug.cgi?id=495562 re-enable this when this has been fixed
 				if (!Platform.IsMono)
-					Assert.AreEqual(FormWindowState.Maximized, state);
-				Assert.AreEqual(rectCompare, rcForm);
+					Assert.That(state, Is.EqualTo(FormWindowState.Maximized));
+				Assert.That(rcForm, Is.EqualTo(rectCompare));
 			}
 		}
 
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.Common.Controls
 				form.Close();
 
 				// Test that normal desktop bounds are still saved in the persistance object
-				Assert.AreEqual(rectOrig, rectNew, "Maximized keeps normal");
+				Assert.That(rectNew, Is.EqualTo(rectOrig), "Maximized keeps normal");
 			}
 		}
 

@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.Controls
 	public class TriStateTreeView : TreeView
 	{
 		private System.Windows.Forms.ImageList m_TriStateImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		/// <summary>Fired when a node's check box is changed</summary>
 		public event EventHandler NodeCheckChanged;
 

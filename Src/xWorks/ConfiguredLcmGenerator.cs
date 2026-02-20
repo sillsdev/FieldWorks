@@ -3051,7 +3051,7 @@ namespace SIL.FieldWorks.XWorks
 						return bldr;
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// We had some sort of error processing the string, possibly an unmatched surrogate pair.
 					// Generate a span with 3 invalid unicode markers and an xml comment instead.

@@ -12,7 +12,7 @@ using System.Text;
 using System.IO;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.FieldWorks.CacheLight
 {

@@ -25,6 +25,9 @@
 		<part ref="Gloss"/>
 		<part ref="ScientificName" visibility="ifdata"/>
 	</layout>
+	<layout class="LexEtymology" type="detail" name="empty">
+		<!-- Empty base template (unified with caller node to inject child parts). -->
+	</layout>
 	<layout class="LexEntry" type="detail" name="Abbrs">
 		<part ref="CitationForm"/>
 		<part ref="CitationForm" label="Citation Form"/>

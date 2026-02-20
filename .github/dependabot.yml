@@ -1,0 +1,47 @@
+# Dependabot configuration for FieldWorks
+# Keeps GitHub Actions and other dependencies up-to-date
+
+version: 2
+updates:
+  # GitHub Actions - check weekly for updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    # Group minor/patch updates to reduce PR noise
+    groups:
+      actions-minor:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # NuGet packages - check weekly
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "nuget"
+    # Ignore major version bumps by default (breaking changes)
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      nuget-minor:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

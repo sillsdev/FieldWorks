@@ -2,21 +2,21 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Application;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using XCore;
-using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1140,6 +1140,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				Subscriber.Unsubscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
 				Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
+				Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
@@ -1398,19 +1399,11 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_sda; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when [prepare to refresh].
-		/// </summary>
-		/// <param name="args">The args.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnPrepareToRefresh(object args)
+		private void PrepareToRefresh(object args)
 		{
 			CheckDisposed();
 
 			SaveScrollPosition(args);
-			return false; // other things may wish to prepare too.
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2109,6 +2102,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			Subscriber.Subscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
 			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 		}
 
 		#endregion XCore Colleague overrides

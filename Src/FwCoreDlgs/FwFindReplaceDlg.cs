@@ -85,6 +85,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ITsString m_resultReplaceText; // saves replace text for reading after dlg closes.
 		/// <summary></summary>
 		protected ITsString m_prevSearchText = null;
+		private CollectorEnv.LocationInfo m_lastFoundLocation;
 		/// <summary></summary>
 		protected SearchKiller m_searchKiller = new SearchKiller();
 		private bool m_messageFilterInstalled = false;
@@ -1806,10 +1807,55 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected void DoReplace(IVwSelection sel)
 		{
 			SetupFindPattern();
+			var fEmptySearchPattern = (FindText.Length == 0);
+			var isWritingSystemOnlyReplace = fEmptySearchPattern && chkMatchWS.Checked;
+
+			// TE-1658: When Find text is empty and Match WS is checked, the first press of
+			// Replace should behave like FindNext (select a match in the specified WS).
+			// A subsequent press replaces the writing system of the current selection but
+			// should not automatically advance to the next match (there may be none).
+			if (isWritingSystemOnlyReplace)
+			{
+				if (sel != null && sel.IsRange && sel.CanFormatChar)
+				{
+					var rootSite = ActiveView;
+					m_vwFindPattern.ReplaceWith = ReplaceText;
+					DoReplacement(sel, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, fEmptySearchPattern);
+
+					// TE-1658: Keep the selection range in place after a WS-only replace.
+					if (rootSite != null)
+					{
+						if (m_lastFoundLocation != null)
+						{
+							rootSite.RootBox?.Activate(VwSelectionState.vssOutOfFocus);
+							var selHelper = SelectionHelper.Create(rootSite);
+							selHelper.SetLevelInfo(SelectionHelper.SelLimitType.Anchor, m_lastFoundLocation.m_location);
+							selHelper.SetLevelInfo(SelectionHelper.SelLimitType.End, m_lastFoundLocation.m_location);
+							selHelper.IchAnchor = m_lastFoundLocation.m_ichMin;
+							selHelper.IchEnd = m_lastFoundLocation.m_ichLim;
+							selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, m_lastFoundLocation.m_cpropPrev);
+							selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, m_lastFoundLocation.m_cpropPrev);
+							selHelper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, m_lastFoundLocation.m_tag);
+							selHelper.SetTextPropId(SelectionHelper.SelLimitType.End, m_lastFoundLocation.m_tag);
+
+							var restored = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
+							if (restored == null)
+								selHelper.SetSelection(rootSite, true, false, VwScrollSelOpts.kssoDefault);
+						}
+					}
+
+					btnClose.Text = FwCoreDlgs.kstidClose;
+					return;
+				}
+
+				btnClose.Text = FwCoreDlgs.kstidClose;
+				FindNext();
+				return;
+			}
+
 			if (IsReplacePossible(sel))
 			{
 				// See if we are just trying to replace formatting.
-				bool fEmptySearchPattern = (FindText.Length == 0);
 				m_vwFindPattern.ReplaceWith = ReplaceText;
 
 				DoReplacement(sel, m_vwFindPattern.ReplacementText, m_vwFindPattern.MatchOldWritingSystem, fEmptySearchPattern);
@@ -1822,7 +1868,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			btnClose.Text = FwCoreDlgs.kstidClose;
 
-			FindNext();
+			// For the TE-1658 (WS-only) scenario, do not automatically advance.
+			if (!isWritingSystemOnlyReplace)
+				FindNext();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1980,6 +2028,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IVwStylesheet styleSheet;
 			rootSite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out styleSheet);
 			m_findEnvironment?.Dispose();
+			m_lastFoundLocation = null;
 			m_findEnvironment = fSearchForward
 				? new FindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller)
 				: new ReverseFindCollectorEnv(vc, DataAccess, hvoRoot, frag, m_vwFindPattern, m_searchKiller);
@@ -2084,6 +2133,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				startLocation = new CollectorEnv.LocationInfo(SelectionHelper.Create(sel, rootSite));
 			}
 			var locationInfo = m_findEnvironment.FindNext(startLocation);
+			m_lastFoundLocation = (locationInfo == null ? null : new CollectorEnv.LocationInfo(locationInfo));
 			if (locationInfo != null)
 			{
 				var selHelper = SelectionHelper.Create(rootSite);
@@ -2095,8 +2145,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, locationInfo.m_cpropPrev);
 				selHelper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, locationInfo.m_tag);
 				selHelper.SetTextPropId(SelectionHelper.SelLimitType.End, locationInfo.m_tag);
+				if (locationInfo.m_ws != 0)
+				{
+					selHelper.SetWritingSystem(SelectionHelper.SelLimitType.Anchor, locationInfo.m_ws);
+					selHelper.SetWritingSystem(SelectionHelper.SelLimitType.End, locationInfo.m_ws);
+				}
+				else if (FindText != null && FindText.Length == 0 && chkMatchWS.Checked)
+				{
+					// TE-1658: When finding "anything in a given writing system" (empty find text),
+					// ensure the reconstructed selection has the target WS so subsequent Replace
+					// operations can recognize the selection as a match.
+					var wsFind = FindText.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
+					if (wsFind != 0)
+					{
+						selHelper.SetWritingSystem(SelectionHelper.SelLimitType.Anchor, wsFind);
+						selHelper.SetWritingSystem(SelectionHelper.SelLimitType.End, wsFind);
+					}
+				}
 				m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
-				Debug.Assert(m_vwSelectionForPattern != null, "We need a selection after a find!");
+				if (m_vwSelectionForPattern == null)
+					m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, false, VwScrollSelOpts.kssoDefault);
+				Debug.Assert(m_vwSelectionForPattern != null,
+					$"We need a selection after a find! tag={locationInfo.m_tag} cpropPrev={locationInfo.m_cpropPrev} ichMin={locationInfo.m_ichMin} ichLim={locationInfo.m_ichLim} ws={locationInfo.m_ws} lvlCount={(locationInfo.m_location == null ? -1 : locationInfo.m_location.Length)}");
 				rootSite.RootBox.Activate(VwSelectionState.vssOutOfFocus);
 			}
 		}
@@ -2110,6 +2180,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			Debug.Assert(m_findEnvironment != null);
 			m_findEnvironment.HasWrapped = true;
+			var rootSite = ActiveView;
+			if (rootSite == null)
+				return;
 
 			// Have we gone full circle and reached the point where we started?
 			if (m_findEnvironment.StoppedAtLimit)
@@ -2117,7 +2190,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else
 			{
 				// Wrap around to start searching at the top or bottom of the view.
-				FindFrom(null);
+				if (m_findEnvironment is ReverseFindCollectorEnv)
+					FindFrom(rootSite.RootBox.MakeSimpleSel(false, true, false, true));
+				else
+					FindFrom(null);
 
 				// If, after wrapping around to begin searching from the top, we hit the
 				// starting point, then display the same message as if we went full circle.
@@ -2172,6 +2248,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor, 0);
 			selHelper.SetNumberOfPreviousProps(SelectionHelper.SelLimitType.End, 0);
 			m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, true, VwScrollSelOpts.kssoDefault);
+			if (m_vwSelectionForPattern == null)
+				m_vwSelectionForPattern = selHelper.SetSelection(rootSite, true, false, VwScrollSelOpts.kssoDefault);
 
 			var rootBox = rootSite.RootBox;
 			return rootBox == null ? null : rootBox.Selection;
@@ -2207,6 +2285,38 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// If there is no selection then replace is impossible.
 			if (vwsel == null)
 				return false;
+
+			// TE-1658: When searching by writing system with an empty Find text, a non-empty
+			// selection can still be a valid match (based on the selection's WS), even though
+			// MatchWhole() won't match an empty pattern against non-empty text.
+			if (FindText != null && FindText.Length == 0 && chkMatchWS.Checked)
+			{
+				if (!vwsel.CanFormatChar)
+					return false;
+
+				// In this mode, replace should apply to the most recently found match, even though
+				// MatchWhole() can't match an empty pattern against non-empty text.
+				if (m_lastFoundLocation == null)
+					return false;
+
+				var rootSite = ActiveView;
+				if (rootSite == null)
+					return false;
+
+				var helper = SelectionHelper.Create(vwsel, rootSite);
+				var ichMin = Math.Min(helper.IchAnchor, helper.IchEnd);
+				var ichLim = Math.Max(helper.IchAnchor, helper.IchEnd);
+				var tag = helper.GetTextPropId(SelectionHelper.SelLimitType.Bottom);
+				var cpropPrev = helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Bottom);
+				var location = helper.GetLevelInfo(SelectionHelper.SelLimitType.Bottom);
+				var topHvo = (location != null && location.Length > 0) ? location[0].hvo : 0;
+
+				return topHvo == m_lastFoundLocation.TopLevelHvo &&
+					tag == m_lastFoundLocation.m_tag &&
+					cpropPrev == m_lastFoundLocation.m_cpropPrev &&
+					ichMin == m_lastFoundLocation.m_ichMin &&
+					ichLim == m_lastFoundLocation.m_ichLim;
+			}
 
 			// Is the current selection the same as what is in the find box?
 			if (!m_vwFindPattern.MatchWhole(vwsel))
@@ -2561,6 +2671,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			btnFindNext.Enabled = btnReplace.Enabled = btnReplaceAll.Enabled =
 				CanFindNext();
+
+			// TE-1658: When searching for "anything in a given writing system" (Match WS
+			// checked and Find text empty), the Replace text box should be disabled.
+			if (m_enableStates == null)
+			{
+				var searchingForWsWithoutText = chkMatchWS.Checked && fweditFindText.Text == string.Empty;
+				if (searchingForWsWithoutText)
+				{
+					var tss = fweditFindText.Tss;
+					var ws = 0;
+					if (tss != null && tss.RunCount > 0)
+						ws = tss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
+					fweditReplaceText.Enabled = ws == 0;
+				}
+				else
+				{
+					fweditReplaceText.Enabled = true;
+				}
+			}
 		}
 
 		private bool CanFindNext()

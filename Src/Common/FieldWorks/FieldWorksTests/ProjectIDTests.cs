@@ -56,9 +56,9 @@ namespace SIL.FieldWorks
 		{
 			var projA = new ProjectId("xml", "monkey");
 			var projB = new ProjectId("xml", "monkey");
-			Assert.AreEqual(BackendProviderType.kXML, projA.Type);
-			Assert.IsTrue(projA.Equals(projB));
-			Assert.AreEqual(projA.GetHashCode(), projB.GetHashCode());
+			Assert.That(projA.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(projA.Equals(projB), Is.True);
+			Assert.That(projB.GetHashCode(), Is.EqualTo(projA.GetHashCode()));
 		}
 
 		#endregion
@@ -73,8 +73,8 @@ namespace SIL.FieldWorks
 		public void IsValid_BogusType()
 		{
 			ProjectId proj = new ProjectId("bogus", "rogus");
-			Assert.AreEqual(BackendProviderType.kInvalid, proj.Type);
-			Assert.IsFalse(proj.IsValid);
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kInvalid));
+			Assert.That(proj.IsValid, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -89,8 +89,8 @@ namespace SIL.FieldWorks
 			string sFile = LcmFileHelper.GetXmlDataFileName(sProjectName);
 			m_mockFileOs.AddExistingFile(GetXmlProjectFilename(sProjectName));
 			ProjectId proj = new ProjectId(null, sFile);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks
 		public void IsValid_XML_False()
 		{
 			ProjectId proj = new ProjectId("xml", "notThere");
-			Assert.IsFalse(proj.IsValid);
+			Assert.That(proj.IsValid, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks
 			string sFile = LcmFileHelper.GetXmlDataFileName(sProjectName);
 			m_mockFileOs.AddExistingFile(GetXmlProjectFilename(sProjectName));
 			ProjectId proj = new ProjectId("xml", sFile);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks
 		public void IsValid_XML_NullProjectName()
 		{
 			ProjectId proj = new ProjectId("xml", null);
-			Assert.IsFalse(proj.IsValid);
+			Assert.That(proj.IsValid, Is.False);
 		}
 
 		#endregion
@@ -146,8 +146,8 @@ namespace SIL.FieldWorks
 		{
 			var proj = new ProjectId(string.Empty, null);
 			Assert.That(proj.Path, Is.Null);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsFalse(proj.IsValid);
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -160,14 +160,16 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_Default_onlyName()
 		{
 			m_defaultBepType = BackendProviderType.kXML;
-			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
-				LcmFileHelper.GetXmlDataFileName("ape"));
+			string expectedPath = Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
+				LcmFileHelper.GetXmlDataFileName("ape")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId("ape");
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -180,13 +182,16 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_Default_NameWithPeriod_Exists()
 		{
-			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
+			string expectedPath = Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"),
+				"my.monkey"
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId("my.monkey");
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -199,15 +204,21 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_NameWithPeriod_FilesWithAndWithoutExtensionExist()
 		{
-			string myMonkeyProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey");
-			string expectedPath = Path.Combine(myMonkeyProjectFolder, LcmFileHelper.GetXmlDataFileName("my.monkey"));
+			string myMonkeyProjectFolder = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				"my.monkey"
+			);
+			string expectedPath = Path.Combine(
+				myMonkeyProjectFolder,
+				LcmFileHelper.GetXmlDataFileName("my.monkey")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 			m_mockFileOs.AddExistingFile(Path.Combine(myMonkeyProjectFolder, "my.monkey"));
 
 			var proj = new ProjectId("my.monkey");
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -225,9 +236,9 @@ namespace SIL.FieldWorks
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(LcmFileHelper.GetXmlDataFileName(projectName));
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -244,9 +255,9 @@ namespace SIL.FieldWorks
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId("my.monkey");
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -261,9 +272,9 @@ namespace SIL.FieldWorks
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(LcmFileHelper.GetXmlDataFileName("monkey"));
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -275,13 +286,16 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_FullPath()
 		{
-			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, LcmFileHelper.GetXmlDataFileName("monkey"));
+			string expectedPath = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				LcmFileHelper.GetXmlDataFileName("monkey")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(expectedPath);
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -294,14 +308,17 @@ namespace SIL.FieldWorks
 		[Ignore("Not sure what this would be useful for or if this would be the desired behavior.")]
 		public void CleanUpNameForType_XML_RelativePath()
 		{
-			string relativePath = Path.Combine("primate", LcmFileHelper.GetXmlDataFileName("monkey"));
+			string relativePath = Path.Combine(
+				"primate",
+				LcmFileHelper.GetXmlDataFileName("monkey")
+			);
 			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, relativePath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId(relativePath);
-			Assert.AreEqual(expectedPath, proj.Path);
-			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
-			Assert.IsTrue(proj.IsValid);
+			Assert.That(proj.Path, Is.EqualTo(expectedPath));
+			Assert.That(proj.Type, Is.EqualTo(BackendProviderType.kXML));
+			Assert.That(proj.IsValid, Is.True);
 		}
 		#endregion
 
@@ -338,7 +355,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException exception)
 			{
-				Assert.IsFalse(exception.ReportToUser);
+				Assert.That(exception.ReportToUser, Is.False);
 			}
 		}
 
@@ -359,7 +376,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException exception)
 			{
-				Assert.IsTrue(exception.ReportToUser);
+				Assert.That(exception.ReportToUser, Is.True);
 			}
 		}
 
@@ -372,7 +389,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_InvalidProjectType()
 		{
-			var proj = new ProjectId(BackendProviderType.kInvalid, LcmFileHelper.GetXmlDataFileName("invalid"));
+			var proj = new ProjectId(
+				BackendProviderType.kInvalid,
+				LcmFileHelper.GetXmlDataFileName("invalid")
+			);
 			try
 			{
 				proj.AssertValid();
@@ -380,7 +400,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException exception)
 			{
-				Assert.IsTrue(exception.ReportToUser);
+				Assert.That(exception.ReportToUser, Is.True);
 			}
 		}
 
@@ -393,7 +413,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_Invalid_SharedFolderNotFound()
 		{
-			var proj = new ProjectId(LcmFileHelper.GetXmlDataFileName("monkey"), FwLinkArgs.kLocalHost);
+			var proj = new ProjectId(
+				LcmFileHelper.GetXmlDataFileName("monkey"),
+				FwLinkArgs.kLocalHost
+			);
 			try
 			{
 				proj.AssertValid();
@@ -401,7 +424,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException exception)
 			{
-				Assert.IsTrue(exception.ReportToUser);
+				Assert.That(exception.ReportToUser, Is.True);
 			}
 		}
 		#endregion
@@ -415,10 +438,18 @@ namespace SIL.FieldWorks
 		[Test]
 		public void NameAndPath()
 		{
-			string myProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "My.Project");
+			string myProjectFolder = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				"My.Project"
+			);
 			ProjectId projId = new ProjectId(BackendProviderType.kXML, "My.Project");
-			Assert.AreEqual(Path.Combine(myProjectFolder, LcmFileHelper.GetXmlDataFileName("My.Project")), projId.Path);
-			Assert.AreEqual("My.Project", projId.Name);
+			Assert.That(
+				projId.Path,
+				Is.EqualTo(
+					Path.Combine(myProjectFolder, LcmFileHelper.GetXmlDataFileName("My.Project"))
+				)
+			);
+			Assert.That(projId.Name, Is.EqualTo("My.Project"));
 		}
 
 		#endregion
@@ -433,8 +464,10 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public static string GetXmlProjectFilename(string projectName)
 		{
-			return Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
-				LcmFileHelper.GetXmlDataFileName(projectName));
+			return Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
+				LcmFileHelper.GetXmlDataFileName(projectName)
+			);
 		}
 		#endregion
 	}

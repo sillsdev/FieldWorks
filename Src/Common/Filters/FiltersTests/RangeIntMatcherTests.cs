@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(0, long.MaxValue);
 			var tssLabel = TsStringUtils.MakeString("9223372036854775807", WsDummy);
-			Assert.IsTrue(rangeIntMatch.Matches(tssLabel));
+			Assert.That(rangeIntMatch.Matches(tssLabel), Is.True);
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(2, 2);
 			var tssLabel = TsStringUtils.MakeString("0 1 2", WsDummy);
-			Assert.IsTrue(rangeIntMatch.Matches(tssLabel));
+			Assert.That(rangeIntMatch.Matches(tssLabel), Is.True);
 		}
 
 		[Test]
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
 			var tssLabel = TsStringUtils.MakeString("0 1 2", WsDummy);
-			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
+			Assert.That(rangeIntMatch.Matches(tssLabel), Is.False);
 		}
 
 		[Test]
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
 			var tssLabel = TsStringUtils.MakeString("999999999999999999999999", WsDummy);
-			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
+			Assert.That(rangeIntMatch.Matches(tssLabel), Is.False);
 		}
 
 		[Test]
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
 			var tssLabel = TsStringUtils.EmptyString(WsDummy);
-			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
+			Assert.That(rangeIntMatch.Matches(tssLabel), Is.False);
 		}
 	}
 }

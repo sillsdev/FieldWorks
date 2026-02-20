@@ -39,9 +39,9 @@ namespace SIL.SilSidePane
 		public void Enabled()
 		{
 			_button.Enabled = true;
-			Assert.IsTrue(_button.Enabled);
+			Assert.That(_button.Enabled, Is.True);
 			_button.Enabled = false;
-			Assert.IsFalse(_button.Enabled);
+			Assert.That(_button.Enabled, Is.False);
 		}
 
 		[Test]
@@ -49,7 +49,7 @@ namespace SIL.SilSidePane
 		{
 			object someObject = new object();
 			_button.Tag = someObject;
-			Assert.AreSame(someObject, _button.Tag);
+			Assert.That(_button.Tag, Is.SameAs(someObject));
 		}
 
 		[Test]
@@ -58,7 +58,7 @@ namespace SIL.SilSidePane
 			string name = "buttonname";
 			_button.Name = name;
 			string result = _button.Name;
-			Assert.AreEqual(result, name);
+			Assert.That(name, Is.EqualTo(result));
 		}
 
 		[Test]
@@ -67,7 +67,7 @@ namespace SIL.SilSidePane
 			using (Image image = new Bitmap("DefaultIcon.ico"))
 			{
 				_button.Image = image;
-				Assert.AreSame(image, _button.Image);
+				Assert.That(_button.Image, Is.SameAs(image));
 			}
 		}
 	}

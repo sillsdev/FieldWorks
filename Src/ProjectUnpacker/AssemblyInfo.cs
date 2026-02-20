@@ -5,4 +5,4 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Paratext project unpacking for unit tests")]
+// [assembly: AssemblyTitle("Paratext project unpacking for unit tests")] // Sanitized by convert_generate_assembly_info

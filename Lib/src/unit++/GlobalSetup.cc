@@ -11,6 +11,7 @@ namespace unitpp {
  */
 void GlobalSetup(bool verbose)
 {
+	(void)verbose; // suppress unused parameter warning while keeping signature stable
 }
 
 }

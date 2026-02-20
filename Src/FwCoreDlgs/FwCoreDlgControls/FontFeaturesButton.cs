@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components;
+		private System.ComponentModel.IContainer components = null;
 		private string m_fontName; // The font for which we are editing the features.
 		private string m_fontFeatures; // The font feature string stored in the writing system.
 		private IRenderingFeatures m_featureEngine;

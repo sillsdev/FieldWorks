@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 			sb.AppendLineFormat(format, new object[] { C, B, A }, delimiter);
 			sb.AppendLineFormat(format, new object[] { B, C, A }, delimiter);
 
-			Assert.AreEqual(expected, sb.ToString());
+			Assert.That(sb.ToString(), Is.EqualTo(expected));
 		}
 
 		/// <summary>

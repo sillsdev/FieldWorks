@@ -4,4 +4,4 @@
 
 using System.Reflection;
 
-[assembly: AssemblyTitle("Filters")]
+// [assembly: AssemblyTitle("Filters")] // Sanitized by convert_generate_assembly_info

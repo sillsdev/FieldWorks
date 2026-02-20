@@ -622,10 +622,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_viewHelper.ActiveView != null)
+			ActiveViewHelper viewHelper = m_viewHelper;
+			if (arg is ActiveViewHelper helper)
+			{
+				viewHelper = helper;
+			}
+			if (viewHelper.ActiveView != null)
 			{
 				using (new DataUpdateMonitor(this, "EditCut"))
-					return m_viewHelper.ActiveView.EditingHelper.CutSelection();
+					return viewHelper.ActiveView.EditingHelper.CutSelection();
 			}
 			return false;
 		}
@@ -641,8 +646,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_viewHelper.ActiveView != null)
-				return m_viewHelper.ActiveView.EditingHelper.CopySelection();
+			ActiveViewHelper viewHelper = m_viewHelper;
+			if (arg is ActiveViewHelper helper)
+			{
+				viewHelper = helper;
+			}
+			if (viewHelper.ActiveView != null)
+				return viewHelper.ActiveView.EditingHelper.CopySelection();
 			return false;
 		}
 
@@ -657,7 +667,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_viewHelper.ActiveView != null)
+			ActiveViewHelper viewHelper = m_viewHelper;
+			if (arg is ActiveViewHelper helper)
+			{
+				viewHelper = helper;
+			}
+			if (viewHelper.ActiveView != null)
 			{
 				string stUndo, stRedo;
 				ResourceHelper.MakeUndoRedoLabels("kstidEditPaste", out stUndo, out stRedo);
@@ -665,7 +680,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
 				using (new DataUpdateMonitor(this, "EditPaste"))
 				{
-					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard(Cache))
+					if (viewHelper.ActiveView.EditingHelper.PasteClipboard(Cache))
 						undoHelper.RollBack = false;
 				}
 				return true;
@@ -825,12 +840,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_viewHelper.ActiveView != null)
+			ActiveViewHelper viewHelper = m_viewHelper;
+			if (arg is ActiveViewHelper helper)
+			{
+				viewHelper = helper;
+			}
+			if (viewHelper.ActiveView != null)
 			{
 				try
 				{
 					EnableBulkLoadingDisableIdleProcessing(true);
-					m_viewHelper.ActiveView.EditingHelper.SelectAll();
+					viewHelper.ActiveView.EditingHelper.SelectAll();
 				}
 				finally
 				{
@@ -1664,14 +1684,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Called in FwXApp.OnMasterRefresh BEFORE clearing the cache, typically to
 		/// save any work in progress.
+		/// REVIEW (Hasso) 2023.07: 2/3 production callers call this in a foreach loop in OnMasterRefresh. There has to be a more efficient way.
 		/// </summary>
 		public void PrepareToRefresh()
 		{
 			CheckDisposed();
 
-			// Use SendMessageToAllNow as this needs to go to everyone right now.  This
+			// REVIEW (Hasso) 2023.07: we had used MediatorSendMessageToAllNow as this needs to go to everyone right now.  This
 			// method on the mediator will not stop when the message is handled, nor is it deferred.
-			m_mediator.SendMessageToAllNow("PrepareToRefresh", null);
+			// REVIEW: do we need to replicate this urgency in PubSub?
+			Publisher.Publish(new PublisherParameterObject(EventConstants.PrepareToRefresh));
 		}
 
 		/// <summary>

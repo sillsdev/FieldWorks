@@ -10,6 +10,6 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("Sfm2Xml")]
-[assembly: AssemblyDescription("Converts an SFM file, using a mapping file, to XML")]
+// [assembly: AssemblyTitle("Sfm2Xml")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("Converts an SFM file, using a mapping file, to XML")] // Sanitized by convert_generate_assembly_info
 [assembly:InternalsVisibleTo("Sfm2XmlTests")]

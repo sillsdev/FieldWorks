@@ -13,7 +13,8 @@ using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.LCModel.FixData;
 
 namespace SIL.FieldWorks.FixData
 {
@@ -123,8 +124,7 @@ namespace SIL.FieldWorks.FixData
 				xw.Close();
 			}
 
-			var bakfile = Path.ChangeExtension(m_filename,
-				Resources.FwFileExtensions.ksFwDataFallbackFileExtension);
+			var bakfile = Path.ChangeExtension(m_filename, ".bak");
 			if (File.Exists(bakfile))
 				File.Delete(bakfile);
 			File.Move(m_filename, bakfile);
@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.FixData
 					}
 					else if (!m_guids.Contains(guidOwner))
 					{
-						m_errors.Add(String.Format(Strings.ksRemovingLinkToNonexistentOwner,
+						m_errors.Add(String.Format(FixFwDataStrings.ksRemovingLinkToNonexistentOwner,
 							guidOwner, className, guid));
 						xaOwner.Remove();
 					}

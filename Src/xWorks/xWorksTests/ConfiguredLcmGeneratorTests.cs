@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.XWorks
 				paragraph.Contents = TsStringUtils.MakeString(customData, m_wsFr);
 				//SUT
 				var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache);
-				Assert.AreEqual(ConfiguredLcmGenerator.PropertyType.PrimitiveType, type);
+				Assert.That(type, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 			}
 		}
 
@@ -442,9 +442,9 @@ namespace SIL.FieldWorks.XWorks
 			var rootConfig = new DictionaryConfigurationModel(true);
 			var lexemeConfig = new DictionaryConfigurationModel(false);
 			// SUT
-			Assert.False(ConfiguredLcmGenerator.IsMainEntry(variantEntry, lexemeConfig), "Variant, Lexeme");
-			Assert.False(ConfiguredLcmGenerator.IsMainEntry(variantEntry, rootConfig), "Variant, Root");
-			Assert.False(ConfiguredLcmGenerator.IsMainEntry(complexEntry, rootConfig), "Complex, Root");
+			Assert.That(ConfiguredLcmGenerator.IsMainEntry(variantEntry, lexemeConfig), Is.False, "Variant, Lexeme");
+			Assert.That(ConfiguredLcmGenerator.IsMainEntry(variantEntry, rootConfig), Is.False, "Variant, Root");
+			Assert.That(ConfiguredLcmGenerator.IsMainEntry(complexEntry, rootConfig), Is.False, "Complex, Root");
 			// (complex entries are considered main entries in lexeme-based configs)
 		}
 

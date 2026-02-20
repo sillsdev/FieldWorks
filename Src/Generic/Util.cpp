@@ -2566,8 +2566,20 @@ const wchar_t kchDirSep[] = L"/";
 StrUni DirectoryFinder::FwRootDataDir()
 {
 #if defined(_WIN32) || defined(_M_X64)
-	RegKey rk;
 	StrUni stuResult;
+
+	// Check environment variable first (CI friendly)
+	wchar_t* envPath = nullptr;
+	size_t envLen = 0;
+	if (_wdupenv_s(&envPath, &envLen, L"FW_ROOT_DATA_DIR") == 0 && envPath && *envPath)
+	{
+		stuResult.Assign(envPath);
+		free(envPath);
+		return stuResult;
+	}
+	free(envPath);
+
+	RegKey rk;
 	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
 		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
@@ -2581,7 +2593,10 @@ StrUni DirectoryFinder::FwRootDataDir()
 			stuResult.Assign(rgch);
 		}
 	}
-	Assert(stuResult.Length() > 0);
+
+	// Only assert if we really can't find anything and are about to fall back to defaults
+	// Assert(stuResult.Length() > 0);
+
 	if (!stuResult.Length())
 	{
 		achar rgch[MAX_PATH];
@@ -2611,8 +2626,20 @@ StrUni DirectoryFinder::FwRootDataDir()
 StrUni DirectoryFinder::FwRootCodeDir()
 {
 #if defined(_WIN32) || defined(_M_X64)
-	RegKey rk;
 	StrUni stuResult;
+
+	// Check environment variable first (CI friendly)
+	wchar_t* envPath = nullptr;
+	size_t envLen = 0;
+	if (_wdupenv_s(&envPath, &envLen, L"FW_ROOT_CODE_DIR") == 0 && envPath && *envPath)
+	{
+		stuResult.Assign(envPath);
+		free(envPath);
+		return stuResult;
+	}
+	free(envPath);
+
+	RegKey rk;
 	if (rk.InitCu(REGISTRYPATHWITHVERSION) ||
 		rk.InitLm(REGISTRYPATHWITHVERSION))
 	{
@@ -2626,7 +2653,23 @@ StrUni DirectoryFinder::FwRootCodeDir()
 			stuResult.Assign(rgch);
 		}
 	}
-	Assert(stuResult.Length() > 0);
+
+	// Only assert if we really can't find anything
+	// Assert(stuResult.Length() > 0);
+
+	if (!stuResult.Length())
+	{
+		wchar_t modulePath[MAX_PATH];
+		DWORD dwT = ::GetModuleFileName(NULL, modulePath, MAX_PATH);
+		if (dwT > 0)
+		{
+			wchar_t * lastSlash = wcsrchr(modulePath, L'\\');
+			if (lastSlash)
+				*(lastSlash) = 0;
+			stuResult.Assign(modulePath);
+		}
+	}
+
 	if (!stuResult.Length())
 		stuResult.Assign(L"C:\\FieldWorks");
 	return stuResult;

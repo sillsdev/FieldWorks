@@ -288,6 +288,8 @@
             <item command="CmdCheckParserOnGenre"/>
             <item command="CmdCheckParserOnAll"/>
             <item command="CmdShowParserReports"/>
+            <item label="-" translate="do not translate"/>
+            <item label="Updates Word Analyses" boolProperty="CheckParserUpdatesAnalyses" persist="true" settings="local"/>
           </menu>
 			<menu id="ChooseParserMenu" label="Choose Parser">
 				<item command="CmdChooseXAmpleParser"/>
@@ -626,6 +628,7 @@
 		<property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local"/>
 		<property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local"/>
 		<property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local"/>
+        <property name="CheckParserUpdatesAnalyses" bool="true" persist="true" settingsGroup="local"/>
 	</defaultProperties>
 	<!-- ********************************************************** -->
 	<!-- *********************** Area Item *********************************** -->

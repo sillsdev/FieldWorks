@@ -534,6 +534,11 @@ namespace SIL.FieldWorks.IText
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
 
+		internal void UpdateLineOptions()
+		{
+			UpdateFieldNamesFromLines(Mode);
+		}
+
 		private LineOption[] UpdateFieldNamesFromLines(InterlinMode mode)
 		{
 			LineOption[] options = LineOptions(mode);

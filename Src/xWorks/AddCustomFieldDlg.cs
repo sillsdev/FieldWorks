@@ -710,9 +710,9 @@ namespace SIL.FieldWorks.XWorks
 			// Name actually gets set later to whatever Userlabel is, so test Userlabel.
 			try
 			{
-				var flid = m_cache.MetaDataCacheAccessor.GetFieldId2(fdw.Fd.Class, fdw.Fd.Userlabel, true);
+				m_cache.MetaDataCacheAccessor.GetFieldId2(fdw.Fd.Class, fdw.Fd.Userlabel, true);
 			}
-			catch (LcmInvalidFieldException e)
+			catch (LcmInvalidFieldException)
 			{
 				return false; // this is actually the 'good' case.
 			}

@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private List<ObjectLabel> m_labels;
 		/// <summary></summary>
 		protected ToolTip toolTip1;
-		private IContainer components;
+		private IContainer components = null;
 		/// <summary></summary>
 		protected IPersistenceProvider m_persistProvider;
 		/// <summary></summary>
@@ -144,7 +144,6 @@ namespace SIL.FieldWorks.Common.Controls
 		private CheckBox m_displayUsageCheckBox;
 
 		private ToolStripButton m_printButton;
-		private Dictionary<char, string> s_xmlCharacterSubstitutions;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.

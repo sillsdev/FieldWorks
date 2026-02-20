@@ -32,9 +32,9 @@ namespace XMLViewsTests
 		[Test]
 		public void TestMergeCustomCopy()
 		{
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry']/sublayout[@name='publishStemPara']").Count, "There should be one subentry from the original setup.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara']/part[@ref='MLHeadWordPub' and @before='']").Count, "The original layout entry attributes have no value for before.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem']/part[@ref='SmartDefinitionPub' and @before='']").Count, "The original layout sense attributes have no value for before.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry']/sublayout[@name='publishStemPara']").Count, Is.EqualTo(1), "There should be one subentry from the original setup.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara']/part[@ref='MLHeadWordPub' and @before='']").Count, Is.EqualTo(1), "The original layout entry attributes have no value for before.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem']/part[@ref='SmartDefinitionPub' and @before='']").Count, Is.EqualTo(1), "The original layout sense attributes have no value for before.");
 
 			var cTypesOrig = m_inventory.GetLayoutTypes().Count;
 			var cLayoutsOrig = m_inventory.GetElements("layout").Count;
@@ -43,19 +43,19 @@ namespace XMLViewsTests
 				Path.Combine(FwDirectoryFinder.SourceDirectory, "Common/Controls/XMLViews/XMLViewsTests/LayoutMergerTestData/My_Stem-based_LexEntry_Layouts.xml")
 			};
 			m_inventory.AddElementsFromFiles(files, 0, true);
-			Assert.AreEqual(cTypesOrig + 1, m_inventory.GetLayoutTypes().Count, "The merge should have added one new layout type.");
-			Assert.AreEqual(cLayoutsOrig + 8, m_inventory.GetElements("layout").Count, "The merge should have added eight new layout elements.");
+			Assert.That(m_inventory.GetLayoutTypes().Count, Is.EqualTo(cTypesOrig + 1), "The merge should have added one new layout type.");
+			Assert.That(m_inventory.GetElements("layout").Count, Is.EqualTo(cLayoutsOrig + 8), "The merge should have added eight new layout elements.");
 
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry']/sublayout[@name='publishStemPara']").Count, "There should still be one subentry from the original setup.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara']/part[@ref='MLHeadWordPub' and @before='']").Count, "The original layout entry attributes should not change.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem']/part[@ref='SmartDefinitionPub' and @before='']").Count, "The original layout sense attributes should not change.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry']/sublayout[@name='publishStemPara']").Count, Is.EqualTo(1), "There should still be one subentry from the original setup.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara']/part[@ref='MLHeadWordPub' and @before='']").Count, Is.EqualTo(1), "The original layout entry attributes should not change.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem']/part[@ref='SmartDefinitionPub' and @before='']").Count, Is.EqualTo(1), "The original layout sense attributes should not change.");
 
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry#stem-785']/sublayout[@name='publishStemPara#Stem-785']").Count, "There should be one subentry from the copied setup, with revised name.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara#stem-785']/part[@ref='MLHeadWordPub' and @before='Headword: ']").Count, "The revised attributes for entry parts in the copy should pass through the merge.");
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem#stem-785']/part[@ref='SmartDefinitionPub' and @before='Definition: ']").Count, "The revised attributes for sense parts in the copy should pass through the merge.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemEntry#stem-785']/sublayout[@name='publishStemPara#Stem-785']").Count, Is.EqualTo(1), "There should be one subentry from the copied setup, with revised name.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemPara#stem-785']/part[@ref='MLHeadWordPub' and @before='Headword: ']").Count, Is.EqualTo(1), "The revised attributes for entry parts in the copy should pass through the merge.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexSense' and @type='jtview' and @name='publishStem#stem-785']/part[@ref='SmartDefinitionPub' and @before='Definition: ']").Count, Is.EqualTo(1), "The revised attributes for sense parts in the copy should pass through the merge.");
 			// If we add some modifications to the standard layout types in additional data files, then more testing could be done on those values passing through...  But this demonstrates the fixes for https://jira.sil.org/browse/LT-15378.
 
-			Assert.AreEqual(1, m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemMinorEntry#stem-785']/part[@ref='MinorEntryConfig' and @entrytypeseq='-b0000000-c40e-433e-80b5-31da08771344,+024b62c9-93b3-41a0-ab19-587a0030219a']").Count, "The entrytypeseq attribute for entry parts in the copy should pass through the merge.");
+			Assert.That(m_inventory.GetElements("layout[@class='LexEntry' and @type='jtview' and @name='publishStemMinorEntry#stem-785']/part[@ref='MinorEntryConfig' and @entrytypeseq='-b0000000-c40e-433e-80b5-31da08771344,+024b62c9-93b3-41a0-ab19-587a0030219a']").Count, Is.EqualTo(1), "The entrytypeseq attribute for entry parts in the copy should pass through the merge.");
 			//Added above test case to handle entrytypeseq to fix https://jira.sil.org/browse/LT-16442
 		}
 

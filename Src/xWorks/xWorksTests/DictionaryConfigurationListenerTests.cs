@@ -48,16 +48,16 @@ namespace SIL.FieldWorks.XWorks
 		public void GetDictionaryConfigurationBaseType_ReportsCorrectlyForDictionaryAndReversal()
 		{
 			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.EqualTo("Dictionary"), "did not return expected type");
 			m_propertyTable.SetProperty("currentContentControl", "lexiconBrowse", true);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.EqualTo("Dictionary"), "did not return expected type");
 			m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", true);
-			Assert.AreEqual("Dictionary", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.EqualTo("Dictionary"), "did not return expected type");
 
 			m_propertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", true);
-			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.EqualTo("Reversal Index"), "did not return expected type");
 			m_propertyTable.SetProperty("currentContentControl", "reversalToolBulkEditReversalEntries", true);
-			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.EqualTo("Reversal Index"), "did not return expected type");
 
 			m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
 			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.Null, "Other areas should return null");

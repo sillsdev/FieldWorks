@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.Discourse
 			//	3. Added the WordGroup to the Cells sequence of the ChartRow
 			VerifyRow(0, "1", 1);
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
-			Assert.AreEqual(cSelectExpected, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cSelectExpected));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 		}
 
@@ -168,9 +168,9 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRow(0, "1a", 1); // still 1 WordGroup, shouldn't make a new one.
 			VerifyWordGroup(0, 0, m_allColumns[1],
 				new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 2);
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add a row");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not add a row");
 		}
 
 		private void VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(AnalysisOccurrence[] allParaOccurrences,
@@ -182,9 +182,9 @@ namespace SIL.FieldWorks.Discourse
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
 			VerifyWordGroup(0, 1, m_allColumns[3], new List<AnalysisOccurrence> { allParaOccurrences[1] });
 			VerifyMovedText(0, 2, m_allColumns[4], wGrp01, true);
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 2);
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add a row");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not add a row");
 		}
 
 		#endregion verification helpers
@@ -215,8 +215,8 @@ namespace SIL.FieldWorks.Discourse
 			// We've set everything up except some input wordforms. We should get an error message.
 			m_mockRibbon.CSelected = 0;
 			IConstChartRow dummy;
-			Assert.IsNotNull(m_logic.MoveToColumn(1, out dummy));
-			Assert.IsNotNull(m_logic.MakeMovedText(1, 3));
+			Assert.That(m_logic.MoveToColumn(1, out dummy), Is.Not.Null);
+			Assert.That(m_logic.MakeMovedText(1, 3), Is.Not.Null);
 		}
 
 		/// <summary>
@@ -237,10 +237,10 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMoveFirstOccurrenceToCol1(allParaOccurrences, 1);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(0, m_chart.RowsOS.Count, "no rows after undo MoveFirstToCol1");
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(0), "no rows after undo MoveFirstToCol1");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 0);
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 0, 1);
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Discourse
 			//undoSpy.AssertHasNotification(m_chart.Hvo, DsConstChartTags.kflidRows, 0, 0, 1);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMoveFirstOccurrenceToCol1(allParaOccurrences, 3);
 		}
@@ -272,18 +272,18 @@ namespace SIL.FieldWorks.Discourse
 				() => m_logic.MoveToColumn(1, out dummy));
 			VerifyMoveSecondOccurrenceToSameCol(allParaOccurrences, 1);
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 1); // didn't remove the one we didn't create.
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
 			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMoveSecondOccurrenceToSameCol(allParaOccurrences, 3);
 			// 1, 1, 0 would be preferable, but this is also valid and is what currently happens.
@@ -309,19 +309,19 @@ namespace SIL.FieldWorks.Discourse
 				() => m_logic.MoveToColumn(3, out dummy));
 			VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(allParaOccurrences, cellPart0_1, 1);
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 2); // removed the new WordGroup.
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
 			VerifyMovedText(0, 1, m_allColumns[4], cellPart0_1, true);
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
 			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(allParaOccurrences, cellPart0_1, 3);
 		}
@@ -341,14 +341,14 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMakeMovedEmptyChart(allParaOccurrences, 1);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(0, m_chart.RowsOS.Count, "should not add more than one row");
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(0), "should not add more than one row");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 0);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMakeMovedEmptyChart(allParaOccurrences, 3);
 		}
@@ -359,9 +359,9 @@ namespace SIL.FieldWorks.Discourse
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
 			var cellPart0_1 = m_chart.RowsOS[0].CellsOS[0] as IConstChartWordGroup;
 			VerifyMovedText(0, 1, m_allColumns[3], cellPart0_1, true);
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add more than one row");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not add more than one row");
 		}
 
 		/// <summary>
@@ -388,14 +388,14 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMakeMovedOnSameRow(allParaOccurrences, 1);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not affect rows");
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not affect rows");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMakeMovedOnSameRow(allParaOccurrences, 3);
 		}
@@ -407,9 +407,9 @@ namespace SIL.FieldWorks.Discourse
 			var cellPart0_3 = m_chart.RowsOS[0].CellsOS[2] as IConstChartWordGroup;
 			VerifyMovedText(0, 1, m_allColumns[2], cellPart0_3, false);
 			VerifyWordGroup(0, 2, m_allColumns[3], new List<AnalysisOccurrence> { allParaOccurrences[1] });
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 2);
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add more than one row");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not add more than one row");
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, spy, 2, 1);
 		}
@@ -432,17 +432,17 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMakeMovedWithCollidingMarker(allParaOccurrences, 1);
 			// This unfortunately enforces their being inserted separately and in a particular order. Grr.
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "return to one row");
-			Assert.AreEqual(2, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "return to one row");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(2));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, undoSpy, 1, 2);
 			// 1, 0, 1 would be preferable, but this is also valid and is what currently happens.
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMakeMovedWithCollidingMarker(allParaOccurrences, 3);
 		}
@@ -454,9 +454,9 @@ namespace SIL.FieldWorks.Discourse
 			var cellPart0_3 = m_chart.RowsOS[0].CellsOS[2] as IConstChartWordGroup;
 			VerifyMovedText(0, 1, m_allColumns[1], cellPart0_3, false);
 			VerifyWordGroup(0, 2, m_allColumns[3], new List<AnalysisOccurrence> { allParaOccurrences[1] });
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 2);
-			Assert.AreEqual(1, m_chart.RowsOS.Count, "should not add rows");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(1), "should not add rows");
 			// Verify various PropChanged calls.
 			//VerifyOccurrenceListChange(allParaOccurrences, spy, 2, 1);
 		}
@@ -477,14 +477,14 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMakeDepClause(allParaOccurrences, 0);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(2, m_chart.RowsOS.Count, "still two rows");
-			Assert.AreEqual(0, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(2), "still two rows");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(0));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMakeDepClause(allParaOccurrences, 0);
 		}
@@ -496,9 +496,9 @@ namespace SIL.FieldWorks.Discourse
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0] });
 			var row0 = m_chart.RowsOS[0];
 			VerifyDependentClause(1, 0, m_allColumns[2], new [] { row0 });
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			Assert.AreEqual(2, m_chart.RowsOS.Count, "should not add rows");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(2), "should not add rows");
 		}
 
 		/// <summary>
@@ -519,18 +519,18 @@ namespace SIL.FieldWorks.Discourse
 			VerifyMakeThreeDepClauses(allParaOccurrences, 0);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 1);
-			Assert.AreEqual(ClauseTypes.Normal, row1.ClauseType);
-			Assert.AreEqual(ClauseTypes.Normal, row2.ClauseType);
-			Assert.AreEqual(ClauseTypes.Normal, row3.ClauseType);
-			Assert.AreEqual(4, m_chart.RowsOS.Count, "still four rows");
-			Assert.AreEqual(0, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(row1.ClauseType, Is.EqualTo(ClauseTypes.Normal));
+			Assert.That(row2.ClauseType, Is.EqualTo(ClauseTypes.Normal));
+			Assert.That(row3.ClauseType, Is.EqualTo(ClauseTypes.Normal));
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(4), "still four rows");
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(0));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyMakeThreeDepClauses(allParaOccurrences, 0);
 		}
@@ -546,13 +546,13 @@ namespace SIL.FieldWorks.Discourse
 			var row2 = m_chart.RowsOS[2];
 			var row3 = m_chart.RowsOS[3];
 			VerifyDependentClause(0, 1, m_allColumns[2], new [] { row1, row2, row3 });
-			Assert.AreEqual(cExpectCSelect, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(cExpectCSelect));
 			AssertUsedAnalyses(allParaOccurrences, 1);
-			Assert.AreEqual(4, m_chart.RowsOS.Count, "should not add rows");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(4), "should not add rows");
 			// Verify various PropChanged calls.
-			Assert.AreEqual(ClauseTypes.Speech, row1.ClauseType);
-			Assert.AreEqual(ClauseTypes.Speech, row2.ClauseType);
-			Assert.AreEqual(ClauseTypes.Speech, row3.ClauseType);
+			Assert.That(row1.ClauseType, Is.EqualTo(ClauseTypes.Speech));
+			Assert.That(row2.ClauseType, Is.EqualTo(ClauseTypes.Speech));
+			Assert.That(row3.ClauseType, Is.EqualTo(ClauseTypes.Speech));
 		}
 
 		[Test]
@@ -574,7 +574,7 @@ namespace SIL.FieldWorks.Discourse
 			// Now test Undo
 			using (new NotifyChangeSpy(m_mockRibbon.Decorator))
 			{
-				Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+				Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 				Cache.ActionHandlerAccessor.Undo();
 				AssertMergeBefore(false, cellPart0_1, "Undo turning on merge left should work");
 				AssertMergeAfter(false, cellPart0_1, "Undo merge left should not affect merge right");
@@ -603,12 +603,12 @@ namespace SIL.FieldWorks.Discourse
 
 		private static void AssertMergeBefore(bool expectedState, IConstituentChartCellPart cellPart, string message)
 		{
-			Assert.AreEqual(expectedState, cellPart.MergesBefore, message);
+			Assert.That(cellPart.MergesBefore, Is.EqualTo(expectedState), message);
 		}
 
 		private static void AssertMergeAfter(bool expectedState, IConstituentChartCellPart cellPart, string message)
 		{
-			Assert.AreEqual(expectedState, cellPart.MergesAfter, message);
+			Assert.That(cellPart.MergesAfter, Is.EqualTo(expectedState), message);
 		}
 
 		[Test]
@@ -629,12 +629,12 @@ namespace SIL.FieldWorks.Discourse
 				VerifyInsertMarker(marker);
 
 				// Now test Undo
-				Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+				Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 				Cache.ActionHandlerAccessor.Undo();
 				VerifyRemovedMarker(allParaOccurrences);
 
 				// And now Redo
-				Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+				Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 				Cache.ActionHandlerAccessor.Redo();
 				VerifyInsertMarker(marker);
 
@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.Discourse
 				// Now test Undo
 				using (new NotifyChangeSpy(m_mockRibbon.Decorator))
 				{
-					Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+					Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 					Cache.ActionHandlerAccessor.Undo();
 					VerifyInsertMarker(marker);
 				}
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.Discourse
 				// And now Redo
 				using (new NotifyChangeSpy(m_mockRibbon.Decorator))
 				{
-					Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+					Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 					Cache.ActionHandlerAccessor.Redo();
 					VerifyRemovedMarker(allParaOccurrences);
 				}
@@ -696,12 +696,12 @@ namespace SIL.FieldWorks.Discourse
 			VerifyChangeColumn(cellPartsToMove, newColumn, "cellPart should have been moved to new column");
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyChangeColumn(cellPartsToMove, originalColumn, "cellPart should have returned to original column");
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyChangeColumn(cellPartsToMove, newColumn, "cellPart should have been moved again to new column");
 		}
@@ -709,7 +709,7 @@ namespace SIL.FieldWorks.Discourse
 		private static void VerifyChangeColumn(IEnumerable<IConstituentChartCellPart> cellPartsToMove, ICmPossibility column, string message)
 		{
 			foreach (var cellPart in cellPartsToMove)
-				Assert.AreEqual(column, cellPart.ColumnRA, message);
+				Assert.That(cellPart.ColumnRA, Is.EqualTo(column), message);
 		}
 
 		[Test]
@@ -731,13 +731,13 @@ namespace SIL.FieldWorks.Discourse
 			VerifyChangeRow(row0, cellPartsToMove, row1, "cellParts should have been moved to new row", 1);
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyChangeRow(row1, cellPartsToMove, row0,
 				"cellParts should have been moved back to original row by Undo", 0);
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			VerifyChangeRow(row0, cellPartsToMove, row1, "cellParts should have been moved again to new row by redo", 1);
 		}
@@ -747,8 +747,8 @@ namespace SIL.FieldWorks.Discourse
 		{
 			foreach (var cellPart in cellPartsToMove)
 			{
-				Assert.AreEqual(cellPart.Hvo, rowDst.CellsOS[ihvoDest].Hvo, message);
-				Assert.IsFalse(rowSrc.CellsOS.Contains(cellPart));
+				Assert.That(rowDst.CellsOS[ihvoDest].Hvo, Is.EqualTo(cellPart.Hvo), message);
+				Assert.That(rowSrc.CellsOS.Contains(cellPart), Is.False);
 				ihvoDest++;
 			}
 		}
@@ -767,16 +767,16 @@ namespace SIL.FieldWorks.Discourse
 			m_helper.VerifyDeletedHvos(new [] {row0.Hvo}, "Deleting last CellPart should delete row too.");
 
 			// Now test Undo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 1);
 			Assert.That(row0.CellsOS, Is.Not.Null, "Should be a CellPart here.");
 			var cellPartUndo = row0.CellsOS[0] as IConstChartWordGroup;
 			Assert.That(cellPartUndo, Is.Not.Null);
-			Assert.AreEqual(allParaOccurrences[0].Analysis.Hvo, cellPartUndo.GetOccurrences()[0].Analysis.Hvo);
+			Assert.That(cellPartUndo.GetOccurrences()[0].Analysis.Hvo, Is.EqualTo(allParaOccurrences[0].Analysis.Hvo));
 
 			// And now Redo
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.True);
 			Cache.ActionHandlerAccessor.Redo();
 			m_helper.VerifyDeletedHvos(new [] { row0.Hvo }, "Deleting last CellPart should delete row too.");
 		}
@@ -858,7 +858,7 @@ namespace SIL.FieldWorks.Discourse
 			get
 			{
 				var possibleAnalyses = m_sda.VecProp(m_hvoStText, OccurenceListId);
-				Assert.IsTrue(m_cSelected <= possibleAnalyses.Length);
+				Assert.That(m_cSelected <= possibleAnalyses.Length, Is.True);
 				var result = new AnalysisOccurrence[m_cSelected];
 
 				for (var i = 0; i < m_cSelected; i++)

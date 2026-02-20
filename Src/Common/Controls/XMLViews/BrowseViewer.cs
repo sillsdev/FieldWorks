@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private Container components;
+		private IContainer components = null;
 		/// <summary></summary>
 		protected internal XmlBrowseViewBase m_xbv;
 		/// <summary></summary>
@@ -2741,7 +2741,9 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlNode column = XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", mi.Text)
 						  ?? XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", mi.Text);
 			bool fRemovingColumn = true;
+#pragma warning disable CS0219 // Variable is assigned but its value is never read - retained for potential future use
 			bool fOrderChanged = false;
+#pragma warning restore CS0219
 			//The column with this label was not found in the current columns
 			if (column == null)
 			{

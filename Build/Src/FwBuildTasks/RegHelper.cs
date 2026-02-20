@@ -14,46 +14,25 @@ using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Build.Tasks
 {
+	/// <summary>
+	/// Helper class for COM DLL registration and type library loading.
+	/// Note: Registry redirection has been removed - RegFree manifest generation now reads
+	/// directly from HKEY_CLASSES_ROOT where COM classes are already registered.
+	/// </summary>
 	public class RegHelper : IDisposable
 	{
 		private TaskLoggingHelper m_Log;
-		private bool RedirectRegistryFailed { get; set; }
-		private bool IsRedirected { get; set; }
 		private bool IsDisposed { get; set; }
-		public static string TmpRegistryKeyHKCR { get; private set; }
-		public static string TmpRegistryKeyHKLM { get; private set; }
-		private static UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
-		private static UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
-		private static UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
 
-		/// <summary/>
+		/// <summary>
+		/// Initializes a new instance of RegHelper.
+		/// </summary>
+		/// <param name="log">MSBuild logging helper</param>
+		/// <param name="platform">Platform (unused, kept for compatibility)</param>
 		public RegHelper(TaskLoggingHelper log, string platform)
 		{
-			if (platform.Contains("64"))
-			{
-				HKEY_CLASSES_ROOT = new UIntPtr(0xFFFFFFFF80000000UL);
-				HKEY_CURRENT_USER = new UIntPtr(0xFFFFFFFF80000001UL);
-				HKEY_LOCAL_MACHINE = new UIntPtr(0xFFFFFFFF80000002UL);
-			}
 			m_Log = log;
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a temporary registry key to register dlls. This registry key is process
-		/// specific, so multiple instances can run at the same time without interfering with
-		/// each other.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static string TmpRegistryKey
-		{
-			get
-			{
-				return string.Format(@"Software\SIL\NAntBuild\tmp-{0}",
-					Process.GetCurrentProcess().Id);
-			}
-		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -76,101 +55,43 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public virtual void Dispose(bool fDisposing)
 		{
-			if (!IsDisposed)
-			{
-				if (IsRedirected && !RedirectRegistryFailed)
-				{
-					EndRedirection();
-					m_Log.LogMessage(MessageImportance.Low, "Deleting {0} in RegHelper.Dispose",
-						TmpRegistryKey);
-					Registry.CurrentUser.DeleteSubKeyTree(TmpRegistryKey);
-				}
-			}
-
 			IsDisposed = true;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads a type library from a file.
+		/// </summary>
+		/// <param name="szFile">Path to the file containing the type library</param>
+		/// <param name="typeLib">Output parameter receiving the loaded type library</param>
+		/// <returns>0 if successful, otherwise an error code</returns>
+		/// ------------------------------------------------------------------------------------
 		[DllImport("oleaut32.dll", CharSet = CharSet.Unicode)]
 		public static extern int LoadTypeLib(string szFile, out ITypeLib typeLib);
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Registers a type library in the system registry.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		[DllImport("oleaut32.dll")]
-		private static extern int RegisterTypeLib(ITypeLib typeLib, string fullPath, string helpDir);
+		private static extern int RegisterTypeLib(
+			ITypeLib typeLib,
+			string fullPath,
+			string helpDir
+		);
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Retrieves the long path name for a short path.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		[DllImport("kernel32.dll")]
-		public static extern int GetLongPathName(string shortPath, StringBuilder longPath,
-			int longPathLength);
-
-		[DllImport("Advapi32.dll")]
-		private static extern int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
-
-		[DllImport("Advapi32.dll")]
-		private static extern int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
-
-		[DllImport("Advapi32.dll")]
-		private static extern int RegCloseKey(UIntPtr hKey);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Temporarily redirects access to HKCR (and optionally HKLM) to a subkey under HKCU.
-		/// </summary>
-		/// <param name="redirectLocalMachine"><c>true</c> to redirect HKLM in addition to
-		/// HKCR, otherwise <c>false</c>.</param>
-		/// ------------------------------------------------------------------------------------
-		public void RedirectRegistry(bool redirectLocalMachine)
-		{
-			try
-			{
-				IsRedirected = true;
-				if (redirectLocalMachine)
-				{
-					TmpRegistryKeyHKCR = TmpRegistryKey + @"\HKCR";
-					TmpRegistryKeyHKLM = TmpRegistryKey + @"\HKLM";
-				}
-				else
-				{
-					TmpRegistryKeyHKCR = TmpRegistryKey;
-					TmpRegistryKeyHKLM = TmpRegistryKey;
-				}
-				m_Log.LogMessage(MessageImportance.Low, "Redirecting HKCR to {0}", TmpRegistryKeyHKCR);
-				UIntPtr hKey;
-				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKCR, out hKey);
-				int ret = RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
-				if (ret != 0)
-					m_Log.LogError("Redirecting HKCR failed with {0}", ret);
-				RegCloseKey(hKey);
-
-				// We also have to create a CLSID subkey - some DLLs expect that it exists
-				Registry.CurrentUser.CreateSubKey(TmpRegistryKeyHKCR + @"\CLSID");
-
-				if (redirectLocalMachine)
-				{
-					m_Log.LogMessage(MessageImportance.Low, "Redirecting HKLM to {0}", TmpRegistryKeyHKLM);
-					RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKLM, out hKey);
-					ret = RegOverridePredefKey(HKEY_LOCAL_MACHINE, hKey);
-					if (ret != 0)
-						m_Log.LogError("Redirecting HKLM failed with {0}", ret);
-					RegCloseKey(hKey);
-				}
-			}
-			catch
-			{
-				m_Log.LogError("registry redirection failed.");
-				RedirectRegistryFailed = true;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Ends the redirection.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void EndRedirection()
-		{
-			m_Log.LogMessage(MessageImportance.Low, "Ending registry redirection");
-			SetDllDirectory(null);
-			RegOverridePredefKey(HKEY_CLASSES_ROOT, UIntPtr.Zero);
-			RegOverridePredefKey(HKEY_LOCAL_MACHINE, UIntPtr.Zero);
-		}
+		public static extern int GetLongPathName(
+			string shortPath,
+			StringBuilder longPath,
+			int longPathLength
+		);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -231,8 +152,10 @@ namespace SIL.FieldWorks.Build.Tasks
 		private delegate int DllRegisterServerFunction();
 
 		[return: MarshalAs(UnmanagedType.Error)]
-		private delegate int DllInstallFunction(bool fInstall,
-			[MarshalAs(UnmanagedType.LPWStr)] string cmdLine);
+		private delegate int DllInstallFunction(
+			bool fInstall,
+			[MarshalAs(UnmanagedType.LPWStr)] string cmdLine
+		);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -259,11 +182,21 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="inHklm"><c>true</c> to register in HKLM, otherwise in HKCU.</param>
 		/// <returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static void ApiInvokeDllInstall(TaskLoggingHelper log, string fileName,
-			bool fRegister, bool inHklm)
+		internal static void ApiInvokeDllInstall(
+			TaskLoggingHelper log,
+			string fileName,
+			bool fRegister,
+			bool inHklm
+		)
 		{
-			ApiInvoke(log, fileName, typeof(DllInstallFunction), "DllInstall", fRegister,
-				inHklm ? null : "user");
+			ApiInvoke(
+				log,
+				fileName,
+				typeof(DllInstallFunction),
+				"DllInstall",
+				fRegister,
+				inHklm ? null : "user"
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -276,8 +209,13 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="methodName">Name of the method</param>
 		/// <param name="args">Arguments to pass to <paramref name="methodName"/>.</param>
 		/// ------------------------------------------------------------------------------------
-		private static void ApiInvoke(TaskLoggingHelper log, string fileName,
-			Type delegateSignatureType, string methodName, params object[] args)
+		private static void ApiInvoke(
+			TaskLoggingHelper log,
+			string fileName,
+			Type delegateSignatureType,
+			string methodName,
+			params object[] args
+		)
 		{
 			if (!File.Exists(fileName))
 				return;
@@ -286,8 +224,12 @@ namespace SIL.FieldWorks.Build.Tasks
 			if (hModule == IntPtr.Zero)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
-				log.LogError("Failed to load library {0} for {1} with error code {2}", fileName, methodName,
-					errorCode);
+				log.LogError(
+					"Failed to load library {0} for {1} with error code {2}",
+					fileName,
+					methodName,
+					errorCode
+				);
 				return;
 			}
 
@@ -297,12 +239,17 @@ namespace SIL.FieldWorks.Build.Tasks
 				if (method == IntPtr.Zero)
 					return;
 
-				Marshal.GetDelegateForFunctionPointer(method, delegateSignatureType).DynamicInvoke(args);
+				Marshal
+					.GetDelegateForFunctionPointer(method, delegateSignatureType)
+					.DynamicInvoke(args);
 			}
 			catch (Exception e)
 			{
-				log.LogError("RegHelper.ApiInvoke failed getting function pointer for {0}: {1}",
-					methodName, e);
+				log.LogError(
+					"RegHelper.ApiInvoke failed getting function pointer for {0}: {1}",
+					methodName,
+					e
+				);
 			}
 			finally
 			{
@@ -335,25 +282,35 @@ namespace SIL.FieldWorks.Build.Tasks
 						var registerResult = RegisterTypeLib(typeLib, fileName, null);
 						if (registerResult == 0)
 						{
-							m_Log.LogMessage(MessageImportance.Low, "Registered type library {0} with result {1}",
-								fileName, registerResult);
+							m_Log.LogMessage(
+								MessageImportance.Low,
+								"Registered type library {0} with result {1}",
+								fileName,
+								registerResult
+							);
 						}
 						else
 						{
-							m_Log.LogWarning("Registering type library {0} failed with result {1} (RegisterTypeLib)", fileName,
-								registerResult);
+							m_Log.LogWarning(
+								"Registering type library {0} failed with result {1} (RegisterTypeLib)",
+								fileName,
+								registerResult
+							);
 						}
 					}
 					else
 					{
-						m_Log.LogWarning("Registering type library {0} failed with result {1} (LoadTypeLib)", fileName,
-							loadResult);
+						m_Log.LogWarning(
+							"Registering type library {0} failed with result {1} (LoadTypeLib)",
+							fileName,
+							loadResult
+						);
 					}
 				}
 				else
 					m_Log.LogMessage(MessageImportance.Low, "Registered {0}", fileName);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				m_Log.LogWarningFromException(e);
 			}

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -59,7 +59,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return false; }
 		}
 
-		public event CancelEventHandler Canceling;
+		public event CancelEventHandler Canceling
+		{
+			add { }
+			remove { }
+		}
 
 		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{

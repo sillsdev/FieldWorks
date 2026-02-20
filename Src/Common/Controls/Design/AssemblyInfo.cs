@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Design time objects")]
-[assembly: AssemblyDescription("Contains objects that are only used in Visual Studio at design time")]
+// [assembly: AssemblyTitle("Design time objects")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("Contains objects that are only used in Visual Studio at design time")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info

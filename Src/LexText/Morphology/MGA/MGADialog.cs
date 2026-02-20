@@ -51,7 +51,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		protected SplitContainer splitContainerHorizontal;
 		private GlossListBox glossListBoxGloss;
 		private SplitContainer splitContainerVertical;
-		private IContainer components;
+		private IContainer components = null;
 		#endregion
 
 		#region event handlers

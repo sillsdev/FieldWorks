@@ -1074,7 +1074,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev, m_selInfo[iAnchor].ihvoEnd,
 					null, false);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0,
 					"Making the anchor selection failed, this is probably an empty editable field.");

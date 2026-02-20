@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// ----------------------------------------------------------------------------------------
 	public class FwRootSite : RootSite
 	{
-		private IContainer components;
+		private IContainer components = null;
 
 		#region Constructor, Dispose, Designer generated code
 		/// -----------------------------------------------------------------------------------

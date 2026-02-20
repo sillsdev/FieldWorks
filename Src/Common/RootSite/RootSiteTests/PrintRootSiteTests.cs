@@ -76,19 +76,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			DummyPrintRootSite pRootSite = new DummyPrintRootSite(10, m_pSettings);
 
-			Assert.AreEqual(5, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(5));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.AreEqual(6, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(6));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.AreEqual(7, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(7));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.IsFalse(pRootSite.HasMorePages);
+			Assert.That(pRootSite.HasMorePages, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -108,19 +108,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			DummyPrintRootSite pRootSite = new DummyPrintRootSite(5, m_pSettings);
 
-			Assert.AreEqual(3, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(3));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.AreEqual(4, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(4));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.AreEqual(5, pRootSite.NextPageToPrint);
-			Assert.IsTrue(pRootSite.HasMorePages);
+			Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(5));
+			Assert.That(pRootSite.HasMorePages, Is.True);
 
 			pRootSite.Advance();
-			Assert.IsFalse(pRootSite.HasMorePages);
+			Assert.That(pRootSite.HasMorePages, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_pSettings.Copies = 1;
 
 			DummyPrintRootSite pRootSite = new DummyPrintRootSite(5, m_pSettings);
-			Assert.IsFalse(pRootSite.HasMorePages);
+			Assert.That(pRootSite.HasMorePages, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -166,14 +166,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			foreach(int i in ExpectedPages)
 			{
-				Assert.AreEqual(i, pRootSite.NextPageToPrint,
-					"this failed in iteration: " + iteration);
-				Assert.IsTrue(pRootSite.HasMorePages,
-					"this failed in iteration: " + iteration);
+				Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(i), "this failed in iteration: " + iteration);
+				Assert.That(pRootSite.HasMorePages, Is.True, "this failed in iteration: " + iteration);
 				pRootSite.Advance();
 				iteration++;
 			}
-			Assert.IsFalse(pRootSite.HasMorePages);
+			Assert.That(pRootSite.HasMorePages, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -197,14 +195,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			foreach(int i in ExpectedPages)
 			{
-				Assert.AreEqual(i, pRootSite.NextPageToPrint,
-					"this failed in iteration: " + iteration);
-				Assert.IsTrue(pRootSite.HasMorePages,
-					"this failed in iteration: " + iteration);
+				Assert.That(pRootSite.NextPageToPrint, Is.EqualTo(i), "this failed in iteration: " + iteration);
+				Assert.That(pRootSite.HasMorePages, Is.True, "this failed in iteration: " + iteration);
 				pRootSite.Advance();
 				iteration++;
 			}
-			Assert.IsFalse(pRootSite.HasMorePages);
+			Assert.That(pRootSite.HasMorePages, Is.False);
 		}
 	}
 }

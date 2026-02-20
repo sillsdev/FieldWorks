@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("sfmStats")]
-[assembly: AssemblyDescription("This program shows statistics on the passed in SFM file.")]
+// [assembly: AssemblyTitle("sfmStats")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("This program shows statistics on the passed in SFM file.")] // Sanitized by convert_generate_assembly_info
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4d4aa897-6ef3-4383-a8b5-1ac729b4558c")]

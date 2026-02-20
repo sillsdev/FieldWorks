@@ -71,7 +71,7 @@ namespace XMLViewsTests
 
 			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
 			Assert.That(output, Is.Not.Null);
-			Assert.IsFalse(source == output);
+			Assert.That(source == output, Is.False);
 
 			XmlDocument docExpected = new XmlDocument();
 			docExpected.LoadXml(
@@ -81,7 +81,7 @@ namespace XMLViewsTests
 					+"</seq> "
 				+"</column>");
 			XmlNode expected = GetRootNode(docExpected, "column");
-			Assert.IsTrue(NodesMatch(output, expected));
+			Assert.That(NodesMatch(output, expected), Is.True);
 		}
 
 		[Test]
@@ -98,7 +98,7 @@ namespace XMLViewsTests
 			XmlNode source = GetRootNode(docSrc, "column");
 			Assert.That(source, Is.Not.Null);
 			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
-			Assert.IsTrue(source == output);
+			Assert.That(source == output, Is.True);
 		}
 
 		[Test]
@@ -114,12 +114,12 @@ namespace XMLViewsTests
 
 			XmlNode source = GetRootNode(docSrc, "column");
 			Assert.That(source, Is.Not.Null);
-			Assert.IsTrue(XmlViewsUtils.HasParam(source));
+			Assert.That(XmlViewsUtils.HasParam(source), Is.True);
 
 			string[] paramList = XmlViewsUtils.FindParams(source);
-			Assert.AreEqual(2, paramList.Length);
-			Assert.AreEqual("$delimiter=commaSpace", paramList[0]);
-			Assert.AreEqual("$ws=analysis", paramList[1]);
+			Assert.That(paramList.Length, Is.EqualTo(2));
+			Assert.That(paramList[0], Is.EqualTo("$delimiter=commaSpace"));
+			Assert.That(paramList[1], Is.EqualTo("$ws=analysis"));
 
 		}
 
@@ -139,23 +139,23 @@ namespace XMLViewsTests
 			string min = XmlViewsUtils.AlphaCompNumberString(Int32.MinValue);
 			IcuComparer comp = new IcuComparer("en");
 			comp.OpenCollatingEngine();
-			Assert.IsTrue(comp.Compare(zero, one) < 0);
-			Assert.IsTrue(comp.Compare(one, two) < 0);
-			Assert.IsTrue(comp.Compare(two, ten) < 0);
-			Assert.IsTrue(comp.Compare(ten, eleven) < 0);
-			Assert.IsTrue(comp.Compare(eleven, hundred) < 0);
-			Assert.IsTrue(comp.Compare(minus1, zero) < 0);
-			Assert.IsTrue(comp.Compare(minus2, minus1) < 0);
-			Assert.IsTrue(comp.Compare(minus10, minus2) < 0);
-			Assert.IsTrue(comp.Compare(hundred, max) < 0);
-			Assert.IsTrue(comp.Compare(min, minus10) < 0);
+			Assert.That(comp.Compare(zero, one) < 0, Is.True);
+			Assert.That(comp.Compare(one, two) < 0, Is.True);
+			Assert.That(comp.Compare(two, ten) < 0, Is.True);
+			Assert.That(comp.Compare(ten, eleven) < 0, Is.True);
+			Assert.That(comp.Compare(eleven, hundred) < 0, Is.True);
+			Assert.That(comp.Compare(minus1, zero) < 0, Is.True);
+			Assert.That(comp.Compare(minus2, minus1) < 0, Is.True);
+			Assert.That(comp.Compare(minus10, minus2) < 0, Is.True);
+			Assert.That(comp.Compare(hundred, max) < 0, Is.True);
+			Assert.That(comp.Compare(min, minus10) < 0, Is.True);
 
-			Assert.IsTrue(comp.Compare(ten, zero) > 0);
-			Assert.IsTrue(comp.Compare(ten, minus1) > 0);
-			Assert.IsTrue(comp.Compare(hundred, minus10) > 0);
-			Assert.IsTrue(comp.Compare(one, one) == 0);
-			Assert.IsTrue(comp.Compare(ten, ten) == 0);
-			Assert.IsTrue(comp.Compare(minus1, minus1) == 0);
+			Assert.That(comp.Compare(ten, zero) > 0, Is.True);
+			Assert.That(comp.Compare(ten, minus1) > 0, Is.True);
+			Assert.That(comp.Compare(hundred, minus10) > 0, Is.True);
+			Assert.That(comp.Compare(one, one) == 0, Is.True);
+			Assert.That(comp.Compare(ten, ten) == 0, Is.True);
+			Assert.That(comp.Compare(minus1, minus1) == 0, Is.True);
 			comp.CloseCollatingEngine();
 		}
 

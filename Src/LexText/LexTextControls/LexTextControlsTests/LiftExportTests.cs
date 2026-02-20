@@ -945,7 +945,7 @@ namespace LexTextControlsTests
 				}
 			}
 			var xcustomListId = XmlUtils.GetOptionalAttributeValue(xcustomListRef, "id");
-			Assert.AreEqual(customList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
+			Assert.That(xcustomListId, Is.EqualTo(customList.Name.BestAnalysisVernacularAlternative.Text));
 		}
 
 		private FieldDescription MakeCustomField(string customFieldName, int classId, int ws, CustomFieldType fieldType,
@@ -960,7 +960,7 @@ namespace LexTextControlsTests
 			SetFieldType(fd, ws, fieldType);
 			if (fieldType == CustomFieldType.ListRefAtomic || fieldType == CustomFieldType.ListRefCollection)
 			{
-				Assert.AreNotEqual(Guid.Empty, listGuid);
+				Assert.That(listGuid, Is.Not.EqualTo(Guid.Empty));
 				fd.ListRootId = listGuid;
 			}
 			fd.UpdateCustomField();
@@ -1201,7 +1201,7 @@ namespace LexTextControlsTests
 
 			var ranges = xdoc.SelectNodes("//range");
 			Assert.That(ranges, Is.Not.Null);
-			Assert.AreEqual(14, ranges.Count);
+			Assert.That(ranges.Count, Is.EqualTo(14));
 			XmlNode referencedCustomFieldList = null;
 			XmlNode unreferencedCustomFieldList = null;
 			foreach (XmlNode range in ranges)
@@ -1219,21 +1219,21 @@ namespace LexTextControlsTests
 			Assert.That(referencedCustomFieldList, Is.Not.Null, "Custom possibility list referenced by a custom field not exported");
 			Assert.That(unreferencedCustomFieldList, Is.Not.Null, "Custom possibility list that is not referred to by a custom field not exported");
 			var xcustomListId = XmlUtils.GetOptionalAttributeValue(referencedCustomFieldList, "id");
-			Assert.AreEqual(referencedCustomList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
+			Assert.That(xcustomListId, Is.EqualTo(referencedCustomList.Name.BestAnalysisVernacularAlternative.Text));
 			xcustomListId = XmlUtils.GetOptionalAttributeValue(unreferencedCustomFieldList, "id");
-			Assert.AreEqual(unreferencedCustomList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
+			Assert.That(xcustomListId, Is.EqualTo(unreferencedCustomList.Name.BestAnalysisVernacularAlternative.Text));
 
 			// verify referenced custom list items
 			var rangeElements = referencedCustomFieldList.ChildNodes;
 			Assert.That(rangeElements, Is.Not.Null);
-			Assert.IsTrue(rangeElements.Count == 2);
+			Assert.That(rangeElements.Count == 2, Is.True);
 			VerifyExportRangeElement(rangeElements[0], item1);
 			VerifyExportRangeElement(rangeElements[1], item2);
 
 			// verify unreferenced custom list items
 			rangeElements = unreferencedCustomFieldList.ChildNodes;
 			Assert.That(rangeElements, Is.Not.Null);
-			Assert.IsTrue(rangeElements.Count == 2);
+			Assert.That(rangeElements.Count == 2, Is.True);
 			VerifyExportRangeElement(rangeElements[0], unRefeditem1);
 			VerifyExportRangeElement(rangeElements[1], unrefedItem2);
 
@@ -1260,11 +1260,11 @@ namespace LexTextControlsTests
 			}
 			Assert.That(xDomainTypesList, Is.Not.Null);
 			var xDomainTypesListId = XmlUtils.GetOptionalAttributeValue(xDomainTypesList, "id");
-			Assert.AreEqual("domain-type", xDomainTypesListId);
+			Assert.That(xDomainTypesListId, Is.EqualTo("domain-type"));
 
 			rangeElements = xDomainTypesList.ChildNodes;
 			Assert.That(rangeElements, Is.Not.Null);
-			Assert.IsTrue(rangeElements.Count == 6);
+			Assert.That(rangeElements.Count == 6, Is.True);
 			VerifyExportRangeElement(rangeElements[0], acDomItem0);
 			VerifyExportRangeElement(rangeElements[1], acDomItem1);
 			VerifyExportRangeElement(rangeElements[2], acDomItem2);
@@ -1289,11 +1289,11 @@ namespace LexTextControlsTests
 			}
 			Assert.That(xPublicationTypesList, Is.Not.Null);
 			var xPublicationTypesListId = XmlUtils.GetOptionalAttributeValue(xPublicationTypesList, "id");
-			Assert.AreEqual("do-not-publish-in", xPublicationTypesListId);
+			Assert.That(xPublicationTypesListId, Is.EqualTo("do-not-publish-in"));
 
 			rangeElements = xPublicationTypesList.ChildNodes;
 			Assert.That(rangeElements, Is.Not.Null);
-			Assert.IsTrue(rangeElements.Count == 2);
+			Assert.That(rangeElements.Count == 2, Is.True);
 			VerifyExportRangeElement(rangeElements[0], publicItem0);
 			VerifyExportRangeElement(rangeElements[1], publicItem1);
 		}
@@ -1302,23 +1302,23 @@ namespace LexTextControlsTests
 		{
 			var id = XmlUtils.GetOptionalAttributeValue(rangeElement1, "id");
 			var guid = XmlUtils.GetOptionalAttributeValue(rangeElement1, "guid");
-			Assert.AreEqual(item1.Guid.ToString(), guid);
-			Assert.AreEqual(item1.Name.BestAnalysisVernacularAlternative.Text, id);
+			Assert.That(guid, Is.EqualTo(item1.Guid.ToString()));
+			Assert.That(id, Is.EqualTo(item1.Name.BestAnalysisVernacularAlternative.Text));
 			var rangeElementFormText = rangeElement1.FirstChild.FirstChild.FirstChild.InnerText;
-			Assert.AreEqual(item1.Name.BestAnalysisVernacularAlternative.Text, rangeElementFormText);
+			Assert.That(rangeElementFormText, Is.EqualTo(item1.Name.BestAnalysisVernacularAlternative.Text));
 		}
 
 		private void VerifyExport(XmlDocument xdoc)
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			Assert.That(repoEntry, Is.Not.Null, "Should have a lex entry repository");
-			Assert.AreEqual(7, repoEntry.Count, "Should have 7 lex entries");
+			Assert.That(repoEntry.Count, Is.EqualTo(7), "Should have 7 lex entries");
 			var repoSense = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.That(repoSense, Is.Not.Null);
-			Assert.AreEqual(7, repoSense.Count, "Each entry has one sense for a total of 7");
+			Assert.That(repoSense.Count, Is.EqualTo(7), "Each entry has one sense for a total of 7");
 			var entries = xdoc.SelectNodes("//entry");
 			Assert.That(entries, Is.Not.Null);
-			Assert.AreEqual(7, entries.Count, "LIFT file should contain 7 entries");
+			Assert.That(entries.Count, Is.EqualTo(7), "LIFT file should contain 7 entries");
 			VerifyCustomLists(xdoc);
 			foreach (XmlNode xentry in entries)
 			{
@@ -1327,14 +1327,14 @@ namespace LexTextControlsTests
 				var dtCreated = DateTime.ParseExact(sCreated, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				var delta = DateTime.UtcNow - dtCreated;
-				Assert.Greater(300, delta.TotalSeconds);
-				Assert.LessOrEqual(0, delta.TotalSeconds);	// allow time for breakpoints in debugging...
+				Assert.That(300, Is.GreaterThan(delta.TotalSeconds));
+				Assert.That(0, Is.LessThanOrEqualTo(delta.TotalSeconds));	// allow time for breakpoints in debugging...
 				var sModified = XmlUtils.GetOptionalAttributeValue(xentry, "dateModified");
 				var dtModified = DateTime.ParseExact(sModified, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													 DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				delta = DateTime.UtcNow - dtModified;
-				Assert.Greater(300, delta.TotalSeconds);
-				Assert.LessOrEqual(0, delta.TotalSeconds);
+				Assert.That(300, Is.GreaterThan(delta.TotalSeconds));
+				Assert.That(0, Is.LessThanOrEqualTo(delta.TotalSeconds));
 				Assert.That(sModified, Is.Not.Null, "an LIFT <entry> should have a dateModified attribute");
 				var sId = XmlUtils.GetOptionalAttributeValue(xentry, "id");
 				Assert.That(sId, Is.Not.Null, "an LIFT <entry> should have a id attribute");
@@ -1342,37 +1342,37 @@ namespace LexTextControlsTests
 				Assert.That(sGuid, Is.Not.Null, "an LIFT <entry> should have a guid attribute");
 				var guid = new Guid(sGuid);
 				ILexEntry entry;
-				Assert.IsTrue(repoEntry.TryGetObject(guid, out entry));
+				Assert.That(repoEntry.TryGetObject(guid, out entry), Is.True);
 				var xform = xentry.SelectSingleNode("lexical-unit/form");
 				Assert.That(xform, Is.Not.Null);
 				var sLang = XmlUtils.GetOptionalAttributeValue(xform, "lang");
 				Assert.That(sLang, Is.Not.Null.Or.Empty);
 				var formWs = m_cache.WritingSystemFactory.get_Engine(sLang);
-				Assert.AreEqual(m_cache.DefaultVernWs, formWs.Handle);
-				Assert.AreEqual(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, xform.FirstChild.InnerText);
+				Assert.That(formWs.Handle, Is.EqualTo(m_cache.DefaultVernWs));
+				Assert.That(xform.FirstChild.InnerText, Is.EqualTo(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text));
 				var traitlist = xentry.SelectNodes("trait");
 				Assert.That(traitlist, Is.Not.Null);
 				if (entry == m_entryTest)
 				{
-					Assert.AreEqual(9, traitlist.Count);
+					Assert.That(traitlist.Count, Is.EqualTo(9));
 					VerifyPublishInExport(xentry);
 				}
 				else
 				{
-					Assert.AreEqual(1, traitlist.Count);
+					Assert.That(traitlist.Count, Is.EqualTo(1));
 					VerifyEmptyPublishIn(xentry);
 				}
 				var xtrait = traitlist[0];
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
-				Assert.AreEqual("morph-type", sName);
+				Assert.That(sName, Is.EqualTo("morph-type"));
 				var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
 				if (entry == m_entryTest)
-					Assert.AreEqual("phrase", sValue);
+					Assert.That(sValue, Is.EqualTo("phrase"));
 				else
-					Assert.AreEqual("stem", sValue);
+					Assert.That(sValue, Is.EqualTo("stem"));
 				var senselist = xentry.SelectNodes("sense");
 				Assert.That(senselist, Is.Not.Null);
-				Assert.AreEqual(1, senselist.Count);
+				Assert.That(senselist.Count, Is.EqualTo(1));
 				var xsense = senselist[0];
 				sId = XmlUtils.GetOptionalAttributeValue(xsense, "id");
 				Assert.That(sId, Is.Not.Null);
@@ -1381,21 +1381,21 @@ namespace LexTextControlsTests
 				else
 					guid = new Guid(sId);
 				ILexSense sense;
-				Assert.IsTrue(repoSense.TryGetObject(guid, out sense));
-				Assert.AreEqual(entry.SensesOS[0], sense);
+				Assert.That(repoSense.TryGetObject(guid, out sense), Is.True);
+				Assert.That(sense, Is.EqualTo(entry.SensesOS[0]));
 				var xgram = xsense.SelectSingleNode("grammatical-info");
 				Assert.That(xgram, Is.Not.Null);
 				sValue = XmlUtils.GetOptionalAttributeValue(xgram, "value");
 				var msa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 				if (msa != null)
-					Assert.AreEqual(msa.PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, sValue);
+					Assert.That(sValue, Is.EqualTo(msa.PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text));
 				var xgloss = xsense.SelectSingleNode("gloss");
 				Assert.That(xgloss, Is.Not.Null);
 				sLang = XmlUtils.GetOptionalAttributeValue(xgloss, "lang");
 				Assert.That(sLang, Is.Not.Null.Or.Empty);
 				var glossWs = m_cache.WritingSystemFactory.get_Engine(sLang);
-				Assert.AreEqual(m_cache.DefaultAnalWs, glossWs.Handle);
-				Assert.AreEqual(sense.Gloss.AnalysisDefaultWritingSystem.Text, xgloss.FirstChild.InnerText);
+				Assert.That(glossWs.Handle, Is.EqualTo(m_cache.DefaultAnalWs));
+				Assert.That(xgloss.FirstChild.InnerText, Is.EqualTo(sense.Gloss.AnalysisDefaultWritingSystem.Text));
 				if (entry == m_entryTest)
 					VerifyEntryExtraStuff(entry, xentry);
 				if (entry == m_entryUnbelieving)
@@ -1407,11 +1407,11 @@ namespace LexTextControlsTests
 		{
 			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
 			var dnpiNodes = xentry.SelectNodes(dnpiXpath);
-			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any 'do-not-publish-in' nodes!");
+			Assert.That(dnpiNodes.Count, Is.EqualTo(0), "Should not contain any 'do-not-publish-in' nodes!");
 			var senseNodes = xentry.SelectNodes("sense");
-			Assert.AreEqual(1, senseNodes.Count, "Should have one sense");
+			Assert.That(senseNodes.Count, Is.EqualTo(1), "Should have one sense");
 			dnpiNodes = senseNodes[0].SelectNodes(dnpiXpath);
-			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any sense-level 'do-not-publish-in' nodes!");
+			Assert.That(dnpiNodes.Count, Is.EqualTo(0), "Should not contain any sense-level 'do-not-publish-in' nodes!");
 		}
 
 		private void VerifyPublishInExport(XmlNode xentry)
@@ -1420,24 +1420,24 @@ namespace LexTextControlsTests
 
 			// Verify LexEntry level
 			var dnpiNodes = xentry.SelectNodes(dnpiXpath);
-			Assert.AreEqual(1, dnpiNodes.Count, "Should contain Main Dictionary");
-			Assert.AreEqual("Main Dictionary", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
+			Assert.That(dnpiNodes.Count, Is.EqualTo(1), "Should contain Main Dictionary");
+			Assert.That(XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), Is.EqualTo("Main Dictionary"), "Wrong publication!");
 
 			// Verify LexSense level
 			var senseNodes = xentry.SelectNodes("sense");
-			Assert.AreEqual(1, senseNodes.Count, "Should have one sense");
+			Assert.That(senseNodes.Count, Is.EqualTo(1), "Should have one sense");
 			var xsense = senseNodes[0];
 			dnpiNodes = xsense.SelectNodes(dnpiXpath);
-			Assert.AreEqual(1, dnpiNodes.Count, "Should contain School");
-			Assert.AreEqual("School", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
+			Assert.That(dnpiNodes.Count, Is.EqualTo(1), "Should contain School");
+			Assert.That(XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), Is.EqualTo("School"), "Wrong publication!");
 
 			// Verify LexExampleSentence level
 			var exampleNodes = xsense.SelectNodes("example");
-			Assert.AreEqual(1, exampleNodes.Count, "Should have one example sentence");
+			Assert.That(exampleNodes.Count, Is.EqualTo(1), "Should have one example sentence");
 			dnpiNodes = exampleNodes[0].SelectNodes(dnpiXpath);
-			Assert.AreEqual(2, dnpiNodes.Count, "Should contain both publications");
-			Assert.AreEqual("Main Dictionary", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
-			Assert.AreEqual("School", XmlUtils.GetAttributeValue(dnpiNodes[1], "value"), "Wrong publication!");
+			Assert.That(dnpiNodes.Count, Is.EqualTo(2), "Should contain both publications");
+			Assert.That(XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), Is.EqualTo("Main Dictionary"), "Wrong publication!");
+			Assert.That(XmlUtils.GetAttributeValue(dnpiNodes[1], "value"), Is.EqualTo("School"), "Wrong publication!");
 		}
 
 		/// <summary>
@@ -1486,7 +1486,7 @@ namespace LexTextControlsTests
 			Assert.That(refValue.StartsWith(target));
 			var guid = new Guid(refValue.Substring(target.Length + 1));
 			ILexEntry relatedEntry;
-			Assert.IsTrue(repoEntry.TryGetObject(guid, out relatedEntry));
+			Assert.That(repoEntry.TryGetObject(guid, out relatedEntry), Is.True);
 			Assert.That(relatedEntry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo(target));
 		}
 
@@ -1494,12 +1494,12 @@ namespace LexTextControlsTests
 		{
 			var citations = xentry.SelectNodes("citation");
 			Assert.That(citations, Is.Not.Null);
-			Assert.AreEqual(1, citations.Count);
+			Assert.That(citations.Count, Is.EqualTo(1));
 			VerifyMultiStringAlt(citations[0], m_cache.DefaultVernWs, 2, entry.CitationForm.VernacularDefaultWritingSystem);
 
 			var notes = xentry.SelectNodes("note");
 			Assert.That(notes, Is.Not.Null);
-			Assert.AreEqual(3, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(3));
 			foreach (XmlNode xnote in notes)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
@@ -1517,7 +1517,7 @@ namespace LexTextControlsTests
 
 			var xsenses = xentry.SelectNodes("sense");
 			Assert.That(xsenses, Is.Not.Null);
-			Assert.AreEqual(1, xsenses.Count);
+			Assert.That(xsenses.Count, Is.EqualTo(1));
 			VerifyExtraSenseStuff(entry.SensesOS[0], xsenses[0]);
 
 			var xpronun = xentry.SelectNodes("pronunciation");
@@ -1525,8 +1525,8 @@ namespace LexTextControlsTests
 
 			var dialectLabelXpath = "trait[@name = 'dialect-labels']";
 			var dialectLabelNodes = xentry.SelectNodes(dialectLabelXpath);
-			Assert.AreEqual(1, dialectLabelNodes.Count, "Should contain dialect label");
-			Assert.AreEqual("east", XmlUtils.GetAttributeValue(dialectLabelNodes[0], "value"), "Wrong dialect label!");
+			Assert.That(dialectLabelNodes.Count, Is.EqualTo(1), "Should contain dialect label");
+			Assert.That(XmlUtils.GetAttributeValue(dialectLabelNodes[0], "value"), Is.EqualTo("east"), "Wrong dialect label!");
 
 			var xmedia = xpronun[0].SelectNodes("media");
 			Assert.That(xmedia, Has.Count.EqualTo(1));
@@ -1544,7 +1544,7 @@ namespace LexTextControlsTests
 		{
 			var xfields = xentry.SelectNodes("field");
 			Assert.That(xfields, Is.Not.Null);
-			Assert.AreEqual(5, xfields.Count);
+			Assert.That(xfields.Count, Is.EqualTo(5));
 			foreach (XmlNode xfield in xfields)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
@@ -1589,7 +1589,7 @@ namespace LexTextControlsTests
 					var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[3]);
 					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
 					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
+					Assert.That(sValue, Is.EqualTo(strPoss));
 				}
 				else if (sName == "CustomField4-LexEntry ListRefCollection")
 				{
@@ -1598,7 +1598,7 @@ namespace LexTextControlsTests
 					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
 					listIndex++;
 					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
+					Assert.That(sValue, Is.EqualTo(strPoss));
 				}
 				else if (sName == "CustomField5-LexEntry CmPossibilityCustomList")
 				{
@@ -1606,7 +1606,7 @@ namespace LexTextControlsTests
 					var possHvo = sda.get_ObjectProp(m_entryTest.Hvo, m_customFieldEntryIds[5]);
 					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
 					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
+					Assert.That(sValue, Is.EqualTo(strPoss));
 				}
 			}
 		}
@@ -1618,11 +1618,11 @@ namespace LexTextControlsTests
 			var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
 			Assert.That(sValue, Is.Not.Null);
 			var liftGenDate = LiftExporter.GetGenDateFromInt(Convert.ToInt32(sValue));
-			Assert.AreEqual(liftGenDate.Precision, genDate.Precision);
-			Assert.AreEqual(liftGenDate.IsAD, genDate.IsAD);
-			Assert.AreEqual(liftGenDate.Year, genDate.Year);
-			Assert.AreEqual(liftGenDate.Month, genDate.Month);
-			Assert.AreEqual(liftGenDate.Day, genDate.Day);
+			Assert.That(genDate.Precision, Is.EqualTo(liftGenDate.Precision));
+			Assert.That(genDate.IsAD, Is.EqualTo(liftGenDate.IsAD));
+			Assert.That(genDate.Year, Is.EqualTo(liftGenDate.Year));
+			Assert.That(genDate.Month, Is.EqualTo(liftGenDate.Month));
+			Assert.That(genDate.Day, Is.EqualTo(liftGenDate.Day));
 		}
 
 		private void VerifyAllomorphCustomFields(XmlNode xentry, ILexEntry entry)
@@ -1636,7 +1636,7 @@ namespace LexTextControlsTests
 			//</variant>
 			var xallomorphs = xentry.SelectNodes("variant");
 			Assert.That(xallomorphs, Is.Not.Null);
-			Assert.AreEqual(1, xallomorphs.Count);
+			Assert.That(xallomorphs.Count, Is.EqualTo(1));
 			foreach (XmlNode xallomorph in xallomorphs)
 			{
 				var xfield = xallomorph.SelectSingleNode("field");
@@ -1657,7 +1657,7 @@ namespace LexTextControlsTests
 		{
 			var xdefs = xsense.SelectNodes("definition");
 			Assert.That(xdefs, Is.Not.Null);
-			Assert.AreEqual(1, xdefs.Count);
+			Assert.That(xdefs.Count, Is.EqualTo(1));
 			VerifyMultiStringAlt(xdefs[0], m_cache.DefaultAnalWs, 2, sense.Definition.AnalysisDefaultWritingSystem);
 			VerifyMultiStringAlt(xdefs[0], m_audioWsCode, 2, TsStringUtils.MakeString(kaudioFileName, m_audioWsCode));
 
@@ -1666,11 +1666,11 @@ namespace LexTextControlsTests
 			var defnHref = defnSpan.Attributes["href"];
 			Assert.That(defnHref.Value, Is.EqualTo("file://others/" + kotherLinkedFileName));
 			var liftOtherFolder = Path.Combine(LiftFolder, "others");
-			Assert.IsTrue(File.Exists(Path.Combine(liftOtherFolder, kotherLinkedFileName)));
+			Assert.That(File.Exists(Path.Combine(liftOtherFolder, kotherLinkedFileName)), Is.True);
 
 			var xnotes = xsense.SelectNodes("note");
 			Assert.That(xnotes, Is.Not.Null);
-			Assert.AreEqual(10, xnotes.Count);
+			Assert.That(xnotes.Count, Is.EqualTo(10));
 			foreach (XmlNode xnote in xnotes)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
@@ -1709,7 +1709,7 @@ namespace LexTextControlsTests
 			var filePath = Path.Combine(liftAudioFolder, audioFileName);
 			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
 													 exists ? "" : "not ");
-			Assert.AreEqual(exists, File.Exists(filePath), failureMsg);
+			Assert.That(File.Exists(filePath), Is.EqualTo(exists), failureMsg);
 		}
 
 		private void VerifyPictures(XmlNode xsense, ILexSense sense)
@@ -1723,35 +1723,35 @@ namespace LexTextControlsTests
 				 select node).First();
 			// If that got one, we're good on the XmlNode.
 			var liftPicsFolder = Path.Combine(LiftFolder, "pictures");
-			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, kpictureOfTestFileName)));
+			Assert.That(File.Exists(Path.Combine(liftPicsFolder, kpictureOfTestFileName)), Is.True);
 
 			var secondPicName = kbasePictureOfTestFileName + "_1" + ".jpg";
 			var secondPic =
 				(from XmlNode node in pictureNodes
 				 where XmlUtils.GetOptionalAttributeValue(node, "href") == secondPicName
 				 select node).First();
-			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, secondPicName)));
+			Assert.That(File.Exists(Path.Combine(liftPicsFolder, secondPicName)), Is.True);
 
 			var thirdPicName = Path.Combine(ksubFolderName, kotherPicOfTestFileName);
 			var thirdPic =
 				(from XmlNode node in pictureNodes
 				 where XmlUtils.GetOptionalAttributeValue(node, "href") == thirdPicName
 				 select node).First();
-			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, thirdPicName)));
+			Assert.That(File.Exists(Path.Combine(liftPicsFolder, thirdPicName)), Is.True);
 
 			var fourthPicName = Path.GetFileName(m_tempPictureFilePath);
 			var fourthPic =
 				(from XmlNode node in pictureNodes
 				 where XmlUtils.GetOptionalAttributeValue(node, "href") == fourthPicName
 				 select node).First();
-			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, fourthPicName)));
+			Assert.That(File.Exists(Path.Combine(liftPicsFolder, fourthPicName)), Is.True);
 		}
 
 		private void VerifySenseCustomFields(XmlNode xsense, ILexSense sense)
 		{
 			var xfields = xsense.SelectNodes("field");
 			Assert.That(xfields, Is.Not.Null);
-			Assert.AreEqual(1, xfields.Count);
+			Assert.That(xfields.Count, Is.EqualTo(1));
 			foreach (XmlNode xfield in xfields)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
@@ -1767,7 +1767,7 @@ namespace LexTextControlsTests
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var xtraits = xsense.SelectNodes("trait");
 			Assert.That(xtraits, Is.Not.Null);
-			Assert.AreEqual(5, xtraits.Count); // 4 custom field traits + 1 DoNotPublishIn trait
+			Assert.That(xtraits.Count, Is.EqualTo(5)); // 4 custom field traits + 1 DoNotPublishIn trait
 
 			int listIndex = 0;
 			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
@@ -1792,7 +1792,7 @@ namespace LexTextControlsTests
 					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
 					listIndex++;
 					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
+					Assert.That(sValue, Is.EqualTo(strPoss));
 				}
 				else
 					Assert.That(sName, Is.Null, "Unrecognized type attribute");
@@ -1804,7 +1804,7 @@ namespace LexTextControlsTests
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
 			Assert.That(sValue, Is.Not.Null);
-			Assert.AreEqual(sValue, intVal.ToString());
+			Assert.That(intVal.ToString(), Is.EqualTo(sValue));
 		}
 
 		private void VerifyExampleSentenceCustomFields(XmlNode xsense, ILexSense sense)
@@ -1821,12 +1821,12 @@ namespace LexTextControlsTests
 			//</example>"
 			var xexamples = xsense.SelectNodes("example");
 			Assert.That(xexamples, Is.Not.Null);
-			Assert.AreEqual(1, xexamples.Count);
+			Assert.That(xexamples.Count, Is.EqualTo(1));
 			foreach (XmlNode xexample in xexamples)
 			{
 				var xfields = xexample.SelectNodes("field");
 				Assert.That(xfields, Is.Not.Null);
-				Assert.AreEqual(2, xfields.Count);
+				Assert.That(xfields.Count, Is.EqualTo(2));
 				foreach (XmlNode xfield in xfields)
 				{
 					var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
@@ -1854,9 +1854,9 @@ namespace LexTextControlsTests
 		{
 			var xforms = xitem.SelectNodes("form");
 			Assert.That(xforms, Is.Not.Null);
-			Assert.AreEqual(1, xforms.Count);
+			Assert.That(xforms.Count, Is.EqualTo(1));
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
-			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(wsItem), sLang);
+			Assert.That(sLang, Is.EqualTo(m_cache.WritingSystemFactory.GetStrFromWs(wsItem)));
 			VerifyForm(xforms[0], tssText, sLang);
 		}
 
@@ -1864,7 +1864,7 @@ namespace LexTextControlsTests
 		{
 			var xforms = xitem.SelectNodes("form");
 			Assert.That(xforms, Is.Not.Null);
-			Assert.AreEqual(wsCount, xforms.Count);
+			Assert.That(xforms.Count, Is.EqualTo(wsCount));
 			var langWanted = m_cache.WritingSystemFactory.GetStrFromWs(wsItem);
 			foreach (XmlNode form in xforms)
 			{
@@ -1884,7 +1884,7 @@ namespace LexTextControlsTests
 			var expected = tssText.Text;
 			if (!DontExpectNewlinesCorrected)
 				expected = expected.Replace("\x2028", Environment.NewLine);
-			Assert.AreEqual(expected, sText);
+			Assert.That(sText, Is.EqualTo(expected));
 			var runs = form.FirstChild.ChildNodes;
 			Assert.That(runs, Has.Count.EqualTo(tssText.RunCount), "form should have correct run count");
 			for (int i = 0; i < tssText.RunCount; i++)
@@ -1917,24 +1917,24 @@ namespace LexTextControlsTests
 		{
 			var xforms = xitem.SelectNodes("form");
 			Assert.That(xforms, Is.Not.Null);
-			Assert.AreEqual(expectCustom ? 3 : 2, xforms.Count);
+			Assert.That(xforms.Count, Is.EqualTo(expectCustom ? 3 : 2));
 
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
-			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs), sLang);
+			Assert.That(sLang, Is.EqualTo(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs)));
 			var sText = xforms[0].FirstChild.InnerText;
-			Assert.AreEqual(tssMultiString.get_String(m_cache.DefaultAnalWs).Text, sText);
+			Assert.That(sText, Is.EqualTo(tssMultiString.get_String(m_cache.DefaultAnalWs).Text));
 
 			sLang = XmlUtils.GetOptionalAttributeValue(xforms[1], "lang");
-			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs), sLang);
+			Assert.That(sLang, Is.EqualTo(m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs)));
 			sText = xforms[1].FirstChild.InnerText;
-			Assert.AreEqual(tssMultiString.get_String(m_cache.DefaultVernWs).Text, sText);
+			Assert.That(sText, Is.EqualTo(tssMultiString.get_String(m_cache.DefaultVernWs).Text));
 
 			if (expectCustom)
 			{
 				sLang = XmlUtils.GetOptionalAttributeValue(xforms[2], "lang");
-				Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(m_audioWsCode), sLang);
+				Assert.That(sLang, Is.EqualTo(m_cache.WritingSystemFactory.GetStrFromWs(m_audioWsCode)));
 				sText = xforms[2].FirstChild.InnerText;
-				Assert.AreEqual(tssMultiString.get_String(m_audioWsCode).Text, kcustomMultiFileName);
+				Assert.That(kcustomMultiFileName, Is.EqualTo(tssMultiString.get_String(m_audioWsCode).Text));
 			}
 		}
 
@@ -2045,7 +2045,7 @@ namespace LexTextControlsTests
 				var sGuid = XmlUtils.GetOptionalAttributeValue(xentry, "guid");
 				Assert.That(sGuid, Is.Not.Null, "an LIFT <entry> should have a guid attribute");
 				var guid = new Guid(sGuid);
-				Assert.IsTrue(repoEntry.TryGetObject(guid, out entry));
+				Assert.That(repoEntry.TryGetObject(guid, out entry), Is.True);
 				if (entry == m_entryTest)
 				{
 					VerifyCustomStTextForEntryTest(xentry);
@@ -2061,23 +2061,23 @@ namespace LexTextControlsTests
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");
 			Assert.That(xcustoms, Is.Not.Null);
-			Assert.AreEqual(0, xcustoms.Count, "We should have zero \"Long Text\" fields for this entry.");
+			Assert.That(xcustoms.Count, Is.EqualTo(0), "We should have zero \"Long Text\" fields for this entry.");
 		}
 
 		private void VerifyCustomStTextForEntryTest(XmlNode xentry)
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");
 			Assert.That(xcustoms, Is.Not.Null);
-			Assert.AreEqual(1, xcustoms.Count, "We should have a single \"Long Text\" field.");
+			Assert.That(xcustoms.Count, Is.EqualTo(1), "We should have a single \"Long Text\" field.");
 			var xforms = xcustoms[0].SelectNodes("form");
 			Assert.That(xforms, Is.Not.Null);
-			Assert.AreEqual(1, xforms.Count, "We should have a single form inside the \"Long Text\" field.");
+			Assert.That(xforms.Count, Is.EqualTo(1), "We should have a single form inside the \"Long Text\" field.");
 			var xtexts = xforms[0].SelectNodes("text");
 			Assert.That(xtexts, Is.Not.Null);
-			Assert.AreEqual(1, xtexts.Count, "We should have a single text inside the \"Long Text\" field.");
+			Assert.That(xtexts.Count, Is.EqualTo(1), "We should have a single text inside the \"Long Text\" field.");
 			var xspans = xtexts[0].SelectNodes("span");
 			Assert.That(xspans, Is.Not.Null);
-			Assert.AreEqual(5, xspans.Count, "We should have 5 span elements inside the \"Long Text\" field.");
+			Assert.That(xspans.Count, Is.EqualTo(5), "We should have 5 span elements inside the \"Long Text\" field.");
 			var i = 0;
 			var sLangExpected = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs);
 			foreach (var x in xtexts[0].ChildNodes)
@@ -2097,51 +2097,51 @@ namespace LexTextControlsTests
 				{
 					case 0:
 						Assert.That(xe, Is.Not.Null);
-						Assert.AreEqual("span", xe.Name);
+						Assert.That(xe.Name, Is.EqualTo("span"));
 						Assert.That(sLang, Is.Null);
-						Assert.AreEqual("Bulleted Text", sClass);
+						Assert.That(sClass, Is.EqualTo("Bulleted Text"));
 						VerifyFirstParagraph(xe, sLangExpected);
 						break;
 					case 1:
 						Assert.That(xt, Is.Not.Null);
-						Assert.AreEqual("\u2029", xt.InnerText);
+						Assert.That(xt.InnerText, Is.EqualTo("\u2029"));
 						break;
 					case 2:
 						Assert.That(xe, Is.Not.Null);
-						Assert.AreEqual("span", xe.Name);
-						Assert.AreEqual(sLangExpected, sLang);
+						Assert.That(xe.Name, Is.EqualTo("span"));
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
 						Assert.That(sClass, Is.Null);
-						Assert.AreEqual("Why is there air?  ", xe.InnerXml);
+						Assert.That(xe.InnerXml, Is.EqualTo("Why is there air?  "));
 						break;
 					case 3:
 						Assert.That(xe, Is.Not.Null);
-						Assert.AreEqual("span", xe.Name);
-						Assert.AreEqual(sLangExpected, sLang);
-						Assert.AreEqual("Strong", sClass);
-						Assert.AreEqual("Which way is up?", xe.InnerXml);
+						Assert.That(xe.Name, Is.EqualTo("span"));
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
+						Assert.That(sClass, Is.EqualTo("Strong"));
+						Assert.That(xe.InnerXml, Is.EqualTo("Which way is up?"));
 						break;
 					case 4:
 						Assert.That(xe, Is.Not.Null);
-						Assert.AreEqual("span", xe.Name);
-						Assert.AreEqual(sLangExpected, sLang);
+						Assert.That(xe.Name, Is.EqualTo("span"));
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
 						Assert.That(sClass, Is.Null);
-						Assert.AreEqual("  Inquiring minds want to know!", xe.InnerXml);
+						Assert.That(xe.InnerXml, Is.EqualTo("  Inquiring minds want to know!"));
 						break;
 					case 5:
 						Assert.That(xt, Is.Not.Null);
-						Assert.AreEqual("\u2029", xt.InnerText);
+						Assert.That(xt.InnerText, Is.EqualTo("\u2029"));
 						break;
 					case 6:
 						Assert.That(xe, Is.Not.Null);
-						Assert.AreEqual("span", xe.Name);
+						Assert.That(xe.Name, Is.EqualTo("span"));
 						Assert.That(sLang, Is.Null);
-						Assert.AreEqual("Canadian Bacon", sClass);
+						Assert.That(sClass, Is.EqualTo("Canadian Bacon"));
 						VerifyThirdParagraph(xe, sLangExpected);
 						break;
 				}
 				++i;
 			}
-			Assert.AreEqual(7, i, "There should be exactly 7 child nodes of the text element.");
+			Assert.That(i, Is.EqualTo(7), "There should be exactly 7 child nodes of the text element.");
 		}
 
 		private static void VerifyFirstParagraph(XmlElement xePara, string sLangExpected)
@@ -2156,24 +2156,24 @@ namespace LexTextControlsTests
 				switch (i)
 				{
 					case 0:
-						Assert.AreEqual(sLangExpected, sLang);
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
 						Assert.That(sClass, Is.Null);
-						Assert.AreEqual("This is a ", xe.InnerXml);
+						Assert.That(xe.InnerXml, Is.EqualTo("This is a "));
 						break;
 					case 1:
-						Assert.AreEqual(sLangExpected, sLang);
-						Assert.AreEqual("Emphasized Text", sClass);
-						Assert.AreEqual("test", xe.InnerXml);
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
+						Assert.That(sClass, Is.EqualTo("Emphasized Text"));
+						Assert.That(xe.InnerXml, Is.EqualTo("test"));
 						break;
 					case 2:
-						Assert.AreEqual(sLangExpected, sLang);
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
 						Assert.That(sClass, Is.Null);
-						Assert.AreEqual(".  This is only a test!", xe.InnerXml);
+						Assert.That(xe.InnerXml, Is.EqualTo(".  This is only a test!"));
 						break;
 				}
 				++i;
 			}
-			Assert.AreEqual(3, i, "There should be exactly 3 child nodes of the first paragraph.");
+			Assert.That(i, Is.EqualTo(3), "There should be exactly 3 child nodes of the first paragraph.");
 		}
 
 		private static void VerifyThirdParagraph(XmlElement xePara, string sLangExpected)
@@ -2188,14 +2188,14 @@ namespace LexTextControlsTests
 				switch (i)
 				{
 					case 0:
-						Assert.AreEqual(sLangExpected, sLang);
+						Assert.That(sLang, Is.EqualTo(sLangExpected));
 						Assert.That(sClass, Is.Null);
-						Assert.AreEqual("CiCi pizza is cheap, but not really gourmet when it comes to pizza.", xe.InnerXml);
+						Assert.That(xe.InnerXml, Is.EqualTo("CiCi pizza is cheap, but not really gourmet when it comes to pizza."));
 						break;
 				}
 				++i;
 			}
-			Assert.AreEqual(1, i, "There should be exactly 1 child node of the third paragraph.");
+			Assert.That(i, Is.EqualTo(1), "There should be exactly 1 child node of the third paragraph.");
 		}
 	}
 

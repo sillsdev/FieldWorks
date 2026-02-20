@@ -1,0 +1,10 @@
+<Project>
+	<PropertyGroup>
+		<!--
+			Installer projects use WiX-specific packages (WixToolset.Dtf.*) that are
+			not shared with the main FieldWorks codebase. Opt out of CPM to avoid
+			needing unnecessary entries in the root Directory.Packages.props.
+		-->
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+</Project>

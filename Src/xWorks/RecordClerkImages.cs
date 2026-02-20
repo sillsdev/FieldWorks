@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordClerkImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

@@ -36,9 +36,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_mergeLabel;
 		private Button m_backupButton;
 		private HelpProvider m_helpProvider;
-		private LcmCache cache;
-		private WritingSystemSetupModel currentWsSetupModel;
-		private IEnumerable<CoreWritingSystemDefinition> enumerable;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.

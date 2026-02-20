@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
 					return false;
-				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue, WordformUpdatedEventHandler);
+				m_parserConnection = new ParserConnection(m_cache, m_propertyTable, m_mediator.IdleQueue, WordformUpdatedEventHandler);
 			}
 			StartProgressUpdateTimer();
 			return true;

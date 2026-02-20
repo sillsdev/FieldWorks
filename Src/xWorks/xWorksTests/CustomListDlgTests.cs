@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
+				Assert.That(wsFr > 0, Is.True, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
 				var nameTss = TsStringUtils.MakeString("Gens", wsFr);
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT (actually tests both Set and Get)
 				dlg.SetListNameForWs(nameTss, wsFr);
 
-				Assert.AreEqual("Gens", dlg.GetListNameForWs(wsFr).Text, "Setting the custom list Name failed.");
+				Assert.That(dlg.GetListNameForWs(wsFr).Text, Is.EqualTo("Gens"), "Setting the custom list Name failed.");
 			}
 		}
 
@@ -78,9 +78,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.SetTestCache(Cache);
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
+				Assert.That(wsFr > 0, Is.True, "Test failed because French ws is not installed.");
 				var wsSp = Cache.WritingSystemFactory.GetWsFromStr("es");
-				Assert.True(wsSp > 0, "Test failed because Spanish ws is not installed.");
+				Assert.That(wsSp > 0, Is.True, "Test failed because Spanish ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
 				var nameTssFr = TsStringUtils.MakeString("Une description en français!", wsFr);
@@ -90,10 +90,8 @@ namespace SIL.FieldWorks.XWorks
 				dlg.SetDescriptionForWs(nameTssFr, wsFr);
 				dlg.SetDescriptionForWs(nameTssSp, wsSp);
 
-				Assert.AreEqual("Une description en français!", dlg.GetDescriptionForWs(wsFr).Text,
-					"Setting the custom list Description in French failed.");
-				Assert.AreEqual("Un descripción en español?", dlg.GetDescriptionForWs(wsSp).Text,
-				"Setting the custom list Description in Spanish failed.");
+				Assert.That(dlg.GetDescriptionForWs(wsFr).Text, Is.EqualTo("Une description en français!"), "Setting the custom list Description in French failed.");
+				Assert.That(dlg.GetDescriptionForWs(wsSp).Text, Is.EqualTo("Un descripción en español?"), "Setting the custom list Description in Spanish failed.");
 			}
 		}
 
@@ -111,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
+				Assert.That(wsFr > 0, Is.True, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
 				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
@@ -124,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// SUT
 				bool fdup = dlg.IsNameDuplicated;
-				Assert.IsTrue(fdup, "Couldn't detect list with duplicate French name?!");
+				Assert.That(fdup, Is.True, "Couldn't detect list with duplicate French name?!");
 			}
 		}
 
@@ -142,7 +140,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.SetTestCache(Cache);
 				SetUserWs("fr"); // user ws needs to be French for this test
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
+				Assert.That(wsFr > 0, Is.True, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
 				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
@@ -153,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				bool fdup = dlg.IsNameDuplicated;
 
-				Assert.IsFalse(fdup, "Detected a list with duplicate French name?!");
+				Assert.That(fdup, Is.False, "Detected a list with duplicate French name?!");
 			}
 		}
 
@@ -169,8 +167,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new TestCustomListDlg())
 			{
 				// Dialog Title should default to "New List"
-				Assert.AreEqual("New List", dlg.Text,
-					"Dialog default title for AddList dialog is wrong.");
+				Assert.That(dlg.Text, Is.EqualTo("New List"), "Dialog default title for AddList dialog is wrong.");
 			}
 		}
 
@@ -186,8 +183,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				// Dialog Title should default to "Configure List"
-				Assert.AreEqual("Configure List", dlg.Text,
-					"Dialog default title for ConfigureList dialog is wrong.");
+				Assert.That(dlg.Text, Is.EqualTo("Configure List"), "Dialog default title for ConfigureList dialog is wrong.");
 			}
 		}
 
@@ -207,9 +203,9 @@ namespace SIL.FieldWorks.XWorks
 				var dupl = dlg.AllowDuplicate;
 
 				// Verify
-				Assert.IsFalse(hier, "'Support hierarchy' default value should be false.");
-				Assert.IsFalse(sort, "'Sort items by name' default value should be false.");
-				Assert.IsTrue(dupl, "'Allow duplicate items' default value should be true.");
+				Assert.That(hier, Is.False, "'Support hierarchy' default value should be false.");
+				Assert.That(sort, Is.False, "'Sort items by name' default value should be false.");
+				Assert.That(dupl, Is.True, "'Allow duplicate items' default value should be true.");
 			}
 		}
 
@@ -229,9 +225,9 @@ namespace SIL.FieldWorks.XWorks
 				dlg.AllowDuplicate = false;
 
 				// Verify
-				Assert.IsTrue(dlg.SupportsHierarchy, "'Support hierarchy' value should be set to true.");
-				Assert.IsTrue(dlg.SortByName, "'Sort items by name' value should be set to true.");
-				Assert.IsFalse(dlg.AllowDuplicate, "'Allow duplicate items' value should be set to false.");
+				Assert.That(dlg.SupportsHierarchy, Is.True, "'Support hierarchy' value should be set to true.");
+				Assert.That(dlg.SortByName, Is.True, "'Sort items by name' value should be set to true.");
+				Assert.That(dlg.AllowDuplicate, Is.False, "'Allow duplicate items' value should be set to false.");
 			}
 		}
 
@@ -247,8 +243,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new AddListDlg(null, null))
 			{
 				// Verify
-				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
-					"Wrong default writing system in combo box.");
+				Assert.That(dlg.SelectedWs, Is.EqualTo(WritingSystemServices.kwsAnals), "Wrong default writing system in combo box.");
 			}
 		}
 
@@ -266,8 +261,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
 				// Verify
-				Assert.AreEqual(WritingSystemServices.kwsVerns, dlg.SelectedWs,
-					"Wrong writing system in combo box.");
+				Assert.That(dlg.SelectedWs, Is.EqualTo(WritingSystemServices.kwsVerns), "Wrong writing system in combo box.");
 			}
 		}
 
@@ -290,14 +284,13 @@ namespace SIL.FieldWorks.XWorks
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(2, wss.Count,
-					"Wrong number of wss found.");
+				Assert.That(wss.Count, Is.EqualTo(2), "Wrong number of wss found.");
 				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
 				var fspanish = wss.Where(ws => ws.IcuLocale == "es").Any();
 				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsTrue(fspanish, "Spanish not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.That(fenglish, Is.True, "English not found.");
+				Assert.That(fspanish, Is.True, "Spanish not found.");
+				Assert.That(ffrench, Is.False, "French should not be found.");
 			}
 		}
 
@@ -320,15 +313,14 @@ namespace SIL.FieldWorks.XWorks
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(2, wss.Count,
-					"Wrong number of wss found.");
+				Assert.That(wss.Count, Is.EqualTo(2), "Wrong number of wss found.");
 				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
 				// Interesting! We input the string "es-MX" and get out the string "es_MX"!
 				var fspanish = wss.Where(ws => ws.IcuLocale == "es_MX").Any();
 				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsTrue(fspanish, "Spanish(Mexican) not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.That(fenglish, Is.True, "English not found.");
+				Assert.That(fspanish, Is.True, "Spanish(Mexican) not found.");
+				Assert.That(ffrench, Is.False, "French should not be found.");
 			}
 		}
 
@@ -351,14 +343,13 @@ namespace SIL.FieldWorks.XWorks
 				var wss = dlg.GetUiWssAndInstall(testStrings);
 
 				// Verify
-				Assert.AreEqual(1, wss.Count,
-					"Wrong number of wss found.");
+				Assert.That(wss.Count, Is.EqualTo(1), "Wrong number of wss found.");
 				var fenglish = wss.Where(ws => ws.IcuLocale == "en").Any();
 				var fspanish = wss.Where(ws => ws.IcuLocale == "es").Any();
 				var ffrench = wss.Where(ws => ws.IcuLocale == "fr").Any();
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsFalse(fspanish, "Spanish should not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.That(fenglish, Is.True, "English not found.");
+				Assert.That(fspanish, Is.False, "Spanish should not found.");
+				Assert.That(ffrench, Is.False, "French should not be found.");
 			}
 		}
 	}

@@ -36,8 +36,7 @@ namespace SIL.FieldWorks.Common.Controls
 					SplitterCancelEventArgs e = new SplitterCancelEventArgs(50, 90, 50, 90);
 					splitContainer.OnSplitterMoving(e);
 
-					Assert.AreEqual((int)(splitContainer.Height * splitContainer.MaxFirstPanePercentage),
-						e.SplitY);
+					Assert.That(e.SplitY, Is.EqualTo((int)(splitContainer.Height * splitContainer.MaxFirstPanePercentage)));
 				}
 		}
 
@@ -62,7 +61,7 @@ namespace SIL.FieldWorks.Common.Controls
 				SplitterCancelEventArgs e = new SplitterCancelEventArgs(50, 70, 50, 70);
 				splitContainer.OnSplitterMoving(e);
 
-				Assert.IsFalse(e.Cancel);
+				Assert.That(e.Cancel, Is.False);
 			}
 		}
 
@@ -86,8 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 				SplitterCancelEventArgs e = new SplitterCancelEventArgs(90, 50, 90, 50);
 				splitContainer.OnSplitterMoving(e);
 
-				Assert.AreEqual((int)(splitContainer.Width * splitContainer.MaxFirstPanePercentage),
-					e.SplitX);
+				Assert.That(e.SplitX, Is.EqualTo((int)(splitContainer.Width * splitContainer.MaxFirstPanePercentage)));
 			}
 		}
 	}

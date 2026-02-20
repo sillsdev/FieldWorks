@@ -49,12 +49,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Cache.LanguageProject.StylesOC.Add(style);
 			testInfo.SaveToDB(style, false, false);
 
-			Assert.AreEqual(ContextValues.Intro, testInfo.Context);
-			Assert.AreEqual(StructureValues.Heading, testInfo.Structure);
-			Assert.AreEqual(FunctionValues.Table, testInfo.Function);
-			Assert.AreEqual(ContextValues.Intro, style.Context);
-			Assert.AreEqual(StructureValues.Heading, style.Structure);
-			Assert.AreEqual(FunctionValues.Table, style.Function);
+			Assert.That(testInfo.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(testInfo.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(testInfo.Function, Is.EqualTo(FunctionValues.Table));
+			Assert.That(style.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(style.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(style.Function, Is.EqualTo(FunctionValues.Table));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -96,12 +96,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Cache.LanguageProject.StylesOC.Add(style);
 			testInfo.SaveToDB(style, false, false);
 
-			Assert.AreEqual(ContextValues.Text, testInfo.Context);
-			Assert.AreEqual(StructureValues.Body, testInfo.Structure);
-			Assert.AreEqual(FunctionValues.Prose, testInfo.Function);
-			Assert.AreEqual(ContextValues.Text, style.Context);
-			Assert.AreEqual(StructureValues.Body, style.Structure);
-			Assert.AreEqual(FunctionValues.Prose, style.Function);
+			Assert.That(testInfo.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(testInfo.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That(testInfo.Function, Is.EqualTo(FunctionValues.Prose));
+			Assert.That(style.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(style.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That(style.Function, Is.EqualTo(FunctionValues.Prose));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -143,12 +143,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Cache.LanguageProject.StylesOC.Add(style);
 			testInfo.SaveToDB(style, false, false);
 
-			Assert.AreEqual(ContextValues.Text, testInfo.Context);
-			Assert.AreEqual(StructureValues.Body, testInfo.Structure);
-			Assert.AreEqual(FunctionValues.Prose, testInfo.Function);
-			Assert.AreEqual(ContextValues.Text, style.Context);
-			Assert.AreEqual(StructureValues.Body, style.Structure);
-			Assert.AreEqual(FunctionValues.Prose, style.Function);
+			Assert.That(testInfo.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(testInfo.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That(testInfo.Function, Is.EqualTo(FunctionValues.Prose));
+			Assert.That(style.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(style.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That(style.Function, Is.EqualTo(FunctionValues.Prose));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -182,19 +182,19 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Cache.LanguageProject.StylesOC.Add(style);
 			testInfo1.SaveToDB(style, false, false);
 
-			Assert.AreEqual(ContextValues.Intro, testInfo1.Context);
-			Assert.AreEqual(StructureValues.Heading, testInfo1.Structure);
-			Assert.AreEqual(FunctionValues.Table, testInfo1.Function);
-			Assert.AreEqual(ContextValues.Intro, style.Context);
-			Assert.AreEqual(StructureValues.Heading, style.Structure);
-			Assert.AreEqual(FunctionValues.Table, style.Function);
+			Assert.That(testInfo1.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(testInfo1.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(testInfo1.Function, Is.EqualTo(FunctionValues.Table));
+			Assert.That(style.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(style.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(style.Function, Is.EqualTo(FunctionValues.Table));
 
-			Assert.AreEqual(ContextValues.Intro, testInfo2.Context);
-			Assert.AreEqual(StructureValues.Heading, testInfo2.Structure);
-			Assert.AreEqual(FunctionValues.Table, testInfo2.Function);
-			Assert.AreEqual(ContextValues.Intro, style2.Context);
-			Assert.AreEqual(StructureValues.Heading, style2.Structure);
-			Assert.AreEqual(FunctionValues.Table, style2.Function);
+			Assert.That(testInfo2.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(testInfo2.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(testInfo2.Function, Is.EqualTo(FunctionValues.Table));
+			Assert.That(style2.Context, Is.EqualTo(ContextValues.Intro));
+			Assert.That(style2.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(style2.Function, Is.EqualTo(FunctionValues.Table));
 		}
 	}
 }

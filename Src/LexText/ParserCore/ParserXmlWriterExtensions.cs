@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,16 +18,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	internal static class ParserXmlWriterExtensions
 	{
-		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
+		private static Tuple<int, int, int> ProcessMsaHvo(string msaHvo)
 		{
 			string[] msaHvoParts = msaHvo.Split('.');
-			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
+			// the msa hvo has one part or three parts separated by a period.
+			// in the latter case, it is the lex entry hvo, the lex ref hvo, and the msa hvo
+			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[1]) : 0,
+				msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[2]) : 0);
 		}
 
 		public static void WriteMsaElement(this XmlWriter writer, LcmCache cache, string formID, string msaID, string type, string wordType)
 		{
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int> msaTuple = ProcessMsaHvo(msaID);
+			Tuple<int, int, int> msaTuple = ProcessMsaHvo(msaID);
 			ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item1);
 			switch (obj.GetType().Name)
 			{
@@ -52,9 +55,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					var entry = (ILexEntry) obj;
 					if (entry.EntryRefsOS.Count > 0)
 					{
-						ILexEntryRef lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-						WriteStemMsaXmlElement(writer, (IMoStemMsa) sense.MorphoSyntaxAnalysisRA, entry.VariantEntryRefs);
+						// use the msa itself
+						IMoStemMsa stemMsa = (IMoStemMsa)cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item3);
+						WriteStemMsaXmlElement(writer, stemMsa, entry.VariantEntryRefs);
 					}
 					break;
 				case "LexEntryInflType":
@@ -328,7 +331,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				int iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
 				int iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
 				alloform = shortName.Substring(0, iFirstSpace);
-				Tuple<int, int> msaTuple = ProcessMsaHvo(msaID);
+				Tuple<int, int, int> msaTuple = ProcessMsaHvo(msaID);
 				ICmObject msaObj = cache.ServiceLocator.GetObject(msaTuple.Item1);
 				if (msaObj.ClassID == LexEntryTags.kClassId)
 				{
@@ -344,7 +347,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
 							glossWs, out sbGlossPrepend, out sbGlossAppend);
 						ITsIncStrBldr sbGloss = sbGlossPrepend;
-						sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
+						// use the gloss of the first sense of the MSA
+						IMoStemMsa stemMsa = (IMoStemMsa)cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item3);
+						string msaGloss = (stemMsa != null) ? stemMsa.GetGlossOfFirstSense() : "***";
+						sbGloss.Append(msaGloss);
 						sbGloss.Append(sbGlossAppend.Text);
 						gloss = sbGloss.Text;
 					}
@@ -392,7 +398,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteStartElement("lexEntryInflType");
 			writer.WriteEndElement();
 			writer.WriteElementString("alloform", "0");
-			string sNullGloss = null;
 			var sbGloss = new StringBuilder();
 			if (string.IsNullOrEmpty(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text))
 			{

@@ -2166,17 +2166,15 @@ InflClass
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="sVariantOfGloss"/>
 		<xsl:param name="stemMsa"/>
-			<xsl:choose>
-				<xsl:when test="key('LexEntryInflTypes',$lexEntryRef/LexEntryType/@dst)">
-					<xsl:call-template name="IdOfVariantEntry">
-						<xsl:with-param name="lexEntry" select="$lexEntry"/>
-						<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
-					</xsl:call-template>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="$stemMsa/@Id"/>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:if test="key('LexEntryInflTypes',$lexEntryRef/LexEntryType/@dst)">
+				<!-- we produce sn id that has three parts separated by a period: the lex entry, the lex ref, and the msa -->
+				<xsl:call-template name="IdOfVariantEntry">
+					<xsl:with-param name="lexEntry" select="$lexEntry"/>
+					<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+				</xsl:call-template>
+				<xsl:text>.</xsl:text>
+			</xsl:if>
+			<xsl:value-of select="$stemMsa/@Id"/>
 			<xsl:variable name="gloss">
 				<xsl:call-template name="GlossOfVariant">
 					<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>

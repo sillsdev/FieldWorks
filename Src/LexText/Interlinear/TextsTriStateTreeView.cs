@@ -43,6 +43,23 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				(m_scriptureStylesheet as IDisposable)?.Dispose();
+			}
+			m_scriptureStylesheet = null;
+			m_cache = null;
+			m_scr = null;
+			m_associatedPtText = null;
+
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
 		/// Set the cache.
 		/// </summary>
 		public LcmCache Cache

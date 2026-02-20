@@ -98,9 +98,9 @@ namespace Paratext8Plugin
 			catch (Exception e)
 			{
 				// A TypeInitializationException may also be thrown if ParaText 8 is not installed.
-				Assert.False(MockScriptureProvider.IsInstalled);
+				Assert.That(MockScriptureProvider.IsInstalled, Is.False);
 				// A FileLoadException may indicate that ParatextData dependency (i.e. icu.net) has been undated to a new version.
-				Assert.False(e.GetType().Name.Contains(typeof(FileLoadException).Name));
+				Assert.That(e.GetType().Name.Contains(typeof(FileLoadException).Name), Is.False);
 			}
 		}
 	}

@@ -104,26 +104,26 @@ namespace SIL.FieldWorks.FdoUi
 				TsStringUtils.MakeString("Uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.That(lexEntryUi, Is.Not.Null);
-				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.That(lexEntryUi.Object.Hvo, Is.EqualTo(entry1.Hvo), "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("lowercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.That(lexEntryUi, Is.Not.Null);
-				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.That(lexEntryUi.Object.Hvo, Is.EqualTo(entry2.Hvo), "Found wrong object");
 			}
 			// Now make sure it works with the wrong case
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.That(lexEntryUi, Is.Not.Null);
-				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.That(lexEntryUi.Object.Hvo, Is.EqualTo(entry1.Hvo), "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("LowerCASEword", Cache.DefaultVernWs)))
 			{
 				Assert.That(lexEntryUi, Is.Not.Null);
-				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+				Assert.That(lexEntryUi.Object.Hvo, Is.EqualTo(entry2.Hvo), "Found wrong object");
 			}
 		}
 
@@ -136,9 +136,9 @@ namespace SIL.FieldWorks.FdoUi
 			var obj = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			using (DummyCmObjectUi objectUi = DummyCmObjectUi.MakeDummyUi(obj))
 			{
-				Assert.IsTrue(obj.IsValidObject);
+				Assert.That(obj.IsValidObject, Is.True);
 				objectUi.SimulateReallyDeleteUnderlyingObject(); // Call ReallyDeleteUnderlyingObject() in CmObjectUi
-				Assert.IsFalse(obj.IsValidObject);
+				Assert.That(obj.IsValidObject, Is.False);
 			}
 		}
 	}

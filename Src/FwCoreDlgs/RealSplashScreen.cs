@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
+		/// Sets the assembly of the product-specific EXE (e.g., TE.exe or the unified FieldWorks.exe that subsumed the FLEx.exe stub).
 		/// .Net callers should set this.
 		/// </summary>
 		/// <param name="value">The value.</param>

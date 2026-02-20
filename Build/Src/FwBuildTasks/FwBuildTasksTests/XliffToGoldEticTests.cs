@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			_task.CombineXliffs(new List<XDocument> {xlfEs});
 
-			Assert.False(_tbi.Errors.Any());
+			Assert.That(_tbi.Errors.Any(), Is.False);
 		}
 
 		[Test]

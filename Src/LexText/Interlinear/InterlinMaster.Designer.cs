@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+		// TODO (Hasso) 2023.07: move to non-designer class?
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -35,6 +36,7 @@ namespace SIL.FieldWorks.IText
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.RefreshInterlin, RefreshInterlin);
+				Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 
 				//SuspendLayout();	// don't want do trigger OnLayout() when removing controls!
 				//DestroyTitleContentsPane();
