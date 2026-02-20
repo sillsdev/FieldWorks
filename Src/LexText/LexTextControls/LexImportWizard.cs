@@ -1164,7 +1164,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
 			using (LexImportWizardMarker dlg = new LexImportWizardMarker(m_LexFields))
 			{
-				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable, m_app);
 			DialogResult dr = dlg.ShowDialog(this);
 
 			// Custom fields have to be handled independantly of the dialogresult being ok sense they

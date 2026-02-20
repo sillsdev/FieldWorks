@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -81,19 +81,6 @@ namespace SIL.FieldWorks.XWorks
 		private ComboBox m_typeComboBox;
 		private ComboBox m_listComboBox;
 		private Label m_listLabel;
-
-		/// <summary>
-		/// Provide access (via reflection) to this dialog for use by the
-		/// Data Notebook standard format importer.
-		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(Mediator mediator, PropertyTable propertyTable)
-		{
-			using (var dlg = new AddCustomFieldDlg(mediator, propertyTable, LocationType.Notebook))
-			{
-				if (dlg.ShowCustomFieldWarning(null))
-					dlg.ShowDialog();
-			}
-		}
 
 		public AddCustomFieldDlg(Mediator mediator, PropertyTable propertyTable, LocationType locationType)
 		{
