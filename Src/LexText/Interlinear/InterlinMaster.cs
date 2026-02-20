@@ -62,6 +62,18 @@ namespace SIL.FieldWorks.IText
 			get { return m_currentTool; }
 		}
 
+		public static Dictionary<Tuple<string, Guid>, InterAreaBookmark> Bookmarks
+		{
+			get {
+				if (m_bookmarks == null)
+				{
+					m_bookmarks = new Dictionary<Tuple<string, Guid>, InterAreaBookmark>();
+				}
+				RemoveStaleBookmarks();
+				return m_bookmarks;
+			}
+		}
+
 		/// <summary>
 		/// Numbers identifying the main tabs in the interlinear text.
 		/// </summary>
@@ -94,6 +106,24 @@ namespace SIL.FieldWorks.IText
 		internal string BookmarkId
 		{
 			get { return m_vectorName ?? ""; }
+		}
+
+		private static void RemoveStaleBookmarks()
+		{
+			// Remove stale bookmarks that came from a Window > New Window being closed.
+			IList<Tuple<string, Guid>> staleKeys = new List<Tuple<string, Guid>>();
+			foreach (var key in m_bookmarks.Keys)
+			{
+				InterAreaBookmark mark = m_bookmarks[key];
+				if (mark.IsPropertyTableDisposed)
+				{
+					staleKeys.Add(key);
+				}
+			}
+			foreach (var key in staleKeys)
+			{
+				m_bookmarks.Remove(key);
+			}
 		}
 
 		/// <summary>
@@ -342,9 +372,8 @@ namespace SIL.FieldWorks.IText
 
 			if (!fSaved)
 			{
-				RemoveStaleBookmarks();
 				InterAreaBookmark mark;
-				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
+				if(Bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
 				{
 					//We only want to persist the save if we are in the interlinear edit, not the concordance view
 					mark.Save(curAnalysis, CurrentTool.Equals("interlinearTexts"), IndexOfTextRecord);
@@ -353,26 +382,8 @@ namespace SIL.FieldWorks.IText
 				{
 					mark = new InterAreaBookmark(this, Cache, m_propertyTable);
 					mark.Restore(IndexOfTextRecord);
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
+					Bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
 				}
-			}
-		}
-
-		public static void RemoveStaleBookmarks()
-		{
-			// Remove stale bookmarks that came from a Window > New Window being closed.
-			IList<Tuple<string, Guid>> staleKeys = new List<Tuple<string, Guid>>();
-			foreach (var key in m_bookmarks.Keys)
-			{
-				InterAreaBookmark mark = m_bookmarks[key];
-				if (mark.IsPropertyTableDisposed())
-				{
-					staleKeys.Add(key);
-				}
-			}
-			foreach (var key in staleKeys)
-			{
-				m_bookmarks.Remove(key);
 			}
 		}
 
@@ -448,11 +459,10 @@ namespace SIL.FieldWorks.IText
 			{
 				//if there is a bookmark for this text with this tool, then save it, if not some logic error brought us here,
 				//but simply not saving a bookmark which doesn't exist seems better than crashing. naylor 3/2012
-				RemoveStaleBookmarks();
 				var key = new Tuple<string, Guid>(CurrentTool, RootStText.Guid);
-				if (m_bookmarks.ContainsKey(key))
+				if (Bookmarks.ContainsKey(key))
 				{
-					m_bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
+					Bookmarks[key].Save(IndexOfTextRecord, iPara, Math.Min(ichAnchor, ichEnd), Math.Max(ichAnchor, ichEnd), true);
 				}
 
 				return true;
@@ -747,10 +757,9 @@ namespace SIL.FieldWorks.IText
 				m_tcPane.StyleSheet = m_styleSheet;
 				m_tcPane.Visible = true;
 			}
-			if (m_bookmarks != null && m_bookmarks.Count > 0)
+			if (Bookmarks.Count > 0)
 			{
-				RemoveStaleBookmarks();
-				foreach (InterAreaBookmark bookmark in m_bookmarks.Values)
+				foreach (InterAreaBookmark bookmark in Bookmarks.Values)
 				{
 					bookmark.Init(this, Cache, propertyTable);
 				}
@@ -1032,12 +1041,11 @@ namespace SIL.FieldWorks.IText
 				Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
 				if (!m_fRefreshOccurred && m_bookmarks != null && text != null)
 				{
-					RemoveStaleBookmarks();
 					InterAreaBookmark mark;
-					if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
+					if (!Bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, text.Guid), out mark))
 					{
 						mark = new InterAreaBookmark(this, Cache, m_propertyTable);
-						m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
+						Bookmarks.Add(new Tuple<string, Guid>(CurrentTool, text.Guid), mark);
 					}
 
 					mark.Save(point, false, IndexOfTextRecord);
@@ -1054,12 +1062,11 @@ namespace SIL.FieldWorks.IText
 		{
 			if (stText != null)
 			{
-				RemoveStaleBookmarks();
 				InterAreaBookmark mark;
-				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
+				if (Bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
 					mark.Restore(IndexOfTextRecord);
 				else
-					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, m_propertyTable));
+					Bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, m_propertyTable));
 			}
 		}
 
@@ -1092,11 +1099,10 @@ namespace SIL.FieldWorks.IText
 			if (Clerk.CurrentObjectHvo == 0 || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 				return;
 			// Use a bookmark, if we've set one.
-			RemoveStaleBookmarks();
-			if ((RootStText != null && ((ICmObject)RootStText).IsValidObject) && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
-				m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
+			if ((RootStText != null && ((ICmObject)RootStText).IsValidObject) && Bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)) &&
+				Bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)].IndexOfParagraph >= 0 && CurrentInterlinearTabControl is IHandleBookmark)
 			{
-				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)]);
+				(CurrentInterlinearTabControl as IHandleBookmark).SelectBookmark(Bookmarks[new Tuple<string, Guid>(CurrentTool, RootStText.Guid)]);
 			}
 		}
 
@@ -1473,8 +1479,7 @@ namespace SIL.FieldWorks.IText
 			{
 				//At this point m_tabCtrl.SelectedIndex is set to the value of the tabPage
 				//we are leaving.
-				RemoveStaleBookmarks();
-				if (RootStText != null && m_bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)))
+				if (RootStText != null && Bookmarks.ContainsKey(new Tuple<string, Guid>(CurrentTool, RootStText.Guid)))
 					SaveBookMark();
 			}
 		}

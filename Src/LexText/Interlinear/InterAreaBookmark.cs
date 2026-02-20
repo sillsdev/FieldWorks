@@ -45,10 +45,7 @@ namespace SIL.FieldWorks.IText
 			m_propertyTable = propertyTable;
 		}
 
-		public bool IsPropertyTableDisposed()
-		{
-			return m_propertyTable.IsDisposed;
-		}
+		public bool IsPropertyTableDisposed => m_propertyTable.IsDisposed;
 
 		/// <summary>
 		/// Saves the given AnalysisOccurrence in the InterlinMaster.
