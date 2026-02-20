@@ -128,6 +128,7 @@ python .github/skills/jira-to-beads/scripts/export_jira_assigned.py
 |----------|-------|
 | Read issue details | `atlassian-readonly-skills` (default) |
 | Create/update/comment | `atlassian-skills` (only when user explicitly requests) |
+| Fix a JIRA bug (end-to-end) | `jira-bugfix` |
 | Bulk import to Beads | `jira-to-beads` |
 
 See `/AGENTS.md` → "Atlassian / JIRA Skills" section for full configuration and details.
