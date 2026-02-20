@@ -73,7 +73,10 @@
   // C# Dev Kit is discouraged because this repo is MSBuild-first and mixed native/managed.
   "dotnet.preferCSharpExtension": true,
   "dotnet.automaticallyBuildProjects": false,
-  "resharper.solution.autoOpenLastSolution": true,
+  // Avoid reopening a stale solution path when switching between repo root and git worktrees.
+  // Always open the preferred root solution (`FieldWorks.sln`) deterministically instead.
+  "resharper.solution.autoOpenLastSolution": false,
+  "resharper.solution.autoOpenSingleSolution": true,
   "resharper.build.useResharperBuild": false,
   "resharper.build.restorePackagesOnBuild": true,
   "resharper.build.smartNugetRestore": true,
