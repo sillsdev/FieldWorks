@@ -2643,11 +2643,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
+			// Select the text before applying WS (LT-21845).
+			fwTextBox.Select();
 			fwTextBox.ApplyWS(hvoWs);
 			if (chkMatchWS.Enabled)
 				chkMatchWS.Checked = true;
 			SetFormatLabels();
-			fwTextBox.Select();
 		}
 
 		/// ------------------------------------------------------------------------------------
