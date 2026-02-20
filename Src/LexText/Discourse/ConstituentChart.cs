@@ -1064,6 +1064,7 @@ namespace SIL.FieldWorks.Discourse
 			if (myParent is InterlinMaster)
 			{
 				string tool = (myParent as InterlinMaster).CurrentTool;
+				InterlinMaster.RemoveStaleBookmarks();
 				return InterlinMaster.m_bookmarks[new Tuple<string, Guid>(tool, basedOnRa.Guid)];
 			}
 			return GetAncestorBookmark(myParent as Control, basedOnRa);

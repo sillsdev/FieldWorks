@@ -690,6 +690,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (CanFocus)
 			{
+				InterlinMaster.RemoveStaleBookmarks();
 				var bookmark = InterlinMaster.m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootObject.Guid)];
 				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
 
