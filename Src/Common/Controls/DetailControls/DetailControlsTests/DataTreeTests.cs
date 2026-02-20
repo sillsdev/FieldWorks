@@ -211,6 +211,188 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		[Test]
+		public void ShowObject_ShowHiddenEnabledForCurrentTool_ShowsIfDataSlicesForLexEntry()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconEdit-variant", PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit-variant", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2));
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
+		}
+
+		/// <summary>
+		/// When currentContentControl is not set, the show-hidden key for ILexEntry should
+		/// fall back to "lexiconEdit" for backward compatibility.
+		/// </summary>
+		[Test]
+		public void ShowObject_NoCurrentContentControl_FallsBackToLexiconEditForLexEntry()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				// Do NOT set currentContentControl — test the fallback path.
+				m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+				// The fallback should pick up "lexiconEdit" and show both slices.
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
+					"Should show ifdata slices via lexiconEdit fallback");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
+		}
+
+		/// <summary>
+		/// Enabling ShowHiddenFields for a different tool must not reveal ifdata slices
+		/// for the current tool.
+		/// </summary>
+		[Test]
+		public void ShowObject_ShowHiddenForDifferentTool_DoesNotRevealIfDataSlices()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				// Current tool is "lexiconEdit", but show-hidden is only set for a *different* tool.
+				m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty("ShowHiddenFields-notebookEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+				// Only CitationForm should show; Bibliography has no data and the correct tool key is OFF.
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(1),
+					"ShowHiddenFields for a different tool should not affect the current tool");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
+		}
+
+		/// <summary>
+		/// When ShowHiddenFields is enabled, parts with visibility="never" should also appear.
+		/// </summary>
+		[Test]
+		public void ShowObject_ShowHiddenEnabled_RevealsNeverVisibilityParts()
+		{
+			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			// CfOnly layout: CitationForm (always) + Bibliography (never)
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			// With show-hidden ON, even "never" parts should appear.
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
+				"visibility='never' parts should be visible when ShowHiddenFields is ON");
+			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+		}
+
+		/// <summary>
+		/// OnPropertyChanged("ShowHiddenFields") should toggle the show-hidden state keyed
+		/// to the current tool, not a hard-coded name.
+		/// </summary>
+		[Test]
+		public void OnPropertyChanged_ShowHiddenFields_TogglesForCurrentTool()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				m_propertyTable.SetProperty("currentContentControl", "mySpecialTool", PropertyTable.SettingsGroup.LocalSettings, false);
+
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+				// Initially show-hidden is off: only CitationForm should show.
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(1), "Before toggle: only non-ifdata slice");
+
+				// Toggle via OnPropertyChanged (simulates View menu).
+				m_dtree.OnPropertyChanged("ShowHiddenFields");
+
+				// The tool-specific property should now be true.
+				bool showHidden = m_propertyTable.GetBoolProperty(
+					"ShowHiddenFields-mySpecialTool", false, PropertyTable.SettingsGroup.LocalSettings);
+				Assert.That(showHidden, Is.True,
+					"OnPropertyChanged should toggle the property keyed to currentContentControl");
+
+				// ifdata slices should now be visible.
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2), "After toggle: ifdata slice should appear");
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
+		}
+
+		/// <summary>
+		/// OnDisplayShowHiddenFields should report Checked=true when the current tool's
+		/// show-hidden property is true.
+		/// </summary>
+		[Test]
+		public void OnDisplayShowHiddenFields_CheckedState_MatchesCurrentTool()
+		{
+			m_propertyTable.SetProperty("currentContentControl", "lexiconBrowse", PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconBrowse", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			var display = new UIItemDisplayProperties(null, "Show Hidden Fields", true, null, true);
+			bool handled = m_dtree.OnDisplayShowHiddenFields(null, ref display);
+			Assert.That(handled, Is.True);
+			Assert.That(display.Checked, Is.True,
+				"Checked should reflect ShowHiddenFields for the current tool (lexiconBrowse)");
+
+			// Now set it to false and re-check.
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconBrowse", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			display = new UIItemDisplayProperties(null, "Show Hidden Fields", true, null, true);
+			m_dtree.OnDisplayShowHiddenFields(null, ref display);
+			Assert.That(display.Checked, Is.False,
+				"Checked should be false when ShowHiddenFields is off for the current tool");
+		}
+
 		/// <summary></summary>
 		[Test]
 		public void NestedExpandedPart()

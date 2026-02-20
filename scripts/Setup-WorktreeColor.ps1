@@ -407,6 +407,12 @@ $managedKeys = @(
 	"activityBar.inactiveForeground"
 )
 
+$managedWorkspaceSettings = @{
+	"dotnet.defaultSolution" = "FieldWorks.sln"
+	"resharper.solution.autoOpenLastSolution" = $false
+	"resharper.solution.autoOpenSingleSolution" = $true
+}
+
 function Write-WorktreeWorkspaceFile(
 	[Parameter(Mandatory = $true)][string]$targetRoot,
 	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded
@@ -527,6 +533,9 @@ function Write-WorktreeWorkspaceFile(
 		foreach ($p in $overlay.PSObject.Properties) {
 			$settings | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value -Force
 		}
+	}
+	foreach ($key in $managedWorkspaceSettings.Keys) {
+		$settings | Add-Member -MemberType NoteProperty -Name $key -Value $managedWorkspaceSettings[$key] -Force
 	}
 	$existingColorCustomizations = $null
 	if ($settings.PSObject.Properties["workbench.colorCustomizations"]) {
