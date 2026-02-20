@@ -133,6 +133,9 @@ def index_repo_files(root: Path):
 
 
 def parse_frontmatter(text: str):
+    # Strip UTF-8 BOM if present
+    if text.startswith("\ufeff"):
+        text = text[1:]
     lines = text.splitlines()
     fm = {}
     if len(lines) >= 3 and lines[0].strip() == "---":
@@ -222,7 +225,7 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
         "current_tree": "",
         "ok": True,
     }
-    text = path.read_text(encoding="utf-8", errors="replace")
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
     fm, body = parse_frontmatter(text)
     if not fm:
         result["frontmatter"]["missing"] = [

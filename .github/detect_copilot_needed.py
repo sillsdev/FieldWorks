@@ -90,7 +90,7 @@ def top_level_src_folder(path: str):
 def parse_frontmatter(path: Path) -> Tuple[Optional[Dict[str, str]], str]:
     if not path.exists():
         return None, ""
-    text = path.read_text(encoding="utf-8", errors="replace")
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
     lines = text.splitlines()
     if len(lines) >= 3 and lines[0].strip() == "---":
         end_idx = -1

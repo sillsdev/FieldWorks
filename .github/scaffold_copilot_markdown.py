@@ -87,6 +87,9 @@ def top_level_src_folder(path: str) -> Optional[str]:
 
 
 def parse_frontmatter(text: str) -> Tuple[Optional[Dict[str, str]], str]:
+    # Strip UTF-8 BOM if present
+    if text.startswith("\ufeff"):
+        text = text[1:]
     lines = text.splitlines()
     if len(lines) >= 3 and lines[0].strip() == "---":
         end_idx = -1
@@ -230,7 +233,7 @@ def ensure_copilot_doc(
 ) -> Tuple[str, Optional[str]]:
     copath = folder / "AGENTS.md"
     if copath.exists():
-        original = copath.read_text(encoding="utf-8", errors="replace")
+        original = copath.read_text(encoding="utf-8-sig", errors="replace")
     else:
         original = ""
     try:
