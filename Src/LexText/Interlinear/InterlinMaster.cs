@@ -1,6 +1,7 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -744,6 +745,7 @@ namespace SIL.FieldWorks.IText
 			m_fullyInitialized = true;
 			RefreshPaneBar();
 
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 			Subscriber.Subscribe(EventConstants.RefreshInterlin, RefreshInterlin);
 		}
 
@@ -783,14 +785,13 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-		public bool OnPrepareToRefresh(object args)
+		private void PrepareToRefresh(object _)
 		{
 			CheckDisposed();
 
-			// flag that a refresh was triggered (unless we don't have a current record..see var comment).
+			// flag that a refresh was triggered (unless we don't have a current record. See comment on m_fRefreshOccurred).
 			if (RootStTextHvo != 0)
 				m_fRefreshOccurred = true;
-			return false; // other things may wish to prepare too.
 		}
 
 		protected override void SetupDataContext()
