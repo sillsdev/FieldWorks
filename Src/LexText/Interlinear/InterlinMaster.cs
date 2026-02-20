@@ -342,6 +342,7 @@ namespace SIL.FieldWorks.IText
 
 			if (!fSaved)
 			{
+				RemoveStaleBookmarks();
 				InterAreaBookmark mark;
 				if(m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), out mark))
 				{
@@ -354,6 +355,24 @@ namespace SIL.FieldWorks.IText
 					mark.Restore(IndexOfTextRecord);
 					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, RootStText.Guid), mark);
 				}
+			}
+		}
+
+		private void RemoveStaleBookmarks()
+		{
+			// Remove stale bookmarks that came from a Window > New Window being closed.
+			IList<Tuple<string, Guid>> staleKeys = new List<Tuple<string, Guid>>();
+			foreach (var key in m_bookmarks.Keys)
+			{
+				InterAreaBookmark mark = m_bookmarks[key];
+				if (mark.IsPropertyTableDisposed())
+				{
+					staleKeys.Add(key);
+				}
+			}
+			foreach (var key in staleKeys)
+			{
+				m_bookmarks.Remove(key);
 			}
 		}
 
