@@ -440,6 +440,8 @@ namespace XCore
 			m_mediator.SpecificToOneMainWindow = true;
 
 			InitializeComponent();
+
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 		}
 
 		/// <summary>
@@ -1317,6 +1319,7 @@ namespace XCore
 		/// </summary>
 		private void ShutDownPart1()
 		{
+			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
 
 			if (m_mediator != null)
 			{
@@ -1937,21 +1940,14 @@ namespace XCore
 		/// gives the window a chance to save anything in progress before the Refresh
 		/// updates the cache.
 		///
-		/// Possibly this should be allowed to fail and abort the Refresh, if PrepareToGoAway fails?
+		/// ENHANCE (2012 or earlier) Possibly this should be allowed to fail and abort the Refresh, if PrepareToGoAway fails?
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnPrepareToRefresh(object sender)
+		private void PrepareToRefresh(object _)
 		{
 			CheckDisposed();
 
 			// This can be null when the MasterRefresh is being processed.
-			if (MainContentControlAsIxCoreContentControl == null)
-				return false;
-
-			MainContentControlAsIxCoreContentControl.PrepareToGoAway();
-
-			return false; // others may want to check also.
+			MainContentControlAsIxCoreContentControl?.PrepareToGoAway();
 		}
 
 		#endregion XCORE Message Handlers
