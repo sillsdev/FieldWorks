@@ -130,6 +130,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
 				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+				Subscriber.Unsubscribe(EventConstants.SetInitialContentObject, SetInitialContentObject);
 
 				// Dispose managed resources here.
 				if (m_mediator != null)
@@ -152,6 +153,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
+			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject);
 			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
 			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
@@ -845,7 +847,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="windowConfigurationNode"></param>
 		/// <returns></returns>
-		public bool OnSetInitialContentObject(object windowConfigurationNode)
+		private void SetInitialContentObject(object windowConfigurationNode)
 		{
 			CheckDisposed();
 
@@ -865,8 +867,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_propertyTable.SetPropertyPersistence("areaChoice", false);
 
 			ActivateToolForArea(areaName);
-
-			return true;	//we handled this.
 		}
 
 		/// <summary>
