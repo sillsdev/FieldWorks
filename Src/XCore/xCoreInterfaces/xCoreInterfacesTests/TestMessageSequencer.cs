@@ -251,7 +251,9 @@ namespace XCore
 
 				ArrayList testList = new ArrayList();
 				ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
+#pragma warning disable 618 // suppress obsolete warning
 				mediator.SendMessage("AddTestItem", testList);
+#pragma warning restore 618
 				Assert.That(expectedResult, Is.EqualTo(testList), "Mediator message Prioritization is broken.");
 			}
 		}

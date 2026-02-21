@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.FdoUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						posUi = new PartOfSpeechUi(dlg.SelectedPOS);
+#pragma warning disable 618 // suppress obsolete warning
 						mediator.SendMessage("JumpToRecord", dlg.SelectedPOS.Hvo);
+#pragma warning restore 618
 						break;
 				}
 			}

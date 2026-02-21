@@ -419,7 +419,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 							 dlg is LiftImportDlg || dlg is CombineImportDlg)
 					{
 						// Make everything we've imported visible.
+#pragma warning disable 618 // suppress obsolete warning
 						wndActive.Mediator.SendMessage("MasterRefresh", wndActive);
+#pragma warning restore 618
 					}
 				}
 			}

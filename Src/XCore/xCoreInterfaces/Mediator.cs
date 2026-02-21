@@ -779,6 +779,8 @@ namespace XCore
 		/// <param name="parameter"></param>
 		/// <returns><c>true</c> if the message was handled, otherwise <c>false</c></returns>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public bool SendMessage(string messageName, object parameter)
 		{
 			CheckDisposed();
@@ -792,7 +794,7 @@ namespace XCore
 				/// Have seen a stack situation that the Mediator has been disposed of after returning from this call...
 				///
 
-				result = SendMessage(messageName, parameter, true);
+				result = SendMessageWorker(messageName, parameter);
 			}
 			catch (DisposedInAnotherFrameException)
 			{
@@ -804,15 +806,11 @@ namespace XCore
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This version is used to invoke commands
+		/// Worker method to invoke commands. It will log the call if it is not an update or idle.
 		/// </summary>
-		/// <param name="messageName"></param>
-		/// <param name="parameter"></param>
-		/// <param name="fLogIt">True to log the call (if its not an update or idle), false
-		/// otherwise</param>
 		/// <returns><c>true</c> if the message was handled, otherwise <c>false</c></returns>
 		/// ------------------------------------------------------------------------------------
-		public bool SendMessage(string messageName, object parameter, bool fLogIt)
+		private bool SendMessageWorker(string messageName, object parameter)
 		{
 			CheckDisposed();
 
@@ -831,7 +829,7 @@ namespace XCore
 			}
 			string methodName = "On" + messageName;
 			// Logging
-			if (!messageName.StartsWith("Update") && messageName != "Idle" && fLogIt)
+			if (!messageName.StartsWith("Update") && messageName != "Idle")
 			{
 				// We want to log the method if any colleague handles it.
 				// So we check the list of methods known-to-us first. If we don't find it,
@@ -866,6 +864,8 @@ namespace XCore
 		/// <param name="parameter"></param>
 		/// <param name="returnValue"></param>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public void SendMessage(string messageName, object parameter,
 			ref UIItemDisplayProperties returnValue)
 		{
@@ -901,6 +901,8 @@ namespace XCore
 		/// <param name="messageName"></param>
 		/// <param name="parameter"></param>
 		/// <param name="returnValue"></param>
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public void SendMessage(string messageName, object parameter,
 			ref UIListDisplayProperties returnValue)
 		{
@@ -939,6 +941,8 @@ namespace XCore
 		/// <param name="messageName"></param>
 		/// <param name="parameter"></param>
 		/// <returns>true if one or more colleagues handled the message, else false</returns>
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public bool SendMessageToAllNow(string messageName, object parameter)
 		{
 			CheckDisposed();
@@ -1010,7 +1014,9 @@ namespace XCore
 		private bool PostMessageOnIdle(object parameter)
 		{
 			var pmi = (PendingMessageItem) parameter;
+#pragma warning disable 618 // suppress obsolete warning
 			SendMessage(pmi.m_message, pmi.m_parameter);
+#pragma warning restore 618
 			return true;
 		}
 

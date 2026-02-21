@@ -731,7 +731,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("MasterRefresh", null);
+#pragma warning restore 618
 		}
 
 		internal static IReversalIndex ReversalIndexAfterDeletion(LcmCache cache, out int cobjNew)

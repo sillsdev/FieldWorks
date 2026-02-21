@@ -112,7 +112,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						// this call, so there is code in the Mediator to handle in the middle of a msg the case
 						// where the object is nolonger valid.  This has happend before and was being handled, this
 						// call "SendMessageToAllNow" has not had the code to handle the exception, so it was added.
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.SendMessageToAllNow("MasterRefresh", cache.LangProject.PhFeatureSystemOA);
+#pragma warning restore 618
 						break;
 				}
 			}

@@ -750,7 +750,9 @@ namespace XCore
 					using (new WaitCursor(Form.ActiveForm))
 					{
 						Logger.WriteEvent("Start: " + msgString);
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.SendMessage(msgString, this);
+#pragma warning restore 618
 						Logger.WriteEvent("Done: " + msgString);
 					}
 				}

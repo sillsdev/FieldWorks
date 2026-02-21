@@ -359,7 +359,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (fmi == null)
 				return;
 			var command = new Command(m_mediator, fmi.ConfigurationNode);
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage(fmi.Message, command);
+#pragma warning restore 618
 		}
 
 		private FwMenuItem FindEnabledItem(int iSel)

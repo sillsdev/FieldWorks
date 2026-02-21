@@ -756,7 +756,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ILexRefType newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			m_cache.DomainDataByFlid.EndUndoTask();
+#pragma warning disable 618 // suppress obsolete warning
 			ContainingDataTree.Mediator.SendMessage("FollowLink", new FwLinkArgs("lexRefEdit", newKid.Guid));
+#pragma warning restore 618
 		}
 
 		protected void ExpandNewNode()

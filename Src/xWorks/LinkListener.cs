@@ -416,7 +416,9 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("FollowLink", new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]));
+#pragma warning restore 618
 			return true;
 		}
 
@@ -478,7 +480,9 @@ namespace SIL.FieldWorks.XWorks
 							// Thus we've created this method (on AreaListener) which we call awkwardly throught the mediator.
 							var parameters = new object[2];
 							parameters[0] = majorObject;
+#pragma warning disable 618 // suppress obsolete warning
 							m_mediator.SendMessage("GetToolForList", parameters);
+#pragma warning restore 618
 							realTool = (string)parameters[1];
 							break;
 						case RnResearchNbkTags.kClassId:

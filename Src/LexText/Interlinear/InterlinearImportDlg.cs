@@ -79,7 +79,9 @@ namespace SIL.FieldWorks.IText
 							var firstNewText = import.FirstNewText;
 							if (firstNewText != null && m_mediator != null)
 							{
+#pragma warning disable 618 // suppress obsolete warning
 								m_mediator.SendMessage("JumpToRecord", firstNewText.Hvo);
+#pragma warning restore 618
 							}
 						}
 						else

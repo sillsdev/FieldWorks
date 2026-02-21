@@ -256,7 +256,11 @@ namespace SIL.FieldWorks.IText
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
+			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
+#pragma warning restore 618
+			}
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);
 			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app
