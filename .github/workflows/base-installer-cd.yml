@@ -292,7 +292,7 @@ jobs:
               ${{ steps.compress_artifacts.outputs.proc_runner_zip }}
 
       - name: Upload Build Logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           if-no-files-found: warn

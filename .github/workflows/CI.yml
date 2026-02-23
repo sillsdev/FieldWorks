@@ -39,14 +39,14 @@ jobs:
 
       - name: Upload TRX test results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trx-results
           path: |
             **/*.trx
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() && failure() }}
         with:
           name: build-logs
