@@ -1620,7 +1620,9 @@ namespace SIL.FieldWorks.XWorks
 					// EricP/JohnT -- this path will probably never be called in a production
 					// context, since we'll have an FwApp. And even in the case of tests
 					// taking this path, we wonder if we should issue a "MasterRefresh" instead
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.SendMessage("Refresh", this);
+#pragma warning restore 618
 				}
 			}
 		}
@@ -2029,7 +2031,9 @@ namespace SIL.FieldWorks.XWorks
 				var phonologyServices = new PhonologyServices(Cache);
 				phonologyServices.DeletePhonology();
 				phonologyServices.ImportPhonologyFromXml(filename);
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.SendMessage("MasterRefresh", null);
+#pragma warning restore 618
 			}
 			catch (Exception ex)
 			{
@@ -2277,7 +2281,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (m_startupLink != null)
+			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.SendMessage("FollowLink", m_startupLink);
+#pragma warning restore 618
+			}
 			UpdateControls();
 			return true;
 		}
@@ -2402,7 +2410,9 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// We don't want to clear the cache... just update the view.
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("Refresh", this);
+#pragma warning restore 618
 			//OnMasterRefresh(null);
 		}
 

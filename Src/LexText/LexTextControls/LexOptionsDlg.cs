@@ -233,7 +233,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					var managerNode = managerDoc.SelectSingleNode("/manager");
 					var shutdownMsg = XmlUtils.GetOptionalAttributeValue(managerNode, "shutdown");
 					if (!string.IsNullOrEmpty(shutdownMsg))
+					{
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.SendMessage(shutdownMsg, null);
+#pragma warning restore 618
+					}
 					var configfilesNode = managerNode.SelectSingleNode("configfiles");
 					var extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
 					Directory.Delete(extensionPath, true);

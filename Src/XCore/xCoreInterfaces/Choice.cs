@@ -273,7 +273,9 @@ namespace XCore
 			//OK, this is a little non-obvious
 			//first we allow anyone who knows about this specific command to influence how it is displayed
 			//why was it this way?			m_mediator.SendMessage("Display"+this.m_idOfCorrespondingCommand, CommandObject, ref display);
+#pragma warning disable 618 // suppress obsolete warning
 			mediator.SendMessage("Display" + command.Id, command, ref display);
+#pragma warning restore 618
 
 
 			//but then, we also allow anyone who knows about this specific message that would be sent
@@ -283,7 +285,9 @@ namespace XCore
 			//And in this case, there may not be any actual code which knows about one of these commands,
 			//instead the code may be written to just listen  for the "InsertRecord" message and then act
 			//upon its arguments which, in this example, would cause it to either insert a person or a company.
+#pragma warning disable 618 // suppress obsolete warning
 			mediator.SendMessage("Display" + command.MessageString, command, ref display);
+#pragma warning restore 618
 			return display;
 		}
 
@@ -396,7 +400,9 @@ namespace XCore
 			// known group are those starting with ShowHiddenFields-), partly because they occur in settings
 			// files as well as the program. So we change any hyphens to underscore so that it's actually possible
 			// to implement the method that this code is looking for.
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("Display" + BoolPropertyName.Replace('-', '_'), null, ref display);
+#pragma warning restore 618
 			if (display.Text.StartsWith("$"))
 			{
 				int iOfEquals = display.Text.IndexOf("=");
@@ -506,7 +512,9 @@ namespace XCore
 		{
 			UIItemDisplayProperties display = new UIItemDisplayProperties(m_parent, Label, m_defaultVisible, ImageName, m_defaultVisible);
 			display.Checked = Checked;
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("Display"+ PropertyName, null, ref display);
+#pragma warning restore 618
 
 			return display;
 		}

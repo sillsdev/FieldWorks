@@ -1561,7 +1561,9 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 					}
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.SendMessage("MasterRefresh", null);
+#pragma warning restore 618
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.
@@ -2560,8 +2562,10 @@ namespace SIL.FieldWorks.XWorks
 			m_suppressSaveOnChangeRecord = true;
 			try
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				if (m_mediator.SendMessage("DialogInsertItemInVector", argument))
 					return true;
+#pragma warning restore 618
 			}
 			finally
 			{

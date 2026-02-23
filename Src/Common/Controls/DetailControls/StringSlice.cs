@@ -333,8 +333,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							FwLinkArgs linkArgs = new FwLinkArgs(url);
 							linkArgs.DisplayErrorMsg = false;
+#pragma warning disable 618 // suppress obsolete warning
 							if (m_mediator.SendMessage("FollowLink", linkArgs))
 								return;
+#pragma warning restore 618
 						}
 					}
 					catch

@@ -232,7 +232,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					string notification = m_parserConnection.GetAndClearNotification();
 					if (notification != null)
+					{
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.SendMessage("ShowNotification", notification);
+#pragma warning restore 618
+					}
 				}
 			}
 			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled)

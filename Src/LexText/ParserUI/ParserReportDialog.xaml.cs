@@ -59,7 +59,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parseReport = button.CommandParameter as ParseReport;
+#pragma warning disable 618 // suppress obsolete warning
 			Mediator.SendMessage("TryThisWord", RemoveArrow(parseReport.Word));
+#pragma warning restore 618
 		}
 
 		public void ShowWordAnalyses(object sender, RoutedEventArgs e)

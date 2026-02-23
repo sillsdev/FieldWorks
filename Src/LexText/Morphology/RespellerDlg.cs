@@ -518,7 +518,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (ChangesWereMade)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.SendMessage("MasterRefresh", null);
+#pragma warning restore 618
 			}
 			Close();
 		}
@@ -569,7 +571,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.SendMessage("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform));
+#pragma warning restore 618
 
 				ChangesWereMade = true;
 
@@ -1534,11 +1538,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					else
 					{
+#pragma warning disable 618 // suppress obsolete warning
 						mediator.SendMessage("ItemDataModified", wfOld);
+#pragma warning restore 618
 					}
 				}
 
+#pragma warning disable 618 // suppress obsolete warning
 				mediator.SendMessage("ItemDataModified", wfNew);
+#pragma warning restore 618
 
 				uuow.RollBack = false;
 			}

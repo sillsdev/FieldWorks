@@ -586,7 +586,9 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("MasterRefresh", ActiveForm);
+#pragma warning restore 618
 			if (m_firstNewText != null)
 			{
 				// try to select it.

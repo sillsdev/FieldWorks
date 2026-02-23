@@ -245,7 +245,9 @@ namespace XCore
 				{
 					var holder = new ToolTipHolder();
 					holder.ToolTip = text;
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.SendMessage(command.MessageString + "ToolTip", holder);
+#pragma warning restore 618
 					text = holder.ToolTip;
 				}
 			}

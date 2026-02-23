@@ -621,7 +621,11 @@ namespace SIL.FieldWorks.XWorks
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
+			{
+#pragma warning disable 618 // suppress obsolete warning
 				mediator.SendMessage("MasterRefresh", null);
+#pragma warning restore 618
+			}
 		}
 
 		private static void RunDiagnosticsDialogAt(object sender, EventArgs e)

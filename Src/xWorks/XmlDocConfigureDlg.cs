@@ -4673,7 +4673,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("ConfigureHeadwordNumbers", this);
+#pragma warning restore 618
 		}
 
 		#region ILayoutConverter methods

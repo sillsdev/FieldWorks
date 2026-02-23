@@ -1730,8 +1730,10 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						FwLinkArgs linkArgs = new FwLinkArgs(url);
 						linkArgs.DisplayErrorMsg = false;
+#pragma warning disable 618 // suppress obsolete warning
 						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
 							return;
+#pragma warning restore 618
 					}
 				}
 				catch

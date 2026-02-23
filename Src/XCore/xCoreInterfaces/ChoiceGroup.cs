@@ -409,10 +409,12 @@ namespace XCore
 			// enabled items would be 'visible' and enabled was true by default.
 			UIItemDisplayProperties display =new UIItemDisplayProperties(this, this.Label,
 				this.m_defaultVisible, ImageName, this.m_defaultVisible);
+#pragma warning disable 618 // suppress obsolete warning
 			if (this.PropertyName != null && this.PropertyName != string.Empty)
 				m_mediator.SendMessage("Display"+this.PropertyName, null, ref display);
 			else
 				m_mediator.SendMessage("Display"+this.Id, null, ref display);
+#pragma warning restore 618
 
 			return display;
 		}
@@ -466,7 +468,9 @@ namespace XCore
 			UIListDisplayProperties display = new UIListDisplayProperties(list);
 			display.PropertyName = PropertyName;
 			string wsSet = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "wsSet");
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("Display"+ ListId, wsSet, ref display);
+#pragma warning restore 618
 
 			PropertyName = display.PropertyName;
 
@@ -651,7 +655,9 @@ namespace XCore
 		/// <param name="choice"></param>
 		private void HandleClickedWhenCommand(ListPropertyChoice choice)
 		{
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage(CommandMessage, choice.ParameterNode);
+#pragma warning restore 618
 		}
 
 		protected bool IsAListGroup

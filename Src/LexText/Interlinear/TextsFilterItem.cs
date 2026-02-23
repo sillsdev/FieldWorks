@@ -25,7 +25,9 @@ namespace SIL.FieldWorks.IText
 
 		public override bool Invoke()
 		{
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("AddTexts", this);
+#pragma warning restore 618
 
 			//var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts") as InterlinearTextsRecordClerk;
 			//if (clerk == null)

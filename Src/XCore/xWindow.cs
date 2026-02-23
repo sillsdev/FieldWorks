@@ -1803,7 +1803,9 @@ namespace XCore
 			UpdateControls();
 
 			// call OnIdle () on any colleagues that implement it.
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.SendMessage("Idle", null);
+#pragma warning restore 618
 		}
 
 		/// <summary>
