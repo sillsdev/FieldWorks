@@ -1046,7 +1046,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Visible)
 			{
 #pragma warning disable 618 // suppress obsolete warning
-				m_mediator.PostMessage("MasterRefresh", null);
+				m_mediator?.PostMessage("MasterRefresh", null);
 #pragma warning restore 618
 			}
 		}
