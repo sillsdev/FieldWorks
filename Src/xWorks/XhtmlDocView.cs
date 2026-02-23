@@ -1287,6 +1287,11 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ScrollAndHighlightResult(GeckoWebBrowser geckoBrowser, IBasicFindView view, string lastId)
 			{
+				if (geckoBrowser.Document == null)
+				{
+					Close();
+					return;
+				}
 				if (results != null && results.Length > 0)
 				{
 					view.StatusText = $"{resultIndex + 1} of {results.Length} Results";
@@ -1304,7 +1309,7 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ClearCurrentFindResult(GeckoWebBrowser geckoBrowser, string lastId)
 			{
-				var currentElement = geckoBrowser.Document.GetHtmlElementById(lastId);
+				var currentElement = geckoBrowser.Document?.GetHtmlElementById(lastId);
 				if (currentElement != null)
 					docView.RemoveClassFromHtmlElement(currentElement, CurrentSelectedEntryClass);
 			}
@@ -1317,6 +1322,12 @@ namespace SIL.FieldWorks.XWorks
 				if (results == null || results.Length == 0)
 				{
 					string newResults = string.Empty;
+					if (geckoBrowser.Document == null)
+					{
+						results = newResults.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+						resultIndex = 0;
+						return true;
+					}
 					geckoBrowser.RemoveMessageEventListener("find");
 					geckoBrowser.AddMessageEventListener("find", r => newResults = r);
 					using(var executor = new AutoJSContext(geckoBrowser.Window))
