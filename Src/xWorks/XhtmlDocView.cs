@@ -1289,7 +1289,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (geckoBrowser.Document == null)
 				{
-					Close();
+					view.StatusText = "No Document";
 					return;
 				}
 				if (results != null && results.Length > 0)
