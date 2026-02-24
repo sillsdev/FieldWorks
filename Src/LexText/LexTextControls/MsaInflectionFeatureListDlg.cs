@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string m_helpTopic = "khtpChoose-lexiconEdit-InflFeats";
 		private HelpProvider helpProvider;
 
-		public MsaInflectionFeatureListDlg()
+		public MsaInflectionFeatureListDlg(bool includePreserveExistingValues = false)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -58,6 +58,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			pictureBox1.Image = m_imageListPictures.Images[0];
+			m_tvMsaFeatureList.IncludePreserveExistingValues = includePreserveExistingValues;
 		}
 
 		#region OnLoad

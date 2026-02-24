@@ -2506,16 +2506,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					var closedValue = value as IFsClosedValue;
 					if (closedValue != null)
 					{
-						var hcFeature = featSys.GetFeature<SymbolicFeature>("feat" + closedValue.FeatureRA.Hvo);
-						// TODO: should we display something to the user if a FS has an invalid value?
-						if (hcFeature.PossibleSymbols.TryGet("sym" + closedValue.ValueRA.Hvo, out var symbol))
-							hcFS.AddValue(hcFeature, symbol);
+						if (closedValue.ValueRA != null)
+						{
+							var hcFeature = featSys.GetFeature<SymbolicFeature>("feat" + closedValue.FeatureRA.Hvo);
+							// TODO: should we display something to the user if a FS has an invalid value?
+							if (hcFeature.PossibleSymbols.TryGet("sym" + closedValue.ValueRA.Hvo, out var symbol))
+								hcFS.AddValue(hcFeature, symbol);
+						}
 					}
 					else
 					{
 						var complexValue = (IFsComplexValue)value;
-						var hcFeature = featSys.GetFeature<ComplexFeature>("feat" + complexValue.FeatureRA.Hvo);
-						hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc)complexValue.ValueOA, featSys));
+						if (complexValue.ValueOA != null)
+						{
+							var hcFeature = featSys.GetFeature<ComplexFeature>("feat" + complexValue.FeatureRA.Hvo);
+							hcFS.AddValue(hcFeature, LoadFeatureStruct((IFsFeatStruc)complexValue.ValueOA, featSys));
+						}
 					}
 				}
 			}
