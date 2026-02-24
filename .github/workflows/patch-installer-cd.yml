@@ -8,7 +8,7 @@ name: Patch Installer
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "release/**"]
   schedule:
     # Runs every Monday at 03:30 UTC (which is 8:30pm MST/PDT Sunday evening)
     - cron: "30 3 * * 1"
@@ -183,8 +183,7 @@ jobs:
           Expand-Archive -Path "base-artifacts/ProcRunner.zip" -DestinationPath $procTarget -Force
           Write-Host "Expanded ProcRunner.zip -> $procTarget"
 
-      # Write out the properties file (a first build on a system requires a prompt response otherwise)
-      # and set an OS feature in the registry that will allow Wix v3 to use temporary files without error
+      # Set an OS feature in the registry that will allow Wix v3 to use temporary files without error
       - name: Prepare for build
         working-directory: Build
         run: |
@@ -203,18 +202,13 @@ jobs:
               }
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
-          
-          .\build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
       - name: Build Debug and run tests
         id: build_installer
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          cd Build
-          .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
-          cd ..
-          cd BuildDir
+          .\build.ps1 -BuildPatch -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Debug Build Output
         shell: powershell

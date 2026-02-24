@@ -54,7 +54,6 @@ x64
 *.user
 *.ncrunchsolution
 *.ncb
-FW.sln
 *.suo
 *.o
 *_ReSharper*
@@ -89,6 +88,7 @@ buildi686/
 buildx86_64/
 installi686/
 installx86_64/
+msbuild.binlog
 test-results/
 trash/
 UpgradeLog*.XML

@@ -119,6 +119,7 @@ param(
 	[string]$TestFilter,
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
+	[switch]$BuildPatch,
 	[string]$Verbosity = "minimal",
 	[bool]$NodeReuse = $true,
 	[string[]]$MsBuildArgs = @(),
@@ -154,6 +155,11 @@ if ($Configuration -like "--*") {
 if ($BuildInstaller -and -not $BuildAdditionalApps) {
 	$BuildAdditionalApps = $true
 	Write-Host "BuildInstaller enabled: including additional apps (use -BuildAdditionalApps:$false to skip)." -ForegroundColor Yellow
+}
+
+if (($BuildInstaller -or $BuildPatch) -and -not ($Configuration -eq "Release")) {
+	$Configuration = "Release"
+	Write-Host "Installer builds must be Release builds; changing Configuration to Release" -ForegroundColor Yellow
 }
 
 # For local Release builds, use a stable daily build number so native artifacts can be reused.
@@ -388,8 +394,8 @@ try {
 		$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
 		Invoke-MSBuild `
 			-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
-			"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
-			"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
+				"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
+				"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
 			-Description 'FwBuildTasks (Bootstrap)'
 
 		if (-not (Test-Path $fwTasksSourcePath)) {
@@ -421,8 +427,8 @@ try {
 		}
 
 		if ($InstallerOnly) {
-			if (-not $BuildInstaller) {
-				throw "-InstallerOnly requires -BuildInstaller."
+			if (-not $BuildInstaller -and -not $BuildPatch) {
+				throw "-InstallerOnly requires -BuildInstaller or -BuildPatch."
 			}
 
 			$stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
@@ -499,9 +505,15 @@ try {
 			}
 		}
 
-		if ($BuildInstaller) {
+		if ($BuildInstaller -or $BuildPatch) {
+			if ($BuildPatch) {
+				$BaseOrPatch = "Patch"
+			}
+			else {
+				$BaseOrPatch = "Installer"
+			}
 			Write-Host ""
-			Write-Host "Building Installer..." -ForegroundColor Cyan
+			Write-Host "Building $BaseOrPatch..." -ForegroundColor Cyan
 
 			if (-not $isGitHubActions) {
 				if ($SignInstaller) {
@@ -523,12 +535,42 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments @('Build/InstallerBuild.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release',
-				"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
-				-Description 'Installer Build'
+				-Arguments (@('Build/InstallerBuild.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
+					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
+				-Description '$BaseOrPatch Build'
 
-			Write-Host "[OK] Installer build complete!" -ForegroundColor Green
+			Write-Host "[OK] $BaseOrPatch build complete!" -ForegroundColor Green
 		}
+#		else { if ($BuildPatch) {
+#			Write-Host ""
+#			Write-Host "Building Patch Installer..." -ForegroundColor Cyan
+#
+#			if (-not $isGitHubActions) {
+#				if ($SignInstaller) {
+#					Write-Host "Signing enabled for local installer build." -ForegroundColor Yellow
+#					$env:FILESTOSIGNLATER = $null
+#				}
+#				else {
+#					$defaultSignList = Join-Path $PSScriptRoot "Output\files-to-sign.txt"
+#					if ([string]::IsNullOrWhiteSpace($env:FILESTOSIGNLATER)) {
+#						$env:FILESTOSIGNLATER = $defaultSignList
+#					}
+#					Write-Host "Signing disabled for local build; capturing files to $env:FILESTOSIGNLATER" -ForegroundColor Yellow
+#				}
+#			}
+#
+#			$installerCleanArg = "/p:InstallerCleanProductOutputs=false"
+#			if ($isGitHubActions) {
+#				$installerCleanArg = "/p:InstallerCleanProductOutputs=true"
+#			}
+#
+#			Invoke-MSBuild `
+#				-Arguments @('Build/InstallerBuild.proj', '/t:BuildPatch', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release',
+#					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
+#				-Description 'Patch Installer Build'
+#
+#			Write-Host "[OK] Patch Installer build complete!" -ForegroundColor Green
+#		}}
 	}
 
 	# =============================================================================

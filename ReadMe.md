@@ -55,24 +55,18 @@ Installer builds include the additional utilities (UnicodeCharEditor, LCMBrowser
 To skip them, pass `-BuildAdditionalApps:$false`.
 
 ```powershell
-# Build the installer (Debug, WiX 3 default)
+# Build the installer (WiX 3 default)
 .\build.ps1 -BuildInstaller
 
-# Build the installer (Debug, WiX 6)
+# Build the installer (WiX 6)
 .\build.ps1 -BuildInstaller -InstallerToolset Wix6
-
-# Build the installer (Release, WiX 3 default)
-.\build.ps1 -BuildInstaller -Configuration Release
-
-# Build the installer (Release, WiX 6)
-.\build.ps1 -BuildInstaller -Configuration Release -InstallerToolset Wix6
 ```
 
 WiX 3 artifacts are produced under `FLExInstaller/bin/x64/<Config>/` (MSI under `en-US/`).
 
 WiX 6 artifacts are produced under `FLExInstaller/wix6/bin/x64/<Config>/` (MSI under `en-US/`).
 
-For more details, see [specs/001-wix-v6-migration/quickstart.md](specs/001-wix-v6-migration/quickstart.md).
+For more details, see [specs/001-wix-v6-migration/quickstart.md (TODO: DEAD LINK)](specs/001-wix-v6-migration/quickstart.md).
 
 ### Code signing for local installer builds
 
