@@ -3186,10 +3186,12 @@ public:  // we can make anything public since the whole class is private to this
 		// If there are inner piles in the line, align their corresponding components
 		IntVec vdyBaselines; // item is position of nth baseline
 		bool fNeedAdjust = false;
+		bool bContainsInnerPileBox = false;
 		for (pbox = m_pboxStartLine; ; pbox = pbox->Next())
 		{
 			if (pbox->IsInnerPileBox())
 			{
+				bContainsInnerPileBox = true;
 				int irow = 0;
 				pbox->ComputeInnerPileBaselines(m_pvpbox, vdyBaselines, 0, irow, fNeedAdjust);
 			}
@@ -3268,11 +3270,18 @@ public:  // we can make anything public since the whole class is private to this
 			break;
 		case ktalRight:
 			if (m_pvpbox->RightToLeft()) {
-				xPos = m_dxTrail + dxAlignMentAdjust;
+				xPos = m_dxTrail;
 			}
 			else {
-				xPos = m_dxLead + dxAlignMentAdjust;
+				xPos = m_dxLead;
 			}
+
+			// Only add the adjustment if this box does not contain an inner pile. (LT-21004)
+			if (!bContainsInnerPileBox)
+			{
+				xPos += dxAlignMentAdjust;
+			}
+
 			xSpaceUsed = xPos;
 			dxExtraWidthRight = m_dxLead;
 			break;
@@ -9993,10 +10002,6 @@ void VwConcParaBox::DoSpecialAlignment(IVwGraphics * pvg)
 {
 	if (m_cpo & kcpoAlign)
 	{
-		// For now we can only do align left.
-		// The trick otherwise is not just to do our alignment, but to undo what the
-		// superclass Layout did.
-		Assert(m_qzvps->ParaAlign() == ktalLeft || m_qzvps->ParaAlign() == ktalLeading);
 		// Figure out where the key word is naturally displayed.
 		// First find the box it is part of.
 		VwStringBox * psbox = NULL;
