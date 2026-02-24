@@ -26,6 +26,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.ImageList imageList1;
 		private System.ComponentModel.IContainer components = null;
 
+		public bool IncludePreserveExistingValues { get; internal set; }
+
 		public FeatureStructureTreeView(System.ComponentModel.IContainer container)
 		{
 			///
@@ -143,9 +145,13 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						AddNode(val, newNode);
 					}
-					FeatureTreeNode unknownNode = new FeatureTreeNode(LexTextControls.ksPreserveExistingValues,
-						(int)ImageKind.radio, (int)ImageKind.radio, 0, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
-					InsertNode(unknownNode, newNode);
+					if (IncludePreserveExistingValues)
+					{
+						FeatureTreeNode unknownNode = new FeatureTreeNode(LexTextControls.ksPreserveExistingValues,
+							(int)ImageKind.radio, (int)ImageKind.radio, 0, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+						InsertNode(unknownNode, newNode);
+						HandleCheckBoxNodes(null, unknownNode);
+					}
 				}
 			}
 			var complex = defn as IFsComplexFeature;
