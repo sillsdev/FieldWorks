@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				Assert.That(tv.Nodes.Count, Is.EqualTo(2), "Count of top level nodes in tree view");
 				TreeNodeCollection col = tv.Nodes[0].Nodes;
-				Assert.That(col.Count, Is.EqualTo(4), "Count of first level nodes in tree view");
+				Assert.That(col.Count, Is.EqualTo(3), "Count of first level nodes in tree view");
 			}
 		}
 
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				TreeNodeCollection col2 = node.Nodes;
 				if (node.Text == "gender")
-					Assert.That(col2.Count, Is.EqualTo(3), "Count of second level nodes in tree view");
+					Assert.That(col2.Count, Is.EqualTo(2), "Count of second level nodes in tree view");
 				if (node.Text == "person")
 					Assert.That(col2.Count, Is.EqualTo(1), "Count of second level nodes in tree view");
 			}
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (TreeNode node in col)
 			{
 				TreeNodeCollection col2 = node.Nodes;
-				Assert.That(col2.Count, Is.EqualTo(3), "Count of second level nodes in tree view");
+				Assert.That(col2.Count, Is.EqualTo(2), "Count of second level nodes in tree view");
 				if (node.PrevNode == null)
 					node.Checked = true;
 			}
