@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Whatever happens below, we don't want to actually leave the "More..." node selected!
 					// This is at least required if the user selects "Cancel" from the dialog below.
 					pt.Hide();
-					using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
+					using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg(true))
 					{
 						HvoTreeNode parentNode = selectedNode.Parent as HvoTreeNode;
 						int hvoPos = parentNode.Hvo;
