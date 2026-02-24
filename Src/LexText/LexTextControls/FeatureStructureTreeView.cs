@@ -109,6 +109,10 @@ namespace SIL.FieldWorks.LexText.Controls
 							(int)ImageKind.radio, (int)ImageKind.radio, 0,
 							FeatureTreeNodeInfo.NodeKind.Other);
 						InsertNode(noneOfTheAboveNode, childNode);
+						if (!HasChosenCheckBox(childNode))
+						{
+							HandleCheckBoxNodes(null, noneOfTheAboveNode);
+						}
 					}
 				}
 			}
@@ -142,7 +146,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					FeatureTreeNode unknownNode = new FeatureTreeNode(LexTextControls.ksPreserveExistingValues,
 						(int)ImageKind.radio, (int)ImageKind.radio, 0, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
 					InsertNode(unknownNode, newNode);
-					HandleCheckBoxNodes(null, unknownNode);
 				}
 			}
 			var complex = defn as IFsComplexFeature;
@@ -311,6 +314,21 @@ namespace SIL.FieldWorks.LexText.Controls
 //				}
 //			}
 //		}
+
+		private bool HasChosenCheckBox(FeatureTreeNode parent)
+		{
+			FeatureTreeNode sibling = (FeatureTreeNode)parent.FirstNode;
+			while (sibling != null)
+			{
+				if (sibling.Chosen)
+				{
+					return true;
+				}
+				sibling = (FeatureTreeNode)sibling.NextNode;
+			}
+			return false;
+		}
+
 		private void HandleCheckBoxNodes(TreeView tv, FeatureTreeNode tn)
 		{
 			//UndoLastSelectedNode();
