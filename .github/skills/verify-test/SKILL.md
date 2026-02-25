@@ -33,4 +33,5 @@ You will receive:
 
 <notes>
 - Use FieldWorks build/test scripts when applicable.
+- Use `rubric-verify` when execution-free scoring or explicit hard-gate review is requested.
 </notes>

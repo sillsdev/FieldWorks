@@ -34,6 +34,7 @@ Use for:
 - `debugging.instructions.md`
 - `installer.instructions.md`
 - `managed.instructions.md`
+- `navigation.instructions.md`
 - `native.instructions.md`
 - `powershell.instructions.md`
 - `repo.instructions.md`

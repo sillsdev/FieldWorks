@@ -1,0 +1,20 @@
+extends: .github/rubrics/fieldworks-rubric.base.yaml
+name: UI and Build Workflow Rubric
+specialization: ui-managed-build-integration
+
+requiredCommands:
+  - .\build.ps1
+  - .\test.ps1 -NoBuild
+
+focusCriteria:
+  - scope_minimality
+  - repo_conventions
+  - test_coverage
+
+specialChecks:
+  - id: localization_compliance
+    check: Translatable UI strings use .resx files following crowdin.json conventions.
+    evidence: changed resource file paths
+  - id: workflow_integrity
+    check: Build and test workflow remains script-first for touched areas.
+    evidence: command transcript summary

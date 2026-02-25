@@ -18,6 +18,7 @@ Minimal, high-signal guidance for coding agents in this repository.
 ## Context model
 
 - Use `.github/instructions/*.instructions.md` for prescriptive rules.
+- Apply `.github/instructions/navigation.instructions.md` for structural navigation and hidden-dependency handling.
 - Use `Repository.Intelligence.Graph.json` as the deterministic architecture/build/test map.
 - Use `Src/AGENTS.md`, `.github/AGENTS.md`, `FLExInstaller/AGENTS.md`, and `openspec/AGENTS.md` for area-specific guidance.
 

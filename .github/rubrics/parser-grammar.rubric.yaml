@@ -1,0 +1,20 @@
+extends: .github/rubrics/fieldworks-rubric.base.yaml
+name: Parser and Grammar Change Rubric
+specialization: parsing-morphology-analysis
+
+requiredCommands:
+  - .\build.ps1
+  - .\test.ps1 -NoBuild -TestFilter "TestCategory!=Slow"
+
+focusCriteria:
+  - requirements_traceability
+  - acceptance_coverage
+  - verification_reproducibility
+
+specialChecks:
+  - id: rule_traceability
+    check: Each grammar or parsing rule change maps to at least one acceptance example.
+    evidence: case mapping in verification notes
+  - id: regression_guard
+    check: Existing parsing behavior outside the intended scope remains stable.
+    evidence: targeted regression test outcomes

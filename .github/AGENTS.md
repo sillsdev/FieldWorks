@@ -34,10 +34,13 @@ Short repo-level instructions for agents.
 ## Relevant files
 
 - `.github/instructions/build.instructions.md`
+- `.github/instructions/navigation.instructions.md`
 - `.github/instructions/testing.instructions.md`
 - `.github/instructions/managed.instructions.md`
 - `.github/instructions/native.instructions.md`
 - `.github/instructions/installer.instructions.md`
+- `.github/rubrics/*.yaml`
+- `.github/skills/rubric-verify/SKILL.md`
 - `Src/AGENTS.md`
 - `FLExInstaller/AGENTS.md`
 
