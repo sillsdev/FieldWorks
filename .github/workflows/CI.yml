@@ -79,3 +79,9 @@ jobs:
           comment_mode: ${{ github.event_name == 'pull_request' && 'always' || 'off' }}
           job_summary: true
           fail_on: test failures
+
+      - name: Fail if build or tests failed
+        if: ${{ needs.debug_build_and_test.result != 'success' }}
+        run: |
+          echo "::error::Build or test failures detected in 'Build Debug and run managed tests' job"
+          exit 1
