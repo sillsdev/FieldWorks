@@ -653,6 +653,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (template.Owner == selectedPOS)
 			{
+				// Don't move the template to selectedPOS if it is already there.
 				return;
 			}
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
