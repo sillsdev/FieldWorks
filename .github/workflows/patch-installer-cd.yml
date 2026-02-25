@@ -118,6 +118,7 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
+      # TODO (Hasso) 2026.02: use .NET 4.8 targeting pack (if not already installed)
       - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
         id: downloadfile  # Remember to give an ID if you need the output filename
@@ -185,7 +186,6 @@ jobs:
 
       # Set an OS feature in the registry that will allow Wix v3 to use temporary files without error
       - name: Prepare for build
-        working-directory: Build
         run: |
           # Define paths and the key/value to set
           $regPaths = @(
@@ -212,7 +212,6 @@ jobs:
 
       - name: Scan Debug Build Output
         shell: powershell
-        working-directory: Build
         run: |
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {
