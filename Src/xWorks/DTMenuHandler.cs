@@ -651,6 +651,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
 		{
+			if (template.Owner == selectedPOS)
+			{
+				return;
+			}
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
 									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
 									{
