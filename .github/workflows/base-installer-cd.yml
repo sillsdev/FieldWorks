@@ -55,7 +55,7 @@ jobs:
       - name: Compute build number
         id: build_number
         run: |
-          $lastJenkins = 1100  # The last base build from jenkins, rounded to the next hundred
+          $lastJenkins = 1000  # The last base build from jenkins, rounded to the nearest thousand
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
@@ -103,6 +103,7 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
+      # TODO (Hasso) 2026.02: use .NET 4.8 targeting pack (if not already installed)
       - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
         id: downloadfile  # Remember to give an ID if you need the output filename
@@ -142,7 +143,6 @@ jobs:
 
       - name: Scan Build Output
         shell: powershell
-        working-directory: Build
         run: |
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {

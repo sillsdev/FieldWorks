@@ -36,6 +36,8 @@
 		<GoldEticDir>$(ListsDirectory)/GramCats</GoldEticDir>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
+		<WarnForMissingDD Condition="'$(DownloadsDir)'==''">true</WarnForMissingDD>
+		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir><!-- TODO (Hasso) 2026.02: figure out why this isn't getting set elsewhere -->
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 		<CrowdinApiKey>$(CROWDIN_API_KEY)</CrowdinApiKey>
 		<DisableLocalization Condition="'$(DisableLocalization)'=='' and '$(CrowdinApiKey)'==''">true</DisableLocalization>
@@ -114,6 +116,7 @@ To update localizations, liblcm must be cloned locally to the location specified
 		DependsOnTargets="ValidateCrowdinApiKey;InstallOvercrowdin"
 	>
 		<ForceDelete Files="$(L10nsDirectory)" />
+		<Warn Condition="'$(WarnForMissingDD)'=='true'" Text="WARNING: DownloadsDir was not set when $(MSBuildThisFile) was loaded"/>
 		<MakeDir Directories="$(DownloadsDir)" />
 		<Exec
 			WorkingDirectory="$(fwrt)"

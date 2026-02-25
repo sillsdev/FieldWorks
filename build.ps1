@@ -535,7 +535,7 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments (@('Build/InstallerBuild.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
+				-Arguments (@('Build/InstallerBuild.proj', '/t:Build$BaseOrPatch', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
 					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
 				-Description '$BaseOrPatch Build'
 

@@ -15,11 +15,10 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<IcuVersion>70</IcuVersion>
-		<!-- Only compute fwrt if not already set (e.g., by NativeBuild.csproj) -->
-		<fwrt Condition="'$(fwrt)' == ''"
-			>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt
-		>
+		<!-- Compute fwrt only if not already set (e.g., by NativeBuild.csproj) -->
+		<fwrt Condition="'$(fwrt)' == ''">$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
+		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
 	<!--
 		Configuration Synchronization:
