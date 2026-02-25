@@ -66,7 +66,7 @@ WiX 3 artifacts are produced under `FLExInstaller/bin/x64/<Config>/` (MSI under 
 
 WiX 6 artifacts are produced under `FLExInstaller/wix6/bin/x64/<Config>/` (MSI under `en-US/`).
 
-For more details, see [specs/001-wix-v6-migration/quickstart.md (TODO: DEAD LINK)](specs/001-wix-v6-migration/quickstart.md).
+For more details, see [specs/001-wix-v6-migration/quickstart.md](specs/001-wix-v6-migration/quickstart.md).
 
 ### Code signing for local installer builds
 
