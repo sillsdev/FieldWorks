@@ -32,5 +32,3 @@ Bin/ilrepack-assemblies -whitespace
 *.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
 
-# Use bd merge for beads JSONL files
-.beads/issues.jsonl merge=beads

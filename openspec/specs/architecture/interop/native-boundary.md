@@ -22,10 +22,6 @@ The Views rendering engine and related interfaces are native C++ COM servers. Ma
 
 ### References
 
-- [Views interfaces](../../../../Src/Common/ViewsInterfaces/AGENTS.md#interop--contracts) — COM interop definitions
-- [Views engine](../../../../Src/Views/AGENTS.md#interop--contracts) — Native COM rendering interfaces
-- [RootSite interop](../../../../Src/Common/RootSite/AGENTS.md#interop--contracts) — Managed COM contracts for view hosting
-- [ManagedVwWindow bridge](../../../../Src/ManagedVwWindow/AGENTS.md#interop--contracts) — WinForms HWND to IVwWindow bridge
 
 ## Constraints
 

@@ -26,8 +26,6 @@ Text export relies on Interlinear print/export components and shared framework p
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — PrintLayout and export helpers
-- [Framework publishing](../../../../Src/Common/Framework/AGENTS.md#key-components) — Publication interfaces
 
 ## Constraints
 

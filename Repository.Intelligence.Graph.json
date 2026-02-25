@@ -1,0 +1,1748 @@
+{
+  "graph_version": 1,
+  "repository": "FieldWorks",
+  "generated_from_commit": "cb374e2c07888d60203ae087a3564978417b5115",
+  "generation_tool": "Build/Agent/Generate-RepositoryIntelligenceGraph.ps1",
+  "build_commands": [
+    {
+      "name": "build-debug",
+      "command": ".\\\\build.ps1"
+    },
+    {
+      "name": "build-release",
+      "command": ".\\\\build.ps1 -Configuration Release"
+    },
+    {
+      "name": "test-managed",
+      "command": ".\\\\test.ps1"
+    },
+    {
+      "name": "test-native",
+      "command": ".\\\\test.ps1 -Native"
+    }
+  ],
+  "constraints": [
+    "windows-x64-only",
+    "native-build-before-managed-build",
+    "registration-free-com",
+    "localization-via-resx",
+    "use-build-ps1-and-test-ps1"
+  ],
+  "projects": [
+    {
+      "name": "FieldWorks.Bundle",
+      "path": "FLExInstaller/wix6/FieldWorks.Bundle.wixproj",
+      "kind": "installer",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "FLExInstaller",
+      "project_references": [
+        "FLExInstaller/wix6/FieldWorks.Installer.wixproj"
+      ]
+    },
+    {
+      "name": "Paratext8Plugin",
+      "path": "Src/Paratext8Plugin/Paratext8Plugin.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Paratext8Plugin",
+      "project_references": [
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj"
+      ]
+    },
+    {
+      "name": "MigrateSqlDbs",
+      "path": "Src/MigrateSqlDbs/MigrateSqlDbs.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/MigrateSqlDbs",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "ManagedVwWindowTests",
+      "path": "Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/ManagedVwWindow",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/ManagedVwWindow/ManagedVwWindow.csproj"
+      ]
+    },
+    {
+      "name": "ManagedVwWindow",
+      "path": "Src/ManagedVwWindow/ManagedVwWindow.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/ManagedVwWindow",
+      "project_references": [
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ManagedVwDrawRootBuffered",
+      "path": "Src/ManagedVwDrawRootBuffered/ManagedVwDrawRootBuffered.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/ManagedVwDrawRootBuffered",
+      "project_references": [
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ManagedLgIcuCollatorTests",
+      "path": "Src/ManagedLgIcuCollator/ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/ManagedLgIcuCollator",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj"
+      ]
+    },
+    {
+      "name": "ManagedLgIcuCollator",
+      "path": "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/ManagedLgIcuCollator",
+      "project_references": [
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ParserUITests",
+      "path": "Src/LexText/ParserUI/ParserUITests/ParserUITests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "ParserUI",
+      "path": "Src/LexText/ParserUI/ParserUI.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/LexText/ParserCore/ParserCore.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "XAmpleManagedWrapperTests",
+      "path": "Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj"
+      ]
+    },
+    {
+      "name": "XAmpleManagedWrapper",
+      "path": "Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": []
+    },
+    {
+      "name": "Paratext8PluginTests",
+      "path": "Src/Paratext8Plugin/ParaText8PluginTests/Paratext8PluginTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Paratext8Plugin",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj"
+      ]
+    },
+    {
+      "name": "XAmpleCOMWrapper",
+      "path": "Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleCOMWrapper.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": []
+    },
+    {
+      "name": "ParserCore",
+      "path": "Src/LexText/ParserCore/ParserCore.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "MorphologyEditorDllTests",
+      "path": "Src/LexText/Morphology/MorphologyEditorDllTests/MorphologyEditorDllTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/Morphology/MorphologyEditorDll.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "MorphologyEditorDll",
+      "path": "Src/LexText/Morphology/MorphologyEditorDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "MGATests",
+      "path": "Src/LexText/Morphology/MGA/MGATests/MGATests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/Morphology/MGA/MGA.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "MGA",
+      "path": "Src/LexText/Morphology/MGA/MGA.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "LexTextDllTests",
+      "path": "Src/LexText/LexTextDll/LexTextDllTests/LexTextDllTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/LexTextDll/LexTextDll.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "LexTextDll",
+      "path": "Src/LexText/LexTextDll/LexTextDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "LexTextControlsTests",
+      "path": "Src/LexText/LexTextControls/LexTextControlsTests/LexTextControlsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "LexTextControls",
+      "path": "Src/LexText/LexTextControls/LexTextControls.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Lib/src/FormLanguageSwitch/FormLanguageSwitch.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/FXT/FxtDll/FxtDll.csproj",
+        "Src/LexText/Morphology/MGA/MGA.csproj",
+        "Src/LexText/ParserCore/ParserCore.csproj",
+        "Src/Utilities/MessageBoxExLib/MessageBoxExLib.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "LexEdDllTests",
+      "path": "Src/LexText/Lexicon/LexEdDllTests/LexEdDllTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/LexText/Lexicon/LexEdDll.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "LexEdDll",
+      "path": "Src/LexText/Lexicon/LexEdDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/FieldWorks/FieldWorks.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/LexText/LexTextDll/LexTextDll.csproj",
+        "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "ParserCoreTests",
+      "path": "Src/LexText/ParserCore/ParserCoreTests/ParserCoreTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/ParserCore/ParserCore.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ITextDllTests",
+      "path": "Src/LexText/Interlinear/ITextDllTests/ITextDllTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj",
+        "Src/xWorks/xWorksTests/xWorksTests.csproj"
+      ]
+    },
+    {
+      "name": "ParatextImport",
+      "path": "Src/ParatextImport/ParatextImport.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/ParatextImport",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ProjectUnpacker",
+      "path": "Src/ProjectUnpacker/ProjectUnpacker.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/ProjectUnpacker",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "xCoreTests",
+      "path": "Src/XCore/xCoreTests/xCoreTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/FlexUIAdapter/FlexUIAdapter.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "xCoreInterfacesTests",
+      "path": "Src/XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "xCoreInterfaces",
+      "path": "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "xCore",
+      "path": "Src/XCore/xCore.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Utilities/MessageBoxExLib/MessageBoxExLib.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "SilSidePaneTests",
+      "path": "Src/XCore/SilSidePane/SilSidePaneTests/SilSidePaneTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/XCore/SilSidePane/SilSidePane.csproj"
+      ]
+    },
+    {
+      "name": "SilSidePane",
+      "path": "Src/XCore/SilSidePane/SilSidePane.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FlexUIAdapter",
+      "path": "Src/XCore/FlexUIAdapter/FlexUIAdapter.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/XCore",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/SilSidePane/SilSidePane.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "views",
+      "path": "Src/views/views.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": false,
+      "top_area": "Src/views",
+      "project_references": []
+    },
+    {
+      "name": "TestViews",
+      "path": "Src/views/Test/TestViews.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": true,
+      "top_area": "Src/views",
+      "project_references": []
+    },
+    {
+      "name": "VwGraphicsReplayer",
+      "path": "Src/views/lib/VwGraphicsReplayer/VwGraphicsReplayer.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/views",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "XMLUtilsTests",
+      "path": "Src/Utilities/XMLUtils/XMLUtilsTests/XMLUtilsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "ParatextImportTests",
+      "path": "Src/ParatextImport/ParatextImportTests/ParatextImportTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/ParatextImport",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureUtilsTests.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/Paratext8Plugin/Paratext8Plugin.csproj",
+        "Src/ParatextImport/ParatextImport.csproj",
+        "Src/ProjectUnpacker/ProjectUnpacker.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "XMLUtils",
+      "path": "Src/Utilities/XMLUtils/XMLUtils.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "Sfm2Xml",
+      "path": "Src/Utilities/SfmToXml/Sfm2Xml.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": []
+    },
+    {
+      "name": "ConvertSFM",
+      "path": "Src/Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj"
+      ]
+    },
+    {
+      "name": "SfmStats",
+      "path": "Src/Utilities/SfmStats/SfmStats.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj"
+      ]
+    },
+    {
+      "name": "Reporting",
+      "path": "Src/Utilities/Reporting/Reporting.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "MessageBoxExLibTests",
+      "path": "Src/Utilities/MessageBoxExLib/MessageBoxExLibTests/MessageBoxExLibTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Utilities/MessageBoxExLib/MessageBoxExLib.csproj"
+      ]
+    },
+    {
+      "name": "MessageBoxExLib",
+      "path": "Src/Utilities/MessageBoxExLib/MessageBoxExLib.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "FixFwDataDll",
+      "path": "Src/Utilities/FixFwDataDll/FixFwDataDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FixFwData",
+      "path": "Src/Utilities/FixFwData/FixFwData.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": []
+    },
+    {
+      "name": "ComManifestTestHost",
+      "path": "Src/Utilities/ComManifestTestHost/ComManifestTestHost.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Utilities",
+      "project_references": []
+    },
+    {
+      "name": "UnicodeCharEditorTests",
+      "path": "Src/UnicodeCharEditor/UnicodeCharEditorTests/UnicodeCharEditorTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/UnicodeCharEditor",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/UnicodeCharEditor/UnicodeCharEditor.csproj"
+      ]
+    },
+    {
+      "name": "UnicodeCharEditor",
+      "path": "Src/UnicodeCharEditor/UnicodeCharEditor.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/UnicodeCharEditor",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "Sfm2XmlTests",
+      "path": "Src/Utilities/SfmToXml/Sfm2XmlTests/Sfm2XmlTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Utilities",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj"
+      ]
+    },
+    {
+      "name": "ITextDll",
+      "path": "Src/LexText/Interlinear/ITextDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj",
+        "Src/Utilities/SfmToXml/Sfm2Xml.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "FlexPathwayPluginTests",
+      "path": "Src/LexText/FlexPathwayPlugin/FlexPathwayPluginTests/FlexPathwayPluginTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/LexText/FlexPathwayPlugin/FlexPathwayPlugin.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FlexPathwayPlugin",
+      "path": "Src/LexText/FlexPathwayPlugin/FlexPathwayPlugin.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "ScriptureUtils",
+      "path": "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj"
+      ]
+    },
+    {
+      "name": "RootSiteTests",
+      "path": "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "RootSite",
+      "path": "Src/Common/RootSite/RootSite.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FwUtilsTests",
+      "path": "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FwUtils",
+      "path": "Src/Common/FwUtils/FwUtils.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj"
+      ]
+    },
+    {
+      "name": "FrameworkTests",
+      "path": "Src/Common/Framework/FrameworkTests/FrameworkTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "Framework",
+      "path": "Src/Common/Framework/Framework.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FiltersTests",
+      "path": "Src/Common/Filters/FiltersTests/FiltersTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "Filters",
+      "path": "Src/Common/Filters/Filters.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FieldWorksTests",
+      "path": "Src/Common/FieldWorks/FieldWorksTests/FieldWorksTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FieldWorks/FieldWorks.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/LexText/LexTextDll/LexTextDll.csproj"
+      ]
+    },
+    {
+      "name": "FieldWorks",
+      "path": "Src/Common/FieldWorks/FieldWorks.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/LexText/LexTextDll/LexTextDll.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "ScriptureUtilsTests",
+      "path": "Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureUtilsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Paratext8Plugin/Paratext8Plugin.csproj",
+        "Src/ProjectUnpacker/ProjectUnpacker.csproj"
+      ]
+    },
+    {
+      "name": "XMLViewsTests",
+      "path": "Src/Common/Controls/XMLViews/XMLViewsTests/XMLViewsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/CacheLight/CacheLight.csproj",
+        "Src/CacheLight/CacheLightTests/CacheLightTests.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "WidgetsTests",
+      "path": "Src/Common/Controls/Widgets/WidgetsTests/WidgetsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "Widgets",
+      "path": "Src/Common/Controls/Widgets/Widgets.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FwControlsTests",
+      "path": "Src/Common/Controls/FwControls/FwControlsTests/FwControlsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj"
+      ]
+    },
+    {
+      "name": "FwControls",
+      "path": "Src/Common/Controls/FwControls/FwControls.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "DetailControlsTests",
+      "path": "Src/Common/Controls/DetailControls/DetailControlsTests/DetailControlsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorksTests/xWorksTests.csproj"
+      ]
+    },
+    {
+      "name": "DetailControls",
+      "path": "Src/Common/Controls/DetailControls/DetailControls.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "Design",
+      "path": "Src/Common/Controls/Design/Design.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": []
+    },
+    {
+      "name": "CacheLightTests",
+      "path": "Src/CacheLight/CacheLightTests/CacheLightTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/CacheLight",
+      "project_references": [
+        "Src/CacheLight/CacheLight.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "CacheLight",
+      "path": "Src/CacheLight/CacheLight.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/CacheLight",
+      "project_references": [
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FieldWorks.OfflineBundle",
+      "path": "FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj",
+      "kind": "installer",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "FLExInstaller",
+      "project_references": [
+        "FLExInstaller/wix6/FieldWorks.Installer.wixproj"
+      ]
+    },
+    {
+      "name": "FieldWorks.Installer",
+      "path": "FLExInstaller/wix6/FieldWorks.Installer.wixproj",
+      "kind": "installer",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "FLExInstaller",
+      "project_references": [
+        "FLExInstaller/wix6/Shared/CustomActions/CustomActions/CustomActions.csproj",
+        "FLExInstaller/wix6/Shared/ProcRunner/ProcRunner/ProcRunner.csproj"
+      ]
+    },
+    {
+      "name": "XMLViews",
+      "path": "Src/Common/Controls/XMLViews/XMLViews.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "SimpleRootSite",
+      "path": "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/ManagedVwDrawRootBuffered/ManagedVwDrawRootBuffered.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "SimpleRootSiteTests",
+      "path": "Src/Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/CacheLight/CacheLight.csproj",
+        "Src/CacheLight/CacheLightTests/CacheLightTests.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "UIAdapterInterfaces",
+      "path": "Src/Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "DiscourseTests",
+      "path": "Src/LexText/Discourse/DiscourseTests/DiscourseTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/LexText/Discourse/Discourse.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "Discourse",
+      "path": "Src/LexText/Discourse/Discourse.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LexText",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/Interlinear/ITextDll.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    },
+    {
+      "name": "LCMBrowser",
+      "path": "Src/LCMBrowser/LCMBrowser.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/LCMBrowser",
+      "project_references": [
+        "Lib/src/ObjectBrowser/ObjectBrowser.csproj",
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "Kernel",
+      "path": "Src/Kernel/Kernel.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": false,
+      "top_area": "Src/Kernel",
+      "project_references": []
+    },
+    {
+      "name": "InstallValidatorTests",
+      "path": "Src/InstallValidator/InstallValidatorTests/InstallValidatorTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/InstallValidator",
+      "project_references": [
+        "Src/InstallValidator/InstallValidator.csproj"
+      ]
+    },
+    {
+      "name": "InstallValidator",
+      "path": "Src/InstallValidator/InstallValidator.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/InstallValidator",
+      "project_references": []
+    },
+    {
+      "name": "InstallerArtifactsTests",
+      "path": "Src/InstallValidator/InstallerArtifactsTests/InstallerArtifactsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/InstallValidator",
+      "project_references": []
+    },
+    {
+      "name": "TestGeneric",
+      "path": "Src/Generic/Test/TestGeneric.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": true,
+      "top_area": "Src/Generic",
+      "project_references": []
+    },
+    {
+      "name": "Generic",
+      "path": "Src/Generic/Generic.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": false,
+      "top_area": "Src/Generic",
+      "project_references": []
+    },
+    {
+      "name": "GenerateHCConfig",
+      "path": "Src/GenerateHCConfig/GenerateHCConfig.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/GenerateHCConfig",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/LexText/ParserCore/ParserCore.csproj"
+      ]
+    },
+    {
+      "name": "FxtExe",
+      "path": "Src/FXT/FxtExe/FxtExe.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FXT",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/FXT/FxtDll/FxtDll.csproj",
+        "Src/LCMBrowser/LCMBrowser.csproj"
+      ]
+    },
+    {
+      "name": "FxtDllTests",
+      "path": "Src/FXT/FxtDll/FxtDllTests/FxtDllTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/FXT",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/FXT/FxtDll/FxtDll.csproj"
+      ]
+    },
+    {
+      "name": "FxtDll",
+      "path": "Src/FXT/FxtDll/FxtDll.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FXT",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj"
+      ]
+    },
+    {
+      "name": "FwResources",
+      "path": "Src/FwResources/FwResources.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FwResources",
+      "project_references": []
+    },
+    {
+      "name": "FwParatextLexiconPluginTests",
+      "path": "Src/FwParatextLexiconPlugin/FwParatextLexiconPluginTests/FwParatextLexiconPluginTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/FwParatextLexiconPlugin",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/FwParatextLexiconPlugin/FwParatextLexiconPlugin.csproj"
+      ]
+    },
+    {
+      "name": "FwParatextLexiconPlugin",
+      "path": "Src/FwParatextLexiconPlugin/FwParatextLexiconPlugin.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FwParatextLexiconPlugin",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/LexText/ParserCore/ParserCore.csproj"
+      ]
+    },
+    {
+      "name": "FwCoreDlgsTests",
+      "path": "Src/FwCoreDlgs/FwCoreDlgsTests/FwCoreDlgsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/FwCoreDlgs",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FwCoreDlgs",
+      "path": "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FwCoreDlgs",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/ScriptureUtils/ScriptureUtils.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FwCoreDlgControlsTests",
+      "path": "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControlsTests/FwCoreDlgControlsTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/FwCoreDlgs",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj"
+      ]
+    },
+    {
+      "name": "FwCoreDlgControls",
+      "path": "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FwCoreDlgs",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FdoUiTests",
+      "path": "Src/FdoUi/FdoUiTests/FdoUiTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/FdoUi",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "FdoUi",
+      "path": "Src/FdoUi/FdoUi.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/FdoUi",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "DebugProcs",
+      "path": "Src/DebugProcs/DebugProcs.vcxproj",
+      "kind": "native",
+      "target_framework": null,
+      "is_test_project": false,
+      "top_area": "Src/DebugProcs",
+      "project_references": []
+    },
+    {
+      "name": "ViewsInterfacesTests",
+      "path": "Src/Common/ViewsInterfaces/ViewsInterfacesTests/ViewsInterfacesTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "ViewsInterfaces",
+      "path": "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/Common",
+      "project_references": [
+        "Build/Src/NativeBuild/NativeBuild.csproj"
+      ]
+    },
+    {
+      "name": "xWorks",
+      "path": "Src/xWorks/xWorks.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": false,
+      "top_area": "Src/xWorks",
+      "project_references": [
+        "Src/Common/Controls/DetailControls/DetailControls.csproj",
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FdoUi/FdoUi.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/FwResources/FwResources.csproj",
+        "Src/FXT/FxtDll/FxtDll.csproj",
+        "Src/LexText/LexTextControls/LexTextControls.csproj",
+        "Src/Utilities/Reporting/Reporting.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/FlexUIAdapter/FlexUIAdapter.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj"
+      ]
+    },
+    {
+      "name": "xWorksTests",
+      "path": "Src/xWorks/xWorksTests/xWorksTests.csproj",
+      "kind": "managed-dotnet-framework",
+      "target_framework": "net48",
+      "is_test_project": true,
+      "top_area": "Src/xWorks",
+      "project_references": [
+        "Src/Common/Controls/FwControls/FwControls.csproj",
+        "Src/Common/Controls/Widgets/Widgets.csproj",
+        "Src/Common/Controls/XMLViews/XMLViews.csproj",
+        "Src/Common/Filters/Filters.csproj",
+        "Src/Common/Framework/Framework.csproj",
+        "Src/Common/FwUtils/FwUtils.csproj",
+        "Src/Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj",
+        "Src/Common/RootSite/RootSite.csproj",
+        "Src/Common/SimpleRootSite/SimpleRootSite.csproj",
+        "Src/Common/ViewsInterfaces/ViewsInterfaces.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj",
+        "Src/FwCoreDlgs/FwCoreDlgs.csproj",
+        "Src/LexText/Lexicon/LexEdDll.csproj",
+        "Src/Utilities/XMLUtils/XMLUtils.csproj",
+        "Src/XCore/xCore.csproj",
+        "Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj",
+        "Src/xWorks/xWorks.csproj"
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ Describe the major architectural layers in FieldWorks so cross-cutting guidance 
 
 ## Context
 
-FieldWorks splits responsibilities across UI shell, framework services, and data access infrastructure. Components document their specific responsibilities in AGENTS.md; this spec captures the shared layer model.
+FieldWorks splits responsibilities across UI shell, framework services, and data access infrastructure. Component responsibilities are summarized in the minimal AGENTS set plus Repository.Intelligence.Graph.json; this spec captures the shared layer model.
 
 ## Layer Model
 
@@ -22,9 +22,6 @@ FieldWorks splits responsibilities across UI shell, framework services, and data
 
 ### References
 
-- [Framework layer](../../../../Src/Common/Framework/AGENTS.md#architecture) — Application framework and lifecycle services
-- [UI shell layer](../../../../Src/xWorks/AGENTS.md#architecture) — Primary application shell
-- [Cache layer](../../../../Src/CacheLight/AGENTS.md#architecture) — Lightweight data access and metadata cache
 
 ## Constraints
 

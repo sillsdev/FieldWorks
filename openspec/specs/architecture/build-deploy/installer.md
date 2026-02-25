@@ -18,8 +18,6 @@ FieldWorks uses WiX 3 (default) and WiX 6 (opt-in) installers. The installer bui
 
 ### References
 
-- [WiX 3 installer inputs](../../../../FLExInstaller/AGENTS.md#flexinstaller-wix-3-default) — Legacy WiX 3 pipeline
-- [WiX 6 installer inputs](../../../../FLExInstaller/wix6/AGENTS.md#flexinstaller-wix-v6) — SDK-style WiX 6 pipeline
 
 ### Entry Point
 

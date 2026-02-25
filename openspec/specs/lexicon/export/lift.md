@@ -26,8 +26,6 @@ LIFT export uses shared lexicon UI workflows and entry structures.
 
 ### References
 
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#purpose) — Lexicon entry structures
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Shared export dialogs
 
 ## Constraints
 

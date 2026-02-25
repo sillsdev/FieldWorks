@@ -26,8 +26,6 @@ Send/Receive uses Lexicon collaboration integration (FLExBridge) and scripture p
 
 ### References
 
-- [Lexicon collaboration](../../../../Src/LexText/Lexicon/AGENTS.md#key-components) — FLExBridge integration
-- [Scripture utilities](../../../../Src/Common/ScriptureUtils/AGENTS.md#purpose) — Paratext helper and scripture providers
 
 ## Constraints
 

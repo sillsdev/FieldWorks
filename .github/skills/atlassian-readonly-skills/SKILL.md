@@ -42,12 +42,7 @@ python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-ski
 python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
 ```
 
-Alternatively, use the CLI helper in `jira-to-beads` skill:
-
-```powershell
-# Export your assigned issues to .cache/jira_assigned.json
-python .github/skills/jira-to-beads/scripts/export_jira_assigned.py
-```
+Use the script modules in this skill directly.
 
 ## Configuration
 
@@ -102,11 +97,7 @@ BITBUCKET_PAT_TOKEN=your_pat_token
 
 ### Mode 2: Parameter-Based (Agent Environments)
 
-When deploying skills in Agent environments where environment variables are not available, pass credentials directly to skill functions using the `AtlassianCredentials` object.
-
-```python
-from scripts._common import AtlassianCredentials, check_available_skills
-from scripts.jira_issues import jira_get_issue
+Alternatively, call the scripts in this skill directly.
 
 # Create credentials object
 credentials = AtlassianCredentials(
@@ -114,12 +105,12 @@ credentials = AtlassianCredentials(
     jira_url="https://your-company.atlassian.net",
     jira_username="your.email@company.com",
     jira_api_token="your_api_token",
-    
+
     # Confluence configuration (optional)
     confluence_url="https://your-company.atlassian.net/wiki",
     confluence_username="your.email@company.com",
     confluence_api_token="your_api_token",
-    
+
     # Bitbucket configuration (optional)
     # bitbucket_url="https://bitbucket.your-company.com",
     # bitbucket_pat_token="your_pat_token"

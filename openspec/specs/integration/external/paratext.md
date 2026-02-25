@@ -32,10 +32,6 @@ Paratext integrations are handled via provider plugins, helpers, and import pipe
 
 ### References
 
-- [Paratext import](../../../../Src/ParatextImport/AGENTS.md#purpose) — Import pipeline
-- [Paratext 8 provider](../../../../Src/Paratext8Plugin/AGENTS.md#purpose) — Provider plugin
-- [Scripture utilities](../../../../Src/Common/ScriptureUtils/AGENTS.md#purpose) — Helper interfaces
-- [Paratext lexicon plugin](../../../../Src/FwParatextLexiconPlugin/AGENTS.md#purpose) — Lexicon integration
 
 ## Constraints
 

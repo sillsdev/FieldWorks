@@ -21,8 +21,6 @@ Many components rely on XML and data fixtures (parser transforms, interlinear da
 
 ### References
 
-- [ParserCore fixtures](../../../../Src/LexText/ParserCore/AGENTS.md#test-index) — Parser XML fixtures
-- [Transforms fixtures](../../../../Src/Transforms/AGENTS.md#test-index) — XSLT transform inputs/outputs
 
 ## Constraints
 

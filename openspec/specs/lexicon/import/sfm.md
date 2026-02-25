@@ -26,8 +26,6 @@ SFM import relies on shared conversion utilities and the lexicon import wizard. 
 
 ### References
 
-- [Sfm2Xml utilities](../../../../Src/Utilities/SfmToXml/AGENTS.md#purpose) — SFM conversion pipeline
-- [Lexicon import wizard](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — LexImportWizard UI
 
 ## Constraints
 

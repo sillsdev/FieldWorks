@@ -32,9 +32,6 @@ Lexicon entry structure is defined by LexEdDll UI patterns and shared lexicon co
 
 ### References
 
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#key-components) — Entry UI slices and launchers
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Shared entry dialogs
-- [LexText overview](../../../../Src/LexText/AGENTS.md#purpose) — Lexicon module context
 
 ## Constraints
 

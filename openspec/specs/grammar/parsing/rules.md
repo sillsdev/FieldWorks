@@ -26,8 +26,6 @@ Parser rules are defined in morphology data and exported via transforms for pars
 
 ### References
 
-- [ParserCore rule handling](../../../../Src/LexText/ParserCore/AGENTS.md#key-components) — Parser rule consumption
-- [Transforms](../../../../Src/Transforms/AGENTS.md#key-components) — XSLT exports for parser rules
 
 ## Constraints
 

@@ -26,8 +26,6 @@ Parser troubleshooting relies on ParserUI trace tools and ParserCore logging.
 
 ### References
 
-- [ParserUI troubleshooting tools](../../../../Src/LexText/ParserUI/AGENTS.md#key-components) — Try A Word and trace viewer
-- [Transforms](../../../../Src/Transforms/AGENTS.md#key-components) — Trace formatting transforms
 
 ## Constraints
 
