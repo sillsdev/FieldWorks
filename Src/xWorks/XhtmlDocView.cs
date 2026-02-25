@@ -1291,11 +1291,6 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ScrollAndHighlightResult(GeckoWebBrowser geckoBrowser, IBasicFindView view, string lastId)
 			{
-				if (geckoBrowser.Document == null)
-				{
-					view.StatusText = "No Document";
-					return;
-				}
 				if (results != null && results.Length > 0)
 				{
 					view.StatusText = $"{resultIndex + 1} of {results.Length} Results";
@@ -1328,7 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 					string newResults = string.Empty;
 					if (geckoBrowser.Document == null)
 					{
-						results = newResults.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+						results = null;
 						resultIndex = 0;
 						return true;
 					}
