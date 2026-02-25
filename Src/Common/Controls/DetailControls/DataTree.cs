@@ -967,12 +967,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-			if (root is ILexEntry)
-			{
-				// We are in the Lexicon Edit Popup window
-				toolName = "lexiconEdit";
-			}
+			string toolName = GetShowHiddenFieldsToolName(root);
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
@@ -3765,7 +3760,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+				string toolName = GetShowHiddenFieldsToolName();
 				display.Checked = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			}
 
@@ -4041,7 +4036,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+				string toolName = GetShowHiddenFieldsToolName();
 				name = "ShowHiddenFields-" + toolName;
 
 				// Invert the status of the real property
@@ -4058,6 +4053,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_fCurrentContentControlObjectTriggered = true;
 			}
+		}
+
+		private string GetShowHiddenFieldsToolName(ICmObject root = null)
+		{
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			if (!string.IsNullOrEmpty(toolName))
+				return toolName;
+
+			var candidateRoot = root ?? m_root;
+			if (candidateRoot is ILexEntry)
+				return "lexiconEdit";
+
+			return toolName;
 		}
 
 		/// <summary>
