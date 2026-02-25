@@ -92,6 +92,7 @@ Get-Content .cache/jira_assigned.json | ConvertFrom-Json
 | Read issue details | [atlassian-readonly-skills](.github/skills/atlassian-readonly-skills/SKILL.md) |
 | Search issues | [atlassian-readonly-skills](.github/skills/atlassian-readonly-skills/SKILL.md) |
 | Create/update issues | [atlassian-skills](.github/skills/atlassian-skills/SKILL.md) (only when user explicitly requests) |
+| Fix a JIRA bug (end-to-end) | [jira-bugfix](.github/skills/jira-bugfix/SKILL.md) |
 | Bulk import to Beads | [jira-to-beads](.github/skills/jira-to-beads/SKILL.md) |
 
 ### Configuration
