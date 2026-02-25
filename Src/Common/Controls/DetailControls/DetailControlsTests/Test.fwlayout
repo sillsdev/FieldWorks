@@ -46,4 +46,18 @@
 	<layout class="LexEntry" type="detail" name="NoRef">
 		<part customFields="here"/>
 	</layout>
+	<!-- LT-22427 regression: parent slice with indented ifdata children.
+	     Bibliography has no data, so it is hidden. With Show Hidden Fields ON,
+	     the parent should auto-expand to reveal the child. -->
+	<layout class="LexEntry" type="detail" name="ParentWithHiddenChildren">
+		<part ref="CitationForm">
+			<indent>
+				<part ref="Bibliography" visibility="ifdata"/>
+			</indent>
+		</part>
+	</layout>
+	<layout class="LexEntry" type="detail" name="CfAndBibFiltered">
+		<part ref="CitationForm"/>
+		<part ref="BibliographyFiltered" visibility="ifdata"/>
+	</layout>
 </LayoutInventory>

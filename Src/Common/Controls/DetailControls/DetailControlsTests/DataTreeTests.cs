@@ -272,6 +272,38 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// When currentContentControl is set to a non-lexicon tool while displaying a LexEntry,
+		/// show-hidden must still resolve to the lexiconEdit key.
+		/// </summary>
+		[Test]
+		public void ShowObject_NonLexiconCurrentContentControl_UsesLexiconEditForLexEntry()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
+
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
+					"LexEntry DataTree should use ShowHiddenFields-lexiconEdit even when currentContentControl is non-lexicon");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
+		}
+
+		/// <summary>
 		/// Enabling ShowHiddenFields for a different tool must not reveal ifdata slices
 		/// for the current tool.
 		/// </summary>
@@ -338,6 +370,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
 				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
 
+				// Even with a non-lexiconEdit tool name, ILexEntry root resolves
+				// to "lexiconEdit" for the show-hidden property key.
 				m_propertyTable.SetProperty("currentContentControl", "mySpecialTool", PropertyTable.SettingsGroup.LocalSettings, false);
 
 				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -349,11 +383,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Toggle via OnPropertyChanged (simulates View menu).
 				m_dtree.OnPropertyChanged("ShowHiddenFields");
 
-				// The tool-specific property should now be true.
+				// For ILexEntry roots the resolved key is always "lexiconEdit".
 				bool showHidden = m_propertyTable.GetBoolProperty(
-					"ShowHiddenFields-mySpecialTool", false, PropertyTable.SettingsGroup.LocalSettings);
+					"ShowHiddenFields-lexiconEdit", false, PropertyTable.SettingsGroup.LocalSettings);
 				Assert.That(showHidden, Is.True,
-					"OnPropertyChanged should toggle the property keyed to currentContentControl");
+					"OnPropertyChanged should toggle the property keyed to lexiconEdit for LexEntry roots");
 
 				// ifdata slices should now be visible.
 				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2), "After toggle: ifdata slice should appear");
@@ -373,8 +407,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[Test]
 		public void OnDisplayShowHiddenFields_CheckedState_MatchesCurrentTool()
 		{
+			// For ILexEntry roots, even with currentContentControl="lexiconBrowse",
+			// the resolved key is "lexiconEdit".
 			m_propertyTable.SetProperty("currentContentControl", "lexiconBrowse", PropertyTable.SettingsGroup.LocalSettings, false);
-			m_propertyTable.SetProperty("ShowHiddenFields-lexiconBrowse", true, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
@@ -383,14 +419,63 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			bool handled = m_dtree.OnDisplayShowHiddenFields(null, ref display);
 			Assert.That(handled, Is.True);
 			Assert.That(display.Checked, Is.True,
-				"Checked should reflect ShowHiddenFields for the current tool (lexiconBrowse)");
+				"Checked should reflect ShowHiddenFields for lexiconEdit (resolved from lexiconBrowse)");
 
 			// Now set it to false and re-check.
-			m_propertyTable.SetProperty("ShowHiddenFields-lexiconBrowse", false, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", false, PropertyTable.SettingsGroup.LocalSettings, false);
 			display = new UIItemDisplayProperties(null, "Show Hidden Fields", true, null, true);
 			m_dtree.OnDisplayShowHiddenFields(null, ref display);
 			Assert.That(display.Checked, Is.False,
-				"Checked should be false when ShowHiddenFields is off for the current tool");
+				"Checked should be false when ShowHiddenFields is off for lexiconEdit");
+		}
+
+		/// <summary>
+		/// When ShowHiddenFields is enabled, slices excluded by the SliceFilter
+		/// (either by ID match or by IsFieldRelevant) should still be shown.
+		/// This is the fix for the missing Inflection Class / Inflection Features
+		/// fields in Grammatical Info. Details (LT-22427).
+		/// </summary>
+		[Test]
+		public void ShowObject_ShowHiddenEnabled_BypassesSliceFilter()
+		{
+			// Set Bibliography data so it would normally show, then clear it
+			// so the slice is only visible via show-hidden filter bypass.
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				// Create a SliceFilter that blocks the BibliographyFiltered slice by id.
+				var filterDoc = new XmlDocument();
+				filterDoc.LoadXml("<SliceFilter><node id=\"TestBibFilter\"/></SliceFilter>");
+				m_dtree.SliceFilter = new SliceFilter(filterDoc);
+
+				// Without show-hidden, the filtered + empty Bibliography should be hidden.
+				m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", PropertyTable.SettingsGroup.LocalSettings, false);
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "CfAndBibFiltered", null, m_entry, false);
+
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(1),
+					"Filter should hide the matching slice when ShowHiddenFields is OFF");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+
+				// Now enable show-hidden and rebuild.
+				m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, PropertyTable.SettingsGroup.LocalSettings, false);
+				m_dtree.OnPropertyChanged("ShowHiddenFields-lexiconEdit");
+
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
+					"SliceFilter should be bypassed when ShowHiddenFields is ON");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+				m_dtree.SliceFilter = null;
+			}
 		}
 
 		/// <summary></summary>
@@ -415,6 +500,61 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
 			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
 			Assert.That(expected, Is.EqualTo(template.OuterXml), "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
+		}
+
+		/// <summary>
+		/// LT-22427: When Show Hidden Fields is enabled, a parent slice whose
+		/// indented children were all hidden (visibility=ifdata with no data)
+		/// should auto-expand to reveal those children. This reproduces the bug
+		/// where Inflection Class / Inflection Features / Exception Features
+		/// remained invisible under Category Info because the parent slice
+		/// stayed collapsed even after its children became visible.
+		/// </summary>
+		[Test]
+		public void ShowObject_ShowHiddenFields_ExpandsParentToRevealChildren()
+		{
+			string anaWsText = m_entry.Bibliography.AnalysisDefaultWritingSystem.Text;
+			string vernWsText = m_entry.Bibliography.VernacularDefaultWritingSystem.Text;
+			try
+			{
+				// Clear Bibliography data so the ifdata child is hidden without ShowHiddenFields.
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("");
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem("");
+
+				// Without ShowHiddenFields, the parent has no visible children,
+				// so only the parent slice (CitationForm) appears.
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "ParentWithHiddenChildren", null, m_entry, false);
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(1),
+					"Without ShowHiddenFields, only the parent slice should appear");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+
+				// Enable ShowHiddenFields and recreate the DataTree (ShowObject
+				// early-returns when root/layout haven't changed).
+				m_parent.Controls.Remove(m_dtree);
+				m_dtree.Dispose();
+				m_propertyTable.SetProperty("currentContentControl", "lexiconEdit",
+					PropertyTable.SettingsGroup.LocalSettings, false);
+				m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true,
+					PropertyTable.SettingsGroup.LocalSettings, false);
+				m_dtree = new DataTree();
+				m_dtree.Init(m_mediator, m_propertyTable, null);
+				m_parent.Controls.Add(m_dtree);
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(m_entry, "ParentWithHiddenChildren", null, m_entry, false);
+
+				// The parent slice should auto-expand and the previously-hidden
+				// Bibliography child should now be visible.
+				Assert.That(m_dtree.Controls.Count, Is.EqualTo(2),
+					"With ShowHiddenFields ON, the parent should auto-expand and reveal the ifdata child");
+				Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
+				Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
+			}
+			finally
+			{
+				m_entry.Bibliography.SetAnalysisDefaultWritingSystem(anaWsText);
+				m_entry.Bibliography.SetVernacularDefaultWritingSystem(vernWsText);
+			}
 		}
 
 		[Test]

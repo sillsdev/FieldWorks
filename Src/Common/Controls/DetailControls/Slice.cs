@@ -1110,7 +1110,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 
 			if (ntr == DataTree.NodeTestResult.kntrNothing)
+			{
 				Expansion = DataTree.TreeItemState.ktisFixed; // probably redundant, but play safe
+			}
 			else if (ntr == DataTree.NodeTestResult.kntrPossible)
 			{
 				// It could have children but currently can't: we always show this as collapsedEmpty.
@@ -1136,6 +1138,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					Expansion = DataTree.TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.
 					fExpand = m_propertyTable.GetBoolProperty(ExpansionStateKey, fExpand);
 				}
+				// LT-22427: When Show Hidden Fields is on, auto-expand sections whose
+				// children are now visible (e.g. Category Info. → InflectionClass).
+				// Without this, ifdata children promoted to always-visible stay hidden
+				// behind a collapsed parent that the user never manually expanded.
+				if (!fExpand && ContainingDataTree?.ShowingAllFields == true)
+					fExpand = true;
 				if (fExpand)
 				{
 					// Record the expansion state and generate the children.

@@ -2250,7 +2250,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					editor = editor.ToLower();
 				int flid = GetFlidFromNode(node, obj);
 
-				if (m_sliceFilter != null &&
+				// When the user has enabled "Show Hidden Fields", bypass the
+				// slice filter so that fields hidden by IsFieldRelevant (e.g.
+				// InflectionClass when no POS is set) still appear.
+				if (!m_fShowAllFields &&
+					m_sliceFilter != null &&
 					flid != 0 &&
 					!m_sliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
 				{
@@ -4058,12 +4062,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetShowHiddenFieldsToolName(ICmObject root = null)
 		{
 			var toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			var candidateRoot = root ?? m_root;
+			// LT-22427: LexEntry details share a single DataTree across tools
+			// (lexiconEdit, lexiconBrowse, lexiconDictionary, etc.). Normalize
+			// the key to "lexiconEdit" so the toggle is consistent everywhere.
+			if (candidateRoot is ILexEntry)
+			{
+				if (string.IsNullOrEmpty(toolName) || !toolName.StartsWith("lexiconEdit", StringComparison.Ordinal))
+					return "lexiconEdit";
+			}
+
 			if (!string.IsNullOrEmpty(toolName))
 				return toolName;
-
-			var candidateRoot = root ?? m_root;
-			if (candidateRoot is ILexEntry)
-				return "lexiconEdit";
 
 			return toolName;
 		}

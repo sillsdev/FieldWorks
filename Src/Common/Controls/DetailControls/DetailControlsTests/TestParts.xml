@@ -37,5 +37,8 @@
 		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">
 			<slice field="LanguageNotes" label="Source Language Notes" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
 		</part>
+		<part id="LexEntry-Detail-BibliographyFiltered">
+			<slice id="TestBibFilter" label="Bibliography" editor="multistring" field="Bibliography" ws="analysis"/>
+		</part>
 	</bin>
 </PartInventory>
