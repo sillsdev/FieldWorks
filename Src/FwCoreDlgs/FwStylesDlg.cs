@@ -1010,7 +1010,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool IsCurrentStyleResettable()
 		{
 			StyleListItem selectedItem = m_styleListHelper.SelectedStyle;
-			if (SetPropsToFactorySettings == null || selectedItem.StyleInfo == null ||
+			if (SetPropsToFactorySettings == null || selectedItem?.StyleInfo == null ||
 				!(selectedItem.StyleInfo is StyleInfo))
 			{
 				return false;
