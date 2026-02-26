@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HCSynthByGloss": {
+      "commandName": "Project",
+      "commandLineArgs": " -h indoHC4FLExrans.xml -g IndonesianAnalyses.txt -o habby.txt -t -s",
+      "workingDirectory": "C:\\fwrepo\\fw\\Src\\Utilities\\HCSynthByGloss\\HCSynthByGloss\\TestData"
+    }
+  }
+}

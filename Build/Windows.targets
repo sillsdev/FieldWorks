@@ -205,7 +205,7 @@
 			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Exec
-			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:x64 /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:x64 /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl $(PresentationTransformsPath)\HCSynthByGlossFormatCommon.xsl $(PresentationTransformsPath)\HCSynthByGlossFormatHCTrace.xsl"
 			ContinueOnError="ErrorAndContinue"
 			IgnoreExitCode="true"
 			Condition="'$(SkipXsltCompilation)'!='true'"
