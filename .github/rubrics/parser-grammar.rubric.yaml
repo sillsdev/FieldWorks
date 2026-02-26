@@ -1,4 +1,4 @@
-extends: .github/rubrics/fieldworks-rubric.base.yaml
+extends: ./fieldworks-rubric.base.yaml
 name: Parser and Grammar Change Rubric
 specialization: parsing-morphology-analysis
 

@@ -1,4 +1,4 @@
-extends: .github/rubrics/fieldworks-rubric.base.yaml
+extends: ./fieldworks-rubric.base.yaml
 name: Installer and Deployment Rubric
 specialization: wix-installer-deployment
 

@@ -1,4 +1,4 @@
-extends: .github/rubrics/fieldworks-rubric.base.yaml
+extends: ./fieldworks-rubric.base.yaml
 name: UI and Build Workflow Rubric
 specialization: ui-managed-build-integration
 

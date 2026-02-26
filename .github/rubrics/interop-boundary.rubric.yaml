@@ -1,4 +1,4 @@
-extends: .github/rubrics/fieldworks-rubric.base.yaml
+extends: ./fieldworks-rubric.base.yaml
 name: Interop Boundary Change Rubric
 specialization: native-managed-com-boundary
 

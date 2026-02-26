@@ -34,5 +34,5 @@ You will receive:
 </constraints>
 
 <notes>
-- Coordinate with sil.jira.org issue and PR updates when needed.
+- Coordinate with jira.sil.org issue and PR updates when needed.
 </notes>
