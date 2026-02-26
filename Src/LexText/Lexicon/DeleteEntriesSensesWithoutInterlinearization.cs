@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -110,8 +110,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 			}
 
-			progressBar.Value = 1;
 			progressBar.Maximum = entriesToDel.Count;
+			progressBar.Value = Math.Min(1, progressBar.Maximum);
 			foreach (var entry in entriesToDel)
 			{
 				progressBar.PerformStep();
@@ -119,8 +119,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var senses = cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().ToArray();
-			progressBar.Value = 1;
 			progressBar.Maximum = senses.Length;
+			progressBar.Value = Math.Min(1, progressBar.Maximum);
 			foreach (var sense in senses)
 			{
 				progressBar.PerformStep();
