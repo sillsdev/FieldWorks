@@ -2,7 +2,7 @@
 .SYNOPSIS
     Sets a unique window color for the current VS Code workspace/worktree.
 .DESCRIPTION
-    Chooses a color from a fixed 8-color palette based on the workspace path hash.
+	Chooses a color from a fixed deterministic palette using the lowest free slot.
 
     Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
     - Base workspace configuration is embedded in this script
@@ -17,6 +17,9 @@ param(
 	# VS Code expands ${workspaceFile} when running inside a .code-workspace.
 	# When opening a folder, this is typically empty.
 	[string]$VSCodeWorkspaceFile = "",
+
+	# Optional explicit color slot override (0-based index into palette).
+	[Nullable[int]]$ColorIndex = $null,
 
 	# Apply: write/remove the worktree-local workspace file for the current repoRoot.
 	# Launch: pick a worktree (if multiple) and open it in a new VS Code window.
@@ -245,6 +248,41 @@ function ConvertFrom-HexRgb($hex) {
 	}
 }
 
+function ConvertTo-RelativeLuminance([int]$r, [int]$g, [int]$b) {
+	$rScaled = $r / 255.0
+	$gScaled = $g / 255.0
+	$bScaled = $b / 255.0
+
+	$rLin = if ($rScaled -le 0.03928) { $rScaled / 12.92 } else { [Math]::Pow((($rScaled + 0.055) / 1.055), 2.4) }
+	$gLin = if ($gScaled -le 0.03928) { $gScaled / 12.92 } else { [Math]::Pow((($gScaled + 0.055) / 1.055), 2.4) }
+	$bLin = if ($bScaled -le 0.03928) { $bScaled / 12.92 } else { [Math]::Pow((($bScaled + 0.055) / 1.055), 2.4) }
+
+	return (0.2126 * $rLin + 0.7152 * $gLin + 0.0722 * $bLin)
+}
+
+function Get-ContrastRatio([double]$l1, [double]$l2) {
+	$bright = [Math]::Max($l1, $l2)
+	$dark = [Math]::Min($l1, $l2)
+	return (($bright + 0.05) / ($dark + 0.05))
+}
+
+function Get-ForegroundColorsForBackground([string]$backgroundHex) {
+	$rgb = ConvertFrom-HexRgb $backgroundHex
+	$lBackground = ConvertTo-RelativeLuminance -r $rgb.r -g $rgb.g -b $rgb.b
+	$contrastWhite = Get-ContrastRatio -l1 $lBackground -l2 1.0
+	$contrastBlack = Get-ContrastRatio -l1 $lBackground -l2 0.0
+
+	$textColor = if ($contrastWhite -ge $contrastBlack) { "#FFFFFF" } else { "#000000" }
+	$inactiveColor = if ($textColor -eq "#000000") { "#000000B3" } else { "#FFFFFFB3" }
+
+	return @{
+		TextColor = $textColor
+		InactiveColor = $inactiveColor
+		ContrastWhite = [Math]::Round($contrastWhite, 2)
+		ContrastBlack = [Math]::Round($contrastBlack, 2)
+	}
+}
+
 function Remove-JsonComments([string]$text) {
 	if ([string]::IsNullOrEmpty($text)) {
 		return ""
@@ -407,40 +445,178 @@ $managedKeys = @(
 	"activityBar.inactiveForeground"
 )
 
+# Deterministic worktree palette (16 colors), ordered to cycle hue families early.
+$worktreeColorPalette = @(
+	"#d64541", # Bold Red
+	"#2f6fdd", # Bold Blue
+	"#2e8b57", # Rich Green
+	"#c9a227", # Subdued Yellow
+	"#7b4ab2", # Purple
+	"#e67e22", # Orange
+	"#1f9d9d", # Teal
+	"#c2529f", # Magenta
+	"#b13f63", # Raspberry
+	"#3a9ec9", # Sky Blue
+	"#365f9c", # Denim Blue
+	"#8f5a2a", # Walnut
+	"#3a6f3a", # Forest Green
+	"#4f4f4f", # Charcoal
+	"#7a6fa8", # Muted Violet
+	"#2f4858"  # Deep Slate
+)
+
+function Get-WorktreeColorPalette() {
+	return @($worktreeColorPalette)
+}
+
+function ConvertTo-ColorIndex([object]$value, [int]$paletteLength) {
+	if ($null -eq $value) {
+		return $null
+	}
+
+	[int]$idx = 0
+	if ($value -is [int]) {
+		$idx = $value
+	}
+	else {
+		if (-not [int]::TryParse(($value.ToString()), [ref]$idx)) {
+			return $null
+		}
+	}
+
+	if ($idx -lt 0 -or $idx -ge $paletteLength) {
+		return $null
+	}
+
+	return $idx
+}
+
+function Get-ColorIndexFromSettings($settings, [string[]]$palette) {
+	if ($null -eq $settings) {
+		return $null
+	}
+
+	if ($settings.PSObject.Properties["fieldworks.worktreeColorIndex"]) {
+		$idx = ConvertTo-ColorIndex -value $settings."fieldworks.worktreeColorIndex" -paletteLength $palette.Length
+		if ($null -ne $idx) {
+			return $idx
+		}
+	}
+
+	if (
+		$settings.PSObject.Properties["workbench.colorCustomizations"] -and
+		$null -ne $settings."workbench.colorCustomizations" -and
+		$settings."workbench.colorCustomizations".PSObject.Properties["titleBar.activeBackground"]
+	) {
+		$hex = $settings."workbench.colorCustomizations"."titleBar.activeBackground"
+		if (-not [string]::IsNullOrWhiteSpace($hex)) {
+			for ($i = 0; $i -lt $palette.Length; $i++) {
+				if ([string]::Equals($palette[$i], $hex, [System.StringComparison]::OrdinalIgnoreCase)) {
+					return $i
+				}
+			}
+		}
+	}
+
+	return $null
+}
+
+function Get-UsedColorIndices([string]$mainRepoRoot, [string]$targetRoot, [string[]]$palette) {
+	$used = @{}
+	$normalizedTargetRoot = Normalize-PathForComparison $targetRoot
+	$worktrees = @(Get-GitWorktrees $mainRepoRoot)
+
+	foreach ($wt in $worktrees) {
+		if ($null -eq $wt -or [string]::IsNullOrWhiteSpace($wt.Path)) {
+			continue
+		}
+
+		$normalizedPath = Normalize-PathForComparison $wt.Path
+		if ($normalizedPath -eq $normalizedTargetRoot) {
+			continue
+		}
+
+		$workspacePath = Get-WorktreeWorkspacePath $wt.Path
+		if (-not (Test-Path $workspacePath -PathType Leaf)) {
+			continue
+		}
+
+		try {
+			$workspace = ConvertFrom-JsoncFile $workspacePath
+			if ($null -eq $workspace -or -not $workspace.PSObject.Properties["settings"]) {
+				continue
+			}
+
+			$idx = Get-ColorIndexFromSettings -settings $workspace.settings -palette $palette
+			if ($null -ne $idx) {
+				$used[[int]$idx] = $true
+			}
+		}
+		catch {
+			Write-Warning "Failed to inspect color settings in $workspacePath"
+		}
+	}
+
+	return $used
+}
+
+function Select-WorktreeColorIndex(
+	[string]$mainRepoRoot,
+	[string]$targetRoot,
+	[Nullable[int]]$requestedColorIndex,
+	[string[]]$palette
+) {
+	if ($null -ne $requestedColorIndex) {
+		if ($requestedColorIndex.Value -lt 0 -or $requestedColorIndex.Value -ge $palette.Length) {
+			throw "ColorIndex '$($requestedColorIndex.Value)' is out of range. Valid range: 0-$($palette.Length - 1)."
+		}
+		return $requestedColorIndex.Value
+	}
+
+	$targetWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
+	if (Test-Path $targetWorkspacePath -PathType Leaf) {
+		try {
+			$existingWorkspace = ConvertFrom-JsoncFile $targetWorkspacePath
+			if ($null -ne $existingWorkspace -and $existingWorkspace.PSObject.Properties["settings"]) {
+				$existingIdx = Get-ColorIndexFromSettings -settings $existingWorkspace.settings -palette $palette
+				if ($null -ne $existingIdx) {
+					return $existingIdx
+				}
+			}
+		}
+		catch {
+			Write-Warning "Failed to parse existing workspace file $targetWorkspacePath while selecting color index."
+		}
+	}
+
+	$used = Get-UsedColorIndices -mainRepoRoot $mainRepoRoot -targetRoot $targetRoot -palette $palette
+	for ($i = 0; $i -lt $palette.Length; $i++) {
+		if (-not $used.ContainsKey($i)) {
+			return $i
+		}
+	}
+
+	$md5 = [System.Security.Cryptography.MD5]::Create()
+	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($targetRoot))
+	return ($hashBytes[0] % $palette.Length)
+}
+
 function Write-WorktreeWorkspaceFile(
 	[Parameter(Mandatory = $true)][string]$targetRoot,
-	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded
+	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded,
+	[Nullable[int]]$requestedColorIndex = $null
 ) {
 	$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
 	$legacyWorkspacePath = Get-WorktreeWorkspaceLegacyPath $targetRoot
 
-	# Choose color from a fixed palette (Loading.io: lloyds)
-	# Source: https://loading.io/color/feature/lloyds
-	# Note: The palette on the page has 9 colors; we use the 8 brand colors and exclude the neutral "#1e1e1e".
-	$palette = @(
-		"#d81f2a", # red
-		"#ff9900", # orange
-		"#e0d86e", # yellow
-		"#9ea900", # green
-		"#6ec9e0", # light blue
-		"#007ea3", # blue
-		"#9e4770", # magenta
-		"#631d76"  # purple
-	)
+	$palette = Get-WorktreeColorPalette
+	$resolvedColorIndex = Select-WorktreeColorIndex -mainRepoRoot $repoRoot -targetRoot $targetRoot -requestedColorIndex $requestedColorIndex -palette $palette
+	$colorHex = $palette[$resolvedColorIndex]
+	$foreground = Get-ForegroundColorsForBackground -backgroundHex $colorHex
+	$textColor = $foreground.TextColor
+	$inactiveColor = $foreground.InactiveColor
 
-	$md5 = [System.Security.Cryptography.MD5]::Create()
-	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($targetRoot))
-	$colorHex = $palette[($hashBytes[0] % $palette.Length)]
-	$rgb = ConvertFrom-HexRgb $colorHex
-	$r = $rgb.r; $g = $rgb.g; $b = $rgb.b
-
-	# Determine text color (contrast)
-	$luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b)
-	$textColor = if ($luminance -gt 128) { "#000000" } else { "#FFFFFF" }
-	# For inactive foreground, use slightly transparent version of text color
-	$inactiveColor = if ($textColor -eq "#000000") { "#00000099" } else { "#FFFFFF99" }
-
-	Write-Host "Worktree detected. Applying color $colorHex to $targetRoot"
+	Write-Host "Worktree detected. Applying color index $resolvedColorIndex ($colorHex) to $targetRoot; contrast white=$($foreground.ContrastWhite), black=$($foreground.ContrastBlack), using $textColor"
 
 	$colorCustomizations = New-Object PSObject
 	$colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.activeBackground" -Value $colorHex -Force
@@ -545,6 +721,8 @@ function Write-WorktreeWorkspaceFile(
 		$settings."workbench.colorCustomizations" | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
 	}
 
+	$settings | Add-Member -MemberType NoteProperty -Name "fieldworks.worktreeColorIndex" -Value $resolvedColorIndex -Force
+
 	# Marker flag: true only when this task is running inside the generated workspace file
 	$settings | Add-Member -MemberType NoteProperty -Name "fieldworks.workspaceLoaded" -Value $isWorkspaceLoaded -Force
 
@@ -591,7 +769,7 @@ switch ($Action) {
 			throw "Selected path does not look like a git worktree (expected .git file): $targetRoot"
 		}
 
-		$workspaceFile = Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$false
+		$workspaceFile = Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$false -requestedColorIndex $ColorIndex
 
 		$codeCmd = "code"
 		try {
@@ -614,7 +792,7 @@ switch ($Action) {
 		$isWorktreeWorkspaceLoaded = ($normalizedPassedWorkspaceFile -ne "") -and ($normalizedPassedWorkspaceFile -eq $normalizedWorktreeWorkspacePath)
 
 		if (Get-IsWorktree $targetRoot) {
-			[void](Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$isWorktreeWorkspaceLoaded)
+			[void](Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$isWorktreeWorkspaceLoaded -requestedColorIndex $ColorIndex)
 			if (-not $isWorktreeWorkspaceLoaded) {
 				Write-Host "Workspace file created. To apply colors, open: $worktreeWorkspacePath"
 			}

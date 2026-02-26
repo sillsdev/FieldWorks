@@ -15,6 +15,9 @@ param(
 	[Parameter(Mandatory = $false)]
 	[string]$BranchName = "",
 
+	# Optional explicit color slot override (0-based index into Setup-WorktreeColor palette).
+	[Nullable[int]]$ColorIndex = $null,
+
 	# Print the actions that would be taken, but do not create/move/open anything.
 	[switch]$DryRun
 )
@@ -417,4 +420,9 @@ if (-not (Test-Path $colorizeScript -PathType Leaf)) {
 	throw "Missing colorize script: $colorizeScript"
 }
 
-& $colorizeScript -Action Launch -WorktreePath $targetWorktreePath
+$colorizeArgs = @("-Action", "Launch", "-WorktreePath", $targetWorktreePath)
+if ($PSBoundParameters.ContainsKey("ColorIndex")) {
+	$colorizeArgs += @("-ColorIndex", $ColorIndex)
+}
+
+& $colorizeScript @colorizeArgs
