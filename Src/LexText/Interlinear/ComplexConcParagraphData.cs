@@ -200,7 +200,8 @@ namespace SIL.FieldWorks.IText
 			{
 				// skip invalid tags
 				// TODO: should these tags be cleaned up somewhere?
-				if (tag.BeginAnalysisIndex >= tag.BeginSegmentRA.AnalysesRS.Count || tag.EndAnalysisIndex >= tag.EndSegmentRA.AnalysesRS.Count
+				if (tag.BeginSegmentRA == null || tag.EndSegmentRA == null ||
+					tag.BeginAnalysisIndex >= tag.BeginSegmentRA.AnalysesRS.Count || tag.EndAnalysisIndex >= tag.EndSegmentRA.AnalysesRS.Count
 					|| tag.BeginAnalysisIndex > tag.EndAnalysisIndex)
 				{
 					continue;
