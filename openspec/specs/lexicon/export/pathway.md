@@ -26,8 +26,6 @@ Pathway integration is handled by the FlexPathwayPlugin utility and shared lexic
 
 ### References
 
-- [Pathway plugin](../../../../Src/LexText/FlexPathwayPlugin/AGENTS.md#purpose) — Pathway integration utility
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#purpose) — Lexicon data configuration
 
 ## Constraints
 

@@ -22,9 +22,6 @@ Entry points are distributed across the application shell (xWorks), the mediator
 
 ### References
 
-- [xWorks entry points](../../../../Src/xWorks/AGENTS.md#entry-points) — Application shell startup
-- [XCore entry points](../../../../Src/XCore/AGENTS.md#entry-points) — Mediator and window initialization
-- [Framework entry points](../../../../Src/Common/Framework/AGENTS.md#entry-points) — FwApp-based lifecycle
 
 ## Constraints
 

@@ -1,0 +1,126 @@
+schemaVersion: 2
+name: FieldWorks Change Rubric (Base)
+description: Weighted, execution-free review rubric for repository-grounded verification.
+
+scoring:
+  criterionScale:
+    min: 0
+    max: 5
+    guidance:
+      "0": missing or incorrect
+      "3": acceptable
+      "5": strong
+  overallFormula: sum(categoryPercent * categoryWeight)
+  thresholds:
+    pass: 85
+    conditional: 70
+
+# focusCriteria semantics: specialization rubrics list focusCriteria ids.
+# Focused criteria receive +50% relative weight within their category
+# and the scorer should prioritize gathering evidence for them first.
+# Non-focused criteria are still scored at their base weight.
+focusCriteriaBoost: 1.5
+
+requiredCommands:
+  - .\build.ps1
+  - .\test.ps1
+
+hardGates:
+  - id: build_test_gate
+    rule: All requiredCommands exit 0 for the touched areas.
+    failureEffect: fail
+  - id: security_gate
+    rule: No new unsanitized input path crosses a native, COM, or file-system boundary without validation.
+    failureEffect: fail
+  - id: evidence_gate
+    rule: Each scored criterion cites a concrete evidence artifact (command output, file diff, or explicit N/A rationale).
+    failureEffect: conditional
+
+categories:
+  - id: file_change
+    weight: 0.25
+    criteria:
+      - id: scope_minimality
+        weight: 0.30
+        check: Every changed file maps to the stated intent.
+        evidence: diff file list annotated with purpose
+      - id: repo_conventions
+        weight: 0.30
+        check: Build and test use repository scripts (build.ps1, test.ps1).
+        evidence: command transcript or CI log
+      - id: docs_sync
+        weight: 0.15
+        check: Docs/instructions updated if and only if behavior or process changed.
+        evidence: changed doc paths or explicit N/A
+      - id: reviewability
+        weight: 0.25
+        check: Changes are partitioned into reviewable, self-contained units.
+        evidence: commit/PR structure note
+
+  - id: spec_alignment
+    weight: 0.25
+    criteria:
+      - id: requirements_traceability
+        weight: 0.30
+        check: Each requirement or acceptance signal maps to at least one changed file or test.
+        evidence: requirement-to-file mapping
+      - id: acceptance_coverage
+        weight: 0.25
+        check: Every stated acceptance signal has a corresponding verification result.
+        evidence: acceptance signal checklist with pass/fail
+      - id: contract_safety
+        weight: 0.25
+        check: Public API signatures and observable behavior are unchanged unless the spec requires it.
+        evidence: API diff or behavioral comparison note
+      - id: test_coverage
+        weight: 0.20
+        check: New or changed behavior has at least one corresponding test.
+        evidence: test names covering the change
+
+  - id: integrity
+    weight: 0.25
+    criteria:
+      - id: boundary_safety
+        weight: 0.30
+        check: Untrusted input is validated before crossing native, COM, or file-system boundaries.
+        evidence: input validation code path or N/A rationale
+      - id: warning_discipline
+        weight: 0.25
+        check: No new compiler or analyzer warnings are introduced.
+        evidence: build output diff or clean build log
+      - id: artifact_integrity
+        weight: 0.25
+        check: Generated or runtime artifacts (configs, manifests, resources) are present and well-formed.
+        evidence: artifact file check or N/A
+      - id: no_regression
+        weight: 0.20
+        check: Existing tests outside the change scope continue to pass.
+        evidence: full test suite result summary
+
+  - id: runtime
+    weight: 0.25
+    criteria:
+      - id: execution_success
+        weight: 0.45
+        check: Touched scenarios execute to completion with expected outcomes.
+        evidence: test output or manual run transcript
+      - id: diagnostics_quality
+        weight: 0.20
+        check: Changed code paths emit actionable log/trace output on failure.
+        evidence: trace output sample or code inspection note
+      - id: state_verification
+        weight: 0.20
+        check: Post-execution state (DB, files, settings) matches expectations.
+        evidence: state comparison or N/A rationale
+      - id: verification_reproducibility
+        weight: 0.15
+        check: Verification steps are repeatable on a clean machine using only repo scripts and documented environment.
+        evidence: environment assumptions listed
+
+output:
+  requiredSections:
+    - scope
+    - scoresByCategory
+    - hardGateResults
+    - evidenceIndex
+    - finalVerdict

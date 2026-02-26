@@ -26,9 +26,6 @@ Scripting integrations rely on shared utilities and data access contracts. This 
 
 ### References
 
-- [FieldWorks core services](../../../../Src/Common/FieldWorks/AGENTS.md#interop--contracts) — Core service contracts
-- [XML utilities](../../../../Src/Utilities/XMLUtils/AGENTS.md#purpose) — XML configuration helpers
-- [Transforms](../../../../Src/Transforms/AGENTS.md#purpose) — Shared transform pipeline
 
 ## Constraints
 

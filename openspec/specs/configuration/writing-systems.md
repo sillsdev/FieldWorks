@@ -32,8 +32,6 @@ Writing system configuration is surfaced through shared dialogs and UI component
 
 ### References
 
-- [Writing system dialogs](../../../Src/FwCoreDlgs/AGENTS.md#key-components) — Writing system properties dialogs
-- [Writing system controls](../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Add writing system UI components
 
 ## Constraints
 

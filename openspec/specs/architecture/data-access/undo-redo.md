@@ -22,7 +22,6 @@ Undo/redo is coordinated through framework services so that application shells a
 
 ### References
 
-- [Framework undo/redo components](../../../../Src/Common/Framework/AGENTS.md#key-components) — UndoRedoDropDown and editing helpers
 
 ## Constraints
 

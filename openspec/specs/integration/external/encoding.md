@@ -26,9 +26,6 @@ Encoding conversion relies on shared utilities and XML configuration for convert
 
 ### References
 
-- [FwUtils utilities](../../../../Src/Common/FwUtils/AGENTS.md#key-components) — Utility helpers and registry settings
-- [XML utilities](../../../../Src/Utilities/XMLUtils/AGENTS.md#purpose) — XML configuration helpers
-- [Sfm2Xml utilities](../../../../Src/Utilities/SfmToXml/AGENTS.md#purpose) — Encoding-sensitive conversions
 
 ## Constraints
 

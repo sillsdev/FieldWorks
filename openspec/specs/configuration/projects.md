@@ -17,7 +17,7 @@ Define shared project configuration patterns (creation, backup, and restore).
 
 ## Context
 
-Project settings flow through framework services and shared dialogs. This spec captures cross-cutting expectations and references component-specific details in AGENTS.md.
+Project settings flow through framework services and shared dialogs. This spec captures cross-cutting expectations and references component-specific details in Repository.Intelligence.Graph.json and minimal AGENTS guidance.
 
 ## Behavior
 
@@ -26,9 +26,6 @@ Project settings flow through framework services and shared dialogs. This spec c
 
 ### References
 
-- [Framework settings](../../../Src/Common/Framework/AGENTS.md#key-components) — Framework settings infrastructure
-- [Project dialogs](../../../Src/FwCoreDlgs/AGENTS.md#key-components) — Backup/restore and project dialogs
-- [Utility helpers](../../../Src/Common/FwUtils/AGENTS.md#key-components) — Directory and settings utilities
 
 ## Constraints
 

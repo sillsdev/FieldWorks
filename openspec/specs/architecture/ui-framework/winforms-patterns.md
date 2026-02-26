@@ -23,10 +23,6 @@ FieldWorks relies on WinForms for UI while layering mediator-driven composition 
 
 ### References
 
-- [Framework composition](../../../../Src/Common/Framework/AGENTS.md#architecture) — Application lifecycle and window delegation
-- [XCore UI framework](../../../../Src/XCore/AGENTS.md#architecture) — XML-driven UI composition
-- [Shared controls](../../../../Src/Common/Controls/AGENTS.md#purpose) — Common WinForms control library
-- [UI adapter contracts](../../../../Src/Common/UIAdapterInterfaces/AGENTS.md#purpose) — Sidebar/tool manager interfaces
 
 ## Constraints
 

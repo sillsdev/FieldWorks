@@ -12,7 +12,7 @@ Document shared localization practices for FieldWorks.
 
 ## Context
 
-Localization relies on .resx resources and shared resource assemblies. Component-specific resources are documented in AGENTS.md.
+Localization relies on .resx resources and shared resource assemblies. Component-specific resources are documented in Repository.Intelligence.Graph.json and minimal AGENTS guidance.
 
 ## Localization Patterns
 
@@ -23,8 +23,6 @@ Localization relies on .resx resources and shared resource assemblies. Component
 
 ### References
 
-- [Shared resources](../../../../Src/FwResources/AGENTS.md#purpose) — Centralized strings and images
-- [Framework localization](../../../../Src/Common/Framework/AGENTS.md#technology-stack) — Framework resx usage
 
 ## Constraints
 

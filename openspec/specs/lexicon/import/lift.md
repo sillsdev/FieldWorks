@@ -26,8 +26,6 @@ LIFT import is driven through shared lexicon import UI and lexicon entry handlin
 
 ### References
 
-- [Lexicon import wizard](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — LexImportWizard UI
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#purpose) — Entry structure handling
 
 ## Constraints
 

@@ -23,11 +23,6 @@ FieldWorks uses a native C++ Views engine for text layout and rendering. Managed
 
 ### References
 
-- [Views engine](../../../../Src/Views/AGENTS.md#architecture) — Native layout and rendering engine
-- [Views interfaces](../../../../Src/Common/ViewsInterfaces/AGENTS.md#architecture) — Managed COM interface definitions
-- [RootSite hosting](../../../../Src/Common/RootSite/AGENTS.md#architecture) — Advanced root site infrastructure
-- [SimpleRootSite hosting](../../../../Src/Common/SimpleRootSite/AGENTS.md#architecture) — Standard view hosting control
-- [ManagedVwWindow bridge](../../../../Src/ManagedVwWindow/AGENTS.md#interop--contracts) — HWND bridge to native Views
 
 ## Constraints
 

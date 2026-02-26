@@ -26,8 +26,6 @@ Entry creation flows through Lexicon UI components and shared lexicon dialogs. T
 
 ### References
 
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#key-components) — Entry menu handlers and dialogs
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Insert entry and sense dialogs
 
 ## Constraints
 

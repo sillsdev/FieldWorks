@@ -12,7 +12,7 @@ Define allowed dependencies between major layers and core frameworks in FieldWor
 
 ## Context
 
-AGENTS.md files describe component-specific dependencies. This spec captures the cross-cutting rules that keep the dependency graph stable and understandable.
+Repository.Intelligence.Graph.json and the minimal AGENTS set describe component dependencies. This spec captures the cross-cutting rules that keep the dependency graph stable and understandable.
 
 ## Dependency Rules
 
@@ -22,9 +22,6 @@ AGENTS.md files describe component-specific dependencies. This spec captures the
 
 ### References
 
-- [Framework dependencies](../../../../Src/Common/Framework/AGENTS.md#dependencies) — Framework upstream and downstream usage
-- [xWorks dependencies](../../../../Src/xWorks/AGENTS.md#dependencies) — Shell dependencies on frameworks and views
-- [XCore dependencies](../../../../Src/XCore/AGENTS.md#dependencies) — Core mediator framework dependencies
 
 ## Constraints
 

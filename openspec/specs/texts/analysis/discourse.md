@@ -26,8 +26,6 @@ Discourse analysis builds on Interlinear text data and uses specialized Discours
 
 ### References
 
-- [Discourse components](../../../../Src/LexText/Discourse/AGENTS.md#key-components) — Constituent chart UI
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — InterlinDocChart base
 
 ## Constraints
 

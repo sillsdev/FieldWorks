@@ -12,7 +12,7 @@ Define shared patterns for LCModel data access and caching.
 
 ## Context
 
-FieldWorks data access is built on LCModel and cache layers used by framework services and view hosts. Components document their data access specifics in AGENTS.md; this spec captures shared patterns.
+FieldWorks data access is built on LCModel and cache layers used by framework services and view hosts. Data-access specifics are summarized in the minimal AGENTS set plus Repository.Intelligence.Graph.json; this spec captures shared patterns.
 
 ## Data Access Patterns
 
@@ -22,9 +22,6 @@ FieldWorks data access is built on LCModel and cache layers used by framework se
 
 ### References
 
-- [CacheLight architecture](../../../../Src/CacheLight/AGENTS.md#architecture) — In-memory cache and metadata model
-- [Framework dependencies](../../../../Src/Common/Framework/AGENTS.md#dependencies) — Framework uses LCModel services
-- [Cellar XML utilities](../../../../Src/Cellar/AGENTS.md#purpose) — XML parsing utilities used by native data access
 
 ## Constraints
 
