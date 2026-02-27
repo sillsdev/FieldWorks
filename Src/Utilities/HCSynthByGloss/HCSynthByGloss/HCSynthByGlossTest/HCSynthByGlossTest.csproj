@@ -22,7 +22,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="C:\fwrepo\fw\Src\AssemblyInfoForTests.cs" />
+    <Compile Remove="..\..\..\..\AssemblyInfoForTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
