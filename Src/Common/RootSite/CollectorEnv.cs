@@ -2921,6 +2921,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void AddTsString(ITsString tss)
 		{
+			if (m_builder.Text != null)
+			{
+				// Allow MoreThanOneLineMatcher and ExactlyOneLineMatcher to distinguish lines.
+				m_builder.Append("\r");
+			}
 			AppendSpaceForFirstWordInNewParagraph(tss.Text);
 			m_builder.AppendTsString(tss);
 		}
@@ -2933,6 +2938,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		internal protected override void AddResultString(string s)
 		{
+			if (m_builder.Text != null)
+			{
+				// Allow MoreThanOneLineMatcher and ExactlyOneLineMatcher to distinguish lines.
+				m_builder.Append("\r");
+			}
 			AppendSpaceForFirstWordInNewParagraph(s);
 			m_builder.Append(s);
 		}

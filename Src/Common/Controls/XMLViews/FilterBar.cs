@@ -967,6 +967,8 @@ namespace SIL.FieldWorks.Common.Controls
 				case "true":
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksBlanks), new BlankMatcher(), item));
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksNonBlanks), new NonBlankMatcher(), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksMoreThanOneLine), new MoreThanOneLineMatcher(), item));
+					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksExactlyOneLine), new ExactlyOneLineMatcher(), item));
 					break;
 			}
 
