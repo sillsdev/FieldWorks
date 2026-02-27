@@ -76,6 +76,6 @@ jobs:
         with:
           files: 'test-results/**/*.trx'
           check_name: NUnit Tests
-          comment_mode: always
+          comment_mode: ${{ github.event_name == 'pull_request' && 'always' || 'off' }}
           job_summary: true
           fail_on: test failures
