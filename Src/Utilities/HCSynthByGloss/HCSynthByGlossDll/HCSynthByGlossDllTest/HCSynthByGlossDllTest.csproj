@@ -5,7 +5,9 @@
     <RootNamespace>SIL.HCSynthByGlossDllTest</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
-    <IsTestProject>true</IsTestProject>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <UseUiIndependentTestAssemblyInfo>true</UseUiIndependentTestAssemblyInfo>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -21,9 +23,6 @@
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="..\..\..\..\AssemblyInfoForTests.cs" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="SIL.Core" />
@@ -41,5 +40,6 @@
   <ItemGroup>
     <ProjectReference Include="../../HCSynthByGlossDll/HCSynthByGlossDll.csproj" />
     <ProjectReference Include="../../HCSynthByGlossLib/HCSynthByGlossLib.csproj" />
+    <ProjectReference Include="..\..\..\..\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj" />
   </ItemGroup>
 </Project>
