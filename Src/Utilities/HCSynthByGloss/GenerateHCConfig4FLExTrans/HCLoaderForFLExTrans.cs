@@ -1835,11 +1835,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						else
 						{
 							prefixPattern.Children.Add(PrefixNull());
-							if (contexts.Item2.Contains("^"))
-							{
-								int i = 0;
-								int j = i++;
-							}
 							prefixPattern.Children.AddRange(LoadPatternNodes(contexts.Item2));
 							if (contexts.Item2.EndsWith("#"))
 								prefixPattern.Children.Add(SuffixNull());

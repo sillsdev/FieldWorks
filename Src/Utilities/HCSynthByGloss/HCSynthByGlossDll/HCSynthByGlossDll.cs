@@ -64,7 +64,6 @@ namespace SIL.HCSynthByGloss
 			{
 				return kError1 + kGlossFile + kError2 + GlossFile + kError3;
 			}
-			Language synLang = XmlLanguageLoader.Load(HcXmlFile);
 			var hcTraceManager = new HcXmlTraceManager();
 			hcTraceManager.IsTracing = DoTracing;
 			var srcMorpher = new Morpher(hcTraceManager, synLang);
@@ -115,18 +114,20 @@ namespace SIL.HCSynthByGloss
 			var traceTransform = XmlUtils.CreateTransform("HCSynthByGlossFormatHCTrace", "PresentationTransforms");
 			XPathDocument doc = new XPathDocument(xmlFile);
 
-			StreamWriter result = new StreamWriter(tempHtmResult);
-			XsltArgumentList argList = new XsltArgumentList();
-			argList.AddParam("prmIconPath", "", iconPath);
-			// we do not have access to any of the following; use defaults
-			//argList.AddParam("prmAnalysisFont", "", m_language.NTFontFace);
-			//argList.AddParam("prmAnalysisFontSize", "", m_language.NTFontSize.ToString());
-			//argList.AddParam("prmVernacularFont", "", m_language.LexFontFace);
-			//argList.AddParam("prmVernacularFontSize", "", m_language.LexFontSize.ToString());
-			//argList.AddParam("prmVernacularRTL", "", m_language.NTColorName);
-			argList.AddParam("prmShowTrace", "", "true");
-			traceTransform.Transform(doc, argList, result);
-			result.Close();
+			using (StreamWriter result = new StreamWriter(tempHtmResult))
+			{
+				XsltArgumentList argList = new XsltArgumentList();
+				argList.AddParam("prmIconPath", "", iconPath);
+				// we do not have access to any of the following; use defaults
+				//argList.AddParam("prmAnalysisFont", "", m_language.NTFontFace);
+				//argList.AddParam("prmAnalysisFontSize", "", m_language.NTFontSize.ToString());
+				//argList.AddParam("prmVernacularFont", "", m_language.LexFontFace);
+				//argList.AddParam("prmVernacularFontSize", "", m_language.LexFontSize.ToString());
+				//argList.AddParam("prmVernacularRTL", "", m_language.NTColorName);
+				argList.AddParam("prmShowTrace", "", "true");
+				traceTransform.Transform(doc, argList, result);
+				result.Close();
+			}
 			return tempHtmResult;
 		}
 

@@ -460,9 +460,9 @@ namespace HCSynthByGloss
 						if (env != null)
 							reasonElem.Add(new XElement("Environment", env));
 						if (prefixEnv != null)
-							reasonElem.Add(new XElement("Environment", env));
+							reasonElem.Add(new XElement("Environment", prefixEnv));
 						if (suffixEnv != null)
-							reasonElem.Add(new XElement("Environment", env));
+							reasonElem.Add(new XElement("Environment", suffixEnv));
 						trace.Add(reasonElem);
 					}
 					else

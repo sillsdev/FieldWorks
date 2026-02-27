@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
-	<xsl:include href="FormatCommon.xsl"/>
+	<xsl:include href="HCSynthByGlossFormatCommon.xsl"/>
 	<!--
 =========================================================================
 Format the xml returned from HermitCrab synthesis trace for user display.
@@ -1574,7 +1574,7 @@ ShowMorph
 				<xsl:variable name="len" select="string-length($form)"/>
 				<xsl:variable name="lenBefore" select="string-length($sBefore)"/>
 				<xsl:choose>
-					<xsl:when test="lenBefore=0">
+					<xsl:when test="$lenBefore=0">
 						<!-- null is at the beginning -->
 						<xsl:call-template name="StripOffNulls">
 							<xsl:with-param name="form" select="substring-after($form,$sNull)"/>
