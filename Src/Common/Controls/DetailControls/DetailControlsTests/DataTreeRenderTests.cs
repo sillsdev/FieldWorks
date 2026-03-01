@@ -995,6 +995,273 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		/// <summary>
+		/// Verifies that slice positions set by the full layout pass (fFull=true,
+		/// called from OnLayout) agree with the accumulated yTop values computed by
+		/// the paint path (fFull=false, called from OnPaint). This is the core safety
+		/// invariant for a future binary-search optimization: if the paint path skips
+		/// iterating above-viewport slices, the positions it uses must match what
+		/// the full layout established.
+		/// Failure mode: yTop accumulator drift when the paint path doesn't walk all slices.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_FullLayoutAndPaintPathPositionsAgree()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 2400, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				var dt = harness.DataTree;
+
+				// Record positions after full layout (set by OnLayout → HandleLayout1(fFull=true))
+				var fullLayoutPositions = new int[dt.Slices.Count];
+				var fullLayoutHeights = new int[dt.Slices.Count];
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					var slice = (Slice)dt.Slices[i];
+					fullLayoutPositions[i] = slice.Top;
+					fullLayoutHeights[i] = slice.Height;
+				}
+
+				// Force another paint-path layout by invalidating and pumping
+				dt.Invalidate();
+				System.Windows.Forms.Application.DoEvents();
+
+				// Verify positions haven't drifted
+				int checkedCount = 0;
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					var slice = (Slice)dt.Slices[i];
+					Assert.That(slice.Top, Is.EqualTo(fullLayoutPositions[i]),
+						$"Slice [{i}] ({slice.GetType().Name}, Label=\"{slice.Label}\") " +
+						$"Top drifted from {fullLayoutPositions[i]} to {slice.Top} " +
+						$"after paint-path layout. Full→paint position agreement broken.");
+					checkedCount++;
+				}
+
+				Console.WriteLine($"[OPT-TEST] Position agreement: {checkedCount} slices verified");
+			}
+		}
+
+		/// <summary>
+		/// Verifies that AutoScrollPosition does not drift across multiple paint passes.
+		/// The paint path adjusts scroll position when slices above the viewport change
+		/// height (e.g., DummyObjectSlice → real slice). After initial convergence,
+		/// scroll position must be stable.
+		/// Failure mode: binary search skips the desiredScrollPosition adjustment for
+		/// above-viewport slices, causing scroll jumps.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_ScrollPositionStableAcrossPaints()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				// Use a small viewport so most slices are below the fold
+				harness.PopulateSlices(1024, 400, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				var dt = harness.DataTree;
+
+				// Warm up — first paint triggers layout convergence
+				var warmup = harness.CaptureCompositeBitmap();
+				Assert.That(warmup, Is.Not.Null);
+				warmup.Dispose();
+
+				// Record scroll position after convergence
+				var scrollAfterConvergence = dt.AutoScrollPosition;
+
+				// Force multiple paint passes
+				for (int pass = 0; pass < 3; pass++)
+				{
+					dt.Invalidate();
+					System.Windows.Forms.Application.DoEvents();
+				}
+
+				Assert.That(dt.AutoScrollPosition, Is.EqualTo(scrollAfterConvergence),
+					$"AutoScrollPosition drifted from {scrollAfterConvergence} to " +
+					$"{dt.AutoScrollPosition} after 3 additional paint passes. " +
+					$"Scroll stability is essential for binary-search correctness.");
+
+				Console.WriteLine($"[OPT-TEST] Scroll stability: position={dt.AutoScrollPosition} " +
+					$"stable across 3 additional paints");
+			}
+		}
+
+		/// <summary>
+		/// Verifies that all slices at or before the last visible slice are also visible.
+		/// The .NET Framework has a bug (LT-7307) where making a slice visible when
+		/// prior slices are invisible causes index corruption. The MakeSliceVisible
+		/// method guarantees all preceding slices are visible before making the target
+		/// visible. A binary search that starts mid-list must preserve this invariant.
+		/// Failure mode: binary search skips MakeSliceVisible for slices 0..N-1, leaving
+		/// gaps in the visibility sequence.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_VisibilitySequenceHasNoGaps()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 800, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				// Force paint to trigger MakeSliceVisible
+				var bitmap = harness.CaptureCompositeBitmap();
+				Assert.That(bitmap, Is.Not.Null);
+				bitmap.Dispose();
+
+				var dt = harness.DataTree;
+
+				// Find the highest-index visible slice
+				int highestVisibleIndex = -1;
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					if (((Slice)dt.Slices[i]).Visible)
+						highestVisibleIndex = i;
+				}
+
+				Assert.That(highestVisibleIndex, Is.GreaterThan(0),
+					"Should have multiple visible slices");
+
+				// All slices 0..highestVisibleIndex must be visible (no gaps)
+				int gapCount = 0;
+				for (int i = 0; i <= highestVisibleIndex; i++)
+				{
+					var slice = (Slice)dt.Slices[i];
+					if (!slice.Visible)
+					{
+						gapCount++;
+						Console.WriteLine($"[OPT-TEST] Visibility gap at [{i}] " +
+							$"({slice.GetType().Name}, Label=\"{slice.Label}\")");
+					}
+				}
+
+				Assert.That(gapCount, Is.EqualTo(0),
+					$"Found {gapCount} invisible slices before the last visible slice " +
+					$"(index {highestVisibleIndex}). LT-7307: all preceding slices must " +
+					$"be visible to prevent index corruption.");
+
+				Console.WriteLine($"[OPT-TEST] Visibility sequence: no gaps in 0..{highestVisibleIndex}");
+			}
+		}
+
+		/// <summary>
+		/// Verifies that no DummyObjectSlice remains in the viewport after paint.
+		/// The paint path must make all viewport slices real via FieldAt(). A binary
+		/// search that miscalculates which slices are in the viewport could leave
+		/// DummyObjectSlices un-expanded.
+		/// Failure mode: binary search starts too late, leaving slices at the top edge
+		/// of the viewport as dummies.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_NoDummySlicesInViewportAfterPaint()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 800, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				// Force full paint cycle
+				var bitmap = harness.CaptureCompositeBitmap();
+				Assert.That(bitmap, Is.Not.Null);
+				bitmap.Dispose();
+
+				var dt = harness.DataTree;
+				int viewportHeight = dt.ClientRectangle.Height;
+				int dummyCount = 0;
+
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					var slice = (Slice)dt.Slices[i];
+					int sliceTop = slice.Top;
+					int sliceBottom = sliceTop + slice.Height;
+
+					// Slice intersects the viewport
+					if (sliceBottom > 0 && sliceTop < viewportHeight)
+					{
+						if (!slice.IsRealSlice)
+						{
+							dummyCount++;
+							Console.WriteLine($"[OPT-TEST] Dummy in viewport at [{i}]: " +
+								$"{slice.GetType().Name} Y={sliceTop}-{sliceBottom}");
+						}
+					}
+				}
+
+				Assert.That(dummyCount, Is.EqualTo(0),
+					$"Found {dummyCount} DummyObjectSlice(s) in viewport (0-{viewportHeight}). " +
+					$"Paint path must make all viewport slices real via FieldAt().");
+
+				Console.WriteLine($"[OPT-TEST] No dummies in viewport 0-{viewportHeight}");
+			}
+		}
+
+		/// <summary>
+		/// Verifies that slice heights are stable after layout convergence.
+		/// A binary search for the first visible slice depends on accumulated
+		/// heights being deterministic: if heights change between paint calls
+		/// (e.g., because DummyObjectSlice→real changes weren't finalized),
+		/// the binary search would compute wrong yTop offsets and skip or
+		/// double-show slices.
+		/// After the initial full-layout pass, heights should never change
+		/// on subsequent paint passes (since all viewport slices are already real).
+		/// Failure mode: binary search pre-computes yTop from stale heights,
+		/// causing slices to render at wrong positions.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_SliceHeightsStableAfterConvergence()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 800, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				// Force full convergence — first paint makes everything real
+				var warmup = harness.CaptureCompositeBitmap();
+				Assert.That(warmup, Is.Not.Null);
+				warmup.Dispose();
+
+				var dt = harness.DataTree;
+
+				// Record converged heights
+				var convergedHeights = new int[dt.Slices.Count];
+				for (int i = 0; i < dt.Slices.Count; i++)
+					convergedHeights[i] = ((Slice)dt.Slices[i]).Height;
+
+				// Force 3 more paint cycles
+				for (int pass = 0; pass < 3; pass++)
+				{
+					dt.Invalidate();
+					System.Windows.Forms.Application.DoEvents();
+				}
+
+				// Verify heights haven't changed
+				int driftCount = 0;
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					var slice = (Slice)dt.Slices[i];
+					if (slice.Height != convergedHeights[i])
+					{
+						driftCount++;
+						Console.WriteLine($"[OPT-TEST] Height drift at [{i}] " +
+							$"({slice.GetType().Name}): {convergedHeights[i]} → {slice.Height}");
+					}
+				}
+
+				Assert.That(driftCount, Is.EqualTo(0),
+					$"{driftCount} slice(s) changed height after convergence. " +
+					$"Binary search requires stable heights to compute accurate yTop offsets.");
+
+				Console.WriteLine($"[OPT-TEST] Height stability: {dt.Slices.Count} slices " +
+					$"stable across 3 post-convergence paint passes");
+			}
+		}
+
 		#endregion
 
 		#region Helpers

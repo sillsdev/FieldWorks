@@ -3346,8 +3346,51 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// Binary search for the index of the first slice whose bottom edge extends
+		/// below <paramref name="clipTop"/>. Slices before this index are entirely
+		/// above the viewport and can be skipped in the paint path.
+		/// Returns 0 if no slices can be safely skipped (e.g., all are visible or a
+		/// null entry is encountered during the search).
+		/// </summary>
+		/// <param name="clipTop">The Y coordinate of the top of the clip rectangle.</param>
+		/// <returns>Index of the first slice that might be visible.</returns>
+		private int FindFirstPotentiallyVisibleSlice(int clipTop)
+		{
+			int lo = 0, hi = Slices.Count - 1;
+			int result = 0;
+
+			while (lo <= hi)
+			{
+				int mid = lo + (hi - lo) / 2;
+				var slice = Slices[mid] as Slice;
+				if (slice == null)
+					return result; // Can't binary search past null; use best result so far
+
+				int sliceBottom = slice.Top + slice.Height;
+				if (sliceBottom <= clipTop)
+				{
+					// Slice ends at or before the clip top — entirely above viewport.
+					result = mid + 1;
+					lo = mid + 1;
+				}
+				else
+				{
+					// Slice extends below clip top — could be visible.
+					hi = mid - 1;
+				}
+			}
+
+			// Back up by one slice as a safety margin for heavyweight spacing or
+			// off-by-one edge cases. Cost: one extra loop iteration.
+			return Math.Max(0, result - 1);
+		}
+
+		/// <summary>
 		/// Used both by main layout routine and also by OnPaint to make sure all
 		/// visible slices are real. For full layout, clipRect is meaningless.
+		/// On the paint path (!fFull), uses a binary search to skip above-viewport
+		/// slices, reducing each paint from O(N) to O(log N + V) where V is the
+		/// number of visible slices.
 		/// </summary>
 		/// <param name="fFull">if set to <c>true</c> [f full].</param>
 		/// <param name="clipRect">The clip rect.</param>
@@ -3368,7 +3411,36 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 
 			int yTop = AutoScrollPosition.Y;
-			for (int i = 0; i < Slices.Count; i++)
+			int startIndex = 0;
+
+			// Paint-path optimization: binary search for the first potentially-visible
+			// slice, skipping above-viewport slices whose fSliceIsVisible would be false.
+			// Safety: only applied on the paint path after the full layout pass has already
+			// positioned every slice. Skipped slices have no side effects in the original
+			// loop (no FieldAt, no MakeSliceVisible, no scroll-position adjustment).
+			if (!fFull && Slices.Count > 0)
+			{
+				startIndex = FindFirstPotentiallyVisibleSlice(clipRect.Top);
+				if (startIndex > 0)
+				{
+					var startSlice = Slices[startIndex] as Slice;
+					if (startSlice != null)
+					{
+						// Recover yTop for the start of this iteration.
+						// slice.Top was set to yTop AFTER heavyweight spacing was added,
+						// so undo the spacing to get the yTop at loop-entry for this slice.
+						yTop = startSlice.Top;
+						if (startSlice.Weight == ObjectWeight.heavy)
+							yTop -= (HeavyweightRuleThickness + HeavyweightRuleAboveMargin);
+					}
+					else
+					{
+						startIndex = 0; // Null slice — fall back to full linear scan.
+					}
+				}
+			}
+
+			for (int i = startIndex; i < Slices.Count; i++)
 			{
 				// Don't care about items below bottom of clip, if one is specified.
 				if ((!fFull) && yTop >= clipRect.Bottom)
@@ -3629,8 +3701,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			try
 			{
-				// Optimize JohnT: Could we do a binary search for the
-				// slice at the top? But the chop point slices may not be real...
+				// Paint-path binary search: HandleLayout1 now uses FindFirstPotentiallyVisibleSlice
+				// to skip above-viewport slices (addresses JohnT's original TODO).
 				m_layoutState = LayoutStates.klsChecking;
 				Rectangle requiredReal = ClientRectangle; // all slices in this must be real
 				HandleLayout1(false, requiredReal);

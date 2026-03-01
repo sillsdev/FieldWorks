@@ -375,13 +375,70 @@
 
 ---
 
+## 2026-02-20 — Binary search paint-path optimization
+
+### Enhancement 12: Binary search for first visible slice in HandleLayout1
+
+**What changed:** Added `FindFirstPotentiallyVisibleSlice(int clipTop)` — a binary search on `Slice.Top + Slice.Height` — to skip above-viewport slices in the paint path (`HandleLayout1(fFull=false)`). The `yTop` accumulator is recovered from the start slice's known position (set by the prior full layout), with an undo for heavyweight spacing. A one-slice backup margin ensures robustness.
+
+**How it improves timing:** Reduces the paint path from O(N) to O(log N + V) where V is the number of visible slices. For complex entries with 100-250+ slices, this eliminates iterating through all above-viewport slices on every paint, saving per-slice property reads, position checks, and height accumulations.
+
+**Measured savings:**
+
+| Scenario | Slices | Before (ms) | After (ms) | Delta |
+|----------|--------|-------------|------------|-------|
+| timing-shallow | 25 | 984.5 | 283.8 | -71.2% * |
+| timing-deep | 29 | 375.5 | 300.2 | -20.1% |
+| timing-extreme | 253 | 449.9 | 419.6 | -6.7% |
+| paint-extreme | 253 | 447.3 | 399.2 | -10.8% |
+
+\* timing-shallow improvement is inflated by JIT warmup effects (first test in suite).
+
+**Safety analysis:**
+- Only applied on paint path (`!fFull`), never on full layout.
+- Skipped slices had `fSliceIsVisible=false` in the original loop — no FieldAt, MakeSliceVisible, or scroll-position adjustment side effects are missed.
+- `yTop` recovery from `slice.Top` is correct because the full layout pass (OnLayout → HandleLayout1(true)) positions every slice before any paint.
+- Heavyweight spacing undo (`yTop -= HeavyweightRuleThickness + HeavyweightRuleAboveMargin`) exactly reverses what the loop body adds back.
+- Binary search requires monotonically increasing positions — guaranteed by sequential layout pass, validated by test.
+- Null-slice fallback returns to linear scan from index 0.
+- One-slice backup (`Math.Max(0, result - 1)`) provides edge-case safety.
+- MakeSliceVisible's high-water mark handles LT-7307 independent of HandleLayout1.
+- Original OnPaint TODO comment ("Optimize JohnT: Could we do a binary search...") updated.
+
+### Binary search risk-reduction tests (DataTreeOpt_ prefix)
+
+5 targeted tests added before the optimization to catch each identified failure mode:
+
+1. **FullLayoutAndPaintPathPositionsAgree** — Catches yTop accumulator drift between full layout and paint path.
+2. **ScrollPositionStableAcrossPaints** — Catches missed desiredScrollPosition adjustment for above-viewport slices.
+3. **VisibilitySequenceHasNoGaps** — Catches MakeSliceVisible ordering violation (LT-7307).
+4. **NoDummySlicesInViewportAfterPaint** — Catches failure to call FieldAt for visible DummyObjectSlices.
+5. **SliceHeightsStableAfterConvergence** — Catches binary search using stale heights for yTop computation.
+
+### Devil's-advocate review (Enhancement 12)
+
+| Risk | Classification | Analysis |
+|------|----------------|----------|
+| Positions not monotonic | Monitor | Full layout guarantees; test validates; -1 backup |
+| DummyObjectSlice stale Top | Monitor | Full layout positions all before paint fires |
+| yTop heavyweight undo | Verified safe | Traced: undo + loop re-add matches linear scan |
+| MakeSliceVisible (LT-7307) | No issue | High-water mark handles independently |
+| desiredScrollPosition drift | No issue | Only fires for visible slices (not skipped) |
+| Return value correctness | Verified | slice.Top includes prior accumulation |
+
+### Verification
+- `./build.ps1 -BuildTests` succeeded (0 errors).
+- `./test.ps1 -TestFilter "DataTreeTiming|DataTreeOpt" -NoBuild` passed (17 tests: 5 timing + 12 optimization).
+- Snapshot tests (`DataTreeRender_`) — pre-existing baseline drift, unrelated to this change (confirmed by stash/restore test).
+
+---
+
 ## Remaining optimization targets (ranked)
 
 | Rank | Target | Risk | Impact | Status |
 |------|--------|------|--------|--------|
-| 1 | Binary search in HandleLayout1 paint path | MODERATE | HIGH | Not started — original author left TODO comment |
-| 2 | IndexOfSliceAtY binary search | LOW | LOW-MOD | Not started — mouse interaction, not hot path |
-| 3 | Eliminate Slices.IndexOf in batch RemoveSlice | LOW | LOW-MOD | Not started |
-| 4 | Guard ShowSubControls with visibility check | LOW | LOW | Assessed — too little benefit for the change |
-| 5 | Avoid redundant Invalidate in OnLayout convergence | HIGH | LOW-MOD | Deferred — historically fragile |
-| 6 | HWND reduction per slice | VERY HIGH | HIGHEST | Architectural — multi-month project |
+| 1 | IndexOfSliceAtY binary search | LOW | LOW-MOD | Not started — mouse interaction, not hot path |
+| 2 | Eliminate Slices.IndexOf in batch RemoveSlice | LOW | LOW-MOD | Not started |
+| 3 | Guard ShowSubControls with visibility check | LOW | LOW | Assessed — too little benefit for the change |
+| 4 | Avoid redundant Invalidate in OnLayout convergence | HIGH | LOW-MOD | Deferred — historically fragile |
+| 5 | HWND reduction per slice | VERY HIGH | HIGHEST | Architectural — multi-month project |

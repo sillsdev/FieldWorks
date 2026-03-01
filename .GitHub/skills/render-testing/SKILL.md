@@ -120,7 +120,18 @@ When a timing optimization is implemented, always run this sequence before commi
     .\test.ps1 -TestFilter "DataTreeTiming" -NoBuild
     ```
 
-6. **Timing evidence documentation (mandatory)**
+6. **Snapshot regression check (mandatory)**
+    - Run the visual snapshot tests to verify no rendering regressions:
+    ```powershell
+    .\test.ps1 -TestFilter "DataTreeRender_" -NoBuild
+    ```
+    - All 6 snapshot scenarios (collapsed, simple, deep, extreme, expanded, multiws) must pass.
+    - If any fail with `VerifyException`, inspect the `.received.png` vs `.verified.png` diff:
+      - If the change is expected (e.g., layout/factory change), regenerate baselines per the "Regenerate All Baselines" section.
+      - If the change is unexpected, the optimization introduced a visual regression — **stop and debug before committing**.
+    - This gate catches subtle rendering bugs (shifted positions, missing slices, clipped content) that timing and optimization tests won't detect.
+
+7. **Timing evidence documentation (mandatory)**
     - Before committing, create or append `TIMING_ENHANCEMENTS.md` at repo root.
     - For each enhancement, record:
       1) what changed,
@@ -128,7 +139,7 @@ When a timing optimization is implemented, always run this sequence before commi
       3) measured savings (render timings and/or saved call counts),
       4) why it is safe architecturally (or what architectural updates were made).
 
-7. **Commit only after docs + tests are updated**
+8. **Commit only after docs + tests are updated**
     - Ensure the markdown and timing artifacts are staged with code changes.
 
 ## Regenerate All Baselines
