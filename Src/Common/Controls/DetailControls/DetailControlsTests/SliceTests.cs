@@ -272,6 +272,61 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		[Test]
+		public void IsSequenceNode_TrueForOwningSequence()
+		{
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+			m_Slice.Cache = Cache;
+			m_Slice.Object = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			m_Slice.ConfigurationNode = CreateXmlElementFromOuterXmlOf("<slice><seq field=\"Senses\" /></slice>");
+
+			Assert.That(m_Slice.IsSequenceNode, Is.True,
+				"LexEntry.Senses should be treated as an owning sequence node");
+			Assert.That(m_Slice.IsCollectionNode, Is.False);
+		}
+
+		[Test]
+		public void IsCollectionNode_TrueForNonOwningSequenceField()
+		{
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+			m_Slice.Cache = Cache;
+			m_Slice.Object = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			m_Slice.ConfigurationNode = CreateXmlElementFromOuterXmlOf("<slice><seq field=\"CitationForm\" /></slice>");
+
+			Assert.That(m_Slice.IsSequenceNode, Is.False,
+				"CitationForm is not an owning sequence field");
+			Assert.That(m_Slice.IsCollectionNode, Is.True,
+				"Current behavior: any <seq> node that is not owning-sequence is treated as collection");
+		}
+
+		[Test]
+		public void Object_SetAndGet()
+		{
+			using (var slice = new Slice())
+			{
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+
+				slice.Object = entry;
+
+				Assert.That(slice.Object, Is.SameAs(entry));
+			}
+		}
+
+		[Test]
+		public void Key_SetAndGet()
+		{
+			using (var slice = new Slice())
+			{
+				var key = new object[] { 1, "abc" };
+
+				slice.Key = key;
+
+				Assert.That(slice.Key, Is.SameAs(key));
+			}
+		}
+
 		/// <summary>
 		/// ContainingDataTree returns null when the slice is not parented.
 		/// </summary>

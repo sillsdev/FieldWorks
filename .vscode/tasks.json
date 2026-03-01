@@ -48,6 +48,12 @@
       "default": ""
     },
     {
+      "id": "coverageFilter",
+      "type": "promptString",
+      "description": "Coverage test filter (e.g., 'FullyQualifiedName~DetailControls')",
+      "default": "FullyQualifiedName~DetailControls"
+    },
+    {
       "id": "worktreeBranch",
       "type": "promptString",
       "description": "Branch name for worktree (e.g., spec/my-branch or release/9.3)",
@@ -359,6 +365,34 @@
         }
       },
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test Coverage (DetailControls)",
+      "type": "shell",
+      "command": "./Build/Agent/Run-TestCoverage.ps1 -Configuration ${input:testConfiguration} -TestFilter 'FullyQualifiedName~DetailControls'",
+      "group": "test",
+      "detail": "Collect local cobertura + HTML coverage report for DetailControls tests",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Coverage (with filter)",
+      "type": "shell",
+      "command": "./Build/Agent/Run-TestCoverage.ps1 -Configuration ${input:testConfiguration} -TestFilter '${input:coverageFilter}'",
+      "group": "test",
+      "detail": "Collect local cobertura + HTML coverage report using a custom test filter",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
     },
 
     // ==================== CI Parity Checks ====================

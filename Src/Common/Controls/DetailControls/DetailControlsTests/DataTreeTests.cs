@@ -79,6 +79,101 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		#endregion
 
+		#region Characterization Tests — Coverage Gap Closures
+
+		[Test]
+		public void DoNotRefresh_GetterReflectsSetter()
+		{
+			Assert.That(m_dtree.DoNotRefresh, Is.False);
+			m_dtree.DoNotRefresh = true;
+			Assert.That(m_dtree.DoNotRefresh, Is.True);
+			m_dtree.DoNotRefresh = false;
+			Assert.That(m_dtree.DoNotRefresh, Is.False);
+		}
+
+		[Test]
+		public void Init_AssignsMediatorAndPropertyTable()
+		{
+			Assert.That(m_dtree.Mediator, Is.SameAs(m_mediator));
+			Assert.That(m_dtree.PropTable, Is.SameAs(m_propertyTable));
+		}
+
+		[Test]
+		public void RootLayoutName_DefaultAndAfterShowObject()
+		{
+			Assert.That(m_dtree.RootLayoutName, Is.EqualTo("default"));
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			Assert.That(m_dtree.RootLayoutName, Is.EqualTo("CfOnly"));
+		}
+
+		[Test]
+		public void SliceFilter_GetterReflectsSetter()
+		{
+			Assert.That(m_dtree.SliceFilter, Is.Null);
+
+			var filter = new SliceFilter();
+			m_dtree.SliceFilter = filter;
+
+			Assert.That(m_dtree.SliceFilter, Is.SameAs(filter));
+		}
+
+		[Test]
+		public void ShowingAllFields_ReadsShowHiddenSettingForTool()
+		{
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, true, PropertyTable.SettingsGroup.LocalSettings);
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			Assert.That(m_dtree.ShowingAllFields, Is.True);
+		}
+
+		[Test]
+		public void GetFlidIfPossible_ValidField_ReturnsFlid()
+		{
+			var mdc = Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
+			Assert.That(mdc, Is.Not.Null);
+
+			int flid = m_dtree.GetFlidIfPossible(LexEntryTags.kClassId, "CitationForm", mdc);
+
+			Assert.That(flid, Is.GreaterThan(0), "CitationForm should resolve to a valid flid");
+		}
+
+		[Test]
+		public void GetFlidIfPossible_InvalidField_ReturnsZero_AndCachesInvalidKey()
+		{
+			var mdc = Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
+			Assert.That(mdc, Is.Not.Null);
+			int countBefore = GetInvalidFieldCacheCount();
+
+			int flid = m_dtree.GetFlidIfPossible(LexEntryTags.kClassId, "DefinitelyNotARealField", mdc);
+
+			Assert.That(flid, Is.EqualTo(0));
+			Assert.That(GetInvalidFieldCacheCount(), Is.EqualTo(countBefore + 1),
+				"Invalid field should be cached after first failed lookup");
+		}
+
+		[Test]
+		public void GetFlidIfPossible_InvalidField_SecondCallDoesNotGrowCache()
+		{
+			var mdc = Cache.DomainDataByFlid.MetaDataCache as IFwMetaDataCacheManaged;
+			Assert.That(mdc, Is.Not.Null);
+
+			m_dtree.GetFlidIfPossible(LexEntryTags.kClassId, "StillNotARealField", mdc);
+			int countAfterFirst = GetInvalidFieldCacheCount();
+
+			m_dtree.GetFlidIfPossible(LexEntryTags.kClassId, "StillNotARealField", mdc);
+			int countAfterSecond = GetInvalidFieldCacheCount();
+
+			Assert.That(countAfterSecond, Is.EqualTo(countAfterFirst),
+				"Same invalid field should not be added twice to invalid-field cache");
+		}
+
+		#endregion
+
 		#region Test setup and teardown
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -871,6 +966,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(value, Is.Not.Null, "m_monitoredProps should be non-null");
 			var countProperty = value.GetType().GetProperty("Count");
 			Assert.That(countProperty, Is.Not.Null, "m_monitoredProps should expose Count");
+			return (int)countProperty.GetValue(value, null);
+		}
+
+		private int GetInvalidFieldCacheCount()
+		{
+			var field = typeof(DataTree).GetField("m_setInvalidFields",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(field, Is.Not.Null, "Could not reflect DataTree.m_setInvalidFields field");
+			var value = field.GetValue(m_dtree);
+			Assert.That(value, Is.Not.Null, "m_setInvalidFields should be non-null");
+			var countProperty = value.GetType().GetProperty("Count");
+			Assert.That(countProperty, Is.Not.Null, "m_setInvalidFields should expose Count");
 			return (int)countProperty.GetValue(value, null);
 		}
 

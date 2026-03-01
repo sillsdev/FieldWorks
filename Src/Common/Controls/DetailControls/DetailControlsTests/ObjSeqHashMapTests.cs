@@ -153,6 +153,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		[Test]
+		public void Report_DoesNotThrow_WhenMapContainsEntries()
+		{
+			var map = new ObjSeqHashMap();
+			var key = new ArrayList { 101 };
+			map.Add(key, MakeSlice(101));
+
+			Assert.DoesNotThrow(() => map.Report());
+		}
+
+		[Test]
 		public void Values_ReturnsAllSlices()
 		{
 			var map = new ObjSeqHashMap();

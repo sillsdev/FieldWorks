@@ -108,3 +108,52 @@ The following behaviors from the test plans (`test-plan-datatree.md`, `test-plan
 - **Phase 1** (partial-class split): Items 1–4 should be resolved before splitting, so the split starts from a cleaner baseline.
 - **Phase 2** (extract collaborators): Item 5 directly informs the notification pattern for `DataTreeModel`.
 - **Phase 3** (model/view separation): Item 7 informs testing strategy for `SliceSpec` generation.
+
+## Coverage Findings (2026-02-25)
+
+Coverage was re-run locally using `Build/Agent/Run-TestCoverage.ps1` and assessed via
+`.github/skills/managed-test-coverage-assessment/scripts/Assess-CoverageGaps.ps1`.
+
+### Focused Class Coverage Snapshot
+
+| Class | Line % | Branch % |
+|------|-------:|---------:|
+| `DataTree` | 40.59 | 28.03 |
+| `Slice` | 30.27 | 19.40 |
+| `ObjSeqHashMap` | 98.39 | 94.44 |
+
+### Gap Classification Summary (Top Focused Methods)
+
+| Suggested Resolution | Count |
+|----------------------|------:|
+| `add-tests-or-evaluate-relevance` | 109 |
+| `add-targeted-tests` | 43 |
+| `add-unit-tests` | 41 |
+| `simplify-architecture-or-add-ui-harness` | 23 |
+| `add-functional-tests` | 16 |
+| `dead-code-or-debug-path-review` | 3 |
+
+### Implemented Coverage-Reduction Tests (This Batch)
+
+The following tests were implemented to reduce deterministic unit-test gaps:
+
+- `DataTreeTests.DoNotRefresh_GetterReflectsSetter`
+- `DataTreeTests.GetFlidIfPossible_ValidField_ReturnsFlid`
+- `DataTreeTests.GetFlidIfPossible_InvalidField_ReturnsZero_AndCachesInvalidKey`
+- `DataTreeTests.GetFlidIfPossible_InvalidField_SecondCallDoesNotGrowCache`
+- `SliceTests.IsSequenceNode_TrueForOwningSequence`
+- `SliceTests.IsCollectionNode_TrueForNonOwningSequenceField`
+- `ObjSeqHashMapTests.Report_DoesNotThrow_WhenMapContainsEntries`
+
+### Artifacts
+
+- `Output/Debug/Coverage/coverage-summary.md`
+- `Output/Debug/Coverage/coverage-summary.json`
+- `Output/Debug/Coverage/coverage-gap-assessment.md`
+- `Output/Debug/Coverage/coverage-gap-assessment.json`
+
+### Current Prioritization After This Run
+
+1. Continue with deterministic `add-unit-tests` in `DataTree` and `Slice` (non-UI paths).
+2. Defer `simplify-architecture-or-add-ui-harness` methods unless extracted into pure collaborators.
+3. Review `dead-code-or-debug-path-review` candidates with maintainers before any removal.
