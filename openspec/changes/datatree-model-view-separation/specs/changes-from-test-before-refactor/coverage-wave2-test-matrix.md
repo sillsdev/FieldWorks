@@ -227,6 +227,120 @@ Incremental gain from the immediately previous checkpoint (65.38 / 50.04 for `Da
 - `Slice`: **+7.62 line** / **+4.50 branch**
 - `ObjSeqHashMap`: **no change**
 
+## Rerun Status (2026-02-26, post-Slice low-cost method/property batch)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~SliceTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **67.51%** line / **52.02%** branch
+- `Slice`: **40.51%** line / **25.68%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (67.51 / 52.02 for `DataTree`, 34.5 / 22.4 for `Slice`):
+
+- `DataTree`: **no change**
+- `Slice`: **+6.01 line** / **+3.28 branch**
+- `ObjSeqHashMap`: **no change**
+
+## Rerun Status (2026-02-26, post-Slice move paths + DataTree `MakeSliceRealAt`/`ChooseNewOwner` probes)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **68.27%** line / **52.68%** branch
+- `Slice`: **46.47%** line / **32.1%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (67.51 / 52.02 for `DataTree`, 40.51 / 25.68 for `Slice`):
+
+- `DataTree`: **+0.76 line** / **+0.66 branch**
+- `Slice`: **+5.96 line** / **+6.42 branch**
+- `ObjSeqHashMap`: **no change**
+
+## Rerun Status (2026-02-26, post-`EmbeddedSlice`/`ExpandSubItem` tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~SliceTests|FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **68.27%** line / **52.68%** branch
+- `Slice`: **47.63%** line / **33.47%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (68.27 / 52.68 for `DataTree`, 46.47 / 32.1 for `Slice`):
+
+- `DataTree`: **no change**
+- `Slice`: **+1.16 line** / **+1.37 branch**
+- `ObjSeqHashMap`: **no change**
+
+## Rerun Status (2026-02-26, post-`FocusSliceOrChild` + help-topic fallback + variant backref tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~SliceTests|FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **68.27%** line / **52.84%** branch
+- `Slice`: **54.48%** line / **42.76%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (68.27 / 52.68 for `DataTree`, 47.63 / 33.47 for `Slice`):
+
+- `DataTree`: **+0.00 line** / **+0.16 branch**
+- `Slice`: **+6.85 line** / **+9.29 branch**
+- `ObjSeqHashMap`: **no change**
+
+## Rerun Status (2026-02-26, post-`GetCloseSlices` + `GetCanDeleteNow`/`GetCanEditNow` tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~SliceTests|FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **68.27%** line / **52.84%** branch
+- `Slice`: **56.04%** line / **44.13%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (68.27 / 52.84 for `DataTree`, 54.48 / 42.76 for `Slice`):
+
+- `DataTree`: **no change**
+- `Slice`: **+1.56 line** / **+1.37 branch**
+- `ObjSeqHashMap`: **no change**
+
+## Rerun Status (2026-02-26, post-`GetSeqContext`/`GetAtomicContext` + `GetCanSplitNow` null-path tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~SliceTests|FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **68.27%** line / **52.84%** branch
+- `Slice`: **60.27%** line / **46.45%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (68.27 / 52.84 for `DataTree`, 56.04 / 44.13 for `Slice`):
+
+- `DataTree`: **no change**
+- `Slice`: **+4.23 line** / **+2.32 branch**
+- `ObjSeqHashMap`: **no change**
+
 Wave 2 desired target:
 
 - `DataTree` line coverage toward ~46-50%

@@ -1016,6 +1016,34 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.DoesNotThrow(() => map.Report());
 		}
 
+		[Test]
+		public void MakeSliceRealAt_WithExistingSlice_MakesSliceVisible()
+		{
+			var slice = new Slice
+			{
+				ConfigurationNode = CreateXmlNode("<slice />"),
+				Object = m_entry
+			};
+			slice.SetBounds(0, 0, 200, 20);
+
+			m_dtree.Width = 220;
+			m_dtree.Controls.Add(slice);
+			m_dtree.Slices.Add(slice);
+
+			var method = typeof(DataTree).GetMethod("MakeSliceRealAt",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.MakeSliceRealAt");
+
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree, new object[] { 0 }));
+			Assert.That(slice.Width, Is.EqualTo(m_dtree.ClientRectangle.Width));
+		}
+
+		[Test]
+		public void ChooseNewOwner_NullRecords_ThrowsNullReferenceException()
+		{
+			Assert.Throws<NullReferenceException>(() => m_dtree.ChooseNewOwner(null, "choose"));
+		}
+
 		private sealed class TraceTestDataTree : DataTree
 		{
 			public void SetTraceLevel(System.Diagnostics.TraceLevel level)
