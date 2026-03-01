@@ -85,6 +85,17 @@
     }
   ],
   "tasks": [
+    {
+      "label": "Test: RenderBaselineTests",
+      "type": "shell",
+      "command": ".\\test.ps1 -TestProject \"Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj\" -TestFilter \"FullyQualifiedName~RenderBaselineTests\"",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
     // ==================== Setup Tasks ====================
     {
       "label": "Setup: Colorize Worktree",
@@ -249,6 +260,20 @@
       "command": "./build.ps1 -Configuration Release",
       "group": "build",
       "detail": "Build FieldWorks in Release configuration",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build Tests",
+      "type": "shell",
+      "command": "./build.ps1 -BuildTests",
+      "group": "build",
+      "detail": "Build FieldWorks including test projects (required for ReSharper Test Explorer)",
       "options": {
         "shell": {
           "executable": "powershell.exe",

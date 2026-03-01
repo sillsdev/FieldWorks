@@ -91,6 +91,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected bool m_widthHasBeenSetByDataTree = false;
 		protected IPersistenceProvider m_persistenceProvider;
 
+		// Cached XML configuration attributes — parsed once from ConfigurationNode on first access.
+		// Invalidated when ConfigurationNode is re-set (rare).
+		private bool? m_cachedIsHeader;
+		private bool? m_cachedSkipSpacerLine;
+		private bool? m_cachedSameObject;
+
 		protected Slice m_parentSlice;
 		private readonly SplitContainer m_splitter;
 
@@ -285,6 +291,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				m_configurationNode = value;
+				// Invalidate cached XML attribute values.
+				m_cachedIsHeader = null;
+				m_cachedSkipSpacerLine = null;
+				m_cachedSameObject = null;
 			}
 		}
 
@@ -417,7 +427,49 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "header") == "true";
+				return IsHeader;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has header="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool IsHeader
+		{
+			get
+			{
+				if (!m_cachedIsHeader.HasValue)
+					m_cachedIsHeader = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "header", false);
+				return m_cachedIsHeader.Value;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has skipSpacerLine="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool SkipSpacerLine
+		{
+			get
+			{
+				if (!m_cachedSkipSpacerLine.HasValue)
+					m_cachedSkipSpacerLine = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "skipSpacerLine", false);
+				return m_cachedSkipSpacerLine.Value;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has sameObject="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool SameObject
+		{
+			get
+			{
+				if (!m_cachedSameObject.HasValue)
+					m_cachedSameObject = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "sameObject", false);
+				return m_cachedSameObject.Value;
 			}
 		}
 
@@ -603,7 +655,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// We very possibly want to focus this node, but .NET won't let us focus it till it is visible.
 					// Make it so.
-					DataTree.MakeSliceVisible(this);
+					ContainingDataTree.MakeSliceVisible(this);
 				}
 			}
 
@@ -633,7 +685,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Disposing)
 				return;
-			DataTree.MakeSliceVisible(this); // otherwise no change our control can take focus.
+			ContainingDataTree.MakeSliceVisible(this); // otherwise no change our control can take focus.
 			base.OnGotFocus(e);
 			if (Control != null && Control.CanFocus)
 				Control.Focus();
@@ -2311,14 +2363,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Slice slice = containingDT.FieldAt(i);	// make it real.
 				if (!slice.Visible)								// make it visible.
-					DataTree.MakeSliceVisible(slice);
+					containingDT.MakeSliceVisible(slice);
 			}
 			int cslice = containingDT.Slices.Count;
 			Slice sliceRetVal = null;
 			for (int islice = myIndex; islice < cslice; ++islice)
 			{
 				Slice slice = containingDT.FieldAt(islice);
-				DataTree.MakeSliceVisible(slice); // otherwise it can't take focus
+				containingDT.MakeSliceVisible(slice); // otherwise it can't take focus
 				if (slice.TakeFocus(false))
 				{
 					sliceRetVal = slice;
@@ -3277,6 +3329,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected internal virtual void SetWidthForDataTreeLayout(int width)
 		{
 			CheckDisposed();
+
+			// Fast path: if width hasn't changed and we've already been initialized,
+			// skip splitter resize and event handler manipulation. This avoids O(N)
+			// unnecessary work in HandleLayout1 when width is stable (every layout
+			// pass after the first).
+			if (m_widthHasBeenSetByDataTree && Width == width)
+				return;
 
 			if (Width != width)
 				Width = width;

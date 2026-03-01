@@ -19,6 +19,9 @@
 		<part id="LexSense-Detail-ScientificName" type="Detail">
 			<slice field="ScientificName" label="ScientificName" editor="string" ws="analysis" />
 		</part>
+		<part id="LexSense-Detail-Senses">
+			<seq field="Senses" />
+		</part>
 		<part id="LexEtymology-Detail-Form" type="Detail">
 			<slice field="Form" label="Form" editor="multistring" ws="vernacular" menu="mnuDataTree-Help" />
 		</part>

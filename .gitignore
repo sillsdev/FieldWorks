@@ -97,6 +97,8 @@ _UpgradeReport_Files/
 /Release/
 Output/
 Output
+Output/RenderBenchmarks/
+Output/RenderBenchmarks/**
 Output_i686/
 Output_x86_64/
 __pycache__/
@@ -197,3 +199,6 @@ FLExInstaller/wix6/cabcache/*
 .env
 .beads/*
 .beads/metadata.json
+
+# Verify snapshot testing - received files are transient
+*.received.png
