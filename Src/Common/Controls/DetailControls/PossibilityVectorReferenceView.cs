@@ -321,7 +321,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			for (int i = 0; i < count; ++i)
 			{
 				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this, VectorReferenceView.kfragTargetObj);
-				vwenv.AddSeparatorBar();
+				// Only add separator between items, not after the last one.
+				if (i < count - 1)
+					vwenv.AddSeparatorBar();
 			}
 			vwenv.AddObj(PossibilityVectorReferenceView.khvoFake, this, VectorReferenceView.kfragTargetObj);
 		}

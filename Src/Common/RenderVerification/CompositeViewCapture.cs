@@ -58,6 +58,19 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				dataTree.ClientSize = new Size(width, totalHeight);
 				dataTree.PerformLayout();
 
+				// Force all slices to create handles and RootBoxes.
+				// PerformLayout calls HandleLayout1(fFull=true) which positions slices
+				// but does NOT call MakeSliceVisible (because fSliceIsVisible is always
+				// false on the full-layout path). Without explicit initialization here,
+				// ViewSlices that never received a paint-path MakeSliceVisible call would
+				// have null RootBoxes, and the VwDrawRootBuffered overlay in Pass 2 would
+				// silently skip them, leaving blank/empty field areas in the bitmap.
+				//
+				// We use the same sequence as HandleLayout1's fSliceIsVisible block:
+				// FieldAt(i) to convert dummies → force Handle creation on slice and its
+				// Control (which triggers MakeRoot via OnHandleCreated) → set Visible.
+				EnsureAllSlicesInitialized(dataTree);
+
 				// Pass 1: Capture WinForms chrome via DrawToBitmap
 				var bitmap = new Bitmap(width, totalHeight, PixelFormat.Format32bppArgb);
 				dataTree.DrawToBitmap(bitmap, new Rectangle(0, 0, width, totalHeight));
@@ -95,6 +108,70 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		}
 
 		/// <summary>
+		/// Deterministically initializes every slice so that ViewSlice RootBoxes
+		/// are fully laid out and available for the <see cref="OverlayViewSliceContent"/> pass.
+		///
+		/// Uses the production <see cref="ViewSlice.BecomeRealInPlace"/> path which:
+		/// 1. Forces Handle creation (triggers OnHandleCreated → MakeRoot → VwRootBox)
+		/// 2. Sets AllowLayout = true (triggers PerformLayout → DoLayout → rootBox.Layout)
+		/// 3. Adjusts slice height to match content
+		///
+		/// Without BecomeRealInPlace, AllowLayout remains false (set in ViewSlice.Control setter),
+		/// rootBox.Layout is never called, and VwDrawRootBuffered renders un-laid-out boxes
+		/// producing empty or clipped field content.
+		/// </summary>
+		private static void EnsureAllSlicesInitialized(DataTree dataTree)
+		{
+			if (dataTree.Slices == null) return;
+
+			for (int i = 0; i < dataTree.Slices.Count; i++)
+			{
+				Slice slice;
+				try
+				{
+					// FieldAt converts dummy slices → real slices (may change Slices.Count).
+					slice = dataTree.FieldAt(i);
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceWarning(
+						$"[CompositeViewCapture] FieldAt({i}) failed: {ex.Message}");
+					continue;
+				}
+				if (slice == null) continue;
+
+				try
+				{
+					// Ensure the slice has a window handle.
+					if (!slice.IsHandleCreated)
+					{
+						var h = slice.Handle;
+					}
+
+					// Use the production initialization path (BecomeRealInPlace).
+					// For ViewSlice this creates the RootBox handle, sets AllowLayout = true
+					// (which triggers rootBox.Layout with the correct width), and adjusts
+					// the slice height to match the laid-out content.
+					if (!slice.IsRealSlice)
+						slice.BecomeRealInPlace();
+
+					// Set the slice visible (required for DrawToBitmap to include it).
+					if (!slice.Visible)
+						slice.Visible = true;
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceWarning(
+						$"[CompositeViewCapture] Failed to init slice '{slice.Label}' at {i}: {ex.Message}");
+				}
+			}
+
+			// After making all slices real and visible, run a full layout pass to
+			// reposition slices correctly with their updated heights.
+			dataTree.PerformLayout();
+		}
+
+		/// <summary>
 		/// Iterates all ViewSlice descendants and renders their RootBox content
 		/// via VwDrawRootBuffered into the correct region of the bitmap.
 		/// </summary>
@@ -122,6 +199,15 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 		/// <summary>
 		/// Renders a single ViewSlice's RootBox into the correct region of the bitmap.
+		///
+		/// Key insight: VwDrawRootBuffered.DrawTheRoot calls rootSite.GetGraphics() to get
+		/// coordinate transform rectangles (rcSrc/rcDst). GetCoordRects returns rcDst in
+		/// rootSite-local coordinates (origin at (HorizMargin, 0)). If we pass a clientRect
+		/// with the rootSite's position in the *DataTree* (e.g. X=175), VwDrawRootBuffered
+		/// offsets rcDst by (-175, -y), placing content at negative X — clipping it.
+		///
+		/// Fix: render into a temporary bitmap using rootSite-local coordinates (0,0,w,h),
+		/// then composite the result into the main bitmap at the correct DataTree-relative position.
 		/// </summary>
 		private static void OverlaySingleViewSlice(ViewSlice viewSlice, DataTree dataTree, Bitmap bitmap)
 		{
@@ -135,39 +221,44 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			}
 			catch
 			{
-				// RootBox may not be initialized
 				return;
 			}
 			if (rootBox == null) return;
 
-			// Calculate the position of the RootSite relative to the DataTree
+			// Where in the DataTree bitmap this rootSite should appear
 			var rootSiteRect = GetControlRectRelativeTo(rootSite, dataTree);
 			if (rootSiteRect.Width <= 0 || rootSiteRect.Height <= 0) return;
 
-			// Render the RootBox into the bitmap at the correct offset
-			using (var graphics = Graphics.FromImage(bitmap))
+			// Render into a temp bitmap using rootSite-local coordinates.
+			// This matches what GetCoordRects returns (origin at the rootSite control, not
+			// the DataTree), so VwDrawRootBuffered produces correct content.
+			using (var tempBitmap = new Bitmap(rootSiteRect.Width, rootSiteRect.Height, PixelFormat.Format32bppArgb))
 			{
-				// Clear the ViewSlice area first (DrawToBitmap may have left a black rect)
-				graphics.SetClip(rootSiteRect);
-				graphics.Clear(Color.White);
-				graphics.ResetClip();
-
-				IntPtr hdc = graphics.GetHdc();
-				try
+				using (var tempGraphics = Graphics.FromImage(tempBitmap))
 				{
-					var vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered();
-					var clientRect = new Rect(
-						rootSiteRect.Left,
-						rootSiteRect.Top,
-						rootSiteRect.Right,
-						rootSiteRect.Bottom);
-
-					const uint whiteColor = 0x00FFFFFF;
-					vdrb.DrawTheRoot(rootBox, hdc, clientRect, whiteColor, true, rootSite);
+					IntPtr tempHdc = tempGraphics.GetHdc();
+					try
+					{
+						var vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered();
+						var localRect = new Rect(0, 0, rootSiteRect.Width, rootSiteRect.Height);
+						const uint whiteColor = 0x00FFFFFF;
+						vdrb.DrawTheRoot(rootBox, tempHdc, localRect, whiteColor, true, rootSite);
+					}
+					finally
+					{
+						tempGraphics.ReleaseHdc(tempHdc);
+					}
 				}
-				finally
+
+				// Composite the rendered rootSite content into the main bitmap
+				using (var mainGraphics = Graphics.FromImage(bitmap))
 				{
-					graphics.ReleaseHdc(hdc);
+					// Clear the area first (DrawToBitmap may have left a black rect)
+					mainGraphics.SetClip(rootSiteRect);
+					mainGraphics.Clear(Color.White);
+					mainGraphics.ResetClip();
+
+					mainGraphics.DrawImage(tempBitmap, rootSiteRect.X, rootSiteRect.Y);
 				}
 			}
 		}
