@@ -5,6 +5,7 @@
 // Original author: MarkS 2010-08-03 SliceTests.cs
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
@@ -426,6 +427,68 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var node3 = CreateXmlElementFromOuterXmlOf("<part ref=\"Bibliography\" label=\"Bib\" />");
 				Assert.That(slice.CallerNodeEqual(node3), Is.False,
 					"Different XML content should not be equal");
+			}
+		}
+
+		[Test]
+		public void IsObjectNode_TrueWhenNodeElementPresent_AndObjectIsNotRoot()
+		{
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+
+			var root = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var childObject = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var rootField = typeof(DataTree).GetField("m_root", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			Assert.That(rootField, Is.Not.Null, "Could not reflect DataTree.m_root");
+			rootField.SetValue(m_DataTree, root);
+
+			m_Slice.Object = childObject;
+			m_Slice.ConfigurationNode = CreateXmlElementFromOuterXmlOf("<slice><node /></slice>");
+
+			Assert.That(m_Slice.IsObjectNode, Is.True,
+				"A <node> slice for a non-root object should be treated as object node");
+		}
+
+		[Test]
+		public void IsObjectNode_FalseWhenSeqElementPresent()
+		{
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+
+			var root = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var childObject = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var rootField = typeof(DataTree).GetField("m_root", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			Assert.That(rootField, Is.Not.Null, "Could not reflect DataTree.m_root");
+			rootField.SetValue(m_DataTree, root);
+
+			m_Slice.Object = childObject;
+			m_Slice.ConfigurationNode = CreateXmlElementFromOuterXmlOf("<slice><node /><seq field=\"Senses\" /></slice>");
+
+			Assert.That(m_Slice.IsObjectNode, Is.False,
+				"Presence of <seq> should force non-object-node behavior");
+		}
+
+		[Test]
+		public void LabelIndent_IncreasesWithIndent()
+		{
+			using (var slice = new Slice())
+			{
+				slice.Indent = 0;
+				int indent0 = slice.LabelIndent();
+				slice.Indent = 2;
+				int indent2 = slice.LabelIndent();
+
+				Assert.That(indent2 - indent0, Is.EqualTo(2 * SliceTreeNode.kdxpIndDist));
+			}
+		}
+
+		[Test]
+		public void GetBranchHeight_ReturnsPositiveValue()
+		{
+			using (var slice = new Slice())
+			{
+				int branchHeight = slice.GetBranchHeight();
+				Assert.That(branchHeight, Is.GreaterThan(0));
 			}
 		}
 

@@ -327,6 +327,166 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		[Test]
+		public void RestorePreferences_WithPersistedSplitterDistance_UpdatesSliceSplitPositionBase()
+		{
+			var provider = new PersistenceProvider(m_mediator, m_propertyTable, "DataTreeTests");
+			provider.SetInfoObject("SliceSplitterBaseDistance", 123);
+			m_dtree.PersistenceProvder = provider;
+
+			var method = typeof(DataTree).GetMethod("RestorePreferences",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.RestorePreferences method");
+
+			method.Invoke(m_dtree, null);
+
+			Assert.That(m_dtree.SliceSplitPositionBase, Is.EqualTo(123));
+		}
+
+		[Test]
+		public void ApplyChildren_WithOnlyChangeRecordHandler_ReturnsUnchangedInsertPosition()
+		{
+			var template = CreateXmlNode("<layout><ChangeRecordHandler /></layout>");
+			int result = m_dtree.ApplyChildren(m_entry, null, template, 0, 9,
+				new System.Collections.ArrayList(), new ObjSeqHashMap());
+
+			Assert.That(result, Is.EqualTo(9));
+		}
+
+		[Test]
+		public void MakeEditorAt_DefaultImplementation_ReturnsNull()
+		{
+			Assert.That(m_dtree.MakeEditorAt(0), Is.Null);
+		}
+
+		[Test]
+		public void AddAtomicNode_WhenFlidIsZero_ThrowsApplicationException()
+		{
+			int insertPosition = 0;
+			var ex = Assert.Throws<System.Reflection.TargetInvocationException>(() => InvokeAddAtomicNode(
+				new System.Collections.ArrayList(),
+				CreateXmlNode("<slice />"),
+				new ObjSeqHashMap(),
+				0,
+				m_entry,
+				null,
+				0,
+				ref insertPosition,
+				true,
+				"default",
+				false,
+				null));
+
+			Assert.That(ex.InnerException, Is.TypeOf<ApplicationException>());
+		}
+
+		[Test]
+		public void AddAtomicNode_TestOnlyWithoutDataAndNoGhost_ReturnsPossible()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			int flid = LexEntryTags.kflidLexemeForm;
+			int insertPosition = 0;
+			var result = InvokeAddAtomicNode(
+				new System.Collections.ArrayList(),
+				CreateXmlNode("<slice field='LexemeForm' />"),
+				new ObjSeqHashMap(),
+				flid,
+				m_entry,
+				null,
+				0,
+				ref insertPosition,
+				true,
+				"default",
+				false,
+				null);
+
+			Assert.That(result, Is.EqualTo(DataTree.NodeTestResult.kntrPossible));
+		}
+
+		[Test]
+		public void AddAtomicNode_TestOnlyWithGhost_ReturnsSomething()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			int flid = LexEntryTags.kflidLexemeForm;
+			int insertPosition = 0;
+			var result = InvokeAddAtomicNode(
+				new System.Collections.ArrayList(),
+				CreateXmlNode("<slice field='LexemeForm' ghost='true' />"),
+				new ObjSeqHashMap(),
+				flid,
+				m_entry,
+				null,
+				0,
+				ref insertPosition,
+				true,
+				"default",
+				false,
+				null);
+
+			Assert.That(result, Is.EqualTo(DataTree.NodeTestResult.kntrSomething));
+		}
+
+		[Test]
+		public void AddAtomicNode_VisIfDataWithoutData_ReturnsNothing()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			int flid = LexEntryTags.kflidLexemeForm;
+			int insertPosition = 0;
+			var result = InvokeAddAtomicNode(
+				new System.Collections.ArrayList(),
+				CreateXmlNode("<slice field='LexemeForm' />"),
+				new ObjSeqHashMap(),
+				flid,
+				m_entry,
+				null,
+				0,
+				ref insertPosition,
+				false,
+				"default",
+				true,
+				null);
+
+			Assert.That(result, Is.EqualTo(DataTree.NodeTestResult.kntrNothing));
+		}
+
+		[Test]
+		public void RefreshListByHvoTag_NoPendingRefresh_DoesNotThrow()
+		{
+			var method = typeof(DataTree).GetMethod("RefreshList",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+				null,
+				new[] { typeof(int), typeof(int) },
+				null);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.RefreshList(int, int) method");
+
+			m_dtree.RefreshListNeeded = false;
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree, new object[] { m_entry.Hvo, LexEntryTags.kflidCitationForm }));
+			Assert.That(m_dtree.RefreshListNeeded, Is.False);
+		}
+
+		[Test]
+		public void RefreshListByHvoTag_WithPendingRefreshAndSuppressedRefresh_LeavesRefreshNeededTrue()
+		{
+			var method = typeof(DataTree).GetMethod("RefreshList",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+				null,
+				new[] { typeof(int), typeof(int) },
+				null);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.RefreshList(int, int) method");
+
+			m_dtree.DoNotRefresh = true;
+			m_dtree.RefreshListNeeded = true;
+
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree, new object[] { m_entry.Hvo, LexEntryTags.kflidCitationForm }));
+			Assert.That(m_dtree.RefreshListNeeded, Is.True);
+		}
+
+		[Test]
 		public void RefreshDisplay_ReturnsTrue()
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
@@ -492,6 +652,142 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		[Test]
+		public void SetCurrentSliceNewFromObject_MatchingSlice_SetsCurrentSliceNewField()
+		{
+			var first = new Slice { Object = m_entry };
+			var secondEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var second = new Slice { Object = secondEntry };
+
+			m_dtree.Slices.Clear();
+			m_dtree.Slices.Add(first);
+			m_dtree.Slices.Add(second);
+
+			var method = typeof(DataTree).GetMethod("SetCurrentSliceNewFromObject",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.SetCurrentSliceNewFromObject method");
+			method.Invoke(m_dtree, new object[] { secondEntry });
+
+			var currentSliceNewField = typeof(DataTree).GetField("m_currentSliceNew",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(currentSliceNewField, Is.Not.Null, "Could not reflect DataTree.m_currentSliceNew field");
+			Assert.That(currentSliceNewField.GetValue(m_dtree), Is.SameAs(second));
+		}
+
+		[Test]
+		public void SetCurrentSliceNewFromObject_NoMatch_LeavesCurrentSliceNewNull()
+		{
+			var first = new Slice { Object = m_entry };
+			m_dtree.Slices.Clear();
+			m_dtree.Slices.Add(first);
+
+			var currentSliceNewField = typeof(DataTree).GetField("m_currentSliceNew",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(currentSliceNewField, Is.Not.Null, "Could not reflect DataTree.m_currentSliceNew field");
+			currentSliceNewField.SetValue(m_dtree, null);
+
+			var method = typeof(DataTree).GetMethod("SetCurrentSliceNewFromObject",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.SetCurrentSliceNewFromObject method");
+			method.Invoke(m_dtree, new object[] { Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create() });
+
+			Assert.That(currentSliceNewField.GetValue(m_dtree), Is.Null);
+		}
+
+		[Test]
+		public void CreateAndAssociateNotebookRecord_WhenCurrentSliceObjectIsNotText_ThrowsArgumentException()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+			SetCurrentSliceFieldForTest(m_dtree.Slices[0]);
+
+			var method = typeof(DataTree).GetMethod("CreateAndAssociateNotebookRecord",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.CreateAndAssociateNotebookRecord method");
+
+			var ex = Assert.Throws<System.Reflection.TargetInvocationException>(() => method.Invoke(m_dtree, null));
+			Assert.That(ex.InnerException, Is.TypeOf<ArgumentException>());
+		}
+
+		[Test]
+		public void FixRecordList_WithNullHandlers_DoesNotThrow()
+		{
+			Assert.DoesNotThrow(() => m_dtree.FixRecordList());
+		}
+
+		[Test]
+		public void DescendantForSlice_ParentNull_ReturnsRoot()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			var method = typeof(DataTree).GetMethod("DescendantForSlice",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.DescendantForSlice method");
+
+			var slice = m_dtree.Slices[0];
+			var result = method.Invoke(m_dtree, new object[] { slice }) as ICmObject;
+
+			Assert.That(result, Is.SameAs(m_entry));
+		}
+
+		[Test]
+		public void DescendantForSlice_HeaderAncestor_ReturnsHeaderObject()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			var headerObject = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var parentSlice = new Slice
+			{
+				Object = m_entry,
+				ConfigurationNode = CreateXmlNode("<slice />")
+			};
+			var headerSlice = new Slice
+			{
+				Object = headerObject,
+				ParentSlice = parentSlice,
+				ConfigurationNode = CreateXmlNode("<slice header='true' />")
+			};
+			var childSlice = new Slice
+			{
+				Object = m_entry,
+				ParentSlice = headerSlice,
+				ConfigurationNode = CreateXmlNode("<slice />")
+			};
+
+			var method = typeof(DataTree).GetMethod("DescendantForSlice",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.DescendantForSlice method");
+
+			var result = method.Invoke(m_dtree, new object[] { childSlice }) as ICmObject;
+
+			Assert.That(result, Is.SameAs(headerObject));
+		}
+
+		[Test]
+		public void RawSetSlice_ReplacesSliceAtIndex()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+			var replacement = new Slice { Object = m_entry, ConfigurationNode = CreateXmlNode("<slice />") };
+			m_dtree.RawSetSlice(0, replacement);
+
+			Assert.That(m_dtree.Slices[0], Is.SameAs(replacement));
+		}
+
+		[Test]
+		public void RemoveDisposedSlice_RemovesMatchingSliceFromCollection()
+		{
+			var slice = new Slice();
+			m_dtree.Slices.Add(slice);
+
+			m_dtree.RemoveDisposedSlice(slice);
+
+			Assert.That(m_dtree.Slices.Contains(slice), Is.False);
+		}
+
+		[Test]
 		public void NotebookRecordRefersToThisText_Null_ThrowsArgumentException()
 		{
 			IRnGenericRec ignored;
@@ -572,6 +868,247 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			Assert.That(callCount, Is.EqualTo(1));
 			Assert.That(capturedSlice, Is.SameAs(slice));
+		}
+
+		[Test]
+		public void SelectFirstPossibleSlice_EmptyList_DoesNotThrow()
+		{
+			Assert.DoesNotThrow(() => m_dtree.SelectFirstPossibleSlice(new System.Collections.Generic.List<Slice>()));
+		}
+
+		[Test]
+		public void SelectFirstPossibleSlice_SliceFromDifferentTree_DoesNotThrow()
+		{
+			var otherTree = new DataTree();
+			try
+			{
+				var slice = new Slice();
+				otherTree.Slices.Add(slice);
+
+				Assert.DoesNotThrow(() =>
+					m_dtree.SelectFirstPossibleSlice(new System.Collections.Generic.List<Slice> { slice }));
+			}
+			finally
+			{
+				otherTree.Dispose();
+			}
+		}
+
+		[Test]
+		public void SelectFirstPossibleSlice_DisposedSlice_DoesNotThrow()
+		{
+			var slice = new Slice();
+			slice.Dispose();
+
+			Assert.DoesNotThrow(() =>
+				m_dtree.SelectFirstPossibleSlice(new System.Collections.Generic.List<Slice> { slice }));
+		}
+
+		[Test]
+		public void TraceMethods_WhenVerboseEnabled_DoNotThrow()
+		{
+			var tree = new TraceTestDataTree();
+			try
+			{
+				tree.SetTraceLevel(System.Diagnostics.TraceLevel.Verbose);
+				Assert.DoesNotThrow(() => tree.CallTraceVerbose("v"));
+				Assert.DoesNotThrow(() => tree.CallTraceVerboseLine("vl"));
+				Assert.DoesNotThrow(() => tree.CallTraceInfoLine("il"));
+			}
+			finally
+			{
+				tree.Dispose();
+			}
+		}
+
+		[Test]
+		public void RecordChangeHandlerDisposed_WhenSenderDiffers_DoesNotClearField()
+		{
+			var fakeRch = new FakeRecordChangeHandler();
+			var rchField = typeof(DataTree).GetField("m_rch",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(rchField, Is.Not.Null, "Could not reflect DataTree.m_rch field");
+			rchField.SetValue(m_dtree, fakeRch);
+
+			var method = typeof(DataTree).GetMethod("m_rch_Disposed",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.m_rch_Disposed method");
+
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree, new object[] { new object(), EventArgs.Empty }));
+			Assert.That(rchField.GetValue(m_dtree), Is.SameAs(fakeRch));
+		}
+
+		[Test]
+		public void RecordChangeHandlerDisposed_WhenSenderMatches_ClearsField()
+		{
+			var fakeRch = new FakeRecordChangeHandler();
+			var rchField = typeof(DataTree).GetField("m_rch",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(rchField, Is.Not.Null, "Could not reflect DataTree.m_rch field");
+			rchField.SetValue(m_dtree, fakeRch);
+
+			var method = typeof(DataTree).GetMethod("m_rch_Disposed",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.m_rch_Disposed method");
+
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree, new object[] { fakeRch, EventArgs.Empty }));
+			Assert.That(rchField.GetValue(m_dtree), Is.Null);
+		}
+
+		[Test]
+		public void InsertSliceRange_WithTwoSlices_InsertsBoth()
+		{
+			var tree = new InsertSliceRangeTestDataTree();
+			try
+			{
+				var first = new Slice();
+				var second = new Slice();
+				var range = new System.Collections.Generic.HashSet<Slice> { first, second };
+
+				Assert.DoesNotThrow(() => tree.CallInsertSliceRange(0, range));
+				Assert.That(tree.Slices.Count, Is.EqualTo(2));
+				Assert.That(tree.Slices.Contains(first), Is.True);
+				Assert.That(tree.Slices.Contains(second), Is.True);
+			}
+			finally
+			{
+				tree.Dispose();
+			}
+		}
+
+		[Test]
+		public void SliceSplitterMoved_WhenCurrentSliceNull_DoesNotThrow()
+		{
+			var method = typeof(DataTree).GetMethod("slice_SplitterMoved",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.slice_SplitterMoved method");
+
+			Assert.DoesNotThrow(() => method.Invoke(m_dtree,
+				new object[] { null, new System.Windows.Forms.SplitterEventArgs(0, 0, 0, 0) }));
+		}
+
+		[Test]
+		public void ObjSeqHashMap_GetSliceToReuse_ReturnsAndRemovesSlice()
+		{
+			var map = new ObjSeqHashMap();
+			var key = new System.Collections.ArrayList { 1, 2, 3 };
+			var slice = new Slice();
+			try
+			{
+				slice.Key = new object[] { 1, 2, 3 };
+				map.Add(key, slice);
+
+				var reused = map.GetSliceToReuse(nameof(Slice));
+
+				Assert.That(reused, Is.SameAs(slice));
+				Assert.That(map[key].Count, Is.EqualTo(0));
+			}
+			finally
+			{
+				slice.Dispose();
+			}
+		}
+
+		[Test]
+		public void ObjSeqHashMap_Report_DoesNotThrow()
+		{
+			var map = new ObjSeqHashMap();
+			Assert.DoesNotThrow(() => map.Report());
+		}
+
+		private sealed class TraceTestDataTree : DataTree
+		{
+			public void SetTraceLevel(System.Diagnostics.TraceLevel level)
+			{
+				m_traceSwitch.Level = level;
+			}
+
+			public void CallTraceVerbose(string message)
+			{
+				TraceVerbose(message);
+			}
+
+			public void CallTraceVerboseLine(string message)
+			{
+				TraceVerboseLine(message);
+			}
+
+			public void CallTraceInfoLine(string message)
+			{
+				TraceInfoLine(message);
+			}
+		}
+
+		private sealed class InsertSliceRangeTestDataTree : DataTree
+		{
+			public void CallInsertSliceRange(int insertPosition, System.Collections.Generic.ISet<Slice> slices)
+			{
+				InsertSliceRange(insertPosition, slices);
+			}
+		}
+
+		private DataTree.NodeTestResult InvokeAddAtomicNode(
+			System.Collections.ArrayList path,
+			System.Xml.XmlNode node,
+			ObjSeqHashMap reuseMap,
+			int flid,
+			ICmObject obj,
+			Slice parentSlice,
+			int indent,
+			ref int insertPosition,
+			bool fTestOnly,
+			string layoutName,
+			bool fVisIfData,
+			System.Xml.XmlNode caller)
+		{
+			var method = typeof(DataTree).GetMethod("AddAtomicNode",
+				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.AddAtomicNode method");
+
+			object[] args =
+			{
+				path,
+				node,
+				reuseMap,
+				flid,
+				obj,
+				parentSlice,
+				indent,
+				insertPosition,
+				fTestOnly,
+				layoutName,
+				fVisIfData,
+				caller
+			};
+
+			var result = (DataTree.NodeTestResult)method.Invoke(m_dtree, args);
+			insertPosition = (int)args[7];
+			return result;
+		}
+
+		private sealed class FakeRecordChangeHandler : SIL.FieldWorks.Common.Framework.IRecordChangeHandler
+		{
+			public event EventHandler Disposed;
+
+			public bool HasRecordListUpdater
+			{
+				get { return false; }
+			}
+
+			public void Setup(object record, SIL.FieldWorks.Common.Framework.IRecordListUpdater rlu, LcmCache cache)
+			{
+			}
+
+			public void Fixup(bool fRefreshList)
+			{
+			}
+
+			public void Dispose()
+			{
+				var handler = Disposed;
+				if (handler != null)
+					handler(this, EventArgs.Empty);
+			}
 		}
 
 		#endregion

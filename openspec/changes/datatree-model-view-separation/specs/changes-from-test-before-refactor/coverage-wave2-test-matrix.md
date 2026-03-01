@@ -72,6 +72,161 @@ Incremental gain from the build-backed continuation pass:
 
 - `DataTree`: **+1.26 line** / **+1.40 branch** (from 59.83 / 43.94)
 
+## Rerun Status (2026-02-25, latest targeted reassessment)
+
+After the most recent deterministic Wave 3 additions, managed coverage was rerun with:
+
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **62.82%** line / **47.16%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the prior build-backed checkpoint (61.09 / 45.34):
+
+- `DataTree`: **+1.73 line** / **+1.82 branch**
+
+## Rerun Status (2026-02-25, post-`RestorePreferences`/`ApplyChildren`/`MakeEditorAt` tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **63.50%** line / **47.57%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous targeted reassessment (62.82 / 47.16):
+
+- `DataTree`: **+0.68 line** / **+0.41 branch**
+
+## Rerun Status (2026-02-26, post-`SelectFirstPossibleSlice` deterministic paths)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **63.70%** line / **47.98%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous checkpoint (63.50 / 47.57):
+
+- `DataTree`: **+0.20 line** / **+0.41 branch**
+
+## Rerun Status (2026-02-26, post-`RefreshList(int,int)` deterministic probes)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **63.96%** line / **48.23%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous checkpoint (63.70 / 47.98):
+
+- `DataTree`: **+0.26 line** / **+0.25 branch**
+
+## Rerun Status (2026-02-26, post-trace + `m_rch_Disposed` tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **64.84%** line / **49.22%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous checkpoint (63.96 / 48.23):
+
+- `DataTree`: **+0.88 line** / **+0.99 branch**
+
+## Rerun Status (2026-02-26, post-`AddAtomicNode` guard/test-only branches)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **65.34%** line / **50.04%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous checkpoint (64.84 / 49.22):
+
+- `DataTree`: **+0.50 line** / **+0.82 branch**
+
+## Rerun Status (2026-02-26, post-`InsertSliceRange`/`slice_SplitterMoved` guard path)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **65.80%** line / **50.29%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **62.9%** line / **61.11%** branch
+
+Incremental gain from the immediately previous checkpoint (65.34 / 50.04):
+
+- `DataTree`: **+0.46 line** / **+0.25 branch**
+
+## Rerun Status (2026-02-26, post-`ObjSeqHashMap` reuse/report tests)
+
+Validated with:
+
+- `./test.ps1 -TestFilter "FullyQualifiedName~DataTreeTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **65.38%** line / **50.04%** branch
+- `Slice`: **26.88%** line / **17.9%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Net effect:
+
+- `ObjSeqHashMap` gaps were substantially reduced (no longer in top-gap list for `GetSliceToReuse`/`Report`).
+- `DataTree` remained near the previous high-water mark, with branch coverage still at ~50%.
+
+## Rerun Status (2026-02-26, post-Wave 4 offscreen + `HandleLayout1` + Slice branch tests)
+
+Validated with:
+
+- `./test.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+- `./Build/Agent/Run-ManagedCoverageAssessment.ps1 -NoBuild -TestFilter "FullyQualifiedName~DataTreeTests|FullyQualifiedName~SliceTests"`
+
+Latest focused class coverage from `coverage-gap-assessment.md`:
+
+- `DataTree`: **67.51%** line / **52.02%** branch
+- `Slice`: **34.5%** line / **22.4%** branch
+- `ObjSeqHashMap`: **90.32%** line / **83.33%** branch
+
+Incremental gain from the immediately previous checkpoint (65.38 / 50.04 for `DataTree`, 26.88 / 17.9 for `Slice`):
+
+- `DataTree`: **+2.13 line** / **+1.98 branch**
+- `Slice`: **+7.62 line** / **+4.50 branch**
+- `ObjSeqHashMap`: **no change**
+
 Wave 2 desired target:
 
 - `DataTree` line coverage toward ~46-50%

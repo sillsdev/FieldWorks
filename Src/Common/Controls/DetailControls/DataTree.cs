@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
+	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot, IDataTreePainter
 	{
 		/// <summary>
 		/// Part refs that don't represent actual data slices
@@ -160,6 +160,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal bool ConstructingSlices { get; private set; }
 
 		public List<Slice> Slices { get; private set; }
+
+		/// <summary>
+		/// The painter used to draw separator lines between slices.
+		/// Defaults to <c>this</c> (DataTree's own implementation).
+		/// Tests can substitute a recording implementation to verify
+		/// rendering without a visible window.
+		/// </summary>
+		public IDataTreePainter Painter { get; set; }
 
 		#endregion Data members
 
@@ -474,6 +482,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 //			string objName = ToString() + GetHashCode().ToString();
 //			Debug.WriteLine("Creating object:" + objName);
 			Slices = new List<Slice>();
+			Painter = this;
 			m_autoCustomFieldNodesDocument = new XmlDocument();
 			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");
 			m_autoCustomFieldNodesDocument.AppendChild(m_autoCustomFieldNodesDocRoot);
@@ -1627,7 +1636,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Answer true if the two slices are displaying fields of the same object.
 		/// Review: should we require more strictly, that the full path of objects in their keys are the same?
 		/// </summary>
-		private static bool SameSourceObject(Slice first, Slice second)
+		internal static bool SameSourceObject(Slice first, Slice second)
 		{
 			return first.Object.Hvo == second.Object.Hvo;
 		}
@@ -1635,7 +1644,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Answer true if the second slice is a 'child' of the first (common key)
 		/// </summary>
-		private static bool IsChildSlice(Slice first, Slice second)
+		internal static bool IsChildSlice(Slice first, Slice second)
 		{
 			if (second.Key == null || second.Key.Length <= first.Key.Length)
 				return false;
@@ -1655,12 +1664,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This actually handles Paint for the contained control that has the slice controls in it.
 		/// </summary>
 		/// <param name="pea">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
-		void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
+		internal void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
 		{
-			Graphics gr = pea.Graphics;
-			UserControl uc = this;
-			// Where we're drawing.
-			int width = uc.Width;
+			PaintLinesBetweenSlices(pea.Graphics, Width);
+		}
+
+		/// <summary>
+		/// IDataTreePainter implementation: draw separator lines between slices.
+		/// </summary>
+		public void PaintLinesBetweenSlices(Graphics gr, int width)
+		{
 			using (var thinPen = new Pen(Color.LightGray, 1))
 			using (var thickPen = new Pen(Color.LightGray, 1 + HeavyweightRuleThickness))
 			{
@@ -3593,7 +3606,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else
 				{
 					base.OnPaint(e);
-					HandlePaintLinesBetweenSlices(e);
+					Painter.PaintLinesBetweenSlices(e.Graphics, Width);
 				}
 			}
 			finally
