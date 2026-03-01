@@ -21,12 +21,12 @@ You may receive:
 1. **Run coverage collection**
    - Use repo wrapper (auto-approvable):
      ```powershell
-     .\Build\Agent\Run-TestCoverage.ps1 -Configuration Debug -TestFilter "FullyQualifiedName~DetailControls" -NoBuild
+   .\Build\Agent\Run-ManagedCoverageAssessment.ps1 -Configuration Debug -TestFilter "FullyQualifiedName~DetailControls" -NoBuild
      ```
 2. **Generate method/class gap inventory**
    - Use helper parser:
      ```powershell
-     .\.github\skills\managed-test-coverage-assessment\scripts\Assess-CoverageGaps.ps1 -Configuration Debug -FocusPath "Src\\Common\\Controls\\DetailControls\\"
+   .\Build\Agent\Run-ManagedCoverageAssessment.ps1 -Configuration Debug -TestFilter "FullyQualifiedName~DetailControls" -NoBuild -FocusPath "Src\\Common\\Controls\\DetailControls\\"
      ```
 3. **Classify remediation strategy**
    - For each gap: choose one of
@@ -43,6 +43,7 @@ You may receive:
 
 <constraints>
 - Use `build.ps1` / `test.ps1` / repo wrappers only.
+- Do not run scripts under `.github/skills/*/scripts` directly from terminal; use `Build/Agent` wrappers for auto-approval.
 - Keep red/future-fix tests gated (`[Explicit]`) unless user asks otherwise.
 - Prefer deterministic unit tests over UI-event/message-pump dependent tests.
 - Do not claim dead code without evidence and owner confirmation.

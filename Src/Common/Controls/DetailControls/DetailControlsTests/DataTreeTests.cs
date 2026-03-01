@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary></summary>
 	[TestFixture]
-	public class DataTreeTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public partial class DataTreeTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Inventory m_parts;
 		private Inventory m_layouts;
@@ -123,7 +123,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		[Test]
 		public void ShowingAllFields_ReadsShowHiddenSettingForTool()
 		{
-			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true,
+				PropertyTable.SettingsGroup.LocalSettings, true);
 
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
@@ -945,6 +946,442 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion
 
+		#region Package A Matrix Tests
+
+		[Test]
+		public void EquivalentKeys_LengthMismatch_ReturnsFalse()
+		{
+			bool result = InvokeEquivalentKeys(new object[] { "a" }, new object[] { "a", "b" }, true);
+
+			Assert.That(result, Is.False);
+		}
+
+		[Test]
+		public void EquivalentKeys_XmlNodesWithSameNameInnerAndAttributes_ReturnsTrue()
+		{
+			XmlNode first = CreateXmlNode("<part ref='Custom' param='testField'><child>v</child></part>");
+			XmlNode second = CreateXmlNode("<part param='testField' ref='Custom'><child>v</child></part>");
+
+			bool result = InvokeEquivalentKeys(new object[] { first }, new object[] { second }, true);
+
+			Assert.That(result, Is.True);
+		}
+
+		[Test]
+		public void EquivalentKeys_XmlNodesWithAttributeMismatch_ReturnsFalse()
+		{
+			XmlNode first = CreateXmlNode("<part ref='Custom' param='testField' />");
+			XmlNode second = CreateXmlNode("<part ref='Custom' param='otherField' />");
+
+			bool result = InvokeEquivalentKeys(new object[] { first }, new object[] { second }, true);
+
+			Assert.That(result, Is.False);
+		}
+
+		[Test]
+		public void EquivalentKeys_IntComparisonHonorsCheckFlag()
+		{
+			bool strict = InvokeEquivalentKeys(new object[] { 1 }, new object[] { 2 }, true);
+			bool loose = InvokeEquivalentKeys(new object[] { 1 }, new object[] { 2 }, false);
+
+			Assert.That(strict, Is.False);
+			Assert.That(loose, Is.True);
+		}
+
+		[Test]
+		public void EquivalentKeys_DifferentNonComparableTypes_ReturnsFalse()
+		{
+			bool result = InvokeEquivalentKeys(new object[] { "1" }, new object[] { 1 }, true);
+
+			Assert.That(result, Is.False);
+		}
+
+		[Test]
+		public void FindMatchingSlices_FindsSliceForObjectAndKey()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+			Slice target = m_dtree.Slices[0];
+			Slice newCopy;
+			Slice found = m_dtree.FindMatchingSlices(target.Object, null, target.Key, target.GetType(), out newCopy);
+
+			Assert.That(found, Is.SameAs(target));
+			Assert.That(newCopy, Is.Null);
+		}
+
+		[Test]
+		public void FindMatchingSlices_NoMatch_ReturnsNulls()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+			Slice target = m_dtree.Slices[0];
+			Slice newCopy;
+			Slice found = m_dtree.FindMatchingSlices(target.Object, null,
+				new object[] { "definitely-not-a-real-key" }, target.GetType(), out newCopy);
+
+			Assert.That(found, Is.Null);
+			Assert.That(newCopy, Is.Null);
+		}
+
+		[Test]
+		public void IsChildSlice_MatchingPrefix_ReturnsTrue()
+		{
+			Slice first = CreateSliceWithKey(1, "root");
+			Slice second = CreateSliceWithKey(1, "root", "child");
+			bool result = InvokeIsChildSlice(first, second);
+
+			Assert.That(result, Is.True);
+		}
+
+		[Test]
+		public void IsChildSlice_ShortOrNullSecondKey_ReturnsFalse()
+		{
+			Slice first = CreateSliceWithKey(1, "root");
+
+			Slice secondWithNull = CreateSliceWithKey((object[])null);
+			bool nullResult = InvokeIsChildSlice(first, secondWithNull);
+
+			Slice secondWithShortKey = CreateSliceWithKey(1);
+			bool shortResult = InvokeIsChildSlice(first, secondWithShortKey);
+
+			Assert.That(nullResult, Is.False);
+			Assert.That(shortResult, Is.False);
+		}
+
+		[Test]
+		public void IsChildSlice_MismatchedPrefix_ReturnsFalse()
+		{
+			Slice first = CreateSliceWithKey(1, "root");
+			Slice second = CreateSliceWithKey(2, "root", "child");
+			bool result = InvokeIsChildSlice(first, second);
+
+			Assert.That(result, Is.False);
+		}
+
+		[Test]
+		public void GetClassId_DelegatesToMetadataCache()
+		{
+			var mdc = Cache.DomainDataByFlid.MetaDataCache;
+			int expected = mdc.GetClassId("LexEntry");
+			int actual = DataTree.GetClassId(mdc, "LexEntry");
+
+			Assert.That(actual, Is.EqualTo(expected));
+		}
+
+		#endregion
+
+		#region Package B Matrix Tests
+
+		[Test]
+		public void GetMessageTargets_NotVisible_ReturnsEmpty()
+		{
+			Assert.That(m_dtree.Visible, Is.False);
+
+			IxCoreColleague[] targets = m_dtree.GetMessageTargets();
+
+			Assert.That(targets, Is.Empty);
+		}
+
+		[Test]
+		public void GetMessageTargets_VisibleWithoutCurrentSlice_ReturnsTreeOnly()
+		{
+			SetControlVisibleForTest(m_parent, true);
+			SetControlVisibleForTest(m_dtree, true);
+			Assert.That(m_dtree.Visible, Is.True);
+
+			IxCoreColleague[] targets = m_dtree.GetMessageTargets();
+
+			Assert.That(targets.Length, Is.EqualTo(1));
+			Assert.That(targets[0], Is.SameAs(m_dtree));
+		}
+
+		[Test]
+		public void GetMessageTargets_VisibleWithCurrentSlice_ReturnsSliceAndTree()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			SetControlVisibleForTest(m_parent, true);
+			SetControlVisibleForTest(m_dtree, true);
+			Assert.That(m_dtree.Visible, Is.True);
+
+			var currentSlice = m_dtree.Slices[0];
+			SetCurrentSliceFieldForTest(currentSlice);
+
+			IxCoreColleague[] targets = m_dtree.GetMessageTargets();
+
+			Assert.That(targets.Length, Is.EqualTo(2));
+			Assert.That(targets[0], Is.SameAs(currentSlice));
+			Assert.That(targets[1], Is.SameAs(m_dtree));
+
+			SetCurrentSliceFieldForTest(null);
+		}
+
+		[Test]
+		public void OnDisplayShowHiddenFields_AllowedAndSet_ShowsChecked()
+		{
+			m_propertyTable.SetProperty("AllowShowNormalFields", true, true);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			m_propertyTable.SetProperty("ShowHiddenFields-lexiconEdit", true,
+				PropertyTable.SettingsGroup.LocalSettings, true);
+
+			var display = new UIItemDisplayProperties(null, "ShowHiddenFields", true, null, true);
+
+			bool handled = m_dtree.OnDisplayShowHiddenFields(null, ref display);
+
+			Assert.That(handled, Is.True);
+			Assert.That(display.Enabled, Is.True);
+			Assert.That(display.Visible, Is.True);
+			Assert.That(display.Checked, Is.True);
+		}
+
+		[Test]
+		public void OnDisplayShowHiddenFields_NotAllowed_Disables()
+		{
+			m_propertyTable.SetProperty("AllowShowNormalFields", false, true);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+
+			var display = new UIItemDisplayProperties(null, "ShowHiddenFields", true, null, true)
+			{
+				Enabled = true,
+				Visible = true
+			};
+
+			bool handled = m_dtree.OnDisplayShowHiddenFields(null, ref display);
+
+			Assert.That(handled, Is.True);
+			Assert.That(display.Enabled, Is.False);
+			Assert.That(display.Visible, Is.False);
+		}
+
+		[Test]
+		public void OnDelayedRefreshList_ArgumentTogglesDoNotRefresh()
+		{
+			Assert.That(m_dtree.DoNotRefresh, Is.False);
+
+			m_dtree.OnDelayedRefreshList(true);
+			Assert.That(m_dtree.DoNotRefresh, Is.True);
+
+			m_dtree.OnDelayedRefreshList(false);
+			Assert.That(m_dtree.DoNotRefresh, Is.False);
+		}
+
+		[Test]
+		public void OnDisplayInsertItemViaBackrefVector_MatchingClass_Enabled()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			using (var cmd = CreateCommandFromXml(
+				"<command id='CmdInsertItemViaBackrefVector' message='InsertItemViaBackrefVector'><parameters className='LexEntry' fieldName='Senses'/></command>"))
+			{
+				var display = new UIItemDisplayProperties(null, "InsertItemViaBackrefVector", true, null, true);
+
+				bool handled = m_dtree.OnDisplayInsertItemViaBackrefVector(cmd, ref display);
+
+				Assert.That(handled, Is.True);
+				Assert.That(display.Enabled, Is.True);
+			}
+		}
+
+		[Test]
+		public void OnDisplayInsertItemViaBackrefVector_WrongClass_Disabled()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			using (var cmd = CreateCommandFromXml(
+				"<command id='CmdInsertItemViaBackrefVector' message='InsertItemViaBackrefVector'><parameters className='LexSense' fieldName='Senses'/></command>"))
+			{
+				var display = new UIItemDisplayProperties(null, "InsertItemViaBackrefVector", true, null, true)
+				{
+					Enabled = true
+				};
+
+				bool handled = m_dtree.OnDisplayInsertItemViaBackrefVector(cmd, ref display);
+
+				Assert.That(handled, Is.False);
+				Assert.That(display.Enabled, Is.False);
+			}
+		}
+
+		[Test]
+		public void OnDisplayDemoteItemInVector_NonRnRoot_Disables()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			using (var cmd = CreateCommandFromXml(
+				"<command id='CmdDemoteItemInVector' message='DemoteItemInVector'><parameters className='RnGenericRec'/></command>"))
+			{
+				var display = new UIItemDisplayProperties(null, "DemoteItemInVector", true, null, true)
+				{
+					Enabled = true
+				};
+
+				bool handled = m_dtree.OnDisplayDemoteItemInVector(cmd, ref display);
+
+				Assert.That(handled, Is.True);
+				Assert.That(display.Enabled, Is.False);
+			}
+		}
+
+		[Test]
+		public void OnDisplayJumpToTool_ValidCommand_Enables()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			using (var cmd = CreateCommandFromXml(
+				"<command id='CmdRootEntryJumpToConcordance' message='JumpToTool'><parameters tool='concordance' className='LexEntry'/></command>"))
+			{
+				var display = new UIItemDisplayProperties(null, "JumpToTool", true, null, true);
+
+				bool handled = m_dtree.OnDisplayJumpToTool(cmd, ref display);
+
+				Assert.That(handled, Is.True);
+				Assert.That(display.Enabled, Is.True);
+				Assert.That(display.Visible, Is.True);
+			}
+		}
+
+		#endregion
+
+		#region Package C Matrix Tests
+
+		[Test]
+		public void NextFieldAtIndent_FindsNextAtSameIndent()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			SetSliceIndents(0, 1, 1, 2, 0);
+
+			int next = m_dtree.NextFieldAtIndent(1, 1);
+
+			Assert.That(next, Is.EqualTo(2));
+		}
+
+		[Test]
+		public void NextFieldAtIndent_StopsWhenIndentDecreases()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			SetSliceIndents(0, 1, 2, 0, 1);
+
+			int next = m_dtree.NextFieldAtIndent(1, 1);
+
+			Assert.That(next, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void PrevFieldAtIndent_FindsPreviousAtSameIndent()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			SetSliceIndents(0, 1, 2, 1, 0);
+
+			int previous = m_dtree.PrevFieldAtIndent(1, 3);
+
+			Assert.That(previous, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void PrevFieldAtIndent_StopsWhenIndentDecreases()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			SetSliceIndents(1, 0, 2, 2, 1);
+
+			int previous = m_dtree.PrevFieldAtIndent(1, 4);
+
+			Assert.That(previous, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void IndexOfSliceAtY_ReturnsExpectedIndexAndMinusOneAfterLast()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			foreach (Slice slice in m_dtree.Slices)
+				slice.Height = 20;
+
+			Assert.That(m_dtree.IndexOfSliceAtY(0), Is.EqualTo(0));
+			Assert.That(m_dtree.IndexOfSliceAtY(19), Is.EqualTo(0));
+			Assert.That(m_dtree.IndexOfSliceAtY(20), Is.EqualTo(1));
+			Assert.That(m_dtree.IndexOfSliceAtY(99), Is.EqualTo(4));
+			Assert.That(m_dtree.IndexOfSliceAtY(100), Is.EqualTo(-1));
+		}
+
+		[Test]
+		public void GotoNextSliceAfterIndex_AtEnd_ReturnsFalse()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+			bool moved = InvokeGotoNextSliceAfterIndex(m_dtree.Slices.Count - 1);
+
+			Assert.That(moved, Is.False);
+		}
+
+		[Test]
+		public void GotoPreviousSliceBeforeIndex_AtStart_ReturnsFalse()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+
+			bool moved = m_dtree.GotoPreviousSliceBeforeIndex(0);
+
+			Assert.That(moved, Is.False);
+		}
+
+		[Test]
+		public void MakeSliceVisible_TargetSliceAndPriorSlicesBecomeVisible()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "NavigationTest", null, m_entry, false);
+			SetControlVisibleForTest(m_parent, true);
+			SetControlVisibleForTest(m_dtree, true);
+
+			for (int i = 0; i < m_dtree.Slices.Count; i++)
+				m_dtree.Slices[i].Visible = false;
+
+			InvokeMakeSliceVisible(m_dtree.Slices[3]);
+
+			Assert.That(m_dtree.Slices[0].Visible, Is.True);
+			Assert.That(m_dtree.Slices[1].Visible, Is.True);
+			Assert.That(m_dtree.Slices[2].Visible, Is.True);
+			Assert.That(m_dtree.Slices[3].Visible, Is.True);
+			Assert.That(m_dtree.Slices[4].Visible, Is.False);
+		}
+
+		[Test]
+		public void GotoFirstSlice_SetsCurrentSlice_WhenFocusable()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
+
+			SetControlVisibleForTest(m_parent, true);
+			SetControlVisibleForTest(m_dtree, true);
+
+			Slice first = m_dtree.Slices[0];
+			Assert.That(first.Control, Is.Not.Null);
+			Assume.That(first.Control.TabStop && first.Control.CanFocus,
+				"Current harness did not produce a focusable first slice control.");
+
+			SetCurrentSliceFieldForTest(first);
+			bool movedToNext = InvokeGotoNextSliceAfterIndex(0);
+			Assert.That(movedToNext, Is.False);
+			SetCurrentSliceFieldForTest(first);
+
+			m_dtree.GotoFirstSlice();
+
+			Assert.That(m_dtree.CurrentSlice, Is.SameAs(first));
+		}
+
+		#endregion
+
 		#region Helper Methods
 
 		/// <summary>
@@ -979,6 +1416,83 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var countProperty = value.GetType().GetProperty("Count");
 			Assert.That(countProperty, Is.Not.Null, "m_setInvalidFields should expose Count");
 			return (int)countProperty.GetValue(value, null);
+		}
+
+		private bool InvokeEquivalentKeys(object[] newKey, object[] oldKey, bool fCheckInts)
+		{
+			var method = typeof(DataTree).GetMethod("EquivalentKeys",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.EquivalentKeys method");
+			return (bool)method.Invoke(m_dtree, new object[] { newKey, oldKey, fCheckInts });
+		}
+
+		private bool InvokeIsChildSlice(Slice first, Slice second)
+		{
+			var method = typeof(DataTree).GetMethod("IsChildSlice",
+				BindingFlags.Static | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.IsChildSlice method");
+			return (bool)method.Invoke(null, new object[] { first, second });
+		}
+
+		private bool InvokeGotoNextSliceAfterIndex(int index)
+		{
+			var method = typeof(DataTree).GetMethod("GotoNextSliceAfterIndex",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.GotoNextSliceAfterIndex method");
+			return (bool)method.Invoke(m_dtree, new object[] { index });
+		}
+
+		private static void InvokeMakeSliceVisible(Slice slice)
+		{
+			var method = typeof(DataTree).GetMethod("MakeSliceVisible",
+				BindingFlags.Static | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect DataTree.MakeSliceVisible method");
+			method.Invoke(null, new object[] { slice });
+		}
+
+		private void SetSliceIndents(params int[] indents)
+		{
+			Assert.That(m_dtree.Slices.Count, Is.EqualTo(indents.Length),
+				"Expected one indent value per existing slice");
+			for (int i = 0; i < indents.Length; i++)
+				m_dtree.Slices[i].Indent = indents[i];
+		}
+
+		private static Slice CreateSliceWithKey(params object[] key)
+		{
+			var slice = new Slice();
+			slice.Key = key;
+			return slice;
+		}
+
+		private static XmlNode CreateXmlNode(string xml)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(xml);
+			return doc.DocumentElement;
+		}
+
+		private void SetCurrentSliceFieldForTest(Slice slice)
+		{
+			var field = typeof(DataTree).GetField("m_currentSlice",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(field, Is.Not.Null, "Could not reflect DataTree.m_currentSlice field");
+			field.SetValue(m_dtree, slice);
+		}
+
+		private static void SetControlVisibleForTest(Control control, bool visible)
+		{
+			var method = typeof(Control).GetMethod("SetVisibleCore",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(method, Is.Not.Null, "Could not reflect Control.SetVisibleCore method");
+			method.Invoke(control, new object[] { visible });
+		}
+
+		private static Command CreateCommandFromXml(string commandXml)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(commandXml);
+			return new Command(null, doc.DocumentElement);
 		}
 
 		#endregion

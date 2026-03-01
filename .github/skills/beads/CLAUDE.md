@@ -72,7 +72,7 @@ wc -w claude-plugin/skills/beads/SKILL.md  # Target: 400-600 words
 # (Manual check: ensure all resource links in SKILL.md exist)
 
 # Verify bd prime still works
-bd prime | head -20
+bd prime
 ```
 
 ## Attribution

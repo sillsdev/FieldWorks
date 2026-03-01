@@ -81,8 +81,8 @@ bd show <B-id>
 If dependencies still don't persist after updating:
 
 1. **Check daemon is running:**
-   ```bash
-   ps aux | grep "bd daemon"
+   ```powershell
+   bd daemon status
    ```
 
 2. **Try without --no-daemon flag:**
@@ -92,9 +92,9 @@ If dependencies still don't persist after updating:
    ```
 
 3. **Check JSONL file:**
-   ```bash
-   cat .beads/issues.jsonl | jq '.dependencies'
-   # Should show dependency array
+   ```powershell
+   .\scripts\Agent\Read-FileContent.ps1 -Path ".beads/issues.jsonl" -Pattern '"dependencies"'
+   # Should show dependency entries
    ```
 
 4. **Report to beads GitHub** with:
@@ -150,7 +150,7 @@ bd show issue-1
 ```bash
 bd --no-daemon update issue-1 --status in_progress
 # Trigger sync by exporting/importing
-bd export > /dev/null 2>&1  # Forces sync
+bd export
 bd show issue-1
 ```
 
@@ -428,7 +428,7 @@ Before reporting issues, collect this information:
 bd version
 
 # 2. Daemon status
-ps aux | grep "bd daemon"
+bd daemon status
 
 # 3. Database location
 echo $PWD/.beads/*.db
@@ -439,7 +439,7 @@ git status
 git log --oneline -1
 
 # 5. JSONL contents (for dependency issues)
-cat .beads/issues.jsonl | jq '.' | head -50
+.\scripts\Agent\Read-FileContent.ps1 -Path ".beads/issues.jsonl" -HeadLines 50
 ```
 
 ### Report to beads GitHub

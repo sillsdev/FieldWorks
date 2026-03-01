@@ -394,6 +394,34 @@
       },
       "problemMatcher": []
     },
+    {
+      "label": "Test Coverage Assessment (DetailControls)",
+      "type": "shell",
+      "command": "./Build/Agent/Run-ManagedCoverageAssessment.ps1 -Configuration ${input:testConfiguration} -TestFilter 'FullyQualifiedName~DetailControls' -NoBuild",
+      "group": "test",
+      "detail": "Collect coverage and generate gap assessment artifacts for DetailControls tests",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Coverage Assessment (with filter)",
+      "type": "shell",
+      "command": "./Build/Agent/Run-ManagedCoverageAssessment.ps1 -Configuration ${input:testConfiguration} -TestFilter '${input:coverageFilter}' -NoBuild",
+      "group": "test",
+      "detail": "Collect coverage and generate gap assessment artifacts using a custom filter",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
 
     // ==================== CI Parity Checks ====================
     {

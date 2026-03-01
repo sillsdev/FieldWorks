@@ -17,8 +17,8 @@ Guide the user through their first complete OpenSpec workflow cycle. This is a t
 
 Before starting, check if OpenSpec is initialized:
 
-```bash
-openspec status --json 2>&1 || echo "NOT_INITIALIZED"
+```powershell
+openspec status --json
 ```
 
 **If not initialized:**
@@ -66,8 +66,8 @@ Scan the codebase for small improvement opportunities. Look for:
 6. **Missing validation** - User input handlers without validation
 
 Also check recent git activity:
-```bash
-git log --oneline -10 2>/dev/null || echo "No git history"
+```powershell
+.\scripts\Agent\Git-Search.ps1 -Action log -HeadLines 10
 ```
 
 ### Present Suggestions

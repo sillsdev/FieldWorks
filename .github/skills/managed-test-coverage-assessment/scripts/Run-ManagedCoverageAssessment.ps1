@@ -10,29 +10,22 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "../../../..")
-$coverageRunner = Join-Path $repoRoot "Build/Agent/Run-TestCoverage.ps1"
-$assessmentRunner = Join-Path $PSScriptRoot "Assess-CoverageGaps.ps1"
+$wrapperRunner = Join-Path $repoRoot "Build/Agent/Run-ManagedCoverageAssessment.ps1"
 
-if (-not (Test-Path -LiteralPath $coverageRunner)) {
-	throw "Coverage runner not found: $coverageRunner"
+if (-not (Test-Path -LiteralPath $wrapperRunner)) {
+	throw "Managed coverage wrapper not found: $wrapperRunner"
 }
-if (-not (Test-Path -LiteralPath $assessmentRunner)) {
-	throw "Assessment runner not found: $assessmentRunner"
-}
+
+Write-Host "[WARN] Running skill-local coverage script; prefer Build/Agent/Run-ManagedCoverageAssessment.ps1 for terminal use." -ForegroundColor Yellow
 
 if ($NoBuild) {
-	& $coverageRunner -Configuration $Configuration -TestFilter $TestFilter -NoBuild -FocusPath $FocusPath
+	& $wrapperRunner -Configuration $Configuration -TestFilter $TestFilter -NoBuild -FocusPath $FocusPath
 }
 else {
-	& $coverageRunner -Configuration $Configuration -TestFilter $TestFilter -FocusPath $FocusPath
+	& $wrapperRunner -Configuration $Configuration -TestFilter $TestFilter -FocusPath $FocusPath
 }
 if ($LASTEXITCODE -ne 0) {
-	throw "Coverage collection failed"
-}
-
-& $assessmentRunner -Configuration $Configuration -FocusPath $FocusPath
-if ($LASTEXITCODE -ne 0) {
-	throw "Coverage gap assessment failed"
+	throw "Managed coverage assessment failed"
 }
 
 Write-Host "[OK] Managed coverage assessment flow complete" -ForegroundColor Green

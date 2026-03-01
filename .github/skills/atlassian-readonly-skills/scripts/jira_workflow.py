@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from _common import (
+    AtlassianCredentials,
     get_jira_client,
     format_json_response,
     format_error_response,
@@ -29,15 +30,15 @@ def _simplify_transition(transition_data: Dict[str, Any]) -> Dict[str, Any]:
         'id': transition_data.get('id', ''),
         'name': transition_data.get('name', ''),
     }
-    
+
     to_status = transition_data.get('to', {})
     if to_status and isinstance(to_status, dict):
         simplified['to_status'] = to_status.get('name', '')
         simplified['to_status_id'] = to_status.get('id', '')
-    
+
     has_screen = transition_data.get('hasScreen', False)
     simplified['has_screen'] = has_screen
-    
+
     fields = transition_data.get('fields', {})
     if fields:
         required_fields = []
@@ -53,47 +54,47 @@ def _simplify_transition(transition_data: Dict[str, Any]) -> Dict[str, Any]:
                 required_fields.append(field_data)
             else:
                 optional_fields.append(field_data)
-        
+
         if required_fields:
             simplified['required_fields'] = required_fields
         if optional_fields:
             simplified['optional_fields'] = optional_fields
-    
+
     return simplified
 
 
 def jira_get_transitions(issue_key: str,
     credentials: Optional[AtlassianCredentials] = None) -> str:
     """Get available status transitions for a Jira issue.
-    
+
     Args:
         issue_key: Issue key (e.g., 'PROJ-123')
-    
+
     Returns:
         JSON string with list of available transitions or error information
     """
     try:
         client = get_jira_client(credentials)
-        
+
         if not issue_key:
             raise ValidationError('issue_key is required')
-        
+
         params = {'expand': 'transitions.fields'}
         response = client.get(
             client.api_path(f'issue/{issue_key}/transitions'), params=params
         )
-        
+
         transitions = response.get('transitions', [])
         simplified_transitions = [_simplify_transition(t) for t in transitions]
-        
+
         result = {
             'issue_key': issue_key,
             'transitions': simplified_transitions,
             'count': len(simplified_transitions)
         }
-        
+
         return format_json_response(result)
-        
+
     except ConfigurationError as e:
         return format_error_response('ConfigurationError', str(e))
     except AuthenticationError as e:
