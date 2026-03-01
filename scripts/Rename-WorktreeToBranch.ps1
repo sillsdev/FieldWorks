@@ -191,9 +191,13 @@ if ($LASTEXITCODE -ne 0) {
 
 # Ensure the worktree-local workspace file exists at the new location.
 if (Test-Path $colorizeScript -PathType Leaf) {
-	$colorizeArgs = @("-Action", "Apply", "-WorktreePath", $desiredPath, "-VSCodeWorkspaceFile", "")
+	$colorizeArgs = @{
+		Action = "Apply"
+		WorktreePath = $desiredPath
+		VSCodeWorkspaceFile = ""
+	}
 	if ($PSBoundParameters.ContainsKey("ColorIndex")) {
-		$colorizeArgs += @("-ColorIndex", $ColorIndex)
+		$colorizeArgs.ColorIndex = $ColorIndex
 	}
 
 	& $colorizeScript @colorizeArgs

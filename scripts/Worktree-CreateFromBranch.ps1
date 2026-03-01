@@ -420,9 +420,12 @@ if (-not (Test-Path $colorizeScript -PathType Leaf)) {
 	throw "Missing colorize script: $colorizeScript"
 }
 
-$colorizeArgs = @("-Action", "Launch", "-WorktreePath", $targetWorktreePath)
+$colorizeArgs = @{
+	Action = "Launch"
+	WorktreePath = $targetWorktreePath
+}
 if ($PSBoundParameters.ContainsKey("ColorIndex")) {
-	$colorizeArgs += @("-ColorIndex", $ColorIndex)
+	$colorizeArgs.ColorIndex = $ColorIndex
 }
 
 & $colorizeScript @colorizeArgs
