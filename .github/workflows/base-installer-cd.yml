@@ -103,18 +103,17 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      # TODO (Hasso) 2026.02: use .NET 4.8 targeting pack (if not already installed)
-      - name: Download .NET 461 targeting pack
+      - name: Download .NET 4.8 targeting pack
         uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
         id: downloadfile  # Remember to give an ID if you need the output filename
         with:
-            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+            url: "https://download.microsoft.com/download/9/5/0/9500E0A8-3C76-45F9-8D4B-8D2A7F2C1A3A/NDP48-DevPack-KB4486153-ENU.exe"
             target: public/
 
-      - name: Install .NET 461 targeting pack
+      - name: Install .NET 4.8 targeting pack
         shell: cmd
         working-directory: public
-        run: NDP461-DevPack-KB3105179-ENU.exe /q
+        run: NDP48-DevPack-KB4486153-ENU.exe /q
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
