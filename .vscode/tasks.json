@@ -510,21 +510,6 @@
         }
       },
       "problemMatcher": []
-    },
-
-    // ==================== Agent Metadata ====================
-    {
-      "label": "Agent: Generate RIG",
-      "type": "shell",
-      "command": ".\\Build\\Agent\\Generate-RepositoryIntelligenceGraph.ps1 -OutputPath Repository.Intelligence.Graph.json",
-      "detail": "Regenerate deterministic repository intelligence graph",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
     }
   ]
 }

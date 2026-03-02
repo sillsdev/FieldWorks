@@ -7,10 +7,9 @@ description: "Navigation policy for agentic code discovery and hidden-dependency
 # Navigation policy (FieldWorks)
 
 ## Purpose & Scope
-Define when agents should use structural navigation (Serena symbol/reference tools + `Repository.Intelligence.Graph.json`) versus lexical search, so hidden dependencies are not missed.
+Define when agents should use structural navigation (Serena symbol/reference tools) versus lexical search, so hidden dependencies are not missed.
 
 ## Core policy
-- Use `Repository.Intelligence.Graph.json` first to identify impacted projects, tests, and build entry points.
 - Use Serena symbol tools before broad file reads for code exploration and edits.
 - Treat lexical search (`grep`/keyword search) as a helper, not a complete dependency map.
 
@@ -20,12 +19,11 @@ Define when agents should use structural navigation (Serena symbol/reference too
 - **Hidden-dependency risk**: issue text is narrow but implementation may cross layers (native/managed boundary, COM/reg-free behavior, parser pipelines, installer chains).
 
 ## Required workflow
-1. Start with RIG project/topology lookup.
-2. If structural or hidden-dependency risk is present, run Serena reference/navigation steps before editing:
+1. If structural or hidden-dependency risk is present, run Serena reference/navigation steps before editing:
    - locate defining symbol(s),
    - enumerate referencing symbols/callers,
    - inspect likely boundary files first.
-3. Only then proceed to implementation.
+2. Only then proceed to implementation.
 
 ## Veto protocol
 - If lexical search returns weak or zero relevant results, do **not** conclude “no dependency.”
@@ -35,7 +33,6 @@ Define when agents should use structural navigation (Serena symbol/reference too
 - Put navigation checklist items at the **end** of long agent prompts to improve compliance in long-context runs.
 
 ## References
-- `Repository.Intelligence.Graph.json`
 - `.github/instructions/build.instructions.md`
 - `.github/instructions/testing.instructions.md`
 - `.github/instructions/security.instructions.md`

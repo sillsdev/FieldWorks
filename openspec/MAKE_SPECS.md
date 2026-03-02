@@ -506,7 +506,6 @@ jobs:
 ### Phase 5: Automation (Week 6+)
 
 - [ ] Nightly auto-fix PR workflow
-- [ ] Integration with `Repository.Intelligence.Graph.json` refresh (flag architecture/build/test topology changes that may need spec updates)
 
 ---
 

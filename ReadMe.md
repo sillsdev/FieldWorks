@@ -97,15 +97,7 @@ requirements and troubleshooting tips.
 
 We maintain a minimal AGENTS model (`AGENTS.md`, `.github/AGENTS.md`,
 `Src/AGENTS.md`, `FLExInstaller/AGENTS.md`, `openspec/AGENTS.md`) and a
-deterministic repository structure map in `Repository.Intelligence.Graph.json`.
-
-Regenerate the structure map with:
-
-```powershell
-.\Build\Agent\Generate-RepositoryIntelligenceGraph.ps1 -OutputPath Repository.Intelligence.Graph.json
-```
-
-`Repository.Intelligence.Graph.json` is checked in and should be updated when project graph/build-test topology changes.
+minimal, requirement-focused guidance model.
 
 Prescriptive constraints remain under `.github/instructions/*.instructions.md`.
 

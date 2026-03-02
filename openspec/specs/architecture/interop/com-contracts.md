@@ -12,7 +12,7 @@ Describe the registration-free COM contracts used across FieldWorks components s
 
 ## Context
 
-FieldWorks relies on registration-free COM to avoid global registry pollution. Native COM interfaces and proxy/stub DLLs are authored in native components, while managed layers consume these interfaces through C++/CLI and COM interop. This spec captures cross-cutting constraints and the contract boundaries; component-specific details remain in Repository.Intelligence.Graph.json and minimal AGENTS guidance.
+FieldWorks relies on registration-free COM to avoid global registry pollution. Native COM interfaces and proxy/stub DLLs are authored in native components, while managed layers consume these interfaces through C++/CLI and COM interop. This spec captures cross-cutting constraints and the contract boundaries; component-specific details remain in minimal AGENTS guidance.
 
 ## Behavior
 

@@ -27,4 +27,3 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 - [OpenSpec Index](specs/README.md)
 - [Root AGENTS guidance](../AGENTS.md)
-- [Repository Intelligence Graph](../Repository.Intelligence.Graph.json)

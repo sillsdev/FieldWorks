@@ -16,4 +16,4 @@ Minimal guidance for source-tree work.
 
 ## Discoverability
 
-Use `Repository.Intelligence.Graph.json` for project/dependency/test topology instead of per-folder AGENTS files.
+Use repo and folder AGENTS guidance plus Serena symbol navigation for project/dependency/test discovery.

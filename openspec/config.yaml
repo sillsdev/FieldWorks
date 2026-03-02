@@ -14,7 +14,7 @@ context: |
 
   ## Conventions
   - Conventional commits (feat:, fix:, chore:, etc.)
-  - Minimal AGENTS.md files plus Repository.Intelligence.Graph.json describe architecture and dependencies
+  - Minimal AGENTS.md files describe architecture and dependencies
   - .github/instructions/*.md contain coding guidelines by surface area
   - Localization via .resx files and Crowdin (crowdin.json)
 

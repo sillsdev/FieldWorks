@@ -12,7 +12,7 @@ Define shared patterns for LCModel data access and caching.
 
 ## Context
 
-FieldWorks data access is built on LCModel and cache layers used by framework services and view hosts. Data-access specifics are summarized in the minimal AGENTS set plus Repository.Intelligence.Graph.json; this spec captures shared patterns.
+FieldWorks data access is built on LCModel and cache layers used by framework services and view hosts. Data-access specifics are summarized in the minimal AGENTS set; this spec captures shared patterns.
 
 ## Data Access Patterns
 

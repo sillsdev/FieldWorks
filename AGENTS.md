@@ -19,16 +19,11 @@ Minimal, high-signal guidance for coding agents in this repository.
 
 - Use `.github/instructions/*.instructions.md` for prescriptive rules.
 - Apply `.github/instructions/navigation.instructions.md` for structural navigation and hidden-dependency handling.
-- Use `Repository.Intelligence.Graph.json` as the deterministic architecture/build/test map.
 - Use `Src/AGENTS.md`, `.github/AGENTS.md`, `FLExInstaller/AGENTS.md`, and `openspec/AGENTS.md` for area-specific guidance.
 
-## RIG and Serena
+## Serena navigation
 
 - Prefer Serena symbolic tools for code discovery/navigation before broad file reads.
-- Use `Repository.Intelligence.Graph.json` for project graph/build/test topology, then drill into code with Serena tools.
-- Commit `Repository.Intelligence.Graph.json` to source control.
-- Regenerate it deterministically with `Build/Agent/Generate-RepositoryIntelligenceGraph.ps1` when project structure/build topology changes.
-- Do not gitignore the RIG file.
 
 ## Issue tracking and Jira
 

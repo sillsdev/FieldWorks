@@ -12,7 +12,7 @@ Describe the shared testing strategy across FieldWorks components.
 
 ## Context
 
-Testing spans managed and native components with shared guidance in Repository.Intelligence.Graph.json and minimal AGENTS guidance. This spec captures the high-level approach.
+Testing spans managed and native components with shared guidance in minimal AGENTS guidance. This spec captures the high-level approach.
 
 ## Strategy
 

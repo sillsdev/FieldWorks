@@ -12,7 +12,7 @@ Define allowed dependencies between major layers and core frameworks in FieldWor
 
 ## Context
 
-Repository.Intelligence.Graph.json and the minimal AGENTS set describe component dependencies. This spec captures the cross-cutting rules that keep the dependency graph stable and understandable.
+The minimal AGENTS set describes component dependencies. This spec captures the cross-cutting rules that keep the dependency graph stable and understandable.
 
 ## Dependency Rules
 

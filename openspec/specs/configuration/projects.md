@@ -17,7 +17,7 @@ Define shared project configuration patterns (creation, backup, and restore).
 
 ## Context
 
-Project settings flow through framework services and shared dialogs. This spec captures cross-cutting expectations and references component-specific details in Repository.Intelligence.Graph.json and minimal AGENTS guidance.
+Project settings flow through framework services and shared dialogs. This spec captures cross-cutting expectations and references component-specific details in minimal AGENTS guidance.
 
 ## Behavior
 
