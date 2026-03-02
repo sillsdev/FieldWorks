@@ -13,7 +13,7 @@ focusCriteria:
 
 specialChecks:
   - id: localization_compliance
-    check: Translatable UI strings use .resx files following crowdin.json conventions.
+    check: Translatable UI strings use .resx files
     evidence: changed resource file paths
   - id: workflow_integrity
     check: Build and test workflow remains script-first for touched areas.
