@@ -306,5 +306,5 @@ jobs:
           if-no-files-found: warn
           name: build-logs
           path: |
-            Build/*.log
-            Build/*.binlog
+            *.log
+            *.binlog
