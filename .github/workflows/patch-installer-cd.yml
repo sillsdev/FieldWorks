@@ -119,7 +119,7 @@ jobs:
           path: 'Localizations/LCM'
 
       - name: Download .NET 461 targeting pack
-        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+        uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
         id: downloadfile  # Remember to give an ID if you need the output filename
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
