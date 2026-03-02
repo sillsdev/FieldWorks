@@ -138,6 +138,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// to allow slices to handle events (e.g. InflAffixTemplateSlice)
 		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
+		private int m_sliceInstallCreationCount;
 		protected IRecordChangeHandler m_rch = null;
 		protected IRecordListUpdater m_rlu = null;
 		protected string m_listName;
@@ -158,8 +159,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
 		bool m_postponePropChanged = true;
 		internal bool ConstructingSlices { get; private set; }
+		internal bool DeferSliceHwndCreationEnabled { get; set; }
 
 		public List<Slice> Slices { get; private set; }
+
+		public int SliceInstallCreationCount => m_sliceInstallCreationCount;
+
+		public void ResetSliceInstallCreationCount()
+		{
+			m_sliceInstallCreationCount = 0;
+		}
+
+		public void IncrementSliceInstallCreationCount()
+		{
+			m_sliceInstallCreationCount++;
+		}
 
 		/// <summary>
 		/// Tracks the highest slice index that has been made visible. Used by MakeSliceVisible
@@ -711,8 +725,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Tell the old geezer it isn't current anymore.
 				if (m_currentSlice != null)
 				{
-					m_currentSlice.Validate();
-					if (m_currentSlice.Control is ContainerControl)
+					if (m_currentSlice.IsHandleCreated)
+						m_currentSlice.Validate();
+					if (m_currentSlice.IsHandleCreated && m_currentSlice.Control is ContainerControl)
 						((ContainerControl)m_currentSlice.Control).Validate();
 					m_currentSlice.SetCurrentState(false);
 				}
@@ -1566,6 +1581,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var watch = new Stopwatch();
 			watch.Start();
+			ResetSliceInstallCreationCount();
 			bool wasVisible = this.Visible;
 			var previousSlices = new ObjSeqHashMap();
 			int oldSliceCount = Slices.Count;
@@ -3460,9 +3476,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// We cannot allow slice to be unreal; it's visible, and we're checking
 					// for real slices where they're visible
 					tci = FieldAt(i); // ensures it becomes real if needed.
-					var dummy = tci.Handle; // also force it to get a handle
-					if (tci.Control != null)
-						dummy = tci.Control.Handle; // and its control must too.
+					if (DeferSliceHwndCreationEnabled)
+					{
+						tci.EnsureHwndCreated();
+					}
+					else
+					{
+						var dummy = tci.Handle; // also force it to get a handle
+						if (tci.Control != null)
+							dummy = tci.Control.Handle; // and its control must too.
+					}
 					if (yTop < 0)
 					{
 						// It starts above the top of the window. We need to adjust the scroll position
@@ -3520,6 +3543,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var tci = Slices[i];
 			int oldHeight = tci == null ? GetMinFieldHeight() : tci.Height;
 			tci = FieldAt(i); // ensures it becomes real if needed.
+			if (DeferSliceHwndCreationEnabled)
+				tci.EnsureHwndCreated();
 			int desiredWidth = ClientRectangle.Width;
 			if (tci.Width != desiredWidth)
 				tci.SetWidthForDataTreeLayout(desiredWidth); // can have side effects, don't do unless needed.
@@ -3559,6 +3584,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </param>
 		internal void MakeSliceVisible(Slice tci, int knownIndex = -1)
 		{
+			if (DeferSliceHwndCreationEnabled)
+				tci.EnsureHwndCreated();
+
 			// It intersects the screen so it needs to be visible.
 			if (!tci.Visible)
 			{

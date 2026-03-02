@@ -554,6 +554,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 		}
 
+		protected internal virtual void EnsureHwndCreated()
+		{
+			CheckDisposed();
+
+			if (!Controls.Contains(m_splitter))
+				Controls.Add(m_splitter);
+
+			if (m_splitter.Size != Size)
+				m_splitter.Size = Size;
+		}
+
 		protected override void OnEnter(EventArgs e)
 		{
 			CheckDisposed();
@@ -891,6 +902,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// REVIEW (Hasso) 2018.07: would it be better to check !parent.Controls.Contains(this)?
 			if (!isBeingReused)
 			{
+				parent.IncrementSliceInstallCreationCount();
 				parent.Controls.Add(this); // Parent will have to move it into the right place.
 				parent.Slices.Add(this);
 			}

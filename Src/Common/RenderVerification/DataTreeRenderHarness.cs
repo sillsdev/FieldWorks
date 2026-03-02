@@ -146,6 +146,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			// After ShowObject, slices exist but are Visible=false because CreateSlices
 			// checks wasVisible = this.Visible at the start, and since the form isn't
 			// shown, wasVisible is false and Show() is skipped at the end.
+			int userHandlesBeforeShowObject = HwndDiagnostics.GetCurrentProcessUserHandleCount();
+			m_dataTree.ResetSliceInstallCreationCount();
 			var populateStopwatch = Stopwatch.StartNew();
 			try
 			{
@@ -174,6 +176,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			m_dataTree.Visible = true;
 			m_dataTree.Invalidate();
 			System.Windows.Forms.Application.DoEvents();
+			int userHandlesAfterShowObject = HwndDiagnostics.GetCurrentProcessUserHandleCount();
 
 			stopwatch.Stop();
 
@@ -183,6 +186,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				PopulateSlicesMs = populateStopwatch.Elapsed.TotalMilliseconds,
 				TotalMs = stopwatch.Elapsed.TotalMilliseconds,
 				SliceCount = m_dataTree.Slices?.Count ?? 0,
+				SliceInstallCreationCount = m_dataTree.SliceInstallCreationCount,
+				UserHandleCountBeforePopulate = userHandlesBeforeShowObject,
+				UserHandleCountAfterPopulate = userHandlesAfterShowObject,
 				Timestamp = DateTime.UtcNow
 			};
 
@@ -447,6 +453,18 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 		/// <summary>Number of slices created.</summary>
 		public int SliceCount { get; set; }
+
+		/// <summary>Number of slice installs that created hosted controls.</summary>
+		public int SliceInstallCreationCount { get; set; }
+
+		/// <summary>USER handle count measured immediately before ShowObject().</summary>
+		public int UserHandleCountBeforePopulate { get; set; }
+
+		/// <summary>USER handle count measured after ShowObject() + paint pump.</summary>
+		public int UserHandleCountAfterPopulate { get; set; }
+
+		/// <summary>Delta between after and before USER handle counts.</summary>
+		public int UserHandleDelta => UserHandleCountAfterPopulate - UserHandleCountBeforePopulate;
 
 		/// <summary>Timestamp of the operation.</summary>
 		public DateTime Timestamp { get; set; }

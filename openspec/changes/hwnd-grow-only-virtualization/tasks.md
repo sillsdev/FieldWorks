@@ -2,12 +2,13 @@
 
 Establish exact HWND costs and automated regression detection before any behavioral changes.
 
-- [ ] 0.1 Add `GetGuiResources()` P/Invoke wrapper to count USER handles per process. File: `Src/Common/Controls/DetailControls/HwndDiagnostics.cs`. [Managed C#, ~30 min]
-- [ ] 0.2 Add HWND counter integration to `DataTreeRenderHarness` — log HWND count before/after `ShowObject()`. File: `Src/Common/RenderVerification/DataTreeRenderHarness.cs`. [Managed C#, ~30 min]
-- [ ] 0.3 Add `Slice.Install()` counter — increment a static or DataTree-level counter each time a slice creates HWNDs. File: `Src/Common/Controls/DetailControls/Slice.cs`, `DataTree.cs`. [Managed C#, ~30 min]
-- [ ] 0.4 Create `DataTreeHwndCountTest` — NUnit test that loads a known entry (pathological 253-slice or equivalent) and asserts HWND count stays below threshold. File: `Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeHwndCountTest.cs`. [Managed C#, ~1 hr]
+- [x] 0.1 Add `GetGuiResources()` P/Invoke wrapper to count USER handles per process. File: `Src/Common/Controls/DetailControls/HwndDiagnostics.cs`. [Managed C#, ~30 min]
+- [x] 0.2 Add HWND counter integration to `DataTreeRenderHarness` — log HWND count before/after `ShowObject()`. File: `Src/Common/RenderVerification/DataTreeRenderHarness.cs`. [Managed C#, ~30 min]
+- [x] 0.3 Add `Slice.Install()` counter — increment a static or DataTree-level counter each time a slice creates HWNDs. File: `Src/Common/Controls/DetailControls/Slice.cs`, `DataTree.cs`. [Managed C#, ~30 min]
+- [x] 0.4 Create `DataTreeHwndCountTest` — NUnit test that loads a known entry (pathological 253-slice or equivalent) and asserts HWND count stays below threshold. File: `Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeHwndCountTest.cs`. [Managed C#, ~1 hr]
 - [ ] 0.5 Record baseline numbers in `research/baseline-measurements.md` for: Lexicon Edit (253-slice entry), Grammar Edit (typical category), Lists Edit (typical item). [Documentation, ~1 hr]
-- [ ] 0.6 Run `.\build.ps1 -BuildTests` and `.\test.ps1 -TestProject DetailControlsTests` to verify baseline infrastructure. [Verification]
+- [x] 0.6 Run `.\build.ps1 -BuildTests` and `.\test.ps1 -TestProject DetailControlsTests` to verify baseline infrastructure. [Verification]
+	- Updated render baselines (`DataTreeRender_Deep`, `DataTreeRender_Expanded`, `DataTreeRender_Extreme`) and re-ran full `DetailControlsTests` successfully.
 
 ## Phase 1: Defer HWND Creation (2-3 weeks)
 
@@ -19,7 +20,8 @@ Extend the existing `BecomeRealInPlace` pattern so no slice creates any HWND unt
 - [ ] 1.4 Add null guards to `Label`, `Indent`, `Weight`, `Expansion` property setters for `m_treeNode` and `SplitCont` that may not yet exist. Store values in backing fields. File: `Src/Common/Controls/DetailControls/Slice.cs`. [Managed C#, ~1 hr]
 - [ ] 1.5 Update `DataTree.MakeSliceVisible()` — call `EnsureHwndCreated()` on the target slice (and high-water-mark predecessors) before setting `Visible`. File: `Src/Common/Controls/DetailControls/DataTree.cs`. [Managed C#, ~1 hr]
 - [ ] 1.6 Update `DataTree.HandleLayout1()` — only call `Handle`-forcing and `MakeSliceVisible` for slices where `fSliceIsVisible` is true. Non-visible slices skip HWND creation entirely. File: `Src/Common/Controls/DetailControls/DataTree.cs`. [Managed C#, ~2 hrs]
-- [ ] 1.7 Guard `CurrentSlice` setter — wrap `Validate()` call with `if (m_currentSlice.IsHandleCreated)`. File: `Src/Common/Controls/DetailControls/DataTree.cs`. [Managed C#, ~30 min]
+- [x] 1.7 Guard `CurrentSlice` setter — wrap `Validate()` call with `if (m_currentSlice.IsHandleCreated)`. File: `Src/Common/Controls/DetailControls/DataTree.cs`. [Managed C#, ~30 min]
+	- Incremental scaffold landed: `DeferSliceHwndCreationEnabled` flag, `Slice.EnsureHwndCreated()`, and visibility/layout call sites now branch through deferred hooks when flag is enabled (default remains eager/off).
 - [ ] 1.8 Audit all `SplitCont` / `TreeNode` / `Control` accesses across all 73 slice subclasses — add null guards or `EnsureHwndCreated()` calls where needed. Files: multiple across `Src/Common/Controls/DetailControls/` and `Src/LexText/`. [Managed C#, ~4 hrs]
 - [ ] 1.9 Update `ViewSlice.Install()` — move RootSite event subscriptions (`LayoutSizeChanged`, `Enter`, `SizeChanged`) to `EnsureHwndCreated()` or `BecomeRealInPlace()`. File: `Src/Common/Controls/DetailControls/ViewSlice.cs`. [Managed C#, ~1 hr]
 - [ ] 1.10 Run full `DetailControlsTests` suite, render benchmark, and manual smoke test. Verify HWND count reduction matches expectations. [Verification, ~2 hrs]
