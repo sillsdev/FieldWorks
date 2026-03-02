@@ -118,17 +118,35 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      - name: Download .NET 4.8 targeting pack
-        uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
-        id: downloadfile  # Remember to give an ID if you need the output filename
-        with:
-            url: "https://download.microsoft.com/download/9/5/0/9500E0A8-3C76-45F9-8D4B-8D2A7F2C1A3A/NDP48-DevPack-KB4486153-ENU.exe"
-            target: public/
+      - name: Ensure .NET Framework 4.8 targeting pack
+        shell: pwsh
+        run: |
+          # Check registry Release key for .NET Framework 4.8 (Release >= 528040 indicates 4.8)
+          $targetRelease = 528040
+          try {
+            $releaseKey = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -Name Release -ErrorAction Stop).Release
+          } catch {
+            $releaseKey = $null
+          }
 
-      - name: Install .NET 4.8 targeting pack
-        shell: cmd
-        working-directory: public
-        run: NDP48-DevPack-KB4486153-ENU.exe /q
+          if (-not $releaseKey -or $releaseKey -lt $targetRelease) {
+            Write-Host "Detected .NET release $releaseKey. Installing .NET Framework 4.8 Developer Pack..."
+            $installerUrl = "https://download.microsoft.com/download/9/5/0/9500E0A8-3C76-45F9-8D4B-8D2A7F2C1A3A/NDP48-DevPack-KB4486153-ENU.exe"
+            $installer = Join-Path $env:RUNNER_TEMP "NDP48-DevPack-KB4486153-ENU.exe"
+
+            Invoke-WebRequest -Uri $installerUrl -OutFile $installer -UseBasicParsing -TimeoutSec 120
+
+            Write-Host "Starting installer..."
+            $proc = Start-Process -FilePath $installer -ArgumentList "/quiet","/norestart" -Wait -PassThru
+            if ($proc.ExitCode -ne 0) {
+              Write-Error "Failed to install .NET 4.8 Developer Pack. ExitCode: $($proc.ExitCode)"
+              exit $proc.ExitCode
+            }
+            Write-Host ".NET 4.8 Developer Pack installation finished."
+          }
+          else {
+            Write-Host ".NET Framework 4.8 (Release=$releaseKey) already present. Skipping install."
+          }
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
