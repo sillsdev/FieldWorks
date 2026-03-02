@@ -42,5 +42,8 @@
     <EmbeddedResource Remove="HCSynthByGlossDllTest\**" />
     <None Remove="HCSynthByGlossDllTest\**" />
     <None Remove="HCSynthByGlossTest/**" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

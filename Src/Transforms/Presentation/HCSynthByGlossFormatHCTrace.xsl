@@ -564,6 +564,7 @@ function Toggle(node, path, imgOffset)
 		if (node.childNodes.length > 0)
 		{
 			if (node.childNodes.item(0).nodeName == "IMG")
+			{
 				var str = node.childNodes.item(0).src;
 				var pos = str.indexOf(Images[0 + imgOffset]); // "beginminus.gif");
 				if (pos >= 0)
@@ -590,6 +591,7 @@ function Toggle(node, path, imgOffset)
 						}
 					}
 				}
+			}
 	}
 	NextNonTextSibling(node).style.display = 'none';
 }
