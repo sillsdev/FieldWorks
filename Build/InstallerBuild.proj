@@ -15,7 +15,7 @@
 
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
-    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
     <InstallerToolset Condition="'$(InstallerToolset)'==''">Wix3</InstallerToolset>
   </PropertyGroup>
 

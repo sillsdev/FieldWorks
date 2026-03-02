@@ -100,8 +100,8 @@
 			Condition="'$(Platform)' != 'x64'"
 		/>
 		<Error
-			Text="Installer must be run for release builds [config=$(config)]"
-			Condition="'$(config)' != 'release'"
+			Text="Installer must be run for release builds [config=$(config); Configuration=$(Configuration)]"
+			Condition="'$(config)' != 'release' or '$(Configuration)' != 'Release'"
 		/>
 	</Target>
 	<!--
