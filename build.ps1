@@ -59,14 +59,14 @@
 	reusing existing binaries under Output/<Configuration>. For safety, this requires a build stamp from a
 	prior full build in the same configuration.
 
-.PARAMETER SignInstaller
-	Only used with -BuildInstaller. Enables local signing when signing tools are available.
-	By default, local installer builds capture files to sign later instead of signing.
-
 .PARAMETER ForceInstallerOnly
 	Only used with -InstallerOnly. Forces installer-only builds even when the git HEAD or dirty state
 	differs from the last full-build stamp, or when there are uncommitted changes outside FLExInstaller/.
 	Use only when you are sure the current Output/<Configuration> binaries are still what you want to package.
+
+.PARAMETER SignInstaller
+	Only used with -BuildInstaller. Enables local signing when signing tools are available.
+	By default, local installer builds capture files to sign later instead of signing.
 
 .PARAMETER UseLocalLcm
 	If set, builds liblcm from a local checkout (default: ../liblcm) after the FieldWorks build
@@ -484,6 +484,7 @@ try {
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
 		}
 
+		# REVIEW (Hasso) 2026.03: shouldn't this be between the restore and build calls?
 		# Copy local LCM assemblies if requested
 		if ($UseLocalLcm) {
 			Write-Host ""
@@ -535,7 +536,7 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments (@('Build/InstallerBuild.proj', '/t:Build$BaseOrPatch', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
+				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
 					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
 				-Description '$BaseOrPatch Build'
 
