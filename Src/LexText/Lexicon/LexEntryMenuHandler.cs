@@ -48,19 +48,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			base.OnDisplayDataTreeInsert(commandObject, ref display);
-			var containingDataTree = slice.ContainingDataTree;
-			if (containingDataTree == null)
-			{
-				display.Enabled = false;
-				display.Visible = false;
-				return true;
-			}
 
-			if (!(slice.Object is ILexEntry) && !(containingDataTree.Root is ILexEntry))
+			if (!(slice.Object is ILexEntry) && !(slice.ContainingDataTree.Root is ILexEntry))
 				return false;
 			ILexEntry entry = slice.Object as ILexEntry;
 			if (entry == null)
-				entry = containingDataTree.Root as ILexEntry;
+				entry = slice.ContainingDataTree.Root as ILexEntry;
 			if (entry == null || !entry.IsValidObject)
 			{
 				// At one point this could happen during delete object. Not sure it will be possible when I
@@ -126,18 +119,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.OnDisplayInsertMediaFile(commandObject, ref display);
 			if (display.Enabled)
 				return true;
-			var containingDataTree = slice.ContainingDataTree;
-			if (containingDataTree == null)
-			{
-				display.Visible = false;
-				display.Enabled = false;
-				return true;
-			}
-			if (!(slice.Object is ILexEntry) && !(containingDataTree.Root is ILexEntry))
+			if (!(slice.Object is ILexEntry) && !(slice.ContainingDataTree.Root is ILexEntry))
 				return false;
 			ILexEntry entry = slice.Object as ILexEntry;
 			if (entry == null)
-				entry = containingDataTree.Root as ILexEntry;
+				entry = slice.ContainingDataTree.Root as ILexEntry;
 			display.Visible = entry != null;
 			display.Enabled = entry != null;
 			return true;

@@ -398,6 +398,11 @@ protected:
 
 	bool m_fConstructed; // true when we have called Construct() successfully.
 
+	// PATH-L1 layout guard: skip redundant full-layout passes when width hasn't changed
+	// and no structural mutation has occurred since the last successful Layout().
+	bool m_fNeedsLayout;        // true when internal state requires a full relayout
+	int m_dxLastLayoutWidth;    // width used for last successful Layout(), -1 if none
+
 	ISilDataAccessPtr m_qsda; // data access object, for getting and setting properties
 
 	IVwOverlayPtr m_qvo; // controls overlay/tagging behavior for all text

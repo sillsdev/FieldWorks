@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// pins NUnit 3.13.3.
 	/// </remarks>
 	[TestFixture]
-	[NonParallelizable]
 	public class DataTreeRenderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private ILexEntry m_entry;

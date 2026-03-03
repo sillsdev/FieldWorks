@@ -230,9 +230,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void m_cb_GotFocus(object sender, EventArgs e)
 		{
 			base.OnGotFocus(e);
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree != null)
-				containingDataTree.CurrentSlice = this;
+			ContainingDataTree.CurrentSlice = this;
 		}
 
 		//// ************************************************************************
@@ -387,16 +385,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus (e);
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree != null)
-				containingDataTree.CurrentSlice = this;
+			ContainingDataTree.CurrentSlice = this;
 		}
 
 		private void Control_GotFocus(object sender, EventArgs e)
 		{
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree != null)
-				containingDataTree.CurrentSlice = this;
+			ContainingDataTree.CurrentSlice = this;
 		}
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -514,9 +508,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void m_tb_GotFocus(object sender, EventArgs e)
 		{
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree != null)
-				containingDataTree.CurrentSlice = this;
+			ContainingDataTree.CurrentSlice = this;
 		}
 	}
 }

@@ -147,10 +147,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Debug.Assert(slice != null);
 			if (slice != null)
 			{
-				var containingDataTree = slice.ContainingDataTree;
 				// Make sure we are a current slice so we are a colleague so we can enable menu items.
-				if (containingDataTree != null && slice != containingDataTree.CurrentSlice)
-					containingDataTree.CurrentSlice = slice;
+				if (slice != slice.ContainingDataTree.CurrentSlice)
+					slice.ContainingDataTree.CurrentSlice = slice;
 			}
 			if (ShowContextMenu == null)
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);

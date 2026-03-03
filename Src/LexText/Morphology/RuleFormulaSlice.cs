@@ -133,11 +133,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			base.Install(parent);
-			if (parent == null)
-				return;
 
 			RuleFormulaControl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"), Object, -1, MEStrings.ksRuleEnvChooserName,
-				parent.PersistenceProvder, Mediator, m_propertyTable, null, null);
+				ContainingDataTree.PersistenceProvder, Mediator, m_propertyTable, null, null);
 
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;

@@ -170,14 +170,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override XCore.IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			var containingDataTree = ContainingDataTree;
 			// Normally a slice should only handle messages if both it and its data tree
 			// are visible. Override this method if there is some reason to handle messages
 			// while not visible. Note however that currently (31 Aug 2005) RecordEditView
 			// hides the data tree but does not remove slices when no record is current.
 			// Thus, a slice that is not visible might belong to a display of a deleted
 			// or unavailable object, so be very careful what you enable!
-			if (this.Visible && containingDataTree != null && containingDataTree.Visible)
+			if (this.Visible && ContainingDataTree.Visible)
 			{
 				PhoneEnvReferenceLauncher rl = Control as PhoneEnvReferenceLauncher;
 				//PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;

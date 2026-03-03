@@ -152,6 +152,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <summary>Gets or sets the top time contributors by stage.</summary>
 		public List<Contributor> TopContributors { get; set; } = new List<Contributor>();
 
+		/// <summary>Gets or sets aggregated per-stage timing and call statistics.</summary>
+		public List<StageBreakdown> StageBreakdown { get; set; } = new List<StageBreakdown>();
+
 		/// <summary>Gets or sets optimization recommendations.</summary>
 		public List<string> Recommendations { get; set; } = new List<string>();
 
@@ -175,6 +178,30 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 		/// <summary>Gets or sets the percentage share of total render time.</summary>
 		public double SharePercent { get; set; }
+	}
+
+	/// <summary>
+	/// Aggregated timing metrics for a single stage/function.
+	/// </summary>
+	public class StageBreakdown
+	{
+		/// <summary>Gets or sets the stage/function name.</summary>
+		public string Stage { get; set; }
+
+		/// <summary>Gets or sets how many times the stage executed.</summary>
+		public int Calls { get; set; }
+
+		/// <summary>Gets or sets total duration for the stage across all calls.</summary>
+		public double TotalDurationMs { get; set; }
+
+		/// <summary>Gets or sets average duration per call.</summary>
+		public double AverageDurationMs { get; set; }
+
+		/// <summary>Gets or sets minimum observed call duration.</summary>
+		public double MinDurationMs { get; set; }
+
+		/// <summary>Gets or sets maximum observed call duration.</summary>
+		public double MaxDurationMs { get; set; }
 	}
 
 	/// <summary>

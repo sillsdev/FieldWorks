@@ -100,12 +100,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var source = (AtomicReferenceLauncher)sender;
 			Debug.Assert(Control == source);
 			Debug.Assert(Object is IMoDerivAffMsa);
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree == null)
-				return;
 
 			AtomicReferenceLauncher otherControl = null;
-			int idxSender = containingDataTree.Slices.IndexOf(this);
+			int idxSender = ContainingDataTree.Slices.IndexOf(this);
 			int otherFlid;
 			bool myIsFromPOS = true;
 			if (m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech)
@@ -123,7 +120,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				idxOther = idxSender - 1;
 				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
 				{
-					otherSlice = containingDataTree.Slices[idxOther--];
+					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is AtomicReferenceSlice && (otherSlice as AtomicReferenceSlice).Flid == otherFlid)
 						break;
 				}
@@ -132,13 +129,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else
 					otherSlice = null;
 			}
-			if (otherControl == null && idxSender < containingDataTree.Slices.Count)
+			if (otherControl == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
 				while (otherSlice == null
 					|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object))
 				{
-					otherSlice = containingDataTree.Slices[idxOther++];
+					otherSlice = ContainingDataTree.Slices[idxOther++];
 					if (otherSlice is AtomicReferenceSlice && (otherSlice as AtomicReferenceSlice).Flid == otherFlid)
 						break;
 				}

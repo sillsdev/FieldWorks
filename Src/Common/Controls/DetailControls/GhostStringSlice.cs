@@ -403,20 +403,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			private static void GetSliceReadyToFocus(Slice slice)
 			{
-				if (slice == null)
-					return;
-
-				var containingDataTree = slice.ContainingDataTree;
-				if (containingDataTree == null)
-					return;
-
 				if (!slice.IsRealSlice)
 					slice.BecomeRealInPlace();
 				slice.Visible = true;
-				if (slice.Control != null)
-					slice.Control.Visible = true;
-				containingDataTree.Update();
-				containingDataTree.CurrentSlice = slice;
+				slice.Control.Visible = true;
+				slice.ContainingDataTree.Update();
+				slice.ContainingDataTree.CurrentSlice = slice;
 			}
 
 			/// <summary>

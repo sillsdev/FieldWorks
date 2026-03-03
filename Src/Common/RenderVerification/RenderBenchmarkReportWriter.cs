@@ -104,6 +104,21 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 			if (allTraceEvents.Any())
 			{
+				summary.StageBreakdown = m_traceParser
+					.AggregateByStage(allTraceEvents)
+					.Values
+					.OrderByDescending(s => s.TotalDurationMs)
+					.Select(s => new StageBreakdown
+					{
+						Stage = s.Stage,
+						Calls = s.Count,
+						TotalDurationMs = s.TotalDurationMs,
+						AverageDurationMs = s.AverageDurationMs,
+						MinDurationMs = s.MinDurationMs,
+						MaxDurationMs = s.MaxDurationMs
+					})
+					.ToList();
+
 				summary.TopContributors = m_traceParser.GetTopContributors(allTraceEvents, count: 5);
 			}
 
@@ -197,6 +212,20 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				foreach (var contributor in summary.TopContributors)
 				{
 					sb.AppendLine($"| {contributor.Stage} | {contributor.AverageDurationMs:F2} | {contributor.SharePercent:F1}% |");
+				}
+				sb.AppendLine();
+			}
+
+			if (summary?.StageBreakdown?.Any() == true)
+			{
+				sb.AppendLine("## Stage Breakdown");
+				sb.AppendLine();
+				sb.AppendLine("| Stage | Calls | Total (ms) | Avg (ms) | Min (ms) | Max (ms) |");
+				sb.AppendLine("|-------|------:|-----------:|---------:|---------:|---------:|");
+
+				foreach (var stage in summary.StageBreakdown)
+				{
+					sb.AppendLine($"| {stage.Stage} | {stage.Calls} | {stage.TotalDurationMs:F2} | {stage.AverageDurationMs:F2} | {stage.MinDurationMs:F2} | {stage.MaxDurationMs:F2} |");
 				}
 				sb.AppendLine();
 			}

@@ -101,11 +101,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (e.Button == MouseButtons.Right)
 				HandleMouseDown(new Point(e.X, e.Y));
 			else
-			{
-				var containingDataTree = ContainingDataTree;
-				if (containingDataTree != null)
-					containingDataTree.CurrentSlice = this;
-			}
+				ContainingDataTree.CurrentSlice = this;
 		}
 
 		public override DataTree.TreeItemState Expansion
@@ -758,11 +754,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (e.Button == MouseButtons.Right)
 				m_slice.HandleMouseDown(new Point(e.X,e.Y));
 			else
-			{
-				var containingDataTree = m_slice.ContainingDataTree;
-				if (containingDataTree != null)
-					containingDataTree.CurrentSlice = m_slice;
-			}
+				m_slice.ContainingDataTree.CurrentSlice = m_slice;
 			//base.OnMouseDown (e);
 		}
 
@@ -867,11 +859,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (e.Button == MouseButtons.Right)
 				m_slice.HandleMouseDown(new Point(e.X,e.Y));
 			else
-			{
-				var containingDataTree = m_slice.ContainingDataTree;
-				if (containingDataTree != null)
-					containingDataTree.CurrentSlice = m_slice;
-			}
+				m_slice.ContainingDataTree.CurrentSlice = m_slice;
 			//base.OnMouseDown (e);
 		}
 		public override void MakeRoot()

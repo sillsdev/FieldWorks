@@ -66,6 +66,8 @@ void VwRootBox::Init()
 	m_fInDrag = false;
 	m_hrSegmentError = S_OK;
 	m_cMaxParasToScan = 4;
+	m_fNeedsLayout = true;
+	m_dxLastLayoutWidth = -1;
 	// Usually set in Layout method, but some tests don't do this...
 	// play safe also for any code called before Layout.
 	m_ptDpiSrc.x = 96;
@@ -397,7 +399,10 @@ STDMETHODIMP VwRootBox::putref_Overlay(IVwOverlay * pvo)
 	m_qvo = pvo;
 	m_qvrs->OverlayChanged(this, m_qvo);
 	if (m_fConstructed)
+	{
+		m_fNeedsLayout = true; // overlay changes may affect layout
 		LayoutFull();
+	}
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
@@ -2604,6 +2609,7 @@ STDMETHODIMP VwRootBox::OnStylesheetChange()
 
 	Style()->InitRootTextProps(m_vqvwvc.Size() == 0 ? NULL : m_vqvwvc[0]);
 	Style()->RecomputeEffects();
+	m_fNeedsLayout = true; // style changes invalidate layout
 	LayoutFull();
 	return S_OK;
 
@@ -2835,6 +2841,27 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pvg);
+
+	// PATH-L1 guard: skip full layout when the box tree is already laid out at this width
+	// and no structural mutation has occurred since the last successful layout.
+	if (m_fConstructed && !m_fNeedsLayout && dxAvailWidth == m_dxLastLayoutWidth)
+	{
+#ifdef DEBUG
+		StrAnsi staSkip;
+		staSkip.Format("PATH-L1 GUARD HIT: skipped width=%d\n", dxAvailWidth);
+		::OutputDebugStringA(staSkip.Chars());
+#endif
+		return S_OK;
+	}
+#ifdef DEBUG
+	{
+		StrAnsi staFull;
+		staFull.Format("PATH-L1 FULL LAYOUT: width=%d constructed=%d needsLayout=%d lastWidth=%d\n",
+			dxAvailWidth, (int)m_fConstructed, (int)m_fNeedsLayout, m_dxLastLayoutWidth);
+		::OutputDebugStringA(staFull.Chars());
+	}
+#endif
+
 	int dpiX, dpiY;
 	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
@@ -2844,6 +2871,10 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 	if (!m_fConstructed)
 		Construct(pvg, dxAvailWidth);
 	VwDivBox::DoLayout(pvg, dxAvailWidth, -1, true);
+
+	// Layout succeeded — cache the width and clear the dirty flag.
+	m_fNeedsLayout = false;
+	m_dxLastLayoutWidth = dxAvailWidth;
 #ifdef ENABLE_TSF
 	if (m_qvim)
 		CheckHr(m_qvim->OnLayoutChange());
@@ -4140,6 +4171,11 @@ void VwRootBox::RelayoutRoot(IVwGraphics * pvg, FixupMap * pfixmap, int dxpAvail
 	int dyOld = FieldHeight();
 	int dxOld = Width();
 	RelayoutCore(pvg, dxAvailWidth, this, pfixmap, -1, NULL, pboxsetDeleted);
+
+	// Incremental relayout succeeded — update layout guard state.
+	m_fNeedsLayout = false;
+	m_dxLastLayoutWidth = dxAvailWidth;
+
 	if (dyOld != FieldHeight() || dxOld != Width() || dyOld2 != Height())
 		CheckHr(m_qvrs->RootBoxSizeChanged(this));
 }
@@ -4189,6 +4225,7 @@ void VwRootBox::Construct(IVwGraphics * pvg, int dxAvailWidth)
 	// about everything being closed, etc...
 	qvwenv->Cleanup();
 	m_fConstructed = true;
+	m_fNeedsLayout = true; // newly-constructed boxes require layout
 	ResetSpellCheck(); // in case it somehow got called while we had no contents.
 }
 
