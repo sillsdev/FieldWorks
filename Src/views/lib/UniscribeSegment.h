@@ -231,7 +231,9 @@ public:
 	}
 
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts);
+	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts);
+	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
 
 protected:
 	// Static variables
@@ -298,7 +300,7 @@ protected:
 	static void ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg = false);
 	static int CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf, Vector<OLECHAR> & vch,
 		IVwTextSource * pts, int ichMin, int cch, OLECHAR ** pprgchBuf, int & citem,
-		bool fParaRTL);
+		bool fParaRTL, bool * pfTextIsNfc = NULL);
 
 	int NumStretchableGlyphs();
 	int StretchGlyphs(UniscribeRunInfo & uri,

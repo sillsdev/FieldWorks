@@ -4239,10 +4239,10 @@ void VwRootBox::Construct(IVwGraphics * pvg, int dxAvailWidth)
 	qvwenv->Cleanup();
 	m_fConstructed = true;
 	m_fNeedsLayout = true; // newly-constructed boxes require layout
-	// Leave m_fNeedsReconstruct as-is (typically true from Init). The first
-	// RefreshDisplay/Reconstruct call will clear it after finalizing the display.
-	// This ensures PATH-L5 and PATH-R1 guards allow the initial reconstruction
-	// pass that settles slice heights and positions.
+	m_fNeedsReconstruct = false; // construction complete — no need to reconstruct
+	// until PropChanged, OnStylesheetChange, or another mutation sets the flag.
+	// Previously this was left true from Init, causing the first Reconstruct()
+	// call to redo all work even when no data had changed (PATH-R1 guard bug).
 	ResetSpellCheck(); // in case it somehow got called while we had no contents.
 }
 
