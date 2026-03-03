@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class ParserReportDialog : Window
 	{
+		public ParserListener ParserListener { get; set; }
 		public Mediator Mediator { get; set; }
 		public LcmCache Cache { get; set; }
 
@@ -27,9 +28,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
-		public ParserReportDialog(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache, PropertyTable propertyTable)
+		public ParserReportDialog(ParserReportViewModel parserReport, ParserListener parserListener, Mediator mediator, LcmCache cache, PropertyTable propertyTable)
 		{
 			InitializeComponent();
+			ParserListener = parserListener;
 			Mediator = mediator;
 			Cache = cache;
 			m_propertyTable = propertyTable;
@@ -59,9 +61,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parseReport = button.CommandParameter as ParseReport;
-#pragma warning disable 618 // suppress obsolete warning
-			Mediator.SendMessage("TryThisWord", RemoveArrow(parseReport.Word));
-#pragma warning restore 618
+			ParserListener.TryThisWord(RemoveArrow(parseReport.Word));
 		}
 
 		public void ShowWordAnalyses(object sender, RoutedEventArgs e)
