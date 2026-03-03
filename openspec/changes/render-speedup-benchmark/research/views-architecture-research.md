@@ -1,4 +1,4 @@
-# FieldWorks Views Architecture Research
+﻿# FieldWorks Views Architecture Research
 
 ## Executive Summary
 
@@ -425,11 +425,11 @@ STDMETHODIMP VwRootBox::DrawRoot(IVwGraphics * pvg, RECT rcSrcRoot1, RECT rcDstR
 {
     // 1. Draw the box hierarchy
     Draw(pvg, rcSrcRoot, rcDstRoot);
-    
+
     // 2. Draw selection overlay (if any)
     if (m_qvwsel && fDrawSel)
         m_qvwsel->DrawIfShowing(pvg, rcSrcRoot, rcDstRoot, -1, INT_MAX);
-    
+
     // 3. Reclaim memory by converting visible boxes to lazy (virtualization)
     if (m_ydTopLastDraw != rcDstRoot.TopLeft().y)
     {
@@ -509,7 +509,7 @@ The `VwLazyBox` implements UI virtualization by deferring box creation:
 
 ```cpp
 // VwLazyBox.cpp:127-158 - Constructor
-VwLazyBox::VwLazyBox(VwPropertyStore * pzvps, HVO * prghvoItems, int chvoItems, 
+VwLazyBox::VwLazyBox(VwPropertyStore * pzvps, HVO * prghvoItems, int chvoItems,
     int ihvoMin, IVwViewConstructor * pvc, int frag, HVO hvoContext)
     :VwBox(pzvps)
 {
@@ -534,13 +534,13 @@ void VwLazyBox::ExpandItems(int ihvoMin, int ihvoLim, bool * pfForcedScroll)
 
     HoldGraphics hg(prootb);
     Rect rcThisOld = GetBoundsRect(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot);
-    
+
     VwDivBox * pdboxContainer = dynamic_cast<VwDivBox *>(Container());
-    ExpandItemsNoLayout(ihvoMin, ihvoLim, pnoteBest, ipropBest, tag, 
+    ExpandItemsNoLayout(ihvoMin, ihvoLim, pnoteBest, ipropBest, tag,
         &pboxFirstLayout, &pboxLimLayout);
-    
+
     // WARNING: *this may have been deleted at this point!
-    prootb->AdjustBoxPositions(rcRootOld, pboxFirstLayout, pboxLimLayout, 
+    prootb->AdjustBoxPositions(rcRootOld, pboxFirstLayout, pboxLimLayout,
         rcThisOld, pdboxContainer, pfForcedScroll, NULL, true);
 }
 ```
@@ -563,7 +563,7 @@ void VwLazyBox::DoLayout(IVwGraphics* pvg, int dxsAvailWidth, int dxpAvailOnLine
             // Ask view constructor for height estimates
             for (int i = 0; i < m_vwlziItems.Size(); i++)
             {
-                CheckHr(m_qvc->EstimateHeight(m_vwlziItems.GetHvo(i), m_frag, 
+                CheckHr(m_qvc->EstimateHeight(m_vwlziItems.GetHvo(i), m_frag,
                     dxsAvailWidth, &itemHeight));
                 itemHeight = MulDiv(itemHeight > 0 ? itemHeight : 1, dypInch, 72);
                 m_vwlziItems.SetEstimatedHeight(i, itemHeight);
@@ -648,7 +648,7 @@ bool VwBox::Relayout(IVwGraphics * pvg, int dxpAvailWidth, VwRootBox * prootb,
     Rect vrect;
     VwBox * pboxThis = this;
     bool fGotOldRect = pfixmap->Retrieve(pboxThis, &vrect);
-    
+
     if (fGotOldRect)
         Root()->InvalidateRect(&vrect); // Invalidate old position
 
@@ -773,4 +773,3 @@ Rect VwBox::GetInvalidateRect()
 - [Src/views/AGENTS.md](../../Src/views/AGENTS.md) - Views module documentation
 - [Src/Common/ViewsInterfaces/AGENTS.md](../../Src/Common/ViewsInterfaces/AGENTS.md) - Interface documentation
 - [presentation-ir-research.md](presentation-ir-research.md) - Presentation IR research (existing)
-

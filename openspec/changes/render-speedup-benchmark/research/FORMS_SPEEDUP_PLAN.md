@@ -1,4 +1,4 @@
-# WinForms Speedup Plan (Plan A)
+﻿# WinForms Speedup Plan (Plan A)
 
 **Feature**: Advanced Entry Avalonia View
 **Related**: `FAST_FORM_PLAN.md`, `presentation-ir-research.md`
@@ -91,7 +91,7 @@ foreach (var field in fields)
        foreach (var field in fields)
            _panel.Controls.Add(CreateFieldEditor(field));
    }
-   
+
    // After
    public void BuildFieldPanel(IEnumerable<FieldSpec> fields)
    {
@@ -153,21 +153,21 @@ public partial class EntryEditorForm : Form
     public EntryEditorForm()
     {
         InitializeComponent();
-        
+
         // Enable double buffering for entire form
         DoubleBuffered = true;
-        
+
         // Or via reflection for inherited forms
         SetDoubleBuffered(this, true);
     }
-    
+
     private static void SetDoubleBuffered(Control control, bool enabled)
     {
         var prop = typeof(Control).GetProperty(
             "DoubleBuffered",
             BindingFlags.Instance | BindingFlags.NonPublic);
         prop?.SetValue(control, enabled);
-        
+
         // Recursively apply to children
         foreach (Control child in control.Controls)
             SetDoubleBuffered(child, enabled);
@@ -244,25 +244,25 @@ public class VirtualFieldList : Control
     private readonly Dictionary<int, Control> _visibleControls = new();
     private int _scrollOffset;
     private const int RowHeight = 24;
-    
+
     protected override void OnPaint(PaintEventArgs e)
     {
         int firstVisible = _scrollOffset / RowHeight;
         int lastVisible = ((_scrollOffset + Height) / RowHeight) + 1;
-        
+
         // Only create/show controls for visible range
         RecycleInvisibleControls(firstVisible, lastVisible);
         EnsureVisibleControls(firstVisible, lastVisible);
-        
+
         base.OnPaint(e);
     }
-    
+
     private void RecycleInvisibleControls(int first, int last)
     {
         var toRemove = _visibleControls.Keys
             .Where(i => i < first || i > last)
             .ToList();
-            
+
         foreach (var idx in toRemove)
         {
             var ctrl = _visibleControls[idx];
@@ -271,7 +271,7 @@ public class VirtualFieldList : Control
             _visibleControls.Remove(idx);
         }
     }
-    
+
     private void EnsureVisibleControls(int first, int last)
     {
         for (int i = first; i <= last && i < _allFields.Count; i++)
@@ -295,18 +295,18 @@ public class LazyFieldPanel : ScrollableControl
 {
     private readonly List<Func<Control>> _controlFactories = new();
     private readonly HashSet<int> _createdIndices = new();
-    
+
     public void AddFieldFactory(Func<Control> factory)
     {
         _controlFactories.Add(factory);
     }
-    
+
     protected override void OnScroll(ScrollEventArgs se)
     {
         base.OnScroll(se);
         EnsureVisibleControlsCreated();
     }
-    
+
     private void EnsureVisibleControlsCreated()
     {
         var visibleRect = new Rectangle(
@@ -314,11 +314,11 @@ public class LazyFieldPanel : ScrollableControl
             VerticalScroll.Value,
             ClientSize.Width,
             ClientSize.Height);
-        
+
         int rowHeight = 30; // Approximate
         int firstRow = visibleRect.Top / rowHeight;
         int lastRow = visibleRect.Bottom / rowHeight;
-        
+
         for (int i = firstRow; i <= lastRow && i < _controlFactories.Count; i++)
         {
             if (!_createdIndices.Contains(i))
@@ -365,7 +365,7 @@ Forms create all controls during `InitializeComponent()`, even for tabs/panels t
 public EntryEditorForm()
 {
     InitializeComponent(); // Creates ALL controls for ALL tabs
-    
+
     // User may only look at "General" tab
     // But "Etymology", "History", "Custom Fields" tabs are fully built
 }
@@ -377,13 +377,13 @@ public class LazyTabPage : TabPage
 {
     private readonly Func<Control> _contentFactory;
     private bool _isContentCreated;
-    
+
     public LazyTabPage(string text, Func<Control> contentFactory)
     {
         Text = text;
         _contentFactory = contentFactory;
     }
-    
+
     public void EnsureContentCreated()
     {
         if (!_isContentCreated)
@@ -408,27 +408,27 @@ public class LazyTabPage : TabPage
 public class EntryEditorForm : Form
 {
     private TabControl _tabControl;
-    
+
     public EntryEditorForm()
     {
         _tabControl = new TabControl();
         _tabControl.Dock = DockStyle.Fill;
-        
+
         // General tab - always needed
         _tabControl.TabPages.Add(CreateGeneralTab());
-        
+
         // Other tabs - lazy
         _tabControl.TabPages.Add(new LazyTabPage("Etymology", CreateEtymologyPanel));
         _tabControl.TabPages.Add(new LazyTabPage("History", CreateHistoryPanel));
         _tabControl.TabPages.Add(new LazyTabPage("Custom Fields", CreateCustomFieldsPanel));
-        
+
         // Create content when tab is selected
         _tabControl.SelectedIndexChanged += (s, e) =>
         {
             if (_tabControl.SelectedTab is LazyTabPage lazy)
                 lazy.EnsureContentCreated();
         };
-        
+
         Controls.Add(_tabControl);
     }
 }
@@ -440,7 +440,7 @@ public class LazySenseView : UserControl
 {
     private Panel _examplesPanel;
     private bool _examplesLoaded;
-    
+
     // Examples are expensive - load only when expanded
     public Panel ExamplesPanel
     {
@@ -454,7 +454,7 @@ public class LazySenseView : UserControl
             return _examplesPanel;
         }
     }
-    
+
     private void OnExpandExamplesClicked(object sender, EventArgs e)
     {
         _examplesContainer.Controls.Add(ExamplesPanel);
@@ -502,43 +502,43 @@ public class EnhancedLayoutCache
 {
     // Cache by (classId, layoutName, configVersion)
     private readonly Dictionary<LayoutKey, CompiledLayout> _compiledLayouts = new();
-    
+
     public record LayoutKey(int ClassId, string LayoutName, int ConfigVersion);
-    
+
     public class CompiledLayout
     {
         // Pre-resolved sequence of operations
         public List<DisplayOperation> Operations { get; }
-        
+
         // Field metadata for data binding
         public List<FieldBinding> Bindings { get; }
-        
+
         // Estimated height for virtualization
         public int EstimatedHeight { get; }
     }
-    
+
     public CompiledLayout GetOrCompile(int classId, string layoutName)
     {
         var key = new LayoutKey(classId, layoutName, GetConfigVersion());
-        
+
         if (!_compiledLayouts.TryGetValue(key, out var compiled))
         {
             compiled = CompileLayout(classId, layoutName);
             _compiledLayouts[key] = compiled;
         }
-        
+
         return compiled;
     }
-    
+
     private CompiledLayout CompileLayout(int classId, string layoutName)
     {
         var operations = new List<DisplayOperation>();
         var bindings = new List<FieldBinding>();
-        
+
         // Walk layout XML ONCE, record operations
         var layoutNode = _layoutCache.GetNodeForPart(classId, layoutName);
         CompileNode(layoutNode, operations, bindings);
-        
+
         return new CompiledLayout
         {
             Operations = operations,
@@ -555,7 +555,7 @@ public class EnhancedLayoutCache
 public void DisplayWithCache(IVwEnv vwenv, int hvo, int classId, string layoutName)
 {
     var compiled = _enhancedCache.GetOrCompile(classId, layoutName);
-    
+
     // Execute pre-compiled operations instead of walking XML
     foreach (var op in compiled.Operations)
     {
@@ -614,13 +614,13 @@ private void OnEntrySelected(int hvo)
     // ALL of this runs on UI thread
     var entry = _cache.ServiceLocator.GetInstance<ILexEntryRepository>()
         .GetObject(hvo);
-    
+
     // Load all senses (may trigger database queries)
     foreach (var sense in entry.SensesOS)
     {
         LoadSenseData(sense); // More queries
     }
-    
+
     // Finally update UI
     DisplayEntry(entry);
 }
@@ -632,12 +632,12 @@ private async void OnEntrySelected(int hvo)
 {
     // Show loading indicator immediately
     ShowLoadingState();
-    
+
     try
     {
         // Load data on background thread
         var entryData = await Task.Run(() => LoadEntryDataAsync(hvo));
-        
+
         // Update UI on UI thread
         DisplayEntry(entryData);
     }
@@ -652,7 +652,7 @@ private EntryDataPackage LoadEntryDataAsync(int hvo)
     // This runs on ThreadPool thread
     var entry = _cache.ServiceLocator.GetInstance<ILexEntryRepository>()
         .GetObject(hvo);
-    
+
     // Pre-load all needed data into a DTO
     return new EntryDataPackage
     {
@@ -677,15 +677,15 @@ private async void OnEntrySelected(int hvo)
     // Phase 1: Critical data (headword, POS) - fast
     var criticalData = await Task.Run(() => LoadCriticalDataAsync(hvo));
     DisplayCriticalSection(criticalData);
-    
+
     // Phase 2: Primary content (senses) - medium
     var sensesData = await Task.Run(() => LoadSensesDataAsync(hvo));
     DisplaySensesSection(sensesData);
-    
+
     // Phase 3: Secondary content (examples, etymology) - slow
     var secondaryData = await Task.Run(() => LoadSecondaryDataAsync(hvo));
     DisplaySecondarySection(secondaryData);
-    
+
     // Phase 4: Custom fields - defer until expanded
     // Don't load until user expands the section
 }
@@ -733,12 +733,12 @@ private void OnDataChanged(object sender, EventArgs e)
 public class SmartInvalidationPanel : Panel
 {
     private readonly Dictionary<string, Rectangle> _fieldBounds = new();
-    
+
     public void RegisterField(string fieldKey, Control control)
     {
         _fieldBounds[fieldKey] = control.Bounds;
     }
-    
+
     public void InvalidateField(string fieldKey)
     {
         if (_fieldBounds.TryGetValue(fieldKey, out var bounds))
@@ -753,13 +753,13 @@ public class SmartInvalidationPanel : Panel
 private void OnGlossChanged(int senseHvo, string newGloss)
 {
     var fieldKey = $"sense_{senseHvo}_gloss";
-    
+
     // Update the specific control
     if (_fieldControls.TryGetValue(fieldKey, out var textBox))
     {
         textBox.Text = newGloss;
     }
-    
+
     // Only invalidate that region
     _smartPanel.InvalidateField(fieldKey);
 }
@@ -771,24 +771,24 @@ public class ChangeTrackingTextBox : TextBox
 {
     private string _originalValue;
     private bool _isDirty;
-    
+
     public void SetValueWithoutDirty(string value)
     {
         _originalValue = value;
         Text = value;
         _isDirty = false;
     }
-    
+
     protected override void OnTextChanged(EventArgs e)
     {
         _isDirty = (Text != _originalValue);
         base.OnTextChanged(e);
-        
+
         // Only notify parent if actually changed
         if (_isDirty)
             OnValueChanged();
     }
-    
+
     private void OnValueChanged()
     {
         // Only invalidate THIS control
@@ -841,30 +841,30 @@ foreach (var field in fields)
 public class FieldStrip : Control
 {
     private readonly List<FieldData> _fields = new();
-    
+
     public FieldStrip()
     {
         SetStyle(ControlStyles.UserPaint, true);
         SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
     }
-    
+
     protected override void OnPaint(PaintEventArgs e)
     {
         var g = e.Graphics;
         int y = 0;
-        
+
         foreach (var field in _fields)
         {
             // Draw label (no Label control needed)
             g.DrawString(field.Label, Font, Brushes.Gray, 0, y);
-            
+
             // Draw value (no TextBox control needed for read-only)
             g.DrawString(field.Value, Font, Brushes.Black, 100, y);
-            
+
             y += 24;
         }
     }
-    
+
     // Handle clicks to enter edit mode for specific field
     protected override void OnMouseClick(MouseEventArgs e)
     {
@@ -874,7 +874,7 @@ public class FieldStrip : Control
             EnterEditMode(clickedIndex);
         }
     }
-    
+
     private void EnterEditMode(int fieldIndex)
     {
         // Create a SINGLE TextBox overlay for editing
@@ -899,23 +899,23 @@ public class OwnerDrawFieldList : ListView
         View = View.Details;
         OwnerDraw = true;
         VirtualMode = true; // Combine with virtualization!
-        
+
         Columns.Add("Label", 100);
         Columns.Add("Value", 200);
     }
-    
+
     protected override void OnDrawItem(DrawListViewItemEventArgs e)
     {
         // Custom painting - no child controls
         e.DrawBackground();
-        
+
         var field = GetFieldAt(e.ItemIndex);
         e.Graphics.DrawString(field.Label, Font, Brushes.Gray, e.Bounds.X, e.Bounds.Y);
         e.Graphics.DrawString(field.Value, Font, Brushes.Black, e.Bounds.X + 100, e.Bounds.Y);
-        
+
         e.DrawFocusRectangle();
     }
-    
+
     protected override void OnRetrieveVirtualItem(RetrieveVirtualItemEventArgs e)
     {
         // Virtual mode - items created on demand
@@ -972,22 +972,22 @@ public class CollapsibleSection : UserControl
     private readonly Func<Control> _contentFactory;
     private bool _isExpanded;
     private Control _content;
-    
+
     public CollapsibleSection(string header, int itemCount, Func<Control> contentFactory)
     {
         _contentFactory = contentFactory;
-        
+
         var headerPanel = new Panel { Height = 24, Dock = DockStyle.Top };
         var expandButton = new Button { Text = "▶", Width = 24 };
         var label = new Label { Text = $"{header} ({itemCount})", Left = 30 };
-        
+
         headerPanel.Controls.Add(expandButton);
         headerPanel.Controls.Add(label);
         Controls.Add(headerPanel);
-        
+
         expandButton.Click += OnExpandClick;
     }
-    
+
     private void OnExpandClick(object sender, EventArgs e)
     {
         if (_isExpanded)
@@ -999,7 +999,7 @@ public class CollapsibleSection : UserControl
             Expand();
         }
     }
-    
+
     private void Expand()
     {
         if (_content == null)
@@ -1008,14 +1008,14 @@ public class CollapsibleSection : UserControl
             _content = _contentFactory();
             _content.Dock = DockStyle.Fill;
         }
-        
+
         SuspendLayout();
         Controls.Add(_content);
         _isExpanded = true;
         ((Button)Controls[0].Controls[0]).Text = "▼";
         ResumeLayout(true);
     }
-    
+
     private void Collapse()
     {
         SuspendLayout();
@@ -1080,7 +1080,7 @@ public class EnhancedLayoutCache
 {
     // Include configuration version in cache key
     private readonly Dictionary<LayoutCacheKey, XmlNode> _cache = new();
-    
+
     private record LayoutCacheKey(
         int ClassId,
         string LayoutName,
@@ -1088,7 +1088,7 @@ public class EnhancedLayoutCache
         int ConfigVersion,
         string UserOverrideHash  // Include user override state
     );
-    
+
     public XmlNode GetNodeForPart(int classId, string layoutName, bool includeLayouts)
     {
         var key = new LayoutCacheKey(
@@ -1098,16 +1098,16 @@ public class EnhancedLayoutCache
             GetConfigVersion(),
             GetUserOverrideHash()
         );
-        
+
         if (!_cache.TryGetValue(key, out var node))
         {
             node = ComputeNodeForPart(classId, layoutName, includeLayouts);
             _cache[key] = node;
         }
-        
+
         return node;
     }
-    
+
     // Invalidate on config changes
     public void OnConfigurationChanged()
     {
@@ -1130,7 +1130,7 @@ public class LayoutCacheWarmer
             (typeof(ILexExampleSentence), "Normal"),
             // ... other common layouts
         };
-        
+
         await Task.Run(() =>
         {
             foreach (var (type, layout) in commonLayouts)
@@ -1146,7 +1146,7 @@ public class LayoutCacheWarmer
 protected override async void OnLoad(EventArgs e)
 {
     base.OnLoad(e);
-    
+
     // Warm cache while showing splash screen
     await _cacheWarmer.WarmCacheAsync();
 }
@@ -1201,13 +1201,13 @@ public class PerformanceMetrics
         var sw = Stopwatch.StartNew();
         var initialMemory = GC.GetTotalMemory(true);
         var initialHandles = Process.GetCurrentProcess().HandleCount;
-        
+
         loadAction();
-        
+
         sw.Stop();
         var finalMemory = GC.GetTotalMemory(false);
         var finalHandles = Process.GetCurrentProcess().HandleCount;
-        
+
         Console.WriteLine($"Load time: {sw.ElapsedMilliseconds}ms");
         Console.WriteLine($"Memory delta: {(finalMemory - initialMemory) / 1024}KB");
         Console.WriteLine($"Handle delta: {finalHandles - initialHandles}");
@@ -1296,7 +1296,7 @@ public static class AsyncUIHelper
         try
         {
             var data = await Task.Run(loader);
-            
+
             if (uiControl.IsHandleCreated)
             {
                 uiControl.BeginInvoke(new Action(() => uiUpdater(data)));

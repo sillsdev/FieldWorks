@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private MSAPopupTreeManager m_MSAPopupTreeManager;
 		private TreeCombo m_tree;
 		int m_treeBaseWidth = 0;
+		private bool m_panel2SizeChangedHooked;
 
 		//private bool m_processSelectionEvent = true;
 		private bool m_handlingMessage = false;
@@ -131,7 +132,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void Install(DataTree parent)
 		{
 			base.Install(parent);
+			if (!parent.DeferSliceHwndCreationEnabled)
+				EnsurePanel2SizeChangedHooked();
+		}
+
+		protected internal override void EnsureHwndCreated()
+		{
+			base.EnsureHwndCreated();
+			EnsurePanel2SizeChangedHooked();
+		}
+
+		private void EnsurePanel2SizeChangedHooked()
+		{
+			if (m_panel2SizeChangedHooked)
+				return;
+
 			SplitCont.Panel2.SizeChanged += new EventHandler(SplitContPanel2_SizeChanged);
+			m_panel2SizeChangedHooked = true;
 		}
 
 		void SplitContPanel2_SizeChanged(object sender, EventArgs e)
@@ -164,10 +181,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
-				if (SplitCont != null && !SplitCont.IsDisposed &&
+				if (m_panel2SizeChangedHooked && SplitCont != null && !SplitCont.IsDisposed &&
 					SplitCont.Panel2 != null && !SplitCont.Panel2.IsDisposed)
 				{
 					SplitCont.Panel2.SizeChanged -= new EventHandler(SplitContPanel2_SizeChanged);
+					m_panel2SizeChangedHooked = false;
 				}
 				// Dispose managed resources here.
 				if (m_cache != null)
@@ -201,6 +219,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal protected override bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
+			var containingDataTree = ContainingDataTree;
+			if (containingDataTree == null)
+				return false;
 			if (tag == Flid)
 			{
 				m_handlingMessage = true;
@@ -209,7 +230,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var sense = m_obj as ILexSense;
 					if (sense.MorphoSyntaxAnalysisRA != null)
 						m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
-					ContainingDataTree.RefreshListNeeded = true;
+					containingDataTree.RefreshListNeeded = true;
 					return true;
 				}
 				finally
@@ -227,6 +248,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void m_MSAPopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
 		{
+			var containingDataTree = ContainingDataTree;
+			if (containingDataTree == null)
+				return;
+
 			// unless we get a mouse click or simulated mouse click (e.g. by ENTER or TAB),
 			// do not treat as an actual selection.
 			if (m_handlingMessage || e.Action != TreeViewAction.ByMouse)
@@ -244,13 +269,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// except possibly for refresh.
 			if (hvoSel < 0)
 			{
-				ContainingDataTree.RefreshList(false);
+				containingDataTree.RefreshList(false);
 				return;
 			}
 			var sense = m_obj as ILexSense;
 			// Setting sense.DummyMSA can cause the DataTree to want to refresh.  Don't
 			// let this happen until after we're through!  See LT-9713 and LT-9714.
-			bool fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
+			bool fOldDoNotRefresh = containingDataTree.DoNotRefresh;
 			try
 			{
 				m_handlingMessage = true;
@@ -259,7 +284,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSel);
 					if (obj.ClassID == PartOfSpeechTags.kClassId)
 					{
-						ContainingDataTree.DoNotRefresh = true;
+						containingDataTree.DoNotRefresh = true;
 						var sandoxMSA = new SandboxGenericMSA();
 						sandoxMSA.MsaType = sense.GetDesiredMsaType();
 						sandoxMSA.MainPOS = obj as IPartOfSpeech;
@@ -274,7 +299,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					else if (sense.MorphoSyntaxAnalysisRA != obj)
 					{
-						ContainingDataTree.DoNotRefresh = true;
+						containingDataTree.DoNotRefresh = true;
 						UndoableUnitOfWorkHelper.Do(String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 							String.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
@@ -288,7 +313,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_handlingMessage = false;
 				// We still can't refresh the data at this point without causing a crash due to
 				// a pending Windows message.  See LT-9713 and LT-9714.
-				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
+				if (containingDataTree.DoNotRefresh != fOldDoNotRefresh)
 				{
 #pragma warning disable 618 // suppress obsolete warning
 					Mediator.BroadcastMessage("DelayedRefreshList", fOldDoNotRefresh);

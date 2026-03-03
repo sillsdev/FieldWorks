@@ -1,4 +1,4 @@
-# Quickstart: Render Performance Baseline & Optimization Plan
+﻿# Quickstart: Render Performance Baseline & Optimization Plan
 
 ## Prerequisites
 
@@ -99,4 +99,3 @@ For pixel-perfect validation to pass, the environment must match the baseline:
 - **Text Scale Factor**: 100%
 
 Check environment hash in snapshot `.environment.txt` files to verify compatibility.
-

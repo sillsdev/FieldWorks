@@ -191,6 +191,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged (e);
+			if (ContainingDataTree == null)
+				return;
 			if (Width == m_dxLastWidth)
 				return;
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.
@@ -218,12 +220,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected void OnViewSizeChanged(object sender, FwViewSizeEventArgs e)
 		{
 			// For now, just handle changes in the height.
+			if (ContainingDataTree == null)
+				return;
+
 			var vrl = (VectorReferenceLauncher)Control;
 			var view = (VectorReferenceView)vrl.MainControl;
 			int hMin = ContainingDataTree.GetMinFieldHeight();
 			int h1 = view.RootBox.Height;
 			Debug.Assert(e.Height == h1);
-			int hOld = TreeNode.Height;
+			var treeNode = TreeNode;
+			int hOld = treeNode == null ? 0 : treeNode.Height;
 			int hNew = Math.Max(h1, hMin) + 3;
 			if (hNew != hOld)
 			{
@@ -235,7 +241,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The tree node is also supposed to be docked, but again, if we don't do this
 				// then the tree node doesn't fill the height of the window, and clicks at the
 				// bottom of it may not work.
-				TreeNode.Height = hNew - 1;
+				if (treeNode != null)
+					treeNode.Height = hNew - 1;
 				vrl.Height = hNew - 1;
 				// This seems to be really not needed, the view height is docked to the launcher's.
 //				view.Height = hNew - 1;

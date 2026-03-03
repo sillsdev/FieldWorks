@@ -219,7 +219,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							// some menu commands use the current slice to decide what to act on.
 							// It had better be the one the command is expecting it to be.
-							m_slice.ContainingDataTree.CurrentSlice = m_slice;
+							var containingDataTree = m_slice.ContainingDataTree;
+							if (containingDataTree != null)
+								containingDataTree.CurrentSlice = m_slice;
 							if (xcoreMenuItem.Enabled)
 							{
 								ItemClicked(xcoreMenuItem);

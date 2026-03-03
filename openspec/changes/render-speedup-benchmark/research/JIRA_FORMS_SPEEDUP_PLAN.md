@@ -1,4 +1,4 @@
-# JIRA Forms Speedup Plan
+﻿# JIRA Forms Speedup Plan
 
 **Feature**: WinForms Rendering Performance (Plan A)
 **Related**: `FAST_FORM_PLAN.md`, `FORMS_SPEEDUP_PLAN.md`
@@ -1155,4 +1155,3 @@ Summary,Issue Type,Priority,Story Points,Labels,Description
 "PERF-10: XML/Layout Resolution Caching",Story,Medium,3,"performance,xmlviews,low-risk","Enhance LayoutCache with pre-warming..."
 "PERF-11: Integration Validation & Documentation",Story,High,5,"performance,documentation,testing","Validate all optimizations work together..."
 ```
-

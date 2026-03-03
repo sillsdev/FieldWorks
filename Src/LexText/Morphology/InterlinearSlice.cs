@@ -89,7 +89,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override void SetWidthForDataTreeLayout(int width)
 		{
-			var minWidth = ((AnalysisInterlinearRs)Control).DesiredSize.Width + SplitCont.SplitterDistance + SplitCont.SplitterWidth;
+			var analysisInterlinear = Control as AnalysisInterlinearRs;
+			if (analysisInterlinear == null)
+			{
+				base.SetWidthForDataTreeLayout(width);
+				return;
+			}
+
+			var minWidth = analysisInterlinear.DesiredSize.Width + SplitCont.SplitterDistance + SplitCont.SplitterWidth;
 			if (width < minWidth)
 				width = minWidth;
 			base.SetWidthForDataTreeLayout(width);

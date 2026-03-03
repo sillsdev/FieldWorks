@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_cache.DomainDataByFlid.EndUndoTask();
 				// The changing value may affect the datatree display.  See LT-6539.
 				bool fRefresh = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationNode, "refreshDataTreeOnChange", false);
-				if (fRefresh)
+				if (fRefresh && ContainingDataTree != null)
 					ContainingDataTree.RefreshList(false);
 			}
 		}
@@ -237,7 +237,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		private void m_combo_GotFocus(object sender, EventArgs e)
 		{
-			ContainingDataTree.CurrentSlice = this;
+			if (ContainingDataTree != null)
+				ContainingDataTree.CurrentSlice = this;
 		}
 
 		#region IVwNotifyChange Members

@@ -129,22 +129,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Category 22: ContainingDataTree null-safety contracts
 
 		/// <summary>
-		/// CONTRACT: TakeFocus(true) on a standalone slice throws NullReferenceException
-		/// because ContainingDataTree is null. The code path is:
-		///   TakeFocus → slice is invisible → (ctrl TabStop || fOkToFocusTreeNode)
-		///   → ContainingDataTree.MakeSliceVisible(this) → NRE.
+		/// CONTRACT: TakeFocus(true) on a standalone slice returns false (safe)
+		/// when ContainingDataTree is null.
 		///
-		/// Virtualization must ensure deferred slices cannot receive TakeFocus(true)
-		/// before they have a valid ContainingDataTree reference.
+		/// Virtualization should avoid throwing in this pre-install state.
 		/// </summary>
 		[Test]
-		public void TakeFocus_True_Standalone_ThrowsNRE_BecauseCDTNull()
+		public void TakeFocus_True_Standalone_ReturnsFalse_WhenCDTNull()
 		{
 			using (var slice = CreateStandaloneSlice())
 			{
-				Assert.Throws<NullReferenceException>(() => slice.TakeFocus(true),
-					"TakeFocus(true) accesses CDT.MakeSliceVisible — must not be called " +
-					"on deferred slices.");
+				bool result = slice.TakeFocus(true);
+				Assert.That(result, Is.False,
+					"TakeFocus(true) should return false when no ContainingDataTree is available.");
 			}
 		}
 
@@ -169,58 +166,48 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// CONTRACT: TakeFocus(false) on a standalone slice WITH a TabStop-enabled control
-		/// throws NRE because the path becomes:
-		///   ctrl.TabStop == true → ContainingDataTree.MakeSliceVisible(this) → NRE.
+		/// returns false safely when ContainingDataTree is null.
 		///
-		/// This is a subtle edge case: adding a Control with TabStop=true changes
-		/// TakeFocus(false) from safe to unsafe on deferred slices.
+		/// This verifies a subtle deferred edge case remains non-throwing.
 		/// </summary>
 		[Test]
-		public void TakeFocus_False_StandaloneWithTabStopControl_ThrowsNRE()
+		public void TakeFocus_False_StandaloneWithTabStopControl_ReturnsFalse()
 		{
 			using (var slice = CreateStandaloneSliceWithControl())
 			{
 				// TextBox has TabStop=true by default
 				Assert.That(slice.Control.TabStop, Is.True, "Precondition: TextBox.TabStop is true.");
-				Assert.Throws<NullReferenceException>(() => slice.TakeFocus(false),
-					"TakeFocus(false) with TabStop Control still accesses CDT.MakeSliceVisible.");
+				bool result = slice.TakeFocus(false);
+				Assert.That(result, Is.False,
+					"TakeFocus(false) with TabStop control should return false without throwing.");
 			}
 		}
 
 		/// <summary>
-		/// CONTRACT: The TreeNode getter throws ArgumentOutOfRangeException on a standalone
-		/// slice because SplitCont.Panel1.Controls[0] fails — Panel1 is empty before Install().
-		///
-		/// Unlike Control (which returns null when Panel2 is empty), TreeNode has NO count
-		/// check. This is a critical difference: any code that accesses TreeNode on a
-		/// deferred slice will crash, not get null.
+		/// CONTRACT: The TreeNode getter on a standalone slice returns null (safe) before
+		/// physical install; it no longer throws when Panel1 has no controls.
 		/// </summary>
 		[Test]
 		public void TreeNode_Standalone_ThrowsArgumentOutOfRange()
 		{
 			using (var slice = CreateStandaloneSlice())
 			{
-				Assert.Throws<ArgumentOutOfRangeException>(() => { var _ = slice.TreeNode; },
-					"TreeNode getter accesses Panel1.Controls[0] without count check — " +
-					"crashes on standalone slices.");
+				Assert.That(slice.TreeNode, Is.Null,
+					"TreeNode should be null before physical install for standalone slices.");
 			}
 		}
 
 		/// <summary>
-		/// CONTRACT: SetCurrentState on a standalone slice throws because the TreeNode
-		/// getter is called inside `if (TreeNode != null)` — but the getter throws
-		/// ArgumentOutOfRangeException BEFORE the null check can evaluate.
-		///
-		/// This means SetCurrentState cannot be called on deferred slices that haven't
-		/// been through Install().
+		/// CONTRACT: SetCurrentState on a standalone slice should not throw when TreeNode
+		/// is not yet created; TreeNode is null-safe in deferred mode.
 		/// </summary>
 		[Test]
 		public void SetCurrentState_Standalone_ThrowsDueToTreeNodeAccess()
 		{
 			using (var slice = CreateStandaloneSlice())
 			{
-				Assert.Throws<ArgumentOutOfRangeException>(() => slice.SetCurrentState(true),
-					"SetCurrentState accesses TreeNode getter which throws on standalone slices.");
+				Assert.DoesNotThrow(() => slice.SetCurrentState(true),
+					"SetCurrentState should tolerate missing TreeNode before physical install.");
 			}
 		}
 

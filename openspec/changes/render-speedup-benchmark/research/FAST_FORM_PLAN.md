@@ -1,4 +1,4 @@
-# Fast Form Rendering Plan
+﻿# Fast Form Rendering Plan
 
 **Feature**: Advanced Entry Avalonia View
 **Related**: `specs/010-advanced-entry-view/spec.md`, `presentation-ir-research.md`
@@ -139,7 +139,7 @@ Display(vwenv, hvo, frag)
     items = GetVectorProperty(hvo, flid)
     if hasFilter: items = items.Where(filterPredicate)
     if hasSort: items = items.OrderBy(sortKey)
-    
+
     foreach item in items:
         AddEmbellishments(numbering, separator)
         vwenv.AddObj(item, vc, childFrag)  // RECURSIVE DISPLAY
@@ -162,12 +162,12 @@ Display(vwenv, hvo, frag)
 DoLayout(graphics, availWidth)
     foreach child in children:
         child.DoLayout(graphics, availWidth)
-    
+
     height = 0
     foreach child in children:
         child.SetTop(height)
         height += child.Height
-    
+
     this.Height = height
 ```
 
@@ -184,7 +184,7 @@ DoLayout(graphics, availWidth)
 ```
 DrawRoot(graphics, clipRect)
     PrepareToDraw()  // May expand VwLazyBoxes
-    
+
     foreach box in boxTree:
         if box.Intersects(clipRect):
             box.Draw(graphics, clipRect)
@@ -301,7 +301,7 @@ For a "heavy" entry (20 senses, 5 subsenses, 50 custom fields, depth 10):
 </ScrollViewer>
 ```
 
-**Applicability to FieldWorks**: 
+**Applicability to FieldWorks**:
 - ✅ List of senses/examples: Ideal for `ItemsRepeater` or `TreeDataGrid`
 - ⚠️ Custom fields within an item: Need additional strategy (see Section 2.3)
 
@@ -399,17 +399,17 @@ async Task RenderEntryAsync(Entry entry)
 {
     // Phase 1: Critical path (headword, POS) - synchronous
     await RenderCriticalFieldsSync();
-    
+
     // Phase 2: Primary content (definitions) - high priority
-    await Dispatcher.InvokeAsync(() => RenderDefinitions(), 
+    await Dispatcher.InvokeAsync(() => RenderDefinitions(),
         DispatcherPriority.Render);
-    
+
     // Phase 3: Secondary content (examples, etymology) - low priority
-    await Dispatcher.InvokeAsync(() => RenderSecondaryFields(), 
+    await Dispatcher.InvokeAsync(() => RenderSecondaryFields(),
         DispatcherPriority.Background);
-    
+
     // Phase 4: Custom fields - idle time
-    await Dispatcher.InvokeAsync(() => RenderCustomFields(), 
+    await Dispatcher.InvokeAsync(() => RenderCustomFields(),
         DispatcherPriority.ApplicationIdle);
 }
 ```
@@ -474,7 +474,7 @@ async Task RenderEntryAsync(Entry entry)
 <PackageReference Include="DynamicData" Version="8.*" />
 
 <!-- Profiling (Debug only) -->
-<PackageReference Include="BenchmarkDotNet" Version="0.13.*" 
+<PackageReference Include="BenchmarkDotNet" Version="0.13.*"
                   Condition="'$(Configuration)' == 'Debug'" />
 ```
 
@@ -503,7 +503,7 @@ async Task RenderEntryAsync(Entry entry)
    {
        private readonly Lazy<string> _value;
        public string Value => _value.Value;
-       
+
        public LazyFieldViewModel(Func<string> loader)
        {
            _value = new Lazy<string>(loader);
@@ -572,7 +572,7 @@ async Task RenderEntryAsync(Entry entry)
    ```csharp
    // Host Avalonia control in WinForms
    using Avalonia.Controls.Embedding;
-   
+
    public class AvaloniaEntryEditor : AvaloniaControlHost
    {
        public AvaloniaEntryEditor()
@@ -637,7 +637,7 @@ async Task RenderEntryAsync(Entry entry)
    {
        // IR-driven field list
        public IObservable<IChangeSet<FieldIrNode>> FieldNodes { get; }
-       
+
        // Virtualization-friendly flat list
        public ReadOnlyObservableCollection<FieldViewModel> VisibleFields { get; }
    }
@@ -673,14 +673,14 @@ async Task RenderEntryAsync(Entry entry)
    public async Task<EntryIr> CompileEntryViewAsync(int classId, string layoutName)
    {
        var cacheKey = (classId, layoutName, configVersion);
-       
+
        if (_irCache.TryGetValue(cacheKey, out var cached))
            return cached;
-       
+
        // Compile off UI thread
-       var ir = await Task.Run(() => 
+       var ir = await Task.Run(() =>
            _irCompiler.Compile(classId, layoutName));
-       
+
        _irCache[cacheKey] = ir;
        return ir;
    }
@@ -794,25 +794,25 @@ public class EntryRenderingBenchmarks
 {
     private LexEntry _simpleEntry;    // 3 senses, 0 custom fields
     private LexEntry _complexEntry;   // 20 senses, 50 custom fields
-    
+
     [Benchmark(Baseline = true)]
     public void RenderSimpleEntry_Current()
     {
         // Current XmlVc path
     }
-    
+
     [Benchmark]
     public void RenderComplexEntry_Current()
     {
         // Current XmlVc path - expected slow
     }
-    
+
     [Benchmark]
     public void RenderSimpleEntry_IR()
     {
         // IR-based rendering
     }
-    
+
     [Benchmark]
     public void RenderComplexEntry_IR()
     {

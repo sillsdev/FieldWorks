@@ -13,6 +13,12 @@ A "grow-only" virtualization strategy extends the existing `BecomeRealInPlace` d
 - **Virtual layout model**: Maintain parallel `_sliceTop[]` / `_sliceHeight[]` arrays for positioning non-HWND slices; enable `FindFirstPotentiallyVisibleSlice` binary search to work without HWNDs.
 - **Measurement baseline**: Add HWND counting diagnostics and a regression gate test.
 
+## Render Baseline Policy
+
+- Render snapshot files (`*.verified.png`) are treated as immutable truth for this change.
+- Any `RenderBaseline` mismatch is a code regression and must be fixed in product/test code.
+- Do not accept or regenerate render baselines as part of HWND virtualization implementation.
+
 ## Non-goals
 
 - Destroying or recycling HWNDs for off-screen slices (Phase 4 in the design — deferred as high-risk, diminishing-returns work).
