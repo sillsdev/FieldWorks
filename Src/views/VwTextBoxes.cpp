@@ -10055,7 +10055,11 @@ void VwConcParaBox::DoSpecialAlignment(IVwGraphics * pvg)
 			return; // ignore any problems here, just don't align.
 		}
 
-		int dxsAlign = rgxdLefts[0] + psbox->Left();
+		int dxsAlign;
+		if (Style()->ParaAlign() == ktalRight)
+			dxsAlign = rgxdRights[cxd - 1] + psbox->Left();
+		else
+			dxsAlign = rgxdLefts[0] + psbox->Left();
 		int dxsGoalAlign = MulDiv(m_dmpAlign, dxsInch, kdzmpInch);
 		int dxsAdjust = dxsGoalAlign - dxsAlign;
 		// Now adjust all the box lefts by this amount
