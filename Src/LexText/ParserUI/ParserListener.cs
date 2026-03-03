@@ -963,7 +963,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void ShowParserReport(object obj)
 		{
 			ParserReportViewModel parserReport = obj as ParserReportViewModel;
-			ParserReportDialog dialog = new ParserReportDialog(parserReport, m_mediator, m_cache, m_propertyTable);
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, this, m_mediator, m_cache, m_propertyTable);
 			dialog.Show();
 			m_parserReportDialogs.Add(dialog);
 			dialog.Closed += ParserReportDialog_Closed;
@@ -1124,15 +1124,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Handles the xWorks message for Try This Word
+		/// Try This Word
 		/// </summary>
-		/// <param name="argument">The word to try</param>
-		/// <returns></returns>
-		public bool OnTryThisWord(object commandObject)
+		/// <param name="word">The word to try</param>
+		public bool TryThisWord(string word)
 		{
 			CheckDisposed();
 
-			var result = TryAWord(commandObject as string);
+			var result = TryAWord(word);
 			// Invoke it immediately.
 			m_dialog.TryIt();
 			return result;
