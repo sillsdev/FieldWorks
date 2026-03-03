@@ -2676,5 +2676,262 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#endregion
+
+		#region Category 53: InitChrp ws=0 crash regression (VwPropertyStore line 518)
+
+		// The crash in VwPropertyStore.cpp:518 occurs in InitChrp(), which is called
+		// when a property store is locked for rendering. This is a different code path
+		// from the SetIntProperty/ktptWs fix (line 1336). InitChrp() tries to get the
+		// ws engine via get_EngineOrNull and asserts non-null. During PropChanged-driven
+		// sense expansion, if a ws=0 property store reaches the rendering pipeline,
+		// InitChrp() crashes.
+		//
+		// The key difference: InitChrp() is called during RENDERING (bitmap capture,
+		// DrawToBitmap, painting), not during data setup. So tests that only call
+		// ShowObject without forcing paint may not trigger it.
+
+		/// <summary>
+		/// CRASH REGRESSION: Adding a sense with unset gloss to a VISIBLE,
+		/// PAINTED DataTree and then forcing a render (via bitmap capture)
+		/// exercises the InitChrp() path during rendering. This is the exact
+		/// scenario that triggers VwPropertyStore.cpp:518.
+		/// </summary>
+		[Test]
+		public void InitChrp_AddUnsetWsSense_BitmapCapture_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(2, "initchrp-test");
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			// Verify rendering works before the change
+			var before = CaptureBitmapInfo(m_dtree);
+			Assert.That(before.Height, Is.GreaterThan(0));
+
+			// Add a sense with NO gloss (ws=0) while the tree is actively displayed
+			var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(emptySense);
+
+			// Re-show and force rendering — this triggers InitChrp() on property
+			// stores that have ws=0 during the rendering pipeline
+			m_dtree.ShowObject(entry, "Normal", null, entry, false);
+			Application.DoEvents();
+
+			Assert.DoesNotThrow(() =>
+			{
+				var after = CaptureBitmapInfo(m_dtree);
+				Assert.That(after.Height, Is.GreaterThan(0),
+					"Bitmap should render after adding unset-ws sense.");
+			}, "InitChrp() with ws=0 sense during bitmap capture must not crash " +
+				"(VwPropertyStore.cpp:518 regression).");
+		}
+
+		/// <summary>
+		/// CRASH REGRESSION: Adding multiple senses with unset gloss to a visible
+		/// tree and forcing repeated renders exercises InitChrp() multiple times.
+		/// </summary>
+		[Test]
+		public void InitChrp_MultipleUnsetWsSenses_RepeatedRender_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(1, "initchrp-multi");
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			Assert.DoesNotThrow(() =>
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+					entry.SensesOS.Add(emptySense);
+					// No gloss — ws=0
+
+					m_dtree.ShowObject(entry, "Normal", null, entry, false);
+					Application.DoEvents();
+
+					// Force render via bitmap capture
+					var info = CaptureBitmapInfo(m_dtree);
+					Assert.That(info.Height, Is.GreaterThan(0));
+				}
+			}, "Repeated InitChrp() with ws=0 senses during rendering must not crash.");
+		}
+
+		/// <summary>
+		/// CRASH REGRESSION: Resizing the DataTree after adding unset-ws senses
+		/// forces a relayout which calls InitChrp() on all property stores.
+		/// </summary>
+		[Test]
+		public void InitChrp_UnsetWsSense_ResizeForcesPaint_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(2, "initchrp-resize");
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			// Add unset-ws senses
+			for (int i = 0; i < 3; i++)
+			{
+				var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(emptySense);
+			}
+
+			m_dtree.ShowObject(entry, "Normal", null, entry, false);
+			Application.DoEvents();
+
+			// Resize forces relayout, which locks property stores and calls InitChrp()
+			Assert.DoesNotThrow(() =>
+			{
+				ResizeParent(400, 600);
+				var info1 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info1.Height, Is.GreaterThan(0));
+
+				ResizeParent(1200, 600);
+				var info2 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info2.Height, Is.GreaterThan(0));
+
+				ResizeParent(800, 600);
+				var info3 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info3.Height, Is.GreaterThan(0));
+			}, "InitChrp() during relayout with ws=0 senses must not crash.");
+		}
+
+		/// <summary>
+		/// CRASH REGRESSION: Navigate between entries where one has unset-ws
+		/// senses, with bitmap capture at each step to force InitChrp().
+		/// </summary>
+		[Test]
+		public void InitChrp_NavigateWithUnsetWs_ForcedRender_DoesNotCrash()
+		{
+			var normalEntry = CreateEntryWithSenses(3, "normal-ic");
+			var unsetEntry = CreateEntryWithSenses(0, "unset-ic");
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				unsetEntry.SensesOS.Add(sense);
+				// No gloss — ws=0
+			}
+
+			CreateNormalDataTree(normalEntry);
+			PrepareForBitmapCapture(800, 600);
+
+			Assert.DoesNotThrow(() =>
+			{
+				// Render normal entry
+				var info1 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info1.Height, Is.GreaterThan(0));
+
+				// Navigate to unset-ws entry and render
+				m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+				Application.DoEvents();
+				var info2 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info2.Height, Is.GreaterThan(0));
+
+				// Navigate back and render
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+				m_dtree.AutoScroll = false;
+				m_dtree.Size = new Size(800, 600);
+				m_dtree.PerformLayout();
+				Application.DoEvents();
+				var info3 = CaptureBitmapInfo(m_dtree);
+				Assert.That(info3.Height, Is.GreaterThan(0));
+			}, "Navigate + render with unset-ws senses must not trigger InitChrp() crash.");
+		}
+
+		/// <summary>
+		/// CRASH REGRESSION: Expand/collapse on a collapsible layout with unset-ws
+		/// senses while forcing renders at each step.
+		/// </summary>
+		[Test]
+		public void InitChrp_ExpandCollapseWithUnsetWs_ForcedRender_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "expcol-ic");
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				if (i < 2)
+				{
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"gl-{i}", Cache.DefaultAnalWs);
+				}
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(entry, "NormalCollapsible", null, entry, false);
+			PrepareForBitmapCapture(800, 600);
+
+			var expandable = FindExpandableSlice(m_dtree);
+			if (expandable != null)
+			{
+				Assert.DoesNotThrow(() =>
+				{
+					// Collapse and render
+					expandable.Collapse();
+					Application.DoEvents();
+					var info1 = CaptureBitmapInfo(m_dtree);
+
+					// Expand and render — this is where InitChrp() re-evaluates
+					// property stores for the newly-expanded senses
+					expandable.Expand(m_dtree.Slices.IndexOf(expandable));
+					Application.DoEvents();
+					var info2 = CaptureBitmapInfo(m_dtree);
+					Assert.That(info2.Height, Is.GreaterThan(0));
+				}, "Expand/collapse + render with unset-ws senses must not trigger InitChrp() crash.");
+			}
+		}
+
+		/// <summary>
+		/// CRASH REGRESSION: Full lifecycle with forced rendering at every step —
+		/// the integration stress test for InitChrp() with ws=0.
+		/// </summary>
+		[Test]
+		public void InitChrp_FullLifecycle_ForcedRender_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(2, "lifecycle-ic");
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			Assert.DoesNotThrow(() =>
+			{
+				// Phase 1: Render initial state
+				var info = CaptureBitmapInfo(m_dtree);
+				Assert.That(info.Height, Is.GreaterThan(0));
+
+				// Phase 2: Add unset-ws sense, re-show, render
+				var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(emptySense);
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				Application.DoEvents();
+				info = CaptureBitmapInfo(m_dtree);
+
+				// Phase 3: Resize and render
+				ResizeParent(400, 600);
+				info = CaptureBitmapInfo(m_dtree);
+
+				// Phase 4: Add more unset-ws senses, render
+				for (int i = 0; i < 3; i++)
+				{
+					var s = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+					entry.SensesOS.Add(s);
+				}
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				Application.DoEvents();
+				info = CaptureBitmapInfo(m_dtree);
+
+				// Phase 5: Navigate to different entry, render
+				var otherEntry = CreateEntryWithSenses(1, "other-ic");
+				m_dtree.ShowObject(otherEntry, "Normal", null, otherEntry, false);
+				Application.DoEvents();
+				info = CaptureBitmapInfo(m_dtree);
+
+				// Phase 6: Navigate back, resize wider, render
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				m_dtree.AutoScroll = false;
+				m_dtree.Size = new Size(1200, 600);
+				m_dtree.PerformLayout();
+				Application.DoEvents();
+				info = CaptureBitmapInfo(m_dtree);
+				Assert.That(info.Height, Is.GreaterThan(0));
+			}, "Full lifecycle with forced rendering and ws=0 senses must not crash.");
+		}
+
+		#endregion
 	}
 }

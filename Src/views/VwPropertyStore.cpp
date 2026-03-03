@@ -513,16 +513,28 @@ void VwPropertyStore::InitChrp()
 	ILgWritingSystemPtr qws;
 	if (!m_chrp.ws)
 		CheckHr(m_qwsf->get_UserWs(&m_chrp.ws));	// Get default writing system id.
-	Assert(m_chrp.ws);
-	CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
-	AssertPtr(qws);
-	ComBool fRtl;
-	CheckHr(qws->get_RightToLeftScript(&fRtl));
-	m_chrp.fWsRtl = (bool)fRtl;
-	m_chrp.nDirDepth = (fRtl) ? 1 : 0;
+	// A ws of 0 can arrive during PropChanged-driven box rebuilds when
+	// a view constructor emits runs without an explicit writing system,
+	// or when get_UserWs fails to provide a valid ws.
+	// get_EngineOrNull may also return null for an unknown ws.
+	if (m_chrp.ws)
+		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+	AssertPtrN(qws); // null is recoverable — default to LTR below
+	ComBool fRtl = false; // default LTR for unknown/zero ws
+	if (qws)
+	{
+		CheckHr(qws->get_RightToLeftScript(&fRtl));
+		m_chrp.fWsRtl = (bool)fRtl;
+		m_chrp.nDirDepth = (fRtl) ? 1 : 0;
 
-	// Interpret any magic font names.
-	CheckHr(qws->InterpretChrp(&m_chrp));
+		// Interpret any magic font names.
+		CheckHr(qws->InterpretChrp(&m_chrp));
+	}
+	else
+	{
+		m_chrp.fWsRtl = false;
+		m_chrp.nDirDepth = 0;
+	}
 
 	// Other fields in m_chrp have the exact same meaning as the corresponding property,
 	// and are already used to store it.
