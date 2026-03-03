@@ -2902,7 +2902,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Date access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display, if m_baseEnv is null.
-		/// <param name="addEOL">Add an EOL between lines.
+		/// <param name="addEOL">Add an EOL between lines.</param>
 		/// If baseEnv is not null, hvoRoot is ignored.</param>
 		/// ------------------------------------------------------------------------------------
 		public TsStringCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot, bool addEOL = false) :
