@@ -967,9 +967,13 @@ namespace SIL.FieldWorks.Common.Controls
 				case "true":
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksBlanks), new BlankMatcher(), item));
 					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksNonBlanks), new NonBlankMatcher(), item));
-					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksMoreThanOneLine), new MoreThanOneLineMatcher(), item));
-					combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksExactlyOneLine), new ExactlyOneLineMatcher(), item));
 					break;
+			}
+			string multipara = XmlUtils.GetOptionalAttributeValue(item.Spec, "multipara", "false");
+			if (multipara == "true")
+			{
+				combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksMoreThanOneLine), new MoreThanOneLineMatcher(), item));
+				combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksExactlyOneLine), new ExactlyOneLineMatcher(), item));
 			}
 
 			// Enhance JohnT: figure whether the column has vernacular or analysis data...
