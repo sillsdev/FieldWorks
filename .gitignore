@@ -181,6 +181,7 @@ CrashLog.txt
 # VSTest Artifacts
 TestResults/
 *.trx
+TestResult.xml
 
 # WPF markup compilation temp projects
 *_wpftmp.csproj
@@ -193,12 +194,6 @@ TestResults/
 bin/
 FLExInstaller/cabcache/*
 FLExInstaller/wix6/cabcache/*
-
-# bv (beads viewer) local config and caches
-.bv/
-.env
-.beads/*
-.beads/metadata.json
 
 # Verify snapshot testing - received files are transient
 *.received.png
