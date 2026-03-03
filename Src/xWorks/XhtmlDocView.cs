@@ -1308,7 +1308,7 @@ namespace SIL.FieldWorks.XWorks
 
 			private void ClearCurrentFindResult(GeckoWebBrowser geckoBrowser, string lastId)
 			{
-				var currentElement = geckoBrowser.Document.GetHtmlElementById(lastId);
+				var currentElement = geckoBrowser.Document?.GetHtmlElementById(lastId);
 				if (currentElement != null)
 					docView.RemoveClassFromHtmlElement(currentElement, CurrentSelectedEntryClass);
 			}
@@ -1320,6 +1320,12 @@ namespace SIL.FieldWorks.XWorks
 					throw new ApplicationException();
 				if (results == null || results.Length == 0)
 				{
+					if (geckoBrowser.Document == null)
+					{
+						results = null;
+						resultIndex = 0;
+						return true;
+					}
 					string newResults = string.Empty;
 					geckoBrowser.RemoveMessageEventListener("find");
 					geckoBrowser.AddMessageEventListener("find", r => newResults = r);
