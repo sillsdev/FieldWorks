@@ -1835,5 +1835,846 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		#endregion
+
+		#region Category 45: ws=0 combined with navigation
+
+		/// <summary>
+		/// CONTRACT: Navigating from an entry with all unset-ws senses to a normal
+		/// entry does not crash. The Reconstruct guard must handle the transition
+		/// from ws=0 property stores to valid ones.
+		/// </summary>
+		[Test]
+		public void NavigateFromUnsetWsToNormal_DoesNotCrash()
+		{
+			// Entry with all unset-ws senses
+			var unsetEntry = CreateEntryWithSenses(0, "unset");
+			for (int i = 0; i < 3; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				unsetEntry.SensesOS.Add(sense);
+				// No gloss set — ws=0
+			}
+
+			// Normal entry with set gloss
+			var normalEntry = CreateEntryWithSenses(3, "normal");
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			// Show unset-ws entry first
+			m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+
+			// Navigate to normal entry
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+			}, "Navigating from unset-ws entry to normal entry must not crash.");
+
+			int glossCount = m_dtree.Slices.Cast<Slice>()
+				.Count(s => s.Label == "Gloss");
+			Assert.That(glossCount, Is.GreaterThanOrEqualTo(3),
+				"Normal entry should display its gloss slices after navigation.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Navigating from a normal entry to one with all unset-ws senses
+		/// does not crash. VwPropertyStore ws=0 fix must handle this.
+		/// </summary>
+		[Test]
+		public void NavigateFromNormalToUnsetWs_DoesNotCrash()
+		{
+			var normalEntry = CreateEntryWithSenses(3, "normal");
+
+			var unsetEntry = CreateEntryWithSenses(0, "unset");
+			for (int i = 0; i < 5; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				unsetEntry.SensesOS.Add(sense);
+				// No gloss set — ws=0
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			// Show normal entry first
+			m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+			int normalCount = m_dtree.Slices.Count;
+			Assert.That(normalCount, Is.GreaterThan(0));
+
+			// Navigate to unset-ws entry
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+			}, "Navigating from normal entry to unset-ws entry must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Rapid navigation cycling through a mix of normal and unset-ws
+		/// entries does not crash. Tests the full Reconstruct + PropChanged path
+		/// under ws transitions.
+		/// </summary>
+		[Test]
+		public void RapidNavigation_MixedWsEntries_DoesNotCrash()
+		{
+			var entries = new ILexEntry[6];
+
+			// Alternate between normal and unset-ws entries
+			for (int i = 0; i < 6; i++)
+			{
+				entries[i] = CreateEntryWithSenses(0, $"mixed-{i}");
+				for (int j = 0; j < 3; j++)
+				{
+					var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+					entries[i].SensesOS.Add(sense);
+					// Only set gloss on even-indexed entries
+					if (i % 2 == 0)
+					{
+						sense.Gloss.AnalysisDefaultWritingSystem =
+							TsStringUtils.MakeString($"sense-{i}-{j}", Cache.DefaultAnalWs);
+					}
+				}
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			Assert.DoesNotThrow(() =>
+			{
+				for (int cycle = 0; cycle < 3; cycle++)
+				{
+					foreach (var entry in entries)
+					{
+						m_dtree.ShowObject(entry, "Normal", null, entry, false);
+					}
+				}
+			}, "Rapid navigation through mixed ws/unset-ws entries must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Navigating from an entry with unset-ws senses to the same entry
+		/// (re-show) does not crash. Tests the Reconstruct path when source and
+		/// target are the same.
+		/// </summary>
+		[Test]
+		public void NavigateToSameEntry_WithUnsetWs_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "self-nav");
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				// No gloss set — ws=0
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(entry, "Normal", null, entry, false);
+
+			// Navigate to the same entry again
+			Assert.DoesNotThrow(() =>
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				}
+			}, "Re-showing the same unset-ws entry must not crash.");
+		}
+
+		#endregion
+
+		#region Category 46: ws=0 combined with resize
+
+		/// <summary>
+		/// CONTRACT: Resizing the window while unset-ws senses are displayed
+		/// does not crash. Layout must handle ws=0 property stores during relayout.
+		/// </summary>
+		[Test]
+		public void ResizeWithUnsetWsSenses_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "resize-ws0");
+			for (int i = 0; i < 5; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				// No gloss set — ws=0
+			}
+
+			var dtree = CreateNormalDataTree(entry);
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_parent.ClientSize = new Size(400, 300);
+				Application.DoEvents();
+				m_parent.ClientSize = new Size(1200, 800);
+				Application.DoEvents();
+				m_parent.ClientSize = new Size(200, 100);
+				Application.DoEvents();
+			}, "Resizing with unset-ws senses displayed must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Rapid horizontal resize with unset-ws senses does not crash.
+		/// Tests PATH-L1 guard under ws=0 conditions.
+		/// </summary>
+		[Test]
+		public void RapidResizeWithUnsetWsSenses_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "rapid-ws0");
+			for (int i = 0; i < 8; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				// Mix: even senses have gloss, odd do not
+				if (i % 2 == 0)
+				{
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"gloss-{i}", Cache.DefaultAnalWs);
+				}
+			}
+
+			var dtree = CreateNormalDataTree(entry);
+
+			Assert.DoesNotThrow(() =>
+			{
+				for (int w = 200; w <= 1400; w += 100)
+				{
+					m_parent.ClientSize = new Size(w, 500);
+				}
+				Application.DoEvents();
+			}, "Rapid resize with mixed ws/unset-ws senses must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Resizing to a very small width then navigating to an unset-ws
+		/// entry does not crash. Tests resize + navigation + ws=0 interaction.
+		/// </summary>
+		[Test]
+		public void ResizeThenNavigateToUnsetWs_DoesNotCrash()
+		{
+			var normalEntry = CreateEntryWithSenses(3);
+			var unsetEntry = CreateEntryWithSenses(0, "after-resize");
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				unsetEntry.SensesOS.Add(sense);
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+
+			// Resize to very small
+			m_parent.ClientSize = new Size(150, 100);
+			Application.DoEvents();
+
+			// Navigate to unset-ws entry at small viewport
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+			}, "Navigating to unset-ws entry after small resize must not crash.");
+		}
+
+		#endregion
+
+		#region Category 47: ws=0 in nested subsenses
+
+		/// <summary>
+		/// CONTRACT: An entry with subsenses where ALL subsenses have unset gloss
+		/// does not crash. ws=0 appears at the deepest nesting level.
+		/// </summary>
+		[Test]
+		public void SubsensesAllUnsetWs_ShowObject_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.CitationForm.VernacularDefaultWritingSystem =
+				TsStringUtils.MakeString("sub-ws0", Cache.DefaultVernWs);
+
+			// Top-level sense with set gloss
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("parent-sense", Cache.DefaultAnalWs);
+
+			// Subsenses with NO gloss (ws=0)
+			for (int i = 0; i < 3; i++)
+			{
+				var sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				sense.SensesOS.Add(sub);
+				// No gloss — ws=0
+			}
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(entry, "OptSensesEty", null, entry, false);
+			}, "Subsenses with unset gloss (ws=0) must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Mixed ws at different nesting levels — some parent senses
+		/// have gloss, some don't; some subsenses have gloss, some don't.
+		/// </summary>
+		[Test]
+		public void MixedWsAtDifferentNestingLevels_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.CitationForm.VernacularDefaultWritingSystem =
+				TsStringUtils.MakeString("mixed-nesting", Cache.DefaultVernWs);
+
+			for (int i = 0; i < 3; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+
+				// Only set the first parent sense gloss
+				if (i == 0)
+				{
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString("parent-0", Cache.DefaultAnalWs);
+				}
+
+				// Add subsenses with alternating ws
+				for (int j = 0; j < 2; j++)
+				{
+					var sub = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+					sense.SensesOS.Add(sub);
+					if (j == 0)
+					{
+						sub.Gloss.AnalysisDefaultWritingSystem =
+							TsStringUtils.MakeString($"sub-{i}-{j}", Cache.DefaultAnalWs);
+					}
+					// Odd j subsenses have no gloss — ws=0
+				}
+			}
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(entry, "OptSensesEty", null, entry, false);
+			}, "Mixed ws at different nesting levels must not crash.");
+
+			Assert.That(m_dtree.Slices.Count, Is.GreaterThan(0),
+				"Should produce slices for mixed ws entry.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Deeply nested senses (4 levels) where every other level
+		/// has unset ws does not crash. Tests ws=0 in deep recursion.
+		/// </summary>
+		[Test]
+		public void DeeplyNestedAlternatingWs_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.CitationForm.VernacularDefaultWritingSystem =
+				TsStringUtils.MakeString("deep-alt-ws", Cache.DefaultVernWs);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("level-1", Cache.DefaultAnalWs);
+
+			var current = sense;
+			for (int level = 2; level <= 4; level++)
+			{
+				var child = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				current.SensesOS.Add(child);
+				// Only set gloss on even levels
+				if (level % 2 == 0)
+				{
+					child.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"level-{level}", Cache.DefaultAnalWs);
+				}
+				current = child;
+			}
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(entry, "OptSensesEty", null, entry, false);
+			}, "Deeply nested senses with alternating ws/unset-ws must not crash.");
+		}
+
+		#endregion
+
+		#region Category 48: Writing system transitions
+
+		/// <summary>
+		/// CONTRACT: Setting a gloss, then clearing it (set→unset ws transition),
+		/// then re-showing does not crash. This tests the ws going from a valid
+		/// value back to 0.
+		/// </summary>
+		[Test]
+		public void ClearGloss_ReShow_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(1);
+
+			// First show with the gloss set (valid ws)
+			var dtree = CreateNormalDataTree(entry);
+			Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+
+			// Clear the gloss — this sets ws back to 0 on that string
+			entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("", Cache.DefaultAnalWs);
+
+			// Re-show
+			Assert.DoesNotThrow(() =>
+			{
+				dtree = ReShowWithFreshDataTree(entry, "Normal");
+			}, "Clearing a gloss and re-showing must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Multiple set→unset→set cycles on a gloss do not crash.
+		/// Tests repeated ws transitions through the PropChanged path.
+		/// </summary>
+		[Test]
+		public void GlossSetUnsetCycles_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(1);
+
+			Assert.DoesNotThrow(() =>
+			{
+				for (int round = 0; round < 5; round++)
+				{
+					// Set the gloss
+					entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"gloss-round-{round}", Cache.DefaultAnalWs);
+					var dtree = ReShowWithFreshDataTree(entry, "Normal");
+					Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+
+					// Clear the gloss
+					entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString("", Cache.DefaultAnalWs);
+					dtree = ReShowWithFreshDataTree(entry, "Normal");
+				}
+			}, "Multiple gloss set/unset cycles must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Changing a gloss from one writing system to another by
+		/// setting multiple alternatives does not crash. Tests VwPropertyStore
+		/// handling of ws transitions.
+		/// </summary>
+		[Test]
+		public void ChangeGlossWritingSystem_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(1);
+
+			// Set gloss in analysis default ws
+			entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("english-gloss", Cache.DefaultAnalWs);
+
+			var dtree = CreateNormalDataTree(entry);
+			Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+
+			// Set gloss in vernacular ws as well
+			entry.SensesOS[0].Gloss.VernacularDefaultWritingSystem =
+				TsStringUtils.MakeString("vern-gloss", Cache.DefaultVernWs);
+
+			Assert.DoesNotThrow(() =>
+			{
+				dtree = ReShowWithFreshDataTree(entry, "Normal");
+			}, "Changing gloss writing system must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Adding a sense with an empty TsString (ws is set but text
+		/// is empty) does not crash. This is distinct from ws=0 — the ws IS set,
+		/// but the string content is empty.
+		/// </summary>
+		[Test]
+		public void SenseWithEmptyStringGloss_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(1);
+
+			// Add a sense with an empty string gloss (ws IS set, text is "")
+			var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(emptySense);
+			emptySense.Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("", Cache.DefaultAnalWs);
+
+			Assert.DoesNotThrow(() =>
+			{
+				var dtree = CreateNormalDataTree(entry);
+				Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+			}, "Sense with empty-string gloss (ws set, text empty) must not crash.");
+		}
+
+		#endregion
+
+		#region Category 49: ws=0 image regression
+
+		/// <summary>
+		/// IMAGE REGRESSION: Bitmap capture of an entry with unset-ws senses
+		/// produces a valid (non-null, non-degenerate) bitmap without crashing.
+		/// </summary>
+		[Test]
+		public void ImageRegression_UnsetWsSenses_ProducesValidBitmap()
+		{
+			var entry = CreateEntryWithSenses(0, "bitmap-ws0");
+			for (int i = 0; i < 3; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				// No gloss — ws=0
+			}
+
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			(string hash, int width, int height, int nonWhite) info = default;
+			Assert.DoesNotThrow(() =>
+			{
+				info = CaptureBitmapInfo(m_dtree);
+			}, "Bitmap capture with unset-ws senses must not crash.");
+
+			Assert.That(info.width, Is.GreaterThan(0), "Bitmap width should be positive.");
+			Assert.That(info.height, Is.GreaterThan(0), "Bitmap height should be positive.");
+		}
+
+		/// <summary>
+		/// IMAGE REGRESSION: Bitmap capture of mixed ws/unset-ws entry,
+		/// then resize and recapture, does not crash or produce a degenerate bitmap.
+		/// </summary>
+		[Test]
+		public void ImageRegression_MixedWs_ResizeRoundTrip_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "mixed-bmp");
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				if (i % 2 == 0)
+				{
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"gl-{i}", Cache.DefaultAnalWs);
+				}
+			}
+
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			var before = CaptureBitmapInfo(m_dtree);
+
+			// Resize cycle
+			ResizeParent(400, 600);
+			ResizeParent(800, 600);
+
+			var after = CaptureBitmapInfo(m_dtree);
+
+			Assert.That(after.Width, Is.EqualTo(before.Width),
+				"Width should match after resize round-trip with mixed ws.");
+			Assert.That(after.Height, Is.EqualTo(before.Height),
+				"Height should match after resize round-trip with mixed ws.");
+		}
+
+		/// <summary>
+		/// IMAGE REGRESSION: Adding a sense with unset ws to a displayed entry
+		/// and re-rendering does not crash the bitmap capture.
+		/// </summary>
+		[Test]
+		public void ImageRegression_AddUnsetWsSense_RecaptureDoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(2, "add-ws0-bmp");
+			CreateNormalDataTree(entry);
+			PrepareForBitmapCapture(800, 600);
+
+			var before = CaptureBitmapInfo(m_dtree);
+			Assert.That(before.Height, Is.GreaterThan(0));
+
+			// Add an unset-ws sense
+			var emptySense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(emptySense);
+
+			ReShowWithFreshDataTree(entry, "Normal");
+			PrepareForBitmapCapture(800, 600);
+
+			Assert.DoesNotThrow(() =>
+			{
+				var after = CaptureBitmapInfo(m_dtree);
+				Assert.That(after.Height, Is.GreaterThan(0),
+					"Bitmap should have positive height after adding unset-ws sense.");
+			}, "Recapturing bitmap after adding unset-ws sense must not crash.");
+		}
+
+		#endregion
+
+		#region Category 50: ws=0 combined with layout switching
+
+		/// <summary>
+		/// CONTRACT: Switching layouts on an entry with unset-ws senses does not crash.
+		/// Different layouts access different fields — the ws=0 fix in VwPropertyStore
+		/// must work regardless of which layout is active.
+		/// </summary>
+		[Test]
+		public void SwitchLayouts_WithUnsetWsSenses_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "layout-ws0");
+			for (int i = 0; i < 3; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				// No gloss — ws=0
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				m_dtree.ShowObject(entry, "OptSensesEty", null, entry, false);
+				m_dtree.ShowObject(entry, "CfAndBib", null, entry, false);
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+			}, "Switching layouts with unset-ws senses must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Switching to NormalCollapsible layout with unset-ws senses
+		/// and then expanding/collapsing does not crash.
+		/// </summary>
+		[Test]
+		public void CollapsibleLayout_WithUnsetWs_ExpandCollapse_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "coll-ws0");
+			// Mix of set and unset gloss
+			for (int i = 0; i < 4; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				if (i == 0)
+				{
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString("only-set", Cache.DefaultAnalWs);
+				}
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(entry, "NormalCollapsible", null, entry, false);
+
+			var expandable = FindExpandableSlice(m_dtree);
+			if (expandable != null)
+			{
+				Assert.DoesNotThrow(() =>
+				{
+					for (int i = 0; i < 3; i++)
+					{
+						expandable.Collapse();
+						expandable.Expand(m_dtree.Slices.IndexOf(expandable));
+					}
+				}, "Expand/collapse cycles with unset-ws senses on collapsible layout must not crash.");
+			}
+		}
+
+		#endregion
+
+		#region Category 51: ws=0 stress scenarios
+
+		/// <summary>
+		/// CONTRACT: Full lifecycle with unset-ws entries — create, show, resize,
+		/// navigate, add senses, navigate back — does not crash. Integration test
+		/// for the VwPropertyStore ws=0 + ComBool fixes.
+		/// </summary>
+		[Test]
+		public void FullLifecycle_WithUnsetWs_StressTest_DoesNotCrash()
+		{
+			var normalEntry = CreateEntryWithSenses(3, "stress-normal");
+			var unsetEntry = CreateEntryWithSenses(0, "stress-unset");
+			for (int i = 0; i < 5; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				unsetEntry.SensesOS.Add(sense);
+			}
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			Assert.DoesNotThrow(() =>
+			{
+				// Phase 1: Show normal entry
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+
+				// Phase 2: Navigate to unset-ws entry
+				m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+
+				// Phase 3: Resize while showing unset-ws
+				m_parent.ClientSize = new Size(300, 200);
+				Application.DoEvents();
+
+				// Phase 4: Navigate back to normal
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+
+				// Phase 5: Add an unset-ws sense to the normal entry
+				var mixSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				normalEntry.SensesOS.Add(mixSense);
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+
+				// Phase 6: Switch layout while mixed ws is active
+				m_dtree.ShowObject(normalEntry, "OptSensesEty", null, normalEntry, false);
+
+				// Phase 7: Navigate to unset entry at narrow width
+				m_dtree.ShowObject(unsetEntry, "Normal", null, unsetEntry, false);
+
+				// Phase 8: Widen and navigate back
+				m_parent.ClientSize = new Size(1200, 800);
+				Application.DoEvents();
+				m_dtree.ShowObject(normalEntry, "Normal", null, normalEntry, false);
+			}, "Full lifecycle with unset-ws entries must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Showing an entry with a mix of senses that have glosses in
+		/// different writing systems (analysis and vernacular) plus some with
+		/// no gloss at all does not crash. Tests multiple ws values flowing through
+		/// VwPropertyStore.
+		/// </summary>
+		[Test]
+		public void MultipleWritingSystems_MixedWithUnset_DoesNotCrash()
+		{
+			var entry = CreateEntryWithSenses(0, "multi-ws");
+
+			for (int i = 0; i < 6; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+
+				if (i % 3 == 0)
+				{
+					// Analysis ws gloss
+					sense.Gloss.AnalysisDefaultWritingSystem =
+						TsStringUtils.MakeString($"analysis-{i}", Cache.DefaultAnalWs);
+				}
+				else if (i % 3 == 1)
+				{
+					// Vernacular ws gloss
+					sense.Gloss.VernacularDefaultWritingSystem =
+						TsStringUtils.MakeString($"vernacular-{i}", Cache.DefaultVernWs);
+				}
+				// i % 3 == 2: no gloss set — ws=0
+			}
+
+			Assert.DoesNotThrow(() =>
+			{
+				var dtree = CreateNormalDataTree(entry);
+				Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+			}, "Entry with mixed analysis/vernacular/unset ws senses must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Disposing the DataTree while it has unset-ws senses displayed
+		/// does not throw or leak.
+		/// </summary>
+		[Test]
+		public void Dispose_WithUnsetWsSensesDisplayed_DoesNotThrow()
+		{
+			var entry = CreateEntryWithSenses(0, "dispose-ws0");
+			for (int i = 0; i < 5; i++)
+			{
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+			}
+
+			var mediator = new Mediator();
+			var propTable = new PropertyTable(mediator);
+			var dtree = new DataTree();
+			dtree.Init(mediator, propTable, null);
+			var parent = new Form();
+			parent.Controls.Add(dtree);
+
+			dtree.Initialize(Cache, false, m_layouts, m_parts);
+			dtree.ShowObject(entry, "Normal", null, entry, false);
+
+			Assert.DoesNotThrow(() =>
+			{
+				parent.Close();
+				parent.Dispose();
+				propTable.Dispose();
+				mediator.Dispose();
+			}, "Disposing with unset-ws senses displayed must not throw.");
+		}
+
+		#endregion
+
+		#region Category 52: Entry edge cases
+
+		/// <summary>
+		/// CONTRACT: Showing an entry with no citation form set does not crash.
+		/// The citation form field's ws may be 0 if no vernacular string is set.
+		/// </summary>
+		[Test]
+		public void EntryWithNoCitationForm_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			// Do NOT set CitationForm — ws=0
+
+			// Add a sense with a gloss so we have something to display
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("orphan-gloss", Cache.DefaultAnalWs);
+
+			Assert.DoesNotThrow(() =>
+			{
+				var dtree = CreateNormalDataTree(entry);
+				Assert.That(dtree.Slices.Count, Is.GreaterThan(0));
+			}, "Entry with no citation form must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Showing a completely empty entry (no citation form, no senses)
+		/// does not crash. This is the minimal possible entry.
+		/// </summary>
+		[Test]
+		public void CompletelyEmptyEntry_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			// Nothing set at all
+
+			Assert.DoesNotThrow(() =>
+			{
+				var dtree = CreateNormalDataTree(entry);
+			}, "Completely empty entry must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: Navigation from a completely empty entry to one with senses
+		/// and back does not crash.
+		/// </summary>
+		[Test]
+		public void NavigateBetweenEmptyAndFull_DoesNotCrash()
+		{
+			var emptyEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var fullEntry = CreateEntryWithSenses(5, "full");
+
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.ShowObject(emptyEntry, "Normal", null, emptyEntry, false);
+				m_dtree.ShowObject(fullEntry, "Normal", null, fullEntry, false);
+				m_dtree.ShowObject(emptyEntry, "Normal", null, emptyEntry, false);
+				m_dtree.ShowObject(fullEntry, "Normal", null, fullEntry, false);
+			}, "Navigating between empty and full entries must not crash.");
+		}
+
+		/// <summary>
+		/// CONTRACT: An entry where senses have definition (not gloss) set, but
+		/// no gloss, does not crash. Tests another field path through VwPropertyStore.
+		/// </summary>
+		[Test]
+		public void SenseWithDefinitionButNoGloss_DoesNotCrash()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.CitationForm.VernacularDefaultWritingSystem =
+				TsStringUtils.MakeString("def-no-gloss", Cache.DefaultVernWs);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			// Set definition but NOT gloss
+			sense.Definition.AnalysisDefaultWritingSystem =
+				TsStringUtils.MakeString("the definition", Cache.DefaultAnalWs);
+
+			Assert.DoesNotThrow(() =>
+			{
+				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+				m_dtree.ShowObject(entry, "Normal", null, entry, false);
+				Assert.That(m_dtree.Slices.Count, Is.GreaterThan(0));
+			}, "Sense with definition but no gloss must not crash.");
+		}
+
+		#endregion
 	}
 }

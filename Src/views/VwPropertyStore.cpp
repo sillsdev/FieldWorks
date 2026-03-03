@@ -1336,11 +1336,10 @@ STDMETHODIMP VwPropertyStore::put_IntProperty(int tpt, int xpv, int nValue)
 				ILgWritingSystemPtr qws;
 				if (m_chrp.ws)
 					CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
-				// An unknown or zero ws yields a null engine; the code below
-				// already defaults to LTR, so allow null.
+				// An unknown or zero ws yields a null engine; default to LTR.
 				AssertPtrN(qws);
-				ComBool fRtl;
-				if (qws) // If by some chance we're trying to use an unknown WS, default to LTR.
+				ComBool fRtl = false; // default LTR for unknown/zero ws
+				if (qws)
 					CheckHr(qws->get_RightToLeftScript(&fRtl));
 				m_chrp.fWsRtl = (bool)fRtl;
 				m_chrp.nDirDepth = (fRtl) ? 1 : 0;

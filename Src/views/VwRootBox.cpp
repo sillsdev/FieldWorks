@@ -2497,7 +2497,7 @@ STDMETHODIMP VwRootBox::get_IsPropChangedInProgress(ComBool * pfInProgress)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pfInProgress);
 
-	*pfInProgress = m_fIsPropChangedInProgress;
+	*pfInProgress = m_fIsPropChangedInProgress ? true : false;
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
@@ -2513,7 +2513,7 @@ STDMETHODIMP VwRootBox::get_NeedsReconstruct(ComBool * pfNeeds)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pfNeeds);
 
-	*pfNeeds = m_fNeedsReconstruct;
+	*pfNeeds = m_fNeedsReconstruct ? true : false;
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
