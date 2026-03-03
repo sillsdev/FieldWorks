@@ -51,6 +51,10 @@
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
 	This automatically enables -BuildAdditionalApps unless explicitly disabled.
 
+.PARAMETER BuildPatch
+	If set, builds the patch installer via Build/InstallerBuild.proj after the main build.
+	This automatically enables -BuildAdditionalApps unless explicitly disabled.
+
 .PARAMETER InstallerToolset
 	Selects the installer toolset to build (Wix3 or Wix6). Default is Wix3.
 
@@ -119,7 +123,6 @@ param(
 	[string]$TestFilter,
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
-	[switch]$BuildPatch,
 	[string]$Verbosity = "minimal",
 	[bool]$NodeReuse = $true,
 	[string[]]$MsBuildArgs = @(),
@@ -128,6 +131,7 @@ param(
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
 	[switch]$BuildInstaller,
+	[switch]$BuildPatch,
 	[ValidateSet('Wix3', 'Wix6')]
 	[string]$InstallerToolset = "Wix3",
 	[switch]$InstallerOnly,
