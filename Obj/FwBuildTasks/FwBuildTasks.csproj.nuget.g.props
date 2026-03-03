@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/dependabot/dependabot-updater/repo/packages</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/dependabot/dependabot-updater/repo/packages</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">7.0.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="/home/dependabot/dependabot-updater/repo/packages/" />
+  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)/nunit/3.14.0/build/NUnit.props" Condition="Exists('$(NuGetPackageRoot)/nunit/3.14.0/build/NUnit.props')" />
+    <Import Project="$(NuGetPackageRoot)/sil.buildtasks/3.2.0/build/SIL.BuildTasks.props" Condition="Exists('$(NuGetPackageRoot)/sil.buildtasks/3.2.0/build/SIL.BuildTasks.props')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.testing.platform/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Platform.props" Condition="Exists('$(NuGetPackageRoot)/microsoft.testing.platform/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Platform.props')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.testing.platform.msbuild/1.9.0/buildTransitive/Microsoft.Testing.Platform.MSBuild.props" Condition="Exists('$(NuGetPackageRoot)/microsoft.testing.platform.msbuild/1.9.0/buildTransitive/Microsoft.Testing.Platform.MSBuild.props')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.testing.extensions.telemetry/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Extensions.Telemetry.props" Condition="Exists('$(NuGetPackageRoot)/microsoft.testing.extensions.telemetry/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Extensions.Telemetry.props')" />
+    <Import Project="$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.props" Condition="Exists('$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgSIL_BuildTasks Condition=" '$(PkgSIL_BuildTasks)' == '' ">/home/dependabot/dependabot-updater/repo/packages/sil.buildtasks/3.2.0</PkgSIL_BuildTasks>
+  </PropertyGroup>
+</Project>
