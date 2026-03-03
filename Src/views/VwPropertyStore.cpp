@@ -1328,12 +1328,17 @@ STDMETHODIMP VwPropertyStore::put_IntProperty(int tpt, int xpv, int nValue)
 			if (m_chrp.ws != nValue)
 			{
 				m_chrp.ws = nValue;
-				Assert(m_chrp.ws);
+				// A ws of 0 can arrive during PropChanged-driven box rebuilds when
+				// a view constructor emits runs without an explicit writing system.
+				// This is recoverable — we default to LTR below.
 				// Recompute m_chrp.fRtl and m_chrp.nDirDepth
 				EnsureWritingSystemFactory();
 				ILgWritingSystemPtr qws;
-				CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
-				AssertPtr(qws);
+				if (m_chrp.ws)
+					CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+				// An unknown or zero ws yields a null engine; the code below
+				// already defaults to LTR, so allow null.
+				AssertPtrN(qws);
 				ComBool fRtl;
 				if (qws) // If by some chance we're trying to use an unknown WS, default to LTR.
 					CheckHr(qws->get_RightToLeftScript(&fRtl));

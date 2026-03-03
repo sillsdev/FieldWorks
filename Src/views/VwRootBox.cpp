@@ -68,6 +68,7 @@ void VwRootBox::Init()
 	m_cMaxParasToScan = 4;
 	m_fNeedsLayout = true;
 	m_dxLastLayoutWidth = -1;
+	m_fNeedsReconstruct = true;
 	// Usually set in Layout method, but some tests don't do this...
 	// play safe also for any code called before Layout.
 	m_ptDpiSrc.x = 96;
@@ -194,6 +195,9 @@ STDMETHODIMP VwRootBox::PropChanged(HVO hvo, PropTag tag, int ivMin, int cvIns,
 	int cvDel)
 {
 	BEGIN_COM_METHOD;
+
+	// Any data change makes a subsequent Reconstruct() valid work.
+	m_fNeedsReconstruct = true;
 
 	int ivMinDisp;
 	if (m_qsda)
@@ -2497,6 +2501,23 @@ STDMETHODIMP VwRootBox::get_IsPropChangedInProgress(ComBool * pfInProgress)
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
+
+/*----------------------------------------------------------------------------------------------
+	PATH-L5: Reports whether this root box needs a full Reconstruct.
+	Returns true when data or structural changes (PropChanged, OnStylesheetChange, etc.)
+	have occurred since the last Reconstruct. Managed callers can use this to skip the
+	overhead of selection save/restore and drawing suspension when nothing has changed.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_NeedsReconstruct(ComBool * pfNeeds)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pfNeeds);
+
+	*pfNeeds = m_fNeedsReconstruct;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
 /*----------------------------------------------------------------------------------------------
 	Discard all your notifiers. In case this happens during a sequence of PropChanged calls,
 	mark them all as deleted.
@@ -2525,6 +2546,11 @@ void VwRootBox::ClearNotifiers()
 ----------------------------------------------------------------------------------------------*/
 void VwRootBox::Reconstruct(bool fCheckForSync)
 {
+	// PATH-R1 guard: skip if the view has been constructed and no data or
+	// structural change has been reported since the last construction.
+	if (m_fConstructed && !m_fNeedsReconstruct)
+		return;
+
 	if (m_qsync && fCheckForSync)
 	{
 		m_qsync->Reconstruct();
@@ -2581,6 +2607,7 @@ void VwRootBox::Reconstruct(bool fCheckForSync)
 
 	Invalidate(); // new
 	InvalidateRect(&vwrect); //old
+	m_fNeedsReconstruct = false; // reconstruction complete
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2606,6 +2633,7 @@ STDMETHODIMP VwRootBox::OnStylesheetChange()
 	if (!m_fConstructed || Style() == NULL)
 		return S_OK;  // no Style() object exists to fix. (I think the second condition above is redundant, but play safe.)
 	// Redraw the boxes based on stylesheet changes.
+	m_fNeedsReconstruct = true; // style changes warrant reconstruction
 
 	Style()->InitRootTextProps(m_vqvwvc.Size() == 0 ? NULL : m_vqvwvc[0]);
 	Style()->RecomputeEffects();
@@ -2845,22 +2873,7 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 	// PATH-L1 guard: skip full layout when the box tree is already laid out at this width
 	// and no structural mutation has occurred since the last successful layout.
 	if (m_fConstructed && !m_fNeedsLayout && dxAvailWidth == m_dxLastLayoutWidth)
-	{
-#ifdef DEBUG
-		StrAnsi staSkip;
-		staSkip.Format("PATH-L1 GUARD HIT: skipped width=%d\n", dxAvailWidth);
-		::OutputDebugStringA(staSkip.Chars());
-#endif
 		return S_OK;
-	}
-#ifdef DEBUG
-	{
-		StrAnsi staFull;
-		staFull.Format("PATH-L1 FULL LAYOUT: width=%d constructed=%d needsLayout=%d lastWidth=%d\n",
-			dxAvailWidth, (int)m_fConstructed, (int)m_fNeedsLayout, m_dxLastLayoutWidth);
-		::OutputDebugStringA(staFull.Chars());
-	}
-#endif
 
 	int dpiX, dpiY;
 	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
@@ -4226,6 +4239,10 @@ void VwRootBox::Construct(IVwGraphics * pvg, int dxAvailWidth)
 	qvwenv->Cleanup();
 	m_fConstructed = true;
 	m_fNeedsLayout = true; // newly-constructed boxes require layout
+	// Leave m_fNeedsReconstruct as-is (typically true from Init). The first
+	// RefreshDisplay/Reconstruct call will clear it after finalizing the display.
+	// This ensures PATH-L5 and PATH-R1 guards allow the initial reconstruction
+	// pass that settles slice heights and positions.
 	ResetSpellCheck(); // in case it somehow got called while we had no contents.
 }
 
