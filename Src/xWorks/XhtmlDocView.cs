@@ -1320,13 +1320,13 @@ namespace SIL.FieldWorks.XWorks
 					throw new ApplicationException();
 				if (results == null || results.Length == 0)
 				{
-					string newResults = string.Empty;
 					if (geckoBrowser.Document == null)
 					{
 						results = null;
 						resultIndex = 0;
 						return true;
 					}
+					string newResults = string.Empty;
 					geckoBrowser.RemoveMessageEventListener("find");
 					geckoBrowser.AddMessageEventListener("find", r => newResults = r);
 					using(var executor = new AutoJSContext(geckoBrowser.Window))
