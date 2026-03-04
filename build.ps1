@@ -47,6 +47,14 @@
 .PARAMETER MsBuildArgs
 	Additional arguments to pass directly to MSBuild.
 
+.PARAMETER LogFile
+	Path to a file where the build output should be logged.
+
+.PARAMETER TailLines
+	If specified, displays only the last N lines of output after the build completes.
+	Useful for CI/agent scenarios where you want to see recent output without piping.
+	The full output is still written to LogFile if specified.
+
 .PARAMETER BuildInstaller
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
 	This automatically enables -BuildAdditionalApps unless explicitly disabled.
@@ -81,13 +89,8 @@
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
 
-.PARAMETER LogFile
-	Path to a file where the build output should be logged.
-
-.PARAMETER TailLines
-	If specified, only displays the last N lines of output after the build completes.
-	Useful for CI/agent scenarios where you want to see recent output without piping.
-	The full output is still written to LogFile if specified.
+.PARAMETER SkipDependencyCheck
+	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
 
 .EXAMPLE
 	.\build.ps1
@@ -520,6 +523,8 @@ try {
 			Write-Host ""
 			Write-Host "Building $BaseOrPatch..." -ForegroundColor Cyan
 
+			$env:PATH = "$env:WIX/bin;$env:PATH"
+
 			if (-not $isGitHubActions) {
 				if ($SignInstaller) {
 					Write-Host "Signing enabled for local installer build." -ForegroundColor Yellow
@@ -546,36 +551,6 @@ try {
 
 			Write-Host "[OK] $BaseOrPatch build complete!" -ForegroundColor Green
 		}
-#		else { if ($BuildPatch) {
-#			Write-Host ""
-#			Write-Host "Building Patch Installer..." -ForegroundColor Cyan
-#
-#			if (-not $isGitHubActions) {
-#				if ($SignInstaller) {
-#					Write-Host "Signing enabled for local installer build." -ForegroundColor Yellow
-#					$env:FILESTOSIGNLATER = $null
-#				}
-#				else {
-#					$defaultSignList = Join-Path $PSScriptRoot "Output\files-to-sign.txt"
-#					if ([string]::IsNullOrWhiteSpace($env:FILESTOSIGNLATER)) {
-#						$env:FILESTOSIGNLATER = $defaultSignList
-#					}
-#					Write-Host "Signing disabled for local build; capturing files to $env:FILESTOSIGNLATER" -ForegroundColor Yellow
-#				}
-#			}
-#
-#			$installerCleanArg = "/p:InstallerCleanProductOutputs=false"
-#			if ($isGitHubActions) {
-#				$installerCleanArg = "/p:InstallerCleanProductOutputs=true"
-#			}
-#
-#			Invoke-MSBuild `
-#				-Arguments @('Build/InstallerBuild.proj', '/t:BuildPatch', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release',
-#					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
-#				-Description 'Patch Installer Build'
-#
-#			Write-Host "[OK] Patch Installer build complete!" -ForegroundColor Green
-#		}}
 	}
 
 	# =============================================================================
