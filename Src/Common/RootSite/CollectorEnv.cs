@@ -2893,6 +2893,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private ITsIncStrBldr m_builder;
 		private bool m_fNewParagraph = false;
 		private int m_cParaOpened = 0;
+		private bool m_addEOL = false;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2902,8 +2903,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="sda">Date access to get prop values etc.</param>
 		/// <param name="hvoRoot">The root object to display, if m_baseEnv is null.
 		/// If baseEnv is not null, hvoRoot is ignored.</param>
+		/// <param name="addEOL">Add an EOL between lines.</param>
 		/// ------------------------------------------------------------------------------------
-		public TsStringCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot):
+		public TsStringCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot, bool addEOL = false) :
 			base(baseEnv, sda, hvoRoot)
 		{
 			m_builder = TsStringUtils.MakeIncStrBldr();
@@ -2911,6 +2913,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// builders by giving it SOME writing system.
 			m_builder.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 				sda.WritingSystemFactory.UserWs);
+			this.m_addEOL = addEOL;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2921,6 +2924,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void AddTsString(ITsString tss)
 		{
+			if (m_addEOL && m_builder.Text != null)
+			{
+				// Allow MoreThanOneLineMatcher and ExactlyOneLineMatcher to distinguish lines.
+				m_builder.Append("\r");
+			}
 			AppendSpaceForFirstWordInNewParagraph(tss.Text);
 			m_builder.AppendTsString(tss);
 		}
@@ -2933,6 +2941,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		internal protected override void AddResultString(string s)
 		{
+			if (m_addEOL && m_builder.Text != null)
+			{
+				// Allow MoreThanOneLineMatcher and ExactlyOneLineMatcher to distinguish lines.
+				m_builder.Append("\r");
+			}
 			AppendSpaceForFirstWordInNewParagraph(s);
 			m_builder.Append(s);
 		}

@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				collector = new TsStringCollectorEnv(null, m_sda, hvo);
+				collector = new TsStringCollectorEnv(null, m_sda, hvo, true);
 			}
 
 			// This will check to see if the VC is either null or disposed.  The disposed check is neccesary because

@@ -1341,6 +1341,7 @@ namespace SIL.FieldWorks.Filters
 			}
 			return false;
 		}
+
 		/// <summary>
 		/// True if it is the same class and member vars match.
 		/// </summary>
@@ -1349,6 +1350,65 @@ namespace SIL.FieldWorks.Filters
 		public override bool SameMatcher(IMatcher other)
 		{
 			return other is NonBlankMatcher;
+		}
+	}
+
+	/// <summary>
+	/// Matches entries with more than one line.
+	/// </summary>
+	public class MoreThanOneLineMatcher : BaseMatcher
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Contains a new line.
+		/// </summary>
+		/// <param name="arg"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool Matches(ITsString arg)
+		{
+			if (arg == null || arg.Length == 0)
+				return false;
+			return arg.Text.Contains("\r");
+		}
+
+		/// <summary>
+		/// True if it is the same class and member vars match.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public override bool SameMatcher(IMatcher other)
+		{
+			return other is MoreThanOneLineMatcher;
+		}
+	}
+
+	/// <summary>
+	/// Matches entries with exactly one line.
+	/// </summary>
+	public class ExactlyOneLineMatcher : BaseMatcher
+	{
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Does not contain a new line and is not empty.
+		/// </summary>
+		/// <param name="arg"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		public override bool Matches(ITsString arg)
+		{
+			if (arg == null || arg.Length == 0)
+				return false;
+			return !arg.Text.Contains("\r");
+		}
+		/// <summary>
+		/// True if it is the same class and member vars match.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public override bool SameMatcher(IMatcher other)
+		{
+			return other is ExactlyOneLineMatcher;
 		}
 	}
 
