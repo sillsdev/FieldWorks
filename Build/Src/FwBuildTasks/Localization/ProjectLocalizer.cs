@@ -9,11 +9,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using FwBuildTasks;
 using Microsoft.Build.Framework;
 
 // ReSharper disable AssignNullToNotNullAttribute - System.IO is hypocritical in its null handling
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			// Run assembly linker with the specified arguments
 			Directory.CreateDirectory(Path.GetDirectoryName(outputDllPath)); // make sure the directory in which we want to make it exists.
-			var fileName = IsUnix ? "al" : "al.exe";
+			var fileName = BuildUtils.ResolveDotNetFrameworkSdkTool(IsUnix ? "al" : "al.exe");
 			var arguments = BuildLinkerArgs(outputDllPath, culture, fileversion,
 				productVersion, version, resources);
 			var exitCode = RunProcess(fileName, arguments, out var stdOutput);
@@ -380,14 +380,13 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		protected virtual void RunResGen(string outputResourcePath, string localizedResxPath,
 			string originalResxFolder)
 		{
-			var fileName = IsUnix ? "resgen" : "resgen.exe";
+			var fileName = BuildUtils.ResolveDotNetFrameworkSdkTool(IsUnix ? "resgen" : "resgen.exe");
 			var arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\"";
 			if (!IsUnix)
 			{
-				// It needs to be able to reference the appropriate System.Drawing.dll and System.Windows.Forms.dll to make the conversion.
-				var clrFolder = RuntimeEnvironment.GetRuntimeDirectory();
-				var drawingPath = Path.Combine(clrFolder, "System.Drawing.dll");
-				var formsPath = Path.Combine(clrFolder, "System.Windows.Forms.dll");
+				// resgen needs System.Drawing.dll and System.Windows.Forms.dll to process designer resx files.
+				var drawingPath = BuildUtils.ResolveDotNetFrameworkAssemblyPath("System.Drawing.dll");
+				var formsPath = BuildUtils.ResolveDotNetFrameworkAssemblyPath("System.Windows.Forms.dll");
 
 				arguments += $" /r:\"{drawingPath}\" /r:\"{formsPath}\"";
 			}

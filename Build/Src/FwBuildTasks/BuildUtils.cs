@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -22,6 +23,8 @@ namespace FwBuildTasks
 	public static class BuildUtils
 	{
 		public static bool IsUnix => Environment.OSVersion.Platform == PlatformID.Unix;
+		private const string NetFxLegacyVersionFolder = "v4.0.30319";
+		private static readonly string[] NetFxFrameworkFolders = { "Framework64", "Framework" };
 
 		/// <summary>
 		/// Return the executing assembly's location as a directory path.
@@ -203,6 +206,168 @@ namespace FwBuildTasks
 				substitutions[items[0].Trim()] = items[1].Trim();
 			}
 			return true;
+		}
+
+		public static string ResolveDotNetFrameworkSdkTool(string toolName)
+		{
+			if (IsUnix)
+				return Path.GetFileNameWithoutExtension(toolName);
+
+			var probeLog = new List<string>();
+			foreach (var sdkPath in GetToolLocationHelperCandidates(toolName, probeLog))
+			{
+				if (File.Exists(sdkPath))
+					return sdkPath;
+			}
+
+			var programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			if (!string.IsNullOrEmpty(programFilesX86))
+			{
+				var sdkBase = Path.Combine(programFilesX86, "Microsoft SDKs", "Windows", "v10.0A", "bin");
+				if (Directory.Exists(sdkBase))
+				{
+					var netfxDirs = Directory.GetDirectories(sdkBase, "NETFX*")
+						.OrderByDescending(d => d)
+						.ToList();
+					foreach (var dir in netfxDirs)
+					{
+						var x64Path = Path.Combine(dir, "x64", toolName);
+						probeLog.Add(x64Path);
+						if (File.Exists(x64Path))
+							return x64Path;
+
+						var anyPath = Path.Combine(dir, toolName);
+						probeLog.Add(anyPath);
+						if (File.Exists(anyPath))
+							return anyPath;
+					}
+				}
+			}
+
+			if (IsToolOnPath(toolName))
+				return toolName;
+
+			throw new FileNotFoundException(
+				$"Unable to locate required SDK tool '{toolName}'. " +
+				"Install Visual Studio Build Tools with .NET Framework 4.8 SDK/targeting pack or run build.ps1/test.ps1 from this repo. " +
+				$"Probed: {string.Join("; ", probeLog.Distinct())}");
+		}
+
+		public static string ResolveDotNetFrameworkAssemblyPath(string assemblyFileName)
+		{
+			var probeLog = new List<string>();
+			foreach (var candidate in GetFrameworkAssemblyCandidates(assemblyFileName, probeLog))
+			{
+				if (File.Exists(candidate))
+					return candidate;
+			}
+
+			throw new FileNotFoundException(
+				$"Unable to locate required .NET Framework assembly '{assemblyFileName}' for resgen. " +
+				$"Probed: {string.Join("; ", probeLog.Distinct())}");
+		}
+
+		private static IEnumerable<string> GetToolLocationHelperCandidates(string toolName, ICollection<string> probeLog)
+		{
+			var candidates = new List<string>();
+			try
+			{
+				candidates.Add(ToolLocationHelper.GetPathToDotNetFrameworkSdkFile(
+					toolName,
+					TargetDotNetFrameworkVersion.Version48,
+					VisualStudioVersion.Version170,
+					DotNetFrameworkArchitecture.Bitness64));
+			}
+			catch
+			{
+			}
+
+			try
+			{
+				candidates.Add(ToolLocationHelper.GetPathToDotNetFrameworkSdkFile(
+					toolName,
+					TargetDotNetFrameworkVersion.Version48,
+					DotNetFrameworkArchitecture.Bitness64));
+			}
+			catch
+			{
+			}
+
+			try
+			{
+				candidates.Add(ToolLocationHelper.GetPathToDotNetFrameworkSdkFile(
+					toolName,
+					TargetDotNetFrameworkVersion.Version48));
+			}
+			catch
+			{
+			}
+
+			foreach (var candidate in candidates.Where(c => !string.IsNullOrEmpty(c)))
+			{
+				probeLog.Add(candidate);
+				yield return candidate;
+			}
+		}
+
+		private static IEnumerable<string> GetFrameworkAssemblyCandidates(string assemblyFileName, ICollection<string> probeLog)
+		{
+			var candidates = new List<string>();
+			try
+			{
+				var sdkPath = ToolLocationHelper.GetPathToDotNetFrameworkFile(
+					assemblyFileName,
+					TargetDotNetFrameworkVersion.Version48);
+				if (!string.IsNullOrEmpty(sdkPath))
+					candidates.Add(sdkPath);
+			}
+			catch
+			{
+			}
+
+			var runtimeDirectory = RuntimeEnvironment.GetRuntimeDirectory();
+			if (!string.IsNullOrEmpty(runtimeDirectory))
+			{
+				var runtimeCandidate = Path.Combine(runtimeDirectory, assemblyFileName);
+				candidates.Add(runtimeCandidate);
+			}
+
+			var windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+			if (!string.IsNullOrEmpty(windowsFolder))
+			{
+				foreach (var frameworkFolder in NetFxFrameworkFolders)
+				{
+					var candidate = Path.Combine(
+						windowsFolder,
+						"Microsoft.NET",
+						frameworkFolder,
+						NetFxLegacyVersionFolder,
+						assemblyFileName);
+					candidates.Add(candidate);
+				}
+			}
+
+			foreach (var candidate in candidates)
+			{
+				probeLog.Add(candidate);
+				yield return candidate;
+			}
+		}
+
+		private static bool IsToolOnPath(string toolName)
+		{
+			var path = Environment.GetEnvironmentVariable("PATH");
+			if (string.IsNullOrEmpty(path))
+				return false;
+
+			foreach (var entry in path.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var candidate = Path.Combine(entry.Trim(), toolName);
+				if (File.Exists(candidate))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

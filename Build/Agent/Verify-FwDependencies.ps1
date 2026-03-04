@@ -71,6 +71,33 @@ function Test-Dependency {
     }
 }
 
+function Find-DotNetFrameworkSdkTool {
+    param([Parameter(Mandatory)][string]$ToolName)
+
+    $programFilesX86 = ${env:ProgramFiles(x86)}
+    if (-not $programFilesX86) { return $null }
+
+    $sdkBase = Join-Path $programFilesX86 'Microsoft SDKs\Windows\v10.0A\bin'
+    if (-not (Test-Path $sdkBase)) { return $null }
+
+    $toolCandidates = @()
+    $netfxDirs = Get-ChildItem -Path $sdkBase -Directory -Filter 'NETFX*' -ErrorAction SilentlyContinue |
+        Sort-Object Name -Descending
+
+    foreach ($dir in $netfxDirs) {
+        $toolCandidates += (Join-Path $dir.FullName (Join-Path 'x64' $ToolName))
+        $toolCandidates += (Join-Path $dir.FullName $ToolName)
+    }
+
+    foreach ($candidate in $toolCandidates) {
+        if (Test-Path $candidate) {
+            return $candidate
+        }
+    }
+
+    return $null
+}
+
 # ============================================================================
 # MAIN SCRIPT
 # ============================================================================
@@ -85,11 +112,17 @@ $results = @()
 # ----------------------------------------------------------------------------
 Write-Host "--- Required Dependencies ---" -ForegroundColor Cyan
 
-# .NET Framework 4.8.1 Targeting Pack
-$results += Test-Dependency -Name ".NET Framework 4.8.1 Targeting Pack" -Check {
-    $path = "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8.1"
-    if (Test-Path $path) { return $path }
-    throw "Not found at $path"
+# .NET Framework targeting pack (4.8+)
+$results += Test-Dependency -Name ".NET Framework Targeting Pack (4.8+)" -Check {
+    $base = "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework"
+    $candidates = @('v4.8.1', 'v4.8')
+    foreach ($version in $candidates) {
+        $path = Join-Path $base $version
+        if (Test-Path $path) {
+            return "$version at $path"
+        }
+    }
+    throw "Neither v4.8.1 nor v4.8 targeting pack was found under $base"
 }
 
 # Windows SDK
@@ -129,6 +162,19 @@ $results += Test-Dependency -Name "MSBuild" -Check {
         }
     }
     throw "MSBuild not found in PATH or VS installation"
+}
+
+# .NET Framework SDK tools used by localization tasks
+$results += Test-Dependency -Name "ResGen.exe (.NET Framework SDK)" -Check {
+    $resgen = Find-DotNetFrameworkSdkTool -ToolName 'ResGen.exe'
+    if ($resgen) { return $resgen }
+    throw "ResGen.exe not found in Windows SDK NETFX tool folders"
+}
+
+$results += Test-Dependency -Name "al.exe (.NET Framework SDK)" -Check {
+    $al = Find-DotNetFrameworkSdkTool -ToolName 'al.exe'
+    if ($al) { return $al }
+    throw "al.exe not found in Windows SDK NETFX tool folders"
 }
 
 # NuGet CLI (legacy — build uses dotnet restore since CPM migration)
