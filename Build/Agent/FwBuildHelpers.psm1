@@ -125,6 +125,159 @@ function Stop-ConflictingProcesses {
     }
 }
 
+function Get-WorktreeMutexName {
+    param([Parameter(Mandatory)][string]$RepoRoot)
+
+    $normalizedRepoRoot = [System.IO.Path]::GetFullPath($RepoRoot).TrimEnd('\\', '/')
+    $normalizedRepoRoot = $normalizedRepoRoot.ToLowerInvariant()
+
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($normalizedRepoRoot)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hashBytes = $sha.ComputeHash($bytes)
+    }
+    finally {
+        $sha.Dispose()
+    }
+
+    $hash = [System.BitConverter]::ToString($hashBytes).Replace('-', '')
+    $shortHash = $hash.Substring(0, 16)
+    return "Global\\FieldWorks.Worktree.$shortHash"
+}
+
+function Enter-WorktreeLock {
+    <#
+    .SYNOPSIS
+        Acquires an exclusive same-worktree lock for build/test workflows.
+    .DESCRIPTION
+        Uses a named Windows mutex keyed by RepoRoot to prevent concurrent build/test
+        runs inside the same worktree. Also writes lock metadata to Output/ so users
+        can see who currently owns the lock.
+    .PARAMETER RepoRoot
+        Repository root path for this worktree.
+    .PARAMETER Context
+        Friendly text describing the operation (e.g. "FieldWorks build").
+    .PARAMETER StartedBy
+        Optional actor tag for diagnostics (for example: user, agent).
+    #>
+    param(
+        [Parameter(Mandatory)][string]$RepoRoot,
+        [Parameter(Mandatory)][string]$Context,
+        [string]$StartedBy = 'unknown'
+    )
+
+    $mutexName = Get-WorktreeMutexName -RepoRoot $RepoRoot
+    $mutex = New-Object System.Threading.Mutex($false, $mutexName)
+    $hasHandle = $false
+
+    try {
+        try {
+            $hasHandle = $mutex.WaitOne(0)
+        }
+        catch [System.Threading.AbandonedMutexException] {
+            $hasHandle = $true
+        }
+
+        $lockPath = Join-Path $RepoRoot "Output\\WorktreeRun.lock.json"
+
+        if (-not $hasHandle) {
+            $ownerDetails = $null
+            if (Test-Path -LiteralPath $lockPath -PathType Leaf) {
+                try {
+                    $ownerDetails = Get-Content -LiteralPath $lockPath -Raw | ConvertFrom-Json
+                }
+                catch {
+                    $ownerDetails = $null
+                }
+            }
+
+            if ($ownerDetails) {
+                throw "$Context is already running in this worktree (ownerPid=$($ownerDetails.Pid), startedBy=$($ownerDetails.StartedBy), startedAtUtc=$($ownerDetails.StartedAtUtc), context=$($ownerDetails.Context)). Run one build/test workflow at a time per worktree."
+            }
+
+            throw "$Context is already running in this worktree. Run one build/test workflow at a time per worktree."
+        }
+
+        $outputDir = Split-Path -Parent $lockPath
+        if (-not (Test-Path -LiteralPath $outputDir -PathType Container)) {
+            New-Item -Path $outputDir -ItemType Directory -Force | Out-Null
+        }
+
+        $metadata = [pscustomobject]@{
+            Context = $Context
+            StartedBy = $StartedBy
+            Pid = $PID
+            ProcessName = (Get-Process -Id $PID).ProcessName
+            RepoRoot = [System.IO.Path]::GetFullPath($RepoRoot)
+            MutexName = $mutexName
+            StartedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
+        }
+
+        $metadata | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $lockPath -Encoding UTF8
+
+        return [pscustomobject]@{
+            Mutex = $mutex
+            MutexName = $mutexName
+            LockPath = $lockPath
+            HasHandle = $true
+            OwnerPid = $PID
+        }
+    }
+    catch {
+        if (-not $hasHandle -and $mutex) {
+            $mutex.Dispose()
+        }
+        throw
+    }
+}
+
+function Exit-WorktreeLock {
+    <#
+    .SYNOPSIS
+        Releases a same-worktree lock acquired by Enter-WorktreeLock.
+    #>
+    param([Parameter(Mandatory)]$LockHandle)
+
+    if (-not $LockHandle) {
+        return
+    }
+
+    $mutex = $LockHandle.Mutex
+    $lockPath = $LockHandle.LockPath
+
+    try {
+        if ($lockPath -and (Test-Path -LiteralPath $lockPath -PathType Leaf)) {
+            try {
+                $owner = $null
+                try {
+                    $owner = Get-Content -LiteralPath $lockPath -Raw | ConvertFrom-Json
+                }
+                catch {
+                    $owner = $null
+                }
+
+                if (-not $owner -or ($owner.Pid -eq $PID)) {
+                    Remove-Item -LiteralPath $lockPath -Force -ErrorAction SilentlyContinue
+                }
+            }
+            catch {
+                # Best effort only
+            }
+        }
+    }
+    finally {
+        if ($mutex) {
+            try {
+                $mutex.ReleaseMutex()
+            }
+            catch {
+                # Ignore release failures
+            }
+            $mutex.Dispose()
+        }
+    }
+}
+
 function Test-IsFileLockError {
     param([Parameter(Mandatory)][System.Management.Automation.ErrorRecord]$ErrorRecord)
 
@@ -156,10 +309,28 @@ function Test-IsFileLockError {
 }
 
 function Invoke-WithFileLockRetry {
+    <#
+    .SYNOPSIS
+        Runs an action and retries once when a file lock conflict is detected.
+    .DESCRIPTION
+        On lock-related failures, performs the same process cleanup used by build/test scripts
+        before retrying. When RepoRoot is provided, cleanup remains worktree-aware.
+    .PARAMETER Action
+        Script block to execute.
+    .PARAMETER Context
+        Friendly text used in retry warnings.
+    .PARAMETER IncludeOmniSharp
+        Includes OmniSharp processes in cleanup candidates.
+    .PARAMETER RepoRoot
+        Optional repository root used to scope cleanup to the current worktree.
+    .PARAMETER MaxAttempts
+        Number of attempts (default 2).
+    #>
     param(
         [Parameter(Mandatory)][ScriptBlock]$Action,
         [Parameter(Mandatory)][string]$Context,
         [switch]$IncludeOmniSharp,
+        [string]$RepoRoot,
         [int]$MaxAttempts = 2
     )
 
@@ -173,7 +344,7 @@ function Invoke-WithFileLockRetry {
             if ($attempt -lt $MaxAttempts -and (Test-IsFileLockError -ErrorRecord $_)) {
                 $nextAttempt = $attempt + 1
                 Write-Host "[WARN] $Context hit a file lock. Cleaning and retrying (attempt $nextAttempt of $MaxAttempts)..." -ForegroundColor Yellow
-                Stop-ConflictingProcesses -IncludeOmniSharp:$IncludeOmniSharp
+                Stop-ConflictingProcesses -IncludeOmniSharp:$IncludeOmniSharp -RepoRoot $RepoRoot
                 Start-Sleep -Seconds 2
                 $retry = $true
             }
@@ -321,6 +492,8 @@ Export-ModuleMember -Function @(
     'Get-CvtresDiagnostics',
     # Local functions
     'Stop-ConflictingProcesses',
+    'Enter-WorktreeLock',
+    'Exit-WorktreeLock',
     'Remove-StaleObjFolders',
     'Test-IsFileLockError',
     'Invoke-WithFileLockRetry'
