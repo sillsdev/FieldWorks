@@ -1144,7 +1144,7 @@ namespace SIL.FieldWorks.XWorks
 			var expectedWithoutWs = (JObject)JsonConvert.DeserializeObject(expectedResultsWithoutWs, new JsonSerializerSettings { Formatting = Formatting.None });
 			var expectedWithWs = (JObject)JsonConvert.DeserializeObject(expectedResultsWithWs, new JsonSerializerSettings { Formatting = Formatting.None });
 
-			dynamic jsonResult = JsonConvert.DeserializeObject(results[0][0].ToString(Formatting.None), new JsonSerializerSettings { Formatting = Formatting.None });
+			dynamic jsonResult = JsonConvert.DeserializeObject(results[0][0].ToString(Formatting.None, new JsonConverter[0]), new JsonSerializerSettings { Formatting = Formatting.None });
 			string actualReformatted = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
 			Assert.That(actualReformatted, Is.AnyOf(JsonConvert.SerializeObject(expectedWithoutWs, Formatting.Indented),
 				JsonConvert.SerializeObject(expectedWithWs, Formatting.Indented)));

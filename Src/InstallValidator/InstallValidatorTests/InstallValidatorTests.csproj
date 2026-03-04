@@ -37,11 +37,14 @@
     </Reference>
     <Reference Include="Microsoft.Build.Utilities.Core">
       <HintPath>../../../BuildTools/FwBuildTasks/$(Configuration)/Microsoft.Build.Utilities.Core.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../InstallValidator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../AppForTests.config" Link="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
