@@ -275,7 +275,7 @@ jobs:
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
 
       - name: Upload Build Logs
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           if-no-files-found: warn
