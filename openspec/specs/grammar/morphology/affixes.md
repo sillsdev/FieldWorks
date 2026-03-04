@@ -26,8 +26,6 @@ Affix editing uses Morphology UI components and parser integration.
 
 ### References
 
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#key-components) — Affix template and rule editors
-- [ParserCore integration](../../../../Src/LexText/ParserCore/AGENTS.md#dependencies) — Parser consumes morphology rules
 
 ## Constraints
 

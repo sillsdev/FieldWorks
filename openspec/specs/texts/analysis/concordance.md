@@ -26,8 +26,6 @@ Concordance search is provided by Interlinear components and related analysis di
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — ConcordanceControl and ComplexConc
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#key-components) — Concordance dialogs in morphology
 
 ## Constraints
 

@@ -22,9 +22,6 @@ XCore is the extensibility framework that coordinates commands, properties, and 
 
 ### References
 
-- [XCore mediator framework](../../../../Src/XCore/AGENTS.md#architecture) — Mediator, property table, inventory
-- [xWorks integration](../../../../Src/xWorks/AGENTS.md#dependencies) — Shell depends on XCore
-- [Framework integration](../../../../Src/Common/Framework/AGENTS.md#dependencies) — Framework depends on XCore
 
 ## Constraints
 

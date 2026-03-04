@@ -26,8 +26,6 @@ Text tagging uses Interlinear components (TextTaggingView) and is related to Dis
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — TextTaggingView and tagging workflows
-- [Discourse components](../../../../Src/LexText/Discourse/AGENTS.md#purpose) — Discourse analysis context
 
 ## Constraints
 

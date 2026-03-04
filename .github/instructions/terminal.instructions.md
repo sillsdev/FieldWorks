@@ -31,7 +31,3 @@ Placement policy for wrappers:
 | `Read-FileContent.ps1` | File reading with filtering |
 
 **Build/test**: Run `.\build.ps1` or `.\test.ps1` directly—they're auto-approvable.
-## Beads CLI (auto-approvable patterns)
-- `br` and `bv --robot-*` commands are auto-approvable **when they do not use pipes, `&&`, or redirection**.
-- Prefer `--json`/`--robot` output and parse in the agent instead of piping to `jq`.
-- `br sync --flush-only` does **not** run git; you must run git commands separately.

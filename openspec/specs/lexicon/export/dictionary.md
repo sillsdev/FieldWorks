@@ -26,8 +26,6 @@ Dictionary export relies on lexicon UI configuration and shell-level export work
 
 ### References
 
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#purpose) — Lexicon entry configuration
-- [xWorks shell](../../../../Src/xWorks/AGENTS.md#purpose) — Shell export workflows
 
 ## Constraints
 

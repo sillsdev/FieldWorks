@@ -22,9 +22,6 @@ External integrations rely on adapter layers and plugins to isolate SDK dependen
 
 ### References
 
-- [Paratext import contracts](../../../../Src/ParatextImport/AGENTS.md#interop--contracts) — ISCScriptureText adapter layer
-- [Paratext 8 provider](../../../../Src/Paratext8Plugin/AGENTS.md#interop--contracts) — MEF-based IScriptureProvider
-- [Paratext lexicon plugin](../../../../Src/FwParatextLexiconPlugin/AGENTS.md#interop--contracts) — Lexicon plugin contract
 
 ## Constraints
 

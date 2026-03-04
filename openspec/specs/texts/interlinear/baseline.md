@@ -26,8 +26,6 @@ Baseline text is rendered by Interlinear components and configured through share
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — Interlinear view constructors
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Interlinear configuration dialogs
 
 ## Constraints
 

@@ -32,8 +32,6 @@ Parser configuration is handled by ParserUI dialogs and ParserCore settings.
 
 ### References
 
-- [ParserUI dialogs](../../../../Src/LexText/ParserUI/AGENTS.md#key-components) — ParserParameters and Try A Word
-- [ParserCore settings](../../../../Src/LexText/ParserCore/AGENTS.md#config--feature-flags) — Parser options
 
 ## Constraints
 

@@ -205,7 +205,7 @@ Write-Host "  1. Open VS Code with the FieldWorks workspace"
 Write-Host "  2. Serena tools will be available via MCP"
 Write-Host ""
 Write-Host "To test Serena standalone:"
-Write-Host "  uvx oraios-serena --project-root `"$repoRoot`""
+Write-Host "  uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide --project `"$repoRoot`""
 Write-Host ""
 
 # Return success

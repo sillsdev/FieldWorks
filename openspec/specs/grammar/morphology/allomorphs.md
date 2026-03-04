@@ -26,8 +26,6 @@ Allomorph editing uses Morphology UI components, and parser integration relies o
 
 ### References
 
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#key-components) — Allomorph editors
-- [ParserCore integration](../../../../Src/LexText/ParserCore/AGENTS.md#dependencies) — Parser uses allomorph data
 
 ## Constraints
 

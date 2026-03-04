@@ -26,8 +26,6 @@ Grammar sketch generation uses XSLT transforms and morphology data exports.
 
 ### References
 
-- [Transforms](../../../../Src/Transforms/AGENTS.md#key-components) — Morphology sketch transforms
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#purpose) — Morphology data sources
 
 ## Constraints
 

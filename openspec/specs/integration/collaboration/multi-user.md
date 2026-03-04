@@ -26,8 +26,6 @@ Multi-user coordination is handled by application shells and framework services.
 
 ### References
 
-- [xWorks shell](../../../../Src/xWorks/AGENTS.md#purpose) — Collaboration surfaced in shell UI
-- [Framework services](../../../../Src/Common/Framework/AGENTS.md#purpose) — Shared lifecycle and settings
 
 ## Constraints
 

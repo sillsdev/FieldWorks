@@ -12,6 +12,9 @@
 
 [CmdletBinding()]
 param(
+	# Optional explicit color slot override (0-based index into Setup-WorktreeColor palette).
+	[Nullable[int]]$ColorIndex = $null,
+
 	# Print the actions that would be taken, but do not move anything.
 	[switch]$DryRun
 )
@@ -188,7 +191,16 @@ if ($LASTEXITCODE -ne 0) {
 
 # Ensure the worktree-local workspace file exists at the new location.
 if (Test-Path $colorizeScript -PathType Leaf) {
-	& $colorizeScript -Action Apply -WorktreePath $desiredPath -VSCodeWorkspaceFile ""
+	$colorizeArgs = @{
+		Action = "Apply"
+		WorktreePath = $desiredPath
+		VSCodeWorkspaceFile = ""
+	}
+	if ($PSBoundParameters.ContainsKey("ColorIndex")) {
+		$colorizeArgs.ColorIndex = $ColorIndex
+	}
+
+	& $colorizeScript @colorizeArgs
 }
 
 Write-Host "Done. Worktree moved to: $desiredPath"

@@ -32,8 +32,6 @@ Interlinear annotation uses Interlinear (ITextDll) components and shared lexicon
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — InterlinDocForAnalysis and Sandbox
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Entry and sense dialogs
 
 ## Constraints
 

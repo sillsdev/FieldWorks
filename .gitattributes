@@ -1,4 +1,4 @@
-*.cs	diff=csharp
+﻿*.cs	diff=csharp
 *.cpp	diff=cpp
 *.h	diff=cpp
 *.idh	diff=cpp
@@ -31,6 +31,3 @@ Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
 *.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
-
-# Use bd merge for beads JSONL files
-.beads/issues.jsonl merge=beads
