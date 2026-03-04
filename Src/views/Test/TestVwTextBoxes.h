@@ -61,6 +61,45 @@ namespace TestViews
 		IPicturePtr m_qPicture;
 	};
 
+	// View constructor that displays a single string inside a concordance paragraph.
+	// The keyword region (ichMin..ichLim) is aligned at dmpAlign.
+	// If textAlign is set to ktalRight, the paragraph gets right alignment so that
+	// DoSpecialAlignment uses the right edge of the keyword for positioning.
+	class ConcParaVc : public DummyBaseVc
+	{
+	public:
+		int m_ichMinItem;
+		int m_ichLimItem;
+		int m_dmpAlign;
+		int m_textAlign; // ktalLeft or ktalRight
+
+		ConcParaVc(int ichMin, int ichLim, int dmpAlign, int textAlign)
+			: m_ichMinItem(ichMin), m_ichLimItem(ichLim),
+			  m_dmpAlign(dmpAlign), m_textAlign(textAlign)
+		{
+		}
+
+		STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+		{
+			pvwenv->put_IntProperty(ktptAlign, ktpvEnum, m_textAlign);
+			pvwenv->OpenConcPara(m_ichMinItem, m_ichLimItem,
+				(VwConcParaOpts)kcpoDefault, m_dmpAlign);
+			pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+			pvwenv->CloseParagraph();
+			return S_OK;
+		}
+		STDMETHOD(EstimateHeight)(HVO hvo, int frag, int dxAvailWidth, int * pdyHeight)
+		{
+			*pdyHeight = 20;
+			return S_OK;
+		}
+		STDMETHOD(LoadDataFor)(IVwEnv * pvwenv, HVO * prghvo, int chvo, HVO hvoParent,
+			int tag, int frag, int ihvoMin)
+		{
+			return S_OK;
+		}
+	};
+
 	class TestVwParagraphBox : public unitpp::suite
 	{
 		// Maximum number of previous strings to add before testing strings
@@ -1205,6 +1244,68 @@ namespace TestViews
 				unitpp::assert_eq("Min difference wrong", 8, ichwMinDiff);
 				unitpp::assert_eq("Lim difference wrong", 23, ichwLimDiff);
 			}
+		}
+
+		// Helper: lay out a single concordance paragraph and return the Left() of its first child box.
+		// The paragraph contains the given string with keyword at ichMin..ichLim aligned at dmpAlign.
+		int LayoutConcParaAndGetFirstBoxLeft(const OLECHAR * pszText, int cch,
+			int ichMin, int ichLim, int dmpAlign, int textAlign)
+		{
+			HVO hvoPara = 1;
+			ITsStringPtr qtss;
+			CheckHr(m_qtsf->MakeStringRgch(pszText, cch, g_wsEng, &qtss));
+			CheckHr(m_qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IVwViewConstructorPtr qvc;
+			qvc.Attach(NewObj ConcParaVc(ichMin, ichLim, dmpAlign, textAlign));
+			m_qrootb->SetRootObject(hvoPara, qvc, 1, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_true("ConcPara layout succeeded", hr == S_OK);
+
+			VwParagraphBox * ppbox = dynamic_cast<VwParagraphBox *>(m_qrootb->FirstBox());
+			unitpp::assert_true("Root contains a paragraph box", ppbox != NULL);
+			VwBox * pFirstChild = ppbox->FirstBox();
+			unitpp::assert_true("Paragraph has a child box", pFirstChild != NULL);
+
+			int result = pFirstChild->Left();
+
+			// Clean up so we can reuse the root box
+			m_qrootb->Close();
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &m_qrootb);
+			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
+			m_qrootb->SetSite(m_qdrs);
+
+			return result;
+		}
+
+		// Tests that DoSpecialAlignment uses the right edge of the keyword
+		// when the paragraph alignment is ktalRight, and the left edge when
+		// the alignment is ktalLeft. These should produce different box positions
+		// because the keyword has nonzero width.
+		void testConcParaAlignment_RightVsLeftEdge()
+		{
+			// Use a string where the keyword ("keyword") is in the middle.
+			// "Before keyword after end" - keyword at positions 7..14
+			const OLECHAR text[] = L"Before keyword after end";
+			int cch = (int)wcslen(text);
+			int ichMin = 7;  // start of "keyword"
+			int ichLim = 14; // end of "keyword"
+			int dmpAlign = 36000; // 0.5 inch alignment point
+
+			int leftWithLeftAlign = LayoutConcParaAndGetFirstBoxLeft(
+				text, cch, ichMin, ichLim, dmpAlign, ktalLeft);
+			int leftWithRightAlign = LayoutConcParaAndGetFirstBoxLeft(
+				text, cch, ichMin, ichLim, dmpAlign, ktalRight);
+
+			// With left alignment, the left edge of "keyword" is placed at dmpAlign.
+			// With right alignment, the right edge of "keyword" is placed at dmpAlign.
+			// Since the keyword has nonzero width, the first child box should be
+			// shifted further left in the right-aligned case (by the width of the keyword).
+			unitpp::assert_true(
+				"Right-aligned conc para should shift boxes further left than left-aligned",
+				leftWithRightAlign < leftWithLeftAlign);
 		}
 
 	public:
