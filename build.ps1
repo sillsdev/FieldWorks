@@ -148,6 +148,9 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Add WiX to the PATH for installer builds (required for harvesting localizations)
+$env:PATH = "$env:WIX/bin;$env:PATH"
+
 if ($Configuration -like "--*") {
 	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
 		$TraceCrashes = $true
@@ -522,8 +525,6 @@ try {
 			}
 			Write-Host ""
 			Write-Host "Building $BaseOrPatch..." -ForegroundColor Cyan
-
-			$env:PATH = "$env:WIX/bin;$env:PATH"
 
 			if (-not $isGitHubActions) {
 				if ($SignInstaller) {
