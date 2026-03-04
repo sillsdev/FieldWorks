@@ -2014,7 +2014,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Stop notifications of prop changes
 		/// </summary>
-		void RemoveNotification()
+		protected virtual void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
 

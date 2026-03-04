@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using XCore;
@@ -25,14 +27,7 @@ namespace SIL.FieldWorks.IText
 
 		public override bool Invoke()
 		{
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("AddTexts", this);
-#pragma warning restore 618
-
-			//var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts") as InterlinearTextsRecordClerk;
-			//if (clerk == null)
-			//    return false;
-			//clerk.OnAddTexts(null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddTexts, this));
 
 			return false; // Whatever the user did, we don't currently count it as changing the filter.
 		}
