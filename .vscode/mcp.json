@@ -8,8 +8,13 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-        "oraios-serena",
-        "--project-root",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide",
+        "--project",
         "${workspaceFolder}"
       ],
       "env": {

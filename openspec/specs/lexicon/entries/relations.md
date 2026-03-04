@@ -26,9 +26,6 @@ Lexical relation editing is handled by Lexicon UI slices and shared lexicon cont
 
 ### References
 
-- [Lexicon UI](../../../../Src/LexText/Lexicon/AGENTS.md#key-components) — LexReference slices and launchers
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Shared reference dialogs
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#key-components) — Morphology relation editors
 
 ## Constraints
 

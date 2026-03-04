@@ -1,0 +1,25 @@
+extends: ./fieldworks-rubric.base.yaml
+name: Installer and Deployment Rubric
+specialization: wix-installer-deployment
+
+requiredCommands:
+  - .\build.ps1
+  - .\scripts\Agent\Invoke-InstallerCheck.ps1 -InstallerType Bundle -Configuration Debug -Platform x64
+
+hardGates:
+  - id: evidence_gate
+    rule: Installer evidence contains before/after snapshots and diff report for this run.
+    failureEffect: fail
+
+focusCriteria:
+  - acceptance_coverage
+  - execution_success
+  - state_verification
+
+specialChecks:
+  - id: footprint_verified
+    check: Install footprint (files/registry/shortcuts/uninstall entries) matches expected result.
+    evidence: installer snapshot diff
+  - id: upgrade_uninstall_behavior
+    check: Upgrade/uninstall behavior for touched packaging paths was validated or explicitly deferred.
+    evidence: run notes + rationale

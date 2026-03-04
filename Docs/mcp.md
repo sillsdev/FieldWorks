@@ -1,6 +1,6 @@
 # Model Context Protocol helpers
 
-FieldWorks ships a small workspace `mcp.json` so Model Context Protocol clients can spin up two
+FieldWorks ships a small workspace `.vscode/mcp.json` so Model Context Protocol clients can spin up two
 servers automatically:
 
 - **GitHub server** via the hosted GitHub MCP endpoint (`https://api.githubcopilot.com/mcp/`).
@@ -12,7 +12,7 @@ servers automatically:
 | -------------- | ----------------------------------------- | ----------------------------------------------------- |
 | VS Code 1.101+ | Remote MCP + OAuth support               | https://code.visualstudio.com                         |
 | Serena CLI     | Provides Serena search/navigation        | `pipx install serena-cli` or `uv tool install serena` |
-| `uvx`          | Launches Serena from workspace `mcp.json` | https://github.com/astral-sh/uv                       |
+| `uvx`          | Launches Serena from workspace `.vscode/mcp.json` | https://github.com/astral-sh/uv                       |
 
 > **Note**: Serena **auto-downloads** its language servers on first use:
 > - **C# (`csharp`)**: Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet + .NET 9 runtime
@@ -27,9 +27,9 @@ Authentication:
 
 ## How it works
 
-1. `mcp.json` defines a hosted GitHub MCP server and a local Serena stdio server.
+1. `.vscode/mcp.json` defines a hosted GitHub MCP server and a local Serena stdio server.
 2. GitHub MCP uses VS Code OAuth authentication for repository operations.
-3. Serena starts from `uvx oraios-serena --project-root ${workspaceFolder}`.
+3. Serena starts from `uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide --project ${workspaceFolder}`.
 4. In chat, use tool sets / tool picker to keep active tool counts low and focused.
 
 ## Running the servers manually
@@ -40,7 +40,7 @@ If you want to test outside an MCP-aware editor:
 # GitHub server is hosted; test by adding it to VS Code MCP and invoking a GitHub tool.
 
 # Serena server
-uvx oraios-serena --project-root .
+uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide --project .
 ```
 
 The Serena process runs until you press `Ctrl+C`. When invoked through an MCP host, it stops
@@ -70,7 +70,7 @@ Remove or disable the Serena entry from your user-level MCP config:
 # View current user MCP config
 code "$env:APPDATA\Code\User\mcp.json"
 ```
-Remove the `"oraios/serena"` entry. The workspace `mcp.json` provides Serena
+Remove the `"oraios/serena"` entry. The workspace `.vscode/mcp.json` provides Serena
 with explicit project targeting.
 
 ## Best-practice profile for this repo
@@ -82,9 +82,9 @@ with explicit project targeting.
 
 ## Worktree best practices
 
-- Open one VS Code window per worktree; let that window use its own workspace `mcp.json`.
+- Open one VS Code window per worktree; let that window use its own workspace `.vscode/mcp.json`.
 - Keep only one Serena server definition active (workspace-level), and remove user-level Serena.
-- Keep Serena pinned to the active workspace via `--project-root ${workspaceFolder}` (already configured).
+- Keep Serena pinned to the active workspace via `--project ${workspaceFolder}` (already configured).
 - After switching worktrees, run **MCP: Reset Cached Tools** if tool lists or capabilities look stale.
 - No extra GitHub MCP worktree settings are required beyond OAuth sign-in.
 
@@ -92,7 +92,8 @@ with explicit project targeting.
 
 - **GitHub tools fail with auth errors** – sign out/in of GitHub in VS Code and restart MCP servers.
 - **`uvx` was not found on PATH** – install `uv` and reopen your shell.
-- **Unable to locate Serena CLI** – install Serena CLI (via `pipx`/`uv tool install`) so `oraios-serena` resolves.
+- **Unable to start Serena MCP** – ensure `uvx` can reach GitHub and run:
+  `uvx --from git+https://github.com/oraios/serena serena start-mcp-server --help`
 - **Language server download fails (network error)** – Serena auto-downloads C# (Roslyn) and C++ (clangd)
   language servers on first use. Check network connectivity to Azure NuGet and GitHub releases.
   The download is cached, so subsequent starts are fast.

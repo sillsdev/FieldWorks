@@ -14,7 +14,7 @@ context: |
 
   ## Conventions
   - Conventional commits (feat:, fix:, chore:, etc.)
-  - AGENTS.md files describe folder architecture and dependencies
+  - Minimal AGENTS.md files describe architecture and dependencies
   - .github/instructions/*.md contain coding guidelines by surface area
   - Localization via .resx files and Crowdin (crowdin.json)
 
@@ -33,9 +33,8 @@ context: |
   - Build/Src/NativeBuild/** - C++/CLI native layer
 
   ## Issue Tracking
-  - Primary: Beads (bd) for agent-friendly issue tracking
+  - Primary: GitHub issues/PRs
   - Legacy: JIRA (LT-* tickets) via .github/skills/atlassian-*
-  - Integration: bd issues link to specs via labels
 
 # Per-artifact rules
 rules:

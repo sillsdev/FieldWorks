@@ -90,7 +90,7 @@
       "label": "Setup: Colorize Worktree",
       "type": "shell",
       "command": "./scripts/Setup-WorktreeColor.ps1 -VSCodeWorkspaceFile \"${workspaceFile}\"",
-      "detail": "Sets a unique window color based on the worktree path",
+      "detail": "Sets a unique window color from a deterministic palette slot",
       "runOptions": {
         "runOn": "folderOpen"
       },
@@ -129,7 +129,7 @@
     {
       "label": "Worktree: Create/Open from branch",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -InitBeads:$true",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\"",
       "detail": "Create/open a worktree under ../<repo>.worktrees/<branch> and open it in a new VS Code window (colorized)",
       "options": {
         "shell": {
@@ -145,7 +145,7 @@
     {
       "label": "Worktree: Create/Open from branch (picker in terminal)",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1 -InitBeads:$true",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1",
       "detail": "Create/open a worktree by selecting a branch in the terminal picker (local first, then origin/*)",
       "options": {
         "shell": {
@@ -161,7 +161,7 @@
     {
       "label": "Worktree: Create/Open from branch (dry run)",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun -InitBeads:$false",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun",
       "detail": "Dry run: show where the worktree would be created/opened (no git changes, no VS Code launch)",
       "options": {
         "shell": {
@@ -206,25 +206,7 @@
         "panel": "shared"
       }
     },
-    {
-      "label": "Jira: Export, select, create beads",
-      "type": "shell",
-      "command": "./scripts/Agent/Jira-Beads-FromSelection.ps1",
-      "detail": "Export Jira issues, open selection file, then create beads from chosen items",
-      "options": {
-        "env": {
-          "JIRA_JQL": "${input:jiraJql}"
-        },
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
+
     // ==================== Build Tasks ====================
     {
       "label": "Build",
@@ -521,73 +503,6 @@
       "type": "shell",
       "command": "git fetch --prune",
       "detail": "Remove stale remote-tracking branches",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-
-    // ==================== Agent Documentation ====================
-    {
-      "label": "Agent: Detect updates needed",
-      "type": "shell",
-      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
-      "detail": "Check which AGENTS.md files need updates",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agent: Validate docs",
-      "type": "shell",
-      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/check_copilot_docs.py --only-changed --base $base --fail }",
-      "detail": "Validate AGENTS.md files for changed folders",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agent: Plan all folders",
-      "type": "shell",
-      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/plan_copilot_updates.py --all --fallback-base $base --out .cache/copilot/diff-plan.json }",
-      "detail": "Generate diff plan for all Src folders",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agent: Propose updates",
-      "type": "shell",
-      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/scaffold_copilot_markdown.py --base $base }",
-      "detail": "Generate AGENTS.md updates for changed folders (modifies files)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agent: Apply change-log",
-      "type": "shell",
-      "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:agentFolders}",
-      "detail": "Apply auto change-log to selected folders (modifies files)",
       "options": {
         "shell": {
           "executable": "powershell.exe",

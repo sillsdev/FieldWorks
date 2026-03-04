@@ -26,8 +26,6 @@ Morphology category management uses Morphology UI components and shared lexicon 
 
 ### References
 
-- [Morphology UI](../../../../Src/LexText/Morphology/AGENTS.md#key-components) — Category editors
-- [ParserCore integration](../../../../Src/LexText/ParserCore/AGENTS.md#dependencies) — Parser uses morphology categories
 
 ## Constraints
 

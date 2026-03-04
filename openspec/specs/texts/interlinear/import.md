@@ -26,8 +26,6 @@ Interlinear import uses Interlinear components (BIRD importer) and shared text c
 
 ### References
 
-- [Interlinear components](../../../../Src/LexText/Interlinear/AGENTS.md#key-components) — BIRD interlinear importer
-- [Lexicon controls](../../../../Src/LexText/LexTextControls/AGENTS.md#key-components) — Import configuration dialogs
 
 ## Constraints
 

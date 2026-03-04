@@ -95,7 +95,10 @@ requirements and troubleshooting tips.
 
 ## Agent instruction files
 
-We maintain a human-facing `.github/AGENTS.md` plus a small curated set of
-`*.instructions.md` files under `.github/instructions/` for prescriptive constraints.
+We maintain a minimal AGENTS model (`AGENTS.md`, `.github/AGENTS.md`,
+`Src/AGENTS.md`, `FLExInstaller/AGENTS.md`, `openspec/AGENTS.md`) and a
+minimal, requirement-focused guidance model.
+
+Prescriptive constraints remain under `.github/instructions/*.instructions.md`.
 
 See [.github/AI_GOVERNANCE.md](.github/AI_GOVERNANCE.md) for the documentation taxonomy and “source of truth” rules.

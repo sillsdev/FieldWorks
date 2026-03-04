@@ -33,4 +33,5 @@ You will receive:
 
 <notes>
 - For code review in FieldWorks, also confirm impacted instructions were followed.
+- Use `rubric-verify` for weighted scoring and hard-gate assessment when requested.
 </notes>

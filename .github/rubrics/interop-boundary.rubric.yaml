@@ -1,0 +1,25 @@
+extends: ./fieldworks-rubric.base.yaml
+name: Interop Boundary Change Rubric
+specialization: native-managed-com-boundary
+
+requiredCommands:
+  - .\build.ps1
+  - .\test.ps1 -NoBuild
+
+hardGates:
+  - id: security_gate
+    rule: Input validation and marshaling safety are demonstrated for every changed interop surface.
+    failureEffect: fail
+
+focusCriteria:
+  - boundary_safety
+  - contract_safety
+  - diagnostics_quality
+
+specialChecks:
+  - id: regfree_com_preserved
+    check: No global COM registration is introduced; reg-free manifests remain valid.
+    evidence: changed manifests/config + runtime validation note
+  - id: marshalling_verified
+    check: Pointer, buffer, and string marshaling in touched interop signatures produce correct results in tests.
+    evidence: test names exercising interop paths

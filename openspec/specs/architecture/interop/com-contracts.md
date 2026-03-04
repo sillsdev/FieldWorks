@@ -12,7 +12,7 @@ Describe the registration-free COM contracts used across FieldWorks components s
 
 ## Context
 
-FieldWorks relies on registration-free COM to avoid global registry pollution. Native COM interfaces and proxy/stub DLLs are authored in native components, while managed layers consume these interfaces through C++/CLI and COM interop. This spec captures cross-cutting constraints and the contract boundaries; component-specific details remain in AGENTS.md.
+FieldWorks relies on registration-free COM to avoid global registry pollution. Native COM interfaces and proxy/stub DLLs are authored in native components, while managed layers consume these interfaces through C++/CLI and COM interop. This spec captures cross-cutting constraints and the contract boundaries; component-specific details remain in minimal AGENTS guidance.
 
 ## Behavior
 
@@ -24,11 +24,6 @@ FieldWorks relies on registration-free COM to avoid global registry pollution. N
 
 #### References
 
-- [Kernel COM implementation](../../../../Src/Kernel/AGENTS.md#interop--contracts) — Proxy/stub GUIDs and core COM identifiers
-- [FwCoreDlgs COM usage](../../../../Src/FwCoreDlgs/AGENTS.md#interop--contracts) — Managed dialogs consuming COM interfaces
-- [Views rendering contracts](../../../../Src/Views/AGENTS.md#interop--contracts) — Native rendering COM interfaces
-- [Generic COM helpers](../../../../Src/Generic/AGENTS.md#interop--contracts) — Shared COM base utilities
-- [RootSite COM contracts](../../../../Src/Common/RootSite/AGENTS.md#interop--contracts) — Managed view environment contracts
 
 ## Constraints
 
