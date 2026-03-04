@@ -90,7 +90,7 @@ jobs:
 
             - name: Setup uv (Python package manager for Serena)
               if: inputs.skip_serena != true
-              uses: astral-sh/setup-uv@v4
+              uses: astral-sh/setup-uv@v7
               with:
                   version: "latest"
 
