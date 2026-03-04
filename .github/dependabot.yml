@@ -3,17 +3,14 @@
 
 version: 2
 updates:
-  # GitHub Actions - check weekly for updates
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "monthly"
     commit-message:
-      prefix: "ci"
+      prefix: "Chore"
     labels:
       - "dependencies"
-      - "github-actions"
     # Group minor/patch updates to reduce PR noise
     groups:
       actions-minor:
@@ -23,17 +20,14 @@ updates:
           - "minor"
           - "patch"
 
-  # NuGet packages - check weekly
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "tuesday"
+      interval: "monthly"
     commit-message:
-      prefix: "deps"
+      prefix: "Chore"
     labels:
       - "dependencies"
-      - "nuget"
     # Ignore major version bumps by default (breaking changes)
     ignore:
       - dependency-name: "*"
