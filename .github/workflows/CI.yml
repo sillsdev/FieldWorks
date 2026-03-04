@@ -39,14 +39,14 @@ jobs:
 
       - name: Upload TRX test results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trx-results
           path: |
             **/*.trx
           if-no-files-found: warn
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() && failure() }}
         with:
           name: build-logs
@@ -66,13 +66,13 @@ jobs:
       pull-requests: write
     steps:
       - name: Download TRX artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: trx-results
           path: test-results
 
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@27d65e188ec43221b20d26de30f4892fad91df2f
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040
         with:
           files: 'test-results/**/*.trx'
           check_name: NUnit Tests
