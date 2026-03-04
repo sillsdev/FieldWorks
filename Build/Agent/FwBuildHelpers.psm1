@@ -128,7 +128,7 @@ function Stop-ConflictingProcesses {
 function Get-WorktreeMutexName {
     param([Parameter(Mandatory)][string]$RepoRoot)
 
-    $normalizedRepoRoot = [System.IO.Path]::GetFullPath($RepoRoot).TrimEnd('\\', '/')
+    $normalizedRepoRoot = [System.IO.Path]::GetFullPath($RepoRoot).TrimEnd('\', '/')
     $normalizedRepoRoot = $normalizedRepoRoot.ToLowerInvariant()
 
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($normalizedRepoRoot)
@@ -142,7 +142,7 @@ function Get-WorktreeMutexName {
 
     $hash = [System.BitConverter]::ToString($hashBytes).Replace('-', '')
     $shortHash = $hash.Substring(0, 16)
-    return "Global\\FieldWorks.Worktree.$shortHash"
+    return "Global\FieldWorks.Worktree.$shortHash"
 }
 
 function Enter-WorktreeLock {
@@ -178,7 +178,7 @@ function Enter-WorktreeLock {
             $hasHandle = $true
         }
 
-        $lockPath = Join-Path $RepoRoot "Output\\WorktreeRun.lock.json"
+        $lockPath = Join-Path $RepoRoot 'Output' | Join-Path -ChildPath 'WorktreeRun.lock.json'
 
         if (-not $hasHandle) {
             $ownerDetails = $null
