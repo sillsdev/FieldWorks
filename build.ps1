@@ -547,7 +547,9 @@ try {
 			Invoke-MSBuild `
 				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
 					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
-				-Description '$BaseOrPatch Build'
+				-Description '$BaseOrPatch Build' `
+				-LogPath $LogFile `
+				-TailLines $TailLines
 
 			Write-Host "[OK] $BaseOrPatch build complete!" -ForegroundColor Green
 		}
