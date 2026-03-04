@@ -13,14 +13,30 @@ New to FieldWorks development? Start here:
 
 For first-time setup on a Windows development machine:
 
+- Install required software:
+	- Visual Studio 2022 with .NET desktop and C++ desktop workloads
+	- Git for Windows
+- Run the setup script:
 ```powershell
 # Run as Administrator (or User for user-level PATH)
 .\Setup-Developer-Machine.ps1
 ```
 
-This configures a dev machine for builds and tests (verifies prerequisites and configures PATH). Prerequisites:
-- Visual Studio 2022 with .NET desktop and C++ desktop workloads
-- Git for Windows
+This configures a dev machine for builds and tests (verifies prerequisites and configures PATH).
+
+## Building FieldWorks
+
+FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordered builds:
+
+**Windows (PowerShell):**
+```powershell
+.\build.ps1                    # Debug build
+.\build.ps1 -Configuration Release
+```
+
+For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
+
+## Building Installers (WiX 3 default, WiX 6 opt-in)
 
 Installer builds default to **WiX 3** (legacy batch pipeline) using inputs in `FLExInstaller/` and `PatchableInstaller/`. The **Visual Studio WiX Toolset v3 extension** is required so `Wix.CA.targets` is available under the MSBuild extensions path. Use `-InstallerToolset Wix6` to opt into the WiX 6 SDK-style path (restored via NuGet).
 
@@ -37,19 +53,7 @@ Required:
 - Add the toolset root to `PATH` (or rerun `Setup-Developer-Machine.ps1` to do it for you).
 - Install the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available to MSBuild.
 
-## Building FieldWorks
-
-FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordered builds:
-
-**Windows (PowerShell):**
-```powershell
-.\build.ps1                    # Debug build
-.\build.ps1 -Configuration Release
-```
-
-For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
-
-## Building Installers (WiX 3 default, WiX 6 opt-in)
+### Running installer builds
 
 Installer builds include the additional utilities (UnicodeCharEditor, LCMBrowser, MigrateSqlDbs, etc.).
 To skip them, pass `-BuildAdditionalApps:$false`.
