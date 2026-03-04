@@ -46,4 +46,26 @@
 	<layout class="LexEntry" type="detail" name="NoRef">
 		<part customFields="here"/>
 	</layout>
+	<!-- Characterization test layouts -->
+	<layout class="LexEntry" type="detail" name="ManySenses">
+		<part ref="Senses" param="GlossOnly" expansion="expanded"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="ManySensesExpanded">
+		<part ref="Senses" param="GlossOnly" expansion="expanded"/>
+	</layout>
+	<layout class="LexSense" type="detail" name="GlossOnly">
+		<part ref="Gloss"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="NavigationTest">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography"/>
+		<part ref="CitationForm" label="CF2"/>
+		<part ref="Bibliography" label="Bib2"/>
+		<part ref="CitationForm" label="CF3"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="ShowHiddenTest">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography" visibility="ifdata"/>
+		<part ref="CitationForm" label="NeverField" visibility="never"/>
+	</layout>
 </LayoutInventory>

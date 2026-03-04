@@ -29,17 +29,17 @@ Read-only Python utilities for Jira, Confluence, and Bitbucket integration, supp
 - Use `fetch_webpage` or similar tools on JIRA URLs
 - Use GitHub issue tools for LT-* tickets
 
-**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+**ALWAYS** use these Python scripts via CLI entry points:
 
 ```powershell
-# Get a single issue (inline Python one-liner)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+# Get a single issue
+python .github/skills/atlassian-readonly-skills/scripts/jira_cli.py get-issue --issue-key LT-22382
 
 # Search for issues (JQL query)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
+python .github/skills/atlassian-readonly-skills/scripts/jira_cli.py search --jql "project = LT AND status = Open"
 
 # Get issue workflow transitions
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
+python .github/skills/atlassian-readonly-skills/scripts/jira_cli.py get-transitions --issue-key LT-22382
 ```
 
 Alternatively, use the CLI helper in `jira-to-beads` skill:
@@ -114,12 +114,12 @@ credentials = AtlassianCredentials(
     jira_url="https://your-company.atlassian.net",
     jira_username="your.email@company.com",
     jira_api_token="your_api_token",
-    
+
     # Confluence configuration (optional)
     confluence_url="https://your-company.atlassian.net/wiki",
     confluence_username="your.email@company.com",
     confluence_api_token="your_api_token",
-    
+
     # Bitbucket configuration (optional)
     # bitbucket_url="https://bitbucket.your-company.com",
     # bitbucket_pat_token="your_pat_token"
