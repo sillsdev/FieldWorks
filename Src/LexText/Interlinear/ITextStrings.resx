@@ -351,30 +351,14 @@
   <data name="ksNoMedia" xml:space="preserve">
     <value>No Media</value>
   </data>
-  <data name="ksNoMedia_" xml:space="preserve">
-    <value>No Media </value>
-    <comment>there is a trailing space</comment>
-  </data>
   <data name="ksBeginTimeOffset" xml:space="preserve">
     <value>Begin</value>
-  </data>
-  <data name="ksBeginTimeOffset_" xml:space="preserve">
-    <value>Begin </value>
-    <comment>there is a trailing space</comment>
   </data>
   <data name="ksEndTimeOffset" xml:space="preserve">
     <value>End</value>
   </data>
-  <data name="ksEndTimeOffset_" xml:space="preserve">
-    <value>End </value>
-    <comment>there is a trailing space</comment>
-  </data>
   <data name="ksSpeaker" xml:space="preserve">
     <value>Speaker</value>
-  </data>
-  <data name="ksSpeaker_" xml:space="preserve">
-    <value>Speaker </value>
-    <comment>there is a trailing space</comment>
   </data>
   <data name="ksPhaseButton" xml:space="preserve">
     <value>Ph{0} {1}</value>

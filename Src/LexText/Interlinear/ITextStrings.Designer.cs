@@ -277,15 +277,6 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Begin .
-        /// </summary>
-        internal static string ksBeginTimeOffset_ {
-            get {
-                return ResourceManager.GetString("ksBeginTimeOffset_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to bst. an.
         /// </summary>
         internal static string ksBstAn {
@@ -669,15 +660,6 @@ namespace SIL.FieldWorks.IText {
         internal static string ksEndTimeOffset {
             get {
                 return ResourceManager.GetString("ksEndTimeOffset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to End .
-        /// </summary>
-        internal static string ksEndTimeOffset_ {
-            get {
-                return ResourceManager.GetString("ksEndTimeOffset_", resourceCulture);
             }
         }
         
@@ -1586,15 +1568,6 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Media .
-        /// </summary>
-        internal static string ksNoMedia_ {
-            get {
-                return ResourceManager.GetString("ksNoMedia_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to no morphemes.
         /// </summary>
         internal static string ksNoMorphemes {
@@ -2005,15 +1978,6 @@ namespace SIL.FieldWorks.IText {
         internal static string ksSpeaker {
             get {
                 return ResourceManager.GetString("ksSpeaker", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Speaker .
-        /// </summary>
-        internal static string ksSpeaker_ {
-            get {
-                return ResourceManager.GetString("ksSpeaker_", resourceCulture);
             }
         }
         
