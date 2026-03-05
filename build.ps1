@@ -367,6 +367,10 @@ try {
 		if ($SkipNative) {
 			$finalMsBuildArgs += "/p:SkipNative=true"
 		}
+
+		$installerMsBuildArgs = $finalMsBuildArgs
+
+		# Args specific to the main build (not the installer)
 		if ($TraceCrashes) {
 			$finalMsBuildArgs += "/p:UseDevTraceConfig=true"
 		}
@@ -386,6 +390,7 @@ try {
 
 		# Add user-supplied args
 		$finalMsBuildArgs += $MsBuildArgs
+		$installerMsBuildArgs += $MsBuildArgs
 
 		# =============================================================================
 		# Build Execution
@@ -436,6 +441,27 @@ try {
 			Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
 		}
 
+		# Copy local LCM assemblies if requested
+		if ($UseLocalLcm) {
+			Write-Host ""
+			Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
+
+			$lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
+			$lcmArgs = @{
+				Configuration = $Configuration
+				BuildLcm = $true
+				SkipConfirm = $true
+			}
+			if ($LocalLcmPath) {
+				$lcmArgs['LcmRoot'] = $LocalLcmPath
+			}
+
+			& $lcmCopyScript @lcmArgs
+			if ($LASTEXITCODE -ne 0) {
+				throw "Failed to copy local LCM assemblies."
+			}
+		}
+
 		if ($InstallerOnly) {
 			if (-not $BuildInstaller -and -not $BuildPatch) {
 				throw "-InstallerOnly requires -BuildInstaller or -BuildPatch."
@@ -471,6 +497,11 @@ try {
 				-LogPath $LogFile `
 				-TailLines $TailLines
 
+			# Avoid log file collisions between the main build and the installer build.
+			if (Test-Path "msbuild.binlog") {
+				Rename-Item -Path "msbuild.binlog" -NewName "msbuild-FieldWorks.binlog" -Force
+			}
+
 			$stampDir = Join-Path $PSScriptRoot ("Output\\{0}" -f $Configuration)
 			if (-not (Test-Path $stampDir)) {
 				New-Item -Path $stampDir -ItemType Directory -Force | Out-Null
@@ -494,28 +525,6 @@ try {
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
 		}
 
-		# REVIEW (Hasso) 2026.03: shouldn't this be between the restore and build calls?
-		# Copy local LCM assemblies if requested
-		if ($UseLocalLcm) {
-			Write-Host ""
-			Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
-
-			$lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
-			$lcmArgs = @{
-				Configuration = $Configuration
-				BuildLcm = $true
-				SkipConfirm = $true
-			}
-			if ($LocalLcmPath) {
-				$lcmArgs['LcmRoot'] = $LocalLcmPath
-			}
-
-			& $lcmCopyScript @lcmArgs
-			if ($LASTEXITCODE -ne 0) {
-				throw "Failed to copy local LCM assemblies."
-			}
-		}
-
 		if ($BuildInstaller -or $BuildPatch) {
 			if ($BuildPatch) {
 				$BaseOrPatch = "Patch"
@@ -525,6 +534,12 @@ try {
 			}
 			Write-Host ""
 			Write-Host "Building $BaseOrPatch..." -ForegroundColor Cyan
+
+			# Use a different LogFile name than the main build to avoid collisions.
+			if (-not [string]::IsNullOrWhiteSpace($LogFile)) {
+				$LogFileExtension = [System.IO.Path]::GetExtension($LogFile)
+				$LogFile = [System.IO.Path]::ChangeExtension($LogFile, "$BaseOrPatch$LogFileExtension")
+			}
 
 			if (-not $isGitHubActions) {
 				if ($SignInstaller) {
@@ -546,11 +561,16 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
-					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
+				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + `
+					$InstallerMsBuildArgs) `
 				-Description '$BaseOrPatch Build' `
 				-LogPath $LogFile `
 				-TailLines $TailLines
+
+			# Avoid log file collisions between the main build and the installer build.
+			if (Test-Path "msbuild.binlog") {
+				Rename-Item -Path "msbuild.binlog" -NewName "msbuild-$BaseOrPatch.binlog" -Force
+			}
 
 			Write-Host "[OK] $BaseOrPatch build complete!" -ForegroundColor Green
 		}

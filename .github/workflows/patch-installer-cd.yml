@@ -220,14 +220,22 @@ jobs:
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
 
-      - name: Build Debug and run tests
+      - name: Build
         id: build_installer
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Scan Debug Build Output
+      - name: Run tests
+        id: managed_test
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' | Tee-Object -FilePath build.log -Append
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } # is this needed?
+
+      - name: Scan Build Output
         shell: powershell
         run: |
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
@@ -291,5 +299,5 @@ jobs:
           if-no-files-found: warn
           name: build-logs
           path: |
-            *.log
-            *.binlog
+            ./*.log
+            ./*.binlog
