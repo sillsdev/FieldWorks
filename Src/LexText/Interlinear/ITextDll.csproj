@@ -30,6 +30,7 @@
     <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
     <PackageReference Include="SIL.LCModel.Utils" />
     <PackageReference Include="SIL.Machine" />
+    <PackageReference Include="SIL.Media" />
     <PackageReference Include="SIL.ParatextShared" />
     <PackageReference Include="SIL.Windows.Forms" />
     <PackageReference Include="SIL.Windows.Forms.GeckoBrowserAdapter" />
@@ -40,6 +41,7 @@
     <PackageReference Include="AdamsLair.TreeViewAdv" />
     <PackageReference Include="SIL.ExCSS" />
     <PackageReference Include="Geckofx60.64" />
+    <PackageReference Include="NAudio" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />

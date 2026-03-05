@@ -268,6 +268,15 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Begin.
+        /// </summary>
+        internal static string ksBeginTimeOffset {
+            get {
+                return ResourceManager.GetString("ksBeginTimeOffset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to bst. an.
         /// </summary>
         internal static string ksBstAn {
@@ -642,6 +651,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksEndTagSymbol {
             get {
                 return ResourceManager.GetString("ksEndTagSymbol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        internal static string ksEndTimeOffset {
+            get {
+                return ResourceManager.GetString("ksEndTimeOffset", resourceCulture);
             }
         }
         
@@ -1370,6 +1388,24 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Media.
+        /// </summary>
+        internal static string ksMedia {
+            get {
+                return ResourceManager.GetString("ksMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Media .
+        /// </summary>
+        internal static string ksMedia_ {
+            get {
+                return ResourceManager.GetString("ksMedia_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This utility finds groups of analyses that have the same word category and morphological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one..
         /// </summary>
         internal static string ksMergeAnalysesAttemptsTo {
@@ -1519,6 +1555,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksNoForm {
             get {
                 return ResourceManager.GetString("ksNoForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Media.
+        /// </summary>
+        internal static string ksNoMedia {
+            get {
+                return ResourceManager.GetString("ksNoMedia", resourceCulture);
             }
         }
         
@@ -1924,6 +1969,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksSomeTexts {
             get {
                 return ResourceManager.GetString("ksSomeTexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speaker.
+        /// </summary>
+        internal static string ksSpeaker {
+            get {
+                return ResourceManager.GetString("ksSpeaker", resourceCulture);
             }
         }
         
