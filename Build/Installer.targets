@@ -1,289 +1,289 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <fwrt Condition="'$(fwrt)'==''">$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)\..'))</fwrt>
-    <Wix6Root Condition="'$(Wix6Root)'==''">$(MSBuildProjectDirectory)\..\FLExInstaller\wix6</Wix6Root>
-    <WixLibsDir Condition="'$(WixLibsDir)'==''">$(Wix6Root)\libs</WixLibsDir>
-    <DownloadsDir Condition="'$(DownloadsDir)'==''">$(MSBuildProjectDirectory)\..\Downloads</DownloadsDir>
+	<fwrt Condition="'$(fwrt)'==''">$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)\..'))</fwrt>
+	<Wix6Root Condition="'$(Wix6Root)'==''">$(MSBuildProjectDirectory)\..\FLExInstaller\wix6</Wix6Root>
+	<WixLibsDir Condition="'$(WixLibsDir)'==''">$(Wix6Root)\libs</WixLibsDir>
+	<DownloadsDir Condition="'$(DownloadsDir)'==''">$(MSBuildProjectDirectory)\..\Downloads</DownloadsDir>
 
-    <!-- Where we stage the files that the WiX projects harvest/compile. -->
-    <AppBuildDir Condition="'$(AppBuildDir)'==''">$(fwrt)\BuildDir\FieldWorks_InstallerInput_$(Configuration)_$(Platform)</AppBuildDir>
-    <OutputDirForConfig Condition="'$(OutputDirForConfig)'==''">$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+	<!-- Where we stage the files that the WiX projects harvest/compile. -->
+	<AppBuildDir Condition="'$(AppBuildDir)'==''">$(fwrt)\BuildDir\FieldWorks_InstallerInput_$(Configuration)_$(Platform)</AppBuildDir>
+	<OutputDirForConfig Condition="'$(OutputDirForConfig)'==''">$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
 
-    <!-- Match legacy installer folder conventions expected by WiX authoring. -->
-    <BinDirSuffix Condition="'$(BinDirSuffix)'==''">objects\FieldWorks</BinDirSuffix>
-    <DataDirSuffix Condition="'$(DataDirSuffix)'==''">objects\FieldWorks_Data</DataDirSuffix>
-    <L10nDirSuffix Condition="'$(L10nDirSuffix)'==''">$(BinDirSuffix)_L10n</L10nDirSuffix>
-    <FontDirSuffix Condition="'$(FontDirSuffix)'==''">$(BinDirSuffix)_Font</FontDirSuffix>
+	<!-- Match legacy installer folder conventions expected by WiX authoring. -->
+	<BinDirSuffix Condition="'$(BinDirSuffix)'==''">objects\FieldWorks</BinDirSuffix>
+	<DataDirSuffix Condition="'$(DataDirSuffix)'==''">objects\FieldWorks_Data</DataDirSuffix>
+	<L10nDirSuffix Condition="'$(L10nDirSuffix)'==''">$(BinDirSuffix)_L10n</L10nDirSuffix>
+	<FontDirSuffix Condition="'$(FontDirSuffix)'==''">$(BinDirSuffix)_Font</FontDirSuffix>
 
-    <IcuVersion Condition="'$(IcuVersion)'==''">70</IcuVersion>
+	<IcuVersion Condition="'$(IcuVersion)'==''">70</IcuVersion>
 
-    <!-- Installer identity defaults (can be overridden by MSBuild properties). -->
-    <ApplicationName Condition="'$(ApplicationName)'==''">FieldWorks</ApplicationName>
-    <SafeApplicationName Condition="'$(SafeApplicationName)'==''">FieldWorks</SafeApplicationName>
-    <Manufacturer Condition="'$(Manufacturer)'==''">SIL International</Manufacturer>
-    <SafeManufacturer Condition="'$(SafeManufacturer)'==''">SIL</SafeManufacturer>
-    <BundleId Condition="'$(BundleId)'==''">$(SafeManufacturer).$(SafeApplicationName)</BundleId>
-    <UpgradeCode Condition="'$(UpgradeCode)'==''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
-    <BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment>
-    <Year Condition="'$(Year)'==''">$([System.DateTime]::Now.Year)</Year>
+	<!-- Installer identity defaults (can be overridden by MSBuild properties). -->
+	<ApplicationName Condition="'$(ApplicationName)'==''">FieldWorks</ApplicationName>
+	<SafeApplicationName Condition="'$(SafeApplicationName)'==''">FieldWorks</SafeApplicationName>
+	<Manufacturer Condition="'$(Manufacturer)'==''">SIL International</Manufacturer>
+	<SafeManufacturer Condition="'$(SafeManufacturer)'==''">SIL</SafeManufacturer>
+	<BundleId Condition="'$(BundleId)'==''">$(SafeManufacturer).$(SafeApplicationName)</BundleId>
+	<UpgradeCode Condition="'$(UpgradeCode)'==''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+	<BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment>
+	<Year Condition="'$(Year)'==''">$([System.DateTime]::Now.Year)</Year>
   </PropertyGroup>
 
   <Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
-    <ParseVersionNumbers VersionInfo="@(VersionSymbols)">
-      <Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
-      <Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
-      <Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
-    </ParseVersionNumbers>
+	<ParseVersionNumbers VersionInfo="@(VersionSymbols)">
+	  <Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
+	  <Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
+	  <Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
+	</ParseVersionNumbers>
   </Target>
 
   <Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
-    <PropertyGroup>
-      <MajorVersion>$(MajorVersionSegment)</MajorVersion>
-      <MinorVersion>$(MajorVersionSegment).$(MinorVersionSegment)</MinorVersion>
-      <PatchVersion>$(MinorVersion).$(PatchVersionSegment)</PatchVersion>
-      <VersionNumber>$(PatchVersion).$(BuildVersionSegment)</VersionNumber>
-      <TruncatedVersion>$(MinorVersion)</TruncatedVersion>
-    </PropertyGroup>
-    <Message Text="Installer VersionNumber: $(VersionNumber) (TruncatedVersion: $(TruncatedVersion))" Importance="high" />
+	<PropertyGroup>
+	  <MajorVersion>$(MajorVersionSegment)</MajorVersion>
+	  <MinorVersion>$(MajorVersionSegment).$(MinorVersionSegment)</MinorVersion>
+	  <PatchVersion>$(MinorVersion).$(PatchVersionSegment)</PatchVersion>
+	  <VersionNumber>$(PatchVersion).$(BuildVersionSegment)</VersionNumber>
+	  <TruncatedVersion>$(MinorVersion)</TruncatedVersion>
+	</PropertyGroup>
+	<Message Text="Installer VersionNumber: $(VersionNumber) (TruncatedVersion: $(TruncatedVersion))" Importance="high" />
   </Target>
 
   <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner;StageInstallerInputs;ValidateInstallerAddons;InstallerVersionNumbers">
-    <Message Text="Building Installer..." Importance="high" />
-    <MSBuild
-      Projects="$(Wix6Root)\FieldWorks.Bundle.wixproj"
-      Targets="Restore;Build"
-      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
-    />
+	<Message Text="Building Installer..." Importance="high" />
+	<MSBuild
+	  Projects="$(Wix6Root)\FieldWorks.Bundle.wixproj"
+	  Targets="Restore;Build"
+	  Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
+	/>
 
-    <MSBuild
-      Projects="$(Wix6Root)\FieldWorks.OfflineBundle.wixproj"
-      Targets="Restore;Build"
-      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
-    />
+	<MSBuild
+	  Projects="$(Wix6Root)\FieldWorks.OfflineBundle.wixproj"
+	  Targets="Restore;Build"
+	  Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
+	/>
 
-    <PropertyGroup>
-      <InstallerHelperScript>$(MSBuildProjectDirectory)\..\scripts\Installer\Invoke-InstallerWithLog.ps1</InstallerHelperScript>
-      <Wix6OutputDir>$(Wix6Root)\bin\x64\$(Configuration)</Wix6OutputDir>
-    </PropertyGroup>
-    <MakeDir Directories="$(Wix6OutputDir)" Condition="!Exists('$(Wix6OutputDir)')" />
-    <Copy
-      SourceFiles="$(InstallerHelperScript)"
-      DestinationFolder="$(Wix6OutputDir)"
-      Condition="Exists('$(InstallerHelperScript)')"
-    />
+	<PropertyGroup>
+	  <InstallerHelperScript>$(MSBuildProjectDirectory)\..\scripts\Installer\Invoke-InstallerWithLog.ps1</InstallerHelperScript>
+	  <Wix6OutputDir>$(Wix6Root)\bin\x64\$(Configuration)</Wix6OutputDir>
+	</PropertyGroup>
+	<MakeDir Directories="$(Wix6OutputDir)" Condition="!Exists('$(Wix6OutputDir)')" />
+	<Copy
+	  SourceFiles="$(InstallerHelperScript)"
+	  DestinationFolder="$(Wix6OutputDir)"
+	  Condition="Exists('$(InstallerHelperScript)')"
+	/>
   </Target>
 
   <Target Name="BuildInstallerWix6" DependsOnTargets="BuildInstaller" />
 
   <Target Name="StageInstallerInputs">
-    <Message Text="Staging installer inputs to $(AppBuildDir)" Importance="high" />
+	<Message Text="Staging installer inputs to $(AppBuildDir)" Importance="high" />
 
-    <PropertyGroup>
-      <StagedBinDir>$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
-      <StagedDataDir>$(AppBuildDir)\$(DataDirSuffix)</StagedDataDir>
-      <StagedL10nDir>$(AppBuildDir)\$(L10nDirSuffix)</StagedL10nDir>
-      <StagedFontDir>$(AppBuildDir)\$(FontDirSuffix)</StagedFontDir>
-    </PropertyGroup>
+	<PropertyGroup>
+	  <StagedBinDir>$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
+	  <StagedDataDir>$(AppBuildDir)\$(DataDirSuffix)</StagedDataDir>
+	  <StagedL10nDir>$(AppBuildDir)\$(L10nDirSuffix)</StagedL10nDir>
+	  <StagedFontDir>$(AppBuildDir)\$(FontDirSuffix)</StagedFontDir>
+	</PropertyGroup>
 
-    <RemoveDir Directories="$(AppBuildDir)" Condition="Exists('$(AppBuildDir)')" />
-    <MakeDir Directories="$(StagedBinDir);$(StagedDataDir);$(StagedL10nDir);$(StagedFontDir)" />
+	<RemoveDir Directories="$(AppBuildDir)" Condition="Exists('$(AppBuildDir)')" />
+	<MakeDir Directories="$(StagedBinDir);$(StagedDataDir);$(StagedL10nDir);$(StagedFontDir)" />
 
-    <ItemGroup>
-      <FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf" />
-      <FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf" />
-      <FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt" />
-      <FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*" />
-      <IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*" />
+	<ItemGroup>
+	  <FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf" />
+	  <FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf" />
+	  <FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt" />
+	  <FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*" />
+	  <IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*" />
 
-      <!-- If you change this list, also update Localizations/ReadMe.md. -->
-      <L10nFiles Include="$(OutputDirForConfig)\ar\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\az\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\bn\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\de\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\es\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\fa\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\fr\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\hi\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\hu\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\pt\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ru\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\rw\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\sw\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ta\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\te\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\th\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
-      <L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
+	  <!-- If you change this list, also update Localizations/ReadMe.md. -->
+	  <L10nFiles Include="$(OutputDirForConfig)\ar\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\az\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\bn\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\de\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\es\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\fa\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\fr\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\hi\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\hu\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\pt\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ru\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\rw\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\sw\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ta\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\te\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\th\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
 
-      <!-- Binary + content files installed under Program Files. -->
-      <BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)" />
-      <!-- %(RecursiveDir) needs to include the locale folder name (e.g., ar\, zh-CN\). -->
-      <L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)" />
-      <BinFiles Include="$(fwrt)\DistFiles\**\*" />
-      <BinFiles Include="$(fwrt)\License.htm" />
+	  <!-- Binary + content files installed under Program Files. -->
+	  <BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)" />
+	  <!-- %(RecursiveDir) needs to include the locale folder name (e.g., ar\, zh-CN\). -->
+	  <L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)" />
+	  <BinFiles Include="$(fwrt)\DistFiles\**\*" />
+	  <BinFiles Include="$(fwrt)\License.htm" />
 
-      <!-- Exclude common dev/test artifacts that shouldn't ship. -->
-      <DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*" />
-      <DevTestArtifacts Include="$(OutputDirForConfig)\test*" />
-      <DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs" />
-      <BinFiles Remove="@(DevTestArtifacts)" />
-    </ItemGroup>
+	  <!-- Exclude common dev/test artifacts that shouldn't ship. -->
+	  <DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*" />
+	  <DevTestArtifacts Include="$(OutputDirForConfig)\test*" />
+	  <DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs" />
+	  <BinFiles Remove="@(DevTestArtifacts)" />
+	</ItemGroup>
 
-    <Copy SourceFiles="@(FontFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedFontDir)" />
-    <Copy SourceFiles="@(FontDocumentation)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\Fonts\%(RecursiveDir)" />
-    <Copy SourceFiles="@(IcuDataFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedDataDir)\Icu$(IcuVersion)\%(RecursiveDir)" />
-    <Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedL10nDir)\%(RecursiveDir)" />
-    <Copy SourceFiles="@(BinFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\%(RecursiveDir)" />
+	<Copy SourceFiles="@(FontFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedFontDir)" />
+	<Copy SourceFiles="@(FontDocumentation)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\Fonts\%(RecursiveDir)" />
+	<Copy SourceFiles="@(IcuDataFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedDataDir)\Icu$(IcuVersion)\%(RecursiveDir)" />
+	<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedL10nDir)\%(RecursiveDir)" />
+	<Copy SourceFiles="@(BinFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\%(RecursiveDir)" />
   </Target>
 
   <Target Name="ValidateInstallerAddons" Condition="'$(BuildAdditionalApps)'=='true'">
-    <ItemGroup>
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\UnicodeCharEditor.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\LCMBrowser.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\MigrateSqlDbs.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\ConvertSFM.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\Fxt.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\InstallValidator.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\GenerateHCConfig.exe" />
-      <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\ComManifestTestHost.exe" />
-      <MissingAddonFiles Include="@(RequiredAddonFiles)" Condition="!Exists('%(Identity)')" />
-    </ItemGroup>
-    <Error
-      Condition="'@(MissingAddonFiles)' != ''"
-      Text="Installer add-ons missing from staged output: @(MissingAddonFiles). Ensure BuildAdditionalApps=true builds these projects."
-    />
+	<ItemGroup>
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\UnicodeCharEditor.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\LCMBrowser.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\MigrateSqlDbs.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\ConvertSFM.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\Fxt.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\InstallValidator.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\GenerateHCConfig.exe" />
+	  <RequiredAddonFiles Include="$(AppBuildDir)\$(BinDirSuffix)\ComManifestTestHost.exe" />
+	  <MissingAddonFiles Include="@(RequiredAddonFiles)" Condition="!Exists('%(Identity)')" />
+	</ItemGroup>
+	<Error
+	  Condition="'@(MissingAddonFiles)' != ''"
+	  Text="Installer add-ons missing from staged output: @(MissingAddonFiles). Ensure BuildAdditionalApps=true builds these projects."
+	/>
   </Target>
 
   <!--
-    ValidateStagedAssemblies: Comprehensive single-pass validation of all staged DLLs.
+	ValidateStagedAssemblies: Comprehensive single-pass validation of all staged DLLs.
 
-    Runs the shared Remove-StaleDlls.ps1 in -ValidateOnly mode and with -ReferenceDir
-    pointing at the build output.  This catches:
-      - First-party DLLs with wrong product major version (e.g. 6.0.0.0 in a 9.x tree)
-        identified via a whitelist built from Src/**/*.csproj assembly names
-      - Any staged DLL whose assembly identity or FileVersion drifts from the build
-        output (catches NuGet version mismatches like LT-22382 Newtonsoft.Json)
+	Runs the shared Remove-StaleDlls.ps1 in -ValidateOnly mode and with -ReferenceDir
+	pointing at the build output.  This catches:
+	  - First-party DLLs with wrong product major version (e.g. 6.0.0.0 in a 9.x tree)
+		identified via a whitelist built from Src/**/*.csproj assembly names
+	  - Any staged DLL whose assembly identity or FileVersion drifts from the build
+		output (catches NuGet version mismatches like LT-22382 Newtonsoft.Json)
   -->
   <Target Name="ValidateStagedAssemblies" AfterTargets="StageInstallerInputs">
-    <PropertyGroup>
-      <StagedBinDir Condition="'$(StagedBinDir)'==''">$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
-      <StaleDllScript>$(fwrt)\Build\Agent\Remove-StaleDlls.ps1</StaleDllScript>
-    </PropertyGroup>
+	<PropertyGroup>
+	  <StagedBinDir Condition="'$(StagedBinDir)'==''">$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
+	  <StaleDllScript>$(fwrt)\Build\Agent\Remove-StaleDlls.ps1</StaleDllScript>
+	</PropertyGroup>
 
-    <Exec
-      Condition="Exists('$(StaleDllScript)') and Exists('$(StagedBinDir)')"
-      Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(StaleDllScript)&quot; -OutputDir &quot;$(StagedBinDir)&quot; -RepoRoot &quot;$(fwrt)&quot; -ReferenceDir &quot;$(OutputDirForConfig)&quot; -ValidateOnly"
-      IgnoreExitCode="false"
-    />
+	<Exec
+	  Condition="Exists('$(StaleDllScript)') and Exists('$(StagedBinDir)')"
+	  Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(StaleDllScript)&quot; -OutputDir &quot;$(StagedBinDir)&quot; -RepoRoot &quot;$(fwrt)&quot; -ReferenceDir &quot;$(OutputDirForConfig)&quot; -ValidateOnly"
+	  IgnoreExitCode="false"
+	/>
   </Target>
 
   <Target Name="BuildProcRunner">
-    <MSBuild Projects="$(Wix6Root)\Shared\ProcRunner\ProcRunner\ProcRunner.csproj" Targets="Restore;Build" Properties="Configuration=Release" />
+	<MSBuild Projects="$(Wix6Root)\Shared\ProcRunner\ProcRunner\ProcRunner.csproj" Targets="Restore;Build" Properties="Configuration=Release" />
   </Target>
 
   <Target Name="DownloadPrerequisites" DependsOnTargets="DownloadBundledInstallers;DownloadAndUnzipFonts">
-    <Message Text="Prerequisites downloaded." Importance="high" />
+	<Message Text="Prerequisites downloaded." Importance="high" />
   </Target>
 
   <Target Name="DownloadBundledInstallers">
-    <MakeDir Directories="$(WixLibsDir)" Condition="!Exists('$(WixLibsDir)')" />
-    <!-- .NET 4.8 -->
-    <DownloadFile
-      Address="https://go.microsoft.com/fwlink/?linkid=2088631"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="ndp48-x86-x64-allos-enu.exe"
-      Condition="!Exists('$(WixLibsDir)\ndp48-x86-x64-allos-enu.exe')"
-    />
-    <!-- VC++ Redists -->
-    <DownloadFile
-      Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="vcredist_2008_x64.exe"
-      Condition="!Exists('$(WixLibsDir)\vcredist_2008_x64.exe')"
-    />
-    <DownloadFile
-      Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="vcredist_2010_x64.exe"
-      Condition="!Exists('$(WixLibsDir)\vcredist_2010_x64.exe')"
-    />
-    <DownloadFile
-      Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="vcredist_2012_x64.exe"
-      Condition="!Exists('$(WixLibsDir)\vcredist_2012_x64.exe')"
-    />
-    <DownloadFile
-      Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="vcredist_2013_x64.exe"
-      Condition="!Exists('$(WixLibsDir)\vcredist_2013_x64.exe')"
-    />
-    <DownloadFile
-      Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="vcredist_2015-19_x64.exe"
-      Condition="!Exists('$(WixLibsDir)\vcredist_2015-19_x64.exe')"
-    />
-    <!-- FLEx Bridge -->
-    <DownloadFile
-      Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
-      DownloadsDir="$(WixLibsDir)"
-      LocalFilename="FLExBridge_Offline.exe"
-      Condition="!Exists('$(WixLibsDir)\FLExBridge_Offline.exe')"
-    />
+	<MakeDir Directories="$(WixLibsDir)" Condition="!Exists('$(WixLibsDir)')" />
+	<!-- .NET 4.8 -->
+	<DownloadFile
+	  Address="https://go.microsoft.com/fwlink/?linkid=2088631"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="ndp48-x86-x64-allos-enu.exe"
+	  Condition="!Exists('$(WixLibsDir)\ndp48-x86-x64-allos-enu.exe')"
+	/>
+	<!-- VC++ Redists -->
+	<DownloadFile
+	  Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="vcredist_2008_x64.exe"
+	  Condition="!Exists('$(WixLibsDir)\vcredist_2008_x64.exe')"
+	/>
+	<DownloadFile
+	  Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="vcredist_2010_x64.exe"
+	  Condition="!Exists('$(WixLibsDir)\vcredist_2010_x64.exe')"
+	/>
+	<DownloadFile
+	  Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="vcredist_2012_x64.exe"
+	  Condition="!Exists('$(WixLibsDir)\vcredist_2012_x64.exe')"
+	/>
+	<DownloadFile
+	  Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="vcredist_2013_x64.exe"
+	  Condition="!Exists('$(WixLibsDir)\vcredist_2013_x64.exe')"
+	/>
+	<DownloadFile
+	  Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="vcredist_2015-19_x64.exe"
+	  Condition="!Exists('$(WixLibsDir)\vcredist_2015-19_x64.exe')"
+	/>
+	<!-- FLEx Bridge -->
+	<DownloadFile
+	  Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
+	  DownloadsDir="$(WixLibsDir)"
+	  LocalFilename="FLExBridge_Offline.exe"
+	  Condition="!Exists('$(WixLibsDir)\FLExBridge_Offline.exe')"
+	/>
   </Target>
 
   <Target Name="DownloadAndUnzipFonts">
-    <MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')" />
-    <DownloadFile
-      Address="http://www.quivira-font.com/files/Quivira.otf"
-      DownloadsDir="$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw"
-      Condition="!Exists('$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw\Quivira.otf')"
-      ContinueOnError="true"
-    />
-    <DownloadFile
-      Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
-      DownloadsDir="$(DownloadsDir)"
-      LocalFilename="Andika-6.101.zip"
-      Condition="!Exists('$(DownloadsDir)\Andika-6.101.zip')"
-    />
-    <DownloadFile
-      Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
-      DownloadsDir="$(DownloadsDir)"
-      LocalFilename="CharisSIL-6.101.zip"
-      Condition="!Exists('$(DownloadsDir)\CharisSIL-6.101.zip')"
-    />
-    <DownloadFile
-      Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
-      DownloadsDir="$(DownloadsDir)"
-      LocalFilename="DoulosSIL-6.101.zip"
-      Condition="!Exists('$(DownloadsDir)\DoulosSIL-6.101.zip')"
-    />
-    <DownloadFile
-      Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
-      DownloadsDir="$(DownloadsDir)"
-      LocalFilename="GentiumPlus-6.101.zip"
-      Condition="!Exists('$(DownloadsDir)\GentiumPlus-6.101.zip')"
-    />
+	<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')" />
+	<DownloadFile
+	  Address="http://www.quivira-font.com/files/Quivira.otf"
+	  DownloadsDir="$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw"
+	  Condition="!Exists('$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw\Quivira.otf')"
+	  ContinueOnError="true"
+	/>
+	<DownloadFile
+	  Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
+	  DownloadsDir="$(DownloadsDir)"
+	  LocalFilename="Andika-6.101.zip"
+	  Condition="!Exists('$(DownloadsDir)\Andika-6.101.zip')"
+	/>
+	<DownloadFile
+	  Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
+	  DownloadsDir="$(DownloadsDir)"
+	  LocalFilename="CharisSIL-6.101.zip"
+	  Condition="!Exists('$(DownloadsDir)\CharisSIL-6.101.zip')"
+	/>
+	<DownloadFile
+	  Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
+	  DownloadsDir="$(DownloadsDir)"
+	  LocalFilename="DoulosSIL-6.101.zip"
+	  Condition="!Exists('$(DownloadsDir)\DoulosSIL-6.101.zip')"
+	/>
+	<DownloadFile
+	  Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
+	  DownloadsDir="$(DownloadsDir)"
+	  LocalFilename="GentiumPlus-6.101.zip"
+	  Condition="!Exists('$(DownloadsDir)\GentiumPlus-6.101.zip')"
+	/>
 
-    <ItemGroup>
-      <ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101" />
-    </ItemGroup>
-    <Unzip
-      ZipFilename="$(DownloadsDir)\%(ZippedFonts.Identity).zip"
-      ToDir="$(DownloadsDir)\Fonts"
-      Condition="!Exists('$(DownloadsDir)\Fonts\%(ZippedFonts.Identity)')"
-    />
+	<ItemGroup>
+	  <ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101" />
+	</ItemGroup>
+	<Unzip
+	  ZipFilename="$(DownloadsDir)\%(ZippedFonts.Identity).zip"
+	  ToDir="$(DownloadsDir)\Fonts"
+	  Condition="!Exists('$(DownloadsDir)\Fonts\%(ZippedFonts.Identity)')"
+	/>
   </Target>
 </Project>
