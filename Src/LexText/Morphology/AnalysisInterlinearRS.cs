@@ -200,8 +200,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var slice = MySlice;
 			if (slice == null)
 				return; // in any case we don't want selections in the interlinear.
-			if (slice.ContainingDataTree.CurrentSlice != slice)
-				slice.ContainingDataTree.CurrentSlice = slice;
+			var containingDataTree = slice.ContainingDataTree;
+			if (containingDataTree != null && containingDataTree.CurrentSlice != slice)
+				containingDataTree.CurrentSlice = slice;
 		}
 
 		/// <summary>

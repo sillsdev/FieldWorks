@@ -24,6 +24,7 @@
 	<layout class="LexSense" type="detail" name="GlossSn" expansion="expanded">
 		<part ref="Gloss"/>
 		<part ref="ScientificName" visibility="ifdata"/>
+		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
 	</layout>
 	<layout class="LexEtymology" type="detail" name="empty">
 		<!-- Empty base template (unified with caller node to inject child parts). -->
@@ -34,7 +35,8 @@
 		<part ref="CitationForm" label="Citation Form" abbr="!?"/>
 	</layout>
   <layout class="LexEntry" type="detail" name="Normal">
-		<part ref="_CustomFieldPlaceholder" customFields="here"/>
+		<part ref="CitationForm"/>
+		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
 		<part ref="_CustomFieldPlaceholder" customFields="here"/>
   </layout>
 	<layout class="LexSense" type="detail" name="Indented" expansion="expanded">

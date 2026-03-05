@@ -78,6 +78,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			base.Install(parent);
+			if (parent == null)
+				return;
 
 			MsaInflectionFeatureListDlgLauncher ctrl = (MsaInflectionFeatureListDlgLauncher)Control;
 
@@ -94,7 +96,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_fs,
 				m_flid,
 				"Name",
-				ContainingDataTree.PersistenceProvder,
+				parent.PersistenceProvder,
 				Mediator,
 				m_propertyTable,
 				"Name",
@@ -224,6 +226,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			base.Install(parent);
+			if (parent == null)
+				return;
 
 			FeatureSystemInflectionFeatureListDlgLauncher ctrl = (FeatureSystemInflectionFeatureListDlgLauncher)Control;
 
@@ -240,7 +244,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_fs,
 				m_flid,
 				"Name",
-				ContainingDataTree.PersistenceProvder,
+				parent.PersistenceProvder,
 				Mediator,
 				m_propertyTable,
 				"Name",

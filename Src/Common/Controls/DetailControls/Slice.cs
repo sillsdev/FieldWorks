@@ -91,8 +91,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected bool m_widthHasBeenSetByDataTree = false;
 		protected IPersistenceProvider m_persistenceProvider;
 
+		// Cached XML configuration attributes — parsed once from ConfigurationNode on first access.
+		// Invalidated when ConfigurationNode is re-set (rare).
+		private bool? m_cachedIsHeader;
+		private bool? m_cachedSkipSpacerLine;
+		private bool? m_cachedSameObject;
+
 		protected Slice m_parentSlice;
 		private readonly SplitContainer m_splitter;
+		private DataTree m_containingDataTree;
+		private SliceTreeNode m_treeNode;
+		private readonly SliceVirtualizationCoordinator m_virtualization;
 
 		#endregion Data members
 
@@ -126,7 +135,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				return null;
 			}
-			return ContainingDataTree.GetSliceContextMenu(this, true);
+			var containingDataTree = ContainingDataTree;
+			return containingDataTree == null
+				? null
+				: containingDataTree.GetSliceContextMenu(this, true);
 		}
 
 		/// <summary></summary>
@@ -211,7 +223,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				return Parent as DataTree;
+				return Parent as DataTree ?? m_containingDataTree;
 			}
 		}
 		protected internal SplitContainer SplitCont
@@ -220,7 +232,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				return Controls[0] as SplitContainer;
+				return m_splitter;
 			}
 		}
 
@@ -230,8 +242,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get
 			{
 				CheckDisposed();
+				if (m_treeNode != null)
+					return m_treeNode;
 
-				return SplitCont.Panel1.Controls[0] as SliceTreeNode;
+				return m_splitter.Panel1.Controls.Count > 0
+					? m_splitter.Panel1.Controls[0] as SliceTreeNode
+					: null;
 			}
 		}
 
@@ -285,6 +301,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				m_configurationNode = value;
+				// Invalidate cached XML attribute values.
+				m_cachedIsHeader = null;
+				m_cachedSkipSpacerLine = null;
+				m_cachedSameObject = null;
 			}
 		}
 
@@ -417,7 +437,49 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "header") == "true";
+				return IsHeader;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has header="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool IsHeader
+		{
+			get
+			{
+				if (!m_cachedIsHeader.HasValue)
+					m_cachedIsHeader = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "header", false);
+				return m_cachedIsHeader.Value;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has skipSpacerLine="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool SkipSpacerLine
+		{
+			get
+			{
+				if (!m_cachedSkipSpacerLine.HasValue)
+					m_cachedSkipSpacerLine = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "skipSpacerLine", false);
+				return m_cachedSkipSpacerLine.Value;
+			}
+		}
+
+		/// <summary>
+		/// Cached: whether ConfigurationNode has sameObject="true". Parsed once per ConfigurationNode.
+		/// </summary>
+		internal bool SameObject
+		{
+			get
+			{
+				if (!m_cachedSameObject.HasValue)
+					m_cachedSameObject = XmlUtils.GetOptionalBooleanAttributeValue(
+						ConfigurationNode, "sameObject", false);
+				return m_cachedSameObject.Value;
 			}
 		}
 
@@ -468,6 +530,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary></summary>
 		public Slice()
 		{
+			m_virtualization = new SliceVirtualizationCoordinator(this);
 			// Create a SplitContainer to hold the two (or one control.
 			m_splitter = new SplitContainer {TabStop = false, AccessibleName = "Slice.SplitContainer"};
 			// Do this once right away, mainly so child controls like check box that don't control
@@ -500,6 +563,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual void FinishInit()
 		{
 			CheckDisposed();
+		}
+
+		protected internal virtual void EnsureHwndCreated()
+		{
+			CheckDisposed();
+			m_virtualization.EnsureHwndCreated();
 		}
 
 		protected override void OnEnter(EventArgs e)
@@ -596,6 +665,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
+			var containingDataTree = ContainingDataTree;
 			Control ctrl = Control;
 			if (!Visible)
 			{
@@ -603,7 +673,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// We very possibly want to focus this node, but .NET won't let us focus it till it is visible.
 					// Make it so.
-					DataTree.MakeSliceVisible(this);
+					if (containingDataTree == null)
+						return false;
+					containingDataTree.MakeSliceVisible(this);
 				}
 			}
 
@@ -613,15 +685,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			else if (fOkToFocusTreeNode)
 			{
-				TreeNode.Focus();
+				var treeNode = TreeNode;
+				if (treeNode == null)
+					return false;
+				treeNode.Focus();
 			}
 			else
 				return false;
 
 			//this is a bit of a hack, because focus and OnEnter are related but not equivalent...
 			//some slices  never get an on enter, but  claim to be focus-able.
-			if (ContainingDataTree.CurrentSlice != this)
-				ContainingDataTree.CurrentSlice = this;
+			if (containingDataTree != null && containingDataTree.CurrentSlice != this)
+				containingDataTree.CurrentSlice = this;
 			return true;
 		}
 
@@ -633,7 +708,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Disposing)
 				return;
-			DataTree.MakeSliceVisible(this); // otherwise no change our control can take focus.
+			var containingDataTree = ContainingDataTree;
+			if (containingDataTree != null)
+				containingDataTree.MakeSliceVisible(this); // otherwise no change our control can take focus.
 			base.OnGotFocus(e);
 			if (Control != null && Control.CanFocus)
 				Control.Focus();
@@ -716,8 +793,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual bool ShowContextMenuIconInTreeNode()
 		{
 			CheckDisposed();
-
-			return this == ContainingDataTree.CurrentSlice;
+			var containingDataTree = ContainingDataTree;
+			return containingDataTree != null && this == containingDataTree.CurrentSlice;
 		}
 
 		/// <summary></summary>
@@ -748,117 +825,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (parent == null) // Parent == null ||
 				throw new InvalidOperationException("The slice '" + GetType().Name + "' must be placed in the Parent.Controls property before installing it.");
 
-			SplitContainer sc = SplitCont;
-
-			// prevents the controls of the new 'SplitContainer' being NAMELESS
-			if (sc.Panel1.AccessibleName == null)
-				sc.Panel1.AccessibleName = "Panel1";
-			if (sc.Panel2.AccessibleName == null)
-				sc.Panel2.AccessibleName = "Panel2";
-
-			SliceTreeNode treeNode;
-			bool isBeingReused = sc.Panel1.Controls.Count > 0;
-			if (isBeingReused)
-			{
-				treeNode = (SliceTreeNode)sc.Panel1.Controls[0];
-			}
-			else
-			{
-				// Make a standard SliceTreeNode now.
-				treeNode = new SliceTreeNode(this);
-				treeNode.SuspendLayout();
-				treeNode.Dock = DockStyle.Fill;
-				sc.Panel1.Controls.Add(treeNode);
-				sc.AccessibleName = "SplitContainer";
-			}
-
-			if (!string.IsNullOrEmpty(Label))
-			{
-				// Susanna wanted to try five, rather than the default of four
-				// to see if wider and still invisble made it easier to work with.
-				// It may end up being made visible in a light grey color, but then it would
-				// go back to the default of four.
-				// Being visible at four may be too overpowering, so we may have to
-				// manually draw a thin line to give the user a que as to where the splitter bar is.
-				// Then, if it gets to be visible, we will probably need to add a bit of padding between
-				// the line and the main slice content, or its text will be connected to the line.
-				sc.SplitterWidth = 5;
-
-				// It was hard-coded to 40, but it isn't right for indented slices,
-				// as they then can be shrunk so narrow as to completely cover up their label.
-				sc.Panel1MinSize = (20 * (Indent + 1)) + 20;
-				sc.Panel2MinSize = 0; // min size of right pane
-				// This makes the splitter essentially invisible.
-				sc.BackColor = Color.FromKnownColor(KnownColor.Window); //to make it invisible
-				treeNode.MouseEnter += treeNode_MouseEnter;
-				treeNode.MouseLeave += treeNode_MouseLeave;
-				treeNode.MouseHover += treeNode_MouseEnter;
-			}
-			else
-			{
-				// SummarySlice is one of these kinds of Slices.
-				//Debug.WriteLine("Slice gets no usable splitter: " + GetType().Name);
-				sc.SplitterWidth = 1;
-				sc.Panel1MinSize = LabelIndent();
-				sc.SplitterDistance = LabelIndent();
-				sc.IsSplitterFixed = true;
-				// Just in case it was previously installed with a different label.
-				treeNode.MouseEnter -= treeNode_MouseEnter;
-				treeNode.MouseLeave -= treeNode_MouseLeave;
-				treeNode.MouseHover -= treeNode_MouseEnter;
-			}
-
-			int newHeight;
-			Control mainControl = Control;
-			if (mainControl != null)
-			{
-				// Has SliceTreeNode and Control.
-
-				// Set stylesheet on every view-based child control that doesn't already have one.
-				SetViewStylesheet(mainControl, parent);
-				mainControl.AccessibleName = string.IsNullOrEmpty(Label) ? "Slice_unknown" : Label;
-				// By default the height of the slice comes from the height of the embedded
-				// control.
-				// Just store the new height for now, as actually settig it, will cause events,
-				// and the slice has no parent yet, which will be bad for those event handlers.
-				//this.Height = Math.Max(Control.Height, LabelHeight);
-				newHeight = Math.Max(mainControl.Height, LabelHeight);
-				mainControl.Dock = DockStyle.Fill;
-				sc.FixedPanel = FixedPanel.Panel1;
-			}
-			else
-			{
-				// Has SliceTreeNode but no Control.
-
-				// LexReferenceMultiSlice has no control, as of 12/30/2006.
-				newHeight = LabelHeight;
-				sc.Panel2Collapsed = true;
-				sc.FixedPanel = FixedPanel.Panel2;
-			}
-
-			// REVIEW (Hasso) 2018.07: would it be better to check !parent.Controls.Contains(this)?
-			if (!isBeingReused)
-			{
-				parent.Controls.Add(this); // Parent will have to move it into the right place.
+			m_virtualization.MarkInstalled(parent);
+			if (!parent.Slices.Contains(this))
 				parent.Slices.Add(this);
-			}
+
+			if (m_virtualization.TryDeferredInstall(parent))
+				return;
+
+			m_virtualization.EnsureHwndCreated();
 
 			if (Platform.IsMono)
 			{
 				// FWNX-266
+				Control mainControl = Control;
 				if (mainControl != null && mainControl.Visible == false)
 				{
 					// ensure Launcher Control is shown.
 					mainControl.Visible = true;
 				}
 			}
-
-			SetSplitPosition();
-
-			// Don'f fire off all those size changed event handlers, unless it is really needed.
-			if (Height != newHeight)
-				Height = newHeight;
-			treeNode.ResumeLayout(false);
 		}
 
 		void treeNode_MouseLeave(object sender, EventArgs e)
@@ -869,6 +854,185 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		void treeNode_MouseEnter(object sender, EventArgs e)
 		{
 			Highlighted = true;
+		}
+
+		private sealed class SliceVirtualizationCoordinator
+		{
+			private readonly Slice m_slice;
+			private bool m_isInstalled;
+			private bool m_isPhysicallyInstalled;
+			private bool m_isApplyingPhysicalInstall;
+
+			internal SliceVirtualizationCoordinator(Slice slice)
+			{
+				m_slice = slice;
+			}
+
+			internal void MarkInstalled(DataTree parent)
+			{
+				m_slice.m_containingDataTree = parent;
+				m_isInstalled = true;
+			}
+
+			internal void MarkPhysicallyInstalled()
+			{
+				m_isPhysicallyInstalled = true;
+			}
+
+			internal bool TryDeferredInstall(DataTree parent)
+			{
+				if (!parent.DeferSliceHwndCreationEnabled)
+					return false;
+
+				if (!parent.Slices.Contains(m_slice))
+					parent.Slices.Add(m_slice);
+
+				int newDeferredHeight;
+				Control deferredMainControl = m_slice.Control;
+				if (deferredMainControl != null)
+				{
+					m_slice.SetViewStylesheet(deferredMainControl, parent);
+					deferredMainControl.AccessibleName = string.IsNullOrEmpty(m_slice.Label)
+						? "Slice_unknown"
+						: m_slice.Label;
+					newDeferredHeight = Math.Max(deferredMainControl.Height, m_slice.LabelHeight);
+					deferredMainControl.Dock = DockStyle.Fill;
+				}
+				else
+				{
+					newDeferredHeight = m_slice.LabelHeight;
+				}
+
+				if (m_slice.Height != newDeferredHeight)
+					m_slice.Height = newDeferredHeight;
+
+				if (m_slice.Visible)
+					m_slice.EnsureHwndCreated();
+
+				return true;
+			}
+
+			internal void EnsureHwndCreated()
+			{
+				if (!m_isInstalled || m_isApplyingPhysicalInstall)
+					return;
+
+				m_isApplyingPhysicalInstall = true;
+				try
+				{
+					var containingTree = m_slice.ContainingDataTree;
+					if (containingTree == null)
+						return;
+
+					if (!m_isPhysicallyInstalled)
+					{
+						if (m_slice.Parent != null && m_slice.Parent != containingTree)
+							m_slice.Parent.Controls.Remove(m_slice);
+
+						if (m_slice.Parent != containingTree)
+						{
+							containingTree.IncrementSliceInstallCreationCount();
+							containingTree.Controls.Add(m_slice);
+						}
+
+						int index = containingTree.Slices.IndexOf(m_slice);
+						if (index >= 0)
+							containingTree.Controls.SetChildIndex(m_slice, index);
+
+						m_isPhysicallyInstalled = true;
+					}
+
+					if (!m_slice.Controls.Contains(m_slice.m_splitter))
+						m_slice.Controls.Add(m_slice.m_splitter);
+
+					if (m_slice.m_splitter.Size != m_slice.Size)
+						m_slice.m_splitter.Size = m_slice.Size;
+
+					if (m_slice.m_splitter.Panel1.AccessibleName == null)
+						m_slice.m_splitter.Panel1.AccessibleName = "Panel1";
+					if (m_slice.m_splitter.Panel2.AccessibleName == null)
+						m_slice.m_splitter.Panel2.AccessibleName = "Panel2";
+
+					EnsureTreeNode();
+					ApplySplitAppearance();
+
+					int newHeight = ApplyMainControlLayout(containingTree);
+					m_slice.SetSplitPosition();
+
+					if (m_slice.Height != newHeight)
+						m_slice.Height = newHeight;
+				}
+				finally
+				{
+					m_isApplyingPhysicalInstall = false;
+				}
+			}
+
+			private void EnsureTreeNode()
+			{
+				if (m_slice.m_treeNode != null)
+					return;
+
+				if (m_slice.m_splitter.Panel1.Controls.Count > 0)
+					m_slice.m_treeNode = m_slice.m_splitter.Panel1.Controls[0] as SliceTreeNode;
+
+				if (m_slice.m_treeNode == null)
+				{
+					m_slice.m_treeNode = new SliceTreeNode(m_slice);
+					m_slice.m_treeNode.SuspendLayout();
+					m_slice.m_treeNode.Dock = DockStyle.Fill;
+					m_slice.m_splitter.Panel1.Controls.Add(m_slice.m_treeNode);
+					m_slice.m_splitter.AccessibleName = "SplitContainer";
+					m_slice.m_treeNode.ResumeLayout(false);
+				}
+			}
+
+			private void ApplySplitAppearance()
+			{
+				if (!string.IsNullOrEmpty(m_slice.Label))
+				{
+					m_slice.m_splitter.SplitterWidth = 5;
+					m_slice.m_splitter.Panel1MinSize = (20 * (m_slice.Indent + 1)) + 20;
+					m_slice.m_splitter.Panel2MinSize = 0;
+					m_slice.m_splitter.BackColor = Color.FromKnownColor(KnownColor.Window);
+					m_slice.m_treeNode.MouseEnter -= m_slice.treeNode_MouseEnter;
+					m_slice.m_treeNode.MouseLeave -= m_slice.treeNode_MouseLeave;
+					m_slice.m_treeNode.MouseHover -= m_slice.treeNode_MouseEnter;
+					m_slice.m_treeNode.MouseEnter += m_slice.treeNode_MouseEnter;
+					m_slice.m_treeNode.MouseLeave += m_slice.treeNode_MouseLeave;
+					m_slice.m_treeNode.MouseHover += m_slice.treeNode_MouseEnter;
+				}
+				else
+				{
+					m_slice.m_splitter.SplitterWidth = 1;
+					m_slice.m_splitter.Panel1MinSize = m_slice.LabelIndent();
+					m_slice.m_splitter.SplitterDistance = m_slice.LabelIndent();
+					m_slice.m_splitter.IsSplitterFixed = true;
+					m_slice.m_treeNode.MouseEnter -= m_slice.treeNode_MouseEnter;
+					m_slice.m_treeNode.MouseLeave -= m_slice.treeNode_MouseLeave;
+					m_slice.m_treeNode.MouseHover -= m_slice.treeNode_MouseEnter;
+				}
+			}
+
+			private int ApplyMainControlLayout(DataTree containingTree)
+			{
+				Control mainControl = m_slice.Control;
+				if (mainControl != null)
+				{
+					m_slice.SetViewStylesheet(mainControl, containingTree);
+					mainControl.AccessibleName = string.IsNullOrEmpty(m_slice.Label)
+						? "Slice_unknown"
+						: m_slice.Label;
+					mainControl.Dock = DockStyle.Fill;
+					m_slice.m_splitter.Panel2Collapsed = false;
+					m_slice.m_splitter.FixedPanel = FixedPanel.Panel1;
+					return Math.Max(mainControl.Height, m_slice.LabelHeight);
+				}
+
+				m_slice.m_splitter.Panel2Collapsed = true;
+				m_slice.m_splitter.FixedPanel = FixedPanel.Panel2;
+				return m_slice.LabelHeight;
+			}
 		}
 
 		/// <summary>
@@ -894,7 +1058,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//if ((sc.SplitterDistance > MaxAbbrevWidth && valueSansLabelindent <= MaxAbbrevWidth)
 				//	|| (sc.SplitterDistance <= MaxAbbrevWidth && valueSansLabelindent > MaxAbbrevWidth))
 				//{
-					TreeNode.Invalidate();
+					var treeNode = TreeNode;
+					if (treeNode != null)
+						treeNode.Invalidate();
 				//}
 			}
 		}
@@ -961,7 +1127,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			if (SplitCont.Panel2Collapsed)
-				TreeNode.Width = LabelIndent();
+			{
+				var treeNode = TreeNode;
+				if (treeNode != null)
+					treeNode.Width = LabelIndent();
+			}
 
 			base.OnLayout(levent);
 		}
@@ -1031,7 +1201,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					parent.RemoveDisposedSlice(this);
 
 				// Dispose managed resources here.
-				SplitCont.SplitterMoved -= mySplitterMoved;
+				if (m_splitter != null && !m_splitter.IsDisposed)
+					m_splitter.SplitterMoved -= mySplitterMoved;
+
+				if (m_treeNode != null && !m_treeNode.IsDisposed)
+				{
+					m_treeNode.MouseEnter -= treeNode_MouseEnter;
+					m_treeNode.MouseLeave -= treeNode_MouseLeave;
+					m_treeNode.MouseHover -= treeNode_MouseEnter;
+				}
 				// If anyone but the owning DataTree called this to be disposed,
 				// then it will still hold a referecne to this slice in an event handler.
 				// We could take care of it here by asking the DT to remove it,
@@ -1188,6 +1366,32 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		internal virtual int GetEstimatedHeightForVirtualLayout()
+		{
+			CheckDisposed();
+
+			int estimated = Math.Max(LabelHeight, 20);
+			if (m_configurationNode != null)
+			{
+				string editor = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "editor");
+				if (editor == "multistring")
+					estimated = Math.Max(estimated, 40);
+				else if (editor == "sttext")
+					estimated = Math.Max(estimated, 60);
+			}
+
+			if (this is SummarySlice)
+				estimated = Math.Max(estimated, 30);
+			else if (this is StTextSlice)
+				estimated = Math.Max(estimated, 60);
+			else if (this is MultiStringSlice)
+				estimated = Math.Max(estimated, 40);
+			else if (this is ViewSlice)
+				estimated = Math.Max(estimated, 30);
+
+			return estimated;
+		}
+
 		/// <summary>
 		/// Determines how deeply indented this item is in the tree diagram. 0 means no indent.
 		/// </summary>
@@ -1202,8 +1406,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			set
 			{
 				CheckDisposed();
-
+				if (m_indent == value)
+					return;
 				m_indent = value;
+
+				if (m_splitter != null && !m_splitter.IsDisposed)
+				{
+					if (!string.IsNullOrEmpty(m_strLabel))
+						m_splitter.Panel1MinSize = (20 * (m_indent + 1)) + 20;
+					else
+						m_splitter.Panel1MinSize = LabelIndent();
+				}
+
+				if (ContainingDataTree != null)
+					SetSplitPosition();
+
+				var treeNode = TreeNode;
+				if (treeNode != null)
+					treeNode.Invalidate();
 			}
 		}
 
@@ -1222,8 +1442,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			set
 			{
 				CheckDisposed();
-
+				if (m_expansion == value)
+					return;
 				m_expansion = value;
+
+				var treeNode = TreeNode;
+				if (treeNode != null)
+					treeNode.Invalidate();
 			}
 		}
 
@@ -1242,10 +1467,39 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			set
 			{
 				CheckDisposed();
-
+				if (m_strLabel == value)
+					return;
 				m_strLabel = value;
 				//				this.Control.AccessibleName = m_strLabel;
 				//				this.Control.AccessibilityObject.Value = m_strLabel;
+
+				if (m_splitter != null && !m_splitter.IsDisposed)
+				{
+					if (!string.IsNullOrEmpty(m_strLabel))
+					{
+						m_splitter.SplitterWidth = 5;
+						m_splitter.Panel1MinSize = (20 * (Indent + 1)) + 20;
+						m_splitter.Panel2MinSize = 0;
+						m_splitter.BackColor = Color.FromKnownColor(KnownColor.Window);
+					}
+					else
+					{
+						m_splitter.SplitterWidth = 1;
+						m_splitter.Panel1MinSize = LabelIndent();
+						m_splitter.SplitterDistance = LabelIndent();
+						m_splitter.IsSplitterFixed = true;
+					}
+				}
+
+				if (Control != null)
+					Control.AccessibleName = string.IsNullOrEmpty(m_strLabel) ? "Slice_unknown" : m_strLabel;
+
+				if (ContainingDataTree != null)
+					SetSplitPosition();
+
+				var treeNode = TreeNode;
+				if (treeNode != null)
+					treeNode.Invalidate();
 			}
 		}
 
@@ -1681,7 +1935,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			ContainingDataTree.CurrentSlice = this;
+			var containingDataTree = ContainingDataTree;
+			if (containingDataTree != null)
+				containingDataTree.CurrentSlice = this;
 			if (ShowContextMenu != null)// m_btnRectangle.Contains(p))
 			{
 				ShowContextMenu(this, new TreeNodeEventArgs(TreeNode, this, p));
@@ -2195,7 +2451,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// We added something to the object of the current slice...almost certainly it
 						// will be something that will display under this node...if it is still collapsed,
 						// expand it to show the thing inserted.
-						TreeNode.ToggleExpansion(IndexInContainer);
+						EnsureHwndCreated();
+						var treeNode = TreeNode;
+						if (treeNode != null)
+							treeNode.ToggleExpansion(IndexInContainer);
 					}
 					Slice child = ExpandSubItem(uiObj.Object.Hvo);
 					if (child != null)
@@ -2245,7 +2504,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (slice.Object.Hvo == hvo)
 				{
 					if (slice.Expansion == DataTree.TreeItemState.ktisCollapsed)
-						slice.TreeNode.ToggleExpansion(islice);
+					{
+						slice.EnsureHwndCreated();
+						var treeNode = slice.TreeNode;
+						if (treeNode != null)
+							treeNode.ToggleExpansion(islice);
+					}
 					return slice;
 				}
 			}
@@ -2311,14 +2575,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Slice slice = containingDT.FieldAt(i);	// make it real.
 				if (!slice.Visible)								// make it visible.
-					DataTree.MakeSliceVisible(slice);
+					containingDT.MakeSliceVisible(slice);
 			}
 			int cslice = containingDT.Slices.Count;
 			Slice sliceRetVal = null;
 			for (int islice = myIndex; islice < cslice; ++islice)
 			{
 				Slice slice = containingDT.FieldAt(islice);
-				DataTree.MakeSliceVisible(slice); // otherwise it can't take focus
+				containingDT.MakeSliceVisible(slice); // otherwise it can't take focus
 				if (slice.TakeFocus(false))
 				{
 					sliceRetVal = slice;
@@ -2754,6 +3018,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
+			var containingDataTree = ContainingDataTree;
 
 			// Normally a slice should only handle messages if both it and its data tree
 			// are visible. Override this method if there is some reason to handle messages
@@ -2761,7 +3026,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// hides the data tree but does not remove slices when no record is current.
 			// Thus, a slice that is not visible might belong to a display of a deleted
 			// or unavailable object, so be very careful what you enable!
-			if (Visible && ContainingDataTree.Visible)
+			if (Visible && containingDataTree != null && containingDataTree.Visible)
 			{
 				if (Control != null && Control.IsDisposed)
 					throw new ObjectDisposedException(ToString() + GetHashCode(), "Trying to use object that no longer exists: ");
@@ -3278,6 +3543,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
+			// Fast path: if width hasn't changed and we've already been initialized,
+			// skip splitter resize and event handler manipulation. This avoids O(N)
+			// unnecessary work in HandleLayout1 when width is stable (every layout
+			// pass after the first).
+			if (m_widthHasBeenSetByDataTree && Width == width)
+				return;
+
 			if (Width != width)
 				Width = width;
 
@@ -3302,7 +3574,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//if ((sc.SplitterDistance > MaxAbbrevWidth && valueSansLabelindent <= MaxAbbrevWidth)
 				//	|| (sc.SplitterDistance <= MaxAbbrevWidth && valueSansLabelindent > MaxAbbrevWidth))
 				//{
-					TreeNode.Invalidate();
+					var treeNode = TreeNode;
+					if (treeNode != null)
+						treeNode.Invalidate();
 				//}
 			}
 		}

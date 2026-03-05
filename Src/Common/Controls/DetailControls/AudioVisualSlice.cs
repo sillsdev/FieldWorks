@@ -130,6 +130,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			base.Install(parent);
+			if (parent == null)
+				return;
 
 			AudioVisualLauncher ctrl = Control as AudioVisualLauncher;
 			ctrl.Initialize(
@@ -137,7 +139,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Media.MediaFileRA,
 				CmFileTags.kflidInternalPath,
 				"InternalPath",
-				ContainingDataTree.PersistenceProvder,
+				parent.PersistenceProvder,
 				Mediator,
 				m_propertyTable,
 				"InternalPath",

@@ -91,6 +91,7 @@
     // Build tasks (safe - only produce artifacts)
     "Build",
     "Build Release",
+    "Build Tests",
 
     // Test tasks (safe - no external changes)
     "Test",

@@ -65,6 +65,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			CheckDisposed();
 
 			base.Install(parent);
+			if (parent == null)
+				return;
 
 			MSADlgLauncher ctrl = (MSADlgLauncher)Control;
 			this.Size = new System.Drawing.Size(208, 32);
@@ -72,7 +74,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Object,
 				1, // Maybe need a real flid?
 				"InterlinearName",
-				ContainingDataTree.PersistenceProvder,
+				parent.PersistenceProvder,
 				Mediator,
 				m_propertyTable,
 				"InterlinearName",

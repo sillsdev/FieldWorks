@@ -130,6 +130,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 
 			base.OnSizeChanged (e);
+			if (ContainingDataTree == null)
+				return;
 
 			if (Control.Size == m_lastSize)
 				return;

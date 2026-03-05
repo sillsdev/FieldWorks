@@ -341,16 +341,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="wssToDisplay"></param>
 		private void SetWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
 		{
+			var containingDataTree = ContainingDataTree;
+			if (containingDataTree == null)
+				return;
+
 			XmlNode ourPart = this.PartRef();
 			var writingSystemsToDisplay = wssToDisplay == null ? null : wssToDisplay.ToList();
-			foreach (Control c in ContainingDataTree.Slices)
+			foreach (Control c in containingDataTree.Slices)
 			{
 				var slice = (Slice) c;
 				XmlNode part = slice.PartRef();
 				if (part == ourPart)
 				{
-					((LabeledMultiStringView) slice.Control).WritingSystemsToDisplay = writingSystemsToDisplay;
-					((LabeledMultiStringView) slice.Control).RefreshDisplay();
+					var labeledView = slice.Control as LabeledMultiStringView;
+					if (labeledView == null)
+						continue;
+
+					labeledView.WritingSystemsToDisplay = writingSystemsToDisplay;
+					labeledView.RefreshDisplay();
 				}
 			}
 		}

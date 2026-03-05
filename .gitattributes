@@ -31,3 +31,7 @@ Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
 *.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
+
+# Verify snapshot testing
+*.verified.png binary
+*.received.png binary
