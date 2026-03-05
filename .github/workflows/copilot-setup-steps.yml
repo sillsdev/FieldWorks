@@ -1,14 +1,18 @@
 # Reusable workflow to setup Windows build environment for AI coding agents
-# Optimized for windows-latest which already includes most FieldWorks dependencies.
+# Optimized for windows-2022 which already includes most FieldWorks dependencies.
+# This workflow is for managed/native validation only.
+#
+# IMPORTANT: Do not run installer/signing/deployment builds here.
+# Rationale: cloud agent jobs should not require high-privilege credentials
+# (signing, release upload, deployment) and should minimize secret exposure.
 #
 # ============================================================================
-# EXPECTED FROM windows-latest (DO NOT RE-INSTALL):
+# EXPECTED FROM windows-2022 (DO NOT RE-INSTALL):
 # ============================================================================
 # - Visual Studio 2022 Enterprise (with Desktop & C++ workloads)
 # - MSBuild (via VS 2022)
 # - .NET Framework 4.8.1 SDK & Targeting Pack
 # - Windows SDK (10.0.17763+, 19041, 22621, 26100)
-# - WiX Toolset 3.14.x
 # - NuGet CLI
 # - .NET SDK 8.x and 9.x
 # - LLVM/clangd (for Serena C++ language server)
@@ -35,105 +39,177 @@
 # ============================================================================
 
 name: "Agents: Windows setup steps"
+
 on:
-    workflow_call:
-        inputs:
-            msbuild_args:
-                required: false
-                type: string
-                description: 'Arguments to pass to msbuild (e.g., "FieldWorks.sln /t:RunTests /p:Configuration=Debug")'
-            skip_serena:
-                required: false
-                type: boolean
-                default: false
-                description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
+  workflow_call:
+    # Inputs are intentionally wrapper-script focused to avoid ad-hoc build
+    # command injection and to preserve FieldWorks build ordering rules.
+    inputs:
+      build_args:
+        required: false
+        type: string
+        description: 'Arguments to pass to build.ps1 (e.g., "-Configuration Release -BuildTests")'
+      test_args:
+        required: false
+        type: string
+        description: 'Arguments to pass to test.ps1 (e.g., "-NoBuild -TestProject FwUtilsTests")'
+      skip_serena:
+        required: false
+        type: boolean
+        default: false
+        description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
+      clone_helper_repos:
+        required: false
+        type: boolean
+        default: true
+        description: 'Clone FwHelps/FwLocalizations/liblcm with shallow checkout for full build compatibility'
+
+permissions:
+  contents: read
 
 jobs:
-    windows-setup:
-        runs-on: windows-latest
-        outputs:
-            msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
-            vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
+  windows-setup:
+    runs-on: windows-2022
+    outputs:
+      msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
+      vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
 
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-            # ================================================================
-            # CACHING - speeds up repeat runs significantly
-            # ================================================================
-            - name: Cache NuGet packages
-              uses: actions/cache@v5
-              with:
-                  path: ~/.nuget/packages
-                  key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props') }}
-                  restore-keys: |
-                      nuget-${{ runner.os }}-
+      # ================================================================
+      # CACHING - speeds up repeat runs significantly
+      # ================================================================
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props', 'nuget.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
 
-            - name: Cache Serena language servers
-              if: inputs.skip_serena != true
-              uses: actions/cache@v5
-              with:
-                  path: |
-                      ~/.cache/serena
-                      ~/AppData/Local/serena
-                  key: serena-lsp-${{ runner.os }}-v1
-                  restore-keys: |
-                      serena-lsp-${{ runner.os }}-
+      - name: Cache Serena language servers
+        if: inputs.skip_serena != true
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/serena
+            ~/AppData/Local/serena
+          key: serena-lsp-${{ runner.os }}-${{ hashFiles('.serena/project.yml', 'Build/Agent/Setup-Serena.ps1', '.github/workflows/copilot-setup-steps.yml') }}
+          restore-keys: |
+            serena-lsp-${{ runner.os }}-
 
-            # ================================================================
-            # ENVIRONMENT SETUP
-            # Scripts are in Build/Agent/ and can be run locally for testing
-            # ================================================================
-            - name: Setup MSBuild PATH
-              uses: microsoft/setup-msbuild@v2
+      # ================================================================
+      # ENVIRONMENT SETUP
+      # Scripts are in Build/Agent/ and can be run locally for testing
+      # ================================================================
+      - name: Setup MSBuild PATH
+        uses: microsoft/setup-msbuild@v2
 
-            - name: Setup uv (Python package manager for Serena)
-              if: inputs.skip_serena != true
-              uses: astral-sh/setup-uv@v7
-              with:
-                  version: "latest"
+      - name: Setup uv (Python package manager for Serena)
+        if: inputs.skip_serena != true
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.6.x"
 
-            - name: Configure FieldWorks build environment
-              id: setup-env
-              shell: pwsh
-              run: |
-                  # Run testable script with GitHub Actions output
-                  .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
+      - name: Configure FieldWorks build environment
+        id: setup-env
+        shell: pwsh
+        run: |
+          # Run testable script with GitHub Actions output
+          .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
 
-            - name: Verify pre-installed dependencies
-              shell: pwsh
-              run: |
-                  # Run testable script with strict checking
-                  .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
+      - name: Verify pre-installed dependencies
+        shell: pwsh
+        run: |
+          # Run testable script with strict checking
+          .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
 
-            # ================================================================
-            # SERENA MCP SETUP - for agent code intelligence
-            # ================================================================
-            - name: "Serena: Setup and verify"
-              if: inputs.skip_serena != true
-              shell: pwsh
-              timeout-minutes: 10
-              run: |
-                  # Run testable script with GitHub Actions output
-                  .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+      - name: Guardrail - block installer builds in agent workflow
+        if: inputs.build_args != '' && inputs.build_args != null
+        shell: pwsh
+        run: |
+          $argsText = "${{ inputs.build_args }}"
+          if ($argsText -match '(?i)(-BuildInstaller|InstallerToolset|Build/InstallerBuild\.proj|FLExInstaller)') {
+            throw "Installer builds are not allowed in this workflow. Use dedicated installer pipelines."
+          }
 
-            # ================================================================
-            # BUILD (optional)
-            # ================================================================
-            - name: Initialize VS Developer Environment
-              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
-              uses: ilammy/msvc-dev-cmd@v1
-              with:
-                  arch: x64
+      - name: Clone helper repos (shallow)
+        if: inputs.clone_helper_repos == true
+        shell: pwsh
+        run: |
+          function Invoke-ShallowClone {
+            param(
+              [Parameter(Mandatory = $true)][string]$RepoUrl,
+              [Parameter(Mandatory = $true)][string]$Destination,
+              [string]$Branch = ""
+            )
 
-            - name: Run msbuild
-              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
-              shell: pwsh
-              run: |
-                  Write-Host "Running: msbuild ${{ inputs.msbuild_args }}" -ForegroundColor Cyan
-                  msbuild ${{ inputs.msbuild_args }}
-                  if ($LASTEXITCODE -ne 0) {
-                      throw "MSBuild failed with exit code $LASTEXITCODE"
-                  }
-                  Write-Host "Build completed successfully!" -ForegroundColor Green
+            if (Test-Path (Join-Path $Destination '.git')) {
+              Write-Host "Already cloned: $Destination" -ForegroundColor DarkGray
+              return
+            }
+
+            if (Test-Path $Destination) {
+              Remove-Item -Path $Destination -Recurse -Force
+            }
+
+            $parent = Split-Path -Parent $Destination
+            if (-not (Test-Path $parent)) {
+              New-Item -ItemType Directory -Path $parent -Force | Out-Null
+            }
+
+            if ([string]::IsNullOrWhiteSpace($Branch)) {
+              git clone --depth 1 $RepoUrl $Destination
+            }
+            else {
+              git clone --depth 1 --branch $Branch $RepoUrl $Destination
+            }
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to clone $RepoUrl into $Destination"
+            }
+          }
+
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwHelps.git' -Destination 'DistFiles/Helps'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwLocalizations.git' -Destination 'Localizations'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCM'
+
+      # ================================================================
+      # SERENA MCP SETUP - for agent code intelligence
+      # ================================================================
+      - name: "Serena: Setup and verify"
+        if: inputs.skip_serena != true
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          # Run testable script with GitHub Actions output
+          .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+
+      # ================================================================
+      # BUILD (optional)
+      # ================================================================
+      - name: Run build.ps1
+        if: inputs.build_args != '' && inputs.build_args != null
+        shell: pwsh
+        timeout-minutes: 60
+        run: |
+          Write-Host "Running: ./build.ps1 ${{ inputs.build_args }}" -ForegroundColor Cyan
+          ./build.ps1 ${{ inputs.build_args }}
+          if ($LASTEXITCODE -ne 0) {
+            throw "build.ps1 failed with exit code $LASTEXITCODE"
+          }
+          Write-Host "build.ps1 completed successfully!" -ForegroundColor Green
+
+      - name: Run test.ps1
+        if: inputs.test_args != '' && inputs.test_args != null
+        shell: pwsh
+        timeout-minutes: 60
+        run: |
+          Write-Host "Running: ./test.ps1 ${{ inputs.test_args }}" -ForegroundColor Cyan
+          ./test.ps1 ${{ inputs.test_args }}
+          if ($LASTEXITCODE -ne 0) {
+            throw "test.ps1 failed with exit code $LASTEXITCODE"
+          }
+          Write-Host "test.ps1 completed successfully!" -ForegroundColor Green
