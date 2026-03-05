@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 				string response;
 				try
 				{
-					response = client.PostDictionaryMetadata(targetURI, postContent.ToString(Formatting.None));
+					response = client.PostDictionaryMetadata(targetURI, postContent.ToString(Formatting.None, new JsonConverter[0]));
 				}
 				catch (WebonaryClient.WebonaryException e)
 				{
@@ -327,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 				string response;
 				try
 				{
-					response = client.PostEntry(targetURI, postContent.ToString(Formatting.None), isReversal);
+					response = client.PostEntry(targetURI, postContent.ToString(Formatting.None, new JsonConverter[0]), isReversal);
 				}
 				catch (WebonaryClient.WebonaryException e)
 				{

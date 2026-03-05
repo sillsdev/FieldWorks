@@ -269,8 +269,10 @@ try {
             # Find all test DLLs, excluding:
             # - Test framework DLLs (nunit, Microsoft.*, xunit)
             # - External NuGet package tests (SIL.LCModel.*.Tests) - these test liblcm, not FieldWorks
+            # - SIL.WritingSystems.Tests - NuGet-delivered libpalaso test DLL compiled against
+            #   NUnit 3.13.3; loading it causes binding-redirect failures (not a FieldWorks test)
             $testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -ErrorAction SilentlyContinue |
-                Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel' } |
+                Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel|^SIL\.WritingSystems\.Tests' } |
                 Select-Object -ExpandProperty FullName
 
             # Some test projects (e.g., under Lib/src) are not copied into Output/<Configuration>.
