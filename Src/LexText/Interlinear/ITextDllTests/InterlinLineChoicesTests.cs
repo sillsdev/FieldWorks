@@ -384,11 +384,13 @@ namespace SIL.FieldWorks.IText
 			choices.Add(InterlinLineChoices.kflidLitTrans, wsEng, true); //7
 			choices.Add(InterlinLineChoices.kflidFreeTrans, wsEng, true); //8
 
-			choices.Add(InterlinLineChoices.kflidLexGloss, wsFrn, true);
-			choices.Add(InterlinLineChoices.kflidLexGloss, wsGer, true);
+			choices.Add(InterlinLineChoices.kflidLexGloss, wsFrn, true); //9
+			choices.Add(InterlinLineChoices.kflidLexGloss, wsGer, true); //10
+
+			choices.Add(InterlinLineChoices.kflidMedia, wsEng, true); //11
 
 			// Pre-checks
-			Assert.AreEqual(11, choices.AllLineSpecs.Count);
+			Assert.AreEqual(12, choices.AllLineSpecs.Count);
 			Assert.AreEqual(InterlinLineChoices.kflidWord, choices.AllLineSpecs[0].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices.AllLineSpecs[1].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices.AllLineSpecs[2].Flid);
@@ -400,6 +402,7 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices.AllLineSpecs[8].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices.AllLineSpecs[9].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices.AllLineSpecs[10].Flid);
+			Assert.AreEqual(InterlinLineChoices.kflidMedia, choices.AllLineSpecs[11].Flid);
 
 			Assert.AreEqual(wsEng, choices.AllLineSpecs[3].WritingSystem);
 			Assert.AreEqual(wsFrn, choices.AllLineSpecs[4].WritingSystem);
@@ -408,7 +411,7 @@ namespace SIL.FieldWorks.IText
 			ReadOnlyCollection<LineOption> configLineOptions = choices.ConfigurationLineOptions;
 
 			// Post-checks
-			Assert.AreEqual(10, configLineOptions.Count); // 9 + 1 for kflidNote.
+			Assert.AreEqual(11, configLineOptions.Count); // 10 + 1 for kflidNote.
 			Assert.AreEqual(InterlinLineChoices.kflidWord, configLineOptions[0].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, configLineOptions[1].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, configLineOptions[2].Flid);
@@ -418,8 +421,11 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(InterlinLineChoices.kflidWordPos, configLineOptions[6].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, configLineOptions[7].Flid);
 			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, configLineOptions[8].Flid);
+			Assert.AreEqual(InterlinLineChoices.kflidMedia, configLineOptions[9].Flid);
 			// kflidNote is one of the required options so it was added.
-			Assert.AreEqual(InterlinLineChoices.kflidNote, configLineOptions[9].Flid);
+			// Note: kflidNote is always added as the last option, so if new line choices are added in future,
+			// kflidNote will need to be updated to match the new last index.
+			Assert.AreEqual(InterlinLineChoices.kflidNote, configLineOptions[10].Flid);
 		}
 
 		[Test]
