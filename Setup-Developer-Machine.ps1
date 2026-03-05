@@ -131,7 +131,7 @@ if ($InstallerDeps) {
 	$helperRepos = @(
 		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
 		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" }
-		# TODO (Hasso) 2026.03: clone genericinstaller.git (needed for the WiX 3 installer
+		# TODO (Hasso) 2026.03: clone genericinstaller.git (needed for the WiX 3 installer)
 	)
 
 	foreach ($repo in $helperRepos) {
@@ -311,9 +311,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor White
 Write-Host "  1. Restart VS Code (or your terminal) for PATH changes to take effect"
-# REVIEW (Hasso) 2026.03: this script is in the FieldWorks repository. In what case do we expect the user to need to close this repository after running this script?
-Write-Host "  2. Clone the repository: git clone https://github.com/sillsdev/FieldWorks"
-Write-Host "  3. Build: .\build.ps1"
+Write-Host "  2. Build: .\build.ps1"
 Write-Host ""
-Write-Host "To build installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
+Write-Host "Before building installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
 Write-Host "For Serena MCP support, see Docs/mcp.md" -ForegroundColor Gray
