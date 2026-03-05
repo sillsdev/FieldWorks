@@ -108,6 +108,7 @@
 	  <L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\ml\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
@@ -121,6 +122,7 @@
 	  <L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
+	  <L10nFiles Include="$(OutputDirForConfig)\yo\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
 	  <L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
 
