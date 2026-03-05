@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			if (dataTree == null)
 				throw new ArgumentNullException(nameof(dataTree));
 
-			// Calculate the total height needed (may exceed the visible client area)
+			// Initial totalHeight estimate from pre-init slice positions.
 			int totalHeight = CalculateTotalHeight(dataTree);
 			int width = dataTree.ClientSize.Width;
 
@@ -71,8 +71,26 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				// Control (which triggers MakeRoot via OnHandleCreated) → set Visible.
 				EnsureAllSlicesInitialized(dataTree);
 
-				// Pass 1: Capture WinForms chrome via DrawToBitmap
+				// Recompute height after initialization — slices may have changed
+				// height during BecomeRealInPlace (VwRootBox construction adjusts
+				// slice heights to match content). Use the content-tight height
+				// so the bitmap fits exactly around the rendered content without
+				// depending on DataTree.ClientSize.Height, which can vary based on
+				// WinForms internal auto-scroll state.
+				totalHeight = CalculateTotalHeight(dataTree);
+				dataTree.ClientSize = new Size(width, totalHeight);
+				dataTree.PerformLayout();
+
+				// Pass 1: Capture WinForms chrome via DrawToBitmap.
+				// Pre-fill with white so areas beyond slice content (and the
+				// DataTree's grey SystemColors.Control background) render as
+				// white, producing deterministic output regardless of system
+				// theme or control background color.
 				var bitmap = new Bitmap(width, totalHeight, PixelFormat.Format32bppArgb);
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					g.Clear(Color.White);
+				}
 				dataTree.DrawToBitmap(bitmap, new Rectangle(0, 0, width, totalHeight));
 
 				// Pass 2: Overlay Views engine content for each ViewSlice
@@ -89,7 +107,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		}
 
 		/// <summary>
-		/// Calculates the total height needed to display all slices without scrolling.
+		/// Calculates the content-tight height from slice positions.
+		/// Returns the bottom edge of the lowest slice, producing a bitmap
+		/// that fits exactly around the rendered content without padding.
+		/// This avoids depending on <see cref="DataTree.ClientSize"/> which
+		/// varies with WinForms auto-scroll state, form size, and other
+		/// non-deterministic factors.
 		/// </summary>
 		private static int CalculateTotalHeight(DataTree dataTree)
 		{
@@ -103,8 +126,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 						maxBottom = bottom;
 				}
 			}
-			// Ensure at least the client area size
-			return Math.Max(maxBottom, dataTree.ClientSize.Height);
+			return Math.Max(maxBottom, 1);
 		}
 
 		/// <summary>

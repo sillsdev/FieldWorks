@@ -48,4 +48,8 @@
 	<layout class="LexEntry" type="detail" name="NoRef">
 		<part customFields="here"/>
 	</layout>
+	<layout class="LexEntry" type="detail" name="NormalCollapsible">
+		<part ref="CitationForm"/>
+		<part ref="SensesCollapsible" expansion="expanded"/>
+	</layout>
 </LayoutInventory>

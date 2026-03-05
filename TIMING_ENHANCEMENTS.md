@@ -442,3 +442,49 @@
 | 3 | Guard ShowSubControls with visibility check | LOW | LOW | Assessed — too little benefit for the change |
 | 4 | Avoid redundant Invalidate in OnLayout convergence | HIGH | LOW-MOD | Deferred — historically fragile |
 | 5 | HWND reduction per slice | VERY HIGH | HIGHEST | Architectural — multi-month project |
+
+---
+
+## 2026-03-03 — VwRootBox + VwPropertyStore optimization & crash fix pass
+
+### Enhancement 7: PATH-L5 — Managed-level RefreshDisplay guard (NeedsReconstruct)
+
+#### 1) What changed
+- Files: `Src/views/Views.idh`, `Src/views/VwRootBox.h`, `Src/views/VwRootBox.cpp` — added `NeedsReconstruct` COM property exposing the existing `m_fNeedsReconstruct` flag
+- File: `Src/Common/ViewsInterfaces/Views.cs` — added `NeedsReconstruct` to `IVwRootBox`, `_VwRootBoxClass`, and `_VwInvertedRootBoxClass`
+- File: `Src/Common/SimpleRootSite/SimpleRootSite.cs` — `RefreshDisplay()` now checks `m_rootb.NeedsReconstruct` before performing selection save/restore, SuspendDrawing, and the Reconstruct COM call
+- File: `Src/Common/Controls/XMLViews/XMLViewsTests/XmlBrowseViewBaseTests.cs` — added `NeedsReconstruct` to `FakeRootBox` mock
+
+#### 2) How it improved timing
+- In the real FieldWorks app, `RefreshDisplay()` is called on ALL root sites when the Mediator dispatches a refresh (data change, focus change, panel activation). Most root sites have not received a PropChanged since last Reconstruct. PATH-L5 eliminates the managed overhead (SelectionRestorer creation/disposal, SuspendDrawing WM_SETREDRAW pair, COM interop call) for all these no-op refreshes.
+- Combined with PATH-R1 (which already made Reconstruct a no-op at the C++ level), this eliminates all managed AND native overhead for redundant refreshes.
+
+#### 3) Measured timing savings / inner metrics
+- Benchmark timing tests pass (5/5) with identical results to pre-PATH-L5 baseline — the benchmark harness exercises cold+warm renders directly, not via RefreshDisplay.
+- Real-world savings: for a typical 10-panel FieldWorks layout with 1 data change, 9 out of 10 RefreshDisplay calls now return immediately at the managed level without any COM interop overhead.
+
+#### 4) Why this is safe architecturally
+- The `NeedsReconstruct` flag is only true when a genuine mutation has occurred (PropChanged, OnStylesheetChange, overlay change). The flag is reset to false after Reconstruct completes.
+- The managed guard preserves the existing decorator.Refresh() call before the check — decorators still get refreshed even when Reconstruct is skipped.
+- If the flag is wrong (stuck at false), the worst case is a stale display — the same as the existing PATH-R1 guard, which has been validated with 45 edge-case tests and all snapshot/timing tests.
+
+### Fix: VwPropertyStore crash (ws=0 assertion)
+
+#### 1) What changed
+- File: `Src/views/VwPropertyStore.cpp` — in `SetIntValue()`, `case ktptWs:` block
+- Removed `Assert(m_chrp.ws)` assertion that fired when ws=0 arrived during PropChanged-driven box tree rebuilds
+- Added `if (m_chrp.ws)` guard before `get_EngineOrNull` call to avoid looking up an invalid writing system ID
+- Changed `AssertPtr(qws)` to `AssertPtrN(qws)` to allow null engine (the code already handled null gracefully by defaulting to LTR directionality)
+
+#### 2) Why this is safe
+- The existing code path already had `if (qws) { ... }` which handled null engine properly — the assertion was overly strict
+- Writing system 0 (unset) is a valid state during partial data construction and lazy expansion
+- 6 new regression tests verify this fix (Category 43: VwPropertyStore crash regression)
+
+### Test suite expansion
+
+- Added 10 new tests (35 → 45 total) in `HwndVirtualizationTests.ExpandResizeNavigate.cs`:
+  - Category 33 (5 tests): Expand/collapse using NormalCollapsible layout with proper header slices — eliminated 3 previous inconclusive results
+  - Category 43 (6 tests): VwPropertyStore crash regression — exercise ws=0, mixed set/unset gloss, empty sense reconstruction
+  - Category 44 (2 tests): Layout switching edge cases — Normal ↔ NormalCollapsible transitions
+- Added test layout `NormalCollapsible` and part `SensesCollapsible` to test fixtures

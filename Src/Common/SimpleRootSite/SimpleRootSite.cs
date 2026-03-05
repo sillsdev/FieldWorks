@@ -1936,6 +1936,18 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 
+			// PATH-L5: Skip the expensive selection save/restore and drawing
+			// suspension when the VwRootBox reports no pending changes.
+			// The root box's NeedsReconstruct flag is set by PropChanged,
+			// OnStylesheetChange, and other mutation paths. When false,
+			// Reconstruct() would be a no-op (PATH-R1), so we can avoid
+			// the managed overhead entirely.
+			if (!m_rootb.NeedsReconstruct)
+			{
+				m_fRefreshPending = false;
+				return false;
+			}
+
 			// Rebuild the display... the drastic way.
 			SelectionRestorer restorer = CreateSelectionRestorer();
 			try

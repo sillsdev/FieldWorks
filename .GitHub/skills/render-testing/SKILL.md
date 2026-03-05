@@ -131,6 +131,19 @@ When a timing optimization is implemented, always run this sequence before commi
       - If the change is unexpected, the optimization introduced a visual regression — **stop and debug before committing**.
     - This gate catches subtle rendering bugs (shifted positions, missing slices, clipped content) that timing and optimization tests won't detect.
 
+    **CRITICAL BASELINE POLICY — read before regenerating:**
+    - **NEVER** overwrite verified baselines with received images without investigating the diff first.
+    - Verified `.verified.png` files are the source of truth. If a test fails, the **code** is wrong until proven otherwise.
+    - Acceptable reasons to regenerate baselines:
+      1. Data factory changes (new/removed fields in test entries).
+      2. Layout XML changes (different slices shown).
+      3. Deliberate rendering infrastructure changes (e.g., content-tight bitmaps replacing padded bitmaps).
+    - Unacceptable reasons:
+      1. "The test fails so let's update the baseline" — this masks regressions.
+      2. Optimization changes — optimizations must not change rendered output.
+      3. Unknown causes — if you can't explain the diff, debug the code.
+    - When regenerating, **always** document what changed and why in the commit message.
+
 7. **Timing evidence documentation (mandatory)**
     - Before committing, create or append `TIMING_ENHANCEMENTS.md` at repo root.
     - For each enhancement, record:

@@ -181,6 +181,7 @@ CrashLog.txt
 # VSTest Artifacts
 TestResults/
 *.trx
+TestResult.xml
 
 # WPF markup compilation temp projects
 *_wpftmp.csproj

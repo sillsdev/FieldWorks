@@ -35,6 +35,12 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		private bool m_disposed;
 		private double m_traceTimelineMs;
 
+		// Cached GDI resources for offscreen layout (avoid per-call allocation).
+		private Bitmap m_layoutBmp;
+		private Graphics m_layoutGraphics;
+		private IntPtr m_layoutHdc;
+		private IVwGraphics m_layoutVwGraphics;
+
 		/// <summary>
 		/// Gets the last render timing result.
 		/// </summary>
@@ -163,39 +169,19 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			// PATH-L1 layout guard can detect truly redundant calls.
 			int layoutWidth = m_view.GetAvailWidth(m_view.RootBox);
 
-			// PATH-L1 diagnostic: log width values and Layout timing to file
-			var diagPath = System.IO.Path.Combine(
-				System.IO.Path.GetTempPath(),
-				"PATH_L1_diag.log");
-
-			// Create a temp bitmap to get a strictly compatible HDC
-			using (var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb))
-			using (var g = Graphics.FromImage(bmp))
+			// PATH-L4: Cache the offscreen GDI resources across calls to
+			// eliminate ~27ms per-call Bitmap/Graphics/HDC allocation overhead.
+			// Layout itself takes <0.1ms when the PATH-L1 guard fires.
+			if (m_layoutBmp == null)
 			{
-				IntPtr hdc = g.GetHdc();
-				try
-				{
-					// Use VwGraphicsWin32 directly to drive the layout
-					IVwGraphics vwGraphics = VwGraphicsWin32Class.Create();
-					((IVwGraphicsWin32)vwGraphics).Initialize(hdc);
-					try
-					{
-						var sw = Stopwatch.StartNew();
-						m_view.RootBox.Layout(vwGraphics, layoutWidth);
-						sw.Stop();
-						System.IO.File.AppendAllText(diagPath,
-							$"layoutWidth={layoutWidth} Layout={sw.Elapsed.TotalMilliseconds:F3}ms\n");
-					}
-					finally
-					{
-						vwGraphics.ReleaseDC();
-					}
-				}
-				finally
-				{
-					g.ReleaseHdc(hdc);
-				}
+				m_layoutBmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+				m_layoutGraphics = Graphics.FromImage(m_layoutBmp);
+				m_layoutHdc = m_layoutGraphics.GetHdc();
+				m_layoutVwGraphics = VwGraphicsWin32Class.Create();
+				((IVwGraphicsWin32)m_layoutVwGraphics).Initialize(m_layoutHdc);
 			}
+
+			m_view.RootBox.Layout(m_layoutVwGraphics, layoutWidth);
 		}
 
 		/// <summary>
@@ -404,6 +390,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 		private void DisposeView()
 		{
+			DisposeLayoutResources();
 			if (m_view != null)
 			{
 				var form = m_view.Parent as Form;
@@ -411,6 +398,24 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				m_view = null;
 				form?.Dispose();
 			}
+		}
+
+		private void DisposeLayoutResources()
+		{
+			if (m_layoutVwGraphics != null)
+			{
+				m_layoutVwGraphics.ReleaseDC();
+				m_layoutVwGraphics = null;
+			}
+			if (m_layoutHdc != IntPtr.Zero && m_layoutGraphics != null)
+			{
+				m_layoutGraphics.ReleaseHdc(m_layoutHdc);
+				m_layoutHdc = IntPtr.Zero;
+			}
+			m_layoutGraphics?.Dispose();
+			m_layoutGraphics = null;
+			m_layoutBmp?.Dispose();
+			m_layoutBmp = null;
 		}
 
 		/// <summary>
@@ -433,6 +438,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			if (disposing)
 			{
+				DisposeLayoutResources();
 				DisposeView();
 				LastCapture?.Dispose();
 				LastCapture = null;

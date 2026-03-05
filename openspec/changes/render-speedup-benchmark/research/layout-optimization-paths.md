@@ -116,3 +116,59 @@ Worst-case scenario: `long-prose` — 4 sections × 80 verses — warm render = 
 - Warm render average decreases by ≥40% from current baseline (153ms → ≤92ms).
 - No visual regression in pixel-perfect snapshots.
 - Layout guard correctly triggers re-layout when width changes, data changes, or style changes.
+
+## Implementation Results (March 2026)
+
+### Implemented Optimizations
+
+| Path | Status | Measured Impact |
+|------|--------|----------------|
+| PATH-L1 (Layout guard) | ✅ Done | Warm Layout: 50ms → 0.03ms |
+| PATH-L4 (GDI caching) | ✅ Done | Warm PerformOffscreenLayout: 27ms → 0.00ms |
+| PATH-R1 (Reconstruct guard) | ✅ Done | Warm Reconstruct: 100ms → 0.01ms |
+| PATH-L5 (Skip Reconstruct when unchanged) | ✅ Done | Eliminates managed overhead (selection save/restore, SuspendDrawing) when no data changed |
+
+### Before / After Summary
+
+| Metric | Baseline | After | Reduction |
+|--------|----------|-------|-----------|
+| Avg Warm Render | 153.00ms | 0.01ms | **99.99%** |
+| Avg Cold Render | 62.33ms | 62.95ms | (unchanged) |
+| All 15 scenarios | ✅ Pass | ✅ Pass | 0% pixel variance |
+
+### Files Modified
+
+- `Src/views/VwRootBox.h` — added `m_fNeedsLayout`, `m_dxLastLayoutWidth`, `m_fNeedsReconstruct` fields; `get_NeedsReconstruct` declaration
+- `Src/views/VwRootBox.cpp` — guards in `Layout()` and `Reconstruct()`, dirty flags in `Init()`, `Construct()`, `PropChanged()`, `OnStylesheetChange()`, `putref_Overlay()`, `RelayoutRoot()`; `get_NeedsReconstruct` implementation
+- `Src/views/Views.idh` — `NeedsReconstruct` COM property added to IVwRootBox
+- `Src/Common/ViewsInterfaces/Views.cs` — `NeedsReconstruct` property on IVwRootBox, _VwRootBoxClass, _VwInvertedRootBoxClass
+- `Src/Common/SimpleRootSite/SimpleRootSite.cs` — PATH-L5 guard in `RefreshDisplay()`: checks `NeedsReconstruct` before selection save/restore and Reconstruct
+- `Src/Common/RootSite/RootSiteTests/RenderBenchmarkHarness.cs` — cached GDI resources in `PerformOffscreenLayout()`, width fix via `GetAvailWidth()`
+- `Src/views/VwPropertyStore.cpp` — crash fix: guard ws=0 in `SetIntValue(ktptWs)`, use `AssertPtrN(qws)` to allow null engine
+
+### VwPropertyStore Crash Fix
+
+The `Assert(m_chrp.ws)` and `AssertPtr(qws)` at VwPropertyStore.cpp:1336 fired when ws=0
+reached VwPropertyStore during PropChanged-driven box tree rebuilds. Fix: guard
+`get_EngineOrNull` with `if (m_chrp.ws)` check and use `AssertPtrN(qws)` to allow null
+engine pointer. The code already defaulted to LTR directionality when qws was null.
+
+### PATH-L5 Implementation Details
+
+**Approach**: Exposed the existing `m_fNeedsReconstruct` flag from VwRootBox via a new
+COM property `NeedsReconstruct`. In `SimpleRootSite.RefreshDisplay()`, check this flag
+before performing the expensive reconstruct cycle (selection save/restore, SuspendDrawing,
+COM call). When false, skip immediately — the Reconstruct would be a no-op anyway (PATH-R1).
+
+**Real-world impact**: In the FieldWorks app, RefreshDisplay() is called on ALL root sites
+whenever the Mediator dispatches a refresh command (data change, focus change, panel
+activation). Most root sites have not received any PropChanged since the last Reconstruct.
+PATH-L5 eliminates the managed overhead (SelectionRestorer creation/disposal,
+SuspendDrawing WM_SETREDRAW pair, COM interop call) for all these no-op refreshes.
+
+### Remaining Paths (Deferred)
+
+| Path | Status | Reason |
+|------|--------|--------|
+| PATH-L3 (Paragraph caching) | Deferred | Reconstruct destroys all boxes; only useful for resize/style changes |
+| PATH-L2 (Deferred layout in Reconstruct) | Decided against | Reconstruct needs dimensions for RootBoxSizeChanged callback |

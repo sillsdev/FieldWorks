@@ -198,6 +198,8 @@ public:
 
 	STDMETHOD(SetSpellingRepository)(IGetSpellChecker * pgsp);
 
+	STDMETHOD(get_NeedsReconstruct)(ComBool * pfNeeds);
+
 	// IServiceProvider methods
 	STDMETHOD(QueryService)(REFGUID guidService, REFIID riid, void ** ppv);
 
@@ -402,6 +404,10 @@ protected:
 	// and no structural mutation has occurred since the last successful Layout().
 	bool m_fNeedsLayout;        // true when internal state requires a full relayout
 	int m_dxLastLayoutWidth;    // width used for last successful Layout(), -1 if none
+
+	// PATH-R1 reconstruct guard: skip redundant Reconstruct() calls when no data
+	// or structural change has occurred since the last successful construction.
+	bool m_fNeedsReconstruct;   // true when data changed and full rebuild is warranted
 
 	ISilDataAccessPtr m_qsda; // data access object, for getting and setting properties
 
