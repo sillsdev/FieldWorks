@@ -134,7 +134,8 @@ param(
 	[switch]$SignInstaller,
 	[switch]$TraceCrashes,
 	[switch]$UseLocalLcm,
-	[string]$LocalLcmPath
+	[string]$LocalLcmPath,
+	[switch]$SkipDependencyCheck
 )
 
 $ErrorActionPreference = "Stop"
@@ -272,6 +273,17 @@ try {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
+
+		if (-not $SkipDependencyCheck) {
+			$verifyScript = Join-Path $PSScriptRoot "Build/Agent/Verify-FwDependencies.ps1"
+			if (Test-Path $verifyScript) {
+				Write-Host "Running dependency preflight..." -ForegroundColor Cyan
+				& $verifyScript -FailOnMissing
+				if ($LASTEXITCODE -ne 0) {
+					throw "Dependency preflight failed. Re-run with -SkipDependencyCheck only if you are actively debugging environment setup."
+				}
+			}
+		}
 
 		# Set architecture environment variable (x64-only)
 		$env:arch = 'x64'

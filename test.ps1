@@ -54,7 +54,8 @@ param(
     [switch]$ListTests,
     [ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
     [string]$Verbosity = "normal",
-    [switch]$Native
+    [switch]$Native,
+    [switch]$SkipDependencyCheck
 )
 
 $ErrorActionPreference = 'Stop'
@@ -88,6 +89,17 @@ try {
         # Initialize VS environment
         Initialize-VsDevEnvironment
         Test-CvtresCompatibility
+
+        if (-not $SkipDependencyCheck) {
+            $verifyScript = Join-Path $PSScriptRoot "Build/Agent/Verify-FwDependencies.ps1"
+            if (Test-Path $verifyScript) {
+                Write-Host "Running dependency preflight..." -ForegroundColor Cyan
+                & $verifyScript -FailOnMissing
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Dependency preflight failed. Re-run with -SkipDependencyCheck only if you are actively debugging environment setup."
+                }
+            }
+        }
 
         # Set architecture (x64-only)
         $env:arch = 'x64'
