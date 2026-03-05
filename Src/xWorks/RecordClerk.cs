@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The notification is passed on to any SDAs that understand it, including embedded ones.
 		/// </summary>
 		/// <param name="argument"></param>
-		public void OnItemDataModified(object argument)
+		private void ItemDataModified(object argument)
 		{
 			var da = m_list.VirtualListPublisher;
 			while (da != null)
@@ -2017,6 +2017,7 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
+			Subscriber.Unsubscribe(EventConstants.ItemDataModified, ItemDataModified);
 
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
@@ -2118,6 +2119,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
 			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
+			Subscriber.Subscribe(EventConstants.ItemDataModified, ItemDataModified);
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
