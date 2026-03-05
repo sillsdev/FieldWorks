@@ -5,7 +5,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 
 namespace GenerateHCConfig
 {
-	internal class ConsoleLogger : ILcmUI, IHCLoadErrorLogger
+	public class ConsoleLogger : ILcmUI, IHCLoadErrorLogger
 	{
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 

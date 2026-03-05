@@ -12,6 +12,7 @@ using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using SIL.Machine.FeatureModel;
+using SIL.FieldWorks.WordWorks.Parser;
 
 namespace HCSynthByGloss
 {
@@ -19,22 +20,6 @@ namespace HCSynthByGloss
 	// Since there is no LcmCache, we use other things
 	public class HcXmlTraceManager : ISynTraceManager
 	{
-		// Following moved from HCParser as we do not need anything else from HCParser
-		internal const string CRuleID = "ID";
-		internal const string FormID = "ID";
-		internal const string FormID2 = "ID2";
-		internal const string InflTypeID = "InflTypeID";
-		internal const string MsaID = "ID";
-		internal const string PRuleID = "ID";
-		internal const string SlotID = "SlotID";
-		internal const string TemplateID = "ID";
-
-		internal const string IsNull = "IsNull";
-		internal const string IsPrefix = "IsPrefix";
-		internal const string Env = "Env";
-		internal const string PrefixEnv = "PrefixEnv";
-		internal const string SuffixEnv = "SuffixEnv";
-
 		Language _lang;
 
 		public HcXmlTraceManager() { }
@@ -448,9 +433,9 @@ namespace HCSynthByGloss
 
 				case FailureReason.Pattern:
 					//Debug.Assert(aprule != null);
-					var env = (string)aprule.Allomorphs[subruleIndex].Properties[Env];
-					var prefixEnv = (string)aprule.Allomorphs[subruleIndex].Properties[PrefixEnv];
-					var suffixEnv = (string)aprule.Allomorphs[subruleIndex].Properties[SuffixEnv];
+					var env = (string)aprule.Allomorphs[subruleIndex].Properties[HCParser.Env];
+					var prefixEnv = (string)aprule.Allomorphs[subruleIndex].Properties[HCParser.PrefixEnv];
+					var suffixEnv = (string)aprule.Allomorphs[subruleIndex].Properties[HCParser.SuffixEnv];
 					if (env != null || prefixEnv != null || suffixEnv != null)
 					{
 						var reasonElem = new XElement(
@@ -687,7 +672,7 @@ namespace HCSynthByGloss
 
 		private XElement CreateMorphemeElement(Morpheme morpheme)
 		{
-			var msaID = (int?)morpheme.Properties[MsaID] ?? 0;
+			var msaID = (int?)morpheme.Properties[HCParser.MsaID] ?? 0;
 			//IMoMorphSynAnalysis msa;
 			//if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 			//	return null;

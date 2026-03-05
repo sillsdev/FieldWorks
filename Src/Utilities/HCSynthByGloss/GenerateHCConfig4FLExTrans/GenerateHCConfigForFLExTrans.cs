@@ -11,7 +11,6 @@ using SIL.LCModel.Utils;
 using SIL.Machine.Annotations;
 using SIL.Machine.Morphology.HermitCrab;
 using SIL.WritingSystems;
-using GenerateHCConfig;
 
 namespace SIL.GenerateHCConfigForFLExTrans
 {
@@ -41,7 +40,7 @@ namespace SIL.GenerateHCConfigForFLExTrans
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
 
 			var projectId = new ProjectIdentifier(flexDB);
-			var logger = new ConsoleLogger(synchronizeInvoke);
+			var logger = new GenerateHCConfig.ConsoleLogger(synchronizeInvoke);
 			var dirs = new NullFdoDirectories();
 			var settings = new LcmSettings { DisableDataMigration = true };
 			var progress = new NullThreadedProgress(synchronizeInvoke);
