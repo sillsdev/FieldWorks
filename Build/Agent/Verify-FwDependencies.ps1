@@ -12,7 +12,6 @@
     - .NET Framework 4.8.1 SDK & Targeting Pack
     - Windows SDK
     - WiX Toolset v6 (installer builds restore via NuGet)
-    - NuGet CLI
     - .NET SDK 8.x+
 
 .PARAMETER FailOnMissing
@@ -37,7 +36,9 @@
 [CmdletBinding()]
 param(
     [switch]$FailOnMissing,
-    [switch]$IncludeOptional
+    [switch]$IncludeOptional,
+    [switch]$Detailed,
+    [switch]$PassThru
 )
 
 $ErrorActionPreference = 'Stop'
@@ -52,11 +53,13 @@ function Test-Dependency {
     try {
         $result = & $Check
         if ($result) {
-            Write-Host "[OK]   $Name" -ForegroundColor Green
-            if ($result -is [string] -and $result.Length -gt 0 -and $result.Length -lt 100) {
-                Write-Host "       $result" -ForegroundColor DarkGray
+            if ($Detailed) {
+                Write-Host "[OK]   $Name" -ForegroundColor Green
+                if ($result -is [string] -and $result.Length -gt 0 -and $result.Length -lt 100) {
+                    Write-Host "       $result" -ForegroundColor DarkGray
+                }
             }
-            return @{ Name = $Name; Found = $true; Info = $result }
+            return @{ Name = $Name; Found = $true; Required = ($Required -eq "Required"); Info = $result }
         }
         else {
             throw "Check returned null/false"
@@ -102,15 +105,19 @@ function Find-DotNetFrameworkSdkTool {
 # MAIN SCRIPT
 # ============================================================================
 
-Write-Host "=== FieldWorks Dependency Verification ===" -ForegroundColor Cyan
-Write-Host ""
+if ($Detailed) {
+    Write-Host "=== FieldWorks Dependency Verification ===" -ForegroundColor Cyan
+    Write-Host ""
+}
 
 $results = @()
 
 # ----------------------------------------------------------------------------
 # Required Dependencies
 # ----------------------------------------------------------------------------
-Write-Host "--- Required Dependencies ---" -ForegroundColor Cyan
+if ($Detailed) {
+    Write-Host "--- Required Dependencies ---" -ForegroundColor Cyan
+}
 
 # .NET Framework targeting pack (4.8+)
 $results += Test-Dependency -Name ".NET Framework Targeting Pack (4.8+)" -Check {
@@ -177,16 +184,6 @@ $results += Test-Dependency -Name "al.exe (.NET Framework SDK)" -Check {
     throw "al.exe not found in Windows SDK NETFX tool folders"
 }
 
-# NuGet CLI (legacy — build uses dotnet restore since CPM migration)
-$results += Test-Dependency -Name "NuGet CLI (legacy)" -Required "Optional" -Check {
-    $nuget = Get-Command nuget.exe -ErrorAction SilentlyContinue
-    if ($nuget) {
-        $version = (& nuget.exe help 2>&1 | Select-Object -First 1)
-        return $version
-    }
-    throw "nuget.exe not found in PATH (no longer required; build uses dotnet restore)"
-}
-
 # .NET SDK
 $results += Test-Dependency -Name ".NET SDK" -Check {
     $dotnet = Get-Command dotnet.exe -ErrorAction SilentlyContinue
@@ -206,8 +203,22 @@ $results += Test-Dependency -Name "WiX Toolset (v6 via NuGet)" -Required "Option
         throw "Installer project not found: $wixProj"
     }
 
-    $wixProjText = Get-Content -LiteralPath $wixProj -Raw
-    if ($wixProjText -match "WixToolset\\.Sdk") {
+    [xml]$wixProjXml = Get-Content -LiteralPath $wixProj
+    $projectNode = $wixProjXml.Project
+    $hasWixSdk = $false
+
+    if ($projectNode -and $projectNode.Sdk -match 'WixToolset\.Sdk') {
+        $hasWixSdk = $true
+    }
+
+    if (-not $hasWixSdk) {
+        $wixSdkReference = $wixProjXml.SelectSingleNode("//*[local-name()='PackageReference' and @Include='WixToolset.Sdk']")
+        if ($wixSdkReference) {
+            $hasWixSdk = $true
+        }
+    }
+
+    if ($hasWixSdk) {
         return "Configured in $wixProj (restored during build)"
     }
 
@@ -218,8 +229,10 @@ $results += Test-Dependency -Name "WiX Toolset (v6 via NuGet)" -Required "Option
 # Optional Dependencies (for Serena MCP)
 # ----------------------------------------------------------------------------
 if ($IncludeOptional) {
-    Write-Host ""
-    Write-Host "--- Optional Dependencies (Serena MCP) ---" -ForegroundColor Cyan
+    if ($Detailed) {
+        Write-Host ""
+        Write-Host "--- Optional Dependencies (Serena MCP) ---" -ForegroundColor Cyan
+    }
 
     # Python
     $results += Test-Dependency -Name "Python" -Required "Optional" -Check {
@@ -265,8 +278,10 @@ if ($IncludeOptional) {
 # ----------------------------------------------------------------------------
 # Summary
 # ----------------------------------------------------------------------------
-Write-Host ""
-Write-Host "=== Summary ===" -ForegroundColor Cyan
+if ($Detailed) {
+    Write-Host ""
+    Write-Host "=== Summary ===" -ForegroundColor Cyan
+}
 
 $required = $results | Where-Object { $_.Required -ne $false }
 $missing = $required | Where-Object { -not $_.Found }
@@ -275,12 +290,12 @@ $optional = $results | Where-Object { $_.Required -eq $false }
 $totalRequired = ($required | Measure-Object).Count
 $foundRequired = ($required | Where-Object { $_.Found } | Measure-Object).Count
 
-Write-Host "Required: $foundRequired / $totalRequired found"
+Write-Host "Dependency preflight: required $foundRequired/$totalRequired found"
 
 if ($IncludeOptional) {
     $totalOptional = ($optional | Measure-Object).Count
     $foundOptional = ($optional | Where-Object { $_.Found } | Measure-Object).Count
-    Write-Host "Optional: $foundOptional / $totalOptional found"
+    Write-Host "Dependency preflight: optional $foundOptional/$totalOptional found"
 }
 
 if ($missing.Count -gt 0) {
@@ -297,8 +312,9 @@ if ($missing.Count -gt 0) {
     }
 }
 else {
-    Write-Host ""
-    Write-Host "All required dependencies are available!" -ForegroundColor Green
+    Write-Host "Dependency preflight: all required dependencies are available" -ForegroundColor Green
 }
 
-return $results
+if ($PassThru) {
+    return $results
+}
