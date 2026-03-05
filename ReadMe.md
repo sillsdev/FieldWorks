@@ -49,6 +49,14 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordere
 
 For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
 
+### Concurrent worktree builds/tests
+
+`build.ps1` and `test.ps1` use worktree-aware process cleanup, so running scripted builds/tests in different git worktrees does not kill each other.
+
+Within a single worktree, builds and tests run one at a time: scripts acquire a worktree lock and fail fast if another scripted workflow is active.
+
+You can tag lock ownership for diagnostics with `FW_BUILD_STARTED_BY=user|agent` (or `-StartedBy user|agent`).
+
 ## Building Installers (WiX 3 default, WiX 6 opt-in)
 
 Installer builds include the additional utilities (UnicodeCharEditor, LCMBrowser, MigrateSqlDbs, etc.).

@@ -42,7 +42,8 @@
 	is written next to the built executable. Useful for crash investigation.
 
 .PARAMETER NodeReuse
-	Enables or disables MSBuild node reuse (/nr). Default is true.
+	Enables or disables MSBuild node reuse (/nr). Default is false to improve
+	worktree isolation for concurrent local builds. Set to true to favor speed over isolation.
 
 .PARAMETER MsBuildArgs
 	Additional arguments to pass directly to MSBuild.
@@ -79,6 +80,10 @@
 
 .PARAMETER LogFile
 	Path to a file where the build output should be logged.
+
+.PARAMETER StartedBy
+	Optional actor label written to the worktree lock metadata (for example: user or agent).
+	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
 
 .PARAMETER TailLines
 	If specified, only displays the last N lines of output after the build completes.
@@ -120,7 +125,7 @@ param(
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
 	[string]$Verbosity = "minimal",
-	[bool]$NodeReuse = $true,
+	[bool]$NodeReuse = $false,
 	[string[]]$MsBuildArgs = @(),
 	[string]$LogFile,
 	[int]$TailLines,
@@ -134,10 +139,19 @@ param(
 	[switch]$SignInstaller,
 	[switch]$TraceCrashes,
 	[switch]$UseLocalLcm,
-	[string]$LocalLcmPath
+	[string]$LocalLcmPath,
+	[ValidateSet('user', 'agent', 'unknown')]
+	[string]$StartedBy = 'unknown'
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
+	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
+	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {
+		$StartedBy = $startedByFromEnv
+	}
+}
 
 if ($Configuration -like "--*") {
 	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
@@ -190,7 +204,10 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-Stop-ConflictingProcesses -IncludeOmniSharp
+$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
+
+# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
 
 $fwTasksSourcePath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
 $fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
@@ -268,7 +285,7 @@ function Get-BuildStampPath {
 }
 
 try {
-	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -Action {
+	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
@@ -528,6 +545,7 @@ try {
 		Write-Host "Running tests..." -ForegroundColor Cyan
 
 		$testArgs = @("-Configuration", $Configuration, "-NoBuild")
+		$testArgs += "-SkipWorktreeLock"
 		if ($TestFilter) {
 			$testArgs += @("-TestFilter", $TestFilter)
 		}
@@ -543,6 +561,7 @@ try {
 finally {
 	# Kill any lingering build processes that might hold file locks
 	Stop-ConflictingProcesses @cleanupArgs
+	Exit-WorktreeLock -LockHandle $worktreeLock
 }
 
 if ($testExitCode -ne 0) {
