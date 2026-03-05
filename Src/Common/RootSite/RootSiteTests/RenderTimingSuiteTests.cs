@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					ColdRenderMs = coldTiming.DurationMs,
 					WarmRenderMs = warmTiming.DurationMs,
 					PixelPerfectPass = contentOk,
-					MismatchDetails = contentNote
+					MismatchDetails = contentNote,
+					TraceEvents = new List<TraceEvent>(harness.TraceEvents)
 				};
 
 				m_results.Add(benchmarkResult);

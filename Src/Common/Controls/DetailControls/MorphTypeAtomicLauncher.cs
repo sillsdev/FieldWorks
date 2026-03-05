@@ -384,8 +384,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{
 			DataTree dtree = Slice.ContainingDataTree;
-			if (dtree == null)
-				return;
 			dtree.DoNotRefresh = true;	// don't let the datatree repeatedly redraw itself...
 			entry.ReplaceMoForm(origForm, newForm);
 			newForm.MorphTypeRA = type;

@@ -172,12 +172,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (slice != null)
 			{
-				var containingDataTree = slice.ContainingDataTree;
-				if (containingDataTree == null)
-					return;
-
 				ClassAndPropInfo cpi = (ClassAndPropInfo)m_rgcpiCreateOptions[((MenuItem)sender).Index];
-				var cache = containingDataTree.Cache;
+				var cache = slice.ContainingDataTree.Cache;
 				int hvoOwner = cpi.hvoOwner;
 				int ihvoPosition = cpi.ihvoPosition;
 				if (ihvoPosition == ClassAndPropInfo.kposNotSet && cpi.fieldType == (int)CellarPropertyType.OwningSequence)
@@ -196,10 +192,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// We added something to the object of the current slice...almost certainly it
 					// will be something that will display under this node...if it is still collapsed,
 					// expand it to show the thing inserted.
-					slice.EnsureHwndCreated();
-					var treeNode = slice.TreeNode;
-					if (treeNode != null)
-						treeNode.ToggleExpansion(slice.IndexInContainer);
+					slice.TreeNode.ToggleExpansion(slice.IndexInContainer);
 				}
 				Slice child = slice.ExpandSubItem(hvoNew);
 				if (child != null)
@@ -254,10 +247,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public ContextMenuHelper(SliceTreeNode stn)
 			{
 				m_sliceTreeNode = stn;
-				var containingDataTree = m_sliceTreeNode.Slice.ContainingDataTree;
-				m_cache = containingDataTree != null
-					? containingDataTree.Cache
-					: m_sliceTreeNode.Slice.Cache;
+				m_cache= m_sliceTreeNode.Slice.ContainingDataTree.Cache;
 				m_mdc = m_cache.DomainDataByFlid.MetaDataCache;
 			}
 
@@ -332,16 +322,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			public void HandleDeleteMenuItem(Object src, System.EventArgs ea)
 			{
-				var containingDataTree = m_sliceTreeNode.Slice.ContainingDataTree;
-				if (containingDataTree == null)
-					return;
-
 				m_cache.DomainDataByFlid.BeginUndoTask(DetailControlsStrings.ksUndoDelete,
 					DetailControlsStrings.ksRedoDelete);
 				using (CmObjectUi ui = CmObjectUi.MakeUi(m_cache, m_hvoDeleteTarget))
 				{
-					ui.Mediator = containingDataTree.Mediator;
-					ui.PropTable = containingDataTree.PropTable;
+					ui.Mediator = m_sliceTreeNode.Slice.ContainingDataTree.Mediator;
+					ui.PropTable = m_sliceTreeNode.Slice.ContainingDataTree.PropTable;
 					ui.DeleteUnderlyingObject();
 				}
 				m_cache.DomainDataByFlid.EndUndoTask();

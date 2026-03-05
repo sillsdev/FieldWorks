@@ -15,8 +15,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class ViewSlice: Slice
 	{
-		private bool m_rootSiteEventsWired;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -77,12 +75,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Dispose managed resources here.
 				SimpleRootSite rs = RootSite;
-				if (rs != null && m_rootSiteEventsWired)
+				if (rs != null)
 				{
 					rs.LayoutSizeChanged -= new EventHandler(this.HandleLayoutSizeChanged);
 					rs.Enter -= new EventHandler(ViewSlice_Enter);
 					rs.SizeChanged -= new EventHandler(rs_SizeChanged);
-					m_rootSiteEventsWired = false;
 				}
 			}
 
@@ -110,8 +107,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 				base.Control = value;
 				SimpleRootSite rs = RootSite;
-				if (rs == null)
-					return;
 				// Don't allow it to lay out until we have a realistic size, while the DataTree is
 				// actually being laid out.
 				rs.AllowLayout = false;
@@ -119,6 +114,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Embedded forms should not do their own scrolling. Rather we resize them as needed, and scroll the whole
 				// DE view.
 				rs.AutoScroll = false;
+				rs.LayoutSizeChanged += new EventHandler(this.HandleLayoutSizeChanged);
+				rs.SizeChanged += new EventHandler(rs_SizeChanged);
+
 
 				// This is usually done by the DataTree method that creates and initializes slices.
 				// However, for most view slices doing it before the control is set does no good.
@@ -129,17 +127,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (ConfigurationNode != null)
 					OverrideBackColor(XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "backColor"));
 			}
-		}
-
-		private void EnsureRootSiteEventsHooked()
-		{
-			SimpleRootSite rs = RootSite;
-			if (rs == null || m_rootSiteEventsWired)
-				return;
-
-			rs.LayoutSizeChanged += new EventHandler(this.HandleLayoutSizeChanged);
-			rs.SizeChanged += new EventHandler(rs_SizeChanged);
-			m_rootSiteEventsWired = true;
 		}
 
 		void rs_SizeChanged(object sender, EventArgs e)
@@ -196,27 +183,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			base.Install(parent);
 
-			if (!parent.DeferSliceHwndCreationEnabled)
-				EnsureRootSiteEventsHooked();
-
 			rs.SetAccessibleName(this.Label);
-		}
-
-		protected internal override void EnsureHwndCreated()
-		{
-			base.EnsureHwndCreated();
-
-			RootSite rs = RootSite;
-			if (rs == null)
-				return;
-
-			DataTree parent = ContainingDataTree;
-			rs.Cache = Cache;
-			if (parent != null && rs.StyleSheet != parent.StyleSheet)
-				rs.StyleSheet = parent.StyleSheet;
-
-			EnsureRootSiteEventsHooked();
-			rs.SetAccessibleName(Label);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -329,8 +296,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void ViewSlice_Enter(object sender, System.EventArgs e)
 		{
 			RootSite.Focus();
-			if (ContainingDataTree != null)
-				ContainingDataTree.ActiveControl = RootSite;
+			ContainingDataTree.ActiveControl = RootSite;
 		}
 
 		/// <summary>

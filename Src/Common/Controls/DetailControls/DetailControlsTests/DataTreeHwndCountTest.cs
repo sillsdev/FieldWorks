@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -110,71 +109,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"Baseline should have created at least one slice on first ShowObject.");
 			Assert.That(m_dtree.SliceInstallCreationCount, Is.EqualTo(m_dtree.Slices.Count),
 				"Baseline behavior rebuilds/reinstalls slices on same-root ShowObject refresh.");
-		}
-
-		[Test]
-		public void ShowObject_WithDeferredCreation_NotAllSlicesArePhysicallyInstalled()
-		{
-			m_dtree.DeferSliceHwndCreationEnabled = true;
-			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
-
-			m_parent.Show();
-			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
-			Application.DoEvents();
-
-			int totalSlices = m_dtree.Slices.Count;
-			int physicallyInstalled = m_dtree.Slices.Count(slice => slice.Parent == m_dtree);
-			int slicesWithTreeNode = m_dtree.Slices.Count(slice => slice.TreeNode != null);
-			int slicesWithHandles = m_dtree.Slices.Count(slice => slice.IsHandleCreated);
-
-			Assert.That(totalSlices, Is.GreaterThan(20),
-				"Test requires a substantial slice set to verify deferred physical installation behavior.");
-			Assert.That(physicallyInstalled, Is.GreaterThan(0),
-				"Visible/active slices should still be physically installed when deferred mode is enabled.");
-			Assert.That(physicallyInstalled, Is.LessThan(totalSlices),
-				"Deferred mode should avoid physically installing every slice immediately.");
-			Assert.That(slicesWithTreeNode, Is.EqualTo(physicallyInstalled),
-				"TreeNode creation should align with physical install status in deferred mode.");
-			Assert.That(slicesWithHandles, Is.EqualTo(physicallyInstalled),
-				"Only physically installed slices should own HWND handles immediately after initial layout.");
-		}
-
-		[Test]
-		public void DeferredLayout_AfterAllSlicesMaterialized_VirtualHeightMatchesActualHeight()
-		{
-			m_dtree.DeferSliceHwndCreationEnabled = true;
-			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
-
-			m_parent.Show();
-			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
-			Application.DoEvents();
-
-			int totalSlices = m_dtree.Slices.Count;
-			Assert.That(totalSlices, Is.GreaterThan(20),
-				"Test requires a substantial slice set to validate deferred virtual layout convergence.");
-
-			for (int index = 0; index < totalSlices; index++)
-			{
-				m_dtree.MakeSliceVisible(m_dtree.Slices[index], index);
-				Application.DoEvents();
-			}
-
-			m_dtree.PerformLayout();
-			Application.DoEvents();
-
-			int physicallyInstalled = m_dtree.Slices.Count(slice => slice.Parent == m_dtree);
-			Assert.That(physicallyInstalled, Is.EqualTo(totalSlices),
-				"After materializing all slices, every logical slice should be physically installed.");
-
-			int minHeight = m_dtree.GetMinFieldHeight();
-			int scrollOffset = -m_dtree.AutoScrollPosition.Y;
-			int actualBottom = m_dtree.Slices.Max(slice =>
-				slice.Top + scrollOffset + Math.Max(minHeight, slice.Height) + 1);
-			int virtualBottom = m_dtree.AutoScrollMinSize.Height;
-
-			Assert.That(Math.Abs(virtualBottom - actualBottom), Is.LessThanOrEqualTo(1),
-				$"Virtual layout bottom should converge to actual realized layout bottom within 1px. " +
-				$"Virtual={virtualBottom}, Actual={actualBottom}, Slices={totalSlices}.");
 		}
 
 		private ILexEntry CreateEntryWithSenses(int senseCount)

@@ -159,7 +159,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
 		bool m_postponePropChanged = true;
 		internal bool ConstructingSlices { get; private set; }
-		internal bool DeferSliceHwndCreationEnabled { get; set; }
 
 		public List<Slice> Slices { get; private set; }
 
@@ -181,9 +180,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Reset to -1 in CreateSlices (before fresh slice construction).
 		/// </summary>
 		private int m_lastVisibleHighWaterMark = -1;
-		private int[] m_sliceTop = Array.Empty<int>();
-		private int[] m_sliceHeight = Array.Empty<int>();
-		private bool m_sliceLayoutArraysValid;
 
 		#endregion Data members
 
@@ -265,7 +261,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void InsertSlice(int index, Slice slice)
 		{
 			InstallSlice(slice, index);
-			InvalidateSliceLayoutArrays();
 			// Skip per-slice tab index reset during bulk construction; CreateSlices()
 			// performs a single ResetTabIndices(0) after all slices are created.
 			if (!ConstructingSlices)
@@ -299,6 +294,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// HandleLayout1 sets correct widths + positions after construction completes.
 			if (!ConstructingSlices)
 			{
+				SplitContainer sc = slice.SplitCont;
 				AdjustSliceSplitPosition(slice);
 			}
 		}
@@ -318,7 +314,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void SetToolTip(Slice slice)
 		{
-			if (slice.ToolTip != null && slice.TreeNode != null)
+			if (slice.ToolTip != null)
 				ToolTip.SetToolTip(slice.TreeNode, slice.ToolTip);
 		}
 
@@ -427,7 +423,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal void RemoveDisposedSlice(Slice gonner)
 		{
 			Slices.Remove(gonner);
-			InvalidateSliceLayoutArrays();
 		}
 
 		private void RemoveSlice(Slice gonner, int index, bool fixToolTips)
@@ -437,7 +432,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Controls.Remove(gonner);
 			Debug.Assert(Slices[index] == gonner);
 			Slices.RemoveAt(index);
-			InvalidateSliceLayoutArrays();
 
 			// Reset CurrentSlice, if appropriate.
 			if (gonner == m_currentSlice)
@@ -523,7 +517,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				true);
 
 			Slices = new List<Slice>();
-			EnsureSliceLayoutArrayCapacity();
 			m_autoCustomFieldNodesDocument = new XmlDocument();
 			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");
 			m_autoCustomFieldNodesDocument.AppendChild(m_autoCustomFieldNodesDocRoot);
@@ -867,7 +860,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				Controls.Clear(); //clear the controls
 				Slices.Clear(); //empty the slices collection
-				InvalidateSliceLayoutArrays();
 				foreach (var slice in slices) //make sure the slices don't think they are active, dispose them
 				{
 					slice.SetCurrentState(false);
@@ -1733,19 +1725,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Clip-rect culling: skip separator lines entirely outside the paint region.
 				// Slice positions are monotonically increasing (set sequentially by HandleLayout1),
 				// so once we pass the bottom of the clip rect we can stop.
-				int top = GetSliceTop(i, slice);
-				int height = GetSliceHeight(i, slice);
-				int yPos = top + height;
+				Point loc = slice.Location;
+				int yPos = loc.Y + slice.Height;
 				if (yPos + maxLineExtent < clipRect.Top)
 					continue; // separator is above the paint region
-				if (top > clipRect.Bottom)
+				if (loc.Y > clipRect.Bottom)
 					break; // all remaining slices are below the paint region
 
 				Slice nextSlice = null;
 				if (i < Slices.Count - 1)
 					nextSlice = Slices[i + 1] as Slice;
 				Pen linePen = thinPen;
-				int xPos = slice.LabelIndent();
+				int xPos = loc.X + slice.LabelIndent();
 
 				if (nextSlice != null)
 				{
@@ -1768,7 +1759,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// regardless of whether they represent the same object.
 					bool fSameObject = nextSlice.SameObject;
 
-					xPos = Math.Min(xPos, nextSlice.LabelIndent());
+					xPos = Math.Min(xPos, loc.X + nextSlice.LabelIndent());
 					if (nextSlice.Weight == ObjectWeight.heavy)
 					{
 						linePen = thickPen;
@@ -3346,10 +3337,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (m_layoutState == LayoutStates.klsDoingLayout)
 						m_layoutState = LayoutStates.klsNormal;
 				}
-				int layoutBottom = GetVirtualLayoutBottom(yTop);
-				if (layoutBottom != AutoScrollMinSize.Height)
+				if (yTop != AutoScrollMinSize.Height)
 				{
-					AutoScrollMinSize = new Size(0, layoutBottom);
+					AutoScrollMinSize = new Size(0, yTop);
 					// If we don't do this, the system thinks only the previously hidden part of the
 					// data pane was affected, whereas all of it may have been if control heights
 					// changed.
@@ -3381,9 +3371,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>Index of the first slice that might be visible.</returns>
 		private int FindFirstPotentiallyVisibleSlice(int clipTop)
 		{
-			if (!m_sliceLayoutArraysValid)
-				return 0;
-
 			int lo = 0, hi = Slices.Count - 1;
 			int result = 0;
 
@@ -3394,9 +3381,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (slice == null)
 					return result; // Can't binary search past null; use best result so far
 
-				int sliceTop = GetSliceTop(mid, slice);
-				int sliceHeight = GetSliceHeight(mid, slice);
-				int sliceBottom = sliceTop + sliceHeight;
+				int sliceBottom = slice.Top + slice.Height;
 				if (sliceBottom <= clipTop)
 				{
 					// Slice ends at or before the clip top — entirely above viewport.
@@ -3430,8 +3415,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_fDisposing)
 				return clipRect.Bottom; // don't want to lay out while clearing slices in dispose!
 
-			EnsureSliceLayoutArrayCapacity();
-
 			int minHeight = GetMinFieldHeight();
 			int desiredWidth = ClientRectangle.Width;
 
@@ -3444,7 +3427,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			int yTop = AutoScrollPosition.Y;
 			int startIndex = 0;
-			int relayoutFrom = int.MaxValue;
 
 			// Paint-path optimization: binary search for the first potentially-visible
 			// slice, skipping above-viewport slices whose fSliceIsVisible would be false.
@@ -3462,7 +3444,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// Recover yTop for the start of this iteration.
 						// slice.Top was set to yTop AFTER heavyweight spacing was added,
 						// so undo the spacing to get the yTop at loop-entry for this slice.
-						yTop = GetSliceTop(startIndex, startSlice);
+						yTop = startSlice.Top;
 						if (startSlice.Weight == ObjectWeight.heavy)
 							yTop -= (HeavyweightRuleThickness + HeavyweightRuleAboveMargin);
 					}
@@ -3482,7 +3464,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				var tci = Slices[i] as Slice;
 				// Best guess of its height, before we ensure it's real.
-				int defHeight = tci == null ? minHeight : GetSliceHeight(i, tci);
+				int defHeight = tci == null ? minHeight : tci.Height;
 				bool fSliceIsVisible = !fFull && yTop + defHeight > clipRect.Top && yTop <= clipRect.Bottom;
 
 				//Debug.WriteLine(String.Format("DataTree.HandleLayout1({3},{4}): fSliceIsVisible = {5}, i = {0}, defHeight = {1}, yTop = {2}, desiredWidth = {7}, tci.Config = {6}",
@@ -3492,18 +3474,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// We cannot allow slice to be unreal; it's visible, and we're checking
 					// for real slices where they're visible
-					int estimatedHeight = defHeight;
 					tci = FieldAt(i); // ensures it becomes real if needed.
-					if (DeferSliceHwndCreationEnabled)
-					{
-						tci.EnsureHwndCreated();
-					}
-					else
-					{
-						var dummy = tci.Handle; // also force it to get a handle
-						if (tci.Control != null)
-							dummy = tci.Control.Handle; // and its control must too.
-					}
+					var dummy = tci.Handle; // also force it to get a handle
+					if (tci.Control != null)
+						dummy = tci.Control.Handle; // and its control must too.
 					if (yTop < 0)
 					{
 						// It starts above the top of the window. We need to adjust the scroll position
@@ -3514,18 +3488,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							tci.SetWidthForDataTreeLayout(desiredWidth);
 						desiredScrollPosition.Y -= (defHeight - tci.Height);
 					}
-
-					if (!fFull)
-					{
-						int actualHeight = Math.Max(minHeight, tci.Height);
-						if (actualHeight != estimatedHeight)
-							relayoutFrom = Math.Min(relayoutFrom, yTop);
-					}
 				}
 				if (tci == null)
 				{
-					m_sliceTop[i] = yTop;
-					m_sliceHeight[i] = minHeight;
 					yTop += minHeight;
 				}
 				else
@@ -3533,8 +3498,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// Move this slice down a little if it needs a heavy rule above it
 					if (tci.Weight == ObjectWeight.heavy)
 						yTop += HeavyweightRuleThickness + HeavyweightRuleAboveMargin;
-					m_sliceTop[i] = yTop;
-					if (tci.Parent == this && tci.Top != yTop)
+					if (tci.Top != yTop)
 						tci.Top = yTop;
 					// In the full layout pass (fFull), we must call SetWidthForDataTreeLayout
 					// on every slice to position them correctly. In the paint-check pass
@@ -3542,7 +3506,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// will be handled on the next full layout if width changed.
 					if (fFull || fSliceIsVisible)
 						tci.SetWidthForDataTreeLayout(desiredWidth);
-					m_sliceHeight[i] = Math.Max(minHeight, tci.Height);
 					yTop += tci.Height + 1;
 					if (fSliceIsVisible)
 					{
@@ -3561,57 +3524,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// (This might not always succeed, if the scroll range changed so as to make the old position invalid.
 			if (-AutoScrollPosition.Y != desiredScrollPosition.Y)
 				AutoScrollPosition = desiredScrollPosition;
-			if (!fFull && relayoutFrom != int.MaxValue)
-			{
-				int invalidTop = Math.Max(0, relayoutFrom);
-				int invalidHeight = Math.Max(1, ClientRectangle.Height - invalidTop);
-				Invalidate(new Rectangle(0, invalidTop, ClientRectangle.Width, invalidHeight));
-			}
-			if (fFull)
-				m_sliceLayoutArraysValid = true;
 			return yTop - AutoScrollPosition.Y;
-		}
-
-		private void EnsureSliceLayoutArrayCapacity()
-		{
-			int sliceCount = Slices == null ? 0 : Slices.Count;
-			if (m_sliceTop.Length != sliceCount)
-				Array.Resize(ref m_sliceTop, sliceCount);
-			if (m_sliceHeight.Length != sliceCount)
-				Array.Resize(ref m_sliceHeight, sliceCount);
-		}
-
-		private void InvalidateSliceLayoutArrays()
-		{
-			m_sliceLayoutArraysValid = false;
-			EnsureSliceLayoutArrayCapacity();
-		}
-
-		private int GetSliceTop(int index, Slice slice)
-		{
-			if (index >= 0 && index < m_sliceTop.Length)
-				return m_sliceTop[index];
-			return slice.Top;
-		}
-
-		private int GetSliceHeight(int index, Slice slice)
-		{
-			int minHeight = GetMinFieldHeight();
-			if (index >= 0 && index < m_sliceHeight.Length && m_sliceHeight[index] > 0)
-				return Math.Max(minHeight, m_sliceHeight[index]);
-			if (slice.Parent == this || slice.IsHandleCreated)
-				return Math.Max(minHeight, slice.Height);
-			return Math.Max(minHeight, slice.GetEstimatedHeightForVirtualLayout());
-		}
-
-		private int GetVirtualLayoutBottom(int fallbackBottom)
-		{
-			if (!m_sliceLayoutArraysValid || Slices.Count == 0)
-				return fallbackBottom;
-
-			int lastIndex = Slices.Count - 1;
-			int virtualBottom = m_sliceTop[lastIndex] + m_sliceHeight[lastIndex] + 1;
-			return Math.Max(fallbackBottom, virtualBottom);
 		}
 
 		private void MakeSliceRealAt(int i)
@@ -3622,8 +3535,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var tci = Slices[i];
 			int oldHeight = tci == null ? GetMinFieldHeight() : tci.Height;
 			tci = FieldAt(i); // ensures it becomes real if needed.
-			if (DeferSliceHwndCreationEnabled)
-				tci.EnsureHwndCreated();
 			int desiredWidth = ClientRectangle.Width;
 			if (tci.Width != desiredWidth)
 				tci.SetWidthForDataTreeLayout(desiredWidth); // can have side effects, don't do unless needed.
@@ -3639,7 +3550,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// of the view before we started.
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 			// topAbs is the position of the slice relative to the top of the whole view contents now.
-			int topAbs = GetSliceTop(i, tci) - AutoScrollPosition.Y;
+			int topAbs = tci.Top - AutoScrollPosition.Y;
 			MakeSliceVisible(tci); // also required for it to be a real tab stop.
 
 			if (topAbs < desiredScrollPosition.Y)
@@ -3650,19 +3561,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (-AutoScrollPosition.Y != desiredScrollPosition.Y)
 				AutoScrollPosition = desiredScrollPosition;
-
-			int minHeight = GetMinFieldHeight();
-			if (i >= 0 && i < m_sliceHeight.Length)
-			{
-				int actualHeight = Math.Max(minHeight, tci.Height);
-				if (m_sliceHeight[i] != actualHeight)
-				{
-					m_sliceHeight[i] = actualHeight;
-					int invalidTop = Math.Max(0, GetSliceTop(i, tci));
-					int invalidHeight = Math.Max(1, ClientRectangle.Height - invalidTop);
-					Invalidate(new Rectangle(0, invalidTop, ClientRectangle.Width, invalidHeight));
-				}
-			}
 		}
 
 		/// <summary>
@@ -3676,9 +3574,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </param>
 		internal void MakeSliceVisible(Slice tci, int knownIndex = -1)
 		{
-			if (DeferSliceHwndCreationEnabled)
-				tci.EnsureHwndCreated();
-
 			// It intersects the screen so it needs to be visible.
 			if (!tci.Visible)
 			{

@@ -145,8 +145,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected void RefreshTree(object sender, EventArgs args)
 		{
 			CheckDisposed();
-			if (ContainingDataTree != null)
-				ContainingDataTree.RefreshList(false);
+			ContainingDataTree.RefreshList(false);
 		}
 
 		public override void ShowSubControls()
@@ -171,13 +170,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int hMin = ContainingDataTree.GetMinFieldHeight();
 			int h1 = view.RootBox.Height;
 			Debug.Assert(e.Height == h1);
-			var treeNode = TreeNode;
-			int hOld = treeNode == null ? 0 : treeNode.Height;
+			int hOld = TreeNode.Height;
 			int hNew = Math.Max(h1, hMin) + 3;
 			if (hNew > hOld)
 			{
-				if (treeNode != null)
-					treeNode.Height = hNew;
+				TreeNode.Height = hNew;
 				arl.Height = hNew - 1;
 				view.Height = hNew - 1;
 				Height = hNew;
@@ -187,8 +184,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (ContainingDataTree == null)
-				return;
 			if (Width == m_dxLastWidth)
 				return;
 			m_dxLastWidth = Width; // BEFORE doing anything, actions below may trigger recursive call.

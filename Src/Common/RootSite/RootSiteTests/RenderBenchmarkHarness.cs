@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -29,8 +30,10 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		private readonly LcmCache m_cache;
 		private readonly RenderScenario m_scenario;
 		private readonly RenderEnvironmentValidator m_environmentValidator;
+		private readonly List<TraceEvent> m_traceEvents = new List<TraceEvent>();
 		private DummyBasicView m_view;
 		private bool m_disposed;
+		private double m_traceTimelineMs;
 
 		/// <summary>
 		/// Gets the last render timing result.
@@ -41,6 +44,11 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// Gets the last captured bitmap (may be null if capture failed).
 		/// </summary>
 		public Bitmap LastCapture { get; private set; }
+
+		/// <summary>
+		/// Gets a snapshot of per-stage trace events captured for this harness instance.
+		/// </summary>
+		public IReadOnlyList<TraceEvent> TraceEvents => m_traceEvents.ToArray();
 
 		/// <summary>
 		/// Gets the environment hash for the current rendering context.
@@ -68,13 +76,25 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// <returns>The timing result for the cold render.</returns>
 		public RenderTimingResult ExecuteColdRender(int width = 800, int height = 600)
 		{
+			ResetTraceEvents();
 			DisposeView();
 
 			var stopwatch = Stopwatch.StartNew();
 
-			m_view = CreateView(width, height);
-			m_view.MakeRoot(m_scenario.RootObjectHvo, m_scenario.RootFlid, m_scenario.FragmentId);
-			PerformOffscreenLayout(width, height);
+			m_view = MeasureStage(
+				"CreateView",
+				() => CreateView(width, height),
+				new Dictionary<string, string> { { "phase", "cold" } });
+
+			MeasureStage(
+				"MakeRoot",
+				() => m_view.MakeRoot(m_scenario.RootObjectHvo, m_scenario.RootFlid, m_scenario.FragmentId),
+				new Dictionary<string, string> { { "phase", "cold" } });
+
+			MeasureStage(
+				"PerformOffscreenLayout",
+				() => PerformOffscreenLayout(width, height),
+				new Dictionary<string, string> { { "phase", "cold" } });
 
 			if (m_view.RootBox != null && (m_view.RootBox.Width <= 0 || m_view.RootBox.Height <= 0))
 			{
@@ -108,8 +128,15 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var stopwatch = Stopwatch.StartNew();
 
 			// Force a full relayout to simulate warm render
-			m_view.RootBox?.Reconstruct();
-			PerformOffscreenLayout(m_view.Width, m_view.Height);
+			MeasureStage(
+				"Reconstruct",
+				() => m_view.RootBox?.Reconstruct(),
+				new Dictionary<string, string> { { "phase", "warm" } });
+
+			MeasureStage(
+				"PerformOffscreenLayout",
+				() => PerformOffscreenLayout(m_view.Width, m_view.Height),
+				new Dictionary<string, string> { { "phase", "warm" } });
 
 			stopwatch.Stop();
 
@@ -132,6 +159,15 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		{
 			if (m_view?.RootBox == null) return;
 
+			// Use the same width the site reports to Reconstruct, so the
+			// PATH-L1 layout guard can detect truly redundant calls.
+			int layoutWidth = m_view.GetAvailWidth(m_view.RootBox);
+
+			// PATH-L1 diagnostic: log width values and Layout timing to file
+			var diagPath = System.IO.Path.Combine(
+				System.IO.Path.GetTempPath(),
+				"PATH_L1_diag.log");
+
 			// Create a temp bitmap to get a strictly compatible HDC
 			using (var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb))
 			using (var g = Graphics.FromImage(bmp))
@@ -144,7 +180,11 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 					((IVwGraphicsWin32)vwGraphics).Initialize(hdc);
 					try
 					{
-						m_view.RootBox.Layout(vwGraphics, width);
+						var sw = Stopwatch.StartNew();
+						m_view.RootBox.Layout(vwGraphics, layoutWidth);
+						sw.Stop();
+						System.IO.File.AppendAllText(diagPath,
+							$"layoutWidth={layoutWidth} Layout={sw.Elapsed.TotalMilliseconds:F3}ms\n");
 					}
 					finally
 					{
@@ -183,29 +223,36 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				var width = m_view.Width;
 				var height = m_view.Height;
 
+				Bitmap bitmap = null;
+				MeasureStage(
+					"PrepareToDraw",
+					() => bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb),
+					new Dictionary<string, string> { { "phase", "capture" } });
+
 				// Create bitmap and get its Graphics/HDC
-				var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 				using (var graphics = Graphics.FromImage(bitmap))
 				{
 					// Fill with white background first
 					graphics.Clear(Color.White);
 
-					IntPtr hdc = graphics.GetHdc();
-					try
-					{
-						// Create the draw buffer and render the root box directly
-						var vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered();
-						var clientRect = new Rect(0, 0, width, height);
-
-						// Use white background (BGR format: 0x00FFFFFF)
-						const uint whiteColor = 0x00FFFFFF;
-
-						vdrb.DrawTheRoot(m_view.RootBox, hdc, clientRect, whiteColor, true, m_view);
-					}
-					finally
-					{
-						graphics.ReleaseHdc(hdc);
-					}
+					MeasureStage(
+						"DrawTheRoot",
+						() =>
+						{
+							IntPtr hdc = graphics.GetHdc();
+							try
+							{
+								var vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered();
+								var clientRect = new Rect(0, 0, width, height);
+								const uint whiteColor = 0x00FFFFFF;
+								vdrb.DrawTheRoot(m_view.RootBox, hdc, clientRect, whiteColor, true, m_view);
+							}
+							finally
+							{
+								graphics.ReleaseHdc(hdc);
+							}
+						},
+						new Dictionary<string, string> { { "phase", "capture" } });
 				}
 
 				LastCapture = bitmap;
@@ -216,6 +263,41 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				Trace.TraceWarning($"[RenderBenchmarkHarness] View capture failed: {ex.Message}");
 				return null;
 			}
+		}
+
+		private void ResetTraceEvents()
+		{
+			m_traceEvents.Clear();
+			m_traceTimelineMs = 0;
+		}
+
+		private void MeasureStage(string stage, Action action, Dictionary<string, string> context = null)
+		{
+			var stopwatch = Stopwatch.StartNew();
+			action();
+			stopwatch.Stop();
+			RecordStage(stage, stopwatch.Elapsed.TotalMilliseconds, context);
+		}
+
+		private T MeasureStage<T>(string stage, Func<T> func, Dictionary<string, string> context = null)
+		{
+			var stopwatch = Stopwatch.StartNew();
+			T result = func();
+			stopwatch.Stop();
+			RecordStage(stage, stopwatch.Elapsed.TotalMilliseconds, context);
+			return result;
+		}
+
+		private void RecordStage(string stage, double durationMs, Dictionary<string, string> context)
+		{
+			m_traceEvents.Add(new TraceEvent
+			{
+				Stage = stage,
+				StartTimeMs = m_traceTimelineMs,
+				DurationMs = durationMs,
+				Context = context
+			});
+			m_traceTimelineMs += durationMs;
 		}
 
 		/// <summary>

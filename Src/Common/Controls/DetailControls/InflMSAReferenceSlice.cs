@@ -105,11 +105,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var source = (AtomicReferenceLauncher)sender;
 			Debug.Assert(Control == source);
 			Debug.Assert(Object is IMoInflAffMsa);
-			var containingDataTree = ContainingDataTree;
-			if (containingDataTree == null)
-				return;
 
-			int idxSender = containingDataTree.Slices.IndexOf(this);
+			int idxSender = ContainingDataTree.Slices.IndexOf(this);
 
 			int otherFlid = MoInflAffMsaTags.kflidSlots;
 			Slice otherSlice = null;
@@ -124,7 +121,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					&& (otherSlice == null
 						|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
 				{
-					otherSlice = containingDataTree.Slices[idxOther--];
+					otherSlice = ContainingDataTree.Slices[idxOther--];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
 						break;
 					otherSlice = null;
@@ -132,14 +129,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 
 			// Check for following slices, if we didn't get one earlier.
-			if (otherSlice == null && idxSender < containingDataTree.Slices.Count)
+			if (otherSlice == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (idxOther < containingDataTree.Slices.Count
+				while (idxOther < ContainingDataTree.Slices.Count
 					&& (otherSlice == null
 						|| (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.Object == Object)))
 				{
-					otherSlice = containingDataTree.Slices[idxOther++];
+					otherSlice = ContainingDataTree.Slices[idxOther++];
 					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
 						break;
 					otherSlice = null;

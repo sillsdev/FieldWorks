@@ -85,3 +85,16 @@
 **Acceptance guard**: Each optimization must show relative improvement % over its own baseline run; no absolute ms thresholds (targets are % improvement).
 
 **Feature flags**: Ship optimizations behind environment variable flags (e.g., `FW_PERF_COLLAPSE_DEFAULT`, `FW_PERF_ASYNC_LOAD`) for gradual rollout and rollback. See `research/FORMS_SPEEDUP_PLAN.md` Feature Flags section.
+
+## Phase 8: Layout & Reconstruct Optimization (Native Views Engine)
+
+**Purpose**: Eliminate redundant layout passes in the C++ Views engine that cause double-work during warm renders. Analysis shows Reconstruct (44.5%) + PerformOffscreenLayout (45.1%) together consume 89.6% of warm render time, and the second layout pass is provably redundant. See `research/layout-optimization-paths.md`.
+
+- [ ] PATH-L1 Width-invariant layout guard — add `m_fNeedsLayout` + `m_dxLastLayoutWidth` dirty-flag to `VwRootBox::Layout()`. When called with same width and box tree is not dirty, return immediately. Set dirty in `Construct()`, `PropChanged()`, `OnStylesheetChange()`, `putref_Overlay()`. Expected: eliminates Layout #2, ~45% of warm render time.
+- [ ] PATH-L4 Harness double-layout elimination — update `RenderBenchmarkHarness.cs` warm render path to not call `PerformOffscreenLayout()` after `Reconstruct()` since Reconstruct already includes Layout. Cache the offscreen bitmap/VwGraphics objects. Expected: eliminates bitmap alloc + COM overhead, ~5-15ms per render.
+- [ ] PATH-L1-VERIFY Run full benchmark suite and compare before/after timing evidence.
+
+**Deferred** (future iterations):
+- [ ] PATH-L5 Skip Reconstruct when data unchanged — track data version in `SimpleRootSite.RefreshDisplay()`.
+- [ ] PATH-L3 Per-paragraph layout caching — dirty-flag line-breaking in `VwParagraphBox::DoLayout()`.
+- [ ] PATH-L2 Deferred layout in Reconstruct — remove internal `Layout()` call from `Reconstruct()` (blocked: `RootBoxSizeChanged` callback needs dimensions immediately).

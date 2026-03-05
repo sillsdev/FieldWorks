@@ -1,3 +1,7 @@
+## Status (March 2026)
+
+This design is retained for reference only. Implementation is currently scoped to **Phase 0 measurement baseline**; deferred HWND creation and virtualization behavior are deferred and reverted in this branch.
+
 ## Context
 
 This change addresses the #1 remaining render performance bottleneck in FieldWorks: excessive HWND allocation in the DataTree detail pane. Each of the 73 Slice subclasses creates 6+ Win32 HWNDs (UserControl + SplitContainer + 2×SplitterPanel + SliceTreeNode + content control). A pathological 253-slice lexical entry allocates ~1,500 kernel USER objects just for the detail pane.
@@ -15,13 +19,6 @@ Full research is in:
 **Goals**
 - Achieve 80-95% HWND reduction for the common case (user views/edits the first screen of fields in an entry).
 - Maintain identical user-visible behavior — no visual changes, no functional regressions.
-
-### Render Invariance Rule
-
-For this change, render snapshots are a hard regression gate:
-- `DataTreeRenderTests.*.verified.png` files must not be modified.
-- `RenderBaseline` failures indicate behavioral drift and must be fixed in code.
-- Baseline promotion (`*.received.png` -> `*.verified.png`) is not an allowed resolution path.
 - Preserve existing focus management, Tab navigation, accessibility, and IME behavior.
 - Add measurement infrastructure to quantify and regression-gate HWND counts.
 - Deliver incrementally with test gates between each phase.
@@ -59,17 +56,6 @@ A new method `Slice.EnsureHwndCreated()` is the sole entry point for HWND creati
 4. Subscribes HWND-dependent events (SplitterMoved, etc.)
 
 All paths that need an HWND (focus, Tab navigation, `CurrentSlice` setter, `HandleLayout1` visibility) already call `MakeSliceVisible`, which will call `EnsureHwndCreated()`.
-
-#### Orchestration ownership (implemented)
-
-Two implementation paths were considered for keeping `Slice` maintainable while continuing grow-only virtualization:
-
-1. **Keep orchestration inline in `Slice`** with additional private helper methods.
-	- Lowest churn, but continues to mix domain behavior, UI behavior, and virtualization lifecycle flags in one class.
-2. **Extract lifecycle orchestration into a dedicated coordinator class** and keep `Slice` as facade.
-	- Slightly higher local churn, but cleaner separation of responsibilities and easier targeted testing.
-
-Path 2 was selected and implemented with a low-risk, low-refactor approach: a dedicated `SliceVirtualizationCoordinator` (nested in `Slice`) now owns deferred/physical install orchestration while preserving existing public behavior and call sites.
 
 ### 4) Virtual layout arrays for positioning
 
