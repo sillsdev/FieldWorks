@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../../LexText/ParserCore/ParserCore.csproj" />
     <ProjectReference Include="../../XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
   <ItemGroup>

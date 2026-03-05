@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	internal class InvalidAffixProcessException : Exception
+	public class InvalidAffixProcessException : Exception
 	{
 		private readonly IMoAffixProcess m_affixProcess;
 		private readonly bool m_invalidLhs;

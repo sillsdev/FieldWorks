@@ -31,20 +31,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
 
+		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
 		internal const string FormID = "ID";
 		internal const string FormID2 = "ID2";
-		internal const string InflTypeID = "InflTypeID";
-		internal const string MsaID = "ID";
+		public const string InflTypeID = "InflTypeID";
+		public const string MsaID = "ID";
 		internal const string PRuleID = "ID";
 		internal const string SlotID = "SlotID";
 		internal const string TemplateID = "ID";
 
 		internal const string IsNull = "IsNull";
 		internal const string IsPrefix = "IsPrefix";
-		internal const string Env = "Env";
-		internal const string PrefixEnv = "PrefixEnv";
-		internal const string SuffixEnv = "SuffixEnv";
+		public const string Env = "Env";
+		public const string PrefixEnv = "PrefixEnv";
+		public const string SuffixEnv = "SuffixEnv";
 
 		public HCParser(LcmCache cache)
 		{
