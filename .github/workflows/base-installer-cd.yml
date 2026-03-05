@@ -55,7 +55,7 @@ jobs:
       - name: Compute build number
         id: build_number
         run: |
-          $lastJenkins = 1100  # The last base build from jenkins, rounded to the next hundred
+          $lastJenkins = 1000  # The last base build from jenkins, rounded to the nearest thousand
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
@@ -103,17 +103,35 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      - name: Download .NET 461 targeting pack
-        uses: suisei-cn/actions-download-file@9f75b8c2dad5ccced7509c44a3b881c5613abde2 # 1.6.1
-        id: downloadfile  # Remember to give an ID if you need the output filename
-        with:
-            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
-            target: public/
+      - name: Ensure .NET Framework 4.8 targeting pack
+        shell: pwsh
+        run: |
+          # Check registry Release key for .NET Framework 4.8 (Release >= 528040 indicates 4.8)
+          $targetRelease = 528040
+          try {
+            $releaseKey = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -Name Release -ErrorAction Stop).Release
+          } catch {
+            $releaseKey = $null
+          }
 
-      - name: Install .NET 461 targeting pack
-        shell: cmd
-        working-directory: public
-        run: NDP461-DevPack-KB3105179-ENU.exe /q
+          if (-not $releaseKey -or $releaseKey -lt $targetRelease) {
+            Write-Host "Detected .NET release $releaseKey. Installing .NET Framework 4.8 Developer Pack..."
+            $installerUrl = "https://download.microsoft.com/download/9/5/0/9500E0A8-3C76-45F9-8D4B-8D2A7F2C1A3A/NDP48-DevPack-KB4486153-ENU.exe"
+            $installer = Join-Path $env:RUNNER_TEMP "NDP48-DevPack-KB4486153-ENU.exe"
+
+            Invoke-WebRequest -Uri $installerUrl -OutFile $installer -UseBasicParsing -TimeoutSec 120
+
+            Write-Host "Starting installer..."
+            $proc = Start-Process -FilePath $installer -ArgumentList "/quiet","/norestart" -Wait -PassThru
+            if ($proc.ExitCode -ne 0) {
+              Write-Error "Failed to install .NET 4.8 Developer Pack. ExitCode: $($proc.ExitCode)"
+              exit $proc.ExitCode
+            }
+            Write-Host ".NET 4.8 Developer Pack installation finished."
+          }
+          else {
+            Write-Host ".NET Framework 4.8 (Release=$releaseKey) already present. Skipping install."
+          }
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
@@ -134,24 +152,14 @@ jobs:
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
 
-      - name: Prepare for build
-        shell: cmd
-        working-directory: Build
-        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
-
       - name: Build and run tests
         id: build_installer
         shell: powershell
         run: |
-          cd Build
-          .\build64.bat /t:BuildBaseInstaller "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
-          cd ..
-          cd BuildDir
-          md5sum *.exe > md5.txt
+          .\build.ps1 -BuildInstaller -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Build Output
         shell: powershell
-        working-directory: Build
         run: |
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {
@@ -298,5 +306,5 @@ jobs:
           if-no-files-found: warn
           name: build-logs
           path: |
-            Build/*.log
-            Build/*.binlog
+            *.log
+            *.binlog

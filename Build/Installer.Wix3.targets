@@ -28,5 +28,5 @@
   </Target>
 
   <Target Name="BuildInstaller" DependsOnTargets="VerifyWix3Inputs;BuildBaseInstaller" />
-  <Target Name="BuildInstallerWix3" DependsOnTargets="VerifyWix3Inputs;BuildBaseInstaller" />
+  <Target Name="BuildPatch" DependsOnTargets="VerifyWix3Inputs;BuildPatchInstaller" />
 </Project>

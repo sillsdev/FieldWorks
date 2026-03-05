@@ -47,8 +47,20 @@
 .PARAMETER MsBuildArgs
 	Additional arguments to pass directly to MSBuild.
 
+.PARAMETER LogFile
+	Path to a file where the build output should be logged.
+
+.PARAMETER TailLines
+	If specified, displays only the last N lines of output after the build completes.
+	Useful for CI/agent scenarios where you want to see recent output without piping.
+	The full output is still written to LogFile if specified.
+
 .PARAMETER BuildInstaller
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
+	This automatically enables -BuildAdditionalApps unless explicitly disabled.
+
+.PARAMETER BuildPatch
+	If set, builds the patch installer via Build/InstallerBuild.proj after the main build.
 	This automatically enables -BuildAdditionalApps unless explicitly disabled.
 
 .PARAMETER InstallerToolset
@@ -59,14 +71,14 @@
 	reusing existing binaries under Output/<Configuration>. For safety, this requires a build stamp from a
 	prior full build in the same configuration.
 
-.PARAMETER SignInstaller
-	Only used with -BuildInstaller. Enables local signing when signing tools are available.
-	By default, local installer builds capture files to sign later instead of signing.
-
 .PARAMETER ForceInstallerOnly
 	Only used with -InstallerOnly. Forces installer-only builds even when the git HEAD or dirty state
 	differs from the last full-build stamp, or when there are uncommitted changes outside FLExInstaller/.
 	Use only when you are sure the current Output/<Configuration> binaries are still what you want to package.
+
+.PARAMETER SignInstaller
+	Only used with -BuildInstaller. Enables local signing when signing tools are available.
+	By default, local installer builds capture files to sign later instead of signing.
 
 .PARAMETER UseLocalLcm
 	If set, builds liblcm from a local checkout (default: ../liblcm) after the FieldWorks build
@@ -77,13 +89,8 @@
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
 
-.PARAMETER LogFile
-	Path to a file where the build output should be logged.
-
-.PARAMETER TailLines
-	If specified, only displays the last N lines of output after the build completes.
-	Useful for CI/agent scenarios where you want to see recent output without piping.
-	The full output is still written to LogFile if specified.
+.PARAMETER SkipDependencyCheck
+	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
 
 .EXAMPLE
 	.\build.ps1
@@ -127,6 +134,7 @@ param(
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
 	[switch]$BuildInstaller,
+	[switch]$BuildPatch,
 	[ValidateSet('Wix3', 'Wix6')]
 	[string]$InstallerToolset = "Wix3",
 	[switch]$InstallerOnly,
@@ -139,6 +147,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# Add WiX to the PATH for installer builds (required for harvesting localizations)
+$env:PATH = "$env:WIX/bin;$env:PATH"
 
 if ($Configuration -like "--*") {
 	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
@@ -154,6 +165,11 @@ if ($Configuration -like "--*") {
 if ($BuildInstaller -and -not $BuildAdditionalApps) {
 	$BuildAdditionalApps = $true
 	Write-Host "BuildInstaller enabled: including additional apps (use -BuildAdditionalApps:$false to skip)." -ForegroundColor Yellow
+}
+
+if (($BuildInstaller -or $BuildPatch) -and -not ($Configuration -eq "Release")) {
+	$Configuration = "Release"
+	Write-Host "Installer builds must be Release builds; changing Configuration to Release" -ForegroundColor Yellow
 }
 
 # For local Release builds, use a stable daily build number so native artifacts can be reused.
@@ -388,8 +404,8 @@ try {
 		$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
 		Invoke-MSBuild `
 			-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
-			"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
-			"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
+				"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
+				"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
 			-Description 'FwBuildTasks (Bootstrap)'
 
 		if (-not (Test-Path $fwTasksSourcePath)) {
@@ -421,8 +437,8 @@ try {
 		}
 
 		if ($InstallerOnly) {
-			if (-not $BuildInstaller) {
-				throw "-InstallerOnly requires -BuildInstaller."
+			if (-not $BuildInstaller -and -not $BuildPatch) {
+				throw "-InstallerOnly requires -BuildInstaller or -BuildPatch."
 			}
 
 			$stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
@@ -478,6 +494,7 @@ try {
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
 		}
 
+		# REVIEW (Hasso) 2026.03: shouldn't this be between the restore and build calls?
 		# Copy local LCM assemblies if requested
 		if ($UseLocalLcm) {
 			Write-Host ""
@@ -499,9 +516,15 @@ try {
 			}
 		}
 
-		if ($BuildInstaller) {
+		if ($BuildInstaller -or $BuildPatch) {
+			if ($BuildPatch) {
+				$BaseOrPatch = "Patch"
+			}
+			else {
+				$BaseOrPatch = "Installer"
+			}
 			Write-Host ""
-			Write-Host "Building Installer..." -ForegroundColor Cyan
+			Write-Host "Building $BaseOrPatch..." -ForegroundColor Cyan
 
 			if (-not $isGitHubActions) {
 				if ($SignInstaller) {
@@ -523,11 +546,13 @@ try {
 			}
 
 			Invoke-MSBuild `
-				-Arguments @('Build/InstallerBuild.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release',
-				"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) `
-				-Description 'Installer Build'
+				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:config=release', `
+					"/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + $MsBuildArgs) `
+				-Description '$BaseOrPatch Build' `
+				-LogPath $LogFile `
+				-TailLines $TailLines
 
-			Write-Host "[OK] Installer build complete!" -ForegroundColor Green
+			Write-Host "[OK] $BaseOrPatch build complete!" -ForegroundColor Green
 		}
 	}
 
