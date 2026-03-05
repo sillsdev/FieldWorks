@@ -37,20 +37,12 @@ namespace SIL.FieldWorks.IText
 			return (from st in GetInterestingTextList().ScriptureTexts select st.Hvo).ToList();
 		}
 
-		public override bool IsControllingTheRecordTreeBar
+		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
-			set
-			{
-				CheckDisposed();
+			// Only needs to handle changes if this RecordClerk is being used in the GUI.
+			Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
 
-				// Nothing to do if we were already the active clerk or if we are not controlling the recordtreebar,
-				var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-				if (oldActiveClerk == this || !value)
-					return;
-
-				base.IsControllingTheRecordTreeBar = value;
-				Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
-			}
+			base.ActivateUI(useRecordTreeBar, updateStatusBar);
 		}
 
 		protected override void RemoveNotification()
