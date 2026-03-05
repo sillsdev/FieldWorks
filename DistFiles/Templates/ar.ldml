@@ -11,7 +11,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 		<version number="$Revision$"/>
 		<language type="ar"/>
 		<special xmlns:sil="urn://www.sil.org/ldml/0.1">
-			<sil:identity revid="a1a173b8dc6f4ca89c9acb76f913e95f69bf3971" source="cldr" defaultRegion="EG" script="Arab"/>
+			<sil:identity revid="1f9188eccdd20d6b71d82723bbd185f439d50196" source="cldr" defaultRegion="EG" script="Arab"/>
 		</special>
 	</identity>
 	<localeDisplayNames>
@@ -29064,14 +29064,14 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 	</listPatterns>
 	<collations>
 		<defaultCollation>standard</defaultCollation>
-		<collation type="compat" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="compat" sil:modified="true">
 			<cr><![CDATA[
 				[reorder Arab]
 				&ت<<ة<<<ﺔ<<<ﺓ
 				&ي<<ى<<<ﯨ<<<ﯩ<<<ﻰ<<<ﻯ<<<ﲐ<<<ﱝ
 			]]></cr>
 		</collation>
-		<collation type="standard" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" sil:modified="true">
 			<cr><![CDATA[
 				[reorder Arab]
 				# Updated Arabic Ordering Specification

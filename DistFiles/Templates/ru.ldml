@@ -11,7 +11,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 		<version number="$Revision$"/>
 		<language type="ru"/>
 		<special xmlns:sil="urn://www.sil.org/ldml/0.1">
-			<sil:identity revid="a1a173b8dc6f4ca89c9acb76f913e95f69bf3971" source="cldr" defaultRegion="RU" script="Cyrl"/>
+			<sil:identity revid="1f9188eccdd20d6b71d82723bbd185f439d50196" source="cldr" defaultRegion="RU" script="Cyrl"/>
 		</special>
 	</identity>
 	<localeDisplayNames>
@@ -31994,7 +31994,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 	</listPatterns>
 	<collations>
 		<defaultCollation>standard</defaultCollation>
-		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" sil:modified="true">
+		<collation type="standard" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
 			<cr><![CDATA[
 				[reorder Cyrl]
 				# The root collation already sorts й/Й as a base letter.
@@ -32874,8 +32874,8 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 	</metadata>
 	<special xmlns:sil="urn://www.sil.org/ldml/0.1">
 		<sil:external-resources>
-			<sil:font name="Charis SIL" types="default">
-				<sil:url>https://lff.api.languagetechnology.org/family/charissil</sil:url>
+			<sil:font name="Charis" types="default">
+				<sil:url>https://lff.api.languagetechnology.org/family/charis</sil:url>
 			</sil:font>
 			<sil:font name="Noto Sans">
 				<!--types="ui"-->
