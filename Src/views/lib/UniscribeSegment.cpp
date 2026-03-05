@@ -1077,6 +1077,18 @@ int UniscribeSegment::OffsetInNfc(int ich, int ichBase, IVwTextSource * pts)
 #endif
 }
 
+// PATH-N1: NFC-aware overload. When fTextIsNfc is true (text already in NFC form),
+// skip the expensive Fetch + NormalizeStrUni and return the identity offset directly.
+// This eliminates redundant COM calls and NFC normalization when the text source
+// already provides NFC text (the common case in FieldWorks).
+int UniscribeSegment::OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc)
+{
+	Assert(ich >= ichBase);
+	if (fTextIsNfc)
+		return ich - ichBase;
+	return OffsetInNfc(ich, ichBase, pts);
+}
+
 // ich is an offset into the (NFC normalized) characters of this segment.
 // convert it into a (typically NFD) position in the original paragraph.
 // This is complicated because it isn't absolutely guaranteed that the original is
@@ -1113,6 +1125,15 @@ int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts)
 #else
 	return ich + ichBase;
 #endif
+}
+
+// PATH-N1: NFC-aware overload. When fTextIsNfc is true, original offsets equal NFC offsets,
+// so we can return directly without the expensive iterative Fetch + normalize loop.
+int UniscribeSegment::OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc)
+{
+	if (fTextIsNfc)
+		return ich + ichBase;
+	return OffsetToOrig(ich, ichBase, pts);
 }
 
 int OffsetInRun(UniscribeRunInfo & uri, int ichRun, bool fTrailing)
@@ -2454,7 +2475,7 @@ ExitBothLoops:
 ----------------------------------------------------------------------------------------------*/
 int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 	Vector<OLECHAR> & vch, IVwTextSource * pts, int ichMin, int cch, OLECHAR ** pprgchBuf,
-	int & citem, bool fParaRTL)
+	int & citem, bool fParaRTL, bool * pfTextIsNfc)
 {
 	* pprgchBuf = prgchDefBuf; // Use on-stack variable if big enough
 
@@ -2466,9 +2487,15 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		OLECHAR * pch;
 		stu.SetSize(cch, &pch);
 		CheckHr(pts->Fetch(ichMin, ichMin + cch, pch));
+		int cchOrig = cch; // PATH-N1: remember original length before NFC
 		StrUtil::NormalizeStrUni(stu,  UNORM_NFC);
 		if (cch != stu.Length())
 			cch = stu.Length();
+		// PATH-N1: Report whether text was already NFC (normalization didn't change length).
+		// When true, OffsetInNfc/OffsetToOrig can return identity offsets, avoiding
+		// redundant NFC normalization + COM Fetch calls per run.
+		if (pfTextIsNfc)
+			*pfTextIsNfc = (cch == cchOrig);
 		if (cch > cchBuf)
 		{
 			cchBuf = cch;
@@ -2477,7 +2504,14 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		}
 		::memcpy(*pprgchBuf, stu.Chars(), isizeof(OLECHAR) * cch);
 	}
+	else
+	{
+		if (pfTextIsNfc)
+			*pfTextIsNfc = true; // Empty text is trivially NFC
+	}
 #else
+	if (pfTextIsNfc)
+		*pfTextIsNfc = true; // No NFC mode means offsets are always identity
 	if (cch > cchBuf)
 	{
 		cchBuf = cch;
@@ -2624,8 +2658,10 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 	Vector<OLECHAR> vch; // Use as buffer if 1000 is not enough
 	int citem; // actual number of items obtained.
 	OLECHAR * prgchBuf; // Where text actually goes.
+	// PATH-N1: Get NFC flag from CallScriptItemize to skip redundant OffsetInNfc calls below.
+	bool fTextIsNfc = false;
 	int cchNfc = CallScriptItemize(rgchBuf, INIT_BUF_SIZE, vch, m_qts, ichBase, m_dichLim, &prgchBuf,
-		citem, m_fParaRTL);
+		citem, m_fParaRTL, &fTextIsNfc);
 
 	// If dxdExpectedWidth is not 0, then the segment will try its best to stretch to the
 	// specified size.
@@ -2683,7 +2719,7 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 
 			if (ichLim - ichBase > m_dichLim)
 				ichLim = ichBase + m_dichLim;
-			ichLimNfc = OffsetInNfc(ichLim, ichBase, m_qts);
+			ichLimNfc = OffsetInNfc(ichLim, ichBase, m_qts, fTextIsNfc);
 			if (ichLimNfc == ichMinNfc && m_dichLim > 0)
 			{
 				// This can happen pathologically where later characters in a composition have different

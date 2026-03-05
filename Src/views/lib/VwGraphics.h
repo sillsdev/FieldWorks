@@ -163,6 +163,30 @@ protected:
 	HFONT m_hfont; // current font selected into DC, if any
 	LgCharRenderProps m_chrp;
 
+	// PATH-C1: HFONT LRU cache — avoid repeated CreateFontIndirect/DeleteObject
+	// for alternating writing systems within multi-WS paragraphs.
+	// The font-related portion of LgCharRenderProps (from ttvBold onward) is the cache key.
+	static const int kcFontCacheMax = 8;
+	struct FontCacheEntry
+	{
+		HFONT hfont;
+		LgCharRenderProps chrp;
+		bool fUsed;
+	};
+	FontCacheEntry m_rgfce[kcFontCacheMax];
+	int m_cfceUsed; // number of cache entries in use
+
+	// PATH-C2: Color state tracking — skip redundant GDI SetTextColor/SetBkColor/SetBkMode
+	// calls when colors haven't changed since the last SetupGraphics call.
+	COLORREF m_clrForeCache;     // last foreground color set on HDC
+	COLORREF m_clrBackCache;     // last background color set on HDC
+	int m_nBkModeCache;          // last background mode (TRANSPARENT or OPAQUE)
+	bool m_fColorCacheValid;     // true when color cache is initialized
+
+	HFONT FindCachedFont(const LgCharRenderProps * pchrp);
+	void AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp);
+	void ClearFontCache();
+
 	// Vertical and horizontal resolution. Zero indicates not yet initialized.
 	int m_xInch;
 	int m_yInch;

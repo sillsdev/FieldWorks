@@ -76,11 +76,10 @@ VwGraphics::~VwGraphics()
 		m_hfontOld = NULL;
 	}
 	Assert(!m_hfont);
-	if (m_hfont)
-	{
-		fSuccess = AfGdi::DeleteObjectFont(m_hfont);
-		m_hfont = NULL;
-	}
+	// PATH-C1: Font cache owns all created fonts. Don't double-delete m_hfont
+	// here — ClearFontCache handles it. Just null the pointer.
+	m_hfont = NULL;
+	ClearFontCache();
 
 	if (m_hdc)
 	{
@@ -105,6 +104,16 @@ void VwGraphics::Init()
 	Assert(m_hfont == NULL);
 	Assert(m_hfontOld == NULL);
 	// m_chrp should contain zeros too; don't bother checking.
+
+	// PATH-C1: Initialize font cache.
+	m_cfceUsed = 0;
+	memset(m_rgfce, 0, sizeof(m_rgfce));
+
+	// PATH-C2: Initialize color cache.
+	m_clrForeCache = CLR_INVALID;
+	m_clrBackCache = CLR_INVALID;
+	m_nBkModeCache = -1;
+	m_fColorCacheValid = false;
 
 	// Initialize the clip rectangle to be as big as possible:
 	// TODO: decide if we want to do this.
@@ -1084,10 +1093,12 @@ STDMETHODIMP VwGraphics::ReleaseDC()
 			// original one back into the DC to prevent GDI memory leaks and similar problems.
 			HFONT hfontPrev; // Fixed release build.
 			hfontPrev = AfGdi::SelectObjectFont(m_hdc, m_hfontOld, AfGdi::OLD);
-			fSuccess = AfGdi::DeleteObjectFont(m_hfont);
+			// PATH-C1: Don't delete m_hfont here — ClearFontCache handles lifecycle.
 			m_hfont = 0;
 			m_hfontOld = 0;
 		}
+		// PATH-C1: Delete all cached fonts now that they're deselected from the DC.
+		ClearFontCache();
 		Assert(m_hfont == 0);
 		if (m_hfontOldMeasure)
 		{
@@ -1214,61 +1225,78 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 		memcpy(((byte *)&m_chrp) + cbFontOffset, ((byte *)pchrp) + cbFontOffset,
 			isizeof(m_chrp) - cbFontOffset);
 
-		// Figure the actual font we need.
-		LOGFONT lf;
-		lf.lfItalic = pchrp->ttvItalic == kttvOff ? false : true;
-		lf.lfWeight = pchrp->ttvBold == kttvOff ? 400 : 700;
-		// The minus causes this to be the font height (roughly, from top of ascenders
-		// to bottom of descenders). A positive number indicates we want a font with
-		// this distance as the total line spacing, which makes them too small.
-		// Note that we are also scaling the font size based on the resolution.
-		lf.lfHeight = -MulDiv(pchrp->dympHeight, GetYInch(), kdzmpInch);
-		lf.lfUnderline = false;
-		lf.lfWidth = 0;			// default width, based on height
-		lf.lfEscapement = 0;	// no rotation of text (is this how to do slanted?)
-		lf.lfOrientation = 0;	// no rotation of character baselines
+		// PATH-C1: Check the font cache before creating a new HFONT.
+		// This avoids repeated CreateFontIndirect/DeleteObject cycles when
+		// alternating between writing systems in multi-WS paragraphs.
+		HFONT hfontCached = FindCachedFont(pchrp);
+		if (hfontCached)
+		{
+			SetFont(hfontCached);
+		}
+		else
+		{
+			// Figure the actual font we need.
+			LOGFONT lf;
+			lf.lfItalic = pchrp->ttvItalic == kttvOff ? false : true;
+			lf.lfWeight = pchrp->ttvBold == kttvOff ? 400 : 700;
+			// The minus causes this to be the font height (roughly, from top of ascenders
+			// to bottom of descenders). A positive number indicates we want a font with
+			// this distance as the total line spacing, which makes them too small.
+			// Note that we are also scaling the font size based on the resolution.
+			lf.lfHeight = -MulDiv(pchrp->dympHeight, GetYInch(), kdzmpInch);
+			lf.lfUnderline = false;
+			lf.lfWidth = 0;			// default width, based on height
+			lf.lfEscapement = 0;	// no rotation of text (is this how to do slanted?)
+			lf.lfOrientation = 0;	// no rotation of character baselines
 
-		lf.lfStrikeOut = 0;		// not strike-out
-		lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
-		lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
-		lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
-		lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
-		lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
-		#ifdef UNICODE
-				// ENHANCE: test this path if ever needed.
-				wcscpy_s(lf.lfFaceName, pchrp->szFaceName);
-		#else // not unicode, LOGFONT has 8-bit chars
-				WideCharToMultiByte(
-					CP_ACP,	0, // dumb; we don't expect non-ascii chars
-					pchrp->szFaceName, // string to convert
-					-1,		// null-terminated
-					lf.lfFaceName, 32,
-					NULL, NULL);  // default handling of unconvertibles
-		#endif // not unicode
-		HFONT hfont;
-		hfont = AfGdi::CreateFontIndirect(&lf);
-		if (!hfont)
-			ThrowHr(WarnHr(E_FAIL));
-		SetFont(hfont);
+			lf.lfStrikeOut = 0;		// not strike-out
+			lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
+			lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
+			lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
+			lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
+			lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
+			#ifdef UNICODE
+					// ENHANCE: test this path if ever needed.
+					wcscpy_s(lf.lfFaceName, pchrp->szFaceName);
+			#else // not unicode, LOGFONT has 8-bit chars
+					WideCharToMultiByte(
+						CP_ACP,	0, // dumb; we don't expect non-ascii chars
+						pchrp->szFaceName, // string to convert
+						-1,		// null-terminated
+						lf.lfFaceName, 32,
+						NULL, NULL);  // default handling of unconvertibles
+			#endif // not unicode
+			HFONT hfont;
+			hfont = AfGdi::CreateFontIndirect(&lf);
+			if (!hfont)
+				ThrowHr(WarnHr(E_FAIL));
+			AddFontToCache(hfont, pchrp);
+			SetFont(hfont);
+		}
 	}
 
 
-	// Always set the colors.
-	// OPTIMIZE JohnT: would it be useful to remember what the hdc is set to?
+	// PATH-C2: Only set colors when they actually changed, avoiding redundant
+	// GDI kernel calls (SetTextColor, SetBkColor, SetBkMode) per run.
 	{
-		SmartPalette spal(m_hdc);
+		COLORREF clrForeNeeded = pchrp->clrFore;
+		COLORREF clrBackNeeded = (pchrp->clrBack == kclrTransparent) ? RGB(0,0,0) : pchrp->clrBack;
+		int nBkModeNeeded = (pchrp->clrBack == kclrTransparent) ? TRANSPARENT : OPAQUE;
 
-		bool fOK = (AfGfx::SetTextColor(m_hdc, pchrp->clrFore) != CLR_INVALID);
-		if (pchrp->clrBack == kclrTransparent)
+		if (!m_fColorCacheValid
+			|| clrForeNeeded != m_clrForeCache
+			|| clrBackNeeded != m_clrBackCache
+			|| nBkModeNeeded != m_nBkModeCache)
 		{
-			// I can't find it documented anywhere, but it seems to be necessary to set
-			// the background color to black to make TRANSPARENT mode work--at least on my
-			// computer.
-			fOK = fOK && (::SetBkColor(m_hdc, RGB(0,0,0)) != CLR_INVALID);
-			fOK = fOK && ::SetBkMode(m_hdc, TRANSPARENT);
-		} else {
-			fOK = fOK && (AfGfx::SetBkColor(m_hdc, pchrp->clrBack)!= CLR_INVALID);
-			fOK = fOK && ::SetBkMode(m_hdc, OPAQUE);
+			SmartPalette spal(m_hdc);
+			bool fOK = (AfGfx::SetTextColor(m_hdc, clrForeNeeded) != CLR_INVALID);
+			fOK = fOK && (AfGfx::SetBkColor(m_hdc, clrBackNeeded) != CLR_INVALID);
+			fOK = fOK && ::SetBkMode(m_hdc, nBkModeNeeded);
+
+			m_clrForeCache = clrForeNeeded;
+			m_clrBackCache = clrBackNeeded;
+			m_nBkModeCache = nBkModeNeeded;
+			m_fColorCacheValid = true;
 		}
 	}
 #if 0
@@ -1612,7 +1640,6 @@ int VwGraphics::GetYInch()
 ----------------------------------------------------------------------------------------------*/
 void VwGraphics::SetFont(HFONT hfont)
 {
-	BOOL fSuccess;
 	if (hfont == m_hfont)
 		return;
 	// Select the new font into the device context
@@ -1630,20 +1657,15 @@ void VwGraphics::SetFont(HFONT hfont)
 	if (!hfontPrev)
 		ThrowHr(WarnHr(E_FAIL));
 
-	if (m_hfontOld)
-	{
-		// We have previously created a font and now need to delete it.
-		// NB this must be done after it is selected out of the DC, or we get a hard-to-find
-		// GDI memory leak that causes weird drawing failures on W-98.
-		Assert(m_hfont);
-		fSuccess = AfGdi::DeleteObjectFont(m_hfont);
-	}
-	else
+	if (!m_hfontOld)
 	{
 		// This is the first font selection we have made into this level; save the old one
 		// to eventually select back into the DC before we RestoreDC.
 		m_hfontOld = hfontPrev;
 	}
+	// PATH-C1: Don't delete the previous font here — the font cache manages
+	// all created HFONT lifecycles. Previously this deleted m_hfont immediately,
+	// causing repeated CreateFontIndirect/DeleteObject cycles for alternating WS.
 	m_hfont = hfont;
 }
 
@@ -1867,3 +1889,78 @@ int VwGraphics::GetFontHeightFromFontTable()
 
 #include <vector_i.cpp>
 template Vector<HFONT>; // VecHfont;
+
+/*----------------------------------------------------------------------------------------------
+	PATH-C1: Font cache helpers.
+	These methods manage a small LRU cache of HFONT objects keyed by the font-related
+	portion of LgCharRenderProps (ttvBold onward). This eliminates repeated
+	CreateFontIndirect/DeleteObject cycles when multiple writing systems are used
+	in the same paragraph or across paragraphs during a single layout/draw pass.
+----------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------
+	Search the font cache for an HFONT matching the font-related properties in pchrp.
+	Returns the cached HFONT if found, or NULL if not cached.
+----------------------------------------------------------------------------------------------*/
+HFONT VwGraphics::FindCachedFont(const LgCharRenderProps * pchrp)
+{
+	const int cbFontOffset = (int)offsetof(LgCharRenderProps, ttvBold);
+	const int cbFontSize = isizeof(LgCharRenderProps) - cbFontOffset;
+
+	for (int i = 0; i < m_cfceUsed; i++)
+	{
+		if (m_rgfce[i].fUsed &&
+			memcmp(((byte *)pchrp) + cbFontOffset,
+				   ((byte *)&m_rgfce[i].chrp) + cbFontOffset,
+				   cbFontSize) == 0)
+		{
+			return m_rgfce[i].hfont;
+		}
+	}
+	return NULL;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Add a newly created HFONT to the cache. If the cache is full, evict the oldest entry
+	(index 0) by deleting its HFONT and shifting entries down.
+----------------------------------------------------------------------------------------------*/
+void VwGraphics::AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp)
+{
+	if (m_cfceUsed >= kcFontCacheMax)
+	{
+		// Cache full — evict oldest entry (index 0).
+		// The evicted font must not be currently selected into the DC.
+		if (m_rgfce[0].hfont && m_rgfce[0].hfont != m_hfont)
+		{
+			AfGdi::DeleteObjectFont(m_rgfce[0].hfont);
+		}
+		// Shift all entries down by one.
+		memmove(&m_rgfce[0], &m_rgfce[1], (kcFontCacheMax - 1) * sizeof(FontCacheEntry));
+		m_cfceUsed = kcFontCacheMax - 1;
+	}
+
+	m_rgfce[m_cfceUsed].hfont = hfont;
+	m_rgfce[m_cfceUsed].chrp = *pchrp;
+	m_rgfce[m_cfceUsed].fUsed = true;
+	m_cfceUsed++;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Delete all cached HFONTs and reset the cache. Called from ReleaseDC and destructor.
+	Assumes all cached fonts have been deselected from the DC.
+----------------------------------------------------------------------------------------------*/
+void VwGraphics::ClearFontCache()
+{
+	for (int i = 0; i < m_cfceUsed; i++)
+	{
+		if (m_rgfce[i].hfont)
+		{
+			AfGdi::DeleteObjectFont(m_rgfce[i].hfont);
+			m_rgfce[i].hfont = NULL;
+		}
+		m_rgfce[i].fUsed = false;
+	}
+	m_cfceUsed = 0;
+	// PATH-C2: Invalidate color cache when DC is released.
+	m_fColorCacheValid = false;
+}
