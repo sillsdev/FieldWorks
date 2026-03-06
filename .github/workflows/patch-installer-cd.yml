@@ -220,20 +220,13 @@ jobs:
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
 
-      - name: Build
+      - name: Build and Run Tests
         id: build_installer
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Run tests
-        id: managed_test
-        shell: powershell
-        run: |
-          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' | Tee-Object -FilePath build.log -Append
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } # is this needed?
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' `
+            -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Build Output
         shell: powershell
