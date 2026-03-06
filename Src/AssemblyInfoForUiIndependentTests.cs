@@ -10,6 +10,9 @@ using SIL.TestUtilities;
 // This file is for test fixtures for UI independent projects, i.e. projects that don't
 // reference System.Windows.Forms et al.
 
+// Log last-chance managed exceptions to console output before process termination.
+[assembly: LogUnhandledExceptions]
+
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
 

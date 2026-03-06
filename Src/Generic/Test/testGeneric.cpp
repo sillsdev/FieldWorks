@@ -11,11 +11,13 @@ Last reviewed:
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "testGenericLib.h"
 #include "RedirectHKCU.h"
+#include "DebugProcs.h"
 
 namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+		ShowAssertMessageBox(0); // Disable assertion dialogs
 #if defined(WIN32) || defined(WIN64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
