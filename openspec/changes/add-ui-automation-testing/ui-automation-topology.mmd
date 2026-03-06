@@ -1,0 +1,41 @@
+%% UI automation topology for FieldWorks
+%% Render with: mmdc -i ui-automation-topology.mmd -o ui-automation-topology.svg
+flowchart TD
+    A[build.ps1 -BuildTests] --> B[Output/Debug/FieldWorks.exe]
+    A --> C[FieldWorksUiAutomationTests.dll]
+
+    subgraph TestHarness [Test harness inside execution environment]
+        C --> D[FwUiTestBase]
+        D --> E[Temp project root]
+        D --> F[Temp settings root]
+        D --> G[Process env overrides]
+
+        E --> H[TestLangProj copy]
+        F --> I[Seeded update/reporting settings]
+        G --> J[FEEDBACK=false, AssertUiEnabled=false]
+
+        D --> K[Launch FieldWorks.exe -db TestLangProj]
+        K --> L[FlaUI automation backend]
+        L --> M[Main window + shell navigation]
+        M --> N[Screenshots + step diagnostics]
+    end
+
+    subgraph CIPath [CI: direct desktop]
+        O[ui-tests.yml] --> A
+        O --> P[testui.ps1 -Mode DirectDesktop]
+        P --> C
+        P --> Q1[TRX artifacts]
+    end
+
+    subgraph LocalPath [Local: warm Sandbox default]
+        S[Local developer] --> T[testui.ps1 default Sandbox mode]
+        T --> U[Warm Windows Sandbox]
+        U -->|Output/Debug mapped read-only| B
+        U --> C
+        U -->|write results| V[Mapped writable results folder]
+        V --> W[_status.json + _done sentinel]
+        T -->|poll status file| W
+        W --> Q2[TRX + PNG artifacts on host]
+    end
+
+    N --> R[PNG artifacts]
