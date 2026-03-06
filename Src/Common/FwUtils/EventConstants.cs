@@ -20,6 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string GetContentControlParameters = "GetContentControlParameters";
 		public const string GetToolForList = "GetToolForList";
 		public const string HandleLocalHotlink = "HandleLocalHotlink";
+		public const string ItemDataModified = "ItemDataModified";
 		public const string JumpToPopupLexEntry = "JumpToPopupLexEntry";
 		public const string JumpToRecord = "JumpToRecord";
 		public const string LinkFollowed = "LinkFollowed";
