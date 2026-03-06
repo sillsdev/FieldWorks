@@ -27,6 +27,8 @@ Short repo-level instructions for agents.
 
 - Use GitHub issues/PRs for local issue flow.
 - For `LT-` tickets, use the Atlassian skill scripts; do not attempt direct Jira URL browsing.
+- GitHub Copilot for Jira may be used with authenticated Jira Data Center access when the approved service-user/API policy limits which issues are exposed.
+- Setup and policy notes: `.github/copilot-jira-setup.md`
 
 ## Relevant files
 
