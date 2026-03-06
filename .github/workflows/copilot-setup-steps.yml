@@ -2,6 +2,17 @@
 # Optimized for windows-2022 which already includes most FieldWorks dependencies.
 # This workflow is for managed/native validation only.
 #
+# JIRA INTEGRATION POLICY:
+# - This workflow may be used by GitHub Copilot coding agent sessions that were
+#   started from Jira.
+# - FieldWorks uses authenticated Jira Data Center access, not anonymous public
+#   Jira access.
+# - Jira content exposed to agent runs must be filtered through the approved
+#   service-user/API policy so only issues intended for agent use are surfaced.
+# - If Jira credentials are provided to a caller workflow, they must be
+#   least-privilege service-user credentials, not personal high-privilege
+#   credentials.
+#
 # IMPORTANT: Do not run installer/signing/deployment builds here.
 # Rationale: cloud agent jobs should not require high-privilege credentials
 # (signing, release upload, deployment) and should minimize secret exposure.
@@ -125,6 +136,38 @@ jobs:
         run: |
           # Run testable script with strict checking
           .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
+
+      - name: Guardrail - Jira integration policy
+        shell: pwsh
+        run: |
+          Write-Host "Jira policy: authenticated Jira Data Center access is allowed when scoped through the approved service-user/API policy." -ForegroundColor Cyan
+
+          $jiraUrl = [Environment]::GetEnvironmentVariable('JIRA_URL')
+          if (-not [string]::IsNullOrWhiteSpace($jiraUrl) -and $jiraUrl -notmatch '^https://') {
+            throw "Unsupported JIRA_URL '$jiraUrl'. Jira URLs must use HTTPS."
+          }
+
+          $jiraTokenVars = @(
+            'JIRA_PAT_TOKEN',
+            'JIRA_API_TOKEN',
+            'ATLASSIAN_API_TOKEN'
+          )
+
+          $presentTokenVars = @(
+            $jiraTokenVars |
+              Where-Object {
+                $value = [Environment]::GetEnvironmentVariable($_)
+                -not [string]::IsNullOrWhiteSpace($value)
+              }
+          )
+
+          if ($presentTokenVars.Count -gt 0 -and [string]::IsNullOrWhiteSpace($jiraUrl)) {
+            throw "Jira credentials were provided without JIRA_URL. Set JIRA_URL alongside the service-user token configuration."
+          }
+
+          if ($presentTokenVars.Count -gt 0) {
+            Write-Host "Jira service-user credentials detected. Ensure the token is scoped by the approved visibility API/policy." -ForegroundColor DarkGray
+          }
 
       - name: Guardrail - block installer builds in agent workflow
         if: inputs.build_args != '' && inputs.build_args != null
