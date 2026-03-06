@@ -84,6 +84,8 @@ Initialize-VsDevEnvironment
 # Suppress assertion dialog boxes (DebugProcs.dll checks this env var)
 # This prevents tests from blocking on MessageBox popups
 $env:AssertUiEnabled = 'false'
+# Unconditional test-mode override: bypasses registry AssertMessageBox key in DebugProcs.dll
+$env:FW_TEST_MODE = '1'
 
 # Suppress Windows Error Reporting and crash dialogs
 # SEM_FAILCRITICALERRORS = 0x0001

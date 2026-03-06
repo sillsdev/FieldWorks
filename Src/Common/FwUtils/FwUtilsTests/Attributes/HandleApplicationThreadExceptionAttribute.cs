@@ -42,6 +42,10 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 
 		private void OnThreadException(object sender, ThreadExceptionEventArgs e)
 		{
+			Console.Error.WriteLine("Unhandled Windows Forms thread exception during test run:");
+			Console.Error.WriteLine(e.Exception.ToString());
+			Console.Error.Flush();
+
 			throw new ApplicationException(e.Exception.Message, e.Exception);
 		}
 	}
