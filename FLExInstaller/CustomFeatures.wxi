@@ -27,8 +27,12 @@
 		</Feature>
 		<Feature Id="Malay" Title="Malay" Description="Allows the software to have a Malay user interface." Display="expand" Level="1" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1086</Condition>
+			<!-- REVIEW (Hasso) 2026.03: ms and zlm are both Malay. Why are we including both? -->
 			<ComponentGroupRef Id="msLocalization" />
 			<ComponentGroupRef Id="zlmLocalization" />
+		</Feature>
+		<Feature Id="Malayalam" Title="Malayalam" Description="Allows the software to have a Malayalam user interface." Display="expand" Level="1" AllowAdvertise="no">
+			<ComponentGroupRef Id="mlLocalization" />
 		</Feature>
 		<Feature Id="Arabic" Title="Arabic" Description="Allows the software to have an Arabic user interface." Display="expand" Level="1" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1025</Condition>
@@ -139,6 +143,9 @@
 		<Feature Id="Vietnamese" Title="Vietnamese" Description="Allows the software to have a Vietnamese user interface." Display="expand" Level="1" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1066</Condition>
 			<ComponentGroupRef Id="viLocalization" />
+		</Feature>
+		<Feature Id="Yoruba" Title="Yoruba" Description="Allows the software to have a Yoruba user interface." Display="expand" Level="1" AllowAdvertise="no">
+			<ComponentGroupRef Id="yoLocalization" />
 		</Feature>
 	</Feature>
 </Include>

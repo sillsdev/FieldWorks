@@ -11,7 +11,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 		<version number="$Revision$"/>
 		<language type="ur"/>
 		<special xmlns:sil="urn://www.sil.org/ldml/0.1">
-			<sil:identity revid="a1a173b8dc6f4ca89c9acb76f913e95f69bf3971" source="cldr" defaultRegion="PK" script="Arab"/>
+			<sil:identity revid="1f9188eccdd20d6b71d82723bbd185f439d50196" source="cldr" defaultRegion="PK" script="Arab"/>
 		</special>
 	</identity>
 	<localeDisplayNames>
@@ -28010,7 +28010,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 	</listPatterns>
 	<collations>
 		<defaultCollation>standard</defaultCollation>
-		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" references="http://www.panl10n.net/english/outputs/Pakistan/Urdu-Encoding-Collation.pdf" sil:modified="true">
+		<collation type="standard" references="http://www.panl10n.net/english/outputs/Pakistan/Urdu-Encoding-Collation.pdf" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
 			<cr><![CDATA[
 				[reorder Arab]
 				&ا<<أ<آ<ب<بھ<پ<پھ<ت<تھ<ٹ<ٹھ<ث<ج<جھ<چ<چھ<ح<خ<د<دھ<ڈ<ڈھ<ذ<ر<رھ<ڑ<ڑھ<ز<ژ<س<ش<ص<ض<ط<ظ

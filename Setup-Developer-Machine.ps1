@@ -130,8 +130,8 @@ if ($InstallerDeps) {
 	# Helper repo definitions: name, git URL, target subdirectory in FW repo
 	$helperRepos = @(
 		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
-		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" }
-		# TODO (Hasso) 2026.03: clone genericinstaller.git (needed for the WiX 3 installer)
+		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" },
+		@{ Name = "genericinstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller" }
 	)
 
 	foreach ($repo in $helperRepos) {

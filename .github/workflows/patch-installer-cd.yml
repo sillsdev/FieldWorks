@@ -39,11 +39,11 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1379' # When updating this, update base_build_number and their fallbacks below, too.
+        default: 'build-1387' # When updating this, update base_build_number and their fallbacks below, too.
       base_build_number:
         description: 'The base build number'
         required: false
-        default: '1379'
+        default: '1387'
       make_release:
         description: 'Should the release be pushed to s3 - use false for test builds'
         required: false
@@ -62,7 +62,7 @@ jobs:
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
-      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1379' }}
+      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1387' }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -170,7 +170,7 @@ jobs:
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
-          $release = "${{ inputs.base_release || 'build-1379' }}"
+          $release = "${{ inputs.base_release || 'build-1387' }}"
           $repo    = "${{ github.repository }}"
 
           Write-Host "Downloading artifacts for release $release from $repo"
@@ -220,14 +220,15 @@ jobs:
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
 
-      - name: Build Debug and run tests
+      - name: Build and Run Tests
         id: build_installer
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' `
+            -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
-      - name: Scan Debug Build Output
+      - name: Scan Build Output
         shell: powershell
         run: |
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
@@ -291,5 +292,5 @@ jobs:
           if-no-files-found: warn
           name: build-logs
           path: |
-            *.log
-            *.binlog
+            ./*.log
+            ./*.binlog

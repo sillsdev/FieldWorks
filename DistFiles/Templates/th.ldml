@@ -11,7 +11,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 		<version number="$Revision$"/>
 		<language type="th"/>
 		<special xmlns:sil="urn://www.sil.org/ldml/0.1">
-			<sil:identity revid="a1a173b8dc6f4ca89c9acb76f913e95f69bf3971" source="cldr" defaultRegion="TH" script="Thai"/>
+			<sil:identity revid="1f9188eccdd20d6b71d82723bbd185f439d50196" source="cldr" defaultRegion="TH" script="Thai"/>
 		</special>
 	</identity>
 	<localeDisplayNames>
@@ -27034,7 +27034,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 	</listPatterns>
 	<collations>
 		<defaultCollation>standard</defaultCollation>
-		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" references="ISO/IEC 14651, Annex C, C.2.1 Thai ordering principles" sil:modified="true">
+		<collation type="standard" references="ISO/IEC 14651, Annex C, C.2.1 Thai ordering principles" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
 			<cr><![CDATA[
 				[normalization on]
 				[alternate shifted]
