@@ -1,4 +1,4 @@
-# Reusable workflow to setup Windows build environment for AI coding agents
+# Direct Copilot setup workflow for Windows-based GitHub Copilot coding agent runs
 # Optimized for windows-2022 which already includes most FieldWorks dependencies.
 # This workflow is for managed/native validation only.
 #
@@ -16,6 +16,28 @@
 # IMPORTANT: Do not run installer/signing/deployment builds here.
 # Rationale: cloud agent jobs should not require high-privilege credentials
 # (signing, release upload, deployment) and should minimize secret exposure.
+#
+# ACCEPTED RESIDUAL RISK:
+# - GitHub's Windows Copilot guidance explicitly notes that the integrated
+#   Copilot firewall is not compatible with Windows runs. In addition, GitHub
+#   documents that the agent firewall does not protect processes started in
+#   copilot-setup-steps, even where the firewall is otherwise enabled.
+# - As a result, this workflow is designed under the assumption that setup-step
+#   traffic could exfiltrate repository data or any credentials intentionally
+#   exposed to the agent environment.
+# - We accept that residual risk for this repository because the credentials in
+#   scope here are deliberately low-privilege and narrowly scoped: `contents: read`
+#   for checkout only, Jira service-user credentials limited by Jira/API policy,
+#   and no installer/signing/deployment secrets.
+# - Additional exposure that remains in scope: package/dependency downloads,
+#   shallow helper-repo clones, and any network access performed by build/test
+#   tooling during setup.
+# - This acceptance is conditional on keeping this workflow limited to managed/
+#   native validation and never adding high-privilege release, signing, deployment,
+#   or broadly scoped cross-system credentials.
+# - If stronger exfiltration controls become required, move Copilot Windows runs
+#   to a self-hosted ephemeral runner or a larger runner with Azure private
+#   networking, and re-review this workflow before adding new secrets.
 #
 # ============================================================================
 # EXPECTED FROM windows-2022 (DO NOT RE-INSTALL):
@@ -49,41 +71,30 @@
 #
 # ============================================================================
 
-name: "Agents: Windows setup steps"
+name: "Copilot Setup Steps"
 
 on:
-  workflow_call:
-    # Inputs are intentionally wrapper-script focused to avoid ad-hoc build
-    # command injection and to preserve FieldWorks build ordering rules.
-    inputs:
-      build_args:
-        required: false
-        type: string
-        description: 'Arguments to pass to build.ps1 (e.g., "-Configuration Release -BuildTests")'
-      test_args:
-        required: false
-        type: string
-        description: 'Arguments to pass to test.ps1 (e.g., "-NoBuild -TestProject FwUtilsTests")'
-      skip_serena:
-        required: false
-        type: boolean
-        default: false
-        description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
-      clone_helper_repos:
-        required: false
-        type: boolean
-        default: true
-        description: 'Clone FwHelps/FwLocalizations/liblcm with shallow checkout for full build compatibility'
-
-permissions:
-  contents: read
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+      - Build/Agent/**
+      - build.ps1
+      - test.ps1
+      - .serena/project.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+      - Build/Agent/**
+      - build.ps1
+      - test.ps1
+      - .serena/project.yml
 
 jobs:
-  windows-setup:
+  copilot-setup-steps:
     runs-on: windows-2022
-    outputs:
-      msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
-      vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repo
@@ -101,7 +112,6 @@ jobs:
             nuget-${{ runner.os }}-
 
       - name: Cache Serena language servers
-        if: inputs.skip_serena != true
         uses: actions/cache@v5
         with:
           path: |
@@ -119,13 +129,11 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Setup uv (Python package manager for Serena)
-        if: inputs.skip_serena != true
         uses: astral-sh/setup-uv@v7
         with:
           version: "0.6.x"
 
       - name: Configure FieldWorks build environment
-        id: setup-env
         shell: pwsh
         run: |
           # Run testable script with GitHub Actions output
@@ -169,17 +177,7 @@ jobs:
             Write-Host "Jira service-user credentials detected. Ensure the token is scoped by the approved visibility API/policy." -ForegroundColor DarkGray
           }
 
-      - name: Guardrail - block installer builds in agent workflow
-        if: inputs.build_args != '' && inputs.build_args != null
-        shell: pwsh
-        run: |
-          $argsText = "${{ inputs.build_args }}"
-          if ($argsText -match '(?i)(-BuildInstaller|InstallerToolset|Build/InstallerBuild\.proj|FLExInstaller)') {
-            throw "Installer builds are not allowed in this workflow. Use dedicated installer pipelines."
-          }
-
       - name: Clone helper repos (shallow)
-        if: inputs.clone_helper_repos == true
         shell: pwsh
         run: |
           function Invoke-ShallowClone {
@@ -223,7 +221,6 @@ jobs:
       # SERENA MCP SETUP - for agent code intelligence
       # ================================================================
       - name: "Serena: Setup and verify"
-        if: inputs.skip_serena != true
         shell: pwsh
         timeout-minutes: 10
         run: |
@@ -231,27 +228,31 @@ jobs:
           .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
 
       # ================================================================
-      # BUILD (optional)
+      # BUILD AND TEST VALIDATION
+      # This workflow always pre-seeds the Copilot environment the same way:
+      # Debug build, include managed test binaries, then run managed tests.
       # ================================================================
       - name: Run build.ps1
-        if: inputs.build_args != '' && inputs.build_args != null
         shell: pwsh
         timeout-minutes: 60
         run: |
-          Write-Host "Running: ./build.ps1 ${{ inputs.build_args }}" -ForegroundColor Cyan
-          ./build.ps1 ${{ inputs.build_args }}
+          $buildArgs = @('-Configuration', 'Debug', '-BuildTests')
+
+          Write-Host "Running: ./build.ps1 $($buildArgs -join ' ')" -ForegroundColor Cyan
+          ./build.ps1 @buildArgs
           if ($LASTEXITCODE -ne 0) {
             throw "build.ps1 failed with exit code $LASTEXITCODE"
           }
           Write-Host "build.ps1 completed successfully!" -ForegroundColor Green
 
       - name: Run test.ps1
-        if: inputs.test_args != '' && inputs.test_args != null
         shell: pwsh
         timeout-minutes: 60
         run: |
-          Write-Host "Running: ./test.ps1 ${{ inputs.test_args }}" -ForegroundColor Cyan
-          ./test.ps1 ${{ inputs.test_args }}
+          $testArgs = @('-Configuration', 'Debug', '-NoBuild')
+
+          Write-Host "Running: ./test.ps1 $($testArgs -join ' ')" -ForegroundColor Cyan
+          ./test.ps1 @testArgs
           if ($LASTEXITCODE -ne 0) {
             throw "test.ps1 failed with exit code $LASTEXITCODE"
           }
