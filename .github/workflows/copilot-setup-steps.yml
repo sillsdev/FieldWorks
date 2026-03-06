@@ -73,22 +73,11 @@
 
 name: "Copilot Setup Steps"
 
+# Copilot discovers and runs this workflow by filename/job name when it starts
+# an agent session from the default branch. Keep manual dispatch for explicit
+# validation, but do not subscribe this workflow to normal PR/push CI events.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
-      - Build/Agent/**
-      - build.ps1
-      - test.ps1
-      - .serena/project.yml
-  pull_request:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
-      - Build/Agent/**
-      - build.ps1
-      - test.ps1
-      - .serena/project.yml
 
 jobs:
   copilot-setup-steps:
