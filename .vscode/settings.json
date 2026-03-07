@@ -88,12 +88,7 @@
   // Tasks not listed require manual confirmation.
   // ============================================================================
   "chat.tools.tasks.allowedTasks": [
-    // Build tasks (safe - only produce artifacts)
-    "Build",
-    "Build Release",
-    "Build Tests",
-
-    // Test tasks (safe - no external changes)
+    // Test tasks remain auto-approved so Linux hosts surface the not-supported message.
     "Test",
     "Test (no build)",
 
@@ -119,6 +114,9 @@
   ]
   // ============================================================================
   // TASKS REQUIRING MANUAL APPROVAL (not in allowedTasks):
+  // - Build                        (Windows only)
+  // - Build Release                (Windows only)
+  // - Build Tests                  (Windows only)
   // - Test (with filter)           (has user input prompt)
   // - Test (specific project)      (has user input prompt)
   // - Agent: Propose updates       (modifies files)

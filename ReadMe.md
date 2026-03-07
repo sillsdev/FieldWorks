@@ -9,6 +9,14 @@ New to FieldWorks development? Start here:
 
 > **Note**: We are migrating documentation from the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) into this repository. Some wiki content may be more recent until migration is complete.
 
+## Linux and macOS
+
+This repository can be opened on Linux or macOS for editing, code search, documentation, specs, and agent-assisted review.
+
+Builds, tests, installer work, and developer-environment setup are Windows-only and are intentionally disabled on non-Windows hosts.
+
+If you need runnable output, use a Windows machine and run `./build.ps1` or `./test.ps1` there.
+
 ## Developer Machine Setup
 
 For first-time setup on a Windows development machine:
