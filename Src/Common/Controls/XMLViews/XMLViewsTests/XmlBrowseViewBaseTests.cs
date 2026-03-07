@@ -190,6 +190,12 @@ namespace XMLViewsTests
 			}
 
 			/// <summary/>
+			public bool NeedsReconstruct
+			{
+				get { throw new NotImplementedException();}
+			}
+
+			/// <summary/>
 			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 			{
 				throw new NotImplementedException();

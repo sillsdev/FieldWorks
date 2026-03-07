@@ -34,6 +34,7 @@
     <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" />
     <PackageReference Include="SIL.WritingSystems" />
+    <PackageReference Include="Verify" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />
@@ -45,9 +46,11 @@
     <ProjectReference Include="../../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../../FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../../FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
+    <ProjectReference Include="../../../FwCoreDlgs/FwCoreDlgs.csproj" />
     <ProjectReference Include="../../SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../RootSite.csproj" />
+    <ProjectReference Include="../../RenderVerification/RenderVerification.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">

@@ -21,6 +21,10 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Apply `.github/instructions/navigation.instructions.md` for structural navigation and hidden-dependency handling.
 - Use `Src/AGENTS.md`, `.github/AGENTS.md`, `FLExInstaller/AGENTS.md`, and `openspec/AGENTS.md` for area-specific guidance.
 
+## External Dependencies (LibLcm)
+
+FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, which provides the main data model and FDO (FieldWorks Data Objects) layers used by FieldWorks. The liblcm library is the core FieldWorks model for language and culture data and includes interfaces like `IScrFootnoteFactory` that FieldWorks consumes. If you cannot find a core data model definition within this workspace, ask for access to the `liblcm` repository to reference the source.
+
 ## Serena navigation
 
 - Prefer Serena symbolic tools for code discovery/navigation before broad file reads.

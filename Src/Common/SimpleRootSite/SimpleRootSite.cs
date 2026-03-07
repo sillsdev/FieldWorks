@@ -195,6 +195,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>True if we are waiting to do a refresh on the view (will be done when the view
 		/// becomes visible); false otherwise</summary>
 		protected bool m_fRefreshPending = false;
+		private bool m_fRefreshInProgress;
+		private bool m_fRefreshRequestedWhileInProgress;
+		private bool m_fRefreshInvokeQueued;
 
 		/// <summary>True to show range selections when focus is lost; false otherwise</summary>
 		protected bool m_fShowRangeSelAfterLostFocus = false;
@@ -1915,6 +1918,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_rootb?.Site == null)
 				return false;
 
+			if (m_fRefreshInProgress)
+			{
+				m_fRefreshRequestedWhileInProgress = true;
+				m_fRefreshPending = true;
+				return false;
+			}
+
 			var decorator = m_rootb.DataAccess as DomainDataByFlidDecoratorBase;
 			decorator?.Refresh();
 
@@ -1926,10 +1936,24 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 
+			// PATH-L5: Skip the expensive selection save/restore and drawing
+			// suspension when the VwRootBox reports no pending changes.
+			// The root box's NeedsReconstruct flag is set by PropChanged,
+			// OnStylesheetChange, and other mutation paths. When false,
+			// Reconstruct() would be a no-op (PATH-R1), so we can avoid
+			// the managed overhead entirely.
+			if (!m_rootb.NeedsReconstruct)
+			{
+				m_fRefreshPending = false;
+				return false;
+			}
+
 			// Rebuild the display... the drastic way.
 			SelectionRestorer restorer = CreateSelectionRestorer();
 			try
 			{
+				m_fRefreshInProgress = true;
+				m_fRefreshRequestedWhileInProgress = false;
 				using (new SuspendDrawing(this))
 				{
 					m_rootb.Reconstruct();
@@ -1938,10 +1962,36 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
+				m_fRefreshInProgress = false;
 				restorer?.Dispose();
+				if (m_fRefreshRequestedWhileInProgress)
+					QueueRefreshDisplay();
 			}
 			//Enhance: If all refreshable descendants are handled this should return true
 			return false;
+		}
+
+		private void QueueRefreshDisplay()
+		{
+			if (m_fRefreshInvokeQueued || IsDisposed)
+				return;
+			if (!IsHandleCreated)
+			{
+				m_fRefreshPending = true;
+				return;
+			}
+
+			m_fRefreshInvokeQueued = true;
+			BeginInvoke((MethodInvoker)delegate
+			{
+				m_fRefreshInvokeQueued = false;
+				if (IsDisposed)
+					return;
+				if (Visible && m_fRootboxMade && m_rootb != null)
+					RefreshDisplay();
+				else
+					m_fRefreshPending = true;
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------

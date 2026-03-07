@@ -60,6 +60,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$runningOnWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+if (-not $runningOnWindows) {
+    Write-Host "[ERROR] FieldWorks tests are disabled on non-Windows hosts." -ForegroundColor Red
+    Write-Host "Linux and macOS are supported for editing, code search, specs, and documentation only." -ForegroundColor Yellow
+    Write-Host "Run test.ps1 on Windows if you need executable test output." -ForegroundColor Yellow
+    exit 1
+}
+
 # =============================================================================
 # Import Shared Module
 # =============================================================================
@@ -200,12 +208,53 @@ try {
                 Write-Host ""
             }
             else {
-                Write-Host "Building before running tests..." -ForegroundColor Cyan
-                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
-                if ($LASTEXITCODE -ne 0) {
-                    Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
-                    $script:testExitCode = $LASTEXITCODE
-                    return
+                # Attempt to build specific project if requested
+                $projectToBuild = $null
+
+                if ($TestProject) {
+                    if ($TestProject -match '\.csproj$') {
+                        if (Test-Path $TestProject) {
+                            $projectToBuild = $TestProject
+                        }
+                    }
+                    elseif (Test-Path $TestProject -PathType Container) {
+                        # Look for csproj in the folder
+                        $candidates = Get-ChildItem -Path $TestProject -Filter "*.csproj"
+                        if ($candidates.Count -eq 1) {
+                            $projectToBuild = $candidates[0].FullName
+                        }
+                        elseif ($candidates.Count -gt 1) {
+                            # Try to match folder name
+                            $folderName = Split-Path $TestProject -Leaf
+                            $match = $candidates | Where-Object { $_.BaseName -eq $folderName }
+                            if ($match) {
+                                $projectToBuild = $match[0].FullName
+                            }
+                        }
+                    }
+                }
+
+                if ($projectToBuild) {
+                    Write-Host "Building single project: $projectToBuild..." -ForegroundColor Cyan
+                    Invoke-MSBuild `
+                        -Arguments @(
+                            $projectToBuild,
+                            '/t:Build',
+                            "/p:Configuration=$Configuration",
+                            '/p:Platform=x64',
+                            '/v:minimal',
+                            '/nologo'
+                        ) `
+                        -Description "Build $TestProject"
+                }
+                else {
+                    Write-Host "Building before running tests..." -ForegroundColor Cyan
+                    & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
+                        $script:testExitCode = $LASTEXITCODE
+                        return
+                    }
                 }
                 Write-Host ""
             }
@@ -246,7 +295,11 @@ try {
             else {
                 # Assume it's a project path, find the DLL
                 $projectName = Split-Path $TestProject -Leaf
-                if ($projectName -notmatch 'Tests?$') {
+                if ($projectName -match '\.csproj$') {
+                    $projectName = [System.IO.Path]::GetFileNameWithoutExtension($projectName)
+                }
+
+                if ($projectName -notmatch 'Tests$') {
                     $projectName = "${projectName}Tests"
                 }
                 $testDlls = @(Join-Path $outputDir "$projectName.dll")

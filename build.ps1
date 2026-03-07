@@ -148,6 +148,14 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+	$runningOnWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+	if (-not $runningOnWindows) {
+		Write-Host "[ERROR] FieldWorks builds are disabled on non-Windows hosts." -ForegroundColor Red
+		Write-Host "Linux and macOS are supported for editing, code search, specs, and documentation only." -ForegroundColor Yellow
+		Write-Host "Run build.ps1 on Windows if you need build output." -ForegroundColor Yellow
+		exit 1
+	}
+
 # Add WiX to the PATH for installer builds (required for harvesting localizations)
 $env:PATH = "$env:WIX/bin;$env:PATH"
 
