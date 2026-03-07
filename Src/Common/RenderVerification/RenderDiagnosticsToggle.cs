@@ -42,7 +42,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// Gets the default output directory for benchmark artifacts.
 		/// </summary>
 		public static string DefaultOutputDirectory => Path.Combine(
-			AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Output", "RenderBenchmarks");
+			AppDomain.CurrentDomain.BaseDirectory,
+			"..",
+			"..",
+			"..",
+			"Output",
+			"RenderBenchmarks");
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RenderDiagnosticsToggle"/> class.
@@ -52,7 +57,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		public RenderDiagnosticsToggle(string flagsFilePath = null, string traceLogPath = null)
 		{
 			m_flagsFilePath = flagsFilePath ?? RenderScenarioDataBuilder.DefaultFlagsPath;
-			m_traceLogPath = traceLogPath ?? Path.Combine(DefaultOutputDirectory, "render-trace.log");
+			m_traceLogPath = traceLogPath ?? Path.Combine(
+				DefaultOutputDirectory,
+				"render-trace.log");
 
 			LoadFlags();
 		}
@@ -63,16 +70,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <param name="persist">Whether to persist the change to the flags file.</param>
 		public void EnableDiagnostics(bool persist = false)
 		{
-			m_originalDiagnosticsState = DiagnosticsEnabled;
-			DiagnosticsEnabled = true;
-			TraceEnabled = true;
-
-			if (persist)
-			{
-				SaveFlags();
-			}
-
-			SetupTraceListener();
+			ApplyDiagnosticsState(enabled: true, persist: persist);
 		}
 
 		/// <summary>
@@ -81,15 +79,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <param name="persist">Whether to persist the change to the flags file.</param>
 		public void DisableDiagnostics(bool persist = false)
 		{
-			DiagnosticsEnabled = false;
-			TraceEnabled = false;
-
-			if (persist)
-			{
-				SaveFlags();
-			}
-
-			RemoveTraceListener();
+			ApplyDiagnosticsState(enabled: false, persist: persist);
 		}
 
 		/// <summary>
@@ -97,14 +87,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// </summary>
 		public void RestoreOriginalState()
 		{
-			if (m_originalDiagnosticsState)
-			{
-				EnableDiagnostics(persist: false);
-			}
-			else
-			{
-				DisableDiagnostics(persist: false);
-			}
+			ApplyDiagnosticsState(enabled: m_originalDiagnosticsState, persist: false);
 		}
 
 		/// <summary>
@@ -175,7 +158,11 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			try
 			{
 				// Need to read without locking since we may still have the file open
-				using (var stream = new FileStream(m_traceLogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				using (var stream = new FileStream(
+					m_traceLogPath,
+					FileMode.Open,
+					FileAccess.Read,
+					FileShare.ReadWrite))
 				using (var reader = new StreamReader(stream))
 				{
 					return reader.ReadToEnd();
@@ -244,6 +231,26 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			File.WriteAllText(m_flagsFilePath, json, Encoding.UTF8);
 		}
 
+		private void ApplyDiagnosticsState(bool enabled, bool persist)
+		{
+			DiagnosticsEnabled = enabled;
+			TraceEnabled = enabled;
+
+			if (persist)
+			{
+				SaveFlags();
+			}
+
+			if (enabled)
+			{
+				SetupTraceListener();
+			}
+			else
+			{
+				RemoveTraceListener();
+			}
+		}
+
 		private void SetupTraceListener()
 		{
 			if (m_traceListener != null)
@@ -255,7 +262,10 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				Directory.CreateDirectory(directory);
 			}
 
-			m_traceWriter = new StreamWriter(m_traceLogPath, append: true, encoding: Encoding.UTF8)
+			m_traceWriter = new StreamWriter(
+				m_traceLogPath,
+				append: true,
+				encoding: Encoding.UTF8)
 			{
 				AutoFlush = true
 			};

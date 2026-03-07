@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
 using SIL.FieldWorks.Common.RenderVerification;
@@ -162,6 +163,55 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Cleanup
 			m_diagnostics.ClearTraceLog();
+		}
+
+		/// <summary>
+		/// Tests that restoring diagnostics preserves the initial enabled state across repeated restores.
+		/// </summary>
+		[Test]
+		public void DiagnosticsToggle_RestoreOriginalState_CanBeCalledRepeatedly()
+		{
+			// Arrange
+			var tempDirectory = Path.Combine(Path.GetTempPath(), "RenderDiagnosticsToggleTests", Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDirectory);
+			var flagsPath = Path.Combine(tempDirectory, "flags.json");
+			var traceLogPath = Path.Combine(tempDirectory, "trace.log");
+
+			File.WriteAllText(
+				flagsPath,
+				"{\"DiagnosticsEnabled\":true,\"TraceEnabled\":true,\"CaptureMode\":\"DrawToBitmap\"}");
+
+			try
+			{
+				using (var diagnostics = new RenderDiagnosticsToggle(flagsPath, traceLogPath))
+				{
+					// Act
+					diagnostics.DisableDiagnostics();
+					diagnostics.RestoreOriginalState();
+					diagnostics.RestoreOriginalState();
+
+					// Assert
+					Assert.That(diagnostics.DiagnosticsEnabled, Is.True, "Restore should preserve the initial enabled state");
+					Assert.That(diagnostics.TraceEnabled, Is.True, "Trace output should remain enabled after repeated restore calls");
+				}
+			}
+			finally
+			{
+				if (File.Exists(traceLogPath))
+				{
+					File.Delete(traceLogPath);
+				}
+
+				if (File.Exists(flagsPath))
+				{
+					File.Delete(flagsPath);
+				}
+
+				if (Directory.Exists(tempDirectory))
+				{
+					Directory.Delete(tempDirectory);
+				}
+			}
 		}
 	}
 }

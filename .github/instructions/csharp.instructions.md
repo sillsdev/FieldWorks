@@ -5,110 +5,68 @@ applyTo: '**/*.cs'
 
 # C# Development
 
-## C# Instructions
-- Always use the latest version C#, currently C# 14 features.
-- Write clear and concise comments for each function.
+## Scope
+- FieldWorks managed code is a Windows desktop codebase built on .NET Framework 4.8 and native dependencies.
+- Treat this file as guidance for existing FieldWorks C# projects, not for ASP.NET or service-oriented .NET applications.
+- On Linux and macOS, limit work to editing, search, docs, and specs. Do not claim to have built or run managed binaries there.
+
+## Language Version And Features
+- Use the repo default C# language version unless a project explicitly overrides it. Today that default is C# 8.0 via `Directory.Build.props`.
+- Do not introduce C# features that require a newer language version without first updating repo-wide build policy.
+- Nullable reference types are disabled by default. Only use nullable annotations and nullable-flow assumptions in projects that opt in explicitly.
+- Prefer syntax that is already common in the touched area. Consistency with nearby code is more important than using the newest available syntax.
 
 ## General Instructions
-- Make only high confidence suggestions when reviewing code changes.
-- Write code with good maintainability practices, including comments on why certain design decisions were made.
-- Handle edge cases and write clear exception handling.
-- For libraries or external dependencies, mention their usage and purpose in comments.
+- Make only high-confidence suggestions when reviewing code changes.
+- Fix the root cause when practical, but keep edits narrow and compatible with existing behavior.
+- Handle edge cases and exception paths explicitly. Do not swallow exceptions without a documented reason.
+- Treat native interop, COM, registry-free COM, file formats, and serialization boundaries as high-risk areas that need extra care.
 
 ## Naming Conventions
+- Follow PascalCase for types, methods, properties, events, and public members.
+- Use camelCase for locals and private fields.
+- Prefix interfaces with `I`.
+- Keep namespaces aligned with the existing project root namespace instead of inventing new top-level naming schemes.
 
-- Follow PascalCase for component names, method names, and public members.
-- Use camelCase for private fields and local variables.
-- Prefix interface names with "I" (e.g., IUserService).
+## Formatting And Style
+- Apply the formatting rules defined in `.editorconfig` and match surrounding code.
+- Prefer block-scoped namespaces. Do not default to file-scoped namespaces in this repo.
+- Keep using directives simple and consistent with the file you are editing.
+- Use `nameof` instead of string literals when referencing member names.
+- Use pattern matching where it improves clarity and is supported by the project language version. Do not force newer syntax into older-looking code.
 
-## Formatting
+## Documentation And Comments
+- Public APIs should have XML documentation comments.
+- Add code comments only when intent, invariants, or interop constraints are not obvious from the code itself.
+- Do not add boilerplate comments to every method.
 
-- Apply code-formatting style defined in `.editorconfig`.
-- Prefer file-scoped namespace declarations and single-line using directives.
-- Insert a newline before the opening curly brace of any code block (e.g., after `if`, `for`, `while`, `foreach`, `using`, `try`, etc.).
-- Ensure that the final return statement of a method is on its own line.
-- Use pattern matching and switch expressions wherever possible.
-- Use `nameof` instead of string literals when referring to member names.
-- Ensure that XML doc comments are created for any public APIs. When applicable, include `<example>` and `<code>` documentation in the comments.
+## Project Conventions
+- Most managed projects here are SDK-style `.csproj` files targeting `net48`.
+- Keep `GenerateAssemblyInfo` disabled where the project relies on linked `CommonAssemblyInfo.cs`.
+- Preserve project-specific build settings such as warnings-as-errors, x64 assumptions, WinExe/WindowsDesktop settings, and registration-free COM behavior.
+- When adding new files, update the project file only if the specific project format requires it.
 
-## Project Setup and Structure
+## Desktop, UI, And Localization
+- FieldWorks is a desktop application. Favor guidance relevant to WinForms, WPF, dialogs, view models, threading, and long-running UI work.
+- UI-affecting code must respect the UI thread. Avoid blocking calls that can freeze the application.
+- Keep user-visible strings in `.resx` resources and follow existing localization patterns. Do not hardcode new UI strings.
+- Preserve designer compatibility for WinForms and avoid edits that break generated code patterns.
 
-- Guide users through creating a new .NET project with the appropriate templates.
-- Explain the purpose of each generated file and folder to build understanding of the project structure.
-- Demonstrate how to organize code using feature folders or domain-driven design principles.
-- Show proper separation of concerns with models, services, and data access layers.
-- Explain the Program.cs and configuration system in ASP.NET Core 10 including environment-specific settings.
-
-## Nullable Reference Types
-
-- Declare variables non-nullable, and check for `null` at entry points.
-- Always use `is null` or `is not null` instead of `== null` or `!= null`.
-- Trust the C# null annotations and don't add null checks when the type system says a value cannot be null.
-
-## Data Access Patterns
-
-- Guide the implementation of a data access layer using Entity Framework Core.
-- Explain different options (SQL Server, SQLite, In-Memory) for development and production.
-- Demonstrate repository pattern implementation and when it's beneficial.
-- Show how to implement database migrations and data seeding.
-- Explain efficient query patterns to avoid common performance issues.
-
-## Authentication and Authorization
-
-- Guide users through implementing authentication using JWT Bearer tokens.
-- Explain OAuth 2.0 and OpenID Connect concepts as they relate to ASP.NET Core.
-- Show how to implement role-based and policy-based authorization.
-- Demonstrate integration with Microsoft Entra ID (formerly Azure AD).
-- Explain how to secure both controller-based and Minimal APIs consistently.
-
-## Validation and Error Handling
-
-- Guide the implementation of model validation using data annotations and FluentValidation.
-- Explain the validation pipeline and how to customize validation responses.
-- Demonstrate a global exception handling strategy using middleware.
-- Show how to create consistent error responses across the API.
-- Explain problem details (RFC 7807) implementation for standardized error responses.
-
-## API Versioning and Documentation
-
-- Guide users through implementing and explaining API versioning strategies.
-- Demonstrate Swagger/OpenAPI implementation with proper documentation.
-- Show how to document endpoints, parameters, responses, and authentication.
-- Explain versioning in both controller-based and Minimal APIs.
-- Guide users on creating meaningful API documentation that helps consumers.
-
-## Logging and Monitoring
-
-- Guide the implementation of structured logging using Serilog or other providers.
-- Explain the logging levels and when to use each.
-- Demonstrate integration with Application Insights for telemetry collection.
-- Show how to implement custom telemetry and correlation IDs for request tracking.
-- Explain how to monitor API performance, errors, and usage patterns.
+## Nullability And Defensive Code
+- Because nullable reference types are usually disabled, write explicit null checks at public entry points and interop boundaries when required by the surrounding code.
+- Prefer `is null` and `is not null` checks when adding new null checks.
+- Do not pretend the compiler will enforce null-state safety unless the project has opted into nullable analysis.
 
 ## Testing
+- For behavior changes and bug fixes, add or update tests when practical.
+- Follow nearby test naming and structure conventions. Do not add `Arrange`, `Act`, or `Assert` comments unless the existing file already uses them.
+- Prefer fast, deterministic NUnit tests for managed code.
+- Use `./test.ps1` on Windows to run tests, and `./build.ps1` when you need a supporting build first. Do not recommend ad-hoc `dotnet test` or `msbuild` commands as the normal path for this repo.
 
-- Always include test cases for critical paths of the application.
-- Guide users through creating unit tests.
-- Do not emit "Act", "Arrange" or "Assert" comments.
-- Copy existing style in nearby files for test method names and capitalization.
-- Explain integration testing approaches for API endpoints.
-- Demonstrate how to mock dependencies for effective testing.
-- Show how to test authentication and authorization logic.
-- Explain test-driven development principles as applied to API development.
+## Build And Validation
+- Use `./build.ps1` for builds and `./test.ps1` for tests in normal repo workflows.
+- Avoid changing build, packaging, COM, or registry behavior without checking the existing build instructions and affected tests.
+- Treat compiler warnings as actionable unless the repo already documents a specific exception.
 
-## Performance Optimization
-
-- Guide users on implementing caching strategies (in-memory, distributed, response caching).
-- Explain asynchronous programming patterns and why they matter for API performance.
-- Demonstrate pagination, filtering, and sorting for large data sets.
-- Show how to implement compression and other performance optimizations.
-- Explain how to measure and benchmark API performance.
-
-## Deployment and DevOps
-
-- Guide users through containerizing their API using .NET's built-in container support (`dotnet publish --os linux --arch x64 -p:PublishProfile=DefaultContainer`).
-- Explain the differences between manual Dockerfile creation and .NET's container publishing features.
-- Explain CI/CD pipelines for NET applications.
-- Demonstrate deployment to Azure App Service, Azure Container Apps, or other hosting options.
-- Show how to implement health checks and readiness probes.
-- Explain environment-specific configurations for different deployment stages.
+## What Not To Assume
+- Do not assume ASP.NET Core, Minimal APIs, Entity Framework Core, Swagger/OpenAPI, cloud deployment, container publishing, or JWT authentication are relevant unless the user is explicitly working in a repo area that adds those technologies.

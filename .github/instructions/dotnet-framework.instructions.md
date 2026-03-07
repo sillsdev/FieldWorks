@@ -18,7 +18,7 @@ applyTo: '**/*.csproj, **/*.cs'
   - Example: `<Compile Include="Path\To\NewFile.cs" />`
 
 - **No Implicit Imports**: Unlike SDK-style projects, .NET Framework projects do not automatically import common namespaces or assemblies
- 
+
 - **Build Configuration**: Contains explicit `<PropertyGroup>` sections for Debug/Release configurations
 
 - **Output Paths**: Explicit `<OutputPath>` and `<IntermediateOutputPath>` definitions
@@ -31,19 +31,8 @@ applyTo: '**/*.csproj, **/*.cs'
 - Instead, if changes to NuGet references are required, ask the user to install or update NuGet packages using the Visual Studio NuGet Package Manager or Visual Studio package manager console.
 - When recommending NuGet packages, ensure they are compatible with .NET Framework or .NET Standard 2.0 (not only .NET Core or .NET 5+).
 
-## C# Language Version is 7.3
-- This project is limited to C# 7.3 features only. Please avoid using:
-
-### C# 8.0+ Features (NOT SUPPORTED):
-  - Using declarations (`using var stream = ...`)
-  - Await using statements (`await using var resource = ...`)
-  - Switch expressions (`variable switch { ... }`)
-  - Null-coalescing assignment (`??=`)
-  - Range and index operators (`array[1..^1]`, `array[^1]`)
-  - Default interface methods
-  - Readonly members in structs
-  - Static local functions
-  - Nullable reference types (`string?`, `#nullable enable`)
+## C# Language Version is 8.0
+- This project is limited to C# 8.0 features only. Please avoid using:
 
 ### C# 9.0+ Features (NOT SUPPORTED):
   - Records (`public record Person(string Name)`)
@@ -58,12 +47,16 @@ applyTo: '**/*.csproj, **/*.cs'
   - Record structs
   - Required members
 
-### Use Instead (C# 7.3 Compatible):
-  - Traditional using statements with braces
-  - Switch statements instead of switch expressions
-  - Explicit null checks instead of null-coalescing assignment
-  - Array slicing with manual indexing
-  - Abstract classes or interfaces instead of default interface methods
+### Use Instead (C# 8.0 Compatible):
+  - Using declarations (`using var stream = ...`)
+  - Await using statements (`await using var resource = ...`)
+  - Switch expressions (`variable switch { ... }`)
+  - Null-coalescing assignment (`??=`)
+  - Range and index operators (`array[1..^1]`, `array[^1]`)
+  - Default interface methods
+  - Readonly members in structs
+  - Static local functions
+  - Nullable reference types (`string?`, `#nullable enable`)
 
 ## Environment Considerations (Windows environment)
 - Use Windows-style paths with backslashes (e.g., `C:\path\to\file.cs`)
