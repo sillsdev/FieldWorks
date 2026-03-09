@@ -1065,7 +1065,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Id == "entries")
 			{
-				return JumpToRecord(argument, true);
+				return JumpToRecord(argument);
 			}
 			return false;
 		}
@@ -1080,7 +1080,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
 		/// <returns></returns>
-		bool JumpToRecord(object argument, bool popup = false)
+		bool JumpToRecord(object argument)
 		{
 			CheckDisposed();
 
@@ -1125,10 +1125,7 @@ namespace SIL.FieldWorks.XWorks
 							// update issue reported in (LT-2448). However, that message only works in the context of a
 							// BrowseViewer, not a document view (e.g. Dictionary) (see LT-7298). So, I've
 							// tested OnChangeFilterClearAll, and it seems to solve both problems now.
-							if (!popup)
-							{
-								OnChangeFilterClearAll(null);
-							}
+							OnChangeFilterClearAll(null);
 							m_activeMenuBarFilter = null;
 							index = IndexOfObjOrChildOrParent(hvoTarget);
 						}
