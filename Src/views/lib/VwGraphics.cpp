@@ -105,15 +105,8 @@ void VwGraphics::Init()
 	Assert(m_hfontOld == NULL);
 	// m_chrp should contain zeros too; don't bother checking.
 
-	// PATH-C1: Initialize font cache.
-	m_cfceUsed = 0;
-	memset(m_rgfce, 0, sizeof(m_rgfce));
-
 	// PATH-C2: Initialize color cache.
-	m_clrForeCache = CLR_INVALID;
-	m_clrBackCache = CLR_INVALID;
-	m_nBkModeCache = -1;
-	m_fColorCacheValid = false;
+	m_colorStateCache.Invalidate();
 
 	// Initialize the clip rectangle to be as big as possible:
 	// TODO: decide if we want to do this.
@@ -132,6 +125,11 @@ static GenericFactory g_fact(
 	_T("SIL Graphics"),
 	_T("Apartment"),
 	&VwGraphics::CreateCom);
+
+static bool TryDeleteCachedFont(HFONT hfont, void *)
+{
+	return AfGdi::DeleteObjectFont(hfont) != 0;
+}
 
 
 void VwGraphics::CreateCom(IUnknown *punkCtl, REFIID riid, void ** ppv)
@@ -1270,8 +1268,9 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 			hfont = AfGdi::CreateFontIndirect(&lf);
 			if (!hfont)
 				ThrowHr(WarnHr(E_FAIL));
-			AddFontToCache(hfont, pchrp);
 			SetFont(hfont);
+			// Keep deletion-safe ordering: select first, then allow cache eviction.
+			AddFontToCache(hfont, pchrp);
 		}
 	}
 
@@ -1282,22 +1281,7 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 		COLORREF clrForeNeeded = pchrp->clrFore;
 		COLORREF clrBackNeeded = (pchrp->clrBack == kclrTransparent) ? RGB(0,0,0) : pchrp->clrBack;
 		int nBkModeNeeded = (pchrp->clrBack == kclrTransparent) ? TRANSPARENT : OPAQUE;
-
-		if (!m_fColorCacheValid
-			|| clrForeNeeded != m_clrForeCache
-			|| clrBackNeeded != m_clrBackCache
-			|| nBkModeNeeded != m_nBkModeCache)
-		{
-			SmartPalette spal(m_hdc);
-			bool fOK = (AfGfx::SetTextColor(m_hdc, clrForeNeeded) != CLR_INVALID);
-			fOK = fOK && (AfGfx::SetBkColor(m_hdc, clrBackNeeded) != CLR_INVALID);
-			fOK = fOK && ::SetBkMode(m_hdc, nBkModeNeeded);
-
-			m_clrForeCache = clrForeNeeded;
-			m_clrBackCache = clrBackNeeded;
-			m_nBkModeCache = nBkModeNeeded;
-			m_fColorCacheValid = true;
-		}
+		m_colorStateCache.ApplyIfNeeded(m_hdc, clrForeNeeded, clrBackNeeded, nBkModeNeeded);
 	}
 #if 0
 	// DarrellX reports that this was causing some weird failures on his machine.
@@ -1667,6 +1651,7 @@ void VwGraphics::SetFont(HFONT hfont)
 	// all created HFONT lifecycles. Previously this deleted m_hfont immediately,
 	// causing repeated CreateFontIndirect/DeleteObject cycles for alternating WS.
 	m_hfont = hfont;
+	m_fontHandleCache.TryDeleteDeferredFonts(m_hfont, TryDeleteCachedFont, NULL);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1888,7 +1873,7 @@ int VwGraphics::GetFontHeightFromFontTable()
 }
 
 #include <vector_i.cpp>
-template Vector<HFONT>; // VecHfont;
+template Vector<HRGN>; // VecHRgn;
 
 /*----------------------------------------------------------------------------------------------
 	PATH-C1: Font cache helpers.
@@ -1904,20 +1889,7 @@ template Vector<HFONT>; // VecHfont;
 ----------------------------------------------------------------------------------------------*/
 HFONT VwGraphics::FindCachedFont(const LgCharRenderProps * pchrp)
 {
-	const int cbFontOffset = (int)offsetof(LgCharRenderProps, ttvBold);
-	const int cbFontSize = isizeof(LgCharRenderProps) - cbFontOffset;
-
-	for (int i = 0; i < m_cfceUsed; i++)
-	{
-		if (m_rgfce[i].fUsed &&
-			memcmp(((byte *)pchrp) + cbFontOffset,
-				   ((byte *)&m_rgfce[i].chrp) + cbFontOffset,
-				   cbFontSize) == 0)
-		{
-			return m_rgfce[i].hfont;
-		}
-	}
-	return NULL;
+	return m_fontHandleCache.FindCachedFont(pchrp);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1926,23 +1898,7 @@ HFONT VwGraphics::FindCachedFont(const LgCharRenderProps * pchrp)
 ----------------------------------------------------------------------------------------------*/
 void VwGraphics::AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp)
 {
-	if (m_cfceUsed >= kcFontCacheMax)
-	{
-		// Cache full — evict oldest entry (index 0).
-		// The evicted font must not be currently selected into the DC.
-		if (m_rgfce[0].hfont && m_rgfce[0].hfont != m_hfont)
-		{
-			AfGdi::DeleteObjectFont(m_rgfce[0].hfont);
-		}
-		// Shift all entries down by one.
-		memmove(&m_rgfce[0], &m_rgfce[1], (kcFontCacheMax - 1) * sizeof(FontCacheEntry));
-		m_cfceUsed = kcFontCacheMax - 1;
-	}
-
-	m_rgfce[m_cfceUsed].hfont = hfont;
-	m_rgfce[m_cfceUsed].chrp = *pchrp;
-	m_rgfce[m_cfceUsed].fUsed = true;
-	m_cfceUsed++;
+	m_fontHandleCache.AddFontToCache(hfont, pchrp, m_hfont, TryDeleteCachedFont, NULL);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1951,16 +1907,8 @@ void VwGraphics::AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp)
 ----------------------------------------------------------------------------------------------*/
 void VwGraphics::ClearFontCache()
 {
-	for (int i = 0; i < m_cfceUsed; i++)
-	{
-		if (m_rgfce[i].hfont)
-		{
-			AfGdi::DeleteObjectFont(m_rgfce[i].hfont);
-			m_rgfce[i].hfont = NULL;
-		}
-		m_rgfce[i].fUsed = false;
-	}
-	m_cfceUsed = 0;
+	m_fontHandleCache.Clear(m_hfont, TryDeleteCachedFont, NULL);
+
 	// PATH-C2: Invalidate color cache when DC is released.
-	m_fColorCacheValid = false;
+	m_colorStateCache.Invalidate();
 }

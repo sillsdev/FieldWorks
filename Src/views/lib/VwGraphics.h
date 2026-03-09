@@ -23,6 +23,9 @@ Description:
 #ifndef VWGRAPHICS_INCLUDED
 #define VWGRAPHICS_INCLUDED
 
+#include "FontHandleCache.h"
+#include "ColorStateCache.h"
+
 #if !defined(_WIN32) && !defined(_M_X64)
 #include "VwGraphicsCairo.h"
 #else
@@ -165,23 +168,11 @@ protected:
 
 	// PATH-C1: HFONT LRU cache — avoid repeated CreateFontIndirect/DeleteObject
 	// for alternating writing systems within multi-WS paragraphs.
-	// The font-related portion of LgCharRenderProps (from ttvBold onward) is the cache key.
-	static const int kcFontCacheMax = 8;
-	struct FontCacheEntry
-	{
-		HFONT hfont;
-		LgCharRenderProps chrp;
-		bool fUsed;
-	};
-	FontCacheEntry m_rgfce[kcFontCacheMax];
-	int m_cfceUsed; // number of cache entries in use
+	FontHandleCache m_fontHandleCache;
 
 	// PATH-C2: Color state tracking — skip redundant GDI SetTextColor/SetBkColor/SetBkMode
 	// calls when colors haven't changed since the last SetupGraphics call.
-	COLORREF m_clrForeCache;     // last foreground color set on HDC
-	COLORREF m_clrBackCache;     // last background color set on HDC
-	int m_nBkModeCache;          // last background mode (TRANSPARENT or OPAQUE)
-	bool m_fColorCacheValid;     // true when color cache is initialized
+	ColorStateCache m_colorStateCache;
 
 	HFONT FindCachedFont(const LgCharRenderProps * pchrp);
 	void AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp);
