@@ -3937,7 +3937,7 @@ namespace SIL.FieldWorks.IText
 		/// Get's the real lex senses for each current morph.
 		/// </summary>
 		/// <returns></returns>
-		protected List<int> LexSensesForCurrentMorphs()
+		internal List<int> LexSensesForCurrentMorphs()
 		{
 			List<int> lexSensesForMorphs = new List<int>();
 

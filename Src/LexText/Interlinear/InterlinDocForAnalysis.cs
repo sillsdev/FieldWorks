@@ -104,6 +104,12 @@ namespace SIL.FieldWorks.IText
 					MoveFocusBoxIntoPlace();
 				}
 			}
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null
+				&& tag == LexSenseTags.kflidGloss && FocusBox.ContainsLexEntry(hvo))
+			{
+				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
+				MoveFocusBoxIntoPlace();
+			}
 		}
 
 		protected override void UpdateWordforms(HashSet<IWfiWordform> wordforms)
