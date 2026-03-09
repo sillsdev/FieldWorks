@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AllomorphGenerators xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" dbVersion="3">
+  <Operations>
+    <Operation active="true">
+      <Name>foreshortening</Name>
+      <Description>Add allomorphs for entries which undergo foreshortening</Description>
+      <Pattern>
+        <Matcher>
+          <Type>Begin</Type>
+          <Pattern>:$|:\..+$</Pattern>
+          <MatchCase>true</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root"/>
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem"/>
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root"/>
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem"/>
+        </MorphTypes>
+        <Category active="true" guid="54712931-442f-42d5-8634-f12bd2e310ce" name="Transitive verb"/>
+      </Pattern>
+      <Action>
+        <ReplaceOps/>
+        <ReplaceOpRefs>
+          <string>2c31f8c6-9eaa-4fdf-a658-76c97db4901f</string>
+          <string>af45b9a8-1586-47c7-95bc-7147c54572fe</string>
+          <string>54211854-087a-422a-893f-06b0efef2dc9</string>
+          <string>3fb809d1-37a2-43a2-8315-c97c25e58ecb</string>
+          <string>9b769216-2984-4546-9e7f-75905ffcce9d</string>
+          <string>74d68073-0ca7-4ebe-b3ec-9d4bfb4d8fff</string>
+        </ReplaceOpRefs>
+        <Environments>
+          <Environment active="true" guid="d7f7123-e8cf-11d3-9733-00c04f186933" name="/ _ #"/>
+          <Environment active="true" guid="d7f7456-e8cf-11d3-9733-00c04f186933" name="/ ([C])[C]_ [V]"/>
+        </Environments>
+        <StemName active="true" guid="d2cf436-e8cf-11d3-9733-00c04f186933" name="no lowering"/>
+      </Action>
+    </Operation>
+  </Operations>
+  <ReplaceOperations>
+    <Replace active="true" guid="2c31f8c6-9eaa-4fdf-a658-76c97db4901f" mode="false" ach="true" acl="true" akh="true" akl="true" ame="true">
+      <From/>
+      <To/>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ach</string>
+        <string>qvm-acl</string>
+        <string>qvm-akh</string>
+        <string>qvm-akl</string>
+        <string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="af45b9a8-1586-47c7-95bc-7147c54572fe" mode="false" ach="true" acl="true" akh="true" akl="true" ame="true">
+      <From>*</From>
+      <To/>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ach</string>
+        <string>qvm-acl</string>
+        <string>qvm-akh</string>
+        <string>qvm-akl</string>
+        <string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="54211854-087a-422a-893f-06b0efef2dc9" mode="false" ach="true" acl="true" akh="true" akl="true" ame="true">
+      <From>+</From>
+      <To/>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ach</string>
+        <string>qvm-acl</string>
+        <string>qvm-akh</string>
+        <string>qvm-akl</string>
+        <string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="3fb809d1-37a2-43a2-8315-c97c25e58ecb" mode="true" ach="true" acl="true" akh="true" akl="true" ame="true">
+      <From>^(.*:)\..+$</From>
+      <To>$1</To>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ach</string>
+        <string>qvm-acl</string>
+        <string>qvm-akh</string>
+        <string>qvm-akl</string>
+        <string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="9b769216-2984-4546-9e7f-75905ffcce9d" mode="false" ach="true" acl="true" akh="true" akl="true" ame="false">
+      <From>:</From>
+      <To/>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ach</string>
+        <string>qvm-acl</string>
+        <string>qvm-akh</string>
+        <string>qvm-akl</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="74d68073-0ca7-4ebe-b3ec-9d4bfb4d8fff" mode="false" ach="false" acl="false" akh="false" akl="false" ame="true">
+      <From>:</From>
+      <To>a</To>
+      <Description/>
+      <WritingSystemRefs>
+        <string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+  </ReplaceOperations>
+  <WritingSystems>
+    <WritingSystem>
+      <Name>qvm-akh</Name>
+      <Handle>999000005</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-acl</Name>
+      <Handle>999000004</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-akl</Name>
+      <Handle>999000006</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-ach</Name>
+      <Handle>999000003</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-ame</Name>
+      <Handle>999000007</Handle>
+    </WritingSystem>
+  </WritingSystems>
+</AllomorphGenerators>
