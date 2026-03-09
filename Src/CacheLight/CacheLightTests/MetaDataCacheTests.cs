@@ -362,7 +362,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetDstClsNameTest()
 		{
-			Assert.That(m_metaDataCache.GetDstClsName(59005), Is.EqualTo("ClassL"), "Wrong class name");
+			Assert.Fail("just checking");
 		}
 
 		/// <summary>
