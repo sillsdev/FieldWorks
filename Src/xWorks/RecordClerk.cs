@@ -294,27 +294,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion IDisposable & Co. implementation
 
 		/// <summary>
-		/// This is invoked by reflection when something might want to know about a change.
-		/// The initial usage is for the respelling dialog to let ConcDecorators know about spelling changes.
-		/// The notification is passed on to any SDAs that understand it, including embedded ones.
-		/// </summary>
-		/// <param name="argument"></param>
-		private void ItemDataModified(object argument)
-		{
-			var da = m_list.VirtualListPublisher;
-			while (da != null)
-			{
-				if (da.GetType().GetMethod("OnItemDataModified") != null)
-					ReflectionHelper.CallMethod(da, "OnItemDataModified", new [] {argument});
-				var decorator = da as DomainDataByFlidDecoratorBase;
-				if (decorator == null)
-					break;
-				da = decorator.BaseSda;
-			}
-		}
-
-
-		/// <summary>
 		/// We watch for changes to DateModified and update the status bar if we are controlling it.
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -2017,7 +1996,6 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
-			Subscriber.Unsubscribe(EventConstants.ItemDataModified, ItemDataModified);
 
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
@@ -2119,7 +2097,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
 			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
-			Subscriber.Subscribe(EventConstants.ItemDataModified, ItemDataModified);
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
