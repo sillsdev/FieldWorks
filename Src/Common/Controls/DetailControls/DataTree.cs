@@ -177,7 +177,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Tracks the highest slice index that has been made visible. Used by MakeSliceVisible
 		/// to avoid re-walking already-visible prefix on sequential calls.
-		/// Reset to -1 in CreateSlices (before fresh slice construction).
+		/// Reset to -1 in CreateSlices and on any structural mutation of Slices.
+		/// This may be able to be optimized more, but this is the simplest,
+		/// "always works" solution.
 		/// </summary>
 		private int m_lastVisibleHighWaterMark = -1;
 
@@ -261,6 +263,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void InsertSlice(int index, Slice slice)
 		{
 			InstallSlice(slice, index);
+			InvalidateVisibleSliceHighWaterMark();
 			// Skip per-slice tab index reset during bulk construction; CreateSlices()
 			// performs a single ResetTabIndices(0) after all slices are created.
 			if (!ConstructingSlices)
@@ -309,7 +312,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Slices.Remove(slice);
 				Slices.Insert(index, slice);
+				InvalidateVisibleSliceHighWaterMark();
 			}
+		}
+
+		/// <summary>
+		/// The MakeSliceVisible cache is only valid while the current Slices ordering stays intact.
+		/// Any insert, remove, or reorder can move an invisible slice into the cached visible prefix,
+		/// so the conservative fix is to drop the cache and rebuild it on demand.
+		/// </summary>
+		private void InvalidateVisibleSliceHighWaterMark()
+		{
+			m_lastVisibleHighWaterMark = -1;
 		}
 
 		private void SetToolTip(Slice slice)
@@ -423,6 +437,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal void RemoveDisposedSlice(Slice gonner)
 		{
 			Slices.Remove(gonner);
+			InvalidateVisibleSliceHighWaterMark();
 		}
 
 		private void RemoveSlice(Slice gonner, int index, bool fixToolTips)
@@ -432,6 +447,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Controls.Remove(gonner);
 			Debug.Assert(Slices[index] == gonner);
 			Slices.RemoveAt(index);
+			InvalidateVisibleSliceHighWaterMark();
 
 			// Reset CurrentSlice, if appropriate.
 			if (gonner == m_currentSlice)
@@ -860,6 +876,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				Controls.Clear(); //clear the controls
 				Slices.Clear(); //empty the slices collection
+				InvalidateVisibleSliceHighWaterMark();
 				foreach (var slice in slices) //make sure the slices don't think they are active, dispose them
 				{
 					slice.SetCurrentState(false);

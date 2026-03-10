@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -1145,6 +1146,55 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					$"be visible to prevent index corruption.");
 
 				Console.WriteLine($"[OPT-TEST] Visibility sequence: no gaps in 0..{highestVisibleIndex}");
+			}
+		}
+
+		/// <summary>
+		/// Removing the last visible slice shifts the first invisible off-screen slice into the
+		/// visible prefix. MakeSliceVisible must rebuild that prefix from the start on the next call;
+		/// otherwise LT-7307 can be violated by skipping the shifted slice.
+		/// </summary>
+		[Test]
+		public void DataTreeOpt_RemoveVisibleSliceInvalidatesHighWaterMark()
+		{
+			CreateExtremeEntry();
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 800, false);
+				Assert.That(harness.SliceCount, Is.GreaterThan(0), "Should have slices");
+
+				var dt = harness.DataTree;
+				const int cachedPrefixEnd = 4;
+				Assert.That(dt.Slices.Count, Is.GreaterThan(cachedPrefixEnd + 2),
+					"Need enough slices to remove one cached-visible slice and then show a later one");
+
+				for (int i = 0; i < dt.Slices.Count; i++)
+				{
+					((Slice)dt.Slices[i]).Visible = i <= cachedPrefixEnd;
+				}
+
+				var highWaterMarkField = typeof(DataTree).GetField("m_lastVisibleHighWaterMark",
+					BindingFlags.Instance | BindingFlags.NonPublic);
+				Assert.That(highWaterMarkField, Is.Not.Null,
+					"Test must be able to seed the private visibility cache deterministically");
+				highWaterMarkField.SetValue(dt, cachedPrefixEnd);
+
+				dt.RemoveSliceAt(cachedPrefixEnd);
+
+				var shiftedSlice = (Slice)dt.Slices[cachedPrefixEnd];
+				Assert.That(shiftedSlice.Visible, Is.False,
+					"Removing the cached frontier should shift an off-screen slice into that slot");
+
+				int targetIndex = cachedPrefixEnd + 1;
+				Assert.That(((Slice)dt.Slices[targetIndex]).Visible, Is.False,
+					"The later target slice should begin off-screen for this regression test");
+
+				dt.MakeSliceVisible((Slice)dt.Slices[targetIndex], targetIndex);
+
+				Assert.That(((Slice)dt.Slices[cachedPrefixEnd]).Visible, Is.True,
+					"Removing a slice must invalidate the high-water mark so MakeSliceVisible repairs the shifted prefix");
+				Assert.That(((Slice)dt.Slices[targetIndex]).Visible, Is.True,
+					"The requested target slice should still be made visible");
 			}
 		}
 
