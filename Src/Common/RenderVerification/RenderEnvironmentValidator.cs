@@ -39,10 +39,10 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <returns>A SHA256 hash string of the environment settings.</returns>
 		public string GetEnvironmentHash()
 		{
-			var settingsJson = Newtonsoft.Json.JsonConvert.SerializeObject(CurrentSettings);
+			var settingsPayload = BuildStableSettingsPayload(CurrentSettings);
 			using (var sha256 = SHA256.Create())
 			{
-				var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(settingsJson));
+				var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(settingsPayload));
 				return Convert.ToBase64String(hashBytes);
 			}
 		}
@@ -131,6 +131,24 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		public void Refresh()
 		{
 			CurrentSettings = CaptureCurrentSettings();
+		}
+
+		private static string BuildStableSettingsPayload(EnvironmentSettings settings)
+		{
+			if (settings == null)
+				return string.Empty;
+
+			var builder = new StringBuilder();
+			builder.Append("DpiX=").Append(settings.DpiX.ToString(CultureInfo.InvariantCulture)).Append('\n');
+			builder.Append("DpiY=").Append(settings.DpiY.ToString(CultureInfo.InvariantCulture)).Append('\n');
+			builder.Append("FontSmoothing=").Append(settings.FontSmoothing ? "1" : "0").Append('\n');
+			builder.Append("ClearTypeEnabled=").Append(settings.ClearTypeEnabled ? "1" : "0").Append('\n');
+			builder.Append("ThemeName=").Append(settings.ThemeName ?? string.Empty).Append('\n');
+			builder.Append("TextScaleFactor=").Append(settings.TextScaleFactor.ToString("R", CultureInfo.InvariantCulture)).Append('\n');
+			builder.Append("ScreenWidth=").Append(settings.ScreenWidth.ToString(CultureInfo.InvariantCulture)).Append('\n');
+			builder.Append("ScreenHeight=").Append(settings.ScreenHeight.ToString(CultureInfo.InvariantCulture)).Append('\n');
+			builder.Append("CultureName=").Append(settings.CultureName ?? string.Empty);
+			return builder.ToString();
 		}
 
 		private EnvironmentSettings CaptureCurrentSettings()

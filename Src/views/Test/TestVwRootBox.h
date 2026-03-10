@@ -1237,6 +1237,124 @@ namespace TestViews
 			qrootb->Close();
 		}
 
+		void testSetRootObjectReconstructsConstructedView()
+		{
+			class SwitchingRootVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					switch (frag)
+					{
+					case 1:
+						pvwenv->OpenDiv();
+						pvwenv->OpenParagraph();
+						pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+						pvwenv->CloseParagraph();
+						pvwenv->CloseDiv();
+						break;
+					case 2:
+						pvwenv->OpenDiv();
+						pvwenv->OpenParagraph();
+						pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+						pvwenv->CloseParagraph();
+						pvwenv->OpenParagraph();
+						pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+						pvwenv->CloseParagraph();
+						pvwenv->CloseDiv();
+						break;
+					default:
+						return E_INVALIDARG;
+					}
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"Short paragraph text");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SwitchingRootVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				int dySinglePara = 0;
+				CheckHr(qrootb->get_Height(&dySinglePara));
+				unitpp::assert_true("single-paragraph height should be positive", dySinglePara > 0);
+
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag", fNeedsReconstruct);
+
+				// This is the PATH-R1 regression: switching fragments on an already-constructed root
+				// must rebuild immediately even when the caller does not issue another explicit Layout().
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 2, NULL));
+
+				int dyTwoParas = 0;
+				CheckHr(qrootb->get_Height(&dyTwoParas));
+				VwRootBox * prootb = dynamic_cast<VwRootBox *>(qrootb.Ptr());
+				VwDivBox * pdivRoot = dynamic_cast<VwDivBox *>(prootb);
+				unitpp::assert_true("root should be a div box", pdivRoot != NULL);
+				VwDivBox * pdivInner = dynamic_cast<VwDivBox *>(pdivRoot->FirstBox());
+				unitpp::assert_true("root should contain an inner div after fragment change", pdivInner != NULL);
+				unitpp::assert_true("fragment change should produce a second paragraph",
+					pdivInner->FirstBox() != NULL && pdivInner->FirstBox()->Next() != NULL);
+				unitpp::assert_true("changing the root fragment should rebuild the view immediately",
+					dyTwoParas > dySinglePara);
+
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("successful reconstruct should clear reconstruct flag", fNeedsReconstruct);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
 	public:
 		TestVwRootBox();
 
