@@ -643,10 +643,11 @@ namespace SIL.FieldWorks.Common.Controls
 						if (m_hvoRootObj > 0)
 						{
 							var servLoc = m_cache.ServiceLocator;
-							var ri = servLoc.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
-							//var ws = servLoc.WritingSystemManager.Get(ri.WritingSystem);
-							//sWsName = ws.DisplayLabel;
-							sWsName = ri.ShortName;
+							ICmObject obj = servLoc.GetObject(m_hvoRootObj);
+							if (obj is IReversalIndex ri)
+							{
+								sWsName = ri.ShortName;
+							}
 						}
 						if (String.IsNullOrEmpty(sWsName))
 							sWsName = GetDefaultReversalWsName();
