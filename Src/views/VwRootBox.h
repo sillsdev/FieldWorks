@@ -400,8 +400,8 @@ protected:
 
 	bool m_fConstructed; // true when we have called Construct() successfully.
 
-	// PATH-L1 layout guard: skip redundant full-layout passes when width hasn't changed
-	// and no structural mutation has occurred since the last successful Layout().
+	// PATH-L1 layout guard: skip redundant full-layout passes when width and source DPI
+	// haven't changed and no structural mutation has occurred since the last successful Layout().
 	bool m_fNeedsLayout;        // true when internal state requires a full relayout
 	int m_dxLastLayoutWidth;    // width used for last successful Layout(), -1 if none
 
@@ -444,7 +444,7 @@ protected:
 	// When it changes, we try to increase laziness.
 	int m_ydTopLastDraw;
 
-	Point m_ptDpiSrc; // x and y resolutions of most recent Layout.
+	Point m_ptDpiSrc; // x and y resolutions of most recent successful Layout/Relayout.
 
 	StrUni m_stuAccessibleName;
 

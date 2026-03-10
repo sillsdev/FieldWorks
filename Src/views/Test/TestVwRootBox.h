@@ -1355,6 +1355,376 @@ namespace TestViews
 			qrootb->Close();
 		}
 
+		void testPropChangedDirtiesConstructedView()
+		{
+			class SimpleParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenParagraph();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"Paragraph before PropChanged");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SimpleParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag before PropChanged", fNeedsReconstruct);
+
+				StrUni stuUpdated(L"Paragraph after PropChanged");
+				CheckHr(qtsf->MakeString(stuUpdated.Bstr(), g_wsEng, &qtss));
+				CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+				CheckHr(qrootb->PropChanged(hvoPara, kflidStTxtPara_Contents, 0, 0, 0));
+
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_true("PropChanged should dirty reconstruct state on a constructed view", fNeedsReconstruct);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
+		void testPutrefOverlayRelayoutsWithoutDirtyingConstructedView()
+		{
+			class TaggedParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenMappedTaggedPara();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			class OverlayAwareRootSite : public DummyRootSite
+			{
+			public:
+				int m_cOverlayChanges;
+
+				OverlayAwareRootSite()
+					: m_cOverlayChanges(0)
+				{
+				}
+
+				STDMETHOD(OverlayChanged)(IVwRootBox * prootb, IVwOverlay * pvo)
+				{
+					++m_cOverlayChanges;
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"Tagged paragraph text");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj TaggedParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				OverlayAwareRootSite * pdrs = NewObj OverlayAwareRootSite();
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(pdrs);
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag before overlay changes", fNeedsReconstruct);
+
+				IVwOverlayPtr qvo;
+				VwOverlay::CreateCom(NULL, IID_IVwOverlay, (void **)&qvo);
+
+				CheckHr(qrootb->putref_Overlay(qvo));
+
+				IVwOverlayPtr qvoRoundTrip;
+				CheckHr(qrootb->get_Overlay(&qvoRoundTrip));
+				unitpp::assert_eq("root box should retain the installed overlay", qvo.Ptr(), qvoRoundTrip.Ptr());
+				unitpp::assert_eq("site should be notified of overlay changes", 1, pdrs->m_cOverlayChanges);
+
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("putref_Overlay should remain on the relayout-only path", fNeedsReconstruct);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
+		void testStylesheetChangeDirtiesConstructedView()
+		{
+			class SimpleParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenParagraph();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"Styled paragraph text");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			IVwStylesheetPtr qss;
+			VwStylesheet::CreateCom(NULL, IID_IVwStylesheet, (void **)&qss);
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SimpleParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, qss));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag before stylesheet changes", fNeedsReconstruct);
+
+				CheckHr(qrootb->OnStylesheetChange());
+
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_true("stylesheet changes should dirty reconstruct state even after relayout", fNeedsReconstruct);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
+		void testLayoutUpdatesCachedDpiWhenWidthIsUnchanged()
+		{
+			class SimpleParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenParagraph();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"Paragraph for DPI cache regression");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SimpleParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qvg32->put_XUnitsPerInch(96));
+				CheckHr(qvg32->put_YUnitsPerInch(96));
+				CheckHr(qrootb->Layout(qvg32, 300));
+
+				VwRootBox * prootb = dynamic_cast<VwRootBox *>(qrootb.Ptr());
+				unitpp::assert_true("expected concrete VwRootBox", prootb != NULL);
+				unitpp::assert_eq("initial layout should cache the starting X DPI", 96, prootb->DpiSrc().x);
+				unitpp::assert_eq("initial layout should cache the starting Y DPI", 96, prootb->DpiSrc().y);
+
+				CheckHr(qvg32->put_XUnitsPerInch(144));
+				CheckHr(qvg32->put_YUnitsPerInch(144));
+				CheckHr(qrootb->Layout(qvg32, 300));
+
+				unitpp::assert_eq("same-width layout should still refresh cached X DPI", 144, prootb->DpiSrc().x);
+				unitpp::assert_eq("same-width layout should still refresh cached Y DPI", 144, prootb->DpiSrc().y);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
 	public:
 		TestVwRootBox();
 

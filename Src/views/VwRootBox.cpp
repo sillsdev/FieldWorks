@@ -2636,6 +2636,10 @@ STDMETHODIMP VwRootBox::OnStylesheetChange()
 	if (!m_fConstructed || Style() == NULL)
 		return S_OK;  // no Style() object exists to fix. (I think the second condition above is redundant, but play safe.)
 	// Redraw the boxes based on stylesheet changes.
+	// This is intentionally nontrivial: LayoutFull() is enough to keep the current display
+	// usable, but a stylesheet change can also invalidate construction-time state such as
+	// notifier/property-store assumptions. Leave m_fNeedsReconstruct set so later callers
+	// like SimpleRootSite.RefreshDisplay() can still observe that a full rebuild may be needed.
 	m_fNeedsReconstruct = true; // style changes warrant reconstruction
 
 	Style()->InitRootTextProps(m_vqvwvc.Size() == 0 ? NULL : m_vqvwvc[0]);
@@ -2872,15 +2876,16 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 {
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pvg);
-
-	// PATH-L1 guard: skip full layout when the box tree is already laid out at this width
-	// and no structural mutation has occurred since the last successful layout.
-	if (m_fConstructed && !m_fNeedsLayout && dxAvailWidth == m_dxLastLayoutWidth)
-		return S_OK;
-
 	int dpiX, dpiY;
 	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
+
+	// PATH-L1 guard: skip full layout when the box tree is already laid out at this width
+	// and source DPI, and no structural mutation has occurred since the last successful layout.
+	if (m_fConstructed && !m_fNeedsLayout && dxAvailWidth == m_dxLastLayoutWidth
+		&& dpiX == m_ptDpiSrc.x && dpiY == m_ptDpiSrc.y)
+		return S_OK;
+
 	m_ptDpiSrc.x = dpiX;
 	m_ptDpiSrc.y = dpiY;
 
@@ -4189,6 +4194,11 @@ void VwRootBox::RelayoutRoot(IVwGraphics * pvg, FixupMap * pfixmap, int dxpAvail
 	RelayoutCore(pvg, dxAvailWidth, this, pfixmap, -1, NULL, pboxsetDeleted);
 
 	// Incremental relayout succeeded — update layout guard state.
+	int dpiX, dpiY;
+	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
+	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
+	m_ptDpiSrc.x = dpiX;
+	m_ptDpiSrc.y = dpiY;
 	m_fNeedsLayout = false;
 	m_dxLastLayoutWidth = dxAvailWidth;
 

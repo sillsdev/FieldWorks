@@ -1001,7 +1001,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected internal Point Dpi
 		{
 			get { return m_Dpi; }
-			set { m_Dpi = value; }
+			set
+			{
+				if (m_Dpi == value)
+					return;
+
+				m_Dpi = value;
+				if (m_dxdLayoutWidth > 0)
+					m_dxdLayoutWidth = kForceLayout;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
