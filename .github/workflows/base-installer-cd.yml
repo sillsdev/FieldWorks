@@ -152,11 +152,17 @@ jobs:
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
 
-      - name: Build and run tests
+      - name: Build
         id: build_installer
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+
+      - name: Run tests
+        id: run_tests
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' | Tee-Object -FilePath build.log -Append
 
       - name: Scan Build Output
         shell: powershell
