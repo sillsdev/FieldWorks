@@ -2487,15 +2487,15 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		OLECHAR * pch;
 		stu.SetSize(cch, &pch);
 		CheckHr(pts->Fetch(ichMin, ichMin + cch, pch));
-		int cchOrig = cch; // PATH-N1: remember original length before NFC
+		StrUni stuOrig(stu);
 		StrUtil::NormalizeStrUni(stu,  UNORM_NFC);
 		if (cch != stu.Length())
 			cch = stu.Length();
-		// PATH-N1: Report whether text was already NFC (normalization didn't change length).
-		// When true, OffsetInNfc/OffsetToOrig can return identity offsets, avoiding
-		// redundant NFC normalization + COM Fetch calls per run.
+		// PATH-N1: Only treat offsets as identity when normalization leaves the text
+		// byte-for-byte unchanged. Length equality alone is not sufficient because NFC
+		// can preserve length while still changing code-unit composition.
 		if (pfTextIsNfc)
-			*pfTextIsNfc = (cch == cchOrig);
+			*pfTextIsNfc = (stu == stuOrig);
 		if (cch > cchBuf)
 		{
 			cchBuf = cch;

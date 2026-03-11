@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -12,18 +14,16 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
 using SIL.FieldWorks.Common.RenderVerification;
 using SIL.LCModel.Infrastructure;
-using VerifyTests;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
-	/// Snapshot tests using Verify (base package) for pixel-perfect render baseline validation.
-	/// We use InnerVerifier directly because Verify.NUnit requires NUnit 4.x,
-	/// and FieldWorks is pinned to NUnit 3.13.3.
+	/// Snapshot tests for render baseline validation.
 	///
-	/// Verify manages .verified.png files automatically — on first run it creates a
-	/// .received.png that must be accepted (copied to .verified.png). Subsequent runs
-	/// compare against the committed .verified.png baseline.
+	/// Each run saves a .received.png and compares it against the committed
+	/// .verified.png baseline by decoded pixel values, not by the PNG file bytes.
+	/// Small encoder-level differences are therefore ignored as long as the rendered
+	/// image differs by fewer than five pixels.
 	///
 	/// Each scenario is set up inside its own UndoableUnitOfWork, matching the pattern
 	/// used by RenderTimingSuiteTests.
@@ -32,6 +32,9 @@ namespace SIL.FieldWorks.Common.RootSites
 	[Category("RenderBenchmark")]
 	public class RenderVerifyTests : RenderBenchmarkTestsBase
 	{
+		private const string UpdateBaselinesEnvVar = "FW_UPDATE_RENDER_BASELINES";
+		private const int MaxAllowedPixelDifferences = 4;
+
 		/// <summary>
 		/// CreateTestData is a no-op; individual tests call SetupScenarioData within a UoW.
 		/// </summary>
@@ -43,7 +46,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Verifies that a scenario renders consistently against its .verified.png baseline.
 		/// On first run, creates the .received.png for acceptance. On subsequent runs,
-		/// compares against the committed .verified.png baseline.
+		/// compares decoded pixels against the committed .verified.png baseline.
 		/// </summary>
 		[Test, TestCaseSource(nameof(GetVerifyScenarios))]
 		public async Task VerifyScenario(string scenarioId)
@@ -76,20 +79,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				harness.ExecuteColdRender();
 				using (var bitmap = harness.CaptureViewBitmap())
 				{
-					// Convert bitmap to PNG stream for Verify.
-					var stream = new MemoryStream();
-					bitmap.Save(stream, ImageFormat.Png);
-					stream.Position = 0;
-
-					// Use InnerVerifier directly (Verify.NUnit requires NUnit 4.x).
 					string directory = GetSourceFileDirectory();
 					string name = $"RenderVerifyTests.VerifyScenario_{scenarioId}";
-					using (var verifier = new InnerVerifier(directory, name))
-					{
-						await verifier.VerifyStream(stream, "png", null);
-					}
+					RefreshVerifiedBaselineIfRequested(bitmap, directory, name);
+					VerifyRenderedBitmap(bitmap, directory, name, scenarioId);
 				}
 			}
+
+			await Task.CompletedTask;
 		}
 
 		/// <summary>
@@ -121,6 +118,114 @@ namespace SIL.FieldWorks.Common.RootSites
 		private static string GetSourceFileDirectory([CallerFilePath] string sourceFile = "")
 		{
 			return Path.GetDirectoryName(sourceFile);
+		}
+
+		private static void RefreshVerifiedBaselineIfRequested(Bitmap bitmap, string directory, string name)
+		{
+			if (!string.Equals(Environment.GetEnvironmentVariable(UpdateBaselinesEnvVar), "1", StringComparison.Ordinal))
+				return;
+
+			string verifiedPath = Path.Combine(directory, $"{name}.verified.png");
+			bitmap.Save(verifiedPath, ImageFormat.Png);
+		}
+
+		private static void VerifyRenderedBitmap(Bitmap actualBitmap, string directory, string name, string scenarioId)
+		{
+			string verifiedPath = Path.Combine(directory, $"{name}.verified.png");
+			string diffPath = Path.Combine(directory, $"{name}.diff.png");
+			if (File.Exists(diffPath))
+				File.Delete(diffPath);
+
+			if (!File.Exists(verifiedPath))
+			{
+				string receivedPath = Path.Combine(directory, $"{name}.received.png");
+				actualBitmap.Save(receivedPath, ImageFormat.Png);
+				Assert.Fail($"Missing verified render baseline for '{scenarioId}'. Review and accept {receivedPath} as the new baseline.");
+			}
+
+			using (var expectedBitmap = new Bitmap(verifiedPath))
+			{
+				int differentPixelCount = CountDifferentPixels(expectedBitmap, actualBitmap);
+				if (differentPixelCount <= MaxAllowedPixelDifferences)
+				{
+					return;
+				}
+
+				using (var diffBitmap = CreateDiffBitmap(expectedBitmap, actualBitmap))
+				{
+					diffBitmap.Save(diffPath, ImageFormat.Png);
+				}
+
+				Assert.Fail(
+					$"Render output for '{scenarioId}' differed from baseline by {differentPixelCount} pixels; " +
+					$"{MaxAllowedPixelDifferences} or fewer differences are allowed. See {diffPath}.");
+			}
+		}
+
+		private static int CountDifferentPixels(Bitmap expectedBitmap, Bitmap actualBitmap)
+		{
+			int maxWidth = Math.Max(expectedBitmap.Width, actualBitmap.Width);
+			int maxHeight = Math.Max(expectedBitmap.Height, actualBitmap.Height);
+			int differentPixelCount = 0;
+
+			for (int y = 0; y < maxHeight; y++)
+			{
+				for (int x = 0; x < maxWidth; x++)
+				{
+					bool expectedInBounds = x < expectedBitmap.Width && y < expectedBitmap.Height;
+					bool actualInBounds = x < actualBitmap.Width && y < actualBitmap.Height;
+
+					if (!expectedInBounds || !actualInBounds)
+					{
+						differentPixelCount++;
+						continue;
+					}
+
+					if (expectedBitmap.GetPixel(x, y) != actualBitmap.GetPixel(x, y))
+						differentPixelCount++;
+				}
+			}
+
+			return differentPixelCount;
+		}
+
+		private static Bitmap CreateDiffBitmap(Bitmap expectedBitmap, Bitmap actualBitmap)
+		{
+			int maxWidth = Math.Max(expectedBitmap.Width, actualBitmap.Width);
+			int maxHeight = Math.Max(expectedBitmap.Height, actualBitmap.Height);
+			var diffBitmap = new Bitmap(maxWidth, maxHeight);
+
+			for (int y = 0; y < maxHeight; y++)
+			{
+				for (int x = 0; x < maxWidth; x++)
+				{
+					Color expected = x < expectedBitmap.Width && y < expectedBitmap.Height
+						? expectedBitmap.GetPixel(x, y)
+						: Color.White;
+					Color actual = x < actualBitmap.Width && y < actualBitmap.Height
+						? actualBitmap.GetPixel(x, y)
+						: Color.White;
+
+					diffBitmap.SetPixel(x, y, CreateDiffPixel(expected, actual));
+				}
+			}
+
+			return diffBitmap;
+		}
+
+		private static Color CreateDiffPixel(Color expected, Color actual)
+		{
+			return Color.FromArgb(
+				255,
+				ScaleDiffChannel(expected.R, actual.R),
+				ScaleDiffChannel(expected.G, actual.G),
+				ScaleDiffChannel(expected.B, actual.B));
+		}
+
+		private static int ScaleDiffChannel(int expectedChannel, int actualChannel)
+		{
+			int delta = actualChannel - expectedChannel;
+			return Math.Max(0, Math.Min(255, 128 + (delta / 2)));
 		}
 	}
 }

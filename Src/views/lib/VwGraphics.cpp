@@ -104,8 +104,6 @@ void VwGraphics::Init()
 	Assert(m_hfont == NULL);
 	Assert(m_hfontOld == NULL);
 	// m_chrp should contain zeros too; don't bother checking.
-
-	// PATH-C2: Initialize color cache.
 	m_colorStateCache.Invalidate();
 
 	// Initialize the clip rectangle to be as big as possible:
@@ -1097,6 +1095,7 @@ STDMETHODIMP VwGraphics::ReleaseDC()
 		}
 		// PATH-C1: Delete all cached fonts now that they're deselected from the DC.
 		ClearFontCache();
+		m_colorStateCache.Invalidate();
 		Assert(m_hfont == 0);
 		if (m_hfontOldMeasure)
 		{
@@ -1223,9 +1222,6 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 		memcpy(((byte *)&m_chrp) + cbFontOffset, ((byte *)pchrp) + cbFontOffset,
 			isizeof(m_chrp) - cbFontOffset);
 
-		// PATH-C1: Check the font cache before creating a new HFONT.
-		// This avoids repeated CreateFontIndirect/DeleteObject cycles when
-		// alternating between writing systems in multi-WS paragraphs.
 		HFONT hfontCached = FindCachedFont(pchrp);
 		if (hfontCached)
 		{
@@ -1269,19 +1265,19 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 			if (!hfont)
 				ThrowHr(WarnHr(E_FAIL));
 			SetFont(hfont);
-			// Keep deletion-safe ordering: select first, then allow cache eviction.
 			AddFontToCache(hfont, pchrp);
 		}
 	}
+	m_rgbForeColor = pchrp->clrFore;
+	m_rgbBackColor = pchrp->clrBack;
 
 
-	// PATH-C2: Only set colors when they actually changed, avoiding redundant
-	// GDI kernel calls (SetTextColor, SetBkColor, SetBkMode) per run.
+	// PATH-C2: Reuse HDC color state when the requested colors and background mode
+	// already match the previous SetupGraphics call.
 	{
-		COLORREF clrForeNeeded = pchrp->clrFore;
 		COLORREF clrBackNeeded = (pchrp->clrBack == kclrTransparent) ? RGB(0,0,0) : pchrp->clrBack;
 		int nBkModeNeeded = (pchrp->clrBack == kclrTransparent) ? TRANSPARENT : OPAQUE;
-		m_colorStateCache.ApplyIfNeeded(m_hdc, clrForeNeeded, clrBackNeeded, nBkModeNeeded);
+		m_colorStateCache.ApplyIfNeeded(m_hdc, pchrp->clrFore, clrBackNeeded, nBkModeNeeded);
 	}
 #if 0
 	// DarrellX reports that this was causing some weird failures on his machine.
@@ -1648,8 +1644,7 @@ void VwGraphics::SetFont(HFONT hfont)
 		m_hfontOld = hfontPrev;
 	}
 	// PATH-C1: Don't delete the previous font here — the font cache manages
-	// all created HFONT lifecycles. Previously this deleted m_hfont immediately,
-	// causing repeated CreateFontIndirect/DeleteObject cycles for alternating WS.
+	// all created HFONT lifecycles.
 	m_hfont = hfont;
 	m_fontHandleCache.TryDeleteDeferredFonts(m_hfont, TryDeleteCachedFont, NULL);
 }
@@ -1875,40 +1870,17 @@ int VwGraphics::GetFontHeightFromFontTable()
 #include <vector_i.cpp>
 template Vector<HRGN>; // VecHRgn;
 
-/*----------------------------------------------------------------------------------------------
-	PATH-C1: Font cache helpers.
-	These methods manage a small LRU cache of HFONT objects keyed by the font-related
-	portion of LgCharRenderProps (ttvBold onward). This eliminates repeated
-	CreateFontIndirect/DeleteObject cycles when multiple writing systems are used
-	in the same paragraph or across paragraphs during a single layout/draw pass.
-----------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------
-	Search the font cache for an HFONT matching the font-related properties in pchrp.
-	Returns the cached HFONT if found, or NULL if not cached.
-----------------------------------------------------------------------------------------------*/
 HFONT VwGraphics::FindCachedFont(const LgCharRenderProps * pchrp)
 {
 	return m_fontHandleCache.FindCachedFont(pchrp);
 }
 
-/*----------------------------------------------------------------------------------------------
-	Add a newly created HFONT to the cache. If the cache is full, evict the oldest entry
-	(index 0) by deleting its HFONT and shifting entries down.
-----------------------------------------------------------------------------------------------*/
 void VwGraphics::AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp)
 {
 	m_fontHandleCache.AddFontToCache(hfont, pchrp, m_hfont, TryDeleteCachedFont, NULL);
 }
 
-/*----------------------------------------------------------------------------------------------
-	Delete all cached HFONTs and reset the cache. Called from ReleaseDC and destructor.
-	Assumes all cached fonts have been deselected from the DC.
-----------------------------------------------------------------------------------------------*/
 void VwGraphics::ClearFontCache()
 {
 	m_fontHandleCache.Clear(m_hfont, TryDeleteCachedFont, NULL);
-
-	// PATH-C2: Invalidate color cache when DC is released.
-	m_colorStateCache.Invalidate();
 }

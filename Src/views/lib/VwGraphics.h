@@ -23,8 +23,8 @@ Description:
 #ifndef VWGRAPHICS_INCLUDED
 #define VWGRAPHICS_INCLUDED
 
-#include "FontHandleCache.h"
 #include "ColorStateCache.h"
+#include "FontHandleCache.h"
 
 #if !defined(_WIN32) && !defined(_M_X64)
 #include "VwGraphicsCairo.h"
@@ -165,22 +165,16 @@ protected:
 	HFONT m_hfontOldMeasure;
 	HFONT m_hfont; // current font selected into DC, if any
 	LgCharRenderProps m_chrp;
-
-	// PATH-C1: HFONT LRU cache — avoid repeated CreateFontIndirect/DeleteObject
-	// for alternating writing systems within multi-WS paragraphs.
 	FontHandleCache m_fontHandleCache;
-
-	// PATH-C2: Color state tracking — skip redundant GDI SetTextColor/SetBkColor/SetBkMode
-	// calls when colors haven't changed since the last SetupGraphics call.
 	ColorStateCache m_colorStateCache;
-
-	HFONT FindCachedFont(const LgCharRenderProps * pchrp);
-	void AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp);
-	void ClearFontCache();
 
 	// Vertical and horizontal resolution. Zero indicates not yet initialized.
 	int m_xInch;
 	int m_yInch;
+
+	HFONT FindCachedFont(const LgCharRenderProps * pchrp);
+	void AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp);
+	void ClearFontCache();
 
 	void Init();
 

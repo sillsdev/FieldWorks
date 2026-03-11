@@ -2549,11 +2549,6 @@ void VwRootBox::ClearNotifiers()
 ----------------------------------------------------------------------------------------------*/
 void VwRootBox::Reconstruct(bool fCheckForSync)
 {
-	// PATH-R1 guard: skip if the view has been constructed and no data or
-	// structural change has been reported since the last construction.
-	if (m_fConstructed && !m_fNeedsReconstruct)
-		return;
-
 	if (m_qsync && fCheckForSync)
 	{
 		m_qsync->Reconstruct();
