@@ -175,6 +175,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// as on Mono Setting AutoScrollPosition causes a redraw even when AllowPainting == false
 		/// </summary>
 		private Point? cachedAutoScrollPosition = null;
+		private bool m_fWarmingScrollViewport;
+		private bool m_fDeferredScrollWarmupPending = true;
+		private bool m_fDeferredScrollWarmupQueued;
+		private int m_lastScrollWarmDirection;
+		private int m_scrollWarmRangeTop = int.MinValue;
+		private int m_scrollWarmRangeBottom = int.MinValue;
 
 		/// <summary>Used to draw the rootbox</summary>
 		private IVwDrawRootBuffered m_vdrb;
@@ -1620,6 +1626,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
+				int previousViewportTop = -AutoScrollPosition.Y;
 				Point newPos = value;
 				if (this.AutoScroll)
 				{
@@ -1637,7 +1644,140 @@ namespace SIL.FieldWorks.Common.RootSites
 					AutoScrollPosition = newPos;
 				else
 					cachedAutoScrollPosition = newPos;
+
+				int scrollDelta = newPos.Y - previousViewportTop;
+				if (scrollDelta != 0)
+					m_lastScrollWarmDirection = Math.Sign(scrollDelta);
+
+				WarmScrollViewportIfNeeded();
 			}
+		}
+
+		protected virtual int ScrollWarmupMargin
+		{
+			get
+			{
+				return Math.Max(1, ClientRectangle.Height / 2);
+			}
+		}
+
+		protected virtual void WarmScrollViewportIfNeeded()
+		{
+			WarmScrollViewportIfNeeded(false);
+		}
+
+		private void WarmScrollViewportIfNeeded(bool preferSymmetric)
+		{
+			if (m_fWarmingScrollViewport || m_fInPaint || m_fInLayout || m_rootb == null ||
+				m_dxdLayoutWidth <= 0 || !AllowPainting || ClientRectangle.Height <= 0)
+			{
+				return;
+			}
+
+			int viewportTop = -ScrollPosition.Y;
+			int viewportBottom = viewportTop + ClientRectangle.Height;
+			GetScrollWarmupMargins(preferSymmetric, out int warmMarginTop, out int warmMarginBottom);
+			if (viewportTop >= m_scrollWarmRangeTop && viewportBottom <= m_scrollWarmRangeBottom)
+			{
+				m_fDeferredScrollWarmupPending = false;
+				return;
+			}
+
+			using (new HoldGraphics(this))
+			{
+				m_fWarmingScrollViewport = true;
+				try
+				{
+					Rectangle rcSrcRoot;
+					Rectangle rcDstRoot;
+					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+
+					if (PrepareToDrawForScrollWarmup(rcSrcRoot, rcDstRoot) == VwPrepDrawResult.kxpdrInvalidate)
+						return;
+
+					if (warmMarginTop > 0)
+					{
+						if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, -warmMarginTop)) == VwPrepDrawResult.kxpdrInvalidate)
+							return;
+					}
+
+					if (warmMarginBottom > 0)
+					{
+						if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, warmMarginBottom)) == VwPrepDrawResult.kxpdrInvalidate)
+							return;
+					}
+				}
+				finally
+				{
+					m_fWarmingScrollViewport = false;
+				}
+			}
+
+			viewportTop = -ScrollPosition.Y;
+			viewportBottom = viewportTop + ClientRectangle.Height;
+			m_scrollWarmRangeTop = viewportTop - warmMarginTop;
+			m_scrollWarmRangeBottom = viewportBottom + warmMarginBottom;
+			m_fDeferredScrollWarmupPending = false;
+		}
+
+		private void GetScrollWarmupMargins(bool preferSymmetric, out int warmMarginTop, out int warmMarginBottom)
+		{
+			int fullMargin = ScrollWarmupMargin;
+			if (preferSymmetric || m_lastScrollWarmDirection == 0)
+			{
+				warmMarginTop = fullMargin;
+				warmMarginBottom = fullMargin;
+				return;
+			}
+
+			int trailingMargin = Math.Max(1, fullMargin / 2);
+			if (m_lastScrollWarmDirection > 0)
+			{
+				warmMarginTop = trailingMargin;
+				warmMarginBottom = fullMargin;
+			}
+			else
+			{
+				warmMarginTop = fullMargin;
+				warmMarginBottom = trailingMargin;
+			}
+		}
+
+		private static Rectangle OffsetRootRect(Rectangle rect, int dy)
+		{
+			rect.Offset(0, dy);
+			return rect;
+		}
+
+		protected virtual VwPrepDrawResult PrepareToDrawForScrollWarmup(Rectangle rcSrcRoot, Rectangle rcDstRoot)
+		{
+			VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
+			while (xpdr == VwPrepDrawResult.kxpdrAdjust)
+				xpdr = PrepareToDraw(rcSrcRoot, rcDstRoot);
+
+			return xpdr;
+		}
+
+		private void QueueDeferredScrollWarmup()
+		{
+			if (m_fDeferredScrollWarmupQueued || IsDisposed)
+				return;
+			if (!m_fDeferredScrollWarmupPending)
+				return;
+			if (!IsHandleCreated || !Visible || m_rootb == null || !AllowPainting)
+				return;
+
+			m_fDeferredScrollWarmupQueued = true;
+			BeginInvoke((MethodInvoker)delegate
+			{
+				m_fDeferredScrollWarmupQueued = false;
+				if (IsDisposed || !m_fDeferredScrollWarmupPending)
+					return;
+				if (!IsHandleCreated || !Visible || m_rootb == null || !AllowPainting || m_fInLayout)
+					return;
+
+				WarmScrollViewportIfNeeded(true);
+			});
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2151,6 +2291,8 @@ namespace SIL.FieldWorks.Common.RootSites
 							Update();
 							Invalidate();
 						}
+
+						QueueDeferredScrollWarmup();
 					}
 				}
 				else
@@ -3287,6 +3429,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.OnVisibleChanged(e);
 			if (Visible && m_fRootboxMade && m_rootb != null && m_fRefreshPending)
 				RefreshDisplay();
+			if (Visible)
+				QueueDeferredScrollWarmup();
 		}
 
 		/// <summary>
@@ -3854,7 +3998,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				using (new HoldGraphics(this))
 				{
 					if (DoLayout())
+					{
 						Invalidate();
+						QueueDeferredScrollWarmup();
+					}
 				}
 			}
 
@@ -5570,6 +5717,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool DoLayout()
 		{
+			m_fDeferredScrollWarmupPending = true;
+			m_scrollWarmRangeTop = int.MinValue;
+			m_scrollWarmRangeBottom = int.MinValue;
+
 			if (DesignMode && !AllowPaintingInDesigner)
 				return false;
 
