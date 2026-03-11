@@ -348,8 +348,13 @@
     <value>Media </value>
     <comment>there is a trailing space</comment>
   </data>
+  <data name="ksMediaNotFound" xml:space="preserve">
+    <value>Media not found: check Info tab for file name</value>
+    <comment>Used when a media filepath is specified, but the file doesn't exist. Ensure translation of "Info" matches translation used for the tab label.</comment>
+  </data>
   <data name="ksNoMedia" xml:space="preserve">
     <value>No Media</value>
+    <comment>Used when no there is no media filepath specified.</comment>
   </data>
   <data name="ksBeginTimeOffset" xml:space="preserve">
     <value>Begin</value>

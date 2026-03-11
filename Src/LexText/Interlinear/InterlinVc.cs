@@ -1004,21 +1004,42 @@ namespace SIL.FieldWorks.IText
 			return tssLabel;
 		}
 
-		private void AddNoMediaMessage(IVwEnv vwenv, ITsString tssMediaLabel, bool lineAndSegSameDir, bool lineAndUserSameDir)
+		private void AddNoMediaMessage(IVwEnv vwenv, ITsString tssMediaLabel, bool lineAndSegSameDir, bool lineAndUserSameDir, string mediaFile)
 		{
 			var defUserWs = m_cache.DefaultUserWs;
+			bool isFilePathSpecified = !string.IsNullOrEmpty(mediaFile);
+			ITsString tssFilePath = null;
+			ITsString tssNoMediaMessage;
 
-			// Build "No Media" message.
-			// Use normal label settings, except make it italic instead of bold.
-			var tssNoMediaMessage = MakeUiElementString(
-				ITextStrings.ksNoMedia, defUserWs,
-				propsBldr =>
-				{
-					propsBldr.SetIntPropValues(
-						(int)FwTextPropType.ktptItalic,
-						(int)FwTextPropVar.ktpvEnum,
-						(int)FwTextToggleVal.kttvForceOn);
-				});
+			if (isFilePathSpecified)
+			{
+				tssFilePath = TsStringUtils.MakeString(mediaFile, defUserWs);
+				// We have a media filepath, but file was not found. Build media not found message.
+				// Use normal label settings, except make it italic instead of bold.
+				tssNoMediaMessage = MakeUiElementString(
+					ITextStrings.ksMediaNotFound, defUserWs,
+					propsBldr =>
+					{
+						propsBldr.SetIntPropValues(
+							(int)FwTextPropType.ktptItalic,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwTextToggleVal.kttvForceOn);
+					});
+			}
+			else
+			{
+				// No media filepath was given. Build no media message.
+				// Use normal label settings, except make it italic instead of bold.
+				tssNoMediaMessage = MakeUiElementString(
+					ITextStrings.ksNoMedia, defUserWs,
+					propsBldr =>
+					{
+						propsBldr.SetIntPropValues(
+							(int)FwTextPropType.ktptItalic,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwTextToggleVal.kttvForceOn);
+					});
+			}
 
 			// If the line WS and segment WS are not the same direction, OR the line WS and user WS
 			// are not the same direction, but not both, then we need to insert pieces in reverse
@@ -1099,7 +1120,7 @@ namespace SIL.FieldWorks.IText
 				vwenv.OpenParagraph();
 				bool lineAndSegSameDir = IsWsRtl(wssOptions[0]) == IsWsRtl(wsForSeg);
 				bool lineAndUserSameDir = (IsWsRtl(wssOptions[0]) == IsWsRtl(defUserWs));
-				AddNoMediaMessage(vwenv, tssMediaLabel, lineAndSegSameDir, lineAndUserSameDir);
+				AddNoMediaMessage(vwenv, tssMediaLabel, lineAndSegSameDir, lineAndUserSameDir, mediaFile);
 				vwenv.CloseParagraph();
 				vwenv.CloseDiv();
 				return;
