@@ -156,8 +156,7 @@ jobs:
         id: build_installer
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired' `
-            -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildInstaller -Configuration Release -MsBuildArgs @("/p:action=test;desktopNotAvailable=true","/v:d","/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Build Output
         shell: powershell
