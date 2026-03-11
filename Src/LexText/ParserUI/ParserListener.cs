@@ -981,13 +981,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool OnParseAllWords(object argument)
 		{
 			CheckDisposed();
-			if (ConnectToParser())
+			IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+			// Ask before connecting because it affects OnDisplayParseAllWords and OnDisplayReparseAllWords.
+			if (UserApprovesParsingAllWords(wordforms) && ConnectToParser())
 			{
-				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
 				UpdateWordforms(wordforms, ParserPriority.Low);
 			}
 
 			return true;	//we handled this.
+		}
+
+		private bool UserApprovesParsingAllWords(IEnumerable<IWfiWordform> wordforms)
+		{
+			return MessageBox.Show(string.Format(ParserUIStrings.ksAskParseXWords, wordforms.Count()), "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
 		}
 
 		private bool InTextsWordsArea
@@ -1087,9 +1093,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool OnReparseAllWords(object argument)
 		{
 			CheckDisposed();
-			if (ConnectToParser())
+			IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+			// Ask before connecting because it affects OnDisplayParseAllWords and OnDisplayReparseAllWords.
+			if (UserApprovesParsingAllWords(wordforms) && ConnectToParser())
 			{
-				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
 				UpdateWordforms(wordforms, ParserPriority.Low);
 			}
 			return true;	//we handled this.

@@ -61,6 +61,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure that you want to parse all {0} words in the current project?.
+        /// </summary>
+        public static string ksAskParseXWords {
+            get {
+                return ResourceManager.GetString("ksAskParseXWords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Changed value for {0} from {1} to {2}.  The value must be between {3} and {4}, inclusive..
         /// </summary>
         public static string ksChangedValueReport {
