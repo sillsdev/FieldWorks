@@ -26,8 +26,6 @@ namespace SIL.AllomorphGenerator
 {
 	public partial class AlloGenForm : AlloGenFormBase
 	{
-		AllomorphCreator allomorphCreator;
-
 		protected new const string OperationsFilePrompt =
 			"Allomorph Generator Operations File (*.agf)|*.agf|" + "All Files (*.*)|*.*";
 		const string RegKey = "Software\\SIL\\AllomorphGenerator";
@@ -63,37 +61,27 @@ namespace SIL.AllomorphGenerator
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(
 				this.OnFormClosing
 			);
-			try
-			{
-				RememberFormState(RegKey);
-				Provider = new XmlBackEndProvider();
-				Migrator = new DatabaseMigrator();
-				LoadMigrateGetOperations();
-				FillOperationsListBox();
-				FillApplyToComboBox();
-				SetupFontAndStyleInfo();
-				SetUpOperationsCheckedListBox();
-				SetUpPreviewCheckedListBox();
-				FillApplyOperationsListView();
-				SetUpEditReplaceOpsListView();
-				FillReplaceOpsListView();
-				BuildReplaceContextMenu();
-				BuildEditReplaceOpContextMenu();
-				BuildOperationsCheckBoxContextMenu();
-				BuildPreviewCheckBoxContextMenu();
-				lBoxMorphTypes.ClearSelected();
-				lBoxEnvironments.ClearSelected();
-				RememberTabSelection();
-				MarkAsChanged(false);
-				alloCreator = new AllomorphCreator(Cache, WritingSystems);
-				allomorphCreator = new AllomorphCreator(Cache, WritingSystems);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
-			}
+			RememberFormState(RegKey);
+			Provider = new XmlBackEndProvider();
+			Migrator = new DatabaseMigrator();
+			LoadMigrateGetOperations();
+			FillOperationsListBox();
+			FillApplyToComboBox();
+			SetupFontAndStyleInfo();
+			SetUpOperationsCheckedListBox();
+			SetUpPreviewCheckedListBox();
+			FillApplyOperationsListView();
+			SetUpEditReplaceOpsListView();
+			FillReplaceOpsListView();
+			BuildReplaceContextMenu();
+			BuildEditReplaceOpContextMenu();
+			BuildOperationsCheckBoxContextMenu();
+			BuildPreviewCheckBoxContextMenu();
+			lBoxMorphTypes.ClearSelected();
+			lBoxEnvironments.ClearSelected();
+			RememberTabSelection();
+			MarkAsChanged(false);
+			alloCreator = new AllomorphCreator(Cache, WritingSystems);
 		}
 
 		protected override string CreateUndoRedoPrompt(Operation op)

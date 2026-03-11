@@ -26,8 +26,8 @@ namespace SIL.AlloGenService
 		public IEnumerable<ILexEntry> MultiAllomorphEntries { get; set; }
 		public IEnumerable<ILexEntry> NonVariantMainEntries { get; set; }
 		public IEnumerable<ILexEntry> VariantEntries { get; set; }
-		public IMoMorphType morphType { get; set; }
-		public List<IMoMorphType> morphTypes { get; set; } = new List<IMoMorphType>();
+		public IMoMorphType MorphType { get; set; }
+		public List<IMoMorphType> MorphTypes { get; set; } = new List<IMoMorphType>();
 		public string ErrorMessage { get; set; } = "";
 		List<WritingSystem> WritingSystems { get; set; } = new List<WritingSystem>();
 		public ApplyTo ApplyTo { get; set; }
@@ -57,18 +57,18 @@ namespace SIL.AlloGenService
 		{
 			if (pattern.MorphTypes.Count > 0)
 			{
-				morphTypes.Clear();
+				MorphTypes.Clear();
 				foreach (IMoMorphType mt in Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS)
 				{
 					if (pattern.MorphTypes.Where(m => m.Guid == mt.Guid.ToString()).Count() > 0)
 					{
-						morphTypes.Add(mt);
+						MorphTypes.Add(mt);
 					}
 				}
 				var lexEntriesForMorphTypes = new List<ILexEntry>();
 				foreach (ILexEntry e in lexEntries)
 				{
-					foreach (IMoMorphType mt in morphTypes)
+					foreach (IMoMorphType mt in MorphTypes)
 					{
 						if (e.MorphTypes.Contains(mt))
 						{

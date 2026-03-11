@@ -88,8 +88,6 @@ namespace SIL.AlloGenService
 			XslCompiledTransform myXslTrans = new XslCompiledTransform();
 			string migrationStyleSheet = Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities", "AlloVarGen", "AlloGenService", "AlloGenDataMigrations", transform);
 
-			Console.WriteLine("migrationStyleSheet='" + migrationStyleSheet + "'");
-
 			myXslTrans.Load(migrationStyleSheet);
 			string resultFile = Path.Combine(
 				Path.GetTempPath(),
@@ -120,8 +118,6 @@ namespace SIL.AlloGenService
 			index += 11;
 			int indexEnd = contents.Substring(index).IndexOf("\"");
 			string value = contents.Substring(index, indexEnd);
-			Console.WriteLine("index=" + index + "; indexEnd=" + indexEnd);
-			Console.WriteLine("value='" + value + "'");
 			return Int32.Parse(value);
 		}
 

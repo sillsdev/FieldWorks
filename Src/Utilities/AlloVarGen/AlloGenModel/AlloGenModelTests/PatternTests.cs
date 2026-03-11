@@ -29,16 +29,16 @@ namespace AlloGenModelTests
 			Assert.AreEqual(4, mts.Count);
 			var mt = mts[0];
 			Assert.AreEqual("bound root", mt.Name);
-			Assert.AreEqual("d7f713e4-e8cf-11d3-9764-00c04f186933", mt.Guid);
+			Assert.AreEqual(Constants.mtBoundRoot, mt.Guid);
 			mt = mts[1];
 			Assert.AreEqual("bound stem", mt.Name);
-			Assert.AreEqual("d7f713e7-e8cf-11d3-9764-00c04f186933", mt.Guid);
+			Assert.AreEqual(Constants.mtBoundStem, mt.Guid);
 			mt = mts[2];
 			Assert.AreEqual("root", mt.Name);
-			Assert.AreEqual("d7f713e5-e8cf-11d3-9764-00c04f186933", mt.Guid);
+			Assert.AreEqual(Constants.mtRoot, mt.Guid);
 			mt = mts[3];
 			Assert.AreEqual("stem", mt.Name);
-			Assert.AreEqual("d7f713e8-e8cf-11d3-9764-00c04f186933", mt.Guid);
+			Assert.AreEqual(Constants.mtStem, mt.Guid);
 		}
 	}
 }

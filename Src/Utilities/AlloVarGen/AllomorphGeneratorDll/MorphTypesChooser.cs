@@ -23,13 +23,13 @@ namespace SIL.AllomorphGenerator
 		public List<MorphType> SelectedMorphTypes { get; set; }
 		List<string> morphTypesToUseGuids = new List<string>()
 		{
-			"d7f713e4-e8cf-11d3-9764-00c04f186933",
-			"d7f713e7-e8cf-11d3-9764-00c04f186933",
-			"0cc8c35a-cee9-434d-be58-5d29130fba5b",
-			"56db04bf-3d58-44cc-b292-4c8aa68538f4",
-			"a23b6faa-1052-4f4d-984b-4b338bdaf95f",
-			"d7f713e5-e8cf-11d3-9764-00c04f186933",
-			"d7f713e8-e8cf-11d3-9764-00c04f186933",
+			Constants.mtBoundRoot,
+			Constants.mtBoundStem,
+			Constants.mtDiscontiguousPhrase,
+			Constants.mtParticle,
+			Constants.mtPhrase,
+			Constants.mtRoot,
+			Constants.mtStem,
 		};
 
 		public MorphTypesChooser(LcmCache cache)

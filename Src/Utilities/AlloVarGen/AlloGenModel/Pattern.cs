@@ -26,17 +26,17 @@ namespace SIL.AlloGenModel
 		{
 			MorphType mtBoundRoot = CreateMorphType(
 				"bound root",
-				"d7f713e4-e8cf-11d3-9764-00c04f186933"
+				Constants.mtBoundRoot
 			);
 			MorphTypes.Add(mtBoundRoot);
 			MorphType mtBoundStem = CreateMorphType(
 				"bound stem",
-				"d7f713e7-e8cf-11d3-9764-00c04f186933"
+				Constants.mtBoundStem
 			);
 			MorphTypes.Add(mtBoundStem);
-			MorphType mtRoot = CreateMorphType("root", "d7f713e5-e8cf-11d3-9764-00c04f186933");
+			MorphType mtRoot = CreateMorphType("root", Constants.mtRoot);
 			MorphTypes.Add(mtRoot);
-			MorphType mtStem = CreateMorphType("stem", "d7f713e8-e8cf-11d3-9764-00c04f186933");
+			MorphType mtStem = CreateMorphType("stem", Constants.mtStem);
 			MorphTypes.Add(mtStem);
 		}
 

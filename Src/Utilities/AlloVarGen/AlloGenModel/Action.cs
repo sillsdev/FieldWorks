@@ -21,7 +21,7 @@ namespace SIL.AlloGenModel
 		// Variant Types, ShowInMinorEntry, and PublishEntryIn used in Variant Generator
 		public List<VariantType> VariantTypes { get; set; }
 		public bool ShowMinorEntry { get; set; } = true;
-		public List<PublishEntryInItem> PublishEntryInItems { get; set; }
+		public List<PublishEntryInItem> PublishEntryInItems { get; set; } = new List<PublishEntryInItem>();
 
 		public Action()
 		{

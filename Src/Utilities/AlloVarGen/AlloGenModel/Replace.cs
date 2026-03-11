@@ -27,7 +27,6 @@ namespace SIL.AlloGenModel
 			{ // make sure it has a value
 				Guid = System.Guid.NewGuid().ToString();
 			}
-			;
 		}
 
 		public Replace Duplicate()
@@ -43,7 +42,6 @@ namespace SIL.AlloGenModel
 			foreach (string ws in WritingSystemRefs)
 			{
 				newWritingSystems.Add(ws);
-				Console.WriteLine("name='" + ws + "'");
 			}
 			newReplace.WritingSystemRefs = newWritingSystems;
 			return newReplace;

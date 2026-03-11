@@ -49,6 +49,7 @@
         </StemName>
         <VariantTypes />
         <ShowMinorEntry>true</ShowMinorEntry>
+        <PublishEntryInItems />
       </Action>
     </Operation>
   </Operations>

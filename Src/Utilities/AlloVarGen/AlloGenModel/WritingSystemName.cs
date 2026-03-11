@@ -23,7 +23,6 @@ namespace SIL.AlloGenModel
 
 		public WritingSystemName Duplicate()
 		{
-			Console.WriteLine("wsndup: name='" + Name + "'");
 			WritingSystemName newWS = new WritingSystemName();
 			newWS.Name = Name;
 			return newWS;

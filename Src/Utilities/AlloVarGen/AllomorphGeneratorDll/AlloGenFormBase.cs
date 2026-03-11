@@ -451,34 +451,34 @@ namespace SIL.AllomorphGenerator
 			if (lBoxSender.Name == "lBoxOperations")
 			{
 				// Do not show Edit and its separator
-				editContextMenu.Items[0].Visible = false;
+				editContextMenu.Items[cmEdit].Visible = false;
 				editContextMenu.Items[1].Visible = false;
 				// Do not show "Insert existing before" or "Insert existing after"
-				editContextMenu.Items[4].Visible = false;
-				editContextMenu.Items[6].Visible = false;
+				editContextMenu.Items[cmInsertExistingBefore].Visible = false;
+				editContextMenu.Items[cmInsertExistingAfter].Visible = false;
 			}
 			else
 			{
-				editContextMenu.Items[0].Visible = true;
+				editContextMenu.Items[cmEdit].Visible = true;
 				editContextMenu.Items[1].Visible = true;
-				editContextMenu.Items[4].Visible = true;
-				editContextMenu.Items[6].Visible = true;
+				editContextMenu.Items[cmInsertExistingBefore].Visible = true;
+				editContextMenu.Items[cmInsertExistingAfter].Visible = true;
 			}
 			if (indexAtMouse == 0)
 				// move up does not work
-				editContextMenu.Items[8].Enabled = false;
+				editContextMenu.Items[cmMoveUp].Enabled = false;
 			else
-				editContextMenu.Items[8].Enabled = true;
+				editContextMenu.Items[cmMoveUp].Enabled = true;
 			if (indexAtMouse == 0 && indexLast == 0)
 				// delete does not work
-				editContextMenu.Items[11].Enabled = false;
+				editContextMenu.Items[cmDelete].Enabled = false;
 			else
-				editContextMenu.Items[11].Enabled = true;
+				editContextMenu.Items[cmDelete].Enabled = true;
 			if (indexAtMouse == indexLast)
 				// move down does not work
-				editContextMenu.Items[9].Enabled = false;
+				editContextMenu.Items[cmMoveDown].Enabled = false;
 			else
-				editContextMenu.Items[9].Enabled = true;
+				editContextMenu.Items[cmMoveDown].Enabled = true;
 		}
 
 		protected void EditContextMenuReplace_Click(object sender, EventArgs e)
@@ -1528,7 +1528,7 @@ namespace SIL.AllomorphGenerator
 				{
 					continue;
 				}
-				GetRepaceOpsToUse(replaceOpsToUse, op);
+				GetReplaceOpsToUse(replaceOpsToUse, op);
 				Replacer replacer = new Replacer(replaceOpsToUse);
 				string undoRedoPrompt = CreateUndoRedoPrompt(op);
 				UndoableUnitOfWorkHelper.Do(
@@ -1575,7 +1575,7 @@ namespace SIL.AllomorphGenerator
 			}
 		}
 
-		protected void GetRepaceOpsToUse(List<Replace> replaceOpsToUse, Operation op)
+		protected void GetReplaceOpsToUse(List<Replace> replaceOpsToUse, Operation op)
 		{
 			replaceOpsToUse.Clear();
 			foreach (string guid in op.Action.ReplaceOpRefs)
@@ -1712,7 +1712,7 @@ namespace SIL.AllomorphGenerator
 				{
 					nonChosenEntries = dictNonChosen[Operation];
 				}
-				GetRepaceOpsToUse(replaceOpsToUse, Operation);
+				GetReplaceOpsToUse(replaceOpsToUse, Operation);
 				Replacer replacer = new Replacer(replaceOpsToUse);
 				lvPreview.Items.Clear();
 				foreach (ILexEntry entry in matchingEntries)

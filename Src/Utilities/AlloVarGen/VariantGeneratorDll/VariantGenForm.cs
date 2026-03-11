@@ -77,36 +77,27 @@ namespace SIL.VariantGenerator
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(
 				this.OnFormClosing
 			);
-			try
-			{
-				RememberFormState(RegKey);
-				Provider = new XmlBackEndProvider();
-				Migrator = new DatabaseMigrator();
-				LoadMigrateGetOperations();
-				FillOperationsListBox();
-				FillApplyToComboBox();
-				SetupFontAndStyleInfo();
-				SetUpOperationsCheckedListBox();
-				SetUpPreviewCheckedListBox();
-				FillApplyOperationsListView();
-				SetUpEditReplaceOpsListView();
-				FillReplaceOpsListView();
-				BuildReplaceContextMenu();
-				BuildEditReplaceOpContextMenu();
-				BuildOperationsCheckBoxContextMenu();
-				BuildPreviewCheckBoxContextMenu();
-				lBoxMorphTypes.ClearSelected();
-				lBoxEnvironments.ClearSelected();
-				RememberTabSelection();
-				MarkAsChanged(false);
-				variantCreator = new VariantCreator(Cache, WritingSystems);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
-			}
+			RememberFormState(RegKey);
+			Provider = new XmlBackEndProvider();
+			Migrator = new DatabaseMigrator();
+			LoadMigrateGetOperations();
+			FillOperationsListBox();
+			FillApplyToComboBox();
+			SetupFontAndStyleInfo();
+			SetUpOperationsCheckedListBox();
+			SetUpPreviewCheckedListBox();
+			FillApplyOperationsListView();
+			SetUpEditReplaceOpsListView();
+			FillReplaceOpsListView();
+			BuildReplaceContextMenu();
+			BuildEditReplaceOpContextMenu();
+			BuildOperationsCheckBoxContextMenu();
+			BuildPreviewCheckBoxContextMenu();
+			lBoxMorphTypes.ClearSelected();
+			lBoxEnvironments.ClearSelected();
+			RememberTabSelection();
+			MarkAsChanged(false);
+			variantCreator = new VariantCreator(Cache, WritingSystems);
 		}
 
 		protected void AdjustHeightOfReplaceOpsBox()
@@ -308,7 +299,7 @@ namespace SIL.VariantGenerator
 
 		protected override bool CheckForInvalidActionComponents()
 		{
-			return CheckForInvalidVariantTypes() && CheckForInvalidPublishEntryIItems();
+			return CheckForInvalidVariantTypes() && CheckForInvalidPublishEntryItems();
 		}
 
 		protected override string CreateUndoRedoPrompt(Operation op)
@@ -359,7 +350,7 @@ namespace SIL.VariantGenerator
 			return allIsGood;
 		}
 
-		protected bool CheckForInvalidPublishEntryIItems()
+		protected bool CheckForInvalidPublishEntryItems()
 		{
 			bool allIsGood = true;
 			foreach (ListViewItem lvItem in lvOperations.CheckedItems)

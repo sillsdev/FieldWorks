@@ -30,7 +30,6 @@ namespace SIL.AlloGenServiceTest
 		{
 			TestDataDir = Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities", "AlloVarGen", "AlloGenService", "AlloGenServiceTests", "TestData");
 			AlloGenExpected = Path.Combine(TestDataDir, "AlloGenReplace.xml");
-			WritingSystem ws = new WritingSystem();
 		}
 
 		[Test]

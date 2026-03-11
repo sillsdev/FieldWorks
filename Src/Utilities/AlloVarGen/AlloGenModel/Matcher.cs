@@ -102,8 +102,8 @@ namespace SIL.AlloGenModel
 				fwMatcher = new RegExpMatcher(fwPattern);
 				if (!fwMatcher.IsValid())
 				{
-					fwMatcher = null;
 					errorMessage = fwMatcher.ErrorMessage();
+					fwMatcher = null;
 				}
 			}
 			else

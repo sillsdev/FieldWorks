@@ -24,10 +24,12 @@ namespace SIL.AlloGenService
 		public void LoadDataFromFile(string FileName)
 		{
 			XmlSerializer deserializer = new XmlSerializer(typeof(AllomorphGenerators));
-			TextReader reader = new StreamReader(FileName);
-			object obj = deserializer.Deserialize(reader);
-			AlloGens = (AllomorphGenerators)obj;
-			reader.Close();
+			using (TextReader reader = new StreamReader(FileName))
+			{
+				object obj = deserializer.Deserialize(reader);
+				AlloGens = (AllomorphGenerators)obj;
+				reader.Close();
+			}
 		}
 
 		public void SaveDataToFile(string FileName)

@@ -48,8 +48,7 @@ namespace SIL.AlloGenModel
 			else
 			{
 				WritingSystem ws = (WritingSystem)obj;
-				return base.Equals(obj)
-					&& (Name == ws.Name)
+				return (Name == ws.Name)
 					&& (Handle == ws.Handle)
 					&& (Font == ws.Font)
 					&& (FontInfo == ws.FontInfo)
@@ -64,9 +63,7 @@ namespace SIL.AlloGenModel
 
 		override public string ToString()
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append(Name);
-			return sb.ToString();
+			return Name;
 		}
 	}
 }

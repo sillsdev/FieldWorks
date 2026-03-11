@@ -12,6 +12,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -52,6 +53,7 @@ namespace SIL.AllomorphGenerator
 			this.fwtbFrom.Name = "fwtbFrom";
 			this.fwtbFrom.SuppressEnter = true;
 			this.fwtbFrom.WordWrap = false;
+			this.fwtbFrom.Leave += new System.EventHandler(fwtb_Leave);
 			((System.ComponentModel.ISupportInitialize)(this.fwtbFrom)).EndInit();
 			this.Controls.Add(this.fwtbFrom);
 
@@ -74,8 +76,21 @@ namespace SIL.AllomorphGenerator
 			this.fwtbTo.Name = "fwtbTo";
 			this.fwtbTo.SuppressEnter = true;
 			this.fwtbTo.WordWrap = false;
+			this.fwtbTo.Leave += new System.EventHandler(fwtb_Leave);
 			((System.ComponentModel.ISupportInitialize)(this.fwtbTo)).EndInit();
 			this.Controls.Add(this.fwtbTo);
+		}
+
+		private void fwtb_Leave(object sender, EventArgs e)
+		{
+			if (cbRegEx.Checked)
+			{
+				FwTextBox tb = (FwTextBox)sender;
+				if (!IsValidRegex(tb.Text))
+				{
+					tb.Focus();
+				}
+			}
 		}
 
 		public void Initialize(Replace replace, List<WritingSystem> writingSystems, LcmCache cache)
@@ -131,6 +146,26 @@ namespace SIL.AllomorphGenerator
 			}
 			OkPressed = true;
 			this.Close();
+		}
+
+		// Source - https://stackoverflow.com/a/1775017
+		// Posted by Jeff Atwood, modified by community. See post 'Timeline' for change history
+		// Retrieved 2026-03-10, License - CC BY-SA 4.0
+		private static bool IsValidRegex(string pattern)
+		{
+			if (string.IsNullOrWhiteSpace(pattern)) return false;
+
+			try
+			{
+				Regex.Match("", pattern);
+			}
+			catch (ArgumentException ex)
+			{
+				MessageBox.Show("Error found in regular expression:\n" + ex.Message);
+				return false;
+			}
+
+			return true;
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)

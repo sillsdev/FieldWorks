@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SIL.AlloGenService
 {
@@ -34,7 +35,14 @@ namespace SIL.AlloGenService
 				if (replace.Mode)
 				{
 					// regular expression
-					result = Regex.Replace(result, replace.From, replace.To);
+					try {
+						result = Regex.Replace(result, replace.From, replace.To);
+					}
+					catch (ArgumentException ex)
+					{
+						//MessageBox.Show(ex.Message + "; on '" + input + "'");
+						return result;
+					}
 				}
 				else
 				{
