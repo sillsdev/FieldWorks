@@ -328,6 +328,15 @@ try {
 		# Clean stale per-project obj/ folders
 		Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
+		$normalizedProjectPath = [System.IO.Path]::GetFullPath($projectPath)
+		$testViewsProjectPath = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'Src\views\Test\TestViews.vcxproj'))
+		if (-not $SkipNative -and ($normalizedProjectPath -eq $testViewsProjectPath) -and (Test-ViewsNativeArtifactsStale -RepoRoot $PSScriptRoot -Configuration $Configuration)) {
+			Write-Host "[INFO] Views native artifacts are stale; refreshing NativeBuild before building TestViews." -ForegroundColor Yellow
+			Invoke-MSBuild `
+				-Arguments @('Build/Src/NativeBuild/NativeBuild.csproj', '/t:Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:BuildNativeTests=true', '/v:minimal', '/nologo') `
+				-Description 'NativeBuild (Freshness Refresh)'
+		}
+
 		# LT-22382: Remove stale first-party DLLs from the output directory before building.
 		# Uses a whitelist of assembly names from Src/**/*.csproj to identify FW assemblies
 		# and checks their major version against FWMAJOR. See Build\Agent\Remove-StaleDlls.ps1.
