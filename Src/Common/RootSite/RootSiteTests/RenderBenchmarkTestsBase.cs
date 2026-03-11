@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -290,6 +291,89 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 					CreateSimpleScenario();
 					break;
 			}
+		}
+
+		protected RenderScenario CreateConfiguredScenario(string scenarioId)
+		{
+			var scenarioConfig = RenderScenarioDataBuilder.LoadFromFile()
+				.FirstOrDefault(s => s.Id == scenarioId);
+
+			return new RenderScenario
+			{
+				Id = scenarioId,
+				Description = scenarioConfig?.Description ?? $"Render scenario for {scenarioId}",
+				Tags = scenarioConfig?.Tags,
+				RootObjectHvo = m_hvoRoot,
+				RootFlid = m_flidContainingTexts,
+				FragmentId = m_frag,
+				ViewType = scenarioConfig?.ViewType ?? RenderViewType.Scripture,
+				SimulateIfDataDoubleRender = scenarioConfig?.SimulateIfDataDoubleRender ?? false
+			};
+		}
+
+		internal RootSiteScenarioExecutionResult ExecuteScenarioAndCapture(
+			string scenarioId,
+			bool includeWarmRender,
+			RenderEnvironmentValidator environmentValidator = null,
+			int width = 800,
+			int height = 600)
+		{
+			RenderScenario scenario;
+			using (var uow = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor,
+				"Setup Scenario", "Undo Setup Scenario"))
+			{
+				SetupScenarioData(scenarioId);
+				scenario = CreateConfiguredScenario(scenarioId);
+				uow.RollBack = false;
+			}
+
+			using (var harness = new RenderBenchmarkHarness(Cache, scenario, environmentValidator))
+			{
+				var coldTiming = harness.ExecuteColdRender(width, height);
+
+				using (var bitmap = harness.CaptureViewBitmap())
+				{
+					if (bitmap == null)
+						throw new InvalidOperationException($"Failed to capture render bitmap for scenario '{scenarioId}'.");
+
+					string directory = global::SIL.FieldWorks.Common.RootSites.RenderBaselineVerifier.GetSourceFileDirectory();
+					string snapshotName = $"RenderVerifyTests.VerifyScenario_{scenarioId}";
+					var verification = global::SIL.FieldWorks.Common.RootSites.RenderBaselineVerifier.Verify(
+						bitmap,
+						directory,
+						snapshotName,
+						scenarioId);
+
+					var warmTiming = includeWarmRender ? harness.ExecuteWarmRender() : null;
+
+					return new RootSiteScenarioExecutionResult
+					{
+						Scenario = scenario,
+						ColdTiming = coldTiming,
+						WarmTiming = warmTiming,
+						Verification = verification,
+						CaptureWidth = bitmap.Width,
+						CaptureHeight = bitmap.Height,
+						TraceEvents = harness.TraceEvents.ToList()
+					};
+				}
+			}
+		}
+
+		protected static string[] GetConfiguredScenarioIds(params string[] fallbackScenarioIds)
+		{
+			try
+			{
+				var scenarios = RenderScenarioDataBuilder.LoadFromFile();
+				if (scenarios.Count > 0)
+					return scenarios.Select(s => s.Id).ToArray();
+			}
+			catch (Exception ex)
+			{
+				TestContext.Error.WriteLine($"Error discovering scenarios: {ex.Message}");
+			}
+
+			return fallbackScenarioIds;
 		}
 
 		private void CreateSimpleScenario()
@@ -888,5 +972,16 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		}
 
 		#endregion
+	}
+
+	internal sealed class RootSiteScenarioExecutionResult
+	{
+		public RenderScenario Scenario { get; set; }
+		public RenderTimingResult ColdTiming { get; set; }
+		public RenderTimingResult WarmTiming { get; set; }
+		internal global::SIL.FieldWorks.Common.RootSites.RenderBaselineVerificationResult Verification { get; set; }
+		public int CaptureWidth { get; set; }
+		public int CaptureHeight { get; set; }
+		public System.Collections.Generic.List<TraceEvent> TraceEvents { get; set; }
 	}
 }

@@ -18,6 +18,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailControls", "Src\Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailControlsTests", "Src\Common\Controls\DetailControls\DetailControlsTests\DetailControlsTests.csproj", "{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTestInfrastructure", "Src\Common\RenderTestInfrastructure\RenderTestInfrastructure.csproj", "{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderVerification", "Src\Common\RenderVerification\RenderVerification.csproj", "{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discourse", "Src\LexText\Discourse\Discourse.csproj", "{A51BAFC3-1649-584D-8D25-101884EE9EAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscourseTests", "Src\LexText\Discourse\DiscourseTests\DiscourseTests.csproj", "{1CE6483D-5D10-51AD-B2A7-FD7F82CCBAB2}"
@@ -301,6 +305,18 @@ Global
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Debug|x64.Build.0 = Debug|x64
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Release|x64.ActiveCfg = Release|x64
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Release|x64.Build.0 = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Bounds|x64.ActiveCfg = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Bounds|x64.Build.0 = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Debug|x64.ActiveCfg = Debug|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Debug|x64.Build.0 = Debug|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Release|x64.ActiveCfg = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Release|x64.Build.0 = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Bounds|x64.ActiveCfg = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Bounds|x64.Build.0 = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Debug|x64.ActiveCfg = Debug|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Debug|x64.Build.0 = Debug|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Release|x64.ActiveCfg = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Release|x64.Build.0 = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Bounds|x64.ActiveCfg = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Bounds|x64.Build.0 = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Debug|x64.ActiveCfg = Debug|x64

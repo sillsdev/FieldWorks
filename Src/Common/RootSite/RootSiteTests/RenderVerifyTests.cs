@@ -3,12 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
-using SIL.FieldWorks.Common.RenderVerification;
-using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -43,41 +40,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test, TestCaseSource(nameof(GetVerifyScenarios))]
 		public async Task VerifyScenario(string scenarioId)
 		{
-			// Create scenario data inside a UoW
-			using (var uow = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor,
-				"Setup Scenario", "Undo Setup Scenario"))
-			{
-				SetupScenarioData(scenarioId);
-				uow.RollBack = false;
-			}
-
-			// Load scenario config to get ViewType
-			var allScenarios = RenderScenarioDataBuilder.LoadFromFile();
-			var scenarioConfig = allScenarios.FirstOrDefault(s => s.Id == scenarioId);
-
-			var scenario = new RenderScenario
-			{
-				Id = scenarioId,
-				Description = $"Verify snapshot for {scenarioId}",
-				RootObjectHvo = m_hvoRoot,
-				RootFlid = m_flidContainingTexts,
-				FragmentId = m_frag,
-				ViewType = scenarioConfig?.ViewType ?? RenderViewType.Scripture,
-				SimulateIfDataDoubleRender = scenarioConfig?.SimulateIfDataDoubleRender ?? false
-			};
-
-			using (var harness = new RenderBenchmarkHarness(Cache, scenario))
-			{
-				harness.ExecuteColdRender();
-				using (var bitmap = harness.CaptureViewBitmap())
-				{
-					string directory = RenderBaselineVerifier.GetSourceFileDirectory();
-					string name = $"RenderVerifyTests.VerifyScenario_{scenarioId}";
-					var verification = RenderBaselineVerifier.Verify(bitmap, directory, name, scenarioId);
-					if (!verification.Passed)
-						Assert.Fail(verification.FailureMessage);
-				}
-			}
+			var execution = ExecuteScenarioAndCapture(scenarioId, includeWarmRender: false);
+			if (!execution.Verification.Passed)
+				Assert.Fail(execution.Verification.FailureMessage);
 
 			await Task.CompletedTask;
 		}
@@ -87,21 +52,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public static IEnumerable<string> GetVerifyScenarios()
 		{
-			try
-			{
-				var scenarios = RenderScenarioDataBuilder.LoadFromFile();
-				if (scenarios.Count > 0)
-					return scenarios.Select(s => s.Id);
-			}
-			catch
-			{
-				// Fall through to default list
-			}
-			return new[]
-			{
-				"simple", "medium", "complex", "deep-nested", "custom-heavy",
-				"many-paragraphs", "footnote-heavy", "mixed-styles", "long-prose", "multi-book"
-			};
+			return GetConfiguredScenarioIds(
+				"simple",
+				"medium",
+				"complex",
+				"deep-nested",
+				"custom-heavy",
+				"many-paragraphs",
+				"footnote-heavy",
+				"mixed-styles",
+				"long-prose",
+				"multi-book");
 		}
 	}
 }

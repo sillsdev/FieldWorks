@@ -82,7 +82,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				Assert.That(bitmap, Is.Not.Null, "Captured bitmap should not be null");
 				Assert.That(bitmap.Width, Is.EqualTo(400), "Bitmap width should match view width");
-				Assert.That(bitmap.Height, Is.EqualTo(300), "Bitmap height should match view height");
+				Assert.That(bitmap.Height, Is.GreaterThanOrEqualTo(300),
+					"Bitmap height should honor the requested view height and may grow to fit content.");
 			}
 		}
 

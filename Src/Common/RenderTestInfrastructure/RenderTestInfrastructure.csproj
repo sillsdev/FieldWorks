@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>RenderVerification</AssemblyName>
+    <AssemblyName>RenderTestInfrastructure</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common.RenderVerification</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
@@ -37,15 +37,30 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../RenderTestInfrastructure/RenderTestInfrastructure.csproj" />
-    <!-- DetailControls brings the full DataTree/Slice stack plus transitive deps
-         (XMLViews, xCore, Framework, Widgets, FwControls, RootSite, SimpleRootSite, ViewsInterfaces) -->
-    <ProjectReference Include="../Controls/DetailControls/DetailControls.csproj" />
-    <ProjectReference Include="../FwUtils/FwUtils.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CompositeViewCapture.cs" />
-    <Compile Include="DataTreeRenderHarness.cs" />
+    <Compile Include="..\RenderVerification\RenderBenchmarkComparer.cs">
+      <Link>RenderBenchmarkComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderBenchmarkReportWriter.cs">
+      <Link>RenderBenchmarkReportWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderBenchmarkResults.cs">
+      <Link>RenderBenchmarkResults.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderDiagnosticsToggle.cs">
+      <Link>RenderDiagnosticsToggle.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderEnvironmentValidator.cs">
+      <Link>RenderEnvironmentValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderModels.cs">
+      <Link>RenderModels.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderScenarioDataBuilder.cs">
+      <Link>RenderScenarioDataBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\RenderVerification\RenderTraceParser.cs">
+      <Link>RenderTraceParser.cs</Link>
+    </Compile>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

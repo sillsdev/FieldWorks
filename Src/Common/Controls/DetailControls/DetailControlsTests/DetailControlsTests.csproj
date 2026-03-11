@@ -48,6 +48,7 @@
     <ProjectReference Include="../../../SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../DetailControls.csproj" />
+    <ProjectReference Include="../../../RenderTestInfrastructure/RenderTestInfrastructure.csproj" />
     <ProjectReference Include="../../../RenderVerification/RenderVerification.csproj" />
   </ItemGroup>
   <ItemGroup>

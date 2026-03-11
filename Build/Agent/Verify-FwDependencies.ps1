@@ -49,6 +49,8 @@ function Test-Dependency {
         [string]$Required = "Required"
     )
 
+    $isRequired = ($Required -eq "Required")
+
     try {
         $result = & $Check
         if ($result) {
@@ -56,18 +58,18 @@ function Test-Dependency {
             if ($result -is [string] -and $result.Length -gt 0 -and $result.Length -lt 100) {
                 Write-Host "       $result" -ForegroundColor DarkGray
             }
-            return @{ Name = $Name; Found = $true; Info = $result }
+            return @{ Name = $Name; Found = $true; Required = $isRequired; Info = $result }
         }
         else {
             throw "Check returned null/false"
         }
     }
     catch {
-        $color = if ($Required -eq "Required") { "Red" } else { "Yellow" }
-        $status = if ($Required -eq "Required") { "[FAIL]" } else { "[WARN]" }
+        $color = if ($isRequired) { "Red" } else { "Yellow" }
+        $status = if ($isRequired) { "[FAIL]" } else { "[WARN]" }
         Write-Host "$status $Name" -ForegroundColor $color
         Write-Host "       $_" -ForegroundColor DarkGray
-        return @{ Name = $Name; Found = $false; Required = ($Required -eq "Required"); Error = $_.ToString() }
+        return @{ Name = $Name; Found = $false; Required = $isRequired; Error = $_.ToString() }
     }
 }
 
@@ -268,9 +270,9 @@ if ($IncludeOptional) {
 Write-Host ""
 Write-Host "=== Summary ===" -ForegroundColor Cyan
 
-$required = $results | Where-Object { $_.Required -ne $false }
-$missing = $required | Where-Object { -not $_.Found }
-$optional = $results | Where-Object { $_.Required -eq $false }
+$required = @($results | Where-Object { $_.Required -ne $false })
+$missing = @($required | Where-Object { -not $_.Found })
+$optional = @($results | Where-Object { $_.Required -eq $false })
 
 $totalRequired = ($required | Measure-Object).Count
 $foundRequired = ($required | Where-Object { $_.Found } | Measure-Object).Count
