@@ -16,21 +16,52 @@ This plan includes:
 - edge-case test coverage (unit + render/timing),
 - explicit pre-implementation decisions that still need to be made.
 
-## Baseline Evidence (Current Run)
+## Current Evidence (2026-03-11)
 
 Source artifacts:
 
 - `Output/RenderBenchmarks/summary.md`
 - `Output/RenderBenchmarks/results.json`
+- `Output/RenderBenchmarks/summary.cache-on-final.md`
+- `Output/RenderBenchmarks/results.cache-on-final.json`
+- `Output/RenderBenchmarks/summary.cache-off.md`
+- `Output/RenderBenchmarks/results.cache-off.json`
 
-Key numbers from run `1b193fb08a1b477f9419b59b0ec8d78f` (`2026-03-10 19:33:16Z`):
+Latest cache-enabled timing-suite run `aeead2c451e2426e92a8b945790d5e80` (`2026-03-11 15:53:56Z`):
 
-- Avg cold render: 49.22 ms
-- Avg warm render: 0.01 ms
-- Avg `PerformOffscreenLayout`: 22.78 ms
-- `PerformOffscreenLayout` remains the dominant cold-path stage (77.6% of traced stage time in `summary.md`)
+- Flags: `FW_PERF_P125_PATH1=1`, `FW_PERF_P125_PATH2=1`, `FW_PERF_P125_PATH5=not-implemented`
+- Avg cold render: 110.90 ms
+- Avg warm render: 43.72 ms
+- Avg cold `PerformOffscreenLayout`: 90.54 ms
+- Avg warm `PerformOffscreenLayout`: 1.81 ms
+- `PerformOffscreenLayout` remains the dominant traced stage (55.6% of traced stage time)
 
-Heavy scenarios where `PerformOffscreenLayout` dominates cold time:
+Matched cache-disabled control run `e2167ab0e60f4dd0a944601e266ca3aa` (`2026-03-11 15:52:23Z`):
+
+- Flags: `FW_PERF_P125_PATH1=0`, `FW_PERF_P125_PATH2=0`, `FW_PERF_P125_PATH5=not-implemented`
+- Avg cold render: 156.44 ms
+- Avg warm render: 77.04 ms
+- Avg cold `PerformOffscreenLayout`: 136.80 ms
+- Avg warm `PerformOffscreenLayout`: 2.27 ms
+
+Observed cache-on improvements versus control:
+
+- Avg cold render: 156.44 → 110.90 ms (`-45.54 ms`, about `-29.1%`)
+- Avg cold `PerformOffscreenLayout`: 136.80 → 90.54 ms (`-46.26 ms`, about `-33.8%`)
+- Avg warm render: 77.04 → 43.72 ms (`-33.32 ms`, about `-43.2%`)
+
+Representative heavy-scenario cold `PerformOffscreenLayout` wins from the matched control pair:
+
+- `footnote-heavy`: 459.00 → 139.65 ms
+- `many-paragraphs`: 194.56 → 63.61 ms
+- `complex`: 191.27 → 68.40 ms
+- `deep-nested`: 97.05 → 30.76 ms
+- `medium`: 89.49 → 28.11 ms
+- `custom-heavy`: 84.70 → 35.16 ms
+
+Some scenarios were noisy or slightly worse in the single-run control pair (`lex-deep`, `lex-extreme`, `multi-book`, `multi-ws`). Treat the current pair as strong directional evidence, not the final tuned benchmark set.
+
+Historical pre-implementation benchmark reference `1b193fb08a1b477f9419b59b0ec8d78f` (`2026-03-10 19:33:16Z`):
 
 - `long-prose`: 149.90/152.92 ms (98.0%)
 - `mixed-styles`: 109.37/115.23 ms (94.9%)
@@ -54,6 +85,30 @@ Implications for this plan:
 2. Cold-path numbers must now be evaluated against the current 49.22 ms baseline, not the older 64.98 ms run.
 3. Path 2 is no longer "cache NFC work from scratch"; `PATH-N1` already removes redundant normalization work for the common `fTextIsNfc == true` case.
 4. The remaining native opportunity is still real because `PerformOffscreenLayout` now dominates an even larger share of cold render time.
+
+## Validated Implementation Status
+
+Implemented and validated on this branch:
+
+- `LayoutPassCache` is owned by `ParaBuilder` and exposed through a thread-local pointer.
+- Path 2 is implemented: `CallScriptItemize` analysis reuse, cached NFC text, cached non-NFC offset maps, and `DoAllRuns` reuse of cached analysis.
+- Path 1 first slice is implemented: `ShapePlaceRun` result reuse keyed by NFC text content + font + `SCRIPT_ANALYSIS`, with deep-copied shaping buffers.
+- Shape-cache hits are allowed for all `ShapePlaceRun` callers, while new cache stores remain restricted to `fCreatingSeg` calls.
+- Layout-pass telemetry is implemented and emitted from `ParaBuilder` teardown: analysis/shape request counts, hit/miss counts, evictions, and miss compute time.
+- Runtime kill switches are implemented for the validated paths:
+  - `FW_PERF_P125_PATH1`
+  - `FW_PERF_P125_PATH2`
+- Render benchmark artifacts now record active P125 flag states and per-scenario cold/warm `PerformOffscreenLayout` totals.
+
+Explicitly attempted and rejected:
+
+- Broad reuse of cached `ScriptBreak` / `ScriptGetLogicalWidths` results from the shape cache was implemented experimentally and then fully reverted after it caused large pixel-output regressions across 12 render scenarios.
+
+Still pending:
+
+- Path 5 fast path is not implemented.
+- A native runtime flag for Path 5 is not yet needed because there is no Path 5 code to gate.
+- There are no new native unit tests yet for the new cache layers; current confidence comes from existing native tests plus render/timing/baseline validation.
 
 ## Design Goals and Constraints
 
@@ -349,7 +404,7 @@ Short-circuit common LTR/no-special handling path with fewer branches and less f
 - `PerformOffscreenLayout`: about 4-10% reduction if loop/control-flow overhead remains visible after Paths 1 and 2
 - Total cold average: likely secondary to Paths 1 and 2; only justify if re-profiling shows the generic loop itself still dominates
 
-## Decisions Required Before Coding
+## Decisions Required Before Further Coding
 
 ## Research-Backed Recommendation
 
@@ -392,6 +447,13 @@ Code review plus Microsoft Uniscribe guidance suggest the following execution or
    - `PATH-N1` changed the cost distribution inside the Uniscribe path.
    - Re-profile the current branch before committing to Path 2 as the first substantive optimization after infrastructure work.
 
+Current status of these decisions:
+
+- Cache ownership/lifetime: settled in favor of `ParaBuilder` + thread-local exposure.
+- Initial capacities: implemented as `16` analysis entries and `32` shaped-run entries, with telemetry in place for later tuning.
+- Feature-flag rollout: implemented paths default on and are independently disableable via environment variables.
+- Path ordering: resolved in practice as infrastructure → Path 2 → Path 1 slice → re-profile → Path 5 last.
+
 ## Execution Order
 
 Based on the current branch state, the revised execution order is:
@@ -408,6 +470,11 @@ Based on the current branch state, the revised execution order is:
 4. **Re-profile after Paths 1 and/or 2** to measure actual gains and identify remaining hot spots.
 5. **Path 5 last** — only if re-profiling still shows meaningful generic loop overhead after the
    expensive API calls are being reused.
+
+Current state:
+
+- Steps 1-4 are complete enough for the current slice.
+- The next substantive implementation target is Path 5, guided by the refreshed benchmark/reporting data.
 
 ## Combined Savings Model (Paths 1+2+5)
 
@@ -431,50 +498,52 @@ remain intact.
 
 ### P125-0: Refresh evidence and settle design choices
 
-- [ ] Reconfirm the current `PerformOffscreenLayout` sub-cost split on this branch before choosing Path 1 vs. Path 2 ordering.
-- [ ] Decide whether the cache context is thread-local RAII or an explicit parameter path.
-- [ ] Decide initial cache capacities and required hit/miss/eviction telemetry.
-- [ ] Decide initial feature-flag defaults and rollout strategy.
+- [x] Reconfirm the current `PerformOffscreenLayout` sub-cost split on this branch before choosing Path 1 vs. Path 2 ordering.
+- [x] Decide whether the cache context is thread-local RAII or an explicit parameter path.
+- [x] Decide initial cache capacities and required hit/miss/eviction telemetry.
+- [x] Decide initial feature-flag defaults and rollout strategy.
 
 ### P125-1: LayoutPassCache infrastructure
 
-- [ ] Create `Src/views/lib/LayoutCache.h` with:
+- [x] Create `Src/views/lib/LayoutCache.h` with:
   - `AnalysisKey` and `AnalysisValue` structs.
   - `ShapeRunKey` and `ShapeRunValue` structs.
   - `TextAnalysisCache` class (fixed-capacity map, initial target about 16 entries, key comparison via `memcmp`).
   - `ShapeRunCache` class (fixed-capacity map, initial target about 32 entries).
   - `LayoutPassCache` wrapper owning both caches.
-- [ ] Add `LayoutPassCache` creation in `ParaBuilder::Initialize` (`VwTextBoxes.cpp`).
-- [ ] Thread the cache to `GetSegment` → `FindBreakPoint` via either:
+- [x] Add `LayoutPassCache` creation in `ParaBuilder::Initialize` (`VwTextBoxes.cpp`).
+- [x] Thread the cache to `GetSegment` → `FindBreakPoint` via either:
   - (a) thread-local pointer set/cleared by `ParaBuilder`, or
   - (b) added parameter to `IRenderEngine::FindBreakPoint` (COM signature change — heavier).
   - Current recommendation: prefer (a) to avoid COM interface change.
-- [ ] Ensure cache is destroyed when `ParaBuilder` goes out of scope (RAII or destructor).
+- [x] Ensure cache is destroyed when `ParaBuilder` goes out of scope (RAII or destructor).
 
 ### P125-2: Path 2 — Text analysis cache
 
-- [ ] Refactor `CallScriptItemize` call in `FindBreakPoint` (currently around line 414 of `UniscribeEngine.cpp`):
+- [x] Refactor `CallScriptItemize` call in `FindBreakPoint` (currently around line 414 of `UniscribeEngine.cpp`):
   - Build `AnalysisKey` from `{pts, ichMinSeg, ichLimText, chrpThis.ws, fParaRtoL}`.
   - Probe `TextAnalysisCache`. On hit, use cached `prgchNfc`, `cchNfc`, `fTextIsNfc`,
     `prgscri`, `citem`. Skip `CallScriptItemize`.
   - On miss, call `CallScriptItemize` as today, then store results.
-- [ ] Refactor `OffsetInNfc`/`OffsetToOrig` calls in the main loop to use cached offset maps
+- [x] Refactor `OffsetInNfc`/`OffsetToOrig` calls in the main loop to use cached offset maps
   when `fTextIsNfc == false` (when `true`, these are already identity via `PATH-N1`).
-- [ ] Add overload or optional parameter to `DoAllRuns` in `UniscribeSegment.cpp` to accept
+- [x] Add overload or optional parameter to `DoAllRuns` in `UniscribeSegment.cpp` to accept
   cached analysis and skip its own `CallScriptItemize` call.
-- [ ] Add trace counter: analysis cache hits vs. misses per `FindBreakPoint` call.
+- [x] Add trace counter: analysis cache hits vs. misses per layout pass.
 
 ### P125-3: Path 1 — ShapePlaceRun cache
 
-- [ ] Before `ShapePlaceRun(uri, true)` in `FindBreakPoint` main loop (currently around line 547):
+- [x] Before `ShapePlaceRun(uri, true)` in `FindBreakPoint` main loop (currently around line 547):
   - Build `ShapeRunKey` from `{uri.prgch, uri.cch, hfont (from VwGraphics), uri.psa}`.
   - Probe `ShapeRunCache`. On hit, copy cached glyph/advance/cluster/width data into `uri`.
   - On miss, call `ShapePlaceRun` as today, then deep-copy results into cache.
-- [ ] Deep-copy `UniscribeRunInfo` owned glyph/advance/cluster/offset buffers into the cache;
+- [x] Deep-copy `UniscribeRunInfo` owned glyph/advance/cluster/offset buffers into the cache;
   do not rely on transient vector state.
-- [ ] Add trace counter: shaping cache hits vs. misses per run.
-- [ ] Validate that `BackTrack()` re-entry into `FindBreakPoint` now hits the shaping cache
+- [x] Add trace counter: shaping cache hits vs. misses per layout pass.
+- [x] Validate that `BackTrack()` re-entry into `FindBreakPoint` now hits the shaping cache
   for previously-shaped runs.
+
+Implementation note: the validated slice caches shaping outputs only. A broader attempt to cache logical widths and `ScriptBreak` results was reverted after render regressions.
 
 ### P125-4: Path 5 fast path
 
@@ -484,18 +553,28 @@ remain intact.
 
 ### P125-5: Feature flag and diagnostics
 
-- [ ] Add runtime flags:
+- [x] Add runtime flags:
   - `FW_PERF_P125_PATH1`
   - `FW_PERF_P125_PATH2`
+- [ ] Add runtime flag:
   - `FW_PERF_P125_PATH5`
-- [ ] Emit counters for hit/miss/fallback reasons into trace logs.
+- [x] Emit counters for analysis/shape hit/miss/evict/compute-time telemetry into trace logs.
+- [ ] Emit Path 5 fallback-reason counters once Path 5 exists.
 
 ### P125-6: Verification and benchmark reporting
 
-- [ ] Run targeted native tests for line-break correctness.
-- [ ] Run render timing suite and compare against baseline JSON.
-- [ ] Record before/after in `Output/RenderBenchmarks` and summarize deltas by scenario against
+- [x] Run targeted native tests for line-break correctness.
+- [x] Run render timing suite and compare against baseline JSON / matched control runs.
+- [x] Record before/after in `Output/RenderBenchmarks` and summarize deltas by scenario against
   run `1b193fb08a1b477f9419b59b0ec8d78f` unless a newer validated baseline replaces it.
+
+Latest validation snapshot:
+
+- `msbuild Src\views\Test\TestViews.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:LinkIncremental=false /v:minimal /nologo` passed.
+- `.\test.ps1 -Native -TestProject TestViews -NoBuild` passed.
+- `msbuild Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj /p:Configuration=Debug /p:Platform=x64 /v:minimal /nologo` passed.
+- `.\Build\Agent\Run-AllRenders.ps1 -Scope All -NoBuild -Verbosity minimal` passed.
+- `.\test.ps1 -NoBuild -TestProject "Src/Common/RootSite/RootSiteTests" -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"` passed with Path 1/2 enabled and disabled.
 
 ## Test Plan
 
@@ -539,19 +618,19 @@ Primary location: `Src/views/Test/RenderEngineTestBase.h` and related native ren
 
 Primary location: `Src/Common/RootSite/RootSiteTests/RenderTimingSuiteTests.cs` and baseline tests.
 
-- [ ] Existing pixel-perfect scenarios still pass unchanged.
+- [x] Existing pixel-perfect scenarios still pass unchanged.
 - [ ] Add scenario variants emphasizing:
   - deep paragraphs with many break opportunities,
   - mixed styles in one paragraph,
   - multi-writing-system lines,
   - RTL-heavy text blocks,
   - combining-mark intensive text.
-- [ ] Validate no pixel variance compared to baseline snapshots.
+- [x] Validate no pixel variance compared to baseline snapshots.
 
 ## C. Timing and Regression Tests
 
 - [ ] Add per-stage regression assertion for `PerformOffscreenLayout` (improves or no worse within tolerance).
-- [ ] Add per-scenario delta reporting for heavy scenarios:
+- [x] Add per-scenario delta reporting for heavy scenarios:
   - `long-prose`, `mixed-styles`, `rtl-script`, `lex-extreme`.
 - [ ] Add hit-rate telemetry assertions (non-zero hit rate in scenarios designed for reuse).
 
@@ -569,8 +648,8 @@ Run matrix:
 For each matrix entry:
 
 - [ ] native correctness tests pass,
-- [ ] render snapshots pass,
-- [ ] timing suite emits valid artifacts,
+- [x] render snapshots pass for the `all paths off` and `Path 1+2` runs performed so far,
+- [x] timing suite emits valid artifacts for the `all paths off` and `Path 1+2` runs performed so far,
 - [ ] no crash or regression on warm path.
 
 ## Edge Cases Checklist (Must Explicitly Pass)
