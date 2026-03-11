@@ -792,6 +792,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				$"Expected extreme workload to exceed deep workload, but got deep={deepSlices}, extreme={extremeSlices}");
 		}
 
+		[Test]
+		public void DataTreeTimingBaselines_CoverAllSnapshotScenarios()
+		{
+			DataTreeTimingBaselineCatalog.AssertSnapshotCoverage();
+		}
+
 		#endregion
 
 		#region Optimization Regression Tests
@@ -1534,6 +1540,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private static void RecordTiming(string scenario, int depth, int breadth,
 			DataTreeTimingInfo timing, double density)
 		{
+			DataTreeTimingBaselineCatalog.AssertMatches(scenario, depth, breadth, timing, density);
+
 			string outputDir = Path.Combine(
 				AppDomain.CurrentDomain.BaseDirectory, "..", "..", "Output", "RenderBenchmarks");
 			if (!Directory.Exists(outputDir))

@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal static RenderBaselineVerificationResult Verify(Bitmap actualBitmap, string directory, string name, string scenarioId)
 		{
 			string verifiedPath = Path.Combine(directory, $"{name}.verified.png");
+			string receivedPath = Path.Combine(directory, $"{name}.received.png");
 			string diffPath = Path.Combine(directory, $"{name}.diff.png");
 
 			RefreshVerifiedBaselineIfRequested(actualBitmap, verifiedPath);
@@ -28,7 +29,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (!File.Exists(verifiedPath))
 			{
-				string receivedPath = Path.Combine(directory, $"{name}.received.png");
 				actualBitmap.Save(receivedPath, ImageFormat.Png);
 				return new RenderBaselineVerificationResult
 				{
@@ -44,6 +44,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				int differentPixelCount = CountDifferentPixels(expectedBitmap, actualBitmap);
 				if (differentPixelCount <= MaxAllowedPixelDifferences)
 				{
+					DeleteIfPresent(receivedPath);
+					DeleteIfPresent(diffPath);
 					return new RenderBaselineVerificationResult
 					{
 						Passed = true,
@@ -56,6 +58,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					diffBitmap.Save(diffPath, ImageFormat.Png);
 				}
+
+				actualBitmap.Save(receivedPath, ImageFormat.Png);
 
 				return new RenderBaselineVerificationResult
 				{
@@ -75,6 +79,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			bitmap.Save(verifiedPath, ImageFormat.Png);
+		}
+
+		private static void DeleteIfPresent(string path)
+		{
+			if (File.Exists(path))
+				File.Delete(path);
 		}
 
 		private static int CountDifferentPixels(Bitmap expectedBitmap, Bitmap actualBitmap)
