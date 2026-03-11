@@ -477,6 +477,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_autoCustomFieldNodesDocument = new XmlDocument();
 			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");
 			m_autoCustomFieldNodesDocument.AppendChild(m_autoCustomFieldNodesDocRoot);
+			s_wheelRedirector.Register(this);
 		}
 
 		/// <summary>
@@ -1242,6 +1243,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
+
+			s_wheelRedirector.Unregister(this);
 
 			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
@@ -4530,6 +4533,72 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 			return true;
+		}
+
+		private const int WM_MOUSEWHEEL = 0x020A;
+		private static readonly WheelRedirector s_wheelRedirector = new WheelRedirector();
+
+		/// <summary>
+		/// Application-level message filter that intercepts WM_MOUSEWHEEL messages
+		/// and scrolls the DataTree when the cursor is over its client area.
+		/// Some child controls (e.g. RichTextBox in DateSlice) consume WM_MOUSEWHEEL
+		/// without propagating it, preventing the DataTree from scrolling.
+		/// Intercepting at the message pump level ensures consistent scroll behavior
+		/// regardless of which child control has focus.
+		/// </summary>
+		private sealed class WheelRedirector : IMessageFilter
+		{
+			private readonly List<DataTree> m_dataTrees = new List<DataTree>();
+			private bool m_installed;
+
+			public void Register(DataTree dataTree)
+			{
+				m_dataTrees.Add(dataTree);
+				if (!m_installed)
+				{
+					Application.AddMessageFilter(this);
+					m_installed = true;
+				}
+			}
+
+			public void Unregister(DataTree dataTree)
+			{
+				m_dataTrees.Remove(dataTree);
+				if (m_dataTrees.Count == 0 && m_installed)
+				{
+					Application.RemoveMessageFilter(this);
+					m_installed = false;
+				}
+			}
+
+			public bool PreFilterMessage(ref Message m)
+			{
+				if (m.Msg != WM_MOUSEWHEEL)
+					return false;
+
+				Point cursor = Cursor.Position;
+				for (int i = 0; i < m_dataTrees.Count; i++)
+				{
+					var dataTree = m_dataTrees[i];
+					if (!dataTree.IsHandleCreated || dataTree.IsDisposed)
+						continue;
+
+					Rectangle bounds = dataTree.RectangleToScreen(dataTree.ClientRectangle);
+					if (!bounds.Contains(cursor))
+						continue;
+
+					int delta = (short)((long)m.WParam >> 16);
+					int currentY = -dataTree.AutoScrollPosition.Y;
+					int maxScroll = Math.Max(0,
+						dataTree.AutoScrollMinSize.Height - dataTree.ClientRectangle.Height);
+					int newY = Math.Max(0, Math.Min(currentY - delta, maxScroll));
+					if (newY != currentY)
+						dataTree.AutoScrollPosition = new Point(0, newY);
+					return true;
+				}
+
+				return false;
+			}
 		}
 	}
 
