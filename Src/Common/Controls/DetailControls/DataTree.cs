@@ -4013,6 +4013,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					PerformLayout();
 					if (AutoScrollPosition != oldPos)
 						AutoScrollPosition = new Point(-oldPos.X, -oldPos.Y);
+					// Layout recovery can complete this paint pass without reaching the normal
+					// line-paint path below. Redraw separators now so they do not disappear
+					// until a follow-up paint arrives.
+					PaintLinesBetweenSlices(e.Graphics, ClientRectangle, ClientRectangle.Width);
 				}
 				else
 				{
