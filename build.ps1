@@ -37,9 +37,9 @@
 	Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
 	Default is 'minimal'.
 
-.PARAMETER TraceCrashes
+.PARAMETER EnableTracing
 	If set, enables the dev diagnostics config (FieldWorks.Diagnostics.dev.config) so trace logging
-	is written next to the built executable. Useful for crash investigation.
+	is written next to the built executable. Use this for interactive diagnostics and crash investigation.
 
 .PARAMETER NodeReuse
 	Enables or disables MSBuild node reuse (/nr). Default is true.
@@ -140,7 +140,7 @@ param(
 	[switch]$InstallerOnly,
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
-	[switch]$TraceCrashes,
+	[switch]$EnableTracing,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
 	[switch]$SkipDependencyCheck
@@ -160,13 +160,13 @@ $ErrorActionPreference = "Stop"
 $env:PATH = "$env:WIX/bin;$env:PATH"
 
 if ($Configuration -like "--*") {
-	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
-		$TraceCrashes = $true
+	if ($Configuration -eq "--EnableTracing" -and -not $EnableTracing) {
+		$EnableTracing = $true
 		$Configuration = "Debug"
-		Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
+		Write-Output "[WARN] Detected '--EnableTracing' passed without PowerShell switch parsing. Using -EnableTracing and defaulting Configuration to Debug."
 	}
 	else {
-		throw "Invalid Configuration value '$Configuration'. Use -TraceCrashes (single dash) for the trace option."
+		throw "Invalid Configuration value '$Configuration'. Use -EnableTracing (single dash) for trace-enabled builds."
 	}
 }
 
@@ -384,7 +384,7 @@ try {
 		if ($SkipNative) {
 			$finalMsBuildArgs += "/p:SkipNative=true"
 		}
-		if ($TraceCrashes) {
+		if ($EnableTracing) {
 			$finalMsBuildArgs += "/p:UseDevTraceConfig=true"
 		}
 		$finalMsBuildArgs += "/p:CL_MPCount=$mpCount"

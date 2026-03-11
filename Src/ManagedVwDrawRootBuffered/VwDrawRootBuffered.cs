@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -18,6 +19,10 @@ namespace SIL.FieldWorks.Views
 	[Guid("97199458-10C7-49da-B3AE-EA922EA64859")]
 	public class VwDrawRootBuffered : IVwDrawRootBuffered
 	{
+		private static readonly bool s_reuseLastFrameOnInvalidate = IsOptInPerfFlagEnabled(
+			"FW_PERF_REUSE_LAST_FRAME_ON_INVALIDATE");
+		private GdiMemoryBuffer m_cachedBuffer;
+
 		private class GdiMemoryBuffer : IDisposable
 		{
 			public IntPtr HdcMem { get; private set; }
@@ -93,6 +98,26 @@ namespace SIL.FieldWorks.Views
 		private const int SRCCOPY = 0x00CC0020;
 		private const uint kclrTransparent = 0xC0000000;
 
+		private static bool IsOptInPerfFlagEnabled(string variableName)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (string.IsNullOrEmpty(value))
+				return false;
+
+			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private void ReplaceCachedBuffer(GdiMemoryBuffer newBuffer)
+		{
+			if (ReferenceEquals(m_cachedBuffer, newBuffer))
+				return;
+
+			m_cachedBuffer?.Dispose();
+			m_cachedBuffer = newBuffer;
+		}
+
 		/// <summary>
 		/// See C++ documentation
 		/// </summary>
@@ -117,7 +142,9 @@ namespace SIL.FieldWorks.Views
 
 			IVwGraphicsWin32 qvg = VwGraphicsWin32Class.Create();
 			Rectangle rcp = rcpDraw;
-			using (var memoryBuffer = new GdiMemoryBuffer(hdc, rcp.Width, rcp.Height))
+			var memoryBuffer = new GdiMemoryBuffer(hdc, rcp.Width, rcp.Height);
+			bool keepBuffer = false;
+			try
 			{
 				IntPtr hdcMem = memoryBuffer.HdcMem;
 				try
@@ -184,8 +211,15 @@ namespace SIL.FieldWorks.Views
 
 						if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
 						{
+							ReplaceCachedBuffer(memoryBuffer);
+							keepBuffer = true;
 							// We drew something...now blast it onto the screen.
 							BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, hdcMem, 0, 0, SRCCOPY);
+						}
+						else if (s_reuseLastFrameOnInvalidate && m_cachedBuffer != null)
+						{
+							Trace.WriteLine("[FW_PERF_INTERACTION] [VwDrawRootBuffered] Stage=ReuseLastFrameOnInvalidate Path=Managed");
+							BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, m_cachedBuffer.HdcMem, 0, 0, SRCCOPY);
 						}
 					}
 					catch (Exception)
@@ -200,12 +234,20 @@ namespace SIL.FieldWorks.Views
 					qvg.ReleaseDC();
 				}
 			}
+			finally
+			{
+				if (!keepBuffer)
+					memoryBuffer.Dispose();
+			}
 		}
 
 		public void ReDrawLastDraw(IntPtr hdc, Rect rcpDraw)
 		{
-			// TODO-Linux: implement
-			throw new NotImplementedException();
+			if (m_cachedBuffer == null)
+				throw new NotImplementedException();
+
+			Rectangle rcp = rcpDraw;
+			BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, m_cachedBuffer.HdcMem, 0, 0, SRCCOPY);
 		}
 
 		/// <summary>

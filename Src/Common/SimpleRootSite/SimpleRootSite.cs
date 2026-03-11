@@ -61,6 +61,47 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public event EventHandler OnRefreshForScrollBarVisibility;
 		#endregion Events
+		private static readonly bool s_enableInteractionTrace = IsOptInPerfFlagEnabled("FW_PERF_INTERACTION_TRACE");
+		private static readonly int s_interactionTraceThresholdMs = GetPerfThresholdMs(
+			"FW_PERF_INTERACTION_TRACE_THRESHOLD_MS", 25);
+
+		private static bool IsOptInPerfFlagEnabled(string variableName)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (string.IsNullOrEmpty(value))
+				return false;
+
+			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static int GetPerfThresholdMs(string variableName, int defaultValue)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (int.TryParse(value, out var thresholdMs) && thresholdMs >= 0)
+				return thresholdMs;
+
+			return defaultValue;
+		}
+
+		private static void TraceInteractionTiming(string stage, long elapsedMs, string details)
+		{
+			if (!s_enableInteractionTrace || elapsedMs < s_interactionTraceThresholdMs)
+				return;
+
+			Trace.WriteLine(
+				$"[FW_PERF_INTERACTION] [SimpleRootSite] Stage={stage} DurationMs={elapsedMs} {details}");
+		}
+
+		private static void TraceInteractionEvent(string stage, string details)
+		{
+			if (!s_enableInteractionTrace)
+				return;
+
+			Trace.WriteLine(
+				$"[FW_PERF_INTERACTION] [SimpleRootSite] Stage={stage} {details}");
+		}
 
 		#region WindowsLanguageProfileSink class
 
@@ -181,6 +222,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		private int m_lastScrollWarmDirection;
 		private int m_scrollWarmRangeTop = int.MinValue;
 		private int m_scrollWarmRangeBottom = int.MinValue;
+		private int m_deferredScrollWarmupTargetTop = int.MinValue;
+		private int m_deferredScrollWarmupTargetBottom = int.MinValue;
+		private int m_deferredScrollWarmupGeneration;
 
 		/// <summary>Used to draw the rootbox</summary>
 		private IVwDrawRootBuffered m_vdrb;
@@ -1338,11 +1382,28 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void SelectionChanged(IVwRootBox rootb, IVwSelection vwselNew)
 		{
 			CheckDisposed();
+			Stopwatch stopwatch = null;
+			if (s_enableInteractionTrace)
+				stopwatch = Stopwatch.StartNew();
 
-			Debug.Assert(rootb == EditingHelper.EditedRootBox);
-			Debug.Assert(vwselNew == rootb.Selection);
+			try
+			{
+				Debug.Assert(rootb == EditingHelper.EditedRootBox);
+				Debug.Assert(vwselNew == rootb.Selection);
 
-			EditingHelper.SelectionChanged();
+				EditingHelper.SelectionChanged();
+			}
+			finally
+			{
+				if (stopwatch != null)
+				{
+					stopwatch.Stop();
+					TraceInteractionTiming(
+						"SelectionChanged",
+						stopwatch.ElapsedMilliseconds,
+						$"Control={Name} RootBoxNull={rootb == null} SelectionValid={vwselNew != null && vwselNew.IsValid}");
+				}
+			}
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1563,19 +1624,39 @@ namespace SIL.FieldWorks.Common.RootSites
 			VwScrollSelOpts scrollOption)
 		{
 			CheckDisposed();
+			Stopwatch stopwatch = null;
+			if (s_enableInteractionTrace)
+				stopwatch = Stopwatch.StartNew();
+
+			bool result;
 			switch (scrollOption)
 			{
 				case VwScrollSelOpts.kssoDefault:
-					return MakeSelectionVisible(sel, true);
+					result = MakeSelectionVisible(sel, true);
+					break;
 				case VwScrollSelOpts.kssoNearTop:
-					return ScrollSelectionToLocation(sel, LineHeight);
+					result = ScrollSelectionToLocation(sel, LineHeight);
+					break;
 				case VwScrollSelOpts.kssoTop:
-					return ScrollSelectionToLocation(sel, 1);
+					result = ScrollSelectionToLocation(sel, 1);
+					break;
 				case VwScrollSelOpts.kssoBoth:
-					return MakeSelectionVisible(sel, true, true, true);
+					result = MakeSelectionVisible(sel, true, true, true);
+					break;
 				default:
 					throw new ArgumentException("Unsupported VwScrollSelOpts");
 			}
+
+			if (stopwatch != null)
+			{
+				stopwatch.Stop();
+				TraceInteractionTiming(
+					"ScrollSelectionIntoView",
+					stopwatch.ElapsedMilliseconds,
+					$"Control={Name} Option={scrollOption} DidScroll={result}");
+			}
+
+			return result;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1653,94 +1734,204 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		protected virtual int ScrollWarmupMargin
-		{
-			get
-			{
-				return Math.Max(1, ClientRectangle.Height / 2);
-			}
-		}
+		// Tunable scroll warmup settings. Percent values are relative to the current viewport height.
+		protected virtual int ScrollWarmupImmediatePercentInScrollDirection => 100;
+		protected virtual int ScrollWarmupImmediatePercentAgainstScrollDirection => 25;
+		protected virtual int ScrollWarmupDeferredPercentInScrollDirection => 100;
+		protected virtual int ScrollWarmupDeferredPercentAgainstScrollDirection => 0;
+		protected virtual int ScrollWarmupSymmetricImmediatePercent => 50;
+		protected virtual int ScrollWarmupSymmetricDeferredPercent => 50;
+		protected virtual int ScrollWarmupDeferredChunkPercent => 50;
+		protected virtual int ScrollWarmupDeferredTimeBudgetMs => 50;
+		protected virtual int ScrollWarmupDeferredMaxChunksPerIdle => 2;
+		protected virtual IdleQueuePriority ScrollWarmupDeferredIdlePriority => IdleQueuePriority.Low;
 
 		protected virtual void WarmScrollViewportIfNeeded()
 		{
-			WarmScrollViewportIfNeeded(false);
+			WarmScrollViewportIfNeeded(false, true);
 		}
 
-		private void WarmScrollViewportIfNeeded(bool preferSymmetric)
+		private void WarmScrollViewportIfNeeded(bool preferSymmetric, bool restartDeferredWarmup)
 		{
 			if (m_fWarmingScrollViewport || m_fInPaint || m_fInLayout || m_rootb == null ||
 				m_dxdLayoutWidth <= 0 || !AllowPainting || ClientRectangle.Height <= 0)
 			{
+				TraceInteractionEvent(
+					"WarmScrollViewport.Skip",
+					$"Control={Name} InPaint={m_fInPaint} InLayout={m_fInLayout} RootBoxNull={m_rootb == null} AllowPainting={AllowPainting} ClientHeight={ClientRectangle.Height}");
 				return;
 			}
+
+			if (restartDeferredWarmup)
+				m_deferredScrollWarmupGeneration++;
 
 			int viewportTop = -ScrollPosition.Y;
 			int viewportBottom = viewportTop + ClientRectangle.Height;
-			GetScrollWarmupMargins(preferSymmetric, out int warmMarginTop, out int warmMarginBottom);
-			if (viewportTop >= m_scrollWarmRangeTop && viewportBottom <= m_scrollWarmRangeBottom)
-			{
-				m_fDeferredScrollWarmupPending = false;
-				return;
-			}
+			GetScrollWarmupMargins(preferSymmetric,
+				out int immediateWarmMarginTop,
+				out int immediateWarmMarginBottom,
+				out int deferredWarmMarginTop,
+				out int deferredWarmMarginBottom);
 
-			using (new HoldGraphics(this))
+			int desiredImmediateTop = viewportTop - immediateWarmMarginTop;
+			int desiredImmediateBottom = viewportBottom + immediateWarmMarginBottom;
+			bool warmImmediateRange = !IsScrollWarmRangeCovered(desiredImmediateTop, desiredImmediateBottom);
+			TraceInteractionEvent(
+				"WarmScrollViewport.Plan",
+				$"Control={Name} PreferSymmetric={preferSymmetric} RestartDeferred={restartDeferredWarmup} Direction={m_lastScrollWarmDirection} ViewTop={viewportTop} ViewBottom={viewportBottom} ImmediateTop={desiredImmediateTop} ImmediateBottom={desiredImmediateBottom} DeferredTop={desiredImmediateTop - deferredWarmMarginTop} DeferredBottom={desiredImmediateBottom + deferredWarmMarginBottom} WarmImmediate={warmImmediateRange} ChunkPercent={ScrollWarmupDeferredChunkPercent} ChunkBudgetMs={ScrollWarmupDeferredTimeBudgetMs} MaxChunksPerIdle={ScrollWarmupDeferredMaxChunksPerIdle}");
+
+			if (warmImmediateRange)
 			{
-				m_fWarmingScrollViewport = true;
-				try
+				Stopwatch immediateStopwatch = Stopwatch.StartNew();
+				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-
-					if (PrepareToDrawForScrollWarmup(rcSrcRoot, rcDstRoot) == VwPrepDrawResult.kxpdrInvalidate)
-						return;
-
-					if (warmMarginTop > 0)
+					m_fWarmingScrollViewport = true;
+					try
 					{
-						if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, -warmMarginTop)) == VwPrepDrawResult.kxpdrInvalidate)
+						Rectangle rcSrcRoot;
+						Rectangle rcDstRoot;
+						GetCoordRects(out rcSrcRoot, out rcDstRoot);
+
+						if (!WarmScrollViewportRange(rcSrcRoot, rcDstRoot, immediateWarmMarginTop, immediateWarmMarginBottom,
+							Math.Max(1, ClientRectangle.Height)))
 							return;
 					}
-
-					if (warmMarginBottom > 0)
+					finally
 					{
-						if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, warmMarginBottom)) == VwPrepDrawResult.kxpdrInvalidate)
-							return;
+						m_fWarmingScrollViewport = false;
 					}
 				}
-				finally
-				{
-					m_fWarmingScrollViewport = false;
-				}
+
+				viewportTop = -ScrollPosition.Y;
+				viewportBottom = viewportTop + ClientRectangle.Height;
+				desiredImmediateTop = viewportTop - immediateWarmMarginTop;
+				desiredImmediateBottom = viewportBottom + immediateWarmMarginBottom;
+				ExpandScrollWarmRange(desiredImmediateTop, desiredImmediateBottom);
+				immediateStopwatch.Stop();
+				TraceInteractionTiming(
+					"WarmScrollViewport.Immediate",
+					immediateStopwatch.ElapsedMilliseconds,
+					$"Control={Name} WarmTop={desiredImmediateTop} WarmBottom={desiredImmediateBottom}");
 			}
 
-			viewportTop = -ScrollPosition.Y;
-			viewportBottom = viewportTop + ClientRectangle.Height;
-			m_scrollWarmRangeTop = viewportTop - warmMarginTop;
-			m_scrollWarmRangeBottom = viewportBottom + warmMarginBottom;
-			m_fDeferredScrollWarmupPending = false;
-		}
+			m_deferredScrollWarmupTargetTop = desiredImmediateTop - deferredWarmMarginTop;
+			m_deferredScrollWarmupTargetBottom = desiredImmediateBottom + deferredWarmMarginBottom;
+			m_fDeferredScrollWarmupPending = !IsScrollWarmRangeCovered(
+				m_deferredScrollWarmupTargetTop,
+				m_deferredScrollWarmupTargetBottom);
 
-		private void GetScrollWarmupMargins(bool preferSymmetric, out int warmMarginTop, out int warmMarginBottom)
-		{
-			int fullMargin = ScrollWarmupMargin;
-			if (preferSymmetric || m_lastScrollWarmDirection == 0)
+			if (m_fDeferredScrollWarmupPending)
 			{
-				warmMarginTop = fullMargin;
-				warmMarginBottom = fullMargin;
-				return;
-			}
-
-			int trailingMargin = Math.Max(1, fullMargin / 2);
-			if (m_lastScrollWarmDirection > 0)
-			{
-				warmMarginTop = trailingMargin;
-				warmMarginBottom = fullMargin;
+				TraceInteractionEvent(
+					"WarmScrollViewport.DeferredQueued",
+					$"Control={Name} Generation={m_deferredScrollWarmupGeneration} TargetTop={m_deferredScrollWarmupTargetTop} TargetBottom={m_deferredScrollWarmupTargetBottom} CoveredTop={m_scrollWarmRangeTop} CoveredBottom={m_scrollWarmRangeBottom}");
+				QueueDeferredScrollWarmup();
 			}
 			else
 			{
-				warmMarginTop = fullMargin;
-				warmMarginBottom = trailingMargin;
+				TraceInteractionEvent(
+					"WarmScrollViewport.Complete",
+					$"Control={Name} Generation={m_deferredScrollWarmupGeneration} CoveredTop={m_scrollWarmRangeTop} CoveredBottom={m_scrollWarmRangeBottom}");
 			}
+		}
+
+		private void GetScrollWarmupMargins(bool preferSymmetric,
+			out int immediateWarmMarginTop,
+			out int immediateWarmMarginBottom,
+			out int deferredWarmMarginTop,
+			out int deferredWarmMarginBottom)
+		{
+			int symmetricImmediateMargin = GetScrollWarmupPixels(ScrollWarmupSymmetricImmediatePercent);
+			int symmetricDeferredMargin = GetScrollWarmupPixels(ScrollWarmupSymmetricDeferredPercent);
+			if (preferSymmetric || m_lastScrollWarmDirection == 0)
+			{
+				immediateWarmMarginTop = symmetricImmediateMargin;
+				immediateWarmMarginBottom = symmetricImmediateMargin;
+				deferredWarmMarginTop = symmetricDeferredMargin;
+				deferredWarmMarginBottom = symmetricDeferredMargin;
+				return;
+			}
+
+			int leadingImmediateMargin = GetScrollWarmupPixels(ScrollWarmupImmediatePercentInScrollDirection);
+			int trailingImmediateMargin = GetScrollWarmupPixels(ScrollWarmupImmediatePercentAgainstScrollDirection);
+			int leadingDeferredMargin = GetScrollWarmupPixels(ScrollWarmupDeferredPercentInScrollDirection);
+			int trailingDeferredMargin = GetScrollWarmupPixels(ScrollWarmupDeferredPercentAgainstScrollDirection);
+			if (m_lastScrollWarmDirection > 0)
+			{
+				immediateWarmMarginTop = trailingImmediateMargin;
+				immediateWarmMarginBottom = leadingImmediateMargin;
+				deferredWarmMarginTop = trailingDeferredMargin;
+				deferredWarmMarginBottom = leadingDeferredMargin;
+			}
+			else
+			{
+				immediateWarmMarginTop = leadingImmediateMargin;
+				immediateWarmMarginBottom = trailingImmediateMargin;
+				deferredWarmMarginTop = leadingDeferredMargin;
+				deferredWarmMarginBottom = trailingDeferredMargin;
+			}
+		}
+
+		private int GetScrollWarmupPixels(int viewportPercent)
+		{
+			if (viewportPercent <= 0 || ClientRectangle.Height <= 0)
+				return 0;
+
+			long pixels = (long)ClientRectangle.Height * viewportPercent / 100;
+			return Math.Max(1, (int)pixels);
+		}
+
+		private bool IsScrollWarmRangeCovered(int targetTop, int targetBottom)
+		{
+			return targetTop >= m_scrollWarmRangeTop && targetBottom <= m_scrollWarmRangeBottom;
+		}
+
+		private void ExpandScrollWarmRange(int warmTop, int warmBottom)
+		{
+			m_scrollWarmRangeTop = (m_scrollWarmRangeTop == int.MinValue)
+				? warmTop
+				: Math.Min(m_scrollWarmRangeTop, warmTop);
+			m_scrollWarmRangeBottom = (m_scrollWarmRangeBottom == int.MinValue)
+				? warmBottom
+				: Math.Max(m_scrollWarmRangeBottom, warmBottom);
+		}
+
+		private bool WarmScrollViewportRange(Rectangle rcSrcRoot, Rectangle rcDstRoot,
+			int warmMarginTop, int warmMarginBottom, int chunkSize)
+		{
+			if (PrepareToDrawForScrollWarmup(rcSrcRoot, rcDstRoot) == VwPrepDrawResult.kxpdrInvalidate)
+				return false;
+
+			chunkSize = Math.Max(1, chunkSize);
+			if (!WarmScrollViewportOffsets(rcSrcRoot, rcDstRoot, warmMarginTop, -1, chunkSize))
+				return false;
+			if (!WarmScrollViewportOffsets(rcSrcRoot, rcDstRoot, warmMarginBottom, 1, chunkSize))
+				return false;
+
+			return true;
+		}
+
+		private bool WarmScrollViewportOffsets(Rectangle rcSrcRoot, Rectangle rcDstRoot,
+			int warmDistance, int direction, int chunkSize)
+		{
+			if (warmDistance <= 0)
+				return true;
+
+			int lastOffset = 0;
+			for (int offset = chunkSize; offset <= warmDistance; offset += chunkSize)
+			{
+				lastOffset = offset;
+				if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, direction * offset)) == VwPrepDrawResult.kxpdrInvalidate)
+					return false;
+			}
+
+			if (lastOffset != warmDistance)
+			{
+				if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, direction * warmDistance)) == VwPrepDrawResult.kxpdrInvalidate)
+					return false;
+			}
+
+			return true;
 		}
 
 		private static Rectangle OffsetRootRect(Rectangle rect, int dy)
@@ -1760,14 +1951,33 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private void QueueDeferredScrollWarmup()
 		{
-			if (m_fDeferredScrollWarmupQueued || IsDisposed)
+			if (IsDisposed)
 				return;
 			if (!m_fDeferredScrollWarmupPending)
 				return;
 			if (!IsHandleCreated || !Visible || m_rootb == null || !AllowPainting)
 				return;
 
+			if (m_mediator != null)
+			{
+				TraceInteractionEvent(
+					"WarmScrollViewport.IdleQueueAdd",
+					$"Control={Name} Generation={m_deferredScrollWarmupGeneration} Priority={ScrollWarmupDeferredIdlePriority} TargetTop={m_deferredScrollWarmupTargetTop} TargetBottom={m_deferredScrollWarmupTargetBottom}");
+				m_mediator.IdleQueue.Add(
+					ScrollWarmupDeferredIdlePriority,
+					ContinueDeferredScrollWarmupOnIdle,
+					m_deferredScrollWarmupGeneration,
+					true);
+				return;
+			}
+
+			if (m_fDeferredScrollWarmupQueued)
+				return;
+
 			m_fDeferredScrollWarmupQueued = true;
+			TraceInteractionEvent(
+				"WarmScrollViewport.BeginInvokeAdd",
+				$"Control={Name} Generation={m_deferredScrollWarmupGeneration} TargetTop={m_deferredScrollWarmupTargetTop} TargetBottom={m_deferredScrollWarmupTargetBottom}");
 			BeginInvoke((MethodInvoker)delegate
 			{
 				m_fDeferredScrollWarmupQueued = false;
@@ -1776,8 +1986,190 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (!IsHandleCreated || !Visible || m_rootb == null || !AllowPainting || m_fInLayout)
 					return;
 
-				WarmScrollViewportIfNeeded(true);
+				if (!ContinueDeferredScrollWarmupOnIdle(m_deferredScrollWarmupGeneration))
+					QueueDeferredScrollWarmup();
 			});
+		}
+
+		private bool ContinueDeferredScrollWarmupOnIdle(object generationState)
+		{
+			if (IsDisposed || !m_fDeferredScrollWarmupPending)
+				return true;
+			if (!IsHandleCreated || !Visible || m_rootb == null || !AllowPainting || m_fInLayout)
+			{
+				TraceInteractionEvent(
+					"WarmScrollViewport.IdleDeferred",
+					$"Control={Name} Action=defer Visible={Visible} InLayout={m_fInLayout} RootBoxNull={m_rootb == null} AllowPainting={AllowPainting}");
+				return false;
+			}
+			if (m_deferredScrollWarmupTargetTop == int.MinValue || m_deferredScrollWarmupTargetBottom == int.MinValue)
+			{
+				TraceInteractionEvent(
+					"WarmScrollViewport.Bootstrap",
+					$"Control={Name} Generation={m_deferredScrollWarmupGeneration}");
+				WarmScrollViewportIfNeeded(true, true);
+				return true;
+			}
+
+			int generation = generationState is int intGeneration ? intGeneration : m_deferredScrollWarmupGeneration;
+			if (generation != m_deferredScrollWarmupGeneration)
+			{
+				TraceInteractionEvent(
+					"WarmScrollViewport.Cancelled",
+					$"Control={Name} Reason=stale-generation ScheduledGeneration={generation} CurrentGeneration={m_deferredScrollWarmupGeneration}");
+				return true;
+			}
+
+			if (IsScrollWarmRangeCovered(m_deferredScrollWarmupTargetTop, m_deferredScrollWarmupTargetBottom))
+			{
+				m_fDeferredScrollWarmupPending = false;
+				TraceInteractionEvent(
+					"WarmScrollViewport.Complete",
+					$"Control={Name} Generation={generation} CoveredTop={m_scrollWarmRangeTop} CoveredBottom={m_scrollWarmRangeBottom}");
+				return true;
+			}
+
+			int viewportTop = -ScrollPosition.Y;
+			int viewportBottom = viewportTop + ClientRectangle.Height;
+			int chunkPixels = GetScrollWarmupPixels(ScrollWarmupDeferredChunkPercent);
+			if (chunkPixels <= 0)
+			{
+				m_fDeferredScrollWarmupPending = false;
+				return true;
+			}
+
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			int chunksProcessed = 0;
+			string stopReason = "covered";
+			using (new HoldGraphics(this))
+			{
+				m_fWarmingScrollViewport = true;
+				try
+				{
+					Rectangle rcSrcRoot;
+					Rectangle rcDstRoot;
+					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+
+					while (!IsScrollWarmRangeCovered(m_deferredScrollWarmupTargetTop, m_deferredScrollWarmupTargetBottom))
+					{
+						if (chunksProcessed >= ScrollWarmupDeferredMaxChunksPerIdle)
+						{
+							stopReason = "chunk-budget";
+							break;
+						}
+						if (stopwatch.ElapsedMilliseconds >= ScrollWarmupDeferredTimeBudgetMs)
+						{
+							stopReason = "time-budget";
+							break;
+						}
+
+						bool warmBottomNext = m_lastScrollWarmDirection >= 0;
+						if (!WarmDeferredScrollViewportChunk(
+							rcSrcRoot,
+							rcDstRoot,
+							viewportTop,
+							viewportBottom,
+							chunkPixels,
+							warmBottomNext))
+						{
+							m_fDeferredScrollWarmupPending = false;
+							TraceInteractionEvent(
+								"WarmScrollViewport.Cancelled",
+								$"Control={Name} Reason=invalidate Generation={generation} CoveredTop={m_scrollWarmRangeTop} CoveredBottom={m_scrollWarmRangeBottom}");
+							return true;
+						}
+
+						chunksProcessed++;
+					}
+				}
+				finally
+				{
+					m_fWarmingScrollViewport = false;
+				}
+			}
+
+			m_fDeferredScrollWarmupPending = !IsScrollWarmRangeCovered(
+				m_deferredScrollWarmupTargetTop,
+				m_deferredScrollWarmupTargetBottom);
+			stopwatch.Stop();
+			TraceInteractionEvent(
+				"WarmScrollViewport.IdleChunk",
+				$"Control={Name} Generation={generation} DurationMs={stopwatch.ElapsedMilliseconds} ChunksProcessed={chunksProcessed} StopReason={(m_fDeferredScrollWarmupPending ? stopReason : "complete")} CoveredTop={m_scrollWarmRangeTop} CoveredBottom={m_scrollWarmRangeBottom} TargetTop={m_deferredScrollWarmupTargetTop} TargetBottom={m_deferredScrollWarmupTargetBottom}");
+			return !m_fDeferredScrollWarmupPending;
+		}
+
+		private bool WarmDeferredScrollViewportChunk(Rectangle rcSrcRoot, Rectangle rcDstRoot,
+			int viewportTop, int viewportBottom, int chunkPixels, bool warmBottomFirst)
+		{
+			if (warmBottomFirst)
+			{
+				if (!WarmDeferredScrollViewportChunkForDirection(
+					rcSrcRoot,
+					rcDstRoot,
+					viewportTop,
+					viewportBottom,
+					chunkPixels,
+					true))
+				{
+					return false;
+				}
+
+				return WarmDeferredScrollViewportChunkForDirection(
+					rcSrcRoot,
+					rcDstRoot,
+					viewportTop,
+					viewportBottom,
+					chunkPixels,
+					false);
+			}
+
+			if (!WarmDeferredScrollViewportChunkForDirection(
+				rcSrcRoot,
+				rcDstRoot,
+				viewportTop,
+				viewportBottom,
+				chunkPixels,
+				false))
+			{
+				return false;
+			}
+
+			return WarmDeferredScrollViewportChunkForDirection(
+				rcSrcRoot,
+				rcDstRoot,
+				viewportTop,
+				viewportBottom,
+				chunkPixels,
+				true);
+		}
+
+		private bool WarmDeferredScrollViewportChunkForDirection(Rectangle rcSrcRoot, Rectangle rcDstRoot,
+			int viewportTop, int viewportBottom, int chunkPixels, bool warmBottom)
+		{
+			if (warmBottom)
+			{
+				if (m_scrollWarmRangeBottom >= m_deferredScrollWarmupTargetBottom)
+					return true;
+
+				int nextBottom = Math.Min(m_deferredScrollWarmupTargetBottom, m_scrollWarmRangeBottom + chunkPixels);
+				int offset = nextBottom - viewportBottom;
+				if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, offset)) == VwPrepDrawResult.kxpdrInvalidate)
+					return false;
+
+				ExpandScrollWarmRange(m_scrollWarmRangeTop, nextBottom);
+				return true;
+			}
+
+			if (m_scrollWarmRangeTop <= m_deferredScrollWarmupTargetTop)
+				return true;
+
+			int nextTop = Math.Max(m_deferredScrollWarmupTargetTop, m_scrollWarmRangeTop - chunkPixels);
+			int topOffset = nextTop - viewportTop;
+			if (PrepareToDrawForScrollWarmup(rcSrcRoot, OffsetRootRect(rcDstRoot, topOffset)) == VwPrepDrawResult.kxpdrInvalidate)
+				return false;
+
+			ExpandScrollWarmRange(nextTop, m_scrollWarmRangeBottom);
+			return true;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2159,11 +2551,22 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				m_refreshPhase = RefreshPhase.Refreshing;
 				m_fRefreshReplayRequested = false;
+				Stopwatch reconstructStopwatch = null;
+				if (s_enableInteractionTrace)
+					reconstructStopwatch = Stopwatch.StartNew();
 				using (new SuspendDrawing(this))
 				{
 					m_rootb.Reconstruct();
 					m_fRefreshPending = false;
 					m_fForceNextRefreshDisplay = false;
+				}
+				if (reconstructStopwatch != null)
+				{
+					reconstructStopwatch.Stop();
+					TraceInteractionTiming(
+						"RefreshDisplay.Reconstruct",
+						reconstructStopwatch.ElapsedMilliseconds,
+						$"Control={Name} ReplayRequested={m_fRefreshReplayRequested}");
 				}
 			}
 			finally
@@ -5718,6 +6121,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual bool DoLayout()
 		{
 			m_fDeferredScrollWarmupPending = true;
+			m_deferredScrollWarmupGeneration++;
+			m_deferredScrollWarmupTargetTop = int.MinValue;
+			m_deferredScrollWarmupTargetBottom = int.MinValue;
 			m_scrollWarmRangeTop = int.MinValue;
 			m_scrollWarmRangeBottom = int.MinValue;
 

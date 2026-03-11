@@ -182,6 +182,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// "always works" solution.
 		/// </summary>
 		private int m_lastVisibleHighWaterMark = -1;
+		private int m_lastSlicePrewarmScrollTop = int.MinValue;
+		private int m_lastSlicePrewarmScrollDirection;
+		private int m_deferredSlicePrewarmStartIndex = -1;
+		private int m_deferredSlicePrewarmTargetIndex = -1;
+		private int m_deferredSlicePrewarmGeneration;
+		private bool m_deferredSlicePrewarmPending;
+		private bool m_deferredSlicePrewarmQueued;
 
 		#endregion Data members
 
@@ -227,6 +234,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
 		/// </summary>
 		protected TraceSwitch m_traceSwitch = new TraceSwitch("DataTree", "");
+		private static readonly bool s_enableInteractionTrace = IsOptInPerfFlagEnabled("FW_PERF_INTERACTION_TRACE");
+		private static readonly int s_interactionTraceThresholdMs = GetPerfThresholdMs(
+			"FW_PERF_INTERACTION_TRACE_THRESHOLD_MS", 25);
 		protected void TraceVerbose(string s)
 		{
 			if(m_traceSwitch.TraceVerbose)
@@ -242,7 +252,50 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if(m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
 				Trace.WriteLine("DataTreeThreadID="+System.Threading.Thread.CurrentThread.GetHashCode()+": "+s);
 		}
+		private static bool IsOptInPerfFlagEnabled(string variableName)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (string.IsNullOrEmpty(value))
+				return false;
+
+			return !string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(value, "off", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static int GetPerfThresholdMs(string variableName, int defaultValue)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (int.TryParse(value, out var thresholdMs) && thresholdMs >= 0)
+				return thresholdMs;
+
+			return defaultValue;
+		}
+
+		private static void TraceInteractionTiming(string stage, long elapsedMs, string details)
+		{
+			if (!s_enableInteractionTrace || elapsedMs < s_interactionTraceThresholdMs)
+				return;
+
+			Trace.WriteLine(
+				$"[FW_PERF_INTERACTION] [DataTree] Stage={stage} DurationMs={elapsedMs} {details}");
+		}
+
+		private static void TraceInteractionEvent(string stage, string details)
+		{
+			if (!s_enableInteractionTrace)
+				return;
+
+			Trace.WriteLine(
+				$"[FW_PERF_INTERACTION] [DataTree] Stage={stage} {details}");
+		}
 		#endregion
+
+		protected virtual int ScrollSlicePrewarmPercentInScrollDirection => 200;
+		protected virtual int ScrollSlicePrewarmPercentAgainstScrollDirection => 0;
+		protected virtual int ScrollSlicePrewarmChunkSize => 10;
+		protected virtual int ScrollSlicePrewarmTimeBudgetMs => 25;
+		protected virtual IdleQueuePriority ScrollSlicePrewarmIdlePriority => IdleQueuePriority.Medium;
 
 		#region Slice collection manipulation methods
 
@@ -297,7 +350,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// HandleLayout1 sets correct widths + positions after construction completes.
 			if (!ConstructingSlices)
 			{
-				SplitContainer sc = slice.SplitCont;
 				AdjustSliceSplitPosition(slice);
 			}
 		}
@@ -357,8 +409,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 			ResumeLayout(false);
-			// This can affect the lines between the slices. We need to redraw them but not the
-			// slices themselves.
 			Invalidate(false);
 			movedSlice.TakeFocus();
 		}
@@ -523,6 +573,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 //			string objName = ToString() + GetHashCode().ToString();
 //			Debug.WriteLine("Creating object:" + objName);
+			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+			UpdateStyles();
 
 			Slices = new List<Slice>();
 			m_autoCustomFieldNodesDocument = new XmlDocument();
@@ -1712,14 +1764,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// This actually handles Paint for the contained control that has the slice controls in it.
 		/// </summary>
-		/// <param name="pea">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
-		void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
+		private void PaintLinesBetweenSlices(Graphics gr, Rectangle clipRect, int width)
 		{
-			Graphics gr = pea.Graphics;
-			UserControl uc = this;
-			// Where we're drawing.
-			int width = uc.Width;
-			Rectangle clipRect = pea.ClipRectangle;
 			// Maximum vertical extent a separator can occupy (heavy rule + above-margin).
 			int maxLineExtent = HeavyweightRuleThickness + HeavyweightRuleAboveMargin;
 			using (var thinPen = new Pen(Color.LightGray, 1))
@@ -3195,12 +3241,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public Slice FieldAt(int i)
 		{
 			CheckDisposed();
+			Stopwatch stopwatch = null;
+			int expansionCount = 0;
+			if (s_enableInteractionTrace)
+				stopwatch = Stopwatch.StartNew();
+
 			Slice slice = FieldOrDummyAt(i);
 			// Keep trying until we get a real slice. It's possible, for example, that the first object
 			// in a sequence expands into an embedded lazy sequence, which in turn needs to have its
 			// first item made real.
 			while (!slice.IsRealSlice)
 			{
+				expansionCount++;
 				var oldState = m_layoutState;
 				// guard against OnPaint() while slice is being constructed. Especially dangerous if it is a view,
 				// which might end up doing a re-entrant call to Construct() the root box. LT-11052.
@@ -3232,6 +3284,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (m_layoutState == LayoutStates.klsDoingLayout)
 						m_layoutState = oldState;
 				}
+			}
+			if (stopwatch != null)
+			{
+				stopwatch.Stop();
+				TraceInteractionTiming("FieldAt", stopwatch.ElapsedMilliseconds,
+					$"Index={i} Expansions={expansionCount} IsRealSlice={slice != null && slice.IsRealSlice}");
 			}
 			return slice;
 		}
@@ -3421,13 +3479,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns></returns>
 		protected internal int HandleLayout1(bool fFull, Rectangle clipRect)
 		{
+			Stopwatch layoutStopwatch = null;
+			long fieldAtMs = 0;
+			int fieldAtCount = 0;
+			long makeVisibleMs = 0;
+			int makeVisibleCount = 0;
+			int visibleSliceCount = 0;
+			if (s_enableInteractionTrace && !fFull)
+				layoutStopwatch = Stopwatch.StartNew();
+
 			if (m_fDisposing)
-				return clipRect.Bottom; // don't want to lay out while clearing slices in dispose!
+			{
+				if (layoutStopwatch != null)
+				{
+					layoutStopwatch.Stop();
+					TraceInteractionTiming("HandleLayout1.PaintPath", layoutStopwatch.ElapsedMilliseconds,
+						$"Reason=disposing ClipTop={clipRect.Top} ClipBottom={clipRect.Bottom}");
+				}
+				return clipRect.Bottom;
+			}
 
 			int minHeight = GetMinFieldHeight();
 			int desiredWidth = ClientRectangle.Width;
-
-			// FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
 			if (Platform.IsMono && VerticalScroll.Visible)
 				desiredWidth -= SystemInformation.VerticalScrollBarWidth;
 
@@ -3436,12 +3509,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			int yTop = AutoScrollPosition.Y;
 			int startIndex = 0;
-
-			// Paint-path optimization: binary search for the first potentially-visible
-			// slice, skipping above-viewport slices whose fSliceIsVisible would be false.
-			// Safety: only applied on the paint path after the full layout pass has already
-			// positioned every slice. Skipped slices have no side effects in the original
-			// loop (no FieldAt, no MakeSliceVisible, no scroll-position adjustment).
+			int firstIndexBelowViewport = -1;
 			if (!fFull && Slices.Count > 0)
 			{
 				startIndex = FindFirstPotentiallyVisibleSlice(clipRect.Top);
@@ -3450,93 +3518,272 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var startSlice = Slices[startIndex] as Slice;
 					if (startSlice != null)
 					{
-						// Recover yTop for the start of this iteration.
-						// slice.Top was set to yTop AFTER heavyweight spacing was added,
-						// so undo the spacing to get the yTop at loop-entry for this slice.
 						yTop = startSlice.Top;
 						if (startSlice.Weight == ObjectWeight.heavy)
 							yTop -= (HeavyweightRuleThickness + HeavyweightRuleAboveMargin);
 					}
 					else
 					{
-						startIndex = 0; // Null slice — fall back to full linear scan.
+						startIndex = 0;
 					}
 				}
 			}
 
 			for (int i = startIndex; i < Slices.Count; i++)
 			{
-				// Don't care about items below bottom of clip, if one is specified.
 				if ((!fFull) && yTop >= clipRect.Bottom)
 				{
-					return yTop - AutoScrollPosition.Y; // not very meaningful in this case, but a result is required.
+					firstIndexBelowViewport = i;
+					QueueDeferredSlicePrewarm(firstIndexBelowViewport);
+					if (layoutStopwatch != null)
+					{
+						layoutStopwatch.Stop();
+						TraceInteractionTiming("HandleLayout1.PaintPath", layoutStopwatch.ElapsedMilliseconds,
+							$"StartIndex={startIndex} VisibleSlices={visibleSliceCount} FieldAtCount={fieldAtCount} FieldAtMs={fieldAtMs} MakeVisibleCount={makeVisibleCount} MakeVisibleMs={makeVisibleMs} ClipTop={clipRect.Top} ClipBottom={clipRect.Bottom} Exit=below-clip");
+					}
+					return yTop - AutoScrollPosition.Y;
 				}
+
 				var tci = Slices[i] as Slice;
-				// Best guess of its height, before we ensure it's real.
 				int defHeight = tci == null ? minHeight : tci.Height;
 				bool fSliceIsVisible = !fFull && yTop + defHeight > clipRect.Top && yTop <= clipRect.Bottom;
 
-				//Debug.WriteLine(String.Format("DataTree.HandleLayout1({3},{4}): fSliceIsVisible = {5}, i = {0}, defHeight = {1}, yTop = {2}, desiredWidth = {7}, tci.Config = {6}",
-				//	i, defHeight, yTop, fFull, clipRect.ToString(), fSliceIsVisible, tci.ConfigurationNode.OuterXml, desiredWidth));
-
 				if (fSliceIsVisible)
 				{
-					// We cannot allow slice to be unreal; it's visible, and we're checking
-					// for real slices where they're visible
-					tci = FieldAt(i); // ensures it becomes real if needed.
-					var dummy = tci.Handle; // also force it to get a handle
+					visibleSliceCount++;
+					Stopwatch fieldAtStopwatch = null;
+					if (layoutStopwatch != null)
+						fieldAtStopwatch = Stopwatch.StartNew();
+					tci = FieldAt(i);
+					if (fieldAtStopwatch != null)
+					{
+						fieldAtStopwatch.Stop();
+						fieldAtCount++;
+						fieldAtMs += fieldAtStopwatch.ElapsedMilliseconds;
+					}
+					var dummy = tci.Handle;
 					if (tci.Control != null)
-						dummy = tci.Control.Handle; // and its control must too.
+						dummy = tci.Control.Handle;
 					if (yTop < 0)
 					{
-						// It starts above the top of the window. We need to adjust the scroll position
-						// by the difference between the expected and actual heights.
-						// This can have side effects, don't do unless needed.
-						// The slice will now handle the conditioanl execution.
-						//if (tci.Width != desiredWidth)
-							tci.SetWidthForDataTreeLayout(desiredWidth);
+						tci.SetWidthForDataTreeLayout(desiredWidth);
 						desiredScrollPosition.Y -= (defHeight - tci.Height);
 					}
 				}
+
 				if (tci == null)
 				{
 					yTop += minHeight;
 				}
 				else
 				{
-					// Move this slice down a little if it needs a heavy rule above it
 					if (tci.Weight == ObjectWeight.heavy)
 						yTop += HeavyweightRuleThickness + HeavyweightRuleAboveMargin;
 					if (tci.Top != yTop)
 						tci.Top = yTop;
-					// In the full layout pass (fFull), we must call SetWidthForDataTreeLayout
-					// on every slice to position them correctly. In the paint-check pass
-					// (!fFull), only visible slices need width sync; off-screen slices
-					// will be handled on the next full layout if width changed.
 					if (fFull || fSliceIsVisible)
 						tci.SetWidthForDataTreeLayout(desiredWidth);
 					yTop += tci.Height + 1;
 					if (fSliceIsVisible)
 					{
+						Stopwatch makeVisibleStopwatch = null;
+						if (layoutStopwatch != null)
+							makeVisibleStopwatch = Stopwatch.StartNew();
 						MakeSliceVisible(tci, i);
+						if (makeVisibleStopwatch != null)
+						{
+							makeVisibleStopwatch.Stop();
+							makeVisibleCount++;
+							makeVisibleMs += makeVisibleStopwatch.ElapsedMilliseconds;
+						}
 					}
 				}
 			}
-			// In the course of making slices real or adjusting their width they may have changed height (more strictly, its
-			// real height may be different from the previous estimated height).
-			// If it was previously above the top of the window, this can produce an unwanted
-			// change in the visble position of previously visible slices.
-			// The scroll position may also have changed as a result of the blankety blank
-			// blank undocumented behavior of the UserControl class trying to make what it
-			// thinks is the interesting child control visible.
-			// In case it changed, try to change it back!
-			// (This might not always succeed, if the scroll range changed so as to make the old position invalid.
+
 			if (-AutoScrollPosition.Y != desiredScrollPosition.Y)
 				AutoScrollPosition = desiredScrollPosition;
+			if (!fFull)
+				QueueDeferredSlicePrewarm(firstIndexBelowViewport >= 0 ? firstIndexBelowViewport : Slices.Count);
+			if (layoutStopwatch != null)
+			{
+				layoutStopwatch.Stop();
+				TraceInteractionTiming("HandleLayout1.PaintPath", layoutStopwatch.ElapsedMilliseconds,
+					$"StartIndex={startIndex} VisibleSlices={visibleSliceCount} FieldAtCount={fieldAtCount} FieldAtMs={fieldAtMs} MakeVisibleCount={makeVisibleCount} MakeVisibleMs={makeVisibleMs} ClipTop={clipRect.Top} ClipBottom={clipRect.Bottom} Exit=complete");
+			}
 			return yTop - AutoScrollPosition.Y;
 		}
 
-		private void MakeSliceRealAt(int i)
+		private int GetSlicePrewarmPixels(int viewportPercent)
+		{
+			if (viewportPercent <= 0 || ClientRectangle.Height <= 0)
+				return 0;
+
+			long pixels = (long)ClientRectangle.Height * viewportPercent / 100;
+			return Math.Max(1, (int)pixels);
+		}
+
+		private void QueueDeferredSlicePrewarm(int firstIndexBelowViewport)
+		{
+			if (m_fDisposing || !Visible || !IsHandleCreated || ClientRectangle.Height <= 0 || Slices.Count == 0)
+				return;
+			if (m_lastSlicePrewarmScrollDirection == 0)
+				return;
+
+			int viewportTop = -AutoScrollPosition.Y;
+			int viewportBottom = viewportTop + ClientRectangle.Height;
+			int topMargin = m_lastSlicePrewarmScrollDirection > 0
+				? GetSlicePrewarmPixels(ScrollSlicePrewarmPercentAgainstScrollDirection)
+				: GetSlicePrewarmPixels(ScrollSlicePrewarmPercentInScrollDirection);
+			int bottomMargin = m_lastSlicePrewarmScrollDirection > 0
+				? GetSlicePrewarmPixels(ScrollSlicePrewarmPercentInScrollDirection)
+				: GetSlicePrewarmPixels(ScrollSlicePrewarmPercentAgainstScrollDirection);
+			if (topMargin <= 0 && bottomMargin <= 0)
+				return;
+
+			int targetY = m_lastSlicePrewarmScrollDirection >= 0
+				? viewportBottom + bottomMargin
+				: Math.Max(0, viewportTop - topMargin);
+			int targetIndex = IndexOfSliceAtY(targetY);
+			if (targetIndex < 0)
+				targetIndex = Slices.Count - 1;
+
+			int startIndex = firstIndexBelowViewport;
+			if (m_lastSlicePrewarmScrollDirection < 0)
+				startIndex = Math.Max(0, IndexOfSliceAtY(Math.Max(0, viewportTop - topMargin)));
+			else if (startIndex < 0)
+				startIndex = Math.Max(0, IndexOfSliceAtY(viewportBottom));
+
+			startIndex = Math.Max(0, Math.Min(startIndex, Slices.Count - 1));
+			targetIndex = Math.Max(0, Math.Min(targetIndex, Slices.Count - 1));
+			int direction = m_lastSlicePrewarmScrollDirection;
+			if ((direction > 0 && startIndex > targetIndex) ||
+				(direction < 0 && targetIndex > startIndex))
+			{
+				return;
+			}
+
+			bool restartingRange = !m_deferredSlicePrewarmPending ||
+				(direction > 0 && targetIndex > m_deferredSlicePrewarmTargetIndex) ||
+				(direction < 0 && targetIndex < m_deferredSlicePrewarmTargetIndex) ||
+				(direction > 0 && startIndex > m_deferredSlicePrewarmTargetIndex) ||
+				(direction < 0 && startIndex < m_deferredSlicePrewarmTargetIndex);
+
+			if (!m_deferredSlicePrewarmPending)
+			{
+				m_deferredSlicePrewarmStartIndex = startIndex;
+				m_deferredSlicePrewarmTargetIndex = targetIndex;
+				m_deferredSlicePrewarmGeneration++;
+			}
+			else if (direction > 0)
+			{
+				m_deferredSlicePrewarmStartIndex = Math.Max(m_deferredSlicePrewarmStartIndex, startIndex);
+				m_deferredSlicePrewarmTargetIndex = Math.Max(m_deferredSlicePrewarmTargetIndex, targetIndex);
+				if (restartingRange)
+					m_deferredSlicePrewarmGeneration++;
+			}
+			else
+			{
+				m_deferredSlicePrewarmStartIndex = Math.Min(m_deferredSlicePrewarmStartIndex, startIndex);
+				m_deferredSlicePrewarmTargetIndex = Math.Min(m_deferredSlicePrewarmTargetIndex, targetIndex);
+				if (restartingRange)
+					m_deferredSlicePrewarmGeneration++;
+			}
+
+			if ((direction > 0 && m_deferredSlicePrewarmStartIndex > m_deferredSlicePrewarmTargetIndex) ||
+				(direction < 0 && m_deferredSlicePrewarmStartIndex < m_deferredSlicePrewarmTargetIndex))
+			{
+				m_deferredSlicePrewarmPending = false;
+				return;
+			}
+
+			m_deferredSlicePrewarmPending = true;
+			TraceInteractionEvent(
+				"DeferredSlicePrewarm.Plan",
+				$"Direction={direction} StartIndex={m_deferredSlicePrewarmStartIndex} TargetIndex={m_deferredSlicePrewarmTargetIndex} ViewTop={viewportTop} ViewBottom={viewportBottom} FirstBelowViewport={firstIndexBelowViewport} ChunkSize={ScrollSlicePrewarmChunkSize} BudgetMs={ScrollSlicePrewarmTimeBudgetMs} Restarting={restartingRange}");
+			QueueDeferredSlicePrewarmOnIdle();
+		}
+
+		private void QueueDeferredSlicePrewarmOnIdle()
+		{
+			if (!m_deferredSlicePrewarmPending || m_fDisposing || !Visible || !IsHandleCreated)
+				return;
+
+			if (m_mediator != null)
+			{
+				m_mediator.IdleQueue.Add(
+					ScrollSlicePrewarmIdlePriority,
+					ContinueDeferredSlicePrewarmOnIdle,
+					m_deferredSlicePrewarmGeneration,
+					true);
+				return;
+			}
+
+			if (m_deferredSlicePrewarmQueued)
+				return;
+
+			m_deferredSlicePrewarmQueued = true;
+			BeginInvoke((MethodInvoker)delegate
+			{
+				m_deferredSlicePrewarmQueued = false;
+				if (!ContinueDeferredSlicePrewarmOnIdle(m_deferredSlicePrewarmGeneration))
+					QueueDeferredSlicePrewarmOnIdle();
+			});
+		}
+
+		private bool ContinueDeferredSlicePrewarmOnIdle(object generationState)
+		{
+			if (!m_deferredSlicePrewarmPending || m_fDisposing)
+				return true;
+			if (!Visible || !IsHandleCreated || m_layoutState != LayoutStates.klsNormal)
+				return false;
+
+			int generation = generationState is int value ? value : m_deferredSlicePrewarmGeneration;
+			if (generation != m_deferredSlicePrewarmGeneration)
+				return true;
+
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			int slicesWarmed = 0;
+			int initialIndex = m_deferredSlicePrewarmStartIndex;
+			while (m_deferredSlicePrewarmPending && slicesWarmed < ScrollSlicePrewarmChunkSize)
+			{
+				if (stopwatch.ElapsedMilliseconds >= ScrollSlicePrewarmTimeBudgetMs)
+					break;
+
+				int index = m_deferredSlicePrewarmStartIndex;
+				if (index < 0 || index >= Slices.Count)
+				{
+					m_deferredSlicePrewarmPending = false;
+					break;
+				}
+
+				if (m_lastSlicePrewarmScrollDirection > 0 && index > m_deferredSlicePrewarmTargetIndex)
+				{
+					m_deferredSlicePrewarmPending = false;
+					break;
+				}
+				if (m_lastSlicePrewarmScrollDirection < 0 && index < m_deferredSlicePrewarmTargetIndex)
+				{
+					m_deferredSlicePrewarmPending = false;
+					break;
+				}
+
+				if (Slices[index] is Slice)
+					MakeSliceRealAt(index, false);
+
+				m_deferredSlicePrewarmStartIndex += m_lastSlicePrewarmScrollDirection >= 0 ? 1 : -1;
+				slicesWarmed++;
+			}
+
+			stopwatch.Stop();
+			TraceInteractionTiming(
+				"DeferredSlicePrewarm.Idle",
+				stopwatch.ElapsedMilliseconds,
+				$"Direction={m_lastSlicePrewarmScrollDirection} InitialIndex={initialIndex} NextIndex={m_deferredSlicePrewarmStartIndex} TargetIndex={m_deferredSlicePrewarmTargetIndex} SlicesWarmed={slicesWarmed} Pending={m_deferredSlicePrewarmPending}");
+
+			return !m_deferredSlicePrewarmPending;
+		}
+
+		private void MakeSliceRealAt(int i, bool ensureVisible = true)
 		{
 			// We cannot allow slice to be unreal; it's visible, and we're checking
 			// for real slices where they're visible
@@ -3560,9 +3807,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 			// topAbs is the position of the slice relative to the top of the whole view contents now.
 			int topAbs = tci.Top - AutoScrollPosition.Y;
-			MakeSliceVisible(tci); // also required for it to be a real tab stop.
+			if (ensureVisible)
+				MakeSliceVisible(tci); // also required for it to be a real tab stop.
+			else
+				tci.ShowSubControls();
 
-			if (topAbs < desiredScrollPosition.Y)
+			if (ensureVisible && topAbs < desiredScrollPosition.Y)
 			{
 				// It was above the top of the window. We need to adjust the scroll position
 				// by the difference between the expected and actual heights.
@@ -3583,6 +3833,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </param>
 		internal void MakeSliceVisible(Slice tci, int knownIndex = -1)
 		{
+			Stopwatch stopwatch = null;
+			int newlyVisibleSiblingCount = 0;
+			bool sliceAlreadyVisible = tci.Visible;
+			if (s_enableInteractionTrace)
+				stopwatch = Stopwatch.StartNew();
+
 			// It intersects the screen so it needs to be visible.
 			if (!tci.Visible)
 			{
@@ -3597,7 +3853,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					Control ctrl = Slices[i];
 					if (ctrl != null && !ctrl.Visible)
+					{
 						ctrl.Visible = true;
+						newlyVisibleSiblingCount++;
+					}
 				}
 				tci.Visible = true;
 				if (index > m_lastVisibleHighWaterMark)
@@ -3614,6 +3873,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					tci.Control.AccessibilityObject.Name = tci.Label;// + "ZZZ_Slice";
 			}
 			tci.ShowSubControls();
+			if (stopwatch != null)
+			{
+				stopwatch.Stop();
+				TraceInteractionTiming("MakeSliceVisible", stopwatch.ElapsedMilliseconds,
+					$"SliceLabel={tci.Label ?? "(null)"} AlreadyVisible={sliceAlreadyVisible} NewlyVisibleSiblings={newlyVisibleSiblingCount}");
+			}
 		}
 
 		public int GetMinFieldHeight()
@@ -3710,6 +3975,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			int previousScrollTop = m_lastSlicePrewarmScrollTop == int.MinValue
+				? -AutoScrollPosition.Y
+				: m_lastSlicePrewarmScrollTop;
+			int currentScrollTop = -AutoScrollPosition.Y;
+			if (currentScrollTop != previousScrollTop)
+				m_lastSlicePrewarmScrollDirection = Math.Sign(currentScrollTop - previousScrollTop);
+			m_lastSlicePrewarmScrollTop = currentScrollTop;
+
 			if (m_layoutState != LayoutStates.klsNormal)
 			{
 				// re-entrant call, in the middle of doing layout! Suppress it. But, we need to paint sometime...
@@ -3744,7 +4017,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				else
 				{
 					base.OnPaint(e);
-					HandlePaintLinesBetweenSlices(e);
+					PaintLinesBetweenSlices(e.Graphics, e.ClipRectangle, ClientRectangle.Width);
 				}
 			}
 			finally
@@ -3768,6 +4041,33 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if ((slice.Control == value || slice == value) && m_currentSlice != slice)
 						CurrentSlice = slice;
 				}
+			}
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			base.WndProc(ref m);
+			// After any scroll input (scrollbar drag, mouse wheel, horizontal wheel),
+			// force the parent background to repaint so separator lines are redrawn at
+			// correct positions. Without this, Windows bitblts stale line pixels
+			// from the old scroll position and only repaints the newly-exposed strip.
+			// Invalidate(false) skips child invalidation — slice HWNDs repaint
+			// themselves — so only the gap areas between slices are redrawn.
+			// Update() forces synchronous processing so stale lines don't accumulate
+			// across multiple scroll events before the low-priority WM_PAINT fires.
+			const int WM_VSCROLL = 0x0115;
+			const int WM_HSCROLL = 0x0114;
+			const int WM_MOUSEWHEEL = 0x020A;
+			const int WM_MOUSEHWHEEL = 0x020E;
+			switch (m.Msg)
+			{
+				case WM_VSCROLL:
+				case WM_HSCROLL:
+				case WM_MOUSEWHEEL:
+				case WM_MOUSEHWHEEL:
+					Invalidate(false);
+					Update();
+					break;
 			}
 		}
 
@@ -4853,12 +5153,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return containingTree.Slices.Count > index + 1 ? containingTree.Slices[index + 1] as Slice : null;
 		}
 
-		protected override void WndProc(ref Message m)
-		{
-			int aspY = AutoScrollPosition.Y;
-			base.WndProc (ref m);
-			if (aspY != AutoScrollPosition.Y)
-				Debug.WriteLine("ASP changed during processing message " + m.Msg);
-		}
 	}
 }

@@ -37,6 +37,35 @@ const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0
 //:>	Forward declarations
 //:>********************************************************************************************
 
+namespace
+{
+	bool IsReuseLastFrameOnInvalidateEnabled()
+	{
+		static int s_nEnabled = -1;
+		if (s_nEnabled < 0)
+		{
+			wchar_t rgchValue[16] = {0};
+			DWORD cchValue = ::GetEnvironmentVariableW(L"FW_PERF_REUSE_LAST_FRAME_ON_INVALIDATE",
+				rgchValue, _countof(rgchValue));
+			s_nEnabled = (cchValue != 0 && _wcsicmp(rgchValue, L"0") != 0 &&
+				_wcsicmp(rgchValue, L"false") != 0 && _wcsicmp(rgchValue, L"off") != 0) ? 1 : 0;
+		}
+		return s_nEnabled == 1;
+	}
+
+	void DeleteMemoryDcAndBitmap(HDC hdcMem)
+	{
+		if (!hdcMem)
+			return;
+
+		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(hdcMem, OBJ_BITMAP);
+		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		Assert(fSuccess);
+		fSuccess = AfGdi::DeleteDC(hdcMem);
+		Assert(fSuccess);
+	}
+}
+
 //:>********************************************************************************************
 //:>	Local Constants and static variables
 //:>********************************************************************************************
@@ -4947,40 +4976,23 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	IVwGraphicsWin32Ptr qvg32;
 	Rect rcp(rcpDraw);
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-
-	// Clean up any previous cached bitmap and DC
-	if (m_hdcMem)
-	{
-		HBITMAP hbmpCached = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		if (hbmpCached)
-		{
-			BOOL fSuccessBitmap = AfGdi::DeleteObjectBitmap(hbmpCached);
-			Assert(fSuccessBitmap);
-			(void)fSuccessBitmap; // Suppress C4189 warning in Release builds
-		}
-		BOOL fSuccessDC = AfGdi::DeleteDC(m_hdcMem);
-		Assert(fSuccessDC);
-		(void)fSuccessDC; // Suppress C4189 warning in Release builds
-		m_hdcMem = 0;
-	}
-
-	// Create a new memory DC and bitmap for double buffering
-	m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
-	HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
-	Assert(hbmp);
-	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
+	const bool fReuseLastFrame = IsReuseLastFrameOnInvalidateEnabled();
+	HDC hdcPrevious = m_hdcMem;
+	HDC hdcNew = AfGdi::CreateCompatibleDC(hdc);
+	HBITMAP hbmpNew = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
+	Assert(hbmpNew);
+	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(hdcNew, hbmpNew);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
 	(void)hbmpOld; // Suppress C4189 warning in Release builds (variable only used in Assert)
-	// We don't delete hbmpOld (the stock bitmap from the DC)
-	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
+	bool fPromotedCache = false;
 
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
-		::BitBlt(m_hdcMem, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
+		::BitBlt(hdcNew, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
 	else
-		AfGfx::FillSolidRect(m_hdcMem, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
-	CheckHr(qvg32->Initialize(m_hdcMem));
+		AfGfx::FillSolidRect(hdcNew, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
+	CheckHr(qvg32->Initialize(hdcNew));
 	VwPrepDrawResult xpdr = kxpdrAdjust;
 	IVwGraphicsPtr qvgDummy; // Required for GetGraphics calls to get transform rects
 
@@ -5047,9 +5059,23 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 
 	if (xpdr != kxpdrInvalidate)
 	{
+		DeleteMemoryDcAndBitmap(hdcPrevious);
+		m_hdcMem = hdcNew;
+		hdcNew = 0;
+		fPromotedCache = true;
 		// We drew something...now blast it onto the screen.
 		// The bitmap in m_hdcMem is kept around for potential ReDrawLastDraw calls.
 		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), m_hdcMem, 0, 0, SRCCOPY);
+	}
+	else if (fReuseLastFrame && hdcPrevious)
+	{
+		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), hdcPrevious, 0, 0, SRCCOPY);
+	}
+
+	if (!fPromotedCache)
+	{
+		DeleteMemoryDcAndBitmap(hdcNew);
+		m_hdcMem = hdcPrevious;
 	}
 
 	END_COM_METHOD(g_factVDRB, IID_IVwRootBox);

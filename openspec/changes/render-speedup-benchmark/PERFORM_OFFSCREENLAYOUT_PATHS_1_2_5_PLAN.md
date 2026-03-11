@@ -674,9 +674,74 @@ For each matrix entry:
    - feature flags allow disabling each path independently,
    - no memory growth trend in stress loop.
 
+## Managed-Layer Scroll Rendering Fix (DataTree Separator Lines)
+
+### Problem
+
+DataTree is a scrollable `UserControl` that hosts child `Slice` controls (each a separate HWND).
+Thin horizontal separator lines are painted in the parent background between slices. During
+scrolling, Windows bitblts the entire client area (including parent-painted separator pixels)
+to the new scroll position and only repaints the newly-exposed strip. This caused separator
+lines to accumulate at wrong positions — visible as persistent gray line artifacts during
+fast scrolling.
+
+The original code used `ScrollWindowEx` (P/Invoke) to manually bitblt separator content during
+scroll. This was both unnecessary (WinForms handles scrolling natively) and the root cause of
+additional jitter because manually blitting parent-painted content races with the framework's
+own scroll handling.
+
+### Approaches Tried
+
+1. **ScrollWindowEx removal**: Removed all `ScrollWindowEx` interop (`DllImport`, `RECT` struct,
+   `SW_INVALIDATE` constant, `m_inScrollWindowEx` flag, `ScrollParentPaintedContent()` method).
+   This eliminated the manual bitblt jitter but did not solve the stale line artifacts from
+   Windows' own scroll bitblt.
+
+2. **SeparatorOverlayControl**: A dedicated transparent child control drawn on top of all slices
+   to paint separator lines independently. Failed: (a) caused `NullReferenceException` because
+   `Controls.Add` triggered layout before `Slices` was initialized; (b) after fixing the crash,
+   the opaque sibling covered slice content — WinForms HWND-per-control architecture made this
+   fundamentally unworkable without `WS_CLIPSIBLINGS` management. Fully reverted.
+
+3. **OnScroll override**: Added `Invalidate(false)` in `OnScroll`. Partially worked but
+   `OnScroll` does not fire for mouse wheel input.
+
+4. **WndProc scroll message interception (final solution)**: Override `WndProc` to catch
+   `WM_VSCROLL`, `WM_HSCROLL`, `WM_MOUSEWHEEL`, and `WM_MOUSEHWHEEL`. After `base.WndProc`,
+   call `Invalidate(false); Update();`. This works because:
+   - `Invalidate(false)` invalidates only the parent background (separator gap areas), not
+     child HWNDs
+   - `Update()` forces synchronous `WM_PAINT` processing before the next scroll message can
+     bitblt stale pixels
+   - Covers all scroll input vectors (scrollbar drag, mouse wheel, horizontal wheel)
+
+### Additional Managed Optimizations
+
+- **Double buffering**: `SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true)`
+  eliminates flicker from the synchronous repaint.
+
+- **Deferred slice prewarm**: After scroll, queues idle-time work to pre-materialize lazy slices
+  in the scroll direction ahead of the viewport. Uses `IdleQueue` integration when available,
+  with configurable chunk size and time budget to avoid jank.
+
+- **VwDrawRootBuffered cached frame reuse**: When `PrepareToDrawRoot` returns `kxpdrInvalidate`
+  (content not yet ready), the previous successfully-drawn frame is re-blitted instead of
+  showing a blank or partially-drawn frame. Implemented in both managed (`VwDrawRootBuffered.cs`)
+  and native (`VwRootBox.cpp`) paths, gated behind `FW_PERF_REUSE_LAST_FRAME_ON_INVALIDATE`.
+
+### Key Insight
+
+WinForms hosts each child control in a separate native HWND. Unlike a browser (single composited
+texture), parent-painted content between child HWNDs is just pixels in the parent DC — Windows
+has no knowledge that those pixels represent separator lines. When scrolling bitblts the client
+area, those pixels move with everything else. The fix is to repaint them synchronously after
+every scroll event, which has negligible cost because `Invalidate(false)` skips child
+invalidation and separator line drawing is a handful of `DrawLine` calls.
+
 ## Deliverables
 
 1. Code changes for paths 1, 2, and 5.
 2. New or updated native tests for edge-case correctness.
 3. New or updated render and timing tests plus scenario coverage.
 4. Before/after benchmark artifacts and summary note linked from this change.
+5. DataTree scroll rendering fix with separator line artifact elimination.
