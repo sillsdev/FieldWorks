@@ -584,9 +584,12 @@ try {
 		Write-Host ""
 		Write-Host "Running tests..." -ForegroundColor Cyan
 
-		$testArgs = @("-Configuration", $Configuration, "-NoBuild")
+		$testArgs = @{
+			Configuration = $Configuration
+			NoBuild       = $true
+		}
 		if ($TestFilter) {
-			$testArgs += @("-TestFilter", $TestFilter)
+			$testArgs["TestFilter"] = $TestFilter
 		}
 
 		Stop-ConflictingProcesses @cleanupArgs
