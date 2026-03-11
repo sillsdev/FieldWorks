@@ -39,6 +39,13 @@ namespace SIL.FieldWorks.Common.RootSites
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
 		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
+		private enum RefreshPhase
+		{
+			Idle,
+			Refreshing,
+			QueuedForReplay
+		}
+
 		#region Events
 		/// <summary>
 		/// This event notifies you that the right mouse button was clicked,
@@ -195,9 +202,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>True if we are waiting to do a refresh on the view (will be done when the view
 		/// becomes visible); false otherwise</summary>
 		protected bool m_fRefreshPending = false;
-		private bool m_fRefreshInProgress;
-		private bool m_fRefreshRequestedWhileInProgress;
-		private bool m_fRefreshInvokeQueued;
+		private bool m_fForceNextRefreshDisplay;
+		private RefreshPhase m_refreshPhase;
+		private bool m_fRefreshReplayRequested;
 
 		/// <summary>True to show range selections when focus is lost; false otherwise</summary>
 		protected bool m_fShowRangeSelAfterLostFocus = false;
@@ -953,6 +960,56 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual ISilDataAccess DataAccess
 		{
 			get { return (m_rootb == null) ? null : m_rootb.DataAccess; }
+		}
+
+		/// <summary>
+		/// Updates the root box data source without implying that the current box tree is stale.
+		/// Use this for initial wiring and other source swaps that should remain cheap.
+		/// </summary>
+		/// <param name="dataAccess">The data access to install on the current root box.</param>
+		protected void SetRootBoxDataAccess(ISilDataAccess dataAccess)
+		{
+			CheckDisposed();
+			if (m_rootb == null)
+				return;
+
+			m_rootb.DataAccess = dataAccess;
+		}
+
+		/// <summary>
+		/// Updates the root box data source and marks the current display for an explicit refresh
+		/// when the new data source changes the meaning or visible set of the current view.
+		/// </summary>
+		/// <param name="dataAccess">The data access to install on the current root box.</param>
+		protected void SetRootBoxDataAccessAndRefresh(ISilDataAccess dataAccess)
+		{
+			CheckDisposed();
+			if (m_rootb == null)
+				return;
+
+			m_rootb.DataAccess = dataAccess;
+			NotifyDataAccessSemanticsChanged();
+		}
+
+		/// <summary>
+		/// Signals that the current root box tree is semantically stale after an explicit
+		/// post-construction DataAccess swap. This keeps DataAccess assignment cheap while
+		/// routing the rebuild through the normal managed refresh pipeline.
+		/// </summary>
+		protected void NotifyDataAccessSemanticsChanged()
+		{
+			CheckDisposed();
+			if (m_rootb?.Site == null)
+				return;
+
+			m_fForceNextRefreshDisplay = true;
+			if (!Visible || FindForm() == null)
+			{
+				m_fRefreshPending = true;
+				return;
+			}
+
+			RefreshDisplay();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1926,9 +1983,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_rootb?.Site == null)
 				return false;
 
-			if (m_fRefreshInProgress)
+			if (m_refreshPhase == RefreshPhase.Refreshing)
 			{
-				m_fRefreshRequestedWhileInProgress = true;
+				m_fRefreshReplayRequested = true;
 				m_fRefreshPending = true;
 				return false;
 			}
@@ -1950,7 +2007,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// OnStylesheetChange, and other mutation paths. When false,
 			// Reconstruct() would be a no-op (PATH-R1), so we can avoid
 			// the managed overhead entirely.
-			if (!m_rootb.NeedsReconstruct)
+			if (!ShouldReconstructDisplay())
 			{
 				m_fRefreshPending = false;
 				return false;
@@ -1960,19 +2017,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			SelectionRestorer restorer = CreateSelectionRestorer();
 			try
 			{
-				m_fRefreshInProgress = true;
-				m_fRefreshRequestedWhileInProgress = false;
+				m_refreshPhase = RefreshPhase.Refreshing;
+				m_fRefreshReplayRequested = false;
 				using (new SuspendDrawing(this))
 				{
 					m_rootb.Reconstruct();
 					m_fRefreshPending = false;
+					m_fForceNextRefreshDisplay = false;
 				}
 			}
 			finally
 			{
-				m_fRefreshInProgress = false;
+				m_refreshPhase = RefreshPhase.Idle;
 				restorer?.Dispose();
-				if (m_fRefreshRequestedWhileInProgress)
+				if (m_fRefreshReplayRequested)
 					QueueRefreshDisplay();
 			}
 			//Enhance: If all refreshable descendants are handled this should return true
@@ -1981,7 +2039,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private void QueueRefreshDisplay()
 		{
-			if (m_fRefreshInvokeQueued || IsDisposed)
+			if (m_refreshPhase == RefreshPhase.QueuedForReplay || IsDisposed)
 				return;
 			if (!IsHandleCreated)
 			{
@@ -1989,10 +2047,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			m_fRefreshInvokeQueued = true;
+			m_refreshPhase = RefreshPhase.QueuedForReplay;
 			BeginInvoke((MethodInvoker)delegate
 			{
-				m_fRefreshInvokeQueued = false;
+				m_refreshPhase = RefreshPhase.Idle;
 				if (IsDisposed)
 					return;
 				if (Visible && m_fRootboxMade && m_rootb != null)
@@ -2000,6 +2058,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 					m_fRefreshPending = true;
 			});
+		}
+
+		private bool ShouldReconstructDisplay()
+		{
+			return m_fForceNextRefreshDisplay || m_rootb.NeedsReconstruct;
 		}
 
 		/// ------------------------------------------------------------------------------------

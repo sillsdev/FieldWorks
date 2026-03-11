@@ -39,6 +39,15 @@
 		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
 		<part ref="_CustomFieldPlaceholder" customFields="here"/>
   </layout>
+	<layout class="LexEntry" type="detail" name="NormalWithHiddenFields">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography" visibility="never"/>
+		<part ref="Comment" visibility="never"/>
+		<part ref="LiteralMeaning" visibility="never"/>
+		<part ref="Restrictions" visibility="never"/>
+		<part ref="SummaryDefinition" visibility="never"/>
+		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
+	</layout>
 	<layout class="LexSense" type="detail" name="Indented" expansion="expanded">
 		<indent>
 			<part ref="Gloss"/>

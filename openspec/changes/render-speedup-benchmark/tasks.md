@@ -24,7 +24,7 @@
 ## Phase 3: User Story 1 - Pixel-Perfect Render Baseline (P1)
 
 - [x] T009 Implement baseline test in `Src/Common/RootSite/RootSiteTests/RenderBaselineTests.cs`.
-- [ ] T009a Pivot: Adopt native capture via `VwDrawRootBuffered` in `RenderBenchmarkHarness.cs`.
+- [x] T009a Pivot: Adopt native capture via `VwDrawRootBuffered` in `RenderBenchmarkHarness.cs`.
 - [ ] T009b Pivot: Replace `DummyBasicView` with production `StVc` in benchmark test base.
 - [x] T010 Add baseline snapshot for simple scenario.
 - [x] T011 Wire environment hash validation into harness.
@@ -37,8 +37,8 @@
 - [x] T014 Add report writer in `RenderBenchmarkReportWriter.cs`.
 - [x] T015 Add baseline snapshots for remaining scenarios.
 - [x] T016 Emit results to `Output/RenderBenchmarks/results.json` and summary to `Output/RenderBenchmarks/summary.md`.
-- [ ] T016a Implement run comparison in report writer using `RenderBenchmarkComparer.cs`.
-- [ ] T016b Add reproducible test data guidance in migrated quickstart docs.
+- [x] T016a Implement run comparison in report writer using `RenderBenchmarkComparer.cs`.
+- [x] T016b Add reproducible test data guidance in migrated quickstart docs.
 
 ## Phase 5: User Story 3 - Rendering Trace Diagnostics (P3)
 
@@ -96,6 +96,6 @@
 - [x] PATH-L1-VERIFY Run full benchmark suite and compare before/after timing evidence. Result: **99.99% warm render reduction** (153.00ms → 0.01ms). All 15 scenarios pass with 0% pixel variance. Cold render unaffected (62.33ms → 62.95ms).
 
 **Deferred** (future iterations):
-- [ ] PATH-L5 Skip Reconstruct when data unchanged — track data version in `SimpleRootSite.RefreshDisplay()`.
+- [x] PATH-L5 Skip Reconstruct when data unchanged — gate `SimpleRootSite.RefreshDisplay()` on `VwRootBox.NeedsReconstruct` and cover it with focused tests.
 - [ ] PATH-L3 Per-paragraph layout caching — dirty-flag line-breaking in `VwParagraphBox::DoLayout()`.
 - [ ] PATH-L2 Deferred layout in Reconstruct — remove internal `Layout()` call from `Reconstruct()` (blocked: `RootBoxSizeChanged` callback needs dimensions immediately).

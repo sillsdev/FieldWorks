@@ -97,6 +97,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// Creates a lex entry with sub-sub-sub senses (depth 4, breadth 2).
+		/// 2 + 4 + 8 + 16 = 30 senses total.
+		/// Used to validate deeper recursive rendering with hidden fields enabled.
+		/// </summary>
+		private void CreateSubSubSubEntry()
+		{
+			const string testName = "subsubsub-hidden";
+			m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+
+			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
+			var morph = morphFactory.Create();
+			m_entry.LexemeFormOA = morph;
+			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+				$"LexemeForm - {testName}", Cache.DefaultVernWs);
+
+			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+				$"CitationForm - {testName}", Cache.DefaultVernWs);
+
+			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			CreateNestedSenses(m_entry, senseFactory, 4, 2, "", 1, testName);
+
+			EnrichEntry(m_entry, testName);
+		}
+
+		/// <summary>
 		/// Creates a lex entry with extreme nesting (6 levels deep, 2 wide = 126 senses).
 		/// Stress test for the DataTree slice rendering pipeline.
 		/// </summary>
@@ -429,6 +454,64 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				RecordTiming("deep", 3, 2, harness.LastTiming, density);
 				await VerifyDataTreeBitmap(bitmap, "deep");
+			}
+		}
+
+		/// <summary>
+		/// Verifies a depth-4 lexeme edit tree can render recursive senses while hidden
+		/// entry fields are forced visible. The hidden-field layout is test-only, but the
+		/// render path is the real DataTree pipeline.
+		/// </summary>
+		[Test]
+		public void DataTreeRender_SubSubSubSenses_ShowHiddenFields()
+		{
+			CreateSubSubSubEntry();
+			const string layoutName = "NormalWithHiddenFields";
+			var hiddenLabels = new[]
+			{
+				"Bibliography",
+				"Comment",
+				"Literal Meaning",
+				"Restrictions",
+				"Summary Definition"
+			};
+
+			using (var withoutHiddenFields = new DataTreeRenderHarness(Cache, m_entry, layoutName))
+			using (var withHiddenFields = new DataTreeRenderHarness(Cache, m_entry, layoutName, showHiddenFields: true))
+			{
+				withoutHiddenFields.PopulateSlices(1024, 2400, false);
+				withHiddenFields.PopulateSlices(1024, 2400, false);
+
+				var labelsWithoutHiddenFields = withoutHiddenFields.LastTiming.SliceDiagnostics
+					.Select(diag => diag.Label)
+					.Where(label => !string.IsNullOrEmpty(label))
+					.ToList();
+				var labelsWithHiddenFields = withHiddenFields.LastTiming.SliceDiagnostics
+					.Select(diag => diag.Label)
+					.Where(label => !string.IsNullOrEmpty(label))
+					.ToList();
+
+				foreach (var hiddenLabel in hiddenLabels)
+				{
+					Assert.That(labelsWithoutHiddenFields, Does.Not.Contain(hiddenLabel),
+						$"{hiddenLabel} should stay hidden when ShowHiddenFields is off.");
+					Assert.That(labelsWithHiddenFields, Does.Contain(hiddenLabel),
+						$"{hiddenLabel} should be rendered when ShowHiddenFields is enabled.");
+				}
+
+				Assert.That(withHiddenFields.SliceCount, Is.GreaterThan(withoutHiddenFields.SliceCount),
+					"Enabling hidden fields should increase the number of rendered slices.");
+
+				int glossSliceCount = labelsWithHiddenFields.Count(label => label == "Gloss");
+				int scientificNameSliceCount = labelsWithHiddenFields.Count(label => label == "ScientificName");
+				Assert.That(glossSliceCount, Is.GreaterThanOrEqualTo(30),
+					$"Expected at least 30 gloss slices for the depth-4 sense tree, but saw {glossSliceCount}.");
+				Assert.That(scientificNameSliceCount, Is.GreaterThanOrEqualTo(30),
+					$"Expected at least 30 scientific-name slices for the depth-4 sense tree, but saw {scientificNameSliceCount}.");
+
+				var bitmap = withHiddenFields.CaptureCompositeBitmap();
+				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed with hidden fields enabled.");
+				bitmap.Dispose();
 			}
 		}
 

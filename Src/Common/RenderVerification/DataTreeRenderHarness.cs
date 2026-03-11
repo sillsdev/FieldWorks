@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		private readonly LcmCache m_cache;
 		private readonly ICmObject m_rootObject;
 		private readonly string m_layoutName;
+		private readonly bool m_showHiddenFields;
 
 		private DataTree m_dataTree;
 		private Mediator m_mediator;
@@ -67,11 +68,13 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <param name="cache">The LCM data cache.</param>
 		/// <param name="rootObject">The root object to display (e.g. an ILexEntry).</param>
 		/// <param name="layoutName">The layout name (e.g. "Normal").</param>
-		public DataTreeRenderHarness(LcmCache cache, ICmObject rootObject, string layoutName = "Normal")
+		public DataTreeRenderHarness(LcmCache cache, ICmObject rootObject, string layoutName = "Normal",
+			bool showHiddenFields = false)
 		{
 			m_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			m_rootObject = rootObject ?? throw new ArgumentNullException(nameof(rootObject));
 			m_layoutName = layoutName ?? "Normal";
+			m_showHiddenFields = showHiddenFields;
 		}
 
 		/// <summary>
@@ -91,6 +94,20 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			// Create XCore infrastructure required by DataTree
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
+
+			if (m_showHiddenFields)
+			{
+				var toolName = m_rootObject is ILexEntry ? "lexiconEdit" :
+					m_propertyTable.GetStringProperty("currentContentControl", null);
+				if (!string.IsNullOrEmpty(toolName))
+				{
+					m_propertyTable.SetProperty(
+						"ShowHiddenFields-" + toolName,
+						true,
+						PropertyTable.SettingsGroup.LocalSettings,
+						false);
+				}
+			}
 
 			// Create the DataTree
 			m_dataTree = new DataTree();

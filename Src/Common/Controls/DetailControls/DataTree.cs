@@ -524,14 +524,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 //			string objName = ToString() + GetHashCode().ToString();
 //			Debug.WriteLine("Creating object:" + objName);
 
-			// Enable double-buffering to eliminate flicker during paint.
-			// AllPaintingInWmPaint suppresses WM_ERASEBKGND (background is painted in OnPaint
-			// via base.OnPaint). OptimizedDoubleBuffer composites to an offscreen buffer.
-			SetStyle(
-				System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer |
-				System.Windows.Forms.ControlStyles.AllPaintingInWmPaint,
-				true);
-
 			Slices = new List<Slice>();
 			m_autoCustomFieldNodesDocument = new XmlDocument();
 			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");

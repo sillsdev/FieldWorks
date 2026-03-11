@@ -7,6 +7,18 @@
 		<part id="LexEntry-Detail-Bibliography">
 			<slice label="Bibliography" editor="multistring" field="Bibliography" ws="analysis"/>
 		</part>
+		<part id="LexEntry-Detail-Comment">
+			<slice label="Comment" editor="multistring" field="Comment" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-LiteralMeaning">
+			<slice label="Literal Meaning" editor="multistring" field="LiteralMeaning" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-Restrictions">
+			<slice label="Restrictions" editor="multistring" field="Restrictions" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-SummaryDefinition">
+			<slice label="Summary Definition" editor="multistring" field="SummaryDefinition" ws="analysis"/>
+		</part>
 		<part id="LexEntry-Detail-Senses">
 			<seq field="Senses" />
 		</part>

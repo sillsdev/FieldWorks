@@ -1550,6 +1550,97 @@ namespace TestViews
 			qrootb->Close();
 		}
 
+		void testPutrefDataAccessDoesNotImplicitlyDirtyConstructedView()
+		{
+			class SimpleParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenParagraph();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda1;
+			qcda1.CreateInstance(CLSID_VwCacheDa);
+			qcda1->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda1;
+			CheckHr(qcda1->QueryInterface(IID_ISilDataAccess, (void **)&qsda1));
+			CheckHr(qsda1->putref_WritingSystemFactory(g_qwsf));
+
+			IVwCacheDaPtr qcda2;
+			qcda2.CreateInstance(CLSID_VwCacheDa);
+			qcda2->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda2;
+			CheckHr(qcda2->QueryInterface(IID_ISilDataAccess, (void **)&qsda2));
+			CheckHr(qsda2->putref_WritingSystemFactory(g_qwsf));
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"DataAccess baseline text");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda1->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+			CheckHr(qcda2->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SimpleParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda1));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag before DataAccess swaps", fNeedsReconstruct);
+
+				CheckHr(qrootb->putref_DataAccess(qsda2));
+
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("putref_DataAccess should remain a cheap wiring operation", fNeedsReconstruct);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
 		void testStylesheetChangeDirtiesConstructedView()
 		{
 			class SimpleParagraphVc : public DummyBaseVc
@@ -1709,6 +1800,95 @@ namespace TestViews
 
 				unitpp::assert_eq("same-width layout should still refresh cached X DPI", 144, prootb->DpiSrc().x);
 				unitpp::assert_eq("same-width layout should still refresh cached Y DPI", 144, prootb->DpiSrc().y);
+			}
+			catch(...)
+			{
+				if (qvg32)
+					qvg32->ReleaseDC();
+				if (hdc != 0)
+					ReleaseTestDC(hdc);
+				qrootb->Close();
+				throw;
+			}
+
+			qvg32->ReleaseDC();
+			ReleaseTestDC(hdc);
+			qrootb->Close();
+		}
+
+		void testLayoutWithChangedWidthRelayoutsWithoutDirtyingConstructedView()
+		{
+			class SimpleParagraphVc : public DummyBaseVc
+			{
+			public:
+				STDMETHOD(Display)(IVwEnv * pvwenv, HVO hvo, int frag)
+				{
+					pvwenv->OpenDiv();
+					pvwenv->OpenParagraph();
+					pvwenv->AddStringProp(kflidStTxtPara_Contents, NULL);
+					pvwenv->CloseParagraph();
+					pvwenv->CloseDiv();
+					return S_OK;
+				}
+			};
+
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IVwCacheDaPtr qcda;
+			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
+			ISilDataAccessPtr qsda;
+			CheckHr(qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda));
+			CheckHr(qsda->putref_WritingSystemFactory(g_qwsf));
+
+			ITsStringPtr qtss;
+			StrUni stuPara(L"A paragraph with enough repeated words to wrap differently when the available width shrinks substantially in a relayout-only scenario.");
+			CheckHr(qtsf->MakeString(stuPara.Bstr(), g_wsEng, &qtss));
+			HVO hvoPara = 1;
+			CheckHr(qcda->CacheStringProp(hvoPara, kflidStTxtPara_Contents, qtss));
+
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
+			IVwRootBoxPtr qrootb;
+			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **)&qrootb);
+			IVwGraphicsWin32Ptr qvg32;
+			HDC hdc = 0;
+			try
+			{
+				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
+				hdc = GetTestDC();
+				CheckHr(qvg32->Initialize(hdc));
+
+				IVwViewConstructorPtr qvc;
+				qvc.Attach(NewObj SimpleParagraphVc());
+				CheckHr(qrootb->putref_DataAccess(qsda));
+				CheckHr(qrootb->putref_RenderEngineFactory(qref));
+				CheckHr(qrootb->putref_TsStrFactory(qtsf));
+				CheckHr(qrootb->SetRootObject(hvoPara, qvc, 1, NULL));
+
+				DummyRootSitePtr qdrs;
+				qdrs.Attach(NewObj DummyRootSite());
+				Rect rcSrc(0, 0, 96, 96);
+				qdrs->SetRects(rcSrc, rcSrc);
+				qdrs->SetGraphics(qvg32);
+				CheckHr(qrootb->SetSite(qdrs));
+
+				CheckHr(qrootb->Layout(qvg32, 300));
+				int dyWide = 0;
+				CheckHr(qrootb->get_Height(&dyWide));
+
+				ComBool fNeedsReconstruct = true;
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("layout should clear reconstruct flag before width-driven relayout", fNeedsReconstruct);
+
+				CheckHr(qrootb->Layout(qvg32, 120));
+				int dyNarrow = 0;
+				CheckHr(qrootb->get_Height(&dyNarrow));
+
+				unitpp::assert_true("narrower layout should relayout to a taller height", dyNarrow > dyWide);
+				CheckHr(qrootb->get_NeedsReconstruct(&fNeedsReconstruct));
+				unitpp::assert_false("width-driven relayout should stay on the relayout-only path", fNeedsReconstruct);
 			}
 			catch(...)
 			{

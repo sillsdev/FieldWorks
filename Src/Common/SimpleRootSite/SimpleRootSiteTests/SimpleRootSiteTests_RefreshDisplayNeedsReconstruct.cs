@@ -14,6 +14,21 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	{
 		public bool RefreshPending => m_fRefreshPending;
 
+		public void SetRootBoxDataAccessForTest(ISilDataAccess dataAccess)
+		{
+			SetRootBoxDataAccess(dataAccess);
+		}
+
+		public void SetRootBoxDataAccessAndRefreshForTest(ISilDataAccess dataAccess)
+		{
+			SetRootBoxDataAccessAndRefresh(dataAccess);
+		}
+
+		public void NotifyDataAccessSemanticsChangedForTest()
+		{
+			NotifyDataAccessSemanticsChanged();
+		}
+
 		protected override SelectionRestorer CreateSelectionRestorer()
 		{
 			return null;
@@ -72,6 +87,65 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			Assert.That(m_site.RefreshDisplay(), Is.False);
 			Assert.That(m_site.RefreshPending, Is.False);
+			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Once);
+		}
+
+		[Test]
+		public void NotifyDataAccessSemanticsChanged_Reconstructs_WhenRootBoxDoesNotNeedReconstruct()
+		{
+			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
+			m_rootbMock.Setup(rb => rb.Reconstruct());
+
+			m_site.NotifyDataAccessSemanticsChangedForTest();
+
+			Assert.That(m_site.RefreshPending, Is.False);
+			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Once);
+		}
+
+		[Test]
+		public void NotifyDataAccessSemanticsChanged_DefersUntilVisible()
+		{
+			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
+			m_rootbMock.Setup(rb => rb.Reconstruct());
+			m_site.Visible = false;
+
+			m_site.NotifyDataAccessSemanticsChangedForTest();
+
+			Assert.That(m_site.RefreshPending, Is.True);
+			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Never);
+
+			m_site.Visible = true;
+			Assert.That(m_site.RefreshDisplay(), Is.False);
+			Assert.That(m_site.RefreshPending, Is.False);
+			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Once);
+		}
+
+		[Test]
+		public void SetRootBoxDataAccess_DoesNotReconstruct_WhenSwapIsCheap()
+		{
+			var replacementDataAccess = Mock.Of<ISilDataAccess>();
+			m_rootbMock.SetupSet(rb => rb.DataAccess = replacementDataAccess);
+			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
+
+			m_site.SetRootBoxDataAccessForTest(replacementDataAccess);
+
+			Assert.That(m_site.RefreshPending, Is.False);
+			m_rootbMock.VerifySet(rb => rb.DataAccess = replacementDataAccess, Times.Once);
+			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Never);
+		}
+
+		[Test]
+		public void SetRootBoxDataAccessAndRefresh_Reconstructs_WhenSwapChangesDisplaySemantics()
+		{
+			var replacementDataAccess = Mock.Of<ISilDataAccess>();
+			m_rootbMock.SetupSet(rb => rb.DataAccess = replacementDataAccess);
+			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
+			m_rootbMock.Setup(rb => rb.Reconstruct());
+
+			m_site.SetRootBoxDataAccessAndRefreshForTest(replacementDataAccess);
+
+			Assert.That(m_site.RefreshPending, Is.False);
+			m_rootbMock.VerifySet(rb => rb.DataAccess = replacementDataAccess, Times.Once);
 			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Once);
 		}
 	}

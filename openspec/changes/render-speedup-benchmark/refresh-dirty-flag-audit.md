@@ -23,7 +23,8 @@ The recent `SetRootObjects()` fix in [Src/views/VwRootBox.cpp](../../../../Src/v
 - Confirmed missing path that was already fixed: `SetRootObjects(...)` on an already-constructed root box.
 - Confirmed managed fix: `DictionaryPublicationDecorator.Refresh()` now emits a conservative invalidation when its filtered state changes.
 - Plausible native risk still to close: `putref_DataAccess(...)` does not dirty reconstruct state if used post-construction.
-- Architectural decision still to document with tests: whether `putref_Overlay(...)` is intentionally relayout-only or should sometimes dirty reconstruct state.
+- Confirmed current contract: `putref_Overlay(...)` is intentionally relayout-only, with native regression coverage to lock that behavior in.
+- Confirmed native stylesheet contract with regression coverage: `OnStylesheetChange()` dirties reconstruct state and also triggers immediate relayout.
 - Separate fact: many callers invoke `m_rootb.Reconstruct()` directly. Those sites bypass `SimpleRootSite.RefreshDisplay()` and therefore are not protected by the managed guard, but they still depend on native reconstruct semantics.
 
 ## Current Architecture
@@ -96,11 +97,11 @@ These are the highest-priority paths because they define whether the native box 
 | Item | Parameters / transform | Should make `NeedsReconstruct` dirty? | Current behavior | Status |
 |---|---|---:|---|---|
 | `VwRootBox::PropChanged(HVO hvo, PropTag tag, int ivMin, int cvIns, int cvDel)` | Any semantic data change surfaced through SDA notification | Yes | Sets `m_fNeedsReconstruct = true` | Confirmed correct |
-| `VwRootBox::OnStylesheetChange()` | Stylesheet effects change rendered output and layout | Yes | Sets `m_fNeedsReconstruct = true` and `m_fNeedsLayout = true` | Confirmed correct |
+| `VwRootBox::OnStylesheetChange()` | Stylesheet effects change rendered output and layout | Yes | Sets `m_fNeedsReconstruct = true` and `m_fNeedsLayout = true`, then immediately relayouts | Confirmed correct and covered by native regression test |
 | `VwRootBox::SetRootObjects(HVO* prghvo, IVwViewConstructor** prgpvwvc, int* prgfrag, IVwStylesheet* pss, int chvo)` | Root HVO, VC, fragment, stylesheet, or root count changes | Yes | Now sets `m_fNeedsReconstruct = true` before `Reconstruct()` when already constructed | Confirmed fixed |
 | `VwRootBox::SetRootObject(HVO hvo, IVwViewConstructor* pvvc, int frag, IVwStylesheet* pss)` | Single-root wrapper over `SetRootObjects(...)` | Yes | Delegates to `SetRootObjects(...)` | Confirmed correct after fix |
-| `VwRootBox::putref_Overlay(IVwOverlay* pvo)` | Overlay affects appearance and can affect layout | Possibly layout-only, depending on whether overlay changes box generation or only appearance/layout metrics | Currently sets `m_fNeedsLayout = true` and calls `LayoutFull()`, but does not set `m_fNeedsReconstruct` | Needs explicit architectural decision and targeted test |
-| `VwRootBox::putref_DataAccess(ISilDataAccess* psda)` | Replacing the underlying data access object after construction | Yes if used post-construct | Adds/removes notifications, does not dirty reconstruct state | Potential risk path; likely safe in current usage because callers typically set root object immediately after |
+| `VwRootBox::putref_Overlay(IVwOverlay* pvo)` | Overlay affects appearance and can affect layout | No, under the current design it is relayout-only | Sets `m_fNeedsLayout = true` and calls `LayoutFull()`, but does not set `m_fNeedsReconstruct` | Confirmed intentional and covered by native regression test |
+| `VwRootBox::putref_DataAccess(ISilDataAccess* psda)` | Replacing the underlying data access object after construction | No by itself; this remains the cheap wiring primitive | Adds/removes notifications, does not dirty reconstruct state | Confirmed intentional and covered by native regression test |
 | `VwRootBox::Construct(...)` | Initial construction of box tree | No, this is the rebuild itself | Clears `m_fNeedsReconstruct = false` | Correct |
 | `VwRootBox::Reconstruct(...)` | Full rebuild of current root | No, this is the rebuild itself | Clears `m_fNeedsReconstruct = false` at end | Correct |
 
@@ -112,6 +113,20 @@ Not every path that bypasses `m_fNeedsReconstruct` is a bug. The native sweep fo
 |---|---|---|
 | Immediate reconstruct after explicit root change | `SetRootObjects(...)` | Sets the flag and immediately reconstructs |
 | Immediate relayout after appearance change | `OnStylesheetChange()`, `putref_Overlay(...)` | Treats the change as relayout work instead of deferred rebuild work |
+| Cheap source wiring without semantic invalidation | `putref_DataAccess(...)` | Keeps setup-time and non-visual SDA swaps cheap; host layers must opt into an explicit semantic refresh signal when the current tree is stale |
+
+### Explicit SDA swap contract
+
+The current native/managed split treats SDA changes as a two-step contract:
+
+1. `putref_DataAccess(...)` changes notification wiring and the source used for future reads.
+2. `SimpleRootSite.NotifyDataAccessSemanticsChanged()` is the explicit opt-in signal for the rarer case where an already-constructed root site's current tree is semantically stale and must be rebuilt later.
+
+This keeps initialization-time `DataAccess` setup cheap, avoids forcing incidental swaps to behave like live-view refreshes, and reuses the existing managed refresh pipeline instead of changing the `IVwRootBox` COM surface.
+
+The known `XmlSeqView` print-source swap should stay on the cheap path. That code temporarily changes `RootBox.DataAccess` so `SimpleRootSite.Print()` picks up an alternate SDA when creating a separate `PrintRootSite`; it is not asking the live on-screen root box to rebuild.
+
+The first concrete product caller adjusted under this contract is `InterlinRibbon.SetRoot(...)`. That path previously rebuilt the existing root and then swapped `DataAccess` to the ribbon decorator afterward. It now installs the decorator before calling `ChangeOrMakeRoot(...)`, so the rebuild runs against the right source without needing a post-construct semantic refresh.
 | Lazy-box incremental updates | lazy expansion and notifier relayout paths | Mutates only the affected part of the tree |
 | Synchronizer-driven updates | synchronized lazy expansion / contraction paths | Coordinator logic updates participating roots directly |
 
@@ -244,20 +259,19 @@ The most important remaining gaps are:
 
 | Gap | Why it matters |
 |---|---|
-| Repeated `SetRootObject()` / `SetRootObjects()` after construction | Confirms the recent native fix with a focused regression test |
-| Overlay mutation after construction | Clarifies whether overlay changes are truly layout-only or should dirty reconstruct state |
-| Decorator `Refresh()` under PATH-L5 | Validates that a decorator-visible change is not lost when `NeedsReconstruct` stays false |
-| Stylesheet-change dirtying / relayout expectations | Verifies the current `OnStylesheetChange()` behavior matches intended architecture |
+| Direct `Reconstruct()` caller scenarios (`XmlView`, `XmlSeqView`, `TryAWordRootSite`, bulk-edit flows) | These bypass `RefreshDisplay()` by design and therefore need focused caller-level tests rather than more root-box dirty-flag changes |
+| Decorator refresh under PATH-L5 for dynamic list/projector decorators | Validates that `Refresh()`-driven visible changes are not lost when `NeedsReconstruct` stays false |
+| XML `<choice>` and similar dependency-tracking workaround paths | Confirms explicit rebuild workarounds remain necessary and intentional |
 | Width-change boundary behavior around `m_fNeedsLayout` / `m_dxLastLayoutWidth` | Confirms the split between relayout and reconstruct stays coherent |
 
 ### Suggested test targets
 
 If this audit turns into follow-up implementation work, the highest-value new tests are:
 
-1. a focused native or integration test for repeated `SetRootObject()` after a first construct
-2. an overlay-mutation test that asserts whether a full reconstruct is or is not expected
-3. a decorator test for `DictionaryPublicationDecorator.Refresh()` under the managed fast path
-4. a stylesheet-change test that documents whether relayout-only behavior is intentional
+1. a focused managed test for direct rebuild callers such as `XmlView.ResetTables()` / `XmlSeqView.ResetTables()`
+2. a decorator test for `DictionaryPublicationDecorator.Refresh()` under the managed fast path
+3. a focused managed test for the XML `<choice>` workaround path that currently rebuilds explicitly
+4. a width-boundary test that documents relayout-only behavior versus reconstruct behavior
 
 ## Execution Checklist
 
@@ -266,163 +280,107 @@ If this audit turns into follow-up implementation work, the highest-value new te
 - [x] Confirm `SetRootObjects(...)` needed to dirty reconstruct state for already-constructed root boxes.
 - [x] Confirm `DictionaryPublicationDecorator.Refresh()` was the highest-risk managed refresh path.
 - [x] Identify `putref_DataAccess(...)` as a plausible native dirty-flag gap.
-- [ ] Resolve whether `putref_Overlay(...)` is intentionally relayout-only.
-- [ ] Decide whether any other decorator besides `DictionaryPublicationDecorator` needs immediate code changes.
+- [x] Resolve whether `putref_Overlay(...)` is intentionally relayout-only.
+- [x] Decide whether any other decorator besides `DictionaryPublicationDecorator` needs immediate code changes.
+- [x] Classify remaining live `DataAccess` swaps after construction.
+
+Findings summary:
+
+- No additional live post-construction `DataAccess` swap needing code changes was found beyond the already-fixed `InterlinRibbon.SetRoot(...)` ordering case.
+- `XmlSeqView` print-time `DataAccess` swaps remain intentionally cheap because they are print/setup flows, not live-view semantic refreshes.
+- The remaining medium-risk decorator is `InterestingTextsDecorator`, but its update model already flows through explicit `SendPropChanged(...)` on list changes rather than a hidden post-construction SDA swap.
+- Most remaining direct `m_rootb.Reconstruct()` callers are explicit caller-policy rebuilds or workaround paths for incomplete dependency tracking, not evidence that `putref_DataAccess(...)` should dirty the root box globally.
 
 ### Existing Coverage Verified
 
 - [x] Native regression test added for repeated `SetRootObject()` on a constructed view.
 - [x] Existing render baseline/timing tests cover the performance intent of PATH-L5 / PATH-R1.
 - [x] Existing dictionary decorator tests cover filtering logic and `PropChanged(...)` routing.
+- [x] Existing `InterestingTextsTests` cover the list/decorator event path at the domain level.
+- [x] Existing `SimpleRootSiteTests` cover cheap SDA swaps, explicit semantic refresh, and hidden-site deferral.
+- [x] Existing `InterlinRibbonTests` cover decorator-install ordering before rebuilding an existing root.
 
 ### New Tests Planned
 
-- [ ] Add native test that `putref_DataAccess(...)` marks a constructed root box dirty.
-- [x] Add managed test that `DictionaryPublicationDecorator.Refresh()` notifies registered listeners after state changes.
-- [ ] Add targeted test for overlay mutation behavior after construction.
-- [ ] Add targeted test for stylesheet-change behavior after construction.
+- [x] Add native test that `putref_DataAccess(...)` remains a cheap wiring operation after construction.
+- [x] Add managed test coverage for explicit semantic refresh after a post-construction SDA swap.
+- [x] Add targeted test for overlay mutation behavior after construction.
+- [x] Add targeted test for stylesheet-change behavior after construction.
+- [x] Add focused caller-level test for `XmlView.ResetTables()` / `XmlSeqView.ResetTables()` explicit rebuild behavior.
+- [x] Add focused caller-level test for the XML `<choice>` rebuild workaround path.
+- [x] Close the decorator-visible PATH-L5 gap with the existing `DictionaryPublicationDecoratorTests.Refresh_NotifiesRegisteredRoots_WhenVisibleFilteringChanges` coverage plus the focused `SimpleRootSite` PATH-L5 tests.
+- [x] Add width-boundary test that distinguishes relayout-only invalidation from reconstruct invalidation.
 
-### Code Cleanups Planned
+### Edge Cases Planned
 
-- [ ] Dirty reconstruct state when `putref_DataAccess(...)` is called on a constructed root box.
+- [x] Existing root box rebuilt after VC/layout-spec table reset.
+- [x] Decorator-visible filter/list change while `NeedsReconstruct == false`.
+- [x] Hidden-site semantic refresh deferred until visible.
+- [x] XML `<choice>` dependency change that still requires an explicit rebuild workaround.
+- [x] Width change that should relayout without forcing reconstruct.
+
+### Code Changes Completed
+
+- [x] Keep `putref_DataAccess(...)` as a cheap wiring operation and move semantic post-construction swaps to the managed explicit-refresh contract.
 - [x] Make `DictionaryPublicationDecorator.Refresh()` participate in the normal refresh/invalidation contract.
+- [x] Add explicit managed SDA-swap helpers in `SimpleRootSite` for cheap versus semantic swaps.
+- [x] Reorder `InterlinRibbon.SetRoot(...)` so the decorator is installed before rebuilding an existing root.
+
+### Code Changes Rejected By Audit
+
+- [x] Do not dirty reconstruct state automatically in `putref_DataAccess(...)`.
+- [x] Do not add another COM/native dirtying API for SDA semantics.
+- [x] Do not weaken the PATH-L5 / PATH-R1 guards globally for decorated views.
 
 ### Validation
 
-- [ ] Run native `TestViews` after native test/code changes.
+- [x] Get a clean native `TestViews` validation run.
 - [x] Run targeted managed tests for `DictionaryPublicationDecoratorTests` after managed test/code changes.
+- [x] Run targeted managed tests for `SimpleRootSiteTests` covering cheap SDA swaps and explicit semantic refreshes.
+- [x] Run targeted managed tests for `InterlinRibbon` ordering on existing root boxes.
+- [x] Run the focused `XMLViewsTests` assertions for explicit rebuild callers and the `ShowFailingItems` workaround path.
 
-## Systematic Architectural Assessment
+### Validation Notes
 
-### What the current design gets right
+- `SimpleRootSiteTests` now provide deterministic coverage for:
+  - cheap `SetRootBoxDataAccess(...)` swaps staying on the no-reconstruct fast path,
+  - explicit `SetRootBoxDataAccessAndRefresh(...)` swaps forcing one managed rebuild,
+  - deferred semantic refresh when the site is hidden.
+- `InterlinRibbonTests.SetRoot_AssignsDecoratorBeforeChangingExistingRootObject` provides deterministic caller-level coverage that the ribbon decorator is installed before an existing root is rebuilt.
+- `XmlViewRefreshPolicyTests` now cover direct XMLViews rebuild callers and the `ShowFailingItems` workaround path with a lightweight fake root box; the focused assertions passed, but the local VSTest host still aborted after completion in this environment.
+- The legacy `InterlinRibbonTests.RibbonLayout` integration test still times out in isolation and should be treated as pre-existing instability, not as proof that the SDA-swap ordering change is wrong.
+- After a clean native rebuild, `TestViews.exe` now links and runs cleanly again, including the new width-boundary regression.
 
-- `VwRootBox` is the correct place for the native source of truth.
-- `NeedsReconstruct` is the correct kind of signal for the managed fast path.
-- `m_fNeedsLayout` and `m_dxLastLayoutWidth` are a good example of a coherent lower-level dirty contract.
+## Resolved Architectural Decision
 
-### What is still weak
+The audit now supports a single clear direction:
 
-The current reconstruct contract is distributed across three different conventions:
+- `VwRootBox` stays the native source of truth for whether a tree is stale.
+- `putref_DataAccess(...)` stays cheap and does not automatically dirty reconstruct state.
+- When a post-construction SDA swap truly makes the current tree semantically stale, the host layer must opt in through the managed explicit-refresh contract in `SimpleRootSite`.
+- Direct `Reconstruct()` callers remain allowed when the caller is intentionally choosing an immediate rebuild policy or compensating for incomplete dependency tracking.
 
-1. native mutation methods set `m_fNeedsReconstruct = true`
-2. SDA notifications eventually become `PropChanged(...)`, which sets it
-3. decorators are expected to mutate in a way that eventually flows into one of the above
+This is the smallest and most testable design because it:
 
-That means the architecture is only as safe as the least careful caller. Missing one path creates silent stale-display risk that is hard to test and hard to notice.
+- preserves PATH-L5 / PATH-R1 performance wins,
+- avoids expanding the COM/native invalidation surface,
+- keeps one native dirty-state authority,
+- and makes the exceptional post-construction SDA case explicit at the host layer.
 
-### The correct architecture
+## Best-Next Test Work
 
-The cleanest architecture is:
+The highest-value remaining work is now testability, not more architecture churn.
 
-- `VwRootBox` remains the only authority on whether the current box tree is stale.
-- Any operation that invalidates the current box tree must notify `VwRootBox` through one clearly defined mechanism.
-- Managed code should consume the signal, not infer it independently.
-- Decorators should not rely on unconditional reconstruction as a safety net.
-
-In practice, that means one of two architectures is preferable:
-
-1. **Notification architecture**: every semantic change flows into `PropChanged(...)` or an equivalent native invalidation API.
-2. **Explicit refresh contract architecture**: decorators and managed refresh participants explicitly report “I changed visible state” and the root box is dirtied from that contract.
-
-The current system is mostly using architecture 1, with some implicit dependence on convention.
-
-## Three Paths Forward
-
-### Path 1: Stay with the current architecture and close every missing dirty path
-
-This means:
-
-- keep `NeedsReconstruct` and PATH-L5 / PATH-R1 exactly as designed
-- audit all native mutation paths and decorator refresh paths
-- fix any path that mutates visible state without dirtying reconstruct state
-
-Examples:
-
-- keep the new `SetRootObjects()` fix
-- review `putref_Overlay(...)`
-- review `putref_DataAccess(...)`
-- fix `DictionaryPublicationDecorator.Refresh()` to trigger the right notification path
-
-**Pros**
-
-- Smallest architectural change
-- Preserves current performance work with minimal disruption
-- Keeps the source of truth in `VwRootBox`
-- No new public contract if existing notification paths are sufficient
-
-**Cons**
-
-- Requires careful audit discipline
-- Easy to miss future paths
-- No compile-time enforcement for decorator authors
-- Silent stale-display bugs remain possible if somebody forgets one path later
-
-### Path 2: Add an explicit managed-side “visual state changed” contract for decorators
-
-This means:
-
-- decorator refresh paths explicitly report whether they changed visible state
-- managed refresh code uses that signal to request reconstruct state before the guard check
-- the contract becomes visible and reviewable, instead of implicit
-
-Possible shapes:
-
-- `Refresh()` returns `bool`
-- new interface such as `IReportsVisualRefresh`
-- explicit dirty callback from decorator to root site/root box
-
-**Pros**
-
-- Makes decorator refresh semantics explicit
-- Easier to review and reason about than “maybe PropChanged happens somewhere underneath”
-- Good fit for the actual risky area discovered so far
-
-**Cons**
-
-- New API surface and coordination cost
-- If only managed code knows about the change, native PATH-R1 still needs a clean way to learn it
-- Risks creating two parallel dirtying systems if not designed carefully
-
-### Path 3: Use a conservative fallback for decorated views or uncertain mutation paths
-
-This means:
-
-- if a root site has a decorator, or if a mutation path is not proven safe, avoid the fast skip and reconstruct conservatively
-- treat this as a safety-oriented policy rather than a long-term architecture
-
-**Pros**
-
-- Lowest stale-display risk immediately
-- Very simple to implement
-- Good temporary safety net while the audit is still in progress
-
-**Cons**
-
-- Gives back part of the performance win exactly where many complex views live
-- Masks contract problems instead of fixing them
-- Hard to know when it is safe to remove without completing the deeper audit
-
-## Recommendation
-
-Recommend **Path 1 as the target architecture**, with a **temporary Path 3 safety net only if needed for confidence while auditing**.
-
-Reasoning:
-
-- The current design is fundamentally sound if `VwRootBox` remains the single source of truth.
-- The recent `SetRootObjects()` fix is evidence that the architecture works once missing dirty paths are repaired.
-- Adding a second, parallel dirtying authority in managed code should be avoided unless the decorator audit proves the notification model is too fragile to maintain.
-
-### Concrete next steps
-
-1. Resolve whether `putref_Overlay(...)` is intentionally relayout-only or should sometimes dirty reconstruct state.
-2. Decide whether `putref_DataAccess(...)` should dirty reconstruct state when used after construction.
-3. Audit every decorator used in complex document views, with `DictionaryPublicationDecorator` first.
-4. Add focused regression tests for repeated `SetRootObject()`, overlay mutation, and decorator refresh under PATH-L5.
-5. If a decorator changes visible state without a notification path, fix that path instead of weakening the guard globally.
-6. Only if the decorator audit finds repeated breakage should the codebase adopt an explicit decorator refresh contract.
+1. If the local test-host abort remains reproducible, isolate it separately from the XMLViews assertions themselves.
+2. Add broader integration coverage only where a direct caller still lacks focused deterministic tests.
 
 ## Bottom Line
 
-The correct architectural answer is not to weaken `NeedsReconstruct`. It is to make the dirty-state contract complete.
+The post-construction `DataAccess` sweep did not uncover more live-swap bugs of the same class as the original `InterlinRibbon` issue.
 
-The branch has already shown one missing path in `SetRootObjects()`. The remaining work is to finish the same audit mindset across decorators and any other native mutation APIs that can change what the current box tree should display.
+The branch now has:
+
+- a native fix for `SetRootObjects(...)`,
+- an explicit managed semantic-refresh contract for the rare SDA-swap case,
+- a concrete caller fix in `InterlinRibbon`,
+- and a narrowed follow-up list centered on direct-caller and decorator-path test coverage.

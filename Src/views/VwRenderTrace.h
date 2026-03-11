@@ -150,9 +150,6 @@ private:
 	bool m_fStopped;
 };
 
-// Global trace file pointer
-FILE * g_fpRenderTrace = NULL;
-
 // Convenience macros for conditional tracing
 #define RENDER_TRACE_TIMER(name) VwRenderTraceTimer __rtt_##__LINE__(name)
 #define RENDER_TRACE_TIMER_CTX(name, ctx) VwRenderTraceTimer __rtt_##__LINE__(name, ctx)
