@@ -39,20 +39,6 @@ const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0
 
 namespace
 {
-	bool IsReuseLastFrameOnInvalidateEnabled()
-	{
-		static int s_nEnabled = -1;
-		if (s_nEnabled < 0)
-		{
-			wchar_t rgchValue[16] = {0};
-			DWORD cchValue = ::GetEnvironmentVariableW(L"FW_PERF_REUSE_LAST_FRAME_ON_INVALIDATE",
-				rgchValue, _countof(rgchValue));
-			s_nEnabled = (cchValue != 0 && _wcsicmp(rgchValue, L"0") != 0 &&
-				_wcsicmp(rgchValue, L"false") != 0 && _wcsicmp(rgchValue, L"off") != 0) ? 1 : 0;
-		}
-		return s_nEnabled == 1;
-	}
-
 	void DeleteMemoryDcAndBitmap(HDC hdcMem)
 	{
 		if (!hdcMem)
@@ -4976,7 +4962,6 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	IVwGraphicsWin32Ptr qvg32;
 	Rect rcp(rcpDraw);
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-	const bool fReuseLastFrame = IsReuseLastFrameOnInvalidateEnabled();
 	HDC hdcPrevious = m_hdcMem;
 	HDC hdcNew = AfGdi::CreateCompatibleDC(hdc);
 	HBITMAP hbmpNew = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
@@ -5067,7 +5052,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 		// The bitmap in m_hdcMem is kept around for potential ReDrawLastDraw calls.
 		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), m_hdcMem, 0, 0, SRCCOPY);
 	}
-	else if (fReuseLastFrame && hdcPrevious)
+	else if (hdcPrevious)
 	{
 		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), hdcPrevious, 0, 0, SRCCOPY);
 	}

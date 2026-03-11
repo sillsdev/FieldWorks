@@ -727,7 +727,7 @@ own scroll handling.
 - **VwDrawRootBuffered cached frame reuse**: When `PrepareToDrawRoot` returns `kxpdrInvalidate`
   (content not yet ready), the previous successfully-drawn frame is re-blitted instead of
   showing a blank or partially-drawn frame. Implemented in both managed (`VwDrawRootBuffered.cs`)
-  and native (`VwRootBox.cpp`) paths, gated behind `FW_PERF_REUSE_LAST_FRAME_ON_INVALIDATE`.
+	and native (`VwRootBox.cpp`) paths so the fallback is always available during invalidate-only passes.
 
 ### Key Insight
 
