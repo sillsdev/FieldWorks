@@ -44,12 +44,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				Results = m_results,
 				EnvironmentHash = m_environmentValidator?.GetEnvironmentHash() ?? "Unknown",
 				Configuration = "Debug",
-                MachineName = Environment.MachineName
+				MachineName = Environment.MachineName,
+				FeatureFlags = GetActivePerfFlags()
 			};
 
 			m_reportWriter?.WriteReport(run);
 			TestContext.WriteLine($"Benchmark report written to: {OutputDir}");
-            TestContext.WriteLine($"Summary: {Path.Combine(OutputDir, "summary.md")}");
+			TestContext.WriteLine($"Summary: {Path.Combine(OutputDir, "summary.md")}");
 		}
 
 		[Test, TestCaseSource(nameof(GetScenarios))]
@@ -71,6 +72,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				ScenarioDescription = execution.Scenario.Description,
 				ColdRenderMs = execution.ColdTiming.DurationMs,
 				WarmRenderMs = execution.WarmTiming.DurationMs,
+				ColdPerformOffscreenLayoutMs = SumStageDuration(execution.TraceEvents, "PerformOffscreenLayout", "cold"),
+				WarmPerformOffscreenLayoutMs = SumStageDuration(execution.TraceEvents, "PerformOffscreenLayout", "warm"),
 				PixelPerfectPass = execution.Verification.Passed,
 				MismatchDetails = execution.Verification.FailureMessage,
 				SnapshotPath = execution.Verification.VerifiedPath,
@@ -84,6 +87,49 @@ namespace SIL.FieldWorks.Common.RootSites
 		public static IEnumerable<string> GetScenarios()
 		{
 			return GetConfiguredScenarioIds("simple", "medium", "complex", "deep-nested", "custom-heavy");
+		}
+
+		private static Dictionary<string, string> GetActivePerfFlags()
+		{
+			return new Dictionary<string, string>
+			{
+				{ "FW_PERF_P125_PATH1", GetPerfFlagState("FW_PERF_P125_PATH1") },
+				{ "FW_PERF_P125_PATH2", GetPerfFlagState("FW_PERF_P125_PATH2") },
+				{ "FW_PERF_P125_PATH5", GetPerfFlagState("FW_PERF_P125_PATH5") }
+			};
+		}
+
+		private static string GetPerfFlagState(string variableName)
+		{
+			var value = Environment.GetEnvironmentVariable(variableName);
+			if (!string.IsNullOrEmpty(value))
+				return value;
+
+			if (string.Equals(variableName, "FW_PERF_P125_PATH5", StringComparison.OrdinalIgnoreCase))
+				return "not-implemented";
+
+			return "default-on";
+		}
+
+		private static double SumStageDuration(IEnumerable<TraceEvent> traceEvents, string stage, string phasePrefix)
+		{
+			if (traceEvents == null)
+				return 0;
+
+			double total = 0;
+			foreach (var traceEvent in traceEvents)
+			{
+				if (!string.Equals(traceEvent.Stage, stage, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				if (traceEvent.Context == null || !traceEvent.Context.TryGetValue("phase", out var phase))
+					continue;
+
+				if (phase.StartsWith(phasePrefix, StringComparison.OrdinalIgnoreCase))
+					total += traceEvent.DurationMs;
+			}
+
+			return total;
 		}
 	}
 }

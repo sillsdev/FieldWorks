@@ -31,6 +31,9 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <summary>Gets or sets the machine name.</summary>
 		public string MachineName { get; set; } = Environment.MachineName;
 
+		/// <summary>Gets or sets the active performance feature-flag states for this run.</summary>
+		public Dictionary<string, string> FeatureFlags { get; set; } = new Dictionary<string, string>();
+
 		/// <summary>Gets or sets the list of scenario results.</summary>
 		public List<BenchmarkResult> Results { get; set; } = new List<BenchmarkResult>();
 
@@ -92,6 +95,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		/// <summary>Gets or sets the warm render duration in milliseconds.</summary>
 		public double WarmRenderMs { get; set; }
 
+		/// <summary>Gets or sets the total cold-phase PerformOffscreenLayout duration in milliseconds.</summary>
+		public double ColdPerformOffscreenLayoutMs { get; set; }
+
+		/// <summary>Gets or sets the total warm-phase PerformOffscreenLayout duration in milliseconds.</summary>
+		public double WarmPerformOffscreenLayoutMs { get; set; }
+
 		/// <summary>Gets or sets the variance percentage across multiple runs.</summary>
 		public double VariancePercent { get; set; }
 
@@ -148,6 +157,12 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 		/// <summary>Gets or sets the average warm render time across scenarios.</summary>
 		public double AverageWarmRenderMs { get; set; }
+
+		/// <summary>Gets or sets the average cold-phase PerformOffscreenLayout time across scenarios.</summary>
+		public double AverageColdPerformOffscreenLayoutMs { get; set; }
+
+		/// <summary>Gets or sets the average warm-phase PerformOffscreenLayout time across scenarios.</summary>
+		public double AverageWarmPerformOffscreenLayoutMs { get; set; }
 
 		/// <summary>Gets or sets the top time contributors by stage.</summary>
 		public List<Contributor> TopContributors { get; set; } = new List<Contributor>();

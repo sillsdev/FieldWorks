@@ -94,6 +94,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			{
 				summary.AverageColdRenderMs = run.Results.Average(r => r.ColdRenderMs);
 				summary.AverageWarmRenderMs = run.Results.Average(r => r.WarmRenderMs);
+				summary.AverageColdPerformOffscreenLayoutMs = run.Results.Average(r => r.ColdPerformOffscreenLayoutMs);
+				summary.AverageWarmPerformOffscreenLayoutMs = run.Results.Average(r => r.WarmPerformOffscreenLayoutMs);
 			}
 
 			// Aggregate trace events for top contributors
@@ -147,6 +149,17 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			sb.AppendLine($"**Environment Hash**: `{run.EnvironmentHash}`");
 			sb.AppendLine();
 
+			if (run.FeatureFlags?.Any() == true)
+			{
+				sb.AppendLine("## Feature Flags");
+				sb.AppendLine();
+				foreach (var flag in run.FeatureFlags.OrderBy(kvp => kvp.Key))
+				{
+					sb.AppendLine($"- **{flag.Key}**: {flag.Value}");
+				}
+				sb.AppendLine();
+			}
+
 			// Overall Status
 			var summary = run.Summary;
 			if (summary != null)
@@ -159,6 +172,8 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				sb.AppendLine($"- **Failing**: {summary.FailingScenarios}");
 				sb.AppendLine($"- **Avg Cold Render**: {summary.AverageColdRenderMs:F2}ms");
 				sb.AppendLine($"- **Avg Warm Render**: {summary.AverageWarmRenderMs:F2}ms");
+				sb.AppendLine($"- **Avg Cold PerformOffscreenLayout**: {summary.AverageColdPerformOffscreenLayoutMs:F2}ms");
+				sb.AppendLine($"- **Avg Warm PerformOffscreenLayout**: {summary.AverageWarmPerformOffscreenLayoutMs:F2}ms");
 				sb.AppendLine();
 			}
 
@@ -191,13 +206,13 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			// Scenario Details Table
 			sb.AppendLine("## Scenario Results");
 			sb.AppendLine();
-			sb.AppendLine("| Scenario | Cold (ms) | Warm (ms) | Pixel Pass | Variance |");
-			sb.AppendLine("|----------|-----------|-----------|------------|----------|");
+			sb.AppendLine("| Scenario | Cold (ms) | Warm (ms) | Cold Layout (ms) | Warm Layout (ms) | Pixel Pass | Variance |");
+			sb.AppendLine("|----------|-----------|-----------|------------------|------------------|------------|----------|");
 
 			foreach (var result in run.Results.OrderBy(r => r.ScenarioId))
 			{
 				var passIcon = result.PixelPerfectPass ? "✅" : "❌";
-				sb.AppendLine($"| {result.ScenarioId} | {result.ColdRenderMs:F2} | {result.WarmRenderMs:F2} | {passIcon} | {result.VariancePercent:F1}% |");
+				sb.AppendLine($"| {result.ScenarioId} | {result.ColdRenderMs:F2} | {result.WarmRenderMs:F2} | {result.ColdPerformOffscreenLayoutMs:F2} | {result.WarmPerformOffscreenLayoutMs:F2} | {passIcon} | {result.VariancePercent:F1}% |");
 			}
 			sb.AppendLine();
 
