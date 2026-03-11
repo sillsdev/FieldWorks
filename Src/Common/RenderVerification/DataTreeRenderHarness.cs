@@ -192,6 +192,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			m_dataTree.Visible = true;
 			m_dataTree.Invalidate();
 			System.Windows.Forms.Application.DoEvents();
+			ExpandHostFormToContent(width, height);
 
 			stopwatch.Stop();
 
@@ -229,6 +230,43 @@ namespace SIL.FieldWorks.Common.RenderVerification
 					LastTiming.SliceDiagnostics.Add(diag);
 				}
 			}
+		}
+
+		private void ExpandHostFormToContent(int width, int minimumHeight)
+		{
+			int currentHeight = Math.Max(minimumHeight, 1);
+			for (int pass = 0; pass < 3; pass++)
+			{
+				int requiredHeight = Math.Max(currentHeight, CalculateSliceContentHeight());
+				if (requiredHeight <= currentHeight)
+					break;
+
+				currentHeight = requiredHeight;
+				m_hostForm.ClientSize = new Size(width, currentHeight);
+				m_hostForm.PerformLayout();
+				m_dataTree.PerformLayout();
+				m_dataTree.Invalidate();
+				System.Windows.Forms.Application.DoEvents();
+			}
+		}
+
+		private int CalculateSliceContentHeight()
+		{
+			int maxBottom = 0;
+			if (m_dataTree?.Slices != null)
+			{
+				foreach (Slice slice in m_dataTree.Slices)
+				{
+					if (slice == null)
+						continue;
+
+					int bottom = slice.Top + slice.Height;
+					if (bottom > maxBottom)
+						maxBottom = bottom;
+				}
+			}
+
+			return Math.Max(maxBottom, 1);
 		}
 
 		/// <summary>

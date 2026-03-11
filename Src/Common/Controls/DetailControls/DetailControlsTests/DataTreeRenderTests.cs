@@ -463,10 +463,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// render path is the real DataTree pipeline.
 		/// </summary>
 		[Test]
-		public void DataTreeRender_SubSubSubSenses_ShowHiddenFields()
+		public async Task DataTreeRender_SubSubSubSenses_ShowHiddenFields()
 		{
 			CreateSubSubSubEntry();
-			const string layoutName = "NormalWithHiddenFields";
+			const string layoutName = "NormalWithHiddenFieldsIndented";
 			var hiddenLabels = new[]
 			{
 				"Bibliography",
@@ -509,8 +509,61 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Assert.That(scientificNameSliceCount, Is.GreaterThanOrEqualTo(30),
 					$"Expected at least 30 scientific-name slices for the depth-4 sense tree, but saw {scientificNameSliceCount}.");
 
+				int maxIndent = withHiddenFields.DataTree.Slices.Cast<Slice>().Max(slice => slice.Indent);
+				Assert.That(maxIndent, Is.GreaterThanOrEqualTo(3),
+					$"Expected nested subsenses to create at least 3 levels of indentation, but saw {maxIndent}.");
+
 				var bitmap = withHiddenFields.CaptureCompositeBitmap();
 				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed with hidden fields enabled.");
+				double density = CalculateNonWhiteDensity(bitmap);
+				RecordTiming("subsubsub-hidden", 4, 2, withHiddenFields.LastTiming, density);
+				await VerifyDataTreeBitmap(bitmap, "subsubsub-hidden");
+				bitmap.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// Verifies a production-like lexeme edit snapshot for the depth-4 hidden-fields scenario.
+		/// This keeps the focused hidden-field regression separate while adding top-matter coverage
+		/// closer to the real lexeme edit view.
+		/// </summary>
+		[Test]
+		public async Task DataTreeRender_SubSubSubSenses_ShowHiddenFields_ProductionLike()
+		{
+			CreateSubSubSubEntry();
+			const string layoutName = "ProductionLikeWithHiddenFieldsIndented";
+
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, layoutName, showHiddenFields: true))
+			{
+				harness.PopulateSlices(1024, 2600, false);
+
+				var labels = harness.LastTiming.SliceDiagnostics
+					.Select(diag => diag.Label)
+					.Where(label => !string.IsNullOrEmpty(label))
+					.ToList();
+
+				Assert.That(labels, Does.Contain("Lexeme Form"),
+					"Production-like scenario should include the lexeme form top matter.");
+				Assert.That(labels, Does.Contain("Citation Form"),
+					"Production-like scenario should include the citation form top matter.");
+				Assert.That(labels, Does.Contain("Pronunciation"),
+					"Production-like scenario should include pronunciation top matter.");
+				Assert.That(labels, Does.Contain("Bibliography"));
+				Assert.That(labels, Does.Contain("Comment"));
+				Assert.That(labels, Does.Contain("Literal Meaning"));
+				Assert.That(labels, Does.Contain("Restrictions"));
+				Assert.That(labels, Does.Contain("Summary Definition"));
+
+				int maxIndent = harness.DataTree.Slices.Cast<Slice>().Max(slice => slice.Indent);
+				Assert.That(maxIndent, Is.GreaterThanOrEqualTo(3),
+					$"Expected nested subsenses to create at least 3 levels of indentation, but saw {maxIndent}.");
+
+				var bitmap = harness.CaptureCompositeBitmap();
+				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed for the production-like layout.");
+
+				double density = CalculateNonWhiteDensity(bitmap);
+				RecordTiming("subsubsub-hidden-productionlike", 4, 2, harness.LastTiming, density);
+				await VerifyDataTreeBitmap(bitmap, "subsubsub-hidden-productionlike");
 				bitmap.Dispose();
 			}
 		}

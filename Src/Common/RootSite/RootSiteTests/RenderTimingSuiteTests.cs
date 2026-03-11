@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -12,8 +11,8 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Main benchmark suite that executes all scenarios and generates a timing report.
-	/// Pixel-perfect validation is handled by RenderVerifyTests; this suite focuses
-	/// on performance measurement and content-density sanity checks.
+	/// Each scenario is timed and also checked against the committed pixel baselines
+	/// so performance and correctness are validated together.
 	/// </summary>
 	[TestFixture]
 	[Category("RenderBenchmark")]
@@ -91,58 +90,45 @@ namespace SIL.FieldWorks.Common.RootSites
 				// 1. Cold Render
 				var coldTiming = harness.ExecuteColdRender();
 
+				// Validate the canonical cold-render output against the committed baseline.
+				bool pixelPerfectPass;
+				string mismatchDetails;
+				string snapshotPath;
+				using (var bitmap = harness.CaptureViewBitmap())
+				{
+					string directory = RenderBaselineVerifier.GetSourceFileDirectory();
+					string name = $"RenderVerifyTests.VerifyScenario_{scenarioId}";
+					var verification = RenderBaselineVerifier.Verify(bitmap, directory, name, scenarioId);
+
+					pixelPerfectPass = verification.Passed;
+					mismatchDetails = verification.FailureMessage;
+					snapshotPath = verification.VerifiedPath;
+
+					if (!pixelPerfectPass)
+						TestContext.WriteLine($"[VERIFY] {mismatchDetails}");
+				}
+
 				// 2. Warm Render
 				var warmTiming = harness.ExecuteWarmRender();
 
-				// 3. Content density sanity check (pixel-perfect validation is in RenderVerifyTests)
-				bool contentOk = true;
-				string contentNote = null;
-				using (var bitmap = harness.CaptureViewBitmap())
-				{
-					double density = MeasureContentDensity(bitmap);
-					TestContext.WriteLine($"[CONTENT] Non-white density: {density:F2}%");
-					if (density < 0.4)
-					{
-						contentOk = false;
-						contentNote = $"Content density too low ({density:F2}%). Image may be blank.";
-						TestContext.WriteLine($"[WARN] {contentNote}");
-					}
-				}
-
-				// 4. Record Result
+				// 3. Record Result
 				var benchmarkResult = new BenchmarkResult
 				{
 					ScenarioId = scenarioId,
 					ScenarioDescription = scenarioConfig.Description,
 					ColdRenderMs = coldTiming.DurationMs,
 					WarmRenderMs = warmTiming.DurationMs,
-					PixelPerfectPass = contentOk,
-					MismatchDetails = contentNote,
+					PixelPerfectPass = pixelPerfectPass,
+					MismatchDetails = mismatchDetails,
+					SnapshotPath = snapshotPath,
 					TraceEvents = new List<TraceEvent>(harness.TraceEvents)
 				};
 
 				m_results.Add(benchmarkResult);
-			}
-		}
 
-		/// <summary>
-		/// Measures the percentage of non-white pixels in the bitmap (sampled every 4th pixel).
-		/// </summary>
-		private static double MeasureContentDensity(Bitmap bitmap)
-		{
-			if (bitmap == null) return 0;
-			long nonWhite = 0;
-			for (int y = 0; y < bitmap.Height; y += 4)
-			{
-				for (int x = 0; x < bitmap.Width; x += 4)
-				{
-					Color pixel = bitmap.GetPixel(x, y);
-					if (pixel.R < 250 || pixel.G < 250 || pixel.B < 250)
-						nonWhite++;
-				}
+				if (!pixelPerfectPass)
+					Assert.Fail(mismatchDetails);
 			}
-			long sampled = (long)(bitmap.Width / 4) * (bitmap.Height / 4);
-			return sampled > 0 ? (double)nonWhite / sampled * 100.0 : 0;
 		}
 
 		public static IEnumerable<string> GetScenarios()

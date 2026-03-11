@@ -4,6 +4,12 @@
 		<part id="LexEntry-Detail-CitationForm">
 			<slice label="CitationForm" editor="multistring" field="CitationForm" ws="vernacular"/>
 		</part>
+		<part id="LexEntry-Detail-LexemeForm">
+			<obj field="LexemeForm" layout="FormOnly" />
+		</part>
+		<part id="LexEntry-Detail-Pronunciations">
+			<seq field="Pronunciations" layout="FormOnly" />
+		</part>
 		<part id="LexEntry-Detail-Bibliography">
 			<slice label="Bibliography" editor="multistring" field="Bibliography" ws="analysis"/>
 		</part>
@@ -33,6 +39,12 @@
 		</part>
 		<part id="LexSense-Detail-Senses">
 			<seq field="Senses" />
+		</part>
+		<part id="MoStemAllomorph-Detail-FormOnly" type="Detail">
+			<slice field="Form" label="Lexeme Form" editor="multistring" ws="vernacular" />
+		</part>
+		<part id="LexPronunciation-Detail-FormOnly" type="Detail">
+			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" />
 		</part>
 		<part id="LexEtymology-Detail-Form" type="Detail">
 			<slice field="Form" label="Form" editor="multistring" ws="vernacular" menu="mnuDataTree-Help" />

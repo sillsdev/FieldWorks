@@ -27,6 +27,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	/// </remarks>
 	public class RenderBenchmarkHarness : IDisposable
 	{
+		private const int CapturePaddingPx = 4;
+
 		private readonly LcmCache m_cache;
 		private readonly RenderScenario m_scenario;
 		private readonly RenderEnvironmentValidator m_environmentValidator;
@@ -102,6 +104,14 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				() => PerformOffscreenLayout(width, height),
 				new Dictionary<string, string> { { "phase", "cold" } });
 
+			if (EnsureViewSizedToContent(width, height))
+			{
+				MeasureStage(
+					"PerformOffscreenLayout",
+					() => PerformOffscreenLayout(width, m_view.Height),
+					new Dictionary<string, string> { { "phase", "cold-resized" } });
+			}
+
 			if (m_view.RootBox != null && (m_view.RootBox.Width <= 0 || m_view.RootBox.Height <= 0))
 			{
 				throw new InvalidOperationException($"[RenderBenchmarkHarness] RootBox dimensions are zero/negative after layout ({m_view.RootBox.Width}x{m_view.RootBox.Height}). View Size: {m_view.Width}x{m_view.Height}. Capture will be empty.");
@@ -144,6 +154,14 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				() => PerformOffscreenLayout(m_view.Width, m_view.Height),
 				new Dictionary<string, string> { { "phase", "warm" } });
 
+			if (EnsureViewSizedToContent(m_view.Width, m_view.Height))
+			{
+				MeasureStage(
+					"PerformOffscreenLayout",
+					() => PerformOffscreenLayout(m_view.Width, m_view.Height),
+					new Dictionary<string, string> { { "phase", "warm-resized" } });
+			}
+
 			stopwatch.Stop();
 
 			LastTiming = new RenderTimingResult
@@ -172,8 +190,9 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			// PATH-L4: Cache the offscreen GDI resources across calls to
 			// eliminate ~27ms per-call Bitmap/Graphics/HDC allocation overhead.
 			// Layout itself takes <0.1ms when the PATH-L1 guard fires.
-			if (m_layoutBmp == null)
+			if (m_layoutBmp == null || m_layoutBmp.Width != width || m_layoutBmp.Height != height)
 			{
+				DisposeLayoutResources();
 				m_layoutBmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 				m_layoutGraphics = Graphics.FromImage(m_layoutBmp);
 				m_layoutHdc = m_layoutGraphics.GetHdc();
@@ -182,6 +201,31 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			}
 
 			m_view.RootBox.Layout(m_layoutVwGraphics, layoutWidth);
+		}
+
+		private bool EnsureViewSizedToContent(int width, int minimumHeight)
+		{
+			if (m_view?.RootBox == null)
+				return false;
+
+			int requiredHeight = Math.Max(minimumHeight, m_view.RootBox.Height + CapturePaddingPx);
+			if (requiredHeight <= 0 || requiredHeight == m_view.Height)
+				return false;
+
+			ResizeHostedView(width, requiredHeight);
+			return true;
+		}
+
+		private void ResizeHostedView(int width, int height)
+		{
+			if (m_view == null)
+				return;
+
+			var newSize = new Size(width, height);
+			m_view.Size = newSize;
+
+			if (m_view.Parent is Form form)
+				form.ClientSize = newSize;
 		}
 
 		/// <summary>

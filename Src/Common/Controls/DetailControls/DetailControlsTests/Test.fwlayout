@@ -26,6 +26,19 @@
 		<part ref="ScientificName" visibility="ifdata"/>
 		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
 	</layout>
+	<layout class="LexSense" type="detail" name="GlossSnIndented" expansion="expanded">
+		<part ref="Gloss"/>
+		<part ref="ScientificName" visibility="ifdata"/>
+		<indent indent="true">
+			<part ref="Senses" visibility="ifdata" param="GlossSnIndented" expansion="expanded"/>
+		</indent>
+	</layout>
+	<layout class="MoStemAllomorph" type="detail" name="FormOnly">
+		<part ref="FormOnly"/>
+	</layout>
+	<layout class="LexPronunciation" type="detail" name="FormOnly">
+		<part ref="FormOnly"/>
+	</layout>
 	<layout class="LexEtymology" type="detail" name="empty">
 		<!-- Empty base template (unified with caller node to inject child parts). -->
 	</layout>
@@ -47,6 +60,26 @@
 		<part ref="Restrictions" visibility="never"/>
 		<part ref="SummaryDefinition" visibility="never"/>
 		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="NormalWithHiddenFieldsIndented">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography" visibility="never"/>
+		<part ref="Comment" visibility="never"/>
+		<part ref="LiteralMeaning" visibility="never"/>
+		<part ref="Restrictions" visibility="never"/>
+		<part ref="SummaryDefinition" visibility="never"/>
+		<part ref="Senses" visibility="ifdata" param="GlossSnIndented" expansion="expanded"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="ProductionLikeWithHiddenFieldsIndented">
+		<part ref="LexemeForm" label="Lexeme Form"/>
+		<part ref="CitationForm" label="Citation Form"/>
+		<part ref="Pronunciations" visibility="ifdata"/>
+		<part ref="Bibliography" visibility="never"/>
+		<part ref="Comment" visibility="never"/>
+		<part ref="LiteralMeaning" visibility="never"/>
+		<part ref="Restrictions" visibility="never"/>
+		<part ref="SummaryDefinition" visibility="never"/>
+		<part ref="Senses" visibility="ifdata" param="GlossSnIndented" expansion="expanded"/>
 	</layout>
 	<layout class="LexSense" type="detail" name="Indented" expansion="expanded">
 		<indent>
