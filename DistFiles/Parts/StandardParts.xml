@@ -26,5 +26,9 @@
 	<part id="CmObject-Detail-Custom" type="detail" paramType="FieldName">
 		<slice editor="autoCustom" menu="mnuDataTree-Help" helpTopicID="khtpCustomFields"/>
 	</part>
+	<part id="CmObject-Detail-ImportResidue" type="detail">
+	</part>
+	<part id="CmObject-Detail-Pictures" type="detail">
+	</part>
   </bin>
 </PartInventory>
