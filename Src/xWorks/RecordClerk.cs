@@ -294,27 +294,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion IDisposable & Co. implementation
 
 		/// <summary>
-		/// This is invoked by reflection when something might want to know about a change.
-		/// The initial usage is for the respelling dialog to let ConcDecorators know about spelling changes.
-		/// The notification is passed on to any SDAs that understand it, including embedded ones.
-		/// </summary>
-		/// <param name="argument"></param>
-		public void OnItemDataModified(object argument)
-		{
-			var da = m_list.VirtualListPublisher;
-			while (da != null)
-			{
-				if (da.GetType().GetMethod("OnItemDataModified") != null)
-					ReflectionHelper.CallMethod(da, "OnItemDataModified", new [] {argument});
-				var decorator = da as DomainDataByFlidDecoratorBase;
-				if (decorator == null)
-					break;
-				da = decorator.BaseSda;
-			}
-		}
-
-
-		/// <summary>
 		/// We watch for changes to DateModified and update the status bar if we are controlling it.
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)

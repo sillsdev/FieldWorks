@@ -1,20 +1,22 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.Application;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -52,6 +54,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_services = services;
 			SetOverrideMdc(new ConcMdc(MetaDataCache as IFwMetaDataCacheManaged));
+
+			Subscriber.Subscribe(EventConstants.ItemDataModified, ItemDataModified);
 		}
 
 		internal const int kflidWfOccurrences = 899923; // occurrences of a wordform
@@ -81,6 +85,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void RemoveNotification(IVwNotifyChange nchng)
 		{
+			Subscriber.Unsubscribe(EventConstants.ItemDataModified, ItemDataModified);
+
 			base.RemoveNotification(nchng);
 			m_notifieeCount--;
 			if (m_notifieeCount <= 0 && m_interestingTexts != null)
@@ -173,13 +179,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This is invoked by reflection when the Respeller dialog changes the frequency of a wordform.
+		/// This is invoked when the Respeller dialog changes the frequency of a wordform.
 		/// </summary>
-		public void OnItemDataModified(object argument)
+		private void ItemDataModified(object argument)
 		{
-			if (!(argument is IAnalysis))
-				return;
-			UpdateAnalysisOccurrences((IAnalysis)argument, true);
+			ISilDataAccessManaged da = this;
+			while (da != null)
+			{
+				if (da is ConcDecorator && argument is IAnalysis analysis)
+				{
+					UpdateAnalysisOccurrences(analysis, true);
+				}
+				if (!(da is DomainDataByFlidDecoratorBase decorator))
+					break;
+				da = decorator.BaseSda;
+			}
 		}
 
 		/// <summary>
