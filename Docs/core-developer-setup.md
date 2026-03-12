@@ -27,6 +27,10 @@ See [Visual Studio Setup](visual-studio-setup.md) for detailed component list.
 
 Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tools via NuGet during the build. No separate WiX 3.x installation is required.
 
+### .NET SDK 8.x
+
+Local `liblcm` builds require the .NET 8 SDK because `liblcm` currently multi-targets `net8.0` in addition to legacy frameworks. Having only .NET 9 installed is not sufficient for this workflow.
+
 ```powershell
 # Standard developer machine setup
 .\Setup-Developer-Machine.ps1

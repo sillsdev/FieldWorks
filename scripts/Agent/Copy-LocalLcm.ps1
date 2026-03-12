@@ -4,11 +4,17 @@
 
 .DESCRIPTION
     This script enables developers to test local liblcm fixes without publishing a NuGet package.
-    It builds liblcm from a local checkout (by default ../liblcm) and copies the resulting
-    assemblies into FieldWorks' Output/<Configuration> folder, overwriting the NuGet versions.
+    It builds liblcm from a local checkout and copies the resulting assemblies into
+    FieldWorks' Output/<Configuration> folder, overwriting the NuGet versions.
+
+    Default liblcm discovery order:
+    1. -LcmRoot parameter
+    2. FW_LOCAL_LCM_ROOT environment variable
+    3. ../liblcm relative to the main FieldWorks repo root
 
 .PARAMETER LcmRoot
-    Path to the liblcm repository root. Defaults to ../liblcm (relative to FieldWorks repo).
+    Path to the liblcm repository root. If omitted, uses FW_LOCAL_LCM_ROOT when set,
+    otherwise ../liblcm relative to the main FieldWorks repo root.
 
 .PARAMETER FwOutputDir
     Path to FieldWorks output directory. Defaults to Output/<Configuration>.
@@ -24,7 +30,7 @@
 
 .EXAMPLE
     .\Copy-LocalLcm.ps1 -BuildLcm
-    Builds liblcm from ../liblcm and copies DLLs to Output/Debug.
+    Builds liblcm from the discovered local checkout and copies DLLs to Output/Debug.
 
 .EXAMPLE
     .\Copy-LocalLcm.ps1 -Configuration Release -BuildLcm
@@ -44,10 +50,59 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Get-RepoRoot([string]$anyPathInRepo) {
+    $top = & git -C $anyPathInRepo rev-parse --show-toplevel 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($top)) {
+        throw "Not a git repo (or git missing). Path: $anyPathInRepo"
+    }
+    return $top.Trim()
+}
+
+function Get-MainRepoRoot([string]$anyPathInRepo) {
+    $top = Get-RepoRoot $anyPathInRepo
+    $common = & git -C $anyPathInRepo rev-parse --git-common-dir 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($common)) {
+        return $top
+    }
+
+    $commonPath = $common.Trim()
+    if (-not [System.IO.Path]::IsPathRooted($commonPath)) {
+        $commonPath = Join-Path $top $commonPath
+    }
+
+    try {
+        $commonPath = (Resolve-Path -LiteralPath $commonPath).Path
+    }
+    catch {
+    }
+
+    $probe = $commonPath
+    while ($true) {
+        if ([string]::Equals((Split-Path $probe -Leaf), ".git", [System.StringComparison]::OrdinalIgnoreCase)) {
+            break
+        }
+
+        $parent = Split-Path $probe -Parent
+        if ([string]::IsNullOrWhiteSpace($parent) -or $parent -eq $probe) {
+            return $top
+        }
+
+        $probe = $parent
+    }
+
+    return (Split-Path $probe -Parent)
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
+$mainRepoRoot = Get-MainRepoRoot $repoRoot
 
 if (-not $LcmRoot) {
-    $LcmRoot = Join-Path (Split-Path $repoRoot -Parent) "liblcm"
+    if (-not [string]::IsNullOrWhiteSpace($env:FW_LOCAL_LCM_ROOT)) {
+        $LcmRoot = $env:FW_LOCAL_LCM_ROOT
+    }
+    else {
+        $LcmRoot = Join-Path (Split-Path $mainRepoRoot -Parent) "liblcm"
+    }
 }
 
 if (-not (Test-Path $LcmRoot)) {

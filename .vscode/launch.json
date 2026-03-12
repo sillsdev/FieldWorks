@@ -2,19 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FieldWorks",
+      "name": "FieldWorks (.NET Framework)",
       "type": "clr",
       "request": "launch",
       "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
       "cwd": "${workspaceFolder}\\Output\\Debug",
       "console": "externalTerminal",
-      "justMyCode": false,
+      "justMyCode": false
     },
     {
       "name": "Debug NUnit Tests",
       "type": "clr",
       "request": "launch",
-      "preLaunchTask": "Build Debug",
+      "preLaunchTask": "Build",
       "program": "dotnet",
       "args": [
         "test",

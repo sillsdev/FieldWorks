@@ -107,13 +107,14 @@ Update the NuGet versions in FieldWorks to use your local packages:
 
 ## Debugging Dependencies
 
-To debug into dependency code:
+For the detailed `liblcm` workflow, see `Docs/architecture/liblcm-debugging.md`.
 
-1. Build the dependency in Debug configuration
-2. Open the dependency project in Visual Studio alongside FieldWorks
-3. Start debugging FLEx
-4. Choose **Debug → Attach to Process** from the dependency project
-5. If breakpoints show "No symbols loaded", disable **Debug → Options → Enable Just My Code**
+Short version:
+
+1. Use Visual Studio 2022 as the primary debugger for `.NET Framework` plus native FieldWorks work.
+2. If you need exact source-level debugging into `liblcm`, build it locally and use `scripts/Agent/Copy-LocalLcm.ps1 -BuildLcm` to overlay the local DLLs and PDBs into `Output/Debug`.
+3. Use VS Code only for limited managed-only sessions in this repo, and only with the legacy C# extension path.
+4. If breakpoints show "No symbols loaded", verify the loaded module path and PDB match before changing debugger settings.
 
 ## Dependency Configuration
 

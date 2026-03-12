@@ -12,7 +12,7 @@
     - .NET Framework 4.8.1 SDK & Targeting Pack
     - Windows SDK
     - WiX Toolset v6 (installer builds restore via NuGet)
-    - .NET SDK 8.x+
+    - .NET SDK 8.x (required for local liblcm builds)
 
 .PARAMETER FailOnMissing
     If specified, exits with non-zero code if any required dependency is missing.
@@ -198,14 +198,25 @@ $results += Test-Dependency -Name "al.exe (.NET Framework SDK)" -Check {
     throw "al.exe not found in Windows SDK NETFX tool folders"
 }
 
-# .NET SDK
-$results += Test-Dependency -Name ".NET SDK" -Check {
+# .NET SDK 8.x
+$results += Test-Dependency -Name ".NET SDK 8.x" -Check {
     $dotnet = Get-Command dotnet.exe -ErrorAction SilentlyContinue
-    if ($dotnet) {
-        $version = (& dotnet.exe --version 2>&1)
-        return "Version $version"
+    if (-not $dotnet) {
+        throw "dotnet.exe not found in PATH"
     }
-    throw "dotnet.exe not found in PATH"
+
+    $sdks = @(& dotnet.exe --list-sdks 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to enumerate installed SDKs"
+    }
+
+    $sdk8 = $sdks | Where-Object { $_ -match '^8\.' } | Select-Object -First 1
+    if ($sdk8) {
+        return $sdk8.Trim()
+    }
+
+    $installed = (($sdks | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }) -join ', ')
+    throw ".NET SDK 8.x not found. Installed SDKs: $installed"
 }
 
 # WiX Toolset (v6)

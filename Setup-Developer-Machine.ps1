@@ -13,6 +13,7 @@
 #	 - .NET desktop development workload
 #	 - Desktop development with C++ workload (including ATL/MFC)
 #   - Git for Windows
+#   - This script installs .NET SDK 8.x if it is missing (for compiling liblcm)
 #
 # Note: Serena MCP language servers (Microsoft's Roslyn C# server and clangd for C++)
 # auto-download on first use. No manual installation needed for Serena support.
@@ -92,6 +93,43 @@ if (-not (Test-Path $toolsBase)) {
 }
 
 # Check what's already installed
+
+# .NET SDK 8.x
+$sdkLines = @()
+$dotnetCommand = Get-Command dotnet.exe -ErrorAction SilentlyContinue
+if ($dotnetCommand) {
+	$sdkLines = @(& dotnet.exe --list-sdks 2>$null)
+}
+
+$dotnet8Installed = $sdkLines | Where-Object { $_ -match '^8\.' } | Select-Object -First 1
+if ($dotnet8Installed) {
+	Write-Host "[OK] .NET SDK 8.x: $($dotnet8Installed.Trim())" -ForegroundColor Green
+} else {
+	$winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+	if (-not $winget) {
+		Write-Host "[MISSING] .NET SDK 8.x - install manually with WinGet or the .NET installer" -ForegroundColor Red
+		Write-Host "         WinGet: winget install --id Microsoft.DotNet.SDK.8 --exact" -ForegroundColor Red
+		exit 1
+	}
+
+	if ($PSCmdlet.ShouldProcess('.NET SDK 8.x', 'Install via WinGet')) {
+		Write-Host "Installing .NET SDK 8.x..." -ForegroundColor Cyan
+		& $winget.Source install --id Microsoft.DotNet.SDK.8 --exact --accept-package-agreements --accept-source-agreements
+		if ($LASTEXITCODE -ne 0) {
+			Write-Host "[ERROR] Failed to install .NET SDK 8.x via WinGet" -ForegroundColor Red
+			exit 1
+		}
+
+		$sdkLines = @(& dotnet.exe --list-sdks 2>$null)
+		$dotnet8Installed = $sdkLines | Where-Object { $_ -match '^8\.' } | Select-Object -First 1
+		if (-not $dotnet8Installed) {
+			Write-Host "[ERROR] .NET SDK 8.x still not detected after install" -ForegroundColor Red
+			exit 1
+		}
+
+		Write-Host "[OK] .NET SDK 8.x: $($dotnet8Installed.Trim())" -ForegroundColor Green
+	}
+}
 
 # WiX Toolset
 # This worktree builds installers with WiX v6 via NuGet PackageReference (restored during build).

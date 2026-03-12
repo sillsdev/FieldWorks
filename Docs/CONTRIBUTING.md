@@ -34,6 +34,14 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
+#### .NET SDK 8.x
+
+Install .NET SDK 8.x for local `liblcm` builds. The repository setup script installs it if missing:
+
+```powershell
+.\Setup-Developer-Machine.ps1
+```
+
 #### WiX Toolset (v6 via NuGet restore) (for installer building)
 
 Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tooling via NuGet during the build.

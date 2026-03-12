@@ -239,6 +239,22 @@
       },
       "problemMatcher": "$msCompile"
     },
+    {
+      "label": "Debug: Overlay local liblcm",
+      "type": "shell",
+      "command": "./scripts/Agent/Copy-LocalLcm.ps1 -BuildLcm",
+      "detail": "Build local liblcm from ../liblcm and copy its DLLs/PDBs into Output/Debug for debugging",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
 
     // ==================== Test Tasks ====================
     {
