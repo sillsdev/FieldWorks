@@ -529,6 +529,12 @@ namespace SIL.FieldWorks.IText
 			}
 
 		}
+
+		internal bool ContainsLexEntry(int hvo)
+		{
+			Sandbox sandbox = m_sandbox as Sandbox;
+			return sandbox?.IsShowingLexEntry(hvo) == true;
+		}
 	}
 
 	/// <summary>

@@ -3933,6 +3933,11 @@ namespace SIL.FieldWorks.IText
 			return hvoMorphEntry;
 		}
 
+		internal bool IsShowingLexEntry(int hvoLex)
+		{
+			return LexSensesForCurrentMorphs().Contains(hvoLex);
+		}
+
 		/// <summary>
 		/// Get's the real lex senses for each current morph.
 		/// </summary>
