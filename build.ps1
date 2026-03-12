@@ -594,8 +594,8 @@ try {
 
 		Stop-ConflictingProcesses @cleanupArgs
 		& "$PSScriptRoot\test.ps1" @testArgs
-		$testExitCode = $LASTEXITCODE
-		if ($testExitCode -ne 0) {
+		$script:testExitCode = $LASTEXITCODE
+		if ($script:testExitCode -ne 0) {
 			Write-Warning "Some tests failed. Check output above for details."
 		}
 	}
