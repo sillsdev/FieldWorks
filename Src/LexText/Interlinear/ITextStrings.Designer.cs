@@ -1397,15 +1397,6 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Media .
-        /// </summary>
-        internal static string ksMedia_ {
-            get {
-                return ResourceManager.GetString("ksMedia_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This utility finds groups of analyses that have the same word category and morphological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one..
         /// </summary>
         internal static string ksMergeAnalysesAttemptsTo {

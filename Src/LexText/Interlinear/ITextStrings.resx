@@ -344,10 +344,6 @@
   <data name="ksMedia" xml:space="preserve">
     <value>Media</value>
   </data>
-  <data name="ksMedia_" xml:space="preserve">
-    <value>Media </value>
-    <comment>there is a trailing space</comment>
-  </data>
   <data name="ksNoMedia" xml:space="preserve">
     <value>No Media</value>
   </data>

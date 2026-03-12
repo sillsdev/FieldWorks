@@ -1420,12 +1420,6 @@ namespace SIL.FieldWorks.IText
 					if (exporter != null)
 						exporter.FreeAnnotationType = "note";
 					break;
-				case InterlinLineChoices.kflidMedia:
-					label = ITextStrings.ksMedia_;
-					flid = SegmentTags.kflidMediaURI;
-					if (exporter != null)
-						exporter.FreeAnnotationType = "media";
-					break;
 				default:
 					throw new Exception("Unexpected FF annotation type");
 			}
