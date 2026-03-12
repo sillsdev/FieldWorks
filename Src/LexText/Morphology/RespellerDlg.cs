@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Resources;
@@ -571,10 +572,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform));
-#pragma warning restore 618
-
+				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform)));
 				ChangesWereMade = true;
 
 
@@ -1539,16 +1537,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					else
 					{
-#pragma warning disable 618 // suppress obsolete warning
-						mediator.SendMessage("ItemDataModified", wfOld);
-#pragma warning restore 618
+						Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfOld));
 					}
 				}
-
-#pragma warning disable 618 // suppress obsolete warning
-				mediator.SendMessage("ItemDataModified", wfNew);
-#pragma warning restore 618
-
+				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfNew));
 				uuow.RollBack = false;
 			}
 		}
