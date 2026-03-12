@@ -533,11 +533,7 @@ namespace SIL.FieldWorks.IText
 		internal bool ContainsLexEntry(int hvo)
 		{
 			Sandbox sandbox = m_sandbox as Sandbox;
-			if (sandbox != null)
-			{
-				return sandbox.LexSensesForCurrentMorphs().Contains(hvo);
-			}
-			return false;
+			return sandbox?.IsShowingLexEntry(hvo) == true;
 		}
 	}
 
