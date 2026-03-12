@@ -4,8 +4,9 @@
 
 .DESCRIPTION
     This script enables developers to test local liblcm fixes without publishing a NuGet package.
-    It builds liblcm from a local checkout and copies the resulting assemblies into
-    FieldWorks' Output/<Configuration> folder, overwriting the NuGet versions.
+    It builds the liblcm runtime assemblies needed by FieldWorks from a local checkout
+    and copies the resulting assemblies into FieldWorks' Output/<Configuration> folder,
+    overwriting the NuGet versions.
 
     Default liblcm discovery order:
     1. -LcmRoot parameter
@@ -30,11 +31,11 @@
 
 .EXAMPLE
     .\Copy-LocalLcm.ps1 -BuildLcm
-    Builds liblcm from the discovered local checkout and copies DLLs to Output/Debug.
+    Builds the liblcm net462 runtime assemblies from the discovered local checkout and copies DLLs to Output/Debug.
 
 .EXAMPLE
     .\Copy-LocalLcm.ps1 -Configuration Release -BuildLcm
-    Builds liblcm for Release and copies to Output/Release.
+    Builds the liblcm net462 runtime assemblies for Release and copies to Output/Release.
 
 .NOTES
     Use this for local debugging of liblcm issues. Never commit code that depends on this.
@@ -144,22 +145,30 @@ if (-not $SkipConfirm) {
 # Build liblcm if requested
 if ($BuildLcm) {
     Write-Host ""
-    Write-Host "Building liblcm ($Configuration)..." -ForegroundColor Cyan
+    Write-Host "Building liblcm runtime assemblies ($Configuration, net462)..." -ForegroundColor Cyan
 
     Push-Location $LcmRoot
     try {
-        # liblcm uses build.cmd for building
-        $buildScript = Join-Path $LcmRoot "build.cmd"
-        if (-not (Test-Path $buildScript)) {
-            throw "build.cmd not found at '$buildScript'. Is '$LcmRoot' a valid liblcm checkout?"
+        $projectPath = Join-Path $LcmRoot "src\SIL.LCModel\SIL.LCModel.csproj"
+        if (-not (Test-Path $projectPath)) {
+            throw "SIL.LCModel.csproj not found at '$projectPath'. Is '$LcmRoot' a valid liblcm checkout?"
         }
 
-        Write-Host "Running: $buildScript" -ForegroundColor Gray
-        & cmd /c $buildScript
+        $msbuildArgs = @(
+            $projectPath,
+            "/t:Build",
+            "/p:Configuration=$Configuration",
+            "/p:TargetFramework=net462",
+            "/nologo",
+            "/clp:ErrorsOnly"
+        )
+
+        Write-Host "Running: msbuild $projectPath /t:Build /p:Configuration=$Configuration /p:TargetFramework=net462" -ForegroundColor Gray
+        & msbuild @msbuildArgs
         if ($LASTEXITCODE -ne 0) {
             throw "liblcm build failed with exit code $LASTEXITCODE"
         }
-        Write-Host "[OK] liblcm build complete." -ForegroundColor Green
+        Write-Host "[OK] liblcm runtime build complete." -ForegroundColor Green
     }
     finally {
         Pop-Location

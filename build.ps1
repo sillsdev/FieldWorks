@@ -285,6 +285,52 @@ function Get-BuildStampPath {
 	return Join-Path $outputDir "BuildStamp.json"
 }
 
+function Remove-StaleLocalLcmSymbols {
+	param(
+		[Parameter(Mandatory = $true)][string]$OutputDir
+	)
+
+	$staleSymbolFiles = @(
+		"SIL.LCModel.pdb",
+		"SIL.LCModel.Core.pdb",
+		"SIL.LCModel.Utils.pdb"
+	)
+
+	foreach ($symbolFile in $staleSymbolFiles) {
+		$symbolPath = Join-Path $OutputDir $symbolFile
+		if (Test-Path $symbolPath) {
+			Remove-Item -Path $symbolPath -Force
+			Write-Host "Removed stale local LCM symbol: $symbolFile" -ForegroundColor Yellow
+		}
+	}
+}
+
+function Invoke-LocalLcmOverlay {
+	param(
+		[Parameter(Mandatory = $true)][string]$RepoRoot,
+		[Parameter(Mandatory = $true)][string]$BuildConfiguration,
+		[string]$LcmRootOverride
+	)
+
+	Write-Host ""
+	Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
+
+	$lcmCopyScript = Join-Path $RepoRoot "scripts\Agent\Copy-LocalLcm.ps1"
+	$lcmArgs = @{
+		Configuration = $BuildConfiguration
+		BuildLcm = $true
+		SkipConfirm = $true
+	}
+	if ($LcmRootOverride) {
+		$lcmArgs['LcmRoot'] = $LcmRootOverride
+	}
+
+	& $lcmCopyScript @lcmArgs
+	if ($LASTEXITCODE -ne 0) {
+		throw "Failed to copy local LCM assemblies."
+	}
+}
+
 try {
 	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -Action {
 		# Initialize Visual Studio Developer environment
@@ -305,6 +351,11 @@ try {
 		# Set architecture environment variable (x64-only)
 		$env:arch = 'x64'
 		Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
+
+		$fieldWorksOutputDir = Join-Path $PSScriptRoot ("Output\\{0}" -f $Configuration)
+		if (-not $UseLocalLcm) {
+			Remove-StaleLocalLcmSymbols -OutputDir $fieldWorksOutputDir
+		}
 
 		# Stop conflicting processes before the build
 		Stop-ConflictingProcesses @cleanupArgs
@@ -442,27 +493,6 @@ try {
 			Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
 		}
 
-		# Copy local LCM assemblies if requested
-		if ($UseLocalLcm) {
-			Write-Host ""
-			Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
-
-			$lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
-			$lcmArgs = @{
-				Configuration = $Configuration
-				BuildLcm = $true
-				SkipConfirm = $true
-			}
-			if ($LocalLcmPath) {
-				$lcmArgs['LcmRoot'] = $LocalLcmPath
-			}
-
-			& $lcmCopyScript @lcmArgs
-			if ($LASTEXITCODE -ne 0) {
-				throw "Failed to copy local LCM assemblies."
-			}
-		}
-
 		if ($InstallerOnly) {
 			if (-not $BuildInstaller -and -not $BuildPatch) {
 				throw "-InstallerOnly requires -BuildInstaller or -BuildPatch."
@@ -524,6 +554,10 @@ try {
 			Write-Host ""
 			Write-Host "[OK] Build complete!" -ForegroundColor Green
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+		}
+
+		if ($UseLocalLcm) {
+			Invoke-LocalLcmOverlay -RepoRoot $PSScriptRoot -BuildConfiguration $Configuration -LcmRootOverride $LocalLcmPath
 		}
 
 		if ($BuildInstaller -or $BuildPatch) {

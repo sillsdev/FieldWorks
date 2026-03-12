@@ -24,7 +24,7 @@ Use this decision tree first:
 
 By default, FieldWorks consumes `liblcm` through NuGet packages. The version is pinned in `Build/SilVersions.props` and flowed into `Directory.Packages.props`.
 
-For local debugging, the repository already provides `scripts/Agent/Copy-LocalLcm.ps1`, which can build `liblcm` from a sibling checkout and copy the resulting assemblies and PDBs into `Output/<Configuration>`.
+For local debugging, the repository already provides `scripts/Agent/Copy-LocalLcm.ps1`, which builds only the `liblcm` net462 runtime assemblies required by FieldWorks from a sibling checkout and copies the resulting assemblies and PDBs into `Output/<Configuration>`.
 
 Default liblcm discovery order:
 
@@ -86,6 +86,7 @@ Why this works:
 - The process loads the local `liblcm` assemblies from `Output/Debug`.
 - Visual Studio can resolve the matching local PDBs.
 - You avoid symbol-server ambiguity and package cache confusion.
+- The overlay step only builds the runtime net462 liblcm path that FieldWorks actually loads, which avoids unrelated liblcm solution warnings during the local-debug inner loop.
 
 Common reset step:
 
