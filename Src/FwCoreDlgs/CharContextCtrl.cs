@@ -60,7 +60,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private string[] m_fileData;
 		private DataGridView m_tokenGrid;
-		private string m_scrChecksDllFile;
 		private List<ContextInfo> m_currContextInfoList;
 		private Dictionary<string, List<ContextInfo>> m_contextInfoLists;
 		private LcmCache m_cache;
@@ -68,7 +67,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IApp m_app;
 		private CoreWritingSystemDefinition m_ws;
 		private int m_gridRowHeight;
-		private CheckType m_checkToRun;
 		private string m_sListName;
 		private readonly string m_sInitialScanMsgLabel;
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
@@ -112,12 +110,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_app = app;
 			ContextFont = contextFont;
 			TokenGrid = tokenGrid;
-
-			var isOkToDisplayScripture = m_cache != null && m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
-			if (isOkToDisplayScripture)
-			{
-				m_scrChecksDllFile = FwDirectoryFinder.BasicEditorialChecksDll;
-			}
 
 			if (m_ws != null)
 			{
@@ -207,33 +199,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_gridRowHeight = Math.Max(value.Height, gridContext.Font.Height) + 2;
 				}
 			}
-		}
-
-		/// <summary>
-		/// Kinds of checks this control might run if activated.
-		/// </summary>
-		public enum CheckType
-		{
-			/// <summary>
-			/// Use PunctuationCheck
-			/// </summary>
-			Punctuation,
-			/// <summary>
-			/// Use CharactersCheck
-			/// </summary>
-			Characters
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public CheckType CheckToRun
-		{
-			get { return m_checkToRun; }
-			set { m_checkToRun = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -577,10 +542,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_fileData = File.ReadAllLines(fileName);
 				NormalizeFileData();
 
-				var data = new TextFileDataSource(m_scrChecksDllFile,
-					m_checkToRun == CheckType.Punctuation ? "PunctuationCheck" : "CharactersCheck",
-					m_fileData,
-					ResourceHelper.GetResourceString("kstidFileLineRef"), m_chkParams, CharacterCategorizer);
+				var data = new TextFileDataSource(m_fileData,
+					ResourceHelper.GetResourceString("kstidFileLineRef"), CharacterCategorizer);
 
 				tokens = data.GetReferences();
 			}
