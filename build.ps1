@@ -42,7 +42,8 @@
 	is written next to the built executable. Useful for crash investigation.
 
 .PARAMETER NodeReuse
-	Enables or disables MSBuild node reuse (/nr). Default is true.
+	Enables or disables MSBuild node reuse (/nr). Default is false to improve
+	worktree isolation for concurrent local builds. Set to true to favor speed over isolation.
 
 .PARAMETER MsBuildArgs
 	Additional arguments to pass directly to MSBuild.
@@ -89,6 +90,18 @@
 	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
 	Only used when -UseLocalLcm is specified.
 
+.PARAMETER LogFile
+	Path to a file where the build output should be logged.
+
+.PARAMETER StartedBy
+	Optional actor label written to the worktree lock metadata (for example: user or agent).
+	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
+
+.PARAMETER TailLines
+	If specified, only displays the last N lines of output after the build completes.
+	Useful for CI/agent scenarios where you want to see recent output without piping.
+	The full output is still written to LogFile if specified.
+
 .PARAMETER SkipDependencyCheck
 	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
 
@@ -127,7 +140,7 @@ param(
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
 	[string]$Verbosity = "minimal",
-	[bool]$NodeReuse = $true,
+	[bool]$NodeReuse = $false,
 	[string[]]$MsBuildArgs = @(),
 	[string]$LogFile,
 	[int]$TailLines,
@@ -143,10 +156,19 @@ param(
 	[switch]$TraceCrashes,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
+	[ValidateSet('user', 'agent', 'unknown')]
+	[string]$StartedBy = 'unknown',
 	[switch]$SkipDependencyCheck
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
+	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
+	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {
+		$StartedBy = $startedByFromEnv
+	}
+}
 
 # Add WiX to the PATH for installer builds (required for harvesting localizations)
 $env:PATH = "$env:WIX/bin;$env:PATH"
@@ -207,7 +229,10 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-Stop-ConflictingProcesses -IncludeOmniSharp
+$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
+
+# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
 
 $fwTasksSourcePath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
 $fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
@@ -285,7 +310,7 @@ function Get-BuildStampPath {
 }
 
 try {
-	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -Action {
+	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
@@ -588,6 +613,7 @@ try {
 			Configuration = $Configuration
 			NoBuild       = $true
 		}
+		$testArgs += "-SkipWorktreeLock"
 		if ($TestFilter) {
 			$testArgs["TestFilter"] = $TestFilter
 		}
@@ -609,6 +635,7 @@ try {
 finally {
 	# Kill any lingering build processes that might hold file locks
 	Stop-ConflictingProcesses @cleanupArgs
+	Exit-WorktreeLock -LockHandle $worktreeLock
 }
 
 if ($testExitCode -ne 0) {

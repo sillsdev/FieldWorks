@@ -26,6 +26,14 @@
     Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
     Default is 'normal'.
 
+.PARAMETER StartedBy
+    Optional actor label written to worktree lock metadata (for example: user or agent).
+    Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
+
+.PARAMETER SkipWorktreeLock
+    Internal switch used when test.ps1 is invoked from build.ps1 -RunTests.
+    Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
+
 .EXAMPLE
     .\test.ps1
     Runs all tests in Debug configuration (builds first if needed).
@@ -55,10 +63,20 @@ param(
     [ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
     [string]$Verbosity = "normal",
     [switch]$Native,
-    [switch]$SkipDependencyCheck
+    [switch]$SkipDependencyCheck,
+    [switch]$SkipWorktreeLock,
+    [ValidateSet('user', 'agent', 'unknown')]
+    [string]$StartedBy = 'unknown'
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
+    $startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
+    if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {
+        $StartedBy = $startedByFromEnv
+    }
+}
 
 # =============================================================================
 # Import Shared Module
@@ -71,7 +89,13 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-Stop-ConflictingProcesses -IncludeOmniSharp
+$worktreeLock = $null
+if (-not $SkipWorktreeLock) {
+    $worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks test run" -StartedBy $StartedBy
+}
+
+# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
 
 # =============================================================================
 # Environment Setup
@@ -85,7 +109,7 @@ $cleanupArgs = @{
 $testExitCode = 0
 
 try {
-    Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -Action {
+    Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
         # Initialize VS environment
         Initialize-VsDevEnvironment
         Test-CvtresCompatibility
@@ -530,6 +554,9 @@ try {
 }
 finally {
     Stop-ConflictingProcesses @cleanupArgs
+    if ($worktreeLock) {
+        Exit-WorktreeLock -LockHandle $worktreeLock
+    }
 }
 
 # =============================================================================

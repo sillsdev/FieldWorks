@@ -65,6 +65,13 @@ The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **`Build/scripts/Invoke-CppTest.ps1`**: Backend for native C++ tests (MSBuild/NMake).
 -   **`Build/Agent/FwBuildHelpers.psm1`**: Shared logic for VS environment, and process cleanup.
 
+## Worktree-aware behavior
+- `test.ps1` scopes process cleanup to the current repository root (`$PSScriptRoot`) so concurrent runs in other worktrees are not terminated.
+- `build.ps1` and `test.ps1` in the same worktree both target `Output/<Configuration>/`; a same-worktree lock prevents concurrent runs and fails fast with owner details.
+- `build.ps1 -RunTests` is supported in the same worktree: the child `test.ps1` run reuses the parent workflow lock.
+- If you need concurrency, use separate git worktrees and run one scripted workflow per worktree.
+- Optional lock ownership tagging: set `FW_BUILD_STARTED_BY=user|agent` (or pass `-StartedBy`) before running scripts.
+
 ## Debugging & Logs
 -   **Logs**: Build logs are written to `Output/Build.log` (if configured) or standard output.
 -   **Verbosity**: Use `-Verbosity detailed` with `test.ps1` for more output.
