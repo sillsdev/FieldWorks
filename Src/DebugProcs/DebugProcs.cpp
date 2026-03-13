@@ -286,10 +286,29 @@ extern "C" __declspec(dllexport) int APIENTRY DebugProcsExit(void)
 
 /*----------------------------------------------------------------------------------------------
 	Returns the AssertMessageBox value from the registry; if not set return the value of the
-	environment variable AssertUiEnabled; if not set return true
+	environment variable AssertUiEnabled; if not set return true.
+	FW_TEST_MODE=1 takes absolute priority and always returns false (no dialog).
 ----------------------------------------------------------------------------------------------*/
 bool GetShowAssertMessageBox()
 {
+// getenv is deprecated on Windows
+#if defined(WIN32) || defined(WIN64)
+#pragma warning(push)
+#pragma warning(disable: 4996)
+
+// Windows doesn't know strcasecmp, it calls it stricmp instead...
+#ifndef strcasecmp
+#define strcasecmp stricmp
+#endif
+#endif // WIN32
+
+	// FW_TEST_MODE is an unconditional override set by test runners.
+	// It takes priority over both the registry and AssertUiEnabled so that
+	// developer machines with the registry key set never pop dialogs during tests.
+	const char* pTestMode = getenv("FW_TEST_MODE");
+	if (pTestMode && strcasecmp(pTestMode, "1") == 0)
+		return false;
+
 #if defined(WIN32) || defined(WIN64)
 	HKEY hk;
 	if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\SIL\\FieldWorks", 0,
@@ -304,15 +323,6 @@ bool GetShowAssertMessageBox()
 		if (ret == ERROR_SUCCESS)
 			return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
 	}
-// getenv is deprecated on Windows
-#pragma warning(push)
-#pragma warning(disable: 4996)
-
-// Windows doesn't know strcasecmp, it calls it stricmp instead...
-#ifndef strcasecmp
-#define strcasecmp stricmp
-#endif
-
 #endif // WIN32
 	const char* pEnvVar = getenv("AssertUiEnabled");
 	return !pEnvVar ||
@@ -580,6 +590,11 @@ void __cdecl SilAssert (
 		g_ReportHook(_CRT_ASSERT, assertbuf);
 	else
 		OutputDebugString(assertbuf);
+
+	// Always mirror assertion text to the process error stream so test runners,
+	// humans, and automation can see the failure details without a debugger.
+	fprintf(stderr, "%s\n", assertbuf);
+	fflush(stderr);
 
 	// NOTE: this method is intented to be used by unmanaged apps only;
 	// managed apps should use DebugProcs.AssertProc in DebugProcs.cs
