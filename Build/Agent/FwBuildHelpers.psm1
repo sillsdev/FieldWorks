@@ -147,6 +147,7 @@ function Get-WorktreeMutexName {
     $hash = [System.BitConverter]::ToString($hashBytes).Replace('-', '')
     $shortHash = $hash.Substring(0, 16)
     return "Global\FieldWorks.Worktree.$shortHash"
+    return "Global\FieldWorks.Worktree.$shortHash"
 }
 
 function Enter-WorktreeLock {
@@ -182,7 +183,7 @@ function Enter-WorktreeLock {
             $hasHandle = $true
         }
 
-        $lockPath = Join-Path $RepoRoot "Output\\WorktreeRun.lock.json"
+        $lockPath = Join-Path $RepoRoot 'Output' | Join-Path -ChildPath 'WorktreeRun.lock.json'
 
         if (-not $hasHandle) {
             $ownerDetails = $null
