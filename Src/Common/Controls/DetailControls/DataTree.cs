@@ -4536,8 +4536,38 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		private const int WM_MOUSEWHEEL = 0x020A;
 		private static readonly WheelRedirector s_wheelRedirector = new WheelRedirector();
+
+		internal static int GetWheelScrollPixels(DataTree dataTree, int delta)
+		{
+			if (delta == 0)
+				return 0;
+
+			int scrollLines = SystemInformation.MouseWheelScrollLines;
+			if (scrollLines == 0)
+				return 0;
+
+			if (scrollLines == int.MaxValue)
+				return Math.Sign(delta) * dataTree.ClientRectangle.Height;
+
+			double linesToScroll = (double)delta / SystemInformation.MouseWheelScrollDelta * scrollLines;
+			return (int)Math.Round(linesToScroll * dataTree.Font.Height, MidpointRounding.AwayFromZero);
+		}
+
+		internal static bool TryGetWheelScrollPosition(DataTree dataTree, int delta, out int newY)
+		{
+			int currentY = -dataTree.AutoScrollPosition.Y;
+			int maxScroll = Math.Max(0,
+				dataTree.AutoScrollMinSize.Height - dataTree.ClientRectangle.Height);
+			int pixelDelta = GetWheelScrollPixels(dataTree, delta);
+			newY = Math.Max(0, Math.Min(currentY - pixelDelta, maxScroll));
+			return newY != currentY;
+		}
+
+		internal static bool CanRedirectWheelMessage(DataTree dataTree)
+		{
+			return dataTree.IsHandleCreated && !dataTree.IsDisposed && dataTree.Visible;
+		}
 
 		/// <summary>
 		/// Application-level message filter that intercepts WM_MOUSEWHEEL messages
@@ -4549,12 +4579,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private sealed class WheelRedirector : IMessageFilter
 		{
-			private readonly List<DataTree> m_dataTrees = new List<DataTree>();
+			private readonly HashSet<DataTree> m_dataTrees = new HashSet<DataTree>();
 			private bool m_installed;
 
 			public void Register(DataTree dataTree)
 			{
-				m_dataTrees.Add(dataTree);
+				if (!m_dataTrees.Add(dataTree))
+					return;
 				if (!m_installed)
 				{
 					Application.AddMessageFilter(this);
@@ -4564,7 +4595,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			public void Unregister(DataTree dataTree)
 			{
-				m_dataTrees.Remove(dataTree);
+				if (!m_dataTrees.Remove(dataTree))
+					return;
+
 				if (m_dataTrees.Count == 0 && m_installed)
 				{
 					Application.RemoveMessageFilter(this);
@@ -4574,14 +4607,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			public bool PreFilterMessage(ref Message m)
 			{
-				if (m.Msg != WM_MOUSEWHEEL)
+				if (m.Msg != (int)Win32.WinMsgs.WM_MOUSEWHEEL)
 					return false;
 
 				Point cursor = Cursor.Position;
-				for (int i = 0; i < m_dataTrees.Count; i++)
+				foreach (var dataTree in m_dataTrees)
 				{
-					var dataTree = m_dataTrees[i];
-					if (!dataTree.IsHandleCreated || dataTree.IsDisposed)
+					if (!CanRedirectWheelMessage(dataTree))
 						continue;
 
 					Rectangle bounds = dataTree.RectangleToScreen(dataTree.ClientRectangle);
@@ -4589,13 +4621,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						continue;
 
 					int delta = (short)((long)m.WParam >> 16);
-					int currentY = -dataTree.AutoScrollPosition.Y;
-					int maxScroll = Math.Max(0,
-						dataTree.AutoScrollMinSize.Height - dataTree.ClientRectangle.Height);
-					int newY = Math.Max(0, Math.Min(currentY - delta, maxScroll));
-					if (newY != currentY)
+					int newY;
+					if (TryGetWheelScrollPosition(dataTree, delta, out newY))
+					{
 						dataTree.AutoScrollPosition = new Point(0, newY);
-					return true;
+						return true;
+					}
+
+					return false;
 				}
 
 				return false;
