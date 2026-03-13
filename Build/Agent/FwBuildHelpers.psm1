@@ -146,7 +146,7 @@ function Get-WorktreeMutexName {
 
     $hash = [System.BitConverter]::ToString($hashBytes).Replace('-', '')
     $shortHash = $hash.Substring(0, 16)
-    return "Global\FieldWorks.Worktree.$shortHash"
+	# Global scope is intentional to allow mutex visibility across processes regardless of session or user (e.g. VS and command line)
     return "Global\FieldWorks.Worktree.$shortHash"
 }
 

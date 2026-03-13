@@ -52,11 +52,13 @@ This repo supports multiple concurrent builds across git worktrees. Prefer the s
 - Optional actor tagging: set `FW_BUILD_STARTED_BY=user|agent` (or pass `-StartedBy`) to record who owns the lock.
 
 ### MSBuild node reuse default
-- `build.ps1` defaults `-NodeReuse` to `false` to reduce cross-worktree lock contention from shared MSBuild worker nodes.
-- If you prefer faster local inner-loop builds and are not running concurrent worktrees, you can opt back in with:
+- `build.ps1` defaults `-NodeReuse` to `auto`.
+- In `auto` mode, MSBuild node reuse is enabled when the repository has a single local worktree and disabled when multiple local worktrees are detected, reducing cross-worktree lock contention from shared worker nodes.
+- You can still override the policy explicitly with:
 
 ```powershell
 .\build.ps1 -NodeReuse $true
+.\build.ps1 -NodeReuse $false
 ```
 
 ## Troubleshooting (common)

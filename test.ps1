@@ -225,7 +225,10 @@ try {
             }
             else {
                 Write-Host "Building before running tests..." -ForegroundColor Cyan
-                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
+                # This nested call runs while test.ps1 already owns the same-worktree lock.
+                # Pass -SkipWorktreeLock explicitly so the build path does not depend on the
+                # current '&' invocation sharing the same thread and Windows mutex recursion.
+                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -SkipWorktreeLock
                 if ($LASTEXITCODE -ne 0) {
                     Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
                     $script:testExitCode = $LASTEXITCODE

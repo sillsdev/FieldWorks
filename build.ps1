@@ -42,8 +42,9 @@
 	is written next to the built executable. Useful for crash investigation.
 
 .PARAMETER NodeReuse
-	Enables or disables MSBuild node reuse (/nr). Default is false to improve
-	worktree isolation for concurrent local builds. Set to true to favor speed over isolation.
+	Controls MSBuild node reuse (/nr). Accepts true, false, or auto.
+	Default is auto: enable reuse when this repository has a single local worktree,
+	and disable it when multiple local worktrees exist to improve isolation.
 
 .PARAMETER MsBuildArgs
 	Additional arguments to pass directly to MSBuild.
@@ -97,6 +98,10 @@
 	Optional actor label written to the worktree lock metadata (for example: user or agent).
 	Defaults to the FW_BUILD_STARTED_BY environment variable when set, otherwise 'unknown'.
 
+.PARAMETER SkipWorktreeLock
+	Internal switch used when build.ps1 is invoked from test.ps1 while the parent test workflow
+	already owns the same-worktree lock. Skips acquiring/releasing that lock again.
+
 .PARAMETER TailLines
 	If specified, only displays the last N lines of output after the build completes.
 	Useful for CI/agent scenarios where you want to see recent output without piping.
@@ -140,7 +145,8 @@ param(
 	[switch]$BuildAdditionalApps,
 	[string]$Project = "FieldWorks.proj",
 	[string]$Verbosity = "minimal",
-	[bool]$NodeReuse = $false,
+	[ValidateSet('true', 'false', 'auto')]
+	[string]$NodeReuse = 'auto',
 	[string[]]$MsBuildArgs = @(),
 	[string]$LogFile,
 	[int]$TailLines,
@@ -158,6 +164,7 @@ param(
 	[string]$LocalLcmPath,
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown',
+	[switch]$SkipWorktreeLock,
 	[switch]$SkipDependencyCheck
 )
 
@@ -302,8 +309,64 @@ function Get-BuildStampPath {
 	return Join-Path $outputDir "BuildStamp.json"
 }
 
+function Resolve-NodeReuse {
+	param(
+		[Parameter(Mandatory = $true)][string]$Mode
+	)
+
+	$normalizedMode = $Mode.ToLowerInvariant()
+	if ($normalizedMode -eq 'true') {
+		return [pscustomobject]@{
+			Enabled = $true
+			Source = 'explicit'
+			Reason = 'requested explicitly'
+		}
+	}
+
+	if ($normalizedMode -eq 'false') {
+		return [pscustomobject]@{
+			Enabled = $false
+			Source = 'explicit'
+			Reason = 'requested explicitly'
+		}
+	}
+
+	$worktreeList = & git worktree list --porcelain
+	if ($LASTEXITCODE -ne 0) {
+		Write-Warning 'Failed to inspect git worktrees. Defaulting MSBuild node reuse to false for safety.'
+		return [pscustomobject]@{
+			Enabled = $false
+			Source = 'auto'
+			Reason = 'git worktree detection failed'
+		}
+	}
+
+	$worktreeCount = 0
+	foreach ($line in (($worktreeList | Out-String) -split "`r?`n")) {
+		if ($line.StartsWith('worktree ')) {
+			$worktreeCount++
+		}
+	}
+
+	if ($worktreeCount -le 1) {
+		return [pscustomobject]@{
+			Enabled = $true
+			Source = 'auto'
+			Reason = 'single local worktree detected'
+		}
+	}
+
+	return [pscustomobject]@{
+		Enabled = $false
+		Source = 'auto'
+		Reason = "$worktreeCount local worktrees detected"
+	}
+}
+
 try {
-	$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
+	if (-not $SkipWorktreeLock) {
+		$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
+	}
 
 	# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
 	Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
@@ -373,6 +436,7 @@ try {
 
 		# Construct MSBuild arguments
 		$finalMsBuildArgs = @()
+		$nodeReuseDecision = Resolve-NodeReuse -Mode $NodeReuse
 
 		# Parallelism
 		if (-not $Serial) {
@@ -385,7 +449,7 @@ try {
 		$finalMsBuildArgs += "/consoleloggerparameters:Summary"
 
 		# Node Reuse
-		$finalMsBuildArgs += "/nr:$($NodeReuse.ToString().ToLower())"
+		$finalMsBuildArgs += "/nr:$($nodeReuseDecision.Enabled.ToString().ToLower())"
 
 		# Properties
 		$finalMsBuildArgs += "/p:Configuration=$Configuration"
@@ -425,7 +489,7 @@ try {
 		Write-Host ""
 		Write-Host "Building FieldWorks..." -ForegroundColor Cyan
 		Write-Host "Project: $projectPath" -ForegroundColor Cyan
-		Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $($BuildTests -or $RunTests)" -ForegroundColor Cyan
+		Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $($BuildTests -or $RunTests) | NodeReuse: $($nodeReuseDecision.Enabled) [$($nodeReuseDecision.Source): $($nodeReuseDecision.Reason)]" -ForegroundColor Cyan
 
 		if ($BuildAdditionalApps) {
 			Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
