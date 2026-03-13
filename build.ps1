@@ -229,18 +229,11 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
-
-# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
-Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
-
-$fwTasksSourcePath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
-$fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
-
 # =============================================================================
 # Environment Setup
 # =============================================================================
 
+$worktreeLock = $null
 $cleanupArgs = @{
 	IncludeOmniSharp = $true
 	RepoRoot = $PSScriptRoot
@@ -310,6 +303,14 @@ function Get-BuildStampPath {
 }
 
 try {
+	$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
+
+	# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+	Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
+
+	$fwTasksSourcePath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
+	$fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
+
 	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
@@ -635,7 +636,9 @@ try {
 finally {
 	# Kill any lingering build processes that might hold file locks
 	Stop-ConflictingProcesses @cleanupArgs
-	Exit-WorktreeLock -LockHandle $worktreeLock
+	if ($worktreeLock) {
+		Exit-WorktreeLock -LockHandle $worktreeLock
+	}
 }
 
 if ($testExitCode -ne 0) {

@@ -229,7 +229,16 @@ function Enter-WorktreeLock {
         }
     }
     catch {
-        if (-not $hasHandle -and $mutex) {
+        if ($mutex) {
+            if ($hasHandle) {
+                try {
+                    $mutex.ReleaseMutex()
+                }
+                catch {
+                    # Ignore release failures on the error path.
+                }
+            }
+
             $mutex.Dispose()
         }
         throw

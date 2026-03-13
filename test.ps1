@@ -89,18 +89,11 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-$worktreeLock = $null
-if (-not $SkipWorktreeLock) {
-    $worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks test run" -StartedBy $StartedBy
-}
-
-# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
-Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
-
 # =============================================================================
 # Environment Setup
 # =============================================================================
 
+$worktreeLock = $null
 $cleanupArgs = @{
     IncludeOmniSharp = $true
     RepoRoot = $PSScriptRoot
@@ -109,6 +102,13 @@ $cleanupArgs = @{
 $testExitCode = 0
 
 try {
+    if (-not $SkipWorktreeLock) {
+        $worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks test run" -StartedBy $StartedBy
+    }
+
+    # Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+    Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
+
     Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
         # Initialize VS environment
         Initialize-VsDevEnvironment
