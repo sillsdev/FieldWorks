@@ -2,13 +2,37 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FieldWorks (.NET Framework)",
+      "name": "FieldWorks (.NET Framework, Package)",
       "type": "clr",
       "request": "launch",
+      "preLaunchTask": "Prepare Debug (Package)",
       "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
       "cwd": "${workspaceFolder}\\Output\\Debug",
       "console": "externalTerminal",
-      "justMyCode": false
+      "justMyCode": false,
+      "requireExactSource": false,
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}\\Output\\Debug"
+        ]
+      }
+    },
+    {
+      "name": "FieldWorks (.NET Framework, Local LCM)",
+      "type": "clr",
+      "request": "launch",
+      "preLaunchTask": "Prepare Debug (Local LCM)",
+      "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
+      "cwd": "${workspaceFolder}\\Output\\Debug",
+      "console": "externalTerminal",
+      "justMyCode": false,
+      "requireExactSource": false,
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}\\Output\\Debug",
+          "${workspaceFolder}\\Localizations\\LCM\\artifacts\\Debug\\net462"
+        ]
+      }
     },
     {
       "name": "Debug NUnit Tests",

@@ -211,12 +211,96 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "./build.ps1",
+      "command": "./build.ps1 -LcmMode Auto",
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "detail": "Build FieldWorks (auto-detects worktree)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Package)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Package",
+      "group": "build",
+      "detail": "Build FieldWorks against the pinned liblcm packages",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Package, VS Code Debug)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Package -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build FieldWorks against pinned liblcm packages with portable managed PDBs for the VS Code debugger",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Prepare Debug (Package)",
+      "type": "shell",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Package -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build for VS Code debugging only when relevant files changed since the last successful package-mode portable-PDB debug build",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Local LCM)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Local",
+      "group": "build",
+      "detail": "Build FieldWorks against the nested Localizations/LCM checkout",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Local LCM, VS Code Debug)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Local -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build FieldWorks against the nested local LCM checkout with portable managed PDBs for the VS Code debugger",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Prepare Debug (Local LCM)",
+      "type": "shell",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Local -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build for VS Code debugging only when relevant files changed since the last successful local-LCM portable-PDB debug build",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -239,23 +323,6 @@
       },
       "problemMatcher": "$msCompile"
     },
-    {
-      "label": "Debug: Overlay local liblcm",
-      "type": "shell",
-      "command": "./scripts/Agent/Copy-LocalLcm.ps1 -BuildLcm",
-      "detail": "Build local liblcm from ../liblcm and copy its DLLs/PDBs into Output/Debug for debugging",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-
     // ==================== Test Tasks ====================
     {
       "label": "Test",

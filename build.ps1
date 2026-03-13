@@ -80,15 +80,15 @@
 	Only used with -BuildInstaller. Enables local signing when signing tools are available.
 	By default, local installer builds capture files to sign later instead of signing.
 
-.PARAMETER UseLocalLcm
-	If set, builds liblcm from a local checkout after the FieldWorks build
-	and copies the resulting DLLs into the output directory, overwriting the NuGet package versions.
-	Use this to test local liblcm fixes without publishing a NuGet package.
+.PARAMETER LcmMode
+	Controls how FieldWorks resolves liblcm.
+	- Auto: use package mode by default, but report whether local Localizations/LCM inputs are ready.
+	- Package: force the package-backed path.
+	- Local: force the nested Localizations/LCM source-backed path.
 
-.PARAMETER LocalLcmPath
-	Path to the local liblcm repository. If omitted, uses FW_LOCAL_LCM_ROOT when set,
-	otherwise ../liblcm relative to the main FieldWorks repo root so the same checkout works for linked worktrees.
-	Only used when -UseLocalLcm is specified.
+.PARAMETER ManagedDebugType
+	Optionally overrides the managed project PDB format for this build.
+	Use 'portable' for VS Code debugging. Windows PDBs are not supported by the VS Code debugger path used for FieldWorks.
 
 .PARAMETER SkipDependencyCheck
 	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
@@ -110,8 +110,12 @@
 	Builds Debug x64 serially with detailed logging.
 
 .EXAMPLE
-	.\build.ps1 -UseLocalLcm
-	Builds FieldWorks, then builds liblcm from the discovered local checkout and copies DLLs into Output.
+	.\build.ps1 -LcmMode Local
+	Builds FieldWorks against the nested Localizations/LCM checkout.
+
+.EXAMPLE
+	.\build.ps1 -LcmMode Local -ManagedDebugType portable
+	Builds FieldWorks against the nested Localizations/LCM checkout with portable managed PDBs for VS Code debugging.
 
 .NOTES
 	FieldWorks is x64-only. The x86 platform is no longer supported.
@@ -142,8 +146,10 @@ param(
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
 	[switch]$TraceCrashes,
-	[switch]$UseLocalLcm,
-	[string]$LocalLcmPath,
+	[ValidateSet('Auto', 'Package', 'Local')]
+	[string]$LcmMode = 'Auto',
+	[ValidateSet('portable', 'full', 'pdbonly', 'embedded')]
+	[string]$ManagedDebugType,
 	[switch]$SkipDependencyCheck
 )
 
@@ -285,49 +291,76 @@ function Get-BuildStampPath {
 	return Join-Path $outputDir "BuildStamp.json"
 }
 
-function Remove-StaleLocalLcmSymbols {
+function Get-LocalLcmState {
 	param(
-		[Parameter(Mandatory = $true)][string]$OutputDir
+		[Parameter(Mandatory = $true)][string]$RepoRoot,
+		[Parameter(Mandatory = $true)][string]$ConfigurationName
 	)
 
-	$staleSymbolFiles = @(
-		"SIL.LCModel.pdb",
-		"SIL.LCModel.Core.pdb",
-		"SIL.LCModel.Utils.pdb"
-	)
+	$nestedRoot = Join-Path $RepoRoot 'Localizations\LCM'
+	$localSolution = Join-Path $RepoRoot 'FieldWorks.LocalLcm.sln'
+	$lcmSolution = Join-Path $nestedRoot 'LCM.sln'
+	$artifactsDir = Join-Path $nestedRoot ("artifacts\{0}\net462" -f $ConfigurationName)
+	$buildTasksPath = Join-Path $artifactsDir 'SIL.LCModel.Build.Tasks.dll'
 
-	foreach ($symbolFile in $staleSymbolFiles) {
-		$symbolPath = Join-Path $OutputDir $symbolFile
-		if (Test-Path $symbolPath) {
-			Remove-Item -Path $symbolPath -Force
-			Write-Host "Removed stale local LCM symbol: $symbolFile" -ForegroundColor Yellow
-		}
+	return [pscustomobject]@{
+		NestedRoot = $nestedRoot
+		LocalSolutionPath = $localSolution
+		LcmSolutionPath = $lcmSolution
+		ArtifactsDir = $artifactsDir
+		NestedRootExists = (Test-Path $nestedRoot)
+		LocalSolutionExists = (Test-Path $localSolution)
+		LcmSolutionExists = (Test-Path $lcmSolution)
+		ArtifactsReady = (Test-Path $buildTasksPath)
+		BuildTasksPath = $buildTasksPath
 	}
 }
 
-function Invoke-LocalLcmOverlay {
+function Resolve-LcmMode {
 	param(
-		[Parameter(Mandatory = $true)][string]$RepoRoot,
-		[Parameter(Mandatory = $true)][string]$BuildConfiguration,
-		[string]$LcmRootOverride
+		[Parameter(Mandatory = $true)][ValidateSet('Auto', 'Package', 'Local')][string]$RequestedMode,
+		[Parameter(Mandatory = $true)][string]$ProjectArgument,
+		[Parameter(Mandatory = $true)][psobject]$LocalLcmState
 	)
 
-	Write-Host ""
-	Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
-
-	$lcmCopyScript = Join-Path $RepoRoot "scripts\Agent\Copy-LocalLcm.ps1"
-	$lcmArgs = @{
-		Configuration = $BuildConfiguration
-		BuildLcm = $true
-		SkipConfirm = $true
-	}
-	if ($LcmRootOverride) {
-		$lcmArgs['LcmRoot'] = $LcmRootOverride
+	if ($RequestedMode -eq 'Local') {
+		return 'Local'
 	}
 
-	& $lcmCopyScript @lcmArgs
-	if ($LASTEXITCODE -ne 0) {
-		throw "Failed to copy local LCM assemblies."
+	if ($RequestedMode -eq 'Package') {
+		return 'Package'
+	}
+
+	if ([System.IO.Path]::GetFileName($ProjectArgument) -ieq 'FieldWorks.LocalLcm.sln') {
+		return 'Local'
+	}
+
+	return 'Package'
+}
+
+function Sync-LocalLcmRuntimeOutputs {
+	param(
+		[Parameter(Mandatory = $true)][string]$ArtifactsDir,
+		[Parameter(Mandatory = $true)][string]$RuntimeOutputDir
+	)
+
+	$runtimeAssemblies = @(
+		'SIL.LCModel',
+		'SIL.LCModel.Core',
+		'SIL.LCModel.Utils',
+		'SIL.LCModel.FixData'
+	)
+
+	foreach ($assemblyName in $runtimeAssemblies) {
+		foreach ($extension in @('dll', 'pdb', 'dll.config')) {
+			$sourcePath = Join-Path $ArtifactsDir ("{0}.{1}" -f $assemblyName, $extension)
+			if (-not (Test-Path $sourcePath)) {
+				continue
+			}
+
+			$destinationPath = Join-Path $RuntimeOutputDir ("{0}.{1}" -f $assemblyName, $extension)
+			Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+		}
 	}
 }
 
@@ -351,11 +384,6 @@ try {
 		# Set architecture environment variable (x64-only)
 		$env:arch = 'x64'
 		Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
-
-		$fieldWorksOutputDir = Join-Path $PSScriptRoot ("Output\\{0}" -f $Configuration)
-		if (-not $UseLocalLcm) {
-			Remove-StaleLocalLcmSymbols -OutputDir $fieldWorksOutputDir
-		}
 
 		# Stop conflicting processes before the build
 		Stop-ConflictingProcesses @cleanupArgs
@@ -419,6 +447,10 @@ try {
 		if ($SkipNative) {
 			$finalMsBuildArgs += "/p:SkipNative=true"
 		}
+		if ($ManagedDebugType) {
+			$finalMsBuildArgs += "/p:DebugSymbols=true"
+			$finalMsBuildArgs += "/p:DebugType=$ManagedDebugType"
+		}
 
 		$installerMsBuildArgs = $finalMsBuildArgs
 
@@ -443,6 +475,36 @@ try {
 		# Add user-supplied args
 		$finalMsBuildArgs += $MsBuildArgs
 		$installerMsBuildArgs += $MsBuildArgs
+
+		$localLcmState = Get-LocalLcmState -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
+		$resolvedLcmMode = Resolve-LcmMode -RequestedMode $LcmMode -ProjectArgument $Project -LocalLcmState $localLcmState
+		$useLocalLcmSource = ($resolvedLcmMode -eq 'Local')
+		$restoreSolution = if ($useLocalLcmSource) { $localLcmState.LocalSolutionPath } else { Join-Path $PSScriptRoot 'FieldWorks.sln' }
+
+		Write-Host "LCM mode: $resolvedLcmMode (requested: $LcmMode)" -ForegroundColor Cyan
+		if ($ManagedDebugType) {
+			Write-Host "Managed debug symbols: $ManagedDebugType" -ForegroundColor Cyan
+		}
+		Write-Host "Local LCM checkout: $(if ($localLcmState.LcmSolutionExists) { 'ready' } elseif ($localLcmState.NestedRootExists) { 'partial' } else { 'missing' }) at $($localLcmState.NestedRoot)" -ForegroundColor Cyan
+		Write-Host "Local LCM artifacts: $(if ($localLcmState.ArtifactsReady) { 'ready' } else { 'missing' }) at $($localLcmState.ArtifactsDir)" -ForegroundColor Cyan
+		if ($LcmMode -eq 'Auto' -and -not $useLocalLcmSource -and $localLcmState.NestedRootExists) {
+			Write-Host "Auto mode kept the package-backed path. Use -LcmMode Local to build against Localizations/LCM." -ForegroundColor Yellow
+		}
+
+		if ($useLocalLcmSource) {
+			if (-not $localLcmState.LocalSolutionExists) {
+				throw "Local LCM mode requested but FieldWorks.LocalLcm.sln was not found at $($localLcmState.LocalSolutionPath)."
+			}
+			if (-not $localLcmState.LcmSolutionExists) {
+				throw "Local LCM mode requested but the nested liblcm checkout was not found at $($localLcmState.LcmSolutionPath)."
+			}
+			if (-not $localLcmState.ArtifactsReady) {
+				Write-Host "Local LCM build tasks are missing from $($localLcmState.ArtifactsDir). The build will bootstrap them from source." -ForegroundColor Yellow
+			}
+		}
+
+		$finalMsBuildArgs += "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())"
+		$installerMsBuildArgs += "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())"
 
 		# =============================================================================
 		# Build Execution
@@ -484,13 +546,30 @@ try {
 			if (-not (Test-Path $packagesDir)) {
 				New-Item -Path $packagesDir -ItemType Directory -Force | Out-Null
 			}
-			& dotnet restore "$PSScriptRoot\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$Platform" --verbosity quiet
+			& dotnet restore $restoreSolution /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$Platform" "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())" --verbosity quiet
 			if ($LASTEXITCODE -ne 0) {
-				throw "NuGet package restore failed for FieldWorks.sln"
+				throw "NuGet package restore failed for $([System.IO.Path]::GetFileName($restoreSolution))"
 			}
 			Write-Host "Package restore complete." -ForegroundColor Green
 		} else {
 			Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
+		}
+
+		if ($useLocalLcmSource -and $ManagedDebugType) {
+			Write-Host "Refreshing Localizations/LCM runtime outputs for managed debug symbols..." -ForegroundColor Cyan
+			$localLcmProjects = @(
+				'Localizations\LCM\src\SIL.LCModel.Core\SIL.LCModel.Core.csproj',
+				'Localizations\LCM\src\SIL.LCModel.Utils\SIL.LCModel.Utils.csproj',
+				'Localizations\LCM\src\SIL.LCModel\SIL.LCModel.csproj',
+				'Localizations\LCM\src\SIL.LCModel.FixData\SIL.LCModel.FixData.csproj'
+			)
+
+			foreach ($localLcmProject in $localLcmProjects) {
+				& dotnet build (Join-Path $PSScriptRoot $localLcmProject) --no-restore -f net462 "/p:Configuration=$Configuration" "/p:DebugSymbols=true" "/p:DebugType=$ManagedDebugType" --verbosity quiet
+				if ($LASTEXITCODE -ne 0) {
+					throw "Local LCM build failed while regenerating managed symbols for $ManagedDebugType debugging."
+				}
+			}
 		}
 
 		if ($InstallerOnly) {
@@ -538,10 +617,18 @@ try {
 				New-Item -Path $stampDir -ItemType Directory -Force | Out-Null
 			}
 
+			if ($useLocalLcmSource -and $ManagedDebugType) {
+				Sync-LocalLcmRuntimeOutputs -ArtifactsDir $localLcmState.ArtifactsDir -RuntimeOutputDir $stampDir
+			}
+
 			$repoStamp = Get-RepoStamp
 			$stampObject = [pscustomobject]@{
 				Configuration = $Configuration
 				Platform = $Platform
+				RequestedLcmMode = $LcmMode
+				ResolvedLcmMode = $resolvedLcmMode
+				UseLocalLcmSource = $useLocalLcmSource
+				ManagedDebugType = $(if ($ManagedDebugType) { $ManagedDebugType } else { '' })
 				GitHead = $repoStamp.GitHead
 				IsDirty = $repoStamp.IsDirty
 				IsDirtyOutsideInstaller = $repoStamp.IsDirtyOutsideInstaller
@@ -554,10 +641,6 @@ try {
 			Write-Host ""
 			Write-Host "[OK] Build complete!" -ForegroundColor Green
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
-		}
-
-		if ($UseLocalLcm) {
-			Invoke-LocalLcmOverlay -RepoRoot $PSScriptRoot -BuildConfiguration $Configuration -LcmRootOverride $LocalLcmPath
 		}
 
 		if ($BuildInstaller -or $BuildPatch) {

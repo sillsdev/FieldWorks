@@ -112,7 +112,7 @@ For the detailed `liblcm` workflow, see `Docs/architecture/liblcm-debugging.md`.
 Short version:
 
 1. Use Visual Studio 2022 as the primary debugger for `.NET Framework` plus native FieldWorks work.
-2. If you need exact source-level debugging into `liblcm`, build it locally and use `scripts/Agent/Copy-LocalLcm.ps1 -BuildLcm` to overlay the local DLLs and PDBs into `Output/Debug`.
+2. If you need exact source-level debugging into `liblcm`, clone it under `Localizations/LCM`, then use `FieldWorks.LocalLcm.sln` or `./build.ps1 -LcmMode Local`.
 3. Use VS Code only for limited managed-only sessions in this repo, and only with the legacy C# extension path.
 4. If breakpoints show "No symbols loaded", verify the loaded module path and PDB match before changing debugger settings.
 

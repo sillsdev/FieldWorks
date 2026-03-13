@@ -167,9 +167,9 @@ if ($InstallerDeps) {
 
 	# Helper repo definitions: name, git URL, target subdirectory in FW repo
 	$helperRepos = @(
-		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
-		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" },
-		@{ Name = "genericinstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller" }
+		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps"; UseSharedCloneInWorktree = $true },
+		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations"; UseSharedCloneInWorktree = $false },
+		@{ Name = "genericinstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller"; UseSharedCloneInWorktree = $true }
 	)
 
 	foreach ($repo in $helperRepos) {
@@ -194,7 +194,7 @@ if ($InstallerDeps) {
 			Remove-Item $targetPath -Recurse -Force
 		}
 
-		if ($isWorktree) {
+		if ($isWorktree -and $repo.UseSharedCloneInWorktree) {
 			# Clone to shared location and create junction
 			$sharedPath = Join-Path $repoRoot $repo.Name
 
@@ -242,31 +242,15 @@ if ($InstallerDeps) {
 		}
 	}
 
-	# Special case: liblcm goes inside Localizations
+	# Special case: liblcm goes inside Localizations and should remain per-worktree.
 	$lcmTarget = Join-Path $scriptDir "Localizations/LCM"
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	if ((Test-Path $localizationsPath) -and -not (Test-Path $lcmTarget)) {
-		if ($isWorktree) {
-			$sharedLcm = Join-Path $repoRoot "liblcm"
-			if (-not (Test-Path $sharedLcm)) {
-				if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
-					Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
-					git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
-				}
-			}
-			if (Test-Path $sharedLcm) {
-				if ($PSCmdlet.ShouldProcess("Localizations/LCM", "Create junction to $sharedLcm")) {
-					New-Item -ItemType Junction -Path $lcmTarget -Target $sharedLcm -Force | Out-Null
-					Write-Host "[OK] Created junction: Localizations/LCM -> $sharedLcm" -ForegroundColor Green
-				}
-			}
-		} else {
-			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
-				Write-Host "Cloning liblcm..." -ForegroundColor Cyan
-				git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
-				if ($LASTEXITCODE -eq 0) {
-					Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
-				}
+		if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
+			Write-Host "Cloning liblcm..." -ForegroundColor Cyan
+			git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
 			}
 		}
 	} elseif (Test-Path $lcmTarget) {
