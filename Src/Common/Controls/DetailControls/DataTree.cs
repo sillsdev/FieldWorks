@@ -1244,12 +1244,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (IsDisposed)
 				return;
 
-			s_wheelRedirector.Unregister(this);
-
 			// m_sda COM object block removed due to crash in Finializer thread LT-6124
 
 			if (disposing)
 			{
+
+				s_wheelRedirector.Unregister(this);
+
 				Subscriber.Unsubscribe(EventConstants.PostponePropChanged, PostponePropChanged);
 
 				// Do this first, before setting m_fDisposing to true.
