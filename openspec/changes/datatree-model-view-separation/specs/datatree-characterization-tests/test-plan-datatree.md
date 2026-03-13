@@ -11,7 +11,8 @@ before the model/view separation. Tests are organized by subdomain
 - The test name and fixture pattern
 - Edge cases to cover
 
-All tests go in `Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeTests.cs`
+Tests are primarily in `Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeTests.cs`
+and its partial companions (`DataTreeTests.Wave3.*`, `DataTreeTests.Wave4.OffscreenUI.cs`),
 unless otherwise noted.
 
 ---
@@ -68,16 +69,16 @@ pipeline from `CreateSlicesFor` through `AddSimpleNode`.
 - **Fixture:** New layout `ManySenses` referencing `<seq field="Senses">`.
   Populate 25 senses.
 - **Assertions:**
-  - Total slice count < 25 (some are dummies)
+  - Total slice count == 25
   - At least one slice has `IsRealSlice == false`
-  - First `kInstantSliceMax` slices are real
+  - Do **not** assume the first `kInstantSliceMax` are real; current behavior may produce all dummy placeholders for large sequences.
 
 #### 1.6 `ProcessSubpartNode_ThresholdOverride_ExpandedCaller`
 - **What:** When the caller node has `expansion="expanded"`, the
-  threshold is overridden — all items are instantiated.
+  current implementation does not reliably force eager instantiation for all items.
 - **Fixture:** Layout with `<part ref="Senses" expansion="expanded">`.
   25 senses.
-- **Assertions:** All 25 slices are real (`IsRealSlice == true`).
+- **Assertions:** Document observed behavior (which may still include dummy placeholders) and avoid asserting all-real slices unless code changes to guarantee that contract.
 
 #### 1.7 `ProcessSubpartNode_ThresholdOverride_PersistentExpansion`
 - **What:** When the user previously expanded a node (stored in

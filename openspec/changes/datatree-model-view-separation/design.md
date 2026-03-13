@@ -1,6 +1,6 @@
 ## Context
 
-DataTree.cs is 4,358 lines implementing a WinForms `UserControl` that fuses 8+ responsibilities into one class. It is the core detail-editing control in FieldWorks — every entry, sense, and record is displayed through DataTree slices. The Avalonia migration roadmap requires that both WinForms and Avalonia coexist in the same repo, meaning we need a UI-framework-agnostic model layer that either can consume.
+DataTree.cs is currently ~4.7k lines implementing a WinForms `UserControl` that fuses 8+ responsibilities into one class. It is the core detail-editing control in FieldWorks — every entry, sense, and record is displayed through DataTree slices. The Avalonia migration roadmap requires that both WinForms and Avalonia coexist in the same repo, meaning we need a UI-framework-agnostic model layer either can consume.
 
 **Current architecture:**
 ```
@@ -18,7 +18,9 @@ RecordEditView → DataTree (monolith: XML parsing + WinForms layout + navigatio
 - `DTMenuHandler.m_dataEntryForm` — holds a typed `DataTree` reference
 - `RecordEditView.m_dataEntryForm` — the primary consumer
 
-**Existing test coverage:** ~14 tests in DataTreeTests.cs, all focused on `ShowObject` + show-hidden logic. No tests for XML parsing internals, navigation, reuse, or layout.
+**Current test reality (branch snapshot):** DataTree tests are now spread across `DataTreeTests.cs` plus `DataTreeTests.Wave3.*` and `DataTreeTests.Wave4.OffscreenUI.cs`, including offscreen paint/layout and command/navigation paths. Coverage has improved from the original baseline, but production `DataTree` remains monolithic.
+
+**Current implementation snapshot (2026-02-28):** `IDataTreePainter` is implemented; `DataTreeModel`, `IDataTreeView`, `SliceLayoutBuilder`, and `ShowHiddenFieldsManager` are not yet present in production code.
 
 ## Goals / Non-Goals
 

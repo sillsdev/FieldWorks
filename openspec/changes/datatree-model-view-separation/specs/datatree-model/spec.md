@@ -1,3 +1,8 @@
+## Status Note (Current vs Target)
+
+This document defines the **target-state requirements** for the model/view separation.
+On the current branch snapshot (2026-02-28), `DataTreeModel`, `IDataTreeView`, `SliceLayoutBuilder`, and `ShowHiddenFieldsManager` are not yet implemented in production code; `IDataTreePainter` is implemented.
+
 ## ADDED Requirements
 
 ### Requirement: DataTreeModel owns slice-specification logic

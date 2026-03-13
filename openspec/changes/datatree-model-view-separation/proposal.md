@@ -1,6 +1,12 @@
 ## Why
 
-DataTree.cs (4,358 lines) is a God Class that fuses XML layout parsing, slice lifecycle management, WinForms layout/paint, focus navigation, mediator messaging, data-change notification, and persistence into a single `UserControl`. This makes it untestable without a running form, impossible to reason about in isolation, and completely blocks reuse when the project migrates from WinForms to Avalonia. The same problem extends to Slice.cs (3,341 lines). With the Avalonia migration on the roadmap, we need a UI-framework-agnostic model layer *now* so both WinForms and Avalonia views can coexist during the transition period.
+DataTree.cs (currently ~4.7k lines on this branch) is a God Class that fuses XML layout parsing, slice lifecycle management, WinForms layout/paint, focus navigation, mediator messaging, data-change notification, and persistence into a single `UserControl`. This makes it difficult to reason about in isolation and blocks straightforward reuse when the project migrates from WinForms to Avalonia. The same problem extends to Slice.cs. With the Avalonia migration on the roadmap, we need a UI-framework-agnostic model layer so both WinForms and Avalonia views can coexist during the transition period.
+
+### Current implementation snapshot (2026-02-28)
+
+- `IDataTreePainter` exists and is implemented by `DataTree`; painter seams are in place for offscreen/UI-adjacent tests.
+- `DataTreeModel`, `IDataTreeView`, `SliceLayoutBuilder`, and `ShowHiddenFieldsManager` are **not** present yet in production code.
+- `DataTree` remains a single concrete WinForms control file (`DataTree.cs`) rather than partial-class decomposition in production.
 
 ## What Changes
 
