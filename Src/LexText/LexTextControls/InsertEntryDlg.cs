@@ -825,6 +825,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
 			Mediator = mediator;
+			if (m_propertyTable.GetStringProperty("currentContentControl", null) != "lexiconEdit")
+			{
+				this.Controls.Add(this.m_btnCreateAndEdit);
+			}
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
@@ -1271,7 +1275,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
-			this.Controls.Add(this.m_btnCreateAndEdit);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "InsertEntryDlg";
