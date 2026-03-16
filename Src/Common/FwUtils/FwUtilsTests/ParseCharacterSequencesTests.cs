@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		[Test]
-		public void GetReferences_EmptyLines_Handled()
+		public void GetReferences_EmptyLines_Skipped()
 		{
 			var categorizer = new CharacterCategorizer();
 			var data = new TextFileDataSource(

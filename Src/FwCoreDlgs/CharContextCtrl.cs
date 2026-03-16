@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tts">The TextTokenSubstring.</param>
 		/// ------------------------------------------------------------------------------------
 		internal ContextInfo(PuncPattern pattern, TextTokenSubstring tts) :
-			this(pattern, tts.Offset, tts.FullTokenText, tts.FirstToken.ScrRefString)
+			this(pattern, tts.Offset, tts.FullTokenText)
 		{
 		}
 
@@ -627,7 +627,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tts">The TextTokenSubstring.</param>
 		/// ------------------------------------------------------------------------------------
 		internal ContextInfo(string chr, TextTokenSubstring tts)
-			: this(chr,	tts.Offset, tts.FullTokenText, tts.FirstToken.ScrRefString)
+			: this(chr,	tts.Offset, tts.FullTokenText)
 		{
 		}
 
@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="context">The context (a string with the line contents).</param>
 		/// <param name="reference">The reference (line number).</param>
 		/// ------------------------------------------------------------------------------------
-		internal ContextInfo(PuncPattern pattern, int offset, string context, string reference)
+		internal ContextInfo(PuncPattern pattern, int offset, string context)
 		{
 			m_position = pattern.ContextPos;
 			string chr = pattern.Pattern;
@@ -657,7 +657,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					offset--;
 				}
 			}
-			Initialize(chr, offset, context, reference);
+			Initialize(chr, offset, context);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -669,9 +669,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="context">The context (a string with the line contents).</param>
 		/// <param name="reference">The reference (line number).</param>
 		/// ------------------------------------------------------------------------------------
-		internal ContextInfo(string chr, int offset, string context, string reference)
+		internal ContextInfo(string chr, int offset, string context)
 		{
-			Initialize(chr, offset, context, reference);
+			Initialize(chr, offset, context);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -683,10 +683,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="context">The context (a string with the line contents).</param>
 		/// <param name="reference">The reference (line number).</param>
 		/// ------------------------------------------------------------------------------------
-		private void Initialize(string chr, int offset, string context, string reference)
+		private void Initialize(string chr, int offset, string context)
 		{
 			m_chr = chr;
-			m_ref = reference;
 
 			int startPos = Math.Max(0, offset - 50);
 			int length = Math.Max(0, (startPos == 0 ? offset : offset - startPos));

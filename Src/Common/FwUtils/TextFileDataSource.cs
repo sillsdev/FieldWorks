@@ -132,67 +132,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region ITextToken Members
 		/// <summary>Not used.</summary>
-		public bool IsNoteStart
-		{
-			get { return false; }
-		}
+		public bool IsNoteStart => false;
 
 		/// <summary>Not used.</summary>
-		public bool IsParagraphStart
-		{
-			get { return true; }
-		}
+		public bool IsParagraphStart => true;
 
 		/// <summary>Not used.</summary>
-		public string Locale
-		{
-			get { return null; }
-		}
+		public string Locale => null;
 
 		/// <summary>Gets the scripture reference string.</summary>
-		public string ScrRefString
-		{
-			get { return string.Format(m_scrRefFmtString, m_iLine); }
-			set { ; }
-		}
-
-		/// <summary>Not used.</summary>
-		public string ParaStyleName
-		{
-			get { return null; }
-		}
-
-		/// <summary>Not used.</summary>
-		public string CharStyleName
-		{
-			get { return null; }
-		}
+		public string ScrRefString => string.Format(m_scrRefFmtString, m_iLine);
 
 		/// <summary>Gets the text.</summary>
-		public string Text
-		{
-			get { return m_text; }
-		}
+		public string Text => m_text;
 
 		/// <summary>Force the check to treat the text like verse text.</summary>
-		public TextType TextType
-		{
-			get { return TextType.Verse; }
-		}
+		public TextType TextType => TextType.Verse;
 
-		/// <summary/>
-		public BCVRef MissingEndRef
-		{
-			get { return null; }
-			set { ; }
-		}
-
-		/// <summary/>
-		public BCVRef MissingStartRef
-		{
-			get { return null; }
-			set { ; }
-		}
 
 		/// <summary>Makes a deep copy of the specified text token.</summary>
 		public ITextToken Clone()
