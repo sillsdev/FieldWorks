@@ -4,7 +4,7 @@ FieldWorks depends on several external libraries and related repositories. This 
 
 ## Overview
 
-Most dependencies are automatically downloaded as NuGet packages during the build process. However, if you need to debug into or modify these libraries, you may need to build them locally.
+Most dependencies are automatically downloaded as NuGet packages during the build process. If you need to debug into or modify these libraries, use either a local source workflow or a local package-validation workflow depending on the goal.
 
 ## Primary Dependencies
 
@@ -32,9 +32,22 @@ By default, dependencies are downloaded as NuGet packages during the build. The 
 <SilLcmVersion>...</SilLcmVersion>
 ```
 
-## Building Dependencies Locally
+## Local Source Workflow
 
-If you need to debug into or modify a dependency library, you can build it locally.
+Use local source mode when you are diagnosing or changing library code and need direct source-level debugging.
+
+For `liblcm`, the preferred local source workflow is:
+
+1. Clone `liblcm` under `Localizations/LCM`.
+2. Use `FieldWorks.LocalLcm.sln` in Visual Studio or `./build.ps1 -LcmMode Local`.
+3. Make and validate the `liblcm` fix locally.
+4. Return to the package-backed FieldWorks workflow after a released `liblcm` package is available.
+
+This workflow is for development and local verification. It is not the CI truth.
+
+## Local Package Validation Workflow
+
+Use a local package workflow only when you explicitly need to validate FieldWorks as a package consumer rather than as a source consumer.
 
 ### Step 1: Clone the Repositories
 
@@ -107,13 +120,14 @@ Update the NuGet versions in FieldWorks to use your local packages:
 
 ## Debugging Dependencies
 
-To debug into dependency code:
+For the detailed `liblcm` debugging workflow, see `Docs/architecture/liblcm-debugging.md`.
 
-1. Build the dependency in Debug configuration
-2. Open the dependency project in Visual Studio alongside FieldWorks
-3. Start debugging FLEx
-4. Choose **Debug → Attach to Process** from the dependency project
-5. If breakpoints show "No symbols loaded", disable **Debug → Options → Enable Just My Code**
+Short version:
+
+1. Use Visual Studio 2022 as the primary debugger for `.NET Framework` plus native FieldWorks work.
+2. If you need exact source-level debugging into `liblcm`, clone it under `Localizations/LCM`, then use `FieldWorks.LocalLcm.sln` or `./build.ps1 -LcmMode Local`.
+3. Use VS Code only for limited managed-only sessions in this repo, and only with the legacy C# extension path.
+4. If breakpoints show "No symbols loaded", verify the loaded module path and PDB match before changing debugger settings.
 
 ## Dependency Configuration
 
@@ -125,7 +139,7 @@ Build dependency information is also available in:
 
 FieldWorks uses GitHub Actions for CI/CD. The workflow files are in `.github/workflows/`.
 
-Dependencies are restored automatically from NuGet during CI builds.
+Dependencies are restored automatically from NuGet during CI builds. CI does not depend on a nested `Localizations/LCM` checkout.
 
 ## See Also
 

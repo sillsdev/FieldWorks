@@ -77,6 +77,9 @@ _user.mak.lnx
 *.VC.opendb
 *.invalid
 *.code-workspace
+.env
+.env.*
+.github/skills/**/.env
 
 .dotest/
 .depend

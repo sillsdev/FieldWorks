@@ -27,7 +27,7 @@ jobs:
         id: managed_build
         shell: powershell
         run: |
-          .\build.ps1 -Configuration Debug -Platform x64 -BuildTests
+          .\build.ps1 -Configuration Debug -BuildTests
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run managed tests

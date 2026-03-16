@@ -30,6 +30,8 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Use GitHub issues/PRs (and Jira when required) for issue workflow.
 - For `LT-` Jira tickets, use the Atlassian Python skill scripts under `.github/skills/atlassian-readonly-skills/scripts`.
 - Do not attempt direct web access to Jira pages from agent tooling.
+- GitHub Copilot for Jira may be used with authenticated Jira Data Center access when the approved service-user/API policy limits which issues are exposed.
+- See `.github/copilot-jira-setup.md` for setup and secret guidance.
 
 ## Validation checklist
 

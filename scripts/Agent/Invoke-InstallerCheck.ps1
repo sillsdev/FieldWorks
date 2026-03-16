@@ -9,10 +9,6 @@ param(
 	[string]$Configuration = 'Debug',
 
 	[Parameter(Mandatory = $false)]
-	[ValidateSet('x64', 'x86')]
-	[string]$Platform = 'x64',
-
-	[Parameter(Mandatory = $false)]
 	[string]$InstallerPath,
 
 	[Parameter(Mandatory = $false)]
@@ -75,7 +71,7 @@ Write-Output "Collecting snapshot: before install"
 & "$repoRoot\scripts\Agent\Collect-InstallerSnapshot.ps1" -OutputPath $beforePath -Name 'before-install' -MaxFileCount $MaxFileCount
 
 Write-Output "Running installer"
-$installResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType $InstallerType -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $RunId -Arguments $InstallArguments -IncludeTempLogs -PassThru -NoExit
+$installResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType $InstallerType -Configuration $Configuration -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $RunId -Arguments $InstallArguments -IncludeTempLogs -PassThru -NoExit
 
 if ($null -eq $installResult) {
 	throw "Invoke-Installer did not return a result."
@@ -97,7 +93,7 @@ if ($RunUninstall) {
 	} else {
 		Write-Output "Running uninstall"
 		$uninstallRunId = "$RunId-uninstall"
-		$uninstallResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType 'Bundle' -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $uninstallRunId -Arguments $UninstallArguments -IncludeTempLogs -PassThru -NoExit
+		$uninstallResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType 'Bundle' -Configuration $Configuration -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $uninstallRunId -Arguments $UninstallArguments -IncludeTempLogs -PassThru -NoExit
 		$uninstallExit = [int]$uninstallResult.ExitCode
 		Write-Output "Uninstall exit code: $uninstallExit"
 

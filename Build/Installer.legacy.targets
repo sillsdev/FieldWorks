@@ -240,6 +240,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
+			<L10nFiles Include="$(OutputDirForConfig)\ml\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
@@ -253,6 +254,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
+			<L10nFiles Include="$(OutputDirForConfig)\yo\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
 			<L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
 			<!-- no need to install the following; most are installed by merge modules -->
@@ -516,7 +518,7 @@
 		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)" />
 		<ForceDelete Files="@(HarvestedWxsFiles)" />
 		<ItemGroup>
-			<ExpectedL10nLocales Include="ar;az;bn;de;es;fa;fr;hi;hu;id;km;ko;ms;my;ne;pt;ru;rw;sw;ta;te;th;tr;ur;vi;zh;zlm" />
+			<ExpectedL10nLocales Include="ar;az;bn;de;es;fa;fr;hi;hu;id;km;ko;ml;ms;my;ne;pt;ru;rw;sw;ta;te;th;tr;ur;vi;yo;zh;zlm" />
 			<MissingMasterL10nWxi
 				Include="@(ExpectedL10nLocales)"
 				Condition="!Exists('$(OverridesDestDir)\Master\%(Identity)Harvest.wxi')"

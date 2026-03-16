@@ -350,4 +350,7 @@
   <data name="ksUnsavedParserReport" xml:space="preserve">
     <value>(unsaved)</value>
   </data>
+  <data name="ksAskParseXWords" xml:space="preserve">
+    <value>Are you sure that you want to parse all {0} words in the current project?</value>
+  </data>
 </root>

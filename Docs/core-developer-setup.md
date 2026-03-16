@@ -52,7 +52,15 @@ git --version
 
 # Verify installer build prerequisites
 .\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
+
+# Compact dependency preflight summary
+.\Build\Agent\Verify-FwDependencies.ps1
+
+# Include optional Serena-related tools with detailed per-check output
+.\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional -Detailed
 ```
+
+For automation or scripted setup checks, add `-PassThru` to return structured dependency results instead of relying only on console output.
 
 ## Additional Setup
 

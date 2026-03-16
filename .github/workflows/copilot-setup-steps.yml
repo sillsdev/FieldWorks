@@ -1,14 +1,51 @@
-# Reusable workflow to setup Windows build environment for AI coding agents
-# Optimized for windows-latest which already includes most FieldWorks dependencies.
+# Direct Copilot setup workflow for Windows-based GitHub Copilot coding agent runs
+# Optimized for windows-2022 which already includes most FieldWorks dependencies.
+# This workflow is for managed/native validation only.
+#
+# JIRA INTEGRATION POLICY:
+# - This workflow may be used by GitHub Copilot coding agent sessions that were
+#   started from Jira.
+# - FieldWorks uses authenticated Jira Data Center access, not anonymous public
+#   Jira access.
+# - Jira content exposed to agent runs must be filtered through the approved
+#   service-user/API policy so only issues intended for agent use are surfaced.
+# - If Jira credentials are provided to a caller workflow, they must be
+#   least-privilege service-user credentials, not personal high-privilege
+#   credentials.
+#
+# IMPORTANT: Do not run installer/signing/deployment builds here.
+# Rationale: cloud agent jobs should not require high-privilege credentials
+# (signing, release upload, deployment) and should minimize secret exposure.
+#
+# ACCEPTED RESIDUAL RISK:
+# - GitHub's Windows Copilot guidance explicitly notes that the integrated
+#   Copilot firewall is not compatible with Windows runs. In addition, GitHub
+#   documents that the agent firewall does not protect processes started in
+#   copilot-setup-steps, even where the firewall is otherwise enabled.
+# - As a result, this workflow is designed under the assumption that setup-step
+#   traffic could exfiltrate repository data or any credentials intentionally
+#   exposed to the agent environment.
+# - We accept that residual risk for this repository because the credentials in
+#   scope here are deliberately low-privilege and narrowly scoped: `contents: read`
+#   for checkout only, Jira service-user credentials limited by Jira/API policy,
+#   and no installer/signing/deployment secrets.
+# - Additional exposure that remains in scope: package/dependency downloads,
+#   shallow helper-repo clones, and any network access performed by build/test
+#   tooling during setup.
+# - This acceptance is conditional on keeping this workflow limited to managed/
+#   native validation and never adding high-privilege release, signing, deployment,
+#   or broadly scoped cross-system credentials.
+# - If stronger exfiltration controls become required, move Copilot Windows runs
+#   to a self-hosted ephemeral runner or a larger runner with Azure private
+#   networking, and re-review this workflow before adding new secrets.
 #
 # ============================================================================
-# EXPECTED FROM windows-latest (DO NOT RE-INSTALL):
+# EXPECTED FROM windows-2022 (DO NOT RE-INSTALL):
 # ============================================================================
 # - Visual Studio 2022 Enterprise (with Desktop & C++ workloads)
 # - MSBuild (via VS 2022)
 # - .NET Framework 4.8.1 SDK & Targeting Pack
 # - Windows SDK (10.0.17763+, 19041, 22621, 26100)
-# - WiX Toolset 3.14.x
 # - NuGet CLI
 # - .NET SDK 8.x and 9.x
 # - LLVM/clangd (for Serena C++ language server)
@@ -34,106 +71,178 @@
 #
 # ============================================================================
 
-name: "Agents: Windows setup steps"
+name: "Copilot Setup Steps"
+
+# Copilot discovers and runs this workflow by filename/job name when it starts
+# an agent session from the default branch. Keep manual dispatch for explicit
+# validation, but do not subscribe this workflow to normal PR/push CI events.
 on:
-    workflow_call:
-        inputs:
-            msbuild_args:
-                required: false
-                type: string
-                description: 'Arguments to pass to msbuild (e.g., "FieldWorks.sln /t:RunTests /p:Configuration=Debug")'
-            skip_serena:
-                required: false
-                type: boolean
-                default: false
-                description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
+  workflow_dispatch:
 
 jobs:
-    windows-setup:
-        runs-on: windows-latest
-        outputs:
-            msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
-            vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
+  copilot-setup-steps:
+    runs-on: windows-2022
+    permissions:
+      contents: read
 
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-            # ================================================================
-            # CACHING - speeds up repeat runs significantly
-            # ================================================================
-            - name: Cache NuGet packages
-              uses: actions/cache@v5
-              with:
-                  path: ~/.nuget/packages
-                  key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props') }}
-                  restore-keys: |
-                      nuget-${{ runner.os }}-
+      # ================================================================
+      # CACHING - speeds up repeat runs significantly
+      # ================================================================
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props', 'nuget.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
 
-            - name: Cache Serena language servers
-              if: inputs.skip_serena != true
-              uses: actions/cache@v5
-              with:
-                  path: |
-                      ~/.cache/serena
-                      ~/AppData/Local/serena
-                  key: serena-lsp-${{ runner.os }}-v1
-                  restore-keys: |
-                      serena-lsp-${{ runner.os }}-
+      - name: Cache Serena language servers
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/serena
+            ~/AppData/Local/serena
+          key: serena-lsp-${{ runner.os }}-${{ hashFiles('.serena/project.yml', 'Build/Agent/Setup-Serena.ps1', '.github/workflows/copilot-setup-steps.yml') }}
+          restore-keys: |
+            serena-lsp-${{ runner.os }}-
 
-            # ================================================================
-            # ENVIRONMENT SETUP
-            # Scripts are in Build/Agent/ and can be run locally for testing
-            # ================================================================
-            - name: Setup MSBuild PATH
-              uses: microsoft/setup-msbuild@v2
+      # ================================================================
+      # ENVIRONMENT SETUP
+      # Scripts are in Build/Agent/ and can be run locally for testing
+      # ================================================================
+      - name: Setup MSBuild PATH
+        uses: microsoft/setup-msbuild@v2
 
-            - name: Setup uv (Python package manager for Serena)
-              if: inputs.skip_serena != true
-              uses: astral-sh/setup-uv@v7
-              with:
-                  version: "latest"
+      - name: Setup uv (Python package manager for Serena)
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.6.x"
 
-            - name: Configure FieldWorks build environment
-              id: setup-env
-              shell: pwsh
-              run: |
-                  # Run testable script with GitHub Actions output
-                  .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
+      - name: Configure FieldWorks build environment
+        shell: pwsh
+        run: |
+          # Run testable script with GitHub Actions output
+          .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
 
-            - name: Verify pre-installed dependencies
-              shell: pwsh
-              run: |
-                  # Run testable script with strict checking
-                  .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
+      - name: Verify pre-installed dependencies
+        shell: pwsh
+        run: |
+          # Run testable script with strict checking
+          .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
 
-            # ================================================================
-            # SERENA MCP SETUP - for agent code intelligence
-            # ================================================================
-            - name: "Serena: Setup and verify"
-              if: inputs.skip_serena != true
-              shell: pwsh
-              timeout-minutes: 10
-              run: |
-                  # Run testable script with GitHub Actions output
-                  .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+      - name: Guardrail - Jira integration policy
+        shell: pwsh
+        run: |
+          Write-Host "Jira policy: authenticated Jira Data Center access is allowed when scoped through the approved service-user/API policy." -ForegroundColor Cyan
 
-            # ================================================================
-            # BUILD (optional)
-            # ================================================================
-            - name: Initialize VS Developer Environment
-              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
-              uses: ilammy/msvc-dev-cmd@v1
-              with:
-                  arch: x64
+          $jiraUrl = [Environment]::GetEnvironmentVariable('JIRA_URL')
+          if (-not [string]::IsNullOrWhiteSpace($jiraUrl) -and $jiraUrl -notmatch '^https://') {
+            throw "Unsupported JIRA_URL '$jiraUrl'. Jira URLs must use HTTPS."
+          }
 
-            - name: Run msbuild
-              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
-              shell: pwsh
-              run: |
-                  Write-Host "Running: msbuild ${{ inputs.msbuild_args }}" -ForegroundColor Cyan
-                  msbuild ${{ inputs.msbuild_args }}
-                  if ($LASTEXITCODE -ne 0) {
-                      throw "MSBuild failed with exit code $LASTEXITCODE"
-                  }
-                  Write-Host "Build completed successfully!" -ForegroundColor Green
+          $jiraTokenVars = @(
+            'JIRA_PAT_TOKEN',
+            'JIRA_API_TOKEN',
+            'ATLASSIAN_API_TOKEN'
+          )
+
+          $presentTokenVars = @(
+            $jiraTokenVars |
+              Where-Object {
+                $value = [Environment]::GetEnvironmentVariable($_)
+                -not [string]::IsNullOrWhiteSpace($value)
+              }
+          )
+
+          if ($presentTokenVars.Count -gt 0 -and [string]::IsNullOrWhiteSpace($jiraUrl)) {
+            throw "Jira credentials were provided without JIRA_URL. Set JIRA_URL alongside the service-user token configuration."
+          }
+
+          if ($presentTokenVars.Count -gt 0) {
+            Write-Host "Jira service-user credentials detected. Ensure the token is scoped by the approved visibility API/policy." -ForegroundColor DarkGray
+          }
+
+      - name: Clone helper repos (shallow)
+        shell: pwsh
+        run: |
+          function Invoke-ShallowClone {
+            param(
+              [Parameter(Mandatory = $true)][string]$RepoUrl,
+              [Parameter(Mandatory = $true)][string]$Destination,
+              [string]$Branch = ""
+            )
+
+            if (Test-Path (Join-Path $Destination '.git')) {
+              Write-Host "Already cloned: $Destination" -ForegroundColor DarkGray
+              return
+            }
+
+            if (Test-Path $Destination) {
+              Remove-Item -Path $Destination -Recurse -Force
+            }
+
+            $parent = Split-Path -Parent $Destination
+            if (-not (Test-Path $parent)) {
+              New-Item -ItemType Directory -Path $parent -Force | Out-Null
+            }
+
+            if ([string]::IsNullOrWhiteSpace($Branch)) {
+              git clone --depth 1 $RepoUrl $Destination
+            }
+            else {
+              git clone --depth 1 --branch $Branch $RepoUrl $Destination
+            }
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to clone $RepoUrl into $Destination"
+            }
+          }
+
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwHelps.git' -Destination 'DistFiles/Helps'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/FwLocalizations.git' -Destination 'Localizations'
+          Invoke-ShallowClone -RepoUrl 'https://github.com/sillsdev/liblcm.git' -Destination 'Localizations/LCM'
+
+      # ================================================================
+      # SERENA MCP SETUP - for agent code intelligence
+      # ================================================================
+      - name: "Serena: Setup and verify"
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          # Run testable script with GitHub Actions output
+          .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+
+      # ================================================================
+      # BUILD AND TEST VALIDATION
+      # This workflow always pre-seeds the Copilot environment the same way:
+      # Debug build, include managed test binaries, then run managed tests.
+      # ================================================================
+      - name: Run build.ps1
+        shell: pwsh
+        timeout-minutes: 60
+        run: |
+          $buildArgs = @('-Configuration', 'Debug', '-BuildTests')
+
+          Write-Host "Running: ./build.ps1 $($buildArgs -join ' ')" -ForegroundColor Cyan
+          ./build.ps1 @buildArgs
+          if ($LASTEXITCODE -ne 0) {
+            throw "build.ps1 failed with exit code $LASTEXITCODE"
+          }
+          Write-Host "build.ps1 completed successfully!" -ForegroundColor Green
+
+      - name: Run test.ps1
+        shell: pwsh
+        timeout-minutes: 60
+        run: |
+          $testArgs = @('-Configuration', 'Debug', '-NoBuild')
+
+          Write-Host "Running: ./test.ps1 $($testArgs -join ' ')" -ForegroundColor Cyan
+          ./test.ps1 @testArgs
+          if ($LASTEXITCODE -ne 0) {
+            throw "test.ps1 failed with exit code $LASTEXITCODE"
+          }
+          Write-Host "test.ps1 completed successfully!" -ForegroundColor Green

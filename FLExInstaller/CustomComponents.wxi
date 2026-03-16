@@ -159,6 +159,7 @@
 		<Directory Id="kmL10NFOLDER" Name="km"/>
 		<Directory Id="koL10NFOLDER" Name="ko"/>
 		<Directory Id="neL10NFOLDER" Name="ne"/>
+		<Directory Id="mlL10NFOLDER" Name="ml"/>
 		<Directory Id="msL10NFOLDER" Name="ms"/>
 		<Directory Id="myL10NFOLDER" Name="my"/>
 		<Directory Id="ptL10NFOLDER" Name="pt"/>
@@ -171,6 +172,7 @@
 		<Directory Id="trL10NFOLDER" Name="tr"/>
 		<Directory Id="urL10NFOLDER" Name="ur"/>
 		<Directory Id="viL10NFOLDER" Name="vi"/>
+		<Directory Id="yoL10NFOLDER" Name="yo"/>
 		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
 		<Directory Id="zlmL10NFOLDER" Name="zlm"/>
 	</DirectoryRef>
@@ -215,6 +217,7 @@
 	<WixVariable Id="MASTERidL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\id"/>
 	<WixVariable Id="MASTERkmL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\km"/>
 	<WixVariable Id="MASTERkoL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="MASTERmlL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ml"/>
 	<WixVariable Id="MASTERmsL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ms"/>
 	<WixVariable Id="MASTERmyL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\my"/>
 	<WixVariable Id="MASTERneL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ne"/>
@@ -228,6 +231,7 @@
 	<WixVariable Id="MASTERtrL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="MASTERurL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ur"/>
 	<WixVariable Id="MASTERviL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="MASTERyoL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\yo"/>
 	<WixVariable Id="MASTERzhL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zh-CN"/>
 	<WixVariable Id="MASTERzlmL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zlm"/>
 	<WixVariable Id="MASTERFONTDIR" Value="$(var.MASTERBUILDDIR)_Font"/>
@@ -245,6 +249,7 @@
 	<WixVariable Id="UPDATEidL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\id"/>
 	<WixVariable Id="UPDATEkmL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\km"/>
 	<WixVariable Id="UPDATEkoL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="UPDATEmlL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ml"/>
 	<WixVariable Id="UPDATEmsL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ms"/>
 	<WixVariable Id="UPDATEmyL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\my"/>
 	<WixVariable Id="UPDATEneL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ne"/>
@@ -258,6 +263,7 @@
 	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
 	<WixVariable Id="UPDATEurL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ur"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="UPDATEyoL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\yo"/>
 	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
 	<WixVariable Id="UPDATEzlmL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zlm"/>
 	<WixVariable Id="UPDATEFONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
@@ -276,6 +282,7 @@
 	<?include $(var.HarvestWxiDir)\idHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\kmHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\koHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\mlHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\msHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\myHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\neHarvest.wxi?>
@@ -289,6 +296,7 @@
 	<?include $(var.HarvestWxiDir)\trHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\urHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\yoHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zlmHarvest.wxi?>
 	<?include Fonts.wxi?>
