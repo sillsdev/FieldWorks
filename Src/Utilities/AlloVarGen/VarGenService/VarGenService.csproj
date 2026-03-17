@@ -35,9 +35,9 @@
     <ProjectReference Include="../../XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="VarGenServiceTest/**" />
-    <EmbeddedResource Remove="VarGenServiceTest\**" />
-    <None Remove="VarGenServiceTest\**" />
+    <Compile Remove="VarGenServiceTests/**" />
+    <EmbeddedResource Remove="VarGenServiceTests\**" />
+    <None Remove="VarGenServiceTests\**" />
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

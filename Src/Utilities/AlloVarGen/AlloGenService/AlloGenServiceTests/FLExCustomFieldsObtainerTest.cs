@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static SIL.AlloGenService.FLExCustomFieldsObtainer;
 
-namespace SIL.AlloGenServiceTest
+namespace SIL.AlloGenServiceTests
 {
 	[TestFixture]
 	class FLExCustomFieldsObtainerTest : FwTestBase

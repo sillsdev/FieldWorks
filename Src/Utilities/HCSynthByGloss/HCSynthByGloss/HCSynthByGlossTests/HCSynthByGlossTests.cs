@@ -15,9 +15,9 @@ using System.IO;
 using HCSynthByGloss;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.HCSynthByGlossTest
+namespace SIL.HCSynthByGlossTests
 {
-	public class HCSynthByGlossTest
+	public class HCSynthByGlossTests
 	{
 		Morpher morpher = null;
 		Language synLang;

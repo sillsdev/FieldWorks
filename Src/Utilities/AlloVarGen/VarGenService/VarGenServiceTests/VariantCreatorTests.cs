@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using SIL.AlloGenService;
-using SIL.AlloGenServiceTest;
+using SIL.AlloGenServiceTests;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIL.VarGenServiceTest
+namespace SIL.VarGenServiceTests
 {
 	[TestFixture]
 	class VariantCreatorTests : MemoryOnlyBackendProviderTestBase //FwTestBase

@@ -242,9 +242,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGloss", "Src\Utili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDll", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDll.csproj", "{EEE765C8-6812-4F9F-A100-42AA71921926}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDllTest", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDllTest\HCSynthByGlossDllTest.csproj", "{8EF1E1AE-2226-4A9B-8942-CAB531956ED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDllTests", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDllTests\HCSynthByGlossDllTests.csproj", "{8EF1E1AE-2226-4A9B-8942-CAB531956ED3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossTest", "Src\Utilities\HCSynthByGloss\HCSynthByGloss\HCSynthByGlossTest\HCSynthByGlossTest.csproj", "{5DB1CEDA-B7AA-4594-9CE0-6D3A6F5763DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossTests", "Src\Utilities\HCSynthByGloss\HCSynthByGloss\HCSynthByGlossTests\HCSynthByGlossTests.csproj", "{5DB1CEDA-B7AA-4594-9CE0-6D3A6F5763DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlloGenModel", "Src\Utilities\AlloVarGen\AlloGenModel\AlloGenModel.csproj", "{996498A3-06F1-4B1B-B83F-15648DD8F514}"
 EndProject
@@ -258,7 +258,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllomorphGeneratorDll", "Sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VarGenService", "Src\Utilities\AlloVarGen\VarGenService\VarGenService.csproj", "{0EDB239B-A523-4259-9123-EBA3B7E0139F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VarGenServiceTest", "Src\Utilities\AlloVarGen\VarGenService\VarGenServiceTest\VarGenServiceTest.csproj", "{AF29BF64-3F6E-4CD9-BC70-AFB68F563173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VarGenServiceTests", "Src\Utilities\AlloVarGen\VarGenService\VarGenServiceTests\VarGenServiceTests.csproj", "{AF29BF64-3F6E-4CD9-BC70-AFB68F563173}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VariantGeneratorDll", "Src\Utilities\AlloVarGen\VariantGeneratorDll\VariantGeneratorDll.csproj", "{91219E68-FF1D-4DED-BB06-3A6AF46C0419}"
 EndProject

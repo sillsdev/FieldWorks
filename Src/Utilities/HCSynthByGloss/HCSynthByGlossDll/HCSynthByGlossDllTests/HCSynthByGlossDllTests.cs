@@ -12,9 +12,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace SIL.HCSynthByGlossDllTest
+namespace SIL.HCSynthByGlossDllTests
 {
-	public class HCSynthByGlossDllTest
+	public class HCSynthByGlossDllTests
 	{
 		string glossFile = "";
 		string testDataDir = "";
