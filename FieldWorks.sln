@@ -154,6 +154,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RootSite", "Src\Common\Root
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RootSiteTests", "Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj", "{EC934204-1D3A-5575-A500-CB7923C440E2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrChecks", "Lib\src\ScrChecks\ScrChecks.csproj", "{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrChecksTests", "Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj", "{37555756-6D42-5E46-B455-E58E3D1E8E0C}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptureUtils", "Src\Common\ScriptureUtils\ScriptureUtils.csproj", "{8336DC7C-954B-5076-9315-D7DC5317282B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptureUtilsTests", "Src\Common\ScriptureUtils\ScriptureUtilsTests\ScriptureUtilsTests.csproj", "{04546E35-9A3A-5629-8282-3683A5D848F9}"
@@ -721,6 +725,18 @@ Global
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Debug|x64.Build.0 = Debug|x64
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Release|x64.ActiveCfg = Release|x64
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Release|x64.Build.0 = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Bounds|x64.ActiveCfg = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Bounds|x64.Build.0 = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Debug|x64.ActiveCfg = Debug|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Debug|x64.Build.0 = Debug|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Release|x64.ActiveCfg = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Release|x64.Build.0 = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Bounds|x64.ActiveCfg = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Bounds|x64.Build.0 = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Debug|x64.ActiveCfg = Debug|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Debug|x64.Build.0 = Debug|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Release|x64.ActiveCfg = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Release|x64.Build.0 = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Bounds|x64.ActiveCfg = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Bounds|x64.Build.0 = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Debug|x64.ActiveCfg = Debug|x64

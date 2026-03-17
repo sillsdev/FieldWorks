@@ -59,7 +59,6 @@
 		<Nullable Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(Nullable)' == ''">disable</Nullable>
 	</PropertyGroup>
 
-	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
 	<!-- System.Resources.Extensions 9.0.0 requires net462 or higher - use explicit version check -->
 	<!--
 		Global PackageReferences for application code have moved to Src/Directory.Build.props
@@ -80,6 +79,10 @@
 	<PropertyGroup Label="Shared Paths for Traversal Build">
 		<!-- Root directory paths -->
 		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<UseLocalLcmSource Condition="'$(UseLocalLcmSource)'=='' and '$(SolutionName)'=='FieldWorks.LocalLcm'">true</UseLocalLcmSource>
+		<UseLocalLcmSource Condition="'$(UseLocalLcmSource)'==''">false</UseLocalLcmSource>
+		<LocalLcmRootDir Condition="'$(UseLocalLcmSource)'=='true' and '$(LocalLcmRootDir)'==''">$(FwRoot)Localizations\LCM\</LocalLcmRootDir>
+		<LocalLcmArtifactsDir Condition="'$(UseLocalLcmSource)'=='true'">$([System.IO.Path]::GetFullPath('$(LocalLcmRootDir)artifacts\$(Configuration)\net462'))</LocalLcmArtifactsDir>
 		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
 		<FwOutput>$(FwRoot)Output\</FwOutput>
 		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
@@ -111,6 +114,10 @@
 		<!-- LCM artifacts directory -->
 		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
 		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<LcmRootDir Condition="'$(UseLocalLcmSource)'=='true' and '$(LcmRootDir)'==''">$(LocalLcmRootDir)</LcmRootDir>
+		<LcmArtifactsDir Condition="'$(UseLocalLcmSource)'=='true'">$(LocalLcmArtifactsDir)</LcmArtifactsDir>
+		<LcmModelArtifactsDir Condition="'$(UseLocalLcmSource)'=='true' and '$(LcmModelArtifactsDir)'==''">$(LocalLcmArtifactsDir)</LcmModelArtifactsDir>
+		<LcmBuildTasksDir Condition="'$(UseLocalLcmSource)'=='true' and '$(LcmBuildTasksDir)'==''">$(LocalLcmArtifactsDir)</LcmBuildTasksDir>
 		<!-- Enable binding redirects for all projects -->
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>

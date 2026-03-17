@@ -296,6 +296,10 @@
 			<!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
 			<MergeModules Include="$(OutputDirForConfig)\Python\**\*" />
 			<!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.dll" />
+			<!-- this will be taken from DistFiles\Editorial Checks -->
+			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.pdb" />
+			<!-- this will be taken from DistFiles\Editorial Checks -->
 			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.dll" />
 			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.tlb" />
 			<MergeModules Include="$(OutputDirForConfig)\Temp\**\*" />

@@ -211,12 +211,96 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "./build.ps1",
+      "command": "./build.ps1 -LcmMode Auto",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build FieldWorks (auto-detects worktree)",
+      "detail": "Build FieldWorks (package-backed by default; use explicit local LCM tasks for source mode)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Package)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Package",
+      "group": "build",
+      "detail": "Build FieldWorks against the pinned liblcm packages",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Package, VS Code Debug)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Package -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build FieldWorks against pinned liblcm packages with portable managed PDBs for the VS Code debugger",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Prepare Debug (Package)",
+      "type": "shell",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Package -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build for VS Code debugging only when relevant files changed since the last successful package-mode portable-PDB debug build",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Local LCM)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Local",
+      "group": "build",
+      "detail": "Build FieldWorks against the nested Localizations/LCM checkout",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build (Local LCM, VS Code Debug)",
+      "type": "shell",
+      "command": "./build.ps1 -LcmMode Local -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build FieldWorks against the nested local LCM checkout with portable managed PDBs for the VS Code debugger",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Prepare Debug (Local LCM)",
+      "type": "shell",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Local -ManagedDebugType portable",
+      "group": "build",
+      "detail": "Build for VS Code debugging only when relevant files changed since the last successful local-LCM portable-PDB debug build",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -239,7 +323,6 @@
       },
       "problemMatcher": "$msCompile"
     },
-
     // ==================== Test Tasks ====================
     {
       "label": "Test",
@@ -249,7 +332,7 @@
         "kind": "test",
         "isDefault": true
       },
-      "detail": "Run all tests (auto-detects worktree). See specs/007-test-modernization-vstest/IGNORED_TESTS.md for the tracked skip/ignore inventory.",
+      "detail": "Run all tests. See specs/007-test-modernization-vstest/IGNORED_TESTS.md for the tracked skip/ignore inventory.",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -484,9 +567,9 @@
       "problemMatcher": []
     },
     {
-      "label": "Installer Check: Bundle (Debug, x64)",
+      "label": "Installer Check: Bundle (Debug)",
       "type": "shell",
-      "command": "./scripts/Agent/Invoke-InstallerCheck.ps1 -InstallerType Bundle -Configuration Debug -Platform x64",
+      "command": "./scripts/Agent/Invoke-InstallerCheck.ps1 -InstallerType Bundle -Configuration Debug",
       "detail": "Run snapshot -> install bundle -> snapshot -> diff (writes evidence under Output/InstallerEvidence/<RunId>)",
       "options": {
         "shell": {
