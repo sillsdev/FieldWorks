@@ -344,10 +344,6 @@
   <data name="ksMedia" xml:space="preserve">
     <value>Media</value>
   </data>
-  <data name="ksMedia_" xml:space="preserve">
-    <value>Media </value>
-    <comment>there is a trailing space</comment>
-  </data>
   <data name="ksMediaNotFound" xml:space="preserve">
     <value>Media not found: check Info tab for file name</value>
     <comment>Used when a media filepath is specified, but the file doesn't exist. Ensure translation of "Info" matches translation used for the tab label.</comment>

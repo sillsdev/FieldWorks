@@ -183,6 +183,9 @@
 		<part id="Text-Detail-IsTranslated" type="Detail">
 			<slice label="Text is a translation" field="IsTranslated" editor="Checkbox" menu="mnuDataTree-Help"/>
 		</part>
+ 		<part id="Text-Detail-Media" type="Detail">
+			<slice label="Media" field="MediaFiles" editor="custom" assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.MediaInfoSlice" />
+		</part>
 		<part id="Text-Detail-CommentAllWs" type="Detail">
 			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" menu="mnuDataTree-Help"/>
 		</part>
