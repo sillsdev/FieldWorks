@@ -1397,15 +1397,6 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Media .
-        /// </summary>
-        internal static string ksMedia_ {
-            get {
-                return ResourceManager.GetString("ksMedia_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Media not found: check Info tab for file name.
         /// </summary>
         internal static string ksMediaNotFound {
