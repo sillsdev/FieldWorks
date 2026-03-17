@@ -13,8 +13,18 @@ function Get-BaseRef {
 function Test-HasUtf8Bom {
 	param([Parameter(Mandatory)][string]$Path)
 
-	$bytes = [System.IO.File]::ReadAllBytes($Path)
-	return $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+	# Read only the first three bytes to check for a UTF-8 BOM to avoid loading the entire file.
+	$buffer = [byte[]]::new(3)
+	$stream = [System.IO.File]::OpenRead($Path)
+	try {
+		$bytesRead = $stream.Read($buffer, 0, 3)
+	}
+	finally {
+		$stream.Dispose()
+	}
+
+	if ($bytesRead -lt 3) { return $false }
+	return $buffer[0] -eq 0xEF -and $buffer[1] -eq 0xBB -and $buffer[2] -eq 0xBF
 }
 
 function Write-Utf8Text {
@@ -31,8 +41,8 @@ function Write-Utf8Text {
 function Format-FileWhitespace {
 	param([Parameter(Mandatory)][string]$Path)
 	if (-not (Test-Path -LiteralPath $Path)) { return }
-	$hasUtf8Bom = Test-HasUtf8Bom -Path $Path
 	try {
+		$hasUtf8Bom = Test-HasUtf8Bom -Path $Path
 		$raw = Get-Content -LiteralPath $Path -Raw -Encoding utf8
 	}
  catch {
