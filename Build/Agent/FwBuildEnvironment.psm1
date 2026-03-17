@@ -14,6 +14,51 @@
 # VS Environment Functions
 # =============================================================================
 
+function Get-PreferredVcToolBinPath {
+    <#
+    .SYNOPSIS
+        Returns the preferred HostX64\x64 MSVC tool bin directory.
+    #>
+    if (-not $env:VCINSTALLDIR) {
+        return $null
+    }
+
+    $toolsRoot = Join-Path $env:VCINSTALLDIR 'Tools\MSVC'
+    if (-not (Test-Path $toolsRoot)) {
+        return $null
+    }
+
+    $preferred = Get-ChildItem -Path $toolsRoot -Directory -ErrorAction SilentlyContinue |
+        Sort-Object Name -Descending |
+        ForEach-Object { Join-Path $_.FullName 'bin\HostX64\x64' } |
+        Where-Object { Test-Path $_ } |
+        Select-Object -First 1
+
+    return $preferred
+}
+
+function Ensure-PreferredVcToolPath {
+    <#
+    .SYNOPSIS
+        Moves the preferred HostX64\x64 MSVC bin directory to the front of PATH.
+    #>
+    $preferred = Get-PreferredVcToolBinPath
+    if (-not $preferred) {
+        return
+    }
+
+    $pathEntries = @()
+    if (-not [string]::IsNullOrWhiteSpace($env:PATH)) {
+        $pathEntries = $env:PATH -split ';' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    }
+
+    $filteredEntries = $pathEntries | Where-Object {
+        -not [string]::Equals($_.TrimEnd('\'), $preferred.TrimEnd('\'), [System.StringComparison]::OrdinalIgnoreCase)
+    }
+
+    $env:PATH = (@($preferred) + $filteredEntries) -join ';'
+}
+
 function Initialize-VsDevEnvironment {
     <#
     .SYNOPSIS
@@ -27,6 +72,7 @@ function Initialize-VsDevEnvironment {
     }
 
     if ($env:VCINSTALLDIR) {
+        Ensure-PreferredVcToolPath
         Write-Host '[OK] Visual Studio environment already initialized' -ForegroundColor Green
         return
     }
@@ -86,6 +132,8 @@ function Initialize-VsDevEnvironment {
     if (-not $env:VCINSTALLDIR) {
         throw 'Visual Studio C++ environment not configured'
     }
+
+    Ensure-PreferredVcToolPath
 
     Write-Host '[OK] Visual Studio environment initialized successfully' -ForegroundColor Green
     Write-Host "   VCINSTALLDIR: $env:VCINSTALLDIR" -ForegroundColor Gray

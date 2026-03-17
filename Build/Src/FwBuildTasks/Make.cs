@@ -111,6 +111,39 @@ namespace FwBuildTasks
 			}
 		}
 
+		private static string FindVisualStudioToolPath(string vcInstallDir, string toolName)
+		{
+			if (String.IsNullOrEmpty(vcInstallDir) || !Directory.Exists(vcInstallDir))
+				return null;
+
+			string toolsRoot = Path.Combine(vcInstallDir, "Tools", "MSVC");
+			if (!Directory.Exists(toolsRoot))
+				return null;
+
+			string[] versionDirs = Directory.GetDirectories(toolsRoot);
+			Array.Sort(versionDirs, StringComparer.OrdinalIgnoreCase);
+			Array.Reverse(versionDirs);
+
+			foreach (string versionDir in versionDirs)
+			{
+				string[] candidateDirs =
+				{
+					Path.Combine(versionDir, "bin", "Hostx64", "x64"),
+					Path.Combine(versionDir, "bin", "Hostx64", "x86"),
+					Path.Combine(versionDir, "bin", "Hostx86", "x86"),
+					Path.Combine(versionDir, "bin", "Hostx86", "x64")
+				};
+
+				foreach (string candidateDir in candidateDirs)
+				{
+					if (File.Exists(Path.Combine(candidateDir, toolName)))
+						return candidateDir;
+				}
+			}
+
+			return null;
+		}
+
 		private void CheckToolPath()
 		{
 			string path = Environment.GetEnvironmentVariable("PATH");
@@ -140,7 +173,21 @@ namespace FwBuildTasks
 			// Fall Back to the install directory (if VCINSTALLDIR is set)
 			if (!String.IsNullOrEmpty(vcInstallDir))
 			{
-				ToolPath = Path.Combine(vcInstallDir, "bin");
+				string visualStudioToolPath = FindVisualStudioToolPath(vcInstallDir, ToolName);
+				if (!String.IsNullOrEmpty(visualStudioToolPath))
+				{
+					ToolPath = visualStudioToolPath;
+					return;
+				}
+
+				string legacyToolPath = Path.Combine(vcInstallDir, "bin");
+				if (File.Exists(Path.Combine(legacyToolPath, ToolName)))
+				{
+					ToolPath = legacyToolPath;
+					return;
+				}
+
+				ToolPath = String.Empty;
 			}
 			else
 			{
