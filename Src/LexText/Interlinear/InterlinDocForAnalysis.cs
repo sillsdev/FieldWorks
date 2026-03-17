@@ -310,8 +310,18 @@ namespace SIL.FieldWorks.IText
 			RecordGuessIfNotKnown(target);
 			InstallFocusBox();
 			RootBox.DestroySelection();
-			FocusBox.SelectOccurrence(target);
-			SetFocusBoxSizeForVc();
+			try
+			{
+				// Suppress changing the FocusBox when called from VwDrawRootBufferedClass.Create()
+				// when the selected word has a different RTL from the text (LT-22295).
+				SuppressChanges = true;
+				FocusBox.SelectOccurrence(target);
+				SetFocusBoxSizeForVc();
+			}
+			finally
+			{
+				SuppressChanges = false;
+			}
 			SelectedOccurrence = target;
 
 			if (fShow)
@@ -1851,7 +1861,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if ((ExistingFocusBox == null && ForEditing) || hasRightToLeftChanged)
+				if ((ExistingFocusBox == null && ForEditing) || hasRightToLeftChanged && !SuppressChanges)
 				{
 					CreateFocusBox();
 					previousRightToLeft = Vc.RightToLeft;
@@ -1990,6 +2000,8 @@ namespace SIL.FieldWorks.IText
 		{
 			get { return false; }
 		}
+
+		private bool SuppressChanges = false;
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
