@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.IText
 			RootBox.DestroySelection();
 			try
 			{
-				// Don't let the FocusBox be disposed in VwDrawRootBufferedClass.Create()
+				// Suppress changing the FocusBox when called from VwDrawRootBufferedClass.Create()
 				// when the selected word has a different RTL from the text (LT-22295).
 				SuppressChanges = true;
 				FocusBox.SelectOccurrence(target);
@@ -1985,7 +1985,7 @@ namespace SIL.FieldWorks.IText
 			get { return false; }
 		}
 
-		public bool SuppressChanges = false;
+		private bool SuppressChanges = false;
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
