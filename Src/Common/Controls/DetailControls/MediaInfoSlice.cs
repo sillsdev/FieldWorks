@@ -172,8 +172,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					int userWs = m_cache.WritingSystemFactory.UserWs;
 					foreach (var medUri in m_mediaURIs)
 					{
-						Uri uri = new Uri(medUri.MediaURI);
-						string uriString = uri.LocalPath;
+						// If the URI is valid a nice path will be displayed. If not valid then the URI
+						// string will be displayed, which may still be helpful for the user.
+						string uriString = medUri.MediaURI;
+						try
+						{
+							Uri uri = new Uri(uriString);
+							uriString = uri.LocalPath;
+						}
+						catch { }
+
 						ITsString tss = TsStringUtils.MakeString(uriString, userWs);
 						vwenv.OpenParagraph();
 						vwenv.AddString(tss);
