@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIL.AlloGenServiceTest
+namespace SIL.AlloGenServiceTests
 {
 	public class ReplacerTests
 	{

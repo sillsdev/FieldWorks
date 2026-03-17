@@ -13,7 +13,7 @@ using System.Text;
 using Action = SIL.AlloGenModel.Action;
 using Environment = SIL.AlloGenModel.Environment;
 
-namespace SIL.AlloGenServiceTest
+namespace SIL.AlloGenServiceTests
 {
 	public class XmlBackEndProviderTests : AlloGenTestBase
 	{

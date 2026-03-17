@@ -13,7 +13,7 @@ using NUnit.Framework;
 using SIL.AlloGenModel;
 using SIL.AlloGenService;
 
-namespace SIL.AlloGenServiceTest
+namespace SIL.AlloGenServiceTests
 {
 	[TestFixture]
 	class DatabaseMigratorTest : AlloGenTestBase

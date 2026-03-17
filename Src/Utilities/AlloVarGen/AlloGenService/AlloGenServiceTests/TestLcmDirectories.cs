@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIL.AlloGenServiceTest
+namespace SIL.AlloGenServiceTests
 {
 	// Following taken from LCM test code (TestLcmDiectories.cs)
 	internal class TestLcmDirectories : ILcmDirectories

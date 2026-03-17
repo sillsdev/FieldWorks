@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>HCSynthByGlossDllTest</AssemblyName>
-    <RootNamespace>SIL.HCSynthByGlossDllTest</RootNamespace>
+    <AssemblyName>HCSynthByGlossDllTests</AssemblyName>
+    <RootNamespace>SIL.HCSynthByGlossDllTests</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <IsTestProject>true</IsTestProject>
