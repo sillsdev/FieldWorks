@@ -13,6 +13,8 @@ Placement policy for wrappers:
 
 **MCP-first:** When the `ps-tools` MCP server is running, prefer MCP tools (`Git-Search`, `Read-FileContent`, `Invoke-AgentTask`, `build`, `test`, agent tools) instead of direct terminal commands. Use wrappers only when MCP is unavailable.
 
+**Task-first for CI parity:** Prefer the existing VS Code tasks `CI: Whitespace check`, `CI: Commit messages`, and `CI: Full local check` over ad-hoc shell commands. These tasks are already allowed for agent use and match the repository CI checks.
+
 ## Transformations
 
 | ❌ Blocked | ✅ Use Instead |
