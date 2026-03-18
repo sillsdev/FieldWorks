@@ -345,7 +345,7 @@
     <value>Media</value>
   </data>
   <data name="ksMediaNotFound" xml:space="preserve">
-    <value>Media not found: check Info tab for file name</value>
+    <value>Media not found: check Info tab for full file path</value>
     <comment>Used when a media filepath is specified, but the file doesn't exist. Ensure translation of "Info" matches translation used for the tab label.</comment>
   </data>
   <data name="ksNoMedia" xml:space="preserve">
@@ -360,6 +360,9 @@
   </data>
   <data name="ksSpeaker" xml:space="preserve">
     <value>Speaker</value>
+  </data>
+  <data name="ksFile" xml:space="preserve">
+    <value>File</value>
   </data>
   <data name="ksPhaseButton" xml:space="preserve">
     <value>Ph{0} {1}</value>
