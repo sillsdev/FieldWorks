@@ -772,6 +772,15 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        internal static string ksFile {
+            get {
+                return ResourceManager.GetString("ksFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finish LinguaLinks texts problem (phase 5): {0}.
         /// </summary>
         internal static string ksFinishLLTextsProblem5 {
@@ -1397,7 +1406,7 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Media not found: check Info tab for file name.
+        ///   Looks up a localized string similar to Media not found: check Info tab for full file path.
         /// </summary>
         internal static string ksMediaNotFound {
             get {

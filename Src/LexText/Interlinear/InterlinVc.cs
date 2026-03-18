@@ -21,6 +21,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using System.IO;
+using SIL.LCModel.Core.Phonology;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1004,16 +1005,26 @@ namespace SIL.FieldWorks.IText
 			return tssLabel;
 		}
 
-		private void AddNoMediaMessage(IVwEnv vwenv, ITsString tssMediaLabel, bool lineAndSegSameDir, bool lineAndUserSameDir, string mediaFile)
+		private ITsString GetSpeakerName(ICmPerson speakerRA, int ws)
+		{
+			// If speaker name is available in the writing system we want, use that.
+			// Otherwise, use the default stored in ChooserNameTS. Otherwise an empty string.
+			ITsString speakerName = speakerRA?.Name?.get_String(ws);
+			if (string.IsNullOrEmpty(speakerName?.ToString()))
+				speakerName = speakerRA?.ChooserNameTS ?? m_tssEmptyString;
+			return speakerName;
+		}
+
+		private void AddNoMediaMessage(IVwEnv vwenv, ITsString tssMediaLabel, ITsString tssFileLabel, int wsForSeg, string mediaFileName)
 		{
 			var defUserWs = m_cache.DefaultUserWs;
-			bool isFilePathSpecified = !string.IsNullOrEmpty(mediaFile);
-			ITsString tssFilePath = null;
+			bool isFilePathSpecified = !string.IsNullOrEmpty(mediaFileName);
+			ITsString tssFileName = null;
 			ITsString tssNoMediaMessage;
 
 			if (isFilePathSpecified)
 			{
-				tssFilePath = TsStringUtils.MakeString(mediaFile, defUserWs);
+				tssFileName = MakeUiElementString(mediaFileName, defUserWs, null);
 				// We have a media filepath, but file was not found. Build media not found message.
 				// Use normal label settings, except make it italic instead of bold.
 				tssNoMediaMessage = MakeUiElementString(
@@ -1029,7 +1040,7 @@ namespace SIL.FieldWorks.IText
 			else
 			{
 				// No media filepath was given. Build no media message.
-				// Use normal label settings, except make it italic instead of bold.
+				// Use normal label settings, except not bold.
 				tssNoMediaMessage = MakeUiElementString(
 					ITextStrings.ksNoMedia, defUserWs,
 					propsBldr =>
@@ -1041,12 +1052,18 @@ namespace SIL.FieldWorks.IText
 					});
 			}
 
-			// If the line WS and segment WS are not the same direction, OR the line WS and user WS
-			// are not the same direction, but not both, then we need to insert pieces in reverse
+			// If the user WS and segment WS are not the same direction, then we need to insert pieces in reverse
 			// logical order.
 			AddTssDirForWs(vwenv, defUserWs);
-			if (!lineAndSegSameDir ^ !lineAndUserSameDir)
+			if (IsWsRtl(wsForSeg)!=IsWsRtl(defUserWs))
 			{
+				if (isFilePathSpecified)
+				{
+					vwenv.AddString(tssFileName);
+					vwenv.AddString(m_tssDefaultSpace);
+					vwenv.AddString(tssFileLabel);
+					AddSeparator(vwenv);
+				}
 				vwenv.AddString(tssNoMediaMessage);
 				vwenv.AddString(m_tssDefaultSpace);
 				vwenv.AddString(tssMediaLabel);
@@ -1056,6 +1073,13 @@ namespace SIL.FieldWorks.IText
 				vwenv.AddString(tssMediaLabel);
 				vwenv.AddString(m_tssDefaultSpace);
 				vwenv.AddString(tssNoMediaMessage);
+				if (isFilePathSpecified)
+				{
+					AddSeparator(vwenv);
+					vwenv.AddString(tssFileLabel);
+					vwenv.AddString(m_tssDefaultSpace);
+					vwenv.AddString(tssFileName);
+				}
 			}
 			AddTssDirForWs(vwenv, defUserWs);
 		}
@@ -1105,22 +1129,24 @@ namespace SIL.FieldWorks.IText
 			//		=> 1 himetric = 720/25.4 millipoints = 7200/254 millipoints
 			int mediaPlayPicWidth = m_PlayArrowPic.Picture.Width * 7200 / 254;
 
-			// Build labels for begin/end offsets and speaker.
+			// Build labels for begin/end offsets, speaker, and file.
 			var tssBeginTimeLabel = MakeLabel(ITextStrings.ksBeginTimeOffset);
 			var tssEndTimeLabel = MakeLabel(ITextStrings.ksEndTimeOffset);
 			var tssSpeakerLabel = MakeLabel(ITextStrings.ksSpeaker);
+			var tssFileLabel = MakeLabel(ITextStrings.ksFile);
+
+			var mediaFile = segment.MediaURIRA?.MediaURI;
+			string mediaFileName;
+			bool fileExists = CheckFileExistsFromUri(mediaFile, out mediaFileName);
 
 			// If there is no media file, add Media line label and a "No Media" message and skip the rest of the media line display.
-			var mediaFile = segment.MediaURIRA?.MediaURI;
-			bool fileExists = CheckFileExistsFromUri(mediaFile);
 			if (!fileExists)
 			{
 				vwenv.OpenDiv();
-				SetParaDirectionAndAlignment(vwenv, wssOptions[0]);
+				// No Media Message uses the default user ws
+				SetParaDirectionAndAlignment(vwenv, defUserWs);
 				vwenv.OpenParagraph();
-				bool lineAndSegSameDir = IsWsRtl(wssOptions[0]) == IsWsRtl(wsForSeg);
-				bool lineAndUserSameDir = (IsWsRtl(wssOptions[0]) == IsWsRtl(defUserWs));
-				AddNoMediaMessage(vwenv, tssMediaLabel, lineAndSegSameDir, lineAndUserSameDir, mediaFile);
+				AddNoMediaMessage(vwenv, tssMediaLabel, tssFileLabel, wsForSeg, mediaFileName);
 				vwenv.CloseParagraph();
 				vwenv.CloseDiv();
 				return;
@@ -1181,14 +1207,29 @@ namespace SIL.FieldWorks.IText
 				// then content within each piece needs to be in reverse logical order.
 				//
 				// In the order in which they should appear, pieces for the media line are:
-				// [Label WS - media label], [Line content WS - playback button], [Label WS - optional WS label & Begin time label],
-				// [Line content WS - Begin time value], [Label WS - End time label], [Line content WS - End time value],
-				// [Label WS - Speaker label], [Line content WS - Speaker value].
+				// [Default user WS - media label], [Line content WS - playback button], [Default user WS - optional WS label & Begin time label],
+				// [Line content WS - Begin time value], [Default user WS - End time label], [Line content WS - End time value],
+				// [Default user WS - Speaker label], [Line content WS - Speaker value], [Default user WS - File label & filename].
 				if (!lineAndSegSameDir)
 				{
+					// Add the file name section.
+					// Piece 1: default user WS - Add file label and filename
+					if (lineAndUserSameDir)
+					{
+						// content within the piece is in reverse logical order, so add filename and then label
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+					}
+					else
+					{
+						// content within the piece is in logical order, so add label and then filename
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+					}
+
 					// Add the speaker section.
 					// Piece 1: Line content WS - Add speaker value.
-					AddITsStringProperty(vwenv, wssOptions[i], segment.SpeakerRA?.ChooserNameTS ?? m_tssEmptyString);
+					AddITsStringProperty(vwenv, wssOptions[i], GetSpeakerName(segment.SpeakerRA, wssOptions[i]));
 					// Piece 2: default user WS - Add speaker label.
 					AddFormattedLabel(vwenv, tssSpeakerLabel, lineAndSegSameDir, lineAndUserSameDir);
 
@@ -1375,7 +1416,22 @@ namespace SIL.FieldWorks.IText
 					// Speaker label Piece: default user WS.
 					AddFormattedLabel(vwenv, tssSpeakerLabel, lineAndSegSameDir, lineAndUserSameDir);
 					// Speaker value piece: Line content WS.
-					AddITsStringProperty(vwenv, wssOptions[i], segment.SpeakerRA?.ChooserNameTS ?? m_tssEmptyString);
+					AddITsStringProperty(vwenv, wssOptions[i], GetSpeakerName(segment.SpeakerRA, wssOptions[i]));
+
+					// Add the file name piece.
+					// Default user WS - Add file label and filename
+					if (lineAndUserSameDir)
+					{
+						// content within the piece should be in logical order, so add label and then filename
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+					}
+					else
+					{
+						// content within the piece should be in reverse logical order, so add filename and then label
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+					}
 				}
 				vwenv.CloseParagraph();
 			}
@@ -1991,9 +2047,11 @@ namespace SIL.FieldWorks.IText
 		/// Checks if a file associated with a file URI string exists.
 		/// </summary>
 		/// <param name="uriString">The string containing the file URI.</param>
+		/// <param name="fileName">The name of the file extracted from the URI, if it exists.</param>
 		/// <returns>True if the file exists, false otherwise.</returns>
-		private static bool CheckFileExistsFromUri(string uriString)
+		private static bool CheckFileExistsFromUri(string uriString, out string fileName)
 		{
+			fileName = null;
 			if (string.IsNullOrEmpty(uriString))
 			{
 				return false;
@@ -2007,8 +2065,9 @@ namespace SIL.FieldWorks.IText
 				// 2. Check if it's a local file path (scheme "file").
 				if (uri.IsFile)
 				{
-					// 3. Get the local file path using uri.LocalPath or uri.OriginalString (for UNC paths).
+					// 3. Get the file path using uri.LocalPath.
 					string localPath = uri.LocalPath;
+					fileName = Path.GetFileName(uri.LocalPath);
 
 					// 4. Use File.Exists to verify if the file exists at that path.
 					return File.Exists(localPath);
