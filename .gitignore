@@ -63,6 +63,7 @@ _user.mak.lnx
 *.usertasks
 *.resources
 *.bak
+*.fwdata.lock
 *.swp
 *.pyc
 *.log
