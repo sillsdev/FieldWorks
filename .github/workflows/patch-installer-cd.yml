@@ -225,7 +225,7 @@ jobs:
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Test
         id: test
