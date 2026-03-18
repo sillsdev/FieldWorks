@@ -156,7 +156,7 @@ jobs:
         id: build_and_test
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Build Output
         shell: powershell
