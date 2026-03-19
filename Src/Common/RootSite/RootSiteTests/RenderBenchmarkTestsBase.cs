@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	/// </summary>
 	public abstract class RenderBenchmarkTestsBase : RealDataTestsBase
 	{
+		protected const string DeterministicRenderFontFamily = "Segoe UI";
 		protected ILgWritingSystemFactory m_wsf;
 		protected int m_wsEng;
 		protected int m_wsAr;  // Arabic (RTL)
@@ -96,7 +97,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				var normalBldr = TsStringUtils.MakePropsBldr();
 				normalBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
 					(int)FwTextPropVar.ktpvMilliPoint, 10000); // 10pt
-				normalBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Charis SIL");
+				normalBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, DeterministicRenderFontFamily);
 				normalStyle.Rules = normalBldr.GetTextProps();
 			}
 
@@ -919,7 +920,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var entry = entryFactory.Create();
 			var morph = morphFactory.Create();
 			entry.LexemeFormOA = morph;
-			morph.Form.set_String(m_wsEng, TsStringUtils.MakeString("benchmark-entry", m_wsEng));
+			morph.Form.set_String(m_wsEng, MakeRenderString("benchmark-entry", m_wsEng));
 
 			// Recursively create the sense tree
 			CreateNestedSenses(entry, senseFactory, depth, breadth, "", 1);
@@ -962,13 +963,26 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				string definition = $"This is the definition for sense {senseNum}, which demonstrates " +
 					$"nested rendering at depth {remainingDepth} with {breadth}-way branching.";
 
-				sense.Gloss.set_String(m_wsEng, TsStringUtils.MakeString(gloss, m_wsEng));
-				sense.Definition.set_String(m_wsEng, TsStringUtils.MakeString(definition, m_wsEng));
+				sense.Gloss.set_String(m_wsEng, MakeRenderString(gloss, m_wsEng));
+				sense.Definition.set_String(m_wsEng, MakeRenderString(definition, m_wsEng));
 
 				// Recurse for subsenses
 				CreateNestedSenses(sense, senseFactory, remainingDepth - 1, breadth,
 					senseNum + ".", 1);
 			}
+		}
+
+		private static ITsString MakeRenderString(string value, int writingSystemHandle)
+		{
+			var propsBuilder = TsStringUtils.MakePropsBldr();
+			propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
+				(int)FwTextPropVar.ktpvDefault, writingSystemHandle);
+			propsBuilder.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
+				DeterministicRenderFontFamily);
+
+			var stringBuilder = TsStringUtils.MakeStrBldr();
+			stringBuilder.Replace(0, 0, value, propsBuilder.GetTextProps());
+			return stringBuilder.GetString();
 		}
 
 		#endregion
