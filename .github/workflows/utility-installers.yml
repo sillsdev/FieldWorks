@@ -1,0 +1,151 @@
+name: Utility Installers
+
+# Builds installers for these utilities that depend on FieldWorks:
+#  - PCPATR with FLEx
+#  - Extract ANA files
+#  - TonePars with FLEx
+# Saves the installers and build logs as artifacts of the workflow run.
+
+on:
+  workflow_run:
+    workflows: ["Base Installer", "Patch Installer"]
+    conclusion: ["success"]
+    make_release: ["true"]
+  workflow_dispatch:
+    inputs:
+      fw_ref:
+        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
+        required: false
+        default: ''
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_test:
+    env:
+      SignedInstallerDir: ./Utilities/pcpatrflex/Installers # TODO: copy installers into this folder
+    name: Build and run Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+        with:
+          ref: ${{ github.event.inputs.fw_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Ensure .NET Framework 4.8 targeting pack
+        shell: pwsh
+        run: |
+          # Check registry Release key for .NET Framework 4.8 (Release >= 528040 indicates 4.8)
+          $targetRelease = 528040
+          try {
+            $releaseKey = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" -Name Release -ErrorAction Stop).Release
+          } catch {
+            $releaseKey = $null
+          }
+
+          if (-not $releaseKey -or $releaseKey -lt $targetRelease) {
+            Write-Host "Detected .NET release $releaseKey. Installing .NET Framework 4.8 Developer Pack..."
+            $installerUrl = "https://download.microsoft.com/download/9/5/0/9500E0A8-3C76-45F9-8D4B-8D2A7F2C1A3A/NDP48-DevPack-KB4486153-ENU.exe"
+            $installer = Join-Path $env:RUNNER_TEMP "NDP48-DevPack-KB4486153-ENU.exe"
+
+            Invoke-WebRequest -Uri $installerUrl -OutFile $installer -UseBasicParsing -TimeoutSec 120
+
+            Write-Host "Starting installer..."
+            $proc = Start-Process -FilePath $installer -ArgumentList "/quiet","/norestart" -Wait -PassThru
+            if ($proc.ExitCode -ne 0) {
+              Write-Error "Failed to install .NET 4.8 Developer Pack. ExitCode: $($proc.ExitCode)"
+              exit $proc.ExitCode
+            }
+            Write-Host ".NET 4.8 Developer Pack installation finished."
+          }
+          else {
+            Write-Host ".NET Framework 4.8 (Release=$releaseKey) already present. Skipping install."
+          }
+
+        # TODO: test whether we need this
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: | 
+            3.1.x
+            5.0.x
+
+      # TODO: do these utilities need this?
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        if: github.event_name != 'pull_request'
+
+# TODO
+#      - name: Build and test
+#        id: build_and_test
+#        shell: powershell
+#        run: |
+#          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+
+# TODO: build installer (will need to install Inno Setup or convert the installer script to WiX
+
+      - name: Scan Build Output
+        shell: powershell
+        run: |
+          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+          if ($results) {
+              foreach ($result in $results) {
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+              }
+              exit 1
+          } else {
+              Write-Host "No errors found" -ForegroundColor green 
+              exit 0
+          }
+
+# TODO
+      # - name: Move installers to staging folder
+        # id: stage_installers
+        # shell: pwsh
+        # run: |
+            # $staging = Join-Path $pwd "Installers"
+            # if (-not (Test-Path $staging)) { New-Item -ItemType Directory -Path $staging | Out-Null }
+
+            # $offlineExe = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
+            # $onlineExe  = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Online_x64.exe"  | Select-Object -First 1
+
+            # if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
+            # if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
+
+            # Move-Item -Path $offlineExe.FullName -Destination $staging
+            # Move-Item -Path $onlineExe.FullName  -Destination $staging
+
+            # $offlinePath = Join-Path $staging $offlineExe.Name
+            # $onlinePath  = Join-Path $staging $onlineExe.Name
+
+            # "offline_exe=$offlinePath" >> $env:GITHUB_OUTPUT
+            # "online_exe=$onlinePath"   >> $env:GITHUB_OUTPUT
+
+      - name: Sign Installers
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+            files-folder: ${{ env.SignedInstallerDir }}
+            files-folder-filter: '*Setup.exe'
+            description:  'FieldWorks-related Utility Installer'
+            description-url: 'https://software.sil.org/'
+
+
+      - name: Upload Installers and Build Logs
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          if-no-files-found: warn
+          name: build-logs
+          path: |
+            ./*.log
+            ./*.binlog
+            ${{ env.SignedInstallerDir }}/*.exe
