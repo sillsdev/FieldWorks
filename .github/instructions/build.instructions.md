@@ -44,6 +44,23 @@ Key ordering constraint:
 ## Worktrees and concurrent builds
 This repo supports multiple concurrent builds across git worktrees. Prefer the scripts because they handle environment setup and avoid cross-worktree process conflicts.
 
+### Worktree-aware process cleanup
+- `build.ps1` now scopes process cleanup to the current repository root (`$PSScriptRoot`).
+- This avoids killing active `msbuild`/`dotnet`/test processes started from other worktrees.
+- The same worktree is intentionally exclusive: `build.ps1`/`test.ps1` acquire a named lock and fail fast if another build/test workflow is already running in that worktree.
+- Lock metadata is written to `Output/WorktreeRun.lock.json` while the workflow is active.
+- Optional actor tagging: set `FW_BUILD_STARTED_BY=user|agent` (or pass `-StartedBy`) to record who owns the lock.
+
+### MSBuild node reuse default
+- `build.ps1` defaults `-NodeReuse` to `auto`.
+- In `auto` mode, MSBuild node reuse is enabled when the repository has a single local worktree and disabled when multiple local worktrees are detected, reducing cross-worktree lock contention from shared worker nodes.
+- You can still override the policy explicitly with:
+
+```powershell
+.\build.ps1 -NodeReuse $true
+.\build.ps1 -NodeReuse $false
+```
+
 ## Troubleshooting (common)
 
 ### “Native artifacts missing” / code-generation failures
