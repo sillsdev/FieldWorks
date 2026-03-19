@@ -73,6 +73,12 @@
     <ClInclude Include="lib\DebugReport.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\ColorStateCache.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\FontHandleCache.h">
+      <Filter>lib</Filter>
+    </ClInclude>
     <ClInclude Include="lib\TextServ.h">
       <Filter>lib</Filter>
     </ClInclude>
@@ -151,6 +157,12 @@
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\DebugReport.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ColorStateCache.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\FontHandleCache.cpp">
       <Filter>lib</Filter>
     </ClCompile>
     <ClCompile Include="lib\TextServ.cpp">

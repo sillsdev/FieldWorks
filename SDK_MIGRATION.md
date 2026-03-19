@@ -262,7 +262,7 @@ With CPM ensuring all projects resolve to the same package version, most manual 
 - Initializes VS Developer environment
 - Supports `/m` parallel builds
 - **Stale DLL detection**: Runs `Remove-StaleDlls.ps1` pre-build to catch version-mismatched binaries
-- **Diagnostics config**: Optionally copies dev trace config for Debug builds (`-TraceCrashes` or `UseDevTraceConfig`)
+- **Diagnostics config**: Optionally copies dev trace config for Debug builds (`-EnableTracing` or `UseDevTraceConfig`)
 - **Installer support**: `-BuildInstaller` flag triggers full installer build pipeline
 
 **Note**: `build.sh` is not supported in this repo (FieldWorks is Windows-first). Use `.\build.ps1`.

@@ -61,6 +61,8 @@ OBJ_VIEWS=\
 	$(INT_DIR)\autopch\VwSelection.obj\
 	$(INT_DIR)\autopch\VwTableBox.obj\
 	$(INT_DIR)\autopch\VwGraphics.obj\
+	$(INT_DIR)\autopch\FontHandleCache.obj\
+	$(INT_DIR)\autopch\ColorStateCache.obj\
 	$(INT_DIR)\autopch\VwTxtSrc.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(INT_DIR)\autopch\AfColorTable.obj\

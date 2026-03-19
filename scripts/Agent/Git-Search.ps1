@@ -81,20 +81,12 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Determine repository path
+# Assume current path is repo path and then verify it is the correct repo
 if (-not $RepoPath) {
-    # Try to find FieldWorks main repo
-    $candidates = @(
-        'C:\Users\johnm\Documents\repos\FieldWorks',
-        'C:\Users\johnm\Documents\repos\fw-worktrees\main',
-        (Get-Location).Path
-    )
-    foreach ($candidate in $candidates) {
-        if (Test-Path (Join-Path $candidate '.git')) {
-            $RepoPath = $candidate
-            break
-        }
-    }
+	$RepoPath = Get-Location
+	if (-not (Test-Path -Path (Join-Path $RepoPath ".git"))) {
+		throw "Current directory is not a git repository. Specify -RepoPath explicitly."
+	}
 }
 
 if (-not $RepoPath -or -not (Test-Path $RepoPath)) {

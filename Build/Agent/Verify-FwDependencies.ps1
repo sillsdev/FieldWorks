@@ -64,6 +64,8 @@ function Test-Dependency {
         [string]$Required = "Required"
     )
 
+    $isRequired = ($Required -eq "Required")
+
     try {
         $result = & $Check
         if ($result) {
@@ -80,8 +82,8 @@ function Test-Dependency {
         }
     }
     catch {
-        $color = if ($Required -eq "Required") { "Red" } else { "Yellow" }
-        $status = if ($Required -eq "Required") { "[FAIL]" } else { "[WARN]" }
+        $color = if ($isRequired) { "Red" } else { "Yellow" }
+        $status = if ($isRequired) { "[FAIL]" } else { "[WARN]" }
         Write-Host "$status $Name" -ForegroundColor $color
         Write-Host "       $_" -ForegroundColor DarkGray
         return @{ Name = $Name; Found = $false; IsRequired = ($Required -eq "Required"); Error = $_.ToString() }
@@ -297,9 +299,9 @@ if ($Detailed) {
     Write-Host "=== Summary ===" -ForegroundColor Cyan
 }
 
-$required = $results | Where-Object { $_.IsRequired -ne $false }
-$missing = $required | Where-Object { -not $_.Found }
-$optional = $results | Where-Object { $_.IsRequired -eq $false }
+$required = @($results | Where-Object { $_.IsRequired -ne $false })
+$missing = @($required | Where-Object { -not $_.Found })
+$optional = @($results | Where-Object { $_.IsRequired -eq $false })
 
 $totalRequired = ($required | Measure-Object).Count
 $foundRequired = ($required | Where-Object { $_.Found } | Measure-Object).Count

@@ -1,12 +1,29 @@
 <Project>
+	<!-- Build infrastructure versions are centralized here rather than in the repo root CPM file. -->
+	<Import Project="..\SilVersions.props" />
+
 	<PropertyGroup>
 		<!--
-			Build infrastructure projects (FwBuildTasks, NativeBuild) manage their own
-			package versions independently. They do not contribute assemblies to the
-			shared Output/ directory, so CPM transitive pinning does not apply here.
-			FwBuildTasks also requires different versions of test infrastructure packages
-			(NUnit3TestAdapter 5.2.0, SIL.TestUtilities 12.0.0-*) than the main codebase.
+			Build infrastructure projects keep their package versions scoped to Build/Src.
+			This avoids polluting the repo-root CPM file while still centralizing versions
+			for FwBuildTasks and NativeBuild in one place.
 		-->
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
+
+	<PropertyGroup Label="NativeBuild Package Version Properties">
+		<!-- NativeBuild.csproj is a legacy MSBuild project that still requires explicit Version attributes. -->
+		<BuildSrcSilChorusL10nsVersion>3.0.1</BuildSrcSilChorusL10nsVersion>
+	</PropertyGroup>
+
+	<ItemGroup Label="Build Infrastructure Packages">
+		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.3.3" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+		<PackageVersion Include="NUnit" Version="3.14.0" />
+		<PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" />
+		<PackageVersion Include="SIL.BuildTasks" Version="3.2.0" />
+		<PackageVersion Include="SIL.TestUtilities" Version="12.0.1" />
+		<PackageVersion Include="System.Reflection.Metadata" Version="9.0.13" />
+		<PackageVersion Include="System.Resources.Extensions" Version="9.0.13" />
+	</ItemGroup>
 </Project>

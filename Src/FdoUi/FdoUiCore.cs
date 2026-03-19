@@ -1021,7 +1021,9 @@ namespace SIL.FieldWorks.FdoUi
 				object command = this;
 				if (m_command != null)
 					command = m_command;
-				Publisher.Publish(new PublisherParameterObject(EventConstants.DeleteRecord, command));
+#pragma warning disable 618 // suppress obsolete warning
+				m_mediator.SendMessage("DeleteRecord", command);
+#pragma warning restore 618
 			}
 			else
 			{

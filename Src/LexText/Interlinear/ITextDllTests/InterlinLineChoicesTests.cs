@@ -384,13 +384,11 @@ namespace SIL.FieldWorks.IText
 			choices.Add(InterlinLineChoices.kflidLitTrans, wsEng, true); //7
 			choices.Add(InterlinLineChoices.kflidFreeTrans, wsEng, true); //8
 
-			choices.Add(InterlinLineChoices.kflidLexGloss, wsFrn, true); //9
-			choices.Add(InterlinLineChoices.kflidLexGloss, wsGer, true); //10
-
-			choices.Add(InterlinLineChoices.kflidMedia, wsEng, true); //11
+			choices.Add(InterlinLineChoices.kflidLexGloss, wsFrn, true);
+			choices.Add(InterlinLineChoices.kflidLexGloss, wsGer, true);
 
 			// Pre-checks
-			Assert.That(choices.AllLineSpecs.Count, Is.EqualTo(12));
+			Assert.That(choices.AllLineSpecs.Count, Is.EqualTo(11));
 			Assert.That(choices.AllLineSpecs[0].Flid, Is.EqualTo(InterlinLineChoices.kflidWord));
 			Assert.That(choices.AllLineSpecs[1].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
 			Assert.That(choices.AllLineSpecs[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
@@ -402,7 +400,6 @@ namespace SIL.FieldWorks.IText
 			Assert.That(choices.AllLineSpecs[8].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
 			Assert.That(choices.AllLineSpecs[9].Flid, Is.EqualTo(InterlinLineChoices.kflidLitTrans));
 			Assert.That(choices.AllLineSpecs[10].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans));
-			Assert.That(choices.AllLineSpecs[11].Flid, Is.EqualTo(InterlinLineChoices.kflidMedia));
 
 			Assert.That(choices.AllLineSpecs[3].WritingSystem, Is.EqualTo(wsEng));
 			Assert.That(choices.AllLineSpecs[4].WritingSystem, Is.EqualTo(wsFrn));
@@ -411,7 +408,7 @@ namespace SIL.FieldWorks.IText
 			ReadOnlyCollection<LineOption> configLineOptions = choices.ConfigurationLineOptions;
 
 			// Post-checks
-			Assert.That(configLineOptions.Count, Is.EqualTo(11)); // 10 + 1 for kflidNote.
+			Assert.That(configLineOptions.Count, Is.EqualTo(10)); // 9 + 1 for kflidNote.
 			Assert.That(configLineOptions[0].Flid, Is.EqualTo(InterlinLineChoices.kflidWord));
 			Assert.That(configLineOptions[1].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
 			Assert.That(configLineOptions[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
@@ -421,11 +418,8 @@ namespace SIL.FieldWorks.IText
 			Assert.That(configLineOptions[6].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
 			Assert.That(configLineOptions[7].Flid, Is.EqualTo(InterlinLineChoices.kflidLitTrans));
 			Assert.That(configLineOptions[8].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans));
-			Assert.That(configLineOptions[9].Flid, Is.EqualTo(InterlinLineChoices.kflidMedia));
 			// kflidNote is one of the required options so it was added.
-			// Note: kflidNote is always added as the last option, so if new line choices are added in future,
-			// kflidNote will need to be updated to match the new last index.
-			Assert.AreEqual(InterlinLineChoices.kflidNote, configLineOptions[10].Flid);
+			Assert.That(configLineOptions[9].Flid, Is.EqualTo(InterlinLineChoices.kflidNote));
 		}
 
 		[Test]

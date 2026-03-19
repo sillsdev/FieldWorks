@@ -7,11 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Moq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -158,6 +160,37 @@ namespace SIL.FieldWorks.Discourse
 			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
 			Assert.That(m_ribbon.SelectedOccurrences, Is.EqualTo(new[] { glosses[0] }));
 		}
+
+		[Test]
+		public void SetRoot_AssignsDecoratorBeforeChangingExistingRootObject()
+		{
+			EndSetupTask();
+			var orderingRibbon = new OrderingTestInterlinRibbon(Cache, m_stText.Hvo);
+			var rootbMock = new Mock<IVwRootBox>(MockBehavior.Strict);
+			var installedDecorator = false;
+			rootbMock.Setup(rb => rb.Close());
+
+			rootbMock.SetupSet(rb => rb.DataAccess = It.IsAny<ISilDataAccess>())
+				.Callback<ISilDataAccess>(sda => installedDecorator = ReferenceEquals(sda, orderingRibbon.Decorator));
+			rootbMock.Setup(rb => rb.SetRootObject(
+				m_stText.Hvo,
+				It.IsAny<IVwViewConstructor>(),
+				InterlinRibbon.kfragRibbonWordforms,
+				orderingRibbon.StyleSheet))
+				.Callback(() => Assert.That(installedDecorator, Is.True,
+					"InterlinRibbon should install its decorator before changing an existing root object"));
+
+			orderingRibbon.InstallRootBoxForTest(rootbMock.Object);
+			orderingRibbon.SetRoot(m_stText.Hvo);
+
+			rootbMock.VerifySet(rb => rb.DataAccess = It.IsAny<ISilDataAccess>(), Times.Once);
+			rootbMock.Verify(rb => rb.SetRootObject(
+				m_stText.Hvo,
+				It.IsAny<IVwViewConstructor>(),
+				InterlinRibbon.kfragRibbonWordforms,
+				orderingRibbon.StyleSheet), Times.Once);
+			orderingRibbon.Dispose();
+		}
 		#endregion
 	}
 
@@ -221,11 +254,33 @@ namespace SIL.FieldWorks.Discourse
 			base.OnLoad(eventArgs);
 		}
 
+		internal void InstallRootBoxForTest(IVwRootBox rootBox)
+		{
+			m_rootb = rootBox;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			m_propertyTable.Dispose();
 			base.Dispose(disposing);
+		}
+	}
+
+	internal class OrderingTestInterlinRibbon : TestInterlinRibbon
+	{
+		public OrderingTestInterlinRibbon(LcmCache cache, int hvoStText)
+			: base(cache, hvoStText)
+		{
+		}
+
+		protected override void SetRootInternal(int hvo)
+		{
+			EnsureVc();
+		}
+
+		public override void MakeInitialSelection()
+		{
 		}
 	}
 }
