@@ -629,6 +629,9 @@ try {
 			$testArgs = @{
 				Configuration = $Configuration
 				NoBuild       = $true
+				Verbosity     = $Verbosity
+				SkipDependencyCheck = $SkipDependencyCheck
+				SkipWorktreeLock    = $true
 			}
 			if ($TestFilter) {
 				$testArgs["TestFilter"] = $TestFilter
