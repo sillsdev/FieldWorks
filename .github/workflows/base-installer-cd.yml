@@ -156,7 +156,8 @@ jobs:
         id: build_and_test
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -BuildTests -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") `
+            -TestLogFile test.log | Tee-Object -FilePath build.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Scan Build Output

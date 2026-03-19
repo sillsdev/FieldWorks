@@ -55,6 +55,9 @@
 	Useful for CI/agent scenarios where you want to see recent output without piping.
 	The full output is still written to LogFile if specified.
 
+.PARAMETER TestLogFile
+	Path to a file where the test output should be logged.
+
 .PARAMETER BuildInstaller
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
 	This automatically enables -BuildAdditionalApps unless explicitly disabled.
@@ -131,6 +134,7 @@ param(
 	[string[]]$MsBuildArgs = @(),
 	[string]$LogFile,
 	[int]$TailLines,
+	[string]$TestLogFile = "Out-Null",
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
 	[switch]$BuildInstaller,
@@ -545,16 +549,16 @@ try {
 			}
 
 			Stop-ConflictingProcesses @cleanupArgs
-			& "$PSScriptRoot\test.ps1" @testArgs
+			& "$PSScriptRoot\test.ps1" @testArgs | Tee-Object -FilePath $TestLogFile
 			$script:testExitCode = $LASTEXITCODE
 			if ($script:testExitCode -eq 1) {
 				# VSTest exit code 1 means tests were skipped (or skipped+failed). test.ps1 prints a
 				# FAIL summary when there are actual failures, so treat exit code 1 as a warning only
 				# to avoid failing the build when the only non-passing tests were skipped.
-				Write-Warning "Test run exited with code 1 (skipped tests or failures). Check test output above for details."
+				Write-Warning "Test run exited with code 1 (skipped tests or failures). Check test output above for details." | Tee-Object -FilePath $TestLogFile
 				$script:testExitCode = 0
 			} elseif ($script:testExitCode -ne 0) {
-				Write-Warning "Some tests failed (exit code: $($script:testExitCode)). Check output above for details."
+				Write-Warning "Some tests failed (exit code: $($script:testExitCode)). Check output above for details." | Tee-Object -FilePath $TestLogFile
 			}
 		}
 
