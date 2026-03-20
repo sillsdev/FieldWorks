@@ -22,6 +22,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	public class SuppressAssertDialogsAttribute : TestActionAttribute
 	{
 		private ConsoleErrorTraceListener m_listener;
+		private string m_previousAssertUiEnabled;
+		private string m_previousAssertExceptionEnabled;
+		private string m_previousTestMode;
 
 		/// <summary/>
 		public override ActionTargets Targets => ActionTargets.Suite;
@@ -33,22 +36,29 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 
 			// Force environment variables that control native (DebugProcs.dll) and
 			// managed (EnvVarTraceListener) assertion behavior.
+			m_previousAssertUiEnabled = Environment.GetEnvironmentVariable("AssertUiEnabled");
+			m_previousAssertExceptionEnabled = Environment.GetEnvironmentVariable(
+				"AssertExceptionEnabled"
+			);
+			m_previousTestMode = Environment.GetEnvironmentVariable("FW_TEST_MODE");
+
 			Environment.SetEnvironmentVariable("AssertUiEnabled", "false");
 			Environment.SetEnvironmentVariable("AssertExceptionEnabled", "true");
 			Environment.SetEnvironmentVariable("FW_TEST_MODE", "1");
 
 			// If EnvVarTraceListener is already installed (via AppForTests.config), keep
-			// its assert-to-exception and file logging behavior, but still mirror output
-			// to the console. Otherwise, our listener is responsible for failing tests.
+			// its assert-to-exception and file logging behavior. Otherwise, our listener
+			// is responsible for converting Debug.Fail into a test failure.
 			bool hasEnvVarListener = false;
+			bool hasConsoleErrorListener = false;
 			foreach (TraceListener listener in Trace.Listeners)
 			{
 				// Check by type name to avoid a hard dependency on SIL.LCModel.Utils.
 				if (listener.GetType().Name == "EnvVarTraceListener")
-				{
 					hasEnvVarListener = true;
-					break;
-				}
+
+				if (listener is ConsoleErrorTraceListener)
+					hasConsoleErrorListener = true;
 			}
 
 			// Suppress the DefaultTraceListener dialog even when another listener is
@@ -62,8 +72,11 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 				}
 			}
 
-			m_listener = new ConsoleErrorTraceListener(throwOnFail: !hasEnvVarListener);
-			Trace.Listeners.Insert(0, m_listener);
+			if (!hasConsoleErrorListener)
+			{
+				m_listener = new ConsoleErrorTraceListener(throwOnFail: !hasEnvVarListener);
+				Trace.Listeners.Insert(0, m_listener);
+			}
 		}
 
 		/// <summary/>
@@ -75,12 +88,23 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 				m_listener = null;
 			}
 
+			Environment.SetEnvironmentVariable("AssertUiEnabled", m_previousAssertUiEnabled);
+			Environment.SetEnvironmentVariable(
+				"AssertExceptionEnabled",
+				m_previousAssertExceptionEnabled
+			);
+			Environment.SetEnvironmentVariable("FW_TEST_MODE", m_previousTestMode);
+
+			m_previousAssertUiEnabled = null;
+			m_previousAssertExceptionEnabled = null;
+			m_previousTestMode = null;
+
 			base.AfterTest(test);
 		}
 	}
 
 	/// <summary>
-	/// Mirrors debug trace output to Console.Error and optionally converts
+	/// Writes debug failure details to Console.Error and optionally converts
 	/// Debug.Fail/failed Debug.Assert calls into exceptions.
 	/// </summary>
 	internal class ConsoleErrorTraceListener : TraceListener
@@ -102,17 +126,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			WriteFailure(message, detailMessage);
 		}
 
-		public override void Write(string message)
-		{
-			Console.Error.Write(message);
-			Console.Error.Flush();
-		}
+		public override void Write(string message) { }
 
-		public override void WriteLine(string message)
-		{
-			Console.Error.WriteLine(message);
-			Console.Error.Flush();
-		}
+		public override void WriteLine(string message) { }
 
 		private void WriteFailure(string message, string detailMessage)
 		{
@@ -136,8 +152,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	public class AssertionDialogException : Exception
 	{
 		public AssertionDialogException(string message)
-			: base($"Debug.Fail/Assert fired during test (would have shown a modal dialog):\n{message}")
-		{
-		}
+			: base(
+				$"Debug.Fail/Assert fired during test (would have shown a modal dialog):\n{message}"
+			) { }
 	}
 }

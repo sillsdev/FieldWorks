@@ -13,6 +13,9 @@ using SIL.TestUtilities;
 // Log last-chance managed exceptions to console output before process termination.
 [assembly: LogUnhandledExceptions]
 
+// Suppress all assertion dialog boxes (native + managed) regardless of config file coverage
+[assembly: SuppressAssertDialogs]
+
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
 
