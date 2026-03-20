@@ -74,6 +74,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ToolTip m_toolTipSlotCombo;
 		private MSAGroupBox m_msaGroupBox;
 		private IContainer components = null;
+		private TableLayoutPanel m_tableLayoutPanel;
+		private FlowLayoutPanel m_buttonPanel;
+		private FlowLayoutPanel m_glossFlowLayout;
 
 		private string s_helpTopic = "khtpInsertEntry";
 		private LinkLabel m_linkSimilarEntry;
@@ -628,7 +631,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (WritingSystemServices.GetWritingSystemList(m_cache, WritingSystemServices.kwsAnals, false).Count > 1)
 				{
 					msGloss = ReplaceTextBoxWithMultiStringBox(m_tbGloss, WritingSystemServices.kwsAnals, stylesheet);
-					m_lnkAssistant.Top = msGloss.Bottom - m_lnkAssistant.Height;
+						// Vertically align the link to the bottom of the multi-string control within the FlowLayoutPanel
+					m_lnkAssistant.Margin = new Padding(3, msGloss.Height - m_lnkAssistant.Height, 3, 0);
 					msGloss.TextChanged += tbGloss_TextChanged;
 				}
 				else
@@ -784,7 +788,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			int oldHeight = tb.Parent.Height;
 			FontHeightAdjuster.GrowDialogAndAdjustControls(tb.Parent, ms.Height - tb.Height, ms);
-			tb.Parent.Controls.Add(ms);
+			var parent = tb.Parent;
+			parent.Controls.Add(ms);
+			// Keep the new control in the same position as the original in the parent's
+			// Controls collection.  This matters when the parent is a FlowLayoutPanel,
+			// because Controls order determines visual order; without this, the replacement
+			// control ends up at the end and the neighbouring controls swap sides.
+			parent.Controls.SetChildIndex(ms, parent.Controls.GetChildIndex(tb));
 
 			// Grow the dialog and move all lower controls down to make room.
 			GrowDialogAndAdjustControls(tb.Parent.Height - oldHeight, tb.Parent);
@@ -827,7 +837,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			Mediator = mediator;
 			if (m_propertyTable.GetStringProperty("currentContentControl", null) != "lexiconEdit")
 			{
-				this.Controls.Add(this.m_btnCreateAndEdit);
+				// Insert between Create (index 2) and Cancel (index 1) in the RightToLeft flow.
+				// RightToLeft order: Help(0), Cancel(1), Create(2)
+				// After insert at index 2: Help(0), Cancel(1), CreateAndEdit(2), Create(3)
+				// Display left-to-right: Create | CreateAndEdit | Cancel | Help
+				m_buttonPanel.Controls.Add(m_btnCreateAndEdit);
+				m_buttonPanel.Controls.SetChildIndex(m_btnCreateAndEdit, 2);
 			}
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
@@ -1095,12 +1110,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_propsGroupBox = new System.Windows.Forms.GroupBox();
 			this.m_complexTypeLabel = new System.Windows.Forms.Label();
 			this.m_glossGroupBox = new System.Windows.Forms.GroupBox();
+			this.m_glossFlowLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.m_lnkAssistant = new System.Windows.Forms.LinkLabel();
+			this.m_tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.m_buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbLexicalForm)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_tbGloss)).BeginInit();
 			this.m_matchingEntriesGroupBox.SuspendLayout();
 			this.m_propsGroupBox.SuspendLayout();
 			this.m_glossGroupBox.SuspendLayout();
+			this.m_glossFlowLayout.SuspendLayout();
+			this.m_tableLayoutPanel.SuspendLayout();
+			this.m_buttonPanel.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// m_btnOK
@@ -1241,6 +1262,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_propsGroupBox, "m_propsGroupBox");
 			this.m_propsGroupBox.Name = "m_propsGroupBox";
 			this.m_propsGroupBox.TabStop = false;
+			this.m_propsGroupBox.AutoSize = true;
+			this.m_propsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			//
 			// m_complexTypeLabel
 			//
@@ -1249,10 +1272,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			// m_glossGroupBox
 			//
-			this.m_glossGroupBox.Controls.Add(this.m_lnkAssistant);
-			this.m_glossGroupBox.Controls.Add(this.m_tbGloss);
+			//
+			// m_glossFlowLayout
+			//
+			this.m_glossFlowLayout.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_glossFlowLayout.AutoSize = true;
+			this.m_glossFlowLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.m_glossFlowLayout.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
+			this.m_glossFlowLayout.WrapContents = false;
+			this.m_glossFlowLayout.Name = "m_glossFlowLayout";
+			this.m_glossFlowLayout.Padding = System.Windows.Forms.Padding.Empty;
+			this.m_glossFlowLayout.Margin = System.Windows.Forms.Padding.Empty;
+			this.m_glossFlowLayout.Controls.Add(this.m_tbGloss);
+			this.m_lnkAssistant.Margin = new System.Windows.Forms.Padding(3, 10, 3, 0);
+			this.m_glossFlowLayout.Controls.Add(this.m_lnkAssistant);
+			this.m_glossGroupBox.Controls.Add(this.m_glossFlowLayout);
 			resources.ApplyResources(this.m_glossGroupBox, "m_glossGroupBox");
 			this.m_glossGroupBox.Name = "m_glossGroupBox";
+			this.m_glossGroupBox.AutoSize = true;
+			this.m_glossGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.m_glossGroupBox.TabStop = false;
 			//
 			// m_lnkAssistant
@@ -1263,18 +1301,48 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_lnkAssistant.VisitedLinkColor = System.Drawing.Color.Blue;
 			this.m_lnkAssistant.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAssistant_LinkClicked);
 			//
+			// m_buttonPanel
+			//
+			this.m_buttonPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_buttonPanel.AutoSize = true;
+			this.m_buttonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.m_buttonPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this.m_buttonPanel.WrapContents = false;
+			this.m_buttonPanel.Name = "m_buttonPanel";
+			this.m_buttonPanel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 6);
+			this.m_buttonPanel.Controls.Add(this.m_btnHelp);
+			this.m_buttonPanel.Controls.Add(this.m_btnCancel);
+			this.m_buttonPanel.Controls.Add(this.m_btnOK);
+			//
+			// m_tableLayoutPanel
+			//
+			this.m_tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_tableLayoutPanel.Padding = new System.Windows.Forms.Padding(5, 9, 5, 3);
+			this.m_tableLayoutPanel.Name = "m_tableLayoutPanel";
+			this.m_tableLayoutPanel.ColumnCount = 1;
+			this.m_tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.m_tableLayoutPanel.RowCount = 5;
+			this.m_tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.m_tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.m_tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.m_tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.m_tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.m_propsGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_glossGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_msaGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+			this.m_matchingEntriesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_tableLayoutPanel.Controls.Add(this.m_propsGroupBox, 0, 0);
+			this.m_tableLayoutPanel.Controls.Add(this.m_glossGroupBox, 0, 1);
+			this.m_tableLayoutPanel.Controls.Add(this.m_msaGroupBox, 0, 2);
+			this.m_tableLayoutPanel.Controls.Add(this.m_matchingEntriesGroupBox, 0, 3);
+			this.m_tableLayoutPanel.Controls.Add(this.m_buttonPanel, 0, 4);
+			//
 			// InsertEntryDlg
 			//
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
 			this.CancelButton = this.m_btnCancel;
-			this.Controls.Add(this.m_glossGroupBox);
-			this.Controls.Add(this.m_propsGroupBox);
-			this.Controls.Add(this.m_msaGroupBox);
-			this.Controls.Add(this.m_matchingEntriesGroupBox);
-			this.Controls.Add(this.m_btnHelp);
-			this.Controls.Add(this.m_btnCancel);
-			this.Controls.Add(this.m_btnOK);
+			this.Controls.Add(this.m_tableLayoutPanel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "InsertEntryDlg";
@@ -1287,8 +1355,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_matchingEntriesGroupBox.ResumeLayout(false);
 			this.m_matchingEntriesGroupBox.PerformLayout();
 			this.m_propsGroupBox.ResumeLayout(false);
+			this.m_glossFlowLayout.ResumeLayout(false);
+			this.m_glossFlowLayout.PerformLayout();
 			this.m_glossGroupBox.ResumeLayout(false);
 			this.m_glossGroupBox.PerformLayout();
+			this.m_buttonPanel.ResumeLayout(false);
+			this.m_buttonPanel.PerformLayout();
+			this.m_tableLayoutPanel.ResumeLayout(false);
+			this.m_tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
