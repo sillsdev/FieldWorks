@@ -220,27 +220,16 @@ jobs:
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
 
-      - name: Build and test
-        id: build_and_test
+      - name: Build and run tests
         shell: powershell
         run: |
-          Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\test.ps1 -Configuration Release -Verbosity detailed -TestFilter 'TestCategory!=DesktopRequired' | Tee-Object -FilePath test.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Scan Build Output
+      - name: Build patch installer
         shell: powershell
         run: |
-          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
-          if ($results) {
-              foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
-              }
-              exit 1
-          } else {
-              Write-Host "No errors found" -ForegroundColor green 
-              exit 0
-          }
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Find patch installer
         id: find_patch

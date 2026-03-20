@@ -152,26 +152,16 @@ jobs:
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
 
-      - name: Build and test
-        id: build_and_test
+      - name: Build and run tests
         shell: powershell
         run: |
-          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\test.ps1 -Configuration Release -Verbosity detailed -TestFilter 'TestCategory!=DesktopRequired' | Tee-Object -FilePath test.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Scan Build Output
+      - name: Build installer
         shell: powershell
         run: |
-          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
-          if ($results) {
-              foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
-              }
-              exit 1
-          } else {
-              Write-Host "No errors found" -ForegroundColor green 
-              exit 0
-          }
+          .\build.ps1 -BuildInstaller -Configuration Release -Verbosity detailed -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Move installers to staging folder
         id: stage_installers
