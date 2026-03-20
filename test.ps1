@@ -199,6 +199,23 @@ try {
 
                 Write-Host ""
             }
+            elseif ($TestProject -and ($normalizedTestProjectForBuild -match '(^|/)Src/InstallValidator/InstallValidatorTests($|/InstallValidatorTests\.csproj$)')) {
+                Write-Host "Building InstallValidatorTests before running tests..." -ForegroundColor Cyan
+
+                Invoke-MSBuild `
+                    -Arguments @(
+                        'Src/InstallValidator/InstallValidatorTests/InstallValidatorTests.csproj',
+                        '/t:Restore;Build',
+                        "/p:Configuration=$Configuration",
+                        '/p:Platform=x64',
+                        '/nr:false',
+                        '/v:minimal',
+                        '/nologo'
+                    ) `
+                    -Description 'InstallValidatorTests'
+
+                Write-Host ""
+            }
             else {
                 Write-Host "Building before running tests..." -ForegroundColor Cyan
                 & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
@@ -243,6 +260,9 @@ try {
             else {
                 # Assume it's a project path, find the DLL
                 $projectName = Split-Path $TestProject -Leaf
+                if ($projectName -match '\.csproj$') {
+                    $projectName = [System.IO.Path]::GetFileNameWithoutExtension($projectName)
+                }
                 if ($projectName -notmatch 'Tests?$') {
                     $projectName = "${projectName}Tests"
                 }
