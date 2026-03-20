@@ -197,6 +197,7 @@ if ($Configuration -eq 'Release' -and -not $isGitHubActions) {
 	}
 }
 
+# REVIEW (HASSO) 2026.03: what happened to the rest of this comment?
 # ===========ed Module
 # =============================================================================
 
@@ -384,6 +385,7 @@ try {
 			$finalMsBuildArgs += "/p:BuildNativeTests=true"
 		}
 
+		# REVIEW (Hasso) 2026.03: do we want to build additional apps for the installer? (moot, because the installer shouldn't be rebuilding stuff)
 		if ($BuildAdditionalApps) {
 			$finalMsBuildArgs += "/p:BuildAdditionalApps=true"
 		}
@@ -597,7 +599,7 @@ try {
 			Invoke-MSBuild `
 				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + `
 					$InstallerMsBuildArgs) `
-				-Description '$BaseOrPatch Build' `
+				-Description "$BaseOrPatch Build" `
 				-LogPath $LogFile `
 				-TailLines $TailLines
 
