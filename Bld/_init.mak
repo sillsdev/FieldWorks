@@ -174,7 +174,7 @@ CL_OPTS=$(CL_OPTS) /MD
 # JohnT: /EHa is required so that our code that converts C exceptions (access violation, div by zero)
 # into C++ ThrowableSd exceptions, and catches them at interface boundaries, can work
 # reliably. The October 1999 edition of Bugslayer in MSDN has a fuller explanation.
-CL_OPTS=$(CL_OPTS) /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN32_WINNT=0x0500
+CL_OPTS=$(CL_OPTS) /options:strict /favor:AMD64 /W4 /WX /Fd"$(INT_DIR)/" /EHa /GR /GF /Zm400 /D_WIN32_WINNT=0x0500
 
 PREPROCESS_OPTS=/E
 
