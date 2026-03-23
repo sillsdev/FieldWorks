@@ -193,3 +193,6 @@ TestResults/
 bin/
 FLExInstaller/cabcache/*
 FLExInstaller/wix6/cabcache/*
+
+# Claude Code worktrees
+.claude/worktrees/*
