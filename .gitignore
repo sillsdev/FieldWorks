@@ -99,6 +99,8 @@ _UpgradeReport_Files/
 /Release/
 Output/
 Output
+Output/RenderBenchmarks/
+Output/RenderBenchmarks/**
 Output_i686/
 Output_x86_64/
 __pycache__/
@@ -181,6 +183,7 @@ CrashLog.txt
 # VSTest Artifacts
 TestResults/
 *.trx
+TestResult.xml
 
 # WPF markup compilation temp projects
 *_wpftmp.csproj
@@ -193,3 +196,8 @@ TestResults/
 bin/
 FLExInstaller/cabcache/*
 FLExInstaller/wix6/cabcache/*
+
+# Verify snapshot testing - received files are transient
+*.received.png
+*.diff.png
+DataTreeTimingBaselines.json

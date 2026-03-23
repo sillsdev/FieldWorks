@@ -64,7 +64,6 @@
 		<part ref="AbbreviationAllWs"/>
 		<part ref="SourceAllWs"/>
 		<part ref="IsTranslated"/>
-		<part ref="Media"/>
 		<part ref="Genres"/>
 		<part ref="CommentAllWs"/>
 		<part label="Date Created" ref="DateCreated"/>

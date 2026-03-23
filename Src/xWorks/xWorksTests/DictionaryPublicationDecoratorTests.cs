@@ -634,6 +634,30 @@ namespace SIL.FieldWorks.XWorks
 			m_decorator.Refresh();
 		}
 
+		[Test]
+		public void Refresh_NotifiesRegisteredRoots_WhenVisibleFilteringChanges()
+		{
+			var mockRoot = new MockNotifyChange();
+			m_decorator.AddNotification(mockRoot);
+
+			UndoableUnitOfWorkHelper.Do("do", "undo", m_actionHandler,
+				() =>
+				{
+					var goodWord = MakeEntry("good", "nice", false);
+					var badSense = MakeSense(goodWord, "bad");
+					badSense.DoNotPublishInRC.Add(m_mainDict);
+
+					m_decorator.Refresh();
+
+					Assert.That(mockRoot.PropChangedCount, Is.GreaterThan(0));
+					Assert.That(m_decorator.get_VecSize(goodWord.Hvo, LexEntryTags.kflidSenses), Is.EqualTo(1));
+				});
+
+			m_actionHandler.Undo();
+			m_decorator.Refresh();
+			m_decorator.RemoveNotification(mockRoot);
+		}
+
 		private void VerifyPropChanged(PropChangeInfo propChangeInfo, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			Assert.That(propChangeInfo.hvo, Is.EqualTo(hvo));
@@ -646,9 +670,11 @@ namespace SIL.FieldWorks.XWorks
 		private class MockNotifyChange : IVwNotifyChange
 		{
 			public PropChangeInfo LastPropChanged { get; private set; }
+			public int PropChangedCount { get; private set; }
 
 			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 			{
+				PropChangedCount++;
 				LastPropChanged = new PropChangeInfo() { hvo = hvo, tag = tag, ivMin = ivMin, cvIns = cvIns, cvDel = cvDel };
 			}
 		}

@@ -609,10 +609,32 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public override void Refresh()
 		{
+			var excludedItemsBeforeRefresh = new HashSet<int>(m_excludedItems);
+			var excludedMainEntriesBeforeRefresh = new HashSet<int>(m_excludeAsMainEntry);
+			var homographNumbersBeforeRefresh = new Dictionary<int, int>(m_homographNumbers);
+
 			BuildExcludedObjects();
 			// It probably isn't necessary to rebuild the fields, but one day we might be able to add a relevant custom field??
 			BuildFieldsToFilter();
 			BuildHomographInfo();
+			if (!excludedItemsBeforeRefresh.SetEquals(m_excludedItems)
+				|| !excludedMainEntriesBeforeRefresh.SetEquals(m_excludeAsMainEntry)
+				|| !homographNumbersBeforeRefresh.OrderBy(kvp => kvp.Key).SequenceEqual(m_homographNumbers.OrderBy(kvp => kvp.Key)))
+			{
+				NotifyRefreshChanged();
+			}
+			base.Refresh();
+		}
+
+		private void NotifyRefreshChanged()
+		{
+			if (Cache.LangProject?.LexDbOA == null)
+				return;
+
+			var lexDbHvo = Cache.LangProject.LexDbOA.Hvo;
+			var visibleEntryCount = get_VecSize(lexDbHvo, m_LexDbEntriesFlid);
+			foreach (var notifee in m_notifees)
+				notifee.PropChanged(lexDbHvo, m_LexDbEntriesFlid, 0, visibleEntryCount, 0);
 		}
 
 		/// <summary>

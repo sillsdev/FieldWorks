@@ -306,6 +306,110 @@ function Test-GitTrackedFile {
     }
 }
 
+function Get-NewestWriteTimeUtc {
+    <#!
+    .SYNOPSIS
+        Returns the newest LastWriteTimeUtc among matching files under one or more roots.
+    #>
+    param(
+        [Parameter(Mandatory)][string[]]$Paths,
+        [string[]]$IncludePatterns = @()
+    )
+
+    $latest = [datetime]::MinValue
+    foreach ($path in $Paths) {
+        if (-not (Test-Path $path)) {
+            continue
+        }
+
+        $items = Get-ChildItem -Path $path -Recurse -File -ErrorAction SilentlyContinue
+        if ($IncludePatterns.Count -gt 0) {
+            $items = $items | Where-Object {
+                $fileName = $_.Name
+                foreach ($pattern in $IncludePatterns) {
+                    if ($fileName -like $pattern) {
+                        return $true
+                    }
+                }
+                return $false
+            }
+        }
+
+        foreach ($item in $items) {
+            if ($item.LastWriteTimeUtc -gt $latest) {
+                $latest = $item.LastWriteTimeUtc
+            }
+        }
+    }
+
+    return $latest
+}
+
+function Get-OldestWriteTimeUtc {
+    <#!
+    .SYNOPSIS
+        Returns the oldest LastWriteTimeUtc across a set of required artifact files.
+        Returns $null if any required artifact is missing.
+    #>
+    param(
+        [Parameter(Mandatory)][string[]]$Paths
+    )
+
+    $oldest = [datetime]::MaxValue
+    $foundAny = $false
+    foreach ($path in $Paths) {
+        if (-not (Test-Path $path)) {
+            return $null
+        }
+
+        $item = Get-Item -LiteralPath $path -ErrorAction Stop
+        $foundAny = $true
+        if ($item.LastWriteTimeUtc -lt $oldest) {
+            $oldest = $item.LastWriteTimeUtc
+        }
+    }
+
+    if (-not $foundAny) {
+        return $null
+    }
+
+    return $oldest
+}
+
+function Test-ViewsNativeArtifactsStale {
+    <#!
+    .SYNOPSIS
+        Returns $true when the Views/FwKernel native artifacts are missing or older than relevant native inputs.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$RepoRoot,
+        [Parameter(Mandatory)][string]$Configuration
+    )
+
+    $sourceRoots = @(
+        (Join-Path $RepoRoot 'Src\views'),
+        (Join-Path $RepoRoot 'Src\Kernel'),
+        (Join-Path $RepoRoot 'Src\Generic'),
+        (Join-Path $RepoRoot 'Include')
+    )
+    $sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.ixx', '*.idl', '*.rc', '*.mak', '*.def', '*.bat')
+    $artifactPaths = @(
+        (Join-Path $RepoRoot "Output\$Configuration\Views.dll"),
+        (Join-Path $RepoRoot "Output\$Configuration\views.lib"),
+        (Join-Path $RepoRoot "Output\$Configuration\Common\FwKernelTlb.h"),
+        (Join-Path $RepoRoot "Obj\$Configuration\Views\autopch\VwRootBox.obj")
+    )
+
+    $latestSource = Get-NewestWriteTimeUtc -Paths $sourceRoots -IncludePatterns $sourcePatterns
+    $oldestArtifact = Get-OldestWriteTimeUtc -Paths $artifactPaths
+
+    if ($oldestArtifact -eq $null) {
+        return $true
+    }
+
+    return $latestSource -gt $oldestArtifact
+}
+
 # =============================================================================
 # Module Exports
 # =============================================================================
@@ -323,5 +427,8 @@ Export-ModuleMember -Function @(
     'Stop-ConflictingProcesses',
     'Remove-StaleObjFolders',
     'Test-IsFileLockError',
-    'Invoke-WithFileLockRetry'
+    'Invoke-WithFileLockRetry',
+    'Get-NewestWriteTimeUtc',
+    'Get-OldestWriteTimeUtc',
+    'Test-ViewsNativeArtifactsStale'
 )
