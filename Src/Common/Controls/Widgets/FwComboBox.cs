@@ -166,6 +166,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public FwComboBoxBase()
 		{
+			bool inDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
 			if (Application.RenderWithVisualStyles)
 				DoubleBuffered = true;
 
@@ -179,10 +181,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_comboTextBox.Dock = DockStyle.Fill;
 			m_comboTextBox.Visible = true;
 
-			// This causes us to get a notification when the string gets changed, so we can fire our
-			// TextChanged event.
-			m_sda = m_comboTextBox.DataAccess;
-			m_sda.AddNotification(this);
+			if (!inDesigner)
+			{
+				// This causes us to get a notification when the string gets changed, so we can fire our
+				// TextChanged event.
+				m_sda = m_comboTextBox.DataAccess;
+				m_sda.AddNotification(this);
+			}
 
 			m_comboTextBox.KeyDown += m_comboTextBox_KeyDown;
 			m_comboTextBox.MouseDown += m_comboTextBox_MouseDown;
@@ -225,8 +230,11 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			m_buttonPanel.Width = m_button.PreferredWidth + m_buttonPanel.Padding.Horizontal;
 
-			m_dropDownBox = CreateDropDownBox();
-			m_dropDownBox.Form.VisibleChanged += Form_VisibleChanged;
+			if (!inDesigner)
+			{
+				m_dropDownBox = CreateDropDownBox();
+				m_dropDownBox.Form.VisibleChanged += Form_VisibleChanged;
+			}
 
 			ResumeLayout();
 		}
@@ -723,7 +731,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				Debug.Assert(value != ComboBoxStyle.Simple); // not (yet) supported.
 				m_dropDownStyle = value;
 				// if it's a DropDownList, then don't allow 'editable'
-				m_comboTextBox.EditingHelper.Editable = m_dropDownStyle != ComboBoxStyle.DropDownList;
+				if (m_comboTextBox?.EditingHelper != null)
+					m_comboTextBox.EditingHelper.Editable = m_dropDownStyle != ComboBoxStyle.DropDownList;
 			}
 		}
 
@@ -779,13 +788,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return m_dropDownBox.Form.Width;
+				return m_dropDownBox?.Form.Width ?? Width;
 			}
 			set
 			{
 				CheckDisposed();
 				m_fListWidthSet = true;
-				m_dropDownBox.Form.Width = value;
+				if (m_dropDownBox != null)
+					m_dropDownBox.Form.Width = value;
 			}
 		}
 
@@ -799,11 +809,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return m_dropDownBox.Form.Visible;
+				return m_dropDownBox?.Form.Visible ?? false;
 			}
 			set
 			{
 				CheckDisposed();
+				if (m_dropDownBox == null)
+					return;
 
 				if (value)
 				{
@@ -1300,6 +1312,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public FwComboBox()
 		{
+			if (m_comboTextBox.InDesigner)
+				return;
 			m_comboTextBox.KeyPress += m_comboTextBox_KeyPress;
 			m_button.KeyPress += m_button_KeyPress;
 		}
@@ -1375,12 +1389,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return ListBox.SelectedIndex;
+				return ListBox?.SelectedIndex ?? -1;
 			}
 			set
 			{
 				CheckDisposed();
-				ListBox.SelectedIndex = value;
+				if (ListBox != null)
+					ListBox.SelectedIndex = value;
 			}
 		}
 		/// ------------------------------------------------------------------------------------
@@ -1403,7 +1418,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				CheckDisposed();
 
 				base.StyleSheet = value;
-				ListBox.StyleSheet = value;
+				if (ListBox != null)
+					ListBox.StyleSheet = value;
 			}
 		}
 
@@ -1430,11 +1446,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return ListBox.SelectedItem;
+				return ListBox?.SelectedItem;
 			}
 			set
 			{
 				CheckDisposed();
+				if (ListBox == null)
+					return;
 
 				ListBox.SelectedItem = value;
 				if (value != null)

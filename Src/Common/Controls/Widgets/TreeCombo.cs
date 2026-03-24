@@ -51,6 +51,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		public TreeCombo()
 		{
 			base.DropDownStyle = ComboBoxStyle.DropDownList;
+			if (m_comboTextBox.InDesigner)
+				return;
 			m_comboTextBox.KeyPress += m_comboTextBox_KeyPress;
 			m_button.KeyPress += m_button_KeyPress;
 		}
@@ -234,11 +236,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return Tree.SelectedNode;
+				return Tree?.SelectedNode;
 			}
 			set
 			{
 				CheckDisposed();
+				if (Tree == null)
+					return;
 
 				Tree.SelectedNode = value;
 				SetComboText(value);

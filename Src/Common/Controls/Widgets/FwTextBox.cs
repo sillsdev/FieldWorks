@@ -72,9 +72,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		public FwTextBox()
 		{
-			bool inDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 			m_innerFwTextBox = new InnerFwTextBox();
-			m_innerFwTextBox.InDesigner = inDesigner;
 
 			if (Application.RenderWithVisualStyles)
 				DoubleBuffered = true;
@@ -83,7 +81,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			Padding = Application.RenderWithVisualStyles ? new Padding(2) : new Padding(1, 2, 1, 1);
 			m_innerFwTextBox.Dock = DockStyle.Fill;
 			Controls.Add(m_innerFwTextBox);
-			if (!inDesigner)
+			if (!m_innerFwTextBox.InDesigner)
 			{
 				// This causes us to get a notification when the string gets changed,
 				// so we can fire our TextChanged event.
@@ -1700,10 +1698,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// -------------------------------------------------------------------------------------
 		public InnerFwTextBox()
 		{
+			InDesigner = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 			m_DataAccess = new TextBoxDataAccess();
 			// Check for the availability of the FwKernel COM DLL.  Too bad we have to catch an
 			// exception to make this check...
-			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			if(!InDesigner)
 			{
 				m_vc = new TextBoxVc(this);
 				// So many things blow up so badly if we don't have one of these that I finally decided to just
@@ -2816,7 +2815,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_DataAccess == null)
+			if (m_DataAccess == null || InDesigner)
 				return;
 
 			m_mpEditHeight = FwTextBox.GetDympMaxHeight(this);
