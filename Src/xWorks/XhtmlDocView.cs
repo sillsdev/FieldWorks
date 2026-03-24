@@ -230,6 +230,10 @@ namespace SIL.FieldWorks.XWorks
 		internal static bool IsObjectVisible(int hvoTarget, LcmCache cache, PropertyTable propertyTable, out DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			if (cache == null)
+				throw new ArgumentException("Missing cache.");
+			if (propertyTable == null)
+				throw new ArgumentException("Missing propertyTable.");
 			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
