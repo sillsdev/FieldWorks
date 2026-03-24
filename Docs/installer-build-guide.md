@@ -58,22 +58,22 @@ git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
 ### Full Build (Recommended)
 
 ```powershell
-# Open VS Developer Command Prompt (x64) or run:
+# Open VS Developer Command Prompt or run:
 # & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\Launch-VsDevShell.ps1" -Arch amd64
 
 # Restore packages
-msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug
 
-# Build base installer (x64 only)
-msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+# Build base installer
+msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:config=release /m /v:n
 ```
 
 ### Output Location
 
 After successful build, artifacts are produced in one of these locations (bundle outputs are culture-specific under `en-US/`):
 
-- WiX 3 default: `FLExInstaller/bin/<platform>/<configuration>/`
-- WiX 6 opt-in: `FLExInstaller/wix6/bin/<platform>/<configuration>/`
+- WiX 3 default: `FLExInstaller/bin/x64/<configuration>/`
+- WiX 6 opt-in: `FLExInstaller/wix6/bin/x64/<configuration>/`
 
 ## Building a Patch Installer
 
@@ -89,10 +89,10 @@ These can be downloaded from GitHub Releases (e.g., `build-1188`).
 
 ```powershell
 # Restore packages
-msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug
 
-# Build patch installer (x64 only)
-msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+# Build patch installer
+msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:config=release /m /v:n
 ```
 
 ### Output Location
@@ -157,7 +157,7 @@ Workflows should use **WiX Toolset v6** via `WixToolset.Sdk` restored from NuGet
 **Cause**: NuGet restore/build tools not fully restored, or missing VS build prerequisites.
 
 **Fix**:
-1. Ensure `msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64` succeeds.
+1. Ensure `msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug` succeeds.
 2. Re-run `\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly` and resolve any reported issues.
 2. Add WiX bin directory to PATH: `C:\Program Files (x86)\WiX Toolset v3.14\bin`
 
