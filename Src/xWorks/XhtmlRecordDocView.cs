@@ -2,17 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using XCore;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Xml;
+using XCore;
+using static SIL.FieldWorks.XWorks.DictionaryConfigurationController;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -114,6 +115,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
 						xWorksStrings.ksNoConfiguration);
+					return;
+				}
+				if (!XhtmlDocView.IsObjectVisible(cmo.Hvo, Cache, m_propertyTable, out ExclusionReasonCode xrc))
+				{
+					string caption;
+					string helpTopic;
+					string warning = XhtmlDocView.GetExclusionWarning(xrc, out caption, out helpTopic);
+					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>", warning);
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
