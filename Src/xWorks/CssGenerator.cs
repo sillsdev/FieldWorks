@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
-			var senseNumberSelector = string.Format("{0} .sensenumber", senseContentSelector);
+			var senseNumberSelector = string.Format("{0} > .sensenumber", senseContentSelector);
 
 			senseNumberRule.Value = senseNumberSelector;
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))

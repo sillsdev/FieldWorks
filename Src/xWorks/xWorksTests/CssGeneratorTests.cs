@@ -2337,7 +2337,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber", "sense number style selector was not generated.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sensenumber", "sense number style selector was not generated.");
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult);
 		}
 
@@ -2391,7 +2391,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @"^.gloss\s*{\s*font-family", "Gloss with style was not generated from reversal sense");
-			VerifyRegex(cssResult, @"^\.refdsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", "Sense Number missing");
+			VerifyRegex(cssResult, @"^\.refdsenses\s*>\s*\.sensecontent\s*>\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", "Sense Number missing");
 		}
 
 		[Test]
@@ -2414,8 +2414,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:before{.*content:'\['.*}", "Before content not applied to the sense number selector.");
-			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:after{.*content:'\]'.*}", "After content not applied to the sense number selector.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sensenumber:before{.*content:'\['.*}", "Before content not applied to the sense number selector.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sensenumber:after{.*content:'\]'.*}", "After content not applied to the sense number selector.");
 		}
 
 		[Test]
