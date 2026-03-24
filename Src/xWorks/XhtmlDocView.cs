@@ -491,6 +491,10 @@ namespace SIL.FieldWorks.XWorks
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
 			item.Tag = new object[] { propertyTable, mediator, nodeId, topLevelGuid };
+			var item2 = new DisposableToolStripMenuItem(xWorksStrings.ksJumpToField);
+			s_contextMenu.Items.Add(item2);
+			item2.Click += JumpToFieldAt;
+			item2.Tag = new object[] { propertyTable, mediator, element };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
@@ -638,6 +642,35 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new XmlDiagnosticsDlg(element, guid))
 			{
 				dlg.ShowDialog(propTable.GetValue<IWin32Window>("window"));
+			}
+		}
+
+		private static void JumpToFieldAt(object sender, EventArgs e)
+		{
+			var item = (ToolStripMenuItem)sender;
+			var tagObjects = (object[])item.Tag;
+			var propertyTable = tagObjects[0] as PropertyTable;
+			var mediator = tagObjects[1] as Mediator;
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			GeckoElement fieldElement = tagObjects[2] as GeckoElement;
+			// Find the field object that contains fieldElement.
+			ICmObject fieldObj = null;
+			for (GeckoElement element = fieldElement; element != null; element = element.ParentElement)
+			{
+				if (element.HasAttribute("sourceGuid"))
+				{
+					Guid fieldGuid = new Guid(element.GetAttribute("sourceGuid"));
+					if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(fieldGuid, out fieldObj))
+					{
+						break;
+					}
+				}
+			}
+			if (fieldObj != null)
+			{
+				// Jump to the slice with the field object and text value.
+				object[] arguments = new object[] { fieldObj.Hvo, fieldElement.TextContent };
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField, arguments));
 			}
 		}
 

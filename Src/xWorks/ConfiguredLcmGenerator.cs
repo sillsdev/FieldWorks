@@ -493,6 +493,11 @@ namespace SIL.FieldWorks.XWorks
 			bool fUseReverseSubField = false)
 		{
 			var config = nodeList.Last();
+			if (field is ICmObject fieldObj)
+			{
+				// Record the guid of the source.
+				config.SourceGuid = fieldObj.Guid;
+			}
 
 			if (!config.IsEnabled)
 			{

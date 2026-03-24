@@ -1047,6 +1047,83 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		/// <summary>
+		/// Jump to the slice that contains the given field object and value.
+		/// </summary>
+		private void JumpToField(object arguments)
+		{
+			var array = (object[])arguments;
+			int fieldHvo = (int)array[0];
+			string fieldValue = (string)array[1];
+			ICmObject fieldObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fieldHvo);
+			bool found = false;
+			// Try matching fieldObject and fieldValue first.
+			foreach (Slice slice in Slices)
+			{
+				if (slice.Object == fieldObj && SliceMatchesText(slice, fieldValue))
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+				if (slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+
+				if (m_fSetCurrentSliceNew && !slice.IsHeaderNode)
+				{
+					m_fSetCurrentSliceNew = false;
+					m_currentSliceNew = slice;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				// Just match fieldObject.
+				foreach (Slice slice in Slices)
+				{
+					if (slice.Object == fieldObj)
+					{
+						m_fSetCurrentSliceNew = true;
+					}
+
+					if (m_fSetCurrentSliceNew && !slice.IsHeaderNode)
+					{
+						m_fSetCurrentSliceNew = false;
+						m_currentSliceNew = slice;
+						found = true;
+						break;
+					}
+				}
+			}
+			if (found)
+			{
+				// Set the current slice.
+				m_fCurrentContentControlObjectTriggered = true;
+				OnReadyToSetCurrentSlice(false);
+			}
+		}
+
+		/// <summary>
+		/// Does the slice's display text match the given text?
+		/// </summary>
+		private bool SliceMatchesText(Slice slice, string text)
+		{
+			if (slice is MultiStringSlice)
+			{
+				ITsMultiString multiString = m_cache.DomainDataByFlid.get_MultiStringProp(slice.Object.Hvo, slice.Flid);
+				for (int i = 0; i < multiString.StringCount; i++)
+				{
+					ITsString tsString = multiString.GetStringFromIndex(i, out int ws);
+					if (tsString.Text == text)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		private void SetCurrentSliceNewFromObject(ICmObject obj)
 		{
 			foreach (Slice slice in Slices)
@@ -1248,6 +1325,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.PostponePropChanged, PostponePropChanged);
+				Subscriber.Unsubscribe(EventConstants.JumpToField, JumpToField);
 
 				// Do this first, before setting m_fDisposing to true.
 				if (m_sda != null)
@@ -3711,6 +3789,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				RestorePreferences();
 
 			Subscriber.Subscribe(EventConstants.PostponePropChanged, PostponePropChanged);
+			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()

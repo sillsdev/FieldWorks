@@ -570,6 +570,11 @@ namespace SIL.FieldWorks.XWorks
 			if (settings != null && (settings.IsWebExport || settings.IsXhtmlExport))
 				return;
 			xw.WriteAttributeString("nodeId", $"{config.GetNodeId()}");
+			if (config.SourceGuid != null)
+			{
+				// Write out the source guid for JumpToField to use.
+				xw.WriteAttributeString("sourceGuid", $"{config.SourceGuid.ToString()}");
+			}
 		}
 
 		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname,

@@ -1331,4 +1331,7 @@ See USFM documentation for help.</value>
     <value>Batch {0} failed after {1} retries ({2}). Upload aborted.</value>
     <comment>Error message when a batch fails after all retry attempts. {0} is batch number, {1} is max retries, {2} is HTTP status code.</comment>
   </data>
+  <data name="ksJumpToField" xml:space="preserve">
+    <value>Jump to field</value>
+  </data>
 </root>
