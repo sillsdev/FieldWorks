@@ -1,0 +1,1736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xlingpaper PUBLIC "-//XMLmind//DTD XLingPap//EN"
+"XLingPap.dtd">
+<xlingpaper
+version="2.24.0"
+><styledPaper
+><lingPaper
+automaticallywrapinterlinears="yes"
+version="2.28.0"
+><frontMatter
+><title
+><object
+type="tToneParsFLEx"
+></object
+> User Documentation</title
+><author
+>H. Andrew Black</author
+><affiliation
+>SIL International</affiliation
+><emailAddress
+>blackhandrew@gmail.com</emailAddress
+><date
+>29 August, 2023</date
+><version
+>Version 0.6.0 Beta</version
+><version
+>Copyright © 2019-2023 SIL International</version
+><contents
+></contents
+></frontMatter
+><section1
+id="sIntro"
+><secTitle
+>Introduction</secTitle
+><p
+><object
+type="tToneParsFLEx"
+></object
+> is a tool that works as a utility in <object
+type="tFieldWorks"
+></object
+> (aka <object
+type="tFLEx"
+></object
+>). <object
+type="tToneParsFLEx"
+></object
+> runs either the <object
+type="tXAmple"
+></object
+> program or the <object
+type="tHermitCrab"
+></object
+> program followed by the <object
+type="tTonePars"
+></object
+> program on a text or a portion of a text that exists in a <object
+type="tFLEx"
+></object
+> project. You tell <object
+type="tToneParsFLEx"
+></object
+> the <object
+type="tTonePars"
+></object
+> rule file to use as well as an <object
+type="tXAmple"
+></object
+> input control file.<endnote
+id="nIntextCtrl"
+><p
+>When using the <object
+type="tHermitCrab"
+></object
+> program, you still need an input control file in order to define the set of input changes.  These are normally used to remove tone markings from an input word.</p
+></endnote
+> Then you can choose a text or a portion of that text and ask <object
+type="tToneParsFLEx"
+></object
+> to process it. The result will show in <object
+type="tFLEx"
+></object
+> the same as it does when using either of the two morphological parsers that come with <object
+type="tFLEx"
+></object
+>.</p
+><p
+>When using the <object
+type="tXAmple"
+></object
+> program, the input to the <object
+type="tXAmple"
+></object
+> program is the same as what <object
+type="tFLEx"
+></object
+> uses for the default morphological parser (which is <object
+type="tXAmple"
+></object
+>). This means that you must control <object
+type="tXAmple"
+></object
+> using the capabilities <object
+type="tFLEx"
+></object
+> offers, not what you may have used with <object
+type="tAmple"
+></object
+> via, say, <object
+type="tCarlaStudio"
+></object
+>.</p
+><p
+><object
+type="tToneParsFLEx"
+></object
+> works with version <object
+type="tFLExVersion"
+></object
+> or higher of <object
+type="tFLEx"
+></object
+> and is only available on 64-bit Windows computers.</p
+><section2
+id="sInstallation"
+><secTitle
+>Installation</secTitle
+><p
+>To install <object
+type="tToneParsFLEx"
+></object
+>, obtain the installer from <link
+href="https://github.com/sillsdev/pcpatrflex/blob/ToneParsFLEx/InstallerTonePars/Output/UseToneParsWithFLExDllSetup.exe"
+>https://​github.com/​sillsdev/​pcpatrflex/​blob/​ToneParsFLEx/​InstallerTonePars/​Output/​Use​Tone​Pars​With​FLExDll​Setup.exe</link
+>. The installer will check to see if you have installed <object
+type="tFieldWorks"
+></object
+> version 9. If not, it will abort.</p
+><p
+>We recommend that you close <object
+type="tFieldWorks"
+></object
+> before running the <object
+type="tToneParsFLEx"
+></object
+> installer.</p
+></section2
+><section2
+id="sInvokingFromFLEx"
+><secTitle
+>Invoking <object
+type="tToneParsFLEx"
+></object
+> from within <object
+type="tFLEx"
+></object
+></secTitle
+><p
+>While running <object
+type="tFLEx"
+></object
+>, use <object
+type="tMenuItem"
+>Tools</object
+> menu item / <object
+type="tMenuItem"
+>Utilities...</object
+>. Find the “Use TonePars with FLEx” item, check it, and then click on the “Run Checked Utilities Now” button.</p
+></section2
+><section2
+id="sInitialRun"
+><secTitle
+>Initial invocation</secTitle
+><p
+>The first time you invoke <object
+type="tToneParsFLEx"
+></object
+> on a <object
+type="tFLEx"
+></object
+> database, it will automatically add to your <object
+type="tFLEx"
+></object
+> database the following:</p
+><ol
+><li
+>a custom field to each sense (called “ToneParsSense”);</li
+><li
+>a custom field for each allomorph/lexeme form<endnote
+id="nLexemeFormAlloProp"
+><p
+>The current version of <object
+type="tFLEx"
+></object
+> does not show this custom field on Lexeme Form. You can set it, though, by swapping the lexeme form with an allomorph. See the <object
+type="tFLEx"
+></object
+> help system for how to do this.</p
+></endnote
+> (called “ToneParsForm”); and</li
+><li
+>a custom list (called “TonePars Properties”). You use this custom list to create any allomorph or morpheme properties used in your <object
+type="tTonePars"
+></object
+> rule file.</li
+></ol
+><p
+>The names shown above are always in the English analysis writing system and English is the only writing system containing these names.</p
+><p
+>You can find the custom list by clicking on the “Lists” button in <object
+type="tFLEx"
+></object
+>.</p
+></section2
+><section2
+id="sAppearance"
+><secTitle
+>Appearance</secTitle
+><p
+><object
+type="tToneParsFLEx"
+></object
+> looks like what is shown in <exampleRef
+letter="xNewPcPatrFLEx"
+num="xNewPcPatrFLEx"
+></exampleRef
+>.</p
+><example
+num="xNewPcPatrFLEx"
+><chart
+><img
+XeLaTeXSpecial="scaled='600'"
+src="resources/ToneParsFLExEmpty.png "
+width="450"
+></img
+></chart
+></example
+><p
+>The texts in the <object
+type="tFLEx"
+></object
+> database are shown in the left pane and the segments of the first text are shown in the right pane.</p
+><p
+>There are buttons you can click. Each is discussed in section <sectionRef
+sec="sButtons"
+></sectionRef
+> below.</p
+></section2
+></section1
+><section1
+id="sButtons"
+><secTitle
+>Buttons and check boxes</secTitle
+><p
+>You control <object
+type="tToneParsFLEx"
+></object
+> by using the various buttons and check boxes. This section briefly describes them.</p
+><section2
+id="sToneParsRuleBrowse"
+><secTitle
+><object
+type="tTonePars"
+></object
+> rule file Browse button</secTitle
+><p
+>To choose which <object
+type="tTonePars"
+></object
+> rule file to use, click on the topmost Browse button. By convention, <object
+type="tTonePars"
+></object
+> rule files have an extension of “.ctl” so this is what the file browser uses.</p
+></section2
+><section2
+id="sAmpleIBrowsentxCtl"
+><secTitle
+><object
+type="tAmple"
+></object
+> intx ctl file Browse button</secTitle
+><p
+>As you most likely already know, when using <object
+type="tTonePars"
+></object
+>, one first parses a text via <object
+type="tAmple"
+></object
+> but as part of the processing, <object
+type="tAmple"
+></object
+> strips out tone marking. The result is then passed to <object
+type="tTonePars"
+></object
+>. In order to correctly strip out the tone markings, <object
+type="tToneParsFLEx"
+></object
+> needs to know the location of the input text control file needed. To choose which input text control file to use, click on the Browse button. By convention, <object
+type="tAmple"
+></object
+> input text control file names end with “intx.ctl” so this is what the file browser uses.</p
+><p
+>If you are using the <object
+type="tHermitCrab"
+></object
+> parser in <object
+type="tFLEx"
+></object
+>, you will still need to specify this file.  <object
+type="tToneParsFLEx"
+></object
+> will read the input text changes from this file and apply them before parsing a word via <object
+type="tHermitCrab"
+></object
+>.</p
+></section2
+><section2
+id="sTraceToneProcessing"
+><secTitle
+>Trace Tone Processing check box</secTitle
+><p
+>The next item is a check box with a label of “Trace Tone Processing.” When working with <object
+type="tTonePars"
+></object
+>, you often need to get a trace of what the tool is doing. When this check box is checked, <object
+type="tToneParsFLEx"
+></object
+> invokes <object
+type="tTonePars"
+></object
+> with tracing turned on. The log file will show the results of the tracing process. See section <sectionRef
+sec="sTracingOptions"
+></sectionRef
+> for the various tracing options available and see section <sectionRef
+sec="sShowLog"
+></sectionRef
+> for how to see the resulting log file.</p
+></section2
+><section2
+id="sTracingOptions"
+><secTitle
+>Tracing Options button</secTitle
+><p
+>When you click on the “Tracing Options” button, it brings up a dialog box that looks like what is in example <exampleRef
+letter="xTracingOptionsDIalog"
+num="xTracingOptionsDIalog"
+></exampleRef
+>:</p
+><example
+num="xTracingOptionsDIalog"
+><chart
+><img
+src="resources/TracingOptionsDialog.png"
+width="450"
+></img
+></chart
+></example
+><p
+>The options listed are the same as the options available in <object
+type="tCarlaStudio"
+></object
+>.</p
+></section2
+><section2
+id="sShowLog"
+><secTitle
+>Show Log button</secTitle
+><p
+>When you click on the “Show Log” button, the log file generated by the last invocation of <object
+type="tTonePars"
+></object
+> will be displayed.</p
+></section2
+><section2
+id="sHelp"
+><secTitle
+>Help button</secTitle
+><p
+>The “Help...” button is used to get this user documentation file, show the TonePars Manual, show the TonePars Grammar documentation file, or show the “About” dialog box.</p
+></section2
+><section2
+id="sVerifyControlFileInformation"
+><secTitle
+>Verify Control File Information check box</secTitle
+><p
+>One run time option for <object
+type="tTonePars"
+></object
+> is to verify various pieces of information. When the “Verify Control File Information’ check box is checked, <object
+type="tToneParsFLEx"
+></object
+> will invoke <object
+type="tTonePars"
+></object
+> in such a way that this information will be included in the log file. You can see it by showing the log file (see section <sectionRef
+sec="sShowLog"
+></sectionRef
+>).</p
+></section2
+><section2
+id="sIgenoreContext"
+><secTitle
+>Ignore Context check box</secTitle
+><p
+>When the “Ignore Context” check box is checked, <object
+type="tToneParsFLEx"
+></object
+> will determine all the unique word forms in the text (or segment) and parse them. This means that each unique word form is parsed once and only once no matter how many times it appears in the text (or segment). It therefore runs much faster especially on a text. This is the default setting.</p
+><p
+>When this check box is not checked, then the input to parsing is like it is for <object
+type="tAmple"
+></object
+>: Each word is parsed in turn, even if it occurs multiple times. So this takes longer to parse. On the other hand, if your tone rules need to go across word boundaries,<endnote
+id="nEdgeRules"
+><p
+>That is, if some of your tone rules are edge rules…</p
+></endnote
+> then you may need to process texts (and segments) this way.</p
+></section2
+><section2
+id="sRefresh"
+><secTitle
+>Refresh Texts button</secTitle
+><p
+>Whenever you click on the “Refresh Texts” button or press the <object
+type="tKey"
+>F5</object
+> key, <object
+type="tToneParsFLEx"
+></object
+> will reload all of the texts from <object
+type="tFLEx"
+></object
+>. This is so if you know that if some texts have been added, deleted or changed since you first started <object
+type="tToneParsFLEx"
+></object
+>, you can get the most current list of texts.</p
+></section2
+><section2
+id="sDisambiguate"
+><secTitle
+>Parse this text button</secTitle
+><p
+>Above the pane containing the texts is a button labeled “Parse this text.” You use this button to parse this entire text via the current parser chosen in <object
+type="tFLEx"
+></object
+><endnote
+id="nChooseParser"
+><p
+>To set the parser in <object
+type="tFLEx"
+></object
+>, use <object
+type="tMenuItem"
+>Parser</object
+> menu item / <object
+type="tMenuItem"
+>Choose Parser</object
+>.</p
+></endnote
+> and then <object
+type="tTonePars"
+></object
+>. Before parsing the text, <object
+type="tToneParsFLEx"
+></object
+> will check to make sure the following files exist:</p
+><ol
+><li
+>The <object
+type="tAmple"
+></object
+> intx control file.</li
+><li
+>The <object
+type="tTonePars"
+></object
+> rule file.</li
+><li
+>The segments file from the <object
+type="tTonePars"
+></object
+> rule file.</li
+></ol
+><pc
+>If any cannot be found, then an error message showing the unfound file(s) will show. The parsing will not be done.</pc
+><p
+>If these files are there, then the mouse icon will change to the “busy” shape until it is done. The results will show in <object
+type="tFLEx"
+></object
+> the same way as using one of the morphological parsers that come with <object
+type="tFLEx"
+></object
+> show their result. It is easiest to see this in the “Texts &amp; Words" / “Interlinear Texts" view or the “Texts &amp; Words" / “Word Analyses” view.</p
+><p
+>During the parsing process, the bottom left of the window will display the current step that is occurring.</p
+></section2
+><section2
+id="sParse"
+><secTitle
+>Parse this segment button</secTitle
+><p
+>Above the pane containing the segments of the selected text is a button labeled “Parse this segment.” You use this button to parse this particular segment via the current parser chosen in <object
+type="tFLEx"
+></object
+><endnote
+id="nChooseParser2"
+><p
+>To set the parser in <object
+type="tFLEx"
+></object
+>, use <object
+type="tMenuItem"
+>Parser</object
+> menu item / <object
+type="tMenuItem"
+>Choose Parser</object
+>.</p
+></endnote
+>  and then <object
+type="tTonePars"
+></object
+>. Before parsing the text, <object
+type="tToneParsFLEx"
+></object
+> will check to make sure the following files exist:</p
+><ol
+><li
+>The <object
+type="tAmple"
+></object
+> intx control file.</li
+><li
+>The <object
+type="tTonePars"
+></object
+> rule file.</li
+><li
+>The segments file from the <object
+type="tTonePars"
+></object
+> rule file.</li
+></ol
+><pc
+>If any cannot be found, then an error message showing the unfound file(s) will show. The parsing will not be done.</pc
+><p
+>If these files are there, then the mouse icon will change to the “busy” shape until it is done. The results will show in <object
+type="tFLEx"
+></object
+> the same way as using one of the morphological parsers that come with <object
+type="tFLEx"
+></object
+> show their result. It is easiest to see this in the “Texts &amp; Words" / “Interlinear Texts" view or the “Texts &amp; Words" / “Word Analyses” view.</p
+><p
+>During the parsing process, the bottom left of the window will display the current step that is occurring.</p
+></section2
+></section1
+><section1
+id="sMaxAnalyses"
+><secTitle
+>Maximum analyses setting for <object
+type="tXAmple"
+></object
+></secTitle
+><p
+>By default, <object
+type="tFLEx"
+></object
+> only returns a maximum of the first twenty parses found by <object
+type="tXAmple"
+></object
+>. This is often very reasonable when one is not using <object
+type="tTonePars"
+></object
+>. With <object
+type="tTonePars"
+></object
+>, however, this could easily be too few. In one <object
+type="tTonePars"
+></object
+> project, there are twenty-six nulls possible for various tone possibilities within a given word. Only returning twenty will never do. We have changed the default to be 1000. If this is ridiculously high for your situation, you can always change the setting to a different number. To do so, in the main <object
+type="tFLEx"
+></object
+> window, use the <object
+type="tMenuItem"
+>Parser / Edit Parser Parameters…</object
+> menu item and set the “MaxAnalyses” value to what you need. Note that a value of -1 will be treated as 1000 by <object
+type="tToneParsFLEx"
+></object
+>.</p
+><p
+>This situation is only for when the using the <object
+type="tXAmple"
+></object
+> parser in <object
+type="tFLEx"
+></object
+>.  There is no such restriction when using the <object
+type="tHermitCrab"
+></object
+> parser.</p
+></section1
+><section1
+id="sRemembering"
+><secTitle
+>Restarting <object
+type="tToneParsFLEx"
+></object
+></secTitle
+><p
+>Whenever you exit and restart <object
+type="tToneParsFLEx"
+></object
+>, it will do the following:</p
+><ol
+><li
+>remember the size and position of the <object
+type="tToneParsFLEx"
+></object
+> window;</li
+><li
+>remember which <object
+type="tTonePars"
+></object
+> rule file you last chose;</li
+><li
+>remember which <object
+type="tAmple"
+></object
+> intx ctl file you last chose;</li
+><li
+>remember the settings of “Trace Tone Processing,” “Tracing Options.” and “Verify Control File Information;”</li
+><li
+>remember which text in that project you last selected; and</li
+><li
+>remember which segment in that text you last selected.</li
+></ol
+></section1
+><section1
+id="sKnownProblems"
+><secTitle
+>Known problems</secTitle
+><p
+>The following items are known to be less than desirable with this version of <object
+type="tToneParsFLEx"
+></object
+>:</p
+><ol
+><li
+><object
+type="tToneParsFLEx"
+></object
+> only works with version <object
+type="tFLExVersion"
+></object
+> or higher of <object
+type="tFLEx"
+></object
+>.</li
+><li
+>The location of the <object
+type="tTonePars"
+></object
+> rule file and the <object
+type="tAmple"
+></object
+> intx ctl file work best if the path to them does not contain any spaces.</li
+><li
+>The location of the segments file within the <object
+type="tTonePars"
+></object
+> rule file needs to follow the MSDOS 8.3 file convention or it may not be found. See <link
+href="https://stackoverflow.com/questions/4051088/get-dos-path-instead-of-windows-path"
+>here</link
+> for some ways to do that.</li
+><li
+>If a lexical entry in <object
+type="tFLEx"
+></object
+> is marked as either a proclitic or an enclitic, it may not parse correctly. This is because <object
+type="tFLEx"
+></object
+> creates two entries for it with the same morphname; one is as an affix and the other is as a root. <object
+type="tToneParsFLEx"
+></object
+> may not process it correctly due to this ambiguity. It might be possible, however, to model these as affixes instead of as proclitics/ enclitics.</li
+><li
+>When you need to mark an allomorph with an allomorph property using the custom field of “ToneParsForm,” the custom field only shows up in <object
+type="tFLEx"
+></object
+> for an allomorph. It does not show for a lexeme form. To add an allomorph property to a lexeme form, you can use the “Swap Lexeme Form with Allomorph” capability (on the Lexeme Form item) or the “Swap Allomorph with Lexeme Form” capability (on the Allomorph item). See the <object
+type="tFLEx"
+></object
+> help system for how to do this.</li
+><li
+>The current version of <object
+type="tFLEx"
+></object
+> does not always parse a capitalized word. Here is one way to try and deal with this:<endnote
+id="nLT5722"
+><p
+>This is a slightly modified version of Kevin Warfel's work-around in <object
+type="tFLEx"
+></object
+>'s issue tracking system at <link
+href="https://jira.sil.org/browse/LT-5722"
+>LT-5722</link
+>.</p
+></endnote
+><ol
+><li
+>Go to the Baseline tab and change the upper-case letter to lower case.</li
+><li
+>Return to the Analyze tab and parse the segment in <object
+type="tToneParsFLEx"
+></object
+>.</li
+><li
+>If there are multiple parser-generated analyses available, select the correct one, then click on the green check mark. (This marks that particular analysis as “user-approved” in the Word Analyses area, which the interlinear view uses as one of its default sources.)</li
+><li
+>Go back to the Baseline tab and change the letter back to upper case.</li
+><li
+>Return to the Analyze tab, click on the word, then use the drop-down arrow on the Morphemes line to select the lower-case form of the word. (This should enable FLEx to associate the previously generated analysis of the lower-case form with the current instance.)</li
+></ol
+></li
+><li
+>The user interface is in English only.</li
+><li
+>Be sure to close <object
+type="tToneParsFLEx"
+></object
+> *before* you close <object
+type="tFLEx"
+></object
+> or there may a version of <object
+type="tFLEx"
+></object
+> running in the background. This can prevent <object
+type="tFLEx"
+></object
+> from starting again.</li
+><li
+><object
+type="tToneParsFLEx"
+></object
+> produces a copy of the Tone Rule file with an extension of “.hvo” in the directory where the Tone Rule file is. This file is used by <object
+type="tTonePars"
+></object
+> in order to correctly handle “morphname is” statements in the rule file.</li
+></ol
+></section1
+><section1
+id="sOutputFiles"
+><secTitle
+>Output files</secTitle
+><p
+>When you parse a segment or a text, <object
+type="tToneParsFLEx"
+></object
+> produces several temporary files. There may be times when seeing these files will prove useful, especially if you are used to seeing such files in <object
+type="tCarlaStudio"
+></object
+>. To see the files, open a Windows Explorer window in the temp directory. One way to do this is to click in the address bar and then replace its contents with “%TEMP%” (without the quotes). Next, view the directory showing details and click on the "Date modified” column header so that the most recently used files are ordered first. The files used by <object
+type="tToneParsFLEx"
+></object
+> are shown in example <exampleRef
+letter="xTempFiles"
+num="xTempFiles"
+></exampleRef
+> below.</p
+><example
+num="xTempFiles"
+><table
+border="1"
+><tr
+><th
+>File name</th
+><th
+>Contents</th
+></tr
+><tr
+><td
+><object
+type="tItalic"
+>FLExProjectName</object
+>adctl.txt</td
+><td
+>The analysis data control file used by <object
+type="tXAmple"
+></object
+>.</td
+></tr
+><tr
+><td
+><object
+type="tItalic"
+>FLExProjectName</object
+>gram.txt</td
+><td
+>The <object
+type="tTool"
+>PC-PATR</object
+> grammar file used by <object
+type="tXAmple"
+></object
+>. (Most likely this file will not make much sense unless you have a lot of experience with <object
+type="tTool"
+>PC-PATR</object
+> grammar files.</td
+></tr
+><tr
+><td
+><object
+type="tItalic"
+>FLExProjectName</object
+>lex.txt</td
+><td
+>The lexicon file used by <object
+type="tXAmple"
+></object
+>.</td
+></tr
+><tr
+><td
+><object
+type="tItalic"
+>FLExProjectName</object
+>TPadctl.txt</td
+><td
+>The analysis data control file used by <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+><object
+type="tItalic"
+>FLExProjectName</object
+>TPlex.txt</td
+><td
+>The lexicon file used by <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+>ToneParsCmd.cmd</td
+><td
+>A file containing the files loaded by <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+>ToneParsFLEx.bat</td
+><td
+>The batch file which invokes <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+>ToneParsInvoker.ana</td
+><td
+>The ANA file produced by <object
+type="tXAmple"
+></object
+> which is used as the input to <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+>ToneParsInvoker.ant</td
+><td
+>The output ANA file produced by <object
+type="tTonePars"
+></object
+>.</td
+></tr
+><tr
+><td
+>ToneParsInvoker.log</td
+><td
+>The log file produced by <object
+type="tTonePars"
+></object
+>. See section <sectionRef
+sec="sShowLog"
+></sectionRef
+> for an easier way to see this.</td
+></tr
+></table
+></example
+><p
+>Note that most of these files use numbers instead of text for things like morph-names. This is how it needs to be done for <object
+type="tFLEx"
+></object
+> to properly process the data.</p
+></section1
+><section1
+id="sErrorMessages"
+><secTitle
+>Error messages</secTitle
+><p
+>When parsing a segment or a text, you may see an error message box. The following tries to explain them.</p
+><table
+border="1"
+><tr
+><th
+>Message</th
+><th
+>Explanation</th
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>Could not find the AMPLE intx.ctl file at: <object
+type="tItalic"
+>file location</object
+></object
+></td
+><td
+align="left"
+valign="top"
+>This appears when you try to parse a text or a segment and the <object
+type="tAmple"
+></object
+> intx ctrl file was not found.</td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+></td
+><td
+align="left"
+valign="top"
+></td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>Could not find the segments file in the TonePars rule file at: <object
+type="tItalic"
+>file location</object
+>. Remember that this file path may need to be in 8.3 format.</object
+></td
+><td
+align="left"
+valign="top"
+>This appears when you try to parse a text or a segment and while the <object
+type="tTonePars"
+></object
+> rule file was found, the file indicated by the \segments field was not found. See section <sectionRef
+sec="sKnownProblems"
+></sectionRef
+>, item 3.</td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+></td
+><td
+align="left"
+valign="top"
+></td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>Could not find the TonePars rule file at: <object
+type="tItalic"
+>file location</object
+></object
+></td
+><td
+align="left"
+valign="top"
+>This appears when you try to parse a text or a segment and the <object
+type="tTonePars"
+></object
+> rule file was not found.</td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+></td
+><td
+align="left"
+valign="top"
+></td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>Log file does not exist; please parse a segment or a text.</object
+></td
+><td
+align="left"
+valign="top"
+>This appears when you try to show the log file and we could not find one.</td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+></td
+><td
+align="left"
+valign="top"
+></td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>Somehow the result file was empty. Please try again.</object
+></td
+><td
+align="left"
+valign="top"
+>We detected that the resulting <object
+type="tTonePars"
+></object
+> file was empty. This seems to be a result of some kind of timing issue.</td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+></td
+><td
+align="left"
+valign="top"
+></td
+></tr
+><tr
+><td
+align="left"
+valign="top"
+><object
+type="tErrorType"
+>There was a timing problem. Check if the \segments path to xxxTP.seg in xxxTP.ctl is correct. See the Log file.</object
+></td
+><td
+align="left"
+valign="top"
+>For some reason, the running of <object
+type="tTonePars"
+></object
+> did not finish. One possibility is that the \segments field in the <object
+type="tTonePars"
+></object
+> rule file had a problem or could not be found.</td
+></tr
+></table
+></section1
+><section1
+id="sSupport"
+><secTitle
+>Support</secTitle
+><p
+>If you have any questions with <object
+type="tToneParsFLEx"
+></object
+> or find bugs in it, please send an email to <link
+href="mailto:blackhandrew@gmail.com"
+>blackhandrew@gmail.com</link
+>.</p
+></section1
+><backMatter
+><endnotes
+></endnotes
+><references
+></references
+></backMatter
+><languages
+><language
+id="lVernacular"
+name="vernacular"
+></language
+><language
+id="lGloss"
+name="gloss"
+></language
+><language
+id="en"
+></language
+><language
+font-family="Ezra SIL"
+id="lHebrew"
+></language
+><language
+color="black"
+font-family="Courier New"
+id="lTreeExample"
+></language
+></languages
+><types
+><comment
+>The following types are provided as pre-set examples. You may well want to create your own types that refer to one or more of these. You do that by typing in the names of the types in the types attribute of your type.</comment
+><type
+font-weight="bold"
+id="tBold"
+></type
+><type
+font-style="italic"
+font-weight="bold"
+id="tBoldItalic"
+></type
+><type
+font-weight="bold"
+id="tEmphasis"
+></type
+><type
+id="tGrammaticalGloss"
+types="tSmallCaps"
+></type
+><type
+font-style="italic"
+id="tItalic"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoOverline"
+xsl-foSpecial="text-decoration=&quot;no-overline&quot;"
+></type
+><type
+font-variant="normal"
+id="tNoSmallCaps"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoStrikethrough"
+xsl-foSpecial="text-decoration=&quot;no-line-through&quot;"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoUnderline"
+xsl-foSpecial="text-decoration=&quot;no-underline&quot;"
+></type
+><type
+cssSpecial="text-decoration:overline"
+id="tOverline"
+xsl-foSpecial="text-decoration=&quot;overline&quot;"
+></type
+><type
+font-style="normal"
+font-variant="normal"
+font-weight="normal"
+id="tRegular"
+></type
+><type
+font-family="Charis SIL Small Caps"
+id="tSmallCaps"
+></type
+><type
+XeLaTeXSpecial="line-through"
+cssSpecial="text-decoration:line-through"
+id="tStrikethrough"
+xsl-foSpecial="text-decoration=&quot;line-through&quot;"
+></type
+><type
+XeLaTeXSpecial="subscript"
+cssSpecial="vertical-align:sub;"
+font-size="65%"
+id="tSubscript"
+xsl-foSpecial="baseline-shift='sub'"
+></type
+><type
+XeLaTeXSpecial="superscript"
+cssSpecial="vertical-align:super;"
+font-size="65%"
+id="tSuperscript"
+xsl-foSpecial="baseline-shift='super'"
+></type
+><type
+XeLaTeXSpecial="underline"
+cssSpecial="text-decoration:underline"
+id="tUnderline"
+xsl-foSpecial="text-decoration=&quot;underline&quot;"
+></type
+><comment
+>Add your custom types here.</comment
+><type
+id="tDialogTitle"
+></type
+><type
+color="#800080"
+font-family="Arial"
+font-size="12pt"
+font-style="italic"
+id="tEmpty"
+></type
+><type
+color="red"
+id="tErrorType"
+></type
+><type
+color="blue"
+font-family="Arial"
+id="tGloss"
+></type
+><type
+color="#009900"
+font-family="Charis SIL"
+font-weight="bold"
+id="tKey"
+></type
+><type
+color="red"
+font-family="Arial"
+font-size="12pt"
+id="tLexical"
+></type
+><type
+color="maroon"
+id="tMenuItem"
+></type
+><type
+color="black"
+font-family="Arial"
+font-size="12pt"
+id="tNonterminal"
+></type
+><type
+before="AMPLE"
+color="navy"
+font-style="italic"
+id="tAmple"
+></type
+><type
+before="CARLAStudio"
+color="navy"
+font-style="italic"
+id="tCarlaStudio"
+></type
+><type
+before="Hermit Crab"
+color="navy"
+font-style="italic"
+id="tHermitCrab"
+></type
+><type
+before="XAmple"
+color="navy"
+font-style="italic"
+id="tXAmple"
+></type
+><type
+before="TonePars"
+color="navy"
+font-style="italic"
+id="tTonePars"
+></type
+><type
+before="PC-PATR grammar"
+id="tPcPatrGrammar"
+></type
+><type
+before="9.1.18"
+id="tFLExVersion"
+></type
+><type
+before="700072"
+id="tFWDatabaseVersion"
+></type
+><type
+before="PcPatr Browser"
+color="navy"
+font-style="italic"
+id="tPcPatrBrowser"
+></type
+><type
+before="Use TonePars with FLEx"
+color="navy"
+font-style="italic"
+id="tToneParsFLEx"
+></type
+><type
+before="FieldWorks Language Explorer"
+color="navy"
+font-style="italic"
+id="tFieldWorks"
+></type
+><type
+before="FLEx"
+color="navy"
+font-style="italic"
+id="tFLEx"
+></type
+><type
+color="black"
+font-family="Monospaced"
+font-weight="bold"
+id="tSynTagmeme"
+></type
+><type
+color="navy"
+id="tTool"
+></type
+><type
+before="XMLmind XML Editor"
+color="navy"
+font-style="italic"
+id="tXXE"
+></type
+></types
+><contentControl
+><contentTypes
+><contentType
+id="ctKeyColor"
+>Tree description in color/font</contentType
+><contentType
+id="ctRegular"
+>Tree description plain</contentType
+></contentTypes
+><contentControlChoices
+><contentControlChoice
+active="yes"
+exclude="ctKeyColor"
+>Tree description regular</contentControlChoice
+><contentControlChoice
+active="no"
+>Tree description color/font</contentControlChoice
+></contentControlChoices
+></contentControl
+></lingPaper
+><publisherStyleSheet
+><publisherStyleSheetName
+>SIL International Paper Stylesheet</publisherStyleSheetName
+><publisherStyleSheetVersion
+>0.4.5</publisherStyleSheetVersion
+><pageLayout
+><pageWidth
+>8.5in</pageWidth
+><pageHeight
+>11in</pageHeight
+><pageTopMargin
+>.7in</pageTopMargin
+><pageBottomMargin
+>.675in</pageBottomMargin
+><pageInsideMargin
+>1.5in</pageInsideMargin
+><pageOutsideMargin
+>1in</pageOutsideMargin
+><useThesisSubmissionStyle
+></useThesisSubmissionStyle
+><headerMargin
+>.25in</headerMargin
+><footerMargin
+>.25in</footerMargin
+><paragraphIndent
+>1em</paragraphIndent
+><blockQuoteIndent
+>.125in</blockQuoteIndent
+><lineSpacing
+></lineSpacing
+><defaultFontFamily
+>Charis SIL</defaultFontFamily
+><basicPointSize
+>12</basicPointSize
+><footnotePointSize
+>10</footnotePointSize
+><footnoteLine
+leaderlength="2in"
+leaderpattern="rule"
+textalign="left"
+></footnoteLine
+><linkLayout
+color="blue"
+decoration="underline"
+><abbrRefLinkLayout
+></abbrRefLinkLayout
+><appendixRefLinkLayout
+></appendixRefLinkLayout
+><citationLinkLayout
+></citationLinkLayout
+><contentsLinkLayout
+></contentsLinkLayout
+><endnoteRefLinkLayout
+></endnoteRefLinkLayout
+><exampleRefLinkLayout
+></exampleRefLinkLayout
+><genericRefLinkLayout
+></genericRefLinkLayout
+><indexLinkLayout
+></indexLinkLayout
+><interlinearRefLinkLayout
+></interlinearRefLinkLayout
+><linkLinkLayout
+></linkLinkLayout
+><sectionRefLinkLayout
+></sectionRefLinkLayout
+><urlLinkLayout
+></urlLinkLayout
+></linkLayout
+><headerFooterPageStyles
+font-family="Times New Roman"
+font-size="9pt"
+font-style="italic"
+><headerFooterFirstPage
+><header
+><leftHeaderFooterItem
+><nothing
+></nothing
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><nothing
+></nothing
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><nothing
+></nothing
+></rightHeaderFooterItem
+></header
+><footer
+><leftHeaderFooterItem
+><nothing
+></nothing
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><pageNumber
+font-size="smaller"
+font-style="italic"
+></pageNumber
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><nothing
+></nothing
+></rightHeaderFooterItem
+></footer
+></headerFooterFirstPage
+><headerFooterOddEvenPages
+><headerFooterEvenPage
+><header
+><leftHeaderFooterItem
+><pageNumber
+font-size="smaller"
+font-style="italic"
+></pageNumber
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><nothing
+></nothing
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><paperTitle
+font-size="smaller"
+font-style="italic"
+></paperTitle
+></rightHeaderFooterItem
+></header
+><footer
+><leftHeaderFooterItem
+><nothing
+></nothing
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><nothing
+></nothing
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><nothing
+></nothing
+></rightHeaderFooterItem
+></footer
+></headerFooterEvenPage
+><headerFooterOddPage
+><header
+><leftHeaderFooterItem
+><sectionTitle
+font-size="smaller"
+font-style="italic"
+></sectionTitle
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><nothing
+></nothing
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><pageNumber
+font-size="smaller"
+font-style="italic"
+></pageNumber
+></rightHeaderFooterItem
+></header
+><footer
+><leftHeaderFooterItem
+><nothing
+></nothing
+></leftHeaderFooterItem
+><centerHeaderFooterItem
+><nothing
+></nothing
+></centerHeaderFooterItem
+><rightHeaderFooterItem
+><nothing
+></nothing
+></rightHeaderFooterItem
+></footer
+></headerFooterOddPage
+></headerFooterOddEvenPages
+></headerFooterPageStyles
+></pageLayout
+><frontMatterLayout
+><comment
+>Front Matter Layout</comment
+><titleLayout
+font-size="18pt"
+font-weight="bold"
+pagebreakbefore="yes"
+spacebefore="1.25in"
+startonoddpage="yes"
+textalign="center"
+></titleLayout
+><subtitleLayout
+font-size="14pt"
+font-weight="bold"
+textalign="center"
+></subtitleLayout
+><authorLayout
+font-style="italic"
+textalign="center"
+></authorLayout
+><affiliationLayout
+font-style="italic"
+textalign="center"
+></affiliationLayout
+><emailAddressLayout
+font-size="90%"
+textalign="center"
+></emailAddressLayout
+><presentedAtLayout
+font-size="10pt"
+textalign="center"
+textbefore="Presented at "
+></presentedAtLayout
+><dateLayout
+font-size="10pt"
+textalign="center"
+></dateLayout
+><versionLayout
+font-size="10pt"
+textalign="center"
+></versionLayout
+><contentsLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+useperiodafterappendixletter="yes"
+></contentsLayout
+><abstractLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></abstractLayout
+><acknowledgementsLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></acknowledgementsLayout
+><prefaceLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></prefaceLayout
+></frontMatterLayout
+><bodyLayout
+><comment
+>Body Layout</comment
+><section1Layout
+><sectionTitleLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></sectionTitleLayout
+></section1Layout
+><section2Layout
+><sectionTitleLayout
+font-size="12pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="12pt"
+textalign="start"
+></sectionTitleLayout
+></section2Layout
+><section3Layout
+><sectionTitleLayout
+font-style="italic"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="12pt"
+textalign="start"
+></sectionTitleLayout
+></section3Layout
+><section4Layout
+><sectionTitleLayout
+font-style="italic"
+spaceafter="12pt"
+spacebefore="12pt"
+textalign="start"
+></sectionTitleLayout
+></section4Layout
+><section5Layout
+ignore="yes"
+><sectionTitleLayout
+></sectionTitleLayout
+></section5Layout
+><section6Layout
+ignore="yes"
+><sectionTitleLayout
+></sectionTitleLayout
+></section6Layout
+></bodyLayout
+><backMatterLayout
+><comment
+>Back Matter Layout</comment
+><acknowledgementsLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></acknowledgementsLayout
+><appendixLayout
+><appendixTitleLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textafterletter=". "
+textalign="center"
+></appendixTitleLayout
+></appendixLayout
+><glossaryLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></glossaryLayout
+><referencesTitleLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></referencesTitleLayout
+><xi:include
+href="SILInternationalReferencesStylesheet.xml"
+xpointer="element(/1)"
+xmlns:xi="http://www.w3.org/2001/XInclude"
+></xi:include
+><indexLayout
+font-size="14pt"
+font-weight="bold"
+spaceafter="12pt"
+spacebefore="24pt"
+textalign="center"
+></indexLayout
+></backMatterLayout
+><contentLayout
+><comment
+>Document Content Layout</comment
+><exampleLayout
+indent-after=".125in"
+indent-before=".125in"
+></exampleLayout
+><interlinearSourceStyle
+></interlinearSourceStyle
+><endnoteRefLayout
+></endnoteRefLayout
+><figureLayout
+captionLocation="after"
+><figureLabelLayout
+textafter=" "
+></figureLabelLayout
+><figureNumberLayout
+></figureNumberLayout
+><figureCaptionLayout
+textbefore=" "
+></figureCaptionLayout
+></figureLayout
+><figureRefLayout
+></figureRefLayout
+><tablenumberedLayout
+captionLocation="after"
+><tablenumberedLabelLayout
+textafter=" "
+></tablenumberedLabelLayout
+><tablenumberedNumberLayout
+></tablenumberedNumberLayout
+><tablenumberedCaptionLayout
+textbefore="  "
+></tablenumberedCaptionLayout
+></tablenumberedLayout
+><tablenumberedRefLayout
+></tablenumberedRefLayout
+></contentLayout
+></publisherStyleSheet
+></styledPaper
+></xlingpaper
+>
