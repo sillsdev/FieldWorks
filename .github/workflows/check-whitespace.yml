@@ -18,5 +18,5 @@ jobs:
                   fetch-depth: 0
 
             - name: Run whitespace check script
-              shell: bash
-              run: bash ./Build/Agent/check-whitespace.sh
+              shell: pwsh
+              run: ./Build/Agent/check-whitespace.ps1
