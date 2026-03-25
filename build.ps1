@@ -557,7 +557,6 @@ try {
 				$script:testExitCode = 0
 			} elseif ($script:testExitCode -ne 0) {
 				Write-Warning "Some tests failed (exit code: $($script:testExitCode)). Check output above for details."
-				exit $testExitCode
 			}
 		}
 
@@ -618,4 +617,5 @@ finally {
 }
 
 if ($testExitCode -ne 0) {
+	exit $testExitCode
 }
