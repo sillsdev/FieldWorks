@@ -48,6 +48,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label m_lMainCat;
 		private System.Windows.Forms.Label m_lAfxType;
 		private SIL.FieldWorks.Common.Widgets.FwComboBox m_fwcbAffixTypes;
+		private System.Windows.Forms.FlowLayoutPanel m_flowLayout;
+		private System.Windows.Forms.Panel m_afxTypePanel;
+		private System.Windows.Forms.Panel m_mainCatPanel;
+		private System.Windows.Forms.Panel m_slotsPanel;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -249,31 +253,25 @@ namespace SIL.FieldWorks.LexText.Controls
 						case MsaType.kRoot: // Fall through.
 						case MsaType.kStem:
 						{
-							m_groupBox.SuspendLayout();
+							m_flowLayout.SuspendLayout();
 							m_lMainCat.Text = LexTextControls.ksCategor_y;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = false;
-							m_fwcbAffixTypes.Visible = false;
-							m_lSLots.Visible = false;
-							m_fwcbSlots.Visible = false;
-							m_tcSecondaryPOS.Visible = false;
+							// Hide the panels we don't need, show the ones we do.
+							m_afxTypePanel.Visible = false;
+							m_slotsPanel.Visible = false;
 
 							m_lMainCat.TabIndex = 0;
 							m_tcMainPOS.TabIndex = 1;
 							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ks_NotSure_);
-							m_groupBox.ResumeLayout();
+							m_flowLayout.ResumeLayout();
 							break;
 						}
 						case MsaType.kUnclassified:
 						{
-							m_groupBox.SuspendLayout();
+							m_flowLayout.SuspendLayout();
 							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = false;
-							m_fwcbSlots.Visible = false;
-							m_tcSecondaryPOS.Visible = false;
+							// Hide the panels we don't need, show the ones we do.
+							m_afxTypePanel.Visible = true;
+							m_slotsPanel.Visible = false;
 
 							m_lAfxType.TabIndex = 0;
 							m_fwcbAffixTypes.TabIndex = 1;
@@ -281,18 +279,17 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_lMainCat.TabIndex = 2;
 							m_tcMainPOS.TabIndex = 3;
 							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
+							m_flowLayout.ResumeLayout();
 							break;
 						}
 						case MsaType.kInfl:
 						{
-							m_groupBox.SuspendLayout();
+							m_flowLayout.SuspendLayout();
 							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
 							m_lSLots.Text = LexTextControls.ks_FillsSlot;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = true;
+							// Show all panels; within slots panel, show slots combo, hide secondary POS.
+							m_afxTypePanel.Visible = true;
+							m_slotsPanel.Visible = true;
 							m_fwcbSlots.Visible = true;
 							m_tcSecondaryPOS.Visible = false;
 
@@ -307,18 +304,17 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_fwcbSlots.Enabled = m_fwcbSlots.Items.Count > 0;
 							m_lSLots.Enabled = m_fwcbSlots.Enabled;
 							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
+							m_flowLayout.ResumeLayout();
 							break;
 						}
 						case MsaType.kDeriv:
 						{
-							m_groupBox.SuspendLayout();
+							m_flowLayout.SuspendLayout();
 							m_lMainCat.Text = LexTextControls.ksAttachesToCategor_y;
 							m_lSLots.Text = LexTextControls.ksC_hangesToCategory;
-							// Hide the controls we don't want, show the ones we do.
-							m_lAfxType.Visible = true;
-							m_fwcbAffixTypes.Visible = true;
-							m_lSLots.Visible = true;
+							// Show all panels; within slots panel, show secondary POS, hide slots combo.
+							m_afxTypePanel.Visible = true;
+							m_slotsPanel.Visible = true;
 							m_fwcbSlots.Visible = false;
 							m_tcSecondaryPOS.Visible = true;
 
@@ -331,7 +327,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_tcSecondaryPOS.TabIndex = 5;
 							m_lSLots.Enabled = true;
 							m_mainPOSPopupTreeManager.SetEmptyLabel(LexTextControls.ksAny);
-							m_groupBox.ResumeLayout();
+							m_flowLayout.ResumeLayout();
 							break;
 						}
 					}
@@ -407,17 +403,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			get
 			{
 				int nHeight = this.Height;
+				// All combos/trees are in the same visual row within their panels,
+				// so we only need the maximum delta across all of them.
+				int maxDelta = 0;
 				int delta = m_fwcbAffixTypes.PreferredHeight - m_fwcbAffixTypes.Height;
 				if (delta > 0)
-					nHeight += delta;
+					maxDelta = Math.Max(maxDelta, delta);
 				delta = m_tcMainPOS.PreferredHeight - m_tcMainPOS.Height;
 				if (delta > 0)
-					nHeight += delta;
+					maxDelta = Math.Max(maxDelta, delta);
 				delta = Math.Max(m_fwcbSlots.PreferredHeight - m_fwcbSlots.Height,
 					m_tcSecondaryPOS.PreferredHeight - m_tcSecondaryPOS.Height);
 				if (delta > 0)
-					nHeight += delta;
-				return nHeight;
+					maxDelta = Math.Max(maxDelta, delta);
+				return nHeight + maxDelta;
 			}
 		}
 
@@ -569,11 +568,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_secPOSPopupTreeManager.LoadPopupTree(m_selectedSecondaryPOS != null ? m_selectedSecondaryPOS.Hvo : 0);
 			m_secPOSPopupTreeManager.AfterSelect += m_secPOSPopupTreeManager_AfterSelect;
 
-			// Relocate the m_tcSecondaryPOS control to overlay the m_fwcbSlots.
-			// In the designer, they are offset to see them, and edit them.
-			// In running code they are in the same spot, but only one is visible at a time.
-			m_tcSecondaryPOS.Location = m_fwcbSlots.Location;
-
 			if (m_selectedMainPOS != null && sandboxMSA.MsaType == MsaType.kInfl)
 			{
 				// This fixes LT-4677, LT-6048, and LT-6201.
@@ -593,6 +587,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MSAGroupBox));
 			this.m_groupBox = new System.Windows.Forms.GroupBox();
+			this.m_flowLayout = new System.Windows.Forms.FlowLayoutPanel();
+			this.m_afxTypePanel = new System.Windows.Forms.Panel();
+			this.m_mainCatPanel = new System.Windows.Forms.Panel();
+			this.m_slotsPanel = new System.Windows.Forms.Panel();
 			this.m_lAfxType = new System.Windows.Forms.Label();
 			this.m_fwcbAffixTypes = new SIL.FieldWorks.Common.Widgets.FwComboBox();
 			this.m_lMainCat = new System.Windows.Forms.Label();
@@ -601,42 +599,38 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_fwcbSlots = new SIL.FieldWorks.Common.Widgets.FwComboBox();
 			this.m_tcSecondaryPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
 			this.m_groupBox.SuspendLayout();
+			this.m_flowLayout.SuspendLayout();
+			this.m_afxTypePanel.SuspendLayout();
+			this.m_mainCatPanel.SuspendLayout();
+			this.m_slotsPanel.SuspendLayout();
 			this.SuspendLayout();
-			//
-			// m_groupBox
-			//
-			this.m_groupBox.Controls.Add(this.m_lAfxType);
-			this.m_groupBox.Controls.Add(this.m_fwcbAffixTypes);
-			this.m_groupBox.Controls.Add(this.m_lMainCat);
-			this.m_groupBox.Controls.Add(this.m_tcMainPOS);
-			this.m_groupBox.Controls.Add(this.m_lSLots);
-			this.m_groupBox.Controls.Add(this.m_fwcbSlots);
-			this.m_groupBox.Controls.Add(this.m_tcSecondaryPOS);
-			resources.ApplyResources(this.m_groupBox, "m_groupBox");
-			this.m_groupBox.Name = "m_groupBox";
-			this.m_groupBox.TabStop = false;
 			//
 			// m_lAfxType
 			//
 			resources.ApplyResources(this.m_lAfxType, "m_lAfxType");
 			this.m_lAfxType.Name = "m_lAfxType";
+			this.m_lAfxType.Location = new System.Drawing.Point(0, 0);
+			this.m_lAfxType.Size = new System.Drawing.Size(170, 23);
 			//
 			// m_fwcbAffixTypes
 			//
 			this.m_fwcbAffixTypes.AdjustStringHeight = true;
 			this.m_fwcbAffixTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_fwcbAffixTypes.DroppedDown = false;
-			resources.ApplyResources(this.m_fwcbAffixTypes, "m_fwcbAffixTypes");
 			this.m_fwcbAffixTypes.Name = "m_fwcbAffixTypes";
 			this.m_fwcbAffixTypes.PreviousTextBoxText = null;
 			this.m_fwcbAffixTypes.SelectedIndex = -1;
 			this.m_fwcbAffixTypes.SelectedItem = null;
 			this.m_fwcbAffixTypes.StyleSheet = null;
+			this.m_fwcbAffixTypes.Location = new System.Drawing.Point(0, 23);
+			this.m_fwcbAffixTypes.Size = new System.Drawing.Size(170, 21);
 			//
 			// m_lMainCat
 			//
 			resources.ApplyResources(this.m_lMainCat, "m_lMainCat");
 			this.m_lMainCat.Name = "m_lMainCat";
+			this.m_lMainCat.Location = new System.Drawing.Point(0, 0);
+			this.m_lMainCat.Size = new System.Drawing.Size(170, 23);
 			//
 			// m_tcMainPOS
 			//
@@ -644,15 +638,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Setting width to match the default width used by popuptree
 			this.m_tcMainPOS.DropDownWidth = 300;
 			this.m_tcMainPOS.DroppedDown = false;
-			resources.ApplyResources(this.m_tcMainPOS, "m_tcMainPOS");
 			this.m_tcMainPOS.Name = "m_tcMainPOS";
 			this.m_tcMainPOS.SelectedNode = null;
 			this.m_tcMainPOS.StyleSheet = null;
+			this.m_tcMainPOS.Location = new System.Drawing.Point(0, 23);
+			this.m_tcMainPOS.Size = new System.Drawing.Size(170, 21);
 			//
 			// m_lSLots
 			//
 			resources.ApplyResources(this.m_lSLots, "m_lSLots");
 			this.m_lSLots.Name = "m_lSLots";
+			this.m_lSLots.Location = new System.Drawing.Point(0, 0);
+			this.m_lSLots.Size = new System.Drawing.Size(170, 23);
 			//
 			// m_fwcbSlots
 			//
@@ -660,28 +657,78 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_fwcbSlots.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_fwcbSlots.DropDownWidth = 140;
 			this.m_fwcbSlots.DroppedDown = false;
-			resources.ApplyResources(this.m_fwcbSlots, "m_fwcbSlots");
 			this.m_fwcbSlots.Name = "m_fwcbSlots";
 			this.m_fwcbSlots.PreviousTextBoxText = null;
 			this.m_fwcbSlots.SelectedIndex = -1;
 			this.m_fwcbSlots.SelectedItem = null;
 			this.m_fwcbSlots.StyleSheet = null;
+			this.m_fwcbSlots.Location = new System.Drawing.Point(0, 23);
+			this.m_fwcbSlots.Size = new System.Drawing.Size(170, 21);
 			//
 			// m_tcSecondaryPOS
 			//
 			this.m_tcSecondaryPOS.AdjustStringHeight = true;
 			this.m_tcSecondaryPOS.DropDownWidth = 140;
 			this.m_tcSecondaryPOS.DroppedDown = false;
-			resources.ApplyResources(this.m_tcSecondaryPOS, "m_tcSecondaryPOS");
 			this.m_tcSecondaryPOS.Name = "m_tcSecondaryPOS";
 			this.m_tcSecondaryPOS.SelectedNode = null;
 			this.m_tcSecondaryPOS.StyleSheet = null;
+			this.m_tcSecondaryPOS.Location = new System.Drawing.Point(0, 23);
+			this.m_tcSecondaryPOS.Size = new System.Drawing.Size(170, 21);
+			//
+			// m_afxTypePanel
+			//
+			this.m_afxTypePanel.Controls.Add(this.m_fwcbAffixTypes);
+			this.m_afxTypePanel.Controls.Add(this.m_lAfxType);
+			this.m_afxTypePanel.Size = new System.Drawing.Size(170, 48);
+			this.m_afxTypePanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this.m_afxTypePanel.Name = "m_afxTypePanel";
+			//
+			// m_mainCatPanel
+			//
+			this.m_mainCatPanel.Controls.Add(this.m_tcMainPOS);
+			this.m_mainCatPanel.Controls.Add(this.m_lMainCat);
+			this.m_mainCatPanel.Size = new System.Drawing.Size(170, 48);
+			this.m_mainCatPanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this.m_mainCatPanel.Name = "m_mainCatPanel";
+			//
+			// m_slotsPanel (holds both m_fwcbSlots and m_tcSecondaryPOS, only one visible at a time)
+			//
+			this.m_slotsPanel.Controls.Add(this.m_fwcbSlots);
+			this.m_slotsPanel.Controls.Add(this.m_tcSecondaryPOS);
+			this.m_slotsPanel.Controls.Add(this.m_lSLots);
+			this.m_slotsPanel.Size = new System.Drawing.Size(170, 48);
+			this.m_slotsPanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this.m_slotsPanel.Name = "m_slotsPanel";
+			//
+			// m_flowLayout
+			//
+			this.m_flowLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_flowLayout.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
+			this.m_flowLayout.WrapContents = false;
+			this.m_flowLayout.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+			this.m_flowLayout.Name = "m_flowLayout";
+			this.m_flowLayout.Controls.Add(this.m_afxTypePanel);
+			this.m_flowLayout.Controls.Add(this.m_mainCatPanel);
+			this.m_flowLayout.Controls.Add(this.m_slotsPanel);
+			//
+			// m_groupBox
+			//
+			this.m_groupBox.Controls.Add(this.m_flowLayout);
+			resources.ApplyResources(this.m_groupBox, "m_groupBox");
+			this.m_groupBox.Name = "m_groupBox";
+			this.m_groupBox.TabStop = false;
+			this.m_groupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			//
 			// MSAGroupBox
 			//
 			this.Controls.Add(this.m_groupBox);
 			this.Name = "MSAGroupBox";
 			resources.ApplyResources(this, "$this");
+			this.m_slotsPanel.ResumeLayout(false);
+			this.m_mainCatPanel.ResumeLayout(false);
+			this.m_afxTypePanel.ResumeLayout(false);
+			this.m_flowLayout.ResumeLayout(false);
 			this.m_groupBox.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -765,38 +812,39 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public void AdjustInternalControlsAndGrow()
 		{
-			int nHeightWanted = m_fwcbAffixTypes.PreferredHeight;
-			int delta = nHeightWanted - m_fwcbAffixTypes.Height;
+			// All combos/trees are in the same visual row within their panels.
+			// Find the max height increase needed and apply it uniformly.
+			int maxDelta = 0;
+
+			int delta = m_fwcbAffixTypes.PreferredHeight - m_fwcbAffixTypes.Height;
 			if (delta > 0)
 			{
-				this.Height += delta;
-				m_fwcbAffixTypes.Height = nHeightWanted;
-				FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_fwcbAffixTypes);
+				m_fwcbAffixTypes.Height = m_fwcbAffixTypes.PreferredHeight;
+				maxDelta = Math.Max(maxDelta, delta);
 			}
-			nHeightWanted = m_tcMainPOS.PreferredHeight;
-			delta = nHeightWanted - m_tcMainPOS.Height;
+
+			delta = m_tcMainPOS.PreferredHeight - m_tcMainPOS.Height;
 			if (delta > 0)
 			{
-				m_tcMainPOS.Height = nHeightWanted;
-				this.Height += delta;
-				FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_tcMainPOS);
+				m_tcMainPOS.Height = m_tcMainPOS.PreferredHeight;
+				maxDelta = Math.Max(maxDelta, delta);
 			}
-			int nWanted1 = m_fwcbSlots.PreferredHeight;
-			int delta1 = nWanted1 - m_fwcbSlots.Height;
-			int nWanted2 = m_tcSecondaryPOS.PreferredHeight;
-			int delta2 = nWanted2 - m_tcSecondaryPOS.Height;
-			delta = Math.Max(delta1, delta2);
-			if (delta > 0)
+
+			int delta1 = m_fwcbSlots.PreferredHeight - m_fwcbSlots.Height;
+			int delta2 = m_tcSecondaryPOS.PreferredHeight - m_tcSecondaryPOS.Height;
+			if (delta1 > 0)
+				m_fwcbSlots.Height = m_fwcbSlots.PreferredHeight;
+			if (delta2 > 0)
+				m_tcSecondaryPOS.Height = m_tcSecondaryPOS.PreferredHeight;
+			maxDelta = Math.Max(maxDelta, Math.Max(delta1, delta2));
+
+			if (maxDelta > 0)
 			{
-				if (delta1 > 0)
-					m_fwcbSlots.Height = nWanted1;
-				if (delta2 > 0)
-					m_tcSecondaryPOS.Height = nWanted2;
-				this.Height += delta;
-				if (delta1 == delta)
-					FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_fwcbSlots);
-				else
-					FontHeightAdjuster.GrowDialogAndAdjustControls(m_groupBox, delta, m_tcSecondaryPOS);
+				// Grow all panels and the overall control to accommodate taller combos.
+				m_afxTypePanel.Height += maxDelta;
+				m_mainCatPanel.Height += maxDelta;
+				m_slotsPanel.Height += maxDelta;
+				this.Height += maxDelta;
 			}
 		}
 		#endregion Other methods

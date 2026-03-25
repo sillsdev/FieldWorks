@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -242,16 +241,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the paragraph style name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string ParagraphStyle
-		{
-			get { return m_tokens[0].ParaStyleName; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the first text token.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -267,26 +256,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public ITextToken LastToken
 		{
 			get { return m_tokens.Count == 0 ? null : m_tokens[m_tokens.Count - 1]; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the missing start reference, if any.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public BCVRef MissingStartRef
-		{
-			get { return m_tokens.Count != 1 ? null : m_tokens[0].MissingStartRef; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the missing and reference, if any.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public BCVRef MissingEndRef
-		{
-			get { return m_tokens.Count != 1 ? null : m_tokens[0].MissingEndRef; }
 		}
 
 		/// ------------------------------------------------------------------------------------

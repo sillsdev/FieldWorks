@@ -22,7 +22,7 @@ GR2_LIB=$(OUT_DIR)\graphite2.lib
 INCLUDE=$(INCLUDE);$(GR2_SRC);$(GR2_INC)
 
 DEFS=/DGRAPHITE2_STATIC /DWIN32
-CL_OPTS=/EHsc /Zi
+CL_OPTS=/options:strict /EHsc /WX /Zi /favor:AMD64
 
 !IF "$(BUILD_TYPE)"=="d"
 CL_OPTS=$(CL_OPTS) /MDd /Od
