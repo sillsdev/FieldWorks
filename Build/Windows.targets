@@ -11,7 +11,7 @@
 		Mirrors the managed project policy in Directory.Build.props.
 	-->
 	<PropertyGroup Label="Native Intermediate Output">
-		<NativeIntDirBase>$(fwrt)Obj\$(config-capital)\</NativeIntDirBase>
+		<NativeIntDirBase>$(fwrt)\Obj\$(config-capital)\</NativeIntDirBase>
 	</PropertyGroup>
 	<UsingTask
 		TaskName="CheckAdminPrivilege"
