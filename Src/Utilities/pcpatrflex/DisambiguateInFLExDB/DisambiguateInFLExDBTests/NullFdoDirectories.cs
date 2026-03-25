@@ -2,7 +2,7 @@ using SIL.LCModel;
 
 namespace SIL.DisambiguateInFLExDBTests
 {
-	internal class NullFdoDirectories : ILcmDirectories
+	public class NullFdoDirectories : ILcmDirectories
 	{
 		public string ProjectsDirectory => null;
 

@@ -4,7 +4,7 @@ using SIL.LCModel.Utils;
 
 namespace SIL.DisambiguateInFLExDBTests
 {
-	internal class NullThreadedProgress : IThreadedProgress
+	public class NullThreadedProgress : IThreadedProgress
 	{
 		private readonly ISynchronizeInvoke m_synchronizeInvoke;
 
