@@ -32,3 +32,4 @@ Bin/ilrepack-assemblies -whitespace
 *.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
 Src/Utilities/pcpatrflex/DisambiguateInFLExDB/DisambiguateInFLExDBTests/TestData/*.* -whitespace
+Src/Utilities/pcpatrflex/PcPatrBrowserDll/Transforms/*.* -whitespace
