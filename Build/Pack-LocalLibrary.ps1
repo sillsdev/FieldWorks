@@ -123,10 +123,6 @@ $baseVersion = $versionNode.InnerText.Trim()
 $versionCore = ($baseVersion -replace '-.*$', '')
 $localVersion = "$versionCore-local"
 
-# Update SilVersions.props so FieldWorks resolves the local version
-$versionNode.InnerText = $localVersion
-$versionProps.Save($versionPropsPath)
-
 Write-Host ""
 Write-Host "Pack-LocalLibrary" -ForegroundColor Cyan
 Write-Host "  Library:    $Library" -ForegroundColor Cyan
@@ -134,9 +130,6 @@ Write-Host "  Source:     $SourcePath" -ForegroundColor Cyan
 Write-Host "  Base ver:   $baseVersion" -ForegroundColor Cyan
 Write-Host "  Local ver:  $localVersion" -ForegroundColor Cyan
 Write-Host "  Output:     $localRepo" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Updated SilVersions.props ($($config.VersionProperty) = $localVersion)" -ForegroundColor Yellow
-Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
 Write-Host ""
 
 # ---------------------------------------------------------------------------
@@ -160,6 +153,12 @@ if ($LASTEXITCODE -ne 0) {
 	throw "dotnet pack failed for $Library."
 }
 
+# Update SilVersions.props only after a successful pack
+$versionNode.InnerText = $localVersion
+$versionProps.Save($versionPropsPath)
+Write-Host "Updated SilVersions.props ($($config.VersionProperty) = $localVersion)" -ForegroundColor Yellow
+Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
+
 Write-Host ""
 Write-Host "Pack complete." -ForegroundColor Green
 
@@ -179,13 +178,11 @@ if (Test-Path $pdbSourceDir) {
 		}
 	}
 
-	$pdbFiles = Get-ChildItem -Path $pdbSourceDir -Filter "*.pdb" -File
+	$pdbFiles = @(Get-ChildItem -Path $pdbSourceDir -Filter "*.pdb" -File)
 	if ($pdbFiles.Count -gt 0) {
 		Write-Host "Copying $($pdbFiles.Count) PDB file(s) to Output/Debug/ and Downloads/..." -ForegroundColor Cyan
-		foreach ($pdb in $pdbFiles) {
-			Copy-Item -Path $pdb.FullName -Destination $outputDebugDir -Force
-			Copy-Item -Path $pdb.FullName -Destination $downloadsDir -Force
-		}
+		$pdbFiles | Copy-Item -Destination $outputDebugDir -Force
+		$pdbFiles | Copy-Item -Destination $downloadsDir -Force
 	}
 	else {
 		Write-Host "No PDB files found in $pdbSourceDir" -ForegroundColor Yellow
@@ -201,16 +198,11 @@ else {
 
 $packagesDir = Join-Path $repoRoot "packages"
 if (Test-Path $packagesDir) {
-	$cleared = 0
-	foreach ($prefix in $config.CachePrefixes) {
-		$matches = Get-ChildItem -Path $packagesDir -Directory -Filter "$prefix*" -ErrorAction SilentlyContinue
-		foreach ($dir in $matches) {
-			Remove-Item -Path $dir.FullName -Recurse -Force
-			$cleared++
-		}
-	}
-	if ($cleared -gt 0) {
-		Write-Host "Cleared $cleared stale package folder(s) from packages/." -ForegroundColor Yellow
+	$patterns = $config.CachePrefixes | ForEach-Object { "$packagesDir/$_*" }
+	$stale = @(Get-ChildItem -Path $patterns -Directory -ErrorAction SilentlyContinue)
+	if ($stale.Count -gt 0) {
+		$stale | Remove-Item -Recurse -Force
+		Write-Host "Cleared $($stale.Count) stale package folder(s) from packages/." -ForegroundColor Yellow
 	}
 }
 
