@@ -197,8 +197,8 @@ if ($Configuration -eq 'Release' -and -not $isGitHubActions) {
 	}
 }
 
-# REVIEW (HASSO) 2026.03: what happened to the rest of this comment?
-# ===========ed Module
+# =============================================================================
+# Import FwBuildHelpers Module (for building build tasks)
 # =============================================================================
 
 $helpersPath = Join-Path $PSScriptRoot "Build/Agent/FwBuildHelpers.psm1"
