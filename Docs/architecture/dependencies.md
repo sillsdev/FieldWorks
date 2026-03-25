@@ -32,88 +32,19 @@ By default, dependencies are downloaded as NuGet packages during the build. The 
 <SilLcmVersion>...</SilLcmVersion>
 ```
 
-## Building Dependencies Locally
+## Building and Debugging Dependencies Locally
 
-If you need to debug into or modify a dependency library, you can build it locally.
+If you need to debug into or modify a dependency library, use the `Build/Pack-LocalLibrary.ps1` script. It packs a local checkout into a local NuGet feed using the exact version from `Build/SilVersions.props`, so no version edits are needed in FieldWorks.
 
-### Step 1: Clone the Repositories
+Quick start:
 
-```bash
-# Clone to any location
-git clone https://github.com/sillsdev/liblcm.git
-git clone https://github.com/sillsdev/libpalaso.git
-git clone https://github.com/sillsdev/chorus.git
+```powershell
+$env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
+.\Build\Pack-LocalLibrary.ps1 -Library libpalaso -SourcePath C:\Repos\libpalaso
+.\build.ps1
 ```
 
-### Step 2: Set Up Local NuGet Repository
-
-1. **Create a local NuGet folder** (e.g., `C:\localnugetpackages`)
-
-2. **Add as NuGet source in Visual Studio**:
-   - Tools → Options → NuGet Package Manager → Package Sources
-   - Add your local folder
-
-3. **Set environment variable**:
-   ```powershell
-   $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-   # Add to your profile for persistence
-   ```
-
-4. **Add the CopyPackage target** to each dependency's `Directory.Build.targets`:
-   ```xml
-   <Target Name="CopyPackage" AfterTargets="Pack"
-           Condition="'$(LOCAL_NUGET_REPO)'!='' AND '$(IsPackable)'=='true'">
-     <Copy SourceFiles="$(PackageOutputPath)/$(PackageId).$(PackageVersion).nupkg"
-           DestinationFolder="$(LOCAL_NUGET_REPO)"/>
-   </Target>
-   ```
-
-### Step 3: Build in Order
-
-Dependencies must be built in a specific order:
-
-1. **libpalaso** (no dependencies on other SIL libraries)
-2. **chorus** and **liblcm** (depend on libpalaso)
-3. **FieldWorks** (depends on all of the above)
-
-For each library:
-
-```bash
-# Create a local branch for versioning
-git checkout -b localcommit
-
-# Make a small change to bump version (e.g., edit README.md)
-git commit -am "Local build version bump"
-
-# Build
-dotnet build
-
-# Pack and publish to local repo
-dotnet pack
-```
-
-### Step 4: Update FieldWorks
-
-Update the NuGet versions in FieldWorks to use your local packages:
-
-1. Clear cached packages:
-   - `~\.nuget\packages\` (user cache)
-   - `packages\` (solution packages)
-   - Your local NuGet folder
-
-2. Update version numbers in `Build/SilVersions.props`
-
-3. Build FieldWorks
-
-## Debugging Dependencies
-
-To debug into dependency code:
-
-1. Build the dependency in Debug configuration
-2. Open the dependency project in Visual Studio alongside FieldWorks
-3. Start debugging FLEx
-4. Choose **Debug → Attach to Process** from the dependency project
-5. If breakpoints show "No symbols loaded", disable **Debug → Options → Enable Just My Code**
+For the full workflow (setup, pack, build, debug, revert), see **[Local Library Debugging](local-library-debugging.md)**.
 
 ## Dependency Configuration
 
