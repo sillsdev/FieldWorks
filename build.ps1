@@ -197,7 +197,8 @@ if ($Configuration -eq 'Release' -and -not $isGitHubActions) {
 	}
 }
 
-# ===========ed Module
+# =============================================================================
+# Import FwBuildHelpers Module (for building build tasks)
 # =============================================================================
 
 $helpersPath = Join-Path $PSScriptRoot "Build/Agent/FwBuildHelpers.psm1"
@@ -596,7 +597,7 @@ try {
 			Invoke-MSBuild `
 				-Arguments (@('Build/InstallerBuild.proj', "/t:Build$BaseOrPatch", '/p:config=release', "/p:InstallerToolset=$InstallerToolset", $installerCleanArg) + `
 					$InstallerMsBuildArgs) `
-				-Description '$BaseOrPatch Build' `
+				-Description "$BaseOrPatch Build" `
 				-LogPath $LogFile `
 				-TailLines $TailLines
 
