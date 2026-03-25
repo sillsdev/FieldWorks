@@ -6,11 +6,12 @@ This document describes how to debug locally-modified versions of **liblcm**, **
 
 The workflow uses a single PowerShell script (`Build/Pack-LocalLibrary.ps1`) that:
 
-1. Reads the exact version from `Build/SilVersions.props` — no version edits needed in FieldWorks.
-2. Runs `dotnet pack` in Debug configuration with symbols.
-3. Places `.nupkg` / `.snupkg` in your local NuGet feed folder.
-4. Copies PDB files to `Output/Debug/` and `Downloads/` for debugger access.
-5. Clears stale cached packages so the next restore picks up the local build.
+1. Reads the base version from `Build/SilVersions.props` and appends a `-local` pre-release suffix (e.g., `17.0.0` becomes `17.0.0-local`).
+2. Updates `SilVersions.props` so FieldWorks resolves the local version — the `-local` version only exists in your local feed, eliminating any ambiguity with upstream packages.
+3. Runs `dotnet pack` in Debug configuration with symbols.
+4. Places `.nupkg` / `.snupkg` in your local NuGet feed folder.
+5. Copies PDB files to `Output/Debug/` and `Downloads/` for debugger access.
+6. Clears stale cached packages so the next restore picks up the local build.
 
 This approach works identically for all three libraries.
 
@@ -61,7 +62,7 @@ $env:LIBCHORUS_PATH = "C:\Repos\chorus"
 ```
 
 The script:
-- Packs with the version from `Build/SilVersions.props`, so the local package shadows the upstream one.
+- Appends `-local` to the version and updates `Build/SilVersions.props` so NuGet unambiguously resolves from the local feed.
 - Produces `.snupkg` symbol packages (same format as production).
 - Copies PDB files to `Output/Debug/` and `Downloads/` for the debugger.
 - Clears stale packages from the `packages/` cache.
@@ -72,7 +73,7 @@ The script:
 .\build.ps1
 ```
 
-The build will print a yellow message listing any local packages detected in `LOCAL_NUGET_REPO`. NuGet restore will prefer your local packages because they have the same version as the upstream ones.
+The build will print a yellow message listing any local packages detected in `LOCAL_NUGET_REPO`. NuGet restore will use your local packages because `SilVersions.props` now requests the `-local` version which only exists in your local feed.
 
 ## Debug
 
@@ -90,14 +91,17 @@ After each change to the library:
 
 ## Reverting to upstream packages
 
-1. Delete the library's `.nupkg` files from `LOCAL_NUGET_REPO`.
+1. Restore the original version in `SilVersions.props`:
+   ```powershell
+   git checkout Build/SilVersions.props
+   ```
 2. Clear the cached packages:
    ```powershell
    Remove-Item -Recurse packages/sil.*
    ```
 3. Run `.\build.ps1` — NuGet will restore from nuget.org.
 
-Alternatively, unset `LOCAL_NUGET_REPO` entirely to disable the local feed.
+You can also clean up your local feed, but it's not required — the `-local` packages won't be resolved once `SilVersions.props` is reverted.
 
 ## Supported libraries
 

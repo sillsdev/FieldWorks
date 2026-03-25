@@ -3,11 +3,14 @@
 	Packs a locally-built SIL library into the local NuGet feed for debugging in FieldWorks.
 
 .DESCRIPTION
-	Builds and packs liblcm, libpalaso, or chorus in Debug configuration, using the exact
-	version from Build/SilVersions.props so no version edits are needed in FieldWorks.
-	The resulting .nupkg/.snupkg are placed in LOCAL_NUGET_REPO, PDB files are copied
-	to Output/Debug/ and Downloads/, and stale cached packages are cleared so the next
+	Builds and packs liblcm, libpalaso, or chorus in Debug configuration. Reads the
+	base version from Build/SilVersions.props, appends a '-local' pre-release suffix,
+	updates SilVersions.props to match, and packs with that version. The resulting
+	.nupkg/.snupkg are placed in LOCAL_NUGET_REPO, PDB files are copied to
+	Output/Debug/ and Downloads/, and stale cached packages are cleared so the next
 	NuGet restore picks up the local build.
+
+	To revert: git checkout Build/SilVersions.props and clear packages/sil.*.
 
 	See Docs/architecture/local-library-debugging.md for the full workflow.
 
@@ -114,14 +117,26 @@ $versionNode = $versionProps.SelectSingleNode("//PropertyGroup[@Label='SIL Ecosy
 if (-not $versionNode) {
 	throw "Could not find <$($config.VersionProperty)> in SilVersions.props"
 }
-$version = $versionNode.InnerText.Trim()
+$baseVersion = $versionNode.InnerText.Trim()
+
+# Strip any existing pre-release suffix and append '-local'
+$versionCore = ($baseVersion -replace '-.*$', '')
+$localVersion = "$versionCore-local"
+
+# Update SilVersions.props so FieldWorks resolves the local version
+$versionNode.InnerText = $localVersion
+$versionProps.Save($versionPropsPath)
 
 Write-Host ""
 Write-Host "Pack-LocalLibrary" -ForegroundColor Cyan
 Write-Host "  Library:    $Library" -ForegroundColor Cyan
 Write-Host "  Source:     $SourcePath" -ForegroundColor Cyan
-Write-Host "  Version:    $version" -ForegroundColor Cyan
+Write-Host "  Base ver:   $baseVersion" -ForegroundColor Cyan
+Write-Host "  Local ver:  $localVersion" -ForegroundColor Cyan
 Write-Host "  Output:     $localRepo" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Updated SilVersions.props ($($config.VersionProperty) = $localVersion)" -ForegroundColor Yellow
+Write-Host "To revert: git checkout Build/SilVersions.props" -ForegroundColor Yellow
 Write-Host ""
 
 # ---------------------------------------------------------------------------
@@ -132,14 +147,15 @@ Write-Host "Running dotnet pack..." -ForegroundColor Cyan
 
 $packArgs = @(
 	'pack'
+	$SourcePath
 	'-c', 'Debug'
 	"-p:IncludeSymbols=true"
 	"-p:SymbolPackageFormat=snupkg"
-	"-p:Version=$version"
+	"-p:Version=$localVersion"
 	'--output', $localRepo
 )
 
-& dotnet @packArgs --project $SourcePath
+& dotnet @packArgs
 if ($LASTEXITCODE -ne 0) {
 	throw "dotnet pack failed for $Library."
 }
