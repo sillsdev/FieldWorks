@@ -31,3 +31,4 @@ Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
 *.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
+Src/Utilities/pcpatrflex/DisambiguateInFLExDB/DisambiguateInFLExDBTests/TestData/*.* -whitespace

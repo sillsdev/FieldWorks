@@ -1,0 +1,396 @@
+
+\lx 3223
+\g «SUB'EO»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {3418} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 4587
+\g «CMPL"NINT'EO'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {5244} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 1133
+\g «X'NP'L»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {8545} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 2376
+\g S.B&L.EFUT.3
+\c W/W
+\o -2 -2 
+\wc 3783
+\a ndø {616}
+\eType prefix
+ 
+\lx 5025
+\g «CMPL"NINT'FN'Q¦Dᴮ»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {1437} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 4661
+\g «EQ'EO'Q»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {6086} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6382
+\g «INT'FN'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {9940} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 7035
+\g «EQ'D»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {4067} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 4966
+\g «CMPL"EQ'D»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {7326} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 3
+\g «ATTDR'NV'D»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {3693} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6902
+\g «INT'FN'Q»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {1836} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6158
+\g «EQ'EO'D»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {1612} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 275
+\g «CMPL"NINT'FN'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {4893} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 760
+\g «NINT'EO'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {735} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 2604
+\g «CMPL"NINT'EO'Q¦Dᴮ»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {9307} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 8438
+\g «X'POSS'H»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {9441} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 467
+\g «INT'EO'Q»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {8299} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6217
+\g «NINT'FV'Q»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {9262} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 5222
+\g «NINT'FV'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {6418} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 8455
+\g «X'NP'F»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {2268} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 10610
+\g «EQ'Q»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {8139} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 1701
+\g «X'NP'H»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {5028} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 7837
+\g «CMPL"NINT'FV'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {7010} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 343
+\g S.B&L.DX'F.3SGN
+\c W/W
+\o -2 -2 
+\wc 3783
+\a ndø {3196}
+\eType prefix
+ 
+\lx 2409
+\g S.B&L.GEN.3.FN
+\c W/W
+\o -2 -2 
+\wc 3783
+\a ndø {2524}
+\eType prefix
+ 
+\lx 9105
+\g «EXIST»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {7240} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 61
+\g «CMPL"INT'FN'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {7268} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 4294
+\g «SUB»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {8303} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6666
+\g value
+\c W
+\wc root
+\mp RootPOS6700
+\a fia {2267}
+ 
+\lx 4574
+\g «SEQ2'NINT²»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {7385} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 1880
+\g «NINT'EO'Q»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {8348} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 9716
+\g «X'NP'M»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {1240} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 3797
+\g God
+\c W
+\wc root
+\mp RootPOS6700
+\a mbumbuki {9062} /_am  | /_am 
+		
+\a Mbumbuki {2387} /_am  | /_am 
+		  
+ 
+ ~/_am  | ~/_am 
+		
+\a mbumbuk {7286}  
+ 
+ ~/_am  | ~/_am 
+		  
+ 
+ ~/_am  | ~/_am 
+		
+ 
+\lx 7566
+\g «CMPL"NINT'FV'Q¦Dᴮ»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {4583} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 6553
+\g «NINT'FN'Q»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {1864} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 4550
+\g «CMPL"INT'FN'Q¦Dᴮ»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {2486} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 2954
+\g cook
+\c W
+\wc root
+\mp RootPOS5394
+\a ta {9325}
+\a tav {8160}
+ 
+\lx 5400
+\g «NINT'EO'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {4808} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 8656
+\g «CMPL"EXIST»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {2509} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 8599
+\g SGᴺ
+\c W/W
+\o 2 2 
+\wc 6865
+\a yam {5459} /a_  | /a_ 
+		
+\a am {1728}  
+ 
+ ~/a_  | ~/a_ 
+		
+\eType suffix
+ 
+\lx 625
+\g «ATTDR'NV'Q»
+\c W/W
+\o 3 3 
+\wc 7818
+\a 0 {1246} /_#  | /_# 
+		
+\eType suffix
+ 
+\lx 8290
+\g «INT'EO'D»
+\c W/W
+\o 2 2 
+\wc 2191
+\a 0 {5547} /_#  | /_# 
+		
+\eType suffix
+
+\lx 10648
+\mp Ac2
+\g know
+\c W
+\wc root
+\mp RootPOS5394
+\a te {10644} sampleToneParsAllomorphProperty
+\a nøten {8160}
