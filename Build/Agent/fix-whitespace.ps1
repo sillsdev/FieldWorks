@@ -78,7 +78,7 @@ if (Test-Path -LiteralPath 'check-results.log') {
 if (-not $fixFiles -or $fixFiles.Count -eq 0) {
 	$base = Get-BaseRef
 	Write-Host "Fixing whitespace for files changed since $base..HEAD"
-	$fixFiles = git diff --name-only "$base"..HEAD
+	$fixFiles = git diff --name-only $base HEAD
 }
 
 $files = $fixFiles | Where-Object { $_ -and (Test-Path $_) }

@@ -38,6 +38,9 @@ Write-Host "Base ref: $baseRef ($baseSha)"
 $log = git log --check --pretty=format:'---% h% s' "$baseSha.." 2>&1
 $null = $log | Tee-Object -FilePath check-results.log
 $log | Out-Host
+	if (-not (Test-Path -LiteralPath 'check-results.log')) {
+		New-Item -ItemType File -Path 'check-results.log' -Force | Out-Null
+	}
 
 $problems = New-Object System.Collections.Generic.List[string]
 $commit = ''
@@ -46,7 +49,7 @@ $commitTextmd = ''
 $repoPath = Get-RepoPath
 $headRef = (git rev-parse --abbrev-ref HEAD 2>$null)
 
-Get-Content check-results.log | ForEach-Object {
+	$log | ForEach-Object {
 	$line = $_
 	switch -regex ($line) {
 		'^---\s' {
@@ -83,7 +86,7 @@ Get-Content check-results.log | ForEach-Object {
 }
 
 if ($problems.Count -gt 0) {
-	Write-Host "`u26A0`uFE0F Please review the output for further information."
+	Write-Host '[WARN] Please review the output for further information.'
 	Write-Host '### A whitespace issue was found in one or more of the commits.'
 	Write-Host 'This check validates commit history from origin/main..HEAD, not just the current working tree.'
 	Write-Host 'If the report names an older commit, fix the file and then amend, squash, or rebase so that commit no longer appears in the branch history.'
