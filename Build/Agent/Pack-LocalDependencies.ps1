@@ -168,13 +168,13 @@ function Get-DependencyRepoFingerprint {
 	)
 
 	$resolvedRepoPath = [System.IO.Path]::GetFullPath($RepoPath)
-	$gitHeadOutput = @(& git -C $resolvedRepoPath rev-parse HEAD 2>$null)
+	$gitHeadOutput = @(& git -c core.safecrlf=false -c core.autocrlf=false -C $resolvedRepoPath rev-parse HEAD 2>$null)
 	if ($LASTEXITCODE -ne 0 -or $gitHeadOutput.Count -eq 0) {
 		throw "Could not determine git HEAD for local dependency repo '$resolvedRepoPath'."
 	}
 
 	$gitHead = ($gitHeadOutput -join "`n").Trim()
-	$statusLines = @(& git -C $resolvedRepoPath status --porcelain=v1 --untracked-files=all 2>$null)
+	$statusLines = @(& git -c core.safecrlf=false -c core.autocrlf=false -C $resolvedRepoPath status --porcelain=v1 --untracked-files=all 2>$null)
 	if ($LASTEXITCODE -ne 0) {
 		throw "Could not determine git status for local dependency repo '$resolvedRepoPath'."
 	}
@@ -188,7 +188,7 @@ function Get-DependencyRepoFingerprint {
 		}
 	}
 
-	$diffText = (@(& git -C $resolvedRepoPath diff --no-ext-diff --binary HEAD -- . 2>$null) -join "`n")
+	$diffText = (@(& git -c core.safecrlf=false -c core.autocrlf=false -C $resolvedRepoPath diff --no-ext-diff --binary HEAD -- . 2>$null) -join "`n")
 	if ($LASTEXITCODE -ne 0) {
 		throw "Could not determine git diff for local dependency repo '$resolvedRepoPath'."
 	}

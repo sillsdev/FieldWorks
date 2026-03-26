@@ -14,7 +14,31 @@
       "symbolOptions": {
         "searchPaths": [
           "${workspaceFolder}\\Output\\Debug"
-        ]
+        ],
+        "searchNuGetOrgSymbolServer": true
+      }
+    },
+    {
+      "name": "FieldWorks (.NET Framework, Package, Diagnostics)",
+      "type": "clr",
+      "request": "launch",
+      "preLaunchTask": "Prepare Debug (Package)",
+      "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
+      "cwd": "${workspaceFolder}\\Output\\Debug",
+      "console": "externalTerminal",
+      "justMyCode": false,
+      "requireExactSource": false,
+      "suppressJITOptimizations": true,
+      "logging": {
+        "moduleLoad": true,
+        "exceptions": true,
+        "programOutput": true
+      },
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}\\Output\\Debug"
+        ],
+        "searchNuGetOrgSymbolServer": true
       }
     },
     {
@@ -30,35 +54,31 @@
       "symbolOptions": {
         "searchPaths": [
           "${workspaceFolder}\\Output\\Debug"
-        ]
+        ],
+        "searchNuGetOrgSymbolServer": true
       }
     },
     {
-      "name": "Debug NUnit Tests",
+      "name": "FieldWorks (.NET Framework, Local Packages, Diagnostics)",
       "type": "clr",
       "request": "launch",
-      "preLaunchTask": "Build",
-      "program": "dotnet",
-      "args": [
-        "test",
-        "${workspaceFolder}/${input:testProject}",
-        "--no-build",
-        "--settings",
-        "${workspaceFolder}/Test.runsettings",
-        "-c",
-        "Debug"
-      ],
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "justMyCode": false
-    }
-  ],
-  "inputs": [
-    {
-      "id": "testProject",
-      "type": "promptString",
-      "description": "Path to test project (e.g., Src/CacheLight/CacheLightTests/CacheLightTests.csproj)",
-      "default": "Src/CacheLight/CacheLightTests/CacheLightTests.csproj"
+      "preLaunchTask": "Prepare Debug (Local Packages)",
+      "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
+      "cwd": "${workspaceFolder}\\Output\\Debug",
+      "console": "externalTerminal",
+      "justMyCode": false,
+      "requireExactSource": false,
+      "logging": {
+        "moduleLoad": true,
+        "exceptions": true,
+        "programOutput": true
+      },
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}\\Output\\Debug"
+        ],
+        "searchNuGetOrgSymbolServer": true
+      }
     }
   ]
 }

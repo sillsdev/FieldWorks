@@ -30,6 +30,12 @@ For local debugging, the supported workflow keeps FieldWorks package-backed. `bu
 
 This is the default workflow for real debugging.
 
+Visual Studio and VS Code intentionally share build artifacts, but they do not share one debugger configuration model. In practice that means:
+
+- use the same `build.ps1` entrypoints from either editor
+- expect Visual Studio to own mixed managed/native and test-debugging scenarios
+- expect VS Code to own the lightweight managed-only path through `.vscode/launch.json`
+
 ### Package-based debugging
 
 Use this when you want to investigate the currently pinned package version without changing the dependency source.
@@ -37,16 +43,20 @@ Use this when you want to investigate the currently pinned package version witho
 1. Build FieldWorks with `./build.ps1`.
 2. Open FieldWorks in Visual Studio 2022.
 3. Start the FieldWorks host process under the debugger, or attach to the running process.
-4. In Visual Studio debugger options:
-   Enable Source Link support.
-5. In Visual Studio debugger options:
-   Disable Just My Code for sessions where you need to step into package code.
-6. In Visual Studio symbol settings:
-   Enable the NuGet.org symbol server if the package publishes symbols there.
+4. In Visual Studio debugger options, enable Source Link support.
+5. In Visual Studio debugger options, disable Just My Code for sessions where you need to step into package code.
+6. In Visual Studio symbol settings, leave symbol loading on the recommended automatic mode, then enable the NuGet.org symbol server if the package publishes symbols there.
 7. Use the Modules window to verify:
    the exact `SIL.LCModel*.dll` path loaded,
    whether symbols were found,
    and whether the PDB matches the loaded binary.
+
+Visual Studio checklist:
+
+- Debugger type: managed for package-only inspection, mixed-mode when native boundaries matter.
+- Symbols: automatic loading, NuGet.org symbol server on when useful, local symbol paths only when needed.
+- Source: Source Link enabled.
+- Stepping: Just My Code off for dependency stepping.
 
 Use this path when the issue reproduces against the pinned package and you do not need to modify `liblcm` itself.
 
@@ -58,13 +68,18 @@ Prerequisites:
 
 - `FW_LOCAL_LCM` points to your `liblcm` checkout.
 - Build output is Debug/x64.
+- The built-in VS Code `Local Packages` launchers are the full local-stack shortcut and currently assume `FW_LOCAL_PALASO`, `FW_LOCAL_LCM`, and `FW_LOCAL_CHORUS` are all set. If you only want a local `liblcm` checkout, run `./build.ps1 -LocalLcm` yourself and prefer Visual Studio for the debug session.
 
 Steps:
 
 1. Run `./build.ps1 -LocalLcm`.
-2. Open `FieldWorks.sln` in Visual Studio 2022, or use the `FieldWorks (.NET Framework, Local Packages)` launcher in VS Code.
+2. Open `FieldWorks.sln` in Visual Studio 2022, or use the `FieldWorks (.NET Framework, Local Packages)` launcher in VS Code when all three local dependency repos are configured.
 3. Start debugging FieldWorks.
 4. If breakpoints do not bind, check the Modules window before changing any debugger settings.
+
+Visual Studio mixed-mode note:
+
+- If the investigation crosses into native FieldWorks code, enable native code debugging for the startup project and stay in Visual Studio for the session.
 
 Why this works:
 
@@ -102,16 +117,35 @@ Do not treat VS Code as the primary workflow for:
 4. Stay x64 only.
 5. Use the VS Code launchers in this repo, which prebuild managed projects with portable PDBs and keep package mode and local-package mode explicit.
 6. Ensure the local dependency build completed successfully so the feed under `Output/LocalNuGetFeed` contains the expected `SIL.LCModel*` packages.
+7. Prefer the diagnostics launchers first when symbols do not bind; they log module loads and make symbol resolution problems easier to see.
+
+VS Code checklist:
+
+- Launch type: `clr`
+- Platform: x64 only
+- Symbols: portable PDBs, `justMyCode: false`, symbols searched next to the built outputs under `Output/Debug`, with NuGet.org available when package symbols exist
+- Editor integration: classic C# extension preferred, not C# Dev Kit
 
 ### VS Code launch workflow
 
 1. Build FieldWorks with `./build.ps1`.
 2. Choose `FieldWorks (.NET Framework, Package)` when you want the pinned package path.
-3. Choose `FieldWorks (.NET Framework, Local Packages)` after building with `./build.ps1 -LocalLcm` when you want the locally packed `liblcm` path.
-4. Keep `justMyCode` disabled when stepping into `liblcm`.
-5. The VS Code launchers first run `Prepare Debug (*)`, which checks the last successful debug-build stamp and skips the build when no relevant saved files changed.
-6. Do not switch the VS Code debug path to Windows PDBs. The debugger used here requires portable PDBs.
-7. If symbols still do not bind, inspect the loaded binaries and symbol paths before changing code.
+3. Choose `FieldWorks (.NET Framework, Local Packages)` only when `FW_LOCAL_PALASO`, `FW_LOCAL_LCM`, and `FW_LOCAL_CHORUS` are all configured, because that launcher runs the repo's full local-package shortcut. If you only need local `liblcm`, run `./build.ps1 -LocalLcm` manually and use Visual Studio.
+4. Use the `Diagnostics` variants when you need module-load evidence or symbol troubleshooting.
+5. Keep `justMyCode` disabled when stepping into `liblcm`.
+6. The VS Code launchers first run `Prepare Debug (*)`, which checks the last successful debug-build stamp and skips the build when no relevant workspace files changed. For local-package mode it also checks whether the selected local dependency repos changed since the last successful debug build.
+7. If another tool rewrites the FieldWorks launch binary or its matching PDB later, such as a Visual Studio rebuild in the same worktree, the prelaunch helper treats those newer launch outputs as unstamped and rebuilds before launch.
+8. Do not switch the VS Code debug path to Windows PDBs. The debugger used here requires portable PDBs.
+9. If symbols still do not bind, inspect the loaded binaries and symbol paths before changing code.
+
+What VS Code does not try to share with Visual Studio:
+
+- startup project selection
+- mixed-mode/native debug flags
+- test debugging integration
+- symbol cache and debugger option state
+
+Those remain editor-specific by design.
 
 Important boundary:
 
@@ -121,6 +155,7 @@ Important boundary:
 Practical limit:
 
 - This path is best effort only. If the session turns into mixed managed/native debugging, move to Visual Studio.
+- Do not use the old `dotnet test`-style VS Code launcher pattern for this repo's .NET Framework tests. Use `test.ps1` for normal test runs and Visual Studio when you need interactive test debugging.
 
 ## NuGet package versus local packages
 

@@ -305,6 +305,7 @@ function Get-DebugRebuildCheckPathspecs {
 		'build.ps1',
 		'test.ps1',
 		'nuget.config',
+		'.vscode',
 		'Directory.Build.props',
 		'Directory.Build.targets',
 		'Directory.Packages.props',
@@ -362,6 +363,34 @@ function Get-SelectedLocalDependencies {
 	}
 
 	return $selectedDependencies
+}
+
+function Get-LocalDependencyDebugState {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string[]]$Dependencies
+	)
+
+	$states = @()
+	$stampDir = Join-Path $PSScriptRoot 'Output\LocalNuGetFeed\.stamp'
+	foreach ($dependency in $Dependencies) {
+		$stampPath = Join-Path $stampDir ("{0}.json" -f $dependency)
+		if (-not (Test-Path -LiteralPath $stampPath -PathType Leaf)) {
+			throw "Local dependency stamp '$stampPath' was not found after packing $dependency."
+		}
+
+		$stamp = Get-Content -LiteralPath $stampPath -Raw | ConvertFrom-Json
+		$states += [pscustomobject]@{
+			DependencyName = [string]$stamp.DependencyName
+			RepoPath = [string]$stamp.RepoPath
+			PackageVersion = [string]$stamp.PackageVersion
+			GitHead = [string]$stamp.GitHead
+			IsDirty = [bool]$stamp.IsDirty
+			Fingerprint = [string]$stamp.Fingerprint
+		}
+	}
+
+	return $states
 }
 
 try {
@@ -618,6 +647,7 @@ try {
 				Platform = $platform
 				LocalDependencies = @($selectedLocalDependencies)
 				LocalPackageVersion = $(if ($selectedLocalDependencies.Count -gt 0) { $LocalPackageVersion } else { '' })
+				LocalDependencyStates = $(if ($selectedLocalDependencies.Count -gt 0) { @(Get-LocalDependencyDebugState -Dependencies $selectedLocalDependencies) } else { @() })
 				ManagedDebugType = $(if ($ManagedDebugType) { $ManagedDebugType } else { '' })
 				GitHead = $repoStamp.GitHead
 				IsDirty = $repoStamp.IsDirty

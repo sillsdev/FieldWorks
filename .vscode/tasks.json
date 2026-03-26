@@ -298,9 +298,9 @@
     {
       "label": "Prepare Debug (Local Packages)",
       "type": "shell",
-      "command": "./build.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable",
       "group": "build",
-      "detail": "Pack the local dependency repos and build FieldWorks for VS Code debugging",
+      "detail": "Build for VS Code debugging only when relevant files or local dependency repo states changed since the last successful local-package portable-PDB debug build",
       "options": {
         "shell": {
           "executable": "powershell.exe",
