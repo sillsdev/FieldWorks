@@ -194,6 +194,7 @@ namespace SIL.DisambiguateInFLExDBTests
 				int iColon = input.IndexOf(":");
 				if (iColon != -1)
 				{
+					iColon--; // skip the drive letter, too
 					string appdataPath = input.Substring(iColon, iAppData - iColon);
 					input = input.Replace(appdataPath, change);
 				}

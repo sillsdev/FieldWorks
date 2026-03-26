@@ -30,6 +30,8 @@
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 		<!-- GeckofxHtmlToPdf: download from GitHub release (https://github.com/sillsdev/geckofxHtmlToPdf/releases) -->
 		<GeckofxHtmlToPdfVersion>1.1.0</GeckofxHtmlToPdfVersion>
+		<!-- pc-parse: download from GitHub release (https://github.com/sillsdev/CarlaLegacy/releases/) -->
+		<PcParseVersion>pc-parse1.0.0</PcParseVersion>
 		<!-- PackagesDir: Use local packages folder. -->
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
@@ -282,6 +284,19 @@
 			DownloadsDir="$(DownloadsDir)"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/Args.dll')"
 		/>
+		<!-- pc-parse binaries downloaded from GitHub release. -->
+		<DownloadFile
+			Address="https://github.com/sillsdev/CarlaLegacy/releases/download/$(PcParseVersion)/pcpatr64.exe"
+			LocalFilename="pcpatr64.exe"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/pcpatr64.exe')"
+		/>
+		<DownloadFile
+			Address="https://github.com/sillsdev/CarlaLegacy/releases/download/$(PcParseVersion)/TonePars64.exe"
+			LocalFilename="TonePars64.exe"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/TonePars64.exe')"
+		/>
 	</Target>
 
 	<!-- ======================================================================================== -->
@@ -526,6 +541,21 @@
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
+		/>
+		<!-- Copy pre-populated binaries from pc-parse -->
+		<Copy
+			SourceFiles="$(DownloadsDir)/pcpatr64.exe"
+			DestinationFiles="$(dir-outputBase)/pcpatr64.exe"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/pcpatr64.exe')"
+		/>
+		<Copy
+			SourceFiles="$(DownloadsDir)/TonePars64.exe"
+			DestinationFiles="$(dir-outputBase)/TonePars64.exe"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/TonePars64.exe')"
 		/>
 		<!-- Encoding Converters Files (x64 only) -->
 		<!-- Note: encoding-converters-core package doesn't follow standard NuGet runtime conventions
