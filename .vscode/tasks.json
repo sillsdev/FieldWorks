@@ -211,12 +211,12 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "./build.ps1 -LcmMode Auto",
+      "command": "./build.ps1",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build FieldWorks (package-backed by default; use explicit local LCM tasks for source mode)",
+      "detail": "Build FieldWorks against the pinned dependency packages",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -228,9 +228,9 @@
     {
       "label": "Build (Package)",
       "type": "shell",
-      "command": "./build.ps1 -LcmMode Package",
+      "command": "./build.ps1",
       "group": "build",
-      "detail": "Build FieldWorks against the pinned liblcm packages",
+      "detail": "Build FieldWorks against the pinned dependency packages",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -242,9 +242,9 @@
     {
       "label": "Build (Package, VS Code Debug)",
       "type": "shell",
-      "command": "./build.ps1 -LcmMode Package -ManagedDebugType portable",
+      "command": "./build.ps1 -ManagedDebugType portable",
       "group": "build",
-      "detail": "Build FieldWorks against pinned liblcm packages with portable managed PDBs for the VS Code debugger",
+      "detail": "Build FieldWorks against pinned dependency packages with portable managed PDBs for the VS Code debugger",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -256,9 +256,9 @@
     {
       "label": "Prepare Debug (Package)",
       "type": "shell",
-      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Package -ManagedDebugType portable",
+      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -ManagedDebugType portable",
       "group": "build",
-      "detail": "Build for VS Code debugging only when relevant files changed since the last successful package-mode portable-PDB debug build",
+      "detail": "Build for VS Code debugging only when relevant files changed since the last successful portable-PDB package-mode debug build",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -268,11 +268,11 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Build (Local LCM)",
+      "label": "Build (Local Packages)",
       "type": "shell",
-      "command": "./build.ps1 -LcmMode Local",
+      "command": "./build.ps1 -LocalPalaso -LocalLcm -LocalChorus",
       "group": "build",
-      "detail": "Build FieldWorks against the nested Localizations/LCM checkout",
+      "detail": "Pack libpalaso first, then liblcm and chorus in parallel, then build FieldWorks against those local packages",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -282,11 +282,11 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Build (Local LCM, VS Code Debug)",
+      "label": "Build (Local Packages, VS Code Debug)",
       "type": "shell",
-      "command": "./build.ps1 -LcmMode Local -ManagedDebugType portable",
+      "command": "./build.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable",
       "group": "build",
-      "detail": "Build FieldWorks against the nested local LCM checkout with portable managed PDBs for the VS Code debugger",
+      "detail": "Build FieldWorks against locally packed dependency packages with portable FieldWorks PDBs for the VS Code debugger",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -296,11 +296,11 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Prepare Debug (Local LCM)",
+      "label": "Prepare Debug (Local Packages)",
       "type": "shell",
-      "command": "./Build/Agent/Invoke-VsCodeDebugBuild.ps1 -LcmMode Local -ManagedDebugType portable",
+      "command": "./build.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable",
       "group": "build",
-      "detail": "Build for VS Code debugging only when relevant files changed since the last successful local-LCM portable-PDB debug build",
+      "detail": "Pack the local dependency repos and build FieldWorks for VS Code debugging",
       "options": {
         "shell": {
           "executable": "powershell.exe",

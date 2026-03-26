@@ -1,8 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<_IsNestedLcmProject Condition="$([System.String]::Copy('$(MSBuildProjectFullPath)').ToUpperInvariant().Contains('\\LOCALIZATIONS\\LCM\\'))">true</_IsNestedLcmProject>
-		<ManagePackageVersionsCentrally Condition="'$(_IsNestedLcmProject)'=='true'">false</ManagePackageVersionsCentrally>
-		<ManagePackageVersionsCentrally Condition="'$(_IsNestedLcmProject)'!='true'">true</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<!--
 			Transitive Pinning: When a package is declared here but only consumed
 			transitively (not directly referenced by a project), NuGet still pins it
@@ -14,7 +12,9 @@
 	</PropertyGroup>
 
 	<!-- SIL ecosystem version properties: single source of truth in Build/SilVersions.props -->
-	<Import Project="Build/SilVersions.props" Condition="'$(ManagePackageVersionsCentrally)'=='true'" />
+	<Import
+		Project="Build/SilVersions.props"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'" />
 
 	<!--
 		=============================================================
@@ -24,7 +24,9 @@
 		all projects sharing Output/{Configuration}/.
 		=============================================================
 	-->
-	<ItemGroup Label="Transitive Pins" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+	<ItemGroup
+		Label="Transitive Pins"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
 		<!-- System.Drawing.Common: SIL.LCModel.Core pulls 6.0.0 transitively,
 		     but ParatextData 9.5.x requires >= 9.0.9. Pin to 9.0.9. -->
 		<PackageVersion Include="System.Drawing.Common" Version="9.0.13" />
@@ -49,7 +51,9 @@
 		SIL LCModel Ecosystem
 		=============================================================
 	-->
-	<ItemGroup Label="SIL LCModel Ecosystem" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+	<ItemGroup
+		Label="SIL LCModel Ecosystem"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
 		<PackageVersion Include="SIL.LCModel" Version="$(SilLcmVersion)" />
 		<PackageVersion Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" />
 		<PackageVersion Include="SIL.LCModel.Core.Tests" Version="$(SilLcmVersion)" />
@@ -64,7 +68,9 @@
 		SIL LibPalaso Ecosystem
 		=============================================================
 	-->
-	<ItemGroup Label="SIL LibPalaso Ecosystem" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+	<ItemGroup
+		Label="SIL LibPalaso Ecosystem"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
 		<PackageVersion Include="SIL.Core" Version="$(SilLibPalasoVersion)" />
 		<PackageVersion Include="SIL.Core.Desktop" Version="$(SilLibPalasoVersion)" />
 		<PackageVersion Include="SIL.Archiving" Version="$(SilLibPalasoVersion)" />
@@ -88,10 +94,12 @@
 		SIL Localization (ExcludeAssets=all; consumed by Build/Localize.targets)
 		=============================================================
 	-->
-	<ItemGroup Label="SIL Localization" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
-		<PackageVersion Include="L10NSharp" Version="9.0.0" />
-		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
-		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)" />
+	<ItemGroup
+		Label="SIL Localization"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
+		<PackageVersion Include="SIL.Chorus.L10ns" Version="$(SilChorusL10nsVersion)" />
+		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />
 	</ItemGroup>
 
 	<!--
@@ -99,7 +107,9 @@
 		SIL Tools
 		=============================================================
 	-->
-	<ItemGroup Label="SIL Tools" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+	<ItemGroup
+		Label="SIL Tools"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
 		<PackageVersion Include="SIL.Chorus.App" Version="$(SilChorusVersion)" />
 		<PackageVersion Include="SIL.Chorus.LibChorus" Version="$(SilChorusVersion)" />
 		<PackageVersion Include="SIL.DesktopAnalytics" Version="4.0.0" />
@@ -117,7 +127,9 @@
 		Third-Party Runtime
 		=============================================================
 	-->
-	<ItemGroup Label="Third-Party Runtime" Condition="'$(ManagePackageVersionsCentrally)'=='true'">
+	<ItemGroup
+		Label="Third-Party Runtime"
+		Condition="'$(ManagePackageVersionsCentrally)'=='true'">
 		<PackageVersion Include="AdamsLair.TreeViewAdv" Version="1.7.7" />
 		<PackageVersion Include="CommandLineArgumentsParser" Version="3.0.22" />
 		<PackageVersion Include="CommonServiceLocator" Version="2.0.7" />

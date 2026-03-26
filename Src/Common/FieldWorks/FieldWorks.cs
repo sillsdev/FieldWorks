@@ -3665,7 +3665,7 @@ namespace SIL.FieldWorks
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				// First create localization manager for Chorus with english
 				LocalizationManagerWinforms.Create("en",
-					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", new [] { "Chorus", "LibChorus" });
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new [] { "Chorus", "LibChorus" });
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
 				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
@@ -3678,7 +3678,7 @@ namespace SIL.FieldWorks
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-					userL10nBaseDir, null, "flex_localization@sil.org", new [] { "SIL.Windows.Forms" });
+					userL10nBaseDir, null, new [] { "SIL.Windows.Forms" });
 			}
 			catch (Exception e)
 			{

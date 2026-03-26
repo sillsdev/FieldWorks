@@ -1,7 +1,5 @@
 [CmdletBinding()]
 param(
-	[ValidateSet('Package', 'Local')]
-	[string]$LcmMode,
 	[ValidateSet('Debug', 'Release')]
 	[string]$Configuration = 'Debug',
 	[ValidateSet('full', 'portable', 'pdbonly', 'embedded')]
@@ -16,27 +14,21 @@ $stampPath = Join-Path $outputDir 'BuildStamp.json'
 $runtimeExePath = Join-Path $outputDir 'FieldWorks.exe'
 
 function Get-DebugRebuildCheckPathspecs {
-	param(
-		[Parameter(Mandatory = $true)][ValidateSet('Package', 'Local')][string]$ResolvedLcmMode
-	)
-
 	$pathspecs = @(
 		'build.ps1',
+		'test.ps1',
+		'nuget.config',
 		'Directory.Build.props',
 		'Directory.Build.targets',
 		'Directory.Packages.props',
+		'Build/SilVersions.props',
+		'Build/SilVersions.Local.props',
 		'FieldWorks.proj',
+		'FieldWorks.sln',
 		'Build',
 		'Src',
 		'Lib'
 	)
-
-	if ($ResolvedLcmMode -eq 'Local') {
-		$pathspecs += @('FieldWorks.LocalLcm.sln', 'Localizations/LCM')
-	}
-	else {
-		$pathspecs += 'FieldWorks.sln'
-	}
 
 	return $pathspecs | ForEach-Object { $_ -replace '\\', '/' }
 }
@@ -118,8 +110,6 @@ function Invoke-DebugBuild {
 		'Bypass',
 		'-File',
 		(Join-Path $repoRoot 'build.ps1'),
-		'-LcmMode',
-		$LcmMode,
 		'-Configuration',
 		$Configuration,
 		'-ManagedDebugType',
@@ -139,18 +129,16 @@ if (-not (Test-Path $stampPath) -or -not (Test-Path $runtimeExePath)) {
 }
 
 $stamp = Get-Content -LiteralPath $stampPath -Raw | ConvertFrom-Json
-$resolvedLcmMode = if ($LcmMode -eq 'Local') { 'Local' } else { 'Package' }
-
-$modeMatches = ($stamp.PSObject.Properties.Name -contains 'ResolvedLcmMode') -and ($stamp.ResolvedLcmMode -eq $resolvedLcmMode)
+$localDependencyMatches = ($stamp.PSObject.Properties.Name -contains 'LocalDependencies') -and (@($stamp.LocalDependencies).Count -eq 0)
 $debugTypeMatches = ($stamp.PSObject.Properties.Name -contains 'ManagedDebugType') -and ($stamp.ManagedDebugType -eq $ManagedDebugType)
 
-if (-not $modeMatches -or -not $debugTypeMatches) {
+if (-not $localDependencyMatches -or -not $debugTypeMatches) {
 	Write-Host "Build stamp mode does not match requested VS Code debug mode. Rebuilding..." -ForegroundColor Yellow
 	Invoke-DebugBuild
 	exit 0
 }
 
-$pathspecsToCheck = Get-DebugRebuildCheckPathspecs -ResolvedLcmMode $resolvedLcmMode
+$pathspecsToCheck = Get-DebugRebuildCheckPathspecs
 if (Test-GitStateRequiresDebugRebuild -Stamp $stamp -Pathspecs $pathspecsToCheck) {
 	Invoke-DebugBuild
 	exit 0

@@ -18,10 +18,10 @@
       }
     },
     {
-      "name": "FieldWorks (.NET Framework, Local LCM)",
+      "name": "FieldWorks (.NET Framework, Local Packages)",
       "type": "clr",
       "request": "launch",
-      "preLaunchTask": "Prepare Debug (Local LCM)",
+      "preLaunchTask": "Prepare Debug (Local Packages)",
       "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
       "cwd": "${workspaceFolder}\\Output\\Debug",
       "console": "externalTerminal",
@@ -29,8 +29,7 @@
       "requireExactSource": false,
       "symbolOptions": {
         "searchPaths": [
-          "${workspaceFolder}\\Output\\Debug",
-          "${workspaceFolder}\\Localizations\\LCM\\artifacts\\Debug\\net462"
+          "${workspaceFolder}\\Output\\Debug"
         ]
       }
     },

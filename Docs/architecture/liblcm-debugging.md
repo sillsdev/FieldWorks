@@ -14,7 +14,7 @@ Use this decision tree first:
 1. Need to step between C# and native C++ or debug a process that loads native DLLs:
    Use Visual Studio 2022.
 2. Need trustworthy source-level debugging into your local `liblcm` changes:
-	Use `FieldWorks.LocalLcm.sln` in Visual Studio or the local-LCM launcher/task pair in VS Code.
+	Use the local package workflow driven by `./build.ps1 -LocalLcm`.
 3. Need to inspect package behavior without rebuilding `liblcm` locally:
    Use Visual Studio 2022 with symbols and Source Link when available.
 4. Need a quick managed-only session from VS Code:
@@ -24,7 +24,7 @@ Use this decision tree first:
 
 By default, FieldWorks consumes `liblcm` through NuGet packages. The version is pinned in `Build/SilVersions.props` and flowed into `Directory.Packages.props`.
 
-For local debugging, the preferred workflow is now local source mode with a nested checkout at `Localizations/LCM`. In that mode, FieldWorks switches from the `SIL.LCModel*` packages to local project references and local `liblcm` build artifacts.
+For local debugging, the supported workflow keeps FieldWorks package-backed. `build.ps1 -LocalLcm` packs your checked-out `liblcm` repo into `Output/LocalNuGetFeed`, updates `Build/SilVersions.Local.props`, and rebuilds FieldWorks against those local packages.
 
 ## Recommended workflow: Visual Studio 2022
 
@@ -50,31 +50,31 @@ Use this when you want to investigate the currently pinned package version witho
 
 Use this path when the issue reproduces against the pinned package and you do not need to modify `liblcm` itself.
 
-### Local-source debugging with nested checkout
+### Local package debugging with a local `liblcm` checkout
 
-Use this when you are actively changing `liblcm` or you need exact source and symbol fidelity.
+Use this when you are actively changing `liblcm` and want FieldWorks to behave like a package consumer while still stepping into your local source.
 
 Prerequisites:
 
-- `liblcm` is cloned at `Localizations/LCM`.
+- `FW_LOCAL_LCM` points to your `liblcm` checkout.
 - Build output is Debug/x64.
 
 Steps:
 
-1. Open `FieldWorks.LocalLcm.sln` in Visual Studio 2022.
-2. Build the solution. If the local liblcm build tasks have not been generated yet, the first build bootstraps them into `Localizations/LCM/artifacts/<Configuration>/net462`.
+1. Run `./build.ps1 -LocalLcm`.
+2. Open `FieldWorks.sln` in Visual Studio 2022, or use the `FieldWorks (.NET Framework, Local Packages)` launcher in VS Code.
 3. Start debugging FieldWorks.
 4. If breakpoints do not bind, check the Modules window before changing any debugger settings.
 
 Why this works:
 
-- FieldWorks compiles against local `liblcm` projects instead of the published packages.
-- Shared build-time artifacts come from the local `liblcm` checkout.
-- Visual Studio can resolve the matching local PDBs without a post-build copy step.
+- FieldWorks still restores `SIL.LCModel*` packages, but they were packed from your local checkout immediately before the build.
+- The local package build uses embedded PDBs, so the package already contains the matching debug information.
+- Visual Studio can resolve the matching source paths from the local `liblcm` checkout without a post-build copy step.
 
 Common reset step:
 
-- Switch back to `FieldWorks.sln` in Visual Studio or use the package-backed launcher/task in VS Code.
+- Run `./build.ps1` without local dependency switches to remove `Build/SilVersions.Local.props` and go back to the pinned package versions.
 
 ## Limited workflow: VS Code
 
@@ -100,14 +100,14 @@ Do not treat VS Code as the primary workflow for:
 2. Use the Microsoft C# extension path, not C# Dev Kit, for this repo.
 3. Use the `clr` launch type for the .NET Framework host executable.
 4. Stay x64 only.
-5. Ensure matching PDBs are present next to the loaded `SIL.LCModel*.dll` files.
-6. Use the VS Code launchers in this repo, which prebuild managed projects with portable PDBs and keep package mode and local-source mode explicit.
+5. Use the VS Code launchers in this repo, which prebuild managed projects with portable PDBs and keep package mode and local-package mode explicit.
+6. Ensure the local dependency build completed successfully so the feed under `Output/LocalNuGetFeed` contains the expected `SIL.LCModel*` packages.
 
 ### VS Code launch workflow
 
 1. Build FieldWorks with `./build.ps1`.
 2. Choose `FieldWorks (.NET Framework, Package)` when you want the pinned package path.
-3. Choose `FieldWorks (.NET Framework, Local LCM)` when you want the nested `Localizations/LCM` path.
+3. Choose `FieldWorks (.NET Framework, Local Packages)` after building with `./build.ps1 -LocalLcm` when you want the locally packed `liblcm` path.
 4. Keep `justMyCode` disabled when stepping into `liblcm`.
 5. The VS Code launchers first run `Prepare Debug (*)`, which checks the last successful debug-build stamp and skips the build when no relevant saved files changed.
 6. Do not switch the VS Code debug path to Windows PDBs. The debugger used here requires portable PDBs.
@@ -115,14 +115,14 @@ Do not treat VS Code as the primary workflow for:
 
 Important boundary:
 
-- Local source mode is for diagnosis, development, and local verification.
+- Local package mode is for diagnosis, development, and local verification.
 - Package-backed builds remain the final merge and CI validation path.
 
 Practical limit:
 
 - This path is best effort only. If the session turns into mixed managed/native debugging, move to Visual Studio.
 
-## NuGet package versus local source
+## NuGet package versus local packages
 
 ### When to stay on the package
 
@@ -132,22 +132,22 @@ Stay on the package when:
 - Source Link and symbols are already good enough,
 - you only need to understand behavior, not change `liblcm`.
 
-### When to switch to local source mode
+### When to switch to local package mode
 
-Switch to local source mode when:
+Switch to local package mode when:
 
 - you are modifying `liblcm`,
-- you want a checked-out `liblcm` solution in the same Visual Studio session,
-- you need build-time artifacts to come from the local checkout,
-- you want the package-backed mode to remain untouched when local mode is off.
+- you want FieldWorks to restore a package built from your local checkout,
+- you need matching symbols without a manual copy step,
+- you want the default pinned-package workflow to remain untouched when local mode is off.
 
 ## Build entrypoints
 
-- `./build.ps1 -LcmMode Package` forces the package-backed path.
-- `./build.ps1 -LcmMode Local` forces the nested `Localizations/LCM` path and bootstraps the local build tasks when needed.
-- `./build.ps1 -LcmMode Auto` stays package-backed by default, but prints whether local LCM inputs are available.
-- `FieldWorks.sln` stays package-backed in Visual Studio.
-- `FieldWorks.LocalLcm.sln` enables local source mode in Visual Studio.
+- `./build.ps1` uses the pinned package versions from `Build/SilVersions.props`.
+- `./build.ps1 -LocalLcm` packs your local `liblcm` checkout and rebuilds FieldWorks against that package.
+- `./build.ps1 -LocalPalaso -LocalLcm -LocalChorus` packs all three local dependency repos in the supported build order.
+- `./test.ps1` accepts the same local dependency switches and forwards them to `build.ps1`.
+- `FieldWorks.sln` remains the Visual Studio solution for both pinned-package and local-package workflows.
 
 ## Failure modes to check first
 
@@ -158,13 +158,13 @@ If debugging does not behave as expected, check these before changing tool setti
 2. PDB mismatch:
    verify that the PDB came from the same build as the DLL.
 3. Package cache confusion:
-   stale copies under `%USERPROFILE%\.nuget\packages` can mislead assumptions.
+   stale copies under `%USERPROFILE%\.nuget\packages` or `packages\` can mislead assumptions.
 4. Architecture mismatch:
    keep the workflow x64 end to end.
 
 ## Minimal repo changes that improve this workflow
 
-The current repo is close, but a few small changes make the workflow more obvious and less fragile.
+This repo now uses a package-only inner loop, but a few small additions could still make the workflow more obvious and less fragile.
 
 ### Recommended now
 

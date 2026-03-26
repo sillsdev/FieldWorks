@@ -12,11 +12,20 @@
 		=============================================================
 	-->
 	<PropertyGroup Label="SIL Ecosystem Versions">
-		<SilLcmVersion>11.0.0-beta0159</SilLcmVersion>
-		<SilLibPalasoVersion>17.0.0</SilLibPalasoVersion>
-		<SilChorusVersion>6.0.0-beta0063</SilChorusVersion>
-		<SilMachineVersion>3.7.13</SilMachineVersion>
-		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
-		<IcuNugetVersion>70.1.152</IcuNugetVersion>
+		<SilLcmVersion Condition="'$(SilLcmVersion)'==''">11.0.0-beta0159</SilLcmVersion>
+		<SilLibPalasoVersion Condition="'$(SilLibPalasoVersion)'==''">17.0.0</SilLibPalasoVersion>
+		<L10NSharpVersion Condition="'$(L10NSharpVersion)'==''">9.0.0</L10NSharpVersion>
+		<SilChorusVersion Condition="'$(SilChorusVersion)'==''">6.0.0-beta0063</SilChorusVersion>
+		<SilMachineVersion Condition="'$(SilMachineVersion)'==''">3.7.13</SilMachineVersion>
+		<SilIPCFrameworkVersion Condition="'$(SilIPCFrameworkVersion)'==''"
+			>1.1.1-beta0001</SilIPCFrameworkVersion>
+		<IcuNugetVersion Condition="'$(IcuNugetVersion)'==''">70.1.152</IcuNugetVersion>
+	</PropertyGroup>
+	<Import Project="SilVersions.Local.props" Condition="Exists('SilVersions.Local.props')" />
+	<PropertyGroup Label="Derived SIL Ecosystem Versions">
+		<SilLibPalasoL10nsVersion Condition="'$(SilLibPalasoL10nsVersion)'==''"
+			>17.0.0</SilLibPalasoL10nsVersion>
+		<SilChorusL10nsVersion Condition="'$(SilChorusL10nsVersion)'==''"
+			>3.0.1</SilChorusL10nsVersion>
 	</PropertyGroup>
 </Project>

@@ -6,43 +6,6 @@
 		<_InstallerBuildProj>$([System.IO.Path]::Combine('$(_TransformRoot)','Build','InstallerBuild.proj'))</_InstallerBuildProj>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(UseLocalLcmSource)'=='true'">
-		<_LocalLcmPackageReference Include="@(PackageReference->WithMetadataValue('Identity','SIL.LCModel'))" />
-		<_LocalLcmPackageReference Include="@(PackageReference->WithMetadataValue('Identity','SIL.LCModel.Core'))" />
-		<_LocalLcmPackageReference Include="@(PackageReference->WithMetadataValue('Identity','SIL.LCModel.Utils'))" />
-		<_LocalLcmPackageReference Include="@(PackageReference->WithMetadataValue('Identity','SIL.LCModel.FixData'))" />
-
-		<PackageReference Remove="@(_LocalLcmPackageReference)" />
-
-		<ProjectReference Include="$(LocalLcmRootDir)src\SIL.LCModel\SIL.LCModel.csproj"
-			Condition="'@(_LocalLcmPackageReference->WithMetadataValue(&quot;Identity&quot;,&quot;SIL.LCModel&quot;))' != '' and Exists('$(LocalLcmRootDir)src\SIL.LCModel\SIL.LCModel.csproj')" />
-		<ProjectReference Include="$(LocalLcmRootDir)src\SIL.LCModel.Core\SIL.LCModel.Core.csproj"
-			Condition="'@(_LocalLcmPackageReference->WithMetadataValue(&quot;Identity&quot;,&quot;SIL.LCModel.Core&quot;))' != '' and Exists('$(LocalLcmRootDir)src\SIL.LCModel.Core\SIL.LCModel.Core.csproj')" />
-		<ProjectReference Include="$(LocalLcmRootDir)src\SIL.LCModel.Utils\SIL.LCModel.Utils.csproj"
-			Condition="'@(_LocalLcmPackageReference->WithMetadataValue(&quot;Identity&quot;,&quot;SIL.LCModel.Utils&quot;))' != '' and Exists('$(LocalLcmRootDir)src\SIL.LCModel.Utils\SIL.LCModel.Utils.csproj')" />
-		<ProjectReference Include="$(LocalLcmRootDir)src\SIL.LCModel.FixData\SIL.LCModel.FixData.csproj"
-			Condition="'@(_LocalLcmPackageReference->WithMetadataValue(&quot;Identity&quot;,&quot;SIL.LCModel.FixData&quot;))' != '' and Exists('$(LocalLcmRootDir)src\SIL.LCModel.FixData\SIL.LCModel.FixData.csproj')" />
-	</ItemGroup>
-
-	<Target Name="EnsureLocalLcmBuildTasks"
-		Condition="'$(UseLocalLcmSource)'=='true' and '$(DesignTimeBuild)'!='true' and '$(MSBuildProjectName)'!='SIL.LCModel.Build.Tasks' and !Exists('$(LcmBuildTasksDir)\SIL.LCModel.Build.Tasks.dll') and Exists('$(LocalLcmRootDir)src\SIL.LCModel.Build.Tasks\SIL.LCModel.Build.Tasks.csproj')">
-		<Message Text="Bootstrapping local liblcm build tasks from source because $(LcmBuildTasksDir)\SIL.LCModel.Build.Tasks.dll is missing." Importance="High" />
-		<MSBuild
-			Projects="$(LocalLcmRootDir)src\SIL.LCModel.Build.Tasks\SIL.LCModel.Build.Tasks.csproj"
-			Targets="Build"
-			Properties="Configuration=$(Configuration)" />
-	</Target>
-
-	<Target Name="ValidateLocalLcmSourceMode"
-		BeforeTargets="ResolveAssemblyReferences"
-		DependsOnTargets="EnsureLocalLcmBuildTasks"
-		Condition="'$(UseLocalLcmSource)'=='true' and '$(DesignTimeBuild)'!='true'">
-		<Error Condition="!Exists('$(LocalLcmRootDir)LCM.sln')"
-			Text="UseLocalLcmSource=true but no liblcm checkout was found at $(LocalLcmRootDir). Use FieldWorks.LocalLcm.sln or build.ps1 -LcmMode Local only after Localizations/LCM has been cloned." />
-		<Error Condition="!Exists('$(LcmBuildTasksDir)\SIL.LCModel.Build.Tasks.dll')"
-			Text="UseLocalLcmSource=true but local liblcm artifacts are missing from $(LcmBuildTasksDir). Build FieldWorks.LocalLcm.sln or Localizations/LCM first so artifacts/$(Configuration)/net462 contains SIL.LCModel.Build.Tasks.dll." />
-	</Target>
-
 	<!--
 		EnsureTransformsForManagedBuilds — guarantee XSL transform DLLs are up-to-date
 		before any managed project resolves assembly references.

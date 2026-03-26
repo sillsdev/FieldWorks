@@ -77,11 +77,20 @@
 	Only used with -BuildInstaller. Enables local signing when signing tools are available.
 	By default, local installer builds capture files to sign later instead of signing.
 
-.PARAMETER LcmMode
-	Controls how FieldWorks resolves liblcm.
-	- Auto: use package mode by default, but report whether local Localizations/LCM inputs are ready.
-	- Package: force the package-backed path.
-	- Local: force the nested Localizations/LCM source-backed path.
+.PARAMETER LocalPalaso
+	If set, packs the local libpalaso checkout referenced by FW_LOCAL_PALASO into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
+
+.PARAMETER LocalLcm
+	If set, packs the local liblcm checkout referenced by FW_LOCAL_LCM into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
+
+.PARAMETER LocalChorus
+	If set, packs the local chorus checkout referenced by FW_LOCAL_CHORUS into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
+
+.PARAMETER LocalPackageVersion
+	The fixed version used for locally packed dependency packages. Default is 99.0.0-local.
 
 .PARAMETER ManagedDebugType
 	Optionally overrides the managed project PDB format for this build.
@@ -107,12 +116,12 @@
 	Builds Debug serially with detailed logging.
 
 .EXAMPLE
-	.\build.ps1 -LcmMode Local
-	Builds FieldWorks against the nested Localizations/LCM checkout.
+	.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus
+	Packs the selected local dependency repos into the repo-local NuGet feed, then builds FieldWorks against those packages.
 
 .EXAMPLE
-	.\build.ps1 -LcmMode Local -ManagedDebugType portable
-	Builds FieldWorks against the nested Localizations/LCM checkout with portable managed PDBs for VS Code debugging.
+	.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable
+	Builds FieldWorks against the locally packed dependency packages with portable FieldWorks PDBs for VS Code debugging.
 
 .NOTES
 	FieldWorks is x64-only. The x86 platform is no longer supported.
@@ -141,8 +150,10 @@ param(
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
 	[switch]$TraceCrashes,
-	[ValidateSet('Auto', 'Package', 'Local')]
-	[string]$LcmMode = 'Auto',
+	[switch]$LocalPalaso,
+	[switch]$LocalLcm,
+	[switch]$LocalChorus,
+	[string]$LocalPackageVersion = '99.0.0-local',
 	[ValidateSet('portable', 'full', 'pdbonly', 'embedded')]
 	[string]$ManagedDebugType,
 	[switch]$SkipDependencyCheck
@@ -151,7 +162,6 @@ param(
 $ErrorActionPreference = "Stop"
 
 $platform = 'x64'
-$validLcmModes = @('Auto', 'Package', 'Local')
 
 # PowerShell requires single-dash named parameters. Some callers still pass GNU-style
 # double-dash options, which bind positionally before the script starts. Normalize the
@@ -166,23 +176,8 @@ if ($Configuration -like "--*") {
 				Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
 			}
 		}
-		'LcmMode' {
-			if ([string]::IsNullOrWhiteSpace($TestFilter)) {
-				throw "Detected '--LcmMode' without a mode value. Use -LcmMode <Auto|Package|Local>."
-			}
-
-			$requestedMode = $TestFilter.Trim()
-			if ($requestedMode -notin $validLcmModes) {
-				throw "Invalid LCM mode '$requestedMode'. Use -LcmMode with one of: $($validLcmModes -join ', ')."
-			}
-
-			$LcmMode = $requestedMode
-			$Configuration = 'Debug'
-			$TestFilter = ''
-			Write-Output "[WARN] Detected '--LcmMode $requestedMode' passed without PowerShell parameter parsing. Using -LcmMode $requestedMode and defaulting Configuration to Debug."
-		}
 		default {
-			throw "Invalid Configuration value '$Configuration'. Use PowerShell parameter syntax like -Configuration Release or -LcmMode Local."
+			throw "Invalid Configuration value '$Configuration'. Use PowerShell parameter syntax like -Configuration Release."
 		}
 	}
 }
@@ -249,6 +244,9 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+$repoNuGetPackages = Join-Path $PSScriptRoot 'packages'
+$previousNuGetPackages = [Environment]::GetEnvironmentVariable('NUGET_PACKAGES')
+$didOverrideNuGetPackages = $false
 
 function Get-RepoStamp {
 	$gitHead = & git rev-parse HEAD
@@ -303,27 +301,21 @@ function Get-RepoStamp {
 }
 
 function Get-DebugRebuildCheckPathspecs {
-	param(
-		[Parameter(Mandatory = $true)][ValidateSet('Package', 'Local')][string]$ResolvedLcmMode
-	)
-
 	$pathspecs = @(
 		'build.ps1',
+		'test.ps1',
+		'nuget.config',
 		'Directory.Build.props',
 		'Directory.Build.targets',
 		'Directory.Packages.props',
+		'Build/SilVersions.props',
+		'Build/SilVersions.Local.props',
 		'FieldWorks.proj',
+		'FieldWorks.sln',
 		'Build',
 		'Src',
 		'Lib'
 	)
-
-	if ($ResolvedLcmMode -eq 'Local') {
-		$pathspecs += @('FieldWorks.LocalLcm.sln', 'Localizations/LCM')
-	}
-	else {
-		$pathspecs += 'FieldWorks.sln'
-	}
 
 	return $pathspecs | ForEach-Object { $_ -replace '\\', '/' }
 }
@@ -351,50 +343,25 @@ function Get-BuildStampPath {
 	return Join-Path $outputDir "BuildStamp.json"
 }
 
-function Get-LocalLcmState {
+function Get-SelectedLocalDependencies {
 	param(
-		[Parameter(Mandatory = $true)][string]$RepoRoot,
-		[Parameter(Mandatory = $true)][string]$ConfigurationName
+		[switch]$UseLocalPalaso,
+		[switch]$UseLocalLcm,
+		[switch]$UseLocalChorus
 	)
 
-	$nestedRoot = Join-Path $RepoRoot 'Localizations\LCM'
-	$localSolution = Join-Path $RepoRoot 'FieldWorks.LocalLcm.sln'
-	$lcmSolution = Join-Path $nestedRoot 'LCM.sln'
-	$artifactsDir = Join-Path $nestedRoot ("artifacts\{0}\net462" -f $ConfigurationName)
-	$buildTasksPath = Join-Path $artifactsDir 'SIL.LCModel.Build.Tasks.dll'
-
-	return [pscustomobject]@{
-		NestedRoot = $nestedRoot
-		LocalSolutionPath = $localSolution
-		LcmSolutionPath = $lcmSolution
-		ArtifactsDir = $artifactsDir
-		NestedRootExists = (Test-Path $nestedRoot)
-		LocalSolutionExists = (Test-Path $localSolution)
-		LcmSolutionExists = (Test-Path $lcmSolution)
-		ArtifactsReady = (Test-Path $buildTasksPath)
-		BuildTasksPath = $buildTasksPath
+	$selectedDependencies = @()
+	if ($UseLocalPalaso) {
+		$selectedDependencies += 'Palaso'
 	}
-}
-
-function Resolve-LcmMode {
-	param(
-		[Parameter(Mandatory = $true)][ValidateSet('Auto', 'Package', 'Local')][string]$RequestedMode,
-		[Parameter(Mandatory = $true)][string]$ProjectArgument
-	)
-
-	if ($RequestedMode -eq 'Local') {
-		return 'Local'
+	if ($UseLocalLcm) {
+		$selectedDependencies += 'Lcm'
+	}
+	if ($UseLocalChorus) {
+		$selectedDependencies += 'Chorus'
 	}
 
-	if ($RequestedMode -eq 'Package') {
-		return 'Package'
-	}
-
-	if ([System.IO.Path]::GetFileName($ProjectArgument) -ieq 'FieldWorks.LocalLcm.sln') {
-		return 'Local'
-	}
-
-	return 'Package'
+	return $selectedDependencies
 }
 
 try {
@@ -429,6 +396,18 @@ try {
 		if (-not (Test-Path $projectPath)) {
 			throw "Project path '$Project' was not found. Pass a path relative to the repo root or an absolute path."
 		}
+
+		if (-not (Test-Path $repoNuGetPackages)) {
+			New-Item -Path $repoNuGetPackages -ItemType Directory -Force | Out-Null
+		}
+
+		if ($previousNuGetPackages -ne $repoNuGetPackages) {
+			if (-not [string]::IsNullOrWhiteSpace($previousNuGetPackages)) {
+				Write-Host "Overriding NUGET_PACKAGES for this build: $previousNuGetPackages -> $repoNuGetPackages" -ForegroundColor Yellow
+			}
+			$didOverrideNuGetPackages = $true
+		}
+		$env:NUGET_PACKAGES = $repoNuGetPackages
 
 		# Clean stale per-project obj/ folders
 		Remove-StaleObjFolders -RepoRoot $PSScriptRoot
@@ -509,35 +488,25 @@ try {
 		$finalMsBuildArgs += $MsBuildArgs
 		$installerMsBuildArgs += $MsBuildArgs
 
-		$localLcmState = Get-LocalLcmState -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
-		$resolvedLcmMode = Resolve-LcmMode -RequestedMode $LcmMode -ProjectArgument $Project
-		$useLocalLcmSource = ($resolvedLcmMode -eq 'Local')
-		$restoreSolution = if ($useLocalLcmSource) { $localLcmState.LocalSolutionPath } else { Join-Path $PSScriptRoot 'FieldWorks.sln' }
+		$selectedLocalDependencies = Get-SelectedLocalDependencies -UseLocalPalaso:$LocalPalaso -UseLocalLcm:$LocalLcm -UseLocalChorus:$LocalChorus
+		$restoreSolution = Join-Path $PSScriptRoot 'FieldWorks.sln'
 
-		Write-Host "LCM mode: $resolvedLcmMode (requested: $LcmMode)" -ForegroundColor Cyan
+		$localPackScript = Join-Path $PSScriptRoot 'Build\Agent\Pack-LocalDependencies.ps1'
+		& $localPackScript -Configuration $Configuration -LocalPalaso:$LocalPalaso -LocalLcm:$LocalLcm -LocalChorus:$LocalChorus -LocalPackageVersion $LocalPackageVersion
+		if ($LASTEXITCODE -ne 0) {
+			throw 'Packing local dependency packages failed.'
+		}
+
+		if ($selectedLocalDependencies.Count -gt 0) {
+			Write-Host "Local dependency packages: $($selectedLocalDependencies -join ', ') ($LocalPackageVersion)" -ForegroundColor Cyan
+		}
+		else {
+			Write-Host 'Dependency packages: pinned versions from Build/SilVersions.props' -ForegroundColor Cyan
+		}
+
 		if ($ManagedDebugType) {
 			Write-Host "Managed debug symbols: $ManagedDebugType" -ForegroundColor Cyan
 		}
-		Write-Host "Local LCM checkout: $(if ($localLcmState.LcmSolutionExists) { 'ready' } elseif ($localLcmState.NestedRootExists) { 'partial' } else { 'missing' }) at $($localLcmState.NestedRoot)" -ForegroundColor Cyan
-		Write-Host "Local LCM artifacts: $(if ($localLcmState.ArtifactsReady) { 'ready' } else { 'missing' }) at $($localLcmState.ArtifactsDir)" -ForegroundColor Cyan
-		if ($LcmMode -eq 'Auto' -and -not $useLocalLcmSource -and $localLcmState.NestedRootExists) {
-			Write-Host "Auto mode kept the package-backed path. Use -LcmMode Local to build against Localizations/LCM." -ForegroundColor Yellow
-		}
-
-		if ($useLocalLcmSource) {
-			if (-not $localLcmState.LocalSolutionExists) {
-				throw "Local LCM mode requested but FieldWorks.LocalLcm.sln was not found at $($localLcmState.LocalSolutionPath)."
-			}
-			if (-not $localLcmState.LcmSolutionExists) {
-				throw "Local LCM mode requested but the nested liblcm checkout was not found at $($localLcmState.LcmSolutionPath)."
-			}
-			if (-not $localLcmState.ArtifactsReady) {
-				Write-Host "Local LCM build tasks are missing from $($localLcmState.ArtifactsDir). The build will bootstrap them from source." -ForegroundColor Yellow
-			}
-		}
-
-		$finalMsBuildArgs += "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())"
-		$installerMsBuildArgs += "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())"
 
 		# =============================================================================
 		# Build Execution
@@ -579,34 +548,13 @@ try {
 			if (-not (Test-Path $packagesDir)) {
 				New-Item -Path $packagesDir -ItemType Directory -Force | Out-Null
 			}
-			& dotnet restore $restoreSolution /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$platform" "/p:UseLocalLcmSource=$($useLocalLcmSource.ToString().ToLowerInvariant())" --verbosity quiet
+			& dotnet restore $restoreSolution /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$platform" --verbosity quiet
 			if ($LASTEXITCODE -ne 0) {
 				throw "NuGet package restore failed for $([System.IO.Path]::GetFileName($restoreSolution))"
 			}
 			Write-Host "Package restore complete." -ForegroundColor Green
 		} else {
 			Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
-		}
-
-		# Copy local LCM assemblies if requested
-		if ($UseLocalLcm) {
-			Write-Host ""
-			Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
-
-			$lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
-			$lcmArgs = @{
-				Configuration = $Configuration
-				BuildLcm = $true
-				SkipConfirm = $true
-			}
-			if ($LocalLcmPath) {
-				$lcmArgs['LcmRoot'] = $LocalLcmPath
-			}
-
-			& $lcmCopyScript @lcmArgs
-			if ($LASTEXITCODE -ne 0) {
-				throw "Failed to copy local LCM assemblies."
-			}
 		}
 
 		if ($InstallerOnly) {
@@ -663,14 +611,13 @@ try {
 			}
 
 			$repoStamp = Get-RepoStamp
-			$relevantDebugPathspecs = Get-DebugRebuildCheckPathspecs -ResolvedLcmMode $resolvedLcmMode
+			$relevantDebugPathspecs = Get-DebugRebuildCheckPathspecs
 			$relevantDebugStatus = Get-GitStatusForDebugRebuildCheck -Pathspecs $relevantDebugPathspecs
 			$stampObject = [pscustomobject]@{
 				Configuration = $Configuration
 				Platform = $platform
-				RequestedLcmMode = $LcmMode
-				ResolvedLcmMode = $resolvedLcmMode
-				UseLocalLcmSource = $useLocalLcmSource
+				LocalDependencies = @($selectedLocalDependencies)
+				LocalPackageVersion = $(if ($selectedLocalDependencies.Count -gt 0) { $LocalPackageVersion } else { '' })
 				ManagedDebugType = $(if ($ManagedDebugType) { $ManagedDebugType } else { '' })
 				GitHead = $repoStamp.GitHead
 				IsDirty = $repoStamp.IsDirty
@@ -773,6 +720,15 @@ try {
 	}
 }
 finally {
+	if ($didOverrideNuGetPackages) {
+		if ([string]::IsNullOrWhiteSpace($previousNuGetPackages)) {
+			Remove-Item Env:NUGET_PACKAGES -ErrorAction SilentlyContinue
+		}
+		else {
+			$env:NUGET_PACKAGES = $previousNuGetPackages
+		}
+	}
+
 	# Kill any lingering build processes that might hold file locks
 	Stop-ConflictingProcesses @cleanupArgs
 }

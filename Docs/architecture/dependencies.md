@@ -1,10 +1,10 @@
 ﻿# Dependencies on Other Repositories
 
-FieldWorks depends on several external libraries and related repositories. This document describes those dependencies and how to work with them.
+FieldWorks depends on several external libraries and related repositories. This document describes those dependencies and the supported local-development workflow for them.
 
 ## Overview
 
-Most dependencies are automatically downloaded as NuGet packages during the build process. If you need to debug into or modify these libraries, use either a local source workflow or a local package-validation workflow depending on the goal.
+Most dependencies are automatically downloaded as NuGet packages during the build process. If you need to debug into or modify these libraries locally, use the local package workflow driven by `build.ps1`.
 
 ## Primary Dependencies
 
@@ -32,22 +32,9 @@ By default, dependencies are downloaded as NuGet packages during the build. The 
 <SilLcmVersion>...</SilLcmVersion>
 ```
 
-## Local Source Workflow
-
-Use local source mode when you are diagnosing or changing library code and need direct source-level debugging.
-
-For `liblcm`, the preferred local source workflow is:
-
-1. Clone `liblcm` under `Localizations/LCM`.
-2. Use `FieldWorks.LocalLcm.sln` in Visual Studio or `./build.ps1 -LcmMode Local`.
-3. Make and validate the `liblcm` fix locally.
-4. Return to the package-backed FieldWorks workflow after a released `liblcm` package is available.
-
-This workflow is for development and local verification. It is not the CI truth.
-
 ## Local Package Validation Workflow
 
-Use a local package workflow only when you explicitly need to validate FieldWorks as a package consumer rather than as a source consumer.
+Use a local package workflow when you are changing `libpalaso`, `liblcm`, or `chorus` and want FieldWorks to consume those changes exactly the way it consumes released packages.
 
 ### Step 1: Clone the Repositories
 
@@ -58,65 +45,50 @@ git clone https://github.com/sillsdev/libpalaso.git
 git clone https://github.com/sillsdev/chorus.git
 ```
 
-### Step 2: Set Up Local NuGet Repository
+### Step 2: Set the Repository Environment Variables
 
-1. **Create a local NuGet folder** (e.g., `C:\localnugetpackages`)
+Set one environment variable for each local dependency checkout you want FieldWorks to pack:
 
-2. **Add as NuGet source in Visual Studio**:
-   - Tools → Options → NuGet Package Manager → Package Sources
-   - Add your local folder
-
-3. **Set environment variable**:
-   ```powershell
-   $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-   # Add to your profile for persistence
-   ```
-
-4. **Add the CopyPackage target** to each dependency's `Directory.Build.targets`:
-   ```xml
-   <Target Name="CopyPackage" AfterTargets="Pack"
-           Condition="'$(LOCAL_NUGET_REPO)'!='' AND '$(IsPackable)'=='true'">
-     <Copy SourceFiles="$(PackageOutputPath)/$(PackageId).$(PackageVersion).nupkg"
-           DestinationFolder="$(LOCAL_NUGET_REPO)"/>
-   </Target>
-   ```
-
-### Step 3: Build in Order
-
-Dependencies must be built in a specific order:
-
-1. **libpalaso** (no dependencies on other SIL libraries)
-2. **chorus** and **liblcm** (depend on libpalaso)
-3. **FieldWorks** (depends on all of the above)
-
-For each library:
-
-```bash
-# Create a local branch for versioning
-git checkout -b localcommit
-
-# Make a small change to bump version (e.g., edit README.md)
-git commit -am "Local build version bump"
-
-# Build
-dotnet build
-
-# Pack and publish to local repo
-dotnet pack
+```powershell
+$env:FW_LOCAL_PALASO = 'C:\src\libpalaso'
+$env:FW_LOCAL_LCM = 'C:\src\liblcm'
+$env:FW_LOCAL_CHORUS = 'C:\src\chorus'
 ```
 
-### Step 4: Update FieldWorks
+`build.ps1` validates these paths before it tries to pack anything. If you enable `-LocalPalaso`, `-LocalLcm`, or `-LocalChorus` without the matching environment variable, the build stops with an error.
 
-Update the NuGet versions in FieldWorks to use your local packages:
+### Step 3: Build in Order Through `build.ps1`
 
-1. Clear cached packages:
-   - `~\.nuget\packages\` (user cache)
-   - `packages\` (solution packages)
-   - Your local NuGet folder
+The supported control surface is `build.ps1`. It packs selected dependency repos into `Output/LocalNuGetFeed`, writes `Build/SilVersions.Local.props` with the temporary version overrides, then restores and builds FieldWorks against those local packages.
 
-2. Update version numbers in `Build/SilVersions.props`
+Dependencies are packed in this order:
 
-3. Build FieldWorks
+1. `libpalaso`
+2. `liblcm` and `chorus` in parallel
+3. FieldWorks
+
+Examples:
+
+```powershell
+# Use only a local liblcm checkout
+.\build.ps1 -LocalLcm
+
+# Use all three local repos with the default local version
+.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus
+
+# Override the temporary package version written into the local feed
+.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus -LocalPackageVersion 99.0.0-dev42
+```
+
+### Step 4: Run Tests the Same Way
+
+`test.ps1` accepts the same switches and forwards them to `build.ps1` before running the selected test pass.
+
+```powershell
+.\test.ps1 -LocalPalaso -LocalLcm -LocalChorus
+```
+
+The local package workflow is intended for local development only. CI stays on the pinned versions from `Build/SilVersions.props`.
 
 ## Debugging Dependencies
 
@@ -125,7 +97,7 @@ For the detailed `liblcm` debugging workflow, see `Docs/architecture/liblcm-debu
 Short version:
 
 1. Use Visual Studio 2022 as the primary debugger for `.NET Framework` plus native FieldWorks work.
-2. If you need exact source-level debugging into `liblcm`, clone it under `Localizations/LCM`, then use `FieldWorks.LocalLcm.sln` or `./build.ps1 -LcmMode Local`.
+2. If you need to step into local `liblcm` code, build FieldWorks with `./build.ps1 -LocalLcm` so the loaded package contains your local symbols.
 3. Use VS Code only for limited managed-only sessions in this repo, and only with the legacy C# extension path.
 4. If breakpoints show "No symbols loaded", verify the loaded module path and PDB match before changing debugger settings.
 
@@ -139,7 +111,7 @@ Build dependency information is also available in:
 
 FieldWorks uses GitHub Actions for CI/CD. The workflow files are in `.github/workflows/`.
 
-Dependencies are restored automatically from NuGet during CI builds. CI does not depend on a nested `Localizations/LCM` checkout.
+Dependencies are restored automatically from NuGet during CI builds. CI does not use the local package feed or the generated `Build/SilVersions.Local.props` override file.
 
 ## See Also
 

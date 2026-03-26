@@ -26,6 +26,15 @@
     Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
     Default is 'normal'.
 
+.PARAMETER LocalPalaso
+    If set, packs the local libpalaso checkout referenced by FW_LOCAL_PALASO before building tests.
+
+.PARAMETER LocalLcm
+    If set, packs the local liblcm checkout referenced by FW_LOCAL_LCM before building tests.
+
+.PARAMETER LocalChorus
+    If set, packs the local chorus checkout referenced by FW_LOCAL_CHORUS before building tests.
+
 .EXAMPLE
     .\test.ps1
     Runs all tests in Debug configuration (builds first if needed).
@@ -54,6 +63,10 @@ param(
     [switch]$ListTests,
     [ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
     [string]$Verbosity = "normal",
+    [switch]$LocalPalaso,
+    [switch]$LocalLcm,
+    [switch]$LocalChorus,
+    [string]$LocalPackageVersion = '99.0.0-local',
     [switch]$Native,
     [switch]$SkipDependencyCheck
 )
@@ -83,6 +96,22 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+
+function Remove-StaleVersificationTestFiles {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Directories
+    )
+
+    foreach ($directory in ($Directories | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        foreach ($fileName in @('eng.vrs', 'lxx.vrs', 'org.vrs')) {
+            $filePath = Join-Path $directory $fileName
+            if (Test-Path -LiteralPath $filePath -PathType Leaf) {
+                Remove-Item -LiteralPath $filePath -Force
+            }
+        }
+    }
+}
 
 try {
     Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -Action {
@@ -201,7 +230,7 @@ try {
             }
             else {
                 Write-Host "Building before running tests..." -ForegroundColor Cyan
-                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
+                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -LocalPalaso:$LocalPalaso -LocalLcm:$LocalLcm -LocalChorus:$LocalChorus -LocalPackageVersion $LocalPackageVersion
                 if ($LASTEXITCODE -ne 0) {
                     Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
                     $script:testExitCode = $LASTEXITCODE
@@ -304,6 +333,9 @@ try {
             $script:testExitCode = 1
             return
         }
+
+        $testAssemblyDirectories = @($testDlls | ForEach-Object { Split-Path $_ -Parent })
+        Remove-StaleVersificationTestFiles -Directories $testAssemblyDirectories
 
         if (-not $testDlls -or $testDlls.Count -eq 0) {
             Write-Host "[ERROR] No test assemblies found in $outputDir" -ForegroundColor Red
