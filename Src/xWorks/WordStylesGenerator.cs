@@ -336,15 +336,14 @@ namespace SIL.FieldWorks.XWorks
 							parProps.Append(new SpacingBetweenLines() { Line = lineHeight.ToString(), LineRule = LineSpacingRuleValues.Exact });
 						}
 					}
-					if (exportStyleInfo.HasSpaceAfter)
-					{
-						parProps.Append(new SpacingBetweenLines() { After = MilliPtToTwentiPt(exportStyleInfo.SpaceAfter).ToString() });
-					}
-					if (exportStyleInfo.HasSpaceBefore)
-					{
-						parProps.Append(new SpacingBetweenLines() { Before = MilliPtToTwentiPt(exportStyleInfo.SpaceBefore).ToString() });
-					}
 				}
+
+				// Set the space before and after the line, even if the value is zero.  If we do not set the value
+				// then Word generates a value, sometimes 8 or 24 point.
+				int spaceAfter = exportStyleInfo.HasSpaceAfter ? exportStyleInfo.SpaceAfter : 0;
+				int spaceBefore = exportStyleInfo.HasSpaceBefore ? exportStyleInfo.SpaceBefore : 0;
+				parProps.Append(new SpacingBetweenLines() { After = MilliPtToTwentiPt(spaceAfter).ToString() });
+				parProps.Append(new SpacingBetweenLines() { Before = MilliPtToTwentiPt(spaceBefore).ToString() });
 
 				if (exportStyleInfo.HasTrailingIndent)
 				{

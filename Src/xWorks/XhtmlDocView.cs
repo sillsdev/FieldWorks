@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
 				// the current Publication layout or Configuration view.
-				if (!IsObjectVisible(hvoTarget, out xrc))
+				if (!IsObjectVisible(hvoTarget, Cache, m_propertyTable, out xrc))
 				{
 					// Tell the user why we aren't jumping to his record
 					GiveSimpleWarning(xrc);
@@ -189,16 +189,27 @@ namespace SIL.FieldWorks.XWorks
 		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
-			var msg = xWorksStrings.ksSelectedEntryNotInDict;
 			string caption;
-			string reason;
 			string shlpTopic;
+			string msg = GetExclusionWarning(xrc, out caption, out shlpTopic);
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+							HelpNavigator.Topic, shlpTopic);
+		}
+
+		internal static string GetExclusionWarning(DictionaryConfigurationController.ExclusionReasonCode xrc, out string caption, out string shlpTopic)
+		{
+			// Tell the user why we aren't jumping to his record
+			var msg = xWorksStrings.ksSelectedEntryNotInDict;
+			string reason;
 			switch (xrc)
 			{
 				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
-					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";       //khtpEntryNotPublished
 					break;
 				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
@@ -213,18 +224,17 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
-			msg = String.Format(msg, reason);
-			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
-							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
-							HelpNavigator.Topic, shlpTopic);
+			return String.Format(msg, reason);
 		}
 
-		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		internal static bool IsObjectVisible(int hvoTarget, LcmCache cache, PropertyTable propertyTable, out DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
-			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			if (cache == null)
+				throw new ArgumentException("Missing cache.");
+			if (propertyTable == null)
+				throw new ArgumentException("Missing propertyTable.");
+			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
 				throw new ArgumentException("Unknown object.");
@@ -235,8 +245,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// Now we have our LexEntry
 			// First deal with whether the active Publication excludes it.
-			var m_currentPublication = m_propertyTable.GetValue<string>("SelectedPublication", null);
-			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
+			var m_currentPublication = propertyTable.GetValue<string>("SelectedPublication", null);
+			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
 			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
 			if (publications != null && publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
 			{
@@ -255,7 +265,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Third deal with whether the entry shouldn't be shown as a minor entry.
 			// commented out until conditions are clarified (LT-11447)
-			var configuration = new DictionaryConfigurationModel(GetCurrentConfiguration(false), Cache);
+			string configurationName = DictionaryConfigurationListener.GetCurrentConfiguration(propertyTable, false);
+			var configuration = new DictionaryConfigurationModel(configurationName, cache);
 			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
 			{
 				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;

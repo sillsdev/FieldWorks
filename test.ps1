@@ -236,10 +236,6 @@ try {
                 # build.ps1 bootstraps this into BuildTools/FwBuildTasks/<Configuration>/FwBuildTasks.dll.
                 $testDlls = @(Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll")
             }
-            elseif ($normalizedTestProject -match '(^|/)Lib/src/ScrChecks/ScrChecksTests($|/)') {
-                # ScrChecksTests builds under Lib/src and is not copied into Output/<Configuration>.
-                $testDlls = @(Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll")
-            }
             elseif ($TestProject -match '\.dll$') {
                 $testDlls = @(Join-Path $outputDir (Split-Path $TestProject -Leaf))
             }
@@ -251,31 +247,6 @@ try {
                 }
                 $testDlls = @(Join-Path $outputDir "$projectName.dll")
             }
-
-            # Fallback: some test projects build into their own bin folder and are not copied into Output/<Configuration>.
-            # If the expected Output/<Configuration>/<Name>.dll isn't present, look for bin/x64/<Configuration>/net48/<Name>.dll.
-            if ($testDlls.Count -eq 1 -and -not (Test-Path $testDlls[0]) -and ($TestProject -notmatch '\\.dll$')) {
-                $projectPathCandidate = Join-Path $PSScriptRoot $TestProject
-
-                $projectDir = $null
-                $projectBaseName = $null
-
-                if (Test-Path -LiteralPath $projectPathCandidate -PathType Container) {
-                    $projectDir = $projectPathCandidate
-                    $projectBaseName = Split-Path $projectDir -Leaf
-                }
-                elseif (Test-Path -LiteralPath $projectPathCandidate -PathType Leaf) {
-                    $projectDir = Split-Path $projectPathCandidate -Parent
-                    $projectBaseName = [System.IO.Path]::GetFileNameWithoutExtension($projectPathCandidate)
-                }
-
-                if ($projectDir -and $projectBaseName) {
-                    $binDll = Join-Path $projectDir "bin/x64/$Configuration/net48/$projectBaseName.dll"
-                    if (Test-Path -LiteralPath $binDll -PathType Leaf) {
-                        $testDlls = @($binDll)
-                    }
-                }
-            }
         }
         else {
             # Find all test DLLs, excluding:
@@ -286,12 +257,6 @@ try {
             $testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -ErrorAction SilentlyContinue |
                 Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel|^SIL\.WritingSystems\.Tests' } |
                 Select-Object -ExpandProperty FullName
-
-            # Some test projects (e.g., under Lib/src) are not copied into Output/<Configuration>.
-            $scrChecksTestsDll = Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll"
-            if (Test-Path $scrChecksTestsDll) {
-                $testDlls = @($testDlls + $scrChecksTestsDll | Select-Object -Unique)
-            }
         }
 
         $missingTestDlls = @($testDlls | Where-Object { -not (Test-Path $_) })

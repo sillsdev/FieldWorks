@@ -40,7 +40,6 @@ Lib/release/graphite2.lib
 Lib/release/System.Buffers.dll
 Lib/release/System.ValueTuple.dll
 Lib/release/unit++.*
-Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Lib/src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
@@ -194,3 +193,6 @@ TestResults/
 bin/
 FLExInstaller/cabcache/*
 FLExInstaller/wix6/cabcache/*
+
+# Claude Code worktrees
+.claude/worktrees/*

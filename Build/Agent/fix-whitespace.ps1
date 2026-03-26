@@ -10,10 +10,39 @@ function Get-BaseRef {
 	return (Get-DefaultBranchRef)
 }
 
+function Test-HasUtf8Bom {
+	param([Parameter(Mandatory)][string]$Path)
+
+	# Read only the first three bytes to check for a UTF-8 BOM to avoid loading the entire file.
+	$buffer = [byte[]]::new(3)
+	$stream = [System.IO.File]::OpenRead($Path)
+	try {
+		$bytesRead = $stream.Read($buffer, 0, 3)
+	}
+	finally {
+		$stream.Dispose()
+	}
+
+	if ($bytesRead -lt 3) { return $false }
+	return $buffer[0] -eq 0xEF -and $buffer[1] -eq 0xBB -and $buffer[2] -eq 0xBF
+}
+
+function Write-Utf8Text {
+	param(
+		[Parameter(Mandatory)][string]$Path,
+		[Parameter(Mandatory)][string]$Content,
+		[Parameter(Mandatory)][bool]$EmitBom
+	)
+
+	$encoding = New-Object System.Text.UTF8Encoding($EmitBom)
+	[System.IO.File]::WriteAllText($Path, $Content, $encoding)
+}
+
 function Format-FileWhitespace {
 	param([Parameter(Mandatory)][string]$Path)
 	if (-not (Test-Path -LiteralPath $Path)) { return }
 	try {
+		$hasUtf8Bom = Test-HasUtf8Bom -Path $Path
 		$raw = Get-Content -LiteralPath $Path -Raw -Encoding utf8
 	}
  catch {
@@ -33,7 +62,7 @@ function Format-FileWhitespace {
 	# Join back and ensure exactly one trailing newline
 	$new = ($lines -join "`n") + "`n"
 	if ($new -ne $orig) {
-		Set-Content -LiteralPath $Path -Value $new -Encoding utf8 -NoNewline
+		Write-Utf8Text -Path $Path -Content $new -EmitBom $hasUtf8Bom
 		Write-Host "Fixed whitespace: $Path"
 	}
 }
@@ -56,5 +85,6 @@ $files = $fixFiles | Where-Object { $_ -and (Test-Path $_) }
 
 foreach ($f in $files) { Format-FileWhitespace -Path $f }
 
-Write-Host "Whitespace fix completed. Review changes, commit, and rebase as needed."
+Write-Host "Whitespace fix completed. Review and stage the updated files before committing."
+Write-Host "If check-whitespace reported an older commit in origin/main..HEAD, rewrite history with amend, squash, or rebase so that offending commit is no longer part of the branch."
 exit 0

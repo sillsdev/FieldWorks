@@ -533,6 +533,7 @@ namespace SIL.FieldWorks.IText
 		public const int kflidFreeTrans = InterlinVc.ktagSegmentFree;
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
+		public const int kflidMedia = InterlinVc.ktagMediaFile;
 
 		internal void UpdateLineOptions()
 		{
@@ -585,7 +586,8 @@ namespace SIL.FieldWorks.IText
 					mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordCat : ITextStrings.ksWordCat),
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),
 				 new LineOption(kflidLitTrans, ITextStrings.ksLiteralTranslation),
-				 new LineOption(kflidNote, ITextStrings.ksNote)
+				 new LineOption(kflidNote, ITextStrings.ksNote),
+				 new LineOption(kflidMedia, ITextStrings.ksMedia)
 			}.Union(customLineOptions).ToArray();
 		}
 
@@ -947,6 +949,11 @@ namespace SIL.FieldWorks.IText
 				case kflidNote:
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					ws = m_wsDefAnal;
+					fWordLevel = false;
+					break;
+				case kflidMedia:
+					ws = WritingSystemServices.kwsFirstAnal;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					fWordLevel = false;
 					break;
 				default:
