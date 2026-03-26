@@ -1054,17 +1054,38 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var array = (object[])arguments;
 			int fieldHvo = (int)array[0];
-			string fieldValue = (string)array[1];
+			string fieldName = (string)array[1];
+			string fieldValue = (string)array[2];
 			ICmObject fieldObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fieldHvo);
+			int flid = 0;
+			try
+			{
+				// Some field names are synthetic, like "DefinitionOrGloss".
+				// In this case, we will try to match the value.
+				flid = m_cache.MetaDataCacheAccessor.GetFieldId2(fieldObj.ClassID, PlainFieldName(fieldName), true);
+			}
+			catch { }
 			bool found = false;
-			// Try matching fieldObject and fieldValue first.
+			// Try matching object and field first.
 			foreach (Slice slice in Slices)
 			{
-				if (slice.Object == fieldObj && SliceMatchesText(slice, fieldValue))
+				if (slice.IsHeaderNode)
+				{
+					continue;
+				}
+				if (slice is MorphTypeAtomicReferenceSlice && slice.Object is IMoAffixForm affix && affix.MorphTypeRA == fieldObj)
 				{
 					m_fSetCurrentSliceNew = true;
 				}
-				if (slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
+				else if (slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+				else if (slice.Object is IMoStemAllomorph && slice.Object.Owner == fieldObj && fieldName == "MLHeadWord" && SliceMatchesText(slice, fieldValue))
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+				else if (slice.Object == fieldObj && ((flid != 0 && slice.Flid == flid) || (flid == 0 && SliceMatchesText(slice, fieldValue))))
 				{
 					m_fSetCurrentSliceNew = true;
 				}
@@ -1079,14 +1100,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (!found)
 			{
-				// Just match fieldObject.
+				// Try matching just object.
 				foreach (Slice slice in Slices)
 				{
 					if (slice.Object == fieldObj)
 					{
 						m_fSetCurrentSliceNew = true;
 					}
-
 					if (m_fSetCurrentSliceNew && !slice.IsHeaderNode)
 					{
 						m_fSetCurrentSliceNew = false;
@@ -1104,14 +1124,64 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		private string PlainFieldName(string fieldname)
+		{
+			if (fieldname.EndsWith("OA") || fieldname.EndsWith("OS") || fieldname.EndsWith("OC")
+				|| fieldname.EndsWith("RA") || fieldname.EndsWith("RS") || fieldname.EndsWith("RC"))
+			{
+				return fieldname.Substring(0, fieldname.Length - 2);
+			}
+			return fieldname;
+		}
+
+
 		/// <summary>
 		/// Does the slice's display text match the given text?
 		/// </summary>
 		private bool SliceMatchesText(Slice slice, string text)
 		{
-			if (slice is MultiStringSlice)
+			try
 			{
-				ITsMultiString multiString = m_cache.DomainDataByFlid.get_MultiStringProp(slice.Object.Hvo, slice.Flid);
+				if (slice is MultiStringSlice)
+				{
+					ITsMultiString multiString = m_cache.DomainDataByFlid.get_MultiStringProp(slice.Object.Hvo, slice.Flid);
+					if (MultiStringMatchesText(multiString, text))
+					{
+						return true;
+					}
+					for (int i = 0; i < multiString.StringCount; i++)
+					{
+						ITsString tsString = multiString.GetStringFromIndex(i, out int ws);
+						if (tsString.Text == text)
+						{
+							return true;
+						}
+					}
+				}
+				else if (slice is PossibilityReferenceVectorSlice)
+				{
+					int[] hvos = SetupContents(slice.Flid, slice.Object);
+					for (int i = 0; i < hvos.Length; i++)
+					{
+						ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvos[i]);
+						if (obj is ICmPossibility possibility)
+						{
+							if (MultiStringMatchesText(possibility.Name, text) || MultiStringMatchesText(possibility.Abbreviation, text))
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			catch { }
+			return false;
+		}
+
+		private bool MultiStringMatchesText(ITsMultiString multiString, string text)
+		{
+			if (multiString != null)
+			{
 				for (int i = 0; i < multiString.StringCount; i++)
 				{
 					ITsString tsString = multiString.GetStringFromIndex(i, out int ws);

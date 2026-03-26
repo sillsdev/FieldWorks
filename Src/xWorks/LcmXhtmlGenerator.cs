@@ -574,6 +574,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Write out the source guid for JumpToField to use.
 				xw.WriteAttributeString("sourceGuid", $"{config.SourceGuid.ToString()}");
+				xw.WriteAttributeString("sourceField", $"{config.FieldDescription}");
 			}
 		}
 

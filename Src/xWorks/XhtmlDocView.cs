@@ -2,6 +2,21 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Gecko;
+using Gecko.DOM;
+using SIL.CommandLineProcessing;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.IO;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.Progress;
+using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,23 +28,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Gecko;
-using Gecko.DOM;
-using SIL.CommandLineProcessing;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.IO;
-using SIL.LCModel.Utils;
-using SIL.Progress;
-using SIL.Utils;
-using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -655,6 +655,7 @@ namespace SIL.FieldWorks.XWorks
 			GeckoElement fieldElement = tagObjects[2] as GeckoElement;
 			// Find the field object that contains fieldElement.
 			ICmObject fieldObj = null;
+			string fieldName = null;
 			for (GeckoElement element = fieldElement; element != null; element = element.ParentElement)
 			{
 				if (element.HasAttribute("sourceGuid"))
@@ -662,14 +663,22 @@ namespace SIL.FieldWorks.XWorks
 					Guid fieldGuid = new Guid(element.GetAttribute("sourceGuid"));
 					if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(fieldGuid, out fieldObj))
 					{
+						if (fieldObj is ICmPossibility)
+						{
+							// Use the enclosing field.
+							fieldObj = null;
+							continue;
+						}
+
+						fieldName = element.GetAttribute("sourceField");
 						break;
 					}
 				}
 			}
 			if (fieldObj != null)
 			{
-				// Jump to the slice with the field object and text value.
-				object[] arguments = new object[] { fieldObj.Hvo, fieldElement.TextContent };
+				// Jump to the slice with the given field.
+				object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
 				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField, arguments));
 			}
 		}
