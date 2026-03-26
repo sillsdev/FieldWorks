@@ -444,17 +444,6 @@ namespace LingTree
 			}
 			if (iEnd > Tree.XSize)
 				Tree.XSize = iEnd; // Keep track of total width for scrolling
-#if DoTrace
-			Console.WriteLine(
-				"{0}\tXSize = {1},\tWidth = {2},\tXCoord = {3},\tYCoord = {4}, \tXMid = {4}",
-				Content,
-				Tree.XSize,
-				Width,
-				XCoord,
-				YCoord,
-				XMid
-			);
-#endif
 			return XMid;
 		}
 
@@ -570,13 +559,6 @@ namespace LingTree
 					}
 					else
 					{
-#if DoTrace
-						Console.WriteLine(
-							"\tDrawing triangle: Node = {0},\tXCoord = {1}",
-							Node.Content,
-							Node.XCoord
-						);
-#endif
 						int ix = Node.XCoord + m_iTriangleOffset;
 						Point[] apt =
 						{
@@ -714,13 +696,6 @@ namespace LingTree
 					}
 					else
 					{
-#if DoTrace
-						Console.WriteLine(
-							"\tDrawing triangle: Node = {0},\tXCoord = {1}",
-							Node.Content,
-							Node.XCoord
-						);
-#endif
 						int ix = Node.XCoord + m_iTriangleOffset;
 						Point[] apt =
 						{

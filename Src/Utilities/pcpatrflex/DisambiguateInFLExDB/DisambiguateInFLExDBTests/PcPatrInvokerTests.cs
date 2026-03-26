@@ -19,10 +19,10 @@ namespace SIL.DisambiguateInFLExDBTests
 	[TestFixture]
 	class PcPatrInvokerTests : DisambiguateTests
 	{
-		//String TestDataDir { get; set; }
-		String AnaString { get; set; }
-		String AndString { get; set; }
-		String TakeString { get; set; }
+		//string TestDataDir { get; set; }
+		string AnaString { get; set; }
+		string AndString { get; set; }
+		string TakeString { get; set; }
 
 		//[SetUp]
 		//public void FixtureSetup()
@@ -30,7 +30,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		//    Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 		//    var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
 		//    int i = rootdir.LastIndexOf("DisambiguateInFLExDBTests");
-		//    String basedir = rootdir.Substring(0, i);
+		//    string basedir = rootdir.Substring(0, i);
 		//    TestDataDir = Path.Combine(basedir, "DisambiguateInFLExDBTests", "TestData");
 		//}
 
@@ -44,10 +44,10 @@ namespace SIL.DisambiguateInFLExDBTests
 		[Test]
 		public void PcPatrInvokerTest()
 		{
-			String grammarFile = Path.Combine(TestDataDir, "Invoker.grm");
-			String anaFile = Path.Combine(TestDataDir, "Invoker.ana");
+			string grammarFile = Path.Combine(TestDataDir, "Invoker.grm");
+			string anaFile = Path.Combine(TestDataDir, "Invoker.ana");
 			File.Copy(anaFile, Path.Combine(Path.GetTempPath(), "Invoker.ana"), true);
-			String andFile = Path.Combine(TestDataDir, "InvokerB4.and");
+			string andFile = Path.Combine(TestDataDir, "InvokerB4.and");
 			using (var streamReader = new StreamReader(andFile, Encoding.UTF8))
 			{
 				AndString = streamReader.ReadToEnd().Replace("\r", "");
@@ -55,7 +55,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off");
 			invoker.Invoke();
 			Assert.AreEqual(true, invoker.InvocationSucceeded);
-			String andResult = "";
+			string andResult = "";
 			using (var streamReader = new StreamReader(invoker.AndFile, Encoding.UTF8))
 			{
 				andResult = streamReader.ReadToEnd().Replace("\r", "");
@@ -89,7 +89,7 @@ namespace SIL.DisambiguateInFLExDBTests
 
 		private void checkRootGlossState(PCPatrInvoker invoker, string state)
 		{
-			String takeFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.tak");
+			string takeFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.tak");
 
 			invoker.RootGlossState = state;
 			invoker.Invoke();
@@ -113,7 +113,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			string expectedValue
 		)
 		{
-			String takeFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.tak");
+			string takeFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.tak");
 
 			invoker.RootGlossState = state;
 			invoker.Invoke();
@@ -139,8 +139,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		[Test]
 		public void PcPatrInvokerFailureTest()
 		{
-			String grammarFile = Path.Combine(TestDataDir, "GrammarFail.grm");
-			String anaFile = Path.Combine(TestDataDir, "InvokerFail.ana");
+			string grammarFile = Path.Combine(TestDataDir, "GrammarFail.grm");
+			string anaFile = Path.Combine(TestDataDir, "InvokerFail.ana");
 			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off");
 			invoker.Invoke();
 			Assert.AreEqual(false, invoker.InvocationSucceeded);

@@ -18,7 +18,7 @@ namespace SIL.DisambiguateInFLExDBTest
 	[TestFixture]
 	class AndFileLoaderTest : DisambiguateTests
 	{
-		String AndFile { get; set; }
+		string AndFile { get; set; }
 
 		[Test]
 		public void LoadAndFileGuidsTest()

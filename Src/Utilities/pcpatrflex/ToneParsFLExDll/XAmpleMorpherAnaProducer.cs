@@ -21,7 +21,7 @@ namespace SIL.ToneParsFLEx
 		string InputFilePath { get; set; }
 		public string DatabaseName { get; set; }
 		protected const string kAdCtl = "adctl.txt";
-		protected const String kLexicon = "lex.txt";
+		protected const string kLexicon = "lex.txt";
 
 		public XAmpleMorpherAnaProducer(bool useUniqueWordForms, LcmCache cache, string intxCtlFile)
 		{
@@ -86,10 +86,10 @@ namespace SIL.ToneParsFLEx
 		private void AppendToneParsPropertiesToAdCtlFile()
 		{
 			// Append all TonePars properties in FLEx DB as allomorph properties to the AD Ctl file
-			String xAmpleAdCtlFile = Path.GetTempPath() + DatabaseName + kAdCtl;
-			String xAmpleAdCtl = File.ReadAllText(xAmpleAdCtlFile);
+			string xAmpleAdCtlFile = Path.GetTempPath() + DatabaseName + kAdCtl;
+			string xAmpleAdCtl = File.ReadAllText(xAmpleAdCtlFile);
 			var props = GetAllToneParsPropsFromPossibilityList();
-			String toneParsAdCtlFile = Path.GetTempPath() + DatabaseName + ToneParsInvoker.kTPAdCtl;
+			string toneParsAdCtlFile = Path.GetTempPath() + DatabaseName + ToneParsInvoker.kTPAdCtl;
 			File.WriteAllText(toneParsAdCtlFile, xAmpleAdCtl + props);
 		}
 
@@ -116,8 +116,8 @@ namespace SIL.ToneParsFLEx
 
 		private void AddToneParsPropertiesToLexiconFile()
 		{
-			String xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + kLexicon;
-			String xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
+			string xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + kLexicon;
+			string xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
 			var allomorphHvoPropertyMapper = new Dictionary<string, string> { };
 			var morphemePropertyMapper = new Dictionary<string, string> { };
 			var possListRepository =
@@ -142,7 +142,7 @@ namespace SIL.ToneParsFLEx
 				(current, replacement) => current.Replace(replacement.Key, replacement.Value)
 			);
 
-			String toneParsLexiconFile =
+			string toneParsLexiconFile =
 				Path.GetTempPath() + DatabaseName + ToneParsInvoker.kTPLexicon;
 			File.WriteAllText(toneParsLexiconFile, lexWithAlloAndMorphProps);
 		}

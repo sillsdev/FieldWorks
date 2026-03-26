@@ -81,7 +81,7 @@ namespace SIL.ToneParsFLEx
 			int ambiguities = parserResult.Analyses.Count;
 			if (ambiguities > 1)
 			{
-				String ambigs = "%" + ambiguities + "%";
+				string ambigs = "%" + ambiguities + "%";
 				sbA.Append(ambigs);
 				sbD.Append(ambigs);
 				sbP.Append(ambigs);

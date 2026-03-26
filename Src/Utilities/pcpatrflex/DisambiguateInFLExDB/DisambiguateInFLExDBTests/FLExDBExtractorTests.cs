@@ -21,7 +21,7 @@ namespace SIL.DisambiguateInFLExDBTests
 	[TestFixture]
 	class FLExDBExtractorTests : DisambiguateTests
 	{
-		String Lexicon { get; set; }
+		string Lexicon { get; set; }
 
 		public override void FixtureSetup()
 		{
@@ -61,7 +61,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			Assert.AreEqual(26, MyCache.LangProject.AllPartsOfSpeech.Count);
 			Assert.AreEqual(335, MyCache.LangProject.LexDbOA.Entries.Count());
 			var extractor = new FLExDBExtractor(MyCache);
-			String lexicon = extractor.ExtractPcPatrLexicon();
+			string lexicon = extractor.ExtractPcPatrLexicon();
 			//Console.Write(lexicon);
 			Assert.AreEqual(Lexicon, lexicon);
 		}
@@ -175,8 +175,8 @@ namespace SIL.DisambiguateInFLExDBTests
 				.First();
 			var paragraph = (IStTxtPara)text.ParagraphsOS.ElementAt(3);
 			var segment = paragraph.SegmentsOS.First();
-			String segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
-			String expectedANA = ExpectedSegmentAsANA("WeWantToGetMarriedAndBeHappy.ana");
+			string segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
+			string expectedANA = ExpectedSegmentAsANA("WeWantToGetMarriedAndBeHappy.ana");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 			paragraph = (IStTxtPara)text.ParagraphsOS.ElementAt(7);
 			segment = paragraph.SegmentsOS.First();
@@ -191,25 +191,21 @@ namespace SIL.DisambiguateInFLExDBTests
 			segment = paragraph.SegmentsOS.First();
 			segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
 			expectedANA = ExpectedSegmentAsANA("ISeeTwoTrees.ana");
-			//Console.WriteLine("ana='" + segmentAsANA + "'");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 			paragraph = (IStTxtPara)text.ParagraphsOS.ElementAt(1);
 			segment = paragraph.SegmentsOS.First();
 			segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
 			expectedANA = ExpectedSegmentAsANA("ISeeTheTreesColor.ana");
-			//Console.WriteLine("ana='" + segmentAsANA + "'");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 			paragraph = (IStTxtPara)text.ParagraphsOS.ElementAt(2);
 			segment = paragraph.SegmentsOS.First();
 			segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
 			expectedANA = ExpectedSegmentAsANA("ThePreturntablesAreBetterThanTheProturntables.ana");
-			//Console.WriteLine("ana='" + segmentAsANA + "'");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 			paragraph = (IStTxtPara)text.ParagraphsOS.ElementAt(3);
 			segment = paragraph.SegmentsOS.First();
 			segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
 			expectedANA = ExpectedSegmentAsANA("SiPro.ana");
-			//Console.WriteLine("ana='" + segmentAsANA + "'");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 
 			text = MyCache.LangProject.InterlinearTexts
@@ -219,13 +215,12 @@ namespace SIL.DisambiguateInFLExDBTests
 			segment = paragraph.SegmentsOS.First();
 			segmentAsANA = extractor.ExtractTextSegmentAsANA(segment);
 			expectedANA = ExpectedSegmentAsANA("BahBook.ana");
-			//Console.WriteLine("ana='" + segmentAsANA + "'");
 			Assert.AreEqual(expectedANA, segmentAsANA);
 		}
 
-		private String ExpectedSegmentAsANA(String segmentFileName)
+		private string ExpectedSegmentAsANA(string segmentFileName)
 		{
-			String result;
+			string result;
 			using (
 				var streamReader = new StreamReader(
 					Path.Combine(TestDataDir, segmentFileName),

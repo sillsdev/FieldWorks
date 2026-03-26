@@ -31,6 +31,7 @@ using XAmpleManagedWrapper;
 using System.Text.RegularExpressions;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PcPatrFLEx;
 
 namespace SIL.ToneParsFLEx
 {
@@ -44,8 +45,8 @@ namespace SIL.ToneParsFLEx
 		protected Font AnalysisFont { get; set; }
 		protected Font VernacularFont { get; set; }
 
-		private String ToneRuleFile { get; set; }
-		private String IntxCtlFile { get; set; }
+		private string ToneRuleFile { get; set; }
+		private string IntxCtlFile { get; set; }
 
 		private MorpherAnaProducer AnaProducer { get; set; }
 
@@ -125,7 +126,7 @@ namespace SIL.ToneParsFLEx
 				{
 					Cursor.Current = Cursors.WaitCursor;
 					Application.DoEvents();
-					retrieveRegistryInfo();
+					RetrieveRegistryInfo();
 					regkey.Close();
 					DesktopBounds = RectNormal;
 					WindowState = WindowState;
@@ -145,10 +146,7 @@ namespace SIL.ToneParsFLEx
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
-				MessageBox.Show(e.Message + e.InnerException + e.StackTrace);
+				throw (e);
 			}
 		}
 
@@ -180,7 +178,7 @@ namespace SIL.ToneParsFLEx
 			helpContextMenu.Items.Add(toneParsGrammarDoc);
 		}
 
-		void retrieveRegistryInfo()
+		void RetrieveRegistryInfo()
 		{
 			// Window location
 			int iX = (int)regkey.GetValue(m_strLocationX, 100);
@@ -234,7 +232,7 @@ namespace SIL.ToneParsFLEx
 			);
 		}
 
-		public void saveRegistryInfo()
+		public void SaveRegistryInfo()
 		{
 			regkey = Registry.CurrentUser.OpenSubKey(m_strRegKey, true);
 			if (regkey == null)
@@ -300,21 +298,6 @@ namespace SIL.ToneParsFLEx
 			regkey.Close();
 		}
 
-		private static Font CreateFont(CoreWritingSystemDefinition wsDef)
-		{
-			float fontSize = (wsDef.DefaultFontSize == 0) ? 10 : wsDef.DefaultFontSize;
-			var fStyle = FontStyle.Regular;
-			if (wsDef.DefaultFontFeatures.Contains("Bold"))
-			{
-				fStyle |= FontStyle.Bold;
-			}
-			if (wsDef.DefaultFontFeatures.Contains("Italic"))
-			{
-				fStyle |= FontStyle.Italic;
-			}
-			return new Font(wsDef.DefaultFontName, fontSize, fStyle);
-		}
-
 		private void EnsureDatabaseHasBeenPrepped()
 		{
 			var preparer = new Preparer(Cache, false);
@@ -330,9 +313,9 @@ namespace SIL.ToneParsFLEx
 			{
 				EnsureDatabaseHasBeenPrepped();
 				Extractor = new FLExDBExtractor(Cache);
-				AnalysisFont = CreateFont(Cache.LanguageProject.DefaultAnalysisWritingSystem);
+				AnalysisFont = FLExFormUtilities.CreateFont(Cache.LanguageProject.DefaultAnalysisWritingSystem);
 				lbTexts.Font = AnalysisFont;
-				VernacularFont = CreateFont(Cache.LanguageProject.DefaultVernacularWritingSystem);
+				VernacularFont = FLExFormUtilities.CreateFont(Cache.LanguageProject.DefaultVernacularWritingSystem);
 				lbSegments.Font = VernacularFont;
 				lbSegments.RightToLeft = Cache
 					.LanguageProject
@@ -376,7 +359,7 @@ namespace SIL.ToneParsFLEx
 
 		private void OnFormClosing(object sender, EventArgs e)
 		{
-			saveRegistryInfo();
+			SaveRegistryInfo();
 			if (m_parserConnection != null && Cache != null && !Cache.IsDisposed)
 			{
 				m_parserConnection.Dispose();
@@ -388,6 +371,8 @@ namespace SIL.ToneParsFLEx
 		{
 			SegmentsInListBox = new List<SegmentToShow>();
 			IText text = lbTexts.SelectedItem as IText;
+			if (text == null)
+				return;
 			LastText = text.Guid.ToString();
 			var contents = text.ContentsOA;
 			IList<IStPara> paragraphs = contents.ParagraphsOS;
@@ -503,7 +488,6 @@ namespace SIL.ToneParsFLEx
 			invoker.Invoke();
 			if (invoker.InvocationSucceeded)
 			{
-				Console.WriteLine("invocation succeeded!\n");
 				UpdateParsingStatus("Updating results in texts");
 				invoker.SaveResultsInDatabase();
 				UpdateParsingStatus("");
@@ -554,7 +538,7 @@ namespace SIL.ToneParsFLEx
 
 		private char GetDecompSeparationCharacter()
 		{
-			String textInptControlFileContents = File.ReadAllText(tbIntxCtlFile.Text);
+			string textInptControlFileContents = File.ReadAllText(tbIntxCtlFile.Text);
 			string decompSeparationCharacter = ToneParsInvoker
 				.GetFieldFromAntRecord(textInptControlFileContents, "\\dsc ")
 				.Trim();
@@ -603,10 +587,9 @@ namespace SIL.ToneParsFLEx
 			{
 				btnParseSegment.Enabled = true;
 			}
-			btnParseSegment.Enabled = true;
 		}
 
-		private String FormatSelectedSegmentIndices()
+		private string FormatSelectedSegmentIndices()
 		{
 			StringBuilder sb = new StringBuilder();
 			int i = 0;
@@ -628,25 +611,29 @@ namespace SIL.ToneParsFLEx
 
 		private void Browse_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "Tone Parse Rule File (*TP.ctl)|*.ctl|" + "All Files (*.*)|*.*";
-			if (dlg.ShowDialog() == DialogResult.OK)
+			using (OpenFileDialog dlg = new OpenFileDialog())
 			{
-				ToneRuleFile = dlg.FileName;
-				LastToneRuleFile = ToneRuleFile;
-				tbToneRuleFile.Text = ToneRuleFile;
+				dlg.Filter = "Tone Parse Rule File (*TP.ctl)|*.ctl|" + "All Files (*.*)|*.*";
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					ToneRuleFile = dlg.FileName;
+					LastToneRuleFile = ToneRuleFile;
+					tbToneRuleFile.Text = ToneRuleFile;
+				}
 			}
 		}
 
 		private void btnBrowseIntxCtl_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "AMPLE Input Text Control File (*intx.ctl)|*.ctl|" + "All Files (*.*)|*.*";
-			if (dlg.ShowDialog() == DialogResult.OK)
+			using (OpenFileDialog dlg = new OpenFileDialog())
 			{
-				IntxCtlFile = dlg.FileName;
-				LastIntxCtlFile = IntxCtlFile;
-				tbIntxCtlFile.Text = IntxCtlFile;
+				dlg.Filter = "AMPLE Input Text Control File (*intx.ctl)|*.ctl|" + "All Files (*.*)|*.*";
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					IntxCtlFile = dlg.FileName;
+					LastIntxCtlFile = IntxCtlFile;
+					tbIntxCtlFile.Text = IntxCtlFile;
+				}
 			}
 		}
 
@@ -774,16 +761,6 @@ namespace SIL.ToneParsFLEx
 			}
 		}
 
-		private static void DetermineIndexOfBinInExecutablesPath(
-			out string rootdir,
-			out int indexOfBinInPath
-		)
-		{
-			Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-			rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-			indexOfBinInPath = rootdir.LastIndexOf("bin");
-		}
-
 		void ToneParsDoc_Click(object sender, EventArgs e)
 		{
 			ToolStripItem menuItem = (ToolStripItem)sender;
@@ -799,7 +776,6 @@ namespace SIL.ToneParsFLEx
 			if (menuItem.Name == ToneParsGrammarDocumentation)
 			{
 				Process.Start(Path.Combine(helpsPath, "Language Explorer", "Utilities", "ToneParsGrammar.txt"));
-
 			}
 		}
 
@@ -870,18 +846,6 @@ namespace SIL.ToneParsFLEx
 				return true;
 			}
 			return base.ProcessCmdKey(ref msg, keyData);
-		}
-	}
-
-	public class SegmentToShow
-	{
-		public ISegment Segment { get; set; }
-		public String Baseline { get; set; }
-
-		public SegmentToShow(ISegment segment, string baseline)
-		{
-			Segment = segment;
-			Baseline = baseline;
 		}
 	}
 }

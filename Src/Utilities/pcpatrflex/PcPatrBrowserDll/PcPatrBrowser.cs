@@ -1212,109 +1212,6 @@ namespace SIL.PcPatrBrowser
 		}
 
 		#endregion
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		public static void Main()
-		{
-			Application.Run(new PcPatrBrowserApp());
-		}
-
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		public static void Main(string[] rgArgs)
-		{
-			if (rgArgs.Length > 1)
-			{
-				string startupDirectory = rgArgs[0];
-				string andFile = rgArgs[1];
-				if (!Directory.Exists(startupDirectory))
-				{
-					Console.WriteLine("Could not find directory '" + startupDirectory + "'");
-				}
-				else
-				{
-					if (!File.Exists(andFile))
-					{
-						Console.WriteLine("Could not find file '" + andFile + "'");
-					}
-					else
-					{
-						PcPatrBrowserApp browserApp = new PcPatrBrowserApp(startupDirectory);
-						browserApp.LoadAnaFile(andFile);
-						Application.Run(browserApp);
-						//Application.Run(new PcPatrBrowserApp(rgArgs[0]));
-					}
-				}
-			}
-			else
-			{
-				Console.WriteLine(
-					"Usage: SIL.PcPatrBrowserExe 'FLEx program directory' 'Invoker.and file'"
-				);
-			}
-		}
-
-#if ItWouldBeNiceToHaveInsteadButICouldNotGetItToWorkAndAmNotGoingToSpendMoreTimeOnItNow
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Application entry point. If PcPatrBrowserApp isn't already running,
-		/// an instance of the app is created.
-		/// </summary>
-		/// <param name="rgArgs">Command-line arguments</param>
-		/// <returns>0</returns>
-		/// -----------------------------------------------------------------------------------
-		[STAThread]
-		public static int Main(string[] rgArgs)
-		{
-			// Create a semaphore to keep more than one instance of the application
-			// from running at the same time.  If the semaphore is signalled, then
-			// this instance can run.
-			Win32.SecurityAttributes sa = new Win32.SecurityAttributes();
-			IntPtr semaphore = Win32.CreateSemaphore(
-				ref sa,
-				1,
-				1,
-				Process.GetCurrentProcess().MainModule.ModuleName
-			);
-			switch (Win32.WaitForSingleObject(semaphore, 0))
-			{
-				case Win32.WAIT_OBJECT_0:
-					// Using the 'using' gizmo will call Dispose on app,
-					// which in turn will call Dispose for all FdoCache objects,
-					// which will release all of the COM objects it connects to.
-					using (PcPatrBrowserApp application = new PcPatrBrowserApp(rgArgs))
-					{
-						application.Run();
-					}
-					int previousCount;
-					Win32.ReleaseSemaphore(semaphore, 1, out previousCount);
-					break;
-
-				case Win32.WAIT_TIMEOUT:
-					// If the semaphore wait times out then another instance is running.
-					// Try to get a handle to its window and activate it.  Then terminate
-					// this process.
-					try
-					{
-						IntPtr hWndMain = ExistingProcess.MainWindowHandle;
-						if (hWndMain != (IntPtr)0)
-							Win32.SetForegroundWindow(hWndMain);
-					}
-					catch
-					{
-						// The other instance does not have a window handle.  It is either in
-						// the process of starting up or shutting down.
-					}
-					break;
-			}
-
-			return 0;
-		}
-#endif
 
 		private void FileOpenAna_Click(object sender, System.EventArgs e)
 		{
@@ -1336,7 +1233,7 @@ namespace SIL.PcPatrBrowser
 			}
 		}
 
-		public void LoadAnaFile(String anaFile)
+		public void LoadAnaFile(string anaFile)
 		{
 			m_sLogOrAnaFileName = anaFile;
 			LoadAnaFile();
@@ -2212,9 +2109,7 @@ namespace SIL.PcPatrBrowser
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
+				throw (e);
 			}
 		}
 

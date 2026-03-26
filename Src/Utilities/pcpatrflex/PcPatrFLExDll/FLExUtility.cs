@@ -45,7 +45,6 @@ namespace SIL.PcPatrFLEx
 			m_dlg.WhenDescription = "Run this when you have a PC-PATR grammar and have a reasonable amount of morphological ambiguity in interlinear texts.";
 			m_dlg.WhatDescription = "Run this to use a PC-PATR grammar to try and disambiguate interlinear texts.";
 			m_dlg.RedoDescription = "You cannot use 'Undo' to cancel the effect of this utility.You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).";
-			;
 		}
 
 		void IUtility.Process()

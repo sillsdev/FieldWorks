@@ -15,7 +15,7 @@ namespace SIL.DisambiguateInFLExDB
 {
 	public class SegmentDisambiguation
 	{
-		String tempFileName = "";
+		string tempFileName = "";
 
 		public SegmentDisambiguation(ISegment segment, List<Guid> disambiguatedMorphBundleGuids)
 		{
@@ -35,31 +35,10 @@ namespace SIL.DisambiguateInFLExDB
 				cache.ActionHandlerAccessor,
 				() =>
 				{
-					using (StreamWriter file = new StreamWriter(tempFileName, true))
-					{
-						file.WriteLine(
-							"DisambiguatedMorphBundles count=" + DisambiguatedMorphBundles.Count
-						);
-						int ig = 0;
-						foreach (Guid g in DisambiguatedMorphBundles)
-						{
-							file.WriteLine("\t i=" + ig + " guid=\"" + g + "\"");
-						}
-						file.WriteLine("Segment.Analyses count=" + Segment.AnalysesRS.Count);
-						file.WriteLine("WfiWordForm     ID=" + WfiWordformTags.kClassId);
-						file.WriteLine("WfiGloss        ID=" + WfiGlossTags.kClassId);
-						file.WriteLine("WfiAnalysis     ID=" + WfiAnalysisTags.kClassId);
-						file.WriteLine("PunctuationForm ID=" + PunctuationFormTags.kClassId);
-					}
 					int guidsIndex = 0;
 					int analysesIndex = 0;
 					foreach (IAnalysis analysis in Segment.AnalysesRS)
 					{
-						using (StreamWriter file = new StreamWriter(tempFileName, true))
-						{
-							file.WriteLine("\tAnalysis guid=\"" + analysis.Guid + "\"");
-							file.WriteLine("\tClass id=\"" + analysis.ClassID + "\"");
-						}
 						// The Analyses can be:
 						//	  a WfiWordForm when it is unanalyzed,
 						//    a WfiAnalysis when it is partially analyzed, and
@@ -83,30 +62,9 @@ namespace SIL.DisambiguateInFLExDB
 								wfiMorphBundleGuidToUse
 							);
 							var bundle = wfiMorphBundle as IWfiMorphBundle;
-							using (StreamWriter file = new StreamWriter(tempFileName, true))
-							{
-								file.WriteLine(
-									"\t\twfiMorphBundleGuidToUse=\""
-										+ wfiMorphBundleGuidToUse
-										+ "\""
-								);
-								String s =
-									(wfiMorphBundle == null)
-										? "null"
-										: wfiMorphBundle.Guid.ToString();
-								file.WriteLine("\t\twfiMorphBundle=\"" + s + "\"");
-								s = (bundle == null) ? "null" : bundle.Guid.ToString();
-								file.WriteLine("\t\tbundle=" + s + "\"");
-							}
 							EnsureMorphBundleHasSense(bundle);
 							if (wfiMorphBundle.Owner is IWfiAnalysis wfiAnalysisToUse)
 							{
-								using (StreamWriter file = new StreamWriter(tempFileName, true))
-								{
-									file.WriteLine(
-										"wfiAnalysis guid=\"" + wfiAnalysisToUse.Guid + "\""
-									);
-								}
 								wfiAnalysisToUse.SetAgentOpinion(
 									cache.LanguageProject.DefaultUserAgent,
 									Opinions.approves
@@ -141,42 +99,23 @@ namespace SIL.DisambiguateInFLExDB
 		{
 			if (bundle != null)
 			{
-				using (StreamWriter file = new StreamWriter(tempFileName, true))
-				{
-					file.WriteLine("\tEMBHS: bundle guid=\"" + bundle.Guid + "\"");
-					var sense = bundle.SenseRA;
-					if (sense == null)
-					{ // bundle does not have a sense (due to coming from parser)
-					  // find its sense and set it in bundle
-						file.WriteLine("\t\tbundle missing sense");
-						var msa = bundle.MsaRA;
-						if (msa != null)
+				var sense = bundle.SenseRA;
+				if (sense == null)
+				{ // bundle does not have a sense (due to coming from parser)
+				  // find its sense and set it in bundle
+					var msa = bundle.MsaRA;
+					if (msa != null)
+					{
+						var entry = msa.Owner as ILexEntry;
+						if (entry != null)
 						{
-							file.WriteLine("\t\tmsa guid=\"" + msa.Guid + "\"");
-							var entry = msa.Owner as ILexEntry;
-							if (entry != null)
+							sense = entry.SenseWithMsa(msa);
+							if (sense != null)
 							{
-								file.WriteLine("\t\tentry guid=\"" + entry.Guid + "\"");
-								sense = entry.SenseWithMsa(msa);
-								if (sense != null)
-								{
-									file.WriteLine("\t\tsense guid=\"" + sense.Guid + "\"");
-									bundle.SenseRA = sense;
-								}
+								bundle.SenseRA = sense;
 							}
 						}
 					}
-					else
-					{
-						file.WriteLine("\t\tsense guid=\"" + sense.Guid + "\"");
-					}
-				}
-			}
-			else
-			{
-				using (StreamWriter file = new StreamWriter(tempFileName, true))
-				{
-					file.WriteLine("\tEMBHS: bundle is null");
 				}
 			}
 		}

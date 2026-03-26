@@ -30,7 +30,7 @@ namespace SIL.PcPatrFLEx
 		private IList<IText> Texts { get; set; }
 		private IList<SegmentToShow> SegmentsInListBox { get; set; }
 		private FLExDBExtractor Extractor { get; set; }
-		private String GrammarFile { get; set; }
+		private string GrammarFile { get; set; }
 		private Font AnalysisFont { get; set; }
 		private Font VernacularFont { get; set; }
 		private Boolean BadGlossesFound = false;
@@ -133,9 +133,7 @@ namespace SIL.PcPatrFLEx
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
+				throw (e);
 			}
 		}
 
@@ -219,21 +217,6 @@ namespace SIL.PcPatrFLEx
 			regkey.Close();
 		}
 
-		private static Font CreateFont(CoreWritingSystemDefinition wsDef)
-		{
-			float fontSize = (wsDef.DefaultFontSize == 0) ? 10 : wsDef.DefaultFontSize;
-			var fStyle = FontStyle.Regular;
-			if (wsDef.DefaultFontFeatures.Contains("Bold"))
-			{
-				fStyle |= FontStyle.Bold;
-			}
-			if (wsDef.DefaultFontFeatures.Contains("Italic"))
-			{
-				fStyle |= FontStyle.Italic;
-			}
-			return new Font(wsDef.DefaultFontName, fontSize, fStyle);
-		}
-
 		private void EnsureDatabaseHasBeenPrepped()
 		{
 			var preparer = new Preparer(Cache, false);
@@ -248,9 +231,9 @@ namespace SIL.PcPatrFLEx
 			{
 				EnsureDatabaseHasBeenPrepped();
 				Extractor = new FLExDBExtractor(Cache);
-				AnalysisFont = CreateFont(Cache.LanguageProject.DefaultAnalysisWritingSystem);
+				AnalysisFont = FLExFormUtilities.CreateFont(Cache.LanguageProject.DefaultAnalysisWritingSystem);
 				lbTexts.Font = AnalysisFont;
-				VernacularFont = CreateFont(Cache.LanguageProject.DefaultVernacularWritingSystem);
+				VernacularFont = FLExFormUtilities.CreateFont(Cache.LanguageProject.DefaultVernacularWritingSystem);
 				lbSegments.Font = VernacularFont;
 				lbSegments.RightToLeft = Cache.LanguageProject.DefaultVernacularWritingSystem.RightToLeftScript ? RightToLeft.Yes : RightToLeft.No;
 				FillTextsListBox();
@@ -288,7 +271,6 @@ namespace SIL.PcPatrFLEx
 
 		private void OnFormClosing(object sender, EventArgs e)
 		{
-			Console.WriteLine("form closing");
 			SaveRegistryInfo();
 		}
 
@@ -296,6 +278,8 @@ namespace SIL.PcPatrFLEx
 		{
 			SegmentsInListBox = new List<SegmentToShow>();
 			IText text = lbTexts.SelectedItem as IText;
+			if (text == null)
+				return;
 			LastText = text.Guid.ToString();
 			var contents = text.ContentsOA;
 			IList<IStPara> paragraphs = contents.ParagraphsOS;
@@ -476,7 +460,7 @@ namespace SIL.PcPatrFLEx
 			int lastOne = lbSegments.SelectedItems.Count - 1;
 			var selectedSegmentToShow = (SegmentToShow)lbSegments.SelectedItems[lastOne];
 
-			String sSelectedIndicies = FormatSelectedSegmentIndices();
+			string sSelectedIndicies = FormatSelectedSegmentIndices();
 			lbStatusSegments.Text = sSelectedIndicies + "/" + lbSegments.Items.Count;
 			LastSegment = selectedSegmentToShow.Segment.Guid.ToString();
 			var ana = GetAnaForm(selectedSegmentToShow);
@@ -490,7 +474,7 @@ namespace SIL.PcPatrFLEx
 			}
 		}
 
-		private String FormatSelectedSegmentIndices()
+		private string FormatSelectedSegmentIndices()
 		{
 			StringBuilder sb = new StringBuilder();
 			int i = 0;
@@ -521,14 +505,16 @@ namespace SIL.PcPatrFLEx
 		}
 		private void Browse_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "PC-PATR Grammar File (*.grm)|*.grm|" +
-			"All Files (*.*)|*.*";
-			if (dlg.ShowDialog() == DialogResult.OK)
+			using (OpenFileDialog dlg = new OpenFileDialog())
 			{
-				GrammarFile = dlg.FileName;
-				LastGrammarFile = GrammarFile;
-				tbGrammarFile.Text = GrammarFile;
+				dlg.Filter = "PC-PATR Grammar File (*.grm)|*.grm|" +
+				"All Files (*.*)|*.*";
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					GrammarFile = dlg.FileName;
+					LastGrammarFile = GrammarFile;
+					tbGrammarFile.Text = GrammarFile;
+				}
 			}
 		}
 
@@ -586,22 +572,22 @@ namespace SIL.PcPatrFLEx
 			if (ana.Contains("\\a \n"))
 			{
 				int iA = ana.IndexOf("\\a \n");
-				String sA = ana.Substring(iA);
+				string sA = ana.Substring(iA);
 				int iW = sA.IndexOf("\\w ");
-				String sW = sA.Substring(iW);
+				string sW = sA.Substring(iW);
 				int iWEnd = sW.IndexOf("\n");
-				String word = sW.Substring(3, iWEnd - 3);
+				string word = sW.Substring(3, iWEnd - 3);
 				MessageBox.Show("Sorry, but not every sentence has every word parsed. At least the word '" + word + "' did not parse.  Please make sure every word is parsed and try again.");
 				return false;
 			}
 			if (ana.Contains(Extractor.MissingItemMessage))
 			{
 				int iA = ana.IndexOf(Extractor.MissingItemMessage);
-				String sA = ana.Substring(iA);
+				string sA = ana.Substring(iA);
 				int iW = sA.IndexOf("\\w ");
-				String sW = sA.Substring(iW);
+				string sW = sA.Substring(iW);
 				int iWEnd = sW.IndexOf("\n");
-				String word = sW.Substring(3, iWEnd - 3);
+				string word = sW.Substring(3, iWEnd - 3);
 				MessageBox.Show("Sorry, but at least the word '" + word + "' has an analysis with an invalid parse.  Please make sure every word has valid parses and try again.");
 				return false;
 			}
@@ -610,7 +596,7 @@ namespace SIL.PcPatrFLEx
 
 		private bool ProcessANAFileAndShowResults(string ana, out string andResult, out PcPatrBrowserApp browser)
 		{
-			String anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
+			string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 			File.WriteAllText(anaFile, ana);
 			var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
 			invoker.MaxAmbiguities = MaxAmbiguities.ToString();
@@ -653,8 +639,8 @@ namespace SIL.PcPatrFLEx
 			var sbAND = new StringBuilder();
 			var contents = selectedTextToShow.ContentsOA;
 			IList<IStPara> paragraphs = contents.ParagraphsOS;
-			String andFile = "";
-			String statusMessage = lbStatusSegments.Text;
+			string andFile = "";
+			string statusMessage = lbStatusSegments.Text;
 			int i = 1;
 			foreach (IStPara para in paragraphs)
 			{
@@ -671,7 +657,7 @@ namespace SIL.PcPatrFLEx
 						{
 							continue;
 						}
-						String anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
+						string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 						File.WriteAllText(anaFile, sb.ToString());
 						var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
 						invoker.MaxAmbiguities = MaxAmbiguities.ToString();
@@ -682,7 +668,7 @@ namespace SIL.PcPatrFLEx
 						{
 							try
 							{
-								String result = File.ReadAllText(andResult);
+								string result = File.ReadAllText(andResult);
 								if (i > 2)
 								{
 									// skip the "\id Grammar file used" line
@@ -745,19 +731,12 @@ namespace SIL.PcPatrFLEx
 			string basedir;
 			string rootdir;
 			int indexOfBinInPath;
-			DetermineIndexOfBinInExecutablesPath(out rootdir, out indexOfBinInPath);
+			FLExFormUtilities.DetermineIndexOfBinInExecutablesPath(out rootdir, out indexOfBinInPath);
 			if (indexOfBinInPath >= 0)
 				basedir = rootdir.Substring(0, indexOfBinInPath);
 			else
 				basedir = rootdir;
 			return basedir;
-		}
-
-		private static void DetermineIndexOfBinInExecutablesPath(out string rootdir, out int indexOfBinInPath)
-		{
-			Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-			rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-			indexOfBinInPath = rootdir.LastIndexOf("bin");
 		}
 
 		void PCPATRDoc_Click(object sender, EventArgs e)
@@ -801,7 +780,7 @@ namespace SIL.PcPatrFLEx
 				return;
 			if (!BadGlossesFound)
 			{
-				String anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
+				string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 				File.WriteAllText(anaFile, ana);
 			}
 			Cursor.Current = Cursors.Default;
@@ -832,15 +811,4 @@ namespace SIL.PcPatrFLEx
 		}
 	}
 
-	public class SegmentToShow
-	{
-		public ISegment Segment { get; set; }
-		public String Baseline { get; set; }
-
-		public SegmentToShow(ISegment segment, string baseline)
-		{
-			Segment = segment;
-			Baseline = baseline;
-		}
-	}
 }

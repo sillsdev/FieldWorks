@@ -60,7 +60,7 @@ namespace SIL.DisambiguateInFLExDBTests
 				.Where(t => t.Title.BestAnalysisAlternative.Text == "PCPATR 3 Ron's testing")
 				.First();
 			var itext = text.Owner as IText;
-			String AndFile = Path.Combine(TestDataDir, "Text2b.and");
+			string AndFile = Path.Combine(TestDataDir, "Text2b.and");
 			var textDisam = new TextDisambiguation(itext, Text2Testing, AndFile);
 			var defaultAgent = MyCache.LanguageProject.DefaultUserAgent;
 

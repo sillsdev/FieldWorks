@@ -17,7 +17,7 @@ namespace SIL.DisambiguateInFLExDB
 	{
 		public IText Text { get; set; }
 		public string[] GuidBundles { get; set; }
-		public String AndFile { get; set; }
+		public string AndFile { get; set; }
 #if ShowOutput
 		string tempFileName = "";
 #endif
@@ -48,8 +48,6 @@ namespace SIL.DisambiguateInFLExDB
 			for (int i = 0; i < istText.ParagraphsOS.Count; i++)
 			{
 				var para = istText.ParagraphsOS.ElementAtOrDefault(i) as IStTxtPara;
-				//Console.WriteLine("text='" + para.Contents.Text + "'");
-				//Console.WriteLine("i=" + i + "; guidIndex=" + guidIndex);
 #if ShowOutput
 				using (StreamWriter file = new StreamWriter(tempFileName, true))
 				{
@@ -71,9 +69,8 @@ namespace SIL.DisambiguateInFLExDB
 					}
 					if (guidIndex < GuidBundles.Length)
 					{
-						if (Disambguated(cache, segment, GuidBundles.ElementAtOrDefault(guidIndex)))
+						if (Disambiguated(cache, segment, GuidBundles.ElementAtOrDefault(guidIndex)))
 						{
-							//Console.WriteLine("did guid bundles for " + guidIndex);
 #if ShowOutput
 							using (StreamWriter file = new StreamWriter(tempFileName, true))
 							{
@@ -86,8 +83,7 @@ namespace SIL.DisambiguateInFLExDB
 					}
 					if (guidIndex < andGuids.Length)
 					{
-						Disambguated(cache, segment, andGuids.ElementAtOrDefault(guidIndex));
-						//Console.WriteLine("did and guids for " + guidIndex);
+						Disambiguated(cache, segment, andGuids.ElementAtOrDefault(guidIndex));
 #if ShowOutput
 						using (StreamWriter file = new StreamWriter(tempFileName, true))
 						{
@@ -100,7 +96,7 @@ namespace SIL.DisambiguateInFLExDB
 			}
 		}
 
-		private bool Disambguated(LcmCache cache, ISegment segment, string chosen)
+		private bool Disambiguated(LcmCache cache, ISegment segment, string chosen)
 		{
 			if (!String.IsNullOrEmpty(chosen))
 			{

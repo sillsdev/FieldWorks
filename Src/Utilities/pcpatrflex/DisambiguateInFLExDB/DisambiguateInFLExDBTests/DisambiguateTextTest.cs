@@ -73,7 +73,7 @@ namespace SIL.DisambiguateInFLExDBTests
 				.Where(t => t.Title.BestAnalysisAlternative.Text == "Part 4")
 				.First();
 			var itext = text.Owner as IText;
-			String AndFile = Path.Combine(TestDataDir, "Text.and");
+			string AndFile = Path.Combine(TestDataDir, "Text.and");
 			var textDisam = new TextDisambiguation(itext, TextPart3, AndFile);
 			var defaultAgent = MyCache.LanguageProject.DefaultUserAgent;
 

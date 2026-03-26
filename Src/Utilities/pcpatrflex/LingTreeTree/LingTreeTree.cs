@@ -213,9 +213,6 @@ namespace LingTree
 			// Calculate vertical position for root and all daughters
 			m_Root.CalculateYCoordinate(InitialYCoord, this, grfx);
 			// Calculate horizontal position for root and all daughters
-#if DoTrace
-			Console.WriteLine("Beginning calculations");
-#endif
 			m_iHorizontalOffset = InitialXCoord;
 			m_Root.CalculateXCoordinate(this, grfx, 0);
 			if (UseRightToLeft)

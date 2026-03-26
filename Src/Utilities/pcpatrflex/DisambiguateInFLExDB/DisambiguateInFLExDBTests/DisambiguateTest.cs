@@ -23,9 +23,9 @@ namespace SIL.DisambiguateInFLExDBTests
 	[TestFixture]
 	abstract class DisambiguateTests : MemoryOnlyBackendProviderTestBase
 	{
-		protected String TestDataDir { get; set; }
-		protected String SavedTestFile { get; set; }
-		protected String TestFile { get; set; }
+		protected string TestDataDir { get; set; }
+		protected string SavedTestFile { get; set; }
+		protected string TestFile { get; set; }
 		protected LcmCache MyCache { get; set; }
 		public ProjectId ProjId { get; set; }
 

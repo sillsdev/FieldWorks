@@ -35,8 +35,8 @@ namespace SIL.PrepFLExDBTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			String basedir = Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities", "pcpatrflex", "PrepFLExDBDll");
-			String testfile = Path.Combine(basedir, "PrepFLExDBTests", "TestData", "PCPATRTestingEmpty.fwdata");
+			string basedir = Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities", "pcpatrflex", "PrepFLExDBDll");
+			string testfile = Path.Combine(basedir, "PrepFLExDBTests", "TestData", "PCPATRTestingEmpty.fwdata");
 
 			ProjId = new ProjectId(testfile);
 

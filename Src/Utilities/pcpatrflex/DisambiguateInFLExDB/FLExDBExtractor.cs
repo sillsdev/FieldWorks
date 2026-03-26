@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-//using SIL.LcmLoaderUI;
 using SIL.LCModel;
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace SIL.DisambiguateInFLExDB
 
 		FieldDescription CustomField { get; set; }
 
-		public List<String> BadGlosses { get; set; }
+		public List<string> BadGlosses { get; set; }
 
 		public string MissingItemMessage { get; set; }
 
@@ -54,12 +53,12 @@ namespace SIL.DisambiguateInFLExDB
 			var lexEntries = Cache.LanguageProject.LexDbOA.Entries;
 			foreach (ILexEntry entry in lexEntries.OrderBy(e => e.ShortName))
 			{
-				formatEntry(entry, sb);
+				FormatEntry(entry, sb);
 			}
 			return sb.ToString();
 		}
 
-		protected void formatEntry(ILexEntry entry, StringBuilder sb)
+		protected void FormatEntry(ILexEntry entry, StringBuilder sb)
 		{
 			var sense = entry.SensesOS.FirstOrDefault<ILexSense>();
 			if (sense == null)
@@ -154,7 +153,7 @@ namespace SIL.DisambiguateInFLExDB
 				int ambiguities = wordform.AnalysesOC.Count;
 				if (ambiguities > 1)
 				{
-					String ambigs = "%" + ambiguities + "%";
+					string ambigs = "%" + ambiguities + "%";
 					sbA.Append(ambigs);
 					sbD.Append(ambigs);
 					sbC.Append(ambigs);
@@ -208,10 +207,7 @@ namespace SIL.DisambiguateInFLExDB
 						}
 						else if (i > 0)
 							sbA.Append(" ");
-						if (morph != null)
-						{
-							sbD.Append(morph.Form.VernacularDefaultWritingSystem.Text);
-						}
+						sbD.Append(morph.Form.VernacularDefaultWritingSystem.Text);
 						var sense = bundle.SenseRA;
 						if (sense == null)
 						{ // a sense can be missing from a bundle if the bundle is built by the parser filer
@@ -338,9 +334,9 @@ namespace SIL.DisambiguateInFLExDB
 			return false;
 		}
 
-		public String GetOrComputeWordCategory(IWfiAnalysis wfiAnalysis)
+		public string GetOrComputeWordCategory(IWfiAnalysis wfiAnalysis)
 		{
-			String result = "";
+			string result = "";
 			if (wfiAnalysis == null)
 				return result;
 			var cat = wfiAnalysis.CategoryRA;

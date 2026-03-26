@@ -18,15 +18,15 @@ namespace SIL.DisambiguateInFLExDB
 	{
 		const string takeFileName = "PcPatrFLEx.tak";
 		const string logFileName = "Invoker.log";
-		public String GrammarFile { get; set; }
-		public String AnaFile { get; set; }
-		public String AndFile { get; set; }
-		public String LogFile { get; set; }
-		public String BatchFile { get; set; }
-		public String RootGlossState { get; set; }
+		public string GrammarFile { get; set; }
+		public string AnaFile { get; set; }
+		public string AndFile { get; set; }
+		public string LogFile { get; set; }
+		public string BatchFile { get; set; }
+		public string RootGlossState { get; set; }
 		public Boolean InvocationSucceeded { get; set; }
-		public String MaxAmbiguities { get; set; }
-		public String TimeLimit { get; set; }
+		public string MaxAmbiguities { get; set; }
+		public string TimeLimit { get; set; }
 
 		public PCPatrInvoker(string grammarFile, string anaFile, string rootglossState)
 		{
@@ -40,7 +40,7 @@ namespace SIL.DisambiguateInFLExDB
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern int GetShortPathName(
-			String pathName,
+			string pathName,
 			StringBuilder shortName,
 			int cbShortName
 		);
@@ -61,7 +61,7 @@ namespace SIL.DisambiguateInFLExDB
 			File.WriteAllText(BatchFile, sbBatchFile.ToString());
 		}
 
-		private String GetPcPatr64ExePath()
+		private string GetPcPatr64ExePath()
 		{
 			Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 			var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
@@ -82,35 +82,24 @@ namespace SIL.DisambiguateInFLExDB
 			processInfo.RedirectStandardError = true;
 			processInfo.RedirectStandardOutput = true;
 
-			var process = Process.Start(processInfo);
-			//process.Start();
-			process.WaitForExit();
-			// the exit code is now always 0
-			//if (process.exitcode == 0)
-			//{
-			//    invocationsucceeded = true;
-			//}
-			//else
-			//{
-			//    invocationsucceeded = false;
-			//}
-			////string output = process.StandardOutput.ReadToEnd();
-			string error = process.StandardError.ReadToEnd();
-			if (error.Contains("ERROR "))
+			using (var process = Process.Start(processInfo))
 			{
-				InvocationSucceeded = false;
+				process.WaitForExit();
+				string error = process.StandardError.ReadToEnd();
+				if (error.Contains("ERROR "))
+				{
+					InvocationSucceeded = false;
+				}
+				else
+				{
+					InvocationSucceeded = true;
+				}
 			}
-			else
-			{
-				InvocationSucceeded = true;
-			}
-			//Console.Write(output);
-			//Console.Write(error);
 		}
 
 		private void CreateTakeFile()
 		{
-			String takeFile = Path.Combine(Path.GetTempPath(), takeFileName);
+			string takeFile = Path.Combine(Path.GetTempPath(), takeFileName);
 			StringBuilder sbTakeFileShortPath = new StringBuilder(255);
 			int i = GetShortPathName(takeFile, sbTakeFileShortPath, sbTakeFileShortPath.Capacity);
 			var sbTake = new StringBuilder();
@@ -156,7 +145,7 @@ namespace SIL.DisambiguateInFLExDB
 				return;
 			}
 			sbTake.Append("set rootgloss ");
-			String result;
+			string result;
 			result = GetRootGlossStateValue();
 			sbTake.Append(result + "\n");
 		}
@@ -164,7 +153,7 @@ namespace SIL.DisambiguateInFLExDB
 		public string GetRootGlossStateValue()
 		{
 			string result;
-			String sBeginning = RootGlossState.Substring(0, 1).ToLower();
+			string sBeginning = RootGlossState.Substring(0, 1).ToLower();
 			switch (sBeginning)
 			{
 				case "l":

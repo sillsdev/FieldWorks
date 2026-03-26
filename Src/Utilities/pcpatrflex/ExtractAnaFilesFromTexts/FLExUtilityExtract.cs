@@ -51,7 +51,6 @@ namespace SIL.PcPatrFLEx
 				"Run this when you are using PCPatrFLEx and want to create a set of regression input files.";
 			m_dlg.RedoDescription =
 				"You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).";
-			;
 		}
 
 		void IUtility.Process()

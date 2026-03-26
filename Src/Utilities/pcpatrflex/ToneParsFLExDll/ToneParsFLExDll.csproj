@@ -42,6 +42,7 @@
     <ProjectReference Include="../../../LexText/ParserCore/ParserCore.csproj" />
     <ProjectReference Include="../../../LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj" />
     <ProjectReference Include="../../../LexText/ParserUI/ParserUI.csproj" />
+    <ProjectReference Include="../PcPatrFLExDll/PcPatrFLExDll.csproj" />
     <ProjectReference Include="../PrepFLExDBDll/PrepFLExDBDll.csproj" />
     <ProjectReference Include="../DisambiguateInFLExDB/DisambiguateInFLExDB.csproj" />
   </ItemGroup>

@@ -22,25 +22,23 @@ namespace SIL.DisambiguateInFLExDBTests
 	[TestFixture]
 	class ToneParsInvokerTests : DisambiguateTests
 	{
-		String AnaExpectedString { get; set; }
-		String AntExpectedString { get; set; }
-		String LexExpectedString { get; set; }
-		String ParserFilerXMLString { get; set; }
-		String ToneParsBatchExpectedString { get; set; }
-		String ToneParsCmdExpectedString { get; set; }
-		String Word1ExpectedString { get; set; }
-		String Word2ExpectedString { get; set; }
-		String Word3ExpectedString { get; set; }
-		String Word24ExpectedString { get; set; }
-		//String XAmpleBatchExpectedString { get; set; }
-		//String XAmpleCmdExpectedString { get; set; }
+		string AnaExpectedString { get; set; }
+		string AntExpectedString { get; set; }
+		string LexExpectedString { get; set; }
+		string ParserFilerXMLString { get; set; }
+		string ToneParsBatchExpectedString { get; set; }
+		string ToneParsCmdExpectedString { get; set; }
+		string Word1ExpectedString { get; set; }
+		string Word2ExpectedString { get; set; }
+		string Word3ExpectedString { get; set; }
+		string Word24ExpectedString { get; set; }
 		ToneParsInvoker invoker { get; set; }
-		const String kADCtlFile = "KuniToneParsTestadctl.txt";
-		const String kGrammarFile = "KuniToneParsTestgram.txt";
-		const String kLexiconFile = "KuniToneParsTestlex.txt";
-		const String kLexiconTPFile = "KuniToneParsTestTPlex.txt";
-		const String kTPSegFile = "KVGTP.seg";
-		const String kTPIntxFile = "KVGintx.ctl";
+		const string kADCtlFile = "KuniToneParsTestadctl.txt";
+		const string kGrammarFile = "KuniToneParsTestgram.txt";
+		const string kLexiconFile = "KuniToneParsTestlex.txt";
+		const string kLexiconTPFile = "KuniToneParsTestTPlex.txt";
+		const string kTPSegFile = "KVGTP.seg";
+		const string kTPIntxFile = "KVGintx.ctl";
 
 		[SetUp]
 		public override void FixtureSetup()
@@ -110,10 +108,10 @@ namespace SIL.DisambiguateInFLExDBTests
 				Path.Combine(Path.GetTempPath(), kTPIntxFile),
 				true
 			);
-			String toneParsLexFile = Path.Combine(TestDataDir, "KvgTP.ctl");
-			String toneParsRuleFile = Path.Combine(TestDataDir, "KvgTP.ctl");
-			String intxCtlFile = Path.Combine(TestDataDir, "KVGintx.ctl");
-			String inputFile = Path.Combine(TestDataDir, "KVGinput.txt");
+			string toneParsLexFile = Path.Combine(TestDataDir, "KvgTP.ctl");
+			string toneParsRuleFile = Path.Combine(TestDataDir, "KvgTP.ctl");
+			string intxCtlFile = Path.Combine(TestDataDir, "KVGintx.ctl");
+			string inputFile = Path.Combine(TestDataDir, "KVGinput.txt");
 			invoker = new ToneParsInvoker(toneParsRuleFile, intxCtlFile, inputFile, '+', MyCache);
 			CreateExpectedFileStrings();
 			File.Copy(Path.Combine(TestDataDir, "ToneParsInvoker.ana"), Path.Combine(Path.GetTempPath(), "ToneParsInvoker.ana"), true);
@@ -166,9 +164,9 @@ namespace SIL.DisambiguateInFLExDBTests
 			Assert.AreEqual(9, wfndot2.ParserCount);
 		}
 
-		private void CompareResultToExpectedFile(String expectedFileString, String actualFile, bool normalizeContent = false)
+		private void CompareResultToExpectedFile(string expectedFileString, string actualFile, bool normalizeContent = false)
 		{
-			String result = CreateFileString(actualFile);
+			string result = CreateFileString(actualFile);
 			string expected = expectedFileString;
 			if (normalizeContent)
 			{
@@ -220,12 +218,6 @@ namespace SIL.DisambiguateInFLExDBTests
 			Word24ExpectedString = CreateFileString(
 				Path.Combine(TestDataDir, "Word24Expected.xml")
 			);
-			//XAmpleBatchExpectedString = CreateFileString(
-			//    Path.Combine(TestDataDir, Path.GetFileName(invoker.XAmpleBatchFile))
-			//);
-			//XAmpleCmdExpectedString = CreateFileString(
-			//    Path.Combine(TestDataDir, Path.GetFileName(invoker.XAmpleCmdFile))
-			//);
 			ToneParsBatchExpectedString = CreateFileString(
 				Path.Combine(TestDataDir, Path.GetFileName(invoker.ToneParsBatchFile))
 			);
@@ -234,10 +226,10 @@ namespace SIL.DisambiguateInFLExDBTests
 			);
 		}
 
-		private String CreateFileString(String fileName)
+		private string CreateFileString(string fileName)
 		{
-			String expectedFile = Path.Combine(TestDataDir, fileName);
-			String result = "";
+			string expectedFile = Path.Combine(TestDataDir, fileName);
+			string result = "";
 			using (var streamReader = new StreamReader(expectedFile, Encoding.UTF8))
 			{
 				result = streamReader.ReadToEnd().Replace("\r", "");

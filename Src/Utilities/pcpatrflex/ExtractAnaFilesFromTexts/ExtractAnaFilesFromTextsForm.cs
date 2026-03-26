@@ -73,9 +73,7 @@ namespace SIL.PcPatrFLEx
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.Message);
-				Console.WriteLine(e.InnerException);
-				Console.WriteLine(e.StackTrace);
+				throw (e);
 			}
 		}
 
@@ -193,7 +191,6 @@ namespace SIL.PcPatrFLEx
 
 		private void OnFormClosing(object sender, EventArgs e)
 		{
-			Console.WriteLine("form closing");
 			SaveRegistryInfo();
 		}
 
@@ -258,7 +255,7 @@ namespace SIL.PcPatrFLEx
 				if (String.IsNullOrEmpty(textName))
 					textName = "text" + selectedText.Guid.ToString();
 				textName = MakeValidFileName(textName);
-				String anaFile = Path.Combine(Path.GetTempPath(), textName + ".ana");
+				string anaFile = Path.Combine(Path.GetTempPath(), textName + ".ana");
 				File.WriteAllText(anaFile, ana);
 			}
 			Cursor.Current = Cursors.Default;

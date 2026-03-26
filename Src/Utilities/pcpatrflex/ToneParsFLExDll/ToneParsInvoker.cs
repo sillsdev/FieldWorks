@@ -33,28 +33,28 @@ namespace SIL.ToneParsFLEx
 	{
 		public LcmCache Cache { get; set; }
 
-		public String AnaFile { get; set; }
-		public String AntFile { get; set; }
-		public String DatabaseName { get; set; }
-		public String InputFile { get; set; }
-		public String IntxCtlFile { get; set; }
+		public string AnaFile { get; set; }
+		public string AntFile { get; set; }
+		public string DatabaseName { get; set; }
+		public string InputFile { get; set; }
+		public string IntxCtlFile { get; set; }
 		public Boolean InvocationSucceeded { get; set; }
-		public String ParserFilerXMLString { get; set; }
-		public String ToneParsBatchFile { get; set; }
-		public String ToneParsCmdFile { get; set; }
-		public String ToneParsLogFile { get; set; }
-		public String ToneParsRuleFile { get; set; }
+		public string ParserFilerXMLString { get; set; }
+		public string ToneParsBatchFile { get; set; }
+		public string ToneParsCmdFile { get; set; }
+		public string ToneParsLogFile { get; set; }
+		public string ToneParsRuleFile { get; set; }
 		public Char DecompSeparationChar { get; set; }
 		public IdleQueue Queue { get; set; }
 		public Label ParsingStatus { get; set; }
 
 		protected String[] AntRecords { get; set; }
 		protected const string kAdCtl = "adctl.txt";
-		protected const String kLexicon = "lex.txt";
+		protected const string kLexicon = "lex.txt";
 
 		public const string kTPAdCtl = "TPadctl.txt";
 
-		public const String kTPLexicon = "TPlex.txt";
+		public const string kTPLexicon = "TPlex.txt";
 		public FLExDBExtractor Extractor { get; set; }
 
 		public ToneParsInvoker(
@@ -113,7 +113,7 @@ namespace SIL.ToneParsFLEx
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern int GetShortPathName(
-			String pathName,
+			string pathName,
 			StringBuilder shortName,
 			int cbShortName
 		);
@@ -186,7 +186,7 @@ namespace SIL.ToneParsFLEx
 			File.WriteAllText(ToneParsCmdFile, sbCmdFile.ToString());
 		}
 
-		private String GetXAmpleExePath()
+		private string GetXAmpleExePath()
 		{
 			Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 			var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
@@ -275,7 +275,7 @@ namespace SIL.ToneParsFLEx
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(parameters);
 			XmlNodeList elems = doc.GetElementsByTagName("MaxAnalysesToReturn");
-			if (elems != null)
+			if (elems != null && elems.Item(0) != null)
 			{
 				int max = Int32.Parse(elems.Item(0).InnerText);
 				if (max < 0)
@@ -301,7 +301,6 @@ namespace SIL.ToneParsFLEx
 		{
 			string programName = filePath.EndsWith("ana") ? "XAmple" : "TonePars";
 			// Give it time to completely finish or the output file won't be available
-			Console.WriteLine("Wait: path=" + filePath);
 			const int numberOfRetries = 10;
 			const int delayOnRetry = 1000;
 			int iWait = 0;
@@ -313,7 +312,6 @@ namespace SIL.ToneParsFLEx
 					iWait++;
 					continue;
 				}
-				Console.WriteLine("\tWait: file exists after=" + iWait);
 				break;
 			}
 			if (!File.Exists(filePath))
@@ -329,13 +327,11 @@ namespace SIL.ToneParsFLEx
 				fileSize = new System.IO.FileInfo(filePath).Length;
 				if (fileSize == 0)
 				{
-					Console.WriteLine("\tWait: file size is zero after=" + iWait);
 					Thread.Sleep(delayOnRetry);
 					iWait++;
 				}
 				else
 				{
-					Console.WriteLine("\tWait: file size after=" + iWait + "; size=" + fileSize);
 					iWait = numberOfRetries;
 				}
 			}
@@ -343,7 +339,7 @@ namespace SIL.ToneParsFLEx
 			if (fileSize == 0)
 			{
 				UpdateParsingStatus(
-					"Parsing failed to finish writin to a file (" + programName + ")."
+					"Parsing failed to finish writing to a file (" + programName + ")."
 				);
 				InvocationSucceeded = false;
 			}
@@ -369,7 +365,7 @@ namespace SIL.ToneParsFLEx
 		private void CreateAntRecords()
 		{
 			AntRecords = new string[] { "" };
-			String antFileContents = "";
+			string antFileContents = "";
 			antFileContents = File.ReadAllText(AntFile, Encoding.UTF8).Replace("\r", "");
 			if (String.IsNullOrEmpty(antFileContents))
 			{
@@ -392,9 +388,6 @@ namespace SIL.ToneParsFLEx
 			using (var process = Process.Start(processInfo))
 			{
 				process.PriorityClass = ProcessPriorityClass.High;
-				process.Start();
-				string stdOutput = process.StandardOutput.ReadToEnd();
-				string stdError = process.StandardError.ReadToEnd();
 				process.WaitForExit();
 				if (process.ExitCode == 0)
 				{
@@ -415,7 +408,7 @@ namespace SIL.ToneParsFLEx
 			ParserFilerXMLString = "";
 			if (word > 0 && AntRecords != null && word < AntRecords.Length)
 			{
-				String record = AntRecords[word];
+				string record = AntRecords[word];
 				if (String.IsNullOrEmpty(record))
 					return false;
 				string wordform = GetFieldFromAntRecord(record, "\\w ");
@@ -431,7 +424,7 @@ namespace SIL.ToneParsFLEx
 				else
 				{
 					int analysisEnd = record.IndexOf("\n");
-					String analysis = record.Substring(0, analysisEnd);
+					string analysis = record.Substring(0, analysisEnd);
 					string decomp = GetFieldFromAntRecord(record, "\\d ");
 					string underlying = GetFieldFromAntRecord(record, "\\u ");
 					if (record.StartsWith("%"))
@@ -501,7 +494,7 @@ namespace SIL.ToneParsFLEx
 		{
 			int fieldBegin = record.IndexOf(fieldMarker) + fieldMarker.Length;
 			int fieldEnd = record.Substring(fieldBegin).IndexOf("\n");
-			String field = record.Substring(fieldBegin, fieldEnd);
+			string field = record.Substring(fieldBegin, fieldEnd);
 			return field;
 		}
 
@@ -509,7 +502,7 @@ namespace SIL.ToneParsFLEx
 		// We need to convert all of these from gloss to MSA hvo.
 		private void ConvertMorphnameIsToUseHvosInToneRuleFile()
 		{
-			String toneParsRuleFileContents = File.ReadAllText(ToneParsRuleFile);
+			string toneParsRuleFileContents = File.ReadAllText(ToneParsRuleFile);
 
 			// Find all instances of 'morphname is', replace morphname/gloss with the hvo of the MSA
 			var matches = Regex.Matches(
@@ -553,7 +546,6 @@ namespace SIL.ToneParsFLEx
 					}
 					if (sense == null)
 					{
-						//Console.WriteLine("sense not found");
 						continue;
 					}
 					var hvo = sense.MorphoSyntaxAnalysisRA.Hvo;
@@ -565,32 +557,32 @@ namespace SIL.ToneParsFLEx
 				toneParsRuleFileContents,
 				(current, replacement) => current.Replace(replacement.Key, replacement.Value)
 			);
-			String toneParsRuleFile = ToneParsRuleFile + ".hvo";
+			string toneParsRuleFile = ToneParsRuleFile + ".hvo";
 			File.WriteAllText(toneParsRuleFile, toneParsRuleWithHvos);
 		}
 
 		private void RemoveAllomorphHvoFromLexiconFile()
 		{
 			// Remove hvo ID from lexicon file; TonePars does not handle it
-			String xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + "lex.txt";
-			String xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
-			String toneParsLexicon = Regex.Replace(
+			string xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + "lex.txt";
+			string xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
+			string toneParsLexicon = Regex.Replace(
 				xAmpleLexicon,
 				@"^\\a ([^ ]+) \{[1-9][0-9]*\}",
 				@"\a $1",
 				RegexOptions.Multiline
 			);
-			String toneParsLexiconFile = Path.GetTempPath() + DatabaseName + "TPlex.txt";
+			string toneParsLexiconFile = Path.GetTempPath() + DatabaseName + "TPlex.txt";
 			File.WriteAllText(toneParsLexiconFile, toneParsLexicon);
 		}
 
 		private void AppendToneParsPropertiesToAdCtlFile()
 		{
 			// Append all TonePars properties in FLEx DB as allomorph properties to the AD Ctl file
-			String xAmpleAdCtlFile = Path.GetTempPath() + DatabaseName + kAdCtl;
-			String xAmpleAdCtl = File.ReadAllText(xAmpleAdCtlFile);
+			string xAmpleAdCtlFile = Path.GetTempPath() + DatabaseName + kAdCtl;
+			string xAmpleAdCtl = File.ReadAllText(xAmpleAdCtlFile);
 			var props = GetAllToneParsPropsFromPossibilityList();
-			String toneParsAdCtlFile = Path.GetTempPath() + DatabaseName + kTPAdCtl;
+			string toneParsAdCtlFile = Path.GetTempPath() + DatabaseName + kTPAdCtl;
 			File.WriteAllText(toneParsAdCtlFile, xAmpleAdCtl + props);
 		}
 
@@ -617,8 +609,8 @@ namespace SIL.ToneParsFLEx
 
 		private void AddToneParsPropertiesToLexiconFile()
 		{
-			String xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + kLexicon;
-			String xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
+			string xAmpleLexiconFile = Path.GetTempPath() + DatabaseName + kLexicon;
+			string xAmpleLexicon = File.ReadAllText(xAmpleLexiconFile);
 			var allomorphHvoPropertyMapper = new Dictionary<string, string> { };
 			var morphemePropertyMapper = new Dictionary<string, string> { };
 			var possListRepository =
@@ -643,7 +635,7 @@ namespace SIL.ToneParsFLEx
 				(current, replacement) => current.Replace(replacement.Key, replacement.Value)
 			);
 
-			String toneParsLexiconFile = Path.GetTempPath() + DatabaseName + kTPLexicon;
+			string toneParsLexiconFile = Path.GetTempPath() + DatabaseName + kTPLexicon;
 			File.WriteAllText(toneParsLexiconFile, lexWithAlloAndMorphProps);
 		}
 
@@ -708,7 +700,6 @@ namespace SIL.ToneParsFLEx
 			while (ConvertAntToParserFilerXML(i))
 			{
 				// call parser filer on
-				//Console.WriteLine(ParserFilerXMLString);
 				int wordformBegin = ParserFilerXMLString.IndexOf("Form=\"") + 6;
 				int wordformEnd = ParserFilerXMLString.Substring(wordformBegin).IndexOf("\"");
 				var wordform = ParserFilerXMLString.Substring(wordformBegin, wordformEnd);

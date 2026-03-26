@@ -22,7 +22,7 @@ namespace SIL.DisambiguateInFLExDB
 				{
 					if (!String.IsNullOrEmpty(sGuid))
 					{
-						String sGuidToUse = sGuid;
+						string sGuidToUse = sGuid;
 						int i = sGuid.IndexOf("=");
 						if (i > 0)
 						{
