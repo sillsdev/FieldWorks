@@ -42,7 +42,7 @@ A) Move to64-bit only
 
 3) Solution + CI
 - Update `FieldWorks.sln` to remove Win32 platforms and keep `x64` (Debug/Release). If other solutions exist, do the same.
-- Update CI/build scripts to call: `msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64`.
+- Update CI/build scripts to call: `build.ps1` or `msbuild FieldWorks.sln /m /p:Configuration=Debug`.
 - Remove any32-bit specific paths or tools (e.g., SysWOW64 regsvr32) from build/targets.
 
 B) Registration‑free COM (no regsvr32)
@@ -133,7 +133,7 @@ Appendix: key references in repo
 - COM interop usage sites: `Src/Common/ViewsInterfaces/Views.cs`, `Src/Common/FwUtils/DebugProcs.cs`.
 
 Validation path (first pass)
-- Build all (x64): `msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64`.
+- Build all: `msbuild FieldWorks.sln /m /p:Configuration=Debug`.
 - Confirm `FieldWorks.exe.manifest` is generated and contains `<file name="Views.dll">` with `comClass` entries and interfaces. **✅ VERIFIED**
 - From a machine with no FieldWorks registrations, launch `FieldWorks.exe` → expect no class-not-registered exceptions. **✅ VERIFIED**
 
@@ -143,7 +143,7 @@ Validation path (first pass)
 - `Directory.Build.props` enforces `<PlatformTarget>x64</PlatformTarget>`
 - `FieldWorks.sln` Win32 configurations removed
 - Native VCXPROJs x86 configurations removed
-- CI enforces `/p:Platform=x64` by invoking `msbuild Build/FieldWorks.proj`
+- CI enforces the x64-only default by invoking `build.ps1`
 
 ### Phase 2: Manifest wiring (✅ COMPLETE)
 - `Build/RegFree.targets` generates manifests with COM class/typelib entries

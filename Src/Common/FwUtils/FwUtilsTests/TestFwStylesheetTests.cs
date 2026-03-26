@@ -127,19 +127,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
-			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
-			vwps.Stylesheet = stylesheet;
-			vwps.WritingSystemFactory = wsf;
+			using (VwPropertyStoreManaged vwps = new VwPropertyStoreManaged())
+			{
+				vwps.Stylesheet = stylesheet;
+				vwps.WritingSystemFactory = wsf;
 
-			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoGermanWs);
-			ITsTextProps ttp = ttpBldr.GetTextProps();
+				ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
+				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
+				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoGermanWs);
+				ITsTextProps ttp = ttpBldr.GetTextProps();
 
-			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
-			ws.InterpretChrp(ref chrps);
+				LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
+				ws.InterpretChrp(ref chrps);
 
-			Assert.That(chrps.dympHeight / 1000, Is.EqualTo(48));
+				Assert.That(chrps.dympHeight / 1000, Is.EqualTo(48));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -190,29 +192,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
-			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
-			vwps.Stylesheet = stylesheet;
-			vwps.WritingSystemFactory = wsf;
+			using (VwPropertyStoreManaged vwps = new VwPropertyStoreManaged())
+			{
+				vwps.Stylesheet = stylesheet;
+				vwps.WritingSystemFactory = wsf;
 
-			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoFrenchWs);
-			ITsTextProps ttpFrench = ttpBldr.GetTextProps();
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoGermanWs);
-			ITsTextProps ttpGerman = ttpBldr.GetTextProps();
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoInglesWs);
-			ITsTextProps ttpIngles = ttpBldr.GetTextProps();
+				ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
+				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "FirstStyle");
+				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoFrenchWs);
+				ITsTextProps ttpFrench = ttpBldr.GetTextProps();
+				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoGermanWs);
+				ITsTextProps ttpGerman = ttpBldr.GetTextProps();
+				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoInglesWs);
+				ITsTextProps ttpIngles = ttpBldr.GetTextProps();
 
-			LgCharRenderProps chrpsFrench = vwps.get_ChrpFor(ttpFrench);
-			LgCharRenderProps chrpsGerman = vwps.get_ChrpFor(ttpGerman);
-			LgCharRenderProps chrpsIngles = vwps.get_ChrpFor(ttpIngles);
-			wsFrench.InterpretChrp(ref chrpsFrench);
-			wsGerman.InterpretChrp(ref chrpsGerman);
-			wsIngles.InterpretChrp(ref chrpsIngles);
+				LgCharRenderProps chrpsFrench = vwps.get_ChrpFor(ttpFrench);
+				LgCharRenderProps chrpsGerman = vwps.get_ChrpFor(ttpGerman);
+				LgCharRenderProps chrpsIngles = vwps.get_ChrpFor(ttpIngles);
+				wsFrench.InterpretChrp(ref chrpsFrench);
+				wsGerman.InterpretChrp(ref chrpsGerman);
+				wsIngles.InterpretChrp(ref chrpsIngles);
 
-			Assert.That(chrpsFrench.dympHeight / 1000, Is.EqualTo(23));
-			Assert.That(chrpsIngles.dympHeight / 1000, Is.EqualTo(34));
-			Assert.That(chrpsGerman.dympHeight / 1000, Is.EqualTo(48));
+				Assert.That(chrpsFrench.dympHeight / 1000, Is.EqualTo(23));
+				Assert.That(chrpsIngles.dympHeight / 1000, Is.EqualTo(34));
+				Assert.That(chrpsGerman.dympHeight / 1000, Is.EqualTo(48));
+			}
 		}
 	}
 }

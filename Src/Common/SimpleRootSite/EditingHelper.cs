@@ -1537,22 +1537,24 @@ namespace SIL.FieldWorks.Common.RootSites
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
 
-			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
-			vwps.Stylesheet = styleSheet;
-			vwps.WritingSystemFactory = wsf;
-			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
-			ILgWritingSystem ws = wsf.get_EngineOrNull(hvoWs);
-			ws.InterpretChrp(ref chrps);
-			int dympHeight = chrps.dympHeight;
-			StringBuilder bldr = new StringBuilder(chrps.szFaceName.Length);
-			for (int i = 0; i < chrps.szFaceName.Length; i++)
+			using (VwPropertyStoreManaged vwps = new VwPropertyStoreManaged())
 			{
-				ushort ch = chrps.szFaceName[i];
-				if (ch == 0)
-					break; // null termination
-				bldr.Append(Convert.ToChar(ch));
+				vwps.Stylesheet = styleSheet;
+				vwps.WritingSystemFactory = wsf;
+				LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
+				ILgWritingSystem ws = wsf.get_EngineOrNull(hvoWs);
+				ws.InterpretChrp(ref chrps);
+				int dympHeight = chrps.dympHeight;
+				StringBuilder bldr = new StringBuilder(chrps.szFaceName.Length);
+				for (int i = 0; i < chrps.szFaceName.Length; i++)
+				{
+					ushort ch = chrps.szFaceName[i];
+					if (ch == 0)
+						break; // null termination
+					bldr.Append(Convert.ToChar(ch));
+				}
+				return new Font(bldr.ToString(), (float)(dympHeight / 1000.0));
 			}
-			return new Font(bldr.ToString(), (float)(dympHeight / 1000.0));
 		}
 
 		/// ------------------------------------------------------------------------------------

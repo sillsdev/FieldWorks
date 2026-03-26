@@ -311,7 +311,7 @@ Build commands: see `.github/instructions/build.instructions.md` or `build.ps1 -
 
 **3. Native C++ Projects**: 8 VCXPROJ files — Win32 configurations removed, MIDL updated for 64-bit
 
-**4. CI Enforcement**: `./build.ps1 -Configuration Debug -Platform x64` in `.github/workflows/CI.yml`
+**4. CI Enforcement**: `./build.ps1 -Configuration Debug` in `.github/workflows/CI.yml`
 
 ### Registration-Free COM Implementation
 

@@ -165,19 +165,21 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 			}
 
-			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
-			vwps.Stylesheet = styleSheet;
-			vwps.WritingSystemFactory = writingSystemFactory;
+			using (VwPropertyStoreManaged vwps = new VwPropertyStoreManaged())
+			{
+				vwps.Stylesheet = styleSheet;
+				vwps.WritingSystemFactory = writingSystemFactory;
 
-			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
-			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
-			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
-			ITsTextProps ttp = ttpBldr.GetTextProps();
+				ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
+				ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
+				ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
+				ITsTextProps ttp = ttpBldr.GetTextProps();
 
-			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
-			ILgWritingSystem ws = writingSystemFactory.get_EngineOrNull(hvoWs);
-			ws.InterpretChrp(ref chrps);
-			return chrps;
+				LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
+				ILgWritingSystem ws = writingSystemFactory.get_EngineOrNull(hvoWs);
+				ws.InterpretChrp(ref chrps);
+				return chrps;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
