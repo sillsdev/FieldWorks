@@ -20,46 +20,11 @@ jobs:
       id: commit_message_summary
       if: always()
       shell: pwsh
-      run: |
-        $resultsLogPath = 'check_results.log'
-        $lintSucceeded = '${{ steps.lint_commit_messages.outcome }}' -eq 'success'
-        if (Test-Path -LiteralPath $resultsLogPath) {
-          $content = Get-Content -LiteralPath $resultsLogPath -Raw
-          if ([string]::IsNullOrWhiteSpace($content)) {
-            if ($lintSucceeded) {
-              $content = 'No problems found.'
-            }
-            else {
-              $content = 'Commit message checker failed before producing details.'
-            }
-          }
-          else {
-            $commitUrl = 'https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/commit/'
-            $content = [regex]::Replace($content, 'Commit ([0-9a-f]{7,40})', {
-              param($match)
-              $sha = $match.Groups[1].Value
-              return "[commit $sha]($commitUrl$sha)"
-            })
-            Set-Content -LiteralPath $resultsLogPath -Value $content -NoNewline
-          }
-        }
-        elseif ($lintSucceeded) {
-          $content = 'No problems found.'
-        }
-        else {
-          $content = 'Commit message checker failed before producing details.'
-        }
-        if ([string]::IsNullOrWhiteSpace($content) -and $lintSucceeded) {
-          $content = 'No problems found.'
-        }
-        if ($env:GITHUB_STEP_SUMMARY) {
-          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $content
-        }
-        if ($env:GITHUB_OUTPUT) {
-          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value 'check_results<<###LINT_DELIMITER###'
-          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value $content
-          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value '###LINT_DELIMITER###'
-        }
+      run: >
+        ./Build/Agent/publish-commit-message-summary.ps1
+        -LintOutcome '${{ steps.lint_commit_messages.outcome }}'
+        -RepositoryOwner '${{ github.repository_owner }}'
+        -RepositoryName '${{ github.event.repository.name }}'
     # add a comment on the PR if the commit message linting failed
     - name: Comment on PR
       if: steps.lint_commit_messages.outcome == 'failure'
