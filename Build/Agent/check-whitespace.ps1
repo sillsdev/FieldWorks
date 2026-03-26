@@ -8,6 +8,12 @@ $ErrorActionPreference = 'Stop'
 
 $resultsLogPath = 'check-results.log'
 
+if (Test-Path -LiteralPath $resultsLogPath) {
+	Remove-Item -LiteralPath $resultsLogPath -Force
+}
+
+New-Item -ItemType File -Path $resultsLogPath -Force | Out-Null
+
 # Import shared git helpers
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $ScriptDir 'GitHelpers.ps1')
@@ -41,7 +47,7 @@ Write-Host "Base ref: $baseRef ($baseSha)"
 
 # Run git log --check and tee output to a file for later inspection.
 $log = git log --check --pretty=format:'---% h% s' "$baseSha.." 2>&1
-$null = $log | Tee-Object -FilePath $resultsLogPath
+$null = $log | Tee-Object -FilePath $resultsLogPath -Append
 $log | Out-Host
 
 $problems = New-Object System.Collections.Generic.List[string]

@@ -13,6 +13,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Lint git commit messages
+      id: lint_commit_messages
       shell: pwsh
       run: ./Build/Agent/commit-messages.ps1
     - name: Propagate Error Summary
@@ -31,8 +32,14 @@ jobs:
           })
           Set-Content -LiteralPath $resultsLogPath -Value $content -NoNewline
         }
+        elseif ('${{ steps.lint_commit_messages.outcome }}' -eq 'success') {
+          $content = 'No problems found.'
+        }
         else {
           $content = 'Commit message checker failed before producing details.'
+        }
+        if ([string]::IsNullOrWhiteSpace($content) -and '${{ steps.lint_commit_messages.outcome }}' -eq 'success') {
+          $content = 'No problems found.'
         }
         if ($env:GITHUB_STEP_SUMMARY) {
           Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $content
@@ -44,7 +51,7 @@ jobs:
         }
     # add a comment on the PR if the commit message linting failed
     - name: Comment on PR
-      if: failure()
+      if: steps.lint_commit_messages.outcome == 'failure'
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: Commit Comment
@@ -52,9 +59,10 @@ jobs:
           [WARN] Commit message format issues
           ${{ steps.commit_message_summary.outputs.check_results }}
     - name: Clear PR Comment
-      if: success()
+      if: steps.lint_commit_messages.outcome == 'success'
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: Commit Comment
+        only_update: true
         hide: true
         hide_classify: "RESOLVED"
