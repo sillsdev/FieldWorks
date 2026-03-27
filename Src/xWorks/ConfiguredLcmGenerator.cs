@@ -404,6 +404,8 @@ namespace SIL.FieldWorks.XWorks
 					return settings.ContentGenerator.CreateFragment();
 				}
 
+				// Record the guid of the source entry for JumpToField.
+				configuration.SourceGuid = entry.Guid;
 				var nodeList = BuildNodeList(new List<ConfigurableDictionaryNode>(), configuration);
 				var pieces = configuration.ReferencedOrDirectChildren
 					.Select(childNode => new ConfigFragment(childNode, GenerateContentForFieldByReflection(entry, BuildNodeList(nodeList, childNode), publicationDecorator,
@@ -495,7 +497,7 @@ namespace SIL.FieldWorks.XWorks
 			var config = nodeList.Last();
 			if (field is ICmObject fieldObj)
 			{
-				// Record the guid of the source.
+				// Record the guid of the source field for JumpToField.
 				config.SourceGuid = fieldObj.Guid;
 			}
 
@@ -2166,6 +2168,11 @@ namespace SIL.FieldWorks.XWorks
 				|| config.ReferencedOrDirectChildren == null)
 				return settings.ContentGenerator.CreateFragment();
 
+			if (item is ILexEntry obj)
+			{
+				// Record the guid of the source entry for JumpToField.
+				config.SourceGuid = obj.Guid;
+			}
 			var bldr = settings.ContentGenerator.CreateFragment();
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions is DictionaryNodeListAndParaOptions)
@@ -2389,6 +2396,9 @@ namespace SIL.FieldWorks.XWorks
 			if (!nodeList.Last().IsEnabled)
 				return settings.ContentGenerator.CreateFragment();
 
+			var config = nodeList.Last();
+			// Record the guid of the source field for JumpToField.
+			config.SourceGuid = subEntry.Guid;
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
 				? settings.ContentGenerator.CreateFragment()

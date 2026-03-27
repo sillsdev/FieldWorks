@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 			var item2 = new DisposableToolStripMenuItem(xWorksStrings.ksJumpToField);
 			s_contextMenu.Items.Add(item2);
 			item2.Click += JumpToFieldAt;
-			item2.Tag = new object[] { propertyTable, mediator, element };
+			item2.Tag = new object[] { propertyTable, mediator, entryElement, element };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
@@ -652,7 +652,8 @@ namespace SIL.FieldWorks.XWorks
 			var propertyTable = tagObjects[0] as PropertyTable;
 			var mediator = tagObjects[1] as Mediator;
 			var cache = propertyTable.GetValue<LcmCache>("cache");
-			GeckoElement fieldElement = tagObjects[2] as GeckoElement;
+			GeckoElement entryElement = tagObjects[2] as GeckoElement;
+			GeckoElement fieldElement = tagObjects[3] as GeckoElement;
 			// Find the field object that contains fieldElement.
 			ICmObject fieldObj = null;
 			string fieldName = null;
@@ -663,24 +664,57 @@ namespace SIL.FieldWorks.XWorks
 					Guid fieldGuid = new Guid(element.GetAttribute("sourceGuid"));
 					if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(fieldGuid, out fieldObj))
 					{
-						if (fieldObj is ICmPossibility)
+						fieldName = element.GetAttribute("sourceField");
+						if (fieldObj is IMoInflAffixSlot ||
+							(fieldObj is ICmPossibility && (fieldName == "Name" || fieldName == "Abbreviation")))
 						{
 							// Use the enclosing field.
 							fieldObj = null;
 							continue;
 						}
 
-						fieldName = element.GetAttribute("sourceField");
 						break;
 					}
 				}
 			}
 			if (fieldObj != null)
 			{
-				// Jump to the slice with the given field.
-				object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
-				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField, arguments));
+				ILexEntry entryLexEntry = GetGeckoLexEntry(entryElement, cache);
+				ILexEntry fieldLexEntry = GetGeckoLexEntry(fieldElement, cache);
+				if (entryLexEntry != null && fieldLexEntry != null && fieldLexEntry != entryLexEntry)
+				{
+#pragma warning disable 618 // suppress obsolete warning
+					mediator.SendMessage("JumpToRecord", fieldLexEntry.Hvo);
+#pragma warning restore 618
+
+				}
+				// Jump to field on idle to allow JumpToRecord to finish.
+				void JumpToField(object sender, EventArgs args)
+				{
+					Application.Idle -= JumpToField;
+					// Jump to the slice with the given field.
+					object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField, arguments));
+				}
+				Application.Idle += JumpToField;
+
 			}
+		}
+
+		private static ILexEntry GetGeckoLexEntry(GeckoElement firstElement, LcmCache cache)
+		{
+			for (GeckoElement element = firstElement; element != null; element = element.ParentElement)
+			{
+				if (element.HasAttribute("sourceGuid"))
+				{
+					Guid guid = new Guid(element.GetAttribute("sourceGuid"));
+					if (cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(guid, out ILexEntry lexEntry))
+					{
+						return lexEntry;
+					}
+				}
+			}
+			return null;
 		}
 
 		public override int Priority
