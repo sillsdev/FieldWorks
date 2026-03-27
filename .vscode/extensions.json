@@ -5,6 +5,9 @@
     // C# language + test explorer in VS Code (ReSharper-first)
     "jetbrains.resharper-code",
 
+    // Use the official C# extension for debugging language support, but disable its test runner to avoid conflicts with ReSharper's test runner.
+    "ms-dotnettools.csharp",
+
     // PowerShell scripts are part of the standard workflow (build.ps1/test.ps1/etc.)
     "ms-vscode.powershell",
 
@@ -17,6 +20,5 @@
   "unwantedRecommendations": [
     // This workspace is ReSharper-first; dotnet test providers are discouraged.
     "ms-dotnettools.csdevkit",
-    "ms-dotnettools.csharp"
   ]
 }

@@ -1,7 +1,12 @@
-# Mirrored from .github/workflows/check-whitespace.yml, ported to PowerShell for local use
-# Exits non-zero if any whitespace problems are found
+# Runs the whitespace check used by CI and local validation.
+# Exit codes:
+#   0 = checker completed and found no whitespace issues
+#   2 = checker completed and found whitespace issues
+#   1 = checker could not complete successfully
 
 $ErrorActionPreference = 'Stop'
+
+$resultsLogPath = 'check-results.log'
 
 # Import shared git helpers
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -34,9 +39,9 @@ if (-not $baseSha) {
 
 Write-Host "Base ref: $baseRef ($baseSha)"
 
-# Run git log --check and tee output to a file (like CI)
+# Run git log --check and tee output to a file for later inspection.
 $log = git log --check --pretty=format:'---% h% s' "$baseSha.." 2>&1
-$null = $log | Tee-Object -FilePath check-results.log
+$null = $log | Tee-Object -FilePath $resultsLogPath
 $log | Out-Host
 
 $problems = New-Object System.Collections.Generic.List[string]
@@ -46,7 +51,7 @@ $commitTextmd = ''
 $repoPath = Get-RepoPath
 $headRef = (git rev-parse --abbrev-ref HEAD 2>$null)
 
-Get-Content check-results.log | ForEach-Object {
+$log | ForEach-Object {
 	$line = $_
 	switch -regex ($line) {
 		'^---\s' {
@@ -83,14 +88,14 @@ Get-Content check-results.log | ForEach-Object {
 }
 
 if ($problems.Count -gt 0) {
-	Write-Host "`u26A0`uFE0F Please review the output for further information."
+	Write-Host '[WARN] Please review the output for further information.'
 	Write-Host '### A whitespace issue was found in one or more of the commits.'
 	Write-Host 'This check validates commit history from origin/main..HEAD, not just the current working tree.'
 	Write-Host 'If the report names an older commit, fix the file and then amend, squash, or rebase so that commit no longer appears in the branch history.'
 	Write-Host ''
 	Write-Host 'Errors:'
 	$problems | ForEach-Object { Write-Host $_ }
-	exit 1
+	exit 2
 }
 
 Write-Host 'No problems found'

@@ -129,6 +129,8 @@ namespace FwBuildTasks
 			);
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
+			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
+			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
 
@@ -550,6 +552,12 @@ namespace FwBuildTasks
 						writer.Write("\t<Target Name=\"{0}\"", project);
 						var bldr = new StringBuilder();
 						bldr.Append("Initialize"); // ensure the output directories and version files exist.
+						if (project == "ParatextImportTests" || project == "FwCoreDlgsTests")
+						{
+							// The ParatextImportTests and FwCoreDlgsTests require that the ScrChecks.dll be in DistFiles/Editorial Checks.
+							// We don't discover that dependency because it's not a reference (LT-13777).
+							bldr.Append(";ScrChecks");
+						}
 						var dependencies = m_mapProjDepends[project];
 						dependencies.Sort();
 						foreach (var dep in dependencies)

@@ -13,6 +13,7 @@
 #	 - .NET desktop development workload
 #	 - Desktop development with C++ workload (including ATL/MFC)
 #   - Git for Windows
+#   - This script installs .NET SDK 8.x if it is missing (for compiling liblcm)
 #
 # Note: Serena MCP language servers (Microsoft's Roslyn C# server and clangd for C++)
 # auto-download on first use. No manual installation needed for Serena support.
@@ -93,6 +94,43 @@ if (-not (Test-Path $toolsBase)) {
 
 # Check what's already installed
 
+# .NET SDK 8.x
+$sdkLines = @()
+$dotnetCommand = Get-Command dotnet.exe -ErrorAction SilentlyContinue
+if ($dotnetCommand) {
+	$sdkLines = @(& dotnet.exe --list-sdks 2>$null)
+}
+
+$dotnet8Installed = $sdkLines | Where-Object { $_ -match '^8\.' } | Select-Object -First 1
+if ($dotnet8Installed) {
+	Write-Host "[OK] .NET SDK 8.x: $($dotnet8Installed.Trim())" -ForegroundColor Green
+} else {
+	$winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+	if (-not $winget) {
+		Write-Host "[MISSING] .NET SDK 8.x - install manually with WinGet or the .NET installer" -ForegroundColor Red
+		Write-Host "         WinGet: winget install --id Microsoft.DotNet.SDK.8 --exact" -ForegroundColor Red
+		exit 1
+	}
+
+	if ($PSCmdlet.ShouldProcess('.NET SDK 8.x', 'Install via WinGet')) {
+		Write-Host "Installing .NET SDK 8.x..." -ForegroundColor Cyan
+		& $winget.Source install --id Microsoft.DotNet.SDK.8 --exact --accept-package-agreements --accept-source-agreements
+		if ($LASTEXITCODE -ne 0) {
+			Write-Host "[ERROR] Failed to install .NET SDK 8.x via WinGet" -ForegroundColor Red
+			exit 1
+		}
+
+		$sdkLines = @(& dotnet.exe --list-sdks 2>$null)
+		$dotnet8Installed = $sdkLines | Where-Object { $_ -match '^8\.' } | Select-Object -First 1
+		if (-not $dotnet8Installed) {
+			Write-Host "[ERROR] .NET SDK 8.x still not detected after install" -ForegroundColor Red
+			exit 1
+		}
+
+		Write-Host "[OK] .NET SDK 8.x: $($dotnet8Installed.Trim())" -ForegroundColor Green
+	}
+}
+
 # WiX Toolset
 # This worktree builds installers with WiX v6 via NuGet PackageReference (restored during build).
 # No separate WiX 3.x installation (candle/light) is required.
@@ -129,9 +167,9 @@ if ($InstallerDeps) {
 
 	# Helper repo definitions: name, git URL, target subdirectory in FW repo
 	$helperRepos = @(
-		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
-		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" },
-		@{ Name = "genericinstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller" }
+		@{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps"; UseSharedCloneInWorktree = $true },
+		@{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations"; UseSharedCloneInWorktree = $false },
+		@{ Name = "genericinstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller"; UseSharedCloneInWorktree = $true }
 	)
 
 	foreach ($repo in $helperRepos) {
@@ -156,7 +194,7 @@ if ($InstallerDeps) {
 			Remove-Item $targetPath -Recurse -Force
 		}
 
-		if ($isWorktree) {
+		if ($isWorktree -and $repo.UseSharedCloneInWorktree) {
 			# Clone to shared location and create junction
 			$sharedPath = Join-Path $repoRoot $repo.Name
 
@@ -204,31 +242,15 @@ if ($InstallerDeps) {
 		}
 	}
 
-	# Special case: liblcm goes inside Localizations
+	# Special case: liblcm goes inside Localizations and should remain per-worktree.
 	$lcmTarget = Join-Path $scriptDir "Localizations/LCM"
 	$localizationsPath = Join-Path $scriptDir "Localizations"
 	if ((Test-Path $localizationsPath) -and -not (Test-Path $lcmTarget)) {
-		if ($isWorktree) {
-			$sharedLcm = Join-Path $repoRoot "liblcm"
-			if (-not (Test-Path $sharedLcm)) {
-				if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
-					Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
-					git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
-				}
-			}
-			if (Test-Path $sharedLcm) {
-				if ($PSCmdlet.ShouldProcess("Localizations/LCM", "Create junction to $sharedLcm")) {
-					New-Item -ItemType Junction -Path $lcmTarget -Target $sharedLcm -Force | Out-Null
-					Write-Host "[OK] Created junction: Localizations/LCM -> $sharedLcm" -ForegroundColor Green
-				}
-			}
-		} else {
-			if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
-				Write-Host "Cloning liblcm..." -ForegroundColor Cyan
-				git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
-				if ($LASTEXITCODE -eq 0) {
-					Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
-				}
+		if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
+			Write-Host "Cloning liblcm..." -ForegroundColor Cyan
+			git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+			if ($LASTEXITCODE -eq 0) {
+				Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
 			}
 		}
 	} elseif (Test-Path $lcmTarget) {

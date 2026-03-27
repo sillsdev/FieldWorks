@@ -53,11 +53,11 @@
       They must be explicitly referenced here because NativeBuild.csproj is a traditional
       MSBuild project, not an SDK-style project, so it doesn't inherit from Directory.Build.props.
     -->
-    <PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1">
+    <PackageReference Include="SIL.Chorus.L10ns" Version="$(SilChorusL10nsVersion)">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)">
+    <PackageReference Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

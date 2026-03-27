@@ -12,9 +12,6 @@
 .PARAMETER Configuration
 	The build configuration (Debug or Release). Default is Debug.
 
-.PARAMETER Platform
-	The target platform. Only x64 is supported. Default is x64.
-
 .PARAMETER Serial
 	If set, disables parallel build execution (/m). Default is false (parallel enabled).
 
@@ -80,37 +77,51 @@
 	Only used with -BuildInstaller. Enables local signing when signing tools are available.
 	By default, local installer builds capture files to sign later instead of signing.
 
-.PARAMETER UseLocalLcm
-	If set, builds liblcm from a local checkout (default: ../liblcm) after the FieldWorks build
-	and copies the resulting DLLs into the output directory, overwriting the NuGet package versions.
-	Use this to test local liblcm fixes without publishing a NuGet package.
+.PARAMETER LocalPalaso
+	If set, packs the local libpalaso checkout referenced by FW_LOCAL_PALASO into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
 
-.PARAMETER LocalLcmPath
-	Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
-	Only used when -UseLocalLcm is specified.
+.PARAMETER LocalLcm
+	If set, packs the local liblcm checkout referenced by FW_LOCAL_LCM into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
+
+.PARAMETER LocalChorus
+	If set, packs the local chorus checkout referenced by FW_LOCAL_CHORUS into the repo-local NuGet feed
+	and builds FieldWorks against those local packages.
+
+.PARAMETER LocalPackageVersion
+	The fixed version used for locally packed dependency packages. Default is 99.0.0-local.
+
+.PARAMETER ManagedDebugType
+	Optionally overrides the managed project PDB format for this build.
+	Use 'portable' for VS Code debugging. Windows PDBs are not supported by the VS Code debugger path used for FieldWorks.
 
 .PARAMETER SkipDependencyCheck
 	If set, skips the dependency preflight check that verifies that required SDKs and tools are installed.
 
 .EXAMPLE
 	.\build.ps1
-	Builds Debug x64 in parallel with minimal logging.
+	Builds Debug in parallel with minimal logging.
 
 .EXAMPLE
 	.\build.ps1 -Configuration Release -BuildTests
-	Builds Release x64 including test projects.
+	Builds Release including test projects.
 
 .EXAMPLE
 	.\build.ps1 -RunTests
-	Builds Debug x64 including test projects and runs all tests.
+	Builds Debug including test projects and runs all tests.
 
 .EXAMPLE
 	.\build.ps1 -Serial -Verbosity detailed
-	Builds Debug x64 serially with detailed logging.
+	Builds Debug serially with detailed logging.
 
 .EXAMPLE
-	.\build.ps1 -UseLocalLcm
-	Builds FieldWorks, then builds liblcm from ../liblcm and copies DLLs into Output.
+	.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus
+	Packs the selected local dependency repos into the repo-local NuGet feed, then builds FieldWorks against those packages.
+
+.EXAMPLE
+	.\build.ps1 -LocalPalaso -LocalLcm -LocalChorus -ManagedDebugType portable
+	Builds FieldWorks against the locally packed dependency packages with portable FieldWorks PDBs for VS Code debugging.
 
 .NOTES
 	FieldWorks is x64-only. The x86 platform is no longer supported.
@@ -118,8 +129,6 @@
 [CmdletBinding()]
 param(
 	[string]$Configuration = "Debug",
-	[ValidateSet('x64')]
-	[string]$Platform = "x64",
 	[switch]$Serial,
 	[switch]$BuildTests,
 	[switch]$RunTests,
@@ -141,26 +150,39 @@ param(
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
 	[switch]$TraceCrashes,
-	[switch]$UseLocalLcm,
-	[string]$LocalLcmPath,
+	[switch]$LocalPalaso,
+	[switch]$LocalLcm,
+	[switch]$LocalChorus,
+	[string]$LocalPackageVersion = '99.0.0-local',
+	[ValidateSet('portable', 'full', 'pdbonly', 'embedded')]
+	[string]$ManagedDebugType,
 	[switch]$SkipDependencyCheck
 )
 
 $ErrorActionPreference = "Stop"
 
-# Add WiX to the PATH for installer builds (required for harvesting localizations)
-$env:PATH = "$env:WIX/bin;$env:PATH"
+$platform = 'x64'
 
+# PowerShell requires single-dash named parameters. Some callers still pass GNU-style
+# double-dash options, which bind positionally before the script starts. Normalize the
+# common cases here so build.ps1 remains tolerant of that invocation style.
 if ($Configuration -like "--*") {
-	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
-		$TraceCrashes = $true
-		$Configuration = "Debug"
-		Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
-	}
-	else {
-		throw "Invalid Configuration value '$Configuration'. Use -TraceCrashes (single dash) for the trace option."
+	$doubleDashOption = $Configuration.Substring(2)
+	switch ($doubleDashOption) {
+		'TraceCrashes' {
+			if (-not $TraceCrashes) {
+				$TraceCrashes = $true
+				$Configuration = 'Debug'
+				Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
+			}
+		}
+		default {
+			throw "Invalid Configuration value '$Configuration'. Use PowerShell parameter syntax like -Configuration Release."
+		}
 	}
 }
+# Add WiX to the PATH for installer builds (required for harvesting localizations)
+$env:PATH = "$env:WIX/bin;$env:PATH"
 
 if ($BuildInstaller -and -not $BuildAdditionalApps) {
 	$BuildAdditionalApps = $true
@@ -222,6 +244,9 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+$repoNuGetPackages = Join-Path $PSScriptRoot 'packages'
+$previousNuGetPackages = [Environment]::GetEnvironmentVariable('NUGET_PACKAGES')
+$didOverrideNuGetPackages = $false
 
 function Get-RepoStamp {
 	$gitHead = & git rev-parse HEAD
@@ -275,6 +300,41 @@ function Get-RepoStamp {
 	}
 }
 
+function Get-DebugRebuildCheckPathspecs {
+	$pathspecs = @(
+		'build.ps1',
+		'test.ps1',
+		'nuget.config',
+		'.vscode',
+		'Directory.Build.props',
+		'Directory.Build.targets',
+		'Directory.Packages.props',
+		'Build/SilVersions.props',
+		'Build/SilVersions.Local.props',
+		'FieldWorks.proj',
+		'FieldWorks.sln',
+		'Build',
+		'Src',
+		'Lib'
+	)
+
+	return $pathspecs | ForEach-Object { $_ -replace '\\', '/' }
+}
+
+function Get-GitStatusForDebugRebuildCheck {
+	param(
+		[Parameter(Mandatory = $true)][string[]]$Pathspecs
+	)
+
+	$gitArgs = @('status', '--porcelain=v1', '--untracked-files=all', '--') + $Pathspecs
+	$statusOutput = & git @gitArgs
+	if ($LASTEXITCODE -ne 0) {
+		throw "Failed to determine git status snapshot for build stamp."
+	}
+
+	return @($statusOutput | ForEach-Object { $_.TrimEnd() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
 function Get-BuildStampPath {
 	param(
 		[Parameter(Mandatory = $true)][string]$RepoRoot,
@@ -282,6 +342,55 @@ function Get-BuildStampPath {
 	)
 	$outputDir = Join-Path $RepoRoot ("Output\\{0}" -f $ConfigurationName)
 	return Join-Path $outputDir "BuildStamp.json"
+}
+
+function Get-SelectedLocalDependencies {
+	param(
+		[switch]$UseLocalPalaso,
+		[switch]$UseLocalLcm,
+		[switch]$UseLocalChorus
+	)
+
+	$selectedDependencies = @()
+	if ($UseLocalPalaso) {
+		$selectedDependencies += 'Palaso'
+	}
+	if ($UseLocalLcm) {
+		$selectedDependencies += 'Lcm'
+	}
+	if ($UseLocalChorus) {
+		$selectedDependencies += 'Chorus'
+	}
+
+	return $selectedDependencies
+}
+
+function Get-LocalDependencyDebugState {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string[]]$Dependencies
+	)
+
+	$states = @()
+	$stampDir = Join-Path $PSScriptRoot 'Output\LocalNuGetFeed\.stamp'
+	foreach ($dependency in $Dependencies) {
+		$stampPath = Join-Path $stampDir ("{0}.json" -f $dependency)
+		if (-not (Test-Path -LiteralPath $stampPath -PathType Leaf)) {
+			throw "Local dependency stamp '$stampPath' was not found after packing $dependency."
+		}
+
+		$stamp = Get-Content -LiteralPath $stampPath -Raw | ConvertFrom-Json
+		$states += [pscustomobject]@{
+			DependencyName = [string]$stamp.DependencyName
+			RepoPath = [string]$stamp.RepoPath
+			PackageVersion = [string]$stamp.PackageVersion
+			GitHead = [string]$stamp.GitHead
+			IsDirty = [bool]$stamp.IsDirty
+			Fingerprint = [string]$stamp.Fingerprint
+		}
+	}
+
+	return $states
 }
 
 try {
@@ -316,6 +425,18 @@ try {
 		if (-not (Test-Path $projectPath)) {
 			throw "Project path '$Project' was not found. Pass a path relative to the repo root or an absolute path."
 		}
+
+		if (-not (Test-Path $repoNuGetPackages)) {
+			New-Item -Path $repoNuGetPackages -ItemType Directory -Force | Out-Null
+		}
+
+		if ($previousNuGetPackages -ne $repoNuGetPackages) {
+			if (-not [string]::IsNullOrWhiteSpace($previousNuGetPackages)) {
+				Write-Host "Overriding NUGET_PACKAGES for this build: $previousNuGetPackages -> $repoNuGetPackages" -ForegroundColor Yellow
+			}
+			$didOverrideNuGetPackages = $true
+		}
+		$env:NUGET_PACKAGES = $repoNuGetPackages
 
 		# Clean stale per-project obj/ folders
 		Remove-StaleObjFolders -RepoRoot $PSScriptRoot
@@ -363,9 +484,13 @@ try {
 
 		# Properties
 		$finalMsBuildArgs += "/p:Configuration=$Configuration"
-		$finalMsBuildArgs += "/p:Platform=$Platform"
+		$finalMsBuildArgs += "/p:Platform=$platform"
 		if ($SkipNative) {
 			$finalMsBuildArgs += "/p:SkipNative=true"
+		}
+		if ($ManagedDebugType) {
+			$finalMsBuildArgs += "/p:DebugSymbols=true"
+			$finalMsBuildArgs += "/p:DebugType=$ManagedDebugType"
 		}
 
 		$installerMsBuildArgs = $finalMsBuildArgs
@@ -392,6 +517,26 @@ try {
 		$finalMsBuildArgs += $MsBuildArgs
 		$installerMsBuildArgs += $MsBuildArgs
 
+		$selectedLocalDependencies = Get-SelectedLocalDependencies -UseLocalPalaso:$LocalPalaso -UseLocalLcm:$LocalLcm -UseLocalChorus:$LocalChorus
+		$restoreSolution = Join-Path $PSScriptRoot 'FieldWorks.sln'
+
+		$localPackScript = Join-Path $PSScriptRoot 'Build\Agent\Pack-LocalDependencies.ps1'
+		& $localPackScript -Configuration $Configuration -LocalPalaso:$LocalPalaso -LocalLcm:$LocalLcm -LocalChorus:$LocalChorus -LocalPackageVersion $LocalPackageVersion
+		if ($LASTEXITCODE -ne 0) {
+			throw 'Packing local dependency packages failed.'
+		}
+
+		if ($selectedLocalDependencies.Count -gt 0) {
+			Write-Host "Local dependency packages: $($selectedLocalDependencies -join ', ') ($LocalPackageVersion)" -ForegroundColor Cyan
+		}
+		else {
+			Write-Host 'Dependency packages: pinned versions from Build/SilVersions.props' -ForegroundColor Cyan
+		}
+
+		if ($ManagedDebugType) {
+			Write-Host "Managed debug symbols: $ManagedDebugType" -ForegroundColor Cyan
+		}
+
 		# =============================================================================
 		# Build Execution
 		# =============================================================================
@@ -399,7 +544,7 @@ try {
 		Write-Host ""
 		Write-Host "Building FieldWorks..." -ForegroundColor Cyan
 		Write-Host "Project: $projectPath" -ForegroundColor Cyan
-		Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $($BuildTests -or $RunTests)" -ForegroundColor Cyan
+		Write-Host "Configuration: $Configuration | Parallel: $(-not $Serial) | Tests: $($BuildTests -or $RunTests)" -ForegroundColor Cyan
 
 		if ($BuildAdditionalApps) {
 			Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
@@ -408,7 +553,7 @@ try {
 		# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
 		$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
 		Invoke-MSBuild `
-			-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
+			-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$platform", `
 				"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
 				"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
 			-Description 'FwBuildTasks (Bootstrap)'
@@ -432,34 +577,13 @@ try {
 			if (-not (Test-Path $packagesDir)) {
 				New-Item -Path $packagesDir -ItemType Directory -Force | Out-Null
 			}
-			& dotnet restore "$PSScriptRoot\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$Platform" --verbosity quiet
+			& dotnet restore $restoreSolution /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true "/p:Configuration=$Configuration" "/p:Platform=$platform" --verbosity quiet
 			if ($LASTEXITCODE -ne 0) {
-				throw "NuGet package restore failed for FieldWorks.sln"
+				throw "NuGet package restore failed for $([System.IO.Path]::GetFileName($restoreSolution))"
 			}
 			Write-Host "Package restore complete." -ForegroundColor Green
 		} else {
 			Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
-		}
-
-		# Copy local LCM assemblies if requested
-		if ($UseLocalLcm) {
-			Write-Host ""
-			Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
-
-			$lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
-			$lcmArgs = @{
-				Configuration = $Configuration
-				BuildLcm = $true
-				SkipConfirm = $true
-			}
-			if ($LocalLcmPath) {
-				$lcmArgs['LcmRoot'] = $LocalLcmPath
-			}
-
-			& $lcmCopyScript @lcmArgs
-			if ($LASTEXITCODE -ne 0) {
-				throw "Failed to copy local LCM assemblies."
-			}
 		}
 
 		if ($InstallerOnly) {
@@ -477,8 +601,16 @@ try {
 
 			$stampConfig = $stamp.Configuration
 			$stampPlatform = $stamp.Platform
-			if (($stampConfig -ne $Configuration) -or ($stampPlatform -ne $Platform)) {
-				throw "-InstallerOnly stamp mismatch: stamp is Configuration='$stampConfig' Platform='$stampPlatform' but this run is Configuration='$Configuration' Platform='$Platform'. Run a full build in this configuration/platform."
+			$platformMismatch = ($stamp.PSObject.Properties.Name -contains 'Platform') -and ($stampPlatform -ne $platform)
+			if (($stampConfig -ne $Configuration) -or $platformMismatch) {
+				$stampDescription = if ($platformMismatch) {
+					"Configuration='$stampConfig' Platform='$stampPlatform'"
+				}
+				else {
+					"Configuration='$stampConfig'"
+				}
+
+				throw "-InstallerOnly stamp mismatch: stamp is $stampDescription but this run is Configuration='$Configuration'. Run a full build in this configuration."
 			}
 
 			$headChanged = ($stamp.GitHead -ne $current.GitHead)
@@ -508,12 +640,20 @@ try {
 			}
 
 			$repoStamp = Get-RepoStamp
+			$relevantDebugPathspecs = Get-DebugRebuildCheckPathspecs
+			$relevantDebugStatus = Get-GitStatusForDebugRebuildCheck -Pathspecs $relevantDebugPathspecs
 			$stampObject = [pscustomobject]@{
 				Configuration = $Configuration
-				Platform = $Platform
+				Platform = $platform
+				LocalDependencies = @($selectedLocalDependencies)
+				LocalPackageVersion = $(if ($selectedLocalDependencies.Count -gt 0) { $LocalPackageVersion } else { '' })
+				LocalDependencyStates = $(if ($selectedLocalDependencies.Count -gt 0) { @(Get-LocalDependencyDebugState -Dependencies $selectedLocalDependencies) } else { @() })
+				ManagedDebugType = $(if ($ManagedDebugType) { $ManagedDebugType } else { '' })
 				GitHead = $repoStamp.GitHead
 				IsDirty = $repoStamp.IsDirty
 				IsDirtyOutsideInstaller = $repoStamp.IsDirtyOutsideInstaller
+				RelevantDebugPathspecs = $relevantDebugPathspecs
+				RelevantDebugStatus = $relevantDebugStatus
 				TimestampUtc = (Get-Date).ToUniversalTime().ToString('o')
 			}
 
@@ -610,6 +750,15 @@ try {
 	}
 }
 finally {
+	if ($didOverrideNuGetPackages) {
+		if ([string]::IsNullOrWhiteSpace($previousNuGetPackages)) {
+			Remove-Item Env:NUGET_PACKAGES -ErrorAction SilentlyContinue
+		}
+		else {
+			$env:NUGET_PACKAGES = $previousNuGetPackages
+		}
+	}
+
 	# Kill any lingering build processes that might hold file locks
 	Stop-ConflictingProcesses @cleanupArgs
 }

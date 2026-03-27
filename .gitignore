@@ -4,6 +4,7 @@ Collection.cpp
 .vs/
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
+Build/SilVersions.Local.props
 Build/NuGet.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml

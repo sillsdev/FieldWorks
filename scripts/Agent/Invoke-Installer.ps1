@@ -9,10 +9,6 @@ param(
 	[string]$Configuration = 'Debug',
 
 	[Parameter(Mandatory = $false)]
-	[ValidateSet('x64', 'x86')]
-	[string]$Platform = 'x64',
-
-	[Parameter(Mandatory = $false)]
 	[string]$InstallerPath,
 
 	[Parameter(Mandatory = $false)]
@@ -46,6 +42,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+$platform = 'x64'
+
 function Resolve-RepoRoot {
 	$repoRoot = Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..')
 	return $repoRoot.Path
@@ -69,12 +67,10 @@ function Resolve-DefaultInstallerPath {
 		[Parameter(Mandatory = $true)]
 		[string]$ResolvedType,
 		[Parameter(Mandatory = $true)]
-		[string]$Configuration,
-		[Parameter(Mandatory = $true)]
-		[string]$Platform
+		[string]$Configuration
 	)
 
-	$installerDir = Join-Path $RepoRoot ('FLExInstaller\bin\{0}\{1}' -f $Platform, $Configuration)
+	$installerDir = Join-Path $RepoRoot ('FLExInstaller\bin\{0}\{1}' -f $platform, $Configuration)
 
 	if ($ResolvedType -eq 'Msi') {
 		return Join-Path $installerDir 'en-US\FieldWorks.msi'
@@ -180,7 +176,7 @@ $repoRoot = Resolve-RepoRoot
 $resolvedType = Resolve-InstallerType -InstallerType $InstallerType -InstallerPath $InstallerPath
 
 if ([string]::IsNullOrWhiteSpace($InstallerPath)) {
-	$InstallerPath = Resolve-DefaultInstallerPath -RepoRoot $repoRoot -ResolvedType $resolvedType -Configuration $Configuration -Platform $Platform
+	$InstallerPath = Resolve-DefaultInstallerPath -RepoRoot $repoRoot -ResolvedType $resolvedType -Configuration $Configuration
 }
 
 if (!(Test-Path -LiteralPath $InstallerPath)) {

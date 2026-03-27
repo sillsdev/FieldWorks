@@ -26,7 +26,7 @@ try {
     # Run MSBuild and check for CS0436
     $BuildLog = "$RepoRoot/Output/test-exclusions/build.log"
     Write-Host "Running MSBuild..."
-    $BuildArgs = @("FieldWorks.proj", "/m", "/p:Configuration=Debug", "/p:Platform=x64", "/v:minimal", "/nologo", "/fl", "/flp:LogFile=$BuildLog;Verbosity=Normal")
+    $BuildArgs = @("FieldWorks.proj", "/m", "/p:Configuration=Debug", "/v:minimal", "/nologo", "/fl", "/flp:LogFile=$BuildLog;Verbosity=Normal")
 
     & msbuild $BuildArgs
     if ($LASTEXITCODE -ne 0) {

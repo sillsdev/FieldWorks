@@ -59,7 +59,6 @@
 		<Nullable Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(Nullable)' == ''">disable</Nullable>
 	</PropertyGroup>
 
-	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
 	<!-- System.Resources.Extensions 9.0.0 requires net462 or higher - use explicit version check -->
 	<!--
 		Global PackageReferences for application code have moved to Src/Directory.Build.props

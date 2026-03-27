@@ -26,6 +26,15 @@
     Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
     Default is 'normal'.
 
+.PARAMETER LocalPalaso
+    If set, packs the local libpalaso checkout referenced by FW_LOCAL_PALASO before building tests.
+
+.PARAMETER LocalLcm
+    If set, packs the local liblcm checkout referenced by FW_LOCAL_LCM before building tests.
+
+.PARAMETER LocalChorus
+    If set, packs the local chorus checkout referenced by FW_LOCAL_CHORUS before building tests.
+
 .EXAMPLE
     .\test.ps1
     Runs all tests in Debug configuration (builds first if needed).
@@ -54,6 +63,10 @@ param(
     [switch]$ListTests,
     [ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
     [string]$Verbosity = "normal",
+    [switch]$LocalPalaso,
+    [switch]$LocalLcm,
+    [switch]$LocalChorus,
+    [string]$LocalPackageVersion = '99.0.0-local',
     [switch]$Native,
     [switch]$SkipDependencyCheck
 )
@@ -83,6 +96,22 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+
+function Remove-StaleVersificationTestFiles {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Directories
+    )
+
+    foreach ($directory in ($Directories | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        foreach ($fileName in @('eng.vrs', 'lxx.vrs', 'org.vrs')) {
+            $filePath = Join-Path $directory $fileName
+            if (Test-Path -LiteralPath $filePath -PathType Leaf) {
+                Remove-Item -LiteralPath $filePath -Force
+            }
+        }
+    }
+}
 
 try {
     Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -Action {
@@ -201,7 +230,7 @@ try {
             }
             else {
                 Write-Host "Building before running tests..." -ForegroundColor Cyan
-                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
+                & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -LocalPalaso:$LocalPalaso -LocalLcm:$LocalLcm -LocalChorus:$LocalChorus -LocalPackageVersion $LocalPackageVersion
                 if ($LASTEXITCODE -ne 0) {
                     Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
                     $script:testExitCode = $LASTEXITCODE
@@ -236,6 +265,10 @@ try {
                 # build.ps1 bootstraps this into BuildTools/FwBuildTasks/<Configuration>/FwBuildTasks.dll.
                 $testDlls = @(Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll")
             }
+            elseif ($normalizedTestProject -match '(^|/)Lib/src/ScrChecks/ScrChecksTests($|/)') {
+                # ScrChecksTests builds under Lib/src and is not copied into Output/<Configuration>.
+                $testDlls = @(Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll")
+            }
             elseif ($TestProject -match '\.dll$') {
                 $testDlls = @(Join-Path $outputDir (Split-Path $TestProject -Leaf))
             }
@@ -247,6 +280,31 @@ try {
                 }
                 $testDlls = @(Join-Path $outputDir "$projectName.dll")
             }
+
+            # Fallback: some test projects build into their own bin folder and are not copied into Output/<Configuration>.
+            # If the expected Output/<Configuration>/<Name>.dll isn't present, look for bin/x64/<Configuration>/net48/<Name>.dll.
+            if ($testDlls.Count -eq 1 -and -not (Test-Path $testDlls[0]) -and ($TestProject -notmatch '\\.dll$')) {
+                $projectPathCandidate = Join-Path $PSScriptRoot $TestProject
+
+                $projectDir = $null
+                $projectBaseName = $null
+
+                if (Test-Path -LiteralPath $projectPathCandidate -PathType Container) {
+                    $projectDir = $projectPathCandidate
+                    $projectBaseName = Split-Path $projectDir -Leaf
+                }
+                elseif (Test-Path -LiteralPath $projectPathCandidate -PathType Leaf) {
+                    $projectDir = Split-Path $projectPathCandidate -Parent
+                    $projectBaseName = [System.IO.Path]::GetFileNameWithoutExtension($projectPathCandidate)
+                }
+
+                if ($projectDir -and $projectBaseName) {
+                    $binDll = Join-Path $projectDir "bin/x64/$Configuration/net48/$projectBaseName.dll"
+                    if (Test-Path -LiteralPath $binDll -PathType Leaf) {
+                        $testDlls = @($binDll)
+                    }
+                }
+            }
         }
         else {
             # Find all test DLLs, excluding:
@@ -257,6 +315,12 @@ try {
             $testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -ErrorAction SilentlyContinue |
                 Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel|^SIL\.WritingSystems\.Tests' } |
                 Select-Object -ExpandProperty FullName
+
+            # Some test projects (e.g., under Lib/src) are not copied into Output/<Configuration>.
+            $scrChecksTestsDll = Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll"
+            if (Test-Path $scrChecksTestsDll) {
+                $testDlls = @($testDlls + $scrChecksTestsDll | Select-Object -Unique)
+            }
         }
 
         $missingTestDlls = @($testDlls | Where-Object { -not (Test-Path $_) })
@@ -269,6 +333,9 @@ try {
             $script:testExitCode = 1
             return
         }
+
+        $testAssemblyDirectories = @($testDlls | ForEach-Object { Split-Path $_ -Parent })
+        Remove-StaleVersificationTestFiles -Directories $testAssemblyDirectories
 
         if (-not $testDlls -or $testDlls.Count -eq 0) {
             Write-Host "[ERROR] No test assemblies found in $outputDir" -ForegroundColor Red
