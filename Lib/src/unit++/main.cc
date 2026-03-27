@@ -2,9 +2,85 @@
 // Terms of use are in the file COPYING
 #include "main.h"
 #include <algorithm>
+#include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#if defined(WIN32) || defined(WIN64)
+#define WINDOWS_LEAN_AND_MEAN
+#include <Windows.h>
+#include <crtdbg.h>
+#endif
 using namespace std;
 using namespace unitpp;
+
+#if defined(WIN32) || defined(WIN64)
+namespace
+{
+	void TerminateOnSigAbrt(int)
+	{
+		_exit(3);
+	}
+
+	typedef HRESULT (WINAPI * PfnWerGetFlags)(HANDLE, PDWORD);
+	typedef HRESULT (WINAPI * PfnWerSetFlags)(DWORD);
+
+	const DWORD kWerFaultReportingNoUi = 0x00000004;
+	const DWORD kWerFaultReportingAlwaysShowUi = 0x00000010;
+
+	void ConfigureWindowsErrorReportingUi()
+	{
+		DWORD errorMode = GetErrorMode();
+		errorMode |= SEM_FAILCRITICALERRORS;
+		errorMode |= SEM_NOGPFAULTERRORBOX;
+		errorMode |= SEM_NOOPENFILEERRORBOX;
+		SetErrorMode(errorMode);
+
+		HMODULE hWer = LoadLibraryA("wer.dll");
+		if (!hWer)
+			return;
+
+		PfnWerGetFlags pfnWerGetFlags = reinterpret_cast<PfnWerGetFlags>(
+			GetProcAddress(hWer, "WerGetFlags")
+		);
+		PfnWerSetFlags pfnWerSetFlags = reinterpret_cast<PfnWerSetFlags>(
+			GetProcAddress(hWer, "WerSetFlags")
+		);
+
+		if (pfnWerSetFlags)
+		{
+			DWORD flags = 0;
+			if (pfnWerGetFlags)
+				pfnWerGetFlags(GetCurrentProcess(), &flags);
+
+			flags |= kWerFaultReportingNoUi;
+			flags &= ~kWerFaultReportingAlwaysShowUi;
+			pfnWerSetFlags(flags);
+		}
+
+		FreeLibrary(hWer);
+	}
+
+	void ConfigureCrtReportUi()
+	{
+		_set_error_mode(_OUT_TO_STDERR);
+
+		_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+		_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+		_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+		_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+		_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+		_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+
+		_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+	}
+
+	void SuppressInteractiveCrashUi()
+	{
+		ConfigureWindowsErrorReportingUi();
+		ConfigureCrtReportUi();
+	}
+}
+#endif
 
 bool unitpp::verbose = false;
 int unitpp::verbose_lvl = 0;
@@ -25,6 +101,9 @@ void unitpp::set_tester(test_runner* tr)
 
 int main(int argc, const char* argv[])
 {
+#if defined(WIN32) || defined(WIN64)
+	SuppressInteractiveCrashUi();
+#endif
     printf("DEBUG: unit++ main start\n"); fflush(stdout);
 	options().add("v", new options_utils::opt_flag(verbose));
 	options().alias("verbose", "v");
@@ -42,14 +121,41 @@ int main(int argc, const char* argv[])
 	if (!runner)
 		runner = &plain;
 
-    printf("DEBUG: Calling GlobalSetup\n"); fflush(stdout);
-	GlobalSetup(verbose);
-	printf("DEBUG: Returned from GlobalSetup\n"); fflush(stdout);
+	int retval = 0;
 
-	int retval = runner->run_tests(argc, argv) ? 0 : 1;
+	try {
+    	printf("DEBUG: Calling GlobalSetup\n"); fflush(stdout);
+		GlobalSetup(verbose);
+		printf("DEBUG: Returned from GlobalSetup\n"); fflush(stdout);
+ 	}
+	catch (const std::exception& e) {
+		fprintf(stderr, "GlobalSetup threw std::exception: %s\n", e.what());
+		fflush(stderr);
+		return 1;
+	}
+	catch (...) {
+		fprintf(stderr, "GlobalSetup threw an unknown exception\n");
+		fflush(stderr);
+		return 1;
+	}
 
-    printf("DEBUG: Calling GlobalTeardown\n"); fflush(stdout);
-	GlobalTeardown();
+	retval = runner->run_tests(argc, argv) ? 0 : 1;
+	signal(SIGABRT, TerminateOnSigAbrt);
+
+	try {
+    	printf("DEBUG: Calling GlobalTeardown\n"); fflush(stdout);
+		GlobalTeardown();
+ 	}
+	catch (const std::exception& e) {
+		fprintf(stderr, "GlobalTeardown threw std::exception: %s\n", e.what());
+		fflush(stderr);
+		retval = 1;
+	}
+	catch (...) {
+		fprintf(stderr, "GlobalTeardown threw an unknown exception\n");
+		fflush(stderr);
+		retval = 1;
+	}
 	printf("DEBUG: unit++ main end (retval=%d)\n", retval); fflush(stdout);
 	return retval;
 }
