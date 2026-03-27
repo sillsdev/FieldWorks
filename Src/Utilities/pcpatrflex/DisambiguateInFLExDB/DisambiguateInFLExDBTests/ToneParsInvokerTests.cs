@@ -5,6 +5,7 @@
 using NUnit.Framework;
 using PtxUtils;
 using SIL.DisambiguateInFLExDB;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.ToneParsFLEx;
 using System;
@@ -83,6 +84,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		[Test]
 		public void ToneParsInvokerTest()
 		{
+			// Check for the existence of the TonePars executable
+			Assert.IsTrue(File.Exists(Path.Combine(FwDirectoryFinder.ExeOrDllDirectory, "TonePars64.exe")));
 			File.Copy(
 				Path.Combine(TestDataDir, kADCtlFile),
 				Path.Combine(Path.GetTempPath(), kADCtlFile),

@@ -52,8 +52,8 @@ namespace SIL.PcPatrFLEx
 			InitializeComponent();
 			btnExtract.Enabled = false;
 
-			try
-			{
+			//try
+			//{
 				regkey = Registry.CurrentUser.OpenSubKey(m_strRegKey);
 				if (regkey != null)
 				{
@@ -70,11 +70,11 @@ namespace SIL.PcPatrFLEx
 						btnExtract.Enabled = false;
 					Cursor.Current = Cursors.Default;
 				}
-			}
-			catch (Exception e)
-			{
-				throw (e);
-			}
+			//}
+			//catch (Exception e)
+			//{
+			//	throw (e);
+			//}
 		}
 
 		void RetrieveRegistryInfo()

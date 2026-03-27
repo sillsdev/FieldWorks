@@ -4,6 +4,7 @@
 
 using NUnit.Framework;
 using SIL.DisambiguateInFLExDB;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using System;
 using System.Collections.Generic;
@@ -19,24 +20,9 @@ namespace SIL.DisambiguateInFLExDBTests
 	[TestFixture]
 	class PcPatrInvokerTests : DisambiguateTests
 	{
-		//string TestDataDir { get; set; }
 		string AnaString { get; set; }
 		string AndString { get; set; }
 		string TakeString { get; set; }
-
-		//[SetUp]
-		//public void FixtureSetup()
-		//{
-		//    Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-		//    var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-		//    int i = rootdir.LastIndexOf("DisambiguateInFLExDBTests");
-		//    string basedir = rootdir.Substring(0, i);
-		//    TestDataDir = Path.Combine(basedir, "DisambiguateInFLExDBTests", "TestData");
-		//}
-
-		/// <summary></summary>
-		//[TearDown]
-		//public void FixtureTeardown() { }
 
 		/// <summary>
 		/// Test extracting of lexicon.
@@ -44,6 +30,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		[Test]
 		public void PcPatrInvokerTest()
 		{
+			// Check for the existence of the PcPatr executable
+			Assert.IsTrue(File.Exists(Path.Combine(FwDirectoryFinder.ExeOrDllDirectory, "pcpatr64.exe")));
 			string grammarFile = Path.Combine(TestDataDir, "Invoker.grm");
 			string anaFile = Path.Combine(TestDataDir, "Invoker.ana");
 			File.Copy(anaFile, Path.Combine(Path.GetTempPath(), "Invoker.ana"), true);

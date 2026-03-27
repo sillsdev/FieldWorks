@@ -119,8 +119,8 @@ namespace SIL.ToneParsFLEx
 			BuildHelpContextMenu();
 			helpsPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps");
 
-			try
-			{
+			//try
+			//{
 				regkey = Registry.CurrentUser.OpenSubKey(m_strRegKey);
 				if (regkey != null)
 				{
@@ -143,11 +143,11 @@ namespace SIL.ToneParsFLEx
 				}
 				AdjustSplitterLocation();
 				lblParsingStatus.Text = "";
-			}
-			catch (Exception e)
-			{
-				throw (e);
-			}
+			//}
+			//catch (Exception e)
+			//{
+			//	throw (e);
+			//}
 		}
 
 		private void AdjustSplitterLocation()
