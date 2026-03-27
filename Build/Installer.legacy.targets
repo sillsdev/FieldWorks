@@ -92,7 +92,7 @@
 		Name="BuildProductMain"
 		DependsOnTargets="MakeInstallBuildFolders;BuildProduct;Localize;CopyFilesToInstall;ValidateInstallerAddons"
 	/>
-	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile" />
+	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;BuildProcRunner;RescuePatching" />
 	<Target Name="RequirePlatform">
 		<!-- x64-only build (x86 is no longer supported) -->
 		<Error
@@ -123,36 +123,12 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile" DependsOnTargets="BuildFieldWorks;RescuePatching">
+	<Target Name="BuildProcRunner">
 		<MSBuild
 			Projects="$(InstallerDir)/CustomActions/CustomActions.sln"
 			Targets="CustomActions"
 			Properties="Configuration=Release;Platform=x86"
 		/>
-	</Target>
-	<!-- Modern traversal build for installer (replaces legacy remakefw) -->
-	<PropertyGroup>
-		<!--
-			Installer builds historically forced a full clean (CleanAll deletes Obj/ and Output/).
-			That guarantees correctness but destroys incremental rebuild performance for local iteration,
-			especially for native C++ projects.
-
-			Set InstallerCleanProductOutputs=true to restore the legacy behavior.
-		-->
-		<InstallerCleanProductOutputs Condition="'$(InstallerCleanProductOutputs)'==''">false</InstallerCleanProductOutputs>
-		<BuildFieldWorksDependsOn>Initialize;CopyDlls;setRegistryValues;GeneratePartsAndLayoutFiles</BuildFieldWorksDependsOn>
-		<BuildFieldWorksDependsOn Condition="'$(InstallerCleanProductOutputs)'=='true'">CleanAll;$(BuildFieldWorksDependsOn)</BuildFieldWorksDependsOn>
-	</PropertyGroup>
-	<Target
-		Name="BuildFieldWorks"
-		DependsOnTargets="$(BuildFieldWorksDependsOn)"
-	>
-		<Message Text="Building FieldWorks using MSBuild Traversal SDK..." Importance="High" />
-		<MSBuild
-			Projects="$(fwrt)/FieldWorks.proj"
-			Properties="Configuration=$(Configuration);Platform=$(Platform);action=$(action);desktopNotAvailable=$(desktopNotAvailable)"
-		/>
-		<Message Text="FieldWorks build complete." Importance="High" />
 	</Target>
 	<!-- Legacy cleanup target (external template repo no longer exists in this repo). -->
 	<Target Name="CleanInstaller">
