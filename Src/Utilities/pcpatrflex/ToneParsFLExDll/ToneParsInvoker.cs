@@ -349,14 +349,15 @@ namespace SIL.ToneParsFLEx
 		{
 			const string kTPcdtab = "ToneParscd.tab";
 			const string kXAcdtab = "XAmplecd.tab";
-			var rootdir = GetXAmpleExePath();
+			var datadir = Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName);
+			var codeTablesDir = Path.Combine(datadir, "Configuration", "Grammar");
 			File.Copy(
-				Path.Combine(rootdir, kTPcdtab),
+				Path.Combine(codeTablesDir, kTPcdtab),
 				Path.Combine(Path.GetTempPath(), kTPcdtab),
 				true
 			);
 			File.Copy(
-				Path.Combine(rootdir, kXAcdtab),
+				Path.Combine(codeTablesDir, kXAcdtab),
 				Path.Combine(Path.GetTempPath(), kXAcdtab),
 				true
 			);

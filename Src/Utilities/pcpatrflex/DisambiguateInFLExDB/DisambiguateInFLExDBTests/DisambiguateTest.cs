@@ -56,15 +56,6 @@ namespace SIL.DisambiguateInFLExDBTests
 			TestDataDir = Path.Combine(FwDirectoryFinder.SourceDirectory, "Utilities", "pcpatrflex", "DisambiguateInFLExDB", "DisambiguateInFLExDBTests", "TestData");
 		}
 
-		//protected static void IcuInit()
-		//{
-		//	Icu.InitIcuDataDir();
-		//          if (!Sldr.IsInitialized)
-		//          {
-		//              Sldr.Initialize();
-		//          }
-		//      }
-
 		/// <summary></summary>
 		public override void FixtureTeardown()
 		{
