@@ -1,0 +1,56 @@
+\a < pro 1PL-nom >
+\d we
+\cat pro
+\p e2e4949d-9af0-4142-9d4f-f2d9afdcb646
+\fd first nominative plural
+\w we
+
+\a < v want >
+\d want
+\cat v
+\p b3e8623e-5679-4261-acd5-d62ed71d1d2b
+\fd sentential_-finiteIP_or_transitive
+\w want
+
+\a %3%< aux to >%< p to-DAT >%< p to-LOC >%
+\d %3%to%to%to%
+\cat %3%aux%p%p%
+\p %3%9be2d38f-bc3a-4e96-acb5-64d2b3e53d95%62f4c91c-7744-426f-b0a5-96f1ee35131f%933d7fb3-b038-4913-b5b8-576f80df2fba%
+\fd %3%-finite%dative%locative%
+\w to
+
+\a %2%< v get >%< v get-cop >%
+\d %2%get%get%
+\cat %2%v%v%
+\p %2%7b94a783-86b2-4b2b-b0c8-b0219f924165%0dee3420-0d8e-4506-8737-c5a78b85188a%
+\fd %2%sentential_-finiteIP_or_transitive%copular%
+\w get
+
+\a < v marry-PART >
+\d married
+\cat v
+\p 1ea23f59-f6d9-406d-89f6-792318a04efe
+\fd participle
+\w married
+
+\a < conj and >
+\d and
+\cat conj
+\p 479aca02-ca6a-4c2a-862a-d980fbcc9a37
+\fd plural
+\w and
+
+\a %2%< v be >%< v be-exist >%
+\d %2%be%be%
+\cat %2%v%v%
+\p %2%04f021dc-a0dd-44fc-8b0a-9e6741743dd8%5ed1dfd8-bcc3-4410-8b5c-5d8e8f75ec35%
+\fd %2%copular%exist%
+\w be
+
+\a < adj happy >
+\d happy
+\cat adj
+\p 07fbf262-bbe7-415b-af3f-8317a2cb4521
+\fd 
+\w happy
+

@@ -1,0 +1,12 @@
+<Wordform DbRef="" Form="Mbumbukiam">
+<WfiAnalysis>
+<Morphs>
+<Morph>
+<MoForm DbRef="9062" Label="mbumbuki" wordType=""/>
+<MSI DbRef="3797"/></Morph>
+<Morph>
+<MoForm DbRef="1728" Label="am" wordType=""/>
+<MSI DbRef="8599"/></Morph>
+</Morphs>
+</WfiAnalysis>
+</Wordform>

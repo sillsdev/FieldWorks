@@ -1,0 +1,2981 @@
+\id Grammar file used: C:\Users\ANDYBL~1\DOCUME~1\FIELDW~1\PCPATR~1\DISAMB~2\TestData\Invoker.grm
+\a < Pron 1PL-nom >
+\d we
+\cat Pron
+\p e2e4949d-9af0-4142-9d4f-f2d9afdcb646
+\fd first nominative plural
+\w we
+
+\a < V want >
+\d want
+\cat V
+\p b3e8623e-5679-4261-acd5-d62ed71d1d2b
+\fd sentential_-finiteIP_or_transitive
+\w want
+
+\a < Aux to >
+\d to
+\cat Aux
+\p 2f63f58f-112b-46ab-b329-3dc85ffda392
+\fd -finite
+\w to
+
+\a < V get-cop >
+\d get
+\cat V
+\p 8ac47da9-e3dd-4645-9ef6-507b4f9dc802
+\fd copular
+\w get
+
+\a < V marry-PART >
+\d married
+\cat V
+\p 1ea23f59-f6d9-406d-89f6-792318a04efe
+\fd participle
+\w married
+
+\a < Conj and >
+\d and
+\cat Conj
+\p 479aca02-ca6a-4c2a-862a-d980fbcc9a37
+\fd plural
+\w and
+
+\a < V be >
+\d be
+\cat V
+\p 04f021dc-a0dd-44fc-8b0a-9e6741743dd8
+\fd copular
+\w be
+
+\a < Adj happy >
+\d happy
+\cat Adj
+\p 07fbf262-bbe7-415b-af3f-8317a2cb4521
+\fd 
+\w happy
+
+\parse
+<Analysis count="2">
+<Input>
+<Word id="word1">
+<OrigWord id="w1">we</OrigWord>
+<WordParse id="parse1.1">
+<Morphs id="a1.1">
+<Root id="rt1.1.1">
+<Morph id="m1.1.1">1PL-nom</Morph>
+<Decomp id="d1.1.1">we</Decomp>
+<MorphCat id="mcat1.1.1">Pron</MorphCat>
+<Prop id="p1.1.1">e2e4949d-9af0-4142-9d4f-f2d9afdcb646</Prop>
+<FeatDesc id="fd1.1.1">first nominative plural</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a1.1">Pron</WordCat>
+</WordParse>
+<NonAlpha id="na1"> </NonAlpha>
+</Word>
+<Word id="word2">
+<OrigWord id="w2">want</OrigWord>
+<WordParse id="parse2.1">
+<Morphs id="a2.1">
+<Root id="rt2.1.1">
+<Morph id="m2.1.1">want</Morph>
+<Decomp id="d2.1.1">want</Decomp>
+<MorphCat id="mcat2.1.1">V</MorphCat>
+<Prop id="p2.1.1">b3e8623e-5679-4261-acd5-d62ed71d1d2b</Prop>
+<FeatDesc id="fd2.1.1">sentential_-finiteIP_or_transitive</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a2.1">V</WordCat>
+</WordParse>
+<NonAlpha id="na2"> </NonAlpha>
+</Word>
+<Word id="word3">
+<OrigWord id="w3">to</OrigWord>
+<WordParse id="parse3.1">
+<Morphs id="a3.1">
+<Root id="rt3.1.1">
+<Morph id="m3.1.1">to</Morph>
+<Decomp id="d3.1.1">to</Decomp>
+<MorphCat id="mcat3.1.1">Aux</MorphCat>
+<Prop id="p3.1.1">2f63f58f-112b-46ab-b329-3dc85ffda392</Prop>
+<FeatDesc id="fd3.1.1">-finite</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a3.1">Aux</WordCat>
+</WordParse>
+<NonAlpha id="na3"> </NonAlpha>
+</Word>
+<Word id="word4">
+<OrigWord id="w4">get</OrigWord>
+<WordParse id="parse4.1">
+<Morphs id="a4.1">
+<Root id="rt4.1.1">
+<Morph id="m4.1.1">get-cop</Morph>
+<Decomp id="d4.1.1">get</Decomp>
+<MorphCat id="mcat4.1.1">V</MorphCat>
+<Prop id="p4.1.1">8ac47da9-e3dd-4645-9ef6-507b4f9dc802</Prop>
+<FeatDesc id="fd4.1.1">copular</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a4.1">V</WordCat>
+</WordParse>
+<NonAlpha id="na4"> </NonAlpha>
+</Word>
+<Word id="word5">
+<OrigWord id="w5">married</OrigWord>
+<WordParse id="parse5.1">
+<Morphs id="a5.1">
+<Root id="rt5.1.1">
+<Morph id="m5.1.1">marry-PART</Morph>
+<Decomp id="d5.1.1">married</Decomp>
+<MorphCat id="mcat5.1.1">V</MorphCat>
+<Prop id="p5.1.1">1ea23f59-f6d9-406d-89f6-792318a04efe</Prop>
+<FeatDesc id="fd5.1.1">participle</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a5.1">V</WordCat>
+</WordParse>
+<NonAlpha id="na5"> </NonAlpha>
+</Word>
+<Word id="word6">
+<OrigWord id="w6">and</OrigWord>
+<WordParse id="parse6.1">
+<Morphs id="a6.1">
+<Root id="rt6.1.1">
+<Morph id="m6.1.1">and</Morph>
+<Decomp id="d6.1.1">and</Decomp>
+<MorphCat id="mcat6.1.1">Conj</MorphCat>
+<Prop id="p6.1.1">479aca02-ca6a-4c2a-862a-d980fbcc9a37</Prop>
+<FeatDesc id="fd6.1.1">plural</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a6.1">Conj</WordCat>
+</WordParse>
+<NonAlpha id="na6"> </NonAlpha>
+</Word>
+<Word id="word7">
+<OrigWord id="w7">be</OrigWord>
+<WordParse id="parse7.1">
+<Morphs id="a7.1">
+<Root id="rt7.1.1">
+<Morph id="m7.1.1">be</Morph>
+<Decomp id="d7.1.1">be</Decomp>
+<MorphCat id="mcat7.1.1">V</MorphCat>
+<Prop id="p7.1.1">04f021dc-a0dd-44fc-8b0a-9e6741743dd8</Prop>
+<FeatDesc id="fd7.1.1">copular</FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a7.1">V</WordCat>
+</WordParse>
+<NonAlpha id="na7"> </NonAlpha>
+</Word>
+<Word id="word8">
+<OrigWord id="w8">happy</OrigWord>
+<WordParse id="parse8.1">
+<Morphs id="a8.1">
+<Root id="rt8.1.1">
+<Morph id="m8.1.1">happy</Morph>
+<Decomp id="d8.1.1">happy</Decomp>
+<MorphCat id="mcat8.1.1">Adj</MorphCat>
+<Prop id="p8.1.1">07fbf262-bbe7-415b-af3f-8317a2cb4521</Prop>
+<FeatDesc id="fd8.1.1"></FeatDesc>
+</Root>
+</Morphs>
+<WordCat id="a8.1">Adj</WordCat>
+</WordParse>
+<NonAlpha id="na8"> </NonAlpha>
+</Word>
+</Input>
+  <Parse>
+    <Node cat="S" rule="S option start.symbolIP  - optional elements initial" id="s1_1._1">
+      <Fs>
+        <F name="cat"><Str>S</Str></F>
+        <F name="head">
+          <Fs id="s1_1.co10">
+            <F name="adjoinedVP"><Str>-</Str></F>
+            <F name="adverbialVP"><Str>-</Str></F>
+            <F name="embedded">
+              <Fs id="s1_1.co7">
+                <F name="cat"><Str>IP</Str></F>
+                <F name="head">
+                  <Fs id="s1_1.co6">
+                    <F name="adjoinedVP"><Str>-</Str></F>
+                    <F name="adverbialVP"><Str>-</Str></F>
+                    <F name="embedded">
+                      <Fs>
+                        <F name="cat"><Str>none</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="fronted"><Str>none</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="finite"><Str>-</Str></F>
+                        <F name="polarity"><Str>positive</Str></F>
+                        <F name="valence"><Str>active</Str></F>
+                        <F name="voice"><Str>none</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="subject">
+                      <Fs>
+                        <F name="head">
+                          <Fs>
+                            <F name="agr"><Any id="s1_1.co5"/></F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="auxiliary-C'"><Str>-</Str></F>
+                        <F name="auxiliary-I'"><Str>+</Str></F>
+                        <F name="auxiliary-VP"><Str>-</Str></F>
+                        <F name="causative_syntax"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="comp"><Str>-</Str></F>
+                        <F name="copular"><Str>+</Str></F>
+                        <F name="ditransitive"><Str>-</Str></F>
+                        <F name="existential"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="motion"><Str>-</Str></F>
+                        <F name="ordinal"><Str>-</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="perception"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pro-drop"><Str>+</Str></F>
+                        <F name="pronoun-fronted"><Str>-</Str></F>
+                        <F name="question"><Str>-</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="relative"><Str>-</Str></F>
+                        <F name="root"><Str>-</Str></F>
+                        <F name="sentential"><Str>-</Str></F>
+                        <F name="sentential_with_object"><Str>-</Str></F>
+                        <F name="speech_DP"><Str>-</Str></F>
+                        <F name="speech_PP"><Str>-</Str></F>
+                        <F name="subject_focused"><Str>-</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conditional"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="subjunctive_conditional"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="takes_P"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="transitive"><Str>-</Str></F>
+                        <F name="transitive_motion"><Str>-</Str></F>
+                        <F name="verbheaded"><Str>+</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="option"><Str>1d</Str></F>
+              </Fs>
+            </F>
+            <F name="fronted"><Str>none</Str></F>
+            <F name="infl">
+              <Fs>
+                <F name="finite"><Str>+</Str></F>
+                <F name="polarity"><Str>positive</Str></F>
+                <F name="valence"><Str>active</Str></F>
+                <F name="voice"><Str>none</Str></F>
+              </Fs>
+            </F>
+            <F name="object">
+              <Fs>
+                <F name="head">
+                  <Fs>
+                    <F name="type">
+                      <Fs>
+                        <F name="reflexive"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+              </Fs>
+            </F>
+            <F name="subject">
+              <Fs id="s1_1.co9">
+                <F name="cat"><Str>DP</Str></F>
+                <F name="head">
+                  <Fs id="s1_1.co8">
+                    <F name="agr">
+                      <Fs>
+                        <F name="animacy"><Str>animate</Str></F>
+                        <F name="gender"><Str>masculine</Str></F>
+                        <F name="number"><Str>plural</Str></F>
+                        <F name="person"><Str>first</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="case"><Str>nominative</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="case-marked"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="definite"><Str>+</Str></F>
+                        <F name="emphatic"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="locative"><Str>-</Str></F>
+                        <F name="noN"><Str>+</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="possessive"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun"><Str>+</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="relative"><Str>-</Str></F>
+                        <F name="root"><Str>+</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="temporal"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="wh"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="option"><Str>0</Str></F>
+              </Fs>
+            </F>
+            <F name="type">
+              <Fs>
+                <F name="PP"><Str>-</Str></F>
+                <F name="auxiliary-C'"><Str>-</Str></F>
+                <F name="auxiliary-I'"><Str>-</Str></F>
+                <F name="auxiliary-VP"><Str>-</Str></F>
+                <F name="causative_syntax"><Str>-</Str></F>
+                <F name="comma"><Str>-</Str></F>
+                <F name="copular"><Str>-</Str></F>
+                <F name="ditransitive"><Str>-</Str></F>
+                <F name="existential"><Str>-</Str></F>
+                <F name="focusmarked"><Str>-</Str></F>
+                <F name="gerund"><Str>-</Str></F>
+                <F name="motion"><Str>-</Str></F>
+                <F name="ordinal"><Str>-</Str></F>
+                <F name="participle"><Str>-</Str></F>
+                <F name="perception"><Str>-</Str></F>
+                <F name="prefix">
+                  <Fs>
+                    <F name="case"><Str>none</Str></F>
+                    <F name="comp"><Str>-</Str></F>
+                    <F name="comparative"><Str>-</Str></F>
+                    <F name="conj"><Str>-</Str></F>
+                    <F name="copular"><Str>-</Str></F>
+                    <F name="focusmarked"><Str>-</Str></F>
+                    <F name="negative"><Str>-</Str></F>
+                    <F name="poss"><Str>-</Str></F>
+                    <F name="relative"><Str>-</Str></F>
+                    <F name="superlative"><Str>-</Str></F>
+                  </Fs>
+                </F>
+                <F name="pro-drop"><Str>-</Str></F>
+                <F name="pronoun-fronted"><Str>-</Str></F>
+                <F name="question"><Str>-</Str></F>
+                <F name="reciprocal"><Str>-</Str></F>
+                <F name="reflexive"><Str>-</Str></F>
+                <F name="root"><Str>+</Str></F>
+                <F name="sentential"><Str>+</Str></F>
+                <F name="sentential_with_object"><Str>-</Str></F>
+                <F name="speech_DP"><Str>-</Str></F>
+                <F name="speech_PP"><Str>-</Str></F>
+                <F name="subject_focused"><Str>-</Str></F>
+                <F name="suffix">
+                  <Fs>
+                    <F name="case"><Str>none</Str></F>
+                    <F name="comp"><Str>-</Str></F>
+                    <F name="comparative"><Str>-</Str></F>
+                    <F name="conditional"><Str>-</Str></F>
+                    <F name="conj"><Str>-</Str></F>
+                    <F name="copular"><Str>-</Str></F>
+                    <F name="focusmarked"><Str>-</Str></F>
+                    <F name="negative"><Str>-</Str></F>
+                    <F name="poss"><Str>-</Str></F>
+                    <F name="relative"><Str>-</Str></F>
+                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                    <F name="superlative"><Str>-</Str></F>
+                  </Fs>
+                </F>
+                <F name="takes_P"><Str>-</Str></F>
+                <F name="topic"><Str>-</Str></F>
+                <F name="transitive"><Str>+</Str></F>
+                <F name="transitive_motion"><Str>-</Str></F>
+              </Fs>
+            </F>
+          </Fs>
+        </F>
+        <F name="option"><Str>start.symbolIP</Str></F>
+      </Fs>
+      <Node cat="IP" rule="IP option 2a - subject initial, required, active only" id="s1_1._2">
+        <Fs>
+          <F name="cat"><Str>IP</Str></F>
+          <F name="head" fVal="s1_1.co10"></F>
+          <F name="option"><Str>2a</Str></F>
+        </Fs>
+        <Node cat="DP" rule="DP option 0 - no Deg modifiers, not case-marked - or just on head" id="s1_1._3" all="true">
+          <Fs>
+            <F name="cat"><Str>DP</Str></F>
+            <F name="head" fVal="s1_1.co8"></F>
+            <F name="option"><Str>0</Str></F>
+          </Fs>
+          <Node cat="D'" rule="DBar option noNRel - pronoun,dem,quantifiers which can be modified by Rel Cl only (or partitive also with NP rules" id="s1_1._4" all="true">
+            <Fs>
+              <F name="cat"><Str>D'</Str></F>
+              <F name="head" fVal="s1_1.co8"></F>
+              <F name="option"><Str>noNRel</Str></F>
+            </Fs>
+            <Leaf cat="Pron" id="s1_1._5" all="true" gloss="1PL-nom">
+              <Fs>
+                <F name="cat"><Str>Pron</Str></F>
+                <F name="decomposition"><Str>we</Str></F>
+                <F name="featureDescriptors"><Str>first nominative plural</Str></F>
+                <F name="gloss"><Str>1PL-nom</Str></F>
+                <F name="head" fVal="s1_1.co8"></F>
+                <F name="lex"><Str>we</Str></F>
+                <F name="properties"><Str>e2e4949d-9af0-4142-9d4f-f2d9afdcb646</Str></F>
+                <F name="rootgloss"><Str>1PL-nom</Str></F>
+              </Fs>
+              <Lexfs>
+                <F name="cat"><Str>Pron</Str></F>
+                <F name="decomposition"><Str>we</Str></F>
+                <F name="featureDescriptors"><Str>first nominative plural</Str></F>
+                <F name="gloss"><Str>1PL-nom</Str></F>
+                <F name="head">
+                  <Fs>
+                    <F name="agr">
+                      <Fs>
+                        <F name="animacy"><Str>animate</Str></F>
+                        <F name="gender"><Str>masculine</Str></F>
+                        <F name="number"><Str>plural</Str></F>
+                        <F name="person"><Str>first</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="case"><Str>nominative</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="definite"><Str>+</Str></F>
+                        <F name="emphatic"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="locative"><Str>-</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="possessive"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun"><Str>+</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="relative"><Str>-</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="temporal"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="wh"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="lex"><Str>we</Str></F>
+                <F name="properties"><Str>e2e4949d-9af0-4142-9d4f-f2d9afdcb646</Str></F>
+                <F name="rootgloss"><Str>1PL-nom</Str></F>
+              </Lexfs>
+              <Str>we</Str>
+            </Leaf>
+          </Node>
+        </Node>
+        <Node cat="I'" rule="IBarNegObjVerbRequired option 1 - no auxiliaries" id="s1_1._6">
+          <Fs>
+            <F name="cat"><Str>I'</Str></F>
+            <F name="head" fVal="s1_1.co10"></F>
+            <F name="option"><Str>1NegObjVerbRequired</Str></F>
+          </Fs>
+          <Node cat="VP" rule="VP option 8a - V initial, sentential complement" id="s1_1._7">
+            <Fs>
+              <F name="cat"><Str>VP</Str></F>
+              <F name="head" fVal="s1_1.co10"></F>
+              <F name="option"><Str>8a</Str></F>
+            </Fs>
+            <Leaf cat="V" id="s1_1._8" all="true" gloss="want">
+              <Fs>
+                <F name="cat"><Str>V</Str></F>
+                <F name="decomposition"><Str>want</Str></F>
+                <F name="featureDescriptors"><Str>sentential_-finiteIP_or_transitive</Str></F>
+                <F name="gloss"><Str>want</Str></F>
+                <F name="head" fVal="s1_1.co10"></F>
+                <F name="lex"><Str>want</Str></F>
+                <F name="properties"><Str>b3e8623e-5679-4261-acd5-d62ed71d1d2b</Str></F>
+                <F name="rootgloss"><Str>want</Str></F>
+              </Fs>
+              <Lexfs>
+                <F name="cat"><Str>V</Str></F>
+                <F name="decomposition"><Str>want</Str></F>
+                <F name="featureDescriptors"><Str>sentential_-finiteIP_or_transitive</Str></F>
+                <F name="gloss"><Str>want</Str></F>
+                <F name="head">
+                  <Fs>
+                    <F name="adjoinedVP"><Str>-</Str></F>
+                    <F name="adverbialVP"><Str>-</Str></F>
+                    <F name="embedded">
+                      <Fs>
+                        <F name="cat"><Str>IP</Str></F>
+                        <F name="head">
+                          <Fs>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="verbheaded"><Str>+</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="finite"><Str>+</Str></F>
+                        <F name="polarity"><Str>positive</Str></F>
+                        <F name="valence"><Str>active</Str></F>
+                        <F name="voice"><Str>none</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="auxiliary-C'"><Str>-</Str></F>
+                        <F name="auxiliary-I'"><Str>-</Str></F>
+                        <F name="auxiliary-VP"><Str>-</Str></F>
+                        <F name="causative_syntax"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="copular"><Str>-</Str></F>
+                        <F name="ditransitive"><Str>-</Str></F>
+                        <F name="existential"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="motion"><Str>-</Str></F>
+                        <F name="ordinal"><Str>-</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="perception"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun-fronted"><Str>-</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="sentential"><Str>+</Str></F>
+                        <F name="sentential_with_object"><Str>-</Str></F>
+                        <F name="speech_DP"><Str>-</Str></F>
+                        <F name="speech_PP"><Str>-</Str></F>
+                        <F name="subject_focused"><Str>-</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conditional"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="subjunctive_conditional"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="takes_P"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="transitive_motion"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="lex"><Str>want</Str></F>
+                <F name="properties"><Str>b3e8623e-5679-4261-acd5-d62ed71d1d2b</Str></F>
+                <F name="rootgloss"><Str>want</Str></F>
+              </Lexfs>
+              <Str>want</Str>
+            </Leaf>
+            <Node cat="IP" rule="IP option 1d - subject pro-drop for non-root nonfinite clauses, not passive or antipassive" id="s1_1._9">
+              <Fs>
+                <F name="cat"><Str>IP</Str></F>
+                <F name="head" fVal="s1_1.co6"></F>
+                <F name="option"><Str>1d</Str></F>
+              </Fs>
+              <Node cat="I'" rule="IBar option 2NegObjVerbRequired - positive Aux initial, required" id="s1_1._10">
+                <Fs>
+                  <F name="cat"><Str>I'</Str></F>
+                  <F name="head" fVal="s1_1.co6"></F>
+                  <F name="option"><Str>2NegObjVerbRequired</Str></F>
+                </Fs>
+                <Leaf cat="Aux" id="s1_1._11" all="true" gloss="to">
+                  <Fs>
+                    <F name="cat"><Str>Aux</Str></F>
+                    <F name="decomposition"><Str>to</Str></F>
+                    <F name="featureDescriptors"><Str>-finite</Str></F>
+                    <F name="gloss"><Str>to</Str></F>
+                    <F name="head">
+                      <Fs>
+                        <F name="infl">
+                          <Fs>
+                            <F name="finite"><Str>-</Str></F>
+                            <F name="polarity"><Str>positive</Str></F>
+                            <F name="valence"><Str>active</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="subject">
+                          <Fs>
+                            <F name="head">
+                              <Fs>
+                                <F name="agr" fVal="s1_1.co5"></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="type">
+                          <Fs>
+                            <F name="comma"><Str>-</Str></F>
+                            <F name="existential"><Str>-</Str></F>
+                            <F name="gerund"><Str>-</Str></F>
+                            <F name="participle"><Str>-</Str></F>
+                            <F name="prefix">
+                              <Fs>
+                                <F name="case"><Str>none</Str></F>
+                                <F name="conj"><Str>-</Str></F>
+                                <F name="negative"><Str>-</Str></F>
+                                <F name="relative"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="suffix">
+                              <Fs>
+                                <F name="case"><Str>none</Str></F>
+                                <F name="conj"><Str>-</Str></F>
+                                <F name="negative"><Str>-</Str></F>
+                                <F name="relative"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="topic"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                    <F name="lex"><Str>to</Str></F>
+                    <F name="properties"><Str>2f63f58f-112b-46ab-b329-3dc85ffda392</Str></F>
+                    <F name="rootgloss"><Str>to</Str></F>
+                  </Fs>
+                  <Lexfs>
+                    <F name="cat"><Str>Aux</Str></F>
+                    <F name="decomposition"><Str>to</Str></F>
+                    <F name="featureDescriptors"><Str>-finite</Str></F>
+                    <F name="gloss"><Str>to</Str></F>
+                    <F name="head">
+                      <Fs>
+                        <F name="infl">
+                          <Fs>
+                            <F name="finite"><Str>-</Str></F>
+                            <F name="polarity"><Str>positive</Str></F>
+                            <F name="valence"><Str>active</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="type">
+                          <Fs>
+                            <F name="comma"><Str>-</Str></F>
+                            <F name="existential"><Str>-</Str></F>
+                            <F name="gerund"><Str>-</Str></F>
+                            <F name="participle"><Str>-</Str></F>
+                            <F name="prefix">
+                              <Fs>
+                                <F name="case"><Str>none</Str></F>
+                                <F name="conj"><Str>-</Str></F>
+                                <F name="negative"><Str>-</Str></F>
+                                <F name="relative"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="suffix">
+                              <Fs>
+                                <F name="case"><Str>none</Str></F>
+                                <F name="conj"><Str>-</Str></F>
+                                <F name="negative"><Str>-</Str></F>
+                                <F name="relative"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="topic"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                    <F name="lex"><Str>to</Str></F>
+                    <F name="properties"><Str>2f63f58f-112b-46ab-b329-3dc85ffda392</Str></F>
+                    <F name="rootgloss"><Str>to</Str></F>
+                  </Lexfs>
+                  <Str>to</Str>
+                </Leaf>
+                <Node cat="VP" rule="VP option conj - conjoined VPs" id="s1_1._12">
+                  <Fs>
+                    <F name="cat"><Str>VP</Str></F>
+                    <F name="conjoined"><Str>+</Str></F>
+                    <F name="head" fVal="s1_1.co6"></F>
+                    <F name="option"><Str>conj</Str></F>
+                  </Fs>
+                  <Node cat="VP" rule="VP option 4aNegObjVerbRequired - V initial, copular, not passive" id="s1_1._13" all="true">
+                    <Fs>
+                      <F name="cat"><Str>VP</Str></F>
+                      <F name="head">
+                        <Fs id="s1_1.co4">
+                          <F name="adjoinedVP"><Str>-</Str></F>
+                          <F name="adverbialVP"><Str>-</Str></F>
+                          <F name="embedded">
+                            <Fs>
+                              <F name="cat"><Str>none</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="infl">
+                            <Fs>
+                              <F name="finite"><Str>+</Str></F>
+                              <F name="polarity"><Str>positive</Str></F>
+                              <F name="valence"><Str>active</Str></F>
+                              <F name="voice"><Str>none</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="PP"><Str>-</Str></F>
+                              <F name="auxiliary-C'"><Str>-</Str></F>
+                              <F name="auxiliary-I'"><Str>-</Str></F>
+                              <F name="auxiliary-VP"><Str>-</Str></F>
+                              <F name="causative_syntax"><Str>-</Str></F>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="copular"><Str>+</Str></F>
+                              <F name="ditransitive"><Str>-</Str></F>
+                              <F name="existential"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="gerund"><Str>-</Str></F>
+                              <F name="motion"><Str>-</Str></F>
+                              <F name="ordinal"><Str>-</Str></F>
+                              <F name="participle"><Str>-</Str></F>
+                              <F name="perception"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comp"><Str>-</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="pronoun-fronted"><Str>-</Str></F>
+                              <F name="reciprocal"><Str>-</Str></F>
+                              <F name="reflexive"><Str>-</Str></F>
+                              <F name="sentential"><Str>-</Str></F>
+                              <F name="sentential_with_object"><Str>-</Str></F>
+                              <F name="speech_DP"><Str>-</Str></F>
+                              <F name="speech_PP"><Str>-</Str></F>
+                              <F name="subject_focused"><Str>-</Str></F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conditional"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="copular"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="subjunctive_conditional"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="takes_P"><Str>-</Str></F>
+                              <F name="topic"><Str>-</Str></F>
+                              <F name="transitive"><Str>-</Str></F>
+                              <F name="transitive_motion"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="option"><Str>4aNegObjVerbRequired</Str></F>
+                    </Fs>
+                    <Leaf cat="V" id="s1_1._14" all="true" gloss="get-cop">
+                      <Fs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>get</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>get-cop</Str></F>
+                        <F name="head" fVal="s1_1.co4"></F>
+                        <F name="lex"><Str>get</Str></F>
+                        <F name="properties"><Str>8ac47da9-e3dd-4645-9ef6-507b4f9dc802</Str></F>
+                        <F name="rootgloss"><Str>get-cop</Str></F>
+                      </Fs>
+                      <Lexfs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>get</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>get-cop</Str></F>
+                        <F name="head">
+                          <Fs>
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>+</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="lex"><Str>get</Str></F>
+                        <F name="properties"><Str>8ac47da9-e3dd-4645-9ef6-507b4f9dc802</Str></F>
+                        <F name="rootgloss"><Str>get-cop</Str></F>
+                      </Lexfs>
+                      <Str>get</Str>
+                    </Leaf>
+                    <Node cat="AdjP" rule="AdjP option 0 - no modifiers" id="s1_1._15" all="true">
+                      <Fs>
+                        <F name="cat"><Str>AdjP</Str></F>
+                        <F name="head">
+                          <Fs id="s1_1.co3">
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="fronted"><Str>none</Str></F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>-</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>+</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="option"><Str>0</Str></F>
+                      </Fs>
+                      <Node cat="Adj'" rule="Adj' option part - participles" id="s1_1._16" all="true">
+                        <Fs>
+                          <F name="cat"><Str>Adj'</Str></F>
+                          <F name="head" fVal="s1_1.co3"></F>
+                          <F name="option"><Str>part</Str></F>
+                        </Fs>
+                        <Leaf cat="V" id="s1_1._17" all="true" gloss="marry-PART">
+                          <Fs>
+                            <F name="cat"><Str>V</Str></F>
+                            <F name="conjoined"><Str>-</Str></F>
+                            <F name="decomposition"><Str>married</Str></F>
+                            <F name="featureDescriptors"><Str>participle</Str></F>
+                            <F name="gloss"><Str>marry-PART</Str></F>
+                            <F name="head" fVal="s1_1.co3"></F>
+                            <F name="lex"><Str>married</Str></F>
+                            <F name="properties"><Str>1ea23f59-f6d9-406d-89f6-792318a04efe</Str></F>
+                            <F name="rootgloss"><Str>marry-PART</Str></F>
+                          </Fs>
+                          <Lexfs>
+                            <F name="cat"><Str>V</Str></F>
+                            <F name="decomposition"><Str>married</Str></F>
+                            <F name="featureDescriptors"><Str>participle</Str></F>
+                            <F name="gloss"><Str>marry-PART</Str></F>
+                            <F name="head">
+                              <Fs>
+                                <F name="adjoinedVP"><Str>-</Str></F>
+                                <F name="adverbialVP"><Str>-</Str></F>
+                                <F name="embedded">
+                                  <Fs>
+                                    <F name="cat"><Str>none</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="infl">
+                                  <Fs>
+                                    <F name="finite"><Str>+</Str></F>
+                                    <F name="polarity"><Str>positive</Str></F>
+                                    <F name="valence"><Str>active</Str></F>
+                                    <F name="voice"><Str>none</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="type">
+                                  <Fs>
+                                    <F name="PP"><Str>-</Str></F>
+                                    <F name="auxiliary-C'"><Str>-</Str></F>
+                                    <F name="auxiliary-I'"><Str>-</Str></F>
+                                    <F name="auxiliary-VP"><Str>-</Str></F>
+                                    <F name="causative_syntax"><Str>-</Str></F>
+                                    <F name="comma"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="ditransitive"><Str>-</Str></F>
+                                    <F name="existential"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="gerund"><Str>-</Str></F>
+                                    <F name="motion"><Str>-</Str></F>
+                                    <F name="ordinal"><Str>-</Str></F>
+                                    <F name="participle"><Str>+</Str></F>
+                                    <F name="perception"><Str>-</Str></F>
+                                    <F name="prefix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comp"><Str>-</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="pronoun-fronted"><Str>-</Str></F>
+                                    <F name="reciprocal"><Str>-</Str></F>
+                                    <F name="reflexive"><Str>-</Str></F>
+                                    <F name="sentential"><Str>-</Str></F>
+                                    <F name="sentential_with_object"><Str>-</Str></F>
+                                    <F name="speech_DP"><Str>-</Str></F>
+                                    <F name="speech_PP"><Str>-</Str></F>
+                                    <F name="subject_focused"><Str>-</Str></F>
+                                    <F name="suffix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conditional"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="subjunctive_conditional"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="takes_P"><Str>-</Str></F>
+                                    <F name="topic"><Str>-</Str></F>
+                                    <F name="transitive_motion"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                              </Fs>
+                            </F>
+                            <F name="lex"><Str>married</Str></F>
+                            <F name="properties"><Str>1ea23f59-f6d9-406d-89f6-792318a04efe</Str></F>
+                            <F name="rootgloss"><Str>marry-PART</Str></F>
+                          </Lexfs>
+                          <Str>married</Str>
+                        </Leaf>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Leaf cat="Conj" id="s1_1._18" all="true" gloss="and">
+                    <Fs>
+                      <F name="cat"><Str>Conj</Str></F>
+                      <F name="decomposition"><Str>and</Str></F>
+                      <F name="featureDescriptors"><Str>plural</Str></F>
+                      <F name="gloss"><Str>and</Str></F>
+                      <F name="head">
+                        <Fs>
+                          <F name="agr">
+                            <Fs>
+                              <F name="number"><Str>plural</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="infl">
+                            <Fs>
+                              <F name="polarity"><Str>positive</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="compareAdj"><Str>-</Str></F>
+                              <F name="compareN"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="lex"><Str>and</Str></F>
+                      <F name="properties"><Str>479aca02-ca6a-4c2a-862a-d980fbcc9a37</Str></F>
+                      <F name="rootgloss"><Str>and</Str></F>
+                    </Fs>
+                    <Lexfs>
+                      <F name="cat"><Str>Conj</Str></F>
+                      <F name="decomposition"><Str>and</Str></F>
+                      <F name="featureDescriptors"><Str>plural</Str></F>
+                      <F name="gloss"><Str>and</Str></F>
+                      <F name="head">
+                        <Fs>
+                          <F name="agr">
+                            <Fs>
+                              <F name="number"><Str>plural</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="infl">
+                            <Fs>
+                              <F name="polarity"><Str>positive</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="compareAdj"><Str>-</Str></F>
+                              <F name="compareN"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="lex"><Str>and</Str></F>
+                      <F name="properties"><Str>479aca02-ca6a-4c2a-862a-d980fbcc9a37</Str></F>
+                      <F name="rootgloss"><Str>and</Str></F>
+                    </Lexfs>
+                    <Str>and</Str>
+                  </Leaf>
+                  <Node cat="VP" rule="VP option 4aNegObjVerbRequired - V initial, copular, not passive" id="s1_1._19" all="true">
+                    <Fs>
+                      <F name="cat"><Str>VP</Str></F>
+                      <F name="head">
+                        <Fs id="s1_1.co2">
+                          <F name="adjoinedVP"><Str>-</Str></F>
+                          <F name="adverbialVP"><Str>-</Str></F>
+                          <F name="embedded">
+                            <Fs>
+                              <F name="cat"><Str>none</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="infl">
+                            <Fs>
+                              <F name="finite"><Str>+</Str></F>
+                              <F name="polarity"><Str>positive</Str></F>
+                              <F name="valence"><Str>active</Str></F>
+                              <F name="voice"><Str>none</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="PP"><Str>-</Str></F>
+                              <F name="auxiliary-C'"><Str>-</Str></F>
+                              <F name="auxiliary-I'"><Str>-</Str></F>
+                              <F name="auxiliary-VP"><Str>-</Str></F>
+                              <F name="causative_syntax"><Str>-</Str></F>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="copular"><Str>+</Str></F>
+                              <F name="ditransitive"><Str>-</Str></F>
+                              <F name="existential"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="gerund"><Str>-</Str></F>
+                              <F name="motion"><Str>-</Str></F>
+                              <F name="ordinal"><Str>-</Str></F>
+                              <F name="participle"><Str>-</Str></F>
+                              <F name="perception"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comp"><Str>-</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="pronoun-fronted"><Str>-</Str></F>
+                              <F name="reciprocal"><Str>-</Str></F>
+                              <F name="reflexive"><Str>-</Str></F>
+                              <F name="sentential"><Str>-</Str></F>
+                              <F name="sentential_with_object"><Str>-</Str></F>
+                              <F name="speech_DP"><Str>-</Str></F>
+                              <F name="speech_PP"><Str>-</Str></F>
+                              <F name="subject_focused"><Str>-</Str></F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conditional"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="copular"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="poss"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="subjunctive_conditional"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="takes_P"><Str>-</Str></F>
+                              <F name="topic"><Str>-</Str></F>
+                              <F name="transitive"><Str>-</Str></F>
+                              <F name="transitive_motion"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="option"><Str>4aNegObjVerbRequired</Str></F>
+                    </Fs>
+                    <Leaf cat="V" id="s1_1._20" all="true" gloss="be">
+                      <Fs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>be</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>be</Str></F>
+                        <F name="head" fVal="s1_1.co2"></F>
+                        <F name="lex"><Str>be</Str></F>
+                        <F name="properties"><Str>04f021dc-a0dd-44fc-8b0a-9e6741743dd8</Str></F>
+                        <F name="rootgloss"><Str>be</Str></F>
+                      </Fs>
+                      <Lexfs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>be</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>be</Str></F>
+                        <F name="head">
+                          <Fs>
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>+</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="lex"><Str>be</Str></F>
+                        <F name="properties"><Str>04f021dc-a0dd-44fc-8b0a-9e6741743dd8</Str></F>
+                        <F name="rootgloss"><Str>be</Str></F>
+                      </Lexfs>
+                      <Str>be</Str>
+                    </Leaf>
+                    <Node cat="AdjP" rule="AdjP option 0 - no modifiers" id="s1_1._21" all="true">
+                      <Fs>
+                        <F name="cat"><Str>AdjP</Str></F>
+                        <F name="head">
+                          <Fs id="s1_1.co1">
+                            <F name="type">
+                              <Fs>
+                                <F name="clausal-comp"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="comparative"><Str>-</Str></F>
+                                <F name="equalAdj"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="poss"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="superlative"><Str>-</Str></F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="wh"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="option"><Str>0</Str></F>
+                      </Fs>
+                      <Node cat="Adj'" rule="Adj' option 0 - no complements" id="s1_1._22" all="true">
+                        <Fs>
+                          <F name="cat"><Str>Adj'</Str></F>
+                          <F name="head" fVal="s1_1.co1"></F>
+                          <F name="option"><Str>0</Str></F>
+                        </Fs>
+                        <Leaf cat="Adj" id="s1_1._23" all="true" gloss="happy">
+                          <Fs>
+                            <F name="cat"><Str>Adj</Str></F>
+                            <F name="decomposition"><Str>happy</Str></F>
+                            <F name="gloss"><Str>happy</Str></F>
+                            <F name="head" fVal="s1_1.co1"></F>
+                            <F name="lex"><Str>happy</Str></F>
+                            <F name="properties"><Str>07fbf262-bbe7-415b-af3f-8317a2cb4521</Str></F>
+                            <F name="rootgloss"><Str>happy</Str></F>
+                          </Fs>
+                          <Lexfs>
+                            <F name="cat"><Str>Adj</Str></F>
+                            <F name="decomposition"><Str>happy</Str></F>
+                            <F name="gloss"><Str>happy</Str></F>
+                            <F name="head">
+                              <Fs>
+                                <F name="type">
+                                  <Fs>
+                                    <F name="clausal-comp"><Str>-</Str></F>
+                                    <F name="comma"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="equalAdj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="gerund"><Str>-</Str></F>
+                                    <F name="ordinal"><Str>-</Str></F>
+                                    <F name="participle"><Str>-</Str></F>
+                                    <F name="prefix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comp"><Str>-</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="copular"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="sentential"><Str>-</Str></F>
+                                    <F name="subject_focused"><Str>-</Str></F>
+                                    <F name="suffix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="copular"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="poss"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                    <F name="takes_P"><Str>-</Str></F>
+                                    <F name="topic"><Str>-</Str></F>
+                                    <F name="wh"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                              </Fs>
+                            </F>
+                            <F name="lex"><Str>happy</Str></F>
+                            <F name="properties"><Str>07fbf262-bbe7-415b-af3f-8317a2cb4521</Str></F>
+                            <F name="rootgloss"><Str>happy</Str></F>
+                          </Lexfs>
+                          <Str>happy</Str>
+                        </Leaf>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </Node>
+      </Node>
+    </Node>
+  </Parse>
+  <Parse>
+    <Node cat="S" rule="S option start.symbolIP  - optional elements initial" id="s1_2._24">
+      <Fs>
+        <F name="cat"><Str>S</Str></F>
+        <F name="head">
+          <Fs id="s1_2.co9">
+            <F name="adjoinedVP"><Str>-</Str></F>
+            <F name="adverbialVP"><Str>-</Str></F>
+            <F name="embedded">
+              <Fs>
+                <F name="cat"><Str>none</Str></F>
+              </Fs>
+            </F>
+            <F name="fronted"><Str>none</Str></F>
+            <F name="infl">
+              <Fs>
+                <F name="finite"><Str>+</Str></F>
+                <F name="polarity"><Str>positive</Str></F>
+                <F name="valence"><Str>active</Str></F>
+                <F name="voice"><Str>none</Str></F>
+              </Fs>
+            </F>
+            <F name="subject">
+              <Fs id="s1_2.co8">
+                <F name="cat"><Str>DP</Str></F>
+                <F name="head">
+                  <Fs id="s1_2.co7">
+                    <F name="agr">
+                      <Fs>
+                        <F name="animacy"><Str>animate</Str></F>
+                        <F name="gender"><Str>masculine</Str></F>
+                        <F name="number"><Str>plural</Str></F>
+                        <F name="person"><Str>first</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="case"><Str>nominative</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="case-marked"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="definite"><Str>+</Str></F>
+                        <F name="emphatic"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="locative"><Str>-</Str></F>
+                        <F name="noN"><Str>+</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="possessive"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun"><Str>+</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="relative"><Str>-</Str></F>
+                        <F name="root"><Str>+</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="temporal"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="wh"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="option"><Str>0</Str></F>
+              </Fs>
+            </F>
+            <F name="type">
+              <Fs>
+                <F name="PP"><Str>-</Str></F>
+                <F name="auxiliary-C'"><Str>-</Str></F>
+                <F name="auxiliary-I'"><Str>-</Str></F>
+                <F name="auxiliary-VP"><Str>-</Str></F>
+                <F name="causative_syntax"><Str>-</Str></F>
+                <F name="comma"><Str>-</Str></F>
+                <F name="copular"><Str>+</Str></F>
+                <F name="ditransitive"><Str>-</Str></F>
+                <F name="existential"><Str>-</Str></F>
+                <F name="focusmarked"><Str>-</Str></F>
+                <F name="gerund"><Str>-</Str></F>
+                <F name="motion"><Str>-</Str></F>
+                <F name="ordinal"><Str>-</Str></F>
+                <F name="participle"><Str>-</Str></F>
+                <F name="perception"><Str>-</Str></F>
+                <F name="prefix">
+                  <Fs>
+                    <F name="case"><Str>none</Str></F>
+                    <F name="comp"><Str>-</Str></F>
+                    <F name="comparative"><Str>-</Str></F>
+                    <F name="conj"><Str>-</Str></F>
+                    <F name="copular"><Str>-</Str></F>
+                    <F name="focusmarked"><Str>-</Str></F>
+                    <F name="negative"><Str>-</Str></F>
+                    <F name="poss"><Str>-</Str></F>
+                    <F name="relative"><Str>-</Str></F>
+                    <F name="superlative"><Str>-</Str></F>
+                  </Fs>
+                </F>
+                <F name="pro-drop"><Str>-</Str></F>
+                <F name="pronoun-fronted"><Str>-</Str></F>
+                <F name="question"><Str>-</Str></F>
+                <F name="reciprocal"><Str>-</Str></F>
+                <F name="reflexive"><Str>-</Str></F>
+                <F name="root"><Str>+</Str></F>
+                <F name="sentential"><Str>-</Str></F>
+                <F name="sentential_with_object"><Str>-</Str></F>
+                <F name="speech_DP"><Str>-</Str></F>
+                <F name="speech_PP"><Str>-</Str></F>
+                <F name="subject_focused"><Str>-</Str></F>
+                <F name="suffix">
+                  <Fs>
+                    <F name="case"><Str>none</Str></F>
+                    <F name="comparative"><Str>-</Str></F>
+                    <F name="conditional"><Str>-</Str></F>
+                    <F name="conj"><Str>-</Str></F>
+                    <F name="copular"><Str>-</Str></F>
+                    <F name="focusmarked"><Str>-</Str></F>
+                    <F name="negative"><Str>-</Str></F>
+                    <F name="poss"><Str>-</Str></F>
+                    <F name="relative"><Str>-</Str></F>
+                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                    <F name="superlative"><Str>-</Str></F>
+                  </Fs>
+                </F>
+                <F name="takes_P"><Str>-</Str></F>
+                <F name="topic"><Str>-</Str></F>
+                <F name="transitive"><Str>-</Str></F>
+                <F name="transitive_motion"><Str>-</Str></F>
+                <F name="verbheaded"><Str>+</Str></F>
+              </Fs>
+            </F>
+          </Fs>
+        </F>
+        <F name="option"><Str>start.symbolIP</Str></F>
+      </Fs>
+      <Node cat="IP" rule="IP option 2a - subject initial, required, active only" id="s1_2._25">
+        <Fs>
+          <F name="cat"><Str>IP</Str></F>
+          <F name="head" fVal="s1_2.co9"></F>
+          <F name="option"><Str>2a</Str></F>
+        </Fs>
+        <Node cat="DP" rule="DP option 0 - no Deg modifiers, not case-marked - or just on head" id="s1_2._3" all="true">
+          <Fs>
+            <F name="cat"><Str>DP</Str></F>
+            <F name="head" fVal="s1_2.co7"></F>
+            <F name="option"><Str>0</Str></F>
+          </Fs>
+          <Node cat="D'" rule="DBar option noNRel - pronoun,dem,quantifiers which can be modified by Rel Cl only (or partitive also with NP rules" id="s1_2._4" all="true">
+            <Fs>
+              <F name="cat"><Str>D'</Str></F>
+              <F name="head" fVal="s1_2.co7"></F>
+              <F name="option"><Str>noNRel</Str></F>
+            </Fs>
+            <Leaf cat="Pron" id="s1_2._5" all="true" gloss="1PL-nom">
+              <Fs>
+                <F name="cat"><Str>Pron</Str></F>
+                <F name="decomposition"><Str>we</Str></F>
+                <F name="featureDescriptors"><Str>first nominative plural</Str></F>
+                <F name="gloss"><Str>1PL-nom</Str></F>
+                <F name="head" fVal="s1_2.co7"></F>
+                <F name="lex"><Str>we</Str></F>
+                <F name="properties"><Str>e2e4949d-9af0-4142-9d4f-f2d9afdcb646</Str></F>
+                <F name="rootgloss"><Str>1PL-nom</Str></F>
+              </Fs>
+              <Lexfs>
+                <F name="cat"><Str>Pron</Str></F>
+                <F name="decomposition"><Str>we</Str></F>
+                <F name="featureDescriptors"><Str>first nominative plural</Str></F>
+                <F name="gloss"><Str>1PL-nom</Str></F>
+                <F name="head">
+                  <Fs>
+                    <F name="agr">
+                      <Fs>
+                        <F name="animacy"><Str>animate</Str></F>
+                        <F name="gender"><Str>masculine</Str></F>
+                        <F name="number"><Str>plural</Str></F>
+                        <F name="person"><Str>first</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="case"><Str>nominative</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="definite"><Str>+</Str></F>
+                        <F name="emphatic"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="locative"><Str>-</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="possessive"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun"><Str>+</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="relative"><Str>-</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="poss"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="temporal"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="wh"><Str>-</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="lex"><Str>we</Str></F>
+                <F name="properties"><Str>e2e4949d-9af0-4142-9d4f-f2d9afdcb646</Str></F>
+                <F name="rootgloss"><Str>1PL-nom</Str></F>
+              </Lexfs>
+              <Str>we</Str>
+            </Leaf>
+          </Node>
+        </Node>
+        <Node cat="I'" rule="IBarNegObjVerbRequired option 1 - no auxiliaries" id="s1_2._26">
+          <Fs>
+            <F name="cat"><Str>I'</Str></F>
+            <F name="head" fVal="s1_2.co9"></F>
+            <F name="option"><Str>1NegObjVerbRequired</Str></F>
+          </Fs>
+          <Node cat="VP" rule="VP option conj - conjoined VPs" id="s1_2._27">
+            <Fs>
+              <F name="cat"><Str>VP</Str></F>
+              <F name="conjoined"><Str>+</Str></F>
+              <F name="head" fVal="s1_2.co9"></F>
+              <F name="option"><Str>conj</Str></F>
+            </Fs>
+            <Node cat="VP" rule="VP option 8a - V initial, sentential complement" id="s1_2._28">
+              <Fs>
+                <F name="cat"><Str>VP</Str></F>
+                <F name="conjoined"><Str>-</Str></F>
+                <F name="head">
+                  <Fs id="s1_2.co6">
+                    <F name="adjoinedVP"><Str>-</Str></F>
+                    <F name="adverbialVP"><Str>-</Str></F>
+                    <F name="embedded">
+                      <Fs id="s1_2.co5">
+                        <F name="cat"><Str>IP</Str></F>
+                        <F name="head">
+                          <Fs id="s1_2.co4">
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>-</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="subject">
+                              <Fs>
+                                <F name="head">
+                                  <Fs>
+                                    <F name="agr"><Any id="s1_2.co3"/></F>
+                                  </Fs>
+                                </F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>+</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="comp"><Str>-</Str></F>
+                                <F name="copular"><Str>+</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pro-drop"><Str>+</Str></F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="question"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="relative"><Str>-</Str></F>
+                                <F name="root"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                                <F name="verbheaded"><Str>+</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="option"><Str>1d</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="fronted"><Str>none</Str></F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="finite"><Str>+</Str></F>
+                        <F name="polarity"><Str>positive</Str></F>
+                        <F name="valence"><Str>active</Str></F>
+                        <F name="voice"><Str>none</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="object">
+                      <Fs>
+                        <F name="head">
+                          <Fs>
+                            <F name="type">
+                              <Fs>
+                                <F name="reflexive"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="PP"><Str>-</Str></F>
+                        <F name="auxiliary-C'"><Str>-</Str></F>
+                        <F name="auxiliary-I'"><Str>-</Str></F>
+                        <F name="auxiliary-VP"><Str>-</Str></F>
+                        <F name="causative_syntax"><Str>-</Str></F>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="copular"><Str>-</Str></F>
+                        <F name="ditransitive"><Str>-</Str></F>
+                        <F name="existential"><Str>-</Str></F>
+                        <F name="focusmarked"><Str>-</Str></F>
+                        <F name="gerund"><Str>-</Str></F>
+                        <F name="motion"><Str>-</Str></F>
+                        <F name="ordinal"><Str>-</Str></F>
+                        <F name="participle"><Str>-</Str></F>
+                        <F name="perception"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="pronoun-fronted"><Str>-</Str></F>
+                        <F name="question"><Str>-</Str></F>
+                        <F name="reciprocal"><Str>-</Str></F>
+                        <F name="reflexive"><Str>-</Str></F>
+                        <F name="sentential"><Str>+</Str></F>
+                        <F name="sentential_with_object"><Str>-</Str></F>
+                        <F name="speech_DP"><Str>-</Str></F>
+                        <F name="speech_PP"><Str>-</Str></F>
+                        <F name="subject_focused"><Str>-</Str></F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="comp"><Str>-</Str></F>
+                            <F name="comparative"><Str>-</Str></F>
+                            <F name="conditional"><Str>-</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="copular"><Str>-</Str></F>
+                            <F name="focusmarked"><Str>-</Str></F>
+                            <F name="negative"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                            <F name="subjunctive_conditional"><Str>-</Str></F>
+                            <F name="superlative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="takes_P"><Str>-</Str></F>
+                        <F name="topic"><Str>-</Str></F>
+                        <F name="transitive"><Str>+</Str></F>
+                        <F name="transitive_motion"><Str>-</Str></F>
+                        <F name="verbheaded"><Str>+</Str></F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="option"><Str>8a</Str></F>
+              </Fs>
+              <Leaf cat="V" id="s1_2._8" all="true" gloss="want">
+                <Fs>
+                  <F name="cat"><Str>V</Str></F>
+                  <F name="decomposition"><Str>want</Str></F>
+                  <F name="featureDescriptors"><Str>sentential_-finiteIP_or_transitive</Str></F>
+                  <F name="gloss"><Str>want</Str></F>
+                  <F name="head" fVal="s1_2.co6"></F>
+                  <F name="lex"><Str>want</Str></F>
+                  <F name="properties"><Str>b3e8623e-5679-4261-acd5-d62ed71d1d2b</Str></F>
+                  <F name="rootgloss"><Str>want</Str></F>
+                </Fs>
+                <Lexfs>
+                  <F name="cat"><Str>V</Str></F>
+                  <F name="decomposition"><Str>want</Str></F>
+                  <F name="featureDescriptors"><Str>sentential_-finiteIP_or_transitive</Str></F>
+                  <F name="gloss"><Str>want</Str></F>
+                  <F name="head">
+                    <Fs>
+                      <F name="adjoinedVP"><Str>-</Str></F>
+                      <F name="adverbialVP"><Str>-</Str></F>
+                      <F name="embedded">
+                        <Fs>
+                          <F name="cat"><Str>IP</Str></F>
+                          <F name="head">
+                            <Fs>
+                              <F name="infl">
+                                <Fs>
+                                  <F name="finite"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="type">
+                                <Fs>
+                                  <F name="verbheaded"><Str>+</Str></F>
+                                </Fs>
+                              </F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="infl">
+                        <Fs>
+                          <F name="finite"><Str>+</Str></F>
+                          <F name="polarity"><Str>positive</Str></F>
+                          <F name="valence"><Str>active</Str></F>
+                          <F name="voice"><Str>none</Str></F>
+                        </Fs>
+                      </F>
+                      <F name="type">
+                        <Fs>
+                          <F name="PP"><Str>-</Str></F>
+                          <F name="auxiliary-C'"><Str>-</Str></F>
+                          <F name="auxiliary-I'"><Str>-</Str></F>
+                          <F name="auxiliary-VP"><Str>-</Str></F>
+                          <F name="causative_syntax"><Str>-</Str></F>
+                          <F name="comma"><Str>-</Str></F>
+                          <F name="copular"><Str>-</Str></F>
+                          <F name="ditransitive"><Str>-</Str></F>
+                          <F name="existential"><Str>-</Str></F>
+                          <F name="focusmarked"><Str>-</Str></F>
+                          <F name="gerund"><Str>-</Str></F>
+                          <F name="motion"><Str>-</Str></F>
+                          <F name="ordinal"><Str>-</Str></F>
+                          <F name="participle"><Str>-</Str></F>
+                          <F name="perception"><Str>-</Str></F>
+                          <F name="prefix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comp"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="pronoun-fronted"><Str>-</Str></F>
+                          <F name="reciprocal"><Str>-</Str></F>
+                          <F name="reflexive"><Str>-</Str></F>
+                          <F name="sentential"><Str>+</Str></F>
+                          <F name="sentential_with_object"><Str>-</Str></F>
+                          <F name="speech_DP"><Str>-</Str></F>
+                          <F name="speech_PP"><Str>-</Str></F>
+                          <F name="subject_focused"><Str>-</Str></F>
+                          <F name="suffix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conditional"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="subjunctive_conditional"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="takes_P"><Str>-</Str></F>
+                          <F name="topic"><Str>-</Str></F>
+                          <F name="transitive_motion"><Str>-</Str></F>
+                        </Fs>
+                      </F>
+                    </Fs>
+                  </F>
+                  <F name="lex"><Str>want</Str></F>
+                  <F name="properties"><Str>b3e8623e-5679-4261-acd5-d62ed71d1d2b</Str></F>
+                  <F name="rootgloss"><Str>want</Str></F>
+                </Lexfs>
+                <Str>want</Str>
+              </Leaf>
+              <Node cat="IP" rule="IP option 1d - subject pro-drop for non-root nonfinite clauses, not passive or antipassive" id="s1_2._29">
+                <Fs>
+                  <F name="cat"><Str>IP</Str></F>
+                  <F name="head" fVal="s1_2.co4"></F>
+                  <F name="option"><Str>1d</Str></F>
+                </Fs>
+                <Node cat="I'" rule="IBar option 2NegObjVerbRequired - positive Aux initial, required" id="s1_2._30">
+                  <Fs>
+                    <F name="cat"><Str>I'</Str></F>
+                    <F name="head" fVal="s1_2.co4"></F>
+                    <F name="option"><Str>2NegObjVerbRequired</Str></F>
+                  </Fs>
+                  <Leaf cat="Aux" id="s1_2._11" all="true" gloss="to">
+                    <Fs>
+                      <F name="cat"><Str>Aux</Str></F>
+                      <F name="decomposition"><Str>to</Str></F>
+                      <F name="featureDescriptors"><Str>-finite</Str></F>
+                      <F name="gloss"><Str>to</Str></F>
+                      <F name="head">
+                        <Fs>
+                          <F name="infl">
+                            <Fs>
+                              <F name="finite"><Str>-</Str></F>
+                              <F name="polarity"><Str>positive</Str></F>
+                              <F name="valence"><Str>active</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="subject">
+                            <Fs>
+                              <F name="head">
+                                <Fs>
+                                  <F name="agr" fVal="s1_2.co3"></F>
+                                </Fs>
+                              </F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="existential"><Str>-</Str></F>
+                              <F name="gerund"><Str>-</Str></F>
+                              <F name="participle"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="topic"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="lex"><Str>to</Str></F>
+                      <F name="properties"><Str>2f63f58f-112b-46ab-b329-3dc85ffda392</Str></F>
+                      <F name="rootgloss"><Str>to</Str></F>
+                    </Fs>
+                    <Lexfs>
+                      <F name="cat"><Str>Aux</Str></F>
+                      <F name="decomposition"><Str>to</Str></F>
+                      <F name="featureDescriptors"><Str>-finite</Str></F>
+                      <F name="gloss"><Str>to</Str></F>
+                      <F name="head">
+                        <Fs>
+                          <F name="infl">
+                            <Fs>
+                              <F name="finite"><Str>-</Str></F>
+                              <F name="polarity"><Str>positive</Str></F>
+                              <F name="valence"><Str>active</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="type">
+                            <Fs>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="existential"><Str>-</Str></F>
+                              <F name="gerund"><Str>-</Str></F>
+                              <F name="participle"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="topic"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="lex"><Str>to</Str></F>
+                      <F name="properties"><Str>2f63f58f-112b-46ab-b329-3dc85ffda392</Str></F>
+                      <F name="rootgloss"><Str>to</Str></F>
+                    </Lexfs>
+                    <Str>to</Str>
+                  </Leaf>
+                  <Node cat="VP" rule="VP option 4aNegObjVerbRequired - V initial, copular, not passive" id="s1_2._13" all="true">
+                    <Fs>
+                      <F name="cat"><Str>VP</Str></F>
+                      <F name="head" fVal="s1_2.co4"></F>
+                      <F name="option"><Str>4aNegObjVerbRequired</Str></F>
+                    </Fs>
+                    <Leaf cat="V" id="s1_2._14" all="true" gloss="get-cop">
+                      <Fs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>get</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>get-cop</Str></F>
+                        <F name="head">
+                          <Fs>
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>+</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="lex"><Str>get</Str></F>
+                        <F name="properties"><Str>8ac47da9-e3dd-4645-9ef6-507b4f9dc802</Str></F>
+                        <F name="rootgloss"><Str>get-cop</Str></F>
+                      </Fs>
+                      <Lexfs>
+                        <F name="cat"><Str>V</Str></F>
+                        <F name="decomposition"><Str>get</Str></F>
+                        <F name="featureDescriptors"><Str>copular</Str></F>
+                        <F name="gloss"><Str>get-cop</Str></F>
+                        <F name="head">
+                          <Fs>
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>+</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>-</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="lex"><Str>get</Str></F>
+                        <F name="properties"><Str>8ac47da9-e3dd-4645-9ef6-507b4f9dc802</Str></F>
+                        <F name="rootgloss"><Str>get-cop</Str></F>
+                      </Lexfs>
+                      <Str>get</Str>
+                    </Leaf>
+                    <Node cat="AdjP" rule="AdjP option 0 - no modifiers" id="s1_2._15" all="true">
+                      <Fs>
+                        <F name="cat"><Str>AdjP</Str></F>
+                        <F name="head">
+                          <Fs id="s1_2.co2">
+                            <F name="adjoinedVP"><Str>-</Str></F>
+                            <F name="adverbialVP"><Str>-</Str></F>
+                            <F name="embedded">
+                              <Fs>
+                                <F name="cat"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="fronted"><Str>none</Str></F>
+                            <F name="infl">
+                              <Fs>
+                                <F name="finite"><Str>+</Str></F>
+                                <F name="polarity"><Str>positive</Str></F>
+                                <F name="valence"><Str>active</Str></F>
+                                <F name="voice"><Str>none</Str></F>
+                              </Fs>
+                            </F>
+                            <F name="type">
+                              <Fs>
+                                <F name="PP"><Str>-</Str></F>
+                                <F name="auxiliary-C'"><Str>-</Str></F>
+                                <F name="auxiliary-I'"><Str>-</Str></F>
+                                <F name="auxiliary-VP"><Str>-</Str></F>
+                                <F name="causative_syntax"><Str>-</Str></F>
+                                <F name="comma"><Str>-</Str></F>
+                                <F name="copular"><Str>-</Str></F>
+                                <F name="ditransitive"><Str>-</Str></F>
+                                <F name="existential"><Str>-</Str></F>
+                                <F name="focusmarked"><Str>-</Str></F>
+                                <F name="gerund"><Str>-</Str></F>
+                                <F name="motion"><Str>-</Str></F>
+                                <F name="ordinal"><Str>-</Str></F>
+                                <F name="participle"><Str>+</Str></F>
+                                <F name="perception"><Str>-</Str></F>
+                                <F name="prefix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comp"><Str>-</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="pronoun-fronted"><Str>-</Str></F>
+                                <F name="reciprocal"><Str>-</Str></F>
+                                <F name="reflexive"><Str>-</Str></F>
+                                <F name="sentential"><Str>-</Str></F>
+                                <F name="sentential_with_object"><Str>-</Str></F>
+                                <F name="speech_DP"><Str>-</Str></F>
+                                <F name="speech_PP"><Str>-</Str></F>
+                                <F name="subject_focused"><Str>-</Str></F>
+                                <F name="suffix">
+                                  <Fs>
+                                    <F name="case"><Str>none</Str></F>
+                                    <F name="comparative"><Str>-</Str></F>
+                                    <F name="conditional"><Str>-</Str></F>
+                                    <F name="conj"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="negative"><Str>-</Str></F>
+                                    <F name="relative"><Str>-</Str></F>
+                                    <F name="subjunctive_conditional"><Str>-</Str></F>
+                                    <F name="superlative"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="takes_P"><Str>-</Str></F>
+                                <F name="topic"><Str>-</Str></F>
+                                <F name="transitive_motion"><Str>-</Str></F>
+                              </Fs>
+                            </F>
+                          </Fs>
+                        </F>
+                        <F name="option"><Str>0</Str></F>
+                      </Fs>
+                      <Node cat="Adj'" rule="Adj' option part - participles" id="s1_2._16" all="true">
+                        <Fs>
+                          <F name="cat"><Str>Adj'</Str></F>
+                          <F name="head" fVal="s1_2.co2"></F>
+                          <F name="option"><Str>part</Str></F>
+                        </Fs>
+                        <Leaf cat="V" id="s1_2._17" all="true" gloss="marry-PART">
+                          <Fs>
+                            <F name="cat"><Str>V</Str></F>
+                            <F name="conjoined"><Str>-</Str></F>
+                            <F name="decomposition"><Str>married</Str></F>
+                            <F name="featureDescriptors"><Str>participle</Str></F>
+                            <F name="gloss"><Str>marry-PART</Str></F>
+                            <F name="head" fVal="s1_2.co2"></F>
+                            <F name="lex"><Str>married</Str></F>
+                            <F name="properties"><Str>1ea23f59-f6d9-406d-89f6-792318a04efe</Str></F>
+                            <F name="rootgloss"><Str>marry-PART</Str></F>
+                          </Fs>
+                          <Lexfs>
+                            <F name="cat"><Str>V</Str></F>
+                            <F name="decomposition"><Str>married</Str></F>
+                            <F name="featureDescriptors"><Str>participle</Str></F>
+                            <F name="gloss"><Str>marry-PART</Str></F>
+                            <F name="head">
+                              <Fs>
+                                <F name="adjoinedVP"><Str>-</Str></F>
+                                <F name="adverbialVP"><Str>-</Str></F>
+                                <F name="embedded">
+                                  <Fs>
+                                    <F name="cat"><Str>none</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="infl">
+                                  <Fs>
+                                    <F name="finite"><Str>+</Str></F>
+                                    <F name="polarity"><Str>positive</Str></F>
+                                    <F name="valence"><Str>active</Str></F>
+                                    <F name="voice"><Str>none</Str></F>
+                                  </Fs>
+                                </F>
+                                <F name="type">
+                                  <Fs>
+                                    <F name="PP"><Str>-</Str></F>
+                                    <F name="auxiliary-C'"><Str>-</Str></F>
+                                    <F name="auxiliary-I'"><Str>-</Str></F>
+                                    <F name="auxiliary-VP"><Str>-</Str></F>
+                                    <F name="causative_syntax"><Str>-</Str></F>
+                                    <F name="comma"><Str>-</Str></F>
+                                    <F name="copular"><Str>-</Str></F>
+                                    <F name="ditransitive"><Str>-</Str></F>
+                                    <F name="existential"><Str>-</Str></F>
+                                    <F name="focusmarked"><Str>-</Str></F>
+                                    <F name="gerund"><Str>-</Str></F>
+                                    <F name="motion"><Str>-</Str></F>
+                                    <F name="ordinal"><Str>-</Str></F>
+                                    <F name="participle"><Str>+</Str></F>
+                                    <F name="perception"><Str>-</Str></F>
+                                    <F name="prefix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comp"><Str>-</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="pronoun-fronted"><Str>-</Str></F>
+                                    <F name="reciprocal"><Str>-</Str></F>
+                                    <F name="reflexive"><Str>-</Str></F>
+                                    <F name="sentential"><Str>-</Str></F>
+                                    <F name="sentential_with_object"><Str>-</Str></F>
+                                    <F name="speech_DP"><Str>-</Str></F>
+                                    <F name="speech_PP"><Str>-</Str></F>
+                                    <F name="subject_focused"><Str>-</Str></F>
+                                    <F name="suffix">
+                                      <Fs>
+                                        <F name="case"><Str>none</Str></F>
+                                        <F name="comparative"><Str>-</Str></F>
+                                        <F name="conditional"><Str>-</Str></F>
+                                        <F name="conj"><Str>-</Str></F>
+                                        <F name="focusmarked"><Str>-</Str></F>
+                                        <F name="negative"><Str>-</Str></F>
+                                        <F name="relative"><Str>-</Str></F>
+                                        <F name="subjunctive_conditional"><Str>-</Str></F>
+                                        <F name="superlative"><Str>-</Str></F>
+                                      </Fs>
+                                    </F>
+                                    <F name="takes_P"><Str>-</Str></F>
+                                    <F name="topic"><Str>-</Str></F>
+                                    <F name="transitive_motion"><Str>-</Str></F>
+                                  </Fs>
+                                </F>
+                              </Fs>
+                            </F>
+                            <F name="lex"><Str>married</Str></F>
+                            <F name="properties"><Str>1ea23f59-f6d9-406d-89f6-792318a04efe</Str></F>
+                            <F name="rootgloss"><Str>marry-PART</Str></F>
+                          </Lexfs>
+                          <Str>married</Str>
+                        </Leaf>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Leaf cat="Conj" id="s1_2._18" all="true" gloss="and">
+              <Fs>
+                <F name="cat"><Str>Conj</Str></F>
+                <F name="decomposition"><Str>and</Str></F>
+                <F name="featureDescriptors"><Str>plural</Str></F>
+                <F name="gloss"><Str>and</Str></F>
+                <F name="head">
+                  <Fs>
+                    <F name="agr">
+                      <Fs>
+                        <F name="number"><Str>plural</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="comparative"><Str>-</Str></F>
+                        <F name="compareAdj"><Str>-</Str></F>
+                        <F name="compareN"><Str>-</Str></F>
+                        <F name="conjoins_IP"><Str>+</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="lex"><Str>and</Str></F>
+                <F name="properties"><Str>479aca02-ca6a-4c2a-862a-d980fbcc9a37</Str></F>
+                <F name="rootgloss"><Str>and</Str></F>
+              </Fs>
+              <Lexfs>
+                <F name="cat"><Str>Conj</Str></F>
+                <F name="decomposition"><Str>and</Str></F>
+                <F name="featureDescriptors"><Str>plural</Str></F>
+                <F name="gloss"><Str>and</Str></F>
+                <F name="head">
+                  <Fs>
+                    <F name="agr">
+                      <Fs>
+                        <F name="number"><Str>plural</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="infl">
+                      <Fs>
+                        <F name="polarity"><Str>positive</Str></F>
+                      </Fs>
+                    </F>
+                    <F name="type">
+                      <Fs>
+                        <F name="comma"><Str>-</Str></F>
+                        <F name="comparative"><Str>-</Str></F>
+                        <F name="compareAdj"><Str>-</Str></F>
+                        <F name="compareN"><Str>-</Str></F>
+                        <F name="prefix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                        <F name="suffix">
+                          <Fs>
+                            <F name="case"><Str>none</Str></F>
+                            <F name="conj"><Str>-</Str></F>
+                            <F name="relative"><Str>-</Str></F>
+                          </Fs>
+                        </F>
+                      </Fs>
+                    </F>
+                  </Fs>
+                </F>
+                <F name="lex"><Str>and</Str></F>
+                <F name="properties"><Str>479aca02-ca6a-4c2a-862a-d980fbcc9a37</Str></F>
+                <F name="rootgloss"><Str>and</Str></F>
+              </Lexfs>
+              <Str>and</Str>
+            </Leaf>
+            <Node cat="VP" rule="VP option 4aNegObjVerbRequired - V initial, copular, not passive" id="s1_2._19" all="true">
+              <Fs>
+                <F name="cat"><Str>VP</Str></F>
+                <F name="head" fVal="s1_2.co9"></F>
+                <F name="option"><Str>4aNegObjVerbRequired</Str></F>
+              </Fs>
+              <Leaf cat="V" id="s1_2._20" all="true" gloss="be">
+                <Fs>
+                  <F name="cat"><Str>V</Str></F>
+                  <F name="decomposition"><Str>be</Str></F>
+                  <F name="featureDescriptors"><Str>copular</Str></F>
+                  <F name="gloss"><Str>be</Str></F>
+                  <F name="head" fVal="s1_2.co9"></F>
+                  <F name="lex"><Str>be</Str></F>
+                  <F name="properties"><Str>04f021dc-a0dd-44fc-8b0a-9e6741743dd8</Str></F>
+                  <F name="rootgloss"><Str>be</Str></F>
+                </Fs>
+                <Lexfs>
+                  <F name="cat"><Str>V</Str></F>
+                  <F name="decomposition"><Str>be</Str></F>
+                  <F name="featureDescriptors"><Str>copular</Str></F>
+                  <F name="gloss"><Str>be</Str></F>
+                  <F name="head">
+                    <Fs>
+                      <F name="adjoinedVP"><Str>-</Str></F>
+                      <F name="adverbialVP"><Str>-</Str></F>
+                      <F name="embedded">
+                        <Fs>
+                          <F name="cat"><Str>none</Str></F>
+                        </Fs>
+                      </F>
+                      <F name="infl">
+                        <Fs>
+                          <F name="finite"><Str>+</Str></F>
+                          <F name="polarity"><Str>positive</Str></F>
+                          <F name="valence"><Str>active</Str></F>
+                          <F name="voice"><Str>none</Str></F>
+                        </Fs>
+                      </F>
+                      <F name="type">
+                        <Fs>
+                          <F name="PP"><Str>-</Str></F>
+                          <F name="auxiliary-C'"><Str>-</Str></F>
+                          <F name="auxiliary-I'"><Str>-</Str></F>
+                          <F name="auxiliary-VP"><Str>-</Str></F>
+                          <F name="causative_syntax"><Str>-</Str></F>
+                          <F name="comma"><Str>-</Str></F>
+                          <F name="copular"><Str>+</Str></F>
+                          <F name="ditransitive"><Str>-</Str></F>
+                          <F name="existential"><Str>-</Str></F>
+                          <F name="focusmarked"><Str>-</Str></F>
+                          <F name="gerund"><Str>-</Str></F>
+                          <F name="motion"><Str>-</Str></F>
+                          <F name="ordinal"><Str>-</Str></F>
+                          <F name="participle"><Str>-</Str></F>
+                          <F name="perception"><Str>-</Str></F>
+                          <F name="prefix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comp"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="pronoun-fronted"><Str>-</Str></F>
+                          <F name="reciprocal"><Str>-</Str></F>
+                          <F name="reflexive"><Str>-</Str></F>
+                          <F name="sentential"><Str>-</Str></F>
+                          <F name="sentential_with_object"><Str>-</Str></F>
+                          <F name="speech_DP"><Str>-</Str></F>
+                          <F name="speech_PP"><Str>-</Str></F>
+                          <F name="subject_focused"><Str>-</Str></F>
+                          <F name="suffix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conditional"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="subjunctive_conditional"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="takes_P"><Str>-</Str></F>
+                          <F name="topic"><Str>-</Str></F>
+                          <F name="transitive_motion"><Str>-</Str></F>
+                        </Fs>
+                      </F>
+                    </Fs>
+                  </F>
+                  <F name="lex"><Str>be</Str></F>
+                  <F name="properties"><Str>04f021dc-a0dd-44fc-8b0a-9e6741743dd8</Str></F>
+                  <F name="rootgloss"><Str>be</Str></F>
+                </Lexfs>
+                <Str>be</Str>
+              </Leaf>
+              <Node cat="AdjP" rule="AdjP option 0 - no modifiers" id="s1_2._21" all="true">
+                <Fs>
+                  <F name="cat"><Str>AdjP</Str></F>
+                  <F name="head">
+                    <Fs id="s1_2.co1">
+                      <F name="type">
+                        <Fs>
+                          <F name="clausal-comp"><Str>-</Str></F>
+                          <F name="comma"><Str>-</Str></F>
+                          <F name="comparative"><Str>-</Str></F>
+                          <F name="equalAdj"><Str>-</Str></F>
+                          <F name="focusmarked"><Str>-</Str></F>
+                          <F name="gerund"><Str>-</Str></F>
+                          <F name="ordinal"><Str>-</Str></F>
+                          <F name="participle"><Str>-</Str></F>
+                          <F name="prefix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comp"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="copular"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="sentential"><Str>-</Str></F>
+                          <F name="subject_focused"><Str>-</Str></F>
+                          <F name="suffix">
+                            <Fs>
+                              <F name="case"><Str>none</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="conj"><Str>-</Str></F>
+                              <F name="copular"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="negative"><Str>-</Str></F>
+                              <F name="poss"><Str>-</Str></F>
+                              <F name="relative"><Str>-</Str></F>
+                              <F name="superlative"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                          <F name="superlative"><Str>-</Str></F>
+                          <F name="takes_P"><Str>-</Str></F>
+                          <F name="topic"><Str>-</Str></F>
+                          <F name="wh"><Str>-</Str></F>
+                        </Fs>
+                      </F>
+                    </Fs>
+                  </F>
+                  <F name="option"><Str>0</Str></F>
+                </Fs>
+                <Node cat="Adj'" rule="Adj' option 0 - no complements" id="s1_2._22" all="true">
+                  <Fs>
+                    <F name="cat"><Str>Adj'</Str></F>
+                    <F name="head" fVal="s1_2.co1"></F>
+                    <F name="option"><Str>0</Str></F>
+                  </Fs>
+                  <Leaf cat="Adj" id="s1_2._23" all="true" gloss="happy">
+                    <Fs>
+                      <F name="cat"><Str>Adj</Str></F>
+                      <F name="decomposition"><Str>happy</Str></F>
+                      <F name="gloss"><Str>happy</Str></F>
+                      <F name="head" fVal="s1_2.co1"></F>
+                      <F name="lex"><Str>happy</Str></F>
+                      <F name="properties"><Str>07fbf262-bbe7-415b-af3f-8317a2cb4521</Str></F>
+                      <F name="rootgloss"><Str>happy</Str></F>
+                    </Fs>
+                    <Lexfs>
+                      <F name="cat"><Str>Adj</Str></F>
+                      <F name="decomposition"><Str>happy</Str></F>
+                      <F name="gloss"><Str>happy</Str></F>
+                      <F name="head">
+                        <Fs>
+                          <F name="type">
+                            <Fs>
+                              <F name="clausal-comp"><Str>-</Str></F>
+                              <F name="comma"><Str>-</Str></F>
+                              <F name="comparative"><Str>-</Str></F>
+                              <F name="equalAdj"><Str>-</Str></F>
+                              <F name="focusmarked"><Str>-</Str></F>
+                              <F name="gerund"><Str>-</Str></F>
+                              <F name="ordinal"><Str>-</Str></F>
+                              <F name="participle"><Str>-</Str></F>
+                              <F name="prefix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comp"><Str>-</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="copular"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="sentential"><Str>-</Str></F>
+                              <F name="subject_focused"><Str>-</Str></F>
+                              <F name="suffix">
+                                <Fs>
+                                  <F name="case"><Str>none</Str></F>
+                                  <F name="comparative"><Str>-</Str></F>
+                                  <F name="conj"><Str>-</Str></F>
+                                  <F name="copular"><Str>-</Str></F>
+                                  <F name="focusmarked"><Str>-</Str></F>
+                                  <F name="negative"><Str>-</Str></F>
+                                  <F name="poss"><Str>-</Str></F>
+                                  <F name="relative"><Str>-</Str></F>
+                                  <F name="superlative"><Str>-</Str></F>
+                                </Fs>
+                              </F>
+                              <F name="superlative"><Str>-</Str></F>
+                              <F name="takes_P"><Str>-</Str></F>
+                              <F name="topic"><Str>-</Str></F>
+                              <F name="wh"><Str>-</Str></F>
+                            </Fs>
+                          </F>
+                        </Fs>
+                      </F>
+                      <F name="lex"><Str>happy</Str></F>
+                      <F name="properties"><Str>07fbf262-bbe7-415b-af3f-8317a2cb4521</Str></F>
+                      <F name="rootgloss"><Str>happy</Str></F>
+                    </Lexfs>
+                    <Str>happy</Str>
+                  </Leaf>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </Node>
+      </Node>
+    </Node>
+  </Parse>
+</Analysis>
+\endparse
+

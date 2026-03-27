@@ -143,6 +143,7 @@ DistFiles/ReleaseData/
 # Exceptions
 !Lib/Windows/Debug
 !Lib/Windows/Release
+!Src/Utilities/pcpatrflex/DisambiguateInFLExDB/DisambiguateInFLExDBTests/TestData/*.log
 
 Lib/icu*.lib
 DistFiles/Icu*/data

@@ -1,0 +1,99 @@
+
+\ca W Prt Linker
+\cr W W
+
+
+\maxnull 1
+\maxprops 255
+\maxp 5
+\maxi 1
+\maxs 5
+\maxr 1
+\maxn 0
+\mp Proclitic Enclitic
+\mp RootPOS0 RootPOS2800 RootPOS5394 RootPOS4333 RootPOS8060 RootPOS1877 RootPOS6700 RootPOS6452 IrregInflForm79 IrregInflForm5238 IrregInflForm6456
+\ap Bound  MSEnvPOS2800 MSEnvPOS5394 MSEnvPOS4333 MSEnvPOS8060 MSEnvPOS1877 MSEnvPOS6700 MSEnvPOS6452  
+\scl 10523 | C
+ 
+ b d f g j k l m n p r s t v w x z ŋ
+\scl 10524 | V
+ 
+ a e i o u
+\pt SEC_ST
+\pt OrderPfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR (left orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+	OR ((current orderclass = -1) AND (left orderclass = 0))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+
+\pt Category (left tocategory is current fromcategory)
+\it SEC_ST
+\it OrderIfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR (left orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\it Category
+\nt InterfixType_ST
+	 NOT (    (left    type is interfixprefix)
+		  AND (current type is interfixsuffix)
+		 )
+\rt SEC_ST
+\co only proclitics can occur left of a particle
+\rt RootCategory_ST
+  IF (current tocategory is Prt)
+THEN (left property is Proclitic)
+
+\st SEC_ST
+\st OrderSfx_ST
+(    (left orderclassmin < current orderclassmin)
+AND (left orderclassmax < current orderclassmax) )
+OR (current orderclass = 0)
+OR ((current orderclass = 1) AND (left orderclass = 1))
+OR ((current orderclass = 32000) AND (left orderclass = 32000))
+OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
+OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\st SuffixCategory_ST
+   (left tocategory is current fromcategory)
+OR
+   | only enclitics can go on particles
+   (  IF (left tocategory is Prt)
+	THEN (current property is Enclitic)
+   )
+\ft OrderFinal_FT
+IF   (    (current orderclass = 0)
+	  AND (NOT (current type is root))
+	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
+	  AND (FOR_SOME_RIGHT (RIGHT orderclass ~= 0))
+	 )
+THEN (   (LEFT orderclass <= RIGHT orderclass)
+	  OR (    (LEFT  orderclass = -1)
+		  AND (RIGHT orderclass ~= -32000)
+		  )
+	  OR (    (RIGHT orderclass = 1)
+		  AND (LEFT  orderclass ~= 32000)
+		  )
+	 )
+\ft BoundStemOrRoot_FT
+IF   (current property is Bound)
+THEN (NOT (    (current type is initial)
+		   AND (current type is final))
+	 )
+\ft MCC_FT
+
+\patr TreeStyle none
+\patr ShowGlosses Off
+\patr ShowFeatures On
