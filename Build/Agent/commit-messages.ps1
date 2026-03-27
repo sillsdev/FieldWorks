@@ -1,14 +1,39 @@
-# Mirrored from .github/workflows/CommitMessage.yml, ported to PowerShell
-# Installs gitlint and lints commit messages since PR base (or origin default branch)
+# Runs the commit-message lint used by CI and local validation.
+# Exits with gitlint's exit code.
 
 $ErrorActionPreference = 'Stop'
+
+$resultsLogPath = 'check_results.log'
+
+if (Test-Path -LiteralPath $resultsLogPath) {
+	Remove-Item -LiteralPath $resultsLogPath -Force
+}
+
+New-Item -ItemType File -Path $resultsLogPath -Force | Out-Null
 
 # Import shared git helpers
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $ScriptDir 'GitHelpers.ps1')
 
-# Ensure Python/pip can install gitlint
-python -m pip install --upgrade gitlint
+function Install-GitLint {
+	$pythonCommand = $null
+	foreach ($candidate in @('python', 'python3')) {
+		if (Get-Command $candidate -ErrorAction SilentlyContinue) {
+			$pythonCommand = $candidate
+			break
+		}
+	}
+
+	if (-not $pythonCommand) {
+		throw 'Unable to locate python or python3 to install gitlint.'
+	}
+
+	& $pythonCommand -m pip install --upgrade gitlint
+}
+
+if (-not (Get-Command gitlint -ErrorAction SilentlyContinue)) {
+	Install-GitLint
+}
 
 # Ensure we have up-to-date refs
 git fetch origin 2>$null | Out-Null
@@ -25,11 +50,10 @@ else {
 	$range = 'HEAD~20..HEAD'
 }
 
-# Run gitlint and tee to check_results.log like CI
-# Note: PowerShell uses Tee-Object instead of POSIX tee
+# Run gitlint and tee output to a file for CI summaries and local inspection.
 $cmd = @('gitlint', '--ignore', 'body-is-missing', '--commits', $range)
 Write-Host "Running: $($cmd -join ' ')"
-$proc = & gitlint --ignore body-is-missing --commits $range 2>&1 | Tee-Object -FilePath check_results.log
+$proc = & gitlint --ignore body-is-missing --commits $range 2>&1 | Tee-Object -FilePath $resultsLogPath -Append
 $exit = $LASTEXITCODE
 $proc | Out-Host
 exit $exit
