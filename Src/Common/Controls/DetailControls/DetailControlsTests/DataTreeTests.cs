@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
@@ -273,6 +275,85 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var guid = m_dtree.GetGuidForJumpToTool(cmd, true, out tool);
 				Assert.That(guid, Is.EqualTo(m_dtree.Root.Guid));
 			}
+		}
+
+		[Test]
+		public void GetWheelScrollPixels_UsesSystemWheelSettings()
+		{
+			m_dtree.Bounds = new Rectangle(0, 0, 200, 100);
+
+			int delta = SystemInformation.MouseWheelScrollDelta;
+			int scrollLines = SystemInformation.MouseWheelScrollLines;
+			int expectedPixels;
+			if (scrollLines == 0)
+			{
+				expectedPixels = 0;
+			}
+			else if (scrollLines == int.MaxValue)
+			{
+				expectedPixels = m_dtree.ClientRectangle.Height;
+			}
+			else
+			{
+				expectedPixels = (int)Math.Round((double)scrollLines * m_dtree.Font.Height,
+					MidpointRounding.AwayFromZero);
+			}
+
+			Assert.That(DataTree.GetWheelScrollPixels(m_dtree, delta), Is.EqualTo(expectedPixels));
+			Assert.That(DataTree.GetWheelScrollPixels(m_dtree, -delta), Is.EqualTo(-expectedPixels));
+		}
+
+		[Test]
+		public void TryGetWheelScrollPosition_ReturnsFalse_WhenAlreadyAtTop()
+		{
+			m_dtree.Bounds = new Rectangle(0, 0, 200, 100);
+			m_dtree.AutoScrollMinSize = new Size(200, 1000);
+			m_dtree.AutoScrollPosition = new Point(0, 0);
+
+			int newY;
+			bool handled = DataTree.TryGetWheelScrollPosition(m_dtree,
+				SystemInformation.MouseWheelScrollDelta, out newY);
+
+			Assert.That(handled, Is.False);
+			Assert.That(newY, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void CanRedirectWheelMessage_ReturnsFalse_WhenDataTreeHidden()
+		{
+			m_parent.Show();
+			m_dtree.Show();
+			Assert.That(m_dtree.IsHandleCreated, Is.True);
+
+			m_dtree.Hide();
+
+			Assert.That(DataTree.CanRedirectWheelMessage(m_dtree), Is.False);
+		}
+
+		[Test]
+		public void Register_RegisteredTwice_AddsOneEntryAndSingleUnregisterRemovesIt()
+		{
+			Type wheelRedirectorType = typeof(DataTree).GetNestedType("WheelRedirector", BindingFlags.NonPublic);
+			Assert.That(wheelRedirectorType, Is.Not.Null);
+
+			object redirector = Activator.CreateInstance(wheelRedirectorType, true);
+			MethodInfo register = wheelRedirectorType.GetMethod("Register", BindingFlags.Public | BindingFlags.Instance);
+			MethodInfo unregister = wheelRedirectorType.GetMethod("Unregister", BindingFlags.Public | BindingFlags.Instance);
+			FieldInfo dataTreesField = wheelRedirectorType.GetField("m_dataTrees", BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.That(register, Is.Not.Null);
+			Assert.That(unregister, Is.Not.Null);
+			Assert.That(dataTreesField, Is.Not.Null);
+
+			register.Invoke(redirector, new object[] { m_dtree });
+			register.Invoke(redirector, new object[] { m_dtree });
+
+			object registrations = dataTreesField.GetValue(redirector);
+			PropertyInfo countProperty = registrations.GetType().GetProperty("Count", BindingFlags.Public | BindingFlags.Instance);
+			Assert.That(countProperty, Is.Not.Null);
+			Assert.That((int)countProperty.GetValue(registrations, null), Is.EqualTo(1));
+
+			unregister.Invoke(redirector, new object[] { m_dtree });
+			Assert.That((int)countProperty.GetValue(registrations, null), Is.EqualTo(0));
 		}
 
 		/// <summary></summary>

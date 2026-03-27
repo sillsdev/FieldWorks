@@ -477,6 +477,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_autoCustomFieldNodesDocument = new XmlDocument();
 			m_autoCustomFieldNodesDocRoot = m_autoCustomFieldNodesDocument.CreateElement("root");
 			m_autoCustomFieldNodesDocument.AppendChild(m_autoCustomFieldNodesDocRoot);
+			s_wheelRedirector.Register(this);
 		}
 
 		/// <summary>
@@ -1247,6 +1248,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
+
+				s_wheelRedirector.Unregister(this);
+
 				Subscriber.Unsubscribe(EventConstants.PostponePropChanged, PostponePropChanged);
 
 				// Do this first, before setting m_fDisposing to true.
@@ -4530,6 +4534,105 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 			return true;
+		}
+
+		private static readonly WheelRedirector s_wheelRedirector = new WheelRedirector();
+
+		internal static int GetWheelScrollPixels(DataTree dataTree, int delta)
+		{
+			if (delta == 0)
+				return 0;
+
+			int scrollLines = SystemInformation.MouseWheelScrollLines;
+			if (scrollLines == 0)
+				return 0;
+
+			if (scrollLines == int.MaxValue)
+				return Math.Sign(delta) * dataTree.ClientRectangle.Height;
+
+			double linesToScroll = (double)delta / SystemInformation.MouseWheelScrollDelta * scrollLines;
+			return (int)Math.Round(linesToScroll * dataTree.Font.Height, MidpointRounding.AwayFromZero);
+		}
+
+		internal static bool TryGetWheelScrollPosition(DataTree dataTree, int delta, out int newY)
+		{
+			int currentY = -dataTree.AutoScrollPosition.Y;
+			int maxScroll = Math.Max(0,
+				dataTree.AutoScrollMinSize.Height - dataTree.ClientRectangle.Height);
+			int pixelDelta = GetWheelScrollPixels(dataTree, delta);
+			newY = Math.Max(0, Math.Min(currentY - pixelDelta, maxScroll));
+			return newY != currentY;
+		}
+
+		internal static bool CanRedirectWheelMessage(DataTree dataTree)
+		{
+			return dataTree.IsHandleCreated && !dataTree.IsDisposed && dataTree.Visible;
+		}
+
+		/// <summary>
+		/// Application-level message filter that intercepts WM_MOUSEWHEEL messages
+		/// and scrolls the DataTree when the cursor is over its client area.
+		/// Some child controls (e.g. RichTextBox in DateSlice) consume WM_MOUSEWHEEL
+		/// without propagating it, preventing the DataTree from scrolling.
+		/// Intercepting at the message pump level ensures consistent scroll behavior
+		/// regardless of which child control has focus.
+		/// </summary>
+		private sealed class WheelRedirector : IMessageFilter
+		{
+			private readonly HashSet<DataTree> m_dataTrees = new HashSet<DataTree>();
+			private bool m_installed;
+
+			public void Register(DataTree dataTree)
+			{
+				if (!m_dataTrees.Add(dataTree))
+					return;
+				if (!m_installed)
+				{
+					Application.AddMessageFilter(this);
+					m_installed = true;
+				}
+			}
+
+			public void Unregister(DataTree dataTree)
+			{
+				if (!m_dataTrees.Remove(dataTree))
+					return;
+
+				if (m_dataTrees.Count == 0 && m_installed)
+				{
+					Application.RemoveMessageFilter(this);
+					m_installed = false;
+				}
+			}
+
+			public bool PreFilterMessage(ref Message m)
+			{
+				if (m.Msg != (int)Win32.WinMsgs.WM_MOUSEWHEEL)
+					return false;
+
+				Point cursor = Cursor.Position;
+				foreach (var dataTree in m_dataTrees)
+				{
+					if (!CanRedirectWheelMessage(dataTree))
+						continue;
+
+					Rectangle bounds = dataTree.RectangleToScreen(dataTree.ClientRectangle);
+					if (!bounds.Contains(cursor))
+						continue;
+
+					int delta = (short)((long)m.WParam >> 16);
+					int newY;
+					if (TryGetWheelScrollPosition(dataTree, delta, out newY))
+					{
+						dataTree.AutoScrollPosition = new Point(0, newY);
+						return true;
+					}
+
+					return false;
+				}
+
+				return false;
+			}
 		}
 	}
 
