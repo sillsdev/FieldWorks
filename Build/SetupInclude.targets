@@ -364,6 +364,20 @@
 		/>
 		<Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)." />
 	</Target>
+	<!-- TODO: call this and setRegistryValues (or remakefw-internal) during bootstrap builds (developer and CI/CD) -->
+	<Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
+		<XslTransformation
+			OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"
+			XmlInputPaths="$(LcmModelArtifactsDir)/MasterLCModel.xml"
+			XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/PartGenerate.xslt"
+		/>
+		<XslTransformation
+			OutputPaths="$(fwrt)/DistFiles/Parts/Generated.fwlayout"
+			XmlInputPaths="$(LcmModelArtifactsDir)/MasterLCModel.xml"
+			XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/LayoutGenerate.xslt"
+		/>
+		<Message Text="Updated GeneratedParts.xml and Generated.fwlayout (if needed)." />
+	</Target>
 	<PropertyGroup>
 		<!-- Only compute fwrt if not already set (e.g., by NativeBuild.csproj) -->
 		<fwrt Condition="'$(fwrt)'==''">$([System.IO.Path]::GetFullPath("$(MSBuildProjectDirectory)/.."))</fwrt>
