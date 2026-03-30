@@ -344,36 +344,16 @@ if ($toPack.Count -gt 0) {
 		New-Item -Path $localRepo -ItemType Directory -Force | Out-Null
 	}
 
-	# Ensure nuget.config has the local source and mapping
-	$nugetConfigPath = Join-Path $repoRoot "nuget.config"
-	[xml]$nugetConfig = Get-Content -LiteralPath $nugetConfigPath
-	$sources = $nugetConfig.SelectSingleNode("//packageSources")
-	$existing = $sources.SelectSingleNode("add[@key='local']")
-	if ($existing) {
-		if ($existing.value -ne $localRepo) {
-			$existing.value = $localRepo
-			Write-Host "Updated local source in nuget.config to $localRepo" -ForegroundColor Yellow
-		}
+	# Ensure local NuGet source is registered (user-level config)
+	$sourceList = & dotnet nuget list source 2>&1
+	$normalizedRepo = [System.IO.Path]::GetFullPath($localRepo).TrimEnd('\', '/')
+	$alreadyRegistered = $sourceList | Where-Object {
+		$_.Trim() -replace '[\\/]$', '' -ieq $normalizedRepo
 	}
-	else {
-		$newSource = $nugetConfig.CreateElement("add")
-		$newSource.SetAttribute("key", "local")
-		$newSource.SetAttribute("value", $localRepo)
-		$sources.AppendChild($newSource) | Out-Null
-		Write-Host "Added local source to nuget.config: $localRepo" -ForegroundColor Yellow
+	if (-not $alreadyRegistered) {
+		& dotnet nuget add source $localRepo --name local 2>&1 | Out-Null
+		Write-Host "Added local NuGet source: $localRepo" -ForegroundColor Yellow
 	}
-	# Ensure package source mapping includes local
-	$mapping = $nugetConfig.SelectSingleNode("//packageSourceMapping")
-	if ($mapping -and -not $mapping.SelectSingleNode("packageSource[@key='local']")) {
-		$localMapping = $nugetConfig.CreateElement("packageSource")
-		$localMapping.SetAttribute("key", "local")
-		$pattern = $nugetConfig.CreateElement("package")
-		$pattern.SetAttribute("pattern", "*")
-		$localMapping.AppendChild($pattern) | Out-Null
-		$mapping.AppendChild($localMapping) | Out-Null
-		Write-Host "Added local source mapping to nuget.config" -ForegroundColor Yellow
-	}
-	$nugetConfig.Save($nugetConfigPath)
 
 	Write-Host ""
 	Write-Host "Libraries to pack: $($toPack.Keys -join ', ')" -ForegroundColor Cyan

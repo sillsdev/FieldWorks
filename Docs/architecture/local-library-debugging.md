@@ -6,12 +6,13 @@ This document describes how to debug locally-modified versions of **liblcm**, **
 
 The workflow uses a single PowerShell script (`Build/Manage-LocalLibraries.ps1`) that:
 
-1. Runs `dotnet pack` in Debug configuration with symbols, letting the library use its own version.
-2. Detects the version from the produced packages.
-3. Updates `SilVersions.props` so FieldWorks resolves that exact version.
-4. Places `.nupkg` / `.snupkg` in your local NuGet feed folder.
-5. Copies PDB files to `Output/Debug/` and `Downloads/` for debugger access.
-6. Clears stale cached packages so the next restore picks up the local build.
+1. Adds a local NuGet source to `nuget.config` (pointing to your `LOCAL_NUGET_REPO` folder).
+2. Runs `dotnet pack` in Debug configuration with symbols, letting the library use its own version.
+3. Detects the version from the produced packages.
+4. Updates `SilVersions.props` so FieldWorks resolves that exact version.
+5. Places `.nupkg` / `.snupkg` in your local NuGet feed folder.
+6. Copies PDB files to `Output/Debug/` and `Downloads/` for debugger access.
+7. Clears stale cached packages so the next restore picks up the local build.
 
 This approach works identically for all three libraries.
 
@@ -35,7 +36,7 @@ $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
 [System.Environment]::SetEnvironmentVariable("LOCAL_NUGET_REPO", "C:\localnugetpackages", "User")
 ```
 
-The `nuget.config` in the FieldWorks repo already references `%LOCAL_NUGET_REPO%` as a package source. NuGet silently ignores it when the variable is unset.
+The script automatically registers this folder as a NuGet source in your user-level NuGet config when you pack. The repo's `nuget.config` is not modified.
 
 ### 3. Clone the library you need
 
@@ -120,9 +121,15 @@ Use `-Version` to set the library back to its upstream version:
 Or revert all libraries at once:
 
 ```powershell
-git checkout Build/SilVersions.props nuget.config
+git checkout Build/SilVersions.props
 Remove-Item -Recurse packages/sil.*
 .\build.ps1
+```
+
+To also remove the user-level local source:
+
+```powershell
+dotnet nuget remove source local
 ```
 
 ## Supported libraries
