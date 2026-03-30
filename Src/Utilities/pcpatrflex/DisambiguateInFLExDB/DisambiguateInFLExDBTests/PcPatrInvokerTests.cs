@@ -32,7 +32,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		{
 			// Check for the existence of the PcPatr executable
 			Assert.IsTrue(File.Exists(Path.Combine(FwDirectoryFinder.ExeOrDllDirectory, "pcpatr64.exe")));
-			string grammarFile = Path.Combine(TestDataDir, "Invoker.grm");
+			string grammarFile = "Invoker.grm";
+			File.Copy(Path.Combine(TestDataDir, grammarFile), Path.Combine(Path.GetTempPath(), grammarFile), true);
 			string anaFile = Path.Combine(TestDataDir, "Invoker.ana");
 			File.Copy(anaFile, Path.Combine(Path.GetTempPath(), "Invoker.ana"), true);
 			string andFile = Path.Combine(TestDataDir, "InvokerB4.and");
@@ -127,7 +128,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		[Test]
 		public void PcPatrInvokerFailureTest()
 		{
-			string grammarFile = Path.Combine(TestDataDir, "GrammarFail.grm");
+			string grammarFile = "GrammarFail.grm";
+			File.Copy(Path.Combine(TestDataDir, grammarFile), Path.Combine(Path.GetTempPath(), grammarFile), true);
 			string anaFile = Path.Combine(TestDataDir, "InvokerFail.ana");
 			var invoker = new PCPatrInvoker(grammarFile, anaFile, "Off");
 			invoker.Invoke();

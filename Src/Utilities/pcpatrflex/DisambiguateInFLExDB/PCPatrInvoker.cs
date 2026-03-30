@@ -108,13 +108,17 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append(logFileName);
 			sbTake.Append("\n");
 			sbTake.Append("load grammar ");
-			StringBuilder sbGrammarFileShortPath = new StringBuilder(255);
-			i = GetShortPathName(
-				GrammarFile,
-				sbGrammarFileShortPath,
-				sbGrammarFileShortPath.Capacity
-			);
-			sbTake.Append(sbGrammarFileShortPath.ToString() + "\n");
+			sbTake.Append(GrammarFile);
+			sbTake.Append("\n");
+			// See if the failure we're getting in GitHub is due to not finding the grammr file:
+			// We'll put it in the temp directory now.
+			//StringBuilder sbGrammarFileShortPath = new StringBuilder(255);
+			//i = GetShortPathName(
+			//	GrammarFile,
+			//	sbGrammarFileShortPath,
+			//	sbGrammarFileShortPath.Capacity
+			//);
+			//sbTake.Append(sbGrammarFileShortPath.ToString() + "\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
 			sbTake.Append("set features all\n");

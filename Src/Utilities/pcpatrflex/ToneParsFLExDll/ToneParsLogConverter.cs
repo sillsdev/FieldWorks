@@ -76,7 +76,8 @@ namespace SIL.ToneParsFLEx
 
 		private void BuildHvoGlossMapper(Dictionary<string, string> hvoGlossMapper)
 		{
-			const string endOfLine = "\n";
+			const string newLine = "\n";
+			const string carriageReturn = "\r";
 			const string colon = ":";
 			const string space = " ";
 			// Find all instances of 'Working on:' which has the MSA hvos.
@@ -96,9 +97,11 @@ namespace SIL.ToneParsFLEx
 					// space hvo \r
 					// space hvo :
 					var spaceHvoSpace = space + sHvo + space;
-					var spaceHvoCR = space + sHvo + endOfLine;
+					var spaceHvoNL = space + sHvo + newLine;
+					var spaceHvoCR = space + sHvo + carriageReturn;
 					var spaceHvoColon = space + sHvo + colon;
-					if (hvoGlossMapper.ContainsKey(spaceHvoSpace))
+					if (hvoGlossMapper.ContainsKey(spaceHvoSpace) || hvoGlossMapper.ContainsKey(spaceHvoNL)
+						|| hvoGlossMapper.ContainsKey(spaceHvoCR) || hvoGlossMapper.ContainsKey(spaceHvoColon))
 						continue;
 					int hvo = 0;
 					if (Int32.TryParse(sHvo, out hvo))
@@ -113,7 +116,8 @@ namespace SIL.ToneParsFLEx
 							{
 								var gloss = sense.Gloss.BestAnalysisAlternative.Text;
 								hvoGlossMapper.Add(spaceHvoSpace, space + gloss + space);
-								hvoGlossMapper.Add(spaceHvoCR, space + gloss + endOfLine);
+								hvoGlossMapper.Add(spaceHvoCR, space + gloss + carriageReturn);
+								hvoGlossMapper.Add(spaceHvoNL, space + gloss + newLine);
 								hvoGlossMapper.Add(spaceHvoColon, space + gloss + colon);
 							}
 						}
