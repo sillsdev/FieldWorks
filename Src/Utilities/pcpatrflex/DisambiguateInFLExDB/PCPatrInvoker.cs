@@ -57,7 +57,6 @@ namespace SIL.DisambiguateInFLExDB
 			sbBatchFile.Append("\\pcpatr64\" -t ");
 			sbBatchFile.Append(takeFileName);
 			sbBatchFile.Append("\n");
-			Console.Write(sbBatchFile.ToString());
 			File.WriteAllText(BatchFile, sbBatchFile.ToString());
 		}
 
@@ -84,19 +83,23 @@ namespace SIL.DisambiguateInFLExDB
 
 			using (var process = Process.Start(processInfo))
 			{
+				Console.WriteLine("\nBefore WaitForExit");
 				process.WaitForExit();
-				process.StandardOutput.Close();
-				process.StandardError.Close();
-				process.Close();
+				Console.WriteLine("\tAfter  WaitForExit");
 				string error = process.StandardError.ReadToEnd();
 				if (error.Contains("ERROR "))
 				{
+					Console.WriteLine("\tFailure");
 					InvocationSucceeded = false;
 				}
 				else
 				{
+					Console.WriteLine("\tSuccess");
 					InvocationSucceeded = true;
 				}
+				process.StandardOutput.Close();
+				process.StandardError.Close();
+				process.Close();
 			}
 		}
 
@@ -140,8 +143,7 @@ namespace SIL.DisambiguateInFLExDB
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
 			sbTake.Append("exit\n");
-			//Console.Write(sbTake.ToString());
-			File.WriteAllText(takeFile, sbTake.ToString(), Encoding.UTF8);
+			File.WriteAllText(takeFile, sbTake.ToString());
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
 		}
 
