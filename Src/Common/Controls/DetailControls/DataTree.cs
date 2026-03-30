@@ -1073,11 +1073,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					continue;
 				}
-				if (slice is MorphTypeAtomicReferenceSlice && slice.Object is IMoAffixForm affix && affix.MorphTypeRA == fieldObj)
+				if (slice is MorphTypeAtomicReferenceSlice && slice.Object is IMoAffixForm affix &&
+					(affix.MorphTypeRA == fieldObj || (fieldObj is IMoMorphSynAnalysis && SliceMatchesText(slice, fieldValue))))
 				{
 					m_fSetCurrentSliceNew = true;
 				}
 				else if (slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+				else if (slice.Object is ILexEntryRef lexEntryRef && lexEntryRef.ComponentLexemesRS.Contains(fieldObj) && fieldName == "LookupComplexEntryType")
+				{
+					m_fSetCurrentSliceNew = true;
+				}
+				else if (slice.Object is ILexEntryRef lexEntryRef2 && lexEntryRef2.ComplexEntryTypesRS.Contains(fieldObj) && fieldName == "ReverseAbbr")
 				{
 					m_fSetCurrentSliceNew = true;
 				}
@@ -1098,7 +1107,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
-			if (!found)
+			if (!found && fieldObj != Root)
 			{
 				// Try matching just object.
 				foreach (Slice slice in Slices)
@@ -1157,6 +1166,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							return true;
 						}
 					}
+				}
+				else if (slice is MorphTypeAtomicReferenceSlice && slice.Object is IMoAffixForm affix)
+				{
+					IMoMorphType morphType = affix.MorphTypeRA;
+					if (MultiStringMatchesText(morphType.Name, text) || MultiStringMatchesText(morphType.Abbreviation, text))
+					{
+						return true;
+					}
+
 				}
 				else if (slice is PossibilityReferenceVectorSlice)
 				{
