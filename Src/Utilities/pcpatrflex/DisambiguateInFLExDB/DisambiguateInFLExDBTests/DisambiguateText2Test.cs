@@ -24,8 +24,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		{
 			//IcuInit();
 			TestDirInit();
-			TestFile = Path.Combine(TestDataDir, "PCPATRTestingMultiSegmentInitPunc.fwdata");
-			SavedTestFile = Path.Combine(TestDataDir, "PCPATRTestingMultiSegmentInitPuncB4.fwdata");
+			TestFile = "PCPATRTestingMultiSegmentInitPunc.fwdata";
+			SavedTestFile = "PCPATRTestingMultiSegmentInitPuncB4.fwdata";
 
 			base.FixtureSetup();
 			Text2Testing = new string[]

@@ -26,20 +26,23 @@ namespace SIL.DisambiguateInFLExDBTests
 		protected string TestDataDir { get; set; }
 		protected string SavedTestFile { get; set; }
 		protected string TestFile { get; set; }
+		protected string TempTestFile { get; set; }
 		protected LcmCache MyCache { get; set; }
 		public ProjectId ProjId { get; set; }
+		const string kTestFile = "PCPATRTesting.fwdata";
+		const string kTestFileB4 = "PCPATRTestingB4.fwdata";
 
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 			TestDirInit();
 			if (String.IsNullOrEmpty(TestFile))
-				TestFile = Path.Combine(TestDataDir, "PCPATRTesting.fwdata");
-
+				TestFile = "PCPATRTesting.fwdata";
 			if (String.IsNullOrEmpty(SavedTestFile))
-				SavedTestFile = Path.Combine(TestDataDir, "PCPATRTestingB4.fwdata");
-			File.Copy(SavedTestFile, TestFile, true);
-			ProjId = new ProjectId(TestFile);
+				SavedTestFile = "PCPATRTestingB4.fwdata";
+			TempTestFile = Path.Combine(Path.GetTempPath(), TestFile);
+			File.Copy(Path.Combine(TestDataDir, SavedTestFile), TempTestFile, true);
+			ProjId = new ProjectId(TempTestFile);
 			FwRegistryHelper.Initialize();
 			FwUtils.InitializeIcu();
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
@@ -63,7 +66,10 @@ namespace SIL.DisambiguateInFLExDBTests
 			if (MyCache != null)
 			{
 				ProjectLockingService.UnlockCurrentProject(MyCache);
-				File.Copy(SavedTestFile, TestFile, true);
+				if (File.Exists(TempTestFile))
+				{
+					File.Delete(TempTestFile);
+				}
 			}
 		}
 	}

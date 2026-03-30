@@ -27,8 +27,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		{
 			//IcuInit();
 			TestDirInit();
-			TestFile = Path.Combine(TestDataDir, "PCPATRTestingMultiMorphemic.fwdata");
-			SavedTestFile = Path.Combine(TestDataDir, "PCPATRTestingMultiMorphemicB4.fwdata");
+			TestFile = "PCPATRTestingMultiMorphemic.fwdata";
+			SavedTestFile = "PCPATRTestingMultiMorphemicB4.fwdata";
 
 			base.FixtureSetup();
 

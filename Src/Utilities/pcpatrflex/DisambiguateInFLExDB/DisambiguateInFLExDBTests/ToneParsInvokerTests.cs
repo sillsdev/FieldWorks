@@ -40,15 +40,17 @@ namespace SIL.DisambiguateInFLExDBTests
 		const string kLexiconTPFile = "KuniToneParsTestTPlex.txt";
 		const string kTPSegFile = "KVGTP.seg";
 		const string kTPIntxFile = "KVGintx.ctl";
+		const string kTestFile = "KuniToneParsTest.fwdata";
+		const string kTestFileB4 = "KuniToneParsTestB4.fwdata";
 
 		[SetUp]
 		public override void FixtureSetup()
 		{
 			//IcuInit();
 			TestDirInit();
-			base.FixtureSetup();
-			TestFile = Path.Combine(TestDataDir, "KuniToneParsTest.fwdata");
-			SavedTestFile = Path.Combine(TestDataDir, "KuniToneParsTestB4.fwdata");
+			//base.FixtureSetup();
+			TestFile = "KuniToneParsTest.fwdata";
+			SavedTestFile = "KuniToneParsTestB4.fwdata";
 			ToneParsInvokerOptions.Instance.ResetAllOptions();
 
 			base.FixtureSetup();
