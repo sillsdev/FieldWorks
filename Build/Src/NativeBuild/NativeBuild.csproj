@@ -53,7 +53,7 @@
       They must be explicitly referenced here because NativeBuild.csproj is a traditional
       MSBuild project, not an SDK-style project, so it doesn't inherit from Directory.Build.props.
     -->
-    <PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1">
+    <PackageReference Include="SIL.Chorus.L10ns" Version="$(SilChorusL10nsVersion)">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -67,11 +67,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <!-- Override the Build target to call native build instead -->
-  <Target
-    Name="Build"
-    DependsOnTargets="allCppNoTest"
-  >
+  <!-- Override the Build target to call native build instead. Also call auxiliary targets. -->
+  <Target Name="Build" DependsOnTargets="allCppNoTest;GeneratePartsAndLayoutFiles;setRegistryValues">
     <Message Text="Native C++ components built successfully" Importance="high" />
   </Target>
   <!-- Ensure Clean works -->

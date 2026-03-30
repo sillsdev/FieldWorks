@@ -15,6 +15,7 @@
 		<SilLcmVersion>11.0.0-beta0159</SilLcmVersion>
 		<SilLibPalasoVersion>17.0.0</SilLibPalasoVersion>
 		<SilChorusVersion>6.0.0-beta0063</SilChorusVersion>
+		<SilChorusL10nsVersion>3.0.1</SilChorusL10nsVersion>
 		<SilMachineVersion>3.7.13</SilMachineVersion>
 		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>

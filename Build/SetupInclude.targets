@@ -364,7 +364,6 @@
 		/>
 		<Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)." />
 	</Target>
-	<!-- TODO: call this and setRegistryValues (or remakefw-internal) during bootstrap builds (developer and CI/CD) -->
 	<Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
 		<XslTransformation
 			OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"
