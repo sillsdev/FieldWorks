@@ -405,6 +405,20 @@ try {
 			Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
 		}
 
+		# Report local library packages when LOCAL_NUGET_REPO is configured
+		if ($env:LOCAL_NUGET_REPO -and (Test-Path $env:LOCAL_NUGET_REPO)) {
+			$localPkgs = Get-ChildItem -Path $env:LOCAL_NUGET_REPO -Filter "SIL.*.nupkg" -File -ErrorAction SilentlyContinue
+			if ($localPkgs.Count -gt 0) {
+				Write-Host ""
+				Write-Host "Local library packages detected in $($env:LOCAL_NUGET_REPO):" -ForegroundColor Yellow
+				foreach ($pkg in $localPkgs) {
+					Write-Host "  $($pkg.Name)" -ForegroundColor Yellow
+				}
+				Write-Host "These will shadow upstream NuGet packages during restore." -ForegroundColor Yellow
+				Write-Host ""
+			}
+		}
+
 		# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
 		$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
 		Invoke-MSBuild `
