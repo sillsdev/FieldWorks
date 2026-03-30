@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.DisambiguateInFLExDB
 {
@@ -62,9 +63,10 @@ namespace SIL.DisambiguateInFLExDB
 
 		private string GetPcPatr64ExePath()
 		{
-			Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-			var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-			return rootdir;
+			return FwDirectoryFinder.ExeOrDllDirectory;
+			//Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+			//var rootdir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
+			//return rootdir;
 		}
 
 		public void Invoke()
