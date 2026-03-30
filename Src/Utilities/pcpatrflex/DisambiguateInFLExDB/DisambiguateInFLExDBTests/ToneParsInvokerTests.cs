@@ -113,7 +113,6 @@ namespace SIL.DisambiguateInFLExDBTests
 				Path.Combine(Path.GetTempPath(), kTPIntxFile),
 				true
 			);
-			string toneParsLexFile = Path.Combine(TestDataDir, "KvgTP.ctl");
 			string toneParsRuleFile = Path.Combine(TestDataDir, "KvgTP.ctl");
 			string intxCtlFile = Path.Combine(TestDataDir, "KVGintx.ctl");
 			string inputFile = Path.Combine(TestDataDir, "KVGinput.txt");

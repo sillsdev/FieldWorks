@@ -85,6 +85,9 @@ namespace SIL.DisambiguateInFLExDB
 			using (var process = Process.Start(processInfo))
 			{
 				process.WaitForExit();
+				process.StandardOutput.Close();
+				process.StandardError.Close();
+				process.Close();
 				string error = process.StandardError.ReadToEnd();
 				if (error.Contains("ERROR "))
 				{
@@ -100,8 +103,8 @@ namespace SIL.DisambiguateInFLExDB
 		private void CreateTakeFile()
 		{
 			string takeFile = Path.Combine(Path.GetTempPath(), takeFileName);
-			StringBuilder sbTakeFileShortPath = new StringBuilder(255);
-			int i = GetShortPathName(takeFile, sbTakeFileShortPath, sbTakeFileShortPath.Capacity);
+			//StringBuilder sbTakeFileShortPath = new StringBuilder(255);
+			//int i = GetShortPathName(takeFile, sbTakeFileShortPath, sbTakeFileShortPath.Capacity);
 			var sbTake = new StringBuilder();
 			sbTake.Append("set comment |\n");
 			sbTake.Append("log ");
@@ -138,7 +141,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
 			sbTake.Append("exit\n");
 			//Console.Write(sbTake.ToString());
-			File.WriteAllText(takeFile, sbTake.ToString());
+			File.WriteAllText(takeFile, sbTake.ToString(), Encoding.UTF8);
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
 		}
 
