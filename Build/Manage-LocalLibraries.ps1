@@ -23,17 +23,26 @@
 
 	See Docs/architecture/local-library-debugging.md for the full workflow.
 
-.PARAMETER LibPalasoPath
-	Path to a local libpalaso checkout. Falls back to LIBPALASO_PATH env var
-	if the switch -LibPalaso is used without a path.
+.PARAMETER Palaso
+	Switch: include libpalaso in the pack operation.
 
-.PARAMETER LibLcmPath
-	Path to a local liblcm checkout. Falls back to LIBLCM_PATH env var
-	if the switch -LibLcm is used without a path.
+.PARAMETER PalasoPath
+	Path to a local libpalaso checkout. Overrides LIBPALASO_PATH env var.
+	Only used when -Palaso is specified.
+
+.PARAMETER Lcm
+	Switch: include liblcm in the pack operation.
+
+.PARAMETER LcmPath
+	Path to a local liblcm checkout. Overrides LIBLCM_PATH env var.
+	Only used when -Lcm is specified.
+
+.PARAMETER Chorus
+	Switch: include chorus in the pack operation.
 
 .PARAMETER ChorusPath
-	Path to a local chorus checkout. Falls back to LIBCHORUS_PATH env var
-	if the switch -Chorus is used without a path.
+	Path to a local chorus checkout. Overrides LIBCHORUS_PATH env var.
+	Only used when -Chorus is specified.
 
 .PARAMETER Library
 	Which library to set a version for (SetVersion mode only):
@@ -44,21 +53,26 @@
 	to an upstream version. Not used in pack mode.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibrary.ps1 -LibPalasoPath C:\Repos\libpalaso
+	.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
 	Packs libpalaso, detects its version, and updates SilVersions.props.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibrary.ps1 -LibPalasoPath C:\Repos\libpalaso -ChorusPath C:\Repos\chorus
-	Packs libpalaso first, then chorus.
+	.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus -ChorusPath C:\Repos\chorus
+	Packs libpalaso (from env var) and chorus first, then chorus.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibrary.ps1 -Library libpalaso -Version 17.0.0
+	.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
 	Sets libpalaso version to 17.0.0 in SilVersions.props (e.g. to revert).
 #>
 [CmdletBinding()]
 param(
-	[string]$LibPalasoPath,
-	[string]$LibLcmPath,
+	[switch]$Palaso,
+	[string]$PalasoPath,
+
+	[switch]$Lcm,
+	[string]$LcmPath,
+
+	[switch]$Chorus,
 	[string]$ChorusPath,
 
 	[ValidateSet('liblcm', 'libpalaso', 'chorus')]
@@ -282,27 +296,31 @@ function Invoke-PackLibrary {
 # Build the list of libraries to pack (in order)
 # ===========================================================================
 
-# Map parameter paths to library names
-$paramPaths = @{
-	libpalaso = $LibPalasoPath
-	liblcm    = $LibLcmPath
-	chorus    = $ChorusPath
+# Map switches and explicit paths to library names
+$switchMap = @{
+	libpalaso = @{ Enabled = [bool]$Palaso;  ExplicitPath = $PalasoPath }
+	liblcm    = @{ Enabled = [bool]$Lcm;     ExplicitPath = $LcmPath }
+	chorus    = @{ Enabled = [bool]$Chorus;   ExplicitPath = $ChorusPath }
 }
 
-# Resolve source paths from parameters or environment variables
+# Resolve source paths: explicit path > env var (only when switch is set)
 $toPack = [ordered]@{}
 foreach ($lib in $PackOrder) {
+	$sw = $switchMap[$lib]
+	if (-not $sw.Enabled) { continue }
+
 	$cfg = $LibraryConfig[$lib]
-	$path = $paramPaths[$lib]
+	$path = $sw.ExplicitPath
 	if (-not $path) {
 		$path = [System.Environment]::GetEnvironmentVariable($cfg.EnvVar)
 	}
-	if ($path) {
-		if (-not (Test-Path $path)) {
-			throw "Source path for $lib does not exist: $path"
-		}
-		$toPack[$lib] = $path
+	if (-not $path) {
+		throw "-$($lib) was specified but no path was provided and $($cfg.EnvVar) is not set."
 	}
+	if (-not (Test-Path $path)) {
+		throw "Source path for $lib does not exist: $path"
+	}
+	$toPack[$lib] = $path
 }
 
 # ===========================================================================
@@ -358,5 +376,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Provide source paths to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibrary.ps1 -LibPalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibrary.ps1 -Library libpalaso -Version 17.0.0"
+	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
 }

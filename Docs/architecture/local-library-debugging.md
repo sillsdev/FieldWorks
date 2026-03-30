@@ -4,7 +4,7 @@ This document describes how to debug locally-modified versions of **liblcm**, **
 
 ## Overview
 
-The workflow uses a single PowerShell script (`Build/Manage-LocalLibrary.ps1`) that:
+The workflow uses a single PowerShell script (`Build/Manage-LocalLibraries.ps1`) that:
 
 1. Runs `dotnet pack` in Debug configuration with symbols, letting the library use its own version.
 2. Detects the version from the produced packages.
@@ -48,11 +48,11 @@ git clone https://github.com/sillsdev/chorus.git
 ## Pack a local library
 
 ```powershell
-# Single library
-.\Build\Manage-LocalLibrary.ps1 -LibPalasoPath C:\Repos\libpalaso
+# Single library — explicit path
+.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
 
 # Multiple libraries (libpalaso is always packed first)
-.\Build\Manage-LocalLibrary.ps1 -LibPalasoPath C:\Repos\libpalaso -ChorusPath C:\Repos\chorus
+.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso -Chorus -ChorusPath C:\Repos\chorus
 ```
 
 Or set environment variables so you can omit the paths:
@@ -62,8 +62,8 @@ $env:LIBPALASO_PATH = "C:\Repos\libpalaso"
 $env:LIBLCM_PATH    = "C:\Repos\liblcm"
 $env:LIBCHORUS_PATH = "C:\Repos\chorus"
 
-# Packs all libraries whose env vars are set
-.\Build\Manage-LocalLibrary.ps1
+# Switches still required — env vars only provide the path
+.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus
 ```
 
 The script:
@@ -92,7 +92,7 @@ The build will print a yellow message listing any local packages detected in `LO
 
 After each change to the library:
 
-1. Re-run `Manage-LocalLibrary.ps1` (~30-60 seconds).
+1. Re-run `Manage-LocalLibraries.ps1` (~30-60 seconds).
 2. Re-run `.\build.ps1`.
 
 ## Setting a specific version
@@ -101,10 +101,10 @@ Use `-Version` to set any library to a specific version in `SilVersions.props` w
 
 ```powershell
 # Revert libpalaso to an upstream version
-.\Build\Manage-LocalLibrary.ps1 -Library libpalaso -Version 17.0.0
+.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
 
 # Set liblcm to a specific pre-release version
-.\Build\Manage-LocalLibrary.ps1 -Library liblcm -Version 11.0.0-beta0159
+.\Build\Manage-LocalLibraries.ps1 -Library liblcm -Version 11.0.0-beta0159
 ```
 
 This updates `SilVersions.props` and clears stale cached packages. Run `.\build.ps1` afterward to restore and build with the new version.
@@ -114,7 +114,7 @@ This updates `SilVersions.props` and clears stale cached packages. Run `.\build.
 Use `-Version` to set the library back to its upstream version:
 
 ```powershell
-.\Build\Manage-LocalLibrary.ps1 -Library libpalaso -Version 17.0.0
+.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
 ```
 
 Or revert all libraries at once:
@@ -127,11 +127,11 @@ Remove-Item -Recurse packages/sil.*
 
 ## Supported libraries
 
-| Library | Pack parameter | Version property | Env var for source path |
-|---------|---------------|------------------|------------------------|
-| liblcm | `-LibLcmPath` | `SilLcmVersion` | `LIBLCM_PATH` |
-| libpalaso | `-LibPalasoPath` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
-| chorus | `-ChorusPath` | `SilChorusVersion` | `LIBCHORUS_PATH` |
+| Library | Switch | Path parameter | Version property | Env var fallback |
+|---------|--------|---------------|------------------|-----------------|
+| liblcm | `-Lcm` | `-LcmPath` | `SilLcmVersion` | `LIBLCM_PATH` |
+| libpalaso | `-Palaso` | `-PalasoPath` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
+| chorus | `-Chorus` | `-ChorusPath` | `SilChorusVersion` | `LIBCHORUS_PATH` |
 
 ## See Also
 

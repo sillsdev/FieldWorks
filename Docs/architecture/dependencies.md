@@ -34,13 +34,13 @@ By default, dependencies are downloaded as NuGet packages during the build. The 
 
 ## Building and Debugging Dependencies Locally
 
-If you need to debug into or modify a dependency library, use the `Build/Manage-LocalLibrary.ps1` script. It packs a local checkout into a local NuGet feed using the exact version from `Build/SilVersions.props`, so no version edits are needed in FieldWorks.
+If you need to debug into or modify a dependency library, use the `Build/Manage-LocalLibraries.ps1` script. It packs a local checkout into a local NuGet feed, detects the produced version, and updates `SilVersions.props` to match.
 
 Quick start:
 
 ```powershell
 $env:LOCAL_NUGET_REPO = "C:\localnugetpackages"
-.\Build\Manage-LocalLibrary.ps1 -Library libpalaso -SourcePath C:\Repos\libpalaso
+.\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso
 .\build.ps1
 ```
 
