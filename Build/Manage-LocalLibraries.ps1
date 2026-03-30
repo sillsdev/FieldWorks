@@ -58,7 +58,7 @@
 
 .EXAMPLE
 	.\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus -ChorusPath C:\Repos\chorus
-	Packs libpalaso (from env var) and chorus first, then chorus.
+	Packs libpalaso (from env var) and then chorus from the given path.
 
 .EXAMPLE
 	.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
