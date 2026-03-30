@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -2968,7 +2969,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// Note: often we also want to update LayoutCache.LayoutVersionNumber.
 		// (last updated by Ariel Rorabaugh, Oct 28, 2025, for adding PictureLicense column to Browse view)
-		internal const int kBrowseViewVersion = 19;
+		internal const int kBrowseViewVersion = 20;
 
 		/// <summary>
 		/// Column has been added or removed, update all child windows.
@@ -3042,6 +3043,24 @@ namespace SIL.FieldWorks.Common.Controls
 					colList.Append(node.OuterXml);
 				}
 			}
+			// Save labels of hidden columns so we can distinguish "removed by user" from "new column" on load.
+			// Use SortedSet with Ordinal comparison for deterministic output (stable for Send/Receive).
+			var activeLabels = new HashSet<string>();
+			foreach (XmlNode node in ColumnSpecs)
+			{
+				var label = XmlUtils.GetOptionalAttributeValue(node, "label", "");
+				if (!string.IsNullOrEmpty(label))
+					activeLabels.Add(label);
+			}
+			var hiddenLabels = new SortedSet<string>(StringComparer.Ordinal);
+			foreach (XmlNode node in m_xbv.Vc.PossibleColumnSpecs)
+			{
+				var label = XmlUtils.GetOptionalAttributeValue(node, "label", "");
+				if (!string.IsNullOrEmpty(label) && !activeLabels.Contains(label))
+					hiddenLabels.Add(label);
+			}
+			foreach (var label in hiddenLabels)
+				colList.Append("<hidden label=\"" + SecurityElement.Escape(label) + "\"/>");
 			colList.Append("</root>");
 			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, true);
 		}

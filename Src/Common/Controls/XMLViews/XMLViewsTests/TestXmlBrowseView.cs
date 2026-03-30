@@ -133,6 +133,47 @@ namespace XMLViewsTests
 			}
 		}
 
+		[Test]
+		public void MigrateBrowseColumns_Version19ToVersion20()
+		{
+			var input =
+				"<root version=\"19\">" +
+				"<column layout=\"EntryHeadwordForFindEntry\" label=\"Headword\" sortmethod=\"FullSortKey\" ws=\"$ws=vernacular\" editable=\"false\" width=\"96000\"/>" +
+				"<column layout=\"Unknown Test\"/>" +
+				"</root>";
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo("20"));
+				// Columns should be preserved as-is
+				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
+				Assert.That(headwordNode, Is.Not.Null);
+				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
+			}
+		}
+
+		[Test]
+		public void MigrateBrowseColumns_HiddenElementsPreservedThroughMigration()
+		{
+			// Version 19 with hidden elements (simulating a future scenario where hidden elements exist)
+			var input =
+				"<root version=\"19\">" +
+				"<column layout=\"EntryHeadwordForFindEntry\" label=\"Headword\"/>" +
+				"<hidden label=\"Lexeme Form\"/>" +
+				"</root>";
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo("20"));
+				// Hidden elements should be preserved
+				var hiddenNode = output.SelectSingleNode("//hidden[@label='Lexeme Form']");
+				Assert.That(hiddenNode, Is.Not.Null, "Hidden column labels should be preserved through migration");
+			}
+		}
+
 		void VerifyColumn(XmlNode output, string layoutName, string attrName, string attrVal)
 		{
 			var node = output.SelectSingleNode("//column[@layout='" + layoutName + "']");
