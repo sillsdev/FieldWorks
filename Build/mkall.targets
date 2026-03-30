@@ -262,8 +262,6 @@
 	</PropertyGroup>
 	<!-- Package restoration, dependency downloads, and CopyDlls are in PackageRestore.targets -->
 	<Import Project="$(MSBuildThisFileDirectory)PackageRestore.targets" />
-	<!-- REVIEW (Hasso) 2026.03: the targets setRegistryValues and setKeysInHKCU appear unused by the recentnly-modernized build process,
-		but they may still be essential for developers wanting to run FieldWorks. TODO: test a new machine setup -->
 	<Target Name="setRegistryValues" DependsOnTargets="initWindows;setKeysInHKCU" />
 	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)." />
