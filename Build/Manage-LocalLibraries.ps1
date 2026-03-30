@@ -344,6 +344,37 @@ if ($toPack.Count -gt 0) {
 		New-Item -Path $localRepo -ItemType Directory -Force | Out-Null
 	}
 
+	# Ensure nuget.config has the local source and mapping
+	$nugetConfigPath = Join-Path $repoRoot "nuget.config"
+	[xml]$nugetConfig = Get-Content -LiteralPath $nugetConfigPath
+	$sources = $nugetConfig.SelectSingleNode("//packageSources")
+	$existing = $sources.SelectSingleNode("add[@key='local']")
+	if ($existing) {
+		if ($existing.value -ne $localRepo) {
+			$existing.value = $localRepo
+			Write-Host "Updated local source in nuget.config to $localRepo" -ForegroundColor Yellow
+		}
+	}
+	else {
+		$newSource = $nugetConfig.CreateElement("add")
+		$newSource.SetAttribute("key", "local")
+		$newSource.SetAttribute("value", $localRepo)
+		$sources.AppendChild($newSource) | Out-Null
+		Write-Host "Added local source to nuget.config: $localRepo" -ForegroundColor Yellow
+	}
+	# Ensure package source mapping includes local
+	$mapping = $nugetConfig.SelectSingleNode("//packageSourceMapping")
+	if ($mapping -and -not $mapping.SelectSingleNode("packageSource[@key='local']")) {
+		$localMapping = $nugetConfig.CreateElement("packageSource")
+		$localMapping.SetAttribute("key", "local")
+		$pattern = $nugetConfig.CreateElement("package")
+		$pattern.SetAttribute("pattern", "*")
+		$localMapping.AppendChild($pattern) | Out-Null
+		$mapping.AppendChild($localMapping) | Out-Null
+		Write-Host "Added local source mapping to nuget.config" -ForegroundColor Yellow
+	}
+	$nugetConfig.Save($nugetConfigPath)
+
 	Write-Host ""
 	Write-Host "Libraries to pack: $($toPack.Keys -join ', ')" -ForegroundColor Cyan
 

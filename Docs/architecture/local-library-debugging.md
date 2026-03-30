@@ -120,7 +120,7 @@ Use `-Version` to set the library back to its upstream version:
 Or revert all libraries at once:
 
 ```powershell
-git checkout Build/SilVersions.props
+git checkout Build/SilVersions.props nuget.config
 Remove-Item -Recurse packages/sil.*
 .\build.ps1
 ```
