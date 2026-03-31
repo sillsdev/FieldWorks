@@ -126,13 +126,13 @@ if (Test-Path $vsWhere) {
 			$nmakeExists = Get-ChildItem -Path $nmakePath -ErrorAction SilentlyContinue | Select-Object -First 1
 			if ($nmakeExists) {
 				Write-Host "[WARN] VS Developer environment NOT active" -ForegroundColor Yellow
-				Write-Host "	   nmake.exe exists but is not in PATH" -ForegroundColor Yellow
-				Write-Host "	   Run builds from VS Developer Command Prompt or use:" -ForegroundColor Yellow
-				Write-Host "	   cmd /c `"call `"$vsDevCmd`" -arch=amd64 && msbuild ...`"" -ForegroundColor Cyan
+				Write-Host "       nmake.exe exists but is not in PATH" -ForegroundColor Yellow
+				Write-Host "       Run builds from VS Developer Command Prompt or use:" -ForegroundColor Yellow
+				Write-Host "       cmd /c `"call `"$vsDevCmd`" -arch=amd64 && msbuild ...`"" -ForegroundColor Cyan
 				$warnings += "VS Developer environment not active (nmake not in PATH)"
 			} else {
 				Write-Host "[MISSING] C++ build tools (nmake.exe) not found" -ForegroundColor Red
-				Write-Host "		  Install 'Desktop development with C++' workload in VS Installer" -ForegroundColor Red
+				Write-Host "          Install 'Desktop development with C++' workload in VS Installer" -ForegroundColor Red
 				$issues += "C++ build tools not installed (nmake.exe missing)"
 			}
 		}
@@ -175,7 +175,7 @@ foreach ($repo in $helperRepos) {
 
 if ($missingRepos.Count -gt 0 -and -not $ValidateOnly) {
 	Write-Host "`n[INFO] Missing repositories can be cloned with:" -ForegroundColor Cyan
-	Write-Host "	   .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Cyan
+	Write-Host "       .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Cyan
 }
 
 #endregion
@@ -208,9 +208,9 @@ if (-not $regKeySet) {
 	if ($ValidateOnly) {
 		$warnings += "WiX temp file registry key not set (may cause build errors)"
 		Write-Host "[WARN] WiX temp file registry key not set" -ForegroundColor Yellow
-		Write-Host "	   This may cause 'DisableTempFileCollectionDirectoryFeature' errors" -ForegroundColor Yellow
-		Write-Host "	   Run this command in an elevated (Admin) PowerShell to fix:" -ForegroundColor Yellow
-		Write-Host '	   $paths = @("HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext", "HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\AppContext"); foreach ($path in $paths) { if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }; New-ItemProperty -Path $path -Name "Switch.System.DisableTempFileCollectionDirectoryFeature" -Value "true" -Type String -Force | Out-Null }; Write-Host "Registry keys set successfully"' -ForegroundColor Cyan
+		Write-Host "       This may cause 'DisableTempFileCollectionDirectoryFeature' errors" -ForegroundColor Yellow
+		Write-Host "       Run this command in an elevated (Admin) PowerShell to fix:" -ForegroundColor Yellow
+		Write-Host '       $paths = @("HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext", "HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\AppContext"); foreach ($path in $paths) { if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }; New-ItemProperty -Path $path -Name "Switch.System.DisableTempFileCollectionDirectoryFeature" -Value "true" -Type String -Force | Out-Null }; Write-Host "Registry keys set successfully"' -ForegroundColor Cyan
 	} else {
 		Write-Host "[INFO] Setting WiX temp file registry key (requires admin)..." -ForegroundColor Cyan
 		$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -246,8 +246,8 @@ if ($SetupPatch) {
 
 	if ($buildDirExists -and $procRunnerExists -and -not $Force) {
 		Write-Host "[OK] Base build artifacts already present" -ForegroundColor Green
-		Write-Host "	 BuildDir: $buildDir" -ForegroundColor Gray
-		Write-Host "	 ProcRunner: $procRunnerDir" -ForegroundColor Gray
+		Write-Host "     BuildDir: $buildDir" -ForegroundColor Gray
+		Write-Host "     ProcRunner: $procRunnerDir" -ForegroundColor Gray
 	} else {
 		if ($ValidateOnly) {
 			$warnings += "Base build artifacts not found (needed for patch builds)"
