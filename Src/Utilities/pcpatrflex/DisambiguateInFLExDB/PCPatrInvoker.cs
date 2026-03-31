@@ -90,6 +90,7 @@ namespace SIL.DisambiguateInFLExDB
 
 			using (var process = Process.Start(processInfo))
 			{
+				process.PriorityClass = ProcessPriorityClass.High;
 				Console.WriteLine("\nBefore WaitForExit");
 				process.WaitForExit();
 				Console.WriteLine("\tAfter  WaitForExit");
