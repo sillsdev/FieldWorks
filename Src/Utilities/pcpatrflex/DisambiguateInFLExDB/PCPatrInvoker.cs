@@ -50,18 +50,19 @@ namespace SIL.DisambiguateInFLExDB
 		{
 			BatchFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.bat");
 			StringBuilder sbBatchFile = new StringBuilder();
-			sbBatchFile.Append("@echo off\r\n");
+			sbBatchFile.Append("@echo off\n");
 			sbBatchFile.Append("cd \"");
 			sbBatchFile.Append(Path.GetTempPath());
-			sbBatchFile.Append("\"\r\n\"");
+			sbBatchFile.Append("\"\n\"");
 			sbBatchFile.Append(GetPcPatr64ExePath());
 			sbBatchFile.Append("\\pcpatr64\" -t ");
 			sbBatchFile.Append(takeFileName);
-			sbBatchFile.Append("\r\n");
-			File.WriteAllText(BatchFile, sbBatchFile.ToString());
+			sbBatchFile.Append("\n");
+			string removeCRs = sbBatchFile.ToString().Replace("\r", "");
+			File.WriteAllText(BatchFile, removeCRs);
 			Console.WriteLine("\nbatch file =");
 			Console.WriteLine("=================================================");
-			Console.Write(sbBatchFile.ToString());
+			Console.Write(removeCRs);
 			Console.WriteLine("=================================================");
 		}
 
@@ -119,13 +120,13 @@ namespace SIL.DisambiguateInFLExDB
 			//StringBuilder sbTakeFileShortPath = new StringBuilder(255);
 			//int i = GetShortPathName(takeFile, sbTakeFileShortPath, sbTakeFileShortPath.Capacity);
 			var sbTake = new StringBuilder();
-			sbTake.Append("set comment |\r\n");
+			sbTake.Append("set comment |\n");
 			sbTake.Append("log ");
 			sbTake.Append(logFileName);
-			sbTake.Append("\r\n");
+			sbTake.Append("\n");
 			sbTake.Append("load grammar ");
 			sbTake.Append(GrammarFile);
-			sbTake.Append("\r\n");
+			sbTake.Append("\n");
 			// See if the failure we're getting in GitHub is due to not finding the grammr file:
 			// We'll put it in the temp directory now.
 			//StringBuilder sbGrammarFileShortPath = new StringBuilder(255);
@@ -135,29 +136,30 @@ namespace SIL.DisambiguateInFLExDB
 			//	sbGrammarFileShortPath.Capacity
 			//);
 			//sbTake.Append(sbGrammarFileShortPath.ToString() + "\n");
-			sbTake.Append("set timing on\r\n");
-			sbTake.Append("set gloss on\r\n");
-			sbTake.Append("set features all\r\n");
+			sbTake.Append("set timing on\n");
+			sbTake.Append("set gloss on\n");
+			sbTake.Append("set features all\n");
 			HandleRootGloss(sbTake);
-			sbTake.Append("set tree xml\r\n");
+			sbTake.Append("set tree xml\n");
 			sbTake.Append("set ambiguities ");
 			sbTake.Append(MaxAmbiguities);
-			sbTake.Append("\r\n");
+			sbTake.Append("\n");
 			if (!TimeLimit.Equals("0"))
 			{
 				sbTake.Append("set limit ");
 				sbTake.Append(TimeLimit);
-				sbTake.Append("\r\n");
+				sbTake.Append("\n");
 			}
-			sbTake.Append("set write-ample-parses on\r\n");
+			sbTake.Append("set write-ample-parses on\n");
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
-			sbTake.Append("file disambiguate Invoker.ana Invoker.and\r\n");
-			sbTake.Append("exit\r\n");
-			File.WriteAllText(takeFile, sbTake.ToString());
+			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
+			sbTake.Append("exit\n");
+			string removeCRs = sbTake.ToString().Replace("\r", "");
+			File.WriteAllText(takeFile, removeCRs);
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
 			Console.WriteLine("\ntake file =");
 			Console.WriteLine("=================================================");
-			Console.Write(sbTake.ToString());
+			Console.Write(removeCRs);
 			Console.WriteLine("=================================================");
 		}
 
