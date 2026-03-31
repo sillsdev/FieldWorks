@@ -58,7 +58,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbBatchFile.Append("\\pcpatr64\" -t ");
 			sbBatchFile.Append(takeFileName);
 			sbBatchFile.Append("\n");
-			string removeCRs = sbBatchFile.ToString().Replace("\r", "");
+			string removeCRs = sbBatchFile.ToString().Replace("\r", "").Replace("&#xD;","");
 			File.WriteAllText(BatchFile, removeCRs);
 			Console.WriteLine("\nbatch file =");
 			Console.WriteLine("=================================================");
@@ -155,7 +155,7 @@ namespace SIL.DisambiguateInFLExDB
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
 			sbTake.Append("exit\n");
-			string removeCRs = sbTake.ToString().Replace("\r", "");
+			string removeCRs = sbTake.ToString().Replace("\r", "").Replace("&#xD;", "");
 			File.WriteAllText(takeFile, removeCRs);
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
 			Console.WriteLine("\ntake file =");
