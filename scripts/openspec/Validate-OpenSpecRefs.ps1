@@ -340,8 +340,8 @@ foreach ($ref in $forwardRefs) {
 		$brokenCount++
 		$broken += @(
 			"[BROKEN] {0}:{1}" -f $ref.SpecRel, $ref.LineNumber,
-			"		 -> {0}#{1}" -f $ref.AgentRel, $ref.AgentAnchor,
-			'		 Target file not found.'
+			"         -> {0}#{1}" -f $ref.AgentRel, $ref.AgentAnchor,
+			'         Target file not found.'
 		)
 		continue
 	}
@@ -351,8 +351,8 @@ foreach ($ref in $forwardRefs) {
 		$brokenCount++
 		$broken += @(
 			"[BROKEN] {0}:{1}" -f $ref.SpecRel, $ref.LineNumber,
-			"		 -> {0}#{1}" -f $ref.AgentRel, $ref.AgentAnchor,
-			'		 Anchor not found.'
+			"         -> {0}#{1}" -f $ref.AgentRel, $ref.AgentAnchor,
+			'         Anchor not found.'
 		)
 		continue
 	}
@@ -362,7 +362,7 @@ foreach ($ref in $forwardRefs) {
 		$orphanCount++
 		$orphans += @(
 			"[ORPHAN] {0}:{1} #{2}" -f $ref.SpecRel, $ref.LineNumber, $ref.SpecAnchor,
-			"		 Missing back-ref in {0}." -f $ref.AgentRel
+			"         Missing back-ref in {0}." -f $ref.AgentRel
 		)
 	}
 }
@@ -372,8 +372,8 @@ foreach ($ref in $backRefs) {
 		$brokenCount++
 		$broken += @(
 			"[BROKEN] {0}:{1} #{2}" -f $ref.AgentRel, $ref.LineNumber, $ref.AgentAnchor,
-			"		 -> {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor,
-			'		 Target spec not found.'
+			"         -> {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor,
+			'         Target spec not found.'
 		)
 		continue
 	}
@@ -383,8 +383,8 @@ foreach ($ref in $backRefs) {
 		$brokenCount++
 		$broken += @(
 			"[BROKEN] {0}:{1} #{2}" -f $ref.AgentRel, $ref.LineNumber, $ref.AgentAnchor,
-			"		 -> {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor,
-			'		 Anchor not found.'
+			"         -> {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor,
+			'         Anchor not found.'
 		)
 		continue
 	}
@@ -394,7 +394,7 @@ foreach ($ref in $backRefs) {
 		$orphanCount++
 		$orphans += @(
 			"[ORPHAN] {0}:{1} #{2}" -f $ref.AgentRel, $ref.LineNumber, $ref.AgentAnchor,
-			"		 Spec missing forward ref: {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor
+			"         Spec missing forward ref: {0}#{1}" -f $ref.SpecRel, $ref.SpecAnchor
 		)
 	}
 }

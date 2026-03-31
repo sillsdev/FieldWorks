@@ -70,7 +70,7 @@ function Test-Dependency {
 			if ($Detailed) {
 				Write-Host "[OK]   $Name" -ForegroundColor Green
 				if ($result -is [string] -and $result.Length -gt 0 -and $result.Length -lt 100) {
-					Write-Host "	   $result" -ForegroundColor DarkGray
+					Write-Host "       $result" -ForegroundColor DarkGray
 				}
 			}
 			return @{ Name = $Name; Found = $true; IsRequired = ($Required -eq "Required"); Info = $result }
@@ -83,7 +83,7 @@ function Test-Dependency {
 		$color = if ($Required -eq "Required") { "Red" } else { "Yellow" }
 		$status = if ($Required -eq "Required") { "[FAIL]" } else { "[WARN]" }
 		Write-Host "$status $Name" -ForegroundColor $color
-		Write-Host "	   $_" -ForegroundColor DarkGray
+		Write-Host "       $_" -ForegroundColor DarkGray
 		return @{ Name = $Name; Found = $false; IsRequired = ($Required -eq "Required"); Error = $_.ToString() }
 	}
 }

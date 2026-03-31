@@ -188,7 +188,7 @@ Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object
 			# Compare AssemblyName.FullName (catches strong-name/version mismatches)
 			try {
 				$stagedAsm = [System.Reflection.AssemblyName]::GetAssemblyName($dll.FullName)
-				$refAsm	= [System.Reflection.AssemblyName]::GetAssemblyName($refDll)
+				$refAsm    = [System.Reflection.AssemblyName]::GetAssemblyName($refDll)
 				if ($stagedAsm.FullName -ne $refAsm.FullName) {
 					$msg = "$($dll.Name): staged=$($stagedAsm.FullName), build=$($refAsm.FullName) (assembly mismatch)"
 					$problems.Add($msg)
@@ -208,7 +208,7 @@ Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object
 
 			# Compare FileVersion (catches same-AssemblyVersion NuGet bumps like Newtonsoft.Json)
 			$stagedFV = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dll.FullName).FileVersion
-			$refFV	= [System.Diagnostics.FileVersionInfo]::GetVersionInfo($refDll).FileVersion
+			$refFV    = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($refDll).FileVersion
 			if ($stagedFV -ne $refFV) {
 				$msg = "$($dll.Name): staged FileVersion=$stagedFV, build FileVersion=$refFV (drift)"
 				$problems.Add($msg)

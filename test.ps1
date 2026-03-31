@@ -530,10 +530,10 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 			$shown = 0
 			foreach ($item in $grp.Group) {
 				if ($shown -ge 5) {
-					Write-Host "	... and $($grp.Count - 5) more" -ForegroundColor DarkGray
+					Write-Host "    ... and $($grp.Count - 5) more" -ForegroundColor DarkGray
 					break
 				}
-				Write-Host "	- $($item.Test)" -ForegroundColor Gray
+				Write-Host "    - $($item.Test)" -ForegroundColor Gray
 				$shown++
 			}
 		}

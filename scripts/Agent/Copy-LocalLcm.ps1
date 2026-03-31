@@ -71,7 +71,7 @@ Write-Host "  Local LCM Copy Utility" -ForegroundColor Cyan
 Write-Host "===============================================" -ForegroundColor Cyan
 Write-Host "  LCM Source:  $LcmRoot" -ForegroundColor White
 Write-Host "  FW Output:   $FwOutputDir" -ForegroundColor White
-Write-Host "  Config:	  $Configuration" -ForegroundColor White
+Write-Host "  Config:      $Configuration" -ForegroundColor White
 Write-Host "  Build LCM:   $($BuildLcm.IsPresent)" -ForegroundColor White
 Write-Host ""
 
