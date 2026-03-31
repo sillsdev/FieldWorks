@@ -59,6 +59,10 @@ namespace SIL.DisambiguateInFLExDB
 			sbBatchFile.Append(takeFileName);
 			sbBatchFile.Append("\n");
 			File.WriteAllText(BatchFile, sbBatchFile.ToString());
+			Console.WriteLine("\nbatch file =");
+			Console.WriteLine("=================================================");
+			Console.Write(sbBatchFile.ToString());
+			Console.WriteLine("=================================================");
 		}
 
 		private string GetPcPatr64ExePath()
@@ -89,6 +93,10 @@ namespace SIL.DisambiguateInFLExDB
 				process.WaitForExit();
 				Console.WriteLine("\tAfter  WaitForExit");
 				string error = process.StandardError.ReadToEnd();
+				Console.WriteLine("\nStdErr=");
+				Console.WriteLine("=================================================");
+				Console.Write(error);
+				Console.WriteLine("=================================================");
 				if (error.Contains("ERROR "))
 				{
 					Console.WriteLine("\tFailure");
@@ -147,6 +155,10 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("exit\n");
 			File.WriteAllText(takeFile, sbTake.ToString());
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
+			Console.WriteLine("\ntake file =");
+			Console.WriteLine("=================================================");
+			Console.Write(sbTake.ToString());
+			Console.WriteLine("=================================================");
 		}
 
 		private void HandleRootGloss(StringBuilder sbTake)
