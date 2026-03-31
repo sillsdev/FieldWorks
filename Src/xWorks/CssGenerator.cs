@@ -672,6 +672,17 @@ namespace SIL.FieldWorks.XWorks
 					var wsFontInfo = exportStyleInfo.BulletInfo.FontInfo;
 					bulletRule.Declarations.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(wsFontInfo.FontSize.Value)) });
 					bulletRule.Declarations.Add(new Property("color") { Term = new PrimitiveTerm(UnitType.RGB, wsFontInfo.FontColor.Value.Name) });
+
+					// Add the space between the bullet/number and the text that follows.
+					if (exportStyleInfo.HasFirstLineIndent && exportStyleInfo.FirstLineIndent < 0)
+					{
+						var hangingIndent = -(MilliPtToPt(exportStyleInfo.FirstLineIndent));
+						string marginDirection = "margin-right";
+						if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+							marginDirection = "margin-left";
+						bulletRule.Declarations.Add(new Property(marginDirection) { Term = new PrimitiveTerm(UnitType.Point, hangingIndent) });
+					}
+
 					// remove the bullet content if present in the base rule
 					var contentInRule = rule.Declarations.FirstOrDefault(p => p.Name == "content");
 					if (contentInRule != null)

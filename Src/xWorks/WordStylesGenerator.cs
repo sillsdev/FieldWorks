@@ -270,6 +270,12 @@ namespace SIL.FieldWorks.XWorks
 				if (exportStyleInfo.HasFirstLineIndent)
 				{
 					// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
+					// Note: Typically hanging indent is only applied to the lines after the first line.  For bulleted/numbered lists,
+					// it also has a use on the fist line. In Word it represents the distance between the bullet/number and the
+					// text that follows the bullet/number. For the first line, Word does not honor small hanging indent
+					// values (0.0" to 0.1"). It displays the distance as 0.2". (For lines after the first, Word does honor the
+					// small values.) As a result of this behavior, the distance between a bullet/number and the text that follows
+					// will be different between Flex and Word if the hanging indent value is less than 0.1".
 					var firstLineIndentValue = MilliPtToTwentiPt(exportStyleInfo.FirstLineIndent);
 
 					if (firstLineIndentValue < 0.0f)
