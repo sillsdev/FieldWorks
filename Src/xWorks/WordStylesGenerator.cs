@@ -513,11 +513,10 @@ namespace SIL.FieldWorks.XWorks
 
 			// Check for bold
 			bool bold;
-			GetFontValue(wsFontInfo.m_bold, defaultFontInfo.Bold, out bold);
-			if (bold)
+			if (GetFontValue(wsFontInfo.m_bold, defaultFontInfo.Bold, out bold))
 			{
-				var boldFont = new Bold() { Val = true };
-				var boldCS = new BoldComplexScript() { Val = true };
+				var boldFont = new Bold() { Val = bold };
+				var boldCS = new BoldComplexScript() { Val = bold };
 				charDefaults.RemoveAllChildren<Bold>();
 				charDefaults.RemoveAllChildren<BoldComplexScript>();
 				charDefaults.Append(boldFont);
@@ -526,11 +525,10 @@ namespace SIL.FieldWorks.XWorks
 
 			// Check for italic
 			bool ital;
-			GetFontValue(wsFontInfo.m_italic, defaultFontInfo.Italic, out ital);
-			if (ital)
+			if (GetFontValue(wsFontInfo.m_italic, defaultFontInfo.Italic, out ital))
 			{
-				var italFont = new Italic() { Val = true };
-				var italicCS = new ItalicComplexScript() { Val = true };
+				var italFont = new Italic() { Val = ital };
+				var italicCS = new ItalicComplexScript() { Val = ital };
 				charDefaults.RemoveAllChildren<Italic>();
 				charDefaults.RemoveAllChildren<ItalicComplexScript>();
 				charDefaults.Append(italFont);
