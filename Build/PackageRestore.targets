@@ -317,10 +317,7 @@
 	     SIL.Machine.Morphology.HermitCrab.dll are now provided by NuGet PackageReference. -->
 	<ItemGroup>
 		<!-- GeckofxHtmlToPdf dependency (shipped alongside FieldWorksPdfMaker.exe) -->
-		<DownloadedFiles
-			Include="$(DownloadsDir)/Args.dll"
-			Condition="Exists('$(DownloadsDir)/Args.dll')"
-		/>
+		<DownloadedFiles Include="$(DownloadsDir)/Args.dll" />
 	</ItemGroup>
 
 	<!-- ======================================================================================== -->
@@ -451,6 +448,7 @@
 		/>
 		<!-- Copy native/special-case artifacts that PackageReference doesn't handle automatically -->
 		<ItemGroup>
+			<!-- REVIEW (Hasso) 2026.03: when do we expect any of these files not to exist? If they don't, do we really want to continue building merrily? -->
 			<ExistingPalasoFiles
 				Include="@(PalasoFiles)"
 				Condition="Exists('$(PalasoArtifactsDir)/%(Identity)')"
@@ -458,10 +456,6 @@
 			<ExistingChorusFiles
 				Include="@(ChorusFiles)"
 				Condition="Exists('$(ChorusArtifactsDir)/%(Identity)')"
-			/>
-			<ExistingDownloadedFiles
-				Include="@(DownloadedFiles)"
-				Condition="Exists('%(Identity)')"
 			/>
 		</ItemGroup>
 		<!--
@@ -506,7 +500,7 @@
 		/>
 		<!-- Copy pre-populated binaries (Args.dll for GeckofxHtmlToPdf) -->
 		<Copy
-			SourceFiles="@(ExistingDownloadedFiles)"
+			SourceFiles="@(DownloadedFiles)"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
