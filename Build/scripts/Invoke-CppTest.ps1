@@ -1,38 +1,38 @@
 <#
 .SYNOPSIS
-    Build and/or run native C++ test executables.
+	Build and/or run native C++ test executables.
 
 .DESCRIPTION
-    Script for building and running native C++ tests.
-    Supports both MSBuild (new vcxproj) and nmake (legacy makefile) builds.
-    Auto-approvable by Copilot agents.
+	Script for building and running native C++ tests.
+	Supports both MSBuild (new vcxproj) and nmake (legacy makefile) builds.
+	Auto-approvable by Copilot agents.
 
 .PARAMETER Action
-    What to do: Build, Run, or BuildAndRun (default).
+	What to do: Build, Run, or BuildAndRun (default).
 
 .PARAMETER TestProject
-    Which test: TestGeneric (default) or TestViews.
+	Which test: TestGeneric (default) or TestViews.
 
 .PARAMETER Configuration
-    Build configuration: Debug (default) or Release.
+	Build configuration: Debug (default) or Release.
 
 .PARAMETER BuildSystem
-    Build system to use: MSBuild (default, uses vcxproj) or NMake (legacy).
+	Build system to use: MSBuild (default, uses vcxproj) or NMake (legacy).
 
 .PARAMETER WorktreePath
-    Path to the worktree root. Defaults to current directory.
+	Path to the worktree root. Defaults to current directory.
 
 .EXAMPLE
-    .\Invoke-CppTest.ps1 -TestProject TestGeneric
-    Build and run TestGeneric using MSBuild.
+	.\Invoke-CppTest.ps1 -TestProject TestGeneric
+	Build and run TestGeneric using MSBuild.
 
 .EXAMPLE
-    .\Invoke-CppTest.ps1 -Action Run -TestProject TestViews
-    Run TestViews without rebuilding.
+	.\Invoke-CppTest.ps1 -Action Run -TestProject TestViews
+	Run TestViews without rebuilding.
 
 .EXAMPLE
-    .\Invoke-CppTest.ps1 -BuildSystem NMake -TestProject TestGeneric
-    Build TestGeneric using legacy nmake (requires VsDevCmd).
+	.\Invoke-CppTest.ps1 -BuildSystem NMake -TestProject TestGeneric
+	Build TestGeneric using legacy nmake (requires VsDevCmd).
 #>
 [CmdletBinding()]
 param(

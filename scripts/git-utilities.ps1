@@ -9,35 +9,35 @@ get out of sync so callers stay tidy.
 function Invoke-GitSafe {
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory=$true)][string[]]$Arguments,
-    [switch]$Quiet,
-    [switch]$CaptureOutput
+	[Parameter(Mandatory=$true)][string[]]$Arguments,
+	[switch]$Quiet,
+	[switch]$CaptureOutput
   )
 
   $previousEap = $ErrorActionPreference
   $output = @()
   try {
-    $ErrorActionPreference = 'Continue'
-    $output = @( & git @Arguments 2>&1 )
-    $exitCode = $LASTEXITCODE
+	$ErrorActionPreference = 'Continue'
+	$output = @( & git @Arguments 2>&1 )
+	$exitCode = $LASTEXITCODE
   } finally {
-    $ErrorActionPreference = $previousEap
+	$ErrorActionPreference = $previousEap
   }
 
   if ($exitCode -ne 0) {
-    $message = "git $($Arguments -join ' ') failed with exit code $exitCode"
-    if ($output) {
-      $message += "`n$output"
-    }
-    throw $message
+	$message = "git $($Arguments -join ' ') failed with exit code $exitCode"
+	if ($output) {
+	  $message += "`n$output"
+	}
+	throw $message
   }
 
   if ($CaptureOutput) {
-    return $output
+	return $output
   }
 
   if (-not $Quiet -and $output) {
-    return $output
+	return $output
   }
 }
 
@@ -50,35 +50,35 @@ function Get-GitWorktrees {
   $current = @{}
 
   foreach ($line in $lines) {
-    if ([string]::IsNullOrWhiteSpace($line)) { continue }
-    $parts = $line.Split(' ',2)
-    $key = $parts[0]
-    $value = $parts[1]
+	if ([string]::IsNullOrWhiteSpace($line)) { continue }
+	$parts = $line.Split(' ',2)
+	$key = $parts[0]
+	$value = $parts[1]
 
-    switch ($key) {
-      'worktree' {
-        if ($current.Keys.Count -gt 0) {
-          $result += [PSCustomObject]$current
-          $current = @{}
-        }
-        $rawPath = $value.Trim()
-        $fullPath = [System.IO.Path]::GetFullPath($rawPath)
-        $current = @{ RawPath = $rawPath; FullPath = $fullPath; Flags = @() }
-      }
-      'HEAD' { $current.Head = $value.Trim() }
-      'branch' { $current.Branch = $value.Trim() }
-      'detached' { $current.Detached = $true }
-      'locked' { $current.Flags += 'locked' }
-      'prunable' { $current.Flags += 'prunable' }
-      default {
-        # Preserve unknown keys for troubleshooting
-        $current[$key] = $value.Trim()
-      }
-    }
+	switch ($key) {
+	  'worktree' {
+		if ($current.Keys.Count -gt 0) {
+		  $result += [PSCustomObject]$current
+		  $current = @{}
+		}
+		$rawPath = $value.Trim()
+		$fullPath = [System.IO.Path]::GetFullPath($rawPath)
+		$current = @{ RawPath = $rawPath; FullPath = $fullPath; Flags = @() }
+	  }
+	  'HEAD' { $current.Head = $value.Trim() }
+	  'branch' { $current.Branch = $value.Trim() }
+	  'detached' { $current.Detached = $true }
+	  'locked' { $current.Flags += 'locked' }
+	  'prunable' { $current.Flags += 'prunable' }
+	  default {
+		# Preserve unknown keys for troubleshooting
+		$current[$key] = $value.Trim()
+	  }
+	}
   }
 
   if ($current.Keys.Count -gt 0) {
-    $result += [PSCustomObject]$current
+	$result += [PSCustomObject]$current
   }
 
   return $result
@@ -87,7 +87,7 @@ function Get-GitWorktrees {
 function Get-GitWorktreeForBranch {
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory=$true)][string]$Branch
+	[Parameter(Mandatory=$true)][string]$Branch
   )
 
   $branchRef = if ($Branch.StartsWith('refs/')) { $Branch } else { "refs/heads/$Branch" }
@@ -97,60 +97,60 @@ function Get-GitWorktreeForBranch {
 function Remove-GitWorktreePath {
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory=$true)][string]$WorktreePath
+	[Parameter(Mandatory=$true)][string]$WorktreePath
   )
 
   try {
-    Invoke-GitSafe @('worktree','remove','--force','--',$WorktreePath) -Quiet
-    return
+	Invoke-GitSafe @('worktree','remove','--force','--',$WorktreePath) -Quiet
+	return
   } catch {
-    $message = $_
-    if (Detach-GitWorktreeMetadata -WorktreePath $WorktreePath -VerboseMode ($PSBoundParameters['Verbose'] -or $VerbosePreference -ne 'SilentlyContinue')) {
-      try {
-        Invoke-GitSafe @('worktree','prune','--expire=now') -Quiet
-      } catch {}
-      Write-Warning "git worktree remove failed for $WorktreePath; completed metadata-only detach instead. Original error: $message"
-      return
-    }
+	$message = $_
+	if (Detach-GitWorktreeMetadata -WorktreePath $WorktreePath -VerboseMode ($PSBoundParameters['Verbose'] -or $VerbosePreference -ne 'SilentlyContinue')) {
+	  try {
+		Invoke-GitSafe @('worktree','prune','--expire=now') -Quiet
+	  } catch {}
+	  Write-Warning "git worktree remove failed for $WorktreePath; completed metadata-only detach instead. Original error: $message"
+	  return
+	}
 
-    try {
-      Invoke-GitSafe @('worktree','prune','--expire=now') -Quiet
-    } catch {}
-    throw
+	try {
+	  Invoke-GitSafe @('worktree','prune','--expire=now') -Quiet
+	} catch {}
+	throw
   }
 }
 
 function Detach-GitWorktreeMetadata {
   param(
-    [Parameter(Mandatory=$true)][string]$WorktreePath,
-    [bool]$VerboseMode = $false
+	[Parameter(Mandatory=$true)][string]$WorktreePath,
+	[bool]$VerboseMode = $false
   )
 
   $gitPointer = Join-Path $WorktreePath '.git'
   if (-not (Test-Path -LiteralPath $gitPointer)) { return $false }
 
   try {
-    $content = Get-Content -LiteralPath $gitPointer -Raw -ErrorAction Stop
+	$content = Get-Content -LiteralPath $gitPointer -Raw -ErrorAction Stop
   } catch {
-    return $false
+	return $false
   }
 
   if ($content -notmatch 'gitdir:\s*(.+)') { return $false }
   $dirPath = $matches[1].Trim()
   $resolvedDir = $null
   try {
-    if (Test-Path -LiteralPath $dirPath) {
-      $resolvedDir = (Resolve-Path -LiteralPath $dirPath).Path
-    } else {
-      $resolvedDir = (Resolve-Path -LiteralPath ([System.IO.Path]::Combine($WorktreePath,$dirPath)) -ErrorAction SilentlyContinue).Path
-    }
+	if (Test-Path -LiteralPath $dirPath) {
+	  $resolvedDir = (Resolve-Path -LiteralPath $dirPath).Path
+	} else {
+	  $resolvedDir = (Resolve-Path -LiteralPath ([System.IO.Path]::Combine($WorktreePath,$dirPath)) -ErrorAction SilentlyContinue).Path
+	}
   } catch {
-    $resolvedDir = $null
+	$resolvedDir = $null
   }
 
   if ($resolvedDir -and (Test-Path -LiteralPath $resolvedDir)) {
-    if ($VerboseMode) { Write-Warning "Falling back to metadata-only detach for $WorktreePath (removing $resolvedDir)" }
-    Remove-Item -Recurse -Force $resolvedDir -ErrorAction SilentlyContinue
+	if ($VerboseMode) { Write-Warning "Falling back to metadata-only detach for $WorktreePath (removing $resolvedDir)" }
+	Remove-Item -Recurse -Force $resolvedDir -ErrorAction SilentlyContinue
   }
 
   Remove-Item -LiteralPath $gitPointer -Force -ErrorAction SilentlyContinue

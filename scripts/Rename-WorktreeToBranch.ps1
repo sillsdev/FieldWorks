@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    Rename (move) the current git worktree folder to match the current branch name.
+	Rename (move) the current git worktree folder to match the current branch name.
 .DESCRIPTION
-    Uses 'git worktree move' so git keeps tracking the worktree.
+	Uses 'git worktree move' so git keeps tracking the worktree.
 
-    The target path is:
-        ../<main-folder-of-repo>.worktrees/<branch_name>
+	The target path is:
+		../<main-folder-of-repo>.worktrees/<branch_name>
 
-    If run from inside a worktree, the main repo root is used for base paths.
+	If run from inside a worktree, the main repo root is used for base paths.
 #>
 
 [CmdletBinding()]

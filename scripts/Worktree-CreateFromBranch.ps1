@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    Create (or open) a git worktree for a branch and open it in a new VS Code window.
+	Create (or open) a git worktree for a branch and open it in a new VS Code window.
 .DESCRIPTION
-    - Worktrees are placed under ../<main-folder-of-repo>.worktrees/<branch_name>
-    - If invoked from within an existing worktree, path names are based on the main repo root.
-    - If the branch already has a worktree (or the folder already exists as a worktree), it opens that.
-    - If a VS Code window already appears to be open for that worktree, it attempts to bring it to the foreground.
+	- Worktrees are placed under ../<main-folder-of-repo>.worktrees/<branch_name>
+	- If invoked from within an existing worktree, path names are based on the main repo root.
+	- If the branch already has a worktree (or the folder already exists as a worktree), it opens that.
+	- If a VS Code window already appears to be open for that worktree, it attempts to bring it to the foreground.
 
-    Colorization and workspace generation is delegated to scripts/Setup-WorktreeColor.ps1.
+	Colorization and workspace generation is delegated to scripts/Setup-WorktreeColor.ps1.
 #>
 
 [CmdletBinding()]
