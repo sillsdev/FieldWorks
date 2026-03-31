@@ -32,6 +32,9 @@ namespace SIL.DisambiguateInFLExDBTests
 		{
 			// Check for the existence of the PcPatr executable
 			Assert.IsTrue(File.Exists(Path.Combine(FwDirectoryFinder.ExeOrDllDirectory, "pcpatr64.exe")));
+			// Check for the existence of the PcPatr batch and take files
+			Assert.IsTrue(File.Exists(Path.Combine(Path.GetTempPath(), "PcPatrFLEx.bat")));
+			Assert.IsTrue(File.Exists(Path.Combine(Path.GetTempPath(), "PcPatrFLEx.tak")));
 			string grammarFile = "Invoker.grm";
 			File.Copy(Path.Combine(TestDataDir, grammarFile), Path.Combine(Path.GetTempPath(), grammarFile), true);
 			string anaFile = Path.Combine(TestDataDir, "Invoker.ana");
