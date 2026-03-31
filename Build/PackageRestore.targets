@@ -563,6 +563,7 @@
 			     MSBuild's automatic assembly resolution copies them to the output directory.
 			     SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj. -->
 		</ItemGroup>
+		<!-- REVIEW (Hasso) 2026.03: do we still need to copy NuGottenFiles explicitly here? -->
 		<Copy
 			SourceFiles="@(NuGottenFiles)"
 			DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"

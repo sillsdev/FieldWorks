@@ -67,8 +67,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <!-- Override the Build target to call native build instead. Also generate Parts and Layout files. -->
-  <Target Name="Build" DependsOnTargets="allCppNoTest;GeneratePartsAndLayoutFiles">
+  <!-- Override the Build target to call native build instead. Also copy DLLs and generate Parts and Layout files. -->
+  <Target Name="Build" DependsOnTargets="CopyDlls;allCppNoTest;GeneratePartsAndLayoutFiles">
     <Message Text="Native C++ components built successfully" Importance="high" />
   </Target>
   <!-- Ensure Clean works -->
