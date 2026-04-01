@@ -5,6 +5,8 @@
 .DESCRIPTION
     Checks for required tools and SDKs needed to build FieldWorks.
     Can be run locally for testing or called from GitHub Actions workflows.
+    By default, the script writes host output only and does not emit result objects.
+    Use -PassThru when a caller needs structured results returned on the pipeline.
 
     Expected dependencies (typically pre-installed on windows-latest):
     - Visual Studio 2022 with Desktop & C++ workloads
@@ -24,7 +26,8 @@
     If specified, prints the full per-dependency section headers and success details instead of the compact summary-only output.
 
 .PARAMETER PassThru
-    If specified, returns the dependency result objects for scripting callers instead of writing them implicitly.
+    If specified, returns the dependency result objects for scripting callers.
+    Without -PassThru, the script is quiet-by-default and writes host output only.
 
 .EXAMPLE
     # Quick check
@@ -45,6 +48,9 @@
 .EXAMPLE
     # Capture structured results for automation
     $results = .\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional -PassThru
+
+.NOTES
+    Behavioral change: this script no longer emits dependency result objects unless -PassThru is specified.
 #>
 
 [CmdletBinding()]
@@ -217,7 +223,7 @@ $results += Test-Dependency -Name "WiX Toolset (v6 via NuGet)" -Required "Option
         throw "Installer project not found: $wixProj"
     }
 
-    [xml]$wixProjXml = Get-Content -LiteralPath $wixProj
+    [xml]$wixProjXml = Get-Content -LiteralPath $wixProj -Raw
     $projectNode = $wixProjXml.Project
     $hasWixSdk = $false
 
