@@ -640,23 +640,27 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool IsValidColumnSpec(XmlNode colSpec)
 		{
-			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
-			{
-				return false;
-			}
 			// If it is a Custom Field, check that it is valid and has the correct label.
 			if (IsCustomField(colSpec, out var isValid))
 			{
 				return isValid;
 			}
-			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
-			// ENHANCE (Hasso) 2025.11: 'layout' (mandatory?) and 'field' (optional) would be better attributes to match, but that would require more test setup.
+			// If the column matches a known PossibleColumnSpec by label, it is valid.
+			// Check this before GetPartFromParentNode because some views (e.g. Phonological Features
+			// with FsFeatDefn) have valid columns whose class hierarchy has no matching parts in
+			// the part inventory; GetPartFromParentNode would incorrectly reject those columns.
 			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
 						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??
 								XmlUtils.GetAttributeValue(colSpec, "originalLabel");
-			return XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
-					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null;
+			if (XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
+				XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null)
+			{
+				return true;
+			}
+			// For columns not in PossibleColumnSpecs (e.g. generated columns), fall back to
+			// checking whether the part/layout inventory can resolve the column.
+			return GetPartFromParentNode(colSpec, ListItemsClass) != null;
 		}
 
 		/// <summary>
