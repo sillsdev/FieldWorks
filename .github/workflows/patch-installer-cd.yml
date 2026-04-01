@@ -225,7 +225,7 @@ jobs:
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -RunTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
 
       - name: Scan Build Output
         shell: powershell
@@ -293,3 +293,5 @@ jobs:
           path: |
             ./*.log
             ./*.binlog
+            ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
+            ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs

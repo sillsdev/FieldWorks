@@ -320,21 +320,22 @@ if ($issues.Count -eq 0) {
 		}
 	}
 
+	# REVIEW (Hasso) 2026.03: why are we encouraging direct msbuild calls over $(fwrt)/Build.ps1 calls?
 	Write-Host "`nTo build installers:" -ForegroundColor White
 
 	if ($vsDevEnvActive) {
 		# VS Developer environment is active, show simple commands
 		Write-Host ""
 		Write-Host "  # Restore packages" -ForegroundColor Gray
-		Write-Host "  msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64" -ForegroundColor Cyan
+		Write-Host "  msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Release /p:Platform=x64" -ForegroundColor Cyan
 		Write-Host ""
 		Write-Host "  # Build base installer" -ForegroundColor Gray
-		Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
+		Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
 		Write-Host ""
 
 		if ($SetupPatch) {
 			Write-Host "  # Build patch installer" -ForegroundColor Gray
-			Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
+			Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
 			Write-Host ""
 		}
 	} else {
@@ -344,15 +345,15 @@ if ($issues.Count -eq 0) {
 		Write-Host "  # Option 2: Use these one-liner commands from any PowerShell:" -ForegroundColor Gray
 		Write-Host ""
 		Write-Host "  # Restore packages" -ForegroundColor Gray
-		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -ForegroundColor Cyan
+		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Release /p:Platform=x64"' -ForegroundColor Cyan
 		Write-Host ""
 		Write-Host "  # Build base installer" -ForegroundColor Gray
-		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
+		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
 		Write-Host ""
 
 		if ($SetupPatch) {
 			Write-Host "  # Build patch installer" -ForegroundColor Gray
-			Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
+			Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
 			Write-Host ""
 		}
 	}
