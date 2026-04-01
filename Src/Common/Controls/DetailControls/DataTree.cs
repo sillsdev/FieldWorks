@@ -28,6 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -1081,41 +1082,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 			}
-			if (fieldName == "MLHeadWord")
-			{
-				// Look for matching Form or CitationForm.
-				foreach (Slice slice in Slices)
-				{
-					if ((slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object) &&
-						SliceMatchesValue(slice, fieldValue))
-					{
-						string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-						if (sliceFieldName == "Form" || sliceFieldName == "CitationForm")
-						{
-							found = true;
-							m_currentSliceNew = slice;
-							break;
-						}
-					}
-				}
-				if (!found)
-				{
-					// Look for Form slice.
-					foreach (Slice slice in Slices)
-					{
-						if (slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object)
-						{
-							string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-							if (sliceFieldName == "Form")
-							{
-								found = true;
-								m_currentSliceNew = slice;
-								break;
-							}
-						}
-					}
-				}
-			}
 			if (!found)
 			{
 				// Look for special cases.
@@ -1126,28 +1092,50 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						continue;
 					}
 					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-					if (slice is MorphTypeAtomicReferenceSlice && slice.Object is IMoAffixForm affix &&
-						(affix.MorphTypeRA == fieldObj || (fieldObj is IMoMorphSynAnalysis && SliceMatchesValue(slice, fieldValue))))
+					if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "ShowMainEntryIn" &&
+						slice.Object == fieldObj)
 					{
 						found = true;
 					}
-					else if (slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj &&
-							sliceFieldName == "MorphoSyntaxAnalysis" && fieldName == "MLPartOfSpeech")
+					else if (fieldName == "ConfigReferencedEntries" && sliceFieldName == "ComponentLexemes" &&
+						slice.Object == fieldObj)
 					{
 						found = true;
 					}
-					else if (slice.Object is ILexEntryRef lexEntryRef && lexEntryRef.ComponentLexemesRS.Contains(fieldObj) &&
-						sliceFieldName == "ComplexEntryTypes" && fieldName == "LookupComplexEntryType")
+					else if (fieldName == "DefinitionOrGloss" && (sliceFieldName == "Definition" || sliceFieldName == "Gloss") &&
+							slice.Object == fieldObj &&
+							SliceMatchesValue(slice, fieldValue))
 					{
 						found = true;
 					}
-					else if (slice.Object is ILexEntryRef lexEntryRef2 && lexEntryRef2.ComplexEntryTypesRS.Contains(fieldObj) &&
-						fieldName == "ReverseAbbr")
+					else if (fieldName == "LookupComplexEntryType" && sliceFieldName == "ComplexEntryTypes" &&
+							slice.Object is ILexEntryRef lexEntryRef && lexEntryRef.ComponentLexemesRS.Contains(fieldObj))
 					{
 						found = true;
 					}
-					else if (slice.Object == fieldObj &&
-							sliceFieldName == "ComponentLexemes" && fieldName == "ConfigReferencedEntries")
+					else if (fieldName == "MLHeadWord" && (sliceFieldName == "Form" || sliceFieldName == "CitationForm") &&
+							(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object) &&
+							SliceMatchesValue(slice, fieldValue))
+					{
+						found = true;
+					}
+					else if (fieldName == "MLPartOfSpeech" && sliceFieldName == "MorphoSyntaxAnalysis" &&
+							slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
+					{
+						found = true;
+					}
+					else if (fieldName == "MorphTypes" && sliceFieldName == "MorphType" &&
+						slice.Object is IMoAffixForm affix && fieldObj is IMoMorphSynAnalysis msa && msa.MorphTypes.Contains(affix.MorphTypeRA))
+					{
+						found = true;
+					}
+					else if (fieldName == "MorphTypes" && sliceFieldName == "MorphTypes" &&
+						slice.Object is IMoAffixForm affix2 && affix2.MorphTypeRA == fieldObj)
+					{
+						found = true;
+					}
+					else if (fieldName == "ReverseAbbr" && sliceFieldName == "ComplexEntryTypes" &&
+							slice.Object is ILexEntryRef lexEntryRef2 && lexEntryRef2.ComplexEntryTypesRS.Contains(fieldObj))
 					{
 						found = true;
 					}
@@ -1158,31 +1146,57 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 			}
-			if (!found)
+			if (!found && fieldName == "MLHeadWord")
 			{
-				// Try matching object and value.
+				// Use Form slice as default.
 				foreach (Slice slice in Slices)
 				{
 					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-					if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue) && !slice.IsHeaderNode)
+					if (sliceFieldName == "Form" &&
+						(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object))
 					{
-						m_currentSliceNew = slice;
 						found = true;
+						m_currentSliceNew = slice;
 						break;
 					}
 				}
 			}
-			if (!found && fieldObj != Root)
+			if (!found)
 			{
-				// Try matching just object.
+				Slice objectSlice = null;
+				Slice valueSlice = null;
+				// Try matching object and/or value.
 				foreach (Slice slice in Slices)
 				{
-					if (slice.Object == fieldObj && !slice.IsHeaderNode)
+					if (slice.IsHeaderNode)
+					{
+						continue;
+					}
+					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
+					if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
 					{
 						m_currentSliceNew = slice;
 						found = true;
 						break;
 					}
+					if (objectSlice == null && fieldObj != Root && slice.Object == fieldObj)
+					{
+						objectSlice = slice;
+					}
+					if (valueSlice == null && SliceMatchesValue(slice, fieldValue))
+					{
+						 valueSlice = slice;
+					}
+				}
+				if (!found && valueSlice != null)
+				{
+					m_currentSliceNew = valueSlice;
+					found = true;
+				}
+				if (!found && objectSlice != null)
+				{
+					m_currentSliceNew = objectSlice;
+					found = true;
 				}
 			}
 			if (found)
@@ -1263,7 +1277,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				for (int i = 0; i < multiString.StringCount; i++)
 				{
 					ITsString tsString = multiString.GetStringFromIndex(i, out int ws);
-					if (tsString.Text == text)
+					if (TsStringUtils.NormalizeNfd(tsString.Text) == TsStringUtils.NormalizeNfd(text))
 					{
 						return true;
 					}
