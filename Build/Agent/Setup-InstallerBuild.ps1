@@ -99,37 +99,37 @@ $toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Mic
 $vsDevEnvActive = Test-VsDevEnvironmentActive
 
 if ($toolchain) {
-    $vsVersion = if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) { 'unknown version' } else { $toolchain.DisplayVersion }
+	$vsVersion = if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) { 'unknown version' } else { $toolchain.DisplayVersion }
 		Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
 
-    if ($toolchain.MSBuildPath) {
-        Write-Host "[OK] MSBuild found: $($toolchain.MSBuildPath)" -ForegroundColor Green
+	if ($toolchain.MSBuildPath) {
+		Write-Host "[OK] MSBuild found: $($toolchain.MSBuildPath)" -ForegroundColor Green
 		} else {
 			$issues += "MSBuild not found in VS installation"
 		}
 
-    if ($toolchain.VsDevCmdPath) {
+	if ($toolchain.VsDevCmdPath) {
 			Write-Host "[OK] VS Developer environment scripts available" -ForegroundColor Green
-        $restoreWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -f $toolchain.VsDevCmdPath
-        $buildWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
-        $patchWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
-    } else {
-        $issues += "VsDevCmd.bat not found in VS installation"
+		$restoreWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -f $toolchain.VsDevCmdPath
+		$buildWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
+		$patchWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
+	} else {
+		$issues += "VsDevCmd.bat not found in VS installation"
 		}
 
-    if ($vsDevEnvActive) {
-        Write-Host "[OK] VS Developer environment active" -ForegroundColor Green
+	if ($vsDevEnvActive) {
+		Write-Host "[OK] VS Developer environment active" -ForegroundColor Green
 		} else {
 				Write-Host "[WARN] VS Developer environment NOT active" -ForegroundColor Yellow
-        Write-Host "       Run builds from VS Developer Command Prompt or use the detected VsDevCmd wrapper commands below" -ForegroundColor Yellow
-        $warnings += "VS Developer environment not active"
+		Write-Host "       Run builds from VS Developer Command Prompt or use the detected VsDevCmd wrapper commands below" -ForegroundColor Yellow
+		$warnings += "VS Developer environment not active"
 	}
 } else {
-    if (Get-VsWherePath) {
-        $issues += "Visual Studio 2022 with MSBuild and C++ tools not installed"
-    } else {
+	if (Get-VsWherePath) {
+		$issues += "Visual Studio 2022 with MSBuild and C++ tools not installed"
+	} else {
 	$issues += "Visual Studio Installer not found"
-    }
+	}
 }
 
 #endregion
