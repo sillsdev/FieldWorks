@@ -45,18 +45,9 @@
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<!-- Platform-specific irrKlang native DLL (from SIL.Media package contentFiles) -->
-		<PalasoFiles
-			Include="lib/win-x86/irrKlang.NET4.dll"
-			Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"
-		/>
-		<PalasoFiles
-			Include="lib/win-x64/irrKlang.NET4.dll"
-			Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
-		/>
+		<PalasoFiles Include="lib/win-x64/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<!-- Platform-specific Interop.WIA.dll (from SIL.Windows.Forms package) -->
 		<PalasoFiles Include="Interop.WIA.dll" />
-		<!-- NDesk.DBus.dll.config file (config files not auto-copied by NuGet) -->
-		<PalasoFiles Include="NDesk.DBus.dll.config" />
 		<!-- Chorus.exe application (entry point, not just a library) -->
 		<ChorusFiles Include="Chorus.exe" />
 		<!-- ICU native binaries and static libraries -->
@@ -447,53 +438,16 @@
 			OverwriteReadOnlyFiles="true"
 		/>
 		<!-- Copy native/special-case artifacts that PackageReference doesn't handle automatically -->
-		<ItemGroup>
-			<!-- REVIEW (Hasso) 2026.03: when do we expect any of these files not to exist? If they don't, do we really want to continue building merrily? -->
-			<ExistingPalasoFiles
-				Include="@(PalasoFiles)"
-				Condition="Exists('$(PalasoArtifactsDir)/%(Identity)')"
-			/>
-			<ExistingChorusFiles
-				Include="@(ChorusFiles)"
-				Condition="Exists('$(ChorusArtifactsDir)/%(Identity)')"
-			/>
-		</ItemGroup>
-		<!--
-			Expected Warning: "Missing Palaso native files"
-			These are Windows-only native interop DLLs for optional features:
-			- Keyman*Interop.dll, KeymanLink.dll: Keyman keyboard integration
-			- irrKlang.NET4.dll: Audio playback via irrKlang engine
-			- Interop.WIA.dll: Windows Image Acquisition for scanning
-			- NDesk.DBus.dll.config: Linux D-Bus configuration (not needed on Windows)
-
-			This warning is EXPECTED in CI environments where:
-			1. These optional native dependencies aren't installed
-			2. The NuGet packages don't include all platform-specific files
-			3. Full functionality requires a complete Windows development environment
-
-			The warning does NOT fail the build. Features using these DLLs will gracefully
-			degrade or show appropriate error messages at runtime if the files are missing.
-		-->
-		<Message
-			Text="Missing Palaso native files (skipping): @(PalasoFiles)"
-			Importance="low"
-			Condition="'@(ExistingPalasoFiles)'!='' AND '@(PalasoFiles)'!='@(ExistingPalasoFiles)'"
-		/>
-		<Message
-			Text="Missing Chorus application files (skipping): @(ChorusFiles)"
-			Importance="low"
-			Condition="'@(ExistingChorusFiles)'!='' AND '@(ChorusFiles)'!='@(ExistingChorusFiles)'"
-		/>
 		<!-- Copy native Keyman/irrKlang/Interop.WIA files from Palaso packages -->
 		<Copy
-			SourceFiles="@(ExistingPalasoFiles -&gt; '$(PalasoArtifactsDir)/%(Identity)')"
+			SourceFiles="@(PalasoFiles -&gt; '$(PalasoArtifactsDir)/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
 		<!-- Copy Chorus.exe application -->
 		<Copy
-			SourceFiles="@(ExistingChorusFiles -&gt; '$(ChorusArtifactsDir)/%(Identity)')"
+			SourceFiles="@(ChorusFiles -&gt; '$(ChorusArtifactsDir)/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
@@ -539,27 +493,17 @@
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
-		<!-- Native Geckofx package (complex multi-file layout requires manual copying) -->
+		<!-- Native Geckofx browser engine package (managed wrapper + native XULRunner files) -->
 		<PropertyGroup>
 			<Architecture>64</Architecture>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT'"
-				>$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir
-			>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<!-- Geckofx native browser engine (managed wrapper + native XULRunner files) -->
-			<NuGottenFiles
-				Include="$(GeckoDir)/lib/net45/*.*"
-				Condition="'$(OS)'=='Windows_NT'"
-			/>
-			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*" />
-			<!-- NOTE: All other managed DLLs are now handled automatically by PackageReference.
-			     MSBuild's automatic assembly resolution copies them to the output directory.
-			     SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj. -->
+			<GeckoFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'" />
+			<GeckoFiles Include="$(GeckoDir)/content/**/*.*" />
 		</ItemGroup>
-		<!-- REVIEW (Hasso) 2026.03: do we still need to copy NuGottenFiles explicitly here? -->
 		<Copy
-			SourceFiles="@(NuGottenFiles)"
+			SourceFiles="@(GeckoFiles)"
 			DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
