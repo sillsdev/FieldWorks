@@ -2,9 +2,14 @@
 	<PropertyGroup>
 		<!--
 			Installer projects use WiX-specific packages (WixToolset.Dtf.*) that are
-			not shared with the main FieldWorks codebase. Opt out of CPM to avoid
-			needing unnecessary entries in the root Directory.Packages.props.
+			not shared with the main FieldWorks codebase. Keep those versions scoped
+			to FLExInstaller, but centralize them here.
 		-->
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
+
+	<ItemGroup Label="Installer Packages">
+		<PackageVersion Include="WixToolset.Dtf.CustomAction" Version="6.0.0" />
+		<PackageVersion Include="WixToolset.Dtf.WindowsInstaller" Version="6.0.0" />
+	</ItemGroup>
 </Project>

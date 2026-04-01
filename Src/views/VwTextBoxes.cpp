@@ -19,11 +19,15 @@ Description:
 #include "Main.h"
 #pragma hdrstop
 // any other headers (not precompiled)
+#include "lib/LayoutCache.h"
+#include "VwRenderTrace.h"
 
 using namespace std;
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
+
+__declspec(thread) LayoutPassCache * g_pCurrentLayoutPassCache = NULL;
 
 // #define _DEBUG_SHOW_BOX
 
@@ -793,6 +797,10 @@ typedef enum
 class ParaBuilder
 {
 public:  // we can make anything public since the whole class is private to this file
+	ParaBuilder() : m_pPrevLayoutPassCache(NULL)
+	{
+	}
+
 	ParaBuilderState m_zpbs;	// state of the builder, controls next step in MainLoop()
 
 	VwParagraphBox * m_pvpbox;	// the thing we are laying out.
@@ -916,6 +924,8 @@ public:  // we can make anything public since the whole class is private to this
 	int m_dyTagBelow;		// extra height to insert below lines for closing tags
 	bool m_fSemiTagging;	// displaying styles on text itself but not the tags
 	IVwOverlay * m_pxvo;
+	LayoutPassCache m_layoutPassCache;
+	LayoutPassCache * m_pPrevLayoutPassCache;
 
 	// Picture box we are trying to fit into line
 	VwPictureBox * m_pboxpic;
@@ -1187,6 +1197,8 @@ public:  // we can make anything public since the whole class is private to this
 		}
 		Assert(!(fComplete && pboxStartLayout));
 		m_pvpbox = pvpbox;
+		m_layoutPassCache.Reset();
+		m_pPrevLayoutPassCache = SetCurrentLayoutPassCache(&m_layoutPassCache);
 		m_pboxOriginalFirst = m_pvpbox->FirstBox();
 		// Need to set the first box of the paragraph to null. This is needed since we can call
 		// EditableSubStringAt() while laying out the paragraph (possibly trying to get an
@@ -1591,6 +1603,22 @@ public:  // we can make anything public since the whole class is private to this
 	------------------------------------------------------------------------------------------*/
 	virtual ~ParaBuilder()
 	{
+		LayoutPassCache * pLayoutPassCache = GetCurrentLayoutPassCache();
+		if (pLayoutPassCache)
+		{
+			RENDER_TRACE_MSG("[RENDER] Stage=LayoutPassCache AnalysisReq=%d AnalysisHit=%d AnalysisMiss=%d AnalysisEvict=%d AnalysisMissMs=%lu ShapeReq=%d ShapeHit=%d ShapeMiss=%d ShapeEvict=%d ShapeMissMs=%lu\r\n",
+				pLayoutPassCache->AnalysisCache().RequestCount(),
+				pLayoutPassCache->AnalysisCache().HitCount(),
+				pLayoutPassCache->AnalysisCache().MissCount(),
+				pLayoutPassCache->AnalysisCache().EvictionCount(),
+				pLayoutPassCache->AnalysisCache().ComputeMs(),
+				pLayoutPassCache->ShapeCache().RequestCount(),
+				pLayoutPassCache->ShapeCache().HitCount(),
+				pLayoutPassCache->ShapeCache().MissCount(),
+				pLayoutPassCache->ShapeCache().EvictionCount(),
+				pLayoutPassCache->ShapeCache().ComputeMs());
+		}
+		SetCurrentLayoutPassCache(m_pPrevLayoutPassCache);
 		Assert(m_vmpbox.Size() == 0);
 		// Delete any discarded string boxes that have not been reused
 		while (m_psboxReusable)

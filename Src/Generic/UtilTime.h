@@ -468,7 +468,9 @@ At some convenient point set m_msMyMethod to zero, and later see what it contain
 You can also surround a smaller piece of code with braces and call this at the start.
 Hungarian: not needed
 ----------------------------------------------------------------------------------------------*/
-#define MeasureDuration(arg) _MeasureDuration _measure_duration_##__LINE__(&arg)
+#define UTILTIME_CONCAT_INNER(a, b) a##b
+#define UTILTIME_CONCAT(a, b) UTILTIME_CONCAT_INNER(a, b)
+#define MeasureDuration(arg) _MeasureDuration UTILTIME_CONCAT(_measure_duration_, __LINE__)(&arg)
 
 class _MeasureDuration
 {

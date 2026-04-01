@@ -421,6 +421,7 @@ namespace SIL.FieldWorks.XWorks
 			StoreClerkInPropertyTable(clerkConfiguration);
 
 			SetupDataContext(false);
+
 		}
 
 		/// <summary>
@@ -1468,20 +1469,7 @@ namespace SIL.FieldWorks.XWorks
 			get { return Id != "AllReversalEntries" && (!Editable || !IsPrimaryClerk || !m_shouldHandleDeletion); }
 		}
 
-		/// <summary>
-		/// Handler for the 'Delete ...' menu item.
-		/// Triggered from (DistFiles\Language Explorer\Configuration\Main.xml)
-		/// </summary>
 		public bool OnDeleteRecord(object commandObject)
-		{
-			DeleteRecord(commandObject);
-			return true;
-		}
-
-		/// <summary>
-		/// Method to handle published messages for DeleteRecord
-		/// </summary>
-		private void DeleteRecord(object commandObject)
 		{
 			CheckDisposed();
 
@@ -1493,7 +1481,7 @@ namespace SIL.FieldWorks.XWorks
 			// The m_shouldHandleDeletion member was also added, so the "AllReversalEntries" clerk's primary clerk
 			// would not handle the message, and delete an entire reversal index.
 			if (ShouldNotHandleDeletionMessage)
-				return;
+				return false;
 
 			// It may be null:
 			// 1. if the objects are bing deleted using the keys,
@@ -1501,13 +1489,13 @@ namespace SIL.FieldWorks.XWorks
 			// 3. the user keeps pressing the del key.
 			// It looks like the command is not being disabled at all or fast enough.
 			if (CurrentObjectHvo == 0)
-				return;
+				return true;
 
 			// Don't allow an object to be deleted if it shouldn't be deleted.
 			if (!CanDelete())
 			{
 				ReportCannotDelete();
-				return;
+				return true;
 			}
 
 			ICmObject thingToDelete = GetObjectToDelete(CurrentObject);
@@ -1554,6 +1542,7 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning restore 618
 				}
 			}
+			return true; //we handled this, no need to ask anyone else.
 		}
 
 		/// <summary>
@@ -2004,7 +1993,6 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
-			Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
 
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
@@ -2106,7 +2094,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
 			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
-			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
