@@ -566,16 +566,6 @@ namespace SIL.FieldWorks.Resources
 			get { return Helper.m_imgLst11x12.Images[0]; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the interlinear audio play arrow.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static Image InterlinPlayArrow
-		{
-			get { return Helper.m_imgLst11x12.Images[1]; }
-		}
-
 		/// <summary>
 		/// Icon for linking words into phrases.
 		/// </summary>
