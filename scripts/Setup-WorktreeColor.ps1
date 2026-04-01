@@ -1,16 +1,16 @@
 <#
 .SYNOPSIS
-    Sets a unique window color for the current VS Code workspace/worktree.
+	Sets a unique window color for the current VS Code workspace/worktree.
 .DESCRIPTION
 	Chooses a color from a fixed deterministic palette using the lowest free slot.
 
-    Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
-    - Base workspace configuration is embedded in this script
+	Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
+	- Base workspace configuration is embedded in this script
 	- Writes a worktree-local workspace file: <branch>.code-workspace (git-ignored)
 
-    - If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
-    - If in Main Repo: Removes these color customizations.
-    Intended to be run as a "folderOpen" task in VS Code.
+	- If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
+	- If in Main Repo: Removes these color customizations.
+	Intended to be run as a "folderOpen" task in VS Code.
 #>
 
 param(
