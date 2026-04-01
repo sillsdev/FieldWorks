@@ -37,9 +37,9 @@ namespace SIL.DisambiguateInFLExDBTests
 			base.FixtureSetup();
 			TestDirInit();
 			if (String.IsNullOrEmpty(TestFile))
-				TestFile = "PCPATRTesting.fwdata";
+				TestFile = kTestFile;
 			if (String.IsNullOrEmpty(SavedTestFile))
-				SavedTestFile = "PCPATRTestingB4.fwdata";
+				SavedTestFile = kTestFileB4;
 			TempTestFile = Path.Combine(Path.GetTempPath(), TestFile);
 			File.Copy(Path.Combine(TestDataDir, SavedTestFile), TempTestFile, true);
 			ProjId = new ProjectId(TempTestFile);

@@ -51,7 +51,7 @@ namespace SIL.DisambiguateInFLExDB
 			BatchFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.bat");
 			StringBuilder sbBatchFile = new StringBuilder();
 			sbBatchFile.Append("@echo off\n");
-			sbBatchFile.Append("cd \"");
+			sbBatchFile.Append("cd /d \"");
 			sbBatchFile.Append(Path.GetTempPath());
 			sbBatchFile.Append("\"\n\"");
 			sbBatchFile.Append(GetPcPatr64ExePath());
