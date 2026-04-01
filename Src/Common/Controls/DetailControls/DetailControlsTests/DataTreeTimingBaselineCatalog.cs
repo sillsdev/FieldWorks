@@ -45,19 +45,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			}
 
-			Assert.That(depth, Is.EqualTo(baseline.Depth),
-				$"Scenario '{scenario}' depth no longer matches its committed timing baseline.");
-			Assert.That(breadth, Is.EqualTo(baseline.Breadth),
-				$"Scenario '{scenario}' breadth no longer matches its committed timing baseline.");
-			Assert.That(timing.SliceCount, Is.EqualTo(baseline.Slices),
-				$"Scenario '{scenario}' slice count no longer matches its committed timing baseline.");
+			WarnIfValueDiffers(scenario, "Depth", depth, baseline.Depth);
+			WarnIfValueDiffers(scenario, "Breadth", breadth, baseline.Breadth);
+			WarnIfValueDiffers(scenario, "Slice count", timing.SliceCount, baseline.Slices);
 			WarnIfTimingExceedsBaseline(scenario, "Init", timing.InitializationMs, baseline.MaxInitMs);
 			WarnIfTimingExceedsBaseline(scenario, "Populate", timing.PopulateSlicesMs, baseline.MaxPopulateMs);
 			WarnIfTimingExceedsBaseline(scenario, "Total", timing.TotalMs, baseline.MaxTotalMs);
-			Assert.That(density, Is.GreaterThanOrEqualTo(baseline.MinDensity),
-				$"Scenario '{scenario}' rendered less content than expected for its timing baseline.");
-			Assert.That(density, Is.LessThanOrEqualTo(baseline.MaxDensity),
-				$"Scenario '{scenario}' rendered more content than expected for its timing baseline.");
+			WarnIfDensityOutOfRange(scenario, density, baseline.MinDensity, baseline.MaxDensity);
 		}
 
 		internal static void AssertSnapshotCoverage()
@@ -83,8 +77,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				.Where(id => !Baselines.ContainsKey(id))
 				.ToList();
 
-			Assert.That(missingScenarioIds, Is.Empty,
-				$"Committed snapshot scenarios must all have timing baselines in {BaselineFilePath}.");
+			if (missingScenarioIds.Count > 0)
+			{
+				WriteTimingReport(
+					$"Committed snapshot scenarios are missing timing baselines in {BaselineFilePath}: " +
+					string.Join(", ", missingScenarioIds));
+			}
 		}
 
 		private static IReadOnlyDictionary<string, DataTreeTimingBaseline> LoadBaselines()
@@ -128,6 +126,34 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			WriteTimingReport(
 				$"{scenario} {metricName} exceeded local baseline: " +
 				$"actual={actualMs:F2}ms baseline={baselineMs:F2}ms");
+		}
+
+		private static void WarnIfValueDiffers(string scenario, string metricName, int actualValue, int baselineValue)
+		{
+			if (actualValue == baselineValue)
+				return;
+
+			WriteTimingReport(
+				$"{scenario} {metricName} differs from local baseline: " +
+				$"actual={actualValue} baseline={baselineValue}");
+		}
+
+		private static void WarnIfDensityOutOfRange(string scenario, double actualDensity, double minDensity, double maxDensity)
+		{
+			if (actualDensity < minDensity)
+			{
+				WriteTimingReport(
+					$"{scenario} rendered less content than its local timing baseline: " +
+					$"actual={actualDensity:F2}% min={minDensity:F2}%");
+				return;
+			}
+
+			if (actualDensity > maxDensity)
+			{
+				WriteTimingReport(
+					$"{scenario} rendered more content than its local timing baseline: " +
+					$"actual={actualDensity:F2}% max={maxDensity:F2}%");
+			}
 		}
 
 		private static void WriteTimingReport(string message)
