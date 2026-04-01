@@ -58,12 +58,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbBatchFile.Append("\\pcpatr64\" -t ");
 			sbBatchFile.Append(takeFileName);
 			sbBatchFile.Append("\n");
-			string removeCRs = sbBatchFile.ToString().Replace("\r", "").Replace("&#xD;","");
-			File.WriteAllText(BatchFile, removeCRs);
-			Console.WriteLine("\nbatch file =");
-			Console.WriteLine("=================================================");
-			Console.Write(removeCRs);
-			Console.WriteLine("=================================================");
+			File.WriteAllText(BatchFile, sbBatchFile.ToString());
 		}
 
 		private string GetPcPatr64ExePath()
@@ -91,22 +86,14 @@ namespace SIL.DisambiguateInFLExDB
 			using (var process = Process.Start(processInfo))
 			{
 				process.PriorityClass = ProcessPriorityClass.High;
-				Console.WriteLine("\nBefore WaitForExit");
 				process.WaitForExit();
-				Console.WriteLine("\tAfter  WaitForExit");
 				string error = process.StandardError.ReadToEnd();
-				Console.WriteLine("\nStdErr=");
-				Console.WriteLine("=================================================");
-				Console.Write(error);
-				Console.WriteLine("=================================================");
 				if (error.Contains("ERROR "))
 				{
-					Console.WriteLine("\tFailure");
 					InvocationSucceeded = false;
 				}
 				else
 				{
-					Console.WriteLine("\tSuccess");
 					InvocationSucceeded = true;
 				}
 				process.StandardOutput.Close();
@@ -118,8 +105,6 @@ namespace SIL.DisambiguateInFLExDB
 		private void CreateTakeFile()
 		{
 			string takeFile = Path.Combine(Path.GetTempPath(), takeFileName);
-			//StringBuilder sbTakeFileShortPath = new StringBuilder(255);
-			//int i = GetShortPathName(takeFile, sbTakeFileShortPath, sbTakeFileShortPath.Capacity);
 			var sbTake = new StringBuilder();
 			sbTake.Append("set comment |\n");
 			sbTake.Append("log ");
@@ -128,15 +113,6 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("load grammar ");
 			sbTake.Append(GrammarFile);
 			sbTake.Append("\n");
-			// See if the failure we're getting in GitHub is due to not finding the grammr file:
-			// We'll put it in the temp directory now.
-			//StringBuilder sbGrammarFileShortPath = new StringBuilder(255);
-			//i = GetShortPathName(
-			//	GrammarFile,
-			//	sbGrammarFileShortPath,
-			//	sbGrammarFileShortPath.Capacity
-			//);
-			//sbTake.Append(sbGrammarFileShortPath.ToString() + "\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
 			sbTake.Append("set features all\n");
@@ -155,13 +131,8 @@ namespace SIL.DisambiguateInFLExDB
 			// since the batch fle defaults to the temp directory, we just use the invoker files as they are
 			sbTake.Append("file disambiguate Invoker.ana Invoker.and\n");
 			sbTake.Append("exit\n");
-			string removeCRs = sbTake.ToString().Replace("\r", "").Replace("&#xD;", "");
-			File.WriteAllText(takeFile, removeCRs);
+			File.WriteAllText(takeFile, sbTake.ToString());
 			AndFile = Path.Combine(Path.GetTempPath(), "Invoker.and");
-			Console.WriteLine("\ntake file =");
-			Console.WriteLine("=================================================");
-			Console.Write(removeCRs);
-			Console.WriteLine("=================================================");
 		}
 
 		private void HandleRootGloss(StringBuilder sbTake)

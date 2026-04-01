@@ -1773,7 +1773,7 @@ namespace SIL.PcPatrBrowser
 
 		private void miSentenceGoTo_Click(object sender, System.EventArgs e)
 		{
-			dlgGoTo dlg = new dlgGoTo();
+			GoToDialog dlg = new GoToDialog();
 			dlg.Text = "Go To Sentence";
 			dlg.GoToPrompt = "&Go to sentence:";
 			dlg.ShowDialog();
@@ -1788,7 +1788,7 @@ namespace SIL.PcPatrBrowser
 
 		private void miParserGoTo_Click(object sender, System.EventArgs e)
 		{
-			dlgGoTo dlg = new dlgGoTo();
+			GoToDialog dlg = new GoToDialog();
 			dlg.Text = "Go To Parse";
 			dlg.GoToPrompt = "&Go to parse:";
 			dlg.ShowDialog();

@@ -40,7 +40,9 @@ namespace SIL.DisambiguateInFLExDBTests
 				TestFile = kTestFile;
 			if (String.IsNullOrEmpty(SavedTestFile))
 				SavedTestFile = kTestFileB4;
-			TempTestFile = Path.Combine(Path.GetTempPath(), TestFile);
+
+			var temp = new IO.TempFile(Path.Combine(Path.GetTempPath(), TestFile), false);
+			TempTestFile = temp.Path;
 			File.Copy(Path.Combine(TestDataDir, SavedTestFile), TempTestFile, true);
 			ProjId = new ProjectId(TempTestFile);
 			FwRegistryHelper.Initialize();
@@ -66,10 +68,6 @@ namespace SIL.DisambiguateInFLExDBTests
 			if (MyCache != null)
 			{
 				ProjectLockingService.UnlockCurrentProject(MyCache);
-				if (File.Exists(TempTestFile))
-				{
-					File.Delete(TempTestFile);
-				}
 			}
 		}
 	}

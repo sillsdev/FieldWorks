@@ -9,7 +9,7 @@ namespace SIL.PcPatrBrowser
 	/// <summary>
 	/// Summary description for GoToDialog.
 	/// </summary>
-	public class dlgGoTo : System.Windows.Forms.Form
+	public class GoToDialog : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.Label lblGoToPrompt;
 		private System.Windows.Forms.TextBox tbNumber;
@@ -21,7 +21,7 @@ namespace SIL.PcPatrBrowser
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public dlgGoTo()
+		public GoToDialog()
 		{
 			//
 			// Required for Windows Form Designer support
@@ -83,7 +83,7 @@ namespace SIL.PcPatrBrowser
 		private void InitializeComponent()
 		{
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(
-				typeof(dlgGoTo)
+				typeof(GoToDialog)
 			);
 			this.lblGoToPrompt = new System.Windows.Forms.Label();
 			this.tbNumber = new System.Windows.Forms.TextBox();
