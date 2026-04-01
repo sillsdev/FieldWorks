@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Xml;
@@ -307,13 +308,58 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class DateSlice : FieldSlice, IVwNotifyChange
 	{
+		private static readonly TraceSwitch s_wheelTraceSwitch = new TraceSwitch("DateSliceWheel", "");
+		private const int kWmMouseWheel = 0x020A;
+
+		private sealed class WheelForwardingRichTextBox : RichTextBox
+		{
+			protected override void WndProc(ref Message m)
+			{
+				if (m.Msg == kWmMouseWheel)
+				{
+					int delta = (short)((long)m.WParam >> 16);
+					bool handled = TryScrollOwningDataTree(this, delta);
+					TraceWheel(string.Format("RichTextBoxWndProc delta={0} handled={1}", delta, handled));
+					if (handled)
+						return;
+				}
+
+				base.WndProc(ref m);
+			}
+		}
+
+		private static void TraceWheel(string message)
+		{
+			if (s_wheelTraceSwitch.TraceInfo || s_wheelTraceSwitch.TraceVerbose)
+				Trace.WriteLine("DateSliceWheel: " + message);
+		}
+
+		internal static bool TryScrollOwningDataTree(Control control, int delta)
+		{
+			for (Control current = control; current != null; current = current.Parent)
+			{
+				var dataTree = current as DataTree;
+				if (dataTree != null)
+				{
+					bool handled = DataTree.TryHandleWheelScroll(dataTree, delta);
+					TraceWheel(string.Format(
+						"TryScrollOwningDataTree delta={0} dataTreeVisible={1} handled={2}",
+						delta, dataTree.Visible, handled));
+					return handled;
+				}
+			}
+
+			TraceWheel(string.Format("TryScrollOwningDataTree delta={0} no-datatree", delta));
+			return false;
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DateSlice"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public DateSlice(LcmCache cache, ICmObject obj, int flid)
-			: base(new RichTextBox(), cache, obj, flid)
+			: base(new WheelForwardingRichTextBox(), cache, obj, flid)
 		{
 			// JohnT: per comment at the end of LT-7073, we want the normal window color for this
 			// slice. It's also nice to be able to select and copy. Setting ReadOnly is enough to prevent

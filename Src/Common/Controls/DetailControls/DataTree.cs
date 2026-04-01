@@ -4531,6 +4531,50 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			return true;
 		}
+
+		internal static int GetWheelScrollPixels(DataTree dataTree, int delta)
+		{
+			if (delta == 0)
+				return 0;
+
+			int scrollLines = SystemInformation.MouseWheelScrollLines;
+			if (scrollLines == 0)
+				return 0;
+
+			if (scrollLines == int.MaxValue)
+				return Math.Sign(delta) * dataTree.ClientRectangle.Height;
+
+			double linesToScroll = (double)delta / SystemInformation.MouseWheelScrollDelta * scrollLines;
+			return (int)Math.Round(linesToScroll * dataTree.Font.Height, MidpointRounding.AwayFromZero);
+		}
+
+		internal static bool TryGetWheelScrollPosition(DataTree dataTree, int delta, out int newY)
+		{
+			int currentY = -dataTree.AutoScrollPosition.Y;
+			int maxScroll = Math.Max(0,
+				dataTree.AutoScrollMinSize.Height - dataTree.ClientRectangle.Height);
+			int pixelDelta = GetWheelScrollPixels(dataTree, delta);
+			newY = Math.Max(0, Math.Min(currentY - pixelDelta, maxScroll));
+			return newY != currentY;
+		}
+
+		internal static bool CanRedirectWheelMessage(DataTree dataTree)
+		{
+			return dataTree.IsHandleCreated && !dataTree.IsDisposed && dataTree.Visible;
+		}
+
+		internal static bool TryHandleWheelScroll(DataTree dataTree, int delta)
+		{
+			if (!CanRedirectWheelMessage(dataTree))
+				return false;
+
+			int newY;
+			if (!TryGetWheelScrollPosition(dataTree, delta, out newY))
+				return false;
+
+			dataTree.AutoScrollPosition = new Point(0, newY);
+			return true;
+		}
 	}
 
 	class DummyObjectSlice : Slice
