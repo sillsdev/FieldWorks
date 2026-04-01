@@ -20,7 +20,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: checkout
 
       - name: Build managed (with tests)
