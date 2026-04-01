@@ -84,6 +84,8 @@ Initialize-VsDevEnvironment
 # Suppress assertion dialog boxes (DebugProcs.dll checks this env var)
 # This prevents tests from blocking on MessageBox popups
 $env:AssertUiEnabled = 'false'
+# Unconditional test-mode override: bypasses registry AssertMessageBox key in DebugProcs.dll
+$env:FW_TEST_MODE = '1'
 
 # Suppress Windows Error Reporting and crash dialogs
 # SEM_FAILCRITICALERRORS = 0x0001
@@ -549,6 +551,13 @@ function Invoke-Run {
 	}
 
 	$process.WaitForExit()
+	$nativeExitCode = $null
+	try {
+		$nativeExitCode = $process.ExitCode
+	}
+	catch {
+		$nativeExitCode = $null
+	}
 
 	$logTail = @()
 	if (Test-Path $LogPath) {
@@ -562,15 +571,34 @@ function Invoke-Run {
 		Write-Host "--- end output ---" -ForegroundColor Yellow
 	}
 
-	# Determine exit code: parse the Unit++ summary line from the log as the authoritative
-	# source. Start-Process -RedirectStandardOutput in PowerShell 5.1 can return a null
-	# ExitCode even after WaitForExit(), so the process exit code is not reliable here.
+	# Determine exit code using both the real process exit code and the Unit++ summary.
+	# The process exit code is authoritative for crashes/teardown failures that occur after
+	# the Unit++ summary has already been written.
 	$exitCode = -1
+	$summaryExitCode = $null
 	if (-not $timedOut) {
 		$summaryLine = $logTail | Where-Object { $_ -match 'Tests \[Ok-Fail-Error\]: \[\d+-\d+-\d+\]' } | Select-Object -Last 1
 		if ($summaryLine) {
 			$m = [regex]::Match($summaryLine, 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]')
-			$exitCode = [int]$m.Groups[2].Value + [int]$m.Groups[3].Value
+			$summaryExitCode = [int]$m.Groups[2].Value + [int]$m.Groups[3].Value
+		}
+
+		if ($terminatedAfterCompletion) {
+			if ($null -ne $nativeExitCode -and $nativeExitCode -ne 0) {
+				$exitCode = $nativeExitCode
+			}
+			else {
+				$exitCode = 1
+			}
+		}
+		elseif ($null -ne $nativeExitCode -and $nativeExitCode -ne 0) {
+			$exitCode = $nativeExitCode
+		}
+		elseif ($null -ne $summaryExitCode) {
+			$exitCode = $summaryExitCode
+		}
+		elseif ($null -ne $nativeExitCode) {
+			$exitCode = $nativeExitCode
 		}
 	}
 
