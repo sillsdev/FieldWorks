@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
@@ -30,6 +32,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private PropertyTable m_propertyTable;
 		private DataTree m_dtree;
 		private Form m_parent;
+
+		private sealed class ScrollTestDataTree : DataTree
+		{
+			protected override void OnPaint(PaintEventArgs e)
+			{
+			}
+		}
 
 		private CustomFieldForTest m_customField;
 		#region Fixture Setup and Teardown
@@ -76,6 +85,30 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_parts = GenerateParts();
 		}
 		#endregion
+
+		private static DataTree CreateScrollableDataTree(Form parent)
+		{
+			var dataTree = new ScrollTestDataTree();
+			parent.Size = new Size(400, 200);
+			dataTree.Dock = DockStyle.Fill;
+			parent.Controls.Add(dataTree);
+
+			for (int i = 0; i < 12; i++)
+			{
+				var slice = new Slice(new Panel { Dock = DockStyle.Fill })
+				{
+					Visible = true,
+					Size = new Size(360, 50),
+					Location = new Point(0, i * 50)
+				};
+				dataTree.Controls.Add(slice);
+				slice.Install(dataTree);
+			}
+
+			parent.Show();
+			Application.DoEvents();
+			return dataTree;
+		}
 
 		#region Test setup and teardown
 		/// ------------------------------------------------------------------------------------
@@ -272,6 +305,102 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string tool;
 				var guid = m_dtree.GetGuidForJumpToTool(cmd, true, out tool);
 				Assert.That(guid, Is.EqualTo(m_dtree.Root.Guid));
+			}
+		}
+
+		[Test]
+		public void GetWheelScrollPixels_UsesSystemWheelSettings()
+		{
+			m_dtree.Bounds = new Rectangle(0, 0, 200, 100);
+
+			int delta = SystemInformation.MouseWheelScrollDelta;
+			int scrollLines = SystemInformation.MouseWheelScrollLines;
+			int expectedPixels;
+			if (scrollLines == 0)
+			{
+				expectedPixels = 0;
+			}
+			else if (scrollLines == int.MaxValue)
+			{
+				expectedPixels = m_dtree.ClientRectangle.Height;
+			}
+			else
+			{
+				expectedPixels = (int)Math.Round((double)scrollLines * m_dtree.Font.Height,
+					MidpointRounding.AwayFromZero);
+			}
+
+			Assert.That(DataTree.GetWheelScrollPixels(m_dtree, delta), Is.EqualTo(expectedPixels));
+			Assert.That(DataTree.GetWheelScrollPixels(m_dtree, -delta), Is.EqualTo(-expectedPixels));
+		}
+
+		[Test]
+		public void TryGetWheelScrollPosition_ReturnsFalse_WhenAlreadyAtTop()
+		{
+			m_dtree.Bounds = new Rectangle(0, 0, 200, 100);
+			m_dtree.AutoScrollMinSize = new Size(200, 1000);
+			m_dtree.AutoScrollPosition = new Point(0, 0);
+
+			int newY;
+			bool handled = DataTree.TryGetWheelScrollPosition(m_dtree,
+				SystemInformation.MouseWheelScrollDelta, out newY);
+
+			Assert.That(handled, Is.False);
+			Assert.That(newY, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void CanRedirectWheelMessage_ReturnsFalse_WhenDataTreeHidden()
+		{
+			m_parent.Show();
+			m_dtree.Show();
+			Assert.That(m_dtree.IsHandleCreated, Is.True);
+
+			m_dtree.Hide();
+
+			Assert.That(DataTree.CanRedirectWheelMessage(m_dtree), Is.False);
+		}
+
+		[Test]
+		public void TryHandleWheelScroll_UpdatesScrollPosition_WhenScrollingIsPossible()
+		{
+			using (var parent = new Form())
+			{
+				var dataTree = CreateScrollableDataTree(parent);
+				dataTree.AutoScrollPosition = new Point(0, 0);
+
+				bool handled = DataTree.TryHandleWheelScroll(dataTree, -SystemInformation.MouseWheelScrollDelta);
+
+				Assert.That(handled, Is.True);
+				Assert.That(-dataTree.AutoScrollPosition.Y, Is.GreaterThan(0));
+			}
+		}
+
+		[Test]
+		public void TryScrollOwningDataTree_ScrollsContainingDataTree_FromDateSliceHostedControl()
+		{
+			using (var parent = new Form())
+			{
+				var dataTree = CreateScrollableDataTree(parent);
+				dataTree.AutoScrollPosition = new Point(0, 0);
+
+				using (var host = new Panel())
+				using (var control = new RichTextBox())
+				{
+					host.Bounds = new Rectangle(0, 0, 150, 20);
+					control.Dock = DockStyle.Fill;
+					host.Controls.Add(control);
+					dataTree.Controls.Add(host);
+					host.Show();
+					control.Show();
+					Application.DoEvents();
+
+					bool handled = DateSlice.TryScrollOwningDataTree(control,
+						-SystemInformation.MouseWheelScrollDelta);
+
+					Assert.That(handled, Is.True);
+					Assert.That(-dataTree.AutoScrollPosition.Y, Is.GreaterThan(0));
+				}
 			}
 		}
 
