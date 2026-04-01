@@ -54,6 +54,7 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'  # Don't stop on stderr output from vstest
+Import-Module (Join-Path $PSScriptRoot 'FwBuildEnvironment.psm1') -Force
 
 # Find repo root (where FieldWorks.sln is)
 $repoRoot = $PSScriptRoot
@@ -71,12 +72,7 @@ if (-not $OutputDir) {
 }
 
 $runSettings = Join-Path $repoRoot "Test.runsettings"
-$vsTestPath = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-
-if (-not (Test-Path $vsTestPath)) {
-    # Try BuildTools path
-    $vsTestPath = "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-}
+$vsTestPath = Get-VSTestPath
 
 if (-not (Test-Path $vsTestPath)) {
     Write-Error "vstest.console.exe not found. Install Visual Studio 2022 or Build Tools."

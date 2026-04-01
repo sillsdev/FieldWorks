@@ -62,6 +62,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'FwBuildEnvironment.psm1') -Force
 
 function Test-Dependency {
     param(
@@ -164,12 +165,14 @@ $results += Test-Dependency -Name "Windows SDK" -Check {
 
 # Visual Studio / MSBuild
 $results += Test-Dependency -Name "Visual Studio 2022" -Check {
-    $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-    if (-not (Test-Path $vsWhere)) { throw "vswhere.exe not found" }
-    $vsPath = & $vsWhere -latest -requires Microsoft.Component.MSBuild -products * -property installationPath
-    if (-not $vsPath) { throw "No VS installation with MSBuild found" }
-    $version = & $vsWhere -latest -property catalog_productDisplayVersion
-    return "Version $version at $vsPath"
+    $vsInfo = Get-VsInstallationInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+    if (-not $vsInfo) {
+        $vsWhere = Get-VsWherePath
+        if (-not $vsWhere) { throw "vswhere.exe not found" }
+        throw "No VS installation with MSBuild and C++ tools found"
+    }
+
+    return "Version $($vsInfo.DisplayVersion) at $($vsInfo.InstallationPath)"
 }
 
 # MSBuild
@@ -179,11 +182,9 @@ $results += Test-Dependency -Name "MSBuild" -Check {
         $version = (& msbuild.exe -version -nologo 2>$null | Select-Object -Last 1)
         return "Version $version"
     }
-    # Try via vswhere
-    $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-    $vsPath = & $vsWhere -latest -requires Microsoft.Component.MSBuild -products * -property installationPath 2>$null
-    if ($vsPath) {
-        $msbuildPath = Join-Path $vsPath 'MSBuild\Current\Bin\MSBuild.exe'
+    $vsInfo = Get-VsInstallationInfo -Requires @('Microsoft.Component.MSBuild')
+    if ($vsInfo) {
+        $msbuildPath = Join-Path $vsInfo.InstallationPath 'MSBuild\Current\Bin\MSBuild.exe'
         if (Test-Path $msbuildPath) {
             return "Found at $msbuildPath (not in PATH)"
         }
