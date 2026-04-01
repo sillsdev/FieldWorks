@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)/system.valuetuple/4.6.1/buildTransitive/net471/System.ValueTuple.targets" Condition="Exists('$(NuGetPackageRoot)/system.valuetuple/4.6.1/buildTransitive/net471/System.ValueTuple.targets')" />
+    <Import Project="$(NuGetPackageRoot)/system.text.json/10.0.1/buildTransitive/net462/System.Text.Json.targets" Condition="Exists('$(NuGetPackageRoot)/system.text.json/10.0.1/buildTransitive/net462/System.Text.Json.targets')" />
+    <Import Project="$(NuGetPackageRoot)/system.resources.extensions/9.0.14/buildTransitive/net462/System.Resources.Extensions.targets" Condition="Exists('$(NuGetPackageRoot)/system.resources.extensions/9.0.14/buildTransitive/net462/System.Resources.Extensions.targets')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.testing.platform/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Platform.targets" Condition="Exists('$(NuGetPackageRoot)/microsoft.testing.platform/1.9.0/buildTransitive/netstandard2.0/Microsoft.Testing.Platform.targets')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.testing.platform.msbuild/1.9.0/buildTransitive/Microsoft.Testing.Platform.MSBuild.targets" Condition="Exists('$(NuGetPackageRoot)/microsoft.testing.platform.msbuild/1.9.0/buildTransitive/Microsoft.Testing.Platform.MSBuild.targets')" />
+    <Import Project="$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.targets" Condition="Exists('$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.targets')" />
+    <Import Project="$(NuGetPackageRoot)/microsoft.netframework.referenceassemblies.net48/1.0.3/build/Microsoft.NETFramework.ReferenceAssemblies.net48.targets" Condition="Exists('$(NuGetPackageRoot)/microsoft.netframework.referenceassemblies.net48/1.0.3/build/Microsoft.NETFramework.ReferenceAssemblies.net48.targets')" />
+  </ImportGroup>
+</Project>
