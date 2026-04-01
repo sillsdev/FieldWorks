@@ -10,8 +10,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		private const string UpdateBaselinesEnvVar = "FW_UPDATE_RENDER_BASELINES";
 		private const int MaxAllowedPixelDifferences = 4;
-		private const int PerChannelTolerance = 8;
-		private const int AlphaTolerance = 8;
 
 		internal static string GetSourceFileDirectory([CallerFilePath] string sourceFile = "")
 		{
@@ -111,7 +109,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					var expected = expectedBitmap.GetPixel(x, y);
 					var actual = actualBitmap.GetPixel(x, y);
 
-					if (!PixelsAreEquivalent(expected, actual))
+					if (expected != actual)
 						differentPixelCount++;
 				}
 			}
@@ -155,14 +153,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		private static int ScaleDiffChannel(int expected, int actual)
 		{
 			return Math.Min(255, Math.Abs(expected - actual) * 4);
-		}
-
-		private static bool PixelsAreEquivalent(Color expected, Color actual)
-		{
-			return Math.Abs(expected.A - actual.A) <= AlphaTolerance &&
-				Math.Abs(expected.R - actual.R) <= PerChannelTolerance &&
-				Math.Abs(expected.G - actual.G) <= PerChannelTolerance &&
-				Math.Abs(expected.B - actual.B) <= PerChannelTolerance;
 		}
 	}
 

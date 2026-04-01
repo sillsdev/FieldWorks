@@ -18,6 +18,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		[OneTimeSetUp]
 		public void OneTimeSetup()
 		{
+			// Force grayscale antialiasing (ANTIALIASED_QUALITY=4) for deterministic
+			// rendering across dev machines and CI (Windows Server 2025).
+			// The native VwGraphics reads this env var when creating GDI fonts.
+			Environment.SetEnvironmentVariable("FW_FONT_QUALITY", "4");
+
 			try
 			{
 				SetProcessDpiAwarenessContext(DpiAwarenessContextUnaware);
