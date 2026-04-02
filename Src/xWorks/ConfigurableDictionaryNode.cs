@@ -224,11 +224,6 @@ namespace SIL.FieldWorks.XWorks
 			get { return ReferencedNode == null ? Children : ReferencedNode.Children; } // REVIEW (Hasso) 2016.03: optimize by caching
 		}
 
-		/// <summary>
-		/// The Guid of the node source.
-		/// </summary>
-		internal Guid SourceGuid { get; set; }
-
 		/// <summary>If node is a HeadWord node.</summary>
 		internal bool IsHeadWord => CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword" || CSSClassNameOverride == "headword-classified";
 

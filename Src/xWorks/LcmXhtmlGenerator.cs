@@ -570,10 +570,10 @@ namespace SIL.FieldWorks.XWorks
 			if (settings != null && (settings.IsWebExport || settings.IsXhtmlExport))
 				return;
 			xw.WriteAttributeString("nodeId", $"{config.GetNodeId()}");
-			if (config.SourceGuid != null)
+			if (settings.ConfigSource.TryGetValue(config, out Guid guid))
 			{
 				// Write out the source guid for JumpToField to use.
-				xw.WriteAttributeString("sourceGuid", $"{config.SourceGuid.ToString()}");
+				xw.WriteAttributeString("sourceGuid", $"{guid}");
 				xw.WriteAttributeString("sourceField", $"{config.FieldDescription}");
 			}
 		}

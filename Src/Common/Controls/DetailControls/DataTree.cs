@@ -1092,8 +1092,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						continue;
 					}
 					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-					if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "ShowMainEntryIn" &&
-						slice.Object == fieldObj)
+					if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "PrimaryLexemes" &&
+						slice.Object is ILexEntryRef ler && ler.OwningEntry == fieldObj)
 					{
 						found = true;
 					}
@@ -1109,11 +1109,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						found = true;
 					}
 					else if (fieldName == "LookupComplexEntryType" && sliceFieldName == "ComplexEntryTypes" &&
-							slice.Object is ILexEntryRef lexEntryRef && lexEntryRef.ComponentLexemesRS.Contains(fieldObj))
+							slice.Object is ILexEntryRef ler2 && ler2.OwningEntry == fieldObj)
 					{
 						found = true;
 					}
-					else if (fieldName == "MLHeadWord" && (sliceFieldName == "Form" || sliceFieldName == "CitationForm") &&
+					else if ((fieldName == "MLHeadWord" || fieldName == "HeadWordRef") &&
+							(sliceFieldName == "Form" || sliceFieldName == "CitationForm") &&
 							(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object) &&
 							SliceMatchesValue(slice, fieldValue))
 					{
@@ -1135,27 +1136,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						found = true;
 					}
 					else if (fieldName == "ReverseAbbr" && sliceFieldName == "ComplexEntryTypes" &&
-							slice.Object is ILexEntryRef lexEntryRef2 && lexEntryRef2.ComplexEntryTypesRS.Contains(fieldObj))
+							slice.Object is ILexEntryRef ler3 && ler3.ComplexEntryTypesRS.Contains(fieldObj))
 					{
 						found = true;
 					}
 					if (found)
 					{
-						m_currentSliceNew = slice;
-						break;
-					}
-				}
-			}
-			if (!found && fieldName == "MLHeadWord")
-			{
-				// Use Form slice as default.
-				foreach (Slice slice in Slices)
-				{
-					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-					if (sliceFieldName == "Form" &&
-						(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object))
-					{
-						found = true;
 						m_currentSliceNew = slice;
 						break;
 					}
@@ -1173,7 +1159,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						continue;
 					}
 					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
-					if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
+					if ((fieldName == "MLHeadWord" || fieldName == "HeadWordRef") && sliceFieldName == "Form" &&
+						(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object))
+					{
+						// MLHeadWord, and HeadWordRef default to Form if the value doesn't match CitationForm or Form.
+						m_currentSliceNew = slice;
+						found = true;
+						break;
+					}
+					else if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
 					{
 						m_currentSliceNew = slice;
 						found = true;

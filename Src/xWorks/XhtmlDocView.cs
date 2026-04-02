@@ -686,11 +686,6 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning disable 618 // suppress obsolete warning
 					mediator.SendMessage("JumpToRecord", fieldLexEntry.Hvo);
 #pragma warning restore 618
-					if (fieldObj == fieldLexEntry && fieldName == "LookupComplexEntryType")
-					{
-						// Go to subentry with entry field object.
-						fieldObj = entryLexEntry;
-					}
 				}
 				// Jump to field on idle to allow JumpToRecord to finish.
 				void JumpToField(object sender, EventArgs args)

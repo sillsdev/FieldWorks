@@ -24,6 +24,7 @@ using SIL.Reporting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -405,7 +406,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Record the guid of the source entry for JumpToField.
-				configuration.SourceGuid = entry.Guid;
+				settings.ConfigSource[configuration] = entry.Guid;
 				var nodeList = BuildNodeList(new List<ConfigurableDictionaryNode>(), configuration);
 				var pieces = configuration.ReferencedOrDirectChildren
 					.Select(childNode => new ConfigFragment(childNode, GenerateContentForFieldByReflection(entry, BuildNodeList(nodeList, childNode), publicationDecorator,
@@ -498,7 +499,7 @@ namespace SIL.FieldWorks.XWorks
 			if (field is ICmObject fieldObj)
 			{
 				// Record the guid of the source field for JumpToField.
-				config.SourceGuid = fieldObj.Guid;
+				settings.ConfigSource[config] = fieldObj.Guid;
 			}
 
 			if (!config.IsEnabled)
@@ -2171,7 +2172,7 @@ namespace SIL.FieldWorks.XWorks
 			if (item is ILexEntry obj)
 			{
 				// Record the guid of the source entry for JumpToField.
-				config.SourceGuid = obj.Guid;
+				settings.ConfigSource[config] = obj.Guid;
 			}
 			var bldr = settings.ContentGenerator.CreateFragment();
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
@@ -2398,7 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var config = nodeList.Last();
 			// Record the guid of the source field for JumpToField.
-			config.SourceGuid = subEntry.Guid;
+			settings.ConfigSource[config] = subEntry.Guid;
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
 				? settings.ContentGenerator.CreateFragment()
@@ -3507,6 +3508,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
+			public Dictionary<ConfigurableDictionaryNode, Guid> ConfigSource = new Dictionary<ConfigurableDictionaryNode, Guid>();
+
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
 			public bool UseRelativePaths { get; }
