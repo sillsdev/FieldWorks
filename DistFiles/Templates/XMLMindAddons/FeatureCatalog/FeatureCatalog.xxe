@@ -31,14 +31,14 @@ Trying to do this is too complicated and doesn't do everything we'd want
 		<command name="createFeatureCatalog"/>
 	</binding>
 	<menu label="_Feature Catalog">
-		<item label="_Insert New Language    ESC+i" icon="xxe-config:common/icons/RowInsertAfter16.gif" command="insertNewLanguage"/>
-		<item label="_Remove Language    ESC+r" icon="xxe-config:common/icons/RowDelete16.gif" command="removeLanguage"/>
+		<item label="_Insert New Language    ESC+i" icon="xxe-config:common/icons/insertRowAfter.png" command="insertNewLanguage"/>
+		<item label="_Remove Language    ESC+r" icon="xxe-config:common/icons/deleteRow.png" command="removeLanguage"/>
 		<separator/>
 <!--
 Trying to do this is too complicated and doesn't do everything we'd want
 		<item label="Create Initial _Set of Items    ESC+s" icon="xxe-config:common/icons2/itemizedlist.gif" command="createInitialSetOfItems"/>
 -->
-		<item label="_Create Feature Catalog (aka EticGlossList.xml)    ESC+c" icon="xxe-config:common/icons2/table.gif" command="createFeatureCatalog"/>
+		<item label="_Create Feature Catalog (aka EticGlossList.xml)    ESC+c" icon="xxe-config:common/icons/table.png" command="createFeatureCatalog"/>
 	</menu>
 	<command name="insertNewLanguage">
 		<macro>
