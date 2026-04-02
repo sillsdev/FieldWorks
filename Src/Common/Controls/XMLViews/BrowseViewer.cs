@@ -3059,8 +3059,17 @@ namespace SIL.FieldWorks.Common.Controls
 				if (!string.IsNullOrEmpty(label) && !activeLabels.Contains(label))
 					hiddenLabels.Add(label);
 			}
-			foreach (var label in hiddenLabels)
-				colList.Append("<hidden label=\"" + SecurityElement.Escape(label) + "\"/>");
+			if (hiddenLabels.Count == 0)
+			{
+				// Write a sentinel so the load side knows hidden tracking is active
+				// (distinguishes "all columns visible" from "pre-upgrade save with no tracking").
+				colList.Append("<hidden/>");
+			}
+			else
+			{
+				foreach (var label in hiddenLabels)
+					colList.Append("<hidden label=\"" + SecurityElement.Escape(label) + "\"/>");
+			}
 			colList.Append("</root>");
 			m_propertyTable.SetProperty(m_xbv.Vc.ColListId, colList.ToString(), PropertyTable.SettingsGroup.LocalSettings, true);
 		}

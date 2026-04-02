@@ -658,8 +658,12 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return true;
 			}
-			// For columns not in PossibleColumnSpecs (e.g. generated columns), fall back to
-			// checking whether the part/layout inventory can resolve the column.
+			// For columns not in PossibleColumnSpecs (e.g. generated columns with a layout
+			// attribute), fall back to checking whether the part/layout inventory can resolve
+			// the column. Columns without a layout attribute that aren't in PossibleColumnSpecs
+			// are invalid (GetPartFromParentNode would trivially return the node itself).
+			if (XmlUtils.GetOptionalAttributeValue(colSpec, "layout") == null)
+				return false;
 			return GetPartFromParentNode(colSpec, ListItemsClass) != null;
 		}
 
