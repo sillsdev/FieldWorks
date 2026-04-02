@@ -47,6 +47,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent (Split-Path -Parent $scriptDir)
+Import-Module (Join-Path $scriptDir 'FwBuildEnvironment.psm1') -Force
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " FieldWorks Installer Build Setup" -ForegroundColor Cyan
@@ -55,6 +56,10 @@ Write-Host ""
 
 $issues = @()
 $warnings = @()
+$vsDevEnvActive = $false
+$restoreWrappedCommand = $null
+$buildWrappedCommand = $null
+$patchWrappedCommand = $null
 
 #region WiX Toolset Validation
 
@@ -90,57 +95,41 @@ if (Test-Path $heatFromRepoPackages) {
 
 Write-Host "`n--- Checking Visual Studio / MSBuild ---" -ForegroundColor Yellow
 
-$vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-$vsInstall = $null
-$vsDevEnvActive = $false
+$toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+$vsDevEnvActive = Test-VsDevEnvironmentActive
 
-if (Test-Path $vsWhere) {
-	$vsInstall = & $vsWhere -latest -property installationPath 2>$null
-	if ($vsInstall) {
-		$vsVersion = & $vsWhere -latest -property catalog_productDisplayVersion 2>$null
+if ($toolchain) {
+	$vsVersion = if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) { 'unknown version' } else { $toolchain.DisplayVersion }
 		Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
 
-		# Check for MSBuild
-		$msbuildPath = Join-Path $vsInstall "MSBuild\Current\Bin\MSBuild.exe"
-		if (Test-Path $msbuildPath) {
-			Write-Host "[OK] MSBuild found: $msbuildPath" -ForegroundColor Green
+	if ($toolchain.MSBuildPath) {
+		Write-Host "[OK] MSBuild found: $($toolchain.MSBuildPath)" -ForegroundColor Green
 		} else {
 			$issues += "MSBuild not found in VS installation"
 		}
 
-		# Check for VsDevCmd
-		$vsDevCmd = Join-Path $vsInstall "Common7\Tools\VsDevCmd.bat"
-		$launchVsDevShell = Join-Path $vsInstall "Common7\Tools\Launch-VsDevShell.ps1"
-		if ((Test-Path $vsDevCmd) -or (Test-Path $launchVsDevShell)) {
+	if ($toolchain.VsDevCmdPath) {
 			Write-Host "[OK] VS Developer environment scripts available" -ForegroundColor Green
+		$restoreWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -f $toolchain.VsDevCmdPath
+		$buildWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
+		$patchWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
+	} else {
+		$issues += "VsDevCmd.bat not found in VS installation"
 		}
 
-		# Check if VS Developer environment is active (nmake in PATH)
-		$nmake = Get-Command nmake.exe -ErrorAction SilentlyContinue
-		if ($nmake) {
-			Write-Host "[OK] VS Developer environment active (nmake in PATH)" -ForegroundColor Green
-			$vsDevEnvActive = $true
+	if ($vsDevEnvActive) {
+		Write-Host "[OK] VS Developer environment active" -ForegroundColor Green
 		} else {
-			# Check if nmake exists in VS installation
-			$nmakePath = Join-Path $vsInstall "VC\Tools\MSVC\*\bin\Hostx64\x64\nmake.exe"
-			$nmakeExists = Get-ChildItem -Path $nmakePath -ErrorAction SilentlyContinue | Select-Object -First 1
-			if ($nmakeExists) {
 				Write-Host "[WARN] VS Developer environment NOT active" -ForegroundColor Yellow
-				Write-Host "       nmake.exe exists but is not in PATH" -ForegroundColor Yellow
-				Write-Host "       Run builds from VS Developer Command Prompt or use:" -ForegroundColor Yellow
-				Write-Host "       cmd /c `"call `"$vsDevCmd`" -arch=amd64 && msbuild ...`"" -ForegroundColor Cyan
-				$warnings += "VS Developer environment not active (nmake not in PATH)"
-			} else {
-				Write-Host "[MISSING] C++ build tools (nmake.exe) not found" -ForegroundColor Red
-				Write-Host "          Install 'Desktop development with C++' workload in VS Installer" -ForegroundColor Red
-				$issues += "C++ build tools not installed (nmake.exe missing)"
-			}
-		}
-	} else {
-		$issues += "Visual Studio 2022 not installed"
+		Write-Host "       Run builds from VS Developer Command Prompt or use the detected VsDevCmd wrapper commands below" -ForegroundColor Yellow
+		$warnings += "VS Developer environment not active"
 	}
 } else {
+	if (Get-VsWherePath) {
+		$issues += "Visual Studio 2022 with MSBuild and C++ tools not installed"
+	} else {
 	$issues += "Visual Studio Installer not found"
+	}
 }
 
 #endregion
@@ -344,17 +333,21 @@ if ($issues.Count -eq 0) {
 		Write-Host "  # Option 1: Open VS Developer Command Prompt and run commands there" -ForegroundColor Gray
 		Write-Host "  # Option 2: Use these one-liner commands from any PowerShell:" -ForegroundColor Gray
 		Write-Host ""
-		Write-Host "  # Restore packages" -ForegroundColor Gray
-		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Release /p:Platform=x64"' -ForegroundColor Cyan
-		Write-Host ""
-		Write-Host "  # Build base installer" -ForegroundColor Gray
-		Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
-		Write-Host ""
-
-		if ($SetupPatch) {
-			Write-Host "  # Build patch installer" -ForegroundColor Gray
-			Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
+		if ($restoreWrappedCommand -and $buildWrappedCommand) {
+			Write-Host "  # Restore packages" -ForegroundColor Gray
+			Write-Host "  $restoreWrappedCommand" -ForegroundColor Cyan
 			Write-Host ""
+			Write-Host "  # Build base installer" -ForegroundColor Gray
+			Write-Host "  $buildWrappedCommand" -ForegroundColor Cyan
+			Write-Host ""
+
+			if ($SetupPatch -and $patchWrappedCommand) {
+				Write-Host "  # Build patch installer" -ForegroundColor Gray
+				Write-Host "  $patchWrappedCommand" -ForegroundColor Cyan
+				Write-Host ""
+			}
+		} else {
+			Write-Host "  Unable to derive a VsDevCmd wrapper command for this installation." -ForegroundColor Yellow
 		}
 	}
 

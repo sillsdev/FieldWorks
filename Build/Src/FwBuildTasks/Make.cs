@@ -111,9 +111,21 @@ namespace FwBuildTasks
 			}
 		}
 
+		private static string FindToolInDirectory(string directory, string toolName)
+		{
+			if (String.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+				return null;
+
+			if (File.Exists(Path.Combine(directory, toolName)))
+				return directory;
+
+			return null;
+		}
+
 		private void CheckToolPath()
 		{
 			string path = Environment.GetEnvironmentVariable("PATH");
+			string vcToolsInstallDir = Environment.GetEnvironmentVariable("VCToolsInstallDir");
 			string vcInstallDir = Environment.GetEnvironmentVariable("VCINSTALLDIR");
 			//Console.WriteLine("DEBUG Make Task: PATH='{0}'", path);
 			string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
@@ -128,7 +140,7 @@ namespace FwBuildTasks
 				if (File.Exists(Path.Combine(ToolPath, ToolName)))
 					return;
 			}
-			string[] splitPath = path.Split(new char[] { Path.PathSeparator });
+			string[] splitPath = String.IsNullOrEmpty(path) ? new string[0] : path.Split(new[] { Path.PathSeparator });
 			foreach (var dir in splitPath)
 			{
 				if (File.Exists(Path.Combine(dir, ToolName)))
@@ -137,10 +149,27 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Fall Back to the install directory (if VCINSTALLDIR is set)
+			if (!String.IsNullOrEmpty(vcToolsInstallDir))
+			{
+				string activeToolPath = FindToolInDirectory(Path.Combine(vcToolsInstallDir, "bin", "Hostx64", "x64"), ToolName);
+				if (!String.IsNullOrEmpty(activeToolPath))
+				{
+					ToolPath = activeToolPath;
+					return;
+				}
+			}
+
+			// Fall back to the legacy VC install directory (if VCINSTALLDIR is set)
 			if (!String.IsNullOrEmpty(vcInstallDir))
 			{
-				ToolPath = Path.Combine(vcInstallDir, "bin");
+				string legacyToolPath = FindToolInDirectory(Path.Combine(vcInstallDir, "bin"), ToolName);
+				if (!String.IsNullOrEmpty(legacyToolPath))
+				{
+					ToolPath = legacyToolPath;
+					return;
+				}
+
+				ToolPath = String.Empty;
 			}
 			else
 			{
