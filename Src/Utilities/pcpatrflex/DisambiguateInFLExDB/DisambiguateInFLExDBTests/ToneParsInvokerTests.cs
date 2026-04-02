@@ -67,6 +67,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// Test conversion of log file using hvos to using glosses.
 		/// </summary>
 		[Test]
+		[Category("LongRunning")]
 		public void ToneParsHvoToGlossInLogTest()
 		{
 			var logFileWithHvos = Path.Combine(TestDataDir, "ToneParsInvokerWithHvos.log");
