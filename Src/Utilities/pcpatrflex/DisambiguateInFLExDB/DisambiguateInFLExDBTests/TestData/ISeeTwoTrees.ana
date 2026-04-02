@@ -1,0 +1,28 @@
+\a < pro 1sg >
+\d I
+\cat pro
+\p d3f40ba4-6fc3-4696-a648-cc6d51f6fe1e
+\fd first nominative singular
+\w I
+
+\a < v see >
+\d see
+\cat v
+\p 399dd27b-5ff1-4719-87ac-58b2f0178463
+\fd transitive
+\w see
+
+\a < num 2 >
+\d two
+\cat num
+\p 7df77c51-3b54-44a5-9a2c-fac71c31a197
+\fd 
+\w two
+
+\a %2%< n tree > POSS%< n tree > PL%
+\d %2%tree-s%tree-s%
+\cat %2%n%n%
+\p %2%db269bb7-819f-43b1-85b4-84b8fcdb719b=75a58633-b02c-4c99-9ee2-fbc17b0d3d35%4172bab0-cbf7-4e8f-96b5-1ac409c99276=91a77900-98fe-45f1-ae54-7886db43d64e%
+\fd %2%-animate=poss_suffix%-animate=plural%
+\w trees
+

@@ -1,0 +1,70 @@
+\a < pro it >
+\d it
+\cat pro
+\p aed04360-a8e6-451b-ad2e-8b88a1f080e2
+\fd third
+\w it
+
+\a %3%< v is-exist >%< aux is-Aux >%< v is >%
+\d %3%is%is%is%
+\cat %3%v%aux%v%
+\p %3%76b02d8e-99d5-4c4f-b3bb-ad5b2fd8438b%c7b4e620-0192-4825-8c8c-ec384e845073%ac219243-83d7-4b12-8f3f-f759001a8e03%
+\fd %3%exist singular_subject third_subject%singular_subject third_subject%copular singular_subject third_subject%
+\w is
+
+\a < adj hard >
+\d hard
+\cat adj
+\p 10dfbbc4-a5ac-4027-a11c-1e5dccf87e07
+\fd sentential_A
+\w hard
+
+\a %3%< aux to >%< p to-DAT >%< p to-LOC >%
+\d %3%to%to%to%
+\cat %3%aux%p%p%
+\p %3%9be2d38f-bc3a-4e96-acb5-64d2b3e53d95%62f4c91c-7744-426f-b0a5-96f1ee35131f%933d7fb3-b038-4913-b5b8-576f80df2fba%
+\fd %3%-finite%dative%locative%
+\w to
+
+\a < v pick >
+\d pick
+\cat v
+\p babe0bf3-206c-48b0-9c5d-faf71d1c87f7
+\fd takes_P transitive
+\w pick
+
+\a < p up >
+\d up
+\cat p
+\p bbc1751c-a2ea-4b4c-82d7-d4b1d5f80a42
+\fd locative particle
+\w up
+
+\a < art the >
+\d the
+\cat art
+\p 7841d0ff-57f0-4a2c-a689-6d109efca66e
+\fd definite
+\w the
+
+\a < adj dull >
+\d dull
+\cat adj
+\p 728ba8cd-c8c2-4911-81bf-645622c0a3c8
+\fd 
+\w dull
+
+\a < v break-PART >
+\d broken
+\cat v
+\p 4a1d23f6-c387-4956-b594-de9fa7ba22ed
+\fd participle passive
+\w broken
+
+\a < n glass >
+\d glass
+\cat n
+\p db63e48e-690e-4bd6-9717-8c6486aa14e4
+\fd 
+\w glass
+
