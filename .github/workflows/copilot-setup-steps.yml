@@ -115,7 +115,7 @@ jobs:
       # Scripts are in Build/Agent/ and can be run locally for testing
       # ================================================================
       - name: Setup MSBuild PATH
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Setup uv (Python package manager for Serena)
         uses: astral-sh/setup-uv@v7
