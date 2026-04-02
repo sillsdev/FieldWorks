@@ -39,13 +39,6 @@ namespace SIL.DisambiguateInFLExDB
 			TimeLimit = "0";
 		}
 
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern int GetShortPathName(
-			string pathName,
-			StringBuilder shortName,
-			int cbShortName
-		);
-
 		private void CreateBatchFile()
 		{
 			BatchFile = Path.Combine(Path.GetTempPath(), "PcPatrFLEx.bat");

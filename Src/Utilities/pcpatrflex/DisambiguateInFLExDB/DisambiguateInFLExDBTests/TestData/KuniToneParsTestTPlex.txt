@@ -388,6 +388,7 @@
 
 \lx 10648
 \mp Ac2
+\mp Ac2
 \g know
 \c W
 \wc root

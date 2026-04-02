@@ -111,13 +111,6 @@ namespace SIL.ToneParsFLEx
 			return sb.ToString();
 		}
 
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern int GetShortPathName(
-			string pathName,
-			StringBuilder shortName,
-			int cbShortName
-		);
-
 		private void CreateToneParsBatchFile()
 		{
 			// TonePars
@@ -159,13 +152,7 @@ namespace SIL.ToneParsFLEx
 			sbCmdFile.Append(DatabaseName);
 			sbCmdFile.Append(kTPAdCtl);
 			sbCmdFile.Append(Environment.NewLine);
-			StringBuilder sbToneRuleFileShortPath = new StringBuilder(255);
-			int i = GetShortPathName(
-				ToneParsRuleFile + ".hvo",
-				sbToneRuleFileShortPath,
-				sbToneRuleFileShortPath.Capacity
-			);
-			sbCmdFile.Append(sbToneRuleFileShortPath.ToString());
+			sbCmdFile.Append(ToneParsRuleFile + ".hvo");
 			sbCmdFile.Append(Environment.NewLine);
 			sbCmdFile.Append("ToneParscd.tab");
 			sbCmdFile.Append(Environment.NewLine);
@@ -174,13 +161,7 @@ namespace SIL.ToneParsFLEx
 			sbCmdFile.Append(kTPLexicon);
 			sbCmdFile.Append(Environment.NewLine);
 			sbCmdFile.Append(Environment.NewLine);
-			StringBuilder sbIntxCtlFileShortPath = new StringBuilder(255);
-			i = GetShortPathName(
-				IntxCtlFile,
-				sbIntxCtlFileShortPath,
-				sbIntxCtlFileShortPath.Capacity
-			);
-			sbCmdFile.Append(sbIntxCtlFileShortPath.ToString());
+			sbCmdFile.Append(IntxCtlFile);
 			sbCmdFile.Append(Environment.NewLine);
 			sbCmdFile.Append(Environment.NewLine);
 			File.WriteAllText(ToneParsCmdFile, sbCmdFile.ToString());
