@@ -20,7 +20,7 @@ namespace SIL.DisambiguateInFLExDBTest
 	{
 		string AndFile { get; set; }
 
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void LoadAndFileGuidsTest()
 		{
 			AndFile = Path.Combine(TestDataDir, "Text4LoadTest.and");

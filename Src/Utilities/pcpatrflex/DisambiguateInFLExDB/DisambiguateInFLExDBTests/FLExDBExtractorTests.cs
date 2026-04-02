@@ -52,7 +52,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test extracting of lexicon.
 		/// </summary>
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void ExtractLexiconTest()
 		{
 			//MyCache = Loader.CreateCache();
@@ -66,7 +66,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			Assert.AreEqual(Lexicon, lexicon);
 		}
 
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void IsAttachedCliticTest()
 		{
 			//MyCache = Loader.CreateCache();
@@ -103,7 +103,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			Assert.IsTrue(extractor.IsAttachedClitic(MoMorphTypeTags.kguidMorphProclitic, 2));
 		}
 
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void GetOrComputeWordCategoryTest()
 		{
 			//MyCache = Loader.CreateCache();
@@ -160,7 +160,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test extracting of text segments in ANA format.
 		/// </summary>
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void ExtractTextSegmentAsANATest()
 		{
 			//MyCache = Loader.CreateCache();

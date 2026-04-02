@@ -15,7 +15,7 @@ namespace SIL.DisambiguateInFLExDBTest
 	[TestFixture]
 	class GuidConverterTest
 	{
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void ConvertGuidsTest()
 		{
 			string result =

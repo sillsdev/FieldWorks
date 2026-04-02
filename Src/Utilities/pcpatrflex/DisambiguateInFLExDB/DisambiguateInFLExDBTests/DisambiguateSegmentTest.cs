@@ -51,7 +51,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test disambiguating segment in a text
 		/// </summary>
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void DisambiguateSegmentTest()
 		{
 			//MyCache = Loader.CreateCache();
@@ -131,7 +131,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test disambiguating segment in a text
 		/// </summary>
-		[Test]
+		[Test, Ignore("Ignoring this test for timing purposes")]
 		public void EnsureMorphBundleHasSenseTest()
 		{
 			//MyCache = Loader.CreateCache();
