@@ -1,0 +1,4390 @@
+<HTML>
+<HEAD>
+<!-- This HTML file has been created by texi2html 1.52
+	 from pcpatr.txi on 28 November 2006 -->
+
+<TITLE>PC-PATR Reference Manual</TITLE>
+</HEAD>
+<BODY>
+<H1>PC-PATR Reference Manual</H1>
+<H2>a unification based syntactic parser</H2>
+<H2>version 1.4.0</H2>
+<H2>November 2006</H2>
+<ADDRESS>by Stephen McConnel (changes for v. 1.2.5-1.4.0 by H. Andrew Black)</ADDRESS>
+<P>
+<P><HR><P>
+<H1>Table of Contents</H1>
+<UL>
+<LI><A NAME="TOC1" HREF="pcpatr.html#SEC1">1  Introduction to the PC-PATR program</A>
+<LI><A NAME="TOC2" HREF="pcpatr.html#SEC2">2  The PATR-II Formalism</A>
+<UL>
+<LI><A NAME="TOC3" HREF="pcpatr.html#SEC3">2.1  Phrase structure rules</A>
+<LI><A NAME="TOC4" HREF="pcpatr.html#SEC4">2.2  Feature structures</A>
+<LI><A NAME="TOC5" HREF="pcpatr.html#SEC5">2.3  Unification</A>
+<LI><A NAME="TOC6" HREF="pcpatr.html#SEC6">2.4  Feature constraints</A>
+<LI><A NAME="TOC7" HREF="pcpatr.html#SEC7">2.5  The lexicon</A>
+</UL>
+<LI><A NAME="TOC8" HREF="pcpatr.html#SEC8">3  Running PC-PATR</A>
+<UL>
+<LI><A NAME="TOC9" HREF="pcpatr.html#SEC9">3.1  PC-PATR Command Line Options</A>
+<LI><A NAME="TOC10" HREF="pcpatr.html#SEC10">3.2  Interactive Commands</A>
+<UL>
+<LI><A NAME="TOC11" HREF="pcpatr.html#SEC11">3.2.1  cd</A>
+<LI><A NAME="TOC12" HREF="pcpatr.html#SEC12">3.2.2  clear</A>
+<LI><A NAME="TOC13" HREF="pcpatr.html#SEC13">3.2.3  close</A>
+<LI><A NAME="TOC14" HREF="pcpatr.html#SEC14">3.2.4  directory</A>
+<LI><A NAME="TOC15" HREF="pcpatr.html#SEC15">3.2.5  edit</A>
+<LI><A NAME="TOC16" HREF="pcpatr.html#SEC16">3.2.6  exit</A>
+<LI><A NAME="TOC17" HREF="pcpatr.html#SEC17">3.2.7  file</A>
+<UL>
+<LI><A NAME="TOC18" HREF="pcpatr.html#SEC18">3.2.7.1  file disambiguate</A>
+<LI><A NAME="TOC19" HREF="pcpatr.html#SEC19">3.2.7.2  file parse</A>
+</UL>
+<LI><A NAME="TOC20" HREF="pcpatr.html#SEC20">3.2.8  help</A>
+<LI><A NAME="TOC21" HREF="pcpatr.html#SEC21">3.2.9  load</A>
+<UL>
+<LI><A NAME="TOC22" HREF="pcpatr.html#SEC22">3.2.9.1  load ample control</A>
+<LI><A NAME="TOC23" HREF="pcpatr.html#SEC23">3.2.9.2  load ample dictionary</A>
+<LI><A NAME="TOC24" HREF="pcpatr.html#SEC24">3.2.9.3  load ample text-control</A>
+<LI><A NAME="TOC25" HREF="pcpatr.html#SEC25">3.2.9.4  load analysis</A>
+<LI><A NAME="TOC26" HREF="pcpatr.html#SEC26">3.2.9.5  load grammar</A>
+<LI><A NAME="TOC27" HREF="pcpatr.html#SEC27">3.2.9.6  load kimmo grammar</A>
+<LI><A NAME="TOC28" HREF="pcpatr.html#SEC28">3.2.9.7  load kimmo lexicon</A>
+<LI><A NAME="TOC29" HREF="pcpatr.html#SEC29">3.2.9.8  load kimmo rules</A>
+<LI><A NAME="TOC30" HREF="pcpatr.html#SEC30">3.2.9.9  load lexicon</A>
+</UL>
+<LI><A NAME="TOC31" HREF="pcpatr.html#SEC31">3.2.10  log</A>
+<LI><A NAME="TOC32" HREF="pcpatr.html#SEC32">3.2.11  parse</A>
+<LI><A NAME="TOC33" HREF="pcpatr.html#SEC33">3.2.12  quit</A>
+<LI><A NAME="TOC34" HREF="pcpatr.html#SEC34">3.2.13  save</A>
+<UL>
+<LI><A NAME="TOC35" HREF="pcpatr.html#SEC35">3.2.13.1  save lexicon</A>
+<LI><A NAME="TOC36" HREF="pcpatr.html#SEC36">3.2.13.2  save status</A>
+</UL>
+<LI><A NAME="TOC37" HREF="pcpatr.html#SEC37">3.2.14  set</A>
+<UL>
+<LI><A NAME="TOC38" HREF="pcpatr.html#SEC38">3.2.14.1  set ambiguities</A>
+<LI><A NAME="TOC39" HREF="pcpatr.html#SEC39">3.2.14.2  set ample-dictionary</A>
+<LI><A NAME="TOC40" HREF="pcpatr.html#SEC40">3.2.14.3  set check-cycles</A>
+<LI><A NAME="TOC41" HREF="pcpatr.html#SEC41">3.2.14.4  set comment</A>
+<LI><A NAME="TOC42" HREF="pcpatr.html#SEC42">3.2.14.5  set failures</A>
+<LI><A NAME="TOC43" HREF="pcpatr.html#SEC43">3.2.14.6  set features</A>
+<LI><A NAME="TOC44" HREF="pcpatr.html#SEC44">3.2.14.7  set final-punctuation</A>
+<LI><A NAME="TOC45" HREF="pcpatr.html#SEC45">3.2.14.8  set gloss</A>
+<LI><A NAME="TOC46" HREF="pcpatr.html#SEC46">3.2.14.9  set kimmo check-cycles</A>
+<LI><A NAME="TOC47" HREF="pcpatr.html#SEC47">3.2.14.10  set kimmo promote-defaults</A>
+<LI><A NAME="TOC48" HREF="pcpatr.html#SEC48">3.2.14.11  set kimmo top-down-filter</A>
+<LI><A NAME="TOC49" HREF="pcpatr.html#SEC49">3.2.14.12  set limit</A>
+<LI><A NAME="TOC50" HREF="pcpatr.html#SEC50">3.2.14.13  set marker category</A>
+<LI><A NAME="TOC51" HREF="pcpatr.html#SEC51">3.2.14.14  set marker features</A>
+<LI><A NAME="TOC52" HREF="pcpatr.html#SEC52">3.2.14.15  set marker gloss</A>
+<LI><A NAME="TOC53" HREF="pcpatr.html#SEC53">3.2.14.16  set marker record</A>
+<LI><A NAME="TOC54" HREF="pcpatr.html#SEC54">3.2.14.17  set marker rootgloss</A>
+<LI><A NAME="TOC55" HREF="pcpatr.html#SEC55">3.2.14.18  set marker word</A>
+<LI><A NAME="TOC56" HREF="pcpatr.html#SEC56">3.2.14.19  set promote-defaults</A>
+<LI><A NAME="TOC57" HREF="pcpatr.html#SEC57">3.2.14.20  set property-is-feature</A>
+<LI><A NAME="TOC58" HREF="pcpatr.html#SEC58">3.2.14.21  set recognize-only</A>
+<LI><A NAME="TOC59" HREF="pcpatr.html#SEC59">3.2.14.22  set rootgloss</A>
+<LI><A NAME="TOC60" HREF="pcpatr.html#SEC60">3.2.14.23  set timing</A>
+<LI><A NAME="TOC61" HREF="pcpatr.html#SEC61">3.2.14.24  set top-down-filter</A>
+<LI><A NAME="TOC62" HREF="pcpatr.html#SEC62">3.2.14.25  set tree</A>
+<LI><A NAME="TOC63" HREF="pcpatr.html#SEC63">3.2.14.26  set trim-empty-features</A>
+<LI><A NAME="TOC64" HREF="pcpatr.html#SEC64">3.2.14.27  set unification</A>
+<LI><A NAME="TOC65" HREF="pcpatr.html#SEC65">3.2.14.28  set verbose</A>
+<LI><A NAME="TOC66" HREF="pcpatr.html#SEC66">3.2.14.29  set warnings</A>
+<LI><A NAME="TOC67" HREF="pcpatr.html#SEC67">3.2.14.30  set write-ample-parses</A>
+</UL>
+<LI><A NAME="TOC68" HREF="pcpatr.html#SEC68">3.2.15  show</A>
+<UL>
+<LI><A NAME="TOC69" HREF="pcpatr.html#SEC69">3.2.15.1  show lexicon</A>
+<LI><A NAME="TOC70" HREF="pcpatr.html#SEC70">3.2.15.2  show status</A>
+</UL>
+<LI><A NAME="TOC71" HREF="pcpatr.html#SEC71">3.2.16  status</A>
+<LI><A NAME="TOC72" HREF="pcpatr.html#SEC72">3.2.17  system</A>
+<LI><A NAME="TOC73" HREF="pcpatr.html#SEC73">3.2.18  take</A>
+</UL>
+</UL>
+<LI><A NAME="TOC74" HREF="pcpatr.html#SEC74">4  The PC-PATR Grammar File</A>
+<UL>
+<LI><A NAME="TOC75" HREF="pcpatr.html#SEC75">4.1  Rules</A>
+<UL>
+<LI><A NAME="TOC76" HREF="pcpatr.html#SEC76">4.1.1  Priority union operations</A>
+<LI><A NAME="TOC77" HREF="pcpatr.html#SEC77">4.1.2  Logical constraint operations</A>
+</UL>
+<LI><A NAME="TOC78" HREF="pcpatr.html#SEC78">4.2  Feature templates</A>
+<LI><A NAME="TOC79" HREF="pcpatr.html#SEC79">4.3  Parameter settings</A>
+<LI><A NAME="TOC80" HREF="pcpatr.html#SEC80">4.4  Lexical rules</A>
+<LI><A NAME="TOC81" HREF="pcpatr.html#SEC81">4.5  Constraint templates</A>
+</UL>
+<LI><A NAME="TOC82" HREF="pcpatr.html#SEC82">5  Standard format</A>
+<LI><A NAME="TOC83" HREF="pcpatr.html#SEC83">6  The PC-PATR Lexicon File</A>
+<LI><A NAME="TOC84" HREF="pcpatr.html#SEC84">7  The AMPLE Analysis File</A>
+<UL>
+<LI><A NAME="TOC85" HREF="pcpatr.html#SEC85">7.1  AMPLE analysis file fields</A>
+<UL>
+<LI><A NAME="TOC86" HREF="pcpatr.html#SEC86">7.1.1  Analysis: \a</A>
+<LI><A NAME="TOC87" HREF="pcpatr.html#SEC87">7.1.2  Decomposition (surface forms): \d</A>
+<LI><A NAME="TOC88" HREF="pcpatr.html#SEC88">7.1.3  Category (possible word or morpheme): \cat</A>
+<LI><A NAME="TOC89" HREF="pcpatr.html#SEC89">7.1.4  Properties: \p</A>
+<LI><A NAME="TOC90" HREF="pcpatr.html#SEC90">7.1.5  Feature Descriptors: \fd</A>
+<LI><A NAME="TOC91" HREF="pcpatr.html#SEC91">7.1.6  Underlying forms (decomposition): \u</A>
+<LI><A NAME="TOC92" HREF="pcpatr.html#SEC92">7.1.7  Word (before decapitalization and orthography changes): \w</A>
+<LI><A NAME="TOC93" HREF="pcpatr.html#SEC93">7.1.8  Formatting (junk before the word): \f</A>
+<LI><A NAME="TOC94" HREF="pcpatr.html#SEC94">7.1.9  Capitalization flag: \c</A>
+<LI><A NAME="TOC95" HREF="pcpatr.html#SEC95">7.1.10  Nonalphabetic (junk after the word): \n</A>
+</UL>
+<LI><A NAME="TOC96" HREF="pcpatr.html#SEC96">7.2  Ambiguous analyses</A>
+<LI><A NAME="TOC97" HREF="pcpatr.html#SEC97">7.3  Analysis failures</A>
+</UL>
+<LI><A NAME="TOC98" HREF="pcpatr.html#SEC98">8  Using the Embedded Morphological Parsers</A>
+<UL>
+<LI><A NAME="TOC99" HREF="pcpatr.html#SEC99">8.1  PC-Kimmo</A>
+<LI><A NAME="TOC100" HREF="pcpatr.html#SEC100">8.2  AMPLE</A>
+</UL>
+<LI><A NAME="TOC101" HREF="pcpatr.html#SEC101">9  Index</A>
+</UL>
+<P><HR><P>
+
+
+<H1><A NAME="SEC1" HREF="pcpatr.html#TOC1">1  Introduction to the PC-PATR program</A></H1>
+
+<P>
+This document describes PC-PATR, an implementation of the PATR-II
+computational linguistic formalism (plus a few enhancements) for personal
+computers.  It is available for MS-DOS, Microsoft Windows, Macintosh, and
+Unix.<A NAME="DOCF1" HREF="pcpatr.html#FOOT1">(1)</A>
+
+</P>
+<P>
+PC-PATR uses a left corner chart parser with these characteristics:
+
+</P>
+
+<UL>
+<LI>
+
+bottom-up parse with top-down filtering based on the categories
+<LI>
+
+left-to-right order--after each word is added to the chart, all
+possible edges that can be derived up that point are computed as a
+side-effect
+</UL>
+
+<P>
+PC-PATR is still under development.  The author would appreciate
+feedback directed to the following address:
+
+<PRE>
+
+Stephen McConnel                 (972)708-7361 (office)
+Language Software Development    (972)708-7561 (fax)
+SIL International
+7500 W. Camp Wisdom Road
+Dallas, TX 75236                 steve@acadcomp.sil.org
+U.S.A.                        or Stephen_McConnel@sil.org
+
+</PRE>
+
+
+
+<H1><A NAME="SEC2" HREF="pcpatr.html#TOC2">2  The PATR-II Formalism</A></H1>
+
+<P>
+The PATR-II formalism can be viewed as a computer language for
+encoding linguistic information.  It does not presuppose any particular
+theory of syntax.  It was originally developed by Stuart M. Shieber at
+Stanford University in the early 1980's (Shieber 1984, Shieber 1986).
+A PATR-II grammar consists of a set of rules and a lexicon.  Each
+rule consists of a context-free <EM>phrase structure rule</EM> and a set
+of <EM>feature constraints</EM>, that is, <EM>unifications</EM> on the
+<EM>feature structures</EM> associated with the constituents of the
+phrase structure rules.  The lexicon provides the items that can
+replace the terminal symbols of the phrase structure rules, that is,
+the words of the language together with their relevant features.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC3">Phrase structure rules</A>
+<LI><A HREF="pcpatr.html#SEC4">Feature structures</A>
+<LI><A HREF="pcpatr.html#SEC5">Unification</A>
+<LI><A HREF="pcpatr.html#SEC6">Feature constraints</A>
+<LI><A HREF="pcpatr.html#SEC7">The lexicon</A>
+</UL>
+
+
+
+<H2><A NAME="SEC3" HREF="pcpatr.html#TOC3">2.1  Phrase structure rules</A></H2>
+
+<P>
+Context-free phrase structure rules should be familiar to anyone who
+has studied either linguistic theory or computer science.  They look
+like this:
+
+<PRE>
+
+LHS -&#62; RHS_1 RHS_2 ...
+
+</PRE>
+
+<P>
+<SAMP>`LHS'</SAMP> (the symbol to the left of the arrow) is a nonterminal
+symbol for the type of phrase that is being described.  To the right of
+the arrow is an ordered list of the constituents of the phrase.  These
+constituents are either nonterminal symbols, appearing on the left hand
+side of some rule in the grammar, or terminal symbols, representing
+basic classes of elements from the lexicon.  These basic classes
+usually correspond to what are commonly called <EM>parts of speech</EM>.
+In PATR-II, the terminal and nonterminal symbols are both
+referred to as <EM>categories</EM>.
+
+</P>
+
+<PRE>
+
+<B>Figure 1. Context-free phrase structure grammar</B>
+
+Rule  S       -&#62; NP VP (SubCl)
+Rule  NP      -&#62; {(Det) (AdjP) N (PrepP)} / PR
+Rule  Det     -&#62; DT / PR
+Rule  VP      -&#62; VerbalP (NP / AdjP) (AdvP)
+Rule  VerbalP -&#62; V
+Rule  VerbalP -&#62; AuxP V
+Rule  AuxP    -&#62; AUX (AuxP_1)
+Rule  PrepP   -&#62; PP NP
+Rule  AdjP    -&#62; (AV) AJ (AdjP_1)
+Rule  AdvP    -&#62; {AV / PrepP} (AdvP_1)
+Rule  SubCl   -&#62; CJ S
+
+</PRE>
+
+<P>
+Consider the PC-PATR style context-free phrase structure grammar
+in figure 1.  It has ten nonterminal symbols (S, NP,
+Det, VP, VerbalP, AuxP, PrepP, AdjP, AdvP, and SubCl), and nine terminal
+symbols (N, PR, DT, V, AUX, PP, AV, AJ, and CJ).  This grammar
+describes a small subset of English sentences.  Several aspects of this
+grammar are worth mentioning.
+
+</P>
+
+<OL>
+<LI>
+
+Optional constituents (or sets of constituents) on the right hand
+side are enclosed in parentheses.
+<LI>
+
+Alternative constituents (or sets of constituents) on the right
+hand side are separated by slashes.
+<LI>
+
+Braces are used to group alternative sets of elements together,
+so that alternations are not ambiguous.
+<LI>
+
+Symbols should not be repeated verbatim within a rule.  Repeated
+symbols should be distinguished from each other by adding a different
+index number to a symbol each time it is repeated.  Index numbers are
+introduced by the underscore (<CODE>_</CODE>) character.
+</OL>
+
+
+<PRE>
+
+<B>Figure 2. Parse of sample English sentence</B>
+
+			  S
+			  /\
+			 /  \
+			/    \
+		   /      \
+		  /        \
+		 /          \
+		/            \
+	  NP              VP
+	  /\             /|\
+	 /  \           / | \
+	/    \         /  |  \
+  Det     N  VerbalP NP   AdvP
+   |      |     |     |     |
+  DT     man    V    PR   PrepP
+   |            |     |    /\
+  the         sees   us   /  \
+						 /    \
+						PP     NP
+						 |     /\
+					   with   /  \
+							 /    \
+						   Det     N
+							|      |
+						   DT  telescope
+							|
+							a
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 3. Parse of sample sentence (PC-PATR output)</B>
+
+				S
+	  __________|__________
+	 NP                  VP
+   ___|____      _________|__________
+  Det     N   VerbalP  NP         AdvP
+   |     man     |      |           |
+  DT             V     PR         PrepP
+  the          sees    us      _____|______
+							  PP         NP
+							 with     ____|_____
+									 Det       N
+									  |    telescope
+									 DT
+									  a
+
+</PRE>
+
+<P>
+A significant amount of grammar development can be done just with
+context-free phrase structure rules such as these.  For example,
+parsing the sentence "the man sees us with a telescope" with this
+simple grammar produces a parse tree like that shown in figure
+2.  (In order to minimize the height of parse trees
+without needing to use a graphical interface, PC-PATR actually draws
+parse trees like the one shown in figure 3.)
+Parsing the similar sentence "we see the man with a telescope"
+produces two different parses as shown in figure 4,
+correctly showing the ambiguity between whether we used a telescope to
+see the man, or the man had a telescope when we saw him.
+
+</P>
+
+<PRE>
+
+<B>Figure 4. Parses of an ambiguous English sentence</B>
+
+			S_1
+   __________|__________
+ NP_2+               VP_4
+   |      _____________|_____________
+ PR_3+ VerbalP_5+ NP_7           AdvP_11
+  we      |      ___|____           |
+		V_6+  Det_8+  N_10+     PrepP_12+
+		 see     |     man     _____|______
+			   DT_9+        PP_13+     NP_14+
+				the          with     ____|_____
+								   Det_15+   N_17+
+									  |    telescope
+								   DT_16+
+									  a
+
+		S_18
+   _______|________
+ NP_2+          VP_19
+   |      ________|________
+ PR_3+ VerbalP_5+       NP_20
+  we      |      _________|__________
+		V_6+  Det_8+  N_10+     PrepP_12+
+		 see     |     man     _____|______
+			   DT_9+        PP_13+     NP_14+
+				the          with     ____|_____
+								   Det_15+   N_17+
+									  |    telescope
+								   DT_16+
+									  a
+
+</PRE>
+
+<P>
+A fundamental problem with context-free phrase structure grammars is
+that they tend to grossly overgenerate.  For example, the sample
+grammar would incorrectly recognize the sentence "*he see the man with
+a telescope", assigning it tree structures similar to those shown in
+figure 4.  With only the simple categories used by
+context-free phrase structure rules, a very large number of rules are
+required to accurately handle even a small subset of a language's
+grammar.  This is the primary motivation behind feature structures, the
+basic enhancement of PATR-II over context-free phrase structure
+grammars.<A NAME="DOCF2" HREF="pcpatr.html#FOOT2">(2)</A>
+
+</P>
+
+
+<H2><A NAME="SEC4" HREF="pcpatr.html#TOC4">2.2  Feature structures</A></H2>
+
+<P>
+The basic data structure of the PATR-II formalism is called a
+<EM>feature structure</EM>.  A feature structure contains one or more
+<EM>features</EM>.  A feature consists of an attribute name and a value.
+Feature structures are commonly written as attribute-value matrices
+like this (example 1):
+
+<PRE>
+
+(1)     [ lex: telescope
+		  cat: N ]
+
+</PRE>
+
+<P>
+where <EM>lex</EM> and <EM>cat</EM> are attribute names, and
+<EM>telescope</EM> and <EM>N</EM> are the values for those attributes.  Note
+that the feature structure is enclosed in brackets.  Each feature
+occurs on a separate line, with the name coming first, followed by a
+colon and then its value.  Feature names and (simple) values are single
+words consisting of alphanumeric characters.
+
+</P>
+<P>
+Feature structures can have either simple values, such as the example
+above, or complex values, such as this (example 2):
+
+<PRE>
+
+(2)     [ lex:      telescope
+		  cat:      N
+		  gloss:    `telescope
+		  head:     [ agr:    [ 3sg: + ]
+					  number: SG
+					  pos:    N
+					  proper: -
+					  verbal: - ]
+		  root_pos: N ]
+
+</PRE>
+
+<P>
+where the value of the <EM>head</EM> feature is another feature
+structure, that also contains an embedded feature structure.  Feature
+structures can be arbitrarily nested in this manner.
+
+</P>
+<P>
+Portions of a feature structure can be referred to using the
+<EM>path</EM> notation.  A path is a sequence of one or more feature names
+enclosed in angled brackets (<CODE>&#60;&#62;</CODE>).  For instance, examples
+3-5
+would all be valid feature paths based on the feature structure of
+example 2:
+
+<PRE>
+
+(3)     &#60;head&#62;
+(4)     &#60;head number&#62;
+(5)     &#60;head agr 3sg&#62;
+
+</PRE>
+
+<P>
+Paths are used in feature templates and feature constraints, described
+below.
+
+</P>
+<P>
+Different features within a feature structure can share values.  This
+is not the same thing as two features having identical values.  In
+Example 6 below, the <CODE>&#60;head agr&#62;</CODE> and
+<CODE>&#60;subj head agr&#62;</CODE> features have identical values, but in
+Example 7, they share the same value:
+
+</P>
+
+<PRE>
+(6)     [ cat:  S
+		  pred: [ cat:  VP
+				  head: [ agr:    [ 3sg: + ]
+						  finite: +
+						  pos:    V
+						  tense:  PAST
+						  vform:  ED ] ]
+		  subj: [ cat:  NP
+				  head: [ agr:    [ 3sg: + ]
+						  case:   NOM
+						  number: SG
+						  pos:    N
+						  proper: -
+						  verbal: - ] ] ]
+</PRE>
+
+
+<PRE>
+(7)     [ cat:  S
+		  pred: [ cat:  VP
+				  head: [ agr:    $1[ 3sg: + ]
+						  finite: +
+						  pos:    V
+						  tense:  PAST
+						  vform:  ED ] ]
+		  subj: [ cat:  NP
+				  head: [ agr:    $1[ 3sg: + ]
+						  case:   NOM
+						  number: SG
+						  pos:    N
+						  proper: -
+						  verbal: - ] ] ]
+</PRE>
+
+<P>
+Shared values are indicated by the coindexing markers
+<CODE>$1</CODE>, <CODE>$2</CODE>, and so on.
+
+</P>
+<P>
+Note that upper and lower case letters used in feature names and values
+are distinctive.  For example, <EM>NUMBER</EM> is not the same as
+<EM>Number</EM> or <EM>number</EM>.  (This is also true of the symbols used in
+the context-free phrase structure rules.)
+
+</P>
+
+
+<H2><A NAME="SEC5" HREF="pcpatr.html#TOC5">2.3  Unification</A></H2>
+
+<P>
+<EM>Unification</EM> is the basic operation applied to feature
+structures in PC-PATR.  It consists of the merging of the
+information from two feature structures.  Two feature structures can
+unify if their common features have the same values, but do not unify
+if any feature values conflict.
+
+</P>
+<P>
+Consider the following feature structures:
+
+<PRE>
+
+(8)     [ agreement: [ number: singular
+					   person: first ] ]
+
+(9)     [ agreement: [ number: singular ]
+		  case:      nominative ]
+
+(10)    [ agreement: [ number: singular
+					   person: third ] ]
+
+(11)    [ agreement: [ number: singular
+					   person: first ]
+		  case:      nominative ]
+
+(12)    [ agreement: [ number: singular
+					   person: third ]
+		  case:      nominative ]
+
+</PRE>
+
+<P>
+Feature 9 can unify with either feature 8
+(producing feature 11) or feature 10 (producing
+feature 12).  However, feature 8 cannot unify with
+feature 10 due to the conflict in the values of their
+<CODE>&#60;agreement person&#62;</CODE> features.
+
+</P>
+
+
+<H2><A NAME="SEC6" HREF="pcpatr.html#TOC6">2.4  Feature constraints</A></H2>
+
+<P>
+The feature constraints associated with phrase structure rules in PATR-II
+consist of a set of unification expressions (the <EM>unification
+constraints</EM>).  Each unification expression has three parts, in this
+order:
+
+<OL>
+<LI>
+
+a feature path, the first element of which is one of the symbols from
+the phrase structure rule
+<LI>
+
+an equal sign (<CODE>=</CODE>)
+<LI>
+
+either a simple value, or another feature path that also starts with a
+symbol from the phrase structure rule
+</OL>
+
+<P>
+As an example, consider the following PC-PATR rules:
+
+<PRE>
+
+(13)	Rule S -&#62; NP VP (SubCl)
+		&#60;NP head agr&#62;  = &#60;VP head agr&#62;
+		&#60;NP head case&#62; = NOM
+		&#60;S subj&#62;       = &#60;NP&#62;
+		&#60;S head&#62;       = &#60;VP head&#62;
+
+(14)	Rule NP -&#62; {(Det) (AJ) N (PrepP)} / PR
+		&#60;Det head number&#62; = &#60;N head number&#62;
+		&#60;NP head&#62;         = &#60;N head&#62;
+		&#60;NP head&#62;         = &#60;PR head&#62;
+
+</PRE>
+
+<P>
+Rule 13 has two feature constraints that limit the co-occurrence of NP
+and VP, and two feature constraints that build the feature structures for
+S.  This highlights the dual purpose of feature constraints in PC-PATR:
+limiting the co-occurrence of phrase structure elements and constructing
+the feature structure for the element defined by a rule.  The first
+constraint states that the NP and VP <CODE>&#60;head agr&#62;</CODE> features must
+unify successfully, and also modifies both of those features if they do
+unify.  The second constraint states that NP's <CODE>&#60;head case&#62;</CODE> feature
+must either be equal to <CODE>NOM</CODE> or else be undefined.  In the latter
+case, it is set equal to <CODE>NOM</CODE>.  The last two constraints create a
+new feature structure for S from the feature structures for NP and VP.
+
+</P>
+<P>
+Rule 14 illustrates another important point about feature unification
+constraints:  they are applied only if they involve the phrase
+structure constituents actually found for the rule.
+
+</P>
+
+<PRE>
+
+<B>Figure 5. PC-PATR grammar of English subset</B>
+
+Rule  S -&#62; NP VP (SubCl)
+		&#60;NP head agr&#62;  = &#60;VP head agr&#62;
+		&#60;NP head case&#62; = NOM
+		&#60;S subj&#62; = &#60;NP&#62;
+		&#60;S pred&#62; = &#60;VP&#62;
+Rule  NP -&#62; {(Det) (AdjP) N (PrepP)} / PR
+		&#60;Det head number&#62; = &#60;N head number&#62;
+		&#60;NP head&#62; = &#60;N head&#62;
+		&#60;NP head&#62; = &#60;PR head&#62;
+Rule  Det -&#62; DT / PR
+		&#60;PR head case&#62; = GEN
+		&#60;Det head&#62; = &#60;DT head&#62;
+		&#60;Det head&#62; = &#60;PR head&#62;
+Rule  VP -&#62; VerbalP (NP / AdjP) (AdvP)
+		&#60;NP head case&#62;   = ACC
+		&#60;NP head verbal&#62; = -
+		&#60;VP head&#62; = &#60;VerbalP head&#62;
+Rule  VerbalP -&#62; V
+		&#60;V head finite&#62; = +
+		&#60;VerbalP head&#62;  = &#60;V head&#62;
+Rule  VerbalP -&#62; AuxP V
+		&#60;V head finite&#62; = -
+		&#60;VerbalP head&#62;  = &#60;AuxP head&#62;
+Rule  AuxP -&#62; AUX (AuxP_1)
+		&#60;AuxP head&#62; = &#60;AUX head&#62;
+Rule  PrepP -&#62; PP NP
+		&#60;NP head case&#62; = ACC
+		&#60;PrepP head&#62; = &#60;PP head&#62;
+Rule  AdjP -&#62; (AV) AJ (AdjP_1)
+Rule  AdvP -&#62; {AV / PrepP} (AdvP_1)
+Rule  SubCl -&#62; CJ S
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 6. PC-PATR output with feature structure</B>
+
+1:
+				S
+	  __________|__________
+	 NP                  VP
+   ___|____      _________|__________
+  Det     N   VerbalP  NP         AdvP
+   |     man     |      |           |
+  DT             V     PR         PrepP
+  the           saw    us      _____|______
+							  PP         NP
+							 with     ____|_____
+									 Det       N
+									  |    telescope
+									 DT
+									  a
+
+S:
+[ cat:   S
+  pred:    [ cat:   VP
+			 head:    [ agr:   $1[ 3sg:   + ]
+						finite:+
+						pos:   V
+						tense: PAST
+						vform: ED ] ]
+  subj:    [ cat:   NP
+			 head:    [ agr:   $1[ 3sg:   + ]
+						case:  NOM
+						number:SG
+						pos:   N
+						proper:-
+						verbal:- ] ] ]
+
+1 parse found
+
+</PRE>
+
+<P>
+Figure 5 shows the grammar of
+figure 1 augmented with a number of feature constraints.
+With this grammar (and a suitable lexicon), the parse output shown in
+figure 2 would include the sentence feature
+structure, as shown in figure 6.  Note that the
+<CODE>&#60;subj head agr&#62;</CODE> and <CODE>&#60;pred head agr&#62;</CODE> features
+share a common value as a result of the feature constraint unifications
+associated with the rule <CODE>S -&#62; NP VP (SubCl)</CODE>.
+
+</P>
+<P>
+PC-PATR allows disjunctive feature unification constraints with its
+phrase structure rules.  Consider rules 15 and 16 below.  These two rules
+have the same phrase structure rule part.  They can therefore be
+collapsed into the single rule 17, which has a disjunction in its
+unification constraints.
+
+<PRE>
+
+(15)	Rule CP -&#62; NP C'        ; for wh questions with NP fronted
+		&#60;NP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;NP&#62;
+		&#60;CP type wh&#62; = &#60;NP type wh&#62;
+		&#60;CP type&#62; = &#60;C' type&#62;
+		&#60;CP moved A-bar&#62; = none
+		&#60;CP type root&#62; = +          ; root clauses
+		&#60;CP type q&#62; = +
+		&#60;CP type fin&#62; = +
+		&#60;CP moved A&#62; = none
+		&#60;CP moved head&#62; = none
+
+(16)	Rule CP -&#62; NP C'        ; for wh questions with NP fronted
+		&#60;NP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;NP&#62;
+		&#60;CP type wh&#62; = &#60;NP type wh&#62;
+		&#60;CP type&#62; = &#60;C' type&#62;
+		&#60;CP moved A-bar&#62; = none
+		&#60;CP type root&#62; = -          ; non-root clauses
+
+(17)	Rule CP -&#62; NP C'        ; for wh questions with NP fronted
+		&#60;NP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;NP&#62;
+		&#60;CP type wh&#62; = &#60;NP type wh&#62;
+		&#60;CP type&#62; = &#60;C' type&#62;
+		&#60;CP moved A-bar&#62; = none
+		{
+		&#60;CP type root&#62; = +		; root clauses
+		&#60;CP type q&#62; = +
+		&#60;CP type fin&#62; = +
+		&#60;CP moved A&#62; = none
+		&#60;CP moved head&#62; = none
+			/
+		&#60;CP type root&#62; = -		; non-root clauses
+		}
+
+</PRE>
+
+<P>
+Not only does PC-PATR allow disjunctive unification constraints, but it
+also allows disjunctive phrase structure rules.  Consider rule 18: it is
+very similar to rule 17.  These two rules can be further combined to form
+rule 19, which has disjunctions in both its phrase structure rule and its
+unification constraints.
+
+<PRE>
+
+(18)	Rule CP -&#62; PP C'        ; for wh questions with PP fronted
+		&#60;PP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;PP&#62;
+		&#60;CP type wh&#62; = &#60;PP type wh&#62;
+		&#60;CP type&#62; = &#60;C' type&#62;
+		&#60;CP moved A-bar&#62; = none
+		{
+		&#60;CP type root&#62; = +		; root clauses
+		&#60;CP type q&#62; = +
+		&#60;CP type fin&#62; = +
+		&#60;CP moved A&#62; = none
+		&#60;CP moved head&#62; = none
+			/
+		&#60;CP type root&#62; = -		; non-root clauses
+		}
+
+(19)	; for wh questions with NP or PP fronted
+	Rule CP -&#62; { NP / PP } C'
+		&#60;NP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;NP&#62;
+		&#60;CP type wh&#62; = &#60;NP type wh&#62;
+		&#60;PP type wh&#62; = +
+		&#60;C' moved A-bar&#62; = &#60;PP&#62;
+		&#60;CP type wh&#62; = &#60;PP type wh&#62;
+		&#60;CP type&#62; = &#60;C' type&#62;
+		&#60;CP moved A-bar&#62; = none
+		{
+		&#60;CP type root&#62; = +		; root clauses
+		&#60;CP type q&#62; = +
+		&#60;CP type fin&#62; = +
+		&#60;CP moved A&#62; = none
+		&#60;CP moved head&#62; = none
+			/
+		&#60;CP type root&#62; = -		; non-root clauses
+		}
+
+</PRE>
+
+<P>
+Since the open brace (<CODE>{</CODE>) introduces disjunctions both in the
+phrase structure rule and in the unification constraints, care must be
+taken to avoid confusing PC-PATR when it is loading the grammar
+file.  The end of the phrase structure rule, and the beginning of the
+unification constraints, is signaled either by the first constraint
+beginning with an open angle bracket (<CODE>&#60;</CODE>) or by a colon
+(<CODE>:</CODE>).  If the first constraint is part of a disjunction, then the
+phrase structure rule must end with a colon.  Otherwise, PC-PATR
+will treat the unification constraint as part of the phrase structure
+rule, and will shortly complain about syntax errors in the grammar
+file.
+
+</P>
+<P>
+Perhaps it should be noted that disjunctions in phrase structure rules
+or unifications are expanded when the grammar file is read.  They serve
+only as a convenience for the person writing the rules.
+
+</P>
+
+
+<H2><A NAME="SEC7" HREF="pcpatr.html#TOC7">2.5  The lexicon</A></H2>
+
+<P>
+The lexicon provides the basic elements (atoms) of the grammar, which
+are usually words.  Information like that shown in
+feature 2 is provided for each lexicon entry.  Unlike
+the original implementation of PATR-II, PC-PATR stores
+the lexicon in a separate file from the grammar rules.
+See section <A HREF="pcpatr.html#SEC83">6  The PC-PATR Lexicon File</A>,
+below for details.
+
+</P>
+
+
+<H1><A NAME="SEC8" HREF="pcpatr.html#TOC8">3  Running PC-PATR</A></H1>
+
+<P>
+PC-PATR is an interactive program.  It has a few command line options,
+but it is controlled primarily by commands typed at the keyboard (or
+loaded from a file previously prepared).
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC9">Command line options</A>
+<LI><A HREF="pcpatr.html#SEC10">Interactive commands</A>
+</UL>
+
+
+
+<H2><A NAME="SEC9" HREF="pcpatr.html#TOC9">3.1  PC-PATR Command Line Options</A></H2>
+
+<P>
+The PC-PATR program uses an old-fashioned command line interface
+following the convention of options starting with a dash character
+(<SAMP>`-'</SAMP>).  The available options are listed below in alphabetical
+order.  Those options which require an argument have the argument type
+following the option letter.
+
+</P>
+<DL COMPACT>
+
+<DT><CODE>-a filename</CODE>
+<DD>
+<A NAME="IDX1"></A>
+loads the lexicon from an AMPLE analysis output file.
+
+<DT><CODE>-g filename</CODE>
+<DD>
+<A NAME="IDX2"></A>
+loads the grammar from a PC-PATR grammar file.
+
+<DT><CODE>-l filename</CODE>
+<DD>
+<A NAME="IDX3"></A>
+loads the lexicon from a PC-PATR lexicon file.
+
+<DT><CODE>-t filename</CODE>
+<DD>
+<A NAME="IDX4"></A>
+opens a file containing one or more PC-PATR commands.
+See section <A HREF="pcpatr.html#SEC10">3.2  Interactive Commands</A>.
+</DL>
+
+<P>
+The following options exist only in beta-test versions of the program,
+since they are used only for debugging.
+
+</P>
+<DL COMPACT>
+
+<DT><CODE>-/</CODE>
+<DD>
+<A NAME="IDX5"></A>
+increments the debugging level.  The default is zero (no debugging output).
+
+<DT><CODE>-z filename</CODE>
+<DD>
+<A NAME="IDX6"></A>
+opens a file for recording a memory allocation log.
+
+<DT><CODE>-Z address,count</CODE>
+<DD>
+<A NAME="IDX7"></A>
+traps the program at the point where <CODE>address</CODE> is allocated or
+freed for the <CODE>count</CODE>'th time.
+</DL>
+
+
+
+<H2><A NAME="SEC10" HREF="pcpatr.html#TOC10">3.2  Interactive Commands</A></H2>
+
+<P>
+Each of the commands available in PC-PATR is described below.  Each
+command consists of one or more keywords followed by zero or more
+arguments.  Keywords may be abbreviated to the minimum length necessary
+to prevent ambiguity.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC11">cd</A>
+<LI><A HREF="pcpatr.html#SEC12">clear</A>
+<LI><A HREF="pcpatr.html#SEC13">close</A>
+<LI><A HREF="pcpatr.html#SEC14">directory</A>
+<LI><A HREF="pcpatr.html#SEC15">edit</A>
+<LI><A HREF="pcpatr.html#SEC16">exit</A>
+<LI><A HREF="pcpatr.html#SEC17">file</A>
+<LI><A HREF="pcpatr.html#SEC20">help</A>
+<LI><A HREF="pcpatr.html#SEC21">load</A>
+<LI><A HREF="pcpatr.html#SEC31">log</A>
+<LI><A HREF="pcpatr.html#SEC32">parse</A>
+<LI><A HREF="pcpatr.html#SEC33">quit</A>
+<LI><A HREF="pcpatr.html#SEC34">save</A>
+<LI><A HREF="pcpatr.html#SEC37">set</A>
+<LI><A HREF="pcpatr.html#SEC68">show</A>
+<LI><A HREF="pcpatr.html#SEC71">status</A>
+<LI><A HREF="pcpatr.html#SEC72">system</A>
+<LI><A HREF="pcpatr.html#SEC73">take</A>
+</UL>
+
+
+
+<H3><A NAME="SEC11" HREF="pcpatr.html#TOC11">3.2.1  cd</A></H3>
+
+<P>
+<CODE>cd</CODE> <VAR>directory</VAR>
+changes the current directory to the one specified.  Spaces in the
+directory pathname are not permitted.
+
+</P>
+<P>
+For MS-DOS or Windows, you can give a full path starting with the disk
+letter and a colon (for example, <CODE>a:</CODE>); a path starting with
+<CODE>\</CODE> which indicates a directory at the top level of the current
+disk; a path starting with <CODE>..</CODE> which indicates the directory
+above the current one; and so on.  Directories are separated by the
+<CODE>\</CODE> character.  (The forward slash <CODE>/</CODE> works just as well as
+the backslash <CODE>\</CODE> for MS-DOS or Windows.)
+
+</P>
+<P>
+For the Macintosh, you can give a full path starting with the name of
+a hard disk, a path starting with <CODE>:</CODE> which means the current
+folder, or one starting <CODE>::</CODE> which means the folder containing the
+current one (and so on).
+
+</P>
+<P>
+For Unix, you can give a full path starting with a <CODE>/</CODE> (for
+example, <CODE>/usr/pcpatr</CODE>); a path starting with <CODE>..</CODE> which
+indicates the directory above the current one; and so on.  Directories
+are separated by the <CODE>/</CODE> character.
+
+</P>
+
+
+<H3><A NAME="SEC12" HREF="pcpatr.html#TOC12">3.2.2  clear</A></H3>
+
+<P>
+<CODE>clear</CODE> erases all existing grammar and lexicon information,
+allowing the user to prepare to load information for a new language.
+Strictly speaking, it is not needed since the <CODE>load grammar</CODE>
+command erases the previously existing grammar, and the
+<CODE>load lexicon</CODE> and <CODE>load analysis</CODE> commands erase any
+previously existing lexicon.
+
+</P>
+
+
+<H3><A NAME="SEC13" HREF="pcpatr.html#TOC13">3.2.3  close</A></H3>
+
+<P>
+<CODE>close</CODE>
+closes the current log file opened by a previous <CODE>log</CODE> command.
+
+</P>
+
+
+<H3><A NAME="SEC14" HREF="pcpatr.html#TOC14">3.2.4  directory</A></H3>
+
+<P>
+<CODE>directory</CODE>
+lists the contents of the current directory.  This command is available
+only for the MS-DOS and Unix implementations.  It does not exist for
+Microsoft Windows or the Macintosh.
+
+</P>
+
+
+<H3><A NAME="SEC15" HREF="pcpatr.html#TOC15">3.2.5  edit</A></H3>
+
+<P>
+<CODE>edit</CODE> <VAR>filename</VAR>
+attempts to edit the specified file using the program indicated by the
+environment variable <CODE>EDITOR</CODE>.  If this environment variable is not
+defined, then <CODE>edlin</CODE> is used to edit the file on MS-DOS, and
+<CODE>vi</CODE> is used to edit the file on Unix.  (These defaults should
+convince you to set this variable!)  This command is not available for
+Microsoft Windows or the Macintosh.
+
+</P>
+
+
+<H3><A NAME="SEC16" HREF="pcpatr.html#TOC16">3.2.6  exit</A></H3>
+
+<P>
+<CODE>exit</CODE>
+stops PC-PATR, returning control to the operating system.  This is the
+same as <CODE>quit</CODE>.
+
+</P>
+
+
+<H3><A NAME="SEC17" HREF="pcpatr.html#TOC17">3.2.7  file</A></H3>
+
+<P>
+The <CODE>file</CODE> commands process data from a file, optionally writing
+the parse results to another file.  Each of these commands is described
+below.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC18">file disambiguate</A>
+<LI><A HREF="pcpatr.html#SEC19">file parse</A>
+</UL>
+
+
+
+<H4><A NAME="SEC18" HREF="pcpatr.html#TOC18">3.2.7.1  file disambiguate</A></H4>
+
+<P>
+<CODE>file disambiguate</CODE> <VAR>input.ana</VAR> <VAR>[out.ana]</VAR>
+reads sentences from the specified AMPLE analysis file and writes the
+corresponding parse trees and feature structures either to the screen
+or to the optionally specified output file.  If the output file is
+written, ambiguous word parses are eliminated as much as possible as a
+result of the sentence parsing.  When finished, a statistical report of
+successful (sentence) parses is displayed on the screen.
+
+</P>
+
+
+<H4><A NAME="SEC19" HREF="pcpatr.html#TOC19">3.2.7.2  file parse</A></H4>
+
+<P>
+<CODE>file parse</CODE> <VAR>input-file</VAR> <VAR>[output-file]</VAR>
+reads sentences from the specified input file, one per line, and writes
+the corresponding parse trees and feature structures to the screen or
+to the optionally specified output file.  The comment character is in
+effect while reading this file.  PC-PATR currently makes no attempt to
+handle either capitalization or punctuation.  PROBABLY SOME
+CAPABILITY FOR HANDLING PUNCTUATION WILL BE ADDED AT SOME POINT.
+
+</P>
+<P>
+This command behaves the same as <CODE>parse</CODE> except that input comes
+from a file rather than the keyboard, and output may go to a file
+rather than the screen.  When finished, a statistical report of
+successful parses is displayed on the screen.
+
+</P>
+
+
+<H3><A NAME="SEC20" HREF="pcpatr.html#TOC20">3.2.8  help</A></H3>
+
+<P>
+<CODE>help</CODE> <VAR>command</VAR>
+displays a description of the specified command.  If <CODE>help</CODE> is typed
+by itself, PC-PATR displays a list of commands with short descriptions of
+each command.
+
+</P>
+
+
+<H3><A NAME="SEC21" HREF="pcpatr.html#TOC21">3.2.9  load</A></H3>
+
+<P>
+The <CODE>load</CODE> commands all load information stored in specially
+formatted files.  The <CODE>load ample</CODE> and <CODE>load kimmo</CODE>
+commands activate morphological parsers, and serve as alternatives to
+<CODE>load lexicon</CODE> (or <CODE>load analysis</CODE>) for obtaining the
+category and other feature information for words.  Each of the
+<CODE>load</CODE> commands is described below.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC22">load ample control</A>
+<LI><A HREF="pcpatr.html#SEC23">load ample dictionary</A>
+<LI><A HREF="pcpatr.html#SEC24">load ample text-control</A>
+<LI><A HREF="pcpatr.html#SEC25">load analysis</A>
+<LI><A HREF="pcpatr.html#SEC26">load grammar</A>
+<LI><A HREF="pcpatr.html#SEC27">load kimmo grammar</A>
+<LI><A HREF="pcpatr.html#SEC28">load kimmo lexicon</A>
+<LI><A HREF="pcpatr.html#SEC29">load kimmo rules</A>
+<LI><A HREF="pcpatr.html#SEC30">load lexicon</A>
+</UL>
+
+
+
+<H4><A NAME="SEC22" HREF="pcpatr.html#TOC22">3.2.9.1  load ample control</A></H4>
+
+<P>
+<CODE>load ample control</CODE> <VAR>xxad01.ctl</VAR> <VAR>xxancd.tab</VAR> <VAR>[xxordc.tab]</VAR>
+erases any existing AMPLE information (including dictionaries) and
+reads control information from the specified files.  This also erases
+any stored PC-Kimmo information.
+
+</P>
+<P>
+At least two and possibly three files are loaded by this command.  The
+first file is the AMPLE <VAR>analysis data</VAR> file.  It has a
+default filetype extension of <CODE>.ctl</CODE> but no default filename.  The
+second file is the AMPLE dictionary code table file.  It has a
+default filetype extension of <CODE>.tab</CODE> but no default filename.  The
+third file is an optional dictionary orthography change table.  It has a
+default filetype extension of <CODE>.tab</CODE> and no default filename.
+
+</P>
+<P>
+<CODE>l am c</CODE> is a synonym for <CODE>load ample control</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC23" HREF="pcpatr.html#TOC23">3.2.9.2  load ample dictionary</A></H4>
+
+<P>
+<CODE>load ample dictionary</CODE> <VAR>[prefix.dic] [infix.dic] [suffix.dic] root1.dic [...]</VAR>
+or<BR>
+<CODE>load ample dictionary</CODE> <VAR>file01.dic [file02.dic ...]</VAR>
+erases any existing AMPLE dictionary information and reads the
+specified files.  This also erases any stored PC-Kimmo information.
+
+</P>
+<P>
+The first form of the command is for using a dictionary whose files are
+divided according to morpheme type (<CODE>set ample-dictionary split</CODE>).
+The different types of dictionary files must be loaded
+in the order shown, with any unneeded affix dictionaries omitted.
+
+</P>
+<P>
+The second form of the command is for using a dictionary whose entries
+contain the type of morpheme
+(<CODE>set ample-dictionary unified</CODE>).<A NAME="DOCF3" HREF="pcpatr.html#FOOT3">(3)</A>
+
+</P>
+<P>
+<CODE>l am d</CODE> is a synonym for <CODE>load ample dictionary</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC24" HREF="pcpatr.html#TOC24">3.2.9.3  load ample text-control</A></H4>
+
+<P>
+<CODE>load ample text-control</CODE> <VAR>xxintx.ctl</VAR>
+erases any existing AMPLE text input control information and reads
+the specified file.  This also erases any stored PC-Kimmo information.
+
+</P>
+<P>
+The text input control file has a default filetype extension of
+<CODE>.ctl</CODE> but no default filename.
+
+</P>
+<P>
+<CODE>l am t</CODE> is a synonym for <CODE>load ample text-control</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC25" HREF="pcpatr.html#TOC25">3.2.9.4  load analysis</A></H4>
+
+<P>
+<CODE>load analysis</CODE> <VAR>file1.ana</VAR> <VAR>[file2.ana ...]</VAR>
+erases any existing lexicon and reads a new lexicon from the specified
+AMPLE analysis file(s).  Note that more than one file may be loaded
+with the single <CODE>load analysis</CODE> command: duplicate entries are not
+stored in the lexicon.
+
+</P>
+<P>
+The default filetype extension for <CODE>load analysis</CODE> is <CODE>.ana</CODE>,
+and the default filename is <CODE>ample.ana</CODE>.
+
+</P>
+<P>
+<CODE>l a</CODE> is a synonym for <CODE>load analysis</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC26" HREF="pcpatr.html#TOC26">3.2.9.5  load grammar</A></H4>
+
+<P>
+<CODE>load grammar</CODE> <VAR>file.grm</VAR>
+erases any existing grammar and reads a new grammar from the specified file.
+
+</P>
+<P>
+The default filetype extension for <CODE>load grammar</CODE> is <CODE>.grm</CODE>,
+and the default filename is <CODE>grammar.grm</CODE>.
+
+</P>
+<P>
+<CODE>l g</CODE> is a synonym for <CODE>load grammar</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC27" HREF="pcpatr.html#TOC27">3.2.9.6  load kimmo grammar</A></H4>
+
+<P>
+<CODE>load kimmo grammar</CODE> <VAR>file.grm</VAR>
+erases any existing PC-Kimmo (word) grammar and reads a new word grammar
+from the specified file.
+
+</P>
+<P>
+The default filetype extension for <CODE>load kimmo grammar</CODE> is
+<CODE>.grm</CODE>, and the default filename is <CODE>grammar.grm</CODE>.
+
+</P>
+<P>
+<CODE>l k g</CODE> is a synonym for <CODE>load kimmo grammar</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC28" HREF="pcpatr.html#TOC28">3.2.9.7  load kimmo lexicon</A></H4>
+
+<P>
+<CODE>load kimmo lexicon</CODE> <VAR>file.lex</VAR>
+erases any existing PC-Kimmo lexicon information and reads a new
+morpheme lexicon from the specified file.  A PC-Kimmo rules file must
+be loaded before a PC-Kimmo lexicon file can be loaded.
+
+</P>
+<P>
+The default filetype extension for <CODE>load kimmo lexicon</CODE> is
+<CODE>.lex</CODE>, and the default filename is <CODE>lexicon.lex</CODE>.
+
+</P>
+<P>
+<CODE>l k l</CODE> is a synonym for <CODE>load kimmo lexicon</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC29" HREF="pcpatr.html#TOC29">3.2.9.8  load kimmo rules</A></H4>
+
+<P>
+<CODE>load kimmo rules</CODE> <VAR>file.rul</VAR>
+erases any existing PC-Kimmo rules and reads a
+new set of rules from the specified file.  This also erases any stored
+AMPLE information.
+
+</P>
+<P>
+The default filetype extension for <CODE>load kimmo rules</CODE> is
+<CODE>.rul</CODE>, and the default filename is <CODE>rules.rul</CODE>.
+
+</P>
+<P>
+<CODE>l k r</CODE> is a synonym for <CODE>load kimmo rules</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC30" HREF="pcpatr.html#TOC30">3.2.9.9  load lexicon</A></H4>
+
+<P>
+<CODE>load lexicon</CODE> <VAR>file1.lex</VAR> <VAR>[file2.lex ...]</VAR>
+erases any existing lexicon and reads a new lexicon from the specified
+file(s).  Note that more than one file may be loaded with a single
+<CODE>load lexicon</CODE> command.
+
+</P>
+<P>
+The default filetype extension for <CODE>load lexicon</CODE> is <CODE>.lex</CODE>,
+and the default filename is <CODE>lexicon.lex</CODE>.
+
+</P>
+<P>
+<CODE>l l</CODE> is a synonym for <CODE>load lexicon</CODE>.
+
+</P>
+
+
+<H3><A NAME="SEC31" HREF="pcpatr.html#TOC31">3.2.10  log</A></H3>
+
+<P>
+<CODE>log</CODE> <VAR>[file.log]</VAR>
+opens a log file.  Each item processed by a <CODE>parse</CODE> command
+is stored to the log file as well as being displayed on the screen.
+
+</P>
+<P>
+If a filename is given on the same line as the <CODE>log</CODE> command, then
+that file is used for the log file.  Any previously existing file with
+the same name will be overwritten.  If no filename is provided, then
+the file <CODE>pcpatr.log</CODE> in the current directory is used for the log
+file.
+
+</P>
+<P>
+Use <CODE>close</CODE> to stop recording in a log file.  If a <CODE>log</CODE>
+command is given when a log file is already open, then the earlier log
+file is closed before the new log file is opened.
+
+</P>
+
+
+<H3><A NAME="SEC32" HREF="pcpatr.html#TOC32">3.2.11  parse</A></H3>
+
+<P>
+<CODE>parse</CODE> <VAR>[sentence or phrase]</VAR>
+attempts to parse the input sentence according to the loaded grammar.
+If a sentence is typed on the same line as the command, then that
+sentence is parsed.  If the <CODE>parse</CODE> command is given by itself,
+then the user is prompted repeatedly for sentences to parse.  This
+cycle of typing and parsing is terminated by typing an empty
+"sentence" (that is, nothing but the <CODE>Enter</CODE> or <CODE>Return</CODE>
+key).
+
+</P>
+<P>
+Both the grammar and the lexicon must be loaded before using this
+command.
+
+</P>
+
+
+<H3><A NAME="SEC33" HREF="pcpatr.html#TOC33">3.2.12  quit</A></H3>
+
+<P>
+<CODE>quit</CODE>
+stops PC-PATR, returning control to the operating system.  This is the
+same as <CODE>exit</CODE>.
+
+</P>
+
+
+<H3><A NAME="SEC34" HREF="pcpatr.html#TOC34">3.2.13  save</A></H3>
+
+<P>
+The <CODE>save</CODE> commands write information stored in memory to a file
+suitable for reloading into PC-PATR later.  Each of these commands is
+described below.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC35">save lexicon</A>
+<LI><A HREF="pcpatr.html#SEC36">save status</A>
+</UL>
+
+
+
+<H4><A NAME="SEC35" HREF="pcpatr.html#TOC35">3.2.13.1  save lexicon</A></H4>
+
+<P>
+<CODE>save lexicon</CODE> <VAR>[file.lex]</VAR>
+writes the current lexicon contents to the designated file.  The output
+lexicon file must be specified.  This can be useful if you are using a
+morphological parser to populate the lexicon.
+
+</P>
+
+
+<H4><A NAME="SEC36" HREF="pcpatr.html#TOC36">3.2.13.2  save status</A></H4>
+
+<P>
+<CODE>save status</CODE> <VAR>[file.tak]</VAR>
+writes the current settings to the designated file in the form of
+PC-PATR commands.  If the file is not specified, the settings are
+written to <CODE>pcpatr.tak</CODE> in the current directory.
+
+</P>
+
+
+<H3><A NAME="SEC37" HREF="pcpatr.html#TOC37">3.2.14  set</A></H3>
+
+<P>
+The <CODE>set</CODE> commands control program behavior by setting internal
+program variables.  Each of these commands (and variables) is described
+below.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC38">set ambiguities</A>
+<LI><A HREF="pcpatr.html#SEC39">set ample-dictionary</A>
+<LI><A HREF="pcpatr.html#SEC40">set check-cycles</A>
+<LI><A HREF="pcpatr.html#SEC41">set comment</A>
+<LI><A HREF="pcpatr.html#SEC42">set failures</A>
+<LI><A HREF="pcpatr.html#SEC43">set features</A>
+<LI><A HREF="pcpatr.html#SEC44">set final-punctuation</A>
+<LI><A HREF="pcpatr.html#SEC45">set gloss</A>
+<LI><A HREF="pcpatr.html#SEC46">set kimmo check-cycles</A>
+<LI><A HREF="pcpatr.html#SEC47">set kimmo promote-defaults</A>
+<LI><A HREF="pcpatr.html#SEC48">set kimmo top-down-filter</A>
+<LI><A HREF="pcpatr.html#SEC49">set limit</A>
+<LI><A HREF="pcpatr.html#SEC50">set marker category</A>
+<LI><A HREF="pcpatr.html#SEC51">set marker features</A>
+<LI><A HREF="pcpatr.html#SEC52">set marker gloss</A>
+<LI><A HREF="pcpatr.html#SEC53">set marker record</A>
+<LI><A HREF="pcpatr.html#SEC54">set marker rootgloss</A>
+<LI><A HREF="pcpatr.html#SEC55">set marker word</A>
+<LI><A HREF="pcpatr.html#SEC56">set promote-defaults</A>
+<LI><A HREF="pcpatr.html#SEC57">set property-is-feature</A>
+<LI><A HREF="pcpatr.html#SEC58">set recognize-only</A>
+<LI><A HREF="pcpatr.html#SEC59">set rootgloss</A>
+<LI><A HREF="pcpatr.html#SEC60">set timing</A>
+<LI><A HREF="pcpatr.html#SEC61">set top-down-filter</A>
+<LI><A HREF="pcpatr.html#SEC62">set tree</A>
+<LI><A HREF="pcpatr.html#SEC63">set trim-empty-features</A>
+<LI><A HREF="pcpatr.html#SEC64">set unification</A>
+<LI><A HREF="pcpatr.html#SEC65">set verbose</A>
+<LI><A HREF="pcpatr.html#SEC66">set warnings</A>
+<LI><A HREF="pcpatr.html#SEC67">set write-ample-parses</A>
+</UL>
+
+
+
+<H4><A NAME="SEC38" HREF="pcpatr.html#TOC38">3.2.14.1  set ambiguities</A></H4>
+
+<P>
+<CODE>set ambiguities</CODE> <VAR>number</VAR>
+limits the number of analyses printed to the given number.  The default
+value is 10.  Note that this does not limit the number of analyses
+produced, just the number printed.
+
+</P>
+
+
+<H4><A NAME="SEC39" HREF="pcpatr.html#TOC39">3.2.14.2  set ample-dictionary</A></H4>
+
+<P>
+<CODE>set ample-dictionary</CODE> <VAR>value</VAR>
+determines whether or not the AMPLE dictionary files are divided
+according to morpheme type.  <CODE>set ample-dictionary split</CODE> declares
+that the AMPLE dictionary is divided into a
+prefix dictionary file, an infix dictionary file, a suffix dictionary
+file, and one or more root dictionary files.  The existence of the
+three affix dictionary depends on settings in the AMPLE analysis
+data file.  If they exist, the <CODE>load ample dictionary</CODE> command
+requires that they be given in this relative
+order: prefix, infix, suffix, root(s).
+
+</P>
+<P>
+<CODE>set ample-dictionary unified</CODE> declares that any of the AMPLE
+dictionary files may contain any type of morpheme.  This implies that
+each dictionary entry may contain a field specifying the type of
+morpheme (the default is <VAR>root</VAR>), and that the dictionary code
+table contains a <CODE>\unified</CODE> field.  One of the changes
+listed under <CODE>\unified</CODE> must convert a backslash code to <CODE>T</CODE>.
+
+</P>
+<P>
+The default is for the AMPLE dictionary to be
+<EM>split</EM>.<A NAME="DOCF4" HREF="pcpatr.html#FOOT4">(4)</A>
+
+</P>
+
+
+<H4><A NAME="SEC40" HREF="pcpatr.html#TOC40">3.2.14.3  set check-cycles</A></H4>
+
+<P>
+<CODE>set check-cycles</CODE> <VAR>value</VAR>
+enables or disables a check to prevent cycles in the parse chart.
+<CODE>set check-cycles on</CODE> turns on this check, and
+<CODE>set check-cycles off</CODE> turns it off.  This check
+slows down the parsing of a sentence, but it makes the parser less
+vulnerable to hanging on perverse grammars.  The default setting is
+<CODE>on</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC41" HREF="pcpatr.html#TOC41">3.2.14.4  set comment</A></H4>
+
+<P>
+<CODE>set comment</CODE> <VAR>character</VAR>
+sets the comment character to the indicated value.  If <VAR>character</VAR>
+is missing (or equal to the current comment character), then comment
+handling is disabled.  The default comment character is <CODE>;</CODE>
+(semicolon).
+
+</P>
+
+
+<H4><A NAME="SEC42" HREF="pcpatr.html#TOC42">3.2.14.5  set failures</A></H4>
+
+<P>
+<CODE>set failures</CODE> <VAR>value</VAR>
+enables or disables <VAR>grammar failure mode</VAR>.  <CODE>set failures on</CODE>
+turns on grammar failure mode, and <CODE>set failures off</CODE> turns it
+off.  When grammar failure mode is on, the partial results of forms
+that fail the grammar module are displayed.  A form may fail the
+grammar either by failing the feature constraints or by failing the
+constituent structure rules. In the latter case, a partial tree (bush)
+will be returned.  The default setting is <CODE>off</CODE>.
+
+</P>
+<P>
+Be careful with this option.  Setting failures to <CODE>on</CODE> can cause
+the PC-PATR to go into an infinite loop for certain recursive grammars
+and certain input sentences.  WE MAY TRY TO DO SOMETHING TO DETECT
+THIS TYPE OF BEHAVIOR, AT LEAST PARTIALLY.
+
+</P>
+
+
+<H4><A NAME="SEC43" HREF="pcpatr.html#TOC43">3.2.14.6  set features</A></H4>
+
+<P>
+<CODE>set features</CODE> <VAR>value</VAR>
+determines how features will be displayed.
+
+</P>
+<P>
+<CODE>set features all</CODE> enables the display of the features for all
+nodes of the parse tree.
+
+</P>
+<P>
+<CODE>set features top</CODE> enables the display of the feature
+structure for only the top node of the parse tree.  This is the default
+setting.
+
+</P>
+<P>
+<CODE>set features flat</CODE> causes features to be displayed in a flat,
+linear string that uses less space on the screen.
+
+</P>
+<P>
+<CODE>set features full</CODE> causes features to be displayed in an
+indented form that makes the embedded structure of the feature set
+clear.  This is the default setting.
+
+</P>
+<P>
+<CODE>set features on</CODE> turns on features display mode, allowing
+features to be shown.  This is the default setting.
+
+</P>
+<P>
+<CODE>set features off</CODE> turns off features display mode, preventing
+features from being shown.
+
+</P>
+
+
+<H4><A NAME="SEC44" HREF="pcpatr.html#TOC44">3.2.14.7  set final-punctuation</A></H4>
+
+<P>
+<CODE>set final-punctuation</CODE> <VAR>value</VAR>
+defines the set of characters used to mark the ends of sentences.  The
+individual characters must be separated by spaces so that digraphs and
+trigraphs can be used, not just single character units.  The default is
+<CODE>. ! ? : ;</CODE>.
+
+</P>
+<P>
+This variable setting affects only the <CODE>file disambiguate</CODE> command.
+
+</P>
+
+
+<H4><A NAME="SEC45" HREF="pcpatr.html#TOC45">3.2.14.8  set gloss</A></H4>
+
+<P>
+<CODE>set gloss</CODE> <VAR>value</VAR>
+enables the display of glosses in the parse tree output if <VAR>value</VAR> is
+<CODE>on</CODE>, and disables the display of glosses if <VAR>value</VAR> is
+<CODE>off</CODE>.  If any glosses exist in the lexicon file, then <CODE>gloss</CODE> is
+automatically turned <CODE>on</CODE> when the lexicon is loaded.  If no glosses
+exist in the lexicon, then this flag is ignored.
+
+</P>
+
+
+<H4><A NAME="SEC46" HREF="pcpatr.html#TOC46">3.2.14.9  set kimmo check-cycles</A></H4>
+
+<P>
+<CODE>set kimmo check-cycles</CODE> <VAR>value</VAR>
+enables or disables a check to prevent cycles in a word parse chart
+created by the embedded PC-Kimmo morphological parser.
+<CODE>set kimmo check-cycles on</CODE> turns on this check, and
+<CODE>set kimmo check-cycles off</CODE> turns it off.  This check slows
+down the parsing of a sentence, but it makes the parser less vulnerable
+to hanging on perverse grammars.  The default setting is <CODE>on</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC47" HREF="pcpatr.html#TOC47">3.2.14.10  set kimmo promote-defaults</A></H4>
+
+<P>
+<CODE>set kimmo promote-default</CODE> <VAR>value</VAR>
+controls whether default atomic values in the feature structures loaded
+from the lexicon are "promoted" to ordinary atomic values before
+parsing a word with the embedded PC-Kimmo morphological parser.
+<CODE>set kimmo promote-defaults on</CODE> turns on this behavior, and
+<CODE>set kimmo promote-defaults off</CODE> turns it off.  The default
+setting is <CODE>on</CODE>.  (It is arguable that this is the wrong choice for
+the default, but this has been the behavior since the program was first
+written.)
+
+</P>
+
+
+<H4><A NAME="SEC48" HREF="pcpatr.html#TOC48">3.2.14.11  set kimmo top-down-filter</A></H4>
+
+<P>
+<CODE>set kimmo top-down-filter</CODE> <VAR>value</VAR>
+enables or disables top-down filtering in the embedded PC-Kimmo
+morphological parser, based on the morpheme categories.
+<CODE>set kimmo top-down-filter on</CODE> turns on this filtering, and
+<CODE>set kimmo top-down-filter off</CODE> turns it off.  The top-down
+filter speeds up the parsing of a sentence, but might cause the parser to
+miss some valid parses.  The default setting is <CODE>on</CODE>.
+
+</P>
+<P>
+This should not be required in the final version of PC-PATR.
+
+</P>
+
+
+<H4><A NAME="SEC49" HREF="pcpatr.html#TOC49">3.2.14.12  set limit</A></H4>
+<P>
+<CODE>set limit</CODE> <VAR>number</VAR>
+sets the time limit (in seconds) for parsing a sentence.  Its argument is
+a number greater than or equal to zero, which is the maximum number of
+seconds than a parse is allowed before being cancelled.  The default
+value is <CODE>0</CODE>, which has the special meaning that no time limit is
+imposed.
+
+</P>
+<P>
+NOTE: this feature is new and still somewhat experimental.  It may not be
+fully debugged, and may cause unforeseen side effects such as program
+crashes some time after one or more parses are cancelled due to exceeding
+the set time limit.
+
+</P>
+
+
+<H4><A NAME="SEC50" HREF="pcpatr.html#TOC50">3.2.14.13  set marker category</A></H4>
+
+<P>
+<CODE>set marker category</CODE> <VAR>marker</VAR>
+establishes the marker for the field containing the category (part of
+speech) feature.  The default is <CODE>\c</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC51" HREF="pcpatr.html#TOC51">3.2.14.14  set marker features</A></H4>
+
+<P>
+<CODE>set marker features</CODE> <VAR>marker</VAR>
+establishes the marker for the field containing miscellaneous features.
+(This field is not needed for many words.)  The default is <CODE>\f</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC52" HREF="pcpatr.html#TOC52">3.2.14.15  set marker gloss</A></H4>
+
+<P>
+<CODE>set marker gloss</CODE> <VAR>marker</VAR>
+establishes the marker for the field containing the word gloss.  The
+default is <CODE>\g</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC53" HREF="pcpatr.html#TOC53">3.2.14.16  set marker record</A></H4>
+
+<P>
+<CODE>set marker record</CODE> <VAR>marker</VAR>
+establishes the field marker that begins a new record in the lexicon
+file.  This may or may not be the same as the <CODE>word</CODE> marker.  The
+default is <CODE>\w</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC54" HREF="pcpatr.html#TOC54">3.2.14.17  set marker rootgloss</A></H4>
+
+<P>
+<CODE>set marker rootgloss</CODE> <VAR>marker</VAR>
+establishes the marker for the field containing the word rootgloss.  The
+default is <CODE>\r</CODE>.  The word's root gloss may be useful for handling
+syntactic constructions such as verb reduplication.  One can write a
+unification constraint that ensures that the rootgloss unifies between
+two successive lexical items/terminal symbols.  Note that this does
+not work when using Kimmo to parse words.
+
+</P>
+
+
+<H4><A NAME="SEC55" HREF="pcpatr.html#TOC55">3.2.14.18  set marker word</A></H4>
+
+<P>
+<CODE>set marker word</CODE> <VAR>marker</VAR>
+establishes the marker for the word field.  The default is <CODE>\w</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC56" HREF="pcpatr.html#TOC56">3.2.14.19  set promote-defaults</A></H4>
+
+<P>
+<CODE>set promote-defaults</CODE> <VAR>value</VAR> controls whether default
+atomic values in the feature structures loaded from the lexicon are
+"promoted" to ordinary atomic values before parsing a sentence.
+<CODE>set promote-defaults on</CODE> turns on this behavior, and
+<CODE>set promote-defaults off</CODE> turns it off.  (This can affect
+feature unification since a conflicting default value does not cause a
+failure: the default value merely disappears.)  The default setting is
+<CODE>on</CODE>.  (It is arguable that this is the wrong choice for the
+default, but this has been the behavior since the program was first
+written.)
+
+</P>
+
+
+<H4><A NAME="SEC57" HREF="pcpatr.html#TOC57">3.2.14.20  set property-is-feature</A></H4>
+
+<P>
+<CODE>set property-is-feature</CODE> <VAR>value</VAR> controls whether the
+values in the AMPLE analysis <CODE>\p</CODE> (property) field are to be
+interpreted as feature template names, the same as the values in the AMPLE
+analysis <CODE>\fd</CODE> (feature descriptor) field.
+<CODE>set property-is-feature on</CODE> turns on this behavior, and
+<CODE>set property-is-feature off</CODE> turns it off.
+The default setting is <CODE>off</CODE>.  (It is arguable that this is the
+wrong choice for the default, but this has been the behavior since the
+program was first written.)
+
+</P>
+
+
+<H4><A NAME="SEC58" HREF="pcpatr.html#TOC58">3.2.14.21  set recognize-only</A></H4>
+
+<P>
+<CODE>set recognize-only</CODE> <VAR>value</VAR> controls whether the parser
+acts as a recognizer or as a real parser and thus produces all
+possible parses.
+
+</P>
+<P>
+<CODE>set recognize-only on</CODE> causes the first successful parse to terminate the parsing process.
+
+</P>
+<P>
+<CODE>set recognize-only off</CODE> allows all possible parses to be to be checked and returned by the parsing process.
+
+</P>
+<P>
+The default setting is <CODE>off</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC59" HREF="pcpatr.html#TOC59">3.2.14.22  set rootgloss</A></H4>
+
+<P>
+<CODE>set rootgloss</CODE> <VAR>value</VAR> specifies if root glosses should be
+treated as a lexical feature and, if so, which root(s) in compound roots
+are used.  The word's root gloss may be useful for handling syntactic
+constructions such as verb reduplication.  Note that this does not work
+when using Kimmo to parse words.
+
+</P>
+<P>
+<CODE>set rootgloss off</CODE> turns off the use of the root gloss feature.
+This is the default setting.
+
+</P>
+<P>
+<CODE>set rootgloss on</CODE> turns on the use of the root gloss feature.
+This value should be used when using a word lexicon (i.e. when using the
+<CODE>load lexicon file</CODE> command).  N.B. that it must be set <B>before</B> one
+loads the lexicon file (otherwise, no root glosses will be loaded).
+
+</P>
+<P>
+<CODE>set rootgloss leftheaded</CODE> turns on the use of the root gloss
+feature and, if one is either disambiguating an ANA file or using AMPLE to
+parse the words in a sentence, only the leftmost root in compound roots
+will be used as the root gloss feature value.
+
+</P>
+<P>
+<CODE>set rootgloss rightheaded</CODE> turns on the use of the root gloss
+feature and, if one is either disambiguating an ANA file or using AMPLE to
+parse the words in a sentence, only the rightmost root in compound roots
+will be used as the root gloss feature value.
+
+</P>
+<P>
+<CODE>set rootgloss all</CODE> turns on the use of the root gloss
+feature and, if one is either disambiguating an ANA file or using AMPLE to
+parse the words in a sentence, every root gloss in compound roots
+will be used as the root gloss feature value.
+
+</P>
+
+
+<H4><A NAME="SEC60" HREF="pcpatr.html#TOC60">3.2.14.23  set timing</A></H4>
+
+<P>
+<CODE>set timing</CODE> <VAR>value</VAR>
+enables timing mode if <VAR>value</VAR> is <CODE>on</CODE>, and disables timing
+mode if <VAR>value</VAR> is <CODE>off</CODE>.  If timing mode is <CODE>on</CODE>, then
+the elapsed time required to process a command is displayed when the
+command finishes.  If timing mode is <CODE>off</CODE>, then the elapsed time
+is not shown.  The default is <CODE>off</CODE>.  (This option is useful only
+to satisfy idle curiosity.)
+
+</P>
+
+
+<H4><A NAME="SEC61" HREF="pcpatr.html#TOC61">3.2.14.24  set top-down-filter</A></H4>
+
+<P>
+<CODE>set top-down-filter</CODE> <VAR>value</VAR>
+enables or disables top-down filtering based on the categories.
+<CODE>set top-down-filter on</CODE> turns on this filtering,
+and <CODE>set top-down-filter off</CODE> turns it off.  The
+top-down filter speeds up the parsing of a sentence, but might cause
+the parser to miss some valid parses.  The default setting is
+<CODE>on</CODE>.
+
+</P>
+<P>
+This should not be required in the final version of PC-PATR.
+
+</P>
+
+
+<H4><A NAME="SEC62" HREF="pcpatr.html#TOC62">3.2.14.25  set tree</A></H4>
+
+<P>
+<CODE>set tree</CODE> <VAR>value</VAR>
+specifies how parse trees should be displayed.
+
+</P>
+<P>
+<CODE>set tree full</CODE> turns on the parse tree display, displaying the
+result of the parse as a full tree.  This is the default setting.
+A short sentence would look something like this:
+
+<PRE>
+
+   Sentence_1
+		|
+  Declarative_2
+   _____|_____
+ NP_3      VP_5
+   |      ___|____
+  N_4    V_6  COMP_7
+ cows    eat     |
+			   NP_8
+				 |
+				N_9
+			   grass
+
+</PRE>
+
+<P>
+<CODE>set tree flat</CODE> turns on the parse tree display, displaying the
+result of the parse as a flat tree structure in the form of a bracketed
+string.  The same short sentence would look something like this:
+
+<PRE>
+
+(Sentence_1 (Declarative_2 (NP_3 (N_4  cows))(VP_5 (V_6  eat)(COMP_7
+		(NP_8 (N_9  grass))))))
+
+</PRE>
+
+<P>
+<CODE>set tree indented</CODE> turns on the parse tree display, displaying
+the result of the parse in an indented format sometimes called a
+<EM>northwest tree</EM>.  The same short sentence would look like this:
+
+<PRE>
+
+Sentence_1
+	Declarative_2
+		NP_3
+			N_4  cows
+		VP_5
+			V_6  eat
+			COMP_7
+				NP_8
+					N_9  grass
+
+</PRE>
+
+<P>
+<CODE>set tree xml</CODE> turns on the parse tree display, displaying the
+result of the parse in an XML format.  The same short sentence would look
+like this:
+
+<PRE>
+
+&#60;Analysis count="1"&#62;
+  &#60;Parse&#62;
+	&#60;Node cat="Sentence" id="_1._1"&#62;
+	  &#60;Fs&#62;
+	  &#60;F name="cat"&#62;&#60;str&#62;Sentence&#60;/str&#62;&#60;/f&#62;
+	  &#60;/Fs&#62;
+	  &#60;Node cat="Declarative" id="_1._2"&#62;
+		&#60;Fs&#62;
+		&#60;F name="cat"&#62;&#60;str&#62;Declarative&#60;/str&#62;&#60;/f&#62;
+		&#60;/Fs&#62;
+		&#60;Node cat="NP" id="_1._3"&#62;
+		  &#60;Fs&#62;
+		  &#60;F name="cat"&#62;&#60;str&#62;NP&#60;/str&#62;&#60;/f&#62;
+		  &#60;/Fs&#62;
+		  &#60;Leaf cat="N" id="_1._4"&#62;
+			&#60;Fs&#62;
+			&#60;F name="cat"&#62;&#60;str&#62;N&#60;/str&#62;&#60;/f&#62;
+			&#60;F name="lex"&#62;&#60;str&#62;cows&#60;/str&#62;&#60;/f&#62;
+			&#60;/Fs&#62;
+			&#60;Lexfs&#62;
+			&#60;F name="cat"&#62;&#60;str&#62;N&#60;/str&#62;&#60;/f&#62;
+			&#60;F name="lex"&#62;&#60;str&#62;cows&#60;/str&#62;&#60;/f&#62;
+			&#60;/Lexfs&#62;
+			&#60;Str&#62;cows&#60;/str&#62;
+		  &#60;/Leaf&#62;
+		&#60;/Node&#62;
+		&#60;Node cat="VP" id="_1._5"&#62;
+		  ...                   (35 lines omitted)
+		&#60;/Node&#62;
+	  &#60;/Node&#62;
+	&#60;/Node&#62;
+  &#60;/Parse&#62;
+&#60;/Analysis&#62;
+
+</PRE>
+
+<P>
+<CODE>set tree off</CODE> disables the display of parse trees altogether.
+
+</P>
+
+
+<H4><A NAME="SEC63" HREF="pcpatr.html#TOC63">3.2.14.26  set trim-empty-features</A></H4>
+
+<P>
+<CODE>set trim-empty-features</CODE> <VAR>value</VAR>
+disables the display of empty feature values if <VAR>value</VAR> is
+<CODE>on</CODE>, and enables the display of empty feature values if
+<VAR>value</VAR> is <CODE>off</CODE>.  The default is not to display empty feature
+values.
+
+</P>
+
+
+<H4><A NAME="SEC64" HREF="pcpatr.html#TOC64">3.2.14.27  set unification</A></H4>
+
+<P>
+<CODE>set unification</CODE> <VAR>value</VAR>
+enables or disables feature unification.
+<CODE>set unification on</CODE> turns on unification mode.  This is the
+default setting.
+
+</P>
+<P>
+<CODE>set unification off</CODE> turns off feature unification in the
+grammar.  Only the context-free phrase structure rules are used to
+guide the parse; the feature contraints are ignored.  This can be
+dangerous, as it is easy to introduce infinite cycles in recursive
+phrase structure rules.
+
+</P>
+
+
+<H4><A NAME="SEC65" HREF="pcpatr.html#TOC65">3.2.14.28  set verbose</A></H4>
+
+<P>
+<CODE>set verbose</CODE> <VAR>value</VAR>
+enables or disables the screen display of parse trees in the
+<CODE>file parse</CODE>
+command.  <CODE>set verbose on</CODE> enables the screen display of parse
+trees, and <CODE>set verbose off</CODE> disables such display.  The default
+setting is <CODE>off</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC66" HREF="pcpatr.html#TOC66">3.2.14.29  set warnings</A></H4>
+
+<P>
+<CODE>set warnings</CODE> <VAR>value</VAR>
+enables warning mode if <VAR>value</VAR> is <CODE>on</CODE>, and disables
+warning mode if <VAR>value</VAR> is <CODE>off</CODE>.  If warning mode is
+enabled, then warning messages are displayed on the output. If warning
+mode is disabled, then no warning messages are displayed.  The default
+setting is <CODE>on</CODE>.
+
+</P>
+
+
+<H4><A NAME="SEC67" HREF="pcpatr.html#TOC67">3.2.14.30  set write-ample-parses</A></H4>
+
+<P>
+<CODE>set write-ample-parses</CODE> <VAR>value</VAR>
+enables writing <CODE>\parse</CODE> and <CODE>\features</CODE> fields at the end of
+each sentence in the disambiguated analysis file if <VAR>value</VAR> is
+<CODE>on</CODE>, and disables writing these fields if <VAR>value</VAR> is
+<CODE>off</CODE>.  The default setting is <CODE>off</CODE>.
+
+</P>
+<P>
+This variable setting affects only the <CODE>file disambiguate</CODE> command.
+
+</P>
+
+
+<H3><A NAME="SEC68" HREF="pcpatr.html#TOC68">3.2.15  show</A></H3>
+
+<P>
+The <CODE>show</CODE> commands display internal settings on the screen.  Each
+of these commands is described below.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC69">show lexicon</A>
+<LI><A HREF="pcpatr.html#SEC70">show status</A>
+</UL>
+
+
+
+<H4><A NAME="SEC69" HREF="pcpatr.html#TOC69">3.2.15.1  show lexicon</A></H4>
+
+<P>
+<CODE>show lexicon</CODE>
+prints the contents of the lexicon stored in memory on the standard
+output.  THIS IS NOT VERY USEFUL, AND MAY BE REMOVED.
+
+</P>
+
+
+<H4><A NAME="SEC70" HREF="pcpatr.html#TOC70">3.2.15.2  show status</A></H4>
+
+<P>
+<CODE>show status</CODE>
+displays the names of the current grammar, sentences, and log files,
+and the values of the switches established by the <CODE>set</CODE> command.
+
+</P>
+<P>
+<CODE>show</CODE> (by itself) and <CODE>status</CODE> are synonyms for
+<CODE>show status</CODE>.
+
+</P>
+
+
+<H3><A NAME="SEC71" HREF="pcpatr.html#TOC71">3.2.16  status</A></H3>
+
+<P>
+<CODE>status</CODE>
+displays the names of the current grammar, sentences, and log files,
+and the values of the switches established by the <CODE>set</CODE> command.
+
+</P>
+
+
+<H3><A NAME="SEC72" HREF="pcpatr.html#TOC72">3.2.17  system</A></H3>
+
+<P>
+<CODE>system</CODE> <VAR>[command]</VAR>
+allows the user to execute an operating system command (such as
+checking the available space on a disk) from within PC-PATR.  This is
+available only for MS-DOS and Unix, not for Microsoft Windows or the
+Macintosh.
+
+</P>
+
+<P>
+If no system-level command is given on the line with the <CODE>system</CODE>
+command, then PC-PATR is pushed into the background and a new system
+command processor (shell) is started.  Control is usually returned to
+PC-PATR in this case by typing <CODE>exit</CODE> as the operating system
+command.
+
+</P>
+<P>
+<CODE>!</CODE> (exclamation point) is a synonym for <CODE>system</CODE>.
+
+</P>
+
+
+<H3><A NAME="SEC73" HREF="pcpatr.html#TOC73">3.2.18  take</A></H3>
+
+<P>
+<CODE>take</CODE> <VAR>[file.tak]</VAR>
+redirects command input to the specified file.
+
+</P>
+<P>
+The default filetype extension for <CODE>take</CODE> is <CODE>.tak</CODE>, and the default
+filename is <CODE>pcpatr.tak</CODE>.
+
+</P>
+<P>
+<CODE>take</CODE> files can be nested three deep.  That is, the user types
+<CODE>take file1</CODE>, <CODE>file1</CODE> contains the command <CODE>take file2</CODE>,
+and <CODE>file2</CODE> has the command <CODE>take file3</CODE>.  It would be an
+error for <CODE>file3</CODE> to contain a <CODE>take</CODE> command.  This should
+not prove to be a serious limitation.
+
+</P>
+<P>
+A <CODE>take</CODE> file can also be specified by using the <CODE>-t</CODE> command
+line option when starting PC-PATR.  When started, PC-PATR looks for a
+<CODE>take</CODE> file named <TT>`pcpatr.tak'</TT> in the current directory to
+initialize itself with.
+
+</P>
+
+
+<H1><A NAME="SEC74" HREF="pcpatr.html#TOC74">4  The PC-PATR Grammar File</A></H1>
+
+<P>
+The following specifications apply generally to the grammar file:
+
+</P>
+
+<UL>
+<LI>
+
+Blank lines, spaces, and tabs separate elements of the grammar file from one
+another, but are ignored otherwise.
+<LI>
+
+The comment character declared by the <CODE>set comment</CODE> command
+(see section <A HREF="pcpatr.html#SEC41">3.2.14.4  set comment</A>)
+is operative in the grammar file.  The default
+comment character is the semicolon (<CODE>;</CODE>).  Comments may be placed
+anywhere in the grammar file.  Everything following a comment character
+to the end of the line is ignored.
+<LI>
+
+A grammar file is divided into fields identified by a small set of keywords.
+
+
+<OL>
+<LI>
+
+<CODE>Rule</CODE> starts a context-free phrase structure rule with its
+set of feature constraints.  These rules define how words join together
+to form phrases, clauses, or sentences.  The lexicon and grammar are
+tied together by using the lexical categories as the terminal symbols
+of the phrase structure rules and by using the other lexical features
+in the feature constraints.
+<LI>
+
+<CODE>Let</CODE> starts a feature template definition.  Feature
+templates are used as macros (abbreviations) in the lexicon.  They may
+also be used to assign default feature structures to the categories.
+<LI>
+
+<CODE>Parameter</CODE> starts a program parameter definition.  These
+parameters control various aspects of the program.
+<LI>
+
+<CODE>Define</CODE> starts a lexical rule definition.  As noted in Shieber
+(1985), something more powerful than just abbreviations for common
+feature elements is sometimes needed to represent systematic
+relationships among the elements of a lexicon.  This need is met by
+lexical rules, which express transformations rather than mere
+abbreviations.  Lexical rules serve two primary purposes in PC-PATR:
+modifying the feature structures associated with lexicon entries to
+produce additional lexicon entries, and modifying the feature structures
+produced by a morphological parser to fit the syntactic grammar
+description.
+<LI>
+
+<CODE>Constraint</CODE> starts a constraint template definition.  Constraint
+templates are used as macros (abbreviations) in the grammar file.
+<LI>
+
+<CODE>Lexicon</CODE> starts a lexicon section.  This is only for
+compatibility with the original PATR-II.  The section name is
+skipped over properly, but nothing is done with it.
+<LI>
+
+<CODE>Word</CODE> starts an entry in the lexicon.  This is only for
+compatibility with the original PATR-II.  The entry is skipped
+over properly, but nothing is done with it.<A NAME="DOCF5" HREF="pcpatr.html#FOOT5">(5)</A>
+<LI>
+
+<CODE>End</CODE> effectively terminates the file.  Anything following this
+keyword is ignored.
+<LI>
+
+<CODE>Comment</CODE> starts a comment field.  The rest of the line following
+the keyword is skipped over, and everything in following lines until the
+next keyword is also ignored.  If you must use a keyword (other than
+<CODE>comment</CODE> verbatim in one of the extra lines of a comment, put a
+comment character at the beginning of the line containing the keyword.
+</OL>
+
+Note that these keywords are not case sensitive:  <CODE>RULE</CODE> is the
+same as <CODE>rule</CODE>, and both are the same as <CODE>Rule</CODE>.  Also, in
+order to facilitate interaction with the <TT>`Shoebox'</TT> program, any
+of the keywords may begin with a backslash <CODE>\</CODE> character.  For
+example, <CODE>\Rule</CODE> and <CODE>\rule</CODE> are both acceptable alternatives
+to <CODE>RULE</CODE> or <CODE>rule</CODE>.  The abbreviated form <CODE>\co</CODE> is a
+special synonym for <CODE>comment</CODE> or <CODE>\comment</CODE>.  Note that there
+is no requirement that these keywords appear at the beginning of a line.
+<LI>
+
+Except for <CODE>comment</CODE>, each of the fields in the grammar file may
+optionally end with a period.  If there is no period, the next keyword
+(in an appropriate slot) marks the end of one field and the beginning of
+the next.
+</UL>
+
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC75">Rules</A>: Rule ...
+<LI><A HREF="pcpatr.html#SEC78">Feature templates</A>: Let &#60;name&#62; be ...
+<LI><A HREF="pcpatr.html#SEC79">Parameter settings</A>: Parameter &#60;name&#62; is ...
+<LI><A HREF="pcpatr.html#SEC80">Lexical rules</A>: Define &#60;name&#62; as ...
+<LI><A HREF="pcpatr.html#SEC81">Constraint templates</A>: Constraint &#60;name&#62; is ...
+</UL>
+
+
+
+<H2><A NAME="SEC75" HREF="pcpatr.html#TOC75">4.1  Rules</A></H2>
+
+<P>
+A PC-PATR grammar rule has these parts, in the order listed:
+
+</P>
+
+<OL>
+<LI>the keyword <CODE>Rule</CODE>
+
+<LI>an optional rule identifier enclosed in braces (<CODE>{}</CODE>)
+
+<LI>a phrase structure rule consisting of the following:
+
+
+<OL>
+<LI>the nonterminal symbol to be expanded
+
+<LI>an arrow (<CODE>-&#62;</CODE>) or equal sign (<CODE>=</CODE>)
+
+<LI>zero or more terminal or nonterminal symbols, possibly marked for
+
+alternation or optionality
+</OL>
+
+<LI>an optional colon (<CODE>:</CODE>)
+
+<LI>zero or more unification constraints
+
+<LI>zero or more priority union operations
+
+<LI>zero or more logical constraint operations
+
+<LI>an optional period (<CODE>.</CODE>)
+
+</OL>
+
+<P>
+The optional rule identifier consists of one or more words enclosed in
+braces.  Its current utility is only as a special form of comment
+describing the intent of the rule.  (Eventually it may be used as a tag
+for interactively adding and removing rules.)  The only limits on the
+rule identifier are that it not contain the comment character and that
+it all appears on the same line in the grammar file.
+
+</P>
+<P>
+The terminal and nonterminal symbols in the rule have the following
+characteristics:
+
+</P>
+
+<UL>
+<LI>
+
+Upper and lower case letters used in symbols are considered different.
+For example, <CODE>NOUN</CODE> is not the same as <CODE>Noun</CODE>, and neither is
+the same as <CODE>noun</CODE>.
+<LI>
+
+The symbol <CODE>X</CODE> (capital letter x) may be used to stand for any
+terminal or nonterminal.  For example, this rule says that any category
+in the grammar rules can be replaced by two copies of the same category
+separated by a CJ.
+
+<PRE>
+
+Rule X -&#62; X_1 CJ X_2
+		&#60;X cat&#62;  = &#60;X_1 cat&#62;
+		&#60;X cat&#62;  = &#60;X_2 cat&#62;
+		&#60;X arg1&#62; = &#60;X_1 arg1&#62;
+		&#60;X arg1&#62; = &#60;X_2 arg1&#62;
+
+</PRE>
+
+The symbol X can be useful for capturing generalities.  Care must be
+taken, since it can be replaced by anything.
+<LI>
+
+Index numbers are used to distinguish instances of a symbol that
+is used more than once in a rule.  They are added to the end of a
+symbol following an underscore character (<CODE>_</CODE>).  This is
+illustrated in the rule for X above.
+<LI>
+
+The characters <CODE>(){}[]&#60;&#62;=:/</CODE> cannot be used in terminal or
+nonterminal symbols since they are used for special purposes in the
+grammar file.  The character <CODE>_</CODE> can be used <EM>only</EM> for
+attaching an index number to a symbol.
+<LI>
+
+By default, the left hand symbol of the first rule in the grammar file
+is the start symbol of the grammar.
+</UL>
+
+<P>
+The symbols on the right hand side of a phrase structure rule may be
+marked or grouped in various ways:
+
+</P>
+
+<UL>
+<LI>
+
+Parentheses around an element of the expansion (right hand) part of a
+rule indicate that the element is optional. Parentheses may be placed
+around multiple elements. This makes an optional group of elements.
+<LI>
+
+A forward slash (/) is used to separate alternative elements of the
+expansion (right hand) part of a rule.
+<LI>
+
+Curly braces can be used for grouping alternative elements. For example the
+following says that an S consists of an NP followed by either a TVP
+or an IV:
+
+<PRE>
+
+Rule S -&#62; NP {TVP / IV}
+
+</PRE>
+
+<LI>
+
+Alternatives are taken to be as long as possible. Thus if the curly
+braces were omitted from the rule above, as in the rule below, the
+TVP would be treated as part of the alternative containing the
+NP. It would not be allowed before the IV.
+
+<PRE>
+
+Rule S -&#62; NP TVP / IV
+
+</PRE>
+
+<LI>
+
+Parentheses group enclosed elements the same as curly braces
+do.  Alternatives and groups delimited by parentheses or curly braces
+may be nested to any depth.
+</UL>
+
+<P>
+The phrase structure rule can be followed by zero or more
+<EM>unification constraints</EM> that refer to symbols used in the rule.  A
+unification constraint has these parts, in the order listed:
+
+</P>
+
+<OL>
+<LI>a feature path that begins with one of the symbols from the phrase
+
+structure rule
+<LI>an equal sign
+
+<LI>either another path or a value
+
+</OL>
+
+<P>
+A unification constraint that refers only to symbols on the right hand side
+of the rule constrains their co-occurrence.  In the following rule and
+constraint, the values of the <EM>agr</EM> features for the NP and VP
+nodes of the parse tree must unify:
+
+<PRE>
+
+Rule S -&#62; NP VP
+		&#60;NP agr&#62; = &#60;VP agr&#62;
+
+</PRE>
+
+<P>
+If a unification constraint refers to a symbol on the right hand side of
+the rule, and has an atomic value on its right hand side, then the
+designated feature must not have a different value.  In the following
+rule and constraint, the <EM>head case</EM> feature for the NP node of
+the parse tree must either be originally undefined or equal to NOM:
+
+<PRE>
+
+Rule S -&#62; NP VP
+		&#60;NP head case&#62; = NOM
+
+</PRE>
+
+<P>
+(After unification succeeds, the <EM>head case</EM> feature for the NP
+node of the parse tree will be equal to NOM.)
+
+</P>
+<P>
+A unification constraint that refers to the symbol on the left hand side of
+the rule passes information up the parse tree.  In the following rule
+and constraint, the value of the <EM>tense</EM> feature is passed from
+the VP node up to the S node:
+
+<PRE>
+
+Rule S -&#62; NP VP
+		&#60;S tense&#62; = &#60;VP tense&#62;
+
+</PRE>
+
+<P>
+See section <A HREF="pcpatr.html#SEC6">2.4  Feature constraints</A>,
+for more details about unification constraints.
+
+</P>
+<P>
+The phrase structure rule can also be followed by zero or more
+<EM>priority union operations</EM> that refer to symbols used in the rule.  A
+priority union operation has these parts, in the order listed:
+
+</P>
+
+<OL>
+<LI>a feature path that begins with one of the symbols from the phrase
+
+structure rule
+<LI>a priority union operation sign (<CODE>&#60;=</CODE>)
+
+<LI>either another path or an atomic value
+
+</OL>
+
+<P>
+Although priority union operations may be intermingled with unification
+constraints following the phrase structure rule, they are applied only
+after all unification constraints have succeeded.  Therefore, it makes
+more sense to place them after all of the unification constraints as a
+reminder of the order of application.
+
+</P>
+<P>
+Priority union operations may not appear inside a disjunction: if two
+rules logically differ only in the application of one priority union or
+another, both rules must be written out in full.
+
+</P>
+<P>
+The phrase structure rule can also be followed by zero or more
+<EM>logical constraint operations</EM> that refer to symbols used in the
+rule.  A logical constraint operation has these parts, in the order
+listed:
+
+<OL>
+<LI>a feature path that begins with one of the symbols from the phrase
+
+structure rule
+<LI>a logical constraint operation sign (<CODE>==</CODE>)
+
+<LI>a logical constraint expression, or a constraint template label
+
+</OL>
+
+<P>
+Although logical constraint operations may be intermingled with
+unification constraints or priority union operations following the phrase
+structure rule, they are applied only after all unification constraints
+have succeeded and all priority union operations have been applied.
+Therefore, it makes more sense to place them after all of the unification
+constraints, and after any priority union operations, as a reminder of
+the order of application.
+
+</P>
+<P>
+Logical constraint operations may not appear inside a disjunction: if two
+rules logically differ only in the application of one logical constraint or
+another, both rules must be written out in full.
+
+</P>
+<P>
+These last two elements of a PC-PATR rule are enhancements to the
+original PATR-II formalism.  For this reason, they are discussed in more
+detail in the following two sections.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC76">Priority union operations</A>
+<LI><A HREF="pcpatr.html#SEC77">Logical constraint operations</A>
+</UL>
+
+
+
+<H3><A NAME="SEC76" HREF="pcpatr.html#TOC76">4.1.1  Priority union operations</A></H3>
+
+<P>
+Unification is the only mechanism implemented in the original PATR-II
+formulism for merging two feature structures.  There are situations where
+the desired percolation of information is not easily expressed in terms
+of unification.  For example, consider the following rule (where
+<EM>ms</EM> stands for <EM>morphosyntactic features</EM>):
+
+<PRE>
+
+Stem -&#62; Root Deriv:
+		&#60;Root ms&#62;  =  &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  =  &#60;Root ms&#62;
+		&#60;Stem ms&#62;  =  &#60;Deriv msTo&#62;
+
+</PRE>
+
+<P>
+The first unification expression above imposes the agreement constraints
+for this rule.  The second and third unification expressions attempt to
+provide the percolation of information up to the <CODE>Stem</CODE>.  However,
+it is quite possible for there to be a conflict between <CODE>&#60;Root ms&#62;</CODE>
+and <CODE>&#60;Deriv msTo&#62;</CODE>.  Any such conflict would cause the third
+unification expression to fail, causing the rule as a whole to fail.  The
+only way around this at present is to provide a large number of
+unification expressions that go into greater depth in the feature
+structures.  Even then it may not be possible to always avoid conflicts.
+
+</P>
+<P>
+An additional mechanism for merging feature structures is provided to
+properly handle percolation of information: overwriting via priority union.
+The notation of the previous example changes slightly to the following:
+
+<PRE>
+
+Stem -&#62; Root Deriv:
+		&#60;Root ms&#62;  =  &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  =  &#60;Root ms&#62;
+		&#60;Stem ms&#62; &#60;=  &#60;Deriv msTo&#62;
+
+</PRE>
+
+<P>
+The only change is in the third expression under the rule: the
+unification operator <CODE>=</CODE> has been changed to a priority union
+operator <CODE>&#60;=</CODE>.  This new operator is the same as unification except
+for handling conflicts and storing results.  In unification, a conflict
+causes the operation to fail.  In priority union, a conflict is resolved
+by taking the value in the right hand feature structure.  In unification,
+both the left hand feature structure and the right hand feature structure
+are replaced by the unified result.  In priority union, only the left
+hand feature structure is replaced by the result.
+
+</P>
+<P>
+There is one other significant difference between unification and
+priority union.  Unification is logically an unordered process; it makes
+no difference what order the unification expressions are written.
+Priority union, on the other hand, is inherently ordered; a priority
+union operation always overrides any earlier priority union (or
+unification) result.  For this reason, all unification expressions are
+evaluated before any priority union expressions, and the ordering of the
+priority union expressions is significant.
+
+</P>
+<P>
+A BNF grammar for PC-PATR priority union operations follows.
+
+<PRE>
+
+&#60;priority-union&#62; ::= &#60;feature-path&#62; '&#60;=' &#60;feature-path&#62;
+				   | &#60;feature-path&#62; '&#60;=' &#60;ATOM&#62;
+
+&#60;feature-path&#62;   ::= '&#60;' &#60;label-list&#62; '&#62;'
+
+&#60;label-list&#62;     ::= &#60;LABEL&#62;
+				   | &#60;LABEL&#62; &#60;label-list&#62;
+
+</PRE>
+
+<P>
+Note that both <CODE>&#60;LABEL&#62;</CODE> and <CODE>&#60;ATOM&#62;</CODE> refer to a single string
+token of contiguous characters.
+
+</P>
+
+
+<H3><A NAME="SEC77" HREF="pcpatr.html#TOC77">4.1.2  Logical constraint operations</A></H3>
+
+<P>
+Unification is the only mechanism implemented in the original PATR-II
+formulism for imposing constraints on feature structures.  There are
+situations where the desired constraint is not easily expressed in terms
+of unification.  For example, consider the following rule:
+
+<PRE>
+
+Stem -&#62; Root Deriv:
+		&#60;Root ms&#62;  =  &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  =  &#60;Root ms&#62;
+		&#60;Stem ms&#62; &#60;=  &#60;Deriv msTo&#62;
+
+</PRE>
+
+<P>
+where <CODE>&#60;Root ms&#62;</CODE> and <CODE>&#60;Deriv msFrom&#62;</CODE> have
+the following feature structures:
+
+<PRE>
+
+[Root: [ms: [finite: - ...]]]
+
+[Deriv: [msFrom: [tense: past ...]]]
+
+</PRE>
+
+<P>
+Assume that from our knowledge of verb morphology, we would like to rule out
+this analysis because only finite verb roots (<CODE>[finite: +]</CODE>) are
+marked for tense.  The only way to do this with unification is to add
+<CODE>[finite: +]</CODE> to the <CODE>msFrom</CODE> feature of all the
+tense bearing derivational suffixes.  This would work, but it adds
+information to suffixes that properly belongs only to roots.  A better
+approach would be some way to express the desired constraint more directly.
+Consider the following rule:
+
+<PRE>
+
+Stem -&#62; Root Deriv:
+		&#60;Root ms&#62;  =  &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  =  &#60;Root ms&#62;
+		&#60;Stem ms&#62; &#60;=  &#60;Deriv msTo&#62;
+		&#60;Stem ms&#62; ==  [finite: +] &#60;-&#62; [tense: []]
+
+</PRE>
+
+<P>
+The fourth feature expression under the rule is a new operation called a
+constraint.  This particular constraint is interpreted as follows: if the
+feature structure <CODE>[finite: +]</CODE> <EM>subsumes</EM> the feature
+structure that is the value of <CODE>&#60;Stem ms&#62;</CODE>, then the feature
+structure <CODE>[tense: []]</CODE> must also subsume the feature structure
+that is the value of <CODE>&#60;Stem ms&#62;</CODE>, and if the feature
+structure <CODE>[finite: +]</CODE> does not subsume the feature structure
+that is the value of <CODE>&#60;Stem ms&#62;</CODE>, then the feature structure
+<CODE>[tense: []]</CODE> must not subsume the feature structure that is the
+value of <CODE>&#60;Stem ms&#62;</CODE>.  (A feature structure <EM>F1</EM>
+subsumes another feature structure <EM>F2</EM> if <EM>F1</EM> contains a
+subset of the information contained by <EM>F2</EM>.  The empty feature
+structure <CODE>[]</CODE> subsumes all other feature structures.  Subsumption
+is a partial ordering: not every two feature structures are in a subsumption
+relation to each other.)
+
+</P>
+<P>
+A constraint is much different both syntactically and semantically from
+either unification or priority union.  The first difference is that a
+constraint does not modify any feature structures; it merely compares the
+content of two feature structures.  The second difference is that the right
+hand side of a constraint expression is a logical expression involving one or
+more feature structures rather than a feature path.
+
+</P>
+<P>
+Constraints support two unary and four binary logical operations:
+existence, negation, logical and, logical or, conditional, and
+biconditional.  The following tables summarize these logical operations.
+(<CODE>$</CODE> is used for the subsumption operation.  <CODE>*P</CODE> represents
+the feature structure pointed to by the feature path associated with the
+logical constraint.  <CODE>F</CODE>, <CODE>L</CODE>, and <CODE>R</CODE> represent a
+feature structure associated with the logical constraint.)
+<table rules="all" frame="border" align="center">
+<tbody>
+<tr>
+<th align="center"></th>
+<th align="center">existence</th>
+<th align="center">negation</th>
+</tr>
+<tr>
+<th align="center">F $ *P</th>
+<th align="center">P == F</th>
+<th align="center">P == ~F</th>
+</tr>
+<tr>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">false</td>
+<td align="center">false</td>
+<td align="center">true</td>
+</tr>
+</tbody>
+</table>
+<table rules="all" frame="border" align="center">
+<tbody>
+<tr>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center">logical and</th>
+<th align="center">logical or</th>
+<th align="center">conditional</th>
+<th align="center">biconditional</th>
+</tr>
+<tr>
+<th align="center">L $ *P</th>
+<th align="center">R $ *P</th>
+<th align="center">P == L & R</th>
+<th align="center">P == L / R</th>
+<th align="center">P == L -&gt; R</th>
+<th align="center">P == L &lt;-&gt; R</th>
+</tr>
+<tr>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">true</td>
+</tr>
+<tr>
+<td align="center">true</td>
+<td align="center">false</td>
+<td align="center">false</td>
+<td align="center">true</td>
+<td align="center">false</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">false</td>
+<td align="center">true</td>
+<td align="center">false</td>
+<td align="center">true</td>
+<td align="center">true</td>
+<td align="center">false</td>
+</tr>
+<tr>
+<td align="center">false</td>
+<td align="center">false</td>
+<td align="center">false</td>
+<td align="center">false</td>
+<td align="center">true</td>
+<td align="center">true</td>
+</tr>
+</tbody>
+</table>
+
+</P>
+<P>
+Since they apply to the final feature structure, constraint expressions
+are evaluated after all of the unification and priority union
+expressions.  Like unification and unlike priority union, the relative
+order of constraints is not (logically) important.
+
+</P>
+<P>
+A BNF grammar for PC-PATR logical constraint operations follows.
+
+<PRE>
+
+&#60;logical-constraint&#62; ::= &#60;feature-path&#62; '==' &#60;expression&#62;
+
+&#60;feature-path&#62;       ::= '&#60;' &#60;label-list&#62; '&#62;'
+
+&#60;label-list&#62;         ::= &#60;LABEL&#62;
+					   | &#60;LABEL&#62; &#60;label-list&#62;
+
+&#60;expression&#62;         ::=     &#60;factor&#62;
+					   | '~' &#60;factor&#62;
+					   |     &#60;factor&#62; &#60;binop&#62;     &#60;factor&#62;
+					   | '~' &#60;factor&#62; &#60;binop&#62;     &#60;factor&#62;
+					   |     &#60;factor&#62; &#60;binop&#62; '~' &#60;factor&#62;
+					   | '~' &#60;factor&#62; &#60;binop&#62; '~' &#60;factor&#62;
+
+&#60;factor&#62;             ::= &#60;feature&#62;
+					   | '(' &#60;expression&#62; ')'
+
+&#60;binop&#62;              ::= '&#38;'
+					   | '/'
+					   | '-&#62;'
+					   | '&#60;-&#62;'
+
+&#60;feature&#62;            ::= '[' &#60;attribute-list&#62; ']'
+					   | '[]'
+
+&#60;attribute-list&#62;     ::= &#60;attribute&#62;
+					   | &#60;attribute&#62; &#60;attribute-list&#62;
+
+&#60;attribute&#62;          ::= &#60;LABEL&#62; ':' &#60;ATOM&#62;
+					   | &#60;LABEL&#62; ':' &#60;feature&#62;
+					   | &#60;LABEL&#62; ':' &#60;indexedvariable&#62;
+
+&#60;indexedvariable&#62;    ::= '^1'
+					   | '^2'
+					   | '^3'
+					   | '^4'
+					   | '^5'
+					   | '^6'
+					   | '^7'
+					   | '^8'
+					   | '^9'
+</PRE>
+
+<P>
+Note that both <CODE>&#60;LABEL&#62;</CODE> and <CODE>&#60;ATOM&#62;</CODE> refer to a
+single string token of contiguous characters.
+
+</P>
+<P>
+An <CODE>&#60;indexedvariable&#62;</CODE> is interpreted as a variable for the
+atomic value at that place in the feature structure.  The
+first such variable is instantiated by the atomic value of
+the feature at that place in the feature-path.  All
+subsequent instances of the variable are compared for
+equality with the first instantiated one.
+
+</P>
+<P>
+Why might one need such an indexed variable?  In some SOV
+languages with pro-drop and noun-verb compounding, a clause
+consisting just of a <CODE>Noun Verb</CODE> sequence is
+potentially at least three ways ambiguous:
+
+<UL>
+<LI>
+
+<CODE>Subject Verb</CODE>
+<LI>
+
+<I>pro-drop</I> <CODE>Object Verb</CODE>
+<LI>
+
+<I>pro-drop</I> <CODE>Noun-Verb-compound</CODE>
+</UL>
+
+<P>
+In at least one of these languages, it is the case that when
+a noun-verb compound is possible, it is the only valid
+reading.  Therefore, the correct thing to do is to ensure
+that none of the other possible readings are allowed by the
+grammar.
+
+</P>
+<P>
+Here's a (simplified) example of how one can use indexed
+variables to rule out the <CODE>Subject Verb</CODE> case.  (The
+<CODE>Noun</CODE> is realized as the <CODE>DP</CODE> node and the
+<CODE>Verb</CODE> is realized as a <CODE>VP</CODE> which is a daughter
+of the <CODE>I'</CODE> node in the following rule.)
+
+<PRE>
+rule {IP option 2cI - subject initial, required, root clause}
+IP = DP I'
+	&#60;IP head&#62; = &#60;I' head&#62;
+	&#60;IP head type root&#62; = +
+	&#60;IP head type pro-drop&#62; = -
+	   ...
+	&#60;DP head case nominative&#62; = +
+	   ...
+	<B>&#60;IP head&#62; == [rootgloss:^1] -&#62;
+				 ~ ( [type:[no_intervening:+]] &#38;
+				   (( [subject:[head:[type:[compounds_with1:^1]]]]
+					/ [subject:[head:[type:[compounds_with2:^1]]]])
+					/ ([subject:[head:[type:[compounds_with3:^1]]]]
+					/ [subject:[head:[type:[compounds_with4:^1]]]]) ) )</B>
+	   ...
+</PRE>
+
+<P>
+In the final logical constraint above (which is shown in
+bold), the atomic value of the <CODE>rootgloss</CODE> feature is
+stored in variable <CODE>^1</CODE> in the antecedent (the "if"
+part) of the conditional.  This atomic value is then
+compared with the values of the various
+<CODE>compounds_with</CODE> features.  The idea is that the value
+of the <CODE>rootgloss</CODE> feature should not be any of the
+values of the various <CODE>compounds_with</CODE> features (there
+are more than one of these because a given noun may compound
+with more than one verb).
+
+</P>
+
+
+<H2><A NAME="SEC78" HREF="pcpatr.html#TOC78">4.2  Feature templates</A></H2>
+
+<P>
+A PC-PATR feature template has these parts, in the order listed:
+
+<OL>
+<LI>the keyword <CODE>Let</CODE>
+
+<LI>the template name
+
+<LI>the keyword <CODE>be</CODE>
+
+<LI>a feature definition
+
+<LI>an optional period (<CODE>.</CODE>)
+
+</OL>
+
+<P>
+If the template name is a terminal category (a terminal symbol in one
+of the phrase structure rules), the template defines the default
+features for that category.  Otherwise the template name serves as an
+abbreviation for the associated feature structure.
+
+</P>
+<P>
+The characters <CODE>(){}[]&#60;&#62;=:</CODE> cannot be used in template names
+since they are used for special purposes in the grammar file.  The
+characters <CODE>/_</CODE> can be freely used in template names.  The
+character <CODE>\</CODE> should not be used as the first character of a
+template name because that is how fields are marked in the lexicon
+file.
+
+</P>
+<P>
+The abbreviations defined by templates are usually used in the feature
+field of entries in the lexicon file.  For example, the lexical entry
+for the irregular plural form <EM>feet</EM> may have the abbreviation
+<EM>pl</EM> in its features field.  The grammar file would define this
+abbreviation with a template like this:
+
+<PRE>
+
+Let pl be [number: PL]
+
+</PRE>
+
+<P>
+The path notation may also be used:
+
+<PRE>
+
+Let pl be &#60;number&#62; = PL
+
+</PRE>
+
+<P>
+More complicated feature structures may be defined in templates.  For
+example,
+
+<PRE>
+
+Let 3sg be [tense:  PRES
+			agr:    3SG
+			finite: +
+			vform:  S]
+
+</PRE>
+
+<P>
+which is equivalent to:
+
+<PRE>
+
+Let 3sg be &#60;tense&#62;  = PRES
+		   &#60;agr&#62;    = 3SG
+		   &#60;finite&#62; = +
+		   &#60;vform&#62;  = S
+
+</PRE>
+
+<P>
+In the following example, the abbreviation <EM>irreg</EM> is defined using
+another abbreviation:
+
+<PRE>
+
+Let irreg be &#60;reg&#62; = -
+			 pl
+
+</PRE>
+
+<P>
+The abbreviation <EM>pl</EM> must be defined previously in the grammar
+file or an error will result.  A subsequent template could also use the
+abbreviation <EM>irreg</EM> in its definition.  In this way, an
+inheritance hierarchy features may be constructed.
+
+</P>
+<P>
+Feature templates permit disjunctive definitions.  For example, the
+lexical entry for the word <EM>deer</EM> may specify the feature
+abbreviation <EM>sg-pl</EM>.  The grammar file would define this as a
+disjunction of feature structures reflecting the fact that the word can
+be either singular or plural:
+
+<PRE>
+
+Let sg/pl be {[number:SG]
+			  [number:PL]}
+
+</PRE>
+
+<P>
+This has the effect of creating two entries for <EM>deer</EM>, one with
+singular number and another with plural.  Note that there is no limit
+to the number of disjunct structures listed between the braces.  Also,
+there is no slash (<CODE>/</CODE>) between the elements of the disjunction as
+there is between the elements of a disjunction in the rules.
+A shorter version of the above template using the path notation looks
+like this:
+
+<PRE>
+
+Let sg/pl be &#60;number&#62; = {SG PL}
+
+</PRE>
+
+<P>
+Abbreviations can also be used in disjunctions, provided that they
+have previously been defined:
+
+<PRE>
+
+Let sg be &#60;number&#62; = SG
+Let pl be &#60;number&#62; = PL
+Let sg/pl be {[sg] [pl]}
+
+</PRE>
+
+<P>
+Note the square brackets around the abbreviations <EM>sg</EM> and <EM>pl</EM>;
+without square brackets they would be interpreted as simple values
+instead.
+
+</P>
+<P>
+Feature templates can assign default atomic feature values, indicated
+by prefixing an exclamation point (!).  A default value can be
+overridden by an explicit feature assignment.  This template says that
+all members of category N have singular number as a default value:
+
+<PRE>
+
+Let N be &#60;number&#62; = !SG
+
+</PRE>
+
+<P>
+The effect of this template is to make all nouns singular unless they
+are explicitly marked as plural.  For example, regular nouns such as
+<EM>book</EM> do not need any feature in their lexical entries to signal
+that they are singular; but an irregular noun such as <EM>feet</EM> would
+have a feature abbreviation such as <EM>pl</EM> in its lexical entry.
+This would be defined in the grammar as <CODE>[number: PL]</CODE>, and would
+override the default value for the feature number specified by the
+template above.  If the N template above used <CODE>SG</CODE> instead of
+<CODE>!SG</CODE>, then the word <EM>feet</EM> would fail to parse, since its
+<EM>number</EM> feature would have an internal conflict between <CODE>SG</CODE>
+and <CODE>PL</CODE>.
+
+</P>
+
+
+<H2><A NAME="SEC79" HREF="pcpatr.html#TOC79">4.3  Parameter settings</A></H2>
+
+<P>
+A PC-PATR parameter setting has these parts, in the order listed:
+
+<OL>
+<LI>the keyword <CODE>Parameter</CODE>
+
+<LI>an optional colon (<CODE>:</CODE>)
+
+<LI>one or more keywords identifying the parameter
+
+<LI>the keyword <CODE>is</CODE>
+
+<LI>the parameter value
+
+<LI>an optional period (<CODE>.</CODE>)
+
+</OL>
+
+<P>
+PC-PATR recognizes the following parameters:
+<DL COMPACT>
+
+<DT><CODE>Start symbol</CODE>
+<DD>
+defines the start symbol of the grammar.  For example,
+
+<PRE>
+
+Parameter Start symbol is S
+
+</PRE>
+
+declares that the parse goal of the grammar is the nonterminal category
+S.  The default start symbol is the left hand symbol of the first
+phrase structure rule in the grammar file.
+
+<DT><CODE>Restrictor</CODE>
+<DD>
+defines a set of features to use for top-down filtering, expressed as a
+list of feature paths.  For example,
+
+<PRE>
+
+Parameter Restrictor is &#60;cat&#62; &#60;head form&#62;
+
+</PRE>
+
+declares that the <EM>cat</EM> and <EM>head form</EM> features should be
+used to screen rules before adding them to the parse chart.  The
+default is not to use any features for such filtering.  This filtering,
+named <EM>restriction</EM> in Shieber (1985), is performed in addition to
+the normal top-down filtering based on categories alone.
+RESTRICTION IS NOT YET IMPLEMENTED.  SHOULD IT BE INSTEAD OF
+NORMAL FILTERING RATHER THAN IN ADDITION TO?
+
+<DT><CODE>Attribute order</CODE>
+<DD>
+specifies the order in which feature attributes are displayed.  For
+example,
+
+<PRE>
+
+Parameter Attribute order is cat lex sense head
+							 first rest agreement
+
+</PRE>
+
+declares that the <EM>cat</EM> attribute should be the first one shown
+in any output from PC-PATR, and that the other attributes should
+be shown in the relative order shown, with the <EM>agreement</EM>
+attribute shown last among those listed, but ahead of any attributes
+that are not listed above.  Attributes that are not listed are ordered
+according to their character code sort order.  If the attribute order
+is not specified, then the category feature <EM>cat</EM> is shown first,
+with all other attributes sorted according to their character codes.
+
+<DT><CODE>Category feature</CODE>
+<DD>
+defines the label for the category attribute.  For example,
+
+<PRE>
+
+Parameter Category feature is Categ
+
+</PRE>
+
+declares that <EM>Categ</EM> is the name of the category attribute.  The
+default name for this attribute is <EM>cat</EM>.
+
+<DT><CODE>Lexical feature</CODE>
+<DD>
+defines the label for the lexical attribute.  For example,
+
+<PRE>
+
+Parameter Lexical feature is Lex
+
+</PRE>
+
+declares that <EM>Lex</EM> is the name of the lexical attribute.  The
+default name for this attribute is <EM>lex</EM>.
+
+<DT><CODE>Gloss feature</CODE>
+<DD>
+defines the label for the gloss attribute.  For example,
+
+<PRE>
+
+Parameter Gloss feature is Gloss
+
+</PRE>
+
+declares that <EM>Gloss</EM> is the name of the gloss attribute.  The
+default name for this attribute is <EM>gloss</EM>.
+
+<DT><CODE>RootGloss feature</CODE>
+<DD>
+defines the label for the root gloss attribute.  For example,
+
+<PRE>
+
+Parameter RootGloss feature is RootGloss
+
+</PRE>
+
+declares that <EM>RootGloss</EM> is the name of the root gloss attribute.  The
+default name for this attribute is <EM>rootgloss</EM>.  Note that this does
+not work when using Kimmo to parse words.
+
+</DL>
+
+
+
+<H2><A NAME="SEC80" HREF="pcpatr.html#TOC80">4.4  Lexical rules</A></H2>
+
+<P>
+Lexical rules serve two purposes: providing a flexible means of creating
+multiple related lexicon entries, and converting morphological parser
+output into a form suitable for syntactic parser input.
+
+</P>
+
+<PRE>
+
+<B>Figure 7. PC-PATR lexical rule example</B>
+
+; lexicon entry
+\w stormed
+\c V
+\f Transitive AgentlessPassive
+   &#60;head trans pred&#62; = storm
+
+; definitions from the grammar file
+Let Transitive be
+		&#60;subcat first cat&#62; = NP
+		&#60;subcat rest first cat&#62; = NP
+		&#60;subcat rest rest&#62; = end
+		&#60;head trans arg1&#62; = &#60;subcat first head trans&#62;
+		&#60;head trans arg2&#62; = &#60;subcat rest first head trans&#62;.
+
+Define AgentlessPassive as
+		&#60;out cat&#62; = &#60;in cat&#62;
+		&#60;out subcat&#62; = &#60;in subcat rest&#62;
+		&#60;out lex&#62; = &#60;in lex&#62; ; added for PC-PATR
+		&#60;out head&#62; = &#60;in head&#62;
+		&#60;out head form&#62; =&#62; passiveparticiple.
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 8. Feature structure before lexical rule</B>
+
+[ lex:    stormed
+  cat:    V
+  head:   [ trans: [ arg1:  $1 []
+					 arg2:  $2 []
+					 pred:  storm ] ]
+  subcat: [ first: [ cat:   NP
+					 head:  [ trans: $1 [] ] ]
+			rest:  [ first: [ cat:   NP
+							   head: [ trans: $2 [] ] ]
+					 rest:  end                      ] ] ]
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 9. Feature structures after lexical rule</B>
+
+[ lex:    stormed
+  cat:    V
+  head:   [ trans: [ arg1:  $1 []
+					 arg2:  $2 []
+					 pred:  storm ] ]
+  subcat: [ first: [ cat:   NP
+					 head:  [ trans: $1 [] ] ]
+			rest:  [ first: [ cat:   NP
+							   head: [ trans: $2 [] ] ]
+					 rest:  end                      ] ] ]
+
+[ lex:    stormed
+  cat:    V
+  head:   [ trans: [ arg1: []
+					 arg2: $1 []
+					 pred: storm ]
+			form:  passiveparticiple ]
+  subcat: [ first: [ cat:  NP
+					 head: [ trans: $1 [] ] ]
+			rest:  end                     ] ]
+
+</PRE>
+
+<P>
+A PC-PATR lexical rule has these parts, in the order listed:
+
+</P>
+
+<OL>
+<LI>the keyword <CODE>Define</CODE>
+
+<LI>the name of the lexical rule
+
+<LI>the keyword <CODE>as</CODE>
+
+<LI>the rule definition
+
+<LI>an optional period (<CODE>.</CODE>)
+
+</OL>
+
+<P>
+The rule definition consists of one or more mappings.  Each mapping has
+three parts: an output feature path, an assignment operator, and the
+value assigned, either an input feature path or an atomic value.  Every
+output path begins with the feature name <CODE>out</CODE> and every input
+path begins with the feature name <CODE>in</CODE>.  The assignment operator
+is either an equal sign (<CODE>=</CODE>) or an equal sign followed by a
+"greater than" sign (<CODE>=&#62;</CODE>).<A NAME="DOCF6" HREF="pcpatr.html#FOOT6">(6)</A>
+
+</P>
+<P>
+Consider the information shown in figure 7.  When
+the lexicon entry is loaded, it is initially assigned the feature
+structure shown in figure 8, which is the unification
+of the information given in the various fields of the lexicon entry.
+Since one of the the labels stored in the <CODE>\f</CODE> (feature) field is
+actually the name of a lexical rule, after the complete feature structure
+has been built, the named lexical rule is applied.  After the rule has
+been applied, the original single feature structure has been changed to
+the two feature structures shown in figure 9.  Note that
+not all of the input feature information is found in both of the output
+feature structures.
+
+</P>
+
+<PRE>
+
+<B>Figure 10. PC-PATR lexical rule for using PC-Kimmo</B>
+
+Define MapKimmoFeatures as
+		&#60;out cat&#62;       = &#60;in head pos&#62;
+		&#60;out head&#62;      = &#60;in head&#62;
+		&#60;out gloss&#62;     = &#60;in root&#62;
+		&#60;out root_pos&#62;  = &#60;in root_pos&#62;
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 11. Feature structure received from PC-Kimmo</B>
+
+[ cat:      Word
+  clitic:   -
+  drvstem:  -
+  head:     [ agr:    [ 3sg: + ]
+			  finite: +
+			  pos:    V
+			  tense:  PRES
+			  vform:  S          ]
+  root:     `sleep
+  root_pos: V                      ]
+
+</PRE>
+
+
+<PRE>
+
+<B>Figure 12. Feature structure sent to PC-PATR</B>
+
+[ cat:       V
+  gloss:     `sleep
+  head:      [ agr:    [ 3sg: + ]
+			   finite: +
+			   pos:    V
+			   tense:  PRES
+			   vform:  S          ]
+  lex:       sleeps
+  root_pos: V                       ]
+
+</PRE>
+
+<P>
+Using a lexical rule in conjunction with the PC-Kimmo morphological
+parser within PC-PATR is illustrated in
+figures 10-12.
+Figure 10 shows the lexical rule for mapping from
+the top-level feature structure produced by the morphological parser to
+the bottom-level feature structure used by the sentence parser.  Note
+that this rule must be named <CODE>MapKimmoFeatures</CODE> (unorthodox
+capitalization and all).
+Figure 11 shows the feature structure
+created by the PC-Kimmo parser.  After the lexical rule shown in
+figure 10 has been applied (and after some
+additional automatic processing), the feature structure shown in
+figure 12 is passed to the PC-PATR parser.  Note that
+only a single feature structure results from this operation, unlike the
+result of a lexical rule applied to a lexicon entry.
+
+</P>
+<P>
+Note that the feature structure passed to the PC-PATR parser
+always has both a <CODE>lex</CODE> feature and a <CODE>gloss</CODE> feature, even
+if the <CODE>MapKimmoFeatures</CODE> lexical rule does not create them.  The
+default value for the <CODE>lex</CODE> feature is the original word from the
+sentence being parsed.  The default value for the <CODE>gloss</CODE> feature
+is the concatenation of the glosses of the individual morphemes in the
+word.
+
+</P>
+<P>
+In contrast to the <CODE>lex</CODE> and <CODE>gloss</CODE> features which are
+provided automatically by default, the <CODE>cat</CODE> feature must be
+provided by the <CODE>MapKimmoFeatures</CODE> lexical rule.  There is no way
+to provide this feature automatically, and it is required for the
+phrase structure rule portion of PC-PATR.
+
+</P>
+
+
+<H2><A NAME="SEC81" HREF="pcpatr.html#TOC81">4.5  Constraint templates</A></H2>
+
+<P>
+A PC-PATR constraint template has these parts, in the order listed:
+
+<OL>
+<LI>the keyword <CODE>Constraint</CODE>
+
+<LI>the template name
+
+<LI>the keyword <CODE>is</CODE>
+
+<LI>a logical constraint expression
+
+<LI>an optional period (<CODE>.</CODE>)
+
+</OL>
+
+<P>
+The characters <CODE>(){}[]&#60;&#62;=:/</CODE> cannot be used in constraint template
+names since they are used for special purposes in the grammar file.  The
+characters <CODE>_\</CODE> can be freely used in constraint template names.
+
+</P>
+<P>
+The abbreviations defined by constraint templates are used in the logical
+constraint operations that are part of the rules defined in the grammar
+file.  A constraint template must be defined in the grammar file before
+it can be used in a rule.
+
+</P>
+<P>
+Consider the following rules in a grammar file:
+
+<PRE>
+
+RULE Word -&#62; Stem
+		&#60;Word ms&#62; = &#60;Stem ms&#62;
+		&#60;Stem ms&#62; == [finite: +] &#60;-&#62; [tense: []]
+
+RULE Word -&#62; Stem Infl
+		&#60;Word ms&#62; = &#60;Stem ms&#62;
+		&#60;Word ms&#62; = &#60;Infl ms&#62;
+		&#60;Stem ms&#62; == [finite: +] &#60;-&#62; [tense: []]
+
+RULE Stem -&#62; Root Deriv
+		&#60;Root ms&#62;  = &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  = &#60;Root ms&#62;
+		&#60;Stem ms&#62; &#60;= &#60;Deriv msTo&#62;
+		&#60;Stem ms&#62; == [finite: +] &#60;-&#62; [tense: []]
+
+RULE Stem -&#62; Root
+		&#60;Stem ms&#62; = &#60;Root ms&#62;
+		&#60;Stem ms&#62; == [finite: +] &#60;-&#62; [tense: []]
+
+</PRE>
+
+<P>
+These rules can be simplied by defining a constraint template:
+
+<PRE>
+
+CONSTRAINT ValidVerb is [finite: +] &#60;-&#62; [tense: []]
+
+RULE Word -&#62; Stem
+		&#60;Word ms&#62; = &#60;Stem ms&#62;
+		&#60;Stem ms&#62; == ValidVerb
+
+RULE Word -&#62; Stem Infl
+		&#60;Word ms&#62; = &#60;Stem ms&#62;
+		&#60;Word ms&#62; = &#60;Infl ms&#62;
+		&#60;Stem ms&#62; == ValidVerb
+
+RULE Stem -&#62; Root Deriv
+		&#60;Root ms&#62;  = &#60;Deriv msFrom&#62;
+		&#60;Stem ms&#62;  = &#60;Root ms&#62;
+		&#60;Stem ms&#62; &#60;= &#60;Deriv msTo&#62;
+		&#60;Stem ms&#62; == ValidVerb
+
+RULE Stem -&#62; Root
+		&#60;Stem ms&#62; = &#60;Root ms&#62;
+		&#60;Stem ms&#62; == ValidVerb
+
+</PRE>
+
+
+
+<H1><A NAME="SEC82" HREF="pcpatr.html#TOC82">5  Standard format</A></H1>
+<P>
+<A NAME="IDX8"></A>
+
+</P>
+<P>
+Some of the input control files that PC-PATR reads are <EM>standard
+format</EM> files.  This means that the files are divided into records and
+fields.  A standard format file contains at least one record, and some
+files may contain a large number of records.  Each record contains one
+or more fields.  Each field occupies at least one line, and is marked
+by a <EM>field code</EM> at the beginning of the line.  A field code
+begins with a backslash character (<CODE>\</CODE>), and contains 1 or more
+printing characters (usually alphabetic) in addition.
+
+</P>
+<P>
+If the file is designed to have multiple records, then one of the field
+codes must be designated to be the <EM>record marker</EM>, and every
+record begins with that field, even if it is empty apart from the field
+code.  If the file contains only one record, then the relative order of
+the fields is constrained only by their semantics.
+
+</P>
+<P>
+It is worth emphasizing that field codes must be at the
+<EM>beginning</EM> of a line.  Even a single space before the backslash
+character prevents it from being recognized as a field code.
+
+</P>
+<P>
+It is also worth emphasizing that record markers <EM>must</EM> be present
+even if that field has no information for that record.  Omitting the
+record marker causes two records to be merge into a single record, with
+unpredictable results.
+
+</P>
+
+
+<H1><A NAME="SEC83" HREF="pcpatr.html#TOC83">6  The PC-PATR Lexicon File</A></H1>
+
+<P>
+The lexicon file is a <EM>standard format</EM>
+database file consisting of any number of records,
+each of which represents one word.  These records are divided into
+fields, each of which begins with a standard format marker at the
+beginning of a line.  These markers begin with the <CODE>\</CODE> (backslash)
+character followed by one or more alphanumeric characters.  Each record
+begins with a designated field.  PC-PATR recognizes four
+different fields, with these default field markers:
+<DL COMPACT>
+
+<DT><CODE>\w</CODE>
+<DD>
+the lexical form of the word, spelled exactly as it will
+appear in any sentences or phrases input to PC-PATR<A NAME="DOCF7" HREF="pcpatr.html#FOOT7">(7)</A>
+<DT><CODE>\c</CODE>
+<DD>
+word category (part of speech)
+<DT><CODE>\g</CODE>
+<DD>
+word gloss
+<DT><CODE>\f</CODE>
+<DD>
+additional features of this word
+</DL>
+<P>
+Note that the fields containing the lexical form of the word and its
+category must be present for each word (record) in the lexicon.  The
+other two fields (glosses and features) are optional, as are additional
+fields that may be present for other purposes.
+
+</P>
+<P>
+Each word loaded from the lexicon file is assigned certain features
+based on the fields described above.
+
+<UL>
+<LI>The value of the <EM>lex</EM> feature is the lexical form of the word,
+
+taken from the lexical form field of the word's entry in the lexicon.
+<LI>The value of the <EM>cat</EM> feature is the lexical category of the word,
+
+for example, Noun, Verb, Adjective, and so on.  This is taken from the
+category field of the word's entry in the lexicon.  Note that the same
+lexical form can appear multiple times in the lexicon, with a different
+category for each occurrence.
+<LI>The value of the <EM>gloss</EM> feature is the gloss of the word, taken
+
+from the gloss field of the word's entry in the lexicon.  Unlike the
+previous two items, this feature is optional.
+</UL>
+
+<P>
+These feature names should be treated as reserved names and not used
+for other purposes.
+
+</P>
+<P>
+For example, consider these entries for the words <EM>fox</EM> and
+<EM>foxes</EM>:
+
+<PRE>
+
+\w fox
+\c N
+\g canine
+\f &#60;number&#62; = singular
+
+\w foxes
+\c N
+\g canine+PL
+\f &#60;number&#62; = plural
+
+</PRE>
+
+<P>
+When these entries are used by the grammar, they are represented by these
+feature structures:
+
+<PRE>
+
+[cat:    N
+ gloss:  canine
+ lex:    foxes
+ number: singular]
+
+[cat:    N
+ gloss:  canine+PL
+ lex:    foxes
+ number: plural]
+
+</PRE>
+
+<P>
+The lexicon entries can be simplified by defining feature templates in
+the grammar file.  Consider the following templates:
+
+<PRE>
+
+Let PL be &#60;number&#62; = plural
+Let N  be &#60;number&#62; = !singular
+
+</PRE>
+
+<P>
+With these two templates, defining an abbreviation for "plural" and
+defining a default feature for category N (noun), the lexicon entries
+can be rewritten as follows:
+
+<PRE>
+
+\w fox
+\c N
+\g canine
+\f
+
+\w foxes
+\c N
+\g canine+PL
+\f PL
+
+</PRE>
+
+<P>
+Note that the feature (<CODE>\f</CODE>) field of the first entry could be
+omitted altogether since it is now empty.
+
+</P>
+
+
+<H1><A NAME="SEC84" HREF="pcpatr.html#TOC84">7  The AMPLE Analysis File</A></H1>
+
+<P>
+Rather than using a dedicated lexicon file, PC-PATR can load its
+internal lexicon from one or analysis files produced by the AMPLE
+morphological analysis program.  AMPLE writes a standard format
+database for its output, each record of which corresponds to a word of
+the source text.  The first field of each entry contains the analysis.
+Other fields, which may or may not occur, contain additional
+information.
+
+</P>
+<P>
+The utility of this command has been greatly reduced by the
+availability of the <CODE>load ample</CODE> and <CODE>load kimmo</CODE>
+commands which allow morphological analysis on demand to populate
+PC-PATR's word lexicon.  However, the <CODE>file disambiguate</CODE>
+command also operates on AMPLE analysis files, so this information is
+still of interest.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC85">AMPLE analysis file fields</A>
+<LI><A HREF="pcpatr.html#SEC96">Ambiguous analyses</A>
+<LI><A HREF="pcpatr.html#SEC97">Analysis failures</A>
+</UL>
+
+
+
+<H2><A NAME="SEC85" HREF="pcpatr.html#TOC85">7.1  AMPLE analysis file fields</A></H2>
+
+<P>
+This section describes the fields that AMPLE writes to the output
+analysis file.  The only field that is guaranteed to exist is the
+analysis (<CODE>\s</CODE>) field.  All other fields are either data dependent
+or optional.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC86">\a</A>: Analysis
+<LI><A HREF="pcpatr.html#SEC87">\d</A>: Decomposition (surface forms)
+<LI><A HREF="pcpatr.html#SEC88">\cat (.ANA)</A>: Category (possible word, morpheme)
+<LI><A HREF="pcpatr.html#SEC89">\p</A>: Properties
+<LI><A HREF="pcpatr.html#SEC90">\fd</A>: Feature Descriptors
+<LI><A HREF="pcpatr.html#SEC91">\u</A>: Underlying forms (decomposition)
+<LI><A HREF="pcpatr.html#SEC92">\w</A>: Word (before decapitalization and orthography changes)
+<LI><A HREF="pcpatr.html#SEC93">\f</A>: Formatting (junk before the word)
+<LI><A HREF="pcpatr.html#SEC94">\c</A>: Capitalization flag
+<LI><A HREF="pcpatr.html#SEC95">\n</A>: Nonalphabetic (junk after the word)
+</UL>
+
+
+
+<H3><A NAME="SEC86" HREF="pcpatr.html#TOC86">7.1.1  Analysis: \a</A></H3>
+<P>
+<A NAME="IDX9"></A>
+
+</P>
+<P>
+The analysis field (<CODE>\a</CODE>) starts each record of the output
+analysis file.  It has the following form:
+
+<PRE>
+
+\a PFX IFX PFX &#60; CAT root CAT root &#62; SFX IFX SFX
+
+</PRE>
+
+<P>
+where <CODE>PFX</CODE> is a prefix morphname, <CODE>IFX</CODE> is an infix
+morphname, <CODE>SFX</CODE> is a suffix morphname, <CODE>CAT</CODE> is a root
+category, and <CODE>root</CODE> is a root gloss or etymology.  In the
+simplest case, an analysis field would look like this:
+
+<PRE>
+
+\a &#60; CAT root &#62;
+
+</PRE>
+
+<P>
+The <CODE>\rd</CODE> field in the analysis data file can replace the
+characters used to bracket the root category and gloss/etymology; see
+section `Root Delimiter Characters: \rd' in <CITE>AMPLE Reference Manual</CITE>.
+The dictionary field code mapped to <CODE>M</CODE> in the dictionary codes
+file controls the affix and default root morphnames; see
+section `Morphname (internal code M)' in <CITE>AMPLE Reference Manual</CITE>.
+If the AMPLE <SAMP>`-g'</SAMP> command line option was given, the output analysis file
+contains glosses from the root dictionary marked by the field code
+mapped to <CODE>G</CODE> in the dictionary codes file; see
+section `AMPLE Command Options' in <CITE>AMPLE Reference Manual</CITE>,
+and
+section `Root Gloss (internal code G)' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+
+
+<H3><A NAME="SEC87" HREF="pcpatr.html#TOC87">7.1.2  Decomposition (surface forms): \d</A></H3>
+<P>
+<A NAME="IDX10"></A>
+
+</P>
+<P>
+The morpheme decomposition field (<CODE>\d</CODE>) follows the analysis
+field.  It has the following form:
+
+<PRE>
+
+\d anti-dis-establish-ment-arian-ism-s
+
+</PRE>
+
+<P>
+where the hyphens separate the individual morphemes in the surface form
+of the word.
+
+</P>
+<P>
+The <CODE>\dsc</CODE> field in the text input control file can replace the
+hyphen with another character for separating the morphemes; see
+section `Decomposition Separation Character: \dsc' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+<P>
+The morpheme decomposition field is optional.  It is enabled either by
+an AMPLE <SAMP>`-w d'</SAMP> command line option
+(see section `AMPLE Command Options' in <CITE>AMPLE Reference Manual</CITE>),
+or by an interactive query.
+
+</P>
+
+
+<H3><A NAME="SEC88" HREF="pcpatr.html#TOC88">7.1.3  Category (possible word or morpheme): \cat</A></H3>
+<P>
+<A NAME="IDX11"></A>
+
+</P>
+<P>
+The category field (<CODE>\cat</CODE>) provides rudimentary category
+information.  It has the following form:
+
+<PRE>
+
+\cat CAT
+
+</PRE>
+
+<P>
+where <CODE>CAT</CODE> is the proposed word category.  A more complex example
+is
+
+<PRE>
+
+\cat C0 C1/C0=C2=C2/C1=C1/C1
+
+</PRE>
+
+<P>
+where <CODE>C0</CODE> is the proposed word category, <CODE>C1/C0</CODE> is a prefix
+category pair, <CODE>C2</CODE> is a root category, and <CODE>C2/C1</CODE> and
+<CODE>C1/C1</CODE> are suffix category pairs.  The equal signs (<CODE>=</CODE>)
+serve to separate the category information of the individual morphemes.
+
+</P>
+<P>
+The <CODE>\cat</CODE> field of the analysis data file controls whether the
+category field is written to the output analysis file; see
+section `Category output control: \cat' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+
+
+<H3><A NAME="SEC89" HREF="pcpatr.html#TOC89">7.1.4  Properties: \p</A></H3>
+<P>
+<A NAME="IDX12"></A>
+
+</P>
+<P>
+The properties field (<CODE>\p</CODE>) contains the names of any allomorph or
+morpheme properties found in the analysis of the word.  It has the
+form:
+
+<PRE>
+
+\p ==prop1 prop2=prop3=
+
+</PRE>
+
+<P>
+where <CODE>prop1</CODE>, <CODE>prop2</CODE>, and <CODE>prop3</CODE> are property names.
+The equal signs (<CODE>=</CODE>) serve to separate the property information
+of the individual morphemes.  Note that morphemes may have more than
+one property, with the names separated by spaces, or no properties at
+all.
+
+</P>
+<P>
+By default, the properties field is written to the output analysis
+file.  The <SAMP>`-w 0'</SAMP> command option, or any <SAMP>`-w'</SAMP> option that
+does not include <SAMP>`p'</SAMP> in its argument disables the properties field.
+
+</P>
+
+
+<H3><A NAME="SEC90" HREF="pcpatr.html#TOC90">7.1.5  Feature Descriptors: \fd</A></H3>
+<P>
+<A NAME="IDX13"></A>
+
+</P>
+<P>
+The feature descriptor field (<CODE>\fd</CODE>) contains the feature names
+associated with each morpheme in the analysis.  It has the following
+form:
+
+<PRE>
+
+\fd ==feat1 feat2=feat3=
+
+</PRE>
+
+<P>
+where <CODE>feat1</CODE>, <CODE>feat2</CODE>, and <CODE>feat3</CODE> are feature
+descriptors.  The equal signs (<CODE>=</CODE>) serve to separate the feature
+descriptors of the individual morphemes.  Note that morphemes may have
+more than one feature descriptor, with the names separated by spaces,
+or no feature descriptors at all.
+
+</P>
+<P>
+The dictionary field code mapped to <CODE>F</CODE> in the dictionary code
+table file controls whether feature descriptors are written to the
+output analysis file; if this mapping is not defined, then the
+<CODE>\fd</CODE> field is not written.
+See section `Feature Descriptor (internal code F)' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+
+
+<H3><A NAME="SEC91" HREF="pcpatr.html#TOC91">7.1.6  Underlying forms (decomposition): \u</A></H3>
+<P>
+<A NAME="IDX14"></A>
+
+</P>
+<P>
+The underlying form field (<CODE>\u</CODE>) is similar to the decomposition
+field except that it shows underlying forms instead of surface forms.
+It looks like this:
+
+<PRE>
+
+\u a-para-a-i-ri-me
+
+</PRE>
+
+<P>
+where the hyphens separate the individual morphemes.
+
+</P>
+<P>
+The <CODE>\dsc</CODE> field in the text input control file can replace the
+hyphen with another character for separating the morphemes; see
+section `Decomposition Separation Character: \dsc' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+<P>
+The dictionary field code mapped to <CODE>U</CODE> in the dictionary code
+table file controls whether underlying forms are written to the output
+analysis file; if this mapping is not defined, then the <CODE>\u</CODE> field
+is not written.
+section `Underlying Form (internal code U)' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+
+
+<H3><A NAME="SEC92" HREF="pcpatr.html#TOC92">7.1.7  Word (before decapitalization and orthography changes): \w</A></H3>
+<P>
+<A NAME="IDX15"></A>
+
+</P>
+<P>
+The original word field (<CODE>\w</CODE>) contains the original input word as
+it looks before decapitalization and orthography changes.  It looks
+like this:
+
+<PRE>
+
+\w The
+
+</PRE>
+
+<P>
+Note that this is a gratuitous change from earlier versions of AMPLE,
+which wrote the decapitalized form.
+
+</P>
+<P>
+The original word field is optional.  It is enabled either by
+an AMPLE <SAMP>`-w w'</SAMP> command line option
+(see section `AMPLE Command Options' in <CITE>AMPLE Reference Manual</CITE>),
+or by an interactive query.
+
+</P>
+
+
+<H3><A NAME="SEC93" HREF="pcpatr.html#TOC93">7.1.8  Formatting (junk before the word): \f</A></H3>
+<P>
+<A NAME="IDX16"></A>
+
+</P>
+<P>
+The format information field (<CODE>\f</CODE>) records any formatting codes
+or punctuation that appeared in the input text file before the word.
+It looks like this:
+
+<PRE>
+
+\f \\id MAT 5 HGMT05.SFM, 14-feb-84 D. Weber, Huallaga Quechua\n
+		\\c 5\n\n
+		\\s
+
+</PRE>
+
+<P>
+where backslashes (<CODE>\</CODE>) in the input text are doubled, newlines
+are represented by <CODE>\n</CODE>, and additional lines in the field start
+with a tab character.
+
+</P>
+<P>
+The format information field is written to the output analysis file
+whenever it is needed, that is, whenever formatting codes or
+punctuation exist before words.
+
+</P>
+
+
+<H3><A NAME="SEC94" HREF="pcpatr.html#TOC94">7.1.9  Capitalization flag: \c</A></H3>
+<P>
+<A NAME="IDX17"></A>
+
+</P>
+<P>
+The capitalization field (<CODE>\c</CODE>) records any capitalization of the
+input word.  It looks like this:
+
+<PRE>
+
+\c 1
+
+</PRE>
+
+<P>
+where the number following the field code has one of these values:
+<DL COMPACT>
+
+<DT><CODE>1</CODE>
+<DD>
+the first (or only) letter of the word is capitalized
+
+<DT><CODE>2</CODE>
+<DD>
+all letters of the word are capitalized
+
+<DT><CODE>4-32767</CODE>
+<DD>
+some letters of the word are capitalized and some are not
+</DL>
+<P>
+Note that the third form is of limited utility, but still exists
+because of the author's last name.
+
+</P>
+<P>
+The capitalization field is written to the output analysis file
+whenever any of the letters in the word are capitalized; see
+section `Prevent Any Decapitalization: \nocap' in <CITE>AMPLE Reference Manual</CITE>,
+and
+section `Prevent Decapitalization of Individual Characters: \noincap' in <CITE>AMPLE Reference Manual</CITE>.
+
+</P>
+
+
+<H3><A NAME="SEC95" HREF="pcpatr.html#TOC95">7.1.10  Nonalphabetic (junk after the word): \n</A></H3>
+<P>
+<A NAME="IDX18"></A>
+
+</P>
+<P>
+The nonalphabetic field (<CODE>\n</CODE>) records any trailing punctuation,
+bar code
+(see section `Bar Code Format Code Characters: \barcodes' in <CITE>AMPLE Reference Manual</CITE>),
+or whitespace characters.  It looks like this:
+
+<PRE>
+
+\n |r.\n
+
+</PRE>
+
+<P>
+where newlines are represented by <CODE>\n</CODE>.  The nonalphabetic field
+ends with the last whitespace character immediately following the word.
+
+</P>
+<P>
+The nonalphabetic field is written to the output analysis file whenever
+the word is followed by anything other than a single space character.
+This includes the case when a word ends a file with nothing following
+it.
+
+</P>
+
+
+<H2><A NAME="SEC96" HREF="pcpatr.html#TOC96">7.2  Ambiguous analyses</A></H2>
+
+<P>
+The previous section assumed that AMPLE produced only one analysis for
+a word.  This is not always possible since words in isolation are
+frequently ambiguous.  AMPLE handles multiple analyses by writing each
+analysis field in parallel, with the number of analyses at the
+beginning of each output field.  For example,
+
+<PRE>
+
+\a %2%&#60; A0 imaika &#62; CNJT AUG%&#60; A0 imaika &#62; ADVS%
+\d %2%imaika-Npa-ni%imaika-Npani%
+\cat %2%A0 A0=A0/A0=A0/A0%A0 A0=A0/A0%
+\p %2%==%=%
+\fd %2%==%=%
+\u %2%imaika-Npa-ni%imaika-Npani%
+\w Imaicampani
+\f \\v124
+\c 1
+\n \n
+
+</PRE>
+
+<P>
+where the percent sign (<CODE>%</CODE>) separates the different analyses in
+each field.  Note that only those fields which contain analysis
+information are marked for ambiguity.  The other fields (<CODE>\w</CODE>,
+<CODE>\f</CODE>, <CODE>\c</CODE>, and <CODE>\n</CODE>) are the same regardless of the
+number of analyses that AMPLE discovers.
+
+</P>
+<P>
+The <CODE>\ambig</CODE> field in the text input control file can replace the
+percent sign with another character for separating the analyses; see
+section `Ambiguity Marker Character: \ambig' in <CITE>AMPLE Reference Manual</CITE>,
+for details.
+
+</P>
+
+
+<H2><A NAME="SEC97" HREF="pcpatr.html#TOC97">7.3  Analysis failures</A></H2>
+
+<P>
+The previous sections assumed that AMPLE successfully analyzed a word.
+This does not always happen.  AMPLE marks analysis failures the same
+way it marks multiple analyses, but with zero (<CODE>0</CODE>) for the
+ambiguity count.  For example,
+
+<PRE>
+
+\a %0%ta%
+\d %0%ta%
+\cat %0%%
+\p %0%%
+\fd %0%%
+\u %0%%
+\w TA
+\f \\v 12 |b
+\c 2
+\n |r\n
+
+</PRE>
+
+<P>
+Note that only the <CODE>\a</CODE> and <CODE>\d</CODE> fields contain any analysis
+information, and those both have the decapitalized word as a place
+holder.
+
+</P>
+<P>
+The <CODE>\ambig</CODE> field in the text input control file can replace the
+percent sign with another character for marking analysis failures and
+ambiguities; see
+section `Ambiguity Marker Character: \ambig' in <CITE>AMPLE Reference Manual</CITE>, for details.
+
+</P>
+
+
+<H1><A NAME="SEC98" HREF="pcpatr.html#TOC98">8  Using the Embedded Morphological Parsers</A></H1>
+
+<P>
+Normally, PC-PATR requires the linguist to develop a full-fledged
+lexicon of words with their features.  This may be unnecessary if a
+morphological analysis, and a comprehensive lexicon of morphemes, has
+already been developed using either PC-Kimmo (version 2) or AMPLE
+(version 3).  These morphological parsing programs are also available
+from SIL.
+
+</P>
+
+<UL>
+<LI><A HREF="pcpatr.html#SEC99">PC-Kimmo</A>
+<LI><A HREF="pcpatr.html#SEC100">AMPLE</A>
+</UL>
+
+
+
+<H2><A NAME="SEC99" HREF="pcpatr.html#TOC99">8.1  PC-Kimmo</A></H2>
+
+<P>
+Version 2 of PC-Kimmo supports a PC-PATR style grammar for defining
+word structure in terms of morphemes.  This provides a straightforward
+way to obtain word features as a result of the morphological analysis
+process.  For best results, the (PC-Kimmo) word grammar and the
+(PC-PATR) sentence or phrase grammar should be developed together.
+
+</P>
+<P>
+When using the PC-Kimmo morphological parser, PC-PATR requires a
+special lexical rule in the (sentence level) grammar file.
+This rule is named <CODE>MapKimmoFeatures</CODE> and is used automatically to
+map from the features produced by the word parse to the features needed
+by the sentence parse.  For example, consider the following definition:
+
+<PRE>
+
+Define MapKimmoFeatures as
+		&#60;out cat&#62;       = &#60;in head pos&#62;
+		&#60;out lex&#62;       = &#60;in lex&#62;
+		&#60;out head&#62;      = &#60;in head&#62;
+
+</PRE>
+
+<P>
+This lexical rule uses the <CODE>&#60;head pos&#62;</CODE> feature produced by the
+PC-Kimmo parser as the <CODE>&#60;cat&#62;</CODE> feature for the PC-PATR
+parser, and passes the <CODE>&#60;lex&#62;</CODE> and <CODE>&#60;head&#62;</CODE> features from the
+morphological parser to the sentence parser unchanged.
+
+</P>
+
+
+<H2><A NAME="SEC100" HREF="pcpatr.html#TOC100">8.2  AMPLE</A></H2>
+
+<P>
+The only thing necessary to use the AMPLE morphological parser
+inside PC-PATR is to load the appropriate control files and
+dictionaries.  This will not be too useful, however, unless the
+AMPLE dictionaries contain feature descriptors to pass through to
+PC-PATR.  It is also required for the AMPLE data to define
+the word category.  (Either the word-final suffix category or the
+word-initial prefix category can be designated in the analysis data
+file).  Consult the AMPLE documentation for more details on either
+of these issues.
+
+</P>
+
+
+<H1><A NAME="SEC101" HREF="pcpatr.html#TOC101">9  Index</A></H1>
+
+<P>
+Jump to:
+<A HREF="#cindex_-">-</A>
+-
+<A HREF="#cindex_\">\</A>
+-
+<A HREF="#cindex_s">s</A>
+<P>
+<H2><A NAME="cindex_-">-</A></H2>
+<DIR>
+<LI><A HREF="pcpatr.html#IDX5">-/</A>
+<LI><A HREF="pcpatr.html#IDX1">-a filename</A>
+<LI><A HREF="pcpatr.html#IDX2">-g filename</A>
+<LI><A HREF="pcpatr.html#IDX3">-l filename</A>
+<LI><A HREF="pcpatr.html#IDX4">-t filename</A>
+<LI><A HREF="pcpatr.html#IDX7">-Z address,count</A>
+<LI><A HREF="pcpatr.html#IDX6">-z filename</A>
+</DIR>
+<H2><A NAME="cindex_\">\</A></H2>
+<DIR>
+<LI><A HREF="pcpatr.html#IDX9">\a</A>
+<LI><A HREF="pcpatr.html#IDX17">\c</A>
+<LI><A HREF="pcpatr.html#IDX11">\cat</A>
+<LI><A HREF="pcpatr.html#IDX10">\d</A>
+<LI><A HREF="pcpatr.html#IDX16">\f</A>
+<LI><A HREF="pcpatr.html#IDX13">\fd</A>
+<LI><A HREF="pcpatr.html#IDX18">\n</A>
+<LI><A HREF="pcpatr.html#IDX12">\p</A>
+<LI><A HREF="pcpatr.html#IDX14">\u</A>
+<LI><A HREF="pcpatr.html#IDX15">\w</A>
+</DIR>
+<H2><A NAME="cindex_s">s</A></H2>
+<DIR>
+<LI><A HREF="pcpatr.html#IDX8">standard format</A>
+</DIR>
+
+</P>
+<P><HR><P>
+<H1>Footnotes</H1>
+<H3><A NAME="FOOT1" HREF="pcpatr.html#DOCF1">(1)</A></H3>
+<P>The Microsoft Windows implementation uses the Microsoft C
+QuickWin function, and the Macintosh implementation uses the Metrowerks C
+SIOUX function.
+<H3><A NAME="FOOT2" HREF="pcpatr.html#DOCF2">(2)</A></H3>
+<P>Gazdar and Mellish (1989, pages
+142-147) discuss
+why context-free phrase structure grammars are inadequate to model some
+human languages.  The PATR-II formalism (unification of feature
+structures added to the context-free phrase structure rules) is shown
+to be adequate for those cases.
+<H3><A NAME="FOOT3" HREF="pcpatr.html#DOCF3">(3)</A></H3>
+<P>This is a new feature
+of AMPLE version 3.
+<H3><A NAME="FOOT4" HREF="pcpatr.html#DOCF4">(4)</A></H3>
+<P>The unified dictionary is a new feature of AMPLE
+version 3.
+<H3><A NAME="FOOT5" HREF="pcpatr.html#DOCF5">(5)</A></H3>
+<P>Would this be a
+useful enhancement to PC-PATR?
+<H3><A NAME="FOOT6" HREF="pcpatr.html#DOCF6">(6)</A></H3>
+<P>These two operators are
+equivalent in PC-PATR, since the implementation treats each
+lexical rule as an ordered list of assignments rather than using
+unification for the mappings that have an equal sign operator.
+<H3><A NAME="FOOT7" HREF="pcpatr.html#DOCF7">(7)</A></H3>
+<P>By
+default, <CODE>\w</CODE> also marks the initial field of each word's record.
+<P><HR><P>
+This document was generated on 28 November 2006 using the
+<A HREF="http://wwwinfo.cern.ch/dis/texi2html/">texi2html</A>
+translator version 1.52.</P>
+</BODY>
+</HTML>

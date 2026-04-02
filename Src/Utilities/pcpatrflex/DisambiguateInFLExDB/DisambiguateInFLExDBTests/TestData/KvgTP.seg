@@ -1,0 +1,316 @@
+ kvg.seg  Kuni/Boazi Segment Inventory file
+|                Jan/1999  Andy Black
+|                Apr/1999  R. Fumey
+|                Aug/2006  R. Fumey
+|                Feb/2007  R. Fumey
+|                Sep/2010  R. Fumey
+
+\co     VOWELS
+
+\s a
+\son  +
+\cons -
+\mb
+\toneseg  H       = á
+\toneseg  R       = a᷄
+\toneseg  M       = ā
+\toneseg  L       = à
+\toneseg  F       = â
+
+
+\s ao
+\son  +
+\cons -
+\mb
+\toneseg  H       = áo
+\toneseg  R       = a᷄o
+\toneseg  M       = āo
+\toneseg  L       = ào
+\toneseg  F       = âo
+
+
+\s æ
+\son  +
+\cons -
+\mb
+\toneseg  H       = ǽ
+\toneseg  R       = æ᷄
+\toneseg  M       = ǣ
+\toneseg  L       = æ̀
+\toneseg  F       = æ̂
+
+
+\s e
+\son  +
+\cons -
+\mb
+\toneseg  H       = é
+\toneseg  R       = e᷄
+\toneseg  M       = ē
+\toneseg  L       = è
+\toneseg  F       = ê
+
+
+\s ea
+\son  +
+\cons -
+\mb
+\toneseg  H       = eá
+\toneseg  R       = ea᷄
+\toneseg  M       = eā
+\toneseg  L       = eà
+\toneseg  F       = eâ
+
+
+\s ei
+\son  +
+\cons -
+\mb
+\toneseg  H       = éi
+\toneseg  R       = e᷄i
+\toneseg  M       = ēi
+\toneseg  L       = èi
+\toneseg  F       = êi
+
+
+\s ein
+\son  +
+\cons -
+\mb
+\toneseg  H       = eín | as in ‹Gèmboeín> ‘He told him.’
+\toneseg  R       = ei᷄n 
+\toneseg  M       = eīn
+\toneseg  L       = èin	| as in ‹Ndø-khakhèina᷄m› ‘Don't make/fix it!’
+\toneseg  F       = eîn
+
+
+\s i
+\son  +
+\cons -
+\mb
+\toneseg  H       = í
+\toneseg  R       = i᷄
+\toneseg  M       = ī
+\toneseg  L       = ì
+\toneseg  F       = î
+
+
+\s ɨ
+\son  +
+\cons -
+\mb
+\toneseg  H       = ɨ́
+\toneseg  R       = ɨ᷄
+\toneseg  M       = ɨ̄
+\toneseg  L       = ɨ̀
+\toneseg  F       = ɨ̂
+
+
+\s o
+\son  +
+\cons -
+\mb
+\toneseg  H       = ó
+\toneseg  R       = o᷄
+\toneseg  M       = ō
+\toneseg  L       = ò
+\toneseg  F       = ô
+
+\s oe
+\son  +
+\cons -
+\mb
+\toneseg  H       = óe
+\toneseg  R       = o᷄e
+\toneseg  M       = ōe
+\toneseg  L       = òe
+\toneseg  F       = ôe
+
+\s oev
+\son  +
+\cons -
+\mb
+\toneseg  H       = oév
+\toneseg  R       = oe᷄v
+\toneseg  M       = oēv
+\toneseg  L       = oèv
+\toneseg  F       = oêv
+
+\s ø
+\son  +
+\cons -
+\mb
+\toneseg  H       = ǿ
+\toneseg  R       = ø᷄
+\toneseg  M       = ø̄
+\toneseg  L       = ø̀
+\toneseg  F       = ø̂
+
+
+\s øe
+\son  +
+\cons -
+\mb
+\toneseg  H       = ǿe
+\toneseg  R       = ø᷄e
+\toneseg  M       = ø̄e
+\toneseg  L       = ø̀e
+\toneseg  F       = ø̂e
+
+
+\s øem
+\son  +
+\cons -
+\mb
+\toneseg  H       = øém
+\toneseg  R       = øe᷄m
+\toneseg  M       = øēm
+\toneseg  L       = øèm
+\toneseg  F       = øêm
+
+
+\s u
+\son  +
+\cons -
+\mb
+\toneseg  H       = ú
+\toneseg  R       = u᷄
+\toneseg  M       = ū
+\toneseg  L       = ù
+\toneseg  F       = û
+
+
+| Digits (can carry tone marks)
+
+\s 1
+\son  +
+\cons -
+\mb
+\toneseg  H       = 1́
+\toneseg  H       = 1̂
+\toneseg  H       = 1̄
+
+
+
+\co     CONSONANTS
+
+                  Palato-
+  Labial Alveolar Alveolar  Velar  Uvular  Glottal
+
+    p b      t d              k g     kh             | Stops
+    mb       nd                       ng             | prenasalized (vd) stops
+    f v      s z                      x q            | fricatives
+                                      nq             | prenasalized fricative
+    m        n                                       | nasals
+    w               y                                | approximants
+             l                                       | lateral
+
+			| hyphen (in clitics)
+\s -
+\son -
+\cont -
+			| vowel lengthening
+\s ꞉
+\son -
+\cont -
+
+			| voiceless stops
+\s p
+\son  -
+\cont -
+
+\s t
+\son  -
+\cont -
+
+\s k
+\son  -
+\cont -
+
+\s kh
+\son  -
+\cont -
+			| voiced stops
+
+\s b
+\son  -
+\cont -
+
+
+\s d
+\son  -
+\cont -
+
+\s g
+\son  -
+\cont -
+
+			| prenasalized stops
+\s mb
+\son  -
+\cont -
+
+\s nd
+\son  -
+\cont -
+
+\s ng
+\son  -
+\cont -
+
+			| voiceless fricatives
+\s f
+\son  -
+\cont +
+
+\s s
+\son  -
+\cont +
+
+\s x
+\son  -
+\cont +
+
+			| voiced fricatives
+\s v
+\son  -
+\cont +
+
+\s z
+\son  -
+\cont +
+
+\s q
+\son  -
+\cont +
+
+			| prenasalized fricatives
+\s nq
+\son  -
+\cont +
+
+			| nasals
+\s m
+\son  +
+
+\s n
+\son  +
+
+			| approximants
+
+\s w
+\son  +
+
+\s y
+\son  +
+
+			| lateral
+
+\s l
+\son  +
+
+\s r		| only in loan words
+\son  +
+
+
+			| glides

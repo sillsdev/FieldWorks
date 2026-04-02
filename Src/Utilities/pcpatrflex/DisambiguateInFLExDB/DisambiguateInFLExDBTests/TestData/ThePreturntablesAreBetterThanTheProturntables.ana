@@ -1,0 +1,49 @@
+\a < art the >
+\d the
+\cat art
+\p 7841d0ff-57f0-4a2c-a689-6d109efca66e
+\fd definite
+\w the
+
+\a %2%BEFORE < v turn n table > PL%BEFORE < v turn n table > POSS%
+\d %2%pre-turn-table-s%pre-turn-table-s%
+\cat %2%n%n%
+\p %2%5d9cf39e-5a9b-4bf0-b8b6-6fe012cf450a=4db104e8-8b0b-4dc7-ba4e-1a325b39b6fe=c365db3d-0f94-4f0b-98ed-057c0cc54fae=e930f277-e5b0-4ce2-9a08-5ac22eb4bdda%e1fb1154-653d-477a-8614-41b93fbcc69f=471667c1-e3e1-4c41-9f2f-cf113b79d19f=a82a0cb3-a52f-428f-8fb9-6c141a6310ab=9eed2c52-0ba7-4c53-8d17-3c4d4faccb79%
+\fd %2%=takes_P=locative=plural%=takes_P=locative=poss_suffix%
+\w preturntables
+
+\a %5%< v are-exist >%< v are-exist >%< v are >%< v are >%< aux are-Aux >%
+\d %5%are%are%are%are%are%
+\cat %5%v%v%v%v%aux%
+\p %5%4d6433bf-fa66-4efd-a758-40cb954ce2bb%43c65d66-f90d-40ee-bd34-dc4539949b6e%a6314d12-d39d-45b5-9eb2-82d7588b5b25%7284d354-4bc7-46ca-87e0-69f407a9fc21%7e6c1be9-ad21-454e-91b4-dfc126514da7%
+\fd %5%exist plural_subject%exist second_subject singular_subject%copular second_subject singular_subject%copular plural_subject%passive plural_subject%
+\w are
+
+\a < deg better >
+\d better
+\cat deg
+\p 3a60aafa-4ded-44be-844b-f940783c916e
+\fd comparative
+\w better
+
+\a < conj than >
+\d than
+\cat conj
+\p b1efe70a-b017-4692-9f13-53fae1b09fd3
+\fd comparative
+\w than
+
+\a < art the >
+\d the
+\cat art
+\p 7841d0ff-57f0-4a2c-a689-6d109efca66e
+\fd definite
+\w the
+
+\a %2%FAVOR < v turn n table > POSS%FAVOR < v turn n table > PL%
+\d %2%pro-turn-table-s%pro-turn-table-s%
+\cat %2%n%n%
+\p %2%ac3b54f0-7b19-49d9-a2c4-ab3f9052b4d6=19bc767b-7563-4cd1-99a8-717494838c45=babadd81-4565-4f66-93fb-262943838f43=ce29a465-0a5a-414c-8128-829d801c9809%f9f2e40d-09a0-4692-912c-18a843930276=07ad67f7-56a7-4519-9d1c-823f74d30a1a=69624c71-4171-4cc4-9a04-bcedeb78c349=d8c7a314-4cca-400a-871b-4ae890b5562b%
+\fd %2%=takes_P=locative=poss_suffix%=takes_P=locative=plural%
+\w proturntables
+
