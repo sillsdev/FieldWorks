@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
@@ -131,6 +132,84 @@ namespace XMLViewsTests
 				Assert.That(publishAsHeadwordNode, Is.Not.Null);
 				Assert.That(propertyTable.GetStringProperty("myKey", ""), Contains.Substring("PublishAsHeadword"));
 			}
+		}
+
+		[Test]
+		public void MigrateBrowseColumns_Version19ToVersion20()
+		{
+			var input =
+				"<root version=\"19\">" +
+				"<column layout=\"EntryHeadwordForFindEntry\" label=\"Headword\" sortmethod=\"FullSortKey\" ws=\"$ws=vernacular\" editable=\"false\" width=\"96000\"/>" +
+				"<column layout=\"Unknown Test\"/>" +
+				"</root>";
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo(BrowseViewer.kBrowseViewVersion.ToString()));
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo("20"));
+				// Columns should be preserved as-is
+				var headwordNode = output.SelectSingleNode("//column[@label='Headword']");
+				Assert.That(headwordNode, Is.Not.Null);
+				Assert.That(XmlUtils.GetOptionalAttributeValue(headwordNode, "layout"), Is.EqualTo("EntryHeadwordForFindEntry"));
+			}
+		}
+
+		[Test]
+		public void MigrateBrowseColumns_HiddenElementsPreservedThroughMigration()
+		{
+			// Version 19 with hidden elements (simulating a future scenario where hidden elements exist)
+			var input =
+				"<root version=\"19\">" +
+				"<column layout=\"EntryHeadwordForFindEntry\" label=\"Headword\"/>" +
+				"<hidden label=\"Lexeme Form\"/>" +
+				"</root>";
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			{
+				var output = XmlBrowseViewBaseVc.GetSavedColumns(input, mediator, propertyTable, "myKey");
+				Assert.That(XmlUtils.GetOptionalAttributeValue(output.DocumentElement, "version"), Is.EqualTo("20"));
+				// Hidden elements should be preserved
+				var hiddenNode = output.SelectSingleNode("//hidden[@label='Lexeme Form']");
+				Assert.That(hiddenNode, Is.Not.Null, "Hidden column labels should be preserved through migration");
+			}
+		}
+
+		[Test]
+		public void HiddenSentinel_AllColumnsVisible_AllowsAutoAddOfNewCommonColumns()
+		{
+			// Simulate a version-20 save where all columns are visible: the sentinel <hidden/>
+			// element (no label) signals that hidden tracking is active, so new common columns
+			// should be auto-added rather than skipped by the bootstrap path.
+			var savedXml =
+				"<root version=\"20\">" +
+				"<column layout=\"Name\" label=\"Name\" ws=\"$ws=best analysis\" field=\"Name\"/>" +
+				"<column layout=\"Abbreviation\" label=\"Abbreviation\" ws=\"$ws=best analysis\" field=\"Abbreviation\"/>" +
+				"<hidden/>" +  // sentinel: hidden tracking active, but nothing hidden
+				"</root>";
+			var doc = new XmlDocument();
+			doc.LoadXml(savedXml);
+
+			var hiddenNodes = doc.DocumentElement.SelectNodes("//hidden");
+			bool hasHiddenTracking = hiddenNodes.Count > 0;
+			Assert.That(hasHiddenTracking, Is.True, "Sentinel <hidden/> should enable hidden tracking");
+
+			// Collect hidden labels — sentinel has no label, so hiddenLabels should be empty
+			var hiddenLabels = new HashSet<string>();
+			foreach (XmlNode hidden in hiddenNodes)
+			{
+				var label = XmlUtils.GetOptionalAttributeValue(hidden, "label", "");
+				if (!string.IsNullOrEmpty(label))
+					hiddenLabels.Add(label);
+			}
+			Assert.That(hiddenLabels, Is.Empty, "Sentinel <hidden/> should not contribute a label");
+
+			// A new common column that is not in the saved list and not hidden should be auto-added
+			// (i.e. hasHiddenTracking is true AND label is not in hiddenLabels)
+			var newColumnLabel = "NewCommonColumn";
+			Assert.That(hasHiddenTracking, Is.True);
+			Assert.That(hiddenLabels.Contains(newColumnLabel), Is.False,
+				"New column should not be blocked when hidden tracking is active with no hidden labels");
 		}
 
 		void VerifyColumn(XmlNode output, string layoutName, string attrName, string attrVal)

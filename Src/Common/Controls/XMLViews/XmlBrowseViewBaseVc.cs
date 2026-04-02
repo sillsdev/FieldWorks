@@ -229,10 +229,34 @@ namespace SIL.FieldWorks.Common.Controls
 						ColumnSpecs.Add(node);
 				}
 
+				// Collect labels of columns the user deliberately removed (hidden).
+				var hiddenNodes = doc.DocumentElement.SelectNodes("//hidden");
+				var hiddenLabels = new HashSet<string>();
+				bool hasHiddenTracking = hiddenNodes.Count > 0;
+				if (hasHiddenTracking)
+				{
+					foreach (XmlNode hidden in hiddenNodes)
+					{
+						var label = XmlUtils.GetOptionalAttributeValue(hidden, "label", "");
+						if (!string.IsNullOrEmpty(label))
+							hiddenLabels.Add(label);
+					}
+				}
+
 				foreach (var node in newPossibleColumns)
 				{
-					// add any possible columns that were not in the saved list and are common (and not custom)
-					if (!IsCustomField(node, out _) && XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
+					if (!hasHiddenTracking)
+					{
+						// Bootstrap: no hidden tracking yet (pre-upgrade save).
+						// Don't auto-add anything — all missing columns are presumed
+						// deliberately removed. They'll be properly tracked on next save.
+						continue;
+					}
+					// Add common non-custom columns that were not in the saved list and not deliberately hidden.
+					var label = XmlUtils.GetOptionalAttributeValue(node, "label", "");
+					if (!hiddenLabels.Contains(label)
+						&& !IsCustomField(node, out _)
+						&& XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
 					{
 						ColumnSpecs.Add(node);
 					}
@@ -299,6 +323,9 @@ namespace SIL.FieldWorks.Common.Controls
 						case 18:
 							savedCols = FixVersion19Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"18\"", "root version=\"19\"");
+							goto case 19;
+						case 19:
+							savedCols = savedCols.Replace("root version=\"19\"", "root version=\"20\"");
 							propertyTable.SetProperty(colListId, savedCols, true);
 							doc.LoadXml(savedCols);
 							break;
@@ -613,23 +640,31 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool IsValidColumnSpec(XmlNode colSpec)
 		{
-			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
-			{
-				return false;
-			}
 			// If it is a Custom Field, check that it is valid and has the correct label.
 			if (IsCustomField(colSpec, out var isValid))
 			{
 				return isValid;
 			}
-			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
-			// ENHANCE (Hasso) 2025.11: 'layout' (mandatory?) and 'field' (optional) would be better attributes to match, but that would require more test setup.
+			// If the column matches a known PossibleColumnSpec by label, it is valid.
+			// Check this before GetPartFromParentNode because some views (e.g. Phonological Features
+			// with FsFeatDefn) have valid columns whose class hierarchy has no matching parts in
+			// the part inventory; GetPartFromParentNode would incorrectly reject those columns.
 			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
 						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??
 								XmlUtils.GetAttributeValue(colSpec, "originalLabel");
-			return XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
-					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null;
+			if (XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
+				XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null)
+			{
+				return true;
+			}
+			// For columns not in PossibleColumnSpecs (e.g. generated columns with a layout
+			// attribute), fall back to checking whether the part/layout inventory can resolve
+			// the column. Columns without a layout attribute that aren't in PossibleColumnSpecs
+			// are invalid (GetPartFromParentNode would trivially return the node itself).
+			if (XmlUtils.GetOptionalAttributeValue(colSpec, "layout") == null)
+				return false;
+			return GetPartFromParentNode(colSpec, ListItemsClass) != null;
 		}
 
 		/// <summary>
