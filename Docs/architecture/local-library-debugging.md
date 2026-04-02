@@ -1,6 +1,6 @@
 # Local Library Debugging
 
-This document describes how to debug locally-modified versions of **liblcm**, **libpalaso**, or **chorus** in FieldWorks using a local NuGet feed.
+This document describes how to debug locally-modified versions of **liblcm**, **libpalaso**, **chorus**, or **machine** (SIL.Machine) in FieldWorks using a local NuGet feed.
 
 ## Overview
 
@@ -44,6 +44,7 @@ The script automatically registers this folder as a NuGet source in your user-le
 git clone https://github.com/sillsdev/liblcm.git
 git clone https://github.com/sillsdev/libpalaso.git
 git clone https://github.com/sillsdev/chorus.git
+git clone https://github.com/sillsdev/machine.git
 ```
 
 ## Pack a local library
@@ -59,9 +60,10 @@ git clone https://github.com/sillsdev/chorus.git
 Or set environment variables so you can omit the paths:
 
 ```powershell
-$env:LIBPALASO_PATH = "C:\Repos\libpalaso"
-$env:LIBLCM_PATH    = "C:\Repos\liblcm"
-$env:LIBCHORUS_PATH = "C:\Repos\chorus"
+$env:LIBPALASO_PATH  = "C:\Repos\libpalaso"
+$env:LIBLCM_PATH     = "C:\Repos\liblcm"
+$env:LIBCHORUS_PATH  = "C:\Repos\chorus"
+$env:SILMACHINE_PATH = "C:\Repos\machine"
 
 # Switches still required — env vars only provide the path
 .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus
@@ -139,6 +141,7 @@ dotnet nuget remove source local
 | liblcm | `-Lcm` | `-LcmPath` | `SilLcmVersion` | `LIBLCM_PATH` |
 | libpalaso | `-Palaso` | `-PalasoPath` | `SilLibPalasoVersion` | `LIBPALASO_PATH` |
 | chorus | `-Chorus` | `-ChorusPath` | `SilChorusVersion` | `LIBCHORUS_PATH` |
+| machine | `-Machine` | `-MachinePath` | `SilMachineVersion` | `SILMACHINE_PATH` |
 
 ## See Also
 

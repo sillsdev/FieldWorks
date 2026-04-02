@@ -6,7 +6,7 @@
 	Two modes of operation:
 
 	Pack mode (one or more source paths provided):
-	  Packs local checkouts of liblcm, libpalaso, and/or chorus into the
+	  Packs local checkouts of liblcm, libpalaso, chorus, and/or machine into the
 	  local NuGet feed using each library's own version. Detects the version
 	  from produced packages, updates SilVersions.props to match, copies
 	  PDBs, and clears stale cached packages.
@@ -44,9 +44,16 @@
 	Path to a local chorus checkout. Overrides LIBCHORUS_PATH env var.
 	Only used when -Chorus is specified.
 
+.PARAMETER Machine
+	Switch: include SIL.Machine in the pack operation.
+
+.PARAMETER MachinePath
+	Path to a local machine checkout. Overrides SILMACHINE_PATH env var.
+	Only used when -Machine is specified.
+
 .PARAMETER Library
 	Which library to set a version for (SetVersion mode only):
-	liblcm, libpalaso, or chorus.
+	liblcm, libpalaso, chorus, or machine.
 
 .PARAMETER Version
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
@@ -75,7 +82,10 @@ param(
 	[switch]$Chorus,
 	[string]$ChorusPath,
 
-	[ValidateSet('liblcm', 'libpalaso', 'chorus')]
+	[switch]$Machine,
+	[string]$MachinePath,
+
+	[ValidateSet('liblcm', 'libpalaso', 'chorus', 'machine')]
 	[string]$Library,
 
 	[string]$Version
@@ -110,10 +120,16 @@ $LibraryConfig = @{
 		CachePrefixes   = @('sil.chorus')
 		EnvVar          = 'LIBCHORUS_PATH'
 	}
+	machine = @{
+		VersionProperty = 'SilMachineVersion'
+		PdbRelativeDir  = 'bin/Debug/netstandard2.0'
+		CachePrefixes   = @('sil.machine')
+		EnvVar          = 'SILMACHINE_PATH'
+	}
 }
 
 # Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('libpalaso', 'liblcm', 'chorus')
+$PackOrder = @('libpalaso', 'liblcm', 'chorus', 'machine')
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -301,6 +317,7 @@ $switchMap = @{
 	libpalaso = @{ Enabled = [bool]$Palaso;  ExplicitPath = $PalasoPath }
 	liblcm    = @{ Enabled = [bool]$Lcm;     ExplicitPath = $LcmPath }
 	chorus    = @{ Enabled = [bool]$Chorus;   ExplicitPath = $ChorusPath }
+	machine   = @{ Enabled = [bool]$Machine;  ExplicitPath = $MachinePath }
 }
 
 # Resolve source paths: explicit path > env var (only when switch is set)
@@ -387,5 +404,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
+	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
 }
