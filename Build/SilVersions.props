@@ -12,7 +12,7 @@
 		=============================================================
 	-->
 	<PropertyGroup Label="SIL Ecosystem Versions">
-		<SilLcmVersion>11.0.0-beta0159</SilLcmVersion>
+		<SilLcmVersion>11.0.0-beta0160</SilLcmVersion>
 		<SilLibPalasoVersion>17.0.0</SilLibPalasoVersion>
 		<SilChorusVersion>6.0.0-beta0063</SilChorusVersion>
 		<SilChorusL10nsVersion>3.0.1</SilChorusL10nsVersion>
