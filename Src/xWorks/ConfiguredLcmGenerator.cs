@@ -405,8 +405,11 @@ namespace SIL.FieldWorks.XWorks
 					return settings.ContentGenerator.CreateFragment();
 				}
 
-				// Record the guid of the source entry for JumpToField.
-				settings.ConfigSource[configuration] = entry.Guid;
+				if (entry is ILexEntry)
+				{
+					// Record the guid of the source entry for JumpToField.
+					settings.ConfigSource[configuration] = entry.Guid;
+				}
 				var nodeList = BuildNodeList(new List<ConfigurableDictionaryNode>(), configuration);
 				var pieces = configuration.ReferencedOrDirectChildren
 					.Select(childNode => new ConfigFragment(childNode, GenerateContentForFieldByReflection(entry, BuildNodeList(nodeList, childNode), publicationDecorator,
@@ -2345,6 +2348,11 @@ namespace SIL.FieldWorks.XWorks
 					switch (child.FieldDescription)
 					{
 						case "ConfigTargets":
+							if (reference is ICmObject fieldObj)
+							{
+								// Record the guid of the source field for JumpToField.
+								settings.ConfigSource[child] = fieldObj.Guid;
+							}
 							var content = settings.ContentGenerator.CreateFragment();
 							foreach (var referenceListItem in referenceList)
 							{

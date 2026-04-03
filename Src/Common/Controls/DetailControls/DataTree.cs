@@ -5,11 +5,11 @@
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -28,7 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
-using SIL.LCModel.Core.Text;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -1059,14 +1059,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string fieldValue = (string)array[2];
 			ICmObject fieldObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fieldHvo);
 			// fieldObj.fieldName == fieldValue.
-			int flid = 0;
-			try
-			{
-				// Some field names are synthetic, like "DefinitionOrGloss".
-				// In this case, we will try to match the value.
-				flid = m_cache.MetaDataCacheAccessor.GetFieldId2(fieldObj.ClassID, PlainFieldName(fieldName), true);
-			}
-			catch { }
+			IFwMetaDataCache mdc = Cache.DomainDataByFlid.MetaDataCache;
+			int flid = GetFlidIfPossible(fieldObj.ClassID, PlainFieldName(fieldName), mdc as IFwMetaDataCacheManaged);
 			bool found = false;
 			if (flid != 0)
 			{
@@ -1074,7 +1068,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We don't need the value for this.
 				foreach (Slice slice in Slices)
 				{
-					if (slice.Object == fieldObj && slice.Flid == flid && !slice.IsHeaderNode)
+					if (slice.Object == fieldObj && GetFlid(slice) == flid && !slice.IsHeaderNode)
 					{
 						m_currentSliceNew = slice;
 						found = true;
@@ -1091,7 +1085,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						continue;
 					}
-					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
+					int sliceFlid = GetFlid(slice);
+					string sliceFieldName = sliceFlid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(sliceFlid);
 					if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "PrimaryLexemes" &&
 						slice.Object is ILexEntryRef ler && ler.OwningEntry == fieldObj)
 					{
@@ -1140,6 +1135,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						found = true;
 					}
+					else if (fieldName == "ReverseAbbr" && sliceFieldName == "VariantEntryTypes" &&
+							slice.Object is ILexEntryRef ler4 && ler4.EntryTypes.Contains(fieldObj))
+					{
+						found = true;
+					}
 					if (found)
 					{
 						m_currentSliceNew = slice;
@@ -1151,14 +1151,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Slice objectSlice = null;
 				Slice valueSlice = null;
-				// Try matching object and/or value.
+				// Look for the closest matching slice.
 				foreach (Slice slice in Slices)
 				{
 					if (slice.IsHeaderNode)
 					{
 						continue;
 					}
-					string sliceFieldName = slice.Flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(slice.Flid);
+					int sliceFlid = GetFlid(slice);
+					string sliceFieldName = sliceFlid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(sliceFlid);
 					if ((fieldName == "MLHeadWord" || fieldName == "HeadWordRef") && sliceFieldName == "Form" &&
 						(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object))
 					{
@@ -1167,7 +1168,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						found = true;
 						break;
 					}
-					else if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
+					// Try matching object and/or value.
+					if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
 					{
 						m_currentSliceNew = slice;
 						found = true;
@@ -1179,15 +1181,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					if (valueSlice == null && SliceMatchesValue(slice, fieldValue))
 					{
-						 valueSlice = slice;
+						valueSlice = slice;
 					}
 				}
+				// Prefer matching value over matching object.
 				if (!found && valueSlice != null)
 				{
 					m_currentSliceNew = valueSlice;
 					found = true;
 				}
-				if (!found && objectSlice != null)
+				else if (!found && objectSlice != null)
 				{
 					m_currentSliceNew = objectSlice;
 					found = true;
@@ -1211,6 +1214,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return fieldname;
 		}
 
+		private int GetFlid(Slice slice)
+		{
+			if (slice.Flid != 0)
+			{
+				return slice.Flid;
+			}
+			if (slice is ViewPropertySlice vpSlice)
+			{
+				return vpSlice.FieldId;
+			}
+			return 0;
+		}
+
 
 		/// <summary>
 		/// Does the slice's display text match the given text?
@@ -1221,7 +1237,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (slice is MultiStringSlice)
 				{
-					ITsMultiString multiString = m_cache.DomainDataByFlid.get_MultiStringProp(slice.Object.Hvo, slice.Flid);
+					ITsMultiString multiString = m_cache.DomainDataByFlid.get_MultiStringProp(slice.Object.Hvo, GetFlid(slice));
 					if (MultiStringMatchesValue(multiString, text))
 					{
 						return true;
@@ -1246,7 +1262,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else if (slice is PossibilityReferenceVectorSlice)
 				{
-					int[] hvos = SetupContents(slice.Flid, slice.Object);
+					int[] hvos = SetupContents(GetFlid(slice), slice.Object);
 					for (int i = 0; i < hvos.Length; i++)
 					{
 						ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvos[i]);
