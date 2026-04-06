@@ -35,7 +35,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test setting of trace and verify options.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void TraceOptionsTest()
 		{
 			Assert.AreEqual("", ToneParsInvokerOptions.Instance.GetOptionsString());

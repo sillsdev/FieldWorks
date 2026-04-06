@@ -59,7 +59,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test disambiguating segment in a text
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void DisambiguateTextTest()
 		{
 			//MyCache = Loader.CreateCache();

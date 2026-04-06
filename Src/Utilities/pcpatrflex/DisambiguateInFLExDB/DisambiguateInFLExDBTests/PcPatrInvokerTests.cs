@@ -27,7 +27,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test extracting of lexicon.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void PcPatrInvokerTest()
 		{
 			// Check for the existence of the PcPatr executable
@@ -128,7 +128,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test extracting of lexicon.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void PcPatrInvokerFailureTest()
 		{
 			string grammarFile = "GrammarFail.grm";
