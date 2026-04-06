@@ -40,6 +40,14 @@
     "/^(&\\s+)?git\\s+(worktree\\s+list|remote(\\s+(-v|show))?|config\\s+--get)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?git\\s+stash(\\s+(push|apply|pop|list|show|drop|branch)(\\s+[^;&|<>]+)*)?(?!.*[;&|<>])/": true,
 
+    // GitHub CLI read-only operations only
+    // Explicitly allow read verbs (view/list/status/search) and block chained/redirection patterns.
+    "/^(&\\s+)?gh\\s+(pr|issue|repo|run|release|workflow|label|milestone|project|discussion|gist)\\s+(view|list|status)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?gh\\s+search\\s+(prs|issues|repos|commits|code)\\b(?!.*[;&|<>])/i": true,
+    // gh api is approved only for non-GraphQL calls when no explicit mutating method is specified.
+    // gh api graphql always uses POST, so require manual approval for any graphql invocation.
+    "/^(&\\s+)?gh\\s+api\\b(?!.*\\bgraphql\\b)(?!.*\\s(-X|--method)\\s*(POST|PUT|PATCH|DELETE)\\b)(?!.*[;&|<>])/i": true,
+
     // Python/scripting (consolidated)
     "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?\\.[\\\\/]scripts[\\\\/](?!.*[;&|<>])/": true,
