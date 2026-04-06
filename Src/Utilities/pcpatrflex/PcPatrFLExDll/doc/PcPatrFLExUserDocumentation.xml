@@ -18,13 +18,14 @@ type="tPcPatrFLEx"
 ><affiliation
 >SIL International</affiliation
 ><emailAddress
->blackhandrew@gmail.com</emailAddress
+>andy_black@sil.org</emailAddress
 ><date
->4 August, 2022</date
+>3 April, 2026</date
 ><version
+contentType="ctKeyColor"
 >Version 1.12.0 Beta</version
 ><version
->Copyright © 2018-2022 SIL International</version
+>Copyright © 2018-2026 SIL International</version
 ><contents
 ></contents
 ></frontMatter
@@ -93,6 +94,7 @@ type="tPAWS"
 ></object
 >.</p
 ><section2
+contentType="ctKeyColor"
 id="sInstallation"
 ><secTitle
 >Installation</secTitle
@@ -736,6 +738,7 @@ type="tPcPatrFLEx"
 >:</p
 ><ol
 ><li
+contentType="ctKeyColor"
 ><object
 type="tPcPatrFLEx"
 ></object
@@ -792,8 +795,8 @@ id="sSupport"
 type="tPcPatrFLEx"
 ></object
 > or find bugs in it, please send an email to <link
-href="mailto:blackhandrew@gmail.com"
->blackhandrew@gmail.com</link
+href="mailto:andy_black@sil.org"
+>andy_black@sil.org</link
 >.</p
 ></section1
 ><backMatter
@@ -1007,6 +1010,7 @@ type="tKey"
 ></section1
 ></appendix
 ><appendix
+contentType="ctKeyColor"
 id="aGrammarAsXML"
 ><secTitle
 >Another way to edit a <object

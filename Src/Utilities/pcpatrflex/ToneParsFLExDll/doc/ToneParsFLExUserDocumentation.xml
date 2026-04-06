@@ -18,13 +18,14 @@ type="tToneParsFLEx"
 ><affiliation
 >SIL International</affiliation
 ><emailAddress
->blackhandrew@gmail.com</emailAddress
+>andy_black@sil.org</emailAddress
 ><date
->29 August, 2023</date
+>3 April, 2026</date
 ><version
+contentType="ctKeyColor"
 >Version 0.6.0 Beta</version
 ><version
->Copyright © 2019-2023 SIL International</version
+>Copyright © 2019-2026 SIL International</version
 ><contents
 ></contents
 ></frontMatter
@@ -72,7 +73,7 @@ id="nIntextCtrl"
 >When using the <object
 type="tHermitCrab"
 ></object
-> program, you still need an input control file in order to define the set of input changes.  These are normally used to remove tone markings from an input word.</p
+> program, you still need an input control file in order to define the set of input changes. These are normally used to remove tone markings from an input word.</p
 ></endnote
 > Then you can choose a text or a portion of that text and ask <object
 type="tToneParsFLEx"
@@ -122,6 +123,7 @@ type="tFLEx"
 ></object
 > and is only available on 64-bit Windows computers.</p
 ><section2
+contentType="ctKeyColor"
 id="sInstallation"
 ><secTitle
 >Installation</secTitle
@@ -306,7 +308,7 @@ type="tHermitCrab"
 > parser in <object
 type="tFLEx"
 ></object
->, you will still need to specify this file.  <object
+>, you will still need to specify this file. <object
 type="tToneParsFLEx"
 ></object
 > will read the input text changes from this file and apply them before parsing a word via <object
@@ -517,7 +519,7 @@ type="tMenuItem"
 >Choose Parser</object
 >.</p
 ></endnote
->  and then <object
+> and then <object
 type="tTonePars"
 ></object
 >. Before parsing the text, <object
@@ -595,7 +597,7 @@ type="tXAmple"
 > parser in <object
 type="tFLEx"
 ></object
->.  There is no such restriction when using the <object
+>. There is no such restriction when using the <object
 type="tHermitCrab"
 ></object
 > parser.</p
@@ -647,6 +649,7 @@ type="tToneParsFLEx"
 >:</p
 ><ol
 ><li
+contentType="ctKeyColor"
 ><object
 type="tToneParsFLEx"
 ></object
@@ -1086,8 +1089,8 @@ id="sSupport"
 type="tToneParsFLEx"
 ></object
 > or find bugs in it, please send an email to <link
-href="mailto:blackhandrew@gmail.com"
->blackhandrew@gmail.com</link
+href="mailto:andy_black@sil.org"
+>andy_black@sil.org</link
 >.</p
 ></section1
 ><backMatter
