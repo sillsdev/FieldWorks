@@ -62,7 +62,7 @@ namespace SIL.PrepFLExDBTests
 		/// <summary>
 		/// Test we get the expected results for the preparer service.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void PCPATRPreparerTest()
 		{
 			FixtureSetup();
@@ -128,7 +128,7 @@ namespace SIL.PrepFLExDBTests
 		/// <summary>
 		/// Test we get the expected results for the preparer service.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void ToneParsPreparerTest()
 		{
 			FixtureSetup();

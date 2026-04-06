@@ -66,7 +66,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test conversion of log file using hvos to using glosses.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
 		public void ToneParsHvoToGlossInLogTest()
 		{
 			var logFileWithHvos = Path.Combine(TestDataDir, "ToneParsInvokerWithHvos.log");
@@ -83,7 +83,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// <summary>
 		/// Test invoking of XAmple followed by TonePars.
 		/// </summary>
-		[Test, Ignore("Ignoring this test for timing purposes")]
+		[Test]
+		[Category("DesktopRequired")]
 		public void ToneParsInvokerTest()
 		{
 			// Check for the existence of the TonePars executable

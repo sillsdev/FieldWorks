@@ -41,10 +41,8 @@ namespace SIL.DisambiguateInFLExDBTests
 			if (String.IsNullOrEmpty(SavedTestFile))
 				SavedTestFile = kTestFileB4;
 
-			using (var temp = new IO.TempFile(Path.Combine(Path.GetTempPath(), TestFile), false))
-			{
-				TempTestFile = temp.Path;
-			}
+			using var temp = new IO.TempFile(Path.Combine(Path.GetTempPath(), TestFile), false);
+			TempTestFile = temp.Path;
 			File.Copy(Path.Combine(TestDataDir, SavedTestFile), TempTestFile, true);
 			ProjId = new ProjectId(TempTestFile);
 			FwRegistryHelper.Initialize();
