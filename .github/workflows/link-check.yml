@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Link check with lychee (non-blocking)
               uses: lycheeverse/lychee-action@v2.8.0
               with:
