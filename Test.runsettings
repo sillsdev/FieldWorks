@@ -22,8 +22,8 @@
     <TargetPlatform>x64</TargetPlatform>
     <!-- Framework version - net48 -->
     <TargetFrameworkVersion>net48</TargetFrameworkVersion>
-    <!-- Test timeout in milliseconds (10 minutes default for long-running tests) -->
-    <TestSessionTimeout>900000</TestSessionTimeout>
+	<!-- Test timeout in milliseconds (15 minutes default for long-running tests) -->
+	<TestSessionTimeout>900000</TestSessionTimeout>
     <!--
       InIsolation: Run tests in a separate process.
       This prevents native COM cleanup crashes from affecting VSTest's exit code.

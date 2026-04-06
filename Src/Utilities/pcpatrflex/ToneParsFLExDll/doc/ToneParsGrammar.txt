@@ -1,0 +1,749 @@
+TonePars Yacc Grammar
+Wed Jan 31 12:06:01 2007
+
+------------------------------------------------------------
+
+Default_Or_Rule
+	: Default
+	| Tone_Rule
+			/* Both default conditions and rules are handled by */
+			/* the grammar */
+	;
+Default
+	: Direction
+	| Iteration
+	| Feature_Op
+	| Ocp
+	| Entity
+	| Cycle_Default
+			/* Global default settings can be made for several */
+			/* of the rule parameters.  A default consists of */
+			/* the field code \default followed by one of the */
+			/* key words that indicates which default.  The */
+			/* name of the default is followed by a colon and */
+			/* then the value of the default */
+	;
+Direction
+	: 'DIRECTION' ':' direction
+			/* Default direction can be any direction */
+	;
+Iteration
+	: 'ITERATION' ':' iteration
+			/* Default iteration can be any iteration */
+	;
+Feature_Op
+	: 'mode' ':' feature_op
+			/* Default mode can be any of the feature */
+			/* operations */
+	;
+Ocp
+	: 'OCP' ':' ocp
+			/* Default OCP values can be any of the OCP */
+			/* settings */
+	;
+Entity
+	: 'domain' ':' entity
+			/* Default domain can be any entity defined by the */
+			/* user */
+	;
+Cycle_Default
+	: 'CYCLE' ':' 'none'
+			/* Indicates that there are no cyclic rules. */
+	| 'CYCLE' ':' 'domain'
+			/* Indicates that all  "lexical" rules should be */
+			/* applied within the domain(s) specified by each */
+			/* rule.  If the rules do not specify any domains, */
+			/* apply the rules from the innermost morphological */
+			/* domain node outward (presumably this will be */
+			/* root-out). */
+			/* This has not been implemented yet. (9504.27) */
+	| 'CYCLE' ':' direction
+			/* Apply "lexical" rules in the specified direction */
+			/* across the morphemes; ignore any morphological */
+			/* domain structure. */
+	;
+Tone_Rule
+	: name '(' 'optional' ')' Tone_Rule_Body
+		| name Tone_Rule_Body
+			/* Tone rules consist of a rule name followed by */
+			/* the main body of the rule.  The name can also be */
+			/* followed by an indication that the rule is to be */
+			/* treated as optional. */
+			/* The optionality code has not been implemented */
+			/* yet 9504.27 */
+	;
+name
+	: identifier			/* name of the test */
+			/* The name of the rule consists of a user-defined */
+			/* string.  The only restrictions on the name are */
+			/* those of any other identifier.  See below.  It */
+			/* is conventional to append various suffixes on */
+			/* rule names to indicate the type of rule it is. */
+			/* Tone Rules are _TR, Edge Rules are _ER, and Edge */
+			/* Conditions are _EC */
+	;
+Tone_Rule_Body
+	: Rule_Body Rule_End Condition
+		| Rule_Body Rule_End
+			/* The body of a tone rule consists of three parts: */
+			/* one or more rule actions (contained within a */
+			/* Rule Body); an indication of the end of the rule */
+			/* actions, including information about the cyclic */
+			/* application of the rule; and any conditions on */
+			/* the rule's application */
+	;
+Rule_Body
+	: Rule_Action
+	| Rule_Body ',' Rule_Action
+			/* A Rule_Body is consists of one or more rule */
+			/* actions separated by semi-colons */
+	;
+Rule_End
+	: ';' Cycle '.'
+	| '.'
+			/* The end of rule actions consists of a period or */
+			/* a comma followed by information about the */
+			/* cyclicity of the rule's application. */
+	;
+Rule_Action
+	: operation Tone Dir_Iter_Mode OCP Domain
+	| operation Tone Dir_Iter_Mode OCP Location
+	| operation Tone Dir_Iter_Mode OCP
+	| operation Tone Dir_Iter_Mode Domain
+	| operation Tone Dir_Iter_Mode Location
+	| operation Tone Dir_Iter_Mode
+	| operation Tone OCP Domain
+	| operation Tone OCP Location
+	| operation Tone OCP
+	| operation Tone Domain
+	| operation Tone Location
+	| operation Tone
+			/* The action of a rule consists of an operation to */
+			/* be performed on an indicated tone.  The */
+			/* operation can be qualified in terms of the */
+			/* direction of its application, its iteration */
+			/* options, its mode, its relation to the OCP, and */
+			/* any particular domain in which it might apply. */
+			/* All of the latter parameters are optional and */
+			/* default values will be used if they are not */
+			/* specified. */
+	| 'Set' 'edge' 'condition' 'to' identifier
+			/* A rule action can also consist of the setting of */
+			/* a word edge condition (a flag to facilitate */
+			/* tonal effects across word boundaries). */
+	;
+operation
+	: 'Associate'
+			/* Associate the indicated tone: this means to */
+			/* insert the tone into the tone tier and to link */
+			/* that tone to its appropriate tbu. */
+	| 'Delete'
+			/* Delete the indicated tone.  The tone is removed */
+			/* from the tone tier and all of its association */
+			/* lines are also erased. */
+	| 'Delink'
+			/* Delink the indicated tone: i.e. erase all of it */
+			/* association lines.  The tone is *not* removed */
+			/* from the tone tier. */
+	| 'Insert'
+			/* Insert the indicated tone into the tone tier. */
+			/* No association lines are drawn. */
+	| 'Link'
+			/* Link the indicated tone to its appropriate tbu. */
+			/* The tone is assumed to already be in the tone */
+			/* tier.  Linking inserts an association line (or */
+			/* lines). */
+	| 'Spread'
+			/* Spread the indicated tone by drawing in the */
+			/* appropriate association lines.  The direction, */
+			/* iteration, etc. of the spreading operation */
+			/* depends on the setting of the appropriate rule */
+			/* action parameters.  Spreading assumes that the */
+			/* indicated tone is linked. */
+	| 'Fill-in'
+			/* Fill-in a default tone value. */
+			/* The indicated tone value will be inserted and */
+			/* linked to every tbu that does not already have a */
+			/* tone on the indicated tone's tier.  The operation */
+			/* parameters are always: left-to-right, */
+			/* iteratively, using feature-filling mode with OCP */
+			/* ignored.  This rule will always be applied as a */
+			/* non-cyclic rule (i.e. all morphemes and domains */
+			/* will be ignored). N.B. there is no user-overide */
+			/* of these parameters or of the non-cyclicity of */
+			/* this operation.  No matter what you say for the */
+			/* parameters and no matter if you place this rule */
+			/* among the cyclic rules, it will *always* operate */
+			/* as prescribed above.  The rule is also treated as */
+			/* conditionless (i.e. any conditions on its */
+			/* application will be ignored). */
+	| 'Copy'
+			/* Copy a tone or tone pattern (as in */
+			/* reduplication).
+			/* This has not been implemented yet. (9504.27) */
+	;
+Tone
+	: 'a' tone_status identifier 'tone'
+			/* Indicates a tone with a particular value (such */
+			/* as H or M or L) which has a particular status */
+			/* (linked, right-floating, left-floating, etc.) */
+	| 'a' position tone_status identifier 'tone'
+			/* Indicates a tone with a particular value (such */
+			/* as H or M or L)  which has a particular status */
+			/* (linked, right-floating, left-floating, etc.). */
+			/* In addition, the tone must be located in the */
+			/* morpheme indicated by position.  If position is */
+			/* 'left', then it is the final tone of the */
+			/* morpheme (on the tone's tier); if position is */
+			/* 'right', then it is the initial tone of the */
+			/* morpheme (on the tone's tier). */
+	| 'a' tone_status 'tone'
+			/* Indicates a tone with unspecified value which */
+			/* has a particular status (linked, right-floating, */
+			/* left-floating, etc.). */
+	| 'a' position tone_status 'tone'
+			/* Indicates a tone with unspecified value which */
+			/* has a particular status (linked, right-floating, */
+			/* left-floating, etc.).
+			/* In addition, the tone must be located in the */
+			/* morpheme indicated by position.  If position is */
+			/* 'left', then it is the final tone of the */
+			/* morpheme (on the tone's tier); if position is */
+			/* 'right', then it is the initial tone of the */
+			/* morpheme (on the tone's tier). */
+	| 'a' identifier 'tone'
+			/* Indicates a tone with a particular value (such */
+			/* as H or M or L) irrespective of its status */
+			/* (linked, right-floating, left-floating, etc.) */
+	| 'a' position identifier 'tone'
+			/* Indicates a tone with a particular value (such */
+			/* as H or M or L) irrespective of its status */
+			/* (linked, right-floating, left-floating, etc.) */
+			/* In addition, the tone must be located in the */
+			/* morpheme indicated by position.  If position is */
+			/* 'left', then it is the final tone of the */
+			/* morpheme (on the tone's tier); if position is */
+			/* 'right', then it is the initial tone of the */
+			/* morpheme (on the tone's tier). */
+	| tone_status identifier 'tones'
+			/* Indicates tones with a particular value (such */
+			/* as H or M or L) which have a particular status */
+			/* (linked, right-floating, left-floating, etc.) */
+	| position tone_status identifier 'tones'
+			/* Indicates several tones with a particular value */
+			/*  (such as H or M or L) which have a particular   */
+			/* status (linked, right-floating, etc.). */
+			/* In addition, the tones must be located in the */
+			/* morpheme indicated by position.  */
+	| tone_status 'tones'
+			/* Indicates several tones with the specified */
+			/* status (linked, right-floating, left-floating, */
+			/* etc.).  The value (such as H or M or L) is not */
+			/* specified. */
+	| position tone_status 'tones'
+			/* Indicates several tones with the specified */
+			/* status (linked, right-floating, left-floating, */
+			/* etc.).  The value (such as H or M or L) is not */
+			/* specified. */
+			/* In addition, the tone must be located in the */
+			/* morpheme indicated by position.  */
+	| identifier 'tones'
+			/* Indicates tones with a particular value (such */
+			/* as H or M or L) irrespective of its status */
+			/* (linked, right-floating, left-floating, etc.) */
+	| position identifier 'tones'
+			/* Indicates tones with a particular value (such */
+			/* as H or M or L) irrespective of its status */
+			/* (linked, right-floating, left-floating, etc.) */
+			/* In addition, the tone musts be located in the */
+			/* morpheme indicated by position. */
+	| 'default' identifier 'tone'
+			/* Indicates the default tone value. */
+	| position 'default' identifier 'tone'
+			/* Indicates the default tone value. */
+			/* In addition, the tone must be located in the */
+			/* morpheme indicated by position.  If position is */
+			/* 'left', then it is the final tone of the */
+			/* morpheme (on the tone's tier); if position is */
+			/* 'right', then it is the initial tone of the */
+			/* morpheme (on the tone's tier). */
+	;
+Dir_Iter_Mode
+	: Dir_Iter Mode
+	| Dir_Iter
+			/* Actions can be qualified in terms of the */
+			/* direction of their applicability, how they */
+			/* iterate, and their mode.  Dir_Iter_Mode is a */
+			/* cover non-terminal symbol for these. */
+	;
+Dir_Iter
+	: direction iteration
+	| direction
+	|           iteration
+			/* Dir_Iter is a cover non-terminal for direction */
+			/* and/or for iteration. */
+	;
+direction
+	: 'right-to-left'
+	| 'rightward'
+			/* Direction is either towards the left */
+			/* (right-to-left) or towards the right */
+			/* (left-to-right). */
+	;
+iteration
+	: 'noniteratively'
+			/* The action is to apply non-iteratively; i.e. it */
+			/* applies once and only once. */
+	| 'iteratively'
+			/* The action is to apply iteratively; i.e. it */
+			/* applies to as many tbus as possible.  For */
+			/* example, if the action is to spread a H tone to */
+			/* the right non-cyclically, then the action */
+			/* attempts to spread the H tone to all the tbus in */
+			/* the word to the right.  If such an action were */
+			/* cyclic within morphemes, then the spreading */
+			/* would be to all tbus within the morpheme. */
+	| 'edge-in'
+			/* The action is to apply the tones in an edge-in */
+			/* fashion.  If direction is to the left, then */
+			/* (i) associate the rightmost tone to the right */
+			/* edge of the domain; (ii) associate the leftmost */
+			/* tone to the left edge of the domain (if */
+			/* possible); and (iii) associate all remaining */
+			/* unassociated tones right-to-left beginning to */
+			/* the immediate left of the first tone.
+			/* If direction is to the right, then (i) associate */
+			/* the leftmost tone to the left edge of the */
+			/* domain; (ii) associate the rightmost tone to the */
+			/* right edge of the domain (if possible); and */
+			/* (iii) associate all remaining unassociated tones */
+			/* left-to-right beginning to the immediate right */
+			/* of the first tone. */
+			/* This has not been implemented yet. (9504.27) */
+	| 'one-to-one'
+			/* There is a one-to-one matching between tones in */
+			/* the list of tones and tbus. */
+			/* This has not been implemented yet. (9504.27) */
+	;
+Mode
+	: 'using' feature_op 'mode'
+			/* An action can be performed in one of three */
+			/* modes: feature-adding, feature-changing, or */
+			/* feature-filling. */
+	;
+feature_op
+	: 'feature-adding'
+			/* Feature-adding mode causes the tone of the */
+			/* action to be appended to the tbu.  That is, if */
+			/* there is already a tone linked to the tbu, the */
+			/* new tone will also be linked to it. */
+	| 'feature-changing'
+			/* Feature-changing mode causes any existing tones */
+			/* on the indicated tbu to be replaced by the new */
+			/* tone. */
+	| 'feature-filling'
+			/* Feature-filling mode causes the new tone to */
+			/* *not* be linked if there are existing tones */
+			/* already on the tbu. */
+	;
+OCP
+	: 'with' ocp
+			/* Actions may be subject (or not subject) to the */
+			/* Obligatory Contour Principle (OCP) in various */
+			/* ways.  */
+			/* This has not been implemented yet. (9504.27) */
+	;
+ocp
+	: 'optional' 'OCP-blockage'
+			/* An OCP violation will optionally block the */
+			/* action from applying. */
+			/* This has not been implemented yet. (9504.27) */
+	| 'OCP-blockage'
+			/* An OCP violation will block the action from */
+			/* applying. */
+			/* This has not been implemented yet. (9504.27) */
+	| 'OCP-ignored'
+			/* The OCP is ignored (does not apply at all). */
+			/* This has not been implemented yet. (9504.27) */
+			/* (Although this is the effect currently; 9504.27.) */
+	| 'OCP-merger'
+			/* When the application of an action will result in */
+			/* an OCP violation, merge the two offending tones */
+			/* into one. */
+			/* This has not been implemented yet. (9504.27) */
+	;
+Domain
+	: 'within' edge entity
+	| 'within' entity
+			/* Actions may apply only within a particular */
+			/* domain.  In addition, the application may only */
+			/* be at the left or right edge of the domain. */
+	;
+Location
+	: 'within' edge location
+	| 'within' location
+			/* Actions may apply only within a particular */
+			/* location (tbu or syllable) with respect to word */
+			/* boundaries.  For syllables, the action may */
+			/* also be at the left or right edge of the syllable. */
+	;
+edge
+	: 'left'  'edge' 'of'
+	| 'right' 'edge' 'of'
+			/* This indicates the appropriate edge of a domain. */
+	;
+entity
+	: identifier 'domain'
+	| 'morpheme'
+	| 'word'
+			/* Entities can be either user-defined domains or */
+			/* morphemes or word boundary. */
+	;
+location
+	: word_position 'syllable' 'of' 'word'
+	| word_position 'tbu' 'of' 'word'
+			/* Locations can be either syllables or tbus, */
+			/* located with respect to a word boundary. */
+	;
+Cycle
+	: 'applies' 'cyclically' direction 'within' Domain_cycle
+			/* The rule actions apply cyclically with the */
+			/* indicated domain(s) in the indicated direction. */
+	| 'applies' 'cyclically' direction
+			/* The rule actions apply cyclically in the */
+			/* indicated direction. */
+	| 'applies' 'cyclically' 'within' Domain_cycle
+			/* The rule actions apply cyclically with the */
+			/* indicated domain(s). */
+	;
+Domain_cycle
+	: identifier 'domain'
+	| Multi_domains 'domains'
+			/* Indicates one or more domains. */
+	;
+Multi_domains
+	: Two_domains
+	| More_domains Two_domains
+			/* Indicates two or more domains. */
+	;
+Two_domains
+	: identifier 'and' identifier
+			/* Indicates two domains. */
+	;
+More_domains
+	: More_domains identifier ','
+	| identifier ','
+			/* Indicates a sequence of domains. */
+	;
+Condition
+	: 'CONDITION' ':' Condition_Body
+			/* Rules may have conditions upon their */
+			/* application. */
+	;
+Condition_Body
+	: Factor
+	| Condition_Body logop Factor
+	| 'IF' Factor 'THEN' Factor
+		| ForLeft Factor
+		| ForRight Factor
+	;
+ForLeft
+ForRight
+Factor
+	: 'NOT' Factor
+			/* A condition can be negated. */
+	| '(' Condition_Body ')'
+	| Edge_expr
+	| Morpheme_expr
+	| Prosodic_expr
+	| Segment_expr
+	| Tbu_expr
+	| Tone_expr
+	| Type_expr
+	;
+Edge_expr
+	: 'edge' 'condition' 'is' identifier
+			/* This checks to see if the indicated edge */
+			/* condition flag is set. */
+	;
+Morpheme_expr
+	: position 'category' 'is' identifier
+			/* This checks to see if the category of the */
+			/* morpheme indicated by position is the indicated */
+			/* value. */
+	| position 'category' 'is' 'member' identifier
+			/* This checks to see if the category of the */
+			/* morpheme indicated by position is one of the */
+			/* categories in the indicated category class. */
+	| position 'morphname' 'is' identifier
+			/* This checks to see if the morpheme indicated by */
+			/* position has the indicated morphname. */
+	| position 'morphname' 'is' 'member' identifier
+			/* This checks to see if the morphname of the */
+			/* morpheme indicated by position is in the */
+			/* indicated morpheme class. */
+	| position 'property' 'is' identifier
+			/* This checks to see if the morpheme indicated by */
+			/* position has the indicated property. */
+	;
+Prosodic_expr
+	: position 'syllable' 'has' onset_coda
+			/* This checks to see of the first syllable of the */
+			/* morpheme indicated by position has an onset or */
+			/* a coda. */
+	| position 'morpheme' 'is' prosodic_shape
+			/* This checks to see if the morpheme indicated by */
+			/* position has the indicated prosodic shape. */
+	;
+Segment_expr
+	: position 'segment' 'is' identifier
+			/* This checks to see if any segment of the */
+			/* indicated morpheme is the indicated segment. */
+	| position 'segment' 'is' 'member' identifier
+			/* This checks to see if any segment of the */
+			/* indicated morpheme is a member of the indicated */
+			/* string class. */
+Tbu_expr
+	: position 'tbu' 'is' Domain
+			/* This checks to see if the morpheme indicated by */
+			/* position has a tbu in the indicated domain. */
+			/* This has not been implemented yet. (9504.27) */
+	| position 'tbu' 'is' 'extrametrical'
+			/* This checks to see if the morpheme indicated by */
+			/* position has a tbu that is marked as */
+			/* extrametrical (extratonal). */
+			/* This has not been implemented yet. (9504.27) */
+	| position 'tbu' 'has' Tone_none
+			/* This checks to see if the morpheme indicated by */
+			/* position has a tbu with the indicated tone.  If */
+			/* position is initial, the first tbu of the word */
+			/* is used.  If position is final, the last tbu of */
+			/* the word is used.  If position is current or */
+			/* right, the first tbu of the indicated morpheme */
+			/* is used.  If position is left, the last tbu of */
+			/* the left morpheme is used. */
+	| position 'morpheme' 'tbu' identifier 'has' Tone_none
+			/* This checks to see if the indicated tbu of the */
+			/* morpheme indicated by position has the indicated */
+			/* tone. */
+	| position 'morpheme' 'underlying' 'tbu' identifier 'has' Tone_none
+			/* This checks to see if the indicated tbu of the */
+			/* morpheme indicated by position has the indicated */
+			/* underlying tone. */
+	| position 'morpheme' 'has' identifier tbu_tbus
+			/* This checks to see if the indicated morpheme has */
+			/* the indicated number of tbus */
+	;
+Tone_expr
+	: position 'tone' 'is' Tone_none
+			/* This checks to see if the tone indicated by */
+			/* position has the indicated tone.  If position is */
+			/* left, the tone is the immediately preceding */
+			/* tone.  If position is right, the tone is the */
+			/* immediately following tone.  For cyclic rules, */
+			/* this condition only makes sense if 'position' is */
+			/* not current. */
+	| position tone_status 'tone' 'is' Tone_none
+			/* This scans the tones in the position for a tone */
+			/* with the indicated status.  If this tone matches */
+			/* the indicated tone pattern (in TONE), then the */
+			/* condition is true.  If no such tone exists, the */
+			/* condition fails.                                */
+			/* If position is  then scanning is  through the */
+			/*    --------     ----------------  ----------- */
+			/*    initial      left-to-right     word        */
+			/*    INITIAL      left-to-right     word        */
+			/*    left         right-to-left     morpheme    */
+			/*    current      left-to-right     morpheme    */
+			/*    right        left-to-right     morpheme    */
+			/*    final        right-to-left     word        */
+			/*    FINAL        right-to-left     word        */
+			/* It is assumed that the tone status is the same */
+			/* between the "position tone_status tone" and the */
+			/* tone_status of the tone (i.e. "final linked tone */
+			/* is a floating H tone" does not make sense).  The */
+			/* tone status value of the TONE will be used.  */
+	| position 'morpheme' 'tone' 'is' Tone_none
+			/* This checks to see if the morpheme indicated by */
+			/* position has only the indicated tone. */
+	| position 'morpheme' 'underlying' 'tone' 'is' Tone_none
+			/* This checks to see if the morpheme indicated by */
+			/* position has only the indicated underlying tone. */
+	| position 'tone' 'pattern' 'is' Tone_Pattern
+			/* This checks to see if the tone indicated by */
+			/* position has the indicated tone pattern.  If */
+			/* position is left, the tone is the immediately */
+			/* preceding tone.  If position is right, the tone */
+			/* is the immediately following tone.  For cyclic */
+			/* rules, this only makes sense if 'position' is */
+			/* not 'current'. */
+	| position 'morpheme' 'tone' 'pattern' 'is' Tone_Pattern
+			/* This checks to see if the morpheme indicated by */
+			/* position has the indicated tone pattern. */
+	| position 'morpheme' 'underlying' 'tone' 'pattern' 'is' Tone_Pattern
+			/* This checks to see if the morpheme indicated by */
+			/* position has the indicated underlying tone */
+			/* pattern. */
+	| 'word' 'tone' 'pattern' 'is' Tone_Pattern
+			/* This checks to see if the word's tone pattern is */
+			/* the indicated tone pattern. */
+	;
+Type_expr
+	: position 'type' 'is' type
+			/* This checks to see if the morpheme indicated by */
+			/* position is of the indicated morpheme type */
+			/* (prefix, suffix, root, etc.) */
+	;
+Tone_none
+	: Tone
+	| 'none'
+			/* Identifies a particular tone or no tone at all. */
+	;
+Tone_Pattern
+	: Tone_Pat
+	| 'none'
+			/* Identifies a particular tone pattern, which can */
+			/* consist of no tones at all (none). */
+	;
+Tone_Pat
+	: Tone_Pat Tone
+	| Tone
+	;
+onset_coda
+	: 'onset'
+			/* The syllable has an initial consonant. */
+	| 'coda'
+			/* The syllable has a final consonant. */
+	;
+prosodic_shape
+	: 'monosyllabic'
+			/* The form has exactly one syllable. */
+	| 'disyllabic'
+			/* The form has exactly two syllables. */
+	| 'trisyllabic'
+			/* The form has exactly three syllables. */
+	| 'quadrisyllabic'
+			/* The form has exactly four syllables. */
+	| 'polysyllabic'
+			/* The form has more than one syllable. */
+	| 'monomoraic'
+			/* The form has exactly one mora. */
+	| 'bimoraic'
+			/* The form has exactly two moras. */
+	;
+logop
+	: 'AND'
+			/* Perform a logical ANDing of the two factors. */
+	| 'IFF'
+			/* Perform a logical IFF of the two factors. */
+	| 'OR'
+			/* Perform a logical ORing of the two factors. */
+	| 'XOR'
+			/* Perform a logical exclusive ORing of the two */
+			/* factors. */
+	;
+position
+	: 'current'
+			/* The item being scanned. */
+	| 'left'
+			/* The item to the left of the item being scanned. */
+	| 'lefttwo'
+			/* The item two morphemes to the left of the item */
+			/* being scanned. */
+	| 'right'
+			/* The item to the right of the item being scanned. */
+	| 'righttwo'
+			/* The item two morphemes to the right of the item */
+			/* being scanned. */
+		| 'LEFT'
+			/* The item found in a FOR_SOME_LEFT or FOR_ALL_LEFT */
+			/* scan. */
+		| 'RIGHT'
+			/* The item found in a FOR_SOME_RIGHT or */
+			/*  FOR_ALL_RIGHT scan. */
+	| 'INITIAL'
+			/* The first item in the word. */
+	| 'initial'
+			/* The first item in the word. */
+	| 'FINAL'
+			/* The last item in the word. */
+	| 'final'
+			/* The last item in the word. */
+	;
+word_position
+	: 'first'
+			/* First item in the word. */
+	| 'second'
+			/* Second item in the word. */
+	| 'third'
+			/* Third item in the word. */
+	| 'antepenultimate'
+			/* The antepenultimate item in the word. */
+	| 'penultimate'
+			/* The penultimate item in the word. */
+		| 'ultimate'
+			/* The ultimate item in the word. */
+	;
+tone_status
+	: 'boundary'
+			/* A boundary tone (one which associates to the */
+			/* edge of some domain). */
+			/* This has not been implemented yet. (9504.27) */
+	| 'delinked'
+			/* A delinked tone. */
+	| 'floating'
+			/* A floating tone (either right-floating or */
+			/* left-floating). */
+	| 'left-floating'
+			/* A floating tone that is to the immediate left of */
+			/* its tbu. */
+	| 'linked'
+			/* A linked tone. */
+	| 'melody'
+			/* Yeah, I'm wondering what this is, too. */
+	| 'right-floating'
+			/* A floating tone that is to the immediate right of */
+			/* its tbu. */
+	;
+type
+	: 'prefix'
+	| 'infix'
+	| 'root'
+	| 'suffix'
+	| 'initial'
+	| 'final'
+	;
+tbu_tbus
+	: 'tbu'
+	| 'tbus'
+	;
+
+------------------------------------------------------------
+
+Note that the following equivalencies also hold for the given lexical items:
+
+'within'             can also be 'in'
+
+'within'             can also be 'at'
+
+'rightward'          can also be 'left-to-right'
+
+'noniteratively'     can also be 'non-iteratively'
+
+'right-to-left'      can also be 'leftward'
+
+'FOR_SOME_RIGHT'     can also be 'FORSOMERIGHT'
+
+'FOR_SOME_RIGHT'     can also be 'FOR-SOME-RIGHT'
+
+'FOR_SOME_LEFT'      can also be 'FORSOMELEFT'
+
+'FOR_SOME_LEFT'      can also be 'FOR-SOME-LEFT'
+
+'FOR_ALL_RIGHT'      can also be 'FORALLRIGHT'
+
+'FOR_ALL_RIGHT'      can also be 'FOR-ALL-RIGHT'
+
+'FOR_ALL_LEFT'       can also be 'FORALLLEFT'
+
+'FOR_ALL_LEFT'       can also be 'FOR-ALL-LEFT'

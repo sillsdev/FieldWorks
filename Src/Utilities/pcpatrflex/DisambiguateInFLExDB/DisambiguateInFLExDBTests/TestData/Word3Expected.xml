@@ -1,0 +1,41 @@
+<Wordform DbRef="" Form="ndø-tá">
+<WfiAnalysis>
+<Morphs>
+<Morph>
+<MoForm DbRef="2524" Label="ndø" wordType=""/>
+<MSI DbRef="2409"/></Morph>
+<Morph>
+<MoForm DbRef="9325" Label="ta" wordType=""/>
+<MSI DbRef="2954"/></Morph>
+<Morph>
+<MoForm DbRef="735" Label="0" wordType=""/>
+<MSI DbRef="760"/></Morph>
+</Morphs>
+</WfiAnalysis>
+<WfiAnalysis>
+<Morphs>
+<Morph>
+<MoForm DbRef="3196" Label="ndø" wordType=""/>
+<MSI DbRef="343"/></Morph>
+<Morph>
+<MoForm DbRef="9325" Label="ta" wordType=""/>
+<MSI DbRef="2954"/></Morph>
+<Morph>
+<MoForm DbRef="735" Label="0" wordType=""/>
+<MSI DbRef="760"/></Morph>
+</Morphs>
+</WfiAnalysis>
+<WfiAnalysis>
+<Morphs>
+<Morph>
+<MoForm DbRef="616" Label="ndø" wordType=""/>
+<MSI DbRef="2376"/></Morph>
+<Morph>
+<MoForm DbRef="9325" Label="ta" wordType=""/>
+<MSI DbRef="2954"/></Morph>
+<Morph>
+<MoForm DbRef="735" Label="0" wordType=""/>
+<MSI DbRef="760"/></Morph>
+</Morphs>
+</WfiAnalysis>
+</Wordform>

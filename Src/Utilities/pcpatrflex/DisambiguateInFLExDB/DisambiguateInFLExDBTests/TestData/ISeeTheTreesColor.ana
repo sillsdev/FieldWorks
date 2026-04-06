@@ -1,0 +1,63 @@
+\a < pro 1sg >
+\d I
+\cat pro
+\p d3f40ba4-6fc3-4696-a648-cc6d51f6fe1e
+\fd first nominative singular
+\w I
+
+\a < v see >
+\d see
+\cat v
+\p 399dd27b-5ff1-4719-87ac-58b2f0178463
+\fd transitive
+\w see
+
+\a < art the >
+\d the
+\cat art
+\p 7841d0ff-57f0-4a2c-a689-6d109efca66e
+\fd definite
+\w the
+
+\a %2%< n tree > POSS%< n tree > PL%
+\d %2%tree-s%tree-s%
+\cat %2%n%n%
+\p %2%db269bb7-819f-43b1-85b4-84b8fcdb719b=75a58633-b02c-4c99-9ee2-fbc17b0d3d35%4172bab0-cbf7-4e8f-96b5-1ac409c99276=91a77900-98fe-45f1-ae54-7886db43d64e%
+\fd %2%-animate=poss_suffix%-animate=plural%
+\w trees
+
+\a < n color >
+\d color
+\cat n
+\p 0bcb5221-cd4b-439a-b982-d1f33ab80410
+\fd 
+\w color
+
+\a < conj and >
+\d and
+\cat conj
+\p 479aca02-ca6a-4c2a-862a-d980fbcc9a37
+\fd plural
+\w and
+
+\a < art the >
+\d the
+\cat art
+\p 7841d0ff-57f0-4a2c-a689-6d109efca66e
+\fd definite
+\w the
+
+\a < n book > =POSS
+\d book-si
+\cat n
+\p 9955e3ff-ee15-417d-b538-7c92daf5d8be=4e32d559-5502-4550-8b10-c085407ec7cc
+\fd class_other=
+\w booksi
+
+\a < n color >
+\d color
+\cat n
+\p 0bcb5221-cd4b-439a-b982-d1f33ab80410
+\fd 
+\w color
+

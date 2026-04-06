@@ -15,4 +15,9 @@
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GoldEticGuidFixer"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.SortReversalSubEntries"/>
 	<utility assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.CircularRefBreaker"/>
+	<utility assemblyPath="AllomorphGenerator.dll" class="SIL.AllomorphGenerator.FLExUtility"/>
+	<utility assemblyPath="VariantGenerator.dll" class="SIL.VariantGenerator.FLExUtility"/>
+	<utility assemblyPath="ExtractAnaFilesFromTextsDll.dll" class="SIL.PcPatrFLEx.FLExUtilityExtract"/>
+	<utility assemblyPath="ToneParsFLExDll.dll" class="SIL.ToneParsFLEx.FLExUtility"/>
+	<utility assemblyPath="PcPatrFLExDll.dll" class="SIL.PcPatrFLEx.FLExUtility"/>
 </utilityCatalog>

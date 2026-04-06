@@ -1,0 +1,49 @@
+\a %14%< pers pn.3pl.dist >%obl%< pro their >%< pers pn.3pl.dist > obl.om%< pers pn.3pl.dist > obl%< pro for them > obl%< pro for them >%< pers pn.3pl.dist > gen%< pro them >%< pro for them > obl.om%< pro them > obl%< pro their > obl.om%< pro them > obl.om%< pro their > obl%
+\d %14%آنها%0-%آنها%آنها-0%آنها-0%آنها-0%آنها%آنها-0%آنها%آنها-0%آنها-0%آنها-0%آنها-0%آنها-0%
+\cat %14%pers%%pro%pers%pers%pro%pro%pers%pro%pro%pro%pro%pro%pro%
+\p %14%be1e5474-7d34-43f4-a6b5-ba93de57f83f%073f307f-6f6a-4c20-b3ab-6cc62ab28739=%c9bba57b-bced-43c4-952f-92a031331049%68a37fdf-d6e7-40fb-a14e-6029d250b9cc=8fff41d4-86a9-4211-b290-903ea415e912%f220df1a-06c7-4ad8-b2c4-3dba076970f8=71f0639e-1d2f-4694-bb2d-d5d5defd709f%37b82e73-4b76-446c-b69f-cddf37c99194=f72f34e9-3f3f-46e4-b260-59ab3af636fe%180017cd-058b-44f0-a9b3-66a5990ba639%45258c2a-9460-4a9a-9817-a1e7de4c01f2=cbbb9930-ba9f-4d08-88fc-3b9c005748fc%45e193f0-5f85-4a09-885a-ff66a6681b42%ab248df0-6419-44fb-bee7-f9bbed3d15a5=c6d23ffb-8b95-495a-ba1b-8b9a70804ec7%d076a46f-5142-4e29-bd50-7bbcb2901210=a01b4fe0-d84b-41c0-a7da-f1a0ee950b99%26d01b83-9076-40d0-83c2-57d28589427a=d3f33dba-a803-46a2-823d-41080715d599%2a9b0748-3567-4f78-8bfb-36eed47db28c=8814709f-3e76-481a-8059-22f40d849458%cf6a9ad6-2660-4934-ace1-4e4c40c47be4=22d2dfa2-c685-4792-95e1-735dc0a5b783%
+\fd %14%-human plural third%oblique=%%-human plural third=object_case%-human plural third=oblique%=oblique%%-human plural third=genitive_suffix%%=object_case%=oblique%=object_case%=object_case%=oblique%
+\w آنها
+
+\a < n work > pl ez obl
+\d کار-ها-ی-0
+\cat n
+\p c7d68025-7bb2-4aa4-b21b-dab14cd55ebc=5e5c839a-569d-4944-963f-c09aef3c1be5=799652c1-2e4e-4f14-be29-261f6a58fc62=9bb232ec-d789-467b-9f52-f4693256d5f5
+\fd =plural=genitive_suffix=oblique
+\w کارهای
+
+\a %2%< adj difficult >%< adj heavy > attr%
+\d %2%سنگین%سنگین-0%
+\cat %2%adj%adj%
+\p %2%b1030d43-bd6b-4bce-bb7b-c830dd40c2dc%0c40f77c-693a-4f3d-bd3f-5c9e6b92845d=33ff6988-a198-44ac-877d-390fe43f271a%
+\fd %2%%=%
+\w سنگین
+
+\a < post om >
+\d را
+\cat post
+\p f3731c79-5705-4d6e-9638-9581f50b9583
+\fd makeCase object_case
+\w را
+
+\a < prep to >
+\d به
+\cat prep
+\p 85cf632a-a7fc-4110-a88e-bfa1cc1e3648
+\fd locative passive
+\w به
+
+\a %4%< pers pn.1pl >%< pers pn.1pl > obl%< pers pn.1pl > gen%< pers pn.1pl > obl.om%
+\d %4%ما%ما-0%ما-0%ما-0%
+\cat %4%pers%pers%pers%pers%
+\p %4%937eaee2-3f65-4549-91a8-5d63544803fd%5e08a011-0989-4866-ad32-ed7147db2b25=b9c68bb2-9ef3-4e8e-998b-7649c27bc324%11ad3928-6693-4df1-ae43-915b7efcd488=0e18f42b-ce93-4b01-a1ee-d4ead27b8abd%ee64fdfe-8a5c-4b44-95a6-c5cac05e8dad=34bce2d0-0110-4855-a583-c01765801a69%
+\fd %4%first plural%first plural=oblique%first plural=genitive_suffix%first plural=object_case%
+\w ما
+
+\a %21%< vcomp give.pst > 3pl%< n shout > be.prs.3pl gen%< n shout > gen be.prs.3pl%< vcomp give.pst > 3pl 1pl.obj%sbjv2 < vcomp give.pst > 3pl%sbjv2 < vcomp give.pst > 3pl 2sg.obj%sbjv2 < vcomp give.pst > 3pl 2pl.obj%< vcomp give.pst > 3pl 2pl.obj%sbjv2 < vcomp give.pst > 3pl 1pl.obj%< vcomp give.pst > 3pl 3sg.obj%< n shout > obl be.prs.3pl%< n shout > be.prs.3pl obl%sbjv2 < vcomp give.pst > 3pl 3pl.obj%sbjv2 < vcomp give.pst > 3pl 1sg.obj%< n shout > be.prs.3pl obl.om%< vcomp give.pst > 3pl 3pl.obj%< n shout > be.prs.3pl%< vcomp give.pst > 3pl 2sg.obj%< vcomp give.pst > 3pl 1sg.obj%< n shout > obl.om be.prs.3pl%sbjv2 < vcomp give.pst > 3pl 3sg.obj%
+\d %21%داد-ند%داد-ند-0%داد-0-ند%داد-ند-0%0-داد-ند%0-داد-ند-0%0-داد-ند-0%داد-ند-0%0-داد-ند-0%داد-ند-0%داد-0-ند%داد-ند-0%0-داد-ند-0%0-داد-ند-0%داد-ند-0%داد-ند-0%داد-ند%داد-ند-0%داد-ند-0%داد-0-ند%0-داد-ند-0%
+\cat %21%vcomp%n%n%vcomp%vcomp%vcomp%vcomp%vcomp%vcomp%vcomp%n%n%vcomp%vcomp%n%vcomp%n%vcomp%vcomp%n%vcomp%
+\p %21%5ef535d3-bd96-4719-823b-ad77b52a6c2a=afbe7d36-c978-4aea-9f2e-71597cc7f163%e8d20a4d-f847-40c2-9d07-f3bd81b60484=285bd15a-de2b-4eaa-ae61-6db9d3021e64=089d8ab8-9058-41af-b4cd-73c1790701e2%14cf2f12-00b5-43b5-a359-2868f8042c04=1f1ffbc5-4e10-4647-93a6-3a0b314cff88=b0356821-c12a-4ff4-b742-ab82ff8bd60c%b83b99e5-cb9f-4ca6-ad71-e4d99454255c=071082ae-0d82-4be9-8e1c-ee1f24e56901=e51d335a-8c67-4534-a177-095cf3f426f0%64e282bd-ec9a-4df9-908d-de8f24179707=c5df96af-b2a0-43c0-be80-ac722a1847f2=83849cb5-488f-4d53-b4e5-bc8322fd3f0c%363514b4-1478-46f6-b59e-305f92c6e259=99a48543-f0e6-4f59-9692-20e5b58bf807=c8548af1-d57b-4fb8-998a-67076920e289=1d40c330-86b3-4acb-8da3-82e825dc9701%d5193544-5428-4b5a-8757-15420c272cec=27b06bb5-7f02-404a-b76a-21fc6cbc8150=fae3d79c-f20a-4dd3-97ef-a2cd72154846=1a658c40-1bf2-4b36-9941-0f71a010c166%4cd874c3-a186-4cfa-ada2-72903976068a=3eab8192-6c6c-4797-a36d-862e19635d14=1e501b52-54d6-4042-83cd-7f3a21cf5c84%c24a777d-cfee-4333-9006-f318b7ab3d86=2b1f70c4-92c0-4de4-af8b-19c9db42ab0f=4836529d-1f8a-489a-b497-ea0a1ae19696=4f771e58-8fba-4b4c-880d-5ae0decdf573%091b3ed7-200f-496f-bd19-45c09b42e16f=401d653f-2248-4dad-be16-963460c74071=7164eac9-4617-496c-8b50-39b36c900ad7%0ca99c79-2955-4ead-bd1c-1cb495c937e3=045bbddd-2fdd-439d-b091-32228d8cfd31=bf707b06-d55b-467d-b3b2-e968a170edc2%e3331451-a4ed-4555-a870-1ee57cd43a7c=0d231ad7-b373-43cf-8d4a-cfd62694b891=d41e59b8-5eec-4512-addd-a361e9cf2563%75cf13e5-ca78-40bd-a1f0-1af175de98a5=6d676b37-c555-4b1c-beb1-4085c553f4f7=4236fce4-94d0-4e8e-8a53-2d6427fd3e14=76688f64-d5a9-420f-b63d-96e13f2f3cdc%8107e168-d8b9-45df-9c0c-f4117e12e9c4=941cd481-7946-49e0-91c5-770296c3dc30=9d7cb57b-b512-43dc-9524-25019a9342be=e14b9fca-1ffb-40f1-a3f7-a864e513619a%097969fe-0731-4a64-8675-7d8ec685c079=d18ec3e0-84d4-4ed8-95e7-64965a06036d=fced024b-dda9-41f4-b95e-1c95f5fd701e%7c7826d0-2b8a-4ed4-9eeb-564fe8eea751=06abe2fc-4ad0-430d-9edd-ad1f45033728=9b5ac656-4cc5-4e43-8d29-a3e9f87857a7%87c2247d-2e1c-4e71-b683-f8495ba733af=736891b8-62fb-43f1-85c6-745f3c46cf82%b2d0425b-ec81-41e9-9dec-4aabf19bff25=d7c879f0-2d36-4d67-bfcd-174865b4e906=d0c64a93-ec36-4c9a-8e0a-6ab7f6b17a90%a0ed5b4b-4e29-47d6-830a-c7276f50fc15=7e45f563-e63f-42ba-8cc9-0393d4a403c2=729ce9e7-28aa-48b5-8c19-f362221331cb%f4ada2d5-6ec0-4f67-9264-24d7f5ca5ec8=03492ae4-b77b-45b7-8c7b-de20999ba5eb=dd7ff49e-5af0-43e3-abf3-275e5cb6b0f0%5a0ea958-8b08-412e-bdd1-6f6f3c142ff6=0b64630d-ef3a-44e1-9742-0cd45fde7bdb=508bc3f0-f76e-4d46-9d06-ce1c45136403=e226e122-ad87-427e-bebd-79cdf1c637c2%
+\fd %21%past transitive=%==genitive_suffix%=genitive_suffix=%past transitive==first_object plural_object%subjunctive=past transitive=%subjunctive=past transitive==second_object singular_object%subjunctive=past transitive==plural_object second_object%past transitive==plural_object second_object%subjunctive=past transitive==first_object plural_object%past transitive==singular_object third_object%=oblique=%==oblique%subjunctive=past transitive==plural_object third_object%subjunctive=past transitive==first_object singular_object%==object_case%past transitive==plural_object third_object%=%past transitive==second_object singular_object%past transitive==first_object singular_object%=object_case=%subjunctive=past transitive==singular_object third_object%
+\w دادند
+
