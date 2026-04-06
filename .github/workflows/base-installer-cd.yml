@@ -62,14 +62,14 @@ jobs:
           echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: checkout
         with:
           ref: ${{ github.event.inputs.fw_ref || github.ref }}
           fetch-depth: 0
 
       - name: Checkout Helps
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: helps-checkout
         with:
           repository: 'sillsdev/FwHelps'
@@ -78,7 +78,7 @@ jobs:
           path: 'DistFiles/Helps'
 
       - name: Checkout PatchableInstaller
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: installer-checkout
         with:
           repository: 'sillsdev/genericinstaller'
@@ -87,7 +87,7 @@ jobs:
           path: 'PatchableInstaller'
 
       - name: Checkout Localizations
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: loc-checkout
         with:
           repository: 'sillsdev/FwLocalizations'
@@ -95,7 +95,7 @@ jobs:
           fetch-depth: 0
           path: 'Localizations'
       - name: Checkout liblcm
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         id: liblcm-checkout
         with:
           repository: 'sillsdev/liblcm'
