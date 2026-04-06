@@ -26,6 +26,14 @@
 	Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
 	Default is 'normal'.
 
+.PARAMETER StartedBy
+	Optional actor label written to worktree lock metadata (for example: user or agent).
+	Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
+
+.PARAMETER SkipWorktreeLock
+	Internal switch used when test.ps1 is invoked from build.ps1 -RunTests.
+	Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
+
 .EXAMPLE
 	.\test.ps1
 	Runs all tests in Debug configuration (builds first if needed).
@@ -55,10 +63,20 @@ param(
 	[ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
 	[string]$Verbosity = "normal",
 	[switch]$Native,
-	[switch]$SkipDependencyCheck
+	[switch]$SkipDependencyCheck,
+	[switch]$SkipWorktreeLock,
+	[ValidateSet('user', 'agent', 'unknown')]
+	[string]$StartedBy = 'unknown'
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
+	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
+	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {
+		$StartedBy = $startedByFromEnv
+	}
+}
 
 # =============================================================================
 # Import Shared Module
@@ -71,12 +89,11 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-Stop-ConflictingProcesses -IncludeOmniSharp
-
 # =============================================================================
 # Environment Setup
 # =============================================================================
 
+$worktreeLock = $null
 $cleanupArgs = @{
 	IncludeOmniSharp = $true
 	RepoRoot = $PSScriptRoot
@@ -85,7 +102,14 @@ $cleanupArgs = @{
 $testExitCode = 0
 
 try {
-	Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -Action {
+	if (-not $SkipWorktreeLock) {
+		$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks test run" -StartedBy $StartedBy
+	}
+
+	# Worktree-aware cleanup: only stop conflicting processes related to this repo root.
+	Stop-ConflictingProcesses -IncludeOmniSharp -RepoRoot $PSScriptRoot
+
+	Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
 		# Initialize VS environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
@@ -201,7 +225,10 @@ try {
 			}
 			else {
 				Write-Host "Building before running tests..." -ForegroundColor Cyan
-				& "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
+				# This nested call runs while test.ps1 already owns the same-worktree lock.
+				# Pass -SkipWorktreeLock explicitly so the build path does not depend on the
+				# current '&' invocation sharing the same thread and Windows mutex recursion.
+				& "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -SkipWorktreeLock
 				if ($LASTEXITCODE -ne 0) {
 					Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
 					$script:testExitCode = $LASTEXITCODE
@@ -417,7 +444,7 @@ try {
 		$previousEap = $ErrorActionPreference
 		$ErrorActionPreference = 'Continue'
 		try {
-			$vstestOutput = & $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
 			$script:testExitCode = $LASTEXITCODE
 		}
 		finally {
@@ -467,7 +494,7 @@ try {
 					$singleArgs += "/TestCaseFilter:$TestFilter"
 				}
 
-				$singleOutput = & $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
 				$singleExitCode = $LASTEXITCODE
 				if ($singleExitCode -ne 0 -and $overallExitCode -eq 0) {
 					$overallExitCode = $singleExitCode
@@ -492,10 +519,13 @@ try {
 			$script:testExitCode = $overallExitCode
 		}
 	}
-}
-finally {
-	Stop-ConflictingProcesses @cleanupArgs
-}
+	}
+	finally {
+		Stop-ConflictingProcesses @cleanupArgs
+		if ($worktreeLock) {
+			Exit-WorktreeLock -LockHandle $worktreeLock
+		}
+	}
 
 # =============================================================================
 # Failure Summary (always print to terminal when there are failures)
