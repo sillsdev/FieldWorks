@@ -84,6 +84,7 @@ namespace SIL.DisambiguateInFLExDBTests
 		/// Test invoking of XAmple followed by TonePars.
 		/// </summary>
 		[Test]
+		[Category("DesktopRequired")]
 		public void ToneParsInvokerTest()
 		{
 			// Check for the existence of the TonePars executable
