@@ -140,7 +140,7 @@ try {
 		# Native Tests Dispatch
 		# =============================================================================
 
-		if ($Native) {
+		#if ($Native) {
 			$cppScript = Join-Path $PSScriptRoot "Build/scripts/Invoke-CppTest.ps1"
 			if (-not (Test-Path $cppScript)) {
 				Write-Host "[ERROR] Native test script not found at $cppScript" -ForegroundColor Red
@@ -174,8 +174,8 @@ try {
 				}
 			}
 			$script:testExitCode = $overallExitCode
-			return
-		}
+		#	return
+		#}
 
 		# =============================================================================
 		# Build (unless -NoBuild)
@@ -445,7 +445,10 @@ try {
 		$ErrorActionPreference = 'Continue'
 		try {
 			& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
-			$script:testExitCode = $LASTEXITCODE
+			# Don't overwrite a non-zero exit code from native tests with a zero exit code from these tests.
+			if ($LASTEXITCODE -ne 0) {
+				$script:testExitCode = $LASTEXITCODE
+			}
 		}
 		finally {
 			$ErrorActionPreference = $previousEap
