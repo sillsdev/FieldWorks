@@ -293,5 +293,15 @@ jobs:
           path: |
             ./*.log
             ./*.binlog
+            ./Output/**/*.log
             ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
             ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040
+        with:
+          files: 'Output/**/*.trx'
+          check_name: NUnit Tests
+          comment_mode: ${{ github.event_name == 'pull_request' && 'always' || 'off' }}
+          job_summary: true
+          fail_on: test failures
