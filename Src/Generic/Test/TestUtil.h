@@ -21,6 +21,10 @@ namespace TestGenericLib
 {
 	class TestUtil : public unitpp::suite
 	{
+		void testFailure()
+		{
+			unitpp::assert_fail("Oh, what fun it is to type in a one-line failing test, hey!");
+		}
 		void testGetPrimeNear()
 		{
 			uint u;
