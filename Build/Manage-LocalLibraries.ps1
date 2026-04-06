@@ -125,6 +125,11 @@ $LibraryConfig = @{
 		PdbRelativeDir  = 'bin/Debug/netstandard2.0'
 		CachePrefixes   = @('sil.machine')
 		EnvVar          = 'SILMACHINE_PATH'
+		# Pack only the projects FieldWorks uses (avoids native CMake deps)
+		PackProjects    = @(
+			'src/SIL.Machine/SIL.Machine.csproj',
+			'src/SIL.Machine.Morphology.HermitCrab/SIL.Machine.Morphology.HermitCrab.csproj'
+		)
 	}
 }
 
@@ -222,18 +227,28 @@ function Invoke-PackLibrary {
 	$packStart = Get-Date
 
 	Write-Host "Running dotnet pack..." -ForegroundColor Cyan
-	$packArgs = @(
-		'pack'
-		$SourceDir
+	$commonPackArgs = @(
 		'-c', 'Debug'
 		"-p:IncludeSymbols=true"
 		"-p:SymbolPackageFormat=snupkg"
 		'--output', $LocalRepo
 	)
 
-	& dotnet @packArgs
-	if ($LASTEXITCODE -ne 0) {
-		throw "dotnet pack failed for $LibName."
+	$projects = $cfg.PackProjects
+	if ($projects -and $projects.Count -gt 0) {
+		foreach ($proj in $projects) {
+			$projPath = Join-Path $SourceDir $proj
+			& dotnet pack $projPath @commonPackArgs
+			if ($LASTEXITCODE -ne 0) {
+				throw "dotnet pack failed for $LibName ($proj)."
+			}
+		}
+	}
+	else {
+		& dotnet pack $SourceDir @commonPackArgs
+		if ($LASTEXITCODE -ne 0) {
+			throw "dotnet pack failed for $LibName."
+		}
 	}
 
 	# Find .nupkg files created after pack started (exclude .snupkg and test pkgs)
