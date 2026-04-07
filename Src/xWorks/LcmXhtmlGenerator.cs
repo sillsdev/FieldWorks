@@ -40,7 +40,6 @@ namespace SIL.FieldWorks.XWorks
 		public const int EntriesPerPage = 1000;
 #endif
 
-
 		/// <summary>
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
@@ -570,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 			if (settings != null && (settings.IsWebExport || settings.IsXhtmlExport))
 				return;
 			xw.WriteAttributeString("nodeId", $"{config.GetNodeId()}");
-			if (settings.ConfigSource.TryGetValue(config, out Guid guid))
+			if (settings.WriteConfigSource && settings.ConfigSource.TryGetValue(config, out Guid guid))
 			{
 				// Write out the source guid for JumpToField to use.
 				xw.WriteAttributeString("sourceGuid", $"{guid}");

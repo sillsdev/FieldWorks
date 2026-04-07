@@ -600,6 +600,7 @@ namespace SIL.FieldWorks.XWorks
 				// could contain different data for unique names. The unique names can be generated
 				// in different orders.
 				displayXhtmlSettings.StylesGenerator = settings.StylesGenerator;
+				displayXhtmlSettings.WriteConfigSource = false;
 
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();

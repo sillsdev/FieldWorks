@@ -3517,6 +3517,7 @@ namespace SIL.FieldWorks.XWorks
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
 			public Dictionary<ConfigurableDictionaryNode, Guid> ConfigSource = new Dictionary<ConfigurableDictionaryNode, Guid>();
+			public bool WriteConfigSource = true;
 
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
