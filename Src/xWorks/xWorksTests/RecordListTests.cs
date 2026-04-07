@@ -253,6 +253,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Reload_ValidItemsRemovedBeforeCurrentSelection_PreservesCurrentObject()
+		{
+			var allEntries = m_revIndex.AllEntries.ToList();
+			allEntries.AddRange(AddSomeReversalEntries(4));
+			var originalHvos = allEntries.Select(entry => entry.Hvo).ToArray();
+			var expectedCurrentHvo = originalHvos[3];
+
+			using (var list = new VirtualRecordListForTests())
+			{
+				list.Initialize(Cache, m_mediator, m_propertyTable, m_revIndex, originalHvos);
+				list.CurrentIndex = 3;
+				list.RemoveBackingItemAt(1);
+
+				list.ReloadList(1, 0, 1);
+
+				Assert.That(list.CurrentIndex, Is.EqualTo(2),
+					"Removing a row before the current one should shift the current index to keep the same selected object");
+				Assert.That(list.CurrentObjectHvo, Is.EqualTo(expectedCurrentHvo),
+					"The same logical object should remain current after earlier rows are filtered out");
+				Assert.That(list.TrackedCurrentHvo, Is.EqualTo(expectedCurrentHvo),
+					"Internal current-object tracking should stay aligned with the visible current object");
+			}
+		}
+
+		[Test]
 		public void ListLoadingSuppressed()
 		{
 			Assert.That(m_list.RequestedLoadWhileSuppressed, Is.True, "Lists start with a pending reload");
@@ -356,6 +381,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public int[] SortedObjectHvos => SortedObjects.Cast<ManyOnePathSortItem>().Select(item => item.RootObjectHvo).ToArray();
+
+		public int TrackedCurrentHvo => m_hvoCurrent;
 
 		public void RemoveBackingItemAt(int index)
 		{

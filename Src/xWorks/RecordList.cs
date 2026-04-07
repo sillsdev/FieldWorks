@@ -2213,6 +2213,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ClearOutDeletedOrRemovedItems(int currentVectorSize)
 		{
+			var currentIndex = CurrentIndex;
 			var remainingRootObjectCounts = new Dictionary<int, int>(currentVectorSize);
 			for (var i = 0; i < currentVectorSize; i++)
 			{
@@ -2229,6 +2230,8 @@ namespace SIL.FieldWorks.XWorks
 				if (IsInvalidItem(item))
 				{
 					SortedObjects.RemoveAt(i);
+					if (i < currentIndex || SortedObjects.Count <= currentIndex)
+						currentIndex--;
 					continue;
 				}
 
@@ -2236,12 +2239,21 @@ namespace SIL.FieldWorks.XWorks
 				if (!remainingRootObjectCounts.TryGetValue(rootObjectHvo, out var remainingCount) || remainingCount == 0)
 				{
 					SortedObjects.RemoveAt(i);
+					if (i < currentIndex || SortedObjects.Count <= currentIndex)
+						currentIndex--;
 					continue;
 				}
 
 				remainingRootObjectCounts[rootObjectHvo] = remainingCount - 1;
 				i++;
 			}
+
+			if (SortedObjects.Count == 0)
+				currentIndex = -1;
+			else if (currentIndex >= SortedObjects.Count)
+				currentIndex = SortedObjects.Count - 1;
+
+			CurrentIndex = currentIndex;
 		}
 
 		private void ClearOutInvalidItems()
