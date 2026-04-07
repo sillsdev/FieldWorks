@@ -308,3 +308,4 @@ jobs:
           path: |
             ./*.log
             ./*.binlog
+            ./Output/**/*.log

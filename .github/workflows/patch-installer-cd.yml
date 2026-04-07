@@ -293,5 +293,6 @@ jobs:
           path: |
             ./*.log
             ./*.binlog
+            ./Output/**/*.log
             ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
             ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs
