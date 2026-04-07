@@ -192,17 +192,25 @@ namespace SIL.DisambiguateInFLExDBTests
 
 		private static string NormalizeViaIndex(string input, string match, string change)
 		{
-			// I tried to use regular expressions but never got them to match...
-			int iAppData = input.IndexOf(match);
-			if (iAppData != -1)
+			int startIndex = 0;
+			while (startIndex < input.Length)
 			{
-				int iColon = input.IndexOf(":");
-				if (iColon != -1)
+				int matchIndex = input.IndexOf(match, startIndex, StringComparison.Ordinal);
+				if (matchIndex == -1)
 				{
-					iColon--; // skip the drive letter, too
-					string appdataPath = input.Substring(iColon, iAppData - iColon);
-					input = input.Replace(appdataPath, change);
+					break;
 				}
+
+				int colonIndex = input.LastIndexOf(':', matchIndex);
+				if (colonIndex == -1)
+				{
+					startIndex = matchIndex + match.Length;
+					continue;
+				}
+
+				int pathPrefixStart = Math.Max(0, colonIndex - 1);
+				input = input.Remove(pathPrefixStart, matchIndex - pathPrefixStart).Insert(pathPrefixStart, change);
+				startIndex = pathPrefixStart + change.Length + match.Length;
 			}
 			return input;
 		}

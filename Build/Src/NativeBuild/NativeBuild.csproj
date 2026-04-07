@@ -43,7 +43,10 @@
   </PropertyGroup>
   <!-- Reference to sil.lcmodel.core package for contentFiles. -->
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" GeneratePathProperty="true">
+    <PackageReference
+      Include="SIL.LCModel.Core"
+      Version="$(SilLcmVersion)"
+      GeneratePathProperty="true">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

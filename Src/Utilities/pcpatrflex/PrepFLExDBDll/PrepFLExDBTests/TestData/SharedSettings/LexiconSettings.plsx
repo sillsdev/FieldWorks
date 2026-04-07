@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ProjectLexiconSettings>
+  <WritingSystems>
+    <WritingSystem id="en">
+      <Abbreviation>Eng</Abbreviation>
+      <LanguageName>English</LanguageName>
+      <SystemCollation />
+    </WritingSystem>
+    <WritingSystem id="nlv">
+      <Abbreviation>Ori</Abbreviation>
+      <LanguageName>Orizaba Nahuatl</LanguageName>
+    </WritingSystem>
+  </WritingSystems>
+</ProjectLexiconSettings>

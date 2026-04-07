@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Normal", null, m_entry, false);
 			var template = m_dtree.GetTemplateForObjLayout(m_entry, "Normal", null);
-			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
+			var expected = "<layout class=\"LexEntry\" type=\"detail\" name=\"Normal\"><part ref=\"CitationForm\" /><part ref=\"Senses\" visibility=\"ifdata\" param=\"GlossSn\" expansion=\"expanded\" /><part ref=\"_CustomFieldPlaceholder\" customFields=\"here\" /><part ref=\"Custom\" param=\"testField\" /></layout>";
 			Assert.That(expected, Is.EqualTo(template.OuterXml), "Exactly one part with a _CustomFieldPlaceholder ref attribute should exist.");
 		}
 
