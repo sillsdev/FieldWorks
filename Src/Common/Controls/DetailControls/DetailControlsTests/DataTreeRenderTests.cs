@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class DataTreeRenderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private const string DeterministicRenderFontFamily = "Segoe UI";
+		private const string UpdateBaselinesEnvVar = "FW_UPDATE_RENDER_BASELINES";
 		private const int MaxAllowedPixelDifferences = 4;
 		private ILexEntry m_entry;
 
@@ -397,6 +398,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string receivedPath = Path.Combine(directory, $"{name}.received.png");
 			string diffPath = Path.Combine(directory, $"{name}.diff.png");
 
+			RefreshVerifiedBaselineIfRequested(bitmap, verifiedPath);
+
 			if (File.Exists(diffPath))
 				File.Delete(diffPath);
 
@@ -428,6 +431,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 
 			await Task.CompletedTask;
+		}
+
+		private static void RefreshVerifiedBaselineIfRequested(Bitmap bitmap, string verifiedPath)
+		{
+			if (!string.Equals(Environment.GetEnvironmentVariable(UpdateBaselinesEnvVar), "1", StringComparison.Ordinal))
+				return;
+
+			bitmap.Save(verifiedPath, ImageFormat.Png);
 		}
 
 		private static void DeleteIfPresent(string path)

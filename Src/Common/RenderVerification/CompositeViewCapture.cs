@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
@@ -19,7 +20,10 @@ namespace SIL.FieldWorks.Common.RenderVerification
 	/// splitters, section headers) but produces black rectangles for Views engine content
 	/// inside <see cref="ViewSlice"/> controls. The fix is a two-pass approach:
 	/// <list type="number">
-	/// <item>Capture the entire DataTree via <c>DrawToBitmap</c> (gets all WinForms chrome)</item>
+	/// <item>Capture each slice locally via <c>DrawToBitmap</c> and composite it into the
+	///   full bitmap (gets per-slice WinForms chrome without relying on giant control coordinates)</item>
+	/// <item>Repaint DataTree-owned separator rules directly onto the bitmap, since those
+	///   thin gray lines are drawn by the parent control rather than by each slice</item>
 	/// <item>For each <see cref="ViewSlice"/>, render its <c>RootBox</c> via
 	///   <c>VwDrawRootBuffered</c> into the correct region, overlaying the black rectangles</item>
 	/// </list>
@@ -81,20 +85,21 @@ namespace SIL.FieldWorks.Common.RenderVerification
 				dataTree.ClientSize = new Size(width, totalHeight);
 				dataTree.PerformLayout();
 
-				// Pass 1: Capture WinForms chrome via DrawToBitmap.
-				// Pre-fill with white so areas beyond slice content (and the
-				// DataTree's grey SystemColors.Control background) render as
-				// white, producing deterministic output regardless of system
-				// theme or control background color.
+				// Pass 1: Capture WinForms chrome slice-by-slice.
+				// A single DrawToBitmap over a very tall DataTree can drop left-side
+				// labels and separator lines for slices near the bottom of the image.
+				// Compositing each slice locally avoids that large-coordinate WinForms
+				// capture failure while preserving the existing root-box overlay pass.
 				var bitmap = new Bitmap(width, totalHeight, PixelFormat.Format32bppArgb);
-				using (var g = Graphics.FromImage(bitmap))
-				{
-					g.Clear(Color.White);
-				}
-				dataTree.DrawToBitmap(bitmap, new Rectangle(0, 0, width, totalHeight));
+				CaptureSliceChrome(dataTree, bitmap);
 
 				// Pass 2: Overlay Views engine content for each ViewSlice
 				OverlayViewSliceContent(dataTree, bitmap);
+
+				// Pass 3: Repaint parent-drawn separator rules.
+				// These thin gray lines come from DataTree.OnPaint rather than from the
+				// slice controls, so the slice-by-slice pass above will not capture them.
+				PaintDataTreeSeparators(dataTree, bitmap, width, totalHeight);
 
 				return bitmap;
 			}
@@ -191,6 +196,90 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			// After making all slices real and visible, run a full layout pass to
 			// reposition slices correctly with their updated heights.
 			dataTree.PerformLayout();
+		}
+
+		/// <summary>
+		/// Captures WinForms chrome one slice at a time and composites the result into the
+		/// final bitmap. This avoids whole-control <c>DrawToBitmap</c> failures when slice
+		/// coordinates become very large in tall DataTree captures.
+		/// </summary>
+		private static void CaptureSliceChrome(DataTree dataTree, Bitmap bitmap)
+		{
+			using (var mainGraphics = Graphics.FromImage(bitmap))
+			{
+				mainGraphics.Clear(Color.White);
+
+				if (dataTree.Slices == null)
+					return;
+
+				foreach (Slice slice in dataTree.Slices)
+				{
+					if (slice == null)
+						continue;
+
+					try
+					{
+						CaptureSingleSliceChrome(slice, dataTree, mainGraphics);
+					}
+					catch (Exception ex)
+					{
+						Trace.TraceWarning(
+							$"[CompositeViewCapture] Failed to capture slice chrome '{slice.Label}': {ex.Message}");
+					}
+				}
+			}
+		}
+
+		private static void CaptureSingleSliceChrome(Slice slice, DataTree dataTree, Graphics mainGraphics)
+		{
+			var sliceRect = GetControlRectRelativeTo(slice, dataTree);
+			if (sliceRect.Width <= 0 || sliceRect.Height <= 0)
+				return;
+
+			using (var sliceBitmap = new Bitmap(sliceRect.Width, sliceRect.Height, PixelFormat.Format32bppArgb))
+			{
+				using (var sliceGraphics = Graphics.FromImage(sliceBitmap))
+				{
+					sliceGraphics.Clear(Color.White);
+				}
+
+				slice.DrawToBitmap(sliceBitmap, new Rectangle(0, 0, sliceRect.Width, sliceRect.Height));
+				mainGraphics.DrawImageUnscaled(sliceBitmap, sliceRect.Location);
+			}
+		}
+
+		private static void PaintDataTreeSeparators(DataTree dataTree, Bitmap bitmap, int width, int totalHeight)
+		{
+			const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
+			var paintLinesMethod = typeof(DataTree).GetMethod("PaintLinesBetweenSlices", privateInstance);
+			if (paintLinesMethod == null)
+			{
+				Trace.TraceWarning("[CompositeViewCapture] Could not locate DataTree.PaintLinesBetweenSlices.");
+				return;
+			}
+
+			using (var graphics = Graphics.FromImage(bitmap))
+			{
+				try
+				{
+					paintLinesMethod.Invoke(dataTree, new object[]
+					{
+						graphics,
+						new Rectangle(0, 0, width, totalHeight),
+						width,
+					});
+				}
+				catch (TargetInvocationException ex)
+				{
+					Trace.TraceWarning(
+						$"[CompositeViewCapture] Failed to paint DataTree separators: {ex.InnerException?.Message ?? ex.Message}");
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceWarning(
+						$"[CompositeViewCapture] Failed to paint DataTree separators: {ex.Message}");
+				}
+			}
 		}
 
 		/// <summary>
