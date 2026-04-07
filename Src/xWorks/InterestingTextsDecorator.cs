@@ -76,8 +76,12 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			// If this decorator gets queried again after notifications were temporarily removed,
-			// drop any cached HVOs and reattach so we don't keep serving stale text lists.
+			// drop any cached HVOs so we don't keep serving stale text lists. Only reattach
+			// when we still have active notifiees; otherwise preserve the unsubscribed state.
 			m_interestingHvos = null;
+			if (m_notifieeCount <= 0)
+				return;
+
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 			m_isSubscribedToInterestingTextsChanged = true;
 		}

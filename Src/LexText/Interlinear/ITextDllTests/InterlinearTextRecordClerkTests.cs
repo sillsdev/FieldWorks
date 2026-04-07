@@ -169,6 +169,44 @@ namespace SIL.FieldWorks.IText
 				"After dropping and later reusing notifications, the decorator should not keep serving stale cached texts");
 		}
 
+		[Test]
+		public void InterestingTextsDecorator_QueryWithoutNotifiees_DoesNotResubscribe()
+		{
+			var texts = CreateInterlinearTexts(5);
+			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
+			interestingTexts.SetInterestingTexts(texts);
+
+			var decorator = new InterestingTextsDecorator(Cache.MainCacheAccessor as ISilDataAccessManaged, null, Cache.ServiceLocator);
+			decorator.SetMediator(m_mediator, m_propertyTable);
+			decorator.SetRootHvo(Cache.LangProject.Hvo);
+
+			var dummyNotifiee = new DummyNotifyChange();
+			decorator.AddNotification(dummyNotifiee);
+			Assert.That(decorator.VecProp(Cache.LangProject.Hvo, InterestingTextsFlid),
+				Is.EqualTo(texts.Select(text => text.Hvo).ToArray()),
+				"Precondition: the decorator should serve the initial interesting texts");
+
+			decorator.RemoveNotification(dummyNotifiee);
+			Assert.That(GetInterestingTextsChangedSubscriptionFlag(decorator), Is.False,
+				"After the last notifiee is removed, the decorator should drop its InterestingTextsChanged subscription");
+
+			var keptTexts = texts.Take(2).ToArray();
+			interestingTexts.SetInterestingTexts(keptTexts);
+
+			Assert.That(decorator.VecProp(Cache.LangProject.Hvo, InterestingTextsFlid),
+				Is.EqualTo(keptTexts.Select(text => text.Hvo).ToArray()),
+				"A direct query should still refresh the cached texts even when there are no active notifiees");
+			Assert.That(GetInterestingTextsChangedSubscriptionFlag(decorator), Is.False,
+				"Refreshing the cache without notifiees should not reattach the InterestingTextsChanged event handler");
+		}
+
+		private static bool GetInterestingTextsChangedSubscriptionFlag(InterestingTextsDecorator decorator)
+		{
+			return (bool)typeof(InterestingTextsDecorator)
+				.GetField("m_isSubscribedToInterestingTextsChanged", BindingFlags.Instance | BindingFlags.NonPublic)
+				.GetValue(decorator);
+		}
+
 		private List<IStText> CreateInterlinearTexts(int count)
 		{
 			var createdTexts = new List<IStText>(count);
