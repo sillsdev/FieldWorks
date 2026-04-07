@@ -36,7 +36,7 @@ jobs:
     # add a comment on the PR if the commit message linting failed
     - name: Comment on PR
       if: failure()
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       with:
         header: Commit Comment
         message: |
@@ -44,7 +44,7 @@ jobs:
           ${{ env.check_results }}
     - name: Clear PR Comment
       if: success()
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       with:
         header: Commit Comment
         hide: true
