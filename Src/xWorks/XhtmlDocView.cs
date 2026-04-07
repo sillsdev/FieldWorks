@@ -657,6 +657,11 @@ namespace SIL.FieldWorks.XWorks
 			// Find the field object that contains fieldElement.
 			ICmObject fieldObj = null;
 			string fieldName = null;
+			if (fieldElement.HasAttribute("class") && fieldElement.GetAttribute("class") == "semanticdomains")
+			{
+				// sourceGuid is stored on the first child.
+				fieldElement = (GeckoElement)fieldElement.FirstChild;
+			}
 			for (GeckoElement element = fieldElement; element != null; element = element.ParentElement)
 			{
 				if (element.HasAttribute("sourceGuid"))

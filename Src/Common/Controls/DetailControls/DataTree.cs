@@ -1055,30 +1055,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var array = (object[])arguments;
 			int fieldHvo = (int)array[0];
-			string fieldName = (string)array[1];
+			string fieldName = PlainFieldName((string)array[1]);
 			string fieldValue = (string)array[2];
 			ICmObject fieldObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fieldHvo);
 			// fieldObj.fieldName == fieldValue.
-			IFwMetaDataCache mdc = Cache.DomainDataByFlid.MetaDataCache;
-			int flid = GetFlidIfPossible(fieldObj.ClassID, PlainFieldName(fieldName), mdc as IFwMetaDataCacheManaged);
 			bool found = false;
-			if (flid != 0)
+			if (!String.IsNullOrEmpty(fieldName))
 			{
-				// Try matching object and field id first.
-				// We don't need the value for this.
-				foreach (Slice slice in Slices)
-				{
-					if (slice.Object == fieldObj && GetFlid(slice) == flid && !slice.IsHeaderNode)
-					{
-						m_currentSliceNew = slice;
-						found = true;
-						break;
-					}
-				}
-			}
-			if (!found)
-			{
-				// Look for special cases.
+				// Try matching object and field first.
 				foreach (Slice slice in Slices)
 				{
 					if (slice.IsHeaderNode)
@@ -1087,7 +1071,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 					int sliceFlid = GetFlid(slice);
 					string sliceFieldName = sliceFlid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(sliceFlid);
-					if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "PrimaryLexemes" &&
+					if (sliceFieldName == fieldName && slice.Object == fieldObj)
+					{
+						found = true;
+					}
+					// Look for special cases.
+					else if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "PrimaryLexemes" &&
 						slice.Object is ILexEntryRef ler && ler.OwningEntry == fieldObj)
 					{
 						found = true;
