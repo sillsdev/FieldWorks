@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.XWorks
 	public class InterestingTextsDecorator : DomainDataByFlidDecoratorBase, ISetMediator, ISetRootHvo
 	{
 		private InterestingTextList m_interestingTexts;
+		private bool m_isSubscribedToInterestingTextsChanged;
 		private ILcmServiceLocator m_services;
 		private int m_notifieeCount;
 		// The object our property belongs to. We consider any object for which we are asked our special
@@ -43,7 +44,11 @@ namespace SIL.FieldWorks.XWorks
 			m_notifieeCount--;
 			if (m_notifieeCount <= 0 && m_interestingTexts != null)
 			{
-				m_interestingTexts.InterestingTextsChanged -= m_interestingTexts_InterestingTextsChanged;
+				if (m_isSubscribedToInterestingTextsChanged)
+				{
+					m_interestingTexts.InterestingTextsChanged -= m_interestingTexts_InterestingTextsChanged;
+					m_isSubscribedToInterestingTextsChanged = false;
+				}
 				// Also we need to make sure the InterestingTextsList doesn't do propchanges for us anymore
 				// N.B. This avoids LT-12437, but we are assuming that this only gets triggered during Refresh or
 				// shutting down the main window, when all the Clerks are being disposed.
@@ -62,7 +67,23 @@ namespace SIL.FieldWorks.XWorks
 		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
 		{
 			m_interestingTexts = GetInterestingTextList(mediator, propertyTable, m_services);
+			EnsureInterestingTextsSubscription();
+		}
+
+		private void EnsureInterestingTextsSubscription()
+		{
+			if (m_interestingTexts == null || m_isSubscribedToInterestingTextsChanged)
+				return;
+
+			// If this decorator gets queried again after notifications were temporarily removed,
+			// drop any cached HVOs so we don't keep serving stale text lists. Only reattach
+			// when we still have active notifiees; otherwise preserve the unsubscribed state.
+			m_interestingHvos = null;
+			if (m_notifieeCount <= 0)
+				return;
+
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
+			m_isSubscribedToInterestingTextsChanged = true;
 		}
 
 		static string InterestingTextKey = "InterestingTexts";
@@ -98,6 +119,7 @@ namespace SIL.FieldWorks.XWorks
 
 		int[] GetInterestingTexts()
 		{
+			EnsureInterestingTextsSubscription();
 			if (m_interestingHvos == null)
 			{
 				//if (m_interestingTexts == null || m_interestingTexts.InterestingTexts.Count() == 0)

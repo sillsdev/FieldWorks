@@ -2,14 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.LexEd;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
+using XCore;
 
 // ReSharper disable PossibleNullReferenceException (tests are expected to pass; ReSharper warnings are ugly)
 namespace SIL.FieldWorks.XWorks
@@ -225,6 +230,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Reload_ValidItemsRemovedFromVirtualList_RemovesStaleItems()
+		{
+			var allEntries = m_revIndex.AllEntries.ToList();
+			allEntries.AddRange(AddSomeReversalEntries(4));
+			var originalHvos = allEntries.Select(entry => entry.Hvo).ToArray();
+			var expectedHvos = originalHvos.Where((hvo, index) => index != 2).ToArray();
+
+			using (var list = new VirtualRecordListForTests())
+			{
+				list.Initialize(Cache, m_mediator, m_propertyTable, m_revIndex, originalHvos);
+				list.RemoveBackingItemAt(2);
+
+				Assert.That(Cache.ServiceLocator.IsValidObjectId(originalHvos[2]), Is.True,
+					"The removed object must stay valid to reproduce the virtual-list filtering bug");
+
+				list.ReloadList(2, 0, 1);
+
+				Assert.That(list.SortedObjectHvos, Is.EqualTo(expectedHvos),
+					"Removing a few valid objects from a virtual list should drop them from SortedObjects");
+			}
+		}
+
+		[Test]
+		public void Reload_ValidItemsRemovedBeforeCurrentSelection_PreservesCurrentObject()
+		{
+			var allEntries = m_revIndex.AllEntries.ToList();
+			allEntries.AddRange(AddSomeReversalEntries(4));
+			var originalHvos = allEntries.Select(entry => entry.Hvo).ToArray();
+			var expectedCurrentHvo = originalHvos[3];
+
+			using (var list = new VirtualRecordListForTests())
+			{
+				list.Initialize(Cache, m_mediator, m_propertyTable, m_revIndex, originalHvos);
+				list.CurrentIndex = 3;
+				list.RemoveBackingItemAt(1);
+
+				list.ReloadList(1, 0, 1);
+
+				Assert.That(list.CurrentIndex, Is.EqualTo(2),
+					"Removing a row before the current one should shift the current index to keep the same selected object");
+				Assert.That(list.CurrentObjectHvo, Is.EqualTo(expectedCurrentHvo),
+					"The same logical object should remain current after earlier rows are filtered out");
+				Assert.That(list.TrackedCurrentHvo, Is.EqualTo(expectedCurrentHvo),
+					"Internal current-object tracking should stay aligned with the visible current object");
+			}
+		}
+
+		[Test]
 		public void ListLoadingSuppressed()
 		{
 			Assert.That(m_list.RequestedLoadWhileSuppressed, Is.True, "Lists start with a pending reload");
@@ -310,6 +363,52 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ReloadCallCount++;
 			base.ReloadList();
+		}
+	}
+
+	public class VirtualRecordListForTests : RecordList
+	{
+		private const int FakeRecordListFlid = 89999956;
+
+		public void Initialize(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ICmObject owningObject, int[] hvos)
+		{
+			BaseInit(cache, mediator, propertyTable, null);
+			m_owningObject = owningObject;
+			m_flid = FakeRecordListFlid;
+			((ObjectListPublisher)VirtualListPublisher).CacheVecProp(owningObject.Hvo, hvos, false);
+			SortedObjects = MakeSortedObjects(hvos);
+			CurrentIndex = 0;
+		}
+
+		public int[] SortedObjectHvos => SortedObjects.Cast<ManyOnePathSortItem>().Select(item => item.RootObjectHvo).ToArray();
+
+		public int TrackedCurrentHvo => m_hvoCurrent;
+
+		public void RemoveBackingItemAt(int index)
+		{
+			((ObjectListPublisher)VirtualListPublisher).Replace(m_owningObject.Hvo, index, new int[0], 1);
+		}
+
+		public override void ReloadList()
+		{
+			var hvos = VirtualListPublisher.VecProp(m_owningObject.Hvo, m_flid);
+			SortedObjects = MakeSortedObjects(hvos);
+			if (SortedObjects.Count == 0)
+			{
+				CurrentIndex = -1;
+				return;
+			}
+
+			if (CurrentIndex < 0 || CurrentIndex >= SortedObjects.Count)
+				CurrentIndex = SortedObjects.Count - 1;
+		}
+
+		private static ArrayList MakeSortedObjects(int[] hvos)
+		{
+			var sortedObjects = new ArrayList(hvos.Length);
+			foreach (var hvo in hvos)
+				sortedObjects.Add(new ManyOnePathSortItem(hvo, null, null));
+			return sortedObjects;
 		}
 	}
 }

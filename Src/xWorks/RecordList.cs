@@ -2202,13 +2202,58 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				// If we are deleting less than half of the list, this may be more efficient than reloading (testing performance is proving difficult)
 				case 0 when cvDel > 0 && cvDel * 2 < cList:
-					ClearOutInvalidItems();
+					ClearOutDeletedOrRemovedItems(cList);
 					DoneReload?.Invoke(this, EventArgs.Empty);
 					return;
 				default:
 					ReloadList();
 					return;
 			}
+		}
+
+		private void ClearOutDeletedOrRemovedItems(int currentVectorSize)
+		{
+			var currentIndex = CurrentIndex;
+			var remainingRootObjectCounts = new Dictionary<int, int>(currentVectorSize);
+			for (var i = 0; i < currentVectorSize; i++)
+			{
+				var rootObjectHvo = VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, i);
+				if (remainingRootObjectCounts.TryGetValue(rootObjectHvo, out var currentCount))
+					remainingRootObjectCounts[rootObjectHvo] = currentCount + 1;
+				else
+					remainingRootObjectCounts[rootObjectHvo] = 1;
+			}
+
+			for (var i = 0; i < SortedObjects.Count; )
+			{
+				var item = (ManyOnePathSortItem)SortedObjects[i];
+				if (IsInvalidItem(item))
+				{
+					SortedObjects.RemoveAt(i);
+					if (i < currentIndex || SortedObjects.Count <= currentIndex)
+						currentIndex--;
+					continue;
+				}
+
+				var rootObjectHvo = item.RootObjectHvo;
+				if (!remainingRootObjectCounts.TryGetValue(rootObjectHvo, out var remainingCount) || remainingCount == 0)
+				{
+					SortedObjects.RemoveAt(i);
+					if (i < currentIndex || SortedObjects.Count <= currentIndex)
+						currentIndex--;
+					continue;
+				}
+
+				remainingRootObjectCounts[rootObjectHvo] = remainingCount - 1;
+				i++;
+			}
+
+			if (SortedObjects.Count == 0)
+				currentIndex = -1;
+			else if (currentIndex >= SortedObjects.Count)
+				currentIndex = SortedObjects.Count - 1;
+
+			CurrentIndex = currentIndex;
 		}
 
 		private void ClearOutInvalidItems()
