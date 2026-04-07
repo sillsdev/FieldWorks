@@ -3,13 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
 using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
 using SIL.LCModel.Infrastructure;
 
@@ -18,11 +23,25 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinearTextRecordClerkTests : MemoryOnlyBackendProviderTestBase, IDisposable
 	{
+		private const int InterestingTextsFlid = 899800;
+
 		private IStText m_stText;
 		private MockFwXApp m_application;
 		private MockFwXWindow m_window;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
+
+		[SetUp]
+		public void SetUpTest()
+		{
+			ResetClerkProperties();
+		}
+
+		[TearDown]
+		public void TearDownTest()
+		{
+			ResetClerkProperties();
+		}
 
 		[OneTimeSetUp]
 		public override void FixtureSetup()
@@ -73,11 +92,21 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion disposal
 
+		private void ResetClerkProperties()
+		{
+			if (m_propertyTable == null || m_propertyTable.IsDisposed)
+				return;
+
+			m_propertyTable.RemoveProperty("ActiveClerk");
+			m_propertyTable.RemoveProperty("OldActiveClerk");
+		}
+
 		[Test]
 		public void CreateStTextShouldAlsoCreateDsConstChart()
 		{
 			using (var interlinTextRecordClerk = new InterlinearTextRecordClerkDerived(m_mediator, m_propertyTable))
 			{
+				interlinTextRecordClerk.InitializeList(Cache);
 				var discourseData = Cache.LangProject.DiscourseDataOA;
 				Assert.That(discourseData, Is.Null);
 				interlinTextRecordClerk.CreateStText(Cache);
@@ -85,29 +114,124 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[Test]
+		public void SetInterestingTexts_WhenListShrinks_ReloadUpdatesSortedObjects()
+		{
+			var texts = CreateInterlinearTexts(5);
+			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
+			interestingTexts.SetInterestingTexts(texts);
+
+			using (var interlinTextRecordClerk = new InterlinearTextRecordClerkDerived(m_mediator, m_propertyTable))
+			{
+				interlinTextRecordClerk.InitializeList(Cache);
+				interlinTextRecordClerk.List.ReloadList();
+
+				Assert.That(interlinTextRecordClerk.SortedObjectHvos, Is.EqualTo(texts.Select(text => text.Hvo).ToArray()),
+					"Precondition: the interlinear list should initially contain all core texts");
+
+				var keptTexts = texts.Take(2).ToArray();
+
+				interestingTexts.SetInterestingTexts(keptTexts);
+				interlinTextRecordClerk.ReloadIfNeeded();
+
+				Assert.That(interestingTexts.InterestingTexts.Select(text => text.Hvo).ToArray(), Is.EqualTo(keptTexts.Select(text => text.Hvo).ToArray()),
+					"Sanity check: the InterestingTextList model should reflect the shrink");
+				Assert.That(interlinTextRecordClerk.SortedObjectHvos, Is.EqualTo(keptTexts.Select(text => text.Hvo).ToArray()),
+					"Reloading the interlinear clerk should rebuild SortedObjects from the updated InterestingTexts list");
+			}
+		}
+
+		[Test]
+		public void InterestingTextsDecorator_RequeriesAfterNotificationDrop_DoesNotReturnStaleTexts()
+		{
+			var texts = CreateInterlinearTexts(5);
+			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
+			interestingTexts.SetInterestingTexts(texts);
+
+			var decorator = new InterestingTextsDecorator(Cache.MainCacheAccessor as ISilDataAccessManaged, null, Cache.ServiceLocator);
+			decorator.SetMediator(m_mediator, m_propertyTable);
+			decorator.SetRootHvo(Cache.LangProject.Hvo);
+
+			var dummyNotifiee = new DummyNotifyChange();
+			decorator.AddNotification(dummyNotifiee);
+
+			Assert.That(decorator.VecProp(Cache.LangProject.Hvo, InterestingTextsFlid),
+				Is.EqualTo(texts.Select(text => text.Hvo).ToArray()),
+				"Precondition: the decorator should cache the current interesting texts");
+
+			decorator.RemoveNotification(dummyNotifiee);
+
+			var keptTexts = texts.Take(2).ToArray();
+			interestingTexts.SetInterestingTexts(keptTexts);
+
+			Assert.That(decorator.VecProp(Cache.LangProject.Hvo, InterestingTextsFlid),
+				Is.EqualTo(keptTexts.Select(text => text.Hvo).ToArray()),
+				"After dropping and later reusing notifications, the decorator should not keep serving stale cached texts");
+		}
+
+		private List<IStText> CreateInterlinearTexts(int count)
+		{
+			var createdTexts = new List<IStText>(count);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
+				var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+				for (var i = 0; i < count; i++)
+				{
+					var text = textFactory.Create();
+					var stText = stTextFactory.Create();
+					text.ContentsOA = stText;
+					createdTexts.Add(stText);
+				}
+			});
+
+			return createdTexts;
+		}
+
 		#region Test Classes
 		private class InterlinearTextRecordClerkDerived : InterlinearTextsRecordClerk
 		{
+			private const string InterlinearRecordListXml = "<recordList owner=\"LangProject\" property=\"InterestingTexts\"><decoratorClass assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.InterestingTextsDecorator\" /></recordList>";
+
 			public InterlinearTextRecordClerkDerived(Mediator mediator, PropertyTable propertyTable)
 			{
 				m_mediator = mediator;
 				m_propertyTable = propertyTable;
+				m_id = "interlinearTexts";
+				m_fIsActiveInGui = true;
+			}
+
+			public RecordList List => m_list;
+
+			public int[] SortedObjectHvos => m_list.SortedObjects.Cast<IManyOnePathSortItem>().Select(item => item.RootObjectHvo).ToArray();
+
+			public void InitializeList(LcmCache cache)
+			{
+				if (m_list != null)
+					return;
+
+				var xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(InterlinearRecordListXml);
+				m_list = RecordList.Create(cache, m_mediator, m_propertyTable, xmlDoc.DocumentElement);
+				typeof(RecordList).GetProperty("Clerk", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+					.SetValue(m_list, this, null);
+				m_propertyTable.SetProperty("ActiveClerk", this, false);
 			}
 
 			public void CreateStText(LcmCache cache)
 			{
+				InitializeList(cache);
 				CreateAndInsertStText createAndInsertStText = new NonUndoableCreateAndInsertStText(cache, this);
-				XmlDocument xmlDoc = new XmlDocument();
-				// xml taken from a dummy project
-				string outerXmlFromProject = "<recordList owner=\"LangProject\" property=\"InterestingTexts\"><!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. --><decoratorClass assemblyPath=\"xWorks.dll\" class=\"SIL.FieldWorks.XWorks.InterestingTextsDecorator\" /></recordList>";
-				xmlDoc.LoadXml(outerXmlFromProject);
-				XmlNode root = xmlDoc.FirstChild;
-				XmlNode attr = xmlDoc.CreateNode(XmlNodeType.Attribute, "property", "InterestingTexts");
-				root.Attributes.SetNamedItem(attr);
-				m_list = RecordList.Create(cache, m_mediator, m_propertyTable, root);
 				createAndInsertStText.Create();
 			}
 		}
 		#endregion Test Classes
+
+		private sealed class DummyNotifyChange : IVwNotifyChange
+		{
+			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+			{
+			}
+		}
 	}
 }
