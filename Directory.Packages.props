@@ -25,21 +25,21 @@
 	<ItemGroup Label="Transitive Pins">
 		<!-- System.Drawing.Common: SIL.LCModel.Core pulls 6.0.0 transitively,
 		     but ParatextData 9.5.x requires >= 9.0.9. Pin to 9.0.9. -->
-		<PackageVersion Include="System.Drawing.Common" Version="9.0.13" />
+		<PackageVersion Include="System.Drawing.Common" Version="9.0.14" />
 		<PackageVersion Include="System.Reflection.Metadata" Version="9.0.13" />
 		<!-- System.Resources.Extensions: required for non-string resources (images, icons)
 		     in .NET Framework SDK-style projects. -->
 		<PackageVersion Include="System.Resources.Extensions" Version="9.0.13" />
 		<!-- DependencyModel: icu.net wants 2.0.4, ParatextData wants 9.0.9.
 		     9.0.9 is backward compatible with 2.0.4 API surface. -->
-		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.13" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.14" />
 		<!-- System.Memory: ParatextData requires 4.6.3; other packages want 4.5.0–4.6.0. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions 9.0.0 requires HashCode. -->
 		<PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
 		     System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.9. -->
-		<PackageVersion Include="System.Security.Permissions" Version="9.0.13" />
+		<PackageVersion Include="System.Security.Permissions" Version="9.0.14" />
 	</ItemGroup>
 
 	<!--
