@@ -1,0 +1,83 @@
+name: Flex CI Native
+on:
+  push:
+    branches: ["release/**", "main", "feature/PubSub"]
+    paths:
+      - 'Src/**/*.cpp'
+      - 'Src/**/*.h'
+      - 'Src/**/*.hpp'
+      - 'Src/**/*.cc'
+      - 'Src/**/*.ixx'
+      - 'Src/**/*.def'
+      - 'Src/**/*.vcxproj'
+      - 'Src/**/*.vcxproj.filters'
+      - 'Src/**/*.mak'
+      - 'Lib/**/*.cpp'
+      - 'Lib/**/*.h'
+      - 'Lib/**/*.hpp'
+      - 'Lib/**/*.cc'
+      - 'Lib/**/*.ixx'
+      - 'Lib/**/*.def'
+      - 'Build/Src/NativeBuild/**'
+      - 'Build/scripts/Invoke-CppTest.ps1'
+      - 'test.ps1'
+  pull_request:
+    branches: ["release/**", "main", "feature/PubSub"]
+    paths:
+      - 'Src/**/*.cpp'
+      - 'Src/**/*.h'
+      - 'Src/**/*.hpp'
+      - 'Src/**/*.cc'
+      - 'Src/**/*.ixx'
+      - 'Src/**/*.def'
+      - 'Src/**/*.vcxproj'
+      - 'Src/**/*.vcxproj.filters'
+      - 'Src/**/*.mak'
+      - 'Lib/**/*.cpp'
+      - 'Lib/**/*.h'
+      - 'Lib/**/*.hpp'
+      - 'Lib/**/*.cc'
+      - 'Lib/**/*.ixx'
+      - 'Lib/**/*.def'
+      - 'Build/Src/NativeBuild/**'
+      - 'Build/scripts/Invoke-CppTest.ps1'
+      - 'test.ps1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native_build_and_test:
+    name: Build Debug and run native tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v6
+        id: checkout
+
+      - name: Build and run native tests
+        id: native_test
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Debug -Native
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Summarize native test results
+        if: ${{ always() }}
+        shell: powershell
+        run: |
+          .\Build\Agent\Summarize-NativeTestResults.ps1 -Configuration Debug
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && failure() }}
+        with:
+          name: native-build-logs
+          path: |
+            ./*.log
+            ./Output/**/*.log

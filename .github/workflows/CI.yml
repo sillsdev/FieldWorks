@@ -16,34 +16,28 @@ concurrency:
 
 jobs:
   debug_build_and_test:
-    name: Build Debug and run native and managed tests
+    name: Build Debug and run managed tests
     runs-on: windows-latest
     steps:
       - name: Checkout Files
         uses: actions/checkout@v6
         id: checkout
 
-      - name: Build (with tests)
-        id: build_with_tests
+      - name: Build managed (with tests)
+        id: managed_build
         shell: powershell
         run: |
           .\build.ps1 -Configuration Debug -BuildTests
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run native and managed tests
-        id: run_tests
+      - name: Run managed tests
+        id: managed_test
         shell: powershell
         run: |
           .\test.ps1 -Configuration Debug -NoBuild -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Summarize native test results
-        if: ${{ always() }}
-        shell: powershell
-        run: |
-          .\Build\Agent\Summarize-NativeTestResults.ps1 -Configuration Debug
-
-      - name: Upload TRX managed test results
+      - name: Upload TRX test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
