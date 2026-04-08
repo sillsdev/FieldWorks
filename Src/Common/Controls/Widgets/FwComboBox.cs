@@ -2021,6 +2021,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		///  Gets or sets the form that the ComboListBox is launched from.
 		/// </summary>
 		public Form LaunchingForm { get; set; }
+
+		public bool InterceptMessages { get; set; }
 		#endregion Properties
 
 		#region Construction and disposal
@@ -2039,6 +2041,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_listForm.Controls.Add(this);
 			m_listForm.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
+			InterceptMessages = true;
 		}
 
 		#region IDisposable & Co. implementation
@@ -2195,11 +2198,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private static void ShowInactiveTopmost(Form owner, Form frm)
 		{
-			if (Platform.IsMono)
-			{
-				// TODO:  Implement something comparable on Linux/Mono if possible.
-				return;
-			}
 			if (owner != null)
 				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
 			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
@@ -2207,7 +2205,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
-		/// Hide the from that the listbox is drawn in (and thus the list box as a whole).
+		/// Hide the form that the listbox is drawn in (and thus the list box as a whole).
 		/// </summary>
 		public void HideForm()
 		{
@@ -2504,6 +2502,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
+			if (!m_comboListbox.InterceptMessages)
+			{
+				return false;
+			}
 			// DEBUGGING (used for tracking down lost left mouse button messages in the sandbox)
 			//Control cx = Control.FromHandle(m.HWnd);
 			//string name = "<>";
