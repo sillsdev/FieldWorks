@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
 		private FwTextBox[] _digitBoxes;
+		private bool _isInitializing = false;
 
 		public HeadwordNumbersDlg()
 		{
@@ -191,9 +192,17 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_writingSystemCombo.Text; }
 			set
 			{
-				m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
-				if (m_writingSystemCombo.SelectedIndex < 0)
-					m_writingSystemCombo.SelectedIndex = 0;
+				_isInitializing = true;
+				try
+				{
+					m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
+					if (m_writingSystemCombo.SelectedIndex < 0)
+						m_writingSystemCombo.SelectedIndex = 0;
+				}
+				finally
+				{
+					_isInitializing = false;
+				}
 			}
 		}
 
@@ -282,6 +291,23 @@ namespace SIL.FieldWorks.XWorks
 		private void m_writingSystemCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateWritingSystemCodeInDigits();
+
+			if (_isInitializing)
+				return;
+
+			// Populate digits from ws.
+			var selectedWs = m_writingSystemCombo.SelectedItem as CoreWritingSystemDefinition;
+			if (selectedWs?.NumberingSystem != null)
+			{
+				var digits = selectedWs.NumberingSystem.Digits;
+
+				if (!string.IsNullOrEmpty(digits))
+				{
+					// Populate the custom digits from writing system, if all 10 digits are specified
+					if (digits.Length == 10)
+						CustomDigits = digits.ToCharArray().Select(c => c.ToString()).ToArray();
+				}
+			}
 		}
 	}
 }
