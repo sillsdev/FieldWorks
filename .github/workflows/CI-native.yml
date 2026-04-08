@@ -65,7 +65,7 @@ jobs:
         id: native_test
         shell: powershell
         run: |
-          .\test.ps1 -Configuration Debug -Native
+          .\test.ps1 -Configuration Debug -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Summarize native test results
