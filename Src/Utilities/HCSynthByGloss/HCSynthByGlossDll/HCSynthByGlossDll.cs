@@ -1,10 +1,14 @@
 using HCSynthByGloss;
+using HCSynthByGlossLib;
+using Icu;
 using SIL.Machine.Morphology.HermitCrab;
 using SIL.Utils;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
@@ -17,10 +21,11 @@ namespace SIL.HCSynthByGloss
 		public string HcXmlFile { get; set; } = "";
 		public string GlossFile { get; set; } = "";
 		public string OutputFile { get; set; } = "";
-		public string kSuccess { get; } = "Success!";
-		public string kError1 { get; } = "Could not find ";
-		public string kHCXmlFile { get; } = "HC XML file";
-		public string kGlossFile { get; } = "Gloss file";
+		public string LocaleCode { get; set; } = "en";
+		public string kSuccess { get; } = HCSynthByGlossStrings.ksSuccess;
+		public string kError1 { get; } = HCSynthByGlossStrings.ksCouldNotFind;
+		public string kHCXmlFile { get; } = HCSynthByGlossStrings.ksHCXmlFile;
+		public string kGlossFile { get; } = HCSynthByGlossStrings.ksGlossFile;
 		public string kError2 { get; } = " '";
 		public string kError3 { get; } = "'";
 		Language synLang;
@@ -55,7 +60,7 @@ namespace SIL.HCSynthByGloss
 
 		public string Process()
 		{
-
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(LocaleCode);
 			if (!File.Exists(HcXmlFile))
 			{
 				return kError1 + kHCXmlFile + kError2 + HcXmlFile + kError3;

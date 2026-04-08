@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using HCSynthByGlossLib;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
 using SIL.Machine.Morphology.HermitCrab;
@@ -127,7 +128,7 @@ namespace HCSynthByGloss
 			List<Morpheme> morphemes
 		)
 		{
-			sb.Append(" One or more glosses not found:");
+			sb.Append(HCSynthByGlossStrings.ksOneOrMoreGlossesNotFound);
 			var glossesFound = new List<string>();
 			foreach (Morpheme morpheme in morphemes)
 			{
@@ -173,7 +174,7 @@ namespace HCSynthByGloss
 				{
 					if (!duplicateFound)
 					{
-						sb.Append(" Duplicate gloss(es) found for '");
+						sb.Append(HCSynthByGlossStrings.ksDuplicateGlossFoundFor);
 						duplicateFound = true;
 					}
 					else
@@ -186,7 +187,7 @@ namespace HCSynthByGloss
 			}
 			if (duplicateFound)
 			{
-				sb.Append(" synthesis may not work.");
+				sb.Append(HCSynthByGlossStrings.ksSynthesisMayNotWork);
 			}
 			return duplicateFound;
 		}

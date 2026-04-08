@@ -737,53 +737,6 @@ namespace HCSynthByGloss
 				new XElement("Gloss", allomorph.Morpheme.Gloss),
 				new XElement("Category", cat)
 			);
-
-			//bool isNull = (bool?)allomorph.Properties[IsNull] ?? false;
-			//if (isNull)
-			//{
-			//	var slotID = (int)allomorph.Morpheme.Properties[SlotID];
-			//	//IMoInflAffixSlot slot;
-			//	//if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out slot))
-			//	//	return null;
-
-			//	var nullInflTypeID = (int)allomorph.Morpheme.Properties[InflTypeID];
-			//	//ILexEntryInflType nullInflType;
-			//	//if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out nullInflType))
-			//	//	return null;
-
-			//	//var isPrefix = (bool)allomorph.Properties[IsPrefix];
-			//	//return new XElement("Allomorph", new XAttribute("id", 0), new XAttribute("type", isPrefix ? MoMorphTypeTags.kMorphPrefix : MoMorphTypeTags.kMorphSuffix),
-			//	//	new XElement("Form", "^0"),
-			//	//	new XElement("Morpheme", new XAttribute("id", 0), new XAttribute("type", "infl"),
-			//	//		new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", nullInflType.Name.BestAnalysisAlternative.Text)),
-			//	//		new XElement("Gloss", (nullInflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossPrepend.BestAnalysisAlternative.Text)
-			//	//			+ (nullInflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossAppend.BestAnalysisAlternative.Text)),
-			//	//		new XElement("Category", slot.OwnerOfClass<IPartOfSpeech>().Abbreviation.BestAnalysisAlternative.Text),
-			//	//		new XElement("Slot", new XAttribute("optional", slot.Optional), slot.Name.BestAnalysisAlternative.Text)));
-			//}
-
-			//var formID = allomorph.Properties[FormID];
-
-			////var formID = (int?)allomorph.Properties[FormID] ?? 0;
-			////IMoForm form;
-			////if (formID == 0 || !m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out form))
-			////	return null;
-			//var formID2 = allomorph.Properties[FormID2];
-			////var formID2 = (int?)allomorph.Properties[FormID2] ?? 0;
-
-			//var msaID = allomorph.Morpheme.Properties[MsaID];
-			////IMoMorphSynAnalysis msa;
-			////if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
-			////	return null;
-
-			//var inflTypeID = allomorph.Morpheme.Properties[InflTypeID];
-			////var inflTypeID = (int?)allomorph.Morpheme.Properties[InflTypeID] ?? 0;
-			////ILexEntryInflType inflType = null;
-			////if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
-			////	return null;
-
-			////return CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0);
-			//return new XElement("sumpn");
 		}
 
 		void ITraceManager.CompoundingRuleNotUnapplied(IMorphologicalRule rule, int subruleIndex, Word input, FailureReason reason, object failureObj)
