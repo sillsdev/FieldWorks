@@ -23,6 +23,7 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -3516,7 +3517,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
-			public Dictionary<ConfigurableDictionaryNode, Guid> ConfigSource = new Dictionary<ConfigurableDictionaryNode, Guid>();
+			public ConcurrentDictionary<ConfigurableDictionaryNode, Guid> ConfigSource = new ConcurrentDictionary<ConfigurableDictionaryNode, Guid>();
 			public bool WriteConfigSource = true;
 
 			public LcmCache Cache { get; }
