@@ -2473,6 +2473,38 @@ namespace SIL.FieldWorks.IText
 				using (AddNewSenseDlg dlg = new AddNewSenseDlg(m_helpTopicProvider))
 				{
 					dlg.SetDlgInfo(tssForm, le, m_sandbox.Mediator, m_sandbox.m_propertyTable);
+
+					// This is a kludge to work around the problem described in LT-22282.
+					// Without this code the call to set m_listForm.Visible to false, in ComboListBox.HideComboBox(), will result
+					// in Windows choosing the wrong main Flex window to activate when there are multiple main Flex windows open.
+					// That causes the wrong MainWindowDelegate to receive the OnActivated() notification, which leads to
+					// SetCurrentStack() being called for the wrong undo stack. Then a little later, but still in the
+					// "m_listForm.Visible = false" call, we end up in PushUowOnUndoStack() for the wrong undo stack.
+					// The correct main Flex window is activated after we get out of the "m_listForm.Visible = false" call and
+					// its undo call stack is set to current, but we have a "UnsavedBundle" on the wrong call stack, which
+					// eventually leads to the crash reported in LT-22282.
+					//
+					// A possible better long term solution would be to execute all the menu choices through an event system
+					// and dispose of the ComboListBox immediately after the menu choice is made, instead of hiding it. Probably
+					// can do this when graphite is no longer needed, and we can use a regular menu.
+					//
+					if (ComboList is ComboListBox clb)
+					{
+						// Stop intercepting messages, let the dialog process them. This fixes a secondary issue that
+						// happened when we set m_listForm.Visible to false in this method. The secondary issue was that the
+						// ComboListBox was intercepting the next mouse button event and causing the dialog to not respond to it.
+						clb.InterceptMessages = false;
+
+						var listForm = clb.Form;
+						if (listForm != null)
+						{
+							// This is the important part of this kludge; hiding the list form before the call to mainWnd.Activate() below.
+							// If we don't hide it here then the mainWnd.Activate() call will cause the list form to be hidden in
+							// ComboListBox.HideComboBox(), resulting in the problem described above.
+							listForm.Visible = false;
+						}
+					}
+
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes problems like LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
