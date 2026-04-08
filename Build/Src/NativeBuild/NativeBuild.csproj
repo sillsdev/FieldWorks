@@ -17,6 +17,8 @@
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <!-- NativeBuild keeps explicit package versions because it is a traditional MSBuild project. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     <!-- Set fwrt early so NuGet package restore can find packages -->
     <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
     <!--
