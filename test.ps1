@@ -26,6 +26,12 @@
 	Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
 	Default is 'normal'.
 
+.PARAMETER NoNative
+	Skip running native C++ tests. Run only managed tests.
+
+.PARAMETER NativeOnly
+	Run only native C++ tests, skipping managed tests.
+
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
 	Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
@@ -62,7 +68,8 @@ param(
 	[switch]$ListTests,
 	[ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
 	[string]$Verbosity = "normal",
-	[switch]$Native,
+	[switch]$NoNative,
+	[switch]$NativeOnly,
 	[switch]$SkipDependencyCheck,
 	[switch]$SkipWorktreeLock,
 	[ValidateSet('user', 'agent', 'unknown')]
@@ -140,7 +147,8 @@ try {
 		# Native Tests Dispatch
 		# =============================================================================
 
-		#if ($Native) {
+		$script:nativeErrorMessages = @()
+		if (-not $NoNative) {
 			$cppScript = Join-Path $PSScriptRoot "Build/scripts/Invoke-CppTest.ps1"
 			if (-not (Test-Path $cppScript)) {
 				Write-Host "[ERROR] Native test script not found at $cppScript" -ForegroundColor Red
@@ -170,12 +178,17 @@ try {
 				& $cppScript -Action $action -TestProject $proj -Configuration $Configuration
 				if ($LASTEXITCODE -ne 0) {
 					$overallExitCode = $LASTEXITCODE
-					Write-Host "[ERROR] $proj failed with exit code $LASTEXITCODE" -ForegroundColor Red
+					$message = "$proj failed with exit code $LASTEXITCODE"
+					$script:nativeErrorMessages += $message
+					Write-Host "[ERROR] $message" -ForegroundColor Red
 				}
 			}
 			$script:testExitCode = $overallExitCode
-		#	return
-		#}
+
+			if ($NativeOnly) {
+				return
+			}
+		}
 
 		# =============================================================================
 		# Build (unless -NoBuild)
@@ -539,6 +552,14 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 	Write-Host ""
 	Write-Host "========== FAILURE SUMMARY ==========" -ForegroundColor Red
 
+	if ($script:nativeErrorMessages.Count -gt 0) {
+		Write-Host "Native test failures:" -ForegroundColor Red
+		foreach ($msg in $script:nativeErrorMessages) {
+			Write-Host "    $msg" -ForegroundColor Red
+		}
+		Write-Host "=====================================" -ForegroundColor Red
+	}
+
 	$logLines = Get-Content $vstestLogPath
 	$failedTests = @()
 	for ($i = 0; $i -lt $logLines.Count; $i++) {
@@ -575,7 +596,10 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 	}
 
 	Write-Host "=====================================" -ForegroundColor Red
-	Write-Host "  Full log: $vstestLogPath" -ForegroundColor Gray
+	Write-Host "  Full log for managed tests: $vstestLogPath" -ForegroundColor Gray
+	if (-not $NoNative) {
+		Write-Host "  Native test logs for each suite are in the same folder." -ForegroundColor Gray
+	}
 }
 
 if ($testExitCode -eq 0) {
