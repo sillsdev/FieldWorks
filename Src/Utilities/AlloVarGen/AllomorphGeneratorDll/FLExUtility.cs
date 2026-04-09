@@ -27,7 +27,7 @@ namespace SIL.AllomorphGenerator
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label => "Allomorph Generator";
+		public string Label => AllomorphGeneratorDll_Strings.ksTitle;
 
 		UtilityDlg IUtility.Dialog
 		{
@@ -41,11 +41,9 @@ namespace SIL.AllomorphGenerator
 
 		void IUtility.OnSelection()
 		{
-			m_dlg.WhenDescription = "Run this when you need to generate allomorphs.";
-			m_dlg.WhatDescription =
-				"Run this to generate allomorphs based on the citation form, lexeme form, eytmology form, or an entry-level custom field.";
-			m_dlg.RedoDescription =
-				"You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).";
+			m_dlg.WhenDescription = AllomorphGeneratorDll_Strings.ksWhenDescription;
+			m_dlg.WhatDescription = AllomorphGeneratorDll_Strings.ksWhatDescription;
+			m_dlg.RedoDescription = AllomorphGeneratorDll_Strings.ksRedoDescription;
 			;
 		}
 

@@ -63,11 +63,11 @@ namespace SIL.AlloGenModel
 			StringBuilder sb = new StringBuilder();
 			sb.Append(Name);
 			sb.Append(": ");
-			sb.Append("Replace '");
+			sb.Append(AlloGenModelStrings.ksReplace);
 			sb.Append(From);
-			sb.Append("' with '");
+			sb.Append(AlloGenModelStrings.ksReplaceWith);
 			sb.Append(To);
-			sb.Append("' for");
+			sb.Append(AlloGenModelStrings.ksReplaceFor);
 			foreach (string ws in WritingSystemRefs)
 			{
 				sb.Append(" ");

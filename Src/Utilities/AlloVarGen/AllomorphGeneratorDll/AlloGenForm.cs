@@ -26,8 +26,7 @@ namespace SIL.AllomorphGenerator
 {
 	public partial class AlloGenForm : AlloGenFormBase
 	{
-		protected new const string OperationsFilePrompt =
-			"Allomorph Generator Operations File (*.agf)|*.agf|" + "All Files (*.*)|*.*";
+		protected string OperationsFilePrompt = AllomorphGeneratorDll_Strings.ksFilePrompt;
 		const string RegKey = "Software\\SIL\\AllomorphGenerator";
 
 		public AlloGenForm(LcmCache cache, PropertyTable propTable, Mediator mediator)
@@ -50,7 +49,7 @@ namespace SIL.AllomorphGenerator
 			base.InitializeComponent();
 			if (plActions != null)
 			{
-				this.Text = "Allomorph Generator";
+				this.Text = AllomorphGeneratorDll_Strings.ksTitle;
 			}
 			// Create an instance of a ListView column sorter and assign it
 			// to the ListView control.
@@ -86,7 +85,7 @@ namespace SIL.AllomorphGenerator
 
 		protected override string CreateUndoRedoPrompt(Operation op)
 		{
-			return " Allomorph Generation for '" + op.Name;
+			return string.Format(AllomorphGeneratorDll_Strings.ksUndoRedoPrompt, op.Name);
 		}
 
 		protected override void GetMatchingEntries(
@@ -115,7 +114,7 @@ namespace SIL.AllomorphGenerator
 		protected override Form BuildCreateNewOpenCancelDialog()
 		{
 			var dlg = new CreateNewOpenCancelDialog();
-			dlg.Text = "Allomorph Generator";
+			dlg.Text = AllomorphGeneratorDll_Strings.ksTitle;
 			return dlg;
 		}
 

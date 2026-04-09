@@ -36,8 +36,8 @@ namespace SIL.VariantGenerator
 		Label lbPublishEntryIn;
 		VariantCreator variantCreator;
 
-		protected new const string OperationsFilePrompt =
-			"Variant Generator Operations File (*.vgf)|*.vgf|" + "All Files (*.*)|*.*";
+		protected string OperationsFilePrompt =
+			VariantGeneratorDll_Strings.ksFilePrompt + VariantGeneratorDll_Strings.ksAllFiles;
 		const string RegKey = "Software\\SIL\\VariantGenerator";
 
 		public VariantGenForm(LcmCache cache, PropertyTable propTable, Mediator mediator)
@@ -66,7 +66,7 @@ namespace SIL.VariantGenerator
 				InitializeShowInMinorEntryControls();
 				InitializePublishEntryInControls();
 				SetBackColor();
-				this.Text = "Variant Generator";
+				this.Text = VariantGeneratorDll_Strings.ksTitle;
 			}
 			// Create an instance of a ListView column sorter and assign it
 			// to the ListView control.
@@ -122,7 +122,7 @@ namespace SIL.VariantGenerator
 			lbVariantTypes.Name = "lblbVariantTypes";
 			lbVariantTypes.Size = new Size(71, 13);
 			lbVariantTypes.TabIndex = 3;
-			lbVariantTypes.Text = "Variant Types";
+			lbVariantTypes.Text = VariantGeneratorDll_Strings.ksVariantTypes;
 			//
 			// lBoxVariantTypes
 			//
@@ -142,7 +142,7 @@ namespace SIL.VariantGenerator
 			btnVariantTypes.Name = "btnVariantTypes";
 			btnVariantTypes.Size = new Size(33, 20);
 			btnVariantTypes.TabIndex = 5;
-			btnVariantTypes.Text = "Ed&it";
+			btnVariantTypes.Text = VariantGeneratorDll_Strings.ksEdit;
 			btnVariantTypes.UseVisualStyleBackColor = true;
 			btnVariantTypes.BringToFront();
 			btnVariantTypes.Click += new System.EventHandler(this.btnVariantTypes_Click);
@@ -161,7 +161,7 @@ namespace SIL.VariantGenerator
 			cbShowMinorEntry.Margin = new Padding(2, 0, 2, 0);
 			cbShowMinorEntry.Size = new System.Drawing.Size(60, 13);
 			cbShowMinorEntry.TabIndex = 6;
-			cbShowMinorEntry.Text = "Show minor entry";
+			cbShowMinorEntry.Text = VariantGeneratorDll_Strings.ksShowMinorEntry;
 			cbShowMinorEntry.Checked = true;
 			cbShowMinorEntry.Click += new EventHandler(this.cbShowMinorEntry_Click);
 		}
@@ -183,7 +183,7 @@ namespace SIL.VariantGenerator
 			lbPublishEntryIn.Name = "lblbPublishEntryIn";
 			lbPublishEntryIn.Size = new Size(71, 13);
 			lbPublishEntryIn.TabIndex = 7;
-			lbPublishEntryIn.Text = "Publish Entry In";
+			lbPublishEntryIn.Text = VariantGeneratorDll_Strings.ksPublishEntryIn;
 			//
 			// lBoxPublishEntryIn
 			//
@@ -203,7 +203,7 @@ namespace SIL.VariantGenerator
 			btnPublishEntryIn.Name = "btnPublishEntryIn";
 			btnPublishEntryIn.Size = new Size(33, 20);
 			btnPublishEntryIn.TabIndex = 9;
-			btnPublishEntryIn.Text = "Ed&it";
+			btnPublishEntryIn.Text = VariantGeneratorDll_Strings.ksEdit;
 			btnPublishEntryIn.UseVisualStyleBackColor = true;
 			btnPublishEntryIn.BringToFront();
 			btnPublishEntryIn.Click += new System.EventHandler(this.btnPublishEntryIn_Click);
@@ -304,7 +304,7 @@ namespace SIL.VariantGenerator
 
 		protected override string CreateUndoRedoPrompt(Operation op)
 		{
-			return " Variant Generation for '" + op.Name;
+			return  string.Format(VariantGeneratorDll_Strings.ksUndoRedoPrompt, op.Name);
 		}
 
 		protected override void ApplyOperationToEntry(
@@ -341,7 +341,7 @@ namespace SIL.VariantGenerator
 							);
 						if (variantType == null)
 						{
-							ReportMissingFLExItem("The variant type '", varType.Name, op.Name);
+							ReportMissingFLExItem(VariantGeneratorDll_Strings.ksVariantType, varType.Name, op.Name);
 							allIsGood = false;
 						}
 					}
@@ -368,7 +368,7 @@ namespace SIL.VariantGenerator
 							);
 						if (publication == null)
 						{
-							ReportMissingFLExItem("The publication '", pubItem.Name, op.Name);
+							ReportMissingFLExItem(VariantGeneratorDll_Strings.ksPublication, pubItem.Name, op.Name);
 							allIsGood = false;
 						}
 					}
@@ -419,7 +419,7 @@ namespace SIL.VariantGenerator
 		protected override Form BuildCreateNewOpenCancelDialog()
 		{
 			var dlg = new CreateNewOpenCancelDialog();
-			dlg.Text = "Variant Generator";
+			dlg.Text = VariantGeneratorDll_Strings.ksTitle;
 			return dlg;
 		}
 

@@ -25,18 +25,18 @@ namespace SIL.AlloGenModel
 		public void SetDefaultMorphTypes()
 		{
 			MorphType mtBoundRoot = CreateMorphType(
-				"bound root",
+				AlloGenModelStrings.ksBoundRoot,
 				Constants.mtBoundRoot
 			);
 			MorphTypes.Add(mtBoundRoot);
 			MorphType mtBoundStem = CreateMorphType(
-				"bound stem",
+				AlloGenModelStrings.ksBoundStem,
 				Constants.mtBoundStem
 			);
 			MorphTypes.Add(mtBoundStem);
-			MorphType mtRoot = CreateMorphType("root", Constants.mtRoot);
+			MorphType mtRoot = CreateMorphType(AlloGenModelStrings.ksRoot, Constants.mtRoot);
 			MorphTypes.Add(mtRoot);
-			MorphType mtStem = CreateMorphType("stem", Constants.mtStem);
+			MorphType mtStem = CreateMorphType(AlloGenModelStrings.ksStem, Constants.mtStem);
 			MorphTypes.Add(mtStem);
 		}
 
