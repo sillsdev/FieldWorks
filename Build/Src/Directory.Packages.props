@@ -5,8 +5,17 @@
 		NuGet auto-imports only the nearest Directory.Packages.props, so parent CPM
 		settings must be imported manually.
 	-->
-	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)..'))" />
+	<PropertyGroup>
+		<RootDirectoryPackagesProps>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)..'))</RootDirectoryPackagesProps>
+	</PropertyGroup>
 
+	<Import Project="$(RootDirectoryPackagesProps)" Condition="Exists('$(RootDirectoryPackagesProps)')" />
+
+	<Target Name="EnsureRootDirectoryPackagesPropsExists" BeforeTargets="CollectPackageReferences" Condition="'$(RootDirectoryPackagesProps)' == '' Or !Exists('$(RootDirectoryPackagesProps)')">
+		<Error Text="Unable to locate the repo root Directory.Packages.props for Build/Src. Expected to find a parent Directory.Packages.props above '$(MSBuildThisFileDirectory)'. Ensure the root CPM file exists and has not been renamed or omitted from the current source checkout." />
+	</Target>
+
+	<!-- Use Update for root-pinned packages and Include for build-only packages absent from the root CPM file. -->
 	<ItemGroup Label="Build Tool Package Versions">
 		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.4.0" />
 		<PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
