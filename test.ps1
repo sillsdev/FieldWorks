@@ -598,7 +598,7 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 	Write-Host "=====================================" -ForegroundColor Red
 	Write-Host "  Full log for managed tests: $vstestLogPath" -ForegroundColor Gray
 	if (-not $NoNative) {
-		Write-Host "  Native test logs for each suite are in the same folder." -ForegroundColor Gray
+		Write-Host "  Logs for each native test suite should be in the directory above (Output\$Configuration)." -ForegroundColor Gray
 	}
 }
 
