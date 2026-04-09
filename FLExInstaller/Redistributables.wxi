@@ -11,7 +11,7 @@
 			<ExePackage Id="FBInstaller" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
 				  Name="FLExBridge_Offline.exe"
 				  SourceFile="..\libs\FLExBridge_Offline.exe"
-				  InstallCommand="/Q /norestart"
+				  InstallCommand="/Passive /norestart"
 				  DetectCondition="FLExBridge">
 				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
 			</ExePackage>
