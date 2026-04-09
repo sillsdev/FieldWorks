@@ -19,5 +19,6 @@
 		<SilMachineVersion>3.7.13</SilMachineVersion>
 		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
+		<GeckoNugetVersion>60.0.56</GeckoNugetVersion>
 	</PropertyGroup>
 </Project>
