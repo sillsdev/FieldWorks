@@ -490,6 +490,36 @@
 			OverwriteReadOnlyFiles="true"
 			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
 		/>
+		<!-- FieldWorksPdfMaker is a pre-built external binary so AutoGenerateBindingRedirects
+			 does not run for it. Patch its config with Geckofx redirects keyed to GeckoNugetVersion
+			 so version drift between the binary and our NuGet pin cannot cause load failures. -->
+		<XmlPeek
+			Condition="Exists('$(dir-outputBase)/FieldWorksPdfMaker.exe.config')"
+			XmlInputPath="$(dir-outputBase)/FieldWorksPdfMaker.exe.config"
+			Namespaces="&lt;Namespace Prefix='b' Uri='urn:schemas-microsoft-com:asm.v1'/&gt;"
+			Query="//b:assemblyIdentity[@name='Geckofx-Core']/../b:bindingRedirect/@newVersion">
+			<Output TaskParameter="Result" PropertyName="_GeckoRedirectVersion" />
+		</XmlPeek>
+		<Error
+			Condition="'$(_GeckoRedirectVersion)' != '' AND '$(_GeckoRedirectVersion)' != '$(GeckoNugetVersion).0'"
+			Text="FieldWorksPdfMaker.exe.config has Geckofx-Core redirect to $(_GeckoRedirectVersion), expected $(GeckoNugetVersion).0"
+		/>
+		<ReadLinesFromFile
+			Condition="'$(_GeckoRedirectVersion)' == '' AND Exists('$(dir-outputBase)/FieldWorksPdfMaker.exe.config')"
+			File="$(dir-outputBase)/FieldWorksPdfMaker.exe.config">
+			<Output TaskParameter="Lines" ItemName="_PdfMakerConfigLines" />
+		</ReadLinesFromFile>
+		<PropertyGroup Condition="'$(_GeckoRedirectVersion)' == '' AND '@(_PdfMakerConfigLines)' != ''">
+			<_PdfMakerConfigContent>@(_PdfMakerConfigLines, '%0A')</_PdfMakerConfigContent>
+			<_GeckoRedirectBlock>&lt;runtime&gt;&lt;assemblyBinding xmlns=&quot;urn:schemas-microsoft-com:asm.v1&quot;&gt;&lt;dependentAssembly&gt;&lt;assemblyIdentity name=&quot;Geckofx-Core&quot; publicKeyToken=&quot;3209ac31600d1857&quot;/&gt;&lt;bindingRedirect oldVersion=&quot;0.0.0.0-$(GeckoNugetVersion).0&quot; newVersion=&quot;$(GeckoNugetVersion).0&quot;/&gt;&lt;/dependentAssembly&gt;&lt;dependentAssembly&gt;&lt;assemblyIdentity name=&quot;Geckofx-Winforms&quot; publicKeyToken=&quot;3209ac31600d1857&quot;/&gt;&lt;bindingRedirect oldVersion=&quot;0.0.0.0-$(GeckoNugetVersion).0&quot; newVersion=&quot;$(GeckoNugetVersion).0&quot;/&gt;&lt;/dependentAssembly&gt;&lt;/assemblyBinding&gt;&lt;/runtime&gt;</_GeckoRedirectBlock>
+			<_PdfMakerConfigContent>$(_PdfMakerConfigContent.Replace('&lt;/configuration&gt;', '$(_GeckoRedirectBlock)&lt;/configuration&gt;'))</_PdfMakerConfigContent>
+		</PropertyGroup>
+		<WriteLinesToFile
+			Condition="'$(_GeckoRedirectVersion)' == '' AND '@(_PdfMakerConfigLines)' != ''"
+			File="$(dir-outputBase)/FieldWorksPdfMaker.exe.config"
+			Lines="$(_PdfMakerConfigContent)"
+			Overwrite="true"
+		/>
 		<!-- Copy pre-populated binaries from pc-parse -->
 		<Copy
 			SourceFiles="$(DownloadsDir)/pcpatr64.exe"
@@ -526,7 +556,7 @@
 		<!-- Native Geckofx browser engine package (managed wrapper + native XULRunner files) -->
 		<PropertyGroup>
 			<Architecture>64</Architecture>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).$(GeckoNugetVersion)</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<GeckoFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'" />
