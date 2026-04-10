@@ -27,6 +27,10 @@
 			<PackageGroupRef Id="redist_vc15to19" />
 			<PackageGroupRef Id="FlexBridgeInstaller" />
 		</PackageGroup>
+		<!-- Backward-compatible alias for older bundle authoring. -->
+		<PackageGroup Id="prerequisites">
+			<PackageGroupRef Id="vcredists" />
+		</PackageGroup>
 	</Fragment>
 </Include>
 <!--
