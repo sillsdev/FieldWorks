@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		private Form m_hostForm;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
+		private int m_captureWidth;
 		private bool m_disposed;
 
 		/// <summary>
@@ -88,6 +89,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		public void PopulateSlices(int width = 1024, int height = 768, bool useProductionLayouts = true)
 		{
 			DisposeResources();
+			m_captureWidth = width;
 
 			var stopwatch = Stopwatch.StartNew();
 
@@ -282,7 +284,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 
 			try
 			{
-				var bitmap = CompositeViewCapture.CaptureDataTree(m_dataTree);
+				var bitmap = CompositeViewCapture.CaptureDataTree(m_dataTree, m_captureWidth);
 				LastCapture = bitmap;
 				return bitmap;
 			}

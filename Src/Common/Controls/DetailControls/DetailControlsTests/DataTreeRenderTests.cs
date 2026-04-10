@@ -5,19 +5,19 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.RenderVerification;
 using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -35,8 +35,50 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	[TestFixture]
 	public class DataTreeRenderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private const int MaxAllowedPixelDifferences = 4;
+		private const string DeterministicRenderFontFamily = "Segoe UI";
 		private ILexEntry m_entry;
+
+		[SetUp]
+		public void UseDeterministicWritingSystemFonts()
+		{
+			NormalizeDeterministicWritingSystemFonts(
+				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem,
+				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem);
+		}
+
+		private void NormalizeDeterministicWritingSystemFonts(params CoreWritingSystemDefinition[] additionalWritingSystems)
+		{
+			var writingSystems = new[]
+				{
+					Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem,
+					Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem
+				}
+				.Concat(Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+				.Concat(Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				.Concat(additionalWritingSystems)
+				.Where(ws => ws != null)
+				.GroupBy(ws => ws.Handle)
+				.Select(group => group.First());
+
+			foreach (var writingSystem in writingSystems)
+			{
+				writingSystem.DefaultFont = new FontDefinition(DeterministicRenderFontFamily);
+				writingSystem.IsGraphiteEnabled = false;
+			}
+		}
+
+		private static ITsString MakeRenderString(string value, int writingSystemHandle)
+		{
+			var propsBuilder = TsStringUtils.MakePropsBldr();
+			propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
+				(int)FwTextPropVar.ktpvDefault, writingSystemHandle);
+			propsBuilder.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
+				DeterministicRenderFontFamily);
+
+			var stringBuilder = TsStringUtils.MakeStrBldr();
+			stringBuilder.Replace(0, 0, value, propsBuilder.GetTextProps());
+			return stringBuilder.GetString();
+		}
 
 		#region Scenario Data Creation
 
@@ -52,10 +94,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			// Add 3 senses with predictable text
@@ -83,10 +125,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
@@ -108,10 +150,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
@@ -132,10 +174,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
@@ -173,11 +215,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private void FillSenseFields(ILexSense sense, string senseNum, string testName)
 		{
-			sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			sense.Gloss.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"Gloss - {testName} sense {senseNum}", Cache.DefaultAnalWs);
-			sense.Definition.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			sense.Definition.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"Definition - {testName} sense {senseNum}", Cache.DefaultAnalWs);
-			sense.ScientificName = TsStringUtils.MakeString(
+			sense.ScientificName = MakeRenderString(
 				$"ScientificName - {testName} sense {senseNum}", Cache.DefaultAnalWs);
 		}
 
@@ -195,19 +237,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var pronFactory = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>();
 			var pronunciation = pronFactory.Create();
 			entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			pronunciation.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"Pronunciation - {testName}", Cache.DefaultVernWs);
 
 			// MultiString ifdata fields
-			entry.LiteralMeaning.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			entry.LiteralMeaning.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"LiteralMeaning - {testName}", Cache.DefaultAnalWs);
-			entry.Bibliography.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			entry.Bibliography.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"Bibliography - {testName}", Cache.DefaultAnalWs);
-			entry.Restrictions.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			entry.Restrictions.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"Restrictions - {testName}", Cache.DefaultAnalWs);
-			entry.SummaryDefinition.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			entry.SummaryDefinition.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"SummaryDefinition - {testName}", Cache.DefaultAnalWs);
-			entry.Comment.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+			entry.Comment.AnalysisDefaultWritingSystem = MakeRenderString(
 				$"Comment - {testName}", Cache.DefaultAnalWs);
 		}
 
@@ -223,10 +265,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			// Single sense — minimal entry, no enrichment
@@ -249,10 +291,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			// Multiple senses with all fields
@@ -271,7 +313,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var pronFactory = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>();
 			var pron2 = pronFactory.Create();
 			m_entry.PronunciationsOS.Add(pron2);
-			pron2.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			pron2.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"Pronunciation2 - {testName}", Cache.DefaultVernWs);
 		}
 
@@ -289,10 +331,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
 
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - {testName}", Cache.DefaultVernWs);
 
-			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			m_entry.CitationForm.VernacularDefaultWritingSystem = MakeRenderString(
 				$"CitationForm - {testName}", Cache.DefaultVernWs);
 
 			int analWs = Cache.DefaultAnalWs;
@@ -306,6 +348,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				wsManager.GetOrSet("fr", out frWsDef);
 				frWs = frWsDef.Handle;
 				Cache.LanguageProject.AddToCurrentAnalysisWritingSystems(frWsDef);
+				NormalizeDeterministicWritingSystemFonts(frWsDef);
 			}
 			catch
 			{
@@ -318,36 +361,36 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				var sense = senseFactory.Create();
 				m_entry.SensesOS.Add(sense);
-				sense.Gloss.set_String(analWs, TsStringUtils.MakeString(
+				sense.Gloss.set_String(analWs, MakeRenderString(
 					$"Gloss - {testName} sense {i} (en)", analWs));
 				if (frWs != analWs)
 				{
-					sense.Gloss.set_String(frWs, TsStringUtils.MakeString(
+					sense.Gloss.set_String(frWs, MakeRenderString(
 						$"Gloss - {testName} sens {i} (fr)", frWs));
 				}
-				sense.Definition.set_String(analWs, TsStringUtils.MakeString(
+				sense.Definition.set_String(analWs, MakeRenderString(
 					$"Definition - {testName} sense {i} (en)", analWs));
 				if (frWs != analWs)
 				{
-					sense.Definition.set_String(frWs, TsStringUtils.MakeString(
+					sense.Definition.set_String(frWs, MakeRenderString(
 						$"Definition - {testName} sens {i} (fr)", frWs));
 				}
 			}
 
 			// Multi-WS entry-level fields
-			m_entry.LiteralMeaning.set_String(analWs, TsStringUtils.MakeString(
+			m_entry.LiteralMeaning.set_String(analWs, MakeRenderString(
 				$"LiteralMeaning - {testName} (en)", analWs));
 			if (frWs != analWs)
 			{
-				m_entry.LiteralMeaning.set_String(frWs, TsStringUtils.MakeString(
+				m_entry.LiteralMeaning.set_String(frWs, MakeRenderString(
 					$"LiteralMeaning - {testName} (fr)", frWs));
 			}
 
-			m_entry.SummaryDefinition.set_String(analWs, TsStringUtils.MakeString(
+			m_entry.SummaryDefinition.set_String(analWs, MakeRenderString(
 				$"SummaryDefinition - {testName} (en)", analWs));
 			if (frWs != analWs)
 			{
-				m_entry.SummaryDefinition.set_String(frWs, TsStringUtils.MakeString(
+				m_entry.SummaryDefinition.set_String(frWs, MakeRenderString(
 					$"SummaryDefinition - {testName} (fr)", frWs));
 			}
 
@@ -355,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var pronFactory = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>();
 			var pronunciation = pronFactory.Create();
 			m_entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			pronunciation.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"Pronunciation - {testName}", Cache.DefaultVernWs);
 		}
 
@@ -367,123 +410,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Returns the directory containing this source file (resolved at compile time).
 		/// Verify stores .verified.png baselines alongside the test source file.
 		/// </summary>
-		private static string GetSourceFileDirectory([CallerFilePath] string sourceFile = "")
-			=> Path.GetDirectoryName(sourceFile);
-
-		/// <summary>
-		/// Runs a Verify snapshot comparison for a DataTree-rendered bitmap.
-		/// Uses committed PNG baselines stored alongside the test source file.
-		/// </summary>
 		private async Task VerifyDataTreeBitmap(Bitmap bitmap, string scenarioId)
 		{
-			string directory = GetSourceFileDirectory();
+			string directory = RenderSnapshotVerifier.GetSourceFileDirectory();
 			string name = $"DataTreeRenderTests.DataTreeRender_{scenarioId}";
-			string verifiedPath = Path.Combine(directory, $"{name}.verified.png");
-			string receivedPath = Path.Combine(directory, $"{name}.received.png");
-			string diffPath = Path.Combine(directory, $"{name}.diff.png");
-
-			if (File.Exists(diffPath))
-				File.Delete(diffPath);
-
-			if (!File.Exists(verifiedPath))
-			{
-				bitmap.Save(receivedPath, ImageFormat.Png);
-				Assert.Fail(
-					$"Missing verified render baseline for '{scenarioId}'. Review and accept {receivedPath} as the new baseline.");
-			}
-
-			using (var expectedBitmap = new Bitmap(verifiedPath))
-			{
-				int differentPixelCount = CountDifferentPixels(expectedBitmap, bitmap);
-				if (differentPixelCount > MaxAllowedPixelDifferences)
-				{
-					using (var diffBitmap = CreateDiffBitmap(expectedBitmap, bitmap))
-					{
-						diffBitmap.Save(diffPath, ImageFormat.Png);
-					}
-
-					bitmap.Save(receivedPath, ImageFormat.Png);
-					Assert.Fail(
-						$"Render output for '{scenarioId}' differed from baseline by {differentPixelCount} pixels; " +
-						$"{MaxAllowedPixelDifferences} or fewer differences are allowed. See {diffPath}.");
-				}
-
-				DeleteIfPresent(receivedPath);
-				DeleteIfPresent(diffPath);
-			}
+			var verification = RenderSnapshotVerifier.Verify(bitmap, directory, name, scenarioId);
+			if (!verification.Passed)
+				Assert.Fail(verification.FailureMessage);
 
 			await Task.CompletedTask;
-		}
-
-		private static void DeleteIfPresent(string path)
-		{
-			if (File.Exists(path))
-				File.Delete(path);
-		}
-
-		private static int CountDifferentPixels(Bitmap expectedBitmap, Bitmap actualBitmap)
-		{
-			int maxWidth = Math.Max(expectedBitmap.Width, actualBitmap.Width);
-			int maxHeight = Math.Max(expectedBitmap.Height, actualBitmap.Height);
-			int differentPixelCount = 0;
-
-			for (int y = 0; y < maxHeight; y++)
-			{
-				for (int x = 0; x < maxWidth; x++)
-				{
-					bool expectedInBounds = x < expectedBitmap.Width && y < expectedBitmap.Height;
-					bool actualInBounds = x < actualBitmap.Width && y < actualBitmap.Height;
-
-					if (!expectedInBounds || !actualInBounds)
-					{
-						differentPixelCount++;
-						continue;
-					}
-
-					if (expectedBitmap.GetPixel(x, y) != actualBitmap.GetPixel(x, y))
-						differentPixelCount++;
-				}
-			}
-
-			return differentPixelCount;
-		}
-
-		private static Bitmap CreateDiffBitmap(Bitmap expectedBitmap, Bitmap actualBitmap)
-		{
-			int maxWidth = Math.Max(expectedBitmap.Width, actualBitmap.Width);
-			int maxHeight = Math.Max(expectedBitmap.Height, actualBitmap.Height);
-			var diffBitmap = new Bitmap(maxWidth, maxHeight);
-
-			for (int y = 0; y < maxHeight; y++)
-			{
-				for (int x = 0; x < maxWidth; x++)
-				{
-					Color expected = x < expectedBitmap.Width && y < expectedBitmap.Height
-						? expectedBitmap.GetPixel(x, y)
-						: Color.White;
-					Color actual = x < actualBitmap.Width && y < actualBitmap.Height
-						? actualBitmap.GetPixel(x, y)
-						: Color.White;
-
-					diffBitmap.SetPixel(x, y, CreateDiffPixel(expected, actual));
-				}
-			}
-
-			return diffBitmap;
-		}
-
-		private static Color CreateDiffPixel(Color expected, Color actual)
-		{
-			return Color.FromArgb(
-				255,
-				ScaleDiffChannel(expected.R, actual.R),
-				ScaleDiffChannel(expected.G, actual.G),
-				ScaleDiffChannel(expected.B, actual.B));
-		}
-
-		private static int ScaleDiffChannel(int expected, int actual)
-		{
-			return Math.Min(255, Math.Abs(expected - actual) * 4);
 		}
 
 		#endregion
@@ -606,6 +541,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Assert.That(maxIndent, Is.GreaterThanOrEqualTo(3),
 					$"Expected nested subsenses to create at least 3 levels of indentation, but saw {maxIndent}.");
 
+				// Warm the composite capture once so deep hidden-field trees snapshot after layout convergence.
+				var warmup = withHiddenFields.CaptureCompositeBitmap();
+				Assert.That(warmup, Is.Not.Null, "Warm-up capture should succeed with hidden fields enabled.");
+				warmup.Dispose();
+
 				var bitmap = withHiddenFields.CaptureCompositeBitmap();
 				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed with hidden fields enabled.");
 				double density = CalculateNonWhiteDensity(bitmap);
@@ -651,12 +591,36 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Assert.That(maxIndent, Is.GreaterThanOrEqualTo(3),
 					$"Expected nested subsenses to create at least 3 levels of indentation, but saw {maxIndent}.");
 
+				// Warm the composite capture once so deep hidden-field trees snapshot after layout convergence.
+				var warmup = harness.CaptureCompositeBitmap();
+				Assert.That(warmup, Is.Not.Null, "Warm-up capture should succeed for the production-like layout.");
+				warmup.Dispose();
+
 				var bitmap = harness.CaptureCompositeBitmap();
 				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed for the production-like layout.");
 
 				double density = CalculateNonWhiteDensity(bitmap);
 				RecordTiming("subsubsub-hidden-productionlike", 4, 2, harness.LastTiming, density);
 				await VerifyDataTreeBitmap(bitmap, "subsubsub-hidden-productionlike");
+				bitmap.Dispose();
+			}
+		}
+
+		[Test]
+		public void DataTreeRender_CaptureUsesRequestedWidth_WhenClientWidthDrifts()
+		{
+			CreateSimpleEntry();
+
+			using (var harness = new DataTreeRenderHarness(Cache, m_entry, "Normal"))
+			{
+				harness.PopulateSlices(1024, 768, false);
+				harness.DataTree.ClientSize = new Size(1007, harness.DataTree.ClientSize.Height);
+				harness.DataTree.PerformLayout();
+
+				var bitmap = harness.CaptureCompositeBitmap();
+				Assert.That(bitmap, Is.Not.Null, "Composite bitmap capture should succeed when the live client width drifts.");
+				Assert.That(bitmap.Width, Is.EqualTo(1024),
+					"Capture should use the requested host width instead of the current DataTree client width.");
 				bitmap.Dispose();
 			}
 		}
@@ -797,7 +761,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - timing-{label}", Cache.DefaultVernWs);
 
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
@@ -1591,7 +1555,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFactory.Create();
 			m_entry.LexemeFormOA = morph;
-			morph.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
+			morph.Form.VernacularDefaultWritingSystem = MakeRenderString(
 				$"LexemeForm - timing-{label}", Cache.DefaultVernWs);
 
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();

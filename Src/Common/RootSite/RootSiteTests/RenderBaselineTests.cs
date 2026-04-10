@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
@@ -271,6 +273,84 @@ namespace SIL.FieldWorks.Common.RootSites
 					Directory.Delete(tempDirectory);
 				}
 			}
+		}
+
+		[Test]
+		public void RenderSnapshotVerifier_MismatchMessage_IncludesConfigAndAnalysisFiles()
+		{
+			var tempDirectory = Path.Combine(Path.GetTempPath(), "RenderSnapshotVerifierTests", Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDirectory);
+			const string snapshotName = "render-mismatch";
+			string verifiedPath = Path.Combine(tempDirectory, snapshotName + ".verified.png");
+
+			try
+			{
+				using (var verifiedBitmap = CreateSolidBitmap(2, 2, Color.White))
+				using (var actualBitmap = CreateSolidBitmap(2, 5, Color.White))
+				{
+					verifiedBitmap.Save(verifiedPath, ImageFormat.Png);
+
+					var result = RenderSnapshotVerifier.Verify(actualBitmap, tempDirectory, snapshotName, "mismatch-scenario");
+
+					Assert.That(result.Passed, Is.False, "The verifier should fail when the bitmap height drifts beyond tolerance.");
+					Assert.That(result.FailureMessage, Does.Contain("Saved baseline:"));
+					Assert.That(result.FailureMessage, Does.Contain("Current run: image=2x5"));
+					Assert.That(result.FailureMessage, Does.Contain("Diff composition:"));
+					Assert.That(File.Exists(Path.Combine(tempDirectory, snapshotName + ".received.json")), Is.True,
+						"Current run metadata should be written next to the received image.");
+					Assert.That(File.Exists(Path.Combine(tempDirectory, snapshotName + ".diff.json")), Is.True,
+						"Comparison analysis should be written when the snapshot differs.");
+				}
+			}
+			finally
+			{
+				if (Directory.Exists(tempDirectory))
+					Directory.Delete(tempDirectory, true);
+			}
+		}
+
+		[Test]
+		public void RenderSnapshotVerifier_UpdateBaseline_WritesVerifiedMetadata()
+		{
+			var originalUpdateValue = Environment.GetEnvironmentVariable("FW_UPDATE_RENDER_BASELINES");
+			var tempDirectory = Path.Combine(Path.GetTempPath(), "RenderSnapshotVerifierTests", Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(tempDirectory);
+			const string snapshotName = "render-refresh";
+
+			try
+			{
+				Environment.SetEnvironmentVariable("FW_UPDATE_RENDER_BASELINES", "1");
+
+				using (var actualBitmap = CreateSolidBitmap(3, 4, Color.White))
+				{
+					var result = RenderSnapshotVerifier.Verify(actualBitmap, tempDirectory, snapshotName, "refresh-scenario");
+
+					Assert.That(result.Passed, Is.True, "Refreshing a baseline should leave the verifier in a passing state.");
+					string verifiedMetadataPath = Path.Combine(tempDirectory, snapshotName + ".verified.json");
+					Assert.That(File.Exists(verifiedMetadataPath), Is.True,
+						"Refreshing a baseline should also persist the baseline metadata sidecar.");
+					string json = File.ReadAllText(verifiedMetadataPath);
+					Assert.That(json, Does.Contain("\"ImageWidth\": 3"));
+					Assert.That(json, Does.Contain("\"ImageHeight\": 4"));
+					Assert.That(json, Does.Contain("\"DpiAwareness\""));
+				}
+			}
+			finally
+			{
+				Environment.SetEnvironmentVariable("FW_UPDATE_RENDER_BASELINES", originalUpdateValue);
+				if (Directory.Exists(tempDirectory))
+					Directory.Delete(tempDirectory, true);
+			}
+		}
+
+		private static Bitmap CreateSolidBitmap(int width, int height, Color color)
+		{
+			var bitmap = new Bitmap(width, height);
+			using (var graphics = Graphics.FromImage(bitmap))
+			{
+				graphics.Clear(color);
+			}
+			return bitmap;
 		}
 	}
 }

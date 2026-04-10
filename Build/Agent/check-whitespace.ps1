@@ -83,7 +83,7 @@ Get-Content check-results.log | ForEach-Object {
 }
 
 if ($problems.Count -gt 0) {
-	Write-Host "`u26A0`uFE0F Please review the output for further information."
+	Write-Host 'WARNING: Please review the output for further information.'
 	Write-Host '### A whitespace issue was found in one or more of the commits.'
 	Write-Host ''
 	Write-Host 'Errors:'

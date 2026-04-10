@@ -49,6 +49,9 @@
     <Compile Include="..\RenderVerification\RenderDiagnosticsToggle.cs">
       <Link>RenderDiagnosticsToggle.cs</Link>
     </Compile>
+    <Compile Include="..\RenderVerification\RenderSnapshotVerifier.cs">
+      <Link>RenderSnapshotVerifier.cs</Link>
+    </Compile>
     <Compile Include="..\RenderVerification\RenderEnvironmentValidator.cs">
       <Link>RenderEnvironmentValidator.cs</Link>
     </Compile>

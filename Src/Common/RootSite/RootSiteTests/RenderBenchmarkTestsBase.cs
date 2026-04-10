@@ -24,6 +24,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	/// </summary>
 	public abstract class RenderBenchmarkTestsBase : RealDataTestsBase
 	{
+		protected const string DeterministicRenderFontFamily = "Segoe UI";
 		protected ILgWritingSystemFactory m_wsf;
 		protected int m_wsEng;
 		protected int m_wsAr;  // Arabic (RTL)
@@ -60,6 +61,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(french);
 			m_wsFr = french.Handle;
 
+			NormalizeDeterministicWritingSystemFonts(arabic, french);
+
 			// Ensure Scripture exists in the real project
 			if (Cache.LangProject.TranslatedScriptureOA == null)
 			{
@@ -71,6 +74,27 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			// Populate the DB with Scripture styles so the stylesheet can resolve them
 			CreateScriptureStyles();
+		}
+
+		private void NormalizeDeterministicWritingSystemFonts(params CoreWritingSystemDefinition[] additionalWritingSystems)
+		{
+			var writingSystems = new[]
+				{
+					Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem,
+					Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem
+				}
+				.Concat(Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+				.Concat(Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				.Concat(additionalWritingSystems)
+				.Where(ws => ws != null)
+				.GroupBy(ws => ws.Handle)
+				.Select(group => group.First());
+
+			foreach (var writingSystem in writingSystems)
+			{
+				writingSystem.DefaultFont = new FontDefinition(DeterministicRenderFontFamily);
+				writingSystem.IsGraphiteEnabled = false;
+			}
 		}
 
 		#region Scripture Style Creation
@@ -96,7 +120,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				var normalBldr = TsStringUtils.MakePropsBldr();
 				normalBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
 					(int)FwTextPropVar.ktpvMilliPoint, 10000); // 10pt
-				normalBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Charis SIL");
+				normalBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, DeterministicRenderFontFamily);
 				normalStyle.Rules = normalBldr.GetTextProps();
 			}
 
@@ -919,7 +943,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var entry = entryFactory.Create();
 			var morph = morphFactory.Create();
 			entry.LexemeFormOA = morph;
-			morph.Form.set_String(m_wsEng, TsStringUtils.MakeString("benchmark-entry", m_wsEng));
+			morph.Form.set_String(m_wsEng, MakeRenderString("benchmark-entry", m_wsEng));
 
 			// Recursively create the sense tree
 			CreateNestedSenses(entry, senseFactory, depth, breadth, "", 1);
@@ -962,13 +986,26 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				string definition = $"This is the definition for sense {senseNum}, which demonstrates " +
 					$"nested rendering at depth {remainingDepth} with {breadth}-way branching.";
 
-				sense.Gloss.set_String(m_wsEng, TsStringUtils.MakeString(gloss, m_wsEng));
-				sense.Definition.set_String(m_wsEng, TsStringUtils.MakeString(definition, m_wsEng));
+				sense.Gloss.set_String(m_wsEng, MakeRenderString(gloss, m_wsEng));
+				sense.Definition.set_String(m_wsEng, MakeRenderString(definition, m_wsEng));
 
 				// Recurse for subsenses
 				CreateNestedSenses(sense, senseFactory, remainingDepth - 1, breadth,
 					senseNum + ".", 1);
 			}
+		}
+
+		private static ITsString MakeRenderString(string value, int writingSystemHandle)
+		{
+			var propsBuilder = TsStringUtils.MakePropsBldr();
+			propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs,
+				(int)FwTextPropVar.ktpvDefault, writingSystemHandle);
+			propsBuilder.SetStrPropValue((int)FwTextPropType.ktptFontFamily,
+				DeterministicRenderFontFamily);
+
+			var stringBuilder = TsStringUtils.MakeStrBldr();
+			stringBuilder.Replace(0, 0, value, propsBuilder.GetTextProps());
+			return stringBuilder.GetString();
 		}
 
 		#endregion
@@ -979,7 +1016,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		public RenderScenario Scenario { get; set; }
 		public RenderTimingResult ColdTiming { get; set; }
 		public RenderTimingResult WarmTiming { get; set; }
-		internal global::SIL.FieldWorks.Common.RootSites.RenderBaselineVerificationResult Verification { get; set; }
+		internal global::SIL.FieldWorks.Common.RenderVerification.RenderBaselineVerificationResult Verification { get; set; }
 		public int CaptureWidth { get; set; }
 		public int CaptureHeight { get; set; }
 		public System.Collections.Generic.List<TraceEvent> TraceEvents { get; set; }

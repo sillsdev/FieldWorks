@@ -43,6 +43,25 @@ static int g_rgnFontSizes[] = {
 	// kvfsSmaller and kvfsLarger don't have absolute values
 static int knDefaultFontSize = 10000;   // 10 point default
 
+// Returns the lfQuality value to use for LOGFONT creation.
+// If the FW_FONT_QUALITY env var is set to a valid value (0-6), that value is used.
+// This allows tests to force ANTIALIASED_QUALITY (4) for deterministic rendering.
+static BYTE GetFontQualityOverride()
+{
+	static BYTE s_quality = []() -> BYTE {
+		wchar_t buf[16] = {};
+		DWORD len = ::GetEnvironmentVariableW(L"FW_FONT_QUALITY", buf, _countof(buf));
+		if (len > 0 && len < _countof(buf))
+		{
+			int val = _wtoi(buf);
+			if (val >= 0 && val <= 6)
+				return static_cast<BYTE>(val);
+		}
+		return DRAFT_QUALITY;
+	}();
+	return s_quality;
+}
+
 // The order of these is signficant--it is the order the font properties are recorded in
 // for each writing system, in the wsStyle string.
 // A copy of this list is in VwPropertyStore.cpp -- the two lists must be kept in sync.
@@ -358,7 +377,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
 	lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
 	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
-	lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
+	lf.lfQuality = GetFontQualityOverride();
 	lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
 	wcscpy_s(lf.lfFaceName, LF_FACESIZE, pchrp->szFaceName);
 	qzvpsWithWsAndFont->Unlock();
