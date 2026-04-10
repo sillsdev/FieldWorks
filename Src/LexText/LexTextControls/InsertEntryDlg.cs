@@ -843,6 +843,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Display left-to-right: Create | CreateAndEdit | Cancel | Help
 				m_buttonPanel.Controls.Add(m_btnCreateAndEdit);
 				m_buttonPanel.Controls.SetChildIndex(m_btnCreateAndEdit, 2);
+				m_btnCreateAndEdit.TabIndex = m_btnCancel.TabIndex;
+				m_btnCancel.TabIndex++;
+				m_btnHelp.TabIndex++;
 			}
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
