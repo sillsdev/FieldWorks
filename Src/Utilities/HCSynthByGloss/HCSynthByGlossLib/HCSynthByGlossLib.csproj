@@ -46,4 +46,44 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="HCSynthByGlossStrings.de.Designer.cs">
+      <DependentUpon>HCSynthByGlossStrings.de.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="HCSynthByGlossStrings.fr.Designer.cs">
+      <DependentUpon>HCSynthByGlossStrings.fr.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="HCSynthByGlossStrings.es.Designer.cs">
+      <DependentUpon>HCSynthByGlossStrings.es.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="HCSynthByGlossStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HCSynthByGlossStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="HCSynthByGlossStrings.de.resx">
+      <LastGenOutput>HCSynthByGlossStrings.de.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="HCSynthByGlossStrings.fr.resx">
+      <LastGenOutput>HCSynthByGlossStrings.fr.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="HCSynthByGlossStrings.es.resx">
+      <LastGenOutput>HCSynthByGlossStrings.es.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="HCSynthByGlossStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>HCSynthByGlossStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
