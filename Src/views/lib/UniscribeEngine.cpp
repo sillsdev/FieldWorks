@@ -28,6 +28,7 @@ POSSIBLE OPTIMIZATION HINT:
 #include "Main.h"
 #pragma hdrstop
 // any other headers (not precompiled)
+#include "LayoutCache.h"
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
@@ -411,8 +412,11 @@ LEmptySeg:
 	// end at a line break opportunity. In particular if a run contains sequences of PUA
 	// characters from plane 0 Uniscribe creates new items for these for reasons which are not
 	// clear.
+	// PATH-N1: Get NFC flag to avoid redundant OffsetInNfc/OffsetToOrig normalization below.
+	bool fTextIsNfc = false;
+	const TextAnalysisEntry * pAnalysis = NULL;
 	int cchNfc = UniscribeSegment::CallScriptItemize(rgchBuf, INIT_BUF_SIZE, vch, pts, ichMinSeg,
-		ichLimText - ichMinSeg, &prgchBuf, citem, (bool)fParaRtoL);
+		ichLimText - ichMinSeg, &prgchBuf, citem, (bool)fParaRtoL, &fTextIsNfc, &pAnalysis);
 
 	Vector<int> vichBreak;
 	ILgLineBreakerPtr qlb;
@@ -504,7 +508,7 @@ LEmptySeg:
 		}
 		ichLim = min(ichLimNext, ichLimBT2);
 		// Optimize JohnT: if ichLim==ichBase+m_dichLim, can use cchNfc.
-		ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+		ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 		if (ichLimNfc == ichMinNfc)
 		{
 			// This can happen if later characters in a composite have different properties than the first.
@@ -528,7 +532,7 @@ LEmptySeg:
 		{
 			// Script item is smaller than run; shorten the amount we treat as a 'run'.
 			ichLimNfc = (pscri + 1)->iCharPos;
-			ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts);
+			ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 		}
 
 		// Set up the characters of the run, if any.
@@ -750,7 +754,7 @@ LEmptySeg:
 				vdxRun.Pop();
 				ichLimBT2 = ichMin;
 				ichLim = *(vichRun.Top());
-				ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+				ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 				vichRun.Pop();
 				cglyph = *(viglyphRun.Top());
 				viglyphRun.Pop();
@@ -855,7 +859,7 @@ LEmptySeg:
 						vdxRun.Pop();
 						ichLimBT2 = ichMin;
 						ichLim = *(vichRun.Top());
-						ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+						ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 						vichRun.Pop();
 						cglyph = *(viglyphRun.Top());
 						viglyphRun.Pop();
@@ -969,11 +973,11 @@ LEmptySeg:
 						}
 					}
 				}
-				ichLim = UniscribeSegment::OffsetToOrig(ichMinUri + ichRun, ichMinSeg, pts);
+				ichLim = UniscribeSegment::OffsetToOrig(ichMinUri + ichRun, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 				break;
 			}
 
-			int ichLineBreak = UniscribeSegment::OffsetToOrig(ichLineBreakNfc, ichMinSeg, pts);
+			int ichLineBreak = UniscribeSegment::OffsetToOrig(ichLineBreakNfc, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 
 			if (ichLineBreak <= ichMin)
 			{
@@ -990,7 +994,7 @@ LEmptySeg:
 					viglyphRun.Pop();
 				}
 				ichLim = ichMin;	// Required to get correct values at start of loop.
-				ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+				ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 				ichLimBT2 = ichLineBreak;
 				fRemovedWs = false;
 				fBacktracking = true;
@@ -998,12 +1002,12 @@ LEmptySeg:
 			}
 			ichLim = ichLineBreak; // We limit the segment to not exceed the latest line break point.
 			Assert(ichLim <= ichLimBacktrack);
-			ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+			ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 			fOkBreak = true;	// Means we have a good line break.
 
 			// Store the glyph-specific information: stretch values.
 			int cchRunTotalTmp = uri.cch;
-			uri.cch = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts) - ichMinNfc;
+			uri.cch = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis) - ichMinNfc;
 			UniscribeSegment::ShapePlaceRun(uri, true);
 			viglyphRun.Push(cglyph);
 			cglyph += uri.cglyph;
@@ -1029,7 +1033,7 @@ LQuit:
 			if (twsh == ktwshNoWs)
 			{
 				fRemovedWs = RemoveTrailingWhiteSpace(ichMinUri, &ichLimNfc, uri);
-				ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts);
+				ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 				// Usually the worst case is that ichLimNfc == ichMinUri, indicating that the whole run is
 				// white space. However, in at least one pathological case, we have observed uniscribe
 				// strip of more than one run of white space. Hence the <=.
@@ -1053,7 +1057,7 @@ LQuit:
 						dxSegWidth = *(vdxRun.Top());
 						vdxRun.Pop();
 						ichLim = *(vichRun.Top());
-						ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts);
+						ichLimNfc = UniscribeSegment::OffsetInNfc(ichLim, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 						vichRun.Pop();
 						cglyph = *(viglyphRun.Top());
 						viglyphRun.Pop();
@@ -1082,7 +1086,7 @@ LQuit:
 				Assert(irun == 1);
 				Assert(ichMinUri == 0);
 				RemoveNonWhiteSpace(ichMinUri, &ichLimNfc, uri);
-				ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts);
+				ichLim = UniscribeSegment::OffsetToOrig(ichLimNfc, ichMinSeg, pts, fTextIsNfc, pAnalysis);
 				if (ichLim == ichMinSeg)
 					return S_OK; // failure to create a valid segment
 				fOkBreak = true;

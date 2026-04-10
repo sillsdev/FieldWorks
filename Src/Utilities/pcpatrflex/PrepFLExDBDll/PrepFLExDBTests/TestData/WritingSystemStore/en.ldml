@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ldml>
+  <identity>
+    <version number="" />
+    <generation date="2026-04-07T14:37:21Z" />
+    <language type="en" />
+    <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+      <sil:identity windowsLCID="1033" />
+    </special>
+  </identity>
+  <characters>
+    <exemplarCharacters>['\-A-Za-z]</exemplarCharacters>
+    <exemplarCharacters type="punctuation">[\ -"\&amp;(),./\:;?\[\]\{\}\u2013\u2018\u2019\u201C\u201D]</exemplarCharacters>
+  </characters>
+  <layout>
+    <orientation>
+      <characterOrder>left-to-right</characterOrder>
+    </orientation>
+  </layout>
+  <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+    <sil:external-resources>
+      <sil:font name="Times New Roman" types="default" />
+    </sil:external-resources>
+  </special>
+</ldml>

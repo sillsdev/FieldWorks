@@ -33,3 +33,7 @@ Bin/ilrepack-assemblies -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
 Src/Utilities/pcpatrflex/DisambiguateInFLExDB/DisambiguateInFLExDBTests/TestData/*.* -whitespace
 Src/Utilities/pcpatrflex/PcPatrBrowserDll/Transforms/*.* -whitespace
+
+# Verify snapshot testing
+*.verified.png binary
+*.received.png binary

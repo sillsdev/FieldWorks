@@ -858,7 +858,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				vwenv.AddObj(da.get_VecItem(hvo, tag, i), this,
 					VectorReferenceView.kfragTargetObj);
-				vwenv.AddSeparatorBar();
+				// Only add separator between items, not after the last one.
+				// A trailing separator draws an unwanted grey bar after the
+				// final item (e.g. after "Main Dictionary").
+				if (i < count - 1)
+					vwenv.AddSeparatorBar();
 			}
 		}
 		public string TextStyle

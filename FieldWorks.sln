@@ -18,6 +18,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailControls", "Src\Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailControlsTests", "Src\Common\Controls\DetailControls\DetailControlsTests\DetailControlsTests.csproj", "{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderTestInfrastructure", "Src\Common\RenderTestInfrastructure\RenderTestInfrastructure.csproj", "{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderVerification", "Src\Common\RenderVerification\RenderVerification.csproj", "{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discourse", "Src\LexText\Discourse\Discourse.csproj", "{A51BAFC3-1649-584D-8D25-101884EE9EAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscourseTests", "Src\LexText\Discourse\DiscourseTests\DiscourseTests.csproj", "{1CE6483D-5D10-51AD-B2A7-FD7F82CCBAB2}"
@@ -154,6 +158,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RootSite", "Src\Common\Root
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RootSiteTests", "Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj", "{EC934204-1D3A-5575-A500-CB7923C440E2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrChecks", "Lib\src\ScrChecks\ScrChecks.csproj", "{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrChecksTests", "Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj", "{37555756-6D42-5E46-B455-E58E3D1E8E0C}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptureUtils", "Src\Common\ScriptureUtils\ScriptureUtils.csproj", "{8336DC7C-954B-5076-9315-D7DC5317282B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptureUtilsTests", "Src\Common\ScriptureUtils\ScriptureUtilsTests\ScriptureUtilsTests.csproj", "{04546E35-9A3A-5629-8282-3683A5D848F9}"
@@ -238,25 +246,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGloss", "Src\Utili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDll", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDll.csproj", "{EEE765C8-6812-4F9F-A100-42AA71921926}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDllTests", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDllTests\HCSynthByGlossDllTests.csproj", "{8EF1E1AE-2226-4A9B-8942-CAB531956ED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossDllTest", "Src\Utilities\HCSynthByGloss\HCSynthByGlossDll\HCSynthByGlossDllTest\HCSynthByGlossDllTest.csproj", "{8EF1E1AE-2226-4A9B-8942-CAB531956ED3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossTests", "Src\Utilities\HCSynthByGloss\HCSynthByGloss\HCSynthByGlossTests\HCSynthByGlossTests.csproj", "{5DB1CEDA-B7AA-4594-9CE0-6D3A6F5763DF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlloGenModel", "Src\Utilities\AlloVarGen\AlloGenModel\AlloGenModel.csproj", "{996498A3-06F1-4B1B-B83F-15648DD8F514}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlloGenService", "Src\Utilities\AlloVarGen\AlloGenService\AlloGenService.csproj", "{ECEC3C09-019A-4B31-B72A-C4A22DE88E84}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlloGenModelTests", "Src\Utilities\AlloVarGen\AlloGenModel\AlloGenModelTests\AlloGenModelTests.csproj", "{98A04BE3-5CDA-4616-9396-E40B33CC9256}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlloGenServiceTests", "Src\Utilities\AlloVarGen\AlloGenService\AlloGenServiceTests\AlloGenServiceTests.csproj", "{B4CDC940-DDA7-4EEC-87A6-8441CF47EE7E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AllomorphGeneratorDll", "Src\Utilities\AlloVarGen\AllomorphGeneratorDll\AllomorphGeneratorDll.csproj", "{2C57CEB5-40DE-4229-89B8-BADE30687815}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VarGenService", "Src\Utilities\AlloVarGen\VarGenService\VarGenService.csproj", "{0EDB239B-A523-4259-9123-EBA3B7E0139F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VarGenServiceTests", "Src\Utilities\AlloVarGen\VarGenService\VarGenServiceTests\VarGenServiceTests.csproj", "{AF29BF64-3F6E-4CD9-BC70-AFB68F563173}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VariantGeneratorDll", "Src\Utilities\AlloVarGen\VariantGeneratorDll\VariantGeneratorDll.csproj", "{91219E68-FF1D-4DED-BB06-3A6AF46C0419}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HCSynthByGlossTest", "Src\Utilities\HCSynthByGloss\HCSynthByGloss\HCSynthByGlossTest\HCSynthByGlossTest.csproj", "{5DB1CEDA-B7AA-4594-9CE0-6D3A6F5763DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisambiguateInFLExDB", "Src\Utilities\pcpatrflex\DisambiguateInFLExDB\DisambiguateInFLExDB.csproj", "{6A3359E7-E3DA-4CF6-B6F8-C6A4E8D9800B}"
 EndProject
@@ -331,6 +323,18 @@ Global
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Debug|x64.Build.0 = Debug|x64
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Release|x64.ActiveCfg = Release|x64
 		{36F2A7A6-C7F9-5D3D-87D7-B4C0D5C51C0E}.Release|x64.Build.0 = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Bounds|x64.ActiveCfg = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Bounds|x64.Build.0 = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Debug|x64.ActiveCfg = Debug|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Debug|x64.Build.0 = Debug|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Release|x64.ActiveCfg = Release|x64
+		{B53C715F-2F97-4E2B-9C10-5BFF1C04A446}.Release|x64.Build.0 = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Bounds|x64.ActiveCfg = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Bounds|x64.Build.0 = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Debug|x64.ActiveCfg = Debug|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Debug|x64.Build.0 = Debug|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Release|x64.ActiveCfg = Release|x64
+		{6F7A4D9C-5B44-4D0E-ABAA-8D6F38F30C6A}.Release|x64.Build.0 = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Bounds|x64.ActiveCfg = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Bounds|x64.Build.0 = Release|x64
 		{A51BAFC3-1649-584D-8D25-101884EE9EAA}.Debug|x64.ActiveCfg = Debug|x64
@@ -739,6 +743,18 @@ Global
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Debug|x64.Build.0 = Debug|x64
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Release|x64.ActiveCfg = Release|x64
 		{EC934204-1D3A-5575-A500-CB7923C440E2}.Release|x64.Build.0 = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Bounds|x64.ActiveCfg = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Bounds|x64.Build.0 = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Debug|x64.ActiveCfg = Debug|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Debug|x64.Build.0 = Debug|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Release|x64.ActiveCfg = Release|x64
+		{0B5C69D2-8502-5FED-A22C-CE6A0269D9F1}.Release|x64.Build.0 = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Bounds|x64.ActiveCfg = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Bounds|x64.Build.0 = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Debug|x64.ActiveCfg = Debug|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Debug|x64.Build.0 = Debug|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Release|x64.ActiveCfg = Release|x64
+		{37555756-6D42-5E46-B455-E58E3D1E8E0C}.Release|x64.Build.0 = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Bounds|x64.ActiveCfg = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Bounds|x64.Build.0 = Release|x64
 		{8336DC7C-954B-5076-9315-D7DC5317282B}.Debug|x64.ActiveCfg = Debug|x64
