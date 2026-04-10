@@ -35,6 +35,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Import-Module (Join-Path $scriptDir 'FwBuildEnvironment.psm1') -Force
 
 function Write-Status {
 	param([string]$Message, [string]$Status = "INFO", [string]$Color = "White")
@@ -97,7 +99,6 @@ Write-Host "OutputGitHubEnv: $OutputGitHubEnv"
 Write-Host "Verify: $Verify"
 Write-Host ""
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Resolve-Path "$scriptDir\..\.."
 
 # Set FW_ROOT_CODE_DIR and FW_ROOT_DATA_DIR for DirectoryFinder fallback
@@ -109,6 +110,7 @@ Set-EnvVar -Name "FW_ROOT_DATA_DIR" -Value $distFiles
 $results = @{
 	VSPath = $null
 	MSBuildPath = $null
+	VSTestPath = $null
 	Errors = @()
 }
 
@@ -117,31 +119,38 @@ $results = @{
 # ----------------------------------------------------------------------------
 Write-Host "--- Locating Visual Studio ---" -ForegroundColor Cyan
 
-$vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-if (Test-Path $vsWhere) {
-	$vsPath = & $vsWhere -latest -requires Microsoft.Component.MSBuild -products * -property installationPath
-	if ($vsPath) {
-		Write-Status "Visual Studio: $vsPath" -Status "OK"
-		$results.VSPath = $vsPath
+$toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+if ($toolchain) {
+	$results.VSPath = $toolchain.InstallationPath
+	$results.MSBuildPath = $toolchain.MSBuildPath
+	$results.VSTestPath = $toolchain.VSTestPath
 
-		# Set VS environment variables
-		Set-EnvVar -Name "VSINSTALLDIR" -Value "$vsPath\"
-		Set-EnvVar -Name "VCINSTALLDIR" -Value "$vsPath\VC\"
-
-		# VCTargetsPath for C++ builds
-		$vcTargets = Join-Path $vsPath 'MSBuild\Microsoft\VC\v170'
-		if (Test-Path $vcTargets) {
-			Set-EnvVar -Name "VCTargetsPath" -Value $vcTargets
-		}
+	if ([string]::IsNullOrWhiteSpace($toolchain.DisplayVersion)) {
+		Write-Status "Visual Studio: $($toolchain.InstallationPath)" -Status "OK"
 	}
 	else {
-		Write-Status "Visual Studio not found via vswhere" -Status "FAIL"
-		$results.Errors += "Visual Studio not found"
+		Write-Status "Visual Studio $($toolchain.DisplayVersion): $($toolchain.InstallationPath)" -Status "OK"
+	}
+
+	# Export installation hints only; build/test scripts still self-initialize via VsDevCmd.
+	Set-EnvVar -Name "VSINSTALLDIR" -Value ($toolchain.InstallationPath.TrimEnd('\') + '\')
+	if ($toolchain.VcInstallDir) {
+		Set-EnvVar -Name "VCINSTALLDIR" -Value ($toolchain.VcInstallDir.TrimEnd('\') + '\')
+	}
+	if ($toolchain.VCTargetsPath) {
+		Set-EnvVar -Name "VCTargetsPath" -Value $toolchain.VCTargetsPath
 	}
 }
 else {
-	Write-Status "vswhere.exe not found at: $vsWhere" -Status "FAIL"
-	$results.Errors += "vswhere.exe not found"
+	$vsWhere = Get-VsWherePath
+	if ($vsWhere) {
+		Write-Status "Visual Studio with MSBuild and C++ tools not found" -Status "FAIL"
+		$results.Errors += "Visual Studio with MSBuild and C++ tools not found"
+	}
+	else {
+		Write-Status "vswhere.exe not found" -Status "FAIL"
+		$results.Errors += "vswhere.exe not found"
+	}
 }
 
 # ----------------------------------------------------------------------------
@@ -150,25 +159,11 @@ else {
 Write-Host ""
 Write-Host "--- Locating MSBuild ---" -ForegroundColor Cyan
 
-$msbuildCandidates = @()
-if ($results.VSPath) {
-	$msbuildCandidates += Join-Path $results.VSPath 'MSBuild\Current\Bin\MSBuild.exe'
-	$msbuildCandidates += Join-Path $results.VSPath 'MSBuild\Current\Bin\amd64\MSBuild.exe'
+if ($results.MSBuildPath) {
+	Write-Status "MSBuild: $($results.MSBuildPath)" -Status "OK"
+	Add-ToPath -Path (Split-Path -Parent $results.MSBuildPath) | Out-Null
 }
-$msbuildCandidates += "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
-$msbuildCandidates += "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe"
-$msbuildCandidates += "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe"
-$msbuildCandidates += "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
-
-foreach ($candidate in $msbuildCandidates) {
-	if (Test-Path $candidate) {
-		$results.MSBuildPath = $candidate
-		Write-Status "MSBuild: $candidate" -Status "OK"
-		break
-	}
-}
-
-if (-not $results.MSBuildPath) {
+else {
 	Write-Status "MSBuild not found" -Status "FAIL"
 	$results.Errors += "MSBuild not found"
 }
@@ -203,37 +198,12 @@ if (-not $foundNetfx) {
 Write-Host ""
 Write-Host "--- Locating VSTest ---" -ForegroundColor Cyan
 
-$vstestPath = $null
-$vstestCandidates = @()
-
-# Check VS installation paths first
-if ($results.VSPath) {
-	$vstestCandidates += Join-Path $results.VSPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
-}
-
-# Add known installation paths (BuildTools, TestAgent, etc.)
-$vstestCandidates += @(
-	'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow',
-	"${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
-	"${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
-	"${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
-	"${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
-	"${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
-)
-
-foreach ($candidate in $vstestCandidates) {
-	if ($candidate -and (Test-Path (Join-Path $candidate 'vstest.console.exe'))) {
-		$vstestPath = $candidate
-		Add-ToPath -Path $vstestPath | Out-Null
-		break
-	}
-}
-
-if (-not $vstestPath) {
-	Write-Status "vstest.console.exe not found" -Status "WARN"
+if ($results.VSTestPath) {
+	Add-ToPath -Path (Split-Path -Parent $results.VSTestPath) | Out-Null
+	Write-Status "VSTest: $($results.VSTestPath)" -Status "OK"
 }
 else {
-	Write-Status "VSTest: $vstestPath" -Status "OK"
+	Write-Status "vstest.console.exe not found" -Status "WARN"
 }
 
 # ----------------------------------------------------------------------------
@@ -246,6 +216,7 @@ Write-Host "=== Setup Complete ===" -ForegroundColor Cyan
 if ($OutputGitHubEnv -and $env:GITHUB_OUTPUT) {
 	"msbuild-path=$($results.MSBuildPath)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 	"vs-install-path=$($results.VSPath)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+	"vstest-path=$($results.VSTestPath)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 }
 
 # Return results object for programmatic use
