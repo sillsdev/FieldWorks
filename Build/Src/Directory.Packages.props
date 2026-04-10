@@ -1,12 +1,26 @@
 <Project>
+	<!--
+		Build/Src uses the repo root CPM file as its baseline, then layers only the
+		few build-tool-specific deltas that genuinely differ from application code.
+		NuGet auto-imports only the nearest Directory.Packages.props, so parent CPM
+		settings must be imported manually.
+	-->
 	<PropertyGroup>
-		<!--
-			Build infrastructure projects (FwBuildTasks, NativeBuild) manage their own
-			package versions independently. They do not contribute assemblies to the
-			shared Output/ directory, so CPM transitive pinning does not apply here.
-			FwBuildTasks also requires different versions of test infrastructure packages
-			(NUnit3TestAdapter 5.2.0, SIL.TestUtilities 12.0.0-*) than the main codebase.
-		-->
-		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<RootDirectoryPackagesProps>$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)..'))</RootDirectoryPackagesProps>
 	</PropertyGroup>
+
+	<Import Project="$(RootDirectoryPackagesProps)" Condition="Exists('$(RootDirectoryPackagesProps)')" />
+
+	<Target Name="EnsureRootDirectoryPackagesPropsExists" BeforeTargets="CollectPackageReferences" Condition="'$(RootDirectoryPackagesProps)' == '' Or !Exists('$(RootDirectoryPackagesProps)')">
+		<Error Text="Unable to locate the repo root Directory.Packages.props for Build/Src. Expected to find a parent Directory.Packages.props above '$(MSBuildThisFileDirectory)'. Ensure the root CPM file exists and has not been renamed or omitted from the current source checkout." />
+	</Target>
+
+	<!-- Use Update for root-pinned packages and Include for build-only packages absent from the root CPM file. -->
+	<ItemGroup Label="Build Tool Package Versions">
+		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.4.0" />
+		<PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+		<PackageVersion Update="NUnit3TestAdapter" Version="5.2.0" />
+		<PackageVersion Include="SIL.BuildTasks" Version="3.2.0" />
+		<PackageVersion Update="SIL.TestUtilities" Version="12.0.1" />
+	</ItemGroup>
 </Project>
