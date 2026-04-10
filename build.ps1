@@ -57,6 +57,15 @@
 	Useful for CI/agent scenarios where you want to see recent output without piping.
 	The full output is still written to LogFile if specified.
 
+.PARAMETER SkipRestore
+	Skips restoring NuGet packages
+
+.PARAMETER SkipNative
+	Skips building native C++ components. Use this for faster iterations when making purely managed code changes.
+
+.PARAMETER ForceBuildBuildTasks
+	Buld FwBuildTasks even if FwBuildTasks.dll already exists. BuildTasks are rarely updated, so the default is not to build them.
+
 .PARAMETER BuildInstaller
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
 	This automatically enables -BuildAdditionalApps unless explicitly disabled.
@@ -152,6 +161,7 @@ param(
 	[int]$TailLines,
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
+	[switch]$ForceBuildBuildTasks,
 	[switch]$BuildInstaller,
 	[switch]$BuildPatch,
 	[ValidateSet('Wix3', 'Wix6')]
@@ -511,12 +521,14 @@ try {
 		}
 
 		# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
-		$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
-		Invoke-MSBuild `
-			-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
-				"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
-				"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
-			-Description 'FwBuildTasks (Bootstrap)'
+		if (-not (Test-Path $fwTasksSourcePath) -or $ForceBuildBuildTasks) {
+			$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
+			Invoke-MSBuild `
+				-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
+					"/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", `
+					"/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
+				-Description 'FwBuildTasks (Bootstrap)'
+		}
 
 		if (-not (Test-Path $fwTasksSourcePath)) {
 			throw "Failed to build FwBuildTasks. Expected $fwTasksSourcePath to exist."
