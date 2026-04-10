@@ -37,9 +37,9 @@
 	Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
 	Default is 'minimal'.
 
-.PARAMETER TraceCrashes
+.PARAMETER EnableTracing
 	If set, enables the dev diagnostics config (FieldWorks.Diagnostics.dev.config) so trace logging
-	is written next to the built executable. Useful for crash investigation.
+	is written next to the built executable. Use this for interactive diagnostics and crash investigation.
 
 .PARAMETER NodeReuse
 	Controls MSBuild node reuse (/nr). Accepts true, false, or auto.
@@ -159,7 +159,7 @@ param(
 	[switch]$InstallerOnly,
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
-	[switch]$TraceCrashes,
+	[switch]$EnableTracing,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
 	[ValidateSet('user', 'agent', 'unknown')]
@@ -169,6 +169,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+$runningOnWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+if (-not $runningOnWindows) {
+	Write-Host "[ERROR] FieldWorks builds are disabled on non-Windows hosts." -ForegroundColor Red
+	Write-Host "Linux and macOS are supported for editing, code search, specs, and documentation only." -ForegroundColor Yellow
+	Write-Host "Run build.ps1 on Windows if you need build output." -ForegroundColor Yellow
+	exit 1
+}
 
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
 	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
@@ -181,13 +189,13 @@ if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullO
 $env:PATH = "$env:WIX/bin;$env:PATH"
 
 if ($Configuration -like "--*") {
-	if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
-		$TraceCrashes = $true
+	if ($Configuration -eq "--EnableTracing" -and -not $EnableTracing) {
+		$EnableTracing = $true
 		$Configuration = "Debug"
-		Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
+		Write-Output "[WARN] Detected '--EnableTracing' passed without PowerShell switch parsing. Using -EnableTracing and defaulting Configuration to Debug."
 	}
 	else {
-		throw "Invalid Configuration value '$Configuration'. Use -TraceCrashes (single dash) for the trace option."
+		throw "Invalid Configuration value '$Configuration'. Use -EnableTracing (single dash) for trace-enabled builds."
 	}
 }
 
@@ -410,6 +418,15 @@ try {
 		# Clean stale per-project obj/ folders
 		Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
+		$normalizedProjectPath = [System.IO.Path]::GetFullPath($projectPath)
+		$testViewsProjectPath = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'Src\views\Test\TestViews.vcxproj'))
+		if (-not $SkipNative -and ($normalizedProjectPath -eq $testViewsProjectPath) -and (Test-ViewsNativeArtifactsStale -RepoRoot $PSScriptRoot -Configuration $Configuration)) {
+			Write-Host "[INFO] Views native artifacts are stale; refreshing NativeBuild before building TestViews." -ForegroundColor Yellow
+			Invoke-MSBuild `
+				-Arguments @('Build/Src/NativeBuild/NativeBuild.csproj', '/t:Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/p:BuildNativeTests=true', '/v:minimal', '/nologo') `
+				-Description 'NativeBuild (Freshness Refresh)'
+		}
+
 		# LT-22382: Remove stale first-party DLLs from the output directory before building.
 		# Uses a whitelist of assembly names from Src/**/*.csproj to identify FW assemblies
 		# and checks their major version against FWMAJOR. See Build\Agent\Remove-StaleDlls.ps1.
@@ -462,7 +479,7 @@ try {
 		$installerMsBuildArgs = $finalMsBuildArgs
 
 		# Args specific to the main build (not the installer)
-		if ($TraceCrashes) {
+		if ($EnableTracing) {
 			$finalMsBuildArgs += "/p:UseDevTraceConfig=true"
 		}
 		$finalMsBuildArgs += "/p:CL_MPCount=$mpCount"

@@ -71,6 +71,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$runningOnWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+if (-not $runningOnWindows) {
+	Write-Host "[ERROR] FieldWorks tests are disabled on non-Windows hosts." -ForegroundColor Red
+	Write-Host "Linux and macOS are supported for editing, code search, specs, and documentation only." -ForegroundColor Yellow
+	Write-Host "Run test.ps1 on Windows if you need executable test output." -ForegroundColor Yellow
+	exit 1
+}
+
 if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullOrWhiteSpace($env:FW_BUILD_STARTED_BY)) {
 	$startedByFromEnv = $env:FW_BUILD_STARTED_BY.ToLowerInvariant()
 	if ($startedByFromEnv -in @('user', 'agent', 'unknown')) {
@@ -224,11 +232,50 @@ try {
 				Write-Host ""
 			}
 			else {
-				Write-Host "Building before running tests..." -ForegroundColor Cyan
-				# This nested call runs while test.ps1 already owns the same-worktree lock.
-				# Pass -SkipWorktreeLock explicitly so the build path does not depend on the
-				# current '&' invocation sharing the same thread and Windows mutex recursion.
-				& "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -SkipWorktreeLock
+				# Attempt to build a single managed test project when possible to reduce iteration cost.
+				$projectToBuild = $null
+
+				if ($TestProject) {
+					if ($TestProject -match '\.csproj$') {
+						if (Test-Path $TestProject) {
+							$projectToBuild = $TestProject
+						}
+					}
+					elseif (Test-Path $TestProject -PathType Container) {
+						$candidates = Get-ChildItem -Path $TestProject -Filter "*.csproj"
+						if ($candidates.Count -eq 1) {
+							$projectToBuild = $candidates[0].FullName
+						}
+						elseif ($candidates.Count -gt 1) {
+							$folderName = Split-Path $TestProject -Leaf
+							$match = $candidates | Where-Object { $_.BaseName -eq $folderName }
+							if ($match) {
+								$projectToBuild = $match[0].FullName
+							}
+						}
+					}
+				}
+
+				if ($projectToBuild) {
+					Write-Host "Building single project: $projectToBuild..." -ForegroundColor Cyan
+					Invoke-MSBuild `
+						-Arguments @(
+							$projectToBuild,
+							'/t:Build',
+							"/p:Configuration=$Configuration",
+							'/p:Platform=x64',
+							'/v:minimal',
+							'/nologo'
+						) `
+						-Description "Build $TestProject"
+				}
+				else {
+					Write-Host "Building before running tests..." -ForegroundColor Cyan
+					# This nested call runs while test.ps1 already owns the same-worktree lock.
+					# Pass -SkipWorktreeLock explicitly so the build path does not depend on the
+					# current '&' invocation sharing the same thread and Windows mutex recursion.
+					& "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -Verbosity $Verbosity -StartedBy $StartedBy -SkipDependencyCheck:$SkipDependencyCheck -SkipWorktreeLock
+				}
 				if ($LASTEXITCODE -ne 0) {
 					Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
 					$script:testExitCode = $LASTEXITCODE
@@ -263,16 +310,49 @@ try {
 				# build.ps1 bootstraps this into BuildTools/FwBuildTasks/<Configuration>/FwBuildTasks.dll.
 				$testDlls = @(Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll")
 			}
+			elseif ($normalizedTestProject -match '(^|/)Lib/src/ScrChecks/ScrChecksTests($|/)') {
+				# ScrChecksTests builds under Lib/src and is not copied into Output/<Configuration>.
+				$testDlls = @(Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll")
+			}
 			elseif ($TestProject -match '\.dll$') {
 				$testDlls = @(Join-Path $outputDir (Split-Path $TestProject -Leaf))
 			}
 			else {
 				# Assume it's a project path, find the DLL
 				$projectName = Split-Path $TestProject -Leaf
-				if ($projectName -notmatch 'Tests?$') {
+				if ($projectName -match '\.csproj$') {
+					$projectName = [System.IO.Path]::GetFileNameWithoutExtension($projectName)
+				}
+
+				if ($projectName -notmatch 'Tests$') {
 					$projectName = "${projectName}Tests"
 				}
 				$testDlls = @(Join-Path $outputDir "$projectName.dll")
+			}
+
+			# Fallback: some test projects build into their own bin folder and are not copied into Output/<Configuration>.
+			# If the expected Output/<Configuration>/<Name>.dll isn't present, look for bin/x64/<Configuration>/net48/<Name>.dll.
+			if ($testDlls.Count -eq 1 -and -not (Test-Path $testDlls[0]) -and ($TestProject -notmatch '\.dll$')) {
+				$projectPathCandidate = Join-Path $PSScriptRoot $TestProject
+
+				$projectDir = $null
+				$projectBaseName = $null
+
+				if (Test-Path -LiteralPath $projectPathCandidate -PathType Container) {
+					$projectDir = $projectPathCandidate
+					$projectBaseName = Split-Path $projectDir -Leaf
+				}
+				elseif (Test-Path -LiteralPath $projectPathCandidate -PathType Leaf) {
+					$projectDir = Split-Path $projectPathCandidate -Parent
+					$projectBaseName = [System.IO.Path]::GetFileNameWithoutExtension($projectPathCandidate)
+				}
+
+				if ($projectDir -and $projectBaseName) {
+					$binDll = Join-Path $projectDir "bin/x64/$Configuration/net48/$projectBaseName.dll"
+					if (Test-Path -LiteralPath $binDll -PathType Leaf) {
+						$testDlls = @($binDll)
+					}
+				}
 			}
 		}
 		else {
@@ -284,6 +364,12 @@ try {
 			$testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -ErrorAction SilentlyContinue |
 				Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel|^SIL\.WritingSystems\.Tests' } |
 				Select-Object -ExpandProperty FullName
+
+			# Some test projects (e.g., under Lib/src) are not copied into Output/<Configuration>.
+			$scrChecksTestsDll = Join-Path $PSScriptRoot "Lib/src/ScrChecks/ScrChecksTests/bin/x64/$Configuration/net48/ScrChecksTests.dll"
+			if (Test-Path $scrChecksTestsDll) {
+				$testDlls = @($testDlls + $scrChecksTestsDll | Select-Object -Unique)
+			}
 		}
 
 		$missingTestDlls = @($testDlls | Where-Object { -not (Test-Path $_) })

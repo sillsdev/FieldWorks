@@ -1,4 +1,4 @@
-﻿/*--------------------------------------------------------------------*//*:Ignore this sentence.
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
 Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -37,6 +37,21 @@ const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0
 //:>	Forward declarations
 //:>********************************************************************************************
 
+namespace
+{
+	void DeleteMemoryDcAndBitmap(HDC hdcMem)
+	{
+		if (!hdcMem)
+			return;
+
+		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(hdcMem, OBJ_BITMAP);
+		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		Assert(fSuccess);
+		fSuccess = AfGdi::DeleteDC(hdcMem);
+		Assert(fSuccess);
+	}
+}
+
 //:>********************************************************************************************
 //:>	Local Constants and static variables
 //:>********************************************************************************************
@@ -66,6 +81,9 @@ void VwRootBox::Init()
 	m_fInDrag = false;
 	m_hrSegmentError = S_OK;
 	m_cMaxParasToScan = 4;
+	m_fNeedsLayout = true;
+	m_dxLastLayoutWidth = -1;
+	m_fNeedsReconstruct = true;
 	// Usually set in Layout method, but some tests don't do this...
 	// play safe also for any code called before Layout.
 	m_ptDpiSrc.x = 96;
@@ -193,6 +211,9 @@ STDMETHODIMP VwRootBox::PropChanged(HVO hvo, PropTag tag, int ivMin, int cvIns,
 {
 	BEGIN_COM_METHOD;
 
+	// Any data change makes a subsequent Reconstruct() valid work.
+	m_fNeedsReconstruct = true;
+
 	int ivMinDisp;
 	if (m_qsda)
 	{
@@ -318,7 +339,10 @@ STDMETHODIMP VwRootBox::SetRootObjects(HVO * prghvo, IVwViewConstructor ** prgpv
 	m_chvoRoot = chvo;
 	m_qss = pss;
 	if (m_fConstructed)
+	{
+		m_fNeedsReconstruct = true; // root data changed — ensure PATH-R1 guard allows reconstruction
 		CheckHr(Reconstruct());
+	}
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
@@ -397,7 +421,10 @@ STDMETHODIMP VwRootBox::putref_Overlay(IVwOverlay * pvo)
 	m_qvo = pvo;
 	m_qvrs->OverlayChanged(this, m_qvo);
 	if (m_fConstructed)
+	{
+		m_fNeedsLayout = true; // overlay changes may affect layout
 		LayoutFull();
+	}
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
@@ -2488,10 +2515,27 @@ STDMETHODIMP VwRootBox::get_IsPropChangedInProgress(ComBool * pfInProgress)
 	BEGIN_COM_METHOD;
 	ChkComArgPtr(pfInProgress);
 
-	*pfInProgress = m_fIsPropChangedInProgress;
+	*pfInProgress = m_fIsPropChangedInProgress ? true : false;
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
+
+/*----------------------------------------------------------------------------------------------
+	PATH-L5: Reports whether this root box needs a full Reconstruct.
+	Returns true when data or structural changes (PropChanged, OnStylesheetChange, etc.)
+	have occurred since the last Reconstruct. Managed callers can use this to skip the
+	overhead of selection save/restore and drawing suspension when nothing has changed.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_NeedsReconstruct(ComBool * pfNeeds)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pfNeeds);
+
+	*pfNeeds = m_fNeedsReconstruct ? true : false;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
 /*----------------------------------------------------------------------------------------------
 	Discard all your notifiers. In case this happens during a sequence of PropChanged calls,
 	mark them all as deleted.
@@ -2576,6 +2620,7 @@ void VwRootBox::Reconstruct(bool fCheckForSync)
 
 	Invalidate(); // new
 	InvalidateRect(&vwrect); //old
+	m_fNeedsReconstruct = false; // reconstruction complete
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2601,9 +2646,15 @@ STDMETHODIMP VwRootBox::OnStylesheetChange()
 	if (!m_fConstructed || Style() == NULL)
 		return S_OK;  // no Style() object exists to fix. (I think the second condition above is redundant, but play safe.)
 	// Redraw the boxes based on stylesheet changes.
+	// This is intentionally nontrivial: LayoutFull() is enough to keep the current display
+	// usable, but a stylesheet change can also invalidate construction-time state such as
+	// notifier/property-store assumptions. Leave m_fNeedsReconstruct set so later callers
+	// like SimpleRootSite.RefreshDisplay() can still observe that a full rebuild may be needed.
+	m_fNeedsReconstruct = true; // style changes warrant reconstruction
 
 	Style()->InitRootTextProps(m_vqvwvc.Size() == 0 ? NULL : m_vqvwvc[0]);
 	Style()->RecomputeEffects();
+	m_fNeedsLayout = true; // style changes invalidate layout
 	LayoutFull();
 	return S_OK;
 
@@ -2838,12 +2889,23 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 	int dpiX, dpiY;
 	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
 	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
+
+	// PATH-L1 guard: skip full layout when the box tree is already laid out at this width
+	// and source DPI, and no structural mutation has occurred since the last successful layout.
+	if (m_fConstructed && !m_fNeedsLayout && dxAvailWidth == m_dxLastLayoutWidth
+		&& dpiX == m_ptDpiSrc.x && dpiY == m_ptDpiSrc.y)
+		return S_OK;
+
 	m_ptDpiSrc.x = dpiX;
 	m_ptDpiSrc.y = dpiY;
 
 	if (!m_fConstructed)
 		Construct(pvg, dxAvailWidth);
 	VwDivBox::DoLayout(pvg, dxAvailWidth, -1, true);
+
+	// Layout succeeded — cache the width and clear the dirty flag.
+	m_fNeedsLayout = false;
+	m_dxLastLayoutWidth = dxAvailWidth;
 #ifdef ENABLE_TSF
 	if (m_qvim)
 		CheckHr(m_qvim->OnLayoutChange());
@@ -4140,6 +4202,16 @@ void VwRootBox::RelayoutRoot(IVwGraphics * pvg, FixupMap * pfixmap, int dxpAvail
 	int dyOld = FieldHeight();
 	int dxOld = Width();
 	RelayoutCore(pvg, dxAvailWidth, this, pfixmap, -1, NULL, pboxsetDeleted);
+
+	// Incremental relayout succeeded — update layout guard state.
+	int dpiX, dpiY;
+	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
+	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
+	m_ptDpiSrc.x = dpiX;
+	m_ptDpiSrc.y = dpiY;
+	m_fNeedsLayout = false;
+	m_dxLastLayoutWidth = dxAvailWidth;
+
 	if (dyOld != FieldHeight() || dxOld != Width() || dyOld2 != Height())
 		CheckHr(m_qvrs->RootBoxSizeChanged(this));
 }
@@ -4189,6 +4261,11 @@ void VwRootBox::Construct(IVwGraphics * pvg, int dxAvailWidth)
 	// about everything being closed, etc...
 	qvwenv->Cleanup();
 	m_fConstructed = true;
+	m_fNeedsLayout = true; // newly-constructed boxes require layout
+	m_fNeedsReconstruct = false; // construction complete — no need to reconstruct
+	// until PropChanged, OnStylesheetChange, or another mutation sets the flag.
+	// Previously this was left true from Init, causing the first Reconstruct()
+	// call to redo all work even when no data had changed (PATH-R1 guard bug).
 	ResetSpellCheck(); // in case it somehow got called while we had no contents.
 }
 
@@ -4885,40 +4962,22 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	IVwGraphicsWin32Ptr qvg32;
 	Rect rcp(rcpDraw);
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-
-	// Clean up any previous cached bitmap and DC
-	if (m_hdcMem)
-	{
-		HBITMAP hbmpCached = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		if (hbmpCached)
-		{
-			BOOL fSuccessBitmap = AfGdi::DeleteObjectBitmap(hbmpCached);
-			Assert(fSuccessBitmap);
-			(void)fSuccessBitmap; // Suppress C4189 warning in Release builds
-		}
-		BOOL fSuccessDC = AfGdi::DeleteDC(m_hdcMem);
-		Assert(fSuccessDC);
-		(void)fSuccessDC; // Suppress C4189 warning in Release builds
-		m_hdcMem = 0;
-	}
-
-	// Create a new memory DC and bitmap for double buffering
-	m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
-	HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
-	Assert(hbmp);
-	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
+	HDC hdcPrevious = m_hdcMem;
+	HDC hdcNew = AfGdi::CreateCompatibleDC(hdc);
+	HBITMAP hbmpNew = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
+	Assert(hbmpNew);
+	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(hdcNew, hbmpNew);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
 	(void)hbmpOld; // Suppress C4189 warning in Release builds (variable only used in Assert)
-	// We don't delete hbmpOld (the stock bitmap from the DC)
-	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
+	bool fPromotedCache = false;
 
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
-		::BitBlt(m_hdcMem, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
+		::BitBlt(hdcNew, 0, 0, rcp.Width(), rcp.Height(), hdc, rcp.left, rcp.top, SRCCOPY);
 	else
-		AfGfx::FillSolidRect(m_hdcMem, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
-	CheckHr(qvg32->Initialize(m_hdcMem));
+		AfGfx::FillSolidRect(hdcNew, Rect(0, 0, rcp.Width(), rcp.Height()), bkclr);
+	CheckHr(qvg32->Initialize(hdcNew));
 	VwPrepDrawResult xpdr = kxpdrAdjust;
 	IVwGraphicsPtr qvgDummy; // Required for GetGraphics calls to get transform rects
 
@@ -4985,9 +5044,23 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 
 	if (xpdr != kxpdrInvalidate)
 	{
+		DeleteMemoryDcAndBitmap(hdcPrevious);
+		m_hdcMem = hdcNew;
+		hdcNew = 0;
+		fPromotedCache = true;
 		// We drew something...now blast it onto the screen.
 		// The bitmap in m_hdcMem is kept around for potential ReDrawLastDraw calls.
 		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), m_hdcMem, 0, 0, SRCCOPY);
+	}
+	else if (hdcPrevious)
+	{
+		::BitBlt(hdc, rcp.left, rcp.top, rcp.Width(), rcp.Height(), hdcPrevious, 0, 0, SRCCOPY);
+	}
+
+	if (!fPromotedCache)
+	{
+		DeleteMemoryDcAndBitmap(hdcNew);
+		m_hdcMem = hdcPrevious;
 	}
 
 	END_COM_METHOD(g_factVDRB, IID_IVwRootBox);

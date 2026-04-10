@@ -83,10 +83,8 @@ Get-Content check-results.log | ForEach-Object {
 }
 
 if ($problems.Count -gt 0) {
-	Write-Host "`u26A0`uFE0F Please review the output for further information."
+	Write-Host 'WARNING: Please review the output for further information.'
 	Write-Host '### A whitespace issue was found in one or more of the commits.'
-	Write-Host 'This check validates commit history from origin/main..HEAD, not just the current working tree.'
-	Write-Host 'If the report names an older commit, fix the file and then amend, squash, or rebase so that commit no longer appears in the branch history.'
 	Write-Host ''
 	Write-Host 'Errors:'
 	$problems | ForEach-Object { Write-Host $_ }

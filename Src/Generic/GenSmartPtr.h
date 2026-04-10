@@ -92,8 +92,10 @@ public:
 	}
 };
 
-#define GenLockThis() _Lock_GenRefObj _lock_this_##__LINE__(this)
-#define GenLockObj(pobj) _Lock_GenRefObj _lock_obj_##__LINE__(pobj)
+#define GENSMARTPTR_CONCAT_INNER(a, b) a##b
+#define GENSMARTPTR_CONCAT(a, b) GENSMARTPTR_CONCAT_INNER(a, b)
+#define GenLockThis() _Lock_GenRefObj GENSMARTPTR_CONCAT(_lock_this_, __LINE__)(this)
+#define GenLockObj(pobj) _Lock_GenRefObj GENSMARTPTR_CONCAT(_lock_obj_, __LINE__)(pobj)
 
 
 

@@ -80,10 +80,24 @@
 	<PropertyGroup Label="Shared Paths for Traversal Build">
 		<!-- Root directory paths -->
 		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<!--
+			Verify NuGet package auto-discovers SolutionDir/SolutionName by searching up 2 parent
+			directories. Test projects nested 3+ levels deep (e.g. Src/Common/RootSite/RootSiteTests)
+			can't find FieldWorks.sln at the repo root. Set these explicitly to suppress the warning.
+		-->
+		<SolutionDir Condition="'$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*'">$(MSBuildThisFileDirectory)</SolutionDir>
+		<SolutionName Condition="'$(SolutionName)' == '' Or '$(SolutionName)' == '*Undefined*'">FieldWorks</SolutionName>
 		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
 		<FwOutput>$(FwRoot)Output\</FwOutput>
 		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
 		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!--
+			WPF temp-file crash recovery:
+			Interrupted builds leave stale *_wpftmp.csproj files in source directories.
+			SDK auto-globbing picks them up, causing NETSDK1022 or MSB3030 on the next build.
+			DefaultItemExcludes prevents the SDK from ever auto-including these files.
+		-->
+		<DefaultItemExcludes>$(DefaultItemExcludes);*_wpftmp*</DefaultItemExcludes>
 		<!--
 			Unified Intermediate Output Policy:
 			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.

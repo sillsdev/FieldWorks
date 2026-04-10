@@ -43,6 +43,25 @@ static int g_rgnFontSizes[] = {
 	// kvfsSmaller and kvfsLarger don't have absolute values
 static int knDefaultFontSize = 10000;   // 10 point default
 
+// Returns the lfQuality value to use for LOGFONT creation.
+// If the FW_FONT_QUALITY env var is set to a valid value (0-6), that value is used.
+// This allows tests to force ANTIALIASED_QUALITY (4) for deterministic rendering.
+static BYTE GetFontQualityOverride()
+{
+	static BYTE s_quality = []() -> BYTE {
+		wchar_t buf[16] = {};
+		DWORD len = ::GetEnvironmentVariableW(L"FW_FONT_QUALITY", buf, _countof(buf));
+		if (len > 0 && len < _countof(buf))
+		{
+			int val = _wtoi(buf);
+			if (val >= 0 && val <= 6)
+				return static_cast<BYTE>(val);
+		}
+		return DRAFT_QUALITY;
+	}();
+	return s_quality;
+}
+
 // The order of these is signficant--it is the order the font properties are recorded in
 // for each writing system, in the wsStyle string.
 // A copy of this list is in VwPropertyStore.cpp -- the two lists must be kept in sync.
@@ -358,7 +377,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
 	lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
 	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
-	lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
+	lf.lfQuality = GetFontQualityOverride();
 	lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
 	wcscpy_s(lf.lfFaceName, LF_FACESIZE, pchrp->szFaceName);
 	qzvpsWithWsAndFont->Unlock();
@@ -513,16 +532,28 @@ void VwPropertyStore::InitChrp()
 	ILgWritingSystemPtr qws;
 	if (!m_chrp.ws)
 		CheckHr(m_qwsf->get_UserWs(&m_chrp.ws));	// Get default writing system id.
-	Assert(m_chrp.ws);
-	CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
-	AssertPtr(qws);
-	ComBool fRtl;
-	CheckHr(qws->get_RightToLeftScript(&fRtl));
-	m_chrp.fWsRtl = (bool)fRtl;
-	m_chrp.nDirDepth = (fRtl) ? 1 : 0;
+	// A ws of 0 can arrive during PropChanged-driven box rebuilds when
+	// a view constructor emits runs without an explicit writing system,
+	// or when get_UserWs fails to provide a valid ws.
+	// get_EngineOrNull may also return null for an unknown ws.
+	if (m_chrp.ws)
+		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+	AssertPtrN(qws); // null is recoverable — default to LTR below
+	ComBool fRtl = false; // default LTR for unknown/zero ws
+	if (qws)
+	{
+		CheckHr(qws->get_RightToLeftScript(&fRtl));
+		m_chrp.fWsRtl = (bool)fRtl;
+		m_chrp.nDirDepth = (fRtl) ? 1 : 0;
 
-	// Interpret any magic font names.
-	CheckHr(qws->InterpretChrp(&m_chrp));
+		// Interpret any magic font names.
+		CheckHr(qws->InterpretChrp(&m_chrp));
+	}
+	else
+	{
+		m_chrp.fWsRtl = false;
+		m_chrp.nDirDepth = 0;
+	}
 
 	// Other fields in m_chrp have the exact same meaning as the corresponding property,
 	// and are already used to store it.
@@ -1328,14 +1359,18 @@ STDMETHODIMP VwPropertyStore::put_IntProperty(int tpt, int xpv, int nValue)
 			if (m_chrp.ws != nValue)
 			{
 				m_chrp.ws = nValue;
-				Assert(m_chrp.ws);
+				// A ws of 0 can arrive during PropChanged-driven box rebuilds when
+				// a view constructor emits runs without an explicit writing system.
+				// This is recoverable — we default to LTR below.
 				// Recompute m_chrp.fRtl and m_chrp.nDirDepth
 				EnsureWritingSystemFactory();
 				ILgWritingSystemPtr qws;
-				CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
-				AssertPtr(qws);
-				ComBool fRtl;
-				if (qws) // If by some chance we're trying to use an unknown WS, default to LTR.
+				if (m_chrp.ws)
+					CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
+				// An unknown or zero ws yields a null engine; default to LTR.
+				AssertPtrN(qws);
+				ComBool fRtl = false; // default LTR for unknown/zero ws
+				if (qws)
 					CheckHr(qws->get_RightToLeftScript(&fRtl));
 				m_chrp.fWsRtl = (bool)fRtl;
 				m_chrp.nDirDepth = (fRtl) ? 1 : 0;

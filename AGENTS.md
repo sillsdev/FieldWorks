@@ -8,10 +8,6 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Build with `.\build.ps1`.
 - Test with `.\test.ps1`.
 - Do not bypass repository scripts for normal build/test work.
-- Before committing or pushing, run the existing VS Code task `CI: Full local check`.
-- After any rebase, merge, cherry-pick, or manual conflict resolution, run `CI: Whitespace check` before committing.
-- If `CI: Whitespace check` rewrites files, review and restage those files, then rerun the task until it passes cleanly.
-- When commit history changes, run `CI: Commit messages` before pushing.
 
 ## Critical constraints
 
@@ -24,6 +20,10 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Use `.github/instructions/*.instructions.md` for prescriptive rules.
 - Apply `.github/instructions/navigation.instructions.md` for structural navigation and hidden-dependency handling.
 - Use `Src/AGENTS.md`, `.github/AGENTS.md`, `FLExInstaller/AGENTS.md`, and `openspec/AGENTS.md` for area-specific guidance.
+
+## External Dependencies (LibLcm)
+
+FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, which provides the main data model and FDO (FieldWorks Data Objects) layers used by FieldWorks. The liblcm library is the core FieldWorks model for language and culture data and includes interfaces like `IScrFootnoteFactory` that FieldWorks consumes. If you cannot find a core data model definition within this workspace, ask for access to the `liblcm` repository to reference the source.
 
 ## Serena navigation
 
@@ -40,6 +40,5 @@ Minimal, high-signal guidance for coding agents in this repository.
 ## Validation checklist
 
 1. Run the relevant build/test scripts for touched areas.
-2. Run `CI: Full local check` before commit/push; use `CI: Whitespace check` immediately after conflict resolution.
-3. Keep edits scoped and avoid unrelated refactors.
-4. Update docs only when behavior/contracts/process changed.
+2. Keep edits scoped and avoid unrelated refactors.
+3. Update docs only when behavior/contracts/process changed.

@@ -28,6 +28,25 @@ DEFINE_THIS_FILE
 	Local Constants and static variables
 ***********************************************************************************************/
 
+// Returns the lfQuality value to use for LOGFONT creation.
+// If the FW_FONT_QUALITY env var is set to a valid value (0-6), that value is used.
+// This allows tests to force ANTIALIASED_QUALITY (4) for deterministic rendering.
+static BYTE GetFontQualityOverride()
+{
+	static BYTE s_quality = []() -> BYTE {
+		wchar_t buf[16] = {};
+		DWORD len = ::GetEnvironmentVariableW(L"FW_FONT_QUALITY", buf, _countof(buf));
+		if (len > 0 && len < _countof(buf))
+		{
+			int val = _wtoi(buf);
+			if (val >= 0 && val <= 6)
+				return static_cast<BYTE>(val);
+		}
+		return DRAFT_QUALITY;
+	}();
+	return s_quality;
+}
+
 /***********************************************************************************************
 	Two local classes, copied from AfGfx.h. Maybe we should move them to somewhere they
 	can be shared more easily?
@@ -76,11 +95,10 @@ VwGraphics::~VwGraphics()
 		m_hfontOld = NULL;
 	}
 	Assert(!m_hfont);
-	if (m_hfont)
-	{
-		fSuccess = AfGdi::DeleteObjectFont(m_hfont);
-		m_hfont = NULL;
-	}
+	// PATH-C1: Font cache owns all created fonts. Don't double-delete m_hfont
+	// here — ClearFontCache handles it. Just null the pointer.
+	m_hfont = NULL;
+	ClearFontCache();
 
 	if (m_hdc)
 	{
@@ -105,6 +123,7 @@ void VwGraphics::Init()
 	Assert(m_hfont == NULL);
 	Assert(m_hfontOld == NULL);
 	// m_chrp should contain zeros too; don't bother checking.
+	m_colorStateCache.Invalidate();
 
 	// Initialize the clip rectangle to be as big as possible:
 	// TODO: decide if we want to do this.
@@ -123,6 +142,11 @@ static GenericFactory g_fact(
 	_T("SIL Graphics"),
 	_T("Apartment"),
 	&VwGraphics::CreateCom);
+
+static bool TryDeleteCachedFont(HFONT hfont, void *)
+{
+	return AfGdi::DeleteObjectFont(hfont) != 0;
+}
 
 
 void VwGraphics::CreateCom(IUnknown *punkCtl, REFIID riid, void ** ppv)
@@ -1084,10 +1108,13 @@ STDMETHODIMP VwGraphics::ReleaseDC()
 			// original one back into the DC to prevent GDI memory leaks and similar problems.
 			HFONT hfontPrev; // Fixed release build.
 			hfontPrev = AfGdi::SelectObjectFont(m_hdc, m_hfontOld, AfGdi::OLD);
-			fSuccess = AfGdi::DeleteObjectFont(m_hfont);
+			// PATH-C1: Don't delete m_hfont here — ClearFontCache handles lifecycle.
 			m_hfont = 0;
 			m_hfontOld = 0;
 		}
+		// PATH-C1: Delete all cached fonts now that they're deselected from the DC.
+		ClearFontCache();
+		m_colorStateCache.Invalidate();
 		Assert(m_hfont == 0);
 		if (m_hfontOldMeasure)
 		{
@@ -1214,62 +1241,62 @@ STDMETHODIMP VwGraphics::SetupGraphics(LgCharRenderProps * pchrp)
 		memcpy(((byte *)&m_chrp) + cbFontOffset, ((byte *)pchrp) + cbFontOffset,
 			isizeof(m_chrp) - cbFontOffset);
 
-		// Figure the actual font we need.
-		LOGFONT lf;
-		lf.lfItalic = pchrp->ttvItalic == kttvOff ? false : true;
-		lf.lfWeight = pchrp->ttvBold == kttvOff ? 400 : 700;
-		// The minus causes this to be the font height (roughly, from top of ascenders
-		// to bottom of descenders). A positive number indicates we want a font with
-		// this distance as the total line spacing, which makes them too small.
-		// Note that we are also scaling the font size based on the resolution.
-		lf.lfHeight = -MulDiv(pchrp->dympHeight, GetYInch(), kdzmpInch);
-		lf.lfUnderline = false;
-		lf.lfWidth = 0;			// default width, based on height
-		lf.lfEscapement = 0;	// no rotation of text (is this how to do slanted?)
-		lf.lfOrientation = 0;	// no rotation of character baselines
-
-		lf.lfStrikeOut = 0;		// not strike-out
-		lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
-		lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
-		lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
-		lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
-		lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
-		#ifdef UNICODE
-				// ENHANCE: test this path if ever needed.
-				wcscpy_s(lf.lfFaceName, pchrp->szFaceName);
-		#else // not unicode, LOGFONT has 8-bit chars
-				WideCharToMultiByte(
-					CP_ACP,	0, // dumb; we don't expect non-ascii chars
-					pchrp->szFaceName, // string to convert
-					-1,		// null-terminated
-					lf.lfFaceName, 32,
-					NULL, NULL);  // default handling of unconvertibles
-		#endif // not unicode
-		HFONT hfont;
-		hfont = AfGdi::CreateFontIndirect(&lf);
-		if (!hfont)
-			ThrowHr(WarnHr(E_FAIL));
-		SetFont(hfont);
-	}
-
-
-	// Always set the colors.
-	// OPTIMIZE JohnT: would it be useful to remember what the hdc is set to?
-	{
-		SmartPalette spal(m_hdc);
-
-		bool fOK = (AfGfx::SetTextColor(m_hdc, pchrp->clrFore) != CLR_INVALID);
-		if (pchrp->clrBack == kclrTransparent)
+		HFONT hfontCached = FindCachedFont(pchrp);
+		if (hfontCached)
 		{
-			// I can't find it documented anywhere, but it seems to be necessary to set
-			// the background color to black to make TRANSPARENT mode work--at least on my
-			// computer.
-			fOK = fOK && (::SetBkColor(m_hdc, RGB(0,0,0)) != CLR_INVALID);
-			fOK = fOK && ::SetBkMode(m_hdc, TRANSPARENT);
-		} else {
-			fOK = fOK && (AfGfx::SetBkColor(m_hdc, pchrp->clrBack)!= CLR_INVALID);
-			fOK = fOK && ::SetBkMode(m_hdc, OPAQUE);
+			SetFont(hfontCached);
 		}
+		else
+		{
+			// Figure the actual font we need.
+			LOGFONT lf;
+			lf.lfItalic = pchrp->ttvItalic == kttvOff ? false : true;
+			lf.lfWeight = pchrp->ttvBold == kttvOff ? 400 : 700;
+			// The minus causes this to be the font height (roughly, from top of ascenders
+			// to bottom of descenders). A positive number indicates we want a font with
+			// this distance as the total line spacing, which makes them too small.
+			// Note that we are also scaling the font size based on the resolution.
+			lf.lfHeight = -MulDiv(pchrp->dympHeight, GetYInch(), kdzmpInch);
+			lf.lfUnderline = false;
+			lf.lfWidth = 0;			// default width, based on height
+			lf.lfEscapement = 0;	// no rotation of text (is this how to do slanted?)
+			lf.lfOrientation = 0;	// no rotation of character baselines
+
+			lf.lfStrikeOut = 0;		// not strike-out
+			lf.lfCharSet = DEFAULT_CHARSET;			// let name determine it; WS should specify valid
+			lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;	// only work with TrueType fonts
+			lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
+			lf.lfQuality = GetFontQualityOverride();
+			lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
+			#ifdef UNICODE
+					// ENHANCE: test this path if ever needed.
+					wcscpy_s(lf.lfFaceName, pchrp->szFaceName);
+			#else // not unicode, LOGFONT has 8-bit chars
+					WideCharToMultiByte(
+						CP_ACP,	0, // dumb; we don't expect non-ascii chars
+						pchrp->szFaceName, // string to convert
+						-1,		// null-terminated
+						lf.lfFaceName, 32,
+						NULL, NULL);  // default handling of unconvertibles
+			#endif // not unicode
+			HFONT hfont;
+			hfont = AfGdi::CreateFontIndirect(&lf);
+			if (!hfont)
+				ThrowHr(WarnHr(E_FAIL));
+			SetFont(hfont);
+			AddFontToCache(hfont, pchrp);
+		}
+	}
+	m_rgbForeColor = pchrp->clrFore;
+	m_rgbBackColor = pchrp->clrBack;
+
+
+	// PATH-C2: Reuse HDC color state when the requested colors and background mode
+	// already match the previous SetupGraphics call.
+	{
+		COLORREF clrBackNeeded = (pchrp->clrBack == kclrTransparent) ? RGB(0,0,0) : pchrp->clrBack;
+		int nBkModeNeeded = (pchrp->clrBack == kclrTransparent) ? TRANSPARENT : OPAQUE;
+		m_colorStateCache.ApplyIfNeeded(m_hdc, pchrp->clrFore, clrBackNeeded, nBkModeNeeded);
 	}
 #if 0
 	// DarrellX reports that this was causing some weird failures on his machine.
@@ -1612,7 +1639,6 @@ int VwGraphics::GetYInch()
 ----------------------------------------------------------------------------------------------*/
 void VwGraphics::SetFont(HFONT hfont)
 {
-	BOOL fSuccess;
 	if (hfont == m_hfont)
 		return;
 	// Select the new font into the device context
@@ -1630,21 +1656,16 @@ void VwGraphics::SetFont(HFONT hfont)
 	if (!hfontPrev)
 		ThrowHr(WarnHr(E_FAIL));
 
-	if (m_hfontOld)
-	{
-		// We have previously created a font and now need to delete it.
-		// NB this must be done after it is selected out of the DC, or we get a hard-to-find
-		// GDI memory leak that causes weird drawing failures on W-98.
-		Assert(m_hfont);
-		fSuccess = AfGdi::DeleteObjectFont(m_hfont);
-	}
-	else
+	if (!m_hfontOld)
 	{
 		// This is the first font selection we have made into this level; save the old one
 		// to eventually select back into the DC before we RestoreDC.
 		m_hfontOld = hfontPrev;
 	}
+	// PATH-C1: Don't delete the previous font here — the font cache manages
+	// all created HFONT lifecycles.
 	m_hfont = hfont;
+	m_fontHandleCache.TryDeleteDeferredFonts(m_hfont, TryDeleteCachedFont, NULL);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1866,4 +1887,19 @@ int VwGraphics::GetFontHeightFromFontTable()
 }
 
 #include <vector_i.cpp>
-template Vector<HFONT>; // VecHfont;
+template Vector<HRGN>; // VecHRgn;
+
+HFONT VwGraphics::FindCachedFont(const LgCharRenderProps * pchrp)
+{
+	return m_fontHandleCache.FindCachedFont(pchrp);
+}
+
+void VwGraphics::AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp)
+{
+	m_fontHandleCache.AddFontToCache(hfont, pchrp, m_hfont, TryDeleteCachedFont, NULL);
+}
+
+void VwGraphics::ClearFontCache()
+{
+	m_fontHandleCache.Clear(m_hfont, TryDeleteCachedFont, NULL);
+}
