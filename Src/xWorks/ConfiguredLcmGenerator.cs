@@ -23,7 +23,9 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -404,6 +406,11 @@ namespace SIL.FieldWorks.XWorks
 					return settings.ContentGenerator.CreateFragment();
 				}
 
+				if (entry is ILexEntry)
+				{
+					// Record the guid of the source entry for JumpToField.
+					settings.ConfigSource[configuration] = entry.Guid;
+				}
 				var nodeList = BuildNodeList(new List<ConfigurableDictionaryNode>(), configuration);
 				var pieces = configuration.ReferencedOrDirectChildren
 					.Select(childNode => new ConfigFragment(childNode, GenerateContentForFieldByReflection(entry, BuildNodeList(nodeList, childNode), publicationDecorator,
@@ -493,6 +500,11 @@ namespace SIL.FieldWorks.XWorks
 			bool fUseReverseSubField = false)
 		{
 			var config = nodeList.Last();
+			if (field is ICmObject fieldObj)
+			{
+				// Record the guid of the source field for JumpToField.
+				settings.ConfigSource[config] = fieldObj.Guid;
+			}
 
 			if (!config.IsEnabled)
 			{
@@ -2161,6 +2173,11 @@ namespace SIL.FieldWorks.XWorks
 				|| config.ReferencedOrDirectChildren == null)
 				return settings.ContentGenerator.CreateFragment();
 
+			if (item is ILexEntry obj)
+			{
+				// Record the guid of the source entry for JumpToField.
+				settings.ConfigSource[config] = obj.Guid;
+			}
 			var bldr = settings.ContentGenerator.CreateFragment();
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			if (listOptions is DictionaryNodeListAndParaOptions)
@@ -2332,6 +2349,11 @@ namespace SIL.FieldWorks.XWorks
 					switch (child.FieldDescription)
 					{
 						case "ConfigTargets":
+							if (reference is ICmObject fieldObj)
+							{
+								// Record the guid of the source field for JumpToField.
+								settings.ConfigSource[child] = fieldObj.Guid;
+							}
 							var content = settings.ContentGenerator.CreateFragment();
 							foreach (var referenceListItem in referenceList)
 							{
@@ -2384,6 +2406,9 @@ namespace SIL.FieldWorks.XWorks
 			if (!nodeList.Last().IsEnabled)
 				return settings.ContentGenerator.CreateFragment();
 
+			var config = nodeList.Last();
+			// Record the guid of the source field for JumpToField.
+			settings.ConfigSource[config] = subEntry.Guid;
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
 				? settings.ContentGenerator.CreateFragment()
@@ -3492,6 +3517,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
+			public ConcurrentDictionary<ConfigurableDictionaryNode, Guid> ConfigSource = new ConcurrentDictionary<ConfigurableDictionaryNode, Guid>();
+			public bool WriteConfigSource = true;
+
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
 			public bool UseRelativePaths { get; }
