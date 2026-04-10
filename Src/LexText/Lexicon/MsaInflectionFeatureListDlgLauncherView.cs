@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
-				m_rootb.SetRootObject(m_fs == null ? 0 : m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				m_rootb.SetRootObject(m_fs == null ? 0 : m_fs.Hvo, m_vc, (int)VcFrags.kfragShortName, m_rootb.Stylesheet);
 				m_rootb.Reconstruct();
 			}
 		}
