@@ -22,26 +22,20 @@
 	<!-- ======================================================================================== -->
 	<!-- Main Native Build Target (Called by Traversal SDK)                                      -->
 	<!-- ======================================================================================== -->
-	<!-- Main native build target - select between tests and no-tests -->
-	<Target Name="allCpp" DependsOnTargets="allCppNoTest" Condition="'$(BuildNativeTests)' != 'true'" />
-	<Target Name="allCpp" DependsOnTargets="allCppTest" Condition="'$(BuildNativeTests)' == 'true'" />
-
-	<!-- Build without native tests (current behavior) -->
+	<Target Name="allCpp" DependsOnTargets="allCppNoTest;allCppTest" />
 	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views" />
-
-	<!-- Build with native tests -->
-	<Target Name="allCppTest" DependsOnTargets="allCppNoTest;TestGenericLib;TestViews" />
+	<Target Name="allCppTest" DependsOnTargets="allCppNoTest;TestGenericLib;TestViews" Condition="'$(BuildNativeTests)' == 'true'" />
 
 	<!-- Native test targets - build test executables via MSBuild (vcxproj) -->
-	<Target Name="TestGenericLib" DependsOnTargets="GenericLib">
+	<Target Name="TestGenericLib" DependsOnTargets="GenericLib" Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'">
 		<MSBuild Projects="$(fwrt)\Src\Generic\Test\TestGeneric.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Build" />
 		<Message Text="Finished building TestGeneric." />
 	</Target>
-
-	<Target Name="TestViews" DependsOnTargets="Views">
+	<Target Name="TestViews" DependsOnTargets="Views" Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'">
 		<MSBuild Projects="$(fwrt)\Src\views\Test\TestViews.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Build" />
 		<Message Text="Finished building TestViews." />
 	</Target>
+
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest" />
 	</ItemGroup>
