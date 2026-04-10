@@ -553,9 +553,9 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 	Write-Host "========== FAILURE SUMMARY ==========" -ForegroundColor Red
 
 	if ($script:nativeErrorMessages.Count -gt 0) {
-		Write-Host "Native test failures:" -ForegroundColor Red
+		Write-Host "  Native test failures:" -ForegroundColor Red
 		foreach ($msg in $script:nativeErrorMessages) {
-			Write-Host "    $msg" -ForegroundColor Red
+			Write-Host "    - $msg" -ForegroundColor Red
 		}
 		Write-Host "=====================================" -ForegroundColor Red
 	}
@@ -598,7 +598,8 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 	Write-Host "=====================================" -ForegroundColor Red
 	Write-Host "  Full log for managed tests: $vstestLogPath" -ForegroundColor Gray
 	if (-not $NoNative) {
-		Write-Host "  Logs for each native test suite should be in the directory above (Output\$Configuration)." -ForegroundColor Gray
+		$nativeLogPath = Join-Path $PSScriptRoot "Output/$Configuration/<SuiteName>.exe.log"
+		Write-Host "  Logs for each native test suite: $nativeLogPath" -ForegroundColor Gray
 	}
 }
 

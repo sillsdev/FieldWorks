@@ -59,6 +59,7 @@ jobs:
           path: |
             ./*.log
             ./Output/**/*.log
+            ./Output/**/*.log.stderr
 
   publish_test_results:
     name: Publish Test Results

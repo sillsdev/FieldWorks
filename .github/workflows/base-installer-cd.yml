@@ -309,3 +309,4 @@ jobs:
             ./*.log
             ./*.binlog
             ./Output/**/*.log
+            ./Output/**/*.log.stderr
