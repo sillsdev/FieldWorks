@@ -167,6 +167,7 @@ build_output.txt
 *.backup
 *.code-workspace
 config.json
+preprocessed.xml
 
 # Test exclusion tooling artifacts
 Output/test-exclusions/
