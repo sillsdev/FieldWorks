@@ -33,3 +33,4 @@ Bin/ilrepack-assemblies -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace
 Src/Utilities/pcpatrflex/DisambiguateInFLExDB/DisambiguateInFLExDBTests/TestData/*.* -whitespace
 Src/Utilities/pcpatrflex/PcPatrBrowserDll/Transforms/*.* -whitespace
+Src/Utilities/HCSynthByGloss/HCSynthByGloss/TestData/*.txt -whitespace
