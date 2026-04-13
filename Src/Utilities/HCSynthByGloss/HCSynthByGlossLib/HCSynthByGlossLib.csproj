@@ -47,18 +47,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="HCSynthByGlossStrings.de.resx">
-      <LastGenOutput>HCSynthByGlossStrings.de.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="HCSynthByGlossStrings.fr.resx">
-      <LastGenOutput>HCSynthByGlossStrings.fr.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="HCSynthByGlossStrings.es.resx">
-      <LastGenOutput>HCSynthByGlossStrings.es.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <Compile Update="HCSynthByGlossStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>HCSynthByGlossStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Update="HCSynthByGlossStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>HCSynthByGlossStrings.Designer.cs</LastGenOutput>
