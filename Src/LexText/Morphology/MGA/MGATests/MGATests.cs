@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			Assert.That(treeViewGlossList.Nodes[0].Nodes.Count, Is.EqualTo(2));
 			Assert.That(treeViewGlossList.Nodes[1].Nodes.Count, Is.EqualTo(2));
 			Assert.That(treeViewGlossList.Nodes[2].Nodes.Count, Is.EqualTo(2));
-			Assert.That(treeViewGlossList.GetNodeCount(true), Is.EqualTo(682));
+			Assert.That(treeViewGlossList.GetNodeCount(true), Is.EqualTo(1159));
 		}
 		[Test]
 		public void SomeNodeContentsTest()
