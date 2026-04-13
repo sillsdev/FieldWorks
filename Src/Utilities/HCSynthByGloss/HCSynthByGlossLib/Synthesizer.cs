@@ -141,9 +141,7 @@ namespace HCSynthByGloss
 			{
 				if (!glossesFound.Contains(form))
 				{
-					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteBegin);
-					sbGlosses.Append(form);
-					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteEnd);
+					sbGlosses.Append(string.Format(HCSynthByGlossStrings.ksQuotedItemInList, form));
 				}
 			}
 			sb.Append(string.Format(HCSynthByGlossStrings.ksOneOrMoreGlossesNotFound, sbGlosses));
@@ -175,9 +173,7 @@ namespace HCSynthByGloss
 				if (duplicateGloss != null)
 				{
 					duplicateFound = true;
-					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteBegin);
-					sbGlosses.Append(morph.Gloss);
-					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteEnd);
+					sbGlosses.Append(string.Format(HCSynthByGlossStrings.ksQuotedItemInList, morph.Gloss));
 				}
 			}
 			if (duplicateFound)

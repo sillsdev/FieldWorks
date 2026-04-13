@@ -138,12 +138,8 @@
   <data name="ksProcessingResult" xml:space="preserve">
     <value>Processing result: </value>
   </data>
-  <data name="ksQuoteBegin" xml:space="preserve">
-    <value>'</value>
-  </data>
-  <data name="ksQuoteEnd" xml:space="preserve">
-    <value>'; </value>
-    <comment>;</comment>
+  <data name="ksQuotedItemInList" xml:space="preserve">
+    <value>'{0}'; </value>
   </data>
   <data name="ksSuccess" xml:space="preserve">
     <value>Success!</value>

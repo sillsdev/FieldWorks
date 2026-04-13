@@ -115,20 +115,11 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;.
+        ///   Looks up a localized string similar to &apos;{0}&apos;; .
         /// </summary>
-        public static string ksQuoteBegin {
+        public static string ksQuotedItemInList {
             get {
-                return ResourceManager.GetString("ksQuoteBegin", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;; .
-        /// </summary>
-        public static string ksQuoteEnd {
-            get {
-                return ResourceManager.GetString("ksQuoteEnd", resourceCulture);
+                return ResourceManager.GetString("ksQuotedItemInList", resourceCulture);
             }
         }
         
