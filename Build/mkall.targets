@@ -31,7 +31,7 @@
 		<MSBuild Projects="$(fwrt)\Src\Generic\Test\TestGeneric.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Build" />
 		<Message Text="Finished building TestGeneric." />
 	</Target>
-	<Target Name="TestViews" DependsOnTargets="Views" Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'">
+	<Target Name="TestViews" DependsOnTargets="Views;TestGenericLib" Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'">
 		<MSBuild Projects="$(fwrt)\Src\views\Test\TestViews.vcxproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Build" />
 		<Message Text="Finished building TestViews." />
 	</Target>
