@@ -52,9 +52,9 @@ mengurus
 mewakili
 meyakini
 menziarahi
-%0%^<AVxyz>yakin1.1<v><CAUSi>$% One or more glosses not found: 'AVxyz';
-%0%^<AV>yakin1.1<v><CAUSiXyz>$% One or more glosses not found: 'CAUSiXyz';
-%0%^<AVxyz>yakinxyz1.1<v><CAUSi>$% One or more glosses not found: 'AVxyz'; 'yakinxyz1.1';
+%0%^<AVxyz>yakin1.1<v><CAUSi>$% One or more glosses not found: 'AVxyz'; 
+%0%^<AV>yakin1.1<v><CAUSiXyz>$% One or more glosses not found: 'CAUSiXyz'; 
+%0%^<AVxyz>yakinxyz1.1<v><CAUSi>$% One or more glosses not found: 'AVxyz'; 'yakinxyz1.1'; 
 mewakili,menulis
 karang-karangi
 kemengarangian

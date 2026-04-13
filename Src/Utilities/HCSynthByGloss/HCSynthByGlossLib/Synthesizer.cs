@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using HCSynthByGlossLib;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
 using SIL.Machine.Morphology.HermitCrab;
@@ -127,7 +128,7 @@ namespace HCSynthByGloss
 			List<Morpheme> morphemes
 		)
 		{
-			sb.Append(" One or more glosses not found:");
+			var sbGlosses = new StringBuilder();
 			var glossesFound = new List<string>();
 			foreach (Morpheme morpheme in morphemes)
 			{
@@ -140,11 +141,10 @@ namespace HCSynthByGloss
 			{
 				if (!glossesFound.Contains(form))
 				{
-					sb.Append(" '");
-					sb.Append(form);
-					sb.Append("';");
+					sbGlosses.Append(string.Format(HCSynthByGlossStrings.ksQuotedItemInList, form));
 				}
 			}
+			sb.Append(string.Format(HCSynthByGlossStrings.ksOneOrMoreGlossesNotFound, sbGlosses));
 		}
 
 		private void AddToTracing(ISynTraceManager traceManager, StringBuilder sb, string analysis)
@@ -162,6 +162,7 @@ namespace HCSynthByGloss
 		private bool CheckForDuplicates(Morpher morpher, StringBuilder sb, List<Morpheme> morphemes)
 		{
 			bool duplicateFound = false;
+			var sbGlosses = new StringBuilder();
 			foreach (Morpheme morph in morphemes)
 			{
 				if (morph == null)
@@ -171,22 +172,13 @@ namespace HCSynthByGloss
 				);
 				if (duplicateGloss != null)
 				{
-					if (!duplicateFound)
-					{
-						sb.Append(" Duplicate gloss(es) found for '");
-						duplicateFound = true;
-					}
-					else
-					{
-						sb.Append(" '");
-					}
-					sb.Append(morph.Gloss);
-					sb.Append("';");
+					duplicateFound = true;
+					sbGlosses.Append(string.Format(HCSynthByGlossStrings.ksQuotedItemInList, morph.Gloss));
 				}
 			}
 			if (duplicateFound)
 			{
-				sb.Append(" synthesis may not work.");
+				sb.Append(string.Format(HCSynthByGlossStrings.ksDuplicateGlossesFound, sbGlosses.ToString()));
 			}
 			return duplicateFound;
 		}

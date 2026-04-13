@@ -82,7 +82,16 @@ namespace SIL.HCSynthByGlossDllTests
 		[Test]
 		public void ProcessBadInputFilesTest()
 		{
+			CheckErrors("en");
+			CheckErrors("es");
+			CheckErrors("de");
+			CheckErrors("fr");
+		}
+
+		private void CheckErrors(string localeCode)
+		{
 			dll = new HCSynthByGlossDll(tempFile);
+			dll.LocaleCode = localeCode;
 			result = dll.Process();
 			Assert.AreEqual(dll.kError1 + dll.kHCXmlFile + dll.kError2 + "" + dll.kError3, result);
 			result = dll.SetHcXmlFile(hcConfig);
