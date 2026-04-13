@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 2003-2013 SIL International
+Copyright (c) 2003-2026 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -99,85 +99,6 @@ namespace TestGenericLib
 		//WriteString(IStream * pstrm, StrBase<schar> & stb);
 		//GetFullPathName(const achar * psz, StrAnsi & staPath)
 		// ...
-
-// Clipboard is entirely handled in C# now
-//		void GetClipboardFormat(CLIPFORMAT cf, StrUni stuNFC)
-//		{
-//			// TODO-Linux: Clipboard not supported in C++
-//#ifdef WIN32
-//			FORMATETC format;
-//			STGMEDIUM medium;
-//
-//			HRESULT hr;
-//			IDataObjectPtr qdobj;
-//			for (int i = 0; i < 10; i++) // try up to 20 times.
-//			{
-//				hr = ::OleGetClipboard(&qdobj);
-//				if (SUCCEEDED(hr))
-//					break;
-//				::Sleep(100);
-//			}
-//			CheckHr(hr);
-//
-//			format.cfFormat = static_cast<unsigned short>(cf);
-//			format.ptd = NULL;
-//			format.dwAspect = DVASPECT_CONTENT;
-//			format.lindex = -1;
-//			format.tymed = TYMED_HGLOBAL;
-//
-//			hr = qdobj->GetData(&format, &medium);
-//			if (hr == S_OK)
-//			{
-//				StrUni stu;
-//				if (medium.tymed == TYMED_HGLOBAL && medium.hGlobal)
-//				{
-//					const char * pszClip;
-//					const wchar * pwszClip;
-//					switch(cf)
-//					{
-//						case CF_OEMTEXT:
-//						case CF_TEXT:
-//							pszClip = (const char *)::GlobalLock(medium.hGlobal);
-//							stu = pszClip;
-//							break;
-//
-//						case CF_UNICODETEXT:
-//						default:
-//							pwszClip = (const wchar *)::GlobalLock(medium.hGlobal);
-//							stu = pwszClip;
-//					}
-//					::GlobalUnlock(medium.hGlobal);
-//				}
-//				::ReleaseStgMedium(&medium);
-//				unitpp::assert_true("Clipboard data normalized correctly in some format",
-//					stu.Equals(stuNFC.Chars(), stuNFC.Length()));
-//			}
-//			else
-//				unitpp::assert_true("GetData failed in GetClipboardFormat", 0);
-//#endif
-//		}
-//
-//		void testGetDataNormalized()
-//		{
-//			// TODO-Linux: Clipboard not supported in C++
-//#ifdef WIN32
-//			StrUni stuIn = L"Te\x0301sting";
-//			StrUni stuNFC = L"T\x00e9sting";
-//			IDataObjectPtr qdobj;
-//			StringDataObject::Create(const_cast<OLECHAR *>(stuIn.Chars()), &qdobj);
-//			if (::OleSetClipboard(qdobj) == S_OK)
-//			{
-//				ModuleEntry::SetClipboard(qdobj);
-//			}
-//			qdobj.Clear(); // Let go of our connection to the clipboard; seems to make tests at least more reliable.
-//
-//			GetClipboardFormat(CF_UNICODETEXT, stuNFC);
-//			GetClipboardFormat(CF_OEMTEXT, stuNFC);
-//			GetClipboardFormat(CF_TEXT, stuNFC);
-//
-//			::OleSetClipboard(NULL);		// reset the clipboard {release the object}
-//#endif
-//		}
 
 	public:
 		TestUtil();

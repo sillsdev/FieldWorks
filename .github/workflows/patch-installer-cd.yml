@@ -294,5 +294,6 @@ jobs:
             ./*.log
             ./*.binlog
             ./Output/**/*.log
+            ./Output/**/*.log.stderr
             ./PatchableInstaller/CreateUpdatePatch/Master/AppHarvest.wxs
             ./PatchableInstaller/CreateUpdatePatch/Update/AppHarvest.wxs
