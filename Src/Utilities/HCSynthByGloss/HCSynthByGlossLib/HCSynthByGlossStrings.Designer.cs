@@ -61,16 +61,7 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HCSynthByGloss locale -h HC.xml_file -g gloss_file -o output (-t (-s)).
-        /// </summary>
-        public static string ksCommandLineUsage {
-            get {
-                return ResourceManager.GetString("ksCommandLineUsage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not find .
+        ///   Looks up a localized string similar to Could not find {0} &apos;{1}&apos;.
         /// </summary>
         public static string ksCouldNotFind {
             get {
@@ -79,20 +70,11 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not find file &apos;.
+        ///   Looks up a localized string similar to  Duplicate gloss(es) found for {0}synthesis may not work..
         /// </summary>
-        public static string ksCouldNotFindFile {
+        public static string ksDuplicateGlossesFound {
             get {
-                return ResourceManager.GetString("ksCouldNotFindFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to  Duplicate gloss(es) found for &apos;.
-        /// </summary>
-        public static string ksDuplicateGlossFoundFor {
-            get {
-                return ResourceManager.GetString("ksDuplicateGlossFoundFor", resourceCulture);
+                return ResourceManager.GetString("ksDuplicateGlossesFound", resourceCulture);
             }
         }
         
@@ -115,7 +97,7 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  One or more glosses not found:.
+        ///   Looks up a localized string similar to  One or more glosses not found: {0}.
         /// </summary>
         public static string ksOneOrMoreGlossesNotFound {
             get {
@@ -133,11 +115,20 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to \t-s = show the tracing result in the system default web browser; -s is only valid when also using -t.
+        ///   Looks up a localized string similar to &apos;.
         /// </summary>
-        public static string ksShowTracing {
+        public static string ksQuoteBegin {
             get {
-                return ResourceManager.GetString("ksShowTracing", resourceCulture);
+                return ResourceManager.GetString("ksQuoteBegin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;; .
+        /// </summary>
+        public static string ksQuoteEnd {
+            get {
+                return ResourceManager.GetString("ksQuoteEnd", resourceCulture);
             }
         }
         
@@ -151,25 +142,10 @@ namespace HCSynthByGlossLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  synthesis may not work..
-        /// </summary>
-        public static string ksSynthesisMayNotWork {
-            get {
-                return ResourceManager.GetString("ksSynthesisMayNotWork", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to \t-t = turn on tracing.
-        /// </summary>
-        public static string ksTurnOnTracing {
-            get {
-                return ResourceManager.GetString("ksTurnOnTracing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Usage:.
+        ///   Looks up a localized string similar to Usage:
+        ///HCSynthByGloss locale -h HC.xml_file -g gloss_file -o output (-t (-s))
+        ///\t-t = turn on tracing
+        ///\t-s = show the tracing result in the system default web browser; -s is only valid when also using -t.
         /// </summary>
         public static string ksUsage {
             get {

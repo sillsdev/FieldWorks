@@ -47,21 +47,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="HCSynthByGlossStrings.de.Designer.cs">
-      <DependentUpon>HCSynthByGlossStrings.de.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="HCSynthByGlossStrings.fr.Designer.cs">
-      <DependentUpon>HCSynthByGlossStrings.fr.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="HCSynthByGlossStrings.es.Designer.cs">
-      <DependentUpon>HCSynthByGlossStrings.es.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="HCSynthByGlossStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

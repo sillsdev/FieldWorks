@@ -60,20 +60,17 @@ namespace SIL.HCSynthByGloss
 				else
 				{
 					Console.WriteLine(HCSynthByGlossStrings.ksUsage);
-					Console.WriteLine(HCSynthByGlossStrings.ksCommandLineUsage);
-					Console.WriteLine(HCSynthByGlossStrings.ksTurnOnTracing);
-					Console.WriteLine(HCSynthByGlossStrings.ksShowTracing);
 					Environment.Exit(1);
 				}
 			}
 			if (!File.Exists(args[iHcFile]))
 			{
-				Console.WriteLine(HCSynthByGlossStrings.ksCouldNotFindFile + args[iHcFile] + "'.");
+				Console.WriteLine(string.Format(HCSynthByGlossStrings.ksCouldNotFind, HCSynthByGlossStrings.ksHCXmlFile, args[iHcFile]));
 				Environment.Exit(2);
 			}
 			if (!File.Exists(args[iGlossFile]))
 			{
-				Console.WriteLine(HCSynthByGlossStrings.ksCouldNotFindFile + args[iGlossFile] + "'.");
+				Console.WriteLine(string.Format(HCSynthByGlossStrings.ksCouldNotFind, HCSynthByGlossStrings.ksGlossFile, args[iGlossFile]));
 				Environment.Exit(3);
 			}
 

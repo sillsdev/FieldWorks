@@ -117,17 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ksCommandLineUsage" xml:space="preserve">
-    <value>HCSynthByGloss locale -h HC.xml_file -g gloss_file -o output (-t (-s))</value>
-  </data>
   <data name="ksCouldNotFind" xml:space="preserve">
-    <value>Could not find </value>
+    <value>Could not find {0} '{1}'</value>
+    <comment>{0} is 'HC XML file' or 'Gloss file'. {1} is the path to (name of?) the file.</comment>
   </data>
-  <data name="ksCouldNotFindFile" xml:space="preserve">
-    <value>Could not find file '</value>
-  </data>
-  <data name="ksDuplicateGlossFoundFor" xml:space="preserve">
-    <value> Duplicate gloss(es) found for '</value>
+  <data name="ksDuplicateGlossesFound" xml:space="preserve">
+    <value> Duplicate gloss(es) found for {0}synthesis may not work.</value>
+    <comment>{0} is the quoted lis of glosses separated by semi-colons</comment>
   </data>
   <data name="ksGlossFile" xml:space="preserve">
     <value>Gloss file</value>
@@ -136,24 +132,26 @@
     <value>HC XML file</value>
   </data>
   <data name="ksOneOrMoreGlossesNotFound" xml:space="preserve">
-    <value> One or more glosses not found:</value>
+    <value> One or more glosses not found: {0}</value>
+    <comment>{0} is the quoted lis of glosses separated by semi-colons</comment>
   </data>
   <data name="ksProcessingResult" xml:space="preserve">
     <value>Processing result: </value>
   </data>
-  <data name="ksShowTracing" xml:space="preserve">
-    <value>\t-s = show the tracing result in the system default web browser; -s is only valid when also using -t</value>
+  <data name="ksQuoteBegin" xml:space="preserve">
+    <value>'</value>
+  </data>
+  <data name="ksQuoteEnd" xml:space="preserve">
+    <value>'; </value>
+    <comment>;</comment>
   </data>
   <data name="ksSuccess" xml:space="preserve">
     <value>Success!</value>
   </data>
-  <data name="ksSynthesisMayNotWork" xml:space="preserve">
-    <value> synthesis may not work.</value>
-  </data>
-  <data name="ksTurnOnTracing" xml:space="preserve">
-    <value>\t-t = turn on tracing</value>
-  </data>
   <data name="ksUsage" xml:space="preserve">
-    <value>Usage:</value>
+    <value>Usage:
+HCSynthByGloss locale -h HC.xml_file -g gloss_file -o output (-t (-s))
+\t-t = turn on tracing
+\t-s = show the tracing result in the system default web browser; -s is only valid when also using -t</value>
   </data>
 </root>

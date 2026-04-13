@@ -128,7 +128,7 @@ namespace HCSynthByGloss
 			List<Morpheme> morphemes
 		)
 		{
-			sb.Append(HCSynthByGlossStrings.ksOneOrMoreGlossesNotFound);
+			var sbGlosses = new StringBuilder();
 			var glossesFound = new List<string>();
 			foreach (Morpheme morpheme in morphemes)
 			{
@@ -141,11 +141,12 @@ namespace HCSynthByGloss
 			{
 				if (!glossesFound.Contains(form))
 				{
-					sb.Append(" '");
-					sb.Append(form);
-					sb.Append("';");
+					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteBegin);
+					sbGlosses.Append(form);
+					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteEnd);
 				}
 			}
+			sb.Append(string.Format(HCSynthByGlossStrings.ksOneOrMoreGlossesNotFound, sbGlosses));
 		}
 
 		private void AddToTracing(ISynTraceManager traceManager, StringBuilder sb, string analysis)
@@ -163,6 +164,7 @@ namespace HCSynthByGloss
 		private bool CheckForDuplicates(Morpher morpher, StringBuilder sb, List<Morpheme> morphemes)
 		{
 			bool duplicateFound = false;
+			var sbGlosses = new StringBuilder();
 			foreach (Morpheme morph in morphemes)
 			{
 				if (morph == null)
@@ -172,22 +174,15 @@ namespace HCSynthByGloss
 				);
 				if (duplicateGloss != null)
 				{
-					if (!duplicateFound)
-					{
-						sb.Append(HCSynthByGlossStrings.ksDuplicateGlossFoundFor);
-						duplicateFound = true;
-					}
-					else
-					{
-						sb.Append(" '");
-					}
-					sb.Append(morph.Gloss);
-					sb.Append("';");
+					duplicateFound = true;
+					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteBegin);
+					sbGlosses.Append(morph.Gloss);
+					sbGlosses.Append(HCSynthByGlossStrings.ksQuoteEnd);
 				}
 			}
 			if (duplicateFound)
 			{
-				sb.Append(HCSynthByGlossStrings.ksSynthesisMayNotWork);
+				sb.Append(string.Format(HCSynthByGlossStrings.ksDuplicateGlossesFound, sbGlosses.ToString()));
 			}
 			return duplicateFound;
 		}
