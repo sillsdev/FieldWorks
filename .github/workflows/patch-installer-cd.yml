@@ -220,12 +220,17 @@ jobs:
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
 
-      - name: Build and test
-        id: build_and_test
+      - name: Build
+        id: build
         shell: powershell
         run: |
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -RunTests -SkipNativeTests -TestFilter 'TestCategory!=DesktopRequired' -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+          .\build.ps1 -BuildPatch -Configuration Release -Verbosity detailed -BuildTests -MsBuildArgs @("/bl") | Tee-Object -FilePath build.log
+
+      - name: Run tests
+        shell: powershell
+        run: |
+          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired'
 
       - name: Scan Build Output
         shell: powershell
