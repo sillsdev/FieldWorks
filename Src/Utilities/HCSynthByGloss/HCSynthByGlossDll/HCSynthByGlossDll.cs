@@ -60,7 +60,6 @@ namespace SIL.HCSynthByGloss
 
 		public string Process()
 		{
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(LocaleCode);
 			if (!File.Exists(HcXmlFile))
 			{
 				return kError1 + kHCXmlFile + kError2 + HcXmlFile + kError3;

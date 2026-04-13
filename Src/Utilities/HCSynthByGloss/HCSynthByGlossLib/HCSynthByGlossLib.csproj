@@ -47,13 +47,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="HCSynthByGlossStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>HCSynthByGlossStrings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Update="HCSynthByGlossStrings.de.resx">
       <LastGenOutput>HCSynthByGlossStrings.de.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
