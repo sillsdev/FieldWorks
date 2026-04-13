@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ITextDll</AssemblyName>
@@ -78,6 +78,7 @@
     <Compile Remove="ITextDllTests/**" />
     <Compile Remove="FlexInterlinModel\FlexInterlinear-generated.cs" />
     <None Remove="ITextDllTests/**" />
+    <None Remove="InvisibleSpaceCursor.cur" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
@@ -94,6 +95,7 @@
     <EmbeddedResource Include="icons\Find Dictionary.ico" />
     <EmbeddedResource Include="icons\Insert Note.ico" />
     <EmbeddedResource Include="icons\LinkWords.ico" />
+    <EmbeddedResource Include="InvisibleSpaceCursor.cur" />
     <EmbeddedResource Include="IText.ico" />
     <EmbeddedResource Include="ZeroWidth.ico" />
   </ItemGroup>
