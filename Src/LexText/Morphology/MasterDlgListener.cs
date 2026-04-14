@@ -193,20 +193,5 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		#endregion IxCoreColleague implementation
-
-		#region XCORE Message Handlers
-
-		/// <summary>
-		/// Handles the xWorks message to insert a new class.
-		/// Invoked by the RecordClerk via a main menu.
-		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>
-		public virtual bool OnDialogInsertItemInVector(object argument)
-		{
-			return false; // Needs to be handled by the override method
-		}
-
-		#endregion XCORE Message Handlers
 	}
 }

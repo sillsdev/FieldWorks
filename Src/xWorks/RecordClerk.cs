@@ -2551,10 +2551,10 @@ namespace SIL.FieldWorks.XWorks
 			m_suppressSaveOnChangeRecord = true;
 			try
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				if (m_mediator.SendMessage("DialogInsertItemInVector", argument))
+				var retObj = new ReturnObject(argument);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.DialogInsertItemInVector, retObj));
+				if (retObj.ReturnValue)
 					return true;
-#pragma warning restore 618
 			}
 			finally
 			{
