@@ -165,6 +165,7 @@ param(
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
 	[switch]$SkipNativeTests,
+	[switch]$SkipManagedTests,
 	[switch]$ForceBuildBuildTasks,
 	[switch]$BuildInstaller,
 	[switch]$BuildPatch,
@@ -717,6 +718,9 @@ try {
 		}
 		if ($SkipNative -or $SkipNativeTests) {
 			$testArgs["SkipNative"] = $true
+		}
+		if ($SkipManagedTests) {
+			$testArgs["SkipManaged"] = $true
 		}
 
 		Stop-ConflictingProcesses @cleanupArgs
