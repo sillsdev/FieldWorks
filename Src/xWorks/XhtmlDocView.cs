@@ -693,15 +693,8 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning restore 618
 				}
 				// Jump to field on idle to allow JumpToRecord to finish.
-				void JumpToField(object sender, EventArgs args)
-				{
-					Application.Idle -= JumpToField;
-					// Jump to the slice with the given field.
-					object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
-					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField, arguments));
-				}
-				Application.Idle += JumpToField;
-
+				object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.JumpToField, arguments));
 			}
 		}
 

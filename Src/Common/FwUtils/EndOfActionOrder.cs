@@ -15,6 +15,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static readonly List<string> m_order = new List<string>
 		{
 			EventConstants.RecordNavigation,
+			EventConstants.JumpToField,
 			EventConstants.SelectionChanged,
 			EventConstants.UpdateControls
 		};
