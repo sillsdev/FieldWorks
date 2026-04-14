@@ -123,10 +123,13 @@ namespace TestViews
 	public:
 		MockTextStoreACPSink(ITextStoreACP * ptsa, IUnknown * punkOldSink)
 		{
+			cout << "MockTextStoreACPSink constructor: ptsa=" << (void*)ptsa << ", punkOldSink=" << (void*)punkOldSink << endl;
 			m_qtsa = ptsa;
 			if (punkOldSink)
 				CheckHr(ptsa->UnadviseSink(punkOldSink));
+			cout << "Between Sinks: " << (void*)this << endl;
 			CheckHr(ptsa->AdviseSink(IID_ITextStoreACPSink, this, TS_AS_ALL_SINKS));
+			cout << "MockTextStoreACPSink constructor mostly done: " << (void*)this << endl;
 			m_fLockGranted = false;
 			m_dwLockFlags = 0;
 		}
@@ -393,13 +396,17 @@ namespace TestViews
 			TS_TEXTCHANGE * pttc)
 			: MockTextStoreACPSink(ptsa, NULL)
 		{
+			cout << "LockSetText constructor: " << (void*)this << ", ichStart=" << ichStart << ", ichEnd=" << ichEnd
+				<< ", pszText=" << (void*)pszText << ", pttc=" << (void*)pttc << endl;
 			m_ichStart = ichStart;
 			m_ichEnd = ichEnd;
 			m_pszText = pszText;
 			m_pttc = pttc;
-
+			cout << "LockSetText constructor logic begins: " << (void*)this << endl;
 			CheckHr(ptsa->RequestLock(TS_LF_READWRITE | TS_LF_SYNC, &m_hrLock));
+			cout << "LockSetText constructor between HRs: " << (void*)this << endl;
 			CheckHr(ptsa->UnadviseSink(this));
+			cout << "LockSetText constructor done: " << (void*)this << endl;
 		}
 
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
@@ -1834,13 +1841,23 @@ namespace TestViews
 		{
 			//_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_DELAY_FREE_MEM_DF );
 			if (!m_fTestable)
+			{
+				cout << "Not testable, skipping testSetTextEmpty.\n";
 				return;
+			}
+			cout << "Testing SetText empty string to join paragraphs.\n";
 			MakeStringList2();
+			cout << "made string list.\n";
 			Make2ParaSel(1, s_cchPara2, 2, 0);
+			cout << "made selection.\n";
 			TS_TEXTCHANGE ttc1 = { 0 };
+			cout << "empty TS_TEXTCHANGE struct.\n";
 			LockSetText xlst1(m_qtxs, s_cchPara2, s_cchPara2 + s_cchParaBreak, L"", &ttc1);
+			cout << "called SetText.\n";
 			_CrtCheckMemory();
+			cout << "checked memory.\n";
 			StrUni stuNew(s_rgpsz2[1]);
+			cout << "created stuNew.\n";
 			stuNew.Append(s_rgpsz2[2]);	// no newline between them!
 			VerifyParaContents(1, stuNew.Chars(), "SetText(join paras)");
 			VerifyParaContents(0, s_rgpsz2[0], "SetText(join paras) prev para");
@@ -2012,7 +2029,8 @@ namespace TestViews
 			PropTag tag = 2;
 			if (m_qrootb.Ptr() == NULL)
 			{
-				cerr << "VwRootBox_PropChanged was skipped because the m_qrootb was null." << endl;
+				cerr << "VwRootBox_PropChanged was skipped because the m_qrootb was null." <<
+					'\n';
 				return;
 			}
 			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
