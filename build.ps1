@@ -716,7 +716,7 @@ try {
 			$testArgs["TestFilter"] = $TestFilter
 		}
 		if ($SkipNative -or $SkipNativeTests) {
-			$testArgs["NoNative"] = $true
+			$testArgs["SkipNative"] = $true
 		}
 
 		Stop-ConflictingProcesses @cleanupArgs

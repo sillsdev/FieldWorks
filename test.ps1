@@ -26,10 +26,10 @@
 	Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
 	Default is 'normal'.
 
-.PARAMETER NoNative
+.PARAMETER SkipNative
 	Skip running native C++ tests. Run only managed tests.
 
-.PARAMETER NativeOnly
+.PARAMETER SkipManaged
 	Run only native C++ tests, skipping managed tests.
 
 .PARAMETER StartedBy
@@ -68,8 +68,8 @@ param(
 	[switch]$ListTests,
 	[ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
 	[string]$Verbosity = "normal",
-	[switch]$NoNative,
-	[switch]$NativeOnly,
+	[switch]$SkipNative,
+	[switch]$SkipManaged,
 	[switch]$SkipDependencyCheck,
 	[switch]$SkipWorktreeLock,
 	[ValidateSet('user', 'agent', 'unknown')]
@@ -148,7 +148,7 @@ try {
 		# =============================================================================
 
 		$script:nativeErrorMessages = @()
-		if (-not $NoNative) {
+		if (-not $SkipNative) {
 			$cppScript = Join-Path $PSScriptRoot "Build/scripts/Invoke-CppTest.ps1"
 			if (-not (Test-Path $cppScript)) {
 				Write-Host "[ERROR] Native test script not found at $cppScript" -ForegroundColor Red
@@ -185,9 +185,12 @@ try {
 			}
 			$script:testExitCode = $overallExitCode
 
-			if ($NativeOnly) {
+			if ($SkipManaged) {
 				return
 			}
+		} elseif ($SkipManaged) {
+			Write-Host "[EXCLAMATION] Are you sure you don't want to run any tests?'" -ForegroundColor Red
+			exit 1
 		}
 
 		# =============================================================================
@@ -597,7 +600,7 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 
 	Write-Host "=====================================" -ForegroundColor Red
 	Write-Host "  Full log for managed tests: $vstestLogPath" -ForegroundColor Gray
-	if (-not $NoNative) {
+	if (-not $SkipNative) {
 		$nativeLogPath = Join-Path $PSScriptRoot "Output/$Configuration/<SuiteName>.exe.log"
 		Write-Host "  Logs for each native test suite: $nativeLogPath" -ForegroundColor Gray
 	}
