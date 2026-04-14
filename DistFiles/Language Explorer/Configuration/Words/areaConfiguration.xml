@@ -129,6 +129,9 @@
 		<command id="CmdDataTree-Insert-WordGloss" label="Add Word Gloss" message="DataTreeInsert">
 			<parameters field="Meanings" className="WfiGloss"/>
 		</command>
+		<command id="CmdDataTree-Insert-WordGloss-And-Approve" label="Approve" message="InsertWordGlossAndApprove">
+			<parameters field="Meanings" className="WfiGloss"/>
+		</command>
 		<command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis">
 			<parameters field="Analyses" className="WfiAnalysis"/>
 		</command>
@@ -463,7 +466,7 @@
 			<item command="CmdShowHumanApprovedAnalysisConc"/>
 			<item command="CmdAnalysisJumpToConcordance"/>
 			<menu id="mnuDataTree-HumanApprovedStatus" label="User Opinion">
-				<item command="CmdAnalysisApprove"/>
+				<item command="CmdDataTree-Insert-WordGloss-And-Approve"/>
 				<item command="CmdAnalysisUnknown"/>
 				<item command="CmdAnalysisDisapprove"/>
 			</menu>
@@ -478,7 +481,7 @@
 		</menu>
 		<menu id="mnuDataTree-ParserProducedAnalysis">
 			<menu id="mnuDataTree-ParserProducedStatus" label="User Opinion">
-				<item command="CmdAnalysisApprove"/>
+				<item command="CmdDataTree-Insert-WordGloss-And-Approve"/>
 				<item command="CmdAnalysisUnknown"/>
 				<item command="CmdAnalysisDisapprove"/>
 			</menu>
@@ -491,7 +494,7 @@
 		</menu>-->
 		<menu id="mnuDataTree-HumanDisapprovedAnalysis">
 			<menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
-				<item command="CmdAnalysisApprove"/>
+				<item command="CmdDataTree-Insert-WordGloss-And-Approve"/>
 				<item command="CmdAnalysisUnknown"/>
 				<item command="CmdAnalysisDisapprove"/>
 			</menu>

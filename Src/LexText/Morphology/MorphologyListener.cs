@@ -22,6 +22,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -806,6 +807,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			display.Enabled = display.Visible = InFriendlyArea;
 			display.Checked = Analysis != null && Analysis.IsValidObject && Analysis.ApprovalStatusIcon == 1;
 			return true; //we've handled this
+		}
+
+		/// <summary>
+		/// Insert Word Gloss and Approve Analysis
+		/// </summary>
+		public bool OnInsertWordGlossAndApprove(object cmd)
+		{
+			if (Analysis.MeaningsOC.Count == 0)
+			{
+				// Insert word gloss.
+				OnDataTreeInsert(cmd);
+			}
+			OnAnalysisApprove(cmd);
+			return true;
 		}
 
 		/// <summary>
