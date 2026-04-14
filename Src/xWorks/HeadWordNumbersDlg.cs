@@ -25,7 +25,6 @@ namespace SIL.FieldWorks.XWorks
 	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
 		private FwTextBox[] _digitBoxes;
-		private bool _isInitializing = false;
 
 		public HeadwordNumbersDlg()
 		{
@@ -192,17 +191,9 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_writingSystemCombo.Text; }
 			set
 			{
-				_isInitializing = true;
-				try
-				{
-					m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
-					if (m_writingSystemCombo.SelectedIndex < 0)
-						m_writingSystemCombo.SelectedIndex = 0;
-				}
-				finally
-				{
-					_isInitializing = false;
-				}
+				m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
+				if (m_writingSystemCombo.SelectedIndex < 0)
+					m_writingSystemCombo.SelectedIndex = 0;
 			}
 		}
 
@@ -291,9 +282,6 @@ namespace SIL.FieldWorks.XWorks
 		private void m_writingSystemCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateWritingSystemCodeInDigits();
-
-			if (_isInitializing)
-				return;
 
 			// Populate digits from ws.
 			var selectedWs = m_writingSystemCombo.SelectedItem as CoreWritingSystemDefinition;
