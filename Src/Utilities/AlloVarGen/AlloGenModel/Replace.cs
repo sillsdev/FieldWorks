@@ -61,20 +61,12 @@ namespace SIL.AlloGenModel
 		override public string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append(Name);
-			sb.Append(": ");
-			sb.Append("Replace '");
-			sb.Append(From);
-			sb.Append("' with '");
-			sb.Append(To);
-			sb.Append("' for");
 			foreach (string ws in WritingSystemRefs)
 			{
 				sb.Append(" ");
 				sb.Append(ws);
 			}
-			sb.Append(".");
-			return sb.ToString();
+			return string.Format(AlloGenModelStrings.ksReplaceOp, Name, From, To, sb.ToString());
 		}
 
 		public override bool Equals(Object obj)

@@ -55,11 +55,6 @@ namespace SIL.AllomorphGenerator
 		protected const string m_strWindowState = "WindowState";
 
 		protected ContextMenuStrip helpContextMenu;
-		protected const string UserDocumentation = "User Documentation";
-		protected const string About = "About";
-
-		protected const string OperationsFilePrompt =
-			"Allomorph Generator Operations File (*.agf)|*.agf|" + "All Files (*.*)|*.*";
 
 		public Rectangle RectNormal { get; set; }
 
@@ -99,23 +94,24 @@ namespace SIL.AllomorphGenerator
 		protected ListBox currentListBox;
 		protected ContextMenuStrip editContextMenu;
 		protected ContextMenuStrip editReplaceOpsContextMenu;
-		protected const string formTitle = "Allomorph Generator";
-		protected const string cmAdd = "Add";
-		protected const string cmEdit = "Edit";
-		protected const string cmInsertBefore = "Insert new before";
-		protected const string cmInsertExistingBefore = "Insert existing before";
-		protected const string cmInsertAfter = "Insert new after";
-		protected const string cmInsertExistingAfter = "Insert existing after";
-		protected const string cmMoveUp = "Move up";
-		protected const string cmMoveDown = "Move down";
-		protected const string cmDelete = "Delete";
-		protected const string cmDuplicate = "Duplicate";
+		protected string formTitle = AllomorphGeneratorDll_Strings.ksTitle;
+		protected string cmAdd = AllomorphGeneratorDll_Strings.cmAdd;
+		protected string cmEdit = AllomorphGeneratorDll_Strings.cmEdit;
+		protected string cmInsertBefore = AllomorphGeneratorDll_Strings.cmInsertBefore;
+		protected string cmInsertExistingBefore = AllomorphGeneratorDll_Strings.cmInsertExistingBefore;
+		protected string cmInsertAfter = AllomorphGeneratorDll_Strings.cmInsertAfter;
+		protected string cmInsertExistingAfter = AllomorphGeneratorDll_Strings.cmInsertExistingAfter;
+		protected string cmMoveUp = AllomorphGeneratorDll_Strings.cmMoveUp;
+		protected string cmMoveDown = AllomorphGeneratorDll_Strings.cmMoveDown;
+		protected string cmDelete = AllomorphGeneratorDll_Strings.cmDelete;
+		protected string cmDuplicate = AllomorphGeneratorDll_Strings.cmDuplicate;
+		protected const string cmSeparator = "-";
 
 		protected ContextMenuStrip operationsCheckBoxContextMenu;
 		protected ContextMenuStrip previewCheckBoxContextMenu;
-		protected const string cmSelectAll = "Select All";
-		protected const string cmClearAll = "Clear All";
-		protected const string cmToggle = "Toggle";
+		protected string cmSelectAll = AllomorphGeneratorDll_Strings.cmSelectAll;
+		protected string cmClearAll = AllomorphGeneratorDll_Strings.cmClearAll;
+		protected string cmToggle = AllomorphGeneratorDll_Strings.cmToggle;
 		protected ListViewColumnSorter lvwColumnSorter;
 		protected ListViewColumnSorter lvwEditReplaceOpsColumnSorter;
 		protected List<FDWrapper> customFields = new List<FDWrapper>();
@@ -123,9 +119,9 @@ namespace SIL.AllomorphGenerator
 
 		protected void FillApplyToComboBox()
 		{
-			ApplyTo cit = new ApplyTo("Citation Form", LexEntryTags.kflidCitationForm);
-			ApplyTo lex = new ApplyTo("Lexeme Form", LexEntryTags.kflidLexemeForm);
-			ApplyTo ety = new ApplyTo("Etymology Form", LexEntryTags.kflidEtymology);
+			ApplyTo cit = new ApplyTo(AllomorphGeneratorDll_Strings.ksCitationForm, LexEntryTags.kflidCitationForm);
+			ApplyTo lex = new ApplyTo(AllomorphGeneratorDll_Strings.ksLexemeForm, LexEntryTags.kflidLexemeForm);
+			ApplyTo ety = new ApplyTo(AllomorphGeneratorDll_Strings.ksEtymologyForm, LexEntryTags.kflidEtymology);
 			cbApplyTo.Items.Add(cit);
 			cbApplyTo.Items.Add(lex);
 			cbApplyTo.Items.Add(ety);
@@ -151,7 +147,7 @@ namespace SIL.AllomorphGenerator
 		{
 			lvOperations.SmallImageList = ilPreview;
 			lvOperations.Columns.Add("", "", 25, HorizontalAlignment.Left, 0);
-			lvOperations.Columns.Add("Operations", -2, HorizontalAlignment.Left);
+			lvOperations.Columns.Add(AllomorphGeneratorDll_Strings.ksOperations, -2, HorizontalAlignment.Left);
 		}
 
 		protected void SetUpPreviewCheckedListBox()
@@ -168,15 +164,15 @@ namespace SIL.AllomorphGenerator
 
 		protected void SetUpEditReplaceOpsListView()
 		{
-			lvEditReplaceOps.Columns.Add("Name", -2, HorizontalAlignment.Left);
-			lvEditReplaceOps.Columns.Add("From", -2, HorizontalAlignment.Left);
-			lvEditReplaceOps.Columns.Add("To", -2, HorizontalAlignment.Left);
-			lvEditReplaceOps.Columns.Add("Mode", -2, HorizontalAlignment.Left);
+			lvEditReplaceOps.Columns.Add(AllomorphGeneratorDll_Strings.ksName, -2, HorizontalAlignment.Left);
+			lvEditReplaceOps.Columns.Add(AllomorphGeneratorDll_Strings.ksFrom, -2, HorizontalAlignment.Left);
+			lvEditReplaceOps.Columns.Add(AllomorphGeneratorDll_Strings.ksTo, -2, HorizontalAlignment.Left);
+			lvEditReplaceOps.Columns.Add(AllomorphGeneratorDll_Strings.ksMode, -2, HorizontalAlignment.Left);
 			foreach (WritingSystem ws in WritingSystems)
 			{
 				lvEditReplaceOps.Columns.Add(ws.Name, -2, HorizontalAlignment.Left);
 			}
-			lvEditReplaceOps.Columns.Add("Description", -2, HorizontalAlignment.Left);
+			lvEditReplaceOps.Columns.Add(AllomorphGeneratorDll_Strings.ksDescription, -2, HorizontalAlignment.Left);
 		}
 
 		protected void SetupFontAndStyleInfo()
@@ -261,16 +257,16 @@ namespace SIL.AllomorphGenerator
 			duplicateItem.Click += new EventHandler(DuplicateContextMenu_Click);
 			duplicateItem.Name = cmDuplicate;
 			editContextMenu.Items.Add(editItem);
-			editContextMenu.Items.Add("-");
+			editContextMenu.Items.Add(cmSeparator);
 			editContextMenu.Items.Add(duplicateItem);
 			editContextMenu.Items.Add(insertBefore);
 			editContextMenu.Items.Add(insertExistingBefore);
 			editContextMenu.Items.Add(insertAfter);
 			editContextMenu.Items.Add(insertExistingAfter);
-			editContextMenu.Items.Add("-");
+			editContextMenu.Items.Add(cmSeparator);
 			editContextMenu.Items.Add(moveUp);
 			editContextMenu.Items.Add(moveDown);
-			editContextMenu.Items.Add("-");
+			editContextMenu.Items.Add(cmSeparator);
 			editContextMenu.Items.Add(deleteItem);
 		}
 
@@ -438,10 +434,10 @@ namespace SIL.AllomorphGenerator
 			duplicateItem.Click += new EventHandler(EditReplaceOpsContextMenuDuplicate_Click);
 			duplicateItem.Name = cmDuplicate;
 			editReplaceOpsContextMenu.Items.Add(editItem);
-			editReplaceOpsContextMenu.Items.Add("-");
+			editReplaceOpsContextMenu.Items.Add(cmSeparator);
 			editReplaceOpsContextMenu.Items.Add(duplicateItem);
 			editReplaceOpsContextMenu.Items.Add(add);
-			editReplaceOpsContextMenu.Items.Add("-");
+			editReplaceOpsContextMenu.Items.Add(cmSeparator);
 			editReplaceOpsContextMenu.Items.Add(deleteItem);
 		}
 
@@ -567,7 +563,7 @@ namespace SIL.AllomorphGenerator
 			bool doable = true;
 			if (lvEditReplaceOps.SelectedItems.Count == 0)
 			{
-				MessageBox.Show("Please select a replace operation first.");
+				MessageBox.Show(AllomorphGeneratorDll_Strings.ksSelectReplaceOp);
 				doable = false;
 			}
 			return doable;
@@ -728,7 +724,7 @@ namespace SIL.AllomorphGenerator
 		{
 			DialogResult result = MessageBox.Show(
 				prompt,
-				"Delete Replace Op",
+				AllomorphGeneratorDll_Strings.ksDeleteReplaceOperation,
 				MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button2
@@ -831,7 +827,7 @@ namespace SIL.AllomorphGenerator
 
 		protected virtual string GetOperationsFilePrompt()
 		{
-			return OperationsFilePrompt;
+			return AllomorphGeneratorDll_Strings.ksFilePrompt;
 		}
 
 		protected void btnBrowse_Click(object sender, EventArgs e)
@@ -905,8 +901,8 @@ namespace SIL.AllomorphGenerator
 				else
 				{
 					MessageBox.Show(
-						"Operations file not found!",
-						"Load error",
+						AllomorphGeneratorDll_Strings.ksOperationsFileNotFound,
+						AllomorphGeneratorDll_Strings.ksLoadError,
 						MessageBoxButtons.OK,
 						MessageBoxIcon.Error
 					);
@@ -939,8 +935,8 @@ namespace SIL.AllomorphGenerator
 			if (ChangesMade)
 			{
 				DialogResult res = MessageBox.Show(
-					"Changes have been made.  Do you want to save them?",
-					"Changes made",
+					AllomorphGeneratorDll_Strings.ksChangesHaveBeenMade,
+					AllomorphGeneratorDll_Strings.ksChangesMade,
 					MessageBoxButtons.YesNo,
 					MessageBoxIcon.Question
 				);
@@ -1037,7 +1033,7 @@ namespace SIL.AllomorphGenerator
 				lvItem.SubItems[1].ForeColor = Color.DarkGreen;
 				lvItem.SubItems.Add(replace.To);
 				lvItem.SubItems[2].ForeColor = Color.Navy;
-				string sMode = replace.Mode ? " RegEx " : " Normal ";
+				string sMode = replace.Mode ? AllomorphGeneratorDll_Strings.ksRegEx : AllomorphGeneratorDll_Strings.ksNormal;
 				lvItem.SubItems.Add(sMode);
 				foreach (WritingSystem ws in WritingSystems)
 				{
@@ -1209,11 +1205,7 @@ namespace SIL.AllomorphGenerator
 			IPartOfSpeech pos = GetPartOfSpeechToUse(Pattern.Category.Guid);
 			if (pos == null)
 			{
-				MessageBox.Show(
-					"The category '"
-						+ Pattern.Category.Name
-						+ "' was not found in the FLEx database"
-				);
+				MessageBox.Show(string.Format(AllomorphGeneratorDll_Strings.ksCategoryNotFound, Pattern.Category.Name));
 				return;
 			}
 			StemNameChooser chooser = new StemNameChooser();
@@ -1494,7 +1486,7 @@ namespace SIL.AllomorphGenerator
 
 		protected virtual string CreateUndoRedoPrompt(Operation op)
 		{
-			return " Allomorph Generation for '" + op.Name;
+			return string.Format(AllomorphGeneratorDll_Strings.ksUndoRedoPrompt, op.Name);
 		}
 
 		protected void btnApplyOperations_Click(object sender, EventArgs e)
@@ -1502,7 +1494,7 @@ namespace SIL.AllomorphGenerator
 			RememberNonChosenEntries(Operation);
 			if (lvOperations.CheckedItems.Count == 0)
 			{
-				MessageBox.Show("No operations are selected, so there's nothing to do");
+				MessageBox.Show(AllomorphGeneratorDll_Strings.ksNoOperationsSelected);
 				return;
 			}
 			if (!CheckForInvalidActionComponents())
@@ -1532,8 +1524,8 @@ namespace SIL.AllomorphGenerator
 				Replacer replacer = new Replacer(replaceOpsToUse);
 				string undoRedoPrompt = CreateUndoRedoPrompt(op);
 				UndoableUnitOfWorkHelper.Do(
-					"Undo" + undoRedoPrompt,
-					"Redo" + undoRedoPrompt,
+					AllomorphGeneratorDll_Strings.ksUndo + undoRedoPrompt,
+					AllomorphGeneratorDll_Strings.ksRedo + undoRedoPrompt,
 					Cache.ActionHandlerAccessor,
 					() =>
 					{
@@ -1603,7 +1595,7 @@ namespace SIL.AllomorphGenerator
 						);
 					if (stemName == null)
 					{
-						ReportMissingFLExItem("The stem name '", op.Action.StemName.Name, op.Name);
+						ReportMissingFLExItem(AllomorphGeneratorDll_Strings.ksStemAllomorphLabel, op.Action.StemName.Name, op.Name);
 						allIsGood = false;
 					}
 				}
@@ -1617,7 +1609,7 @@ namespace SIL.AllomorphGenerator
 							);
 						if (phEnv == null)
 						{
-							ReportMissingFLExItem("The environment '", env.Name, op.Name);
+							ReportMissingFLExItem(AllomorphGeneratorDll_Strings.ksEnvironment, env.Name, op.Name);
 							allIsGood = false;
 						}
 					}
@@ -1632,13 +1624,8 @@ namespace SIL.AllomorphGenerator
 			string operationName
 		)
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append(missingItem);
-			sb.Append(itemName);
-			sb.Append("' is no longer found.  Please fix it in operation '");
-			sb.Append(operationName);
-			sb.Append("'.");
-			MessageBox.Show(sb.ToString());
+			string sMsg = string.Format(AllomorphGeneratorDll_Strings.ksReportMissingItemInOp, missingItem, itemName, operationName);
+			MessageBox.Show(sMsg);
 		}
 
 		protected void lvOperations_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -1932,25 +1919,28 @@ namespace SIL.AllomorphGenerator
 				replace
 			);
 			StringBuilder sb = new StringBuilder();
-			sb.Append("Replace operation '");
-			sb.Append(replace.ToString());
-			sb.Append("' will be deleted.\n");
+			sb.Append(string.Format(AllomorphGeneratorDll_Strings.ksReplaceOpWillBeDeleted, replace.ToString()));
+			GetMessageForDeletingOperations(operationsContainingReplaceOp, sb);
+			sb.Append(AllomorphGeneratorDll_Strings.ksAreYouSureDeletion);
+			return sb;
+		}
+
+		private static void GetMessageForDeletingOperations(List<Operation> operationsContainingReplaceOp, StringBuilder sb)
+		{
 			if (operationsContainingReplaceOp.Count > 0)
 			{
-				sb.Append("It is used in the following operations:\n\n");
+				StringBuilder sbOps = new StringBuilder();
 				foreach (Operation op in operationsContainingReplaceOp)
 				{
-					sb.Append(op.Name);
-					sb.Append("\n");
+					sbOps.Append(op.Name);
+					sbOps.Append("\n");
 				}
-				sb.Append("\n");
+				sb.Append(string.Format(AllomorphGeneratorDll_Strings.ksIsUsedIntheseOperations, sbOps.ToString()));
 			}
 			else
 			{
-				sb.Append("It is not used in any operations.\n\n");
+				sb.Append(AllomorphGeneratorDll_Strings.ksIsNotUsedInAnyOperations);
 			}
-			sb.Append("Are you sure you want to delete it?");
-			return sb;
 		}
 
 		protected StringBuilder BuildDeleteReplaceOpRefMessage(Replace replace)
@@ -1959,25 +1949,9 @@ namespace SIL.AllomorphGenerator
 				replace
 			);
 			StringBuilder sb = new StringBuilder();
-			sb.Append("Replace operation '");
-			sb.Append(replace.ToString());
-			sb.Append("' will be removed from this operation.\n");
-			sb.Append("You can also delete it from the master list.\n");
-			if (operationsContainingReplaceOp.Count > 0)
-			{
-				sb.Append("It is used in the following operations:\n\n");
-				foreach (Operation op in operationsContainingReplaceOp)
-				{
-					sb.Append(op.Name);
-					sb.Append("\n");
-				}
-				sb.Append("\n");
-			}
-			else
-			{
-				sb.Append("It is not used in any operations.\n\n");
-			}
-			sb.Append("Do you want to delete it from the master list?");
+			sb.Append(string.Format(AllomorphGeneratorDll_Strings.ksReplaceRemovedFromOperation, replace.Name));
+			GetMessageForDeletingOperations(operationsContainingReplaceOp, sb);
+			sb.Append(AllomorphGeneratorDll_Strings.ksDeleteFromMasterList);
 			return sb;
 		}
 

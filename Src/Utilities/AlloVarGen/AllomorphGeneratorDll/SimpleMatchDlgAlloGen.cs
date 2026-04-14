@@ -357,8 +357,7 @@ namespace SIL.AllomorphGenerator
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources =
-				new System.ComponentModel.ComponentResourceManager(typeof(SimpleMatchDlgAlloGen));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimpleMatchDlgAlloGen));
 			this.m_anywhereButton = new System.Windows.Forms.RadioButton();
 			this.m_atStartButton = new System.Windows.Forms.RadioButton();
 			this.m_atEndButton = new System.Windows.Forms.RadioButton();
@@ -411,9 +410,7 @@ namespace SIL.AllomorphGenerator
 			//
 			resources.ApplyResources(this.m_regExButton, "m_regExButton");
 			this.m_regExButton.Name = "m_regExButton";
-			this.m_regExButton.CheckedChanged += new System.EventHandler(
-				this.m_regExButton_CheckedChanged
-			);
+			this.m_regExButton.CheckedChanged += new System.EventHandler(this.m_regExButton_CheckedChanged);
 			//
 			// label1
 			//
@@ -464,6 +461,7 @@ namespace SIL.AllomorphGenerator
 			this.Name = "SimpleMatchDlgAlloGen";
 			this.ResumeLayout(false);
 			this.PerformLayout();
+
 		}
 		#endregion
 

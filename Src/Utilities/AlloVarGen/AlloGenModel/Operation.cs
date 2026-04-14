@@ -13,7 +13,7 @@ namespace SIL.AlloGenModel
 {
 	public class Operation : AlloGenBase
 	{
-		public string Name { get; set; } = "new operation";
+		public string Name { get; set; } = AlloGenModelStrings.ksNewOperation;
 		public string Description { get; set; } = "";
 		public Pattern Pattern { get; set; } = new Pattern();
 		public Action Action { get; set; } = new Action();

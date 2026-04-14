@@ -119,10 +119,10 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_anywhereButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 64</value>
+    <value>26, 94</value>
   </data>
   <data name="m_anywhereButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 24</value>
+    <value>166, 35</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_anywhereButton.TabIndex" type="System.Int32, mscorlib">
@@ -144,10 +144,10 @@
     <value>11</value>
   </data>
   <data name="m_atStartButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>189, 88</value>
+    <value>302, 129</value>
   </data>
   <data name="m_atStartButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 24</value>
+    <value>167, 35</value>
   </data>
   <data name="m_atStartButton.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -168,10 +168,10 @@
     <value>10</value>
   </data>
   <data name="m_atEndButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>189, 64</value>
+    <value>302, 94</value>
   </data>
   <data name="m_atEndButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 24</value>
+    <value>167, 35</value>
   </data>
   <data name="m_atEndButton.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -192,10 +192,10 @@
     <value>9</value>
   </data>
   <data name="m_wholeItemButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 88</value>
+    <value>26, 129</value>
   </data>
   <data name="m_wholeItemButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 24</value>
+    <value>166, 35</value>
   </data>
   <data name="m_wholeItemButton.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -216,10 +216,10 @@
     <value>8</value>
   </data>
   <data name="m_okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 142</value>
+    <value>389, 208</value>
   </data>
   <data name="m_okButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>120, 33</value>
   </data>
   <data name="m_okButton.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -240,10 +240,10 @@
     <value>7</value>
   </data>
   <data name="m_cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>324, 142</value>
+    <value>518, 208</value>
   </data>
   <data name="m_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>120, 33</value>
   </data>
   <data name="m_cancelButton.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -264,10 +264,10 @@
     <value>6</value>
   </data>
   <data name="m_regExButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 112</value>
+    <value>26, 164</value>
   </data>
   <data name="m_regExButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 24</value>
+    <value>371, 35</value>
   </data>
   <data name="m_regExButton.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -288,10 +288,10 @@
     <value>5</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 8</value>
+    <value>13, 12</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 15</value>
+    <value>230, 22</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -312,10 +312,10 @@
     <value>4</value>
   </data>
   <data name="buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>405, 142</value>
+    <value>648, 208</value>
   </data>
   <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>120, 33</value>
   </data>
   <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -339,10 +339,10 @@
     <value>False</value>
   </data>
   <data name="regexHelper.Location" type="System.Drawing.Point, System.Drawing">
-    <value>464, 24</value>
+    <value>742, 35</value>
   </data>
   <data name="regexHelper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 32</value>
+    <value>26, 47</value>
   </data>
   <data name="regexHelper.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -363,10 +363,10 @@
     <value>2</value>
   </data>
   <data name="m_MatchCasecheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>320, 65</value>
+    <value>512, 95</value>
   </data>
   <data name="m_MatchCasecheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 24</value>
+    <value>166, 35</value>
   </data>
   <data name="m_MatchCasecheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -390,10 +390,10 @@
     <value>True</value>
   </data>
   <data name="m_MatchDiacriticscheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>320, 93</value>
+    <value>512, 136</value>
   </data>
   <data name="m_MatchDiacriticscheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 17</value>
+    <value>144, 24</value>
   </data>
   <data name="m_MatchDiacriticscheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -420,7 +420,7 @@
     <value>SimpleMatchDlg</value>
   </data>
   <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-    <value>5, 13</value>
+    <value>8, 19</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>488, 172</value>
