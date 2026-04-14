@@ -88,29 +88,11 @@ namespace SIL.AlloGenModel {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace &apos;.
+        ///   Looks up a localized string similar to {0}: Replace &apos;{1}&apos; with &apos;{2}&apos; for {3}..
         /// </summary>
-        internal static string ksReplace {
+        internal static string ksReplaceOp {
             get {
-                return ResourceManager.GetString("ksReplace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos; for.
-        /// </summary>
-        internal static string ksReplaceFor {
-            get {
-                return ResourceManager.GetString("ksReplaceFor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos; with &apos;.
-        /// </summary>
-        internal static string ksReplaceWith {
-            get {
-                return ResourceManager.GetString("ksReplaceWith", resourceCulture);
+                return ResourceManager.GetString("ksReplaceOp", resourceCulture);
             }
         }
         

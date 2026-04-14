@@ -126,14 +126,9 @@
   <data name="ksNewOperation" xml:space="preserve">
     <value>new operation</value>
   </data>
-  <data name="ksReplace" xml:space="preserve">
-    <value>Replace '</value>
-  </data>
-  <data name="ksReplaceFor" xml:space="preserve">
-    <value>' for</value>
-  </data>
-  <data name="ksReplaceWith" xml:space="preserve">
-    <value>' with '</value>
+  <data name="ksReplaceOp" xml:space="preserve">
+    <value>{0}: Replace '{1}' with '{2}' for {3}.</value>
+    <comment>{0} is the replace operation name; {1} is the "from" value; {2} is the "to" value; {3} is the list of writing systems</comment>
   </data>
   <data name="ksRoot" xml:space="preserve">
     <value>root</value>
