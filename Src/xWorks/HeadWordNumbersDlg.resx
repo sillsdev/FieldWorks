@@ -1309,7 +1309,7 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>2</value>
   </data>
   <data name="m_customNumbersLabel.Text" xml:space="preserve">
-    <value>If the selected Writing System uses custom numbers, they will be displayed below and used for homograph and sense numbers. Custom numbers can be specified in the Writing System configuration.</value>
+    <value>If the writing system uses custom numbers, they will be displayed below. Custom numbers can be specified in writing system configuration.</value>
   </data>
   <data name="&gt;&gt;m_customNumbersLabel.Name" xml:space="preserve">
     <value>m_customNumbersLabel</value>
