@@ -7,6 +7,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -32,28 +34,51 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public InsertEntryDlgListener()
 		{
+			Subscriber.Subscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector);
 		}
 
 		#endregion Construction and Initialization
 
+		#region IDisposable
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Subscriber.Unsubscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector);
+			}
+			base.Dispose(disposing);
+		}
+		#endregion IDisposable
+
 		#region XCORE Message Handlers
 
 		/// <summary>
-		/// Handles the xWorks message to insert a new lexical entry.
+		/// Handles the message to insert a new lexical entry.
 		/// Invoked by the RecordClerk
 		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>
-		public bool OnDialogInsertItemInVector(object argument)
+		/// <param name="obj">Object that contains the xCore Command object and has a ReturnValue. The
+		/// ReturnValue is true if we handled the message.</param>
+		private void DialogInsertItemInVector(object obj)
 		{
 			CheckDisposed();
 
-			Debug.Assert(argument != null && argument is XCore.Command);
-			string className = XmlUtils.GetOptionalAttributeValue(
-				(argument as Command).Parameters[0],
-				"className");
-			if (className == null || className != "LexEntry")
-				return false;
+			if (!(obj is ReturnObject retObj) ||
+				!(retObj.Data is Command command))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if already handled by another Subscriber.
+			if (retObj.ReturnValue)
+			{
+				return;
+			}
+			// Only handle "LexEntry" class.
+			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
+			if (className != "LexEntry")
+			{
+				return;
+			}
 
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
@@ -72,7 +97,7 @@ namespace SIL.FieldWorks.LexText.Controls
 #pragma warning restore 618
 				}
 			}
-			return true; // We "handled" the message, regardless of what happened.
+			retObj.ReturnValue = true; // We "handled" the message, regardless of what happened.
 		}
 
 		#endregion XCORE Message Handlers

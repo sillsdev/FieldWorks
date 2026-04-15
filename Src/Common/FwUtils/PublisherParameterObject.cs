@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public sealed class PublisherParameterObject
 	{
-		public PublisherParameterObject(string message, object newValue = null)
+		public PublisherParameterObject(string message, object data = null)
 		{
 			if (string.IsNullOrWhiteSpace(message))
 			{
@@ -16,10 +16,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			Message = message;
-			NewValue = newValue;
+			Data = data;
 		}
 
 		public string Message { get; }
-		public object NewValue { get; }
+		public object Data { get; }
+	}
+
+	/// <summary>
+	/// Convenience class for use when we want to pass a return value back through the PublisherParameterObject.
+	/// </summary>
+	public class ReturnObject
+	{
+		public ReturnObject(object data)
+		{
+			Data = data;
+			ReturnValue = false;
+		}
+
+		public object Data { get; set; }
+		public bool ReturnValue { get; set; }
 	}
 }

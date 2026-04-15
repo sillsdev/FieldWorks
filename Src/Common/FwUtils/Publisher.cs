@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guard.AgainstNull(publisherParameterObject, nameof(publisherParameterObject));
 
-			PublishMessage(publisherParameterObject.Message, publisherParameterObject.NewValue);
+			PublishMessage(publisherParameterObject.Message, publisherParameterObject.Data);
 		}
 
 		/// <inheritdoc />
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			foreach (var publisherParameterObject in publisherParameterObjects)
 			{
-				PublishMessage(publisherParameterObject.Message, publisherParameterObject.NewValue);
+				PublishMessage(publisherParameterObject.Message, publisherParameterObject.Data);
 			}
 		}
 		#endregion

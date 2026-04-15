@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string CreateFirstRecord = "CreateFirstRecord";
 		public const string DataTreeDelete = "DataTreeDelete";
 		public const string DeleteRecord = "DeleteRecord";
+		public const string DialogInsertItemInVector = "DialogInsertItemInVector";
 		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FilterListChanged = "FilterListChanged";
 		public const string FollowLink = "FollowLink";

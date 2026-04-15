@@ -4,9 +4,12 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -33,6 +36,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		public MasterInflFeatDlgListener()
 		{
+			Subscriber.Subscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector);
 		}
 
 		#endregion Construction and Initialization
@@ -53,28 +57,51 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// The base class finalizer is called automatically.
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Subscriber.Unsubscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector);
+			}
+			base.Dispose(disposing);
+		}
 
 		#endregion IDisposable & Co. implementation
 
 		#region XCORE Message Handlers
 
 		/// <summary>
-		/// Handles the xWorks message to insert a new FsFeatDefn.
+		/// Handles the message to insert a new FsFeatDefn.
 		/// Invoked by the RecordClerk via a main menu.
 		/// </summary>
-		/// <param name="argument">The xCore Command object.</param>
-		/// <returns>true, if we handled the message, otherwise false, if there was an unsupported 'classname' parameter</returns>
-		public override bool OnDialogInsertItemInVector(object argument)
+		/// <param name="obj">Object that contains the xCore Command object and has a ReturnValue. The
+		/// ReturnValue is true if we handled the message.</param>
+		private void DialogInsertItemInVector(object obj)
 		{
 			CheckDisposed();
 
-			Debug.Assert(argument != null && argument is XCore.Command);
-			string className = XmlUtils.GetOptionalAttributeValue(
-				(argument as XCore.Command).Parameters[0], "className");
-			if (className == null || ((className != "FsClosedFeature") && (className != "FsComplexFeature")))
-				return false;
-			if (className == "FsClosedFeature" && (argument as XCore.Command).Id != "CmdInsertClosedFeature")
-				return false;
+			if (!(obj is ReturnObject retObj) ||
+				!(retObj.Data is Command command))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if already handled by another Subscriber.
+			if (retObj.ReturnValue)
+			{
+				return;
+			}
+			// Only handle "FsClosedFeature" and "FsComplexFeature" classes.
+			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
+			if ((className != "FsClosedFeature") && (className != "FsComplexFeature"))
+			{
+				return;
+			}
+			// Only handle "FsClosedFeature" for "CmdInsertClosedFeature".
+			if (className == "FsClosedFeature" && command.Id != "CmdInsertClosedFeature")
+			{
+				return;
+			}
 
 			using (MasterInflectionFeatureListDlg dlg = new MasterInflectionFeatureListDlg(className))
 			{
@@ -101,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						break;
 				}
 			}
-			return true; // We "handled" the message, regardless of what happened.
+			retObj.ReturnValue = true; // We "handled" the message, regardless of what happened.
 		}
 
 		#endregion XCORE Message Handlers

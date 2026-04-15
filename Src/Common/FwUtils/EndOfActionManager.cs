@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Add the dictionary entry if the key is not present. Overwrite the value if the key is present.
-			m_events[publisherParameterObject.Message] = publisherParameterObject.NewValue;
+			m_events[publisherParameterObject.Message] = publisherParameterObject.Data;
 		}
 
 		/// Should be private, but is public to support testing.
