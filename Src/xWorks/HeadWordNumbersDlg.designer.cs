@@ -270,6 +270,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitNine.controlID = null;
 			this.m_digitNine.HasBorder = true;
 			this.m_digitNine.Name = "m_digitNine";
+			this.m_digitNine.ReadOnlyView = true;
 			this.m_digitNine.SuppressEnter = false;
 			this.m_digitNine.WordWrap = false;
 			// 
@@ -282,6 +283,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitEight.controlID = null;
 			this.m_digitEight.HasBorder = true;
 			this.m_digitEight.Name = "m_digitEight";
+			this.m_digitEight.ReadOnlyView = true;
 			this.m_digitEight.SuppressEnter = false;
 			this.m_digitEight.WordWrap = false;
 			// 
@@ -294,6 +296,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitSeven.controlID = null;
 			this.m_digitSeven.HasBorder = true;
 			this.m_digitSeven.Name = "m_digitSeven";
+			this.m_digitSeven.ReadOnlyView = true;
 			this.m_digitSeven.SuppressEnter = false;
 			this.m_digitSeven.WordWrap = false;
 			// 
@@ -306,6 +309,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitSix.controlID = null;
 			this.m_digitSix.HasBorder = true;
 			this.m_digitSix.Name = "m_digitSix";
+			this.m_digitSix.ReadOnlyView = true;
 			this.m_digitSix.SuppressEnter = false;
 			this.m_digitSix.WordWrap = false;
 			// 
@@ -318,6 +322,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitFive.controlID = null;
 			this.m_digitFive.HasBorder = true;
 			this.m_digitFive.Name = "m_digitFive";
+			this.m_digitFive.ReadOnlyView = true;
 			this.m_digitFive.SuppressEnter = false;
 			this.m_digitFive.WordWrap = false;
 			// 
@@ -330,6 +335,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitFour.controlID = null;
 			this.m_digitFour.HasBorder = true;
 			this.m_digitFour.Name = "m_digitFour";
+			this.m_digitFour.ReadOnlyView = true;
 			this.m_digitFour.SuppressEnter = false;
 			this.m_digitFour.WordWrap = false;
 			// 
@@ -342,6 +348,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitThree.controlID = null;
 			this.m_digitThree.HasBorder = true;
 			this.m_digitThree.Name = "m_digitThree";
+			this.m_digitThree.ReadOnlyView = true;
 			this.m_digitThree.SuppressEnter = false;
 			this.m_digitThree.WordWrap = false;
 			// 
@@ -354,6 +361,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitTwo.controlID = null;
 			this.m_digitTwo.HasBorder = true;
 			this.m_digitTwo.Name = "m_digitTwo";
+			this.m_digitTwo.ReadOnlyView = true;
 			this.m_digitTwo.SuppressEnter = false;
 			this.m_digitTwo.WordWrap = false;
 			// 
@@ -366,6 +374,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitOne.controlID = null;
 			this.m_digitOne.HasBorder = true;
 			this.m_digitOne.Name = "m_digitOne";
+			this.m_digitOne.ReadOnlyView = true;
 			this.m_digitOne.SuppressEnter = false;
 			this.m_digitOne.WordWrap = false;
 			// 
@@ -378,6 +387,7 @@ namespace SIL.FieldWorks.XWorks
 			this.m_digitZero.controlID = null;
 			this.m_digitZero.HasBorder = true;
 			this.m_digitZero.Name = "m_digitZero";
+			this.m_digitZero.ReadOnlyView = true;
 			this.m_digitZero.SuppressEnter = false;
 			this.m_digitZero.WordWrap = false;
 			// 

@@ -213,6 +213,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// Set the font in each digit textbox
+		/// </summary>
+		private void UpdateFontInDigits(System.Drawing.Font digitFont)
+		{
+			foreach (var digit in _digitBoxes)
+			{
+				digit.Font = digitFont;
+			}
+		}
+
 		public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems
 		{
 			set
@@ -238,24 +249,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			get { return _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text)); }
-		}
-
-		public event EventHandler CustomDigitsChanged
-		{
-			add
-			{
-				foreach (var textBox in _digitBoxes)
-				{
-					textBox.TextChanged += value;
-				}
-			}
-			remove
-			{
-				foreach (var textBox in _digitBoxes)
-				{
-					textBox.TextChanged -= value;
-				}
-			}
 		}
 
 		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
@@ -288,7 +281,8 @@ namespace SIL.FieldWorks.XWorks
 			if (selectedWs?.NumberingSystem != null)
 			{
 				var digits = selectedWs.NumberingSystem.Digits;
-
+				UpdateFontInDigits(new System.Drawing.Font(string.IsNullOrWhiteSpace(selectedWs.DefaultFontName) ? "Segoe" : selectedWs.DefaultFontName,
+					selectedWs.DefaultFontSize == 0.0f ? 12 : selectedWs.DefaultFontSize)); ;
 				if (!string.IsNullOrEmpty(digits))
 				{
 					// Populate the custom digits from writing system, if all 10 digits are specified
