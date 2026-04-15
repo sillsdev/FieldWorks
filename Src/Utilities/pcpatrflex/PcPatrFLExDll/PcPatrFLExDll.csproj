@@ -49,4 +49,17 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="PcPatrFLExDll.Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PcPatrFLExDll.Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="PcPatrFLExDll.Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PcPatrFLExDll.Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

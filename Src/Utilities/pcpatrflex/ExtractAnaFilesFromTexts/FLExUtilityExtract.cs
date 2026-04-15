@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using System.Windows.Forms;
+using ExtractAnaFilesFromTexts;
 
 namespace SIL.PcPatrFLEx
 {
@@ -31,7 +32,7 @@ namespace SIL.PcPatrFLEx
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label => "Xtract Texts as ANA for regression testing of PC-PATR with FLEx";
+		public string Label => ExtractAnaFilesFromTexts_Strings.ksTitle;
 
 		UtilityDlg IUtility.Dialog
 		{
@@ -45,12 +46,9 @@ namespace SIL.PcPatrFLEx
 
 		void IUtility.OnSelection()
 		{
-			m_dlg.WhenDescription =
-				"Run this when you are using PCPatrFLEx and want to create a set of regression input files.";
-			m_dlg.WhatDescription =
-				"Run this when you are using PCPatrFLEx and want to create a set of regression input files.";
-			m_dlg.RedoDescription =
-				"You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).";
+			m_dlg.WhenDescription = ExtractAnaFilesFromTexts_Strings.ksWhenDescription;
+			m_dlg.WhatDescription = ExtractAnaFilesFromTexts_Strings.ksWhatDescription;
+			m_dlg.RedoDescription = ExtractAnaFilesFromTexts_Strings.ksRedoDescription;
 		}
 
 		void IUtility.Process()

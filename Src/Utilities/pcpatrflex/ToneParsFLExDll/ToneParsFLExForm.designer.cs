@@ -59,256 +59,157 @@
 			// 
 			// btnParseSegment
 			// 
-			this.btnParseSegment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnParseSegment.Location = new System.Drawing.Point(519, 336);
+			resources.ApplyResources(this.btnParseSegment, "btnParseSegment");
 			this.btnParseSegment.Name = "btnParseSegment";
-			this.btnParseSegment.Size = new System.Drawing.Size(267, 38);
-			this.btnParseSegment.TabIndex = 10;
-			this.btnParseSegment.Text = "&Parse this segment";
 			this.btnParseSegment.UseVisualStyleBackColor = true;
 			this.btnParseSegment.Click += new System.EventHandler(this.ParseSegment_Click);
 			// 
 			// splitContainer1
 			// 
-			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer1.Location = new System.Drawing.Point(3, 396);
+			resources.ApplyResources(this.splitContainer1, "splitContainer1");
 			this.splitContainer1.Name = "splitContainer1";
 			// 
 			// splitContainer1.Panel1
 			// 
-			this.splitContainer1.Panel1.AutoScroll = true;
+			resources.ApplyResources(this.splitContainer1.Panel1, "splitContainer1.Panel1");
 			this.splitContainer1.Panel1.Controls.Add(this.lbTexts);
 			// 
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.lbSegments);
-			this.splitContainer1.Size = new System.Drawing.Size(1194, 541);
-			this.splitContainer1.SplitterDistance = 534;
-			this.splitContainer1.TabIndex = 4;
 			this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
 			// 
 			// lbTexts
 			// 
-			this.lbTexts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.lbTexts, "lbTexts");
 			this.lbTexts.FormattingEnabled = true;
-			this.lbTexts.ItemHeight = 20;
-			this.lbTexts.Location = new System.Drawing.Point(2, 0);
 			this.lbTexts.Name = "lbTexts";
-			this.lbTexts.Size = new System.Drawing.Size(529, 504);
-			this.lbTexts.TabIndex = 0;
 			this.lbTexts.SelectedIndexChanged += new System.EventHandler(this.Texts_SelectedIndexChanged);
 			// 
 			// lbSegments
 			// 
-			this.lbSegments.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.lbSegments, "lbSegments");
 			this.lbSegments.FormattingEnabled = true;
-			this.lbSegments.ItemHeight = 20;
-			this.lbSegments.Location = new System.Drawing.Point(0, 0);
 			this.lbSegments.Name = "lbSegments";
-			this.lbSegments.Size = new System.Drawing.Size(656, 504);
-			this.lbSegments.TabIndex = 0;
 			this.lbSegments.SelectedIndexChanged += new System.EventHandler(this.Segments_SelectedIndexChanged);
 			// 
 			// lblParsingStatus
 			// 
-			this.lblParsingStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.lblParsingStatus.AutoSize = true;
-			this.lblParsingStatus.Location = new System.Drawing.Point(-1, 953);
+			resources.ApplyResources(this.lblParsingStatus, "lblParsingStatus");
 			this.lblParsingStatus.Name = "lblParsingStatus";
-			this.lblParsingStatus.Size = new System.Drawing.Size(110, 20);
-			this.lblParsingStatus.TabIndex = 1;
-			this.lblParsingStatus.Text = "Parsing status";
 			// 
 			// lblStatus
 			// 
-			this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.lblStatus.AutoSize = true;
-			this.lblStatus.Location = new System.Drawing.Point(1095, 953);
+			resources.ApplyResources(this.lblStatus, "lblStatus");
 			this.lblStatus.Name = "lblStatus";
-			this.lblStatus.Size = new System.Drawing.Size(102, 20);
-			this.lblStatus.TabIndex = 19;
-			this.lblStatus.Text = "Status thingy";
 			// 
 			// lblTexts
 			// 
-			this.lblTexts.AutoSize = true;
-			this.lblTexts.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblTexts.Location = new System.Drawing.Point(9, 345);
+			resources.ApplyResources(this.lblTexts, "lblTexts");
 			this.lblTexts.Name = "lblTexts";
-			this.lblTexts.Size = new System.Drawing.Size(61, 25);
-			this.lblTexts.TabIndex = 7;
-			this.lblTexts.Text = "Texts";
 			// 
 			// lblSegments
 			// 
-			this.lblSegments.AutoSize = true;
-			this.lblSegments.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.lblSegments.Location = new System.Drawing.Point(368, 345);
+			resources.ApplyResources(this.lblSegments, "lblSegments");
 			this.lblSegments.Name = "lblSegments";
-			this.lblSegments.Size = new System.Drawing.Size(101, 25);
-			this.lblSegments.TabIndex = 9;
-			this.lblSegments.Text = "Segments";
 			// 
 			// lblToneRuleFile
 			// 
-			this.lblToneRuleFile.AutoSize = true;
-			this.lblToneRuleFile.Location = new System.Drawing.Point(14, 32);
+			resources.ApplyResources(this.lblToneRuleFile, "lblToneRuleFile");
 			this.lblToneRuleFile.Name = "lblToneRuleFile";
-			this.lblToneRuleFile.Size = new System.Drawing.Size(139, 20);
-			this.lblToneRuleFile.TabIndex = 0;
-			this.lblToneRuleFile.Text = "TonePars rule file: ";
 			// 
 			// tbToneRuleFile
 			// 
-			this.tbToneRuleFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tbToneRuleFile.Location = new System.Drawing.Point(216, 28);
+			resources.ApplyResources(this.tbToneRuleFile, "tbToneRuleFile");
 			this.tbToneRuleFile.Name = "tbToneRuleFile";
-			this.tbToneRuleFile.Size = new System.Drawing.Size(884, 26);
-			this.tbToneRuleFile.TabIndex = 1;
 			this.tbToneRuleFile.TextChanged += new System.EventHandler(this.tbToneRuleFile_TextChanged);
 			// 
 			// btnBrowseToneRule
 			// 
-			this.btnBrowseToneRule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnBrowseToneRule.Location = new System.Drawing.Point(1128, 28);
+			resources.ApplyResources(this.btnBrowseToneRule, "btnBrowseToneRule");
 			this.btnBrowseToneRule.Name = "btnBrowseToneRule";
-			this.btnBrowseToneRule.Size = new System.Drawing.Size(94, 38);
-			this.btnBrowseToneRule.TabIndex = 2;
-			this.btnBrowseToneRule.Text = "&Browse";
 			this.btnBrowseToneRule.UseVisualStyleBackColor = true;
 			this.btnBrowseToneRule.Click += new System.EventHandler(this.Browse_Click);
 			// 
 			// btnParseText
 			// 
-			this.btnParseText.Location = new System.Drawing.Point(76, 336);
+			resources.ApplyResources(this.btnParseText, "btnParseText");
 			this.btnParseText.Name = "btnParseText";
-			this.btnParseText.Size = new System.Drawing.Size(282, 38);
-			this.btnParseText.TabIndex = 8;
-			this.btnParseText.Text = "Parse this &text";
 			this.btnParseText.UseVisualStyleBackColor = true;
 			this.btnParseText.Click += new System.EventHandler(this.ParseText_Click);
 			// 
 			// btnHelp
 			// 
-			this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnHelp.Location = new System.Drawing.Point(1146, 134);
+			resources.ApplyResources(this.btnHelp, "btnHelp");
 			this.btnHelp.Name = "btnHelp";
-			this.btnHelp.Size = new System.Drawing.Size(76, 40);
-			this.btnHelp.TabIndex = 6;
-			this.btnHelp.Text = "Help...";
 			this.btnHelp.UseVisualStyleBackColor = true;
 			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
 			// 
 			// btnBrowseIntxCtl
 			// 
-			this.btnBrowseIntxCtl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnBrowseIntxCtl.Location = new System.Drawing.Point(1128, 78);
+			resources.ApplyResources(this.btnBrowseIntxCtl, "btnBrowseIntxCtl");
 			this.btnBrowseIntxCtl.Name = "btnBrowseIntxCtl";
-			this.btnBrowseIntxCtl.Size = new System.Drawing.Size(94, 38);
-			this.btnBrowseIntxCtl.TabIndex = 14;
-			this.btnBrowseIntxCtl.Text = "Br&owse";
 			this.btnBrowseIntxCtl.UseVisualStyleBackColor = true;
 			this.btnBrowseIntxCtl.Click += new System.EventHandler(this.btnBrowseIntxCtl_Click);
 			// 
 			// tbIntxCtlFile
 			// 
-			this.tbIntxCtlFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tbIntxCtlFile.Location = new System.Drawing.Point(216, 78);
+			resources.ApplyResources(this.tbIntxCtlFile, "tbIntxCtlFile");
 			this.tbIntxCtlFile.Name = "tbIntxCtlFile";
-			this.tbIntxCtlFile.Size = new System.Drawing.Size(884, 26);
-			this.tbIntxCtlFile.TabIndex = 13;
 			this.tbIntxCtlFile.TextChanged += new System.EventHandler(this.tbIntxCtlFile_TextChanged);
 			// 
 			// lblAmpleIntxCtl
 			// 
-			this.lblAmpleIntxCtl.AutoSize = true;
-			this.lblAmpleIntxCtl.Location = new System.Drawing.Point(10, 83);
+			resources.ApplyResources(this.lblAmpleIntxCtl, "lblAmpleIntxCtl");
 			this.lblAmpleIntxCtl.Name = "lblAmpleIntxCtl";
-			this.lblAmpleIntxCtl.Size = new System.Drawing.Size(143, 20);
-			this.lblAmpleIntxCtl.TabIndex = 12;
-			this.lblAmpleIntxCtl.Text = "AMPLE intx.ctl file: ";
 			// 
 			// cbTraceToneProcessing
 			// 
-			this.cbTraceToneProcessing.AutoSize = true;
-			this.cbTraceToneProcessing.Location = new System.Drawing.Point(20, 134);
-			this.cbTraceToneProcessing.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			resources.ApplyResources(this.cbTraceToneProcessing, "cbTraceToneProcessing");
 			this.cbTraceToneProcessing.Name = "cbTraceToneProcessing";
-			this.cbTraceToneProcessing.Size = new System.Drawing.Size(197, 24);
-			this.cbTraceToneProcessing.TabIndex = 15;
-			this.cbTraceToneProcessing.Text = "T&race Tone Processing";
 			this.cbTraceToneProcessing.UseVisualStyleBackColor = true;
 			this.cbTraceToneProcessing.CheckedChanged += new System.EventHandler(this.cbTraceToneProcessing_CheckedChanged);
 			// 
 			// btnTracingOptions
 			// 
-			this.btnTracingOptions.Location = new System.Drawing.Point(262, 134);
-			this.btnTracingOptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			resources.ApplyResources(this.btnTracingOptions, "btnTracingOptions");
 			this.btnTracingOptions.Name = "btnTracingOptions";
-			this.btnTracingOptions.Size = new System.Drawing.Size(178, 35);
-			this.btnTracingOptions.TabIndex = 16;
-			this.btnTracingOptions.Text = "Tracing &Options";
 			this.btnTracingOptions.UseVisualStyleBackColor = true;
 			this.btnTracingOptions.Click += new System.EventHandler(this.btnTracingOptions_Click);
 			// 
 			// cbVerify
 			// 
-			this.cbVerify.AutoSize = true;
-			this.cbVerify.Location = new System.Drawing.Point(20, 195);
-			this.cbVerify.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			resources.ApplyResources(this.cbVerify, "cbVerify");
 			this.cbVerify.Name = "cbVerify";
-			this.cbVerify.Size = new System.Drawing.Size(244, 24);
-			this.cbVerify.TabIndex = 17;
-			this.cbVerify.Text = "&Verify Control File Information";
 			this.cbVerify.UseVisualStyleBackColor = true;
 			this.cbVerify.CheckedChanged += new System.EventHandler(this.cbVerify_CheckedChanged);
 			// 
 			// btnShowLog
 			// 
-			this.btnShowLog.Location = new System.Drawing.Point(499, 134);
-			this.btnShowLog.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			resources.ApplyResources(this.btnShowLog, "btnShowLog");
 			this.btnShowLog.Name = "btnShowLog";
-			this.btnShowLog.Size = new System.Drawing.Size(138, 35);
-			this.btnShowLog.TabIndex = 18;
-			this.btnShowLog.Text = "Show &Log";
 			this.btnShowLog.UseVisualStyleBackColor = true;
 			this.btnShowLog.Click += new System.EventHandler(this.ShowLog_Click);
 			// 
 			// cbIgnoreContext
 			// 
-			this.cbIgnoreContext.AutoSize = true;
+			resources.ApplyResources(this.cbIgnoreContext, "cbIgnoreContext");
 			this.cbIgnoreContext.Checked = true;
 			this.cbIgnoreContext.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cbIgnoreContext.Location = new System.Drawing.Point(18, 239);
 			this.cbIgnoreContext.Name = "cbIgnoreContext";
-			this.cbIgnoreContext.Size = new System.Drawing.Size(360, 24);
-			this.cbIgnoreContext.TabIndex = 20;
-			this.cbIgnoreContext.Text = "Ignore Context (only parse unique word forms)";
 			this.cbIgnoreContext.UseVisualStyleBackColor = true;
 			// 
 			// btnRefresh
 			// 
-			this.btnRefresh.Location = new System.Drawing.Point(22, 284);
+			resources.ApplyResources(this.btnRefresh, "btnRefresh");
 			this.btnRefresh.Name = "btnRefresh";
-			this.btnRefresh.Size = new System.Drawing.Size(178, 35);
-			this.btnRefresh.TabIndex = 21;
-			this.btnRefresh.Text = "Refresh Texts";
 			this.btnRefresh.UseVisualStyleBackColor = true;
 			this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 			// 
 			// ToneParsFLExForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1228, 977);
 			this.Controls.Add(this.btnRefresh);
 			this.Controls.Add(this.cbIgnoreContext);
 			this.Controls.Add(this.lblStatus);
@@ -329,9 +230,7 @@
 			this.Controls.Add(this.lblTexts);
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.btnParseSegment);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "ToneParsFLExForm";
-			this.Text = "Use TonePars with FLEx";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);

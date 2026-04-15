@@ -79,11 +79,7 @@ namespace SIL.PrepFLExDB
 			var pcpatrList = possListRepository.AllInstances().FirstOrDefault(list => list.Name.BestAnalysisAlternative.Text == PcPatrConstants.PcPatrFeatureDescriptorList);
 			if (pcpatrList == null)
 			{
-				// need the master possibility list and it does not exist
-				if (ShowMessages)
-				{
-					MessageBox.Show("Need to create the master list of possibilities first.", "Wrong Order", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
+				ShowWarningMessage();
 				return;
 			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -105,6 +101,17 @@ namespace SIL.PrepFLExDB
 				fd.UpdateCustomField();
 				FieldDescription.ClearDataAbout();
 			});
+		}
+
+		private void ShowWarningMessage()
+		{
+			// need the master possibility list and it does not exist
+			if (ShowMessages)
+			{
+				MessageBox.Show(PrepFLExDBDll_Strings.ksCreateMasterListFirst,
+					PrepFLExDBDll_Strings.ksWrongOrder,
+					MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		public List<FieldDescription> GetListOfCustomFields()
@@ -161,11 +168,7 @@ namespace SIL.PrepFLExDB
 			var toneParsList = possListRepository.AllInstances().FirstOrDefault(list => list.Name.BestAnalysisAlternative.Text == ToneParsConstants.ToneParsPropertiesList);
 			if (toneParsList == null)
 			{
-				// need the master possibility list and it does not exist
-				if (ShowMessages)
-				{
-					MessageBox.Show("Need to create the master list of possibilities first.", "Wrong Order", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
+				ShowWarningMessage();
 				return;
 			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -204,11 +207,7 @@ namespace SIL.PrepFLExDB
 			var toneParsList = possListRepository.AllInstances().FirstOrDefault(list => list.Name.BestAnalysisAlternative.Text == ToneParsConstants.ToneParsPropertiesList);
 			if (toneParsList == null)
 			{
-				// need the master possibility list and it does not exist
-				if (ShowMessages)
-				{
-					MessageBox.Show("Need to create the master list of possibilities first.", "Wrong Order", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				}
+				ShowWarningMessage();
 				return;
 			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>

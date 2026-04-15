@@ -51,4 +51,17 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ToneParsFLExDll.Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ToneParsFLExDll.Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="ToneParsFLExDll.Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ToneParsFLExDll.Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

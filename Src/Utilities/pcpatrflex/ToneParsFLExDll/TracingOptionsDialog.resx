@@ -117,7 +117,315 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="cbRuleTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="cbRuleTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 451</value>
+  </data>
+  <data name="cbRuleTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>250, 24</value>
+  </data>
+  <data name="cbRuleTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="cbRuleTrace.Text" xml:space="preserve">
+    <value>Rule application (normal trace)</value>
+  </data>
+  <data name="&gt;&gt;cbRuleTrace.Name" xml:space="preserve">
+    <value>cbRuleTrace</value>
+  </data>
+  <data name="&gt;&gt;cbRuleTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbRuleTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbRuleTrace.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cbTierAssignmentTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbTierAssignmentTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 397</value>
+  </data>
+  <data name="cbTierAssignmentTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>298, 24</value>
+  </data>
+  <data name="cbTierAssignmentTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="cbTierAssignmentTrace.Text" xml:space="preserve">
+    <value>Primary and Register Tier assignment</value>
+  </data>
+  <data name="&gt;&gt;cbTierAssignmentTrace.Name" xml:space="preserve">
+    <value>cbTierAssignmentTrace</value>
+  </data>
+  <data name="&gt;&gt;cbTierAssignmentTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbTierAssignmentTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbTierAssignmentTrace.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="cbDomainAssignmentTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbDomainAssignmentTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 343</value>
+  </data>
+  <data name="cbDomainAssignmentTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>176, 24</value>
+  </data>
+  <data name="cbDomainAssignmentTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="cbDomainAssignmentTrace.Text" xml:space="preserve">
+    <value>Domain assignment</value>
+  </data>
+  <data name="&gt;&gt;cbDomainAssignmentTrace.Name" xml:space="preserve">
+    <value>cbDomainAssignmentTrace</value>
+  </data>
+  <data name="&gt;&gt;cbDomainAssignmentTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbDomainAssignmentTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbDomainAssignmentTrace.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="cbMorphemeToneAssignmentTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbMorphemeToneAssignmentTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 289</value>
+  </data>
+  <data name="cbMorphemeToneAssignmentTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>233, 24</value>
+  </data>
+  <data name="cbMorphemeToneAssignmentTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="cbMorphemeToneAssignmentTrace.Text" xml:space="preserve">
+    <value>Morpheme tone assignment</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeToneAssignmentTrace.Name" xml:space="preserve">
+    <value>cbMorphemeToneAssignmentTrace</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeToneAssignmentTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeToneAssignmentTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeToneAssignmentTrace.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="cbTBUAssignmentTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbTBUAssignmentTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 235</value>
+  </data>
+  <data name="cbTBUAssignmentTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>153, 24</value>
+  </data>
+  <data name="cbTBUAssignmentTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="cbTBUAssignmentTrace.Text" xml:space="preserve">
+    <value>TBU assignment</value>
+  </data>
+  <data name="&gt;&gt;cbTBUAssignmentTrace.Name" xml:space="preserve">
+    <value>cbTBUAssignmentTrace</value>
+  </data>
+  <data name="&gt;&gt;cbTBUAssignmentTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbTBUAssignmentTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbTBUAssignmentTrace.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="cbSyllableParsingTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbSyllableParsingTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 182</value>
+  </data>
+  <data name="cbSyllableParsingTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 24</value>
+  </data>
+  <data name="cbSyllableParsingTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="cbSyllableParsingTrace.Text" xml:space="preserve">
+    <value>Syllable parsing</value>
+  </data>
+  <data name="&gt;&gt;cbSyllableParsingTrace.Name" xml:space="preserve">
+    <value>cbSyllableParsingTrace</value>
+  </data>
+  <data name="&gt;&gt;cbSyllableParsingTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbSyllableParsingTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbSyllableParsingTrace.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="cbMoraParsingTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbMoraParsingTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 128</value>
+  </data>
+  <data name="cbMoraParsingTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 24</value>
+  </data>
+  <data name="cbMoraParsingTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="cbMoraParsingTrace.Text" xml:space="preserve">
+    <value>Mora parsing</value>
+  </data>
+  <data name="&gt;&gt;cbMoraParsingTrace.Name" xml:space="preserve">
+    <value>cbMoraParsingTrace</value>
+  </data>
+  <data name="&gt;&gt;cbMoraParsingTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbMoraParsingTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbMoraParsingTrace.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="cbMorphemeLinkingTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbMorphemeLinkingTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 74</value>
+  </data>
+  <data name="cbMorphemeLinkingTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 24</value>
+  </data>
+  <data name="cbMorphemeLinkingTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="cbMorphemeLinkingTrace.Text" xml:space="preserve">
+    <value>Linking of morphemes to root nodes</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeLinkingTrace.Name" xml:space="preserve">
+    <value>cbMorphemeLinkingTrace</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeLinkingTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeLinkingTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbMorphemeLinkingTrace.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="cbSegmentParsingTrace.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbSegmentParsingTrace.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 20</value>
+  </data>
+  <data name="cbSegmentParsingTrace.Size" type="System.Drawing.Size, System.Drawing">
+    <value>266, 24</value>
+  </data>
+  <data name="cbSegmentParsingTrace.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="cbSegmentParsingTrace.Text" xml:space="preserve">
+    <value>Segment parsing into root nodes</value>
+  </data>
+  <data name="&gt;&gt;cbSegmentParsingTrace.Name" xml:space="preserve">
+    <value>cbSegmentParsingTrace</value>
+  </data>
+  <data name="&gt;&gt;cbSegmentParsingTrace.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbSegmentParsingTrace.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbSegmentParsingTrace.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
+    <value>226, 500</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnOK.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="btnOK.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="btnOK.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Name" xml:space="preserve">
+    <value>btnOK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>356, 500</value>
+  </data>
+  <data name="btnCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+    <value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>9, 20</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>486, 557</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAUAEBAAAAEAIABoBAAAVgAAABgYAAABACAAiAkAAL4EAAAgIAAAAQAgAKgQAABGDgAAMDAAAAEA
@@ -477,5 +785,17 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAA
 </value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Tracing Options Dialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>TracingOptionsDialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

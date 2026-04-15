@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksEmptySegment" xml:space="preserve">
+    <value>{0} does not have any words in it.
+Please remove it or add words and try again.
+</value>
+    <comment>{0} is the segment number</comment>
+  </data>
+  <data name="ksFileFilterPrompt" xml:space="preserve">
+    <value>PC-PATR Grammar File (*.{0})|*.{0}|All Files (*.*)|*.*</value>
+    <comment>{0} is hard coded to be "grm"</comment>
+  </data>
+  <data name="ksGlossesWithSpace" xml:space="preserve">
+    <value>The following glosses contain a space.
+Please fix them and try again.
+</value>
+  </data>
+  <data name="ksGrammarError" xml:space="preserve">
+    <value>Grammar Error!</value>
+  </data>
+  <data name="ksInvalidParse" xml:space="preserve">
+    <value>Sorry, but at least the word '{0}' has an analysis with an invalid parse.  Please make sure every word has valid parses and try again.</value>
+    <comment>{0} is the word with an invalid parse</comment>
+  </data>
+  <data name="ksPcPatrGrammarError" xml:space="preserve">
+    <value>The PC-PATR grammar file had an error in it and failed to load.
+We will show the error log after you click on OK.
+Please fix all errors in the grammar file and then try again.</value>
+  </data>
+  <data name="ksPcPatrProcessingFailed" xml:space="preserve">
+    <value>The PC-PATR processing failed!
+Perhaps there are incompatible feature values in one of the forms.
+We will show the error log after you click on OK.
+You may also want to try and run the PcPatrFLEx.bat file in the %TEMP% directory.
+This may or may not show which features are incompatible or some other PC-PATR error or warning message.</value>
+  </data>
+  <data name="ksPcPatrReference" xml:space="preserve">
+    <value>PC-PATR Reference Manual</value>
+    <comment>Is only in English</comment>
+  </data>
+  <data name="ksProcessingSegment" xml:space="preserve">
+    <value>Processing segment {0}/{1}</value>
+    <comment>{0} is the current segment number; {1} is the total number of segments</comment>
+  </data>
+  <data name="ksReadFailed" xml:space="preserve">
+    <value>The read failed for segment number {0}; {1}</value>
+    <comment>{0} is the segment number; {1} is the error message</comment>
+  </data>
+  <data name="ksRedoDescription" xml:space="preserve">
+    <value>You cannot use 'Undo' to cancel the effect of this utility.You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).</value>
+  </data>
+  <data name="ksSegmentNumber" xml:space="preserve">
+    <value>Segment number </value>
+  </data>
+  <data name="ksSomeWordsNotParsed" xml:space="preserve">
+    <value>Sorry, but not every sentence has every word parsed. At least the word '{0}' did not parse.  Please make sure every word is parsed and try again.</value>
+    <comment>{0} is the word that did not parse</comment>
+  </data>
+  <data name="ksTitle" xml:space="preserve">
+    <value>Use PC-PATR with FLEx</value>
+  </data>
+  <data name="ksUserDocumentation" xml:space="preserve">
+    <value>User Documentation</value>
+    <comment>Is only in English</comment>
+  </data>
+  <data name="ksWhatDescription" xml:space="preserve">
+    <value>Run this to use a PC-PATR grammar to try and disambiguate interlinear texts.</value>
+  </data>
+  <data name="ksWhenDescription" xml:space="preserve">
+    <value>Run this when you have a PC-PATR grammar and have a reasonable amount of morphological ambiguity in interlinear texts.</value>
+  </data>
+</root>

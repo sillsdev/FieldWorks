@@ -117,7 +117,645 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnParseSegment.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnParseSegment.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 336</value>
+  </data>
+  <data name="btnParseSegment.Size" type="System.Drawing.Size, System.Drawing">
+    <value>267, 38</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnParseSegment.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="btnParseSegment.Text" xml:space="preserve">
+    <value>&amp;Parse this segment</value>
+  </data>
+  <data name="&gt;&gt;btnParseSegment.Name" xml:space="preserve">
+    <value>btnParseSegment</value>
+  </data>
+  <data name="&gt;&gt;btnParseSegment.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnParseSegment.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnParseSegment.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="splitContainer1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 396</value>
+  </data>
+  <data name="splitContainer1.Panel1.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lbTexts.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="lbTexts.ItemHeight" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="lbTexts.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 0</value>
+  </data>
+  <data name="lbTexts.Size" type="System.Drawing.Size, System.Drawing">
+    <value>529, 504</value>
+  </data>
+  <data name="lbTexts.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lbTexts.Name" xml:space="preserve">
+    <value>lbTexts</value>
+  </data>
+  <data name="&gt;&gt;lbTexts.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lbTexts.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;lbTexts.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Name" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Parent" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lbSegments.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="lbSegments.ItemHeight" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="lbSegments.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="lbSegments.Size" type="System.Drawing.Size, System.Drawing">
+    <value>656, 504</value>
+  </data>
+  <data name="lbSegments.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lbSegments.Name" xml:space="preserve">
+    <value>lbSegments</value>
+  </data>
+  <data name="&gt;&gt;lbSegments.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lbSegments.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;lbSegments.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Name" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Parent" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1194, 541</value>
+  </data>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>534</value>
+  </data>
+  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Name" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="lblParsingStatus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="lblParsingStatus.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblParsingStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>-1, 953</value>
+  </data>
+  <data name="lblParsingStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 20</value>
+  </data>
+  <data name="lblParsingStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="lblParsingStatus.Text" xml:space="preserve">
+    <value>Parsing status</value>
+  </data>
+  <data name="&gt;&gt;lblParsingStatus.Name" xml:space="preserve">
+    <value>lblParsingStatus</value>
+  </data>
+  <data name="&gt;&gt;lblParsingStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblParsingStatus.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblParsingStatus.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblStatus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="lblStatus.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblStatus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1095, 953</value>
+  </data>
+  <data name="lblStatus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 20</value>
+  </data>
+  <data name="lblStatus.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="lblStatus.Text" xml:space="preserve">
+    <value>Status thingy</value>
+  </data>
+  <data name="&gt;&gt;lblStatus.Name" xml:space="preserve">
+    <value>lblStatus</value>
+  </data>
+  <data name="&gt;&gt;lblStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblStatus.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblStatus.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblTexts.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblTexts.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 10pt</value>
+  </data>
+  <data name="lblTexts.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 345</value>
+  </data>
+  <data name="lblTexts.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 25</value>
+  </data>
+  <data name="lblTexts.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="lblTexts.Text" xml:space="preserve">
+    <value>Texts</value>
+  </data>
+  <data name="&gt;&gt;lblTexts.Name" xml:space="preserve">
+    <value>lblTexts</value>
+  </data>
+  <data name="&gt;&gt;lblTexts.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblTexts.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblTexts.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="lblSegments.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblSegments.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 10pt</value>
+  </data>
+  <data name="lblSegments.Location" type="System.Drawing.Point, System.Drawing">
+    <value>368, 345</value>
+  </data>
+  <data name="lblSegments.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 25</value>
+  </data>
+  <data name="lblSegments.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="lblSegments.Text" xml:space="preserve">
+    <value>Segments</value>
+  </data>
+  <data name="&gt;&gt;lblSegments.Name" xml:space="preserve">
+    <value>lblSegments</value>
+  </data>
+  <data name="&gt;&gt;lblSegments.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSegments.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblSegments.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="lblToneRuleFile.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblToneRuleFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 32</value>
+  </data>
+  <data name="lblToneRuleFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>139, 20</value>
+  </data>
+  <data name="lblToneRuleFile.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblToneRuleFile.Text" xml:space="preserve">
+    <value>TonePars rule file: </value>
+  </data>
+  <data name="&gt;&gt;lblToneRuleFile.Name" xml:space="preserve">
+    <value>lblToneRuleFile</value>
+  </data>
+  <data name="&gt;&gt;lblToneRuleFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblToneRuleFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblToneRuleFile.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="tbToneRuleFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="tbToneRuleFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 28</value>
+  </data>
+  <data name="tbToneRuleFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>884, 26</value>
+  </data>
+  <data name="tbToneRuleFile.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tbToneRuleFile.Name" xml:space="preserve">
+    <value>tbToneRuleFile</value>
+  </data>
+  <data name="&gt;&gt;tbToneRuleFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbToneRuleFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tbToneRuleFile.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="btnBrowseToneRule.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="btnBrowseToneRule.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1128, 28</value>
+  </data>
+  <data name="btnBrowseToneRule.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 38</value>
+  </data>
+  <data name="btnBrowseToneRule.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="btnBrowseToneRule.Text" xml:space="preserve">
+    <value>&amp;Browse</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseToneRule.Name" xml:space="preserve">
+    <value>btnBrowseToneRule</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseToneRule.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseToneRule.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseToneRule.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="btnParseText.Location" type="System.Drawing.Point, System.Drawing">
+    <value>76, 336</value>
+  </data>
+  <data name="btnParseText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>282, 38</value>
+  </data>
+  <data name="btnParseText.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="btnParseText.Text" xml:space="preserve">
+    <value>Parse this &amp;text</value>
+  </data>
+  <data name="&gt;&gt;btnParseText.Name" xml:space="preserve">
+    <value>btnParseText</value>
+  </data>
+  <data name="&gt;&gt;btnParseText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnParseText.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnParseText.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1146, 134</value>
+  </data>
+  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 40</value>
+  </data>
+  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="btnHelp.Text" xml:space="preserve">
+    <value>Help...</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
+    <value>btnHelp</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="btnBrowseIntxCtl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="btnBrowseIntxCtl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1128, 78</value>
+  </data>
+  <data name="btnBrowseIntxCtl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 38</value>
+  </data>
+  <data name="btnBrowseIntxCtl.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="btnBrowseIntxCtl.Text" xml:space="preserve">
+    <value>Br&amp;owse</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseIntxCtl.Name" xml:space="preserve">
+    <value>btnBrowseIntxCtl</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseIntxCtl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseIntxCtl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnBrowseIntxCtl.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="tbIntxCtlFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="tbIntxCtlFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>216, 78</value>
+  </data>
+  <data name="tbIntxCtlFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>884, 26</value>
+  </data>
+  <data name="tbIntxCtlFile.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;tbIntxCtlFile.Name" xml:space="preserve">
+    <value>tbIntxCtlFile</value>
+  </data>
+  <data name="&gt;&gt;tbIntxCtlFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbIntxCtlFile.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tbIntxCtlFile.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="lblAmpleIntxCtl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblAmpleIntxCtl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 83</value>
+  </data>
+  <data name="lblAmpleIntxCtl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 20</value>
+  </data>
+  <data name="lblAmpleIntxCtl.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="lblAmpleIntxCtl.Text" xml:space="preserve">
+    <value>AMPLE intx.ctl file: </value>
+  </data>
+  <data name="&gt;&gt;lblAmpleIntxCtl.Name" xml:space="preserve">
+    <value>lblAmpleIntxCtl</value>
+  </data>
+  <data name="&gt;&gt;lblAmpleIntxCtl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAmpleIntxCtl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblAmpleIntxCtl.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="cbTraceToneProcessing.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbTraceToneProcessing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 134</value>
+  </data>
+  <data name="cbTraceToneProcessing.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="cbTraceToneProcessing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>197, 24</value>
+  </data>
+  <data name="cbTraceToneProcessing.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="cbTraceToneProcessing.Text" xml:space="preserve">
+    <value>T&amp;race Tone Processing</value>
+  </data>
+  <data name="&gt;&gt;cbTraceToneProcessing.Name" xml:space="preserve">
+    <value>cbTraceToneProcessing</value>
+  </data>
+  <data name="&gt;&gt;cbTraceToneProcessing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbTraceToneProcessing.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbTraceToneProcessing.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="btnTracingOptions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>262, 134</value>
+  </data>
+  <data name="btnTracingOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="btnTracingOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 35</value>
+  </data>
+  <data name="btnTracingOptions.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="btnTracingOptions.Text" xml:space="preserve">
+    <value>Tracing &amp;Options</value>
+  </data>
+  <data name="&gt;&gt;btnTracingOptions.Name" xml:space="preserve">
+    <value>btnTracingOptions</value>
+  </data>
+  <data name="&gt;&gt;btnTracingOptions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnTracingOptions.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnTracingOptions.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="cbVerify.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbVerify.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 195</value>
+  </data>
+  <data name="cbVerify.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="cbVerify.Size" type="System.Drawing.Size, System.Drawing">
+    <value>244, 24</value>
+  </data>
+  <data name="cbVerify.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="cbVerify.Text" xml:space="preserve">
+    <value>&amp;Verify Control File Information</value>
+  </data>
+  <data name="&gt;&gt;cbVerify.Name" xml:space="preserve">
+    <value>cbVerify</value>
+  </data>
+  <data name="&gt;&gt;cbVerify.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbVerify.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbVerify.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="btnShowLog.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 134</value>
+  </data>
+  <data name="btnShowLog.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="btnShowLog.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 35</value>
+  </data>
+  <data name="btnShowLog.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="btnShowLog.Text" xml:space="preserve">
+    <value>Show &amp;Log</value>
+  </data>
+  <data name="&gt;&gt;btnShowLog.Name" xml:space="preserve">
+    <value>btnShowLog</value>
+  </data>
+  <data name="&gt;&gt;btnShowLog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnShowLog.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnShowLog.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="cbIgnoreContext.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbIgnoreContext.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 239</value>
+  </data>
+  <data name="cbIgnoreContext.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 24</value>
+  </data>
+  <data name="cbIgnoreContext.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="cbIgnoreContext.Text" xml:space="preserve">
+    <value>Ignore Context (only parse unique word forms)</value>
+  </data>
+  <data name="&gt;&gt;cbIgnoreContext.Name" xml:space="preserve">
+    <value>cbIgnoreContext</value>
+  </data>
+  <data name="&gt;&gt;cbIgnoreContext.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbIgnoreContext.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbIgnoreContext.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnRefresh.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 284</value>
+  </data>
+  <data name="btnRefresh.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 35</value>
+  </data>
+  <data name="btnRefresh.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="btnRefresh.Text" xml:space="preserve">
+    <value>Refresh Texts</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Name" xml:space="preserve">
+    <value>btnRefresh</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnRefresh.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>9, 20</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1228, 977</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAUAEBAAAAEAIABoBAAAVgAAABgYAAABACAAiAkAAL4EAAAgIAAAAQAgAKgQAABGDgAAMDAAAAEA
@@ -477,5 +1115,14 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAA
 </value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Use TonePars with FLEx</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ToneParsFLExForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

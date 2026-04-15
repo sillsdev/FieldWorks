@@ -84,8 +84,7 @@ namespace SIL.PcPatrBrowser
 		private string m_sLogOrAnaFileName;
 		private string m_sGrammarFileName;
 		private string m_sLanguageFileName;
-		private const string m_strLanguageFileFilter =
-			"PC-PATR Browser Language Info (*.pbl)|*.pbl|" + "All Files (*.*)|*.*";
+		private string m_strLanguageFileFilter = string.Format(PcPatrBrowserDll_Strings.ksFileFilterPrompt, "pbl");
 		string m_sFSFile;
 		string m_sInterFile;
 		string m_sTransformsDir = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Transforms", "PcPatrBrowser");
