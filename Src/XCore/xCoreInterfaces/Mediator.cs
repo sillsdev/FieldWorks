@@ -1108,25 +1108,6 @@ namespace XCore
 				true);		//we are just checking, don't invoke anything
 		}
 
-		/// <returns>true if the message was canceled, otherwise false.</returns>
-		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
-		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-		public bool SendCancellableMessage(string messageName, object parameter)
-		{
-			CheckDisposed();
-#if DEBUG
-			if(messageName.Substring(0,2) == "On")
-				Debug.Fail("The convention is to send messages without the 'On' prefix.  That is added by the message sending code.");
-#endif
-
-			System.ComponentModel.CancelEventArgs cancelArguments = new  System.ComponentModel.CancelEventArgs(false);
-			InvokeOnColleagues("On"+messageName,
-				null, // types see note above
-				new Object[] { parameter, cancelArguments },
-				true, false);
-			return cancelArguments.Cancel;
-		}
-
 		private bool InvokeOnColleagues(string methodName, Type[] parameterTypes,
 			object[] parameterList, bool stopWhenHandled, bool justCheckingForReceivers)
 		{
