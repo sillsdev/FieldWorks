@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					HomographConfiguration.HomographWritingSystem = string.Empty;
-					HomographConfiguration.CustomHomographNumbers = string.Empty;
+					//HomographConfiguration.CustomHomographNumbers = string.Empty;
 				}
 			}
 
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowSenseNumberReversal = other.ShowSenseNumberReversal;
 			HomographNumberBefore = other.HomographNumberBefore;
 			HomographWritingSystem = other.HomographWritingSystem;
-			CustomHomographNumberList = other.CustomHomographNumberList != null ? new List<string>(other.CustomHomographNumberList) : null;
+			//CustomHomographNumberList = other.CustomHomographNumberList != null ? new List<string>(other.CustomHomographNumberList) : null;
 		}
 
 		public DictionaryHomographConfiguration(HomographConfiguration config)
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowHwNumInCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 			ShowHwNumInReversalCrossRef = config.ShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 			HomographWritingSystem = config.WritingSystem;
-			CustomHomographNumberList = config.CustomHomographNumbers;
+			//CustomHomographNumberList = config.CustomHomographNumbers;
 		}
 
 		/// <summary>
@@ -397,11 +397,11 @@ namespace SIL.FieldWorks.XWorks
 			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef, ShowHwNumInCrossRef);
 			config.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, ShowHwNumInReversalCrossRef);
 			config.WritingSystem = HomographWritingSystem;
-			config.CustomHomographNumbers = CustomHomographNumberList;
+			//config.CustomHomographNumbers = CustomHomographNumberList;
 		}
 
-		[XmlIgnore]
-		public List<string> CustomHomographNumberList { get; internal set; }
+		//[XmlIgnore]
+		//public List<string> CustomHomographNumberList { get; internal set; }
 
 		[XmlAttribute("showHwNumInReversalCrossRef")]
 		public bool ShowHwNumInReversalCrossRef { get; set; }
@@ -421,8 +421,8 @@ namespace SIL.FieldWorks.XWorks
 		[XmlAttribute("homographNumberBefore")]
 		public bool HomographNumberBefore { get; set; }
 
-		[XmlAttribute("customHomographNumbers")]
-		public string CustomHomographNumbers
+		//[XmlAttribute("customHomographNumbers")]
+		/*public string CustomHomographNumbers
 		{
 			get
 			{
@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new []{','}, StringSplitOptions.RemoveEmptyEntries));
 			}
-		}
+		}*/
 
 		[XmlAttribute("homographWritingSystem")]
 		public string HomographWritingSystem { get; set; }
