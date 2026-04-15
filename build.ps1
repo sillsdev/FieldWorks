@@ -63,6 +63,9 @@
 .PARAMETER SkipNative
 	Skips building native C++ components. Use this for faster iterations when making purely managed code changes.
 
+.PARAMETER SkipNativeTests
+	Skips running tests for native C++ components. Does not skip building these tests. Implied by SkipNative.
+
 .PARAMETER ForceBuildBuildTasks
 	Buld FwBuildTasks even if FwBuildTasks.dll already exists. BuildTasks are rarely updated, so the default is not to build them.
 
@@ -161,6 +164,7 @@ param(
 	[int]$TailLines,
 	[switch]$SkipRestore,
 	[switch]$SkipNative,
+	[switch]$SkipNativeTests,
 	[switch]$ForceBuildBuildTasks,
 	[switch]$BuildInstaller,
 	[switch]$BuildPatch,
@@ -710,6 +714,9 @@ try {
 		}
 		if ($TestFilter) {
 			$testArgs["TestFilter"] = $TestFilter
+		}
+		if ($SkipNative -or $SkipNativeTests) {
+			$testArgs["SkipNative"] = $true
 		}
 
 		Stop-ConflictingProcesses @cleanupArgs
