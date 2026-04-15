@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			// Only handle "PartOfSpeech" class.
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
-			if (className == null || className != "PartOfSpeech")
+			if (className != "PartOfSpeech")
 			{
 				return;
 			}

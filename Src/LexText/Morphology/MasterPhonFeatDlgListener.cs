@@ -94,14 +94,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				return;
 			}
-			// Only handle "FsClosedFeature" class.
-			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
-			if ((className == null) || (className != "FsClosedFeature"))
-			{
-				return;
-			}
 			// Only handle "FsClosedFeature" for "CmdInsertPhonologicalClosedFeature".
-			if (className == "FsClosedFeature" && command.Id != "CmdInsertPhonologicalClosedFeature")
+			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
+			if (className != "FsClosedFeature" || command.Id != "CmdInsertPhonologicalClosedFeature")
 			{
 				return;
 			}

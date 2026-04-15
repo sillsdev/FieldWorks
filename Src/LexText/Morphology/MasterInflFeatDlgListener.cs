@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			// Only handle "FsClosedFeature" and "FsComplexFeature" classes.
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
-			if (className == null || ((className != "FsClosedFeature") && (className != "FsComplexFeature")))
+			if ((className != "FsClosedFeature") && (className != "FsComplexFeature"))
 			{
 				return;
 			}

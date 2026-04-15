@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			// Only handle "RnGenericRec" class.
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
-			if (className == null || className != "RnGenericRec")
+			if (className != "RnGenericRec")
 			{
 				return;
 			}

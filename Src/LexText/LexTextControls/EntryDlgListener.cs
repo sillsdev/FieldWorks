@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			// Only handle "LexEntry" class.
 			string className = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "className");
-			if (className == null || className != "LexEntry")
+			if (className != "LexEntry")
 			{
 				return;
 			}
