@@ -21,6 +21,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -97,6 +98,8 @@ namespace SIL.FieldWorks.IText
 			}
 			// Load any saved settings.
 			LoadSettings();
+
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
 		/// <summary>
@@ -108,6 +111,8 @@ namespace SIL.FieldWorks.IText
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+
 				if (components != null)
 					components.Dispose();
 				if (m_clerk != null)
@@ -264,13 +269,19 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This is called when the main window is closing.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="arg"></param>
-		/// <returns></returns>
-		public bool OnConsideringClosing(object sender, CancelEventArgs arg)
+		private void ConsideringClosing(object obj)
 		{
+			if (!(obj is CancelEventArgs arg))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if the close has already been canceled by another Subscriber.
+			if (arg.Cancel)
+			{
+				return;
+			}
 			arg.Cancel = !PrepareToGoAway();
-			return arg.Cancel;
 		}
 
 		#endregion

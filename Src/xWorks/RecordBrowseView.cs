@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
@@ -67,6 +68,7 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
+				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
@@ -677,6 +679,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowRecord();
 
 			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
 		private void CheckExpectedListItemsClassInSync()
@@ -699,12 +702,21 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion // IxCoreColleague implementation
 
-		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
+		private void ConsideringClosing(object obj)
 		{
 			CheckDisposed();
 
+			if (!(obj is CancelEventArgs args))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if the close has already been canceled by another Subscriber.
+			if (args.Cancel)
+			{
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		#region IxCoreContentControl implementation

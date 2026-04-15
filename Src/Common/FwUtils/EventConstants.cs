@@ -11,6 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ClerkOwningObjChanged = "ClerkOwningObjChanged";
 		public const string ConfigureCustomFields = "ConfigureCustomFields";
 		public const string ConfigureHeadwordNumbers = "ConfigureHeadwordNumbers";
+		public const string ConsideringClosing = "ConsideringClosing";
 		public const string CreateFirstRecord = "CreateFirstRecord";
 		public const string DataTreeDelete = "DataTreeDelete";
 		public const string DeleteRecord = "DeleteRecord";

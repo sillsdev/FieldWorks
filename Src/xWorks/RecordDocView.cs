@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
@@ -18,6 +19,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -65,6 +67,8 @@ namespace SIL.FieldWorks.XWorks
 
 			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
+
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
 		protected override void GetMessageAdditionalTargets(System.Collections.Generic.List<IxCoreColleague> collector)
@@ -89,6 +93,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+
 				if (m_rootSite != null)
 					m_rootSite.Dispose();
 			}
@@ -102,12 +108,21 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Message Handlers
 
-		public bool OnConsideringClosing(object argument, System.ComponentModel.CancelEventArgs args)
+		private void ConsideringClosing(object obj)
 		{
 			CheckDisposed();
 
+			if (!(obj is CancelEventArgs args))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if the close has already been canceled by another Subscriber.
+			if (args.Cancel)
+			{
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		#endregion // Message Handlers

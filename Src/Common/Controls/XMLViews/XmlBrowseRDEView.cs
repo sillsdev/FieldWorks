@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if( disposing )
 			{
 				Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
+				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 
 				if (components != null)
 				{
@@ -104,6 +105,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
 
 			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
 		#endregion Construction, initialization, and disposal.
@@ -167,17 +169,22 @@ namespace SIL.FieldWorks.Common.Controls
 		#region XCore message handlers
 
 		/// <summary>
-		/// This name is magic for an xCoreColleague that is active at the time when an xWindow is being closed.
-		/// If some active colleague implements this method, it gets a chance to do something special as the
-		/// xWindow closes (and can veto the close, though we aren't really using that here).
+		/// Cleanup any pending edits before a potential xWindow close.
 		/// </summary>
-		/// <returns></returns>
-		public bool OnConsideringClosing(object sender, CancelEventArgs arg)
+		private void ConsideringClosing(object obj)
 		{
 			CheckDisposed();
-
-			arg.Cancel = CleanupPendingEdits();
-			return arg.Cancel; // if we want to cancel, others don't need to be asked.
+			if (!(obj is CancelEventArgs arg))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if the close has already been canceled by another Subscriber.
+			if (arg.Cancel)
+			{
+				return;
+			}
+			CleanupPendingEdits();
 		}
 
 		/// <summary>
@@ -288,10 +295,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Cleanup any pending edits.
 		/// </summary>
-		/// <returns>True to cancel the window closing, otherwise false.</returns>
-		private bool CleanupPendingEdits()
+		private void CleanupPendingEdits()
 		{
-			bool cancelClose = false;
 			ITsString[] rgtss;
 			if (CanGotoNextRow(out rgtss))
 			{
@@ -308,8 +313,6 @@ namespace SIL.FieldWorks.Common.Controls
 				CreateObjectFromEntryRow(rgtss, false);
 			}
 			DoMerges();
-
-			return cancelClose;
 		}
 		/// <summary>
 		/// Check whether we have enough data entered in this row to go on to create another row.

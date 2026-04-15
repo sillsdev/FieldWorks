@@ -14,6 +14,7 @@ using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.PlatformUtilities;
@@ -124,6 +125,8 @@ namespace SIL.FieldWorks.XWorks
 			// If possible make it use the style sheet appropriate for its main window.
 			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
+
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -143,6 +146,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+
 				if (components != null)
 					components.Dispose();
 				if (m_dataEntryForm != null)
@@ -190,12 +195,21 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		public bool OnConsideringClosing(object argument, CancelEventArgs args)
+		private void ConsideringClosing(object obj)
 		{
 			CheckDisposed();
 
+			if (!(obj is CancelEventArgs args))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			// Return if the close has already been canceled by another Subscriber.
+			if (args.Cancel)
+			{
+				return;
+			}
 			args.Cancel = !PrepareToGoAway();
-			return args.Cancel; // if we want to cancel, others don't need to be asked.
 		}
 
 		/// <summary>
