@@ -1548,6 +1548,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jump to field.
+        /// </summary>
+        internal static string ksJumpToField {
+            get {
+                return ResourceManager.GetString("ksJumpToField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lexical Relation Types:.
         /// </summary>
         internal static string ksLexicalRelationTypes {

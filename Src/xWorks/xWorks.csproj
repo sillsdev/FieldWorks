@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xWorks</AssemblyName>
@@ -95,5 +95,18 @@
     <EmbeddedResource Include="Resources\Lists 32.ico" />
     <EmbeddedResource Include="Resources\Texts 32.ico" />
     <EmbeddedResource Include="Resources\Words 32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="xWorksStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>xWorksStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="xWorksStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>xWorksStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
