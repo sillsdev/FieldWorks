@@ -16,7 +16,7 @@
 		<SilLibPalasoVersion>17.0.0</SilLibPalasoVersion>
 		<SilChorusVersion>6.0.0-beta0063</SilChorusVersion>
 		<SilChorusL10nsVersion>3.0.1</SilChorusL10nsVersion>
-		<SilMachineVersion>3.7.13</SilMachineVersion>
+		<SilMachineVersion>3.8.2</SilMachineVersion>
 		<SilIPCFrameworkVersion>1.1.1-beta0001</SilIPCFrameworkVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<GeckoNugetVersion>60.0.56</GeckoNugetVersion>
