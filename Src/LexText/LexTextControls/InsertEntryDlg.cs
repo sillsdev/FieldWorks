@@ -835,7 +835,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
 			Mediator = mediator;
-			if (m_propertyTable.GetStringProperty("currentContentControl", null) != "lexiconEdit")
+			string currentContentControl = m_propertyTable.GetStringProperty("currentContentControl", null);
+			if (currentContentControl != "lexiconEdit" && currentContentControl != "lexiconDictionary")
 			{
 				// Insert between Create (index 2) and Cancel (index 1) in the RightToLeft flow.
 				// RightToLeft order: Help(0), Cancel(1), Create(2)
