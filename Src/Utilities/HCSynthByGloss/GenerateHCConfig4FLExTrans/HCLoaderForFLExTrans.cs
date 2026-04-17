@@ -23,11 +23,13 @@ namespace SIL.GenerateHCConfigForFLExTrans
 		{
 			var loader = new HCLoaderForFLExTrans(cache, logger);
 			loader.LoadLanguage();
+			m_ReplaceSpaceChar = '#';
 			return loader.m_language;
 		}
 
 		protected HCLoaderForFLExTrans(LcmCache cache, IHCLoadErrorLogger logger) : base(cache, logger)
 		{
+			m_ReplaceSpaceChar = '#';
 		}
 
 		protected override void LoadMorphologicalRules(Stratum stratum, ILexEntry entry, IList<IMoForm> allos)
