@@ -70,6 +70,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private SimpleContext m_any;
 		private CharacterDefinition m_null;
 		private CharacterDefinition m_morphBdry;
+		protected static char m_ReplaceSpaceChar = '.';
 
 		protected HCLoader(LcmCache cache, IHCLoadErrorLogger logger)
 		{
@@ -2571,7 +2572,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static string FormatForm(string formStr)
 		{
-			return formStr.Trim().Replace(' ', '.');
+			return formStr.Trim().Replace(' ', m_ReplaceSpaceChar);
 		}
 
 		private IEnumerable<FeatureSymbol> LoadAllPartsOfSpeech(IPartOfSpeech pos)
