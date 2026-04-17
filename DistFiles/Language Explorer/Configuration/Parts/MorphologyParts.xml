@@ -1977,6 +1977,9 @@
 		<part id="FsFeatDefn-Jt-TypeOrValues" type="jtview">
 			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
 		</part>
+		<part id="FsFeatDefn-Detail-ShowInGloss" type="Detail">
+			<slice field="ShowInGloss" label="ShowInGloss" editor="Checkbox" tooltip="When displaying the values for this feature, include a label (the Feature Abbreviation) as well"/>
+		</part>
 	</bin>
 	<bin class="FsComplexFeature">
 		<part id="FsComplexFeature-Jt-SpecialNote" type="jtview">
