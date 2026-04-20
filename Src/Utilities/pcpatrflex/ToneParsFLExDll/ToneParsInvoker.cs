@@ -178,7 +178,7 @@ namespace SIL.ToneParsFLEx
 		{
 			try
 			{
-				UpdateParsingStatus("Preparing for parsing");
+				UpdateParsingStatus(ToneParsFLExDll_Strings.ksPreparingForParsing);
 				AppendToneParsPropertiesToAdCtlFile();
 				AddToneParsPropertiesToLexiconFile();
 				ConvertMorphnameIsToUseHvosInToneRuleFile();
@@ -194,18 +194,16 @@ namespace SIL.ToneParsFLEx
 					"cmd.exe",
 					"/c\"" + ToneParsBatchFile + "\""
 				);
-				UpdateParsingStatus("Parsing via TonePars");
+				UpdateParsingStatus(ToneParsFLExDll_Strings.ksParsingViaTonePars);
 				InvokeBatchFile(processInfo);
 				WaitForFileCompletion(AntFile);
 				if (!File.Exists(AntFile))
 				{
-					MessageBox.Show(
-						"There was a timing problem.\nCheck if the \\segments path to xxxTP.seg in xxxTP.ctl is correct.  See the Log file."
-					);
+					MessageBox.Show(ToneParsFLExDll_Strings.ksTimingProblem);
 					InvocationSucceeded = false;
 					return;
 				}
-				UpdateParsingStatus("Preparing results");
+				UpdateParsingStatus(ToneParsFLExDll_Strings.ksPreparingResults);
 				CreateAntRecords();
 			}
 			catch (IOException e)
@@ -217,11 +215,11 @@ namespace SIL.ToneParsFLEx
 				{
 					if (e.Message.Contains("ToneParsInvoker.ana'"))
 					{
-						UpdateParsingStatus("XAmple result file had a problem.");
+						UpdateParsingStatus(ToneParsFLExDll_Strings.ksXAmpleProblem);
 					}
 					else
 					{
-						UpdateParsingStatus("TonePars result file had a problem.");
+						UpdateParsingStatus(ToneParsFLExDll_Strings.ksToneParsProblem);
 					}
 					InvocationSucceeded = false;
 				}
@@ -236,7 +234,7 @@ namespace SIL.ToneParsFLEx
 				"Configuration",
 				"Grammar"
 			);
-			UpdateParsingStatus("Parsing via XAmple");
+			UpdateParsingStatus(ToneParsFLExDll_Strings.ksParsingViaXAmple);
 			XAmpleWrapperForTonePars m_xampleTP = new XAmpleWrapperForTonePars();
 			m_xampleTP.InitForTonePars();
 			int maxToReturn = GetMaxAnalysesToReturn();
@@ -297,7 +295,7 @@ namespace SIL.ToneParsFLEx
 			}
 			if (!File.Exists(filePath))
 			{
-				UpdateParsingStatus("Parsing failed to produce a file (" + programName + ").");
+				UpdateParsingStatus(string.Format(ToneParsFLExDll_Strings.ksParsingFailedToProduceFile, programName));
 				InvocationSucceeded = false;
 				return;
 			}
@@ -319,9 +317,7 @@ namespace SIL.ToneParsFLEx
 			fileSize = new System.IO.FileInfo(filePath).Length;
 			if (fileSize == 0)
 			{
-				UpdateParsingStatus(
-					"Parsing failed to finish writing to a file (" + programName + ")."
-				);
+				UpdateParsingStatus(string.Format(ToneParsFLExDll_Strings.ksParsingFailedWritingToFile, programName));
 				InvocationSucceeded = false;
 			}
 		}
@@ -352,7 +348,7 @@ namespace SIL.ToneParsFLEx
 			if (String.IsNullOrEmpty(antFileContents))
 			{
 				Console.Beep();
-				MessageBox.Show("Somehow the result file was empty.  Please try again.");
+				MessageBox.Show(ToneParsFLExDll_Strings.ksResultEmpty);
 				InvocationSucceeded = false;
 				return;
 			}

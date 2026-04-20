@@ -46,4 +46,17 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ExtractAnaFilesFromTexts.Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExtractAnaFilesFromTexts.Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="ExtractAnaFilesFromTexts.Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExtractAnaFilesFromTexts.Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

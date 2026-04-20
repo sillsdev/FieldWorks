@@ -73,8 +73,8 @@ namespace SIL.PcPatrFLEx
 		private RegistryKey regkey;
 
 		private ContextMenuStrip helpContextMenu;
-		const string UserDocumentation = "User Documentation";
-		const string PCPATRReferenceManual = "PC-PATR Reference Manual";
+		string UserDocumentation = PcPatrFLExDll_Strings.ksUserDocumentation;
+		string PCPATRReferenceManual = PcPatrFLExDll_Strings.ksPcPatrReference;
 		string helpsPath = "";
 
 		public PcPatrFLExForm()
@@ -421,7 +421,7 @@ namespace SIL.PcPatrFLEx
 			if (Extractor.BadGlosses.Count > 0)
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.Append("The following glosses contain a space.\nPlease fix them and try again.\n");
+				sb.Append(PcPatrFLExDll_Strings.ksGlossesWithSpace);
 				foreach (var gloss in Extractor.BadGlosses)
 				{
 					sb.Append("\t");
@@ -438,7 +438,7 @@ namespace SIL.PcPatrFLEx
 			if (!ana.Contains("\\a"))
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.Append("Segment number ");
+				sb.Append(PcPatrFLExDll_Strings.ksSegmentNumber);
 				int segmentNumber = 0;
 				foreach (var seg in lbSegments.Items)
 				{
@@ -449,8 +449,7 @@ namespace SIL.PcPatrFLEx
 						break;
 					}
 				}
-				sb.Append(segmentNumber);
-				sb.Append(" does not have any words in it.\nPlease remove it or add words and try again.\n");
+				sb.Append(string.Format(PcPatrFLExDll_Strings.ksEmptySegment, segmentNumber));
 				MessageBox.Show(sb.ToString());
 				BadGlossesFound = true;
 			}
@@ -507,8 +506,7 @@ namespace SIL.PcPatrFLEx
 		{
 			using (OpenFileDialog dlg = new OpenFileDialog())
 			{
-				dlg.Filter = "PC-PATR Grammar File (*.grm)|*.grm|" +
-				"All Files (*.*)|*.*";
+				dlg.Filter = string.Format(PcPatrFLExDll_Strings.ksFileFilterPrompt, "grm");
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					GrammarFile = dlg.FileName;
@@ -577,7 +575,7 @@ namespace SIL.PcPatrFLEx
 				string sW = sA.Substring(iW);
 				int iWEnd = sW.IndexOf("\n");
 				string word = sW.Substring(3, iWEnd - 3);
-				MessageBox.Show("Sorry, but not every sentence has every word parsed. At least the word '" + word + "' did not parse.  Please make sure every word is parsed and try again.");
+				MessageBox.Show(string.Format(PcPatrFLExDll_Strings.ksSomeWordsNotParsed, word));
 				return false;
 			}
 			if (ana.Contains(Extractor.MissingItemMessage))
@@ -588,7 +586,7 @@ namespace SIL.PcPatrFLEx
 				string sW = sA.Substring(iW);
 				int iWEnd = sW.IndexOf("\n");
 				string word = sW.Substring(3, iWEnd - 3);
-				MessageBox.Show("Sorry, but at least the word '" + word + "' has an analysis with an invalid parse.  Please make sure every word has valid parses and try again.");
+				MessageBox.Show(string.Format(PcPatrFLExDll_Strings.ksInvalidParse, word));
 				return false;
 			}
 			return true;
@@ -621,14 +619,14 @@ namespace SIL.PcPatrFLEx
 			string message;
 			if (File.Exists(andResult))
 			{
-				message = "The PC-PATR processing failed!\nPerhaps there are incompatible feature values in one of the forms.\nWe will show the error log after you click on OK.\nYou may also want to try and run the PcPatrFLEx.bat file in the %TEMP% directory.\nThis may or may not show which features are incompatible or some other PC-PATR error or warning message.";
+				message = PcPatrFLExDll_Strings.ksPcPatrProcessingFailed;
 			}
 			else
 			{
-				message = "The PC-PATR grammar file had an error in it and failed to load.\nWe will show the error log after you click on OK.\nPlease fix all errors in the grammar file and then try again.";
+				message = PcPatrFLExDll_Strings.ksPcPatrGrammarError;
 			}
 			MessageBox.Show(message + "",
-			"Grammar Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			PcPatrFLExDll_Strings.ksGrammarError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			Process.Start(andResult.Replace(".and", ".log"));
 			return;
 		}
@@ -650,7 +648,7 @@ namespace SIL.PcPatrFLEx
 					foreach (var segment in paraUse.SegmentsOS)
 					{
 						// update status bar
-						lbStatusSegments.Text = "Processing segment " + i++ + "/" + lbSegments.Items.Count;
+						lbStatusSegments.Text = string.Format(PcPatrFLExDll_Strings.ksProcessingSegment, i++, lbSegments.Items.Count);
 						sb.Clear();
 						ProcessSegmentToAnaForm(sb, segment);
 						if (BadGlossesFound)
@@ -681,7 +679,7 @@ namespace SIL.PcPatrFLEx
 							}
 							catch (IOException e)
 							{
-								MessageBox.Show("The read failed for segment number " + (i - 1) + "; " + e.Message);
+								MessageBox.Show(string.Format(PcPatrFLExDll_Strings.ksReadFailed, (i - 1), e.Message));
 							}
 						}
 						else

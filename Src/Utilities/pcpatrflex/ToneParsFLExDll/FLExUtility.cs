@@ -30,7 +30,7 @@ namespace SIL.ToneParsFLEx
 		/// <summary>
 		/// Get the main label describing the utility.
 		/// </summary>
-		public string Label => "Use TonePars with FLEx";
+		public string Label => ToneParsFLExDll_Strings.ksTitle;
 
 		UtilityDlg IUtility.Dialog
 		{
@@ -44,11 +44,9 @@ namespace SIL.ToneParsFLEx
 
 		void IUtility.OnSelection()
 		{
-			m_dlg.WhenDescription = "Run this when you have a TonePars implementation.";
-			m_dlg.WhatDescription =
-				"Run this to use a TonePars rule file to try and use autosegmental tone to disambiguate interlinear texts.";
-			m_dlg.RedoDescription =
-				"You cannot use 'Undo' to cancel the effect of this utility.You would need to go back to a previously saved version of the database(i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want).";
+			m_dlg.WhenDescription = ToneParsFLExDll_Strings.ksWhenDescription;
+			m_dlg.WhatDescription = ToneParsFLExDll_Strings.ksWhatDescription;
+			m_dlg.RedoDescription = ToneParsFLExDll_Strings.ksRedoDescription;
 		}
 
 		void IUtility.Process()

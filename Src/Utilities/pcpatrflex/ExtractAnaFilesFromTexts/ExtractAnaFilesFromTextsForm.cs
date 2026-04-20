@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using ExtractAnaFilesFromTexts;
 using Microsoft.Win32;
 using SIL.DisambiguateInFLExDB;
 using SIL.LCModel;
@@ -209,11 +210,8 @@ namespace SIL.PcPatrFLEx
 						var ana = Extractor.ExtractTextSegmentAsANA(segment);
 						if (ana.Length == 0)
 						{
-							MessageBox.Show(
-								"Warning! No ANA value was found for segment='"
-									+ segment.GetBaselineText(0).Text
-									+ "'.  Will skip it."
-							);
+							MessageBox.Show(string.Format(ExtractAnaFilesFromTexts_Strings.ksNoANAValue,
+								segment.GetBaselineText(0).Text));
 							continue;
 						}
 						sb.Append(ana.Substring(0, ana.Length - 1)); // skip final extra nl
