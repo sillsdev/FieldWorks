@@ -285,7 +285,7 @@
 		</part>
 		<part ref="DescriptionAllA">
 		</part>
-		<part ref="ShowInGloss" label="Use Abbreviation as label"  abbr="sig"/>
+		<part ref="ShowInGloss" label="Use Abbreviation for value"  abbr="sig"/>
 	</layout>
 
 	<layout class="FsClosedFeature" type="detail" name="Edit">
@@ -311,7 +311,7 @@
 		</part>
 		<part ref="DescriptionAllA">
 		</part>
-		<part ref="ShowInGloss" label="Use Abbreviation as label" abbr="sig"/>
+		<part ref="ShowInGloss" label="Use Abbreviation for value" abbr="sig"/>
 	</layout>
 
   <layout class="FsClosedFeature" type="detail" name="PhonEdit">
