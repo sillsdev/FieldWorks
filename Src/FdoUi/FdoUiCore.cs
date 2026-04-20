@@ -431,6 +431,11 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				newUiObj = MakeUi(cache, newHvo, classId);
+				if (newUiObj?.Object is IFsSymFeatVal featVal)
+				{
+					// Default to Use Abbreviation for value.
+					featVal.ShowInGloss = true;
+				}
 			});
 			return newUiObj;
 		}
