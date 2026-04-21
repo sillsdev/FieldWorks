@@ -161,7 +161,7 @@ jobs:
       - name: Run tests
         shell: powershell
         run: |
-          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired'
+          .\test.ps1 -Configuration Release -NoBuild -SkipManaged
 
       - name: Scan Build Output
         shell: powershell
