@@ -11,7 +11,7 @@
 
 @property-group itemBefore( mybackground-color )
 {
-	content:collapser(collapsed-icon, icon(plus-box), expanded-icon, icon(minus-box))
+	content:collapser(collapsed-icon, icon(url(resources/plus-box.png)), expanded-icon, icon(url(resources/minus-box.png)))
 	"  "
 	text-field(attribute, id, background-color, mybackground-color)
 /*

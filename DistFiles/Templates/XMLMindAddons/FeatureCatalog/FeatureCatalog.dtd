@@ -4,7 +4,7 @@
 	 Modifed by A. Black 08 Nov 2002
 	 Revised 12 Sep 2005
 	 Revised for XMLmind 17 Apr 2006 -->
-<!ELEMENT FeatureCatalog (item+)>
+<!ELEMENT FeatureCatalog (item+, Unknowns)>
 <!ATTLIST FeatureCatalog
 	afterSeparator CDATA #IMPLIED
 	complexNameSeparator CDATA #IMPLIED
@@ -13,6 +13,7 @@
 <!ELEMENT item (Languages, item*)>
 <!ATTLIST item
 	id ID #IMPLIED
+	guid CDATA #IMPLIED
 	status (visible | hidden) #IMPLIED
 	type (fsType | complex | feature | value | group | deriv | xref) #REQUIRED
 	target IDREF #IMPLIED
@@ -32,3 +33,11 @@
 <!ELEMENT Language (LangCode, Name, Abbreviation, Description, Citations)>
 <!ELEMENT Languages (Language+)>
 <!ELEMENT Name (#PCDATA)>
+<!-- The word(s) to use for the unknown item, one per language -->
+<!ELEMENT Unknowns (Unknown+) >
+<!-- appearance is for whether the word (Name) occurs before or after the content of the (unknown) item -->
+  <!ELEMENT Unknown (LangCode, Name, Position)>
+<!ELEMENT Position EMPTY >
+<!ATTLIST Position
+  appearance (before | after) "before"
+  >
