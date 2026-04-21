@@ -56,7 +56,7 @@ namespace SIL.AllomorphGenerator
 				{
 					MorphType morphType = new MorphType();
 					morphType.Guid = mt.Guid.ToString();
-					morphType.Name = mt.Name.AnalysisDefaultWritingSystem.Text;
+					morphType.Name = mt.Name.BestAnalysisAlternative.Text;
 					MorphTypes.Add(morphType);
 				}
 			}
