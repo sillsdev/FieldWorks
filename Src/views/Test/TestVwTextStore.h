@@ -23,6 +23,9 @@ Last reviewed:
 
 #pragma once
 
+#include <chrono>
+#include <thread>
+
 #include "testViews.h"
 
 #if defined(_WIN32) || defined(_M_X64)
@@ -123,12 +126,11 @@ namespace TestViews
 	public:
 		MockTextStoreACPSink(ITextStoreACP * ptsa, IUnknown * punkOldSink)
 		{
-			//cout << "MockTextStoreACPSink constructor; ";
+			this_thread::sleep_for(1ms); // testSetTextEmpty fails without this on Release builds but not Debug builds (discovered by LT-22425)
 			m_qtsa = ptsa;
 			if (punkOldSink)
 				CheckHr(ptsa->UnadviseSink(punkOldSink));
 			CheckHr(ptsa->AdviseSink(IID_ITextStoreACPSink, this, TS_AS_ALL_SINKS));
-			//cout << "MockTextStoreACPSink constructor mostly done: " << (void*)this << endl;
 			m_fLockGranted = false;
 			m_dwLockFlags = 0;
 		}
@@ -395,14 +397,13 @@ namespace TestViews
 			TS_TEXTCHANGE * pttc)
 			: MockTextStoreACPSink(ptsa, NULL)
 		{
-			cout << "LockSetText constructor; ";
 			m_ichStart = ichStart;
 			m_ichEnd = ichEnd;
 			m_pszText = pszText;
 			m_pttc = pttc;
+
 			CheckHr(ptsa->RequestLock(TS_LF_READWRITE | TS_LF_SYNC, &m_hrLock));
 			CheckHr(ptsa->UnadviseSink(this));
-			//cout << "LockSetText constructor done: " <</* (void*)this << */endl;
 		}
 
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
@@ -1838,23 +1839,18 @@ namespace TestViews
 			//_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_DELAY_FREE_MEM_DF );
 			if (!m_fTestable)
 			{
-				cout << "Not testable, skipping testSetTextEmpty.\n";
 				return;
 			}
-			//cout << "Testing SetText empty string to join paragraphs.\n";
 			MakeStringList2();
 			Make2ParaSel(1, s_cchPara2, 2, 0);
 			TS_TEXTCHANGE ttc1 = { 0 };
-			cout << "Fixing to construct a LockSetText...\n";
 			LockSetText xlst1(m_qtxs, s_cchPara2, s_cchPara2 + s_cchParaBreak, L"", &ttc1);
-			cout << "Constructed a LockSetText.\n";
 			_CrtCheckMemory();
 			StrUni stuNew(s_rgpsz2[1]);
 			stuNew.Append(s_rgpsz2[2]);	// no newline between them!
 			VerifyParaContents(1, stuNew.Chars(), "SetText(join paras)");
 			VerifyParaContents(0, s_rgpsz2[0], "SetText(join paras) prev para");
 			VerifyParaContents(2, s_rgpsz2[3], "SetText(join paras) next para");
-			cout << "Done testing SetText Empty\n";
 		}
 
 		// We no longer implement this method in C++
@@ -2022,8 +2018,7 @@ namespace TestViews
 			PropTag tag = 2;
 			if (m_qrootb.Ptr() == NULL)
 			{
-				cerr << "VwRootBox_PropChanged was skipped because the m_qrootb was null." <<
-					'\n';
+				cerr << "VwRootBox_PropChanged was skipped because the m_qrootb was null." << endl;
 				return;
 			}
 			VwRootBox* prootb = dynamic_cast<VwRootBox*>(m_qrootb.Ptr());
