@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -459,10 +459,10 @@
     <value>Undo Add Complex Form</value>
   </data>
   <data name="ksChooseSubentries" xml:space="preserve">
-    <value>Choose Subentries to display in Root-based views</value>
+    <value>Choose Subentries to display in Root-based layouts</value>
   </data>
   <data name="ksChooseVisibleComplexForms" xml:space="preserve">
-    <value>Choose Complex Forms to display in Lexeme-based views</value>
+    <value>Choose Complex Forms to display in Lexeme-based layouts</value>
   </data>
   <data name="ksAddAComplexForm" xml:space="preserve">
     <value>Add a Complex Form...</value>

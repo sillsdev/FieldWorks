@@ -841,7 +841,7 @@
 			</slice>
 		</part>
 		<part id="LexEntry-Detail-Subentries" type="Detail">
-			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary views." menu="mnuReorderVector" reorder="true"
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary layouts." menu="mnuReorderVector" reorder="true"
 				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
