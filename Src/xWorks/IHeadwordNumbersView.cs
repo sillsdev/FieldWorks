@@ -25,6 +25,5 @@ namespace SIL.FieldWorks.XWorks
 		string HomographWritingSystem { get; set; }
 		IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { set; }
 		IEnumerable<string> CustomDigits { get; set; }
-		void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory);
 	}
 }
