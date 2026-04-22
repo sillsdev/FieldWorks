@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 				model.IsReversal ? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary,
 				Environment.NewLine,
 				model.Label);
-			_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
+			//_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
 			_view.AvailableWritingSystems = cache.LangProject.CurrentAnalysisWritingSystems.Union(cache.LangProject.CurrentVernacularWritingSystems);
 			if (_cache.LangProject.AllWritingSystems.Any(ws => ws.Id == _homographConfig.HomographWritingSystem))
 			{
@@ -49,12 +49,10 @@ namespace SIL.FieldWorks.XWorks
 			// otherwise use an empty list (which will be treated as default digits in the view).
 			IEnumerable<string> wsCustomDigits = new List<string>();
 			var writingSystem = cache.ServiceLocator.WritingSystemManager.Get(_homographConfig.HomographWritingSystem);
-			if (writingSystem != null && writingSystem.NumberingSystem.Digits.Length == 10)
+			var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem?.NumberingSystem?.Digits);
+			if (unicodeCharacters != null)
 			{
-				for (var digit = 0; digit < 10; ++digit)
-				{
-					wsCustomDigits = wsCustomDigits.Append(writingSystem.NumberingSystem.Digits[digit].ToString());
-				}
+				wsCustomDigits = unicodeCharacters;
 			}
 			_view.CustomDigits = wsCustomDigits;
 			_view.HomographBefore = _homographConfig.HomographNumberBefore;

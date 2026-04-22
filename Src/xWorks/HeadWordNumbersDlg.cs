@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
-		private FwTextBox[] _digitBoxes;
+		private Label[] _digitBoxes;
 
 		public HeadwordNumbersDlg()
 		{
@@ -42,7 +42,6 @@ namespace SIL.FieldWorks.XWorks
 				m_digitZero, m_digitOne, m_digitTwo, m_digitThree, m_digitFour, m_digitFive,
 				m_digitSix, m_digitSeven, m_digitEight, m_digitNine
 			};
-			Shown += (sender, args) => { UpdateWritingSystemCodeInDigits(); };
 		}
 
 		/// <summary>
@@ -198,22 +197,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Set the writing system code in each digit textbox
-		/// </summary>
-		private void UpdateWritingSystemCodeInDigits()
-		{
-			var wsHandle = ((CoreWritingSystemDefinition)m_writingSystemCombo.SelectedItem).Handle;
-			foreach (var digit in _digitBoxes)
-			{
-				digit.WritingSystemCode = wsHandle;
-				digit.SelectAll();
-				digit.ApplyWS(wsHandle);
-				digit.ApplyStyle("UiElement");
-				digit.RemoveSelection();
-			}
-		}
-
-		/// <summary>
 		/// Set the font in each digit textbox
 		/// </summary>
 		private void UpdateFontInDigits(System.Drawing.Font digitFont)
@@ -245,6 +228,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < 10; ++i)
 				{
 					_digitBoxes[i].Text = digitsArray[i];
+					_digitBoxes[i].Visible = true;
 				}
 			}
 
@@ -253,41 +237,19 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
 
-		public LcmStyleSheet SetStyleSheet
-		{
-			set
-			{
-				for (var i = 0; i < 10; ++i)
-				{
-					_digitBoxes[i].StyleSheet = value;
-				}
-			}
-		}
-
-		public void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory)
-		{
-			for (var i = 0; i < 10; ++i)
-			{
-				_digitBoxes[i].WritingSystemFactory = factory;
-			}
-		}
-
 		private void m_writingSystemCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			UpdateWritingSystemCodeInDigits();
-
 			// Populate digits from ws.
 			var selectedWs = m_writingSystemCombo.SelectedItem as CoreWritingSystemDefinition;
 			if (selectedWs?.NumberingSystem != null)
 			{
 				var digits = selectedWs.NumberingSystem.Digits;
-				UpdateFontInDigits(new System.Drawing.Font(string.IsNullOrWhiteSpace(selectedWs.DefaultFontName) ? "Segoe" : selectedWs.DefaultFontName,
-					selectedWs.DefaultFontSize == 0.0f ? 12 : selectedWs.DefaultFontSize)); ;
 				if (!string.IsNullOrEmpty(digits))
 				{
-					// Populate the custom digits from writing system, if all 10 digits are specified
-					if (digits.Length == 10)
-						CustomDigits = digits.ToCharArray().Select(c => c.ToString()).ToArray();
+					// Populate the custom digits from writing system, if all digits are specified.
+					var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(digits);
+					if (unicodeCharacters != null)
+						CustomDigits = unicodeCharacters;
 				}
 			}
 		}

@@ -2479,11 +2479,12 @@ namespace SIL.FieldWorks.XWorks
 					// Use writing system's numbering system for sense numbers.
 					var wsString = GetWsForEntryType(sense, sense?.Cache);
 					var writingSystem = sense?.Cache.ServiceLocator.WritingSystemManager.Get(wsString);
-					if (writingSystem != null && writingSystem.NumberingSystem.Digits.Length == 10)
+					var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem?.NumberingSystem?.Digits);
+					if (unicodeCharacters != null)
 					{
 						for (var digit = 0; digit < 10; ++digit)
 						{
-							nextNumber = nextNumber.Replace(digit.ToString(), writingSystem.NumberingSystem.Digits[digit].ToString());
+							nextNumber = nextNumber.Replace(digit.ToString(), unicodeCharacters[digit]);
 						}
 					}
 					break;
