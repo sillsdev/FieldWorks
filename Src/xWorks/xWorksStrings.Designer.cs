@@ -1881,7 +1881,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preparing to display the publication layout.
+        ///   Looks up a localized string similar to Preparing to display the Dictionary view.
         /// </summary>
         internal static string ksPreparingPublicationDisplay {
             get {
