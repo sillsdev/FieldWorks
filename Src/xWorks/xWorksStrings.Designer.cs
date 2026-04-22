@@ -1881,7 +1881,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preparing to display the publication view.
+        ///   Looks up a localized string similar to Preparing to display the publication layout.
         /// </summary>
         internal static string ksPreparingPublicationDisplay {
             get {
@@ -2099,7 +2099,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The entry you have selected is not shown in Dictionary view, {0}..
+        ///   Looks up a localized string similar to The entry you have selected is not shown, {0}..
         /// </summary>
         internal static string ksSelectedEntryNotInDict {
             get {

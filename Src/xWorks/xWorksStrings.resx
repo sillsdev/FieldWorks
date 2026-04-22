@@ -1079,7 +1079,7 @@ See USFM documentation for help.</value>
     <comment>this message is displayed in a progress report dialog</comment>
   </data>
   <data name="ksPreparingPublicationDisplay" xml:space="preserve">
-    <value>Preparing to display the publication view</value>
+    <value>Preparing to display the publication layout</value>
     <comment>this is the title for a progress report dialog</comment>
   </data>
   <data name="promptGenerateAllEntriesBeforePrinting" xml:space="preserve">
