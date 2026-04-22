@@ -502,10 +502,14 @@ namespace SIL.FieldWorks.XWorks
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
 			item.Tag = new object[] { propertyTable, mediator, nodeId, topLevelGuid };
-			var item2 = new DisposableToolStripMenuItem(xWorksStrings.ksJumpToField);
-			s_contextMenu.Items.Add(item2);
-			item2.Click += JumpToFieldAt;
-			item2.Tag = new object[] { propertyTable, mediator, entryElement, element };
+			string tool = propertyTable.GetStringProperty("currentContentControl", null);
+			if (tool == "lexiconEdit")
+			{
+				var item2 = new DisposableToolStripMenuItem(xWorksStrings.ksJumpToField);
+				s_contextMenu.Items.Add(item2);
+				item2.Click += JumpToFieldAt;
+				item2.Tag = new object[] { propertyTable, mediator, entryElement, element };
+			}
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
