@@ -23,6 +23,9 @@ Last reviewed:
 
 #pragma once
 
+#include <chrono>
+#include <thread>
+
 #include "testViews.h"
 
 #if defined(_WIN32) || defined(_M_X64)
@@ -123,6 +126,7 @@ namespace TestViews
 	public:
 		MockTextStoreACPSink(ITextStoreACP * ptsa, IUnknown * punkOldSink)
 		{
+			this_thread::sleep_for(1ms); // testSetTextEmpty fails without this on Release builds but not Debug builds (discovered by LT-22425)
 			m_qtsa = ptsa;
 			if (punkOldSink)
 				CheckHr(ptsa->UnadviseSink(punkOldSink));
@@ -1834,7 +1838,9 @@ namespace TestViews
 		{
 			//_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_DELAY_FREE_MEM_DF );
 			if (!m_fTestable)
+			{
 				return;
+			}
 			MakeStringList2();
 			Make2ParaSel(1, s_cchPara2, 2, 0);
 			TS_TEXTCHANGE ttc1 = { 0 };
