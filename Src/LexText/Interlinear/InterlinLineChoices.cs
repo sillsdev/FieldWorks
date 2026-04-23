@@ -952,7 +952,7 @@ namespace SIL.FieldWorks.IText
 					fWordLevel = false;
 					break;
 				case kflidMedia:
-					ws = WritingSystemServices.kwsFirstAnal;
+					ws = m_wsDefAnal;
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					fWordLevel = false;
 					break;
