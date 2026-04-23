@@ -51,9 +51,16 @@
 	Path to a local machine checkout. Overrides SILMACHINE_PATH env var.
 	Only used when -Machine is specified.
 
+.PARAMETER L10nSharp
+	Switch: include L10NSharp in the pack operation.
+
+.PARAMETER L10nSharpPath
+	Path to a local L10NSharp checkout. Overrides L10NSHARP_PATH env var.
+	Only used when -L10nSharp is specified.
+
 .PARAMETER Library
 	Which library to set a version for (SetVersion mode only):
-	liblcm, libpalaso, chorus, or machine.
+	liblcm, libpalaso, chorus, machine, or l10nsharp.
 
 .PARAMETER Version
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
@@ -85,7 +92,10 @@ param(
 	[switch]$Machine,
 	[string]$MachinePath,
 
-	[ValidateSet('liblcm', 'libpalaso', 'chorus', 'machine')]
+	[switch]$L10nSharp,
+	[string]$L10nSharpPath,
+
+	[ValidateSet('liblcm', 'libpalaso', 'chorus', 'machine', 'l10nsharp')]
 	[string]$Library,
 
 	[string]$Version
@@ -131,10 +141,16 @@ $LibraryConfig = @{
 			'src/SIL.Machine.Morphology.HermitCrab/SIL.Machine.Morphology.HermitCrab.csproj'
 		)
 	}
+	l10nsharp = @{
+		VersionProperty = 'L10NSharpVersion'
+		PdbRelativeDir  = 'output/Debug/net462'
+		CachePrefixes   = @('l10nsharp')
+		EnvVar          = 'L10NSHARP_PATH'
+	}
 }
 
 # Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('libpalaso', 'liblcm', 'chorus', 'machine')
+$PackOrder = @('libpalaso', 'l10nsharp', 'liblcm', 'chorus', 'machine')
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -333,6 +349,7 @@ $switchMap = @{
 	liblcm    = @{ Enabled = [bool]$Lcm;     ExplicitPath = $LcmPath }
 	chorus    = @{ Enabled = [bool]$Chorus;   ExplicitPath = $ChorusPath }
 	machine   = @{ Enabled = [bool]$Machine;  ExplicitPath = $MachinePath }
+	l10nsharp = @{ Enabled = [bool]$L10nSharp; ExplicitPath = $L10nSharpPath }
 }
 
 # Resolve source paths: explicit path > env var (only when switch is set)
@@ -419,5 +436,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
+	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
 }
