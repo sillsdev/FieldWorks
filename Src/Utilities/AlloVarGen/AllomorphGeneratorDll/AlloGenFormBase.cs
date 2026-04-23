@@ -1091,9 +1091,17 @@ namespace SIL.AllomorphGenerator
 				if (ActionOp.ReplaceOpRefs.Count == 0)
 				{
 					// need at least one replace action
-					Replace replace = CreateNewReplace();
-					AlloGens.AddReplaceOp(replace);
-					lBoxReplaceOps.Items.Add(replace);
+					if (AlloGens.ReplaceOperations.Count > 0)
+					{
+						ActionOp.ReplaceOpRefs.Add(AlloGens.ReplaceOperations.ElementAt(0).Guid);
+					}
+					else
+					{
+						Replace replace = CreateNewReplace();
+						AlloGens.AddReplaceOp(replace);
+						lBoxReplaceOps.Items.Add(replace);
+					}
+					MarkAsChanged(true);
 				}
 				StemName = ActionOp.StemName;
 				tbStemName.Text = StemName.Name;
@@ -1105,6 +1113,7 @@ namespace SIL.AllomorphGenerator
 		protected void RefreshReplaceListBox()
 		{
 			lBoxReplaceOps.Items.Clear();
+			List<string> brokenRefs = new List<string>();
 			foreach (string guid in ReplaceOpRefs)
 			{
 				Replace replace = AlloGens.FindReplaceOp(guid);
@@ -1112,6 +1121,15 @@ namespace SIL.AllomorphGenerator
 				{
 					lBoxReplaceOps.Items.Add(replace);
 				}
+				else
+				{
+					brokenRefs.Add(guid);
+				}
+			}
+			foreach (string guid in brokenRefs)
+			{
+				ReplaceOpRefs.Remove(guid);
+				MarkAsChanged(true);
 			}
 			if (ReplaceOpRefs.Count > 0)
 				lBoxReplaceOps.SetSelected(0, true);

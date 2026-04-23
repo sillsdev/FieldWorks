@@ -423,7 +423,7 @@
     <value>8, 19</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>488, 172</value>
+    <value>823, 255</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Match for forms containing...</value>
