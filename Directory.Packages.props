@@ -87,9 +87,9 @@
 		=============================================================
 	-->
 	<ItemGroup Label="SIL Localization">
-		<PackageVersion Include="L10NSharp" Version="9.0.0" />
+		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
-		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)" />
+		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />
 	</ItemGroup>
 
 	<!--
