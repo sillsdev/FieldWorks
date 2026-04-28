@@ -965,25 +965,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the text box is read-only.
-		/// </summary>
-		/// <value><c>true</c> if the text box is read-only; otherwise, <c>false</c>.</value>
-		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public bool ReadOnlyView
-		{
-			get
-			{
-				CheckDisposed();
-				return m_innerFwTextBox.ReadOnlyView;
-			}
-			set
-			{
-				CheckDisposed();
-				m_innerFwTextBox.ReadOnlyView = value;
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows the control to function like an ordinary text box, setting and reading its text.

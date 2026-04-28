@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.XWorks
 				model.IsReversal ? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary,
 				Environment.NewLine,
 				model.Label);
-			//_view.SetWsFactoryForCustomDigits(cache.WritingSystemFactory);
 			_view.AvailableWritingSystems = cache.LangProject.CurrentAnalysisWritingSystems.Union(cache.LangProject.CurrentVernacularWritingSystems);
 			if (_cache.LangProject.AllWritingSystems.Any(ws => ws.Id == _homographConfig.HomographWritingSystem))
 			{
@@ -58,7 +57,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Do nothing; writingSystem is already null.
 			}
-			//var writingSystem = cache.ServiceLocator.WritingSystemManager?.Get(_homographConfig.HomographWritingSystem);
 			var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem?.NumberingSystem?.Digits);
 			if (unicodeCharacters != null)
 			{

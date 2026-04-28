@@ -196,17 +196,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// Set the font in each digit textbox
-		/// </summary>
-		private void UpdateFontInDigits(System.Drawing.Font digitFont)
-		{
-			foreach (var digit in _digitBoxes)
-			{
-				digit.Font = digitFont;
-			}
-		}
-
 		public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems
 		{
 			set
