@@ -9,8 +9,6 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
-using DocumentFormat.OpenXml.EMMA;
-using Paratext.Data.Linguistics.Morph;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks
