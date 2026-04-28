@@ -1,0 +1,3 @@
+[ignore-by-body]
+regex=^Agent-Logs-Url:
+ignore=B1
