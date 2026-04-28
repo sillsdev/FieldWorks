@@ -501,7 +501,6 @@ namespace SIL.FieldWorks.XWorks
 					Label = "root",
 					HomographConfiguration = new DictionaryHomographConfiguration
 					{
-						CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
 						HomographNumberBefore = true,
 						HomographWritingSystem = "en",
 						ShowHwNumber = true,
@@ -1234,7 +1233,6 @@ namespace SIL.FieldWorks.XWorks
 			// If we were on NUnit 4
 			// Assert.That(model.HomographConfiguration, Is.EqualTo(clone.HomographConfiguration).UsingPropertiesComparer());
 			// But we're not, so we have to do it manually or implement otherwise unnecessary equality interfaces
-			Assert.That(model.HomographConfiguration.CustomHomographNumbers, Is.EqualTo(clone.HomographConfiguration.CustomHomographNumbers));
 			Assert.That(model.HomographConfiguration.HomographNumberBefore, Is.EqualTo(clone.HomographConfiguration.HomographNumberBefore));
 			Assert.That(model.HomographConfiguration.HomographWritingSystem, Is.EqualTo(clone.HomographConfiguration.HomographWritingSystem));
 			Assert.That(model.HomographConfiguration.ShowHwNumber, Is.EqualTo(clone.HomographConfiguration.ShowHwNumber));

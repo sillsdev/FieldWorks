@@ -229,6 +229,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					_digitBoxes[i].Text = digitsArray[i];
 					_digitBoxes[i].Visible = true;
+					// Set UseCompatibleTextRendering to false. This causes WindowsForms to use TextRenderer, which provides better fallback font performance.
+					_digitBoxes[i].UseCompatibleTextRendering = false;
 				}
 			}
 
