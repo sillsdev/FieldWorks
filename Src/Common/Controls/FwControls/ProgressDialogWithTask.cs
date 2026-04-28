@@ -256,7 +256,17 @@ namespace SIL.FieldWorks.Common.Controls
 				CheckDisposed();
 
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
-					m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new [] {value});
+				{
+					try
+					{
+						m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new[] { value });
+					}
+					catch (Exception e)
+					{
+						// Fixes LT-22357.
+						Debug.Assert(false);
+					}
+				}
 				else
 					m_progressDialog.Message = value;
 			}
@@ -352,7 +362,17 @@ namespace SIL.FieldWorks.Common.Controls
 				CheckDisposed();
 
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
-					m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] {value});
+				{
+					try
+					{
+						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] { value });
+					}
+					catch (Exception e)
+					{
+						// Fixes LT-22357.
+						Debug.Assert(false);
+					}
+				}
 				else
 					m_progressDialog.Minimum = value;
 			}
@@ -379,7 +399,17 @@ namespace SIL.FieldWorks.Common.Controls
 				CheckDisposed();
 
 				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
-					m_synchronizeInvoke.Invoke((Action<int>) (i => m_progressDialog.Maximum = i), new object[] {value});
+				{
+					try
+					{
+						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Maximum = i), new object[] { value });
+					}
+					catch (Exception e)
+					{
+						// Fixes LT-22357.
+						Debug.Assert(false);
+					}
+				}
 				else
 					m_progressDialog.Maximum = value;
 			}
