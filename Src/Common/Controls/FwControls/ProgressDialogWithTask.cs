@@ -261,9 +261,10 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new[] { value });
 					}
-					catch
+					catch (Exception e)
 					{
 						// Fixes LT-22357.
+						Debug.Assert(false);
 					}
 				}
 				else
@@ -366,9 +367,10 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] { value });
 					}
-					catch
+					catch (Exception e)
 					{
 						// Fixes LT-22357.
+						Debug.Assert(false);
 					}
 				}
 				else
@@ -402,9 +404,10 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Maximum = i), new object[] { value });
 					}
-					catch
+					catch (Exception e)
 					{
 						// Fixes LT-22357.
+						Debug.Assert(false);
 					}
 				}
 				else
