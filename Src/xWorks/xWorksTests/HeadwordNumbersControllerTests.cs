@@ -9,6 +9,9 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
+using DocumentFormat.OpenXml.EMMA;
+using Paratext.Data.Linguistics.Morph;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -138,49 +141,34 @@ namespace SIL.FieldWorks.XWorks
 		public void Ok_Enabled_WithNoCustomNumbers()
 		{
 			// Test enabled on initial setup
-			var view = new TestHeadwordNumbersView {OkButtonEnabled = false};
+			var view = new TestHeadwordNumbersView { OkButtonEnabled = false };
 			var model = new DictionaryConfigurationModel();
 			var controller = new HeadwordNumbersController(view, model, Cache);
 			// verify ok button enabled on setup with no numbers
-			Assert.That(view.OkButtonEnabled, Is.True, "Ok not enabled by controller constructor");
-			view.OkButtonEnabled = false;
-			// verify ok button enabled when event is triggered and there are no custom numbers
-			view.TriggerCustomDigitsChanged();
-			Assert.That(view.OkButtonEnabled, Is.True, "Ok button not enabled when event is fired");
+			Assert.That(view.OkButtonEnabled, Is.True,
+				"Ok not enabled by controller constructor");
 		}
 
 		[Test]
-		public void Ok_Enabled_WithAllTenNumbers()
+		public void CustomDigits_Default_Ok_Enabled_WhenNotAllTenNumbersSet()
 		{
-			// Test enabled on initial setup
-			var view = new TestHeadwordNumbersView { OkButtonEnabled = false };
-			var model = new DictionaryConfigurationModel
+			var model = new DictionaryConfigurationModel()
 			{
-				HomographConfiguration = new DictionaryHomographConfiguration
-				{
-					CustomHomographNumbers = "a,b,c,d,e,f,g,h,i,j"
-				}
+				HomographConfiguration = new DictionaryHomographConfiguration()
 			};
-			var controller = new HeadwordNumbersController(view, model, Cache);
-			// verify ok button enabled on setup with 10 numbers
-			Assert.That(view.OkButtonEnabled, Is.True, "Ok not enabled by controller constructor");
-			view.OkButtonEnabled = false;
-			// verify ok button enabled when event is triggered and there are 10 custom numbers
-			view.TriggerCustomDigitsChanged();
-			Assert.That(view.OkButtonEnabled, Is.True, "Ok button not enabled when event is fired");
-		}
+			var view = new TestHeadwordNumbersView()
+			{
+				HomographWritingSystem = model.HomographConfiguration.HomographWritingSystem = "en"
+			};
+			var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(view.HomographWritingSystem);
+			writingSystem.NumberingSystem = NumberingSystemDefinition.CreateCustomSystem("1");
 
-		[Test]
-		public void Ok_Disabled_WhenNotAllTenNumbersSet()
-		{
-			// Test enabled on initial setup
-			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel();
-			var controller = new HeadwordNumbersController(view, model, Cache);
-			view.OkButtonEnabled = true;
-			view.CustomDigits = new List<string> { "1" };
-			view.TriggerCustomDigitsChanged();
-			Assert.That(view.OkButtonEnabled, Is.False, "Ok button still enabled after event is fired");
+			// If the writing system doesn't have a valid numbering system with 10 digits,
+			// the view should fall back to the default latin digits and still enable Ok.
+			var defaultNumberingSystem = NumberingSystemDefinition.CreateCustomSystem("0123456789");
+			var testController = new HeadwordNumbersController(view, model, Cache);
+			Assert.That(view.CustomDigits, Is.EqualTo(HeadWordNumbersHelper.GetUnicodeCharacters(defaultNumberingSystem.Digits)));
+			Assert.That(view.OkButtonEnabled, Is.True, "Ok button not enabled after event is fired");
 		}
 
 		[Test]
@@ -235,20 +223,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ConstructorSetsCustomHeadwordNumbersInView()
+		public void ConstructorSetsHeadwordWritingSystemNumbersInView()
 		{
-			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel
+			var model = new DictionaryConfigurationModel()
 			{
-				HomographConfiguration = new DictionaryHomographConfiguration
-				{
-					CustomHomographNumbers = "a;b;c;d;e;f;g;h;i;j;k"
-				}
+				HomographConfiguration = new DictionaryHomographConfiguration()
 			};
-			// ReSharper disable once UnusedVariable
-			// SUT
+			var view = new TestHeadwordNumbersView()
+			{
+				HomographWritingSystem = model.HomographConfiguration.HomographWritingSystem = "en"
+			};
+			var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(view.HomographWritingSystem);
+			writingSystem.NumberingSystem = NumberingSystemDefinition.CreateCustomSystem("abcdefghij");
+
 			var testController = new HeadwordNumbersController(view, model, Cache);
-			Assert.That(view.CustomDigits, Is.EqualTo(model.HomographConfiguration.CustomHomographNumberList));
+			Assert.That(view.CustomDigits, Is.EqualTo(HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem.NumberingSystem.Digits)));
 		}
 
 		public class TestHeadwordNumbersView : IHeadwordNumbersView
@@ -267,13 +256,7 @@ namespace SIL.FieldWorks.XWorks
 #pragma warning restore 67
 			public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { private get; set; }
 			public IEnumerable<string> CustomDigits { get; set; }
-			public event EventHandler CustomDigitsChanged;
 			public bool OkButtonEnabled { get; set; }
-
-			internal void TriggerCustomDigitsChanged()
-			{
-				CustomDigitsChanged(this, null);
-			}
 			public void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory) { }
 		}
 	}

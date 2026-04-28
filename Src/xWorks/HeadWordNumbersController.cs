@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
@@ -48,7 +49,16 @@ namespace SIL.FieldWorks.XWorks
 			// If possible, get digits from the writing system's numbering system,
 			// otherwise use an empty list (which will be treated as default digits in the view).
 			IEnumerable<string> wsCustomDigits = new List<string>();
-			var writingSystem = cache.ServiceLocator.WritingSystemManager.Get(_homographConfig.HomographWritingSystem);
+			CoreWritingSystemDefinition writingSystem = null;
+			try
+			{
+				writingSystem = cache.ServiceLocator.WritingSystemManager?.Get(_homographConfig.HomographWritingSystem);
+			}
+			catch(KeyNotFoundException)
+			{
+				// Do nothing; writingSystem is already null.
+			}
+			//var writingSystem = cache.ServiceLocator.WritingSystemManager?.Get(_homographConfig.HomographWritingSystem);
 			var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem?.NumberingSystem?.Digits);
 			if (unicodeCharacters != null)
 			{
