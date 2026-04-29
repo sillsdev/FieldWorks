@@ -1104,6 +1104,9 @@ See USFM documentation for help.</value>
   <data name="SomethingWentWrongTryingToPrintDict" xml:space="preserve">
     <value>Something went wrong trying to print. An operation may have timed out. You may be able to export your dictionary from the File menu and print it using your browser.</value>
   </data>
+  <data name="ksReversalNumberConfig" xml:space="preserve">
+    <value>Reversal Number Configuration</value>
+  </data>
   <data name="ksSubsenseNumberConfig" xml:space="preserve">
     <value>Subsense Number Configuration</value>
   </data>

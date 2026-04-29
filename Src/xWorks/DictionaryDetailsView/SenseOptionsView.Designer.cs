@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			resources.ApplyResources(this.dropDownParentSenseNumberStyle, "dropDownParentSenseNumberStyle");
 			this.dropDownParentSenseNumberStyle.Name = "dropDownParentSenseNumberStyle";
 			// 
-			// senseOrderingAndFormattingOptionsVerticalFlow
+			// senseStructureVerticalFlow
 			// 
 			resources.ApplyResources(this.senseStructureVerticalFlow, "senseStructureVerticalFlow");
 			this.senseStructureVerticalFlow.Controls.Add(this.checkBoxShowGrammarFirst);
@@ -208,8 +208,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBoxSenseNumber);
 			this.Controls.Add(this.senseStructureVerticalFlow);
-			this.MaximumSize = new System.Drawing.Size(0, 193);
-			this.MinimumSize = new System.Drawing.Size(305, 220);
 			this.Name = "SenseOptionsView";
 			this.groupBoxSenseNumber.ResumeLayout(false);
 			this.groupBoxSenseNumber.PerformLayout();

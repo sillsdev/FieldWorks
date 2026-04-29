@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -127,10 +127,13 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="checkBoxSenseInPara.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 26</value>
+    <value>4, 32</value>
+  </data>
+  <data name="checkBoxSenseInPara.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxSenseInPara.Size" type="System.Drawing.Size, System.Drawing">
-    <value>189, 17</value>
+    <value>238, 20</value>
   </data>
   <data name="checkBoxSenseInPara.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -157,10 +160,13 @@
     <value>True</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+    <value>4, 4</value>
+  </data>
+  <data name="checkBoxShowGrammarFirst.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxShowGrammarFirst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>299, 17</value>
+    <value>371, 20</value>
   </data>
   <data name="checkBoxShowGrammarFirst.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -190,13 +196,16 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxFirstSenseInline.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 49</value>
+    <value>4, 60</value>
+  </data>
+  <data name="checkBoxFirstSenseInline.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxFirstSenseInline.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>20, 0, 0, 0</value>
+    <value>27, 0, 0, 0</value>
   </data>
   <data name="checkBoxFirstSenseInline.Size" type="System.Drawing.Size, System.Drawing">
-    <value>171, 17</value>
+    <value>212, 20</value>
   </data>
   <data name="checkBoxFirstSenseInline.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -226,10 +235,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 16</value>
+    <value>8, 20</value>
+  </data>
+  <data name="labelStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>82, 13</value>
+    <value>101, 16</value>
   </data>
   <data name="labelStyle.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -259,10 +271,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelAfter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 56</value>
+    <value>281, 69</value>
+  </data>
+  <data name="labelAfter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelAfter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 13</value>
+    <value>37, 16</value>
   </data>
   <data name="labelAfter.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -292,10 +307,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelNumberingStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>84, 56</value>
+    <value>112, 69</value>
+  </data>
+  <data name="labelNumberingStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelNumberingStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>87, 13</value>
+    <value>109, 16</value>
   </data>
   <data name="labelNumberingStyle.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -325,10 +343,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelBefore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 56</value>
+    <value>8, 69</value>
+  </data>
+  <data name="labelBefore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelBefore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 13</value>
+    <value>50, 16</value>
   </data>
   <data name="labelBefore.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -352,10 +373,13 @@
     <value>Bottom, Left</value>
   </data>
   <data name="dropDownNumberingStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>87, 72</value>
+    <value>116, 89</value>
+  </data>
+  <data name="dropDownNumberingStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="dropDownNumberingStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 21</value>
+    <value>160, 24</value>
   </data>
   <data name="dropDownNumberingStyle.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -376,10 +400,13 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxAfter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>214, 72</value>
+    <value>285, 89</value>
+  </data>
+  <data name="textBoxAfter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="textBoxAfter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 20</value>
+    <value>95, 22</value>
   </data>
   <data name="textBoxAfter.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -400,10 +427,13 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxBefore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 72</value>
+    <value>12, 89</value>
+  </data>
+  <data name="textBoxBefore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="textBoxBefore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 20</value>
+    <value>95, 22</value>
   </data>
   <data name="textBoxBefore.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -427,10 +457,13 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxNumberSingleSense.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 122</value>
+    <value>13, 153</value>
+  </data>
+  <data name="checkBoxNumberSingleSense.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxNumberSingleSense.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 17</value>
+    <value>313, 31</value>
   </data>
   <data name="checkBoxNumberSingleSense.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -454,10 +487,13 @@
     <value>Bottom, Left</value>
   </data>
   <data name="dropDownStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 32</value>
+    <value>12, 39</value>
+  </data>
+  <data name="dropDownStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="dropDownStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 21</value>
+    <value>260, 24</value>
   </data>
   <data name="dropDownStyle.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -478,10 +514,13 @@
     <value>NoControl</value>
   </data>
   <data name="buttonStyles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>211, 32</value>
+    <value>281, 39</value>
+  </data>
+  <data name="buttonStyles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonStyles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 21</value>
+    <value>100, 26</value>
   </data>
   <data name="buttonStyles.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -511,10 +550,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelParentSenseNumberStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 102</value>
+    <value>8, 126</value>
+  </data>
+  <data name="labelParentSenseNumberStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelParentSenseNumberStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>136, 13</value>
+    <value>169, 16</value>
   </data>
   <data name="labelParentSenseNumberStyle.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -535,10 +577,13 @@
     <value>0</value>
   </data>
   <data name="dropDownParentSenseNumberStyle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>165, 99</value>
+    <value>220, 122</value>
+  </data>
+  <data name="dropDownParentSenseNumberStyle.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="dropDownParentSenseNumberStyle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 21</value>
+    <value>160, 24</value>
   </data>
   <data name="dropDownParentSenseNumberStyle.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -556,10 +601,16 @@
     <value>1</value>
   </data>
   <data name="groupBoxSenseNumber.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+    <value>4, 4</value>
+  </data>
+  <data name="groupBoxSenseNumber.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="groupBoxSenseNumber.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="groupBoxSenseNumber.Size" type="System.Drawing.Size, System.Drawing">
-    <value>300, 145</value>
+    <value>400, 178</value>
   </data>
   <data name="groupBoxSenseNumber.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -589,10 +640,13 @@
     <value>TopDown</value>
   </data>
   <data name="senseStructureVerticalFlow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 151</value>
+    <value>4, 186</value>
+  </data>
+  <data name="senseStructureVerticalFlow.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="senseStructureVerticalFlow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 69</value>
+    <value>379, 84</value>
   </data>
   <data name="senseStructureVerticalFlow.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -613,13 +667,22 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>8, 16</value>
   </data>
   <data name="$this.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>0, 238</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>407, 271</value>
+  </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>311, 220</value>
+    <value>408, 271</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SenseOptionsView</value>
