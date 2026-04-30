@@ -10,6 +10,7 @@ using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
@@ -25,6 +26,38 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
+		private DictionaryPublicationDecorator m_pubDecorator;
+
+		public DictionaryPublicationDecorator PublicationDecorator
+		{
+			get
+			{
+				if (m_pubDecorator == null)
+				{
+					m_pubDecorator = new DictionaryPublicationDecorator(Cache, Clerk.VirtualListPublisher, Clerk.VirtualFlid);
+				}
+				var pubName = GetCurrentPublication();
+				if (xWorksStrings.AllEntriesPublication == pubName)
+				{
+					// A null publication means show everything
+					m_pubDecorator.Publication = null;
+				}
+				else
+				{
+					// look up the publication object
+
+					var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
+							   where item.Name.UserDefaultWritingSystem.Text == pubName
+							   select item).FirstOrDefault();
+					if (pub != null && pub != m_pubDecorator.Publication)
+					{
+						// change the publication if it is different from the current one
+						m_pubDecorator.Publication = pub;
+					}
+				}
+				return m_pubDecorator;
+			}
+		}
 
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -54,6 +87,13 @@ namespace SIL.FieldWorks.XWorks
 				"backColor", "Window");
 			BackColor = Color.FromName(backColorName);
 			m_configObjectName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "configureObjectName", null);
+		}
+
+		private string GetCurrentPublication()
+		{
+			// Returns the current publication and use '$$all_entries$$' if none has yet been set
+			return m_propertyTable.GetStringProperty("SelectedPublication",
+			 xWorksStrings.AllEntriesPublication);
 		}
 
 		/// <summary>
@@ -126,7 +166,8 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, null, configuration, m_propertyTable);
+				PublicationDecorator.Refresh();
+				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, PublicationDecorator, configuration, m_propertyTable);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}
