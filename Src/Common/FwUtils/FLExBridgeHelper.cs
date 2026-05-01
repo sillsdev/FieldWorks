@@ -338,7 +338,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Launch the bridge process.
-			using (var process = new Process())
+			// The watchdog thread takes ownership of the Process handle and is responsible for
+			// calling Dispose(). If anything goes wrong before ownership transfers, the catch
+			// block disposes it so the handle never leaks.
+			var process = new Process();
+			try
 			{
 				var startInfo = new ProcessStartInfo();
 				if (userPass != null) startInfo.EnvironmentVariables["CHORUS_CREDENTIALS"] = userPass;
@@ -348,6 +352,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				process.StartInfo = startInfo;
 				process.Start();
+
+				// Safety net: monitor the FlexBridge process at the OS level.
+				// If FlexBridge exits for any reason (normal completion, crash, hang killed by the user,
+				// or failure to signal over the IPC pipe) this ensures FLEx's UI thread is always unblocked.
+				// AlertFlex() is idempotent: if the normal IPC signaling already woke us, the redundant
+				// call harmlessly sets an already-true flag and pulses with no waiter.
+				var processWatchdog = new Thread(() =>
+				{
+					try
+					{
+						process.WaitForExit();
+					}
+					catch (Exception)
+					{
+						// Process handle may be invalid if the process exited before we got here.
+					}
+					finally
+					{
+						process.Dispose();
+					}
+					Console.WriteLine(@"FLExBridgeHelper: FlexBridge process exited. Calling AlertFlex as safety net.");
+					AlertFlex();
+				}) { IsBackground = true, Name = "FlexBridge process watchdog" };
+				processWatchdog.Start();
+			}
+			catch (Exception)
+			{
+				// If we failed to start the process or the watchdog thread, dispose the handle.
+				// The existing IPC signaling paths may still function; we just lose the safety net.
+				process.Dispose();
 			}
 
 			var nonFlexBlockers = new HashSet<string>
