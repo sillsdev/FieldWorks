@@ -4,6 +4,15 @@ namespace SIL.FieldWorks.XWorks
 {
 	public static class HeadWordNumbersHelper
 	{
+		/// <summary>
+		/// Splits a given string of digits into a list of Unicode characters, handling surrogate pairs if present.
+		/// The string should contain exactly 10 Unicode characters (which may be represented by more than 10 char values if surrogate pairs are used).
+		/// These unicode characters should map in order from 0 to 9.
+		/// If the string is null, empty, or does not contain exactly 10 Unicode characters, this method returns null.
+		/// Otherwise, it returns a list of the 10 Unicode characters as strings.
+		/// </summary>
+		/// <param name="digits"></param>
+		/// <returns></returns>
 		public static List<string> GetUnicodeCharacters(string digits)
 		{
 			if (!string.IsNullOrEmpty(digits))
