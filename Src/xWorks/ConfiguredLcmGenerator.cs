@@ -2432,7 +2432,9 @@ namespace SIL.FieldWorks.XWorks
 
 			var senseOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
-			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, sense, decorator, ref info);
+			var rootNode = DictionaryConfigurationDlg.GetTopLevelNode(nodeList.Last());
+			bool isReversalEntry = rootNode.Label == "Reversal Entry";
+			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, sense, decorator, ref info, isReversalEntry);
 			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
@@ -2441,26 +2443,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ILexSense sense,
-			DictionaryPublicationDecorator publicationDecorator, ref SenseInfo info)
+			DictionaryPublicationDecorator publicationDecorator, ref SenseInfo info, bool isReversalEntry = false)
 		{
 			string nextNumber;
 			var senseCount = info.SenseCounter;
-			// Try to get the outline number if there is a publication decorator
-			if (publicationDecorator != null && sense != null)
+
+			// GetOutlineNumber assumes sense is not a reversal. Only try to get outline number if that assumption is correct.
+			if(!isReversalEntry)
 			{
-				var senseCollectionFlid = 0;
-				var mdc = (IFwMetaDataCacheManaged)sense.Cache.MetaDataCacheAccessor;
-				// get flid for the senses field of the owner
-				if (sense.Owner is ILexSense)
-					senseCollectionFlid = mdc.GetFieldId("LexSense", "Senses", false);
-				else if (sense.Owner is ILexEntry)
-					senseCollectionFlid = mdc.GetFieldId("LexEntry", "Senses", false);
-				if (senseCollectionFlid > 0)
+				// Try to get the outline number if there is a publication decorator
+				if (publicationDecorator != null && sense != null)
 				{
-					var senseNumber = sense.Cache.GetOutlineNumber(sense, senseCollectionFlid, false, true, publicationDecorator);
-					if (!string.IsNullOrEmpty(senseNumber))
+					var senseCollectionFlid = 0;
+					var mdc = (IFwMetaDataCacheManaged)sense.Cache.MetaDataCacheAccessor;
+					// get flid for the senses field of the owner
+					if (sense.Owner is ILexSense)
+						senseCollectionFlid = mdc.GetFieldId("LexSense", "Senses", false);
+					else if (sense.Owner is ILexEntry)
+						senseCollectionFlid = mdc.GetFieldId("LexEntry", "Senses", false);
+					if (senseCollectionFlid > 0)
 					{
-						senseCount = int.Parse(senseNumber.Split('.').Last());
+						var senseNumber = sense.Cache.GetOutlineNumber(sense, senseCollectionFlid, false, true, publicationDecorator);
+						if (!string.IsNullOrEmpty(senseNumber))
+						{
+							senseCount = int.Parse(senseNumber.Split('.').Last());
+						}
 					}
 				}
 			}
