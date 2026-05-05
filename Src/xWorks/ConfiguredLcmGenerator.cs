@@ -2476,12 +2476,28 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
 					nextNumber = senseCount.ToString();
-					// Use the digits from the CustomHomographNumbers if they are defined
-					if (info.HomographConfig.CustomHomographNumbers.Count == 10)
+					// For the sense numbers, use the numbering system associated with the sense number writing system, if there is one.
+					var senseNumberWs = info.HomographConfig.WritingSystem;
+					if (senseNumberWs != null)
 					{
-						for (var digit = 0; digit < 10; ++digit)
+						CoreWritingSystemDefinition writingSystem = null;
+						try
 						{
-							nextNumber = nextNumber.Replace(digit.ToString(), info.HomographConfig.CustomHomographNumbers[digit]);
+							writingSystem = sense?.Cache.ServiceLocator.WritingSystemManager.Get(senseNumberWs);
+						}
+						catch (KeyNotFoundException)
+						{
+							//Don't replace sense number digits.
+							break;
+						}
+						var unicodeCharacters = HeadWordNumbersHelper.GetUnicodeCharacters(writingSystem?.NumberingSystem?.Digits);
+						if (unicodeCharacters != null)
+						{
+							for (var digit = 0; digit < 10; ++digit)
+							{
+								nextNumber = nextNumber.Replace(digit.ToString(),
+									unicodeCharacters[digit]);
+							}
 						}
 					}
 					break;

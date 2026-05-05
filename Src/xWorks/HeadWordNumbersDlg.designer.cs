@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,16 +52,16 @@ namespace SIL.FieldWorks.XWorks
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.customNumbersPanel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.m_digitNine = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitEight = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitSeven = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitSix = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitFive = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitFour = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitThree = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitTwo = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitOne = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_digitZero = new SIL.FieldWorks.Common.Widgets.FwTextBox();
+			this.m_digitNine = new System.Windows.Forms.Label();
+			this.m_digitEight = new System.Windows.Forms.Label();
+			this.m_digitSeven = new System.Windows.Forms.Label();
+			this.m_digitSix = new System.Windows.Forms.Label();
+			this.m_digitFive = new System.Windows.Forms.Label();
+			this.m_digitFour = new System.Windows.Forms.Label();
+			this.m_digitThree = new System.Windows.Forms.Label();
+			this.m_digitTwo = new System.Windows.Forms.Label();
+			this.m_digitOne = new System.Windows.Forms.Label();
+			this.m_digitZero = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
@@ -90,16 +90,6 @@ namespace SIL.FieldWorks.XWorks
 			this.buttonLayoutPanel.SuspendLayout();
 			this.customNumbersPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitNine)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitEight)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitSeven)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitSix)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitFive)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitFour)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitThree)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitTwo)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitOne)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitZero)).BeginInit();
 			this.homographStylePanel.SuspendLayout();
 			this.senseNumberStylePanel.SuspendLayout();
 			this.SuspendLayout();
@@ -263,123 +253,54 @@ namespace SIL.FieldWorks.XWorks
 			// 
 			// m_digitNine
 			// 
-			this.m_digitNine.AcceptsReturn = false;
-			this.m_digitNine.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitNine, "m_digitNine");
-			this.m_digitNine.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitNine.controlID = null;
-			this.m_digitNine.HasBorder = true;
+			this.m_digitNine.BackColor = System.Drawing.SystemColors.Control;
 			this.m_digitNine.Name = "m_digitNine";
-			this.m_digitNine.SuppressEnter = false;
-			this.m_digitNine.WordWrap = false;
 			// 
 			// m_digitEight
 			// 
-			this.m_digitEight.AcceptsReturn = false;
-			this.m_digitEight.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitEight, "m_digitEight");
-			this.m_digitEight.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitEight.controlID = null;
-			this.m_digitEight.HasBorder = true;
 			this.m_digitEight.Name = "m_digitEight";
-			this.m_digitEight.SuppressEnter = false;
-			this.m_digitEight.WordWrap = false;
 			// 
 			// m_digitSeven
 			// 
-			this.m_digitSeven.AcceptsReturn = false;
-			this.m_digitSeven.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitSeven, "m_digitSeven");
-			this.m_digitSeven.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitSeven.controlID = null;
-			this.m_digitSeven.HasBorder = true;
 			this.m_digitSeven.Name = "m_digitSeven";
-			this.m_digitSeven.SuppressEnter = false;
-			this.m_digitSeven.WordWrap = false;
 			// 
 			// m_digitSix
 			// 
-			this.m_digitSix.AcceptsReturn = false;
-			this.m_digitSix.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitSix, "m_digitSix");
-			this.m_digitSix.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitSix.controlID = null;
-			this.m_digitSix.HasBorder = true;
 			this.m_digitSix.Name = "m_digitSix";
-			this.m_digitSix.SuppressEnter = false;
-			this.m_digitSix.WordWrap = false;
 			// 
 			// m_digitFive
 			// 
-			this.m_digitFive.AcceptsReturn = false;
-			this.m_digitFive.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitFive, "m_digitFive");
-			this.m_digitFive.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitFive.controlID = null;
-			this.m_digitFive.HasBorder = true;
 			this.m_digitFive.Name = "m_digitFive";
-			this.m_digitFive.SuppressEnter = false;
-			this.m_digitFive.WordWrap = false;
 			// 
 			// m_digitFour
 			// 
-			this.m_digitFour.AcceptsReturn = false;
-			this.m_digitFour.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitFour, "m_digitFour");
-			this.m_digitFour.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitFour.controlID = null;
-			this.m_digitFour.HasBorder = true;
 			this.m_digitFour.Name = "m_digitFour";
-			this.m_digitFour.SuppressEnter = false;
-			this.m_digitFour.WordWrap = false;
 			// 
 			// m_digitThree
 			// 
-			this.m_digitThree.AcceptsReturn = false;
-			this.m_digitThree.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitThree, "m_digitThree");
-			this.m_digitThree.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitThree.controlID = null;
-			this.m_digitThree.HasBorder = true;
 			this.m_digitThree.Name = "m_digitThree";
-			this.m_digitThree.SuppressEnter = false;
-			this.m_digitThree.WordWrap = false;
 			// 
 			// m_digitTwo
 			// 
-			this.m_digitTwo.AcceptsReturn = false;
-			this.m_digitTwo.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitTwo, "m_digitTwo");
-			this.m_digitTwo.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitTwo.controlID = null;
-			this.m_digitTwo.HasBorder = true;
 			this.m_digitTwo.Name = "m_digitTwo";
-			this.m_digitTwo.SuppressEnter = false;
-			this.m_digitTwo.WordWrap = false;
 			// 
 			// m_digitOne
 			// 
-			this.m_digitOne.AcceptsReturn = false;
-			this.m_digitOne.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitOne, "m_digitOne");
-			this.m_digitOne.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitOne.controlID = null;
-			this.m_digitOne.HasBorder = true;
 			this.m_digitOne.Name = "m_digitOne";
-			this.m_digitOne.SuppressEnter = false;
-			this.m_digitOne.WordWrap = false;
 			// 
 			// m_digitZero
 			// 
-			this.m_digitZero.AcceptsReturn = false;
-			this.m_digitZero.AdjustStringHeight = true;
 			resources.ApplyResources(this.m_digitZero, "m_digitZero");
-			this.m_digitZero.BackColor = System.Drawing.SystemColors.Window;
-			this.m_digitZero.controlID = null;
-			this.m_digitZero.HasBorder = true;
 			this.m_digitZero.Name = "m_digitZero";
-			this.m_digitZero.SuppressEnter = false;
-			this.m_digitZero.WordWrap = false;
 			// 
 			// label11
 			// 
@@ -533,16 +454,6 @@ namespace SIL.FieldWorks.XWorks
 			this.customNumbersPanel.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitNine)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitEight)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitSeven)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitSix)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitFive)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitFour)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitThree)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitTwo)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitOne)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_digitZero)).EndInit();
 			this.homographStylePanel.ResumeLayout(false);
 			this.homographStylePanel.PerformLayout();
 			this.senseNumberStylePanel.ResumeLayout(false);
@@ -593,15 +504,15 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
-		private Common.Widgets.FwTextBox m_digitNine;
-		private Common.Widgets.FwTextBox m_digitEight;
-		private Common.Widgets.FwTextBox m_digitSeven;
-		private Common.Widgets.FwTextBox m_digitSix;
-		private Common.Widgets.FwTextBox m_digitFive;
-		private Common.Widgets.FwTextBox m_digitFour;
-		private Common.Widgets.FwTextBox m_digitThree;
-		private Common.Widgets.FwTextBox m_digitTwo;
-		private Common.Widgets.FwTextBox m_digitOne;
-		private Common.Widgets.FwTextBox m_digitZero;
+		private System.Windows.Forms.Label m_digitNine;
+		private System.Windows.Forms.Label m_digitEight;
+		private System.Windows.Forms.Label m_digitSeven;
+		private System.Windows.Forms.Label m_digitSix;
+		private System.Windows.Forms.Label m_digitFive;
+		private System.Windows.Forms.Label m_digitFour;
+		private System.Windows.Forms.Label m_digitThree;
+		private System.Windows.Forms.Label m_digitTwo;
+		private System.Windows.Forms.Label m_digitOne;
+		private System.Windows.Forms.Label m_digitZero;
 	}
 }

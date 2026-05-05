@@ -873,7 +873,6 @@ namespace SIL.FieldWorks.XWorks
 				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
 				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
 				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
-				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;

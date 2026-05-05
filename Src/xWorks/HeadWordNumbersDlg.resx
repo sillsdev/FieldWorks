@@ -123,10 +123,14 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 161</value>
+    <value>20, 198</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>287, 13</value>
+    <value>356, 16</value>
   </data>
   <data name="label5.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -150,10 +154,13 @@
     <value>True</value>
   </data>
   <data name="m_chkShowHomographNumInDict.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 21</value>
+    <value>8, 26</value>
+  </data>
+  <data name="m_chkShowHomographNumInDict.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_chkShowHomographNumInDict.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 17</value>
+    <value>152, 20</value>
   </data>
   <data name="m_chkShowHomographNumInDict.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -176,15 +183,17 @@
   <data name="m_chkShowSenseNumber.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_chkShowSenseNumber.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="m_chkShowSenseNumber.Location" type="System.Drawing.Point, System.Drawing">
-    <value>26, 40</value>
+    <value>35, 49</value>
+  </data>
+  <data name="m_chkShowSenseNumber.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_chkShowSenseNumber.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 17</value>
+    <value>119, 20</value>
   </data>
   <data name="m_chkShowSenseNumber.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -205,10 +214,13 @@
     <value>1</value>
   </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>120, 3</value>
+    <value>160, 4</value>
+  </data>
+  <data name="m_btnOk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="m_btnOk.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -229,10 +241,13 @@
     <value>2</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>201, 3</value>
+    <value>268, 4</value>
+  </data>
+  <data name="m_btnCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -253,10 +268,13 @@
     <value>1</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 3</value>
+    <value>376, 4</value>
+  </data>
+  <data name="m_btnHelp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -280,10 +298,13 @@
     <value>True</value>
   </data>
   <data name="m_radioBefore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 19</value>
+    <value>7, 23</value>
+  </data>
+  <data name="m_radioBefore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_radioBefore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 17</value>
+    <value>68, 20</value>
   </data>
   <data name="m_radioBefore.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -307,10 +328,13 @@
     <value>True</value>
   </data>
   <data name="m_radioAfter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>80, 20</value>
+    <value>107, 25</value>
+  </data>
+  <data name="m_radioAfter.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_radioAfter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 17</value>
+    <value>55, 20</value>
   </data>
   <data name="m_radioAfter.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -340,10 +364,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="dialogDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+    <value>4, 4</value>
+  </data>
+  <data name="dialogDescription.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="dialogDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>338, 46</value>
+    <value>451, 57</value>
   </data>
   <data name="dialogDescription.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -366,13 +393,16 @@
     <value>0</value>
   </data>
   <data name="m_configurationDescription.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 55</value>
+    <value>4, 69</value>
+  </data>
+  <data name="m_configurationDescription.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_configurationDescription.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_configurationDescription.Size" type="System.Drawing.Size, System.Drawing">
-    <value>338, 31</value>
+    <value>451, 38</value>
   </data>
   <data name="m_configurationDescription.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -397,10 +427,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>TopDown</value>
   </data>
   <data name="descriptionPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 3</value>
+    <value>8, 4</value>
+  </data>
+  <data name="descriptionPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="descriptionPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 97</value>
+    <value>480, 119</value>
   </data>
   <data name="descriptionPanel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -418,10 +451,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>0</value>
   </data>
   <data name="referenceNumberGroup.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 279</value>
+    <value>8, 345</value>
+  </data>
+  <data name="referenceNumberGroup.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="referenceNumberGroup.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="referenceNumberGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 61</value>
+    <value>360, 75</value>
   </data>
   <data name="referenceNumberGroup.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -448,10 +487,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="m_radioNone.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 20</value>
+    <value>204, 25</value>
+  </data>
+  <data name="m_radioNone.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_radioNone.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 17</value>
+    <value>61, 20</value>
   </data>
   <data name="m_radioNone.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -472,10 +514,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>0</value>
   </data>
   <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 106</value>
+    <value>8, 131</value>
+  </data>
+  <data name="groupBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="groupBox1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 44</value>
+    <value>360, 54</value>
   </data>
   <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -502,10 +550,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>RightToLeft</value>
   </data>
   <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 507</value>
+    <value>8, 624</value>
+  </data>
+  <data name="buttonLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 31</value>
+    <value>480, 38</value>
   </data>
   <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
@@ -529,22 +580,28 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_digitNine.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitNine.Location" type="System.Drawing.Point, System.Drawing">
-    <value>273, 31</value>
+    <value>364, 39</value>
+  </data>
+  <data name="m_digitNine.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitNine.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 23</value>
+    <value>33, 27</value>
   </data>
   <data name="m_digitNine.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
+  </data>
+  <data name="m_digitNine.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitNine.Name" xml:space="preserve">
     <value>m_digitNine</value>
   </data>
   <data name="&gt;&gt;m_digitNine.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitNine.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -555,23 +612,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitEight.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitEight.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitEight.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitEight.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 31</value>
+    <value>324, 39</value>
+  </data>
+  <data name="m_digitEight.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitEight.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitEight.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
+  </data>
+  <data name="m_digitEight.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitEight.Name" xml:space="preserve">
     <value>m_digitEight</value>
   </data>
   <data name="&gt;&gt;m_digitEight.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitEight.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -582,23 +648,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitSeven.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitSeven.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitSeven.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitSeven.Location" type="System.Drawing.Point, System.Drawing">
-    <value>213, 31</value>
+    <value>284, 39</value>
+  </data>
+  <data name="m_digitSeven.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitSeven.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitSeven.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
+  </data>
+  <data name="m_digitSeven.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitSeven.Name" xml:space="preserve">
     <value>m_digitSeven</value>
   </data>
   <data name="&gt;&gt;m_digitSeven.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitSeven.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -609,23 +684,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitSix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitSix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitSix.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitSix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>183, 31</value>
+    <value>244, 39</value>
+  </data>
+  <data name="m_digitSix.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitSix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitSix.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
+  </data>
+  <data name="m_digitSix.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitSix.Name" xml:space="preserve">
     <value>m_digitSix</value>
   </data>
   <data name="&gt;&gt;m_digitSix.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitSix.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -636,23 +720,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitFive.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitFive.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitFive.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitFive.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 31</value>
+    <value>204, 39</value>
+  </data>
+  <data name="m_digitFive.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitFive.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitFive.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
+  </data>
+  <data name="m_digitFive.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitFive.Name" xml:space="preserve">
     <value>m_digitFive</value>
   </data>
   <data name="&gt;&gt;m_digitFive.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitFive.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -663,23 +756,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitFour.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitFour.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitFour.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitFour.Location" type="System.Drawing.Point, System.Drawing">
-    <value>123, 31</value>
+    <value>164, 39</value>
+  </data>
+  <data name="m_digitFour.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitFour.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitFour.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
+  </data>
+  <data name="m_digitFour.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitFour.Name" xml:space="preserve">
     <value>m_digitFour</value>
   </data>
   <data name="&gt;&gt;m_digitFour.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitFour.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -690,23 +792,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitThree.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitThree.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitThree.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitThree.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 31</value>
+    <value>124, 39</value>
+  </data>
+  <data name="m_digitThree.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitThree.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitThree.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
+  </data>
+  <data name="m_digitThree.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitThree.Name" xml:space="preserve">
     <value>m_digitThree</value>
   </data>
   <data name="&gt;&gt;m_digitThree.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitThree.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -717,23 +828,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitTwo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitTwo.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitTwo.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitTwo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>63, 31</value>
+    <value>84, 39</value>
+  </data>
+  <data name="m_digitTwo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitTwo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitTwo.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
+  </data>
+  <data name="m_digitTwo.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitTwo.Name" xml:space="preserve">
     <value>m_digitTwo</value>
   </data>
   <data name="&gt;&gt;m_digitTwo.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitTwo.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -744,23 +864,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitOne.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitOne.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitOne.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitOne.Location" type="System.Drawing.Point, System.Drawing">
-    <value>33, 31</value>
+    <value>44, 39</value>
+  </data>
+  <data name="m_digitOne.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitOne.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitOne.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
+  </data>
+  <data name="m_digitOne.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitOne.Name" xml:space="preserve">
     <value>m_digitOne</value>
   </data>
   <data name="&gt;&gt;m_digitOne.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitOne.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -771,23 +900,32 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
   <data name="m_digitZero.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_digitZero.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="m_digitZero.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
+    <value>Segoe UI, 7.8pt</value>
   </data>
   <data name="m_digitZero.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 31</value>
+    <value>4, 39</value>
+  </data>
+  <data name="m_digitZero.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_digitZero.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 23</value>
+    <value>32, 27</value>
   </data>
   <data name="m_digitZero.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
+  </data>
+  <data name="m_digitZero.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
   </data>
   <data name="&gt;&gt;m_digitZero.Name" xml:space="preserve">
     <value>m_digitZero</value>
   </data>
   <data name="&gt;&gt;m_digitZero.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=8.3.5.25382, Culture=neutral, PublicKeyToken=null</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_digitZero.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -805,10 +943,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
-    <value>273, 0</value>
+    <value>364, 0</value>
+  </data>
+  <data name="label11.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 28</value>
+    <value>33, 35</value>
   </data>
   <data name="label11.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -841,10 +982,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
-    <value>243, 0</value>
+    <value>324, 0</value>
+  </data>
+  <data name="label10.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label10.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -877,10 +1021,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>213, 0</value>
+    <value>284, 0</value>
+  </data>
+  <data name="label9.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label9.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -913,10 +1060,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>183, 0</value>
+    <value>244, 0</value>
+  </data>
+  <data name="label8.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label8.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -949,10 +1099,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>153, 0</value>
+    <value>204, 0</value>
+  </data>
+  <data name="label7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label7.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -985,10 +1138,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
-    <value>123, 0</value>
+    <value>164, 0</value>
+  </data>
+  <data name="label6.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label6.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1021,10 +1177,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 0</value>
+    <value>124, 0</value>
+  </data>
+  <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1057,10 +1216,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>63, 0</value>
+    <value>84, 0</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1093,10 +1255,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>33, 0</value>
+    <value>44, 0</value>
+  </data>
+  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1126,10 +1291,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 0</value>
+    <value>4, 0</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 28</value>
+    <value>32, 35</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1153,13 +1321,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>19</value>
   </data>
   <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 75</value>
+    <value>9, 92</value>
+  </data>
+  <data name="tableLayoutPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 57</value>
+    <value>401, 70</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1180,19 +1351,22 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_digitNine" Row="1" RowSpan="1" Column="9" ColumnSpan="1" /&gt;&lt;Control Name="m_digitEight" Row="1" RowSpan="1" Column="8" ColumnSpan="1" /&gt;&lt;Control Name="m_digitSeven" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="m_digitSix" Row="1" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="m_digitFive" Row="1" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="m_digitFour" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="m_digitThree" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="m_digitTwo" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="m_digitOne" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_digitZero" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="0" RowSpan="1" Column="9" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="0" RowSpan="1" Column="8" ColumnSpan="1" /&gt;&lt;Control Name="label9" Row="0" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="label7" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="label6" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,10,Percent,10,Percent,10,Percent,10,Percent,10,Percent,10,Percent,10,Percent,10,Percent,10,Percent,10" /&gt;&lt;Rows Styles="Percent,50,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="m_customNumbersLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 45</value>
+    <value>8, 55</value>
+  </data>
+  <data name="m_customNumbersLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_customNumbersLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_customNumbersLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 38</value>
+    <value>461, 47</value>
   </data>
   <data name="m_customNumbersLabel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="m_customNumbersLabel.Text" xml:space="preserve">
-    <value>To use characters other than 0-9 for homograph and sense numbers enter the characters here:</value>
+    <value>If the writing system uses custom numbers, they will be displayed below. Custom numbers can be specified in writing system configuration.</value>
   </data>
   <data name="&gt;&gt;m_customNumbersLabel.Name" xml:space="preserve">
     <value>m_customNumbersLabel</value>
@@ -1207,10 +1381,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>1</value>
   </data>
   <data name="m_writingSystemCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 18</value>
+    <value>7, 22</value>
+  </data>
+  <data name="m_writingSystemCombo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="m_writingSystemCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 21</value>
+    <value>244, 24</value>
   </data>
   <data name="m_writingSystemCombo.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1231,10 +1408,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>True</value>
   </data>
   <data name="m_writingSystemLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 2</value>
+    <value>4, 2</value>
+  </data>
+  <data name="m_writingSystemLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="m_writingSystemLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>246, 13</value>
+    <value>310, 16</value>
   </data>
   <data name="m_writingSystemLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1255,10 +1435,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>3</value>
   </data>
   <data name="customNumbersPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 346</value>
+    <value>8, 428</value>
+  </data>
+  <data name="customNumbersPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="customNumbersPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 138</value>
+    <value>455, 170</value>
   </data>
   <data name="customNumbersPanel.TabIndex" type="System.Int32, mscorlib">
     <value>22</value>
@@ -1276,10 +1459,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>4</value>
   </data>
   <data name="_homographStyleButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>195, 29</value>
+    <value>260, 36</value>
+  </data>
+  <data name="_homographStyleButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="_homographStyleButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 21</value>
+    <value>100, 26</value>
   </data>
   <data name="_homographStyleButton.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1300,13 +1486,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>0</value>
   </data>
   <data name="styleLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+    <value>4, 4</value>
+  </data>
+  <data name="styleLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="styleLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="styleLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>335, 24</value>
+    <value>447, 30</value>
   </data>
   <data name="styleLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1327,10 +1516,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>1</value>
   </data>
   <data name="_homographStyleCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 29</value>
+    <value>4, 36</value>
+  </data>
+  <data name="_homographStyleCombo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="_homographStyleCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>186, 21</value>
+    <value>247, 24</value>
   </data>
   <data name="_homographStyleCombo.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1348,10 +1540,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>2</value>
   </data>
   <data name="homographStylePanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 156</value>
+    <value>8, 193</value>
+  </data>
+  <data name="homographStylePanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="homographStylePanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 57</value>
+    <value>455, 70</value>
   </data>
   <data name="homographStylePanel.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -1372,10 +1567,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>NoControl</value>
   </data>
   <data name="_senseNumberStyleBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>195, 27</value>
+    <value>260, 33</value>
+  </data>
+  <data name="_senseNumberStyleBtn.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="_senseNumberStyleBtn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 21</value>
+    <value>100, 26</value>
   </data>
   <data name="_senseNumberStyleBtn.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -1396,13 +1594,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>0</value>
   </data>
   <data name="_senseStyleLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 0</value>
+    <value>4, 0</value>
+  </data>
+  <data name="_senseStyleLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="_senseStyleLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_senseStyleLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>335, 24</value>
+    <value>447, 30</value>
   </data>
   <data name="_senseStyleLabel.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -1423,10 +1624,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>1</value>
   </data>
   <data name="_senseStyleCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 27</value>
+    <value>4, 33</value>
+  </data>
+  <data name="_senseStyleCombo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="_senseStyleCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>186, 21</value>
+    <value>247, 24</value>
   </data>
   <data name="_senseStyleCombo.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -1444,10 +1648,13 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>2</value>
   </data>
   <data name="senseNumberStylePanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 219</value>
+    <value>8, 271</value>
+  </data>
+  <data name="senseNumberStylePanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="senseNumberStylePanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 54</value>
+    <value>455, 66</value>
   </data>
   <data name="senseNumberStylePanel.TabIndex" type="System.Int32, mscorlib">
     <value>23</value>
@@ -1471,16 +1678,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>0, 0</value>
   </data>
   <data name="mainLayoutTable.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
+    <value>7, 6, 7, 6</value>
   </data>
   <data name="mainLayoutTable.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 0, 0, 0</value>
+    <value>4, 0, 0, 0</value>
   </data>
   <data name="mainLayoutTable.RowCount" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="mainLayoutTable.Size" type="System.Drawing.Size, System.Drawing">
-    <value>369, 541</value>
+    <value>492, 666</value>
   </data>
   <data name="mainLayoutTable.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -1504,13 +1711,16 @@ Example-string DO NOT LOCALIZE THIS STRING</value>
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>8, 16</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>369, 541</value>
+    <value>492, 666</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>385, 580</value>
+    <value>507, 703</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Configure Headword Numbers</value>

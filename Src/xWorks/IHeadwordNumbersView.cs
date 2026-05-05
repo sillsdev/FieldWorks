@@ -16,7 +16,6 @@ namespace SIL.FieldWorks.XWorks
 	public interface IHeadwordNumbersView
 	{
 		event EventHandler RunStylesDialog;
-		event EventHandler CustomDigitsChanged;
 		bool HomographBefore { get; set; }
 		bool ShowHomograph { get; set; }
 		bool ShowHomographOnCrossRef { get; set; }
@@ -26,6 +25,5 @@ namespace SIL.FieldWorks.XWorks
 		string HomographWritingSystem { get; set; }
 		IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { set; }
 		IEnumerable<string> CustomDigits { get; set; }
-		void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory);
 	}
 }
