@@ -310,6 +310,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			OnLayout(new LayoutEventArgs(this, string.Empty));
 		}
 
+		/// <summary>
+		/// Force layout with a specific width, useful for headless testing.
+		/// </summary>
+		public void ForceLayout(int width)
+		{
+			CheckDisposed();
+			if (m_rootb != null && m_graphicsManager != null)
+			{
+				using (new HoldGraphics(this))
+				{
+					m_rootb.Layout(m_graphicsManager.VwGraphics, width);
+				}
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Add English paragraphs
@@ -482,6 +497,22 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 
 			MakeRoot(m_hvoRoot, m_flid); //, DummyBasicViewVc.kflidTestDummy);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to provide width even if control is not fully realized/visible (headless tests).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override int GetAvailWidth(IVwRootBox prootb)
+		{
+			// If base returns 0 (likely due to ClientRectangle.Width=0 in headless mode),
+			// try to return the explicit Width property.
+			int width = base.GetAvailWidth(prootb);
+			if (width <= 0 && Width > 0)
+				return Width;
+
+			return width;
 		}
 
 		/// ------------------------------------------------------------------------------------
