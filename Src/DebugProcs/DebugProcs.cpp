@@ -677,11 +677,14 @@ void __cdecl SilAssert (
 	else // !g_fShowMessageBox
 	{
 		// if we don't show a message box we should at least abort (and output the assertion
-		// text if we haven't done that already). Note that we don't call _exit(3) as above
-		// so that we can trap the signal and ignore it in unit tests
+		// text if we haven't done that already). In FW_TEST_MODE we must not continue after
+		// a post-summary assert even if SIGABRT is ignored or intercepted by the native test
+		// runner, so force process termination if raise(SIGABRT) returns.
 		if (g_ReportHook)
 			OutputDebugString(assertbuf);
 		raise(SIGABRT);
+		if (IsTestModeEnabled())
+			_exit(3);
 	}
 
 	/* Ignore: continue execution */

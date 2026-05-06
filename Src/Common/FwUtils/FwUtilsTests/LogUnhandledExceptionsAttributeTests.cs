@@ -57,5 +57,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(exception.Message, Does.Contain("second failure"));
 			Assert.That(exception.Message, Does.Contain("fails deterministically"));
 		}
+
+		[Test]
+		public void OnUnobservedTaskException_MarksExceptionObserved()
+		{
+			var aggregateException = new AggregateException(new InvalidOperationException("boom"));
+			var eventArgs = new UnobservedTaskExceptionEventArgs(aggregateException);
+
+			LogUnhandledExceptionsAttribute.OnUnobservedTaskException(this, eventArgs);
+
+			Assert.That(eventArgs.Observed, Is.True);
+		}
 	}
 }
