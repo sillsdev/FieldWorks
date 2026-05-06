@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>RenderComparisonTests</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.Common.RenderVerification.RenderComparisonTests</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseUiIndependentTestAssemblyInfo>true</UseUiIndependentTestAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="HarfBuzzSharp" PrivateAssets="All" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.Win32" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" PrivateAssets="All" />
+    <PackageReference Include="SkiaSharp" PrivateAssets="All" />
+    <PackageReference Include="SkiaSharp.HarfBuzz" PrivateAssets="All" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FwUtils\FwUtilsTests\FwUtilsTests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

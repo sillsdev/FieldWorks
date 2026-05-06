@@ -5,6 +5,7 @@
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -53,6 +54,37 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// unspecified font and the user-defined character style specifies it.
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
+		[Test]
+		public void SaveToInfo_OpenTypeFeatures_RoundTripsThroughFontAttributes()
+		{
+			var charStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LangProject.StylesOC.Add(charStyle);
+			charStyle.Context = ContextValues.Text;
+			charStyle.Function = FunctionValues.Prose;
+			charStyle.Structure = StructureValues.Body;
+			charStyle.Type = StyleType.kstCharacter;
+			var basedOn = new StyleInfo(charStyle);
+			var charStyleInfo = new StyleInfo("OpenType Char Style", basedOn,
+				StyleType.kstCharacter, Cache);
+			var fontInfo = charStyleInfo.FontInfoForWs(-1);
+			fontInfo.m_fontName.ExplicitValue = "Times New Roman";
+			fontInfo.m_fontSize.ExplicitValue = 12000;
+			fontInfo.m_bold.ExplicitValue = false;
+			fontInfo.m_italic.ExplicitValue = false;
+			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvOff;
+			fontInfo.m_offset.ExplicitValue = 0;
+			fontInfo.m_fontColor.ExplicitValue = Color.Black;
+			fontInfo.m_backColor.ExplicitValue = Color.Empty;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_underlineColor.ExplicitValue = Color.Empty;
+			fontInfo.m_features.ExplicitValue = " smcp = 1, kern=0 ";
+
+			m_fontTab.UpdateForStyle(charStyleInfo, -1);
+			m_fontTab.SaveToInfo(charStyleInfo);
+
+			Assert.That(charStyleInfo.FontInfoForWs(-1).m_features.Value, Is.EqualTo("kern=0,smcp=1"));
+		}
+
 		[Test]
 		public void UserDefinedCharacterStyle_ExplicitFontName()
 		{

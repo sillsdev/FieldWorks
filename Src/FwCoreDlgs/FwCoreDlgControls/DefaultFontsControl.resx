@@ -193,7 +193,7 @@
 	<value>False</value>
   </data>
   <data name="m_defaultFontFeaturesButton.HelpString" xml:space="preserve">
-	<value>Allows user to specify font features, when available in Graphite fonts.</value>
+	<value>Allows user to specify font features when available in the selected font.</value>
   </data>
   <data name="m_defaultFontFeaturesButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>
@@ -275,7 +275,7 @@
 	<value>4</value>
   </data>
   <data name="m_graphiteGroupBox.Text" xml:space="preserve">
-	<value>Graphite Font Options</value>
+	<value>Font Options</value>
   </data>
   <data name="&gt;&gt;m_graphiteGroupBox.Name" xml:space="preserve">
 	<value>m_graphiteGroupBox</value>

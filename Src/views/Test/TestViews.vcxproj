@@ -418,6 +418,9 @@
   <ItemGroup>
     <None Include="testViews.mak" />
     <None Include="NiceGuy.bmp" />
+    <None Include="TestData\Fonts\CharisSIL-5.000\CharisSIL-R.ttf" />
+    <None Include="TestData\Fonts\CharisSIL-5.000\OFL.txt" />
+    <None Include="TestData\Fonts\CharisSIL-5.000\README.txt" />
   </ItemGroup>
 
   <!-- Resource file -->
@@ -432,6 +435,18 @@
     <Message Text="Generating Collection.cpp from test headers..." Importance="high" />
     <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h Collection.cpp"
           WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
+  <ItemGroup>
+    <CharisSilTestFont Include="$(ProjectDir)TestData\Fonts\CharisSIL-5.000\CharisSIL-R.ttf" />
+    <CharisSilTestFont Include="$(ProjectDir)TestData\Fonts\CharisSIL-5.000\OFL.txt" />
+    <CharisSilTestFont Include="$(ProjectDir)TestData\Fonts\CharisSIL-5.000\README.txt" />
+  </ItemGroup>
+
+  <Target Name="CopyCharisSilTestFont" AfterTargets="Build">
+    <Copy SourceFiles="@(CharisSilTestFont)"
+          DestinationFolder="$(OutDir)TestData\Fonts\CharisSIL-5.000"
+          SkipUnchangedFiles="true" />
   </Target>
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
