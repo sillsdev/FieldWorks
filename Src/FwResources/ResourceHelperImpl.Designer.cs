@@ -95,7 +95,6 @@ namespace SIL.FieldWorks.Resources
 			this.m_imgLst11x12.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_imgLst11x12.ImageStream")));
 			this.m_imgLst11x12.TransparentColor = System.Drawing.Color.Fuchsia;
 			this.m_imgLst11x12.Images.SetKeyName(0, "");
-			this.m_imgLst11x12.Images.SetKeyName(1, "InterlinPlayArrow.bmp");
 			// 
 			// m_imgLst12x12
 			// 

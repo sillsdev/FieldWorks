@@ -425,6 +425,27 @@ namespace TestViews
 			unitpp::assert_true("should have found a box", pboxFound != NULL);
 		}
 
+		void testConstructAndLayoutUpdatesCachedDpiWhenWidthIsUnchanged()
+		{
+			CreateBoringStrings();
+			CreateTestStTexts(2);
+			SetupRootWithoutMargins();
+
+			const int kdxpLayoutWidth = 200;
+			CheckHr(m_qvg32->put_XUnitsPerInch(96));
+			CheckHr(m_qvg32->put_YUnitsPerInch(96));
+			m_qlay->ConstructAndLayout(m_qvg32, kdxpLayoutWidth);
+			unitpp::assert_eq("initial layout should cache X DPI", 96, m_qlay->DpiSrc().x);
+			unitpp::assert_eq("initial layout should cache Y DPI", 96, m_qlay->DpiSrc().y);
+
+			CheckHr(m_qvg32->put_XUnitsPerInch(144));
+			CheckHr(m_qvg32->put_YUnitsPerInch(144));
+			m_qlay->ConstructAndLayout(m_qvg32, kdxpLayoutWidth);
+
+			unitpp::assert_eq("same-width ConstructAndLayout should refresh X DPI", 144, m_qlay->DpiSrc().x);
+			unitpp::assert_eq("same-width ConstructAndLayout should refresh Y DPI", 144, m_qlay->DpiSrc().y);
+		}
+
 		void testFindPageBreakStuffNoMargins()
 		{
 			CreateBoringStrings();

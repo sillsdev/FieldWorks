@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<UserLexiconSettings>
+  <WritingSystems>
+    <WritingSystem id="en">
+      <LocalKeyboard>en-US_English</LocalKeyboard>
+      <DefaultFontName>Times New Roman</DefaultFontName>
+    </WritingSystem>
+    <WritingSystem id="nlv">
+      <LocalKeyboard>en-US_English</LocalKeyboard>
+      <DefaultFontName>Charis SIL</DefaultFontName>
+    </WritingSystem>
+  </WritingSystems>
+</UserLexiconSettings>

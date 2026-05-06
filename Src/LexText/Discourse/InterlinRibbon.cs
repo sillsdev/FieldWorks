@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void AddDecorator()
 		{
-			m_rootb.DataAccess = Decorator;
+			SetRootBoxDataAccess(Decorator);
 		}
 
 		public override void SetRoot(int hvoStText)
@@ -261,8 +261,8 @@ namespace SIL.FieldWorks.Discourse
 			if (RootBox == null)
 				return;
 			SetRootInternal(hvoStText);
-			ChangeOrMakeRoot(HvoRoot, Vc, kfragRibbonWordforms, StyleSheet);
 			AddDecorator();
+			ChangeOrMakeRoot(HvoRoot, Vc, kfragRibbonWordforms, StyleSheet);
 			MakeInitialSelection();
 		}
 
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.Discourse
 			Vc.LineChoices = LineChoices;
 			SetRootInternal(HvoRoot);
 
-			m_rootb.DataAccess = Decorator;
+			SetRootBoxDataAccess(Decorator);
 			m_rootb.SetRootObject(HvoRoot, Vc, kfragRibbonWordforms, this.StyleSheet);
 
 			m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.

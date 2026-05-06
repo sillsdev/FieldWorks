@@ -85,15 +85,29 @@
     }
   ],
   "tasks": [
+    {
+      "label": "Test: RenderBaselineTests",
+      "type": "shell",
+      "command": ".\\test.ps1 -TestProject \"Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj\" -TestFilter \"FullyQualifiedName~RenderBaselineTests\"",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
     // ==================== Setup Tasks ====================
     {
       "label": "Setup: Colorize Worktree",
       "type": "shell",
       "command": "./scripts/Setup-WorktreeColor.ps1 -VSCodeWorkspaceFile \"${workspaceFile}\"",
-      "detail": "Sets a unique window color from a deterministic palette slot",
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
+      "detail": "Windows only: sets a unique window color from a deterministic palette slot",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -216,7 +230,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build FieldWorks (auto-detects worktree)",
+      "detail": "Windows only: build FieldWorks (auto-detects worktree)",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -230,7 +244,21 @@
       "type": "shell",
       "command": "./build.ps1 -Configuration Release",
       "group": "build",
-      "detail": "Build FieldWorks in Release configuration",
+      "detail": "Windows only: build FieldWorks in Release configuration",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build Tests",
+      "type": "shell",
+      "command": "./build.ps1 -BuildTests",
+      "group": "build",
+      "detail": "Windows only: build FieldWorks including test projects (required for ReSharper Test Explorer)",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -249,7 +277,7 @@
         "kind": "test",
         "isDefault": true
       },
-      "detail": "Run all tests (auto-detects worktree). See specs/007-test-modernization-vstest/IGNORED_TESTS.md for the tracked skip/ignore inventory.",
+      "detail": "Windows only execution. On Linux/macOS this exits with a not-supported message. See specs/007-test-modernization-vstest/IGNORED_TESTS.md for the tracked skip/ignore inventory.",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -263,7 +291,7 @@
       "type": "shell",
       "command": "./test.ps1 -ListTests -NoBuild -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
-      "detail": "List tests via test.ps1 (requires existing built test assemblies). For known skips/ignores see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "detail": "Windows only execution. On Linux/macOS this exits with a not-supported message. For known skips/ignores see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -277,7 +305,7 @@
       "type": "shell",
       "command": "./test.ps1 -TestFilter '${input:testFilter}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
-      "detail": "Run tests with a filter expression. If failures correspond to known ignores/skips, see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "detail": "Windows only execution. On Linux/macOS this exits with a not-supported message. If failures correspond to known ignores/skips, see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -291,7 +319,7 @@
       "type": "shell",
       "command": "./test.ps1 -TestProject '${input:testProject}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
-      "detail": "Run tests from a specific project. Track known skips/ignores in specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "detail": "Windows only execution. On Linux/macOS this exits with a not-supported message. Track known skips/ignores in specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
       "options": {
         "shell": {
           "executable": "powershell.exe",

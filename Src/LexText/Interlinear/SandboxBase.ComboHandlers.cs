@@ -2083,13 +2083,7 @@ namespace SIL.FieldWorks.IText
 				ILexEntry le;
 				IMoForm allomorph;
 				ILexSense sense;
-				bool hasLexEntry = GetLexEntry() != null;
 				CreateNewEntry(false, out le, out allomorph, out sense);
-				if (!hasLexEntry && GetLexEntry() != null)
-				{
-					// Add "Edit Lexical Entry...".
-					SetupCombo();
-				}
 			}
 
 			internal void CreateNewEntry(bool fCreateNow, out ILexEntry le, out IMoForm allomorph, out ILexSense sense)
@@ -2636,15 +2630,7 @@ namespace SIL.FieldWorks.IText
 			private ILexEntry GetLexEntry()
 			{
 				IWfiMorphBundle bundle = m_caches.RealObject(m_hvoMorph) as IWfiMorphBundle;
-				if (bundle?.MorphRA?.Owner is ILexEntry)
-				{
-					return bundle.MorphRA.Owner as ILexEntry;
-				}
-				if (m_sandbox.m_hvoLastSelEntry != 0)
-				{
-					return m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_sandbox.m_hvoLastSelEntry);
-				}
-				return null;
+				return bundle?.MorphRA?.Owner as ILexEntry;
 			}
 			private void OnSelectAllomorphOf(object sender, EventArgs args)
 			{

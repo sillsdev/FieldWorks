@@ -341,29 +341,6 @@
     <value>Nt </value>
     <comment>short for Note; there is a trailing space</comment>
   </data>
-  <data name="ksMedia" xml:space="preserve">
-    <value>Media</value>
-  </data>
-  <data name="ksMediaNotFound" xml:space="preserve">
-    <value>Media not found: check Info tab for full file path</value>
-    <comment>Used when a media filepath is specified, but the file doesn't exist. Ensure translation of "Info" matches translation used for the tab label.</comment>
-  </data>
-  <data name="ksNoMedia" xml:space="preserve">
-    <value>No Media</value>
-    <comment>Used when no there is no media filepath specified.</comment>
-  </data>
-  <data name="ksBeginTimeOffset" xml:space="preserve">
-    <value>Begin</value>
-  </data>
-  <data name="ksEndTimeOffset" xml:space="preserve">
-    <value>End</value>
-  </data>
-  <data name="ksSpeaker" xml:space="preserve">
-    <value>Speaker</value>
-  </data>
-  <data name="ksFile" xml:space="preserve">
-    <value>File</value>
-  </data>
   <data name="ksPhaseButton" xml:space="preserve">
     <value>Ph{0} {1}</value>
     <comment>{0} is phase number; {1} is either "Process" or "Import"</comment>

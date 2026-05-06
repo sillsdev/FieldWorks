@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>RenderVerification</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.Common.RenderVerification</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="SIL.Core" />
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.WritingSystems" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../RenderTestInfrastructure/RenderTestInfrastructure.csproj" />
+    <!-- DetailControls brings the full DataTree/Slice stack plus transitive deps
+         (XMLViews, xCore, Framework, Widgets, FwControls, RootSite, SimpleRootSite, ViewsInterfaces) -->
+    <ProjectReference Include="../Controls/DetailControls/DetailControls.csproj" />
+    <ProjectReference Include="../FwUtils/FwUtils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CompositeViewCapture.cs" />
+    <Compile Include="DataTreeRenderHarness.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

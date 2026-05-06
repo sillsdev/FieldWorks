@@ -9,12 +9,102 @@
 using System;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
+using System.Collections.Generic;
 using System.Text;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+	#region class DummyScrInventory
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Dummy class because NMock can't generate a dynamic mock for this interface. Grr...
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	internal class DummyScrInventory : IScrCheckInventory
+	{
+		internal List<TextTokenSubstring> m_references;
+		#region IScrCheckInventory Members
+
+		public List<TextTokenSubstring> GetReferences(IEnumerable<ITextToken> tokens, string desiredKey)
+		{
+			return m_references;
+		}
+
+		public string InvalidItems
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public string InventoryColumnHeader
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public void Save()
+		{
+			throw new NotImplementedException();
+		}
+
+		public string ValidItems
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
+
+		#region IScriptureCheck Members
+
+		public void Check(IEnumerable<ITextToken> toks, RecordErrorHandler record)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string CheckGroup
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public Guid CheckId
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string CheckName
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Description
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public float RelativeOrder
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		#endregion
+	}
+	#endregion
+
 	#region class CharContextCtrlTests
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

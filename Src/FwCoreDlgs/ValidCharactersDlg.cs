@@ -700,6 +700,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			contextCtrl.Initialize(cache, wsContainer, m_ws, m_app, fnt, gridCharInventory);
 			contextCtrl.Dock = DockStyle.Fill;
+			contextCtrl.CheckToRun = CharContextCtrl.CheckType.Characters;
+
 			colChar.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
 			gridCharInventory.AutoGenerateColumns = false;
 

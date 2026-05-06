@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ldml>
+  <identity>
+    <version number="" />
+    <generation date="2026-04-07T14:37:22Z" />
+    <language type="nlv" />
+  </identity>
+  <layout>
+    <orientation>
+      <characterOrder>left-to-right</characterOrder>
+    </orientation>
+  </layout>
+  <collations>
+    <defaultCollation>standard</defaultCollation>
+    <collation type="standard" />
+  </collations>
+  <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+    <sil:external-resources>
+      <sil:font name="Charis SIL" />
+    </sil:external-resources>
+  </special>
+</ldml>

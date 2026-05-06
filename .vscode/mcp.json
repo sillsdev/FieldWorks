@@ -20,6 +20,19 @@
       "env": {
         "SERENA_API_KEY": "${env:SERENA_API_KEY}"
       }
+    },
+    "winforms-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@fnrhombus/winforms-mcp"
+      ],
+      "env": {
+        "HEADLESS": "true",
+        "TFM": "net48",
+        "TELEMETRY_OPTOUT": "true"
+      }
     }
   }
 }

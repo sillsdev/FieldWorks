@@ -17,7 +17,9 @@
 
 	<!-- Use Update for root-pinned packages and Include for build-only packages absent from the root CPM file. -->
 	<ItemGroup Label="Build Tool Package Versions">
-		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.4.0" />
+		<!-- Keep FwBuildTasks on the 9.x-compatible MSBuild utilities line; 18.4.x pulls System.Collections.Immutable 10.x. -->
+		<PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.3.3" />
+		<PackageVersion Include="System.Collections.Immutable" Version="9.0.13" />
 		<PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
 		<PackageVersion Update="NUnit3TestAdapter" Version="5.2.0" />
 		<PackageVersion Include="SIL.BuildTasks" Version="3.2.0" />

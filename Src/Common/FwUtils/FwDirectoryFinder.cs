@@ -472,6 +472,43 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the basic editorial checks DLL. Note that this is currently the ScrChecks DLL,
+		/// but if we ever split this DLL to separate Scripture-specific checks from more
+		/// generic checks that are really based on the WS and could be used to check any text,
+		/// then this property should be made to return the DLL containing the punctuation
+		/// patterns and characters checks.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string BasicEditorialChecksDll
+		{
+			get
+			{
+#if RELEASE
+				try
+				{
+#endif
+					string directory = EditorialChecksDirectory;
+					string checksDll = Path.Combine(directory, "ScrChecks.dll");
+					if (!File.Exists(checksDll))
+					{
+						string msg = ResourceHelper.GetResourceString(
+							"kstidUnableToFindEditorialChecks"
+						);
+						throw new ApplicationException(string.Format(msg, directory));
+					}
+					return checksDll;
+#if RELEASE
+				}
+				catch (ApplicationException e)
+				{
+					throw new InstallationException(e);
+				}
+#endif
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the dir where templates are installed
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

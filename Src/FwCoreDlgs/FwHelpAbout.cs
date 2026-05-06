@@ -249,23 +249,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblFwVersion.Text = viProvider.MajorVersion;
 
 				// List the copyright information
-				try
+				var acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				var list = acknowledgements.Keys.ToList();
+				list.Sort();
+				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
+				foreach (var key in list)
 				{
-					var acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
-					var list = acknowledgements.Keys.ToList();
-					list.Sort();
-					var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
-					foreach (var key in list)
-					{
-						text += "\r\n" + "\r\n" + key + "\r\n" + acknowledgements[key].Copyright + " " + acknowledgements[key].Url + " " + acknowledgements[key].LicenseUrl;
-					}
-					txtCopyright.Text = text;
+					text += "\r\n" + "\r\n" + key + "\r\n" + acknowledgements[key].Copyright + " " + acknowledgements[key].Url + " " + acknowledgements[key].LicenseUrl;
 				}
-				catch (Exception ex)
-				{
-					txtCopyright.Text = "Error loading acknowledgements.";
-					Console.WriteLine("HelpAbout error loading acknowledgements: " + ex);
-				}
+				txtCopyright.Text = text;
 
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
