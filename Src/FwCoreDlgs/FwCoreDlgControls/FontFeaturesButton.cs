@@ -3,9 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -36,11 +38,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private System.ComponentModel.IContainer components = null;
 		private string m_fontName; // The font for which we are editing the features.
 		private string m_fontFeatures; // The font feature string stored in the writing system.
-		private IRenderingFeatures m_featureEngine;
+		private IFontFeatureProvider m_featureProvider;
 		private ILgWritingSystemFactory m_wsf;
 		private int[] m_values;	// The actual list of values we're editing.
 		private int[] m_ids;		// The corresponding ids.
 		private bool m_isGraphiteFont;
+		private bool m_hasFontFeatures;
+		private bool m_useGraphiteFeatures = true;
 		#endregion
 
 		#region Constructor and dispose stuff
@@ -109,6 +113,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public Graphics m_graphics;
 			/// <summary></summary>
 			private IntPtr m_hdc;
+
+			public IntPtr Hdc
+			{
+				get { return m_hdc; }
+			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -279,7 +288,40 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			set
 			{
 				CheckDisposed();
-				m_fontFeatures = value;
+				m_fontFeatures = FontFeatureSettings.Normalize(value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether Graphite feature discovery should be preferred
+		/// when the current font supports both Graphite and OpenType features.
+		/// </summary>
+		public bool UseGraphiteFeatures
+		{
+			get
+			{
+				CheckDisposed();
+				return m_useGraphiteFeatures;
+			}
+			set
+			{
+				CheckDisposed();
+				if (m_useGraphiteFeatures == value)
+					return;
+				m_useGraphiteFeatures = value;
+				SetupFontFeatures();
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the current font has configurable features.
+		/// </summary>
+		public bool HasFontFeatures
+		{
+			get
+			{
+				CheckDisposed();
+				return m_hasFontFeatures;
 			}
 		}
 
@@ -307,6 +349,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void SetupFontFeatures()
 		{
 			CheckDisposed();
+			m_featureProvider = null;
+			m_hasFontFeatures = false;
 
 			if (string.IsNullOrEmpty(m_fontName))
 			{
@@ -317,47 +361,40 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			using (var hdg = new HoldDummyGraphics(m_fontName, false, false, this))
 			{
-				IRenderEngine renderer = GraphiteEngineClass.Create();
-				renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
-				// check if the font is a valid Graphite font
-				if (!renderer.FontIsValid)
+				var graphiteProvider = CreateGraphiteProvider(hdg);
+				m_isGraphiteFont = graphiteProvider != null;
+
+				if (m_useGraphiteFeatures && graphiteProvider != null && graphiteProvider.HasFeatures)
 				{
-					m_isGraphiteFont = false;
-					Enabled = false;
+					m_featureProvider = graphiteProvider;
+					m_hasFontFeatures = true;
+					Enabled = true;
 					return;
 				}
-				renderer.WritingSystemFactory = m_wsf;
-				m_isGraphiteFont = true;
-				m_featureEngine = renderer as IRenderingFeatures;
-				if (m_featureEngine == null)
+
+				var openTypeProvider = OpenTypeFontFeatureProvider.Create(hdg.Hdc);
+				if (openTypeProvider != null && openTypeProvider.HasFeatures)
 				{
-					Enabled = false;
+					m_featureProvider = openTypeProvider;
+					m_hasFontFeatures = true;
+					Enabled = true;
 					return;
 				}
-				int cfid;
-				m_featureEngine.GetFeatureIDs(0, null, out cfid);
-				if (cfid == 0)
-				{
-					Enabled = false;
-					return;
-				}
-				if (cfid == 1)
-				{
-					// What if it's the dummy built-in graphite feature that we ignore?
-					// Get the list of features (only 1).
-					using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
-					{
-						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-						int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-						if (ids[0] == kGrLangFeature)
-						{
-							Enabled = false;
-							return;
-						}
-					}
-				}
-				Enabled = true;
+
+				Enabled = false;
 			}
+		}
+
+		private IFontFeatureProvider CreateGraphiteProvider(HoldDummyGraphics hdg)
+		{
+			IRenderEngine renderer = GraphiteEngineClass.Create();
+			renderer.InitRenderer(hdg.m_vwGraphics, GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures));
+			if (!renderer.FontIsValid)
+				return null;
+
+			renderer.WritingSystemFactory = m_wsf;
+			var featureEngine = renderer as IRenderingFeatures;
+			return featureEngine == null ? null : new GraphiteFontFeatureProvider(featureEngine);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -645,18 +682,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
-			var menu = components.ContextMenu("ContextMenu");
-			int cfid;
-			m_featureEngine.GetFeatureIDs(0, null, out cfid);
+			if (m_featureProvider == null)
+				return;
 
-			// Get the list of features.
-			using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
-			{
-				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-			}
-			m_fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
-			m_values = ParseFeatureString(m_ids, m_fontFeatures);
+			var menu = components.ContextMenu("ContextMenu");
+			m_ids = m_featureProvider.GetFeatureIds();
+			var parserFeatureString = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
+			m_values = ParseFeatureString(m_ids, parserFeatureString);
 			Debug.Assert(m_ids.Length == m_values.Length);
 
 			for (int ifeat = 0; ifeat < m_ids.Length; ++ifeat)
@@ -665,21 +697,16 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				if (id == kGrLangFeature)
 					continue; // Don't show Graphite built-in 'lang' feature.
 				string label;
-				m_featureEngine.GetFeatureLabel(id, kUiCodePage, out label);
+				label = m_featureProvider.GetFeatureLabel(id, kUiCodePage);
 				if (label.Length == 0)
 				{
 					//Create backup default string, ie, "Feature #1".
-					label = string.Format(FwCoreDlgControls.kstidFeature, id);
+					label = string.Format(FwCoreDlgControls.kstidFeature, m_featureProvider.GetFeatureTag(id));
 				}
 				int cValueIds;
 				int nDefault;
 				int [] valueIds;
-				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
-				{
-					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM,
-						out cValueIds, out nDefault);
-					valueIds = MarshalEx.NativeToArray<int>(valueIdsM, cValueIds);
-				}
+				valueIds = m_featureProvider.GetFeatureValues(id, kMaxValPerFeat, out cValueIds, out nDefault);
 				// If we know a value for this feature, use it. Otherwise init to default.
 				int featureValue = nDefault;
 				if (m_values[ifeat] != Int32.MaxValue)
@@ -695,9 +722,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					// ids of 0 and 1. We further require that the actual values belong to a
 					// natural boolean set.
 					string valueLabelT; // Label corresponding to 'true' etc, the checked value
-					m_featureEngine.GetFeatureValueLabel(id, 1, kUiCodePage, out valueLabelT);
+					valueLabelT = m_featureProvider.GetFeatureValueLabel(id, 1, kUiCodePage);
 					string valueLabelF; // Label corresponding to 'false' etc, the unchecked val.
-					m_featureEngine.GetFeatureValueLabel(id, 0, kUiCodePage, out valueLabelF);
+					valueLabelF = m_featureProvider.GetFeatureValueLabel(id, 0, kUiCodePage);
 
 					// Enhance: these should be based on a resource, or something that depends
 					// on the code page, if the code page is ever not constant.
@@ -733,8 +760,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					for (int ival = 0; ival < valueIds.Length; ++ival)
 					{
 						string valueLabel;
-						m_featureEngine.GetFeatureValueLabel(id, valueIds[ival],
-							kUiCodePage, out valueLabel);
+						valueLabel = m_featureProvider.GetFeatureValueLabel(id, valueIds[ival], kUiCodePage);
 						if (valueLabel.Length == 0)
 						{
 							// Create backup default string.
@@ -804,6 +830,225 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			m_fontFeatures = GenerateFeatureString(m_ids, m_values);
 			OnFontFeatureSelected(new EventArgs());
+		}
+
+		private interface IFontFeatureProvider
+		{
+			bool HasFeatures { get; }
+			int[] GetFeatureIds();
+			string GetFeatureTag(int featureId);
+			string GetFeatureLabel(int featureId, int languageId);
+			int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue);
+			string GetFeatureValueLabel(int featureId, int valueId, int languageId);
+		}
+
+		private sealed class GraphiteFontFeatureProvider : IFontFeatureProvider
+		{
+			private readonly IRenderingFeatures m_featureEngine;
+			private readonly int[] m_featureIds;
+
+			public GraphiteFontFeatureProvider(IRenderingFeatures featureEngine)
+			{
+				m_featureEngine = featureEngine;
+				int featureCount;
+				m_featureEngine.GetFeatureIDs(0, null, out featureCount);
+				if (featureCount == 0)
+				{
+					m_featureIds = Array.Empty<int>();
+					return;
+				}
+				using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(featureCount))
+				{
+					m_featureEngine.GetFeatureIDs(featureCount, idsM, out featureCount);
+					m_featureIds = MarshalEx.NativeToArray<int>(idsM, featureCount)
+						.Where(featureId => featureId != kGrLangFeature).ToArray();
+				}
+			}
+
+			public bool HasFeatures
+			{
+				get { return m_featureIds.Length > 0; }
+			}
+
+			public int[] GetFeatureIds()
+			{
+				return m_featureIds.ToArray();
+			}
+
+			public string GetFeatureTag(int featureId)
+			{
+				return ConvertFontFeatureIdToCode(featureId);
+			}
+
+			public string GetFeatureLabel(int featureId, int languageId)
+			{
+				string label;
+				m_featureEngine.GetFeatureLabel(featureId, languageId, out label);
+				return label;
+			}
+
+			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
+			{
+				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(maxValues))
+				{
+					m_featureEngine.GetFeatureValues(featureId, maxValues, valueIdsM, out valueCount, out defaultValue);
+					return MarshalEx.NativeToArray<int>(valueIdsM, valueCount);
+				}
+			}
+
+			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
+			{
+				string label;
+				m_featureEngine.GetFeatureValueLabel(featureId, valueId, languageId, out label);
+				return label;
+			}
+		}
+
+		private sealed class OpenTypeFontFeatureProvider : IFontFeatureProvider
+		{
+			private static readonly Dictionary<string, string> s_featureLabels = new Dictionary<string, string>
+			{
+				{ "aalt", "Access All Alternates" },
+				{ "c2sc", "Small Capitals From Capitals" },
+				{ "calt", "Contextual Alternates" },
+				{ "case", "Case-Sensitive Forms" },
+				{ "ccmp", "Glyph Composition/Decomposition" },
+				{ "clig", "Contextual Ligatures" },
+				{ "dlig", "Discretionary Ligatures" },
+				{ "frac", "Fractions" },
+				{ "kern", "Kerning" },
+				{ "liga", "Standard Ligatures" },
+				{ "lnum", "Lining Figures" },
+				{ "onum", "Oldstyle Figures" },
+				{ "pnum", "Proportional Figures" },
+				{ "salt", "Stylistic Alternates" },
+				{ "smcp", "Small Capitals" },
+				{ "ss01", "Stylistic Set 1" },
+				{ "ss02", "Stylistic Set 2" },
+				{ "ss03", "Stylistic Set 3" },
+				{ "ss04", "Stylistic Set 4" },
+				{ "ss05", "Stylistic Set 5" },
+				{ "tnum", "Tabular Figures" },
+			};
+
+			private readonly int[] m_featureIds;
+
+			private OpenTypeFontFeatureProvider(IEnumerable<string> tags)
+			{
+				m_featureIds = tags.Select(ConvertFontFeatureCodeToId).Distinct().OrderBy(featureId => GetFeatureTag(featureId), StringComparer.Ordinal).ToArray();
+			}
+
+			public static OpenTypeFontFeatureProvider Create(IntPtr hdc)
+			{
+				var tags = OpenTypeFontFeatureReader.GetFeatureTags(hdc);
+				return tags.Count == 0 ? null : new OpenTypeFontFeatureProvider(tags);
+			}
+
+			public bool HasFeatures
+			{
+				get { return m_featureIds.Length > 0; }
+			}
+
+			public int[] GetFeatureIds()
+			{
+				return m_featureIds.ToArray();
+			}
+
+			public string GetFeatureTag(int featureId)
+			{
+				return ConvertFontFeatureIdToCode(featureId);
+			}
+
+			public string GetFeatureLabel(int featureId, int languageId)
+			{
+				var tag = GetFeatureTag(featureId);
+				string label;
+				return s_featureLabels.TryGetValue(tag, out label) ? label : tag;
+			}
+
+			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
+			{
+				defaultValue = 0;
+				valueCount = 2;
+				return new[] { 0, 1 };
+			}
+
+			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
+			{
+				return valueId == 0 ? "Off" : "On";
+			}
+		}
+
+		private static int ConvertFontFeatureCodeToId(string fontFeature)
+		{
+			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
+			byte[] numbers = fontFeature.Select(Convert.ToByte).ToArray();
+			return BitConverter.ToInt32(numbers, 0);
+		}
+
+		private static class OpenTypeFontFeatureReader
+		{
+			private const uint GdiError = 0xFFFFFFFF;
+			private static readonly uint[] s_layoutTables = { MakeTableTag("GSUB"), MakeTableTag("GPOS") };
+
+			[DllImport("gdi32.dll", SetLastError = true)]
+			private static extern uint GetFontData(IntPtr hdc, uint table, uint offset, byte[] buffer, uint length);
+
+			public static IReadOnlyList<string> GetFeatureTags(IntPtr hdc)
+			{
+				var tags = new SortedSet<string>(StringComparer.Ordinal);
+				foreach (var table in s_layoutTables)
+				{
+					var tableData = ReadTable(hdc, table);
+					if (tableData != null)
+						ReadFeatureList(tableData, tags);
+				}
+				return tags.ToArray();
+			}
+
+			private static byte[] ReadTable(IntPtr hdc, uint table)
+			{
+				var size = GetFontData(hdc, table, 0, null, 0);
+				if (size == GdiError || size == 0)
+					return null;
+
+				var data = new byte[size];
+				var bytesRead = GetFontData(hdc, table, 0, data, size);
+				return bytesRead == GdiError ? null : data;
+			}
+
+			private static void ReadFeatureList(byte[] tableData, ISet<string> tags)
+			{
+				if (tableData.Length < 8)
+					return;
+
+				var featureListOffset = ReadUInt16(tableData, 6);
+				if (featureListOffset <= 0 || featureListOffset + 2 > tableData.Length)
+					return;
+
+				var featureCount = ReadUInt16(tableData, featureListOffset);
+				var featureRecordOffset = featureListOffset + 2;
+				for (var featureIndex = 0; featureIndex < featureCount; featureIndex++)
+				{
+					var recordOffset = featureRecordOffset + featureIndex * 6;
+					if (recordOffset + 6 > tableData.Length)
+						return;
+
+					var tag = System.Text.Encoding.ASCII.GetString(tableData, recordOffset, 4);
+					if (FontFeatureSettings.IsValidOpenTypeTag(tag))
+						tags.Add(tag);
+				}
+			}
+
+			private static ushort ReadUInt16(byte[] data, int offset)
+			{
+				return (ushort)((data[offset] << 8) | data[offset + 1]);
+			}
+
+			private static uint MakeTableTag(string tag)
+			{
+				return (uint)(tag[0] | tag[1] << 8 | tag[2] << 16 | tag[3] << 24);
+			}
 		}
 	}
 }

@@ -40,6 +40,24 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public StyleInfo(IStStyle style)
 			: base(style)
 		{
+			LoadDefaultFontFeatures(style);
+		}
+
+		private void LoadDefaultFontFeatures(IStStyle style)
+		{
+			if (style == null || style.Rules == null)
+				return;
+
+			for (int i = 0; i < style.Rules.StrPropCount; i++)
+			{
+				int tpt;
+				string value = style.Rules.GetStrProp(i, out tpt);
+				if (tpt == (int)FwTextPropType.ktptFontVariations)
+				{
+					m_defaultFontInfo.m_features.ExplicitValue = value;
+					return;
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -38,18 +38,61 @@ function Write-Utf8Text {
 	[System.IO.File]::WriteAllText($Path, $Content, $encoding)
 }
 
+function Get-OriginalLineEnding {
+	param([Parameter(Mandatory)][string]$Content)
+
+	if ($Content.Contains("`r`n")) { return "`r`n" }
+	if ($Content.Contains("`n")) { return "`n" }
+	if ($Content.Contains("`r")) { return "`r" }
+	return [Environment]::NewLine
+}
+
+function Read-Utf8Text {
+	param([Parameter(Mandatory)][string]$Path)
+
+	$stream = [System.IO.File]::OpenRead($Path)
+	try {
+		$encoding = New-Object System.Text.UTF8Encoding($false, $true)
+		$reader = New-Object System.IO.StreamReader($stream, $encoding, $true)
+		try {
+			return $reader.ReadToEnd()
+		}
+		finally {
+			$reader.Dispose()
+		}
+	}
+	finally {
+		$stream.Dispose()
+	}
+}
+
+function Get-TextFilesFromDiff {
+	param([Parameter(Mandatory)][string]$Range)
+
+	$files = New-Object System.Collections.Generic.List[string]
+	foreach ($line in (git diff --numstat $Range)) {
+		$parts = $line -split "`t", 3
+		if ($parts.Length -eq 3 -and $parts[0] -ne '-' -and $parts[1] -ne '-') {
+			$files.Add($parts[2])
+		}
+	}
+
+	return $files.ToArray()
+}
+
 function Format-FileWhitespace {
 	param([Parameter(Mandatory)][string]$Path)
 	if (-not (Test-Path -LiteralPath $Path)) { return }
 	try {
 		$hasUtf8Bom = Test-HasUtf8Bom -Path $Path
-		$raw = Get-Content -LiteralPath $Path -Raw -Encoding utf8
+		$raw = Read-Utf8Text -Path $Path
 	}
  catch {
 		Write-Host "Skipping non-UTF8 or binary file: $Path"
 		return
 	}
 	$orig = $raw
+	$lineEnding = Get-OriginalLineEnding -Content $raw
 	# Normalize newlines to real LF characters for processing
 	$normalized = $raw -replace '\r\n', "`n" -replace '\r', "`n"
 	# Build a mutable list of lines and trim trailing spaces/tabs
@@ -60,7 +103,7 @@ function Format-FileWhitespace {
 	# Remove trailing blank lines
 	while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[$lines.Count - 1])) { $lines.RemoveAt($lines.Count - 1) }
 	# Join back and ensure exactly one trailing newline
-	$new = ($lines -join "`n") + "`n"
+	$new = ($lines -join $lineEnding) + $lineEnding
 	if ($new -ne $orig) {
 		Write-Utf8Text -Path $Path -Content $new -EmitBom $hasUtf8Bom
 		Write-Host "Fixed whitespace: $Path"
@@ -78,7 +121,8 @@ if (Test-Path -LiteralPath 'check-results.log') {
 if (-not $fixFiles -or $fixFiles.Count -eq 0) {
 	$base = Get-BaseRef
 	Write-Host "Fixing whitespace for files changed since $base..HEAD"
-	$fixFiles = git diff --name-only "$base"..HEAD
+	$range = "$base..HEAD"
+	$fixFiles = Get-TextFilesFromDiff -Range $range
 }
 
 $files = $fixFiles | Where-Object { $_ -and (Test-Path $_) }

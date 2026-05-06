@@ -42,6 +42,8 @@ namespace SIL.FieldWorks.XWorks
 		private static WordStyleCollection s_styleCollection = null;
 		private static readonly object _collectionLock = new object();
 		private static readonly object _masterFragmentLock = new object();
+		private const string MarkupCompatibilityNamespace = "http://schemas.openxmlformats.org/markup-compatibility/2006";
+		private const string Word2010Namespace = "http://schemas.microsoft.com/office/word/2010/wordml";
 
 		private ReadOnlyPropertyTable _propertyTable;
 		public static bool IsBidi { get; private set; }
@@ -248,6 +250,7 @@ namespace SIL.FieldWorks.XWorks
 					// Initialize word doc's styles xml
 					stylePart = AddStylesPartToPackage(MasterFragment.DocFrag);
 					Styles styleSheet = new Styles();
+					ConfigureStyleSheetCompatibility(styleSheet);
 
 					// Add generated styles into the stylesheet from the collections.
 					var paragraphElements = s_styleCollection.GetUsedParagraphElements();
@@ -1991,8 +1994,16 @@ namespace SIL.FieldWorks.XWorks
 			StyleDefinitionsPart part;
 			part = doc.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
 			Styles root = new Styles();
+			ConfigureStyleSheetCompatibility(root);
 			root.Save(part);
 			return part;
+		}
+
+		private static void ConfigureStyleSheetCompatibility(Styles styleSheet)
+		{
+			styleSheet.MCAttributes = new MarkupCompatibilityAttributes { Ignorable = "w14" };
+			styleSheet.AddNamespaceDeclaration("mc", MarkupCompatibilityNamespace);
+			styleSheet.AddNamespaceDeclaration("w14", Word2010Namespace);
 		}
 
 		// Add a DocumentSettingsPart to the document. Returns a reference to it.

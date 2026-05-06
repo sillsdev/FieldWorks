@@ -1,6 +1,8 @@
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using ExCSS;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -12,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using XCore;
+using W14 = DocumentFormat.OpenXml.Office2010.Word;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -448,6 +451,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
+			string defaultFontFeatures = null;
 
 			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
 			// defaultFontInfo if set, or null.
@@ -468,13 +472,19 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
 				if (lgWritingSystem != null)
+				{
 					fontName = lgWritingSystem.DefaultFontName;
+					defaultFontFeatures = lgWritingSystem.DefaultFontFeatures;
+				}
 				else
 				{
 					CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 					lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
 					if (lgWritingSystem != null)
+					{
 						fontName = lgWritingSystem.DefaultFontName;
+						defaultFontFeatures = lgWritingSystem.DefaultFontFeatures;
+					}
 
 				}
 			}
@@ -630,7 +640,14 @@ namespace SIL.FieldWorks.XWorks
 					charDefaults.Append(new Strike());
 				}
 			}
-			//TODO: handle remaining font features including from ws or default,
+			string fontFeatures;
+			if (GetFontValue(wsFontInfo.m_features, defaultFontInfo.Features, out fontFeatures) ||
+				(projectStyle.Name == NormalParagraphStyleName && !string.IsNullOrEmpty(defaultFontFeatures) &&
+					!defaultFontInfo.Features.ValueIsSet && !wsFontInfo.m_features.ValueIsSet &&
+					(fontFeatures = defaultFontFeatures) != null))
+			{
+				AddOpenTypeFontFeatureProperties(charDefaults, fontFeatures);
+			}
 
 			return charDefaults;
 		}
@@ -763,7 +780,167 @@ namespace SIL.FieldWorks.XWorks
 					runProps.Append(new Strike());
 				}
 			}
+
+			if (((InheritableStyleProp<string>)fontInfo.Features).IsExplicit)
+			{
+				AddOpenTypeFontFeatureProperties(runProps, fontInfo.Features.Value);
+			}
 			return runProps;
+		}
+
+		private static void AddOpenTypeFontFeatureProperties(OpenXmlCompositeElement runProps, string fontFeatures)
+		{
+			RemoveOpenTypeFontFeatureProperties(runProps);
+
+			var settings = FontFeatureSettings.Parse(fontFeatures);
+			int ligatureFlags = 0;
+			bool hasLigatureSetting = false;
+			W14.NumberFormValues? numberForm = null;
+			W14.NumberSpacingValues? numberSpacing = null;
+			bool? contextualAlternatives = null;
+			var styleSets = new List<W14.StyleSet>();
+
+			foreach (var setting in settings)
+			{
+				switch (setting.Tag)
+				{
+					case "liga":
+						hasLigatureSetting = true;
+						if (setting.Value != 0)
+							ligatureFlags |= 1;
+						break;
+					case "clig":
+						hasLigatureSetting = true;
+						if (setting.Value != 0)
+							ligatureFlags |= 2;
+						break;
+					case "hlig":
+						hasLigatureSetting = true;
+						if (setting.Value != 0)
+							ligatureFlags |= 4;
+						break;
+					case "dlig":
+						hasLigatureSetting = true;
+						if (setting.Value != 0)
+							ligatureFlags |= 8;
+						break;
+					case "lnum":
+						if (!numberForm.HasValue && setting.Value == 0)
+							numberForm = W14.NumberFormValues.Default;
+						else if (setting.Value != 0)
+							numberForm = W14.NumberFormValues.Lining;
+						break;
+					case "onum":
+						if (!numberForm.HasValue && setting.Value == 0)
+							numberForm = W14.NumberFormValues.Default;
+						else if (setting.Value != 0)
+							numberForm = W14.NumberFormValues.OldStyle;
+						break;
+					case "pnum":
+						if (!numberSpacing.HasValue && setting.Value == 0)
+							numberSpacing = W14.NumberSpacingValues.Default;
+						else if (setting.Value != 0)
+							numberSpacing = W14.NumberSpacingValues.Proportional;
+						break;
+					case "tnum":
+						if (!numberSpacing.HasValue && setting.Value == 0)
+							numberSpacing = W14.NumberSpacingValues.Default;
+						else if (setting.Value != 0)
+							numberSpacing = W14.NumberSpacingValues.Tabular;
+						break;
+					case "calt":
+						contextualAlternatives = setting.Value != 0;
+						break;
+					default:
+						uint styleSetId;
+						if (TryGetStylisticSetId(setting.Tag, out styleSetId))
+						{
+							styleSets.Add(new W14.StyleSet { Id = styleSetId, Val = GetOnOffValue(setting.Value != 0) });
+						}
+						break;
+				}
+			}
+
+			if (hasLigatureSetting)
+				runProps.Append(new W14.Ligatures { Val = GetLigaturesValue(ligatureFlags) });
+			if (numberForm.HasValue)
+				runProps.Append(new W14.NumberingFormat { Val = numberForm.Value });
+			if (numberSpacing.HasValue)
+				runProps.Append(new W14.NumberSpacing { Val = numberSpacing.Value });
+			if (contextualAlternatives.HasValue)
+				runProps.Append(new W14.ContextualAlternatives { Val = GetOnOffValue(contextualAlternatives.Value) });
+			if (styleSets.Count > 0)
+				runProps.Append(new W14.StylisticSets(styleSets));
+		}
+
+		private static W14.OnOffValues GetOnOffValue(bool value)
+		{
+			return value ? W14.OnOffValues.True : W14.OnOffValues.False;
+		}
+
+		private static void RemoveOpenTypeFontFeatureProperties(OpenXmlCompositeElement runProps)
+		{
+			runProps.RemoveAllChildren<W14.Ligatures>();
+			runProps.RemoveAllChildren<W14.NumberingFormat>();
+			runProps.RemoveAllChildren<W14.NumberSpacing>();
+			runProps.RemoveAllChildren<W14.ContextualAlternatives>();
+			runProps.RemoveAllChildren<W14.StylisticSets>();
+		}
+
+		private static W14.LigaturesValues GetLigaturesValue(int ligatureFlags)
+		{
+			switch (ligatureFlags)
+			{
+				case 0:
+					return W14.LigaturesValues.None;
+				case 1:
+					return W14.LigaturesValues.Standard;
+				case 2:
+					return W14.LigaturesValues.Contextual;
+				case 3:
+					return W14.LigaturesValues.StandardContextual;
+				case 4:
+					return W14.LigaturesValues.Historical;
+				case 5:
+					return W14.LigaturesValues.StandardHistorical;
+				case 6:
+					return W14.LigaturesValues.ContextualHistorical;
+				case 7:
+					return W14.LigaturesValues.StandardContextualHistorical;
+				case 8:
+					return W14.LigaturesValues.Discretional;
+				case 9:
+					return W14.LigaturesValues.StandardDiscretional;
+				case 10:
+					return W14.LigaturesValues.ContextualDiscretional;
+				case 11:
+					return W14.LigaturesValues.StandardContextualDiscretional;
+				case 12:
+					return W14.LigaturesValues.HistoricalDiscretional;
+				case 13:
+					return W14.LigaturesValues.StandardHistoricalDiscretional;
+				case 14:
+					return W14.LigaturesValues.ContextualHistoricalDiscretional;
+				case 15:
+					return W14.LigaturesValues.All;
+				default:
+					return W14.LigaturesValues.None;
+			}
+		}
+
+		private static bool TryGetStylisticSetId(string tag, out uint styleSetId)
+		{
+			styleSetId = 0;
+			if (tag == null || tag.Length != 4 || tag[0] != 's' || tag[1] != 's')
+				return false;
+
+			int tens = tag[2] - '0';
+			int ones = tag[3] - '0';
+			if (tens < 0 || tens > 9 || ones < 0 || ones > 9)
+				return false;
+
+			styleSetId = (uint)(tens * 10 + ones);
+			return styleSetId >= 1 && styleSetId <= 20;
 		}
 
 		public static string GetWsString(string wsString)

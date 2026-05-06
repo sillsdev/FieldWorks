@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 using XCore;
 
 // ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
@@ -3064,6 +3065,41 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_WsSpanWithNormalStyle_UsesWritingSystemDefaultFontFeatures()
+		{
+			var style = GenerateEmptyStyle("Normal");
+			style.IsParagraphStyle = true;
+
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { vernWs.LanguageTag })
+			};
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			PopulateFieldsForTesting(testEntryNode);
+
+			var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+
+			Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;font-feature-settings:\"ss11\" 1,\"ss12\" 1;"));
 		}
 
 		[Test]
