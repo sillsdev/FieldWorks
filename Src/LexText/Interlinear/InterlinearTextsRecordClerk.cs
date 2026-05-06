@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_wsPrevText; }
 			set { m_wsPrevText = value; }
 		}
-		private int m_langProjectTextFlid = 0;
+		private int m_langProjectTextsFlid = 0;
 
 		/// <summary>
 		/// Get the list of currently selected Scripture section ids.
@@ -304,11 +304,11 @@ namespace SIL.FieldWorks.IText
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-			if (m_langProjectTextFlid == 0)
+			if (m_langProjectTextsFlid == 0)
 			{
-				m_langProjectTextFlid = Cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Texts", true);
+				m_langProjectTextsFlid = Cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Texts", true);
 			}
-			if (tag == m_langProjectTextFlid && (cvIns > 0 || cvDel > 0))
+			if (tag == m_langProjectTextsFlid && (cvIns > 0 || cvDel > 0))
 			{
 				InterestingTextsDecorator.ClearInterestingTextsList(m_propertyTable);
 			}
