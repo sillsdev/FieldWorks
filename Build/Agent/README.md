@@ -11,6 +11,7 @@ PowerShell scripts for build, test, and CI orchestration.
 
 | Script | Purpose |
 |--------|---------|
+| `Run-AllRenders.ps1` | Runs the DetailControls and RootSite render suites sequentially from one command without adding a meta test project. |
 | `Summarize-NativeTestResults.ps1` | Parses native Unit++ logs and appends a pass/fail summary table to GitHub step summary. |
 
 ## GitHub Actions usage
