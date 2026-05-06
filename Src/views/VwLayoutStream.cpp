@@ -29,11 +29,13 @@ DEFINE_THIS_FILE
 VwLayoutStream::VwLayoutStream(VwPropertyStore * pzvps)
 	: VwRootBox(pzvps)
 {
+	m_dxsLayoutWidth = -1;
 }
 
 // Protected default constructor used for CreateCom
 VwLayoutStream::VwLayoutStream() : VwRootBox()
 {
+	m_dxsLayoutWidth = -1;
 }
 
 
@@ -42,15 +44,17 @@ VwLayoutStream::~VwLayoutStream()
 }
 
 /*----------------------------------------------------------------------------------------------
-	Ensure that the view is constructed and laid out at our specified width (TODO: and DPI).
+	Ensure that the view is constructed and laid out at our specified width and source DPI.
 ----------------------------------------------------------------------------------------------*/
 void VwLayoutStream::ConstructAndLayout(IVwGraphics * pvg, int dxsAvailWidth)
 {
 	// Todo: Layout should delete all pages if the width changed.
 	if (!m_fConstructed)
 		Construct(pvg, dxsAvailWidth); // Does NOT lay out to this width.
-	// Todo: also save and check the dpi of the VwGraphics. Layout if changed.
-	if (m_dxsLayoutWidth != dxsAvailWidth)
+	int dpiX, dpiY;
+	CheckHr(pvg->get_XUnitsPerInch(&dpiX));
+	CheckHr(pvg->get_YUnitsPerInch(&dpiY));
+	if (m_dxsLayoutWidth != dxsAvailWidth || m_ptDpiSrc.x != dpiX || m_ptDpiSrc.y != dpiY)
 		Layout(pvg, dxsAvailWidth);
 }
 

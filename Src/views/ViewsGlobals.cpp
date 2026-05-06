@@ -12,6 +12,11 @@ Last reviewed:
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 #include "Main.h"
+#include "VwRenderTrace.h"
+
+#ifdef TRACING_RENDER
+FILE * g_fpRenderTrace = NULL;
+#endif
 
 // Nothing should directly reference this.
 static ViewsGlobals g_views;

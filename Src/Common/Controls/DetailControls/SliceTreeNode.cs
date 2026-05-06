@@ -332,51 +332,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Graphics gr = pea.Graphics;
 
 			Color lineColor = Color.FromKnownColor(KnownColor.ControlDark);
-			using (Pen linePen = new Pen(lineColor, 1))
+			using (Pen boxLinePen = new Pen(lineColor, 1))
+			using (Brush backgroundBrush = new SolidBrush(Slice.ContainingDataTree.BackColor))
+			using (Brush lineBrush = new SolidBrush(lineColor))
 			{
-			linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-				using (Pen boxLinePen = new Pen(lineColor, 1))
-				using (Brush backgroundBrush = new SolidBrush(Slice.ContainingDataTree.BackColor))
-				using (Brush lineBrush = new SolidBrush(lineColor))
-				{
-			int nIndent = Slice.Indent;
-			DataTree.TreeItemState tis = Slice.Expansion;
-			// Drawing within a control that covers the tree node portion of this slice, we always
-			// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
-			// we ever go back to drawing in the parent window.
-			int ypTopOfSlice = 0;
-			// int ypTopOfNextSlice = this.Height; // CS2019
-			int iSlice = Slice.ContainingDataTree.Slices.IndexOf(Slice);
-			// Go through the indents. This used to draw the correct tree structure at each level.
-			// Now we leave out the structue, but this figures out some stuff we need if we end up
-			// drawing a box. This could be optimized if we really never want the tree diagram.
-			for (int nInd = 0; nInd <= nIndent; ++nInd)
-			{
-				// int ypTreeTop = ypTopOfSlice; // CS2019
-				int xpBoxLeft = kdxpLeftMargin + nInd * kdxpIndDist;
+				int nIndent = Slice.Indent;
+				DataTree.TreeItemState tis = Slice.Expansion;
+				// Drawing within a control that covers the tree node portion of this slice, we always
+				// draw relative to a top-of-slice that is 0. I'm keeping the variable just in case
+				// we ever go back to drawing in the parent window.
+				int ypTopOfSlice = 0;
+
+				// We intentionally do not draw connector line patterns here.
+				// Keep only the geometry needed to position the expand/collapse box.
+				int xpBoxLeft = kdxpLeftMargin + nIndent * kdxpIndDist;
 				int xpBoxCtr = xpBoxLeft + kdxpBoxCtr;
-				// Enhance JohnT: 2nd argument of max should be label height.
 				int dypBranchHeight = Slice.GetBranchHeight();
 				int dypLeftOver = Math.Max(kdypBoxHeight / 2, dypBranchHeight) - kdypBoxHeight / 2;
 				int ypBoxTop = ypTopOfSlice + dypLeftOver;
 				int ypBoxCtr = ypBoxTop + kdypBoxHeight / 2;
-				// int xpRtLineEnd = xpBoxCtr + kdxpLongLineLen; // CS2019
 
-				// There are two possible locations for the start and stop points for the
-				// vertical line. That will produce three different results which I have
-				// attempted to illustrate below. In case that's unclear they are:
-				// an L - shaped right angle, a T - shape rotated counter-clockwise by
-				// 90 degrees and an inverted L shape (i.e. flipped vertically).
-				//
-				// |_  > ypStart = top of field, ypStop = center point of +/- box.
-				// |-  > ypStart = top of field, ypStop = bottom of field.
-				// |  > ypStart = center point of +/- box, ypStop = bottom of field.
-				//
-				// Draw the vertical line.
-				bool fMoreFieldsAtLevel = (Slice.ContainingDataTree.NextFieldAtIndent(nInd, iSlice) != 0);
-
-				// Process a terminal level with a box.
-				if (ShowPlusMinus && nInd == nIndent && tis != DataTree.TreeItemState.ktisFixed)
+				if (ShowPlusMinus && tis != DataTree.TreeItemState.ktisFixed)
 				{
 					// Draw the box.
 					Rectangle rcBox = new Rectangle(xpBoxLeft, ypBoxTop, kdxpBoxWid, kdypBoxHeight);
@@ -399,7 +375,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						}
 					}
 				}
-			}
 
 			//			// If the height of the slice is greater then one line (1.5 * LabelHeight) and
 			//			// the slice has a child, then we need to draw a line to that child. (fixes a
@@ -432,7 +407,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//			gr.DrawLine(borderPen, xIndent, yPos, this.Width, yPos);
 
 			Slice.DrawLabel(ypTopOfSlice, gr, pea.ClipRectangle.Width);
-		}
 			}
 		}
 

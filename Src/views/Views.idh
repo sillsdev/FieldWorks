@@ -1712,6 +1712,14 @@ Last reviewed:
 		// Pass in the repository that will be used to get spell-checkers.
 		HRESULT SetSpellingRepository(
 			[in] IGetSpellChecker * pgsp);
+
+		// PATH-L5: Tells whether this root box needs a Reconstruct.
+		// When true, data or structural changes have occurred since the last
+		// Reconstruct completed. Managed callers (e.g. SimpleRootSite.RefreshDisplay)
+		// can check this to skip selection save/restore and drawing suspension
+		// overhead when no reconstruction is actually needed.
+		[propget] HRESULT NeedsReconstruct(
+			[out, retval] ComBool * pfNeeds);
 	}
 
 #ifndef NO_COCLASSES
