@@ -1111,7 +1111,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else
 						{
-							resultIndex = resultIndex-- > 0 ? resultIndex : resultCount - 1;
+							resultIndex = resultIndex-- > 0 ? resultIndex : resultCount > 0 ? resultCount - 1 : 0;
 						}
 						// Javascript query to execute in the browser
 						var browserJsQuery = "scrollToStoredPosition(" + resultIndex + ", " + forward.ToString().ToLower() + ")";
