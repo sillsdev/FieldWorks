@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Concurrent;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -19,6 +21,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	[AttributeUsage(AttributeTargets.Assembly)]
 	public class LogUnhandledExceptionsAttribute : TestActionAttribute
 	{
+		private static readonly ConcurrentQueue<AggregateException> s_unobservedTaskExceptions =
+			new ConcurrentQueue<AggregateException>();
+
 		private UnhandledExceptionEventHandler m_unhandledExceptionHandler;
 		private EventHandler<UnobservedTaskExceptionEventArgs> m_unobservedTaskExceptionHandler;
 
@@ -29,6 +34,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		public override void BeforeTest(ITest test)
 		{
 			base.BeforeTest(test);
+			ResetCapturedUnobservedTaskExceptionsForTesting();
 
 			m_unhandledExceptionHandler = OnUnhandledException;
 			AppDomain.CurrentDomain.UnhandledException += m_unhandledExceptionHandler;
@@ -40,6 +46,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary/>
 		public override void AfterTest(ITest test)
 		{
+			var unobservedTaskExceptions = FlushAndDrainCapturedUnobservedTaskExceptions();
+
 			if (m_unhandledExceptionHandler != null)
 			{
 				AppDomain.CurrentDomain.UnhandledException -= m_unhandledExceptionHandler;
@@ -53,6 +61,8 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			}
 
 			base.AfterTest(test);
+
+			ThrowIfCapturedUnobservedTaskExceptions(unobservedTaskExceptions);
 		}
 
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -63,26 +73,76 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			Console.Error.Flush();
 		}
 
-		private static void OnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+		internal static void OnUnobservedTaskException(
+			object sender,
+			UnobservedTaskExceptionEventArgs e
+		)
 		{
 			Console.Error.WriteLine("Unobserved task exception during test run:");
 			Console.Error.WriteLine(e.Exception.ToString());
 			Console.Error.Flush();
 
-			// Escalate instead of allowing the exception to be quietly ignored at finalization time.
-			throw new UnobservedTaskExceptionLoggedException(e.Exception);
+			s_unobservedTaskExceptions.Enqueue(e.Exception);
+			e.SetObserved();
 		}
-	}
 
-	/// <summary>
-	/// Exception used to surface unobserved task failures in test output after the original
-	/// AggregateException has been written to the console.
-	/// </summary>
-	public class UnobservedTaskExceptionLoggedException : Exception
-	{
-		public UnobservedTaskExceptionLoggedException(AggregateException innerException)
-			: base("Unobserved task exception during test run.", innerException)
+		internal static void ResetCapturedUnobservedTaskExceptionsForTesting()
 		{
+			AggregateException ignored;
+			while (s_unobservedTaskExceptions.TryDequeue(out ignored)) { }
+		}
+
+		internal static AggregateException[] FlushAndDrainCapturedUnobservedTaskExceptions()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			}
+
+			return DrainCapturedUnobservedTaskExceptions();
+		}
+
+		internal static AggregateException[] DrainCapturedUnobservedTaskExceptions()
+		{
+			var exceptions = new ConcurrentQueue<AggregateException>();
+			AggregateException capturedException;
+			while (s_unobservedTaskExceptions.TryDequeue(out capturedException))
+				exceptions.Enqueue(capturedException);
+
+			return exceptions.ToArray();
+		}
+
+		internal static void ThrowIfCapturedUnobservedTaskExceptions(
+			AggregateException[] exceptions
+		)
+		{
+			if (exceptions == null || exceptions.Length == 0)
+				return;
+
+			throw new AssertionException(BuildFailureMessage(exceptions));
+		}
+
+		internal static string BuildFailureMessage(AggregateException[] exceptions)
+		{
+			var builder = new StringBuilder();
+			builder.AppendLine(
+				string.Format(
+					"{0} unobserved task exception(s) were detected during the test run.",
+					exceptions.Length
+				)
+			);
+			builder.AppendLine(
+				"These exceptions were captured from TaskScheduler.UnobservedTaskException and surfaced at suite teardown so the test host fails deterministically without crashing on the finalizer thread."
+			);
+
+			for (int i = 0; i < exceptions.Length; i++)
+			{
+				builder.AppendLine();
+				builder.AppendLine(string.Format("[{0}] {1}", i + 1, exceptions[i]));
+			}
+
+			return builder.ToString();
 		}
 	}
 }
