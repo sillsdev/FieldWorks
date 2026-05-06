@@ -236,7 +236,6 @@ try {
 						'/nologo'
 					) `
 					-Description 'FwBuildTasks (Tests)'
-
 				Write-Host ""
 			}
 			else {
@@ -267,6 +266,7 @@ try {
 		# invoked outside the .runsettings flow.
 		$env:AssertUiEnabled = 'false'
 		$env:AssertExceptionEnabled = 'true'
+		$env:FW_TEST_MODE = '1'
 
 		$outputDir = Join-Path $PSScriptRoot "Output/$Configuration"
 

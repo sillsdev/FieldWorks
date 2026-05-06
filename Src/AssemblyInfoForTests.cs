@@ -16,6 +16,12 @@ using System.Reflection;
 // Set stub for messagebox so that we don't pop up a message box when running tests.
 [assembly: SetMessageBoxAdapter]
 
+// Log last-chance managed exceptions to console output before process termination.
+[assembly: LogUnhandledExceptions]
+
+// Suppress all assertion dialog boxes (native + managed) regardless of config file coverage
+[assembly: SuppressAssertDialogs]
+
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
 
