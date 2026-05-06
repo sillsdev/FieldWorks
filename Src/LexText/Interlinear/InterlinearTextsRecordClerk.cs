@@ -27,6 +27,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_wsPrevText; }
 			set { m_wsPrevText = value; }
 		}
+		private int m_langProjectTextFlid = 0;
 
 		/// <summary>
 		/// Get the list of currently selected Scripture section ids.
@@ -268,7 +269,6 @@ namespace SIL.FieldWorks.IText
 			else
 				createAndInsertMethodObj = new NonUndoableCreateAndInsertStText(Cache, this);
 			var newText = m_list.DoCreateAndInsert(createAndInsertMethodObj);
-			InterestingTextsDecorator.ClearInterestingTextsList(m_propertyTable);
 			// Check to if a genre was assigned to this text
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
@@ -298,6 +298,19 @@ namespace SIL.FieldWorks.IText
 			// waiting for 'Activate' to return!
 			//link.Activate();
 			return true;
+		}
+
+		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+			if (m_langProjectTextFlid == 0)
+			{
+				m_langProjectTextFlid = Cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Texts", true);
+			}
+			if (tag == m_langProjectTextFlid && (cvIns > 0 || cvDel > 0))
+			{
+				InterestingTextsDecorator.ClearInterestingTextsList(m_propertyTable);
+			}
 		}
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>

@@ -295,8 +295,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// We watch for changes to DateModified and update the status bar if we are controlling it.
-		/// </summary>
-		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		///  </summary>
+		public virtual void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (hvo != CurrentObjectHvo)
 				return;
