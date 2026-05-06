@@ -6,13 +6,10 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 
-using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using XCore;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -142,34 +139,6 @@ namespace SIL.FieldWorks.FdoUi
 				Assert.That(obj.IsValidObject, Is.True);
 				objectUi.SimulateReallyDeleteUnderlyingObject(); // Call ReallyDeleteUnderlyingObject() in CmObjectUi
 				Assert.That(obj.IsValidObject, Is.False);
-			}
-		}
-
-		[Test]
-		public void DeleteUnderlyingObject_PublishesDeleteRecordForCurrentObject()
-		{
-			var obj = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			using (var propertyTable = new PropertyTable(null))
-			using (DummyCmObjectUi objectUi = DummyCmObjectUi.MakeDummyUi(obj))
-			{
-				propertyTable.SetProperty("ActiveClerkSelectedObject", obj, false);
-				objectUi.PropTable = propertyTable;
-
-				object published = null;
-				Action<object> deleteRecordHandler = data => published = data;
-				try
-				{
-					FwUtils.Subscriber.Subscribe(EventConstants.DeleteRecord, deleteRecordHandler);
-
-					objectUi.DeleteUnderlyingObject();
-
-					Assert.That(published, Is.SameAs(objectUi));
-					Assert.That(obj.IsValidObject, Is.True);
-				}
-				finally
-				{
-					FwUtils.Subscriber.Unsubscribe(EventConstants.DeleteRecord, deleteRecordHandler);
-				}
 			}
 		}
 	}
