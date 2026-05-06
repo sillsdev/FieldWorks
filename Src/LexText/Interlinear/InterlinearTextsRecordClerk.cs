@@ -269,6 +269,7 @@ namespace SIL.FieldWorks.IText
 			else
 				createAndInsertMethodObj = new NonUndoableCreateAndInsertStText(Cache, this);
 			var newText = m_list.DoCreateAndInsert(createAndInsertMethodObj);
+
 			// Check to if a genre was assigned to this text
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
