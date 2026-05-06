@@ -16,7 +16,7 @@ Use these for WiX Toolset, not Wix.com.
 - `DisplayInternalUI` as a core `MsiPackage` attribute is not the FieldWorks WiX 6 approach.
 - When internal MSI UI is shown, it appears on top of the bootstrapper UI; it is not embedded in WixStdBA.
 - WixStdBA does not support EmbeddedUI.
-- `MsiPackage/@Visible` controls whether the MSI appears in Programs and Features. The default is no, and FieldWorks currently authors `Visible="no"`.
+- `MsiPackage/@Visible` controls whether the MSI appears in Programs and Features. FieldWorks currently authors `Visible="no"`.
 - `MsiPackage/@LogPathVariable` defaults to `WixBundleLog_[PackageId]`; FieldWorks uses `WixBundleLog_AppMsiPackage` explicitly.
 - WiX 4+ bundles respect architecture. In an x64-only product, review registry searches, BA payload architecture, and old Win64 assumptions.
 - Theme assets must be present in the BA container/output using the exact names referenced by the theme.
