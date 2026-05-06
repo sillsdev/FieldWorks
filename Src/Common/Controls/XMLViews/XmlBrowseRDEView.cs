@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if( disposing )
 			{
+				Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
 				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 
 				if (components != null)
@@ -103,6 +104,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// Use the ones in fakeFlid, and any we create.
 			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
 
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
 		}
 
@@ -1070,7 +1072,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="commandObject">The command object.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool OnDeleteRecord(object commandObject)
+		public bool OnDeleteRecord(object commandObject)
+		{
+			DeleteRecord(commandObject);
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for DeleteRecord
+		/// </summary>
+		private void DeleteRecord(object _)
 		{
 			CheckDisposed();
 
@@ -1079,11 +1090,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 			IVwSelection vwsel = m_rootb.Selection;
 			if (vwsel == null)
-				return false;
+				return;
 			ISilDataAccess sda = m_bv.SpecialCache;
 			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
-				return false;		// Something is broken!
+				return;		// Something is broken!
 
 			TextSelInfo tsi = new TextSelInfo(m_rootb.Selection);
 			if (tsi.ContainingObject(0) == XmlRDEBrowseViewVc.khvoNewItem)
@@ -1233,7 +1244,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				});
 			}
-			return true;
+			return;
 		}
 
 		#endregion Other message handlers

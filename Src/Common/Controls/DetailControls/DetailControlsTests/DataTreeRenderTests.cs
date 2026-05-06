@@ -408,7 +408,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Returns the directory containing this source file (resolved at compile time).
-		/// Verify stores .verified.png baselines alongside the test source file.
+		/// RenderSnapshotVerifier stores approved .verified.png baselines alongside the test source file.
 		/// </summary>
 		private async Task VerifyDataTreeBitmap(Bitmap bitmap, string scenarioId)
 		{
@@ -426,9 +426,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Snapshot Tests
 
 		/// <summary>
-		/// Verifies the full DataTree rendering for a simple lex entry with 3 senses.
+		/// Verifies a production-like DataTree rendering for a simple lex entry with 3 senses.
 		/// Captures grey labels, WS indicators, sense summaries, all WinForms chrome.
-		/// Uses production layouts from DistFiles to get the full view.
+		/// Uses DistFiles layouts plus test-time exclusions for unsupported/crashy parts.
 		/// </summary>
 		[Test]
 		public async Task DataTreeRender_Simple()

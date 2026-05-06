@@ -1,101 +1,83 @@
-﻿# Quickstart: Render Performance Baseline & Optimization Plan
+﻿# Quickstart: Render Performance Baselines
 
 ## Prerequisites
 
-- Windows environment with deterministic settings (fixed fonts, DPI, theme).
-- FieldWorks Debug build available locally.
+- Windows x64 with deterministic settings (fonts, DPI, theme).
+- Debug build output available locally.
 - No external services required.
 
-## Building
+## Build
 
 ```powershell
-# Build the solution
 .\build.ps1
 ```
 
-## Running the Benchmark Suite
-
-### Full Five-Scenario Suite
+## Run the RootSite snapshot suite
 
 ```powershell
-# Run the complete timing suite (bootstraps snapshots if missing)
-.\test.ps1 -TestProject "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj" -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"
+.\test.ps1 -TestProject "RootSiteTests" -TestFilter "FullyQualifiedName~RenderBaselineTests"
 ```
 
-Results will be written to:
-- `Output/RenderBenchmarks/results.json` - Machine-readable benchmark data
-- `Output/RenderBenchmarks/summary.md` - Human-readable summary
+This validates the committed RootSite snapshot baselines and the shared snapshot verifier.
 
-### Individual Scenario Tests
+## Run the timing suite
 
 ```powershell
-# Run baseline tests (Unit Tests)
-.\test.ps1 -TestProject "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj" -TestFilter "FullyQualifiedName~RenderBaselineTests"
+.\test.ps1 -TestProject "RootSiteTests" -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"
 ```
 
-## Generating Baseline Snapshots
+Results are written to:
 
-Snapshots are automatically generated (bootstrapped) if they do not exist. To regenerate a snapshot, delete the file in `Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/` and run the suite again.
+- `Output/RenderBenchmarks/results.json` for machine-readable timing data.
+- `Output/RenderBenchmarks/summary.md` for the human-readable summary.
 
-```powershell
-# Example: Regenerate 'simple' snapshot
-rm Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/simple.png
-.\test.ps1 -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"
-```
+## Snapshot files and regeneration
 
-## Creating Reproducible Test Data
+Committed baselines live next to the tests that own them:
 
-To create deterministic scenario data for testing:
+- `Src/Common/RootSite/RootSiteTests/*.verified.png`
+- `Src/Common/Controls/DetailControls/DetailControlsTests/*.verified.png`
+- `Src/Common/Controls/DetailControls/DetailControlsTests/*.verified.json` for scenarios that store extra metadata.
 
-1. **Simple Scenario**: Create a lexical entry with one sense and one definition.
-2. **Medium Scenario**: Create an entry with 3 senses, each with definitions and example sentences.
-3. **Complex Scenario**: Create an entry with 10+ senses, subsenses, and cross-references.
-4. **Deep-Nested Scenario**: Create an entry with 5+ levels of nested subsenses.
-5. **Custom-Field-Heavy Scenario**: Add custom fields of various types to an entry.
+Transient verification outputs are ignored:
 
-Use the LCModel test infrastructure to create in-memory test data that matches these patterns.
+- `*.received.png`
+- `*.diff.png`
 
-## Enabling Trace Diagnostics
+To regenerate a committed baseline, delete the matching `*.verified.png` file and rerun the owning test suite.
 
-Edit `TestData/RenderBenchmarkFlags.json`:
+## Timing baselines
 
-```json
-{
-  "diagnosticsEnabled": true,
-  "traceEnabled": true,
-  "captureMode": "DrawToBitmap"
-}
-```
+`Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeTimingBaselines.json` is local advisory data. When it is missing, timing threshold checks are skipped instead of failing CI.
 
-Or enable programmatically in tests:
+## Trace diagnostics
+
+Use `RenderDiagnosticsToggle` from the shared render infrastructure when a test run needs managed trace capture:
 
 ```csharp
 using (var diagnostics = new RenderDiagnosticsToggle())
 {
     diagnostics.EnableDiagnostics();
-    // Run benchmark...
+    // Run benchmark or snapshot capture.
     diagnostics.Flush();
     var traceContent = diagnostics.GetTraceLogContent();
 }
 ```
 
-## Output Artifacts
+`Src/Common/FieldWorks/FieldWorks.Diagnostics.dev.config` keeps the core xWorks trace switches enabled for Debug runs. Native `VwRenderTrace.h` timing output is still compile-time-gated by `TRACING_RENDER`; there is no always-on runtime `Views_RenderTiming` switch in the final configuration.
 
-| File | Description |
-|------|-------------|
-| `Output/RenderBenchmarks/results.json` | Complete benchmark data (all scenarios, timings, validation) |
-| `Output/RenderBenchmarks/summary.md` | Human-readable summary with recommendations |
-| `Output/RenderBenchmarks/render-trace.log` | Trace diagnostics (when enabled) |
-| `Output/RenderBenchmarks/comparison.md` | Regression comparison (when baseline provided) |
-| `TestData/RenderSnapshots/*.png` | Approved baseline snapshots |
+## Project layout
 
-## Environment Requirements
+- `Src/Common/RenderTestInfrastructure/RenderTestInfrastructure.csproj` exposes the lightweight benchmark, snapshot, and trace helpers that test projects can reference broadly.
+- The source for those reusable helpers lives under `Src/Common/RenderVerification/`.
+- `Src/Common/RenderVerification/RenderVerification.csproj` adds the heavier DataTree and composite-capture pieces that depend on `DetailControls`.
+- `Src/Common/RootSite/RootSiteTests/RenderBenchmarkHarness.cs` stays in `RootSiteTests` because it still depends on RootSite test-only view scaffolding.
 
-For pixel-perfect validation to pass, the environment must match the baseline:
+## Environment requirements
 
-- **DPI**: Typically 96x96 (100% scaling)
-- **Theme**: Light or Dark (must match baseline)
-- **Font Smoothing**: ClearType enabled/disabled must match
-- **Text Scale Factor**: 100%
+For pixel-perfect validation to pass, the runtime environment must match the baseline:
 
-Check environment hash in snapshot `.environment.txt` files to verify compatibility.
+- DPI typically 96x96 (100% scaling).
+- Theme must match the captured baseline.
+- Font smoothing state must match the baseline.
+- Text scale factor should remain 100%.

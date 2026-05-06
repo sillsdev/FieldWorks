@@ -175,9 +175,10 @@ namespace SIL.FieldWorks.Common.RenderVerification
 			}
 			catch (ApplicationException ex)
 			{
-				// Even after stripping known problematic parts, other parts may fail
-				// due to missing test infrastructure. DataTree creates slices as it
-				// encounters them, so the ones before the failure are still usable.
+				// Even after stripping known problematic parts, other parts may still fail
+				// in the test harness because the full production stack is not loaded.
+				// DataTree creates slices as it encounters them, so the slices created
+				// before the failure are still usable for production-like snapshot capture.
 				Trace.TraceWarning(
 					$"[DataTreeRenderHarness] ShowObject partially failed (continuing with " +
 					$"{m_dataTree.Slices?.Count ?? 0} slices already created): {ex.Message}");

@@ -37,6 +37,9 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Keep reusable benchmark/snapshot helpers in a low-dependency assembly.
+         The source files live under RenderVerification/, while RenderVerification.csproj
+         adds the heavier DataTree/composite capture pieces that depend on DetailControls. -->
     <Compile Include="..\RenderVerification\RenderBenchmarkComparer.cs">
       <Link>RenderBenchmarkComparer.cs</Link>
     </Compile>

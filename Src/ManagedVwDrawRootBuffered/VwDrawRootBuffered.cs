@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Views
 				throw new NotImplementedException();
 
 			Rectangle rcp = rcpDraw;
-			BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, m_cachedBuffer.HdcMem, 0, 0, SRCCOPY);
+			BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, m_cachedBuffer.HdcMem, rcp.Left, rcp.Top, SRCCOPY);
 		}
 
 		/// <summary>

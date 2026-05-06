@@ -3,6 +3,8 @@
 - Source of truth migrated from `specs/001-render-speedup/` into this OpenSpec change.
 - Existing completion states from Speckit are preserved below.
 - New OpenSpec-only tasks are marked with `OS-` IDs.
+- Shared benchmark/snapshot helper sources live under `Src/Common/RenderVerification/*.cs` and are compiled into `Src/Common/RenderTestInfrastructure/RenderTestInfrastructure.csproj`.
+- `Src/Common/RenderVerification/RenderVerification.csproj` adds the heavier DataTree/composite capture pieces that depend on `DetailControls`.
 - Detailed optimization, tracing, and follow-up analysis for this branch is tracked in `RENDER_OPTIMIZATIONS.md`, `PERFORM_OFFSCREENLAYOUT_PATHS_1_2_5_PLAN.md`, `refresh-dirty-flag-audit.md`, and `dpi-fix-implementation.md`.
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -14,13 +16,13 @@
 ## Phase 2: Foundational (Blocking)
 
 - [x] T003 Create harness class in `Src/Common/RootSite/RootSiteTests/RenderBenchmarkHarness.cs`.
-- [x] T004 Add bitmap diff utility in `Src/Common/RootSite/RootSiteTests/RenderBitmapComparer.cs`.
-- [x] T005 Add benchmark models + JSON serialization in `Src/Common/RootSite/RootSiteTests/RenderBenchmarkResults.cs`.
-- [x] T006 Add scenario data builder helpers in `Src/Common/RootSite/RootSiteTests/RenderScenarioDataBuilder.cs`.
-- [x] T007 Add deterministic environment validator in `Src/Common/RootSite/RootSiteTests/RenderEnvironmentValidator.cs`.
-- [x] T008 Add trace log parser in `Src/Common/RootSite/RootSiteTests/RenderTraceParser.cs`.
-- [x] T008a Add diagnostics toggle helper in `Src/Common/RootSite/RootSiteTests/RenderDiagnosticsToggle.cs`.
-- [x] T008b Add regression comparer in `Src/Common/RootSite/RootSiteTests/RenderBenchmarkComparer.cs`.
+- [x] T004 Add snapshot verification/diff utility in `Src/Common/RenderVerification/RenderSnapshotVerifier.cs`.
+- [x] T005 Add benchmark models + JSON serialization in `Src/Common/RenderVerification/RenderBenchmarkResults.cs`.
+- [x] T006 Add scenario data builder helpers in `Src/Common/RenderVerification/RenderScenarioDataBuilder.cs`.
+- [x] T007 Add deterministic environment validator in `Src/Common/RenderVerification/RenderEnvironmentValidator.cs`.
+- [x] T008 Add trace log parser in `Src/Common/RenderVerification/RenderTraceParser.cs`.
+- [x] T008a Add diagnostics toggle helper in `Src/Common/RenderVerification/RenderDiagnosticsToggle.cs`.
+- [x] T008b Add regression comparer in `Src/Common/RenderVerification/RenderBenchmarkComparer.cs`.
 
 ## Phase 3: User Story 1 - Pixel-Perfect Render Baseline (P1)
 
@@ -34,17 +36,17 @@
 
 - [x] T012 Populate five timing scenarios (simple, medium, complex, deep-nested, custom-field-heavy).
 - [x] T013 Implement timing suite in `RenderTimingSuiteTests.cs`.
-- [x] T014 Add report writer in `RenderBenchmarkReportWriter.cs`.
+- [x] T014 Add report writer in `Src/Common/RenderVerification/RenderBenchmarkReportWriter.cs`.
 - [x] T015 Add baseline snapshots for remaining scenarios.
 - [x] T016 Emit results to `Output/RenderBenchmarks/results.json` and summary to `Output/RenderBenchmarks/summary.md`.
-- [x] T016a Implement run comparison in report writer using `RenderBenchmarkComparer.cs`.
+- [x] T016a Implement run comparison in report writer using `Src/Common/RenderVerification/RenderBenchmarkComparer.cs`.
 - [x] T016b Add reproducible test data guidance in migrated quickstart docs.
 
 ## Phase 5: User Story 3 - Rendering Trace Diagnostics (P3)
 
 - [x] T017 Add trace timing helper in `Src/views/VwRenderTrace.h`.
-- [x] T021 Add trace switch/config in `Src/Common/FieldWorks/FieldWorks.Diagnostics.dev.config`.
-- [x] T022 Integrate trace parsing into `RenderBenchmarkReportWriter.cs`.
+- [x] T021 Route benchmark trace capture through `Src/Common/RenderVerification/RenderDiagnosticsToggle.cs`; native `VwRenderTrace.h` timing remains compile-time-gated.
+- [x] T022 Integrate trace parsing into `Src/Common/RenderVerification/RenderBenchmarkReportWriter.cs`.
 - Trace instrumentation details, validation notes, and follow-up analysis are tracked in `RENDER_OPTIMIZATIONS.md`, `PERFORM_OFFSCREENLAYOUT_PATHS_1_2_5_PLAN.md`, and `refresh-dirty-flag-audit.md`.
 
 ## Phase 6: Polish & Cross-Cutting

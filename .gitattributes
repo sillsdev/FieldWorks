@@ -37,4 +37,3 @@ Src/Utilities/HCSynthByGloss/HCSynthByGloss/TestData/*.txt -whitespace
 
 # Verify snapshot testing
 *.verified.png binary
-*.received.png binary

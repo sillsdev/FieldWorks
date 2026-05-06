@@ -2742,6 +2742,7 @@ STDMETHODIMP VwRootBox::SetTableColWidths(VwLength * prgvlen, int cvlen)
 				pbox = pbox->NextOrLazy();
 		}
 	}
+	m_fNeedsLayout = true;
 	LayoutFull();
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
