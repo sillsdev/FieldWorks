@@ -10,7 +10,7 @@
 **Findings**:
 - `PatchableInstaller` contains `BaseInstallerBuild` (UI, common wxs) and `CustomActions`.
 - `FLExInstaller` references these files.
-- **Decision**: Move `PatchableInstaller/BaseInstallerBuild` and `PatchableInstaller/CustomActions` into `FLExInstaller/Shared` or similar.
+- **Decision**: Move/migrate `PatchableInstaller/BaseInstallerBuild` and `PatchableInstaller/CustomActions` behavior into `FLExInstaller/wix6/Shared`.
 - **Task**: Audit `FLExInstaller` .wxs files to find all references to `PatchableInstaller`.
 
 ## 2. WiX v6 Conversion
@@ -44,7 +44,7 @@
 - `buildMsi.bat` uses `heat.exe` to harvest `MASTERBUILDDIR` and `MASTERDATADIR`.
 - **Decision**:
     - Create `Build/Installer.targets` to define the build process.
-    - Migrate `ProcRunner` to `FLExInstaller/Shared/ProcRunner`.
+    - Migrate `ProcRunner` to `FLExInstaller/wix6/Shared/ProcRunner`.
     - Use `<HarvestDirectory>` in `.wixproj` to replace `heat.exe` calls.
 - **Task**: Define targets for `Restore`, `Build`, `Sign`, `Publish`.
 - **Prerequisites**: Use `DownloadFile` task or similar in MSBuild to fetch .NET/C++ redistributables if not present (FR-011).

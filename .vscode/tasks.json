@@ -496,6 +496,32 @@
       },
       "problemMatcher": []
     },
+    {
+      "label": "Installer Evidence: WiX6 UI screenshots (Debug, x64)",
+      "type": "shell",
+      "command": "./scripts/Agent/Invoke-Installer.ps1 -InstallerType Bundle -InstallerToolset Wix6 -Configuration Debug -Platform x64 -CaptureScreenshots -ScreenshotDurationSeconds 20 -ScreenshotIntervalSeconds 2 -StopAfterScreenshots -NoWait -IncludeTempLogs",
+      "detail": "Launch WiX 6 bundle UI, capture screenshots under Output/InstallerEvidence/<RunId>/screenshots, then stop before install",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Check: WiX6 Bundle (Debug, x64)",
+      "type": "shell",
+      "command": "./scripts/Agent/Invoke-InstallerCheck.ps1 -InstallerType Bundle -InstallerToolset Wix6 -Configuration Debug -Platform x64",
+      "detail": "Run snapshot -> install WiX 6 bundle -> snapshot -> diff (writes evidence under Output/InstallerEvidence/<RunId>)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
 
     // ==================== Git ====================
     {

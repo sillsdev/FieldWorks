@@ -5,6 +5,15 @@ on:
   pull_request:
     branches: ["release/**", "main", "feature/PubSub"]
   workflow_dispatch:
+    inputs:
+      run_wix6_installer_check:
+        description: 'Run the opt-in WiX 6 quiet install/uninstall verification on the GitHub runner'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
@@ -60,6 +69,110 @@ jobs:
             ./*.log
             ./Output/**/*.log
             ./Output/**/*.log.stderr
+
+  wix6_installer_build:
+    name: Build WiX 6 installer artifacts
+    runs-on: windows-latest
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v6
+        id: checkout
+
+      - name: Checkout Helps
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/FwHelps'
+          ref: 'develop'
+          fetch-depth: 0
+          path: 'DistFiles/Helps'
+
+      - name: Checkout Localizations
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/FwLocalizations'
+          ref: 'develop'
+          fetch-depth: 0
+          path: 'Localizations'
+
+      - name: Checkout liblcm
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/liblcm'
+          ref: 'master'
+          fetch-depth: 0
+          path: 'Localizations/LCM'
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+
+      - name: Validate installer prerequisites
+        shell: powershell
+        run: |
+          .\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build WiX 6 installer
+        shell: powershell
+        run: |
+          $buildLog = Join-Path $pwd 'wix6-installer-build.log'
+          $exitCode = 0
+          Start-Transcript -Path $buildLog -Force
+          try {
+            .\build.ps1 -BuildInstaller -InstallerToolset Wix6 -Configuration Release -Verbosity detailed -MsBuildArgs @('/bl:wix6-installer-build.binlog','/p:FastBundleBuild=0')
+            $exitCode = $LASTEXITCODE
+          }
+          catch {
+            Write-Error $_
+            $exitCode = 1
+          }
+          finally {
+            Stop-Transcript
+          }
+          if ($exitCode -ne 0) { exit $exitCode }
+
+      - name: Audit WiX 6 installer evidence
+        shell: powershell
+        run: |
+          .\Build\Agent\Test-Wix6InstallerBuildEvidence.ps1 -Configuration Release -Platform x64 -BuildLogPath .\wix6-installer-build.log -ReportPath .\Output\InstallerEvidence\wix6-ci-build-audit.txt -RequireNoWix3ToolsOnPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run opt-in WiX 6 installer verification
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_wix6_installer_check == 'true' }}
+        shell: powershell
+        run: |
+          .\scripts\Agent\Invoke-InstallerCheck.ps1 -InstallerType Bundle -InstallerToolset Wix6 -Configuration Release -Platform x64 -RunId wix6-ci-install-check -InstallArguments @('/quiet','/norestart') -InstallTimeoutSeconds 3600 -RunUninstall -UninstallArguments @('/uninstall','/quiet','/norestart') -UninstallTimeoutSeconds 1800
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload WiX 6 installer artifacts
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: wix6-installer-artifacts
+          if-no-files-found: error
+          path: |
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksBundle.exe
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksBundle.wixpdb
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksOfflineBundle.exe
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksOfflineBundle.wixpdb
+            FLExInstaller/wix6/bin/x64/Release/en-US/FieldWorks.msi
+            FLExInstaller/wix6/bin/x64/Release/en-US/FieldWorks.wixpdb
+
+      - name: Upload WiX 6 build evidence
+        uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: wix6-installer-build-evidence
+          if-no-files-found: warn
+          path: |
+            wix6-installer-build.log
+            wix6-installer-build.binlog
+            Output/InstallerEvidence/**
 
   publish_test_results:
     name: Publish Test Results

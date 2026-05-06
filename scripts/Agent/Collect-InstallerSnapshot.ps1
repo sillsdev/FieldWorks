@@ -17,6 +17,16 @@ param(
 	),
 
 	[Parameter(Mandatory = $false)]
+	[string[]]$DependencyRoots = @(
+		'HKLM:\SOFTWARE\Classes\Installer\Dependencies',
+		'HKLM:\SOFTWARE\WOW6432Node\Classes\Installer\Dependencies',
+		'HKCU:\SOFTWARE\Classes\Installer\Dependencies'
+	),
+
+	[Parameter(Mandatory = $false)]
+	[string[]]$DependencyNamePatterns = @('FieldWorks', 'FLEx', 'SIL'),
+
+	[Parameter(Mandatory = $false)]
 	[string[]]$FileRoots = @(
 		'$env:ProgramFiles\SIL',
 		'$env:ProgramFiles(x86)\SIL',
@@ -79,11 +89,11 @@ function Get-UninstallEntries {
 				$displayName = [string]$props.DisplayName
 				if ([string]::IsNullOrWhiteSpace($displayName)) { continue }
 
-				$matches = $false
+				$isMatch = $false
 				foreach ($pattern in $NamePatterns) {
-					if ($displayName -like ('*' + $pattern + '*')) { $matches = $true; break }
+					if ($displayName -like ('*' + $pattern + '*')) { $isMatch = $true; break }
 				}
-				if (-not $matches) { continue }
+				if (-not $isMatch) { continue }
 
 				$results.Add([pscustomobject]@{
 					KeyPath = $subKey.Name
@@ -127,6 +137,106 @@ function Get-RegistrySnapshot {
 			})
 		} catch {
 			# Ignore unreadable roots
+		}
+	}
+
+	return $results
+}
+
+function Convert-RegistryValuesToHashtable {
+	param([Parameter(Mandatory = $true)]$Properties)
+
+	$values = @{}
+	foreach ($property in $Properties.PSObject.Properties) {
+		if ($property.Name -in @('PSPath', 'PSParentPath', 'PSChildName', 'PSDrive', 'PSProvider')) { continue }
+		$values[$property.Name] = [string]$property.Value
+	}
+
+	return $values
+}
+
+function Test-TextMatchesAnyPattern {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string[]]$Values,
+		[Parameter(Mandatory = $true)]
+		[string[]]$Patterns
+	)
+
+	if ($Patterns.Count -eq 0) { return $true }
+
+	foreach ($value in $Values) {
+		if ([string]::IsNullOrWhiteSpace($value)) { continue }
+		foreach ($pattern in $Patterns) {
+			if ($value -like ('*' + $pattern + '*')) { return $true }
+		}
+	}
+
+	return $false
+}
+
+function Get-InstallerDependencyEntries {
+	param(
+		[Parameter(Mandatory = $true)]
+		[string[]]$Roots,
+		[Parameter(Mandatory = $true)]
+		[string[]]$NamePatterns
+	)
+
+	$results = New-Object System.Collections.Generic.List[object]
+
+	foreach ($root in $Roots) {
+		if (!(Test-Path -LiteralPath $root)) { continue }
+
+		$subKeys = Get-ChildItem -LiteralPath $root -ErrorAction SilentlyContinue
+		foreach ($subKey in $subKeys) {
+			try {
+				$item = Get-Item -LiteralPath $subKey.PSPath -ErrorAction Stop
+				$props = Get-ItemProperty -LiteralPath $subKey.PSPath -ErrorAction Stop
+				$values = Convert-RegistryValuesToHashtable -Properties $props
+
+				$dependents = New-Object System.Collections.Generic.List[object]
+				$matchValues = New-Object System.Collections.Generic.List[string]
+				$matchValues.Add([string]$subKey.PSChildName)
+				$matchValues.Add([string]$item.GetValue(''))
+
+				foreach ($value in $values.Values) {
+					$matchValues.Add([string]$value)
+				}
+
+				$dependentsPath = Join-Path -Path $subKey.PSPath -ChildPath 'Dependents'
+				if (Test-Path -LiteralPath $dependentsPath) {
+					$dependentKeys = Get-ChildItem -LiteralPath $dependentsPath -ErrorAction SilentlyContinue
+					foreach ($dependentKey in $dependentKeys) {
+						$dependentProps = Get-ItemProperty -LiteralPath $dependentKey.PSPath -ErrorAction SilentlyContinue
+						$dependentValues = Convert-RegistryValuesToHashtable -Properties $dependentProps
+						$dependents.Add([pscustomobject]@{
+							KeyName = [string]$dependentKey.PSChildName
+							Values = $dependentValues
+						})
+
+						$matchValues.Add([string]$dependentKey.PSChildName)
+						foreach ($value in $dependentValues.Values) {
+							$matchValues.Add([string]$value)
+						}
+					}
+				}
+
+				if (-not (Test-TextMatchesAnyPattern -Values $matchValues.ToArray() -Patterns $NamePatterns)) { continue }
+
+				$results.Add([pscustomobject]@{
+					Root = $root
+					KeyPath = $subKey.Name
+					ProviderKey = [string]$subKey.PSChildName
+					DefaultValue = [string]$item.GetValue('')
+					DisplayName = [string]$values['DisplayName']
+					Version = [string]$values['Version']
+					Values = $values
+					Dependents = $dependents
+				})
+			} catch {
+				# Ignore unreadable keys
+			}
 		}
 	}
 
@@ -211,20 +321,21 @@ if (-not [string]::IsNullOrWhiteSpace($parentDir)) {
 }
 
 $snapshot = [pscustomobject]@{
-	SnapshotVersion = 1
+	SnapshotVersion = 2
 	Name = $Name
 	CreatedUtc = (Get-Date).ToUniversalTime().ToString('o')
 	MachineName = $env:COMPUTERNAME
 	UserName = $env:USERNAME
 	OSVersion = [System.Environment]::OSVersion.VersionString
-	UninstallEntries = (Get-UninstallEntries -NamePatterns $UninstallNamePatterns)
-	Registry = (Get-RegistrySnapshot -Roots $RegistryRoots)
+	UninstallEntries = @(Get-UninstallEntries -NamePatterns $UninstallNamePatterns)
+	Registry = @(Get-RegistrySnapshot -Roots $RegistryRoots)
+	BurnDependencyEntries = @(Get-InstallerDependencyEntries -Roots $DependencyRoots -NamePatterns $DependencyNamePatterns)
 	Environment = (Get-EnvironmentSnapshot)
-	Files = (Get-FileSnapshot -Roots $FileRoots -MaxFileCount $MaxFileCount)
+	Files = @(Get-FileSnapshot -Roots $FileRoots -MaxFileCount $MaxFileCount)
 }
 
 $json = $snapshot | ConvertTo-Json -Depth 10
 Set-Content -LiteralPath $outPath -Value $json -Encoding UTF8
 
 Write-Output "Wrote snapshot: $outPath"
-Write-Output ("UninstallEntries: {0}, RegistryRoots: {1}, Files: {2}" -f $snapshot.UninstallEntries.Count, $snapshot.Registry.Count, $snapshot.Files.Count)
+Write-Output ("UninstallEntries: {0}, RegistryRoots: {1}, BurnDependencyEntries: {2}, Files: {3}" -f $snapshot.UninstallEntries.Count, $snapshot.Registry.Count, $snapshot.BurnDependencyEntries.Count, $snapshot.Files.Count)

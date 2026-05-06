@@ -2,7 +2,7 @@
 
 **Feature Branch**: 001-wix-v6-migration
 **Created**: 2025-12-11
-**Status**: Draft
+**Status**: Draft - harmonized with current repo state
 **Input**: User description: "Migrate WiX 3.11 installer to WiX v6, modernize build process, and remove genericinstaller submodule."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -13,7 +13,7 @@ A developer wants to build the installer locally to verify changes or create a r
 
 **Why this priority**: This is the core development workflow. Without a working build, no other testing or deployment is possible.
 
-**Independent Test**: Run the installer build on a clean developer machine (e.g., `./build.ps1 -BuildInstaller`, or `msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release`) and verify that a valid .exe or .msi is produced.
+**Independent Test**: Run the WiX 6 installer build on a clean developer machine (e.g., `./build.ps1 -BuildInstaller -InstallerToolset Wix6`, or `msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:InstallerToolset=Wix6`) and verify that the MSI plus online and offline bundle artifacts are produced.
 
 **Acceptance Scenarios**:
 
@@ -24,7 +24,7 @@ A developer wants to build the installer locally to verify changes or create a r
 
 ### User Story 2 - CI Builds Installer (Priority: P1)
 
-The Continuous Integration (CI) system needs to build the installer automatically on code changes. The workflow must be updated to use the new WiX v6 build process.
+The Continuous Integration (CI) system needs to build the installer automatically on code changes. The workflow must be updated to use the WiX 6 build process as the migration target and keep any WiX 3 lane explicitly transitional.
 
 **Why this priority**: Automated builds are essential for quality assurance and release management.
 
@@ -32,7 +32,7 @@ The Continuous Integration (CI) system needs to build the installer automaticall
 
 **Acceptance Scenarios**:
 
-1. **Given** a push to the repository, **When** the CI workflow triggers, **Then** the installer build step executes the new MSBuild targets and succeeds.
+1. **Given** a push to the repository, **When** the CI workflow triggers, **Then** a WiX 6 installer build step executes the SDK-style MSBuild targets and succeeds.
 2. **Given** the build completes, **When** artifacts are inspected, **Then** the installer files are present and valid.
 
 ---
@@ -87,56 +87,61 @@ An end user (or admin) wants to install the product on a machine without interne
 - **FR-010**: The installer UI MUST be ported from the existing custom implementation to maintain the "Dual Directory" selection (App + Project Data) and custom feature tree behavior.
 - **FR-011**: The build process MUST automatically download required prerequisites (e.g., .NET runtimes, C++ redistributables) during the build phase using MSBuild targets, rather than relying on pre-existing files.
 
-## Transition Plan: Parallel WiX 3 + WiX 6 Installers (NEW)
+## Current Migration State: WiX 6-first with Temporary WiX 3 Fallback
 
-**Goal**: Run WiX 3 and WiX 6 installers in parallel for a transition period, with WiX 3 as the **default** installer build, and WiX 6 as an opt-in path.
+**Goal**: Finish the WiX 6 migration first, then switch the default installer build to WiX 6 once the validation gates pass. The current repo still keeps a WiX 3 fallback path for transition safety, but WiX 3 is no longer the desired end state.
+
+**Current repo snapshot**:
+
+- `Build/InstallerBuild.proj` currently defaults `InstallerToolset` to `Wix3` and conditionally imports `Build/Installer.Wix3.targets` or `Build/Installer.targets`.
+- The WiX 6 route is explicit: `./build.ps1 -BuildInstaller -InstallerToolset Wix6` or `msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:InstallerToolset=Wix6`.
+- The WiX 6 route builds `FLExInstaller/wix6/FieldWorks.Bundle.wixproj` and `FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj`.
+- `PatchableInstaller/` is not present in this worktree. Existing CI workflows still checkout `sillsdev/genericinstaller` as `PatchableInstaller/` for legacy installer jobs.
+- `build.ps1 -BuildPatch -InstallerToolset Wix6` is not a supported path until WiX 6 patch/MSP work is designed and implemented.
 
 ### Transitional Requirements
 
 - **TR-001**: The build system MUST support building **either WiX 3 or WiX 6** installers via an explicit MSBuild property or build script flag.
-- **TR-002**: The **default installer build** (no property/flag) MUST produce the **WiX 3** installer artifacts.
+- **TR-002**: The current default installer build produces WiX 3 artifacts. This is a temporary compatibility state, not the migration target.
 - **TR-003**: WiX 3 build inputs MUST be preserved and isolated from WiX 6 schema changes (no shared `.wxi` files between toolsets).
-- **TR-004**: CI MUST build WiX 3 by default, with an additional opt-in path for WiX 6 builds.
-- **TR-005**: Documentation MUST clearly describe how to build **WiX 3 (default)** and **WiX 6 (opt-in)** installers, including artifact locations.
+- **TR-004**: CI MUST add a WiX 6 installer lane that does not require `genericinstaller` or `PatchableInstaller/`; any WiX 3 lane must be named as legacy/transition.
+- **TR-005**: Documentation MUST clearly describe how to build WiX 6 installers, where artifacts are produced, and which WiX 3/genericinstaller dependencies remain transitional.
+- **TR-006**: Before the migration is considered complete, the repo default MUST be changed from WiX 3 to WiX 6, or an explicit release decision must document why that switch is deferred.
 
-**Note**: During the transition, **FR-001/FR-002/FR-003 apply to the WiX 6 path only**. The WiX 3 path intentionally retains its legacy build flow until the transition ends.
+**Note**: During the transition, **FR-001/FR-002/FR-003 apply to the WiX 6 path only**. The WiX 3 path intentionally retains its legacy build flow only as a fallback until the transition ends.
 
 ### Changes in this spec that can break WiX 3 (must be reversed or isolated)
 
 - **WiX 6 schema changes to `FLExInstaller/*.wxi`** (namespace and element changes) make those files incompatible with WiX 3.
 - **`Build/Installer.targets` rewritten for WiX 6** and **WiX 3 batch pipelines removed/quarantined** (see tasks T040–T043, T030–T031).
-- **Removal of `PatchableInstaller`/`genericinstaller` assumptions** eliminates WiX 3 build inputs and scripts.
+- **Removal of `PatchableInstaller`/`genericinstaller` assumptions** eliminates WiX 3 build inputs and scripts. The current worktree has removed the in-tree `PatchableInstaller/` folder, but CI still checks out the external repo for legacy jobs.
 - **Custom action wiring changed to WiX 4+ binaries** (e.g., `Wix4UtilCA_X64`), incompatible with WiX 3.
 
-### Files/folders to restore from `release/9.3` worktree (WiX 3)
+### Current legacy WiX 3 fallback state
 
-Pull these **verbatim** from the `release/9.3` worktree to re-introduce the WiX 3 installer project:
+The transition originally considered restoring the full WiX 3 project tree. The current worktree instead has this split:
 
-- `Build/Installer.targets` (WiX 3 build orchestration, batch script invocation, and staging rules)
-- `FLExInstaller/*.wxi` (WiX 3-compatible includes, kept in root to minimize changes from `release/9.3`)
-- `PatchableInstaller/` (full tree)
-	- `BaseInstallerBuild/` (WiX 3 authoring, dialogs, batch scripts)
-	- `Common/` (shared includes/templates)
-	- `CustomActions/` (legacy CA project and build scripts)
-	- `ProcRunner/`
-	- `CreateUpdatePatch/`
-	- `libs/`
-	- `resources/`
-	- `Directory.Build.props`, `README.md`, `.gitignore`, `.gitattributes`
+- `Build/Installer.Wix3.targets` contains the legacy WiX 3 orchestration.
+- `FLExInstaller/*.wxi` remains the WiX 3-compatible FieldWorks include baseline.
+- `PatchableInstaller/` is **not** restored in-tree.
+- `.github/workflows/base-installer-cd.yml` and `.github/workflows/patch-installer-cd.yml` still checkout `sillsdev/genericinstaller` into `PatchableInstaller/` for legacy CI behavior.
+
+This means “WiX 6-first” cleanup is not complete: the repo has removed the in-tree generic installer, but CI still depends on it for some legacy jobs. Do not reintroduce a `genericinstaller` submodule as the migration solution; migrate any remaining required behavior into the WiX 6 path or keep it behind an explicitly legacy job until that job is retired.
 
 ### What else must change (high-level)
 
 - **Split installer inputs by toolset** with **WiX 3 in `FLExInstaller/` root** and **WiX 6 under `FLExInstaller/wix6/`**, and prevent cross-use.
 - **Relocate WiX 6 assets** (projects + shared authoring) under `FLExInstaller/wix6/` to avoid collisions with WiX 3 authoring.
-- **Add toolset selection property** (e.g., `InstallerToolset=Wix3|Wix6`) to `build.ps1` and `Build/Orchestrator.proj` with **default = Wix3**.
-- **Provide dual build targets** in MSBuild (e.g., `BuildInstallerWix3`, `BuildInstallerWix6`).
-- **Update documentation + CI** so WiX 3 is the default build and WiX 6 is opt-in.
+- **Add toolset selection property** (`InstallerToolset=Wix3|Wix6`) to `build.ps1` and `Build/InstallerBuild.proj`. The current default is Wix3; the migration target is to change the default to Wix6 after validation.
+- **Provide clear MSBuild entry points** for the imported WiX 3 and WiX 6 routes. Current state has `BuildInstaller` imported per toolset plus `BuildInstallerWix6`; an explicit WiX 3 alias is not required if `InstallerToolset=Wix3` remains documented.
+- **Update documentation + CI** so WiX 6 is the primary migration path, and WiX 3 is described as transitional fallback.
 
 ### Success Criteria
 
-- **Build Success**: WiX 3 (default) and WiX 6 (opt-in) installers both build successfully on developer machines and CI.
-- **No Legacy Submodule**: The genericinstaller submodule remains removed, even though `PatchableInstaller/` is restored in-tree for WiX 3.
-- **Functional Parity**: Both installer paths provide the same installation options (features, locales, offline/online) as the previous version.
+- **Build Success**: WiX 6 online bundle, offline bundle, MSI, and `.wixpdb` files build successfully on developer machines and CI without a `genericinstaller` checkout.
+- **Default Switch Ready**: `InstallerToolset=Wix6` is proven enough that the repo can make WiX 6 the default installer route, or the remaining blockers are explicitly tracked.
+- **No Legacy Submodule**: The genericinstaller submodule remains removed, and no WiX 6 build or validation lane requires a `PatchableInstaller/` checkout.
+- **Functional Parity**: The WiX 6 path provides the same installation options (features, locales, offline/online) as the previous version.
 - **Modernization (WiX 6 path)**: WiX 6 build uses MSBuild + WiX 6 tools only, with no legacy batch scripts in the WiX 6 path.
 
 ### Assumptions
@@ -145,6 +150,19 @@ Pull these **verbatim** from the `release/9.3` worktree to re-introduce the WiX 
 - The genericinstaller submodule content is available for migration.
 - WiX v6 supports the specific prerequisites (e.g., .NET Framework versions) required by the application.
 - The team accepts the "breaking changes" inherent in moving to WiX v6 (e.g., different CLI tools, different project file format).
+
+### Patch/MSP Support (future / out of scope for first WiX 6 migration)
+
+The first migration target is a working WiX 6 MSI + online/offline bundle using major upgrades. Patch infrastructure (MSP generation, `PatchBaseline`, base-build `.wixpdb` retention, and a WiX 6 `BuildPatch` target) is intentionally separate work.
+
+Future patch work must prove:
+
+- Component GUID and file identity stability across base/update builds.
+- Base MSI and `.wixpdb` artifact retention for patch creation.
+- A WiX 6 replacement for the legacy `PatchableInstaller/CreateUpdatePatch` and `buildPatch.bat` flow.
+- MSP apply, repair, uninstall, and upgrade behavior on clean machines.
+
+Until that work exists, `build.ps1 -BuildPatch -InstallerToolset Wix6` should be treated as unsupported.
 
 ### Key Entities
 

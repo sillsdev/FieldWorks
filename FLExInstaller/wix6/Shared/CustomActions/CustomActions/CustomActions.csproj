@@ -10,6 +10,7 @@
     <Content Include="CustomAction.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Resources.Extensions" Version="9.0.13" />
     <PackageReference Include="WixToolset.Dtf.CustomAction" Version="6.0.0" />
     <PackageReference Include="WixToolset.Dtf.WindowsInstaller" Version="6.0.0" />
   </ItemGroup>

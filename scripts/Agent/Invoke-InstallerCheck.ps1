@@ -13,6 +13,10 @@ param(
 	[string]$Platform = 'x64',
 
 	[Parameter(Mandatory = $false)]
+	[ValidateSet('Wix3', 'Wix6')]
+	[string]$InstallerToolset = 'Wix3',
+
+	[Parameter(Mandatory = $false)]
 	[string]$InstallerPath,
 
 	[Parameter(Mandatory = $false)]
@@ -25,10 +29,16 @@ param(
 	[string[]]$InstallArguments = @(),
 
 	[Parameter(Mandatory = $false)]
+	[int]$InstallTimeoutSeconds = 0,
+
+	[Parameter(Mandatory = $false)]
 	[switch]$RunUninstall,
 
 	[Parameter(Mandatory = $false)]
 	[string[]]$UninstallArguments = @('/uninstall'),
+
+	[Parameter(Mandatory = $false)]
+	[int]$UninstallTimeoutSeconds = 0,
 
 	[Parameter(Mandatory = $false)]
 	[switch]$AssertUninstallClean,
@@ -75,7 +85,9 @@ Write-Output "Collecting snapshot: before install"
 & "$repoRoot\scripts\Agent\Collect-InstallerSnapshot.ps1" -OutputPath $beforePath -Name 'before-install' -MaxFileCount $MaxFileCount
 
 Write-Output "Running installer"
-$installResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType $InstallerType -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $RunId -Arguments $InstallArguments -IncludeTempLogs -PassThru -NoExit
+$allInstallOutput = @(& "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType $InstallerType -Configuration $Configuration -Platform $Platform -InstallerToolset $InstallerToolset -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $RunId -Arguments $InstallArguments -TimeoutSeconds $InstallTimeoutSeconds -IncludeTempLogs -PassThru -NoExit)
+$allInstallOutput | Where-Object { $_ -isnot [pscustomobject] } | ForEach-Object { Write-Output $_ }
+$installResult = $allInstallOutput | Where-Object { $_ -is [pscustomobject] } | Select-Object -Last 1
 
 if ($null -eq $installResult) {
 	throw "Invoke-Installer did not return a result."
@@ -97,7 +109,9 @@ if ($RunUninstall) {
 	} else {
 		Write-Output "Running uninstall"
 		$uninstallRunId = "$RunId-uninstall"
-		$uninstallResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType 'Bundle' -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $uninstallRunId -Arguments $UninstallArguments -IncludeTempLogs -PassThru -NoExit
+		$allUninstallOutput = @(& "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType 'Bundle' -Configuration $Configuration -Platform $Platform -InstallerToolset $InstallerToolset -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $uninstallRunId -Arguments $UninstallArguments -TimeoutSeconds $UninstallTimeoutSeconds -IncludeTempLogs -PassThru -NoExit)
+		$allUninstallOutput | Where-Object { $_ -isnot [pscustomobject] } | ForEach-Object { Write-Output $_ }
+		$uninstallResult = $allUninstallOutput | Where-Object { $_ -is [pscustomobject] } | Select-Object -Last 1
 		$uninstallExit = [int]$uninstallResult.ExitCode
 		Write-Output "Uninstall exit code: $uninstallExit"
 

@@ -167,8 +167,8 @@ Suggested workflow:
 
 ### Toolchain / Build
 
-- [ ] Build succeeds without `genericinstaller` checkout present (fresh clone/worktree)
-- [ ] Build does not rely on WiX 3 being on PATH
+- [x] Build succeeds without `genericinstaller` checkout present (fresh clone/worktree) — T044 confirmed; build log shows no references to PatchableInstaller path; CI check enforces this.
+- [x] Build does not rely on WiX 3 being on PATH — T045 confirmed; local build log has zero invocations of candle/light/insignia; CI `-RequireNoWix3ToolsOnPath` enforces on clean runner.
 - [x] Build outputs match expected filenames/locations
 - [ ] Staging folder contains expected payload roots:
   - [x] `FieldWorks`
@@ -214,9 +214,10 @@ Suggested workflow:
 
 ### Upgrade / uninstall
 
-- [ ] Major upgrade from previous release works (single ARP entry)
+- [x] Major upgrade from previous release works (single ARP entry) — T098: two WiX 3 9.3.8.1 bundles detected and uninstalled; no side-by-side. Evidence: `Output/InstallerEvidence/wix6-quiet-install/diff-before-vs-after-install.txt`
+- [x] Same-version re-install is a no-op (no side-by-side) — T099: second quiet install detected Present; execute=None.
 - [ ] Data path restriction behavior on upgrade matches expectations
-- [ ] Uninstall removes expected registry values and shortcuts
+- [x] Uninstall removes expected registry values and shortcuts — T093: clean uninstall; 5604 files removed, 0 left behind, ARP entry removed. Evidence: `Output/InstallerEvidence/wix6-quiet-install/diff-before-install-vs-after-uninstall.txt`
 - [ ] Uninstall restores env vars/PATH appropriately
 
 ### Offline story (if claimed)
@@ -232,12 +233,12 @@ Populate one row per behavior/step. Keep entries short and point to the most spe
 
 | Behavior / step (short) | Was implicit before (WiX3 baseline) | How it’s expressed in v6 | Where it lives now (path + identifier) | Status | Notes / evidence |
 |---|---|---|---|---|---|
-| Example: CA runtime selection | DTF/SfxCA expected `CustomAction.config` present in CA payload (in WiX3-era tooling this was typically ensured by the CA project output) | Explicitly copied to output and packaged | `FLExInstaller/Shared/CustomActions/CustomActions/CustomActions.csproj` (`Content Include="CustomAction.config"` + `CopyToOutputDirectory`) | ☑ | Confirmed in project file; historic example (optional external baseline): `genericinstaller/CustomActions/CustomActions/CustomActions.csproj` copies `CustomAction.config` to output |
+| Example: CA runtime selection | DTF/SfxCA expected `CustomAction.config` present in CA payload (in WiX3-era tooling this was typically ensured by the CA project output) | Explicitly copied to output and packaged | `FLExInstaller/wix6/Shared/CustomActions/CustomActions/CustomActions.csproj` (`Content Include="CustomAction.config"` + `CopyToOutputDirectory`) | ☑ | Confirmed in project file; historic example (optional external baseline): `genericinstaller/CustomActions/CustomActions/CustomActions.csproj` copies `CustomAction.config` to output |
 | Example: L10n payload inclusion | Legacy pipeline staged + harvested l10n implicitly | Heat harvest + feature reference | `FLExInstaller/wix6/FieldWorks.Installer.wixproj` (`HarvestedL10nFiles`) + `Framework.wxs` feature refs | ☐ | Install file listing |
-| Example: Fonts install semantics | Font components existed, relied on legacy schema allowances | Explicit components with registry gating + Permanent | `FLExInstaller/Fonts.wxi` (`ComponentGroup Fonts`) + referenced from `Framework.wxs` | ☐ | Registry + file check |
+| Example: Fonts install semantics | Font components existed, relied on legacy schema allowances | Explicit components with registry gating + Permanent | `FLExInstaller/wix6/Fonts.wxi` (`ComponentGroup Fonts`) + referenced from `Framework.wxs` | ☐ | Registry + file check |
 | Staged payload roots exist | `Build/Installer.targets` defined versioned staging dirs (e.g., `$(SafeApplicationName)_$(MinorVersion)_Build_$(Platform)` + `objects/...` suffixes) | Explicit staging target creates expected roots under `FieldWorks_InstallerInput_<Config>_<Platform>\objects\...` | `Build/Installer.targets` (`StageInstallerInputs`) and `BuildDir\FieldWorks_InstallerInput_Release_x64\objects\*` | ☑ | Verified on 2025-12-17 (Release build) |
 | Bundle logs captured | Ad-hoc logging varied by invocation | Standardized helper writes log under repo output | `scripts/Agent/Invoke-Installer.ps1` (bundle log path) | ☑ | `Output\InstallerEvidence\20251217-local-bundle-passive\bundle.log` |
-| FLEx Bridge offline prereq (bundle) | Bundle included/offered offline bridge prereq | `ExePackage` is defined in the shared prereqs include and referenced from the bundle chain via `PackageGroupRef` | `FLExInstaller/Shared/Common/Redistributables.wxi` (`PackageGroup FlexBridgeInstaller` + `ExePackage FBInstaller`) and `PackageGroup vcredists` (`PackageGroupRef FlexBridgeInstaller`) | ☑ | Evidence: `Output\InstallerEvidence\flexbridge-parity\bundle.log` contains `Detected package: FBInstaller` and `Planned package: FBInstaller` (still needs clean-VM behavior validation) |
+| FLEx Bridge offline prereq (bundle) | Bundle included/offered offline bridge prereq | `ExePackage` is defined in the shared prereqs include and referenced from the bundle chain via `PackageGroupRef` | `FLExInstaller/wix6/Shared/Common/Redistributables.wxi` (`PackageGroup FlexBridgeInstaller` + `ExePackage FBInstaller`) and `PackageGroup vcredists` (`PackageGroupRef FlexBridgeInstaller`) | ☑ | Evidence: `Output\InstallerEvidence\flexbridge-parity\bundle.log` contains `Detected package: FBInstaller` and `Planned package: FBInstaller` (still needs clean-VM behavior validation) |
 | MSI ICE validation | Typically implicit (or run manually) | Explicit `wix.exe msi validate -sice ICE60 -wx` in build | `FLExInstaller/wix6/FieldWorks.Installer.wixproj` (`WindowsInstallerValidation`) | ☑ | Present in Release build output |
 | | | | | | |
 | | | | | | |

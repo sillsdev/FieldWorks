@@ -1,11 +1,11 @@
 # Bundle UI (WiX v6) — FieldWorks
 
-This document describes the desired UI flow for `FieldWorksBundle.exe` and provides a checklist of changes needed to implement that flow starting from the current bundle UI state in this worktree.
+This document describes the desired UI flow for `FieldWorksBundle.exe` and tracks the remaining runtime verification needed for the current WiX 6 bundle/MSI UI implementation.
 
 ## Scope
 
-- Applies to the **online** bundle authored in [FLExInstaller/Shared/Base/Bundle.wxs](../../FLExInstaller/Shared/Base/Bundle.wxs).
-- Uses **WixStdBA (WixStandardBootstrapperApplication)** with a custom theme authored in [FLExInstaller/Shared/Base/BundleTheme.xml](../../FLExInstaller/Shared/Base/BundleTheme.xml) + [FLExInstaller/Shared/Base/BundleTheme.wxl](../../FLExInstaller/Shared/Base/BundleTheme.wxl).
+- Applies to the **online** bundle authored in [FLExInstaller/wix6/Shared/Base/Bundle.wxs](../../FLExInstaller/wix6/Shared/Base/Bundle.wxs) and the offline bundle authored in [FLExInstaller/wix6/Shared/Base/OfflineBundle.wxs](../../FLExInstaller/wix6/Shared/Base/OfflineBundle.wxs).
+- Uses **WixStdBA (WixStandardBootstrapperApplication)** with a custom theme authored in [FLExInstaller/wix6/Shared/Base/BundleTheme.xml](../../FLExInstaller/wix6/Shared/Base/BundleTheme.xml) + [FLExInstaller/wix6/Shared/Base/BundleTheme.wxl](../../FLExInstaller/wix6/Shared/Base/BundleTheme.wxl).
 - Goal: **mirror the MSI UI** as closely as practical while still letting Burn handle prerequisites, detection, logging, and restart.
 
 ## Reference screenshots (expected UX)
@@ -51,7 +51,7 @@ The MSI UI shows two destination folders. The expected defaults are:
   - `.NET 4.8 web` package group
   - `vcredists` package group
   - `AppMsiPackage` (FieldWorks MSI)
-- In [FLExInstaller/Shared/Base/Bundle.wxs](../../FLExInstaller/Shared/Base/Bundle.wxs), the `AppMsiPackage` currently has:
+- In [FLExInstaller/wix6/Shared/Base/Bundle.wxs](../../FLExInstaller/wix6/Shared/Base/Bundle.wxs), the `AppMsiPackage` currently has:
   - `Visible="no"`
   - MSI internal UI is enabled for **full UI** runs (see note below)
   - MSI logging captured via `LogPathVariable="WixBundleLog_AppMsiPackage"`.
@@ -63,29 +63,26 @@ The MSI UI shows two destination folders. The expected defaults are:
 The WiX v6 mechanism for showing MSI internal UI from a bundle is `bal:DisplayInternalUICondition` on `MsiPackage`.
 
 - Current bundle authoring uses: `bal:DisplayInternalUICondition="WixBundleUILevel >= 4"`
-  - This turns on MSI internal UI only for **full UI** runs.
+  - This turns on MSI internal UI only for **full UI** runs (`BOOTSTRAPPER_DISPLAY_FULL` follows passive/none display levels in the Burn enum).
   - It avoids MSI dialogs in `/passive` and `/quiet` runs (runtime verification still required).
 
 Reference docs:
 - https://docs.firegiant.com/wix/schema/wxs/msipackage/ (see `DisplayInternalUICondition`)
 - https://docs.firegiant.com/wix/tools/burn/builtin-variables/ (see `WixBundleUILevel`)
 
-Attempting to force `REBOOT=ReallySuppress` via `MsiProperty` also fails (error `WIX0365`: `REBOOT` is bootstrapper-controlled). Enabling true MSI dialog UI from the bundle therefore requires either:
-
-- upgrading the WiX toolset packages to a version where `DisplayInternalUI` is supported in this project, or
-- switching to the “bundle-only UI styled to match MSI” approach (Option B).
+Attempting to force `REBOOT=ReallySuppress` via `MsiProperty` also fails (error `WIX0365`: `REBOOT` is bootstrapper-controlled). Reboot behavior therefore needs runtime validation rather than another MSI property override.
 
 ### Payload staging constraint (important)
 
-WixStdBA binds theme resources by *filename* at runtime. This worktree stages flat-named copies of the theme and its assets into the culture output folder via [FLExInstaller/wix6/FieldWorks.Bundle.wixproj](../../FLExInstaller/wix6/FieldWorks.Bundle.wixproj) target `StageBundlePayloads`.
+WixStdBA binds theme resources by *filename* at runtime. This worktree stages flat-named copies of the theme and its assets into the culture output folder via [FLExInstaller/wix6/FieldWorks.Bundle.wixproj](../../FLExInstaller/wix6/FieldWorks.Bundle.wixproj) target `StageBundlePayloads` and [FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj](../../FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj) target `StageOfflineBundlePayloads`.
 
 That staging approach is required for stability of any custom theme/asset work.
 
 ## Target UI approach
 
-There are two viable approaches. The recommended one is **Option A**.
+The implemented approach is **Option A**.
 
-### Option A (recommended): Burn handles prereqs + MSI shows internal UI
+### Option A: Burn handles prereqs + MSI shows internal UI
 
 In this approach:
 
@@ -98,9 +95,9 @@ This provides the closest parity to the MSI UI with the least custom theming wor
 
 With WixStdBA, MSI internal UI is shown in the **Windows Installer UI window** (msiexec) rather than being embedded in the bootstrapper window. Expect “two windows” during the handoff.
 
-### Option B: Keep bundle-only UI and only style it to look like MSI
+### Deferred fallback: Keep bundle-only UI and only style it to look like MSI
 
-This is the current direction of the custom theme: MSI-like background, sizes, and copy. This can be kept even if Option A is implemented, because Option A still needs a small bootstrapper shell.
+The custom theme still matters because Option A needs a small bootstrapper shell. A bundle-only UI should be treated as a fallback, not the primary migration plan, because duplicating MSI directory and feature behavior in WixStdBA would add avoidable maintenance risk.
 
 ## Recommended interactive UI flow (Option A)
 
@@ -187,7 +184,9 @@ Key requirement:
 
 (Implementation note: the bundle currently gates `bal:DisplayInternalUICondition` on `WixBundleUILevel >= 4` (intended to mean full UI only). This still needs explicit verification.)
 
-## Implementation checklist (from current state)
+## Implementation and Verification Checklist
+
+The core authoring for MSI internal UI handoff is in place. Most remaining items below are runtime verification, not missing authoring.
 
 ### Branding and identity requirements
 
@@ -215,8 +214,8 @@ Key requirement:
 - [ ] Align the Welcome bundle screen with the reference screenshot:
   - Keep the license hyperlink and acceptance checkbox.
   - Welcome copy should explain prerequisites → then MSI UI.
-- [x] Make the Install page button label/copy reflect the handoff.
-  - Suggested: keep button text “Install”, but change the page text to mention the MSI installer will open.
+- [ ] Make the Install page copy reflect the handoff.
+  - Suggested: keep button text “Install”, but change the page text to mention the FieldWorks MSI installer will open for folders/features after prerequisite checks.
 - [x] Keep restart UI gated on `WixStdBARestartRequired`.
   - Restart-related controls in `Success`/`Failure` use `VisibleCondition="WixStdBARestartRequired"`.
 - [x] Options page decision: hide it.
@@ -259,7 +258,7 @@ Key requirement:
 
 ## Notes / known gaps
 
-- The offline bundle in this repo ([FLExInstaller/Shared/Base/OfflineBundle.wxs](../../FLExInstaller/Shared/Base/OfflineBundle.wxs)) is not currently wired into the WiX v6 build outputs.
+- The offline bundle in this repo ([FLExInstaller/wix6/Shared/Base/OfflineBundle.wxs](../../FLExInstaller/wix6/Shared/Base/OfflineBundle.wxs)) is wired into the WiX 6 build via [FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj](../../FLExInstaller/wix6/FieldWorks.OfflineBundle.wixproj), but disconnected-machine runtime validation is still pending.
 - `DisplayInternalUI` (legacy attribute) is not supported by WiX v6 schema here; use `bal:DisplayInternalUICondition` instead.
 - Runtime behavior still needs verification for:
   - normal interactive install
