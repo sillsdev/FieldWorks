@@ -1,8 +1,23 @@
-# Atlassian Readonly Skills API Reference
+# Atlassian Skills API Reference
 
-Detailed usage examples and API documentation for read-only Jira, Confluence, and Bitbucket operations.
+Detailed usage examples and API documentation for Jira, Confluence, and Bitbucket tools.
 
-> **Note**: This is a read-only variant. For write operations (create, update, delete), use `atlassian-skills`.
+## Jira CLI Quick Reference
+
+Run from the repository root. The CLI uses `.agents/skills/atlassian-skills/.env` or `JIRA_*` environment variables and accepts either an issue key or a Jira browse URL.
+
+```powershell
+python .agents/skills/atlassian-skills/scripts/jira.py issue LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py issue LT-22324 --all-fields
+python .agents/skills/atlassian-skills/scripts/jira.py comments LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py attachments LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py download-attachments LT-22324 --out Output/Jira/LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py add-comment LT-22324 --body-file Output/Jira/LT-22324/comment.md
+python .agents/skills/atlassian-skills/scripts/jira.py update-comment LT-22324 123456 --body-file Output/Jira/LT-22324/comment.md
+python .agents/skills/atlassian-skills/scripts/jira.py attach LT-22324 Output/Jira/LT-22324/screenshot.png Output/Jira/LT-22324/log.txt
+```
+
+Use `--body-file` and `--description-file` for multi-line text. Avoid inline tokens, long PowerShell blocks, and `python -c` for normal Jira issue work. The plain `issue` command returns a readable common field set; use `--all-fields` only when you need every Jira field.
 
 ## Configuration Modes
 
@@ -79,79 +94,101 @@ result = jira_search(
 )
 ```
 
-### Get Available Fields
+### Create an Issue
 
 ```python
-from scripts.jira_search import jira_search_fields
+from scripts.jira_issues import jira_create_issue
 
-# Get all available fields for searching
-result = jira_search_fields()
+# Environment variable mode
+result = jira_create_issue(
+    project_key="MYPROJ",
+    summary="Implement new feature",
+    issue_type="Task",
+    description="Detailed description here",
+    priority="High",
+    labels=["backend", "api"],
+    custom_fields={
+        "customfield_10001": "Sprint 5",
+        "customfield_10002": {"value": "Option A"}
+    }
+)
+
+# Agent mode with credentials
+result = jira_create_issue(
+    project_key="MYPROJ",
+    summary="Implement new feature",
+    issue_type="Task",
+    description="Detailed description here",
+    priority="High",
+    labels=["backend", "api"],
+    custom_fields={
+        "customfield_10001": "Sprint 5",
+        "customfield_10002": {"value": "Option A"}
+    },
+    credentials=credentials  # Pass credentials
+)
 ```
 
-### Get Issue Details
+### Update an Issue
 
 ```python
-from scripts.jira_issues import jira_get_issue
+from scripts.jira_issues import jira_update_issue
 
-# Get issue by key
-result = jira_get_issue("MYPROJ-123")
-
-# Get issue with specific fields
-result = jira_get_issue("MYPROJ-123", fields="summary,status,assignee,priority")
+result = jira_update_issue(
+    issue_key="MYPROJ-123",
+    summary="Updated summary",
+    priority="Critical",
+    custom_fields={
+        "customfield_10001": "Updated value"
+    }
+)
 ```
 
-### Get Available Transitions
+### Transition an Issue
 
 ```python
-from scripts.jira_workflow import jira_get_transitions
+from scripts.jira_workflow import jira_get_transitions, jira_transition_issue
 
-# Get available transitions for an issue
+# Get available transitions
 transitions = jira_get_transitions("MYPROJ-123")
+
+# Transition to a new status
+result = jira_transition_issue(
+    issue_key="MYPROJ-123",
+    transition_id="31",
+    comment="Moving to In Progress"
+)
 ```
 
-### Get Worklog Entries
+### Add Worklog
 
 ```python
-from scripts.jira_worklog import jira_get_worklog
+from scripts.jira_worklog import jira_add_worklog
 
-# Get worklog for an issue
-result = jira_get_worklog("MYPROJ-123")
+result = jira_add_worklog(
+    issue_key="MYPROJ-123",
+    time_spent="2h 30m",
+    comment="Worked on implementation"
+)
 ```
 
-### Get Link Types
+### Link Issues
 
 ```python
-from scripts.jira_links import jira_get_link_types
+from scripts.jira_links import jira_create_issue_link, jira_link_to_epic
 
-# Get available link types
-result = jira_get_link_types()
-```
+# Create a link between issues
+result = jira_create_issue_link(
+    link_type="Blocks",
+    inward_issue_key="MYPROJ-123",
+    outward_issue_key="MYPROJ-456"
+)
 
-### Get Projects and Versions
-
-```python
-from scripts.jira_projects import jira_get_all_projects, jira_get_project_issues, jira_get_project_versions
-
-# Get all projects
-projects = jira_get_all_projects()
-
-# Get issues for a project
-issues = jira_get_project_issues("MYPROJ", limit=50)
-
-# Get versions for a project
-versions = jira_get_project_versions("MYPROJ")
-```
-
-### Get User Profile
-
-```python
-from scripts.jira_users import jira_get_user_profile
-
-# Get user profile by account ID
-result = jira_get_user_profile("5d123abc456def789")
-
-# Get user profile by email
-result = jira_get_user_profile(email="user@example.com")
+# Link to an epic
+result = jira_link_to_epic(
+    issue_key="MYPROJ-123",
+    epic_key="MYPROJ-100"
+)
 ```
 
 ### Agile Boards and Sprints
@@ -159,22 +196,24 @@ result = jira_get_user_profile(email="user@example.com")
 ```python
 from scripts.jira_agile import (
     jira_get_agile_boards,
-    jira_get_board_issues,
     jira_get_sprints_from_board,
-    jira_get_sprint_issues
+    jira_create_sprint
 )
 
 # Find boards
 boards = jira_get_agile_boards(project_key="MYPROJ")
 
-# Get issues on a board
-issues = jira_get_board_issues(board_id="123", limit=50)
-
-# Get sprints from a board
+# Get active sprints
 sprints = jira_get_sprints_from_board(board_id="123", state="active")
 
-# Get issues in a sprint
-sprint_issues = jira_get_sprint_issues(sprint_id="456", limit=50)
+# Create a sprint
+result = jira_create_sprint(
+    board_id="123",
+    sprint_name="Sprint 5",
+    start_date="2024-01-15",
+    end_date="2024-01-29",
+    goal="Complete API integration"
+)
 ```
 
 ## Confluence Examples
@@ -184,11 +223,7 @@ sprint_issues = jira_get_sprint_issues(sprint_id="456", limit=50)
 ```python
 from scripts.confluence_search import confluence_search
 
-# Search for pages
 result = confluence_search("API documentation", limit=10)
-
-# Search in specific space
-result = confluence_search("guide", space_key="DEV", limit=20)
 ```
 
 ### Get a Page
@@ -203,99 +238,56 @@ result = confluence_get_page(page_id="123456")
 result = confluence_get_page(title="API Guide", space_key="DEV")
 ```
 
-### Get Comments
+### Create a Page
 
 ```python
-from scripts.confluence_comments import confluence_get_comments
+from scripts.confluence_pages import confluence_create_page
 
-# Get comments for a page
+result = confluence_create_page(
+    space_key="DEV",
+    title="New Documentation Page",
+    content="# Welcome\n\nThis is **markdown** content.",
+    parent_id="123456"
+)
+```
+
+### Update a Page
+
+```python
+from scripts.confluence_pages import confluence_update_page
+
+result = confluence_update_page(
+    page_id="123456",
+    title="Updated Title",
+    content="# Updated Content\n\nNew information here."
+)
+```
+
+### Manage Comments
+
+```python
+from scripts.confluence_comments import confluence_add_comment, confluence_get_comments
+
+# Get comments
 comments = confluence_get_comments(page_id="123456")
-```
 
-### Get Labels
-
-```python
-from scripts.confluence_labels import confluence_get_labels
-
-# Get labels for a page
-labels = confluence_get_labels(page_id="123456")
-```
-
-## Bitbucket Examples
-
-### List Projects and Repositories
-
-```python
-from scripts.bitbucket_projects import bitbucket_list_projects, bitbucket_list_repositories
-
-# List all projects
-projects = bitbucket_list_projects(limit=25)
-
-# List repositories in a project
-repos = bitbucket_list_repositories(project_key="PROJ", limit=50)
-```
-
-### Get Pull Request Details
-
-```python
-from scripts.bitbucket_pull_requests import bitbucket_get_pull_request, bitbucket_get_pr_diff
-
-# Get PR details
-result = bitbucket_get_pull_request(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123
-)
-
-# Get PR diff
-diff = bitbucket_get_pr_diff(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    pr_id=123
+# Add comment
+result = confluence_add_comment(
+    page_id="123456",
+    content="Great documentation!"
 )
 ```
 
-### Get File Content
+### Manage Labels
 
 ```python
-from scripts.bitbucket_files import bitbucket_get_file_content, bitbucket_search
+from scripts.confluence_labels import confluence_add_label, confluence_remove_label
 
-# Get file content
-result = bitbucket_get_file_content(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    file_path="src/main.py",
-    branch="master"
-)
+# Add label
+result = confluence_add_label(page_id="123456", name="api-docs")
 
-# Search for code
-result = bitbucket_search(
-    query="def authenticate",
-    project_key="PROJ",
-    search_type="code",
-    limit=25
-)
-```
-
-### Get Commits
-
-```python
-from scripts.bitbucket_commits import bitbucket_get_commits, bitbucket_get_commit
-
-# Get recent commits from a branch
-result = bitbucket_get_commits(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    branch="master",
-    limit=10
-)
-
-# Get specific commit details
-result = bitbucket_get_commit(
-    project_key="PROJ",
-    repository_slug="my-repo",
-    commit_id="1da11eaec25aed8b251de24841885c91493b3173"
-)
+# Remove label
+result = confluence_remove_label(page_id="123456", name="outdated")
 ```
 
 ## JQL Query Examples
@@ -358,6 +350,19 @@ lastModified >= now("-7d")
 creator = "user@example.com"
 ```
 
+## Time Format Reference
+
+For worklog entries, use these time formats:
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| Weeks | `1w` | 1 week |
+| Days | `2d` | 2 days |
+| Hours | `3h` | 3 hours |
+| Minutes | `30m` | 30 minutes |
+| Combined | `1d 4h 30m` | 1 day, 4 hours, 30 minutes |
+| Seconds | `3600` | 3600 seconds (1 hour) |
+
 ## Response Format
 
 ### Success Response
@@ -393,9 +398,79 @@ creator = "user@example.com"
 }
 ```
 
-## Bitbucket Response Examples
+## Bitbucket Examples
 
-### Commit Response Structure
+### Get Recent Commits
+
+```python
+from scripts.bitbucket_commits import bitbucket_get_commits
+import json
+
+# Get latest 10 commits from master branch
+result = bitbucket_get_commits(
+    project_key="PROJ",
+    repository_slug="my-repo",
+    branch="master",
+    limit=10
+)
+
+# Parse and display commits
+data = json.loads(result)
+for commit in data['commits']:
+    print(f"{commit['display_id']}: {commit['message']}")
+    print(f"  Author: {commit['author_name']}")
+    print(f"  Date: {commit['timestamp']}")
+```
+
+### Get Specific Commit Details
+
+```python
+from scripts.bitbucket_commits import bitbucket_get_commit
+import json
+
+# Get details of a specific commit
+result = bitbucket_get_commit(
+    project_key="PROJ",
+    repository_slug="my-repo",
+    commit_id="1da11eaec25aed8b251de24841885c91493b3173"
+)
+
+# Parse commit details
+commit = json.loads(result)
+print(f"Commit: {commit['display_id']}")
+print(f"Message: {commit['message']}")
+print(f"Author: {commit['author_name']} <{commit['author_email']}>")
+print(f"Timestamp: {commit['timestamp']}")
+```
+
+### List Pull Requests
+
+```python
+from scripts.bitbucket_pull_requests import bitbucket_get_pull_request
+
+# Get PR details
+result = bitbucket_get_pull_request(
+    project_key="PROJ",
+    repository_slug="my-repo",
+    pr_id=123
+)
+```
+
+### Search Code
+
+```python
+from scripts.bitbucket_files import bitbucket_search
+
+# Search for specific code pattern
+result = bitbucket_search(
+    query="def authenticate",
+    project_key="PROJ",
+    search_type="code",
+    limit=25
+)
+```
+
+### Bitbucket Commit Response Structure
 
 ```json
 {
@@ -420,41 +495,15 @@ creator = "user@example.com"
 }
 ```
 
-### Pull Request Response Structure
-
-```json
-{
-  "id": 123,
-  "title": "Feature: Add authentication",
-  "description": "Implements OAuth2 authentication",
-  "state": "OPEN",
-  "author": {
-    "name": "John Doe",
-    "email": "john.doe@company.com"
-  },
-  "from_ref": {
-    "branch": "feature/auth",
-    "commit": "abc123"
-  },
-  "to_ref": {
-    "branch": "master",
-    "commit": "def456"
-  },
-  "created_date": 1765534577000,
-  "updated_date": 1765534577000
-}
-```
-
 ## Agent Mode Complete Example
 
 When deploying in Agent environments without environment variables:
 
 ```python
 from scripts._common import AtlassianCredentials, check_available_skills
-from scripts.jira_issues import jira_get_issue
+from scripts.jira_issues import jira_create_issue, jira_get_issue
 from scripts.jira_search import jira_search
-from scripts.confluence_pages import confluence_get_page
-from scripts.bitbucket_commits import bitbucket_get_commits
+from scripts.confluence_pages import confluence_create_page
 import json
 
 # Step 1: Create credentials object with all needed services
@@ -463,12 +512,12 @@ credentials = AtlassianCredentials(
     jira_url="https://company.atlassian.net",
     jira_username="user@company.com",
     jira_api_token="jira_token_here",
-    
+
     # Confluence configuration
     confluence_url="https://company.atlassian.net/wiki",
     confluence_username="user@company.com",
     confluence_api_token="confluence_token_here",
-    
+
     # Bitbucket configuration (optional)
     bitbucket_url="https://bitbucket.company.com",
     bitbucket_pat_token="bitbucket_pat_here"
@@ -479,54 +528,48 @@ availability = check_available_skills(credentials)
 print(f"Available: {availability['available_services']}")
 print(f"Unavailable: {availability['unavailable_services']}")
 
-# Step 3: Use read-only skills with credentials parameter
+# Step 3: Use skills with credentials parameter
 if "jira" in availability["available_services"]:
-    # Get an issue
-    result = jira_get_issue(
-        issue_key="PROJ-123",
-        credentials=credentials
+    # Create an issue
+    result = jira_create_issue(
+        project_key="PROJ",
+        summary="New task from Agent",
+        issue_type="Task",
+        credentials=credentials  # Pass credentials
     )
     issue = json.loads(result)
-    
+
     if not issue.get("error"):
-        print(f"Issue: {issue['key']} - {issue['summary']}")
-        
-        # Search for issues
-        result = jira_search(
-            jql="project = PROJ AND status = 'In Progress'",
-            limit=10,
+        print(f"Created issue: {issue['key']}")
+
+        # Get the issue
+        result = jira_get_issue(
+            issue_key=issue['key'],
             credentials=credentials
         )
-        search_results = json.loads(result)
-        print(f"Found {search_results['total']} issues")
+
+        # Search for issues
+        result = jira_search(
+            jql=f"project = PROJ AND key = {issue['key']}",
+            credentials=credentials
+        )
 
 if "confluence" in availability["available_services"]:
-    # Get a Confluence page
-    result = confluence_get_page(
-        title="Documentation",
+    # Create a Confluence page
+    result = confluence_create_page(
         space_key="TEAM",
+        title="Documentation from Agent",
+        content="<p>Created by Agent</p>",
         credentials=credentials
     )
     page = json.loads(result)
     if not page.get("error"):
-        print(f"Page: {page['title']}")
-
-if "bitbucket" in availability["available_services"]:
-    # Get recent commits
-    result = bitbucket_get_commits(
-        project_key="PROJ",
-        repository_slug="my-repo",
-        branch="master",
-        limit=5,
-        credentials=credentials
-    )
-    commits = json.loads(result)
-    if not commits.get("error"):
-        print(f"Found {commits['total']} commits")
+        print(f"Created page: {page['title']}")
 
 # Step 4: Handle unavailable services
-for service, reason in availability["unavailable_services"].items():
-    print(f"{service} unavailable: {reason}")
+if "bitbucket" not in availability["available_services"]:
+    reason = availability["unavailable_services"].get("bitbucket", "Unknown")
+    print(f"Bitbucket unavailable: {reason}")
 ```
 
 ## Partial Service Configuration
@@ -573,23 +616,23 @@ AtlassianCredentials(
     jira_api_token: Optional[str] = None,
     jira_pat_token: Optional[str] = None,
     jira_api_version: Optional[str] = None,  # '2' or '3', auto-detected if not set
-    jira_ssl_verify: bool = False,
-    
+    jira_ssl_verify: bool = True,
+
     # Confluence
     confluence_url: Optional[str] = None,
     confluence_username: Optional[str] = None,
     confluence_api_token: Optional[str] = None,
     confluence_pat_token: Optional[str] = None,
     confluence_api_version: Optional[str] = None,
-    confluence_ssl_verify: bool = False,
-    
+    confluence_ssl_verify: bool = True,
+
     # Bitbucket
     bitbucket_url: Optional[str] = None,
     bitbucket_username: Optional[str] = None,
     bitbucket_api_token: Optional[str] = None,
     bitbucket_pat_token: Optional[str] = None,
     bitbucket_api_version: Optional[str] = None,
-    bitbucket_ssl_verify: bool = False
+    bitbucket_ssl_verify: bool = True
 )
 ```
 

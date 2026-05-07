@@ -13,7 +13,8 @@ import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import requests
 from dotenv import load_dotenv
@@ -69,12 +70,12 @@ class NetworkError(Exception):
 
 def format_error_response(error_type: str, message: str, details: str = "") -> str:
     """Format an error as a JSON response.
-    
+
     Args:
         error_type: Type of error (e.g., 'AuthenticationError', 'ValidationError')
         message: Main error message
         details: Additional error details (optional)
-    
+
     Returns:
         JSON string with error information
     """
@@ -90,10 +91,10 @@ def format_error_response(error_type: str, message: str, details: str = "") -> s
 
 def format_json_response(data: Any) -> str:
     """Format data as a JSON string with UTF-8 encoding.
-    
+
     Args:
         data: Data to serialize (dict, list, or other JSON-serializable type)
-    
+
     Returns:
         JSON formatted string with proper UTF-8 encoding
     """
@@ -107,45 +108,45 @@ def format_json_response(data: Any) -> str:
 @dataclass
 class AtlassianCredentials:
     """Unified credentials configuration for all Atlassian services.
-    
+
     This class wraps authentication credentials for Jira, Confluence, and Bitbucket.
     When deployed in an Agent environment without environment variables, pass this
     object to skill functions to provide credentials programmatically.
-    
+
     For each service, provide either:
     - PAT Token (for Data Center/Server), or
     - Username + API Token (for Cloud)
-    
+
     If a service's credentials are not provided, that service will be unavailable.
     """
-    
+
     # Jira configuration
     jira_url: Optional[str] = None
     jira_username: Optional[str] = None
     jira_api_token: Optional[str] = None
     jira_pat_token: Optional[str] = None
     jira_api_version: Optional[str] = None
-    jira_ssl_verify: bool = False
-    
+    jira_ssl_verify: bool = True
+
     # Confluence configuration
     confluence_url: Optional[str] = None
     confluence_username: Optional[str] = None
     confluence_api_token: Optional[str] = None
     confluence_pat_token: Optional[str] = None
     confluence_api_version: Optional[str] = None
-    confluence_ssl_verify: bool = False
-    
+    confluence_ssl_verify: bool = True
+
     # Bitbucket configuration
     bitbucket_url: Optional[str] = None
     bitbucket_username: Optional[str] = None
     bitbucket_api_token: Optional[str] = None
     bitbucket_pat_token: Optional[str] = None
     bitbucket_api_version: Optional[str] = None
-    bitbucket_ssl_verify: bool = False
-    
+    bitbucket_ssl_verify: bool = True
+
     def is_jira_available(self) -> bool:
         """Check if Jira credentials are complete and valid.
-        
+
         Returns:
             True if Jira can be used, False otherwise
         """
@@ -154,10 +155,10 @@ class AtlassianCredentials:
         has_pat = bool(self.jira_pat_token)
         has_basic = bool(self.jira_username and self.jira_api_token)
         return has_pat or has_basic
-    
+
     def is_confluence_available(self) -> bool:
         """Check if Confluence credentials are complete and valid.
-        
+
         Returns:
             True if Confluence can be used, False otherwise
         """
@@ -166,10 +167,10 @@ class AtlassianCredentials:
         has_pat = bool(self.confluence_pat_token)
         has_basic = bool(self.confluence_username and self.confluence_api_token)
         return has_pat or has_basic
-    
+
     def is_bitbucket_available(self) -> bool:
         """Check if Bitbucket credentials are complete and valid.
-        
+
         Returns:
             True if Bitbucket can be used, False otherwise
         """
@@ -178,10 +179,10 @@ class AtlassianCredentials:
         has_pat = bool(self.bitbucket_pat_token)
         has_basic = bool(self.bitbucket_username and self.bitbucket_api_token)
         return has_pat or has_basic
-    
+
     def get_available_services(self) -> List[str]:
         """Get list of available services based on provided credentials.
-        
+
         Returns:
             List of service names that have complete credentials
             Example: ["jira", "confluence"]
@@ -194,34 +195,34 @@ class AtlassianCredentials:
         if self.is_bitbucket_available():
             services.append("bitbucket")
         return services
-    
+
     def get_unavailable_services(self) -> Dict[str, str]:
         """Get dictionary of unavailable services with reasons.
-        
+
         Returns:
             Dictionary mapping service name to reason for unavailability
             Example: {"bitbucket": "Missing bitbucket_url"}
         """
         unavailable = {}
-        
+
         if not self.is_jira_available():
             if not self.jira_url:
                 unavailable["jira"] = "Missing jira_url"
             else:
                 unavailable["jira"] = "Missing authentication credentials (provide jira_pat_token or jira_username + jira_api_token)"
-        
+
         if not self.is_confluence_available():
             if not self.confluence_url:
                 unavailable["confluence"] = "Missing confluence_url"
             else:
                 unavailable["confluence"] = "Missing authentication credentials (provide confluence_pat_token or confluence_username + confluence_api_token)"
-        
+
         if not self.is_bitbucket_available():
             if not self.bitbucket_url:
                 unavailable["bitbucket"] = "Missing bitbucket_url"
             else:
                 unavailable["bitbucket"] = "Missing authentication credentials (provide bitbucket_pat_token or bitbucket_username + bitbucket_api_token)"
-        
+
         return unavailable
 
 
@@ -239,7 +240,7 @@ class AtlassianConfig:
         api_token: Optional[str] = None,
         pat_token: Optional[str] = None,
         api_version: Optional[str] = None,
-        ssl_verify: bool = False
+        ssl_verify: bool = True
     ):
         """Initialize configuration.
 
@@ -249,7 +250,7 @@ class AtlassianConfig:
             api_token: API token for Cloud authentication (optional)
             pat_token: Personal Access Token for Data Center authentication (optional)
             api_version: API version to use ('2' or '3'). If not specified, will auto-detect (optional)
-            ssl_verify: Whether to verify SSL certificates (default: False)
+            ssl_verify: Whether to verify SSL certificates (default: True)
         """
         self.url = url.rstrip('/') if url else ""
         self.username = username
@@ -264,7 +265,7 @@ class AtlassianConfig:
             self.auth_type = "basic"
         else:
             self.auth_type = "unknown"
-    
+
     @classmethod
     def from_env(cls, prefix: str) -> "AtlassianConfig":
         """Load configuration from environment variables.
@@ -283,7 +284,7 @@ class AtlassianConfig:
         api_token = os.getenv(f"{prefix}_API_TOKEN")
         pat_token = os.getenv(f"{prefix}_PAT_TOKEN")
         api_version = os.getenv(f"{prefix}_API_VERSION")
-        ssl_verify_str = os.getenv(f"{prefix}_SSL_VERIFY", "false").lower()
+        ssl_verify_str = os.getenv(f"{prefix}_SSL_VERIFY", "true").lower()
         ssl_verify = ssl_verify_str in ("true", "1", "yes")
 
         config = cls(
@@ -296,23 +297,23 @@ class AtlassianConfig:
         )
         config._validate(prefix)
         return config
-    
+
     @classmethod
     def from_credentials(cls, credentials: AtlassianCredentials, service: str) -> "AtlassianConfig":
         """Create configuration from AtlassianCredentials object.
-        
+
         Args:
             credentials: AtlassianCredentials instance with service credentials
             service: Service name ('jira', 'confluence', or 'bitbucket')
-        
+
         Returns:
             AtlassianConfig instance
-        
+
         Raises:
             ConfigurationError: If credentials for the service are incomplete
         """
         service = service.lower()
-        
+
         if service == "jira":
             if not credentials.is_jira_available():
                 raise ConfigurationError(
@@ -357,9 +358,9 @@ class AtlassianConfig:
             )
         else:
             raise ConfigurationError(f"Unknown service: {service}. Must be 'jira', 'confluence', or 'bitbucket'.")
-        
+
         return config
-    
+
     def _validate(self, prefix: Optional[str] = None) -> None:
         """Validate configuration."""
         if not self.url:
@@ -367,10 +368,10 @@ class AtlassianConfig:
                 f"Missing required configuration: {prefix}_URL. "
                 f"Please set this environment variable."
             )
-        
+
         has_pat = bool(self.pat_token)
         has_basic = bool(self.username and self.api_token)
-        
+
         if not has_pat and not has_basic:
             raise ConfigurationError(
                 f"Missing authentication credentials for {prefix}. "
@@ -378,7 +379,7 @@ class AtlassianConfig:
                 f"  - {prefix}_PAT_TOKEN (for Data Center/Server), or\n"
                 f"  - {prefix}_USERNAME and {prefix}_API_TOKEN (for Cloud)"
             )
-    
+
     def get_auth_header(self) -> dict:
         """Get the appropriate Authorization header."""
         if self.auth_type == "pat":
@@ -389,7 +390,7 @@ class AtlassianConfig:
             return {"Authorization": f"Basic {encoded}"}
         else:
             raise ConfigurationError("Cannot generate auth header: unknown auth type.")
-    
+
     @property
     def is_cloud(self) -> bool:
         """Check if this is a Cloud instance."""
@@ -441,9 +442,18 @@ class AtlassianClient:
             self.session.auth = (config.username, config.api_token)
 
         self.session.headers.update({
-            "Accept": "application/json",
-            "Content-Type": "application/json"
+            "Accept": "application/json"
         })
+
+    def _build_url(self, path_or_url: str) -> str:
+        """Build an absolute URL and keep credentials scoped to the configured host."""
+        configured = urlparse(self.config.url)
+        candidate = urlparse(path_or_url)
+        if candidate.scheme and candidate.netloc:
+            if candidate.netloc.lower() != configured.netloc.lower():
+                raise ValidationError("Refusing to send Atlassian credentials to a different host")
+            return path_or_url
+        return f"{self.config.url}{path_or_url}"
 
     def api_path(self, endpoint: str) -> str:
         """Build API path with the correct version.
@@ -457,10 +467,10 @@ class AtlassianClient:
         # Remove leading slash if present
         endpoint = endpoint.lstrip('/')
         return f"/rest/api/{self.api_version}/{endpoint}"
-    
+
     def get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Any:
         """Perform a GET request."""
-        url = f"{self.config.url}{path}"
+        url = self._build_url(path)
         try:
             response = self.session.get(url, params=params, timeout=30, verify=self.ssl_verify)
             self._handle_error(response)
@@ -471,10 +481,10 @@ class AtlassianClient:
             raise NetworkError(f"Connection failed: {str(e)}")
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Network error: {str(e)}")
-    
+
     def post(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
         """Perform a POST request."""
-        url = f"{self.config.url}{path}"
+        url = self._build_url(path)
         try:
             response = self.session.post(url, json=json, timeout=30, verify=self.ssl_verify)
             self._handle_error(response)
@@ -485,10 +495,10 @@ class AtlassianClient:
             raise NetworkError(f"Connection failed: {str(e)}")
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Network error: {str(e)}")
-    
+
     def put(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
         """Perform a PUT request."""
-        url = f"{self.config.url}{path}"
+        url = self._build_url(path)
         try:
             response = self.session.put(url, json=json, timeout=30, verify=self.ssl_verify)
             self._handle_error(response)
@@ -499,10 +509,10 @@ class AtlassianClient:
             raise NetworkError(f"Connection failed: {str(e)}")
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Network error: {str(e)}")
-    
+
     def delete(self, path: str) -> bool:
         """Perform a DELETE request."""
-        url = f"{self.config.url}{path}"
+        url = self._build_url(path)
         try:
             response = self.session.delete(url, timeout=30, verify=self.ssl_verify)
             self._handle_error(response)
@@ -513,12 +523,44 @@ class AtlassianClient:
             raise NetworkError(f"Connection failed: {str(e)}")
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Network error: {str(e)}")
-    
+
+    def download(self, path_or_url: str) -> Tuple[bytes, Dict[str, str]]:
+        """Download binary content from an Atlassian URL or API path."""
+        url = self._build_url(path_or_url)
+        try:
+            response = self.session.get(url, timeout=60, verify=self.ssl_verify)
+            self._handle_error(response)
+            return response.content, dict(response.headers)
+        except requests.exceptions.Timeout:
+            raise NetworkError("Request timed out")
+        except requests.exceptions.ConnectionError as e:
+            raise NetworkError(f"Connection failed: {str(e)}")
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(f"Network error: {str(e)}")
+
+    def post_files(self, path: str, files: Dict[str, Any]) -> Any:
+        """Perform a multipart file upload request."""
+        url = self._build_url(path)
+        headers = {
+            "Accept": "application/json",
+            "X-Atlassian-Token": "no-check"
+        }
+        try:
+            response = self.session.post(url, files=files, headers=headers, timeout=60, verify=self.ssl_verify)
+            self._handle_error(response)
+            return response.json() if response.content else {}
+        except requests.exceptions.Timeout:
+            raise NetworkError("Request timed out")
+        except requests.exceptions.ConnectionError as e:
+            raise NetworkError(f"Connection failed: {str(e)}")
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(f"Network error: {str(e)}")
+
     def _handle_error(self, response: requests.Response) -> None:
         """Handle HTTP error responses."""
         if response.status_code < 400:
             return
-        
+
         error_message = ""
         try:
             error_data = response.json()
@@ -530,7 +572,7 @@ class AtlassianClient:
                 )
         except Exception:
             error_message = response.text or response.reason
-        
+
         if response.status_code == 401:
             raise AuthenticationError(f"Authentication failed: {error_message}")
         elif response.status_code == 400:
@@ -549,14 +591,14 @@ class AtlassianClient:
 
 def get_jira_client(credentials: Optional[AtlassianCredentials] = None) -> AtlassianClient:
     """Get configured Jira client.
-    
+
     Args:
         credentials: Optional AtlassianCredentials object. If not provided,
                     configuration will be loaded from environment variables.
-    
+
     Returns:
         Configured AtlassianClient instance
-        
+
     Raises:
         ConfigurationError: If configuration is missing or invalid
     """
@@ -569,14 +611,14 @@ def get_jira_client(credentials: Optional[AtlassianCredentials] = None) -> Atlas
 
 def get_confluence_client(credentials: Optional[AtlassianCredentials] = None) -> AtlassianClient:
     """Get configured Confluence client.
-    
+
     Args:
         credentials: Optional AtlassianCredentials object. If not provided,
                     configuration will be loaded from environment variables.
-    
+
     Returns:
         Configured AtlassianClient instance
-        
+
     Raises:
         ConfigurationError: If configuration is missing or invalid
     """
@@ -589,14 +631,14 @@ def get_confluence_client(credentials: Optional[AtlassianCredentials] = None) ->
 
 def get_bitbucket_client(credentials: Optional[AtlassianCredentials] = None) -> AtlassianClient:
     """Get configured Bitbucket client.
-    
+
     Args:
         credentials: Optional AtlassianCredentials object. If not provided,
                     configuration will be loaded from environment variables.
-    
+
     Returns:
         Configured AtlassianClient instance
-        
+
     Raises:
         ConfigurationError: If configuration is missing or invalid
     """
@@ -609,13 +651,13 @@ def get_bitbucket_client(credentials: Optional[AtlassianCredentials] = None) -> 
 
 def check_available_skills(credentials: AtlassianCredentials) -> Dict[str, Any]:
     """Check which Atlassian skills are available based on provided credentials.
-    
+
     This function helps Agents determine which skills can be used before attempting
     to call them. Services without complete credentials will be listed as unavailable.
-    
+
     Args:
         credentials: AtlassianCredentials object with service credentials
-    
+
     Returns:
         Dictionary with availability information:
         {
@@ -624,7 +666,7 @@ def check_available_skills(credentials: AtlassianCredentials) -> Dict[str, Any]:
                 "bitbucket": "Missing bitbucket_url"
             }
         }
-    
+
     Example:
         >>> creds = AtlassianCredentials(
         ...     jira_url="https://company.atlassian.net",
@@ -643,25 +685,25 @@ def check_available_skills(credentials: AtlassianCredentials) -> Dict[str, Any]:
 
 def simplify_issue(issue_data: Dict[str, Any]) -> Dict[str, Any]:
     """Simplify issue data to essential fields.
-    
+
     Args:
         issue_data: Raw issue data from Jira API
-    
+
     Returns:
         Simplified issue dictionary with essential fields
     """
     fields = issue_data.get('fields', {})
-    
+
     assignee = fields.get('assignee')
     assignee_email = assignee.get('emailAddress', '') if assignee else None
-    
+
     reporter = fields.get('reporter')
     reporter_email = reporter.get('emailAddress', '') if reporter else None
-    
+
     status = fields.get('status', {})
     issue_type = fields.get('issuetype', {})
     priority = fields.get('priority', {})
-    
+
     simplified = {
         'key': issue_data.get('key', ''),
         'id': issue_data.get('id', ''),
@@ -677,40 +719,40 @@ def simplify_issue(issue_data: Dict[str, Any]) -> Dict[str, Any]:
         'labels': fields.get('labels', []),
         'components': [c.get('name', '') for c in fields.get('components', [])],
     }
-    
+
     custom_fields = {}
     for key, value in fields.items():
         if key.startswith('customfield_'):
             custom_fields[key] = value
     if custom_fields:
         simplified['custom_fields'] = custom_fields
-    
+
     return simplified
 
 
 def parse_time_spent(time_spent: str) -> int:
     """Parse time spent string into seconds.
-    
+
     Args:
         time_spent: Time spent string (e.g., '1h 30m', '2d', '1w')
-    
+
     Returns:
         Time spent in seconds
-        
+
     Raises:
         ValidationError: If time format is invalid
     """
     if not time_spent or not time_spent.strip():
         raise ValidationError('time_spent is required and cannot be empty')
-    
+
     time_spent = time_spent.strip()
-    
+
     if time_spent.endswith('s'):
         try:
             return int(time_spent[:-1])
         except ValueError:
             raise ValidationError(f'Invalid seconds format: {time_spent}')
-    
+
     total_seconds = 0
     time_units = {
         'w': 7 * 24 * 60 * 60,
@@ -718,24 +760,24 @@ def parse_time_spent(time_spent: str) -> int:
         'h': 60 * 60,
         'm': 60,
     }
-    
+
     pattern = r'(\d+)([wdhm])'
     matches = re.findall(pattern, time_spent.lower())
-    
+
     for value, unit in matches:
         seconds = int(value) * time_units[unit]
         total_seconds += seconds
-    
+
     if total_seconds > 0:
         return total_seconds
-    
+
     try:
         raw_value = int(float(time_spent))
         if raw_value > 0:
             return raw_value
     except ValueError:
         pass
-    
+
     raise ValidationError(
         f'Invalid time format: {time_spent}. '
         'Use formats like "1h 30m", "2d", "1w", "45m", or seconds as a number.'
