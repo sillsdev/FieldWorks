@@ -1,16 +1,16 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel;
-using SIL.LCModel.Application;
-using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -102,6 +102,11 @@ namespace SIL.FieldWorks.XWorks
 				services.GetInstance<ISilDataAccessManaged>().AddNotification(interestingTextList);
 			}
 			return interestingTextList;
+		}
+
+		static public void ClearInterestingTextsList(PropertyTable propertyTable)
+		{
+			propertyTable.SetProperty(InterestingTextKey, null, false);
 		}
 
 		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)

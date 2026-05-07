@@ -27,6 +27,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_wsPrevText; }
 			set { m_wsPrevText = value; }
 		}
+		private int m_langProjectTextsFlid = 0;
 
 		/// <summary>
 		/// Get the list of currently selected Scripture section ids.
@@ -298,6 +299,19 @@ namespace SIL.FieldWorks.IText
 			// waiting for 'Activate' to return!
 			//link.Activate();
 			return true;
+		}
+
+		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
+			if (m_langProjectTextsFlid == 0)
+			{
+				m_langProjectTextsFlid = Cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Texts", true);
+			}
+			if (tag == m_langProjectTextsFlid && (cvIns > 0 || cvDel > 0))
+			{
+				InterestingTextsDecorator.ClearInterestingTextsList(m_propertyTable);
+			}
 		}
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>
