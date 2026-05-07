@@ -75,12 +75,6 @@ namespace XMLViewsTests
 			/// <summary/>
 			public XmlBrowseViewBase m_xmlBrowseViewBase;
 
-			public int ReconstructCallCount { get; private set; }
-			public int LastSetRootObjectHvo { get; private set; }
-			public IVwViewConstructor LastSetRootObjectVc { get; private set; }
-			public int LastSetRootObjectFrag { get; private set; }
-			public IVwStylesheet LastSetRootObjectStylesheet { get; private set; }
-
 			/// <summary>
 			/// null unless manually set
 			/// </summary>
@@ -196,12 +190,6 @@ namespace XMLViewsTests
 			}
 
 			/// <summary/>
-			public bool NeedsReconstruct
-			{
-				get { throw new NotImplementedException();}
-			}
-
-			/// <summary/>
 			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 			{
 				throw new NotImplementedException();
@@ -222,10 +210,7 @@ namespace XMLViewsTests
 			/// <summary/>
 			public void SetRootObject(int hvo, IVwViewConstructor _vwvc, int frag, IVwStylesheet _ss)
 			{
-				LastSetRootObjectHvo = hvo;
-				LastSetRootObjectVc = _vwvc;
-				LastSetRootObjectFrag = frag;
-				LastSetRootObjectStylesheet = _ss;
+				throw new NotImplementedException();
 			}
 
 			/// <summary/>
@@ -441,7 +426,7 @@ namespace XMLViewsTests
 			/// <summary/>
 			public bool LoseFocus()
 			{
-				return true;
+				throw new NotImplementedException();
 			}
 
 			/// <summary/>
@@ -453,7 +438,7 @@ namespace XMLViewsTests
 			/// <summary/>
 			public void Reconstruct()
 			{
-				ReconstructCallCount++;
+				throw new NotImplementedException();
 			}
 
 			/// <summary/>

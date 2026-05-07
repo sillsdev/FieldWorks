@@ -150,12 +150,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (IsDisposed)
 				return;
 
-			if (disposing && m_innerView != null)
-			{
-				m_innerView.AllowPainting = false;
-				m_innerView.AllowLayout = false;
-			}
-
 			base.Dispose(disposing);
 
 			if (disposing)
@@ -259,8 +253,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
 			base.OnLayout(levent);
-			if (IsDisposed || Disposing || !IsHandleCreated)
-				return;
 			if (m_innerView.VC == null || m_innerView.RootBox == null) // We can come in with no rootb from a dispose call.
 				return;
 			if (Visible)

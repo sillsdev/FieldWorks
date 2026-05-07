@@ -180,8 +180,6 @@
         $(ViewsObjDir)VwSelection.obj;
         $(ViewsObjDir)VwTableBox.obj;
         $(ViewsObjDir)VwGraphics.obj;
-        $(ViewsObjDir)FontHandleCache.obj;
-        $(ViewsObjDir)ColorStateCache.obj;
         $(ViewsObjDir)VwTxtSrc.obj;
         $(ViewsObjDir)AfColorTable.obj;
         $(ViewsObjDir)AfGfx.obj;
@@ -310,8 +308,6 @@
         $(ViewsObjDir)VwSelection.obj;
         $(ViewsObjDir)VwTableBox.obj;
         $(ViewsObjDir)VwGraphics.obj;
-        $(ViewsObjDir)FontHandleCache.obj;
-        $(ViewsObjDir)ColorStateCache.obj;
         $(ViewsObjDir)VwTxtSrc.obj;
         $(ViewsObjDir)AfColorTable.obj;
         $(ViewsObjDir)AfGfx.obj;
@@ -399,7 +395,6 @@
     <ClInclude Include="TestTsStrBldr.h" />
     <ClInclude Include="TestTsString.h" />
     <ClInclude Include="TestTsTextProps.h" />
-    <ClInclude Include="TestViewCaches.h" />
     <ClInclude Include="TestUndoStack.h" />
     <ClInclude Include="TestUniscribeEngine.h" />
     <ClInclude Include="testViews.h" />
@@ -431,11 +426,11 @@
   </ItemGroup>
 
   <!-- Pre-build: Generate Collection.cpp from test headers (same as makefile) -->
-    <Target Name="GenerateCollection" BeforeTargets="ClCompile"
-        Inputs="testViews.h;DummyBaseVc.h;DummyRootsite.h;MockLgWritingSystemFactory.h;MockLgWritingSystem.h;TestNotifier.h;TestUndoStack.h;TestLayoutPage.h;TestLgCollatingEngine.h;TestVirtualHandlers.h;TestVwTxtSrc.h;TestVwParagraph.h;TestVwPattern.h;TestVwSync.h;TestVwEnv.h;TestVwOverlay.h;TestLazyBox.h;TestVwRootBox.h;TestVwSelection.h;TestInsertDiffPara.h;TestVwTextStore.h;TestVwGraphics.h;TestVwTextBoxes.h;TestVwTableBox.h;TestLgLineBreaker.h;TestUniscribeEngine.h;TestGraphiteEngine.h;RenderEngineTestBase.h;MockRenderEngineFactory.h;TestTsStrBldr.h;TestTsString.h;TestTsPropsBldr.h;TestTsTextProps.h;TestViewCaches.h"
+  <Target Name="GenerateCollection" BeforeTargets="ClCompile"
+          Inputs="testViews.h;DummyBaseVc.h;DummyRootsite.h;MockLgWritingSystemFactory.h;MockLgWritingSystem.h;TestNotifier.h;TestUndoStack.h;TestLayoutPage.h;TestLgCollatingEngine.h;TestVirtualHandlers.h;TestVwTxtSrc.h;TestVwParagraph.h;TestVwPattern.h;TestVwSync.h;TestVwEnv.h;TestVwOverlay.h;TestLazyBox.h;TestVwRootBox.h;TestVwSelection.h;TestInsertDiffPara.h;TestVwTextStore.h;TestVwGraphics.h;TestVwTextBoxes.h;TestVwTableBox.h;TestLgLineBreaker.h;TestUniscribeEngine.h;TestGraphiteEngine.h;RenderEngineTestBase.h;MockRenderEngineFactory.h;TestTsStrBldr.h;TestTsString.h;TestTsPropsBldr.h;TestTsTextProps.h"
           Outputs="Collection.cpp">
     <Message Text="Generating Collection.cpp from test headers..." Importance="high" />
-      <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h TestViewCaches.h Collection.cpp"
+    <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h Collection.cpp"
           WorkingDirectory="$(ProjectDir)" />
   </Target>
 

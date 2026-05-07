@@ -38,8 +38,8 @@
     <ProjectReference Include="../../XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="HCSynthByGlossTest/**" />
-    <None Remove="HCSynthByGlossTest/**" />
+    <Compile Remove="HCSynthByGlossTests/**" />
+    <None Remove="HCSynthByGlossTests/**" />
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

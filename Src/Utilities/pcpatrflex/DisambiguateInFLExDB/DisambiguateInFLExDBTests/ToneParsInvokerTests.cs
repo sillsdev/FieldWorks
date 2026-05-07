@@ -183,36 +183,7 @@ namespace SIL.DisambiguateInFLExDBTests
 
 		private string NormalizeContent(string input)
 		{
-			string tp = "tonepars64";
-			string normalized = NormalizeViaIndex(input, "AppData", "");
-			normalized = NormalizeViaIndex(normalized, "TestData", "");
-			normalized = NormalizeViaIndex(normalized, tp, tp);
-			return normalized;
-		}
-
-		private static string NormalizeViaIndex(string input, string match, string change)
-		{
-			int startIndex = 0;
-			while (startIndex < input.Length)
-			{
-				int matchIndex = input.IndexOf(match, startIndex, StringComparison.Ordinal);
-				if (matchIndex == -1)
-				{
-					break;
-				}
-
-				int colonIndex = input.LastIndexOf(':', matchIndex);
-				if (colonIndex == -1)
-				{
-					startIndex = matchIndex + match.Length;
-					continue;
-				}
-
-				int pathPrefixStart = Math.Max(0, colonIndex - 1);
-				input = input.Remove(pathPrefixStart, matchIndex - pathPrefixStart).Insert(pathPrefixStart, change);
-				startIndex = pathPrefixStart + change.Length + match.Length;
-			}
-			return input;
+			return Regex.Replace(input, @"[A-Za-z]:\\(?:[^\\\r\n""]+\\)*", "");
 		}
 
 		private void CreateExpectedFileStrings()

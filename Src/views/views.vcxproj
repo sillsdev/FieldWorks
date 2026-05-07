@@ -111,8 +111,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="lib\DebugReport.h" />
-    <ClInclude Include="lib\ColorStateCache.h" />
-    <ClInclude Include="lib\FontHandleCache.h" />
     <ClInclude Include="lib\GraphiteEngine.h" />
     <ClInclude Include="lib\GraphiteSegment.h" />
     <ClInclude Include="lib\LgLineBreaker.h" />
@@ -156,8 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\DebugReport.cpp" />
-    <ClCompile Include="lib\ColorStateCache.cpp" />
-    <ClCompile Include="lib\FontHandleCache.cpp" />
     <ClCompile Include="lib\GraphiteEngine.cpp" />
     <ClCompile Include="lib\GraphiteSegment.cpp" />
     <ClCompile Include="lib\LgLineBreaker.cpp" />

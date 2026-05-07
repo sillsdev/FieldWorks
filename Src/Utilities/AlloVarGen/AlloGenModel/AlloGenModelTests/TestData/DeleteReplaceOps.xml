@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AllomorphGenerators xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" dbVersion="2">
+  <Operations>
+    <Operation active="true">
+      <Name>Foreshortening</Name>
+      <Description>Add allomorphs for entries which undergo foreshortening</Description>
+      <Pattern>
+        <Matcher>
+          <Type>RegularExpression</Type>
+          <Pattern>:$|:\..+$</Pattern>
+          <MatchCase>false</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root" />
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem" />
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root" />
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem" />
+        </MorphTypes>
+        <Category active="true" guid="" name="" />
+      </Pattern>
+      <Action>
+        <ReplaceOpRefs>
+          <string>331e03b6-d7b5-4761-b013-e4086a94e478</string>
+          <string>af4729ca-f6a9-4ce3-9307-7a1b70b79a1d</string>
+          <string>49b6ed6c-7f4e-4333-a3f1-836541aa0d73</string>
+          <string>e8521422-eb88-42ff-8d99-401852c4eaa4</string>
+          <string>cc50ddd5-9116-4c0e-9f99-f6ed2e06d9b2</string>
+        </ReplaceOpRefs>
+        <Environments>
+          <Environment active="true" guid="abe0ecdd-ea94-4f30-a907-034beb750359" name="/_[C-t][C][V]" />
+          <Environment active="true" guid="ae5f3ffd-a9d0-4eaa-9040-50a5a57e64bc" name="/_[C]#" />
+          <Environment active="true" guid="c00e385f-cbe6-4724-8993-cc46e22ee3ba" name="/_päk" />
+          <Environment active="true" guid="e381191f-e778-41d7-9369-2559954d06ce" name="/_ra" />
+        </Environments>
+        <StemName active="true" guid="" name="" />
+      </Action>
+    </Operation>
+    <Operation active="false">
+      <Name>Phonetic lowering</Name>
+      <Description>Add allomorphs for entries which undergo phonetic lowering</Description>
+      <Pattern>
+        <Matcher>
+          <Type>RegularExpression</Type>
+          <Pattern>U$|U\..+$</Pattern>
+          <MatchCase>false</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root" />
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem" />
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root" />
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem" />
+        </MorphTypes>
+        <Category active="true" guid="86ff66f6-0774-407a-a0dc-3eeaf873daf7" name="Verb" />
+      </Pattern>
+      <Action>
+        <ReplaceOpRefs>
+          <string>331e03b6-d7b5-4761-b013-e4086a94e478</string>
+          <string>39934fe7-ab3a-4269-a122-3306860b1a74</string>
+          <string>35109daa-9f6b-484c-9dd8-578ec84f1348</string>
+        </ReplaceOpRefs>
+        <Environments>
+          <Environment active="true" guid="3a0ae95e-09e0-4d07-807a-97c7fc5550e1" name="/_([R])[gq]" />
+        </Environments>
+        <StemName active="true" guid="" name="" />
+      </Action>
+    </Operation>
+    <Operation active="true">
+      <Name>Morph-lowering</Name>
+      <Description>Add allomorphs for entries which undergo morph-lowering</Description>
+      <Pattern>
+        <Matcher>
+          <Type>RegularExpression</Type>
+          <Pattern>[UI]$|[UI]\..+$</Pattern>
+          <MatchCase>true</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root" />
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem" />
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root" />
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem" />
+        </MorphTypes>
+        <Category active="true" guid="86ff66f6-0774-407a-a0dc-3eeaf873daf7" name="Verb" />
+      </Pattern>
+      <Action>
+        <ReplaceOpRefs>
+          <string>331e03b6-d7b5-4761-b013-e4086a94e478</string>
+          <string>4f67a199-3460-46c3-b37e-05b77296441f</string>
+          <string>f117c5e3-9bbe-4097-877d-904ba21587bb</string>
+          <string>331e03b6-d7b5-4761-b013-e4086a94e478</string>
+        </ReplaceOpRefs>
+        <Environments />
+        <StemName active="true" guid="a177c679-0e2b-4632-9f01-6391c5a4a352" name="undergoes morphlowering" />
+      </Action>
+    </Operation>
+    <Operation active="false">
+      <Name>i to e before vowel length</Name>
+      <Description />
+      <Pattern>
+        <Matcher>
+          <Type>End</Type>
+          <Pattern>i</Pattern>
+          <MatchCase>true</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root" />
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem" />
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root" />
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem" />
+        </MorphTypes>
+        <Category active="true" guid="" name="" />
+      </Pattern>
+      <Action>
+        <ReplaceOpRefs>
+          <string>58d326cf-d799-4851-a17c-9e1904a5929c</string>
+        </ReplaceOpRefs>
+        <Environments>
+          <Environment active="true" guid="b65aac70-d178-4ecc-a1a1-3b1f89683db0" name="/_ [vl]" />
+        </Environments>
+        <StemName active="true" guid="" name="" />
+      </Action>
+    </Operation>
+    <Operation active="true">
+      <Name>new operation</Name>
+      <Description />
+      <Pattern>
+        <Matcher>
+          <Type>End</Type>
+          <Pattern>u</Pattern>
+          <MatchCase>false</MatchCase>
+          <MatchDiacritics>false</MatchDiacritics>
+        </Matcher>
+        <MorphTypes>
+          <MorphType active="true" guid="d7f713e4-e8cf-11d3-9764-00c04f186933" name="bound root" />
+          <MorphType active="true" guid="d7f713e7-e8cf-11d3-9764-00c04f186933" name="bound stem" />
+          <MorphType active="true" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" name="root" />
+          <MorphType active="true" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" name="stem" />
+        </MorphTypes>
+        <Category active="true" guid="" name="" />
+      </Pattern>
+      <Action>
+        <ReplaceOpRefs>
+          <string>76f68cb0-6b51-49a4-9a51-7ec53cfa9e67</string>
+        </ReplaceOpRefs>
+        <Environments />
+        <StemName active="true" guid="" name="" />
+      </Action>
+    </Operation>
+  </Operations>
+  <ReplaceOperations>
+    <Replace active="true" guid="2dabfec9-2247-4aa1-876e-48614e59e339" name="Hi there" mode="false" >
+      <From>this</From>
+      <To>that</To>
+      <Description>some</Description>
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="331e03b6-d7b5-4761-b013-e4086a94e478" name="Remove proto-form marker" mode="false" >
+      <From>*</From>
+      <To />
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="49b6ed6c-7f4e-4333-a3f1-836541aa0d73" name="" mode="true" >
+      <From>^(.*:)\..+$</From>
+      <To>$1</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="e8521422-eb88-42ff-8d99-401852c4eaa4" name="" mode="false" >
+      <From>:</From>
+      <To />
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="39934fe7-ab3a-4269-a122-3306860b1a74" name="" mode="true" >
+      <From>[Uu]$|[Uu]\..+$</From>
+      <To>o</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-acl</string>
+	<string>qvm-akl</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="35109daa-9f6b-484c-9dd8-578ec84f1348" name="" mode="true" >
+      <From>^.+$</From>
+      <To />
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-akh</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="f117c5e3-9bbe-4097-877d-904ba21587bb" name="" mode="true" >
+      <From>[UI]$|[UI]\..+$</From>
+      <To>a</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="58d326cf-d799-4851-a17c-9e1904a5929c" name="" mode="true" >
+      <From>i$</From>
+      <To>e</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="4f67a199-3460-46c3-b37e-05b77296441f" name="k --&gt; c / _ [ie]" mode="true" >
+      <From>k([^ie])</From>
+      <To>c$1</To>
+      <Description>Ortho change for ach and acl</Description>
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="76f68cb0-6b51-49a4-9a51-7ec53cfa9e67" name="Final u --&gt; o" mode="true" >
+      <From>u$</From>
+      <To>o</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="af4729ca-f6a9-4ce3-9307-7a1b70b79a1d" name="Remove Spanish loan marker" mode="false" >
+      <From>+</From>
+      <To />
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ach</string>
+	<string>qvm-acl</string>
+	<string>qvm-akh</string>
+	<string>qvm-akl</string>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+    <Replace active="true" guid="cc50ddd5-9116-4c0e-9f99-f6ed2e06d9b2" name="ME long vowel" mode="true" >
+      <From>([aeiou]):</From>
+      <To>$1$1</To>
+      <Description />
+      <WritingSystemRefs>
+	<string>qvm-ame</string>
+      </WritingSystemRefs>
+    </Replace>
+  </ReplaceOperations>
+  <WritingSystems>
+    <WritingSystem>
+      <Name>qvm-akh</Name>
+      <Handle>999000005</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-acl</Name>
+      <Handle>999000004</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-akl</Name>
+      <Handle>999000006</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-ach</Name>
+      <Handle>999000003</Handle>
+    </WritingSystem>
+    <WritingSystem>
+      <Name>qvm-ame</Name>
+      <Handle>999000007</Handle>
+    </WritingSystem>
+  </WritingSystems>
+</AllomorphGenerators>

@@ -1248,6 +1248,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					m_popupLexEntryWindow = new PopupToolWindow
 					{
+						Icon = Icon,
 						Owner = this
 					};
 					m_popupLexEntryWindow.Init(m_mediator, m_propertyTable, toolNode);

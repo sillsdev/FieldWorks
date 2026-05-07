@@ -29,8 +29,6 @@ typedef Vector<GOFFSET> OffsetVec; // Hungarian voff
 typedef Vector<SCRIPT_ITEM> ScrItemVec; // Hungarian vscri;
 typedef Vector<SCRIPT_LOGATTR> ScrLogAttrVec; // Hungarian vsla.
 
-class TextAnalysisEntry;
-
 /*----------------------------------------------------------------------------------------------
 Class: UniscribeRunInfo
 Description: This is the block of information that is passed to all our functors.
@@ -233,13 +231,7 @@ public:
 	}
 
 	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts);
-	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
-	static int OffsetInNfc(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-		const TextAnalysisEntry * pAnalysis);
 	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts);
-	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc);
-	static int OffsetToOrig(int ich, int ichBase, IVwTextSource * pts, bool fTextIsNfc,
-		const TextAnalysisEntry * pAnalysis);
 
 protected:
 	// Static variables
@@ -306,7 +298,7 @@ protected:
 	static void ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg = false);
 	static int CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf, Vector<OLECHAR> & vch,
 		IVwTextSource * pts, int ichMin, int cch, OLECHAR ** pprgchBuf, int & citem,
-		bool fParaRTL, bool * pfTextIsNfc = NULL, const TextAnalysisEntry ** ppAnalysis = NULL);
+		bool fParaRTL);
 
 	int NumStretchableGlyphs();
 	int StretchGlyphs(UniscribeRunInfo & uri,

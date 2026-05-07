@@ -1,0 +1,1612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE referencesLayout PUBLIC "-//XMLmind//DTD XLingPap//EN"
+"XLingPap.dtd">
+<referencesLayout
+defaultfontsize="10pt"
+hangingindentsize=".25in"
+><publisherStyleSheetReferencesName
+>SIL International References Style Sheet</publisherStyleSheetReferencesName
+><publisherStyleSheetReferencesVersion
+>0.1.1</publisherStyleSheetReferencesVersion
+><refAuthorLayouts
+><comment
+>Author Layouts</comment
+><refAuthorLayout
+><refAuthorItem
+textafter=",  "
+></refAuthorItem
+><authorRoleItem
+textafter=".  "
+></authorRoleItem
+><refDateItem
+textafter=".  "
+></refDateItem
+></refAuthorLayout
+><refAuthorLayout
+><refAuthorItem
+textafter=".  "
+></refAuthorItem
+><refDateItem
+textafter=".  "
+></refDateItem
+></refAuthorLayout
+></refAuthorLayouts
+><articleLayouts
+><comment
+>Article in a Journal Layouts</comment
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+></jVolItem
+><jIssueNumberItem
+textafter="):"
+textbefore="("
+></jIssueNumberItem
+><jPagesItem
+textafter=".  "
+></jPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+textafter=":"
+></jVolItem
+><jPagesItem
+textafter=".  "
+></jPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+></jVolItem
+><jIssueNumberItem
+textafter=")-"
+textbefore="("
+></jIssueNumberItem
+><jArticleNumberItem
+textafter=".  "
+></jArticleNumberItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+textafter="-"
+></jVolItem
+><jArticleNumberItem
+textafter=".  "
+></jArticleNumberItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+></jVolItem
+><jIssueNumberItem
+textafter=")."
+textbefore="("
+></jIssueNumberItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+><articleLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><jTitleItem
+font-style="italic"
+textafter=" "
+></jTitleItem
+><jVolItem
+textafter=". "
+></jVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></articleLayout
+></articleLayouts
+><bookLayouts
+><comment
+>Book Layouts</comment
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><seriesItem
+textafter=". "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=". "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=" "
+></refTitleItem
+><bVolItem
+font-style="italic"
+textafter=". "
+></bVolItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><bVolItem
+textafter=". "
+></bVolItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+><bookLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><translatedByItem
+textafter=".  "
+textbefore="translated by "
+></translatedByItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><bVolItem
+textafter=". "
+></bVolItem
+><seriesEdItem
+textafter=". "
+></seriesEdItem
+><seriesItem
+textafter=".  "
+></seriesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></bookLayout
+></bookLayouts
+><collectionLayouts
+><comment
+>Paper in a Collection Layouts</comment
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collVolItem
+textafter=":"
+></collVolItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collVolItem
+textafter=".  "
+></collVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=". "
+textbefore="  "
+></collTitleItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collVolItem
+textafter=":"
+></collVolItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collVolItem
+textafter=".  "
+></collVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collTitleItem
+font-style="italic"
+textafter=". "
+textbefore="  "
+></collTitleItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textbefore="In "
+></collCitationItem
+><authorRoleItem
+textafter=", "
+textbefore=", "
+></authorRoleItem
+><collVolItem
+textafter=":"
+></collVolItem
+><collPagesItem
+textafter="."
+></collPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textbefore="In "
+></collCitationItem
+><authorRoleItem
+textafter=". "
+textbefore=", "
+></authorRoleItem
+><collVolItem
+textafter=".  "
+></collVolItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textbefore="In "
+></collCitationItem
+><authorRoleItem
+textafter=". "
+textbefore=", "
+></authorRoleItem
+><collPagesItem
+textafter="."
+></collPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textbefore="In "
+></collCitationItem
+><authorRoleItem
+textafter=". "
+textbefore=", "
+></authorRoleItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textafter=".  "
+textbefore="In "
+></collCitationItem
+><collVolItem
+textafter=":"
+></collVolItem
+><collPagesItem
+textafter="."
+></collPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textafter=".  "
+textbefore="In "
+></collCitationItem
+><collVolItem
+textafter=".  "
+></collVolItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textafter=".  "
+textbefore="In "
+></collCitationItem
+><collPagesItem
+textafter="."
+></collPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collCitationItem
+textafter="."
+textbefore="In "
+></collCitationItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><collVolItem
+textafter=":"
+></collVolItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><collVolItem
+textafter=".  "
+></collVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+><collectionLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><collEdItem
+textbefore="In "
+></collEdItem
+><collTitleItem
+font-style="italic"
+textafter=", "
+textbefore="  "
+></collTitleItem
+><editionItem
+textafter=" Edition.  "
+></editionItem
+><collPagesItem
+textafter=".  "
+></collPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></collectionLayout
+></collectionLayouts
+><dissertationLayouts
+><comment
+>Dissertation Layouts</comment
+><dissertationLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><dissertationLabelItem
+textafter=".  "
+></dissertationLabelItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></dissertationLayout
+><dissertationLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><dissertationLabelItem
+textafter=".  "
+></dissertationLabelItem
+><locationItem
+textafter=".  "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></dissertationLayout
+><dissertationLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><dissertationLabelItem
+textafter=".  "
+></dissertationLabelItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><publishedLayoutRef
+></publishedLayoutRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></dissertationLayout
+><dissertationLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><dissertationLabelItem
+textafter=".  "
+></dissertationLabelItem
+><locationItem
+textafter=".  "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><publishedLayoutRef
+></publishedLayoutRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></dissertationLayout
+></dissertationLayouts
+><fieldNotesLayouts
+><comment
+>Field Note Layouts</comment
+><fieldNotesLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><locationItem
+textafter=":"
+></locationItem
+><institutionItem
+textafter="."
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></fieldNotesLayout
+><fieldNotesLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><institutionItem
+textafter="."
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></fieldNotesLayout
+></fieldNotesLayouts
+><msLayouts
+><comment
+>Manuscript Layouts</comment
+><msLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><locationItem
+textafter=": "
+></locationItem
+><institutionItem
+textafter=".  Manuscript."
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></msLayout
+><msLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><institutionItem
+textafter=".  Manuscript."
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></msLayout
+><msLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><emptyItem
+textafter="Manuscript."
+></emptyItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></msLayout
+></msLayouts
+><paperLayouts
+><comment
+>Paper Presented at a Conference Layouts</comment
+><paperLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><conferenceItem
+textafter=".  "
+textbefore="Paper presented at the "
+></conferenceItem
+><locationItem
+textafter="."
+></locationItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></paperLayout
+><paperLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><conferenceItem
+textafter=".  "
+textbefore="Paper presented at the "
+></conferenceItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></paperLayout
+></paperLayouts
+><proceedingsLayouts
+><comment
+>Paper in a Proceedings Volume Layouts</comment
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=":"
+></procVolItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=".  "
+></procVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=":"
+></procVolItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=".  "
+></procVolItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procEdItem
+textafter=",  "
+></procEdItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=":"
+></procVolItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procVolItem
+textafter=".  "
+></procVolItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procTitleItem
+font-style="italic"
+textafter=".  "
+></procTitleItem
+><procPagesItem
+textafter=".  "
+></procPagesItem
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procCitationItem
+textbefore="In "
+></procCitationItem
+><authorRoleItem
+textafter=".).  "
+textbefore=" ("
+></authorRoleItem
+><procVolItem
+textafter=":"
+></procVolItem
+><procPagesItem
+textafter="."
+></procPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procCitationItem
+textbefore="In "
+></procCitationItem
+><authorRoleItem
+textafter=".).  "
+textbefore=" ("
+></authorRoleItem
+><procVolItem
+textafter=". "
+></procVolItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procCitationItem
+textbefore="In "
+></procCitationItem
+><authorRoleItem
+textafter=".).  "
+textbefore=" ("
+></authorRoleItem
+><procPagesItem
+textafter="."
+></procPagesItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+><proceedingsLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><procCitationItem
+textbefore="In "
+></procCitationItem
+><authorRoleItem
+textafter=".).  "
+textbefore=" ("
+></authorRoleItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></proceedingsLayout
+></proceedingsLayouts
+><thesisLayouts
+><comment
+>Thesis Layouts</comment
+><thesisLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><thesisLabelItem
+textafter=".  "
+></thesisLabelItem
+><locationItem
+textafter=".  "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><publishedLayoutRef
+></publishedLayoutRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></thesisLayout
+><thesisLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><thesisLabelItem
+textafter=".  "
+></thesisLabelItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><publishedLayoutRef
+></publishedLayoutRef
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></thesisLayout
+><thesisLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><thesisLabelItem
+textafter=".  "
+></thesisLabelItem
+><locationItem
+textafter=".  "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></thesisLayout
+><thesisLayout
+><refTitleItem
+font-style="italic"
+textafter=".  "
+></refTitleItem
+><thesisLabelItem
+textafter=".  "
+></thesisLabelItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></thesisLayout
+></thesisLayouts
+><webPageLayouts
+><comment
+>Web Page Layouts</comment
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=".  "
+></editionItem
+><locationItem
+textafter=": "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=".  "
+></editionItem
+><locationItem
+textafter=": "
+></locationItem
+><publisherItem
+textafter=".  "
+></publisherItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=".  "
+></editionItem
+><locationItem
+textafter=".  "
+></locationItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=".  "
+></editionItem
+><publisherItem
+textafter=".  "
+></publisherItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><editionItem
+textafter=".  "
+></editionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><locationItem
+textafter=": "
+></locationItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><locationItem
+textafter=": "
+></locationItem
+><publisherItem
+textafter=".  "
+></publisherItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><locationItem
+textafter=".  "
+></locationItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><institutionItem
+textafter=".  "
+></institutionItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><publisherItem
+textafter=".  "
+></publisherItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+><webPageLayout
+><refTitleItem
+textafter=".  "
+></refTitleItem
+><urlDateAccessedLayoutsRef
+></urlDateAccessedLayoutsRef
+></webPageLayout
+></webPageLayouts
+><publishedLayout
+><locationPublisherLayoutsRef
+></locationPublisherLayoutsRef
+><pubDateItem
+textafter="."
+></pubDateItem
+></publishedLayout
+><locationPublisherLayouts
+><comment
+>Location and/or Publisher Layouts</comment
+><locationPublisherLayout
+><locationItem
+textafter=": "
+></locationItem
+><publisherItem
+textafter="."
+></publisherItem
+></locationPublisherLayout
+><locationPublisherLayout
+><locationItem
+textafter=".  "
+></locationItem
+></locationPublisherLayout
+><locationPublisherLayout
+><publisherItem
+textafter="."
+></publisherItem
+></locationPublisherLayout
+><locationPublisherLayout
+><missingItem
+></missingItem
+></locationPublisherLayout
+></locationPublisherLayouts
+><urlDateAccessedLayouts
+><comment
+>Url and/or DateAccessed Layouts</comment
+><urlDateAccessedLayout
+><urlItem
+textbefore="  "
+></urlItem
+><dateAccessedItem
+textafter=")"
+textbefore="  (accessed "
+></dateAccessedItem
+></urlDateAccessedLayout
+><urlDateAccessedLayout
+><urlItem
+textbefore="  "
+></urlItem
+></urlDateAccessedLayout
+><urlDateAccessedLayout
+><missingItem
+></missingItem
+></urlDateAccessedLayout
+></urlDateAccessedLayouts
+><iso639-3codeItem
+></iso639-3codeItem
+></referencesLayout
+>

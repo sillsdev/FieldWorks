@@ -351,10 +351,8 @@ public:
 	}
 };
 
-#define UTILCOM_CONCAT_INNER(a, b) a##b
-#define UTILCOM_CONCAT(a, b) UTILCOM_CONCAT_INNER(a, b)
-#define LockThis() _Lock_Unknown UTILCOM_CONCAT(_lock_this_, __LINE__)(this)
-#define LockObj(pobj) _Lock_Unknown UTILCOM_CONCAT(_lock_obj_, __LINE__)(pobj)
+#define LockThis() _Lock_Unknown _lock_this_##__LINE__(this)
+#define LockObj(pobj) _Lock_Unknown _lock_obj_##__LINE__(pobj)
 
 /*************************************************************************************
 	Miscellaneous COM related utility functions.

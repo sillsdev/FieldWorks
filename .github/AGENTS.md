@@ -39,7 +39,7 @@ Short repo-level instructions for agents.
 - `.github/instructions/native.instructions.md`
 - `.github/instructions/installer.instructions.md`
 - `.github/rubrics/*.yaml`
-- `.agents/skills/rubric-verify/SKILL.md`
+- `.github/skills/rubric-verify/SKILL.md`
 - `Src/AGENTS.md`
 - `FLExInstaller/AGENTS.md`
 

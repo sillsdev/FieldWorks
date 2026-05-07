@@ -12,13 +12,16 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using Gecko.WebIDL;
+using System.IO;
+using SIL.LCModel.Core.Phonology;
 
 namespace SIL.FieldWorks.IText
 {
@@ -103,6 +106,7 @@ namespace SIL.FieldWorks.IText
 		internal const int ktagSegmentLit = -62;
 		internal const int ktagSegmentNote = -63;
 		internal const int ktagAnalysisStatus = -64;
+		internal const int ktagMediaFile = -65;
 		// flids for paragraph annotation sequences.
 		internal int ktagSegmentForms;
 
@@ -133,7 +137,10 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_tssEmptyVern;
 		private ITsString m_tssEmptyPara;
 		private ITsString m_tssSpace;
+		private ITsString m_tssDefaultSpace; // Space character in the default user ws.
+		private ITsString m_tssEmptyString;
 		private ITsString m_tssCommaSpace;
+		private ITsString m_tssDefaultColon;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
 		private bool m_fRtl;
@@ -147,6 +154,7 @@ namespace SIL.FieldWorks.IText
 		private readonly int m_selfFlid;
 
 		private int m_leftPadding;
+		private ComPictureWrapper m_PlayArrowPic;
 
 		#endregion Data members
 
@@ -181,7 +189,11 @@ namespace SIL.FieldWorks.IText
 			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
 			m_WsList = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
+			m_tssEmptyString = TsStringUtils.MakeString(string.Empty, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
+			// Space and colon are needed in the default user ws for the media line. (Default user ws is needed in this line to match the ws used for labels.)
+			m_tssDefaultSpace = TsStringUtils.MakeString(" ", cache.DefaultUserWs);
+			m_tssDefaultColon = TsStringUtils.MakeString(":", cache.DefaultUserWs);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
 
 			// This usually gets overridden, but ensures default behavior if not.
@@ -193,6 +205,7 @@ namespace SIL.FieldWorks.IText
 			ktagSegmentForms = SegmentTags.kflidAnalyses;
 			GetSegmentLevelTags(cache);
 			LangProjectHvo = m_cache.LangProject.Hvo;
+			m_PlayArrowPic = OLECvt.ConvertImageToComPicture(ResourceHelper.InterlinPlayArrow);
 		}
 
 		internal InterlinViewDataCache GuessCache { get; set; }
@@ -280,6 +293,7 @@ namespace SIL.FieldWorks.IText
 				// dispose managed and unmanaged objects
 				// Dispose managed resources here.
 				m_WsList?.Dispose();
+				m_PlayArrowPic?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -296,6 +310,7 @@ namespace SIL.FieldWorks.IText
 			m_tssSpace = null;
 			m_tssCommaSpace = null;
 			m_WsList = null;
+			m_PlayArrowPic = null;
 
 			IsDisposed = true;
 		}
@@ -908,6 +923,548 @@ namespace SIL.FieldWorks.IText
 			vwenv.OpenInnerPile();
 		}
 
+		/// <summary>
+		/// Use the default user WS to display a separator followed by a label, colon, and space, all enclosed in directionality marks.
+		/// </summary>
+		/// <param name="label">The label of the data (Begin, End, Speaker)</param>
+		/// <param name="lineAndSegSameDir">True if the direction of the line content matches the
+		/// direction the segment should display.</param>
+		/// <param name="lineAndUserSameDir">True if the direction of the line content matches the
+		/// direction of the default user writing system.</param>
+		private void AddFormattedLabel(IVwEnv vwenv, ITsString label, bool lineAndSegSameDir, bool lineAndUserSameDir)
+		{
+			int defUserWs = m_cache.DefaultUserWs;
+			AddTssDirForWs(vwenv, defUserWs);
+			if (lineAndSegSameDir != lineAndUserSameDir)
+			{
+				// Use reverse logical order
+				vwenv.AddString(m_tssDefaultSpace);
+				vwenv.AddString(m_tssDefaultColon);
+				vwenv.AddString(label);
+				AddSeparator(vwenv);
+			}
+			else
+			{
+				// Use logical order
+				AddSeparator(vwenv);
+				vwenv.AddString(label);
+				vwenv.AddString(m_tssDefaultColon);
+				vwenv.AddString(m_tssDefaultSpace);
+			}
+			AddTssDirForWs(vwenv, defUserWs);
+		}
+
+		/// <summary>
+		/// This method adds a double space and is used for separators between items in the media line
+		/// </summary>
+		private void AddSeparator(IVwEnv vwenv)
+		{
+			int defUserWs = m_cache.DefaultUserWs;
+			AddTssDirForWs(vwenv, defUserWs);
+			vwenv.AddString(m_tssDefaultSpace);
+			vwenv.AddString(m_tssDefaultSpace);
+			AddTssDirForWs(vwenv, defUserWs);
+		}
+
+		/// <summary>
+		/// Add a single space for the first line and no space for subsequent lines.
+		/// </summary>
+		private void AddSpaceForFirstLine(IVwEnv vwenv, bool bFirstLine)
+		{
+			if (bFirstLine)
+			{
+				vwenv.AddString(m_tssDefaultSpace);
+			}
+		}
+
+		/// <summary>
+		/// Use the given WS to add a given string with directionality marks
+		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="ws"></param>
+		/// <param name="str"></param>
+		private void AddITsStringProperty(IVwEnv vwenv, int ws, ITsString str)
+		{
+			AddTssDirForWs(vwenv, ws);
+			vwenv.AddString(str);
+			AddTssDirForWs(vwenv, ws);
+		}
+
+		private ITsString MakeLabel(string labelText)
+		{
+			var tssLabel = MakeUiElementString(
+				labelText,
+				m_cache.DefaultUserWs,
+				propsBldr =>
+				{
+					propsBldr.SetIntPropValues(
+						(int)FwTextPropType.ktptBold,
+						(int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvForceOn);
+				});
+			return tssLabel;
+		}
+
+		private ITsString GetSpeakerName(ICmPerson speakerRA, int ws)
+		{
+			// If speaker name is available in the writing system we want, use that.
+			// Otherwise, use the default stored in ChooserNameTS. Otherwise an empty string.
+			ITsString speakerName = speakerRA?.Name?.get_String(ws);
+			if (string.IsNullOrEmpty(speakerName?.ToString()))
+				speakerName = speakerRA?.ChooserNameTS ?? m_tssEmptyString;
+			return speakerName;
+		}
+
+		private void AddNoMediaMessage(IVwEnv vwenv, ITsString tssMediaLabel, ITsString tssFileLabel, int wsForSeg, string mediaFileName)
+		{
+			var defUserWs = m_cache.DefaultUserWs;
+			bool isFilePathSpecified = !string.IsNullOrEmpty(mediaFileName);
+			ITsString tssFileName = null;
+			ITsString tssNoMediaMessage;
+
+			if (isFilePathSpecified)
+			{
+				tssFileName = MakeUiElementString(mediaFileName, defUserWs, null);
+				// We have a media filepath, but file was not found. Build media not found message.
+				// Use normal label settings, except make it italic instead of bold.
+				tssNoMediaMessage = MakeUiElementString(
+					ITextStrings.ksMediaNotFound, defUserWs,
+					propsBldr =>
+					{
+						propsBldr.SetIntPropValues(
+							(int)FwTextPropType.ktptItalic,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwTextToggleVal.kttvForceOn);
+					});
+			}
+			else
+			{
+				// No media filepath was given. Build no media message.
+				// Use normal label settings, except not bold.
+				tssNoMediaMessage = MakeUiElementString(
+					ITextStrings.ksNoMedia, defUserWs,
+					propsBldr =>
+					{
+						propsBldr.SetIntPropValues(
+							(int)FwTextPropType.ktptItalic,
+							(int)FwTextPropVar.ktpvEnum,
+							(int)FwTextToggleVal.kttvForceOn);
+					});
+			}
+
+			// If the user WS and segment WS are not the same direction, then we need to insert pieces in reverse
+			// logical order.
+			AddTssDirForWs(vwenv, defUserWs);
+			if (IsWsRtl(wsForSeg)!=IsWsRtl(defUserWs))
+			{
+				if (isFilePathSpecified)
+				{
+					vwenv.AddString(tssFileName);
+					vwenv.AddString(m_tssDefaultSpace);
+					vwenv.AddString(tssFileLabel);
+					AddSeparator(vwenv);
+				}
+				vwenv.AddString(tssNoMediaMessage);
+				vwenv.AddString(m_tssDefaultSpace);
+				vwenv.AddString(tssMediaLabel);
+			}
+			else
+			{
+				vwenv.AddString(tssMediaLabel);
+				vwenv.AddString(m_tssDefaultSpace);
+				vwenv.AddString(tssNoMediaMessage);
+				if (isFilePathSpecified)
+				{
+					AddSeparator(vwenv);
+					vwenv.AddString(tssFileLabel);
+					vwenv.AddString(m_tssDefaultSpace);
+					vwenv.AddString(tssFileName);
+				}
+			}
+			AddTssDirForWs(vwenv, defUserWs);
+		}
+
+		/// <summary>
+		/// Create a Media line for the segment that includes a media playback button,
+		/// the time offsets for the media clip, and the speaker information.
+		/// If there is no media file, the playback button is omitted,
+		/// and a "No Media" message is displayed instead of the offsets and speaker.
+		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="hvoSeg"></param>
+		/// <param name="lineChoiceIndex"></param>
+		protected virtual void AddMedia(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
+		{
+			InterlinearExporter exporter = vwenv as InterlinearExporter;
+			if (exporter != null)
+				exporter.FreeAnnotationType = "media";
+
+			// Store the segment & the Ws used for the segment.
+			var segment = m_cache.ServiceLocator.GetObject(hvoSeg) as ISegment;
+			Debug.Assert(segment != null);
+			var wsForSeg = GetWsForSeg(hvoSeg);
+			var defUserWs = m_cache.DefaultUserWs;
+
+			// Store the list of WSs that were selected for displaying the media line.
+			int[] wssOptions = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
+			if (wssOptions.Length == 0)
+				return;
+
+			string mediaLabel = ITextStrings.ksMedia;
+			var mediaLabelWidth = 0;
+			int mediaLabelHeight; // unused
+
+			// Build media line label, with line index attached
+			var tssMediaLabel = MakeLabel(mediaLabel);
+			var labelBldr = tssMediaLabel.GetBldr();
+			AddLineIndexProperty(labelBldr, lineChoiceIndex);
+			tssMediaLabel = labelBldr.GetString();
+
+			// Calculate width of the media label, for use indenting subsequent lines.
+			vwenv.get_StringWidth(tssMediaLabel, null, out mediaLabelWidth, out mediaLabelHeight);
+
+			// Calculate width of the media playback button (which is just a picture), for use indenting subsequent lines:
+			//		Get picture width in himetric units & convert to millipoints
+			//		Note: 1 himetric = 0.01 mm and 1 mm = 72000/25.4 millipoints
+			//		=> 1 himetric = 720/25.4 millipoints = 7200/254 millipoints
+			int mediaPlayPicWidth = m_PlayArrowPic.Picture.Width * 7200 / 254;
+
+			// Build labels for begin/end offsets, speaker, and file.
+			var tssBeginTimeLabel = MakeLabel(ITextStrings.ksBeginTimeOffset);
+			var tssEndTimeLabel = MakeLabel(ITextStrings.ksEndTimeOffset);
+			var tssSpeakerLabel = MakeLabel(ITextStrings.ksSpeaker);
+			var tssFileLabel = MakeLabel(ITextStrings.ksFile);
+
+			var mediaFile = segment.MediaURIRA?.MediaURI;
+			string mediaFileName;
+			bool fileExists = CheckFileExistsFromUri(mediaFile, out mediaFileName);
+
+			// If there is no media file, add Media line label and a "No Media" message and skip the rest of the media line display.
+			if (!fileExists)
+			{
+				vwenv.OpenDiv();
+				// No Media Message uses the default user ws
+				SetParaDirectionAndAlignment(vwenv, defUserWs);
+				vwenv.OpenParagraph();
+				AddNoMediaMessage(vwenv, tssMediaLabel, tssFileLabel, wsForSeg, mediaFileName);
+				vwenv.CloseParagraph();
+				vwenv.CloseDiv();
+				return;
+			}
+
+			vwenv.OpenDiv();
+			for (int i = 0; i < wssOptions.Length; i++)
+			{
+				bool bFirstLine = i == 0;
+				bool bOnlyOneLine = wssOptions.Length == 1;
+
+				// Check if the direction of the line content matches the direction the segment should display.
+				bool lineAndSegSameDir = IsWsRtl(wssOptions[i]) == IsWsRtl(wsForSeg);
+
+				// Check if the direction of the line content matches the direction of the default user writing system.
+				bool lineAndUserSameDir = (IsWsRtl(wssOptions[i]) == IsWsRtl(defUserWs));
+
+				// If there are multiple WS to display then we will need to add the writing system label.
+				ITsString wsLabel = null;
+				if (!bOnlyOneLine)
+				{
+					wsLabel = WsListManager.WsLabel(m_cache, wssOptions[i]);
+					var wsLabelBldr = wsLabel.GetBldr();
+					AddLineIndexProperty(wsLabelBldr, lineChoiceIndex);
+					wsLabel = wsLabelBldr.GetString();
+				}
+
+				// For all paragraphs except for the first one, indented by the combined width of the
+				// media label and playback button.
+				if (!bFirstLine)
+				{
+					int spaceIndent = 7000; // amount to indent for the space added before the WS label.
+					if (!lineAndSegSameDir)
+					{
+						vwenv.set_IntProperty((int)FwTextPropType.ktptTrailingIndent,
+							(int)FwTextPropVar.ktpvMilliPoint, mediaLabelWidth + mediaPlayPicWidth + spaceIndent);
+					}
+					else
+					{
+						vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent,
+							(int)FwTextPropVar.ktpvMilliPoint, mediaLabelWidth + mediaPlayPicWidth + spaceIndent);
+					}
+				}
+
+				SetParaDirectionAndAlignment(vwenv, wssOptions[i]);
+				vwenv.OpenParagraph();
+
+				// If the direction of Line content WS and the direction of the Segment WS are different,
+				// we need to insert each piece such that:
+				// - a piece consists of a consecutive chunk that all uses a single writing system (so, when the writing system switches, we begin a new piece)
+				// - pieces are placed in reverse logical order
+				// - each piece should begin and end with directionality marks for its writing system
+				//
+				// If the Line content WS and the default user WS have different directions,
+				// then content within each piece needs to be in logical order.
+				//
+				// If the Line content WS and the default user WS have the same direction--meaning both are opposite the direction of the Segment WS,
+				// then content within each piece needs to be in reverse logical order.
+				//
+				// In the order in which they should appear, pieces for the media line are:
+				// [Default user WS - media label], [Line content WS - playback button], [Default user WS - optional WS label & Begin time label],
+				// [Line content WS - Begin time value], [Default user WS - End time label], [Line content WS - End time value],
+				// [Default user WS - Speaker label], [Line content WS - Speaker value], [Default user WS - File label & filename].
+				if (!lineAndSegSameDir)
+				{
+					// Add the file name section.
+					// Piece 1: default user WS - Add file label and filename
+					if (lineAndUserSameDir)
+					{
+						// content within the piece is in reverse logical order, so add filename and then label
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+					}
+					else
+					{
+						// content within the piece is in logical order, so add label and then filename
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+					}
+
+					// Add the speaker section.
+					// Piece 1: Line content WS - Add speaker value.
+					AddITsStringProperty(vwenv, wssOptions[i], GetSpeakerName(segment.SpeakerRA, wssOptions[i]));
+					// Piece 2: default user WS - Add speaker label.
+					AddFormattedLabel(vwenv, tssSpeakerLabel, lineAndSegSameDir, lineAndUserSameDir);
+
+					// Add the end time section.
+					// Piece 1: Line content WS - Add end time value.
+					AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.EndTimeOffset, wssOptions[i]));
+					// Piece 2: default user WS - Add end time label.
+					AddFormattedLabel(vwenv, tssEndTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+
+					// Add begin time section and optional writing system label.
+					if (bOnlyOneLine)
+					{
+						// In this case, we don't need a writing system label. Add the begin time section.
+						// Piece 1: Line content WS - Add begin time value.
+						AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+						// Piece 2: default user WS - Add begin time label.
+						AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+					}
+					else
+					{
+						if (!lineAndUserSameDir)
+						{
+							// Recall: Need to insert pieces in reverse logical order, but maintain logical order within each piece.
+							// Piece 1: Line content WS - Add begin time value.
+							AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+
+							// Piece 2: default user WS - In logical order add WS label, then begin time label.
+							// Add WS label.
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							AddSpaceForFirstLine(vwenv, bFirstLine);
+							vwenv.AddString(wsLabel);
+							AddTssDirForWs(vwenv, defUserWs);
+							// Begin time label.
+							AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+						}
+						else
+						{
+							// Insert everything in reverse logical order.
+							// Piece 1: Line content WS - Add begin time value.
+							AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+
+							// Piece 2: default user WS - Add begin time label, then add WS label.
+							AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+							// Add WS label.
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							vwenv.AddString(wsLabel);
+							AddSpaceForFirstLine(vwenv, bFirstLine);
+							AddTssDirForWs(vwenv, defUserWs);
+						}
+					}
+
+					if (bFirstLine)
+					{
+						// Add the media playback button, which is just a picture.
+						// Piece 1: Line content WS - Add media playback button.
+						AddTssDirForWs(vwenv, wssOptions[i]);
+						vwenv.AddPicture(m_PlayArrowPic.Picture, SegmentTags.kflidMediaURI, 0, 0);
+						AddTssDirForWs(vwenv, wssOptions[i]);
+
+						// Add the media line label, using default user WS.
+						if (!lineAndUserSameDir)
+						{
+							// Maintain logical order within the piece.
+							// Piece: default user WS - insert Media line label and then space
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							vwenv.AddString(tssMediaLabel);
+							vwenv.AddString(m_tssDefaultSpace);
+							AddTssDirForWs(vwenv, defUserWs);
+						}
+						else
+						{
+							// Reverse logical order within the piece.
+							// Piece: default user WS - insert space and then  Media line label
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							vwenv.AddString(m_tssDefaultSpace);
+							vwenv.AddString(tssMediaLabel);
+							AddTssDirForWs(vwenv, defUserWs);
+						}
+					}
+				}
+
+				// Else, the direction of Line content WS and the direction of the Segment WS are the same.
+				// In this case, we need to insert each piece in logical order.
+				//
+				// If the Line content WS and the default user WS have different directions,
+				// then content within each piece needs to be in reverse logical order.
+				//
+				// If the Line content WS and the default user WS have the same direction--meaning both have the same direction as the Segment WS,
+				// then content within each piece needs to be in logical order.
+				//
+				// In the order in which they should appear, pieces for the media line are:
+				// [Label WS - media label], [Line content WS - playback button], [Label WS - optional WS label & Begin time label],
+				// [Line content WS - Begin time value], [Label WS - End time label], [Line content WS - End time value],
+				// [Label WS - Speaker label], [Line content WS - Speaker value].
+				else
+				{
+					if (bFirstLine)
+					{
+						if (!lineAndUserSameDir)
+						{
+							// Reverse logical order within the piece.
+							// Media label Piece: default user WS - insert space and then  Media line label
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							vwenv.AddString(m_tssDefaultSpace);
+							vwenv.AddString(tssMediaLabel);
+							AddTssDirForWs(vwenv, defUserWs);
+						}
+						else
+						{
+							// Maintain logical order within the piece.
+							// Media label Piece: default user WS - insert Media line label and then space
+							SetNoteLabelProps(vwenv);
+							AddTssDirForWs(vwenv, defUserWs);
+							vwenv.AddString(tssMediaLabel);
+							vwenv.AddString(m_tssDefaultSpace);
+							AddTssDirForWs(vwenv, defUserWs);
+						}
+
+						// Add the media playback button, which is just a picture.
+						// Playback button piece: Line content WS - Add media playback button.
+						AddTssDirForWs(vwenv, wssOptions[i]);
+						vwenv.AddPicture(m_PlayArrowPic.Picture, SegmentTags.kflidMediaURI, 0, 0);
+						AddTssDirForWs(vwenv, wssOptions[i]);
+					}
+
+					// Add begin time section and optional writing system label.
+					if (bOnlyOneLine)
+					{
+						// In this case, we don't need a writing system label. Add the begin time section.
+						// Begin time Label Piece: default user WS
+						AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+						// Begin time value Piece: Line content WS.
+						AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+					}
+					else
+					{
+						if (!lineAndUserSameDir)
+						{
+							// Pieces in logical order, but reverse logical order within each piece.
+
+							// WS label & Begin time label Piece: Using default user WS.
+							// Insert in reverse order: begin time label, separator, WS label
+							// Add begin time label
+							AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+							// Add WS label, to appear before begin time separator and label
+							AddTssDirForWs(vwenv, defUserWs);
+							SetNoteLabelProps(vwenv);
+							vwenv.AddString(wsLabel);
+							AddSpaceForFirstLine(vwenv, bFirstLine);
+							AddTssDirForWs(vwenv, defUserWs);
+
+							// Begin time value Piece: Line content WS.
+							AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+						}
+						else
+						{
+							// Pieces in logical order, and maintain logical order within each piece.
+							// WS label & Begin time label Piece: Using default user WS.
+							AddTssDirForWs(vwenv, defUserWs);
+							AddSpaceForFirstLine(vwenv, bFirstLine);
+							SetNoteLabelProps(vwenv);
+							vwenv.AddString(wsLabel);
+							AddTssDirForWs(vwenv, defUserWs);
+							// Add begin time label
+							AddFormattedLabel(vwenv, tssBeginTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+
+							// Begin time value Piece: Line content WS.
+							AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.BeginTimeOffset, wssOptions[i]));
+						}
+					}
+
+					// Add the end time section.
+					// End time label piece: default user WS.
+					AddFormattedLabel(vwenv, tssEndTimeLabel, lineAndSegSameDir, lineAndUserSameDir);
+					// End time value piece: Line content WS.
+					AddITsStringProperty(vwenv, wssOptions[i], GetDisplayTime(segment.EndTimeOffset, wssOptions[i]));
+
+					// Add the speaker section.
+					// Speaker label Piece: default user WS.
+					AddFormattedLabel(vwenv, tssSpeakerLabel, lineAndSegSameDir, lineAndUserSameDir);
+					// Speaker value piece: Line content WS.
+					AddITsStringProperty(vwenv, wssOptions[i], GetSpeakerName(segment.SpeakerRA, wssOptions[i]));
+
+					// Add the file name piece.
+					// Default user WS - Add file label and filename
+					if (lineAndUserSameDir)
+					{
+						// content within the piece should be in logical order, so add label and then filename
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+					}
+					else
+					{
+						// content within the piece should be in reverse logical order, so add filename and then label
+						AddITsStringProperty(vwenv, defUserWs, MakeUiElementString(mediaFileName, defUserWs, null));
+						AddFormattedLabel(vwenv, tssFileLabel, lineAndSegSameDir, lineAndUserSameDir);
+					}
+				}
+				vwenv.CloseParagraph();
+			}
+			vwenv.CloseDiv();
+		}
+
+		/// <summary>
+		/// Converts a string representing milliseconds to a formatted time string and returns it as an <see cref="ITsString"/>
+		/// in the specified writing system. The returned string is intended for display in the user interface.
+		/// </summary>
+		/// <param name="msString">A string containing the number of milliseconds to convert.</param>
+		/// <returns>An <see cref="ITsString"/> containing the formatted time, using hours, minutes, seconds, and fractional seconds as
+		/// appropriate for the input value.</returns>
+		private ITsString GetDisplayTime(string msString, int writingSystem)
+		{
+			double ms = double.Parse(msString);
+			var timeSpan = TimeSpan.FromMilliseconds(ms);
+			string displayTime;
+			if (timeSpan.Hours != 0)
+			{
+				displayTime = timeSpan.ToString(@"h\:mm\:ss\.ff");
+			}
+			else if (timeSpan.Minutes != 0)
+			{
+				displayTime = timeSpan.ToString(@"m\:ss\.ff");
+			}
+			else
+			{
+				displayTime = timeSpan.ToString(@"s\.ff");
+			}
+			return MakeUiElementString(displayTime, writingSystem, null);
+		}
+
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
 			int[] wssAnalysis = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
@@ -1484,6 +2041,50 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			vwenv.CloseInnerPile();
+		}
+
+		/// <summary>
+		/// Checks if a file associated with a file URI string exists.
+		/// </summary>
+		/// <param name="uriString">The string containing the file URI.</param>
+		/// <param name="fileName">The name of the file extracted from the URI, if it exists.</param>
+		/// <returns>True if the file exists, false otherwise.</returns>
+		private static bool CheckFileExistsFromUri(string uriString, out string fileName)
+		{
+			fileName = null;
+			if (string.IsNullOrEmpty(uriString))
+			{
+				return false;
+			}
+
+			try
+			{
+				// 1. Create a Uri object from the string.
+				Uri uri = new Uri(uriString);
+
+				// 2. Check if it's a local file path (scheme "file").
+				if (uri.IsFile)
+				{
+					// 3. Get the file path using uri.LocalPath.
+					string localPath = uri.LocalPath;
+					fileName = Path.GetFileName(uri.LocalPath);
+
+					// 4. Use File.Exists to verify if the file exists at that path.
+					return File.Exists(localPath);
+				}
+				else
+				{
+					// Handle cases where the URI is not a local file (e.g., http, ftp).
+					Console.WriteLine($"URI scheme is not 'file': {uri.Scheme}");
+					return false;
+				}
+			}
+			catch (UriFormatException ex)
+			{
+				// Handle invalid URI format
+				Console.WriteLine($"Invalid URI format: {ex.Message}");
+				return false;
+			}
 		}
 
 		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, InterlinLineChoices lineChoices, int vernWsContext, ILexEntryInflType inflType, out ITsString result)
@@ -2110,6 +2711,9 @@ namespace SIL.FieldWorks.IText
 						// There's a sequence of these, we use a trick with the frag to indicate which
 						// index into line choices we want to use to display each of them.
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
+						break;
+					case InterlinLineChoices.kflidMedia:
+						AddMedia(vwenv, hvoSeg, ispec);
 						break;
 					default:
 						if(((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid) && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))

@@ -101,10 +101,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public FwNewLangProjectModel(bool useMemoryWsManager = false)
 		{
-			WritingSystemManager = useMemoryWsManager
-				? FwUtils.CreateWritingSystemManager()
-				: new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
-			WritingSystemManager.TemplateFolder = FwDirectoryFinder.TemplateDirectory;
+			WritingSystemManager = useMemoryWsManager ? new WritingSystemManager() : new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
 			CoreWritingSystemDefinition englishWs;
 			WritingSystemManager.GetOrSet("en", out englishWs);
 			_allAnalysis.Add(englishWs);
