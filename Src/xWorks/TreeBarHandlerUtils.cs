@@ -46,15 +46,15 @@ namespace SIL.FieldWorks.XWorks
 					int hvoNew = sda.MakeNewObject(orig.ClassID, ownerHvo, flid, order);
 					newObj = (ICmPossibility)cache.ServiceLocator.GetObject(hvoNew);
 					int ws = orig.Name.AvailableWritingSystemIds[0];
-					newObj.Name.set_String(ws, orig.Name.UiString);
+					newObj.Name.set_String(ws, orig.Name.BestAnalysisVernacularAlternative.Text);
 					newObj.Name.AnalysisDefaultWritingSystem = orig.Name.AnalysisDefaultWritingSystem;
 					newObj.Name.VernacularDefaultWritingSystem = orig.Name.VernacularDefaultWritingSystem;
 					if (flid == itemFlid) //Only the top node needs a name change
 						newObj.Name.set_String(ws, ChangeName(newObj));
-					if (!String.IsNullOrEmpty(orig.Abbreviation.UiString))
-						newObj.Abbreviation.set_String(ws, orig.Abbreviation.UiString);
-					if (!String.IsNullOrEmpty(orig.Description.UiString))
-						newObj.Description.set_String(ws, orig.Description.UiString);
+					if (!String.IsNullOrEmpty(orig.Abbreviation.BestAnalysisVernacularAlternative.Text))
+						newObj.Abbreviation.set_String(ws, orig.Abbreviation.BestAnalysisVernacularAlternative.Text);
+					if (!String.IsNullOrEmpty(orig.Description.BestAnalysisVernacularAlternative.Text))
+						newObj.Description.set_String(ws, orig.Description.BestAnalysisVernacularAlternative.Text);
 					newObj.StatusRA = orig.StatusRA;
 					if(newObj.DiscussionOA != null)
 						newObj.DiscussionOA = orig.DiscussionOA;
@@ -76,9 +76,9 @@ namespace SIL.FieldWorks.XWorks
 			int max = 0;
 			// Captures the name up to a (Copy) and captures the duplicate number if it exists
 			Regex regex = new Regex(@"(.[a-z0-9A-Z\s]*) \(Copy\) \((.[0-9]*)\)$");
-			Match match = regex.Match(obj.Name.UiString);
+			Match match = regex.Match(obj.Name.BestAnalysisVernacularAlternative.Text);
 			//Only need the name up to the (Copy) so grab that if a duplicate else use original name
-			string prefix = (match.Success) ? match.Groups[1].Value : obj.Name.UiString;
+			string prefix = (match.Success) ? match.Groups[1].Value : obj.Name.BestAnalysisVernacularAlternative.Text;
 			//Find the highest duplicate number for that template
 			foreach (ICmObject possibility in obj.OwningList.AllOwnedObjects)
 			{
