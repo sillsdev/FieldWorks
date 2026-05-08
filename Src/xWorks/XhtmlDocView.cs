@@ -1527,6 +1527,10 @@ namespace SIL.FieldWorks.XWorks
 				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
+			if (Clerk.IsDisposed)
+			{
+				return null;
+			}
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
 			var start = DateTime.Now;
 			var entriesPerPage = allOnOnePage ? entriesToPublish.Length : LcmXhtmlGenerator.EntriesPerPage;
