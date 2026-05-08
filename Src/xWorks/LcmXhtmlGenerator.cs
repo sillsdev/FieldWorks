@@ -45,13 +45,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, RecordClerk clerk, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable,
-			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
+			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage, bool isLexEditPreviewOnly = false)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+				SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, isLexEditPreviewOnly: isLexEditPreviewOnly);
 			}
 			catch (IOException ioEx)
 			{
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+						SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, isLexEditPreviewOnly: isLexEditPreviewOnly);
 					}
 					catch (IOException e)
 					{
@@ -81,13 +81,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, RecordClerk clerk, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null,
-			bool isXhtmlExport = false)
+			bool isXhtmlExport = false, bool isLexEditPreviewOnly = false)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
+			if (publicationDecorator == null)
+			{
+				// Used by unit tests.
+				isLexEditPreviewOnly = true;
+			}
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
-			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (RecordClerk.IsClerkSortingByHeadword(clerk));
+			var wantLetterHeaders = (entryCount > 1 || !isLexEditPreviewOnly) && (RecordClerk.IsClerkSortingByHeadword(clerk));
 			using (var xhtmlWriter = XmlWriter.Create(xhtmlPath))
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -146,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
-				if (!IsLexEditPreviewOnly(publicationDecorator) && !IsExport(settings))
+				if (!isLexEditPreviewOnly && !IsExport(settings))
 				{
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					ConfiguredLcmGenerator.CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
@@ -309,11 +314,6 @@ namespace SIL.FieldWorks.XWorks
 			var confName = XhtmlDocView.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(config.FilePath));
 			var fileName = isSingleEntryPreview ? confName + "-Preview" : confName;
 			return Path.Combine(basePath, fileName);
-		}
-
-		private static bool IsLexEditPreviewOnly(DictionaryPublicationDecorator decorator)
-		{
-			return decorator == null;
 		}
 
 		private static void GenerateTopOfPageButtonsIfNeeded(ConfiguredLcmGenerator.GeneratorSettings settings, int[] entryHvos, int entriesPerPage, Tuple<int, int> currentPageBounds, XmlWriter xhtmlWriter, StreamWriter cssWriter)
