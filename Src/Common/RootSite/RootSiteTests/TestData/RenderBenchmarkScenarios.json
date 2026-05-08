@@ -1,0 +1,94 @@
+{
+  "scenarios": [
+    {
+      "id": "simple",
+      "description": "Minimal scripture book with one section and one footnote",
+      "tags": ["baseline", "minimal"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/simple.png"
+    },
+    {
+      "id": "medium",
+      "description": "Scripture book with 5 sections and multiple footnotes",
+      "tags": ["typical", "multi-section"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/medium.png"
+    },
+    {
+      "id": "complex",
+      "description": "Large scripture book with 20 sections, heavy footnotes",
+      "tags": ["stress", "multi-section", "heavy-footnotes"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/complex.png"
+    },
+    {
+      "id": "deep-nested",
+      "description": "Scripture book with nested levels (if supported) or many small paras",
+      "tags": ["nested", "layout-stress"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/deep-nested.png"
+    },
+    {
+      "id": "custom-heavy",
+      "description": "Scripture book with varied styles and character properties",
+      "tags": ["styles", "formatting"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/custom-heavy.png"
+    },
+    {
+      "id": "many-paragraphs",
+      "description": "50 sections with 1 verse each — massive paragraph layout overhead",
+      "tags": ["stress", "layout-stress", "paragraph-count"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/many-paragraphs.png"
+    },
+    {
+      "id": "footnote-heavy",
+      "description": "8 sections with 20 verses each, footnotes on every other verse",
+      "tags": ["stress", "footnotes", "heavy-footnotes"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/footnote-heavy.png"
+    },
+    {
+      "id": "mixed-styles",
+      "description": "6 sections with 15 verses, each verse has unique font-size/color/bold/italic",
+      "tags": ["stress", "styles", "property-cache"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/mixed-styles.png"
+    },
+    {
+      "id": "long-prose",
+      "description": "4 sections with 80 verses each — very long paragraphs for line-break stress",
+      "tags": ["stress", "layout-stress", "line-breaking"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/long-prose.png"
+    },
+    {
+      "id": "multi-book",
+      "description": "3 separate Scripture books with 5 sections each — large cache stress",
+      "tags": ["stress", "multi-book", "cache-stress"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/multi-book.png"
+    },
+    {
+      "id": "rtl-script",
+      "description": "4 sections with Arabic RTL text — bidirectional layout stress",
+      "tags": ["stress", "bidi", "rtl", "arabic"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/rtl-script.png"
+    },
+    {
+      "id": "multi-ws",
+      "description": "5 sections with English/Arabic/French runs per verse — WS switching stress",
+      "tags": ["stress", "multi-ws", "bidi", "font-fallback"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/multi-ws.png"
+    },
+    {
+      "id": "lex-shallow",
+      "description": "Lex entry with 3 senses, each having 3 subsenses (depth 2, breadth 3 = 12 senses)",
+      "tags": ["lex-entry", "nested-senses", "baseline"],
+      "viewType": "LexEntry"
+    },
+    {
+      "id": "lex-deep",
+      "description": "Lex entry with senses nested 4 levels deep, 2-wide (depth 4, breadth 2 = 30 senses)",
+      "tags": ["lex-entry", "nested-senses", "exponential-cost"],
+      "viewType": "LexEntry"
+    },
+    {
+      "id": "lex-extreme",
+      "description": "Lex entry with senses nested 6 levels deep, 2-wide (depth 6, breadth 2 = 126 senses)",
+      "tags": ["lex-entry", "nested-senses", "exponential-cost", "stress"],
+      "viewType": "LexEntry"
+    }
+  ]
+}

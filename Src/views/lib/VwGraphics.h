@@ -23,6 +23,9 @@ Description:
 #ifndef VWGRAPHICS_INCLUDED
 #define VWGRAPHICS_INCLUDED
 
+#include "ColorStateCache.h"
+#include "FontHandleCache.h"
+
 #if !defined(_WIN32) && !defined(_M_X64)
 #include "VwGraphicsCairo.h"
 #else
@@ -162,10 +165,16 @@ protected:
 	HFONT m_hfontOldMeasure;
 	HFONT m_hfont; // current font selected into DC, if any
 	LgCharRenderProps m_chrp;
+	FontHandleCache m_fontHandleCache;
+	ColorStateCache m_colorStateCache;
 
 	// Vertical and horizontal resolution. Zero indicates not yet initialized.
 	int m_xInch;
 	int m_yInch;
+
+	HFONT FindCachedFont(const LgCharRenderProps * pchrp);
+	void AddFontToCache(HFONT hfont, const LgCharRenderProps * pchrp);
+	void ClearFontCache();
 
 	void Init();
 

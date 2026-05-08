@@ -4,8 +4,26 @@
 		<part id="LexEntry-Detail-CitationForm">
 			<slice label="CitationForm" editor="multistring" field="CitationForm" ws="vernacular"/>
 		</part>
+		<part id="LexEntry-Detail-LexemeForm">
+			<obj field="LexemeForm" layout="FormOnly" />
+		</part>
+		<part id="LexEntry-Detail-Pronunciations">
+			<seq field="Pronunciations" layout="FormOnly" />
+		</part>
 		<part id="LexEntry-Detail-Bibliography">
 			<slice label="Bibliography" editor="multistring" field="Bibliography" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-Comment">
+			<slice label="Comment" editor="multistring" field="Comment" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-LiteralMeaning">
+			<slice label="Literal Meaning" editor="multistring" field="LiteralMeaning" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-Restrictions">
+			<slice label="Restrictions" editor="multistring" field="Restrictions" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-SummaryDefinition">
+			<slice label="Summary Definition" editor="multistring" field="SummaryDefinition" ws="analysis"/>
 		</part>
 		<part id="LexEntry-Detail-Senses">
 			<seq field="Senses" />
@@ -18,6 +36,15 @@
 		</part>
 		<part id="LexSense-Detail-ScientificName" type="Detail">
 			<slice field="ScientificName" label="ScientificName" editor="string" ws="analysis" />
+		</part>
+		<part id="LexSense-Detail-Senses">
+			<seq field="Senses" />
+		</part>
+		<part id="MoStemAllomorph-Detail-FormOnly" type="Detail">
+			<slice field="Form" label="Lexeme Form" editor="multistring" ws="vernacular" />
+		</part>
+		<part id="LexPronunciation-Detail-FormOnly" type="Detail">
+			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" />
 		</part>
 		<part id="LexEtymology-Detail-Form" type="Detail">
 			<slice field="Form" label="Form" editor="multistring" ws="vernacular" menu="mnuDataTree-Help" />
@@ -32,6 +59,11 @@
 			<slice label="Header" expansion="expanded">
 				<slice label="Citation form" editor="string" field="CitationForm" ws="vernacular"/>
 				<slice label="Bibliography" editor="string" field="Bibliography" ws="analysis"/>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-SensesCollapsible">
+			<slice label="Senses" expansion="expanded">
+				<seq field="Senses" layout="GlossSn"/>
 			</slice>
 		</part>
 		<part id="LexEtymology-Detail-LanguageNotes" type="Detail">

@@ -85,6 +85,23 @@
     }
   ],
   "tasks": [
+    {
+      "label": "Test: RenderBaselineTests",
+      "type": "shell",
+      "command": ".\\test.ps1 -TestProject \"RootSiteTests\" -TestFilter \"FullyQualifiedName~RenderBaselineTests\"",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
     // ==================== Setup Tasks ====================
     {
       "label": "Setup: Colorize Worktree",

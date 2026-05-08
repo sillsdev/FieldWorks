@@ -1,0 +1,25 @@
+﻿{
+  "ScenarioId": "subsubsub-hidden",
+  "SnapshotName": "DataTreeRenderTests.DataTreeRender_subsubsub-hidden",
+  "CapturedAtUtc": "2026-04-07T19:31:49.8258833Z",
+  "ImageWidth": 1024,
+  "ImageHeight": 1259,
+  "MachineName": "SIL-XPS",
+  "OsVersion": "Microsoft Windows NT 10.0.26200.0",
+  "EnvironmentHash": "3sUMmJxy5F2yJfd/zkW+tp+Srfbv4NmGLzt3D19Uu7c=",
+  "Environment": {
+    "DpiX": 96,
+    "DpiY": 96,
+    "FontSmoothing": true,
+    "ClearTypeEnabled": true,
+    "ThemeName": "Light",
+    "TextScaleFactor": 1.0,
+    "ScreenWidth": 1366,
+    "ScreenHeight": 768,
+    "CultureName": "en-US"
+  },
+  "DpiAwareness": "Unaware",
+  "FontQuality": "4",
+  "DeterministicFontFamily": "Segoe UI",
+  "DeterministicFontInstalled": true
+}

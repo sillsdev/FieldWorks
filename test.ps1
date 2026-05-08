@@ -96,6 +96,105 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
+function Add-UniquePath {
+	param(
+		[System.Collections.Generic.List[string]]$Paths,
+		[string]$Path
+	)
+
+	if ([string]::IsNullOrWhiteSpace($Path)) {
+		return
+	}
+
+	$fullPath = [System.IO.Path]::GetFullPath($Path)
+	foreach ($existingPath in $Paths) {
+		if ([string]::Equals($existingPath, $fullPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+			return
+		}
+	}
+
+	$Paths.Add($fullPath)
+}
+
+function Get-CentralPackageVersion {
+	param(
+		[string]$PackagesPropsPath,
+		[string]$PackageName
+	)
+
+	if (-not (Test-Path -LiteralPath $PackagesPropsPath -PathType Leaf)) {
+		return $null
+	}
+
+	try {
+		[xml]$packagesProps = Get-Content -LiteralPath $PackagesPropsPath -Raw
+		$packageNode = $packagesProps.Project.ItemGroup.PackageVersion |
+			Where-Object { $_.Include -eq $PackageName -or $_.Update -eq $PackageName } |
+			Select-Object -Last 1
+
+		if ($packageNode) {
+			return $packageNode.Version
+		}
+	}
+	catch {
+		Write-Host "[WARN] Could not read $PackagesPropsPath for $PackageName version." -ForegroundColor Yellow
+	}
+
+	return $null
+}
+
+function Get-NUnitTestAdapterPaths {
+	param(
+		[string]$RepoRoot,
+		[string[]]$TestDlls
+	)
+
+	$adapterPaths = New-Object System.Collections.Generic.List[string]
+
+	$packagesPropsPath = Join-Path $RepoRoot 'Directory.Packages.props'
+	$adapterVersion = Get-CentralPackageVersion -PackagesPropsPath $packagesPropsPath -PackageName 'NUnit3TestAdapter'
+	if (-not [string]::IsNullOrWhiteSpace($adapterVersion)) {
+		$adapterPath = Join-Path $RepoRoot "packages/nunit3testadapter/$adapterVersion/build/net462"
+		if (Test-Path -LiteralPath (Join-Path $adapterPath 'NUnit3.TestAdapter.dll') -PathType Leaf) {
+			Add-UniquePath -Paths $adapterPaths -Path $adapterPath
+			return $adapterPaths.ToArray()
+		}
+	}
+
+	foreach ($testDll in $TestDlls) {
+		if ([string]::IsNullOrWhiteSpace($testDll)) {
+			continue
+		}
+
+		$testDir = Split-Path $testDll -Parent
+		if ($testDir -and
+			(Test-Path -LiteralPath (Join-Path $testDir 'NUnit3.TestAdapter.dll') -PathType Leaf) -and
+			(Test-Path -LiteralPath (Join-Path $testDir 'nunit.engine.dll') -PathType Leaf)) {
+			Add-UniquePath -Paths $adapterPaths -Path $testDir
+		}
+	}
+
+	if ($adapterPaths.Count -gt 0) {
+		return $adapterPaths.ToArray()
+	}
+
+	$packagesRoot = Join-Path $RepoRoot 'packages/nunit3testadapter'
+	if (Test-Path -LiteralPath $packagesRoot -PathType Container) {
+		$packageDirs = Get-ChildItem -LiteralPath $packagesRoot -Directory -ErrorAction SilentlyContinue |
+			Sort-Object Name -Descending
+
+		foreach ($packageDir in $packageDirs) {
+			$adapterPath = Join-Path $packageDir.FullName 'build/net462'
+			if (Test-Path -LiteralPath (Join-Path $adapterPath 'NUnit3.TestAdapter.dll') -PathType Leaf) {
+				Add-UniquePath -Paths $adapterPaths -Path $adapterPath
+				break
+			}
+		}
+	}
+
+	return $adapterPaths.ToArray()
+}
+
 # =============================================================================
 # Environment Setup
 # =============================================================================
@@ -429,6 +528,11 @@ try {
 		$vstestArgs += "/Settings:$runSettingsPath"
 		$vstestArgs += "/ResultsDirectory:$resultsDir"
 
+		$nunitAdapterPaths = @(Get-NUnitTestAdapterPaths -RepoRoot $PSScriptRoot -TestDlls $testDlls)
+		foreach ($adapterPath in $nunitAdapterPaths) {
+			$vstestArgs += "/TestAdapterPath:$adapterPath"
+		}
+
 		# Logger configuration - verbosity goes with the console logger
 		$verbosityMap = @{
 			'quiet' = 'quiet'; 'q' = 'quiet'
@@ -454,6 +558,9 @@ try {
 
 		Write-Host ""
 		Write-Host "Running tests..." -ForegroundColor Cyan
+		foreach ($adapterPath in $nunitAdapterPaths) {
+			Write-Host "  NUnit adapter path: $adapterPath" -ForegroundColor DarkGray
+		}
 		Write-Host "  vstest.console.exe $($vstestArgs -join ' ')" -ForegroundColor DarkGray
 		Write-Host ""
 
@@ -506,6 +613,9 @@ try {
 				$singleArgs += "/Platform:x64"
 				$singleArgs += "/Settings:$runSettingsPath"
 				$singleArgs += "/ResultsDirectory:$resultsDir"
+				foreach ($adapterPath in $nunitAdapterPaths) {
+					$singleArgs += "/TestAdapterPath:$adapterPath"
+				}
 				$singleArgs += "/Logger:trx;LogFileName=${dllName}_${timestamp}.trx"
 				$singleArgs += "/Logger:console;verbosity=$vstestVerbosity"
 
