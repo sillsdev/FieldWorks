@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, false, isLexEditPreviewOnly);
+				SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, isLexEditPreviewOnly: isLexEditPreviewOnly);
 			}
 			catch (IOException ioEx)
 			{
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, false, isLexEditPreviewOnly);
+						SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress, isLexEditPreviewOnly: isLexEditPreviewOnly);
 					}
 					catch (IOException e)
 					{
@@ -88,6 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			if (publicationDecorator == null)
 			{
+				// Used by unit tests.
 				isLexEditPreviewOnly = true;
 			}
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
