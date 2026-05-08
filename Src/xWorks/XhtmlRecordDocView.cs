@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 				PublicationDecorator.Refresh();
-				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, PublicationDecorator, configuration, m_propertyTable);
+				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, PublicationDecorator, configuration, m_propertyTable, isLexEditPreviewOnly: true);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}
