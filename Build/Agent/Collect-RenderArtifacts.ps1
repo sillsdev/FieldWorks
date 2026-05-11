@@ -92,7 +92,8 @@ function Write-GitHubOutputValue {
 		return
 	}
 
-	Add-Content -Path $GitHubOutputPath -Value "$Name=$Value" -Encoding UTF8
+	$encoding = New-Object System.Text.UTF8Encoding($false)
+	[System.IO.File]::AppendAllText($GitHubOutputPath, "$Name=$Value$([System.Environment]::NewLine)", $encoding)
 }
 
 function New-MarkdownReport {
@@ -116,9 +117,9 @@ function New-MarkdownReport {
 	)
 
 	foreach ($entry in $Entries) {
-		$expected = if ($entry.ExpectedPath) { "[$($entry.SnapshotName)]($($entry.ExpectedPath))" } else { 'missing' }
-		$actual = if ($entry.ActualPath) { "[$($entry.SnapshotName)]($($entry.ActualPath))" } else { 'missing' }
-		$diff = if ($entry.DiffPath) { "[$($entry.SnapshotName)]($($entry.DiffPath))" } else { 'missing' }
+		$expected = if ($entry.ExpectedPath) { "[expected]($($entry.ExpectedPath))" } else { 'missing' }
+		$actual = if ($entry.ActualPath) { "[actual]($($entry.ActualPath))" } else { 'missing' }
+		$diff = if ($entry.DiffPath) { "[diff]($($entry.DiffPath))" } else { 'missing' }
 		$lines += "| $($entry.SourcePath) | $expected | $actual | $diff |"
 	}
 
@@ -153,7 +154,12 @@ function New-HtmlReport {
 		$snapshot = [System.Net.WebUtility]::HtmlEncode($entry.SourcePath)
 		[void]$builder.AppendLine('<tr>')
 		[void]$builder.AppendLine(('<td class="path">{0}</td>' -f $snapshot))
-		foreach ($propertyName in @('ExpectedPath', 'ActualPath', 'DiffPath')) {
+		foreach ($artifact in @(
+			@{ PropertyName = 'ExpectedPath'; Description = 'Expected render' },
+			@{ PropertyName = 'ActualPath'; Description = 'Actual render' },
+			@{ PropertyName = 'DiffPath'; Description = 'Diff image' }
+		)) {
+			$propertyName = $artifact.PropertyName
 			$path = $entry.$propertyName
 			if ([string]::IsNullOrWhiteSpace($path)) {
 				[void]$builder.AppendLine('<td>missing</td>')
@@ -161,8 +167,8 @@ function New-HtmlReport {
 			}
 
 			$encodedPath = [System.Net.WebUtility]::HtmlEncode($path)
-			$encodedPropertyName = [System.Net.WebUtility]::HtmlEncode($propertyName)
-			[void]$builder.AppendLine(('<td><a href="{0}"><img src="{0}" alt="{1}"></a></td>' -f $encodedPath, $encodedPropertyName))
+			$encodedAltText = [System.Net.WebUtility]::HtmlEncode(('{0} for {1}' -f $artifact.Description, $entry.SourcePath))
+			[void]$builder.AppendLine(('<td><a href="{0}"><img src="{0}" alt="{1}"></a></td>' -f $encodedPath, $encodedAltText))
 		}
 		[void]$builder.AppendLine('</tr>')
 	}
@@ -183,7 +189,7 @@ if (-not (Test-Path -LiteralPath $resolvedSearchRoot)) {
 }
 
 if (Test-Path -LiteralPath $resolvedOutputDirectory) {
-	Remove-Item -Path $resolvedOutputDirectory -Recurse -Force
+	Remove-Item -LiteralPath $resolvedOutputDirectory -Recurse -Force
 }
 
 New-Item -ItemType Directory -Path $resolvedOutputDirectory -Force | Out-Null
@@ -248,3 +254,5 @@ Write-Output ([pscustomobject]@{
 	FailureCount = $entries.Count
 	OutputDirectory = $resolvedOutputDirectory
 })
+
+Write-Host "::notice title=Render comparison artifacts::$($entries.Count) render comparison artifact set(s) collected."
