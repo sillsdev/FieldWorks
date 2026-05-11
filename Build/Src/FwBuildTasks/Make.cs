@@ -111,65 +111,21 @@ namespace FwBuildTasks
 			}
 		}
 
-		private static string FindVisualStudioToolPath(string vcInstallDir, string toolName)
+		private static string FindToolInDirectory(string directory, string toolName)
 		{
-			if (String.IsNullOrEmpty(vcInstallDir) || !Directory.Exists(vcInstallDir))
+			if (String.IsNullOrEmpty(directory) || !Directory.Exists(directory))
 				return null;
 
-			string toolsRoot = Path.Combine(vcInstallDir, "Tools", "MSVC");
-			if (!Directory.Exists(toolsRoot))
-				return null;
-
-			string[] versionDirs = Directory.GetDirectories(toolsRoot);
-			Array.Sort(versionDirs, CompareVersionDirectories);
-
-			foreach (string versionDir in versionDirs)
-			{
-				string[] candidateDirs =
-				{
-					Path.Combine(versionDir, "bin", "Hostx64", "x64"),
-					Path.Combine(versionDir, "bin", "Hostx64", "x86"),
-					Path.Combine(versionDir, "bin", "Hostx86", "x86"),
-					Path.Combine(versionDir, "bin", "Hostx86", "x64")
-				};
-
-				foreach (string candidateDir in candidateDirs)
-				{
-					if (File.Exists(Path.Combine(candidateDir, toolName)))
-						return candidateDir;
-				}
-			}
+			if (File.Exists(Path.Combine(directory, toolName)))
+				return directory;
 
 			return null;
-		}
-
-		private static int CompareVersionDirectories(string left, string right)
-		{
-			string leftName = Path.GetFileName(left);
-			string rightName = Path.GetFileName(right);
-
-			Version leftVersion;
-			Version rightVersion;
-			bool leftIsVersion = Version.TryParse(leftName, out leftVersion);
-			bool rightIsVersion = Version.TryParse(rightName, out rightVersion);
-
-			if (leftIsVersion && rightIsVersion)
-			{
-				int versionComparison = rightVersion.CompareTo(leftVersion);
-				if (versionComparison != 0)
-					return versionComparison;
-			}
-			else if (leftIsVersion != rightIsVersion)
-			{
-				return rightIsVersion.CompareTo(leftIsVersion);
-			}
-
-			return StringComparer.OrdinalIgnoreCase.Compare(rightName, leftName);
 		}
 
 		private void CheckToolPath()
 		{
 			string path = Environment.GetEnvironmentVariable("PATH");
+			string vcToolsInstallDir = Environment.GetEnvironmentVariable("VCToolsInstallDir");
 			string vcInstallDir = Environment.GetEnvironmentVariable("VCINSTALLDIR");
 			//Console.WriteLine("DEBUG Make Task: PATH='{0}'", path);
 			string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
@@ -184,7 +140,7 @@ namespace FwBuildTasks
 				if (File.Exists(Path.Combine(ToolPath, ToolName)))
 					return;
 			}
-			string[] splitPath = path.Split(new char[] { Path.PathSeparator });
+			string[] splitPath = String.IsNullOrEmpty(path) ? new string[0] : path.Split(new[] { Path.PathSeparator });
 			foreach (var dir in splitPath)
 			{
 				if (File.Exists(Path.Combine(dir, ToolName)))
@@ -193,18 +149,21 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Fall Back to the install directory (if VCINSTALLDIR is set)
-			if (!String.IsNullOrEmpty(vcInstallDir))
+			if (!String.IsNullOrEmpty(vcToolsInstallDir))
 			{
-				string visualStudioToolPath = FindVisualStudioToolPath(vcInstallDir, ToolName);
-				if (!String.IsNullOrEmpty(visualStudioToolPath))
+				string activeToolPath = FindToolInDirectory(Path.Combine(vcToolsInstallDir, "bin", "Hostx64", "x64"), ToolName);
+				if (!String.IsNullOrEmpty(activeToolPath))
 				{
-					ToolPath = visualStudioToolPath;
+					ToolPath = activeToolPath;
 					return;
 				}
+			}
 
-				string legacyToolPath = Path.Combine(vcInstallDir, "bin");
-				if (File.Exists(Path.Combine(legacyToolPath, ToolName)))
+			// Fall back to the legacy VC install directory (if VCINSTALLDIR is set)
+			if (!String.IsNullOrEmpty(vcInstallDir))
+			{
+				string legacyToolPath = FindToolInDirectory(Path.Combine(vcInstallDir, "bin"), ToolName);
+				if (!String.IsNullOrEmpty(legacyToolPath))
 				{
 					ToolPath = legacyToolPath;
 					return;
