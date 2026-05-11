@@ -9,6 +9,8 @@ on:
 permissions:
   contents: read
   checks: write
+  issues: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -42,6 +44,135 @@ jobs:
         shell: powershell
         run: |
           .\Build\Agent\Summarize-NativeTestResults.ps1 -Configuration Debug
+
+      - name: Collect render comparison artifacts
+        id: render_artifacts
+        if: ${{ !cancelled() && failure() }}
+        shell: powershell
+        run: |
+          $result = .\Build\Agent\Collect-RenderArtifacts.ps1 -SearchRoot . -OutputDirectory .\Output\RenderArtifacts
+          if ($result.HasArtifacts) {
+            Write-Host "::notice title=Render comparison artifacts::$($result.FailureCount) render comparison artifact set(s) collected."
+          }
+          else {
+            Write-Host 'No render comparison artifacts found.'
+          }
+
+      - name: Upload render comparison artifacts
+        id: upload_render_artifacts
+        if: ${{ !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-comparison-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: Output/RenderArtifacts
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Summarize render comparison artifacts
+        if: ${{ !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        shell: powershell
+        env:
+          ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
+          FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
+        run: |
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value '### Render comparison artifacts'
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value ''
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$env:FAILURE_COUNT render snapshot failure(s) produced expected, actual, and diff images."
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value ''
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "[Download render comparison artifacts]($env:ARTIFACT_URL)"
+
+      - name: Comment render artifact link on PR
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        uses: actions/github-script@v8
+        continue-on-error: true
+        env:
+          ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
+          FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        with:
+          script: |
+            const marker = '<!-- fieldworks-render-comparison-artifacts -->';
+            const issue_number = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const shortSha = context.sha.substring(0, 12);
+            const runLabel = `${context.runId}.${process.env.RUN_ATTEMPT}`;
+            const entry = `- [${shortSha} run ${runLabel}](${runUrl}) - ${process.env.FAILURE_COUNT} render snapshot failure(s) - [download artifact](${process.env.ARTIFACT_URL})`;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100
+            });
+            const previous = comments.find(comment => comment.user.type === 'Bot' && comment.body && comment.body.includes(marker));
+            const previousEntries = previous
+              ? previous.body.split('\n').filter(line => line.startsWith('- ['))
+              : [];
+            const entries = [entry, ...previousEntries.filter(line => !line.includes(`run ${runLabel}`))].slice(0, 25);
+            const body = [
+              marker,
+              '### Render comparison artifacts',
+              '',
+              'Render snapshot failure artifacts from recent CI runs. Each artifact contains `index.html`, expected images, actual images, diff images, and metadata.',
+              '',
+              ...entries,
+              ''
+            ].join('\n');
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: previous.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }
+
+      - name: Mark render artifacts resolved on PR
+        if: ${{ github.event_name == 'pull_request' && success() }}
+        uses: actions/github-script@v8
+        continue-on-error: true
+        env:
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        with:
+          script: |
+            const marker = '<!-- fieldworks-render-comparison-artifacts -->';
+            const issue_number = context.payload.pull_request.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const shortSha = context.sha.substring(0, 12);
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100
+            });
+            const previous = comments.find(comment => comment.user.type === 'Bot' && comment.body && comment.body.includes(marker));
+            const body = [
+              marker,
+              '### Render comparison artifacts',
+              '',
+              'No render snapshot failures were captured in the latest successful CI run.',
+              '',
+              `Latest run: [${shortSha} run ${context.runId}.${process.env.RUN_ATTEMPT}](${runUrl}).`,
+              ''
+            ].join('\n');
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: previous.id,
+                body
+              });
+            }
 
       - name: Upload TRX test results (managed)
         if: ${{ !cancelled() }}
