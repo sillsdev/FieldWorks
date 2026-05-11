@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			// Sample prose fragments for realistic text variety
 			string[] proseFragments = new[]
 			{
-				"In the beginning CI deliberately changed these rendered words. ",
+				"In the beginning God created the heavens and the earth. ",
 				"The earth was formless and empty, darkness was over the surface of the deep. ",
 				"And God said, Let there be light, and there was light. ",
 				"God saw that the light was good, and he separated the light from the darkness. ",
