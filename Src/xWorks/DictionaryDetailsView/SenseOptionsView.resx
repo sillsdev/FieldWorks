@@ -457,13 +457,13 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxNumberSingleSense.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 153</value>
+    <value>13, 145</value>
   </data>
   <data name="checkBoxNumberSingleSense.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxNumberSingleSense.Size" type="System.Drawing.Size, System.Drawing">
-    <value>313, 31</value>
+    <value>313, 25</value>
   </data>
   <data name="checkBoxNumberSingleSense.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
