@@ -105,7 +105,7 @@ function Get-RenderComment {
 
 	$comments = @(Invoke-GitHubApi -Method Get -Uri $CommentsUri)
 	foreach ($comment in $comments) {
-		if ($comment.user.type -eq 'Bot' -and $comment.body -and $comment.body.Contains($Marker)) {
+		if ($comment.body -and $comment.body.Contains($Marker)) {
 			return $comment
 		}
 	}
@@ -163,6 +163,7 @@ if ($hasRenderArtifacts) {
 }
 else {
 	if ($null -eq $previous) {
+		Write-Output 'No existing render artifact comment found to mark resolved.'
 		return
 	}
 
@@ -180,7 +181,9 @@ else {
 $body = $bodyLines -join "`n"
 if ($null -ne $previous) {
 	Invoke-GitHubApi -Method Patch -Uri "$GitHubApiUrl/repos/$owner/$repo/issues/comments/$($previous.id)" -Body @{ body = $body } | Out-Null
+	Write-Output "Updated render artifact comment $($previous.id)."
 }
 else {
 	Invoke-GitHubApi -Method Post -Uri "$GitHubApiUrl/repos/$owner/$repo/issues/$pullRequestNumber/comments" -Body @{ body = $body } | Out-Null
+	Write-Output "Created render artifact comment on PR $pullRequestNumber."
 }
