@@ -100,13 +100,52 @@ function Get-PullRequestNumber {
 function Get-RenderComment {
 	param(
 		[Parameter(Mandatory = $true)]
-		[string]$CommentsUri
+		[string]$CommentsUri,
+		[Parameter(Mandatory = $true)]
+		[string]$Owner,
+		[Parameter(Mandatory = $true)]
+		[string]$Repo,
+		[Parameter(Mandatory = $true)]
+		[int]$PullRequestNumber
 	)
 
 	$comments = @(Invoke-GitHubApi -Method Get -Uri $CommentsUri)
 	foreach ($comment in $comments) {
 		if ($comment.body -and $comment.body.Contains($Marker)) {
 			return $comment
+		}
+	}
+
+	$query = @'
+query($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $number) {
+      comments(first: 100) {
+        nodes {
+          databaseId
+          body
+        }
+      }
+    }
+  }
+}
+'@
+	$result = Invoke-GitHubApi -Method Post -Uri "$GitHubApiUrl/graphql" -Body @{
+		query = $query
+		variables = @{
+			owner = $Owner
+			repo = $Repo
+			number = $PullRequestNumber
+		}
+	}
+
+	$pullRequestComments = @($result.data.repository.pullRequest.comments.nodes)
+	foreach ($comment in $pullRequestComments) {
+		if ($comment.body -and $comment.body.Contains($Marker)) {
+			return [pscustomobject]@{
+				id = $comment.databaseId
+				body = $comment.body
+			}
 		}
 	}
 
@@ -143,7 +182,7 @@ if ($SkipComment) {
 Get-RequiredValue -Name 'GitHubToken' -Value $GitHubToken | Out-Null
 $pullRequestNumber = Get-PullRequestNumber
 $commentsUri = "$GitHubApiUrl/repos/$owner/$repo/issues/$pullRequestNumber/comments?per_page=100"
-$previous = Get-RenderComment -CommentsUri $commentsUri
+$previous = Get-RenderComment -CommentsUri $commentsUri -Owner $owner -Repo $repo -PullRequestNumber $pullRequestNumber
 
 if ($hasRenderArtifacts) {
 	$entry = "- [$shortSha run $runLabel]($runUrl) - $FailureCount render snapshot failure(s) - [download artifact]($ArtifactUrl)"
