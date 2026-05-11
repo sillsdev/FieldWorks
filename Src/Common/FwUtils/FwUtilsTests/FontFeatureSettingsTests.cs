@@ -38,5 +38,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Assert.That(FontFeatureSettings.Normalize(" smcp = 1, kern=0 "), Is.EqualTo("kern=0,smcp=1"));
 		}
+
+		[Test]
+		public void NormalizePreservingLegacy_PreservesNumericGraphiteFeatureIds()
+		{
+			Assert.That(FontFeatureSettings.NormalizePreservingLegacy(" 123=1,456=2 "), Is.EqualTo("123=1,456=2"));
+		}
+
+		[Test]
+		public void NormalizePreservingLegacy_NormalizesOpenTypeFeatures()
+		{
+			Assert.That(FontFeatureSettings.NormalizePreservingLegacy(" smcp = 1, kern=0 "), Is.EqualTo("kern=0,smcp=1"));
+		}
 	}
 }

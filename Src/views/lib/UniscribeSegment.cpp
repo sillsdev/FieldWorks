@@ -17,6 +17,7 @@ Description:
 #pragma hdrstop
 // any other headers (not precompiled)
 #include "LayoutCache.h"
+#include <limits.h>
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
@@ -131,8 +132,16 @@ static bool TryParseFontFeatureRecords(const OLECHAR * prgchFontVar,
 		bool fHaveDigit = false;
 		while (*pch >= L'0' && *pch <= L'9')
 		{
+			int digit = *pch - L'0';
+			if (value > (LONG_MAX - digit) / 10)
+			{
+				fHaveDigit = false;
+				while (*pch >= L'0' && *pch <= L'9')
+					++pch;
+				break;
+			}
 			fHaveDigit = true;
-			value = value * 10 + (*pch - L'0');
+			value = value * 10 + digit;
 			++pch;
 		}
 
@@ -219,7 +228,11 @@ static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int cglyphMax,
 				uri.prgGlyph, vglyphProps.Begin(), uri.cglyph, uri.prgAdvance, uri.prgoff, &abc));
 		}
 		if (SUCCEEDED(hr))
+		{
+			for (int iglyph = 0; iglyph < uri.cglyph; ++iglyph)
+				uri.prgsva[iglyph] = vglyphProps[iglyph].sva;
 			break;
+		}
 	}
 	uri.fScriptPlaceFailed = FAILED(hr);
 	return SUCCEEDED(hr);

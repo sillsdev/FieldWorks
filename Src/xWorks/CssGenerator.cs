@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1661,8 +1662,11 @@ namespace SIL.FieldWorks.XWorks
 				if (string.IsNullOrEmpty(fontValue))
 					return;
 			}
+			var cssFeatures = ConvertToCssFeatures(fontValue);
+			if (cssFeatures == null)
+				return;
 			var fontProp = new Property("font-feature-settings");
-			fontProp.Term = ConvertToCssFeatures(fontValue);
+			fontProp.Term = cssFeatures;
 			declaration.Add(fontProp);
 		}
 
@@ -1673,8 +1677,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>ExCss doesn't support this type of attribute well so we build it by hand</remarks>
 		private static Term ConvertToCssFeatures(string fontValue)
 		{
-			var features = fontValue.Split(',');
-			var terms = features.Select(f => $"\"{f.Replace("=", "\" ")}");
+			var features = FontFeatureSettings.Parse(fontValue);
+			if (features.Count == 0)
+				return null;
+
+			var terms = features.Select(setting => string.Format(CultureInfo.InvariantCulture,
+				"\"{0}\" {1}", setting.Tag, setting.Value));
 			return new PrimitiveTerm(UnitType.Unknown, string.Join(",", terms));
 		}
 

@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			LgCharRenderProps chrp = vg.FontCharProperties;
 			string fontName = MarshalEx.UShortToString(chrp.szFaceName);
+			bool usesDefaultFont = fontName == "<default font>";
 			if (fontName == "<default font>")
 			{
 				fontName = ws.DefaultFontName;
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				wsFontEngines = new Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>>();
 				m_fontEngines[ws] = wsFontEngines;
 			}
-			string fontFeatures = GetFontFeatures(fontName, chrp, ws);
+			string fontFeatures = GetFontFeatures(chrp, ws, usesDefaultFont);
 			if (chrp.szFontVar != null)
 			{
 				MarshalEx.StringToUShort(fontFeatures ?? string.Empty, chrp.szFontVar);
@@ -85,16 +86,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			return wsFontEngines[key].Item2;
 		}
 
-		private static string GetFontFeatures(string fontName, LgCharRenderProps chrp, ILgWritingSystem ws)
+		private static string GetFontFeatures(LgCharRenderProps chrp, ILgWritingSystem ws, bool usesDefaultFont)
 		{
 			string charRenderFeatures = chrp.szFontVar == null
 				? string.Empty
-				: FontFeatureSettings.Normalize(MarshalEx.UShortToString(chrp.szFontVar));
+				: FontFeatureSettings.NormalizePreservingLegacy(MarshalEx.UShortToString(chrp.szFontVar));
 			if (!string.IsNullOrEmpty(charRenderFeatures))
 				return charRenderFeatures;
 
-			if (fontName == ws.DefaultFontName)
-				return FontFeatureSettings.Normalize(ws.DefaultFontFeatures);
+			if (usesDefaultFont)
+				return FontFeatureSettings.NormalizePreservingLegacy(ws.DefaultFontFeatures);
 			return string.Empty;
 		}
 

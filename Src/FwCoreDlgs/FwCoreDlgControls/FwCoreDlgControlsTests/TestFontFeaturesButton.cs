@@ -86,6 +86,27 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 			}
 		}
 
+		[Test]
+		public void FontFeatures_PreservesLegacyGraphiteFeatureIds()
+		{
+			using (var button = new FontFeaturesButton())
+			{
+				button.FontFeatures = " 123=1,456=2 ";
+
+				Assert.That(button.FontFeatures, Is.EqualTo("123=1,456=2"));
+			}
+		}
+
+		[Test]
+		public void ConvertRendererNeutralFeatureStringToIds_UsesOpenTypeTagsDirectly()
+		{
+			var expected = FeatureId("kern") + "=0," + FeatureId("smcp") + "=1";
+
+			Assert.That(
+				FontFeaturesButton.ConvertRendererNeutralFeatureStringToIds(" smcp = 1, kern=0 "),
+				Is.EqualTo(expected));
+		}
+
 		private static int FeatureId(string tag)
 		{
 			var reversedTagBytes = tag.Reverse().Select(Convert.ToByte).ToArray();

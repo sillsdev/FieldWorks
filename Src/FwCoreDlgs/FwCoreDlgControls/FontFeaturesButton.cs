@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -288,8 +289,20 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			set
 			{
 				CheckDisposed();
-				m_fontFeatures = FontFeatureSettings.Normalize(value);
+				m_fontFeatures = FontFeatureSettings.NormalizePreservingLegacy(value);
 			}
+		}
+
+		/// <summary>
+		/// Updates the current font feature context and refreshes discovery exactly once.
+		/// </summary>
+		internal void RefreshFeatureContext(string fontName, string fontFeatures, bool useGraphiteFeatures)
+		{
+			CheckDisposed();
+			m_fontName = fontName;
+			m_fontFeatures = FontFeatureSettings.NormalizePreservingLegacy(fontFeatures);
+			m_useGraphiteFeatures = useGraphiteFeatures;
+			SetupFontFeatures();
 		}
 
 		/// <summary>
@@ -687,7 +700,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			var menu = components.ContextMenu("ContextMenu");
 			m_ids = m_featureProvider.GetFeatureIds();
-			var parserFeatureString = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
+			var parserFeatureString = m_featureProvider is OpenTypeFontFeatureProvider
+				? ConvertRendererNeutralFeatureStringToIds(m_fontFeatures)
+				: GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
 			m_values = ParseFeatureString(m_ids, parserFeatureString);
 			Debug.Assert(m_ids.Length == m_values.Length);
 
@@ -984,6 +999,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
 			byte[] numbers = fontFeature.Select(Convert.ToByte).ToArray();
 			return BitConverter.ToInt32(numbers, 0);
+		}
+
+		internal static string ConvertRendererNeutralFeatureStringToIds(string fontFeatures)
+		{
+			return string.Join(",", FontFeatureSettings.Parse(fontFeatures)
+				.Select(setting => string.Format(CultureInfo.InvariantCulture, "{0}={1}",
+					ConvertFontFeatureCodeToId(setting.Tag),
+					setting.Value)));
 		}
 
 		private static class OpenTypeFontFeatureReader
