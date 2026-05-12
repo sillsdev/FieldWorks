@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
   checks: write
-  issues: write
   pull-requests: write
 
 concurrency:
@@ -61,16 +60,33 @@ jobs:
           retention-days: 30
           if-no-files-found: error
 
-      - name: Report render comparison artifacts
+      - name: Summarize render comparison artifacts
         if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
         shell: pwsh
         continue-on-error: true
         env:
           ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
           FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
-        run: .\Build\Agent\Report-RenderArtifacts.ps1
+        run: .\Build\Agent\Report-RenderArtifacts.ps1 -SkipComment
+
+      - name: Build render comparison comment
+        id: render_comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
+        shell: pwsh
+        env:
+          ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
+          FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
+          HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
+        run: .\Build\Agent\Build-RenderArtifactComment.ps1
+
+      - name: Update render comparison PR comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-render-comparison-artifacts
+          path: ${{ steps.render_comment.outputs.comment_path }}
+          skip_unchanged: true
 
       - name: Upload TRX test results (managed)
         if: ${{ !cancelled() }}
