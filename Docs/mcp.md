@@ -53,7 +53,7 @@ each worktree contains its own `.serena/project.yml` file (shared via git). This
 issues when Serena auto-discovers projects:
 
 ### Symptoms
-- `get_current_config` shows multiple projects named "FieldWorks"
+- `get_current_config` shows multiple FieldWorks worktrees registered, or a project name that does not match the current folder
 - Language server errors that don't match your current worktree
 - Serena loads projects from worktrees you're not currently working in
 
@@ -62,8 +62,12 @@ VS Code's user-level MCP config (`%APPDATA%\Code\User\mcp.json`) may have a Sere
 server that auto-discovers projects by scanning for `.serena` folders. Combined with
 workspace-level `mcp.json`, this creates duplicate project registrations.
 
+This repo's shared `.serena/project.yml` intentionally leaves `project_name` unset so
+Serena falls back to the worktree folder name by default. That keeps worktrees easier
+to distinguish when multiple registrations exist.
+
 ### Solution
-**Use only workspace-level Serena**
+**Use only workspace-level Serena, and keep project names local to the worktree**
 
 Remove or disable the Serena entry from your user-level MCP config:
 ```powershell
@@ -72,6 +76,10 @@ code "$env:APPDATA\Code\User\mcp.json"
 ```
 Remove the `"oraios/serena"` entry. The workspace `.vscode/mcp.json` provides Serena
 with explicit project targeting.
+
+If you want a friendlier project name than the folder name, set it in
+`.serena/project.local.yml` for that worktree instead of committing a shared
+`project_name` in `.serena/project.yml`.
 
 ## Best-practice profile for this repo
 
@@ -85,6 +93,7 @@ with explicit project targeting.
 - Open one VS Code window per worktree; let that window use its own workspace `.vscode/mcp.json`.
 - Keep only one Serena server definition active (workspace-level), and remove user-level Serena.
 - Keep Serena pinned to the active workspace via `--project ${workspaceFolder}` (already configured).
+- If you want an explicit Serena project name, set it in `.serena/project.local.yml`; do not commit a shared `project_name` in `.serena/project.yml`.
 - After switching worktrees, run **MCP: Reset Cached Tools** if tool lists or capabilities look stale.
 - No extra GitHub MCP worktree settings are required beyond OAuth sign-in.
 
