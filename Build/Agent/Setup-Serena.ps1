@@ -70,6 +70,53 @@ function Set-EnvVar {
 	}
 }
 
+function Get-ConfiguredLanguages {
+	param([string]$ConfigContent)
+
+	$languages = @()
+	$inLanguagesBlock = $false
+
+	foreach ($line in ($ConfigContent -split "`r?`n")) {
+		if (-not $inLanguagesBlock) {
+			if ($line -match '^\s*languages:\s*$') {
+				$inLanguagesBlock = $true
+			}
+			continue
+		}
+
+		if ($line -match '^\s*-\s*(.+?)\s*$') {
+			$languages += $matches[1].Trim()
+			continue
+		}
+
+		if ($line -match '^\s*$' -or $line -match '^\s*#') {
+			continue
+		}
+
+		break
+	}
+
+	return $languages
+}
+
+function Get-ConfiguredProjectName {
+	param(
+		[string]$ConfigContent,
+		[string]$DefaultProjectName
+	)
+
+	foreach ($line in ($ConfigContent -split "`r?`n")) {
+		if ($line -match '^\s*project_name:\s*(.+?)\s*$') {
+			$value = $matches[1].Trim()
+			if ($value) {
+				return $value.Trim('"', "'")
+			}
+		}
+	}
+
+	return $DefaultProjectName
+}
+
 # ============================================================================
 # MAIN SCRIPT
 # ============================================================================
@@ -135,11 +182,24 @@ Write-Host "--- Step 2: Serena Configuration ---" -ForegroundColor Cyan
 if (Test-Path $serenaConfig) {
 	Write-Status "Found .serena/project.yml" -Status "OK"
 
-	# Show configured languages
+	# Show configured languages and project identity
 	$configContent = Get-Content $serenaConfig -Raw
-	if ($configContent -match 'programming_languages:\s*\[([^\]]+)\]') {
-		$languages = $matches[1]
-		Write-Status "Configured languages: $languages"
+	$languages = Get-ConfiguredLanguages -ConfigContent $configContent
+	$defaultProjectName = Split-Path -Leaf $repoRoot
+	$projectName = Get-ConfiguredProjectName -ConfigContent $configContent -DefaultProjectName $defaultProjectName
+
+	if ($languages.Count -gt 0) {
+		Write-Status ("Configured languages: {0}" -f ($languages -join ', '))
+	}
+	else {
+		Write-Status "No languages found in .serena/project.yml" -Status "WARN"
+	}
+
+	if ($configContent -match '^\s*project_name:\s*' -and $projectName) {
+		Write-Status "Configured project name: $projectName"
+	}
+	else {
+		Write-Status "Project name defaults to worktree folder: $projectName"
 	}
 }
 else {
@@ -147,9 +207,14 @@ else {
 	Write-Host ""
 	Write-Host "Create .serena/project.yml with:" -ForegroundColor Yellow
 	Write-Host @"
-name: FieldWorks
-project_root: .
-programming_languages: [csharp_omnisharp, cpp]
+languages:
+- csharp_omnisharp
+- cpp
+"@
+	Write-Host ""
+	Write-Host "Optional per-worktree override (.serena/project.local.yml):" -ForegroundColor Yellow
+	Write-Host @"
+project_name: $(Split-Path -Leaf $repoRoot)
 "@
 	exit 1
 }

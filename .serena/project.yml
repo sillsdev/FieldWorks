@@ -54,13 +54,13 @@ read_only: false
 # initial prompt for the project. It will always be given to the LLM upon activating the project
 # (contrary to the memories, which are loaded on demand).
 initial_prompt: |
-  FieldWorks (FLEx) is a Windows-first linguistics suite by SIL International.
-  Key build facts:
-  - Uses MSBuild Traversal SDK via FieldWorks.proj (21 ordered phases, 110+ projects)
-  - Native C++ (Phase 2) must build before managed code (Phases 3+)
-  - Build command: .\build.ps1 or msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
-  - Check .github/instructions/*.instructions.md for coding guidelines (managed, native, testing, etc.)
-  - Per-folder AGENTS.md files describe component contracts and dependencies
+  FieldWorks (FLEx) is a Windows/x64 linguistics suite by SIL International.
+  Key repo facts:
+  - Build with .\build.ps1; test with .\test.ps1.
+  - FieldWorks.proj and FieldWorks.sln are the main build and solution entry points.
+  - The codebase mixes native C++ and managed .NET; native builds must succeed before managed projects.
+  - FieldWorks uses registration-free COM; do not add global COM registration hacks.
+  - Keep localization in .resx and follow .github/instructions/*.instructions.md plus nearby AGENTS.md files.
 
 # list of tool names to exclude.
 # This extends the existing exclusions (e.g. from the global configuration)
@@ -127,8 +127,10 @@ default_modes:
 # fixed set of tools to use as the base tool set (if non-empty), replacing Serena's default set of tools.
 # This cannot be combined with non-empty excluded_tools or included_optional_tools.
 fixed_tools: []
-# the name by which the project can be referenced within Serena
-project_name: FieldWorks
+
+# project_name is intentionally omitted in shared config so Serena falls back to the
+# worktree folder name and multiple FieldWorks worktrees stay distinct.
+# If you need an explicit local override, put it in .serena/project.local.yml.
 
 # time budget (seconds) per tool call for the retrieval of additional symbol information
 # such as docstrings or parameter information.
