@@ -14,7 +14,8 @@ There are several ways you can contribute to the development of FieldWorks:
 
 The following steps are required for setting up a FieldWorks development environment on Windows.
 
-> **Note**: FieldWorks is Windows-only. Linux builds are no longer supported.
+> **Note**: FieldWorks build, test, installer, and setup workflows are Windows-only.
+> Linux and macOS are supported for editing, code search, documentation, specs, and agent work only.
 
 ### 1. Install Required Software
 
@@ -108,6 +109,8 @@ Build FieldWorks using the PowerShell build script:
 ```
 
 For more build options, see [.github/instructions/build.instructions.md](../.github/instructions/build.instructions.md).
+
+On Linux or macOS, do not run `build.ps1` or `test.ps1`; those entry points intentionally fail fast with a not-supported message.
 
 ### 5. VS Code and Visual Studio usage
 
