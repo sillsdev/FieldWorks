@@ -38,5 +38,8 @@
     <Compile Include="..\..\Common\FwUtils\FwUtilsTests\Attributes\LogUnhandledExceptionsAttribute.cs">
       <Link>Attributes\LogUnhandledExceptionsAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\..\Common\FwUtils\FwUtilsTests\Attributes\SuppressAssertDialogsAttribute.cs">
+      <Link>Attributes\SuppressAssertDialogsAttribute.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

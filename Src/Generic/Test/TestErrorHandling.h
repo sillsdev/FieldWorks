@@ -15,6 +15,8 @@ Last reviewed:
 #pragma once
 
 #include "testGenericLib.h"
+#include <stdexcept>
+#include <string>
 
 namespace TestGenericLib
 {
@@ -151,6 +153,31 @@ namespace TestGenericLib
 				unitpp::assert_true("CheckHr didn't clean error info", !qerrinfo);
 				unitpp::assert_true("No error info in exception", thr.GetErrorInfo());
 			}
+#else
+			// TODO-Linux: port
+#endif
+		}
+
+		void testNativeAssertThrowsExceptionWithoutContinuing()
+		{
+#if defined(WIN32) || defined(_M_X64)
+			bool fReachedAfterAssert = false;
+			try
+			{
+				AssertMsg(false, "Test-induced native assert");
+				fReachedAfterAssert = true;
+				unitpp::assert_fail("Assert did not throw an exception in native test mode");
+			}
+			catch (const std::runtime_error & e)
+			{
+				std::string message(e.what());
+				unitpp::assert_true(
+					"Native assert produced wrong exception text",
+					message.find("Test-induced native assert") != std::string::npos
+				);
+			}
+
+			unitpp::assert_true("Execution continued after native assert", !fReachedAfterAssert);
 #else
 			// TODO-Linux: port
 #endif

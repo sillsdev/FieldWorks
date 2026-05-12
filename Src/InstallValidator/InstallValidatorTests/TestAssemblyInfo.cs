@@ -5,3 +5,4 @@
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 
 [assembly: LogUnhandledExceptions]
+[assembly: SuppressAssertDialogs]
