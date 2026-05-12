@@ -1,10 +1,12 @@
 ---
-description: Create a change and generate all artifacts needed for implementation in one go
+description: Create a change and generate all artifacts needed for implementation in one go (preferred OpenSpec workflow)
 ---
 
-Fast-forward through artifact creation - generate everything needed to start implementation.
+Create a change and generate all artifacts needed for implementation in one go.
 
-**Input**: The argument after `/opsx:ff` is the change name (kebab-case), OR a description of what the user wants to build.
+This is the preferred user-facing alias of the fast-forward workflow.
+
+**Input**: The argument after `/opsx:propose` is the change name (kebab-case), OR a description of what the user wants to build.
 
 **Steps**
 
@@ -13,7 +15,7 @@ Fast-forward through artifact creation - generate everything needed to start imp
    Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
    > "What change do you want to work on? Describe what you want to build or fix."
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   From their description, derive a kebab-case name (e.g., "add user authentication" -> `add-user-auth`).
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 

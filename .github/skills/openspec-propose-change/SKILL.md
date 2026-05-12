@@ -1,19 +1,28 @@
 ---
-description: Create a change and generate all artifacts needed for implementation in one go
+name: openspec-propose-change
+description: Create a change and generate all artifacts needed for implementation in one go. Use when the user wants the preferred OpenSpec fast path for a new proposal.
+license: MIT
+compatibility: Requires openspec CLI.
+metadata:
+  author: openspec
+  version: "1.0"
+  generatedBy: "1.3.1"
 ---
 
-Fast-forward through artifact creation - generate everything needed to start implementation.
+Create a change and generate all artifacts needed for implementation in one go.
 
-**Input**: The argument after `/opsx:ff` is the change name (kebab-case), OR a description of what the user wants to build.
+This is the preferred user-facing alias of the fast-forward workflow.
+
+**Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
 
 **Steps**
 
-1. **If no input provided, ask what they want to build**
+1. **If no clear input provided, ask what they want to build**
 
    Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
    > "What change do you want to work on? Describe what you want to build or fix."
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
+   From their description, derive a kebab-case name (e.g., "add user authentication" -> `add-user-auth`).
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 
@@ -74,7 +83,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions
 - What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run `/opsx:apply` to start implementing."
+- Prompt: "Run `/opsx:apply` or ask me to implement to start working on the tasks."
 
 **Artifact Creation Guidelines**
 
@@ -90,5 +99,5 @@ After completing all artifacts, summarize:
 - Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)
 - Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
-- If a change with that name already exists, ask if user wants to continue it or create a new one
+- If a change with that name already exists, suggest continuing that change instead
 - Verify each artifact file exists after writing before proceeding to next
