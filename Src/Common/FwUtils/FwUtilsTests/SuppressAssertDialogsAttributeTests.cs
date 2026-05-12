@@ -51,9 +51,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var listener = new ConsoleErrorTraceListener(throwOnFail: true);
 
-			var exception = Assert.Throws<AssertionDialogException>(
-				() => listener.Fail("boom", "detail")
-			);
+			var exception = Assert.Throws<AssertionDialogException>(() =>
+				listener.Fail("boom", "detail"));
 
 			Assert.That(exception.Message, Does.Contain("boom"));
 			Assert.That(exception.Message, Does.Contain("detail"));
@@ -67,8 +66,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Environment.SetEnvironmentVariable("AssertExceptionEnabled", "false");
 			Environment.SetEnvironmentVariable("FW_TEST_MODE", "0");
 
-			var defaultListener = new DefaultTraceListener();
-			Trace.Listeners.Add(defaultListener);
+			var firstDefaultListener = new DefaultTraceListener { AssertUiEnabled = true };
+			var secondDefaultListener = new DefaultTraceListener { AssertUiEnabled = true };
+			Trace.Listeners.Add(firstDefaultListener);
+			Trace.Listeners.Add(secondDefaultListener);
 
 			var attribute = new SuppressAssertDialogsAttribute();
 
@@ -83,7 +84,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Is.EqualTo("true")
 			);
 			Assert.That(Environment.GetEnvironmentVariable("FW_TEST_MODE"), Is.EqualTo("1"));
-			Assert.That(defaultListener.AssertUiEnabled, Is.False);
+			Assert.That(firstDefaultListener.AssertUiEnabled, Is.False);
+			Assert.That(secondDefaultListener.AssertUiEnabled, Is.False);
 			Assert.That(CountListeners<ConsoleErrorTraceListener>(), Is.EqualTo(1));
 
 			attribute.AfterTest(null);

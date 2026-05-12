@@ -5,7 +5,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64) || defined(_M_X64)
+#define UNITPP_WINDOWS 1
+#endif
+#if defined(UNITPP_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <crtdbg.h>
@@ -13,7 +16,7 @@
 using namespace std;
 using namespace unitpp;
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(UNITPP_WINDOWS)
 namespace
 {
 	void TerminateOnSigAbrt(int)
@@ -101,8 +104,9 @@ void unitpp::set_tester(test_runner* tr)
 
 int main(int argc, const char* argv[])
 {
-#if defined(WIN32) || defined(WIN64)
+#if defined(UNITPP_WINDOWS)
 	SuppressInteractiveCrashUi();
+	signal(SIGABRT, TerminateOnSigAbrt);
 #endif
     printf("DEBUG: unit++ main start\n"); fflush(stdout);
 	options().add("v", new options_utils::opt_flag(verbose));
@@ -140,7 +144,6 @@ int main(int argc, const char* argv[])
 	}
 
 	retval = runner->run_tests(argc, argv) ? 0 : 1;
-	signal(SIGABRT, TerminateOnSigAbrt);
 
 	try {
 		printf("DEBUG: Calling GlobalTeardown\n"); fflush(stdout);

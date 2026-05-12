@@ -94,11 +94,12 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 
 		internal static AggregateException[] FlushAndDrainCapturedUnobservedTaskExceptions()
 		{
-			for (int i = 0; i < 3; i++)
-			{
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			}
+			var alreadyCapturedExceptions = DrainCapturedUnobservedTaskExceptions();
+			if (alreadyCapturedExceptions.Length > 0)
+				return alreadyCapturedExceptions;
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 
 			return DrainCapturedUnobservedTaskExceptions();
 		}

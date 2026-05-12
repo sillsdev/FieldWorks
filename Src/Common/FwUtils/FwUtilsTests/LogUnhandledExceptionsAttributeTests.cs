@@ -44,6 +44,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		[Test]
+		public void FlushAndDrainCapturedUnobservedTaskExceptions_ReturnsAlreadyCapturedExceptions()
+		{
+			var aggregateException = new AggregateException(new InvalidOperationException("boom"));
+			var eventArgs = new UnobservedTaskExceptionEventArgs(aggregateException);
+
+			LogUnhandledExceptionsAttribute.OnUnobservedTaskException(this, eventArgs);
+
+			CollectionAssert.AreEqual(
+				new[] { aggregateException },
+				LogUnhandledExceptionsAttribute.FlushAndDrainCapturedUnobservedTaskExceptions());
+			Assert.That(LogUnhandledExceptionsAttribute.DrainCapturedUnobservedTaskExceptions(), Is.Empty);
+		}
+
+		[Test]
 		public void ThrowIfCapturedUnobservedTaskExceptions_ThrowsAssertionExceptionWithCapturedDetails()
 		{
 			var first = new AggregateException(new InvalidOperationException("first failure"));

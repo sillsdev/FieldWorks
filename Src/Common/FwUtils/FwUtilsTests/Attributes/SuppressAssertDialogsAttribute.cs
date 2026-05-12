@@ -72,10 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			foreach (TraceListener listener in Trace.Listeners)
 			{
 				if (listener is DefaultTraceListener dtl)
-				{
 					dtl.AssertUiEnabled = false;
-					break;
-				}
 			}
 
 			if (!hasConsoleErrorListener)
