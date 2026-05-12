@@ -8,19 +8,27 @@ Guide the user through their first complete OpenSpec workflow cycle. This is a t
 
 ## Preflight
 
-Before starting, check if the OpenSpec CLI is installed:
+Before starting, check that the OpenSpec CLI is installed and this repository is initialized for OpenSpec:
 
 ```bash
 # Unix/macOS
-openspec --version 2>&1 || echo "CLI_NOT_INSTALLED"
+if command -v openspec >/dev/null 2>&1; then
+   openspec --version
+   openspec list --json 2>&1 || echo "NOT_INITIALIZED"
+else
+   echo "CLI_NOT_INSTALLED"
+fi
 # Windows (PowerShell)
-# if (Get-Command openspec -ErrorAction SilentlyContinue) { openspec --version } else { echo "CLI_NOT_INSTALLED" }
+# if (Get-Command openspec -ErrorAction SilentlyContinue) { openspec --version; openspec list --json; if ($LASTEXITCODE -ne 0) { echo "NOT_INITIALIZED" } } else { echo "CLI_NOT_INSTALLED" }
 ```
 
 **If CLI not installed:**
 > OpenSpec CLI is not installed. Install it first, then come back to `/opsx:onboard`.
 
-Stop here if not installed.
+**If repository not initialized:**
+> OpenSpec isn't set up in this project yet. Run `openspec init` in the repository root, then come back to `/opsx:onboard`.
+
+Stop here if either check fails.
 
 ---
 

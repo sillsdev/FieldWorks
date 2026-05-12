@@ -93,6 +93,7 @@ Verify that an implementation matches the change artifacts (specs, tasks, design
 
    **Design Adherence**:
    - If `contextFiles.design` exists:
+       - Read every file path in `contextFiles.design`
      - Extract key decisions (look for sections like "Decision:", "Approach:", "Architecture:")
      - Verify implementation follows those decisions
      - If contradiction detected:
