@@ -244,6 +244,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetExplicitFontProperties_UnsupportedOrMalformedOpenTypeFontFeatures_DoesNotAddWordTypographyProperties()
+		{
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "!abc=1,cv01=2,kern=1,bad=2,liga=x" } };
+
+			var runProps = WordStylesGenerator.GetExplicitFontProperties(fontInfo);
+
+			AssertNoWordTypographyProperties(runProps);
+		}
+
+		[Test]
 		public void GenerateCharacterStyleFromLcmStyleSheet_NormalStyle_UsesWritingSystemDefaultFontFeatures()
 		{
 			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
@@ -320,6 +330,16 @@ namespace SIL.FieldWorks.XWorks
 			var styleSet = stylisticSets.Elements<W14.StyleSet>().Single();
 			Assert.That(styleSet.Id.Value, Is.EqualTo(stylisticSetId));
 			Assert.That(styleSet.Val.Value, Is.EqualTo(GetOnOffValue(stylisticSetValue)));
+		}
+
+		private static void AssertNoWordTypographyProperties(OpenXmlCompositeElement runProps)
+		{
+			Assert.That(runProps, Is.Not.Null);
+			Assert.That(runProps.GetFirstChild<W14.Ligatures>(), Is.Null);
+			Assert.That(runProps.GetFirstChild<W14.NumberingFormat>(), Is.Null);
+			Assert.That(runProps.GetFirstChild<W14.NumberSpacing>(), Is.Null);
+			Assert.That(runProps.GetFirstChild<W14.ContextualAlternatives>(), Is.Null);
+			Assert.That(runProps.GetFirstChild<W14.StylisticSets>(), Is.Null);
 		}
 
 		private static W14.OnOffValues GetOnOffValue(bool value)

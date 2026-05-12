@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Diagnostics;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -10,6 +11,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public static class FontFeatureSettings
 	{
+		private static readonly TraceSwitch s_traceSwitch =
+			new TraceSwitch("FwUtils_FontFeatureSettings", "Font feature parsing diagnostics");
+
+		internal static TraceSwitch DiagnosticsSwitch
+		{
+			get { return s_traceSwitch; }
+		}
+
 		/// <summary>
 		/// Parses a comma-separated font feature string into normalized feature settings.
 		/// Invalid entries are ignored so project data cannot crash render/UI paths.
@@ -28,16 +37,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				var equalsIndex = part.IndexOf('=');
 				if (equalsIndex <= 0 || equalsIndex == part.Length - 1)
+				{
+					TraceIgnoredEntry(part, "expected tag=value");
 					continue;
+				}
 
 				var tag = part.Substring(0, equalsIndex).Trim();
 				var valueText = part.Substring(equalsIndex + 1).Trim();
 				if (!IsValidOpenTypeTag(tag))
+				{
+					TraceIgnoredEntry(part, "tag must contain exactly four printable ASCII characters");
 					continue;
+				}
 
 				int value;
 				if (!int.TryParse(valueText, NumberStyles.Integer, CultureInfo.InvariantCulture, out value) || value < 0)
+				{
+					TraceIgnoredEntry(part, "value must be a non-negative integer");
 					continue;
+				}
 
 				settingsByTag[tag] = new FontFeatureSetting(tag, value);
 			}
@@ -63,7 +81,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return string.Empty;
 
 			var trimmed = features.Trim();
-			return char.IsLetter(trimmed[0]) ? Normalize(trimmed) : trimmed;
+			return LooksLikeLegacyGraphiteFeatureString(trimmed) ? trimmed : Normalize(trimmed);
+		}
+
+		private static bool LooksLikeLegacyGraphiteFeatureString(string features)
+		{
+			var firstPart = features.Split(',').FirstOrDefault();
+			if (string.IsNullOrWhiteSpace(firstPart))
+				return false;
+
+			var equalsIndex = firstPart.IndexOf('=');
+			if (equalsIndex <= 0)
+				return false;
+
+			var featureId = firstPart.Substring(0, equalsIndex).Trim();
+			return featureId.Length > 0 && featureId.All(char.IsDigit);
 		}
 
 		/// <summary>
@@ -72,6 +104,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool IsValidOpenTypeTag(string tag)
 		{
 			return tag != null && tag.Length == 4 && tag.All(character => character >= 0x20 && character <= 0x7e);
+		}
+
+		private static void TraceIgnoredEntry(string part, string reason)
+		{
+			Trace.WriteLineIf(s_traceSwitch.TraceWarning,
+				string.Format(CultureInfo.InvariantCulture,
+					"Ignored invalid font feature entry '{0}': {1}.",
+					part,
+					reason),
+				s_traceSwitch.DisplayName);
 		}
 	}
 

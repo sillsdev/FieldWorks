@@ -17,7 +17,7 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 - Keep persisted feature strings renderer-neutral and compatible with future Avalonia/HarfBuzz-style consumption.
 - Accept any syntactically valid OpenType tag and reject malformed tags safely with trace logging.
 - Add trace logging for discovery, validation, native shaping, and fallback decisions.
-- Remove duplicate style/default font-feature loading and follow the existing inheritance path.
+- Keep style/default font-feature loading on the existing inheritance path, with only the minimal compatibility adapter still required by the current build graph.
 - Fix truncation and malformed-input robustness gaps in legacy feature-string handling.
 - Add tests for UI control behavior and visual rendering differences caused by feature toggles.
 - Add test-only HarfBuzzSharp + SkiaSharp comparison tooling for future visual-fidelity confidence.
@@ -119,11 +119,11 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 
 ### 11. Existing inheritance paths remain authoritative
 
-**Decision:** `BaseStyleInfo.ProcessStyleRules` and `FontInfo.m_features` remain the authoritative inheritance/data-flow path for default and explicit font features. Parallel loaders introduced in style-dialog helpers SHALL be removed or reduced to simple adapters.
+**Decision:** `FontInfo.m_features`, `FwTextPropType.ktptFontVariations`, and style rule round-tripping remain the authoritative inheritance/data-flow path for default and explicit font features. `StyleInfo` retains a minimal compatibility adapter that reads default `ktptFontVariations` from `IStStyle.Rules` because focused validation showed that removing it loses persisted default font features in the current build graph.
 
-**Rationale:** Duplicate loaders create drift between dialog behavior and persisted style behavior.
+**Rationale:** The local LCM source contains `BaseStyleInfo.ProcessStyleRules` support for `ktptFontVariations`, but the active FieldWorks build/test path still requires the `StyleInfo` adapter to reload persisted defaults. The adapter is therefore a compatibility boundary, not a second policy path.
 
-**Alternatives considered:** Keep the parallel loading path in `StyleInfo` and patch both sides. Rejected because it increases long-term maintenance cost and obscures the true source of inherited values.
+**Alternatives considered:** Remove the `StyleInfo` adapter immediately. Rejected for this change because `SaveToDB_DefaultFontFeatures_RoundTripsThroughRules` failed after removal. Broader LCM dependency alignment can retire the adapter later with the same round-trip tests as the gate.
 
 ### 12. Overlong and malformed feature strings fail safe
 
@@ -155,7 +155,7 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 | OpenType default preference conflicts with legacy Graphite-first assumptions | Make provider choice explicit in shared UI and cover dual-technology fonts with tests. |
 | Accepting all valid tags can create unsafe raw CSS strings | Keep parser/storage liberal, but escape valid tags at CSS output boundaries and test serialization. |
 | Silent fallback hides malformed-input and shaping bugs | Add trace switches and testable diagnostics points for filtering, validation, retry, and fallback. |
-| Duplicate inheritance loaders drift from persisted style behavior | Remove duplicate loaders and add reopen/save round-trip tests through the authoritative path. |
+| Duplicate inheritance loaders drift from persisted style behavior | Keep the `StyleInfo` loader as a minimal compatibility adapter, document why it remains, and gate future removal with reopen/save round-trip tests. |
 | Overlong strings without comma boundaries can hang truncation loops | Add no-progress guards and fail-safe truncation behavior with targeted tests. |
 
 ## Migration Plan
@@ -165,13 +165,22 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 3. Add provider abstractions, OpenType-preferred dual-tech toggle behavior, and shared UI tests.
 4. Add filtered OpenType feature discovery for the UI while preserving Graphite provider behavior.
 5. Add native OpenType shaping/placing support, retryable-error handling, script/language trace points, and native tests.
-6. Remove duplicate inheritance-path helpers and verify style/default-feature round-tripping through the authoritative path.
+6. Attempt to reduce inheritance-path duplication, retain only required compatibility adapters, and verify style/default-feature round-tripping through the authoritative path.
 7. Add render snapshot scenarios using the merged render baseline infrastructure.
 8. Add test-only HarfBuzzSharp + SkiaSharp comparison tests in FieldWorks test projects.
 9. Update help/localized UI text and review-driven docs.
 10. Add Word DOCX export mapping for the documented WordprocessingML subset, CSS-safe serialization work, and tests that inspect generated Open XML.
 
 Rollback strategy: disable the OpenType provider and native OpenType shaping path behind a feature flag or fallback path if regressions are found; Graphite and old Uniscribe behavior remain available.
+
+## Implementation Update (2026-05-12)
+
+- `FontFeatureSettings` now accepts any valid four-character printable ASCII tag, ignores malformed entries, and traces ignored input through `FwUtils_FontFeatureSettings`.
+- `FontFeaturesButton` now defaults to OpenType provider selection, filters required shaping features from OpenType discovery, and traces provider/filter decisions through `FontFeatures.OpenType`.
+- `VwPropertyStore` now stores full `ktptFontVariations`, fixes `get_FontVariations`, and copies only render-safe strings into `LgCharRenderProps.szFontVar`, with fail-safe behavior for overlong strings without comma boundaries.
+- `UniscribeSegment` now retries `ScriptShapeOpenType` and `ScriptPlaceOpenType` after `E_OUTOFMEMORY`, traces retries/fallbacks, and keeps classic Uniscribe fallback intact.
+- CSS export escapes valid tags inside `font-feature-settings`; DOCX export remains on the documented Word `w14` subset and ignores unsupported valid or malformed entries safely.
+- Removing the `StyleInfo` default-font-feature loader was attempted and failed the focused round-trip test, so the loader remains as a documented compatibility adapter.
 
 ## Open Questions
 
