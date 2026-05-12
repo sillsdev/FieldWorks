@@ -308,10 +308,6 @@ namespace SIL.FieldWorks.IText
 			{
 				m_langProjectTextsFlid = Cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Texts", true);
 			}
-			if (tag == m_langProjectTextsFlid && (cvIns > 0 || cvDel > 0))
-			{
-				InterestingTextsDecorator.ClearInterestingTextsList(m_propertyTable);
-			}
 		}
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>

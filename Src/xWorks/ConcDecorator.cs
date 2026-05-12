@@ -4,7 +4,6 @@
 
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -18,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -98,6 +98,10 @@ namespace SIL.FieldWorks.XWorks
 				// If a clerk were to be disposed some other time when another clerk was still using the ITL,
 				// this would be a bad thing to do.
 				base.RemoveNotification(m_interestingTexts);
+				// Clear the cache in case we are not shutting down the main window.
+				// This avoids problems in LT-22508 caused by stale cache data.
+				InterestingTextsDecorator.ClearInterestingTextsList(PropTable);
+				m_interestingTexts = null;
 			}
 		}
 
@@ -124,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public IEnumerable<IStText> InterestingTexts
 		{
-			get { return m_interestingTexts.InterestingTexts; }
+			get { return InterestingTextsList.InterestingTexts; }
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -315,10 +319,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool BelongsToInterestingText(ISegment seg)
 		{
-			if (m_interestingTexts == null)
-				return true; // no filtering
 			IStText text = seg.Paragraph != null ? seg.Paragraph.Owner as IStText : null;
-			return (text != null && m_interestingTexts.IsInterestingText(text));
+			return (text != null && InterestingTextsList.IsInterestingText(text));
 
 		}
 
@@ -327,9 +329,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool IsInterestingText(IStText text)
 		{
-			if (m_interestingTexts == null)
-				return true;
-			return m_interestingTexts.IsInterestingText(text);
+			return InterestingTextsList.IsInterestingText(text);
 		}
 
 		public override int[] VecProp(int hvo, int tag)
@@ -552,8 +552,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;
-			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, PropTable, m_services);
-			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
+		}
+
+		private InterestingTextList InterestingTextsList
+		{
+			get
+			{
+				if (m_interestingTexts == null)
+				{
+					m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(Mediator, PropTable, m_services);
+					m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
+				}
+				return m_interestingTexts;
+			}
 		}
 
 		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)
