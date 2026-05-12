@@ -12,8 +12,13 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 
 - Support OpenType font features in current WinForms/Views data entry and preview surfaces.
 - Split Font Features from the `Enable Graphite` UI concept.
+- Prefer OpenType for dual-technology fonts while preserving explicit access to Graphite features.
 - Preserve Graphite behavior and existing Graphite feature support during Phase 1.
 - Keep persisted feature strings renderer-neutral and compatible with future Avalonia/HarfBuzz-style consumption.
+- Accept any syntactically valid OpenType tag and reject malformed tags safely with trace logging.
+- Add trace logging for discovery, validation, native shaping, and fallback decisions.
+- Remove duplicate style/default font-feature loading and follow the existing inheritance path.
+- Fix truncation and malformed-input robustness gaps in legacy feature-string handling.
 - Add tests for UI control behavior and visual rendering differences caused by feature toggles.
 - Add test-only HarfBuzzSharp + SkiaSharp comparison tooling for future visual-fidelity confidence.
 
@@ -23,6 +28,14 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 - Replacing Views.cpp, WinForms, selection, editing, line breaking, or hit testing.
 - Introducing HarfBuzzSharp, SkiaSharp, or Avalonia into production rendering.
 - Guaranteeing pixel identity between GDI/Uniscribe and Skia/HarfBuzz output.
+
+## Clarified Scope From The In-Depth Review
+
+- Local staged/unstaged churn seen during review is not part of the intended scope. This design assumes the final implementation branch resolves that churn before validation.
+- OpenType, not Graphite, is the default feature system for dual-technology fonts in Phase 1. Graphite remains available by explicit user choice.
+- Tag acceptance is syntactic, not registry-based. Any valid four-character printable ASCII OpenType tag is accepted; filtering applies to UI exposure and specific export boundaries.
+- Logging and robustness are Phase 1 requirements, not deferred cleanup work.
+- Existing inheritance/data-flow paths remain authoritative unless a change is explicitly required by this proposal.
 
 ## Decisions
 
@@ -50,13 +63,13 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 
 **Alternatives considered:** Pass writing-system default features to `UniscribeEngine.InitRenderer`. Rejected as insufficient because it misses style-specific `ktptFontVariations`.
 
-### 4. Font Features UI uses providers
+### 4. Font Features UI uses providers, with OpenType preferred by default
 
-**Decision:** Refactor `FontFeaturesButton` around a feature provider concept: Graphite provider uses existing `IRenderingFeatures`; OpenType provider uses OpenType font/script/language/feature tag discovery; the button is enabled when the selected font has configurable features.
+**Decision:** Refactor `FontFeaturesButton` around a feature provider concept: Graphite provider uses existing `IRenderingFeatures`; OpenType provider uses OpenType font/script/language/feature tag discovery; the button is enabled when the selected font has configurable features. When a font exposes both Graphite and OpenType feature sets, the default provider SHALL be OpenType and the UI SHALL expose a clear explicit toggle to switch providers.
 
-**Rationale:** The control should depend on “has configurable font features,” not “is Graphite.” This preserves current UI reuse in writing-system defaults, styles, and font dialogs.
+**Rationale:** The control should depend on “has configurable font features,” not “is Graphite.” Making OpenType the default matches the Phase 1 product goal and avoids hiding the new behavior behind Graphite-first heuristics.
 
-**Alternatives considered:** Add OpenType conditions directly to `DefaultFontsControl`. Rejected because it would leave the shared button and style/font dialogs with duplicated logic.
+**Alternatives considered:** Continue preferring Graphite implicitly or add OpenType conditions only to `DefaultFontsControl`. Rejected because that would preserve confusing defaults and leave the shared button and style/font dialogs with duplicated logic.
 
 ### 5. HarfBuzzSharp + SkiaSharp are test-only comparison tools
 
@@ -80,6 +93,54 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 
 **Alternatives considered:** Store arbitrary tags in custom XML or undocumented extension markup. Rejected because Word would not apply those settings to text rendering and the export would give users a false parity signal.
 
+### 8. OpenType feature discovery filters user-configurable features only
+
+**Decision:** OpenType feature discovery SHALL filter out required shaping features and other non-user-configurable engine-controlled features before populating the Font Features UI.
+
+**Rationale:** HarfBuzz and CSS guidance distinguish required/default shaping behavior from optional user-facing feature selection. Presenting all GSUB/GPOS tags as toggles produces confusing and potentially unsafe UI.
+
+**Alternatives considered:** Expose every raw GSUB/GPOS feature found in the font. Rejected because that treats engine-required features as if they were safe end-user choices.
+
+### 9. Tag validation is syntactic and liberal; output boundaries stay safe
+
+**Decision:** FieldWorks SHALL accept any OpenType tag that is exactly four printable ASCII characters (`U+20`-`U+7E`), whether registered or custom. Malformed tags SHALL be ignored with trace logging. Output boundaries such as CSS SHALL escape or otherwise safely serialize valid tags instead of rejecting them.
+
+**Rationale:** The OpenType/CSS contract is syntactic, not registry-based. Narrowing acceptance to a product-specific allowlist would break legitimate custom tags and weaken renderer-neutral storage.
+
+**Alternatives considered:** Restrict tags to registered tags only, or restrict accepted characters more narrowly than the published syntax. Rejected because those approaches are incompatible with valid custom/private tags and would create artificial persistence/export divergence.
+
+### 10. Trace logging is a Phase 1 requirement
+
+**Decision:** Phase 1 SHALL add trace logging through the existing FieldWorks diagnostics infrastructure for malformed feature input, filtered feature discovery, provider selection/toggle decisions, native shaping failures, and fallback reasons.
+
+**Rationale:** The feature must degrade gracefully for bad fonts and bad feature strings, but silent fallback makes regressions and field failures hard to diagnose.
+
+**Alternatives considered:** Defer diagnostics to a later cleanup pass or rely on modal assertions. Rejected because the review explicitly requires graceful continuation plus actionable logs.
+
+### 11. Existing inheritance paths remain authoritative
+
+**Decision:** `BaseStyleInfo.ProcessStyleRules` and `FontInfo.m_features` remain the authoritative inheritance/data-flow path for default and explicit font features. Parallel loaders introduced in style-dialog helpers SHALL be removed or reduced to simple adapters.
+
+**Rationale:** Duplicate loaders create drift between dialog behavior and persisted style behavior.
+
+**Alternatives considered:** Keep the parallel loading path in `StyleInfo` and patch both sides. Rejected because it increases long-term maintenance cost and obscures the true source of inherited values.
+
+### 12. Overlong and malformed feature strings fail safe
+
+**Decision:** When existing storage/truncation logic encounters overlong or malformed feature strings, the code SHALL either make forward progress or abandon safely, and SHALL log the event. It SHALL NOT loop indefinitely.
+
+**Rationale:** Phase 1 must not crash or hang on malformed feature data from fonts, styles, or legacy persisted values.
+
+**Alternatives considered:** Preserve comma-based truncation behavior without a no-progress guard. Rejected because the review identified a concrete hang risk.
+
+### 13. State-of-the-art native fallback behavior is in scope
+
+**Decision:** Native OpenType shaping SHALL treat `E_OUTOFMEMORY` as retryable, preserve authoritative script tags from `ScriptItemizeOpenType`, and favor an authoritative/generated language-tag mapping strategy over handwritten tables where OS APIs are insufficient.
+
+**Rationale:** Current platform guidance treats OpenType shaping as an itemize/shape/place pipeline with retryable buffer sizing and explicit script/language inputs. That behavior is part of robust Phase 1 support, not a future renderer rewrite.
+
+**Alternatives considered:** Fall back immediately on retryable errors or maintain ad hoc locale-to-tag heuristics indefinitely. Rejected because both approaches weaken correctness and diagnosability.
+
 ## Risks / Trade-offs
 
 | Risk | Mitigation |
@@ -91,23 +152,30 @@ The longer product phases are: add OpenType features now, remove Graphite later 
 | Test fonts cannot be redistributed | Confirm SIL Open Font License or another redistributable license before adding binaries. |
 | HarfBuzz/Skia visual output differs from GDI/Uniscribe | Compare shaping data first; use tolerant image comparisons for cross-renderer evidence. |
 | Word DOCX cannot represent every OpenType feature tag | Map only documented `w14` typography elements and document unsupported tags such as character variants and private features. |
+| OpenType default preference conflicts with legacy Graphite-first assumptions | Make provider choice explicit in shared UI and cover dual-technology fonts with tests. |
+| Accepting all valid tags can create unsafe raw CSS strings | Keep parser/storage liberal, but escape valid tags at CSS output boundaries and test serialization. |
+| Silent fallback hides malformed-input and shaping bugs | Add trace switches and testable diagnostics points for filtering, validation, retry, and fallback. |
+| Duplicate inheritance loaders drift from persisted style behavior | Remove duplicate loaders and add reopen/save round-trip tests through the authoritative path. |
+| Overlong strings without comma boundaries can hang truncation loops | Add no-progress guards and fail-safe truncation behavior with targeted tests. |
 
 ## Migration Plan
 
 1. Wait until `001-render-speedup` is merged into the target branch.
-2. Add provider abstractions, parser/normalizer tests, and UI tests without changing rendering behavior.
-3. Add OpenType feature discovery for the UI and preserve Graphite provider behavior.
-4. Add native OpenType shaping/placing support and native tests.
-5. Add render snapshot scenarios using the merged render baseline infrastructure.
-6. Add test-only HarfBuzzSharp + SkiaSharp comparison tests in FieldWorks test projects.
-7. Update help/localized UI text.
-8. Add Word DOCX export mapping for the documented WordprocessingML subset and tests that inspect generated Open XML.
+2. Add parser/normalizer validation, malformed-input logging, and fail-safe truncation coverage before widening feature discovery.
+3. Add provider abstractions, OpenType-preferred dual-tech toggle behavior, and shared UI tests.
+4. Add filtered OpenType feature discovery for the UI while preserving Graphite provider behavior.
+5. Add native OpenType shaping/placing support, retryable-error handling, script/language trace points, and native tests.
+6. Remove duplicate inheritance-path helpers and verify style/default-feature round-tripping through the authoritative path.
+7. Add render snapshot scenarios using the merged render baseline infrastructure.
+8. Add test-only HarfBuzzSharp + SkiaSharp comparison tests in FieldWorks test projects.
+9. Update help/localized UI text and review-driven docs.
+10. Add Word DOCX export mapping for the documented WordprocessingML subset, CSS-safe serialization work, and tests that inspect generated Open XML.
 
 Rollback strategy: disable the OpenType provider and native OpenType shaping path behind a feature flag or fallback path if regressions are found; Graphite and old Uniscribe behavior remain available.
 
 ## Open Questions
 
-1. Which redistributable fonts should be committed as deterministic test assets: Charis SIL 5.000, Abyssinica SIL, Lorna Evans, or a smaller purpose-built test font?
-2. Should OpenType feature UI list only detected font features or also expose common tags not advertised by all fonts?
-3. Should the production OpenType path use Uniscribe OpenType APIs only, or is a DirectWrite spike required before implementation?
+1. What exact wording and placement should the dual-technology provider toggle use so users understand when they are viewing OpenType versus Graphite features?
+2. Can the implementation vendor or reuse an authoritative script/language-tag mapping source, or must it rely only on OS APIs already present in the runtime environment?
+3. Should new trace switches be split by area (UI/provider/native/export) or grouped under one OpenType font-features category?
 4. Where should the test-only HarfBuzzSharp + SkiaSharp comparison project live after `001-render-speedup`: under RenderVerification, RootSiteTests, or a new dedicated test project?

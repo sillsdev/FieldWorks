@@ -108,7 +108,7 @@ Useful references:
 - Cache identity: managed render-engine cache keys include the normalized feature string, and native `ShapeRunCache` entries include `LgCharRenderProps.szFontVar`. The render verification tests now cover writing-system default features, style-level features, and multi-writing-system text to guard stale output reuse.
 - Native verification: `TestViews` includes Charis SIL fixture tests for `liga` metric changes, `smcp` rendered pixel changes, and switching feature state off/on without stale rendered output reuse. The tests exercise the updated production code by passing `szFontVar` feature strings into `FindBreakPoint`, drawing the resulting segment into a bitmap, and comparing rendered pixels.
 - Test-only comparison: HarfBuzzSharp and SkiaSharp remain isolated to `RenderComparisonTests`. HarfBuzzSharp is used only as a test comparison path for shaping data; production rendering remains Uniscribe/Graphite.
-- Export audit: CSS already emits `font-feature-settings` and is covered by `GenerateCssForConfiguration_CharStyleFontFeaturesWorks`. Notebook export preserves writing-system `DefaultFontFeatures`. `WordStylesGenerator` did not show a feature-string mapping and should be tracked separately if Word export parity is required.
+- Export audit: CSS already emits `font-feature-settings` and is covered by `GenerateCssForConfiguration_CharStyleFontFeaturesWorks`. Notebook export preserves writing-system `DefaultFontFeatures`. `WordStylesGenerator` already maps the documented Word `w14` subset for ligatures, number form, number spacing, contextual alternatives, and stylistic sets; the remaining work is to keep that subset bounded, documented, and regression-tested.
 - Help/docs: no existing FieldWorks help source for Font Options was found in this workspace. Phase 1 adds `Docs/opentype-font-features.md` to document the UI, storage model, temporary Graphite role, and export status.
 
 ## Word DOCX Export Analysis
@@ -131,3 +131,147 @@ Planned DOCX subset:
 - `ss01` through `ss20` map to `w14:stylisticSets/w14:styleSet` with ids 1 through 20.
 
 Unsupported tags such as `cv01`-`cv99`, `smcp`, `c2sc`, `kern`, `salt`, `swsh`, and private/vendor tags do not have a documented arbitrary WordprocessingML feature-tag representation. They should be ignored by Word export while remaining valid for rendering and CSS export where those paths can consume them.
+
+## In-Depth Review Addendum (2026-05-11)
+
+This addendum records the deeper implementation review that expanded the change
+scope after the initial proposal/design/tasks pass. It is planning-only and does
+not imply the reviewed branch was merge-ready as-is.
+
+### Clarification Pass
+
+- The earlier native `MM` churn finding is intentionally excluded from the scope
+	of this review addendum. The user confirmed another agent finished that work;
+	documentation here assumes the final implementation branch resolves local
+	churn before validation.
+- Phase 1 remains the current WinForms/Views renderer and UI stack. No
+	production HarfBuzz/Avalonia rewrite is added by this review.
+- OpenType is now the intended default provider when a font exposes both
+	OpenType and Graphite feature sets.
+- Accepted OpenType tag names are syntactic, not registry-based: valid custom
+	or private tags remain allowed.
+- Logging, safe fallback, and malformed-input handling are now explicit Phase 1
+	scope items rather than possible follow-up cleanups.
+
+### Accepted OpenType Tag Names
+
+CSS Fonts 4 and MDN both describe OpenType feature tags as four-character
+ASCII strings in the printable `U+20`-`U+7E` range. The same section explicitly
+allows feature tags that are not registered, provided they follow the OpenType
+tag syntax.
+
+Useful references:
+
+- https://www.w3.org/TR/css-fonts-4/#font-feature-settings-prop
+- https://developer.mozilla.org/en-US/docs/Web/CSS/font-feature-settings
+- https://learn.microsoft.com/en-us/typography/opentype/spec/featuretags
+
+Planning implication:
+
+- FieldWorks should accept any syntactically valid four-character printable
+	ASCII tag, including custom/private tags.
+- Malformed tags should be ignored and traced.
+- CSS export must safely escape valid tags rather than narrowing accepted tag
+	syntax to avoid serializer problems.
+
+### HarfBuzz Guidance On Required Versus Optional Features
+
+HarfBuzz documentation distinguishes between required/default shaping features
+and optional user-facing features. Required/default features include shaping and
+mark-handling features such as `ccmp`, `locl`, `mark`, `mkmk`, `rlig`, and some
+script-specific defaults. HarfBuzz also enables several common optional features
+by default in horizontal text, including `calt`, `clig`, `kern`, and `liga`.
+
+Useful references:
+
+- https://harfbuzz.github.io/shaping-opentype-features.html
+- https://www.w3.org/TR/css-fonts-4/#default-features
+- https://www.w3.org/TR/css-fonts-4/#font-feature-settings-prop
+
+Planning implication:
+
+- FieldWorks should not expose engine-required shaping features as user toggles.
+- Optional user-facing features such as ligatures, kerning, stylistic sets, and
+	character variants remain valid UI candidates.
+- Filtering needs to distinguish required shaping behavior from optional feature
+	choice, not simply hide every default-enabled feature.
+
+### Script And Language Tag Selection
+
+Repository memory and the Uniscribe docs point to a stronger native direction:
+
+- script tags should come from `ScriptItemizeOpenType` / `SCRIPT_ANALYSIS`
+- language tags should not rely on handwritten locale-to-tag tables when a more
+	authoritative mapping is available
+
+Useful references:
+
+- https://learn.microsoft.com/en-us/windows/win32/api/usp10/nf-usp10-scriptitemizeopentype
+- https://learn.microsoft.com/en-us/windows/win32/api/usp10/nf-usp10-scriptshapeopentype
+- https://learn.microsoft.com/en-us/windows/win32/api/usp10/nf-usp10-scriptplaceopentype
+- /memories/repo/fieldworks-opentype-tag-mapping.md
+
+Planning implication:
+
+- keep script tags authoritative from `ScriptItemizeOpenType`
+- if OS APIs are insufficient for language tags, prefer vendored/generated
+	mappings over ad hoc handwritten tables
+- trace any fallback from authoritative language selection to weaker heuristics
+
+### Retryable Native Failure Modes
+
+Microsoft documents `E_OUTOFMEMORY` from `ScriptShapeOpenType` and
+`ScriptPlaceOpenType` as a buffer-sizing condition that should be retried with a
+larger output buffer before abandoning the OpenType path.
+
+Useful references:
+
+- https://learn.microsoft.com/en-us/windows/win32/api/usp10/nf-usp10-scriptshapeopentype
+- https://learn.microsoft.com/en-us/windows/win32/api/usp10/nf-usp10-scriptplaceopentype
+
+Planning implication:
+
+- native OpenType shaping should retry retryable sizing failures before
+	downgrading to legacy shaping
+- trace logging should record retries, fallback reasons, and final disposition
+
+### Verified Local Code Findings Folded Into Scope
+
+The review directly verified these local concerns and turned them into planning
+items:
+
+- `FontFeaturesButton` was still Graphite-first by default and only some shared
+	font surfaces provided explicit provider context.
+- raw OpenType feature discovery was broad enough to risk exposing non-user
+	shaping features.
+- native fallback paths were mostly silent.
+- `VwPropertyStore.cpp` truncation logic had a no-comma risk for overlong
+	strings.
+- `StyleInfo` maintained a parallel default-font-feature loading path that could
+	drift from `BaseStyleInfo`.
+- CSS export inserted valid tags into quoted CSS strings without a review-driven
+	escaping plan.
+- `manual-testing.md` referenced `evidence/manual-winforms/` screenshots that
+	were not present in the checked workspace, so the evidence note needs to be
+	reconciled with the actual captured artifacts.
+
+Planning implication:
+
+- the OpenSpec change now includes OpenType-first UI defaults, explicit toggle
+	planning, trace logging, truncation safety, inheritance cleanup, and CSS-safe
+	serialization.
+
+### Recommended Additional Tests Beyond The Original Plan
+
+- UI tests for filtered required features versus optional displayed features.
+- UI tests for OpenType-default provider choice on dual-technology fonts.
+- Parser tests for valid custom tags, malformed tags, duplicate tags, and mixed
+	valid/invalid strings.
+- Native tests for malformed input, `E_OUTOFMEMORY` retry behavior, and traced
+	fallback paths.
+- Robustness tests for overlong strings with and without commas.
+- CSS export tests for escaping/serializing all valid accepted tags.
+- Notebook export coverage for writing-system default font features.
+
+These tests are tracked as review-driven tasks rather than optional stretch
+coverage.

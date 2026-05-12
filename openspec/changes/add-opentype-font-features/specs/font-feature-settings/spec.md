@@ -97,6 +97,50 @@ FieldWorks SHALL update user-visible strings and help so Font Features are descr
 - **WHEN** a user opens the relevant FieldWorks Help topic
 - **THEN** the Help content SHALL describe OpenType Font Features and their relationship to Graphite during Phase 1
 
+### Requirement: Dual-technology fonts default to OpenType features
+FieldWorks SHALL prefer OpenType feature discovery and selection when a selected font exposes both OpenType and Graphite feature sets, while still allowing explicit user selection of Graphite features.
+
+#### Scenario: Dual-technology font defaults to OpenType in shared UI
+- **WHEN** a selected font exposes both OpenType and Graphite feature sets
+- **THEN** the shared Font Features UI SHALL open on the OpenType provider by default
+
+#### Scenario: Explicit provider switch remains available
+- **WHEN** a user intentionally switches from the OpenType provider to the Graphite provider for a dual-technology font
+- **THEN** the UI SHALL update to the selected provider without silently discarding persisted font-feature data before the user confirms changes
+
+### Requirement: Accepted OpenType tags are syntactically validated
+FieldWorks SHALL accept any syntactically valid OpenType feature tag and SHALL reject malformed tags safely with trace logging.
+
+#### Scenario: Valid custom tags are preserved
+- **WHEN** a feature string contains a valid four-character printable ASCII tag that is not in a published registry allowlist
+- **THEN** FieldWorks SHALL accept and persist that tag in renderer-neutral `tag=value` form
+
+#### Scenario: Malformed tags are ignored and traced
+- **WHEN** a feature string contains a malformed tag such as the wrong length, control characters, or non-ASCII characters
+- **THEN** FieldWorks SHALL ignore the malformed entry, log the validation failure, and continue processing remaining valid entries
+
+### Requirement: Malformed and overlong feature strings fail safe
+FieldWorks SHALL handle malformed or overlong font-feature strings without crashing or hanging.
+
+#### Scenario: Overlong string without comma boundary does not hang
+- **WHEN** legacy truncation or normalization code receives an overlong feature string with no comma boundary
+- **THEN** FieldWorks SHALL terminate safely, preserve progress where possible, and SHALL NOT loop indefinitely
+
+#### Scenario: Mixed malformed input does not block valid settings
+- **WHEN** a feature string contains both malformed entries and valid entries
+- **THEN** valid entries SHALL continue to round-trip and apply while malformed entries are ignored and traced
+
+### Requirement: Font-feature inheritance follows the authoritative path
+FieldWorks SHALL use the existing style and writing-system inheritance path for default and explicit font features instead of maintaining a duplicate loading path.
+
+#### Scenario: Default font features load through existing style processing
+- **WHEN** a style inherits or overrides default font features
+- **THEN** the loaded value SHALL come through the existing `BaseStyleInfo` / `FontInfo.m_features` processing path
+
+#### Scenario: Style dialogs do not maintain a parallel default-feature loader
+- **WHEN** the style dialog loads or saves font features
+- **THEN** it SHALL adapt the authoritative inherited value rather than calculating a separate duplicate default-feature value path
+
 ### Requirement: Word DOCX export preserves supported OpenType font features
 FieldWorks SHALL export supported OpenType font feature settings into configured dictionary/reversal Word DOCX output using documented Microsoft WordprocessingML typography elements.
 
