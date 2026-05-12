@@ -71,7 +71,7 @@
 	Skips running tests for native C++ components. Does not skip building these tests. Implied by SkipNative.
 
 .PARAMETER ForceBuildBuildTasks
-	Buld FwBuildTasks even if FwBuildTasks.dll already exists. BuildTasks are rarely updated, so the default is not to build them.
+	Build FwBuildTasks even if FwBuildTasks.dll already exists and is newer than its source/package inputs.
 
 .PARAMETER BuildInstaller
 	If set, builds the installer via Build/InstallerBuild.proj after the main build.
@@ -388,6 +388,62 @@ function Resolve-NodeReuse {
 	}
 }
 
+function Test-FwBuildTasksBootstrapRequired {
+	param(
+		[Parameter(Mandatory = $true)][string]$OutputPath,
+		[Parameter(Mandatory = $true)][string]$RepoRoot
+	)
+
+	if (-not (Test-Path $OutputPath)) {
+		Write-Host "FwBuildTasks bootstrap output missing; rebuilding." -ForegroundColor Yellow
+		return $true
+	}
+
+	$configPath = "$OutputPath.config"
+	if (-not (Test-Path $configPath)) {
+		Write-Host "FwBuildTasks bootstrap config missing; rebuilding." -ForegroundColor Yellow
+		return $true
+	}
+
+	$output = Get-Item -LiteralPath $OutputPath
+	$sourceRoot = Join-Path $RepoRoot "Build/Src/FwBuildTasks"
+	$sourceFiles = Get-ChildItem -LiteralPath $sourceRoot -Recurse -Include *.cs,*.csproj,*.props,*.targets -File -ErrorAction Stop
+	$bootstrapInputs = @(
+		(Join-Path $RepoRoot "build.ps1"),
+		(Join-Path $RepoRoot "Directory.Packages.props"),
+		(Join-Path $RepoRoot "Directory.Build.props"),
+		(Join-Path $RepoRoot "Directory.Build.targets"),
+		(Join-Path $RepoRoot "Build/SilVersions.props"),
+		(Join-Path $RepoRoot "Build/Src/Directory.Packages.props"),
+		(Join-Path $RepoRoot "Build/Src/FwBuildTasks/Directory.Build.props")
+	)
+
+	$newestInput = $null
+	foreach ($sourceFile in $sourceFiles) {
+		if ($null -eq $newestInput -or $sourceFile.LastWriteTimeUtc -gt $newestInput.LastWriteTimeUtc) {
+			$newestInput = $sourceFile
+		}
+	}
+
+	foreach ($inputPath in $bootstrapInputs) {
+		if (-not (Test-Path $inputPath)) {
+			continue
+		}
+
+		$inputFile = Get-Item -LiteralPath $inputPath
+		if ($null -eq $newestInput -or $inputFile.LastWriteTimeUtc -gt $newestInput.LastWriteTimeUtc) {
+			$newestInput = $inputFile
+		}
+	}
+
+	if ($null -ne $newestInput -and $newestInput.LastWriteTimeUtc -gt $output.LastWriteTimeUtc) {
+		Write-Host "FwBuildTasks bootstrap output is older than $($newestInput.FullName); rebuilding." -ForegroundColor Yellow
+		return $true
+	}
+
+	return $false
+}
+
 try {
 	if (-not $SkipWorktreeLock) {
 		$worktreeLock = Enter-WorktreeLock -RepoRoot $PSScriptRoot -Context "FieldWorks build" -StartedBy $StartedBy
@@ -555,7 +611,12 @@ try {
 		}
 
 		# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
-		if (-not (Test-Path $fwTasksSourcePath) -or $ForceBuildBuildTasks) {
+		# Keep a cheap script-level freshness check here instead of always invoking the
+		# bootstrap project and letting MSBuild no-op it. FwBuildTasks must exist before
+		# the main graph loads its UsingTask declarations, and skipping the extra MSBuild
+		# startup keeps the common up-to-date path faster.
+		$buildBuildTasks = $ForceBuildBuildTasks -or (Test-FwBuildTasksBootstrapRequired -OutputPath $fwTasksSourcePath -RepoRoot $PSScriptRoot)
+		if ($buildBuildTasks) {
 			$fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
 			Invoke-MSBuild `
 				-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", `
