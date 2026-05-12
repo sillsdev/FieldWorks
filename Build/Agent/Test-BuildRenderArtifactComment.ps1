@@ -55,10 +55,22 @@ try {
 
 	$withoutArtifactsCommentPath = Join-Path $noArtifactsDirectory 'render-comment.md'
 	$withoutArtifactsOutputPath = Join-Path $noArtifactsDirectory 'github-output.txt'
+	$previousFailureComment = @'
+### Render comparison artifacts
+
+[0123456789ab run 123456.1](https://github.com/sillsdev/FieldWorks/actions/runs/123456) detected 2 render snapshot failure(s).
+
+- The artifact includes `index.html`, expected images, actual images, diff images, and metadata.
+- [Download render comparison artifacts](https://example.test/artifact)
+
+This comment is updated in place by CI for the latest run.
+<!-- Sticky Pull Request Commentfieldworks-render-comparison-artifacts -->
+'@
 	$withoutArtifactsParameters = @{
 		CommentPath = $withoutArtifactsCommentPath
 		GitHubOutputPath = $withoutArtifactsOutputPath
 		HasArtifacts = 'false'
+		PreviousCommentBody = $previousFailureComment
 		Repository = 'sillsdev/FieldWorks'
 		RunAttempt = '2'
 		RunId = '123457'
@@ -72,8 +84,7 @@ try {
 	Assert-True ($withoutArtifactsResult.HasArtifacts -eq $false) 'Expected helper to report no artifacts for a clean run.'
 
 	$withoutArtifactsComment = Get-Content -LiteralPath $withoutArtifactsCommentPath -Raw
-	Assert-True ($withoutArtifactsComment.Contains('No render snapshot failures were captured in the latest successful CI run.')) 'Expected clean-run comment text.'
-	Assert-True ($withoutArtifactsComment.Contains('Latest run: [fedcba987654 run 123457.2](https://github.com/sillsdev/FieldWorks/actions/runs/123457).')) 'Expected clean-run comment to include the latest run link.'
+	Assert-True ($withoutArtifactsComment.Contains('Render snapshot failures were reported in [0123456789ab run 123456.1](https://github.com/sillsdev/FieldWorks/actions/runs/123456), but the latest run [fedcba987654 run 123457.2](https://github.com/sillsdev/FieldWorks/actions/runs/123457) is clean.')) 'Expected clean-run comment to reference the prior failing run and the latest clean run.'
 }
 finally {
 	if (Test-Path -LiteralPath $workspace) {

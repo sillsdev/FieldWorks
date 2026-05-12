@@ -70,9 +70,9 @@ jobs:
           HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
         run: .\Build\Agent\Report-RenderArtifacts.ps1 -SkipComment
 
-      - name: Build render comparison comment
-        id: render_comment
-        if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
+      - name: Build render comparison failure comment
+        id: render_failure_comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
         shell: pwsh
         env:
           ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
@@ -80,12 +80,30 @@ jobs:
           HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
         run: .\Build\Agent\Build-RenderArtifactComment.ps1
 
-      - name: Update render comparison PR comment
-        if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
+      - name: Update render comparison PR comment for failures
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
         uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
         with:
           header: fieldworks-render-comparison-artifacts
-          path: ${{ steps.render_comment.outputs.comment_path }}
+          path: ${{ steps.render_failure_comment.outputs.comment_path }}
+          skip_unchanged: true
+
+      - name: Build render comparison resolved comment
+        id: render_clean_comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && success() }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HAS_ARTIFACTS: false
+        run: .\Build\Agent\Build-RenderArtifactComment.ps1
+
+      - name: Update render comparison PR comment for clean run
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && success() }}
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-render-comparison-artifacts
+          only_update: true
+          path: ${{ steps.render_clean_comment.outputs.comment_path }}
           skip_unchanged: true
 
       - name: Upload TRX test results (managed)
