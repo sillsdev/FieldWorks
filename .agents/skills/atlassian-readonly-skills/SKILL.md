@@ -22,27 +22,34 @@ Read-only Python utilities for Jira, Confluence, and Bitbucket integration, supp
 - References to `jira.sil.org` URLs
 - Requests to "look up" or "check" a JIRA ticket
 
-### ⚠️ Critical: Always Use Python Scripts
+### Critical: Use the Small Python CLI First
 
 **NEVER** attempt to:
 - Browse to `jira.sil.org` URLs directly (requires authentication)
 - Use `fetch_webpage` or similar tools on JIRA URLs
 - Use GitHub issue tools for LT-* tickets
+- Build large inline PowerShell commands or quote-heavy `python -c` snippets for normal Jira work
 
-**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+Run commands from the repository root. For normal read-only Jira issue work, use `scripts/jira.py`; it accepts either `LT-22324` or `https://jira.sil.org/browse/LT-22324`.
 
 ```powershell
-# Get a single issue (inline Python one-liner)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+# Read the sample issue
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py issue LT-22324
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py issue LT-22324 --all-fields
 
-# Search for issues (JQL query)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
+# Review comments and attachments
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py comments LT-22324
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py attachments LT-22324
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py download-attachments LT-22324 --out Output/Jira/LT-22324
 
-# Get issue workflow transitions
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
+# Search and workflow inspection
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py search "project = LT AND key = LT-22324"
+python .agents/skills/atlassian-readonly-skills/scripts/jira.py transitions LT-22324
 ```
 
-Use the script modules in this skill directly.
+Use the Python modules directly only when a task genuinely needs custom composition beyond the CLI. For write operations such as adding comments or uploading screenshots, switch to `atlassian-skills` and get explicit user intent before modifying Jira.
+
+By default, `issue` returns the fields agents usually need: summary, description, status, type, priority, assignee, reporter, timestamps, labels, and components. Use `--fields` for a custom field list, or `--all-fields` only when you really need every Jira field.
 
 ## Configuration
 
@@ -58,7 +65,9 @@ Set environment variables based on your deployment type. This mode is used when 
 # SIL JIRA instance for LT-* tickets
 JIRA_URL=https://jira.sil.org
 # Personal Access Token - generate at: https://jira.sil.org/secure/ViewProfile.jspa → Personal Access Tokens
-JIRA_PAT_TOKEN=your_jira_pat_token_here
+JIRA_PAT_TOKEN=
+JIRA_API_VERSION=2
+JIRA_SSL_VERIFY=true
 ```
 
 #### Cloud (API Token)
@@ -82,22 +91,26 @@ Generate API tokens at: https://id.atlassian.com/manage-profile/security/api-tok
 ```bash
 # Jira Data Center
 JIRA_URL=https://jira.your-company.com
-JIRA_PAT_TOKEN=your_pat_token
+JIRA_PAT_TOKEN=
 
 # Confluence Data Center
 CONFLUENCE_URL=https://confluence.your-company.com
 CONFLUENCE_PAT_TOKEN=your_pat_token
 
-# Bitbucket Server/Data Center
-BITBUCKET_URL=https://bitbucket.your-company.com
-BITBUCKET_PAT_TOKEN=your_pat_token
+# Bitbucket Server/Data Center, only if needed
+# BITBUCKET_URL=https://bitbucket.your-company.com
+# BITBUCKET_PAT_TOKEN=
 ```
 
 > **Note**: PAT Token takes precedence if both are provided.
 
 ### Mode 2: Parameter-Based (Agent Environments)
 
-Alternatively, call the scripts in this skill directly.
+When environment variables are not available, pass credentials directly to the Python functions.
+
+```python
+from scripts._common import AtlassianCredentials, check_available_skills
+from scripts.jira_issues import jira_get_issue
 
 # Create credentials object
 credentials = AtlassianCredentials(
@@ -225,13 +238,24 @@ result = confluence_get_page(
 ### Jira Issue Management (`scripts.jira_issues`)
 
 ```python
-from scripts.jira_issues import jira_get_issue
+from scripts.jira_issues import (
+    jira_download_attachment,
+    jira_download_attachments,
+    jira_get_attachments,
+    jira_get_comments,
+    jira_get_issue,
+)
 
 # Get issue by key
 jira_get_issue(
     issue_key="PROJ-123",
     credentials=credentials  # Optional
 )
+
+# Get comments and attachments
+jira_get_comments(issue_key="PROJ-123")
+jira_get_attachments(issue_key="PROJ-123")
+jira_download_attachments(issue_key="PROJ-123", output_dir="Output/Jira/PROJ-123")
 ```
 
 ### Jira Search (`scripts.jira_search`)
