@@ -1,4 +1,8 @@
+
 <Project>
+	<Import Project="$(MSBuildThisFileDirectory)Build\FieldWorks.Toolchain.props"
+		Condition="Exists('$(MSBuildThisFileDirectory)Build\FieldWorks.Toolchain.props')" />
+
 	<PropertyGroup>
 		<!-- Disable Visual Studio's project up to date checking so that a build with build.ps1 will not result in a re-build -->
 		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>

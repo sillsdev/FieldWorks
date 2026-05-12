@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml.Xsl;
+using System.Xml.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -24,6 +25,7 @@ namespace FwBuildTasks
 	{
 		public static bool IsUnix => Environment.OSVersion.Platform == PlatformID.Unix;
 		private const string NetFxLegacyVersionFolder = "v4.0.30319";
+		private const string ToolchainPolicyRelativePath = "Build\\FieldWorks.Toolchain.props";
 		private static readonly string[] NetFxFrameworkFolders = { "Framework64", "Framework" };
 
 		/// <summary>
@@ -267,19 +269,92 @@ namespace FwBuildTasks
 				$"Probed: {string.Join("; ", probeLog.Distinct())}");
 		}
 
-		private static IEnumerable<string> GetToolLocationHelperCandidates(string toolName, ICollection<string> probeLog)
+		private static string FindToolchainPolicyFile()
 		{
-			var candidates = new List<string>();
+			var repoRoot = Environment.GetEnvironmentVariable("FW_ROOT_CODE_DIR");
+			if (!String.IsNullOrWhiteSpace(repoRoot))
+			{
+				var repoCandidate = Path.Combine(repoRoot, ToolchainPolicyRelativePath);
+				if (File.Exists(repoCandidate))
+					return repoCandidate;
+			}
+
+			for (var directory = new DirectoryInfo(GetAssemblyFolder()); directory != null; directory = directory.Parent)
+			{
+				var candidate = Path.Combine(directory.FullName, ToolchainPolicyRelativePath);
+				if (File.Exists(candidate))
+					return candidate;
+			}
+
+			return null;
+		}
+
+		private static string GetToolchainPolicyProperty(string propertyName)
+		{
+			var policyFile = FindToolchainPolicyFile();
+			if (String.IsNullOrEmpty(policyFile))
+				return null;
+
 			try
 			{
-				candidates.Add(ToolLocationHelper.GetPathToDotNetFrameworkSdkFile(
-					toolName,
-					TargetDotNetFrameworkVersion.Version48,
-					VisualStudioVersion.Version170,
-					DotNetFrameworkArchitecture.Bitness64));
+				var policyDocument = XDocument.Load(policyFile);
+				if (policyDocument.Root == null)
+					return null;
+
+				return policyDocument.Root
+					.Elements("PropertyGroup")
+					.Elements(propertyName)
+					.Select(element => element.Value == null ? null : element.Value.Trim())
+					.FirstOrDefault(value => !String.IsNullOrEmpty(value));
 			}
 			catch
 			{
+				return null;
+			}
+		}
+
+		private static VisualStudioVersion? GetConfiguredDotNetFrameworkSdkVisualStudioVersion()
+		{
+			switch (GetToolchainPolicyProperty("FwDotNetFrameworkSdkVisualStudioVersion"))
+			{
+				case "10.0":
+					return VisualStudioVersion.Version100;
+				case "11.0":
+					return VisualStudioVersion.Version110;
+				case "12.0":
+					return VisualStudioVersion.Version120;
+				case "14.0":
+					return VisualStudioVersion.Version140;
+				case "15.0":
+					return VisualStudioVersion.Version150;
+				case "16.0":
+					return VisualStudioVersion.Version160;
+				case "17.0":
+					return VisualStudioVersion.Version170;
+				case "18.0":
+					return VisualStudioVersion.Version180;
+				default:
+					return null;
+			}
+		}
+
+		private static IEnumerable<string> GetToolLocationHelperCandidates(string toolName, ICollection<string> probeLog)
+		{
+			var candidates = new List<string>();
+			var configuredVisualStudioVersion = GetConfiguredDotNetFrameworkSdkVisualStudioVersion();
+			if (configuredVisualStudioVersion.HasValue)
+			{
+				try
+				{
+					candidates.Add(ToolLocationHelper.GetPathToDotNetFrameworkSdkFile(
+						toolName,
+						TargetDotNetFrameworkVersion.Version48,
+						configuredVisualStudioVersion.Value,
+						DotNetFrameworkArchitecture.Bitness64));
+				}
+				catch
+				{
+				}
 			}
 
 			try

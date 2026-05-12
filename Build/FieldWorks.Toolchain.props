@@ -1,0 +1,13 @@
+<Project>
+	<PropertyGroup Label="FieldWorks Toolchain Policy">
+		<!--
+			Repo-controlled toolchain policy. Scripts discover installations dynamically,
+			but only within this supported Visual Studio / MSVC configuration.
+		-->
+		<FwVisualStudioMajor Condition="'$(FwVisualStudioMajor)' == ''">17</FwVisualStudioMajor>
+		<FwVisualStudioVersionRange Condition="'$(FwVisualStudioVersionRange)' == ''">[17.0,18.0)</FwVisualStudioVersionRange>
+		<FwVCTargetsVersion Condition="'$(FwVCTargetsVersion)' == ''">v170</FwVCTargetsVersion>
+		<FwPlatformToolset Condition="'$(FwPlatformToolset)' == ''">v143</FwPlatformToolset>
+		<FwDotNetFrameworkSdkVisualStudioVersion Condition="'$(FwDotNetFrameworkSdkVisualStudioVersion)' == ''">17.0</FwDotNetFrameworkSdkVisualStudioVersion>
+	</PropertyGroup>
+</Project>
