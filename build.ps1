@@ -60,6 +60,10 @@
 .PARAMETER SkipRestore
 	Skips restoring NuGet packages
 
+.PARAMETER Clean
+	If set, removes the repository-level Output/ and Obj/ directories before building.
+	Useful to clear stale artifacts that can cause assembly version mismatches.
+
 .PARAMETER SkipNative
 	Skips building native C++ components. Use this for faster iterations when making purely managed code changes.
 
@@ -135,6 +139,10 @@
 	Builds Debug x64 including test projects and runs all tests.
 
 .EXAMPLE
+	.\build.ps1 -Clean
+	Removes Output/ and Obj/ first, then builds Debug x64.
+
+.EXAMPLE
 	.\build.ps1 -Serial -Verbosity detailed
 	Builds Debug x64 serially with detailed logging.
 
@@ -163,6 +171,7 @@ param(
 	[string]$LogFile,
 	[int]$TailLines,
 	[switch]$SkipRestore,
+	[switch]$Clean,
 	[switch]$SkipNative,
 	[switch]$SkipNativeTests,
 	[switch]$SkipManagedTests,
@@ -391,6 +400,26 @@ try {
 	$fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
 
 	Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -RepoRoot $PSScriptRoot -Action {
+		if ($Clean) {
+			if ($InstallerOnly) {
+				throw "-Clean cannot be used with -InstallerOnly because installer-only builds require existing Output\\<Configuration> artifacts."
+			}
+
+			Write-Host "Cleaning build artifacts (Output/, Obj/) ..." -ForegroundColor Cyan
+			$pathsToClean = @(
+				(Join-Path $PSScriptRoot "Output"),
+				(Join-Path $PSScriptRoot "Obj")
+			)
+
+			foreach ($path in $pathsToClean) {
+				if (Test-Path $path) {
+					Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
+				}
+			}
+
+			Write-Host "Clean complete." -ForegroundColor Green
+		}
+
 		# Initialize Visual Studio Developer environment
 		Initialize-VsDevEnvironment
 		Test-CvtresCompatibility
