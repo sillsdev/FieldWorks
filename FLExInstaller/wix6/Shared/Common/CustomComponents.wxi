@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Include>
+<Include xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<!--<DirectoryRef Id='FontsFolder'>
 	  <Component Id='Font1' Guid='*' Permanent='yes'>
 		<Condition>DOULOS_INSTALLED="False"</Condition>
@@ -58,4 +58,25 @@
 		<File Id='SILEzraOTSR' Source='..\resources\SILEOTSR.ttf' TrueType='yes'/>
 	  </Component>
 	</DirectoryRef>-->
+<?ifdef MASTERBUILDDIR?>
+	<!--
+	Newtonsoft.Json.dll: WiX 3 heat-exclude + KeyPathFix; WiX 6 wix6/Shared/Base/heat-exclude.xml + KeyPathFix.
+	NewtonsoftJsonApp: private copy. NewtonsoftJsonGac: GAC (Assembly=.net). Patch both components when the DLL changes.
+	-->
+	<DirectoryRef Id="APPFOLDER">
+		<Component Id="NewtonsoftJsonApp" Guid="{B8A47C61-2E90-4D1A-9F4E-7C3B5A682D01}">
+			<File Id="NewtonsoftJsonFileApp"
+				Name="Newtonsoft.Json.dll"
+				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
+				KeyPath="yes" />
+		</Component>
+		<Component Id="NewtonsoftJsonGac" Guid="*">
+			<File Id="NewtonsoftJsonFileGac"
+				Name="Newtonsoft.Json.dll"
+				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
+				KeyPath="yes"
+				Assembly=".net" />
+		</Component>
+	</DirectoryRef>
+<?endif?>
 </Include>
