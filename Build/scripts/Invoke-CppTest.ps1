@@ -219,11 +219,9 @@ function Ensure-UnitPlusPlusLibrary {
 
 function Ensure-TestViewsPrerequisites {
 	if ($TestProject -ne 'TestViews') { return }
-	$fwKernelHeader = Join-Path $WorktreePath "Output\$Configuration\Common\FwKernelTlb.h"
-	$viewsObj = Join-Path $WorktreePath "Obj\$Configuration\Views\autopch\VwRootBox.obj"
-	if ((Test-Path $fwKernelHeader) -and (Test-Path $viewsObj)) { return }
+	if (-not (Test-ViewsNativeArtifactsStale -RepoRoot $WorktreePath -Configuration $Configuration)) { return }
 
-	Write-Host "[INFO] Missing native artifacts or generated headers required for TestViews." -ForegroundColor Yellow
+	Write-Host "[INFO] Refreshing native artifacts and generated headers required for TestViews." -ForegroundColor Yellow
 	Build-NativeArtifacts
 	Build-ViewsInterfacesArtifacts
 }
