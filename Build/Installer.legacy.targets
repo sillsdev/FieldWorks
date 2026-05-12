@@ -156,7 +156,15 @@
 		<!-- copy in new stuff -->
 		<PropertyGroup>
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+			<_FieldWorksPatchableInstallerHeatExclude>$([MSBuild]::NormalizePath('$(fwrt)', 'FLExInstaller', 'PatchableInstallerHeatExclude.xml'))</_FieldWorksPatchableInstallerHeatExclude>
+			<_PatchableInstallerHeatExcludeDest>$([MSBuild]::NormalizePath('$(fwrt)', 'PatchableInstaller', 'BaseInstallerBuild', 'heat-exclude.xml'))</_PatchableInstallerHeatExcludeDest>
 		</PropertyGroup>
+		<Copy
+			SourceFiles="$(_FieldWorksPatchableInstallerHeatExclude)"
+			DestinationFiles="$(_PatchableInstallerHeatExcludeDest)"
+			SkipUnchangedFiles="false"
+			Condition="Exists('$(_FieldWorksPatchableInstallerHeatExclude)')"
+		/>
 		<ItemGroup>
 			<DeveloperFiles Include="$(fwrt)\**\.gitignore" />
 			<DeveloperFiles Include="$(fwrt)\**\*~" />
@@ -349,15 +357,6 @@
 			SourceFiles="@(OverrideFiles)"
 			OverwriteReadonlyFiles="true"
 			DestinationFolder="$(OverridesDestDir)"
-		/>
-		<!-- Newtonsoft.Json 13.0.x shares assembly version 13.0.0.0; GAC can win over the private copy. -->
-		<PropertyGroup>
-			<NewtonsoftJsonPrivateCodeBaseScript>$(fwrt)\Build\Agent\Patch-NewtonsoftJsonPrivateCodeBase.ps1</NewtonsoftJsonPrivateCodeBaseScript>
-		</PropertyGroup>
-		<Exec
-			Condition="Exists('$(NewtonsoftJsonPrivateCodeBaseScript)')"
-			Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(NewtonsoftJsonPrivateCodeBaseScript)&quot; -StagedBinDir &quot;$(AppBuildDir)\$(BinDirSuffix)&quot;"
-			IgnoreExitCode="false"
 		/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata" />
 	</Target>
