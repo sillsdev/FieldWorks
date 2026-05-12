@@ -255,20 +255,20 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+				try
 				{
-					try
+					if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					{
 						m_synchronizeInvoke.Invoke((Action<string>)(s => m_progressDialog.Message = s), new[] { value });
 					}
-					catch (Exception e)
-					{
-						// Fixes LT-22357.
-						Debug.Assert(false);
-					}
+					else
+						m_progressDialog.Message = value;
 				}
-				else
-					m_progressDialog.Message = value;
+				catch (Exception e)
+				{
+					// Fixes LT-22357.
+					Debug.Assert(false);
+				}
 			}
 		}
 
@@ -361,20 +361,21 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+				try
 				{
-					try
+					if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					{
 						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Minimum = i), new object[] { value });
 					}
-					catch (Exception e)
-					{
-						// Fixes LT-22357.
-						Debug.Assert(false);
-					}
+					else
+						m_progressDialog.Minimum = value;
+
 				}
-				else
-					m_progressDialog.Minimum = value;
+				catch (Exception e)
+				{
+					// Fixes LT-22357.
+					Debug.Assert(false);
+				}
 			}
 		}
 
@@ -398,20 +399,20 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
-				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+				try
 				{
-					try
+					if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
 					{
 						m_synchronizeInvoke.Invoke((Action<int>)(i => m_progressDialog.Maximum = i), new object[] { value });
 					}
-					catch (Exception e)
-					{
-						// Fixes LT-22357.
-						Debug.Assert(false);
-					}
+					else
+						m_progressDialog.Maximum = value;
 				}
-				else
-					m_progressDialog.Maximum = value;
+				catch (Exception e)
+				{
+					// Fixes LT-22357.
+					Debug.Assert(false);
+				}
 			}
 		}
 		#endregion
@@ -829,10 +830,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void m_worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
-				m_synchronizeInvoke.Invoke((Action)m_progressDialog.Close, null);
-			else
-				m_progressDialog.Close();
+			if (m_progressDialog != null)
+			{
+				if (m_fCreatedProgressDlg && m_synchronizeInvoke.InvokeRequired)
+					m_synchronizeInvoke.Invoke((Action)m_progressDialog.Close, null);
+				else
+					m_progressDialog.Close();
+			}
 		}
 		#endregion
 	}
