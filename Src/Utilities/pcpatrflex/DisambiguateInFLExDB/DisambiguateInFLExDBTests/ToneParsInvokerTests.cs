@@ -183,28 +183,7 @@ namespace SIL.DisambiguateInFLExDBTests
 
 		private string NormalizeContent(string input)
 		{
-			string tp = "tonepars64";
-			string normalized = NormalizeViaIndex(input, "AppData", "");
-			normalized = NormalizeViaIndex(normalized, "TestData", "");
-			normalized = NormalizeViaIndex(normalized, tp, tp);
-			return normalized;
-		}
-
-		private static string NormalizeViaIndex(string input, string match, string change)
-		{
-			// I tried to use regular expressions but never got them to match...
-			int iAppData = input.IndexOf(match);
-			if (iAppData != -1)
-			{
-				int iColon = input.IndexOf(":");
-				if (iColon != -1)
-				{
-					iColon--; // skip the drive letter, too
-					string appdataPath = input.Substring(iColon, iAppData - iColon);
-					input = input.Replace(appdataPath, change);
-				}
-			}
-			return input;
+			return Regex.Replace(input, @"[A-Za-z]:\\(?:[^\\\r\n""]+\\)*", "");
 		}
 
 		private void CreateExpectedFileStrings()

@@ -25,4 +25,20 @@
 			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true;dir-outputBase=$(_TransformOutputBase)"
 			Condition="Exists('$(_InstallerBuildProj)')" />
 	</Target>
+	<!--
+		WPF temp-file crash recovery:
+		If a build is interrupted between GenerateTemporaryTargetAssembly and
+		CleanupTemporaryTargetAssembly, stale *_wpftmp* files remain in the source
+		directory and break the next build. This target deletes them before Pass 2 runs.
+	-->
+	<Target Name="_CleanStaleWpfTempProjects"
+		BeforeTargets="MarkupCompilePass2ForMainAssembly"
+		Condition="'$(UseWPF)' == 'true' and '$(_IsWpfTempProject)' != 'true'">
+		<ItemGroup>
+			<_StaleWpfTemp Include="$(MSBuildProjectDirectory)\*_wpftmp*" />
+		</ItemGroup>
+		<Delete Files="@(_StaleWpfTemp)" Condition="'@(_StaleWpfTemp)' != ''" />
+		<Message Text="Cleaned stale WPF temp files: @(_StaleWpfTemp)"
+			Condition="'@(_StaleWpfTemp)' != ''" Importance="normal" />
+	</Target>
 </Project>

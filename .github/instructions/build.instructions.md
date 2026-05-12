@@ -10,6 +10,11 @@ This file documents the **supported** build workflow for FieldWorks.
 
 FieldWorks is **Windows-first** and **x64-only**. Use the repo scripts so build ordering (native before managed) is correct.
 
+## Non-Windows hosts
+- Linux and macOS are supported for editing, code search, documentation, specs, and agent workflows only.
+- Do not attempt to build, test, or run installer/setup flows on non-Windows hosts.
+- `build.ps1` and `test.ps1` intentionally fail fast on non-Windows hosts so automation notices the environment mismatch.
+
 ## Quick start (PowerShell)
 ```powershell
 # Full traversal build (Debug/x64 defaults)
