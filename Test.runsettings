@@ -50,6 +50,9 @@
 
       <!-- Prefer a failing test over a modal dialog or silent continue -->
       <AssertExceptionEnabled>true</AssertExceptionEnabled>
+
+      <!-- Unconditional test-mode override: bypasses registry AssertMessageBox key -->
+      <FW_TEST_MODE>1</FW_TEST_MODE>
     </EnvironmentVariables>
   </RunConfiguration>
 
