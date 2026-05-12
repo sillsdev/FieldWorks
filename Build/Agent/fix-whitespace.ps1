@@ -13,7 +13,7 @@ function Get-BaseRef {
 function Test-HasUtf8Bom {
 	param([Parameter(Mandatory)][string]$Path)
 
-	# Read only the first three bytes to check for a UTF-8 BOM to avoid loading the entire file.
+	# Read only the first three bytes to avoid loading the entire file.
 	$buffer = [byte[]]::new(3)
 	$stream = [System.IO.File]::OpenRead($Path)
 	try {
@@ -85,6 +85,5 @@ $files = $fixFiles | Where-Object { $_ -and (Test-Path $_) }
 
 foreach ($f in $files) { Format-FileWhitespace -Path $f }
 
-Write-Host "Whitespace fix completed. Review and stage the updated files before committing."
-Write-Host "If check-whitespace reported an older commit in origin/main..HEAD, rewrite history with amend, squash, or rebase so that offending commit is no longer part of the branch."
+Write-Host "Whitespace fix completed. Review changes, commit, and rebase as needed."
 exit 0

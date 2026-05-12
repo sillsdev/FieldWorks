@@ -49,7 +49,7 @@ description: "Runtime debugging and tracing guidance for FieldWorks"
 
 ## Dev switch (auto config)
 - FieldWorks now supports a swappable diagnostics config via `FieldWorks.Diagnostics.config`.
-- Default is quiet. `build.ps1` now enables the dev diagnostics config automatically for Debug builds unless you override `/p:UseDevTraceConfig`. You can also force it via `UseDevTraceConfig=true`, by setting environment variable `FW_TRACE_LOG` before the build, or by passing `-TraceCrashes` to `build.ps1`; the dev diagnostics file is copied as `FieldWorks.Diagnostics.config` in the output.
+- Default is quiet. Use `build.ps1 -EnableTracing` to copy the dev diagnostics file into the output as `FieldWorks.Diagnostics.config`. You can also force it via `UseDevTraceConfig=true` or by setting environment variable `FW_TRACE_LOG` before the build.
 - Dev log location: `Output/Debug/FieldWorks.trace.log` (relative to the app folder) so it’s easy to collect alongside binaries.
 - Dev config logs to `%temp%/FieldWorks.trace.log` and turns on the core switches above. Edit `Src/Common/FieldWorks/FieldWorks.Diagnostics.dev.config` to change log path or switches.
 
@@ -59,5 +59,5 @@ description: "Runtime debugging and tracing guidance for FieldWorks"
 
 ## Proposed Improvements (dev-only)
 - Add `Docs/FieldWorks.trace.sample.config` with the snippet above for easy reuse.
-- Introduce a dev flag (`UseDevTraceConfig=true` or `FW_TRACE_LOG` env var) that copies the dev diagnostics file next to `FieldWorks.exe` in Debug builds so tracing is on by default for local runs.
+- Keep `build.ps1 -EnableTracing` as the single scripted path that copies the dev diagnostics file next to `FieldWorks.exe` for local trace-enabled runs.
 - Document standard trace switches in `Docs/logging.md` and keep `EnvVarTraceListener` as the default listener for dev traces.
