@@ -98,8 +98,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
+					bool isReversal = model != null && model.IsReversal;
 					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
-						node.Parent != null && node.Parent.Label == "MainEntrySubsenses", model.IsReversal);
+						node.Parent != null && node.Parent.Label == "MainEntrySubsenses", isReversal);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
