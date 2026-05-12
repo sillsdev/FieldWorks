@@ -145,6 +145,15 @@
 	<Copy SourceFiles="@(IcuDataFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedDataDir)\Icu$(IcuVersion)\%(RecursiveDir)" />
 	<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedL10nDir)\%(RecursiveDir)" />
 	<Copy SourceFiles="@(BinFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\%(RecursiveDir)" />
+	<!-- Newtonsoft.Json 13.0.x shares assembly version 13.0.0.0; GAC can win over the private copy. -->
+	<PropertyGroup>
+	  <NewtonsoftJsonPrivateCodeBaseScript>$(fwrt)\Build\Agent\Patch-NewtonsoftJsonPrivateCodeBase.ps1</NewtonsoftJsonPrivateCodeBaseScript>
+	</PropertyGroup>
+	<Exec
+	  Condition="Exists('$(NewtonsoftJsonPrivateCodeBaseScript)')"
+	  Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(NewtonsoftJsonPrivateCodeBaseScript)&quot; -StagedBinDir &quot;$(StagedBinDir)&quot;"
+	  IgnoreExitCode="false"
+	/>
   </Target>
 
   <Target Name="ValidateInstallerAddons" Condition="'$(BuildAdditionalApps)'=='true'">
