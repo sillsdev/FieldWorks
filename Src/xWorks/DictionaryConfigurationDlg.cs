@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Returns the top-level ancestor of the given node
 		/// </summary>
-		public static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
+		private static ConfigurableDictionaryNode GetTopLevelNode(ConfigurableDictionaryNode childNode)
 		{
 			while (childNode.Parent != null)
 				childNode = childNode.Parent;

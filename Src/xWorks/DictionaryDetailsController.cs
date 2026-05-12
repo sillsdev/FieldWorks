@@ -75,7 +75,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_configModel = model;
 			m_node = node;
-			bool isReversal = DictionaryConfigurationDlg.GetTopLevelNode(node).Label == "Reversal Entry";
 
 			View.SuspendLayout();
 
@@ -100,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 				else if (Options is DictionaryNodeSenseOptions)
 				{
 					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
-						node.Parent != null && node.Parent.Label == "MainEntrySubsenses", isReversal);
+						node.Parent != null && node.Parent.Label == "MainEntrySubsenses", model.IsReversal);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{

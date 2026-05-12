@@ -2432,8 +2432,9 @@ namespace SIL.FieldWorks.XWorks
 
 			var senseOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
-			var rootNode = DictionaryConfigurationDlg.GetTopLevelNode(nodeList.Last());
+			var rootNode = nodeList.First();
 			bool isReversalEntry = rootNode.Label == "Reversal Entry";
+
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, sense, decorator, ref info, isReversalEntry);
 			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
