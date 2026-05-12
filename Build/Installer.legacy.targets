@@ -350,6 +350,15 @@
 			OverwriteReadonlyFiles="true"
 			DestinationFolder="$(OverridesDestDir)"
 		/>
+		<!-- Newtonsoft.Json 13.0.x shares assembly version 13.0.0.0; GAC can win over the private copy. -->
+		<PropertyGroup>
+			<NewtonsoftJsonPrivateCodeBaseScript>$(fwrt)\Build\Agent\Patch-NewtonsoftJsonPrivateCodeBase.ps1</NewtonsoftJsonPrivateCodeBaseScript>
+		</PropertyGroup>
+		<Exec
+			Condition="Exists('$(NewtonsoftJsonPrivateCodeBaseScript)')"
+			Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(NewtonsoftJsonPrivateCodeBaseScript)&quot; -StagedBinDir &quot;$(AppBuildDir)\$(BinDirSuffix)&quot;"
+			IgnoreExitCode="false"
+		/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata" />
 	</Target>
 	<Target Name="ValidateInstallerAddons" Condition="'$(BuildAdditionalApps)'=='true'">
