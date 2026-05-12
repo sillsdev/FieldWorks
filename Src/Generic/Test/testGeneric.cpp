@@ -35,7 +35,7 @@ namespace
 		TerminateProcess(GetCurrentProcess(), 3);
 	}
 
-	bool IsFailureInjectionEnabled(const char * pszName)
+	bool IsEnvironmentSwitchEnabled(const char * pszName)
 	{
 		size_t cchValue = 0;
 		char * pszValue = NULL;
@@ -67,8 +67,15 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
-		g_previousAssertProc = SetAssertProc(ThrowingAssertProc);
-		ShowAssertMessageBox(0); // Disable assertion dialogs
+		if (IsEnvironmentSwitchEnabled("FW_TEST_ALLOW_ASSERT_DIALOGS"))
+		{
+			ShowAssertMessageBox(1);
+		}
+		else
+		{
+			g_previousAssertProc = SetAssertProc(ThrowingAssertProc);
+			ShowAssertMessageBox(0); // Disable assertion dialogs
+		}
 #if defined(WIN32) || defined(WIN64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
@@ -80,8 +87,8 @@ namespace unitpp
 	{
 		signal(SIGABRT, TerminateOnSigAbrt);
 
-		const bool fInjectTeardownAssert = IsFailureInjectionEnabled("FW_TEST_INDUCE_TEARDOWN_ASSERT");
-		const bool fInjectTeardownAbort = IsFailureInjectionEnabled("FW_TEST_INDUCE_TEARDOWN_ABORT");
+		const bool fInjectTeardownAssert = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ASSERT");
+		const bool fInjectTeardownAbort = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ABORT");
 		if (fInjectTeardownAssert || fInjectTeardownAbort)
 			RestorePreviousAssertProc();
 

@@ -109,6 +109,32 @@ Build FieldWorks using the PowerShell build script:
 
 For more build options, see [.github/instructions/build.instructions.md](../.github/instructions/build.instructions.md).
 
+### Run tests from the command line
+
+Use `test.ps1` for local test runs:
+
+```powershell
+.\test.ps1
+.\test.ps1 -TestProject "Src/Common/FwUtils/FwUtilsTests"
+.\test.ps1 -SkipManaged -TestProject TestGeneric
+```
+
+By default, test runs suppress FieldWorks assertion dialogs so unattended runs cannot hang on Abort/Retry/Ignore UI. For a local debugger session where you intentionally want the previous interactive assertion dialog behavior, use the command-line switch:
+
+```powershell
+.\test.ps1 -SkipManaged -TestProject TestGeneric -AllowAssertDialogs
+```
+
+The environment-variable equivalent is `FW_TEST_ALLOW_ASSERT_DIALOGS=1`:
+
+```powershell
+$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
+.\test.ps1 -SkipManaged -TestProject TestGeneric
+Remove-Item Env:FW_TEST_ALLOW_ASSERT_DIALOGS
+```
+
+Only use this opt-in for attended local debugging. CI and normal local runs should leave it unset.
+
 ### 5. VS Code and Visual Studio usage
 
 Default recommendation:

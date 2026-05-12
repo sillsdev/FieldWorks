@@ -22,6 +22,10 @@
 .PARAMETER WorktreePath
 	Path to the worktree root. Defaults to current directory.
 
+.PARAMETER AllowAssertDialogs
+	Allow FieldWorks Abort/Retry/Ignore assertion dialogs during this local test run.
+	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
+
 .EXAMPLE
 	.\Invoke-CppTest.ps1 -TestProject TestGeneric
 	Build and run TestGeneric using MSBuild.
@@ -33,6 +37,10 @@
 .EXAMPLE
 	.\Invoke-CppTest.ps1 -BuildSystem NMake -TestProject TestGeneric
 	Build TestGeneric using legacy nmake (requires VsDevCmd).
+
+.EXAMPLE
+	.\Invoke-CppTest.ps1 -Action Run -TestProject TestGeneric -AllowAssertDialogs
+	Run TestGeneric with interactive FieldWorks assertion dialogs enabled for debugger attachment.
 #>
 [CmdletBinding()]
 param(
@@ -56,7 +64,9 @@ param(
 
 	[string[]]$TestArguments,
 
-	[string]$LogPath
+	[string]$LogPath,
+
+	[switch]$AllowAssertDialogs
 )
 
 Set-StrictMode -Version Latest
@@ -74,6 +84,80 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
+function Test-EnvironmentSwitchEnabled {
+	param(
+		[string]$Name
+	)
+
+	$value = [Environment]::GetEnvironmentVariable($Name)
+	if ([string]::IsNullOrWhiteSpace($value)) {
+		return $false
+	}
+
+	return @('1', 'true', 'yes', 'on') -contains $value.Trim().ToLowerInvariant()
+}
+
+function Set-AssertDialogEnvironment {
+	param(
+		[bool]$AllowDialogs
+	)
+
+	if ($AllowDialogs) {
+		$env:AssertUiEnabled = 'true'
+		$env:AssertExceptionEnabled = 'false'
+		$env:FW_TEST_MODE = '0'
+		$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
+		Write-Host "[WARN] Interactive assertion dialogs are enabled for this local native test run." -ForegroundColor Yellow
+		return
+	}
+
+	# Suppress assertion dialog boxes (DebugProcs.dll checks these env vars).
+	# This prevents unattended tests from blocking on MessageBox popups.
+	$env:AssertUiEnabled = 'false'
+	$env:AssertExceptionEnabled = 'true'
+	# Unconditional test-mode override: bypasses registry AssertMessageBox key in DebugProcs.dll.
+	$env:FW_TEST_MODE = '1'
+}
+
+function Resolve-NativeTestExitCode {
+	param(
+		[bool]$TimedOut,
+		[bool]$TerminatedAfterCompletion,
+		$NativeExitCode,
+		$SummaryExitCode
+	)
+
+	if ($TimedOut) {
+		return -1
+	}
+
+	if ($null -ne $SummaryExitCode -and $SummaryExitCode -ne 0) {
+		return $SummaryExitCode
+	}
+
+	if ($TerminatedAfterCompletion) {
+		if ($null -ne $NativeExitCode -and $NativeExitCode -ne 0) {
+			return $NativeExitCode
+		}
+
+		return 1
+	}
+
+	if ($null -ne $NativeExitCode -and $NativeExitCode -ne 0) {
+		return $NativeExitCode
+	}
+
+	if ($null -ne $SummaryExitCode) {
+		return $SummaryExitCode
+	}
+
+	if ($null -ne $NativeExitCode) {
+		return $NativeExitCode
+	}
+
+	return -1
+}
+
 # =============================================================================
 # Environment Setup
 # =============================================================================
@@ -81,11 +165,8 @@ Import-Module $helpersPath -Force
 # Initialize VS environment (needed for NMake and MSBuild)
 Initialize-VsDevEnvironment
 
-# Suppress assertion dialog boxes (DebugProcs.dll checks this env var)
-# This prevents tests from blocking on MessageBox popups
-$env:AssertUiEnabled = 'false'
-# Unconditional test-mode override: bypasses registry AssertMessageBox key in DebugProcs.dll
-$env:FW_TEST_MODE = '1'
+$allowAssertDialogsForRun = $AllowAssertDialogs -or (Test-EnvironmentSwitchEnabled -Name 'FW_TEST_ALLOW_ASSERT_DIALOGS')
+Set-AssertDialogEnvironment -AllowDialogs $allowAssertDialogsForRun
 
 # Suppress Windows Error Reporting and crash dialogs
 # SEM_FAILCRITICALERRORS = 0x0001
@@ -571,9 +652,10 @@ function Invoke-Run {
 		Write-Host "--- end output ---" -ForegroundColor Yellow
 	}
 
-	# Determine exit code using both the real process exit code and the Unit++ summary.
-	# The process exit code is authoritative for crashes/teardown failures that occur after
-	# the Unit++ summary has already been written.
+	# Determine exit code using both the Unit++ summary and the real process exit code.
+	# When Unit++ reports failures/errors, prefer that count so the user sees the actionable
+	# test failure total. Fall back to the process exit code for crashes/teardown failures
+	# that happen without a non-zero Unit++ summary.
 	$exitCode = -1
 	$summaryExitCode = $null
 	if (-not $timedOut) {
@@ -582,24 +664,17 @@ function Invoke-Run {
 			$m = [regex]::Match($summaryLine, 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]')
 			$summaryExitCode = [int]$m.Groups[2].Value + [int]$m.Groups[3].Value
 		}
+	}
+	$exitCode = Resolve-NativeTestExitCode `
+		-TimedOut $timedOut `
+		-TerminatedAfterCompletion $terminatedAfterCompletion `
+		-NativeExitCode $nativeExitCode `
+		-SummaryExitCode $summaryExitCode
 
-		if ($terminatedAfterCompletion) {
-			if ($null -ne $nativeExitCode -and $nativeExitCode -ne 0) {
-				$exitCode = $nativeExitCode
-			}
-			else {
-				$exitCode = 1
-			}
-		}
-		elseif ($null -ne $nativeExitCode -and $nativeExitCode -ne 0) {
-			$exitCode = $nativeExitCode
-		}
-		elseif ($null -ne $summaryExitCode) {
-			$exitCode = $summaryExitCode
-		}
-		elseif ($null -ne $nativeExitCode) {
-			$exitCode = $nativeExitCode
-		}
+	if ($null -ne $summaryExitCode -and $summaryExitCode -ne 0 -and
+		$null -ne $nativeExitCode -and $nativeExitCode -ne 0 -and
+		$nativeExitCode -ne $summaryExitCode) {
+		Write-Host "Native process exit code was $nativeExitCode; reporting Unit++ failure/error count $summaryExitCode." -ForegroundColor Yellow
 	}
 
 	Write-Host ""

@@ -32,6 +32,10 @@
 .PARAMETER SkipManaged
 	Run only native C++ tests, skipping managed tests.
 
+.PARAMETER AllowAssertDialogs
+	Allow FieldWorks Abort/Retry/Ignore assertion dialogs during this local test run.
+	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
+
 .PARAMETER StartedBy
 	Optional actor label written to worktree lock metadata (for example: user or agent).
 	Defaults to FW_BUILD_STARTED_BY if set; otherwise 'unknown'.
@@ -56,6 +60,15 @@
 	.\test.ps1 -NoBuild -Verbosity detailed
 	Runs tests without building first, with detailed output.
 
+.EXAMPLE
+	.\test.ps1 -SkipManaged -TestProject TestGeneric -AllowAssertDialogs
+	Runs TestGeneric with interactive FieldWorks assertion dialogs enabled for debugger attachment.
+
+.EXAMPLE
+	$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
+	.\test.ps1 -SkipManaged -TestProject TestGeneric
+	Uses the environment variable equivalent of -AllowAssertDialogs. Clear the variable after debugging.
+
 .NOTES
 	FieldWorks is x64-only. Tests run in 64-bit mode.
 #>
@@ -70,6 +83,7 @@ param(
 	[string]$Verbosity = "normal",
 	[switch]$SkipNative,
 	[switch]$SkipManaged,
+	[switch]$AllowAssertDialogs,
 	[switch]$SkipDependencyCheck,
 	[switch]$SkipWorktreeLock,
 	[ValidateSet('user', 'agent', 'unknown')]
@@ -95,6 +109,77 @@ if (-not (Test-Path $helpersPath)) {
 	exit 1
 }
 Import-Module $helpersPath -Force
+
+function Test-EnvironmentSwitchEnabled {
+	param(
+		[string]$Name
+	)
+
+	$value = [Environment]::GetEnvironmentVariable($Name)
+	if ([string]::IsNullOrWhiteSpace($value)) {
+		return $false
+	}
+
+	return @('1', 'true', 'yes', 'on') -contains $value.Trim().ToLowerInvariant()
+}
+
+function Set-TestAssertDialogEnvironment {
+	param(
+		[bool]$AllowDialogs
+	)
+
+	if ($AllowDialogs) {
+		$env:AssertUiEnabled = 'true'
+		$env:AssertExceptionEnabled = 'false'
+		$env:FW_TEST_MODE = '0'
+		$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
+		return
+	}
+
+	$env:AssertUiEnabled = 'false'
+	$env:AssertExceptionEnabled = 'true'
+	$env:FW_TEST_MODE = '1'
+}
+
+function New-TestRunSettingsForAssertDialogMode {
+	param(
+		[string]$SourcePath,
+		[string]$Configuration,
+		[bool]$AllowDialogs
+	)
+
+	if (-not $AllowDialogs) {
+		return $SourcePath
+	}
+
+	[xml]$runSettings = Get-Content -LiteralPath $SourcePath -Raw
+	$environmentVariables = $runSettings.RunSettings.RunConfiguration.EnvironmentVariables
+	$environmentVariables.AssertUiEnabled = 'true'
+	$environmentVariables.AssertExceptionEnabled = 'false'
+	$environmentVariables.FW_TEST_MODE = '0'
+
+	$allowNode = $environmentVariables.FW_TEST_ALLOW_ASSERT_DIALOGS
+	if ($allowNode) {
+		$allowNode = $environmentVariables.SelectSingleNode('FW_TEST_ALLOW_ASSERT_DIALOGS')
+		$allowNode.InnerText = '1'
+	}
+	else {
+		$allowNode = $runSettings.CreateElement('FW_TEST_ALLOW_ASSERT_DIALOGS')
+		$allowNode.InnerText = '1'
+		[void]$environmentVariables.AppendChild($allowNode)
+	}
+
+	$runSettingsDir = Join-Path $PSScriptRoot "Output/$Configuration"
+	if (-not (Test-Path $runSettingsDir)) {
+		New-Item -ItemType Directory -Force -Path $runSettingsDir | Out-Null
+	}
+
+	$runSettingsPath = Join-Path $runSettingsDir 'Test.allow-assert-dialogs.runsettings'
+	$runSettings.Save($runSettingsPath)
+	return $runSettingsPath
+}
+
+$allowAssertDialogsForRun = $AllowAssertDialogs -or (Test-EnvironmentSwitchEnabled -Name 'FW_TEST_ALLOW_ASSERT_DIALOGS')
 
 function Add-UniquePath {
 	param(
@@ -234,6 +319,11 @@ try {
 		# Set architecture (x64-only)
 		$env:arch = 'x64'
 
+		Set-TestAssertDialogEnvironment -AllowDialogs $allowAssertDialogsForRun
+		if ($allowAssertDialogsForRun) {
+			Write-Host "[WARN] Interactive assertion dialogs are enabled for this local test run." -ForegroundColor Yellow
+		}
+
 		# Stop conflicting processes
 		Stop-ConflictingProcesses @cleanupArgs
 
@@ -274,7 +364,15 @@ try {
 			$overallExitCode = 0
 			foreach ($proj in $projectsToRun) {
 				Write-Host "Dispatching $proj to Invoke-CppTest.ps1..." -ForegroundColor Cyan
-				& $cppScript -Action $action -TestProject $proj -Configuration $Configuration
+				$cppTestArgs = @{
+					Action = $action
+					TestProject = $proj
+					Configuration = $Configuration
+				}
+				if ($allowAssertDialogsForRun) {
+					$cppTestArgs.AllowAssertDialogs = $true
+				}
+				& $cppScript @cppTestArgs
 				if ($LASTEXITCODE -ne 0) {
 					$overallExitCode = $LASTEXITCODE
 					$message = "$proj failed with exit code $LASTEXITCODE"
@@ -379,10 +477,8 @@ try {
 
 		# FieldWorks native + managed assertion infrastructure may show modal UI unless
 		# explicitly disabled. Ensure the test host inherits these settings even when
-		# invoked outside the .runsettings flow.
-		$env:AssertUiEnabled = 'false'
-		$env:AssertExceptionEnabled = 'true'
-		$env:FW_TEST_MODE = '1'
+		# invoked outside the .runsettings flow, unless a local debugging run opted back in.
+		Set-TestAssertDialogEnvironment -AllowDialogs $allowAssertDialogsForRun
 
 		$outputDir = Join-Path $PSScriptRoot "Output/$Configuration"
 
@@ -540,7 +636,11 @@ try {
 			}
 		}
 
-		$runSettingsPath = Join-Path $PSScriptRoot "Test.runsettings"
+		$runSettingsSourcePath = Join-Path $PSScriptRoot "Test.runsettings"
+		$runSettingsPath = New-TestRunSettingsForAssertDialogMode `
+			-SourcePath $runSettingsSourcePath `
+			-Configuration $Configuration `
+			-AllowDialogs $allowAssertDialogsForRun
 
 		$vstestArgs = @()
 		$vstestArgs += $testDlls

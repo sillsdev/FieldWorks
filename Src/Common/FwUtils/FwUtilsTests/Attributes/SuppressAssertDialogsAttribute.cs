@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		private string m_previousAssertUiEnabled;
 		private string m_previousAssertExceptionEnabled;
 		private string m_previousTestMode;
+		private bool m_suppressionApplied;
 
 		/// <summary/>
 		public override ActionTargets Targets => ActionTargets.Suite;
@@ -33,9 +34,14 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		public override void BeforeTest(ITest test)
 		{
 			base.BeforeTest(test);
+			m_suppressionApplied = false;
+
+			if (IsAssertDialogOptInEnabled())
+				return;
 
 			// Force environment variables that control native (DebugProcs.dll) and
 			// managed (EnvVarTraceListener) assertion behavior.
+			m_suppressionApplied = true;
 			m_previousAssertUiEnabled = Environment.GetEnvironmentVariable("AssertUiEnabled");
 			m_previousAssertExceptionEnabled = Environment.GetEnvironmentVariable(
 				"AssertExceptionEnabled"
@@ -82,6 +88,12 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary/>
 		public override void AfterTest(ITest test)
 		{
+			if (!m_suppressionApplied)
+			{
+				base.AfterTest(test);
+				return;
+			}
+
 			if (m_listener != null)
 			{
 				Trace.Listeners.Remove(m_listener);
@@ -98,8 +110,27 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			m_previousAssertUiEnabled = null;
 			m_previousAssertExceptionEnabled = null;
 			m_previousTestMode = null;
+			m_suppressionApplied = false;
 
 			base.AfterTest(test);
+		}
+
+		internal static bool IsAssertDialogOptInEnabled()
+		{
+			var value = Environment.GetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS");
+			if (string.IsNullOrWhiteSpace(value))
+				return false;
+
+			switch (value.Trim().ToLowerInvariant())
+			{
+				case "1":
+				case "true":
+				case "yes":
+				case "on":
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 

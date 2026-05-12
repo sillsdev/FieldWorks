@@ -27,6 +27,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Environment.SetEnvironmentVariable("AssertUiEnabled", null);
 			Environment.SetEnvironmentVariable("AssertExceptionEnabled", null);
 			Environment.SetEnvironmentVariable("FW_TEST_MODE", null);
+			Environment.SetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS", null);
 		}
 
 		[TearDown]
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Environment.SetEnvironmentVariable("AssertUiEnabled", null);
 			Environment.SetEnvironmentVariable("AssertExceptionEnabled", null);
 			Environment.SetEnvironmentVariable("FW_TEST_MODE", null);
+			Environment.SetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS", null);
 		}
 
 		[Test]
@@ -72,7 +74,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			attribute.BeforeTest(null);
 
-			Assert.That(Environment.GetEnvironmentVariable("AssertUiEnabled"), Is.EqualTo("false"));
+			Assert.That(
+				Environment.GetEnvironmentVariable("AssertUiEnabled"),
+				Is.EqualTo("false")
+			);
 			Assert.That(
 				Environment.GetEnvironmentVariable("AssertExceptionEnabled"),
 				Is.EqualTo("true")
@@ -83,7 +88,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			attribute.AfterTest(null);
 
-			Assert.That(Environment.GetEnvironmentVariable("AssertUiEnabled"), Is.EqualTo("true"));
+			Assert.That(
+				Environment.GetEnvironmentVariable("AssertUiEnabled"),
+				Is.EqualTo("true")
+			);
 			Assert.That(
 				Environment.GetEnvironmentVariable("AssertExceptionEnabled"),
 				Is.EqualTo("false")
@@ -103,6 +111,57 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(CountListeners<ConsoleErrorTraceListener>(), Is.EqualTo(1));
 
 			attribute.AfterTest(null);
+		}
+
+		[Test]
+		public void SuppressAssertDialogsAttribute_WithAllowAssertDialogs_DoesNotInstallSuppression()
+		{
+			Environment.SetEnvironmentVariable("AssertUiEnabled", "true");
+			Environment.SetEnvironmentVariable("AssertExceptionEnabled", "false");
+			Environment.SetEnvironmentVariable("FW_TEST_MODE", "0");
+			Environment.SetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS", "1");
+
+			var defaultListener = new DefaultTraceListener { AssertUiEnabled = true };
+			Trace.Listeners.Add(defaultListener);
+
+			var attribute = new SuppressAssertDialogsAttribute();
+			attribute.BeforeTest(null);
+
+			Assert.That(
+				Environment.GetEnvironmentVariable("AssertUiEnabled"),
+				Is.EqualTo("true")
+			);
+			Assert.That(
+				Environment.GetEnvironmentVariable("AssertExceptionEnabled"),
+				Is.EqualTo("false")
+			);
+			Assert.That(Environment.GetEnvironmentVariable("FW_TEST_MODE"), Is.EqualTo("0"));
+			Assert.That(defaultListener.AssertUiEnabled, Is.True);
+			Assert.That(CountListeners<ConsoleErrorTraceListener>(), Is.EqualTo(0));
+
+			attribute.AfterTest(null);
+		}
+
+		[TestCase("1")]
+		[TestCase("true")]
+		[TestCase("yes")]
+		[TestCase("on")]
+		public void IsAssertDialogOptInEnabled_WithTruthyValue_ReturnsTrue(string value)
+		{
+			Environment.SetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS", value);
+
+			Assert.That(SuppressAssertDialogsAttribute.IsAssertDialogOptInEnabled(), Is.True);
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("0")]
+		[TestCase("false")]
+		public void IsAssertDialogOptInEnabled_WithoutTruthyValue_ReturnsFalse(string value)
+		{
+			Environment.SetEnvironmentVariable("FW_TEST_ALLOW_ASSERT_DIALOGS", value);
+
+			Assert.That(SuppressAssertDialogsAttribute.IsAssertDialogOptInEnabled(), Is.False);
 		}
 
 		[Test]
