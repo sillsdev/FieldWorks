@@ -1,6 +1,8 @@
-# Remaining WiX 6 Issues
+# Remaining WiX 6 Issues and Validation Gaps
 
-This is a working TODO list of remaining issues for the WiX 6 installer, based on current observed behavior.
+This is a working TODO list of blocking issues and validation gaps for the WiX 6 installer, based on current observed behavior and the repo state.
+
+**Release posture**: Do not make WiX 6 the default installer route until the WiX 3 to WiX 6 upgrade, ARP presentation, uninstall, online install, and offline install checks below have evidence. The repo still defaults `InstallerToolset` to `Wix3`, which should be treated as a migration blocker or explicit release decision.
 
 ## Upgrade over WiX 3 (keep settings, same install shape)
 
@@ -15,6 +17,8 @@ Goal: installing the WiX 6 bundle over an existing WiX 3 FieldWorks install shou
 - [ ] Upgrade keeps all user settings (projects, preferences, registry-based settings, config files, etc.).
 - [ ] Upgrade keeps all user data in-place (no duplication or orphaned data folders).
 - [ ] Add explicit evidence for the above (bundle log + MSI log + before/after install paths + ARP snapshot).
+- [ ] Verify Burn provider compatibility across WiX 3 to WiX 6. The current WiX 6 `MsiPackage` has no package-level `<Provides Key="..." />`; extract the WiX 3 baseline provider/package identity and determine whether a compatibility provider key is required.
+- [ ] Test same-version major upgrades for WiX 6 dev builds: install a WiX 6 build, reinstall the same `VersionNumber`, and confirm it replaces rather than side-by-side installs.
 
 ## Product icon parity
 
@@ -51,3 +55,36 @@ Observed: uninstall from Settings / Add-Remove Programs gets stuck and does not 
 - [ ] Identify whether the hang is in Burn (bootstrapper) vs MSI execution vs a custom action.
 - [ ] Fix uninstall to complete successfully from ARP without user intervention.
 - [ ] Verify post-uninstall cleanup matches expectations (ARP removed, registry keys cleaned up, shortcuts removed, env vars restored if applicable).
+
+Diagnostics to capture for every uninstall hang reproduction:
+
+- Bundle uninstall log and MSI verbose uninstall log.
+- `%TEMP%` WiX/Burn logs and any `WixBundleLog_AppMsiPackage` path from the bundle log.
+- Before/after snapshots from `scripts/Agent/Collect-InstallerSnapshot.ps1`.
+- Event Viewer Application entries around the hang.
+- Crash dumps from `%LOCALAPPDATA%\CrashDumps` if present.
+
+Use [evidence-collection-checklist.md](evidence-collection-checklist.md) for symptom-specific evidence requirements.
+
+## Online and offline clean-machine validation
+
+- [ ] Online bundle installs on a clean VM with internet access, downloads or skips prerequisites correctly, shows MSI internal UI in full UI mode, and launches FieldWorks after install.
+- [ ] Passive and quiet online installs do not show MSI internal UI and return expected exit codes.
+- [ ] Offline bundle `FieldWorksOfflineBundle.exe` installs on a disconnected VM using embedded/local prerequisites only.
+- [ ] Offline bundle evidence includes proof no network was required.
+
+## Burn engine signing and code signing parity
+
+Goal: Ensure signed WiX 6 bundles match the WiX 3 release expectations.
+
+- [ ] Verify `signingProxy.bat` signs the MSI and both bundle EXEs when signing is enabled.
+- [ ] Verify Burn engine/container signing behavior is equivalent to the old WiX 3 `insignia` flow, or document the WiX 6 SDK signing behavior that replaces it.
+- [ ] Capture Authenticode evidence for MSI, online bundle, and offline bundle.
+
+## Patch/MSP support is deferred
+
+The WiX 6 migration currently supports MSI major upgrades, not WiX 6 MSP patch generation. The legacy `BuildPatch` target remains in the WiX 3 path only.
+
+- [ ] Define a separate WiX 6 patch design before adding any `BuildPatch` support.
+- [ ] Include `PatchBaseline`, base MSI and `.wixpdb` retention, component GUID stability, and repair/uninstall compatibility in that design.
+- [ ] Do not treat `build.ps1 -BuildPatch -InstallerToolset Wix6` as supported until the design is implemented and tested.

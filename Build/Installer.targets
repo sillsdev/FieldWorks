@@ -83,6 +83,7 @@
 	  <StagedDataDir>$(AppBuildDir)\$(DataDirSuffix)</StagedDataDir>
 	  <StagedL10nDir>$(AppBuildDir)\$(L10nDirSuffix)</StagedL10nDir>
 	  <StagedFontDir>$(AppBuildDir)\$(FontDirSuffix)</StagedFontDir>
+	  <DistFilesStagingExcludes>$(fwrt)\DistFiles\**\.git\**\*;$(fwrt)\DistFiles\**\.github\**\*;$(fwrt)\DistFiles\**\.gitignore;$(fwrt)\DistFiles\**\.gitattributes</DistFilesStagingExcludes>
 	</PropertyGroup>
 
 	<RemoveDir Directories="$(AppBuildDir)" Condition="Exists('$(AppBuildDir)')" />
@@ -130,7 +131,8 @@
 	  <BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)" />
 	  <!-- %(RecursiveDir) needs to include the locale folder name (e.g., ar\, zh-CN\). -->
 	  <L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)" />
-	  <BinFiles Include="$(fwrt)\DistFiles\**\*" />
+	  <!-- Helper repositories may be full git checkouts in CI; VCS metadata is not installer payload. -->
+	  <BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="$(DistFilesStagingExcludes)" />
 	  <BinFiles Include="$(fwrt)\License.htm" />
 
 	  <!-- Exclude common dev/test artifacts that shouldn't ship. -->

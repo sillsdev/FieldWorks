@@ -1,6 +1,8 @@
-name: Base Installer
+name: Legacy Base Installer (WiX 3)
 
 # Builds the FieldWorks Base Installers (On- and Offline) (x64).
+# Transitional WiX 3 release lane: this workflow still checks out PatchableInstaller/genericinstaller.
+# The WiX 6 migration lane lives in CI.yml and must not depend on PatchableInstaller.
 # If `make_release` is true:
 #  - Uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Base.
 #  - Tags the repository.
@@ -23,7 +25,7 @@ on:
         required: false
         default: 'develop'
       installer_ref:
-        description: 'Commit-ish for PatchableInstaller repository'
+        description: 'Commit-ish for PatchableInstaller repository (legacy WiX 3 lane only)'
         required: false
         default: 'master'
       localizations_ref:
@@ -40,7 +42,7 @@ on:
         default: 'false'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -49,7 +51,7 @@ jobs:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
-    name: Build Debug and run Tests
+    name: Build legacy WiX 3 base installer and run tests
     runs-on: windows-latest
     steps:
       - name: Compute build number
@@ -60,6 +62,7 @@ jobs:
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
           echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "fw_build_number=$combined" >> $env:GITHUB_OUTPUT
 
       - name: Checkout Files
         uses: actions/checkout@v6
@@ -77,7 +80,7 @@ jobs:
           fetch-depth: 0
           path: 'DistFiles/Helps'
 
-      - name: Checkout PatchableInstaller
+      - name: Checkout PatchableInstaller (legacy WiX 3 only)
         uses: actions/checkout@v6
         id: installer-checkout
         with:
@@ -136,7 +139,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: | 
+          dotnet-version: |
             3.1.x
             5.0.x
 
@@ -169,11 +172,11 @@ jobs:
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {
               foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red
               }
               exit 1
           } else {
-              Write-Host "No errors found" -ForegroundColor green 
+              Write-Host "No errors found" -ForegroundColor green
               exit 0
           }
 
@@ -248,24 +251,24 @@ jobs:
         run: |
           $offlineExe = "${{ steps.stage_installers.outputs.offline_exe }}"
           $onlineExe = "${{ steps.stage_installers.outputs.online_exe }}"
-          
+
           if (-not (Test-Path $offlineExe)) {
             throw "Offline installer not found at $offlineExe"
           }
           if (-not (Test-Path $onlineExe)) {
             throw "Online installer not found at $onlineExe"
           }
-          
+
           $offlineFile = Split-Path $offlineExe -Leaf
           $onlineFile = Split-Path $onlineExe -Leaf
-          
+
           $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:FW_BUILD_NUMBER)"
           $offlineS3Key = "$s3BasePath/$offlineFile"
           $onlineS3Key = "$s3BasePath/$onlineFile"
-          
+
           aws s3 cp $offlineExe "s3://flex-updates/$offlineS3Key"
           Write-Host "Uploaded offline installer to s3://flex-updates/$offlineS3Key"
-          
+
           aws s3 cp $onlineExe "s3://flex-updates/$onlineS3Key"
           Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
 
@@ -295,8 +298,8 @@ jobs:
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
         with:
             target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
-            tag_name: build-${{ env.FW_BUILD_NUMBER }}
-            name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
+            tag_name: build-${{ steps.build_number.outputs.fw_build_number }}
+            name: "FieldWorks Base Build #${{ steps.build_number.outputs.fw_build_number }}"
             draft: false
             prerelease: true
             fail_on_unmatched_files: true

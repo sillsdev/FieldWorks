@@ -28,14 +28,49 @@ function Read-Snapshot {
 	return $content | ConvertFrom-Json -ErrorAction Stop
 }
 
-function To-StringSet {
-	param([Parameter(Mandatory = $true)][object[]]$Items)
+function New-StringSet {
+	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][object[]]$Items)
 	$set = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
 	foreach ($item in $Items) { $null = $set.Add([string]$item) }
-	return $set
+	return ,$set
 }
 
-function Diff-Sets {
+function Get-ArrayProperty {
+	param(
+		[Parameter(Mandatory = $true)]
+		$Object,
+		[Parameter(Mandatory = $true)]
+		[string]$Name
+	)
+
+	$property = $Object.PSObject.Properties[$Name]
+	if ($null -eq $property -or $null -eq $property.Value) { return @() }
+
+	return @($property.Value | ForEach-Object { $_ })
+}
+
+function ConvertTo-StringDictionary {
+	param([Parameter(Mandatory = $false)]$Value)
+
+	$dictionary = New-Object 'System.Collections.Generic.Dictionary[string, string]' ([System.StringComparer]::OrdinalIgnoreCase)
+	if ($null -eq $Value) { return ,$dictionary }
+
+	if ($Value -is [System.Collections.IDictionary]) {
+		foreach ($key in $Value.Keys) {
+			$dictionary[[string]$key] = [string]$Value[$key]
+		}
+
+		return ,$dictionary
+	}
+
+	foreach ($property in $Value.PSObject.Properties) {
+		$dictionary[[string]$property.Name] = [string]$property.Value
+	}
+
+	return ,$dictionary
+}
+
+function Compare-Sets {
 	param(
 		[Parameter(Mandatory = $true)]$Before,
 		[Parameter(Mandatory = $true)]$After
@@ -54,13 +89,47 @@ function Diff-Sets {
 	return [pscustomobject]@{ Added = $added; Removed = $removed }
 }
 
+function Get-DependencyKey {
+	param([Parameter(Mandatory = $true)]$Dependency)
+
+	$key = [string]$Dependency.ProviderKey
+	if ([string]::IsNullOrWhiteSpace($key)) { $key = [string]$Dependency.KeyPath }
+
+	return ('{0}|{1}' -f [string]$Dependency.Root, $key)
+}
+
+function Get-DependencyDescription {
+	param([Parameter(Mandatory = $true)]$Dependency)
+
+	$displayName = [string]$Dependency.DisplayName
+	if ([string]::IsNullOrWhiteSpace($displayName)) { $displayName = [string]$Dependency.DefaultValue }
+	if ([string]::IsNullOrWhiteSpace($displayName)) { $displayName = [string]$Dependency.ProviderKey }
+
+	$version = [string]$Dependency.Version
+	if ([string]::IsNullOrWhiteSpace($version)) { return $displayName }
+
+	return ('{0} {1}' -f $displayName, $version)
+}
+
+function Get-DependencyComparableValue {
+	param([Parameter(Mandatory = $true)]$Dependency)
+
+	$dependents = New-Object System.Collections.Generic.List[string]
+	foreach ($dependent in (Get-ArrayProperty -Object $Dependency -Name 'Dependents')) {
+		$dependents.Add([string]$dependent.KeyName)
+	}
+
+	$dependentText = (($dependents | Sort-Object) -join ',')
+	return ('DisplayName={0};Version={1};Default={2};Dependents={3}' -f [string]$Dependency.DisplayName, [string]$Dependency.Version, [string]$Dependency.DefaultValue, $dependentText)
+}
+
 $before = Read-Snapshot -Path $BeforeSnapshotPath
 $after = Read-Snapshot -Path $AfterSnapshotPath
 
 $reportLines = New-Object System.Collections.Generic.List[string]
 $reportLines.Add("Installer snapshot diff")
-$reportLines.Add("Before: $BeforeSnapshotPath")
-$reportLines.Add("After:  $AfterSnapshotPath")
+$reportLines.Add(('Before: {0}' -f $BeforeSnapshotPath))
+$reportLines.Add(('After:  {0}' -f $AfterSnapshotPath))
 $reportLines.Add("")
 
 # Uninstall entries
@@ -73,7 +142,7 @@ foreach ($p in ($after.UninstallEntries | ForEach-Object { $_ })) {
 	$afterProducts += ([string]$p.DisplayName)
 }
 
-$diffProducts = Diff-Sets -Before (To-StringSet -Items $beforeProducts) -After (To-StringSet -Items $afterProducts)
+$diffProducts = Compare-Sets -Before (New-StringSet -Items $beforeProducts) -After (New-StringSet -Items $afterProducts)
 $reportLines.Add("Uninstall entries")
 $reportLines.Add(("  Added: {0}, Removed: {1}" -f $diffProducts.Added.Count, $diffProducts.Removed.Count))
 
@@ -82,6 +151,51 @@ foreach ($name in ($diffProducts.Added | Select-Object -First $MaxListItems)) {
 }
 foreach ($name in ($diffProducts.Removed | Select-Object -First $MaxListItems)) {
 	$reportLines.Add("    - $name")
+}
+$reportLines.Add("")
+
+# Burn dependency provider entries
+$reportLines.Add("Burn dependency providers")
+$beforeDependencies = Get-ArrayProperty -Object $before -Name 'BurnDependencyEntries'
+$afterDependencies = Get-ArrayProperty -Object $after -Name 'BurnDependencyEntries'
+
+$beforeDependenciesByKey = @{}
+foreach ($dependency in $beforeDependencies) { $beforeDependenciesByKey[(Get-DependencyKey -Dependency $dependency)] = $dependency }
+$afterDependenciesByKey = @{}
+foreach ($dependency in $afterDependencies) { $afterDependenciesByKey[(Get-DependencyKey -Dependency $dependency)] = $dependency }
+
+$addedDependencies = New-Object System.Collections.Generic.List[object]
+$removedDependencies = New-Object System.Collections.Generic.List[object]
+$changedDependencies = New-Object System.Collections.Generic.List[object]
+
+foreach ($key in $afterDependenciesByKey.Keys) {
+	if (-not $beforeDependenciesByKey.ContainsKey($key)) {
+		$addedDependencies.Add($afterDependenciesByKey[$key])
+		continue
+	}
+
+	$beforeComparable = Get-DependencyComparableValue -Dependency $beforeDependenciesByKey[$key]
+	$afterComparable = Get-DependencyComparableValue -Dependency $afterDependenciesByKey[$key]
+	if ($beforeComparable -ne $afterComparable) {
+		$changedDependencies.Add($afterDependenciesByKey[$key])
+	}
+}
+
+foreach ($key in $beforeDependenciesByKey.Keys) {
+	if (-not $afterDependenciesByKey.ContainsKey($key)) {
+		$removedDependencies.Add($beforeDependenciesByKey[$key])
+	}
+}
+
+$reportLines.Add(("  Added: {0}, Removed: {1}, Changed: {2}" -f $addedDependencies.Count, $removedDependencies.Count, $changedDependencies.Count))
+foreach ($dependency in ($addedDependencies | Sort-Object ProviderKey | Select-Object -First $MaxListItems)) {
+	$reportLines.Add(("    + {0} [{1}]" -f (Get-DependencyDescription -Dependency $dependency), [string]$dependency.ProviderKey))
+}
+foreach ($dependency in ($removedDependencies | Sort-Object ProviderKey | Select-Object -First $MaxListItems)) {
+	$reportLines.Add(("    - {0} [{1}]" -f (Get-DependencyDescription -Dependency $dependency), [string]$dependency.ProviderKey))
+}
+foreach ($dependency in ($changedDependencies | Sort-Object ProviderKey | Select-Object -First $MaxListItems)) {
+	$reportLines.Add(("    ~ {0} [{1}]" -f (Get-DependencyDescription -Dependency $dependency), [string]$dependency.ProviderKey))
 }
 $reportLines.Add("")
 
@@ -99,10 +213,10 @@ foreach ($k in $beforeRegByPath.Keys) { $null = $allRegPaths.Add($k) }
 foreach ($k in $afterRegByPath.Keys) { $null = $allRegPaths.Add($k) }
 
 foreach ($path in ($allRegPaths | Sort-Object)) {
-	$beforeValues = @{}
-	if ($beforeRegByPath.ContainsKey($path)) { $beforeValues = $beforeRegByPath[$path].Values }
-	$afterValues = @{}
-	if ($afterRegByPath.ContainsKey($path)) { $afterValues = $afterRegByPath[$path].Values }
+	$beforeValues = ConvertTo-StringDictionary
+	if ($beforeRegByPath.ContainsKey($path)) { $beforeValues = ConvertTo-StringDictionary -Value $beforeRegByPath[$path].Values }
+	$afterValues = ConvertTo-StringDictionary
+	if ($afterRegByPath.ContainsKey($path)) { $afterValues = ConvertTo-StringDictionary -Value $afterRegByPath[$path].Values }
 
 	$allNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
 	foreach ($n in $beforeValues.Keys) { $null = $allNames.Add([string]$n) }
@@ -123,7 +237,7 @@ foreach ($path in ($allRegPaths | Sort-Object)) {
 		}
 		if ([string]$bn -ne [string]$an) {
 			$regDiffCount++
-			if ($regDiffCount -le $MaxListItems) { $reportLines.Add("  ~ $path\\$n: '$bn' -> '$an'") }
+			if ($regDiffCount -le $MaxListItems) { $reportLines.Add(("  ~ {0}\{1}: '{2}' -> '{3}'" -f $path, $n, $bn, $an)) }
 		}
 	}
 }
@@ -171,7 +285,7 @@ if (-not [string]::IsNullOrWhiteSpace($ReportPath)) {
 	Write-Output "Wrote report: $ReportPath"
 }
 
-$hasDiff = ($diffProducts.Added.Count -gt 0) -or ($diffProducts.Removed.Count -gt 0) -or ($regDiffCount -gt 0) -or ($addedFiles.Count -gt 0) -or ($removedFiles.Count -gt 0) -or ($changedFiles.Count -gt 0)
+$hasDiff = ($diffProducts.Added.Count -gt 0) -or ($diffProducts.Removed.Count -gt 0) -or ($addedDependencies.Count -gt 0) -or ($removedDependencies.Count -gt 0) -or ($changedDependencies.Count -gt 0) -or ($regDiffCount -gt 0) -or ($addedFiles.Count -gt 0) -or ($removedFiles.Count -gt 0) -or ($changedFiles.Count -gt 0)
 
 if ($FailOnDifferences -and $hasDiff) {
 	exit 1

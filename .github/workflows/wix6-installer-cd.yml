@@ -1,0 +1,294 @@
+name: WiX 6 Base Installer
+
+# Builds the FieldWorks WiX 6 Base Installers (Online + Offline, x64).
+# This is the WiX 6 release lane. It does NOT require PatchableInstaller/genericinstaller.
+# If `make_release` is true:
+#  - Uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Base-Wix6.
+#  - Creates a GitHub Release of the signed artifacts.
+# Saves the build log and evidence as workflow artifacts.
+# Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the
+# build number on artifacts from our previous system.
+
+on:
+  schedule:
+    # Runs every Monday at 02:45 UTC (offset from WiX 3 lane at 02:30 to avoid runner contention)
+    - cron: "45 2 * * 1"
+  workflow_dispatch:
+    inputs:
+      fw_ref:
+        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
+        required: false
+        default: ''
+      helps_ref:
+        description: 'Commit-ish for helps repository'
+        required: false
+        default: 'develop'
+      localizations_ref:
+        description: 'Commit-ish for localization repository'
+        required: false
+        default: 'develop'
+      lcm_ref:
+        description: 'Commit-ish for liblcm repository'
+        required: false
+        default: 'master'
+      make_release:
+        description: 'Should the build archive a release, false by default, should be set to true on a release build.'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_sign:
+    permissions:
+      contents: write  # required for creating GitHub Releases
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+      # FILESTOSIGNLATER causes signingProxy.bat to defer signing (append paths to this file)
+      # rather than calling signtool directly. The trusted-signing-action step reads this file.
+      FILESTOSIGNLATER: ./signExternally
+    name: Build WiX 6 base installer and sign
+    runs-on: windows-latest
+    steps:
+      - name: Compute build number
+        id: build_number
+        run: |
+          $lastBase = 1000  # Align with WiX 3 lane's lastJenkins offset
+          $githubRun = $env:GITHUB_RUN_NUMBER
+          $combined = $lastBase + $githubRun
+          Write-Host "Calculated build number: $combined"
+          "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          "fw_build_number=$combined" >> $env:GITHUB_OUTPUT
+
+      - name: Checkout Files
+        uses: actions/checkout@v6
+        id: checkout
+        with:
+          ref: ${{ github.event.inputs.fw_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Checkout Helps
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/FwHelps'
+          ref: ${{ github.event.inputs.helps_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'DistFiles/Helps'
+
+      - name: Checkout Localizations
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/FwLocalizations'
+          ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'Localizations'
+
+      - name: Checkout liblcm
+        uses: actions/checkout@v6
+        with:
+          repository: 'sillsdev/liblcm'
+          ref: ${{ github.event.inputs.lcm_ref || 'master' }}
+          fetch-depth: 0
+          path: 'Localizations/LCM'
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+
+      - name: Validate installer prerequisites
+        shell: powershell
+        run: |
+          .\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build WiX 6 installer
+        id: build
+        shell: powershell
+        run: |
+          $buildLog = Join-Path $pwd 'wix6-installer-build.log'
+          $exitCode = 0
+          Start-Transcript -Path $buildLog -Force
+          try {
+            # SignOutput=true triggers signingProxy.bat; FILESTOSIGNLATER env var defers actual signing
+            .\build.ps1 -BuildInstaller -InstallerToolset Wix6 -Configuration Release `
+              -Verbosity detailed `
+              -MsBuildArgs @('/bl:wix6-installer-build.binlog', '/p:FastBundleBuild=0', '/p:SignOutput=true')
+            $exitCode = $LASTEXITCODE
+          }
+          catch {
+            Write-Error $_
+            $exitCode = 1
+          }
+          finally {
+            Stop-Transcript
+          }
+          if ($exitCode -ne 0) { exit $exitCode }
+
+      - name: Audit WiX 6 installer evidence
+        shell: powershell
+        run: |
+          .\Build\Agent\Test-Wix6InstallerBuildEvidence.ps1 `
+            -Configuration Release -Platform x64 `
+            -BuildLogPath .\wix6-installer-build.log `
+            -ReportPath .\Output\InstallerEvidence\wix6-cd-build-audit.txt `
+            -RequireNoWix3ToolsOnPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Stage WiX 6 bundles for signing
+        id: stage
+        shell: pwsh
+        run: |
+          $wixOut  = 'FLExInstaller\wix6\bin\x64\Release'
+          $staging = Join-Path $pwd 'Installers'
+          New-Item -ItemType Directory -Path $staging -Force | Out-Null
+
+          $onlineExe  = Join-Path $wixOut 'FieldWorksBundle.exe'
+          $offlineExe = Join-Path $wixOut 'FieldWorksOfflineBundle.exe'
+          foreach ($f in @($onlineExe, $offlineExe)) {
+            if (-not (Test-Path $f)) { throw "Expected bundle not found: $f" }
+          }
+
+          Copy-Item $onlineExe  (Join-Path $staging 'FieldWorksBundle.exe')
+          Copy-Item $offlineExe (Join-Path $staging 'FieldWorksOfflineBundle.exe')
+
+          "online_exe=$(Join-Path $staging 'FieldWorksBundle.exe')"    >> $env:GITHUB_OUTPUT
+          "offline_exe=$(Join-Path $staging 'FieldWorksOfflineBundle.exe')" >> $env:GITHUB_OUTPUT
+          "staging=$staging"                                            >> $env:GITHUB_OUTPUT
+
+      - name: Detach Burn engines from bundles
+        # WiX 6 syntax: wix burn detach original.exe -engine engine.exe
+        # Replaces WiX 3's: insignia -ib bundle.exe -o engine.exe
+        shell: pwsh
+        run: |
+          $wix = 'packages\wixtoolset.sdk\6.0.2\tools\net472\x64\wix.exe'
+          if (-not (Test-Path $wix)) {
+            # Fall back to locating via MSBuild NuGet cache
+            $wix = (Get-ChildItem packages -Recurse -Filter 'wix.exe' |
+                    Where-Object { $_.FullName -like '*\x64\wix.exe' } |
+                    Select-Object -First 1).FullName
+            if (-not $wix) { throw 'Could not locate wix.exe in NuGet packages' }
+          }
+
+          & $wix burn detach '${{ steps.stage.outputs.online_exe }}'  -engine 'Installers\online-engine.exe'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $wix burn detach '${{ steps.stage.outputs.offline_exe }}' -engine 'Installers\offline-engine.exe'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Sign Burn engines
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: Installers
+          files-folder-filter: '*-engine.exe'
+          description: 'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+
+      - name: Reattach signed Burn engines
+        if: github.event_name != 'pull_request'
+        # WiX 6 syntax: wix burn reattach original.exe -engine signed.exe -o final.exe
+        # Replaces WiX 3's: insignia -ab engine.exe bundle.exe -o bundle.exe
+        shell: pwsh
+        run: |
+          $wix = (Get-ChildItem packages -Recurse -Filter 'wix.exe' |
+                  Where-Object { $_.FullName -like '*\x64\wix.exe' } |
+                  Select-Object -First 1).FullName
+          if (-not $wix) { throw 'Could not locate wix.exe in NuGet packages' }
+
+          & $wix burn reattach '${{ steps.stage.outputs.online_exe }}'  -engine 'Installers\online-engine.exe'  -o '${{ steps.stage.outputs.online_exe }}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $wix burn reattach '${{ steps.stage.outputs.offline_exe }}' -engine 'Installers\offline-engine.exe' -o '${{ steps.stage.outputs.offline_exe }}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Sign bundles
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: Installers
+          files-folder-filter: 'FieldWorks*.exe'
+          description: 'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.make_release == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload Installers to S3
+        if: ${{ inputs.make_release == 'true' }}
+        shell: pwsh
+        run: |
+          $online  = '${{ steps.stage.outputs.online_exe }}'
+          $offline = '${{ steps.stage.outputs.offline_exe }}'
+          $s3Base  = "jobs/FieldWorks-Win-all-Release-Base-Wix6/$($env:FW_BUILD_NUMBER)"
+
+          aws s3 cp $online  "s3://flex-updates/$s3Base/FieldWorksBundle.exe"
+          Write-Host "Uploaded online bundle to s3://flex-updates/$s3Base/FieldWorksBundle.exe"
+          aws s3 cp $offline "s3://flex-updates/$s3Base/FieldWorksOfflineBundle.exe"
+          Write-Host "Uploaded offline bundle to s3://flex-updates/$s3Base/FieldWorksOfflineBundle.exe"
+
+      - name: Compress WiX 6 artifacts for release
+        id: compress_artifacts
+        if: ${{ inputs.make_release == 'true' }}
+        shell: pwsh
+        run: |
+          # Archive .wixpdb files needed as baselines for future WiX 6 patch builds (T101/T102)
+          $wixOut = 'FLExInstaller\wix6\bin\x64\Release'
+          $zipPath = Join-Path $pwd 'Wix6BuildArtifacts.zip'
+          Compress-Archive -Path @(
+            "$wixOut\FieldWorksBundle.wixpdb",
+            "$wixOut\FieldWorksOfflineBundle.wixpdb",
+            "$wixOut\en-US\FieldWorks.msi",
+            "$wixOut\en-US\FieldWorks.wixpdb"
+          ) -DestinationPath $zipPath -Force
+          "artifacts_zip=$zipPath" >> $env:GITHUB_OUTPUT
+
+      - name: Tag, Create Release, and Upload artifacts
+        if: ${{ inputs.make_release == 'true' }}
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
+        with:
+          target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
+          tag_name: wix6-build-${{ steps.build_number.outputs.fw_build_number }}
+          name: "FieldWorks WiX 6 Base Build #${{ steps.build_number.outputs.fw_build_number }}"
+          draft: false
+          prerelease: true
+          fail_on_unmatched_files: true
+          files: |
+            Installers/FieldWorksBundle.exe
+            Installers/FieldWorksOfflineBundle.exe
+            ${{ steps.compress_artifacts.outputs.artifacts_zip }}
+
+      - name: Upload WiX 6 installer artifacts
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: wix6-cd-installer-artifacts
+          if-no-files-found: error
+          path: |
+            Installers/FieldWorksBundle.exe
+            Installers/FieldWorksOfflineBundle.exe
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksBundle.wixpdb
+            FLExInstaller/wix6/bin/x64/Release/FieldWorksOfflineBundle.wixpdb
+            FLExInstaller/wix6/bin/x64/Release/en-US/FieldWorks.msi
+            FLExInstaller/wix6/bin/x64/Release/en-US/FieldWorks.wixpdb
+
+      - name: Upload WiX 6 build evidence
+        uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: wix6-cd-build-evidence
+          if-no-files-found: warn
+          path: |
+            wix6-installer-build.log
+            wix6-installer-build.binlog
+            signExternally
+            Output/InstallerEvidence/**

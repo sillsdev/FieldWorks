@@ -8,6 +8,7 @@
     <!-- Prefer explicit package paths when resolving WixExtension items; otherwise MSBuild's ReferencePaths can
          accidentally bind to older extension DLLs if multiple versions exist under ./packages. -->
     <WixExtensionSearchPaths>{RawFileName};{HintPathFromItem};$(ReferencePaths)</WixExtensionSearchPaths>
+    <WixToolsetExtensionPackageFolder Condition="'$(WixToolsetExtensionPackageFolder)' == ''">wixext6</WixToolsetExtensionPackageFolder>
   </PropertyGroup>
 
   <!--

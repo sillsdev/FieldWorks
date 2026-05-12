@@ -1,6 +1,8 @@
-name: Patch Installer
+name: Legacy Patch Installer (WiX 3)
 
 # Builds the FieldWorks Patch Installer on the specified `base_release`
+# Transitional WiX 3 patch lane: WiX 6 patch/MSP support is deferred and not provided by this workflow.
+# This workflow still checks out PatchableInstaller/genericinstaller for the legacy patch process.
 # If `make_release` is true, uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Patch.
 # Saves the build log as an artifact of the workflow run.
 # Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the build number on artifacts from our previous system.
@@ -23,7 +25,7 @@ on:
         required: false
         default: 'develop'
       installer_ref:
-        description: 'Commit-ish for PatchableInstaller repository'
+        description: 'Commit-ish for PatchableInstaller repository (legacy WiX 3 lane only)'
         required: false
         default: 'master'
       localizations_ref:
@@ -50,7 +52,7 @@ on:
         default: 'true'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -63,7 +65,7 @@ jobs:
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
       BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1416' }}
-    name: Build Debug and run Tests
+    name: Build legacy WiX 3 patch installer and run tests
     runs-on: windows-latest
     steps:
       - name: Compute build number for archival
@@ -92,7 +94,7 @@ jobs:
           fetch-depth: 0
           path: 'DistFiles/Helps'
 
-      - name: Checkout PatchableInstaller
+      - name: Checkout PatchableInstaller (legacy WiX 3 only)
         uses: actions/checkout@v6
         id: installer-checkout
         with:
@@ -151,7 +153,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: | 
+          dotnet-version: |
             3.1.x
             5.0.x
 
@@ -166,7 +168,7 @@ jobs:
           choco install wixtoolset --version 3.11.2 --allow-downgrade --force
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
-        
+
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
@@ -211,7 +213,7 @@ jobs:
           )
           $valueName = "Switch.System.DisableTempFileCollectionDirectoryFeature"
           $expectedValue = "true"
-          
+
           foreach ($path in $regPaths) {
               Write-Host "Adding or updating registry value in $path..."
               if (-not (Test-Path $path)) {
@@ -238,11 +240,11 @@ jobs:
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {
               foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red
               }
               exit 1
           } else {
-              Write-Host "No errors found" -ForegroundColor green 
+              Write-Host "No errors found" -ForegroundColor green
               exit 0
           }
 

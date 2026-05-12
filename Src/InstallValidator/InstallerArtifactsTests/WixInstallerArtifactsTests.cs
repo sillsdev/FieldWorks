@@ -23,22 +23,29 @@ namespace SIL.InstallValidator
 		{
 			var repoRoot = FindRepoRoot();
 			if (repoRoot == null)
-				Assert.Ignore("Could not locate repo root (FieldWorks.sln)." );
+				Assert.Ignore("Could not locate repo root (FieldWorks.sln).");
 
-			var installerBinDir = Path.Combine(repoRoot, "FLExInstaller", "bin");
+			var installerBinDir = Path.Combine(repoRoot, "FLExInstaller", "wix6", "bin");
 			if (!Directory.Exists(installerBinDir))
-				Assert.Ignore("FLExInstaller/bin not found; installer likely not built in this checkout.");
+				Assert.Ignore(
+					"FLExInstaller/wix6/bin not found. Run build.ps1 -BuildInstaller -InstallerToolset Wix6 first.");
 
 			var msiPath = Directory
 				.GetFiles(installerBinDir, "FieldWorks.msi", SearchOption.AllDirectories)
-				.Where(p => p.EndsWith(Path.Combine("en-US", "FieldWorks.msi"), StringComparison.OrdinalIgnoreCase))
+				.Where(path => path.EndsWith(
+					Path.Combine("en-US", "FieldWorks.msi"),
+					StringComparison.OrdinalIgnoreCase))
 				.OrderByDescending(File.GetLastWriteTimeUtc)
 				.FirstOrDefault();
 
 			if (msiPath == null)
-				Assert.Ignore("No FieldWorks.msi found under FLExInstaller/bin/**/en-US. Run build.ps1 -BuildInstaller first.");
+				Assert.Ignore(
+					"No FieldWorks.msi found under FLExInstaller/wix6/bin/**/en-US. Run build.ps1 -BuildInstaller -InstallerToolset Wix6 first.");
 
-			Assert.That(new FileInfo(msiPath).Length, Is.GreaterThan(1024 * 1024), "MSI should be > 1MB");
+			Assert.That(
+				new FileInfo(msiPath).Length,
+				Is.GreaterThan(1024 * 1024),
+				"MSI should be > 1MB");
 
 			var msiDir = Path.GetDirectoryName(msiPath);
 			Assert.That(msiDir, Is.Not.Null);
@@ -51,13 +58,31 @@ namespace SIL.InstallValidator
 			{
 				var bundleExe = Path.Combine(bundleDir, "FieldWorksBundle.exe");
 				var bundlePdb = Path.Combine(bundleDir, "FieldWorksBundle.wixpdb");
-				Assert.That(File.Exists(bundleExe), Is.True, "Expected FieldWorksBundle.exe next to the culture folder");
-				Assert.That(File.Exists(bundlePdb), Is.True, "Expected FieldWorksBundle.wixpdb next to the bundle exe");
+				var offlineBundleExe = Path.Combine(bundleDir, "FieldWorksOfflineBundle.exe");
+				var offlineBundlePdb = Path.Combine(bundleDir, "FieldWorksOfflineBundle.wixpdb");
+				Assert.That(
+					File.Exists(bundleExe),
+					Is.True,
+					"Expected FieldWorksBundle.exe next to the culture folder");
+				Assert.That(
+					File.Exists(bundlePdb),
+					Is.True,
+					"Expected FieldWorksBundle.wixpdb next to the bundle exe");
+				Assert.That(
+					File.Exists(offlineBundleExe),
+					Is.True,
+					"Expected FieldWorksOfflineBundle.exe next to the online bundle exe");
+				Assert.That(
+					File.Exists(offlineBundlePdb),
+					Is.True,
+					"Expected FieldWorksOfflineBundle.wixpdb next to the offline bundle exe");
 			}
 
 			using (var msi = MsiDatabase.OpenReadOnly(msiPath))
 			{
-				Assert.That(msi.GetProperty("ProductName"), Does.StartWith("FieldWorks Language Explorer"));
+				Assert.That(
+					msi.GetProperty("ProductName"),
+					Does.StartWith("FieldWorks Language Explorer"));
 				Assert.That(msi.GetProperty("Manufacturer"), Is.EqualTo("SIL International"));
 
 				var productVersion = msi.GetProperty("ProductVersion");
@@ -70,46 +95,44 @@ namespace SIL.InstallValidator
 
 		[Test]
 		[Category("InstallerArtifacts")]
-		public void BundleIncludes_FLExBridgeOfflinePrereq_InChain()
+		public void BundleAuthoringIncludes_FLExBridgeOfflinePrereq_InOnlineAndOfflineChains()
 		{
 			var repoRoot = FindRepoRoot();
 			if (repoRoot == null)
-				Assert.Ignore("Could not locate repo root (FieldWorks.sln)." );
+				Assert.Ignore("Could not locate repo root (FieldWorks.sln).");
 
-			var installerBinDir = Path.Combine(repoRoot, "FLExInstaller", "bin");
-			if (!Directory.Exists(installerBinDir))
-				Assert.Ignore("FLExInstaller/bin not found; installer likely not built in this checkout.");
-
-			var flexBridgeOfflineExe = Path.Combine(repoRoot, "FLExInstaller", "libs", "FLExBridge_Offline.exe");
-			if (!File.Exists(flexBridgeOfflineExe))
-				Assert.Ignore("FLExInstaller/libs/FLExBridge_Offline.exe not found. Run build.ps1 -BuildInstaller to stage prerequisites.");
-			Assert.That(new FileInfo(flexBridgeOfflineExe).Length, Is.GreaterThan(1024 * 1024), "FLExBridge_Offline.exe should be > 1MB");
-
+			var wix6Root = Path.Combine(repoRoot, "FLExInstaller", "wix6");
 
 			// Guard the intended chain wiring in WiX authoring. This is purposefully non-installing.
 			// Binary .wixpdb contents are not stable for string scanning, so validate the authoring structure instead.
-			var redistributablesWxi = Path.Combine(repoRoot, "FLExInstaller", "Shared", "Common", "Redistributables.wxi");
-			Assert.That(File.Exists(redistributablesWxi), Is.True, "Expected Redistributables.wxi to exist");
-
-			var bundleWxs = Path.Combine(repoRoot, "FLExInstaller", "Shared", "Base", "Bundle.wxs");
-			Assert.That(File.Exists(bundleWxs), Is.True, "Expected Bundle.wxs to exist");
-
-			var bundleText = File.ReadAllText(bundleWxs);
-			Assert.That(bundleText.Contains("Redistributables.wxi"), Is.True, "Expected Bundle.wxs to include Redistributables.wxi");
+			var redistributablesWxi = Path.Combine(
+				wix6Root,
+				"Shared",
+				"Common",
+				"Redistributables.wxi");
+			Assert.That(
+				File.Exists(redistributablesWxi),
+				Is.True,
+				"Expected Redistributables.wxi to exist");
 
 			var wxiDoc = XDocument.Load(redistributablesWxi, LoadOptions.None);
 			XNamespace wxsNs = "http://wixtoolset.org/schemas/v4/wxs";
 			XNamespace utilNs = "http://wixtoolset.org/schemas/v4/wxs/util";
 
 			Assert.That(
-				wxiDoc.Descendants(utilNs + "RegistrySearch").Any(e => (string)e.Attribute("Variable") == "FLExBridge"),
+				wxiDoc
+					.Descendants(utilNs + "RegistrySearch")
+					.Any(element => (string)element.Attribute("Variable") == "FLExBridge"),
 				Is.True,
 				"Expected util:RegistrySearch Variable='FLExBridge' for prereq detection");
 
 			var flexBridgeGroup = wxiDoc
 				.Descendants(wxsNs + "PackageGroup")
 				.FirstOrDefault(e => (string)e.Attribute("Id") == "FlexBridgeInstaller");
-			Assert.That(flexBridgeGroup, Is.Not.Null, "Expected PackageGroup Id='FlexBridgeInstaller'");
+			Assert.That(
+				flexBridgeGroup,
+				Is.Not.Null,
+				"Expected PackageGroup Id='FlexBridgeInstaller'");
 
 			var fbInstaller = flexBridgeGroup
 				.Descendants(wxsNs + "ExePackage")
@@ -118,23 +141,52 @@ namespace SIL.InstallValidator
 
 			var sourceFileAttr = fbInstaller.Attribute("SourceFile");
 			var sourceFile = sourceFileAttr != null ? sourceFileAttr.Value : string.Empty;
-			Assert.That(sourceFile.Contains("FLExBridge_Offline.exe"), Is.True, "Expected FBInstaller SourceFile to reference FLExBridge_Offline.exe");
+			Assert.That(
+				sourceFile.Contains("FLExBridge_Offline.exe"),
+				Is.True,
+				"Expected FBInstaller SourceFile to reference FLExBridge_Offline.exe");
 			var detectConditionAttr = fbInstaller.Attribute("DetectCondition");
 			var detectCondition = detectConditionAttr != null ? detectConditionAttr.Value : null;
-			Assert.That(detectCondition, Is.EqualTo("FLExBridge"), "Expected FBInstaller DetectCondition='FLExBridge'");
+			Assert.That(
+				detectCondition,
+				Is.EqualTo("FLExBridge"),
+				"Expected FBInstaller DetectCondition='FLExBridge'");
 
 			var vcredistsGroup = wxiDoc
 				.Descendants(wxsNs + "PackageGroup")
 				.FirstOrDefault(e => (string)e.Attribute("Id") == "vcredists");
 			Assert.That(vcredistsGroup, Is.Not.Null, "Expected PackageGroup Id='vcredists'");
 			Assert.That(
-				vcredistsGroup.Descendants(wxsNs + "PackageGroupRef").Any(e => (string)e.Attribute("Id") == "FlexBridgeInstaller"),
+				vcredistsGroup
+					.Descendants(wxsNs + "PackageGroupRef")
+					.Any(element => (string)element.Attribute("Id") == "FlexBridgeInstaller"),
 				Is.True,
 				"Expected vcredists group to reference FlexBridgeInstaller");
 
-			var bundleDoc = XDocument.Load(bundleWxs, LoadOptions.None);
+			AssertBundleReferencesVcredists(
+				Path.Combine(wix6Root, "Shared", "Base", "Bundle.wxs"));
+			AssertBundleReferencesVcredists(
+				Path.Combine(wix6Root, "Shared", "Base", "OfflineBundle.wxs"));
+		}
+
+		private static void AssertBundleReferencesVcredists(string bundleWxs)
+		{
 			Assert.That(
-				bundleDoc.Descendants(wxsNs + "PackageGroupRef").Any(e => (string)e.Attribute("Id") == "vcredists"),
+				File.Exists(bundleWxs),
+				Is.True,
+				"Expected bundle authoring file to exist");
+			var bundleText = File.ReadAllText(bundleWxs);
+			Assert.That(
+				bundleText.Contains("Redistributables.wxi"),
+				Is.True,
+				"Expected bundle authoring to include Redistributables.wxi");
+
+			var bundleDoc = XDocument.Load(bundleWxs, LoadOptions.None);
+			XNamespace wxsNs = "http://wixtoolset.org/schemas/v4/wxs";
+			Assert.That(
+				bundleDoc
+					.Descendants(wxsNs + "PackageGroupRef")
+					.Any(element => (string)element.Attribute("Id") == "vcredists"),
 				Is.True,
 				"Expected bundle Chain to reference PackageGroupRef Id='vcredists'");
 		}
