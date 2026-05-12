@@ -38,13 +38,72 @@ function Get-VsWherePath {
     return $null
 }
 
+function Get-FwToolchainPolicy {
+    <#
+    .SYNOPSIS
+        Returns the repo-controlled FieldWorks toolchain policy.
+    #>
+    if ($script:FwToolchainPolicy) {
+        return $script:FwToolchainPolicy
+    }
+
+    $policyPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'FieldWorks.Toolchain.props'
+    $defaults = [ordered]@{
+        VisualStudioMajor = '17'
+        VisualStudioVersionRange = '[17.0,18.0)'
+        VCTargetsVersion = 'v170'
+        PlatformToolset = 'v143'
+        DotNetFrameworkSdkVisualStudioVersion = '17.0'
+    }
+
+    if (-not (Test-Path $policyPath)) {
+        $script:FwToolchainPolicy = [pscustomobject]$defaults
+        return $script:FwToolchainPolicy
+    }
+
+    [xml]$policyXml = Get-Content -LiteralPath $policyPath -Raw
+    $propertyGroups = @($policyXml.Project.PropertyGroup)
+
+    function Get-PolicyValue {
+        param(
+            [string]$Name,
+            [string]$DefaultValue
+        )
+
+        foreach ($propertyGroup in $propertyGroups) {
+            $node = $propertyGroup.$Name
+            if (-not $node) {
+                continue
+            }
+
+            $value = $node.'#text'
+            if (-not [string]::IsNullOrWhiteSpace($value)) {
+                return $value.Trim()
+            }
+        }
+
+        return $DefaultValue
+    }
+
+    $script:FwToolchainPolicy = [pscustomobject]@{
+        VisualStudioMajor = Get-PolicyValue -Name 'FwVisualStudioMajor' -DefaultValue $defaults.VisualStudioMajor
+        VisualStudioVersionRange = Get-PolicyValue -Name 'FwVisualStudioVersionRange' -DefaultValue $defaults.VisualStudioVersionRange
+        VCTargetsVersion = Get-PolicyValue -Name 'FwVCTargetsVersion' -DefaultValue $defaults.VCTargetsVersion
+        PlatformToolset = Get-PolicyValue -Name 'FwPlatformToolset' -DefaultValue $defaults.PlatformToolset
+        DotNetFrameworkSdkVisualStudioVersion = Get-PolicyValue -Name 'FwDotNetFrameworkSdkVisualStudioVersion' -DefaultValue $defaults.DotNetFrameworkSdkVisualStudioVersion
+    }
+
+    return $script:FwToolchainPolicy
+}
+
 function Get-VsInstallationInfo {
     <#
     .SYNOPSIS
         Returns installation metadata for the latest matching Visual Studio instance.
     #>
     param(
-        [string[]]$Requires = @()
+        [string[]]$Requires = @(),
+        [string]$VersionRange = ''
     )
 
     $vsWhere = Get-VsWherePath
@@ -52,7 +111,16 @@ function Get-VsInstallationInfo {
         return $null
     }
 
+    if ([string]::IsNullOrWhiteSpace($VersionRange)) {
+        $VersionRange = (Get-FwToolchainPolicy).VisualStudioVersionRange
+    }
+
     $vsWhereArgs = @('-latest', '-products', '*')
+    if (-not [string]::IsNullOrWhiteSpace($VersionRange)) {
+        $vsWhereArgs += '-version'
+        $vsWhereArgs += $VersionRange
+    }
+
     if ($Requires -and $Requires.Count -gt 0) {
         $vsWhereArgs += '-requires'
         $vsWhereArgs += $Requires
@@ -86,6 +154,8 @@ function Get-VsToolchainInfo {
         return $null
     }
 
+    $toolchainPolicy = Get-FwToolchainPolicy
+
     $installationPath = $vsInfo.InstallationPath
     $vsDevCmdPath = Join-Path $installationPath 'Common7\Tools\VsDevCmd.bat'
     if (-not (Test-Path $vsDevCmdPath)) {
@@ -108,20 +178,26 @@ function Get-VsToolchainInfo {
         $vcInstallDir = $null
     }
 
-    $vcTargetsPath = Join-Path $installationPath 'MSBuild\Microsoft\VC\v170'
-    if (-not (Test-Path $vcTargetsPath)) {
-        $vcTargetsPath = $null
+    $vcTargetsPath = $null
+    if (-not [string]::IsNullOrWhiteSpace($toolchainPolicy.VCTargetsVersion)) {
+        $vcTargetsPath = Join-Path $installationPath (Join-Path 'MSBuild\Microsoft\VC' $toolchainPolicy.VCTargetsVersion)
+        if (-not (Test-Path $vcTargetsPath)) {
+            $vcTargetsPath = $null
+        }
     }
 
     return [pscustomobject]@{
         VsWherePath = $vsInfo.VsWherePath
         InstallationPath = $installationPath
         DisplayVersion = $vsInfo.DisplayVersion
+        VisualStudioVersionRange = $toolchainPolicy.VisualStudioVersionRange
         VsDevCmdPath = $vsDevCmdPath
         MSBuildPath = $msbuildPath
         VSTestPath = $vsTestPath
         VcInstallDir = $vcInstallDir
         VCTargetsPath = $vcTargetsPath
+        PlatformToolset = $toolchainPolicy.PlatformToolset
+        DotNetFrameworkSdkVisualStudioVersion = $toolchainPolicy.DotNetFrameworkSdkVisualStudioVersion
     }
 }
 
