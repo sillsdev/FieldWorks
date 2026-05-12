@@ -2099,6 +2099,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reversal Number Configuration.
+        /// </summary>
+        internal static string ksReversalNumberConfig {
+            get {
+                return ResourceManager.GetString("ksReversalNumberConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The entry you have selected is not shown, {0}..
         /// </summary>
         internal static string ksSelectedEntryNotInDict {

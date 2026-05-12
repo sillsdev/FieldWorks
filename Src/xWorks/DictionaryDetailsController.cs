@@ -98,8 +98,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodeSenseOptions)
 				{
+					bool isReversal = model != null && model.IsReversal;
 					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
-						node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
+						node.Parent != null && node.Parent.Label == "MainEntrySubsenses", isReversal);
 				}
 				else if (Options is DictionaryNodeListOptions)
 				{
@@ -387,12 +388,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
-		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense, bool isSubSubsense)
+		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense, bool isSubSubsense, bool isReversal = false)
 		{
 			// initialize SenseOptionsView
 			//For senses disallow the 1 1.2 1.2.3 option, that is now handled in subsenses
 			var disallowedNumberingStyles = "%O";
-			var senseOptionsView = new SenseOptionsView(isSubsense)
+			var senseOptionsView = new SenseOptionsView(isSubsense, isReversal)
 			{
 				BeforeText = senseOptions.BeforeNumber,
 				// load list of available NumberingStyles before setting NumberingStyle's value

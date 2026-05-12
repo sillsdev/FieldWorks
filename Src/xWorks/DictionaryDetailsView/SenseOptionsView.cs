@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
 
-		public SenseOptionsView(bool isSubsense)
+		public SenseOptionsView(bool isSubsense, bool isReversal = false)
 		{
 			InitializeComponent();
 
@@ -24,7 +24,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 			textBoxBefore.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
 			textBoxAfter.TextChanged += SpecialCharacterHandling.RevealInvisibleCharacters;
-
+			if (isReversal)
+				groupBoxSenseNumber.Text = xWorksStrings.ksReversalNumberConfig;
 			if (!isSubsense)
 				return;
 			groupBoxSenseNumber.Text = xWorksStrings.ksSubsenseNumberConfig;
