@@ -334,7 +334,7 @@
     {
       "label": "Test (native)",
       "type": "shell",
-      "command": "./test.ps1 -Native -Configuration ${input:testConfiguration}",
+      "command": "./test.ps1 -SkipManaged -Configuration ${input:testConfiguration}",
       "group": "test",
       "detail": "Run native tests via test.ps1 (dispatches to Build/scripts/Invoke-CppTest.ps1)",
       "options": {
@@ -348,7 +348,7 @@
     {
       "label": "Test (native, no build)",
       "type": "shell",
-      "command": "./test.ps1 -Native -NoBuild -Configuration ${input:testConfiguration}",
+      "command": "./test.ps1 -SkipManaged -NoBuild -Configuration ${input:testConfiguration}",
       "group": "test",
       "detail": "Run native tests via test.ps1 without rebuilding",
       "options": {
@@ -530,4 +530,3 @@
     }
   ]
 }
-
