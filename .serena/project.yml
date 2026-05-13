@@ -151,5 +151,8 @@ added_modes:
 #     - ../sibling-package
 #     - ../shared-lib
 additional_workspace_folders: []
-# the name by which the project can be referenced within Serena
+# Keep a stable shared project_name here because current Serena rewrites incomplete
+# project.yml files and auto-adds this field if it is missing.
+# If you need a per-worktree name, override project_name in ignored
+# .serena/project.local.yml instead of editing the shared file.
 project_name: FieldWorks

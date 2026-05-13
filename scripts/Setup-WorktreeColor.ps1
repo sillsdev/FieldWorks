@@ -7,6 +7,7 @@
 	Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
 	- Base workspace configuration is embedded in this script
 	- Writes a worktree-local workspace file: <branch>.code-workspace (git-ignored)
+	- Creates .serena/project.local.yml for worktrees when the shared Serena config exists
 
 	- If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
 	- If in Main Repo: Removes these color customizations.
@@ -116,6 +117,32 @@ function Get-WorktreeWorkspacePath([string]$rootPath) {
 	$branchName = Get-GitBranchName $rootPath
 	$fileStem = ConvertTo-SafeWorkspaceFileStem $branchName
 	return (Join-Path $rootPath ("{0}.code-workspace" -f $fileStem))
+}
+
+function Ensure-SerenaLocalProjectFile([string]$targetRoot) {
+	$serenaDir = Join-Path $targetRoot ".serena"
+	if (-not (Test-Path $serenaDir -PathType Container)) {
+		return
+	}
+
+	$sharedProjectPath = Join-Path $serenaDir "project.yml"
+	if (-not (Test-Path $sharedProjectPath -PathType Leaf)) {
+		return
+	}
+
+	$localProjectPath = Join-Path $serenaDir "project.local.yml"
+	if (Test-Path $localProjectPath -PathType Leaf) {
+		return
+	}
+
+	$projectName = Get-GitBranchName $targetRoot
+	$escapedProjectName = $projectName -replace "'", "''"
+	$contents = @(
+		"# Auto-generated per-worktree Serena override. Edit locally if needed."
+		("project_name: '{0}'" -f $escapedProjectName)
+	)
+	$contents | Set-Content -LiteralPath $localProjectPath -Encoding UTF8
+	Write-Host "Created Serena local project override: $localProjectPath"
 }
 
 function Get-GitWorktrees([string]$anyRepoRoot) {
@@ -799,6 +826,7 @@ function Write-WorktreeWorkspaceFile(
 	if ($colorSelection.ShouldPersistLastAssigned) {
 		Write-WorktreeColorState -mainRepoRoot $repoRoot -colorIndex $resolvedColorIndex
 	}
+	Ensure-SerenaLocalProjectFile -targetRoot $targetRoot
 	Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
 
 	# Best-effort cleanup of legacy workspace filename.

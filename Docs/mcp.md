@@ -62,9 +62,13 @@ VS Code's user-level MCP config (`%APPDATA%\Code\User\mcp.json`) may have a Sere
 server that auto-discovers projects by scanning for `.serena` folders. Combined with
 workspace-level `mcp.json`, this creates duplicate project registrations.
 
-This repo's shared `.serena/project.yml` intentionally leaves `project_name` unset so
-Serena falls back to the worktree folder name by default. That keeps worktrees easier
-to distinguish when multiple registrations exist.
+Current Serena releases normalize incomplete `project.yml` files and will write
+`project_name` back into the shared config if it is missing. To avoid that churn,
+this repo keeps a stable shared `project_name` in `.serena/project.yml`.
+
+For worktree-specific naming, use the ignored `.serena/project.local.yml` file in
+each worktree to override `project_name` locally. That keeps Serena names distinct
+without causing repeated edits to the versioned config.
 
 ### Solution
 **Use only workspace-level Serena, and keep project names local to the worktree**
@@ -77,9 +81,12 @@ code "$env:APPDATA\Code\User\mcp.json"
 Remove the `"oraios/serena"` entry. The workspace `.vscode/mcp.json` provides Serena
 with explicit project targeting.
 
-If you want a friendlier project name than the folder name, set it in
-`.serena/project.local.yml` for that worktree instead of committing a shared
-`project_name` in `.serena/project.yml`.
+If you want a worktree-specific Serena project name, set it in
+`.serena/project.local.yml` for that worktree. For example:
+
+```yaml
+project_name: 010-advanced-entry-view
+```
 
 ## Best-practice profile for this repo
 
@@ -93,7 +100,7 @@ If you want a friendlier project name than the folder name, set it in
 - Open one VS Code window per worktree; let that window use its own workspace `.vscode/mcp.json`.
 - Keep only one Serena server definition active (workspace-level), and remove user-level Serena.
 - Keep Serena pinned to the active workspace via `--project ${workspaceFolder}` (already configured).
-- If you want an explicit Serena project name, set it in `.serena/project.local.yml`; do not commit a shared `project_name` in `.serena/project.yml`.
+- If you want a worktree-specific Serena project name, set it in `.serena/project.local.yml`; keep the shared `.serena/project.yml` complete so Serena does not rewrite it.
 - After switching worktrees, run **MCP: Reset Cached Tools** if tool lists or capabilities look stale.
 - No extra GitHub MCP worktree settings are required beyond OAuth sign-in.
 
