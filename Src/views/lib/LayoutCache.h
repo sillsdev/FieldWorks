@@ -102,12 +102,31 @@ public:
 		::ZeroMemory(&m_sa, sizeof(m_sa));
 	}
 
-	bool Matches(const OLECHAR * prgch, int cch, HFONT hfont, const SCRIPT_ANALYSIS & sa)
+	static int CchFontVar(const OLECHAR * prgchFontVar)
+	{
+		if (!prgchFontVar)
+			return 0;
+		int cch = 0;
+		while (prgchFontVar[cch])
+			++cch;
+		return cch;
+	}
+
+	bool Matches(const OLECHAR * prgch, int cch, HFONT hfont, const SCRIPT_ANALYSIS & sa,
+		const OLECHAR * prgchFontVar)
 	{
 		if (m_hfont != hfont || m_cch != cch)
 			return false;
 		if (::memcmp(&m_sa, &sa, sizeof(SCRIPT_ANALYSIS)) != 0)
 			return false;
+		int cchFontVar = CchFontVar(prgchFontVar);
+		if (m_vchFontVar.Size() != cchFontVar)
+			return false;
+		if (cchFontVar > 0 &&
+			::memcmp(m_vchFontVar.Begin(), prgchFontVar, cchFontVar * isizeof(OLECHAR)) != 0)
+		{
+			return false;
+		}
 		if (cch == 0)
 			return true;
 		return ::memcmp(m_vch.Begin(), prgch, cch * isizeof(OLECHAR)) == 0;
@@ -120,6 +139,7 @@ public:
 	int m_dxdWidth;
 	bool m_fScriptPlaceFailed;
 	Vector<OLECHAR> m_vch;
+	Vector<OLECHAR> m_vchFontVar;
 	Vector<WORD> m_vglyph;
 	Vector<SCRIPT_VISATTR> m_vsva;
 	Vector<int> m_vadvance;
@@ -286,12 +306,13 @@ public:
 		m_msCompute = 0;
 	}
 
-	ShapeRunEntry * Find(const OLECHAR * prgch, int cch, HFONT hfont, const SCRIPT_ANALYSIS & sa)
+	ShapeRunEntry * Find(const OLECHAR * prgch, int cch, HFONT hfont, const SCRIPT_ANALYSIS & sa,
+		const OLECHAR * prgchFontVar)
 	{
 		for (int ientry = 0; ientry < m_ventry.Size(); ++ientry)
 		{
 			ShapeRunEntry & entry = m_ventry[ientry];
-			if (entry.Matches(prgch, cch, hfont, sa))
+			if (entry.Matches(prgch, cch, hfont, sa, prgchFontVar))
 			{
 				++m_cHit;
 				return &entry;
@@ -302,6 +323,7 @@ public:
 	}
 
 	ShapeRunEntry * Store(const OLECHAR * prgch, int cch, HFONT hfont, const SCRIPT_ANALYSIS & sa,
+		const OLECHAR * prgchFontVar,
 		const WORD * prgGlyph, const SCRIPT_VISATTR * prgsva, const int * prgAdvance,
 		const int * prgcst, const GOFFSET * prgoff, const WORD * prgCluster, int cglyph,
 		int dxdWidth, bool fScriptPlaceFailed)
@@ -310,7 +332,7 @@ public:
 		for (int ientry = 0; ientry < m_ventry.Size(); ++ientry)
 		{
 			ShapeRunEntry & entry = m_ventry[ientry];
-			if (entry.Matches(prgch, cch, hfont, sa))
+			if (entry.Matches(prgch, cch, hfont, sa, prgchFontVar))
 			{
 				pentry = &entry;
 				break;
@@ -343,6 +365,11 @@ public:
 		pentry->m_vch.Resize(cch);
 		if (cch > 0)
 			::memcpy(pentry->m_vch.Begin(), prgch, cch * isizeof(OLECHAR));
+
+		int cchFontVar = ShapeRunEntry::CchFontVar(prgchFontVar);
+		pentry->m_vchFontVar.Resize(cchFontVar);
+		if (cchFontVar > 0)
+			::memcpy(pentry->m_vchFontVar.Begin(), prgchFontVar, cchFontVar * isizeof(OLECHAR));
 
 		pentry->m_vglyph.Resize(cglyph);
 		pentry->m_vsva.Resize(cglyph);

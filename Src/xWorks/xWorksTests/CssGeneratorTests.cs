@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 using XCore;
 
 // ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
@@ -2346,7 +2347,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
-			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcp=1,ss11=2" } };
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -2362,7 +2363,55 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
-			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcps\" 1,\"Eng\" 2");
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcp\" 1,\"ss11\" 2");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_InvalidCharStyleFontFeaturesAreIgnored()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+			Assert.That(cssResult, Does.Not.Contain("font-feature-settings:"));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CustomPrintableAsciiFontFeatures_AreEscapedForCss()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "!abc=2,a\"b\\=1" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+			Assert.That(cssResult,
+				Does.Contain("font-feature-settings:\"!abc\" 2,\"a\\\"b\\\\\" 1"));
 		}
 
 		[Test]
@@ -3064,6 +3113,41 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_WsSpanWithNormalStyle_UsesWritingSystemDefaultFontFeatures()
+		{
+			var style = GenerateEmptyStyle("Normal");
+			style.IsParagraphStyle = true;
+
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { vernWs.LanguageTag })
+			};
+			var testSensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				Children = new List<ConfigurableDictionaryNode> { glossNode }
+			};
+			var testEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { testEntryNode }
+			};
+			PopulateFieldsForTesting(testEntryNode);
+
+			var cssResult = Regex.Replace(CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable), @"\t|\n|\r", "");
+
+			Assert.That(cssResult, Contains.Substring("span[lang='" + vernWs.LanguageTag + "']{font-family:'Charis SIL',serif;font-feature-settings:\"ss11\" 1,\"ss12\" 1;"));
 		}
 
 		[Test]
