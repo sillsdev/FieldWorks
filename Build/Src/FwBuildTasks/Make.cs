@@ -121,8 +121,7 @@ namespace FwBuildTasks
 				return null;
 
 			string[] versionDirs = Directory.GetDirectories(toolsRoot);
-			Array.Sort(versionDirs, StringComparer.OrdinalIgnoreCase);
-			Array.Reverse(versionDirs);
+			Array.Sort(versionDirs, CompareVersionDirectories);
 
 			foreach (string versionDir in versionDirs)
 			{
@@ -142,6 +141,30 @@ namespace FwBuildTasks
 			}
 
 			return null;
+		}
+
+		private static int CompareVersionDirectories(string left, string right)
+		{
+			string leftName = Path.GetFileName(left);
+			string rightName = Path.GetFileName(right);
+
+			Version leftVersion;
+			Version rightVersion;
+			bool leftIsVersion = Version.TryParse(leftName, out leftVersion);
+			bool rightIsVersion = Version.TryParse(rightName, out rightVersion);
+
+			if (leftIsVersion && rightIsVersion)
+			{
+				int versionComparison = rightVersion.CompareTo(leftVersion);
+				if (versionComparison != 0)
+					return versionComparison;
+			}
+			else if (leftIsVersion != rightIsVersion)
+			{
+				return rightIsVersion.CompareTo(leftIsVersion);
+			}
+
+			return StringComparer.OrdinalIgnoreCase.Compare(rightName, leftName);
 		}
 
 		private void CheckToolPath()

@@ -28,8 +28,27 @@ function Get-PreferredVcToolBinPath {
         return $null
     }
 
+    $versionSort = {
+        $parsedVersion = [version]'0.0'
+        $isVersion = [version]::TryParse($_.Name, [ref]$parsedVersion)
+        if ($isVersion) {
+            return $parsedVersion
+        }
+
+        return [version]'0.0'
+    }
+
+    $sortProperties = @(
+        @{ Expression = {
+                $parsedVersion = [version]'0.0'
+                [version]::TryParse($_.Name, [ref]$parsedVersion)
+            }; Descending = $true }
+        @{ Expression = $versionSort; Descending = $true }
+        @{ Expression = { $_.Name }; Descending = $true }
+    )
+
     $preferred = Get-ChildItem -Path $toolsRoot -Directory -ErrorAction SilentlyContinue |
-        Sort-Object Name -Descending |
+        Sort-Object -Property $sortProperties |
         ForEach-Object { Join-Path $_.FullName 'bin\HostX64\x64' } |
         Where-Object { Test-Path $_ } |
         Select-Object -First 1
