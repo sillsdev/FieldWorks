@@ -32,9 +32,15 @@ Avalonia controls SHALL have headless tests for behavior that cannot be proven b
 - **WHEN** a headless test expands a migrated tree node for senses, terms, or translations
 - **THEN** the expected child nodes SHALL be realized without creating unrelated off-screen editor controls
 
+#### Scenario: Headless test covers editor platform seams
+- **WHEN** an Avalonia editor is tested headlessly
+- **THEN** the test SHALL cover command shortcuts, popup focus return, validation state, edit commit/cancel, keyboard/IME behavior where practical, accessibility metadata, and disposal/subscription cleanup
+
 ### Requirement: Render framework captures semantic parity
 
 Render verification SHALL capture semantic snapshots in addition to pixel/timing artifacts for legacy WinForms, typed IR, and Avalonia outputs.
+
+Semantic snapshots SHALL normalize volatile values and key comparisons around stable node IDs, class/flid/object binding, editor descriptors, writing-system metadata, ghost state, focus order, accessibility identity, and migration diagnostics.
 
 #### Scenario: Semantic snapshot identifies fields and bindings
 - **WHEN** a lexical entry view is captured
@@ -43,6 +49,18 @@ Render verification SHALL capture semantic snapshots in addition to pixel/timing
 #### Scenario: Legacy and Avalonia comparison reports meaningful differences
 - **WHEN** legacy and Avalonia outputs are compared
 - **THEN** the report SHALL distinguish missing semantic nodes, accepted visual variance, accessibility differences, timing differences, and unsupported migration gaps
+
+#### Scenario: Snapshot avoids incidental layout brittleness
+- **WHEN** a visual layout difference does not alter stable semantic identity, editor kind, binding, focus order, accessibility identity, or accepted density thresholds
+- **THEN** the parity result SHALL classify it as visual variance rather than a semantic regression
+
+### Requirement: Migration gates include behavior matrices
+
+Each region proposed for Avalonia completion SHALL provide behavior matrices for undo/redo, LCModel transactions, keyboard/focus behavior, accessibility metadata, localization/resource identity, customer overrides, dynamic editor diagnostics, performance budgets, native-call instrumentation, and Graphite-free default behavior.
+
+#### Scenario: Missing behavior matrix blocks completion
+- **WHEN** a region is proposed as completed
+- **THEN** missing required behavior matrix evidence SHALL block completion even if visual rendering appears correct
 
 ### Requirement: Failure artifacts are actionable
 

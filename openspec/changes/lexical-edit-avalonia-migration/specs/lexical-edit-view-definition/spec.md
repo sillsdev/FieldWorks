@@ -2,7 +2,7 @@
 
 ### Requirement: Typed view definition is the canonical migration boundary
 
-The system SHALL define a managed typed view-definition model and Presentation IR for Lexical Edit that represents sections, fields, sequences, table regions, tree nodes, labels, visibility, ghost behavior, editor descriptors, writing-system metadata, OpenType/HarfBuzz font-feature metadata, and stable node identity.
+The system SHALL define a managed typed view-definition model and Presentation IR for Lexical Edit that represents sections, fields, sequences, table regions, tree nodes, labels, visibility, ghost behavior, editor descriptors, writing-system metadata, OpenType/HarfBuzz font-feature metadata, stable node identity, localization/resource identity, accessibility identity, validation hints, focus groups, command affordances, and virtualization hints.
 
 #### Scenario: IR represents LexEntry layout semantics
 - **WHEN** the LexEntry detail contract is compiled
@@ -24,6 +24,11 @@ The system SHALL import existing XML Parts/Layout definitions, including overrid
 - **WHEN** the importer encounters an XML construct not yet supported by the typed model
 - **THEN** it SHALL emit a diagnostic tied to the layout part and node path rather than silently dropping the construct
 
+#### Scenario: Dynamic editor construct reports diagnostic
+- **WHEN** XML import encounters dynamic editor strings, custom editor constructs, loader-based editors, fallback message/image slices, or unsupported launcher parameters
+- **THEN** the importer SHALL preserve enough descriptor metadata for the legacy adapter when possible
+- **AND** it SHALL emit a deterministic diagnostic with layout part, node path, editor key, and migration severity before Avalonia replacement is attempted
+
 ### Requirement: View-definition services use dependency injection
 
 View-definition compilation and rendering SHALL depend on interfaces for layout source access, XML import, schema/model metadata, writing-system services, editor registry, cache, diagnostics, and LCModel access.
@@ -36,6 +41,8 @@ View-definition compilation and rendering SHALL depend on interfaces for layout 
 
 Typed view-definition compilation SHALL be deterministic, cacheable by stable keys, cancellable, and runnable off the UI thread.
 
+Typed view-definition compilation SHALL operate on immutable layout, metadata, writing-system, custom-field, and override snapshots. It SHALL NOT depend on live WinForms controls, mutable `PropertyTable` state, or UI-thread-only cache traversal when compiling off the UI thread.
+
 #### Scenario: Warm compile reuses cache
 - **WHEN** the same root class, layout id, project configuration fingerprint, writing-system profile, and override set are compiled twice
 - **THEN** the second compile SHALL reuse the cached typed result
@@ -43,6 +50,11 @@ Typed view-definition compilation SHALL be deterministic, cacheable by stable ke
 #### Scenario: UI thread is not blocked by heavy compilation
 - **WHEN** a Lexical Edit view opens or changes root layout
 - **THEN** heavy XML import, custom-field expansion, and semantic compilation SHALL run outside the UI thread and support cancellation
+
+#### Scenario: Async compile does not touch UI state
+- **WHEN** view-definition compilation runs asynchronously
+- **THEN** it SHALL consume immutable inputs captured by a safe source service
+- **AND** it SHALL publish results through the UI scheduling boundary only after compilation completes or is canceled
 
 ### Requirement: XML retirement requires migration tooling and parity gates
 
