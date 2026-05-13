@@ -228,6 +228,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void Find_Click(object sender, EventArgs e)
 		{
+			if (m_sHtmlFileName == InitialDocument)
+			{
+				// InitialDocument doesn't have the proper javascript for Find to work.
+				return;
+			}
 			findDlg = new FindDialog(m_htmlControl.Browser);
 			findDlg.FormClosing += new FormClosingEventHandler(FindDialog_FormClosing);
 			findDlg.Show(this);
