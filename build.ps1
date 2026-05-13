@@ -394,20 +394,26 @@ function Test-FwBuildTasksBootstrapRequired {
 		[Parameter(Mandatory = $true)][string]$RepoRoot
 	)
 
-	if (-not (Test-Path $OutputPath)) {
+	if (-not (Test-Path -LiteralPath $OutputPath)) {
 		Write-Host "FwBuildTasks bootstrap output missing; rebuilding." -ForegroundColor Yellow
 		return $true
 	}
 
 	$configPath = "$OutputPath.config"
-	if (-not (Test-Path $configPath)) {
+	if (-not (Test-Path -LiteralPath $configPath)) {
 		Write-Host "FwBuildTasks bootstrap config missing; rebuilding." -ForegroundColor Yellow
 		return $true
 	}
 
 	$output = Get-Item -LiteralPath $OutputPath
 	$sourceRoot = Join-Path $RepoRoot "Build/Src/FwBuildTasks"
-	$sourceFiles = Get-ChildItem -LiteralPath $sourceRoot -Recurse -Include *.cs,*.csproj,*.props,*.targets -File -ErrorAction Stop
+	if (-not (Test-Path -LiteralPath $sourceRoot)) {
+		throw "FwBuildTasks source root was not found at '$sourceRoot'."
+	}
+
+	$trackedInputExtensions = @('.cs', '.csproj', '.props', '.targets')
+	$sourceFiles = Get-ChildItem -LiteralPath $sourceRoot -Recurse -File -ErrorAction Stop |
+		Where-Object { $_.Extension -in $trackedInputExtensions }
 	$bootstrapInputs = @(
 		(Join-Path $RepoRoot "build.ps1"),
 		(Join-Path $RepoRoot "Directory.Packages.props"),
@@ -426,7 +432,7 @@ function Test-FwBuildTasksBootstrapRequired {
 	}
 
 	foreach ($inputPath in $bootstrapInputs) {
-		if (-not (Test-Path $inputPath)) {
+		if (-not (Test-Path -LiteralPath $inputPath)) {
 			continue
 		}
 
