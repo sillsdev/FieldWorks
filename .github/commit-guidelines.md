@@ -15,6 +15,7 @@ These align with the gitlint rules run in CI.
 - Wrap lines at 80 characters.
 - Explain what and why over how; link issues like "Fixes #1234" when applicable.
 - No hard tabs, no trailing whitespace.
+- Gitlint ignores the B1 body-length rule for generated agent metadata lines such as the `Agent-Logs-Url:` footer and the Copilot Autofix co-author line.
 
 ## Helpful commands (Windows PowerShell)
 

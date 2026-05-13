@@ -1,0 +1,6 @@
+[general]
+regex-style-search=true
+
+[ignore-by-body]
+regex=(?m)^(Agent-Logs-Url:.*|Co-authored-by: Copilot Autofix powered by AI <[0-9]+\+Copilot@users\.noreply\.github\.com>)$
+ignore=B1
