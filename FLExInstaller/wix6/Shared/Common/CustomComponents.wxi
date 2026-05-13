@@ -61,7 +61,7 @@
 <?ifdef MASTERBUILDDIR?>
 	<!--
 	Newtonsoft.Json.dll: WiX 3 heat-exclude + KeyPathFix; WiX 6 wix6/Shared/Base/heat-exclude.xml + KeyPathFix.
-	NewtonsoftJsonApp: private copy. NewtonsoftJsonGac: GAC (Assembly=.net). Patch both components when the DLL changes.
+	NewtonsoftJsonApp: private copy. NewtonsoftJsonGac: GAC (Assembly=.net).
 	-->
 	<DirectoryRef Id="APPFOLDER">
 		<Component Id="NewtonsoftJsonApp" Guid="{B8A47C61-2E90-4D1A-9F4E-7C3B5A682D01}">
