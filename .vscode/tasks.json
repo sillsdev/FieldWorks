@@ -107,7 +107,7 @@
       "label": "Setup: Colorize Worktree",
       "type": "shell",
       "command": "./scripts/Setup-WorktreeColor.ps1 -VSCodeWorkspaceFile \"${workspaceFile}\"",
-      "detail": "Sets a unique window color from a deterministic palette slot",
+      "detail": "Sets a unique window color from a rotating palette slot",
       "runOptions": {
         "runOn": "folderOpen"
       },
@@ -435,6 +435,10 @@
           "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
         }
       },
+        "presentation": {
+          "reveal": "never",
+          "panel": "shared"
+        },
       "problemMatcher": []
     },
     {
