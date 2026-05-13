@@ -14,54 +14,217 @@
 # VS Environment Functions
 # =============================================================================
 
-function Get-PreferredVcToolBinPath {
+function Get-VsWherePath {
     <#
     .SYNOPSIS
-        Returns the preferred HostX64\x64 MSVC tool bin directory.
+        Returns the path to the Microsoft-provided vswhere executable.
     #>
-    if (-not $env:VCINSTALLDIR) {
-        return $null
+    $candidates = @()
+    if ($env:ProgramFiles) {
+        $candidates += (Join-Path -Path $env:ProgramFiles -ChildPath 'Microsoft Visual Studio\Installer\vswhere.exe')
     }
 
-    $toolsRoot = Join-Path $env:VCINSTALLDIR 'Tools\MSVC'
-    if (-not (Test-Path $toolsRoot)) {
-        return $null
+    $programFilesX86 = ${env:ProgramFiles(x86)}
+    if ($programFilesX86) {
+        $candidates += (Join-Path -Path $programFilesX86 -ChildPath 'Microsoft Visual Studio\Installer\vswhere.exe')
     }
 
-    $versionSort = {
-        $parsedVersion = [version]'0.0'
-        $isVersion = [version]::TryParse($_.Name, [ref]$parsedVersion)
-        if ($isVersion) {
-            return $parsedVersion
+    foreach ($candidate in $candidates | Select-Object -Unique) {
+        if (Test-Path $candidate) {
+            return $candidate
         }
-
-        return [version]'0.0'
     }
 
-    $sortProperties = @(
-        @{ Expression = {
-                $parsedVersion = [version]'0.0'
-                [version]::TryParse($_.Name, [ref]$parsedVersion)
-            }; Descending = $true }
-        @{ Expression = $versionSort; Descending = $true }
-        @{ Expression = { $_.Name }; Descending = $true }
+    return $null
+}
+
+function Get-VsInstallationInfo {
+    <#
+    .SYNOPSIS
+        Returns installation metadata for the latest matching Visual Studio instance.
+    #>
+    param(
+        [string[]]$Requires = @()
     )
 
-    $preferred = Get-ChildItem -Path $toolsRoot -Directory -ErrorAction SilentlyContinue |
-        Sort-Object -Property $sortProperties |
-        ForEach-Object { Join-Path $_.FullName 'bin\HostX64\x64' } |
-        Where-Object { Test-Path $_ } |
-        Select-Object -First 1
+    $vsWhere = Get-VsWherePath
+    if (-not $vsWhere) {
+        return $null
+    }
 
-    return $preferred
+    $vsWhereArgs = @('-latest', '-products', '*')
+    if ($Requires -and $Requires.Count -gt 0) {
+        $vsWhereArgs += '-requires'
+        $vsWhereArgs += $Requires
+    }
+
+    $installationPath = & $vsWhere @vsWhereArgs -property installationPath
+    if (-not $installationPath) {
+        return $null
+    }
+
+    $displayVersion = & $vsWhere @vsWhereArgs -property catalog_productDisplayVersion
+
+    return [pscustomobject]@{
+        VsWherePath = $vsWhere
+        InstallationPath = $installationPath
+        DisplayVersion = $displayVersion
+    }
+}
+
+function Get-VsToolchainInfo {
+    <#
+    .SYNOPSIS
+        Returns derived toolchain paths for the latest matching Visual Studio instance.
+    #>
+    param(
+        [string[]]$Requires = @('Microsoft.Component.MSBuild')
+    )
+
+    $vsInfo = Get-VsInstallationInfo -Requires $Requires
+    if (-not $vsInfo) {
+        return $null
+    }
+
+    $installationPath = $vsInfo.InstallationPath
+    $vsDevCmdPath = Join-Path $installationPath 'Common7\Tools\VsDevCmd.bat'
+    if (-not (Test-Path $vsDevCmdPath)) {
+        $vsDevCmdPath = $null
+    }
+
+    $msbuildCandidates = @(
+        (Join-Path $installationPath 'MSBuild\Current\Bin\amd64\MSBuild.exe'),
+        (Join-Path $installationPath 'MSBuild\Current\Bin\MSBuild.exe')
+    )
+    $msbuildPath = $msbuildCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+    $vsTestPath = Join-Path $installationPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+    if (-not (Test-Path $vsTestPath)) {
+        $vsTestPath = $null
+    }
+
+    $vcInstallDir = Join-Path $installationPath 'VC'
+    if (-not (Test-Path $vcInstallDir)) {
+        $vcInstallDir = $null
+    }
+
+    $vcTargetsPath = Join-Path $installationPath 'MSBuild\Microsoft\VC\v170'
+    if (-not (Test-Path $vcTargetsPath)) {
+        $vcTargetsPath = $null
+    }
+
+    return [pscustomobject]@{
+        VsWherePath = $vsInfo.VsWherePath
+        InstallationPath = $installationPath
+        DisplayVersion = $vsInfo.DisplayVersion
+        VsDevCmdPath = $vsDevCmdPath
+        MSBuildPath = $msbuildPath
+        VSTestPath = $vsTestPath
+        VcInstallDir = $vcInstallDir
+        VCTargetsPath = $vcTargetsPath
+    }
+}
+
+function Get-VsDevEnvironmentVariables {
+    <#
+    .SYNOPSIS
+        Returns the environment variables produced by VsDevCmd.bat.
+    #>
+    param(
+        [string]$Architecture = 'amd64',
+        [string]$HostArchitecture = 'amd64',
+        [string[]]$Requires = @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+    )
+
+    $toolchain = Get-VsToolchainInfo -Requires $Requires
+    if (-not $toolchain) {
+        return $null
+    }
+
+    if (-not $toolchain.VsDevCmdPath) {
+        throw "Unable to locate VsDevCmd.bat under '$($toolchain.InstallationPath)'."
+    }
+
+    $cmdArgs = "`"$($toolchain.VsDevCmdPath)`" -no_logo -arch=$Architecture -host_arch=$HostArchitecture && set"
+    $envOutput = & cmd.exe /c $cmdArgs 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Failed to initialize Visual Studio environment'
+    }
+
+    $variables = [ordered]@{}
+    foreach ($line in $envOutput) {
+        $parts = $line -split '=', 2
+        if ($parts.Length -eq 2 -and $parts[0]) {
+            $variables[$parts[0]] = $parts[1]
+        }
+    }
+
+    return [pscustomobject]@{
+        Toolchain = $toolchain
+        Variables = [pscustomobject]$variables
+    }
+}
+
+function Get-ActiveVcToolBinPath {
+    <#
+    .SYNOPSIS
+        Returns the HostX64\x64 tool bin directory for the active VC toolset.
+    #>
+    if (-not [string]::IsNullOrWhiteSpace($env:VCToolsInstallDir)) {
+        $preferred = Join-Path $env:VCToolsInstallDir 'bin\HostX64\x64'
+        if (Test-Path (Join-Path $preferred 'cl.exe')) {
+            return $preferred
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($env:VCINSTALLDIR)) {
+        $legacy = Join-Path $env:VCINSTALLDIR 'bin'
+        if (Test-Path (Join-Path $legacy 'cl.exe')) {
+            return $legacy
+        }
+    }
+
+    return $null
+}
+
+function Test-VsDevEnvironmentActive {
+    <#
+    .SYNOPSIS
+        Returns true when a full VsDevCmd environment is already active.
+    #>
+    if ($env:OS -ne 'Windows_NT') {
+        return $false
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:VSCMD_VER) -or [string]::IsNullOrWhiteSpace($env:VCToolsInstallDir)) {
+        return $false
+    }
+
+    $activeVcToolPath = Get-ActiveVcToolBinPath
+    if (-not $activeVcToolPath) {
+        return $false
+    }
+
+    $cl = Get-Command 'cl.exe' -ErrorAction SilentlyContinue
+    $nmake = Get-Command 'nmake.exe' -ErrorAction SilentlyContinue
+    if (-not $cl -or -not $nmake) {
+        return $false
+    }
+
+    $normalizedToolPath = $activeVcToolPath.TrimEnd('\')
+    $clDirectory = (Split-Path -Parent $cl.Source).TrimEnd('\')
+    $nmakeDirectory = (Split-Path -Parent $nmake.Source).TrimEnd('\')
+
+    return [string]::Equals($clDirectory, $normalizedToolPath, [System.StringComparison]::OrdinalIgnoreCase) -and
+        [string]::Equals($nmakeDirectory, $normalizedToolPath, [System.StringComparison]::OrdinalIgnoreCase)
 }
 
 function Ensure-PreferredVcToolPath {
     <#
     .SYNOPSIS
-        Moves the preferred HostX64\x64 MSVC bin directory to the front of PATH.
+        Moves the active HostX64\x64 MSVC bin directory to the front of PATH.
     #>
-    $preferred = Get-PreferredVcToolBinPath
+    $preferred = Get-ActiveVcToolBinPath
     if (-not $preferred) {
         return
     }
@@ -90,65 +253,52 @@ function Initialize-VsDevEnvironment {
         return
     }
 
-    if ($env:VCINSTALLDIR) {
+    if (Test-VsDevEnvironmentActive) {
         Ensure-PreferredVcToolPath
         Write-Host '[OK] Visual Studio environment already initialized' -ForegroundColor Green
         return
     }
 
+    if ($env:VCINSTALLDIR -or $env:VCToolsInstallDir -or $env:VSCMD_VER) {
+        Write-Host '[WARN] Partial Visual Studio environment detected. Reinitializing...' -ForegroundColor Yellow
+    }
+
     Write-Host 'Initializing Visual Studio Developer environment...' -ForegroundColor Yellow
 
-    $vswhereCandidates = @()
-    if ($env:ProgramFiles) {
-        $pfVswhere = Join-Path -Path $env:ProgramFiles -ChildPath 'Microsoft Visual Studio\Installer\vswhere.exe'
-        if (Test-Path $pfVswhere) { $vswhereCandidates += $pfVswhere }
-    }
-    $programFilesX86 = ${env:ProgramFiles(x86)}
-    if ($programFilesX86) {
-        $pf86Vswhere = Join-Path -Path $programFilesX86 -ChildPath 'Microsoft Visual Studio\Installer\vswhere.exe'
-        if (Test-Path $pf86Vswhere) { $vswhereCandidates += $pf86Vswhere }
-    }
+    $vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
 
-    if (-not $vswhereCandidates) {
+    if (-not $vsToolchain) {
+        $vsWhere = Get-VsWherePath
         Write-Host ''
-        Write-Host '[ERROR] Visual Studio 2017+ not found' -ForegroundColor Red
-        Write-Host '   Install from: https://visualstudio.microsoft.com/downloads/' -ForegroundColor Yellow
-        throw 'Visual Studio not found'
-    }
+        if (-not $vsWhere) {
+            Write-Host '[ERROR] Visual Studio 2017+ not found' -ForegroundColor Red
+            Write-Host '   Install from: https://visualstudio.microsoft.com/downloads/' -ForegroundColor Yellow
+            throw 'Visual Studio not found'
+        }
 
-    $vsInstallPath = & $vswhereCandidates[0] -latest -requires Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -products * -property installationPath
-    if (-not $vsInstallPath) {
-        Write-Host ''
         Write-Host '[ERROR] Visual Studio found but missing required C++ tools' -ForegroundColor Red
         Write-Host '   Please install the "Desktop development with C++" workload' -ForegroundColor Yellow
         throw 'Visual Studio C++ tools not found'
     }
 
-    $vsDevCmd = Join-Path -Path $vsInstallPath -ChildPath 'Common7\Tools\VsDevCmd.bat'
-    if (-not (Test-Path $vsDevCmd)) {
-        throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
-    }
-
     # x64-only build
     $arch = 'amd64'
-    $vsVersion = Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
+    $vsInstallPath = $vsToolchain.InstallationPath
+    $vsVersion = if ([string]::IsNullOrWhiteSpace($vsToolchain.DisplayVersion)) {
+        Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
+    }
+    else {
+        $vsToolchain.DisplayVersion
+    }
     Write-Host "   Found Visual Studio $vsVersion at: $vsInstallPath" -ForegroundColor Gray
     Write-Host "   Setting up environment for $arch..." -ForegroundColor Gray
 
-    $cmdArgs = "`"$vsDevCmd`" -no_logo -arch=$arch -host_arch=$arch && set"
-    $envOutput = & cmd.exe /c $cmdArgs 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        throw 'Failed to initialize Visual Studio environment'
+    $vsEnvironment = Get-VsDevEnvironmentVariables -Architecture $arch -HostArchitecture $arch
+    foreach ($variable in $vsEnvironment.Variables.PSObject.Properties) {
+        Set-Item -Path "Env:$($variable.Name)" -Value $variable.Value
     }
 
-    foreach ($line in $envOutput) {
-        $parts = $line -split '=', 2
-        if ($parts.Length -eq 2 -and $parts[0]) {
-            Set-Item -Path "Env:$($parts[0])" -Value $parts[1]
-        }
-    }
-
-    if (-not $env:VCINSTALLDIR) {
+    if (-not (Test-VsDevEnvironmentActive)) {
         throw 'Visual Studio C++ environment not configured'
     }
 
@@ -227,6 +377,12 @@ function Get-MSBuildPath {
     if ($msbuildCmd) {
         return $msbuildCmd.Source
     }
+
+    $toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild')
+    if ($toolchain -and $toolchain.MSBuildPath) {
+        return $toolchain.MSBuildPath
+    }
+
     return 'msbuild'
 }
 
@@ -320,26 +476,9 @@ function Get-VSTestPath {
         return $vstestFromPath.Source
     }
 
-    # Fall back to known installation paths
-    $programFilesX86 = ${env:ProgramFiles(x86)}
-    if (-not $programFilesX86) { $programFilesX86 = "C:\Program Files (x86)" }
-
-    $vstestCandidates = @(
-        # BuildTools
-        "$programFilesX86\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-        "C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-        # TestAgent (sometimes installed separately)
-        "$programFilesX86\Microsoft Visual Studio\2022\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-        # Full VS installations
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-    )
-
-    foreach ($candidate in $vstestCandidates) {
-        if (Test-Path $candidate) {
-            return $candidate
-        }
+    $toolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild')
+    if ($toolchain -and $toolchain.VSTestPath) {
+        return $toolchain.VSTestPath
     }
 
     return $null
@@ -350,6 +489,11 @@ function Get-VSTestPath {
 # =============================================================================
 
 Export-ModuleMember -Function @(
+    'Get-VsWherePath',
+    'Get-VsInstallationInfo',
+    'Get-VsToolchainInfo',
+    'Get-VsDevEnvironmentVariables',
+    'Test-VsDevEnvironmentActive',
     'Initialize-VsDevEnvironment',
 	'Test-CvtresCompatibility',
     'Get-MSBuildPath',
