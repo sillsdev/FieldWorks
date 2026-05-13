@@ -49,6 +49,42 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent (Split-Path -Parent $scriptDir)
 Import-Module (Join-Path $scriptDir 'FwBuildEnvironment.psm1') -Force
 
+function Get-InstallerBuildCommand {
+	param(
+		[Parameter(Mandatory)]
+		[ValidateSet('RestorePackages', 'BuildInstaller', 'BuildPatchInstaller')]
+		[string]$Target
+	)
+
+	$arguments = @(
+		'msbuild Build/InstallerBuild.proj',
+		"/t:$Target",
+		'/p:Configuration=Release',
+		'/p:Platform=x64'
+	)
+
+	if ($Target -ne 'RestorePackages') {
+		$arguments += @('/m', '/v:n')
+	}
+
+	return $arguments -join ' '
+}
+
+function Get-WrappedInstallerBuildCommand {
+	param(
+		[Parameter(Mandatory)]
+		[string]$VsDevCmdPath,
+		[Parameter(Mandatory)]
+		[string]$Command
+	)
+
+	return 'cmd /c "call ""{0}"" -arch=amd64 >nul && {1}"' -f $VsDevCmdPath, $Command
+}
+
+$restoreCommand = Get-InstallerBuildCommand -Target 'RestorePackages'
+$buildCommand = Get-InstallerBuildCommand -Target 'BuildInstaller'
+$patchCommand = Get-InstallerBuildCommand -Target 'BuildPatchInstaller'
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " FieldWorks Installer Build Setup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
@@ -110,9 +146,9 @@ if ($toolchain) {
 
 	if ($toolchain.VsDevCmdPath) {
 			Write-Host "[OK] VS Developer environment scripts available" -ForegroundColor Green
-		$restoreWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -f $toolchain.VsDevCmdPath
-		$buildWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
-		$patchWrappedCommand = 'cmd /c "call ""{0}"" -arch=amd64 >nul && msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -f $toolchain.VsDevCmdPath
+		$restoreWrappedCommand = Get-WrappedInstallerBuildCommand -VsDevCmdPath $toolchain.VsDevCmdPath -Command $restoreCommand
+		$buildWrappedCommand = Get-WrappedInstallerBuildCommand -VsDevCmdPath $toolchain.VsDevCmdPath -Command $buildCommand
+		$patchWrappedCommand = Get-WrappedInstallerBuildCommand -VsDevCmdPath $toolchain.VsDevCmdPath -Command $patchCommand
 	} else {
 		$issues += "VsDevCmd.bat not found in VS installation"
 		}
@@ -316,15 +352,15 @@ if ($issues.Count -eq 0) {
 		# VS Developer environment is active, show simple commands
 		Write-Host ""
 		Write-Host "  # Restore packages" -ForegroundColor Gray
-		Write-Host "  msbuild Build/InstallerBuild.proj /t:RestorePackages /p:Configuration=Release /p:Platform=x64" -ForegroundColor Cyan
+		Write-Host "  $restoreCommand" -ForegroundColor Cyan
 		Write-Host ""
 		Write-Host "  # Build base installer" -ForegroundColor Gray
-		Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
+		Write-Host "  $buildCommand" -ForegroundColor Cyan
 		Write-Host ""
 
 		if ($SetupPatch) {
 			Write-Host "  # Build patch installer" -ForegroundColor Gray
-			Write-Host "  msbuild Build/InstallerBuild.proj /t:BuildPatchInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
+			Write-Host "  $patchCommand" -ForegroundColor Cyan
 			Write-Host ""
 		}
 	} else {
