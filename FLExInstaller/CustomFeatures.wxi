@@ -10,6 +10,11 @@
 	<MergeRef Id="PerlEC"/>
 	<MergeRef Id="PythonEC"/>
 	<MergeRef Id="TECkit_DLLs"/>
+	<!-- Heat-excluded Newtonsoft.Json: components in CustomComponents.wxi are inside <?ifdef MASTERBUILDDIR?>; match that here so patch builds (UPDATEBUILDDIR only) do not emit dangling ComponentRefs (LGHT0094). -->
+	<?ifdef MASTERBUILDDIR?>
+	<ComponentRef Id="NewtonsoftJsonApp" />
+	<ComponentRef Id="NewtonsoftJsonGac" />
+	<?endif?>
 
 	<Feature Id='DesktopShortcut' Title='Desktop Shortcut' Description='Creates a shortcut on the desktop.' Level='1' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutDesktop'/>
