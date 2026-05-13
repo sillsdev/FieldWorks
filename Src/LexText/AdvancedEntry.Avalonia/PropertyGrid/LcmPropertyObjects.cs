@@ -446,6 +446,7 @@ internal sealed class LcmSequencePropertyDescriptor : PropertyDescriptor
 	private readonly LcmCache _cache;
 	private readonly ICmObject _obj;
 	private readonly int _flid;
+	private readonly CellarPropertyType _type;
 	private readonly IReadOnlyList<PresentationNode> _itemSchema;
 	private readonly string? _itemClass;
 
@@ -466,6 +467,7 @@ internal sealed class LcmSequencePropertyDescriptor : PropertyDescriptor
 		_itemSchema = itemSchema;
 
 		_flid = _cache.DomainDataByFlid.MetaDataCache.GetFieldId(_obj.ClassName, fieldName, true);
+		_type = (CellarPropertyType)_cache.DomainDataByFlid.MetaDataCache.GetFieldType(_flid);
 		_itemClass = Layout.Compilation.FieldClassMap.GetItemClass(_obj.ClassName, fieldName, ghost);
 	}
 
@@ -474,7 +476,7 @@ internal sealed class LcmSequencePropertyDescriptor : PropertyDescriptor
 	public override Type PropertyType => typeof(IList<LcmSequenceItem>);
 
 	public override object GetValue(object? component)
-		=> new LcmSequenceList(DisplayName, _cache, _obj, _flid, _itemClass, _itemSchema);
+		=> new LcmSequenceList(DisplayName, _cache, _obj, _flid, _type, _itemClass, _itemSchema);
 
 	public override void SetValue(object? component, object? value) { }
 	public override void ResetValue(object? component) { }
@@ -537,6 +539,7 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 	private readonly LcmCache _cache;
 	private readonly ICmObject _owner;
 	private readonly int _flid;
+	private readonly CellarPropertyType _type;
 	private readonly string? _itemClass;
 	private readonly IReadOnlyList<PresentationNode> _itemSchema;
 	private readonly string _displayName;
@@ -546,6 +549,7 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 		LcmCache cache,
 		ICmObject owner,
 		int flid,
+		CellarPropertyType type,
 		string? itemClass,
 		IReadOnlyList<PresentationNode> itemSchema
 	)
@@ -554,6 +558,7 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 		_cache = cache;
 		_owner = owner;
 		_flid = flid;
+		_type = type;
 		_itemClass = itemClass;
 		_itemSchema = itemSchema;
 	}
@@ -582,10 +587,9 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 		}
 	}
 
-	public int Add(LcmSequenceItem item)
+	public void Add(LcmSequenceItem item)
 	{
 		Insert(Count, item);
-		return Count - 1;
 	}
 
 	int System.Collections.IList.Add(object? value)
@@ -593,10 +597,22 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 		if (value is not LcmSequenceItem item)
 			throw new ArgumentException("Value must be a LcmSequenceItem.", nameof(value));
 
-		return Add(item);
+		var index = Count;
+		Add(item);
+		return index;
 	}
 
-	public void Clear() => _cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, 0, Count, null, 0);
+	public void Clear()
+	{
+		if (IsOwningVector)
+		{
+			for (var i = Count - 1; i >= 0; i--)
+				RemoveAt(i);
+			return;
+		}
+
+		_cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, 0, Count, null, 0);
+	}
 
 	public bool Contains(LcmSequenceItem item) => IndexOf(item) >= 0;
 	bool System.Collections.IList.Contains(object? value) => value is LcmSequenceItem item && Contains(item);
@@ -642,6 +658,12 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 
 	public void Insert(int index, LcmSequenceItem item)
 	{
+		if (IsOwningVector)
+		{
+			InsertOwning(index, item);
+			return;
+		}
+
 		var hvo = EnsureHvo(item);
 		_cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, index, index, new[] { hvo }, 1);
 	}
@@ -670,7 +692,17 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 			Remove(item);
 	}
 
-	public void RemoveAt(int index) => _cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, index, index + 1, null, 0);
+	public void RemoveAt(int index)
+	{
+		if (IsOwningVector)
+		{
+			var hvo = _cache.DomainDataByFlid.get_VecItem(_owner.Hvo, _flid, index);
+			_cache.DomainDataByFlid.DeleteObjOwner(_owner.Hvo, hvo, _flid, GetOwningOrd(index));
+			return;
+		}
+
+		_cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, index, index + 1, null, 0);
+	}
 
 	private LcmSequenceItem GetItem(int index)
 	{
@@ -686,8 +718,35 @@ public sealed class LcmSequenceList : IList<LcmSequenceItem>, System.Collections
 
 	private void SetItem(int index, LcmSequenceItem item)
 	{
+		if (IsOwningVector)
+		{
+			RemoveAt(index);
+			Insert(index, item);
+			return;
+		}
+
 		var hvo = EnsureHvo(item);
 		_cache.DomainDataByFlid.Replace(_owner.Hvo, _flid, index, index + 1, new[] { hvo }, 1);
+	}
+
+	private bool IsOwningVector => _type is CellarPropertyType.OwningSequence or CellarPropertyType.OwningCollection;
+
+	private void InsertOwning(int index, LcmSequenceItem item)
+	{
+		if (item.Hvo != 0)
+			throw new NotSupportedException($"Moving existing objects into owning sequence '{_displayName}' is not supported yet.");
+
+		_cache.DomainDataByFlid.MakeNewObject(GetItemClassId(), _owner.Hvo, _flid, GetOwningOrd(index));
+	}
+
+	private int GetOwningOrd(int index) => _type == CellarPropertyType.OwningSequence ? index : -1;
+
+	private int GetItemClassId()
+	{
+		if (string.IsNullOrWhiteSpace(_itemClass))
+			throw new NotSupportedException($"Cannot create items for sequence '{_displayName}' because item class is unknown.");
+
+		return _cache.DomainDataByFlid.MetaDataCache.GetClassId(_itemClass);
 	}
 
 	private int EnsureHvo(LcmSequenceItem item)

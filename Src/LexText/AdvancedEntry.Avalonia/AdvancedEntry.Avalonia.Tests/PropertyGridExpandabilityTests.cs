@@ -1,20 +1,18 @@
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Documents;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
-using SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.Layout.Compilation;
-using SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.Layout.XmlContract;
+using SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.Presentation;
 using SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.PropertyGrid;
 using SIL.FieldWorks.LexText.AdvancedEntry.Avalonia.Staging;
 
@@ -28,113 +26,151 @@ public sealed class PropertyGridExpandabilityTests
 	{
 		var root = CreateSampleRoot();
 
-		var rootProps = TypeDescriptor.GetProperties(root);
-		var sensesProp = FindByDisplayName(rootProps, "Senses");
+		var sensesProp = FindByDisplayName(TypeDescriptor.GetProperties(root), "Senses");
 		Assert.That(sensesProp, Is.Not.Null);
 
+		var senses = sensesProp!.GetValue(root)!;
+		var senseItemProp = FindByDisplayName(TypeDescriptor.GetProperties(senses), "Senses 1");
+		Assert.That(senseItemProp, Is.Not.Null);
+
+		var senseItem = senseItemProp!.GetValue(senses)!;
+		var senseProps = TypeDescriptor.GetProperties(senseItem);
+		Assert.That(FindByDisplayName(senseProps, "Gloss"), Is.Not.Null);
+		Assert.That(FindByDisplayName(senseProps, "Examples"), Is.Not.Null);
+
+		var examplesProp = FindByDisplayName(senseProps, "Examples");
+		var examples = examplesProp!.GetValue(senseItem)!;
+		var exampleItemProp = FindByDisplayName(
+			TypeDescriptor.GetProperties(examples),
+			"Examples 1"
+		);
+		Assert.That(exampleItemProp, Is.Not.Null);
+	}
+
+	[AvaloniaTest]
+	public async Task HeadlessUI_PropertyGrid_Can_Expand_Sense_To_Show_Nested_Item()
+	{
+		var root = CreateSampleRoot();
+		var window = new Window
+		{
+			Width = 900,
+			Height = 700,
+			Content = CreatePropertyGrid(root),
+		};
 
 		try
 		{
 			window.Show();
-			await WaitForLabelAsync(window, "Senses");
+			ForceLayout(window);
 
-			// Best-effort expand interaction: find a toggle/expander near the 'Senses' label and activate it.
 			var sensesLabel = await WaitForLabelAsync(window, "Senses");
-			var expanderToggle = FindClosestExpanderToggle(sensesLabel);
-			Assert.That(expanderToggle, Is.Not.Null,
-				"Expected an expander toggle near 'Senses' (ExpandableObjectConverter should provide one)."
+			var sensesToggle = FindClosestExpanderToggle(sensesLabel);
+			Assert.That(
+				sensesToggle,
+				Is.Not.Null,
+				"Expected an expander toggle near the Senses row."
 			);
 
-			// Toggle open.
-			expanderToggle!.IsChecked = true;
+			sensesToggle!.IsChecked = true;
 			await WaitForLabelAsync(window, "Senses 1");
 		}
 		finally
 		{
 			window.Close();
 		}
-		await FlushUi();
-
-		// Sanity: row for the Senses property exists.
-		Assert.That(FindText(window, "Senses"), Is.True, "Expected the PropertyGrid to render a 'Senses' row.");
-
-		// Best-effort expand interaction: find a toggle/expander near the 'Senses' label and activate it.
-		var sensesLabel = FindLabelControl(window, "Senses");
-		Assert.That(sensesLabel, Is.Not.Null);
-
-		var expanderToggle = FindClosestExpanderToggle(sensesLabel!);
-		Assert.That(expanderToggle, Is.Not.Null,
-			"Expected an expander toggle near 'Senses' (ExpandableObjectConverter should provide one).");
-
-		// Toggle open.
-		expanderToggle!.IsChecked = true;
-		await FlushUi();
-		ForceLayout(window);
-		await FlushUi();
-
-		// If the control templates are updated asynchronously, re-scan the visual tree.
-		Assert.That(FindText(window, "Senses 1"), Is.True,
-			"Expected expanding 'Senses' to reveal 'Senses 1' item.");
 	}
 
-	[AvaloniaTest]
-	public async Task HeadlessUI_PropertyGrid_Can_Expand_Sense_To_Show_Examples_And_Items()
+	private static StagedObjectView CreateSampleRoot()
 	{
-		var root = CreateSampleRoot();
-
-		var window = new Window
+		var schema = new PresentationNode[]
 		{
-			Width = 900,
-			Height = 700,
-			Content = CreatePropertyGrid(root)
+			new PresentationSequence(new PresentationNodeId("Senses"))
+			{
+				Field = "Senses",
+				Label = "Senses",
+				ItemTemplate = new PresentationNode[]
+				{
+					new PresentationField(new PresentationNodeId("Gloss"))
+					{
+						Field = "Gloss",
+						Label = "Gloss",
+					},
+					new PresentationSequence(new PresentationNodeId("Examples"))
+					{
+						Field = "Examples",
+						Label = "Examples",
+						ItemTemplate = new PresentationNode[]
+						{
+							new PresentationField(new PresentationNodeId("Example"))
+							{
+								Field = "Example",
+								Label = "Example",
+							},
+						},
+					},
+				},
+			},
 		};
 
-		window.Show();
-		await FlushUi();
-		ForceLayout(window);
-		await FlushUi();
+		var staged = new StagedEntryState("LexEntry");
+		var senses = staged.Root.GetOrCreateSequence("Senses", "LexSense");
+		var sense1 = senses.EnsureItem(0);
+		sense1.Fields["Gloss"] = "first sense";
 
-		// Expand Senses
-		var sensesLabel = FindLabelControl(window, "Senses");
-		Assert.That(sensesLabel, Is.Not.Null);
-		var sensesToggle = FindClosestExpanderToggle(sensesLabel!);
-		Assert.That(sensesToggle, Is.Not.Null);
-		sensesToggle!.IsChecked = true;
-		await FlushUi();
-		ForceLayout(window);
-		await FlushUi();
-		Assert.That(FindText(window, "Senses 1"), Is.True);
+		var examples = sense1.GetOrCreateSequence("Examples", "LexExampleSentence");
+		var example1 = examples.EnsureItem(0);
+		example1.Fields["Example"] = "This is a sample example.";
 
-		// Expand Senses 1
-		var sense1Label = FindLabelControl(window, "Senses 1");
-		Assert.That(sense1Label, Is.Not.Null);
-		var sense1Toggle = FindClosestExpanderToggle(sense1Label!);
-		Assert.That(sense1Toggle, Is.Not.Null);
-		sense1Toggle!.IsChecked = true;
-		await FlushUi();
-		ForceLayout(window);
-		await FlushUi();
-		Assert.That(FindText(window, "Examples"), Is.True,
-			"Expected expanding 'Senses 1' to reveal the 'Examples' sequence.");
-
-		// Expand Examples
-		var examplesLabel = FindLabelControl(window, "Examples");
-		Assert.That(examplesLabel, Is.Not.Null);
-		var examplesToggle = FindClosestExpanderToggle(examplesLabel!);
-		Assert.That(examplesToggle, Is.Not.Null);
-		examplesToggle!.IsChecked = true;
-		await FlushUi();
-		ForceLayout(window);
-		await FlushUi();
-		Assert.That(FindText(window, "Examples 1"), Is.True,
-			"Expected expanding 'Examples' to reveal 'Examples 1' item.");
+		return new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
 	}
 
-	private static Task FlushUi()
+	private static PropertyDescriptor? FindByDisplayName(
+		PropertyDescriptorCollection props,
+		string displayName
+	)
 	{
-		// Give the UI thread a chance to process DataContext updates and templating.
-		return Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background).GetTask();
+		foreach (PropertyDescriptor prop in props)
+		{
+			if (string.Equals(prop.DisplayName, displayName, StringComparison.Ordinal))
+				return prop;
+		}
+
+		return null;
 	}
+
+	private static Control CreatePropertyGrid(object selected)
+	{
+		EnsureFluentTheme();
+
+		var grid = new global::Avalonia.PropertyGrid.Controls.PropertyGrid
+		{
+			DataContext = selected,
+		};
+
+		var selectedObjectProp = grid.GetType().GetProperty("SelectedObject");
+		if (selectedObjectProp is not null && selectedObjectProp.CanWrite)
+			selectedObjectProp.SetValue(grid, selected);
+
+		return grid;
+	}
+
+	private static async Task<Control> WaitForLabelAsync(Window window, string text)
+	{
+		for (var attempt = 0; attempt < 20; attempt++)
+		{
+			await FlushUi();
+			ForceLayout(window);
+
+			var label = FindLabelControl(window, text);
+			if (label is not null)
+				return label;
+		}
+
+		Assert.Fail($"Expected the PropertyGrid visual tree to contain label '{text}'.");
+		throw new InvalidOperationException("Unreachable after Assert.Fail.");
+	}
+
+	private static Task FlushUi() => Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background).GetTask();
 
 	private static void ForceLayout(Window window)
 	{
@@ -145,87 +181,33 @@ public sealed class PropertyGridExpandabilityTests
 		window.UpdateLayout();
 	}
 
-	private static StagedObjectView CreateSampleRoot()
-	{
-		var contract = LoadShippedContractFromRepo();
-		var compiler = new PresentationCompiler();
-		var ir = compiler.Compile(contract);
-
-		var staged = new StagedEntryState("LexEntry");
-		ApplySampleData(staged);
-
-		return new StagedObjectView("LexEntry", ir.RootClass, staged.Root, ir.Children);
-	}
-
-				try
-				{
-					window.Show();
-
-					// Expand Senses
-					var sensesLabel = await WaitForLabelAsync(window, "Senses");
-					var sensesToggle = FindClosestExpanderToggle(sensesLabel);
-					Assert.That(sensesToggle, Is.Not.Null);
-					sensesToggle!.IsChecked = true;
-					await WaitForLabelAsync(window, "Senses 1");
-
-					// Expand Senses 1
-					var sense1Label = await WaitForLabelAsync(window, "Senses 1");
-					var sense1Toggle = FindClosestExpanderToggle(sense1Label);
-					Assert.That(sense1Toggle, Is.Not.Null);
-					sense1Toggle!.IsChecked = true;
-					await WaitForLabelAsync(window, "Examples");
-
-					// Expand Examples
-					var examplesLabel = await WaitForLabelAsync(window, "Examples");
-					var examplesToggle = FindClosestExpanderToggle(examplesLabel);
-					Assert.That(examplesToggle, Is.Not.Null);
-					examplesToggle!.IsChecked = true;
-					await WaitForLabelAsync(window, "Examples 1");
-				}
-				finally
-				{
-					window.Close();
-				}
-		ex1.Fields["Example"] = "This is a sample example.";
-	}
-
-	private static PropertyDescriptor? FindByDisplayName(PropertyDescriptorCollection props, string displayName)
-	{
-		foreach (PropertyDescriptor p in props)
-		{
-			if (string.Equals(p.DisplayName, displayName, StringComparison.Ordinal))
-				return p;
-		}
-		return null;
-	}
-
-	private static bool FindText(Control root, string text) => FindLabelControl(root, text) is not null;
-
 	private static Control? FindLabelControl(Control root, string text)
 	{
 		foreach (var control in root.GetVisualDescendants().OfType<Control>())
 		{
-			if (control is TextBlock tb)
+			if (control is TextBlock textBlock)
 			{
-				var inlineText = GetInlineText(tb.Inlines);
+				var inlineText = NormalizeLabelText(GetInlineText(textBlock.Inlines));
 				if (string.Equals(inlineText, text, StringComparison.Ordinal))
 					return control;
 			}
 
-			if (control is ContentControl cc && cc.Content is string contentText
-				&& string.Equals(contentText, text, StringComparison.Ordinal))
+			if (
+				control is ContentControl contentControl
+				&& contentControl.Content is string contentText
+				&& string.Equals(NormalizeLabelText(contentText), text, StringComparison.Ordinal))
 			{
 				return control;
-			private static bool FindText(Control root, string text) => FindLabelControl(root, text) is not null;
+			}
 
 			var textProp = control.GetType().GetProperty("Text");
 			if (textProp is not null && textProp.PropertyType == typeof(string))
 			{
-				var value = textProp.GetValue(control) as string;
+				var value = NormalizeLabelText(textProp.GetValue(control) as string);
 				if (string.Equals(value, text, StringComparison.Ordinal))
 					return control;
-						var inlineText = NormalizeLabelText(GetInlineText(tb.Inlines));
-						if (string.Equals(inlineText, text, StringComparison.Ordinal))
+			}
+		}
 
 		return null;
 	}
@@ -235,72 +217,53 @@ public sealed class PropertyGridExpandabilityTests
 		if (inlines is null || inlines.Count == 0)
 			return null;
 
-		return string.Concat(inlines.Select(i => i switch
+		return string.Concat(inlines.Select(GetInlineText));
+	}
+
+	private static string? GetInlineText(Inline inline) => inline switch
 		{
-			Run r => r.Text,
+			Run run => run.Text,
+			Span span => GetInlineText(span.Inlines),
 			_ => null,
-		}));
+		};
+
+	private static string? NormalizeLabelText(string? value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+			return null;
+
+		var builder = new StringBuilder(value.Length);
+		var inWhitespace = false;
+		foreach (var ch in value)
+		{
+			if (char.IsWhiteSpace(ch))
+			{
+				if (!inWhitespace)
+				{
+					builder.Append(' ');
+					inWhitespace = true;
+				}
+
+				continue;
+			}
+
+			inWhitespace = false;
+			builder.Append(ch);
+		}
+
+		return builder.ToString().Trim();
 	}
 
 	private static ToggleButton? FindClosestExpanderToggle(Control label)
 	{
-		// Heuristic: in PropertyGrid templates, the name cell and expander usually share a small ancestor.
 		foreach (var ancestor in label.GetVisualAncestors().Take(8))
 		{
-			private static string? NormalizeLabelText(string? value)
-			{
-				if (string.IsNullOrWhiteSpace(value))
-					return null;
-
-				var sb = new StringBuilder(value.Length);
-				var inWs = false;
-				foreach (var ch in value)
-				{
-					if (char.IsWhiteSpace(ch))
-					{
-						if (!inWs)
-						{
-							sb.Append(' ');
-							inWs = true;
-						}
-						continue;
-					}
-
-					inWs = false;
-					sb.Append(ch);
-				}
-
-				return sb.ToString().Trim();
-			}
-
 			var toggle = ancestor.GetVisualDescendants().OfType<ToggleButton>().FirstOrDefault();
 			if (toggle is not null)
 				return toggle;
 		}
 
-				return string.Concat(inlines.Select(GetInlineText));
-		EnsureFluentTheme();
-
-			private static string? GetInlineText(Inline inline)
-			{
-				return inline switch
-				{
-					Run r => r.Text,
-					Span s => GetInlineText(s.Inlines),
-					_ => null,
-				};
-			}
-		var grid = new global::Avalonia.PropertyGrid.Controls.PropertyGrid
-		{
-			DataContext = selected,
-		};
-
-		// Some PropertyGrid implementations use a SelectedObject property instead of DataContext.
-		var selectedObjectProp = grid.GetType().GetProperty("SelectedObject");
-		if (selectedObjectProp is not null && selectedObjectProp.CanWrite)
-			selectedObjectProp.SetValue(grid, selected);
-
-		return grid;
+		return null;
 	}
 
 	private static void EnsureFluentTheme()

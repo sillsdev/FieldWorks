@@ -117,8 +117,13 @@
 	-->
 	<ItemGroup Label="Third-Party Runtime">
 		<PackageVersion Include="AdamsLair.TreeViewAdv" Version="1.7.7" />
+		<PackageVersion Include="Avalonia" Version="11.3.9" />
+		<PackageVersion Include="Avalonia.Desktop" Version="11.3.9" />
+		<PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+		<PackageVersion Include="bodong.Avalonia.PropertyGrid" Version="11.3.3.2" />
 		<PackageVersion Include="CommandLineArgumentsParser" Version="3.0.22" />
 		<PackageVersion Include="CommonServiceLocator" Version="2.0.7" />
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageVersion Include="CsvHelper" Version="33.1.0" />
 		<PackageVersion Include="DialogAdapters" Version="0.1.11" />
 		<PackageVersion Include="DocumentFormat.OpenXml" Version="2.20.0" />
@@ -148,6 +153,7 @@
 		=============================================================
 	-->
 	<ItemGroup Label="Test Infrastructure">
+		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.9" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
