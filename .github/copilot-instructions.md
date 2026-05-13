@@ -18,22 +18,11 @@ desktop application.
   compatible with Crowdin localization.
 - For C# code, flag C# 8+ syntax and APIs that are not compatible with .NET
   Framework 4.8 / C# 7.3.
-- For legacy `.csproj` changes, verify new source files are explicitly included
-  and test sources are explicitly excluded where production and test trees mix.
+- For native/non-SDK `.csproj` changes, verify explicit imports, package
+  wiring, and native-before-managed build ordering remain correct.
 - Require meaningful test or validation evidence for bug fixes, regressions,
   parser changes, interlinear display changes, installer changes, and build
   workflow changes.
-
-## Review focus from recent history
-
-- Recent churn is concentrated in `Src/Utilities`, parser utilities, Allomorph
-  Generator, Interlinear display, build scripts, and installer workflows.
-- Recent bugs include click-handler crashes, stale UI state, layout/display
-  regressions, media-line rework, localization gaps, installer/build fixes, and
-  dependency-version alignment.
-- When those areas change, review null checks, collection bounds, selection
-  state, refresh/invalidation behavior, layout anchoring, localization, and
-  regression-test coverage before style-only concerns.
 
 ## Review style
 

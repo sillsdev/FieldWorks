@@ -22,7 +22,7 @@ ViewsInterfaces, Generic, Kernel, and managed/native boundary changes.
 - Verify SAL annotations, checked APIs, RAII, and deterministic cleanup are used
   where applicable.
 
-## COM and ABI stability
+## COM and binary interface (ABI) stability
 
 - Flag COM GUID, interface layout, vtable order, manifest, or registration-free
   COM changes for explicit compatibility review.
