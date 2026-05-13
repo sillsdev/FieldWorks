@@ -184,8 +184,8 @@ namespace SIL.DisambiguateInFLExDBTests
 		private string NormalizeContent(string input)
 		{
 			string tp = "tonepars64";
-			string normalized = NormalizeViaIndex(input, "AppData", "");
-			normalized = NormalizeViaIndex(normalized, "TestData", "");
+			string normalized = NormalizeViaIndex(input, "AppData", "AppData");
+			normalized = NormalizeViaIndex(normalized, "TestData", "TestData");
 			normalized = NormalizeViaIndex(normalized, tp, tp);
 			return normalized;
 		}
@@ -201,7 +201,7 @@ namespace SIL.DisambiguateInFLExDBTests
 				{
 					iColon--; // skip the drive letter, too
 					string appdataPath = input.Substring(iColon, iAppData - iColon);
-					input = input.Replace(appdataPath, change);
+					input = input.Replace(appdataPath + match, change);
 				}
 			}
 			return input;
