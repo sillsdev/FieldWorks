@@ -22,30 +22,39 @@ Python utilities for Jira, Confluence, and Bitbucket integration, supporting bot
 
 > **Note**: Default to `atlassian-readonly-skills` for read operations. Use this full skill set only when the user explicitly requests create/update/delete operations.
 
-### ⚠️ Critical: Always Use Python Scripts
+### Critical: Use the Small Python CLI First
 
 **NEVER** attempt to:
 - Browse to `jira.sil.org` URLs directly (requires authentication)
 - Use `fetch_webpage` or similar tools on JIRA URLs
 - Use GitHub issue tools for LT-* tickets
+- Build large inline PowerShell commands or quote-heavy `python -c` snippets for normal Jira work
 
-**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+Run commands from the repository root. For normal Jira issue work, use `scripts/jira.py`; it accepts either `LT-22324` or `https://jira.sil.org/browse/LT-22324`.
 
 ```powershell
-# Create a new issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_create_issue; print(jira_create_issue('LT', 'Issue title', 'Bug'))"
+# Read the sample issue
+python .agents/skills/atlassian-skills/scripts/jira.py issue LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py issue LT-22324 --all-fields
 
-# Update an existing issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_update_issue; print(jira_update_issue('LT-22382', summary='Updated title'))"
+# Review comments and attachments
+python .agents/skills/atlassian-skills/scripts/jira.py comments LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py attachments LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py download-attachments LT-22324 --out Output/Jira/LT-22324
 
-# Add a comment
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'Comment text'))"
+# Write operations, only when the user explicitly asks
+python .agents/skills/atlassian-skills/scripts/jira.py add-comment LT-22324 --body-file Output/Jira/LT-22324/comment.md
+python .agents/skills/atlassian-skills/scripts/jira.py update-comment LT-22324 123456 --body-file Output/Jira/LT-22324/comment.md
+python .agents/skills/atlassian-skills/scripts/jira.py attach LT-22324 Output/Jira/LT-22324/screenshot.png Output/Jira/LT-22324/log.txt
 
-# Transition issue status
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_workflow import jira_transition_issue; print(jira_transition_issue('LT-22382', 'In Progress'))"
+# Transition after checking IDs with the transitions command
+python .agents/skills/atlassian-skills/scripts/jira.py transitions LT-22324
+python .agents/skills/atlassian-skills/scripts/jira.py transition LT-22324 31 --comment "Moving to review"
 ```
 
-For read-only operations (get issue, search, get comments), use `atlassian-readonly-skills` instead.
+For long comments or descriptions, put the text in a file and pass `--body-file` or `--description-file`. This avoids brittle shell quoting and keeps credentials out of command history. For read-only operations (get issue, search, get comments, download attachments), prefer `atlassian-readonly-skills`.
+
+By default, `issue` returns the fields agents usually need: summary, description, status, type, priority, assignee, reporter, timestamps, labels, and components. Use `--fields` for a custom field list, or `--all-fields` only when you really need every Jira field.
 
 ## Configuration
 
@@ -61,7 +70,9 @@ Set environment variables based on your deployment type. This mode is used when 
 # SIL JIRA instance for LT-* tickets
 JIRA_URL=https://jira.sil.org
 # Personal Access Token - generate at: https://jira.sil.org/secure/ViewProfile.jspa → Personal Access Tokens
-JIRA_PAT_TOKEN=your_jira_pat_token_here
+JIRA_PAT_TOKEN=
+JIRA_API_VERSION=2
+JIRA_SSL_VERIFY=true
 ```
 
 #### Cloud (API Token)
@@ -85,15 +96,15 @@ Generate API tokens at: https://id.atlassian.com/manage-profile/security/api-tok
 ```bash
 # Jira Data Center
 JIRA_URL=https://jira.your-company.com
-JIRA_PAT_TOKEN=your_pat_token
+JIRA_PAT_TOKEN=
 
 # Confluence Data Center
 CONFLUENCE_URL=https://confluence.your-company.com
 CONFLUENCE_PAT_TOKEN=your_pat_token
 
-# Bitbucket Server/Data Center
-BITBUCKET_URL=https://bitbucket.your-company.com
-BITBUCKET_PAT_TOKEN=your_pat_token
+# Bitbucket Server/Data Center, only if needed
+# BITBUCKET_URL=https://bitbucket.your-company.com
+# BITBUCKET_PAT_TOKEN=
 ```
 
 > **Note**: PAT Token takes precedence if both are provided.
@@ -112,12 +123,12 @@ credentials = AtlassianCredentials(
     jira_url="https://your-company.atlassian.net",
     jira_username="your.email@company.com",
     jira_api_token="your_api_token",
-    
+
     # Confluence configuration (optional)
     confluence_url="https://your-company.atlassian.net/wiki",
     confluence_username="your.email@company.com",
     confluence_api_token="your_api_token",
-    
+
     # Bitbucket configuration (optional)
     # bitbucket_url="https://bitbucket.your-company.com",
     # bitbucket_pat_token="your_pat_token"
@@ -166,23 +177,23 @@ AtlassianCredentials(
     jira_api_token: Optional[str] = None,
     jira_pat_token: Optional[str] = None,
     jira_api_version: Optional[str] = None,  # '2' or '3', auto-detected if not set
-    jira_ssl_verify: bool = False,
-    
+    jira_ssl_verify: bool = True,
+
     # Confluence
     confluence_url: Optional[str] = None,
     confluence_username: Optional[str] = None,
     confluence_api_token: Optional[str] = None,
     confluence_pat_token: Optional[str] = None,
     confluence_api_version: Optional[str] = None,
-    confluence_ssl_verify: bool = False,
-    
+    confluence_ssl_verify: bool = True,
+
     # Bitbucket
     bitbucket_url: Optional[str] = None,
     bitbucket_username: Optional[str] = None,
     bitbucket_api_token: Optional[str] = None,
     bitbucket_pat_token: Optional[str] = None,
     bitbucket_api_version: Optional[str] = None,
-    bitbucket_ssl_verify: bool = False
+    bitbucket_ssl_verify: bool = True
 )
 ```
 
@@ -274,11 +285,17 @@ result = confluence_create_page(
 
 ```python
 from scripts.jira_issues import (
-    jira_get_issue,      # Get issue by key
-    jira_create_issue,   # Create new issue
-    jira_update_issue,   # Update existing issue
-    jira_delete_issue,   # Delete issue
-    jira_add_comment     # Add comment to issue
+    jira_add_attachment,       # Upload attachment
+    jira_add_comment,          # Add comment to issue
+    jira_create_issue,         # Create new issue
+    jira_delete_issue,         # Delete issue
+    jira_download_attachment,  # Download attachment by ID
+    jira_download_attachments, # Download all issue attachments
+    jira_get_attachments,      # Get attachment metadata
+    jira_get_comments,         # Get issue comments
+    jira_get_issue,            # Get issue by key
+    jira_update_comment,       # Update comment on issue
+    jira_update_issue,         # Update existing issue
 )
 
 # Create issue with full options
@@ -295,6 +312,14 @@ jira_create_issue(
         "customfield_10002": 123
     }
 )
+
+# Comments and files/screenshots
+jira_get_comments(issue_key="PROJ-123")
+jira_add_comment(issue_key="PROJ-123", comment="Verified locally")
+jira_update_comment(issue_key="PROJ-123", comment_id="123456", comment="Updated text")
+jira_get_attachments(issue_key="PROJ-123")
+jira_download_attachments(issue_key="PROJ-123", output_dir="Output/Jira/PROJ-123")
+jira_add_attachment(issue_key="PROJ-123", file_path="Output/Jira/PROJ-123/screenshot.png")
 ```
 
 ### Jira Search (`scripts.jira_search`)
@@ -614,14 +639,14 @@ def skill_function(
     credentials: Optional[AtlassianCredentials] = None  # Always last parameter
 ) -> str:
     """Function description.
-    
+
     Args:
         required_param1: Description
         required_param2: Description
         optional_param: Description (optional)
         credentials: Optional AtlassianCredentials for Agent environments.
                     If not provided, uses environment variables.
-    
+
     Returns:
         JSON string with result or error information
     """
