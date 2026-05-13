@@ -2,7 +2,7 @@
 
 ### Requirement: Typed view definition is the canonical migration boundary
 
-The system SHALL define a managed typed view-definition model and Presentation IR for Lexical Edit that represents sections, fields, sequences, table regions, tree nodes, labels, visibility, ghost behavior, editor descriptors, writing-system metadata, and stable node identity.
+The system SHALL define a managed typed view-definition model and Presentation IR for Lexical Edit that represents sections, fields, sequences, table regions, tree nodes, labels, visibility, ghost behavior, editor descriptors, writing-system metadata, OpenType/HarfBuzz font-feature metadata, and stable node identity.
 
 #### Scenario: IR represents LexEntry layout semantics
 - **WHEN** the LexEntry detail contract is compiled
@@ -55,3 +55,24 @@ Runtime XML dependency SHALL be retired only after typed view-definition authori
 #### Scenario: Canonical view definition replaces XML at runtime
 - **WHEN** a Lexical Edit surface has passed migration gates
 - **THEN** the runtime UI SHALL load the canonical typed definition directly while retaining XML import only for migration/audit scenarios
+
+### Requirement: Typed view definitions replace native render contracts for completed regions
+
+Completed Avalonia regions SHALL use typed view definitions and managed renderer/editor services for display, measurement, selection metadata, hit testing, and editor realization instead of native Views/C++ viewing/rendering contracts.
+
+#### Scenario: View definition carries render semantics needed by Avalonia
+- **WHEN** a typed view definition is produced for a migrated region
+- **THEN** it SHALL include enough metadata for Avalonia controls to render, measure, virtualize, focus, and hit-test the region without consulting `IVwEnv`, RootBox, or native Views render objects
+
+#### Scenario: Missing native viewing/rendering replacement blocks completion
+- **WHEN** the typed view-definition model cannot express behavior currently supplied only by native Views/C++ viewing/rendering
+- **THEN** the region SHALL remain incomplete until a managed/Avalonia replacement service or an explicit scoped compatibility decision is added
+
+### Requirement: View definitions exclude Graphite runtime settings
+
+Canonical typed view definitions for Avalonia SHALL NOT depend on Graphite feature IDs, Graphite engine selection, or Graphite-only fonts at runtime.
+
+#### Scenario: Graphite settings become diagnostics or migration inputs
+- **WHEN** XML import or project settings expose `IsGraphiteEnabled`, Graphite `DefaultFontFeatures`, or equivalent Graphite-only font metadata
+- **THEN** the typed view-definition compiler SHALL emit migration diagnostics or mapped OpenType/HarfBuzz metadata
+- **AND** it SHALL NOT preserve Graphite as an Avalonia runtime setting

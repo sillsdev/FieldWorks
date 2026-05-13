@@ -51,3 +51,15 @@ Failed parity automation SHALL preserve enough evidence to diagnose the failing 
 #### Scenario: Parity failure emits bundled evidence
 - **WHEN** a parity test fails
 - **THEN** it SHALL write or reference the relevant trace log, semantic snapshot, screenshot or diff image, timing data, and root capability/scenario id
+
+### Requirement: Graphite decommissioning has validation artifacts
+
+The migration SHALL include validation artifacts proving Graphite is absent from the Avalonia default path and that affected projects/fonts receive actionable migration results.
+
+#### Scenario: Graphite-dependent fixture is detected
+- **WHEN** a fixture contains Graphite-enabled writing-system settings, Graphite feature strings, or Graphite-only sample fonts
+- **THEN** parity automation SHALL report a decommissioning diagnostic, replacement/migration status, or explicit unsupported legacy status
+
+#### Scenario: Gecko/PDF Graphite path is not part of Avalonia default
+- **WHEN** preview, print, or PDF flows are validated for the default Avalonia Lexical Edit path
+- **THEN** the artifacts SHALL prove they do not depend on Gecko Graphite rendering, `XWebBrowser` Graphite behavior, or `GeckofxHtmlToPdf` Graphite shaping assumptions

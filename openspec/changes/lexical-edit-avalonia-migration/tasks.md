@@ -6,6 +6,7 @@
 - [ ] 1.2 Inventory current Lexical Edit view entry points: `RecordEditView`, `DataTree`, `SliceFactory`, XMLViews browse/table views, popup choosers, and AdvancedEntry Avalonia spike.
 - [ ] 1.3 Build a coverage map for DataTree refresh, SliceFactory/editor selection, launchers, popup choosers, XML table views, and render verification.
 - [ ] 1.4 Identify customer/user override XML fixtures that must be included before XML retirement.
+- [ ] 1.5 Start Graphite decommissioning inventory for writing-system settings, fonts, native render engines, Gecko/browser/PDF paths, tests, docs, sample assets, and build/package artifacts.
 
 ## 2. Test Coverage Before Refactor
 
@@ -31,33 +32,58 @@
 - [ ] 4.4 Add unsupported-construct diagnostics with layout part and node path.
 - [ ] 4.5 Add cache key, invalidation, async compile, and cancellation tests.
 
-## 5. Avalonia Control Slices
+## 5. Graphite and Font Decommissioning
 
-- [ ] 5.1 Replace/prove simple text and scalar editors with FieldWorks-owned Avalonia controls over IR nodes.
-- [ ] 5.2 Implement writing-system-aware text editor behavior using project font settings, flow direction, culture/script metadata, and OpenType/HarfBuzz feature settings.
-- [ ] 5.3 Implement popup/hover chooser controls using Avalonia flyouts/context menus and a service-backed chooser model.
-- [ ] 5.4 Spike TreeView/tree-table rendering for multiple translations per sense/term, including compact multi-writing-system node templates.
-- [ ] 5.5 Record any Avalonia package update or local/upstream control patch with parity justification and test evidence.
+- [ ] 5.1 Inventory and classify Graphite code/assets: `Lib/src/graphite2`, `GraphiteEngine`, `RenderEngineFactory`, `GraphiteFontFeatures`, `DistFiles/Graphite`, `Build/Windows.targets`, and Graphite-specific tests/docs.
+- [ ] 5.2 Inventory writing-system Graphite settings and persistence: `IsGraphiteEnabled`, `DefaultFontFeatures`, `FontEngines.Graphite`, import/export formats, project fixtures, and user-visible settings.
+- [ ] 5.3 Replace Graphite feature UI/storage in writing-system dialogs with OpenType/HarfBuzz-compatible font options or explicit decommissioning diagnostics.
+- [ ] 5.4 Define replacement font/fallback policy for Graphite-only fonts, including project diagnostics and user-facing migration evidence.
+- [ ] 5.5 Remove Graphite from the Avalonia/default path: no `GraphiteEngineClass`, no `graphite2`, no Graphite-enabled render-engine selection, and no Graphite feature strings as runtime settings.
+- [ ] 5.6 Audit Gecko/XULRunner preview, print, and PDF paths: startup Graphite preference, `XWebBrowser` consumers, dictionary/interlinear/configuration previews, `GeckofxHtmlToPdf`, and `FieldWorksPdfMaker` packaging.
+- [ ] 5.7 Select and validate a non-Graphite browser/PDF strategy for default Avalonia workflows, or explicitly leave affected paths outside the default Lexical Edit boundary.
+- [ ] 5.8 Add validation proving Avalonia default readiness is blocked while any default-path Graphite dependency remains.
 
-## 6. Tables, Slices, and Lexical Edit Migration
+## 6. Avalonia Control Slices
 
-- [ ] 6.1 Build a virtualized Avalonia table/browse view path over typed view definitions.
-- [ ] 6.2 Compare legacy XMLViews table semantics against typed IR and Avalonia table semantics.
-- [ ] 6.3 Migrate one representative vertical slice: LexEntry identity + morph type + one nested sense/gloss + chooser path.
-- [ ] 6.4 Expand to core P0/P1 parity checklist items from the migrated Speckit parity list.
-- [ ] 6.5 Gate full Lexical Edit replacement on semantic parity, UIA2 legacy baselines, Avalonia.Headless tests, and render comparison evidence.
+- [ ] 6.1 Replace/prove simple text and scalar editors with FieldWorks-owned Avalonia controls over IR nodes.
+- [ ] 6.2 Implement writing-system-aware text editor behavior using project font settings, flow direction, culture/script metadata, and OpenType/HarfBuzz feature settings.
+- [ ] 6.3 Implement popup/hover chooser controls using Avalonia flyouts/context menus and a service-backed chooser model.
+- [ ] 6.4 Spike TreeView/tree-table rendering for multiple translations per sense/term, including compact multi-writing-system node templates.
+- [ ] 6.5 Record any Avalonia package update or local/upstream control patch with parity justification and test evidence.
 
-## 7. XML Retirement Planning
+## 7. Tables, Slices, and Lexical Edit Migration
 
-- [ ] 7.1 Design canonical post-XML view-definition authoring/storage format.
-- [ ] 7.2 Build XML-to-typed-definition migration tooling and audit reports.
-- [ ] 7.3 Prove migration on shipped LexEntry/LexSense layouts and selected user override fixtures.
-- [ ] 7.4 Disable runtime XML for a gated migrated surface while retaining import/audit fallback.
-- [ ] 7.5 Document remaining XML blockers, especially custom fields, ghost items, table views, choosers, TreeView-heavy views, and Graphite-only text behavior.
+- [ ] 7.1 Build a virtualized Avalonia table/browse view path over typed view definitions.
+- [ ] 7.2 Compare legacy XMLViews table semantics against typed IR and Avalonia table semantics.
+- [ ] 7.3 Migrate one representative vertical slice: LexEntry identity + morph type + one nested sense/gloss + chooser path.
+- [ ] 7.4 Expand to core P0/P1 parity checklist items from the migrated Speckit parity list.
+- [ ] 7.5 Gate full Lexical Edit replacement on semantic parity, UIA2 legacy baselines, Avalonia.Headless tests, render comparison evidence, native viewing/render seam audit evidence, and Graphite-free default-path evidence.
 
-## 8. Validation
+## 8. C++ Viewing/Render Seam Decommissioning
 
-- [ ] 8.1 Run targeted managed tests for changed areas using `./test.ps1` filters or relevant VS Code tasks.
-- [ ] 8.2 Run render/parity baseline tests for affected surfaces.
-- [ ] 8.3 Run `./build.ps1` before implementation work is considered ready for review.
-- [ ] 8.4 Run `CI: Full local check` before commit/push.
+- [ ] 8.1 Inventory all native Views/C++ viewing/rendering/editor dependencies reachable from the targeted Lexical Edit region, including `RootSite`, `IVwEnv`, RootBox/ViewSlice paths, `ManagedVwWindow`, measurement, selection, hit testing, scrolling, editor realization, and text rendering adapters.
+- [ ] 8.2 Classify dependencies as baseline-only, non-migrated-region-only, custom linguistics service dependency, or blocker for the targeted migrated region.
+- [ ] 8.3 Replace region-local C++ viewing/rendering/editor usage with managed/Avalonia services for text shaping, measurement, selection metadata, hit testing, scrolling, rendering, and editor realization.
+- [ ] 8.4 Add tests or instrumentation proving the migrated region does not instantiate or call native Views/C++ viewing/rendering/editor infrastructure at runtime.
+- [ ] 8.5 Remove or disable region-local native viewing/render adapters after replacement tests pass, while leaving shared native Views code available for non-migrated consumers.
+- [ ] 8.6 Track any repo-wide native Views deletion blockers that remain outside the migrated Lexical Edit region.
+- [ ] 8.7 Classify non-viewing native dependencies such as spell-check interop, parser tools, XAmple, Encoding Converters, ICU, Expat/ParserObject, and reg-free COM tooling as custom linguistics/service/tool dependencies unless they own display, layout, hit testing, selection, editor realization, or other Avalonia viewing behavior.
+- [ ] 8.8 Define service seams for retained custom linguistics engines so Avalonia consumes results through managed contracts and never hosts their UI/render/editor infrastructure.
+
+## 9. XML Retirement Planning
+
+- [ ] 9.1 Design canonical post-XML view-definition authoring/storage format.
+- [ ] 9.2 Build XML-to-typed-definition migration tooling and audit reports.
+- [ ] 9.3 Prove migration on shipped LexEntry/LexSense layouts and selected user override fixtures.
+- [ ] 9.4 Disable runtime XML for a gated migrated surface while retaining import/audit fallback.
+- [ ] 9.5 Document remaining XML blockers, especially custom fields, ghost items, table views, choosers, TreeView-heavy views, and any remaining native viewing/render coupling.
+
+## 10. Validation
+
+- [ ] 10.1 Run targeted managed tests for changed areas using `./test.ps1` filters or relevant VS Code tasks.
+- [ ] 10.2 Run render/parity baseline tests for affected surfaces.
+- [ ] 10.3 Run native viewing/render seam audit tests/instrumentation for any region claimed as migrated.
+- [ ] 10.4 Run Graphite-free default-path validation for any region proposed as default Avalonia UI.
+- [ ] 10.5 Run browser/PDF replacement validation for default-path XHTML preview, print, or PDF flows.
+- [ ] 10.6 Run `./build.ps1` before implementation work is considered ready for review.
+- [ ] 10.7 Run `CI: Full local check` before commit/push.
