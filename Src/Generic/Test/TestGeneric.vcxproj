@@ -86,6 +86,7 @@
         $(FwRoot)\Include;
         $(FwRoot)\Src\Generic;
         $(FwRoot)\Src\Generic\Test;
+        $(FwRoot)\Src\DebugProcs;
         $(FwRoot)\Output\$(Configuration);
         $(FwRoot)\Output\$(Configuration)\Common;
         $(IntDir);

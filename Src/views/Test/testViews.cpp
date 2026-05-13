@@ -15,11 +15,61 @@ Last reviewed:
 #include "testViews.h"
 #include "RedirectHKCU.h"
 #include "DebugProcs.h"
+#include <cstdlib>
+#include <cstring>
+#include <csignal>
+#include <stdexcept>
 #if !defined(WIN32) && !defined(_M_X64)
 // These define GUIDs that we need to define globally somewhere
 #include "TestVwTxtSrc.h"
 #include "TestLayoutPage.h"
 #endif
+
+namespace
+{
+	Pfn_Assert g_previousAssertProc = NULL;
+
+	void RestorePreviousAssertProc()
+	{
+		if (g_previousAssertProc != NULL)
+		{
+			SetAssertProc(g_previousAssertProc);
+			g_previousAssertProc = NULL;
+		}
+	}
+
+	void TerminateOnSigAbrt(int)
+	{
+		TerminateProcess(GetCurrentProcess(), 3);
+	}
+
+	bool IsEnvironmentSwitchEnabled(const char * pszName)
+	{
+		size_t cchValue = 0;
+		char * pszValue = NULL;
+		const bool fEnabled =
+			_dupenv_s(&pszValue, &cchValue, pszName) == 0 &&
+			pszValue != NULL &&
+			strcmp(pszValue, "1") == 0;
+		free(pszValue);
+		return fEnabled;
+	}
+
+	void WINAPI ThrowingAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE)
+	{
+		char szMessage[1024];
+		sprintf_s(
+			szMessage,
+			"Native assert fired during test: %s (%s:%d)",
+			pszExp,
+			pszFile,
+			nLine
+		);
+		fprintf(stderr, "%s\n", szMessage);
+		fflush(stderr);
+		throw std::runtime_error(szMessage);
+	}
+}
 
 namespace unitpp
 {
@@ -27,7 +77,15 @@ namespace unitpp
 	{
 		printf("DEBUG: Entering GlobalSetup\n");
 		fflush(stdout);
-		ShowAssertMessageBox(0); // Disable assertion dialogs
+		if (IsEnvironmentSwitchEnabled("FW_TEST_ALLOW_ASSERT_DIALOGS"))
+		{
+			ShowAssertMessageBox(1);
+		}
+		else
+		{
+			g_previousAssertProc = SetAssertProc(ThrowingAssertProc);
+			ShowAssertMessageBox(0); // Disable assertion dialogs
+		}
 		printf("DEBUG: After ShowAssertMessageBox\n");
 		fflush(stdout);
 #if defined(WIN32) || defined(_M_X64)
@@ -48,10 +106,29 @@ namespace unitpp
 	}
 	void GlobalTeardown()
 	{
+		signal(SIGABRT, TerminateOnSigAbrt);
+
+		const bool fInjectTeardownAssert = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ASSERT");
+		const bool fInjectTeardownAbort = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ABORT");
+		if (fInjectTeardownAssert || fInjectTeardownAbort)
+			RestorePreviousAssertProc();
+
+		if (fInjectTeardownAssert)
+			AssertMsg(false, "Injected teardown assert for native test infrastructure validation");
+
+		if (fInjectTeardownAbort)
+		{
+			_set_error_mode(_OUT_TO_STDERR);
+			_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+			abort();
+		}
+
 		::OleUninitialize();
 #if defined(WIN32) || defined(_M_X64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
 #endif
+
+		RestorePreviousAssertProc();
 	}
 }
 

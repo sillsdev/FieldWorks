@@ -19,6 +19,12 @@ Last reviewed:
 #include <cstdlib>
 #include <unistd.h>
 #endif
+#include <stdlib.h>
+#if defined(WIN32) || defined(WIN64)
+#include <string.h>
+#else
+#include <strings.h>
+#endif
 #include <stdio.h>
 #include <assert.h>
 #if defined(WIN32) || defined(WIN64)
@@ -37,6 +43,46 @@ typedef Pfn_Assert Pfn_Warn;
 void APIENTRY DefWarnProc(const char * pszExp, const char * pszFile, int nLine, HMODULE hmod);
 void APIENTRY DefAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE hmod);
 bool GetShowAssertMessageBox();
+
+static bool TryGetEnvironmentVariableValue(const char * pszName, char ** ppszValue)
+{
+#if defined(WIN32) || defined(WIN64)
+	size_t cchValue = 0;
+	return _dupenv_s(ppszValue, &cchValue, pszName) == 0 && *ppszValue != NULL;
+#else
+	*ppszValue = getenv(pszName);
+	return *ppszValue != NULL;
+#endif
+}
+
+static void FreeEnvironmentVariableValue(char * pszValue)
+{
+#if defined(WIN32) || defined(WIN64)
+	free(pszValue);
+#else
+	(void)pszValue;
+#endif
+}
+
+static bool EqualsIgnoreCase(const char * pszLeft, const char * pszRight)
+{
+#if defined(WIN32) || defined(WIN64)
+	return _stricmp(pszLeft, pszRight) == 0;
+#else
+	return strcasecmp(pszLeft, pszRight) == 0;
+#endif
+}
+
+static bool IsTestModeEnabled()
+{
+	char * pTestMode = NULL;
+	if (!TryGetEnvironmentVariableValue("FW_TEST_MODE", &pTestMode))
+		return false;
+
+	const bool fIsTestMode = strcmp(pTestMode, "1") == 0;
+	FreeEnvironmentVariableValue(pTestMode);
+	return fIsTestMode;
+}
 
 typedef void (__stdcall * _DBG_REPORT_HOOK)(int, char *);
 typedef int (__stdcall * _DBG_DISPLAYMSGBOX_HOOK)(char *);
@@ -286,10 +332,17 @@ extern "C" __declspec(dllexport) int APIENTRY DebugProcsExit(void)
 
 /*----------------------------------------------------------------------------------------------
 	Returns the AssertMessageBox value from the registry; if not set return the value of the
-	environment variable AssertUiEnabled; if not set return true
+	environment variable AssertUiEnabled; if not set return true.
+	FW_TEST_MODE=1 takes absolute priority and always returns false (no dialog).
 ----------------------------------------------------------------------------------------------*/
 bool GetShowAssertMessageBox()
 {
+	// FW_TEST_MODE is an unconditional override set by test runners.
+	// It takes priority over both the registry and AssertUiEnabled so that
+	// developer machines with the registry key set never pop dialogs during tests.
+	if (IsTestModeEnabled())
+		return false;
+
 #if defined(WIN32) || defined(WIN64)
 	HKEY hk;
 	if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\SIL\\FieldWorks", 0,
@@ -304,24 +357,17 @@ bool GetShowAssertMessageBox()
 		if (ret == ERROR_SUCCESS)
 			return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
 	}
-// getenv is deprecated on Windows
-#pragma warning(push)
-#pragma warning(disable: 4996)
-
-// Windows doesn't know strcasecmp, it calls it stricmp instead...
-#ifndef strcasecmp
-#define strcasecmp stricmp
-#endif
-
 #endif // WIN32
-	const char* pEnvVar = getenv("AssertUiEnabled");
-	return !pEnvVar ||
-		strcasecmp(pEnvVar, "0") != 0 &&
-		strcasecmp(pEnvVar, "false") != 0 &&
-		strcasecmp(pEnvVar, "no") != 0;
-#if defined(WIN32) || defined(WIN64)
-#pragma warning(pop)
-#endif // WIN32
+	char * pEnvVar = NULL;
+	if (!TryGetEnvironmentVariableValue("AssertUiEnabled", &pEnvVar))
+		return true;
+
+	const bool fShowAssertMessageBox =
+		!EqualsIgnoreCase(pEnvVar, "0") &&
+		!EqualsIgnoreCase(pEnvVar, "false") &&
+		!EqualsIgnoreCase(pEnvVar, "no");
+	FreeEnvironmentVariableValue(pEnvVar);
+	return fShowAssertMessageBox;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -581,6 +627,14 @@ void __cdecl SilAssert (
 	else
 		OutputDebugString(assertbuf);
 
+	if (IsTestModeEnabled())
+	{
+		// In test mode, mirror assertion text to stderr so unattended runs capture
+		// the failure details without depending on a debugger or modal UI.
+		fprintf(stderr, "%s\n", assertbuf);
+		fflush(stderr);
+	}
+
 	// NOTE: this method is intented to be used by unmanaged apps only;
 	// managed apps should use DebugProcs.AssertProc in DebugProcs.cs
 
@@ -623,11 +677,14 @@ void __cdecl SilAssert (
 	else // !g_fShowMessageBox
 	{
 		// if we don't show a message box we should at least abort (and output the assertion
-		// text if we haven't done that already). Note that we don't call _exit(3) as above
-		// so that we can trap the signal and ignore it in unit tests
+		// text if we haven't done that already). In FW_TEST_MODE we must not continue after
+		// a post-summary assert even if SIGABRT is ignored or intercepted by the native test
+		// runner, so force process termination if raise(SIGABRT) returns.
 		if (g_ReportHook)
 			OutputDebugString(assertbuf);
 		raise(SIGABRT);
+		if (IsTestModeEnabled())
+			_exit(3);
 	}
 
 	/* Ignore: continue execution */
