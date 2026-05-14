@@ -195,7 +195,7 @@ if (Test-Path $serenaConfig) {
 		Write-Status "No languages found in .serena/project.yml" -Status "WARN"
 	}
 
-	if ($configContent -match '^\s*project_name:\s*' -and $projectName) {
+	if ($configContent -match '(?m)^\s*project_name:\s*' -and $projectName) {
 		Write-Status "Configured project name: $projectName"
 	}
 	else {

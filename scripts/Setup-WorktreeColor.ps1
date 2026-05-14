@@ -2,11 +2,12 @@
 .SYNOPSIS
 	Sets a unique window color for the current VS Code workspace/worktree.
 .DESCRIPTION
-	Chooses a color from a fixed deterministic palette using the lowest free slot.
+	Chooses a color from a fixed deterministic palette using the next free slot in rotation.
 
 	Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
 	- Base workspace configuration is embedded in this script
 	- Writes a worktree-local workspace file: <branch>.code-workspace (git-ignored)
+	- Creates .serena/project.local.yml for worktrees when the shared Serena config exists
 
 	- If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
 	- If in Main Repo: Removes these color customizations.
@@ -116,6 +117,32 @@ function Get-WorktreeWorkspacePath([string]$rootPath) {
 	$branchName = Get-GitBranchName $rootPath
 	$fileStem = ConvertTo-SafeWorkspaceFileStem $branchName
 	return (Join-Path $rootPath ("{0}.code-workspace" -f $fileStem))
+}
+
+function Ensure-SerenaLocalProjectFile([string]$targetRoot) {
+	$serenaDir = Join-Path $targetRoot ".serena"
+	if (-not (Test-Path $serenaDir -PathType Container)) {
+		return
+	}
+
+	$sharedProjectPath = Join-Path $serenaDir "project.yml"
+	if (-not (Test-Path $sharedProjectPath -PathType Leaf)) {
+		return
+	}
+
+	$localProjectPath = Join-Path $serenaDir "project.local.yml"
+	if (Test-Path $localProjectPath -PathType Leaf) {
+		return
+	}
+
+	$projectName = Get-GitBranchName $targetRoot
+	$escapedProjectName = $projectName -replace "'", "''"
+	$contents = @(
+		"# Auto-generated per-worktree Serena override. Edit locally if needed."
+		("project_name: '{0}'" -f $escapedProjectName)
+	)
+	$contents | Set-Content -LiteralPath $localProjectPath -Encoding UTF8
+	Write-Host "Created Serena local project override: $localProjectPath"
 }
 
 function Get-GitWorktrees([string]$anyRepoRoot) {
@@ -491,6 +518,58 @@ function ConvertTo-ColorIndex([object]$value, [int]$paletteLength) {
 	return $idx
 }
 
+function Get-GitCommonDir([string]$anyRepoRoot) {
+	$common = @(& git -C $anyRepoRoot rev-parse --git-common-dir 2>$null)
+	if ($LASTEXITCODE -ne 0 -or $common.Length -eq 0 -or [string]::IsNullOrWhiteSpace($common[0])) {
+		throw "Failed to resolve git common dir for $anyRepoRoot"
+	}
+
+	$commonPath = $common[0].Trim()
+	if (-not [System.IO.Path]::IsPathRooted($commonPath)) {
+		$commonPath = Join-Path $anyRepoRoot $commonPath
+	}
+
+	try {
+		return ([System.IO.Path]::GetFullPath($commonPath))
+	}
+	catch {
+		return $commonPath
+	}
+}
+
+function Get-WorktreeColorStatePath([string]$mainRepoRoot) {
+	return (Join-Path (Get-GitCommonDir $mainRepoRoot) "fieldworks-worktree-color-state.json")
+}
+
+function Read-WorktreeColorState([string]$mainRepoRoot, [int]$paletteLength) {
+	$statePath = Get-WorktreeColorStatePath $mainRepoRoot
+	if (-not (Test-Path $statePath -PathType Leaf)) {
+		return $null
+	}
+
+	try {
+		$state = ConvertFrom-JsoncFile $statePath
+		if ($null -eq $state -or -not $state.PSObject.Properties["lastAssignedColorIndex"]) {
+			return $null
+		}
+
+		return (ConvertTo-ColorIndex -value $state.lastAssignedColorIndex -paletteLength $paletteLength)
+	}
+	catch {
+		Write-Warning "Failed to read worktree color state from $statePath"
+		return $null
+	}
+}
+
+function Write-WorktreeColorState([string]$mainRepoRoot, [int]$colorIndex) {
+	$statePath = Get-WorktreeColorStatePath $mainRepoRoot
+	$state = [pscustomobject]@{
+		lastAssignedColorIndex = $colorIndex
+	}
+
+	$state | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $statePath -Encoding UTF8
+}
+
 function Get-ColorIndexFromSettings($settings, [string[]]$palette) {
 	if ($null -eq $settings) {
 		return $null
@@ -570,7 +649,10 @@ function Select-WorktreeColorIndex(
 		if ($requestedColorIndex.Value -lt 0 -or $requestedColorIndex.Value -ge $palette.Length) {
 			throw "ColorIndex '$($requestedColorIndex.Value)' is out of range. Valid range: 0-$($palette.Length - 1)."
 		}
-		return $requestedColorIndex.Value
+		return [pscustomobject]@{
+			ColorIndex = $requestedColorIndex.Value
+			ShouldPersistLastAssigned = $true
+		}
 	}
 
 	$targetWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
@@ -580,7 +662,10 @@ function Select-WorktreeColorIndex(
 			if ($null -ne $existingWorkspace -and $existingWorkspace.PSObject.Properties["settings"]) {
 				$existingIdx = Get-ColorIndexFromSettings -settings $existingWorkspace.settings -palette $palette
 				if ($null -ne $existingIdx) {
-					return $existingIdx
+					return [pscustomobject]@{
+						ColorIndex = $existingIdx
+						ShouldPersistLastAssigned = $false
+					}
 				}
 			}
 		}
@@ -590,15 +675,23 @@ function Select-WorktreeColorIndex(
 	}
 
 	$used = Get-UsedColorIndices -mainRepoRoot $mainRepoRoot -targetRoot $targetRoot -palette $palette
-	for ($i = 0; $i -lt $palette.Length; $i++) {
-		if (-not $used.ContainsKey($i)) {
-			return $i
+	$lastAssigned = Read-WorktreeColorState -mainRepoRoot $mainRepoRoot -paletteLength $palette.Length
+	$startIndex = if ($null -ne $lastAssigned) { ($lastAssigned + 1) % $palette.Length } else { 0 }
+
+	for ($offset = 0; $offset -lt $palette.Length; $offset++) {
+		$candidate = ($startIndex + $offset) % $palette.Length
+		if (-not $used.ContainsKey($candidate)) {
+			return [pscustomobject]@{
+				ColorIndex = $candidate
+				ShouldPersistLastAssigned = $true
+			}
 		}
 	}
 
-	$md5 = [System.Security.Cryptography.MD5]::Create()
-	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($targetRoot))
-	return ($hashBytes[0] % $palette.Length)
+	return [pscustomobject]@{
+		ColorIndex = $startIndex
+		ShouldPersistLastAssigned = $true
+	}
 }
 
 function Write-WorktreeWorkspaceFile(
@@ -610,7 +703,8 @@ function Write-WorktreeWorkspaceFile(
 	$legacyWorkspacePath = Get-WorktreeWorkspaceLegacyPath $targetRoot
 
 	$palette = Get-WorktreeColorPalette
-	$resolvedColorIndex = Select-WorktreeColorIndex -mainRepoRoot $repoRoot -targetRoot $targetRoot -requestedColorIndex $requestedColorIndex -palette $palette
+	$colorSelection = Select-WorktreeColorIndex -mainRepoRoot $repoRoot -targetRoot $targetRoot -requestedColorIndex $requestedColorIndex -palette $palette
+	$resolvedColorIndex = $colorSelection.ColorIndex
 	$colorHex = $palette[$resolvedColorIndex]
 	$foreground = Get-ForegroundColorsForBackground -backgroundHex $colorHex
 	$textColor = $foreground.TextColor
@@ -729,6 +823,10 @@ function Write-WorktreeWorkspaceFile(
 	$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value $settings
 
 	$worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $worktreeWorkspacePath
+	if ($colorSelection.ShouldPersistLastAssigned) {
+		Write-WorktreeColorState -mainRepoRoot $repoRoot -colorIndex $resolvedColorIndex
+	}
+	Ensure-SerenaLocalProjectFile -targetRoot $targetRoot
 	Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
 
 	# Best-effort cleanup of legacy workspace filename.
