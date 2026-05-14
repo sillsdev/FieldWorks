@@ -5584,8 +5584,18 @@ STDMETHODIMP VwTextSelection::ReplaceWithTsString(ITsString * ptss)
 						qttpPara.Clear();
 
 					if (SameObject(qttpText, qttpPara))
+					{
 						qttpPara.Clear();		// Not a special paragraph property after all.
-					vpttpPara.Push(qttpPara);
+
+						// If it is not the last character, or it is the last character
+						// and we have added others, then add it to vpttpPara.
+						// Otherwise, don't add it so the new text will be treated as if
+						// it doesn't have a newline (fix for LT-20857).
+						if (ichNext < cch || vpttpPara.Size() > 0)
+							vpttpPara.Push(qttpPara);
+					}
+					else
+						vpttpPara.Push(qttpPara);
 					Assert(cNewlines == 0);
 				}
 				else
