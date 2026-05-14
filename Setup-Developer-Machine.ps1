@@ -26,6 +26,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Import-Module (Join-Path $scriptDir 'Build\Agent\FwBuildEnvironment.psm1') -Force
+$vsToolchain = $null
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " FieldWorks Developer Machine Setup" -ForegroundColor Cyan
@@ -57,22 +59,16 @@ if ($git) {
 
 # Check Visual Studio 2022
 if (-not $SkipVSCheck) {
-	$vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-	if (Test-Path $vsWhere) {
-		$vsInstall = & $vsWhere -latest -property installationPath 2>$null
-		if ($vsInstall) {
-			$vsVersion = & $vsWhere -latest -property catalog_productDisplayVersion 2>$null
-			Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
-
-			# Check required workloads
-			$workloads = & $vsWhere -latest -property catalog_productLineVersion 2>$null
-			Write-Host "     Location: $vsInstall" -ForegroundColor Gray
-		} else {
-			Write-Host "[MISSING] Visual Studio 2022 - Please install with:" -ForegroundColor Red
-			Write-Host "         - .NET desktop development workload" -ForegroundColor Red
-			Write-Host "         - Desktop development with C++ workload" -ForegroundColor Red
-			exit 1
-		}
+	$vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+	if ($vsToolchain) {
+		$vsVersion = if ([string]::IsNullOrWhiteSpace($vsToolchain.DisplayVersion)) { 'unknown version' } else { $vsToolchain.DisplayVersion }
+		Write-Host "[OK] Visual Studio 2022: $vsVersion" -ForegroundColor Green
+		Write-Host "     Location: $($vsToolchain.InstallationPath)" -ForegroundColor Gray
+	} elseif (Get-VsWherePath) {
+		Write-Host "[MISSING] Visual Studio 2022 - Please install with:" -ForegroundColor Red
+		Write-Host "         - .NET desktop development workload" -ForegroundColor Red
+		Write-Host "         - Desktop development with C++ workload" -ForegroundColor Red
+		exit 1
 	} else {
 		Write-Host "[MISSING] Visual Studio 2022 - Please install from https://visualstudio.microsoft.com/" -ForegroundColor Red
 		exit 1
@@ -245,15 +241,12 @@ Write-Host "`n--- Configuring PATH ---" -ForegroundColor Yellow
 $pathsToAdd = @()
 
 # VSTest (Visual Studio 2022)
-$vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-if (Test-Path $vsWhere) {
-	$vsInstall = & $vsWhere -latest -property installationPath 2>$null
-	if ($vsInstall) {
-		$vstestPath = Join-Path $vsInstall 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
-		if (Test-Path (Join-Path $vstestPath 'vstest.console.exe')) {
-			$pathsToAdd += $vstestPath
-		}
-	}
+if (-not $vsToolchain -and -not $SkipVSCheck) {
+	$vsToolchain = Get-VsToolchainInfo -Requires @('Microsoft.Component.MSBuild', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64')
+}
+
+if ($vsToolchain -and $vsToolchain.VSTestPath) {
+	$pathsToAdd += (Split-Path -Parent $vsToolchain.VSTestPath)
 }
 
 # Update PATH
