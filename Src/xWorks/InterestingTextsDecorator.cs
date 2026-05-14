@@ -59,6 +59,7 @@ namespace SIL.FieldWorks.XWorks
 				// this would be a bad thing to do.
 				base.RemoveNotification(m_interestingTexts);
 				m_interestingTexts = null;
+				m_interestingHvos = null;
 			}
 		}
 
