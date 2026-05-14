@@ -28,6 +28,9 @@ namespace SIL.FieldWorks.XWorks
 		// The object our property belongs to. We consider any object for which we are asked our special
 		// property to be the root object.
 		private int m_rootHvo;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+
 		public InterestingTextsDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
 			ILcmServiceLocator services)
 			: base(domainDataByFlid)
@@ -55,6 +58,7 @@ namespace SIL.FieldWorks.XWorks
 				// If a clerk were to be disposed some other time when another clerk was still using the ITL,
 				// this would be a bad thing to do.
 				base.RemoveNotification(m_interestingTexts);
+				m_interestingTexts = null;
 			}
 		}
 
@@ -66,8 +70,21 @@ namespace SIL.FieldWorks.XWorks
 
 		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
 		{
-			m_interestingTexts = GetInterestingTextList(mediator, propertyTable, m_services);
-			EnsureInterestingTextsSubscription();
+			m_mediator = mediator;
+			m_propertyTable = propertyTable;
+		}
+
+		private InterestingTextList InterestingTexts
+		{
+			get
+			{
+				if (m_interestingTexts == null)
+				{
+					m_interestingTexts = GetInterestingTextList(m_mediator, m_propertyTable, m_services);
+					EnsureInterestingTextsSubscription();
+				}
+				return m_interestingTexts;
+			}
 		}
 
 		private void EnsureInterestingTextsSubscription()
@@ -132,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 				//    m_interestingHvos = new int[0];
 				//    return m_interestingHvos;
 				//}
-				m_interestingHvos = (from text in m_interestingTexts.InterestingTexts select text.Hvo).ToArray();
+				m_interestingHvos = (from text in InterestingTexts.InterestingTexts select text.Hvo).ToArray();
 			}
 			return m_interestingHvos;
 		}
@@ -161,12 +178,12 @@ namespace SIL.FieldWorks.XWorks
 
 		public IEnumerable<IStText> ScriptureTexts
 		{
-			get { return m_interestingTexts.ScriptureTexts; }
+			get { return InterestingTexts.ScriptureTexts; }
 		}
 
 		public void SetInterestingTexts(IEnumerable<IStText> newTexts)
 		{
-			m_interestingTexts.SetInterestingTexts(newTexts);
+			InterestingTexts.SetInterestingTexts(newTexts);
 		}
 
 		public override int get_VecSize(int hvo, int tag)
