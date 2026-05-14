@@ -118,7 +118,7 @@ language_backend:
 # This does not affect Serena's own files (e.g. memories and configuration files), which always use native line endings.
 line_ending:
 
-# list of regex patterns which, when matched, mark a memory entry as read‑only.
+# list of regex patterns which, when matched, mark a memory entry as read-only.
 # Extends the list from the global configuration, merging the two lists.
 read_only_memory_patterns: []
 
