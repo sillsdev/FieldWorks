@@ -2,16 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
-using System.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -41,6 +43,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private XmlNode m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
+		IEnumerable<ICmObject> m_objs;
 
 		#endregion Data members
 
@@ -79,6 +82,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
 
 			StoreData(objs);
+			m_objs = objs;
 			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache, m_mediator, m_propertyTable,
 				null, m_listPublisher);
 			m_bvList.Location = new Point(0, 0);
@@ -90,8 +94,38 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bvList.StyleSheet = m_stylesheet;
 			m_bvList.Dock = DockStyle.Fill;
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
+			m_bvList.SortersCompatible += m_bvList_AreSortersCompatible;
+			m_bvList.SorterChanged += m_bvList_SorterChanged;
 			Controls.Add(m_bvList);
 			ResumeLayout(false);
+		}
+
+		private bool m_bvList_AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			return first.CompatibleSorter(second);
+		}
+
+		private void m_bvList_SorterChanged(object sender, EventArgs args)
+		{
+			using (new WaitCursor(this))
+			{
+				ArrayList itemList = new ArrayList((from obj in m_objs select new ManyOnePathSortItem(obj.Hvo, null, null)).ToArray());
+				m_bvList.Sorter.Sort(itemList);
+				IList<ICmObject> objList = (from ManyOnePathSortItem item in itemList select GetObject(item.RootObjectHvo)).ToList();
+				StoreData(objList);
+			}
+		}
+
+		private ICmObject GetObject(int hvo)
+		{
+			foreach (var obj in m_objs)
+			{
+				if (obj.Hvo == hvo)
+				{
+					return obj;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>

@@ -177,7 +177,7 @@
 				</parameters>
 			</guicontrol>
 			<guicontrol id="RuleNaturalClassFlatList">
-				<parameters id="ruleNaturalClassList" listItemsClass="PhNaturalClass" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+				<parameters id="ruleNaturalClassList" listItemsClass="PhNaturalClass" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
 									hscroll="true" editable="false" selectColumn="false">
 					<columns>
 						<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name"/>
