@@ -113,8 +113,10 @@ namespace unitpp
 		if (fInjectTeardownAssert || fInjectTeardownAbort)
 			RestorePreviousAssertProc();
 
+#ifdef DEBUG
 		if (fInjectTeardownAssert)
 			AssertMsg(false, "Injected teardown assert for native test infrastructure validation");
+#endif
 
 		if (fInjectTeardownAbort)
 		{
