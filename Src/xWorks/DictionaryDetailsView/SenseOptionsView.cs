@@ -64,7 +64,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 
 		public string NumberingStyle
 		{
-			get{ return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
+			get
+			{
+				// Return null if string is empty, because returning an empty string for reversal numbers
+				// also forces sense numbers not to be displayed. Null doesn't cause the same problem.
+				var formatString = ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString;
+				return string.IsNullOrEmpty(formatString) ? null : formatString;
+			}
 			set
 			{
 				if (string.IsNullOrEmpty(value))
