@@ -520,10 +520,6 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
 			if (senseNode == null) return;
 			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			if (String.IsNullOrEmpty(senseOptions.NumberingStyle))
-			{
-				senseOptions.NumberingStyle = null;
-			}
 			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
 			//SubSense Node
 			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
