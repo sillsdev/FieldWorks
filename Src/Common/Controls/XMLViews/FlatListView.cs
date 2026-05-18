@@ -2,16 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml;
-using System.Linq;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -41,6 +44,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private XmlNode m_configNode;
 		private BrowseViewer m_bvList;
 		private ObjectListPublisher m_listPublisher;
+		IEnumerable<ICmObject> m_objs;
+		RecordFilter m_filter;
 
 		#endregion Data members
 
@@ -79,6 +84,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_listPublisher = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, ObjectListFlid);
 
 			StoreData(objs);
+			m_objs = objs;
 			m_bvList = new BrowseViewer(m_configNode, m_cache.LanguageProject.Hvo, ObjectListFlid, m_cache, m_mediator, m_propertyTable,
 				null, m_listPublisher);
 			m_bvList.Location = new Point(0, 0);
@@ -90,8 +96,120 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bvList.StyleSheet = m_stylesheet;
 			m_bvList.Dock = DockStyle.Fill;
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
+			m_bvList.SortersCompatible += m_bvList_AreSortersCompatible;
+			m_bvList.SorterChanged += m_bvList_SorterChanged;
+			m_bvList.FilterChanged += m_bvList_FilterChanged;
 			Controls.Add(m_bvList);
 			ResumeLayout(false);
+		}
+
+		private bool m_bvList_AreSortersCompatible(RecordSorter first, RecordSorter second)
+		{
+			return first.CompatibleSorter(second);
+		}
+
+		private void m_bvList_SorterChanged(object sender, EventArgs args)
+		{
+			using (new WaitCursor(this))
+			{
+				// Sort m_objs based on the sorter.
+				ArrayList itemList = new ArrayList((from obj in m_objs select new ManyOnePathSortItem(obj.Hvo, null, null)).ToArray());
+				m_bvList.Sorter.Sort(itemList);
+				m_objs = (from ManyOnePathSortItem item in itemList select GetObject(item.RootObjectHvo)).ToList();
+				// Store the filtered data.
+				StoreData(GetFilteredObjects());
+			}
+		}
+
+		/// <summary>
+		/// Get the object for the given hvo.
+		/// </summary>
+		private ICmObject GetObject(int hvo)
+		{
+			foreach (var obj in m_objs)
+			{
+				if (obj.Hvo == hvo)
+				{
+					return obj;
+				}
+			}
+			return null;
+		}
+
+		private void m_bvList_FilterChanged(object sender, Filters.FilterChangeEventArgs args)
+		{
+			// Update the filter.
+			if (m_filter == null)
+			{
+				// Had no filter to begin with
+				Debug.Assert(args.Removed == null);
+				m_filter = args.Added is NullFilter ? null : args.Added;
+			}
+			else if (m_filter.SameFilter(args.Removed))
+			{
+				// Simplest case: we had just one filter, the one being removed.
+				// Change filter to whatever (if anything) replaces it.
+				m_filter = args.Added is NullFilter ? null : args.Added;
+			}
+			else if (m_filter is AndFilter)
+			{
+				AndFilter af = m_filter as AndFilter;
+				if (args.Removed != null)
+				{
+					af.Remove(args.Removed);
+				}
+				if (args.Added != null)
+				{
+					//When the user chooses "all records/no filter", the RecordClerk will remove
+					//its previous filter and add a NullFilter. In that case, we don't really need to add
+					//	that filter. Instead, we can just add nothing.
+					if (!(args.Added is NullFilter))
+						af.Add(args.Added);
+				}
+				// Remove AndFilter if we get down to one.
+				// This is not just an optimization, it allows the last filter to be removed
+				// leaving empty, so the status bar can show that there is then no filter.
+				if (af.Filters.Count == 1)
+					m_filter = af.Filters[0] as RecordFilter;
+			}
+			else
+			{
+				// m_filter is not an AndFilter, so can't contain the one we're removing, nor IS it the one
+				// we're removing...so we have no way to remove, and it's an error if we're trying to.
+				Debug.Assert(args.Removed == null || args.Removed is NullFilter);
+				if (args.Added != null && !(args.Added is NullFilter)) // presumably true or nothing changed, but for paranoia..
+				{
+					// We already checked for m_filter being null, so we now have two filters,
+					// and need to make an AndFilter.
+					AndFilter addFilter = new AndFilter();
+					addFilter.Add(m_filter);
+					addFilter.Add(args.Added);
+					m_filter = addFilter;
+				}
+			}
+			// Store the filtered data.
+			StoreData(GetFilteredObjects());
+		}
+
+		/// <summary>
+		/// Get the filtered objects from m_objs.
+		/// </summary>
+		private IEnumerable<ICmObject> GetFilteredObjects()
+		{
+			if (m_filter == null)
+			{
+				return m_objs;
+			}
+			ArrayList itemList = new ArrayList((from obj in m_objs select new ManyOnePathSortItem(obj.Hvo, null, null)).ToArray());
+			IList<ICmObject> objList = new List<ICmObject>();
+			foreach (ManyOnePathSortItem item in itemList)
+			{
+				if (m_filter.Accept(item))
+				{
+					objList.Add(GetObject(item.RootObjectHvo));
+				}
+			}
+			return objList;
 		}
 
 		/// <summary>
