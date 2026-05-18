@@ -81,19 +81,22 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Determine repository path
+# Assume current path is repo path and then verify it is the correct repo
 if (-not $RepoPath) {
-	# Try to find FieldWorks main repo
 	$candidates = @(
-		'C:\Users\johnm\Documents\repos\FieldWorks',
-		'C:\Users\johnm\Documents\repos\fw-worktrees\main',
-		(Get-Location).Path
-	)
+		(Get-Location).Path,
+		[System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
+	) | Select-Object -Unique
+
 	foreach ($candidate in $candidates) {
-		if (Test-Path (Join-Path $candidate '.git')) {
+		if (Test-Path -Path (Join-Path $candidate '.git')) {
 			$RepoPath = $candidate
 			break
 		}
+	}
+
+	if (-not $RepoPath) {
+		throw "Current directory is not a git repository and the script could not infer the repo root. Specify -RepoPath explicitly."
 	}
 }
 
