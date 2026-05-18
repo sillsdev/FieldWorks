@@ -299,5 +299,27 @@
 	<?include $(var.HarvestWxiDir)\yoHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zlmHarvest.wxi?>
+	<?ifdef MASTERBUILDDIR?>
+	<!--
+		WiX 3 / PatchableInstaller: Newtonsoft.Json.dll is excluded from Heat (FLExInstaller/PatchableInstallerHeatExclude.xml
+		copied to BaseInstallerBuild/heat-exclude.xml; CopyFilesToInstall) and KeyPathFix.xsl. NewtonsoftJsonApp: private
+		copy next to the app. NewtonsoftJsonGac: GAC (Assembly=.net). GAC file-version servicing: buildMsi.bat passes light -fv.
+	-->
+	<DirectoryRef Id="APPFOLDER">
+		<Component Id="NewtonsoftJsonApp" Guid="{B8A47C61-2E90-4D1A-9F4E-7C3B5A682D01}">
+			<File Id="NewtonsoftJsonFileApp"
+				Name="Newtonsoft.Json.dll"
+				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
+				KeyPath="yes" />
+		</Component>
+		<Component Id="NewtonsoftJsonGac" Guid="*">
+			<File Id="NewtonsoftJsonFileGac"
+				Name="Newtonsoft.Json.dll"
+				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
+				KeyPath="yes"
+				Assembly=".net" />
+		</Component>
+	</DirectoryRef>
+	<?endif?>
 	<?include Fonts.wxi?>
 </Include>

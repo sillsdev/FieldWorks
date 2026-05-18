@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Heat directory harvest: basenames listed here drop single-File Heat components (-gg) so authored WiX
+  can own those files. Loaded by KeyPathFix.xsl via document('heat-exclude.xml') (same folder as the XSL).
+  Optional entries: add more <Exclude Name="SomeAssembly.dll" /> lines as needed.
+-->
+<HeatHarvestExcludes xmlns="http://fieldworks.sil.org/heat-harvest-excludes/1">
+	<Exclude Name="Newtonsoft.Json.dll" />
+</HeatHarvestExcludes>

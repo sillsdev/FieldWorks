@@ -156,7 +156,15 @@
 		<!-- copy in new stuff -->
 		<PropertyGroup>
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+			<_FieldWorksPatchableInstallerHeatExclude>$([MSBuild]::NormalizePath('$(fwrt)', 'FLExInstaller', 'PatchableInstallerHeatExclude.xml'))</_FieldWorksPatchableInstallerHeatExclude>
+			<_PatchableInstallerHeatExcludeDest>$([MSBuild]::NormalizePath('$(fwrt)', 'PatchableInstaller', 'BaseInstallerBuild', 'heat-exclude.xml'))</_PatchableInstallerHeatExcludeDest>
 		</PropertyGroup>
+		<Copy
+			SourceFiles="$(_FieldWorksPatchableInstallerHeatExclude)"
+			DestinationFiles="$(_PatchableInstallerHeatExcludeDest)"
+			SkipUnchangedFiles="false"
+			Condition="Exists('$(_FieldWorksPatchableInstallerHeatExclude)')"
+		/>
 		<ItemGroup>
 			<DeveloperFiles Include="$(fwrt)\**\.gitignore" />
 			<DeveloperFiles Include="$(fwrt)\**\*~" />

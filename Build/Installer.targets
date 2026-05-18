@@ -145,7 +145,7 @@
 	<Copy SourceFiles="@(IcuDataFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedDataDir)\Icu$(IcuVersion)\%(RecursiveDir)" />
 	<Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedL10nDir)\%(RecursiveDir)" />
 	<Copy SourceFiles="@(BinFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\%(RecursiveDir)" />
-  </Target>
+	</Target>
 
   <Target Name="ValidateInstallerAddons" Condition="'$(BuildAdditionalApps)'=='true'">
 	<ItemGroup>
