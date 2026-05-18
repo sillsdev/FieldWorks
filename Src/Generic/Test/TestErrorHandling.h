@@ -158,6 +158,7 @@ namespace TestGenericLib
 #endif
 		}
 
+#ifdef DEBUG
 		void testNativeAssertThrowsExceptionWithoutContinuing()
 		{
 #if defined(WIN32) || defined(_M_X64)
@@ -182,6 +183,7 @@ namespace TestGenericLib
 			// TODO-Linux: port
 #endif
 		}
+#endif
 
 	public:
 		TestErrorHandling();
