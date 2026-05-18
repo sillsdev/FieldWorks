@@ -59,7 +59,7 @@
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoVersion)">
+    <PackageReference Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

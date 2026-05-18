@@ -71,7 +71,7 @@ Re-run the scripted build:
 If the failure persists, check the first error (later ones often cascade) and confirm native Phase 2 succeeds.
 
 ### Stale intermediates
-Prefer re-running `.\build.ps1` first (it performs cleanup needed for this repo). If you must do a hard reset, delete `Output/` and `Obj/`, then run `.\build.ps1` again.
+Prefer `.\build.ps1 -Clean` when switching branches or worktrees, after package or version bumps, when stale `Obj/` or `Output/` artifacts are plausible, or when you need a completely clean validation run. If you must do a harder reset beyond that, delete `Output/` and `Obj/`, then run `.\build.ps1` again.
 
 ## References
 - Traversal order: `FieldWorks.proj`
