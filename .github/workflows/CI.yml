@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   checks: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -42,6 +43,70 @@ jobs:
         shell: powershell
         run: |
           .\Build\Agent\Summarize-NativeTestResults.ps1 -Configuration Debug
+
+      - name: Collect render comparison artifacts
+        id: render_artifacts
+        if: ${{ !cancelled() && failure() }}
+        shell: pwsh
+        run: .\Build\Agent\Collect-RenderArtifacts.ps1 -SearchRoot . -OutputDirectory .\Output\RenderArtifacts
+
+      - name: Upload render comparison artifacts
+        id: upload_render_artifacts
+        if: ${{ !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-comparison-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
+          path: Output/RenderArtifacts
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Summarize render comparison artifacts
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && (success() || steps.render_artifacts.outputs.has_artifacts == 'true') }}
+        shell: pwsh
+        continue-on-error: true
+        env:
+          ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
+          FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
+          HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
+        run: .\Build\Agent\Report-RenderArtifacts.ps1 -SkipComment
+
+      - name: Build render comparison failure comment
+        id: render_failure_comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        shell: pwsh
+        env:
+          ARTIFACT_URL: ${{ steps.upload_render_artifacts.outputs.artifact-url }}
+          FAILURE_COUNT: ${{ steps.render_artifacts.outputs.failure_count }}
+          HAS_ARTIFACTS: ${{ steps.render_artifacts.outputs.has_artifacts }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: .\Build\Agent\Build-RenderArtifactComment.ps1
+
+      - name: Update render comparison PR comment for failures
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && steps.render_artifacts.outputs.has_artifacts == 'true' }}
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-render-comparison-artifacts
+          path: ${{ steps.render_failure_comment.outputs.comment_path }}
+          skip_unchanged: true
+
+      - name: Build render comparison resolved comment
+        id: render_clean_comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && success() }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HAS_ARTIFACTS: false
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: .\Build\Agent\Build-RenderArtifactComment.ps1
+
+      - name: Update render comparison PR comment for clean run
+        if: ${{ github.event_name == 'pull_request' && !cancelled() && success() }}
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: fieldworks-render-comparison-artifacts
+          only_update: true
+          path: ${{ steps.render_clean_comment.outputs.comment_path }}
+          skip_unchanged: true
 
       - name: Upload TRX test results (managed)
         if: ${{ !cancelled() }}
