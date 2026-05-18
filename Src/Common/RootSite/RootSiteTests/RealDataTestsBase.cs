@@ -18,17 +18,19 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 	[TestFixture]
 	public abstract class RealDataTestsBase
 	{
+		private const string ReusableProjectName = "integration_test_data";
+
 		protected FwNewLangProjectModel m_model;
 		protected LcmCache Cache;
 		protected string m_dbName;
+		private string m_projectDirectory;
 
 		[SetUp]
 		public virtual void TestSetup()
 		{
-			m_dbName = "RealDataTest_" + Guid.NewGuid().ToString("N");
-			var dbPath = DbFilename(m_dbName);
-			if (File.Exists(dbPath))
-				File.Delete(dbPath);
+			m_dbName = ReusableProjectName;
+			m_projectDirectory = DbDirectory(m_dbName);
+			DeleteProjectDirectory(m_projectDirectory);
 
 			// Init New Lang Project Model (headless)
 			m_model = new FwNewLangProjectModel(true)
@@ -48,6 +50,7 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 				m_model.Next(); // To Analysis WS Setup
 				m_model.SetDefaultWs(new LanguageInfo { LanguageTag = "en", DesiredName = "English" });
 				createdPath = m_model.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
+				m_projectDirectory = Path.GetDirectoryName(createdPath);
 			}
 
 			// Load the cache from the newly created .fwdata file
@@ -98,16 +101,22 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 				Cache.Dispose();
 				Cache = null;
 			}
-			var dbPath = DbFilename(m_dbName);
-			if (File.Exists(dbPath))
-			{
-				try { File.Delete(dbPath); } catch { }
-			}
+
+			DeleteProjectDirectory(m_projectDirectory);
+			m_projectDirectory = null;
 		}
 
-		protected string DbFilename(string name)
+		protected string DbDirectory(string name)
 		{
-			return Path.Combine(Path.GetTempPath(), name + ".fwdata");
+			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
+		}
+
+		private static void DeleteProjectDirectory(string projectDirectory)
+		{
+			if (string.IsNullOrEmpty(projectDirectory) || !Directory.Exists(projectDirectory))
+				return;
+
+			try { Directory.Delete(projectDirectory, true); } catch { }
 		}
 	}
 }
