@@ -66,8 +66,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		{
 			get
 			{
-				// Return null if string is empty, because returning an empty string for reversal numbers
-				// also forces sense numbers not to be displayed. Null doesn't cause the same problem.
+				// Handles NumberingStyle for the dictionary/reversal configuration dialog preview display.
+				// Both empty string and null mean there is no numbering style to use.
+				// Numbering style will be null if no numbering style has ever been selected.
+				// Numbering style will be an empty string if a numbering style was selected at some point and then turned back off.
+				// Returning an empty string for reversal numbering style forces sense numbers to be turned off too, but null doesn't cause this problem.
+				// Return null if numbering style is empty.
 				var formatString = ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString;
 				return string.IsNullOrEmpty(formatString) ? null : formatString;
 			}

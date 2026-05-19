@@ -56,7 +56,22 @@ namespace SIL.FieldWorks.XWorks
 
 		// Example values: ""->none; %O->1.2.3; %d->1, 2, 3
 		[XmlAttribute(AttributeName = "numberingStyle")]
-		public string NumberingStyle { get; set; }
+		private string _numberingStyle;
+
+		public string NumberingStyle
+		{
+			get
+			{
+				// Handles NumberingStyle for the dictionary and reversal displays.
+				// Both empty string and null mean there is no numbering style to use.
+				// Numbering style will be null if no numbering style has ever been selected.
+				// Numbering style will be an empty string if a numbering style was selected at some point and then turned back off.
+				// Returning an empty string for reversal numbering style forces sense numbers to be turned off too, but null doesn't cause this problem.
+				// Return null if numbering style is empty.
+				return string.IsNullOrEmpty(_numberingStyle)? null : _numberingStyle;
+			}
+			set { _numberingStyle = value; }
+		}
 
 		// Example values: ""->none; %j->Joined; %.->Separated by dot
 		[XmlAttribute(AttributeName = "parentSenseNumberingStyle")]
