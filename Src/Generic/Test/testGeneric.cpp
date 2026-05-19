@@ -81,7 +81,7 @@ namespace unitpp
 		else
 		{
 			g_previousAssertProc = SetAssertProc(ThrowingAssertProc);
-			ShowAssertMessageBox(0); // Disable assertion dialogs
+			ShowAssertMessageBox(0);
 		}
 #endif
 #if defined(WIN32) || defined(WIN64)
@@ -95,14 +95,15 @@ namespace unitpp
 	{
 		signal(SIGABRT, TerminateOnSigAbrt);
 
+		const bool fInjectTeardownAbort = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ABORT");
 #ifdef DEBUG
 		const bool fInjectTeardownAssert = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ASSERT");
-		const bool fInjectTeardownAbort = IsEnvironmentSwitchEnabled("FW_TEST_INDUCE_TEARDOWN_ABORT");
 		if (fInjectTeardownAssert || fInjectTeardownAbort)
 			RestorePreviousAssertProc();
 
 		if (fInjectTeardownAssert)
 			AssertMsg(false, "Injected teardown assert for native test infrastructure validation");
+#endif
 
 		if (fInjectTeardownAbort)
 		{
@@ -110,7 +111,6 @@ namespace unitpp
 			_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
 			abort();
 		}
-#endif
 
 #if defined(WIN32) || defined(WIN64)
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
