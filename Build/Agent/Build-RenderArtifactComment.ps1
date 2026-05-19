@@ -122,7 +122,7 @@ function Get-PreviousCommentBody {
 	$owner = $repositoryParts[0]
 	$repo = $repositoryParts[1]
 	$commentsUri = "$GitHubApiUrl/repos/$owner/$repo/issues/$pullRequestNumber/comments?per_page=100"
-	$comments = @(Invoke-GitHubApi -Method Get -Uri $commentsUri)
+	$comments = @(Invoke-GitHubApi -Method Get -Uri $commentsUri) | Where-Object { $null -ne $_ }
 	$latestMatchingCommentBody = $null
 	foreach ($comment in $comments) {
 		if ($comment.body -and $comment.body.Contains($StickyCommentMarker)) {
