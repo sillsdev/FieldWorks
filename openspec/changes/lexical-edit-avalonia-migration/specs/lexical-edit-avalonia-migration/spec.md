@@ -63,6 +63,37 @@ The migration SHALL prefer FieldWorks-owned Avalonia editor controls over perman
 - **WHEN** a migrated tree view displays senses, terms, examples, glosses, definitions, or translations
 - **THEN** each tree node SHALL be able to render multiple writing-system alternatives and compact inline metadata without requiring a separate modal dialog for normal inspection
 
+### Requirement: Avalonia regions declare completion manifests
+
+Each migrated Avalonia region SHALL define a completion manifest before implementation is marked complete. The manifest SHALL list entry points, typed view-definition sources, allowed legacy adapters, forbidden native viewing/rendering and Graphite call paths, retained custom linguistics services, parity fixtures, customer override fixtures, accessibility IDs, performance budgets, and rollback/default-switch gates.
+
+#### Scenario: Region manifest blocks ambiguous completion
+- **WHEN** a region is proposed as migrated
+- **THEN** its manifest SHALL identify the tests, instrumentation, fixtures, and default-switch evidence required for that region
+- **AND** missing manifest entries SHALL block completion
+
+### Requirement: Avalonia editors use explicit edit sessions
+
+Avalonia editors SHALL use explicit edit-session or edit-transaction services for staged values, validation, cancellation, LCModel commit behavior, dirty state, undo/redo grouping, and command enablement.
+
+#### Scenario: Edit is committed through transaction seam
+- **WHEN** a migrated editor commits a value
+- **THEN** the edit SHALL pass through the edit-session boundary
+- **AND** validation, LCModel transaction behavior, undo/redo grouping, and refresh notifications SHALL be observable by tests
+
+#### Scenario: Edit is canceled without side effects
+- **WHEN** a migrated editor cancels a pending edit
+- **THEN** the editor SHALL restore display state without committing LCModel changes or creating undo items
+
+### Requirement: Avalonia platform seams are explicit
+
+Avalonia regions SHALL use explicit services for UI dispatch, focus navigation, command routing, region lifetime/disposal, styling resources, design/preview data, and accessibility metadata rather than reaching through WinForms, DataTree, or xCore UI objects.
+
+#### Scenario: Focus and command behavior are tested through services
+- **WHEN** a migrated editor handles shortcuts, context menus, popup focus return, or command enablement
+- **THEN** that behavior SHALL be routed through explicit command/focus services
+- **AND** Avalonia.Headless or semantic parity tests SHALL cover the behavior
+
 ### Requirement: Package updates and control hacks are gated by parity evidence
 
 Avalonia package updates, third-party control additions, upstream patches, or local control hacks SHALL be allowed only when tied to a specific parity, density, text, table, or automation requirement.

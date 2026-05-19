@@ -58,24 +58,31 @@ flowchart TB
 
 ## 2. Dependency Inversion Path and Better MVC
 
-The first architectural move is not Avalonia. It is extracting narrow ports around refresh, view definitions, editor selection, chooser behavior, writing-system text, diagnostics, and retained linguistics services. Legacy WinForms becomes one adapter. Avalonia becomes another adapter later.
+The first architectural move is not Avalonia. It is extracting narrow ports around refresh, view definitions, editor selection, edit transactions, command/focus routing, UI dispatch, lifetime, writing-system text, diagnostics, and retained linguistics services. Legacy WinForms becomes one adapter. Avalonia becomes another adapter later.
 
 ```mermaid
 flowchart LR
   subgraph Model["Model and canonical contracts"]
     LCModel["LCModel<br/>data and transactions"]:::model
-    TypedIR["Typed view definition<br/>Presentation IR<br/>stable node identity"]:::model
+    Canonical["Canonical view definition<br/>layout semantics, editor descriptors"]:::model
+    Presentation["Instance presentation model<br/>stable node identity,<br/>binding, validation, focus metadata"]:::model
     XMLImport["XML import adapter<br/>transitional compatibility"]:::adapter
   end
 
   subgraph Ports["Dependency-inverted ports"]
-    Refresh["IRefreshCoordinator"]:::port
-    Editors["IEditorRegistry"]:::port
+    Refresh["ILexicalRefreshCoordinator"]:::port
+    ViewDefs["IViewDefinitionSource / Importer / Compiler / Cache"]:::port
+    Editors["ILexicalEditorRegistry"]:::port
+    EditSession["IEditSession<br/>transactions, validation,<br/>undo/redo"]:::port
     Choosers["IChooserService"]:::port
     Text["IWritingSystemTextService<br/>OpenType/HarfBuzz only"]:::port
-    Context["ILexicalContext<br/>cache, mediator, property table"]:::port
-    Linguistics["ILinguisticsServiceGateway<br/>XAmple, spelling, parsers"]:::port
-    Capture["IRenderParityCapture"]:::port
+    Command["IXCoreCommandBridge"]:::port
+    PropertyState["IPropertyStateStore"]:::port
+    Navigation["IRecordNavigationContext"]:::port
+    Scheduler["IUiScheduler"]:::port
+    Lifetime["IRegionLifetime"]:::port
+    Linguistics["Feature-specific linguistics services<br/>spelling, XAmple, parsers"]:::port
+    Capture["IViewParitySnapshotService"]:::port
   end
 
   subgraph LegacyAdapters["Legacy adapters during migration"]
@@ -90,18 +97,24 @@ flowchart LR
     TableTree["Avalonia table/tree renderer"]:::future
   end
 
-  XMLParts["XML Parts/Layout"]:::legacy --> XMLImport --> TypedIR
-  LCModel --> TypedIR
-  TypedIR --> Editors
-  TypedIR --> Capture
+  XMLParts["XML Parts/Layout"]:::legacy --> XMLImport --> Canonical
+  ViewDefs --> Canonical --> Presentation
+  LCModel --> Presentation
+  Presentation --> Editors
+  Presentation --> Capture
   Refresh --> LegacyHost
   Editors --> LegacySlices
   Capture --> LegacyViews
   Editors --> AvaloniaEditors
+  EditSession --> AvaloniaEditors
   Refresh --> AvaloniaHost
   Text --> AvaloniaEditors
   Choosers --> AvaloniaEditors
-  Context --> AvaloniaHost
+  Command --> AvaloniaHost
+  PropertyState --> AvaloniaHost
+  Navigation --> AvaloniaHost
+  Scheduler --> AvaloniaHost
+  Lifetime --> AvaloniaHost
   Linguistics --> AvaloniaEditors
   AvaloniaHost --> TableTree
 
@@ -129,6 +142,11 @@ flowchart TB
   Headless["Avalonia.Headless<br/>input, focus, popups,<br/>control behavior"]:::test
   NativeAudit["Native viewing seam audit<br/>no RootSite / IVwEnv / Views<br/>inside completed region"]:::test
   GraphiteAudit["Graphite-free audit<br/>no graphite2, GraphiteEngine,<br/>Gecko Graphite, feature strings"]:::test
+  UndoGate["Undo/redo and transaction matrix"]:::test
+  A11yGate["Accessibility, keyboard/IME,<br/>localization gates"]:::test
+  OverrideGate["Customer override and<br/>dynamic editor fixtures"]:::test
+  PerfGate["Performance budgets<br/>open, scroll, type, memory"]:::test
+  RegionManifest["Migrated-region manifest<br/>entry points, forbidden calls,<br/>fixtures, rollback"]:::port
 
   Seam1["Refactor seams"]:::port
   Seam2["Typed IR and XML import"]:::port
@@ -144,6 +162,12 @@ flowchart TB
   Requirements --> Headless --> Slice1
   Requirements --> NativeAudit --> Default
   Requirements --> GraphiteAudit --> Default
+  Requirements --> UndoGate --> Slice1
+  Requirements --> A11yGate --> Slice1
+  Requirements --> OverrideGate --> Slice2
+  Requirements --> PerfGate --> Slice2
+  RegionManifest --> Slice1
+  RegionManifest --> Slice2
   Seam1 --> Slice1 --> Slice2 --> Default
   Seam2 --> Slice1
 
@@ -175,6 +199,9 @@ flowchart LR
   subgraph Contracts["Shared contracts"]
     IR["Typed IR node"]:::model
     Text["Writing-system text service<br/>OpenType/HarfBuzz"]:::port
+    EditSession["Edit session<br/>commit/cancel, validation,<br/>undo/redo"]:::port
+    CommandFocus["Command, focus,<br/>keyboard/IME routing"]:::port
+    SchedulerLifetime["UI scheduler and<br/>region lifetime"]:::port
     Chooser["Chooser service"]:::port
     Linguistics["Linguistics service gateway<br/>spelling/XAmple allowed"]:::port
   end
@@ -188,6 +215,10 @@ flowchart LR
   PreviewHost --> Hover
   IR --> SimpleEditor
   Text --> SimpleEditor
+  EditSession --> SimpleEditor
+  CommandFocus --> SimpleEditor
+  SchedulerLifetime --> SimpleEditor
+  CommandFocus --> Hover
   Chooser --> Hover
   Linguistics --> SimpleEditor
   Headless --> SimpleEditor
@@ -210,6 +241,7 @@ Table views and full Lexical Edit regions are meaningfully different from the fi
 ```mermaid
 flowchart TB
   subgraph Inputs["Canonical inputs"]
+    Manifest["Migrated-region manifest<br/>entry points, gates,<br/>forbidden calls"]:::port
     LCModel["LCModel data"]:::model
     XMLImport["XML import<br/>transition only"]:::adapter
     IR["Typed view definition / IR<br/>sections, fields, tables,<br/>tree nodes, editor descriptors"]:::model
@@ -218,6 +250,7 @@ flowchart TB
   subgraph AvaloniaRegion["Migrated table or Lexical Edit region"]
     Host["Avalonia region host"]:::future
     Virtualizer["Virtualized table/tree coordinator"]:::future
+    ControlChoice["Control choice adapter<br/>TreeView, TreeDataGrid,<br/>ItemsRepeater, owned controls"]:::future
     Rows["Dense row/node templates<br/>multiple writing-system alternatives"]:::future
     Editors["Editor registry<br/>cell and field editors"]:::future
     Selection["Managed selection, focus,<br/>scroll, hit-test metadata"]:::future
@@ -236,13 +269,16 @@ flowchart TB
     Render["Render/timing evidence"]:::test
     NativeAudit["No native viewing/rendering/editor path"]:::test
     GraphiteAudit["Graphite-free default path"]:::test
+    Perf["Performance budget"]:::test
+    BrowserPdf["Browser/PDF decision gate"]:::test
   end
 
   Decommissioned["Decommission for this region<br/>DataTree slices, XMLViews runtime,<br/>RootSite/IVwEnv/Native Views,<br/>Graphite render engine"]:::decom
 
   LCModel --> IR
   XMLImport --> IR
-  IR --> Host --> Virtualizer --> Rows
+  Manifest --> Host
+  IR --> Host --> Virtualizer --> ControlChoice --> Rows
   Virtualizer --> Selection
   Rows --> Editors
   Refresh --> Host
@@ -254,6 +290,8 @@ flowchart TB
   Host --> Render
   Host --> NativeAudit
   Host --> GraphiteAudit
+  Host --> Perf
+  Host --> BrowserPdf
   Host -. must not call .-> Decommissioned
 
   classDef model fill:#f3e8ff,stroke:#7e22ce,color:#3b0764;
@@ -266,7 +304,7 @@ flowchart TB
 
 ## 6. Final Default Architecture After Avalonia and Graphite Decommissioning
 
-In the final default path, MVC is explicit: LCModel and canonical view definitions are model/data contracts; presenters and services coordinate commands, refresh, transactions, and diagnostics; Avalonia controls own display and input. Graphite and native viewing/rendering are outside the default path. Retained native linguistics engines are service dependencies, not UI dependencies.
+In the final Lexical Edit default path, MVC/MVVM boundaries are explicit: LCModel and canonical view definitions are model/data contracts; presenters and edit sessions coordinate commands, refresh, transactions, validation, and diagnostics; Avalonia controls own display and input. Graphite and native viewing/rendering are outside the default path. Retained native linguistics engines are service dependencies, not UI dependencies. Full application shell/window replacement is handled by the phase-two `fieldworks-avalonia-shell-migration` change.
 
 ```mermaid
 flowchart TB
@@ -279,7 +317,7 @@ flowchart TB
   subgraph ControllerLayer["Controller / presenter layer"]
     Presenter["Lexical Edit presenters<br/>commands, refresh, selection policy"]:::controller
     EditorRegistry["Editor registry"]:::port
-    Transaction["Transaction and validation services"]:::port
+    Transaction["Edit session, transaction,<br/>validation, undo/redo"]:::port
     Diagnostics["Diagnostics and parity hooks"]:::port
   end
 
@@ -294,6 +332,7 @@ flowchart TB
     Text["Writing-system text service<br/>OpenType/HarfBuzz only"]:::port
     Linguistics["Custom linguistics gateway<br/>XAmple, spelling, parsers,<br/>Encoding Converters, ICU"]:::port
     BrowserPdf["Non-Graphite browser/PDF strategy"]:::port
+    ShellPhase["Phase-two Avalonia app shell<br/>fieldworks-avalonia-shell-migration"]:::port
   end
 
   subgraph Decommissioned["Removed from default Avalonia path"]
@@ -319,6 +358,7 @@ flowchart TB
   Text --> Tables
   Linguistics --> Presenter
   BrowserPdf --> Presenter
+  ShellPhase --> Shell
   Diagnostics --> Presenter
   Shell -. default path excludes .-> Decommissioned
 

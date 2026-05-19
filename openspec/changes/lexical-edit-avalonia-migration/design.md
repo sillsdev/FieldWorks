@@ -97,6 +97,24 @@ Important current constraints:
 - Support Graphite in Avalonia: rejected because Graphite will never be supported in Avalonia.
 - Keep Gecko only for Graphite previews/PDFs: rejected for the default Lexical Edit path because Gecko currently enables Graphite and would keep a parallel rendering story alive.
 
+### 8. Region manifests and hard gates define completion
+
+**Decision:** Every migrated Avalonia region must have a region manifest before implementation: entry points, typed view-definition sources, allowed legacy adapters, forbidden native viewing/rendering and Graphite symbols, retained custom linguistics service dependencies, parity fixtures, customer override fixtures, accessibility IDs, performance budgets, default-switch gates, and rollback behavior.
+
+**Rationale:** “Migrated region” needs to be measurable. A manifest turns architecture intent into a testable contract and prevents accidental native Views, Graphite, WinForms, Gecko, or runtime XML dependencies from slipping through a narrow visible slice.
+
+### 9. Avalonia platform services are explicit ports
+
+**Decision:** Avalonia regions use explicit platform-facing ports for UI dispatch, region lifetime/disposal, focus navigation, command routing, edit sessions, validation, undo/redo grouping, design/preview data, styling resources, and accessibility metadata. These ports are introduced while WinForms remains the default so legacy behavior can be characterized first.
+
+**Rationale:** Avalonia has different threading, focus, command, validation, popup, and lifetime behavior than WinForms. If those seams remain implicit, the first “simple” editor will inherit DataTree and xCore assumptions through the side door.
+
+### 10. Full shell/window replacement is a separate phase-two change
+
+**Decision:** This change remains scoped to Lexical Edit regional migration. Replacement of FieldWorks startup, main windows, shell composition, menus, toolbars, navigation, dialogs, and all main screens is tracked separately by `fieldworks-avalonia-shell-migration`.
+
+**Rationale:** Lexical Edit proves the hardest regional rendering/editor path. The app shell touches different risks: application lifetime, multi-window behavior, xCore command routing, project startup/shutdown, dialog ownership, persisted layout, global services, installer/runtime packaging, and remaining main screens. Splitting keeps both plans reviewable and gives the shell phase concrete prerequisites.
+
 ## Native Dependency Classification
 
 The classification rule is based on the role of the native code, not the implementation language alone. If native code owns what the user is viewing or editing, it is not brought into completed Avalonia regions. If native code supplies custom linguistics capability that supports FieldWorks' role in documenting many languages, it may remain behind an explicit service seam.
@@ -105,6 +123,17 @@ The classification rule is based on the role of the native code, not the impleme
 - **Custom linguistics services:** XAmple, spelling, parser/conversion engines, ICU, Encoding Converters, and similar language-documentation capabilities are allowed to remain in C++ or native/external form when invoked through managed service boundaries. Avalonia may consume their results, but it must not depend on their UI, rendering, or RootBox integration.
 - **Spell-check interop:** `RootSite` wires `SetSpellingRepository(IGetSpellChecker)` into `VwRootBox`, while managed helpers build spelling context menus. Avalonia can keep spelling as a service, but any dependency on RootBox spell integration must be replaced for migrated regions.
 - **Parser/conversion/native utility tools:** `pcpatr64.exe`, `TonePars64.exe`, `xample.dll`, Encoding Converter native files, ICU artifacts, Expat/ParserObject, and reg-free COM/proxy/stub build infrastructure are real native dependencies. They are not default Lexical Edit viewing dependencies, but migrated workflows that invoke them must wrap them as services and keep them outside Avalonia rendering/editor completion gates.
+
+## Interface Direction
+
+Early seams should stay narrow and name the FieldWorks domain they protect:
+
+- `ILexicalRefreshCoordinator` for refresh/postponed `PropChanged` behavior.
+- `IViewDefinitionSource`, `IXmlViewDefinitionImporter`, `IViewDefinitionCompiler`, `IViewDefinitionCache`, and `IViewDefinitionDiagnostics` for the XML-to-typed transition.
+- `ILexicalEditorRegistry`, `EditorDescriptor`, and `ILexicalEditorFactory` for resolving legacy slices and future Avalonia editors.
+- `IEditSession` or `IEditTransactionCoordinator` for staged values, LCModel transactions, validation, cancellation, undo/redo grouping, and dirty-state command enablement.
+- `IXCoreCommandBridge`, `IPropertyStateStore`, `IRecordNavigationContext`, `IUiScheduler`, `IFocusNavigationService`, and `IRegionLifetime` for current xCore/DataTree behaviors that must not be hidden inside a single broad context object.
+- Feature-specific custom linguistics ports such as `ISpellingService`, `IMorphParserService`, and `IEncodingConversionService` only when a migrated editor actually needs them.
 
 ## Architecture Diagrams
 
@@ -146,20 +175,24 @@ Pick a representative lexical path, such as LexEntry morph type plus nested sens
 - Automation flakiness -> Keep UIA2 tests thin; use model/semantic assertions for deep behavior.
 - XML retirement too early -> Gate deletion on migration tooling, custom-field coverage, user overrides, ghost behavior, chooser parity, and fallback ability.
 - C++ viewing/rendering removal exposes text/layout gaps -> Gate each region on dependency audits and replacement services for text shaping, selection, measurement, hit testing, scrolling, and printing/export behaviors where applicable. Do not count custom linguistics service calls as blockers unless they own UI viewing/editing behavior.
+- Over-broad interfaces -> Prefer small domain ports proven by legacy characterization tests; avoid a single “context” service that preserves DataTree/Mediator/PropertyTable coupling.
+- Undo/redo, focus, keyboard/IME, and lifecycle regressions -> Treat edit sessions, command routing, UI dispatch, focus restoration, and disposal/unsubscribe behavior as first-slice gates, not cleanup work.
+- Typed IR becomes a second UI framework -> Version the core view definition, keep instance presentation state separate, and add diagnostics for behavior the IR cannot express yet.
 
 ## Migration Plan
 
-1. Freeze current behavior with targeted unit/integration/render/UIA2 baselines.
-2. Introduce DI-friendly services around DataTree refresh, context, LCModel access, editor selection, and launcher logic.
+1. Freeze current behavior with targeted unit/integration/render/UIA2 baselines, including undo/redo, focus, keyboard/IME, accessibility, localization, customer overrides, and disposal behavior.
+2. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic.
 3. Start Graphite decommissioning: inventory affected project settings, fonts, render engines, Gecko/PDF paths, tests, docs, and build artifacts.
-4. Extend render verification with semantic snapshots and failure bundles.
-5. Build typed view-definition and XML import as the compatibility compiler.
-6. Replace simple controls and hover/popups in Avalonia using owned editor controls.
-7. Replace table/browse views with virtualized Avalonia table/tree structures.
-8. Replace slices and full Lexical Edit views with Avalonia surfaces over the typed contract.
-9. Audit the migrated region's runtime call graph and remove/disable native viewing/rendering/editor dependencies for that region, while classifying custom linguistics engines as service seams when they do not own the Avalonia UI surface.
-10. Add managed canonical view-definition authoring and migration tooling.
-11. Retire runtime XML only after parity gates pass for production layouts, custom fields, and user overrides.
+4. Define migrated-region manifests and hard gates for each proposed Avalonia region.
+5. Extend render verification with normalized semantic snapshots, visual/timing evidence, performance budgets, and failure bundles.
+6. Build typed view-definition and XML import as the compatibility compiler.
+7. Replace text foundation, simple controls, edit sessions, and hover/popups in Avalonia using owned editor controls.
+8. Replace table/browse views with virtualized Avalonia table/tree structures.
+9. Replace slices and full Lexical Edit views with Avalonia surfaces over the typed contract.
+10. Audit the migrated region's runtime call graph and remove/disable native viewing/rendering/editor dependencies for that region, while classifying custom linguistics engines as service seams when they do not own the Avalonia UI surface.
+11. Add managed canonical view-definition authoring and migration tooling.
+12. Retire runtime XML only after parity gates pass for production layouts, custom fields, user overrides, dynamic editors, unsupported constructs, and fallback behavior.
 
 ## Open Questions
 
