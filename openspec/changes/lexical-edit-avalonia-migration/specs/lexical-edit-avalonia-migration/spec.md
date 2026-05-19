@@ -28,15 +28,27 @@ Avalonia replacements SHALL preserve the legacy user interaction model, informat
 
 ### Requirement: Avalonia text uses writing-system font settings and OpenType shaping
 
-Avalonia lexical editors SHALL use FieldWorks writing-system font settings, Avalonia/Skia text rendering, HarfBuzz/OpenType feature support, and explicit fallback behavior for scripts or fonts that previously depended on Graphite-only behavior.
+Avalonia lexical editors SHALL use FieldWorks writing-system font settings, Avalonia/Skia text rendering, and HarfBuzz/OpenType feature support. Graphite SHALL NOT be supported in Avalonia.
 
 #### Scenario: Writing-system text editor binds font metadata
 - **WHEN** a multi-writing-system field is rendered in Avalonia
 - **THEN** each writing-system alternative SHALL use the configured font family, size, flow direction, culture/script metadata, and OpenType feature settings available for that writing system
 
-#### Scenario: Graphite-only behavior is not silently accepted
+#### Scenario: Graphite-only behavior blocks default switch
 - **WHEN** a legacy writing system or font depends on Graphite-only shaping or feature IDs
-- **THEN** the migration SHALL either provide an explicit fallback/migration path or block release of that scenario with a documented compatibility gap
+- **THEN** the migration SHALL block Avalonia becoming the default screen until the writing system is migrated to OpenType/HarfBuzz-compatible font settings, replaced with an acceptable font option, or documented as an unsupported legacy dependency outside the default Avalonia path
+
+### Requirement: Graphite is decommissioned before Avalonia becomes default
+
+Graphite decommissioning SHALL start when the Lexical Edit Avalonia migration starts. Avalonia SHALL NOT become the default Lexical Edit screen until Graphite runtime dependencies, font options, Gecko rendering assumptions, and default-path tests/docs are removed or converted to OpenType/HarfBuzz-only behavior.
+
+#### Scenario: Stealth migration still starts Graphite retirement
+- **WHEN** Avalonia Lexical Edit work begins behind flags, preview hosts, or non-default entry points
+- **THEN** the work SHALL include Graphite inventory and retirement tasks from the start
+
+#### Scenario: Default switch requires Graphite-free evidence
+- **WHEN** Avalonia is proposed as the default Lexical Edit screen
+- **THEN** validation SHALL prove that the default path does not call Graphite native code, create Graphite render engines, enable Gecko Graphite rendering, depend on Graphite feature strings, or require Graphite-only sample fonts
 
 ### Requirement: FieldWorks-owned controls cover domain-specific editors
 
@@ -67,3 +79,26 @@ New Avalonia Lexical Edit functionality SHALL NOT require WinForms slices, XMLVi
 - **WHEN** a migrated Avalonia editor is launched in the Preview Host or headless tests
 - **THEN** it SHALL receive a typed view-definition/IR model and injected services
 - **AND** it SHALL NOT instantiate `DataTree`, `Slice`, `RootSite`, or native Views UI components
+
+### Requirement: C++ viewing/rendering dependencies are decommissioned by migrated region
+
+A Lexical Edit region SHALL NOT be considered fully migrated to Avalonia until that region has no runtime dependency on native code that owns display, layout, measurement, hit testing, selection, scrolling, editor realization, native Views box/layout/rendering, `RootSite`, `IVwEnv`, `ManagedVwWindow`, or equivalent native render adapters.
+
+#### Scenario: Region completion requires native viewing/render seam audit
+- **WHEN** a Lexical Edit region is proposed as fully migrated to Avalonia
+- **THEN** a dependency audit SHALL show that the region renders, measures, hit-tests, scrolls, selects, and edits without calling native Views/C++ viewing/rendering/editor infrastructure
+- **AND** any remaining native render usage SHALL be limited to non-migrated regions or offline baseline comparison tools
+
+#### Scenario: Native viewing/render bridge blocks completion
+- **WHEN** an Avalonia region still relies on native Views/C++ viewing/rendering infrastructure for display, layout, text measurement, selection, hit testing, scrolling, or editor realization
+- **THEN** that region SHALL remain in migration status and SHALL NOT be marked complete
+
+#### Scenario: Custom linguistics services remain allowed
+- **WHEN** a migrated Avalonia region invokes native or external linguistics services such as XAmple, spelling, parser/conversion tools, ICU, or Encoding Converters
+- **THEN** those services SHALL be accessed through explicit service contracts outside the Avalonia render/editor path
+- **AND** they SHALL NOT own UI display, layout, measurement, hit testing, selection, or editor realization for the migrated region
+
+#### Scenario: Shared native code deletion waits for all consumers
+- **WHEN** a migrated Lexical Edit region no longer uses native Views/C++ viewing/rendering infrastructure but other FieldWorks regions still do
+- **THEN** the migrated region SHALL be complete for its scope
+- **AND** global native Views deletion SHALL remain a separate tracked dependency until remaining consumers are migrated or intentionally retained
