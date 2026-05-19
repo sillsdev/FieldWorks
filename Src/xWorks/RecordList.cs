@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return !(m_owningObject as ICmPossibilityList).IsSorted;
+				return (m_owningObject as ICmPossibilityList).IsSorted;
 			}
 		}
 
@@ -2942,7 +2942,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
 		protected void SortList(ArrayList newSortedObjects, bool updateAndNotify, ProgressState progress)
 		{
-			if (m_sorter != null && !ListAlreadySorted)
+			if (m_sorter != null)
 			{
 				m_sorter.DataAccess = m_publisher;
 				if (updateAndNotify && m_sorter is IReportsSortProgress)
