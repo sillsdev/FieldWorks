@@ -8,6 +8,7 @@
 - [ ] 1.4 Identify customer/user override XML fixtures that must be included before XML retirement.
 - [ ] 1.5 Start Graphite decommissioning inventory for writing-system settings, fonts, native render engines, Gecko/browser/PDF paths, tests, docs, sample assets, and build/package artifacts.
 - [ ] 1.6 Define migrated-region manifest format: entry points, allowed legacy adapters, forbidden symbols/call paths, custom linguistics service dependencies, parity fixtures, performance budgets, accessibility IDs, and rollback/default-switch gates.
+- [ ] 1.7 Freeze and maintain the seam capability docs `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, `avalonia-command-focus`, `avalonia-ui-scheduler`, `avalonia-lifetime`, and `seam-recommendations.md` as the reference playbook for both this change and the later shell change.
 
 ## 2. Test Coverage Before Refactor
 
@@ -27,8 +28,8 @@
 - [ ] 3.3 Put an `ILexicalEditorRegistry` boundary in front of `SliceFactory` so editor keys can resolve to legacy slices now and Avalonia editors later.
 - [ ] 3.4 Extract at least one launcher humble object path, using morph type swap as the first target.
 - [ ] 3.5 Define host/surface interfaces around `RecordEditView`/`DataTree` initialization, focus, context menus, and view replacement.
-- [ ] 3.6 Extract edit-session and transaction seams for staged values, validation, cancellation, dirty state, undo/redo grouping, and LCModel commit behavior.
-- [ ] 3.7 Extract UI scheduling, focus navigation, command routing, and region lifetime/disposal seams before introducing editable Avalonia controls.
+- [ ] 3.6 Extract edit-session and transaction seams for staged values, validation, cancellation, dirty state, undo/redo grouping, and LCModel commit behavior, following `avalonia-edit-sessions` and `avalonia-undo-redo`.
+- [ ] 3.7 Extract UI scheduling, focus navigation, command routing, and region lifetime/disposal seams before introducing editable Avalonia controls, following `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime`.
 - [ ] 3.8 Inventory dynamic editor strings and custom editor constructs (`custom`, `customwithparams`, `autocustom`, loader-based editors, fallback slices) with diagnostics requirements.
 
 ## 4. Typed View Definition and XML Import
@@ -60,6 +61,7 @@
 - [ ] 6.5 Record any Avalonia package update or local/upstream control patch with parity justification and test evidence.
 - [ ] 6.6 Add Avalonia.Headless tests for command shortcuts, popup focus return, validation errors, edit commit/cancel, keyboard/IME behavior, accessibility metadata, and disposal cleanup.
 - [ ] 6.7 Add styling/resource and density token gates for shared `FwAvalonia` resources before broad editor rollout.
+- [ ] 6.8 Make the first editable Avalonia slice satisfy `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local screen phase of `avalonia-command-focus` before expanding to more editors.
 
 ## 7. Tables, Slices, and Lexical Edit Migration
 
@@ -100,3 +102,4 @@
 - [ ] 10.6 Run `./build.ps1` before implementation work is considered ready for review.
 - [ ] 10.7 Run `CI: Full local check` before commit/push.
 - [ ] 10.8 Verify every migrated-region manifest has passing evidence for native-call instrumentation, Graphite-free default path, undo/redo, accessibility, localization, keyboard/IME, customer override fixtures, performance budgets, and rollback behavior.
+- [ ] 10.9 Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining those seams ad hoc during shell work.

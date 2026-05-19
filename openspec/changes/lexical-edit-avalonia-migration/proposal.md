@@ -10,6 +10,7 @@ Lexical Edit is the main editing surface in FLEx, but its current WinForms/DataT
 - Make native viewing/rendering decommissioning a completion gate for each migrated region: if native code owns display, layout, measurement, hit testing, selection, or editor realization, it SHALL NOT be brought into the completed Avalonia region. Custom linguistics engines and native services such as XAmple, spelling, parser/conversion tools, or similar language-documentation capability may remain when isolated behind service seams outside the Avalonia render/editor path.
 - Start Graphite decommissioning with the migration. Graphite SHALL NOT be supported in Avalonia, and Avalonia SHALL NOT become the default Lexical Edit screen until Graphite font settings, native Graphite engines, Gecko Graphite rendering, PDF/export assumptions, tests, docs, and build/package artifacts are retired or converted to OpenType/HarfBuzz-only behavior.
 - Require dependency-injected services around DataTree/Slice/Launcher behavior, view-definition source/import/compile/cache, editor selection, edit sessions, LCModel transactions, undo/redo grouping, validation, command/focus routing, UI dispatch, lifetime/disposal, diagnostics, and render/parity capture.
+- Freeze seam-specific recommendations in dedicated capability specs for edit sessions, undo/redo, validation, command/focus, UI scheduling, and lifetime so phase-one lexical work and phase-two shell work consume the same decisions.
 - Define migrated-region manifests and hard gates so each claimed Avalonia region has explicit entry points, allowed legacy adapters, forbidden native/Graphite call paths, custom linguistics service dependencies, parity fixtures, performance budgets, and rollback/default-switch rules.
 - Extend render verification from pixel/timing snapshots to semantic parity snapshots covering legacy WinForms/DataTree, typed IR, and Avalonia output.
 - Define automation strategy: UIA2/FlaUI-style tests for legacy WinForms workflow reachability; Avalonia.Headless tests for new controls; layered unit/integration tests for IR, LCModel, refresh, and transactions.
@@ -31,6 +32,12 @@ Lexical Edit is the main editing surface in FLEx, but its current WinForms/DataT
 - `lexical-edit-view-definition`: Typed view-definition and Presentation IR requirements, including XML import during transition, dynamic editor diagnostics, stable identity, virtualization/focus metadata, and XML retirement gates.
 - `lexical-edit-parity-automation`: Test, UI automation, render verification, and semantic parity requirements for WinForms and Avalonia migration safety.
 - `lexical-edit-font-decommissioning`: Graphite decommissioning, OpenType/HarfBuzz font-option migration, Gecko/browser/PDF impact, and native dependency classification requirements.
+- `avalonia-edit-sessions`: Hybrid staged-draft and FieldWorks-owned commit-boundary requirements for editable Avalonia regions.
+- `avalonia-undo-redo`: Domain-authoritative undo/redo requirements with control-local leaf undo allowed only as a subordinate behavior.
+- `avalonia-validation`: FieldWorks-owned validation seam requirements with Avalonia-native presentation and package-backed rule engines as subordinate options.
+- `avalonia-command-focus`: Global command/focus bridge requirements for shell and popup behavior, while allowing screen-local Avalonia commands inside migrated regions.
+- `avalonia-ui-scheduler`: Thin UI-thread scheduling seam requirements for non-view layers with direct Avalonia dispatcher use allowed only at the view and startup edge.
+- `avalonia-lifetime`: Thin app/window/dialog lifetime seam requirements for non-view layers, with heavier region frameworks explicitly deferred.
 
 ### Modified Capabilities
 

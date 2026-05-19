@@ -115,6 +115,18 @@ Important current constraints:
 
 **Rationale:** Lexical Edit proves the hardest regional rendering/editor path. The app shell touches different risks: application lifetime, multi-window behavior, xCore command routing, project startup/shutdown, dialog ownership, persisted layout, global services, installer/runtime packaging, and remaining main screens. Splitting keeps both plans reviewable and gives the shell phase concrete prerequisites.
 
+### 11. Seam recommendations are fixed in dedicated capability specs with explicit phase timing
+
+**Decision:** This change accepts the current seam recommendations and records them in dedicated capability specs: `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime`. Detailed comparison notes, alternatives considered, and source references are tracked in `seam-recommendations.md`.
+
+**Rationale:** Edit sessions, undo/redo, validation, command/focus, scheduler, and lifetime are the places where a migration can quietly hard-code a wrong abstraction. Freezing the recommendation and the pivot options in dedicated specs makes those choices reviewable, testable, and reusable by the later shell change.
+
+**Phase map:**
+- Up front and before non-view Avalonia code spreads: apply `avalonia-ui-scheduler` and `avalonia-lifetime` as thin seams outside `App`, `Program`, windows, preview host, and headless adapters.
+- First editable slice: apply `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, and the screen-local phase of `avalonia-command-focus` before scaling to broader editable regions.
+- Phase-two shell migration: invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining them there.
+- Deferred or separate-track options: package-first edit sessions, package-first undo/redo, and heavy region-lifetime frameworks remain available only if the pivot triggers documented in `seam-recommendations.md` are met.
+
 ## Native Dependency Classification
 
 The classification rule is based on the role of the native code, not the implementation language alone. If native code owns what the user is viewing or editing, it is not brought into completed Avalonia regions. If native code supplies custom linguistics capability that supports FieldWorks' role in documenting many languages, it may remain behind an explicit service seam.
@@ -138,6 +150,8 @@ Early seams should stay narrow and name the FieldWorks domain they protect:
 ## Architecture Diagrams
 
 See [architecture-diagrams.md](architecture-diagrams.md) for Mermaid diagrams covering the current WinForms/DataTree architecture, MVC pressure, dependency-inversion seams, testing layers, optional first Avalonia slices, table/full Lexical Edit slices, and the final Graphite-free Avalonia default architecture.
+
+See [seam-recommendations.md](seam-recommendations.md) for the accepted seam recommendations, the three options compared for each seam, references used, and the pivot triggers that would justify changing direction later.
 
 ## Refactoring Split Options
 
@@ -182,17 +196,18 @@ Pick a representative lexical path, such as LexEntry morph type plus nested sens
 ## Migration Plan
 
 1. Freeze current behavior with targeted unit/integration/render/UIA2 baselines, including undo/redo, focus, keyboard/IME, accessibility, localization, customer overrides, and disposal behavior.
-2. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic.
+2. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic, following `avalonia-ui-scheduler`, `avalonia-lifetime`, and the local phase of `avalonia-command-focus`.
 3. Start Graphite decommissioning: inventory affected project settings, fonts, render engines, Gecko/PDF paths, tests, docs, and build artifacts.
 4. Define migrated-region manifests and hard gates for each proposed Avalonia region.
 5. Extend render verification with normalized semantic snapshots, visual/timing evidence, performance budgets, and failure bundles.
 6. Build typed view-definition and XML import as the compatibility compiler.
-7. Replace text foundation, simple controls, edit sessions, and hover/popups in Avalonia using owned editor controls.
+7. Replace text foundation, simple controls, edit sessions, validation, undo/redo routing, and hover/popups in Avalonia using owned editor controls, following `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local phase of `avalonia-command-focus`.
 8. Replace table/browse views with virtualized Avalonia table/tree structures.
 9. Replace slices and full Lexical Edit views with Avalonia surfaces over the typed contract.
 10. Audit the migrated region's runtime call graph and remove/disable native viewing/rendering/editor dependencies for that region, while classifying custom linguistics engines as service seams when they do not own the Avalonia UI surface.
 11. Add managed canonical view-definition authoring and migration tooling.
 12. Retire runtime XML only after parity gates pass for production layouts, custom fields, user overrides, dynamic editors, unsupported constructs, and fallback behavior.
+13. Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` once Lexical Edit regional seams are proven.
 
 ## Open Questions
 

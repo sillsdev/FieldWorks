@@ -54,6 +54,10 @@ An Avalonia screen registry maps area/tool IDs to presenters and views. Each mig
 
 Navigation, commands, dialog ownership, status/progress, settings persistence, accessibility metadata, and shell composition are tested through pure services, typed snapshots, and Avalonia.Headless before full-app smoke tests.
 
+### 7. The shell phase consumes earlier seam capabilities instead of redefining them
+
+The shell phase consumes the previously chosen seam capabilities from `lexical-edit-avalonia-migration` rather than reopening those decisions by default. In particular, `avalonia-command-focus` is promoted from screen-local usage to shell-global command and target routing here, while `avalonia-ui-scheduler` and `avalonia-lifetime` are promoted from local editor seams to application-wide services. If those choices later prove wrong, the pivot triggers in `lexical-edit-avalonia-migration/seam-recommendations.md` govern when to change direction.
+
 ## Risks / Trade-offs
 
 - Runtime split between .NET Framework managed code and newer Avalonia projects -> Resolve host/runtime strategy early and avoid hidden cross-runtime assumptions.
@@ -67,10 +71,10 @@ Navigation, commands, dialog ownership, status/progress, settings persistence, a
 
 1. Confirm Lexical Edit regional gates or track unresolved blockers explicitly.
 2. Inventory current shell entry points, XML composition, command IDs, dialogs, main screens, startup/shutdown paths, native/WinForms dependencies, and browser/PDF paths.
-3. Extract framework-neutral shell/lifetime/dialog/dispatcher/command/navigation/status/settings/accessibility ports while WinForms remains default.
+3. Extract framework-neutral shell/lifetime/dialog/dispatcher/command/navigation/status/settings/accessibility ports while WinForms remains default, consuming `avalonia-ui-scheduler` and `avalonia-lifetime` rather than redefining them.
 4. Build typed shell-definition importer and snapshot tests for `Main.xml` and area/tool includes.
 5. Build an Avalonia shell preview path with sample data and migrated regions.
-6. Bridge XCore commands and property state into typed Avalonia command/state services.
+6. Bridge XCore commands and property state into typed Avalonia command/state services, consuming the shell-global phase of `avalonia-command-focus`.
 7. Implement Avalonia navigation, content host, menus, context menus, toolbars, side panes, status/progress, and dialog service.
 8. Migrate main screens area by area using screen manifests and legacy-host boundaries only for non-migrated screens.
 9. Add startup/shutdown, installer/runtime, accessibility, localization, performance, and full-app smoke gates.

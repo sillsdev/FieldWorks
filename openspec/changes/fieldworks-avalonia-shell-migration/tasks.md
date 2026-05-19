@@ -8,7 +8,7 @@
 
 ## 2. Shell Contracts
 
-- [ ] 2.1 Extract framework-neutral managed interfaces for app lifetime, main window, active-window registry, dialog owner, modal state, UI dispatcher, shutdown, progress, settings, and status services.
+- [ ] 2.1 Extract framework-neutral managed interfaces for app lifetime, main window, active-window registry, dialog owner, modal state, UI dispatcher, shutdown, progress, settings, and status services, following `avalonia-ui-scheduler` and `avalonia-lifetime`.
 - [ ] 2.2 Add compatibility adapters for current WinForms `FwApp`, `FieldWorksManager`, xWorks window, and dialog-owner behavior.
 - [ ] 2.3 Remove direct `Form`/`Control` requirements from new shell-facing contracts before Avalonia shell construction begins.
 - [ ] 2.4 Add contract tests for startup, active-window tracking, dialog ownership, shutdown, and UI dispatch behavior.
@@ -22,8 +22,8 @@
 
 ## 4. Command Routing and State
 
-- [ ] 4.1 Define typed command descriptors with stable IDs, labels, gestures, icons, visibility, enabled state, target resolution, and diagnostics.
-- [ ] 4.2 Bridge XCore mediator handlers and property-table state into Avalonia commands.
+- [ ] 4.1 Define typed command descriptors with stable IDs, labels, gestures, icons, visibility, enabled state, target resolution, and diagnostics, following `avalonia-command-focus`.
+- [ ] 4.2 Bridge XCore mediator handlers and property-table state into Avalonia commands and active-target routing, following `avalonia-command-focus`.
 - [ ] 4.3 Add tests for command enable/visible state, shortcuts, one-at-a-time commands, command target selection, and mediator bridge behavior.
 - [ ] 4.4 Add menu/context-menu automation metadata and localization checks.
 
@@ -53,7 +53,7 @@
 
 - [ ] 8.1 Introduce dialog service for project, writing-system, settings, import/export, find/replace, styles, help, feedback, and utility dialogs.
 - [ ] 8.2 Migrate high-frequency dialogs first and retain explicit legacy adapters only while blocked.
-- [ ] 8.3 Add owner/modal, cancellation, focus return, accessibility, and localization tests for migrated dialogs.
+- [ ] 8.3 Add owner/modal, cancellation, focus return, accessibility, and localization tests for migrated dialogs, following `avalonia-command-focus` and `avalonia-lifetime`.
 - [ ] 8.4 Isolate browser/PDF/print behind replaceable services and select a non-Graphite default strategy.
 
 ## 9. Main Screen Migration
@@ -74,3 +74,4 @@
 - [ ] 10.5 Run full local build/test and app smoke gates before default switch.
 - [ ] 10.6 Make Avalonia shell default only after hard gates pass.
 - [ ] 10.7 Remove WinForms shell default path, FlexUIAdapter default dependency, WinForms dynamic content host, retired dialogs, and obsolete shell XML runtime pieces.
+- [ ] 10.8 Revisit heavier reactive or region-framework alternatives only if the pivot triggers recorded in `lexical-edit-avalonia-migration/seam-recommendations.md` are met.
