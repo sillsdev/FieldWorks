@@ -586,6 +586,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
+		public bool OnDisplayCheckParserOnCurrentText(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			display.Enabled = CurrentText != null;
+
+			return true;    //we handled this.
+		}
+
 		public bool OnCheckParserOnGenre(object argument)
 		{
 			CheckDisposed();
