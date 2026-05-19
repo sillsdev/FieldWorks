@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>FwAvaloniaPreviewHost</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.Common.Avalonia.PreviewHost</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
+    <!-- Include at least one module so the host is immediately useful; future modules can add their own preview attribute. -->
+    <ProjectReference Include="..\..\LexText\AdvancedEntry.Avalonia\AdvancedEntry.Avalonia.csproj" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+</Project>
