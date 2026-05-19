@@ -106,6 +106,10 @@ The classification rule is based on the role of the native code, not the impleme
 - **Spell-check interop:** `RootSite` wires `SetSpellingRepository(IGetSpellChecker)` into `VwRootBox`, while managed helpers build spelling context menus. Avalonia can keep spelling as a service, but any dependency on RootBox spell integration must be replaced for migrated regions.
 - **Parser/conversion/native utility tools:** `pcpatr64.exe`, `TonePars64.exe`, `xample.dll`, Encoding Converter native files, ICU artifacts, Expat/ParserObject, and reg-free COM/proxy/stub build infrastructure are real native dependencies. They are not default Lexical Edit viewing dependencies, but migrated workflows that invoke them must wrap them as services and keep them outside Avalonia rendering/editor completion gates.
 
+## Architecture Diagrams
+
+See [architecture-diagrams.md](architecture-diagrams.md) for Mermaid diagrams covering the current WinForms/DataTree architecture, MVC pressure, dependency-inversion seams, testing layers, optional first Avalonia slices, table/full Lexical Edit slices, and the final Graphite-free Avalonia default architecture.
+
 ## Refactoring Split Options
 
 ### Option A: Safety-first legacy seams
