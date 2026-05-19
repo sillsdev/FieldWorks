@@ -158,10 +158,9 @@ namespace TestGenericLib
 #endif
 		}
 
-#ifdef DEBUG
 		void testNativeAssertThrowsExceptionWithoutContinuing()
 		{
-#if defined(WIN32) || defined(_M_X64)
+#if (defined(WIN32) || defined(_M_X64)) && defined(DEBUG)
 			bool fReachedAfterAssert = false;
 			try
 			{
@@ -179,11 +178,8 @@ namespace TestGenericLib
 			}
 
 			unitpp::assert_true("Execution continued after native assert", !fReachedAfterAssert);
-#else
-			// TODO-Linux: port
 #endif
 		}
-#endif
 
 	public:
 		TestErrorHandling();
