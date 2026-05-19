@@ -482,6 +482,13 @@ try {
 
 		$outputDir = Join-Path $PSScriptRoot "Output/$Configuration"
 
+		function Find-TestAssembly([string]$assemblyName) {
+			$matches = Get-ChildItem -Path $outputDir -Filter $assemblyName -Recurse -File -ErrorAction SilentlyContinue |
+				Where-Object { $_.FullName -notmatch '\\TestResults\\' } |
+				Sort-Object LastWriteTimeUtc -Descending
+			return @($matches | Select-Object -First 1 -ExpandProperty FullName)
+		}
+
 		if ($TestProject) {
 			$normalizedTestProject = $TestProject.Replace('\', '/').TrimEnd('/')
 
@@ -492,7 +499,7 @@ try {
 				$testDlls = @(Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll")
 			}
 			elseif ($TestProject -match '\.dll$') {
-				$testDlls = @(Join-Path $outputDir (Split-Path $TestProject -Leaf))
+				$testDlls = Find-TestAssembly (Split-Path $TestProject -Leaf)
 			}
 			else {
 				# Assume it's a project path, find the DLL
@@ -503,7 +510,7 @@ try {
 				if ($projectName -notmatch 'Tests?$') {
 					$projectName = "${projectName}Tests"
 				}
-				$testDlls = @(Join-Path $outputDir "$projectName.dll")
+				$testDlls = Find-TestAssembly "$projectName.dll"
 			}
 		}
 		else {
@@ -512,8 +519,11 @@ try {
 			# - External NuGet package tests (SIL.LCModel.*.Tests) - these test liblcm, not FieldWorks
 			# - SIL.WritingSystems.Tests - NuGet-delivered libpalaso test DLL compiled against
 			#   NUnit 3.13.3; loading it causes binding-redirect failures (not a FieldWorks test)
-			$testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -ErrorAction SilentlyContinue |
+			$testDlls = Get-ChildItem -Path $outputDir -Filter "*Tests.dll" -Recurse -File -ErrorAction SilentlyContinue |
+				Where-Object { $_.FullName -notmatch '\\TestResults\\' } |
 				Where-Object { $_.Name -notmatch '^nunit|^Microsoft|^xunit|^SIL\.LCModel|^SIL\.WritingSystems\.Tests' } |
+				Group-Object Name |
+				ForEach-Object { $_.Group | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1 } |
 				Select-Object -ExpandProperty FullName
 		}
 

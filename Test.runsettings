@@ -20,10 +20,13 @@
     <MaxCpuCount>0</MaxCpuCount>
     <!-- x86 or x64 -->
     <TargetPlatform>x64</TargetPlatform>
-    <!-- Framework version - net48 -->
-    <TargetFrameworkVersion>net48</TargetFrameworkVersion>
-	<!-- Test timeout in milliseconds (15 minutes default for long-running tests) -->
-	<TestSessionTimeout>900000</TestSessionTimeout>
+    <!--
+      TargetFrameworkVersion intentionally omitted to allow VSTest to auto-detect
+      the correct framework per test assembly (FieldWorks now includes both net48
+      and net8.0-windows test projects).
+    -->
+    <!-- Test timeout in milliseconds (15 minutes default for long-running tests) -->
+    <TestSessionTimeout>900000</TestSessionTimeout>
     <!--
       InIsolation: Run tests in a separate process.
       This prevents native COM cleanup crashes from affecting VSTest's exit code.
