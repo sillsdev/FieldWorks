@@ -1,0 +1,76 @@
+## 1. Clarify Alternatives Before Implementation
+
+- [ ] 1.1 Decide whether `ManagedLgIcuCollator` CLSID `{e771361c-ff54-4120-9525-98a0b7a9accf}` is an external compatibility contract or repo-internal implementation detail. [Managed/build, decision]
+- [ ] 1.2 Decide whether FieldWorks is source-level Windows-only for `ViewInputManager` and `ManagedVwWindow`, or whether dormant non-Windows paths must remain buildable. [Native/managed, decision]
+- [ ] 1.3 Choose the DebugProcs path: isolate COM behind a debug-only shim, or attempt a non-COM replacement using existing native exports. [Managed/native, decision]
+- [ ] 1.4 Select the first `SilEncConverters40` adapter slice: Paratext import, writing-system setup, converter tester, bulk edit, or interlinear import. [Managed, decision]
+- [ ] 1.5 Confirm that picture creation, `VwDrawRootBuffered`, and `UnknownProp` narrowing are optional follow-ups rather than required implementation work for this change. [Architecture, decision]
+
+## 2. Baseline Inventory and Characterization
+
+- [ ] 2.1 Snapshot current optional COM class references in `Build/RegFree.targets`, `Build/mkall.targets`, `Src/Common/FieldWorks/BuildInclude.targets`, and generated manifests. [Build, <=2h]
+- [ ] 2.2 Add or identify a `RegFreeCreatorTests` case proving `[ComVisible(false)]` classes do not emit `clrClass` manifest entries. [Managed build task, <=2h]
+- [ ] 2.3 Add or identify a `RegFreeCreatorTests` case proving targeted removed CLSIDs are absent from generated manifest output. [Managed build task, <=2h]
+- [ ] 2.4 Confirm `ModuleEntry::SetClipboard` has no live callers outside its declaration/definition before clipboard cleanup. [Native audit, <=1h]
+- [ ] 2.5 Confirm direct `new EncConverters()` and `Type.GetTypeFromCLSID` call sites before adapter/debug cleanup. [Managed audit, <=1h]
+
+## 3. Required: De-COM `ManagedLgIcuCollator`
+
+- [ ] 3.1 Remove `ComVisible(true)` and COM-only attributes from `Src/ManagedLgIcuCollator/LgIcuCollator.cs` if task 1.1 confirms no external CLSID contract. [Managed C#, <=1h]
+- [ ] 3.2 Remove `ManagedLgIcuCollator.dll` from managed COM manifest inputs in `Build/RegFree.targets` and `Src/Common/FieldWorks/BuildInclude.targets`. [Build, <=1h]
+- [ ] 3.3 Remove CLSID `{e771361c-ff54-4120-9525-98a0b7a9accf}` from `Build/mkall.targets` `ExcludedClsids`. [Build, <=30m]
+- [ ] 3.4 Verify direct managed callers in `Src/Common/Filters/RecordSorter.cs` and `Src/LexText/Lexicon/SortReversalSubEntries.cs` still compile and need no behavior change. [Managed C#, <=1h]
+- [ ] 3.5 Run `.	est.ps1 -TestProject ManagedLgIcuCollatorTests`. [Validation]
+- [ ] 3.6 Run caller/build validation: `.	est.ps1 -TestProject FiltersTests`, `.	est.ps1 -TestProject LexEdDllTests`, and `.	est.ps1 -TestProject FwBuildTasksTests -TestFilter "FullyQualifiedName~RegFreeCreator"`. [Validation]
+
+## 4. Required Companion: Reg-Free Manifest Cleanup Discipline
+
+- [ ] 4.1 For each removed optional COM class, update all manifest/build inputs in the same PR: `Build/RegFree.targets`, `Build/mkall.targets`, and `Src/Common/FieldWorks/BuildInclude.targets` where applicable. [Build, ongoing]
+- [ ] 4.2 Add a manifest scan task or test assertion that removed CLSIDs no longer appear in generated `clrClass` entries. [Build/test, <=2h]
+- [ ] 4.3 Diff generated manifests before/after each COM-surface PR and verify only targeted optional CLSIDs disappeared. [Validation]
+- [ ] 4.4 Run `.uild.ps1` or the narrow approved build target needed to regenerate and validate reg-free manifests. [Validation]
+
+## 5. Required If Characterization Confirms: Remove Dormant OLE Clipboard Cleanup
+
+- [ ] 5.1 Remove `ModuleEntry::SetClipboard` ownership state and shutdown `OleIsCurrentClipboard` / `OleFlushClipboard` cleanup from `Src/Generic/ModuleEntry.cpp` and `Src/Generic/ModuleEntry.h`. [Native C++, <=2h]
+- [ ] 5.2 Remove unused managed declarations in `Src/Common/FwUtils/Win32Wrappers.cs` only if no references remain. [Managed C#, <=1h]
+- [ ] 5.3 Keep TSF `IDataObject` methods and managed clipboard behavior unchanged. [Review gate]
+- [ ] 5.4 Run `.	est.ps1 -TestProject SimpleRootSiteTests -TestFilter "FullyQualifiedName~EditingHelperTests"` and `.	est.ps1 -Native -TestProject TestGeneric`. [Validation]
+- [ ] 5.5 Manual smoke: copy styled multilingual FieldWorks text within FieldWorks, paste to Notepad/Word, exit FieldWorks, then verify clipboard data remains pasteable. [Manual validation]
+
+## 6. Required First Slice: Isolate DebugProcs COM Activation
+
+- [ ] 6.1 Add tests around `DebugProcs` construction/disposal failure tolerance and idempotent disposal without requiring real COM activation. [Managed test, <=2h]
+- [ ] 6.2 Introduce a tiny debug-report transport abstraction in `Src/Common/FwUtils/DebugProcs.cs`. [Managed C#, <=2h]
+- [ ] 6.3 Move current CLSID activation behind that abstraction as the safe default implementation. [Managed C#, <=1h]
+- [ ] 6.4 If task 1.3 selects replacement, implement a non-COM debug transport as a separate optional task after isolation is tested. [Optional, managed/native]
+- [ ] 6.5 Run `.	est.ps1 -TestProject FwUtilsTests -TestFilter "FullyQualifiedName~DebugProcs"`; if native debug code changes, also run `.	est.ps1 -Native -TestProject TestViews`. [Validation]
+
+## 7. Required First Slice: Encoding Converter Adapter Seam
+
+- [ ] 7.1 Define a narrow FieldWorks-owned Encoding Converter provider/service interface for the selected first workflow. [Managed C#, <=2h]
+- [ ] 7.2 Implement the production adapter using existing `SilEncConverters40` / `encoding-converters-core`; do not add a replacement package. [Managed C#, <=2h]
+- [ ] 7.3 Replace direct `new EncConverters()` in the selected first workflow only. [Managed C#, <=2h]
+- [ ] 7.4 Add mocked adapter tests using existing Moq/NUnit patterns. [Managed test, <=2h]
+- [ ] 7.5 Run workflow-specific tests for the selected slice, such as `ParatextImportTests`, `FwCoreDlgsTests`, `ITextDllTests`, or `XMLViewsTests`. [Validation]
+
+## 8. Optional / Risky: Windows-First Shim Removal
+
+- [ ] 8.1 Optional: If task 1.2 confirms source-level Windows-only support, remove `ViewInputManager` COM activation and source/build/manifest entries. [Optional, native/managed/build]
+- [ ] 8.2 Optional: If task 1.2 confirms source-level Windows-only support, remove `ManagedVwWindow` source/build/manifest entries. [Optional, native/managed/build]
+- [ ] 8.3 Optional validation: run `.	est.ps1 -Native -TestProject TestViews`; while the project still exists, run `.	est.ps1 -TestProject ManagedVwWindowTests`. [Optional validation]
+- [ ] 8.4 Manual smoke: edit text in a RootSite field, move selection, use PageUp/PageDown, and test IME/composition if available to verify Windows remains on `VwTextStore`. [Manual validation]
+
+## 9. Optional / Risky Follow-Ups to Keep Out of First PRs
+
+- [ ] 9.1 Optional: Centralize picture creation/lifetime rules without removing the `IPicture` ABI. [Optional, rendering-adjacent]
+- [ ] 9.2 Optional: Evaluate `ManagedVwDrawRootBuffered` COM visibility only after render parity validation; do not flip rendering defaults in this change. [Optional, rendering]
+- [ ] 9.3 Optional: Add typed managed wrappers for common `UnknownProp` uses, but do not alter native cache/undo semantics. [Optional, data boundary]
+- [ ] 9.4 Optional: Audit `LexTextApp` COM visibility for out-of-repo automation before any removal. [Optional, external compatibility]
+
+## 10. Final Verification
+
+- [ ] 10.1 Run the narrow tests listed in completed task groups.
+- [ ] 10.2 Run `.uild.ps1` when build/manifest inputs change.
+- [ ] 10.3 Run `.uild.ps1 -BuildTests` or `.	est.ps1` for broader validation before merge if multiple slices land together.
+- [ ] 10.4 Run `.\/Build\/Agent\/check-and-fix-whitespace.ps1` through the VS Code `CI: Whitespace check` task before committing.
