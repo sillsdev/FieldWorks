@@ -1,4 +1,4 @@
-# FieldWorks SDK Migration — Postmortem & Blame Index
+﻿# FieldWorks SDK Migration — Postmortem & Blame Index
 
 **Migration Period**: November 7-21, 2025
 **Base Commit**: `8e508dab484fafafb641298ed9071f03070f7c8b`
@@ -262,7 +262,7 @@ With CPM ensuring all projects resolve to the same package version, most manual 
 - Initializes VS Developer environment
 - Supports `/m` parallel builds
 - **Stale DLL detection**: Runs `Remove-StaleDlls.ps1` pre-build to catch version-mismatched binaries
-- **Diagnostics config**: Optionally copies dev trace config for Debug builds (`-TraceCrashes` or `UseDevTraceConfig`)
+- **Diagnostics config**: Optionally copies dev trace config for Debug builds (`-EnableTracing` or `UseDevTraceConfig`)
 - **Installer support**: `-BuildInstaller` flag triggers full installer build pipeline
 
 **Note**: `build.sh` is not supported in this repo (FieldWorks is Windows-first). Use `.\build.ps1`.
