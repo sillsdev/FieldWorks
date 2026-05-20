@@ -226,6 +226,69 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(InvokeCheckForAffixDataLoss(affix, new List<IMoMorphSynAnalysis>()), Is.False);
 		}
 
+		[Test]
+		public void GetStemDataLossKinds_StemNameAndGrammarInfo_FlagsBoth()
+		{
+			var stem = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			m_entry.LexemeFormOA = stem;
+			var partOfSpeech = CreatePartOfSpeech("phase2-stem-pos");
+			stem.StemNameRA = CreateStemName(partOfSpeech, "phase2-stem-name");
+			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			m_entry.MorphoSyntaxAnalysesOC.Add(msa);
+			msa.InflectionClassRA = CreateInflectionClass(partOfSpeech, "phase2-stem-class");
+
+			Assert.That(
+				InvokeGetStemDataLossKinds(stem, new List<IMoMorphSynAnalysis> { msa }),
+				Is.EqualTo(MorphTypeDataLossKinds.StemName | MorphTypeDataLossKinds.GrammarInfo));
+		}
+
+		[Test]
+		public void GetAffixDataLossKinds_AffixProcessWithInflectionClassAndGrammarInfo_FlagsRuleInflectionClassAndGrammarInfo()
+		{
+			var affix = Cache.ServiceLocator.GetInstance<IMoAffixProcessFactory>().Create();
+			m_entry.LexemeFormOA = affix;
+			var partOfSpeech = CreatePartOfSpeech("phase2-affix-pos");
+			affix.InflectionClassesRC.Add(CreateInflectionClass(partOfSpeech, "phase2-affix-class"));
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			m_entry.MorphoSyntaxAnalysesOC.Add(msa);
+			msa.AffixCategoryRA = partOfSpeech;
+
+			Assert.That(
+				InvokeGetAffixDataLossKinds(affix, new List<IMoMorphSynAnalysis> { msa }),
+				Is.EqualTo(
+					MorphTypeDataLossKinds.Rule |
+					MorphTypeDataLossKinds.InflectionClass |
+					MorphTypeDataLossKinds.GrammarInfo));
+		}
+
+		[Test]
+		public void GetAffixDataLossKinds_AffixAllomorphWithPositionAndMsEnv_FlagsInfixLocationAndGrammarInfo()
+		{
+			var affix = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			m_entry.LexemeFormOA = affix;
+			affix.PositionRS.Add(CreateEnvironment("/ _"));
+			affix.MsEnvPartOfSpeechRA = CreatePartOfSpeech("phase2-infix-pos");
+
+			Assert.That(
+				InvokeGetAffixDataLossKinds(affix, new List<IMoMorphSynAnalysis>()),
+				Is.EqualTo(MorphTypeDataLossKinds.InfixLocation | MorphTypeDataLossKinds.GrammarInfo));
+		}
+
+		[Test]
+		public void LauncherButtonClick_WithValidObject_ReachesChooserDecisionPath()
+		{
+			using (var launcher = new RecordingAtomicReferenceLauncher())
+			{
+				launcher.Initialize(Cache, m_entry, LexEntryTags.kflidMorphoSyntaxAnalyses, "MorphoSyntaxAnalysesOC", "analysis");
+
+				launcher.InvokeLauncherClickForTest();
+
+				Assert.That(launcher.ChooserInvocationCount, Is.EqualTo(1));
+				Assert.That(launcher.LauncherButton.Name, Is.EqualTo("m_btnLauncher"));
+				Assert.That(launcher.LauncherButton.Enabled, Is.True);
+			}
+		}
+
 		private static IEnumerable<TestCaseData> StemLikeMorphTypes()
 		{
 			yield return new TestCaseData(MoMorphTypeTags.kguidMorphBoundRoot).SetName("IsStemType_BoundRoot_ReturnsTrue");
@@ -279,6 +342,57 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				new object[] { affix, morphSyntaxAnalyses });
 		}
 
+		private static MorphTypeDataLossKinds InvokeGetStemDataLossKinds(
+			IMoStemAllomorph stem,
+			List<IMoMorphSynAnalysis> morphSyntaxAnalyses)
+		{
+			var launcher = new MorphTypeAtomicLauncher();
+			return launcher.GetStemDataLossKinds(stem, morphSyntaxAnalyses);
+		}
+
+		private static MorphTypeDataLossKinds InvokeGetAffixDataLossKinds(
+			IMoAffixForm affix,
+			List<IMoMorphSynAnalysis> morphSyntaxAnalyses)
+		{
+			var launcher = new MorphTypeAtomicLauncher();
+			return launcher.GetAffixDataLossKinds(affix, morphSyntaxAnalyses);
+		}
+
+		private IPartOfSpeech CreatePartOfSpeech(string name)
+		{
+			var partOfSpeech = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(partOfSpeech);
+			partOfSpeech.Name.SetAnalysisDefaultWritingSystem(name);
+			partOfSpeech.Abbreviation.SetAnalysisDefaultWritingSystem(name);
+			return partOfSpeech;
+		}
+
+		private IMoStemName CreateStemName(IPartOfSpeech partOfSpeech, string name)
+		{
+			var stemName = Cache.ServiceLocator.GetInstance<IMoStemNameFactory>().Create();
+			partOfSpeech.StemNamesOC.Add(stemName);
+			stemName.Name.SetAnalysisDefaultWritingSystem(name);
+			stemName.Abbreviation.SetAnalysisDefaultWritingSystem(name);
+			return stemName;
+		}
+
+		private IMoInflClass CreateInflectionClass(IPartOfSpeech partOfSpeech, string name)
+		{
+			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			partOfSpeech.InflectionClassesOC.Add(inflClass);
+			inflClass.Name.SetAnalysisDefaultWritingSystem(name);
+			inflClass.Abbreviation.SetAnalysisDefaultWritingSystem(name);
+			return inflClass;
+		}
+
+		private IPhEnvironment CreateEnvironment(string representation)
+		{
+			var environment = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
+			Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
+			environment.StringRepresentation = TsStringUtils.MakeString(representation, Cache.DefaultVernWs);
+			return environment;
+		}
+
 		private static MethodInfo GetIsStemTypeMethod()
 		{
 			var method = GetPrivateMethod("IsStemType");
@@ -293,6 +407,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.That(method, Is.Not.Null, "Morph type swap extraction depends on {0} semantics.", methodName);
 			return method;
+		}
+
+		private sealed class RecordingAtomicReferenceLauncher : MockAtomicReferenceLauncher
+		{
+			public int ChooserInvocationCount { get; private set; }
+
+			public void InvokeLauncherClickForTest()
+			{
+				OnClick(LauncherButton, EventArgs.Empty);
+			}
+
+			protected override void HandleChooser()
+			{
+				ChooserInvocationCount++;
+			}
 		}
 	}
 }

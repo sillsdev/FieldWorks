@@ -93,6 +93,7 @@ public sealed class StagedObjectView : ICustomTypeDescriptor, INotifyPropertyCha
 						props.Add(
 							new StagedFieldPropertyDescriptor(
 								name: PropertyName.From(field.Id.Value, usedNames),
+								nodeId: field.Id.Value,
 								displayName: field.Label ?? field.Field,
 								category: category,
 								owner: this,
@@ -109,6 +110,7 @@ public sealed class StagedObjectView : ICustomTypeDescriptor, INotifyPropertyCha
 							props.Add(
 								new StagedObjectPropertyDescriptor(
 									name: PropertyName.From(obj.Id.Value, usedNames),
+									nodeId: obj.Id.Value,
 									displayName: obj.Label ?? obj.Field,
 									category: category,
 									owner: this,
@@ -127,6 +129,7 @@ public sealed class StagedObjectView : ICustomTypeDescriptor, INotifyPropertyCha
 							props.Add(
 								new StagedSequencePropertyDescriptor(
 									name: PropertyName.From(seq.Id.Value, usedNames),
+									nodeId: seq.Id.Value,
 									displayName: seq.Label ?? seq.Field,
 									category: category,
 									owner: this,
@@ -232,13 +235,14 @@ internal sealed class StagedFieldPropertyDescriptor : PropertyDescriptor
 
 	public StagedFieldPropertyDescriptor(
 		string name,
+		string nodeId,
 		string displayName,
 		string? category,
 		StagedObjectView owner,
 		string fieldName,
 		bool isRequired
 	)
-		: base(name, BuildAttributes(displayName, category, isRequired))
+		: base(name, BuildAttributes(nodeId, fieldName, "field", displayName, category, isRequired))
 	{
 		_owner = owner;
 		_fieldName = fieldName;
@@ -265,11 +269,23 @@ internal sealed class StagedFieldPropertyDescriptor : PropertyDescriptor
 	public override bool CanResetValue(object? component) => true;
 	public override bool ShouldSerializeValue(object? component) => false;
 
-	private static Attribute[] BuildAttributes(string displayName, string? category, bool isRequired)
+	private static Attribute[] BuildAttributes(
+		string nodeId,
+		string fieldName,
+		string editorKind,
+		string displayName,
+		string? category,
+		bool isRequired)
 	{
 		var list = new List<Attribute>
 		{
 			new DisplayNameAttribute(displayName),
+			new PresentationNodeMetadataAttribute(
+				nodeId,
+				fieldName,
+				editorKind,
+				$"advanced-entry:{nodeId}",
+				nodeId),
 		};
 
 		if (!string.IsNullOrWhiteSpace(category))
@@ -292,6 +308,7 @@ internal sealed class StagedObjectPropertyDescriptor : PropertyDescriptor
 
 	public StagedObjectPropertyDescriptor(
 		string name,
+		string nodeId,
 		string displayName,
 		string? category,
 		StagedObjectView owner,
@@ -299,7 +316,7 @@ internal sealed class StagedObjectPropertyDescriptor : PropertyDescriptor
 		string childClass,
 		IReadOnlyList<PresentationNode> schema
 	)
-		: base(name, BuildAttributes(displayName, category))
+		: base(name, BuildAttributes(nodeId, fieldName, "object", displayName, category))
 	{
 		_owner = owner;
 		_fieldName = fieldName;
@@ -322,11 +339,22 @@ internal sealed class StagedObjectPropertyDescriptor : PropertyDescriptor
 	public override bool CanResetValue(object? component) => false;
 	public override bool ShouldSerializeValue(object? component) => false;
 
-	private static Attribute[] BuildAttributes(string displayName, string? category)
+	private static Attribute[] BuildAttributes(
+		string nodeId,
+		string fieldName,
+		string editorKind,
+		string displayName,
+		string? category)
 	{
 		var list = new List<Attribute>
 		{
 			new DisplayNameAttribute(displayName),
+			new PresentationNodeMetadataAttribute(
+				nodeId,
+				fieldName,
+				editorKind,
+				$"advanced-entry:{nodeId}",
+				nodeId),
 		};
 
 		if (!string.IsNullOrWhiteSpace(category))
@@ -346,6 +374,7 @@ internal sealed class StagedSequencePropertyDescriptor : PropertyDescriptor
 
 	public StagedSequencePropertyDescriptor(
 		string name,
+		string nodeId,
 		string displayName,
 		string? category,
 		StagedObjectView owner,
@@ -354,7 +383,7 @@ internal sealed class StagedSequencePropertyDescriptor : PropertyDescriptor
 		IReadOnlyList<PresentationNode> itemSchema,
 		bool isVirtualized
 	)
-		: base(name, BuildAttributes(displayName, category))
+		: base(name, BuildAttributes(nodeId, fieldName, "sequence", displayName, category))
 	{
 		_owner = owner;
 		_fieldName = fieldName;
@@ -378,11 +407,22 @@ internal sealed class StagedSequencePropertyDescriptor : PropertyDescriptor
 	public override bool CanResetValue(object? component) => false;
 	public override bool ShouldSerializeValue(object? component) => false;
 
-	private static Attribute[] BuildAttributes(string displayName, string? category)
+	private static Attribute[] BuildAttributes(
+		string nodeId,
+		string fieldName,
+		string editorKind,
+		string displayName,
+		string? category)
 	{
 		var list = new List<Attribute>
 		{
 			new DisplayNameAttribute(displayName),
+			new PresentationNodeMetadataAttribute(
+				nodeId,
+				fieldName,
+				editorKind,
+				$"advanced-entry:{nodeId}",
+				nodeId),
 		};
 
 		if (!string.IsNullOrWhiteSpace(category))

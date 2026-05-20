@@ -13,13 +13,13 @@
 ## 2. Test Coverage Before Refactor
 
 - [x] 2.1 Add or extend unit/integration tests for DataTree refresh state transitions and postponed `PropChanged` behavior.
-- [ ] 2.2 Add or extend launcher pure-logic tests, prioritizing morph type swap/data-loss logic and chooser decision paths.
+- [x] 2.2 Add or extend launcher pure-logic tests, prioritizing morph type swap/data-loss logic and chooser decision paths.
 - [x] 2.3 Add semantic baseline capture for DataTree/Slice output: sections, labels, object/flid bindings, editor kind, visibility, ghost state, expansion, focus order, and accessibility identity.
-- [ ] 2.4 Add focused UIA2 smoke baselines for WinForms launcher/chooser workflows and XMLViews table header/filter reachability.
+- [x] 2.4 Add focused UIA2 smoke baselines for WinForms launcher/chooser workflows and XMLViews table header/filter reachability.
 - [x] 2.5 Add failure artifact bundling to render/parity tests where missing.
 - [x] 2.6 Add undo/redo and LCModel transaction characterization tests for editor replacement candidates.
-- [ ] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates.
-- [ ] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise.
+- [x] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates.
+- [x] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise.
 
 ## 3. Refactor Seams First
 

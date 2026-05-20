@@ -108,6 +108,53 @@ public sealed class PropertyGridExpandabilityTests
 	}
 
 	[Test]
+	public void DescriptorModel_FieldDescriptorsExposeStableNodeAccessibilityAndLocalizationMetadata()
+	{
+		var schema = new PresentationNode[]
+		{
+			new PresentationField(new PresentationNodeId("LexEntry.CitationForm"))
+			{
+				Field = "CitationForm",
+				Label = "Citation Form",
+			},
+		};
+		var staged = new StagedEntryState("LexEntry");
+		var root = new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
+
+		var prop = FindByDisplayName(TypeDescriptor.GetProperties(root), "Citation Form");
+		var metadata = prop!.Attributes.OfType<PresentationNodeMetadataAttribute>().Single();
+
+		Assert.That(metadata.NodeId, Is.EqualTo("LexEntry.CitationForm"));
+		Assert.That(metadata.FieldName, Is.EqualTo("CitationForm"));
+		Assert.That(metadata.EditorKind, Is.EqualTo("field"));
+		Assert.That(metadata.AccessibilityId, Is.EqualTo("advanced-entry:LexEntry.CitationForm"));
+		Assert.That(metadata.LocalizationKey, Is.EqualTo("LexEntry.CitationForm"));
+	}
+
+	[Test]
+	public void DescriptorModel_SetValueUpdatesStagedStateAndRaisesStablePropertyChangedName()
+	{
+		var schema = new PresentationNode[]
+		{
+			new PresentationField(new PresentationNodeId("LexEntry.CitationForm"))
+			{
+				Field = "CitationForm",
+				Label = "Citation Form",
+			},
+		};
+		var staged = new StagedEntryState("LexEntry");
+		var root = new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
+		var changedNames = new List<string?>();
+		root.PropertyChanged += (_, args) => changedNames.Add(args.PropertyName);
+		var prop = FindByDisplayName(TypeDescriptor.GetProperties(root), "Citation Form");
+
+		prop!.SetValue(root, "phase 2 citation");
+
+		Assert.That(staged.Root.Fields["CitationForm"], Is.EqualTo("phase 2 citation"));
+		Assert.That(changedNames, Is.EqualTo(new[] { prop.Name }));
+	}
+
+	[Test]
 	public void DescriptorModel_SequenceItemsRemainUnmaterializedUntilInspected()
 	{
 		var schema = new PresentationNode[]

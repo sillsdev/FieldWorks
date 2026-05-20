@@ -71,6 +71,26 @@ public sealed class PresentationCompilerSnapshotTests
 		AssertAppearsBefore(topLevelRefs, "Pronunciations", "Senses");
 	}
 
+	[Test]
+	public void LexEntryDetailNormal_NormalizedSnapshotExcludesIncidentalLayoutNoise()
+	{
+		var repoRoot = TestRepoRoot.Find();
+		var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
+
+		var loader = new PartsLayoutLoader();
+		var contract = loader.Load(new LayoutId("LexEntry", "detail", "Normal"), new[] { partsDir });
+		var compiler = new PresentationCompiler();
+		var ir = compiler.Compile(contract);
+
+		var snapshot = Serialize(SelectTopLevelSubset(ir));
+
+		Assert.That(snapshot, Does.Contain("StableNodeId"));
+		Assert.That(snapshot, Does.Contain("Accessibility"));
+		Assert.That(snapshot, Does.Not.Contain("Bounds"));
+		Assert.That(snapshot, Does.Not.Contain("Width"));
+		Assert.That(snapshot, Does.Not.Contain("Height"));
+	}
+
 	private static object SelectTopLevelSubset(PresentationLayout layout)
 	{
 		var wantedOrder = new[]
@@ -84,22 +104,80 @@ public sealed class PresentationCompilerSnapshotTests
 		var wantedRefs = new HashSet<string>(wantedOrder, StringComparer.Ordinal);
 
 		var nodes = layout.Children
-			.Select(n => new
+			.Select((node, focusOrder) => new
 			{
-				Ref = ExtractRef(n.Id.Value),
-				Kind = n.GetType().Name,
-				n.Label,
-				Field = (n as PresentationField)?.Field ?? (n as PresentationObject)?.Field ?? (n as PresentationSequence)?.Field,
-				Layout = (n as PresentationObject)?.Layout ?? (n as PresentationSequence)?.Layout,
-				GhostLabel = (n as PresentationObject)?.Ghost?.GhostLabel ?? (n as PresentationSequence)?.Ghost?.GhostLabel,
-				Visibility = n.Visibility.Kind.ToString(),
+				Node = node,
+				FocusOrder = focusOrder,
+				Ref = ExtractRef(node.Id.Value),
 			})
 			.Where(x => x.Ref is not null && wantedRefs.Contains(x.Ref))
 			.OrderBy(x => Array.IndexOf(wantedOrder, x.Ref!))
+			.Select(x => new
+			{
+				StableNodeId = x.Node.Id.Value,
+				x.Ref,
+				Kind = x.Node.GetType().Name,
+				x.FocusOrder,
+				x.Node.Label,
+				Field = GetField(x.Node),
+				Binding = new
+				{
+					RootClass = layout.RootClass,
+					ClassId = (int?)null,
+					Flid = (int?)null,
+					ObjectId = (int?)null,
+				},
+				EditorKind = GetEditorKind(x.Node),
+				WritingSystem = (string?)null,
+				Layout = (x.Node as PresentationObject)?.Layout ?? (x.Node as PresentationSequence)?.Layout,
+				Ghost = CreateGhostSnapshot((x.Node as PresentationObject)?.Ghost ?? (x.Node as PresentationSequence)?.Ghost),
+				Visibility = new
+				{
+					Kind = x.Node.Visibility.Kind.ToString(),
+					x.Node.Visibility.Expression,
+				},
+				Accessibility = new
+				{
+					Id = CreateAccessibilityId(x.Node.Id.Value),
+					Name = x.Node.Label ?? x.Ref,
+					Role = GetEditorKind(x.Node),
+				},
+			})
 			.ToArray();
 
 		return new { Layout = layout.Id.Value, Nodes = nodes };
 	}
+
+	private static string? GetField(PresentationNode node) =>
+		node switch
+		{
+			PresentationField field => field.Field,
+			PresentationObject obj => obj.Field,
+			PresentationSequence seq => seq.Field,
+			_ => null,
+		};
+
+	private static string GetEditorKind(PresentationNode node) =>
+		node switch
+		{
+			PresentationField => "field",
+			PresentationObject => "object",
+			PresentationSequence => "sequence",
+			PresentationSection => "section",
+			_ => "unknown",
+		};
+
+	private static object CreateGhostSnapshot(GhostSpec? ghost) => new
+	{
+		Present = ghost is not null,
+		ghost?.GhostField,
+		ghost?.GhostWritingSystem,
+		ghost?.GhostLabel,
+		ghost?.GhostClass,
+		ghost?.GhostInitMethod,
+	};
+
+	private static string CreateAccessibilityId(string stableNodeId) => $"advanced-entry:{stableNodeId}";
 
 	private static void AssertAppearsBefore(string?[] refs, string before, string after)
 	{
