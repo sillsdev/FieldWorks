@@ -2854,22 +2854,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 #endregion
 
 #region Ole32.dll
-		/// <summary>
-		/// Carries out the clipboard shutdown sequence. It also releases the <c>IDataObject</c>
-		/// pointer that was previously placed on the clipboard.
-		/// </summary>
-		/// <returns><c>true</c> if the clipboard has been flushed.</returns>
-		[DllImport("ole32.dll")]
-		public static extern int OleFlushClipboard();
-
-		/// <summary>
-		/// Determines whether the data object pointer previously placed on the clipboard is
-		/// still on the clipboard.
-		/// </summary>
-		/// <param name="pDataObject">[in] Pointer to the data object previously copied or cut.</param>
-		/// <returns><c>true</c> if object still on the clipboard.</returns>
-		[DllImport("ole32.dll")]
-		public static extern bool OleIsCurrentClipboard([MarshalAs(UnmanagedType.IUnknown)]object pDataObject);
 #endregion
 
 #region Shell32.dll

@@ -47,6 +47,14 @@ This is the cleanest confirmed win in the current tree.
 
 This is exactly the kind of change we want: a managed implementation that no longer appears to need COM at all inside this repo.
 
+`origin/main` history check:
+
+- The `ComVisible(true)`/CLSID attributes trace to the truncated 2012 git import; no LT/Jira issue was found for the original COM exposure.
+- PR #678 / commit `5711bf6bed` preserved `ManagedLgIcuCollator.dll` in the registration-free COM manifest inputs as part of broad .NET tooling and reg-free COM modernization, not as a documented class-specific compatibility requirement.
+- Repo-local references to CLSID `{e771361c-ff54-4120-9525-98a0b7a9accf}` are limited to the class attribute and build/manifest plumbing. The in-repo native `Src/views` collating engine path creates `LgUnicodeCollater::CreateCom`; managed callers construct `ManagedLgIcuCollator` directly.
+
+Conclusion: continue removing the repo-local COM surface, but require explicit out-of-repo compatibility sign-off before merge because an external CLSID consumer would not be visible in git history.
+
 ### What success looks like
 
 - `ManagedLgIcuCollator` is no longer COM-visible.
@@ -229,6 +237,14 @@ The live clipboard behavior in FieldWorks is already managed:
 - `Src/Common/SimpleRootSite/TsStringWrapper.cs` handles the serialized payload.
 
 By contrast, `Src/Generic/ModuleEntry.cpp` still tracks an `IDataObject` and calls `OleIsCurrentClipboard` / `OleFlushClipboard` during shutdown. That looks like legacy ownership cleanup rather than the path the application actually depends on.
+
+`origin/main` history check:
+
+- `ModuleEntry::SetClipboard`, `s_qdobjClipboard`, and the shutdown `OleIsCurrentClipboard` / `OleFlushClipboard` cleanup trace to the truncated 2012 git import.
+- The managed P/Invokes in `Win32Wrappers.cs` also trace to the import, with a later touch in `f2ba34747f` for `LT-19322` (`Review kernel32.dll calls in Win32Wrapper`). `LT-19322` is closed and was a broad 64-bit Win32Wrapper review prompted by `LT-19315` (`[x64] Crash on Help > About`); neither issue mentions clipboard persistence or these OLE methods.
+- `origin/main` has no live `ModuleEntry::SetClipboard` callers outside declaration/definition sites. Active clipboard writes go through managed `ClipboardUtils.SetDataObject` / `Clipboard.SetDataObject(data, copy, ...)`.
+
+Conclusion: continue removing the dormant native ownership cleanup and unused P/Invokes, but keep the manual clipboard persistence smoke as a required validation gate.
 
 This is attractive because it is small, testable, and outside the core rendering/data ABI.
 

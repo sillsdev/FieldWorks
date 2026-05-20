@@ -71,6 +71,15 @@ The following are marked optional until clarified:
 - changing picture creation/lifetime or `VwDrawRootBuffered` defaults;
 - narrowing `UnknownProp` usage beyond documentation and local managed wrappers.
 
+### 6. Historical provenance checks for removed COM surfaces
+
+The first removals were checked against `origin/main` history so that the decision is based on why the COM existed, not only on current branch diffs.
+
+| Surface | Historical evidence | Historical issue or PR relevance | Current relevance assessment | Decision |
+| --- | --- | --- | --- | --- |
+| `ManagedLgIcuCollator` COM visibility and manifest entries | The class-level `[ComVisible(true)]`, `[ClassInterface(ClassInterfaceType.None)]`, and CLSID `{e771361c-ff54-4120-9525-98a0b7a9accf}` trace to the truncated 2012 git import. `Build/mkall.targets` referenced `ManagedLgIcuCollator` in the 2012 MSBuild migration commit `d2cbca5776`. PR #678 / commit `5711bf6bed` later preserved the class in the new registration-free COM manifest inputs as part of broad .NET tooling and reg-free COM modernization. | No LT/Jira issue was found for the original collator COM exposure. PR #678 is relevant as deployment infrastructure, but its PR body describes general registration-free COM modernization and does not identify a class-specific requirement for this CLSID. | `origin/main` references to the collator CLSID are limited to the class attribute and build/manifest inputs. Repo-local callers construct `ManagedLgIcuCollator` directly in managed code. Native `Src/views` code uses `ILgCollatingEngine`, but the in-repo native path creates `LgUnicodeCollater::CreateCom`, not the managed collator CLSID. | Continue removal of the managed collator COM surface, with one caveat: any out-of-repo automation or extension using the CLSID would be broken and must be treated as an external compatibility exception if discovered. |
+| Dormant OLE clipboard ownership cleanup in `ModuleEntry` and unused OLE P/Invokes | `IDataObjectPtr ModuleEntry::s_qdobjClipboard`, `ModuleEntry::SetClipboard`, and the shutdown `OleIsCurrentClipboard` / `OleFlushClipboard` cleanup trace to the truncated 2012 git import. The managed `Win32Wrappers` declarations also trace to the import, with a later 2018 touch in `f2ba34747f` for `LT-19322`. | `LT-19322` is closed and was a general Win32Wrapper 64-bit audit prompted by `LT-19315` (`Help > About` x64 crash). Jira text and follow-up history do not mention `OleFlushClipboard`, `OleIsCurrentClipboard`, or clipboard persistence. | `origin/main` has no live callers of `ModuleEntry::SetClipboard` outside its declaration/definitions, so `s_qdobjClipboard` is never populated by product code. Active clipboard behavior uses managed `ClipboardUtils` / `Clipboard.SetDataObject(data, copy, ...)`. | Continue removal of the dormant native ownership cleanup and unused P/Invokes, but keep the manual clipboard persistence smoke test as required validation before merge. |
+
 ## Migration Plan
 
 1. Clarify compatibility and alternative paths.

@@ -41,4 +41,4 @@ The immediate problem is that optional COM-visible managed classes, debug-only C
 - **Affected native code:** targeted cleanup in `Src/Generic/ModuleEntry.*`; optional guarded cleanup in `Src/views/` only for non-Windows shim removal.
 - **Affected build:** `Build/RegFree.targets`, `Build/mkall.targets`, `Src/Common/FieldWorks/BuildInclude.targets`, and focused `RegFreeCreator` tests.
 - **Dependencies:** no new runtime or test NuGet packages; continue using existing Moq/NUnit/System.Drawing/encoding-converters-core.
-- **Risk:** low for `ManagedLgIcuCollator`; medium for DebugProcs and clipboard cleanup; optional/risky for Windows-policy shims, Encoding Converter adapter expansion, picture work, `VwDrawRootBuffered`, and `UnknownProp` narrowing.
+- **Risk:** low-to-medium for `ManagedLgIcuCollator` until external CLSID compatibility is ruled out; medium for DebugProcs and clipboard cleanup until required smoke validation is complete; optional/risky for Windows-policy shims, Encoding Converter adapter expansion, picture work, `VwDrawRootBuffered`, and `UnknownProp` narrowing.

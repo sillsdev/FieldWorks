@@ -57,7 +57,6 @@ bool ModuleEntry::s_fPerUserRegistration = false;
 #endif // WIN32
 
 #ifdef EXE_MODULE
-IDataObjectPtr ModuleEntry::s_qdobjClipboard;	// data stored in clipboard by this app.
 bool ModuleEntry::s_fIsExe = true;
 
 #else // EXE_MODULE
@@ -83,11 +82,6 @@ ModuleEntry::~ModuleEntry()
 /***********************************************************************************************
 	The code in this section only gets included for EXE servers.
 /**********************************************************************************************/
-
-void ModuleEntry::SetClipboard(IDataObject * pdobjClipboard)
-{
-	s_qdobjClipboard = pdobjClipboard;
-}
 
 /*----------------------------------------------------------------------------------------------
 	For an exe, we post a WM_QUIT message to the main thread when the module reference
@@ -154,7 +148,6 @@ bool ModuleEntry::Startup(HINSTANCE hinst, LPSTR pszCmdLine)
 
 	// Initialize COM
 	HRESULT hr = OleInitialize(NULL);
-	s_qdobjClipboard.Clear();
 
 	if (FAILED(hr))
 	{
@@ -230,17 +223,6 @@ void ModuleEntry::ShutDown()
 		}
 	}
 
-	// Uninitialize COM, first shutting down the clipboard.
-	if (s_qdobjClipboard.Ptr())
-	{
-		hr = OleIsCurrentClipboard(s_qdobjClipboard.Ptr());
-		WarnHr(hr);
-		if (hr == S_OK)
-		{
-			WarnHr(OleFlushClipboard());
-		}
-		s_qdobjClipboard.Clear();
-	}
 	OleUninitialize();
 }
 
@@ -266,7 +248,6 @@ int ModuleEntry::WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR pszCmdLine,
 
 	// Initialize COM
 	HRESULT hr = OleInitialize(NULL);
-	s_qdobjClipboard.Clear();
 
 	if (FAILED(hr))
 	{
@@ -324,17 +305,6 @@ int ModuleEntry::WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR pszCmdLine,
 		WarnHr(hr);
 	}
 
-	// Uninitialize COM, first shutting down the clipboard.
-	if (s_qdobjClipboard.Ptr())
-	{
-		hr = OleIsCurrentClipboard(s_qdobjClipboard.Ptr());
-		WarnHr(hr);
-		if (hr == S_OK)
-		{
-			WarnHr(OleFlushClipboard());
-		}
-		s_qdobjClipboard.Clear();
-	}
 	OleUninitialize();
 
 	return nRet;
@@ -346,13 +316,6 @@ int ModuleEntry::WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR pszCmdLine,
 /***********************************************************************************************
 	The code in this section only gets included for DLLs.
 /**********************************************************************************************/
-
-/*----------------------------------------------------------------------------------------------
-	For a DLL, we don't have a global place to record this, so ignore it.
-----------------------------------------------------------------------------------------------*/
-void ModuleEntry::SetClipboard(IDataObject * pdobjClipboard)
-{
-}
 
 /*----------------------------------------------------------------------------------------------
 	For a DLL, we just decrement the count. (But DON'T put this inline in the header! It

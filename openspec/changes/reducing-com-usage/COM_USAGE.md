@@ -180,6 +180,7 @@ Assessment:
 
 - Not all of these are equally live.
 - `ManagedLgIcuCollator` already has direct managed callers and appears to no longer need repo-local COM activation.
+- `origin/main` provenance found no LT/Jira issue for the `ManagedLgIcuCollator` CLSID. PR #678 preserved it in reg-free COM manifest inputs as part of broad registration-free COM modernization, but repo-local references to the CLSID are limited to the class attribute and build/manifest inputs; native `Src/views` creates the native `LgUnicodeCollater`, not this managed CLSID.
 - `ViewInputManager`, `ManagedVwWindow`, and `ManagedPictureFactory` are strongly tied to non-Windows or legacy paths and look removable in a Windows-first repo after a targeted audit.
 - `ManagedVwDrawRootBuffered` is a real managed implementation, but the active Windows path still prefers the native class.
 - `LexTextApp` looks low-risk internally but should be audited for any out-of-repo automation assumptions before removing COM visibility.
@@ -248,6 +249,8 @@ Assessment:
 
 - Clipboard behavior is already mostly managed.
 - Remaining OLE clipboard cleanup appears low-value and possibly dormant.
+- `origin/main` provenance traces `ModuleEntry::SetClipboard`, `s_qdobjClipboard`, and shutdown `OleFlushClipboard` cleanup to the truncated 2012 import. The only later Jira-adjacent touch found for the managed P/Invokes is `LT-19322`, a closed general Win32Wrapper 64-bit review prompted by `LT-19315`; neither issue mentions OLE clipboard persistence.
+- `origin/main` has no live `ModuleEntry::SetClipboard` callers outside its declaration and definitions; active copy paths use managed `ClipboardUtils` / `Clipboard.SetDataObject(data, copy, ...)`.
 - Picture/media COM is still real, but it is more of a chosen boundary shape than a hard OS requirement.
 - There is already a managed picture implementation pattern on the non-Windows path.
 
