@@ -520,18 +520,18 @@ namespace SIL.FieldWorks.XWorks
 			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
 			if (senseNode == null) return;
 			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
+			cacheHc.ksSenseNumberStyle = senseOptions.NonEmptyNumberingStyle;
 			//SubSense Node
 			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSenseNode == null) return;
 			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
+			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NonEmptyNumberingStyle;
 			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
 			//SubSubSense Node
 			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
 			if (subSubSenseNode == null) return;
 			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
+			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NonEmptyNumberingStyle;
 			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
 		}
 

@@ -56,21 +56,28 @@ namespace SIL.FieldWorks.XWorks
 
 		// Example values: ""->none; %O->1.2.3; %d->1, 2, 3
 		[XmlAttribute(AttributeName = "numberingStyle")]
-		private string _numberingStyle;
+		private string m_NumberingStyle;
 
-		public string NumberingStyle
+		/// <summary>
+		/// Numbering style for senses. If null or empty, no style is used.
+		///
+		/// NumberingStyle is null if no numbering style has ever been selected.
+		/// NumberingStyle is an empty string if a numbering style is selected but then removed.
+		/// </summary>
+		public string NumberingStyle { get; set; }
+
+		/// <summary>
+		/// Returns the numbering style, or null if no numbering style should be used.
+		///
+		/// <see cref="NumberingStyle"/> may contain either null or an empty string to indicate
+		/// that numbering is disabled. An empty string used for reversals' NumberingStyle also
+		/// forces sense numbers to be disabled. This property normalizes both values to null
+		/// to retain the expected behavior for senses.
+		/// </summary>
+		public string NonEmptyNumberingStyle
 		{
-			get
-			{
-				// Handles NumberingStyle for the dictionary and reversal displays.
-				// Both empty string and null mean there is no numbering style to use.
-				// Numbering style will be null if no numbering style has ever been selected.
-				// Numbering style will be an empty string if a numbering style was selected at some point and then turned back off.
-				// Returning an empty string for reversal numbering style forces sense numbers to be turned off too, but null doesn't cause this problem.
-				// Return null if numbering style is empty.
-				return string.IsNullOrEmpty(_numberingStyle)? null : _numberingStyle;
-			}
-			set { _numberingStyle = value; }
+			get => string.IsNullOrEmpty(m_NumberingStyle) ? null : m_NumberingStyle;
+			set => m_NumberingStyle = value;
 		}
 
 		// Example values: ""->none; %j->Joined; %.->Separated by dot
