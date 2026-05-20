@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AdvancedEntry.Avalonia</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.LexText.AdvancedEntry.Avalonia</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <OutputType>WinExe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="bodong.Avalonia.PropertyGrid" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <!-- For alignment with FieldWorks diagnostics and LCM integration (future tasks) -->
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <!-- LCModel-first editing (LcmCache + LexEntry domain types) -->
+    <PackageReference Include="SIL.LCModel" />
+    <PackageReference Include="SIL.LCModel.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\FwAvalonia\FwAvalonia.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SDK-style projects include **\*.cs by default; exclude the colocated test project sources. -->
+    <Compile Remove="AdvancedEntry.Avalonia.Tests\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

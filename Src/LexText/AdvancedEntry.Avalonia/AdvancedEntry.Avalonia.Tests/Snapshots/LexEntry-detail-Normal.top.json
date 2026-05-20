@@ -1,0 +1,175 @@
+{
+  "Layout": "layout:LexEntry/detail/Normal",
+  "Nodes": [
+    {
+      "StableNodeId": "LexEntry/detail/Normal:part:ChangeHandler",
+      "Ref": "ChangeHandler",
+      "Kind": "PresentationUnknown",
+      "FocusOrder": 0,
+      "Label": "ChangeHandler",
+      "Field": null,
+      "Binding": {
+        "RootClass": "LexEntry",
+        "ClassId": null,
+        "Flid": null,
+        "ObjectId": null
+      },
+      "EditorKind": "unknown",
+      "WritingSystem": null,
+      "Layout": null,
+      "Ghost": {
+        "Present": false,
+        "GhostField": null,
+        "GhostWritingSystem": null,
+        "GhostLabel": null,
+        "GhostClass": null,
+        "GhostInitMethod": null
+      },
+      "Visibility": {
+        "Kind": "Always",
+        "Expression": null
+      },
+      "Accessibility": {
+        "Id": "advanced-entry:LexEntry/detail/Normal:part:ChangeHandler",
+        "Name": "ChangeHandler",
+        "Role": "unknown"
+      }
+    },
+    {
+      "StableNodeId": "LexEntry/detail/Normal:part:LexemeForm",
+      "Ref": "LexemeForm",
+      "Kind": "PresentationObject",
+      "FocusOrder": 1,
+      "Label": "Lexeme Form",
+      "Field": "LexemeForm",
+      "Binding": {
+        "RootClass": "LexEntry",
+        "ClassId": null,
+        "Flid": null,
+        "ObjectId": null
+      },
+      "EditorKind": "object",
+      "WritingSystem": null,
+      "Layout": "AsLexemeFormBasic",
+      "Ghost": {
+        "Present": true,
+        "GhostField": "Form",
+        "GhostWritingSystem": "vernacular",
+        "GhostLabel": "Lexeme Form",
+        "GhostClass": "MoStemAllomorph",
+        "GhostInitMethod": "SetMorphTypeToRoot"
+      },
+      "Visibility": {
+        "Kind": "Always",
+        "Expression": null
+      },
+      "Accessibility": {
+        "Id": "advanced-entry:LexEntry/detail/Normal:part:LexemeForm",
+        "Name": "Lexeme Form",
+        "Role": "object"
+      }
+    },
+    {
+      "StableNodeId": "LexEntry/detail/Normal:part:CitationFormAllV",
+      "Ref": "CitationFormAllV",
+      "Kind": "PresentationField",
+      "FocusOrder": 2,
+      "Label": "Citation Form",
+      "Field": "CitationForm",
+      "Binding": {
+        "RootClass": "LexEntry",
+        "ClassId": null,
+        "Flid": null,
+        "ObjectId": null
+      },
+      "EditorKind": "field",
+      "WritingSystem": null,
+      "Layout": null,
+      "Ghost": {
+        "Present": false,
+        "GhostField": null,
+        "GhostWritingSystem": null,
+        "GhostLabel": null,
+        "GhostClass": null,
+        "GhostInitMethod": null
+      },
+      "Visibility": {
+        "Kind": "Always",
+        "Expression": null
+      },
+      "Accessibility": {
+        "Id": "advanced-entry:LexEntry/detail/Normal:part:CitationFormAllV",
+        "Name": "Citation Form",
+        "Role": "field"
+      }
+    },
+    {
+      "StableNodeId": "LexEntry/detail/Normal:part:Pronunciations",
+      "Ref": "Pronunciations",
+      "Kind": "PresentationSequence",
+      "FocusOrder": 8,
+      "Label": "Pronunciations",
+      "Field": "Pronunciations",
+      "Binding": {
+        "RootClass": "LexEntry",
+        "ClassId": null,
+        "Flid": null,
+        "ObjectId": null
+      },
+      "EditorKind": "sequence",
+      "WritingSystem": null,
+      "Layout": "Normal",
+      "Ghost": {
+        "Present": true,
+        "GhostField": "Form",
+        "GhostWritingSystem": "pronunciation",
+        "GhostLabel": "Pronunciation",
+        "GhostClass": null,
+        "GhostInitMethod": null
+      },
+      "Visibility": {
+        "Kind": "IfData",
+        "Expression": null
+      },
+      "Accessibility": {
+        "Id": "advanced-entry:LexEntry/detail/Normal:part:Pronunciations",
+        "Name": "Pronunciations",
+        "Role": "sequence"
+      }
+    },
+    {
+      "StableNodeId": "LexEntry/detail/Normal:part:Senses",
+      "Ref": "Senses",
+      "Kind": "PresentationSequence",
+      "FocusOrder": 21,
+      "Label": "Senses",
+      "Field": "Senses",
+      "Binding": {
+        "RootClass": "LexEntry",
+        "ClassId": null,
+        "Flid": null,
+        "ObjectId": null
+      },
+      "EditorKind": "sequence",
+      "WritingSystem": null,
+      "Layout": "Normal",
+      "Ghost": {
+        "Present": false,
+        "GhostField": null,
+        "GhostWritingSystem": null,
+        "GhostLabel": null,
+        "GhostClass": null,
+        "GhostInitMethod": null
+      },
+      "Visibility": {
+        "Kind": "Always",
+        "Expression": null
+      },
+      "Accessibility": {
+        "Id": "advanced-entry:LexEntry/detail/Normal:part:Senses",
+        "Name": "Senses",
+        "Role": "sequence"
+      }
+    }
+  ]
+}
