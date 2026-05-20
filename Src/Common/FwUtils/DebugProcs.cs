@@ -13,6 +13,58 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
+#if DEBUG
+	internal interface IDebugReportTransport : IDisposable
+	{
+		void SetSink(IDebugReportSink sink);
+		void ClearSink();
+	}
+
+	internal sealed class ComDebugReportTransport : IDebugReportTransport
+	{
+		private IDebugReport m_debugReport;
+
+		private ComDebugReportTransport(IDebugReport debugReport)
+		{
+			m_debugReport = debugReport;
+		}
+
+		internal static IDebugReportTransport Create()
+		{
+			if (!Platform.IsWindows)
+				return null;
+
+			// Reg-free COM activation: prefer CLSID over ProgID (ProgID would require registry).
+			var clsidDebugReport = new Guid("24636FD1-DB8D-4B2C-B4C0-44C2592CA482");
+			var comType = Type.GetTypeFromCLSID(clsidDebugReport, throwOnError: false);
+			if (comType == null)
+				return null;
+
+			var debugReport = Activator.CreateInstance(comType) as IDebugReport;
+			return debugReport == null ? null : new ComDebugReportTransport(debugReport);
+		}
+
+		public void SetSink(IDebugReportSink sink)
+		{
+			m_debugReport.SetSink(sink);
+		}
+
+		public void ClearSink()
+		{
+			m_debugReport.ClearSink();
+		}
+
+		public void Dispose()
+		{
+			if (m_debugReport == null)
+				return;
+
+			Marshal.ReleaseComObject(m_debugReport);
+			m_debugReport = null;
+		}
+	}
+#endif
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Debugging helper methods. Accesses the unmanaged C++ DebugProcs.dll
@@ -22,7 +74,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #if DEBUG
 		, IDebugReportSink
 	{
-		private IDebugReport m_DebugReport;
+		private IDebugReportTransport m_debugReportTransport;
 #else
 	{
 #endif
@@ -35,44 +87,44 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public DebugProcs()
-		{
 #if DEBUG
+			: this(ComDebugReportTransport.Create)
+#endif
+		{
+		}
+
+#if DEBUG
+		internal DebugProcs(Func<IDebugReportTransport> createTransport)
+		{
 			try
 			{
-				m_DebugReport = TryCreateDebugReport();
-				m_DebugReport?.SetSink(this);
+				m_debugReportTransport = createTransport();
+				m_debugReportTransport?.SetSink(this);
 			}
 			catch (COMException ex)
 			{
 				Debug.WriteLine($"DebugProcs: DebugReport COM activation failed ({ex.Message})");
-				m_DebugReport = null;
+				DisposeTransportAfterFailedConstruction();
 			}
 			catch (InvalidCastException ex)
 			{
 				Debug.WriteLine($"DebugProcs: DebugReport COM activation returned unexpected type ({ex.Message})");
-				m_DebugReport = null;
+				DisposeTransportAfterFailedConstruction();
 			}
 			catch (Exception ex)
 			{
 				Debug.WriteLine($"DebugProcs: unexpected failure wiring DebugReport ({ex.Message})");
-				m_DebugReport = null;
+				DisposeTransportAfterFailedConstruction();
 			}
-#endif
 		}
 
-#if DEBUG
-		private static IDebugReport TryCreateDebugReport()
+		private void DisposeTransportAfterFailedConstruction()
 		{
-			if (!Platform.IsWindows)
-				return null;
+			if (m_debugReportTransport == null)
+				return;
 
-			// Reg-free COM activation: prefer CLSID over ProgID (ProgID would require registry).
-			var clsidDebugReport = new Guid("24636FD1-DB8D-4B2C-B4C0-44C2592CA482");
-			var comType = Type.GetTypeFromCLSID(clsidDebugReport, throwOnError: false);
-			if (comType == null)
-				return null;
-
-			return Activator.CreateInstance(comType) as IDebugReport;
+			m_debugReportTransport.Dispose();
+			m_debugReportTransport = null;
 		}
 #endif
 
@@ -155,18 +207,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// Dispose managed resources here.
 #if DEBUG
-				if (m_DebugReport != null)
-					m_DebugReport.ClearSink();
+				if (m_debugReportTransport != null)
+					m_debugReportTransport.ClearSink();
 #endif
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 #if DEBUG
-			if (m_DebugReport != null)
+			if (m_debugReportTransport != null)
 			{
-					//m_DebugReport.ClearSink();
-				Marshal.ReleaseComObject(m_DebugReport);
-				m_DebugReport = null;
+				m_debugReportTransport.Dispose();
+				m_debugReportTransport = null;
 			}
 #endif
 

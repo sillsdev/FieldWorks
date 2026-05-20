@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ECInterfaces;
-using SilEncConverters40;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
@@ -42,7 +41,7 @@ namespace ParatextImport
 		private bool m_seenIdInFile;
 		private int m_lineNumber;
 		/// <summary></summary>
-		protected IEncConverters m_encConverters;
+		private IEncodingConverterProvider m_encodingConverterProvider;
 		private Dictionary<string, IEncConverter> m_wsIdToConverterMap = new Dictionary<string, IEncConverter>();
 
 		// List of inline markers (begin and end)
@@ -72,6 +71,13 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public SCTextEnum(IScrImportSet settings, ImportDomain domain,
 			BCVRef startRef, BCVRef endRef, IEncConverters encConverters)
+			: this(settings, domain, startRef, endRef,
+				encConverters == null ? null : new EncodingConverterProvider(encConverters))
+		{
+		}
+
+		internal SCTextEnum(IScrImportSet settings, ImportDomain domain,
+			BCVRef startRef, BCVRef endRef, IEncodingConverterProvider encodingConverterProvider)
 		{
 			m_settings = settings;
 			m_domain = domain;
@@ -79,8 +85,7 @@ namespace ParatextImport
 			m_endRef = new BCVRef(endRef);
 			m_mappingSet = m_settings.GetMappingSetForDomain(domain);
 
-			// Gets the set of encoding converters
-			m_encConverters = encConverters;
+			m_encodingConverterProvider = encodingConverterProvider;
 
 			// make a list of all of the begin and end markers for inline markers
 			// Also build the map of encoding converters
@@ -460,10 +465,17 @@ namespace ParatextImport
 			IEncConverter converter = null;
 			if (!string.IsNullOrEmpty(ws.LegacyMapping))
 			{
-				EnsureEncConvertersInitialized();
 				try
 				{
-					converter = m_encConverters[ws.LegacyMapping];
+					EnsureEncodingConverterProviderInitialized();
+					converter = m_encodingConverterProvider.GetConverter(ws.LegacyMapping);
+				}
+				catch (DirectoryNotFoundException ex)
+				{
+					string message = string.Format(ScriptureUtilsException.GetResourceString(
+						"kstidEncConverterInitError"), ex.Message);
+					throw new EncodingConverterException(message,
+						"/Beginning_Tasks/Import_Standard_Format/Unable_to_Import/Encoding_converter_not_found.htm");
 				}
 				catch
 				{
@@ -483,22 +495,12 @@ namespace ParatextImport
 			return converter;
 		}
 
-		private void EnsureEncConvertersInitialized()
+		private void EnsureEncodingConverterProviderInitialized()
 		{
-			if (m_encConverters != null)
+			if (m_encodingConverterProvider != null)
 				return;
 
-			try
-			{
-				m_encConverters = new EncConverters();
-			}
-			catch (DirectoryNotFoundException ex)
-			{
-				string message = string.Format(ScriptureUtilsException.GetResourceString(
-					"kstidEncConverterInitError"), ex.Message);
-				throw new EncodingConverterException(message,
-					"/Beginning_Tasks/Import_Standard_Format/Unable_to_Import/Encoding_converter_not_found.htm");
-			}
+			m_encodingConverterProvider = new EncodingConverterProvider();
 		}
 
 		/// ------------------------------------------------------------------------------------

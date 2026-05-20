@@ -285,6 +285,7 @@ Assessment:
 
 - This still looks like a real dependency, not dead code.
 - It is not a good first candidate for ripping out directly because the product still constructs and ships around it.
+- The first Paratext import slice now uses a FieldWorks-owned `IEncodingConverterProvider`; remaining workflows should migrate one at a time.
 
 Removal path:
 

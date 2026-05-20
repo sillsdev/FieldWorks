@@ -71,7 +71,13 @@ The following are marked optional until clarified:
 - changing picture creation/lifetime or `VwDrawRootBuffered` defaults;
 - narrowing `UnknownProp` usage beyond documentation and local managed wrappers.
 
-### 6. Historical provenance checks for removed COM surfaces
+### 6. Implemented first-slice decisions
+
+DebugProcs COM activation is isolated, not replaced, in this change. `Src/Common/FwUtils/DebugProcs.cs` now routes CLSID activation through a debug-only transport seam so construction, failure tolerance, and disposal can be tested without activating real COM.
+
+The first Encoding Converter adapter slice is Paratext import. `SCTextEnum` now depends on a FieldWorks-owned `IEncodingConverterProvider`, while the production adapter remains the only Paratext import code that directly constructs `SilEncConverters40.EncConverters`.
+
+### 7. Historical provenance checks for removed COM surfaces
 
 The first removals were checked against `origin/main` history so that the decision is based on why the COM existed, not only on current branch diffs.
 
@@ -106,6 +112,4 @@ The first removals were checked against `origin/main` history so that the decisi
 
 1. Is `ManagedLgIcuCollator` CLSID compatibility required for any out-of-repo automation or extension?
 2. Is FieldWorks now source-level Windows-only, or only product-runtime Windows-only?
-3. For DebugProcs, should this change isolate debug-only COM or attempt replacement through native exports?
-4. Which Encoding Converter workflow should be the first adapter slice: Paratext import, writing-system setup, converter tester, bulk edit, or interlinear import?
-5. Should picture creation centralization and `UnknownProp` narrowing remain follow-up proposals rather than optional tasks in this change?
+3. Should picture creation centralization and `UnknownProp` narrowing remain follow-up proposals rather than optional tasks in this change?

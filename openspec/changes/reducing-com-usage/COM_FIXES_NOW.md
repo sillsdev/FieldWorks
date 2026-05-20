@@ -117,7 +117,7 @@ Conservative alternate:
 - Windows-only,
 - and debug-only.
 
-The current code explicitly creates a COM object by CLSID through `Type.GetTypeFromCLSID` and `Activator.CreateInstance`. That means it is still paying COM activation cost and manifest/build coordination for a non-production feature.
+Before this change, `DebugProcs` directly created a COM object by CLSID through `Type.GetTypeFromCLSID` and `Activator.CreateInstance`. The implemented first slice keeps that safe default behavior but contains it inside a debug-only transport seam.
 
 This is good cleanup terrain because it is isolated and low consequence compared with runtime editing or rendering.
 
@@ -169,6 +169,12 @@ Best alternate if full removal is not worth it:
 - but confine it to one implementation class and explicitly document it as accepted debug-only interop.
 
 That still improves the architecture because COM stops leaking into general managed code.
+
+Implemented first slice:
+
+- `DebugProcs` construction now uses an injectable `IDebugReportTransport` seam.
+- The default transport still activates the existing `DebugReport` CLSID in Debug builds.
+- Focused tests cover failed transport creation and idempotent disposal without requiring real COM activation.
 
 ## 3. Retire `ViewInputManager` and `ManagedVwWindow` if Windows-First Is Official
 
@@ -299,7 +305,6 @@ This does not remove COM immediately, but it is the most realistic first move ag
 
 Current product code still constructs or consumes `EncConverters` directly in places such as:
 
-- `Src/ParatextImport/SCTextEnum.cs`
 - `Src/FwCoreDlgs/FwWritingSystemSetupModel.cs`
 - `Src/FwCoreDlgs/ConverterTester.cs`
 
@@ -350,6 +355,12 @@ Narrower alternate if time is tight:
 - or centralize `EncConverters` creation in one factory first without introducing the full abstraction everywhere.
 
 That still buys a useful seam.
+
+Implemented first slice:
+
+- Paratext import now routes `SCTextEnum` converter lookup through `IEncodingConverterProvider`.
+- `EncodingConverterProvider` is the only Paratext import code that directly constructs `SilEncConverters40.EncConverters`.
+- Existing `SCTextEnum` missing-converter behavior is preserved and covered with the provider-seam test.
 
 ## 6. Prune Reg-Free Build Plumbing as Each Optional COM Surface Disappears
 

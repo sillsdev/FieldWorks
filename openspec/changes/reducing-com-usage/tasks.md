@@ -29,7 +29,7 @@
 
 - [x] 4.1 For each removed optional COM class, update all manifest/build inputs in the same PR: `Build/RegFree.targets`, `Build/mkall.targets`, and `Src/Common/FieldWorks/BuildInclude.targets` where applicable. [Build, ongoing]
 - [x] 4.2 Add a test assertion that the removed `ManagedLgIcuCollator` CLSID no longer appears in generated `clrClass` entries. [Build/test, <=2h]
-- [ ] 4.3 Pending clean generated-manifest scan/diff after removing stale ignored manifest outputs; verify only targeted optional CLSIDs disappeared. [Validation]
+- [x] 4.3 Clean generated-manifest scan after removing stale ignored manifest outputs; removed `ManagedLgIcuCollator` CLSID now appears only in docs/tests, not generated manifests. [Validation]
 - [x] 4.4 Run `.\build.ps1` or the narrow approved build target needed to regenerate and validate reg-free manifests. [Validation]
 
 ## 5. Required If Characterization Confirms: Remove Dormant OLE Clipboard Cleanup
@@ -42,28 +42,28 @@
 
 ## 6. Required First Slice: Isolate DebugProcs COM Activation
 
-- [ ] 6.1 Add tests around `DebugProcs` construction/disposal failure tolerance and idempotent disposal without requiring real COM activation. [Managed test, <=2h]
-- [ ] 6.2 Introduce a tiny debug-report transport abstraction in `Src/Common/FwUtils/DebugProcs.cs`. [Managed C#, <=2h]
-- [ ] 6.3 Move current CLSID activation behind that abstraction as the safe default implementation. [Managed C#, <=1h]
-- [ ] 6.4 If task 1.3 selects replacement, implement a non-COM debug transport as a separate optional task after isolation is tested. [Optional, managed/native]
-- [ ] 6.5 Run `.\test.ps1 -TestProject FwUtilsTests -TestFilter "FullyQualifiedName~DebugProcs"`; if native debug code changes, also run `.\test.ps1 -SkipManaged -TestProject TestViews`. [Validation]
+- [x] 6.1 Add tests around `DebugProcs` construction/disposal failure tolerance and idempotent disposal without requiring real COM activation. [Managed test, <=2h]
+- [x] 6.2 Introduce a tiny debug-report transport abstraction in `Src/Common/FwUtils/DebugProcs.cs`. [Managed C#, <=2h]
+- [x] 6.3 Move current CLSID activation behind that abstraction as the safe default implementation. [Managed C#, <=1h]
+- [x] 6.4 Not selected for this change: non-COM debug transport replacement is deferred; COM remains isolated behind the debug-only transport. [Optional, managed/native]
+- [x] 6.5 Run `.\test.ps1 -TestProject FwUtilsTests -TestFilter "FullyQualifiedName~DebugProcs"`; native debug code was not changed, so `TestViews` is not required for this slice. [Validation]
 
 ## 7. Required First Slice: Encoding Converter Adapter Seam
 
-- [ ] 7.1 Define a narrow FieldWorks-owned Encoding Converter provider/service interface for the selected first workflow. [Managed C#, <=2h]
-- [ ] 7.2 Implement the production adapter using existing `SilEncConverters40` / `encoding-converters-core`; do not add a replacement package. [Managed C#, <=2h]
-- [ ] 7.3 Replace direct `new EncConverters()` in the selected first workflow only. [Managed C#, <=2h]
-- [ ] 7.4 Add mocked adapter tests using existing Moq/NUnit patterns. [Managed test, <=2h]
-- [ ] 7.5 Run workflow-specific tests for the selected slice, such as `ParatextImportTests`, `FwCoreDlgsTests`, `ITextDllTests`, or `XMLViewsTests`. [Validation]
+- [x] 7.1 Define a narrow FieldWorks-owned Encoding Converter provider/service interface for the selected first workflow. [Managed C#, <=2h]
+- [x] 7.2 Implement the production adapter using existing `SilEncConverters40` / `encoding-converters-core`; do not add a replacement package. [Managed C#, <=2h]
+- [x] 7.3 Replace direct `new EncConverters()` in the selected first workflow only. [Managed C#, <=2h]
+- [x] 7.4 Add mocked adapter tests using existing Moq/NUnit patterns. [Managed test, <=2h]
+- [x] 7.5 Run workflow-specific tests for the selected slice: `.\test.ps1 -TestProject ParatextImportTests`. [Validation]
 
-## 8. Optional / Risky: Windows-First Shim Removal
+## 8. Deferred Optional / Risky: Windows-First Shim Removal
 
 - [ ] 8.1 Optional: If task 1.2 confirms source-level Windows-only support, remove `ViewInputManager` COM activation and source/build/manifest entries. [Optional, native/managed/build]
 - [ ] 8.2 Optional: If task 1.2 confirms source-level Windows-only support, remove `ManagedVwWindow` source/build/manifest entries. [Optional, native/managed/build]
 - [ ] 8.3 Optional validation: run `.\test.ps1 -SkipManaged -TestProject TestViews`; while the project still exists, run `.\test.ps1 -TestProject ManagedVwWindowTests`. [Optional validation]
 - [ ] 8.4 Manual smoke: edit text in a RootSite field, move selection, use PageUp/PageDown, and test IME/composition if available to verify Windows remains on `VwTextStore`. [Manual validation]
 
-## 9. Optional / Risky Follow-Ups to Keep Out of First PRs
+## 9. Deferred Optional / Risky Follow-Ups to Keep Out of First PRs
 
 - [ ] 9.1 Optional: Centralize picture creation/lifetime rules without removing the `IPicture` ABI. [Optional, rendering-adjacent]
 - [ ] 9.2 Optional: Evaluate `ManagedVwDrawRootBuffered` COM visibility only after render parity validation; do not flip rendering defaults in this change. [Optional, rendering]
@@ -72,7 +72,7 @@
 
 ## 10. Final Verification
 
-- [ ] 10.1 Run the narrow tests listed in completed task groups.
-- [ ] 10.2 Run `.\build.ps1` when build/manifest inputs change.
-- [ ] 10.3 Run `.\build.ps1 -BuildTests` or `.\test.ps1` for broader validation before merge if multiple slices land together.
-- [ ] 10.4 Run `.\Build\Agent\check-and-fix-whitespace.ps1` through the VS Code `CI: Whitespace check` task before committing.
+- [x] 10.1 Run the narrow tests listed in completed task groups.
+- [x] 10.2 Run `.\build.ps1` when build/manifest inputs change.
+- [x] 10.3 Run `.\build.ps1 -BuildTests` or `.\test.ps1` for broader validation before merge if multiple slices land together.
+- [x] 10.4 Run `.\Build\Agent\check-and-fix-whitespace.ps1` through the VS Code `CI: Whitespace check` task before committing.

@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using NUnit.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -51,6 +52,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 		#endregion // DummyDebugProcs
 
+		#region FakeDebugReportTransport
+		private sealed class FakeDebugReportTransport : IDebugReportTransport
+		{
+			internal int SetSinkCallCount { get; private set; }
+			internal int ClearSinkCallCount { get; private set; }
+			internal int DisposeCallCount { get; private set; }
+			internal bool ThrowOnSetSink { get; set; }
+
+			public void SetSink(IDebugReportSink sink)
+			{
+				SetSinkCallCount++;
+				if (ThrowOnSetSink)
+					throw new COMException("SetSink failed");
+			}
+
+			public void ClearSink()
+			{
+				ClearSinkCallCount++;
+			}
+
+			public void Dispose()
+			{
+				DisposeCallCount++;
+			}
+		}
+		#endregion // FakeDebugReportTransport
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable truncated to the correct length
@@ -69,6 +97,48 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				return exeName.ToString();
 			}
+		}
+
+		[Test]
+		public void Constructor_TransportFactoryThrows_DoesNotThrow()
+		{
+			DebugProcs debugProcs = null;
+
+			Assert.DoesNotThrow(() => debugProcs = new DebugProcs(() =>
+			{
+				throw new COMException("DebugReport unavailable");
+			}));
+			Assert.That(debugProcs, Is.Not.Null);
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+		}
+
+		[Test]
+		public void Constructor_SetSinkThrows_DisposesTransport()
+		{
+			var transport = new FakeDebugReportTransport { ThrowOnSetSink = true };
+			DebugProcs debugProcs = null;
+
+			Assert.DoesNotThrow(() => debugProcs = new DebugProcs(() => transport));
+
+			Assert.That(transport.SetSinkCallCount, Is.EqualTo(1));
+			Assert.That(transport.DisposeCallCount, Is.EqualTo(1));
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+		}
+
+		[Test]
+		public void Dispose_InjectedTransport_ClearsSinkAndDisposesOnce()
+		{
+			var transport = new FakeDebugReportTransport();
+			var debugProcs = new DebugProcs(() => transport);
+
+			Assert.That(transport.SetSinkCallCount, Is.EqualTo(1));
+			debugProcs.Dispose();
+			debugProcs.Dispose();
+
+			Assert.That(transport.ClearSinkCallCount, Is.EqualTo(1));
+			Assert.That(transport.DisposeCallCount, Is.EqualTo(1));
+			Assert.That(debugProcs.IsDisposed, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------

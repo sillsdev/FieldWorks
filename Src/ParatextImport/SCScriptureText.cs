@@ -3,9 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.IO;
-using ECInterfaces;
-using SilEncConverters40;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 
@@ -22,7 +19,7 @@ namespace ParatextImport
 		protected IScrImportSet m_settings;
 		/// <summary></summary>
 		protected ImportDomain m_domain;
-		private IEncConverters m_encConverters;
+		private IEncodingConverterProvider m_encodingConverterProvider;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -32,10 +29,17 @@ namespace ParatextImport
 		/// <param name="domain">The source domain</param>
 		/// ------------------------------------------------------------------------------------
 		public SCScriptureText(IScrImportSet settings, ImportDomain domain)
+			: this(settings, domain, null)
+		{
+		}
+
+		internal SCScriptureText(IScrImportSet settings, ImportDomain domain,
+			IEncodingConverterProvider encodingConverterProvider)
 		{
 			Debug.Assert(settings != null);
 			m_settings = settings;
 			m_domain = domain;
+			m_encodingConverterProvider = encodingConverterProvider;
 		}
 
 		#region ISCScriptureText Members
@@ -50,7 +54,7 @@ namespace ParatextImport
 		public ISCTextEnum TextEnum(BCVRef firstRef, BCVRef lastRef)
 		{
 			// get the enumerator that will return text segments
-			return new SCTextEnum(m_settings, m_domain, firstRef, lastRef, m_encConverters);
+			return new SCTextEnum(m_settings, m_domain, firstRef, lastRef, m_encodingConverterProvider);
 		}
 		#endregion
 	}
