@@ -187,7 +187,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			string normalized = NormalizeViaIndex(input, "AppData", "AppData");
 			normalized = NormalizeViaIndex(normalized, "TestData", "TestData");
 			normalized = NormalizeViaIndex(normalized, tp, tp);
-			return normalized;
+			return Regex.Replace(normalized, @"[A-Za-z]:\\(?:[^\\\r\n""]+\\)*", "");
 		}
 
 		private static string NormalizeViaIndex(string input, string match, string change)
