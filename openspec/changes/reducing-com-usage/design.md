@@ -65,7 +65,7 @@ Following legacy-code refactoring practice, behavior-sensitive work must first l
 
 The following are marked optional until clarified:
 
-- deleting `ViewInputManager` and `ManagedVwWindow` source paths, because this depends on Windows-only support policy;
+- deleting `ViewInputManager` and `ManagedVwWindow` source paths, now moved to branch `retire-linux-era-view-shims` and OpenSpec change `retire-linux-era-view-shims`;
 - replacing rather than isolating DebugProcs COM activation;
 - replacing the Encoding Converters runtime after the provider crossover;
 - changing picture creation/lifetime or `VwDrawRootBuffered` defaults;
@@ -97,7 +97,7 @@ The first removals were checked against `origin/main` history so that the decisi
 5. Remove dormant OLE clipboard ownership cleanup if characterization confirms it is unused.
 6. Isolate or replace DebugProcs COM activation depending on the chosen alternative.
 7. Add the shared Encoding Converter provider and migrate direct repository construction to it.
-8. Consider optional/risky follow-ups only after explicit decisions and baseline validation.
+8. Consider optional/risky follow-ups only after explicit decisions and baseline validation. `ViewInputManager` and `ManagedVwWindow` retirement is tracked separately in branch `retire-linux-era-view-shims`.
 
 ## Risks / Trade-offs
 
@@ -113,5 +113,5 @@ The first removals were checked against `origin/main` history so that the decisi
 ## Open Questions
 
 1. Is `ManagedLgIcuCollator` CLSID compatibility required for any out-of-repo automation or extension?
-2. Is FieldWorks now source-level Windows-only, or only product-runtime Windows-only?
+2. Is FieldWorks now source-level Windows-only, or only product-runtime Windows-only? This is deferred to the split `retire-linux-era-view-shims` change.
 3. Should picture creation centralization and `UnknownProp` narrowing remain follow-up proposals rather than optional tasks in this change?

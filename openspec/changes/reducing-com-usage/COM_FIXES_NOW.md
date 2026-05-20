@@ -27,7 +27,7 @@ These are real COM dependencies, but they are not good immediate targets:
 | --- | --- | --- | --- |
 | 1 | De-COM `ManagedLgIcuCollator` | Very high confidence, direct managed callers already exist, low user risk | Small |
 | 2 | Remove or isolate `DebugReport` COM usage in managed code | Debug-only, Windows-only, isolated call path | Small to medium |
-| 3 | Retire `ViewInputManager` and `ManagedVwWindow` if Windows-first is official | Looks like non-Windows compatibility scaffolding, not active Windows behavior | Medium, policy-gated |
+| 3 | Retire `ViewInputManager` and `ManagedVwWindow` in the split follow-up | Looks like non-Windows compatibility scaffolding, not active Windows behavior | Moved to branch `retire-linux-era-view-shims` |
 | 4 | Remove dormant OLE clipboard ownership cleanup | The real clipboard path is already managed; the native OLE cleanup looks like legacy carryover | Small |
 | 5 | Introduce a FieldWorks-owned adapter around `SilEncConverters40` | Does not remove COM immediately, but creates the seam needed to do so later | Medium |
 | 6 | Prune reg-free build plumbing as each optional COM surface disappears | Necessary follow-through that turns individual removals into real simplification | Small to medium |
@@ -176,7 +176,11 @@ Implemented first slice:
 - The default transport still activates the existing `DebugReport` CLSID in Debug builds.
 - Focused tests cover failed transport creation and idempotent disposal without requiring real COM activation.
 
-## 3. Retire `ViewInputManager` and `ManagedVwWindow` if Windows-First Is Official
+## 3. Moved Follow-Up: Retire `ViewInputManager` and `ManagedVwWindow`
+
+This work has been split out of the `reduce-com-usage` branch. The published follow-up branch is `retire-linux-era-view-shims`, with the OpenSpec change at `openspec/changes/retire-linux-era-view-shims/` on that branch.
+
+Treat this section as context for the COM cleanup PR only. The current branch should not remove these shims; implementation, validation, and risk tracking live in the split follow-up change.
 
 ### Why this belongs in the now list
 
@@ -477,7 +481,8 @@ If two or three are done, add `DebugReport` cleanup and the clipboard OLE cleanu
 
 If the team wants a slightly larger but still disciplined COM-reduction initiative, pair those with:
 
-- the Windows-first removal of `ViewInputManager` and `ManagedVwWindow`, and
 - the `SilEncConverters40` adapter seam.
+
+The Windows-first removal of `ViewInputManager` and `ManagedVwWindow` is now tracked separately in branch `retire-linux-era-view-shims` so it can proceed with its own native/IDL/manifest validation plan.
 
 That combination reduces real COM surface area, lowers manifest/build complexity, and improves the C# side of the codebase without touching Graphite, RootBox, or other architectural bedrock.

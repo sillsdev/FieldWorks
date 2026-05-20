@@ -10,8 +10,8 @@
 
 namespace SIL.FieldWorks.XWorks.LexEd {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace SIL.FieldWorks.XWorks.LexEd {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexEdStrings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal LexEdStrings() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error exporting LIFT data; could not complete Send/Receive.
         /// </summary>
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("FLExBridgeListener_UndoExport_Error_exporting_LIFT", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LIFT Export failed.
         /// </summary>
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("FLExBridgeListener_UndoExport_LIFT_Export_failed_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GUIDs changed.
         /// </summary>
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("GoldEticGuidFixer_Guids_changed_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Some GUIDs for Parts of Speech that did not match the GOLD standard were found and replaced..
         /// </summary>
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("GoldEticGuidFixer_GuidsChangedContent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use standard Part of Speech GUIDs.
         /// </summary>
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("GoldEticGuidFixer_Label", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No changes were necessary..
         /// </summary>
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("GoldEticGuidFixer_NoChangeContent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No GUIDs changed.
         /// </summary>
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("GoldEticGuidFixer_NoChangeTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to basic.
         /// </summary>
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kBasicFailureFileContents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to FLEx was not able to do the initial import. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the initial import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive..
         /// </summary>
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kBasicImportFailureMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Second Get and Merge not possible.
         /// </summary>
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kCannotDoGetAndMergeAgain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to FLEx Import failure.
         /// </summary>
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kFlexImportFailureTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to FLEx was not able to import the changes received. FLEx Bridge will protect its shared LIFT data from loss by requiring a retry of the import, until it is successful. Retry attempts will start with the next LIFT Send/Receive attempt. Sorry for the inconvenience, but a new version of FLEx will likely be required in order to continue using LIFT Send/Receive..
         /// </summary>
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kFlexStandardImportFailureMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to FieldWorks was unable to import the LIFT file {0} that resulted from merging remote changes. Remote changes have NOT been received into this project. This may indicate corruption of the LIFT file, or possibly a bug in Language Explorer. The following message may provide more details of what went wrong: {1}.
         /// </summary>
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kProblemImportWhileMerging", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Problem merging remote changes.
         /// </summary>
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kProblemMerging", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This project has already been linked to a Lexicon (LIFT) repository. It is not possible to Get and Merge with another Lexicon repository..
         /// </summary>
@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kProjectAlreadyHasLiftRepo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &amp;Add.
         /// </summary>
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ks_Add", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &amp;Link.
         /// </summary>
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ks_Link", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &amp;Move Entry.
         /// </summary>
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ks_MoveEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &amp;Replace.
         /// </summary>
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ks_Replace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add a Complex Form....
         /// </summary>
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAddAComplexForm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add a Component....
         /// </summary>
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAddAComponent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add {0}.
         /// </summary>
@@ -257,7 +257,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAddParticipants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Also removing empty Complex Form Info from {0}.
         /// </summary>
@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAlsoEmptyComplexFormInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alternate Forms.
         /// </summary>
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAlternateForms", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always visible.
         /// </summary>
@@ -284,7 +284,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksAlwaysVisible", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove circular references to complex forms.
         /// </summary>
@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksBreakCircularRefs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want)..
         /// </summary>
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCannotRedoConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database (i.e., make a backup of your database before running this utility so you can restore to it if the results are not what you want)..
         /// </summary>
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCannotRedoConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Category to merge into.
         /// </summary>
@@ -320,7 +320,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCategoryToMergeInto", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Category to move to.
         /// </summary>
@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCategoryToMoveTo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose Subentries to display in Root-based views.
         /// </summary>
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksChooseSubentries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose Complex Forms to display in Lexeme-based views.
         /// </summary>
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksChooseVisibleComplexForms", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose where to show subentry.
         /// </summary>
@@ -356,7 +356,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksChooseWhereToShowSubentry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Circular Reference Fixed.
         /// </summary>
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCircularRefsFixed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Warning!.
         /// </summary>
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseCaption", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The environment will be lost! Do you still want to continue?.
         /// </summary>
@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseEnv", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The environment and some grammatical information will be lost! Do you still want to continue?.
         /// </summary>
@@ -392,7 +392,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseEnvGramInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The environment and infix position will be lost! Do you still want to continue?.
         /// </summary>
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseEnvInfixLoc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The environment, infix position, and some grammatical information will be lost! Do you still want to continue?.
         /// </summary>
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseEnvInfixLocGramInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Some grammatical information will be lost! Do you still want to continue?.
         /// </summary>
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseGramInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The infix position will be lost! Do you still want to continue?.
         /// </summary>
@@ -428,7 +428,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseInfixLoc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The infix position and some grammatical information will be lost! Do you still want to continue?.
         /// </summary>
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseInfixLocGramInfo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The affix process rule will be lost! Do you still want to continue?.
         /// </summary>
@@ -446,7 +446,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertFormLoseRule", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Convert variant types to irregularly inflected form variant types.
         /// </summary>
@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Convert irregularly inflected form variant types to variant types.
         /// </summary>
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create New Lexical Relation....
         /// </summary>
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCreateLexRefType_", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create Reversal.
         /// </summary>
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksCreateReversal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete Entries and Senses that are not used in interlinear.
         /// </summary>
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntriesSenses", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to After a confirmation warning, this will delete all entries and senses that are not referenced in the current set of filtered interlinear texts..
         /// </summary>
@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntriesSensesDoes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always back up your project before using this. This will delete all of your entries and senses if you have not done any interlinearization, and can delete a large number if you have done minimal interlinearization. It cannot be undone. It will warn you about the number of entries that will be deleted and give you a chance to stop without deletions..
         /// </summary>
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntriesSensesWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use this when you want to have a lexicon that is limited to entries and senses that are used in one or more filtered interlinear texts..
         /// </summary>
@@ -518,7 +518,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntriesSensesWhen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are about to delete {0} lexical entries. Do you want to continue?.
         /// </summary>
@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntrySenseConfirmText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete Entries Confirmation.
         /// </summary>
@@ -536,7 +536,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteEntrySenseConfirmTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Note: this will remove this entire {0} reference set tree..
         /// </summary>
@@ -545,7 +545,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteLexTree", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Note: the listed references will still be {0} related in a .
         /// </summary>
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteSequenceCollectionA", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  relation..
         /// </summary>
@@ -563,7 +563,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeleteSequenceCollectionB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are deleting the following Reversal Index:.
         /// </summary>
@@ -572,7 +572,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksDeletingThisRevIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit {0}.
         /// </summary>
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksEditX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to That project already exists. Please choose a different name in Project Properties..
         /// </summary>
@@ -590,7 +590,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksExistingProjectName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Field Visibility.
         /// </summary>
@@ -599,7 +599,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksFieldVisibility", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Find:.
         /// </summary>
@@ -608,7 +608,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksFind_", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Concordance.
         /// </summary>
@@ -617,7 +617,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksFindExampleSentenceDlgBrowseViewPaneTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sentence with Translations.
         /// </summary>
@@ -626,7 +626,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksFindExampleSentenceDlgPreviewPaneTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Found {0} circular references in {1} entry references.
         /// </summary>
@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksFoundNCircularReferences", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to go back to a previously saved version of the database..
         /// </summary>
@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksGenericUtilityCannotUndo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Help....
         /// </summary>
@@ -653,7 +653,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksHelp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Normally hidden, unless non-empty.
         /// </summary>
@@ -662,7 +662,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksHiddenUnlessData", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Reference.
         /// </summary>
@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifyRecord", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Identify sense.
         /// </summary>
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifySense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
@@ -689,7 +689,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifyXEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
@@ -698,7 +698,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifyXLexEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
@@ -707,7 +707,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifyXLexEntryOrSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add Reference ({0}).
         /// </summary>
@@ -716,7 +716,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksIdentifyXSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}/{1} relation.
         /// </summary>
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksLexRelation2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select.
         /// </summary>
@@ -734,7 +734,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksMakeComponentOf", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Move Reversal Entry.
         /// </summary>
@@ -743,7 +743,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksMoveRevEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You must select one to create..
         /// </summary>
@@ -752,7 +752,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksMustSelectOne", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Normally hidden.
         /// </summary>
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksNormallyHidden", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete this Reversal Index?.
         /// </summary>
@@ -770,7 +770,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksReallyWantToDeleteRevIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reassign Homographs.
         /// </summary>
@@ -779,7 +779,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksReassignHomographs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The homograph numbers are currently based on {0}. Do you want to update the homograph numbers to be based on the current default vernacular writing system, {1}?.
         /// </summary>
@@ -788,7 +788,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksReassignHomographsCaution", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Recreate Reversal.
         /// </summary>
@@ -797,7 +797,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRecreateReversal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Complex Form.
         /// </summary>
@@ -806,7 +806,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddComplexForm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Add Component.
         /// </summary>
@@ -815,7 +815,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddComponent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Add Examples.
         /// </summary>
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddExamples", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Add {0}.
         /// </summary>
@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddParticipants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Add Reference.
         /// </summary>
@@ -842,7 +842,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Add Reversal Entry to Sense.
         /// </summary>
@@ -851,7 +851,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoAddRevToSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Bulk Edit Reversal Entry POS.
         /// </summary>
@@ -860,7 +860,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoBulkEditRevPOS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Convert variant types to irregularly inflected form variant types.
         /// </summary>
@@ -869,7 +869,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Convert irregularly inflected form variant types to variant types.
         /// </summary>
@@ -878,7 +878,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Create Reversal Index.
         /// </summary>
@@ -887,7 +887,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoCreateReversalIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Creating Entry.
         /// </summary>
@@ -896,7 +896,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoCreatingEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Delete.
         /// </summary>
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDelete", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Delete Participants.
         /// </summary>
@@ -914,7 +914,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDeleteParticipants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reference.
         /// </summary>
@@ -923,7 +923,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Delete Relation.
         /// </summary>
@@ -932,7 +932,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDeleteRelation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reversal Entry from Sense.
         /// </summary>
@@ -941,7 +941,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDeleteRevFromSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Demote.
         /// </summary>
@@ -950,7 +950,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoDemote", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Edit Function.
         /// </summary>
@@ -959,7 +959,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoEditFunction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Edit Reference Set Details.
         /// </summary>
@@ -968,7 +968,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoEditRefSetDetails", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Reassign Homographs.
         /// </summary>
@@ -977,7 +977,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoHomographWs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Insert Lexical Reference Type.
         /// </summary>
@@ -986,7 +986,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoInsertLexRefType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo {0}.
         /// </summary>
@@ -995,7 +995,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoInsertRelation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Merge Reversal Category.
         /// </summary>
@@ -1004,7 +1004,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoMergeRevCategory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Move Reversal Category.
         /// </summary>
@@ -1013,7 +1013,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoMoveRevCategory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Move Reversal Entry.
         /// </summary>
@@ -1022,7 +1022,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoMoveRevEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Promote.
         /// </summary>
@@ -1031,7 +1031,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoPromote", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Replace Reference.
         /// </summary>
@@ -1040,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoReplaceRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Set Reversal Entries.
         /// </summary>
@@ -1049,7 +1049,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoSetRevEntries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redo Variant Of.
         /// </summary>
@@ -1058,7 +1058,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRedoVariantOf", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Removing {0} as component lexeme for {1}.
         /// </summary>
@@ -1067,7 +1067,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Replace Reference.
         /// </summary>
@@ -1076,7 +1076,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksReplaceXEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Send/Receive not permitted.
         /// </summary>
@@ -1085,7 +1085,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSendReceiveNotPermittedMultipleAppsCaption", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Send/Receive cannot be performed when there are other applications using this project. Please close all other applications that are using this project before continuing..
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSendReceiveNotPermittedMultipleAppsText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Senses.
         /// </summary>
@@ -1103,7 +1103,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSenses", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Set Reversal.
         /// </summary>
@@ -1112,7 +1112,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSetReversal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show in Reversal Index (Ctrl-Click).
         /// </summary>
@@ -1121,7 +1121,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksShowInReversalIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ***.
         /// </summary>
@@ -1130,7 +1130,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksStars", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Swap Lexeme Form with Allomorph.
         /// </summary>
@@ -1139,7 +1139,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSwapLexWithAllo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Swap: &quot;{0}&quot;{2}With: &quot;{1}&quot;.
         /// </summary>
@@ -1148,7 +1148,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksSwapXWithY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to standard.
         /// </summary>
@@ -1157,7 +1157,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("kStandardFailureFileContents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Try this tool if Language Explorer disappears or produces a &quot;FieldWorks has stopped working&quot; dialog when you try to view the Dictionary..
         /// </summary>
@@ -1166,7 +1166,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksTryIfProgramGoesPoof", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Complex Form.
         /// </summary>
@@ -1175,7 +1175,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddComplexForm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Component.
         /// </summary>
@@ -1184,7 +1184,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddComponent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Examples.
         /// </summary>
@@ -1193,7 +1193,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddExamples", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add {0}.
         /// </summary>
@@ -1202,7 +1202,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddParticipants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Reference.
         /// </summary>
@@ -1211,7 +1211,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Reversal Entry to Sense.
         /// </summary>
@@ -1220,7 +1220,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoAddRevToSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Bulk Edit Reversal Entry POS.
         /// </summary>
@@ -1229,7 +1229,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoBulkEditRevPOS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Convert variant types to irregularly inflected form variant types.
         /// </summary>
@@ -1238,7 +1238,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Convert irregularly inflected form variant types to variant types.
         /// </summary>
@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Create Reversal Index.
         /// </summary>
@@ -1256,7 +1256,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoCreateReversalIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Creating Entry.
         /// </summary>
@@ -1265,7 +1265,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoCreatingEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Delete.
         /// </summary>
@@ -1274,7 +1274,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDelete", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Delete Participants.
         /// </summary>
@@ -1283,7 +1283,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDeleteParticipants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Delete Reference.
         /// </summary>
@@ -1292,7 +1292,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Delete Relation.
         /// </summary>
@@ -1301,7 +1301,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDeleteRelation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Delete Reversal Entry from Sense.
         /// </summary>
@@ -1310,7 +1310,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDeleteRevFromSense", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Demote.
         /// </summary>
@@ -1319,7 +1319,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoDemote", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Edit Function.
         /// </summary>
@@ -1328,7 +1328,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoEditFunction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Edit Reference Set Details.
         /// </summary>
@@ -1337,7 +1337,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoEditRefSetDetails", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Reassign Homographs.
         /// </summary>
@@ -1346,7 +1346,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoHomographWs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Insert Lexical Reference Type.
         /// </summary>
@@ -1355,7 +1355,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoInsertLexRefType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo {0}.
         /// </summary>
@@ -1364,7 +1364,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoInsertRelation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Merge Reversal Category.
         /// </summary>
@@ -1373,7 +1373,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoMergeRevCategory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Move Reversal Category.
         /// </summary>
@@ -1382,7 +1382,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoMoveRevCategory", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Move Reversal Entry.
         /// </summary>
@@ -1391,7 +1391,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoMoveRevEntry", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Promote.
         /// </summary>
@@ -1400,7 +1400,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoPromote", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Replace Reference.
         /// </summary>
@@ -1409,7 +1409,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoReplaceRef", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Set Reversal Entries.
         /// </summary>
@@ -1418,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoSetRevEntries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Undo Variant Of.
         /// </summary>
@@ -1427,7 +1427,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksUndoVariantOf", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
@@ -1436,7 +1436,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot use &apos;Undo&apos; to cancel the effect of this utility. You would need to either go back to a previously saved version of the database, or manually reorder the subentries in each reversal entry again..
         /// </summary>
@@ -1445,7 +1445,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Older versions of Language Explorer allowed the user to make two complex form entries claim each other as components.  This is no longer allowed, but older projects can be in this bad state..
         /// </summary>
@@ -1454,7 +1454,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatAreCircularRefs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This utility allows you to select which variant types should be converted to irregularly inflected form variant types, which are a special sub-kind of variant types..
         /// </summary>
@@ -1463,7 +1463,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This utility allows you to select which irregularly inflected form variant types should be converted to variant types (irregularly inflected form variant types are a special sub-kind of variant types)..
         /// </summary>
@@ -1472,7 +1472,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This utility cleans up the homographs numbers of lexical entries. It preserves the current relative order of homographs, so you won&apos;t lose any ordering you have done..
         /// </summary>
@@ -1481,7 +1481,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsReassignHomographs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This utility will make the Part of Speech GUIDs for the project match the GOLD standard..
         /// </summary>
@@ -1490,7 +1490,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsSetPartOfSpeechGUIDsToGold", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This utility will sort the reversal subentries in your data alphabetically..
         /// </summary>
@@ -1499,7 +1499,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhatIsSortReversalSubentries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing variant types to be irregularly inflected form variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
@@ -1508,7 +1508,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToConvertIrregularlyInflectedFormVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you need to convert one or more of your existing irregularly inflected form variant types to be variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as &apos;Append to Gloss&apos;, &apos;Inflection Features&apos;, and &apos;Slots.&apos;.
         /// </summary>
@@ -1517,7 +1517,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToConvertVariants", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when the FieldWorks project has entries with duplicate or missing homograph numbers, or when there are gaps in the homograph number sequences..
         /// </summary>
@@ -1526,7 +1526,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToReassignHomographs", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to If this project was created before FieldWorks version 8.1 and you want to use the data as part of a multi-language query, use this utility to standardize the internal identifiers (GUIDs)..
         /// </summary>
@@ -1535,7 +1535,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToSetPartOfSpeechGUIDsToGold", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run this utility when you want your reversal subentries to be sorted alphabetically (in contrast to a manually chosen order, such as by frequency of use)..
         /// </summary>
@@ -1544,7 +1544,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("ksWhenToSortReversalSubentries", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your last Send/Receive Lexicon did not complete successfully. Any work you do before a successful S/R Lexicon will be lost. You should immediately retry S/R Lexicon. If it completes successfully, you can continue your work. If the S/R Lexicon continues to fail, contact flex_errors@sil.org for help before doing further work..
         /// </summary>
@@ -1553,7 +1553,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("LiftSRFailureDetectedOnStartupMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Failed LIFT S/R Detected.
         /// </summary>
@@ -1562,7 +1562,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("LiftSRFailureDetectedOnStartupTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html&amp;gt;&amp;lt;body style=&apos;font-family:&quot;Microsoft Sans Serif&quot;,&quot;sans-serif&quot;;font-size:9.5pt&apos;&amp;gt;
         ///&amp;lt;p style=&apos;font-size:11pt;margin-bottom:0in&apos;&amp;gt;Getting Started&amp;lt;/p&amp;gt;
@@ -1573,7 +1573,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("SendReceiveForTheFirstTimeContent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to All reversal subentries are now sorted..
         /// </summary>
@@ -1582,7 +1582,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("SortReversalSubEntries_CompletedContent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Reversal subentry sorting is completed.
         /// </summary>
@@ -1591,7 +1591,7 @@ namespace SIL.FieldWorks.XWorks.LexEd {
                 return ResourceManager.GetString("SortReversalSubEntries_CompletedTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sort Reversal Subentries.
         /// </summary>

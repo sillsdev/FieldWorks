@@ -11,6 +11,7 @@ The immediate problem is that optional COM-visible managed classes, debug-only C
 - Treat manifest/build cleanup as part of each COM-surface removal, including `Build/RegFree.targets`, `Build/mkall.targets`, and `Src/Common/FieldWorks/BuildInclude.targets`.
 - Remove or isolate debug-only and dormant COM paths only after characterization tests lock current behavior.
 - Introduce a FieldWorks-owned adapter seam around `SilEncConverters40`; this does not remove the external COM dependency immediately, but prevents further spread.
+- Move Windows-first `ViewInputManager` and `ManagedVwWindow` retirement to the separate branch and OpenSpec change `retire-linux-era-view-shims`.
 - Preserve required native COM boundaries for Views/FwKernel, RootBox, Graphite, TSF, and core data-access/rendering contracts.
 
 ## Non-goals
@@ -37,8 +38,8 @@ The immediate problem is that optional COM-visible managed classes, debug-only C
 
 ## Impact
 
-- **Affected managed code:** `Src/ManagedLgIcuCollator/`, `Src/Common/FwUtils/DebugProcs.cs`, Encoding Converter call sites under `Src/FwCoreDlgs/`, `Src/ParatextImport/`, `Src/LexText/`, and optional non-Windows shims if approved.
-- **Affected native code:** targeted cleanup in `Src/Generic/ModuleEntry.*`; optional guarded cleanup in `Src/views/` only for non-Windows shim removal.
+- **Affected managed code:** `Src/ManagedLgIcuCollator/`, `Src/Common/FwUtils/DebugProcs.cs`, and Encoding Converter call sites under `Src/FwCoreDlgs/`, `Src/ParatextImport/`, and `Src/LexText/`.
+- **Affected native code:** targeted cleanup in `Src/Generic/ModuleEntry.*`; non-Windows Views shim removal is split to branch `retire-linux-era-view-shims`.
 - **Affected build:** `Build/RegFree.targets`, `Build/mkall.targets`, `Src/Common/FieldWorks/BuildInclude.targets`, and focused `RegFreeCreator` tests.
 - **Dependencies:** no new runtime or test NuGet packages; continue using existing Moq/NUnit/System.Drawing/encoding-converters-core.
 - **Risk:** low-to-medium for `ManagedLgIcuCollator` until external CLSID compatibility is ruled out; medium for DebugProcs and clipboard cleanup until required smoke validation is complete; optional/risky for Windows-policy shims, Encoding Converter adapter expansion, picture work, `VwDrawRootBuffered`, and `UnknownProp` narrowing.

@@ -57,12 +57,12 @@
 - [x] 7.5 Add/update mocked provider tests using existing Moq/NUnit patterns. [Managed test]
 - [x] 7.6 Run focused validation: `.\test.ps1 -TestProject ParatextImportTests`, `.\test.ps1 -TestProject FwCoreDlgsTests`, and `.\test.ps1 -TestProject Sfm2XmlTests`. [Validation]
 
-## 8. Deferred Optional / Risky: Windows-First Shim Removal
+## 8. Moved Follow-Up: Windows-First Shim Removal
 
-- [ ] 8.1 Optional: If task 1.2 confirms source-level Windows-only support, remove `ViewInputManager` COM activation and source/build/manifest entries. [Optional, native/managed/build]
-- [ ] 8.2 Optional: If task 1.2 confirms source-level Windows-only support, remove `ManagedVwWindow` source/build/manifest entries. [Optional, native/managed/build]
-- [ ] 8.3 Optional validation: run `.\test.ps1 -SkipManaged -TestProject TestViews`; while the project still exists, run `.\test.ps1 -TestProject ManagedVwWindowTests`. [Optional validation]
-- [ ] 8.4 Manual smoke: edit text in a RootSite field, move selection, use PageUp/PageDown, and test IME/composition if available to verify Windows remains on `VwTextStore`. [Manual validation]
+- [x] 8.1 Move `ViewInputManager` COM activation and source/build/manifest removal out of this branch into branch `retire-linux-era-view-shims`. [Follow-up split]
+- [x] 8.2 Move `ManagedVwWindow` source/build/manifest removal out of this branch into branch `retire-linux-era-view-shims`. [Follow-up split]
+- [x] 8.3 Track native `TestViews`, `ManagedVwWindowTests` baseline, manifest inspection, and generated interop cleanup in the split OpenSpec change `retire-linux-era-view-shims`. [Follow-up split]
+- [x] 8.4 Track RootSite editing, keyboard switching, IME/composition, selection, and PageUp/PageDown manual smoke in the split OpenSpec change `retire-linux-era-view-shims`. [Follow-up split]
 
 ## 9. Deferred Optional / Risky Follow-Ups to Keep Out of First PRs
 
