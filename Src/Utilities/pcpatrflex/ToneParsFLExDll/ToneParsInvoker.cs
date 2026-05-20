@@ -826,7 +826,7 @@ namespace SIL.ToneParsFLEx
 			//       The LexEntry is a variant form and the (non-zero) index indicates
 			//       which set of LexEntryRefs it is for.
 			ICmObject objForm;
-			if (
+			if (String.IsNullOrEmpty(formHvo) ||
 				!cache.ServiceLocator
 					.GetInstance<ICmObjectRepository>()
 					.TryGetObject(int.Parse(formHvo), out objForm)

@@ -208,7 +208,7 @@ namespace SIL.ToneParsFLEx
 				case MoStemMsaTags.kClassId:
 					var stemMsa = msa as IMoStemMsa;
 					sb.Append("RootPOS");
-					sb.Append(stemMsa.PartOfSpeechRA.Hvo);
+					sb.Append((stemMsa.PartOfSpeechRA != null) ? stemMsa.PartOfSpeechRA.Hvo : 0);
 					break;
 				case MoInflAffMsaTags.kClassId:
 					break;
