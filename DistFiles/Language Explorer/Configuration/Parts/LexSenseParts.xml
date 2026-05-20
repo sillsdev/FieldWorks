@@ -590,7 +590,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-Subentries" type="Detail">
-			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary views." menu="mnuDataTree-Help"
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this sense in root-based dictionary layouts." menu="mnuDataTree-Help"
 				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
 				<deParams displayProperty="HeadWord"/>
 			</slice>
