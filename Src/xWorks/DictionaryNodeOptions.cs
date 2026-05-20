@@ -64,7 +64,11 @@ namespace SIL.FieldWorks.XWorks
 		/// NumberingStyle is null if no numbering style has ever been selected.
 		/// NumberingStyle is an empty string if a numbering style is selected but then removed.
 		/// </summary>
-		public string NumberingStyle { get; set; }
+		public string NumberingStyle
+		{
+			get => m_NumberingStyle;
+			set => m_NumberingStyle = value;
+		}
 
 		/// <summary>
 		/// Returns the numbering style, or null if no numbering style should be used.
