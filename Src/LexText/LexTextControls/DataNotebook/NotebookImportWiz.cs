@@ -28,7 +28,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
-using SilEncConverters40;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -2810,12 +2809,12 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void FixSettingsForThisDatabase()
 		{
-			ECInterfaces.IEncConverters encConverters = new EncConverters();
+			ECInterfaces.IEncConverters encConverters = EncodingConvertersProvider.Default.Converters;
 			foreach (EncConverterChoice ecc in m_mapWsEncConv.Values)
 			{
 				if (!String.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != Sfm2Xml.STATICS.AlreadyInUnicode)
 				{
-					foreach (string convName in encConverters.Keys)
+					foreach (string convName in encConverters.GetConverterNames())
 					{
 						if (convName == ecc.ConverterName)
 						{

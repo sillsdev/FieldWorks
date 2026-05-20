@@ -1030,7 +1030,7 @@
 			<obj field="$fieldName" layout="Name"/>
 		</part>
 	</bin>
-	
+
 	<bin class="LexExtendedNote">
 		<part id="LexExtendedNote-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
 			<obj class="LexExtendedNote" field="OwningSense" layout="$fieldName"/>
@@ -1072,7 +1072,7 @@
 			<obj field="ExtendedNoteType" layout="Name"/>
 		</part>
 	</bin>
-	
+
 	<bin class="LexReference">
 		<part id="LexReference-Jt-SenseTargetsConfig" type="jtview">
 			<choice>

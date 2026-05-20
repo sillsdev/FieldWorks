@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using NUnit.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -51,6 +52,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 		#endregion // DummyDebugProcs
 
+		#region FakeDebugReportTransport
+		private sealed class FakeDebugReportTransport : IDebugReportTransport
+		{
+			internal int SetSinkCallCount { get; private set; }
+			internal int ClearSinkCallCount { get; private set; }
+			internal int DisposeCallCount { get; private set; }
+			internal bool ThrowOnSetSink { get; set; }
+			internal bool ThrowOnClearSink { get; set; }
+
+			public void SetSink(IDebugReportSink sink)
+			{
+				SetSinkCallCount++;
+				if (ThrowOnSetSink)
+					throw new COMException("SetSink failed");
+			}
+
+			public void ClearSink()
+			{
+				ClearSinkCallCount++;
+				if (ThrowOnClearSink)
+					throw new COMException("ClearSink failed");
+			}
+
+			public void Dispose()
+			{
+				DisposeCallCount++;
+			}
+		}
+		#endregion // FakeDebugReportTransport
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the name of the executable truncated to the correct length
@@ -71,6 +102,81 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		private static string ExpectedAssertMessage(string fileLine, int lineNumber)
+		{
+			return string.Join(Environment.NewLine, new[]
+			{
+				"Assertion failed!",
+				string.Empty,
+				string.Format("Program: {0}", ExecutableName),
+				fileLine,
+				string.Format("Line: {0}", lineNumber),
+				string.Empty,
+				"Expression: The expression that failed",
+				string.Empty,
+				"For information on how your program can cause an assertion",
+				"failure, see the Visual C++ documentation on asserts",
+				string.Empty,
+				"(Press Retry to debug the application - JIT must be enabled)"
+			});
+		}
+
+		[Test]
+		public void Constructor_TransportFactoryThrows_DoesNotThrow()
+		{
+			DebugProcs debugProcs = null;
+
+			Assert.DoesNotThrow(() => debugProcs = new DebugProcs(() =>
+			{
+				throw new COMException("DebugReport unavailable");
+			}));
+			Assert.That(debugProcs, Is.Not.Null);
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+		}
+
+		[Test]
+		public void Constructor_SetSinkThrows_DisposesTransport()
+		{
+			var transport = new FakeDebugReportTransport { ThrowOnSetSink = true };
+			DebugProcs debugProcs = null;
+
+			Assert.DoesNotThrow(() => debugProcs = new DebugProcs(() => transport));
+
+			Assert.That(transport.SetSinkCallCount, Is.EqualTo(1));
+			Assert.That(transport.DisposeCallCount, Is.EqualTo(1));
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+		}
+
+		[Test]
+		public void Dispose_InjectedTransport_ClearsSinkAndDisposesOnce()
+		{
+			var transport = new FakeDebugReportTransport();
+			var debugProcs = new DebugProcs(() => transport);
+
+			Assert.That(transport.SetSinkCallCount, Is.EqualTo(1));
+			debugProcs.Dispose();
+			debugProcs.Dispose();
+
+			Assert.That(transport.ClearSinkCallCount, Is.EqualTo(1));
+			Assert.That(transport.DisposeCallCount, Is.EqualTo(1));
+			Assert.That(debugProcs.IsDisposed, Is.True);
+		}
+
+		[Test]
+		public void Dispose_ClearSinkThrows_DisposesTransportAndDoesNotThrow()
+		{
+			var transport = new FakeDebugReportTransport { ThrowOnClearSink = true };
+			var debugProcs = new DebugProcs(() => transport);
+
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+			Assert.DoesNotThrow(() => debugProcs.Dispose());
+
+			Assert.That(transport.ClearSinkCallCount, Is.EqualTo(1));
+			Assert.That(transport.DisposeCallCount, Is.EqualTo(1));
+			Assert.That(debugProcs.IsDisposed, Is.True);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the GetMessage method when everything fits
@@ -79,20 +185,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void GetMessage_AllFit()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
-
-Program: {0}
-File: bla.cpp
-Line: 583
-
-Expression: The expression that failed
-
-For information on how your program can cause an assertion
-failure, see the Visual C++ documentation on asserts
-
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName);
+			var expectedMsg = ExpectedAssertMessage("File: bla.cpp", 583);
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
@@ -108,20 +201,9 @@ failure, see the Visual C++ documentation on asserts
 		[Test]
 		public void GetMessage_PathToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
-
-Program: {0}
-File: /this/is/a/very/long/path/that/extends...{1}truncate.cpp
-Line: 583
-
-Expression: The expression that failed
-
-For information on how your program can cause an assertion
-failure, see the Visual C++ documentation on asserts
-
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName, Path.DirectorySeparatorChar);
+			var expectedMsg = ExpectedAssertMessage(
+				string.Format("File: /this/is/a/very/long/path/that/extends...{0}truncate.cpp", Path.DirectorySeparatorChar),
+				583);
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
@@ -138,20 +220,8 @@ failure, see the Visual C++ documentation on asserts
 		[Test]
 		public void GetMessage_FilenameToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
-
-Program: {0}
-File: /path/with_a_ver...have_to_truncate_before_it_fits.cpp
-Line: 583
-
-Expression: The expression that failed
-
-For information on how your program can cause an assertion
-failure, see the Visual C++ documentation on asserts
-
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName);
+			var expectedMsg = ExpectedAssertMessage(
+				"File: /path/with_a_ver...have_to_truncate_before_it_fits.cpp", 583);
 
 			using (var debugProcs = new DummyDebugProcs())
 			{
@@ -168,20 +238,8 @@ failure, see the Visual C++ documentation on asserts
 		[Test]
 		public void GetMessage_PathAndFilenameToLong()
 		{
-			var expectedMsg = string.Format(
-@"Assertion failed!
-
-Program: {0}
-File: /path/that/has/too/many/character...with_lon...ame.cpp
-Line: 123
-
-Expression: The expression that failed
-
-For information on how your program can cause an assertion
-failure, see the Visual C++ documentation on asserts
-
-(Press Retry to debug the application - JIT must be enabled)",
-					ExecutableName);
+			var expectedMsg = ExpectedAssertMessage(
+				"File: /path/that/has/too/many/character...with_lon...ame.cpp", 123);
 
 			using (var debugProcs = new DummyDebugProcs())
 			{

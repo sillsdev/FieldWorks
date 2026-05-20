@@ -150,22 +150,12 @@ namespace SIL.FieldWorks.IText
 			// Copied from the LexImportWizard dlg Init (LexImportWizard.cs)
 			// Ensure that we have the default encoding converter (to/from MS Windows Code Page
 			// for Western European languages)
-			SilEncConverters40.EncConverters encConv = new SilEncConverters40.EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			string sEncConvName = "Windows1252<>Unicode";	// REVIEW: SHOULD THIS NAME BE LOCALIZED?
-			bool fMustCreateEncCnv = true;
-			while (de.MoveNext())
-			{
-				if ((string)de.Key != null && (string)de.Key == sEncConvName)
-				{
-					fMustCreateEncCnv = false;
-					break;
-				}
-			}
-			if (fMustCreateEncCnv)
+			if (!EncodingConvertersProvider.Default.ContainsKey(sEncConvName))
 			{
 				try
 				{
+					var encConv = EncodingConvertersProvider.Default.ConcreteConverters;
 					encConv.AddConversionMap(sEncConvName, "1252",
 						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
 						ECInterfaces.ProcessTypeFlags.CodePageConversion);

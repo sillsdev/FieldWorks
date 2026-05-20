@@ -11,7 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Sfm2Xml;
 using ECInterfaces;
-using SilEncConverters40;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (string.IsNullOrEmpty(mapping.Converter))
 				return Encoding.UTF8.GetString(data); // todo: use encoding converter if present in mapping
 			if (m_encConverters == null)
-				m_encConverters = new EncConverters();
+				m_encConverters = EncodingConvertersProvider.Default.Converters;
 			var converter = m_encConverters[mapping.Converter];
 			return converter.ConvertToUnicode(data);
 		}

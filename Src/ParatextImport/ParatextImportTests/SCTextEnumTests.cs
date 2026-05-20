@@ -14,7 +14,6 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using ECInterfaces;
-using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
@@ -262,7 +261,7 @@ namespace ParatextImport
 	{
 		#region data members
 		private IScrImportSet m_settings;
-		private IEncConverters m_converters;
+		private IEncodingConvertersProvider m_converterProvider;
 		private MockFileOS m_fileOs;
 		#endregion
 
@@ -290,7 +289,7 @@ namespace ParatextImport
 			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(m_settings);
 			m_settings.ImportTypeEnum = TypeOfImport.Other;
 			m_settings.Initialize(null, null);
-			m_converters = null;
+			m_converterProvider = null;
 			m_fileOs = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(m_fileOs);
 		}
@@ -306,9 +305,13 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			SCScriptureText scText = new SCScriptureText(m_settings, domain);
-			ReflectionHelper.SetField(scText, "m_encConverters", m_converters);
+			SCScriptureText scText = new SCScriptureText(m_settings, domain, m_converterProvider);
 			return scText.TextEnum(startRef, endRef);
+		}
+
+		private void SetEncodingConverters(IEncConverters encConverters)
+		{
+			m_converterProvider = encConverters == null ? null : new EncodingConvertersProvider(encConverters);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1054,7 +1057,7 @@ namespace ParatextImport
 
 			var mockConverters = new Mock<IEncConverters>();
 			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			SetEncodingConverters(mockConverters.Object);
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1171,7 +1174,7 @@ namespace ParatextImport
 
 			var mockConverters = new Mock<IEncConverters>();
 			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			SetEncodingConverters(mockConverters.Object);
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1240,7 +1243,7 @@ namespace ParatextImport
 
 			var mockConverters = new Mock<IEncConverters>();
 			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			SetEncodingConverters(mockConverters.Object);
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.BackTrans,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1563,7 +1566,7 @@ namespace ParatextImport
 			var mockConverters = new Mock<IEncConverters>();
 			mockConverters.Setup(c => c[It.IsAny<string>()]).Returns((IEncConverter)null);
 			mockConverters.Setup(c => c[converterName]).Returns(mockConverter.Object);
-			m_converters = mockConverters.Object;
+			SetEncodingConverters(mockConverters.Object);
 
 			string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage),
 				false, "ROM",
@@ -1612,11 +1615,39 @@ namespace ParatextImport
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		public void TextEnum_LegacyMapping_UsesEncodingConverterProvider()
+		{
+			string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage), false, "ROM",
+				@"\mt lower case title",
+				@"\c 1",
+				@"\v 1");
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
+			VernacularWs.LegacyMapping = "UPPERCASE";
+			m_settings.SaveSettings();
+
+			var provider = new Mock<IEncodingConvertersProvider>();
+			provider.Setup(x => x.GetConverter("UPPERCASE")).Returns(new DummyEncConverter()).Verifiable();
+			var scText = new SCScriptureText(m_settings, ImportDomain.Main, provider.Object);
+
+			ISCTextEnum textEnum = scText.TextEnum(
+				new ScrReference(45, 0, 0, ScrVers.English),
+				new ScrReference(45, 1, 1, ScrVers.English));
+
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\id"));
+			textSeg = textEnum.Next();
+
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\mt"));
+			Assert.That(textSeg.Text, Is.EqualTo("LOWER CASE TITLE "));
+			provider.Verify(x => x.GetConverter("UPPERCASE"), Times.Once);
+		}
+
+		[Test]
 		public void MissingEncodingConverter()
 		{
 			var mockConverters = new Mock<IEncConverters>();
 			mockConverters.Setup(c => c[It.IsAny<string>()]).Returns((IEncConverter)null);
-			m_converters = mockConverters.Object;
+			SetEncodingConverters(mockConverters.Object);
 
 			string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage), false, "ROM",
 				@"\mt 0123456789",

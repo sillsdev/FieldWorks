@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;
 // for the encoding converters
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -434,16 +433,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			/// Added to make the list of encoding converters match the list that is given when
 			/// the add new converter option is selected. (LT-2955)
-			EncConverters encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			cbEC.BeginUpdate();
 			cbEC.Items.Clear();
 			cbEC.Sorted = true;
-			while (de.MoveNext())
+			foreach (string name in EncodingConvertersProvider.Default.ConverterNames)
 			{
-				string name = de.Key as string;
-				if (name != null)
-					cbEC.Items.Add(name);
+				cbEC.Items.Add(name);
 			}
 			cbEC.Sorted = false;
 			cbEC.Items.Insert(0, m_blankEC);

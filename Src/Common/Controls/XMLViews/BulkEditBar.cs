@@ -24,7 +24,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.RootSites;
-using SilEncConverters40;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -1853,7 +1852,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ECInterfaces.IEncConverters encConverters = null;
 			try
 			{
-				encConverters = new EncConverters();
+				encConverters = EncodingConvertersProvider.Default.Converters;
 			}
 			catch (Exception e)
 			{
@@ -2498,9 +2497,9 @@ namespace SIL.FieldWorks.Common.Controls
 			try
 			{
 				string selectedItem = m_transduceProcessorCombo.SelectedItem as string;
-				ECInterfaces.IEncConverters encConverters = new EncConverters();
+				ECInterfaces.IEncConverters encConverters = EncodingConvertersProvider.Default.Converters;
 				m_transduceProcessorCombo.ClearItems();
-				foreach (string convName in encConverters.Keys)
+				foreach (string convName in encConverters.GetConverterNames())
 				{
 					ECInterfaces.IEncConverter conv = encConverters[convName];
 					// Only Unicode-to-Unicode converters are relevant.

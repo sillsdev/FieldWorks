@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Take care of null values
 			if (encConverters == null)
-				m_encConverters = new EncConverters();
+				m_encConverters = EncodingConvertersProvider.Default.ConcreteConverters;
 			else
 				m_encConverters = encConverters;
 
@@ -626,7 +626,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// after the dialog is closed, we have to "reboot" the list
 				// of encoding converters to detect the new converters
-				m_encConverters = new EncConverters();
+				EncodingConvertersProvider.Default.Reset();
+				m_encConverters = EncodingConvertersProvider.Default.ConcreteConverters;
 				m_cnvtrPropertiesCtrl.Converters = m_encConverters;
 				m_converterTest.Converters = m_encConverters;
 				m_advancedEncProps.Converters = m_encConverters;
@@ -1507,7 +1508,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// call the v2.2 interface to "AutoConfigure" a converter
 				var strFriendlyName = selectedConverter;
-				var encConverters = new EncConverters();
+				var encConverters = EncodingConvertersProvider.Default.ConcreteConverters;
 				encConverters.AutoConfigure(ConvType.Unknown, ref strFriendlyName);
 
 				m_outsideDlgChangedCnvtrs = true;

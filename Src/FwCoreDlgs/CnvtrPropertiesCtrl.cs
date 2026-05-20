@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void EnsureEncConverters()
 		{
 			if (m_encConverters == null)
-				m_encConverters = new EncConverters();
+				m_encConverters = EncodingConvertersProvider.Default.ConcreteConverters;
 		}
 
 		/// ------------------------------------------------------------------------------------

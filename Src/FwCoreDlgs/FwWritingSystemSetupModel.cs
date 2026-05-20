@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Icu;
-using SilEncConverters40;
 using SIL.Code;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
@@ -59,19 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 
 		// function for retrieving Encoding converter keys, internal to allow mock results in unit tests
-		internal Func<ICollection> EncodingConverterKeys = () =>
-		{
-			try
-			{
-				var encConverters = new EncConverters();
-				return encConverters.Keys;
-			}
-			catch (Exception)
-			{
-				// If we can't use encoding converters don't crash, just return an empty list
-				return new string[] { };
-			}
-		};
+		internal IEncodingConvertersProvider EncodingConvertersProvider = SIL.FieldWorks.Common.FwUtils.EncodingConvertersProvider.Default;
 
 		/// <summary/>
 		public readonly LcmCache Cache;
@@ -1102,9 +1089,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public List<string> GetEncodingConverters()
 		{
 			var encodingConverters = new List<string> {FwCoreDlgs.kstidNone};
-			foreach (string key in EncodingConverterKeys())
+			try
 			{
-				encodingConverters.Add(key);
+				foreach (string key in EncodingConvertersProvider.ConverterNames)
+				{
+					encodingConverters.Add(key);
+				}
+			}
+			catch (Exception)
+			{
+				// If we can't use encoding converters don't crash, just return the empty option.
 			}
 			return encodingConverters;
 		}

@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -164,16 +163,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void LoadEncodingConverters()
 		{
-			EncConverters encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			m_converterCombo.BeginUpdate();
 			m_converterCombo.Items.Clear();
 			m_converterCombo.Sorted = true;
-			while (de.MoveNext())
+			foreach (string name in EncodingConvertersProvider.Default.ConverterNames)
 			{
-				string name = de.Key as string;
-				if (name != null)
-					m_converterCombo.Items.Add(name);
+				m_converterCombo.Items.Add(name);
 			}
 			m_converterCombo.Sorted = false;
 			m_converterCombo.Items.Insert(0, m_blankEC);
