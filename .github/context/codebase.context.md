@@ -2,8 +2,10 @@
 
 Use these entry points to load context efficiently without scanning the entire repo.
 
+- Shared language and glossary: `CONTEXT.md`
 - Onboarding: `.github/AGENTS.md`
 - Src catalog (overview of major folders): `.github/src-catalog.md`
+- PR review response workflow: `.github/skills/respond-to-review-comments/SKILL.md`
 - Component guides: `Src/<Folder>/AGENTS.md` (and subfolder AGENTS.md where present)
 - Build system: `build.ps1`, `FieldWorks.proj`, `FieldWorks.sln`, `Build/InstallerBuild.proj`
 - Installer: `FLExInstaller/`
@@ -15,4 +17,3 @@ Use these entry points to load context efficiently without scanning the entire r
 Tips
 - Prefer top-level scripts or FieldWorks.sln over ad-hoc project builds
 - Respect CI checks (commit messages, whitespace) before pushing
-
