@@ -93,6 +93,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				itemsBackedUp.Add(FwCoreDlgs.ksSupportingFilesRestoreDlg);
 			if (settings.IncludeSpellCheckAdditions)
 				itemsBackedUp.Add(FwCoreDlgs.ksSpellingFilesRestoreDlg);
+			if (settings.IncludeSendReceiveData)
+				itemsBackedUp.Add(FwCoreDlgs.ksSendReceiveDataRestoreDlg);
 
 			int numberOfFileSetsBackedUp = itemsBackedUp.Count;
 			if (numberOfFileSetsBackedUp == 0)
@@ -139,8 +141,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			if (!m_restoreProjectView.Settings.ProjectExists)
 				return true;
 
-			// If the user is using Send/Receive, it is NOT OK to restore
-			if (m_restoreProjectView.Settings.UsingSendReceive)
+			// If the user is using Send/Receive and the backup doesn't include S/R data, it is NOT OK to restore
+			if (m_restoreProjectView.Settings.UsingSendReceive && !m_restoreProjectView.Settings.IncludeSendReceiveData)
 			{
 				MessageBox.Show(FwCoreDlgs.ksBackupCantRestoreWhenUsingSRMsg, FwCoreDlgs.ksBackupCantRestoreWhenUsingSRCaption,
 					MessageBoxButtons.OK, MessageBoxIcon.Error);

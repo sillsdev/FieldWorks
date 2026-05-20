@@ -36,6 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BackupProjectDlg));
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.m_sendReceiveData = new System.Windows.Forms.CheckBox();
 			this.m_spellCheckAdditions = new System.Windows.Forms.CheckBox();
 			this.m_supportingFiles = new System.Windows.Forms.CheckBox();
 			this.m_linkedFiles = new System.Windows.Forms.CheckBox();
@@ -55,6 +56,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			//
 			// groupBox1
 			//
+			this.groupBox1.Controls.Add(this.m_sendReceiveData);
 			this.groupBox1.Controls.Add(this.m_spellCheckAdditions);
 			this.groupBox1.Controls.Add(this.m_supportingFiles);
 			this.groupBox1.Controls.Add(this.m_linkedFiles);
@@ -70,6 +72,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			this.m_spellCheckAdditions.Name = "m_spellCheckAdditions";
 			this.helpProvider.SetShowHelp(this.m_spellCheckAdditions, ((bool)(resources.GetObject("m_spellCheckAdditions.ShowHelp"))));
 			this.m_spellCheckAdditions.UseVisualStyleBackColor = true;
+			//
+			// m_sendReceiveData
+			//
+			resources.ApplyResources(this.m_sendReceiveData, "m_sendReceiveData");
+			this.m_sendReceiveData.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.m_sendReceiveData.Name = "m_sendReceiveData";
+			this.m_sendReceiveData.UseVisualStyleBackColor = true;
 			//
 			// m_supportingFiles
 			//
@@ -187,5 +196,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.HelpProvider helpProvider;
 		private System.Windows.Forms.CheckBox m_spellCheckAdditions;
+		private System.Windows.Forms.CheckBox m_sendReceiveData;
 	}
 }

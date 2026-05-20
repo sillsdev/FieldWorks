@@ -62,6 +62,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				m_supportingFiles.Enabled = false;
 			}
 
+			if (m_presenter.SendReceiveDataExists)
+			{
+				m_sendReceiveData.Checked = true;
+			}
+			else
+			{
+				m_sendReceiveData.Enabled = false;
+			}
+
 			DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 			if (File.Exists(m_presenter.PersistanceFilePath))
 			{
@@ -238,6 +247,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			get { return m_spellCheckAdditions.Checked; }
 			set { m_spellCheckAdditions.Checked = value; }
+		}
+
+		///<summary>
+		/// Whether or not user wants Send/Receive repository data in the backup.
+		///</summary>
+		public bool IncludeSendReceiveData
+		{
+			get { return m_sendReceiveData.Checked; }
+			set { m_sendReceiveData.Checked = value; }
 		}
 
 		/// <summary>

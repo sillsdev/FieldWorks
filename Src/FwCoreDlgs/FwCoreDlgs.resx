@@ -830,6 +830,9 @@ Enter a shorter name.</value>
   <data name="ksSpellingFilesRestoreDlg" xml:space="preserve">
     <value>Spelling dictionary</value>
   </data>
+  <data name="ksSendReceiveDataRestoreDlg" xml:space="preserve">
+    <value>Send/Receive data</value>
+  </data>
   <data name="ksIncludesAndRestoreDlg" xml:space="preserve">
     <value> and {0}.</value>
   </data>
