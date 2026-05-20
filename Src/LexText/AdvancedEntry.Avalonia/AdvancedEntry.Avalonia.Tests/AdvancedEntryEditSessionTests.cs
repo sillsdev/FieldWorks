@@ -52,6 +52,48 @@ public sealed class AdvancedEntryEditSessionTests
 		Assert.That(CountLexEntries(cache), Is.EqualTo(1));
 	}
 
+	[Test]
+	public void Cancel_rolls_back_changes_and_prevents_later_save()
+	{
+		using var cache = CreateMemoryOnlyCache();
+		var session = new AdvancedEntryEditSession(
+			cache,
+			"AdvancedEntry: Edit",
+			"AdvancedEntry: Undo"
+		);
+		_ = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+		Assert.That(CountLexEntries(cache), Is.EqualTo(1));
+
+		session.Cancel();
+
+		Assert.That(CountLexEntries(cache), Is.EqualTo(0));
+		Assert.That(
+			() => session.Save(),
+			Throws.InvalidOperationException.With.Message.EqualTo("The edit session has already completed.")
+		);
+	}
+
+	[Test]
+	public void Nested_session_is_rejected_before_any_inner_work_starts()
+	{
+		using var cache = CreateMemoryOnlyCache();
+		using var outerSession = new AdvancedEntryEditSession(
+			cache,
+			"AdvancedEntry: Outer Edit",
+			"AdvancedEntry: Outer Undo"
+		);
+
+		var ex = Assert.Throws<InvalidOperationException>(() =>
+			new AdvancedEntryEditSession(
+				cache,
+				"AdvancedEntry: Inner Edit",
+				"AdvancedEntry: Inner Undo"
+			)
+		);
+
+		Assert.That(ex!.Message, Does.Contain("CurrentDepth=1"));
+	}
+
 	private static int CountLexEntries(LcmCache cache) => cache.ServiceLocator
 		.GetInstance<ILexEntryRepository>()
 		.AllInstances()

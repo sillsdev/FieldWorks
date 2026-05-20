@@ -75,7 +75,7 @@ flowchart LR
     Editors["ILexicalEditorRegistry"]:::port
     EditSession["IEditSession<br/>transactions, validation,<br/>undo/redo"]:::port
     Choosers["IChooserService"]:::port
-    Text["IWritingSystemTextService<br/>OpenType/HarfBuzz only"]:::port
+    Text["IWritingSystemTextService<br/>font and shaping capabilities"]:::port
     Command["IXCoreCommandBridge"]:::port
     PropertyState["IPropertyStateStore"]:::port
     Navigation["IRecordNavigationContext"]:::port
@@ -132,7 +132,7 @@ Tests are layered around the seam being proven. Deep behavior moves to unit and 
 
 ```mermaid
 flowchart TB
-  Requirements["Migration requirements<br/>density, interaction, fonts,<br/>Graphite-free default, no native viewing"]:::model
+  Requirements["Migration requirements<br/>density, interaction, fonts,<br/>audited default path, no native viewing"]:::model
 
   Unit["Unit tests<br/>refresh state<br/>launcher logic<br/>editor registry"]:::test
   Integration["Integration tests<br/>XML import to typed IR<br/>LCModel transactions<br/>cache invalidation"]:::test
@@ -141,7 +141,7 @@ flowchart TB
   Render["Render comparison<br/>near-pixel evidence<br/>timing buckets<br/>failure bundles"]:::test
   Headless["Avalonia.Headless<br/>input, focus, popups,<br/>control behavior"]:::test
   NativeAudit["Native viewing seam audit<br/>no RootSite / IVwEnv / Views<br/>inside completed region"]:::test
-  GraphiteAudit["Graphite-free audit<br/>no graphite2, GraphiteEngine,<br/>Gecko Graphite, feature strings"]:::test
+  GraphiteAudit["Graphite/native rendering audit<br/>no unapproved default-path<br/>Graphite dependency"]:::test
   UndoGate["Undo/redo and transaction matrix"]:::test
   A11yGate["Accessibility, keyboard/IME,<br/>localization gates"]:::test
   OverrideGate["Customer override and<br/>dynamic editor fixtures"]:::test
@@ -198,7 +198,7 @@ flowchart LR
 
   subgraph Contracts["Shared contracts"]
     IR["Typed IR node"]:::model
-    Text["Writing-system text service<br/>OpenType/HarfBuzz"]:::port
+    Text["Writing-system text service<br/>proven font/shaping paths"]:::port
     EditSession["Edit session<br/>commit/cancel, validation,<br/>undo/redo"]:::port
     CommandFocus["Command, focus,<br/>keyboard/IME routing"]:::port
     SchedulerLifetime["UI scheduler and<br/>region lifetime"]:::port
@@ -258,7 +258,7 @@ flowchart TB
 
   subgraph Services["Ports and services"]
     Refresh["Refresh coordinator"]:::port
-    Text["Writing-system text service<br/>OpenType/HarfBuzz"]:::port
+    Text["Writing-system text service<br/>proven font/shaping paths"]:::port
     Chooser["Chooser and popup services"]:::port
     Linguistics["Custom linguistics services<br/>XAmple/spelling/parsers"]:::port
     Diagnostics["Diagnostics and parity capture"]:::port
@@ -268,7 +268,7 @@ flowchart TB
     Semantic["Semantic parity"]:::test
     Render["Render/timing evidence"]:::test
     NativeAudit["No native viewing/rendering/editor path"]:::test
-    GraphiteAudit["Graphite-free default path"]:::test
+    GraphiteAudit["No unapproved Graphite/native<br/>default-path dependency"]:::test
     Perf["Performance budget"]:::test
     BrowserPdf["Browser/PDF decision gate"]:::test
   end
@@ -311,7 +311,7 @@ flowchart TB
   subgraph ModelLayer["Model and canonical definitions"]
     LCModel["LCModel<br/>lexicon data and transactions"]:::model
     Canonical["Canonical typed view definitions<br/>post-XML runtime contract"]:::model
-    ProjectSettings["Project settings<br/>writing systems, fonts,<br/>OpenType/HarfBuzz features"]:::model
+    ProjectSettings["Project settings<br/>writing systems, fonts,<br/>font feature metadata"]:::model
   end
 
   subgraph ControllerLayer["Controller / presenter layer"]
@@ -329,7 +329,7 @@ flowchart TB
   end
 
   subgraph ServiceLayer["FieldWorks services"]
-    Text["Writing-system text service<br/>OpenType/HarfBuzz only"]:::port
+    Text["Writing-system text service<br/>proven font/shaping paths"]:::port
     Linguistics["Custom linguistics gateway<br/>XAmple, spelling, parsers,<br/>Encoding Converters, ICU"]:::port
     BrowserPdf["Non-Graphite browser/PDF strategy"]:::port
     ShellPhase["Phase-two Avalonia app shell<br/>fieldworks-avalonia-shell-migration"]:::port
@@ -339,7 +339,7 @@ flowchart TB
     DataTree["DataTree/Slice runtime"]:::decom
     XMLRuntime["Runtime XML Parts/Layout"]:::decom
     NativeViews["RootSite, IVwEnv,<br/>ManagedVwWindow, Native Views"]:::decom
-    Graphite["graphite2, GraphiteEngine,<br/>Graphite feature settings"]:::decom
+    Graphite["Native Graphite render engines,<br/>unapproved Graphite runtime"]:::decom
     Gecko["Gecko Graphite rendering<br/>GeckofxHtmlToPdf assumptions"]:::decom
   end
 

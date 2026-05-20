@@ -47,6 +47,107 @@ public sealed class PropertyGridExpandabilityTests
 		Assert.That(exampleItemProp, Is.Not.Null);
 	}
 
+	[Test]
+	public void DescriptorModel_DuplicateNodeIdsProduceUniquePropertyNames()
+	{
+		var schema = new PresentationNode[]
+		{
+			new PresentationField(new PresentationNodeId("Duplicate"))
+			{
+				Field = "CitationForm",
+				Label = "Citation Form",
+			},
+			new PresentationField(new PresentationNodeId("Duplicate"))
+			{
+				Field = "LexemeForm",
+				Label = "Lexeme Form",
+			},
+		};
+		var staged = new StagedEntryState("LexEntry");
+		var root = new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
+
+		var names = TypeDescriptor.GetProperties(root)
+			.Cast<PropertyDescriptor>()
+			.Select(prop => prop.Name)
+			.ToArray();
+
+		Assert.That(names, Is.EqualTo(new[] { "Duplicate", "Duplicate_2" }));
+	}
+
+	[Test]
+	public void DescriptorModel_FieldDescriptorsExposeDisplayCategoryAndValidationMetadata()
+	{
+		var schema = new PresentationNode[]
+		{
+			new PresentationSection(new PresentationNodeId("Identity"))
+			{
+				Label = "Identity",
+				Children = new PresentationNode[]
+				{
+					new PresentationField(new PresentationNodeId("CitationForm"))
+					{
+						Field = "CitationForm",
+						Label = "Citation Form",
+						IsRequired = true,
+					},
+				},
+			},
+		};
+		var staged = new StagedEntryState("LexEntry");
+		var root = new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
+
+		var prop = FindByDisplayName(TypeDescriptor.GetProperties(root), "Citation Form");
+
+		Assert.That(prop, Is.Not.Null);
+		Assert.That(prop!.Category, Is.EqualTo("Identity"));
+		Assert.That(
+			prop.Attributes.Cast<Attribute>().Any(attr => attr.GetType().Name == "RequiredAttribute"),
+			Is.True,
+			"Required field metadata must survive descriptor projection for validation and accessibility surfaces."
+		);
+	}
+
+	[Test]
+	public void DescriptorModel_SequenceItemsRemainUnmaterializedUntilInspected()
+	{
+		var schema = new PresentationNode[]
+		{
+			new PresentationSequence(new PresentationNodeId("Senses"))
+			{
+				Field = "Senses",
+				Label = "Senses",
+				ItemTemplate = new PresentationNode[]
+				{
+					new PresentationField(new PresentationNodeId("Gloss"))
+					{
+						Field = "Gloss",
+						Label = "Gloss",
+					},
+				},
+			},
+		};
+		var staged = new StagedEntryState("LexEntry");
+		var sensesState = staged.Root.GetOrCreateSequence("Senses", "LexSense");
+		sensesState.SetCount(2);
+		var root = new StagedObjectView("LexEntry", staged.RootClass, staged.Root, schema);
+
+		var sensesProp = FindByDisplayName(TypeDescriptor.GetProperties(root), "Senses");
+		var sensesView = sensesProp!.GetValue(root)!;
+		var itemProps = TypeDescriptor.GetProperties(sensesView);
+
+		Assert.That(itemProps.Count, Is.EqualTo(2));
+		Assert.That(sensesState.TryGetItem(0, out _), Is.False);
+
+		var itemView = itemProps[0].GetValue(sensesView)!;
+		Assert.That(sensesState.TryGetItem(0, out _), Is.False,
+			"Creating the expandable sequence row must not materialize the staged item.");
+
+		_ = TypeDescriptor.GetProperties(itemView);
+
+		Assert.That(sensesState.TryGetItem(0, out _), Is.True);
+		Assert.That(sensesState.TryGetItem(1, out _), Is.False);
+	}
+
 	[AvaloniaTest]
 	public async Task HeadlessUI_PropertyGrid_Can_Expand_Sense_To_Show_Nested_Item()
 	{

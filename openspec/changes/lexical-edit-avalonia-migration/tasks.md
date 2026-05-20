@@ -2,22 +2,22 @@
 
 ## 1. Migration Baseline and Spec Audit
 
-- [ ] 1.1 Review Speckit artifacts against this OpenSpec change and keep `migration-map.md` current.
-- [ ] 1.2 Inventory current Lexical Edit view entry points: `RecordEditView`, `DataTree`, `SliceFactory`, XMLViews browse/table views, popup choosers, and AdvancedEntry Avalonia spike.
-- [ ] 1.3 Build a coverage map for DataTree refresh, SliceFactory/editor selection, launchers, popup choosers, XML table views, and render verification.
-- [ ] 1.4 Identify customer/user override XML fixtures that must be included before XML retirement.
-- [ ] 1.5 Start Graphite decommissioning inventory for writing-system settings, fonts, native render engines, Gecko/browser/PDF paths, tests, docs, sample assets, and build/package artifacts.
-- [ ] 1.6 Define migrated-region manifest format: entry points, allowed legacy adapters, forbidden symbols/call paths, custom linguistics service dependencies, parity fixtures, performance budgets, accessibility IDs, and rollback/default-switch gates.
-- [ ] 1.7 Freeze and maintain the seam capability docs `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, `avalonia-command-focus`, `avalonia-ui-scheduler`, `avalonia-lifetime`, and `seam-recommendations.md` as the reference playbook for both this change and the later shell change.
+- [x] 1.1 Review Speckit artifacts against this OpenSpec change and keep `migration-map.md` current.
+- [x] 1.2 Inventory current Lexical Edit view entry points: `RecordEditView`, `DataTree`, `SliceFactory`, XMLViews browse/table views, popup choosers, and AdvancedEntry Avalonia spike.
+- [x] 1.3 Build a coverage map for DataTree refresh, SliceFactory/editor selection, launchers, popup choosers, XML table views, and render verification.
+- [x] 1.4 Identify customer/user override XML fixtures that must be included before XML retirement.
+- [x] 1.5 Start Graphite decommissioning inventory for writing-system settings, fonts, native render engines, Gecko/browser/PDF paths, tests, docs, sample assets, and build/package artifacts.
+- [x] 1.6 Define migrated-region manifest format: entry points, allowed legacy adapters, forbidden symbols/call paths, custom linguistics service dependencies, parity fixtures, performance budgets, accessibility IDs, and rollback/default-switch gates.
+- [x] 1.7 Freeze and maintain the seam capability docs `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, `avalonia-command-focus`, `avalonia-ui-scheduler`, `avalonia-lifetime`, and `seam-recommendations.md` as the reference playbook for both this change and the later shell change.
 
 ## 2. Test Coverage Before Refactor
 
-- [ ] 2.1 Add or extend unit/integration tests for DataTree refresh state transitions and postponed `PropChanged` behavior.
+- [x] 2.1 Add or extend unit/integration tests for DataTree refresh state transitions and postponed `PropChanged` behavior.
 - [ ] 2.2 Add or extend launcher pure-logic tests, prioritizing morph type swap/data-loss logic and chooser decision paths.
-- [ ] 2.3 Add semantic baseline capture for DataTree/Slice output: sections, labels, object/flid bindings, editor kind, visibility, ghost state, expansion, focus order, and accessibility identity.
+- [x] 2.3 Add semantic baseline capture for DataTree/Slice output: sections, labels, object/flid bindings, editor kind, visibility, ghost state, expansion, focus order, and accessibility identity.
 - [ ] 2.4 Add focused UIA2 smoke baselines for WinForms launcher/chooser workflows and XMLViews table header/filter reachability.
-- [ ] 2.5 Add failure artifact bundling to render/parity tests where missing.
-- [ ] 2.6 Add undo/redo and LCModel transaction characterization tests for editor replacement candidates.
+- [x] 2.5 Add failure artifact bundling to render/parity tests where missing.
+- [x] 2.6 Add undo/redo and LCModel transaction characterization tests for editor replacement candidates.
 - [ ] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates.
 - [ ] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise.
 
@@ -43,19 +43,19 @@
 
 ## 5. Graphite and Font Decommissioning
 
-- [ ] 5.1 Inventory and classify Graphite code/assets: `Lib/src/graphite2`, `GraphiteEngine`, `RenderEngineFactory`, `GraphiteFontFeatures`, `DistFiles/Graphite`, `Build/Windows.targets`, and Graphite-specific tests/docs.
+- [ ] 5.1 Inventory and classify Graphite/native rendering code/assets: `Src/views/lib/GraphiteEngine.*`, `Src/views/lib/GraphiteSegment.*`, render-engine selection, Graphite feature UI/storage, sample/dist assets, package/build artifacts, and Graphite-specific tests/docs.
 - [ ] 5.2 Inventory writing-system Graphite settings and persistence: `IsGraphiteEnabled`, `DefaultFontFeatures`, `FontEngines.Graphite`, import/export formats, project fixtures, and user-visible settings.
-- [ ] 5.3 Replace Graphite feature UI/storage in writing-system dialogs with OpenType/HarfBuzz-compatible font options or explicit decommissioning diagnostics.
+- [ ] 5.3 Classify Graphite feature UI/storage in writing-system dialogs and define OpenType/HarfBuzz replacements where supported, plus explicit diagnostics/rollback for unsupported Graphite-only settings.
 - [ ] 5.4 Define replacement font/fallback policy for Graphite-only fonts, including project diagnostics and user-facing migration evidence.
-- [ ] 5.5 Remove Graphite from the Avalonia/default path: no `GraphiteEngineClass`, no `graphite2`, no Graphite-enabled render-engine selection, and no Graphite feature strings as runtime settings.
+- [ ] 5.5 Prove the migrated Avalonia default path has no unapproved runtime dependency on native Graphite render engines, Graphite-enabled legacy render selection, Gecko Graphite rendering, or unclassified Graphite-only feature settings.
 - [ ] 5.6 Audit Gecko/XULRunner preview, print, and PDF paths: startup Graphite preference, `XWebBrowser` consumers, dictionary/interlinear/configuration previews, `GeckofxHtmlToPdf`, and `FieldWorksPdfMaker` packaging.
 - [ ] 5.7 Select and validate a non-Graphite browser/PDF strategy for default Avalonia workflows, or explicitly leave affected paths outside the default Lexical Edit boundary.
-- [ ] 5.8 Add validation proving Avalonia default readiness is blocked while any default-path Graphite dependency remains.
+- [ ] 5.8 Add validation proving Avalonia default readiness is blocked while any unapproved default-path Graphite/native-rendering dependency or unsupported Graphite-only setting remains.
 
 ## 6. Avalonia Control Slices
 
 - [ ] 6.1 Replace/prove writing-system text display/editor foundation and simple scalar editors with FieldWorks-owned Avalonia controls over IR nodes.
-- [ ] 6.2 Implement writing-system-aware text editor behavior using project font settings, flow direction, culture/script metadata, and OpenType/HarfBuzz feature settings.
+- [ ] 6.2 Implement writing-system-aware text editor behavior using project font settings, flow direction, culture/script metadata, supported OpenType/HarfBuzz feature settings, and diagnostics for unsupported Graphite-only settings.
 - [ ] 6.3 Implement popup/hover chooser controls using Avalonia flyouts/context menus and a service-backed chooser model.
 - [ ] 6.4 Spike TreeView/tree-table rendering for multiple translations per sense/term, including compact multi-writing-system node templates.
 - [ ] 6.5 Record any Avalonia package update or local/upstream control patch with parity justification and test evidence.
@@ -69,7 +69,7 @@
 - [ ] 7.2 Compare legacy XMLViews table semantics against typed IR and Avalonia table semantics.
 - [ ] 7.3 Migrate one representative vertical slice: LexEntry identity + morph type + one nested sense/gloss + chooser path.
 - [ ] 7.4 Expand to core P0/P1 parity checklist items from the migrated Speckit parity list.
-- [ ] 7.5 Gate full Lexical Edit replacement on semantic parity, UIA2 legacy baselines, Avalonia.Headless tests, render comparison evidence, native viewing/render seam audit evidence, and Graphite-free default-path evidence.
+- [ ] 7.5 Gate full Lexical Edit replacement on semantic parity, UIA2 legacy baselines, Avalonia.Headless tests, render comparison evidence, native viewing/render seam audit evidence, and no unapproved Graphite/native-rendering default-path dependency.
 - [ ] 7.6 Add a control-selection decision matrix for `TreeView`, `TreeDataGrid`, `ItemsRepeater`, and owned virtualized controls using density, virtualization, selection, accessibility, licensing/version, and multi-writing-system criteria.
 - [ ] 7.7 Add large-fixture performance budgets for open time, scroll/expand latency, typing latency, realized control count, memory, and cache invalidation.
 
@@ -97,9 +97,9 @@
 - [ ] 10.1 Run targeted managed tests for changed areas using `./test.ps1` filters or relevant VS Code tasks.
 - [ ] 10.2 Run render/parity baseline tests for affected surfaces.
 - [ ] 10.3 Run native viewing/render seam audit tests/instrumentation for any region claimed as migrated.
-- [ ] 10.4 Run Graphite-free default-path validation for any region proposed as default Avalonia UI.
+- [ ] 10.4 Run Graphite/native-rendering default-path validation for any region proposed as default Avalonia UI.
 - [ ] 10.5 Run browser/PDF replacement validation for default-path XHTML preview, print, or PDF flows.
 - [ ] 10.6 Run `./build.ps1` before implementation work is considered ready for review.
 - [ ] 10.7 Run `CI: Full local check` before commit/push.
-- [ ] 10.8 Verify every migrated-region manifest has passing evidence for native-call instrumentation, Graphite-free default path, undo/redo, accessibility, localization, keyboard/IME, customer override fixtures, performance budgets, and rollback behavior.
+- [ ] 10.8 Verify every migrated-region manifest has passing evidence for native-call instrumentation, no unapproved Graphite/native-rendering default-path dependency, undo/redo, accessibility, localization, keyboard/IME, customer override fixtures, performance budgets, and rollback behavior.
 - [ ] 10.9 Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining those seams ad hoc during shell work.

@@ -197,6 +197,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Bibliography"));
 		}
 
+		[Test]
+		public void CfAndBib_SemanticSliceBaselineCapturesStableBindingsAndFocusOrder()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(2));
+
+			AssertSemanticSlice(
+				m_dtree.Controls[0] as Slice,
+				0,
+				"CitationForm",
+				"CitationForm",
+				LexEntryTags.kflidCitationForm,
+				"multistring",
+				null);
+			AssertSemanticSlice(
+				m_dtree.Controls[1] as Slice,
+				1,
+				"Bibliography",
+				"Bibliography",
+				LexEntryTags.kflidBibliography,
+				"multistring",
+				"ifdata");
+		}
+
 		/// <summary></summary>
 		[Test]
 		public void LabelAbbreviations()
@@ -220,6 +245,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That((m_dtree.Controls[2] as Slice).Label, Is.EqualTo("Citation Form"));
 			Assert.That((m_dtree.Controls[2] as Slice).Abbreviation, Is.EqualTo("!?"));
 			Assert.That(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation, Is.False);
+		}
+
+		private void AssertSemanticSlice(
+			Slice slice,
+			int focusOrder,
+			string label,
+			string field,
+			int flid,
+			string editor,
+			string visibility)
+		{
+			Assert.That(slice, Is.Not.Null, "Expected a realized slice at focus order {0}.", focusOrder);
+			Assert.That(m_dtree.Controls.IndexOf(slice), Is.EqualTo(focusOrder));
+			Assert.That(slice.Label, Is.EqualTo(label));
+			Assert.That(slice.Object.Hvo, Is.EqualTo(m_entry.Hvo));
+			Assert.That(slice.Object.ClassID, Is.EqualTo(LexEntryTags.kClassId));
+			Assert.That(slice.ConfigurationNode.Attributes["field"].Value, Is.EqualTo(field));
+			Assert.That(Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, field, true), Is.EqualTo(flid));
+			Assert.That(slice.ConfigurationNode.Attributes["editor"].Value, Is.EqualTo(editor));
+			Assert.That(slice.CallerNode.Attributes["visibility"]?.Value, Is.EqualTo(visibility));
+			Assert.That(slice.Expansion, Is.EqualTo(DataTree.TreeItemState.ktisFixed));
+			Assert.That(slice.Control.AccessibleName, Is.EqualTo(label));
 		}
 
 		/// <summary></summary>

@@ -30,7 +30,7 @@ public sealed class PresentationCompilerSnapshotTests
 		var actual = NormalizeNewlines(Serialize(subset)).TrimEnd();
 		var expected = NormalizeNewlines(File.ReadAllText(snapshotPath)).TrimEnd();
 
-		Assert.That(actual, Is.EqualTo(expected));
+		AssertSnapshotMatches(actual, expected, "LexEntry-detail-Normal.top.actual.json");
 	}
 
 	[Test]
@@ -47,6 +47,28 @@ public sealed class PresentationCompilerSnapshotTests
 		var ir2 = compiler.Compile(contract);
 
 		Assert.That(Serialize(SelectTopLevelSubset(ir1)), Is.EqualTo(Serialize(SelectTopLevelSubset(ir2))));
+	}
+
+	[Test]
+	public void LexEntryDetailNormal_TopLevelNodesPreserveLayoutFocusOrder()
+	{
+		var repoRoot = TestRepoRoot.Find();
+		var partsDir = Path.Combine(repoRoot, "DistFiles", "Language Explorer", "Configuration", "Parts");
+
+		var loader = new PartsLayoutLoader();
+		var contract = loader.Load(new LayoutId("LexEntry", "detail", "Normal"), new[] { partsDir });
+		var compiler = new PresentationCompiler();
+		var ir = compiler.Compile(contract);
+
+		var topLevelRefs = ir.Children
+			.Select(n => ExtractRef(n.Id.Value))
+			.Where(refId => refId is not null)
+			.ToArray();
+
+		AssertAppearsBefore(topLevelRefs, "ChangeHandler", "LexemeForm");
+		AssertAppearsBefore(topLevelRefs, "LexemeForm", "CitationFormAllV");
+		AssertAppearsBefore(topLevelRefs, "CitationFormAllV", "Pronunciations");
+		AssertAppearsBefore(topLevelRefs, "Pronunciations", "Senses");
 	}
 
 	private static object SelectTopLevelSubset(PresentationLayout layout)
@@ -77,6 +99,34 @@ public sealed class PresentationCompilerSnapshotTests
 			.ToArray();
 
 		return new { Layout = layout.Id.Value, Nodes = nodes };
+	}
+
+	private static void AssertAppearsBefore(string?[] refs, string before, string after)
+	{
+		var beforeIndex = Array.IndexOf(refs, before);
+		var afterIndex = Array.IndexOf(refs, after);
+
+		Assert.That(beforeIndex, Is.GreaterThanOrEqualTo(0), $"Expected to find {before} in the top-level layout.");
+		Assert.That(afterIndex, Is.GreaterThanOrEqualTo(0), $"Expected to find {after} in the top-level layout.");
+		Assert.That(beforeIndex, Is.LessThan(afterIndex), $"Expected {before} to precede {after} in focus order.");
+	}
+
+	private static void AssertSnapshotMatches(string actual, string expected, string artifactName)
+	{
+		if (string.Equals(actual, expected, StringComparison.Ordinal))
+			return;
+
+		var artifactDir = Path.Combine(
+			TestContext.CurrentContext.WorkDirectory,
+			"TestArtifacts",
+			nameof(PresentationCompilerSnapshotTests)
+		);
+		Directory.CreateDirectory(artifactDir);
+		var actualPath = Path.Combine(artifactDir, artifactName);
+		File.WriteAllText(actualPath, actual);
+		TestContext.AddTestAttachment(actualPath);
+
+		Assert.Fail($"Snapshot mismatch. Actual snapshot written to {actualPath}");
 	}
 
 	private static string? ExtractRef(string id)
