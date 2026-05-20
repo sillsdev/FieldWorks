@@ -284,8 +284,8 @@ Representative files:
 Assessment:
 
 - This still looks like a real dependency, not dead code.
-- It is not a good first candidate for ripping out directly because the product still constructs and ships around it.
-- The first Paratext import slice now uses a FieldWorks-owned `IEncodingConverterProvider`; remaining workflows should migrate one at a time.
+- It is not a good first candidate for ripping out directly because the product still ships and configures the Encoding Converters runtime.
+- Direct `new EncConverters()` construction is now centralized in `Src/Common/FwUtils/EncodingConvertersProvider.cs`; application call sites obtain lookup/enumeration/configuration access through that provider.
 
 Removal path:
 
@@ -293,8 +293,9 @@ Removal path:
 
 Better path:
 
-- First hide it behind a FieldWorks-owned adapter/service so the rest of the codebase stops directly constructing `EncConverters`.
-- Once isolated, replacement can happen per workflow instead of as a repo-wide flag day.
+- Keep the FieldWorks-owned provider as the boundary for new work.
+- Replacement can now be evaluated per workflow instead of as a repo-wide flag day.
+- Legacy configuration flows should continue using the provider-backed repository until a smaller managed replacement is proven for that specific workflow.
 
 ### 8. Native COM Stream and Persistence Helpers
 

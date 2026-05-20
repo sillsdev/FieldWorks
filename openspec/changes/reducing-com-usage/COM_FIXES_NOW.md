@@ -303,18 +303,16 @@ Conservative alternate:
 
 This does not remove COM immediately, but it is the most realistic first move against one of the largest remaining external COM islands.
 
-Current product code still constructs or consumes `EncConverters` directly in places such as:
+Product code historically constructed or consumed `EncConverters` directly in Paratext import, converter setup dialogs, bulk edit, LexText import, Interlinear import, Data Notebook import, and Sfm2Xml. The change now introduces a shared `EncodingConvertersProvider` seam in `Src/Common/FwUtils/` so direct repository construction is centralized in one managed provider.
 
-- `Src/FwCoreDlgs/FwWritingSystemSetupModel.cs`
-- `Src/FwCoreDlgs/ConverterTester.cs`
-
-Right now there is no clear seam between FieldWorks logic and the external COM library. Until that seam exists, replacing or shrinking the dependency later will remain expensive.
+This does not remove the external Encoding Converters runtime. FieldWorks still ships `encoding-converters-core` payloads and some workflows still need EncConverters' repository/configuration APIs. The immediate win is that application code no longer calls `new EncConverters()` directly.
 
 ### What success looks like
 
-- Product code depends on a FieldWorks-owned interface, not directly on `EncConverters`.
+- Product code uses a FieldWorks-owned provider for repository lookup, enumeration, and construction.
 - Direct `new EncConverters()` creation is centralized.
-- Existing tests can mock the abstraction cleanly.
+- Existing tests can mock the abstraction cleanly for lookup workflows.
+- Legacy configuration flows that still require Add/Remove/AutoConfigure access receive the existing repository through the provider rather than constructing it themselves.
 
 ### Concrete scope
 
@@ -323,23 +321,25 @@ Primary files:
 - `Src/ParatextImport/SCTextEnum.cs`
 - `Src/FwCoreDlgs/FwWritingSystemSetupModel.cs`
 - `Src/FwCoreDlgs/ConverterTester.cs`
-- other direct product call sites found during implementation
+- `Src/Common/Controls/XMLViews/BulkEditBar.cs`
+- `Src/LexText/**` import and converter-selection call sites
+- `Src/Utilities/SfmToXml/Converter.cs`
 
 New code likely needed:
 
-- a small FieldWorks abstraction interface and one production adapter implementation.
+- `Src/Common/FwUtils/EncodingConvertersProvider.cs`
 
 ### Detailed plan
 
-1. Define the minimum interface FieldWorks actually needs from encoding-converter lookup and execution.
-2. Implement a production adapter that wraps `SilEncConverters40`.
-3. Replace direct `new EncConverters()` and direct product-level indexing/casting with the new abstraction.
+1. Define a shared provider interface for repository lookup, enumeration, and controlled legacy repository access.
+2. Implement a production provider that wraps `SilEncConverters40` and owns lazy repository construction.
+3. Replace direct `new EncConverters()` call sites with the shared provider.
 4. Reuse or extend existing mocks in tests where possible.
-5. Once all direct product call sites are behind the adapter, reassess whether some workflows can use a managed replacement or a simpler built-in path.
+5. Once construction is centralized, reassess per workflow whether a smaller managed replacement is realistic.
 
 ### Validation plan
 
-- Run Paratext import tests and any dialog-model tests that already mock converter behavior.
+- Run Paratext import tests, FwCore dialog-model tests, and Sfm2Xml tests.
 - Manual smoke test for converter selection/configuration flows.
 
 ### Risks
@@ -356,10 +356,11 @@ Narrower alternate if time is tight:
 
 That still buys a useful seam.
 
-Implemented first slice:
+Implemented provider crossover:
 
-- Paratext import now routes `SCTextEnum` converter lookup through `IEncodingConverterProvider`.
-- `EncodingConverterProvider` is the only Paratext import code that directly constructs `SilEncConverters40.EncConverters`.
+- `EncodingConvertersProvider` is the only product code that directly constructs `SilEncConverters40.EncConverters`.
+- Paratext import routes `SCTextEnum` converter lookup through `IEncodingConvertersProvider`.
+- FwCore dialogs, XMLViews bulk edit, LexText import, Interlinear import, Data Notebook import, and Sfm2Xml now obtain the repository through the provider.
 - Existing `SCTextEnum` missing-converter behavior is preserved and covered with the provider-seam test.
 
 ## 6. Prune Reg-Free Build Plumbing as Each Optional COM Surface Disappears

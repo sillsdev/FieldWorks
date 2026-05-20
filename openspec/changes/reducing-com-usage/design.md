@@ -32,7 +32,7 @@ The design follows the audit documents copied into this change directory: `COM_U
 
 ### 1. Branch by abstraction for uncertain dependencies
 
-Encoding Converter work SHALL begin by introducing a narrow FieldWorks-owned adapter around `SilEncConverters40`, not by replacing the package. This follows Branch by Abstraction and Anti-Corruption Layer patterns: move callers behind a stable FieldWorks contract first, then evaluate future replacements per workflow.
+Encoding Converter work SHALL use a FieldWorks-owned provider around `SilEncConverters40`, not replace the package in this change. This follows Branch by Abstraction and Anti-Corruption Layer patterns: move callers behind a stable FieldWorks contract first, then evaluate future replacements per workflow.
 
 References to guide implementation:
 
@@ -67,7 +67,7 @@ The following are marked optional until clarified:
 
 - deleting `ViewInputManager` and `ManagedVwWindow` source paths, because this depends on Windows-only support policy;
 - replacing rather than isolating DebugProcs COM activation;
-- expanding the Encoding Converter adapter beyond one workflow at a time;
+- replacing the Encoding Converters runtime after the provider crossover;
 - changing picture creation/lifetime or `VwDrawRootBuffered` defaults;
 - narrowing `UnknownProp` usage beyond documentation and local managed wrappers.
 
@@ -75,7 +75,9 @@ The following are marked optional until clarified:
 
 DebugProcs COM activation is isolated, not replaced, in this change. `Src/Common/FwUtils/DebugProcs.cs` now routes CLSID activation through a debug-only transport seam so construction, failure tolerance, and disposal can be tested without activating real COM.
 
-The first Encoding Converter adapter slice is Paratext import. `SCTextEnum` now depends on a FieldWorks-owned `IEncodingConverterProvider`, while the production adapter remains the only Paratext import code that directly constructs `SilEncConverters40.EncConverters`.
+The Encoding Converter crossover now uses `Src/Common/FwUtils/EncodingConvertersProvider.cs` as the shared managed boundary. Product call sites no longer construct `SilEncConverters40.EncConverters` directly; the provider owns lazy construction and exposes lookup/enumeration helpers plus controlled access to the existing repository for legacy configuration flows.
+
+This is containment, not replacement. FieldWorks still uses `encoding-converters-core` and still ships native/plugin payloads. User-facing converter management remains tied to EncConverters repository APIs such as Add, Remove, AutoConfigure, and converter type constants, so true runtime replacement remains a later per-workflow decision.
 
 ### 7. Historical provenance checks for removed COM surfaces
 
@@ -94,7 +96,7 @@ The first removals were checked against `origin/main` history so that the decisi
 4. Add or strengthen manifest-generation tests so optional COM removals cannot leave stale entries behind.
 5. Remove dormant OLE clipboard ownership cleanup if characterization confirms it is unused.
 6. Isolate or replace DebugProcs COM activation depending on the chosen alternative.
-7. Add the first narrow Encoding Converter adapter slice.
+7. Add the shared Encoding Converter provider and migrate direct repository construction to it.
 8. Consider optional/risky follow-ups only after explicit decisions and baseline validation.
 
 ## Risks / Trade-offs
@@ -104,7 +106,7 @@ The first removals were checked against `origin/main` history so that the decisi
 | External tools depend on a removed CLSID | First task clarifies external compatibility contract; stage manifest removal separately if needed. |
 | Manifest cleanup accidentally removes required native COM | Diff manifests and track targeted CLSIDs explicitly. |
 | Debug diagnostics regress | Add constructor/dispose/failure-tolerance tests; keep isolation as fallback. |
-| Encoding Converter adapter becomes a broad rewrite | Start with one workflow and existing mock patterns; no replacement package now. |
+| Encoding Converter provider becomes a runtime rewrite | Centralize construction and access only; keep `encoding-converters-core` and defer replacement decisions per workflow. |
 | Non-Windows shim removal breaks dormant source support | Make Windows-first policy explicit before source deletion. |
 | Clipboard cleanup touches active TSF or managed clipboard flows | Limit scope to `ModuleEntry::SetClipboard` ownership cleanup; leave TSF and managed clipboard intact. |
 

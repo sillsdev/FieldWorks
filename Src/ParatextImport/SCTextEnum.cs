@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ECInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
@@ -41,7 +42,7 @@ namespace ParatextImport
 		private bool m_seenIdInFile;
 		private int m_lineNumber;
 		/// <summary></summary>
-		private IEncodingConverterProvider m_encodingConverterProvider;
+		private IEncodingConvertersProvider m_encodingConverterProvider;
 		private Dictionary<string, IEncConverter> m_wsIdToConverterMap = new Dictionary<string, IEncConverter>();
 
 		// List of inline markers (begin and end)
@@ -72,12 +73,12 @@ namespace ParatextImport
 		public SCTextEnum(IScrImportSet settings, ImportDomain domain,
 			BCVRef startRef, BCVRef endRef, IEncConverters encConverters)
 			: this(settings, domain, startRef, endRef,
-				encConverters == null ? null : new EncodingConverterProvider(encConverters))
+				encConverters == null ? null : new EncodingConvertersProvider(encConverters))
 		{
 		}
 
 		internal SCTextEnum(IScrImportSet settings, ImportDomain domain,
-			BCVRef startRef, BCVRef endRef, IEncodingConverterProvider encodingConverterProvider)
+			BCVRef startRef, BCVRef endRef, IEncodingConvertersProvider encodingConverterProvider)
 		{
 			m_settings = settings;
 			m_domain = domain;
@@ -500,7 +501,7 @@ namespace ParatextImport
 			if (m_encodingConverterProvider != null)
 				return;
 
-			m_encodingConverterProvider = new EncodingConverterProvider();
+			m_encodingConverterProvider = EncodingConvertersProvider.Default;
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Multiple EncConverters objects are problematical because they don't all get
 			// updated when something changes.
 			if (m_encConverters == null)
-				m_encConverters = new EncConverters();
+				m_encConverters = EncodingConvertersProvider.Default.ConcreteConverters;
 
 			using (InstalledFontCollection installedFontCollection = new InstalledFontCollection())
 			{

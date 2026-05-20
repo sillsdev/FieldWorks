@@ -14,7 +14,6 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using ECInterfaces;
-using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
@@ -262,7 +261,7 @@ namespace ParatextImport
 	{
 		#region data members
 		private IScrImportSet m_settings;
-		private IEncodingConverterProvider m_converterProvider;
+		private IEncodingConvertersProvider m_converterProvider;
 		private MockFileOS m_fileOs;
 		#endregion
 
@@ -312,7 +311,7 @@ namespace ParatextImport
 
 		private void SetEncodingConverters(IEncConverters encConverters)
 		{
-			m_converterProvider = encConverters == null ? null : new EncodingConverterProvider(encConverters);
+			m_converterProvider = encConverters == null ? null : new EncodingConvertersProvider(encConverters);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1626,7 +1625,7 @@ namespace ParatextImport
 			VernacularWs.LegacyMapping = "UPPERCASE";
 			m_settings.SaveSettings();
 
-			var provider = new Mock<IEncodingConverterProvider>();
+			var provider = new Mock<IEncodingConvertersProvider>();
 			provider.Setup(x => x.GetConverter("UPPERCASE")).Returns(new DummyEncConverter()).Verifiable();
 			var scText = new SCScriptureText(m_settings, ImportDomain.Main, provider.Object);
 

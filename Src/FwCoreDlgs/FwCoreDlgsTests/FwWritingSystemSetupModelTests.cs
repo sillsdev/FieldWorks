@@ -10,6 +10,7 @@ using System.Xml;
 using NUnit.Framework;
 using Moq;
 using SIL.Extensions;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -1043,7 +1044,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.EncodingConverterKeys = () => new string[] { };
+			var provider = new Mock<IEncodingConvertersProvider>();
+			provider.Setup(x => x.Keys).Returns(new string[] { });
+			testModel.EncodingConvertersProvider = provider.Object;
 			var converters = testModel.GetEncodingConverters();
 			Assert.That(converters.Count, Is.EqualTo(1));
 			Assert.That(converters.First(), /* REVIEW (Hasso) contain? */ Is.EqualTo("<None>"));
@@ -1054,7 +1057,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new[] { "en", "en-GB", "en-fonipa", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.EncodingConverterKeys = () => { return new [] {"Test2", "Test"}; };
+			var provider = new Mock<IEncodingConvertersProvider>();
+			provider.Setup(x => x.Keys).Returns(new [] {"Test2", "Test"});
+			testModel.EncodingConvertersProvider = provider.Object;
 			testModel.ShowModifyEncodingConverters = TestShowModifyConverters;
 			testModel.ModifyEncodingConverters();
 			Assert.That(testModel.CurrentLegacyConverter, /* REVIEW (Hasso) contain? */ Is.EqualTo("Test"));
@@ -1065,7 +1070,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new[] { "en", "en-GB", "en-fonipa", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.EncodingConverterKeys = () => { return new[] { "Test2", "Test" }; };
+			var provider = new Mock<IEncodingConvertersProvider>();
+			provider.Setup(x => x.Keys).Returns(new[] { "Test2", "Test" });
+			testModel.EncodingConvertersProvider = provider.Object;
 			testModel.ShowModifyEncodingConverters = TestShowModifyConvertersReturnFalse;
 			testModel.CurrentLegacyConverter = "Test2";
 			testModel.ModifyEncodingConverters();
@@ -1078,7 +1085,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "en-GB", "en-fonipa", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.CurrentLegacyConverter = "Test2";
-			testModel.EncodingConverterKeys = () => { return new string [] { }; };
+			var provider = new Mock<IEncodingConvertersProvider>();
+			provider.Setup(x => x.Keys).Returns(new string [] { });
+			testModel.EncodingConvertersProvider = provider.Object;
 			testModel.ShowModifyEncodingConverters = TestShowModifyConvertersReturnFalse;
 			testModel.ModifyEncodingConverters();
 			Assert.That(testModel.CurrentLegacyConverter, Is.Null.Or.Empty);

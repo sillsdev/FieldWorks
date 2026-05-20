@@ -48,13 +48,14 @@
 - [x] 6.4 Not selected for this change: non-COM debug transport replacement is deferred; COM remains isolated behind the debug-only transport. [Optional, managed/native]
 - [x] 6.5 Run `.\test.ps1 -TestProject FwUtilsTests -TestFilter "FullyQualifiedName~DebugProcs"`; native debug code was not changed, so `TestViews` is not required for this slice. [Validation]
 
-## 7. Required First Slice: Encoding Converter Adapter Seam
+## 7. Required Encoding Converter Provider Crossover
 
-- [x] 7.1 Define a narrow FieldWorks-owned Encoding Converter provider/service interface for the selected first workflow. [Managed C#, <=2h]
-- [x] 7.2 Implement the production adapter using existing `SilEncConverters40` / `encoding-converters-core`; do not add a replacement package. [Managed C#, <=2h]
-- [x] 7.3 Replace direct `new EncConverters()` in the selected first workflow only. [Managed C#, <=2h]
-- [x] 7.4 Add mocked adapter tests using existing Moq/NUnit patterns. [Managed test, <=2h]
-- [x] 7.5 Run workflow-specific tests for the selected slice: `.\test.ps1 -TestProject ParatextImportTests`. [Validation]
+- [x] 7.1 Define a FieldWorks-owned `IEncodingConvertersProvider` seam in `Src/Common/FwUtils/`. [Managed C#, <=2h]
+- [x] 7.2 Implement the production provider using existing `SilEncConverters40` / `encoding-converters-core`; do not add or replace runtime packages. [Managed C#, <=2h]
+- [x] 7.3 Replace product-level direct `new EncConverters()` construction with `EncodingConvertersProvider` across Paratext import, FwCore dialogs, XMLViews bulk edit, LexText import, Interlinear import, Data Notebook import, and Sfm2Xml. [Managed C#]
+- [x] 7.4 Preserve legacy configuration workflows by exposing the existing repository only through the provider where Add/Remove/AutoConfigure APIs are still required. [Managed C#]
+- [x] 7.5 Add/update mocked provider tests using existing Moq/NUnit patterns. [Managed test]
+- [x] 7.6 Run focused validation: `.\test.ps1 -TestProject ParatextImportTests`, `.\test.ps1 -TestProject FwCoreDlgsTests`, and `.\test.ps1 -TestProject Sfm2XmlTests`. [Validation]
 
 ## 8. Deferred Optional / Risky: Windows-First Shim Removal
 

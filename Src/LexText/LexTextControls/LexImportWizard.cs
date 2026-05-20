@@ -283,23 +283,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public static void EnsureWindows1252ConverterExists()
 		{
-			EncConverters encConv = new EncConverters();
-			System.Collections.IDictionaryEnumerator de = encConv.GetEnumerator();
 			// REVIEW: SHOULD THIS NAME BE LOCALIZED?
 			string sEncConvName = "Windows1252<>Unicode";
-			bool fMustCreateEncCnv = true;
-			while (de.MoveNext())
-			{
-				if ((string)de.Key != null && (string)de.Key == sEncConvName)
-				{
-					fMustCreateEncCnv = false;
-					break;
-				}
-			}
-			if (fMustCreateEncCnv)
+			if (!EncodingConvertersProvider.Default.ContainsKey(sEncConvName))
 			{
 				try
 				{
+					var encConv = EncodingConvertersProvider.Default.ConcreteConverters;
 					encConv.AddConversionMap(sEncConvName, "1252",
 						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
 						ECInterfaces.ProcessTypeFlags.CodePageConversion);

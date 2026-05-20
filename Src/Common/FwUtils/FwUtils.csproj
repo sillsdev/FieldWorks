@@ -28,6 +28,7 @@
     <PackageReference Include="SIL.Core" />
     <PackageReference Include="SIL.Core.Desktop" />
     <PackageReference Include="SIL.DesktopAnalytics" />
+    <PackageReference Include="encoding-converters-core" />
     <PackageReference Include="SIL.FLExBridge.IPCFramework" />
     <PackageReference Include="SIL.LCModel" />
     <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />

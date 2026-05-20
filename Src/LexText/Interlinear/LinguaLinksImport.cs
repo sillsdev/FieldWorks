@@ -21,8 +21,8 @@ using SIL.LCModel;
 using ECInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
-using SilEncConverters40;
 using SIL.LCModel.Application.ApplicationServices;
 using System.Xml.Serialization;
 using SIL.LCModel.Core.Text;
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.IText
 		private string m_sErrorMsg;
 		private LanguageMapping[] m_languageMappings;
 		private LanguageMapping m_current;
-		private EncConverters m_converters;
+		private IEncConverters m_converters;
 		private string m_nextInput;
 		private string m_sTempDir;
 		private string m_sRootDir;
@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.IText
 					ITextStrings.ksLLEncConv);
 				return false;
 			}
-			m_converters = new EncConverters();
+			m_converters = EncodingConvertersProvider.Default.Converters;
 			using (FileStream fsi = new FileStream(m_nextInput, FileMode.Open, FileAccess.Read),
 				fso = new FileStream(m_sTempDir + "LLPhase1Output.xml", FileMode.Create, FileAccess.Write))
 			{

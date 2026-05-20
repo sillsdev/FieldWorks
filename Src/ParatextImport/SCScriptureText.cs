@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 
@@ -19,7 +20,7 @@ namespace ParatextImport
 		protected IScrImportSet m_settings;
 		/// <summary></summary>
 		protected ImportDomain m_domain;
-		private IEncodingConverterProvider m_encodingConverterProvider;
+		private IEncodingConvertersProvider m_encodingConverterProvider;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -34,7 +35,7 @@ namespace ParatextImport
 		}
 
 		internal SCScriptureText(IScrImportSet settings, ImportDomain domain,
-			IEncodingConverterProvider encodingConverterProvider)
+			IEncodingConvertersProvider encodingConverterProvider)
 		{
 			Debug.Assert(settings != null);
 			m_settings = settings;

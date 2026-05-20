@@ -12,7 +12,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 using ECInterfaces;
-using SilEncConverters40;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace Sfm2Xml
 {
@@ -150,14 +150,14 @@ namespace Sfm2Xml
 		/// acts on the input files that it's given - with Convert being the main entry point.
 		///
 		/// </summary>
-		public Converter() : this((EncConverters)null)
+		public Converter() : this((IEncConverters)null)
 		{
 		}
 
 		/// <summary>
 		/// internal method to allow testing of some functionality without requiring setup for EncConverters on a developer machine.
 		/// </summary>
-		internal Converter(EncConverters converters)
+		internal Converter(IEncConverters converters)
 		{
 			m_converters = converters;
 			m_options = new Dictionary<string, bool>(); // maps options (for now a checkbox Checked value) to a key string
@@ -178,9 +178,9 @@ namespace Sfm2Xml
 			m_topAnalysisWS = "en";
 		}
 
-		private EncConverters EnsureConverters()
+		private IEncConverters EnsureConverters()
 		{
-			return m_converters ?? (m_converters = new EncConverters());
+			return m_converters ?? (m_converters = EncodingConvertersProvider.Default.Converters);
 		}
 
 		// only one entry per class - iow, the key is the classname
@@ -255,7 +255,7 @@ namespace Sfm2Xml
 
 
 		// This enables us to get hold of encoding converters:
-		private EncConverters m_converters;
+		private IEncConverters m_converters;
 		// Placeholder for the implied root of the hierarchy (we assume there's only one):
 		private ClsHierarchyEntry m_Root;
 		// Hash table of Begin Markers, telling us which hierarchy entry each initiates. This

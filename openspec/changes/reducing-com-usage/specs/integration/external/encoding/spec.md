@@ -1,12 +1,17 @@
 ## MODIFIED Requirements
 
 ### Requirement: Encoding Converter Access Uses FieldWorks Adapter Seams
-New or changed FieldWorks code that uses SIL Encoding Converters SHALL depend on a FieldWorks-owned provider or service interface rather than directly constructing `SilEncConverters40.EncConverters` at application call sites.
+New or changed FieldWorks code that uses SIL Encoding Converters SHALL depend on `IEncodingConvertersProvider` or provider-backed `IEncConverters` access rather than directly constructing `SilEncConverters40.EncConverters` at application call sites.
 
 #### Scenario: Encoding converter lookup is added or modified
 - **WHEN** code under `Src/FwCoreDlgs/`, `Src/ParatextImport/`, `Src/LexText/`, or related import/configuration workflows needs converter lookup
-- **THEN** the call site MUST use the FieldWorks-owned adapter seam for the selected workflow
-- **AND** direct `new EncConverters()` construction MUST remain centralized inside the production adapter.
+- **THEN** the call site MUST use `EncodingConvertersProvider`
+- **AND** direct `new EncConverters()` construction MUST remain centralized inside the production provider.
+
+#### Scenario: Legacy converter configuration APIs are still required
+- **WHEN** a migrated workflow needs EncConverters repository operations such as Add, Remove, AutoConfigure, or converter-type constants
+- **THEN** it MAY use the provider-backed repository surface
+- **AND** it MUST NOT construct `SilEncConverters40.EncConverters` directly.
 
 ### Requirement: Encoding Converter Adapter Preserves Existing Behavior
 The Encoding Converter adapter SHALL preserve existing converter lookup, exception handling, missing-converter behavior, and conversion results for each migrated workflow.

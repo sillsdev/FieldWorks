@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using ECInterfaces;
-using SilEncConverters40;
 
 namespace Sfm2Xml
 {
@@ -93,7 +92,7 @@ namespace Sfm2Xml
 			m_EncCvtrMap = map;
 		}
 
-		public bool SetConverter(EncConverters converters)
+		public bool SetConverter(IEncConverters converters)
 		{
 			if (m_EncCvtrMap == null)
 				return true;	// if the map is empty, this means the lang is already UTF8
