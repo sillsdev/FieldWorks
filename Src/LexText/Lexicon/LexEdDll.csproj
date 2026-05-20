@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LexEdDll</AssemblyName>
@@ -75,5 +75,18 @@
     <EmbeddedResource Include="icons\Find Lexical Entry.ico" />
     <EmbeddedResource Include="icons\Find Reversal Entry.ico" />
     <EmbeddedResource Include="LexEd.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="LexEdStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LexEdStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="LexEdStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LexEdStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
