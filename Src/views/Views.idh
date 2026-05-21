@@ -4911,28 +4911,6 @@ DeclareInterface(VwLayoutManager, Unknown, 13F3A421-4915-455b-B57F-AFD4073CFFA0)
 	};
 #endif // !NO_COCLASSES
 
-
-	/*******************************************************************************************
-		Interface IVwWindow
-		COM interface that wraps a Window handle/HWND
-		Allows cross platform querying of Window properties
-	*******************************************************************************************/
-	DeclareInterface(VwWindow, Unknown, 8856396c-63a9-4bc7-ad47-87ec8b6ef5a4)
-	{
-		[propput] HRESULT Window([in] DWORD * hwnd);
-
-		HRESULT GetClientRectangle(
-			[out] RECT * prcClientRectangle);
-	}
-
-	#ifndef NO_COCLASSES
-	DeclareCoClass(VwWindow, 3fb0fcd2-ac55-42a8-b580-73b89a2b6215)
-	{
-		interface IVwWindow;
-	};
-	#endif // !NO_COCLASSES
-
-
 typedef [v1_enum] enum VwMouseEvent
 {
 	// Mouse event types that we can identify from info passed to us.
@@ -4946,7 +4924,7 @@ typedef [v1_enum] enum VwMouseEvent
 /*******************************************************************************************
 	Interface IViewInputMgr
 
-	Allows interacting with input methods/keyboards in a cross-platform compatible way.
+	Allows interacting with input methods/keyboards for RootSite editing.
 *******************************************************************************************/
 DeclareInterface(ViewInputMgr, Unknown, e41668f7-d506-4c8a-a5d7-feae5630797e)
 {

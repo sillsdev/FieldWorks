@@ -67,7 +67,6 @@
 		<ManagedComAssemblies Include="$(OutDir)FwUtils.dll" />
 		<ManagedComAssemblies Include="$(OutDir)SimpleRootSite.dll" />
 		<ManagedComAssemblies Include="$(OutDir)ManagedLgIcuCollator.dll" />
-		<ManagedComAssemblies Include="$(OutDir)ManagedVwWindow.dll" />
 	</ItemGroup>
 	<ItemGroup>
 		<ManagedComAssemblies Remove="$(OutDir)*.resources.dll" />

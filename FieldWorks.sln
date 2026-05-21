@@ -116,10 +116,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagedLgIcuCollatorTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagedVwDrawRootBuffered", "Src\ManagedVwDrawRootBuffered\ManagedVwDrawRootBuffered.csproj", "{BD5AFBAD-6C0C-5C44-912D-D26745CF8F62}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagedVwWindow", "Src\ManagedVwWindow\ManagedVwWindow.csproj", "{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagedVwWindowTests", "Src\ManagedVwWindow\ManagedVwWindowTests\ManagedVwWindowTests.csproj", "{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBoxExLib", "Src\Utilities\MessageBoxExLib\MessageBoxExLib.csproj", "{C5AA04DD-F91B-5156-BD40-4A761058AC64}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBoxExLibTests", "Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\MessageBoxExLibTests.csproj", "{F2525F78-38CD-5E36-A854-E16BE8A1B8FF}"
@@ -633,18 +629,6 @@ Global
 		{BD5AFBAD-6C0C-5C44-912D-D26745CF8F62}.Debug|x64.Build.0 = Debug|x64
 		{BD5AFBAD-6C0C-5C44-912D-D26745CF8F62}.Release|x64.ActiveCfg = Release|x64
 		{BD5AFBAD-6C0C-5C44-912D-D26745CF8F62}.Release|x64.Build.0 = Release|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Bounds|x64.ActiveCfg = Release|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Bounds|x64.Build.0 = Release|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Debug|x64.ActiveCfg = Debug|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Debug|x64.Build.0 = Debug|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Release|x64.ActiveCfg = Release|x64
-		{5FD892A2-7F18-5DAA-B4DF-1C79A45E7025}.Release|x64.Build.0 = Release|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Bounds|x64.ActiveCfg = Release|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Bounds|x64.Build.0 = Release|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Debug|x64.ActiveCfg = Debug|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Debug|x64.Build.0 = Debug|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Release|x64.ActiveCfg = Release|x64
-		{FF2D5865-1799-5EE8-A46B-3CD86EA9D9EE}.Release|x64.Build.0 = Release|x64
 		{C5AA04DD-F91B-5156-BD40-4A761058AC64}.Bounds|x64.ActiveCfg = Release|x64
 		{C5AA04DD-F91B-5156-BD40-4A761058AC64}.Bounds|x64.Build.0 = Release|x64
 		{C5AA04DD-F91B-5156-BD40-4A761058AC64}.Debug|x64.ActiveCfg = Debug|x64

@@ -21,6 +21,7 @@ FieldWorks relies on registration-free COM to avoid global registry pollution. N
 - COM interfaces are authored in native projects (IDL, GUIDs) and built into proxy/stub DLLs.
 - Managed components consume COM interfaces through interop boundaries and wrapper libraries.
 - Registration-free COM manifests are generated and distributed via build targets; avoid global registration.
+- ViewInputManager and ManagedVwWindow were retired as Linux-era managed COM shims; Windows RootSite input and geometry use native Views/Win32 paths.
 
 #### References
 

@@ -17,7 +17,7 @@ Description:
 	regardless of how much text actually exists in the rootbox.
 
 	This class basically connects a view (rootbox) with keyboards. This class gets created by
-	the VwRootBox on Windows. Linux uses a managed implementation (ViewInputManager).
+	the VwRootBox on Windows.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 //:>********************************************************************************************
@@ -1285,11 +1285,7 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 		CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
 			&rcSecondary, &fSplit, &fEBAIgnored));
 	}
-#if defined(WIN32) || defined(WIN64)
 	rcSel.ClientToScreen(hwnd);
-#else
-	// TODO-Linux: Awaiting VwTextStore rewrite for Linux
-#endif
 	*prc = rcSel;
 #ifdef TRACING_TSF
 	StrAnsi sta;

@@ -19,7 +19,8 @@ FieldWorks uses a native C++ Views engine for text layout and rendering. Managed
 - Views (native) provides layout, selection, and rendering engines.
 - ViewsInterfaces exposes COM interfaces to managed code.
 - RootSite and SimpleRootSite host root boxes and manage view lifecycle.
-- ManagedVwWindow bridges WinForms controls to IVwWindow for native rendering.
+- Windows RootSite input uses native VwTextStore, and selection/page geometry uses the RootSite HWND with Win32 client-rectangle APIs.
+- The retired Linux-era ManagedVwWindow shim is not part of the Windows rendering path.
 
 ### References
 
