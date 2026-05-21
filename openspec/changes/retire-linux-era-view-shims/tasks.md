@@ -46,7 +46,7 @@
 
 ## 8. Manual Smoke Validation
 
-- [ ] 8.1 Edit text in a RootSite field in a rebuilt FieldWorks app; verify normal typing and keyboard switching still work. [Manual]
-- [ ] 8.2 Test IME/composition in a RootSite field if an IME is available; verify pre-edit and commit behavior still work. [Manual]
-- [ ] 8.3 Exercise mouse selection, keyboard selection, Shift+arrow selection, PageUp, and PageDown in a RootSite field; verify selection and visible-page movement remain correct. [Manual]
-- [ ] 8.4 Launch from rebuilt output and watch for side-by-side activation or missing manifest errors. [Manual]
+- [x] 8.1 Edit text in a RootSite field in a rebuilt FieldWorks app; verify normal typing and keyboard switching still work. [Manual]
+- [x] 8.2 Test IME/composition in a RootSite field if an IME is available; verify pre-edit and commit behavior still work. [Manual]
+- [x] 8.3 Exercise mouse selection, keyboard selection, Shift+arrow selection, PageUp, and PageDown in a RootSite field; verify selection and visible-page movement remain correct. [Manual]
+- [x] 8.4 Launch from rebuilt output and watch for side-by-side activation or missing manifest errors. [Manual]
