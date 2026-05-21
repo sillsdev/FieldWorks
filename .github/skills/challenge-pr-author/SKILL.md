@@ -2,7 +2,7 @@
 name: challenge-pr-author
 description: "Interactively challenge a FieldWorks PR author before posting a PR. Use for pre-PR review, author interview, branch review, PR readiness, review summary generation, and surfacing gaps in understanding or validation."
 argument-hint: "Optional branch purpose or PR goal"
-user-invocable: false
+user-invocable: true
 ---
 
 # Challenge PR Author

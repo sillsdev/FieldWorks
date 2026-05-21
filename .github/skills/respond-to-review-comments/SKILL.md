@@ -22,7 +22,7 @@ This workflow starts from technical evaluation, not automatic agreement. Externa
 
 ## Required Context
 
-Before working comments:
+Before working on comments:
 
 1. Load `CONTEXT.md` and apply the shared language rules.
 2. Load the repo instructions relevant to touched files.
