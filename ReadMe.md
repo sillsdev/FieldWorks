@@ -6,6 +6,7 @@ New to FieldWorks development? Start here:
 - **[VS Code Stability Profile](Docs/vscode-stability-profile.md)** - ReSharper-first VS Code setup and when to switch to Visual Studio
 - **[Visual Studio Setup](Docs/visual-studio-setup.md)** - Detailed VS 2022 configuration
 - **[Core Developer Setup](Docs/core-developer-setup.md)** - Additional setup for team members
+- **[AI-Assisted PR Workflow](Docs/workflows/ai-pr-workflow.md)** - Canonical core-developer path from Jira to worktree setup, branch preflight, and review response
 
 > **Note**: We are migrating documentation from the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) into this repository. Some wiki content may be more recent until migration is complete.
 

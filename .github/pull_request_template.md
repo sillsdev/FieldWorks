@@ -11,6 +11,7 @@
   git diff --check --cached
   ```
 - [ ] Builds/tests pass locally (or I've run the CI-style build via Bash script or MSBuild).
+- [ ] If this is core-developer AI-assisted work, I followed `Docs/workflows/ai-pr-workflow.md` and ran `pr-preflight` or the equivalent branch-readiness review before requesting review.
 - [ ] For any `Src/**` folders touched, corresponding `AGENTS.md` files are updated or explicitly confirmed still accurate.
 
 ## Notes for reviewers (optional)

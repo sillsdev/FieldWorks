@@ -142,6 +142,8 @@ Default recommendation:
 - **C# Dev Kit is discouraged** in this workspace.
 - Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
 
+If you are a core developer using GitHub Copilot or Claude Code, follow [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the Jira-to-PR path: create a dedicated worktree, validate with repo tasks/scripts, run `pr-preflight`, and then work review comments through the repo review-response workflow.
+
 Switch to **Visual Studio 2022** when you need:
 - WinForms designer workflows
 - Mixed managed/native debugging across interop boundaries
@@ -184,6 +186,8 @@ We welcome any contribution! To get started:
 
 See [workflows/pull-request-workflow.md](workflows/pull-request-workflow.md) for detailed PR guidelines.
 
+Core developers doing AI-assisted work should start with [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) instead of jumping directly to the generic PR checklist.
+
 ### Becoming a Core Developer
 
 People we know well might be asked to join the core development team. Core developers get additional privileges including the ability to make branches directly in the main repository and contribute in additional ways.
@@ -198,5 +202,6 @@ People we know well might be asked to join the core development team. Core devel
 
 - [Visual Studio Setup](visual-studio-setup.md) - Detailed VS configuration
 - [Core Developer Setup](core-developer-setup.md) - Additional setup for core developers
+- [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) - Canonical Jira-to-PR workflow for core developers using GitHub Copilot or Claude Code
 - [Pull Request Workflow](workflows/pull-request-workflow.md) - How to submit changes
 - [Build Instructions](../.github/instructions/build.instructions.md) - Detailed build guide
