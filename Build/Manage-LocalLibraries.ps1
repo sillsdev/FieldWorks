@@ -60,7 +60,7 @@
 
 .PARAMETER Library
 	Which library to set a version for (SetVersion mode only):
-	liblcm, libpalaso, chorus, machine, or l10nsharp.
+	lcm, palaso, chorus, machine, or l10nsharp.
 
 .PARAMETER Version
 	Sets the version in SilVersions.props (SetVersion mode). Use to revert
@@ -75,7 +75,7 @@
 	Packs libpalaso (from env var) and then chorus from the given path.
 
 .EXAMPLE
-	.\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0
+	.\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0
 	Sets libpalaso version to 17.0.0 in SilVersions.props (e.g. to revert).
 #>
 [CmdletBinding()]
@@ -95,7 +95,7 @@ param(
 	[switch]$L10nSharp,
 	[string]$L10nSharpPath,
 
-	[ValidateSet('liblcm', 'libpalaso', 'chorus', 'machine', 'l10nsharp')]
+	[ValidateSet('palaso', 'lcm', 'chorus', 'machine', 'l10nsharp')]
 	[string]$Library,
 
 	[string]$Version
@@ -108,7 +108,7 @@ $ErrorActionPreference = "Stop"
 # ---------------------------------------------------------------------------
 
 $LibraryConfig = @{
-	libpalaso = @{
+	palaso = @{
 		VersionProperty = 'SilLibPalasoVersion'
 		PdbRelativeDir  = 'output/Debug/net462'
 		CachePrefixes   = @(
@@ -118,7 +118,7 @@ $LibraryConfig = @{
 		)
 		EnvVar          = 'LIBPALASO_PATH'
 	}
-	liblcm = @{
+	lcm = @{
 		VersionProperty = 'SilLcmVersion'
 		PdbRelativeDir  = 'artifacts/Debug/net462'
 		CachePrefixes   = @('sil.lcmodel')
@@ -150,7 +150,7 @@ $LibraryConfig = @{
 }
 
 # Pack order: libpalaso first (other libraries may depend on it)
-$PackOrder = @('libpalaso', 'l10nsharp', 'liblcm', 'chorus', 'machine')
+$PackOrder = @('palaso', 'l10nsharp', 'lcm', 'chorus', 'machine')
 
 # ---------------------------------------------------------------------------
 # Read SilVersions.props
@@ -188,7 +188,21 @@ function Update-VersionAndClearCache {
 	$cfg = $LibraryConfig[$LibName]
 	$node = Get-VersionNode $LibName
 	$node.InnerText = $NewVersion
-	$versionProps.Save($versionPropsPath)
+
+	# Save with XmlWriter to preserve tab indentation (XmlDocument.Save() converts tabs to spaces)
+	$writerSettings = New-Object System.Xml.XmlWriterSettings
+	$writerSettings.Indent = $true
+	$writerSettings.IndentChars = "`t"
+	$writerSettings.NewLineChars = "`r`n"
+	$writerSettings.Encoding = New-Object System.Text.UTF8Encoding($false) # UTF-8 without BOM
+	$writerSettings.OmitXmlDeclaration = -not $versionProps.FirstChild.NodeType.Equals([System.Xml.XmlNodeType]::XmlDeclaration)
+	$writer = [System.Xml.XmlWriter]::Create($versionPropsPath, $writerSettings)
+	try {
+		$versionProps.WriteTo($writer)
+	} finally {
+		$writer.Close()
+	}
+
 	Write-Host "Updated SilVersions.props ($($cfg.VersionProperty) = $NewVersion)" -ForegroundColor Yellow
 
 	$packagesDir = Join-Path $repoRoot "packages"
@@ -345,8 +359,8 @@ function Invoke-PackLibrary {
 
 # Map switches and explicit paths to library names
 $switchMap = @{
-	libpalaso = @{ Enabled = [bool]$Palaso;  ExplicitPath = $PalasoPath }
-	liblcm    = @{ Enabled = [bool]$Lcm;     ExplicitPath = $LcmPath }
+	palaso = @{ Enabled = [bool]$Palaso;  ExplicitPath = $PalasoPath }
+	lcm    = @{ Enabled = [bool]$Lcm;     ExplicitPath = $LcmPath }
 	chorus    = @{ Enabled = [bool]$Chorus;   ExplicitPath = $ChorusPath }
 	machine   = @{ Enabled = [bool]$Machine;  ExplicitPath = $MachinePath }
 	l10nsharp = @{ Enabled = [bool]$L10nSharp; ExplicitPath = $L10nSharpPath }
@@ -436,5 +450,5 @@ elseif ($Library -and $Version) {
 	Write-Host "Run .\build.ps1 to restore and build with the new version." -ForegroundColor Cyan
 }
 else {
-	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library libpalaso -Version 17.0.0"
+	throw "Nothing to do. Use -Palaso/-Lcm/-Chorus/-Machine/-L10nSharp switches to pack, or -Library and -Version to set a version.`nExamples:`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -PalasoPath C:\Repos\libpalaso`n  .\Build\Manage-LocalLibraries.ps1 -Palaso -Chorus`n  .\Build\Manage-LocalLibraries.ps1 -Machine -MachinePath C:\Repos\machine`n  .\Build\Manage-LocalLibraries.ps1 -Library l10nsharp -Version 10.0.0`n  .\Build\Manage-LocalLibraries.ps1 -Library palaso -Version 17.0.0"
 }
