@@ -1141,10 +1141,12 @@ VwRootBox * VwSelection::RootBox()
 VwTextSelection::VwTextSelection()
 {
 	m_pvpbox = NULL;
+	m_pvpboxEnd = NULL;
 	m_ichAnchor = 0;
 	m_ichAnchor2 = -1;
 	m_ichEnd = 0;
 	m_fAssocPrevious = false;
+	m_fEndBeforeAnchor = false;
 	m_xdIP = -1;
 }
 
@@ -1162,6 +1164,7 @@ VwTextSelection::VwTextSelection(VwParagraphBox * pvpbox, int ichAnchor, int ich
 	bool fAssocPrevious)
 {
 	m_pvpbox = pvpbox;
+	m_pvpboxEnd = NULL;
 	m_ichAnchor = ichAnchor;
 	m_ichAnchor2 = -1;
 	m_ichEnd = ichEnd;
@@ -5417,14 +5420,9 @@ bool CheckForParaBreak(const wchar * pchw, int ich, int cch, int * pichNext)
 	return false;
 }
 
-/// <summary>
-/// Check if the selected text (the paste target) is a complete single paragraph.
-/// </summary>
-/// <returns>
-/// True: If the selection contains exactly one complete paragraph, which means that the selection starts
-///       at the beginning of a paragraph and ends at the end of the same paragraph.
-/// False: If the selection contains text from more than one paragraph or only contains part of a paragraph.
-/// </returns>
+/*----------------------------------------------------------------------------------------------
+	Check if the selected text is a complete paragraph backed by one source string.
+----------------------------------------------------------------------------------------------*/
 bool VwTextSelection::SelectedTextIsSingleParagraph()
 {
 	VwParagraphBox* notUsed;
@@ -5432,16 +5430,13 @@ bool VwTextSelection::SelectedTextIsSingleParagraph()
 	int targetLim; // One past the last selected character, relative to the last paragraph.
 	GetFirstAndLast(&notUsed, &notUsed, &targetMin, &targetLim);
 
-	if (!m_pvpboxEnd &&
-		targetMin == 0 &&
-		m_pvpbox->Source()->CStrings() == 1)
+	if ((!m_pvpboxEnd || m_pvpboxEnd == m_pvpbox) &&
+		m_pvpbox->Source()->CStrings() == 1 &&
+		targetMin == 0)
 	{
-		ITsStringPtr firstStr;
-		m_pvpbox->Source()->StringAtIndex(0, &firstStr);
-		int firstStrLen = 0;
-		CheckHr(firstStr->get_Length(&firstStrLen));
+		int fullParagraphLen = m_pvpbox->Source()->IchStartString(m_pvpbox->Source()->CStrings());
 
-		if (targetLim == firstStrLen)
+		if (targetLim == fullParagraphLen)
 		{
 			return true;
 		}
@@ -5449,17 +5444,15 @@ bool VwTextSelection::SelectedTextIsSingleParagraph()
 	return false;
 }
 
-/// <summary>
-/// Check if the replacement text is a single paragraph.
-/// </summary>
-/// <param name="replacementTstr">The replacement text.</param>
-/// <returns>
-/// True: If the replacement text contains exactly one paragraph, which means that the text ends with
-/// a '\n' and contains no other '\n' characters.
-/// False: If the replacement text contains more than one '\n' or if the '\n' is not at the end.
-/// </returns>
-bool VwTextSelection::ReplacementTextIsSingleParagraph(ITsString* replacementTstr)
+/*----------------------------------------------------------------------------------------------
+	Check if the replacement text has exactly one terminal paragraph marker and no interior
+	paragraph markers. If so, set *pichLimText to the limit before the marker.
+----------------------------------------------------------------------------------------------*/
+bool VwTextSelection::ReplacementTextIsSingleParagraph(ITsString* replacementTstr, int * pichLimText)
 {
+	AssertPtr(pichLimText);
+	*pichLimText = 0;
+
 	int replacementCharCount;
 	SmartBstr replacementBstr;
 	CheckHr(replacementTstr->get_Length(&replacementCharCount));
@@ -5469,18 +5462,22 @@ bool VwTextSelection::ReplacementTextIsSingleParagraph(ITsString* replacementTst
 	CheckHr(replacementTstr->get_Text(&replacementBstr));
 	const wchar* replacementText = replacementBstr.Chars();
 
-	// A single paragraph must end with exactly one trailing '\n'.
-	if (replacementText[replacementCharCount - 1] != '\n')
-		return false;
-
-	// Ensure there are no other '\n' characters before the final one.
-	for (int ii = 0; ii < replacementCharCount - 1; ii++)
+	for (int ich = 0; ich < replacementCharCount; ich++)
 	{
-		if (replacementText[ii] == '\n')
-			return false;
+		int ichNext;
+		if (!CheckForParaBreak(replacementText, ich, replacementCharCount, &ichNext))
+			continue;
+
+		if (ichNext == replacementCharCount)
+		{
+			*pichLimText = ich;
+			return true;
+		}
+
+		return false;
 	}
 
-	return true;
+	return false;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -5519,14 +5516,11 @@ STDMETHODIMP VwTextSelection::ReplaceWithTsString(ITsString * ptss)
 	// text is a complete single paragraph (has exactly one terminal paragraph marker with no interior
 	// paragraph breaks) then trim that marker so that we do character replacement instead of paragraph
 	// replacement. Paragraph replacement fails in this case: LT-20857 (and many others).
-	if (SelectedTextIsSingleParagraph() && ReplacementTextIsSingleParagraph(ptss))
+	int ichLimReplacementText;
+	ITsStringPtr trimmedReplacementText;
+	if (SelectedTextIsSingleParagraph() && ReplacementTextIsSingleParagraph(ptss, &ichLimReplacementText))
 	{
-		int replacementCharCount;
-		CheckHr(ptss->get_Length(&replacementCharCount));
-
-		// Remove the trailing '\n'.
-		ITsStringPtr trimmedReplacementText;
-		MakeSubString(ptss, 0, replacementCharCount - 1, &trimmedReplacementText);
+		MakeSubString(ptss, 0, ichLimReplacementText, &trimmedReplacementText);
 		ptss = trimmedReplacementText;
 	}
 

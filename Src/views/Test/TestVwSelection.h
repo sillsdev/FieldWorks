@@ -682,6 +682,120 @@ namespace TestViews
 				khvoTransPara1, trans2);
 		}
 
+		void DoReplaceWholeSelectedParagraphWithCopiedParagraphTest(const OLECHAR * pszPaste,
+			const OLECHAR * pszExpected, bool fBackwardSelection)
+		{
+			ITsStringPtr qtss;
+			StrUni stuOriginal(L"This paragraph will be replaced");
+			m_qtsf->MakeString(stuOriginal.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+			StrUni stuFollowing(L"This paragraph should remain after replacement");
+			m_qtsf->MakeString(stuFollowing.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara2, kflidStTxtPara_Contents, qtss);
+
+			HVO hvoRootBox = 101;
+			HVO rghvo[2] = { khvoOrigPara1, khvoOrigPara2 };
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+
+			VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(m_qrootb->FirstRealBox());
+			unitpp::assert_true("Non-null first paragraph box", pvpbox);
+			VwTextSelectionPtr qselStart;
+			qselStart.Attach(NewObj VwTextSelection(pvpbox, 0, 0, false, NULL));
+			VwTextSelectionPtr qselEnd;
+			qselEnd.Attach(NewObj VwTextSelection(pvpbox, stuOriginal.Length(), stuOriginal.Length(),
+				true, NULL));
+			IVwSelectionPtr qselRange;
+			m_qrootb->MakeRangeSelection(fBackwardSelection ? qselEnd : qselStart,
+				fBackwardSelection ? qselStart : qselEnd, true, &qselRange);
+			m_qzvwsel = dynamic_cast<VwTextSelection *>(qselRange.Ptr());
+			unitpp::assert_true("Non-null whole-paragraph range selection", m_qzvwsel);
+
+			StrUni stuPaste(pszPaste);
+			m_qtsf->MakeString(stuPaste.Bstr(), g_wsEng, &qtss);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qzvwsel->ReplaceWithTsString(qtss);
+			AssertReplaceWithTsStringSucceeded(hr);
+			m_qdrs->SimulateEndUnitOfWork();
+
+			int chvoPara;
+			CheckHr(m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara));
+			unitpp::assert_eq("whole-paragraph character replacement should keep paragraph count",
+				2, chvoPara);
+
+			HVO hvoPara;
+			CheckHr(m_qsda->get_VecItem(hvoRootBox, kflidStText_Paragraphs, 0, &hvoPara));
+			ITsStringPtr qtssResult;
+			CheckHr(m_qsda->get_StringProp(hvoPara, kflidStTxtPara_Contents, &qtssResult));
+			SmartBstr sbstrResult;
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			AssertEqual("whole-paragraph replacement text", pszExpected, sbstrResult.Chars());
+
+			CheckHr(m_qsda->get_VecItem(hvoRootBox, kflidStText_Paragraphs, 1, &hvoPara));
+			CheckHr(m_qsda->get_StringProp(hvoPara, kflidStTxtPara_Contents, &qtssResult));
+			CheckHr(qtssResult->get_Text(&sbstrResult));
+			AssertEqual("following paragraph text", stuFollowing.Chars(), sbstrResult.Chars());
+		}
+
+		void AssertReplaceWithTsStringSucceeded(HRESULT hr)
+		{
+			if (hr == S_OK)
+				return;
+
+			IErrorInfoPtr qerr;
+			::GetErrorInfo(0, &qerr);
+			SmartBstr sbstrDescription;
+			if (qerr)
+				qerr->GetDescription(&sbstrDescription);
+
+			StrAnsi staMsg;
+			staMsg.Format("ReplaceWithTsString failed with HRESULT 0x%08x: %S", hr,
+				sbstrDescription.Chars());
+			unitpp::assert_true(staMsg.Chars(), false);
+		}
+
+		/*
+			These tests document the narrow LT-20857 guardrail. They cover a selected single
+			paragraph backed by one editable source string being replaced by clipboard text that is
+			itself one paragraph plus exactly one terminal paragraph marker. Windows copy uses CRLF,
+			but the same marker rule should hold for CR-only and LF-only text because CheckForParaBreak
+			already treats each form as a paragraph break. The backward-selection test protects the
+			selection-normalization case that deletion mutates later. These tests deliberately do not
+			cover multi-source rendered paragraphs, insertion-point paste, or replacement text with
+			interior paragraph breaks; those remain broader paste-plan concerns for LT-22526.
+		*/
+		void testReplaceWholeSelectedParagraphWithCopiedParagraphTrimsCrLfMarker()
+		{
+			DoReplaceWholeSelectedParagraphWithCopiedParagraphTest(
+				OleStringLiteral(L"Copied paragraph text\r\n"),
+				OleStringLiteral(L"Copied paragraph text"), false);
+		}
+
+		void testReplaceWholeSelectedParagraphWithCopiedParagraphTrimsCrMarker()
+		{
+			DoReplaceWholeSelectedParagraphWithCopiedParagraphTest(
+				OleStringLiteral(L"Copied paragraph text\r"),
+				OleStringLiteral(L"Copied paragraph text"), false);
+		}
+
+		void testReplaceWholeSelectedParagraphWithCopiedParagraphTrimsLfMarker()
+		{
+			DoReplaceWholeSelectedParagraphWithCopiedParagraphTest(
+				OleStringLiteral(L"Copied paragraph text\n"),
+				OleStringLiteral(L"Copied paragraph text"), false);
+		}
+
+		void testReplaceWholeSelectedParagraphWithCopiedParagraphTrimsCrLfMarkerBackwardSelection()
+		{
+			DoReplaceWholeSelectedParagraphWithCopiedParagraphTest(
+				OleStringLiteral(L"Copied paragraph text\r\n"),
+				OleStringLiteral(L"Copied paragraph text"), true);
+		}
+
 		void DoPasteTest(OLECHAR * pszInput, OLECHAR * pszPaste, int ichSel, OLECHAR * pszResult)
 		{
 			HVO hvoRootBox = 101;

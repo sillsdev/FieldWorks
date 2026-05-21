@@ -542,7 +542,7 @@ public:
 	virtual bool RuinedByDeleting(VwBox * pbox, VwBox * pboxReplacement=0);
 	void MakeSubString(ITsString * ptss, int ichMin, int ichLim, ITsString ** pptssSub);
 	bool SelectedTextIsSingleParagraph();
-	bool ReplacementTextIsSingleParagraph(ITsString* ptss);
+	bool ReplacementTextIsSingleParagraph(ITsString* ptss, int * pichLimText);
 
 	void SetInsertionProps(ITsTextProps * pttp)
 	{
