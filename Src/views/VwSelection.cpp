@@ -5463,24 +5463,24 @@ bool VwTextSelection::ReplacementTextIsSingleParagraph(ITsString* replacementTst
 	int replacementCharCount;
 	SmartBstr replacementBstr;
 	CheckHr(replacementTstr->get_Length(&replacementCharCount));
+	if (replacementCharCount <= 0)
+		return false;
+
 	CheckHr(replacementTstr->get_Text(&replacementBstr));
 	const wchar* replacementText = replacementBstr.Chars();
-	for (int ii = 0; ii < replacementCharCount; ii++)
+
+	// A single paragraph must end with exactly one trailing '\n'.
+	if (replacementText[replacementCharCount - 1] != '\n')
+		return false;
+
+	// Ensure there are no other '\n' characters before the final one.
+	for (int ii = 0; ii < replacementCharCount - 1; ii++)
 	{
 		if (replacementText[ii] == '\n')
-		{
-			// The last character is a '\n' and there are no other '\n' characters in the string.
-			if (ii == replacementCharCount - 1)
-			{
-				return true;
-			}
-			else
-			{
-				break;
-			}
-		}
+			return false;
 	}
-	return false;
+
+	return true;
 }
 
 /*----------------------------------------------------------------------------------------------
