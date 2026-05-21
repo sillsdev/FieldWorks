@@ -18,6 +18,7 @@ You will receive:
 <workflow>
 1. **Understand the issue**
    - Restate scope and expected outcome.
+   - If the request uses overloaded repo terms, planning/spec language, or unclear ownership boundaries, apply `grill-with-docs` before finalizing the plan.
 2. **Identify constraints and risks**
    - Note dependencies, compatibility requirements, and edge cases.
 3. **Design the approach**
@@ -30,6 +31,7 @@ You will receive:
 - Keep scope limited to the issue.
 - Record assumptions explicitly.
 - Avoid implementation details that belong in execution.
+- Use clarified terms from `CONTEXT.md`; update that context only when the conversation creates durable shared language.
 </constraints>
 
 <notes>

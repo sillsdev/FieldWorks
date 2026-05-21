@@ -6,50 +6,52 @@ applyTo: '**/*.csproj, **/*.cs'
 # .NET Framework Development
 
 ## Build and Compilation Requirements
-- Always use `msbuild /t:rebuild` to build the solution or projects instead of `dotnet build`
+- Use `./build.ps1` for normal builds and `./test.ps1` for normal test runs.
+- Do not use `dotnet build` for the main repo workflow.
+- Avoid direct `msbuild` or project-only builds unless you are explicitly debugging build infrastructure.
 
 ## Project File Management
 
-### Non-SDK Style Project Structure
-.NET Framework projects use the legacy project format, which differs significantly from modern SDK-style projects:
+### SDK-style net48 projects are common
+Most managed projects in this repo use SDK-style `.csproj` files while still targeting .NET Framework `net48`.
 
-- **Explicit File Inclusion**: All new source files **MUST** be explicitly added to the project file (`.csproj`) using a `<Compile>` element
-  - .NET Framework projects do not automatically include files in the directory like SDK-style projects
-  - Example: `<Compile Include="Path\To\NewFile.cs" />`
+- **Implicit file inclusion is common**: SDK-style projects usually include new `.cs` files automatically.
+- **Check the touched project before editing**: Some projects still carry explicit includes, linked files, designer items, generated code, or custom metadata that must be preserved.
+- **Assembly metadata is managed explicitly**: Keep `GenerateAssemblyInfo` disabled where the project links `CommonAssemblyInfo.cs`.
+- **Preserve project-specific settings**: Keep existing settings for x64, WinExe, WindowsDesktop, COM, resources, warnings-as-errors, and custom MSBuild targets.
+- **Do not normalize projects unnecessarily**: Avoid converting project structure, import style, or target declarations unless that is the task.
 
-- **No Implicit Imports**: Unlike SDK-style projects, .NET Framework projects do not automatically import common namespaces or assemblies
- 
-- **Build Configuration**: Contains explicit `<PropertyGroup>` sections for Debug/Release configurations
+### Legacy project caveat
+Some non-SDK-style or tool-specific projects may still exist. When you encounter one:
 
-- **Output Paths**: Explicit `<OutputPath>` and `<IntermediateOutputPath>` definitions
-
-- **Target Framework**: Uses `<TargetFrameworkVersion>` instead of `<TargetFramework>`
-  - Example: `<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>`
+- Keep explicit `<Compile Include=... />` items and other legacy structure intact.
+- Update the project file only as much as the change requires.
+- Do not assume you can migrate it to SDK-style as part of routine code edits.
 
 ## NuGet Package Management
 - Installing and updating NuGet packages in .NET Framework projects is a complex task requiring coordinated changes to multiple files. Therefore, **do not attempt to install or update NuGet packages** in this project.
 - Instead, if changes to NuGet references are required, ask the user to install or update NuGet packages using the Visual Studio NuGet Package Manager or Visual Studio package manager console.
 - When recommending NuGet packages, ensure they are compatible with .NET Framework or .NET Standard 2.0 (not only .NET Core or .NET 5+).
 
-## C# Language Version is 7.3
-- This project is limited to C# 7.3 features only. Please avoid using:
+## C# Language Version
+- The repo-wide default language version for C# projects is 8.0 via `Directory.Build.props`.
+- Do not introduce features that require a newer language version unless the specific project or repo policy is updated first.
+- Prefer syntax already used in the touched area so edits remain consistent with surrounding code.
 
-### C# 8.0+ Features (NOT SUPPORTED):
-  - Using declarations (`using var stream = ...`)
-  - Await using statements (`await using var resource = ...`)
-  - Switch expressions (`variable switch { ... }`)
-  - Null-coalescing assignment (`??=`)
-  - Range and index operators (`array[1..^1]`, `array[^1]`)
-  - Default interface methods
-  - Readonly members in structs
-  - Static local functions
-  - Nullable reference types (`string?`, `#nullable enable`)
+### C# 8.0 features available by default
+- Switch expressions and pattern matching enhancements.
+- Using declarations where disposal scope remains clear.
+- Null-coalescing assignment and range/index operators when they improve clarity.
+
+### Features not safe to assume repo-wide
+- Nullable reference types are not enabled repo-wide. Do not introduce `string?`, `#nullable enable`, or nullable-flow assumptions unless the project explicitly opts in.
+- File-scoped namespaces are not available under the repo default language version and should not be introduced.
 
 ### C# 9.0+ Features (NOT SUPPORTED):
   - Records (`public record Person(string Name)`)
   - Init-only properties (`{ get; init; }`)
   - Top-level programs (program without Main method)
-  - Pattern matching enhancements
+  - Pattern matching enhancements beyond C# 8
   - Target-typed new expressions (`List<string> list = new()`)
 
 ### C# 10+ Features (NOT SUPPORTED):
@@ -58,17 +60,15 @@ applyTo: '**/*.csproj, **/*.cs'
   - Record structs
   - Required members
 
-### Use Instead (C# 7.3 Compatible):
-  - Traditional using statements with braces
-  - Switch statements instead of switch expressions
-  - Explicit null checks instead of null-coalescing assignment
-  - Array slicing with manual indexing
-  - Abstract classes or interfaces instead of default interface methods
+### Use instead when staying within repo defaults
+  - Block-scoped namespaces
+  - Explicit null checks unless the project has enabled nullable analysis
+  - Established project patterns over newer syntax for its own sake
 
 ## Environment Considerations (Windows environment)
-- Use Windows-style paths with backslashes (e.g., `C:\path\to\file.cs`)
-- Use Windows-appropriate commands when suggesting terminal operations
-- Consider Windows-specific behaviors when working with file system operations
+- FieldWorks builds and managed test runs are Windows-only.
+- On non-Windows hosts, limit work to editing, code search, docs, and specs.
+- When suggesting build or test commands, prefer the repo PowerShell scripts and Windows-oriented workflows.
 
 ## Common .NET Framework Pitfalls and Best Practices
 

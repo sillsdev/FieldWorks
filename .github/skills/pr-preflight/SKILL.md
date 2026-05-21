@@ -1,19 +1,20 @@
 ---
-name: challenge-pr-author
-description: "Interactively challenge a FieldWorks PR author before posting a PR. Use for pre-PR review, author interview, branch review, PR readiness, review summary generation, and surfacing gaps in understanding or validation."
+name: pr-preflight
+description: "Use when preparing a FieldWorks branch or pull request for review: pre-PR review, branch readiness, author interview, review summary generation, validation evidence, or PR description preparation."
 argument-hint: "Optional branch purpose or PR goal"
 user-invocable: true
 ---
 
-# Challenge PR Author
+# PR Preflight
 
-Use this skill when the user wants an interactive pre-PR review that challenges the author, records their explanations, and writes `.review/summary.md`.
+Use this skill when the user wants an interactive FieldWorks branch review before posting or updating a PR.
 
-The analyzer policy is in `.github/instructions/review-analyzer.instructions.md`; load and apply it for every analysis pass in this workflow.
+This is the orchestration layer. The review policy lives in `.github/instructions/review-analyzer.instructions.md`, shared terminology lives in `CONTEXT.md`, and specialized reviewer agents may be used for independent read-only passes.
 
 ## Goals
 
 - Analyze the branch diff from `origin/main` using FieldWorks review policy.
+- Use specialist agents for deep read-only review where they fit the changed files.
 - Challenge the author on risks, assumptions, validation gaps, and design understanding.
 - Record author explanations, dismissed findings, unresolved concerns, and in-review fixes.
 - Write a fresh `.review/summary.md` that a reviewer can use as a meeting agenda.
@@ -23,10 +24,10 @@ The analyzer policy is in `.github/instructions/review-analyzer.instructions.md`
 
 First tell the author what will happen:
 
-> **Here's what this review will do:**
+> **Here's what this preflight will do:**
 >
 > 1. **Setup** - Check your branch and ask a couple of quick questions
-> 2. **Analysis** - Review contracts/correctness, managed UI/localization, native interop/COM, and build/test/installer risk
+> 2. **Analysis** - Review contracts/correctness, managed UI/localization, native interop/COM, build/test/installer risk, and validation evidence
 > 3. **Interview** - Walk through findings and challenge the reasoning
 > 4. **Output** - Write `.review/summary.md` and optionally create or update a PR
 >
@@ -54,6 +55,17 @@ First tell the author what will happen:
    - Use any purpose supplied in the prompt invocation.
    - If none was supplied, ask: "What is the overall purpose of these changes? Please describe it in your own words."
 
+## Context And Language Check
+
+Before analysis, load `CONTEXT.md` and `.github/context/codebase.context.md`.
+
+If the branch purpose, PR title, plan, or spec uses overloaded FieldWorks terms such as `project`, `model`, `view`, `app`, `context`, `review`, or `validation`, apply the `grill-with-docs` discipline before writing the summary:
+
+- Clarify the term with the author.
+- Ground the term in code, docs, tests, or build files.
+- Update `CONTEXT.md` only for durable shared language decisions.
+- Carry the clarified terms into findings, interview notes, and PR copy.
+
 ## Analysis
 
 Load `.github/instructions/review-analyzer.instructions.md` and run all four required passes:
@@ -63,7 +75,17 @@ Load `.github/instructions/review-analyzer.instructions.md` and run all four req
 - Native, COM, and boundary safety.
 - Build, tests, CI, dependencies, and installer.
 
-You may use read-only subagents for independent passes when available, but do not rely on a custom `review-analyzer` agent existing. If subagents are unavailable or would add friction, run the passes directly.
+Use specialist agents as independent read-only reviewers when the changed files justify them and the agent tooling is available. Keep them scoped; the final synthesis remains your responsibility.
+
+Recommended agents:
+
+- `FieldWorks C# Expert` for managed `*.cs`, `.csproj`, config, resources, or net48 behavior.
+- `FieldWorks WinForms Expert` for WinForms UI, designer, layout, event-handler, resource, or localization changes.
+- `FieldWorks C++ Expert` for native, C++/CLI-adjacent, COM, Views, FwKernel, ViewsInterfaces, or ABI-sensitive changes.
+- `FieldWorks Avalonia UI Expert` only for Avalonia/XAML work; do not use it for existing WinForms UI.
+- `devils-advocate` for large architecture, scope, or risk arguments where a skeptical pass would sharpen the interview.
+
+If specialist agents are unavailable or would add friction for a small diff, run the passes directly using the review policy.
 
 For each pass:
 
@@ -212,7 +234,7 @@ After writing the summary, tell the author:
 
 > "Review summary written to `.review/summary.md`.
 >
-> Please review it, make changes where appropriate, and run `/challenge-pr-author` again until you are ready to post the PR.
+> Please review it, make changes where appropriate, and run `/pr-preflight` again until you are ready to post the PR.
 >
 > If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not, using this summary as the description."
 
@@ -221,9 +243,9 @@ Only create or update a PR after the author confirms.
 When creating or updating a PR, wrap the summary in:
 
 ```markdown
-<!-- challenge-pr-author:summary:start -->
+<!-- pr-preflight:summary:start -->
 [summary]
-<!-- challenge-pr-author:summary:end -->
+<!-- pr-preflight:summary:end -->
 ```
 
 For branch names like `lt-1234-anything`, prefix the PR title with `LT-1234:`. Use a sentence-case title based on the actual change, not just the branch slug.

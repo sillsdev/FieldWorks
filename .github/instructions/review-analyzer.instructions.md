@@ -5,7 +5,7 @@ description: "Use when performing PR or branch review analysis for FieldWorks. D
 
 # FieldWorks Review Analyzer
 
-Use these instructions whenever Copilot analyzes a FieldWorks branch, PR, or diff for review. This is review policy, not an interactive workflow; the interactive author interview lives in the `challenge-pr-author` skill.
+Use these instructions whenever Copilot analyzes a FieldWorks branch, PR, or diff for review. This is review policy, not an interactive workflow; the interactive author interview lives in the `pr-preflight` skill.
 
 FieldWorks is a Windows/x64 desktop application with .NET Framework 4.8 managed code, native C++, C++/CLI-adjacent boundaries, registration-free COM, WiX installer flows, `.resx` localization, and repo scripts for build/test validation.
 
@@ -35,7 +35,7 @@ Load only the files needed for the changed areas. For structural or hidden-depen
 ## Severity Rubric
 
 - **Critical**: Blocks merge. Examples: correctness bug, security issue, native/managed boundary safety issue, breaking public contract or ABI change without compatibility plan, global COM registration/registry hack, build ordering break, CI silently skipping tests, installer behavior that can corrupt install/upgrade/uninstall.
-- **Important**: Should fix before merge. Examples: missing meaningful tests for risky behavior, .NET Framework/C# 7.3 incompatibility, localization gap, legacy project file omission, likely UI crash path, installer/build validation gap, significant reuse/architecture concern.
+- **Important**: Should fix before merge. Examples: missing meaningful tests for risky behavior, .NET Framework/C# language policy incompatibility, nullable-reference-type policy mismatch, localization gap, legacy project file omission, likely UI crash path, installer/build validation gap, significant reuse/architecture concern.
 - **Minor**: Nice to have. Examples: naming, small simplification, low-risk consistency issue, dependency bump note, documentation polish.
 
 When a verified finding's severity is unclear, prefer the higher severity and explain the risk.
@@ -47,6 +47,13 @@ Be especially careful when changes touch `Src/Utilities`, parser utilities, Allo
 ## Required Analysis Passes
 
 Run all four passes for PR/branch review. They may be done by separate read-only subagents or by Copilot directly, but every pass must be represented in the final analysis.
+
+When specialist agents are available, use them as focused reviewers for matching areas and synthesize their output against this policy:
+
+- `FieldWorks C# Expert` for managed code, project files, config, net48 behavior, and test failures.
+- `FieldWorks WinForms Expert` for WinForms designer, layout, event-handler, UI-thread, resource, and localization changes.
+- `FieldWorks C++ Expert` for native, COM, C++/CLI-adjacent, Views, FwKernel, ViewsInterfaces, ABI, and memory-safety changes.
+- `FieldWorks Avalonia UI Expert` only for Avalonia/XAML changes.
 
 ### Pass 1: Contracts, Compatibility, and Correctness
 
@@ -82,7 +89,8 @@ Review changed managed files (`*.cs`, `*.csproj`, `*.resx`, `*.config`, `*.xaml`
 
 Check:
 
-- FieldWorks targets .NET Framework 4.8 and C# 7.3. Flag C# 8+ syntax/APIs such as nullable reference types, switch expressions, `using var`, ranges, records, target-typed `new`, file-scoped namespaces, or `required` members.
+- FieldWorks targets .NET Framework 4.8 and defaults C# projects to C# 8.0 via `Directory.Build.props`, with nullable reference types disabled by default. Flag features that require C# 9+ or nullable-flow assumptions unless a specific project explicitly opts in.
+- C# 8 syntax such as switch expressions, using declarations, null-coalescing assignment, and range/index operators is allowed by the repo default, but should still match the surrounding code style. Do not introduce file-scoped namespaces, records, init-only properties, target-typed `new`, global usings, `required` members, `string?`, or `#nullable enable` unless the project policy changes first.
 - Legacy `.csproj` files require explicit source includes. New `.cs` files must be included, and tests must not leak into production projects.
 - NuGet/reference changes are coordinated with `Directory.Packages.props`, binding redirects, app configs, and .NET Framework compatibility.
 - Event handlers and callbacks guard `sender`, selected items, selected indices, model objects, cast results, and collection bounds.

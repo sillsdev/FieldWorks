@@ -76,7 +76,7 @@ For each **Fix** item:
 3. Apply the smallest change that satisfies the reviewer without unrelated refactoring.
 4. Preserve FieldWorks rules:
    - Use `build.ps1` and `test.ps1` for build/test work.
-   - Keep managed code compatible with .NET Framework 4.8 / C# 7.3.
+   - Keep managed code compatible with .NET Framework 4.8, the repo default C# 8.0 language policy, and nullable reference types disabled unless a project explicitly opts in.
    - Keep user-visible strings in `.resx`.
    - Preserve native-before-managed build order.
    - Preserve registration-free COM behavior.

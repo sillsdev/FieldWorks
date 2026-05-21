@@ -80,6 +80,9 @@ It is intentionally not a full architecture manual. It should stay biased toward
 
 ## Review Workflow Language
 
+- **PR preflight**: An interactive branch-readiness workflow before posting or updating a PR. It applies FieldWorks review policy, may use specialist review agents, interviews the author about risks and validation, and writes `.review/summary.md`.
+- **Review analyzer**: The FieldWorks review policy in `.github/instructions/review-analyzer.instructions.md`. It defines what to check; it is not the interactive workflow.
+- **Specialist review agent**: A focused read-only reviewer such as the FieldWorks C#, WinForms, C++, or Avalonia agent. Specialist output is evidence for the final synthesis, not a replacement for verifying findings against code.
 - **Review comment**: Any actionable feedback from Copilot or a human reviewer on a pull request.
 - **Review thread**: A GitHub inline conversation anchored to code. Resolve only after the thread is fully addressed and no question remains.
 - **Copilot reviewer comment**: Automated review feedback from GitHub Copilot. Evaluate it like external reviewer feedback; do not treat it as authoritative without checking the code.

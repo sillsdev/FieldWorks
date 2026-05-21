@@ -24,6 +24,8 @@ Fast-forward through artifact creation - generate everything needed to start imp
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 
+   If the request uses overloaded repo terms or unclear planning language, apply `grill-with-docs` before creating artifacts so proposal/spec/design/task wording matches `CONTEXT.md` and real codebase terminology.
+
 2. **Create the change directory**
    ```bash
    openspec new change "<name>"
