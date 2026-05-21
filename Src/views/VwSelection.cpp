@@ -5436,7 +5436,7 @@ bool VwTextSelection::SelectedTextIsSingleParagraph()
 		targetMin == 0 &&
 		m_pvpbox->Source()->CStrings() == 1)
 	{
-		ITsString* firstStr = NULL;
+		ITsStringPtr firstStr;
 		m_pvpbox->Source()->StringAtIndex(0, &firstStr);
 		int firstStrLen = 0;
 		CheckHr(firstStr->get_Length(&firstStrLen));
