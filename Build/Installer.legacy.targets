@@ -113,6 +113,9 @@
 	<Target Name="RescuePatching">
 		<ItemGroup>
 			<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" /> -->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll.config" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.pdb" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
