@@ -217,6 +217,62 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 		}
 
+		[Test]
+		public void get_Renderer_ExplicitFontNameMatchingDefault_DoesNotApplyDefaultFontFeatures()
+		{
+			using (var control = new Form())
+			using (var gm = new GraphicsManager(control))
+			using (var reFactory = new RenderEngineFactory())
+			{
+				gm.Init(1.0f);
+				try
+				{
+					var wsManager = new WritingSystemManager();
+					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
+					ws.DefaultFont = new FontDefinition("Arial") { Features = "smcp=1" };
+
+					var chrp = CreateCharRenderProps(ws.Handle, "Arial", string.Empty);
+					gm.VwGraphics.SetupGraphics(ref chrp);
+
+					reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.That(MarshalEx.UShortToString(gm.VwGraphics.FontCharProperties.szFontVar), Is.EqualTo(string.Empty));
+					wsManager.Save();
+				}
+				finally
+				{
+					gm.Uninit();
+				}
+			}
+		}
+
+		[Test]
+		public void get_Renderer_DefaultNumericGraphiteFeatures_ArePreserved()
+		{
+			using (var control = new Form())
+			using (var gm = new GraphicsManager(control))
+			using (var reFactory = new RenderEngineFactory())
+			{
+				gm.Init(1.0f);
+				try
+				{
+					var wsManager = new WritingSystemManager();
+					CoreWritingSystemDefinition ws = wsManager.Set("en-US");
+					ws.DefaultFont = new FontDefinition("Arial") { Features = "123=1,456=2" };
+
+					var chrp = CreateCharRenderProps(ws.Handle, "<default font>", string.Empty);
+					gm.VwGraphics.SetupGraphics(ref chrp);
+
+					reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.That(MarshalEx.UShortToString(gm.VwGraphics.FontCharProperties.szFontVar), Is.EqualTo("123=1,456=2"));
+					wsManager.Save();
+				}
+				finally
+				{
+					gm.Uninit();
+				}
+			}
+		}
+
 		private static LgCharRenderProps CreateCharRenderProps(
 			int ws,
 			string fontName,

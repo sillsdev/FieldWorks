@@ -2347,7 +2347,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
-			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcp=1,ss11=2" } };
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -2363,7 +2363,30 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
-			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcps\" 1,\"Eng\" 2");
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcp\" 1,\"ss11\" 2");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_InvalidCharStyleFontFeaturesAreIgnored()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+			Assert.That(cssResult, Does.Not.Contain("font-feature-settings:"));
 		}
 
 		[Test]
