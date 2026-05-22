@@ -21,3 +21,18 @@ WinForms UI changes for Font Features SHALL keep user-visible strings in `.resx`
 #### Scenario: Designer fields remain stable unless necessary
 - **WHEN** an existing designer field has a Graphite-specific internal name but only the visible label changes
 - **THEN** implementation SHOULD prefer label/resource changes over broad designer renames unless the rename reduces real maintenance risk
+
+### Requirement: Dual-technology fonts expose a clear provider toggle
+WinForms font-feature surfaces SHALL expose a clear OpenType-versus-Graphite provider choice when a selected font supports both feature systems, and SHALL default to OpenType.
+
+#### Scenario: OpenType is the default provider
+- **WHEN** a Writing System, Styles, or shared Font dialog surface loads a font that exposes both OpenType and Graphite features
+- **THEN** the shared Font Features control SHALL default to the OpenType provider
+
+#### Scenario: Provider toggle semantics are consistent across shared surfaces
+- **WHEN** a user switches the provider on one canonical font surface
+- **THEN** the provider selection rules, labels, and availability semantics SHALL match the other shared font-feature surfaces that use the same control
+
+#### Scenario: Enable Graphite does not replace provider choice
+- **WHEN** `Enable Graphite` is toggled for renderer selection behavior
+- **THEN** that control SHALL remain separate from the dual-technology feature-provider choice exposed by the Font Features UI

@@ -1,3 +1,8 @@
+> Review-driven update (2026-05-11): Sections 1-11 record research, evidence,
+> and earlier planning already captured for this change. They are not a
+> merge-readiness signal. Sections 12-22 are the authoritative remaining
+> implementation backlog derived from the in-depth review.
+
 ## 1. Post-Speedup Preflight
 
 - [x] 1.1 Rebase or merge the implementation branch after `001-render-speedup` is merged, then inspect render/cache changes in `Src/Common/SimpleRootSite/`, `Src/ManagedVwDrawRootBuffered/`, and `Src/views/`. [Managed C# + Native C++]
@@ -88,3 +93,74 @@
 - [x] 11.3 Implement a Word DOCX feature mapper that reuses the renderer-neutral parser and maps supported tags to `w14` elements. [Managed C#]
 - [x] 11.4 Keep unsupported tags non-fatal and document Word export subset behavior in `Docs/opentype-font-features.md`. [Docs]
 - [x] 11.5 Run targeted xWorks Word generator tests. [Validation]
+
+## 12. Review Baseline And Churn Reconciliation
+
+- [ ] 12.1 Confirm the final implementation branch resolves any remaining local staged/unstaged native churn before validation; review-only churn is not part of the intended feature scope. [Validation/Process]
+- [ ] 12.2 Re-run targeted managed and native validation against one coherent final tree after the review-driven fixes are implemented. [Validation]
+
+## 13. Filter OpenType Discovery To User-Configurable Features
+
+- [ ] 13.1 Define discovery rules that keep optional user-facing features and filter required shaping or engine-controlled features before the UI is populated. [Managed C# + Native C++]
+- [ ] 13.2 Prefer script/language-aware feature enumeration where available instead of exposing raw GSUB/GPOS dumps directly to the UI. [Managed C#]
+- [ ] 13.3 Add tests covering filtered-out required features, preserved optional features, and mixed-font discovery results. [Tests]
+
+## 14. Prefer OpenType With A Clear Explicit Toggle
+
+- [ ] 14.1 Make OpenType the default feature provider for fonts that expose both OpenType and Graphite feature sets. [Managed C# WinForms]
+- [ ] 14.2 Add a clear user-visible provider toggle for dual-technology fonts and define the expected default state, labels, and persistence semantics. [Managed C# WinForms]
+- [ ] 14.3 Thread provider choice through `DefaultFontsControl`, `FwFontAttributes`, `FwFontTab`, `FwFontDialog`, and any shared preview/editing surfaces. [Managed C# WinForms]
+- [ ] 14.4 Add tests for OpenType-default behavior, explicit Graphite switching, inherited default font behavior, and dual-technology fonts. [Tests]
+
+## 15. Add Trace Logging
+
+- [ ] 15.1 Define trace switches/messages using the existing FieldWorks diagnostics infrastructure rather than modal assertions. [Managed C# + Native C++]
+- [ ] 15.2 Log malformed tags and strings, filtered discovery decisions, provider selection/toggle decisions, native shaping failures, retry attempts, and fallback reasons. [Managed C# + Native C++]
+- [ ] 15.3 Add tests or harness checks where practical to verify key diagnostics points without overcoupling to exact message text. [Tests]
+
+## 16. Fix Truncation Logic Risk
+
+- [ ] 16.1 Replace comma-only truncation loops in `VwPropertyStore.cpp` with fail-safe logic that handles overlong strings with no comma boundary and always makes forward progress or aborts safely. [Native C++]
+- [ ] 16.2 Preserve compatible behavior for valid legacy multi-tag strings while rejecting or truncating malformed no-progress cases safely. [Native C++]
+- [ ] 16.3 Add tests for overlong strings with commas, overlong strings without commas, exact-boundary strings, and malformed legacy input. [Tests]
+
+## 17. Validate Accepted Tag Names And Trace Malformed Tags
+
+- [ ] 17.1 Align tag validation with published OpenType/CSS syntax: accept any four-character printable ASCII tag and do not restrict support to registered tags only. [Managed C#]
+- [ ] 17.2 Ignore malformed tags safely, emit trace diagnostics, and continue processing remaining valid entries in the same feature string. [Managed C#]
+- [ ] 17.3 Keep storage and rendering acceptance liberal for valid custom/private tags while making CSS/DOCX output boundaries safe. [Managed C#]
+- [ ] 17.4 Add parser/normalizer tests for valid registered tags, valid custom tags, malformed tags, duplicate tags, and mixed valid/invalid input. [Tests]
+
+## 18. Remove Duplication And Follow The Existing Inheritance Path
+
+- [ ] 18.1 Remove parallel default-font-feature loading logic from `StyleInfo` and use the existing `BaseStyleInfo.ProcessStyleRules` / `FontInfo.m_features` path as the single source of truth. [Managed C#]
+- [ ] 18.2 Audit related call sites so writing-system defaults, style overrides, and dialog reloads still round-trip through the same inheritance pipeline. [Managed C#]
+- [ ] 18.3 Add tests for inherited default features, explicit overrides, and reopen/save cycles after the duplicate path is removed. [Tests]
+
+## 19. Update OpenSpec Scope And Review Artifacts
+
+- [x] 19.1 Capture clarification, analysis, and planning passes in OpenSpec artifacts and add a dedicated in-depth review note. [OpenSpec]
+- [x] 19.2 Expand proposal, design, research, capability specs, and tasks to include review-driven scope: filtering, OpenType preference, logging, truncation safety, tag validation, inheritance cleanup, and additional state-of-the-art follow-ups. [OpenSpec]
+
+## 20. Add Recommended Tests
+
+- [ ] 20.1 Add managed UI tests for required-feature filtering, provider toggle semantics, and OpenType-preferred dual-technology fonts. [Managed C# Tests]
+- [ ] 20.2 Add native tests for malformed feature strings, unsupported valid tags, retryable OpenType shaping failures, script/language handling, and safe traced fallback. [Native C++ Tests]
+- [ ] 20.3 Add export tests for CSS-safe serialization, DOCX supported-subset mapping, and Notebook default-font-features preservation. [Managed C# Tests]
+- [ ] 20.4 Add cache-identity tests ensuring feature changes invalidate render/layout caches without stale reuse. [Managed + Native Tests]
+- [ ] 20.5 Add manual/diagnostic checklist coverage for provider toggle behavior and trace collection steps. [OpenSpec/Manual Validation]
+
+## 21. Apply Review-Driven Architecture Changes
+
+- [ ] 21.1 Introduce an explicit font-feature provider abstraction that separates discovery, selection UI, and renderer choice. [Managed C#]
+- [ ] 21.2 Keep renderer-neutral `tag=value` strings as the authoritative contract and convert only at renderer/export boundaries. [Managed C# + Native C++]
+- [ ] 21.3 Make provider choice explicit in UI state instead of implicit in `Enable Graphite`, and document the OpenType-default rule for dual-technology fonts. [Managed C# WinForms]
+- [ ] 21.4 Keep native Uniscribe changes additive and reg-free-COM-safe while improving diagnostics and robustness. [Native C++]
+
+## 22. Add Additional State-Of-The-Art Follow-Ups
+
+- [ ] 22.1 Retry `ScriptShapeOpenType` / `ScriptPlaceOpenType` on `E_OUTOFMEMORY` before abandoning OpenType shaping. [Native C++]
+- [ ] 22.2 Keep script tags authoritative from `ScriptItemizeOpenType`, and prefer an authoritative/generated language-tag mapping strategy over handwritten tables where OS APIs are insufficient. [Native C++]
+- [ ] 22.3 Ensure CSS export safely serializes any valid accepted tag, including characters that require escaping in CSS strings. [Managed C#]
+- [ ] 22.4 Keep Word DOCX export on the documented `w14` subset and document unsupported tags explicitly rather than inventing hidden storage. [Managed C# + Docs]
+- [ ] 22.5 Add Notebook export test coverage and close remaining review-documented evidence gaps. [Managed C# Tests + OpenSpec]
