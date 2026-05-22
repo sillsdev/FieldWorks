@@ -4,6 +4,7 @@ using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
@@ -20,10 +21,9 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 	public abstract class RealDataTestsBase
 	{
 		private const string ReusableProjectName = "integration_test_data";
-		private const string ProjectMutexName = @"Local\FieldWorks.RealDataTests.integration_test_data";
+		private const string ProjectMutexName =
+			@"Local\FieldWorks.RealDataTests.integration_test_data";
 		private const string TestProjectSentinelFileName = ".fieldworks-real-data-test-project";
-		private const int DeleteRetryCount = 3;
-		private static readonly TimeSpan DeleteRetryDelay = TimeSpan.FromMilliseconds(250);
 
 		protected FwNewLangProjectModel m_model;
 		protected LcmCache Cache;
@@ -102,9 +102,11 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			}
 			catch (Exception)
 			{
-				DisposeCache();
-				TryDeleteProjectDirectoryAfterSetupFailure();
-				ReleaseProjectMutex();
+				RunSetupFailureCleanup(
+					TryDisposeCacheAfterSetupFailure,
+					TryDeleteProjectDirectoryAfterSetupFailure,
+					ReleaseProjectMutex
+				);
 				throw;
 			}
 		}
@@ -146,9 +148,7 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			{
 				m_projectMutex.WaitOne();
 			}
-			catch (AbandonedMutexException)
-			{
-			}
+			catch (AbandonedMutexException) { }
 		}
 
 		private void ReleaseProjectMutex()
@@ -160,9 +160,7 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			{
 				m_projectMutex.ReleaseMutex();
 			}
-			catch (ApplicationException)
-			{
-			}
+			catch (ApplicationException) { }
 			finally
 			{
 				m_projectMutex.Dispose();
@@ -177,6 +175,26 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 			Cache.Dispose();
 			Cache = null;
+		}
+
+		private void TryDisposeCacheAfterSetupFailure()
+		{
+			if (Cache == null)
+				return;
+
+			try
+			{
+				DisposeCache();
+			}
+			catch (Exception e)
+			{
+				Cache = null;
+				TestContext.Error.WriteLine(
+					"Could not dispose test cache after setup failure for '{0}': {1}",
+					m_dbName,
+					e.Message
+				);
+			}
 		}
 
 		private void TryDeleteProjectDirectoryAfterSetupFailure()
@@ -195,10 +213,55 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			}
 		}
 
+		private static void RunSetupFailureCleanup(
+			Action disposeCache,
+			Action deleteProjectDirectory,
+			Action releaseProjectMutex
+		)
+		{
+			Exception firstException = null;
+
+			try
+			{
+				disposeCache();
+			}
+			catch (Exception e)
+			{
+				firstException = e;
+			}
+
+			try
+			{
+				deleteProjectDirectory();
+			}
+			catch (Exception e)
+			{
+				if (firstException == null)
+					firstException = e;
+			}
+
+			try
+			{
+				releaseProjectMutex();
+			}
+			catch (Exception e)
+			{
+				if (firstException == null)
+					firstException = e;
+			}
+
+			if (firstException != null)
+				throw firstException;
+		}
+
 		private static string GetProjectDirectory(string createdPath)
 		{
 			if (string.IsNullOrEmpty(createdPath))
-				throw new InvalidOperationException("CreateNewLangProj did not return a project path.");
+			{
+				throw new InvalidOperationException(
+					"CreateNewLangProj did not return a project path."
+				);
+			}
 
 			var fullPath = NormalizePath(createdPath);
 			if (Directory.Exists(fullPath))
@@ -208,7 +271,12 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 			}
 
 			if (!File.Exists(fullPath))
-				throw new FileNotFoundException("CreateNewLangProj returned a path that does not exist.", fullPath);
+			{
+				throw new FileNotFoundException(
+					"CreateNewLangProj returned a path that does not exist.",
+					fullPath
+				);
+			}
 
 			var projectDirectory = Path.GetDirectoryName(fullPath);
 			EnsureSafeProjectDirectory(projectDirectory);
@@ -243,48 +311,19 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 				);
 			}
 
-			Exception lastException = null;
-			for (var attempt = 1; attempt <= DeleteRetryCount; attempt++)
+			if (!RobustIO.DeleteDirectoryAndContents(safeProjectDirectory))
 			{
-				try
-				{
-					Directory.Delete(safeProjectDirectory, true);
-					return;
-				}
-				catch (IOException e)
-				{
-					lastException = e;
-					LogDeleteFailure(safeProjectDirectory, attempt, e);
-				}
-				catch (UnauthorizedAccessException e)
-				{
-					lastException = e;
-					LogDeleteFailure(safeProjectDirectory, attempt, e);
-				}
-
-				if (attempt < DeleteRetryCount)
-					Thread.Sleep(DeleteRetryDelay);
+				TestContext.Error.WriteLine(
+					"Could not delete test project directory '{0}' via RobustIO.DeleteDirectoryAndContents.",
+					safeProjectDirectory
+				);
+				throw new IOException(
+					string.Format(
+						"Could not delete test project directory '{0}'.",
+						safeProjectDirectory
+					)
+				);
 			}
-
-			throw new IOException(
-				string.Format(
-					"Could not delete test project directory '{0}' after {1} attempts.",
-					safeProjectDirectory,
-					DeleteRetryCount
-				),
-				lastException
-			);
-		}
-
-		private static void LogDeleteFailure(string projectDirectory, int attempt, Exception e)
-		{
-			TestContext.Error.WriteLine(
-				"Could not delete test project directory '{0}' on attempt {1} of {2}: {3}",
-				projectDirectory,
-				attempt,
-				DeleteRetryCount,
-				e.Message
-			);
 		}
 
 		private static void EnsureSafeProjectDirectory(string projectDirectory)
@@ -297,7 +336,13 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 				Path.Combine(FwDirectoryFinder.ProjectsDirectory, ReusableProjectName)
 			);
 
-			if (!string.Equals(safeProjectDirectory, expectedProjectDirectory, StringComparison.OrdinalIgnoreCase))
+			if (
+				!string.Equals(
+					safeProjectDirectory,
+					expectedProjectDirectory,
+					StringComparison.OrdinalIgnoreCase
+				)
+			)
 			{
 				throw new InvalidOperationException(
 					string.Format(
@@ -316,7 +361,8 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 		private static string NormalizePath(string path)
 		{
-			return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			return Path.GetFullPath(path)
+				.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 	}
 }
