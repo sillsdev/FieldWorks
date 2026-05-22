@@ -44,6 +44,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var docView = new TestXhtmlDocView())
 			{
+				// FwXWindow refreshes a view subtree through the first IRefreshableRoot it finds;
+				// this keeps XHTML dictionary views from being skipped during reconstruct/refresh.
 				Assert.That(docView, Is.InstanceOf<IRefreshableRoot>());
 			}
 		}
