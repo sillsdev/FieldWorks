@@ -475,6 +475,7 @@ LEmptySeg:
 		int ichMinNfc = ichLimNfc;  // Min of this run is lim of previous (or 0 for first run).
 
 		IRenderEnginePtr qreneng;
+		StrUni stuIcuLocale;
 
 		// This updates ichLim to the end of the next run that has the same character
 		// properties as the one at ichMin. Then we proceed to reduce this if necessary
@@ -492,6 +493,11 @@ LEmptySeg:
 		{
 			ILgWritingSystemPtr qLgWritingSystem;
 			AssertPtr(m_qwsf);
+			SmartBstr sbstrLocale;
+			HRESULT hrLocale;
+			IgnoreHr(hrLocale = m_qwsf->GetIcuLocaleFromWs(chrp.ws, &sbstrLocale));
+			if (SUCCEEDED(hrLocale) && BstrLen(sbstrLocale) > 0)
+				stuIcuLocale.Assign(sbstrLocale.Chars(), BstrLen(sbstrLocale));
 			CheckHr(m_qwsf->get_EngineOrNull(chrp.ws, &qLgWritingSystem));
 			AssertPtr(qLgWritingSystem);
 			CheckHr(qLgWritingSystem->InterpretChrp(&chrp));
@@ -543,6 +549,11 @@ LEmptySeg:
 			uri.cch = ichLimText;
 		}
 		uri.psa = &pscri->a;
+		int iscriptItem = static_cast<int>(pscri - UniscribeSegment::g_vscri.Begin());
+		uri.otTagScript = (iscriptItem >= 0 &&
+			iscriptItem < UniscribeSegment::g_votScriptTags.Size())
+			? UniscribeSegment::g_votScriptTags[iscriptItem] : 0;
+		uri.stuIcuLocale.Assign(stuIcuLocale.Chars(), stuIcuLocale.Length());
 		uri.pvg = pvg;
 		ichMinUri = ichMinNfc;
 

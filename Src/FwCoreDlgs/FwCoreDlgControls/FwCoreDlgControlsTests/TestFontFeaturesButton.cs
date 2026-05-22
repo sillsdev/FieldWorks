@@ -107,10 +107,44 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				Is.EqualTo(expected));
 		}
 
+		[Test]
+		public void OpenTypeFontFeatureReader_CachesFeatureTagsForSameFontKey()
+		{
+			var readCount = 0;
+			var tableData = MakeOpenTypeLayoutTable("kern");
+			FontFeaturesButton.OpenTypeFontFeatureReader.ClearCacheForTests();
+
+			using (FontFeaturesButton.OpenTypeFontFeatureReader.UseTableReaderForTests((hdc, table) =>
+			{
+				readCount++;
+				return tableData;
+			}))
+			{
+				var firstRead = FontFeaturesButton.OpenTypeFontFeatureReader.GetFeatureTags(IntPtr.Zero);
+				var secondRead = FontFeaturesButton.OpenTypeFontFeatureReader.GetFeatureTags(IntPtr.Zero);
+
+				Assert.That(firstRead, Is.EqualTo(new[] { "kern" }));
+				Assert.That(secondRead, Is.EqualTo(new[] { "kern" }));
+				Assert.That(readCount, Is.EqualTo(2));
+			}
+		}
+
 		private static int FeatureId(string tag)
 		{
 			var reversedTagBytes = tag.Reverse().Select(Convert.ToByte).ToArray();
 			return BitConverter.ToInt32(reversedTagBytes, 0);
+		}
+
+		private static byte[] MakeOpenTypeLayoutTable(string featureTag)
+		{
+			return new byte[]
+			{
+				0, 1, 0, 0, 0, 0, 0, 8,
+				0, 1,
+				Convert.ToByte(featureTag[0]), Convert.ToByte(featureTag[1]),
+				Convert.ToByte(featureTag[2]), Convert.ToByte(featureTag[3]),
+				0, 0
+			};
 		}
 	}
 }

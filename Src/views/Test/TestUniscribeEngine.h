@@ -212,16 +212,33 @@ namespace TestViews
 
 		void SetDefaultFontForTest(const wchar_t * pszFontName)
 		{
+			SetDefaultFontForTest(g_wsEng, pszFontName);
+		}
+
+		void SetDefaultFontForTest(int ws, const wchar_t * pszFontName)
+		{
 			ILgWritingSystemPtr qws;
-			CheckHr(g_qwsf->get_EngineOrNull(g_wsEng, &qws));
+			CheckHr(g_qwsf->get_EngineOrNull(ws, &qws));
 			MockLgWritingSystem * pws = dynamic_cast<MockLgWritingSystem *>(qws.Ptr());
-			unitpp::assert_true("English test writing system should be a mock writing system",
+			unitpp::assert_true("Test writing system should be a mock writing system",
 				pws != NULL);
 			StrUni stuFont(pszFontName);
 			CheckHr(pws->put_DefaultFontName(stuFont.Bstr()));
 		}
 
-		RenderedFeatureText RenderTextWithFeatures(const wchar_t * pszText, const wchar_t * pszFontVar)
+		int CreateWritingSystemForTest(const wchar_t * pszLocale, const wchar_t * pszFontName)
+		{
+			ILgWritingSystemPtr qws;
+			StrUni stuLocale(pszLocale);
+			CheckHr(g_qwsf->get_Engine(stuLocale.Bstr(), &qws));
+			int ws;
+			CheckHr(qws->get_Handle(&ws));
+			SetDefaultFontForTest(ws, pszFontName);
+			return ws;
+		}
+
+		RenderedFeatureText RenderTextWithFeatures(const wchar_t * pszText, const wchar_t * pszFontVar,
+			int wsOverride = 0)
 		{
 			const int kdxBitmap = 640;
 			const int kdyBitmap = 180;
@@ -239,7 +256,7 @@ namespace TestViews
 			chrp.clrFore = kclrBlack;
 			chrp.clrBack = kclrWhite;
 			chrp.clrUnder = kclrRed;
-			chrp.ws = g_wsEng;
+			chrp.ws = wsOverride ? wsOverride : g_wsEng;
 			chrp.ttvBold = kttvOff;
 			chrp.ttvItalic = kttvOff;
 			chrp.dympHeight = 26000;
@@ -249,7 +266,7 @@ namespace TestViews
 			m_qre->get_WritingSystemFactory(&qwsf);
 
 			IVwTextSourcePtr qts;
-			TxtSrc ts(pszText, qwsf, pszFontVar);
+			TxtSrc ts(pszText, qwsf, pszFontVar, wsOverride);
 			ts.QueryInterface(IID_IVwTextSource, (void **)&qts);
 			int cch;
 			CheckHr(qts->get_Length(&cch));
@@ -353,6 +370,26 @@ namespace TestViews
 				CountDifferentPixels(featureOnFirst, featureOff) > 0);
 			unitpp::assert_eq("Feature-on render should be stable after switching off and back on",
 				0, CountDifferentPixels(featureOnFirst, featureOnAgain));
+#endif
+		}
+
+		void testOpenTypeFeatureUsesLocaleLanguageSystem()
+		{
+#if defined(WIN32) || defined(_M_X64)
+			ScopedPrivateFont font(GetCharisFontPath().Chars());
+			unitpp::assert_true("Charis SIL test font should load", font.Loaded());
+			SetDefaultFontForTest(L"Charis SIL");
+			int wsSerbian = CreateWritingSystemForTest(L"sr-Cyrl", L"Charis SIL");
+
+			RenderedFeatureText defaultLocale = RenderTextWithFeatures(
+				L"\x0431\x0433\x0434\x043F\x0442", L"locl=1");
+			RenderedFeatureText serbianLocale = RenderTextWithFeatures(
+				L"\x0431\x0433\x0434\x043F\x0442", L"locl=1", wsSerbian);
+
+			unitpp::assert_true("Serbian Cyrillic OpenType render should draw text",
+				defaultLocale.cNonWhitePixels > 0 && serbianLocale.cNonWhitePixels > 0);
+			unitpp::assert_true("Charis SIL Serbian locl feature should change rendered pixels",
+				CountDifferentPixels(defaultLocale, serbianLocale) > 0);
 #endif
 		}
 

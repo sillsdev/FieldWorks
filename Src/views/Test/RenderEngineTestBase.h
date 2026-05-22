@@ -35,6 +35,8 @@ namespace TestViews
 		TxtSrc(int n, ILgWritingSystemFactory * pwsf);
 		TxtSrc(const wchar_t *, ILgWritingSystemFactory * pwsf);
 		TxtSrc(const wchar_t *, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar);
+		TxtSrc(const wchar_t *, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar,
+			int wsOverride);
 
 		// IUnknown methods.
 		STDMETHOD(QueryInterface)(REFIID iid, void ** ppv);
@@ -110,9 +112,11 @@ namespace TestViews
 		StrUni m_stu;
 		StrUni m_stuFontVar;
 		Vector<int> m_vws;
+		int m_wsOverride;
 
 	private:
-		void Init(const wchar_t* s, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar = L"");
+		void Init(const wchar_t* s, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar = L"",
+			int wsOverride = 0);
 	};
 
 	TxtSrc::TxtSrc(int n, ILgWritingSystemFactory * pwsf)
@@ -202,10 +206,18 @@ namespace TestViews
 		Init(s, pwsf, pszFontVar);
 	}
 
-	void TxtSrc::Init(const wchar_t* s, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar)
+	TxtSrc::TxtSrc(const wchar_t* s, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar,
+		int wsOverride)
+	{
+		Init(s, pwsf, pszFontVar, wsOverride);
+	}
+
+	void TxtSrc::Init(const wchar_t* s, ILgWritingSystemFactory * pwsf, const wchar_t * pszFontVar,
+		int wsOverride)
 	{
 		AssertPtr(pwsf);
 		m_cref = 1;
+		m_wsOverride = wsOverride;
 		m_stu.Assign(s);
 		m_stuFontVar.Assign(pszFontVar ? pszFontVar : L"");
 		int cws = 0;
@@ -289,7 +301,13 @@ namespace TestViews
 		wcscpy_s(pchrp->szFontVar, 32, m_stuFontVar.Chars());
 		wcscpy_s(pchrp->szFaceName, 32, StrUni(L"<default font>").Chars());
 
-		if (ich < 1000)
+		if (m_wsOverride)
+		{
+			pchrp->ws = m_wsOverride;
+			*pichMin = 0;
+			*pichLim = m_stu.Length();
+		}
+		else if (ich < 1000)
 		{
 			if (m_vws.Size())
 				pchrp->ws = m_vws[0];
