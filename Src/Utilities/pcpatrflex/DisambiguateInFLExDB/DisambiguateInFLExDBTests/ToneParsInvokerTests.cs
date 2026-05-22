@@ -187,6 +187,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			string normalized = NormalizeViaIndex(input, "AppData", "AppData");
 			normalized = NormalizeViaIndex(normalized, "TestData", "TestData");
 			normalized = NormalizeViaIndex(normalized, tp, tp);
+			// Strip machine-specific absolute Windows path prefixes so the comparison stays stable across temp and repo roots.
 			return Regex.Replace(normalized, @"[A-Za-z]:\\(?:[^\\\r\n""]+\\)*", "");
 		}
 
