@@ -130,6 +130,19 @@ Do not resolve threads that are ambiguous, disputed, blocked by missing verifica
 
 When using GitHub APIs directly, reply to inline review comments in their thread, not as unrelated top-level PR comments.
 
+## PR Description Updates
+
+If review-response work materially changes the PR's scope, validation state, or main reviewer focus, update the PR description's `## Quick Summary` before finishing.
+
+Quick Summary maintenance rules:
+
+- Keep the first section short and reviewer-focused: what changed, why it matters, where reviewers should focus, and what validation was run or skipped.
+- For ordinary PRs, use one short paragraph or 2-3 bullets.
+- For large, multi-faceted PRs, expand to at most 6 bullets or short items.
+- If more than 6 bullets or short items would be needed to capture the meaningful changes, include this exact sentence in the Quick Summary: "This quick summary does not capture all meaningful changes from this PR - please review the full summary carefully."
+- Preserve the collapsed preflight review details and `pr-preflight:summary` markers when they exist.
+- Do not claim validation that was not performed or explicitly confirmed by the user.
+
 ## Final Report
 
 End with:

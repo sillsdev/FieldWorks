@@ -1,5 +1,5 @@
-## Summary
-<!-- Briefly describe what changed and why. Link issues if applicable (e.g., Fixes #1234). -->
+## Quick Summary
+<!-- Briefly describe what changed and why. Link issues if applicable (e.g., Fixes #1234). For large, multi-faceted PRs, use at most 6 bullets or short items. If more would be needed, include: "This quick summary does not capture all meaningful changes from this PR - please review the full summary carefully." -->
 
 ## CI-ready checklist
 

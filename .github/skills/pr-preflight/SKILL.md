@@ -18,7 +18,7 @@ This is the orchestration layer. The review policy lives in `.github/instruction
 - Challenge the author on risks, assumptions, validation gaps, and design understanding.
 - Record author explanations, dismissed findings, unresolved concerns, and in-review fixes.
 - Write a fresh `.review/summary.md` that a reviewer can use as a meeting agenda.
-- Optionally commit, push, and create or update a PR only after the author confirms readiness.
+- Optionally commit, push, and create or update a PR with a Quick Summary-first description only after the author confirms readiness.
 
 ## Start Here
 
@@ -236,11 +236,41 @@ After writing the summary, tell the author:
 >
 > Please review it, make changes where appropriate, and run `/pr-preflight` again until you are ready to post the PR.
 >
-> If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not, using this summary as the description."
+> If you do not want to make any changes and are ready for review, would you like me to commit any uncommitted changes, push, and post the PR? I will check whether one already exists for this branch and update it, or create a new one if not, using a Quick Summary-first PR description based on this summary."
 
 Only create or update a PR after the author confirms.
 
-When creating or updating a PR, wrap the summary in:
+## PR Description
+
+When creating or updating a PR, do not paste `.review/summary.md` verbatim as the first content. Compose a reviewer-first PR description that starts with a short `Quick Summary`, then keeps the full preflight record available in a collapsed section.
+
+Use this structure:
+
+```markdown
+## Quick Summary
+
+[One short paragraph or 2-3 bullets covering what changed, why, review focus, and validation status.]
+
+<details>
+<summary>Preflight review details</summary>
+
+<!-- pr-preflight:summary:start -->
+[summary]
+<!-- pr-preflight:summary:end -->
+
+</details>
+```
+
+Quick Summary rules:
+
+- Keep it short and reviewer-focused: what changed, why it matters, where reviewers should focus, and what validation was run or skipped.
+- For ordinary PRs, use one short paragraph or 2-3 bullets.
+- For large, multi-faceted PRs, expand to at most 6 bullets or short items.
+- If more than 6 bullets or short items would be needed to capture the meaningful changes, include this exact sentence in the Quick Summary: "This quick summary does not capture all meaningful changes from this PR - please review the full summary carefully."
+- Do not duplicate full findings, interview notes, or detailed validation logs in the Quick Summary. Put detailed material in the collapsed preflight review details.
+- If validation was skipped, incomplete, or manual-only, say that plainly in the Quick Summary.
+
+When creating or updating a PR, wrap the full preflight summary inside the collapsed details section using these markers:
 
 ```markdown
 <!-- pr-preflight:summary:start -->
