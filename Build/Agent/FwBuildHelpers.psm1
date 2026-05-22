@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 	Shared helper functions for FieldWorks build and test scripts.
 
@@ -486,26 +486,45 @@ function Get-NewestWriteTimeUtc {
 
     $latest = [datetime]::MinValue
     foreach ($path in $Paths) {
-        if (-not (Test-Path $path)) {
+		if (-not (Test-Path -LiteralPath $path)) {
             continue
         }
 
-        $items = Get-ChildItem -Path $path -Recurse -File -ErrorAction SilentlyContinue
-        if ($IncludePatterns.Count -gt 0) {
-            $items = $items | Where-Object {
-                $fileName = $_.Name
-                foreach ($pattern in $IncludePatterns) {
-                    if ($fileName -like $pattern) {
-                        return $true
-                    }
-                }
-                return $false
-            }
+		$item = Get-Item -LiteralPath $path -ErrorAction SilentlyContinue
+		if ($item -is [System.IO.FileInfo]) {
+			$matches = $IncludePatterns.Count -eq 0
+			foreach ($pattern in $IncludePatterns) {
+				if ($item.Name -like $pattern) {
+					$matches = $true
+					break
+				}
+			}
+
+			if ($matches -and $item.LastWriteTimeUtc -gt $latest) {
+				$latest = $item.LastWriteTimeUtc
+			}
+			continue
         }
 
-        foreach ($item in $items) {
-            if ($item.LastWriteTimeUtc -gt $latest) {
-                $latest = $item.LastWriteTimeUtc
+		if (-not ($item -is [System.IO.DirectoryInfo])) {
+			continue
+		}
+
+		$patterns = $IncludePatterns
+		if ($patterns.Count -eq 0) {
+			$patterns = @('*')
+		}
+
+		foreach ($pattern in $patterns) {
+			try {
+				foreach ($sourceFile in $item.EnumerateFiles($pattern, [System.IO.SearchOption]::AllDirectories)) {
+					if ($sourceFile.LastWriteTimeUtc -gt $latest) {
+						$latest = $sourceFile.LastWriteTimeUtc
+					}
+				}
+			}
+			catch {
+				Write-Verbose "Skipping freshness scan for '$path' with pattern '$pattern': $_"
             }
         }
     }
@@ -558,9 +577,13 @@ function Test-ViewsNativeArtifactsStale {
         (Join-Path $RepoRoot 'Src\views'),
         (Join-Path $RepoRoot 'Src\Kernel'),
         (Join-Path $RepoRoot 'Src\Generic'),
-        (Join-Path $RepoRoot 'Include')
+		(Join-Path $RepoRoot 'Include'),
+		(Join-Path $RepoRoot 'Bld'),
+		(Join-Path $RepoRoot 'Build'),
+		(Join-Path $RepoRoot 'Directory.Build.props'),
+		(Join-Path $RepoRoot 'Directory.Build.targets')
     )
-    $sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.ixx', '*.idl', '*.rc', '*.mak', '*.def', '*.bat')
+	$sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.hxx', '*.inl', '*.ixx', '*.idl', '*.rc', '*.rc2', '*.rh', '*.mak', '*.def', '*.bat', '*.cmd', '*.vcxproj', '*.vcxproj.filters', '*.props', '*.targets')
     $artifactPaths = @(
         (Join-Path $RepoRoot "Output\$Configuration\Views.dll"),
         (Join-Path $RepoRoot "Output\$Configuration\views.lib"),

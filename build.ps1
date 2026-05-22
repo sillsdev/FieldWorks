@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 	Builds the FieldWorks repository using the MSBuild Traversal SDK.
 
@@ -40,6 +40,7 @@
 .PARAMETER EnableTracing
 	If set, enables the dev diagnostics config (FieldWorks.Diagnostics.dev.config) so trace logging
 	is written next to the built executable. Use this for interactive diagnostics and crash investigation.
+	Legacy alias: -TraceCrashes.
 
 .PARAMETER NodeReuse
 	Controls MSBuild node reuse (/nr). Accepts true, false, or auto.
@@ -183,6 +184,7 @@ param(
 	[switch]$InstallerOnly,
 	[switch]$ForceInstallerOnly,
 	[switch]$SignInstaller,
+	[Alias('TraceCrashes')]
 	[switch]$EnableTracing,
 	[switch]$UseLocalLcm,
 	[string]$LocalLcmPath,
@@ -213,13 +215,14 @@ if (-not $PSBoundParameters.ContainsKey('StartedBy') -and -not [string]::IsNullO
 $env:PATH = "$env:WIX/bin;$env:PATH"
 
 if ($Configuration -like "--*") {
-	if ($Configuration -eq "--EnableTracing" -and -not $EnableTracing) {
+	if (($Configuration -eq "--EnableTracing" -or $Configuration -eq "--TraceCrashes") -and -not $EnableTracing) {
+		$traceArgument = $Configuration
 		$EnableTracing = $true
 		$Configuration = "Debug"
-		Write-Output "[WARN] Detected '--EnableTracing' passed without PowerShell switch parsing. Using -EnableTracing and defaulting Configuration to Debug."
+		Write-Output "[WARN] Detected '$traceArgument' passed without PowerShell switch parsing. Using -EnableTracing and defaulting Configuration to Debug."
 	}
 	else {
-		throw "Invalid Configuration value '$Configuration'. Use -EnableTracing (single dash) for trace-enabled builds."
+		throw "Invalid Configuration value '$Configuration'. Use -EnableTracing (or legacy alias -TraceCrashes) for trace-enabled builds."
 	}
 }
 

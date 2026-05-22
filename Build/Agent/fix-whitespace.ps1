@@ -10,11 +10,49 @@ function Get-BaseRef {
 	return (Get-DefaultBranchRef)
 }
 
+function Read-Utf8TextWithoutBom {
+	param([Parameter(Mandatory)][string]$Path)
+
+	$bytes = [System.IO.File]::ReadAllBytes($Path)
+	$offset = 0
+	$hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+	if ($hasBom) {
+		$offset = 3
+	}
+
+	$encoding = New-Object System.Text.UTF8Encoding($false, $true)
+	return @{
+		Text = $encoding.GetString($bytes, $offset, $bytes.Length - $offset)
+		HadBom = $hasBom
+	}
+}
+
+function Test-ForceUtf8WithoutBom {
+	param([Parameter(Mandatory)][string]$Path)
+
+	# Preserve the existing BOM state for ordinary UTF-8 text files to avoid
+	# noisy encoding-only churn. Force BOM-less writes only for entrypoint scripts
+	# where a UTF-8 BOM can break execution or produce confusing shell output.
+	return @('.cmd', '.bat') -contains [System.IO.Path]::GetExtension($Path).ToLowerInvariant()
+}
+
+function Write-Utf8Text {
+	param(
+		[Parameter(Mandatory)][string]$Path,
+		[Parameter(Mandatory)][string]$Content,
+		[Parameter(Mandatory)][bool]$EmitBom
+	)
+
+	$encoding = New-Object System.Text.UTF8Encoding($EmitBom)
+	[System.IO.File]::WriteAllText($Path, $Content, $encoding)
+}
+
 function Format-FileWhitespace {
 	param([Parameter(Mandatory)][string]$Path)
 	if (-not (Test-Path -LiteralPath $Path)) { return }
 	try {
-		$raw = Get-Content -LiteralPath $Path -Raw -Encoding utf8
+		$readResult = Read-Utf8TextWithoutBom -Path $Path
+		$raw = $readResult.Text
 	}
  catch {
 		Write-Host "Skipping non-UTF8 or binary file: $Path"
@@ -32,8 +70,10 @@ function Format-FileWhitespace {
 	while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[$lines.Count - 1])) { $lines.RemoveAt($lines.Count - 1) }
 	# Join back and ensure exactly one trailing newline
 	$new = ($lines -join "`n") + "`n"
-	if ($new -ne $orig) {
-		Set-Content -LiteralPath $Path -Value $new -Encoding utf8 -NoNewline
+	$forceUtf8WithoutBom = Test-ForceUtf8WithoutBom -Path $Path
+	$emitBom = $readResult.HadBom -and -not $forceUtf8WithoutBom
+	if ($new -ne $orig -or ($forceUtf8WithoutBom -and $readResult.HadBom)) {
+		Write-Utf8Text -Path $Path -Content $new -EmitBom $emitBom
 		Write-Host "Fixed whitespace: $Path"
 	}
 }

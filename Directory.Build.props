@@ -1,4 +1,4 @@
-﻿
+
 <Project>
 	<Import Project="$(MSBuildThisFileDirectory)Build\FieldWorks.Toolchain.props"
 		Condition="Exists('$(MSBuildThisFileDirectory)Build\FieldWorks.Toolchain.props')" />
@@ -97,11 +97,11 @@
 		<FwObj>$(FwRoot)Obj\</FwObj>
 		<!--
 			WPF temp-file crash recovery:
-			Interrupted builds leave stale *_wpftmp.csproj files in source directories.
+			Interrupted builds leave stale *_wpftmp project files in source directories.
 			SDK auto-globbing picks them up, causing NETSDK1022 or MSB3030 on the next build.
 			DefaultItemExcludes prevents the SDK from ever auto-including these files.
 		-->
-		<DefaultItemExcludes>$(DefaultItemExcludes);*_wpftmp*</DefaultItemExcludes>
+		<DefaultItemExcludes>$(DefaultItemExcludes);*_wpftmp*.csproj;*_wpftmp*.props;*_wpftmp*.targets</DefaultItemExcludes>
 		<!--
 			Unified Intermediate Output Policy:
 			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
