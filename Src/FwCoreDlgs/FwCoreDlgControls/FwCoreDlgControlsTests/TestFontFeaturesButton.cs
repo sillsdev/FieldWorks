@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using SIL.FieldWorks.FwCoreDlgControls;
 using NUnit.Framework;
 
@@ -63,6 +64,32 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 			Assert.That(EqualArrays(
 				new int[] {Int32.MaxValue},
 				FontFeaturesButton.ParseFeatureString(new int[] {1}, "1=319")), Is.True, "magic id 1 ignored");
+		}
+
+		[Test]
+		public void GenerateFeatureString_EmitsRendererNeutralOpenTypeTags()
+		{
+			var ids = new[] { FeatureId("smcp"), FeatureId("kern") };
+			var values = new[] { 1, 0 };
+
+			Assert.That(FontFeaturesButton.GenerateFeatureString(ids, values), Is.EqualTo("smcp=1,kern=0"));
+		}
+
+		[Test]
+		public void FontFeatures_NormalizesRendererNeutralTags()
+		{
+			using (var button = new FontFeaturesButton())
+			{
+				button.FontFeatures = " smcp = 1, kern=0, bad=2 ";
+
+				Assert.That(button.FontFeatures, Is.EqualTo("kern=0,smcp=1"));
+			}
+		}
+
+		private static int FeatureId(string tag)
+		{
+			var reversedTagBytes = tag.Reverse().Select(Convert.ToByte).ToArray();
+			return BitConverter.ToInt32(reversedTagBytes, 0);
 		}
 	}
 }

@@ -6,6 +6,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -13,6 +16,36 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	[TestFixture]
 	public class FwAttributesTest
 	{
+		[Test]
+		public void UpdateForStyle_OpenTypeFeatures_RoundTripsNormalizedTags()
+		{
+			var fontInfo = CreateExplicitFontInfo(" smcp = 1, kern=0 ");
+			using (var t = new FwFontAttributes())
+			{
+				t.UpdateForStyle(fontInfo);
+
+				bool isInherited;
+				Assert.That(t.GetFontFeatures(out isInherited), Is.EqualTo("kern=0,smcp=1"));
+				Assert.That(isInherited, Is.False);
+			}
+		}
+
+		private static FontInfo CreateExplicitFontInfo(string features)
+		{
+			return new FontInfo
+			{
+				m_bold = { ExplicitValue = false },
+				m_italic = { ExplicitValue = false },
+				m_superSub = { ExplicitValue = FwSuperscriptVal.kssvOff },
+				m_offset = { ExplicitValue = 0 },
+				m_fontColor = { ExplicitValue = Color.Black },
+				m_backColor = { ExplicitValue = Color.Empty },
+				m_underline = { ExplicitValue = FwUnderlineType.kuntNone },
+				m_underlineColor = { ExplicitValue = Color.Empty },
+				m_features = { ExplicitValue = features }
+			};
+		}
+
 		[Test]
 		public void IsInherited_CheckBoxUnchecked_ReturnsFalse()
 		{

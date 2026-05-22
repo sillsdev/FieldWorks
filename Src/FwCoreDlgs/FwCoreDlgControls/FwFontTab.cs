@@ -139,6 +139,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		private void m_cboFontNames_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (m_dontUpdateInheritance)
+			{
+				m_FontAttributes.FontName = m_cboFontNames.Text;
+				return;
+			}
+
 			FontInfo fontInfoForWs = m_currentStyleInfo.FontInfoForWs(m_currentWs);
 			FontInfo inheritedFontInfo = (m_currentStyleInfo.BasedOnStyle == null) ? null :
 				m_currentStyleInfo.BasedOnStyle.FontInfoForWs(m_currentWs);

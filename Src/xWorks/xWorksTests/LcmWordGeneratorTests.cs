@@ -5,9 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -16,9 +19,11 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 using SIL.TestUtilities;
 using XCore;
 using static SIL.FieldWorks.XWorks.LcmWordGenerator;
+using W14 = DocumentFormat.OpenXml.Office2010.Word;
 // ReSharper disable StringLiteralTypo
 
 namespace SIL.FieldWorks.XWorks
@@ -59,6 +64,7 @@ namespace SIL.FieldWorks.XWorks
 			WordNamespaceManager.AddNamespace("w", openXmlSchema);
 			WordNamespaceManager.AddNamespace("r", openXmlSchema);
 			WordNamespaceManager.AddNamespace("wp", openXmlSchema);
+			WordNamespaceManager.AddNamespace("w14", "http://schemas.microsoft.com/office/word/2010/wordml");
 		}
 
 		[OneTimeSetUp]
@@ -208,6 +214,252 @@ namespace SIL.FieldWorks.XWorks
 		{
 			LcmWordGenerator.ClearStyleCollection();
 			DefaultSettings.StylesGenerator.AddGlobalStyles(null, new ReadOnlyPropertyTable(m_propertyTable));
+		}
+
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_OpenTypeFontFeatures_AddsWordTypographyProperties()
+		{
+			var styleName = "WordFeatureStyle" + Guid.NewGuid().ToString("N");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "liga=0,lnum=1,pnum=1,calt=0,ss02=0,cv01=2" } };
+			var projectStyle = new TestStyle(fontInfo, Cache) { Name = styleName, IsParagraphStyle = false };
+			FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles.Add(projectStyle);
+
+			var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(styleName, Cache.DefaultVernWs,
+				new ReadOnlyPropertyTable(m_propertyTable));
+
+			var runProps = style.GetFirstChild<StyleRunProperties>();
+			AssertWordTypographyProperties(runProps, W14.LigaturesValues.None, W14.NumberFormValues.Lining,
+				W14.NumberSpacingValues.Proportional, false, 2U, false);
+		}
+
+		[Test]
+		public void GetExplicitFontProperties_OpenTypeFontFeatures_AddsWordTypographyProperties()
+		{
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "liga=1,clig=1,onum=1,tnum=1,calt=1,ss03=1,cv01=2" } };
+
+			var runProps = WordStylesGenerator.GetExplicitFontProperties(fontInfo);
+
+			AssertWordTypographyProperties(runProps, W14.LigaturesValues.StandardContextual, W14.NumberFormValues.OldStyle,
+				W14.NumberSpacingValues.Tabular, true, 3U, true);
+		}
+
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_NormalStyle_UsesWritingSystemDefaultFontFeatures()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(
+				WordStylesGenerator.NormalParagraphStyleName,
+				vernWs.Handle,
+				new ReadOnlyPropertyTable(m_propertyTable));
+
+			var runProps = style.GetFirstChild<StyleRunProperties>();
+			Assert.That(runProps, Is.Not.Null);
+
+			var runFonts = runProps.GetFirstChild<RunFonts>();
+			Assert.That(runFonts, Is.Not.Null);
+			Assert.That(runFonts.Ascii?.Value, Is.EqualTo("Charis SIL"));
+
+			var stylisticSets = runProps.GetFirstChild<W14.StylisticSets>();
+			Assert.That(stylisticSets, Is.Not.Null);
+
+			var styleSets = stylisticSets.Elements<W14.StyleSet>().OrderBy(styleSet => styleSet.Id?.Value).ToList();
+			Assert.That(styleSets.Count, Is.EqualTo(2));
+			Assert.That(styleSets.Select(styleSet => styleSet.Id?.Value), Is.EqualTo(new uint?[] { 11U, 12U }));
+			Assert.That(styleSets.Select(styleSet => styleSet.Val?.Value),
+				Is.EqualTo(new[] { W14.OnOffValues.True, W14.OnOffValues.True }));
+		}
+
+		[Test]
+		[Category("ManualDocx")]
+		public void GenerateManualDocxArtifact_CharisBaseline_NoFontOptions()
+		{
+			var docxPath = GenerateManualDocxArtifact("charis-baseline-no-font-options.docx", null);
+
+			Assert.That(new FileInfo(docxPath).Length, Is.GreaterThan(0));
+			Assert.That(GetDocxStyleSetIds(docxPath), Is.Empty);
+		}
+
+		[Test]
+		[Category("ManualDocx")]
+		public void GenerateManualDocxArtifact_CharisSs11Ss12()
+		{
+			var docxPath = GenerateManualDocxArtifact("charis-ss11-ss12.docx", "ss11=1,ss12=1");
+
+			Assert.That(new FileInfo(docxPath).Length, Is.GreaterThan(0));
+			var styleSetIds = GetDocxStyleSetIds(docxPath);
+			Assert.That(styleSetIds, Does.Contain(11U));
+			Assert.That(styleSetIds, Does.Contain(12U));
+		}
+
+		private static void AssertWordTypographyProperties(OpenXmlCompositeElement runProps,
+			W14.LigaturesValues ligaturesValue, W14.NumberFormValues numberFormValue,
+			W14.NumberSpacingValues numberSpacingValue, bool contextualAlternativesValue,
+			uint stylisticSetId, bool stylisticSetValue)
+		{
+			Assert.That(runProps, Is.Not.Null);
+			var ligatures = runProps.GetFirstChild<W14.Ligatures>();
+			Assert.That(ligatures, Is.Not.Null);
+			Assert.That(ligatures.Val.Value, Is.EqualTo(ligaturesValue));
+
+			var numberForm = runProps.GetFirstChild<W14.NumberingFormat>();
+			Assert.That(numberForm, Is.Not.Null);
+			Assert.That(numberForm.Val.Value, Is.EqualTo(numberFormValue));
+
+			var numberSpacing = runProps.GetFirstChild<W14.NumberSpacing>();
+			Assert.That(numberSpacing, Is.Not.Null);
+			Assert.That(numberSpacing.Val.Value, Is.EqualTo(numberSpacingValue));
+
+			var contextualAlternatives = runProps.GetFirstChild<W14.ContextualAlternatives>();
+			Assert.That(contextualAlternatives, Is.Not.Null);
+			Assert.That(contextualAlternatives.Val.Value, Is.EqualTo(GetOnOffValue(contextualAlternativesValue)));
+
+			var stylisticSets = runProps.GetFirstChild<W14.StylisticSets>();
+			Assert.That(stylisticSets, Is.Not.Null);
+			var styleSet = stylisticSets.Elements<W14.StyleSet>().Single();
+			Assert.That(styleSet.Id.Value, Is.EqualTo(stylisticSetId));
+			Assert.That(styleSet.Val.Value, Is.EqualTo(GetOnOffValue(stylisticSetValue)));
+		}
+
+		private static W14.OnOffValues GetOnOffValue(bool value)
+		{
+			return value ? W14.OnOffValues.True : W14.OnOffValues.False;
+		}
+
+		private string GenerateManualDocxArtifact(string fileName, string fontFeatures)
+		{
+			var outputDir = EnsureManualDocxArtifactOutputDirectory();
+			var filePath = Path.Combine(outputDir, fileName);
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+			}
+
+			ConfigureManualDocxWritingSystem(Cache.DefaultVernWs, fontFeatures);
+			ConfigureManualDocxWritingSystem(Cache.DefaultAnalWs, fontFeatures);
+			EnsureManualDocxStylesAvailable();
+
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "agaga", "again agaga");
+			var configuration = CreateManualDocxConfiguration();
+			var publicationDecorator = new DictionaryPublicationDecorator(Cache, m_Clerk.VirtualListPublisher, m_Clerk.VirtualFlid);
+
+			LcmWordGenerator.SavePublishedDocx(new[] { entry.Hvo }, m_Clerk, publicationDecorator, int.MaxValue,
+				configuration, m_propertyTable, filePath);
+
+			TestContext.WriteLine("Generated manual DOCX artifact: " + filePath);
+			Assert.That(File.Exists(filePath), Is.True);
+			return filePath;
+		}
+
+		private DictionaryConfigurationModel CreateManualDocxConfiguration()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "Dictionary-Headword"
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" }),
+				Style = DictionaryGlossStyleName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = SensesParagraphStyleName
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode, sensesNode },
+				CSSClassNameOverride = "entry",
+				FieldDescription = "LexEntry",
+				Style = MainEntryParagraphStyleName
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var configuration = new DictionaryConfigurationModel(true)
+			{
+				Label = "Manual DOCX",
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(configuration.Parts, configuration, configuration.SharedItems);
+			return configuration;
+		}
+
+		private void EnsureManualDocxStylesAvailable()
+		{
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+
+			if (!styles.Contains("Dictionary-Normal"))
+				styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
+			if (!styles.Contains(DictionaryNormal))
+				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
+			if (!styles.Contains("Dictionary-Headword"))
+				styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false });
+			if (!styles.Contains(DictionaryGlossStyleName))
+				styles.Add(new BaseStyleInfo { Name = DictionaryGlossStyleName, IsParagraphStyle = false });
+			if (!styles.Contains(MainEntryParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = MainEntryParagraphStyleName, IsParagraphStyle = true });
+			if (!styles.Contains(SensesParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = SensesParagraphStyleName, IsParagraphStyle = true });
+		}
+
+		private void ConfigureManualDocxWritingSystem(int wsHandle, string fontFeatures)
+		{
+			var writingSystem = Cache.ServiceLocator.WritingSystemManager.Get(wsHandle);
+			writingSystem.DefaultFont = new FontDefinition("Charis SIL") { Features = fontFeatures };
+		}
+
+		private static IReadOnlyCollection<uint> GetDocxStyleSetIds(string filePath)
+		{
+			using (var archive = ZipFile.OpenRead(filePath))
+			{
+				var stylesEntry = archive.GetEntry("word/styles.xml");
+				Assert.That(stylesEntry, Is.Not.Null);
+
+				var stylesDocument = new XmlDocument();
+				using (var stylesStream = stylesEntry.Open())
+				{
+					stylesDocument.Load(stylesStream);
+				}
+
+				var namespaceManager = new XmlNamespaceManager(stylesDocument.NameTable);
+				namespaceManager.AddNamespace("w14", "http://schemas.microsoft.com/office/word/2010/wordml");
+
+				return stylesDocument.SelectNodes("//w14:styleSet", namespaceManager)
+					.Cast<XmlNode>()
+					.Select(node => node.Attributes?["id", "http://schemas.microsoft.com/office/word/2010/wordml"]?.Value)
+					.Where(value => uint.TryParse(value, out _))
+					.Select(value => uint.Parse(value))
+					.Distinct()
+					.OrderBy(id => id)
+					.ToArray();
+			}
+		}
+
+		private static string EnsureManualDocxArtifactOutputDirectory()
+		{
+			if (!string.Equals(Environment.GetEnvironmentVariable("FW_RUN_MANUAL_DOCX_EXPORT_TESTS"), "1",
+				StringComparison.Ordinal))
+			{
+				Assert.Ignore("Set FW_RUN_MANUAL_DOCX_EXPORT_TESTS=1 to generate manual DOCX artifacts.");
+			}
+
+			var outputDir = Environment.GetEnvironmentVariable("FW_MANUAL_DOCX_OUTPUT_DIR");
+			if (string.IsNullOrWhiteSpace(outputDir))
+			{
+				outputDir = Path.Combine(Path.GetDirectoryName(typeof(LcmWordGeneratorTests).Assembly.Location),
+					"ManualDocxArtifacts");
+			}
+
+			Directory.CreateDirectory(outputDir);
+			return outputDir;
 		}
 
 

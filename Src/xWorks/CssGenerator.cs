@@ -1542,6 +1542,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
+			string defaultFontFeatures = null;
 
 			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
 			// defaultFontInfo if set, or null.
@@ -1555,7 +1556,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
 				if(lgWritingSystem != null)
+				{
 					fontName = lgWritingSystem.DefaultFontName;
+					defaultFontFeatures = lgWritingSystem.DefaultFontFeatures;
+				}
 			}
 
 			if (fontName != null)
@@ -1576,7 +1580,7 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
-			AddFontFeaturesFromWsOrDefaultValue(wsFontInfo.m_features, defaultFontInfo.Features, declaration);
+			AddFontFeaturesFromWsOrDefaultValue(wsFontInfo.m_features, defaultFontInfo.Features, declaration, defaultFontFeatures);
 
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 		}
@@ -1649,10 +1653,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propName"></param>
 		/// <param name="declaration"></param>
 		private static void AddFontFeaturesFromWsOrDefaultValue(InheritableStyleProp<string> wsFontInfo, IStyleProp<string> defaultFontInfo,
-			StyleDeclaration declaration)
+			StyleDeclaration declaration, string fallbackFontValue = null)
 		{
 			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
-				return;
+			{
+				fontValue = fallbackFontValue;
+				if (string.IsNullOrEmpty(fontValue))
+					return;
+			}
 			var fontProp = new Property("font-feature-settings");
 			fontProp.Term = ConvertToCssFeatures(fontValue);
 			declaration.Add(fontProp);

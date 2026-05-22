@@ -196,5 +196,27 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Assert.That(style2.Structure, Is.EqualTo(StructureValues.Heading));
 			Assert.That(style2.Function, Is.EqualTo(FunctionValues.Table));
 		}
+
+		[Test]
+		public void SaveToDB_DefaultFontFeatures_RoundTripsThroughRules()
+		{
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var realStyle = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = "Normal";
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+
+			StyleInfo styleInfo = new StyleInfo(realStyle);
+			styleInfo.FontInfoForWs(-1).m_features.ExplicitValue = "kern=0,smcp=1";
+
+			styleInfo.SaveToDB(realStyle, true, true);
+			StyleInfo reloadedStyleInfo = new StyleInfo(realStyle);
+			FontInfo reloadedFontInfo = reloadedStyleInfo.FontInfoForWs(-1);
+
+			Assert.That(reloadedFontInfo.m_features.IsExplicit, Is.True);
+			Assert.That(reloadedFontInfo.m_features.Value, Is.EqualTo("kern=0,smcp=1"));
+		}
 	}
 }

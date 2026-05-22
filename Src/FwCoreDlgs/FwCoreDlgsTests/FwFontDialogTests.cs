@@ -5,7 +5,10 @@
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -56,6 +59,62 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Related to FWNX-273: Fonts not in alphabetical order
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
+		[Test]
+		public void SaveFontInfo_OpenTypeFeatures_RoundTripsThroughAttributes()
+		{
+			var fontInfo = new FontInfo
+			{
+				m_fontName = { ExplicitValue = "Times New Roman" },
+				m_fontSize = { ExplicitValue = 12000 },
+				m_bold = { ExplicitValue = false },
+				m_italic = { ExplicitValue = false },
+				m_superSub = { ExplicitValue = FwSuperscriptVal.kssvOff },
+				m_offset = { ExplicitValue = 0 },
+				m_fontColor = { ExplicitValue = System.Drawing.Color.Black },
+				m_backColor = { ExplicitValue = System.Drawing.Color.Empty },
+				m_underline = { ExplicitValue = FwUnderlineType.kuntNone },
+				m_underlineColor = { ExplicitValue = System.Drawing.Color.Empty },
+				m_features = { ExplicitValue = " smcp = 1, kern=0 " }
+			};
+
+			((IFontDialog)m_dialog).Initialize(fontInfo, true, Cache.DefaultVernWs,
+				Cache.WritingSystemFactory, null, false);
+			var savedFontInfo = new FontInfo(fontInfo);
+
+			((IFontDialog)m_dialog).SaveFontInfo(savedFontInfo);
+
+			Assert.That(savedFontInfo.m_features.Value, Is.EqualTo("kern=0,smcp=1"));
+			Assert.That(savedFontInfo.m_features.IsInherited, Is.False);
+		}
+
+		[Test]
+		public void SaveFontInfo_OpenTypeFeatures_RemainExplicitWhenLaterFieldsAreInherited()
+		{
+			var fontInfo = new FontInfo
+			{
+				m_fontName = { ExplicitValue = "Times New Roman" },
+				m_fontSize = { ExplicitValue = 12000 },
+				m_bold = { ExplicitValue = false },
+				m_italic = { ExplicitValue = false },
+				m_superSub = { ExplicitValue = FwSuperscriptVal.kssvOff },
+				m_fontColor = { ExplicitValue = System.Drawing.Color.Black },
+				m_backColor = { ExplicitValue = System.Drawing.Color.Empty },
+				m_underline = { ExplicitValue = FwUnderlineType.kuntNone },
+				m_underlineColor = { ExplicitValue = System.Drawing.Color.Empty },
+				m_features = { ExplicitValue = " smcp = 1, kern=0 " }
+			};
+			fontInfo.m_offset.ResetToInherited(0);
+
+			((IFontDialog)m_dialog).Initialize(fontInfo, true, Cache.DefaultVernWs,
+				Cache.WritingSystemFactory, null, false);
+			var savedFontInfo = new FontInfo(fontInfo);
+
+			((IFontDialog)m_dialog).SaveFontInfo(savedFontInfo);
+
+			Assert.That(savedFontInfo.m_features.Value, Is.EqualTo("kern=0,smcp=1"));
+			Assert.That(savedFontInfo.m_features.IsInherited, Is.False);
+		}
+
 		[Test]
 		public void FillFontList_IsAlphabeticallySorted()
 		{
