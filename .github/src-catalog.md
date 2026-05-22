@@ -66,9 +66,6 @@ Managed ILgCollatingEngine implementation that wraps ICU.NET to deliver locale-a
 ### ManagedVwDrawRootBuffered
 Managed IVwDrawRootBuffered implementation that renders native Views content to an off-screen bitmap before blitting, eliminating flicker in rich text views.
 
-### ManagedVwWindow
-Minimal IVwWindow adapter that maps WinForms controls to native HWND expectations so the Views engine can render inside .NET windows.
-
 ### MigrateSqlDbs
 Historical SQL→XML migration utility used for the FieldWorks 6→7 transition; kept for archival reference.
 

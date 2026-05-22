@@ -8,7 +8,6 @@
 		<ManagedComAssemblies Include="$(OutDir)FwUtils.dll" />
 		<ManagedComAssemblies Include="$(OutDir)SimpleRootSite.dll" />
 		<ManagedComAssemblies Include="$(OutDir)ManagedLgIcuCollator.dll" />
-		<ManagedComAssemblies Include="$(OutDir)ManagedVwWindow.dll" />
 		<ManagedComAssemblies Include="$(OutDir)xWorks.dll" />
 		<ManagedComAssemblies Include="$(OutDir)LexTextDll.dll" />
 	</ItemGroup>

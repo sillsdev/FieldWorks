@@ -29,10 +29,6 @@ DEFINE_THIS_FILE
 #undef Tracing_KeybdSelection
 //#define Tracing_KeybdSelection
 
-#if !defined(_WIN32) && !defined(_M_X64)
-const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0x3C, 0x1B, 0xFD, 0xF9, 0xE8, 0x3E}};
-#endif
-
 //:>********************************************************************************************
 //:>	Forward declarations
 //:>********************************************************************************************
@@ -90,13 +86,9 @@ void VwRootBox::Init()
 	m_ptDpiSrc.y = 96;
 
 #ifdef ENABLE_TSF
-#if defined(WIN32) || defined(WIN64)
 	VwTextStorePtr qtxs;
 	qtxs.Attach(NewObj VwTextStore(this));
 	CheckHr(qtxs->QueryInterface(IID_IViewInputMgr, (void**)&m_qvim));
-#else
-	m_qvim.CreateInstance(CLSID_ViewInputManager);
-#endif
 #endif /*ENABLE_TSF*/
 }
 

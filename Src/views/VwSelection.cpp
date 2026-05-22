@@ -617,17 +617,10 @@ void VwSelection::DoCtrlPageUpDown(IVwGraphics * pvg, Rect rcDocumentCoord, Rect
 
 
 	Rect rcRootSite;
-#if defined(WIN32) || defined(WIN64)
 	if(!GetClientRect(hwndRootSite, &rcRootSite)){
 		Assert(false); // we better have a valid HWND at this point! That's the only reason GetClientRect should fail that we could think of.
 		return;
 	}
-#else
-	ComSmartPtr<IVwWindow> qhwndWrapper;
-	qhwndWrapper.CreateInstance(CLSID_VwWindow);
-	CheckHr(qhwndWrapper->put_Window(reinterpret_cast<DWORD *>(hwndRootSite)));
-	CheckHr(qhwndWrapper->GetClientRectangle(&rcRootSite));
-#endif
 
 	// rcRootSite is in client coordinates. Map rcRootSite from client coordinates to document coordinates
 //	rcRootSite.Map(rcClientCoord, rcDocumentCoord);
@@ -682,17 +675,10 @@ COMINT32 VwSelection::VisiblePageHeight(IVwGraphics * pvg, Rect rcDocumentCoord,
 	Assert(hwndRootSite);
 
 	Rect rcRootSite;
-#if defined(WIN32) || defined(WIN64)
 	if(!GetClientRect(hwndRootSite, &rcRootSite)){
 		Assert(false); // we better have a valid HWND at this point! That's the only reason GetClientRect should fail that we could think of.
 		return 0;
 	}
-#else
-	ComSmartPtr<IVwWindow> qhwndWrapper;
-	qhwndWrapper.CreateInstance(CLSID_VwWindow);
-	CheckHr(qhwndWrapper->put_Window(reinterpret_cast<DWORD *>(hwndRootSite)));
-	CheckHr(qhwndWrapper->GetClientRectangle(&rcRootSite));
-#endif
 
 	// rcRootSite is in client coordinates. Map rcRootSite from client coordinates to document coordinates
 	//rcRootSite.Map(rcClientCoord, rcDocumentCoord);

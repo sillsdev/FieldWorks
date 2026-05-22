@@ -43,9 +43,7 @@
 		<!-- CLSIDs implemented in managed code that must be excluded from native manifests to avoid SxS duplicates -->
 		<ExcludedClsids Include="{17a2e876-2968-11e0-8046-0019dbf4566e}" /> <!-- ManagedPictureFactory -->
 		<ExcludedClsids Include="{97199458-10C7-49da-B3AE-EA922EA64859}" /> <!-- VwDrawRootBuffered -->
-		<ExcludedClsids Include="{3fb0fcd2-ac55-42a8-b580-73b89a2b6215}" /> <!-- ManagedVwWindow -->
 		<ExcludedClsids Include="{e771361c-ff54-4120-9525-98a0b7a9accf}" /> <!-- ManagedLgIcuCollator -->
-		<ExcludedClsids Include="{830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E}" /> <!-- ViewInputManager -->
 	</ItemGroup>
 	<PropertyGroup>
 		<NativeMakeOutDir></NativeMakeOutDir>

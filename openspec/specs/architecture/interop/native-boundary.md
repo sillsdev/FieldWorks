@@ -18,7 +18,8 @@ The Views rendering engine and related interfaces are native C++ COM servers. Ma
 
 - Managed components consume Views COM interfaces via ViewsInterfaces.
 - RootSite and SimpleRootSite host view objects and implement COM callbacks.
-- ManagedVwWindow bridges WinForms controls to native IVwWindow.
+- Windows RootSite editing relies on native Views interfaces and VwTextStore for input management.
+- The retired Linux-era ManagedVwWindow shim no longer provides a managed HWND wrapper boundary.
 
 ### References
 

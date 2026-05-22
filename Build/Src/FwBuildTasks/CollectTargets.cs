@@ -563,10 +563,6 @@ namespace FwBuildTasks
 						{
 							writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
 						}
-						if (project.StartsWith("ManagedVwWindow"))
-						{
-							writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
-						}
 						writer.WriteLine(">");
 
 						// <MsBuild> task
