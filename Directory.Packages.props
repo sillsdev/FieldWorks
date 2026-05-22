@@ -103,6 +103,7 @@
 		=============================================================
 	-->
 	<ItemGroup Label="SIL Tools">
+		<PackageVersion Include="ILRepack" Version="2.0.18" />
 		<PackageVersion Include="SIL.Chorus.App" Version="$(SilChorusVersion)" />
 		<PackageVersion Include="SIL.Chorus.LibChorus" Version="$(SilChorusVersion)" />
 		<PackageVersion Include="SIL.DesktopAnalytics" Version="4.0.0" />

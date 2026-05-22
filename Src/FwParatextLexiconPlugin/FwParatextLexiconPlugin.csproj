@@ -28,6 +28,7 @@
     <PackageReference Include="SIL.LCModel.Utils" />
     <PackageReference Include="SIL.Machine" />
     <PackageReference Include="SIL.WritingSystems" />
+    <PackageReference Include="ILRepack" GeneratePathProperty="true" ExcludeAssets="all" />
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
   <ItemGroup>
@@ -53,4 +54,5 @@
     <EmbeddedResource Include="question.ico" />
     <EmbeddedResource Include="Resources\question.ico" />
   </ItemGroup>
+  <Import Project="ILRepack.targets" />
 </Project>
