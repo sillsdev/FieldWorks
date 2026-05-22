@@ -46,7 +46,7 @@ First tell the author what will happen:
    - Run `git fetch origin --quiet`.
    - Compute `MERGE_BASE` with `git merge-base origin/main HEAD`.
    - Compute `HEAD_SHA`, `FILE_COUNT`, and `INITIAL_COMMIT_COUNT`.
-   - List changed files with `git diff --name-only <merge-base>`.
+   - List changed files with `git diff --name-only MERGE_BASE`.
    - If this fails, ask the author which base branch to use.
 5. Check whether `.review` is ignored.
    - If `.review` is missing from `.gitignore`, ask whether to add it now.
