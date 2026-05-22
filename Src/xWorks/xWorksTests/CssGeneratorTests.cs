@@ -2390,6 +2390,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_CustomPrintableAsciiFontFeatures_AreEscapedForCss()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "!abc=2,a\"b\\=1" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+			Assert.That(cssResult,
+				Does.Contain("font-feature-settings:\"!abc\" 2,\"a\\\"b\\\\\" 1"));
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
 		{
 			GenerateStyle("Dictionary-RevSenseNum");

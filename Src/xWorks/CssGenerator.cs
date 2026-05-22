@@ -1682,8 +1682,13 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 
 			var terms = features.Select(setting => string.Format(CultureInfo.InvariantCulture,
-				"\"{0}\" {1}", setting.Tag, setting.Value));
+				"\"{0}\" {1}", EscapeCssString(setting.Tag), setting.Value));
 			return new PrimitiveTerm(UnitType.Unknown, string.Join(",", terms));
+		}
+
+		private static string EscapeCssString(string value)
+		{
+			return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
 		}
 
 		/// <summary>

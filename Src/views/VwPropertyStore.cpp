@@ -74,6 +74,29 @@ static const int s_ctptWsStyleProps = (isizeof(s_rgtptWsStyleProps) / isizeof(in
 // Magic font strings that are used in markup:
 static OleStringLiteral g_pszDefaultFont(L"<default font>");
 
+static void CopyRenderableFontVariations(const StrUni & stuFontVariations,
+	OLECHAR * prgchFontVar, int cchFontVar)
+{
+	StrUni stuTmp = stuFontVariations;
+	const int cchLimit = cchFontVar - 1;
+	while (stuTmp.Length() > cchLimit)
+	{
+		int ichComma = stuTmp.FindCh(L',', 0);
+		if (ichComma < 0 || ichComma + 1 >= stuTmp.Length())
+		{
+#if defined(WIN32) || defined(_M_X64)
+			::OutputDebugStringW(L"VwPropertyStore dropped an overlong font variations string without a comma boundary.\n");
+#endif
+			stuTmp.Clear();
+			break;
+		}
+
+		stuTmp = stuTmp.Right(stuTmp.Length() - ichComma - 1);
+	}
+
+	wcscpy_s(prgchFontVar, cchFontVar, stuTmp.Chars());
+}
+
 //:>********************************************************************************************
 //:>	DllExports
 //:>********************************************************************************************
@@ -787,7 +810,7 @@ STDMETHODIMP VwPropertyStore::get_FontVariations(BSTR * pbstr)
 {
 	BEGIN_COM_METHOD;
 	ChkComOutPtr(pbstr);
-	CopyBstr(pbstr, m_stuFontFamily.Bstr());
+	CopyBstr(pbstr, m_stuFontVariations.Bstr());
 	END_COM_METHOD(g_factVps, IID_IVwPropertyStore);
 }
 
@@ -1546,7 +1569,6 @@ STDMETHODIMP VwPropertyStore::put_StringProperty(int sp, BSTR bstrValue)
 	ChkComBstrArg(bstrValue);
 
 	StrUni stuTmp;
-	int max;
 
 	if (m_fLocked)
 		ThrowHr(WarnHr(E_UNEXPECTED));
@@ -1578,15 +1600,8 @@ STDMETHODIMP VwPropertyStore::put_StringProperty(int sp, BSTR bstrValue)
 			m_stuFontVariations += L",";
 		stuTmp = bstrValue;
 		m_stuFontVariations += stuTmp;
-		stuTmp = m_stuFontVariations;
-		max = isizeof (m_chrp.szFontVar);
-		while (stuTmp.Length() >= (isizeof(m_chrp.szFontVar) / isizeof(OLECHAR)))
-		{
-			// Pretruncate to avoid overflow.
-			int ichComma = stuTmp.FindCh(L',', 0);
-			stuTmp = stuTmp.Right(stuTmp.Length() - ichComma - 1);
-		}
-		wcscpy_s(m_chrp.szFontVar, 64, stuTmp.Chars());
+		CopyRenderableFontVariations(m_stuFontVariations, m_chrp.szFontVar,
+			_countof(m_chrp.szFontVar));
 		break;
 	case ktptTags:
 		m_stuTags = bstrValue;
@@ -1847,15 +1862,8 @@ void VwPropertyStore::CopyInheritedFrom(VwPropertyStore* pzvpsParent)
 	m_fRightToLeft = pzvpsParent->m_fRightToLeft;
 	m_chrp.nDirDepth = pzvpsParent->m_chrp.nDirDepth;
 	m_stuFontVariations = pzvpsParent->m_stuFontVariations;
-	StrUni stuTmp = m_stuFontVariations;
-	while (stuTmp.Length() >= (isizeof(m_chrp.szFontVar) / isizeof(OLECHAR)))
-	{
-		// Pretruncate to avoid overflow.
-		// TODO (SharonC): Rework.
-		int ichComma = stuTmp.FindCh(L',', 0);
-		stuTmp = stuTmp.Right(stuTmp.Length() - ichComma - 1);
-	}
-	wcscpy_s(m_chrp.szFontVar, 64, stuTmp.Chars());
+	CopyRenderableFontVariations(m_stuFontVariations, m_chrp.szFontVar,
+		_countof(m_chrp.szFontVar));
 	m_chrp.clrFore = pzvpsParent->m_chrp.clrFore;
 	m_clrBorderColor = pzvpsParent->m_clrBorderColor;
 	m_nMaxLines = pzvpsParent->m_nMaxLines;

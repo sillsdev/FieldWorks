@@ -511,6 +511,81 @@ namespace TestViews
 			unitpp::assert_eq("GetCharProps not bold", kttvForceOn, chrp.ttvBold);
 		}
 
+		void testFontVariations_OverlongEntryWithoutCommaClearsRenderBuffer()
+		{
+			SmartBstr sbstrOverlong = MakeOverlongFontVariationBstr();
+			HRESULT hr = m_qzvps.Ptr()->put_StringProperty(ktptFontVariations, sbstrOverlong);
+			unitpp::assert_eq("put_StringProperty should succeed", S_OK, hr);
+
+			SmartBstr sbstrFontVariations;
+			hr = m_qzvps.Ptr()->get_FontVariations(&sbstrFontVariations);
+			unitpp::assert_eq("get_FontVariations should succeed", S_OK, hr);
+			unitpp::assert_eq("original font variations length should be preserved",
+				BstrLen(sbstrOverlong), BstrLen(sbstrFontVariations));
+
+			m_qzvps.Ptr()->Lock();
+			LgCharRenderProps * pchrp = m_qzvps.Ptr()->Chrp();
+			unitpp::assert_eq("render font variations should be dropped without a comma boundary",
+				0, static_cast<int>(wcslen(pchrp->szFontVar)));
+		}
+
+		void testFontVariations_OverlongEntryWithCommaKeepsTrailingRenderableEntry()
+		{
+			SmartBstr sbstrOverlong = MakeOverlongFontVariationWithCommaBstr();
+			HRESULT hr = m_qzvps.Ptr()->put_StringProperty(ktptFontVariations, sbstrOverlong);
+			unitpp::assert_eq("put_StringProperty should succeed", S_OK, hr);
+
+			SmartBstr sbstrFontVariations;
+			hr = m_qzvps.Ptr()->get_FontVariations(&sbstrFontVariations);
+			unitpp::assert_eq("get_FontVariations should succeed", S_OK, hr);
+			unitpp::assert_eq("original font variations length should be preserved",
+				BstrLen(sbstrOverlong), BstrLen(sbstrFontVariations));
+
+			m_qzvps.Ptr()->Lock();
+			LgCharRenderProps * pchrp = m_qzvps.Ptr()->Chrp();
+			unitpp::assert_true("render font variations should keep trailing comma-delimited entry",
+				wcscmp(pchrp->szFontVar, L"ss01=1") == 0);
+		}
+
+		void testFontVariations_ExactRenderBufferBoundaryIsPreserved()
+		{
+			SmartBstr sbstrBoundary = MakeBoundaryFontVariationBstr();
+			HRESULT hr = m_qzvps.Ptr()->put_StringProperty(ktptFontVariations, sbstrBoundary);
+			unitpp::assert_eq("put_StringProperty should succeed", S_OK, hr);
+
+			m_qzvps.Ptr()->Lock();
+			LgCharRenderProps * pchrp = m_qzvps.Ptr()->Chrp();
+			unitpp::assert_eq("boundary font variations length should be preserved",
+				BstrLen(sbstrBoundary), static_cast<int>(wcslen(pchrp->szFontVar)));
+			unitpp::assert_true("boundary font variations should be copied exactly",
+				wcscmp(pchrp->szFontVar, sbstrBoundary.Chars()) == 0);
+		}
+
+		void testComputedPropertiesForString_OverlongInheritedFontVariationsWithoutCommaClearsRenderBuffer()
+		{
+			SmartBstr sbstrOverlong = MakeOverlongFontVariationBstr();
+			HRESULT hr = m_qzvps.Ptr()->put_StringProperty(ktptFontVariations, sbstrOverlong);
+			unitpp::assert_eq("put_StringProperty should succeed", S_OK, hr);
+
+			VwPropertyStorePtr qzvpsDerived;
+			SmartBstr sbstrFontFamily(L"Arial");
+			hr = m_qzvps.Ptr()->ComputedPropertiesForString(ktptFontFamily, sbstrFontFamily,
+				&qzvpsDerived);
+			unitpp::assert_eq("ComputedPropertiesForString should succeed", S_OK, hr);
+
+			SmartBstr sbstrFontVariations;
+			hr = qzvpsDerived.Ptr()->get_FontVariations(&sbstrFontVariations);
+			unitpp::assert_eq("derived get_FontVariations should succeed", S_OK, hr);
+			unitpp::assert_eq("inherited font variations length should be preserved",
+				BstrLen(sbstrOverlong), BstrLen(sbstrFontVariations));
+
+			LgCharRenderProps chrp;
+			memset(&chrp, 0, isizeof(chrp));
+			qzvpsDerived.Ptr()->GetChrp(&chrp);
+			unitpp::assert_eq("inherited render font variations should be dropped without a comma boundary",
+				0, static_cast<int>(wcslen(chrp.szFontVar)));
+		}
+
 		virtual void Setup()
 		{
 			CreateTestWritingSystemFactory();
@@ -535,6 +610,29 @@ namespace TestViews
 			m_qtsf.Clear();
 			m_qzvps.Clear();
 			CloseTestWritingSystemFactory();
+		}
+
+	private:
+		static SmartBstr MakeOverlongFontVariationBstr()
+		{
+			return SmartBstr(
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		}
+
+		static SmartBstr MakeOverlongFontVariationWithCommaBstr()
+		{
+			return SmartBstr(
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				L",ss01=1");
+		}
+
+		static SmartBstr MakeBoundaryFontVariationBstr()
+		{
+			return SmartBstr(
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				L"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		}
 	};
 }
