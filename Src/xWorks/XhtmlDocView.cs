@@ -267,7 +267,10 @@ namespace SIL.FieldWorks.XWorks
 			// commented out until conditions are clarified (LT-11447)
 			string configurationName = DictionaryConfigurationListener.GetCurrentConfiguration(propertyTable, false);
 			var configuration = new DictionaryConfigurationModel(configurationName, cache);
-			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
+			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry &&
+				(configuration.Type == DictionaryConfigurationModel.ConfigType.Hybrid ||
+				 configuration.Type == DictionaryConfigurationModel.ConfigType.Lexeme ||
+				 configuration.Type == DictionaryConfigurationModel.ConfigType.Root))
 			{
 				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
