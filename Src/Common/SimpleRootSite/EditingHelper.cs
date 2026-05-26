@@ -3257,9 +3257,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual void DeleteSelectionTask(string undoLabel, string redoLabel)
 		{
-			Callbacks.EditedRootBox.DataAccess.GetActionHandler().BeginUndoTask(undoLabel, redoLabel);
-			DeleteSelection();
-			Callbacks.EditedRootBox.DataAccess.GetActionHandler().EndUndoTask();
+			IActionHandler actionHandler = Callbacks.EditedRootBox.DataAccess.GetActionHandler();
+			if (actionHandler != null)
+			{
+				actionHandler.BeginUndoTask(undoLabel, redoLabel);
+				DeleteSelection();
+				actionHandler.EndUndoTask();
+			}
+			else
+			{
+				DeleteSelection();
+			}
 		}
 
 		/// -----------------------------------------------------------------------------------
