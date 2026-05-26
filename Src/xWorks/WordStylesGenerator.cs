@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string BeforeAfterBetween = "-Context";
 		internal const string LinkedCharacterStyle = "-char";
 		internal const string SubentriesHeadword = "Subheadword";
+		internal const string Abbreviation = "Abbreviation";
+		internal const string Name = "Name";
 
 		// Globals and default paragraph styles.
 		// Nodepaths declared here are common names to use for the global styles

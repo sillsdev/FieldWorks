@@ -88,6 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			kftSemanticDomains,
 			kftWebonary,
 			kftWordOpenXml,
+			kftWordClassifiedDict,
 			kftPhonology
 		}
 		// ReSharper restore InconsistentNaming
@@ -100,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 			public string m_sXsltFiles;
 			public string m_path; // Used to keep track of items after they are sorted.
 		}
-		protected List<FxtType> m_rgFxtTypes = new List<FxtType>(8);
+		protected List<FxtType> m_rgFxtTypes = new List<FxtType>(9);
 
 		protected ConfiguredExport m_ce = null;
 		protected XmlSeqView m_seqView = null;
@@ -368,10 +369,8 @@ namespace SIL.FieldWorks.XWorks
 			this.columnHeader2});
 			this.m_exportList.FullRowSelect = true;
 			this.m_exportList.HideSelection = false;
-			this.m_exportList.MinimumSize = new Size(256, 183);
 			this.m_exportList.MultiSelect = false;
 			this.m_exportList.Name = "m_exportList";
-			this.m_exportList.ListViewItemSorter = new ExportListComparer();
 			this.m_exportList.Sorting = SortOrder.Ascending;
 			this.m_exportList.UseCompatibleStateImageBehavior = false;
 			this.m_exportList.View = View.Details;
@@ -644,6 +643,7 @@ namespace SIL.FieldWorks.XWorks
 							ProcessWebonaryExport();
 							return;
 						case FxtTypes.kftWordOpenXml:
+						case FxtTypes.kftWordClassifiedDict:
 						default:
 							using (var dlg = new SaveFileDialogAdapter())
 							{
@@ -844,6 +844,7 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportPhonology, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 							case FxtTypes.kftWordOpenXml:
+							case FxtTypes.kftWordClassifiedDict:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = 1000;
 								progressDlg.AllowCancel = true;
@@ -965,55 +966,68 @@ namespace SIL.FieldWorks.XWorks
 
 		private object ExportWordOpenXml(IThreadedProgress progress, object[] args)
 		{
+
+			var exportType = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
+
 			if (args.Length < 1)
 				return null;
 			var filePath = (string)args[0];
 			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
 
-			// Export the main dictionary.
-			GetDictionaryEntries(exportService, out var clerk, out var pubDecorator, out var entriesToSave);
-			exportService.ExportWordDictionary(filePath, entriesToSave, clerk, pubDecorator, progress);
-
-			// Export all the reversals.
-			var revClerk = exportService.GetReversalClerk();
-			try
+			switch (exportType)
 			{
-				exportService.StoreReversalData(revClerk, false);
-				foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
-				{
-					var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(reversal.WritingSystem, m_cache, m_propertyTable);
-					if (revConfig != null)
-					{
-						GetReversalEntries(reversal.Guid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
+				case FxtTypes.kftWordClassifiedDict:
+					// Export the classified dictionary
+					GetClassifiedDictionaryDomains(exportService, out var classifiedClerk, out var classifiedDecorator, out var domainsToSave);
+					exportService.ExportWordClassifiedDictionary(filePath, domainsToSave, classifiedClerk, classifiedDecorator, progress);
+					break;
 
-						if (entriesToSave.Length > 0)
+				case FxtTypes.kftWordOpenXml:
+					// Export the main dictionary.
+					GetDictionaryEntries(exportService, out var clerk, out var pubDecorator, out var entriesToSave);
+					exportService.ExportWordDictionary(filePath, entriesToSave, clerk, pubDecorator, progress);
+
+					// Export all the reversals.
+					var revClerk = exportService.GetReversalClerk();
+					try
+					{
+						exportService.StoreReversalData(revClerk, false);
+						foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
 						{
-							exportService.ExportWordReversal(filePath, reversal.WritingSystem, entriesToSave,
-								revClerk, pubDecorator, revConfig, progress);
+							var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(reversal.WritingSystem, m_cache, m_propertyTable);
+							if (revConfig != null)
+							{
+								GetReversalEntries(reversal.Guid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
+
+								if (entriesToSave.Length > 0)
+								{
+									exportService.ExportWordReversal(filePath, reversal.WritingSystem, entriesToSave,
+										revClerk, pubDecorator, revConfig, progress);
+								}
+
+								// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
+								exportService.UpdateSortedObjects(revClerk, reversal.Guid, false);
+							}
+						}
+					}
+					finally
+					{
+						// Restore data.
+						if (btnExport.InvokeRequired)
+						{
+							btnExport.Invoke(() => { exportService.RestoreReversalData(revClerk, false); });
+						}
+						else
+						{
+							exportService.RestoreReversalData(revClerk, false);
 						}
 
-						// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
-						exportService.UpdateSortedObjects(revClerk, reversal.Guid, false);
+						// If the reversal clerk was created as part of the export, then we need to stop suppressing
+						// list loading, or the 'Bulk Edit Reversal Entries' view may be blank the first time viewed.
+						revClerk.ListLoadingSuppressed = false;
 					}
-				}
+					break;
 			}
-			finally
-			{
-				// Restore data.
-				if (btnExport.InvokeRequired)
-				{
-					btnExport.Invoke(() => { exportService.RestoreReversalData(revClerk, false); });
-				}
-				else
-				{
-					exportService.RestoreReversalData(revClerk, false);
-				}
-
-				// If the reversal clerk was created as part of the export, then we need to stop suppressing
-				// list loading, or the 'Bulk Edit Reversal Entries' view may be blank the first time viewed.
-				revClerk.ListLoadingSuppressed = false;
-			}
-
 			return null;
 		}
 
@@ -1441,6 +1455,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "wordOpenXml":
 					ft.m_ft = FxtTypes.kftWordOpenXml;
+					break;
+				case "wordClassified":
+					ft.m_ft = FxtTypes.kftWordClassifiedDict;
 					break;
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
