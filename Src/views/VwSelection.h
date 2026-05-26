@@ -541,6 +541,8 @@ public:
 		IVwViewConstructor * pvvcEdit, int fragEdit, ITsStrBldr * ptsb, bool * pfOk);
 	virtual bool RuinedByDeleting(VwBox * pbox, VwBox * pboxReplacement=0);
 	void MakeSubString(ITsString * ptss, int ichMin, int ichLim, ITsString ** pptssSub);
+	bool SelectedTextIsSingleParagraph();
+	bool ReplacementTextIsSingleParagraph(ITsString* ptss);
 
 	void SetInsertionProps(ITsTextProps * pttp)
 	{

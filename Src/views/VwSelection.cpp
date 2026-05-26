@@ -5403,6 +5403,72 @@ bool CheckForParaBreak(const wchar * pchw, int ich, int cch, int * pichNext)
 	return false;
 }
 
+/// <summary>
+/// Check if the selected text (the paste target) is a complete single paragraph.
+/// </summary>
+/// <returns>
+/// True: If the selection contains exactly one complete paragraph, which means that the selection starts
+///       at the beginning of a paragraph and ends at the end of the same paragraph.
+/// False: If the selection contains text from more than one paragraph or only contains part of a paragraph.
+/// </returns>
+bool VwTextSelection::SelectedTextIsSingleParagraph()
+{
+	VwParagraphBox* notUsed;
+	int targetMin;
+	int targetLim; // One past the last selected character, relative to the last paragraph.
+	GetFirstAndLast(&notUsed, &notUsed, &targetMin, &targetLim);
+
+	if (!m_pvpboxEnd &&
+		targetMin == 0 &&
+		m_pvpbox->Source()->CStrings() == 1)
+	{
+		ITsStringPtr firstStr;
+		m_pvpbox->Source()->StringAtIndex(0, &firstStr);
+		int firstStrLen = 0;
+		CheckHr(firstStr->get_Length(&firstStrLen));
+
+		if (targetLim == firstStrLen)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/// <summary>
+/// Check if the replacement text is a single paragraph.
+/// </summary>
+/// <param name="replacementTstr">The replacement text.</param>
+/// <returns>
+/// True: If the replacement text contains exactly one paragraph, which means that the text ends with
+/// a '\n' and contains no other '\n' characters.
+/// False: If the replacement text contains more than one '\n' or if the '\n' is not at the end.
+/// </returns>
+bool VwTextSelection::ReplacementTextIsSingleParagraph(ITsString* replacementTstr)
+{
+	int replacementCharCount;
+	SmartBstr replacementBstr;
+	CheckHr(replacementTstr->get_Length(&replacementCharCount));
+	if (replacementCharCount <= 0)
+		return false;
+
+	CheckHr(replacementTstr->get_Text(&replacementBstr));
+	const wchar* replacementText = replacementBstr.Chars();
+
+	// A single paragraph must end with exactly one trailing '\n'.
+	if (replacementText[replacementCharCount - 1] != '\n')
+		return false;
+
+	// Ensure there are no other '\n' characters before the final one.
+	for (int ii = 0; ii < replacementCharCount - 1; ii++)
+	{
+		if (replacementText[ii] == '\n')
+			return false;
+	}
+
+	return true;
+}
+
 /*----------------------------------------------------------------------------------------------
 	Replace what is selected with a TsString.
 	If the string contains newlines, the properties associated with the Newline become
@@ -5434,6 +5500,21 @@ STDMETHODIMP VwTextSelection::ReplaceWithTsString(ITsString * ptss)
 	ITsStringPtr qtssNorm;
 	CheckHr(ptss->get_NormalizedForm(knmNFD, &qtssNorm));
 	ptss = qtssNorm;
+
+	// If the selected text (the paste target) is a complete single paragraph, and the replacement
+	// text is a complete single paragraph (has exactly one terminal paragraph marker with no interior
+	// paragraph breaks) then trim that marker so that we do character replacement instead of paragraph
+	// replacement. Paragraph replacement fails in this case: LT-20857 (and many others).
+	if (SelectedTextIsSingleParagraph() && ReplacementTextIsSingleParagraph(ptss))
+	{
+		int replacementCharCount;
+		CheckHr(ptss->get_Length(&replacementCharCount));
+
+		// Remove the trailing '\n'.
+		ITsStringPtr trimmedReplacementText;
+		MakeSubString(ptss, 0, replacementCharCount - 1, &trimmedReplacementText);
+		ptss = trimmedReplacementText;
+	}
 
 	// default: only position changed; set to 2 if para changes
 	VwSelChangeType nHowChanged = ksctSamePara;
