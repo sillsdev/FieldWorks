@@ -7596,6 +7596,15 @@ bool VwPictureSelection::RuinedByDeleting(VwBox * pbox, VwBox * pboxReplacement)
 	return pbox == m_plbox;
 }
 
+/// <summary>
+/// Gets the first and last paragraph boxes and the character index range (last index is exclusive) of the current text selection.
+/// </summary>
+/// <param name="ppvpboxFirst">Returns the first paragraph box; which contains the first selected character.</param>
+/// <param name="ppvpboxLast">Returns the last paragraph box; which contains the last selected character.</param>
+/// <param name="pichFirst">Returns the character index of the first selected character.</param>
+/// <param name="pichLast">Returns the exclusive end character index (one past the last selected character).
+///     Note that this value is relative to the beginning of ppvpboxLast, so if there is more than one paragraph
+///     then this value does not provide any indication of the number of characters in the selection. </param>
 void VwTextSelection::GetFirstAndLast(VwParagraphBox ** ppvpboxFirst,
 	VwParagraphBox ** ppvpboxLast, int * pichFirst, int * pichLast)
 {
@@ -7665,7 +7674,8 @@ bool VwTextSelection::DeleteRangeAndPrepareToInsert()
 	// initially the start of the selection relative to the para, gets adjusted to be relative to its last string,
 	// if a multi-para selection.
 	int ichMin;
-	int ichLim;
+	int ichLim; // One past the last selected character relative to the last paragraph (pvpboxEnd). Note that this can
+				// be zero even if there is a selection (if the selection includes the start of an additional paragraph).
 	GetFirstAndLast(&pvpboxStart, &pvpboxEnd, &ichMin, &ichLim);
 	if (!IsInsertionPoint())
 	{
