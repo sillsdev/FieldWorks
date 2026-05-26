@@ -113,6 +113,18 @@ namespace SIL.FieldWorks.XWorks
 				filePath, progress);
 		}
 
+		public void ExportWordClassifiedDictionary(string filePath, int[] entriesToSave, RecordClerk clerk,
+			DictionaryPublicationDecorator pubDecorator, IThreadedProgress progress)
+		{
+			if (progress != null)
+				progress.Maximum = entriesToSave.Length;
+
+			var dictConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Classified Dictionary"), m_cache);
+			LcmWordGenerator.SavePublishedDocx(entriesToSave, clerk, pubDecorator, int.MaxValue, dictConfig, m_propertyTable,
+				filePath, progress);
+		}
+
 		public void ExportWordReversal(string filePath, string reversalWs, int[] entriesToSave, RecordClerk revClerk,
 			DictionaryPublicationDecorator pubDecorator, DictionaryConfigurationModel revConfig, IThreadedProgress progress)
 		{
