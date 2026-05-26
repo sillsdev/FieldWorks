@@ -53,6 +53,21 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		///<summary>
+		/// Returns true if the project has Send/Receive repository data (.hg or OtherRepositories).
+		///</summary>
+		internal bool SendReceiveDataExists
+		{
+			get
+			{
+				var projectFolder = m_cache.ProjectId.ProjectFolder;
+				return Directory.Exists(Path.Combine(projectFolder, ".hg")) ||
+					(Directory.Exists(LcmFileHelper.GetOtherRepositoriesDir(projectFolder)) &&
+					Directory.EnumerateDirectories(LcmFileHelper.GetOtherRepositoriesDir(projectFolder))
+						.Any(dir => Directory.Exists(Path.Combine(dir, ".hg"))));
+			}
+		}
+
+		///<summary>
 		/// If the SupportingFiles folder contains any files return true. Otherwise resturn false.
 		///</summary>
 		internal bool SupportingFilesFolderContainsFiles

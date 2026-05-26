@@ -222,6 +222,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			set { m_spellCheckAdditions.Checked = value; }
 		}
 
+		///<summary>
+		/// Whether or not user wants Send/Receive repository data restored.
+		///</summary>
+		public bool SendReceiveData
+		{
+			get { return m_sendReceiveData.Checked; }
+			set { m_sendReceiveData.Checked = value; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the backup file settings and updates the dialog controls accordingly
@@ -363,6 +372,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_supportingFiles.Enabled = settings.IncludeSupportingFiles;
 			m_spellCheckAdditions.Checked = settings.IncludeSpellCheckAdditions;
 			m_spellCheckAdditions.Enabled = settings.IncludeSpellCheckAdditions;
+			m_sendReceiveData.Checked = settings.IncludeSendReceiveData;
+			m_sendReceiveData.Enabled = false;
 			if (m_rdoDefaultFolder.Checked)
 				m_lblDefaultBackupIncludes.Text = m_presenter.IncludesFiles(settings);
 			else
@@ -591,6 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_settings.IncludeLinkedFiles = LinkedFiles;
 			m_settings.IncludeSupportingFiles = SupportingFiles;
 			m_settings.IncludeSpellCheckAdditions = SpellCheckAdditions;
+			m_settings.IncludeSendReceiveData = SendReceiveData;
 		}
 
 		/// ------------------------------------------------------------------------------------

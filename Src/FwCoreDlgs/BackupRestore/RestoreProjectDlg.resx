@@ -550,6 +550,36 @@
 	<value>m_gbAlsoRestore</value>
   </data>
   <data name="&gt;&gt;m_spellCheckAdditions.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_sendReceiveData.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_sendReceiveData.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_sendReceiveData.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 111</value>
+  </data>
+  <data name="m_sendReceiveData.Size" type="System.Drawing.Size, System.Drawing">
+	<value>250, 17</value>
+  </data>
+  <data name="m_sendReceiveData.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_sendReceiveData.Text" xml:space="preserve">
+	<value>Send/&amp;Receive data (repository history)</value>
+  </data>
+  <data name="&gt;&gt;m_sendReceiveData.Name" xml:space="preserve">
+	<value>m_sendReceiveData</value>
+  </data>
+  <data name="&gt;&gt;m_sendReceiveData.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_sendReceiveData.Parent" xml:space="preserve">
+	<value>m_gbAlsoRestore</value>
+  </data>
+  <data name="&gt;&gt;m_sendReceiveData.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
   <data name="m_gbAlsoRestore.Enabled" type="System.Boolean, mscorlib">
@@ -559,7 +589,7 @@
 	<value>15, 258</value>
   </data>
   <data name="m_gbAlsoRestore.Size" type="System.Drawing.Size, System.Drawing">
-	<value>521, 135</value>
+	<value>521, 158</value>
   </data>
   <data name="m_gbAlsoRestore.TabIndex" type="System.Int32, mscorlib">
 	<value>6</value>
@@ -1153,7 +1183,7 @@
 	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>550, 447</value>
+	<value>550, 470</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
 	<value>566, 485</value>

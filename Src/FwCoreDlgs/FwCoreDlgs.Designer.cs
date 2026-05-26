@@ -1229,7 +1229,16 @@ namespace SIL.FieldWorks.FwCoreDlgs {
                 return ResourceManager.GetString("ksSpellingFilesRestoreDlg", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Send/Receive data.
+        /// </summary>
+        public static string ksSendReceiveDataRestoreDlg {
+            get {
+                return ResourceManager.GetString("ksSendReceiveDataRestoreDlg", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to {0} Stem.
         /// </summary>

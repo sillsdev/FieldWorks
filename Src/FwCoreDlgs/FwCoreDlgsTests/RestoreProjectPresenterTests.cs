@@ -4,27 +4,65 @@
 //
 // File: RestoreProjectPresenterTests.cs
 // Responsibility: FW Team
-// DISABLED: BackupProjectSettings API has been refactored - tests use obsolete constructor and properties
 
+using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary>
-	/// Historical tests for RestoreProjectPresenter.
-	/// The original tests used backup/restore APIs that have since been refactored.
-	/// </summary>
 	[TestFixture]
-	[Ignore("Obsolete: backup/restore presenter tests need rewrite after API refactor.")]
 	public class RestoreProjectPresenterTests
 	{
-		[Test]
-		public void ObsoletePresenterApi_Disabled()
+		private BackupFileSettings CreateBackupFileSettingsWithFlags(
+			bool config = false, bool linked = false, bool supporting = false,
+			bool spellCheck = false, bool sendReceive = false)
 		{
-			Assert.Ignore(
-				"Obsolete: legacy presenter tests are archived behind RUN_LW_LEGACY_TESTS " +
-				"and need to be rewritten against the current backup/restore APIs."
-			);
+			var backupSettings = new BackupFileSettings(
+				Path.ChangeExtension("dummy", LcmFileHelper.ksFwBackupFileExtension), false);
+			ReflectionHelper.SetField(backupSettings, "m_projectName", "dummy");
+			ReflectionHelper.SetField(backupSettings, "m_configurationSettings", config);
+			ReflectionHelper.SetField(backupSettings, "m_linkedFiles", linked);
+			ReflectionHelper.SetField(backupSettings, "m_supportingFiles", supporting);
+			ReflectionHelper.SetField(backupSettings, "m_spellCheckAdditions", spellCheck);
+			ReflectionHelper.SetField(backupSettings, "m_sendReceiveData", sendReceive);
+			return backupSettings;
+		}
+
+		[Test]
+		public void IncludesFiles_WithSendReceiveData_ShowsInLabel()
+		{
+			var presenter = new RestoreProjectPresenter(null);
+			var settings = CreateBackupFileSettingsWithFlags(sendReceive: true);
+			string result = presenter.IncludesFiles(settings);
+			Assert.That(result, Is.EqualTo("Send/Receive data"));
+		}
+
+		[Test]
+		public void IncludesFiles_WithoutSendReceiveData_OmitsFromLabel()
+		{
+			var presenter = new RestoreProjectPresenter(null);
+			var settings = CreateBackupFileSettingsWithFlags(config: true, sendReceive: false);
+			string result = presenter.IncludesFiles(settings);
+			Assert.That(result, Does.Not.Contain("Send/Receive data"));
+		}
+
+		[Test]
+		public void IncludesFiles_AllFlags_CorrectCombination()
+		{
+			var presenter = new RestoreProjectPresenter(null);
+			var settings = CreateBackupFileSettingsWithFlags(
+				config: true, linked: true, supporting: true,
+				spellCheck: true, sendReceive: true);
+			string result = presenter.IncludesFiles(settings);
+			Assert.That(result, Does.Contain("Configuration settings"));
+			Assert.That(result, Does.Contain("Linked files"));
+			Assert.That(result, Does.Contain("Supporting Files"));
+			Assert.That(result, Does.Contain("Spelling dictionary"));
+			Assert.That(result, Does.Contain("Send/Receive data"));
 		}
 	}
 }
@@ -73,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void VerifyStringForBackupPropertiesLabel()
 		{
-			var restoreProjectPresenter = new RestoreProjectPresenter(null, string.Empty);
+			var restoreProjectPresenter = new RestoreProjectPresenter(null);
 			BackupFileSettings backupSettings = new BackupFileSettings(
 				Path.ChangeExtension("dummy", LcmFileHelper.ksFwBackupFileExtension), false);
 			// This is needed to thwart BackupFileSettings's normal logic to populate the flags
@@ -114,7 +152,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void DefaultBackupFile_NoBackupFilesAvailable()
 		{
 			m_fileOs.ExistingDirectories.Add(FwDirectoryFinder.DefaultBackupDirectory);
-			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null, string.Empty);
+			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null);
 			Assert.That(presenter.DefaultProjectName, Is.EqualTo(String.Empty));
 		}
 
@@ -134,7 +172,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			backupSettings.BackupTime = backupSettings.BackupTime.AddHours(-3);
 			string backupFileName2 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName2);
-			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null, string.Empty);
+			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null);
 			Assert.That(presenter.DefaultProjectName, Is.EqualTo(backupSettings.ProjectName));
 		}
 

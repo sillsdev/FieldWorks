@@ -63,6 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			this.m_linkedFiles = new CheckBox();
 			this.m_supportingFiles = new CheckBox();
 			this.m_gbAlsoRestore = new GroupBox();
+			this.m_sendReceiveData = new CheckBox();
 			this.m_spellCheckAdditions = new CheckBox();
 			this.m_btnOk = new Button();
 			this.m_lblOtherBackupIncludes = new Label();
@@ -178,12 +179,19 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			// m_gbAlsoRestore
 			//
 			resources.ApplyResources(this.m_gbAlsoRestore, "m_gbAlsoRestore");
+			this.m_gbAlsoRestore.Controls.Add(this.m_sendReceiveData);
 			this.m_gbAlsoRestore.Controls.Add(this.m_spellCheckAdditions);
 			this.m_gbAlsoRestore.Controls.Add(this.m_supportingFiles);
 			this.m_gbAlsoRestore.Controls.Add(this.m_linkedFiles);
 			this.m_gbAlsoRestore.Controls.Add(this.m_configurationSettings);
 			this.m_gbAlsoRestore.Name = "m_gbAlsoRestore";
 			this.m_gbAlsoRestore.TabStop = false;
+			//
+			// m_sendReceiveData
+			//
+			resources.ApplyResources(this.m_sendReceiveData, "m_sendReceiveData");
+			this.m_sendReceiveData.Name = "m_sendReceiveData";
+			this.m_sendReceiveData.UseVisualStyleBackColor = true;
 			//
 			// m_spellCheckAdditions
 			//
@@ -397,6 +405,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private Label m_lblOtherBackupIncludes;
 		private GroupBox m_gbBackupProperties;
 		private CheckBox m_spellCheckAdditions;
+		private CheckBox m_sendReceiveData;
 		private GroupBox m_gbRestoreAs;
 		private RadioButton m_rdoUseOriginalName;
 		private RadioButton m_rdoRestoreToName;
