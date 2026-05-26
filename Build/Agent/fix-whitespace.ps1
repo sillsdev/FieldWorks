@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 $ErrorActionPreference = 'Stop'
 
 # Import shared git helpers
@@ -10,21 +10,30 @@ function Get-BaseRef {
 	return (Get-DefaultBranchRef)
 }
 
-function Test-HasUtf8Bom {
+function Read-Utf8TextWithoutBom {
 	param([Parameter(Mandatory)][string]$Path)
 
-	# Read only the first three bytes to check for a UTF-8 BOM to avoid loading the entire file.
-	$buffer = [byte[]]::new(3)
-	$stream = [System.IO.File]::OpenRead($Path)
-	try {
-		$bytesRead = $stream.Read($buffer, 0, 3)
-	}
-	finally {
-		$stream.Dispose()
+	$bytes = [System.IO.File]::ReadAllBytes($Path)
+	$offset = 0
+	$hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+	if ($hasBom) {
+		$offset = 3
 	}
 
-	if ($bytesRead -lt 3) { return $false }
-	return $buffer[0] -eq 0xEF -and $buffer[1] -eq 0xBB -and $buffer[2] -eq 0xBF
+	$encoding = New-Object System.Text.UTF8Encoding($false, $true)
+	return @{
+		Text = $encoding.GetString($bytes, $offset, $bytes.Length - $offset)
+		HadBom = $hasBom
+	}
+}
+
+function Test-ForceUtf8WithoutBom {
+	param([Parameter(Mandatory)][string]$Path)
+
+	# Preserve the existing BOM state for ordinary UTF-8 text files to avoid
+	# noisy encoding-only churn. Force BOM-less writes only for entrypoint scripts
+	# where a UTF-8 BOM can break execution or produce confusing shell output.
+	return @('.cmd', '.bat') -contains [System.IO.Path]::GetExtension($Path).ToLowerInvariant()
 }
 
 function Write-Utf8Text {
@@ -42,8 +51,8 @@ function Format-FileWhitespace {
 	param([Parameter(Mandatory)][string]$Path)
 	if (-not (Test-Path -LiteralPath $Path)) { return }
 	try {
-		$hasUtf8Bom = Test-HasUtf8Bom -Path $Path
-		$raw = Get-Content -LiteralPath $Path -Raw -Encoding utf8
+		$readResult = Read-Utf8TextWithoutBom -Path $Path
+		$raw = $readResult.Text
 	}
  catch {
 		Write-Host "Skipping non-UTF8 or binary file: $Path"
@@ -61,8 +70,10 @@ function Format-FileWhitespace {
 	while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[$lines.Count - 1])) { $lines.RemoveAt($lines.Count - 1) }
 	# Join back and ensure exactly one trailing newline
 	$new = ($lines -join "`n") + "`n"
-	if ($new -ne $orig) {
-		Write-Utf8Text -Path $Path -Content $new -EmitBom $hasUtf8Bom
+	$forceUtf8WithoutBom = Test-ForceUtf8WithoutBom -Path $Path
+	$emitBom = $readResult.HadBom -and -not $forceUtf8WithoutBom
+	if ($new -ne $orig -or ($forceUtf8WithoutBom -and $readResult.HadBom)) {
+		Write-Utf8Text -Path $Path -Content $new -EmitBom $emitBom
 		Write-Host "Fixed whitespace: $Path"
 	}
 }
@@ -85,6 +96,5 @@ $files = $fixFiles | Where-Object { $_ -and (Test-Path $_) }
 
 foreach ($f in $files) { Format-FileWhitespace -Path $f }
 
-Write-Host "Whitespace fix completed. Review and stage the updated files before committing."
-Write-Host "If check-whitespace reported an older commit in origin/main..HEAD, rewrite history with amend, squash, or rebase so that offending commit is no longer part of the branch."
+Write-Host "Whitespace fix completed. Review changes, commit, and rebase as needed."
 exit 0

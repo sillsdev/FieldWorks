@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project
   DefaultTargets="Build"
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
@@ -45,7 +45,10 @@
   </PropertyGroup>
   <!-- Reference to sil.lcmodel.core package for contentFiles. -->
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel.Core" Version="$(SilLcmVersion)" GeneratePathProperty="true">
+    <PackageReference
+      Include="SIL.LCModel.Core"
+      Version="$(SilLcmVersion)"
+      GeneratePathProperty="true">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

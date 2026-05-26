@@ -1,4 +1,4 @@
----
+﻿---
 description: 'Guidance for working with .NET Framework projects. Includes project structure, C# language version, NuGet management, and best practices.'
 applyTo: '**/*.csproj, **/*.cs'
 ---
@@ -18,7 +18,7 @@ applyTo: '**/*.csproj, **/*.cs'
   - Example: `<Compile Include="Path\To\NewFile.cs" />`
 
 - **No Implicit Imports**: Unlike SDK-style projects, .NET Framework projects do not automatically import common namespaces or assemblies
- 
+
 - **Build Configuration**: Contains explicit `<PropertyGroup>` sections for Debug/Release configurations
 
 - **Output Paths**: Explicit `<OutputPath>` and `<IntermediateOutputPath>` definitions

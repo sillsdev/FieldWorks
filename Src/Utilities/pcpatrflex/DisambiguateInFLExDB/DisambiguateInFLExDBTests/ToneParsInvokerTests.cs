@@ -1,4 +1,4 @@
-// Copyright (c) 2019 SIL International
+﻿// Copyright (c) 2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -187,7 +187,8 @@ namespace SIL.DisambiguateInFLExDBTests
 			string normalized = NormalizeViaIndex(input, "AppData", "AppData");
 			normalized = NormalizeViaIndex(normalized, "TestData", "TestData");
 			normalized = NormalizeViaIndex(normalized, tp, tp);
-			return normalized;
+			// Strip machine-specific absolute Windows path prefixes so the comparison stays stable across temp and repo roots.
+			return Regex.Replace(normalized, @"[A-Za-z]:\\(?:[^\\\r\n""]+\\)*", "");
 		}
 
 		private static string NormalizeViaIndex(string input, string match, string change)

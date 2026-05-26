@@ -474,6 +474,133 @@ function Test-GitTrackedFile {
 	}
 }
 
+function Get-NewestWriteTimeUtc {
+    <#!
+    .SYNOPSIS
+        Returns the newest LastWriteTimeUtc among matching files under one or more roots.
+    #>
+    param(
+        [Parameter(Mandatory)][string[]]$Paths,
+        [string[]]$IncludePatterns = @()
+    )
+
+    $latest = [datetime]::MinValue
+    foreach ($path in $Paths) {
+		if (-not (Test-Path -LiteralPath $path)) {
+            continue
+        }
+
+		$item = Get-Item -LiteralPath $path -ErrorAction SilentlyContinue
+		if ($item -is [System.IO.FileInfo]) {
+			$matches = $IncludePatterns.Count -eq 0
+			foreach ($pattern in $IncludePatterns) {
+				if ($item.Name -like $pattern) {
+					$matches = $true
+					break
+				}
+			}
+
+			if ($matches -and $item.LastWriteTimeUtc -gt $latest) {
+				$latest = $item.LastWriteTimeUtc
+			}
+			continue
+        }
+
+		if (-not ($item -is [System.IO.DirectoryInfo])) {
+			continue
+		}
+
+		$patterns = $IncludePatterns
+		if ($patterns.Count -eq 0) {
+			$patterns = @('*')
+		}
+
+		foreach ($pattern in $patterns) {
+			try {
+				foreach ($sourceFile in $item.EnumerateFiles($pattern, [System.IO.SearchOption]::AllDirectories)) {
+					if ($sourceFile.LastWriteTimeUtc -gt $latest) {
+						$latest = $sourceFile.LastWriteTimeUtc
+					}
+				}
+			}
+			catch {
+				Write-Verbose "Skipping freshness scan for '$path' with pattern '$pattern': $_"
+            }
+        }
+    }
+
+    return $latest
+}
+
+function Get-OldestWriteTimeUtc {
+    <#!
+    .SYNOPSIS
+        Returns the oldest LastWriteTimeUtc across a set of required artifact files.
+        Returns $null if any required artifact is missing.
+    #>
+    param(
+        [Parameter(Mandatory)][string[]]$Paths
+    )
+
+    $oldest = [datetime]::MaxValue
+    $foundAny = $false
+    foreach ($path in $Paths) {
+        if (-not (Test-Path $path)) {
+            return $null
+        }
+
+        $item = Get-Item -LiteralPath $path -ErrorAction Stop
+        $foundAny = $true
+        if ($item.LastWriteTimeUtc -lt $oldest) {
+            $oldest = $item.LastWriteTimeUtc
+        }
+    }
+
+    if (-not $foundAny) {
+        return $null
+    }
+
+    return $oldest
+}
+
+function Test-ViewsNativeArtifactsStale {
+    <#!
+    .SYNOPSIS
+        Returns $true when the Views/FwKernel native artifacts are missing or older than relevant native inputs.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$RepoRoot,
+        [Parameter(Mandatory)][string]$Configuration
+    )
+
+    $sourceRoots = @(
+        (Join-Path $RepoRoot 'Src\views'),
+        (Join-Path $RepoRoot 'Src\Kernel'),
+        (Join-Path $RepoRoot 'Src\Generic'),
+		(Join-Path $RepoRoot 'Include'),
+		(Join-Path $RepoRoot 'Bld'),
+		(Join-Path $RepoRoot 'Build'),
+		(Join-Path $RepoRoot 'Directory.Build.props'),
+		(Join-Path $RepoRoot 'Directory.Build.targets')
+    )
+	$sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.hxx', '*.inl', '*.ixx', '*.idl', '*.rc', '*.rc2', '*.rh', '*.mak', '*.def', '*.bat', '*.cmd', '*.vcxproj', '*.vcxproj.filters', '*.props', '*.targets')
+    $artifactPaths = @(
+        (Join-Path $RepoRoot "Output\$Configuration\Views.dll"),
+        (Join-Path $RepoRoot "Output\$Configuration\views.lib"),
+        (Join-Path $RepoRoot "Output\$Configuration\Common\FwKernelTlb.h"),
+        (Join-Path $RepoRoot "Obj\$Configuration\Views\autopch\VwRootBox.obj")
+    )
+
+    $latestSource = Get-NewestWriteTimeUtc -Paths $sourceRoots -IncludePatterns $sourcePatterns
+    $oldestArtifact = Get-OldestWriteTimeUtc -Paths $artifactPaths
+
+    if ($oldestArtifact -eq $null) {
+        return $true
+    }
+
+    return $latestSource -gt $oldestArtifact
+}
+
 # =============================================================================
 # Module Exports
 # =============================================================================
@@ -493,5 +620,8 @@ Export-ModuleMember -Function @(
 	'Exit-WorktreeLock',
 	'Remove-StaleObjFolders',
 	'Test-IsFileLockError',
-	'Invoke-WithFileLockRetry'
+	'Invoke-WithFileLockRetry',
+	'Get-NewestWriteTimeUtc',
+	'Get-OldestWriteTimeUtc',
+	'Test-ViewsNativeArtifactsStale'
 )
