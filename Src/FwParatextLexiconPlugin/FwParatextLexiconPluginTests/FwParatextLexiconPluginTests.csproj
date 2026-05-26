@@ -29,13 +29,20 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
+    <!-- Reference the pre-ILRepack copy of the plugin assembly. The codeBase redirect
+         in App.config ensures the runtime also loads this copy instead of the packed one. -->
+    <Reference Include="FwParatextLexiconPlugin">
+      <HintPath>$(OutputPath)FwParatextLexiconPlugin.PreMerge.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
-    <ProjectReference Include="../FwParatextLexiconPlugin.csproj" />
+    <!-- Build the plugin first but don't reference its output (which is the ILRepack'd DLL).
+         Instead, reference the pre-merge copy below so tests compile against the un-merged assembly. -->
+    <ProjectReference Include="../FwParatextLexiconPlugin.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../AppForTests.config" Link="App.config">
+    <None Include="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
