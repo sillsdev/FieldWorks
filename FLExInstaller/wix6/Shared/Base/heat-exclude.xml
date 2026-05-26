@@ -6,4 +6,6 @@
 -->
 <HeatHarvestExcludes xmlns="http://fieldworks.sil.org/heat-harvest-excludes/1">
 	<Exclude Name="Newtonsoft.Json.dll" />
+	<!-- Pre-ILRepack copy used only by tests; the packed FwParatextLexiconPlugin.dll is the shipping assembly. -->
+	<Exclude Name="FwParatextLexiconPlugin.PreMerge.dll" />
 </HeatHarvestExcludes>

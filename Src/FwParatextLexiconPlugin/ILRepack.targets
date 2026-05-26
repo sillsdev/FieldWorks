@@ -8,6 +8,10 @@ This software is licensed under the LGPL, version 2.1 or later
 	<PropertyGroup>
 		<ILRepackBin>&quot;$(PkgILRepack)\tools\ILRepack.exe&quot;</ILRepackBin>
 		<PrimaryAssembly>$(OutputPath)/FwParatextLexiconPlugin.dll</PrimaryAssembly>
+		<!-- Pre-merge copy: used as ILRepack input AND referenced by the test project
+		     so tests compile and run against the un-merged assembly (avoiding type
+		     ambiguity between ILRepack-internalized types and NuGet originals). -->
+		<PreMergeAssembly>$(OutputPath)/FwParatextLexiconPlugin.PreMerge.dll</PreMergeAssembly>
 	</PropertyGroup>
 	<ItemGroup>
 		<RepackAssemblies Include="$(OutputPath)/SIL.Core.dll"/>
@@ -26,14 +30,14 @@ This software is licensed under the LGPL, version 2.1 or later
 		<LibDirs Include="$(OutputPath)"/>
 	</ItemGroup>
 	<Target Name="ILRepack" AfterTargets="Build">
-		<!-- ILRepack some dependencies into primary assembly, first renaming
-			primary assembly so the original filename can be used as the
-			output of ILRepack. -->
-		<Copy SourceFiles="$(PrimaryAssembly)" DestinationFiles="$(PrimaryAssembly)~" />
+		<!-- Save the un-merged assembly before ILRepack overwrites it.
+		     This copy serves double duty: ILRepack input, and the assembly
+		     that the test project compiles/runs against (via codeBase redirect). -->
+		<Copy SourceFiles="$(PrimaryAssembly)" DestinationFiles="$(PreMergeAssembly)" />
 		<!-- Remove auto-generated binding-redirect configs for merged assemblies
 			 to prevent ILRepack config-merge failures (DataSet schema conflicts). -->
 		<Delete Files="@(RepackAssemblies -> '%(Identity).config')" />
-		<Exec Command="$(ILRepackBin) /internalize /repackDrop:NoLinuxRepack /out:$(PrimaryAssembly) @(LibDirs -> '/lib:%(Identity)', ' ') $(PrimaryAssembly)~ @(RepackAssemblies -> '%(Identity)', ' ')" />
+		<Exec Command="$(ILRepackBin) /internalize /out:$(PrimaryAssembly) @(LibDirs -> '/lib:%(Identity)', ' ') $(PreMergeAssembly) @(RepackAssemblies -> '%(Identity)', ' ')" />
 		<!-- SIL.LCModel.Core.dll.config contains dllmaps needed for the repacked assembly.
 			 It was deleted above, so restore it from the NuGet package and copy as the plugin config. -->
 		<Copy SourceFiles="$(PkgSIL_LCModel_Core)/contentFiles/any/any/SIL.LCModel.Core.dll.config" DestinationFiles="$(PrimaryAssembly).config"/>

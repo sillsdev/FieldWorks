@@ -45,6 +45,9 @@
 		<!-- System.Security.Permissions (LT-22394): ProDotNetZip needs >= 8.0.0,
 			 System.Security.AccessControl needs >= 6.0.0. Pin to 9.0.16. -->
 		<PackageVersion Include="System.Security.Permissions" Version="9.0.16" />
+		<!-- System.Text.Encoding.CodePages: SIL.Machine requires 10.0.x,
+			 other chains resolve to 9.0.9. Pin to 10.0.3 to match the plugin project. -->
+		<PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.3" />
 	</ItemGroup>
 
 	<!--
