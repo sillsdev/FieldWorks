@@ -1350,8 +1350,11 @@ namespace SIL.FieldWorks.XWorks
 			private void FindPrevInBrowser(object sender, IBasicFindView view)
 			{
 				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (geckoBrowser == null)
+				if (geckoBrowser == null || geckoBrowser.Document == null)
+				{
+					this.Close();
 					return;
+				}
 				string lastId = Guid.Empty.ToString();
 				if (!InitResults(view.SearchText))
 				{
@@ -1366,8 +1369,11 @@ namespace SIL.FieldWorks.XWorks
 			private void FindNextInBrowser(object sender, IBasicFindView view)
 			{
 				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (geckoBrowser == null)
+				if (geckoBrowser == null || geckoBrowser.Document == null)
+				{
+					this.Close();
 					return;
+				}
 				string lastId = Guid.Empty.ToString();
 				if(!InitResults(view.SearchText))
 				{
