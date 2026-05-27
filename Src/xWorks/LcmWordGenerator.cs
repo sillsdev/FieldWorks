@@ -1875,9 +1875,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType,
-			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
+			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore, bool firstItem)
 		{
 			var fragment = new DocFragment();
+			var node = nodeList.Last();
+
+			// Add Between text if it is not the first item in the collection.
+			if (!firstItem && !string.IsNullOrEmpty(node.Between))
+			{
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(nodeList, node.Between);
+				fragment.DocBody.Append(betweenRun);
+			}
+
 			// Generate the factored ref types element (if before).
 			if (generateLexType && typeBefore)
 			{

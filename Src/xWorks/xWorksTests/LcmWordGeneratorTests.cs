@@ -389,7 +389,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateBeforeBetweenAfterContent()
+		public void BeforeBetweenAfterContent()
 		{
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -472,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateBeforeBetweenAfterContentWithWSAbbreviation()
+		public void BeforeBetweenAfterContentWithWSAbbreviation()
 		{
 			var wsOpts = new DictionaryNodeWritingSystemOptions
 			{
@@ -536,6 +536,129 @@ namespace SIL.FieldWorks.XWorks
 			const string afterAbbreviation =
 				"<w:t xml:space=\"preserve\">glossFR</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss-Context\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
 			Assert.That(outXml.Contains(afterAbbreviation), Is.True);
+		}
+
+		[Test]
+		public void BetweenContentOnceForMultipleVariantTypesGroups()
+		{
+			// LT-22517: When an entry has variants of two different types, the Between text on the
+			// VariantEntryTypesRS node should appear exactly once — between the two type groups —
+			// and not before the first group.
+			const string betweenText = "BETWEEN_VARIANT_TYPES";
+			const string secondVariantType = "Spelling Variant";
+
+			// Create entries BEFORE building list options so both types are captured in the snapshot.
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var variantForm1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var variantForm2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			// Two variants of different types → two type groups in the output.
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantForm1); // "Crazy Variant" (TestVariantName)
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantForm2, secondVariantType);
+
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" })
+			};
+			// Between is on the VariantEntryTypesRS node because that is what nodeList.Last()
+			// resolves to inside AddLexReferences when factoring by type.
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Between = betweenText,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode }
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(
+					DictionaryNodeListOptions.ListIds.Variant, Cache),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.DocBody.OuterXml;
+
+			// Between text should appear exactly once — between the two groups, not before the first.
+			Assert.That(Regex.Matches(outXml, betweenText).Count, Is.EqualTo(1),
+				"Between text should appear exactly once, between the two variant type groups");
+		}
+
+		[Test]
+		public void BetweenContentAbsentForSingleVariantTypeGroup()
+		{
+			// LT-22517: When an entry has variants of only one type, no Between text should appear.
+			const string betweenText = "BETWEEN_VARIANT_TYPES";
+
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var variantForm1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantForm1); // single type group
+
+			var variantFormTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var variantFormTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Between = betweenText,
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNameNode }
+			};
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				SubField = "MLHeadWord",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var variantsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(
+					DictionaryNodeListOptions.ListIds.Variant, Cache),
+				Children = new List<ConfigurableDictionaryNode> { variantFormTypeNode, formNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantsNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.DocBody.OuterXml;
+
+			// No Between text should appear when there is only one type group.
+			Assert.That(outXml, Does.Not.Contain(betweenText),
+				"Between text should not appear when there is only one variant type group");
 		}
 
 		[Test]
