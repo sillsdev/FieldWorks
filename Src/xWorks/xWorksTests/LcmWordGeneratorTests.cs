@@ -101,6 +101,14 @@ namespace SIL.FieldWorks.XWorks
 			if (!styles.Contains(DictionaryGlossStyleName))
 				styles.Add(new BaseStyleInfo { Name = DictionaryGlossStyleName, IsParagraphStyle = false });
 
+			// Add character styles that are used in Classified Dictionary
+			if (!styles.Contains(WordStylesGenerator.Abbreviation))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.Abbreviation, IsParagraphStyle = false });
+			if (!styles.Contains(WordStylesGenerator.Abbreviation + WordStylesGenerator.BeforeAfterBetween))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.Abbreviation + WordStylesGenerator.BeforeAfterBetween, IsParagraphStyle = false });
+			if (!styles.Contains(WordStylesGenerator.Name))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.Name, IsParagraphStyle = false });
+
 			// Add paragraph styles
 			if (!styles.Contains(WordStylesGenerator.NormalParagraphStyleName))
 				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.NormalParagraphStyleName, IsParagraphStyle = true });
@@ -165,6 +173,44 @@ namespace SIL.FieldWorks.XWorks
 			clerk.SortName = "Headword";
 			return clerk;
 		}
+
+		private RecordClerk CreateClassifiedClerk()
+		{
+			const string classifiedClerk = @"<?xml version='1.0' encoding='UTF-8'?>
+			<root>
+				<clerks>
+					<clerk id='SemanticDomainList'>
+						<recordList owner='LangProject' property='SemanticDomainList'/>
+					</clerk>
+				</clerks>
+				<tools>
+					<tool label='Classified Dictionary' value='lexiconClassifiedDictionary' icon='DocumentView'>
+						<control>
+							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.XhtmlDocView'/>
+							<parameters area='lexicon' clerk='SemanticDomainList' layout='classifiedDict' layoutProperty='ClassifiedDictionaryPublicationLayout' editable='false' configureObjectName='Classified Dictionary'/>
+						</control>
+					</tool>
+				</tools>
+			</root>";
+			var doc = new XmlDocument();
+			doc.LoadXml(classifiedClerk);
+			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Classified Dictionary']//parameters[@area='lexicon']");
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
+			clerk.SortName = "Name";
+			return clerk;
+		}
+
+		private ICmSemanticDomain CreateSemanticDomain(LcmCache cache)
+		{
+			var domain = cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			// Add domain to the semantic domain list before setting its name & abbreviation
+			cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domain);
+			int ws = cache.WritingSystemFactory.GetWsFromStr("en");
+			domain.Name.set_String(ws, "Test Domain");
+			domain.Abbreviation.set_String(ws, "1.0");
+			return domain;
+		}
+
 		#region disposal
 		protected virtual void Dispose(bool disposing)
 		{
@@ -898,7 +944,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GetFirstHeadwordStyle()
+		public void GetGuidewordStyleForConfiguredDictionary()
 		{
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode
@@ -927,10 +973,62 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			//SUT
-			string firstHeadwordStyle = LcmWordGenerator.GetFirstGuidewordStyle(result, DictionaryConfigurationModel.ConfigType.Root);
+			List<string> firstHeadwordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, DictionaryConfigurationModel.ConfigType.Root);
 
-			Assert.That(firstHeadwordStyle == "Headword[lang=en]", Is.True);
+			Assert.That(firstHeadwordStyles.Count == 1, Is.True);
+			Assert.That(firstHeadwordStyles[0] == "Headword[lang=en]", Is.True);
 		}
+
+		[Test]
+		public void GetGuidewordStyleForClassifiedDictionary()
+		{
+			var classifiedClerk = CreateClassifiedClerk();
+			m_propertyTable.SetProperty("ActiveClerk", classifiedClerk, false);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconClassifiedDictionary", false);
+
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var domainNumberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation",
+				After = " - ",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Classified-Abbreviation",
+				Label = WordStylesGenerator.Abbreviation
+			};
+			var domainNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Classified-Name",
+				Label = WordStylesGenerator.Name
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "CmSemanticDomain",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { domainNumberNode, domainNameNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var domain = CreateSemanticDomain(Cache);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			//SUT
+			List<string> firstGuidewordStyles = LcmWordGenerator.GetFirstGuidewordStylesList(result, DictionaryConfigurationModel.ConfigType.Lexeme);
+
+			// For Classified Dictionary, the guidewords should consist of the following three pieces:
+			// semantic domain number (abbreviation), after content associated with the semantic domain number, semantic domain name.
+			Assert.That(firstGuidewordStyles.Count, Is.EqualTo(3));
+			Assert.That(firstGuidewordStyles[0], Is.EqualTo(WordStylesGenerator.Abbreviation+"[lang=en]"));
+			Assert.That(firstGuidewordStyles[1], Is.EqualTo(WordStylesGenerator.Abbreviation+WordStylesGenerator.BeforeAfterBetween+"[lang=en]"));
+			Assert.That(firstGuidewordStyles[2], Is.EqualTo(WordStylesGenerator.Name + "[lang=en]"));
+
+			// Reset activeclerk and currentContentControl to avoid affecting other tests.
+			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+		}
+
 		private ITsString MakeMuliStyleTss(IEnumerable<string> content)
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
