@@ -2879,6 +2879,9 @@ namespace SIL.FieldWorks.XWorks
 		public static List<string> GetFirstGuidewordStylesList(DocFragment frag, DictionaryConfigurationModel.ConfigType type)
 		{
 			List<string> guidewordBaseStyles = new List<string>();
+			var runStyles = frag.DocBody.Descendants<RunStyle>().ToList();
+			List<string> guidewordFinalStyleNames = new List<string>();
+
 			switch (type)
 			{
 				case DictionaryConfigurationModel.ConfigType.Reversal:
@@ -2899,18 +2902,44 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 
-			List<string> guidewordFinalStyleNames = new List<string>();
-			foreach (string style in guidewordBaseStyles)
+			// Include beforeafterbetween only if there is more than one guideword base style
+			bool includeBeforeAfterBetween = guidewordBaseStyles.Count > 1;
+
+			for (int i = 0; i < guidewordBaseStyles.Count; i++)
 			{
-				// Find the first run style with a value that begins with the guideword style.
-				foreach (RunStyle runStyle in frag.DocBody.Descendants<RunStyle>())
+				string baseStyle = guidewordBaseStyles[i];
+
+				bool foundPrimaryStyle = false;
+				bool foundBeforeAfterBetweenStyle = false;
+
+				// Find the first run style with a value that begins with the guideword style, and if applicable the first beforeafterbetween style.
+				for (int j = 0; j < runStyles.Count; j++)
 				{
-					if (runStyle.Val.Value.StartsWith(style))
-						// we only include BeforeAfterBetween content if the guideword includes multiple runs
-						if (guidewordBaseStyles.Count > 1 || !runStyle.Val.Value.Contains(WordStylesGenerator.BeforeAfterBetween))
-						{
-							guidewordFinalStyleNames.Add(runStyle.Val.Value);
-						}
+					string styleValue = runStyles[j]?.Val?.Value;
+
+					if (string.IsNullOrEmpty(styleValue) || !styleValue.StartsWith(baseStyle))
+						continue;
+
+					bool isBeforeAfterBetween = styleValue.Contains(WordStylesGenerator.BeforeAfterBetween);
+
+					if (!isBeforeAfterBetween && !foundPrimaryStyle)
+					{
+						guidewordFinalStyleNames.Add(styleValue);
+						foundPrimaryStyle = true;
+					}
+
+					else if (includeBeforeAfterBetween && isBeforeAfterBetween && !foundBeforeAfterBetweenStyle)
+					{
+						guidewordFinalStyleNames.Add(styleValue);
+						foundBeforeAfterBetweenStyle = true;
+					}
+
+					// if there is only one guideword base style, we don't include beforeafterbetween
+					if (foundPrimaryStyle && (!includeBeforeAfterBetween || foundBeforeAfterBetweenStyle))
+					{
+						// Stop looking for style names for this guideword base style & move to the next.
+						break;
+					}
 				}
 			}
 			if (guidewordFinalStyleNames.Count > 0)
