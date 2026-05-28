@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In this tool, we do not allow deleting parts of Scripture sections. Please use Translation Editor to edit Scripture..
+        ///   Looks up a localized string similar to This imported scripture is a read only copy for analysis in FieldWorks. Edits are expected to be made in the scripture editing program (e.g. Paratext)..
         /// </summary>
         internal static string ksCannotDeleteScripture {
             get {
