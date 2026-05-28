@@ -7,7 +7,7 @@ This guide covers the Visual Studio 2022 setup required for FieldWorks developme
 ## Install Visual Studio 2022
 
 1. **Download Visual Studio 2022 Community Edition** (or Professional/Enterprise):
-   - Go to [https://visualstudio.microsoft.com/vs/](https://visualstudio.microsoft.com/vs/)
+   - Go to [https://aka.ms/vs/17/release/vs_community.exe](https://aka.ms/vs/17/release/vs_community.exe)
    - Download and run the installer
 
 2. **Select the following Workloads:**
