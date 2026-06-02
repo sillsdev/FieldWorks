@@ -11,6 +11,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -199,9 +200,7 @@ namespace SIL.FieldWorks.XWorks
 			FwXWindow fwxwnd = m_rgMainWindows.Count > 0 ? (FwXWindow)m_rgMainWindows[0] : null;
 			if (fwxwnd != null)
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				fwxwnd.Mediator.SendMessage("FollowLink", link);
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link));
 				bool topmost = fwxwnd.TopMost;
 				fwxwnd.TopMost = true;
 				fwxwnd.TopMost = topmost;

@@ -288,16 +288,8 @@ namespace SIL.FieldWorks.IText
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("interlinearEdit", CurrentObject.Guid)));
 			}
-			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
-			//(FwXApp.App as FwXApp).OnIncomingLink(link);
-			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app
-			// to return to its message loop, but it never does, because it is the same app that is trying to send the link, so it is busy
-			// waiting for 'Activate' to return!
-			//link.Activate();
 			return true;
 		}
 

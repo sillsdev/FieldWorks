@@ -147,6 +147,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.AddContextToHistory, AddContextToHistory);
 				Subscriber.Unsubscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink);
+				Subscriber.Unsubscribe(EventConstants.FollowLink, FollowLink);
 
 				// Dispose managed resources here.
 				if (m_mediator != null)
@@ -196,6 +197,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Subscriber.Subscribe(EventConstants.AddContextToHistory, AddContextToHistory);
 			Subscriber.Subscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink);
+			Subscriber.Subscribe(EventConstants.FollowLink, FollowLink);
 		}
 
 		/// <summary>
@@ -416,10 +418,40 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("FollowLink", new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]));
-#pragma warning restore 618
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexiconEdit", guids[guids.Length - 1])));
 			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for FollowLink.
+		/// NOTE: This will not handle link requests for other databases/applications. To handle other
+		/// databases or applications, pass a FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.
+		/// </summary>
+		/// <param name="obj">Either a bare FwLinkArgs, or a ReturnObject wrapping a FwLinkArgs for
+		/// callers that need to know whether the link was followed (via its ReturnValue).</param>
+		private void FollowLink(object obj)
+		{
+			CheckDisposed();
+
+			// Callers that need to know whether the link was followed wrap the FwLinkArgs in a
+			// ReturnObject and read its ReturnValue.
+			if (obj is ReturnObject retObj)
+			{
+				if (!(retObj.Data is FwLinkArgs))
+				{
+					Debug.Assert(false, "Received unexpected object type.");
+					return;
+				}
+				retObj.ReturnValue = OnFollowLink(retObj.Data);
+				return;
+			}
+
+			if (!(obj is FwLinkArgs))
+			{
+				Debug.Assert(false, "Received unexpected object type.");
+				return;
+			}
+			OnFollowLink(obj);
 		}
 
 		/// <summary>

@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -333,10 +334,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							FwLinkArgs linkArgs = new FwLinkArgs(url);
 							linkArgs.DisplayErrorMsg = false;
-#pragma warning disable 618 // suppress obsolete warning
-							if (m_mediator.SendMessage("FollowLink", linkArgs))
+							var retObj = new ReturnObject(linkArgs);
+							Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj));
+							if (retObj.ReturnValue)
 								return;
-#pragma warning restore 618
 						}
 					}
 					catch
