@@ -37,7 +37,7 @@
 		<!-- DependencyModel: other current-line pins in this block move to 9.0.16,
 			 but this package stays at 9.0.14. icu.net wants 2.0.4, ParatextData wants
 			 >= 9.0.9, and 9.0.16 breaks ICU initialization in the .NET Framework test host. -->
-		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.16" />
 		<!-- System.Memory: ParatextData requires 4.6.3; other packages want 4.5.0–4.6.0. -->
 		<PackageVersion Include="System.Memory" Version="4.6.3" />
 		<!-- Microsoft.Bcl.HashCode: System.Resources.Extensions requires HashCode. -->
@@ -131,7 +131,7 @@
 		<PackageVersion Include="CsvHelper" Version="33.1.0" />
 		<PackageVersion Include="DialogAdapters" Version="0.1.11" />
 		<PackageVersion Include="DocumentFormat.OpenXml" Version="2.20.0" />
-		<PackageVersion Include="encoding-converters-core" Version="0.9.7" />
+		<PackageVersion Include="encoding-converters-core" Version="0.9.8" />
 		<PackageVersion Include="Geckofx60.64" Version="$(GeckoNugetVersion)" />
 		<PackageVersion Include="Geckofx60.64.Windows" Version="0.19.0" />
 		<PackageVersion Include="ibusdotnet" Version="2.0.3" />
