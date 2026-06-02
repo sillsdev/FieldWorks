@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType,
-			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
+			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore, bool firstItem)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);

@@ -1045,7 +1045,8 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedElementContent(nodeList, elementContent);
 		}
 
-		private IFragment WriteProcessedElementContent(List<ConfigurableDictionaryNode> nodeList, IFragment elementContent)
+		private IFragment WriteProcessedElementContent(List<ConfigurableDictionaryNode> nodeList, IFragment elementContent,
+			bool includeBefore = true)
 		{
 			var config = nodeList.Last();
 			bool eachInAParagraph = config.DictionaryNodeOptions is IParaOption &&
@@ -1099,7 +1100,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Add Before text, if it is not going to be displayed in a paragraph.
-			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			if (includeBefore &&!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(nodeList, config.Before, wsId.Value) :
 					CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
@@ -1876,22 +1877,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType,
-			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
+			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore, bool firstItem)
 		{
 			var fragment = new DocFragment();
+			var node = nodeList.Last();
+			bool includeBefore = true;
+
+			// Add Between text if it is not the first item in the collection.
+			if (!firstItem && !string.IsNullOrEmpty(node.Between))
+			{
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(nodeList, node.Between);
+				fragment.DocBody.Append(betweenRun);
+
+				// To keep the Word display the same as the display in Flex:
+				// If there is Between text, then we should not also add the Before text. LT-22517
+				includeBefore = false;
+			}
+
 			// Generate the factored ref types element (if before).
 			if (generateLexType && typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(nodeList, false, lexTypeContent, className));
+				fragment.Append(WriteProcessedElementContent(nodeList, lexTypeContent, includeBefore));
 			}
+
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			fragment.Append(referencesContent);
+
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(nodeList, false, lexTypeContent, className));
+				fragment.Append(WriteProcessedElementContent(nodeList, lexTypeContent, includeBefore));
 			}
-
 			return fragment;
 		}
 

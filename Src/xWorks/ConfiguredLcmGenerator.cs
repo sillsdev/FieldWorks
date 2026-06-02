@@ -1741,24 +1741,25 @@ namespace SIL.FieldWorks.XWorks
 			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
 				typeNode = null;
 			// Generate XHTML by Type
+			bool firstType = true;
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
 				var combinedContent = settings.ContentGenerator.CreateFragment();
-				bool first = true;
+				bool firstRef = true;
 				foreach (var lexEntRef in lerCollection)
 				{
 					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
 					{
-						var content = GenerateCollectionItemContent(nodeList, pubDecorator, lexEntRef, collectionOwner, settings, first, typeNode);
+						var content = GenerateCollectionItemContent(nodeList, pubDecorator, lexEntRef, collectionOwner, settings, firstRef, typeNode);
 						if (!content.IsNullOrEmpty())
 						{
 							combinedContent.Append(content);
-							first = false;
+							firstRef = false;
 						}
 					}
 				}
 
-				if (!first)
+				if (combinedContent.Length() > 0)
 				{
 					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
 					// Display the Type if there were refs of this Type (and we are factoring)
@@ -1769,8 +1770,9 @@ namespace SIL.FieldWorks.XWorks
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(workingNodeList).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(workingNodeList, generateLexType,
-						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config));
+						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config), firstType);
 					bldr.Append(refsByType);
+					firstType = false;
 				}
 			}
 		}
