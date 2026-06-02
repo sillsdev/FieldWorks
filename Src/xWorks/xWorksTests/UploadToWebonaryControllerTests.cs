@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"), Is.True);
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4"), Is.True); // avoid failure because of capitalization
-			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"), Is.True);
+			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"), Is.False);
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.webm"), Is.True);
 
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"), Is.False);
