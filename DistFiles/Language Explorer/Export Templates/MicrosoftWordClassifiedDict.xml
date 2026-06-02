@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="docx" type="wordClassified" datatype="docx">
+	<FxtDocumentDescription dataLabel="Classified Dictionary" formatLabel="Word (DOCX)" defaultExtension="docx" filter="Word Documents (*.docx)|*.docx|All files (*.*)|*.*">Export classified dictionary to the Microsoft Word .docx format.</FxtDocumentDescription>
+</template>

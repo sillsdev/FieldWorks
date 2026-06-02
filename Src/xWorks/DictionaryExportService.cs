@@ -113,15 +113,15 @@ namespace SIL.FieldWorks.XWorks
 				filePath, progress);
 		}
 
-		public void ExportWordClassifiedDictionary(string filePath, int[] entriesToSave, RecordClerk clerk,
+		public void ExportWordClassifiedDictionary(string filePath, int[] domainsToSave, RecordClerk clerk,
 			DictionaryPublicationDecorator pubDecorator, IThreadedProgress progress)
 		{
 			if (progress != null)
-				progress.Maximum = entriesToSave.Length;
+				progress.Maximum = domainsToSave.Length;
 
 			var dictConfig = new DictionaryConfigurationModel(
 				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Classified Dictionary"), m_cache);
-			LcmWordGenerator.SavePublishedDocx(entriesToSave, clerk, pubDecorator, int.MaxValue, dictConfig, m_propertyTable,
+			LcmWordGenerator.SavePublishedDocx(domainsToSave, clerk, pubDecorator, int.MaxValue, dictConfig, m_propertyTable,
 				filePath, progress);
 		}
 
