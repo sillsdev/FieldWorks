@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
 				bool firstHeader = true;
-				string firstGuidewordStyle = null;
+				List<string> firstGuidewordStyles = null;
 				var entryContents = new Tuple<ICmObject, IFragment>[entryCount];
 				var entryActions = new List<Action>();
 
@@ -183,9 +183,10 @@ namespace SIL.FieldWorks.XWorks
 						// Append the entry to the word doc
 						MasterFragment.Append(entry.Item2);
 
-						if (string.IsNullOrEmpty(firstGuidewordStyle))
+						// Get styles if firstGuidewordStyles is null or empty
+						if (firstGuidewordStyles == null || firstGuidewordStyles.Count == 0)
 						{
-							firstGuidewordStyle = GetFirstGuidewordStyle((DocFragment)entry.Item2, configuration.Type);
+							firstGuidewordStyles = GetFirstGuidewordStylesList((DocFragment)entry.Item2, configuration.Type);
 						}
 					}
 				}
@@ -279,7 +280,7 @@ namespace SIL.FieldWorks.XWorks
 				var headerParts = MasterFragment.mainDocPart.HeaderParts;
 				if (!headerParts.Any())
 				{
-					AddPageHeaderPartsToPackage(MasterFragment.DocFrag, firstGuidewordStyle);
+					AddPageHeaderPartsToPackage(MasterFragment.DocFrag, firstGuidewordStyles);
 				}
 
 				// Add document settings
@@ -2014,15 +2015,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Add the page HeaderParts to the document.
-		public static void AddPageHeaderPartsToPackage(WordprocessingDocument doc, string guidewordStyle)
+		public static void AddPageHeaderPartsToPackage(WordprocessingDocument doc, List<string> guidewordStyles)
 		{
 			// Generate header for even pages.
 			HeaderPart even = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdEven);
-			GenerateHeaderPartContent(even, true, guidewordStyle);
+			GenerateHeaderPartContent(even, true, guidewordStyles);
 
 			// Generate header for odd pages.
 			HeaderPart odd = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdOdd);
-			GenerateHeaderPartContent(odd, false, guidewordStyle);
+			GenerateHeaderPartContent(odd, false, guidewordStyles);
 		}
 
 		/// <summary>
@@ -2032,18 +2033,28 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="even">True = generate content for even pages.
 		///                    False = generate content for odd pages.</param>
 		/// <param name="guidewordStyle">The style that will be used to find the first or last guideword on the page.</param>
-		private static void GenerateHeaderPartContent(HeaderPart part, bool even, string guidewordStyle)
+		private static void GenerateHeaderPartContent(HeaderPart part, bool even, List<string> guidewordStyles)
 		{
 			ParagraphStyleId paraStyleId = new ParagraphStyleId() { Val = WordStylesGenerator.PageHeaderStyleName };
 			Paragraph para = new Paragraph(new ParagraphProperties(paraStyleId));
 
 			if (even)
 			{
-				if (!string.IsNullOrEmpty(guidewordStyle))
+				if (guidewordStyles != null)
 				{
 					// Add the first guideword on the page to the header.
-					para.Append(new Run(new SimpleField() { Instruction = "STYLEREF \"" + guidewordStyle + "\" \\* MERGEFORMAT" }));
+					foreach (string style in guidewordStyles)
+					{
+						if (!string.IsNullOrEmpty(style))
+						{
+							para.Append(new Run(new SimpleField()
+							{
+								Instruction = "STYLEREF \"" + style + "\" \\* MERGEFORMAT"
+							}));
+						}
+					}
 				}
+
 				para.Append(new WP.Run(new WP.TabChar()));
 				// Add the page number to the header.
 				para.Append(new WP.Run(new SimpleField() { Instruction = "PAGE" }));
@@ -2053,10 +2064,19 @@ namespace SIL.FieldWorks.XWorks
 				// Add the page number to the header.
 				para.Append(new WP.Run(new SimpleField() { Instruction = "PAGE" }));
 				para.Append(new WP.Run(new WP.TabChar()));
-				if (!string.IsNullOrEmpty(guidewordStyle))
+				if (guidewordStyles != null)
 				{
 					// Add the last guideword on the page to the header.
-					para.Append(new WP.Run(new SimpleField() { Instruction = "STYLEREF \"" + guidewordStyle + "\" \\l \\* MERGEFORMAT" }));
+					foreach (string style in guidewordStyles)
+					{
+						if (!string.IsNullOrEmpty(style))
+						{
+							para.Append(new WP.Run(new SimpleField()
+							{
+								Instruction = "STYLEREF \"" + style + "\" \\l \\* MERGEFORMAT"
+							}));
+						}
+					}
 				}
 			}
 
@@ -2850,25 +2870,81 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Get the full style name for the first RunStyle that begins with the guideword style.
+		/// Get the full style names for the runs that should be used for guidewords.
+		/// For each of the guideword styles, the full style name is retrieved from the first RunStyle that begins with that guideword style name.
 		/// </summary>
-		/// <param name="type">Indicates if we are are exporting a Reversal or regular dictionary.</param>
-		/// <returns>The full style name that begins with the guideword style.
+		/// <param name="type">Indicates if we are are exporting a Reversal, Classified Dictionary, or regular Configured Dictionary.</param>
+		/// <returns>A list of the full style names beginning with each guideword style.
 		///          Null if none are found.</returns>
-		public static string GetFirstGuidewordStyle(DocFragment frag, DictionaryConfigurationModel.ConfigType type)
+		public static List<string> GetFirstGuidewordStylesList(DocFragment frag, DictionaryConfigurationModel.ConfigType type)
 		{
-			string guidewordStyle = type == DictionaryConfigurationModel.ConfigType.Reversal ?
-				WordStylesGenerator.ReversalFormDisplayName : WordStylesGenerator.HeadwordDisplayName;
+			List<string> guidewordBaseStyles = new List<string>();
+			var runStyles = frag.DocBody.Descendants<RunStyle>().ToList();
+			List<string> guidewordFinalStyleNames = new List<string>();
 
-			// Find the first run style with a value that begins with the guideword style.
-			foreach (RunStyle runStyle in frag.DocBody.Descendants<RunStyle>())
+			switch (type)
 			{
-				if (runStyle.Val.Value.StartsWith(guidewordStyle) &&
-					!runStyle.Val.Value.Contains(WordStylesGenerator.BeforeAfterBetween))
+				case DictionaryConfigurationModel.ConfigType.Reversal:
+					guidewordBaseStyles.Add(WordStylesGenerator.ReversalFormDisplayName);
+					break;
+				// Lexeme type means this is a Classified Dictionary;
+				// the Abbreviation and Name are semantic domain numbers and names respectively,
+				// which we want to combine into the guidewords in this case.
+				case DictionaryConfigurationModel.ConfigType.Lexeme:
+					guidewordBaseStyles.Add(WordStylesGenerator.Abbreviation);
+					guidewordBaseStyles.Add(WordStylesGenerator.Name);
+					break;
+				// Root type is the default Configured Dictionary;
+				// use headwords as the guidewords.
+				case DictionaryConfigurationModel.ConfigType.Root:
+				default:
+					guidewordBaseStyles.Add(WordStylesGenerator.HeadwordDisplayName);
+					break;
+			}
+
+			// Include beforeafterbetween only if there is more than one guideword base style
+			bool includeBeforeAfterBetween = guidewordBaseStyles.Count > 1;
+
+			for (int i = 0; i < guidewordBaseStyles.Count; i++)
+			{
+				string baseStyle = guidewordBaseStyles[i];
+
+				bool foundPrimaryStyle = false;
+				bool foundBeforeAfterBetweenStyle = false;
+
+				// Find the first run style with a value that begins with the guideword style, and if applicable the first beforeafterbetween style.
+				for (int j = 0; j < runStyles.Count; j++)
 				{
-					return runStyle.Val.Value;
+					string styleValue = runStyles[j]?.Val?.Value;
+
+					if (string.IsNullOrEmpty(styleValue) || !styleValue.StartsWith(baseStyle))
+						continue;
+
+					bool isBeforeAfterBetween = styleValue.Contains(WordStylesGenerator.BeforeAfterBetween);
+
+					if (!isBeforeAfterBetween && !foundPrimaryStyle)
+					{
+						guidewordFinalStyleNames.Add(styleValue);
+						foundPrimaryStyle = true;
+					}
+
+					else if (includeBeforeAfterBetween && isBeforeAfterBetween && !foundBeforeAfterBetweenStyle)
+					{
+						guidewordFinalStyleNames.Add(styleValue);
+						foundBeforeAfterBetweenStyle = true;
+					}
+
+					// if there is only one guideword base style, we don't include beforeafterbetween
+					if (foundPrimaryStyle && (!includeBeforeAfterBetween || foundBeforeAfterBetweenStyle))
+					{
+						// Stop looking for style names for this guideword base style & move to the next.
+						break;
+					}
 				}
 			}
+			if (guidewordFinalStyleNames.Count > 0)
+				return guidewordFinalStyleNames;
+
 			return null;
 		}
 
