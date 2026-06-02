@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Reflection; // for check-box icons.
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -1765,10 +1766,10 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						FwLinkArgs linkArgs = new FwLinkArgs(url);
 						linkArgs.DisplayErrorMsg = false;
-#pragma warning disable 618 // suppress obsolete warning
-						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
+						var retObj = new ReturnObject(linkArgs);
+						Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj));
+						if (retObj.ReturnValue)
 							return;
-#pragma warning restore 618
 					}
 				}
 				catch

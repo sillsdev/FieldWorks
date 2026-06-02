@@ -2283,9 +2283,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (m_startupLink != null)
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("FollowLink", m_startupLink);
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_startupLink));
 			}
 			UpdateControls();
 			return true;

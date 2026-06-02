@@ -288,9 +288,7 @@ namespace SIL.FieldWorks.IText
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
 			{
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
-#pragma warning restore 618
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("interlinearEdit", CurrentObject.Guid)));
 			}
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);

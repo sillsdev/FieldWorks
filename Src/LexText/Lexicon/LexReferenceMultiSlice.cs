@@ -20,6 +20,7 @@ using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;
@@ -756,9 +757,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ILexRefType newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			m_cache.DomainDataByFlid.EndUndoTask();
-#pragma warning disable 618 // suppress obsolete warning
-			ContainingDataTree.Mediator.SendMessage("FollowLink", new FwLinkArgs("lexRefEdit", newKid.Guid));
-#pragma warning restore 618
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexRefEdit", newKid.Guid)));
 		}
 
 		protected void ExpandNewNode()
