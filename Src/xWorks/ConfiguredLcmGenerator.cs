@@ -1741,20 +1741,20 @@ namespace SIL.FieldWorks.XWorks
 			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
 				typeNode = null;
 			// Generate XHTML by Type
-			bool outerFirst = true;
+			bool firstType = true;
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
 				var combinedContent = settings.ContentGenerator.CreateFragment();
-				bool innerFirst = true;
+				bool firstRef = true;
 				foreach (var lexEntRef in lerCollection)
 				{
 					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
 					{
-						var content = GenerateCollectionItemContent(nodeList, pubDecorator, lexEntRef, collectionOwner, settings, innerFirst, typeNode);
+						var content = GenerateCollectionItemContent(nodeList, pubDecorator, lexEntRef, collectionOwner, settings, firstRef, typeNode);
 						if (!content.IsNullOrEmpty())
 						{
 							combinedContent.Append(content);
-							innerFirst = false;
+							firstRef = false;
 						}
 					}
 				}
@@ -1770,9 +1770,9 @@ namespace SIL.FieldWorks.XWorks
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(workingNodeList).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(workingNodeList, generateLexType,
-						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config), outerFirst);
+						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config), firstType);
 					bldr.Append(refsByType);
-					outerFirst = false;
+					firstType = false;
 				}
 			}
 		}
