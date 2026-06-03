@@ -39,7 +39,6 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
@@ -2331,16 +2330,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void ClearInvalidSubitem()
 		{
-		}
-
-		/// <summary>
-		/// Handles refreshing the record list after an object was deleted.
-		/// </summary>
-		/// <remarks>This should be overriden to perform more efficient refreshing of the record list display</remarks>
-		protected virtual void RefreshAfterInvalidObject()
-		{
-			// to be safe we just do a full refresh
-			m_propertyTable.GetValue<IApp>("App").RefreshAllViews();
 		}
 
 		private int FindClosestValidIndex(int idx, int cobj)

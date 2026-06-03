@@ -182,12 +182,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected DebugProcs m_debugProcs;
 #endif
 		private FwRegistrySettings m_registrySettings;
-		/// <summary>
-		/// null means that we are not suppressing view refreshes.
-		/// True means we're suppressing and we need to do a refresh when finished.
-		/// False means we're suppressing, but have no need to do a refresh when finished.
-		/// </summary>
-		private bool? m_refreshView;
 
 		/// <summary>The find patterns for the find/replace dialog, one for each database.</summary>
 		/// <remarks>We need one pattern per database (cache). Otherwise it'll crash when we try to
@@ -542,7 +536,6 @@ namespace SIL.FieldWorks.Common.Framework
 			m_registrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
-			m_refreshView = null;
 			PictureHolder = null;
 #if DEBUG
 			m_debugProcs = null;
@@ -1041,24 +1034,6 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				CheckDisposed();
 				return m_rgMainWindows;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Refreshes all the views in all of the Main Windows of the app.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RefreshAllViews()
-		{
-			CheckDisposed();
-
-			if (m_refreshView != null)
-				m_refreshView = true;
-			else
-			{
-				foreach (IFwMainWnd wnd in MainWindows)
-					wnd.RefreshAllViews();
 			}
 		}
 
