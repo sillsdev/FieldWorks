@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
 using SIL.FieldWorks.Common.RenderVerification;
@@ -15,6 +16,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	[TestFixture]
 	[Category("RenderBenchmark")]
 	[Category("Performance")]
+	[Apartment(ApartmentState.STA)]
 	public class RenderTimingSuiteTests : RenderBenchmarkTestsBase
 	{
 		private static List<BenchmarkResult> m_results;

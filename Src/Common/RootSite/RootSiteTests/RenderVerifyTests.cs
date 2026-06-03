@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
@@ -22,6 +23,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	[TestFixture]
 	[Category("RenderBenchmark")]
+	[Apartment(ApartmentState.STA)]
 	public class RenderVerifyTests : RenderBenchmarkTestsBase
 	{
 		/// <summary>
