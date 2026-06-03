@@ -97,9 +97,9 @@ namespace SIL.FieldWorks.IText
 
 		public override bool OnRefresh(object sender)
 		{
-			if(m_list as ConcordanceWordList != null)
+			if(m_list is ConcordanceWordList cwList)
 			{
-				((ConcordanceWordList)m_list).RequestRefresh();
+				cwList.RequestRefresh();
 			}
 			return base.OnRefresh(sender);
 		}

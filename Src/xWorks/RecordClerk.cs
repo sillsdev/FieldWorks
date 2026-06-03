@@ -1155,8 +1155,7 @@ namespace SIL.FieldWorks.XWorks
 			var window = m_propertyTable.GetValue<Form>("window");
 			using (new WaitCursor(window))
 			{
-				if (m_rch != null)
-					m_rch.Fixup(false);		// no need to recursively refresh!
+				m_rch?.Fixup(false);		// no need to recursively refresh!
 				m_list.ReloadList();
 				return false;	//that other colleagues do a refresh, too.
 			}
@@ -2057,8 +2056,7 @@ namespace SIL.FieldWorks.XWorks
 					m_propertyTable.SetProperty("UpdateStatusBar", m_updateStatusBar, true);
 					m_propertyTable.SetPropertyPersistence("UpdateStatusBar", false);
 
-					if (oldActiveClerk != null)
-						oldActiveClerk.BecomeInactive();
+					oldActiveClerk?.BecomeInactive();
 					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, true);
 					m_propertyTable.SetPropertyPersistence("OldActiveClerk", false);
 					m_propertyTable.SetProperty("ActiveClerk", this, true);
