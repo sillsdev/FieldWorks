@@ -67,7 +67,6 @@ namespace SIL.VariantGenerator
 				InitializePublishEntryInControls();
 				SetBackColor();
 				this.Text = VariantGeneratorDll_Strings.ksTitle;
-				formTitle = VariantGeneratorDll_Strings.ksTitle;
 			}
 			// Create an instance of a ListView column sorter and assign it
 			// to the ListView control.

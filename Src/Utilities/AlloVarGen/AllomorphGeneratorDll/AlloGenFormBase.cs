@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using Microsoft.Win32;
+using PtxUtils;
 using SIL.AlloGenModel;
 using SIL.AlloGenService;
 using SIL.FieldWorks.Common.Controls;
@@ -94,7 +95,6 @@ namespace SIL.AllomorphGenerator
 		protected ListBox currentListBox;
 		protected ContextMenuStrip editContextMenu;
 		protected ContextMenuStrip editReplaceOpsContextMenu;
-		protected string formTitle = AllomorphGeneratorDll_Strings.ksTitle;
 		protected string cmAdd = AllomorphGeneratorDll_Strings.cmAdd;
 		protected string cmEdit = AllomorphGeneratorDll_Strings.cmEdit;
 		protected string cmInsertBefore = AllomorphGeneratorDll_Strings.cmInsertBefore;
@@ -1383,9 +1383,13 @@ namespace SIL.AllomorphGenerator
 		{
 			if (AlloGenForm.ActiveForm != null)
 			{
-				AlloGenForm.ActiveForm.Text = formTitle;
+				const string kStar = "*";
+				if (ActiveForm.Text.EndsWith(kStar))
+				{
+					ActiveForm.Text = ActiveForm.Text.Substring(0, ActiveForm.Text.Length-1);
+				}
 				if (ChangesMade)
-					AlloGenForm.ActiveForm.Text += "*";
+					ActiveForm.Text += kStar;
 			}
 		}
 
