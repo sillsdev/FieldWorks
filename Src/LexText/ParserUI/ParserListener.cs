@@ -88,6 +88,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
 			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
+			Subscriber.Subscribe(EventConstants.Idle, Idle);
 		}
 
 		/// <summary>
@@ -202,16 +203,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_parserConnection = null;
 		}
 
-		public bool OnIdle(object argument)
+		/// <summary>
+		/// Method to handle published Idle messages.
+		/// </summary>
+		private void Idle(object argument)
 		{
 			CheckDisposed();
 
 			UpdateStatusPanelProgress();
-
-			return false; // Don't stop other people from getting the idle message
 		}
 
-		// Now called by timer AND by OnIdle
+		// Now called by timer AND by Idle
 		private void UpdateStatusPanelProgress()
 		{
 			var statusMessage = ParserQueueString + " " + ParserActivityString;
@@ -377,6 +379,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
 				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
+				Subscriber.Unsubscribe(EventConstants.Idle, Idle);
 
 				// other clients may now parse
 				// Dispose managed resources here.

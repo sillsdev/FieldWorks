@@ -821,15 +821,12 @@ namespace XCore
 				Debug.Fail("The convention is to send messages without the 'On' prefix. " +
 					"That is added by the message sending code.");
 #endif
-			if (messageName != "Idle")
-			{
-				Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
-					BuildDebugMsg("SendMessage::Looking for listeners for Msg: " + messageName),
-					showPendingMsgsSwitch.DisplayName);
-			}
+			Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
+				BuildDebugMsg("SendMessage::Looking for listeners for Msg: " + messageName),
+				showPendingMsgsSwitch.DisplayName);
 			string methodName = "On" + messageName;
 			// Logging
-			if (!messageName.StartsWith("Update") && messageName != "Idle")
+			if (!messageName.StartsWith("Update"))
 			{
 				// We want to log the method if any colleague handles it.
 				// So we check the list of methods known-to-us first. If we don't find it,
@@ -1040,12 +1037,9 @@ namespace XCore
 				Debug.Fail("The convention is to send messages without the 'On' prefix. " +
 					"That is added by the message sending code.");
 #endif
-			if (messageName != "Idle")
-			{
-				Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
-					BuildDebugMsg("BroadcastMessage::Looking for listeners for Msg: " + messageName),
-					showPendingMsgsSwitch.DisplayName);
-			}
+			Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
+				BuildDebugMsg("BroadcastMessage::Looking for listeners for Msg: " + messageName),
+				showPendingMsgsSwitch.DisplayName);
 #if false
 			return InvokeOnColleagues("On" + messageName, new Type[] {typeof(object)},
 				new Object[] { parameter }, false, false);
@@ -1094,12 +1088,9 @@ namespace XCore
 			if(messageName.Substring(0,2) == "On")
 				Debug.Fail("The convention is to send messages without the 'On' prefix.  That is added by the message sending code.");
 #endif
-			if (messageName != "Idle")
-			{
-				Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
-					BuildDebugMsg("HasReceiver::Checking for listeners for Msg: " + messageName),
-					showPendingMsgsSwitch.DisplayName);
-			}
+			Trace.WriteLineIf(showPendingMsgsSwitch.TraceVerbose,
+				BuildDebugMsg("HasReceiver::Checking for listeners for Msg: " + messageName),
+				showPendingMsgsSwitch.DisplayName);
 
 
 			return InvokeOnColleagues("On"+messageName, new Type[] {typeof(object)},
