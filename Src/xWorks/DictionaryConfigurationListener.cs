@@ -270,19 +270,6 @@ namespace SIL.FieldWorks.XWorks
 
 
 		/// <summary>
-		/// If we are in a tool handled by the new configuration then hide this to avoid confusion with the new dialog
-		/// which is accessible from each configuration file.
-		/// </summary>
-		public virtual bool OnDisplayConfigureHeadwordNumbers(object commandObject,
-																		 ref UIItemDisplayProperties display)
-		{
-			// If we are in 'Dictionary' or 'Reversal Index' hide this menu item
-			display.Enabled = false;
-			display.Visible = false;
-			return true; // we handled it
-		}
-
-		/// <summary>
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
 		/// </summary>

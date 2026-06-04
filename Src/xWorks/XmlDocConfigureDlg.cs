@@ -1628,9 +1628,6 @@ namespace SIL.FieldWorks.XWorks
 				fEnabled = m_current.AllParentsChecked;
 				sHeading = String.Format(xWorksStrings.ksHierarchyLabel, tnParent.Text, sHeading);
 			}
-			// This is kind of kludgy but it's the best I can think of.
-			var partName = m_current.PartName.ToLowerInvariant();
-			m_linkConfigureHomograph.Visible = partName.Contains("headword") || partName.Contains("owneroutline");
 			// Use the text box if the label is too wide. See LT-9281.
 			m_lblPanel.Text = sHeading;
 			m_tbPanelHeader.Text = sHeading;
@@ -4670,13 +4667,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion
-
-		private void m_linkConfigureHomograph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("ConfigureHeadwordNumbers", this);
-#pragma warning restore 618
-		}
 
 		#region ILayoutConverter methods
 		public void AddDictionaryTypeItem(XmlNode layoutNode, List<LayoutTreeNode> oldNodes)
