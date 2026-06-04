@@ -48,7 +48,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.m_linkConfigureHomograph = new System.Windows.Forms.LinkLabel();
 			this.m_cfgSenses = new SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout();
 			m_cfgSenses.SizeChanged += new System.EventHandler(m_cfgSenses_SizeChanged);
 			this.m_cfgParentNode = new SIL.FieldWorks.FwCoreDlgControls.ConfigParentNode();
@@ -165,7 +164,6 @@ namespace SIL.FieldWorks.XWorks
 			//
 			resources.ApplyResources(this.panel1, "panel1");
 			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.panel1.Controls.Add(this.m_linkConfigureHomograph);
 			this.panel1.Controls.Add(this.m_cfgSenses);
 			this.panel1.Controls.Add(this.m_cfgParentNode);
 			this.panel1.Controls.Add(this.m_btnBeforeStyles);
@@ -194,13 +192,6 @@ namespace SIL.FieldWorks.XWorks
 			this.panel1.MaximumSize = new System.Drawing.Size(362, 1009);
 			this.panel1.MinimumSize = new System.Drawing.Size(362, 440);
 			this.panel1.Name = "panel1";
-			//
-			// m_linkConfigureHomograph
-			//
-			resources.ApplyResources(this.m_linkConfigureHomograph, "m_linkConfigureHomograph");
-			this.m_linkConfigureHomograph.Name = "m_linkConfigureHomograph";
-			this.m_linkConfigureHomograph.TabStop = true;
-			this.m_linkConfigureHomograph.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkConfigureHomograph_LinkClicked);
 			//
 			// m_cfgSenses
 			//
@@ -487,6 +478,5 @@ namespace SIL.FieldWorks.XWorks
 		private SIL.FieldWorks.FwCoreDlgControls.ConfigParentNode m_cfgParentNode;
 		private SIL.FieldWorks.FwCoreDlgControls.ConfigSenseLayout m_cfgSenses;
 		private System.Windows.Forms.LinkLabel m_linkManageViews;
-		private System.Windows.Forms.LinkLabel m_linkConfigureHomograph;
 	}
 }

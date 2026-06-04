@@ -471,36 +471,6 @@
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Right</value>
   </data>
-  <data name="m_linkConfigureHomograph.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_linkConfigureHomograph.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <data name="m_linkConfigureHomograph.Location" type="System.Drawing.Point, System.Drawing">
-	<value>160, 26</value>
-  </data>
-  <data name="m_linkConfigureHomograph.Size" type="System.Drawing.Size, System.Drawing">
-	<value>150, 13</value>
-  </data>
-  <data name="m_linkConfigureHomograph.TabIndex" type="System.Int32, mscorlib">
-	<value>30</value>
-  </data>
-  <data name="m_linkConfigureHomograph.Text" xml:space="preserve">
-	<value>Configure Headword Numbers</value>
-  </data>
-  <data name="&gt;&gt;m_linkConfigureHomograph.Name" xml:space="preserve">
-	<value>m_linkConfigureHomograph</value>
-  </data>
-  <data name="&gt;&gt;m_linkConfigureHomograph.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_linkConfigureHomograph.Parent" xml:space="preserve">
-	<value>panel1</value>
-  </data>
-  <data name="&gt;&gt;m_linkConfigureHomograph.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
   <data name="m_cfgSenses.AccessibleName" xml:space="preserve">
 	<value>m_cfgSenses</value>
   </data>

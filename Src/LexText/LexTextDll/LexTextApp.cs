@@ -453,34 +453,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_windowToCloseOnIdle = null;
 		}
 
-		public bool OnConfigureHeadwordNumbers(object commandObject)
-		{
-			CheckDisposed();
-			var configDlg = commandObject as XmlDocConfigureDlg;
-
-			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
-			if (wndActive == null && configDlg != null)
-				wndActive = configDlg.Owner as FwXWindow;
-			if (wndActive != null)
-			{
-				var hc = wndActive.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
-				using (var dlg = new ConfigureHomographDlg())
-				{
-					dlg.SetupDialog(hc, wndActive.Cache, wndActive.ActiveStyleSheet, this, this);
-					dlg.StartPosition = FormStartPosition.CenterScreen;
-					if (dlg.ShowDialog(wndActive) != DialogResult.OK)
-						return true;
-					// If called from config dlg, it will do its own refresh when it closes.
-					if (configDlg == null)
-						OnMasterRefresh(null);
-					else
-						configDlg.MasterRefreshRequired = true;
-				}
-			}
-			return true;
-		}
-
 		public bool OnRestoreDefaultLayouts(object commandObject)
 		{
 			CheckDisposed();
