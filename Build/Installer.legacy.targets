@@ -116,6 +116,8 @@
 			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll.config" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.pdb" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.manifest" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/SimpleRootSite.manifest" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
