@@ -20,10 +20,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	public class RenderEngineFactoryTests
 	{
 		/// <summary>
-		/// Tests the get_RendererFromChrp method with a normal font.
+		/// Tests the GetRenderer method with a normal font.
 		/// </summary>
 		[Test]
-		public void get_Renderer_Uniscribe()
+		public void GetRenderer_Uniscribe()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					};
 					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
-					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine engine = reFactory.GetRenderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
 					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.That(engine, Is.InstanceOf(typeof(UniscribeEngine)));
@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		/// <summary>
-		/// Tests the get_RendererFromChrp method with a Graphite font.
+		/// Tests the GetRenderer method with a Graphite font.
 		/// </summary>
 		[Test]
-		public void get_Renderer_Graphite()
+		public void GetRenderer_Graphite()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -77,14 +77,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					};
 					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
-					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine engine = reFactory.GetRenderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
 					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.That(engine, Is.InstanceOf(typeof(UniscribeEngine)));
 
 					ws.IsGraphiteEnabled = true;
 					gm.VwGraphics.SetupGraphics(ref chrp);
-					engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					engine = reFactory.GetRenderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
 					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.That(engine, Is.InstanceOf(typeof(GraphiteEngine)));
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void get_Renderer_DefaultFontFeatures_CopiesNormalizedFeaturesToGraphics()
+		public void GetRenderer_DefaultFontFeatures_CopiesNormalizedFeaturesToGraphics()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					var chrp = CreateCharRenderProps(ws.Handle, "<default font>", string.Empty);
 					gm.VwGraphics.SetupGraphics(ref chrp);
 
-					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine engine = reFactory.GetRenderer(ws, gm.VwGraphics);
 					var graphicsChrp = gm.VwGraphics.FontCharProperties;
 
 					Assert.That(engine, Is.InstanceOf(typeof(UniscribeEngine)));
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void get_Renderer_DefaultFontWithStyleFeatures_PreservesStyleFeatures()
+		public void GetRenderer_DefaultFontWithStyleFeatures_PreservesStyleFeatures()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					var chrp = CreateCharRenderProps(ws.Handle, "<default font>", " smcp = 1, kern=0 ");
 					gm.VwGraphics.SetupGraphics(ref chrp);
 
-					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine engine = reFactory.GetRenderer(ws, gm.VwGraphics);
 					var graphicsChrp = gm.VwGraphics.FontCharProperties;
 
 					Assert.That(engine, Is.InstanceOf(typeof(UniscribeEngine)));
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void get_Renderer_OpenTypeFeatures_ArePartOfCacheIdentity()
+		public void GetRenderer_OpenTypeFeatures_ArePartOfCacheIdentity()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -187,21 +187,21 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 						"Arial",
 						" smcp = 1, kern=0 ");
 					gm.VwGraphics.SetupGraphics(ref firstChrp);
-					IRenderEngine first = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine first = reFactory.GetRenderer(ws, gm.VwGraphics);
 
 					var equivalentChrp = CreateCharRenderProps(
 						ws.Handle,
 						"Arial",
 						"kern=0,smcp=1");
 					gm.VwGraphics.SetupGraphics(ref equivalentChrp);
-					IRenderEngine equivalent = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine equivalent = reFactory.GetRenderer(ws, gm.VwGraphics);
 
 					var differentChrp = CreateCharRenderProps(
 						ws.Handle,
 						"Arial",
 						"smcp=0,kern=0");
 					gm.VwGraphics.SetupGraphics(ref differentChrp);
-					IRenderEngine different = reFactory.get_Renderer(ws, gm.VwGraphics);
+					IRenderEngine different = reFactory.GetRenderer(ws, gm.VwGraphics);
 
 					Assert.That(equivalent, Is.SameAs(first));
 					Assert.That(different, Is.Not.SameAs(first));
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void get_Renderer_ExplicitFontNameMatchingDefault_DoesNotApplyDefaultFontFeatures()
+		public void GetRenderer_ExplicitFontNameMatchingDefault_DoesNotApplyDefaultFontFeatures()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					var chrp = CreateCharRenderProps(ws.Handle, "Arial", string.Empty);
 					gm.VwGraphics.SetupGraphics(ref chrp);
 
-					reFactory.get_Renderer(ws, gm.VwGraphics);
+					reFactory.GetRenderer(ws, gm.VwGraphics);
 					Assert.That(MarshalEx.UShortToString(gm.VwGraphics.FontCharProperties.szFontVar), Is.EqualTo(string.Empty));
 					wsManager.Save();
 				}
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void get_Renderer_DefaultNumericGraphiteFeatures_ArePreserved()
+		public void GetRenderer_DefaultNumericGraphiteFeatures_ArePreserved()
 		{
 			using (var control = new Form())
 			using (var gm = new GraphicsManager(control))
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					var chrp = CreateCharRenderProps(ws.Handle, "<default font>", string.Empty);
 					gm.VwGraphics.SetupGraphics(ref chrp);
 
-					reFactory.get_Renderer(ws, gm.VwGraphics);
+					reFactory.GetRenderer(ws, gm.VwGraphics);
 					Assert.That(MarshalEx.UShortToString(gm.VwGraphics.FontCharProperties.szFontVar), Is.EqualTo("123=1,456=2"));
 					wsManager.Save();
 				}

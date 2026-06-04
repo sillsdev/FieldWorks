@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Font name may be '&lt;default font&gt;' which produces a renderer suitable for the default
 		/// font.
 		/// </summary>
-		public IRenderEngine get_Renderer(ILgWritingSystem ws, IVwGraphics vg)
+		public IRenderEngine GetRenderer(ILgWritingSystem ws, IVwGraphics vg)
 		{
 			LgCharRenderProps chrp = vg.FontCharProperties;
 			string fontName = MarshalEx.UShortToString(chrp.szFaceName);
@@ -84,6 +84,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			return wsFontEngines[key].Item2;
+		}
+
+		IRenderEngine IRenderEngineFactory.get_Renderer(ILgWritingSystem ws, IVwGraphics vg)
+		{
+			return GetRenderer(ws, vg);
 		}
 
 		private static string GetFontFeatures(LgCharRenderProps chrp, ILgWritingSystem ws, bool usesDefaultFont)
