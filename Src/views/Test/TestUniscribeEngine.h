@@ -41,9 +41,15 @@ namespace TestViews
 			int dxWidth = 0;
 #if defined(WIN32) || defined(_M_X64)
 			int dxMax = 4000;
-			HDC hdc = ::CreateCompatibleDC(::GetDC(::GetDesktopWindow()));
-			HBITMAP hbm = ::CreateCompatibleBitmap(hdc, dxMax, dxMax);
-			::SelectObject(hdc, hbm);
+			HWND hwndDesktop = ::GetDesktopWindow();
+			HDC hdcDesktop = ::GetDC(hwndDesktop);
+			unitpp::assert_true("GetDC should return the desktop DC", hdcDesktop != NULL);
+			HDC hdc = ::CreateCompatibleDC(hdcDesktop);
+			unitpp::assert_true("CreateCompatibleDC should return a memory DC", hdc != NULL);
+			HBITMAP hbm = ::CreateCompatibleBitmap(hdcDesktop, dxMax, dxMax);
+			unitpp::assert_true("CreateCompatibleBitmap should return a bitmap", hbm != NULL);
+			HGDIOBJ hbmOld = ::SelectObject(hdc, hbm);
+			unitpp::assert_true("SelectObject should select the bitmap into the memory DC", hbmOld != NULL);
 			::SetMapMode(hdc, MM_TEXT);
 
 			IVwGraphicsWin32Ptr qvg;
@@ -79,8 +85,10 @@ namespace TestViews
 			CheckHr(qseg->get_Width(0, qvg, &dxWidth));
 
 			qvg.Clear();
+			::SelectObject(hdc, hbmOld);
 			::DeleteObject(hbm);
 			::DeleteDC(hdc);
+			::ReleaseDC(hwndDesktop, hdcDesktop);
 #endif
 			return dxWidth;
 		}

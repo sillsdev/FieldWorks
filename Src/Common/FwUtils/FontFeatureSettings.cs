@@ -54,6 +54,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Returns a deterministic representation for OpenType feature strings while preserving
+		/// legacy numeric Graphite feature identifiers.
+		/// </summary>
+		public static string NormalizePreservingLegacy(string features)
+		{
+			if (string.IsNullOrWhiteSpace(features))
+				return string.Empty;
+
+			var trimmed = features.Trim();
+			return char.IsLetter(trimmed[0]) ? Normalize(trimmed) : trimmed;
+		}
+
+		/// <summary>
 		/// Returns whether a string is a valid four-character OpenType feature tag.
 		/// </summary>
 		public static bool IsValidOpenTypeTag(string tag)

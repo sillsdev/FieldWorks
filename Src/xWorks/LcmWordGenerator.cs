@@ -2018,9 +2018,14 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void ConfigureStyleSheetCompatibility(Styles styleSheet)
 		{
-			styleSheet.MCAttributes = new MarkupCompatibilityAttributes { Ignorable = "w14" };
-			styleSheet.AddNamespaceDeclaration("mc", MarkupCompatibilityNamespace);
-			styleSheet.AddNamespaceDeclaration("w14", Word2010Namespace);
+			ConfigureWord2010Compatibility(styleSheet);
+		}
+
+		private static void ConfigureWord2010Compatibility(OpenXmlElement element)
+		{
+			element.MCAttributes = new MarkupCompatibilityAttributes { Ignorable = "w14" };
+			element.AddNamespaceDeclaration("mc", MarkupCompatibilityNamespace);
+			element.AddNamespaceDeclaration("w14", Word2010Namespace);
 		}
 
 		// Add a DocumentSettingsPart to the document. Returns a reference to it.
@@ -2037,6 +2042,7 @@ namespace SIL.FieldWorks.XWorks
 			NumberingDefinitionsPart part;
 			part = doc.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>();
 			Numbering numElement = new Numbering();
+			ConfigureWord2010Compatibility(numElement);
 			numElement.Save(part);
 			return part;
 		}
