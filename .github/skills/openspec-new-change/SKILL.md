@@ -24,6 +24,8 @@ Start a new change using the experimental artifact-driven approach.
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 
+   If the request uses overloaded repo terms or unclear planning language, apply `grill-with-docs` before selecting names or creating artifacts so OpenSpec wording matches `CONTEXT.md` and real codebase terminology.
+
 2. **Determine the workflow schema**
 
    Use the default schema (omit `--schema`) unless the user explicitly requests a different workflow.

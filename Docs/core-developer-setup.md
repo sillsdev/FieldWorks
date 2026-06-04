@@ -150,6 +150,20 @@ Recommended Git tools:
 - **GitKraken** or **SourceTree** - For visual branch management
 - **VS Code** - Has excellent Git integration
 
+## AI-Assisted PR Workflow
+
+For core developers, the canonical AI-assisted path is now [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md).
+
+Use that guide when you want the full FieldWorks workflow from Jira through merge-ready review:
+
+1. Pull the Jira ticket through approved Atlassian tooling.
+2. Create a dedicated branch worktree with the repo task.
+3. Build and test with `./build.ps1`, `./test.ps1`, or the matching VS Code tasks.
+4. Run `pr-preflight` before opening or updating the PR.
+5. Use the review-response workflow for Copilot and human comments.
+
+If you use Claude Code, create the worktree with the repo task first, then launch Claude inside that worktree.
+
 ### 4. Working with Branches
 
 #### Branch Naming Conventions
@@ -181,7 +195,7 @@ git checkout -b feature/my-feature-name
 
 4. After approval and CI passes, merge the PR
 
-See [Pull Request Workflow](workflows/pull-request-workflow.md) for detailed guidelines.
+See [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) for the canonical core-developer workflow, and [Pull Request Workflow](workflows/pull-request-workflow.md) for the generic GitHub PR mechanics.
 
 ### 5. Release Management
 
@@ -238,5 +252,6 @@ git branch -a  # List all branches including remote
 ## See Also
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Basic setup for all contributors
+- [AI-Assisted PR Workflow](workflows/ai-pr-workflow.md) - Canonical Jira-to-PR workflow for core developers using GitHub Copilot or Claude Code
 - [Pull Request Workflow](workflows/pull-request-workflow.md) - How to submit changes
 - [Release Process](workflows/release-process.md) - Release workflow documentation

@@ -10,7 +10,7 @@ Minimal guidance for source-tree work.
 ## Constraints
 
 - Preserve native-first build order.
-- Keep managed code compatible with .NET Framework 4.8 / C# 7.3.
+- Keep managed code compatible with .NET Framework 4.8, the repo default C# 8.0 language policy, and nullable reference types disabled unless a project explicitly opts in.
 - Keep interop boundaries explicit; do not introduce COM registration side-effects.
 - Keep user-visible strings in resources.
 

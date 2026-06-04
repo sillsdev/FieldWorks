@@ -40,6 +40,8 @@ Continue working on a change by creating the next artifact.
 
 3. **Act based on status**:
 
+  Before creating proposal, design, or task artifacts from ambiguous user language, apply `grill-with-docs` so new artifact wording uses clarified repo terms from `CONTEXT.md`.
+
    ---
 
    **If all artifacts are complete (`isComplete: true`)**:
