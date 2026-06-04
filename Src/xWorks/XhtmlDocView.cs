@@ -7,6 +7,7 @@ using Gecko.DOM;
 using SIL.CommandLineProcessing;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -36,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// This class handles the display of configured xhtml for a particular publication in a dynamically loadable XWorksView.
 	/// </summary>
-	internal class XhtmlDocView : XWorksViewBase, IFindAndReplaceContext, IPostLayoutInit
+	internal class XhtmlDocView : XWorksViewBase, IFindAndReplaceContext, IPostLayoutInit, IRefreshableRoot
 	{
 		private XWebBrowser m_mainView;
 		private DictionaryPublicationDecorator m_pubDecorator;
@@ -1304,6 +1305,12 @@ namespace SIL.FieldWorks.XWorks
 			// Force a refresh.
 			m_loadedConfig = null;
 			UpdateContent(currentConfig);
+		}
+
+		public bool RefreshDisplay()
+		{
+			OnMasterRefresh(this);
+			return true;
 		}
 
 		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)

@@ -11,6 +11,7 @@ This software is licensed under the LGPL, version 2.1 or later
 #include "testViews.h"
 #include "ColorStateCache.h"
 #include "FontHandleCache.h"
+#include "LayoutCache.h"
 
 namespace TestViews
 {
@@ -176,6 +177,46 @@ namespace TestViews
 		{
 			m_cache = FontHandleCache();
 		}
+	};
+
+	class TestShapeRunCache : public unitpp::suite
+	{
+		void testFontFeaturesArePartOfCacheKey()
+		{
+			ShapeRunCache cache;
+			SCRIPT_ANALYSIS sa;
+			ZeroMemory(&sa, sizeof(sa));
+			sa.eScript = 1;
+
+			const OLECHAR rgch[] = L"office";
+			const int cch = 6;
+			const OLECHAR rgchFeatureOn[] = L"liga=1";
+			const OLECHAR rgchFeatureOnCopy[] = L"liga=1";
+			const OLECHAR rgchFeatureOff[] = L"liga=0";
+			HFONT hfont = reinterpret_cast<HFONT>(static_cast<uintptr_t>(0x1234));
+
+			WORD prgGlyph[] = {1, 2, 3};
+			SCRIPT_VISATTR prgsva[3];
+			ZeroMemory(prgsva, sizeof(prgsva));
+			int prgAdvance[] = {5, 5, 5};
+			int prgcst[] = {0, 0, 0};
+			GOFFSET prgoff[3];
+			ZeroMemory(prgoff, sizeof(prgoff));
+			WORD prgCluster[] = {0, 1, 2, 2, 2, 2};
+
+			cache.Store(rgch, cch, hfont, sa, rgchFeatureOn, prgGlyph, prgsva,
+				prgAdvance, prgcst, prgoff, prgCluster, 3, 15, false);
+
+			unitpp::assert_true("same feature contents should hit shape cache",
+				cache.Find(rgch, cch, hfont, sa, rgchFeatureOnCopy) != NULL);
+			unitpp::assert_true("different feature contents should miss shape cache",
+				cache.Find(rgch, cch, hfont, sa, rgchFeatureOff) == NULL);
+			unitpp::assert_true("missing feature contents should miss feature-specific shape cache entry",
+				cache.Find(rgch, cch, hfont, sa, NULL) == NULL);
+		}
+
+	public:
+		TestShapeRunCache();
 	};
 }
 
