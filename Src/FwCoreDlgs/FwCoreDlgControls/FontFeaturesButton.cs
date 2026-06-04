@@ -40,12 +40,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private string m_fontName; // The font for which we are editing the features.
 		private string m_fontFeatures; // The font feature string stored in the writing system.
 		private IFontFeatureProvider m_featureProvider;
+		private static readonly TraceSwitch s_openTypeTraceSwitch =
+			new TraceSwitch("FontFeatures.OpenType", "OpenType font feature discovery and provider selection", "Off");
 		private ILgWritingSystemFactory m_wsf;
 		private int[] m_values;	// The actual list of values we're editing.
 		private int[] m_ids;		// The corresponding ids.
 		private bool m_isGraphiteFont;
 		private bool m_hasFontFeatures;
-		private bool m_useGraphiteFeatures = true;
+		private bool m_useGraphiteFeatures;
 		#endregion
 
 		#region Constructor and dispose stuff
@@ -376,26 +378,40 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				var graphiteProvider = CreateGraphiteProvider(hdg);
 				m_isGraphiteFont = graphiteProvider != null;
-
-				if (m_useGraphiteFeatures && graphiteProvider != null && graphiteProvider.HasFeatures)
-				{
-					m_featureProvider = graphiteProvider;
-					m_hasFontFeatures = true;
-					Enabled = true;
-					return;
-				}
-
 				var openTypeProvider = OpenTypeFontFeatureProvider.Create(hdg.Hdc);
-				if (openTypeProvider != null && openTypeProvider.HasFeatures)
-				{
-					m_featureProvider = openTypeProvider;
-					m_hasFontFeatures = true;
-					Enabled = true;
+
+				var primaryProvider = m_useGraphiteFeatures
+					? (IFontFeatureProvider)graphiteProvider
+					: openTypeProvider;
+				var secondaryProvider = m_useGraphiteFeatures
+					? openTypeProvider
+					: (IFontFeatureProvider)graphiteProvider;
+
+				if (TrySelectFeatureProvider(primaryProvider))
 					return;
-				}
+
+				if (TrySelectFeatureProvider(secondaryProvider))
+					return;
 
 				Enabled = false;
 			}
+		}
+
+		private bool TrySelectFeatureProvider(IFontFeatureProvider provider)
+		{
+			if (provider == null || !provider.HasFeatures)
+				return false;
+
+			m_featureProvider = provider;
+			m_hasFontFeatures = true;
+			Enabled = true;
+			Trace.WriteLineIf(s_openTypeTraceSwitch.TraceInfo,
+				string.Format(CultureInfo.InvariantCulture,
+					"FontFeaturesButton selected {0} provider for '{1}'.",
+					provider.ProviderName,
+					m_fontName ?? string.Empty),
+				s_openTypeTraceSwitch.DisplayName);
+			return true;
 		}
 
 		private IFontFeatureProvider CreateGraphiteProvider(HoldDummyGraphics hdg)
@@ -849,6 +865,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		private interface IFontFeatureProvider
 		{
+			string ProviderName { get; }
 			bool HasFeatures { get; }
 			int[] GetFeatureIds();
 			string GetFeatureTag(int featureId);
@@ -883,6 +900,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public bool HasFeatures
 			{
 				get { return m_featureIds.Length > 0; }
+			}
+
+			public string ProviderName
+			{
+				get { return "Graphite"; }
 			}
 
 			public int[] GetFeatureIds()
@@ -964,6 +986,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				get { return m_featureIds.Length > 0; }
 			}
 
+			public string ProviderName
+			{
+				get { return "OpenType"; }
+			}
+
 			public int[] GetFeatureIds()
 			{
 				return m_featureIds.ToArray();
@@ -1022,6 +1049,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			private const uint GdiError = 0xFFFFFFFF;
 			private const int MaxCacheEntries = 32;
 			private const int ObjFont = 6;
+			private static readonly HashSet<string> s_nonUserConfigurableTags =
+				new HashSet<string>(StringComparer.Ordinal)
+				{
+					"abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "ccmp",
+					"cjct", "curs", "dist", "fina", "haln", "half", "init", "isol",
+					"ljmo", "locl", "mark", "medi", "mkmk", "nukt", "pref", "pres",
+					"pstf", "psts", "rclt", "rkrf", "rlig", "tjmo", "vjmo"
+				};
 			private static readonly uint[] s_layoutTables = { MakeTableTag("GSUB"), MakeTableTag("GPOS") };
 			private static readonly object s_cacheLock = new object();
 			private static readonly Dictionary<FontFeatureCacheKey, string[]> s_featureTagCache =
@@ -1130,9 +1165,22 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 						return;
 
 					var tag = System.Text.Encoding.ASCII.GetString(tableData, recordOffset, 4);
-					if (FontFeatureSettings.IsValidOpenTypeTag(tag))
+					if (FontFeatureSettings.IsValidOpenTypeTag(tag) && IsUserConfigurableTag(tag))
 						tags.Add(tag);
 				}
+			}
+
+			private static bool IsUserConfigurableTag(string tag)
+			{
+				if (!s_nonUserConfigurableTags.Contains(tag))
+					return true;
+
+				Trace.WriteLineIf(s_openTypeTraceSwitch.TraceInfo,
+					string.Format(CultureInfo.InvariantCulture,
+						"FontFeaturesButton filtered non-user OpenType feature '{0}'.",
+						tag),
+					s_openTypeTraceSwitch.DisplayName);
+				return false;
 			}
 
 			private static ushort ReadUInt16(byte[] data, int offset)

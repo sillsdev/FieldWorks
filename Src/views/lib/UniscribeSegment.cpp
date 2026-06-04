@@ -115,6 +115,46 @@ static bool IsOpenTypeTagChar(OLECHAR ch)
 	return ch >= 0x20 && ch <= 0x7e;
 }
 
+static void OpenTypeTagToDebugText(FwOpenTypeTag tag, OLECHAR * prgchTag, int cchTag)
+{
+	if (cchTag < 5)
+		return;
+
+	if (!tag)
+	{
+		wcscpy_s(prgchTag, cchTag, L"----");
+		return;
+	}
+
+	for (int ich = 0; ich < 4; ++ich)
+	{
+		OLECHAR ch = static_cast<OLECHAR>((tag >> (ich * 8)) & 0xff);
+		prgchTag[ich] = IsOpenTypeTagChar(ch) ? ch : L'?';
+	}
+	prgchTag[4] = 0;
+}
+
+static void TraceOpenTypeRenderEvent(const OLECHAR * pszMessage, HRESULT hr,
+	FwOpenTypeTag tagScript, FwOpenTypeTag tagLanguage, int cglyphMax)
+{
+#if defined(WIN32) || defined(WIN64) || defined(_M_X64)
+	OLECHAR rgchScript[5];
+	OLECHAR rgchLanguage[5];
+	OpenTypeTagToDebugText(tagScript, rgchScript, _countof(rgchScript));
+	OpenTypeTagToDebugText(tagLanguage, rgchLanguage, _countof(rgchLanguage));
+	StrUni stu;
+	stu.Format(L"UniscribeSegment OpenType: %s (hr=0x%08x, script='%s', language='%s', glyphMax=%d).\n",
+		pszMessage, static_cast<unsigned int>(hr), rgchScript, rgchLanguage, cglyphMax);
+	::OutputDebugStringW(stu.Chars());
+#else
+	(void)pszMessage;
+	(void)hr;
+	(void)tagScript;
+	(void)tagLanguage;
+	(void)cglyphMax;
+#endif
+}
+
 static bool TryParseFontFeatureRecords(const OLECHAR * prgchFontVar,
 	Vector<FwOpenTypeFeatureRecord> & vfeatureRecords)
 {
@@ -386,7 +426,7 @@ static void BuildLanguageCandidates(UniscribeRunInfo & uri,
 		AddOpenTypeTag(vtags, vfontLanguageTags[0]);
 }
 
-static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int cglyphMax,
+static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int & cglyphMax,
 	Vector<FwOpenTypeFeatureRecord> & vfeatureRecords, ABC & abc)
 {
 	FwScriptShapeOpenTypeProc pfnShape;
@@ -395,13 +435,16 @@ static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int cglyphMax,
 	FwScriptGetFontLanguageTagsProc pfnLanguageTags;
 	GetOpenTypeProcs(&pfnShape, &pfnPlace, NULL, &pfnScriptTags, &pfnLanguageTags);
 	if (!pfnShape || !pfnPlace)
+	{
+		TraceOpenTypeRenderEvent(L"ScriptShapeOpenType or ScriptPlaceOpenType is unavailable; falling back",
+			E_NOTIMPL, 0, 0, cglyphMax);
 		return false;
+	}
 
 	Vector<FwScriptCharProp> vcharProps;
 	Vector<FwScriptGlyphProp> vglyphProps;
 	Vector<int> vrgich;
 	vcharProps.Resize(uri.cch);
-	vglyphProps.Resize(cglyphMax);
 	vrgich.Resize(1);
 	vrgich[0] = uri.cch;
 
@@ -417,42 +460,79 @@ static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int cglyphMax,
 	GetFontScriptTags(uri, pfnScriptTags, vscriptTags);
 	AddOpenTypeTag(vscriptTags, MakeOpenTypeTag(rgchDflt));
 	AddOpenTypeTag(vscriptTags, MakeOpenTypeTag(rgchLatn));
-	HRESULT hr = E_FAIL;
-	for (int iscriptTag = 0; iscriptTag < vscriptTags.Size(); ++iscriptTag)
+	for (;;)
 	{
-		Vector<FwOpenTypeTag> vlanguageTags;
-		BuildLanguageCandidates(uri, pfnLanguageTags, vscriptTags[iscriptTag], vlanguageTags);
-		for (int ilanguageTag = 0; ilanguageTag < vlanguageTags.Size(); ++ilanguageTag)
+		vglyphProps.Resize(cglyphMax);
+		HRESULT hr = E_FAIL;
+		FwOpenTypeTag tagLastScript = 0;
+		FwOpenTypeTag tagLastLanguage = 0;
+		bool fRetryWithLargerGlyphBuffer = false;
+		for (int iscriptTag = 0; iscriptTag < vscriptTags.Size(); ++iscriptTag)
 		{
-			DISABLE_MULTISCRIBE
+			Vector<FwOpenTypeTag> vlanguageTags;
+			BuildLanguageCandidates(uri, pfnLanguageTags, vscriptTags[iscriptTag], vlanguageTags);
+			for (int ilanguageTag = 0; ilanguageTag < vlanguageTags.Size(); ++ilanguageTag)
 			{
-				IgnoreHr(hr = pfnShape(uri.hdc, &uri.sc, uri.psa, vscriptTags[iscriptTag],
-					vlanguageTags[ilanguageTag], vrgich.Begin(), &prangeProperties, 1, uri.prgch,
-					uri.cch, cglyphMax, uri.prgCluster, vcharProps.Begin(), uri.prgGlyph,
-					vglyphProps.Begin(), &uri.cglyph));
-			}
-			if (FAILED(hr))
-				continue;
+				tagLastScript = vscriptTags[iscriptTag];
+				tagLastLanguage = vlanguageTags[ilanguageTag];
+				DISABLE_MULTISCRIBE
+				{
+					IgnoreHr(hr = pfnShape(uri.hdc, &uri.sc, uri.psa, tagLastScript,
+						tagLastLanguage, vrgich.Begin(), &prangeProperties, 1, uri.prgch,
+						uri.cch, cglyphMax, uri.prgCluster, vcharProps.Begin(), uri.prgGlyph,
+						vglyphProps.Begin(), &uri.cglyph));
+				}
+				if (hr == E_OUTOFMEMORY)
+				{
+					cglyphMax *= 2;
+					uri.UpdateGlyphSize(cglyphMax);
+					TraceOpenTypeRenderEvent(
+						L"ScriptShapeOpenType requested a larger glyph buffer; retrying",
+						hr, tagLastScript, tagLastLanguage, cglyphMax);
+					fRetryWithLargerGlyphBuffer = true;
+					break;
+				}
+				if (FAILED(hr))
+					continue;
 
-			DISABLE_MULTISCRIBE
-			{
-				IgnoreHr(hr = pfnPlace(uri.hdc, &uri.sc, uri.psa, vscriptTags[iscriptTag],
-					vlanguageTags[ilanguageTag], vrgich.Begin(), &prangeProperties, 1, uri.prgch,
-					uri.prgCluster, vcharProps.Begin(), uri.cch, uri.prgGlyph, vglyphProps.Begin(),
-					uri.cglyph, uri.prgAdvance, uri.prgoff, &abc));
+				DISABLE_MULTISCRIBE
+				{
+					IgnoreHr(hr = pfnPlace(uri.hdc, &uri.sc, uri.psa, tagLastScript,
+						tagLastLanguage, vrgich.Begin(), &prangeProperties, 1, uri.prgch,
+						uri.prgCluster, vcharProps.Begin(), uri.cch, uri.prgGlyph,
+						vglyphProps.Begin(), uri.cglyph, uri.prgAdvance, uri.prgoff, &abc));
+				}
+				if (hr == E_OUTOFMEMORY)
+				{
+					cglyphMax *= 2;
+					uri.UpdateGlyphSize(cglyphMax);
+					TraceOpenTypeRenderEvent(
+						L"ScriptPlaceOpenType requested a larger glyph buffer; retrying",
+						hr, tagLastScript, tagLastLanguage, cglyphMax);
+					fRetryWithLargerGlyphBuffer = true;
+					break;
+				}
+				if (SUCCEEDED(hr))
+				{
+					for (int iglyph = 0; iglyph < uri.cglyph; ++iglyph)
+						uri.prgsva[iglyph] = vglyphProps[iglyph].sva;
+					uri.fScriptPlaceFailed = false;
+					TraceOpenTypeRenderEvent(L"selected OpenType shaping path", S_OK,
+						tagLastScript, tagLastLanguage, cglyphMax);
+					return true;
+				}
 			}
-			if (SUCCEEDED(hr))
-			{
-				for (int iglyph = 0; iglyph < uri.cglyph; ++iglyph)
-					uri.prgsva[iglyph] = vglyphProps[iglyph].sva;
+			if (fRetryWithLargerGlyphBuffer)
 				break;
-			}
 		}
-		if (SUCCEEDED(hr))
-			break;
+		if (fRetryWithLargerGlyphBuffer)
+			continue;
+
+		uri.fScriptPlaceFailed = true;
+		TraceOpenTypeRenderEvent(L"OpenType shaping failed; falling back to classic Uniscribe",
+			hr, tagLastScript, tagLastLanguage, cglyphMax);
+		return false;
 	}
-	uri.fScriptPlaceFailed = FAILED(hr);
-	return SUCCEEDED(hr);
 }
 
 // cache of SCRIPT_CACHE values accessed by LgCharRenderProps.

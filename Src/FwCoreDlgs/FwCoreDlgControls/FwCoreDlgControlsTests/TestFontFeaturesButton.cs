@@ -98,6 +98,15 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 		}
 
 		[Test]
+		public void UseGraphiteFeatures_DefaultsToFalse()
+		{
+			using (var button = new FontFeaturesButton())
+			{
+				Assert.That(button.UseGraphiteFeatures, Is.False);
+			}
+		}
+
+		[Test]
 		public void ConvertRendererNeutralFeatureStringToIds_UsesOpenTypeTagsDirectly()
 		{
 			var expected = FeatureId("kern") + "=0," + FeatureId("smcp") + "=1";
@@ -129,22 +138,53 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 			}
 		}
 
+		[Test]
+		public void OpenTypeFontFeatureReader_FiltersRequiredShapingFeatures()
+		{
+			var tableData = MakeOpenTypeLayoutTable("ccmp", "liga", "rlig");
+			FontFeaturesButton.OpenTypeFontFeatureReader.ClearCacheForTests();
+
+			using (FontFeaturesButton.OpenTypeFontFeatureReader.UseTableReaderForTests((hdc, table) => tableData))
+			{
+				var tags = FontFeaturesButton.OpenTypeFontFeatureReader.GetFeatureTags(IntPtr.Zero);
+
+				Assert.That(tags, Is.EqualTo(new[] { "liga" }));
+			}
+		}
+
 		private static int FeatureId(string tag)
 		{
 			var reversedTagBytes = tag.Reverse().Select(Convert.ToByte).ToArray();
 			return BitConverter.ToInt32(reversedTagBytes, 0);
 		}
 
-		private static byte[] MakeOpenTypeLayoutTable(string featureTag)
+		private static byte[] MakeOpenTypeLayoutTable(params string[] featureTags)
 		{
-			return new byte[]
+			var tableData = new byte[10 + featureTags.Length * 6];
+			tableData[0] = 0;
+			tableData[1] = 1;
+			tableData[2] = 0;
+			tableData[3] = 0;
+			tableData[4] = 0;
+			tableData[5] = 0;
+			tableData[6] = 0;
+			tableData[7] = 8;
+			tableData[8] = 0;
+			tableData[9] = Convert.ToByte(featureTags.Length);
+
+			for (var index = 0; index < featureTags.Length; index++)
 			{
-				0, 1, 0, 0, 0, 0, 0, 8,
-				0, 1,
-				Convert.ToByte(featureTag[0]), Convert.ToByte(featureTag[1]),
-				Convert.ToByte(featureTag[2]), Convert.ToByte(featureTag[3]),
-				0, 0
-			};
+				var featureTag = featureTags[index];
+				var recordOffset = 10 + index * 6;
+				tableData[recordOffset] = Convert.ToByte(featureTag[0]);
+				tableData[recordOffset + 1] = Convert.ToByte(featureTag[1]);
+				tableData[recordOffset + 2] = Convert.ToByte(featureTag[2]);
+				tableData[recordOffset + 3] = Convert.ToByte(featureTag[3]);
+				tableData[recordOffset + 4] = 0;
+				tableData[recordOffset + 5] = 0;
+			}
+
+			return tableData;
 		}
 	}
 }

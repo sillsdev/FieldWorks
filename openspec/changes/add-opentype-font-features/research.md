@@ -108,7 +108,7 @@ Useful references:
 - Cache identity: managed render-engine cache keys include the normalized feature string, and native `ShapeRunCache` entries include `LgCharRenderProps.szFontVar`. The render verification tests now cover writing-system default features, style-level features, and multi-writing-system text to guard stale output reuse.
 - Native verification: `TestViews` includes Charis SIL fixture tests for `liga` metric changes, `smcp` rendered pixel changes, and switching feature state off/on without stale rendered output reuse. The tests exercise the updated production code by passing `szFontVar` feature strings into `FindBreakPoint`, drawing the resulting segment into a bitmap, and comparing rendered pixels.
 - Test-only comparison: HarfBuzzSharp and SkiaSharp remain isolated to `RenderComparisonTests`. HarfBuzzSharp is used only as a test comparison path for shaping data; production rendering remains Uniscribe/Graphite.
-- Export audit: CSS already emits `font-feature-settings` and is covered by `GenerateCssForConfiguration_CharStyleFontFeaturesWorks`. Notebook export preserves writing-system `DefaultFontFeatures`. `WordStylesGenerator` already maps the documented Word `w14` subset for ligatures, number form, number spacing, contextual alternatives, and stylistic sets; the remaining work is to keep that subset bounded, documented, and regression-tested.
+- Export audit: CSS emits `font-feature-settings` through the shared parser and now escapes valid tags that contain CSS string metacharacters. Notebook export preserves writing-system `DefaultFontFeatures` in XML. `WordStylesGenerator` maps the documented Word `w14` subset for ligatures, number form, number spacing, contextual alternatives, and stylistic sets, and focused tests now cover supported mapping, writing-system defaults, and safe ignoring of unsupported valid or malformed tags.
 - Help/docs: no existing FieldWorks help source for Font Options was found in this workspace. Phase 1 adds `Docs/opentype-font-features.md` to document the UI, storage model, temporary Graphite role, and export status.
 
 ## Word DOCX Export Analysis
@@ -260,6 +260,14 @@ Planning implication:
 - the OpenSpec change now includes OpenType-first UI defaults, explicit toggle
 	planning, trace logging, truncation safety, inheritance cleanup, and CSS-safe
 	serialization.
+
+Implementation follow-up:
+
+- Removing the `StyleInfo` loader was attempted during implementation and failed
+	`SaveToDB_DefaultFontFeatures_RoundTripsThroughRules`, while restoring it made
+	the style/font-tab slice pass. The loader therefore remains as a minimal
+	compatibility adapter until the active LCM dependency path consumes
+	`ktptFontVariations` defaults through `BaseStyleInfo.ProcessStyleRules`.
 
 ### Recommended Additional Tests Beyond The Original Plan
 
