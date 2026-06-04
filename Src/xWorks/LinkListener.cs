@@ -512,9 +512,7 @@ namespace SIL.FieldWorks.XWorks
 							// Thus we've created this method (on AreaListener) which we call awkwardly throught the mediator.
 							var parameters = new object[2];
 							parameters[0] = majorObject;
-#pragma warning disable 618 // suppress obsolete warning
-							m_mediator.SendMessage("GetToolForList", parameters);
-#pragma warning restore 618
+							Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
 							realTool = (string)parameters[1];
 							break;
 						case RnResearchNbkTags.kClassId:
