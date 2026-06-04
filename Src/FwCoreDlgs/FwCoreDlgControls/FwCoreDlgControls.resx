@@ -170,6 +170,75 @@
   <data name="kstidFeatureValue" xml:space="preserve">
     <value>Value #{0}</value>
   </data>
+  <data name="kstidOpenTypeFeatureValueOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="kstidOpenTypeFeatureValueOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="kstidOpenTypeFeature_aalt" xml:space="preserve">
+    <value>Access All Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_c2sc" xml:space="preserve">
+    <value>Small Capitals From Capitals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_calt" xml:space="preserve">
+    <value>Contextual Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_case" xml:space="preserve">
+    <value>Case-Sensitive Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ccmp" xml:space="preserve">
+    <value>Glyph Composition/Decomposition</value>
+  </data>
+  <data name="kstidOpenTypeFeature_clig" xml:space="preserve">
+    <value>Contextual Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_dlig" xml:space="preserve">
+    <value>Discretionary Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_frac" xml:space="preserve">
+    <value>Fractions</value>
+  </data>
+  <data name="kstidOpenTypeFeature_kern" xml:space="preserve">
+    <value>Kerning</value>
+  </data>
+  <data name="kstidOpenTypeFeature_liga" xml:space="preserve">
+    <value>Standard Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_lnum" xml:space="preserve">
+    <value>Lining Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_onum" xml:space="preserve">
+    <value>Oldstyle Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_pnum" xml:space="preserve">
+    <value>Proportional Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_salt" xml:space="preserve">
+    <value>Stylistic Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_smcp" xml:space="preserve">
+    <value>Small Capitals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss01" xml:space="preserve">
+    <value>Stylistic Set 1</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss02" xml:space="preserve">
+    <value>Stylistic Set 2</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss03" xml:space="preserve">
+    <value>Stylistic Set 3</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss04" xml:space="preserve">
+    <value>Stylistic Set 4</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss05" xml:space="preserve">
+    <value>Stylistic Set 5</value>
+  </data>
+  <data name="kstidOpenTypeFeature_tnum" xml:space="preserve">
+    <value>Tabular Figures</value>
+  </data>
   <data name="kstidBadMsr" xml:space="preserve">
     <value>"{0}"  is not a valid measurement.</value>
   </data>

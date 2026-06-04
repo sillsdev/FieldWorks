@@ -28,6 +28,7 @@ typedef Vector<int> IntVec; // Hungarian vi (or specific meaning)
 typedef Vector<GOFFSET> OffsetVec; // Hungarian voff
 typedef Vector<SCRIPT_ITEM> ScrItemVec; // Hungarian vscri;
 typedef Vector<SCRIPT_LOGATTR> ScrLogAttrVec; // Hungarian vsla.
+typedef Vector<ULONG> OpenTypeTagVec; // Hungarian vot.
 
 class TextAnalysisEntry;
 
@@ -63,6 +64,8 @@ public:
 	Rect rcSrc; Rect rcDst;	// ccordinate transformation
 	LgCharRenderProps * pchrp; // char props desired for run (already set in pvg)
 	SCRIPT_ANALYSIS * psa;	// script analysis for the run
+	ULONG otTagScript;		// OpenType script tag from ScriptItemizeOpenType, or 0.
+	StrUni stuIcuLocale;		// SLDR/ICU locale for language-system selection.
 
 	int cglyph;
 	WORD * prgGlyph;			// cglyph glyphs (from ScriptShape)
@@ -244,6 +247,7 @@ public:
 protected:
 	// Static variables
 	static ScrItemVec g_vscri; // vector of script items from ScriptItemize.
+	static OpenTypeTagVec g_votScriptTags; // OpenType script tags parallel to g_vscri.
 	static int g_cscri; // number of valid items in ScriptItemize.
 
 	// Member variables
@@ -315,6 +319,7 @@ protected:
 	void FindValidIPForward(int ichBase, int * pich);
 
 	void InterpretChrp(LgCharRenderProps & chrp);
+	void GetIcuLocale(int ws, StrUni & stuIcuLocale);
 
 	/*------------------------------------------------------------------------------------------
 		This internal class wraps a hashmap for caching SCRIPT_CACHE values.

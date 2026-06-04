@@ -921,29 +921,29 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		private sealed class OpenTypeFontFeatureProvider : IFontFeatureProvider
 		{
-			private static readonly Dictionary<string, string> s_featureLabels = new Dictionary<string, string>
+			private static readonly Dictionary<string, string> s_featureLabelResourceIds = new Dictionary<string, string>
 			{
-				{ "aalt", "Access All Alternates" },
-				{ "c2sc", "Small Capitals From Capitals" },
-				{ "calt", "Contextual Alternates" },
-				{ "case", "Case-Sensitive Forms" },
-				{ "ccmp", "Glyph Composition/Decomposition" },
-				{ "clig", "Contextual Ligatures" },
-				{ "dlig", "Discretionary Ligatures" },
-				{ "frac", "Fractions" },
-				{ "kern", "Kerning" },
-				{ "liga", "Standard Ligatures" },
-				{ "lnum", "Lining Figures" },
-				{ "onum", "Oldstyle Figures" },
-				{ "pnum", "Proportional Figures" },
-				{ "salt", "Stylistic Alternates" },
-				{ "smcp", "Small Capitals" },
-				{ "ss01", "Stylistic Set 1" },
-				{ "ss02", "Stylistic Set 2" },
-				{ "ss03", "Stylistic Set 3" },
-				{ "ss04", "Stylistic Set 4" },
-				{ "ss05", "Stylistic Set 5" },
-				{ "tnum", "Tabular Figures" },
+				{ "aalt", "kstidOpenTypeFeature_aalt" },
+				{ "c2sc", "kstidOpenTypeFeature_c2sc" },
+				{ "calt", "kstidOpenTypeFeature_calt" },
+				{ "case", "kstidOpenTypeFeature_case" },
+				{ "ccmp", "kstidOpenTypeFeature_ccmp" },
+				{ "clig", "kstidOpenTypeFeature_clig" },
+				{ "dlig", "kstidOpenTypeFeature_dlig" },
+				{ "frac", "kstidOpenTypeFeature_frac" },
+				{ "kern", "kstidOpenTypeFeature_kern" },
+				{ "liga", "kstidOpenTypeFeature_liga" },
+				{ "lnum", "kstidOpenTypeFeature_lnum" },
+				{ "onum", "kstidOpenTypeFeature_onum" },
+				{ "pnum", "kstidOpenTypeFeature_pnum" },
+				{ "salt", "kstidOpenTypeFeature_salt" },
+				{ "smcp", "kstidOpenTypeFeature_smcp" },
+				{ "ss01", "kstidOpenTypeFeature_ss01" },
+				{ "ss02", "kstidOpenTypeFeature_ss02" },
+				{ "ss03", "kstidOpenTypeFeature_ss03" },
+				{ "ss04", "kstidOpenTypeFeature_ss04" },
+				{ "ss05", "kstidOpenTypeFeature_ss05" },
+				{ "tnum", "kstidOpenTypeFeature_tnum" },
 			};
 
 			private readonly int[] m_featureIds;
@@ -977,8 +977,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public string GetFeatureLabel(int featureId, int languageId)
 			{
 				var tag = GetFeatureTag(featureId);
-				string label;
-				return s_featureLabels.TryGetValue(tag, out label) ? label : tag;
+				string resourceId;
+				if (s_featureLabelResourceIds.TryGetValue(tag, out resourceId))
+				{
+					var label = FwCoreDlgControls.ResourceManager.GetString(resourceId, CultureInfo.CurrentUICulture);
+					if (!string.IsNullOrEmpty(label))
+						return label;
+				}
+				return tag;
 			}
 
 			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
@@ -990,7 +996,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
 			{
-				return valueId == 0 ? "Off" : "On";
+				return valueId == 0
+					? FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOff", CultureInfo.CurrentUICulture)
+					: FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOn", CultureInfo.CurrentUICulture);
 			}
 		}
 
@@ -1009,24 +1017,88 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					setting.Value)));
 		}
 
-		private static class OpenTypeFontFeatureReader
+		internal static class OpenTypeFontFeatureReader
 		{
 			private const uint GdiError = 0xFFFFFFFF;
+			private const int MaxCacheEntries = 32;
+			private const int ObjFont = 6;
 			private static readonly uint[] s_layoutTables = { MakeTableTag("GSUB"), MakeTableTag("GPOS") };
+			private static readonly object s_cacheLock = new object();
+			private static readonly Dictionary<FontFeatureCacheKey, string[]> s_featureTagCache =
+				new Dictionary<FontFeatureCacheKey, string[]>();
+			private static readonly Queue<FontFeatureCacheKey> s_cacheOrder = new Queue<FontFeatureCacheKey>();
+			private static Func<IntPtr, uint, byte[]> s_tableReader = ReadTable;
 
 			[DllImport("gdi32.dll", SetLastError = true)]
 			private static extern uint GetFontData(IntPtr hdc, uint table, uint offset, byte[] buffer, uint length);
 
+			[DllImport("gdi32.dll")]
+			private static extern IntPtr GetCurrentObject(IntPtr hdc, int objectType);
+
+			[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+			private static extern int GetObject(IntPtr hObject, int size, ref LogFont logFont);
+
 			public static IReadOnlyList<string> GetFeatureTags(IntPtr hdc)
 			{
+				var cacheKey = FontFeatureCacheKey.FromHdc(hdc);
+				lock (s_cacheLock)
+				{
+					string[] cachedTags;
+					if (s_featureTagCache.TryGetValue(cacheKey, out cachedTags))
+						return cachedTags.ToArray();
+				}
+
 				var tags = new SortedSet<string>(StringComparer.Ordinal);
 				foreach (var table in s_layoutTables)
 				{
-					var tableData = ReadTable(hdc, table);
+					var tableData = s_tableReader(hdc, table);
 					if (tableData != null)
 						ReadFeatureList(tableData, tags);
 				}
-				return tags.ToArray();
+				var discoveredTags = tags.ToArray();
+				lock (s_cacheLock)
+				{
+					if (!s_featureTagCache.ContainsKey(cacheKey))
+					{
+						if (s_cacheOrder.Count >= MaxCacheEntries)
+							s_featureTagCache.Remove(s_cacheOrder.Dequeue());
+						s_featureTagCache[cacheKey] = discoveredTags;
+						s_cacheOrder.Enqueue(cacheKey);
+					}
+				}
+				return discoveredTags.ToArray();
+			}
+
+			internal static void ClearCacheForTests()
+			{
+				lock (s_cacheLock)
+				{
+					ClearCache();
+				}
+			}
+
+			internal static IDisposable UseTableReaderForTests(Func<IntPtr, uint, byte[]> tableReader)
+			{
+				lock (s_cacheLock)
+				{
+					var previousReader = s_tableReader;
+					s_tableReader = tableReader ?? ReadTable;
+					ClearCache();
+					return new DisposableAction(() =>
+					{
+						lock (s_cacheLock)
+						{
+							s_tableReader = previousReader;
+							ClearCache();
+						}
+					});
+				}
+			}
+
+			private static void ClearCache()
+			{
+				s_featureTagCache.Clear();
+				s_cacheOrder.Clear();
 			}
 
 			private static byte[] ReadTable(IntPtr hdc, uint table)
@@ -1071,6 +1143,118 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			private static uint MakeTableTag(string tag)
 			{
 				return (uint)(tag[0] | tag[1] << 8 | tag[2] << 16 | tag[3] << 24);
+			}
+
+			[StructLayout(LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+			private struct LogFont
+			{
+				public int Height;
+				public int Width;
+				public int Escapement;
+				public int Orientation;
+				public int Weight;
+				public byte Italic;
+				public byte Underline;
+				public byte StrikeOut;
+				public byte CharSet;
+				public byte OutPrecision;
+				public byte ClipPrecision;
+				public byte Quality;
+				public byte PitchAndFamily;
+				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+				public string FaceName;
+			}
+
+			private struct FontFeatureCacheKey : IEquatable<FontFeatureCacheKey>
+			{
+				private readonly string m_faceName;
+				private readonly int m_height;
+				private readonly int m_weight;
+				private readonly byte m_italic;
+				private readonly byte m_charSet;
+				private readonly byte m_pitchAndFamily;
+				private readonly IntPtr m_fallbackHdc;
+
+				private FontFeatureCacheKey(string faceName, int height, int weight, byte italic,
+					byte charSet, byte pitchAndFamily, IntPtr fallbackHdc)
+				{
+					m_faceName = faceName ?? string.Empty;
+					m_height = height;
+					m_weight = weight;
+					m_italic = italic;
+					m_charSet = charSet;
+					m_pitchAndFamily = pitchAndFamily;
+					m_fallbackHdc = fallbackHdc;
+				}
+
+				public static FontFeatureCacheKey FromHdc(IntPtr hdc)
+				{
+					if (hdc != IntPtr.Zero)
+					{
+						var hfont = GetCurrentObject(hdc, ObjFont);
+						if (hfont != IntPtr.Zero)
+						{
+							var logFont = new LogFont();
+							if (GetObject(hfont, Marshal.SizeOf(typeof(LogFont)), ref logFont) > 0)
+							{
+								return new FontFeatureCacheKey(logFont.FaceName, logFont.Height,
+									logFont.Weight, logFont.Italic, logFont.CharSet,
+									logFont.PitchAndFamily, IntPtr.Zero);
+							}
+						}
+					}
+					return new FontFeatureCacheKey(string.Empty, 0, 0, 0, 0, 0, hdc);
+				}
+
+				public bool Equals(FontFeatureCacheKey other)
+				{
+					return string.Equals(m_faceName, other.m_faceName, StringComparison.OrdinalIgnoreCase) &&
+						m_height == other.m_height &&
+						m_weight == other.m_weight &&
+						m_italic == other.m_italic &&
+						m_charSet == other.m_charSet &&
+						m_pitchAndFamily == other.m_pitchAndFamily &&
+						m_fallbackHdc == other.m_fallbackHdc;
+				}
+
+				public override bool Equals(object obj)
+				{
+					return obj is FontFeatureCacheKey && Equals((FontFeatureCacheKey)obj);
+				}
+
+				public override int GetHashCode()
+				{
+					unchecked
+					{
+						var hash = StringComparer.OrdinalIgnoreCase.GetHashCode(m_faceName);
+						hash = (hash * 397) ^ m_height;
+						hash = (hash * 397) ^ m_weight;
+						hash = (hash * 397) ^ m_italic;
+						hash = (hash * 397) ^ m_charSet;
+						hash = (hash * 397) ^ m_pitchAndFamily;
+						hash = (hash * 397) ^ m_fallbackHdc.GetHashCode();
+						return hash;
+					}
+				}
+			}
+
+			private sealed class DisposableAction : IDisposable
+			{
+				private Action m_disposeAction;
+
+				public DisposableAction(Action disposeAction)
+				{
+					m_disposeAction = disposeAction;
+				}
+
+				public void Dispose()
+				{
+					var disposeAction = m_disposeAction;
+					if (disposeAction == null)
+						return;
+					m_disposeAction = null;
+					disposeAction();
+				}
 			}
 		}
 	}
