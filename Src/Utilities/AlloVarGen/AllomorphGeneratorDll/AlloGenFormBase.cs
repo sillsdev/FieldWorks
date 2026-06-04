@@ -5,29 +5,22 @@
 using Microsoft.Win32;
 using SIL.AlloGenModel;
 using SIL.AlloGenService;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.Utils;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XCore;
 using static SIL.AlloGenService.FLExCustomFieldsObtainer;
@@ -94,7 +87,6 @@ namespace SIL.AllomorphGenerator
 		protected ListBox currentListBox;
 		protected ContextMenuStrip editContextMenu;
 		protected ContextMenuStrip editReplaceOpsContextMenu;
-		protected string formTitle = AllomorphGeneratorDll_Strings.ksTitle;
 		protected string cmAdd = AllomorphGeneratorDll_Strings.cmAdd;
 		protected string cmEdit = AllomorphGeneratorDll_Strings.cmEdit;
 		protected string cmInsertBefore = AllomorphGeneratorDll_Strings.cmInsertBefore;
@@ -1381,11 +1373,15 @@ namespace SIL.AllomorphGenerator
 
 		protected void ShowChangeStatusOnForm()
 		{
-			if (AlloGenForm.ActiveForm != null)
+			const string kStar = "*";
+			bool hasStar = Text.EndsWith(kStar);
+			if (ChangesMade && !hasStar)
 			{
-				AlloGenForm.ActiveForm.Text = formTitle;
-				if (ChangesMade)
-					AlloGenForm.ActiveForm.Text += "*";
+				Text += kStar;
+			}
+			else if (!ChangesMade && hasStar)
+			{
+				Text = Text.Substring(0, Text.Length - 1);
 			}
 		}
 
