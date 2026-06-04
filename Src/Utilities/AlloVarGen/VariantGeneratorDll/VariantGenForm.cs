@@ -2,24 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using Microsoft.Win32;
 using SIL.AlloGenModel;
 using SIL.AlloGenService;
 using SIL.AllomorphGenerator;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.VarGenService;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XCore;
 
