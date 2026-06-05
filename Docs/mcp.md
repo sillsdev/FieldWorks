@@ -1,18 +1,19 @@
 # Model Context Protocol helpers
 
-FieldWorks ships a small workspace `.vscode/mcp.json` so Model Context Protocol clients can spin up two
+FieldWorks ships a small workspace `.vscode/mcp.json` so Model Context Protocol clients can spin up three
 servers automatically:
 
 - **GitHub server** via the hosted GitHub MCP endpoint (`https://api.githubcopilot.com/mcp/`).
 - **Serena server** for accelerated navigation of this large mono-repo.
+- **WinForms MCP server** for background UIA2 automation of the FieldWorks WinForms desktop app.
 
 ## Prerequisites
 
 | Component      | Purpose                                   | Install guidance                                      |
 | -------------- | ----------------------------------------- | ----------------------------------------------------- |
-| VS Code 1.101+ | Remote MCP + OAuth support               | https://code.visualstudio.com                         |
 | Serena CLI     | Provides Serena search/navigation        | `pipx install serena-cli` or `uv tool install serena` |
 | `uvx`          | Launches Serena from workspace `.vscode/mcp.json` | https://github.com/astral-sh/uv                       |
+| Node.js/npm    | Launches `@fnrhombus/winforms-mcp` with `npx` | https://nodejs.org                                    |
 
 > **Note**: Serena **auto-downloads** its language servers on first use:
 > - **C# (`csharp`)**: Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet + .NET 9 runtime
@@ -24,13 +25,37 @@ Authentication:
 
 - GitHub MCP uses OAuth through your normal VS Code GitHub/Copilot sign-in.
 - `SERENA_API_KEY` remains optional and is only needed when your Serena deployment requires it.
+- WinForms MCP is launched locally with `npx -y @fnrhombus/winforms-mcp`; no service login is required.
 
 ## How it works
 
-1. `.vscode/mcp.json` defines a hosted GitHub MCP server and a local Serena stdio server.
+1. `.vscode/mcp.json` defines a hosted GitHub MCP server plus local Serena and WinForms MCP stdio servers.
 2. GitHub MCP uses VS Code OAuth authentication for repository operations.
 3. Serena starts from `uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide --project ${workspaceFolder}`.
-4. In chat, use tool sets / tool picker to keep active tool counts low and focused.
+4. WinForms MCP starts from `npx -y @fnrhombus/winforms-mcp` with `HEADLESS=true`, `TFM=net48`, and `TELEMETRY_OPTOUT=true`.
+5. In chat, use tool sets / tool picker to keep active tool counts low and focused.
+
+## WinForms MCP for FieldWorks UI automation
+
+FieldWorks is currently a WinForms desktop app, so prefer WinForms MCP for most runtime UI walks and screenshots. The workspace config enables headless mode so `winforms_launch_app` starts FieldWorks on a hidden desktop instead of stealing focus from the developer's visible desktop.
+
+Tool names in this section use the WinForms MCP `winforms_*` namespace as shown in the client tool picker. If a client shortens a name to the underlying action, map it back to the same WinForms MCP command.
+
+Use WinForms MCP when:
+
+- launching a fresh FieldWorks instance for manual verification;
+- capturing screenshots without bringing FieldWorks to the foreground;
+- inspecting standard WinForms controls, menus, and dialogs by AutomationId, name, class, or control type;
+- using `winforms_render_form` for a `.Designer.cs` preview.
+
+Use the UIA3 WinApp MCP tools when:
+
+- WinForms MCP is unavailable in the active client;
+- you need to attach to a user-visible process and inspect the desktop/window list;
+- a route needs UIA3-specific behavior or a control is not exposed correctly through WinForms MCP;
+- troubleshooting focus, foreground-window behavior, or non-WinForms surfaces.
+
+Headless WinForms MCP limitations: `winforms_send_keys`, drag/drop, and double-click paths use input simulation and require the visible desktop. Prefer `winforms_type_text`, `winforms_set_value`, `winforms_select_item`, `winforms_click_element`, and `winforms_click_menu_item` for headless work.
 
 ## Running the servers manually
 
@@ -41,9 +66,15 @@ If you want to test outside an MCP-aware editor:
 
 # Serena server
 uvx --from git+https://github.com/oraios/serena serena start-mcp-server --context ide --project .
+
+# WinForms MCP server
+$env:HEADLESS = "true"
+$env:TFM = "net48"
+$env:TELEMETRY_OPTOUT = "true"
+npx -y @fnrhombus/winforms-mcp
 ```
 
-The Serena process runs until you press `Ctrl+C`. When invoked through an MCP host, it stops
+The local stdio processes run until you press `Ctrl+C`. When invoked through an MCP host, they stop
 when the client disconnects.
 
 ## Multiple Worktrees and Serena Conflicts
@@ -90,9 +121,9 @@ project_name: 010-advanced-entry-view
 
 ## Best-practice profile for this repo
 
-- Keep repo-level MCP servers minimal: `github` + `serena` only.
+- Keep repo-level MCP servers focused: `github`, `serena`, and `winforms-mcp`.
 - Keep workflow/task conventions in skills/prompt files, not additional MCP servers.
-- Enable extra MCP servers only per-task via the tool picker, then disable again.
+- Enable WinForms MCP only for UI automation tasks via the tool picker when the client supports per-task tool selection.
 - If tool list feels noisy, reset cached tools with **MCP: Reset Cached Tools**.
 
 ## Worktree best practices
@@ -108,6 +139,10 @@ project_name: 010-advanced-entry-view
 
 - **GitHub tools fail with auth errors** – sign out/in of GitHub in VS Code and restart MCP servers.
 - **`uvx` was not found on PATH** – install `uv` and reopen your shell.
+- **`npx` was not found on PATH** – install Node.js/npm and reopen VS Code.
+- **WinForms MCP package cannot be resolved** – run `npm view @fnrhombus/winforms-mcp version` to check npm registry access.
+- **Headless text input does nothing** – use WinForms MCP `winforms_type_text` or `winforms_set_value`, not `winforms_send_keys`.
+- **Headless screenshot is blank or stale** – pass the FieldWorks process ID to `winforms_take_screenshot` when the client exposes that parameter.
 - **Unable to start Serena MCP** – ensure `uvx` can reach GitHub and run:
   `uvx --from git+https://github.com/oraios/serena serena start-mcp-server --help`
 - **Language server download fails (network error)** – Serena auto-downloads C# (Roslyn) and C++ (clangd)
