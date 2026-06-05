@@ -208,4 +208,4 @@ FLExInstaller/wix6/cabcache/*
 # Verify snapshot testing - received files are transient
 *.received.png
 *.diff.png
-DataTreeTimingBaselines.json
+DataTreeTimingBaselines.json.tools/*

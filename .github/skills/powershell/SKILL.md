@@ -36,6 +36,7 @@ Conventions and safety patterns for PowerShell scripts in `scripts/` and CI.
 - Redirection (`2>&1`)
 
 **ALWAYS use `scripts/Agent/` wrapper scripts for these operations.** Do not attempt raw commands.
+For repo workflows, prefer `Build/Agent/*.ps1` or `scripts/Agent/*.ps1`; avoid invoking `.github/skills/*/scripts/*.ps1` directly from terminal.
 
 See [terminal.instructions.md](../../instructions/terminal.instructions.md) for the complete transformation table.
 
@@ -50,8 +51,4 @@ git status
 .\scripts\Agent\Git-Search.ps1 -Action show -Ref "release/9.3" -Path "file.h" -HeadLines 20
 .\scripts\Agent\Git-Search.ps1 -Action log -HeadLines 20
 .\scripts\Agent\Read-FileContent.ps1 -Path "file.cs" -HeadLines 50 -LineNumbers
-
-# BAD: these require manual approval - NEVER USE
-# git log --oneline | head -20
-# Get-Content file.cs | Select-Object -First 50
 ```

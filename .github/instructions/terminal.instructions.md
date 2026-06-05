@@ -31,5 +31,6 @@ Placement policy for wrappers:
 |--------|---------|
 | `Git-Search.ps1` | git show/diff/log/grep/blame |
 | `Read-FileContent.ps1` | File reading with filtering |
+| `Run-TestCoverage.ps1` | Collect local coverage (cobertura/xml/html summaries) |
 
 **Build/test**: Run `.\build.ps1` or `.\test.ps1` directly—they're auto-approvable.

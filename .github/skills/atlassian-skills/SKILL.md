@@ -29,20 +29,20 @@ Python utilities for Jira, Confluence, and Bitbucket integration, supporting bot
 - Use `fetch_webpage` or similar tools on JIRA URLs
 - Use GitHub issue tools for LT-* tickets
 
-**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+**ALWAYS** use these Python scripts via CLI entry points:
 
 ```powershell
 # Create a new issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_create_issue; print(jira_create_issue('LT', 'Issue title', 'Bug'))"
+python .github/skills/atlassian-skills/scripts/jira_cli.py create-issue --project-key LT --summary "Issue title" --issue-type Bug
 
 # Update an existing issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_update_issue; print(jira_update_issue('LT-22382', summary='Updated title'))"
+python .github/skills/atlassian-skills/scripts/jira_cli.py update-issue --issue-key LT-22382 --summary "Updated title"
 
 # Add a comment
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'Comment text'))"
+python .github/skills/atlassian-skills/scripts/jira_cli.py add-comment --issue-key LT-22382 --comment "Comment text"
 
 # Transition issue status
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_workflow import jira_transition_issue; print(jira_transition_issue('LT-22382', 'In Progress'))"
+python .github/skills/atlassian-skills/scripts/jira_cli.py transition --issue-key LT-22382 --transition-id 31
 ```
 
 For read-only operations (get issue, search, get comments), use `atlassian-readonly-skills` instead.
@@ -112,12 +112,12 @@ credentials = AtlassianCredentials(
     jira_url="https://your-company.atlassian.net",
     jira_username="your.email@company.com",
     jira_api_token="your_api_token",
-    
+
     # Confluence configuration (optional)
     confluence_url="https://your-company.atlassian.net/wiki",
     confluence_username="your.email@company.com",
     confluence_api_token="your_api_token",
-    
+
     # Bitbucket configuration (optional)
     # bitbucket_url="https://bitbucket.your-company.com",
     # bitbucket_pat_token="your_pat_token"
@@ -167,7 +167,7 @@ AtlassianCredentials(
     jira_pat_token: Optional[str] = None,
     jira_api_version: Optional[str] = None,  # '2' or '3', auto-detected if not set
     jira_ssl_verify: bool = False,
-    
+
     # Confluence
     confluence_url: Optional[str] = None,
     confluence_username: Optional[str] = None,
@@ -175,7 +175,7 @@ AtlassianCredentials(
     confluence_pat_token: Optional[str] = None,
     confluence_api_version: Optional[str] = None,
     confluence_ssl_verify: bool = False,
-    
+
     # Bitbucket
     bitbucket_url: Optional[str] = None,
     bitbucket_username: Optional[str] = None,
@@ -614,14 +614,14 @@ def skill_function(
     credentials: Optional[AtlassianCredentials] = None  # Always last parameter
 ) -> str:
     """Function description.
-    
+
     Args:
         required_param1: Description
         required_param2: Description
         optional_param: Description (optional)
         credentials: Optional AtlassianCredentials for Agent environments.
                     If not provided, uses environment variables.
-    
+
     Returns:
         JSON string with result or error information
     """

@@ -31,6 +31,24 @@ Use `.\test.ps1` for all managed (C#) tests.
 .\test.ps1 -NoBuild -TestProject "FwUtilsTests"
 ```
 
+## Local Coverage Reports (Managed)
+
+Use the repo wrapper to collect local, machine-readable coverage that agents can parse.
+
+```powershell
+# Default DetailControls coverage (cobertura+xml+html summaries)
+.\Build\Agent\Run-TestCoverage.ps1 -Configuration Debug -TestFilter "FullyQualifiedName~DetailControls"
+
+# Custom test slice (example)
+.\Build\Agent\Run-TestCoverage.ps1 -Configuration Debug -TestFilter "FullyQualifiedName~DataTreeTests"
+```
+
+Artifacts are written under `Output/<Configuration>/Coverage/`:
+- `coverage.cobertura.xml` (machine-readable)
+- `coverage-summary.json` (agent-friendly aggregate + lowest-coverage classes)
+- `coverage-summary.md` (human summary)
+- `html/index.html` (navigable report)
+
 ## Running Tests (Native C++)
 
 Use `.\test.ps1 -Native` for native (C++) tests. This wraps `Build/scripts/Invoke-CppTest.ps1`.

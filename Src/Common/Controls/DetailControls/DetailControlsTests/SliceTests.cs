@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2010-08-03 SliceTests.cs
+using System;
 using System.Collections;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
@@ -14,7 +16,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary></summary>
 	[TestFixture]
-	public class SliceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public partial class SliceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private DataTree m_DataTree;
 		private Slice m_Slice;
@@ -194,6 +196,96 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var ghostSlice = m_DataTree.Slices[0];
 			Assert.That(ghostSlice, Is.Not.Null);
 			Assert.That(m_Slice.PropTable, Is.EqualTo(ghostSlice.PropTable));
+		}
+
+
+
+		private sealed class ExposedSlice : Slice
+		{
+			public string ExposedHelpId => HelpId;
+			public bool ExposedShouldHide => ShouldHide;
+		}
+
+		private void CreateMoveSlices(out Slice first, out Slice middle, out Slice last)
+		{
+			m_DataTree = new DataTree();
+			var doc = new XmlDocument();
+			doc.LoadXml("<layout><part ref='A'/><part ref='B'/><part ref='C'/></layout>");
+			var layout = doc.DocumentElement;
+			var partA = layout.SelectSingleNode("part[@ref='A']");
+			var partB = layout.SelectSingleNode("part[@ref='B']");
+			var partC = layout.SelectSingleNode("part[@ref='C']");
+
+			first = new Slice { Key = new object[] { layout, partA } };
+			middle = new Slice { Key = new object[] { layout, partB } };
+			last = new Slice { Key = new object[] { layout, partC } };
+
+			m_DataTree.Controls.Add(first);
+			m_DataTree.Controls.Add(middle);
+			m_DataTree.Controls.Add(last);
+			m_DataTree.Slices.Add(first);
+			m_DataTree.Slices.Add(middle);
+			m_DataTree.Slices.Add(last);
+		}
+
+		private void CreateEmbeddedSliceHarness(out Slice root, out Slice child, out Slice outsider)
+		{
+			m_DataTree = new DataTree();
+			m_DataTree.Initialize(Cache, false, DataTreeTests.GenerateLayouts(), DataTreeTests.GenerateParts());
+
+			var doc = new XmlDocument();
+			doc.LoadXml("<layout><part ref='A'/><part ref='B'/></layout>");
+			var layout = doc.DocumentElement;
+			var partA = layout.SelectSingleNode("part[@ref='A']");
+			var partB = layout.SelectSingleNode("part[@ref='B']");
+
+			root = new Slice
+			{
+				Object = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(),
+				Key = new object[] { layout, partA },
+				Expansion = DataTree.TreeItemState.ktisFixed
+			};
+
+			child = new Slice
+			{
+				Object = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(),
+				Key = new object[] { layout, partA, partB },
+				Expansion = DataTree.TreeItemState.ktisFixed
+			};
+
+			outsider = new Slice
+			{
+				Object = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(),
+				Key = new object[] { layout, partB },
+				Expansion = DataTree.TreeItemState.ktisFixed
+			};
+
+			root.Parent = m_DataTree;
+			child.Parent = m_DataTree;
+			outsider.Parent = m_DataTree;
+			m_DataTree.Controls.Add(root);
+			m_DataTree.Controls.Add(child);
+			m_DataTree.Controls.Add(outsider);
+			m_DataTree.Slices.Add(root);
+			m_DataTree.Slices.Add(child);
+			m_DataTree.Slices.Add(outsider);
+		}
+
+		private void CreateSequentialSlices(int count, out Slice[] slices)
+		{
+			m_DataTree = new DataTree();
+			slices = new Slice[count];
+			for (int i = 0; i < count; i++)
+			{
+				var slice = new Slice
+				{
+					Key = new object[] { "k", i }
+				};
+				slice.Parent = m_DataTree;
+				m_DataTree.Controls.Add(slice);
+				m_DataTree.Slices.Add(slice);
+				slices[i] = slice;
+			}
 		}
 	}
 }
