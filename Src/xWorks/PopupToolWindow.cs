@@ -1,3 +1,4 @@
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.Utils;
@@ -58,6 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				oldActiveClerk.ActivateUI(oldUseRecordTreeBar, oldOldUpdateStatusBar);
 			}
+			FwUtils.Publisher.Publish(new PublisherParameterObject("RefreshSandbox"));
 		}
 
 		private void PopupToolWindow_Activated(object sender, EventArgs e)

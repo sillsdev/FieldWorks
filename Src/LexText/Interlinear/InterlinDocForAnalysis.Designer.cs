@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
+
 namespace SIL.FieldWorks.IText
 {
 	partial class InterlinDocForAnalysis
@@ -31,6 +33,7 @@ namespace SIL.FieldWorks.IText
 				m_queuedSegmentHvo = -1;
 				StopMediaPlay();
 			}
+			FwUtils.Subscriber.Unsubscribe(EventConstants.RefreshSandbox, RefreshSandbox);
 			ExistingFocusBox = null;
 			components = null;
 			base.Dispose(disposing);
