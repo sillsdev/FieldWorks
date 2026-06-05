@@ -166,8 +166,6 @@ public:
 	}
 
 #ifdef EXE_MODULE
-	// Data placed on the clipboard by this program.
-	static IDataObjectPtr s_qdobjClipboard;
 #ifdef USING_MFC
 
 	static bool Startup(HINSTANCE hinst, LPSTR pszCmdLine);
@@ -203,8 +201,6 @@ public:
 	static HMODULE GetModuleHandle(void)
 		{ return s_hmod; }
 	static LPCTSTR GetModulePathName(void);
-
-	static void SetClipboard(IDataObject * pdobjClipboard);
 
 	// These methods increment and decrement the reference count for the module. A module
 	// will not be unloaded from memory as long as something is still referencing it.
