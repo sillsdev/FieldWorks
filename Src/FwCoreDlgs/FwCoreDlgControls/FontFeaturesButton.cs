@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private string m_fontName; // The font for which we are editing the features.
 		private string m_fontFeatures; // The font feature string stored in the writing system.
 		private IFontFeatureProvider m_featureProvider;
+		// Enables targeted OpenType discovery traces when debugging which provider was selected
+		// for a font and why GSUB/GPOS feature tags were filtered out of the user-facing menu.
 		private static readonly TraceSwitch s_openTypeTraceSwitch =
 			new TraceSwitch("FontFeatures.OpenType", "OpenType font feature discovery and provider selection", "Off");
 		private ILgWritingSystemFactory m_wsf;

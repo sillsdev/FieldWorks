@@ -362,8 +362,8 @@ static void GetFontLanguageTags(UniscribeRunInfo & uri,
 		break;
 	}
 }
-
-static FwOpenTypeTag LanguageTagFromLocale(const StrUni & stuIcuLocale)
+// Returns the OpenType language-system tag that best matches the given ICU locale.
+static FwOpenTypeTag OpenTypeLanguageTagFromIcuLocale(const StrUni & stuIcuLocale)
 {
 	if (!stuIcuLocale.Length())
 		return 0;
@@ -415,7 +415,7 @@ static void BuildLanguageCandidates(UniscribeRunInfo & uri,
 	Vector<FwOpenTypeTag> vfontLanguageTags;
 	GetFontLanguageTags(uri, pfnLanguageTags, tagScript, vfontLanguageTags);
 
-	FwOpenTypeTag tagLocale = LanguageTagFromLocale(uri.stuIcuLocale);
+	FwOpenTypeTag tagLocale = OpenTypeLanguageTagFromIcuLocale(uri.stuIcuLocale);
 	if (tagLocale && (!pfnLanguageTags || vfontLanguageTags.Size() == 0 ||
 		ContainsOpenTypeTag(vfontLanguageTags, tagLocale)))
 	{
