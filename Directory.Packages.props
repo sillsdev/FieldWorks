@@ -157,8 +157,14 @@
 		=============================================================
 	-->
 	<ItemGroup Label="Test Infrastructure">
-		<PackageVersion Include="HarfBuzzSharp" Version="7.3.0" />
-		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="7.3.0" />
+		<!--
+			Align HarfBuzzSharp with Avalonia 11.3.x for the net48 Avalonia spike.
+			Avalonia.Skia 11.3.17 requires HarfBuzzSharp >= 8.3.1.1; keeping the
+			central pin lower causes NU1109 downgrade failures when -BuildAvalonia is used.
+			These remain non-product dependencies today (test/comparison + Avalonia spike).
+		-->
+		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
+		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
