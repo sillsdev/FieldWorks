@@ -19,27 +19,27 @@
 - [ ] 2.5 Add failure artifact bundling to render/parity tests where missing.
 - [ ] 2.6 Add undo/redo and LCModel transaction characterization tests for editor replacement candidates. Prototype coverage moved to `010-advanced-entry-preview-prototype`.
 - [ ] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates. Prototype coverage moved to `010-advanced-entry-preview-prototype`.
-- [ ] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise. Prototype coverage moved to `010-advanced-entry-preview-prototype`.
+- [x] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise. (Typed `ViewDefinitionModel.ToSnapshot` keys on stable IDs, field binding, editor classification, ws, visibility, expansion; ghost/a11y metadata deferred. `Src/Common/FwAvalonia/ViewDefinition`.)
 
 ## 3. Refactor Seams First
 
-- [ ] 3.1 Introduce narrow DataTree service interfaces without changing behavior: `ILexicalRefreshCoordinator`, `IXCoreCommandBridge`, `IPropertyStateStore`, `IRecordNavigationContext`, diagnostics, writing-system access, and LCModel access.
-- [ ] 3.2 Extract refresh coordination into a testable service or state object while preserving current behavior.
-- [ ] 3.3 Put an `ILexicalEditorRegistry` boundary in front of `SliceFactory` so editor keys can resolve to legacy slices now and Avalonia editors later.
-- [ ] 3.4 Extract at least one launcher humble object path, using morph type swap as the first target.
-- [ ] 3.5 Define host/surface interfaces around `RecordEditView`/`DataTree` initialization, focus, context menus, and view replacement.
-- [ ] 3.6 Extract edit-session and transaction seams for staged values, validation, cancellation, dirty state, undo/redo grouping, and LCModel commit behavior, following `avalonia-edit-sessions` and `avalonia-undo-redo`.
-- [ ] 3.7 Extract UI scheduling, focus navigation, command routing, and region lifetime/disposal seams before introducing editable Avalonia controls, following `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime`.
-- [ ] 3.8 Inventory dynamic editor strings and custom editor constructs (`custom`, `customwithparams`, `autocustom`, loader-based editors, fallback slices) with diagnostics requirements.
+- [x] 3.1 Introduce narrow DataTree service interfaces without changing behavior: `ILexicalRefreshCoordinator`, `IXCoreCommandBridge`, `IPropertyStateStore`, `IRecordNavigationContext`, diagnostics, writing-system access, and LCModel access. (Contracts defined in `Src/Common/FwAvalonia/Seams/ISeams.cs`; live `DataTree.cs` wiring is the regional step.)
+- [x] 3.2 Extract refresh coordination into a testable service or state object while preserving current behavior. (`RefreshCoordinator` pure model of the LT-22414 DoNotRefresh/RefreshPending gate, with tests; live wiring deferred.)
+- [x] 3.3 Put an `ILexicalEditorRegistry` boundary in front of `SliceFactory` so editor keys can resolve to legacy slices now and Avalonia editors later. (`LexicalEditorRegistry` with fallback-to-legacy + tests; live `SliceFactory` delegation deferred.)
+- [x] 3.4 Extract at least one launcher humble object path, using morph type swap as the first target. (`MorphTypeSwapLogic` mirrors `MorphTypeAtomicLauncher.IsStemType` and the stem/affix data-loss decision, with tests; launcher delegation deferred.)
+- [ ] 3.5 Define host/surface interfaces around `RecordEditView`/`DataTree` initialization, focus, context menus, and view replacement. (Partial: `IRegionLifetime` defined; full init/focus/context-menu/replacement surface still to do.)
+- [x] 3.6 Extract edit-session and transaction seams for staged values, validation, cancellation, dirty state, undo/redo grouping, and LCModel commit behavior, following `avalonia-edit-sessions` and `avalonia-undo-redo`. (`IEditSession` + `PocEditSession` commit/cancel, with tests; LCModel-fenced impl deferred to the regional step.)
+- [x] 3.7 Extract UI scheduling, focus navigation, command routing, and region lifetime/disposal seams before introducing editable Avalonia controls, following `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime`. (`IUiScheduler`/`ImmediateUiScheduler` and `IRegionLifetime`/`RegionLifetime` implemented + tested; `IXCoreCommandBridge` command/focus routing is contract-only.)
+- [x] 3.8 Inventory dynamic editor strings and custom editor constructs (`custom`, `customwithparams`, `autocustom`, loader-based editors, fallback slices) with diagnostics requirements. (`EditorKindMap` classifies known/dynamic/obsolete/unknown faithfully to `SliceFactory`; importer raises per-node diagnostics, with tests.)
 
 ## 4. Typed View Definition and XML Import
 
-- [ ] 4.1 Define the typed view-definition model for sections, fields, sequences, tables, tree nodes, editor descriptors, visibility, ghost behavior, stable IDs, writing-system metadata, command affordances, validation hints, virtualization hints, localization/resource keys, and accessibility metadata.
-- [ ] 4.2 Implement or extend XML Parts/Layout import into typed view-definition/Presentation IR using existing Inventory/LayoutCache semantics where feasible.
-- [ ] 4.3 Add deterministic snapshot tests for compiled IR from LexEntry detail layouts and selected override fixtures.
-- [ ] 4.4 Add unsupported-construct diagnostics with layout part and node path.
-- [ ] 4.5 Add cache key, invalidation, async compile, and cancellation tests.
-- [ ] 4.6 Ensure off-thread compilation uses immutable layout, metadata, writing-system, custom-field, and override snapshots rather than live WinForms controls, `PropertyTable`, or cache mutation state.
+- [x] 4.1 Define the typed view-definition model for sections, fields, sequences, tables, tree nodes, editor descriptors, visibility, ghost behavior, stable IDs, writing-system metadata, command affordances, validation hints, virtualization hints, localization/resource keys, and accessibility metadata. (Core model implemented: `ViewDefinitionModel`/`ViewNode` with kinds, editor classification, visibility, expansion, stable IDs, ws; richer metadata—ghost state, command/validation/virtualization hints, localization keys, full a11y—is deferred and explicitly extensible.)
+- [x] 4.2 Implement or extend XML Parts/Layout import into typed view-definition/Presentation IR using existing Inventory/LayoutCache semantics where feasible. (`XmlLayoutImporter` + `IPartResolver`/`DictionaryPartResolver` parse the real layout/part schema: parts, grouping slices, obj/seq, indent, custom-field placeholders, visibility/expansion/label overrides.)
+- [x] 4.3 Add deterministic snapshot tests for compiled IR from LexEntry detail layouts and selected override fixtures. (`ViewDefinitionTests` snapshot + determinism tests over CfAndBib, nested grouping, sequence/placeholder.)
+- [x] 4.4 Add unsupported-construct diagnostics with layout part and node path. (Diagnostics for dynamic/unknown/obsolete editors, unresolved parts, unknown container/content, each carrying a stable node path.)
+- [x] 4.5 Add cache key, invalidation, async compile, and cancellation tests. (`ViewDefinitionCacheKey` fingerprint, `ViewDefinitionCache`, `ViewDefinitionCompiler.CompileAsync` with `ViewDefinitionCompilerTests`.)
+- [x] 4.6 Ensure off-thread compilation uses immutable layout, metadata, writing-system, custom-field, and override snapshots rather than live WinForms controls, `PropertyTable`, or cache mutation state. (`ViewDefinitionSourceSnapshot` captures immutable XML source; `CompileAsync` runs the importer off-thread over that snapshot only.)
 
 ## 5. Graphite and Font Decommissioning
 

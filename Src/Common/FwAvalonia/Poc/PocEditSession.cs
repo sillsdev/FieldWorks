@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 {
@@ -12,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 	/// captured snapshot. The product implementation will fence a real LCModel undo task; the POC
 	/// proves the commit/cancel boundary semantics that the editors must drive.
 	/// </summary>
-	public sealed class PocEditSession
+	public sealed class PocEditSession : IEditSession
 	{
 		private readonly PocEntryDto _entry;
 		private readonly Dictionary<WsAlternative, string> _originalText = new Dictionary<WsAlternative, string>();
