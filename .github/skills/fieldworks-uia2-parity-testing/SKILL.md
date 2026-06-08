@@ -10,6 +10,17 @@ description: Use when designing or reviewing FieldWorks UI automation, UIA2, Fla
 - UIA2/FlaUI/Appium/WinAppDriver tests require realized desktop windows and validate native accessibility trees, focus, invoke patterns, and product integration.
 - Do not call a headless smoke test a UIA2 baseline.
 
+## Path 3 Role
+In a Path 3 parity bundle, UIA2/FlaUI/Appium contributes the workflow/accessibility lane only:
+
+- launcher/chooser reachability,
+- focus movement and focus return,
+- invoke/cancel/accept paths,
+- native automation tree identity,
+- shell-level keyboard behavior.
+
+It does not replace semantic snapshots or visual/render evidence. A desktop automation result should be reported alongside the semantic and visual artifacts for the same scenario id.
+
 ## Required Evidence
 - Stable automation IDs or accessible names for controls under test.
 - Explicit coverage of focus movement, invoke/click path, popup/chooser reachability, keyboard shortcuts, and failure artifacts.
@@ -22,4 +33,4 @@ description: Use when designing or reviewing FieldWorks UI automation, UIA2, Fla
 - IME coverage is claimed without a real text editor/control surface and input-method evidence.
 
 ## Handoff
-Classify each test as headless, native desktop automation, or smoke substitute, and state what parity claim it can and cannot support.
+Classify each test as headless, native desktop automation, or smoke substitute, and state what parity claim it can and cannot support. When used in a Path 3 bundle, say explicitly which workflow/accessibility assertions the desktop lane proved and which still need another lane.

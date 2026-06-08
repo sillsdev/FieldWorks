@@ -54,6 +54,32 @@ Semantic snapshots SHALL normalize volatile values and key comparisons around st
 - **WHEN** a visual layout difference does not alter stable semantic identity, editor kind, binding, focus order, accessibility identity, or accepted density thresholds
 - **THEN** the parity result SHALL classify it as visual variance rather than a semantic regression
 
+### Requirement: Path 3 parity uses triangulated bundles
+
+Scenarios that judge visual fidelity for migrated Avalonia surfaces SHALL use a triangulated parity bundle rather than a single artifact lane.
+
+Each bundle SHALL contain:
+
+- a semantic snapshot keyed on stable node identity and binding,
+- visual evidence for the legacy WinForms surface and the Avalonia surface,
+- an image diff or equivalent visual-variance artifact,
+- accessibility/workflow evidence for focus, invoke, popup reachability, and automation identity,
+- a failure summary classifying the mismatch by lane.
+
+#### Scenario: Control-level Avalonia visual evidence uses headless rendering
+- **WHEN** the parity target is an Avalonia control or region that can be evaluated without product-shell integration
+- **THEN** the visual lane MAY use Avalonia.Headless rendered frames
+- **AND** the evidence SHALL state that it is control-level visual parity, not desktop integration parity
+
+#### Scenario: Workflow parity still needs desktop automation
+- **WHEN** the parity claim involves chooser dialogs, focus return, desktop automation trees, or shell-level interaction
+- **THEN** the bundle SHALL include native desktop automation or live-window evidence
+- **AND** an Avalonia.Headless result alone SHALL NOT satisfy the workflow/accessibility lane
+
+#### Scenario: Bundle failure classifies the broken lane
+- **WHEN** a parity bundle fails
+- **THEN** the failure summary SHALL distinguish whether the primary defect is semantic, visual/density, workflow/accessibility, performance, or an unsupported migration gap
+
 ### Requirement: Migration gates include behavior matrices
 
 Each region proposed for Avalonia completion SHALL provide behavior matrices for undo/redo, LCModel transactions, keyboard/focus behavior, accessibility metadata, localization/resource identity, customer overrides, dynamic editor diagnostics, performance budgets, native-call instrumentation, and Graphite-free default behavior.

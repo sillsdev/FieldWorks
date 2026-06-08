@@ -20,10 +20,23 @@ Semantic snapshots should preserve behaviorally meaningful identity and omit inc
 - Pixel/render tests need deterministic fixtures, clear thresholds, and failure artifacts that reviewers can inspect.
 - A semantic snapshot is not a substitute for visual/render parity when typography, density, wrapping, or native rendering seams are under review.
 
+## Path 3 Bundle
+For migration-quality visual fidelity, prefer a triangulated bundle instead of a single artifact lane:
+
+- semantic snapshot,
+- visual evidence for legacy WinForms and Avalonia,
+- diff/variance artifact,
+- workflow/accessibility evidence,
+- one failure summary that classifies the broken lane.
+
+Use the semantic snapshot as the anchor. Visual variance should be interpreted against stable binding/focus/accessibility identity, not in isolation.
+
+Control-level Avalonia visual evidence may come from Avalonia.Headless rendered frames when the scenario is explicitly control-scoped. Desktop workflow/accessibility claims still need live-window evidence.
+
 ## Review Red Flags
 - Placeholder metadata is presented as real binding or writing-system parity.
 - Snapshot tests update large JSON blobs without a small behavioral explanation.
 - Cache invalidation tests depend on sleeps or filesystem timestamp luck.
 
 ## Handoff
-State whether evidence is semantic, visual, accessibility, or performance parity, and identify remaining unproven axes.
+State whether evidence is semantic, visual, accessibility/workflow, or performance parity, and identify remaining unproven axes. When a Path 3 bundle is used, name each artifact and which lane it proves.

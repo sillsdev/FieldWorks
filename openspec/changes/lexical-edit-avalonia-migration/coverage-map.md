@@ -97,3 +97,21 @@ Additional global gates:
 - Relevant `./test.ps1 -TestProject ...` commands must pass for touched areas.
 - `openspec validate lexical-edit-avalonia-migration --strict` must pass after task/doc changes.
 - Any default-path migration claim must include a forbidden-symbol audit, Graphite/native viewing proof, accessibility metadata checks, localization/resource checks, and rollback/default-off evidence.
+
+## 9. Path 3 Bundle: Semantic + Visual + Accessibility/Workflow
+
+Path 3 is the migration-quality lane for judging visual fidelity: one scenario bundle combines semantic parity, visual/density parity, and accessibility/workflow parity so reviewers and AI can inspect the same evidence set.
+
+| Lane | Source of Truth | Current Status | Path 3 Blocking Gaps |
+|---|---|---|---|
+| Semantic parity | `DataTreeTests` semantic baseline + typed IR snapshots | Partial | Broader fixture set for ghost/custom-field/accessibility identity; selected override fixtures. |
+| Visual parity | WinForms render baselines and Avalonia rendered frames/screenshots | Partial | Canonical scenario bundle format; live Avalonia screenshots once the host work lands; matched DPI/framing rules. |
+| Workflow/accessibility parity | UIA2/FlaUI/Appium on live windows; in-repo smoke substitutes meanwhile | Partial | Task 2.4 true UIA2/FlaUI baselines; remaining 2.7 keyboard/IME/focus-restoration/localization work. |
+| Failure evidence | `RenderFailureArtifactBundler`, semantic snapshots, trace/log output | Partial | Unified failure summary id shared across semantic, visual, and workflow lanes. |
+
+Path 3 blockers before a region can claim strong visual fidelity:
+
+1. A scenario bundle must exist with all three lanes or a documented reason one lane is still pending.
+2. Avalonia.Headless evidence is sufficient only for control-level visual behavior; it does not replace desktop workflow/accessibility evidence.
+3. Live WinForms/Avalonia screenshots must use matched framing, DPI, and state whenever density or wrapping is under review.
+4. A failure report must classify the broken lane rather than emitting only a raw image diff.

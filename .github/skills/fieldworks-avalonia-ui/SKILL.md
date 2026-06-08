@@ -17,6 +17,8 @@ description: Use when creating, reviewing, or fixing Avalonia UI modules in Fiel
 - UI work should stay in bindings/view models where practical; avoid logic-heavy code-behind.
 - Keep module preview data lightweight unless the change explicitly opts into LCModel/project data.
 - Preserve repo build/test entry points: `./build.ps1` and `./test.ps1`.
+- For Path 3 visual parity, remember the official Avalonia behavior: headless tests can simulate keyboard/mouse/text input on `Window`, `Dispatcher.UIThread.RunJobs()` flushes deferred UI work, and visual regression capture requires Skia + `UseHeadlessDrawing=false` with `CaptureRenderedFrame()`.
+- Stamp stable `AutomationProperties.Name` and `AutomationProperties.AutomationId` on user-facing controls that participate in parity bundles so the UIA/accessibility lane can identify them reliably.
 
 ## Review Red Flags
 - A Common project directly references a feature module without an explicit architecture decision.
@@ -25,4 +27,4 @@ description: Use when creating, reviewing, or fixing Avalonia UI modules in Fiel
 - Claims of accessibility, localization, IME, or keyboard parity without executable evidence.
 
 ## Handoff
-Report exact Avalonia docs consulted, tests run, remaining prototype gaps, and whether the change is product-facing or preview-only.
+Report exact Avalonia docs consulted, tests run, remaining prototype gaps, and whether the change is product-facing or preview-only. For Path 3 work, say whether the visual evidence is control-level headless capture or live desktop capture, and which accessibility identities were assigned via `AutomationProperties`.

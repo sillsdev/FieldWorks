@@ -20,6 +20,7 @@
 - [x] 2.6 Add undo/redo and LCModel transaction characterization tests for editor replacement candidates. (`DataTreeUndoRedoCharacterizationTests`: CitationForm/Bibliography multistring edits revert/replay, multi-field single-task = single undo step, consecutive edits = distinct steps, slice reflects reverted model after reshow. Runs against real DataTree/Slice on net48.)
 - [ ] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates. (Disposal/unsubscribe + accessibility-name + focus-order done in `DataTreeDisposalCharacterizationTests` (7 tests, real DataTree/Slice); keyboard/IME, focus restoration across refresh, and localization still pending and partly need a running app.)
 - [x] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise. (Typed `ViewDefinitionModel.ToSnapshot` keys on stable IDs, field binding, editor classification, ws, visibility, expansion; ghost/a11y metadata deferred. `Src/Common/FwAvalonia/ViewDefinition`.)
+- [ ] 2.9 Define the canonical Path 3 parity bundle for legacy baselines: semantic snapshot, matched WinForms screenshot(s), workflow/accessibility evidence, and a failure summary id shared across artifacts.
 
 ## 3. Refactor Seams First
 
@@ -62,6 +63,7 @@
 - [ ] 6.6 Add Avalonia.Headless tests for command shortcuts, popup focus return, validation errors, edit commit/cancel, keyboard/IME behavior, accessibility metadata, and disposal cleanup.
 - [ ] 6.7 Add styling/resource and density token gates for shared `FwAvalonia` resources before broad editor rollout.
 - [ ] 6.8 Make the first editable Avalonia slice satisfy `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local screen phase of `avalonia-command-focus` before expanding to more editors.
+- [ ] 6.9 Add control-level visual parity capture for Avalonia using Avalonia.Headless with Skia-enabled rendered-frame capture, and stamp stable `AutomationProperties.Name`/`AutomationProperties.AutomationId` on user-facing controls used in Path 3 bundles.
 
 ## 7. Tables, Slices, and Lexical Edit Migration
 
@@ -72,6 +74,7 @@
 - [ ] 7.5 Gate full Lexical Edit replacement on semantic parity, UIA2 legacy baselines, Avalonia.Headless tests, render comparison evidence, native viewing/render seam audit evidence, and no unapproved Graphite/native-rendering default-path dependency.
 - [ ] 7.6 Add a control-selection decision matrix for `TreeView`, `TreeDataGrid`, `ItemsRepeater`, and owned virtualized controls using density, virtualization, selection, accessibility, licensing/version, and multi-writing-system criteria.
 - [ ] 7.7 Add large-fixture performance budgets for open time, scroll/expand latency, typing latency, realized control count, memory, and cache invalidation.
+- [ ] 7.8 Produce Path 3 parity bundles for each first-slice and core parity fixture: WinForms visual evidence, Avalonia visual evidence, semantic snapshot, workflow/accessibility evidence, and an actionable failure summary.
 
 ## 8. C++ Viewing/Render Seam Decommissioning
 
@@ -103,3 +106,4 @@
 - [ ] 10.7 Run `CI: Full local check` before commit/push.
 - [ ] 10.8 Verify every migrated-region manifest has passing evidence for native-call instrumentation, no unapproved Graphite/native-rendering default-path dependency, undo/redo, accessibility, localization, keyboard/IME, customer override fixtures, performance budgets, and rollback behavior.
 - [ ] 10.9 Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining those seams ad hoc during shell work.
+- [ ] 10.10 Verify every scenario used to claim visual fidelity has a complete Path 3 bundle and that each bundle explicitly classifies which lanes are proven (`semantic`, `visual`, `workflow/accessibility`, `performance`) and which remain pending.
