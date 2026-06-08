@@ -416,7 +416,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string name = $"DataTreeRenderTests.DataTreeRender_{scenarioId}";
 			var verification = RenderSnapshotVerifier.Verify(bitmap, directory, name, scenarioId);
 			if (!verification.Passed)
+			{
+				// Bundle failure artifacts (received/diff images + summary) for CI diagnosis before failing.
+				RenderFailureArtifactBundler.BundleFailureArtifacts(
+					verification, "DataTreeRenderTests", $"DataTreeRender_{scenarioId}", scenarioId);
 				Assert.Fail(verification.FailureMessage);
+			}
 
 			await Task.CompletedTask;
 		}
