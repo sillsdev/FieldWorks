@@ -20,14 +20,14 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	public class RenderEngineFactory : DisposableBase, IRenderEngineFactory
 	{
-		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>> m_fontEngines;
+		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>>> m_fontEngines;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RenderEngineFactory"/> class.
 		/// </summary>
 		public RenderEngineFactory()
 		{
-			m_fontEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>>();
+			m_fontEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>>>();
 		}
 
 		/// <summary>
@@ -36,30 +36,37 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Font name may be '&lt;default font&gt;' which produces a renderer suitable for the default
 		/// font.
 		/// </summary>
-		public IRenderEngine get_Renderer(ILgWritingSystem ws, IVwGraphics vg)
+		public IRenderEngine GetRenderer(ILgWritingSystem ws, IVwGraphics vg)
 		{
 			LgCharRenderProps chrp = vg.FontCharProperties;
 			string fontName = MarshalEx.UShortToString(chrp.szFaceName);
+			bool usesDefaultFont = fontName == "<default font>";
 			if (fontName == "<default font>")
 			{
 				fontName = ws.DefaultFontName;
 				MarshalEx.StringToUShort(fontName, chrp.szFaceName);
 				vg.SetupGraphics(ref chrp);
 			}
-			Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>> wsFontEngines;
+			Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>> wsFontEngines;
 			if (!m_fontEngines.TryGetValue(ws, out wsFontEngines))
 			{
-				wsFontEngines = new Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>();
+				wsFontEngines = new Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>>();
 				m_fontEngines[ws] = wsFontEngines;
 			}
+			string fontFeatures = GetFontFeatures(chrp, ws, usesDefaultFont);
+			if (chrp.szFontVar != null)
+			{
+				MarshalEx.StringToUShort(fontFeatures ?? string.Empty, chrp.szFontVar);
+				vg.SetupGraphics(ref chrp);
+			}
 			var key = Tuple.Create(fontName, chrp.ttvBold == (int)FwTextToggleVal.kttvForceOn,
-				chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn);
+				chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn, fontFeatures);
 			Tuple<bool, IRenderEngine> fontEngine;
 			if (!wsFontEngines.TryGetValue(key, out fontEngine))
 			{
 				// We don't have a font engine stored for this combination of font face with bold and italic
 				// so we will create the engine for it here
-				wsFontEngines[key] = GetRenderingEngine(fontName, vg, ws);
+				wsFontEngines[key] = GetRenderingEngine(fontName, fontFeatures, vg, ws);
 			}
 			else if (fontEngine.Item1 == ws.IsGraphiteEnabled)
 			{
@@ -72,24 +79,39 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Destroy all the engines associated with this ws and create one for this key.
 				ReleaseRenderEngines(wsFontEngines.Values);
 				wsFontEngines.Clear();
-				var renderingEngine = GetRenderingEngine(fontName, vg, ws);
+				var renderingEngine = GetRenderingEngine(fontName, fontFeatures, vg, ws);
 				wsFontEngines[key] = renderingEngine;
 			}
 
 			return wsFontEngines[key].Item2;
 		}
 
-		private Tuple<bool, IRenderEngine> GetRenderingEngine(string fontName, IVwGraphics vg, ILgWritingSystem ws)
+		IRenderEngine IRenderEngineFactory.get_Renderer(ILgWritingSystem ws, IVwGraphics vg)
+		{
+			return GetRenderer(ws, vg);
+		}
+
+		private static string GetFontFeatures(LgCharRenderProps chrp, ILgWritingSystem ws, bool usesDefaultFont)
+		{
+			string charRenderFeatures = chrp.szFontVar == null
+				? string.Empty
+				: FontFeatureSettings.NormalizePreservingLegacy(MarshalEx.UShortToString(chrp.szFontVar));
+			if (!string.IsNullOrEmpty(charRenderFeatures))
+				return charRenderFeatures;
+
+			if (usesDefaultFont)
+				return FontFeatureSettings.NormalizePreservingLegacy(ws.DefaultFontFeatures);
+			return string.Empty;
+		}
+
+		private Tuple<bool, IRenderEngine> GetRenderingEngine(string fontName, string fontFeatures, IVwGraphics vg, ILgWritingSystem ws)
 		{
 			// NB: Even if the ws claims graphite is enabled, this might not be a graphite font
 			if (ws.IsGraphiteEnabled)
 			{
 				var graphiteEngine = GraphiteEngineClass.Create();
 
-				string fontFeatures = null;
-				if (fontName == ws.DefaultFontName)
-					fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(ws.DefaultFontFeatures);
-				graphiteEngine.InitRenderer(vg, fontFeatures);
+				graphiteEngine.InitRenderer(vg, GraphiteFontFeatures.ConvertFontFeatureCodesToIds(fontFeatures));
 				// check if the font is a valid Graphite font
 				if (graphiteEngine.FontIsValid)
 				{
@@ -100,14 +122,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				// It wasn't really a graphite font - release the graphite one and create a Uniscribe below
 				Marshal.ReleaseComObject(graphiteEngine);
 			}
-			return new Tuple<bool, IRenderEngine>(ws.IsGraphiteEnabled, GetUniscribeEngine(vg, ws));
+			return new Tuple<bool, IRenderEngine>(ws.IsGraphiteEnabled, GetUniscribeEngine(vg, ws, fontFeatures));
 		}
 
-		private IRenderEngine GetUniscribeEngine(IVwGraphics vg, ILgWritingSystem ws)
+		private IRenderEngine GetUniscribeEngine(IVwGraphics vg, ILgWritingSystem ws, string fontFeatures)
 		{
 			IRenderEngine uniscribeEngine;
 			uniscribeEngine = UniscribeEngineClass.Create();
-			uniscribeEngine.InitRenderer(vg, null);
+			uniscribeEngine.InitRenderer(vg, fontFeatures);
 			uniscribeEngine.RenderEngineFactory = this;
 			uniscribeEngine.WritingSystemFactory = ws.WritingSystemFactory;
 
@@ -119,7 +141,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines()
 		{
-			foreach (Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>> wsGraphiteEngines in m_fontEngines.Values)
+			foreach (Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>> wsGraphiteEngines in m_fontEngines.Values)
 				ReleaseRenderEngines(wsGraphiteEngines.Values);
 			m_fontEngines.Clear();
 		}
@@ -129,7 +151,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines(ILgWritingSystemFactory wsf)
 		{
-			foreach (KeyValuePair<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>> kvp in m_fontEngines
+			foreach (KeyValuePair<ILgWritingSystem, Dictionary<Tuple<string, bool, bool, string>, Tuple<bool, IRenderEngine>>> kvp in m_fontEngines
 				.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
 			{
 				ReleaseRenderEngines(kvp.Value.Values);

@@ -17,6 +17,7 @@ Description:
 #pragma hdrstop
 // any other headers (not precompiled)
 #include "LayoutCache.h"
+#include <limits.h>
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
@@ -39,10 +40,506 @@ static DummyFactory g_fact(_T("SIL.Language1.UniscribeSeg"));
 // Vector to hold UniscribeRunInfos in DoAllRuns()
 static Vector<UniscribeRunInfo> g_vuri;
 
+typedef ULONG FwOpenTypeTag;
+
+struct FwOpenTypeFeatureRecord
+{
+	FwOpenTypeTag tagFeature;
+	LONG lParameter;
+};
+
+struct FwTextRangeProperties
+{
+	FwOpenTypeFeatureRecord * potfRecords;
+	int cotfRecords;
+};
+
+struct FwScriptCharProp
+{
+	WORD fCanGlyphAlone : 1;
+	WORD reserved : 15;
+};
+
+struct FwScriptGlyphProp
+{
+	SCRIPT_VISATTR sva;
+	WORD reserved;
+};
+
+typedef HRESULT (WINAPI * FwScriptShapeOpenTypeProc)(HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *,
+	FwOpenTypeTag, FwOpenTypeTag, int *, FwTextRangeProperties **, int, const WCHAR *, int,
+	int, WORD *, FwScriptCharProp *, WORD *, FwScriptGlyphProp *, int *);
+typedef HRESULT (WINAPI * FwScriptPlaceOpenTypeProc)(HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *,
+	FwOpenTypeTag, FwOpenTypeTag, int *, FwTextRangeProperties **, int, const WCHAR *, WORD *,
+	FwScriptCharProp *, int, WORD *, FwScriptGlyphProp *, int, int *, GOFFSET *, ABC *);
+typedef HRESULT (WINAPI * FwScriptItemizeOpenTypeProc)(const WCHAR *, int, int,
+	const SCRIPT_CONTROL *, const SCRIPT_STATE *, SCRIPT_ITEM *, FwOpenTypeTag *, int *);
+typedef HRESULT (WINAPI * FwScriptGetFontScriptTagsProc)(HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *,
+	int, FwOpenTypeTag *, int *);
+typedef HRESULT (WINAPI * FwScriptGetFontLanguageTagsProc)(HDC, SCRIPT_CACHE *, SCRIPT_ANALYSIS *,
+	FwOpenTypeTag, int, FwOpenTypeTag *, int *);
+typedef int (WINAPI * FwGetLocaleInfoExProc)(LPCWSTR, LCTYPE, LPWSTR, int);
+
+#ifndef LOCALE_SOPENTYPELANGUAGETAG
+#define LOCALE_SOPENTYPELANGUAGETAG 0x0000007a
+#endif
+
+static int CallGetLocaleInfoEx(LPCWSTR pszLocale, LCTYPE type, LPWSTR pszData, int cchData)
+{
+	static bool s_fTried = false;
+	static FwGetLocaleInfoExProc s_pfnGetLocaleInfoEx = NULL;
+	if (!s_fTried)
+	{
+		HMODULE hKernel32 = ::GetModuleHandle(L"kernel32.dll");
+		if (hKernel32)
+		{
+			s_pfnGetLocaleInfoEx = reinterpret_cast<FwGetLocaleInfoExProc>(
+				::GetProcAddress(hKernel32, "GetLocaleInfoEx"));
+		}
+		s_fTried = true;
+	}
+	return s_pfnGetLocaleInfoEx ? s_pfnGetLocaleInfoEx(pszLocale, type, pszData, cchData) : 0;
+}
+
+static FwOpenTypeTag MakeOpenTypeTag(const OLECHAR * prgchTag)
+{
+	return static_cast<FwOpenTypeTag>(
+		(static_cast<unsigned char>(prgchTag[0])) |
+		(static_cast<unsigned char>(prgchTag[1]) << 8) |
+		(static_cast<unsigned char>(prgchTag[2]) << 16) |
+		(static_cast<unsigned char>(prgchTag[3]) << 24));
+}
+
+static bool IsOpenTypeTagChar(OLECHAR ch)
+{
+	return ch >= 0x20 && ch <= 0x7e;
+}
+
+static void OpenTypeTagToDebugText(FwOpenTypeTag tag, OLECHAR * prgchTag, int cchTag)
+{
+	if (cchTag < 5)
+		return;
+
+	if (!tag)
+	{
+		wcscpy_s(prgchTag, cchTag, L"----");
+		return;
+	}
+
+	for (int ich = 0; ich < 4; ++ich)
+	{
+		OLECHAR ch = static_cast<OLECHAR>((tag >> (ich * 8)) & 0xff);
+		prgchTag[ich] = IsOpenTypeTagChar(ch) ? ch : L'?';
+	}
+	prgchTag[4] = 0;
+}
+
+static void TraceOpenTypeRenderEvent(const OLECHAR * pszMessage, HRESULT hr,
+	FwOpenTypeTag tagScript, FwOpenTypeTag tagLanguage, int cglyphMax)
+{
+#if defined(WIN32) || defined(WIN64) || defined(_M_X64)
+	OLECHAR rgchScript[5];
+	OLECHAR rgchLanguage[5];
+	OpenTypeTagToDebugText(tagScript, rgchScript, _countof(rgchScript));
+	OpenTypeTagToDebugText(tagLanguage, rgchLanguage, _countof(rgchLanguage));
+	StrUni stu;
+	stu.Format(L"UniscribeSegment OpenType: %s (hr=0x%08x, script='%s', language='%s', glyphMax=%d).\n",
+		pszMessage, static_cast<unsigned int>(hr), rgchScript, rgchLanguage, cglyphMax);
+	::OutputDebugStringW(stu.Chars());
+#else
+	(void)pszMessage;
+	(void)hr;
+	(void)tagScript;
+	(void)tagLanguage;
+	(void)cglyphMax;
+#endif
+}
+
+static bool TryParseFontFeatureRecords(const OLECHAR * prgchFontVar,
+	Vector<FwOpenTypeFeatureRecord> & vfeatureRecords)
+{
+	vfeatureRecords.Delete(0, vfeatureRecords.Size());
+	if (!prgchFontVar || !prgchFontVar[0])
+		return false;
+
+	const OLECHAR * pch = prgchFontVar;
+	while (*pch)
+	{
+		while (*pch == L' ' || *pch == L',')
+			++pch;
+		if (!*pch)
+			break;
+
+		const OLECHAR * pchTag = pch;
+		int cchTag = 0;
+		while (pch[cchTag] && pch[cchTag] != L'=' && pch[cchTag] != L',' && pch[cchTag] != L' ')
+			++cchTag;
+
+		if (cchTag != 4 || !IsOpenTypeTagChar(pchTag[0]) || !IsOpenTypeTagChar(pchTag[1]) ||
+			!IsOpenTypeTagChar(pchTag[2]) || !IsOpenTypeTagChar(pchTag[3]))
+		{
+			while (*pch && *pch != L',')
+				++pch;
+			continue;
+		}
+
+		pch += cchTag;
+		while (*pch == L' ')
+			++pch;
+		if (*pch != L'=')
+		{
+			while (*pch && *pch != L',')
+				++pch;
+			continue;
+		}
+		++pch;
+		while (*pch == L' ')
+			++pch;
+
+		long value = 0;
+		bool fHaveDigit = false;
+		while (*pch >= L'0' && *pch <= L'9')
+		{
+			int digit = *pch - L'0';
+			if (value > (LONG_MAX - digit) / 10)
+			{
+				fHaveDigit = false;
+				while (*pch >= L'0' && *pch <= L'9')
+					++pch;
+				break;
+			}
+			fHaveDigit = true;
+			value = value * 10 + digit;
+			++pch;
+		}
+
+		if (fHaveDigit)
+		{
+			FwOpenTypeFeatureRecord record;
+			record.tagFeature = MakeOpenTypeTag(pchTag);
+			record.lParameter = value;
+			vfeatureRecords.Push(record);
+		}
+
+		while (*pch && *pch != L',')
+			++pch;
+	}
+
+	return vfeatureRecords.Size() > 0;
+}
+
+static bool TextRangeHasOpenTypeFeatures(IVwTextSource * pts, int ichMin, int cch)
+{
+	int ich = ichMin;
+	int ichLim = ichMin + cch;
+	Vector<FwOpenTypeFeatureRecord> vfeatureRecords;
+	while (ich < ichLim)
+	{
+		LgCharRenderProps chrp;
+		ZeroMemory(&chrp, isizeof(chrp));
+		int ichMinRun;
+		int ichLimRun;
+		CheckHr(pts->GetCharProps(ich, &chrp, &ichMinRun, &ichLimRun));
+		if (TryParseFontFeatureRecords(chrp.szFontVar, vfeatureRecords))
+			return true;
+		if (ichLimRun <= ich)
+			break;
+		ich = min(ichLimRun, ichLim);
+	}
+	return false;
+}
+
+static void GetOpenTypeProcs(FwScriptShapeOpenTypeProc * ppfnShape,
+	FwScriptPlaceOpenTypeProc * ppfnPlace, FwScriptItemizeOpenTypeProc * ppfnItemize = NULL,
+	FwScriptGetFontScriptTagsProc * ppfnScriptTags = NULL,
+	FwScriptGetFontLanguageTagsProc * ppfnLanguageTags = NULL)
+{
+	static bool s_fTried = false;
+	static FwScriptShapeOpenTypeProc s_pfnShape = NULL;
+	static FwScriptPlaceOpenTypeProc s_pfnPlace = NULL;
+	static FwScriptItemizeOpenTypeProc s_pfnItemize = NULL;
+	static FwScriptGetFontScriptTagsProc s_pfnScriptTags = NULL;
+	static FwScriptGetFontLanguageTagsProc s_pfnLanguageTags = NULL;
+	if (!s_fTried)
+	{
+		HMODULE hUsp10 = ::GetModuleHandle(L"usp10.dll");
+		if (!hUsp10)
+			hUsp10 = ::LoadLibrary(L"usp10.dll");
+		if (hUsp10)
+		{
+			s_pfnShape = reinterpret_cast<FwScriptShapeOpenTypeProc>(
+				::GetProcAddress(hUsp10, "ScriptShapeOpenType"));
+			s_pfnPlace = reinterpret_cast<FwScriptPlaceOpenTypeProc>(
+				::GetProcAddress(hUsp10, "ScriptPlaceOpenType"));
+			s_pfnItemize = reinterpret_cast<FwScriptItemizeOpenTypeProc>(
+				::GetProcAddress(hUsp10, "ScriptItemizeOpenType"));
+			s_pfnScriptTags = reinterpret_cast<FwScriptGetFontScriptTagsProc>(
+				::GetProcAddress(hUsp10, "ScriptGetFontScriptTags"));
+			s_pfnLanguageTags = reinterpret_cast<FwScriptGetFontLanguageTagsProc>(
+				::GetProcAddress(hUsp10, "ScriptGetFontLanguageTags"));
+		}
+		s_fTried = true;
+	}
+	if (ppfnShape)
+		*ppfnShape = s_pfnShape;
+	if (ppfnPlace)
+		*ppfnPlace = s_pfnPlace;
+	if (ppfnItemize)
+		*ppfnItemize = s_pfnItemize;
+	if (ppfnScriptTags)
+		*ppfnScriptTags = s_pfnScriptTags;
+	if (ppfnLanguageTags)
+		*ppfnLanguageTags = s_pfnLanguageTags;
+}
+
+static bool ContainsOpenTypeTag(const Vector<FwOpenTypeTag> & vtags, FwOpenTypeTag tag)
+{
+	for (int itag = 0; itag < vtags.Size(); ++itag)
+	{
+		if (vtags[itag] == tag)
+			return true;
+	}
+	return false;
+}
+
+static void AddOpenTypeTag(Vector<FwOpenTypeTag> & vtags, FwOpenTypeTag tag)
+{
+	if (tag && !ContainsOpenTypeTag(vtags, tag))
+		vtags.Push(tag);
+}
+
+static void GetFontScriptTags(UniscribeRunInfo & uri, FwScriptGetFontScriptTagsProc pfnScriptTags,
+	Vector<FwOpenTypeTag> & vtags)
+{
+	if (!pfnScriptTags)
+		return;
+	int ctagMax = 8;
+	Vector<FwOpenTypeTag> vtagBuffer;
+	for (;;)
+	{
+		vtagBuffer.Resize(ctagMax);
+		int ctag = 0;
+		HRESULT hr;
+		IgnoreHr(hr = pfnScriptTags(uri.hdc, &uri.sc, uri.psa, ctagMax, vtagBuffer.Begin(), &ctag));
+		if (hr == E_OUTOFMEMORY)
+		{
+			ctagMax *= 2;
+			continue;
+		}
+		if (SUCCEEDED(hr))
+		{
+			for (int itag = 0; itag < ctag; ++itag)
+				AddOpenTypeTag(vtags, vtagBuffer[itag]);
+		}
+		break;
+	}
+}
+
+static void GetFontLanguageTags(UniscribeRunInfo & uri,
+	FwScriptGetFontLanguageTagsProc pfnLanguageTags, FwOpenTypeTag tagScript,
+	Vector<FwOpenTypeTag> & vtags)
+{
+	vtags.Delete(0, vtags.Size());
+	if (!pfnLanguageTags || !tagScript)
+		return;
+	int ctagMax = 8;
+	for (;;)
+	{
+		vtags.Resize(ctagMax);
+		int ctag = 0;
+		HRESULT hr;
+		IgnoreHr(hr = pfnLanguageTags(uri.hdc, &uri.sc, uri.psa, tagScript, ctagMax,
+			vtags.Begin(), &ctag));
+		if (hr == E_OUTOFMEMORY)
+		{
+			ctagMax *= 2;
+			continue;
+		}
+		if (SUCCEEDED(hr))
+			vtags.Resize(ctag);
+		else
+			vtags.Delete(0, vtags.Size());
+		break;
+	}
+}
+// Returns the OpenType language-system tag that best matches the given ICU locale.
+static FwOpenTypeTag OpenTypeLanguageTagFromIcuLocale(const StrUni & stuIcuLocale)
+{
+	if (!stuIcuLocale.Length())
+		return 0;
+
+	OLECHAR rgchLocale[LOCALE_NAME_MAX_LENGTH];
+	int cchLocale = min(stuIcuLocale.Length(), LOCALE_NAME_MAX_LENGTH - 1);
+	for (int ich = 0; ich < cchLocale; ++ich)
+	{
+		OLECHAR ch = stuIcuLocale.GetAt(ich);
+		rgchLocale[ich] = ch == L'_' ? L'-' : ch;
+	}
+	rgchLocale[cchLocale] = 0;
+
+	OLECHAR rgchAbbrev[16];
+	int cchAbbrev = CallGetLocaleInfoEx(rgchLocale, LOCALE_SOPENTYPELANGUAGETAG, rgchAbbrev,
+		_countof(rgchAbbrev));
+	if (cchAbbrev >= 5 && IsOpenTypeTagChar(rgchAbbrev[0]) && IsOpenTypeTagChar(rgchAbbrev[1]) &&
+		IsOpenTypeTagChar(rgchAbbrev[2]) && IsOpenTypeTagChar(rgchAbbrev[3]))
+	{
+		return MakeOpenTypeTag(rgchAbbrev);
+	}
+
+	cchAbbrev = CallGetLocaleInfoEx(rgchLocale, LOCALE_SABBREVLANGNAME, rgchAbbrev,
+		_countof(rgchAbbrev));
+	if (cchAbbrev <= 1)
+		return 0;
+
+	OLECHAR rgchTag[4] = { L' ', L' ', L' ', L' ' };
+	int cchTag = min(cchAbbrev - 1, 3);
+	if (cchTag < 2)
+		return 0;
+	for (int ich = 0; ich < cchTag; ++ich)
+	{
+		OLECHAR ch = rgchAbbrev[ich];
+		if (ch >= L'a' && ch <= L'z')
+			ch = static_cast<OLECHAR>(ch - L'a' + L'A');
+		if (ch < L'A' || ch > L'Z')
+			return 0;
+		rgchTag[ich] = ch;
+	}
+	return MakeOpenTypeTag(rgchTag);
+}
+
+static void BuildLanguageCandidates(UniscribeRunInfo & uri,
+	FwScriptGetFontLanguageTagsProc pfnLanguageTags, FwOpenTypeTag tagScript,
+	Vector<FwOpenTypeTag> & vtags)
+{
+	vtags.Delete(0, vtags.Size());
+	Vector<FwOpenTypeTag> vfontLanguageTags;
+	GetFontLanguageTags(uri, pfnLanguageTags, tagScript, vfontLanguageTags);
+
+	FwOpenTypeTag tagLocale = OpenTypeLanguageTagFromIcuLocale(uri.stuIcuLocale);
+	if (tagLocale && (!pfnLanguageTags || vfontLanguageTags.Size() == 0 ||
+		ContainsOpenTypeTag(vfontLanguageTags, tagLocale)))
+	{
+		AddOpenTypeTag(vtags, tagLocale);
+	}
+	vtags.Push(0);
+	if (!tagLocale && vfontLanguageTags.Size() == 1)
+		AddOpenTypeTag(vtags, vfontLanguageTags[0]);
+}
+
+static bool ShapePlaceRunWithOpenType(UniscribeRunInfo & uri, int & cglyphMax,
+	Vector<FwOpenTypeFeatureRecord> & vfeatureRecords, ABC & abc)
+{
+	FwScriptShapeOpenTypeProc pfnShape;
+	FwScriptPlaceOpenTypeProc pfnPlace;
+	FwScriptGetFontScriptTagsProc pfnScriptTags;
+	FwScriptGetFontLanguageTagsProc pfnLanguageTags;
+	GetOpenTypeProcs(&pfnShape, &pfnPlace, NULL, &pfnScriptTags, &pfnLanguageTags);
+	if (!pfnShape || !pfnPlace)
+	{
+		TraceOpenTypeRenderEvent(L"ScriptShapeOpenType or ScriptPlaceOpenType is unavailable; falling back",
+			E_NOTIMPL, 0, 0, cglyphMax);
+		return false;
+	}
+
+	Vector<FwScriptCharProp> vcharProps;
+	Vector<FwScriptGlyphProp> vglyphProps;
+	Vector<int> vrgich;
+	vcharProps.Resize(uri.cch);
+	vrgich.Resize(1);
+	vrgich[0] = uri.cch;
+
+	FwTextRangeProperties rangeProperties;
+	rangeProperties.potfRecords = vfeatureRecords.Begin();
+	rangeProperties.cotfRecords = vfeatureRecords.Size();
+	FwTextRangeProperties * prangeProperties = &rangeProperties;
+
+	static const OLECHAR rgchDflt[] = { L'D', L'F', L'L', L'T', 0 };
+	static const OLECHAR rgchLatn[] = { L'l', L'a', L't', L'n', 0 };
+	Vector<FwOpenTypeTag> vscriptTags;
+	AddOpenTypeTag(vscriptTags, uri.otTagScript);
+	GetFontScriptTags(uri, pfnScriptTags, vscriptTags);
+	AddOpenTypeTag(vscriptTags, MakeOpenTypeTag(rgchDflt));
+	AddOpenTypeTag(vscriptTags, MakeOpenTypeTag(rgchLatn));
+	for (;;)
+	{
+		vglyphProps.Resize(cglyphMax);
+		HRESULT hr = E_FAIL;
+		FwOpenTypeTag tagLastScript = 0;
+		FwOpenTypeTag tagLastLanguage = 0;
+		bool fRetryWithLargerGlyphBuffer = false;
+		for (int iscriptTag = 0; iscriptTag < vscriptTags.Size(); ++iscriptTag)
+		{
+			Vector<FwOpenTypeTag> vlanguageTags;
+			BuildLanguageCandidates(uri, pfnLanguageTags, vscriptTags[iscriptTag], vlanguageTags);
+			for (int ilanguageTag = 0; ilanguageTag < vlanguageTags.Size(); ++ilanguageTag)
+			{
+				tagLastScript = vscriptTags[iscriptTag];
+				tagLastLanguage = vlanguageTags[ilanguageTag];
+				DISABLE_MULTISCRIBE
+				{
+					IgnoreHr(hr = pfnShape(uri.hdc, &uri.sc, uri.psa, tagLastScript,
+						tagLastLanguage, vrgich.Begin(), &prangeProperties, 1, uri.prgch,
+						uri.cch, cglyphMax, uri.prgCluster, vcharProps.Begin(), uri.prgGlyph,
+						vglyphProps.Begin(), &uri.cglyph));
+				}
+				if (hr == E_OUTOFMEMORY)
+				{
+					cglyphMax *= 2;
+					uri.UpdateGlyphSize(cglyphMax);
+					TraceOpenTypeRenderEvent(
+						L"ScriptShapeOpenType requested a larger glyph buffer; retrying",
+						hr, tagLastScript, tagLastLanguage, cglyphMax);
+					fRetryWithLargerGlyphBuffer = true;
+					break;
+				}
+				if (FAILED(hr))
+					continue;
+
+				DISABLE_MULTISCRIBE
+				{
+					IgnoreHr(hr = pfnPlace(uri.hdc, &uri.sc, uri.psa, tagLastScript,
+						tagLastLanguage, vrgich.Begin(), &prangeProperties, 1, uri.prgch,
+						uri.prgCluster, vcharProps.Begin(), uri.cch, uri.prgGlyph,
+						vglyphProps.Begin(), uri.cglyph, uri.prgAdvance, uri.prgoff, &abc));
+				}
+				if (hr == E_OUTOFMEMORY)
+				{
+					cglyphMax *= 2;
+					uri.UpdateGlyphSize(cglyphMax);
+					TraceOpenTypeRenderEvent(
+						L"ScriptPlaceOpenType requested a larger glyph buffer; retrying",
+						hr, tagLastScript, tagLastLanguage, cglyphMax);
+					fRetryWithLargerGlyphBuffer = true;
+					break;
+				}
+				if (SUCCEEDED(hr))
+				{
+					for (int iglyph = 0; iglyph < uri.cglyph; ++iglyph)
+						uri.prgsva[iglyph] = vglyphProps[iglyph].sva;
+					uri.fScriptPlaceFailed = false;
+					TraceOpenTypeRenderEvent(L"selected OpenType shaping path", S_OK,
+						tagLastScript, tagLastLanguage, cglyphMax);
+					return true;
+				}
+			}
+			if (fRetryWithLargerGlyphBuffer)
+				break;
+		}
+		if (fRetryWithLargerGlyphBuffer)
+			continue;
+
+		uri.fScriptPlaceFailed = true;
+		TraceOpenTypeRenderEvent(L"OpenType shaping failed; falling back to classic Uniscribe",
+			hr, tagLastScript, tagLastLanguage, cglyphMax);
+		return false;
+	}
+}
+
 // cache of SCRIPT_CACHE values accessed by LgCharRenderProps.
 UniscribeSegment::FwScriptCache UniscribeSegment::g_fsc;
 
 ScrItemVec UniscribeSegment::g_vscri; // vector of script items from ScriptItemize.
+OpenTypeTagVec UniscribeSegment::g_votScriptTags; // OpenType script tags parallel to g_vscri.
 int UniscribeSegment::g_cscri; // number of valid items in ScriptItemize.
 
 //:>********************************************************************************************
@@ -62,6 +559,7 @@ UniscribeRunInfo::UniscribeRunInfo(int cglyphMax, int cClusterMax)
 	rcDst = Rect();
 	pchrp = NULL;
 	psa = NULL;
+	otTagScript = 0;
 	sc = NULL;
 	dxdWidth = 0;
 	fScriptPlaceFailed = false;
@@ -95,6 +593,8 @@ UniscribeRunInfo::UniscribeRunInfo(const UniscribeRunInfo& oriUri)
 	rcSrc = oriUri.rcSrc;
 	rcDst = oriUri.rcDst;
 	psa = oriUri.psa;
+	otTagScript = oriUri.otTagScript;
+	stuIcuLocale.Assign(oriUri.stuIcuLocale.Chars(), oriUri.stuIcuLocale.Length());
 	sc = oriUri.sc;
 	dxdWidth = oriUri.dxdWidth;
 	fScriptPlaceFailed = oriUri.fScriptPlaceFailed;
@@ -287,11 +787,16 @@ STDMETHODIMP UniscribeSegment::QueryInterface(REFIID riid, void **ppv)
 void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 {
 	HRESULT hr;
-	LayoutPassCache * pLayoutPassCache = IsPath1ShapeCacheEnabled() ? GetCurrentLayoutPassCache() : NULL;
+	const OLECHAR * prgchFontVar = uri.pchrp ? uri.pchrp->szFontVar : NULL;
+	Vector<FwOpenTypeFeatureRecord> vfeatureRecords;
+	bool fUseOpenTypeFeatures = TryParseFontFeatureRecords(prgchFontVar, vfeatureRecords);
+	LayoutPassCache * pLayoutPassCache = (!fUseOpenTypeFeatures && IsPath1ShapeCacheEnabled()) ?
+		GetCurrentLayoutPassCache() : NULL;
 	HFONT hfont = (HFONT)::GetCurrentObject(uri.hdc, OBJ_FONT);
 	if (pLayoutPassCache && uri.psa)
 	{
-		ShapeRunEntry * pShapeEntry = pLayoutPassCache->ShapeCache().Find(uri.prgch, uri.cch, hfont, *uri.psa);
+		ShapeRunEntry * pShapeEntry = pLayoutPassCache->ShapeCache().Find(uri.prgch, uri.cch,
+			hfont, *uri.psa, prgchFontVar);
 		if (pShapeEntry)
 		{
 			uri.sc = g_fsc.FindScriptCache(uri);
@@ -315,7 +820,6 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 		uri.UpdateClusterSize(uri.cch + 100); // reduce # of resize calls
 	}
 	SCRIPT_CACHE sc = uri.sc = g_fsc.FindScriptCache(/**uri.pchrp*/uri);
-
 #if !defined(_WIN32) && !defined(_M_X64)
 		// Associate VwGraphics with the cache as Linux uniscribe implementation needs it.
 		IVwGraphicsWin32Ptr qvg32;
@@ -323,9 +827,17 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 		SetCachesVwGraphics(&uri.sc, qvg32);
 #endif
 
+	bool fOpenTypePlaced = false;
+	ABC abcOpenType;
 	// loop to try ScriptShape multiple times
 	for (;;)
 	{
+		if (fUseOpenTypeFeatures && ShapePlaceRunWithOpenType(uri, cglyphMax, vfeatureRecords, abcOpenType))
+		{
+			fOpenTypePlaced = true;
+			break;
+		}
+
 		DISABLE_MULTISCRIBE
 		{
 			IgnoreHr(hr = ::ScriptShape(uri.hdc, &uri.sc, uri.prgch, uri.cch, cglyphMax, uri.psa,
@@ -383,10 +895,18 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 	// Having generated glyphs, now generate advance widths and combining
 	// offsets.
 	ABC abc;          // Run combined ABC
-	DISABLE_MULTISCRIBE
+	if (fOpenTypePlaced)
 	{
-		IgnoreHr(hr = ::ScriptPlace(uri.hdc, &uri.sc, uri.prgGlyph, uri.cglyph, uri.prgsva,
-			uri.psa, uri.prgAdvance, uri.prgoff, &abc));
+		abc = abcOpenType;
+		hr = S_OK;
+	}
+	else
+	{
+		DISABLE_MULTISCRIBE
+		{
+			IgnoreHr(hr = ::ScriptPlace(uri.hdc, &uri.sc, uri.prgGlyph, uri.cglyph, uri.prgsva,
+				uri.psa, uri.prgAdvance, uri.prgoff, &abc));
+		}
 	}
 	uri.fScriptPlaceFailed = FAILED(hr);
 	if (FAILED(hr))
@@ -439,10 +959,10 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 	{
 		pLayoutPassCache->ShapeCache().AddComputeMs(::GetTickCount() - dwStartMs);
 		pLayoutPassCache->ShapeCache().Store(uri.prgch, uri.cch, hfont, *uri.psa,
+			prgchFontVar,
 			uri.prgGlyph, uri.prgsva, uri.prgAdvance, uri.prgcst, uri.prgoff,
 			uri.prgCluster, uri.cglyph, uri.dxdWidth, uri.fScriptPlaceFailed);
 	}
-
 	if (uri.sc && uri.sc != sc)
 	{
 		g_fsc.StoreScriptCache(/**uri.pchrp, uri.sc*/uri);
@@ -2578,7 +3098,9 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 	if (ppAnalysis)
 		*ppAnalysis = NULL;
 
-	LayoutPassCache * pLayoutPassCache = IsPath2AnalysisCacheEnabled() ? GetCurrentLayoutPassCache() : NULL;
+	bool fNeedOpenTypeScriptTags = cch > 0 && TextRangeHasOpenTypeFeatures(pts, ichMin, cch);
+	LayoutPassCache * pLayoutPassCache = (!fNeedOpenTypeScriptTags && IsPath2AnalysisCacheEnabled()) ?
+		GetCurrentLayoutPassCache() : NULL;
 	TextAnalysisEntry * pCachedAnalysis = NULL;
 	int cchOrig = cch;
 	int ws = 0;
@@ -2598,6 +3120,10 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 				*pfTextIsNfc = pCachedAnalysis->m_fTextIsNfc;
 			*pprgchBuf = pCachedAnalysis->m_vchNfc.Size() > 0 ? pCachedAnalysis->m_vchNfc.Begin() : prgchDefBuf;
 			pCachedAnalysis->CopyScriptItemsTo(g_vscri, citem);
+			if (g_votScriptTags.Size() < citem)
+				g_votScriptTags.Resize(citem);
+			for (int itag = 0; itag < citem; ++itag)
+				g_votScriptTags[itag] = 0;
 			g_cscri = citem;
 			if (ppAnalysis)
 				*ppAnalysis = pCachedAnalysis;
@@ -2669,6 +3195,8 @@ int UniscribeSegment::CallScriptItemize(OLECHAR * prgchDefBuf, int cchBuf,
 		citemMax = 100; // default starting size
 		g_vscri.Resize(citemMax);
 	}
+	if (g_votScriptTags.Size() < citemMax)
+		g_votScriptTags.Resize(citemMax);
 
 //	ComBool fBaseRtl;
 //	CheckHr(pts->GetBaseRtl(&fBaseRtl));
@@ -2715,31 +3243,65 @@ typedef struct tag_SCRIPT_STATE {
 		WORD(fwsRtl ? 1 : 0),
 		false, false, false, false, false, false, fIsArabic, false, false, 0
 		};
+	bool fUsedOpenTypeItemize = false;
 
 	if (cch) // Can only call if at least one char.
 	{
 		DISABLE_MULTISCRIBE
 		{
-			for (;;)
+			FwScriptItemizeOpenTypeProc pfnItemize;
+			GetOpenTypeProcs(NULL, NULL, &pfnItemize);
+			if (fNeedOpenTypeScriptTags && pfnItemize)
 			{
-				HRESULT hr;
-				IgnoreHr(hr = ::ScriptItemize(*pprgchBuf, cch, citemMax,
-					&scon, //NULL, // default SCRIPT_CONTROL
-					&ss,
-					g_vscri.Begin(),
-					&citem));
+				for (;;)
+				{
+					HRESULT hr;
+					IgnoreHr(hr = pfnItemize(*pprgchBuf, cch, citemMax,
+						&scon,
+						&ss,
+						g_vscri.Begin(),
+						g_votScriptTags.Begin(),
+						&citem));
 
-				if (hr == E_OUTOFMEMORY)
-				{
-					citemMax *= 2; // try twice as much
-					g_vscri.Resize(citemMax); // will fail if really out of memory
-					continue;
+					if (hr == E_OUTOFMEMORY)
+					{
+						citemMax *= 2;
+						g_vscri.Resize(citemMax);
+						g_votScriptTags.Resize(citemMax);
+						continue;
+					}
+					if (SUCCEEDED(hr))
+						fUsedOpenTypeItemize = true;
+					break;
 				}
-				if (FAILED(hr))
+			}
+
+			if (!fUsedOpenTypeItemize)
+			{
+				for (;;)
 				{
-					ThrowHr(WarnHr(hr), L"ScriptItemize failed");
+					HRESULT hr;
+					IgnoreHr(hr = ::ScriptItemize(*pprgchBuf, cch, citemMax,
+						&scon, //NULL, // default SCRIPT_CONTROL
+						&ss,
+						g_vscri.Begin(),
+						&citem));
+
+					if (hr == E_OUTOFMEMORY)
+					{
+						citemMax *= 2; // try twice as much
+						g_vscri.Resize(citemMax); // will fail if really out of memory
+						g_votScriptTags.Resize(citemMax);
+						continue;
+					}
+					if (FAILED(hr))
+					{
+						ThrowHr(WarnHr(hr), L"ScriptItemize failed");
+					}
+					for (int itag = 0; itag < citem; ++itag)
+						g_votScriptTags[itag] = 0;
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -2748,6 +3310,7 @@ typedef struct tag_SCRIPT_STATE {
 		citem = 0;
 		g_vscri[0].iCharPos = 0;
 		g_vscri[1].iCharPos = 0;
+		g_votScriptTags[0] = 0;
 	}
 	g_cscri = citem;
 
@@ -2778,6 +3341,21 @@ void UniscribeSegment::InterpretChrp(LgCharRenderProps &chrp)
 			ThrowHr(WarnHr(E_UNEXPECTED));
 		CheckHr(qLgWritingSystem->InterpretChrp(&chrp));
 	}
+}
+
+void UniscribeSegment::GetIcuLocale(int ws, StrUni & stuIcuLocale)
+{
+	stuIcuLocale.Assign(L"");
+	ILgWritingSystemFactoryPtr qLgWritingSystemFactory;
+	CheckHr(m_qure->get_WritingSystemFactory(&qLgWritingSystemFactory));
+	if (!qLgWritingSystemFactory)
+		return;
+
+	SmartBstr sbstrLocale;
+	HRESULT hr;
+	IgnoreHr(hr = qLgWritingSystemFactory->GetIcuLocaleFromWs(ws, &sbstrLocale));
+	if (SUCCEEDED(hr) && BstrLen(sbstrLocale) > 0)
+		stuIcuLocale.Assign(sbstrLocale.Chars(), BstrLen(sbstrLocale));
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2866,8 +3444,10 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 			int ichMinNfc = ichLimNfc;
 
 			LgCharRenderProps chrp;
+			StrUni stuIcuLocale;
 			int ichMinDum; // for GetCharProps to return
 			CheckHr(m_qts->GetCharProps(ichMin, &chrp, &ichMinDum, &ichLim));
+			GetIcuLocale(chrp.ws, stuIcuLocale);
 			InterpretChrp(chrp);
 			CheckHr(pvg->SetupGraphics(&chrp));
 
@@ -2913,6 +3493,10 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 				uri.prgch = prgchBuf + ichMinRun; // Get the characters of the run, if any
 				uri.cch = cch;
 				uri.psa = &pscri->a;
+				int iscriptItem = static_cast<int>(pscri - g_vscri.Begin());
+				uri.otTagScript = (iscriptItem >= 0 && iscriptItem < g_votScriptTags.Size())
+					? g_votScriptTags[iscriptItem] : 0;
+				uri.stuIcuLocale.Assign(stuIcuLocale.Chars(), stuIcuLocale.Length());
 				uri.dxdStretch = dxdStretchRemaining; // default for last seg
 				uri.fLast = ichLimRun == ichLimNfc && ichLimNfc == cchNfc; // This is the last char group if it reaches the last surface character.
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Text;
 using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -37,6 +38,17 @@ namespace SIL.FieldWorks.XWorks
 		"<Publications></Publications></DictionaryConfiguration>";
 		private const string ConfigurationTemplateWithAllPublications = "<?xml version='1.0' encoding='utf-8'?><DictionaryConfiguration name='AConfigPubtest' allPublications='true'>" +
 		"<Publications></Publications></DictionaryConfiguration>";
+
+		[Test]
+		public void XhtmlDocView_ImplementsRefreshableRoot()
+		{
+			using (var docView = new TestXhtmlDocView())
+			{
+				// FwXWindow refreshes a view subtree through the first IRefreshableRoot it finds;
+				// this keeps XHTML dictionary views from being skipped during reconstruct/refresh.
+				Assert.That(docView, Is.InstanceOf<IRefreshableRoot>());
+			}
+		}
 
 		[Test]
 		public void SplitPublicationsByConfiguration_AllPublicationIsIn()

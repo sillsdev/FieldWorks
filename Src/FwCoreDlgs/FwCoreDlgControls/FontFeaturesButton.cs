@@ -3,9 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -36,11 +39,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private System.ComponentModel.IContainer components = null;
 		private string m_fontName; // The font for which we are editing the features.
 		private string m_fontFeatures; // The font feature string stored in the writing system.
-		private IRenderingFeatures m_featureEngine;
+		private IFontFeatureProvider m_featureProvider;
+		// Enables targeted OpenType discovery traces when debugging which provider was selected
+		// for a font and why GSUB/GPOS feature tags were filtered out of the user-facing menu.
+		private static readonly TraceSwitch s_openTypeTraceSwitch =
+			new TraceSwitch("FontFeatures.OpenType", "OpenType font feature discovery and provider selection", "Off");
 		private ILgWritingSystemFactory m_wsf;
 		private int[] m_values;	// The actual list of values we're editing.
 		private int[] m_ids;		// The corresponding ids.
 		private bool m_isGraphiteFont;
+		private bool m_hasFontFeatures;
+		private bool m_useGraphiteFeatures;
 		#endregion
 
 		#region Constructor and dispose stuff
@@ -109,6 +118,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			public Graphics m_graphics;
 			/// <summary></summary>
 			private IntPtr m_hdc;
+
+			public IntPtr Hdc
+			{
+				get { return m_hdc; }
+			}
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
@@ -279,7 +293,52 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			set
 			{
 				CheckDisposed();
-				m_fontFeatures = value;
+				m_fontFeatures = FontFeatureSettings.NormalizePreservingLegacy(value);
+			}
+		}
+
+		/// <summary>
+		/// Updates the current font feature context and refreshes discovery exactly once.
+		/// </summary>
+		internal void RefreshFeatureContext(string fontName, string fontFeatures, bool useGraphiteFeatures)
+		{
+			CheckDisposed();
+			m_fontName = fontName;
+			m_fontFeatures = FontFeatureSettings.NormalizePreservingLegacy(fontFeatures);
+			m_useGraphiteFeatures = useGraphiteFeatures;
+			SetupFontFeatures();
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether Graphite feature discovery should be preferred
+		/// when the current font supports both Graphite and OpenType features.
+		/// </summary>
+		public bool UseGraphiteFeatures
+		{
+			get
+			{
+				CheckDisposed();
+				return m_useGraphiteFeatures;
+			}
+			set
+			{
+				CheckDisposed();
+				if (m_useGraphiteFeatures == value)
+					return;
+				m_useGraphiteFeatures = value;
+				SetupFontFeatures();
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the current font has configurable features.
+		/// </summary>
+		public bool HasFontFeatures
+		{
+			get
+			{
+				CheckDisposed();
+				return m_hasFontFeatures;
 			}
 		}
 
@@ -307,6 +366,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void SetupFontFeatures()
 		{
 			CheckDisposed();
+			m_featureProvider = null;
+			m_hasFontFeatures = false;
 
 			if (string.IsNullOrEmpty(m_fontName))
 			{
@@ -317,47 +378,54 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			using (var hdg = new HoldDummyGraphics(m_fontName, false, false, this))
 			{
-				IRenderEngine renderer = GraphiteEngineClass.Create();
-				renderer.InitRenderer(hdg.m_vwGraphics, m_fontFeatures);
-				// check if the font is a valid Graphite font
-				if (!renderer.FontIsValid)
-				{
-					m_isGraphiteFont = false;
-					Enabled = false;
+				var graphiteProvider = CreateGraphiteProvider(hdg);
+				m_isGraphiteFont = graphiteProvider != null;
+				var openTypeProvider = OpenTypeFontFeatureProvider.Create(hdg.Hdc);
+
+				var primaryProvider = m_useGraphiteFeatures
+					? (IFontFeatureProvider)graphiteProvider
+					: openTypeProvider;
+				var secondaryProvider = m_useGraphiteFeatures
+					? openTypeProvider
+					: (IFontFeatureProvider)graphiteProvider;
+
+				if (TrySelectFeatureProvider(primaryProvider))
 					return;
-				}
-				renderer.WritingSystemFactory = m_wsf;
-				m_isGraphiteFont = true;
-				m_featureEngine = renderer as IRenderingFeatures;
-				if (m_featureEngine == null)
-				{
-					Enabled = false;
+
+				if (TrySelectFeatureProvider(secondaryProvider))
 					return;
-				}
-				int cfid;
-				m_featureEngine.GetFeatureIDs(0, null, out cfid);
-				if (cfid == 0)
-				{
-					Enabled = false;
-					return;
-				}
-				if (cfid == 1)
-				{
-					// What if it's the dummy built-in graphite feature that we ignore?
-					// Get the list of features (only 1).
-					using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
-					{
-						m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-						int [] ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-						if (ids[0] == kGrLangFeature)
-						{
-							Enabled = false;
-							return;
-						}
-					}
-				}
-				Enabled = true;
+
+				Enabled = false;
 			}
+		}
+
+		private bool TrySelectFeatureProvider(IFontFeatureProvider provider)
+		{
+			if (provider == null || !provider.HasFeatures)
+				return false;
+
+			m_featureProvider = provider;
+			m_hasFontFeatures = true;
+			Enabled = true;
+			Trace.WriteLineIf(s_openTypeTraceSwitch.TraceInfo,
+				string.Format(CultureInfo.InvariantCulture,
+					"FontFeaturesButton selected {0} provider for '{1}'.",
+					provider.ProviderName,
+					m_fontName ?? string.Empty),
+				s_openTypeTraceSwitch.DisplayName);
+			return true;
+		}
+
+		private IFontFeatureProvider CreateGraphiteProvider(HoldDummyGraphics hdg)
+		{
+			IRenderEngine renderer = GraphiteEngineClass.Create();
+			renderer.InitRenderer(hdg.m_vwGraphics, GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures));
+			if (!renderer.FontIsValid)
+				return null;
+
+			renderer.WritingSystemFactory = m_wsf;
+			var featureEngine = renderer as IRenderingFeatures;
+			return featureEngine == null ? null : new GraphiteFontFeatureProvider(featureEngine);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -645,18 +713,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
-			var menu = components.ContextMenu("ContextMenu");
-			int cfid;
-			m_featureEngine.GetFeatureIDs(0, null, out cfid);
+			if (m_featureProvider == null)
+				return;
 
-			// Get the list of features.
-			using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(cfid))
-			{
-				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
-				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
-			}
-			m_fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
-			m_values = ParseFeatureString(m_ids, m_fontFeatures);
+			var menu = components.ContextMenu("ContextMenu");
+			m_ids = m_featureProvider.GetFeatureIds();
+			var parserFeatureString = m_featureProvider is OpenTypeFontFeatureProvider
+				? ConvertRendererNeutralFeatureStringToIds(m_fontFeatures)
+				: GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
+			m_values = ParseFeatureString(m_ids, parserFeatureString);
 			Debug.Assert(m_ids.Length == m_values.Length);
 
 			for (int ifeat = 0; ifeat < m_ids.Length; ++ifeat)
@@ -665,21 +730,16 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				if (id == kGrLangFeature)
 					continue; // Don't show Graphite built-in 'lang' feature.
 				string label;
-				m_featureEngine.GetFeatureLabel(id, kUiCodePage, out label);
+				label = m_featureProvider.GetFeatureLabel(id, kUiCodePage);
 				if (label.Length == 0)
 				{
 					//Create backup default string, ie, "Feature #1".
-					label = string.Format(FwCoreDlgControls.kstidFeature, id);
+					label = string.Format(FwCoreDlgControls.kstidFeature, m_featureProvider.GetFeatureTag(id));
 				}
 				int cValueIds;
 				int nDefault;
 				int [] valueIds;
-				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(kMaxValPerFeat))
-				{
-					m_featureEngine.GetFeatureValues(id, kMaxValPerFeat, valueIdsM,
-						out cValueIds, out nDefault);
-					valueIds = MarshalEx.NativeToArray<int>(valueIdsM, cValueIds);
-				}
+				valueIds = m_featureProvider.GetFeatureValues(id, kMaxValPerFeat, out cValueIds, out nDefault);
 				// If we know a value for this feature, use it. Otherwise init to default.
 				int featureValue = nDefault;
 				if (m_values[ifeat] != Int32.MaxValue)
@@ -695,9 +755,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					// ids of 0 and 1. We further require that the actual values belong to a
 					// natural boolean set.
 					string valueLabelT; // Label corresponding to 'true' etc, the checked value
-					m_featureEngine.GetFeatureValueLabel(id, 1, kUiCodePage, out valueLabelT);
+					valueLabelT = m_featureProvider.GetFeatureValueLabel(id, 1, kUiCodePage);
 					string valueLabelF; // Label corresponding to 'false' etc, the unchecked val.
-					m_featureEngine.GetFeatureValueLabel(id, 0, kUiCodePage, out valueLabelF);
+					valueLabelF = m_featureProvider.GetFeatureValueLabel(id, 0, kUiCodePage);
 
 					// Enhance: these should be based on a resource, or something that depends
 					// on the code page, if the code page is ever not constant.
@@ -733,8 +793,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					for (int ival = 0; ival < valueIds.Length; ++ival)
 					{
 						string valueLabel;
-						m_featureEngine.GetFeatureValueLabel(id, valueIds[ival],
-							kUiCodePage, out valueLabel);
+						valueLabel = m_featureProvider.GetFeatureValueLabel(id, valueIds[ival], kUiCodePage);
 						if (valueLabel.Length == 0)
 						{
 							// Create backup default string.
@@ -804,6 +863,449 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			m_fontFeatures = GenerateFeatureString(m_ids, m_values);
 			OnFontFeatureSelected(new EventArgs());
+		}
+
+		private interface IFontFeatureProvider
+		{
+			string ProviderName { get; }
+			bool HasFeatures { get; }
+			int[] GetFeatureIds();
+			string GetFeatureTag(int featureId);
+			string GetFeatureLabel(int featureId, int languageId);
+			int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue);
+			string GetFeatureValueLabel(int featureId, int valueId, int languageId);
+		}
+
+		private sealed class GraphiteFontFeatureProvider : IFontFeatureProvider
+		{
+			private readonly IRenderingFeatures m_featureEngine;
+			private readonly int[] m_featureIds;
+
+			public GraphiteFontFeatureProvider(IRenderingFeatures featureEngine)
+			{
+				m_featureEngine = featureEngine;
+				int featureCount;
+				m_featureEngine.GetFeatureIDs(0, null, out featureCount);
+				if (featureCount == 0)
+				{
+					m_featureIds = Array.Empty<int>();
+					return;
+				}
+				using (ArrayPtr idsM = MarshalEx.ArrayToNative<int>(featureCount))
+				{
+					m_featureEngine.GetFeatureIDs(featureCount, idsM, out featureCount);
+					m_featureIds = MarshalEx.NativeToArray<int>(idsM, featureCount)
+						.Where(featureId => featureId != kGrLangFeature).ToArray();
+				}
+			}
+
+			public bool HasFeatures
+			{
+				get { return m_featureIds.Length > 0; }
+			}
+
+			public string ProviderName
+			{
+				get { return "Graphite"; }
+			}
+
+			public int[] GetFeatureIds()
+			{
+				return m_featureIds.ToArray();
+			}
+
+			public string GetFeatureTag(int featureId)
+			{
+				return ConvertFontFeatureIdToCode(featureId);
+			}
+
+			public string GetFeatureLabel(int featureId, int languageId)
+			{
+				string label;
+				m_featureEngine.GetFeatureLabel(featureId, languageId, out label);
+				return label;
+			}
+
+			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
+			{
+				using (ArrayPtr valueIdsM = MarshalEx.ArrayToNative<int>(maxValues))
+				{
+					m_featureEngine.GetFeatureValues(featureId, maxValues, valueIdsM, out valueCount, out defaultValue);
+					return MarshalEx.NativeToArray<int>(valueIdsM, valueCount);
+				}
+			}
+
+			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
+			{
+				string label;
+				m_featureEngine.GetFeatureValueLabel(featureId, valueId, languageId, out label);
+				return label;
+			}
+		}
+
+		private sealed class OpenTypeFontFeatureProvider : IFontFeatureProvider
+		{
+			private static readonly Dictionary<string, string> s_featureLabelResourceIds = new Dictionary<string, string>
+			{
+				{ "aalt", "kstidOpenTypeFeature_aalt" },
+				{ "c2sc", "kstidOpenTypeFeature_c2sc" },
+				{ "calt", "kstidOpenTypeFeature_calt" },
+				{ "case", "kstidOpenTypeFeature_case" },
+				{ "ccmp", "kstidOpenTypeFeature_ccmp" },
+				{ "clig", "kstidOpenTypeFeature_clig" },
+				{ "dlig", "kstidOpenTypeFeature_dlig" },
+				{ "frac", "kstidOpenTypeFeature_frac" },
+				{ "kern", "kstidOpenTypeFeature_kern" },
+				{ "liga", "kstidOpenTypeFeature_liga" },
+				{ "lnum", "kstidOpenTypeFeature_lnum" },
+				{ "onum", "kstidOpenTypeFeature_onum" },
+				{ "pnum", "kstidOpenTypeFeature_pnum" },
+				{ "salt", "kstidOpenTypeFeature_salt" },
+				{ "smcp", "kstidOpenTypeFeature_smcp" },
+				{ "ss01", "kstidOpenTypeFeature_ss01" },
+				{ "ss02", "kstidOpenTypeFeature_ss02" },
+				{ "ss03", "kstidOpenTypeFeature_ss03" },
+				{ "ss04", "kstidOpenTypeFeature_ss04" },
+				{ "ss05", "kstidOpenTypeFeature_ss05" },
+				{ "tnum", "kstidOpenTypeFeature_tnum" },
+			};
+
+			private readonly int[] m_featureIds;
+
+			private OpenTypeFontFeatureProvider(IEnumerable<string> tags)
+			{
+				m_featureIds = tags.Select(ConvertFontFeatureCodeToId).Distinct().OrderBy(featureId => GetFeatureTag(featureId), StringComparer.Ordinal).ToArray();
+			}
+
+			public static OpenTypeFontFeatureProvider Create(IntPtr hdc)
+			{
+				var tags = OpenTypeFontFeatureReader.GetFeatureTags(hdc);
+				return tags.Count == 0 ? null : new OpenTypeFontFeatureProvider(tags);
+			}
+
+			public bool HasFeatures
+			{
+				get { return m_featureIds.Length > 0; }
+			}
+
+			public string ProviderName
+			{
+				get { return "OpenType"; }
+			}
+
+			public int[] GetFeatureIds()
+			{
+				return m_featureIds.ToArray();
+			}
+
+			public string GetFeatureTag(int featureId)
+			{
+				return ConvertFontFeatureIdToCode(featureId);
+			}
+
+			public string GetFeatureLabel(int featureId, int languageId)
+			{
+				var tag = GetFeatureTag(featureId);
+				string resourceId;
+				if (s_featureLabelResourceIds.TryGetValue(tag, out resourceId))
+				{
+					var label = FwCoreDlgControls.ResourceManager.GetString(resourceId, CultureInfo.CurrentUICulture);
+					if (!string.IsNullOrEmpty(label))
+						return label;
+				}
+				return tag;
+			}
+
+			public int[] GetFeatureValues(int featureId, int maxValues, out int valueCount, out int defaultValue)
+			{
+				defaultValue = 0;
+				valueCount = 2;
+				return new[] { 0, 1 };
+			}
+
+			public string GetFeatureValueLabel(int featureId, int valueId, int languageId)
+			{
+				return valueId == 0
+					? FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOff", CultureInfo.CurrentUICulture)
+					: FwCoreDlgControls.ResourceManager.GetString("kstidOpenTypeFeatureValueOn", CultureInfo.CurrentUICulture);
+			}
+		}
+
+		private static int ConvertFontFeatureCodeToId(string fontFeature)
+		{
+			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
+			byte[] numbers = fontFeature.Select(Convert.ToByte).ToArray();
+			return BitConverter.ToInt32(numbers, 0);
+		}
+
+		internal static string ConvertRendererNeutralFeatureStringToIds(string fontFeatures)
+		{
+			return string.Join(",", FontFeatureSettings.Parse(fontFeatures)
+				.Select(setting => string.Format(CultureInfo.InvariantCulture, "{0}={1}",
+					ConvertFontFeatureCodeToId(setting.Tag),
+					setting.Value)));
+		}
+
+		internal static class OpenTypeFontFeatureReader
+		{
+			private const uint GdiError = 0xFFFFFFFF;
+			private const int MaxCacheEntries = 32;
+			private const int ObjFont = 6;
+			private static readonly HashSet<string> s_nonUserConfigurableTags =
+				new HashSet<string>(StringComparer.Ordinal)
+				{
+					"abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "ccmp",
+					"cjct", "curs", "dist", "fina", "haln", "half", "init", "isol",
+					"ljmo", "locl", "mark", "medi", "mkmk", "nukt", "pref", "pres",
+					"pstf", "psts", "rclt", "rkrf", "rlig", "tjmo", "vjmo"
+				};
+			private static readonly uint[] s_layoutTables = { MakeTableTag("GSUB"), MakeTableTag("GPOS") };
+			private static readonly object s_cacheLock = new object();
+			private static readonly Dictionary<FontFeatureCacheKey, string[]> s_featureTagCache =
+				new Dictionary<FontFeatureCacheKey, string[]>();
+			private static readonly Queue<FontFeatureCacheKey> s_cacheOrder = new Queue<FontFeatureCacheKey>();
+			private static Func<IntPtr, uint, byte[]> s_tableReader = ReadTable;
+
+			[DllImport("gdi32.dll", SetLastError = true)]
+			private static extern uint GetFontData(IntPtr hdc, uint table, uint offset, byte[] buffer, uint length);
+
+			[DllImport("gdi32.dll")]
+			private static extern IntPtr GetCurrentObject(IntPtr hdc, int objectType);
+
+			[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+			private static extern int GetObject(IntPtr hObject, int size, ref LogFont logFont);
+
+			public static IReadOnlyList<string> GetFeatureTags(IntPtr hdc)
+			{
+				var cacheKey = FontFeatureCacheKey.FromHdc(hdc);
+				lock (s_cacheLock)
+				{
+					string[] cachedTags;
+					if (s_featureTagCache.TryGetValue(cacheKey, out cachedTags))
+						return cachedTags.ToArray();
+				}
+
+				var tags = new SortedSet<string>(StringComparer.Ordinal);
+				foreach (var table in s_layoutTables)
+				{
+					var tableData = s_tableReader(hdc, table);
+					if (tableData != null)
+						ReadFeatureList(tableData, tags);
+				}
+				var discoveredTags = tags.ToArray();
+				lock (s_cacheLock)
+				{
+					if (!s_featureTagCache.ContainsKey(cacheKey))
+					{
+						if (s_cacheOrder.Count >= MaxCacheEntries)
+							s_featureTagCache.Remove(s_cacheOrder.Dequeue());
+						s_featureTagCache[cacheKey] = discoveredTags;
+						s_cacheOrder.Enqueue(cacheKey);
+					}
+				}
+				return discoveredTags.ToArray();
+			}
+
+			internal static void ClearCacheForTests()
+			{
+				lock (s_cacheLock)
+				{
+					ClearCache();
+				}
+			}
+
+			internal static IDisposable UseTableReaderForTests(Func<IntPtr, uint, byte[]> tableReader)
+			{
+				lock (s_cacheLock)
+				{
+					var previousReader = s_tableReader;
+					s_tableReader = tableReader ?? ReadTable;
+					ClearCache();
+					return new DisposableAction(() =>
+					{
+						lock (s_cacheLock)
+						{
+							s_tableReader = previousReader;
+							ClearCache();
+						}
+					});
+				}
+			}
+
+			private static void ClearCache()
+			{
+				s_featureTagCache.Clear();
+				s_cacheOrder.Clear();
+			}
+
+			private static byte[] ReadTable(IntPtr hdc, uint table)
+			{
+				var size = GetFontData(hdc, table, 0, null, 0);
+				if (size == GdiError || size == 0)
+					return null;
+
+				var data = new byte[size];
+				var bytesRead = GetFontData(hdc, table, 0, data, size);
+				return bytesRead == GdiError ? null : data;
+			}
+
+			private static void ReadFeatureList(byte[] tableData, ISet<string> tags)
+			{
+				if (tableData.Length < 8)
+					return;
+
+				var featureListOffset = ReadUInt16(tableData, 6);
+				if (featureListOffset <= 0 || featureListOffset + 2 > tableData.Length)
+					return;
+
+				var featureCount = ReadUInt16(tableData, featureListOffset);
+				var featureRecordOffset = featureListOffset + 2;
+				for (var featureIndex = 0; featureIndex < featureCount; featureIndex++)
+				{
+					var recordOffset = featureRecordOffset + featureIndex * 6;
+					if (recordOffset + 6 > tableData.Length)
+						return;
+
+					var tag = System.Text.Encoding.ASCII.GetString(tableData, recordOffset, 4);
+					if (FontFeatureSettings.IsValidOpenTypeTag(tag) && IsUserConfigurableTag(tag))
+						tags.Add(tag);
+				}
+			}
+
+			private static bool IsUserConfigurableTag(string tag)
+			{
+				if (!s_nonUserConfigurableTags.Contains(tag))
+					return true;
+
+				Trace.WriteLineIf(s_openTypeTraceSwitch.TraceInfo,
+					string.Format(CultureInfo.InvariantCulture,
+						"FontFeaturesButton filtered non-user OpenType feature '{0}'.",
+						tag),
+					s_openTypeTraceSwitch.DisplayName);
+				return false;
+			}
+
+			private static ushort ReadUInt16(byte[] data, int offset)
+			{
+				return (ushort)((data[offset] << 8) | data[offset + 1]);
+			}
+
+			private static uint MakeTableTag(string tag)
+			{
+				return (uint)(tag[0] | tag[1] << 8 | tag[2] << 16 | tag[3] << 24);
+			}
+
+			[StructLayout(LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+			private struct LogFont
+			{
+				public int Height;
+				public int Width;
+				public int Escapement;
+				public int Orientation;
+				public int Weight;
+				public byte Italic;
+				public byte Underline;
+				public byte StrikeOut;
+				public byte CharSet;
+				public byte OutPrecision;
+				public byte ClipPrecision;
+				public byte Quality;
+				public byte PitchAndFamily;
+				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+				public string FaceName;
+			}
+
+			private struct FontFeatureCacheKey : IEquatable<FontFeatureCacheKey>
+			{
+				private readonly string m_faceName;
+				private readonly int m_height;
+				private readonly int m_weight;
+				private readonly byte m_italic;
+				private readonly byte m_charSet;
+				private readonly byte m_pitchAndFamily;
+				private readonly IntPtr m_fallbackHdc;
+
+				private FontFeatureCacheKey(string faceName, int height, int weight, byte italic,
+					byte charSet, byte pitchAndFamily, IntPtr fallbackHdc)
+				{
+					m_faceName = faceName ?? string.Empty;
+					m_height = height;
+					m_weight = weight;
+					m_italic = italic;
+					m_charSet = charSet;
+					m_pitchAndFamily = pitchAndFamily;
+					m_fallbackHdc = fallbackHdc;
+				}
+
+				public static FontFeatureCacheKey FromHdc(IntPtr hdc)
+				{
+					if (hdc != IntPtr.Zero)
+					{
+						var hfont = GetCurrentObject(hdc, ObjFont);
+						if (hfont != IntPtr.Zero)
+						{
+							var logFont = new LogFont();
+							if (GetObject(hfont, Marshal.SizeOf(typeof(LogFont)), ref logFont) > 0)
+							{
+								return new FontFeatureCacheKey(logFont.FaceName, logFont.Height,
+									logFont.Weight, logFont.Italic, logFont.CharSet,
+									logFont.PitchAndFamily, IntPtr.Zero);
+							}
+						}
+					}
+					return new FontFeatureCacheKey(string.Empty, 0, 0, 0, 0, 0, hdc);
+				}
+
+				public bool Equals(FontFeatureCacheKey other)
+				{
+					return string.Equals(m_faceName, other.m_faceName, StringComparison.OrdinalIgnoreCase) &&
+						m_height == other.m_height &&
+						m_weight == other.m_weight &&
+						m_italic == other.m_italic &&
+						m_charSet == other.m_charSet &&
+						m_pitchAndFamily == other.m_pitchAndFamily &&
+						m_fallbackHdc == other.m_fallbackHdc;
+				}
+
+				public override bool Equals(object obj)
+				{
+					return obj is FontFeatureCacheKey && Equals((FontFeatureCacheKey)obj);
+				}
+
+				public override int GetHashCode()
+				{
+					unchecked
+					{
+						var hash = StringComparer.OrdinalIgnoreCase.GetHashCode(m_faceName);
+						hash = (hash * 397) ^ m_height;
+						hash = (hash * 397) ^ m_weight;
+						hash = (hash * 397) ^ m_italic;
+						hash = (hash * 397) ^ m_charSet;
+						hash = (hash * 397) ^ m_pitchAndFamily;
+						hash = (hash * 397) ^ m_fallbackHdc.GetHashCode();
+						return hash;
+					}
+				}
+			}
+
+			private sealed class DisposableAction : IDisposable
+			{
+				private Action m_disposeAction;
+
+				public DisposableAction(Action disposeAction)
+				{
+					m_disposeAction = disposeAction;
+				}
+
+				public void Dispose()
+				{
+					var disposeAction = m_disposeAction;
+					if (disposeAction == null)
+						return;
+					m_disposeAction = null;
+					disposeAction();
+				}
+			}
 		}
 	}
 }

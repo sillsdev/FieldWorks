@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -169,6 +169,75 @@
   </data>
   <data name="kstidFeatureValue" xml:space="preserve">
     <value>Value #{0}</value>
+  </data>
+  <data name="kstidOpenTypeFeatureValueOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="kstidOpenTypeFeatureValueOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="kstidOpenTypeFeature_aalt" xml:space="preserve">
+    <value>Access All Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_c2sc" xml:space="preserve">
+    <value>Small Capitals From Capitals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_calt" xml:space="preserve">
+    <value>Contextual Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_case" xml:space="preserve">
+    <value>Case-Sensitive Forms</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ccmp" xml:space="preserve">
+    <value>Glyph Composition/Decomposition</value>
+  </data>
+  <data name="kstidOpenTypeFeature_clig" xml:space="preserve">
+    <value>Contextual Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_dlig" xml:space="preserve">
+    <value>Discretionary Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_frac" xml:space="preserve">
+    <value>Fractions</value>
+  </data>
+  <data name="kstidOpenTypeFeature_kern" xml:space="preserve">
+    <value>Kerning</value>
+  </data>
+  <data name="kstidOpenTypeFeature_liga" xml:space="preserve">
+    <value>Standard Ligatures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_lnum" xml:space="preserve">
+    <value>Lining Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_onum" xml:space="preserve">
+    <value>Oldstyle Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_pnum" xml:space="preserve">
+    <value>Proportional Figures</value>
+  </data>
+  <data name="kstidOpenTypeFeature_salt" xml:space="preserve">
+    <value>Stylistic Alternates</value>
+  </data>
+  <data name="kstidOpenTypeFeature_smcp" xml:space="preserve">
+    <value>Small Capitals</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss01" xml:space="preserve">
+    <value>Stylistic Set 1</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss02" xml:space="preserve">
+    <value>Stylistic Set 2</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss03" xml:space="preserve">
+    <value>Stylistic Set 3</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss04" xml:space="preserve">
+    <value>Stylistic Set 4</value>
+  </data>
+  <data name="kstidOpenTypeFeature_ss05" xml:space="preserve">
+    <value>Stylistic Set 5</value>
+  </data>
+  <data name="kstidOpenTypeFeature_tnum" xml:space="preserve">
+    <value>Tabular Figures</value>
   </data>
   <data name="kstidBadMsr" xml:space="preserve">
     <value>"{0}"  is not a valid measurement.</value>

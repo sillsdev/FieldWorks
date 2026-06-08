@@ -242,16 +242,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// setup controls for default font
 			SetFontInCombo(m_defaultFontComboBox, m_ws.DefaultFontName);
 			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemFactory;
-			m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
-			m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFontFeatures;
+			m_defaultFontFeaturesButton.RefreshFeatureContext(
+				m_defaultFontComboBox.Text,
+				m_ws.DefaultFontFeatures,
+				m_ws.IsGraphiteEnabled);
 
 			bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
-			m_graphiteGroupBox.Enabled = isGraphiteFont;
+			m_graphiteGroupBox.Enabled = isGraphiteFont || m_defaultFontFeaturesButton.HasFontFeatures;
+			m_enableGraphiteCheckBox.Enabled = isGraphiteFont;
 			if (!isGraphiteFont)
 				m_ws.IsGraphiteEnabled = false;
 			m_enableGraphiteCheckBox.Checked = m_ws.IsGraphiteEnabled;
-			if (!m_ws.IsGraphiteEnabled)
-				m_defaultFontFeaturesButton.Enabled = false;
 		}
 
 		/// <summary>
@@ -303,15 +304,17 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 				if (m_ws.DefaultFont != null)
 				{
-					m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
-					m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
+					m_defaultFontFeaturesButton.RefreshFeatureContext(
+						m_defaultFontComboBox.Text,
+						m_ws.DefaultFont.Features,
+						false);
 				}
 
 				bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
-				m_graphiteGroupBox.Enabled = isGraphiteFont;
+				m_graphiteGroupBox.Enabled = isGraphiteFont || m_defaultFontFeaturesButton.HasFontFeatures;
+				m_enableGraphiteCheckBox.Enabled = isGraphiteFont;
 				m_ws.IsGraphiteEnabled = false;
 				m_enableGraphiteCheckBox.Checked = false;
-				m_defaultFontFeaturesButton.Enabled = false;
 			}
 		}
 
@@ -334,10 +337,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (m_ws == null)
 				return;
 			m_ws.IsGraphiteEnabled = m_enableGraphiteCheckBox.Checked;
-			if (m_ws.IsGraphiteEnabled)
-				m_defaultFontFeaturesButton.SetupFontFeatures();
-			else
-				m_defaultFontFeaturesButton.Enabled = false;
+			m_defaultFontFeaturesButton.RefreshFeatureContext(
+				m_defaultFontComboBox.Text,
+				m_defaultFontFeaturesButton.FontFeatures,
+				m_ws.IsGraphiteEnabled);
 		}
 
 		#endregion

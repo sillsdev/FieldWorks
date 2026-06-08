@@ -229,6 +229,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private void m_btnFontFeatures_FontFeatureSelected(object sender, EventArgs e)
 		{
 			m_btnFontFeatures.Tag = false; // No longer inherited
+			OnValueChanged(sender, e);
 		}
 
 		/// ------------------------------------------------------------------------------------
