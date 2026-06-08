@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -319,7 +318,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private static bool InvokeIsStemType(IMoMorphType morphType)
 		{
 			var launcher = new MorphTypeAtomicLauncher();
-			return (bool)GetIsStemTypeMethod().Invoke(launcher, new object[] { morphType });
+			return launcher.IsStemType(morphType);
 		}
 
 		private static bool InvokeCheckForStemDataLoss(
@@ -327,9 +326,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			List<IMoMorphSynAnalysis> morphSyntaxAnalyses)
 		{
 			var launcher = new MorphTypeAtomicLauncher();
-			return (bool)GetPrivateMethod("CheckForStemDataLoss").Invoke(
-				launcher,
-				new object[] { stem, morphSyntaxAnalyses });
+			return launcher.CheckForStemDataLoss(stem, morphSyntaxAnalyses);
 		}
 
 		private static bool InvokeCheckForAffixDataLoss(
@@ -337,9 +334,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			List<IMoMorphSynAnalysis> morphSyntaxAnalyses)
 		{
 			var launcher = new MorphTypeAtomicLauncher();
-			return (bool)GetPrivateMethod("CheckForAffixDataLoss").Invoke(
-				launcher,
-				new object[] { affix, morphSyntaxAnalyses });
+			return launcher.CheckForAffixDataLoss(affix, morphSyntaxAnalyses);
 		}
 
 		private static MorphTypeDataLossKinds InvokeGetStemDataLossKinds(
@@ -391,22 +386,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS.Add(environment);
 			environment.StringRepresentation = TsStringUtils.MakeString(representation, Cache.DefaultVernWs);
 			return environment;
-		}
-
-		private static MethodInfo GetIsStemTypeMethod()
-		{
-			var method = GetPrivateMethod("IsStemType");
-			Assert.That(method, Is.Not.Null, "Morph type swap extraction depends on IsStemType semantics.");
-			return method;
-		}
-
-		private static MethodInfo GetPrivateMethod(string methodName)
-		{
-			var method = typeof(MorphTypeAtomicLauncher).GetMethod(
-				methodName,
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(method, Is.Not.Null, "Morph type swap extraction depends on {0} semantics.", methodName);
-			return method;
 		}
 
 		private sealed class RecordingAtomicReferenceLauncher : MockAtomicReferenceLauncher

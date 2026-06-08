@@ -372,7 +372,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// get ColumnInfo for specified column
 				FilterSortItem fsiTarget = FindColumnInfo(columnName);
-				int index = fsiTarget.Combo.FindStringExact(filterType);
+				int index;
+				// Avoid matching localized UI strings for the common filter operations.
+				if (filterType == "Show All")
+					index = (fsiTarget.Combo.Items.Count > 0 && fsiTarget.Combo.Items[0] is FilterComboItem) ? 0 : -1;
+				else if (filterType == "Filter for...")
+					index = FindIndexByItemType<FindComboItem>(fsiTarget.Combo);
+				else if (filterType == "Choose...")
+					index = FindIndexByItemType<ListChoiceComboItem>(fsiTarget.Combo);
+				else
+					index = fsiTarget.Combo.FindStringExact(filterType);
 				if (index < 0)
 					return null;
 
@@ -401,17 +410,45 @@ namespace SIL.FieldWorks.XWorks
 				return fsiTarget;
 			}
 
+			private static int FindIndexByItemType<TItem>(SIL.FieldWorks.Common.Widgets.IComboList combo)
+				where TItem : class
+			{
+				for (int i = 0; i < combo.Items.Count; i++)
+				{
+					if (combo.Items[i] is TItem)
+						return i;
+				}
+				return -1;
+			}
+
+			private static bool ContainsItemType<TItem>(SIL.FieldWorks.Common.Widgets.IComboList combo)
+				where TItem : class
+			{
+				return FindIndexByItemType<TItem>(combo) >= 0;
+			}
+
 			internal IReadOnlyList<FilterReachabilityRow> GetFilterReachabilityBaseline()
 			{
 				return m_filterBar.ColumnInfo.Select((fsi, index) => new FilterReachabilityRow(
 					index,
 					GetColumnLabel(fsi.Spec),
+					GetOptionalAttributeValue(fsi.Spec, "layout"),
+					GetOptionalAttributeValue(fsi.Spec, "field"),
+					GetOptionalAttributeValue(fsi.Spec, "subfield"),
+					GetOptionalAttributeValue(fsi.Spec, "list"),
 					fsi.Combo.Name,
 					fsi.Combo.Enabled,
 					fsi.Combo.IsDisposed,
-					fsi.Combo.FindStringExact("Show All") >= 0,
-					fsi.Combo.FindStringExact("Filter for...") >= 0,
-					fsi.Combo.FindStringExact("Choose...") >= 0)).ToList();
+					fsi.Combo.Items.Count > 0 && fsi.Combo.Items[0] is FilterComboItem,
+					ContainsItemType<FindComboItem>(fsi.Combo),
+					ContainsItemType<ListChoiceComboItem>(fsi.Combo))).ToList();
+			}
+
+			private static string GetOptionalAttributeValue(XmlNode spec, string attributeName)
+			{
+				return spec != null && spec.Attributes != null && spec.Attributes[attributeName] != null
+					? spec.Attributes[attributeName].Value
+					: string.Empty;
 			}
 
 			private static string GetColumnLabel(XmlNode spec)
@@ -428,9 +465,10 @@ namespace SIL.FieldWorks.XWorks
 				FilterSortItem fsiTarget = null;
 				foreach (FilterSortItem fsi in m_filterBar.ColumnInfo)
 				{
-					if (fsi.Spec.Attributes["label"].Value == columnName ||
-						fsi.Spec.Attributes["headerlabel"] != null &&
-						fsi.Spec.Attributes["headerlabel"].Value == columnName)
+					var label = fsi.Spec.Attributes["label"] != null ? fsi.Spec.Attributes["label"].Value : string.Empty;
+					var headerLabel = fsi.Spec.Attributes["headerlabel"] != null ? fsi.Spec.Attributes["headerlabel"].Value : string.Empty;
+					var layout = fsi.Spec.Attributes["layout"] != null ? fsi.Spec.Attributes["layout"].Value : string.Empty;
+					if (label == columnName || headerLabel == columnName || layout == columnName)
 					{
 						fsiTarget = fsi;
 						break;
@@ -500,6 +538,10 @@ namespace SIL.FieldWorks.XWorks
 				internal FilterReachabilityRow(
 					int focusOrder,
 					string headerLabel,
+					string columnLayout,
+					string field,
+					string subfield,
+					string listId,
 					string comboName,
 					bool comboEnabled,
 					bool comboDisposed,
@@ -509,6 +551,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					FocusOrder = focusOrder;
 					HeaderLabel = headerLabel;
+					ColumnLayout = columnLayout;
+					Field = field;
+					Subfield = subfield;
+					ListId = listId;
 					ComboName = comboName;
 					ComboEnabled = comboEnabled;
 					ComboDisposed = comboDisposed;
@@ -519,6 +565,10 @@ namespace SIL.FieldWorks.XWorks
 
 				internal int FocusOrder { get; }
 				internal string HeaderLabel { get; }
+				internal string ColumnLayout { get; }
+				internal string Field { get; }
+				internal string Subfield { get; }
+				internal string ListId { get; }
 				internal string ComboName { get; }
 				internal bool ComboEnabled { get; }
 				internal bool ComboDisposed { get; }
@@ -558,8 +608,8 @@ namespace SIL.FieldWorks.XWorks
 		public void FilterBar_HeaderAndFilterControlsExposeReachableBaseline()
 		{
 			var baseline = m_bv.GetFilterReachabilityBaseline();
-			var lexemeForm = baseline.Single(row => row.HeaderLabel == "Lexeme Form");
-			var morphType = baseline.Single(row => row.HeaderLabel == "Morph Type");
+			var lexemeForm = baseline.Single(row => row.ColumnLayout == "LexemeFormForEntry");
+			var morphType = baseline.Single(row => row.ColumnLayout == "MorphTypeForEntry");
 
 			Assert.That(lexemeForm.FocusOrder, Is.LessThan(morphType.FocusOrder));
 			Assert.That(lexemeForm.ComboEnabled, Is.True);
@@ -580,11 +630,11 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.SwitchTab("ListChoice");
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
 			//FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form");
-			m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form");
+			m_bv.SetFilter("LexemeFormForEntry", "Filter for...", "underlying form");
 			// next make a chooser filter on "Entry Type" column
 			//fsFilter = m_bv.SetFilter("Morph Type", "Choose...", "root");
-			m_bv.SetFilter("Morph Type", "Choose...", "root");
-			m_bv.SetSort("Lexeme Form");
+			m_bv.SetFilter("MorphTypeForEntry", "Choose...", "root");
+			m_bv.SetSort("LexemeFormForEntry");
 
 			// Make sure our filters have worked to limit the data
 			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));

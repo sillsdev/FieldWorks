@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		private bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)
+		internal bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)
 		{
 			var dataLossKinds = GetAffixDataLossKinds(affix, rgmsaAffix);
 			bool fLoseInflCls = (dataLossKinds & MorphTypeDataLossKinds.InflectionClass) != 0;
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		private bool CheckForStemDataLoss(IMoStemAllomorph stem, List<IMoMorphSynAnalysis> rgmsaStem)
+		internal bool CheckForStemDataLoss(IMoStemAllomorph stem, List<IMoMorphSynAnalysis> rgmsaStem)
 		{
 			var dataLossKinds = GetStemDataLossKinds(stem, rgmsaStem);
 			bool fLoseStemName = (dataLossKinds & MorphTypeDataLossKinds.StemName) != 0;
@@ -455,7 +455,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private bool IsStemType(IMoMorphType type)
+		internal bool IsStemType(IMoMorphType type)
 		{
 			if (type == null)
 				return false;
