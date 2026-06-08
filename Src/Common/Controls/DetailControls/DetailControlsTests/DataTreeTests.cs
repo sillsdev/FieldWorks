@@ -222,6 +222,36 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ifdata");
 		}
 
+		/// <summary>
+		/// Captures the normalized semantic snapshot that the Avalonia POC slice
+		/// (lexical-edit-avalonia-poc-spike) must reproduce, and proves the snapshot is
+		/// deterministic across realizations. Every expected value here is already proven by
+		/// <see cref="CfAndBib_SemanticSliceBaselineCapturesStableBindingsAndFocusOrder"/>; this test
+		/// only locks the reusable snapshot format used by parity comparison.
+		/// </summary>
+		[Test]
+		public void SemanticSnapshot_CfAndBib_IsStableAndCapturesPocBaseline()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(2));
+
+			int cfFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "CitationForm", true);
+			int bibFlid = Cache.MetaDataCacheAccessor.GetFieldId2(LexEntryTags.kClassId, "Bibliography", true);
+			string expected =
+				$"#0 | label=CitationForm | field=CitationForm | flid={cfFlid} | editor=multistring | vis= | a11y=CitationForm" + Environment.NewLine +
+				$"#1 | label=Bibliography | field=Bibliography | flid={bibFlid} | editor=multistring | vis=ifdata | a11y=Bibliography" + Environment.NewLine;
+
+			string snapshot = BuildSemanticSnapshot();
+			Assert.That(snapshot, Is.EqualTo(expected), "POC parity baseline (semantic snapshot) changed.");
+
+			// Determinism: realizing the same object again must yield a byte-for-byte identical snapshot,
+			// which is the property the Avalonia parity comparison relies on.
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+			Assert.That(BuildSemanticSnapshot(), Is.EqualTo(snapshot),
+				"Semantic snapshot must be deterministic across realizations.");
+		}
+
 		/// <summary></summary>
 		[Test]
 		public void LabelAbbreviations()
@@ -267,6 +297,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(slice.CallerNode.Attributes["visibility"]?.Value, Is.EqualTo(visibility));
 			Assert.That(slice.Expansion, Is.EqualTo(DataTree.TreeItemState.ktisFixed));
 			Assert.That(slice.Control.AccessibleName, Is.EqualTo(label));
+		}
+
+		/// <summary>
+		/// Builds a deterministic, normalized semantic snapshot of the currently realized slices.
+		/// One line per slice: focus order, label, field, flid, editor kind, visibility, and
+		/// accessibility name. This is the reusable format the Avalonia POC parity comparison keys on.
+		/// </summary>
+		private string BuildSemanticSnapshot()
+		{
+			var sb = new System.Text.StringBuilder();
+			for (int i = 0; i < m_dtree.Controls.Count; i++)
+			{
+				var slice = m_dtree.Controls[i] as Slice;
+				if (slice == null)
+					continue;
+				string field = slice.ConfigurationNode?.Attributes?["field"]?.Value ?? "";
+				int flid = string.IsNullOrEmpty(field)
+					? 0
+					: Cache.MetaDataCacheAccessor.GetFieldId2(slice.Object.ClassID, field, true);
+				string editor = slice.ConfigurationNode?.Attributes?["editor"]?.Value ?? "";
+				string vis = slice.CallerNode?.Attributes?["visibility"]?.Value ?? "";
+				string a11y = slice.Control?.AccessibleName ?? "";
+				sb.AppendLine($"#{i} | label={slice.Label} | field={field} | flid={flid} | editor={editor} | vis={vis} | a11y={a11y}");
+			}
+			return sb.ToString();
 		}
 
 		/// <summary></summary>
