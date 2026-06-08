@@ -2,7 +2,7 @@
 
 This is a behavioral coverage report for the Phase 2 "Test Coverage Before Refactor" gate of `lexical-edit-avalonia-migration`. It is not a line-coverage percentage. The goal is to show which Phase 3 refactor surfaces now have executable characterization tests, where the tests live, and which gaps remain too large or too infrastructural to mark complete honestly.
 
-This narrowed Phase 1/2 branch keeps OpenSpec planning plus legacy WinForms/DataTree/XMLViews characterization coverage. The Avalonia Preview Host, `AdvancedEntry.Avalonia` prototype, and net8 Avalonia.Headless/property-grid tests have been split to `010-advanced-entry-preview-prototype`. Product command/menu wiring has been split to `010-advanced-entry-product-launcher-spike`. The unrelated `RecordList` sorting change was dropped from this scope.
+This narrowed Phase 1/2 branch keeps OpenSpec planning plus legacy WinForms/DataTree/XMLViews characterization coverage. It now also contains the net48 `FwAvalonia` spike, a net48 `FwAvaloniaPreviewHost`, and `System.Windows.Automation` UIA smoke tests for the preview host. The older net8 `AdvancedEntry.Avalonia` prototype and its net8-specific host/test bootstrap remain split to `010-advanced-entry-preview-prototype`. Product command/menu wiring has been split to `010-advanced-entry-product-launcher-spike`. The unrelated `RecordList` sorting change was dropped from this scope.
 
 ---
 

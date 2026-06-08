@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -22,6 +23,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		public MultiWsTextEditor(IList<WsAlternative> alternatives, string editorName)
 		{
 			Name = editorName;
+			AutomationProperties.SetAutomationId(this, editorName);
+			AutomationProperties.SetName(this, editorName);
 			Alternatives = alternatives;
 
 			var stack = new StackPanel { Spacing = PocDensity.RowSpacing };
@@ -47,6 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 					MinHeight = 0,
 					AcceptsReturn = false
 				};
+				AutomationProperties.SetAutomationId(box, editorName + "." + alt.WsAbbrev);
+				AutomationProperties.SetName(box, editorName + " " + alt.WsAbbrev);
 				box.TextChanged += (sender, args) => captured.Value = box.Text;
 				_boxes.Add(box);
 

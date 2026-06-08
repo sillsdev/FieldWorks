@@ -5,6 +5,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
+using Avalonia.Automation;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 {
@@ -30,6 +31,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 				ItemsSource = entry.MorphTypeOptions,
 				SelectedItem = entry.SelectedMorphType
 			};
+			AutomationProperties.SetAutomationId(_list, "MorphTypeChooser.List");
+			AutomationProperties.SetName(_list, "Morph type options");
 			_list.SelectionChanged += (sender, args) =>
 			{
 				if (_list.SelectedItem is MorphTypeOption option)
@@ -49,6 +52,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 				HorizontalAlignment = HorizontalAlignment.Left,
 				Flyout = _flyout
 			};
+			AutomationProperties.SetAutomationId(_button, "MorphTypeChooser.Button");
+			AutomationProperties.SetName(_button, "Morph Type");
 
 			Content = _button;
 		}

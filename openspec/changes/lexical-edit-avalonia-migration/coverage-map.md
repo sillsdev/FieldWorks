@@ -52,7 +52,7 @@ The proposed `MorphTypeSwapController` does not exist. Phase 3 should extract fr
 | XML table renderer | [Src/Common/Controls/XMLViews/XmlView.cs](Src/Common/Controls/XMLViews/XmlView.cs) | Existing XMLViews reset/refresh tests | UIA2 or equivalent smoke harness before claiming parity. |
 | Chooser forms | [Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs](Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs) and [Src/Common/Controls/XMLViews/ChooserCommandBase.cs](Src/Common/Controls/XMLViews/ChooserCommandBase.cs) | Existing isolated chooser tests, not enough for migration parity | Keyboard search, expand/collapse, double-click commit, cancel, invalid target, and transaction rollback. |
 
-No UIA2/FlaUI/System.Windows.Automation harness was found in the repo. Phase 2 now uses an in-repo smoke substitute for launcher and XMLViews reachability; a full UIA2 parity harness remains a later infrastructure decision.
+A net48 `System.Windows.Automation` harness now exists for `FwAvaloniaPreviewHost` (`FwAvaloniaPreviewHostTests/PreviewHostUiaTests.cs`). Legacy WinForms launcher/chooser/XMLViews parity still uses in-process smoke substitutes on this branch; a full WinForms UIA2/FlaUI parity harness remains a later infrastructure decision.
 
 ## 5. Layout Overrides and Dictionary Configuration
 

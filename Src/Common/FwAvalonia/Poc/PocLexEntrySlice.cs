@@ -5,6 +5,7 @@
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Automation;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 {
@@ -19,6 +20,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		public PocLexEntrySlice(PocEntryDto entry)
 		{
 			Name = "PocLexEntrySlice";
+			AutomationProperties.SetAutomationId(this, "PocLexEntrySlice");
+			AutomationProperties.SetName(this, "Lexical Edit POC Slice");
 			Entry = entry;
 
 			LexemeFormEditor = new MultiWsTextEditor(entry.LexemeForm, "LexemeFormEditor");
@@ -70,6 +73,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 				TextAlignment = TextAlignment.Right,
 				Foreground = Brushes.Black
 			};
+			AutomationProperties.SetAutomationId(labelBlock, editor.Name + ".Label");
+			AutomationProperties.SetName(labelBlock, label);
 			Grid.SetRow(labelBlock, row);
 			Grid.SetColumn(labelBlock, 0);
 			grid.Children.Add(labelBlock);

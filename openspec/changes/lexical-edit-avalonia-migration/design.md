@@ -2,7 +2,7 @@
 
 Lexical Edit currently depends on a WinForms/DataTree/DetailControls stack that interprets XML Parts/Layout into `Slice` controls, launchers, chooser dialogs, nested `ViewSlice` content, and Views-backed rendering. The Advanced Entry Speckit work under `specs/010-advanced-entry-view/` already proves several useful ideas: a net8 Avalonia module, Preview Host, Presentation IR, XML contract loading, caching, headless tests, and parity checklist. The new target is larger: migrate the real Lexical Edit surface while preserving user interaction, density, writing-system behavior, and customizability, then retire XML after the Avalonia switch is proven.
 
-This branch is the foundation slice: it documents the architecture and keeps legacy characterization tests that protect Phase 3 refactors. The net8 Preview Host/AdvancedEntry prototype is intentionally split to `010-advanced-entry-preview-prototype`, and product launcher wiring is intentionally split to `010-advanced-entry-product-launcher-spike`.
+This branch is the foundation slice: it documents the architecture, keeps legacy characterization tests that protect Phase 3 refactors, and now includes a net48 `FwAvaloniaPreviewHost` + preview-host UIA smoke tests for the current POC module. The older net8 Preview Host/AdvancedEntry prototype remains intentionally split to `010-advanced-entry-preview-prototype`, and product launcher wiring is intentionally split to `010-advanced-entry-product-launcher-spike`.
 
 Important current constraints:
 - `DataTree`, `Slice`, `SliceFactory`, launchers, `RecordEditView`, XMLViews browse/table views, and xCore mediator behavior are tightly coupled.

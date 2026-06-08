@@ -347,6 +347,38 @@ function Get-RepoStamp {
 	}
 }
 
+function Test-IsNet48CompatibleProject {
+	param([string]$ProjectPath)
+
+	try {
+		[xml]$projectXml = Get-Content -LiteralPath $ProjectPath -Raw
+		$frameworks = @()
+		foreach ($propertyGroup in $projectXml.Project.PropertyGroup) {
+			if ($propertyGroup.TargetFramework) {
+				$frameworks += [string]$propertyGroup.TargetFramework
+			}
+			if ($propertyGroup.TargetFrameworks) {
+				$frameworks += ([string]$propertyGroup.TargetFrameworks -split ';')
+			}
+		}
+
+		$frameworks = $frameworks |
+			Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+			ForEach-Object { $_.Trim() }
+
+		if ($frameworks.Count -eq 0) {
+			Write-Host "Skipping Avalonia project with no TargetFramework metadata: $ProjectPath" -ForegroundColor Yellow
+			return $false
+		}
+
+		return $frameworks -contains 'net48'
+	}
+	catch {
+		Write-Host "Skipping Avalonia project whose target frameworks could not be read: $ProjectPath" -ForegroundColor Yellow
+		return $false
+	}
+}
+
 function Get-AvaloniaProjectList {
 	param(
 		[string]$RepoRoot,
@@ -364,38 +396,6 @@ function Get-AvaloniaProjectList {
 			else {
 				Write-Host "Skipping non-net48 Avalonia project: $Path" -ForegroundColor Yellow
 			}
-		}
-	}
-
-	function Test-IsNet48CompatibleProject {
-		param([string]$ProjectPath)
-
-		try {
-			[xml]$projectXml = Get-Content -LiteralPath $ProjectPath -Raw
-			$frameworks = @()
-			foreach ($propertyGroup in $projectXml.Project.PropertyGroup) {
-				if ($propertyGroup.TargetFramework) {
-					$frameworks += [string]$propertyGroup.TargetFramework
-				}
-				if ($propertyGroup.TargetFrameworks) {
-					$frameworks += ([string]$propertyGroup.TargetFrameworks -split ';')
-				}
-			}
-
-			$frameworks = $frameworks |
-				Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-				ForEach-Object { $_.Trim() }
-
-			if ($frameworks.Count -eq 0) {
-				Write-Host "Skipping Avalonia project with no TargetFramework metadata: $ProjectPath" -ForegroundColor Yellow
-				return $false
-			}
-
-			return $frameworks -contains 'net48'
-		}
-		catch {
-			Write-Host "Skipping Avalonia project whose target frameworks could not be read: $ProjectPath" -ForegroundColor Yellow
-			return $false
 		}
 	}
 
@@ -421,6 +421,7 @@ function Get-AvaloniaProjectList {
 	# Avalonia test project only when tests are already being built/run.
 	if ($IncludeTests) {
 		Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvalonia/FwAvaloniaTests/FwAvaloniaTests.csproj")
+		Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHostTests/FwAvaloniaPreviewHostTests.csproj")
 	}
 
 	return $projects.ToArray()

@@ -2,7 +2,7 @@
 
 Lexical Edit is the main editing surface in FLEx, but its current WinForms/DataTree/XMLViews architecture mixes view definition, control creation, LCModel access, refresh state, and legacy rendering concerns in ways that make the Avalonia migration risky. The existing Advanced Entry Speckit work proves useful pieces of an Avalonia path, but the broader migration needs an OpenSpec plan that treats XML Parts/Layout as a transitional compatibility contract and makes testability/refactoring the first-class work before replacing UI.
 
-Current branch scope: this Phase 1/2 foundation branch contains OpenSpec planning, migration-review skills, and legacy WinForms/DataTree/XMLViews characterization coverage. The Avalonia Preview Host and `AdvancedEntry.Avalonia` prototype are split to `010-advanced-entry-preview-prototype`; product command/menu wiring is split to `010-advanced-entry-product-launcher-spike`; the unrelated `RecordList` sorting change was dropped.
+Current branch scope: this Phase 1/2 foundation branch contains OpenSpec planning, migration-review skills, legacy WinForms/DataTree/XMLViews characterization coverage, the net48 `FwAvalonia` spike, and a net48 `FwAvaloniaPreviewHost` + preview-host UIA harness. The older net8 `AdvancedEntry.Avalonia` prototype remains on `010-advanced-entry-preview-prototype`; product command/menu wiring is split to `010-advanced-entry-product-launcher-spike`; the unrelated `RecordList` sorting change was dropped.
 
 ## What Changes
 
