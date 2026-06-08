@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvaloniaTests (POC spike: lexical-edit-avalonia-poc-spike)
+
+		Headless evidence that Avalonia 11.3.x restores, builds, and runs on .NET Framework 4.8,
+		and that the POC slice renders its three editors, returns popup focus, and commits/cancels
+		edits without any native Views or Graphite dependency. Isolated from the traversal build.
+
+		NUnit, NUnit3TestAdapter, and Microsoft.NET.Test.Sdk are injected by Src/Directory.Build.props
+		because IsTestProject is true.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" />
+		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia.Headless" />
+		<PackageReference Include="Avalonia.Headless.NUnit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia.csproj" />
+	</ItemGroup>
+
+	<!-- This isolated spike test project does not use FieldWorks' shared test bootstrap
+	     (SLDR/ICU/registry redirect and the RequiresSTAOnWindows/SetMessageBoxAdapter test
+	     attributes). The headless Avalonia tests do not touch LCModel, ICU, or the registry,
+	     so exclude the auto-injected shared AssemblyInfo files. -->
+	<ItemGroup>
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+
+</Project>
