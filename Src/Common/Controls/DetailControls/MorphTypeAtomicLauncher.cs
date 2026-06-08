@@ -16,6 +16,17 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
+	[Flags]
+	internal enum MorphTypeDataLossKinds
+	{
+		None = 0,
+		InflectionClass = 1,
+		InfixLocation = 2,
+		GrammarInfo = 4,
+		Rule = 8,
+		StemName = 16,
+	}
+
 	public class MorphTypeAtomicLauncher : PossibilityAtomicReferenceLauncher
 	{
 		private const string m_ksPath = "/group[@id='DialogStrings']/";
@@ -225,68 +236,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)
 		{
-			bool fLoseInflCls = affix.InflectionClassesRC.Count > 0;
-			bool fLoseInfixLoc = false;
-			bool fLoseGramInfo = false;
-			bool fLoseRule = false;
-			switch (affix.ClassID)
-			{
-				case MoAffixProcessTags.kClassId:
-					fLoseRule = true;
-					break;
-
-				case MoAffixAllomorphTags.kClassId:
-					var allo = (IMoAffixAllomorph) affix;
-					fLoseInfixLoc = allo.PositionRS.Count > 0;
-					fLoseGramInfo = allo.MsEnvPartOfSpeechRA != null || allo.MsEnvFeaturesOA != null;
-					break;
-			}
-
-			for (int i = 0; !fLoseGramInfo && i < rgmsaAffix.Count; ++i)
-			{
-				var msaInfl = rgmsaAffix[i] as IMoInflAffMsa;
-				if (msaInfl != null)
-				{
-					if (msaInfl.AffixCategoryRA != null ||
-						msaInfl.FromProdRestrictRC.Count > 0 ||
-						msaInfl.SlotsRC.Count > 0 ||
-						msaInfl.InflFeatsOA != null)
-					{
-						fLoseGramInfo = true;
-					}
-					continue;
-				}
-				var msaDeriv = rgmsaAffix[i] as IMoDerivAffMsa;
-				if (msaDeriv != null)
-				{
-					if (msaDeriv.AffixCategoryRA != null ||
-						msaDeriv.FromInflectionClassRA != null ||
-						msaDeriv.FromPartOfSpeechRA != null ||
-						msaDeriv.FromProdRestrictRC.Count > 0 ||
-						msaDeriv.FromStemNameRA != null ||
-						msaDeriv.StratumRA != null ||
-						msaDeriv.ToInflectionClassRA != null ||
-						msaDeriv.ToProdRestrictRC.Count > 0 ||
-						msaDeriv.FromMsFeaturesOA != null ||
-						msaDeriv.ToMsFeaturesOA != null)
-					{
-						fLoseGramInfo = true;
-					}
-					continue;
-				}
-				var msaStep = rgmsaAffix[i] as IMoDerivStepMsa;
-				if (msaStep != null)
-				{
-					if (msaStep.InflectionClassRA != null ||
-						msaStep.ProdRestrictRC.Count > 0 ||
-						msaStep.InflFeatsOA != null ||
-						msaStep.MsFeaturesOA != null)
-					{
-						fLoseGramInfo = true;
-					}
-				}
-			}
-			if (fLoseInflCls || fLoseInfixLoc || fLoseGramInfo || fLoseRule)
+			var dataLossKinds = GetAffixDataLossKinds(affix, rgmsaAffix);
+			bool fLoseInflCls = (dataLossKinds & MorphTypeDataLossKinds.InflectionClass) != 0;
+			bool fLoseInfixLoc = (dataLossKinds & MorphTypeDataLossKinds.InfixLocation) != 0;
+			bool fLoseGramInfo = (dataLossKinds & MorphTypeDataLossKinds.GrammarInfo) != 0;
+			bool fLoseRule = (dataLossKinds & MorphTypeDataLossKinds.Rule) != 0;
+			if (dataLossKinds != MorphTypeDataLossKinds.None)
 			{
 				string sMsg;
 				if (fLoseInflCls && fLoseInfixLoc && fLoseGramInfo)
@@ -320,6 +275,73 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
+		internal MorphTypeDataLossKinds GetAffixDataLossKinds(IMoAffixForm affix, IList<IMoMorphSynAnalysis> rgmsaAffix)
+		{
+			var dataLossKinds = MorphTypeDataLossKinds.None;
+			if (affix.InflectionClassesRC.Count > 0)
+				dataLossKinds |= MorphTypeDataLossKinds.InflectionClass;
+			switch (affix.ClassID)
+			{
+				case MoAffixProcessTags.kClassId:
+					dataLossKinds |= MorphTypeDataLossKinds.Rule;
+					break;
+
+				case MoAffixAllomorphTags.kClassId:
+					var allo = (IMoAffixAllomorph) affix;
+					if (allo.PositionRS.Count > 0)
+						dataLossKinds |= MorphTypeDataLossKinds.InfixLocation;
+					if (allo.MsEnvPartOfSpeechRA != null || allo.MsEnvFeaturesOA != null)
+						dataLossKinds |= MorphTypeDataLossKinds.GrammarInfo;
+					break;
+			}
+
+			for (int i = 0; (dataLossKinds & MorphTypeDataLossKinds.GrammarInfo) == 0 && i < rgmsaAffix.Count; ++i)
+			{
+				var msaInfl = rgmsaAffix[i] as IMoInflAffMsa;
+				if (msaInfl != null)
+				{
+					if (msaInfl.AffixCategoryRA != null ||
+						msaInfl.FromProdRestrictRC.Count > 0 ||
+						msaInfl.SlotsRC.Count > 0 ||
+						msaInfl.InflFeatsOA != null)
+					{
+						dataLossKinds |= MorphTypeDataLossKinds.GrammarInfo;
+					}
+					continue;
+				}
+				var msaDeriv = rgmsaAffix[i] as IMoDerivAffMsa;
+				if (msaDeriv != null)
+				{
+					if (msaDeriv.AffixCategoryRA != null ||
+						msaDeriv.FromInflectionClassRA != null ||
+						msaDeriv.FromPartOfSpeechRA != null ||
+						msaDeriv.FromProdRestrictRC.Count > 0 ||
+						msaDeriv.FromStemNameRA != null ||
+						msaDeriv.StratumRA != null ||
+						msaDeriv.ToInflectionClassRA != null ||
+						msaDeriv.ToProdRestrictRC.Count > 0 ||
+						msaDeriv.FromMsFeaturesOA != null ||
+						msaDeriv.ToMsFeaturesOA != null)
+					{
+						dataLossKinds |= MorphTypeDataLossKinds.GrammarInfo;
+					}
+					continue;
+				}
+				var msaStep = rgmsaAffix[i] as IMoDerivStepMsa;
+				if (msaStep != null)
+				{
+					if (msaStep.InflectionClassRA != null ||
+						msaStep.ProdRestrictRC.Count > 0 ||
+						msaStep.InflFeatsOA != null ||
+						msaStep.MsFeaturesOA != null)
+					{
+						dataLossKinds |= MorphTypeDataLossKinds.GrammarInfo;
+					}
+				}
+			}
+			return dataLossKinds;
+		}
+
 		private bool ChangeStemToAffix(ILexEntry entry, IMoMorphType type)
 		{
 			var stem = m_obj as IMoStemAllomorph;
@@ -344,22 +366,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private bool CheckForStemDataLoss(IMoStemAllomorph stem, List<IMoMorphSynAnalysis> rgmsaStem)
 		{
-			bool fLoseStemName = stem.StemNameRA != null;
-			bool fLoseGramInfo = false;
-			for (int i = 0; i < rgmsaStem.Count; ++i)
-			{
-				var msa = rgmsaStem[i] as IMoStemMsa;
-				if (msa != null &&
-					(msa.FromPartsOfSpeechRC.Count > 0 ||
-					msa.InflectionClassRA != null ||
-					msa.ProdRestrictRC.Count > 0 ||
-					msa.StratumRA != null ||
-					msa.MsFeaturesOA != null))
-				{
-					fLoseGramInfo = true;
-					break;
-				}
-			}
+			var dataLossKinds = GetStemDataLossKinds(stem, rgmsaStem);
+			bool fLoseStemName = (dataLossKinds & MorphTypeDataLossKinds.StemName) != 0;
+			bool fLoseGramInfo = (dataLossKinds & MorphTypeDataLossKinds.GrammarInfo) != 0;
 			if (fLoseStemName || fLoseGramInfo)
 			{
 				string sMsg;
@@ -378,6 +387,27 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 			}
 			return false;
+		}
+
+		internal MorphTypeDataLossKinds GetStemDataLossKinds(IMoStemAllomorph stem, IList<IMoMorphSynAnalysis> rgmsaStem)
+		{
+			var dataLossKinds = stem.StemNameRA != null
+				? MorphTypeDataLossKinds.StemName
+				: MorphTypeDataLossKinds.None;
+			for (int i = 0; (dataLossKinds & MorphTypeDataLossKinds.GrammarInfo) == 0 && i < rgmsaStem.Count; ++i)
+			{
+				var msa = rgmsaStem[i] as IMoStemMsa;
+				if (msa != null &&
+					(msa.FromPartsOfSpeechRC.Count > 0 ||
+					msa.InflectionClassRA != null ||
+					msa.ProdRestrictRC.Count > 0 ||
+					msa.StratumRA != null ||
+					msa.MsFeaturesOA != null))
+				{
+					dataLossKinds |= MorphTypeDataLossKinds.GrammarInfo;
+				}
+			}
+			return dataLossKinds;
 		}
 
 		internal void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,

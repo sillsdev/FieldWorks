@@ -401,6 +401,28 @@ namespace SIL.FieldWorks.XWorks
 				return fsiTarget;
 			}
 
+			internal IReadOnlyList<FilterReachabilityRow> GetFilterReachabilityBaseline()
+			{
+				return m_filterBar.ColumnInfo.Select((fsi, index) => new FilterReachabilityRow(
+					index,
+					GetColumnLabel(fsi.Spec),
+					fsi.Combo.Name,
+					fsi.Combo.Enabled,
+					fsi.Combo.IsDisposed,
+					fsi.Combo.FindStringExact("Show All") >= 0,
+					fsi.Combo.FindStringExact("Filter for...") >= 0,
+					fsi.Combo.FindStringExact("Choose...") >= 0)).ToList();
+			}
+
+			private static string GetColumnLabel(XmlNode spec)
+			{
+				var header = spec.Attributes["headerlabel"] != null ? spec.Attributes["headerlabel"].Value : null;
+				if (!string.IsNullOrEmpty(header))
+					return header;
+
+				return spec.Attributes["label"] != null ? spec.Attributes["label"].Value : string.Empty;
+			}
+
 			private FilterSortItem FindColumnInfo(string columnName)
 			{
 				FilterSortItem fsiTarget = null;
@@ -472,6 +494,38 @@ namespace SIL.FieldWorks.XWorks
 
 				return uncheckedItems;
 			}
+
+			internal sealed class FilterReachabilityRow
+			{
+				internal FilterReachabilityRow(
+					int focusOrder,
+					string headerLabel,
+					string comboName,
+					bool comboEnabled,
+					bool comboDisposed,
+					bool hasShowAll,
+					bool hasFilterFor,
+					bool hasChoose)
+				{
+					FocusOrder = focusOrder;
+					HeaderLabel = headerLabel;
+					ComboName = comboName;
+					ComboEnabled = comboEnabled;
+					ComboDisposed = comboDisposed;
+					HasShowAll = hasShowAll;
+					HasFilterFor = hasFilterFor;
+					HasChoose = hasChoose;
+				}
+
+				internal int FocusOrder { get; }
+				internal string HeaderLabel { get; }
+				internal string ComboName { get; }
+				internal bool ComboEnabled { get; }
+				internal bool ComboDisposed { get; }
+				internal bool HasShowAll { get; }
+				internal bool HasFilterFor { get; }
+				internal bool HasChoose { get; }
+			}
 		}
 
 		protected class RecordBrowseViewForTests : RecordBrowseView
@@ -500,6 +554,25 @@ namespace SIL.FieldWorks.XWorks
 	public class BulkEditBarTests : BulkEditBarTestsBase
 	{
 		#region BulkEditEntries tests
+		[Test]
+		public void FilterBar_HeaderAndFilterControlsExposeReachableBaseline()
+		{
+			var baseline = m_bv.GetFilterReachabilityBaseline();
+			var lexemeForm = baseline.Single(row => row.HeaderLabel == "Lexeme Form");
+			var morphType = baseline.Single(row => row.HeaderLabel == "Morph Type");
+
+			Assert.That(lexemeForm.FocusOrder, Is.LessThan(morphType.FocusOrder));
+			Assert.That(lexemeForm.ComboEnabled, Is.True);
+			Assert.That(lexemeForm.ComboDisposed, Is.False);
+			Assert.That(lexemeForm.HasShowAll, Is.True);
+			Assert.That(lexemeForm.HasFilterFor, Is.True);
+
+			Assert.That(morphType.ComboEnabled, Is.True);
+			Assert.That(morphType.ComboDisposed, Is.False);
+			Assert.That(morphType.HasShowAll, Is.True);
+			Assert.That(morphType.HasChoose, Is.True);
+		}
+
 		[Test]
 		public void ChoiceFilters()
 		{
