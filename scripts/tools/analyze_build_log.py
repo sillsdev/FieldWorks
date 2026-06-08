@@ -353,7 +353,10 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
 
     # Error details
     errors_shown = 0
+    total_errors = sum(len(s.errors) for s in failed_steps)
     for step in failed_steps:
+        if errors_shown >= _MAX_ERRORS_DETAIL:
+            break
         if not step.errors and not any(c != 0 for _, c in step.exit_codes):
             continue
         w(f"### [{steps.index(step) + 1}] {step.name}")
@@ -363,8 +366,6 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
 
         for err in step.errors:
             if errors_shown >= _MAX_ERRORS_DETAIL:
-                remaining = sum(len(s.errors) for s in failed_steps) - _MAX_ERRORS_DETAIL
-                w(f"\n> ... and {remaining} more error(s). See build log for details.")
                 break
             w(f"**Line {err.line_num:,}:** `{err.message[:200]}`")
 
@@ -395,6 +396,9 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
             for ln, c in bad_exits:
                 w(f"- Line {ln:,}: exit code {c}")
             w("")
+
+    if errors_shown < total_errors:
+        w(f"\n> ... and {total_errors - errors_shown} more error(s). See build log for details.\n")
 
     # Unmatched enrichment findings
     unmatched = [f for f in (enrichment_findings or []) if f.error_line not in matched_lines]
