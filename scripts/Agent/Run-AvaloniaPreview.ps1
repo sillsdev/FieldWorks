@@ -59,8 +59,8 @@ Invoke-MSBuild -Arguments @(
 ) -Description 'FwAvaloniaPreviewHost (Build)'
 
 $exeCandidates = @(
-	(Join-Path $repoRoot "Output\$Configuration\FwAvaloniaPreviewHost.exe"),
-	(Join-Path $repoRoot "Src\Common\FwAvaloniaPreviewHost\bin\$Configuration\net48\FwAvaloniaPreviewHost.exe")
+	(Join-Path $repoRoot "Src\Common\FwAvaloniaPreviewHost\bin\$Configuration\net48\FwAvaloniaPreviewHost.exe"),
+	(Join-Path $repoRoot "Output\$Configuration\FwAvaloniaPreviewHost.exe")
 )
 
 $exePath = $exeCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1

@@ -12,12 +12,15 @@
 		<IsPackable>false</IsPackable>
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\net48\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" />
-		<PackageReference Include="Avalonia.Desktop" />
-		<PackageReference Include="Avalonia.Themes.Fluent" />
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
 	</ItemGroup>
 
 	<ItemGroup>

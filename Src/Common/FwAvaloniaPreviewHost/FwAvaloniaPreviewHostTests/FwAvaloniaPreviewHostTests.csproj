@@ -9,6 +9,9 @@
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\net48\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

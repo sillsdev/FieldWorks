@@ -25,10 +25,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" />
-		<PackageReference Include="Avalonia.Desktop" />
-		<PackageReference Include="Avalonia.Themes.Fluent" />
-		<PackageReference Include="Avalonia.Win32.Interoperability" />
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Win32.Interoperability" ExcludeAssets="analyzers" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
 	<!-- The test project lives in the nested FwAvaloniaTests/ folder. Exclude it from this

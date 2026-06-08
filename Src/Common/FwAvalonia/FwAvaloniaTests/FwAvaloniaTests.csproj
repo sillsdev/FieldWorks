@@ -21,10 +21,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" />
-		<PackageReference Include="Avalonia.Themes.Fluent" />
-		<PackageReference Include="Avalonia.Headless" />
-		<PackageReference Include="Avalonia.Headless.NUnit" />
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless.NUnit" ExcludeAssets="analyzers" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Poc;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
 using XCore;
@@ -60,6 +62,9 @@ namespace SIL.FieldWorks.XWorks
 		private string m_titleField;
 		private string m_titleStr;
 		private string m_printLayout;
+		private readonly LexicalEditSurface m_lexicalEditSurface;
+		private readonly LexicalEditSurfaceFactory m_lexicalEditSurfaceFactory;
+		private PocWinFormsHostControl m_avaloniaEntryForm;
 
 		//// <summary>
 		//// used to associate menu commands with the slice that sent them
@@ -80,7 +85,11 @@ namespace SIL.FieldWorks.XWorks
 		protected RecordEditView(DataTree dataEntryForm)
 		{
 			// This must be called before InitializeComponent()
+			m_lexicalEditSurface = LexicalEditSurfaceResolver.Resolve();
 			m_dataEntryForm = dataEntryForm;
+			m_lexicalEditSurfaceFactory = new LexicalEditSurfaceFactory(
+				() => m_dataEntryForm,
+				() => new PocWinFormsHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
@@ -123,7 +132,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			if (!ShouldUseAvaloniaLexicalEdit)
+				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
 
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
@@ -155,11 +165,13 @@ namespace SIL.FieldWorks.XWorks
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
 					m_dataEntryForm.Dispose();
 				}
+				m_avaloniaEntryForm?.Dispose();
 				m_menuHandler?.Dispose();
 				if (!string.IsNullOrEmpty(m_titleField))
 					Cache.DomainDataByFlid.RemoveNotification(this);
 			}
 			m_dataEntryForm = null;
+			m_avaloniaEntryForm = null;
 
 			base.Dispose(disposing);
 		}
@@ -220,7 +232,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_dataEntryForm != null)
+			if (!ShouldUseAvaloniaLexicalEdit && m_dataEntryForm != null)
 				m_dataEntryForm.PrepareToGoAway();
 			return base.PrepareToGoAway();
 		}
@@ -314,13 +326,22 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				m_dataEntryForm.Hide();
-				m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
+				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+				{
+					m_avaloniaEntryForm.Hide();
+					m_avaloniaEntryForm.Clear();
+				}
+				else
+				{
+					m_dataEntryForm.Hide();
+					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
+				}
 				return true;
 			}
 			try
 			{
-				m_dataEntryForm.Show();
+				if (!ShouldUseAvaloniaLexicalEdit)
+					m_dataEntryForm.Show();
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
 				ICmObject obj = Clerk.CurrentObject;
 
@@ -331,7 +352,20 @@ namespace SIL.FieldWorks.XWorks
 						obj = obj.Owner;
 				}
 
-				m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+				{
+					m_dataEntryForm.Hide();
+					m_avaloniaEntryForm.Show();
+					var dto = LexicalEditPocMapper.CreateDto(obj, Cache);
+					if (dto == null)
+						m_avaloniaEntryForm.ShowMessage("Avalonia lexical-edit POC is currently available only for LexEntry records.");
+					else
+						m_avaloniaEntryForm.ShowEntry(dto);
+				}
+				else
+				{
+					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+				}
 			}
 			catch (Exception error)
 			{
@@ -400,28 +434,39 @@ namespace SIL.FieldWorks.XWorks
 			else
 				persistContext=m_vectorName+".DataTree";
 
-			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
+			if (ShouldUseAvaloniaLexicalEdit)
+			{
+				m_avaloniaEntryForm = (PocWinFormsHostControl)m_lexicalEditSurfaceFactory.Create(m_lexicalEditSurface);
+				m_avaloniaEntryForm.Dock = DockStyle.Fill;
+				m_panel.Controls.Clear();
+				m_panel.Controls.Add(m_avaloniaEntryForm);
+				m_avaloniaEntryForm.BringToFront();
+			}
+			else
+			{
+				m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
 
-			Clerk.UpdateRecordTreeBarIfNeeded();
-			SetupSliceFilter();
-			m_dataEntryForm.Dock = DockStyle.Fill;
-			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
-			string sDatabase = Cache.ProjectId.Name;
-			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
-				Inventory.GetInventory("parts", sDatabase));
-			m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
-			if (m_dataEntryForm.AccessibilityObject != null)
-				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
-			//set up the context menu, overriding the automatic menu creator/handler
+				Clerk.UpdateRecordTreeBarIfNeeded();
+				SetupSliceFilter();
+				m_dataEntryForm.Dock = DockStyle.Fill;
+				m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
+				string sDatabase = Cache.ProjectId.Name;
+				m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
+					Inventory.GetInventory("parts", sDatabase));
+				m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
+				if (m_dataEntryForm.AccessibilityObject != null)
+					m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
+				//set up the context menu, overriding the automatic menu creator/handler
 
-			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
-			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
+				m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
+				m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
 
-//			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
-			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
+//				m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
+				m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
-			Controls.Add(m_dataEntryForm);
-			m_dataEntryForm.BringToFront();
+				Controls.Add(m_dataEntryForm);
+				m_dataEntryForm.BringToFront();
+			}
 		}
 
 		/// <summary>
@@ -486,10 +531,11 @@ namespace SIL.FieldWorks.XWorks
 			if(!m_fullyInitialized)
 				return;
 
-			if (m_dataEntryForm != null) // Unlikely it is null, but I have observed it..JohnT.
+			if (!ShouldUseAvaloniaLexicalEdit && m_dataEntryForm != null) // Unlikely it is null, but I have observed it..JohnT.
 				collector.Add(m_dataEntryForm);
 
-			collector.Add(m_menuHandler);
+			if (m_menuHandler != null)
+				collector.Add(m_menuHandler);
 		}
 
 		#region IxCoreCtrlTabProvider implementation
@@ -498,6 +544,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (targetCandidates == null)
 				throw new ArgumentNullException("targetCandidates");
+
+			if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+			{
+				targetCandidates.Add(m_avaloniaEntryForm);
+				return m_avaloniaEntryForm.ContainsFocus ? m_avaloniaEntryForm : null;
+			}
 
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
 			if (m_dataEntryForm != null && m_dataEntryForm.CurrentSlice != null)
@@ -510,6 +562,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		#endregion  IxCoreCtrlTabProvider implementation
+
+		private bool ShouldUseAvaloniaLexicalEdit
+		{
+			get { return m_lexicalEditSurface == LexicalEditSurface.Avalonia; }
+		}
 
 		#region Component Designer generated code
 		/// -----------------------------------------------------------------------------------
