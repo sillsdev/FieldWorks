@@ -67,13 +67,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		PictureHolder PictureHolder { get; }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Refreshes all the views in all of the Main Windows of the app.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void RefreshAllViews();
-
 		/// <summary>
 		/// Restart the spell-checking process (e.g. when dictionary changed)
 		/// </summary>

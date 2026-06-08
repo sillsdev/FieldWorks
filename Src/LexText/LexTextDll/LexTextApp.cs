@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;

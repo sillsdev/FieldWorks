@@ -310,8 +310,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					if (frm != null)
 						wc = new WaitCursor(frm);
-					ConstraintFailure failure;
-					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
+					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out _, /* adjust the squiggly line */ true);
 					// This will make the record list update to the new value.
 					if (refresh)
 					{
@@ -322,8 +321,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				finally
 				{
-					if (wc != null)
-						wc.Dispose();
+					wc?.Dispose();
 				}
 			}
 

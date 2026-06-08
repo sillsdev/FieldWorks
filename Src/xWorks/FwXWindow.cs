@@ -1605,29 +1605,6 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		private void HandleUndoResult(UndoResult ures, bool fPrivate)
-		{
-			// Enhance JohnT: may want to display messages for kuresFailed, kuresError
-			if (ures != UndoResult.kuresSuccess)
-			{
-
-				if (!fPrivate && m_app != null)
-				{
-					// currently implemented, this will cause this app to do a master refresh,
-					m_app.Synchronize();
-				}
-				else
-				{
-					// EricP/JohnT -- this path will probably never be called in a production
-					// context, since we'll have an FwApp. And even in the case of tests
-					// taking this path, we wonder if we should issue a "MasterRefresh" instead
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.SendMessage("Refresh", this);
-#pragma warning restore 618
-				}
-			}
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Disables/enables the Edit/Undo menu item
@@ -2395,24 +2372,6 @@ namespace SIL.FieldWorks.XWorks
 					fssPrev = fss;
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// JohnT: this might be a poorly named or obsolete message. Kept because there are
-		/// some callers and I don't have time to analyze them all. Generally better to use
-		/// RefreshDisplay().
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RefreshAllViews()
-		{
-			CheckDisposed();
-
-			// We don't want to clear the cache... just update the view.
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("Refresh", this);
-#pragma warning restore 618
-			//OnMasterRefresh(null);
 		}
 
 		/// ------------------------------------------------------------------------------------
