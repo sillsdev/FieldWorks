@@ -96,7 +96,7 @@ flowchart TB
 
   G0{"Gate 0<br/>host bridge proven +<br/>density acceptable +<br/>flag dual-run works"}:::gate
   G1{"Gate 1<br/>LexicalEditRegionView at semantic parity,<br/>DataTree untouched on legacy path,<br/>active-host contract proven, no native/Graphite"}:::gate
-  G2{"Gate 2<br/>Lexical Edit region complete:<br/>parity, native audit clean,<br/>Graphite-free default"}:::gate
+  G2{"Gate 2<br/>Lexical Edit region complete:<br/>parity, native audit clean,<br/>Graphite-warned default<br/>(no native Graphite engine)"}:::gate
 
   P0 --> G0 --> P1 --> G1 --> P2 --> G2 --> P7
 
@@ -121,7 +121,10 @@ flowchart TB
   complete as of 2026-06-09.)**
 - **Gate 2 (program → shell):** the Lexical Edit region manifest passes — semantic parity, UIA2 legacy
   baselines, Avalonia.Headless tests, render-comparison evidence, native-viewing audit clean, and no
-  unapproved Graphite/native-rendering default-path dependency.
+  native Graphite engine or native Views shaping on the Avalonia path. (Per
+  `graphite-transition-support`, 2026-06-09: Graphite *presence* in a project no longer blocks an
+  Avalonia default — the gate is per-writing-system classification + warning coverage; Graphite stays
+  fully supported on legacy surfaces until the M2 sunset milestone.)
 
 ## Vocabulary — as-built (Phase 1)
 

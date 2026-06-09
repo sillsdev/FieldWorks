@@ -21,7 +21,7 @@ Important current constraints:
 - Introduce typed view-definition and Presentation IR interfaces suitable for dependency injection, semantic parity tests, and Avalonia rendering.
 - Make the lexical-edit UI mode an app-wide product switch while keeping each current `RecordEditView` consumer on an explicit contract: supported Avalonia surface, explicit legacy fallback, or explicit blocked state.
 - Preserve interaction behavior, information density, writing-system fonts, OpenType/HarfBuzz shaping behavior, nested structures, popup choosers, table views, and TreeView-heavy views.
-- Decommission native Graphite/rendering from the default Lexical Edit path: Graphite work starts when the migration starts, and Avalonia does not become the default screen until Graphite dependencies are classified and either replaced, retained behind legacy fallback/export boundaries, or blocked with explicit diagnostics and rollback.
+- Keep the Avalonia path free of native Graphite/Views shaping engines (audited per region), while Graphite *support* follows `graphite-transition-support` (2026-06-09): fully supported on legacy surfaces until the M2 sunset milestone, classified G0–G3 and warned (not blocked) on Avalonia surfaces, removed at M3 with WinForms.
 - Decommission C++ viewing/rendering dependencies by migrated region so completed Avalonia regions do not use native Views, `RootSite`, `IVwEnv`, `ManagedVwWindow`, or equivalent C++ display/layout/editor infrastructure at runtime. Custom linguistics services may remain when they are exposed through explicit service seams and do not own Avalonia viewing or editing surfaces.
 - Extend render verification to capture semantic output, not only pixels and timings.
 - Keep Avalonia code and tests on the normal repo build/test path; build strategy must not become the way we select legacy vs Avalonia behavior.
@@ -89,7 +89,16 @@ Important current constraints:
 
 ### 7. Graphite and native rendering are evidence-gated before Avalonia becomes default
 
-**Decision:** Graphite/native-rendering decommissioning begins at the start of the Lexical Edit Avalonia migration. The default Avalonia Lexical Edit path must not depend on native Graphite render engines, Gecko Graphite rendering, or unclassified Graphite-only feature settings. Legacy fallback/export consumers may remain only when explicitly classified outside the migrated default path.
+> **Revised (2026-06-09) — see `graphite-transition-support`.** Graphite support policy moved to its
+> own change and inverted from "retire before default" to "support through transition with a graded
+> warning": Graphite remains fully supported on legacy surfaces until the M2 mid-decommissioning
+> milestone, Avalonia surfaces render Graphite-affected writing systems with OpenType shaping plus a
+> per-WS G0–G3 classified warning (never a hard block, never a silent change), and removal happens at
+> M3 with WinForms. What survives of this decision here: the **engine isolation** rule (the Avalonia
+> path never loads native Graphite/Views shaping — audited per region manifest) and the Gecko/PDF
+> classification scope below.
+
+**Decision (as revised):** The default Avalonia Lexical Edit path must not depend on native Graphite render engines, Gecko Graphite rendering, or unclassified Graphite-only feature settings — but Graphite *presence* in a project does not block an Avalonia default; warning/classification coverage per `graphite-transition-support` is the gate. Legacy fallback/export consumers may remain when explicitly classified outside the migrated default path.
 
 **Rationale:** Avalonia documents custom TrueType/OpenType fonts and OpenType `FontFeatures`, but that does not prove FieldWorks Graphite parity. HarfBuzz Graphite2 shaping requires HarfBuzz to be built with Graphite2 enabled, and HarfBuzz documentation says that support is not enabled by default. Graphite behavior therefore needs fixture evidence, not assumption.
 
@@ -206,7 +215,7 @@ Pick a representative lexical path, such as LexEntry morph type plus nested sens
 - XML import drift from legacy behavior -> Mitigate with semantic snapshots and parity tests against production layouts and user-override fixtures.
 - Refresh protocol regressions -> Extract/cover refresh coordination before UI replacement.
 - TreeView/table complexity -> Spike dense custom item templates, TreeDataGrid license/version implications, and owned virtualized row templates early.
-- Graphite/native rendering decommissioning -> Begin the inventory at migration start and block Avalonia default until Graphite engines, feature UI/storage, sample fonts, Gecko Graphite prefs, PDF/export assumptions, and tests/docs are classified, replaced, moved behind legacy boundaries, or blocked with diagnostics.
+- Graphite rendering differences on Avalonia surfaces -> Governed by `graphite-transition-support` (2026-06-09): legacy surfaces keep full Graphite support until M2; Avalonia surfaces classify each writing system (G0–G3) and warn instead of blocking; the engine-isolation audit and Gecko/PDF classification remain here.
 - Gecko/browser rendering -> `XWebBrowser`, dictionary/configuration previews, interlinear configuration previews, print, and `GeckofxHtmlToPdf` need a non-Graphite replacement or an explicit non-default legacy boundary.
 - PropertyGrid limits -> Treat it as a prototype path; do not let it define the final IR or UI shape.
 - Automation flakiness -> Keep UIA2 tests thin; use model/semantic assertions for deep behavior.
@@ -222,7 +231,7 @@ Pick a representative lexical path, such as LexEntry morph type plus nested sens
 2. Define the app-wide lexical-edit UI mode contract and explicit per-host behavior matrix before expanding product wiring beyond the first hosts.
 3. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic, following `avalonia-ui-scheduler`, `avalonia-lifetime`, and the local phase of `avalonia-command-focus`.
 4. Keep Avalonia build/test integration on the normal repo scripts while the runtime UI mode remains the only product selection mechanism.
-5. Start Graphite/native rendering decommissioning: inventory affected project settings, fonts, render engines, Gecko/PDF paths, tests, docs, and build artifacts; prove no default-path claim depends on unverified Graphite behavior.
+5. Execute Graphite transition per `graphite-transition-support`: ship the G0–G3 writing-system classification and graded Avalonia warning with the first user-text Avalonia surface; keep legacy-surface Graphite untouched; prove engine isolation on the Avalonia path; classify Gecko/PDF paths here (tasks 5.6/5.7).
 6. Define migrated-region manifests and hard gates for each proposed Avalonia region.
 7. Extend render verification with normalized semantic snapshots, visual/timing evidence, performance budgets, and failure bundles.
 8. Build typed view-definition and XML import as the compatibility compiler.
