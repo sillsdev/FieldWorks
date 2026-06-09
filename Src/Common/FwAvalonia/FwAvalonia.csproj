@@ -1,24 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
-		FwAvalonia (POC spike: lexical-edit-avalonia-poc-spike)
+		FwAvalonia (lexical-edit-avalonia-migration)
 
-		Isolated proof-of-concept library. It is intentionally NOT added to
-		FieldWorks.proj (traversal) or FieldWorks.sln yet: the spike must not be able
-		to break the default build. Integration into the traversal/solution is deferred
-		until Gate 0 passes (see openspec/changes/avalonia-migration-roadmap).
+		Owning project for the Avalonia lexical-edit migration: typed view-definition IR,
+		migration seams, region model, and the first-slice controls. Part of the normal repo
+		build — included in the FieldWorks.proj traversal via the Src glob and listed in
+		FieldWorks.sln (lexical-edit task 1.11; gate history in
+		openspec/changes/avalonia-migration-roadmap).
 
-		Targets net48 to prove in-process hosting beside WinForms. Avalonia 11.3.x is the
-		last line that still ships netstandard2.0 assemblies and therefore loads on net48.
-		UI is built in pure C# (no XAML) to keep the spike independent of the Avalonia
-		XAML compiler and the repo's customized MSBuild.
+		Targets net48 for in-process hosting beside WinForms. Avalonia 11.3.x is the
+		last line that still ships netstandard2.0 assemblies and therefore loads on net48;
+		stay on the 11.x line until WinForms is removed. UI is built in pure C# (no XAML) to
+		keep the project independent of the Avalonia XAML compiler and the repo's customized
+		MSBuild.
 	-->
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>
-		<!-- Spike-only relaxations: this isolated project is not shipped. -->
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>

@@ -26,10 +26,17 @@ These are fixed product constraints; the seam choices below assume them:
    small islands sharing a WinForms tab order).
 2. **~1-year coexist phase, then WinForms is deleted.** Each *class* of UI is wholly WinForms **or**
    wholly Avalonia at a time, but different classes run **concurrently** and must cooperate through
-   two shared channels: **selection** ("this is the current lexeme") and **copy/paste**. Those two
-   bridges are real, must-build, and bidirectional — not throwaway scaffolding. What *is* throwaway
-   is wiring the new ports into *legacy internals* (e.g. threading `RefreshCoordinator` into the live
-   `DataTree`), because that code is deleted at cutover.
+   three shared data channels: **selection** ("this is the current lexeme", task 3.12), **copy/paste**
+   (task 3.13), and **drag-and-drop** (task 3.14 — product decision 2026-06-09: cross-surface DnD is
+   supported, reusing the clipboard payload formats). These bridges are real, must-build, and
+   bidirectional — not throwaway scaffolding. Beyond data interchange, four behaviors gate the first
+   *editable* slice because both surfaces share one LCModel cache and one window chrome:
+   **cross-surface refresh propagation** (`PropChanged`/F5 reach both surfaces, task 3.15), **one
+   global undo/redo stack** (LCModel `IActionHandler`, 6.8/6.10 — two stacks is user-visible data
+   weirdness), **screen-local command/menu/focus routing** to the active surface (the local phase of
+   `avalonia-command-focus`), and **dialog ownership/modality** across the interop boundary (task
+   3.16). What *is* throwaway is wiring the new ports into *legacy internals* (e.g. threading
+   `RefreshCoordinator` into the live `DataTree`), because that code is deleted at cutover.
 3. **XML-layout retirement is a separate effort.** Moving authoring off XML Parts/Layout to a modern
    typed format is desirable but out of scope here; this change keeps the XML→IR importer and treats
    the typed IR as the runtime contract the Avalonia side consumes.
@@ -46,8 +53,12 @@ switch until cutover. Concretely:
   it); it is now an audited invariant.
 - Replace the **lossy `LexicalEditPocMapper` DTO** on the product route with a
   **typed-definition-backed region model** (4.8); keep `PocEntryDto` for the preview host only.
-- Build the **selection and clipboard bridges** as bidirectional adapters over the shared xCore/LCModel
-  substrate; do not re-plumb legacy internals.
+- Build the **selection, clipboard, and drag-and-drop bridges** (3.12/3.13/3.14) as bidirectional
+  adapters over the shared xCore/LCModel/OS substrate; do not re-plumb legacy internals. Clipboard
+  and DnD speak the legacy `"TsString"` OS format so native-Views surfaces interoperate unchanged.
+- Treat **cross-surface refresh propagation** (3.15) and **global LCModel undo/redo** as first-editable-
+  slice gates, not cleanup: shared-cache consistency stands or falls on the notification loop, and a
+  split undo history is the most jarring coexistence failure a user can hit.
 - Reproduce the prototype's **LCModel-fenced edit session and validation** behind `IEditSession`/the
   validation seam when the first product editor lands (6.x); the prototype branch is the reference.
 

@@ -16,8 +16,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public static class EditorKindMap
 	{
-		// Mirrors the case labels in Src/Common/Controls/DetailControls/SliceFactory.cs.
-		private static readonly HashSet<string> KnownEditors = new HashSet<string>(StringComparer.Ordinal)
+		// Mirrors the case labels in Src/Common/Controls/DetailControls/SliceFactory.cs. Comparison is
+		// case-insensitive because DataTree lowercases the editor attribute before dispatch
+		// (DataTree.ProcessSubpartNode: editor.ToLower()), so e.g. "MorphTypeAtomicReference" in shipped
+		// parts is the known "morphtypeatomicreference" editor.
+		private static readonly HashSet<string> KnownEditors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
 			"multistring",
 			"defaultvectorreference",
@@ -54,14 +57,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			"command"
 		};
 
-		private static readonly HashSet<string> DynamicEditors = new HashSet<string>(StringComparer.Ordinal)
+		private static readonly HashSet<string> DynamicEditors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
 			"custom",
 			"customwithparams",
 			"autocustom"
 		};
 
-		private static readonly HashSet<string> ObsoleteEditors = new HashSet<string>(StringComparer.Ordinal)
+		private static readonly HashSet<string> ObsoleteEditors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
 			"message"
 		};

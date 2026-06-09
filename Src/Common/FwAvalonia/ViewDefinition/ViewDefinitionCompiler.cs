@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -19,12 +20,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class ViewDefinitionSourceSnapshot
 	{
-		public ViewDefinitionSourceSnapshot(string className, string layoutType, string layoutXml, string partsXml)
+		public ViewDefinitionSourceSnapshot(string className, string layoutType, string layoutXml, string partsXml,
+			IReadOnlyDictionary<string, string> baseClassMap = null)
 		{
 			ClassName = className ?? "";
 			LayoutType = string.IsNullOrEmpty(layoutType) ? "detail" : layoutType;
 			LayoutXml = layoutXml ?? "";
 			PartsXml = partsXml ?? "";
+			BaseClassMap = baseClassMap;
 		}
 
 		public string ClassName { get; }
@@ -37,6 +40,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>The <c>&lt;PartInventory&gt;</c> (or <c>&lt;bin&gt;</c>) source.</summary>
 		public string PartsXml { get; }
 
+		/// <summary>Optional subclass → base class chain used for part-ref resolution fallback.</summary>
+		public IReadOnlyDictionary<string, string> BaseClassMap { get; }
+
 		/// <summary>The layout name parsed from <see cref="LayoutXml"/>.</summary>
 		public string LayoutName => (string)XElement.Parse(LayoutXml).Attribute("name") ?? "";
 
@@ -45,7 +51,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			using (var sha = SHA256.Create())
 			{
-				var bytes = Encoding.UTF8.GetBytes(ClassName + "\n" + LayoutType + "\n" + LayoutXml + "\n" + PartsXml);
+				var baseMapText = BaseClassMap == null
+					? ""
+					: string.Join(";", BaseClassMap.OrderBy(p => p.Key, StringComparer.Ordinal)
+						.Select(p => p.Key + ">" + p.Value));
+				var bytes = Encoding.UTF8.GetBytes(
+					ClassName + "\n" + LayoutType + "\n" + LayoutXml + "\n" + PartsXml + "\n" + baseMapText);
 				var hash = sha.ComputeHash(bytes);
 				var sb = new StringBuilder(hash.Length * 2);
 				foreach (var b in hash)
@@ -192,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			var layout = XElement.Parse(snapshot.LayoutXml);
-			var parts = new DictionaryPartResolver(XElement.Parse(snapshot.PartsXml));
+			var parts = new DictionaryPartResolver(XElement.Parse(snapshot.PartsXml), snapshot.BaseClassMap);
 			cancellationToken.ThrowIfCancellationRequested();
 			return _importer.Import(layout, parts);
 		}

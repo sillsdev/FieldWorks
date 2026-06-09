@@ -16,10 +16,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	public sealed class DictionaryPartResolver : IPartResolver
 	{
 		private readonly Dictionary<string, XElement> _partsById = new Dictionary<string, XElement>();
+		private readonly IReadOnlyDictionary<string, string> _baseClassMap;
 
-		/// <summary>Builds a resolver from a <c>&lt;PartInventory&gt;</c> (or its inner <c>&lt;bin&gt;</c>) element.</summary>
-		public DictionaryPartResolver(XElement partInventory)
+		/// <summary>
+		/// Builds a resolver from a <c>&lt;PartInventory&gt;</c> (or its inner <c>&lt;bin&gt;</c>) element.
+		/// The optional <paramref name="baseClassMap"/> (subclass → base class) mirrors the legacy
+		/// Inventory's class-hierarchy fallback: a ref unresolved on the subclass is retried on its base
+		/// class chain (e.g. <c>MoStemAllomorph-Detail-AsLexemeForm</c> → <c>MoForm-Detail-AsLexemeForm</c>).
+		/// </summary>
+		public DictionaryPartResolver(XElement partInventory, IReadOnlyDictionary<string, string> baseClassMap = null)
 		{
+			_baseClassMap = baseClassMap;
 			foreach (var part in partInventory.Descendants("part"))
 			{
 				var id = (string)part.Attribute("id");
@@ -41,10 +48,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 
 			var type = string.IsNullOrEmpty(layoutType) ? "Detail" : layoutType;
-			if (TryGetContent($"{className}-{type}-{refName}", out var content)
-				|| TryGetContent($"{className}-Detail-{refName}", out content))
+			var currentClass = className;
+			// Bounded walk so a cyclic base-class map cannot loop.
+			for (var hop = 0; hop < 16 && !string.IsNullOrEmpty(currentClass); hop++)
 			{
-				return content;
+				if (TryGetContent($"{currentClass}-{type}-{refName}", out var content)
+					|| TryGetContent($"{currentClass}-Detail-{refName}", out content))
+				{
+					return content;
+				}
+
+				if (_baseClassMap == null || !_baseClassMap.TryGetValue(currentClass, out currentClass))
+				{
+					break;
+				}
 			}
 
 			return null;

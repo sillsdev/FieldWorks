@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
 using XCore;
@@ -67,6 +68,7 @@ namespace SIL.FieldWorks.XWorks
 		private readonly LexicalEditSurfaceSelectionService m_surfaceSelectionService = new LexicalEditSurfaceSelectionService();
 		private PocWinFormsHostControl m_avaloniaEntryForm;
 		private bool m_legacySurfaceInitialized;
+		private RecordClerkNavigationContext m_recordNavigationContext;
 
 		//// <summary>
 		//// used to associate menu commands with the slice that sent them
@@ -166,7 +168,10 @@ namespace SIL.FieldWorks.XWorks
 				if (m_dataEntryForm != null)
 				{
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
-					m_dataEntryForm.Dispose();
+					if (m_legacySurfaceInitialized)
+						m_dataEntryForm.Dispose();
+					else if (m_panel != null && m_panel.Controls.Contains(m_dataEntryForm))
+						m_panel.Controls.Remove(m_dataEntryForm);
 				}
 				m_avaloniaEntryForm?.Dispose();
 				m_menuHandler?.Dispose();
@@ -207,6 +212,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.ResumeIdleProcessing();
 			}
+
+			// Selection bridge (task 3.12): the real mediator broadcast delivered a record navigation
+			// for this host's clerk, so let bridge subscribers (the Avalonia surface) follow it.
+			m_recordNavigationContext?.NotifyCurrentRecordChanged();
 			return true;	//we handled this.
 		}
 
@@ -347,13 +356,12 @@ namespace SIL.FieldWorks.XWorks
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
 					// Active-host contract (task 3.10): do not touch the legacy DataTree while Avalonia is active.
-					if (m_avaloniaEntryForm == null)
-						EnsureAvaloniaSurfaceInitialized();
-					m_avaloniaEntryForm.Hide();
+					EnsureAvaloniaSurfaceActive();
 					m_avaloniaEntryForm.Clear();
 				}
 				else
 				{
+					EnsureLegacySurfaceVisible();
 					m_dataEntryForm.Hide();
 					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
 				}
@@ -365,8 +373,7 @@ namespace SIL.FieldWorks.XWorks
 				// or drive the legacy DataTree. Only the active surface is created and shown.
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
-					if (m_avaloniaEntryForm == null)
-						EnsureAvaloniaSurfaceInitialized();
+					EnsureAvaloniaSurfaceActive();
 				}
 				else
 				{
@@ -379,7 +386,7 @@ namespace SIL.FieldWorks.XWorks
 							localPersistContext = m_vectorName + ".DataTree";
 						EnsureLegacySurfaceInitialized(localPersistContext);
 					}
-					m_dataEntryForm.Show();
+					EnsureLegacySurfaceVisible();
 				}
 
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
@@ -430,6 +437,21 @@ namespace SIL.FieldWorks.XWorks
 			return !IsFocusedPane || rni.SuppressFocusChange;
 		}
 
+		/// <summary>
+		/// The bidirectional selection bridge for this host's clerk (task 3.12). Created on first use so
+		/// the clerk is initialized. Surfaces (including the Avalonia host) follow the current-record bus
+		/// through its event and publish their own selection back through it.
+		/// </summary>
+		internal IRecordNavigationContext RecordNavigationContext
+		{
+			get
+			{
+				if (m_recordNavigationContext == null && Clerk != null)
+					m_recordNavigationContext = new RecordClerkNavigationContext(Clerk);
+				return m_recordNavigationContext;
+			}
+		}
+
 		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()
 		{
 			// Task 3.9: route the per-host decision through the explicit selection service rather than
@@ -465,8 +487,7 @@ namespace SIL.FieldWorks.XWorks
 			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
-			if (!m_panel.Controls.Contains(m_dataEntryForm))
-				m_panel.Controls.Add(m_dataEntryForm);
+			AttachLegacySurfaceToPanel();
 
 			m_legacySurfaceInitialized = true;
 		}
@@ -480,6 +501,43 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
+		}
+
+		private void EnsureAvaloniaSurfaceActive()
+		{
+			if (m_avaloniaEntryForm == null)
+				EnsureAvaloniaSurfaceInitialized();
+
+			DetachLegacySurfaceFromPanel();
+			m_avaloniaEntryForm.Show();
+			m_avaloniaEntryForm.BringToFront();
+		}
+
+		private void EnsureLegacySurfaceVisible()
+		{
+			AttachLegacySurfaceToPanel();
+			m_avaloniaEntryForm?.Hide();
+			m_dataEntryForm.Show();
+			m_dataEntryForm.BringToFront();
+		}
+
+		private void AttachLegacySurfaceToPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			if (!m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Add(m_dataEntryForm);
+		}
+
+		private void DetachLegacySurfaceFromPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			m_dataEntryForm.Hide();
+			if (m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Remove(m_dataEntryForm);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -541,9 +599,11 @@ namespace SIL.FieldWorks.XWorks
 			if (!ShouldUseAvaloniaLexicalEdit)
 			{
 				EnsureLegacySurfaceInitialized(persistContext);
-				m_avaloniaEntryForm?.Hide();
-				m_dataEntryForm.Show();
-				m_dataEntryForm.BringToFront();
+				EnsureLegacySurfaceVisible();
+			}
+			else
+			{
+				DetachLegacySurfaceFromPanel();
 			}
 		}
 

@@ -1,11 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
-		FwAvaloniaTests (POC spike: lexical-edit-avalonia-poc-spike)
+		FwAvaloniaTests (lexical-edit-avalonia-migration)
 
-		Headless evidence that Avalonia 11.3.x restores, builds, and runs on .NET Framework 4.8,
-		and that the POC slice renders its three editors, returns popup focus, and commits/cancels
-		edits without any native Views or Graphite dependency. Isolated from the traversal build.
+		Headless Avalonia test suite for FwAvalonia: seams, typed view-definition IR, region
+		model, and first-slice control behavior (render, popup focus return, commit/cancel)
+		with no native Views or Graphite dependency. Part of the normal repo test path —
+		included in the FieldWorks.proj traversal (BuildTests=true) and FieldWorks.sln;
+		test.ps1 discovers the built FwAvaloniaTests.dll from the shared Output directory
+		(lexical-edit task 1.11).
 
 		NUnit, NUnit3TestAdapter, and Microsoft.NET.Test.Sdk are injected by Src/Directory.Build.props
 		because IsTestProject is true.

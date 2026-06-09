@@ -16,6 +16,42 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class XmlLayoutImporter : IViewDefinitionImporter
 	{
+		// Task 4.9: the attribute vocabulary the importer actually consumes, per element role. Anything
+		// outside these sets is reported with an `unhandled-attribute` diagnostic instead of being
+		// silently dropped, so importer coverage is measurable (see LayoutImportCoverage).
+		public static readonly HashSet<string> HandledLayoutAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal) { "class", "type", "name", "version" };
+
+		public static readonly HashSet<string> HandledCallerPartAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal)
+			{
+				"ref", "label", "abbr", "visibility", "expansion", "param", "customFields",
+				"localizationKey", "labelId", "automationId", "surface"
+			};
+
+		public static readonly HashSet<string> HandledSliceAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal)
+			{
+				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
+				"localizationKey", "labelId", "automationId", "surface"
+			};
+
+		public static readonly HashSet<string> HandledObjSeqAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal)
+			{
+				"field", "layout", "label", "abbr", "ws", "visibility", "expansion",
+				"localizationKey", "labelId", "automationId", "surface"
+			};
+
+		// Dropped attributes that change behavior (menus, ghost lines) get Warning severity; purely
+		// presentational ones (styles, separators, numbering) get Info.
+		private static readonly HashSet<string> FunctionalDroppedAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal)
+			{
+				"menu", "hotlinks", "ghost", "ghostWs", "ghostLabel", "ghostAbbr", "ghostClass",
+				"ghostField", "ghostInitMethod", "editor"
+			};
+
 		/// <inheritdoc />
 		public ViewDefinitionModel Import(XElement layoutElement, IPartResolver parts)
 		{
@@ -53,6 +89,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						var indentAttr = (string)el.Attribute("indent");
 						var indentFlag = indentAttr == null || indentAttr != "false";
 						ProcessContainer(el.Elements(), parts, className, layoutType, parentPath, indentFlag, output, diagnostics);
+						break;
+					// Task 4.9: named drop codes for the real-layout constructs the importer does not
+					// expand yet, so coverage reports can count them instead of lumping them as unknown.
+					case "generate":
+						diagnostics.Add(new ViewDiagnostic(
+							ViewDiagnosticSeverity.Warning,
+							"generated-content-dropped",
+							$"<generate class='{(string)el.Attribute("class")}' fieldType='{(string)el.Attribute("fieldType")}'> drives schema/custom-field UI generation and is not imported.",
+							$"{parentPath}/#{output.Count}"));
+						break;
+					case "if":
+					case "ifnot":
+						diagnostics.Add(new ViewDiagnostic(
+							ViewDiagnosticSeverity.Warning,
+							"conditional-dropped",
+							$"Conditional <{el.Name.LocalName} target='{(string)el.Attribute("target")}'> is not evaluated; its content is not imported.",
+							$"{parentPath}/#{output.Count}"));
+						break;
+					case "sublayout":
+						diagnostics.Add(new ViewDiagnostic(
+							ViewDiagnosticSeverity.Info,
+							"sublayout-dropped",
+							$"<sublayout name='{(string)el.Attribute("name")}'> is a publishing construct and is not imported for detail views.",
+							$"{parentPath}/#{output.Count}"));
 						break;
 					default:
 						diagnostics.Add(new ViewDiagnostic(
@@ -126,6 +186,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var field = Attr(contentEl, "field");
 			var ws = Attr(contentEl, "ws");
 
+			// Task 4.9: report attributes the importer drops instead of dropping them silently. The caller
+			// element is reported only when distinct from the content element (inline children pass the
+			// same element for both).
+			if (!ReferenceEquals(callerEl, contentEl))
+			{
+				ReportUnhandledAttributes(callerEl, HandledCallerPartAttributes, "part ref", stableId, diagnostics);
+				ReportSubstitutionValues(callerEl, HandledCallerPartAttributes, stableId, diagnostics);
+			}
+
 			// Task 4.7 metadata. Legacy XML Parts/Layout does not carry these, so they stay null/Inherit for
 			// imported layouts (preserving semantic baselines); authored or region-spec sources may set them.
 			var localizationKey = Attr(callerEl, "localizationKey") ?? Attr(contentEl, "localizationKey")
@@ -140,6 +209,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var editor = Attr(contentEl, "editor");
 					var classification = EditorKindMap.Classify(editor);
 					RaiseEditorDiagnostics(editor, classification, stableId, diagnostics);
+					ReportUnhandledAttributes(contentEl, HandledSliceAttributes, "slice", stableId, diagnostics);
+					ReportSubstitutionValues(contentEl, HandledSliceAttributes, stableId, diagnostics);
 
 					var childElements = new List<XElement>();
 					foreach (var child in contentEl.Elements())
@@ -148,19 +219,50 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						{
 							childElements.Add(child);
 						}
+						else
+						{
+							diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
+								$"Slice content child <{child.Name.LocalName}> is not imported.", stableId));
+						}
 					}
 
-					if (classification == EditorClassification.GroupingNone && childElements.Count > 0)
+					var children = new List<ViewNode>();
+					BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
+
+					// Caller children under a slice-content part (<indent>/<part> wrappers on a section
+					// part, e.g. AsLexemeForm's MorphTypeBasic) become child nodes, mirroring how
+					// DataTree.ProcessPartRefNode realizes them as indented child slices. Other caller
+					// child kinds are reported, not silently dropped (task 4.9).
+					if (!ReferenceEquals(callerEl, contentEl))
 					{
-						var children = new List<ViewNode>();
-						BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
+						var structuralCallerChildren = new List<XElement>();
+						foreach (var callerChild in callerEl.Elements())
+						{
+							if (callerChild.Name.LocalName == "indent" || callerChild.Name.LocalName == "part")
+							{
+								structuralCallerChildren.Add(callerChild);
+							}
+							else
+							{
+								diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "caller-children-dropped",
+									$"Caller child <{callerChild.Name.LocalName}> under part ref with slice content is not imported.",
+									stableId));
+							}
+						}
+
+						ProcessContainer(structuralCallerChildren, parts, className, layoutType, stableId, false,
+							children, diagnostics);
+					}
+
+					if (classification == EditorClassification.GroupingNone && children.Count > 0)
+					{
 						return new ViewNode(stableId, ViewNodeKind.Group, label, abbreviation, field, editor,
 							classification, ws, visibility, expansion, indented, null, children,
 							localizationKey, automationId, routing);
 					}
 
-					return MakeLeaf(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
-						classification, ws, visibility, expansion, indented, null,
+					return new ViewNode(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
+						classification, ws, visibility, expansion, indented, null, children,
 						localizationKey, automationId, routing);
 				}
 				case "obj":
@@ -168,6 +270,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				{
 					var kind = contentEl.Name.LocalName == "obj" ? ViewNodeKind.ObjectAtom : ViewNodeKind.Sequence;
 					var targetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
+					ReportUnhandledAttributes(contentEl, HandledObjSeqAttributes, contentEl.Name.LocalName, stableId, diagnostics);
+					ReportSubstitutionValues(contentEl, HandledObjSeqAttributes, stableId, diagnostics);
 					var children = new List<ViewNode>();
 					BuildInjectedChildren(callerEl, parts, layoutType, stableId, children, diagnostics);
 					return new ViewNode(stableId, kind, label, abbreviation, field, null,
@@ -212,8 +316,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			List<ViewNode> output,
 			List<ViewDiagnostic> diagnostics)
 		{
-			foreach (var child in callerEl.Elements("part"))
+			foreach (var child in callerEl.Elements())
 			{
+				if (child.Name.LocalName != "part")
+				{
+					// E.g. an <indent> wrapper under an obj/seq caller; its nested parts are not expanded
+					// here. Report rather than silently drop (task 4.9).
+					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "injected-child-dropped",
+						$"Caller child <{child.Name.LocalName}> under an object/sequence part is not imported.",
+						$"{parentPath}/#{output.Count}"));
+					continue;
+				}
+
 				var stableId = $"{parentPath}/#{output.Count}";
 				var refName = (string)child.Attribute("ref");
 				if (string.IsNullOrEmpty(refName))
@@ -267,6 +381,53 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
+
+		// Task 4.9: one diagnostic per attribute the importer does not consume. Functional drops
+		// (menus, ghost lines) are warnings; presentational drops (style, separators, numbering) are info.
+		private static void ReportUnhandledAttributes(
+			XElement el, HashSet<string> handled, string role, string stableId,
+			List<ViewDiagnostic> diagnostics)
+		{
+			foreach (var attr in el.Attributes())
+			{
+				var name = attr.Name.LocalName;
+				if (handled.Contains(name))
+				{
+					continue;
+				}
+
+				var severity = FunctionalDroppedAttributes.Contains(name)
+					? ViewDiagnosticSeverity.Warning
+					: ViewDiagnosticSeverity.Info;
+				diagnostics.Add(new ViewDiagnostic(severity, "unhandled-attribute",
+					$"Attribute '{name}'='{attr.Value}' on <{el.Name.LocalName}> ({role}) is not imported.",
+					stableId));
+			}
+		}
+
+		// Task 4.9: handled attributes whose values use runtime substitution ($param, {0}) are consumed
+		// literally by the importer; flag them so substitution semantics are not silently lost.
+		private static void ReportSubstitutionValues(
+			XElement el, HashSet<string> handled, string stableId, List<ViewDiagnostic> diagnostics)
+		{
+			foreach (var attr in el.Attributes())
+			{
+				var name = attr.Name.LocalName;
+				if (!handled.Contains(name))
+				{
+					continue;
+				}
+
+				if (attr.Value.IndexOf('$') < 0 && !attr.Value.Contains("{0}"))
+				{
+					continue;
+				}
+
+				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "param-substitution",
+					$"Attribute '{name}'='{attr.Value}' on <{el.Name.LocalName}> uses runtime substitution the importer does not expand.",
+					stableId));
+			}
+		}
 
 		private static SurfaceRouting ParseRouting(string value)
 		{

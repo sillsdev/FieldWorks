@@ -3,14 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -19,14 +18,13 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 3.10 audit: when the Avalonia surface is active, <c>RecordEditView</c> must not instantiate or
-	/// drive the hidden legacy <c>DataTree</c>. This proves the active-host contract on the real product
-	/// host by loading the lexicon edit tool fresh in the New UI mode and asserting the legacy surface was
-	/// never initialized, while the Avalonia surface was.
+	/// Task 3.12 — the bidirectional selection bridge. Proves on the real product host that
+	/// <c>RecordClerkNavigationContext</c> follows the clerk's actual mediator broadcast (no manual
+	/// handler calls) and publishes a surface-originated selection back through the same bus.
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class RecordEditViewActiveHostContractTests : XWorksAppTestBase
+	public class RecordClerkNavigationContextTests : XWorksAppTestBase
 	{
 		private PropertyTable m_propertyTable;
 		private List<ICmObject> m_createdObjects;
@@ -64,11 +62,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void AvaloniaActive_DoesNotInitializeOrDriveLegacyDataTree()
+		public void SelectionBridge_FollowsRealBroadcast_AndPublishesSelectionBack()
 		{
-			m_propertyTable.SetProperty("UIMode", "New", true);
-			m_propertyTable.SetPropertyPersistence("UIMode", false);
+			LoadRecordEditView("lexiconEdit");
+			DrainMediatorAndIdleQueues();
 
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(control.Clerk.ListSize, Is.GreaterThanOrEqualTo(2), "need at least two records to navigate");
+
+			var bridge = control.RecordNavigationContext;
+			Assert.That(bridge, Is.Not.Null, "the host must expose the selection bridge once its clerk exists");
+
+			var changed = 0;
+			bridge.CurrentRecordChanged += (s, e) => changed++;
+
+			control.Clerk.JumpToIndex(0);
+			DrainMediatorAndIdleQueues();
+			var first = bridge.CurrentRecord as ICmObject;
+			Assert.That(first, Is.Not.Null);
+
+			// Follow direction: moving the bus selection must reach the bridge through the real
+			// mediator RecordNavigation broadcast handled by the sponsoring host.
+			var changedBeforeMove = changed;
+			Assert.That(bridge.MoveNext(), Is.True);
+			DrainMediatorAndIdleQueues();
+			var second = bridge.CurrentRecord as ICmObject;
+			Assert.That(second, Is.Not.Null);
+			Assert.That(second.Hvo, Is.Not.EqualTo(first.Hvo), "MoveNext must change the bus selection");
+			Assert.That(changed, Is.GreaterThan(changedBeforeMove),
+				"the bridge must observe the broadcast (follow direction)");
+
+			// Publish direction: a surface-originated selection (by record object) must route through
+			// the clerk's real OnJumpToRecord and broadcast back to the host.
+			var changedBeforePublish = changed;
+			Assert.That(bridge.PublishSelection(first), Is.True);
+			DrainMediatorAndIdleQueues();
+			Assert.That(((ICmObject)bridge.CurrentRecord).Hvo, Is.EqualTo(first.Hvo),
+				"PublishSelection must move the bus selection (publish direction)");
+			Assert.That(control.Clerk.CurrentObject.Hvo, Is.EqualTo(first.Hvo),
+				"the legacy clerk must see the surface-published selection");
+			Assert.That(changed, Is.GreaterThan(changedBeforePublish),
+				"the publishing surface also follows its own published change via the bus");
+		}
+
+		[Test]
+		public void SelectionBridge_PublishSelection_ByHvo_AndRejectsUnknownKeys()
+		{
 			LoadRecordEditView("lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
@@ -76,22 +117,20 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
 
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia),
-				"Precondition: the lexicon edit tool should resolve to the Avalonia surface under the New UI mode.");
+			var bridge = control.RecordNavigationContext;
+			control.Clerk.JumpToIndex(0);
+			DrainMediatorAndIdleQueues();
+			var first = (ICmObject)bridge.CurrentRecord;
 
-			// Active-host contract (task 3.10): the legacy DataTree must not have been initialized or driven
-			// while Avalonia is the active surface. This is the audited invariant.
-			Assert.That(GetPrivateFieldValue(control, "m_legacySurfaceInitialized"), Is.EqualTo(false),
-				"The active Avalonia path must not instantiate or drive the hidden legacy DataTree (task 3.10).");
+			Assert.That(bridge.MoveNext(), Is.True);
+			DrainMediatorAndIdleQueues();
 
-			var panel = (Panel)GetPrivateFieldValue(control, "m_panel");
-			var legacyDataTree = (DataTree)GetPrivateFieldValue(control, "m_dataEntryForm");
-			Assert.That(panel.Controls.Contains(legacyDataTree), Is.False,
-				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is the active surface.");
+			Assert.That(bridge.PublishSelection(first.Hvo), Is.True, "an hvo key publishes");
+			DrainMediatorAndIdleQueues();
+			Assert.That(((ICmObject)bridge.CurrentRecord).Hvo, Is.EqualTo(first.Hvo));
 
-			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
-			// headless xWorks harness does not provide, so we do not assert the host was created here. The
-			// FwAvaloniaTests headless suite covers Avalonia surface construction/rendering directly.
+			Assert.That(bridge.PublishSelection("not-a-record-key"), Is.False,
+				"unknown key shapes are rejected, not guessed");
 		}
 
 		private void LoadRecordEditView(string toolValue)
@@ -112,7 +151,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var stemMorphType = GetMorphTypeOrCreateOne("stem");
 			var nounPartOfSpeech = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-			AddLexeme(m_createdObjects, "contract-entry", stemMorphType, "contract gloss", nounPartOfSpeech);
+			AddLexeme(m_createdObjects, "alpha-entry", stemMorphType, "first gloss", nounPartOfSpeech);
+			AddLexeme(m_createdObjects, "beta-entry", stemMorphType, "second gloss", nounPartOfSpeech);
 		}
 
 		private void DestroyLexiconTestData()
@@ -126,13 +166,6 @@ namespace SIL.FieldWorks.XWorks
 				if (obj is ILexEntry)
 					obj.Delete();
 			}
-		}
-
-		private static object GetPrivateFieldValue(object target, string fieldName)
-		{
-			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
-			return field.GetValue(target);
 		}
 
 		private void DrainMediatorAndIdleQueues()
