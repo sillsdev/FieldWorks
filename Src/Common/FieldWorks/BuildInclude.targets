@@ -7,7 +7,6 @@
 		<!-- Ensure reg-free manifest includes the core managed COM servers used by FieldWorks.exe -->
 		<ManagedComAssemblies Include="$(OutDir)FwUtils.dll" />
 		<ManagedComAssemblies Include="$(OutDir)SimpleRootSite.dll" />
-		<ManagedComAssemblies Include="$(OutDir)ManagedVwWindow.dll" />
 		<ManagedComAssemblies Include="$(OutDir)xWorks.dll" />
 		<ManagedComAssemblies Include="$(OutDir)LexTextDll.dll" />
 	</ItemGroup>

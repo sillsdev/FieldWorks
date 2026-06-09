@@ -1,0 +1,186 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Windows.Forms;
+using System.Xml;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using XCore;
+
+namespace SIL.FieldWorks.XWorks
+{
+	[TestFixture]
+	[Apartment(System.Threading.ApartmentState.STA)]
+	public class RecordEditViewSwitchTests : XWorksAppTestBase
+	{
+		private PropertyTable m_propertyTable;
+		private List<ICmObject> m_createdObjects;
+
+		protected override void Init()
+		{
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+		}
+
+		[SetUp]
+		public void SetUpWindow()
+		{
+			m_window = new MockFwXWindow(m_application, m_configFilePath);
+			((MockFwXWindow)m_window).Init(Cache);
+			m_propertyTable = m_window.PropTable;
+			m_propertyTable.RemoveLocalAndGlobalSettings();
+			m_window.LoadUI(m_configFilePath);
+			m_createdObjects = new List<ICmObject>();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateLexiconTestData);
+		}
+
+		[TearDown]
+		public void TearDownWindow()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DestroyLexiconTestData);
+			m_createdObjects = null;
+			m_propertyTable?.RemoveLocalAndGlobalSettings();
+			m_propertyTable = null;
+			if (m_window != null && !m_window.IsDisposed)
+			{
+				m_window.Dispose();
+				m_window = null;
+			}
+		}
+
+		[Test]
+		public void LexiconEditTool_UsesLegacyDataTree_WhenUIModeIsLegacy()
+		{
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(control.DatTree, Is.Not.Null);
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null);
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.WinForms));
+		}
+
+		[Test]
+		public void LexiconEditTool_SwitchesSurfaceStateToAvalonia_WhenUIModeChangesToNew()
+		{
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			control.OnPropertyChanged(LexicalEditSurfaceResolver.UIModePropertyName);
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+		}
+
+		private void LoadRecordEditView()
+		{
+			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
+			Assert.That(windowConfiguration, Is.Not.Null, "The xWorks test window should load a merged WindowConfiguration before RecordEditView is activated.");
+			var controlNode = windowConfiguration.SelectSingleNode(
+				"//tool[@value='lexiconEdit']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']");
+			Assert.That(controlNode, Is.Not.Null, "Expected to find the lexicon RecordEditView configuration node.");
+
+			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
+			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
+			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
+		}
+
+		private void CreateLexiconTestData()
+		{
+			var stemMorphType = GetMorphTypeOrCreateOne("stem");
+			var nounPartOfSpeech = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+			AddLexeme(m_createdObjects, "switch-entry", stemMorphType, "switch gloss", nounPartOfSpeech);
+		}
+
+		private void DestroyLexiconTestData()
+		{
+			if (m_createdObjects == null)
+				return;
+
+			foreach (var obj in m_createdObjects)
+			{
+				if (!obj.IsValidObject)
+					continue;
+				if (obj is ILexEntry)
+					obj.Delete();
+			}
+		}
+
+		private static T GetPrivateField<T>(object target, string fieldName) where T : class
+		{
+			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
+			return field.GetValue(target) as T;
+		}
+
+		private static object GetPrivateFieldValue(object target, string fieldName)
+		{
+			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
+			return field.GetValue(target);
+		}
+
+		private void DrainMediatorAndIdleQueues()
+		{
+			var idleQueue = m_window.Mediator.IdleQueue;
+			var processIdle = idleQueue.GetType().GetMethod("Application_Idle", BindingFlags.Instance | BindingFlags.NonPublic);
+			Assert.That(processIdle, Is.Not.Null, "Expected to access IdleQueue.Application_Idle for xWorks test pumping.");
+
+			for (var iteration = 0; iteration < 8; iteration++)
+			{
+				((MockFwXWindow)m_window).ProcessPendingItems();
+				if (idleQueue.Count == 0 && m_window.Mediator.JobItems == 0)
+					break;
+
+				if (idleQueue.Count > 0)
+					processIdle.Invoke(idleQueue, new object[] { this, EventArgs.Empty });
+			}
+
+			Application.DoEvents();
+		}
+
+		private void EnsureCurrentRecord(RecordEditView control)
+		{
+			if (control.Clerk.CurrentObject != null)
+				return;
+
+			control.Clerk.JumpToIndex(0);
+			DrainMediatorAndIdleQueues();
+			Assert.That(control.Clerk.CurrentObject, Is.Not.Null, "Expected the RecordEditView clerk to resolve a current lexical record for the switch test.");
+		}
+
+		private static Control FindControlRecursive(Control root, string name)
+		{
+			if (root == null)
+				return null;
+			if (root.Name == name)
+				return root;
+			foreach (Control child in root.Controls)
+			{
+				var found = FindControlRecursive(child, name);
+				if (found != null)
+					return found;
+			}
+			return null;
+		}
+	}
+}
