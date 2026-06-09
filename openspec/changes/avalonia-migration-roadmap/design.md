@@ -1,5 +1,15 @@
 ## Context
 
+> **Status note (2026-06-09).** Execution has diverged from this sequence: after Gate 0, work
+> proceeded directly into the lexical-edit program (sections 2–4 of
+> `lexical-edit-avalonia-migration/tasks.md`), and the product boundary actually built is the
+> region-model path (`ViewDefinitionModel`/`LexicalEditRegionModel` through `RecordEditView`), not
+> Plan A's `DataTreeModel`/`SliceSpec`/`IDataTreeView`. `seam-domain-comparison.md` now classifies
+> wiring new ports into legacy `DataTree` internals as throwaway, which undercuts Plan A's premise.
+> Gate 1 below therefore no longer describes the actual plan. Lexical-edit task 1.13 tracks the
+> reconciliation: either supersede/re-scope `datatree-model-view-separation` and redefine Gate 1
+> around the region-model boundary, or document how the two boundaries converge.
+
 The recommendation from `Docs/avalonia-migration-approach-comparison.md` is **Approach 3 then
 Approach 2**: run a time-boxed proof-of-concept spike, then execute the Hybrid (the lexical-edit
 program as the spine, with the DataTree model/view split as the first concrete migrated region). This

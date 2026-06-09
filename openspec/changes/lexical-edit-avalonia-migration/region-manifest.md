@@ -2,12 +2,11 @@
 
 The manifest is the contract for what a migrated Lexical Edit region owns, what legacy services it may adapt, and what dependencies are forbidden from the new default path. It is not implemented yet; Phase 3 must introduce it behind a default-off switch and executable audits.
 
-> **Branch note (2026-06-09).** On this branch (`010-advanced-entry-view-phase-1-2`) the owning project
-> is **`SIL.FieldWorks.Common.FwAvalonia`** (`Src/Common/FwAvalonia`), not `AdvancedEntry.Avalonia`
-> (which exists only on the prototype branch `010-advanced-entry-preview-prototype`). Read `ownerProject`
-> below as `FwAvalonia` until/unless a dedicated module project is introduced. The **active-host contract**
-> referenced by `forbiddenSymbols` (`DataTree`, `Slice`, …) is now partially enforced: see
-> `ActiveHostContract` in `FwAvalonia/Seams` and the `RecordEditView` audit test
+> **Branch note (2026-06-09).** The owning project is **`SIL.FieldWorks.Common.FwAvalonia`**
+> (`Src/Common/FwAvalonia`). `AdvancedEntry.Avalonia` exists only on the prototype branch
+> `010-advanced-entry-preview-prototype` and is a reference implementation, not shipped code. The
+> **active-host contract** referenced by `forbiddenSymbols` (`DataTree`, `Slice`, …) is now partially
+> enforced: see `ActiveHostContract` in `FwAvalonia/Seams` and the `RecordEditView` audit test
 > (`RecordEditViewActiveHostContractTests`) proving the active Avalonia path does not drive a hidden
 > legacy `DataTree`.
 
@@ -18,7 +17,7 @@ Each migrated region should declare:
 | Field | Meaning |
 |---|---|
 | `regionId` | Stable identifier such as `lexical-edit.entry.identity`. |
-| `ownerProject` | Owning project/module, for this change `AdvancedEntry.Avalonia`. |
+| `ownerProject` | Owning project/module, for this change `FwAvalonia` (`SIL.FieldWorks.Common.FwAvalonia`). |
 | `legacySurface` | Legacy host/slice/layout being replaced or wrapped. |
 | `uiModeBehavior` | For each app-wide UI mode, declares whether this host is supported, explicitly falls back to legacy, or is blocked with a product-facing diagnostic. |
 | `enabledByDefault` | `false` until all gates pass for that region. |
@@ -33,7 +32,7 @@ Example draft:
 ```json
 {
   "regionId": "lexical-edit.entry.identity",
-  "ownerProject": "AdvancedEntry.Avalonia",
+  "ownerProject": "FwAvalonia",
   "legacySurface": "LexEntry-detail-Normal identity fields in DataTree",
   "uiModeBehavior": {
     "Legacy": "legacy-active",
