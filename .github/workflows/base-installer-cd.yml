@@ -163,19 +163,11 @@ jobs:
         run: |
           .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired' *>&1 | Tee-Object -FilePath test.log
 
-      - name: Scan Build Output
-        shell: powershell
+      - name: Analyze Build Log
+        if: always() && steps.build.outcome != 'skipped'
+        shell: pwsh
         run: |
-          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
-          if ($results) {
-              foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
-              }
-              exit 1
-          } else {
-              Write-Host "No errors found" -ForegroundColor green 
-              exit 0
-          }
+          python scripts/tools/analyze_build_log.py build.log --workspace "${{ github.workspace }}"
 
       - name: Move installers to staging folder
         id: stage_installers
