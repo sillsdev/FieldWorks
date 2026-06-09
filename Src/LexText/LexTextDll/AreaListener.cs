@@ -130,6 +130,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
 				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+				Subscriber.Unsubscribe(EventConstants.GetToolForList, GetToolForList);
 				Subscriber.Unsubscribe(EventConstants.SetInitialContentObject, SetInitialContentObject);
 
 				// Dispose managed resources here.
@@ -157,6 +158,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
 			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+			Subscriber.Subscribe(EventConstants.GetToolForList, GetToolForList);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
@@ -379,12 +381,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
+		/// This method is called through the FwUtils Publisher/Subscriber from LinkListener.FollowActiveLink, because the assembly dependencies
 		/// are in the wrong direction. It finds the name of the tool we need to invoke to edit a given list.
+		/// The result is returned via the second element of the object array payload.
 		/// </summary>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public bool OnGetToolForList(object parameters)
+		private void GetToolForList(object parameters)
 		{
 			var realParams = (object[]) parameters;
 			var list = (ICmPossibilityList)realParams[0];
@@ -409,12 +410,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (possibleList == list)
 				{
 					realParams[1] = toolName;
-					return true;
+					return;
 				}
 			}
 			// If it's not a known list, try custom.
 			realParams[1] = GetCustomListToolName(list);
-			return true;
 		}
 
 		#region Custom List Methods

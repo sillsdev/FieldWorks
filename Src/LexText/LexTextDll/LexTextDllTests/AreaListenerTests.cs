@@ -12,8 +12,10 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace LexTextDllTests
 {
@@ -115,6 +117,35 @@ namespace LexTextDllTests
 			return fakeWindowConfig.DocumentElement;
 		}
 
+		/// <summary>
+		/// Builds a window configuration whose 'lists' area has a single tool wired, via its clerk's
+		/// recordList, to the possibility list identified by <paramref name="listGuid"/>.
+		/// </summary>
+		private static XmlNode SetupWindowConfigWithListTool(string clerkId, string toolValue, string listGuid)
+		{
+			var fakeWindowConfig = new XmlDocument();
+			fakeWindowConfig.LoadXml(
+				"<root>"
+				+ "<commands/>"
+				+ "<contextMenus/>"
+				+ "<item label=\"Lists\" value=\"lists\" icon=\"folder-lists\">"
+				  + "<parameters id=\"lists\">"
+					+ "<clerks>"
+					  + "<clerk id=\"" + clerkId + "\">"
+						+ "<recordList owner=\"unowned\" property=\"" + listGuid + "\"/>"
+					  + "</clerk>"
+					+ "</clerks>"
+					+ "<tools>"
+					  + "<tool value=\"" + toolValue + "\">"
+						+ "<control><parameters clerk=\"" + clerkId + "\"/></control>"
+					  + "</tool>"
+					+ "</tools>"
+				  + "</parameters>"
+				+ "</item>"
+			  + "</root>");
+			return fakeWindowConfig.DocumentElement;
+		}
+
 		#endregion
 
 		///--------------------------------------------------------------------------------------
@@ -160,6 +191,62 @@ namespace LexTextDllTests
 			Assert.That(ccommandNodesAfter, Is.EqualTo(ccommandNodesBefore + 1), "Didn't add a command node.");
 			var ccontextNodesAfter = node.SelectNodes(contextXPath).Count;
 			Assert.That(ccontextNodesAfter, Is.EqualTo(ccontextNodesBefore + 1), "Didn't add a context menu node.");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Publishing EventConstants.GetToolForList for a list that is wired into the window
+		/// configuration must return that tool's name via the second element of the payload array.
+		/// This exercises the full Pub/Sub path that LinkListener.FollowActiveLink relies on:
+		/// publish through the Publisher, the AreaListener subscriber handles it synchronously,
+		/// and the result comes back in parameters[1]. (LT-21515)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetToolForList_KnownList_ReturnsConfiguredToolName()
+		{
+			// Setup: a list wired to a configured tool via its clerk's recordList.
+			var ws = WritingSystemServices.kwsAnals;
+			var list = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("Some List", ws);
+			var windowConfig = SetupWindowConfigWithListTool("someListClerk", "myConfiguredListEdit", list.Guid.ToString());
+			m_propertyTable.SetProperty("WindowConfiguration", windowConfig, true);
+			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
+
+			var parameters = new object[2];
+			parameters[0] = list;
+
+			// SUT: publish exactly as LinkListener.FollowActiveLink does.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
+
+			// Verify: the configured tool name was returned via the payload.
+			Assert.That(parameters[1], Is.EqualTo("myConfiguredListEdit"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Publishing EventConstants.GetToolForList for a list that is NOT in the configuration
+		/// must fall back to the generated custom-list tool name (the list name with whitespace
+		/// removed, plus "Edit"), returned via parameters[1]. (LT-21515)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetToolForList_UnknownList_ReturnsCustomToolName()
+		{
+			// Setup: a window configuration whose 'tools' section has no matching tool.
+			m_propertyTable.SetProperty("WindowConfiguration", SetupMinimalWindowConfig(), true);
+			m_propertyTable.SetPropertyPersistence("WindowConfiguration", false);
+
+			var ws = WritingSystemServices.kwsAnals;
+			var customList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("My Custom List", ws);
+
+			var parameters = new object[2];
+			parameters[0] = customList;
+
+			// SUT
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
+
+			// Verify: whitespace stripped from the name, with "Edit" appended.
+			Assert.That(parameters[1], Is.EqualTo("MyCustomListEdit"));
 		}
 	}
 }

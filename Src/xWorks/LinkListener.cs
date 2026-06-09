@@ -509,12 +509,10 @@ namespace SIL.FieldWorks.XWorks
 							// Unfortunately AreaListener is in an assembly we can't reference.
 							// But there may be custom ones, so just listing them all here does not seem to be an option,
 							// and anyway it would be hard to maintain.
-							// Thus we've created this method (on AreaListener) which we call awkwardly throught the mediator.
+							// Thus we've created this method (on AreaListener) which we call through the FwUtils Publisher/Subscriber.
 							var parameters = new object[2];
 							parameters[0] = majorObject;
-#pragma warning disable 618 // suppress obsolete warning
-							m_mediator.SendMessage("GetToolForList", parameters);
-#pragma warning restore 618
+							Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
 							realTool = (string)parameters[1];
 							break;
 						case RnResearchNbkTags.kClassId:
