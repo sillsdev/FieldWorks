@@ -1,5 +1,5 @@
-## Summary
-<!-- Briefly describe what changed and why. Link issues if applicable (e.g., Fixes #1234). -->
+## Quick Summary
+<!-- Briefly describe what changed and why. Link issues if applicable (e.g., Fixes #1234). For large, multi-faceted PRs, use at most 6 bullets or short items. If more would be needed, include: "This quick summary does not capture all meaningful changes from this PR - please review the full summary carefully." -->
 
 ## CI-ready checklist
 
@@ -11,6 +11,7 @@
   git diff --check --cached
   ```
 - [ ] Builds/tests pass locally (or I've run the CI-style build via Bash script or MSBuild).
+- [ ] If this is core-developer AI-assisted work, I followed `Docs/workflows/ai-pr-workflow.md` and ran `pr-preflight` or the equivalent branch-readiness review before requesting review.
 - [ ] For any `Src/**` folders touched, corresponding `AGENTS.md` files are updated or explicitly confirmed still accurate.
 
 ## Notes for reviewers (optional)

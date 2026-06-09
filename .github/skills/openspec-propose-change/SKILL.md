@@ -26,6 +26,8 @@ This is the preferred user-facing alias of the fast-forward workflow.
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 
+   If the request uses overloaded repo terms or unclear planning language, apply `grill-with-docs` before creating artifacts so proposal/spec/design wording matches `CONTEXT.md` and real codebase terminology.
+
 2. **Create the change directory**
    ```bash
    openspec new change "<name>"

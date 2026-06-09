@@ -2,6 +2,8 @@
 
 This guide describes the process for submitting code changes to FieldWorks via GitHub Pull Requests.
 
+> **Core developer note**: If you are using GitHub Copilot or Claude Code for FieldWorks work, start with [AI-Assisted PR Workflow](ai-pr-workflow.md). That guide covers the canonical path from Jira to worktree setup, branch preflight, reviewer feedback, and Jira follow-up. This document remains the generic GitHub PR mechanics reference.
+
 ## Overview
 
 All code changes to FieldWorks go through a pull request (PR) workflow:

@@ -16,8 +16,9 @@ desktop application.
   validation, encoding assumptions, buffer lengths, and ownership rules.
 - Verify user-visible UI strings are placed in `.resx` resources and remain
   compatible with Crowdin localization.
-- For C# code, flag C# 8+ syntax and APIs that are not compatible with .NET
-  Framework 4.8 / C# 7.3.
+- For C# code, flag language features newer than the repo default C# 8.0,
+  nullable-reference-type assumptions when nullable is disabled, and APIs that
+  are not compatible with .NET Framework 4.8.
 - For legacy `.csproj` changes, verify new source files are explicitly included
   and test sources are explicitly excluded where production and test trees mix.
 - Require meaningful test or validation evidence for bug fixes, regressions,
