@@ -1244,19 +1244,6 @@ namespace XCore
 				XmlUtils.GetAttributeValue(contentClassNode, "class"), contentClassNode);
 		}
 
-		public bool OnShowNotification(object notificationText)
-		{
-			CheckDisposed();
-
-			using (NotifyWindow nw = new NotifyWindow((string)notificationText))
-			{
-				nw.SetDimensions(150, 150);
-				nw.WaitTime = 4000;
-				nw.Notify();
-			}
-			return true;    //we handled this.
-		}
-
 		#endregion Initialization
 
 		#region Disposal

@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (IsDisposed)
 				return;
 
-			if (ParserUpdateNormal != null && ((task.Depth == 0) || (task.NotificationMessage != null)))
+			if (ParserUpdateNormal != null && task.Depth == 0)
 			{
 				//notify any delegates
 				ParserUpdateNormal(this, new ParserUpdateEventArgs(task));

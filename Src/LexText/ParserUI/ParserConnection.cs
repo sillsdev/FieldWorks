@@ -23,7 +23,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly ParserScheduler m_scheduler;
 
 		private string m_activity;
-		private string m_notificationMessage;
 		private XDocument m_traceResult;
 		private readonly ManualResetEvent m_event = new ManualResetEvent(false);
 
@@ -155,9 +154,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_activity = args.Task.Description;
 				if (args.Task.Phase == TaskReport.TaskPhase.Finished)
 					m_activity = "";
-				//keeps us from getting the notification at the end of the task.
-				if (args.Task.NotificationMessage != null && args.Task.Phase != TaskReport.TaskPhase.Finished)
-					m_notificationMessage = args.Task.NotificationMessage;
 
 				//will have to do something more smart something when details is used for something else
 				if (args.Task.Details != null)
@@ -181,22 +177,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				lock (SyncRoot)
 					return m_activity;
-			}
-		}
-
-		/// <summary>
-		/// gives a notification string, if there is any.
-		/// </summary>
-		/// <returns></returns>
-		public string GetAndClearNotification()
-		{
-			CheckDisposed();
-
-			lock (SyncRoot)
-			{
-				string result = m_notificationMessage;
-				m_notificationMessage = null;
-				return result;
 			}
 		}
 
