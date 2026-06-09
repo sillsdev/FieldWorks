@@ -126,6 +126,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			var field = Attr(contentEl, "field");
 			var ws = Attr(contentEl, "ws");
 
+			// Task 4.7 metadata. Legacy XML Parts/Layout does not carry these, so they stay null/Inherit for
+			// imported layouts (preserving semantic baselines); authored or region-spec sources may set them.
+			var localizationKey = Attr(callerEl, "localizationKey") ?? Attr(contentEl, "localizationKey")
+				?? Attr(callerEl, "labelId") ?? Attr(contentEl, "labelId");
+			var automationId = Attr(callerEl, "automationId") ?? Attr(contentEl, "automationId");
+			var routing = ParseRouting(Attr(callerEl, "surface") ?? Attr(contentEl, "surface"));
+
 			switch (contentEl.Name.LocalName)
 			{
 				case "slice":
@@ -148,11 +155,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						var children = new List<ViewNode>();
 						BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
 						return new ViewNode(stableId, ViewNodeKind.Group, label, abbreviation, field, editor,
-							classification, ws, visibility, expansion, indented, null, children);
+							classification, ws, visibility, expansion, indented, null, children,
+							localizationKey, automationId, routing);
 					}
 
 					return MakeLeaf(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
-						classification, ws, visibility, expansion, indented, null);
+						classification, ws, visibility, expansion, indented, null,
+						localizationKey, automationId, routing);
 				}
 				case "obj":
 				case "seq":
@@ -162,7 +171,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var children = new List<ViewNode>();
 					BuildInjectedChildren(callerEl, parts, layoutType, stableId, children, diagnostics);
 					return new ViewNode(stableId, kind, label, abbreviation, field, null,
-						EditorClassification.GroupingNone, ws, visibility, expansion, indented, targetLayout, children);
+						EditorClassification.GroupingNone, ws, visibility, expansion, indented, targetLayout, children,
+						localizationKey, automationId, routing);
 				}
 				default:
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "unknown-part-content",
@@ -251,11 +261,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private static ViewNode MakeLeaf(
 			string stableId, ViewNodeKind kind, string label, string abbreviation, string field, string editor,
 			EditorClassification classification, string ws, ViewVisibility visibility, ViewExpansion expansion,
-			bool indented, string targetLayout)
+			bool indented, string targetLayout,
+			string localizationKey = null, string automationId = null, SurfaceRouting routing = SurfaceRouting.Inherit)
 			=> new ViewNode(stableId, kind, label, abbreviation, field, editor, classification, ws, visibility,
-				expansion, indented, targetLayout, System.Array.Empty<ViewNode>());
+				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
+
+		private static SurfaceRouting ParseRouting(string value)
+		{
+			switch (value)
+			{
+				case "product": return SurfaceRouting.Product;
+				case "preview": return SurfaceRouting.Preview;
+				case "unsupported": return SurfaceRouting.Unsupported;
+				default: return SurfaceRouting.Inherit;
+			}
+		}
 
 		private static ViewVisibility ParseVisibility(string value)
 		{
