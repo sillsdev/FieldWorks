@@ -2912,6 +2912,8 @@ namespace SIL.FieldWorks
 				EnsureValidReversalIndexConfigFile(app.Cache);
 				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
+				s_activeMainWnd.PropTable.SetProperty("UIMode", string.IsNullOrWhiteSpace(s_appSettings.UIMode) ? "Legacy" : s_appSettings.UIMode, false);
+				s_activeMainWnd.PropTable.SetPropertyPersistence("UIMode", false);
 			}
 			catch (StartupException ex)
 			{
