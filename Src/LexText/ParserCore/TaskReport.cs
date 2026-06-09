@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public sealed class TaskReport : IDisposable
 	{
-		public enum TaskPhase {Started, Working, Finished, ErrorEncountered};
+		public enum TaskPhase {Started, Finished, ErrorEncountered};
 
 		private readonly Action<TaskReport> m_taskUpdate;
 		private List<TaskReport> m_subTasks;
@@ -23,7 +23,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private long m_finish;
 		private TaskPhase m_phase;
 		private TaskReport m_owningTask;
-		private string m_notificationMessage;
 		private bool m_isInDispose;		// ture if we're in the dispose method
 		/// <summary>
 		/// this was added to hold the results of a trace request
@@ -156,7 +155,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_owningTask = null;
 			m_details = null;
 			m_description = null;
-			m_notificationMessage = null;
 			m_subTasks = null;
 
 			m_isDisposed = true;
@@ -271,28 +269,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			//all children tasks execute this
 			else if (m_owningTask != null)
 				m_owningTask.InformListeners(this);
-		}
-
-		/// <summary>
-		/// a message to pass to the client which is not quite an error, but which warrants telling the user in a
-		/// non intrusive fashion.
-		/// </summary>
-		public string NotificationMessage
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_notificationMessage;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_notificationMessage = value;
-				if (value != null)
-					InformListeners(TaskPhase.Working);
-			}
 		}
 
 		public TaskPhase Phase
