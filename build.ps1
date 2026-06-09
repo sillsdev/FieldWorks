@@ -32,12 +32,6 @@
 	If set, includes optional utility applications (e.g. MigrateSqlDbs, LCMBrowser, UnicodeCharEditor) in the build.
 	Default is false unless -BuildInstaller is specified, which enables it automatically.
 
-.PARAMETER BuildAvalonia
-	If set, builds optional Avalonia projects that are present on the current branch after the main
-	FieldWorks build completes. This is preview-only by default and does not change the traversal build.
-	On this branch it builds the isolated `Src/Common/FwAvalonia/` projects; if a preview host and/or
-	feature module projects (for example `*.Avalonia`) are present, they are built too.
-
 .PARAMETER Verbosity
 	Specifies the amount of information to display in the build log.
 	Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
@@ -157,10 +151,6 @@
 	.\build.ps1 -UseLocalLcm
 	Builds FieldWorks, then builds liblcm from ../liblcm and copies DLLs into Output.
 
-.EXAMPLE
-	.\build.ps1 -BuildAvalonia
-	Builds FieldWorks, then builds any Avalonia preview/module projects present on the current branch.
-
 .NOTES
 	FieldWorks is x64-only. The x86 platform is no longer supported.
 #>
@@ -174,7 +164,6 @@ param(
 	[switch]$RunTests,
 	[string]$TestFilter,
 	[switch]$BuildAdditionalApps,
-	[switch]$BuildAvalonia,
 	[string]$Project = "FieldWorks.proj",
 	[string]$Verbosity = "minimal",
 	[ValidateSet('true', 'false', 'auto')]
@@ -853,34 +842,32 @@ try {
 			Write-Host "[OK] Build complete!" -ForegroundColor Green
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
 
-			if ($BuildAvalonia) {
-				Write-Host ""
-				Write-Host "Building net48-compatible Avalonia projects present on this branch..." -ForegroundColor Cyan
+			Write-Host ""
+			Write-Host "Building net48-compatible Avalonia projects present on this branch..." -ForegroundColor Cyan
 
-				$avaloniaProjects = Get-AvaloniaProjectList -RepoRoot $PSScriptRoot -IncludeTests ($BuildTests -or $RunTests)
-				if ($avaloniaProjects.Count -gt 0 -and (Test-Path $projectPath)) {
-					$normalizedMainProjectPath = (Resolve-Path $projectPath).Path
-					$avaloniaProjects = @($avaloniaProjects | Where-Object { (Resolve-Path $_).Path -ne $normalizedMainProjectPath })
+			$avaloniaProjects = Get-AvaloniaProjectList -RepoRoot $PSScriptRoot -IncludeTests ($BuildTests -or $RunTests)
+			if ($avaloniaProjects.Count -gt 0 -and (Test-Path $projectPath)) {
+				$normalizedMainProjectPath = (Resolve-Path $projectPath).Path
+				$avaloniaProjects = @($avaloniaProjects | Where-Object { (Resolve-Path $_).Path -ne $normalizedMainProjectPath })
+			}
+			if ($avaloniaProjects.Count -eq 0) {
+				Write-Host "No additional net48-compatible Avalonia projects were found on this branch." -ForegroundColor Yellow
+			}
+			else {
+				foreach ($avaloniaProject in $avaloniaProjects) {
+					Invoke-MSBuild `
+						-Arguments @($avaloniaProject, '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/v:minimal', '/nologo') `
+						-Description ("Avalonia project: {0}" -f [System.IO.Path]::GetFileNameWithoutExtension($avaloniaProject))
 				}
-				if ($avaloniaProjects.Count -eq 0) {
-					Write-Host "No additional net48-compatible Avalonia projects were found on this branch." -ForegroundColor Yellow
-				}
-				else {
-					foreach ($avaloniaProject in $avaloniaProjects) {
-						Invoke-MSBuild `
-							-Arguments @($avaloniaProject, '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/v:minimal', '/nologo') `
-							-Description ("Avalonia project: {0}" -f [System.IO.Path]::GetFileNameWithoutExtension($avaloniaProject))
-					}
-				}
+			}
 
-				$previewHostPath = Join-Path $PSScriptRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHost.csproj"
-				if (-not (Test-Path $previewHostPath)) {
-					Write-Host "Avalonia preview host is not present on this branch." -ForegroundColor Yellow
-					Write-Host "The existing host lives on '010-advanced-entry-preview-prototype' and is net8-based, so it is outside this branch's net48-only policy." -ForegroundColor Yellow
-				}
-				elseif (-not (Test-IsNet48CompatibleProject -ProjectPath $previewHostPath)) {
-					Write-Host "Avalonia preview host exists but is not net48-compatible, so -BuildAvalonia skipped it." -ForegroundColor Yellow
-				}
+			$previewHostPath = Join-Path $PSScriptRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHost.csproj"
+			if (-not (Test-Path $previewHostPath)) {
+				Write-Host "Avalonia preview host is not present on this branch." -ForegroundColor Yellow
+				Write-Host "The existing host lives on '010-advanced-entry-preview-prototype' and is net8-based, so it is outside this branch's net48-only policy." -ForegroundColor Yellow
+			}
+			elseif (-not (Test-IsNet48CompatibleProject -ProjectPath $previewHostPath)) {
+				Write-Host "Avalonia preview host exists but is not net48-compatible, so it was skipped." -ForegroundColor Yellow
 			}
 		}
 
