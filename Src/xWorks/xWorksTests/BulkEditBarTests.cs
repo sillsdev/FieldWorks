@@ -444,6 +444,19 @@ namespace SIL.FieldWorks.XWorks
 					ContainsItemType<ListChoiceComboItem>(fsi.Combo))).ToList();
 			}
 
+			internal FwComboBox GetFilterCombo(string columnName)
+			{
+				var fsi = FindColumnInfo(columnName);
+				return fsi != null ? fsi.Combo : null;
+			}
+
+			internal int GetFilterItemIndex<TItem>(string columnName)
+				where TItem : class
+			{
+				var fsi = FindColumnInfo(columnName);
+				return fsi == null ? -1 : FindIndexByItemType<TItem>(fsi.Combo);
+			}
+
 			private static string GetOptionalAttributeValue(XmlNode spec, string attributeName)
 			{
 				return spec != null && spec.Attributes != null && spec.Attributes[attributeName] != null

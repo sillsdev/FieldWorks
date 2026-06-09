@@ -66,6 +66,18 @@ Each bundle SHALL contain:
 - accessibility/workflow evidence for focus, invoke, popup reachability, and automation identity,
 - a failure summary classifying the mismatch by lane.
 
+Each bundle SHALL also carry one shared identity contract:
+
+- `scenarioId` for the business scenario under test,
+- `bundleId` for the specific artifact set,
+- `failureSummaryId` shared across semantic, visual, workflow/accessibility, and diff artifacts,
+- an explicit lane manifest saying which lanes are present (`semantic`, `visual`, `workflow/accessibility`, `performance`) and which are pending.
+
+#### Scenario: Legacy baseline bundle is canonical before Avalonia comparison exists
+- **WHEN** only the legacy WinForms side of a Path 3 scenario has been captured so far
+- **THEN** the canonical bundle SHALL still exist with the shared `scenarioId`, `bundleId`, and `failureSummaryId`
+- **AND** it SHALL include the semantic snapshot, matched WinForms screenshot(s), workflow/accessibility evidence, and lane manifest marking the Avalonia visual or workflow lanes as pending rather than omitting the bundle contract entirely
+
 #### Scenario: Control-level Avalonia visual evidence uses headless rendering
 - **WHEN** the parity target is an Avalonia control or region that can be evaluated without product-shell integration
 - **THEN** the visual lane MAY use Avalonia.Headless rendered frames

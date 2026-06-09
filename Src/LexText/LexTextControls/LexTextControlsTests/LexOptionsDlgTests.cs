@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Resources;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -117,6 +118,39 @@ namespace LexTextControlsTests
 			}
 		}
 
+		[Test]
+		public void UIModeControls_ReadDisplayTextFromResx()
+		{
+			var settings = CreateSettings("Legacy");
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			using (var dlg = new TestableLexOptionsDlg())
+			{
+				dlg.InitBareBones(null);
+				SetPrivateField(dlg, "m_settings", settings);
+				SetPrivateField(dlg, "m_propertyTable", propertyTable);
+				InvokeOnLoad(dlg);
+
+				var group = (GroupBox)FindControlRecursive(dlg, "m_uiModeGroup");
+				var label = (Label)FindControlRecursive(dlg, "m_uiModeLabel");
+				var combo = (ComboBox)FindControlRecursive(dlg, "m_uiModeChooser");
+				var restartButton = (Button)FindControlRecursive(dlg, "m_restartToApplyButton");
+
+				Assert.That(group, Is.Not.Null);
+				Assert.That(label, Is.Not.Null);
+				Assert.That(combo, Is.Not.Null);
+				Assert.That(restartButton, Is.Not.Null);
+
+				Assert.That(group.Text, Is.EqualTo(ReadLexTextControlsResx("UiModeGroupTitle")));
+				Assert.That(label.Text, Is.EqualTo(ReadLexTextControlsResx("UiModeLabel")));
+				Assert.That(combo.Items[0].ToString(), Is.EqualTo(ReadLexTextControlsResx("UiModeLegacy")));
+				Assert.That(combo.Items[1].ToString(), Is.EqualTo(ReadLexTextControlsResx("UiModeNew")));
+				Assert.That(restartButton.Text, Is.EqualTo(ReadLexTextControlsResx("UiModeRestartToApply")));
+				Assert.That(ReadLexTextControlsResx("RestartToForSettingsToTakeEffect_Title"), Is.Not.Empty);
+				Assert.That(ReadLexTextControlsResx("RestartToForSettingsToTakeEffect_Content"), Is.Not.Empty);
+			}
+		}
+
 		private static void InvokeOk(Form dlg)
 		{
 			var method = FindMethod(dlg.GetType(), "m_btnOK_Click");
@@ -198,6 +232,31 @@ namespace LexTextControlsTests
 			}
 
 			return null;
+		}
+
+		private static string ReadLexTextControlsResx(string key)
+		{
+			var resxPath = System.IO.Path.GetFullPath(
+				System.IO.Path.Combine(
+					TestContext.CurrentContext.TestDirectory,
+					"..",
+					"..",
+					"Src",
+					"LexText",
+					"LexTextControls",
+					"LexTextControls.resx"));
+
+			using (var reader = new ResXResourceReader(resxPath))
+			{
+				foreach (System.Collections.DictionaryEntry entry in reader)
+				{
+					if (string.Equals(entry.Key as string, key, StringComparison.Ordinal))
+						return entry.Value as string ?? string.Empty;
+				}
+			}
+
+			Assert.Fail("Missing LexTextControls.resx key: " + key);
+			return string.Empty;
 		}
 
 		private sealed class TrackingTestFwApplicationSettings : TestFwApplicationSettings

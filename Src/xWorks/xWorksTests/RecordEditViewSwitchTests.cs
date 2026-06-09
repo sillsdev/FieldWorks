@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void LexiconEditTool_SwitchesSurfaceStateToAvalonia_WhenUIModeChangesToNew()
+		public void LexiconEditTool_SwitchesSurfaceStateToAvalonia_WhenUIModePropertyBroadcasts()
 		{
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
@@ -83,24 +83,51 @@ namespace SIL.FieldWorks.XWorks
 			EnsureCurrentRecord(control);
 
 			m_propertyTable.SetProperty("UIMode", "New", true);
-			control.OnPropertyChanged(LexicalEditSurfaceResolver.UIModePropertyName);
 			DrainMediatorAndIdleQueues();
 
+			var sameControl = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(sameControl, Is.SameAs(control), "Changing the UI mode should update the live content control rather than requiring a tool reload in the test harness.");
 			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
 		}
 
+		[TestCase("posEdit")]
+		[TestCase("notebookEdit")]
+		[TestCase("domainTypeEdit")]
+		[TestCase("Analyses")]
+		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView(toolValue);
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
+			Assert.That(
+				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
+				Is.EqualTo(LexicalEditSurface.WinForms),
+				"Tool '{0}' should explicitly fall back to legacy while Avalonia support is not yet implemented.",
+				toolValue);
+		}
+
 		private void LoadRecordEditView()
+		{
+			LoadRecordEditView("lexiconEdit");
+		}
+
+		private void LoadRecordEditView(string toolValue)
 		{
 			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			Assert.That(windowConfiguration, Is.Not.Null, "The xWorks test window should load a merged WindowConfiguration before RecordEditView is activated.");
 			var controlNode = windowConfiguration.SelectSingleNode(
-				"//tool[@value='lexiconEdit']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']");
-			Assert.That(controlNode, Is.Not.Null, "Expected to find the lexicon RecordEditView configuration node.");
+				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
+			Assert.That(controlNode, Is.Not.Null, "Expected to find the RecordEditView configuration node for tool '{0}'.", toolValue);
 
 			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
 			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
+			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
 			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
 		}
 

@@ -11,6 +11,7 @@ Each migrated region should declare:
 | `regionId` | Stable identifier such as `lexical-edit.entry.identity`. |
 | `ownerProject` | Owning project/module, for this change `AdvancedEntry.Avalonia`. |
 | `legacySurface` | Legacy host/slice/layout being replaced or wrapped. |
+| `uiModeBehavior` | For each app-wide UI mode, declares whether this host is supported, explicitly falls back to legacy, or is blocked with a product-facing diagnostic. |
 | `enabledByDefault` | `false` until all gates pass for that region. |
 | `rollbackSurface` | Legacy view or command used when the migrated region is disabled or fails capability checks. |
 | `allowedAdapters` | Narrow legacy services the region may call. |
@@ -25,6 +26,10 @@ Example draft:
   "regionId": "lexical-edit.entry.identity",
   "ownerProject": "AdvancedEntry.Avalonia",
   "legacySurface": "LexEntry-detail-Normal identity fields in DataTree",
+  "uiModeBehavior": {
+    "Legacy": "legacy-active",
+    "New": "supported-avalonia"
+  },
   "enabledByDefault": false,
   "rollbackSurface": "RecordEditView/DataTree",
   "allowedAdapters": [
@@ -89,6 +94,7 @@ Exceptions must be documented in the manifest with owner, reason, tests, and rol
 
 | Gate | Required Evidence |
 |---|---|
+| Switch contract gate | Every affected host declares `uiModeBehavior` for both app-wide UI modes, and no host relies on ambiguous best-effort routing. |
 | Schema gate | Manifest validates against a checked-in schema and has an owner/rollback/test evidence entry. |
 | Symbol audit gate | Automated search over migrated production code finds no forbidden symbols except approved exceptions. |
 | Layout gate | Typed presentation snapshot matches selected DataTree/XML layout baselines for the region. |

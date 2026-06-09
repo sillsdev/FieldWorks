@@ -428,8 +428,11 @@ namespace SIL.FieldWorks.XWorks
 			var uiMode = m_propertyTable != null
 				? m_propertyTable.GetStringProperty(LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode)
 				: LexicalEditSurfaceResolver.LegacyUIMode;
+			var toolName = m_propertyTable != null
+				? m_propertyTable.GetStringProperty("currentContentControl", string.Empty)
+				: string.Empty;
 
-			return LexicalEditSurfaceResolver.Resolve(uiMode: uiMode);
+			return LexicalEditSurfaceResolver.Resolve(uiMode: uiMode, currentToolName: toolName);
 		}
 
 		private void EnsureLegacySurfaceInitialized(string persistContext)

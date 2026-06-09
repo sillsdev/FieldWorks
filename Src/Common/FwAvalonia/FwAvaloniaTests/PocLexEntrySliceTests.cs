@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Text;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
@@ -91,6 +92,35 @@ namespace FwAvaloniaTests
 			Assert.That(entry.MorphTypeKey, Is.EqualTo("suffix"), "choosing updates the entry");
 			Assert.That(slice.MorphTypeChooser.Button.Content, Is.EqualTo("suffix"), "button label reflects the choice");
 			Assert.That(slice.MorphTypeChooser.Button.IsFocused, Is.True, "focus returns to the host button after choosing");
+		}
+
+		[AvaloniaTest]
+		public void PocSlice_FocusedTextBox_UnicodeEditUpdatesEntry_AndKeepsFocus()
+		{
+			var (slice, _) = ShowSlice();
+			var box = slice.LexemeFormEditor.Boxes[0];
+
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(box.IsFocused, Is.True, "text box should accept focus before the edit");
+
+			box.Text = "ka\u0301 東京";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(slice.Entry.LexemeForm[0].Value, Is.EqualTo("ka\u0301 東京"));
+			Assert.That(box.IsFocused, Is.True, "focused text entry should keep focus after the edit write-through");
+		}
+
+		[AvaloniaTest]
+		public void PocSlice_UserFacingControls_ExposeStableAutomationMetadata()
+		{
+			var (slice, _) = ShowSlice();
+
+			Assert.That(AutomationProperties.GetAutomationId(slice), Is.EqualTo("PocLexEntrySlice"));
+			Assert.That(AutomationProperties.GetAutomationId(slice.LexemeFormEditor), Is.EqualTo("LexemeFormEditor"));
+			Assert.That(AutomationProperties.GetAutomationId(slice.LexemeFormEditor.Boxes[0]), Is.EqualTo("LexemeFormEditor.seh"));
+			Assert.That(AutomationProperties.GetAutomationId(slice.SenseGlossEditor), Is.EqualTo("SenseGlossEditor"));
+			Assert.That(AutomationProperties.GetAutomationId(slice.MorphTypeChooser.Button), Is.EqualTo("MorphTypeChooser.Button"));
 		}
 
 		[AvaloniaTest]

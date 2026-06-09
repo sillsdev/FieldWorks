@@ -14,6 +14,24 @@ The Lexical Edit migration SHALL proceed in phases: baseline test coverage, refa
 - **THEN** simple editors and popup hovers SHALL be attempted before table views
 - **AND** table views SHALL be attempted before slice and full Lexical Edit replacement
 
+### Requirement: Lexical-edit UI mode is app-wide and explicit per host
+
+The lexical-edit UI mode SHALL be an app-wide product setting, but each current host that routes through `RecordEditView` or a later replacement SHALL declare explicit behavior for both modes: supported Avalonia surface, explicit legacy fallback, or explicit blocked state with a deliberate product-facing diagnostic.
+
+#### Scenario: Global UI mode changes host behavior predictably
+- **WHEN** the app-wide lexical-edit UI mode is changed
+- **THEN** every affected host SHALL resolve to its declared behavior for that mode
+- **AND** no host SHALL rely on ambiguous best-effort routing or silent lossy fallback
+
+#### Scenario: Legacy UI remains selectable
+- **WHEN** the app-wide lexical-edit UI mode is set to the legacy option
+- **THEN** the existing WinForms lexical-edit surface SHALL remain selectable as the supported legacy product path
+
+#### Scenario: Unsupported host is explicit
+- **WHEN** a host is not yet migrated for the Avalonia mode
+- **THEN** it SHALL either fall back to the declared legacy surface or show a deliberate resource-backed unsupported-state message
+- **AND** that behavior SHALL be covered by tests and the migrated-region manifest
+
 ### Requirement: User interaction and density are preserved
 
 Avalonia replacements SHALL preserve the legacy user interaction model, information density, keyboard/focus behavior, popup semantics, and layout hierarchy within documented near-pixel tolerances.
@@ -93,6 +111,20 @@ Avalonia regions SHALL use explicit services for UI dispatch, focus navigation, 
 - **WHEN** a migrated editor handles shortcuts, context menus, popup focus return, or command enablement
 - **THEN** that behavior SHALL be routed through explicit command/focus services
 - **AND** Avalonia.Headless or semantic parity tests SHALL cover the behavior
+
+### Requirement: Avalonia build and test coverage uses normal repo workflows
+
+Avalonia projects and tests SHALL participate in the normal repo build and test workflows. The legacy-vs-Avalonia choice SHALL be a runtime product behavior switch, not a separate build-lane contract.
+
+#### Scenario: Normal build includes Avalonia companion projects
+- **WHEN** `./build.ps1` builds the branch
+- **THEN** branch-local net48-compatible Avalonia companion projects required by this change SHALL participate in the normal repo build flow
+- **AND** their inclusion SHALL NOT depend on a separate product-mode selection step
+
+#### Scenario: Normal test path covers Avalonia tests when touched
+- **WHEN** Avalonia code or tests are part of the change under review
+- **THEN** `./test.ps1` and its normal build/test path SHALL be the expected validation entry point
+- **AND** the runtime UI mode SHALL remain a product behavior choice rather than a different test lane
 
 ### Requirement: Package updates and control hacks are gated by parity evidence
 

@@ -27,6 +27,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public static class LexicalEditSurfaceResolver
 	{
+		private static readonly string[] SupportedAvaloniaToolNames =
+		{
+			"lexiconEdit",
+			"lexiconEditPopup"
+		};
+
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>
 		public const string UIModePropertyName = "UIMode";
 		public const string LegacyUIMode = "Legacy";
@@ -40,8 +46,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <param name="uiMode">Persisted user preference (`Legacy` or `New`).</param>
 		public static LexicalEditSurface Resolve(
 			bool? overrideEnabled = null,
-			string uiMode = null)
+			string uiMode = null,
+			string currentToolName = null)
 		{
+			if (!SupportsAvaloniaForTool(currentToolName))
+			{
+				return LexicalEditSurface.WinForms;
+			}
+
 			if (overrideEnabled.HasValue)
 			{
 				return overrideEnabled.Value ? LexicalEditSurface.Avalonia : LexicalEditSurface.WinForms;
@@ -54,5 +66,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string ToUIModeValue(LexicalEditSurface surface)
 			=> surface == LexicalEditSurface.Avalonia ? NewUIMode : LegacyUIMode;
+
+		public static bool SupportsAvaloniaForTool(string currentToolName)
+		{
+			if (string.IsNullOrWhiteSpace(currentToolName))
+				return true;
+
+			foreach (var toolName in SupportedAvaloniaToolNames)
+			{
+				if (string.Equals(toolName, currentToolName, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
 	}
 }
