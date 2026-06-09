@@ -806,7 +806,7 @@ namespace XCore
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Worker method to invoke commands. It will log the call if it is not an update or idle.
+		/// Worker method to invoke commands. It will log the call if it is not an update.
 		/// </summary>
 		/// <returns><c>true</c> if the message was handled, otherwise <c>false</c></returns>
 		/// ------------------------------------------------------------------------------------
