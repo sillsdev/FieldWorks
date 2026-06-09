@@ -262,10 +262,9 @@ namespace SIL.FieldWorks.XWorks
 			return GetCurrentConfiguration(propertyTable, true, innerConfigDir, obj);
 		}
 
-		private static void SetConfigureHomographParameters(string currentConfig, LcmCache cache)
+		private static void SetConfigureHomographParameters(PropertyTable propertyTable, LcmCache cache)
 		{
-			var model = new DictionaryConfigurationModel(currentConfig, cache);
-			DictionaryConfigurationController.SetConfigureHomographParameters(model, cache);
+			DictionaryConfigurationController.SetConfigureHomographParameters(propertyTable, cache);
 		}
 
 
@@ -304,7 +303,8 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
-				SetConfigureHomographParameters(currentConfig, cache);
+				var dictionaryConfigDir = GetProjectConfigurationDirectory(propertyTable, DictConfigDirName);
+				SetConfigureHomographParameters(propertyTable, cache);
 				return currentConfig;
 			}
 			var defaultConfigFileName = GetDefaultConfigFileName(innerConfigDir);
