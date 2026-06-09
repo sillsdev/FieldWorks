@@ -10,6 +10,7 @@ Semantic snapshots should preserve behaviorally meaningful identity and omit inc
 
 ## Include
 - Stable node ID and source layout/part identity.
+- When a scenario can run through multiple hosts or fallback states, record which route produced the artifact (`Avalonia`, legacy fallback, or blocked state).
 - Object/class binding, field/flid binding, editor kind, writing-system metadata, visibility, ghost state, expansion, focus order, localization key, and accessibility identity.
 - Unsupported construct diagnostics with enough path context to fix the source layout.
 
@@ -34,6 +35,7 @@ Use the semantic snapshot as the anchor. Visual variance should be interpreted a
 Control-level Avalonia visual evidence may come from Avalonia.Headless rendered frames when the scenario is explicitly control-scoped. Desktop workflow/accessibility claims still need live-window evidence.
 
 ## Review Red Flags
+- A preview-only or lossy route is presented as if it proved product parity.
 - Placeholder metadata is presented as real binding or writing-system parity.
 - Snapshot tests update large JSON blobs without a small behavioral explanation.
 - Cache invalidation tests depend on sleeps or filesystem timestamp luck.

@@ -9,6 +9,9 @@
 - [x] 1.5 Start Graphite decommissioning inventory for writing-system settings, fonts, native render engines, Gecko/browser/PDF paths, tests, docs, sample assets, and build/package artifacts.
 - [x] 1.6 Define migrated-region manifest format: entry points, allowed legacy adapters, forbidden symbols/call paths, custom linguistics service dependencies, parity fixtures, performance budgets, accessibility IDs, and rollback/default-switch gates.
 - [x] 1.7 Freeze and maintain the seam capability docs `avalonia-edit-sessions`, `avalonia-undo-redo`, `avalonia-validation`, `avalonia-command-focus`, `avalonia-ui-scheduler`, `avalonia-lifetime`, and `seam-recommendations.md` as the reference playbook for both this change and the later shell change.
+- [ ] 1.8 Audit migration docs and evidence notes for stale branch/scope assumptions after each wiring or build-strategy change; compare against `main..HEAD`, not calendar-day commit lists, and keep proposal/design/coverage/evidence wording aligned with the live branch scope.
+- [ ] 1.9 Define the global lexical-edit UI mode contract: the switch is app-wide, legacy UI remains selectable, and every current `RecordEditView` consumer has an explicit expected behavior (`Avalonia`, explicit legacy fallback, or blocked state) under both modes.
+- [ ] 1.10 Define the build/test integration contract for Avalonia: Avalonia projects and tests participate in normal `./build.ps1` and `./test.ps1` coverage; runtime legacy-vs-Avalonia selection is a product behavior switch, not a separate build lane.
 
 ## 2. Test Coverage Before Refactor
 
@@ -21,6 +24,9 @@
 - [ ] 2.7 Add keyboard/IME, focus restoration, accessibility metadata, localization, and disposal/unsubscribe characterization tests for first-slice candidates. (Disposal/unsubscribe + accessibility-name + focus-order done in `DataTreeDisposalCharacterizationTests` (7 tests, real DataTree/Slice); keyboard/IME, focus restoration across refresh, and localization still pending and partly need a running app.)
 - [x] 2.8 Add snapshot normalization rules so semantic baselines key on stable node IDs, class/flid/object binding, editor kind, writing-system metadata, ghost state, focus order, and accessibility identity instead of incidental layout noise. (Typed `ViewDefinitionModel.ToSnapshot` keys on stable IDs, field binding, editor classification, ws, visibility, expansion; ghost/a11y metadata deferred. `Src/Common/FwAvalonia/ViewDefinition`.)
 - [ ] 2.9 Define the canonical Path 3 parity bundle for legacy baselines: semantic snapshot, matched WinForms screenshot(s), workflow/accessibility evidence, and a failure summary id shared across artifacts.
+- [ ] 2.10 Add executable wiring baselines for the global UI mode: setting/app-setting source, `PropertyTable` broadcast, live host refresh, and current-content reload behavior without manual `OnPropertyChanged(...)` test calls.
+- [ ] 2.11 Add coverage for every current `RecordEditView` consumer under both UI modes, including Lexicon, Grammar, Notebook, Lists, and Words paths, and assert the configured fallback or blocked behavior for non-migrated surfaces.
+- [ ] 2.12 Add localization coverage for product-facing UI mode labels/messages and Avalonia fallback text, while keeping automation selectors stable through nonlocalized IDs rather than localized labels.
 
 ## 3. Refactor Seams First
 
@@ -32,6 +38,9 @@
 - [x] 3.6 Extract edit-session and transaction seams for staged values, validation, cancellation, dirty state, undo/redo grouping, and LCModel commit behavior, following `avalonia-edit-sessions` and `avalonia-undo-redo`. (`IEditSession` + `PocEditSession` commit/cancel, with tests; LCModel-fenced impl deferred to the regional step.)
 - [x] 3.7 Extract UI scheduling, focus navigation, command routing, and region lifetime/disposal seams before introducing editable Avalonia controls, following `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime`. (`IUiScheduler`/`ImmediateUiScheduler` and `IRegionLifetime`/`RegionLifetime` implemented + tested; `IXCoreCommandBridge` command/focus routing is contract-only.)
 - [x] 3.8 Inventory dynamic editor strings and custom editor constructs (`custom`, `customwithparams`, `autocustom`, loader-based editors, fallback slices) with diagnostics requirements. (`EditorKindMap` classifies known/dynamic/obsolete/unknown faithfully to `SliceFactory`; importer raises per-node diagnostics, with tests.)
+- [ ] 3.9 Extract an explicit global surface-selection/wiring service that maps the app-wide UI mode to per-host behavior, so `RecordEditView` and later hosts do not infer product routing ad hoc from settings/property-table state.
+- [ ] 3.10 Define and enforce the active-host contract for migrated regions: the visible Avalonia path SHALL NOT instantiate or drive hidden legacy `DataTree`/menu infrastructure except through explicitly approved baseline adapters used only for comparison or fallback.
+- [ ] 3.11 Add a repeatable wiring review checklist for feature-flag and host changes: setting source, mediator/property-table notifications, content reload path, focus/command target routing, fallback behavior, preview-vs-product boundaries, and build/test graph coverage.
 
 ## 4. Typed View Definition and XML Import
 
@@ -41,6 +50,8 @@
 - [x] 4.4 Add unsupported-construct diagnostics with layout part and node path. (Diagnostics for dynamic/unknown/obsolete editors, unresolved parts, unknown container/content, each carrying a stable node path.)
 - [x] 4.5 Add cache key, invalidation, async compile, and cancellation tests. (`ViewDefinitionCacheKey` fingerprint, `ViewDefinitionCache`, `ViewDefinitionCompiler.CompileAsync` with `ViewDefinitionCompilerTests`.)
 - [x] 4.6 Ensure off-thread compilation uses immutable layout, metadata, writing-system, custom-field, and override snapshots rather than live WinForms controls, `PropertyTable`, or cache mutation state. (`ViewDefinitionSourceSnapshot` captures immutable XML source; `CompileAsync` runs the importer off-thread over that snapshot only.)
+- [ ] 4.7 Carry localization/resource-key metadata, accessibility identity, and product-vs-preview routing metadata through typed view-definition/Presentation IR for any node that can appear on a globally switchable surface.
+- [ ] 4.8 Replace any product-facing lossy POC-only DTO mapping with typed-definition-backed region models before the global UI mode routes real screens through Avalonia.
 
 ## 5. Graphite and Font Decommissioning
 
@@ -64,6 +75,9 @@
 - [ ] 6.7 Add styling/resource and density token gates for shared `FwAvalonia` resources before broad editor rollout.
 - [ ] 6.8 Make the first editable Avalonia slice satisfy `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local screen phase of `avalonia-command-focus` before expanding to more editors.
 - [ ] 6.9 Add control-level visual parity capture for Avalonia using Avalonia.Headless with Skia-enabled rendered-frame capture, and stamp stable `AutomationProperties.Name`/`AutomationProperties.AutomationId` on user-facing controls used in Path 3 bundles.
+- [ ] 6.10 Wire the first product-facing Avalonia slice through real LCModel-backed edit-session, commit/cancel, validation, and undo/redo seams; detached DTO-only editing remains preview-only.
+- [ ] 6.11 Move all product-facing Avalonia messages, UI mode labels, placeholder text, and unsupported-surface text to localized resources; keep `AutomationId` stable and nonlocalized while allowing localized names/tooltips.
+- [ ] 6.12 Ensure every screen exposed by the global UI mode has a deliberate product behavior in Avalonia mode: supported surface, explicit legacy fallback, or resource-backed unsupported state with tests and diagnostics.
 
 ## 7. Tables, Slices, and Lexical Edit Migration
 
@@ -75,6 +89,8 @@
 - [ ] 7.6 Add a control-selection decision matrix for `TreeView`, `TreeDataGrid`, `ItemsRepeater`, and owned virtualized controls using density, virtualization, selection, accessibility, licensing/version, and multi-writing-system criteria.
 - [ ] 7.7 Add large-fixture performance budgets for open time, scroll/expand latency, typing latency, realized control count, memory, and cache invalidation.
 - [ ] 7.8 Produce Path 3 parity bundles for each first-slice and core parity fixture: WinForms visual evidence, Avalonia visual evidence, semantic snapshot, workflow/accessibility evidence, and an actionable failure summary.
+- [ ] 7.9 Replace preview/prototype host wiring with typed-definition-backed product wiring before any migrated surface is advertised as product-ready under the global switch.
+- [ ] 7.10 For each migrated region manifest, record whether non-migrated global consumers remain on explicit legacy fallback, and block ambiguous "best effort" routing through partial POC hosts.
 
 ## 8. C++ Viewing/Render Seam Decommissioning
 
@@ -97,13 +113,16 @@
 
 ## 10. Validation
 
-- [ ] 10.1 Run targeted managed tests for changed areas using `./test.ps1` filters or relevant VS Code tasks.
+- [ ] 10.1 Run targeted managed tests for changed areas using `./test.ps1` filters or relevant VS Code tasks, including Avalonia projects/tests through the normal repo test path when touched.
 - [ ] 10.2 Run render/parity baseline tests for affected surfaces.
 - [ ] 10.3 Run native viewing/render seam audit tests/instrumentation for any region claimed as migrated.
 - [ ] 10.4 Run Graphite/native-rendering default-path validation for any region proposed as default Avalonia UI.
 - [ ] 10.5 Run browser/PDF replacement validation for default-path XHTML preview, print, or PDF flows.
-- [ ] 10.6 Run `./build.ps1` before implementation work is considered ready for review.
+- [ ] 10.6 Run `./build.ps1` with normal Avalonia build coverage before implementation work is considered ready for review.
 - [ ] 10.7 Run `CI: Full local check` before commit/push.
 - [ ] 10.8 Verify every migrated-region manifest has passing evidence for native-call instrumentation, no unapproved Graphite/native-rendering default-path dependency, undo/redo, accessibility, localization, keyboard/IME, customer override fixtures, performance budgets, and rollback behavior.
 - [ ] 10.9 Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining those seams ad hoc during shell work.
 - [ ] 10.10 Verify every scenario used to claim visual fidelity has a complete Path 3 bundle and that each bundle explicitly classifies which lanes are proven (`semantic`, `visual`, `workflow/accessibility`, `performance`) and which remain pending.
+- [ ] 10.11 Verify Avalonia projects and tests are exercised through the normal repo build/test graph rather than relying on branch-only or optional build lanes as the primary evidence path.
+- [ ] 10.12 Run a dedicated product wiring review for every UI mode or host-routing change: branch-vs-main diff, product-vs-preview boundary, setting/broadcast path, host reload path, focus/command routing, fallback state, and no hidden active legacy rendering.
+- [ ] 10.13 Run localization review for every product-facing Avalonia or UI-mode change: `.resx` coverage, Crowdin compatibility, stable automation IDs, localized user messages, and explicit evidence for any remaining prototype strings.

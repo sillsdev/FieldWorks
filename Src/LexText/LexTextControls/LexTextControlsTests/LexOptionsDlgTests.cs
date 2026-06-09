@@ -19,7 +19,7 @@ namespace LexTextControlsTests
 			var settings = CreateSettings("Legacy");
 			using (var mediator = new Mediator())
 			using (var propertyTable = new PropertyTable(mediator))
-			using (var dlg = new SIL.FieldWorks.LexText.Controls.LexOptionsDlg())
+			using (var dlg = new TestableLexOptionsDlg())
 			{
 				// Use the existing bare-bones path, then inject the test doubles.
 				dlg.InitBareBones(null);
@@ -34,7 +34,9 @@ namespace LexTextControlsTests
 				InvokeOk(dlg);
 
 				Assert.That(settings.UIMode, Is.EqualTo("New"));
+				Assert.That(settings.SaveCalls, Is.EqualTo(1));
 				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("New"));
+				Assert.That(dlg.RestartPromptCount, Is.EqualTo(1));
 			}
 		}
 
@@ -44,7 +46,7 @@ namespace LexTextControlsTests
 			var settings = CreateSettings("Legacy");
 			using (var mediator = new Mediator())
 			using (var propertyTable = new PropertyTable(mediator))
-			using (var dlg = new SIL.FieldWorks.LexText.Controls.LexOptionsDlg())
+			using (var dlg = new TestableLexOptionsDlg())
 			{
 				dlg.InitBareBones(null);
 				SetPrivateField(dlg, "m_settings", settings);
@@ -54,27 +56,91 @@ namespace LexTextControlsTests
 				InvokeOk(dlg);
 
 				Assert.That(settings.UIMode, Is.EqualTo("Legacy"));
+				Assert.That(settings.SaveCalls, Is.EqualTo(1));
 				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("Legacy"));
+				Assert.That(dlg.RestartPromptCount, Is.EqualTo(0));
+			}
+		}
+
+		[Test]
+		public void RestartToApplyButton_EnablesOnlyWhenUIModeChanges()
+		{
+			var settings = CreateSettings("Legacy");
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			using (var dlg = new TestableLexOptionsDlg())
+			{
+				dlg.InitBareBones(null);
+				SetPrivateField(dlg, "m_settings", settings);
+				SetPrivateField(dlg, "m_propertyTable", propertyTable);
+				InvokeOnLoad(dlg);
+
+				var combo = (ComboBox)FindControlRecursive(dlg, "m_uiModeChooser");
+				var restartButton = (Button)FindControlRecursive(dlg, "m_restartToApplyButton");
+				Assert.That(combo, Is.Not.Null);
+				Assert.That(restartButton, Is.Not.Null);
+				Assert.That(restartButton.Enabled, Is.False);
+
+				combo.SelectedIndex = 1;
+				Assert.That(restartButton.Enabled, Is.True);
+
+				combo.SelectedIndex = 0;
+				Assert.That(restartButton.Enabled, Is.False);
+			}
+		}
+
+		[Test]
+		public void RestartToApplyButton_ClickSavesChangedUIMode()
+		{
+			var settings = CreateSettings("Legacy");
+			using (var mediator = new Mediator())
+			using (var propertyTable = new PropertyTable(mediator))
+			using (var dlg = new TestableLexOptionsDlg())
+			{
+				dlg.InitBareBones(null);
+				SetPrivateField(dlg, "m_settings", settings);
+				SetPrivateField(dlg, "m_propertyTable", propertyTable);
+				InvokeOnLoad(dlg);
+
+				var combo = (ComboBox)FindControlRecursive(dlg, "m_uiModeChooser");
+				var restartButton = (Button)FindControlRecursive(dlg, "m_restartToApplyButton");
+				Assert.That(combo, Is.Not.Null);
+				Assert.That(restartButton, Is.Not.Null);
+
+				combo.SelectedIndex = 1;
+				InvokeRestartToApply(dlg);
+
+				Assert.That(settings.UIMode, Is.EqualTo("New"));
+				Assert.That(settings.SaveCalls, Is.EqualTo(1));
+				Assert.That(propertyTable.GetStringProperty("UIMode", "Legacy"), Is.EqualTo("New"));
+				Assert.That(dlg.RestartPromptCount, Is.EqualTo(1));
 			}
 		}
 
 		private static void InvokeOk(Form dlg)
 		{
-			var method = dlg.GetType().GetMethod("m_btnOK_Click", BindingFlags.Instance | BindingFlags.NonPublic);
+			var method = FindMethod(dlg.GetType(), "m_btnOK_Click");
 			Assert.That(method, Is.Not.Null);
 			method.Invoke(dlg, new object[] { null, EventArgs.Empty });
 		}
 
 		private static void InvokeOnLoad(Form dlg)
 		{
-			var method = dlg.GetType().GetMethod("OnLoad", BindingFlags.Instance | BindingFlags.NonPublic);
+			var method = FindMethod(dlg.GetType(), "OnLoad");
 			Assert.That(method, Is.Not.Null);
 			method.Invoke(dlg, new object[] { EventArgs.Empty });
 		}
 
-		private static TestFwApplicationSettings CreateSettings(string uiMode)
+		private static void InvokeRestartToApply(Form dlg)
 		{
-			return new TestFwApplicationSettings
+			var method = FindMethod(dlg.GetType(), "m_restartToApplyButton_Click");
+			Assert.That(method, Is.Not.Null);
+			method.Invoke(dlg, new object[] { null, EventArgs.Empty });
+		}
+
+		private static TrackingTestFwApplicationSettings CreateSettings(string uiMode)
+		{
+			return new TrackingTestFwApplicationSettings
 			{
 				UIMode = uiMode,
 				Reporting = new ReportingSettings(),
@@ -103,9 +169,55 @@ namespace LexTextControlsTests
 
 		private static void SetPrivateField(object target, string fieldName, object value)
 		{
-			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+			var field = FindField(target.GetType(), fieldName);
 			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
 			field.SetValue(target, value);
+		}
+
+		private static FieldInfo FindField(Type type, string fieldName)
+		{
+			while (type != null)
+			{
+				var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+				if (field != null)
+					return field;
+				type = type.BaseType;
+			}
+
+			return null;
+		}
+
+		private static MethodInfo FindMethod(Type type, string methodName)
+		{
+			while (type != null)
+			{
+				var method = type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+				if (method != null)
+					return method;
+				type = type.BaseType;
+			}
+
+			return null;
+		}
+
+		private sealed class TrackingTestFwApplicationSettings : TestFwApplicationSettings
+		{
+			public int SaveCalls { get; private set; }
+
+			public override void Save()
+			{
+				SaveCalls++;
+			}
+		}
+
+		private sealed class TestableLexOptionsDlg : SIL.FieldWorks.LexText.Controls.LexOptionsDlg
+		{
+			public int RestartPromptCount { get; private set; }
+
+			protected override void ShowRestartRequiredPrompt()
+			{
+				RestartPromptCount++;
+			}
 		}
 	}
 }

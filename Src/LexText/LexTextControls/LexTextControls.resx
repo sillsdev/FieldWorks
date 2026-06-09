@@ -1329,6 +1329,10 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>New</value>
     <comment>Uses the new Avalonia lexical edit UI.</comment>
   </data>
+  <data name="UiModeRestartToApply" xml:space="preserve">
+    <value>Restart to apply</value>
+    <comment>Inline button text shown next to the lexical edit UI mode chooser when a restart is needed to fully apply the selected mode.</comment>
+  </data>
   <data name="ksChoosePhonFeats" xml:space="preserve">
     <value>Choose phonological features</value>
   </data>
