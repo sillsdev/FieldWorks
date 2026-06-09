@@ -415,6 +415,15 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
 
 def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, workspace: Optional[Path] = None) -> None:
     """Emit ::error:: workflow commands for GitHub annotation badges."""
+
+    def _esc_msg(s: str) -> str:
+        return s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+    def _esc_prop(s: str) -> str:
+        return _esc_msg(s).replace(":", "%3A").replace(",", "%2C")
+
+    loc_rx = re.compile(r"^(?P<file>.+?)(?:\((?P<line>\d+)(?:,(?P<col>\d+))?\))?$")
+
     count = 0
     for step in steps:
         if not step.failed:
@@ -424,12 +433,19 @@ def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, 
                 return
             diag = MSBUILD_DIAGNOSTIC_RX.match(err.message)
             if diag:
-                source = _strip_workspace(diag.group("source"), workspace)
+                raw_loc = diag.group("source")
+                lm = loc_rx.match(raw_loc)
+                file_path = _strip_workspace((lm.group("file") if lm else raw_loc), workspace)
+                props = f"file={_esc_prop(file_path)}"
+                if lm and lm.group("line"):
+                    props += f",line={lm.group('line')}"
+                if lm and lm.group("col"):
+                    props += f",col={lm.group('col')}"
                 code = diag.group("code")
-                msg = diag.group("message")
-                print(f"::error file={source}::{code}: {msg}")
+                msg = _esc_msg(f"{code}: {diag.group('message')}")
+                print(f"::error {props}::{msg}")
             else:
-                print(f"::error ::{err.message[:200]}")
+                print(f"::error::{_esc_msg(err.message[:200])}")
             count += 1
 
     for finding in (enrichment_findings or []):
