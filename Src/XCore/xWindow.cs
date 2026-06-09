@@ -1789,10 +1789,8 @@ namespace XCore
 
 			UpdateControls();
 
-			// call OnIdle () on any colleagues that implement it.
-#pragma warning disable 618 // suppress obsolete warning
-			m_mediator.SendMessage("Idle", null);
-#pragma warning restore 618
+			// Notify any subscribers that the application is idle.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.Idle, null));
 		}
 
 		/// <summary>
@@ -2400,8 +2398,7 @@ namespace XCore
 			//mi.Invoke(this, new object [] {});
 
 			SynchronizedOnIdleTime();
-			// This is done in SynchronizedOnIdleTime now, as I can't see why some controls should do idle processing, and others not do it.
-			// m_mediator.SendMessage("Idle", this); //let listeners and other colleagues do something
+			// The idle notification is published in SynchronizedOnIdleTime now, as I can't see why some controls should do idle processing, and others not do it.
 		}
 
 		#endregion Windows Event handlers
