@@ -34,7 +34,7 @@ context: |
 
   ## Issue Tracking
   - Primary: GitHub issues/PRs
-  - Legacy: JIRA (LT-* tickets) via .github/skills/atlassian-*
+  - Legacy: JIRA (LT-* tickets) via .claude/skills/atlassian-*
 
 # Per-artifact rules
 rules:

@@ -1,33 +1,44 @@
 # AI guidance governance
 
 ## Purpose
-This repo uses a **tool-agnostic, agent-first** documentation strategy:
-- Component knowledge lives with the component (`Src/**/AGENTS.md`).
-- A small set of scoped instruction files in `.github/instructions/` provides **prescriptive, enforceable constraints**.
-- `.github/AGENTS.md` is the short “front door” that links to the right places.
-- Agent definitions in `.github/agents/` and role chatmodes in `.github/chatmodes/` describe **behavior/persona**, not system architecture.
+This repo targets **GitHub Copilot** and **Claude Code** with a minimal,
+two-tool documentation model:
+- Shared standing guidance lives in root and nested `AGENTS.md` files.
+- GitHub-required custom instructions stay in `.github/` only where GitHub
+	requires exact paths.
+- Claude-only workflows live in `.claude/skills/`.
+- Agent definitions in `.github/agents/` and role chatmodes in
+	`.github/chatmodes/` describe behavior/persona, not system architecture.
 
 ## Source of truth
+- **Shared repo workflow**: `AGENTS.md` plus the nearest nested `AGENTS.md`
 - **Component architecture & entry points**: `Src/<Component>/AGENTS.md`
-- **Repo-wide workflow** (how to build/test, safety constraints): `.github/AGENTS.md`
-- **Non-negotiable rules** (security, terminal restrictions, installer rules, etc.): `.github/instructions/*.instructions.md`
+- **GitHub Copilot custom instructions**: `.github/copilot-instructions.md` and `.github/instructions/*.instructions.md`
+- **Claude Code workflows**: `.claude/skills/*/SKILL.md`
 
 ## No duplication rule
-- Do not copy component descriptions into `.github/instructions/`.
-- Do not restate rules in multiple places. Prefer linking.
-- If a rule must be enforced by agents for a subtree, add a scoped `.instructions.md`; otherwise document it in the relevant `AGENTS.md`.
+- Do not duplicate shared standing guidance across `AGENTS.md`, `CLAUDE.md`,
+	and GitHub compatibility files.
+- Keep each Claude skill in exactly one place: `.claude/skills/`.
+- GitHub prompt files may reference Claude skill paths, but do not keep a
+  mirrored `.github/skills/` tree.
+- If a rule must be auto-applied by GitHub Copilot, keep it in
+	`.github/instructions/*.instructions.md`; otherwise prefer the relevant
+	`AGENTS.md` or a Claude skill.
 
 ## What goes where
 
-### `.github/AGENTS.md`
+### `AGENTS.md`
 Use for:
-- One-page onboarding for agents: build/test commands, repo constraints, and links.
-- Pointers to the curated instruction set and the component docs.
+- One-page onboarding for both tools: build/test commands, repo constraints,
+  and links.
+- Stable, always-on guidance that should apply across sessions.
 
 ### `.github/instructions/*.instructions.md`
 Use for:
 - Prescriptive constraints that must be applied during editing/review.
-- Cross-cutting rules that prevent expensive mistakes (security, terminal command restrictions, installer rules, managed/native boundary rules).
+- Cross-cutting rules that GitHub Copilot needs through its official,
+  path-scoped instruction mechanism.
 
 **Curated keep set (intentionally small):**
 - `build.instructions.md`
@@ -53,9 +64,14 @@ Baseline expectations for a component agent doc:
 - **Dependencies** (other components/layers)
 - **Tests** (test projects and the recommended `./test.ps1` invocation)
 
+### `.claude/skills/`
+Use for:
+- Claude-only workflows, repeatable procedures, and task-specific guidance.
+- Put multi-step procedures here instead of inflating `CLAUDE.md`.
+
 ### `.github/agents/` and `.github/chatmodes/`
 Use for:
-- Role definitions, boundaries, and tool preferences.
+- GitHub Copilot role definitions, boundaries, and tool preferences.
 - Do not put component architecture here; link to the component `AGENTS.md`.
 
 ## External standards alignment (post-2025)
@@ -68,5 +84,6 @@ Add a new `.github/instructions/<name>.instructions.md` only when:
 - It applies broadly or to a subtree, and
 - It would be harmful if Copilot ignored it.
 
-Otherwise, update the appropriate `Src/**/AGENTS.md`.
+Otherwise, update the appropriate `AGENTS.md` or add a Claude skill under
+`.claude/skills/`.
 

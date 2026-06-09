@@ -1,5 +1,10 @@
 # FieldWorks Copilot Code Review Instructions
 
+Prefer the shared repo guidance in `AGENTS.md` and the nearest nested
+`AGENTS.md` first. Keep GitHub-specific, path-scoped constraints in
+`.github/instructions/*.instructions.md`. Claude-only task workflows live in
+`.claude/skills/` and should not be mirrored under `.github/skills/`.
+
 ## Purpose
 
 Review FieldWorks pull requests for the project-specific risks most likely to

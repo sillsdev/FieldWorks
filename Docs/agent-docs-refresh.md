@@ -4,9 +4,14 @@ FieldWorks uses a minimal AGENTS model. There is no hash/frontmatter pipeline an
 
 ## Current model
 
-- Keep only the core files: `AGENTS.md`, `.github/AGENTS.md`, `Src/AGENTS.md`, `FLExInstaller/AGENTS.md`, `openspec/AGENTS.md`.
+- Keep only the core always-on files: `AGENTS.md`, `CLAUDE.md`,
+	`.github/AGENTS.md`, `Src/AGENTS.md`, `FLExInstaller/AGENTS.md`,
+	`openspec/AGENTS.md`.
 - Keep content requirement-only and short.
-- Use `.github/instructions/*.instructions.md` for strict rules.
+- Use `.github/instructions/*.instructions.md` only for GitHub-required,
+	path-scoped Copilot rules.
+- Put Claude-only procedures under `.claude/skills/` instead of inflating the
+	always-on docs.
 
 ## Refresh process
 

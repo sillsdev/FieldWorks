@@ -17,9 +17,13 @@ Minimal, high-signal guidance for coding agents in this repository.
 
 ## Context model
 
-- Use `.github/instructions/*.instructions.md` for prescriptive rules.
-- Apply `.github/instructions/navigation.instructions.md` for structural navigation and hidden-dependency handling.
-- Use `Src/AGENTS.md`, `.github/AGENTS.md`, `FLExInstaller/AGENTS.md`, and `openspec/AGENTS.md` for area-specific guidance.
+- Keep shared repo guidance in this file plus the nearest nested `AGENTS.md`.
+- GitHub Copilot custom instructions still require `.github/copilot-instructions.md`
+	and `.github/instructions/*.instructions.md`.
+- Claude Code reads `CLAUDE.md`, which imports this file; keep Claude-only
+	workflows under `.claude/skills/`.
+- Use `Src/AGENTS.md`, `FLExInstaller/AGENTS.md`, `openspec/AGENTS.md`, and
+	`.github/AGENTS.md` when touching GitHub-specific repo files.
 
 ## External Dependencies (LibLcm)
 
@@ -32,7 +36,7 @@ FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, whi
 ## Issue tracking and Jira
 
 - Use GitHub issues/PRs (and Jira when required) for issue workflow.
-- For `LT-` Jira tickets, use the Atlassian Python skill scripts under `.github/skills/atlassian-readonly-skills/scripts`.
+- For `LT-` Jira tickets, use the Atlassian Python skill scripts under `.claude/skills/atlassian-readonly-skills/scripts`.
 - Do not attempt direct web access to Jira pages from agent tooling.
 - GitHub Copilot for Jira may be used with authenticated Jira Data Center access when the approved service-user/API policy limits which issues are exposed.
 - See `.github/copilot-jira-setup.md` for setup and secret guidance.
