@@ -50,7 +50,7 @@ jobs:
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
     name: Build Debug and run Tests
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Compute build number
         id: build_number
