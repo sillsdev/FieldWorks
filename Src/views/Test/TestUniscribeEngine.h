@@ -201,7 +201,7 @@ namespace TestViews
 				pchLastSlash != NULL);
 			*(pchLastSlash + 1) = 0;
 			wcscat_s(rgchPath, _countof(rgchPath),
-				L"TestData\\Fonts\\CharisSIL-5.000\\CharisSIL-R.ttf");
+				L"TestData\\Fonts\\CharisSIL\\CharisSIL-Regular.ttf");
 
 			DWORD dwAttributes = ::GetFileAttributesW(rgchPath);
 			unitpp::assert_true("Charis SIL test font should be copied beside TestViews.exe",
@@ -324,15 +324,19 @@ namespace TestViews
 			unitpp::assert_true("Charis SIL test font should load", font.Loaded());
 			SetDefaultFontForTest(L"Charis SIL");
 
-			int dxWithoutLigatures = MeasureTextWithFeatures(L"office official affinity", L"liga=0");
-			int dxWithLigatures = MeasureTextWithFeatures(L"office official affinity", L"liga=1");
+			// Small caps replace lowercase letters with glyphs of different advance widths, so the
+			// measured segment width changes. (The liga feature was previously used here, but in
+			// Charis SIL 6.x the fi/ffi ligatures keep the component advance widths, so liga changes
+			// the rendered glyphs without changing segment metrics.)
+			int dxWithoutSmallCaps = MeasureTextWithFeatures(L"small caps verify", L"smcp=0");
+			int dxWithSmallCaps = MeasureTextWithFeatures(L"small caps verify", L"smcp=1");
 
 			unitpp::assert_true("OpenType feature-off segment width should be positive",
-				dxWithoutLigatures > 0);
+				dxWithoutSmallCaps > 0);
 			unitpp::assert_true("OpenType feature-on segment width should be positive",
-				dxWithLigatures > 0);
-			unitpp::assert_true("Charis SIL liga feature should change segment metrics",
-				dxWithoutLigatures != dxWithLigatures);
+				dxWithSmallCaps > 0);
+			unitpp::assert_true("Charis SIL smcp feature should change segment metrics",
+				dxWithoutSmallCaps != dxWithSmallCaps);
 #endif
 		}
 

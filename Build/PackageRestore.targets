@@ -32,6 +32,10 @@
 		<GeckofxHtmlToPdfVersion>1.1.0</GeckofxHtmlToPdfVersion>
 		<!-- pc-parse: download from GitHub release (https://github.com/sillsdev/CarlaLegacy/releases/) -->
 		<PcParseVersion>pc-parse1.0.0</PcParseVersion>
+		<!-- Charis SIL: test font for the Views Uniscribe/Graphite shaping tests; download from
+		     GitHub release (https://github.com/silnrsi/font-charis/releases). v6.x keeps the
+		     "Charis SIL" family name (v7 renames it to "Charis"). -->
+		<CharisSilVersion>6.200</CharisSilVersion>
 		<!-- PackagesDir: Use local packages folder. -->
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
@@ -287,6 +291,20 @@
 			LocalFilename="TonePars64.exe"
 			DownloadsDir="$(DownloadsDir)"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/TonePars64.exe')"
+		/>
+		<!-- Charis SIL font: test font for the Views shaping tests (TestViews). Downloaded once into
+		     Downloads/ and unzipped there; TestViews.vcxproj copies the regular face into its output.
+		     Pinned to a release rather than committed to the repo. -->
+		<DownloadFile
+			Address="https://github.com/silnrsi/font-charis/releases/download/v$(CharisSilVersion)/CharisSIL-$(CharisSilVersion).zip"
+			LocalFilename="CharisSIL-$(CharisSilVersion).zip"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/CharisSIL-$(CharisSilVersion).zip')"
+		/>
+		<Unzip
+			ZipFilename="$(DownloadsDir)/CharisSIL-$(CharisSilVersion).zip"
+			ToDir="$(DownloadsDir)/CharisSIL"
+			Condition="'$(OS)'=='Windows_NT' AND Exists('$(DownloadsDir)/CharisSIL-$(CharisSilVersion).zip') AND !Exists('$(DownloadsDir)/CharisSIL/CharisSIL-$(CharisSilVersion)/CharisSIL-Regular.ttf')"
 		/>
 	</Target>
 
