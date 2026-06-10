@@ -32,6 +32,9 @@
 		<GeckofxHtmlToPdfVersion>1.1.0</GeckofxHtmlToPdfVersion>
 		<!-- pc-parse: download from GitHub release (https://github.com/sillsdev/CarlaLegacy/releases/) -->
 		<PcParseVersion>pc-parse1.0.0</PcParseVersion>
+		<!-- Scheherazade New: deterministic Arabic font for the render-snapshot tests; download from
+		     GitHub release (https://github.com/silnrsi/font-scheherazade/releases). -->
+		<ScheherazadeNewVersion>4.500</ScheherazadeNewVersion>
 		<!-- PackagesDir: Use local packages folder. -->
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
@@ -287,6 +290,21 @@
 			LocalFilename="TonePars64.exe"
 			DownloadsDir="$(DownloadsDir)"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/TonePars64.exe')"
+		/>
+		<!-- Scheherazade New font: deterministic Arabic glyph source for the render-snapshot tests
+		     (RootSiteTests). Downloaded once into Downloads/ and unzipped there; RootSiteTests copies
+		     the regular face into its test output. Pinned to a release so all machines/CI render
+		     identical glyphs. Not committed to the repo. -->
+		<DownloadFile
+			Address="https://github.com/silnrsi/font-scheherazade/releases/download/v$(ScheherazadeNewVersion)/ScheherazadeNew-$(ScheherazadeNewVersion).zip"
+			LocalFilename="ScheherazadeNew-$(ScheherazadeNewVersion).zip"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/ScheherazadeNew-$(ScheherazadeNewVersion).zip')"
+		/>
+		<Unzip
+			ZipFilename="$(DownloadsDir)/ScheherazadeNew-$(ScheherazadeNewVersion).zip"
+			ToDir="$(DownloadsDir)/ScheherazadeNew"
+			Condition="'$(OS)'=='Windows_NT' AND Exists('$(DownloadsDir)/ScheherazadeNew-$(ScheherazadeNewVersion).zip') AND !Exists('$(DownloadsDir)/ScheherazadeNew/ScheherazadeNew-$(ScheherazadeNewVersion)/ScheherazadeNew-Regular.ttf')"
 		/>
 	</Target>
 
