@@ -25,6 +25,9 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	public abstract class RenderBenchmarkTestsBase : RealDataTestsBase
 	{
 		protected const string DeterministicRenderFontFamily = "Segoe UI";
+		// Pinned Arabic font (loaded privately by RenderTestAssemblySetup). Used for Arabic runs so
+		// they don't depend on the host's Segoe UI Arabic version / font fallback.
+		protected const string ArabicRenderFontFamily = "Scheherazade New";
 		protected ILgWritingSystemFactory m_wsf;
 		protected int m_wsEng;
 		protected int m_wsAr;  // Arabic (RTL)
@@ -92,9 +95,24 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			foreach (var writingSystem in writingSystems)
 			{
-				writingSystem.DefaultFont = new FontDefinition(DeterministicRenderFontFamily);
+				writingSystem.DefaultFont = new FontDefinition(
+					writingSystem.RightToLeftScript ? ArabicRenderFontFamily : DeterministicRenderFontFamily);
 				writingSystem.IsGraphiteEnabled = false;
 			}
+		}
+
+		/// <summary>
+		/// Text properties for an Arabic run: the Arabic writing system plus an explicit
+		/// Scheherazade New font. The explicit font is required because the Scripture "Normal"
+		/// style forces FontFamily=Segoe UI, which would otherwise win over the writing system's
+		/// default font for these runs.
+		/// </summary>
+		protected ITsTextProps ArabicRunProps()
+		{
+			var bldr = TsStringUtils.MakePropsBldr();
+			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_wsAr);
+			bldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, ArabicRenderFontFamily);
+			return bldr.GetTextProps();
 		}
 
 		#region Scripture Style Creation
@@ -826,9 +844,9 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 					paraBldr.AppendRun(v.ToString() + "\u00A0",
 						StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsEng));
 
-					// Arabic prose (RTL)
+					// Arabic prose (RTL), rendered with the pinned Scheherazade New font.
 					string prose = arabicProse[(s * versesPerSection + v) % arabicProse.Length];
-					paraBldr.AppendRun(prose, StyleUtils.CharStyleTextProps(null, m_wsAr));
+					paraBldr.AppendRun(prose, ArabicRunProps());
 				}
 
 				paraBldr.CreateParagraph(section.ContentOA);
@@ -900,8 +918,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 					// Rotate: English → Arabic → French within each verse
 					paraBldr.AppendRun(englishProse[idx % englishProse.Length],
 						StyleUtils.CharStyleTextProps(null, m_wsEng));
-					paraBldr.AppendRun(arabicProse[idx % arabicProse.Length],
-						StyleUtils.CharStyleTextProps(null, m_wsAr));
+					paraBldr.AppendRun(arabicProse[idx % arabicProse.Length], ArabicRunProps());
 					paraBldr.AppendRun(frenchProse[idx % frenchProse.Length],
 						StyleUtils.CharStyleTextProps(null, m_wsFr));
 				}

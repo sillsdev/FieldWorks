@@ -362,7 +362,11 @@ namespace SIL.FieldWorks.Common.RenderVerification
 						{
 							var localRect = new Rect(0, 0, rootSiteRect.Width, rootSiteRect.Height);
 							const uint whiteColor = 0x00FFFFFF;
-							vdrb.DrawTheRoot(rootBox, tempHdc, localRect, whiteColor, true, rootSite);
+							// fDrawSel: false — exclude the insertion point from the snapshot.
+								// Its caret blinks on a 500ms timer (FlashInsertionPoint), so drawing
+								// the selection captures the caret non-deterministically and produces
+								// flaky pixel diffs. This snapshot verifies content, not selection.
+								vdrb.DrawTheRoot(rootBox, tempHdc, localRect, whiteColor, false, rootSite);
 						}
 					}
 					finally

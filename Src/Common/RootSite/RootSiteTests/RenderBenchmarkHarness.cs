@@ -276,7 +276,12 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 								{
 									var clientRect = new Rect(0, 0, width, height);
 									const uint whiteColor = 0x00FFFFFF;
-									vdrb.DrawTheRoot(m_view.RootBox, hdc, clientRect, whiteColor, true, m_view);
+									// fDrawSel: false — exclude the insertion point from the snapshot.
+									// MakeRoot installs an insertion-point selection whose caret blinks
+									// on a 500ms timer (FlashInsertionPoint), so drawing the selection
+									// here captures the caret non-deterministically and produces flaky
+									// pixel diffs. This snapshot verifies content rendering, not selection.
+									vdrb.DrawTheRoot(m_view.RootBox, hdc, clientRect, whiteColor, false, m_view);
 								}
 							}
 							finally
