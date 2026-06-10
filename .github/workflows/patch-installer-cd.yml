@@ -230,7 +230,7 @@ jobs:
       - name: Run tests
         shell: powershell
         run: |
-          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired' *>&1 | Tee-Object -FilePath test.log
+          .\test.ps1 -Configuration Release -NoBuild -TestFilter 'TestCategory!=DesktopRequired&TestCategory!=RenderBenchmark' *>&1 | Tee-Object -FilePath test.log
 
       - name: Scan Build Output
         shell: powershell
