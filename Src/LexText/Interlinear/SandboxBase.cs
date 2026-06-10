@@ -1658,17 +1658,30 @@ namespace SIL.FieldWorks.IText
 
 		public void UpdateField(int hvo, int flid)
 		{
-			int hvoMorph = GetHvoMorphForLexSense(hvo);
-			if (hvoMorph != 0)
+			ICmObject hvoObject = Caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			if (hvoObject is ILexSense lexSense)
 			{
-				ILexSense lexSense = Caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
-				ILexEntry lexEntry = lexSense?.Owner as ILexEntry;
-				if (lexSense != null && lexEntry != null)
+				int hvoMorph = GetHvoMorphForLexSense(hvo);
+				if (hvoMorph != 0 && lexSense.Owner is ILexEntry lexEntry)
 				{
 					// This fixes LT-22534.
 					EstablishDefaultSense(hvoMorph, lexEntry, lexSense, null);
 				}
-
+			}
+			if (hvoObject != null && hvoObject.Owner is IMoMorphSynAnalysis msa)
+			{
+				if (msa.Owner is ILexEntry lexEntry)
+				{
+					foreach (var sense in lexEntry.SensesOS)
+					{
+						int hvoMorph = GetHvoMorphForLexSense(sense.Hvo);
+						if (hvoMorph != 0 && sense.MorphoSyntaxAnalysisRA == msa)
+						{
+							// This fixes LT-22541.
+							EstablishDefaultSense(hvoMorph, lexEntry, sense, null);
+						}
+					}
+				}
 			}
 		}
 
