@@ -405,9 +405,17 @@ namespace SIL.FieldWorks.XWorks
 					// lossy POC DTO (which is now preview-host only).
 					var region = LexicalEditRegionBuilder.Build(obj, Cache);
 					if (region == null)
+					{
 						m_avaloniaEntryForm.ShowMessage("Avalonia lexical edit is currently available only for LexEntry records.");
+					}
 					else
-						m_avaloniaEntryForm.ShowRegion(region);
+					{
+						// graphite-transition-support task 2.1: Graphite-affected writing systems render
+						// with OpenType plus a graded warning (never a block); the affordance switches the
+						// whole project surface back to Legacy UI through the real broadcast path.
+						var graphiteWarnings = LexicalEditRegionBuilder.GetPresentableGraphiteWarnings(Cache);
+						m_avaloniaEntryForm.ShowRegion(region, graphiteWarnings, SwitchProjectToLegacyUiMode);
+					}
 				}
 				else
 				{
@@ -450,6 +458,20 @@ namespace SIL.FieldWorks.XWorks
 					m_recordNavigationContext = new RecordClerkNavigationContext(Clerk);
 				return m_recordNavigationContext;
 			}
+		}
+
+		/// <summary>
+		/// The Graphite warning banner's whole-surface affordance (graphite-transition-support task
+		/// 2.1): sets the app-wide UI mode back to Legacy through the property table, which reaches
+		/// this and every other host via the real broadcast path (covered by RecordEditViewSwitchTests).
+		/// </summary>
+		private void SwitchProjectToLegacyUiMode()
+		{
+			if (m_propertyTable == null)
+				return;
+			m_propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModePropertyName,
+				LexicalEditSurfaceResolver.LegacyUIMode, true);
+			m_propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModePropertyName, true);
 		}
 
 		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()

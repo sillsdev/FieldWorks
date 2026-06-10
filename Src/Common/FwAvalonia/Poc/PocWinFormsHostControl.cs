@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
+using SIL.FieldWorks.Common.FwAvalonia.Graphite;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Poc
@@ -44,11 +46,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		/// <summary>
 		/// Displays a typed-definition-backed region model in the Avalonia surface (task 4.8). This is the
 		/// product render path; it replaces <see cref="ShowEntry"/>, which renders the lossy preview DTO.
+		/// Optional Graphite transition warnings (graphite-transition-support task 2.1) render as banners
+		/// above the fields; <paramref name="switchToLegacy"/> is the whole-surface legacy-mode affordance.
 		/// </summary>
-		public void ShowRegion(LexicalEditRegionModel region)
+		public void ShowRegion(
+			LexicalEditRegionModel region,
+			IReadOnlyList<GraphiteWsClassification> graphiteWarnings = null,
+			Action switchToLegacy = null)
 		{
 			if (region == null) throw new ArgumentNullException(nameof(region));
-			_host.Content = new LexicalEditRegionView(region);
+			_host.Content = new LexicalEditRegionView(region, graphiteWarnings, switchToLegacy);
 			Show();
 		}
 

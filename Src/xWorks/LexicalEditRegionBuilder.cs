@@ -4,10 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using SIL.FieldWorks.Common.FwAvalonia.Graphite;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -40,9 +43,16 @@ namespace SIL.FieldWorks.XWorks
 			_cache = cache;
 		}
 
+		// One warning policy per project session (per cache), so each writing system warns at most
+		// once per session (graphite-transition-support task 2.1).
+		private static readonly ConditionalWeakTable<LcmCache, GraphiteWarningPolicy> GraphitePolicies =
+			new ConditionalWeakTable<LcmCache, GraphiteWarningPolicy>();
+
 		/// <summary>
 		/// Builds a region model for the current record, or null if it is not a <see cref="ILexEntry"/>
-		/// (the caller then shows an explicit unsupported state).
+		/// (the caller then shows an explicit unsupported state). Every non-G0 Graphite determination for
+		/// the surface's writing systems is appended to the region diagnostics so it is auditable and
+		/// flows into Path 3 parity bundles (graphite-transition-support task 2.2).
 		/// </summary>
 		public static LexicalEditRegionModel Build(ICmObject obj, LcmCache cache)
 		{
@@ -50,7 +60,76 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 
 			var provider = new LexicalEditRegionBuilder(entry, cache);
-			return LexicalEditRegionMapper.FromViewDefinition(FirstSliceDefinition.Value, provider);
+			var region = LexicalEditRegionMapper.FromViewDefinition(FirstSliceDefinition.Value, provider);
+
+			var graphiteDiagnostics = new List<ViewDiagnostic>();
+			foreach (var classification in ClassifySurfaceWritingSystems(cache))
+			{
+				if (classification.Tier == GraphiteTier.G0)
+					continue;
+				graphiteDiagnostics.Add(new ViewDiagnostic(
+					classification.Tier == GraphiteTier.G1 ? ViewDiagnosticSeverity.Info : ViewDiagnosticSeverity.Warning,
+					classification.DiagnosticCode,
+					classification.Message,
+					"ws/" + classification.WsId));
+			}
+
+			if (graphiteDiagnostics.Count == 0)
+				return region;
+
+			var combined = new List<ViewDiagnostic>(region.Diagnostics);
+			combined.AddRange(graphiteDiagnostics);
+			return new LexicalEditRegionModel(region.ClassName, region.LayoutName, region.Fields, combined);
+		}
+
+		/// <summary>
+		/// The Graphite warnings the surface should present right now (graphite-transition-support
+		/// task 2.1): classification per writing system, rate-limited by the project-session policy.
+		/// G1 determinations are diagnostics only and never returned here.
+		/// </summary>
+		public static IReadOnlyList<GraphiteWsClassification> GetPresentableGraphiteWarnings(LcmCache cache)
+		{
+			var policy = GraphitePolicies.GetValue(cache, _ => new GraphiteWarningPolicy());
+			var presentable = new List<GraphiteWsClassification>();
+			foreach (var classification in ClassifySurfaceWritingSystems(cache))
+			{
+				var presentation = policy.Decide(classification);
+				if (presentation == GraphiteWarningPresentation.Warning
+					|| presentation == GraphiteWarningPresentation.ProminentWarning)
+				{
+					presentable.Add(classification);
+				}
+			}
+
+			return presentable;
+		}
+
+		// The first slice renders the default vernacular (lexeme form) and default analysis (gloss)
+		// writing systems; classify exactly those. Font-table evidence comes from the installed
+		// default font; an uninstalled/unknown font yields Unknown evidence and therefore G0
+		// (no false alarms — legacy would substitute a fallback face too).
+		private static IEnumerable<GraphiteWsClassification> ClassifySurfaceWritingSystems(LcmCache cache)
+		{
+			var seen = new HashSet<string>(StringComparer.Ordinal);
+			foreach (var ws in new[]
+			{
+				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem,
+				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem
+			})
+			{
+				if (ws == null || !seen.Add(ws.Id))
+					continue;
+				yield return ClassifyWritingSystem(ws);
+			}
+		}
+
+		/// <summary>Classifies one writing system from its stored settings and installed-font evidence.</summary>
+		public static GraphiteWsClassification ClassifyWritingSystem(CoreWritingSystemDefinition ws)
+		{
+			if (ws == null) throw new ArgumentNullException(nameof(ws));
+			var evidence = FontTableSniffer.FromInstalledFamily(ws.DefaultFontName);
+			return GraphiteWsClassifier.Classify(
+				ws.IsGraphiteEnabled, ws.DefaultFontFeatures, evidence, ws.Id, ws.DisplayLabel, ws.DefaultFontName);
 		}
 
 		/// <summary>

@@ -9,6 +9,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using SIL.FieldWorks.Common.FwAvalonia.Graphite;
 using SIL.FieldWorks.Common.FwAvalonia.Poc;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
@@ -24,7 +25,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public sealed class LexicalEditRegionView : UserControl
 	{
-		public LexicalEditRegionView(LexicalEditRegionModel model)
+		/// <summary>
+		/// Renders a region, optionally with Graphite transition warnings
+		/// (graphite-transition-support task 2.1): each warning renders as a banner above the fields
+		/// carrying the graded message and, when <paramref name="switchToLegacy"/> is supplied, the
+		/// switch-to-Legacy-UI affordance (whole surface, never per field).
+		/// </summary>
+		public LexicalEditRegionView(
+			LexicalEditRegionModel model,
+			IReadOnlyList<GraphiteWsClassification> graphiteWarnings = null,
+			System.Action switchToLegacy = null)
 		{
 			Model = model ?? throw new System.ArgumentNullException(nameof(model));
 
@@ -48,11 +58,68 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AddField(grid, i, model.Fields[i]);
 			}
 
-			Content = grid;
+			if (graphiteWarnings == null || graphiteWarnings.Count == 0)
+			{
+				Content = grid;
+				return;
+			}
+
+			var panel = new StackPanel();
+			foreach (var warning in graphiteWarnings)
+			{
+				panel.Children.Add(BuildGraphiteWarningBanner(warning, switchToLegacy));
+			}
+
+			panel.Children.Add(grid);
+			Content = panel;
 		}
 
 		/// <summary>The region model this view renders.</summary>
 		public LexicalEditRegionModel Model { get; }
+
+		private static Control BuildGraphiteWarningBanner(GraphiteWsClassification warning, System.Action switchToLegacy)
+		{
+			var prominent = warning.Tier == GraphiteTier.G3;
+
+			var message = new TextBlock
+			{
+				Text = warning.Message,
+				TextWrapping = TextWrapping.Wrap,
+				VerticalAlignment = VerticalAlignment.Center,
+				Foreground = Brushes.Black,
+				FontWeight = prominent ? FontWeight.Bold : FontWeight.Normal
+			};
+			AutomationProperties.SetAutomationId(message, $"GraphiteWarningBanner.{warning.WsId}.Message");
+
+			var content = new DockPanel { Margin = new Thickness(8, 6) };
+			if (switchToLegacy != null)
+			{
+				var switchButton = new Button
+				{
+					Content = GraphiteWarningStrings.SwitchToLegacyAction,
+					Margin = new Thickness(12, 0, 0, 0),
+					VerticalAlignment = VerticalAlignment.Center
+				};
+				AutomationProperties.SetAutomationId(switchButton, $"GraphiteWarningBanner.{warning.WsId}.SwitchToLegacy");
+				AutomationProperties.SetName(switchButton, GraphiteWarningStrings.SwitchToLegacyAction);
+				switchButton.Click += (s, e) => switchToLegacy();
+				DockPanel.SetDock(switchButton, Dock.Right);
+				content.Children.Add(switchButton);
+			}
+
+			content.Children.Add(message);
+
+			var banner = new Border
+			{
+				Background = prominent ? Brushes.MistyRose : Brushes.LemonChiffon,
+				BorderBrush = prominent ? Brushes.Firebrick : Brushes.Goldenrod,
+				BorderThickness = new Thickness(1),
+				Child = content
+			};
+			AutomationProperties.SetAutomationId(banner, $"GraphiteWarningBanner.{warning.WsId}");
+			AutomationProperties.SetName(banner, warning.Message);
+			return banner;
+		}
 
 		private static void AddField(Grid grid, int row, LexicalEditRegionField field)
 		{

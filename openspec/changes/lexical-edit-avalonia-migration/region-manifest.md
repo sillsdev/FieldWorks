@@ -109,7 +109,7 @@ Exceptions must be documented in the manifest with owner, reason, tests, and rol
 | Edit gate | Save, cancel, nested session rejection, undo/redo, and refresh interaction tests pass. |
 | Validation gate | Required fields, deterministic order, localized message metadata, severity, async stale-result handling, and accessibility exposure pass. |
 | Accessibility gate | Controls expose stable automation IDs/names/roles where Avalonia supports them; keyboard-only navigation has headless or UI automation evidence. |
-| Rendering gate | Writing-system/font/Graphite capability matrix is classified and default path blocks unsupported cases with rollback. |
+| Rendering gate | Per `graphite-transition-support` (2026-06-09): every writing system the region renders is classified G0–G3 with warning coverage for G2/G3 (graded banner + switch-to-legacy affordance); Graphite *presence* does not block the region's default. The native-engine audit (no `GraphiteEngineClass`/native Views shaping on the Avalonia path) remains a hard gate. |
 | Performance gate | Provisional budgets are measured against named fixtures and hardware before becoming enablement criteria. |
 
 ## 5. Performance Budgets

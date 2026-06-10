@@ -180,7 +180,10 @@ Transition best practices (applies to whichever path):
 1. What is the acceptable G3 prevalence threshold for the Path B pivot (proposed >10% of partner
    projects — needs product owner confirmation)?
 2. Does the M2 "new projects cannot enable Graphite" rule need a partner exemption mechanism?
-3. Where does the font classification service live — `FwAvalonia` (LCModel-free, table sniffing
-   only) with the WS-flag input injected, or alongside the 6.x writing-system text service?
+3. ~~Where does the font classification service live?~~ **Resolved (2026-06-09, task 1.3):**
+   `FwAvalonia/Graphite` (LCModel-free — table sniffing, classifier, warning policy, banner), with
+   the LCModel edge in xWorks (`LexicalEditRegionBuilder.ClassifyWritingSystem` reads the
+   `CoreWritingSystemDefinition` flags/font name). Revisit folding into the 6.x writing-system text
+   service when that lands.
 4. Should the deprecation notice be in-app only, or also release notes + partner communication
    channel?
