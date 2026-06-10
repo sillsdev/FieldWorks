@@ -33,7 +33,8 @@ try {
 		Set-Content -Path (Join-Path $baselineDirectory "$name.verified.png") -Value "expected-$name"
 		Set-Content -Path (Join-Path $baselineDirectory "$name.received.png") -Value "actual-$name"
 		Set-Content -Path (Join-Path $baselineDirectory "$name.diff.png") -Value "diff-$name"
-		Set-Content -Path (Join-Path $baselineDirectory "$name.diff.json") -Value "{`"SnapshotName`":`"$name`"}"
+		$diffJson = '{"SnapshotName":"' + $name + '","AllowedDifferentPixelCount":4,"Diff":{"DifferentPixelCount":172,"DiffRegionWidth":664,"DiffRegionHeight":290,"MinX":38,"MinY":21}}'
+		Set-Content -Path (Join-Path $baselineDirectory "$name.diff.json") -Value $diffJson
 	}
 
 	$result = & $scriptPath -SearchRoot $searchRoot -OutputDirectory $outputDirectory -GitHubOutputPath $githubOutputPath
@@ -62,6 +63,10 @@ try {
 
 	$html = Get-Content -LiteralPath (Join-Path $outputDirectory 'index.html') -Raw
 	Assert-True ($html.Contains('alt="Expected render for Src/Common/RootSite/RootSiteTests/Baselines/alpha.received.png"')) 'Expected descriptive alt text for expected render image.'
+	Assert-True ($html.Contains('id="lb"')) 'Expected the comparison viewer markup.'
+	Assert-True ($html.Contains('data-mode="expected"') -and $html.Contains('data-mode="actual"') -and $html.Contains('data-mode="diff"')) 'Expected per-mode data attributes that drive the viewer.'
+	Assert-True ($html.Contains('data-stat="172 px differ &#183; region 664&#215;290 @ (38,21)"')) 'Expected the diff summary in the row data-stat attribute.'
+	Assert-True ($html.Contains('<b>172</b> px differ (allowed 4)')) 'Expected the diff pixel count in the snapshot cell.'
 }
 finally {
 	if (Test-Path -LiteralPath $workspace) {
