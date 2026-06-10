@@ -64,7 +64,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1437' }}
     name: Build Debug and run Tests
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Compute build number for archival
         id: build_number
