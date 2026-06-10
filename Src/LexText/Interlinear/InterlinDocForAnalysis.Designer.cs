@@ -33,7 +33,6 @@ namespace SIL.FieldWorks.IText
 				m_queuedSegmentHvo = -1;
 				StopMediaPlay();
 			}
-			FwUtils.Subscriber.Unsubscribe(EventConstants.RefreshSandbox, RefreshSandbox);
 			ExistingFocusBox = null;
 			components = null;
 			base.Dispose(disposing);

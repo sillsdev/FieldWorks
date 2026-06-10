@@ -47,6 +47,8 @@ namespace SIL.FieldWorks.IText
 			get { return m_sandbox.IsDirty; }
 		}
 
+		private bool suppressFocusChange = false;
+
 		// There is no logical reason for other buttons ever to get the focus. But .NET helpfully focuses the link words button
 		// as we hide the focus box. And in some other circumstance, which I can't even figure out, it focuses the menu button.
 		// I can't figure out how to prevent it, but it's better for the confirm
@@ -263,7 +265,10 @@ namespace SIL.FieldWorks.IText
 			}
 			finally
 			{
-				Focus();
+				if (!suppressFocusChange)
+				{
+					Focus();
+				}
 				m_fAdjustingSize = false;
 			}
 		}
@@ -308,6 +313,20 @@ namespace SIL.FieldWorks.IText
 				InitialAnalysis.Analysis = SelectedOccurrence.Analysis;
 			}
 			ChangeOrCreateSandbox(selected);
+		}
+
+		public void UpdateField(int hvo, int flid)
+		{
+			try
+			{
+				// This fixes LT-22539.
+				suppressFocusChange = true;
+				m_sandbox.UpdateField(hvo, flid);
+			}
+			finally
+			{
+				suppressFocusChange = false;
+			}
 		}
 
 		#endregion
@@ -552,6 +571,7 @@ namespace SIL.FieldWorks.IText
 		int GetLineOfCurrentSelection();
 		bool SelectOnOrBeyondLine(int startLine, int increment);
 		void UpdateLineChoices(InterlinLineChoices choices);
+		void UpdateField(int hvo, int flid);
 		int MultipleAnalysisColor { set; }
 		bool IsDirty { get; }
 	}

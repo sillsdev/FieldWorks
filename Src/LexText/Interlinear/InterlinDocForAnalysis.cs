@@ -47,16 +47,6 @@ namespace SIL.FieldWorks.IText
 			InitializeComponent();
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
 			DoSpellCheck = true;
-			FwUtils.Subscriber.Subscribe(EventConstants.RefreshSandbox, RefreshSandbox);
-		}
-
-		private void RefreshSandbox(object commandObject)
-		{
-			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null)
-			{
-				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
-				MoveFocusBoxIntoPlace();
-			}
 		}
 
 		void InterlinDocForAnalysis_RightMouseClickedEvent(SimpleRootSite sender, FwRightMouseClickEventArgs e)
@@ -122,6 +112,10 @@ namespace SIL.FieldWorks.IText
 					FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
 					MoveFocusBoxIntoPlace();
 				}
+			}
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null)
+			{
+				FocusBox.UpdateField(hvo, tag);
 			}
 		}
 
