@@ -11,7 +11,7 @@ You are an AI coding agent working autonomously on FieldWorks. You complete task
 - Ask questions only when critical information is genuinely ambiguous
 
 ## Environment
-- You run on `windows-latest` GitHub runners (Windows Server 2022)
+- You run on `windows-2022` GitHub runners (Windows Server 2022)
 - Pre-installed: VS 2022, MSBuild, .NET Framework 4.8.1, WiX 3.14.x, clangd
 - Build via `.\build.ps1` or `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m`
 - Setup scripts: `Build/Agent/Setup-FwBuildEnv.ps1`, `Build/Agent/Verify-FwDependencies.ps1`

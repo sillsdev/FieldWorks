@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate-refs:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v6
       - name: Validate OpenSpec cross-references
