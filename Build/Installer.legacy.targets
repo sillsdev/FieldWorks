@@ -118,6 +118,8 @@
 			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.pdb" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.manifest" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/SimpleRootSite.manifest" />
+			<!-- ManagedLgIcuCollator.manifest dropped by #904 "Reduce optional COM usage"; the DLL still ships. -->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedLgIcuCollator.manifest" />
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
