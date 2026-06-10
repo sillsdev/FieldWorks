@@ -157,8 +157,8 @@
 		=============================================================
 	-->
 	<ItemGroup Label="Test Infrastructure">
-		<PackageVersion Include="HarfBuzzSharp" Version="7.3.0" />
-		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="7.3.0" />
+		<PackageVersion Include="HarfBuzzSharp" Version="7.3.0.3" />
+		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="7.3.0.3" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
