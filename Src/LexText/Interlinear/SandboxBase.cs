@@ -1659,10 +1659,9 @@ namespace SIL.FieldWorks.IText
 		public void UpdateField(int hvo, int flid)
 		{
 			ICmObject hvoObject = Caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			if (hvoObject is ILexSense lexSense)
+			if (hvoObject is ILexSense lexSense && lexSense.Owner is ILexEntry lexEntry)
 			{
-				int hvoMorph = GetHvoMorphForLexSense(hvo);
-				if (hvoMorph != 0 && lexSense.Owner is ILexEntry lexEntry)
+				foreach (int hvoMorph in GetHvoMorphsForLexSense(hvo))
 				{
 					// This fixes LT-22534.
 					EstablishDefaultSense(hvoMorph, lexEntry, lexSense, null);
@@ -1670,15 +1669,17 @@ namespace SIL.FieldWorks.IText
 			}
 			if (hvoObject != null && hvoObject.Owner is IMoMorphSynAnalysis msa)
 			{
-				if (msa.Owner is ILexEntry lexEntry)
+				if (msa.Owner is ILexEntry entry)
 				{
-					foreach (var sense in lexEntry.SensesOS)
+					foreach (var sense in entry.SensesOS)
 					{
-						int hvoMorph = GetHvoMorphForLexSense(sense.Hvo);
-						if (hvoMorph != 0 && sense.MorphoSyntaxAnalysisRA == msa)
+						if (sense.MorphoSyntaxAnalysisRA == msa)
 						{
-							// This fixes LT-22541.
-							EstablishDefaultSense(hvoMorph, lexEntry, sense, null);
+							foreach (int hvoMorph in GetHvoMorphsForLexSense(sense.Hvo))
+							{
+								// This fixes LT-22541.
+								EstablishDefaultSense(hvoMorph, entry, sense, null);
+							}
 						}
 					}
 				}
@@ -3985,8 +3986,9 @@ namespace SIL.FieldWorks.IText
 			return lexSensesForMorphs;
 		}
 
-		private int GetHvoMorphForLexSense(int lexSense)
+		private IList<int> GetHvoMorphsForLexSense(int lexSense)
 		{
+			IList<int> hvoMorphs = new List<int>();
 			int cmorphs = m_caches.DataAccess.get_VecSize(kSbWord, ktagSbWordMorphs);
 			for (int i = 0; i < cmorphs; i++)
 			{
@@ -3994,10 +3996,10 @@ namespace SIL.FieldWorks.IText
 				int hvoMorphSense = m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphGloss);
 				if (m_caches.RealHvo(hvoMorphSense) == lexSense)
 				{
-					return hvoMorph;
+					hvoMorphs.Add(hvoMorph);
 				}
 			}
-			return 0;
+			return hvoMorphs;
 		}
 
 		/// <summary>
