@@ -75,6 +75,10 @@ namespace SIL.FieldWorks.XWorks
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
 		private readonly RegionEditContextHolder m_regionEditContext = new RegionEditContextHolder();
 		private AvaloniaRegionRefreshController m_avaloniaRefreshController;
+		// winforms-free-lexeme-editor.md D4: the host services handed to region editor plugins —
+		// today only the legacy-dialog launcher seam (this view is the sanctioned WinForms
+		// carve-out; the pane itself stays WinForms-free).
+		private RegionEditorServices m_regionEditorServices;
 		// Settle-on-deactivate hook (review round 2): the undo guard is per-stack and cannot reach
 		// other windows' undo stacks, so settle when this view's top-level window loses activation.
 		private EventHandler m_settleOnDeactivate;
@@ -667,7 +671,8 @@ namespace SIL.FieldWorks.XWorks
 			ComposedEntryRegion composed = null;
 			try
 			{
-				composed = FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden);
+				composed = FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
+					services: EnsureRegionEditorServices());
 				if (composed != null)
 				{
 					region = composed.Model;
@@ -701,6 +706,28 @@ namespace SIL.FieldWorks.XWorks
 				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
 				OnRegionMenuRequested);
+		}
+
+		/// <summary>
+		/// winforms-free-lexeme-editor.md D4: the services region editor plugins may use beyond
+		/// (object, node, edit context, cache) — the legacy-dialog launcher seam, implemented here
+		/// because this host is the only place allowed to touch WinForms during coexistence. Any
+		/// open fenced edit session settles before a dialog launches (a legacy dialog opens its own
+		/// UOW; doing that under the fence's open write lock would throw, the undo-guard hazard).
+		/// The dialog commits through its own UOW, so the refresh controller's PropChanged
+		/// subscription re-renders the region after the dialog closes — no explicit refresh here.
+		/// </summary>
+		private RegionEditorServices EnsureRegionEditorServices()
+		{
+			if (m_regionEditorServices == null)
+			{
+				m_regionEditorServices = new RegionEditorServices
+				{
+					LegacyDialogLauncher = new WinFormsLegacyDialogLauncher(Cache, m_mediator,
+						m_propertyTable, FindForm, () => m_regionEditContext.Settle())
+				};
+			}
+			return m_regionEditorServices;
 		}
 
 		/// <summary>

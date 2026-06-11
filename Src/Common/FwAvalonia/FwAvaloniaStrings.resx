@@ -66,4 +66,31 @@
   <data name="ksAddItem" xml:space="preserve">
     <value>Add item</value>
   </data>
+  <data name="ksSearchPrompt" xml:space="preserve">
+    <value>Type to search</value>
+  </data>
+  <data name="ksChorusAddNote" xml:space="preserve">
+    <value>Add note</value>
+    <comment>Add-note affordance of the Chorus Send/Receive notes bar (D2).</comment>
+  </data>
+  <data name="ksChorusAddMessage" xml:space="preserve">
+    <value>Add message</value>
+    <comment>Watermark of the append-message editor in a Chorus note's flyout.</comment>
+  </data>
+  <data name="ksChorusOk" xml:space="preserve">
+    <value>OK</value>
+    <comment>Confirm button of the Chorus notes flyouts.</comment>
+  </data>
+  <data name="ksChorusResolved" xml:space="preserve">
+    <value>Resolved</value>
+    <comment>Resolve (close/reopen) toggle of a Chorus note's flyout.</comment>
+  </data>
+  <data name="ksLaunchDialog" xml:space="preserve">
+    <value>Edit in dialog</value>
+    <comment>Accessible name of the "..." dialog-launcher button on a launcher row (D4).</comment>
+  </data>
+  <data name="ksLauncherUnavailable" xml:space="preserve">
+    <value>This field is edited in a dialog that is not available in this view.</value>
+    <comment>Tooltip of the disabled launcher button when the host provides no dialog service (D4).</comment>
+  </data>
 </root>

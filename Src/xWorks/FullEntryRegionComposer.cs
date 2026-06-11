@@ -86,7 +86,8 @@ namespace SIL.FieldWorks.XWorks
 				= new ConcurrentDictionary<(int, string), ViewDefinitionModel>();
 		}
 
-		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false)
+		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
+			RegionEditorPluginRegistry plugins = null, RegionEditorServices services = null)
 		{
 			if (entry == null) throw new ArgumentNullException(nameof(entry));
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
@@ -95,12 +96,20 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
-			var state = new ComposeState(cache, showHiddenFields);
+			// winforms-free-lexeme-editor.md D1: plugin rows close over the region's own edit
+			// context, which only exists after the walk has gathered every setter — a deferred
+			// accessor bridges the gap (plugin factories run at render time, never during compose).
+			// D4: host services (the legacy-dialog launcher seam) ride the same closure; null when
+			// the host supplies none, and service-aware plugins must tolerate that.
+			IRegionEditContext composedContext = null;
+			var state = new ComposeState(cache, showHiddenFields,
+				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, services);
 			foreach (var node in root.Roots)
 				state.Walk(node, entry, 0);
 
 			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters,
 				state.ReferenceAddSetters, state.ReferenceRemoveSetters);
+			composedContext = context;
 			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
 		}
@@ -153,16 +162,28 @@ namespace SIL.FieldWorks.XWorks
 				= new List<ComposedCustomEditorField>();
 
 			private readonly bool _showHidden;
+			// winforms-free-lexeme-editor.md D1: the plugin registry consulted FIRST for every
+			// custom slice, plus the deferred accessor for the edit context plugin factories
+			// receive (resolved when the factory runs, after Compose has built the context).
+			private readonly RegionEditorPluginRegistry _plugins;
+			private readonly Func<IRegionEditContext> _editContextAccessor;
+			// D4: the host-injected services handed to service-aware plugins (null when none).
+			private readonly RegionEditorServices _services;
 			// Finding A: per-compose memos — the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
 			private List<RegionChoiceOption> _morphTypeOptions;
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
 				= new Dictionary<(int, string), (string, string)>();
 
-			public ComposeState(LcmCache cache, bool showHiddenFields)
+			public ComposeState(LcmCache cache, bool showHiddenFields,
+				RegionEditorPluginRegistry plugins, Func<IRegionEditContext> editContextAccessor,
+				RegionEditorServices services = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
+				_plugins = plugins;
+				_editContextAccessor = editContextAccessor;
+				_services = services;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 			}
@@ -503,6 +524,23 @@ namespace SIL.FieldWorks.XWorks
 
 			private void WalkField(ViewNode node, ICmObject obj, int depth)
 			{
+				// winforms-free-lexeme-editor.md D1: a custom slice resolves plugin registry →
+				// companion strip → unsupported row, in that order and never the other way. The
+				// registry is consulted FIRST so a migrated class composes as a real in-tree
+				// Avalonia editor (a RegionFieldKind.Custom row carrying the plugin's control
+				// factory); only unclaimed classes fall through to the companion/unsupported lanes.
+				if (!string.IsNullOrEmpty(node.CustomEditorClass))
+				{
+					var plugin = _plugins?.Resolve(node.CustomEditorClass);
+					if (plugin != null)
+					{
+						AddPluginRow(node, obj, depth, plugin);
+						foreach (var pluginChild in node.Children)
+							Walk(pluginChild, obj, depth + 1);
+						return;
+					}
+				}
+
 				var fieldCountBeforeDispatch = Fields.Count;
 				var editor = (node.RawEditor ?? "").ToLowerInvariant();
 				switch (editor)
@@ -545,7 +583,8 @@ namespace SIL.FieldWorks.XWorks
 						break;
 				}
 
-				// Companion lane: a dynamically loaded custom slice (editor="Custom" class=...)
+				// Companion lane (second in the D1 resolution order, after the plugin registry
+				// claim above): a dynamically loaded custom slice (editor="Custom" class=...)
 				// keeps its legacy class/assembly identity, keyed by the StableId of the row the
 				// dispatch above produced for it — whether that was the explicit unsupported row or
 				// a best-effort read-only rendering (e.g. the Messages slice's field="Self" resolves
@@ -830,6 +869,200 @@ namespace SIL.FieldWorks.XWorks
 				return possibility.OwningList == list ? possibility : null;
 			}
 
+			// ---- winforms-free-lexeme-editor.md D3: the entry-reference vector lane ----
+
+			internal const string EntrySequenceSliceClassName =
+				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
+
+			private const int MaxEntrySearchResults = 50;
+
+			// The lane's gate: a NON-virtual reference vector whose destination signature is
+			// LexEntry/LexSense — or CmObject when the layout identity is the legacy
+			// EntrySequenceReferenceSlice (ComponentLexemes/PrimaryLexemes sign ILexEntryOrLexSense
+			// as plain CmObject). Virtual back-ref vectors (ComplexFormEntries, Subentries,
+			// VisibleComplexFormBackRefs, VariantFormEntries) stay read-only this wave: their writes
+			// land on the OTHER entry's LexEntryRef, not on this flid (the legacy launcher's
+			// AddNewObjectsToProperty overrides) — recorded as the lane's deferred note.
+			private bool IsEntryOrSenseReferenceVector(ViewNode node, int flid)
+			{
+				if (_mdc.get_IsVirtual(flid))
+					return false;
+				int dstClass;
+				try
+				{
+					dstClass = _mdc.GetDstClsId(flid);
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+				if (dstClass == LexEntryTags.kClassId || dstClass == LexSenseTags.kClassId)
+					return true;
+				return dstClass == CmObjectTags.kClassId
+					&& string.Equals(node.CustomEditorClass, EntrySequenceSliceClassName, StringComparison.Ordinal);
+			}
+
+			// D3: the editable entry/sense-reference vector — current refs as headword items, remove
+			// in-pane, add via type-ahead headword-prefix search over the entry repository (never the
+			// whole lexicon as options). Writes ride sda.Replace on the flid inside the fenced
+			// session, like the possibility lane, plus the legacy ComponentLexemes coupling below.
+			private void AddEntryReferenceVector(ViewNode node, ICmObject obj, int depth, int flid, int count)
+			{
+				var items = new List<RegionChoiceOption>();
+				for (var i = 0; i < count; i++)
+				{
+					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
+					items.Add(new RegionChoiceOption(item.Guid.ToString(), ResolveEntryOrSenseName(item)));
+				}
+
+				var stableId = StableId(node, obj);
+				var hvo = obj.Hvo;
+				// "Self" for the circular-reference guard: the entry whose pane this is — the row's
+				// object when it IS an entry, else its owning entry (e.g. obj is the LexEntryRef).
+				var owningEntry = obj as ILexEntry ?? obj.OwnerOfClass<ILexEntry>();
+
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
+					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry)));
+
+				ReferenceAddSetters[stableId] = key =>
+				{
+					var target = ResolveEntryOrSense(key);
+					if (target == null)
+						return false;
+					// Direct self-reference rejects up front (the legacy chooser filters the entry
+					// itself out of the candidates); LCModel's own validation backstops the deeper
+					// circular cases below.
+					var targetEntry = target as ILexEntry ?? ((ILexSense)target).Entry;
+					if (owningEntry != null && targetEntry == owningEntry)
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+					{
+						if (_sda.get_VecItem(hvo, flid, i) == target.Hvo)
+							return false; // duplicates rejected, like the legacy launcher's AddItem
+					}
+					try
+					{
+						_sda.Replace(hvo, flid, size, size, new[] { target.Hvo }, 1);
+					}
+					catch (ArgumentException)
+					{
+						// LCModel's circular-component validation (the case legacy surfaces as
+						// ReportLexEntryCircularReference); reject without staging.
+						return false;
+					}
+					ApplyComponentLexemesAddCoupling(obj, flid, target);
+					return true;
+				};
+				ReferenceRemoveSetters[stableId] = key =>
+				{
+					var target = ResolveEntryOrSense(key);
+					if (target == null)
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+					{
+						if (_sda.get_VecItem(hvo, flid, i) != target.Hvo)
+							continue;
+						_sda.Replace(hvo, flid, i, i + 1, new int[0], 0);
+						return true;
+					}
+					return false;
+				};
+			}
+
+			// Legacy EntrySequenceReferenceLauncher.AddNewObjectsToProperty's ComponentLexemes
+			// coupling, which LCModel does NOT apply as a side effect (verified by test): a component
+			// added when PrimaryLexemes is empty becomes the primary lexeme, and (unless the ref is
+			// typed as a derivative) the complex form shows under the new component
+			// (ShowComplexFormsIn) — LT-12285 guards the duplicate. Removal needs no twin here:
+			// LCModel's RemoveObjectSideEffects already clears PrimaryLexemes/ShowComplexFormsIn when
+			// a component leaves (verified by test).
+			private void ApplyComponentLexemesAddCoupling(ICmObject obj, int flid, ICmObject added)
+			{
+				if (flid != LexEntryRefTags.kflidComponentLexemes || !(obj is ILexEntryRef ler))
+					return;
+				if (ler.PrimaryLexemesRS.Count == 0)
+					ler.PrimaryLexemesRS.Add(added);
+				ILexEntryType derivation;
+				_cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>()
+					.TryGetObject(LexEntryTypeTags.kguidLexTypDerivation, out derivation);
+				if ((derivation == null || !ler.ComplexEntryTypesRS.Contains(derivation))
+					&& !ler.ShowComplexFormsInRS.Contains(added))
+				{
+					ler.ShowComplexFormsInRS.Add(added); // don't add it twice — LT-12285
+				}
+			}
+
+			// Resolves a search/option key to an entry or sense — exactly the targets
+			// EntrySequenceReferenceSlice references (ILexEntryOrLexSense); everything else rejects.
+			private ICmObject ResolveEntryOrSense(string key)
+			{
+				if (!Guid.TryParse(key, out var guid))
+					return null;
+				if (!_cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var target))
+					return null;
+				return target is ILexEntry || target is ILexSense ? target : null;
+			}
+
+			// Item display: the headword (HeadWord for entries — homograph number and all — and the
+			// owner-outline headword+sense-number for senses), the same display the legacy slice's
+			// deParams displayProperty="HeadWord" yields; ShortName is the fallback.
+			private string ResolveEntryOrSenseName(ICmObject target)
+			{
+				switch (target)
+				{
+					case ILexEntry entry:
+						return entry.HeadWord?.Text ?? entry.ShortName ?? string.Empty;
+					case ILexSense sense:
+						return sense.OwnerOutlineNameForWs(_cache.DefaultVernWs)?.Text
+							?? sense.ShortName ?? string.Empty;
+					default:
+						return target?.ShortName ?? string.Empty;
+				}
+			}
+
+			// D3's type-ahead lane: case-insensitive headword-prefix search over the entry
+			// repository (headword/citation form/lexeme form), excluding the pane's own entry and
+			// the vector's current members (read live, so a staged add drops out of the next
+			// search), capped at MaxEntrySearchResults, ordered by headword.
+			private IReadOnlyList<RegionChoiceOption> SearchLexicon(string query, int hvo, int flid,
+				ILexEntry owningEntry)
+			{
+				if (string.IsNullOrWhiteSpace(query))
+					return Array.Empty<RegionChoiceOption>();
+				query = query.Trim();
+
+				var present = new HashSet<int>();
+				var size = _sda.get_VecSize(hvo, flid);
+				for (var i = 0; i < size; i++)
+					present.Add(_sda.get_VecItem(hvo, flid, i));
+
+				return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+					.Where(entry => entry != owningEntry && !present.Contains(entry.Hvo)
+						&& MatchesHeadwordPrefix(entry, query))
+					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
+					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
+					.Take(MaxEntrySearchResults)
+					.ToList();
+			}
+
+			private static bool MatchesHeadwordPrefix(ILexEntry entry, string query)
+			{
+				return StartsWithIgnoreCase(entry.HeadWord?.Text, query)
+					|| StartsWithIgnoreCase(entry.CitationForm?.BestVernacularAlternative?.Text, query)
+					|| StartsWithIgnoreCase(entry.LexemeFormOA?.Form?.BestVernacularAlternative?.Text, query);
+			}
+
+			private static bool StartsWithIgnoreCase(string text, string query)
+				=> !string.IsNullOrEmpty(text)
+					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
+
 			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
@@ -903,6 +1136,19 @@ namespace SIL.FieldWorks.XWorks
 								if (count == 0 && HideWhenEmpty(node))
 									return;
 								AddReferenceVector(node, obj, depth, flid, list, count);
+								return;
+							}
+
+							// winforms-free-lexeme-editor.md D3: a vector whose targets are
+							// entries/senses (the EntrySequenceReferenceSlice fields —
+							// ComponentLexemes, PrimaryLexemes, ... on LexEntryRef) composes as an
+							// editable ReferenceVector whose ADD is a type-ahead lexicon search
+							// (lexicons search, possibility lists enumerate).
+							if (IsEntryOrSenseReferenceVector(node, flid))
+							{
+								if (count == 0 && HideWhenEmpty(node))
+									return;
+								AddEntryReferenceVector(node, obj, depth, flid, count);
 								return;
 							}
 
@@ -1003,6 +1249,29 @@ namespace SIL.FieldWorks.XWorks
 					new List<RegionWsValue> { new RegionWsValue("", display ?? string.Empty) }, null, null,
 					isEditable: false, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+			}
+
+			// winforms-free-lexeme-editor.md D1: the plugin-claimed row — RegionFieldKind.Custom
+			// with the normal label/indent/menu metadata, carrying a factory that closes over
+			// (object, node, deferred edit context, cache). The factory runs in the view at render
+			// time, so composing stays side-effect free and the edit context exists by then.
+			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, IRegionEditorPlugin plugin)
+			{
+				var editContextAccessor = _editContextAccessor;
+				var cache = _cache;
+				var services = _services;
+				// D4: a service-aware plugin (the launcher lane) gets the host services through the
+				// five-argument overload; classic plugins keep the original contract.
+				Func<Avalonia.Controls.Control> factory = plugin is IServiceAwareRegionEditorPlugin serviceAware
+					? () => serviceAware.BuildControl(obj, node, editContextAccessor?.Invoke(), cache, services)
+					: (Func<Avalonia.Controls.Control>)(() => plugin.BuildControl(obj, node, editContextAccessor?.Invoke(), cache));
+				Fields.Add(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+					objectHvo: obj.Hvo,
+					controlFactory: factory));
 			}
 
 			private void WalkUnsupported(ViewNode node, ICmObject obj, int depth)

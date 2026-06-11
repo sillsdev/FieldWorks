@@ -45,5 +45,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>"Add item" — reference-vector add-slot launcher name (6.3).</summary>
 		public static string AddItem => Resources.GetString("ksAddItem");
+
+		/// <summary>"Type to search" — the search-backed add slot's type-ahead watermark (D3).</summary>
+		public static string SearchPrompt => Resources.GetString("ksSearchPrompt");
+
+		/// <summary>"Add note" — the Chorus notes bar's add affordance (D2).</summary>
+		public static string ChorusAddNote => Resources.GetString("ksChorusAddNote");
+
+		/// <summary>"Add message" — append-message watermark in a Chorus note flyout (D2).</summary>
+		public static string ChorusAddMessage => Resources.GetString("ksChorusAddMessage");
+
+		/// <summary>"OK" — confirm button of the Chorus notes flyouts (D2).</summary>
+		public static string ChorusOk => Resources.GetString("ksChorusOk");
+
+		/// <summary>"Resolved" — the resolve toggle of a Chorus note flyout (D2).</summary>
+		public static string ChorusResolved => Resources.GetString("ksChorusResolved");
+
+		/// <summary>Accessible name of the "..." dialog-launcher button (D4).</summary>
+		public static string LaunchDialog => Resources.GetString("ksLaunchDialog");
+
+		/// <summary>Tooltip of a disabled launcher button: no host dialog service (D4).</summary>
+		public static string LauncherUnavailable => Resources.GetString("ksLauncherUnavailable");
 	}
 }

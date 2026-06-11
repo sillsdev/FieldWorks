@@ -328,10 +328,22 @@ change's surfaces.
   strip is pinned above the region, not at the slice's legacy mid-tree position between Import
   Residue and Senses. Covered by `FullEntryRegionMessagesCompanionTests`; the Chorus half is
   manual-verification (notes bar + add-note icon against an S/R project).
+- **Status (2026-06-11) — D4 dialog-launcher lane landed** (`winforms-free-lexeme-editor.md`
+  D4): `MsaInflectionFeatureListDlgLauncherSlice`, `PhonologicalFeatureListDlgLauncherSlice`,
+  and `AudioVisualSlice` are plugin-claimed (`LauncherRegionPlugin` in
+  `DialogLauncherPlugins.cs`) and render as an Avalonia value row + "..." button; the button
+  calls the host-injected `ILegacyDialogLauncher` seam (`RegionEditorServices`, threaded from
+  RecordEditView through `FullEntryRegionComposer.Compose`). RecordEditView's
+  `WinFormsLegacyDialogLauncher` runs the real legacy dialogs reflectively through
+  `DynamicLoader` (the MSA/phonological feature dialogs; AudioVisual plays the media file) —
+  the pane stays WinForms-free and the WinForms dialog remains the sanctioned coexistence
+  carve-out. Burn-down: `LexemeEditorBurnDown.LauncherRoutedClassNames` is populated and
+  AudioVisualSlice left the deferred set (pinned by `LexemeEditorBurnDownTests`).
 - **Retirement risk if unaddressed:** High for affected fields (reversal entries, MSA
   launchers, phonological features render as the resource-backed unsupported state at best).
   Per-surface 9.4 must enumerate which dynamic editors that surface's layouts reach; the
-  companion strip is the documented lane for the ones that must stay WinForms (Chorus UI).
+  companion strip is the documented lane for the ones that must stay WinForms (Chorus UI),
+  and the D4 launcher lane is the documented lane for dialog-launcher slices.
 
 ### B12. Native viewing/render coupling
 

@@ -4,7 +4,10 @@
     <AssemblyName>xWorks</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
+    <OutputType>Library</OutputType>    <!-- AVA2001: the compile-only Avalonia reference (IRegionEditorPlugin, winforms-free-lexeme-editor.md
+         D1) drags the Avalonia analyzer along; its WPF-style OnPropertyChanged rule does not apply to
+         this legacy WinForms codebase. -->
+    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903,AVA2001</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -21,6 +24,13 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Compile-only (PrivateAssets): the IRegionEditorPlugin contract
+         (winforms-free-lexeme-editor.md D1) builds Avalonia controls for plugin-claimed custom
+         slices; the Avalonia runtime assemblies ship with FwAvalonia in the shared output. -->
+    <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
+    <!-- Avalonia's transitive analyzer carrier; IncludeAssets="none" keeps the AVA* analyzers
+         from running over the legacy xWorks codebase (warnings are errors here). -->
+    <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
     <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
     <PackageReference Include="DialogAdapters" />
     <PackageReference Include="DocumentFormat.OpenXml" />
@@ -30,6 +40,9 @@
     <PackageReference Include="NAudio" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="SIL.Archiving" />
+    <!-- D2 (winforms-free-lexeme-editor.md): the Avalonia notes bar builds on LibChorus's UI-free
+         .ChorusNotes data model (Chorus.notes); the WinForms-only SIL.Chorus.App stays out. -->
+    <PackageReference Include="SIL.Chorus.LibChorus" />
     <PackageReference Include="SIL.Core" />
     <PackageReference Include="SIL.Core.Desktop" />
     <PackageReference Include="SIL.LCModel" />

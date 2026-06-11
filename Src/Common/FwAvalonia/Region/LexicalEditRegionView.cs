@@ -384,6 +384,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			switch (field.Kind)
 			{
+				case RegionFieldKind.Custom:
+					return BuildCustom(field, automationId);
 				case RegionFieldKind.ReferenceVector:
 					return new FwReferenceVectorField(field, automationId, _editContext);
 				case RegionFieldKind.Chooser:
@@ -476,6 +478,42 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private Control BuildChooser(LexicalEditRegionField field, string automationId)
 			=> new FwChooserField(field, automationId, _editContext);
+
+		// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin's own
+		// Avalonia control in the value column, at the slice's real position. Guarded lane: a
+		// missing, null-returning, or throwing factory degrades to the explicit unsupported row —
+		// never a crash, never a silently blank row.
+		private static Control BuildCustom(LexicalEditRegionField field, string automationId)
+		{
+			if (field.ControlFactory == null)
+			{
+				System.Diagnostics.Debug.WriteLine(
+					$"Custom region field '{field.StableId}' has no control factory; rendering the unsupported row.");
+				return BuildUnsupported(field, automationId);
+			}
+
+			try
+			{
+				var control = field.ControlFactory();
+				if (control == null)
+				{
+					System.Diagnostics.Debug.WriteLine(
+						$"Custom region field '{field.StableId}' factory returned null; rendering the unsupported row.");
+					return BuildUnsupported(field, automationId);
+				}
+
+				// Plugins may carry their own automation identity; only fill in the row's when absent.
+				if (string.IsNullOrEmpty(AutomationProperties.GetAutomationId(control)))
+					AutomationProperties.SetAutomationId(control, automationId);
+				return control;
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine(
+					$"Custom region field '{field.StableId}' factory threw; rendering the unsupported row: {e}");
+				return BuildUnsupported(field, automationId);
+			}
+		}
 
 		private static Control BuildUnsupported(LexicalEditRegionField field, string automationId)
 		{

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
@@ -13,13 +14,15 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The hybrid companion lane for the LexEntry "Messages" slice (Chorus Send/Receive notes bar):
-	/// the composer carries the legacy custom-editor identity (class/assembly, keyed by the
-	/// placeholder row's StableId) instead of dropping it, the designated-class selection picks the
-	/// Messages slice for promotion, and the model filter removes exactly the promoted rows so the
-	/// Avalonia region no longer shows the grey unsupported placeholder. The WinForms/Chorus half
-	/// (PocWinFormsHostControl.SetCompanionControls + the real MessageSlice) is manual-verification
-	/// territory — headless UI for the Chorus notes bar is impractical.
+	/// The hybrid companion-strip lane MECHANISM (winforms-free-lexeme-editor.md D1's second
+	/// resolution slot): the composer carries legacy custom-editor identities (class/assembly,
+	/// keyed by the placeholder row's StableId) instead of dropping them, designated-class
+	/// selection picks slices for WinForms promotion, and the model filter removes exactly the
+	/// promoted rows. Since wave 2 (D2) the designated set is EMPTY — the Messages slice graduated
+	/// to the native ChorusNotesPlugin — so the mechanism is exercised here with an empty plugin
+	/// registry (to reach the placeholder lane at all) and a fake designated class; the strip
+	/// itself stays hidden in the product. The lane remains the documented coexistence path for
+	/// future tools' WinForms-only custom slices (xml-retirement-blockers.md B11).
 	/// </summary>
 	[TestFixture]
 	public class FullEntryRegionMessagesCompanionTests : MemoryOnlyBackendProviderTestBase
@@ -38,10 +41,14 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
+		/// <summary>An empty registry keeps every custom class in the placeholder/companion lane.</summary>
+		private ComposedEntryRegion ComposeWithoutPlugins()
+			=> FullEntryRegionComposer.Compose(m_entry, Cache, plugins: new RegionEditorPluginRegistry());
+
 		[Test]
-		public void Compose_CarriesTheMessagesSliceCustomEditorIdentity_KeyedToItsPlaceholderRow()
+		public void Compose_WithoutAPluginClaim_CarriesTheMessagesSliceIdentity_KeyedToItsPlaceholderRow()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = ComposeWithoutPlugins();
 			Assert.That(composed, Is.Not.Null, "the shipped layouts must compose");
 
 			var messages = composed.CustomEditorFields
@@ -67,46 +74,66 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_WithTheDefaultRegistry_TheMessagesSliceIsPluginRouted_NotCompanionMaterial()
+		{
+			// Wave 2 promotion (D2): the builtin ChorusNotesPlugin claims the Messages class, so the
+			// composer emits a Custom row with a control factory and the companion lane never sees
+			// it — with the designated set also empty, the companion strip stays hidden.
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+
+			Assert.That(composed.CustomEditorFields.Select(f => f.ClassName),
+				Has.No.Member(AvaloniaCompanionSlices.MessageSliceClassName),
+				"a plugin-claimed class never reaches the companion lane (D1 resolution order)");
+			var custom = composed.Model.Fields.Where(f => f.Kind == RegionFieldKind.Custom
+				&& f.Label == "Messages").ToList();
+			Assert.That(custom.Count, Is.EqualTo(1), "the Messages node composes as the plugin's Custom row");
+			Assert.That(custom[0].ControlFactory, Is.Not.Null);
+
+			Assert.That(AvaloniaCompanionSlices.SelectPromotions(composed.CustomEditorFields), Is.Empty,
+				"nothing promotes: the designated set is empty since wave 2, so RecordEditView's "
+				+ "companion strip never shows");
+		}
+
+		[Test]
 		public void SelectPromotions_PicksOnlyDesignatedCompanionClasses()
 		{
-			var messages = new ComposedCustomEditorField("id1",
-				AvaloniaCompanionSlices.MessageSliceClassName, "LexEdDll.dll", "Messages", 17);
+			// The selection mechanism, exercised with a fake designated class (the product set is
+			// empty since wave 2; the mechanism remains for future tools).
+			const string fakeDesignated = "Fake.Tool.WinFormsOnlySlice";
+			var designated = new ComposedCustomEditorField("id1", fakeDesignated, "FakeDll.dll", "Fake", 17);
 			var other = new ComposedCustomEditorField("id2",
 				"SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "LexEdDll.dll", "Components", 17);
 
 			var promotions = AvaloniaCompanionSlices.SelectPromotions(
-				new[] { other, messages, null });
+				new[] { other, designated, null },
+				new HashSet<string> { fakeDesignated });
 
 			Assert.That(promotions.Select(p => p.FieldStableId), Is.EqualTo(new[] { "id1" }),
 				"only the designated companion classes promote; other dynamic editors keep their unsupported row");
 			Assert.That(AvaloniaCompanionSlices.SelectPromotions(null), Is.Empty);
-		}
-
-		[Test]
-		public void SelectPromotions_OnTheRealComposedEntry_PromotesExactlyTheMessagesSlice()
-		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
-			var promotions = AvaloniaCompanionSlices.SelectPromotions(composed.CustomEditorFields);
-
-			Assert.That(promotions.Select(p => p.ClassName),
-				Is.EqualTo(new[] { AvaloniaCompanionSlices.MessageSliceClassName }));
+			Assert.That(AvaloniaCompanionSlices.SelectPromotions(new[] { designated, other }), Is.Empty,
+				"the product designated set is empty since wave 2 (D2)");
 		}
 
 		[Test]
 		public void RemovePromotedFields_RemovesExactlyThePromotedRows()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
-			var promotions = AvaloniaCompanionSlices.SelectPromotions(composed.CustomEditorFields);
-			var promotedIds = promotions.Select(p => p.FieldStableId).ToList();
+			// Promotion removal mechanism over the real composed entry: pick the Messages
+			// placeholder's StableId directly (composing without plugins), as a stand-in for a
+			// future designated class.
+			var composed = ComposeWithoutPlugins();
+			var binding = composed.CustomEditorFields
+				.Single(f => f.ClassName == AvaloniaCompanionSlices.MessageSliceClassName);
+			var promotedIds = new[] { binding.FieldStableId };
 
 			var filtered = AvaloniaCompanionSlices.RemovePromotedFields(composed.Model, promotedIds);
 
-			Assert.That(filtered.Fields.Count, Is.EqualTo(composed.Model.Fields.Count - promotedIds.Count),
-				"exactly the promoted rows disappear; everything else survives");
-			Assert.That(filtered.Fields.Any(f => promotedIds.Contains(f.StableId)), Is.False,
-				"the grey unsupported row for the promoted slice is gone");
+			Assert.That(filtered.Fields.Count, Is.EqualTo(composed.Model.Fields.Count - 1),
+				"exactly the promoted row disappears; everything else survives");
+			Assert.That(filtered.Fields.Any(f => f.StableId == binding.FieldStableId), Is.False,
+				"the placeholder row for the promoted slice is gone");
 			Assert.That(filtered.Fields.Select(f => f.StableId),
-				Is.EqualTo(composed.Model.Fields.Where(f => !promotedIds.Contains(f.StableId))
+				Is.EqualTo(composed.Model.Fields.Where(f => f.StableId != binding.FieldStableId)
 					.Select(f => f.StableId)),
 				"row order is preserved");
 			Assert.That(filtered.ClassName, Is.EqualTo(composed.Model.ClassName));
@@ -118,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void RemovePromotedFields_WithNothingToRemove_ReturnsTheSameModelInstance()
 		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var composed = ComposeWithoutPlugins();
 
 			Assert.That(AvaloniaCompanionSlices.RemovePromotedFields(composed.Model, null),
 				Is.SameAs(composed.Model));

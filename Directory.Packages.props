@@ -190,10 +190,19 @@
 		(targets net461) for the in-process embedding evaluated by the spike.
 		These are referenced only by the isolated Src/Common/FwAvalonia spike
 		projects and are not part of the default product packaging.
+		Exception: xWorks and xWorksTests carry a compile-only (PrivateAssets)
+		reference to the base Avalonia package so the IRegionEditorPlugin
+		contract (winforms-free-lexeme-editor.md D1) can type its control
+		factories; the runtime assemblies still ship with FwAvalonia.
 		=============================================================
 	-->
 	<ItemGroup Label="Avalonia (POC spike)">
 		<PackageVersion Include="Avalonia" Version="11.3.17" />
+		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks can
+		     reference it with IncludeAssets="none": its AVA* analyzers must not run over the large
+		     legacy xWorks codebase where warnings are errors (the compile-only Avalonia reference
+		     there exists only for the IRegionEditorPlugin contract, winforms-free-lexeme-editor.md D1). -->
+		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
 		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.17" />
