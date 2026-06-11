@@ -1,6 +1,7 @@
-﻿# FieldWorks Agentic Instructions
+﻿# FieldWorks GitHub Compatibility
 
-Short repo-level instructions for agents.
+This folder exists for GitHub-required repository configuration and Copilot
+entrypoints.
 
 ## Build and test
 
@@ -10,8 +11,11 @@ Short repo-level instructions for agents.
 
 ## Documentation model
 
-- Keep AGENTS guidance minimal and requirement-only.
-- Source of prescriptive constraints is `.github/instructions/*.instructions.md`.
+- Shared standing guidance lives in `../AGENTS.md`.
+- GitHub-required custom instructions live in `.github/copilot-instructions.md`
+	and `.github/instructions/*.instructions.md`.
+- Claude-only workflows live in `../.claude/skills/` and should not be
+	duplicated under `.github/`.
 
 ## Serena operating model
 
@@ -32,6 +36,8 @@ Short repo-level instructions for agents.
 
 ## Relevant files
 
+- `../AGENTS.md`
+- `../CLAUDE.md`
 - `.github/instructions/build.instructions.md`
 - `.github/instructions/navigation.instructions.md`
 - `.github/instructions/testing.instructions.md`
@@ -39,7 +45,7 @@ Short repo-level instructions for agents.
 - `.github/instructions/native.instructions.md`
 - `.github/instructions/installer.instructions.md`
 - `.github/rubrics/*.yaml`
-- `.github/skills/rubric-verify/SKILL.md`
+- `../.claude/skills/rubric-verify/SKILL.md`
 - `Src/AGENTS.md`
 - `FLExInstaller/AGENTS.md`
 

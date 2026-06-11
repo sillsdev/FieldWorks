@@ -33,13 +33,13 @@ Read-only Python utilities for Jira, Confluence, and Bitbucket integration, supp
 
 ```powershell
 # Get a single issue (inline Python one-liner)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
 
 # Search for issues (JQL query)
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
 
 # Get issue workflow transitions
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
 ```
 
 Use the script modules in this skill directly.

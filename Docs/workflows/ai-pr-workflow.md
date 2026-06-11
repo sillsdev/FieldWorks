@@ -21,10 +21,10 @@ Use this workflow with either:
 
 | Goal | GitHub Copilot | Claude Code | Repo anchor |
 |------|----------------|-------------|-------------|
-| Read Jira issue | Atlassian VS Code extension or ask Copilot to use the Atlassian helpers | Use the Atlassian helper scripts or ask Claude to follow them | [../.github/copilot-jira-setup.md](../../.github/copilot-jira-setup.md), [../.github/skills/atlassian-readonly-skills/SKILL.md](../../.github/skills/atlassian-readonly-skills/SKILL.md) |
+| Read Jira issue | Atlassian VS Code extension or ask Copilot to use the Atlassian helpers | Use the Atlassian helper scripts or ask Claude to follow them | [../.github/copilot-jira-setup.md](../../.github/copilot-jira-setup.md), [../.claude/skills/atlassian-readonly-skills/SKILL.md](../../.claude/skills/atlassian-readonly-skills/SKILL.md) |
 | Create isolated worktree | VS Code task: `Worktree: Create/Open from branch` | Use the same VS Code task, then start Claude inside that worktree | [../.vscode/tasks.json](../../.vscode/tasks.json), [../scripts/Worktree-CreateFromBranch.ps1](../../scripts/Worktree-CreateFromBranch.ps1) |
-| Preflight branch before PR | `/pr-preflight` | Ask Claude to follow [../.github/skills/pr-preflight/SKILL.md](../../.github/skills/pr-preflight/SKILL.md) for the current branch | [../.github/prompts/pr-preflight.prompt.md](../../.github/prompts/pr-preflight.prompt.md) |
-| Respond to review comments | `/respond-to-review-comments` | Ask Claude to follow [../.github/skills/respond-to-review-comments/SKILL.md](../../.github/skills/respond-to-review-comments/SKILL.md) | [../.github/prompts/respond-to-review-comments.prompt.md](../../.github/prompts/respond-to-review-comments.prompt.md) |
+| Preflight branch before PR | `/pr-preflight` | Ask Claude to follow [../.claude/skills/pr-preflight/SKILL.md](../../.claude/skills/pr-preflight/SKILL.md) for the current branch | [../.github/prompts/pr-preflight.prompt.md](../../.github/prompts/pr-preflight.prompt.md) |
+| Respond to review comments | `/respond-to-review-comments` | Ask Claude to follow [../.claude/skills/respond-to-review-comments/SKILL.md](../../.claude/skills/respond-to-review-comments/SKILL.md) | [../.github/prompts/respond-to-review-comments.prompt.md](../../.github/prompts/respond-to-review-comments.prompt.md) |
 | Build and test | VS Code `Build`, `Test`, and `CI: Full local check` tasks | Same tasks or `./build.ps1` and `./test.ps1` from the worktree root | [../ReadMe.md](../../ReadMe.md), [../AGENTS.md](../../AGENTS.md) |
 
 ## Phase 1: Pull The Jira Issue
@@ -42,7 +42,7 @@ Recommended scriptable path:
 
 ```powershell
 # Read one Jira issue through the repo's read-only helper
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
 ```
 
 Best practice from Atlassian's linked-development docs:
@@ -140,7 +140,7 @@ Run:
 Ask Claude to follow the repo skill directly. A good prompt is:
 
 ```text
-Follow .github/skills/pr-preflight/SKILL.md for the current branch.
+Follow .claude/skills/pr-preflight/SKILL.md for the current branch.
 Use CONTEXT.md, .github/context/codebase.context.md, and .github/instructions/review-analyzer.instructions.md.
 Write .review/summary.md.
 ```
@@ -196,7 +196,7 @@ Run:
 Ask Claude to follow the repo skill directly. A good prompt is:
 
 ```text
-Follow .github/skills/respond-to-review-comments/SKILL.md for this PR.
+Follow .claude/skills/respond-to-review-comments/SKILL.md for this PR.
 Classify each comment as Fix, Clarify, Reply only, or Defer.
 Verify each change with the narrowest FieldWorks check.
 ```
@@ -219,7 +219,7 @@ Before merge or immediately after it, make sure Jira reflects the actual state o
 Example:
 
 ```powershell
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'PR ready for review: https://github.com/sillsdev/FieldWorks/pull/905'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'PR ready for review: https://github.com/sillsdev/FieldWorks/pull/905'))"
 ```
 
 ## Short Checklist

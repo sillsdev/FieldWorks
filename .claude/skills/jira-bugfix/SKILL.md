@@ -53,7 +53,7 @@ Then proceed through the steps below.
 Use the `atlassian-readonly-skills` scripts to get the issue:
 
 ```powershell
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-XXXXX'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-XXXXX'))"
 ```
 
 Extract and present to the user:
@@ -76,7 +76,7 @@ the user for their JIRA username and assign it:
 # Assign the issue (Data Center uses 'name' field)
 python -c "
 import sys, json
-sys.path.insert(0, '.github/skills/atlassian-skills/scripts')
+sys.path.insert(0, '.claude/skills/atlassian-skills/scripts')
 from jira_issues import jira_update_issue
 print(jira_update_issue('LT-XXXXX', assignee='username'))
 "
@@ -94,7 +94,7 @@ print(jira_update_issue('LT-XXXXX', assignee='username'))
 # Get available transitions
 python -c "
 import sys
-sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts')
+sys.path.insert(0, '.claude/skills/atlassian-readonly-skills/scripts')
 from jira_workflow import jira_get_transitions
 print(jira_get_transitions('LT-XXXXX'))
 "
@@ -102,7 +102,7 @@ print(jira_get_transitions('LT-XXXXX'))
 # Transition (use the ID for "In Progress" from above)
 python -c "
 import sys
-sys.path.insert(0, '.github/skills/atlassian-skills/scripts')
+sys.path.insert(0, '.claude/skills/atlassian-skills/scripts')
 from jira_workflow import jira_transition_issue
 print(jira_transition_issue('LT-XXXXX', 'TRANSITION_ID'))
 "
@@ -350,7 +350,7 @@ PR link:
 ```powershell
 python -c "
 import sys
-sys.path.insert(0, '.github/skills/atlassian-skills/scripts')
+sys.path.insert(0, '.claude/skills/atlassian-skills/scripts')
 from jira_issues import jira_add_comment
 comment = '''Fix implemented and PR created.
 

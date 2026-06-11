@@ -33,16 +33,16 @@ Python utilities for Jira, Confluence, and Bitbucket integration, supporting bot
 
 ```powershell
 # Create a new issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_create_issue; print(jira_create_issue('LT', 'Issue title', 'Bug'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-skills/scripts'); from jira_issues import jira_create_issue; print(jira_create_issue('LT', 'Issue title', 'Bug'))"
 
 # Update an existing issue
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_update_issue; print(jira_update_issue('LT-22382', summary='Updated title'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-skills/scripts'); from jira_issues import jira_update_issue; print(jira_update_issue('LT-22382', summary='Updated title'))"
 
 # Add a comment
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'Comment text'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'Comment text'))"
 
 # Transition issue status
-python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_workflow import jira_transition_issue; print(jira_transition_issue('LT-22382', 'In Progress'))"
+python -c "import sys; sys.path.insert(0, '.claude/skills/atlassian-skills/scripts'); from jira_workflow import jira_transition_issue; print(jira_transition_issue('LT-22382', 'In Progress'))"
 ```
 
 For read-only operations (get issue, search, get comments), use `atlassian-readonly-skills` instead.

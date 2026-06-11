@@ -4,7 +4,7 @@ agent: "agent"
 argument-hint: "Optional PR URL, reviewer name, comment ID, or focus area"
 ---
 
-Use the `respond-to-review-comments` skill from `.github/skills/respond-to-review-comments/SKILL.md`.
+Use the `respond-to-review-comments` skill from `.claude/skills/respond-to-review-comments/SKILL.md`.
 
 Treat any text supplied with this prompt as optional input: a PR URL, PR number, reviewer name, comment ID, pasted review comments, or a focus area.
 

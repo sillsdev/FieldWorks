@@ -6,7 +6,7 @@ These instructions are for AI assistants working with the OpenSpec workflow in F
 Use `openspec/AGENTS.md` when the request:
 - Mentions OpenSpec, proposals, specs, design, tasks, verification, sync, or archive work
 - References `/opsx:*` commands or asks to do the equivalent workflow from a non-Copilot agent such as Claude Code
-- Touches `openspec/**`, `.github/prompts/opsx-*`, or `.github/skills/openspec-*`
+- Touches `openspec/**`, `.github/prompts/opsx-*`, or `.claude/skills/openspec-*`
 
 Use `openspec/AGENTS.md` to learn:
 - The canonical OpenSpec workflow for this repository
