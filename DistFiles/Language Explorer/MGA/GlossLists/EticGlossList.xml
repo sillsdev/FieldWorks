@@ -16114,9 +16114,9 @@ or using a tool called AddGuids, and re-insert this comment. -->
             </fs>
          </item>
          <item guid="1caada1c-9a01-4cb7-ac1c-2fba2bcf9910" id="vBantuClassNASg" type="value">
-            <abbrev ws="en">NA</abbrev>
-            <term ws="en">NC NA</term>
-            <def ws="en">The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</def>
+            <abbrev ws="en">NAsg</abbrev>
+         	<term ws="en">NC Sg Not Applicable</term>
+         	<def ws="en">The class labeled NAsg is for situations where BantuSg has no value ("not applicable"). For instance, if a noun only has a plural class but no singular class, then for parsing to work correctly, it needs to have BantuSg set to NAsg so that it will not agree with forms that have a value for BantuSg. (If there is no value set for BantuSg, then it will be allowed to take any BantuSg prefix, whereas none should be allowed.)</def>
             <citation>Katamba 2003:114ff;</citation>
             <citation>Hinnebusch 1989:466-467,</citation>
             <citation>Gardner 2005:54.</citation>
@@ -16340,9 +16340,9 @@ or using a tool called AddGuids, and re-insert this comment. -->
             </fs>
          </item>
          <item guid="ad93d8eb-7515-4bdd-b034-8462c78de50a" id="vBantuClassNAPl" type="value">
-            <abbrev ws="en">NA</abbrev>
-            <term ws="en">NC NA</term>
-            <def ws="en">The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</def>
+         	<abbrev ws="en">NApl</abbrev>
+         	<term ws="en">NC Pl Not Applicable</term>
+         	<def ws="en">The class labeled NApl is for situations where BantuPl has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NApl so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</def>
             <citation>Katamba 2003:114ff;</citation>
             <citation>Hinnebusch 1989:466-467,</citation>
             <citation>Gardner 2005:54.</citation>
@@ -16540,9 +16540,9 @@ or using a tool called AddGuids, and re-insert this comment. -->
             </fs>
          </item>
          <item guid="880a016d-cdc4-4bfe-8a28-83f658c43aae" id="vBantuClassNAMany" type="value">
-            <abbrev ws="en">NA</abbrev>
-            <term ws="en">NC NA</term>
-            <def ws="en">The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</def>
+         	<abbrev ws="en">NAmany</abbrev>
+         	<term ws="en">NC Many Not Applicable</term>
+         	<def ws="en">The class labeled NAmany is for situations where BantuMany has no value ("not applicable"). For instance, if a noun only has a singular and plural class but no "many" class, then for parsing to work correctly, it needs to have BantuMany set to NAmany so that it will not agree with forms that have a value for BantuMany. (If there is no value set for BantuMany, then it will be allowed to take any BantuMany prefix, whereas none should be allowed.)</def>
             <citation>Katamba 2003:114ff;</citation>
             <citation>Hinnebusch 1989:466-467,</citation>
             <citation>Gardner 2005:54.</citation>
