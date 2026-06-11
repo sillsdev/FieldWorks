@@ -441,16 +441,18 @@
 
   <!-- Charis SIL test font: downloaded (not committed) by Build/PackageRestore.targets into
        Downloads/CharisSIL; copied beside TestViews.exe so the shaping tests can load it privately.
-       The ItemGroup is inside the target so the glob resolves at execution time (after the download
-       in the downloadDlls step), and the recursive glob avoids hard-coding the pinned version. -->
+       Tied to the exact pinned version (keep CharisSilTestFontVersion in sync with CharisSilVersion
+       in Build/PackageRestore.targets) so the copied test font is deterministic, even if Downloads/
+       holds more than one extracted version. -->
+  <PropertyGroup>
+    <CharisSilTestFontVersion>6.200</CharisSilTestFontVersion>
+    <CharisSilTestFontPath>$(FwRoot)\Downloads\CharisSIL\CharisSIL-$(CharisSilTestFontVersion)\CharisSIL-Regular.ttf</CharisSilTestFontPath>
+  </PropertyGroup>
   <Target Name="CopyCharisSilTestFont" AfterTargets="Build">
-    <ItemGroup>
-      <CharisSilTestFont Include="$(FwRoot)\Downloads\CharisSIL\**\CharisSIL-Regular.ttf" />
-    </ItemGroup>
-    <Copy SourceFiles="@(CharisSilTestFont)"
+    <Copy SourceFiles="$(CharisSilTestFontPath)"
           DestinationFolder="$(OutDir)TestData\Fonts\CharisSIL"
           SkipUnchangedFiles="true"
-          Condition="'@(CharisSilTestFont)' != ''" />
+          Condition="Exists('$(CharisSilTestFontPath)')" />
   </Target>
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

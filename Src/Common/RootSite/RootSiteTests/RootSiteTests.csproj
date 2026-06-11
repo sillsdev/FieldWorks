@@ -59,16 +59,18 @@
   </ItemGroup>
   <!-- Deterministic Arabic font for the render-snapshot tests. Downloaded (not committed) by
        Build/PackageRestore.targets into Downloads/ScheherazadeNew; copied into the test output so
-       RenderTestAssemblySetup can load it privately. The ItemGroup is inside the target so the glob
-       resolves at execution time (after the download), and the recursive glob avoids hard-coding the
-       pinned version folder. -->
+       RenderTestAssemblySetup can load it privately. Tied to the exact pinned version (keep
+       ScheherazadeNewTestFontVersion in sync with ScheherazadeNewVersion in
+       Build/PackageRestore.targets) so the copied test font is deterministic, even if Downloads/
+       holds more than one extracted version. -->
+  <PropertyGroup>
+    <ScheherazadeNewTestFontVersion>4.500</ScheherazadeNewTestFontVersion>
+    <ScheherazadeNewTestFontPath>$(OutDir)..\..\Downloads\ScheherazadeNew\ScheherazadeNew-$(ScheherazadeNewTestFontVersion)\ScheherazadeNew-Regular.ttf</ScheherazadeNewTestFontPath>
+  </PropertyGroup>
   <Target Name="CopyArabicRenderFont" AfterTargets="Build">
-    <ItemGroup>
-      <_ArabicRenderFont Include="$(OutDir)..\..\Downloads\ScheherazadeNew\**\ScheherazadeNew-Regular.ttf" />
-    </ItemGroup>
-    <Copy SourceFiles="@(_ArabicRenderFont)"
+    <Copy SourceFiles="$(ScheherazadeNewTestFontPath)"
           DestinationFolder="$(OutDir)TestData\Fonts"
           SkipUnchangedFiles="true"
-          Condition="'@(_ArabicRenderFont)' != ''" />
+          Condition="Exists('$(ScheherazadeNewTestFontPath)')" />
   </Target>
 </Project>
