@@ -346,13 +346,13 @@ namespace SIL.ToneParsFLEx
 				if (selectedText != null)
 				{
 					lbTexts.SelectedIndex = Texts.IndexOf(selectedText);
-				}
-				var selectedSegment = SegmentsInListBox
-					.Where(s => s.Segment.Guid.ToString() == RetrievedLastSegment)
-					.FirstOrDefault();
-				if (selectedSegment != null)
-				{
-					lbSegments.SelectedIndex = SegmentsInListBox.IndexOf(selectedSegment);
+					var selectedSegment = SegmentsInListBox
+						.Where(s => s.Segment.Guid.ToString() == RetrievedLastSegment)
+						.FirstOrDefault();
+					if (selectedSegment != null)
+					{
+						lbSegments.SelectedIndex = SegmentsInListBox.IndexOf(selectedSegment);
+					}
 				}
 			}
 		}
