@@ -37,10 +37,18 @@ try {
 		Set-Content -Path (Join-Path $baselineDirectory "$name.diff.json") -Value $diffJson
 	}
 
+	# A snapshot missing its baseline (no .verified.png), carrying a hostile .diff.json whose
+	# DifferentPixelCount is markup rather than a number. Confirms the report sanitizes stats to
+	# ints and that the viewer no longer depends on the Expected render existing.
+	Set-Content -Path (Join-Path $baselineDirectory 'gamma.received.png') -Value 'actual-gamma'
+	Set-Content -Path (Join-Path $baselineDirectory 'gamma.diff.png') -Value 'diff-gamma'
+	$hostileDiffJson = '{"SnapshotName":"gamma","AllowedDifferentPixelCount":4,"Diff":{"DifferentPixelCount":"<img src=x onerror=alert(1)>","DiffRegionWidth":664,"DiffRegionHeight":290,"MinX":38,"MinY":21}}'
+	Set-Content -Path (Join-Path $baselineDirectory 'gamma.diff.json') -Value $hostileDiffJson
+
 	$result = & $scriptPath -SearchRoot $searchRoot -OutputDirectory $outputDirectory -GitHubOutputPath $githubOutputPath
 
 	Assert-True ($result.HasArtifacts -eq $true) 'Expected render artifacts to be detected.'
-	Assert-True ($result.FailureCount -eq 2) 'Expected two render failures to be reported.'
+	Assert-True ($result.FailureCount -eq 3) 'Expected three render failures to be reported.'
 	Assert-True (Test-Path (Join-Path $outputDirectory 'index.html')) 'Expected an HTML report.'
 	Assert-True (Test-Path (Join-Path $outputDirectory 'README.md')) 'Expected a Markdown report.'
 	Assert-True (Test-Path (Join-Path $outputDirectory 'manifest.json')) 'Expected a manifest file.'
@@ -54,7 +62,7 @@ try {
 
 	$githubOutput = [System.IO.File]::ReadAllText($githubOutputPath)
 	Assert-True ($githubOutput.Contains('has_artifacts=true')) 'Expected has_artifacts GitHub output.'
-	Assert-True ($githubOutput.Contains('failure_count=2')) 'Expected failure_count GitHub output.'
+	Assert-True ($githubOutput.Contains('failure_count=3')) 'Expected failure_count GitHub output.'
 
 	$readme = Get-Content -LiteralPath (Join-Path $outputDirectory 'README.md') -Raw
 	Assert-True ($readme.Contains('[expected](')) 'Expected Markdown report to use expected link labels.'
@@ -67,6 +75,9 @@ try {
 	Assert-True ($html.Contains('data-mode="expected"') -and $html.Contains('data-mode="actual"') -and $html.Contains('data-mode="diff"')) 'Expected per-mode data attributes that drive the viewer.'
 	Assert-True ($html.Contains('data-stat="172 px differ &#183; region 664&#215;290 @ (38,21)"')) 'Expected the diff summary in the row data-stat attribute.'
 	Assert-True ($html.Contains('<b>172</b> px differ (allowed 4)')) 'Expected the diff pixel count in the snapshot cell.'
+	Assert-True (-not $html.Contains('onerror=alert')) 'Expected hostile diff-stat values to be dropped rather than emitted into the report.'
+	Assert-True ($html.Contains('<td>missing</td>')) 'Expected a missing-baseline snapshot to render a missing cell.'
+	Assert-True ($html.Contains('refImg()')) 'Expected the viewer to size off the first available render, not Expected alone.'
 }
 finally {
 	if (Test-Path -LiteralPath $workspace) {

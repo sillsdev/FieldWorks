@@ -126,6 +126,23 @@ function New-MarkdownReport {
 	Set-Content -Path $readmePath -Value $lines -Encoding UTF8
 }
 
+function ConvertTo-NullableInt {
+	param(
+		$Value
+	)
+
+	if ($null -eq $Value) {
+		return $null
+	}
+
+	$parsed = 0
+	if ([int]::TryParse([string]$Value, [ref]$parsed)) {
+		return $parsed
+	}
+
+	return $null
+}
+
 function Get-DiffStat {
 	param(
 		[string]$DiffMetadataSourcePath
@@ -142,15 +159,17 @@ function Get-DiffStat {
 			return $null
 		}
 
+		# Coerce every value to an int (or null). The stats are emitted into the HTML report's
+		# attributes and markup, so a malformed/hostile .diff.json must never reach the page as text.
 		$diff = $diffNode.Value
 		$allowedNode = $diffJson.PSObject.Properties['AllowedDifferentPixelCount']
 		return [pscustomobject]@{
-			DifferentPixelCount = $diff.DifferentPixelCount
-			AllowedDifferentPixelCount = if ($null -ne $allowedNode) { $allowedNode.Value } else { $null }
-			RegionWidth = $diff.DiffRegionWidth
-			RegionHeight = $diff.DiffRegionHeight
-			MinX = $diff.MinX
-			MinY = $diff.MinY
+			DifferentPixelCount = ConvertTo-NullableInt $diff.DifferentPixelCount
+			AllowedDifferentPixelCount = if ($null -ne $allowedNode) { ConvertTo-NullableInt $allowedNode.Value } else { $null }
+			RegionWidth = ConvertTo-NullableInt $diff.DiffRegionWidth
+			RegionHeight = ConvertTo-NullableInt $diff.DiffRegionHeight
+			MinX = ConvertTo-NullableInt $diff.MinX
+			MinY = ConvertTo-NullableInt $diff.MinY
 		}
 	}
 	catch {
@@ -249,6 +268,13 @@ let sources = {};      // mode -> image src for the open snapshot
 let mode = "actual";   // current view
 let lastAB = "actual"; // last Expected/Actual side, so Diff can flip back
 
+// Image used to size the frame. Expected is preferred, but it can be absent for a
+// brand-new snapshot (no baseline), so fall back to whichever render is present.
+function refImg() {
+	for (const m of MODES) if (sources[m]) return imgs[m];
+	return imgs.actual;
+}
+
 // Open the viewer for whichever thumbnail was clicked, starting on its mode.
 document.querySelector("table").addEventListener("click", e => {
 	const img = e.target.closest("img.thumb");
@@ -262,8 +288,9 @@ function openRow(tr, startMode) {
 	document.getElementById("lbStat").textContent = tr.dataset.stat || "";
 
 	for (const m of MODES) imgs[m].src = sources[m] || "";
-	imgs.expected.onload = sizeFrame;
-	if (imgs.expected.complete) sizeFrame();
+	const ref = refImg();
+	ref.onload = sizeFrame;
+	if (ref.complete) sizeFrame();
 
 	buildModeBar();
 	setMode(sources[startMode] ? startMode : "actual");
@@ -272,12 +299,14 @@ function openRow(tr, startMode) {
 
 // Lock the frame to the render's natural size, then scale it to fill the stage.
 function sizeFrame() {
-	frame.style.width = imgs.expected.naturalWidth + "px";
-	frame.style.height = imgs.expected.naturalHeight + "px";
+	const ref = refImg();
+	frame.style.width = ref.naturalWidth + "px";
+	frame.style.height = ref.naturalHeight + "px";
 	fitFrame();
 }
 function fitFrame() {
-	const w = imgs.expected.naturalWidth, h = imgs.expected.naturalHeight;
+	const ref = refImg();
+	const w = ref.naturalWidth, h = ref.naturalHeight;
 	if (!w || !h) return;
 	const k = Math.min((stage.clientWidth - 24) / w, (stage.clientHeight - 24) / h);
 	frame.style.transform = `scale(${Math.max(k, 0.1)})`;
