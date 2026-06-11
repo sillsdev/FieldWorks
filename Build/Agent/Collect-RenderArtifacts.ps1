@@ -126,6 +126,57 @@ function New-MarkdownReport {
 	Set-Content -Path $readmePath -Value $lines -Encoding UTF8
 }
 
+function ConvertTo-NullableInt {
+	param(
+		$Value
+	)
+
+	if ($null -eq $Value) {
+		return $null
+	}
+
+	$parsed = 0
+	if ([int]::TryParse([string]$Value, [ref]$parsed)) {
+		return $parsed
+	}
+
+	return $null
+}
+
+function Get-DiffStat {
+	param(
+		[string]$DiffMetadataSourcePath
+	)
+
+	if ([string]::IsNullOrWhiteSpace($DiffMetadataSourcePath) -or -not (Test-Path -LiteralPath $DiffMetadataSourcePath)) {
+		return $null
+	}
+
+	try {
+		$diffJson = Get-Content -LiteralPath $DiffMetadataSourcePath -Raw | ConvertFrom-Json
+		$diffNode = $diffJson.PSObject.Properties['Diff']
+		if ($null -eq $diffNode -or $null -eq $diffNode.Value) {
+			return $null
+		}
+
+		# Coerce every value to an int (or null). The stats are emitted into the HTML report's
+		# attributes and markup, so a malformed/hostile .diff.json must never reach the page as text.
+		$diff = $diffNode.Value
+		$allowedNode = $diffJson.PSObject.Properties['AllowedDifferentPixelCount']
+		return [pscustomobject]@{
+			DifferentPixelCount = ConvertTo-NullableInt $diff.DifferentPixelCount
+			AllowedDifferentPixelCount = if ($null -ne $allowedNode) { ConvertTo-NullableInt $allowedNode.Value } else { $null }
+			RegionWidth = ConvertTo-NullableInt $diff.DiffRegionWidth
+			RegionHeight = ConvertTo-NullableInt $diff.DiffRegionHeight
+			MinX = ConvertTo-NullableInt $diff.MinX
+			MinY = ConvertTo-NullableInt $diff.MinY
+		}
+	}
+	catch {
+		return $null
+	}
+}
+
 function New-HtmlReport {
 	param(
 		[Parameter(Mandatory = $true)]
@@ -135,46 +186,227 @@ function New-HtmlReport {
 	)
 
 	$indexPath = Join-Path $OutputRoot 'index.html'
+
+	$style = @'
+<style>
+	:root{color-scheme:light}
+	body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#1f2328;background:#fff}
+	h1{margin:0 0 4px}
+	.lede{color:#57606a;margin:0 0 20px}
+	.hint{font-size:12px;color:#57606a;margin:6px 0 20px}
+	table{border-collapse:collapse;width:100%}
+	th,td{border:1px solid #d0d7de;padding:8px;vertical-align:top}
+	th{background:#f6f8fa;text-align:left}
+	td.thumb{padding:4px;text-align:center;width:330px}
+	img.thumb{max-width:320px;max-height:240px;border:1px solid #d0d7de;background:#fff;cursor:zoom-in;display:block;margin:auto}
+	.path{font-family:Consolas,monospace;font-size:12px;word-break:break-all}
+	.stat{font-family:Consolas,monospace;font-size:12px;color:#57606a;margin-top:6px}
+	.stat b{color:#1f2328}
+	kbd{font-family:Consolas,monospace;background:#f6f8fa;border:1px solid #d0d7de;border-bottom-width:2px;border-radius:4px;padding:1px 5px;font-size:11px}
+
+	/* Comparison viewer */
+	#lb{position:fixed;inset:0;background:rgba(13,17,23,.92);display:none;flex-direction:column;z-index:1000;color:#adbac7;font-size:13px}
+	#lb.open{display:flex}
+	#lb header{display:flex;align-items:center;gap:14px;padding:10px 16px;color:#e6edf3;font-size:14px}
+	#lb header .name{font-family:Consolas,monospace;font-weight:600}
+	#lb header .spacer{flex:1}
+	#lb button{cursor:pointer;color:#adbac7;background:transparent;border:1px solid #444c56;border-radius:6px;padding:4px 10px;font:inherit}
+	#lb button:hover{background:#21262d;color:#e6edf3}
+	.modebar{display:flex;gap:6px;justify-content:center;padding-bottom:8px}
+	.modebar button{border-radius:999px;padding:4px 14px}
+	.modebar button.active{background:#1f6feb;border-color:#1f6feb;color:#fff;font-weight:600}
+	.stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0 16px 8px}
+	.frame{position:relative;cursor:pointer;box-shadow:0 0 0 1px #444c56;
+		/* checkerboard so transparent/white renders stay visible on the dark backdrop */
+		background:linear-gradient(45deg,#888 25%,transparent 25%,transparent 75%,#888 75%),
+		linear-gradient(45deg,#888 25%,#bbb 25%,#bbb 75%,#888 75%) #aaa;
+		background-size:16px 16px;background-position:0 0,8px 8px}
+	.frame img{position:absolute;top:0;left:0;display:block;opacity:0;image-rendering:pixelated}
+	.frame img.show{opacity:1}
+	#lb footer{padding:8px 16px 14px;text-align:center}
+	#lb footer .nav{margin-top:4px;color:#768390}
+	#lb footer kbd{background:#21262d;border-color:#444c56;color:#e6edf3}
+</style>
+'@
+
+	$viewer = @'
+<div id="lb" role="dialog" aria-modal="true" aria-label="Render comparison viewer">
+	<header>
+		<span class="name" id="lbName"></span>
+		<span class="stat" id="lbStat"></span>
+		<span class="spacer"></span>
+		<button id="lbClose" title="Close (Esc)">&#10005; Close</button>
+	</header>
+	<div class="modebar" id="lbModes"></div>
+	<div class="stage" id="lbStage">
+		<div class="frame" id="lbFrame" title="Click to flip Expected &#8596; Actual">
+			<img id="img-expected" alt="Expected">
+			<img id="img-actual" alt="Actual">
+			<img id="img-diff" alt="Diff">
+		</div>
+	</div>
+	<footer>
+		<span id="lbModeLabel"></span>
+		<div class="nav"><kbd>Click</kbd> flip Expected/Actual &nbsp;&middot;&nbsp; <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> change view &nbsp;&middot;&nbsp; <kbd>Esc</kbd> close</div>
+	</footer>
+</div>
+'@
+
+	$script = @'
+<script>
+const MODES = ["expected", "actual", "diff"];
+const LABEL = { expected: "Expected (baseline)", actual: "Actual (this run)", diff: "Diff (changed pixels)" };
+
+const lb = document.getElementById("lb");
+const stage = document.getElementById("lbStage");
+const frame = document.getElementById("lbFrame");
+const modeBar = document.getElementById("lbModes");
+const imgs = { expected: byId("expected"), actual: byId("actual"), diff: byId("diff") };
+function byId(m){ return document.getElementById("img-" + m); }
+
+let sources = {};      // mode -> image src for the open snapshot
+let mode = "actual";   // current view
+let lastAB = "actual"; // last Expected/Actual side, so Diff can flip back
+
+// Image used to size the frame. Expected is preferred, but it can be absent for a
+// brand-new snapshot (no baseline), so fall back to whichever render is present.
+function refImg() {
+	for (const m of MODES) if (sources[m]) return imgs[m];
+	return imgs.actual;
+}
+
+// Open the viewer for whichever thumbnail was clicked, starting on its mode.
+document.querySelector("table").addEventListener("click", e => {
+	const img = e.target.closest("img.thumb");
+	if (img) openRow(img.closest("tr"), img.dataset.mode);
+});
+
+function openRow(tr, startMode) {
+	sources = {};
+	tr.querySelectorAll("img.thumb").forEach(img => sources[img.dataset.mode] = img.getAttribute("src"));
+	document.getElementById("lbName").textContent = tr.dataset.name || "";
+	document.getElementById("lbStat").textContent = tr.dataset.stat || "";
+
+	for (const m of MODES) imgs[m].src = sources[m] || "";
+	const ref = refImg();
+	ref.onload = sizeFrame;
+	if (ref.complete) sizeFrame();
+
+	buildModeBar();
+	setMode(sources[startMode] ? startMode : "actual");
+	lb.classList.add("open");
+}
+
+// Lock the frame to the render's natural size, then scale it to fill the stage.
+function sizeFrame() {
+	const ref = refImg();
+	frame.style.width = ref.naturalWidth + "px";
+	frame.style.height = ref.naturalHeight + "px";
+	fitFrame();
+}
+function fitFrame() {
+	const ref = refImg();
+	const w = ref.naturalWidth, h = ref.naturalHeight;
+	if (!w || !h) return;
+	const k = Math.min((stage.clientWidth - 24) / w, (stage.clientHeight - 24) / h);
+	frame.style.transform = `scale(${Math.max(k, 0.1)})`;
+}
+window.addEventListener("resize", () => { if (lb.classList.contains("open")) fitFrame(); });
+
+function buildModeBar() {
+	modeBar.innerHTML = "";
+	for (const m of MODES) {
+		if (!sources[m]) continue;
+		const b = document.createElement("button");
+		b.textContent = m[0].toUpperCase() + m.slice(1);
+		b.dataset.mode = m;
+		b.onclick = () => setMode(m);
+		modeBar.appendChild(b);
+	}
+}
+
+function setMode(m) {
+	mode = m;
+	if (m !== "diff") lastAB = m;
+	for (const k of MODES) imgs[k].classList.toggle("show", k === m);
+	[...modeBar.children].forEach(b => b.classList.toggle("active", b.dataset.mode === m));
+	document.getElementById("lbModeLabel").textContent = LABEL[m];
+}
+
+function step(dir) {
+	const avail = MODES.filter(m => sources[m]);
+	setMode(avail[(avail.indexOf(mode) + dir + avail.length) % avail.length]);
+}
+
+function close() { lb.classList.remove("open"); }
+
+// Click image: flip Expected <-> Actual; from Diff, flip back to the last A/B side.
+frame.addEventListener("click", () => setMode(mode === "diff" ? lastAB : mode === "expected" ? "actual" : "expected"));
+document.getElementById("lbClose").onclick = close;
+lb.addEventListener("click", e => { if (e.target === lb) close(); });
+document.addEventListener("keydown", e => {
+	if (!lb.classList.contains("open")) return;
+	if (e.key === "Escape") close();
+	else if (e.key === "ArrowRight") { step(1); e.preventDefault(); }
+	else if (e.key === "ArrowLeft") { step(-1); e.preventDefault(); }
+});
+</script>
+'@
+
 	$builder = New-Object System.Text.StringBuilder
 	[void]$builder.AppendLine('<!doctype html>')
 	[void]$builder.AppendLine('<html lang="en">')
 	[void]$builder.AppendLine('<head>')
 	[void]$builder.AppendLine('<meta charset="utf-8">')
 	[void]$builder.AppendLine('<title>Render comparison artifacts</title>')
-	[void]$builder.AppendLine('<style>body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#1f2328}table{border-collapse:collapse;width:100%}th,td{border:1px solid #d0d7de;padding:8px;vertical-align:top}th{background:#f6f8fa;text-align:left}img{max-width:320px;max-height:240px;border:1px solid #d0d7de;background:#fff}.path{font-family:Consolas,monospace;font-size:12px;word-break:break-all}</style>')
+	[void]$builder.AppendLine($style)
 	[void]$builder.AppendLine('</head>')
 	[void]$builder.AppendLine('<body>')
 	[void]$builder.AppendLine('<h1>Render comparison artifacts</h1>')
-	[void]$builder.AppendLine("<p>Render snapshot failures: $($Entries.Count)</p>")
+	[void]$builder.AppendLine("<p class=`"lede`">Render snapshot failures: $($Entries.Count)</p>")
+	[void]$builder.AppendLine('<p class="hint">Click any image to open the comparison viewer. There, <b>click the image to flip Expected&nbsp;&#8596;&nbsp;Actual</b>, or use <kbd>&#8592;</kbd>&nbsp;<kbd>&#8594;</kbd> to step through Expected / Actual / Diff. <kbd>Esc</kbd> closes.</p>')
 	[void]$builder.AppendLine('<table>')
 	[void]$builder.AppendLine('<thead><tr><th>Snapshot</th><th>Expected</th><th>Actual</th><th>Diff</th></tr></thead>')
 	[void]$builder.AppendLine('<tbody>')
 
 	foreach ($entry in $Entries) {
-		$snapshot = [System.Net.WebUtility]::HtmlEncode($entry.SourcePath)
-		[void]$builder.AppendLine('<tr>')
-		[void]$builder.AppendLine(('<td class="path">{0}</td>' -f $snapshot))
+		$source = $entry.SourcePath
+		$encodedSource = [System.Net.WebUtility]::HtmlEncode($source)
+		$encodedName = [System.Net.WebUtility]::HtmlEncode($entry.SnapshotName)
+
+		$statAttr = ''
+		$statCell = ''
+		if ($null -ne $entry.DiffStat) {
+			$d = $entry.DiffStat
+			# numeric entities keep the &middot; and &times; independent of source encoding
+			$statAttr = '{0} px differ &#183; region {1}&#215;{2} @ ({3},{4})' -f $d.DifferentPixelCount, $d.RegionWidth, $d.RegionHeight, $d.MinX, $d.MinY
+			$statCell = '<div class="stat"><b>{0}</b> px differ (allowed {1})</div>' -f $d.DifferentPixelCount, $d.AllowedDifferentPixelCount
+		}
+
+		[void]$builder.AppendLine(('<tr data-name="{0}" data-stat="{1}">' -f $encodedName, $statAttr))
+		[void]$builder.AppendLine(('<td class="path">{0}{1}</td>' -f $encodedSource, $statCell))
 		foreach ($artifact in @(
-			@{ PropertyName = 'ExpectedPath'; Description = 'Expected render' },
-			@{ PropertyName = 'ActualPath'; Description = 'Actual render' },
-			@{ PropertyName = 'DiffPath'; Description = 'Diff image' }
+			@{ Mode = 'expected'; PropertyName = 'ExpectedPath'; Description = 'Expected render' },
+			@{ Mode = 'actual'; PropertyName = 'ActualPath'; Description = 'Actual render' },
+			@{ Mode = 'diff'; PropertyName = 'DiffPath'; Description = 'Diff image' }
 		)) {
-			$propertyName = $artifact.PropertyName
-			$path = $entry.$propertyName
+			$path = $entry.($artifact.PropertyName)
 			if ([string]::IsNullOrWhiteSpace($path)) {
 				[void]$builder.AppendLine('<td>missing</td>')
 				continue
 			}
 
 			$encodedPath = [System.Net.WebUtility]::HtmlEncode($path)
-			$encodedAltText = [System.Net.WebUtility]::HtmlEncode(('{0} for {1}' -f $artifact.Description, $entry.SourcePath))
-			[void]$builder.AppendLine(('<td><a href="{0}"><img src="{0}" alt="{1}"></a></td>' -f $encodedPath, $encodedAltText))
+			$encodedAltText = [System.Net.WebUtility]::HtmlEncode(('{0} for {1}' -f $artifact.Description, $source))
+			[void]$builder.AppendLine(('<td class="thumb"><img class="thumb" data-mode="{0}" src="{1}" alt="{2}"></td>' -f $artifact.Mode, $encodedPath, $encodedAltText))
 		}
 		[void]$builder.AppendLine('</tr>')
 	}
 
 	[void]$builder.AppendLine('</tbody>')
 	[void]$builder.AppendLine('</table>')
+	[void]$builder.AppendLine($viewer)
+	[void]$builder.AppendLine($script)
 	[void]$builder.AppendLine('</body>')
 	[void]$builder.AppendLine('</html>')
 
@@ -212,6 +444,7 @@ foreach ($receivedFile in $receivedFiles) {
 	$expectedMetadataPath = Copy-RenderArtifactFile -SourcePath ($snapshotBasePath + '.verified.json') -DestinationPath (Join-Path $destinationDirectory ($snapshotName + '.expected.json')) -OutputRoot $resolvedOutputDirectory
 	$actualMetadataPath = Copy-RenderArtifactFile -SourcePath ($snapshotBasePath + '.received.json') -DestinationPath (Join-Path $destinationDirectory ($snapshotName + '.actual.json')) -OutputRoot $resolvedOutputDirectory
 	$diffMetadataPath = Copy-RenderArtifactFile -SourcePath ($snapshotBasePath + '.diff.json') -DestinationPath (Join-Path $destinationDirectory ($snapshotName + '.diff.json')) -OutputRoot $resolvedOutputDirectory
+	$diffStat = Get-DiffStat -DiffMetadataSourcePath ($snapshotBasePath + '.diff.json')
 
 	$entries += [pscustomobject]@{
 		SnapshotName = $snapshotName
@@ -222,6 +455,7 @@ foreach ($receivedFile in $receivedFiles) {
 		ExpectedMetadataPath = $expectedMetadataPath
 		ActualMetadataPath = $actualMetadataPath
 		DiffMetadataPath = $diffMetadataPath
+		DiffStat = $diffStat
 	}
 }
 
