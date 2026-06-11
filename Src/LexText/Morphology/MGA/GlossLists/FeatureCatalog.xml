@@ -6164,11 +6164,11 @@ type="value"
 ><LangCode
 >en</LangCode
 ><Name
->NC NAsg</Name
+>NC Sg Not Applicable</Name
 ><Abbreviation
 >NAsg</Abbreviation
 ><Description
->The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</Description
+>The class labeled NAsg is for situations where BantuSg has no value ("not applicable"). For instance, if a noun only has a plural class but no singular class, then for parsing to work correctly, it needs to have BantuSg set to NAsg so that it will not agree with forms that have a value for BantuSg. (If there is no value set for BantuSg, then it will be allowed to take any BantuSg prefix, whereas none should be allowed.)</Description
 ><Citations
 ><Citation
 >Katamba 2003:114ff;</Citation
@@ -6591,11 +6591,11 @@ type="value"
 ><LangCode
 >en</LangCode
 ><Name
->NC NApl</Name
+>NC Pl Not Applicable</Name
 ><Abbreviation
 >NApl</Abbreviation
 ><Description
->The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</Description
+>The class labeled NApl is for situations where BantuPl has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NApl so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.) </Description
 ><Citations
 ><Citation
 >Katamba 2003:114ff;</Citation
@@ -6968,11 +6968,11 @@ type="value"
 ><LangCode
 >en</LangCode
 ><Name
->NC NAmany</Name
+>NC Many Not Applicable</Name
 ><Abbreviation
 >NAmany</Abbreviation
 ><Description
->The class labeled NA is for situations where one of the sets has no value ("not applicable"). For instance, if a noun only has a singular class but no plural class, then for parsing to work correctly, it needs to have BantuPl set to NA so that it will not agree with forms that have a value for BantuPl. (If there is no value set for BantuPl, then it will be allowed to take any BantuPl prefix, whereas none should be allowed.)</Description
+>The class labeled NAmany is for situations where BantuMany has no value ("not applicable"). For instance, if a noun only has a singular and plural class but no "many" class, then for parsing to work correctly, it needs to have BantuMany set to NAmany so that it will not agree with forms that have a value for BantuMany. (If there is no value set for BantuMany, then it will be allowed to take any BantuMany prefix, whereas none should be allowed.) </Description
 ><Citations
 ><Citation
 >Katamba 2003:114ff;</Citation
