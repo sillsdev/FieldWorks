@@ -362,6 +362,9 @@
   <data name="khtpField-CmFile-OriginalPath" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/File_field.htm</value>
   </data>
+  <data name="khtpField-Interlinear-Media" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Media.htm</value>
+  </data>
   <data name="khtpField-LexSense-GeneralNote" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/general_note_field.htm</value>
   </data>
