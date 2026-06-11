@@ -67,12 +67,14 @@
 		<Component Id="NewtonsoftJsonApp" Guid="{B8A47C61-2E90-4D1A-9F4E-7C3B5A682D01}">
 			<File Id="NewtonsoftJsonFileApp"
 				Name="Newtonsoft.Json.dll"
+				ShortName="NJSONAPP.DLL"
 				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
 				KeyPath="yes" />
 		</Component>
 		<Component Id="NewtonsoftJsonGac" Guid="*">
 			<File Id="NewtonsoftJsonFileGac"
 				Name="Newtonsoft.Json.dll"
+				ShortName="NJSONGAC.DLL"
 				Source="$(var.MASTERBUILDDIR)\Newtonsoft.Json.dll"
 				KeyPath="yes"
 				Assembly=".net" />

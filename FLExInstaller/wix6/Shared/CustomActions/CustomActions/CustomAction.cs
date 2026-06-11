@@ -220,9 +220,17 @@ namespace CustomActions
             try
             {
                 if (RegistryU.KeyExists(dataPathKey))
-                    projPath = RegistryU.GetKey("HKLM", "SOFTWARE\\" + path).GetValue(valueName).ToString();
+                {
+                    var value = RegistryU.GetKey("HKLM", "SOFTWARE\\" + path).GetValue(valueName);
+                    if (value != null)
+                        projPath = value.ToString();
+                }
                 if (RegistryU.KeyExists(dataPathKeyWow))
-                    projPath = RegistryU.GetKey("HKLM", "SOFTWARE\\Wow6432Node\\" + path).GetValue(valueName).ToString();
+                {
+                    var value = RegistryU.GetKey("HKLM", "SOFTWARE\\Wow6432Node\\" + path).GetValue(valueName);
+                    if (value != null)
+                        projPath = value.ToString();
+                }
             }
             catch (Exception ex)
             {
