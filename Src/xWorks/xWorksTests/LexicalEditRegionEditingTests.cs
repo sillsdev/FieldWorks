@@ -1083,11 +1083,14 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(date.IsEditable, Is.False, "GenDate stays read-only (matches existing GenDate rows)");
 			Assert.That(date.Values.Single().Value, Is.EqualTo(m_genDate.ToLongString()));
 
-			// Possibility-list reference: read-only joined name for now (chooser write-back rides 6.3).
+			// Possibility-list reference: the 6.3 chooser lane makes custom reference rows
+			// editable too — options from the field's own list, current selection carried.
 			var listRef = fields.FirstOrDefault(f => f.Label == "Field Category");
 			Assert.That(listRef, Is.Not.Null);
-			Assert.That(listRef.IsEditable, Is.False, "reference write-back is deferred to the 6.3 chooser lane");
-			Assert.That(listRef.Values.Single().Value, Is.EqualTo(m_listItem.ShortName));
+			Assert.That(listRef.IsEditable, Is.True, "custom possibility references take the 6.3 chooser lane");
+			Assert.That(listRef.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
+			Assert.That(listRef.Options.Select(o => o.Key), Does.Contain(m_listItem.Guid.ToString()),
+				"options come from the custom field's own possibility list");
 
 			// Integer: editable like the existing int rows.
 			var number = fields.FirstOrDefault(f => f.Label == "Frequency Count");

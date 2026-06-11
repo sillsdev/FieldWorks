@@ -25,6 +25,20 @@ namespace FwAvaloniaTests
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
 		public readonly List<(string Field, string Key)> OptionEdits = new List<(string, string)>();
+		public readonly List<(string Field, string Key)> ReferenceAdds = new List<(string, string)>();
+		public readonly List<(string Field, string Key)> ReferenceRemoves = new List<(string, string)>();
+
+		public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
+		{
+			ReferenceAdds.Add((field.Field, optionKey));
+			return true;
+		}
+
+		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
+		{
+			ReferenceRemoves.Add((field.Field, optionKey));
+			return true;
+		}
 		public IReadOnlyList<string> ValidateResult = new List<string>();
 		public int CommitCount;
 		public int CancelCount;

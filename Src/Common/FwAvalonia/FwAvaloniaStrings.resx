@@ -60,4 +60,10 @@
     <value>Copy</value>
     <comment>Context-menu command copying a field's text.</comment>
   </data>
+  <data name="ksRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ksAddItem" xml:space="preserve">
+    <value>Add item</value>
+  </data>
 </root>

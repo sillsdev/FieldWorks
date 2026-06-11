@@ -384,6 +384,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			switch (field.Kind)
 			{
+				case RegionFieldKind.ReferenceVector:
+					return new FwReferenceVectorField(field, automationId, _editContext);
 				case RegionFieldKind.Chooser:
 					return BuildChooser(field, automationId);
 				case RegionFieldKind.Boolean:

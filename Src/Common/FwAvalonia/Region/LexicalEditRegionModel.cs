@@ -34,7 +34,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		Image,
 
 		/// <summary>A command row rendered as a button (execution rides command routing, shell phase).</summary>
-		Command
+		Command,
+
+		/// <summary>
+		/// An editable reference vector (6.3/B8): current items plus the possibility list's options
+		/// (hierarchy on <see cref="RegionChoiceOption.Depth"/>), edited through
+		/// <see cref="IRegionEditContext.TryAddReferenceItem"/>/<see cref="IRegionEditContext.TryRemoveReferenceItem"/> —
+		/// the legacy possibility-vector slice with its trailing type-ahead add slot.
+		/// </summary>
+		ReferenceVector
 	}
 
 	/// <summary>
@@ -73,14 +81,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>A chooser option (key + display name).</summary>
 	public sealed class RegionChoiceOption
 	{
-		public RegionChoiceOption(string key, string name)
+		public RegionChoiceOption(string key, string name, int depth = 0)
 		{
 			Key = key;
 			Name = name;
+			Depth = depth;
 		}
 
 		public string Key { get; }
 		public string Name { get; }
+
+		/// <summary>
+		/// Hierarchy level for deep possibility lists (B8): 0 for top-level items, +1 per
+		/// sub-possibility nesting, in the list's own document order — drives the legacy indented
+		/// chooser tree. Flat lists (and chooserInfo FlatList specs, B7) stay 0 throughout.
+		/// </summary>
+		public int Depth { get; }
 	}
 
 	/// <summary>
@@ -112,8 +128,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string contextMenuId = null,
 			string hotlinksId = null,
 			int objectHvo = 0,
-			string ghostPrompt = null)
+			string ghostPrompt = null,
+			IReadOnlyList<RegionChoiceOption> items = null)
 		{
+			Items = items ?? new List<RegionChoiceOption>();
 			GhostPrompt = ghostPrompt;
 			IsEditable = isEditable;
 			Indent = indent;
@@ -155,6 +173,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<RegionWsValue> Values { get; }
 		public IReadOnlyList<RegionChoiceOption> Options { get; }
 		public string SelectedOptionKey { get; }
+
+		/// <summary>
+		/// The CURRENT items of a <see cref="RegionFieldKind.ReferenceVector"/> row, in vector order
+		/// (key = possibility guid, name = display name). Empty for other kinds.
+		/// </summary>
+		public IReadOnlyList<RegionChoiceOption> Items { get; }
 
 		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
 		public bool IsEditable { get; }

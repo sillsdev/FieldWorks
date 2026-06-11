@@ -99,9 +99,35 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var node in root.Roots)
 				state.Walk(node, entry, 0);
 
-			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters);
+			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters,
+				state.ReferenceAddSetters, state.ReferenceRemoveSetters);
 			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
+		}
+
+		/// <summary>
+		/// B8/B7: walks a possibility list's tree in document order (parent before children) into
+		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
+		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
+		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
+		/// hierarchy, like the legacy flat chooser.
+		/// </summary>
+		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
+			ICmPossibilityList list, bool flat)
+		{
+			var options = new List<RegionChoiceOption>();
+			void Add(ICmPossibility possibility, int depth)
+			{
+				options.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+					possibility.Name.BestAnalysisAlternative?.Text ?? possibility.ShortName ?? possibility.Guid.ToString(),
+					flat ? 0 : depth));
+				foreach (var sub in possibility.SubPossibilitiesOS)
+					Add(sub, depth + 1);
+			}
+
+			foreach (var possibility in list.PossibilitiesOS)
+				Add(possibility, 0);
+			return options;
 		}
 
 		private sealed class ComposeState
@@ -115,6 +141,11 @@ namespace SIL.FieldWorks.XWorks
 			public readonly Dictionary<string, Func<string, string, bool>> TextSetters
 				= new Dictionary<string, Func<string, string, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<string, bool>> OptionSetters
+				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
+			// 6.3: reference-vector add/remove staging, keyed like the other setters by StableId.
+			public readonly Dictionary<string, Func<string, bool>> ReferenceAddSetters
+				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<string, bool>> ReferenceRemoveSetters
 				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
 			// Companion lane: the unsupported rows that are really legacy dynamic custom slices,
 			// keyed by the row's StableId (see ComposedEntryRegion.CustomEditorFields).
@@ -704,6 +735,101 @@ namespace SIL.FieldWorks.XWorks
 			private static bool TryClassifyMorphType(Guid guid, out MorphTypeKind kind)
 				=> MorphTypeKindByGuid.TryGetValue(guid, out kind);
 
+			// 6.3: an atomic possibility reference takes the chooser lane (legacy
+			// PossibilityAtomicReferenceSlice): options from the field's own list
+			// (ReferenceTargetOwner), write-back through the fenced session.
+			private void AddAtomicPossibilityChooser(ViewNode node, ICmObject obj, int depth, int flid,
+				ICmPossibilityList list, int targetHvo)
+			{
+				// B7 remainder: chooserInfo FlatList specs are not yet imported onto the node;
+				// until they are, the chooser renders the list's own hierarchy.
+				var options = BuildPossibilityOptions(list, flat: false);
+				var selected = targetHvo == 0
+					? null
+					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
+				var stableId = StableId(node, obj);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+					objectHvo: obj.Hvo));
+
+				var hvo = obj.Hvo;
+				OptionSetters[stableId] = key =>
+				{
+					var possibility = ResolvePossibilityInList(list, key);
+					if (possibility == null)
+						return false;
+					_sda.SetObjProp(hvo, flid, possibility.Hvo);
+					return true;
+				};
+			}
+
+			// 6.3/B8: an editable possibility-vector row — current items in vector order plus the
+			// whole list as hierarchical options; add/remove stage through sda.Replace on the flid
+			// (the legacy VectorReferenceView update), one undo step per settled session.
+			private void AddReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
+				ICmPossibilityList list, int count)
+			{
+				var items = new List<RegionChoiceOption>();
+				for (var i = 0; i < count; i++)
+				{
+					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(itemHvo);
+					items.Add(new RegionChoiceOption(item.Guid.ToString(), ResolveShortName(itemHvo)));
+				}
+
+				var options = BuildPossibilityOptions(list, flat: false); // B7 remainder, see above
+				var stableId = StableId(node, obj);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+
+				var hvo = obj.Hvo;
+				ReferenceAddSetters[stableId] = key =>
+				{
+					var possibility = ResolvePossibilityInList(list, key);
+					if (possibility == null)
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+					{
+						if (_sda.get_VecItem(hvo, flid, i) == possibility.Hvo)
+							return false; // duplicates rejected, like the legacy chooser
+					}
+					_sda.Replace(hvo, flid, size, size, new[] { possibility.Hvo }, 1);
+					return true;
+				};
+				ReferenceRemoveSetters[stableId] = key =>
+				{
+					var possibility = ResolvePossibilityInList(list, key);
+					if (possibility == null)
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+					{
+						if (_sda.get_VecItem(hvo, flid, i) != possibility.Hvo)
+							continue;
+						_sda.Replace(hvo, flid, i, i + 1, new int[0], 0);
+						return true;
+					}
+					return false;
+				};
+			}
+
+			// Resolves an option key to a possibility belonging to THIS field's list — garbage,
+			// unknown guids, and possibilities from OTHER lists all reject (no cross-list writes).
+			private ICmPossibility ResolvePossibilityInList(ICmPossibilityList list, string key)
+			{
+				if (!Guid.TryParse(key, out var guid))
+					return null;
+				if (!_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().TryGetObject(guid, out var possibility))
+					return null;
+				return possibility.OwningList == list ? possibility : null;
+			}
+
 			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
@@ -719,6 +845,17 @@ namespace SIL.FieldWorks.XWorks
 						case CellarPropertyType.ReferenceAtomic:
 						{
 							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+
+							// 6.3: an atomic ref whose target owner is a possibility list takes the
+							// chooser lane (legacy PossibilityAtomicReferenceSlice), like morph type.
+							if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
+							{
+								if (targetHvo == 0 && HideWhenEmpty(node))
+									return;
+								AddAtomicPossibilityChooser(node, obj, depth, flid, list, targetHvo);
+								return;
+							}
+
 							if (targetHvo == 0)
 							{
 								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
@@ -756,6 +893,19 @@ namespace SIL.FieldWorks.XWorks
 						case CellarPropertyType.ReferenceCollection:
 						{
 							var count = _sda.get_VecSize(obj.Hvo, flid);
+
+							// 6.3/B8: a vector whose targets live in a possibility list becomes an
+							// editable ReferenceVector row (the legacy possibility-vector slice with
+							// its trailing type-ahead add slot) — even when empty, so an always-visible
+							// field still offers the add affordance.
+							if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
+							{
+								if (count == 0 && HideWhenEmpty(node))
+									return;
+								AddReferenceVector(node, obj, depth, flid, list, count);
+								return;
+							}
+
 							if (count == 0)
 							{
 								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
@@ -1316,32 +1466,63 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
+		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceAddSetters;
+		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceRemoveSetters;
 
 		public ComposedRegionEditContext(
 			LcmCache cache,
 			ILexEntry entry,
 			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
-			IReadOnlyDictionary<string, Func<string, bool>> optionSetters)
+			IReadOnlyDictionary<string, Func<string, bool>> optionSetters,
+			IReadOnlyDictionary<string, Func<string, bool>> referenceAddSetters = null,
+			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null)
 			: base(cache, entry)
 		{
 			_textSetters = textSetters;
 			_optionSetters = optionSetters;
+			_referenceAddSetters = referenceAddSetters ?? new Dictionary<string, Func<string, bool>>();
+			_referenceRemoveSetters = referenceRemoveSetters ?? new Dictionary<string, Func<string, bool>>();
 		}
 
 		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
 			if (field == null || !_textSetters.TryGetValue(field.StableId, out var setter))
 				return false;
-			EnsureOpen();
-			return setter(ws, value);
+			return Stage(() => setter(ws, value));
 		}
 
 		public override bool TrySetOption(LexicalEditRegionField field, string optionKey)
 		{
 			if (field == null || !_optionSetters.TryGetValue(field.StableId, out var setter))
 				return false;
+			return Stage(() => setter(optionKey));
+		}
+
+		public override bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
+		{
+			if (field == null || !_referenceAddSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(optionKey));
+		}
+
+		public override bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
+		{
+			if (field == null || !_referenceRemoveSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(optionKey));
+		}
+
+		// Setters must run inside the fenced session, but a REJECTED edit must not leave an empty
+		// fence open (it would hold the UOW write lock and gate refreshes). If this call opened the
+		// session and staged nothing, close it again.
+		private bool Stage(Func<bool> setter)
+		{
+			var wasOpen = IsOpen;
 			EnsureOpen();
-			return setter(optionKey);
+			var staged = setter();
+			if (!staged && !wasOpen)
+				Cancel();
+			return staged;
 		}
 	}
 }
