@@ -139,15 +139,6 @@
     <None Include="NiceGuy.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="TestData\Fonts\CharisSIL-5.000\CharisSIL-R.ttf">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="TestData\Fonts\CharisSIL-5.000\OFL.txt">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="TestData\Fonts\CharisSIL-5.000\README.txt">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="testViews.mak" />
     <None Include="Makefile" />
   </ItemGroup>
