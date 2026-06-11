@@ -2,6 +2,14 @@
 
 The manifest is the contract for what a migrated Lexical Edit region owns, what legacy services it may adapt, and what dependencies are forbidden from the new default path. It is not implemented yet; Phase 3 must introduce it behind a default-off switch and executable audits.
 
+> **Branch note (2026-06-09).** The owning project is **`SIL.FieldWorks.Common.FwAvalonia`**
+> (`Src/Common/FwAvalonia`). `AdvancedEntry.Avalonia` exists only on the prototype branch
+> `010-advanced-entry-preview-prototype` and is a reference implementation, not shipped code. The
+> **active-host contract** referenced by `forbiddenSymbols` (`DataTree`, `Slice`, …) is now partially
+> enforced: see `ActiveHostContract` in `FwAvalonia/Seams` and the `RecordEditView` audit test
+> (`RecordEditViewActiveHostContractTests`) proving the active Avalonia path does not drive a hidden
+> legacy `DataTree`.
+
 ## 1. Manifest Shape
 
 Each migrated region should declare:
@@ -9,8 +17,9 @@ Each migrated region should declare:
 | Field | Meaning |
 |---|---|
 | `regionId` | Stable identifier such as `lexical-edit.entry.identity`. |
-| `ownerProject` | Owning project/module, for this change `AdvancedEntry.Avalonia`. |
+| `ownerProject` | Owning project/module, for this change `FwAvalonia` (`SIL.FieldWorks.Common.FwAvalonia`). |
 | `legacySurface` | Legacy host/slice/layout being replaced or wrapped. |
+| `uiModeBehavior` | For each app-wide UI mode, declares whether this host is supported, explicitly falls back to legacy, or is blocked with a product-facing diagnostic. |
 | `enabledByDefault` | `false` until all gates pass for that region. |
 | `rollbackSurface` | Legacy view or command used when the migrated region is disabled or fails capability checks. |
 | `allowedAdapters` | Narrow legacy services the region may call. |
@@ -23,8 +32,12 @@ Example draft:
 ```json
 {
   "regionId": "lexical-edit.entry.identity",
-  "ownerProject": "AdvancedEntry.Avalonia",
+  "ownerProject": "FwAvalonia",
   "legacySurface": "LexEntry-detail-Normal identity fields in DataTree",
+  "uiModeBehavior": {
+    "Legacy": "legacy-active",
+    "New": "supported-avalonia"
+  },
   "enabledByDefault": false,
   "rollbackSurface": "RecordEditView/DataTree",
   "allowedAdapters": [
@@ -89,6 +102,7 @@ Exceptions must be documented in the manifest with owner, reason, tests, and rol
 
 | Gate | Required Evidence |
 |---|---|
+| Switch contract gate | Every affected host declares `uiModeBehavior` for both app-wide UI modes, and no host relies on ambiguous best-effort routing. |
 | Schema gate | Manifest validates against a checked-in schema and has an owner/rollback/test evidence entry. |
 | Symbol audit gate | Automated search over migrated production code finds no forbidden symbols except approved exceptions. |
 | Layout gate | Typed presentation snapshot matches selected DataTree/XML layout baselines for the region. |

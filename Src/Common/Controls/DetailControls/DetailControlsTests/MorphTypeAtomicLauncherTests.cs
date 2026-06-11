@@ -185,6 +185,39 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(m_dtree.RefreshListNeeded, Is.False);
 		}
 
+		[Test]
+		public void DoNotRefresh_RemainingSliceRestoresFocus_AfterRefreshRebuild()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_parent.Show();
+			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
+			Application.DoEvents();
+
+			var citationSlice = (Slice)m_dtree.Controls[0];
+			citationSlice.Control.Focus();
+			Application.DoEvents();
+
+			Assert.That(
+				citationSlice.Control.ContainsFocus || citationSlice.Control.Focused,
+				Is.True,
+				"Setup: CitationForm should hold focus before the refresh-triggering change.");
+
+			m_dtree.DoNotRefresh = true;
+			m_entry.Bibliography.SetVernacularDefaultWritingSystem(string.Empty);
+			m_entry.Bibliography.SetAnalysisDefaultWritingSystem(string.Empty);
+			m_dtree.RefreshListNeeded = true;
+			m_dtree.DoNotRefresh = false;
+			Application.DoEvents();
+
+			Assert.That(m_dtree.Controls.Count, Is.EqualTo(1));
+			var remainingSlice = (Slice)m_dtree.Controls[0];
+			Assert.That(remainingSlice.Label, Is.EqualTo("CitationForm"));
+			Assert.That(
+				remainingSlice.Control.ContainsFocus || remainingSlice.Control.Focused,
+				Is.True,
+				"Focus should restore to the remaining visible slice after the refresh rebuild.");
+		}
+
 		[TestCaseSource(nameof(StemLikeMorphTypes))]
 		public void IsStemType_StemLikeMorphTypes_ReturnsTrue(Guid morphTypeGuid)
 		{

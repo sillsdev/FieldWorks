@@ -2,6 +2,55 @@
 
 This note records the recommended seam direction for the Lexical Edit Avalonia migration. It is advisory; the companion seam docs define the concrete gates and tests. Current implementation is deliberately distinguished from proposed seams.
 
+> **Branch-state correction (2026-06-09).** Earlier revisions of this note described
+> `AdvancedEntryEditSession`, `ValidationService`, and `MainWindowViewModel` as the "current
+> implementation." Those types are **not present on this branch** (`010-advanced-entry-view-phase-1-2`).
+> They live on the prototype branch `010-advanced-entry-preview-prototype` and were never merged here.
+> What this branch actually contains is: the typed seam interfaces in `FwAvalonia/Seams/ISeams.cs`
+> (5 with pure-logic implementations, `IXCoreCommandBridge`/`IRecordNavigationContext` contract-only,
+> `IEditSession` with a `PocEditSession` DTO-snapshot stub), the typed view-definition IR under
+> `FwAvalonia/ViewDefinition/`, and the feature-flagged POC host (`FwAvalonia/Poc/` +
+> `RecordEditView`). The "Current implementation" lines below have been re-labelled accordingly:
+> the prototype is a **reference to reproduce behind the seam**, not shipped code in this branch.
+> See `seam-domain-comparison.md` for the per-domain before/ideal/now/recommended breakdown.
+
+## Coexistence constraints driving these recommendations
+
+These are fixed product constraints; the seam choices below assume them:
+
+1. **Avalonia 11.x only during coexistence.** We stay on the latest 11.x and do **not** move to
+   Avalonia 12 until WinForms is fully removed. So the Avalonia 12 WinForms message filter and
+   per-thread dispatcher work are unavailable; cross-interop-boundary tab/focus
+   ([AvaloniaUI/Avalonia#12025](https://github.com/AvaloniaUI/Avalonia/issues/12025)) and popup-DPI
+   quirks must be handled by us, and we host **coarsely** (one Avalonia view per host, not many
+   small islands sharing a WinForms tab order).
+2. **~1-year coexist phase, then WinForms is deleted.** Each *class* of UI is wholly WinForms **or**
+   wholly Avalonia at a time, but different classes run **concurrently** and must cooperate through
+   two shared channels: **selection** ("this is the current lexeme") and **copy/paste**. Those two
+   bridges are real, must-build, and bidirectional — not throwaway scaffolding. What *is* throwaway
+   is wiring the new ports into *legacy internals* (e.g. threading `RefreshCoordinator` into the live
+   `DataTree`), because that code is deleted at cutover.
+3. **XML-layout retirement is a separate effort.** Moving authoring off XML Parts/Layout to a modern
+   typed format is desirable but out of scope here; this change keeps the XML→IR importer and treats
+   the typed IR as the runtime contract the Avalonia side consumes.
+
+## Recommended path (Path 3): thin enforced surface seam + sequenced convergence
+
+The clean seam is **not** legacy re-plumbed through every port. It is (a) the surface-selection
+boundary (`LexicalEditSurfaceResolver`/`Factory` + the new `LexicalEditSurfaceSelectionService`) and
+(b) the typed IR as the data contract the Avalonia side consumes. Legacy stays frozen behind the
+switch until cutover. Concretely:
+
+- Enforce the **active-host contract** (3.10): the active Avalonia path must not instantiate or drive
+  a hidden legacy `DataTree`. This was violated (the POC drove `m_dataEntryForm.ShowObject` then hid
+  it); it is now an audited invariant.
+- Replace the **lossy `LexicalEditPocMapper` DTO** on the product route with a
+  **typed-definition-backed region model** (4.8); keep `PocEntryDto` for the preview host only.
+- Build the **selection and clipboard bridges** as bidirectional adapters over the shared xCore/LCModel
+  substrate; do not re-plumb legacy internals.
+- Reproduce the prototype's **LCModel-fenced edit session and validation** behind `IEditSession`/the
+  validation seam when the first product editor lands (6.x); the prototype branch is the reference.
+
 Supporting docs:
 
 - `avalonia-edit-sessions.md`
@@ -13,7 +62,7 @@ Supporting docs:
 
 ## Edit Sessions
 
-**Current implementation:** `AdvancedEntryEditSession` is a concrete fenced LCModel undo-task session with `Save()` and `Cancel()`.
+**Current implementation (this branch):** `IEditSession` is defined; the only implementation is `PocEditSession`, which snapshots/restores the **detached POC DTO**, not LCModel. A real fenced LCModel undo-task session (`AdvancedEntryEditSession`, with `Save()`/`Cancel()`) exists **only on the prototype branch** `010-advanced-entry-preview-prototype` and is the reference to reproduce behind `IEditSession`.
 
 **Recommendation:** Keep the direct LCModel fenced undo-task model for the first editable slice, then extract a FieldWorks-owned edit-session seam only with lifecycle, rollback, and global undo/redo tests.
 
@@ -59,7 +108,7 @@ Cons: requires explicit focus/command routing rules.
 
 ## Validation
 
-**Current implementation:** `ValidationService` performs deterministic required-field checks over Presentation IR and skips unmaterialized lazy items.
+**Current implementation (this branch):** none. A `ValidationService` performing deterministic required-field checks over Presentation IR (skipping unmaterialized lazy items) exists **only on the prototype branch** `010-advanced-entry-preview-prototype`; reproduce it behind the validation seam when the first editable slice lands.
 
 **Recommendation:** Use a FieldWorks-owned validation model with Avalonia presentation adapters, preferably `INotifyDataErrorInfo` or `DataValidationErrors` where that maps cleanly to controls.
 
@@ -81,7 +130,7 @@ Cons: requires structured issue paths and localization contract.
 
 ## Command and Focus
 
-**Current implementation:** the spike has local Avalonia key bindings and view-model commands. There is no XCore command bridge yet.
+**Current implementation (this branch):** `IXCoreCommandBridge` is contract-only (no implementation). The local Avalonia key bindings and view-model commands referenced here are on the prototype branch `010-advanced-entry-preview-prototype`, not this branch.
 
 **Recommendation:** Use local Avalonia commands for first-slice/preview behavior; introduce a FieldWorks/XCore bridge only during shell integration.
 
@@ -103,7 +152,7 @@ Cons: easy to over-preserve legacy quirks if introduced too early.
 
 ## UI Scheduler
 
-**Current implementation:** dispatcher calls are used directly in the Avalonia module; no shared scheduler seam exists.
+**Current implementation (this branch):** `IUiScheduler` is defined with an `ImmediateUiScheduler` (synchronous, for tests/non-view code); the live app supplies a dispatcher-backed scheduler at the view edge. Direct dispatcher use in the prototype module lives on `010-advanced-entry-preview-prototype`.
 
 **Recommendation:** Introduce a thin `IUiScheduler` only where non-view code needs testable UI-thread marshalling, cancellation, or exception propagation. Keep direct dispatcher use at concrete UI edges.
 
@@ -125,7 +174,7 @@ Cons: unnecessary as global default.
 
 ## Lifetime
 
-**Current implementation:** `MainWindowViewModel` owns and disposes the loaded lifetime on save/cancel; no `ILexicalLifetimeManager` exists.
+**Current implementation (this branch):** `IRegionLifetime`/`RegionLifetime` is implemented and tested (reverse-order, idempotent disposal). The `MainWindowViewModel` ownership pattern referenced here is on the prototype branch `010-advanced-entry-preview-prototype`.
 
 **Recommendation:** Keep ownership explicit in the view model for the first slice; extract a lifetime manager only after late-loader, idempotent-disposal, event-unsubscribe, and shell-unload tests exist.
 

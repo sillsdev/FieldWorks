@@ -1,9 +1,39 @@
 # Hybrid Alignment: DataTree split as the first migrated region
 
-This change (`datatree-model-view-separation`) is sequenced by `avalonia-migration-roadmap` as
+> **Superseded (2026-06-09 — task 1.13).** This alignment document was written when the roadmap
+> planned `datatree-model-view-separation` as Phase 1 of the Lexical Edit migration. Execution
+> diverged: Phase 1 was built directly as the region-model path (`ViewDefinitionModel` →
+> `LexicalEditRegionModel`) inside `lexical-edit-avalonia-migration`, bypassing `DataTree` internals
+> entirely on the Avalonia side.
+>
+> **Why the original plan is superseded:** Refactoring the internals of `DataTree` to extract
+> `DataTreeModel`/`SliceSpec`/`IDataTreeView` invests in a class that will be deleted when the
+> ~1-year coexistence phase ends and WinForms is removed. `seam-domain-comparison.md` classifies
+> wiring new ports into legacy `DataTree` internals as throwaway work. Avalonia does not need to
+> understand DataTree's mental model; `ViewDefinitionModel` is the typed IR that XML layouts compile
+> to, and `LexicalEditRegionModel` is the Avalonia-native binding model.
+>
+> **Current status of DataTree:** `DataTree` is frozen as the complete legacy WinForms surface. The
+> seam is at `RecordEditView` routing — when Avalonia is active, `DataTree` is not invoked at all
+> (enforced by `ActiveHostContract` and audited by `RecordEditViewActiveHostContractTests`). DataTree
+> will be deleted wholesale at end of the coexistence phase.
+>
+> **What the DataTree refactoring work is good for:** Partial-class split and characterization tests
+> remain valid as **optional legacy maintenance** — they reduce complexity while DataTree is still
+> alive. But they do not gate any Avalonia feature work. `DataTreeModel`/`SliceSpec`/`IDataTreeView`
+> should not be built.
+>
+> **Active vocabulary and Gate 1 definition:** see `avalonia-migration-roadmap/design.md`.
+>
+> *(Original content preserved below for historical reference.)*
+
+---
+
+This change (`datatree-model-view-separation`) was sequenced by `avalonia-migration-roadmap` as
 **Phase 1 — the first concrete migrated region** of the Lexical Edit Avalonia program
-(`lexical-edit-avalonia-migration`). It is no longer a standalone end state that "stops at the
-abstraction boundary"; it is the swap point that the program's two-adapter feature flag selects.
+(`lexical-edit-avalonia-migration`). It was no longer a standalone end state that "stops at the
+abstraction boundary"; it was meant to be the swap point that the program's two-adapter feature flag
+selects. This framing is superseded; see the note above.
 
 ## What changes about this plan's framing
 
