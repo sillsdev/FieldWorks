@@ -71,6 +71,23 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["Update"] = value;
             }
         }
+
+        /// <summary>
+        /// Preferred lexical-edit UI mode (Legacy or New)
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Preferred lexical-edit UI mode (Legacy or New)")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Legacy")]
+        public string UIMode {
+            get {
+                return ((string)(this["UIMode"]));
+            }
+            set {
+                this["UIMode"] = value;
+            }
+        }
         
         /// <summary>
         /// Setting indicating that the Settings need to be upgraded
