@@ -1,0 +1,1347 @@
+// Copyright (c) 2026 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+
+namespace SIL.FieldWorks.XWorks
+{
+	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
+	public sealed class ComposedEntryRegion
+	{
+		public ComposedEntryRegion(LexicalEditRegionModel model, IRegionEditContext editContext,
+			IReadOnlyList<ComposedCustomEditorField> customEditorFields = null)
+		{
+			Model = model;
+			EditContext = editContext;
+			CustomEditorFields = customEditorFields ?? Array.Empty<ComposedCustomEditorField>();
+		}
+
+		public LexicalEditRegionModel Model { get; }
+
+		public IRegionEditContext EditContext { get; }
+
+		/// <summary>
+		/// The legacy class/assembly identities of the dynamically loaded custom slices that composed
+		/// as placeholder rows (unsupported or best-effort read-only), keyed back to the model by each
+		/// row's StableId. The host uses this to promote designated WinForms-only slices (the Chorus
+		/// Messages notes bar) to the hybrid companion strip instead of showing the placeholder row
+		/// (see AvaloniaCompanionSlices).
+		/// </summary>
+		public IReadOnlyList<ComposedCustomEditorField> CustomEditorFields { get; }
+	}
+
+	/// <summary>
+	/// Composes the COMPLETE Lexical Edit view for an entry (sections 6/7): walks the compiled
+	/// `LexEntry/Normal` typed definition the same way legacy DataTree walks layouts — expanding
+	/// object/sequence nodes across objects by compiling each target's own layout (with the legacy
+	/// base-class walk), emitting section headers, indentation, per-writing-system editable text
+	/// fields, the morph-type chooser, read-only reference rows, and `ifdata` hiding — every field
+	/// bound to LCModel through metadata (class/field → flid) and editable through the fenced
+	/// session. Labels localize through the same <see cref="StringTable"/> lane legacy slices use.
+	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
+	/// (ifdata), never silently mis-rendered; compile diagnostics ride the region model.
+	/// </summary>
+	public static class FullEntryRegionComposer
+	{
+		private const int MaxDepth = 6;
+		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
+		private static readonly Lazy<CompilerSources> Sources = new Lazy<CompilerSources>(LoadSources);
+
+		// Review finding A (observable memoization): counts the expensive snapshot builds (layout
+		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
+		private static int s_snapshotCompileCount;
+
+		internal static int SnapshotCompileCount => s_snapshotCompileCount;
+
+		// Review finding A: the loaded sources are immutable for the process lifetime, so the layout
+		// lookup is indexed once and compiled definitions are memoized per (starting class, layout)
+		// — repeat composes (and the per-item menu peeks below) never rebuild/re-fingerprint the
+		// ~300KB parts snapshot. Class ids and the class hierarchy are fixed LCModel metadata, so
+		// the memo is safe across caches.
+		private sealed class CompilerSources
+		{
+			public string PartsXml;
+			public Dictionary<(string ClassName, string Type, string Name), XElement> LayoutIndex;
+			public readonly ConcurrentDictionary<(int ClassId, string LayoutName), ViewDefinitionModel> CompiledModels
+				= new ConcurrentDictionary<(int, string), ViewDefinitionModel>();
+		}
+
+		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false)
+		{
+			if (entry == null) throw new ArgumentNullException(nameof(entry));
+			if (cache == null) throw new ArgumentNullException(nameof(cache));
+
+			var root = CompileForObject(cache, entry, "Normal");
+			if (root == null)
+				return null;
+
+			var state = new ComposeState(cache, showHiddenFields);
+			foreach (var node in root.Roots)
+				state.Walk(node, entry, 0);
+
+			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters);
+			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
+			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
+		}
+
+		private sealed class ComposeState
+		{
+			private readonly LcmCache _cache;
+			private readonly ISilDataAccess _sda;
+			private readonly IFwMetaDataCacheManaged _mdc;
+			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
+
+			public readonly List<LexicalEditRegionField> Fields = new List<LexicalEditRegionField>();
+			public readonly Dictionary<string, Func<string, string, bool>> TextSetters
+				= new Dictionary<string, Func<string, string, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<string, bool>> OptionSetters
+				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
+			// Companion lane: the unsupported rows that are really legacy dynamic custom slices,
+			// keyed by the row's StableId (see ComposedEntryRegion.CustomEditorFields).
+			public readonly List<ComposedCustomEditorField> CustomEditorFields
+				= new List<ComposedCustomEditorField>();
+
+			private readonly bool _showHidden;
+			// Finding A: per-compose memos — the morph-type option list is identical for every
+			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
+			private List<RegionChoiceOption> _morphTypeOptions;
+			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
+				= new Dictionary<(int, string), (string, string)>();
+
+			public ComposeState(LcmCache cache, bool showHiddenFields)
+			{
+				_cache = cache;
+				_showHidden = showHiddenFields;
+				_sda = cache.DomainDataByFlid;
+				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+			}
+
+			// Viewing parity: "show hidden fields" surfaces visibility=never fields and keeps empty
+			// ifdata fields visible, exactly like legacy m_fShowAllFields.
+			private bool IsHidden(ViewNode node) => node.Visibility == ViewVisibility.Never && !_showHidden;
+
+			private bool HideWhenEmpty(ViewNode node) => node.Visibility == ViewVisibility.IfData && !_showHidden;
+
+			public void Walk(ViewNode node, ICmObject obj, int depth)
+			{
+				if (IsHidden(node) || depth > MaxDepth)
+					return;
+
+				switch (node.Kind)
+				{
+					case ViewNodeKind.Field:
+						WalkField(node, obj, depth);
+						break;
+					case ViewNodeKind.Group:
+						WalkGroup(node, obj, depth);
+						break;
+					case ViewNodeKind.ObjectAtom:
+						WalkObjectAtom(node, obj, depth);
+						break;
+					case ViewNodeKind.Sequence:
+						WalkSequence(node, obj, depth);
+						break;
+					case ViewNodeKind.CustomFieldPlaceholder:
+						// B1 (xml-retirement-blockers): runtime expansion of `customFields="here"` from
+						// live MDC metadata. The `<generate>` compile-time lane stays 9.2/9.3.
+						WalkCustomFields(node, obj, depth);
+						break;
+					case ViewNodeKind.Conditional:
+						// B3: legacy <if>/<ifnot> — content composes only when the per-object condition
+						// passes (DataTree.ProcessSubpartNode cases "if"/"ifnot").
+						WalkConditional(node, obj, depth);
+						break;
+					case ViewNodeKind.ChoiceGroup:
+						// B3: legacy <choice> — first passing <where> (or the <otherwise>) only.
+						WalkChoiceGroup(node, obj, depth);
+						break;
+				}
+			}
+
+			// B3: <if>/<ifnot> wrapper — evaluate and pass through; failing branches drop entirely.
+			private void WalkConditional(ViewNode node, ICmObject obj, int depth)
+			{
+				if (node.Condition != null && !ConditionPasses(node.Condition, obj))
+					return;
+				foreach (var child in node.Children)
+					Walk(child, obj, depth);
+			}
+
+			// B3: <choice> semantics from DataTree.ProcessSubpartNode case "choice": expand only the
+			// FIRST <where> whose condition passes; an <otherwise> branch (null condition) always
+			// passes and stops the scan.
+			private void WalkChoiceGroup(ViewNode node, ICmObject obj, int depth)
+			{
+				foreach (var branch in node.Children)
+				{
+					if (branch.Kind != ViewNodeKind.Conditional)
+						continue;
+					if (branch.Condition != null && !ConditionPasses(branch.Condition, obj))
+						continue;
+					foreach (var child in branch.Children)
+						Walk(child, obj, depth);
+					break;
+				}
+			}
+
+			// B3: evaluate the imported condition per object, mirroring XmlVc.ConditionPasses exactly
+			// as the legacy detail lane invokes it (DataTree.cs:2639-2696 over XmlVc.cs:3276-3290):
+			// resolve the target object, then every test present must pass; <ifnot> negates the result.
+			private bool ConditionPasses(ViewCondition condition, ICmObject obj)
+			{
+				var passes = EvaluateCondition(condition, obj);
+				return condition.Negated ? !passes : passes;
+			}
+
+			private bool EvaluateCondition(ViewCondition condition, ICmObject obj)
+			{
+				// Target hop (XmlVc.GetActualTarget): "this" (default), "owner", or an atomic field.
+				var target = obj;
+				if (!string.IsNullOrEmpty(condition.Target)
+					&& !string.Equals(condition.Target, "this", StringComparison.OrdinalIgnoreCase))
+				{
+					if (string.Equals(condition.Target, "owner", StringComparison.OrdinalIgnoreCase))
+					{
+						target = obj.Owner;
+					}
+					else
+					{
+						var targetFlid = GetFlid(obj, condition.Target);
+						var targetHvo = targetFlid == 0 ? 0 : _sda.get_ObjectProp(obj.Hvo, targetFlid);
+						target = targetHvo == 0
+							|| !_cache.ServiceLocator.ObjectRepository.TryGetObject(targetHvo, out var resolved)
+							? null
+							: resolved;
+					}
+
+					// Legacy treats a missing target object as "can't have the expected value".
+					if (target == null)
+						return false;
+				}
+
+				// is= class test with the subclass walk (XmlVc.IsConditionPasses).
+				if (!string.IsNullOrEmpty(condition.IsClass)
+					&& !IsClassOrSubclass(target.ClassID, condition.IsClass, condition.ExcludeSubclasses))
+				{
+					return false;
+				}
+
+				// lengthatleast/lengthatmost (XmlVc.LengthConditionsPass: vector size; atomic 0/1).
+				if (condition.LengthAtLeast.HasValue || condition.LengthAtMost.HasValue)
+				{
+					var length = GetPropertyLength(target, condition.Field);
+					if (length < (condition.LengthAtLeast ?? 0) || length > (condition.LengthAtMost ?? int.MaxValue))
+						return false;
+				}
+
+				// boolequals (XmlVc.BoolEqualsConditionPasses via GetBoolValueFromCache: a missing
+				// object/field reads as the boolean value false, not as a failed condition).
+				if (condition.BoolEquals.HasValue)
+				{
+					var flid = GetFlid(target, condition.Field);
+					var value = flid != 0 && IntBoolPropertyConverter.GetBoolean(_sda, target.Hvo, flid);
+					if (value != condition.BoolEquals.Value)
+						return false;
+				}
+
+				// intequals/intlessthan/intgreaterthan/intmemberof (XmlVc.GetValueFromCache reads 0
+				// for a missing field — "rather arbitrary", but legacy-faithful).
+				if (condition.IntEquals.HasValue && GetIntValue(target, condition.Field) != condition.IntEquals.Value)
+					return false;
+				if (condition.IntLessThan.HasValue && GetIntValue(target, condition.Field) >= condition.IntLessThan.Value)
+					return false;
+				if (condition.IntGreaterThan.HasValue && GetIntValue(target, condition.Field) <= condition.IntGreaterThan.Value)
+					return false;
+				if (!string.IsNullOrEmpty(condition.IntMemberOf) && !IntMemberOfPasses(condition, target))
+					return false;
+
+				// guidequals (XmlVc.GuidEqualsConditionPasses): the atomic reference must point at the
+				// object with the literal guid; an empty reference compares as Guid.Empty.
+				if (!string.IsNullOrEmpty(condition.GuidEquals))
+				{
+					var flid = GetFlid(target, condition.Field);
+					if (flid == 0 || !Guid.TryParse(condition.GuidEquals, out var expected))
+						return false;
+					var hvoRef = _sda.get_ObjectProp(target.Hvo, flid);
+					var actual = hvoRef == 0
+						? Guid.Empty
+						: _sda.get_GuidProp(hvoRef, (int)CmObjectFields.kflidCmObject_Guid);
+					if (expected != actual)
+						return false;
+				}
+
+				return true;
+			}
+
+			private bool IsClassOrSubclass(int classId, string className, bool excludeSubclasses)
+			{
+				int expected;
+				try
+				{
+					expected = _mdc.GetClassId(className);
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+
+				if (classId == expected)
+					return true;
+				if (excludeSubclasses)
+					return false;
+				var baseId = _mdc.GetBaseClsId(classId);
+				while (baseId != 0)
+				{
+					if (baseId == expected)
+						return true;
+					var next = _mdc.GetBaseClsId(baseId);
+					if (next == baseId)
+						break;
+					baseId = next;
+				}
+
+				return false;
+			}
+
+			private int GetPropertyLength(ICmObject obj, string fieldName)
+			{
+				var flid = GetFlid(obj, fieldName);
+				if (flid == 0)
+					return 0;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.ReferenceSequence:
+					case CellarPropertyType.ReferenceCollection:
+						return _sda.get_VecSize(obj.Hvo, flid);
+					case CellarPropertyType.OwningAtomic:
+					case CellarPropertyType.ReferenceAtomic:
+						return _sda.get_ObjectProp(obj.Hvo, flid) == 0 ? 0 : 1;
+					default:
+						return 0;
+				}
+			}
+
+			private int GetIntValue(ICmObject obj, string fieldName)
+			{
+				var flid = GetFlid(obj, fieldName);
+				return flid == 0 ? 0 : _sda.get_IntProp(obj.Hvo, flid);
+			}
+
+			private bool IntMemberOfPasses(ViewCondition condition, ICmObject target)
+			{
+				var value = GetIntValue(target, condition.Field);
+				foreach (var piece in condition.IntMemberOf.Split(','))
+				{
+					if (int.TryParse(piece.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var member)
+						&& member == value)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			// B1: a layout can reach the same object through two placeholders (e.g. a persisted
+			// user override duplicating the marker); legacy dedups generated parts by sibling
+			// scan (DataTree.CheckCustomFieldsSibling) — here a (hvo, flid) set does the same.
+			private readonly HashSet<(int Hvo, int Flid)> _emittedCustomFields = new HashSet<(int, int)>();
+
+			// B1: expand the placeholder the way legacy DataTree.EnsureCustomFields +
+			// SliceFactory.MakeAutoCustomSlice do — enumerate the MDC's custom fields whose class
+			// is the object's class or a base class (legacy walks FieldDescription.FieldDescriptors,
+			// i.e. the MDC field list; sorted by flid here for determinism = creation order per
+			// class), synthesize a typed field node per custom field, and dispatch it through the
+			// normal walk so text rows ride the same setter registry/fenced session as authored
+			// fields. The legacy generated `<part ref="Custom" param=.../>` carries no visibility
+			// attribute, so every node is visibility=always: empty custom fields still render,
+			// with or without "show hidden fields".
+			private void WalkCustomFields(ViewNode placeholder, ICmObject obj, int depth)
+			{
+				var interestingClasses = new HashSet<int>();
+				var clsid = obj.ClassID;
+				while (clsid != 0)
+				{
+					interestingClasses.Add(clsid);
+					clsid = _mdc.GetBaseClsId(clsid);
+				}
+
+				foreach (var flid in _mdc.GetFieldIds()
+					.Where(f => _mdc.IsCustom(f) && interestingClasses.Contains(_mdc.GetOwnClsId(f)))
+					.OrderBy(f => f))
+				{
+					if (!_emittedCustomFields.Add((obj.Hvo, flid)))
+						continue;
+					Walk(MakeCustomFieldNode(placeholder, flid), obj, depth);
+				}
+			}
+
+			// One synthesized node per custom field, typed like MakeAutoCustomSlice's editor
+			// switch: String/MultiString/MultiUnicode take the text lane (multi-WS per the field's
+			// WsSelector, resolved through the same legacy magic-ws pair WalkTextField uses);
+			// Integer stays an editable int row, GenDate a read-only formatted row, references
+			// read-only joined names (chooser write-back rides 6.3), and OwningAtomic StText
+			// read-only paragraphs — all via WalkOtherField's type dispatch. The label is the
+			// field's Userlabel (mdc.GetFieldLabel), the menu the autoCustom slice's
+			// mnuDataTree-Help (StandardParts.xml CmObject-Detail-Custom).
+			private ViewNode MakeCustomFieldNode(ViewNode placeholder, int flid)
+			{
+				var fieldName = _mdc.GetFieldName(flid);
+				string rawEditor;
+				string wsSpec = null;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.String:
+						rawEditor = "string";
+						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
+						break;
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						rawEditor = "multistring";
+						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
+						break;
+					default:
+						// Resolved by CellarPropertyType in WalkOtherField, like autoCustom.
+						rawEditor = "autocustom";
+						break;
+				}
+
+				return new ViewNode($"{placeholder.StableId}/custom:{fieldName}", ViewNodeKind.Field,
+					_mdc.GetFieldLabel(flid), null, fieldName, rawEditor, EditorClassification.Known,
+					wsSpec, ViewVisibility.Always, ViewExpansion.NotApplicable, placeholder.Indented,
+					null, null, menuId: "mnuDataTree-Help");
+			}
+
+			// The three section-header construction sites (group header, summary slice, sequence
+			// banner) build the identical collapsible header row; one helper keeps them from drifting.
+			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
+			{
+				Fields.Add(new LexicalEditRegionField(StableId(node, obj), label, node.Field, node.WritingSystem,
+					RegionFieldKind.Header, node.EditorClassification, node.AutomationId, node.LocalizationKey,
+					node.Routing, null, null, null, isEditable: false, indent: depth,
+					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
+					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo));
+			}
+
+			// Empty value in an always-visible row renders blank; an ifdata row hides instead.
+			private void AddRowUnlessHiddenWhenEmpty(ViewNode node, ICmObject obj, int depth)
+			{
+				if (!HideWhenEmpty(node))
+					AddReadOnlyRow(node, obj, depth, string.Empty);
+			}
+
+			private void WalkGroup(ViewNode node, ICmObject obj, int depth)
+			{
+				var headerIndex = Fields.Count;
+				var label = Localize(node.Label);
+				if (!string.IsNullOrEmpty(label))
+					AddHeader(node, obj, depth, label);
+
+				var childDepth = string.IsNullOrEmpty(label) ? depth : depth + 1;
+				foreach (var child in node.Children)
+					Walk(child, obj, childDepth);
+
+				// An ifdata section whose children all hid renders nothing, including its header.
+				if (!string.IsNullOrEmpty(label) && Fields.Count == headerIndex + 1 && HideWhenEmpty(node))
+				{
+					Fields.RemoveAt(headerIndex);
+				}
+			}
+
+			private void WalkField(ViewNode node, ICmObject obj, int depth)
+			{
+				var fieldCountBeforeDispatch = Fields.Count;
+				var editor = (node.RawEditor ?? "").ToLowerInvariant();
+				switch (editor)
+				{
+					case "multistring":
+					case "string":
+						WalkTextField(node, obj, depth);
+						break;
+					case "morphtypeatomicreference":
+						WalkMorphTypeChooser(node, obj, depth);
+						break;
+					case "summary":
+						// Summary slices are section header rows in legacy too.
+						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
+						break;
+					case "lit":
+						// Literal text row: the label IS the content.
+						AddReadOnlyRow(node, obj, depth, string.Empty);
+						break;
+					case "picture":
+					case "image":
+						WalkPictures(node, obj, depth);
+						break;
+					case "jtview":
+						// Embedded formatted view: render the object's summary text read-only (the
+						// full embedded-view replacement rides the table/IR work).
+						AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
+						break;
+					case "command":
+						// Command slices render their button; execution arrives with the xCore
+						// command bridge (shell phase).
+						Fields.Add(new LexicalEditRegionField(StableId(node, obj),
+							Localize(node.Label) ?? node.Field, node.Field, node.WritingSystem,
+							RegionFieldKind.Command, node.EditorClassification, node.AutomationId,
+							node.LocalizationKey, node.Routing, null, null, null,
+							isEditable: false, indent: depth));
+						break;
+					default:
+						WalkOtherField(node, obj, depth);
+						break;
+				}
+
+				// Companion lane: a dynamically loaded custom slice (editor="Custom" class=...)
+				// keeps its legacy class/assembly identity, keyed by the StableId of the row the
+				// dispatch above produced for it — whether that was the explicit unsupported row or
+				// a best-effort read-only rendering (e.g. the Messages slice's field="Self" resolves
+				// to a reference-atomic flid and renders as read-only text). The host promotes
+				// designated classes (the Chorus Messages notes bar) to the WinForms companion strip
+				// and removes the row by this StableId.
+				if (!string.IsNullOrEmpty(node.CustomEditorClass) && Fields.Count > fieldCountBeforeDispatch)
+				{
+					var row = Fields[fieldCountBeforeDispatch];
+					CustomEditorFields.Add(new ComposedCustomEditorField(row.StableId,
+						node.CustomEditorClass, node.CustomEditorAssembly, row.Label, obj.Hvo));
+				}
+
+				// Caller children under a slice (e.g. MorphType under the lexeme form) are fields of
+				// the same object, one level in.
+				foreach (var child in node.Children)
+					Walk(child, obj, depth + 1);
+			}
+
+			private void WalkTextField(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+				{
+					WalkUnsupported(node, obj, depth);
+					return;
+				}
+
+				var type = (CellarPropertyType)_mdc.GetFieldType(flid);
+				var systems = ResolveWritingSystems(_cache, node.WritingSystem);
+				var values = new List<RegionWsValue>();
+				var anyData = false;
+				foreach (var ws in systems)
+				{
+					string text;
+					switch (type)
+					{
+						case CellarPropertyType.MultiUnicode:
+						case CellarPropertyType.MultiString:
+							text = _sda.get_MultiStringAlt(obj.Hvo, flid, ws.Handle)?.Text;
+							break;
+						case CellarPropertyType.String:
+							text = _sda.get_StringProp(obj.Hvo, flid)?.Text;
+							break;
+						case CellarPropertyType.Unicode:
+							text = _sda.get_UnicodeProp(obj.Hvo, flid);
+							break;
+						default:
+							WalkUnsupported(node, obj, depth);
+							return;
+					}
+
+					anyData |= !string.IsNullOrEmpty(text);
+					// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
+					var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+					values.Add(new RegionWsValue(ws.Abbreviation, text ?? string.Empty, ws.DefaultFontName,
+						fontSize, ws.RightToLeftScript, ws.Id, node.BoldEmphasis));
+					if (type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
+						break; // single-alternative property: one row
+				}
+
+				if (!anyData && HideWhenEmpty(node))
+					return;
+
+				var stableId = StableId(node, obj);
+				var editable = type != CellarPropertyType.Unicode;
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
+					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+					objectHvo: obj.Hvo));
+
+				if (!editable)
+					return;
+
+				var hvo = obj.Hvo;
+				// Edits key on the unique IETF tag (ws.Id): the user-editable Abbreviation can
+				// collide across writing systems, which both crashed composition (ToDictionary)
+				// and could misroute an edit to the wrong alternative. Unambiguous abbreviations
+				// stay accepted as aliases for callers addressing the row's gutter label.
+				var wsByKey = new Dictionary<string, int>(StringComparer.Ordinal);
+				foreach (var ws in systems)
+				{
+					if (!string.IsNullOrEmpty(ws.Id))
+						wsByKey[ws.Id] = ws.Handle;
+				}
+				foreach (var ws in systems)
+				{
+					if (!string.IsNullOrEmpty(ws.Abbreviation) && !wsByKey.ContainsKey(ws.Abbreviation)
+						&& systems.Count(other => other.Abbreviation == ws.Abbreviation) == 1)
+					{
+						wsByKey.Add(ws.Abbreviation, ws.Handle);
+					}
+				}
+				TextSetters[stableId] = (wsKey, value) =>
+				{
+					if (wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
+						return false;
+					var tss = TsStringUtils.MakeString(value ?? string.Empty, wsHandle);
+					if (type == CellarPropertyType.String)
+						_sda.SetString(hvo, flid, tss);
+					else
+						_sda.SetMultiStringAlt(hvo, flid, wsHandle, tss);
+					return true;
+				};
+			}
+
+			private void WalkMorphTypeChooser(ViewNode node, ICmObject obj, int depth)
+			{
+				if (!(obj is IMoForm form))
+				{
+					WalkUnsupported(node, obj, depth);
+					return;
+				}
+
+				if (_morphTypeOptions == null)
+				{
+					_morphTypeOptions = new List<RegionChoiceOption>();
+					var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
+					if (morphTypes != null)
+					{
+						foreach (var possibility in morphTypes.ReallyReallyAllPossibilities.OfType<IMoMorphType>()
+							.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
+						{
+							_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+								possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
+						}
+					}
+				}
+				var options = _morphTypeOptions;
+
+				var stableId = StableId(node, obj);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
+					isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+
+				OptionSetters[stableId] = optionKey =>
+				{
+					if (!Guid.TryParse(optionKey, out var guid))
+						return false;
+					var repository = _cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+					if (!repository.TryGetObject(guid, out var morphType))
+						return false;
+					// Legacy MorphTypeAtomicLauncher gates stem<->affix swaps behind a data-loss
+					// prompt AND a class conversion (MoStemAllomorph <-> MoAffixAllomorph). Assigning
+					// blindly would create a model-invalid combination (e.g. a stem allomorph with an
+					// affix morph type), so a boundary-crossing assignment is rejected until the
+					// class-conversion lane lands (review round 2).
+					if (TryClassifyMorphType(guid, out var toKind)
+						&& (form is IMoStemAllomorph) != MorphTypeSwapLogic.IsStemType(toKind))
+					{
+						return false;
+					}
+					form.MorphTypeRA = morphType;
+					return true;
+				};
+			}
+
+			// Maps the fixed MoMorphTypeTags GUIDs onto the seam's MorphTypeKind so the pure
+			// stem/affix boundary logic (extracted from MorphTypeAtomicLauncher) can classify them.
+			private static readonly IReadOnlyDictionary<Guid, MorphTypeKind> MorphTypeKindByGuid =
+				new Dictionary<Guid, MorphTypeKind>
+				{
+					{ MoMorphTypeTags.kguidMorphRoot, MorphTypeKind.Root },
+					{ MoMorphTypeTags.kguidMorphStem, MorphTypeKind.Stem },
+					{ MoMorphTypeTags.kguidMorphBoundRoot, MorphTypeKind.BoundRoot },
+					{ MoMorphTypeTags.kguidMorphBoundStem, MorphTypeKind.BoundStem },
+					{ MoMorphTypeTags.kguidMorphParticle, MorphTypeKind.Particle },
+					{ MoMorphTypeTags.kguidMorphClitic, MorphTypeKind.Clitic },
+					{ MoMorphTypeTags.kguidMorphProclitic, MorphTypeKind.Proclitic },
+					{ MoMorphTypeTags.kguidMorphEnclitic, MorphTypeKind.Enclitic },
+					{ MoMorphTypeTags.kguidMorphPhrase, MorphTypeKind.Phrase },
+					{ MoMorphTypeTags.kguidMorphDiscontiguousPhrase, MorphTypeKind.DiscontiguousPhrase },
+					{ MoMorphTypeTags.kguidMorphPrefix, MorphTypeKind.Prefix },
+					{ MoMorphTypeTags.kguidMorphSuffix, MorphTypeKind.Suffix },
+					{ MoMorphTypeTags.kguidMorphInfix, MorphTypeKind.Infix },
+					{ MoMorphTypeTags.kguidMorphSimulfix, MorphTypeKind.Simulfix },
+					{ MoMorphTypeTags.kguidMorphSuprafix, MorphTypeKind.Suprafix },
+					{ MoMorphTypeTags.kguidMorphCircumfix, MorphTypeKind.Circumfix },
+					{ MoMorphTypeTags.kguidMorphPrefixingInterfix, MorphTypeKind.PrefixingInterfix },
+					{ MoMorphTypeTags.kguidMorphInfixingInterfix, MorphTypeKind.InfixingInterfix },
+					{ MoMorphTypeTags.kguidMorphSuffixingInterfix, MorphTypeKind.SuffixingInterfix }
+				};
+
+			private static bool TryClassifyMorphType(Guid guid, out MorphTypeKind kind)
+				=> MorphTypeKindByGuid.TryGetValue(guid, out kind);
+
+			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
+			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
+			// structured text as paragraph text, references as value rows; explicit unsupported rows
+			// for the rest. Empty fields show under "show hidden fields" exactly like legacy.
+			private void WalkOtherField(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid != 0)
+				{
+					var type = (CellarPropertyType)_mdc.GetFieldType(flid);
+					switch (type)
+					{
+						case CellarPropertyType.ReferenceAtomic:
+						{
+							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+							if (targetHvo == 0)
+							{
+								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+								return;
+							}
+
+							AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+							return;
+						}
+						case CellarPropertyType.OwningAtomic:
+						{
+							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+							if (targetHvo == 0)
+							{
+								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+								return;
+							}
+
+							// Structured text renders its paragraph contents (StTextSlice's view).
+							if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
+							{
+								var paragraphs = stText.ParagraphsOS.OfType<IStTxtPara>()
+									.Select(par => par.Contents?.Text ?? string.Empty);
+								var text = string.Join(Environment.NewLine, paragraphs);
+								if (string.IsNullOrWhiteSpace(text) && HideWhenEmpty(node))
+									return;
+								AddReadOnlyRow(node, obj, depth, text);
+								return;
+							}
+
+							AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+							return;
+						}
+						case CellarPropertyType.ReferenceSequence:
+						case CellarPropertyType.ReferenceCollection:
+						{
+							var count = _sda.get_VecSize(obj.Hvo, flid);
+							if (count == 0)
+							{
+								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+								return;
+							}
+
+							var names = new List<string>();
+							for (var i = 0; i < count; i++)
+								names.Add(ResolveShortName(_sda.get_VecItem(obj.Hvo, flid, i)));
+							AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
+							return;
+						}
+						case CellarPropertyType.Boolean:
+						{
+							var stableId = StableId(node, obj);
+							var isChecked = _sda.get_BooleanProp(obj.Hvo, flid);
+							Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
+								node.Field, node.WritingSystem, RegionFieldKind.Boolean,
+								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
+								null, null, isChecked ? "true" : "false", isEditable: true, indent: depth));
+							var hvo = obj.Hvo;
+							OptionSetters[stableId] = key =>
+							{
+								if (!bool.TryParse(key, out var value))
+									return false;
+								_sda.SetBoolean(hvo, flid, value);
+								return true;
+							};
+							return;
+						}
+						case CellarPropertyType.Integer:
+						{
+							var stableId = StableId(node, obj);
+							var current = _sda.get_IntProp(obj.Hvo, flid);
+							if (current == 0 && HideWhenEmpty(node))
+								return;
+							Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
+								node.Field, node.WritingSystem, RegionFieldKind.Text,
+								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
+								new List<RegionWsValue> { new RegionWsValue("", current.ToString()) },
+								null, null, isEditable: true, indent: depth));
+							var hvo = obj.Hvo;
+							TextSetters[stableId] = (ws, value) =>
+							{
+								if (!int.TryParse(value, out var parsed))
+									return false;
+								_sda.SetInt(hvo, flid, parsed);
+								return true;
+							};
+							return;
+						}
+						case CellarPropertyType.Time:
+						{
+							var silTime = _sda.get_TimeProp(obj.Hvo, flid);
+							if (silTime == 0 && HideWhenEmpty(node))
+								return;
+							// Legacy parity: DateSlice renders the full pattern ("f", CurrentUICulture)
+							// — the day name and all — with no UTC conversion.
+							var display = silTime == 0
+								? string.Empty
+								: SilTime.ConvertFromSilTime(silTime).ToString("f", CultureInfo.CurrentUICulture);
+							AddReadOnlyRow(node, obj, depth, display);
+							return;
+						}
+						case CellarPropertyType.GenDate:
+						{
+							string display;
+							try
+							{
+								var genDate = ((ISilDataAccessManaged)_sda).get_GenDateProp(obj.Hvo, flid);
+								display = genDate.IsEmpty ? string.Empty : genDate.ToLongString();
+							}
+							catch (Exception)
+							{
+								display = string.Empty;
+							}
+
+							if (string.IsNullOrEmpty(display) && HideWhenEmpty(node))
+								return;
+							AddReadOnlyRow(node, obj, depth, display);
+							return;
+						}
+					}
+				}
+
+				if (!HideWhenEmpty(node))
+					WalkUnsupported(node, obj, depth);
+			}
+
+			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
+			{
+				Fields.Add(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing,
+					new List<RegionWsValue> { new RegionWsValue("", display ?? string.Empty) }, null, null,
+					isEditable: false, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+			}
+
+			private void WalkUnsupported(ViewNode node, ICmObject obj, int depth)
+			{
+				Fields.Add(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
+					node.Field, node.WritingSystem, RegionFieldKind.Unsupported, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: false, indent: depth));
+			}
+
+			// Viewing parity (11.6): picture fields render the actual image (caption + file path row);
+			// the view loads the bitmap when the file exists.
+			private void WalkPictures(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+				{
+					WalkUnsupported(node, obj, depth);
+					return;
+				}
+
+				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (count == 0)
+				{
+					if (!HideWhenEmpty(node))
+						AddGhostPrompt(node, obj, depth);
+					return;
+				}
+
+				for (var i = 0; i < count; i++)
+				{
+					if (!(_cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, i))
+						is ICmPicture picture))
+					{
+						continue;
+					}
+
+					var caption = picture.Caption?.BestVernacularAnalysisAlternative?.Text
+						?? Localize(node.Label) ?? node.Field;
+					string path = null;
+					try
+					{
+						path = picture.PictureFileRA?.AbsoluteInternalPath;
+					}
+					catch (Exception)
+					{
+					}
+
+					Fields.Add(new LexicalEditRegionField($"{StableId(node, obj)}/pic{i}", caption,
+						node.Field, null, RegionFieldKind.Image, node.EditorClassification,
+						node.AutomationId, node.LocalizationKey, node.Routing,
+						new List<RegionWsValue> { new RegionWsValue("", path ?? string.Empty) },
+						null, null, isEditable: false, indent: depth));
+				}
+			}
+
+			// Viewing parity (11.14) + 14.1: empty always-visible object/sequence fields show the
+			// legacy ghost add-prompt as a WATERMARK on an editable row — clicking in clears the
+			// prompt, and typing creates the missing object inside the fenced session (the legacy
+			// ghost-slice create-on-edit lane), routing the text into the layout's ghost field
+			// (ghost=/ghostWs=, e.g. the new allomorph's Form).
+			private void AddGhostPrompt(ViewNode node, ICmObject obj, int depth)
+			{
+				var label = Localize(node.GhostLabel) ?? Localize(node.Label) ?? node.Field;
+				if (string.IsNullOrEmpty(label))
+					return;
+				var prompt = string.Format(
+					SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.GhostAddPromptFormat, label);
+
+				var stableId = $"{StableId(node, obj)}/ghost";
+				var ghost = ResolveGhostCreation(node, obj);
+				Fields.Add(new LexicalEditRegionField(stableId, label, node.Field,
+					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing,
+					new List<RegionWsValue> { new RegionWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					null, null, isEditable: ghost != null, indent: depth,
+					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
+					ghostPrompt: prompt));
+
+				if (ghost != null)
+					TextSetters[stableId] = ghost.Setter;
+			}
+
+			private sealed class GhostCreation
+			{
+				public string WsAbbrev;
+				public string WsTag; // unique IETF tag (ws.Id), the edit-routing identity
+				public Func<string, string, bool> Setter;
+			}
+
+			// The create-on-edit half of the ghost lane: resolve the owning field's destination class
+			// (the layout's ghostClass when the model class is abstract; MoStemAllomorph for MoForm,
+			// matching legacy CreateAllomorph; Gloss-on-LexSense when no ghost field is authored) and
+			// build a setter that creates the object inside the open session — cancel rolls the
+			// creation back together with the text.
+			private GhostCreation ResolveGhostCreation(ViewNode node, ICmObject obj)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return null;
+
+				int insertOrd;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningAtomic: insertOrd = -2; break;
+					case CellarPropertyType.OwningCollection: insertOrd = -1; break;
+					case CellarPropertyType.OwningSequence: insertOrd = 0; break;
+					default: return null; // reference ghosts take a chooser, not a text creator
+				}
+
+				int dstClass;
+				try
+				{
+					dstClass = _mdc.GetDstClsId(flid);
+					if (!string.IsNullOrEmpty(node.GhostClass))
+						dstClass = _mdc.GetClassId(node.GhostClass);
+					else if (_mdc.GetAbstract(dstClass))
+					{
+						if (dstClass != MoFormTags.kClassId)
+							return null;
+						dstClass = MoStemAllomorphTags.kClassId; // legacy CreateAllomorph default
+					}
+				}
+				catch (Exception)
+				{
+					return null;
+				}
+
+				var ghostFieldName = node.GhostField
+					?? (dstClass == LexSenseTags.kClassId ? "Gloss" : null);
+				var ghostFlid = 0;
+				if (!string.IsNullOrEmpty(ghostFieldName))
+				{
+					try { ghostFlid = _mdc.GetFieldId2(dstClass, ghostFieldName, true); }
+					catch (Exception) { ghostFlid = 0; }
+				}
+
+				var ws = ResolveGhostWs(node.GhostWs);
+				if (ws == null)
+					return null;
+
+				var hvoOwner = obj.Hvo;
+				var ghostInitMethod = node.GhostInitMethod;
+				var createdHvo = 0;
+				return new GhostCreation
+				{
+					WsAbbrev = ws.Abbreviation,
+					WsTag = ws.Id,
+					Setter = (wsKey, value) =>
+					{
+						// The closure outlives the edit session: a Cancel rolls MakeNewObject back,
+						// so a later edit through the same still-visible view must not write to the
+						// deleted hvo — verify it still exists and re-create when it does not
+						// (review round 2).
+						if (createdHvo != 0
+							&& !_cache.ServiceLocator.ObjectRepository.TryGetObject(createdHvo, out _))
+						{
+							createdHvo = 0;
+						}
+						var created = false;
+						if (createdHvo == 0)
+						{
+							createdHvo = _sda.MakeNewObject(dstClass, hvoOwner, flid, insertOrd);
+							created = true;
+						}
+						if (ghostFlid != 0)
+						{
+							var tss = TsStringUtils.MakeString(value ?? string.Empty, ws.Handle);
+							if ((CellarPropertyType)_mdc.GetFieldType(ghostFlid) == CellarPropertyType.String)
+								_sda.SetString(createdHvo, ghostFlid, tss);
+							else
+								_sda.SetMultiStringAlt(createdHvo, ghostFlid, ws.Handle, tss);
+						}
+						// B2: invoke the layout's ghostInitMethod by reflection on the newly created
+						// object, after the typed text lands — exactly GhostStringSliceView.
+						// MakeRealObject's order (GhostStringSlice.cs:305-328); e.g. SetMorphTypeToRoot
+						// on a new lexeme-form allomorph, SetTypeToFreeTrans on a new translation.
+						if (created && !string.IsNullOrEmpty(ghostInitMethod))
+						{
+							var createdObj = _cache.ServiceLocator.ObjectRepository.GetObject(createdHvo);
+							createdObj.GetType().GetMethod(ghostInitMethod)?.Invoke(createdObj, null);
+						}
+						return true;
+					}
+				};
+			}
+
+			private SIL.LCModel.Core.WritingSystems.CoreWritingSystemDefinition ResolveGhostWs(string ghostWs)
+			{
+				var systems = _cache.ServiceLocator.WritingSystems;
+				switch (ghostWs)
+				{
+					case "vernacular":
+						return systems.DefaultVernacularWritingSystem;
+					case "pronunciation":
+						return systems.DefaultPronunciationWritingSystem
+							?? systems.DefaultVernacularWritingSystem;
+					default:
+						return systems.DefaultAnalysisWritingSystem;
+				}
+			}
+
+			private void WalkObjectAtom(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return;
+				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+				if (targetHvo == 0)
+				{
+					// Ghost add-prompt for an empty always-visible object field (11.14).
+					if (!HideWhenEmpty(node))
+						AddGhostPrompt(node, obj, depth);
+					return;
+				}
+
+				var target = _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo);
+				DescendInto(node, target, depth);
+			}
+
+			private void WalkSequence(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+					return;
+				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (count == 0)
+				{
+					if (!HideWhenEmpty(node))
+						AddGhostPrompt(node, obj, depth);
+					return;
+				}
+
+				var expanded = node.Expansion != ViewExpansion.Collapsed;
+				var isSenses = node.Field == "Senses";
+				var sectionLabel = Localize(node.Label) ?? node.Field;
+				// Nested sense sequences (Senses on a sense) don't repeat the section banner; the
+				// numbered items carry it.
+				if (!(isSenses && obj is ILexSense))
+					AddHeader(node, obj, depth, sectionLabel);
+
+				for (var i = 0; i < count; i++)
+				{
+					var item = _cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, i));
+					string itemLabel;
+					if (isSenses && item is ILexSense sense)
+					{
+						// Legacy sense numbering: 1, 2, ... and 1.1 for subsenses, with the sense's
+						// summary text (ShortName = gloss) in the header line. Finding B: the number
+						// is the domain's own LexSenseOutline (the dictionary/bulk-edit outline), so
+						// the entry pane cannot diverge from the other surfaces.
+						itemLabel = ($"{sense.LexSenseOutline.Text}  {item.ShortName}").TrimEnd();
+					}
+					else
+					{
+						itemLabel = $"{sectionLabel} {i + 1}";
+					}
+
+					// 15.3: the item's own layout carries the slice menu (e.g. the sense's
+					// HeavySummary part ref binds mnuDataTree-Sense in LexSense.fwlayout) — the
+					// sequence node itself usually has none.
+					var itemBinding = ResolveItemMenuBinding(node, item);
+					Fields.Add(new LexicalEditRegionField($"{StableId(node, obj)}/item{i}",
+						itemLabel, node.Field, null, RegionFieldKind.Header,
+						EditorClassification.GroupingNone, null, null, SurfaceRouting.Inherit,
+						null, null, null, isEditable: false, indent: depth + 1,
+						isCollapsible: true, isInitiallyExpanded: expanded,
+						menuId: itemBinding.MenuId ?? node.MenuId,
+						hotlinksId: itemBinding.HotlinksId ?? node.HotlinksId,
+						objectHvo: item.Hvo));
+					DescendInto(node, item, depth + 1);
+				}
+			}
+
+			// 15.3: first root-level menu/hotlinks binding of the item's compiled layout (compile
+			// results are memoized per (class, layout), and the binding itself is memoized per
+			// compose state — finding A).
+			private (string MenuId, string HotlinksId) ResolveItemMenuBinding(ViewNode node, ICmObject item)
+			{
+				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+				if (_itemMenuBindings.TryGetValue((item.ClassID, layoutName), out var cached))
+					return cached;
+
+				var compiled = CompileForObject(_cache, item, layoutName);
+				string menu = null, hotlinks = null;
+				if (compiled != null)
+				{
+					foreach (var root in compiled.Roots)
+					{
+						menu = menu ?? (string.IsNullOrEmpty(root.MenuId) ? null : root.MenuId);
+						hotlinks = hotlinks ?? (string.IsNullOrEmpty(root.HotlinksId) ? null : root.HotlinksId);
+						if (menu != null && hotlinks != null)
+							break;
+					}
+				}
+
+				_itemMenuBindings[(item.ClassID, layoutName)] = (menu, hotlinks);
+				return (menu, hotlinks);
+			}
+
+			private void DescendInto(ViewNode node, ICmObject target, int depth)
+			{
+				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+				if (!_visited.Add((target.Hvo, layoutName)))
+					return;
+
+				var compiled = CompileForObject(_cache, target, layoutName);
+				if (compiled != null && compiled.Roots.Count > 0)
+				{
+					foreach (var child in compiled.Roots)
+						Walk(child, target, depth + 1);
+				}
+				else
+				{
+					// No layout for the target: fall back to the caller-injected children, if any.
+					foreach (var child in node.Children)
+						Walk(child, target, depth + 1);
+				}
+
+				_visited.Remove((target.Hvo, layoutName));
+			}
+
+			private int GetFlid(ICmObject obj, string fieldName)
+			{
+				if (string.IsNullOrEmpty(fieldName))
+					return 0;
+				try
+				{
+					return _mdc.GetFieldId2(obj.ClassID, fieldName, true);
+				}
+				catch (Exception)
+				{
+					return 0;
+				}
+			}
+
+			private string ResolveShortName(int hvo)
+			{
+				return _cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var target)
+					? target.ShortName ?? string.Empty
+					: string.Empty;
+			}
+
+			private static string StableId(ViewNode node, ICmObject obj) => $"{node.StableId}@{obj.Hvo}";
+
+			private static string Localize(string label)
+				=> string.IsNullOrEmpty(label) ? label : StringTable.Table.LocalizeAttributeValue(label);
+		}
+
+		// Layout ws= spec resolution (the composer's read AND write writing-system lists): the
+		// legacy pair — WritingSystemServices.GetMagicWsIdFromName then GetWritingSystemList —
+		// exactly as SliceFactory's multistring lane resolves it, so list membership and ordering
+		// ("analysis vernacular" vs "vernacular analysis") match legacy slices. Pronunciation
+		// specs ride the project's pronunciation list (kwsPronunciations; GetWritingSystemList has
+		// no kwsPronunciation branch), initialized on demand the same way legacy
+		// DefaultPronunciationWritingSystem initializes it. Empty/unknown specs take
+		// GetWritingSystemList's own analysis default — the legacy default for unmarked fields.
+		internal static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystems(LcmCache cache, string spec)
+		{
+			var magicId = WritingSystemServices.GetMagicWsIdFromName(spec);
+			switch (magicId)
+			{
+				case WritingSystemServices.kwsPronunciation:
+				case WritingSystemServices.kwsFirstPronunciation:
+				case WritingSystemServices.kwsPronunciations:
+					WritingSystemServices.InitializePronunciationWritingSystems(cache);
+					magicId = WritingSystemServices.kwsPronunciations;
+					break;
+			}
+
+			return WritingSystemServices.GetWritingSystemList(cache, magicId, forceIncludeEnglish: false);
+		}
+
+		/// <summary>
+		/// Compiles the layout for an object's class, walking base classes the way legacy DataTree
+		/// does (e.g. MoStemAllomorph → MoForm) for both layout lookup and part resolution.
+		/// Memoized per (starting class, layout) for the lifetime of the loaded sources (finding A).
+		/// </summary>
+		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName)
+		{
+			var sources = Sources.Value;
+			if (sources == null)
+				return null;
+
+			return sources.CompiledModels.GetOrAdd((obj.ClassID, layoutName),
+				key => CompileForClass(cache, key.ClassId, key.LayoutName, sources));
+		}
+
+		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
+			CompilerSources sources)
+		{
+			Interlocked.Increment(ref s_snapshotCompileCount);
+
+			var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+			var baseClassMap = new Dictionary<string, string>(StringComparer.Ordinal);
+			var clsid = classId;
+			XElement layout = null;
+			string className = null;
+			while (true)
+			{
+				className = mdc.GetClassName(clsid);
+				if (sources.LayoutIndex.TryGetValue((className, "detail", layoutName), out layout))
+					break;
+				if (clsid == 0)
+					return null;
+				var baseId = mdc.GetBaseClsId(clsid);
+				if (baseId == clsid)
+					return null;
+				baseClassMap[className] = mdc.GetClassName(baseId);
+				clsid = baseId;
+			}
+
+			// Part resolution may still need to climb from the layout's class upward.
+			var chain = clsid;
+			while (chain != 0)
+			{
+				var baseId = mdc.GetBaseClsId(chain);
+				if (baseId == chain || baseId == 0)
+					break;
+				baseClassMap[mdc.GetClassName(chain)] = mdc.GetClassName(baseId);
+				chain = baseId;
+			}
+
+			var snapshot = new ViewDefinitionSourceSnapshot(className, "detail", layout.ToString(),
+				sources.PartsXml, baseClassMap);
+			return Compiler.Compile(snapshot);
+		}
+
+		private static CompilerSources LoadSources()
+		{
+			try
+			{
+				// Finding D: the parts merge and layout glob live in the ONE shared loader
+				// (LayoutSourceLoader) that LexicalEditFirstSlice also uses.
+				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
+				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
+				if (partsXml == null)
+					return null;
+
+				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectory);
+				return new CompilerSources
+				{
+					PartsXml = partsXml,
+					LayoutIndex = LayoutSourceLoader.IndexLayouts(layoutFiles)
+				};
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+	}
+
+	/// <summary>
+	/// The composed region's edit context: staging keyed by composed stable id (unique per object
+	/// occurrence, so each sense's Gloss binds its own sense), writes applied through the registered
+	/// LCModel setters inside the fenced session owned by <see cref="RegionEditContextBase"/>
+	/// (finding C — one shared session lifecycle + required-lexeme validation).
+	/// </summary>
+	public sealed class ComposedRegionEditContext : RegionEditContextBase
+	{
+		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
+		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
+
+		public ComposedRegionEditContext(
+			LcmCache cache,
+			ILexEntry entry,
+			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
+			IReadOnlyDictionary<string, Func<string, bool>> optionSetters)
+			: base(cache, entry)
+		{
+			_textSetters = textSetters;
+			_optionSetters = optionSetters;
+		}
+
+		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
+		{
+			if (field == null || !_textSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			EnsureOpen();
+			return setter(ws, value);
+		}
+
+		public override bool TrySetOption(LexicalEditRegionField field, string optionKey)
+		{
+			if (field == null || !_optionSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			EnsureOpen();
+			return setter(optionKey);
+		}
+	}
+}

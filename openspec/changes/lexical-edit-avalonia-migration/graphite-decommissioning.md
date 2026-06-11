@@ -1,5 +1,15 @@
 # Graphite and Native Rendering Decommissioning Plan
 
+> **Superseded for Graphite policy (2026-06-09).** Graphite support policy now lives in the
+> dedicated change **`graphite-transition-support`**: Graphite remains supported on legacy surfaces
+> until the M2 mid-decommissioning milestone, Avalonia surfaces render with OpenType plus a graded
+> per-writing-system **warning** (G0–G3 classification) instead of being blocked, and removal
+> happens at M3 with WinForms. The "decommissioning starts with the migration" and "Avalonia
+> default blocked by Graphite" posture in this document no longer applies. What REMAINS in scope
+> here: the native-engine isolation audit (no `GraphiteEngineClass`/native Views shaping on the
+> Avalonia path — true under the new policy too), the inventory tables below as reference, and the
+> Gecko/browser/PDF classification (sections still owned by lexical-edit tasks 5.5–5.8).
+
 This plan treats Graphite and native Views rendering as a migration risk, not as a solved problem. The key correction from re-research: Avalonia using Skia/HarfBuzz does not automatically prove Graphite parity. HarfBuzz Graphite2 shaping is optional and its own documentation says Graphite2 support is currently not enabled by default when building HarfBuzz.
 
 ## 1. Current Repo Inventory

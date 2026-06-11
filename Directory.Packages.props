@@ -166,6 +166,10 @@
 		-->
 		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
 		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
+		<!-- Pinned because multiple test projects copy this into the shared Output folder; without a
+		     single version the last-built project's copy breaks the others' binding redirects
+		     (observed: FwAvaloniaTests redirecting to 8.0.0.1 vs a 9.x dll from another graph). -->
+		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
@@ -195,5 +199,8 @@
 		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Headless" Version="11.3.17" />
 		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.17" />
+		<!-- Skia-enabled headless rendering for visual parity frame capture (lexical-edit task 6.9).
+		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
+		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
 	</ItemGroup>
 </Project>

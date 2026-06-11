@@ -14,7 +14,9 @@ It complements `seam-recommendations.md` and `architecture-diagrams.md`.
 - **Avalonia 11.x only** until WinForms is gone (no Avalonia 12 message filter / dispatcher work;
   cross-boundary tab/focus and popup-DPI are ours to work around; host coarsely).
 - **~1-year coexist phase, then WinForms deleted.** Each UI *class* is wholly one framework, but
-  different classes run **concurrently** and cooperate via **selection** and **copy/paste**.
+  different classes run **concurrently** and cooperate via **selection**, **copy/paste**, and
+  **drag-and-drop** (product decision 2026-06-09), with **refresh propagation**, **one undo stack**,
+  and **dialog ownership** as first-editable-slice gates.
 - **XML-layout retirement is a separate effort** — keep XML→IR import; the typed IR is the runtime
   contract the Avalonia side consumes.
 
@@ -22,8 +24,9 @@ It complements `seam-recommendations.md` and `architecture-diagrams.md`.
 
 Throwaway = wiring the new ports into **legacy internals** (e.g. threading `RefreshCoordinator` into
 the live `DataTree`, or `LexicalEditorRegistry` into `SliceFactory`), because that code is deleted at
-cutover. **Not** throwaway: the cross-framework **selection** and **copy/paste** bridges — they are
-real, must-build, and bidirectional, and the selection concept outlives WinForms.
+cutover. **Not** throwaway: the cross-framework **selection**, **copy/paste**, and **drag-and-drop**
+bridges — they are real, must-build, and bidirectional, and the selection/interchange concepts
+outlive WinForms.
 
 ## A. Routing & view model
 
@@ -46,10 +49,12 @@ real, must-build, and bidirectional, and the selection concept outlives WinForms
 
 | Domain | Seam | Before | Ideal | Now | Recommended (coexist year) |
 |---|---|---|---|---|---|
-| Selection sync ("current lexeme") | `IRecordNavigationContext` + `IPropertyStateStore` | WinForms views follow xCore `RecordClerk`/PropertyTable "current record" broadcast | Same bus; Avalonia is first-class publisher+subscriber | `IRecordNavigationContext` contract-only; `IPropertyStateStore` in-memory only | **Build it (not throwaway).** Bidirectional: the active surface *follows* the broadcast and *publishes* its own selection back. The bus already exists |
-| Copy / paste | clipboard seam (not built) | Native Views clipboard (rich/structured TsString) | WS-aware framework-neutral clipboard | Unaddressed | **Build a shared FieldWorks clipboard format** (serialized multi-WS/TsString) both native-Views and Avalonia read/write, plus plain-text fallback; both hit the OS clipboard. Decide target fidelity early — rich Views formats won't round-trip natively |
+| Selection sync ("current lexeme") | `IRecordNavigationContext` + `IPropertyStateStore` | WinForms views follow xCore `RecordClerk`/PropertyTable "current record" broadcast | Same bus; Avalonia is first-class publisher+subscriber | **Built (3.12, 2026-06-09):** `RecordClerkNavigationContext` in xWorks — publish via the clerk's real `OnJumpToRecord`/`OnNextRecord`/`OnPreviousRecord`, follow via the sponsoring `RecordEditView`'s real `OnRecordNavigation`; proven on the real mediator path (`RecordClerkNavigationContextTests`) | Bidirectional bridge done for the first host; extend to additional hosts as they gain Avalonia surfaces |
+| Copy / paste | `IFwClipboard` seam | Native Views clipboard (rich/structured TsString) | WS-aware framework-neutral clipboard | **Built (3.13, 2026-06-09):** the shared format is the existing legacy `"TsString"` OS format (`TsStringWrapper` XML rep) + NFC `UnicodeText` fallback; `IFwClipboard`/`FwClipboardText` (LCModel-free, FwAvalonia) + `FwTsStringClipboard` (xWorks) round-trip with real `EditingHelper` writes/reads (`FwTsStringClipboardTests`) | Fidelity decided: multi-WS/styles round-trip; ORC object references and external consumers don't (documented in `IFwClipboard`). Wire into Avalonia editors at 6.1/6.2 |
+| Drag & drop | DnD bridge (3.14, not built) | WinForms `DoDragDrop`, surface-internal only: `SliceTreeNode` (slice drag/reorder), `RecordBarTreeHandler` (record-bar tree moves) | Framework-neutral payloads over OS DnD | Unaddressed | **Build it — product decision (2026-06-09): cross-surface DnD IS supported.** Reuse the 3.13 clipboard payloads (legacy `"TsString"` format + record-key hvo/guid) over the OS DnD pipeline; in-surface reorder semantics stay surface-local; WinForms→Avalonia→WinForms round-trip test required (3.14) |
 | Focus / keyboard / tab | host edge | WinForms tab order across slices | Pure Avalonia focus within one host | Coarse hosting via `WinFormsAvaloniaControlHost` | Host coarsely — one big Avalonia view per host. Own focus *inside* the Avalonia view; don't fight cross-boundary Tab (open 11.x bug) |
 | Command routing (menus/xCore) | `IXCoreCommandBridge` | xCore mediator routes to active target | Avalonia commands + thin xCore bridge at shell phase | Contract-only | Bridge only the commands this screen needs this year; defer the general bridge to the shell migration |
+| Dialog ownership / modality | host edge (3.16, not built) | WinForms dialogs owned by WinForms windows | Avalonia dialogs/flyouts own their own tree | Unaddressed | WinForms choosers/message boxes launched from an active Avalonia surface need correct owner, modality, z-order, and focus return through `WinFormsAvaloniaControlHost`; Avalonia popups inside WinForms hosts hit the 11.x popup-DPI quirk. Chooser-launch + focus-return smoke test (3.16); document unsupported combinations |
 
 ## D. Text & rendering
 
@@ -63,7 +68,7 @@ real, must-build, and bidirectional, and the selection concept outlives WinForms
 
 | Domain | Seam | Before | Ideal | Now | Recommended (coexist year) |
 |---|---|---|---|---|---|
-| Refresh coordination | `ILexicalRefreshCoordinator` | `DataTree` `DoNotRefresh`/`RefreshPending` flags inline | One coordinator both surfaces honor | `RefreshCoordinator` models the gate, tested; **not** wired into live `DataTree` | Wire on the Avalonia side; leave legacy inline flags alone (throwaway) |
+| Refresh coordination | `ILexicalRefreshCoordinator` | `DataTree` `DoNotRefresh`/`RefreshPending` flags inline | One coordinator both surfaces honor | `RefreshCoordinator` models the gate, tested; **not** wired into live `DataTree` | Wire on the Avalonia side; leave legacy inline flags alone (throwaway). **Coexistence gate (3.15):** Avalonia commits must raise `PropChanged` legacy repaints from, and legacy edits + F5/`RefreshAllViews` must reach active Avalonia hosts — shared-cache consistency stands or falls on this loop; gates the first editable slice with a two-surface test |
 | Lifetime / disposal | `IRegionLifetime` | Slices dispose ad hoc | Explicit region ownership tree | Implemented + tested | Use for the Avalonia host/region |
 | UI scheduling / threading | `IUiScheduler` | WinForms `Control.Invoke` | Single dispatcher, marshalled | `ImmediateUiScheduler` (tests) + dispatcher at edge | Keep thin; single UI thread on 11.x |
 | Host/surface contract | `ILexicalEditHost`/`ILexicalEditSurface` | Implicit in `RecordEditView` | Explicit init/focus/context-menu/replacement contract | Contracts defined (3.5); `RecordEditView` conforms via the selection service | Formalize the active-host contract (3.10) as an audited invariant |

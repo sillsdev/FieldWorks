@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -82,6 +83,11 @@ namespace SIL.FieldWorks.XWorks
 			// while Avalonia is the active surface. This is the audited invariant.
 			Assert.That(GetPrivateFieldValue(control, "m_legacySurfaceInitialized"), Is.EqualTo(false),
 				"The active Avalonia path must not instantiate or drive the hidden legacy DataTree (task 3.10).");
+
+			var panel = (Panel)GetPrivateFieldValue(control, "m_panel");
+			var legacyDataTree = (DataTree)GetPrivateFieldValue(control, "m_dataEntryForm");
+			Assert.That(panel.Controls.Contains(legacyDataTree), Is.False,
+				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is the active surface.");
 
 			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
 			// headless xWorks harness does not provide, so we do not assert the host was created here. The

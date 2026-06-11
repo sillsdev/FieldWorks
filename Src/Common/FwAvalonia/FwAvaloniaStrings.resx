@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksNoEntrySelected" xml:space="preserve">
+    <value>No lexical entry selected.</value>
+    <comment>Placeholder shown in the Avalonia lexical-edit surface when no record is selected.</comment>
+  </data>
+  <data name="ksEntryTypeUnsupported" xml:space="preserve">
+    <value>The new lexical edit view is currently available only for lexical entry records. Other record types use the classic view.</value>
+    <comment>Shown when the Avalonia lexical-edit surface is asked to display a non-LexEntry record.</comment>
+  </data>
+  <data name="ksUnsupportedEditor" xml:space="preserve">
+    <value>(this field type is not supported in the new view yet)</value>
+    <comment>Shown in place of a field whose editor has no Avalonia renderer.</comment>
+  </data>
+  <data name="ksSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>Commit button of the Avalonia lexical-edit region editor.</comment>
+  </data>
+  <data name="ksCancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button of the Avalonia lexical-edit region editor.</comment>
+  </data>
+  <data name="ksUndoEditEntry" xml:space="preserve">
+    <value>Undo Edit Entry</value>
+    <comment>Undo label for the fenced lexical-edit session; appears in the Edit menu.</comment>
+  </data>
+  <data name="ksRedoEditEntry" xml:space="preserve">
+    <value>Redo Edit Entry</value>
+    <comment>Redo label for the fenced lexical-edit session; appears in the Edit menu.</comment>
+  </data>
+  <data name="ksLexemeFormRequired" xml:space="preserve">
+    <value>A Lexeme Form (or Citation Form) is required.</value>
+    <comment>Validation message when an entry would be saved without any lexeme/citation form text.</comment>
+  </data>
+  <data name="ksLexicalEditRegionName" xml:space="preserve">
+    <value>Lexical Edit Region</value>
+    <comment>Screen-reader name of the Avalonia lexical-edit region surface.</comment>
+  </data>
+  <data name="ksAvaloniaHostName" xml:space="preserve">
+    <value>Lexical Edit (new view)</value>
+    <comment>Screen-reader name of the WinForms control hosting the Avalonia surface.</comment>
+  </data>
+  <data name="ksGhostAddPrompt" xml:space="preserve">
+    <value>Click here to add {0}.</value>
+    <comment>Ghost add-prompt line shown for an empty field section; {0} is the field label.</comment>
+  </data>
+  <data name="ksCopy" xml:space="preserve">
+    <value>Copy</value>
+    <comment>Context-menu command copying a field's text.</comment>
+  </data>
+</root>
