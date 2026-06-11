@@ -16114,7 +16114,7 @@ or using a tool called AddGuids, and re-insert this comment. -->
             </fs>
          </item>
          <item guid="1caada1c-9a01-4cb7-ac1c-2fba2bcf9910" id="vBantuClassNASg" type="value">
-            <abbrev ws="en">NASg</abbrev>
+            <abbrev ws="en">NAsg</abbrev>
          	<term ws="en">NC Sg Not Applicable</term>
          	<def ws="en">The class labeled NAsg is for situations where BantuSg has no value ("not applicable"). For instance, if a noun only has a plural class but no singular class, then for parsing to work correctly, it needs to have BantuSg set to NAsg so that it will not agree with forms that have a value for BantuSg. (If there is no value set for BantuSg, then it will be allowed to take any BantuSg prefix, whereas none should be allowed.)</def>
             <citation>Katamba 2003:114ff;</citation>
