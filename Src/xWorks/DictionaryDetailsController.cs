@@ -426,10 +426,10 @@ namespace SIL.FieldWorks.XWorks
 
 			// Register eventhandlers
 			senseOptionsView.BeforeTextChanged += (sender, e) => { senseOptions.BeforeNumber = senseOptionsView.BeforeText; RefreshPreview(); };
-			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumbingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
+			senseOptionsView.NumberingStyleChanged += (sender, e) => SenseNumberingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
 			senseOptionsView.AfterTextChanged += (sender, e) => { senseOptions.AfterNumber = senseOptionsView.AfterText; RefreshPreview(); };
 			senseOptionsView.NumberStyleChanged += (sender, e) => { senseOptions.NumberStyle = senseOptionsView.NumberStyle; RefreshPreview(); };
-			senseOptionsView.ParentSenseNumberingStyleChanged += (sender, e) => ParentSenseNumbingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
+			senseOptionsView.ParentSenseNumberingStyleChanged += (sender, e) => ParentSenseNumberingStyleChanged(senseOptions, senseOptionsView, isSubsense, isSubSubsense);
 			// ReSharper disable ImplicitlyCapturedClosure
 			// Justification: senseOptions, senseOptionsView, and all of these lambda functions will all disappear at the same time.
 			senseOptionsView.StyleButtonClick += (sender, e) => HandleStylesBtn((ComboBox)sender, senseOptionsView.NumberStyle);
@@ -1025,27 +1025,39 @@ namespace SIL.FieldWorks.XWorks
 		#endregion ListChanges
 
 		#region SenseChanges
-		private void SenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
+		private void SenseNumberingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
 		{
-			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			if (isSubSubsense)
-				hc.ksSubSubSenseNumberStyle = senseOptionsView.NumberingStyle;
-			else if (isSubsense)
-				hc.ksSubSenseNumberStyle = senseOptionsView.NumberingStyle;
-			else
-				hc.ksSenseNumberStyle = senseOptionsView.NumberingStyle;
+			// Homograph configuration is used for sense numbers, not reversal numbers.
+			// Do not update it if reversal number style has changed.
+			if (!m_configModel.IsReversal)
+			{
+				var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+				if (isSubSubsense)
+					hc.ksSubSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+				else if (isSubsense)
+					hc.ksSubSenseNumberStyle = senseOptionsView.NumberingStyle;
+				else
+					hc.ksSenseNumberStyle = senseOptionsView.NumberingStyle;
+			}
+
 			senseOptions.NumberingStyle = senseOptionsView.NumberingStyle;
 			senseOptionsView.NumberMetaConfigEnabled = !string.IsNullOrEmpty(senseOptions.NumberingStyle);
 			RefreshPreview();
 		}
 
-		private void ParentSenseNumbingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
+		private void ParentSenseNumberingStyleChanged(DictionaryNodeSenseOptions senseOptions, IDictionarySenseOptionsView senseOptionsView, bool isSubsense, bool isSubSubsense)
 		{
-			var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			if (isSubSubsense)
-				hc.ksParentSubSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
-			else if (isSubsense)
-				hc.ksParentSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			// Homograph configuration is used for sense numbers, not reversal numbers.
+			// Do not update it if reversal number style has changed.
+			if (!m_configModel.IsReversal)
+			{
+				var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+				if (isSubSubsense)
+					hc.ksParentSubSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+				else if (isSubsense)
+					hc.ksParentSenseNumberStyle = senseOptionsView.ParentSenseNumberingStyle;
+			}
+
 			senseOptions.ParentSenseNumberingStyle = senseOptionsView.ParentSenseNumberingStyle;
 			RefreshPreview();
 		}

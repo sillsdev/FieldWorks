@@ -133,6 +133,9 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			  progress.Maximum = entriesToSave.Length;
 
+			var dictConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
+
 			string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
 			LcmWordGenerator.SavePublishedDocx(entriesToSave, revClerk, pubDecorator, int.MaxValue, revConfig, m_propertyTable,
 				reversalFilePath, progress);
