@@ -34,16 +34,30 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Action _refresh;
 		private readonly ILexicalRefreshCoordinator _coordinator;
 		private readonly Action<Action> _schedule;
+		private readonly Func<ICmObject, bool> _isRelevant;
 		private bool _refreshQueued;
 		private bool _disposed;
 
+		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
+		/// <param name="currentRecord">The record the surface is displaying right now.</param>
+		/// <param name="isEditing">Whether the surface's own edit session is open.</param>
+		/// <param name="refresh">Re-resolves/re-shows the region from current domain state.</param>
+		/// <param name="coordinator">The suspend/pending gate used while editing.</param>
+		/// <param name="schedule">Optional UI-thread deferral for coalesced delivery.</param>
+		/// <param name="isRelevant">
+		/// Host-supplied relevance for a changed object that is NOT the displayed record itself
+		/// (the controller already treats the displayed record as relevant). The lexical host
+		/// supplies the ILexEntry owner-walk (see RecordEditView.EnsureAvaloniaRefreshController);
+		/// when null, only changes to the displayed record itself trigger a refresh.
+		/// </param>
 		public AvaloniaRegionRefreshController(
 			LcmCache cache,
 			Func<ICmObject> currentRecord,
 			Func<bool> isEditing,
 			Action refresh,
 			ILexicalRefreshCoordinator coordinator,
-			Action<Action> schedule = null)
+			Action<Action> schedule = null,
+			Func<ICmObject, bool> isRelevant = null)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_currentRecord = currentRecord ?? throw new ArgumentNullException(nameof(currentRecord));
@@ -51,6 +65,7 @@ namespace SIL.FieldWorks.XWorks
 			_refresh = refresh ?? throw new ArgumentNullException(nameof(refresh));
 			_coordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
 			_schedule = schedule;
+			_isRelevant = isRelevant;
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
@@ -81,18 +96,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (_coordinator.RequestRefresh())
-				ScheduleRefresh();
-		}
-
-		/// <summary>
-		/// Called by the host when its edit session committed or cancelled: delivers any refresh that
-		/// was held while editing.
-		/// </summary>
-		public void NotifyEditCompleted()
-		{
-			if (_disposed)
-				return;
-			if (_coordinator.IsSuspended && _coordinator.EndSuspend())
 				ScheduleRefresh();
 		}
 
@@ -173,7 +176,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// A change is relevant when the changed object is, or is owned by, the entry on display.
+		// A change to the displayed record itself is always relevant; anything else is the host's
+		// call (the lexical host walks OwnerOfClass<ILexEntry> — injected, not hard-coded here, so
+		// non-lexical hosts can reuse the controller with their own containment rule).
 		private bool IsRelevant(int hvo)
 		{
 			var current = _currentRecord();
@@ -184,8 +189,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (!_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var changed))
 				return false;
-			var owningEntry = changed as ILexEntry ?? changed.OwnerOfClass<ILexEntry>();
-			return owningEntry != null && owningEntry.Hvo == current.Hvo;
+			return _isRelevant != null && _isRelevant(changed);
 		}
 
 		public void Dispose()

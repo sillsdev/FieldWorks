@@ -156,6 +156,10 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
+		// The lexical host's relevance predicate, exactly as RecordEditView injects it.
+		private Func<ICmObject, bool> LexicalRelevance => changed =>
+			RecordEditView.IsChangeWithinEntry(changed, m_entry);
+
 		[Test]
 		public void RefreshController_WithAScheduler_CoalescesABurstIntoOneRefresh()
 		{
@@ -163,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 			var refreshes = 0;
 			using (new AvaloniaRegionRefreshController(
 				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
-				schedule: scheduled.Add))
+				schedule: scheduled.Add, isRelevant: LexicalRelevance))
 			{
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				{
@@ -305,9 +309,103 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(refreshes, Is.EqualTo(0),
 					"the host discards the held delivery when it is about to re-show anyway");
 
-				controller.NotifyEditCompleted();
-				Assert.That(refreshes, Is.EqualTo(0), "nothing is left pending after the discard");
+				// The completion pair the host actually runs (OnAvaloniaRegionEditCompleted):
+				// discard + ONE explicit request — one recompose, not the held one plus its own.
+				controller.RequestRefresh();
+				Assert.That(refreshes, Is.EqualTo(1),
+					"after the discard exactly the one requested re-show runs (nothing was left pending)");
 			}
+		}
+
+		// The held-while-editing scenario through the surviving API: when editing ends, the next
+		// relevant notification delivers the refresh that was held during the edit (the host's
+		// explicit completion path is the DiscardHeldRefresh + RequestRefresh pair, above).
+		// A UOW raises one PropChanged per changed property, so the single-delivery guarantee
+		// stands on the coalescing scheduler the production host supplies — model it here with a
+		// queue that runs after the notification burst, exactly like the host's BeginInvoke.
+		[Test]
+		public void RefreshController_HeldRefresh_DeliversOnTheNextNotificationAfterEditingEnds()
+		{
+			var editing = true;
+			var refreshes = 0;
+			var queued = new List<Action>();
+			using (new AvaloniaRegionRefreshController(
+				Cache, () => m_entry, () => editing, () => refreshes++, new RefreshCoordinator(),
+				schedule: a => queued.Add(a)))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("raced", Cache.DefaultVernWs)));
+				Assert.That(refreshes, Is.EqualTo(0), "held while the surface's own session is open");
+				Assert.That(queued, Is.Empty, "a held refresh is pending, not scheduled");
+
+				editing = false;
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("after", Cache.DefaultVernWs)));
+				Assert.That(queued, Has.Count.EqualTo(1),
+					"the whole notification burst coalesces into one scheduled delivery");
+
+				queued[0]();
+				Assert.That(refreshes, Is.EqualTo(1),
+					"one delivery covers both the held refresh and the new change");
+			}
+		}
+
+		// Relevance is injected by the host, not hard-coded to ILexEntry inside the controller.
+		[Test]
+		public void RefreshController_HostPredicate_CoversObjectsOwnedByTheDisplayedEntry()
+		{
+			var refreshes = 0;
+			using (new AvaloniaRegionRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				isRelevant: LexicalRelevance))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					m_entry.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs,
+						TsStringUtils.MakeString("sense-level", Cache.DefaultAnalWs)));
+
+				Assert.That(refreshes, Is.GreaterThanOrEqualTo(1),
+					"a change to an object OWNED by the displayed entry reaches the surface through the host's predicate");
+			}
+		}
+
+		[Test]
+		public void RefreshController_HostPredicate_DecidesRelevanceBeyondTheDisplayedRecord()
+		{
+			ILexEntry other = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				other = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create());
+
+			var refreshes = 0;
+			using (new AvaloniaRegionRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator(),
+				isRelevant: changed => true))
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+					other.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("unrelated", Cache.DefaultVernWs)));
+
+				Assert.That(refreshes, Is.GreaterThanOrEqualTo(1),
+					"the injected predicate — not a built-in entry walk — decides relevance for other objects");
+			}
+		}
+
+		// The predicate RecordEditView injects: containment in the displayed entry via the owner
+		// chain, the behavior the controller used to hard-code.
+		[Test]
+		public void IsChangeWithinEntry_WalksTheOwnerChainToTheDisplayedEntry()
+		{
+			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry, m_entry), Is.True,
+				"the entry itself");
+			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry.SensesOS[0], m_entry), Is.True,
+				"a sense owned by the entry");
+			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry.LexemeFormOA, m_entry), Is.True,
+				"the lexeme form owned by the entry");
+			Assert.That(RecordEditView.IsChangeWithinEntry(Cache.LangProject, m_entry), Is.False,
+				"an object outside the entry");
+			Assert.That(RecordEditView.IsChangeWithinEntry(null, m_entry), Is.False);
+			Assert.That(RecordEditView.IsChangeWithinEntry(m_entry, null), Is.False);
 		}
 	}
 }

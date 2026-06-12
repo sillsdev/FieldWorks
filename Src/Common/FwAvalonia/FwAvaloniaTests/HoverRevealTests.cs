@@ -12,6 +12,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -379,6 +380,50 @@ namespace FwAvaloniaTests
 			MoveMouseOver(window, row);
 			PumpUntilOpacity(gear, 1d, "hover still reveals the (disabled) gear");
 			Assert.That(() => row.Launch(), Throws.Nothing, "launching without a callback is a no-op");
+		}
+
+		// Idempotence regression: controls attach their own affordances in their constructors and
+		// the region view attaches AGAIN to widen the hover surface to the row. Before the merge
+		// fix each Attach stacked an independent handler set with its own watched list, and the
+		// LAST registration could hide the affordance while the pointer was still over a source
+		// only an EARLIER registration watched (correctness depended on the superset attaching
+		// last). Attaching the SUBSET last here proves the registrations merge.
+		[AvaloniaTest]
+		public void Attach_MergesRepeatedRegistrations_RegardlessOfOrder()
+		{
+			var rowSurface = new Border { Width = 200, Height = 40, Background = Brushes.Transparent };
+			var editor = new Border { Width = 200, Height = 40, Background = Brushes.Transparent };
+			var gear = new Button { Content = "*", Width = 20, Height = 20 };
+			var focusPark = new TextBox();
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { rowSurface, editor, gear, focusPark } },
+				Width = 500,
+				Height = 300
+			};
+			HoverReveal.Attach(new Control[] { rowSurface, editor }, new Control[] { gear }); // superset first
+			HoverReveal.Attach(new Control[] { editor }, new Control[] { gear });             // subset last
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+
+			// Hover the source only the FIRST registration named...
+			MoveMouseOver(window, rowSurface);
+			Assert.That(gear.IsHitTestVisible, Is.True, "a first-registration source still reveals");
+
+			// ...then a focus blip on the gear forces a LostFocus re-evaluation of the hover
+			// state. The merged registration still sees the pointer over rowSurface; stacked
+			// registrations fought, and the last one hid the gear (it never watched rowSurface).
+			gear.Focus();
+			Dispatcher.UIThread.RunJobs();
+			focusPark.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(gear.IsHitTestVisible, Is.True,
+				"one merged watched list decides the state — not whichever Attach ran last");
+
+			MoveMouseFarAway(window);
+			Assert.That(gear.IsHitTestVisible, Is.False, "leaving every merged source still hides");
 		}
 
 		[AvaloniaTest]

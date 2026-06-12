@@ -65,7 +65,24 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private const int MaxDepth = 6;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
-		private static readonly Lazy<CompilerSources> Sources = new Lazy<CompilerSources>(LoadSources);
+
+		// Review task 10: deliberately NOT a Lazy — a failed load must not be cached as null for
+		// the process lifetime (the old behavior: one transient IO hiccup silently demoted every
+		// future compose to the 3-field first slice). A successful load is immutable and cached
+		// forever; a failure logs (see LoadSources) and is retried on the next compose.
+		private static readonly object SourcesSync = new object();
+		private static CompilerSources s_sources;
+
+		private static CompilerSources GetSources()
+		{
+			var sources = s_sources;
+			if (sources != null)
+				return sources;
+			lock (SourcesSync)
+			{
+				return s_sources ?? (s_sources = LoadSources());
+			}
+		}
 
 		// Review finding A (observable memoization): counts the expensive snapshot builds (layout
 		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
@@ -119,25 +136,14 @@ namespace SIL.FieldWorks.XWorks
 		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
-		/// hierarchy, like the legacy flat chooser.
+		/// hierarchy, like the legacy flat chooser. Review task 12: the implementation lives in
+		/// the shared <see cref="RegionValueFactory"/> so this composer and
+		/// <see cref="LexicalEditRegionBuilder"/> cannot drift; this wrapper keeps the composer's
+		/// established internal surface (and its tests).
 		/// </summary>
 		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
-		{
-			var options = new List<RegionChoiceOption>();
-			void Add(ICmPossibility possibility, int depth)
-			{
-				options.Add(new RegionChoiceOption(possibility.Guid.ToString(),
-					possibility.Name.BestAnalysisAlternative?.Text ?? possibility.ShortName ?? possibility.Guid.ToString(),
-					flat ? 0 : depth));
-				foreach (var sub in possibility.SubPossibilitiesOS)
-					Add(sub, depth + 1);
-			}
-
-			foreach (var possibility in list.PossibilitiesOS)
-				Add(possibility, 0);
-			return options;
-		}
+			=> RegionValueFactory.BuildPossibilityOptions(list, flat);
 
 		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
 		// Research (gear = configure): when a legacy jump's target object is owned by a
@@ -555,17 +561,17 @@ namespace SIL.FieldWorks.XWorks
 				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
 				{
 					case CellarPropertyType.String:
-						rawEditor = "string";
+						rawEditor = EditorKindMap.StringEditor;
 						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
 						break;
 					case CellarPropertyType.MultiUnicode:
 					case CellarPropertyType.MultiString:
-						rawEditor = "multistring";
+						rawEditor = EditorKindMap.MultiStringEditor;
 						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
 						break;
 					default:
 						// Resolved by CellarPropertyType in WalkOtherField, like autoCustom.
-						rawEditor = "autocustom";
+						rawEditor = EditorKindMap.AutoCustomEditor;
 						break;
 				}
 
@@ -597,8 +603,11 @@ namespace SIL.FieldWorks.XWorks
 					if (!string.Equals(link.Type, "goto", StringComparison.OrdinalIgnoreCase)
 						|| string.IsNullOrEmpty(link.Label) || string.IsNullOrEmpty(link.Tool))
 					{
-						System.Diagnostics.Debug.WriteLine(
-							$"chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
+						// Review task 10: skipped links must be visible in the product log, not
+						// only on a debugger (the legacy "dialog"/"simple" kinds wait on the
+						// ChooserCommand lanes).
+						SIL.Reporting.Logger.WriteEvent(
+							$"FullEntryRegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
 					}
 					(links ?? (links = new List<RegionChooserLink>()))
@@ -679,34 +688,37 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var fieldCountBeforeDispatch = Fields.Count;
-				var editor = (node.RawEditor ?? "").ToLowerInvariant();
-				switch (editor)
+				// Review task 8: the editor-string → category knowledge lives ONCE, in
+				// EditorKindMap (the same FwAvalonia home the importer's classification and the
+				// mapper's kind projection use); this switch only routes categories. Categories
+				// without a dedicated lane here (AtomicReferenceChooser, Grouping, Other) refine
+				// by CellarPropertyType in WalkOtherField — that LCModel knowledge stays in the
+				// composer.
+				switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
 				{
-					case "multistring":
-					case "string":
+					case RegionEditorCategory.Text:
 						WalkTextField(node, obj, depth);
 						break;
-					case "morphtypeatomicreference":
+					case RegionEditorCategory.MorphTypeChooser:
 						WalkMorphTypeChooser(node, obj, depth);
 						break;
-					case "summary":
+					case RegionEditorCategory.Summary:
 						// Summary slices are section header rows in legacy too.
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
-					case "lit":
+					case RegionEditorCategory.Literal:
 						// Literal text row: the label IS the content.
 						AddReadOnlyRow(node, obj, depth, string.Empty);
 						break;
-					case "picture":
-					case "image":
+					case RegionEditorCategory.Picture:
 						WalkPictures(node, obj, depth);
 						break;
-					case "jtview":
+					case RegionEditorCategory.EmbeddedView:
 						// Embedded formatted view: render the object's summary text read-only (the
 						// full embedded-view replacement rides the table/IR work).
 						AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
 						break;
-					case "command":
+					case RegionEditorCategory.Command:
 						// Command slices render their button; execution arrives with the xCore
 						// command bridge (shell phase).
 						Fields.Add(new LexicalEditRegionField(StableId(node, obj),
@@ -714,6 +726,9 @@ namespace SIL.FieldWorks.XWorks
 							RegionFieldKind.Command, node.EditorClassification, node.AutomationId,
 							node.LocalizationKey, node.Routing, null, null, null,
 							isEditable: false, indent: depth));
+						break;
+					case RegionEditorCategory.EnumCombo:
+						WalkEnumCombo(node, obj, depth);
 						break;
 					default:
 						WalkOtherField(node, obj, depth);
@@ -751,43 +766,88 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var type = (CellarPropertyType)_mdc.GetFieldType(flid);
-				var systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				var values = new List<RegionWsValue>();
+				switch (type)
+				{
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+					case CellarPropertyType.String:
+					case CellarPropertyType.Unicode:
+						break;
+					default:
+						WalkUnsupported(node, obj, depth);
+						return;
+				}
+
+				var hvo = obj.Hvo;
+				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
+				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
+					&& systems.Count > 0)
+				{
+					// Single-alternative property: one row. Review task 5 (plain String props):
+					// get_StringProp reads the WHOLE string regardless of the layout ws= spec, but
+					// the row's display metadata (abbreviation/font/RTL) and write-back previously
+					// took the spec's FIRST writing system — asymmetric when the stored string was
+					// typed in another ws (legacy StringSlice renders the string's own run
+					// properties). Derive the row's ws from the existing string's first run; the
+					// layout ws only seeds an EMPTY string.
+					var rowWs = systems[0];
+					if (type == CellarPropertyType.String)
+					{
+						var existing = _sda.get_StringProp(hvo, flid);
+						if (existing != null && existing.Length > 0)
+						{
+							var runWs = TsStringUtils.GetWsOfRun(existing, 0);
+							if (runWs > 0)
+							{
+								try
+								{
+									rowWs = _cache.ServiceLocator.WritingSystemManager.Get(runWs);
+								}
+								catch (Exception)
+								{
+									// Unknown run ws: keep the layout writing system.
+								}
+							}
+						}
+					}
+					systems = new[] { rowWs };
+				}
+
 				var anyData = false;
-				foreach (var ws in systems)
+				var rich = false;
+				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
+				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// Review task 12: the per-ws value rows build through the shared factory
+				// (LexicalEditRegionBuilder uses the same one), this lane only supplies the text.
+				var values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
 				{
 					string text;
-					switch (type)
+					if (type == CellarPropertyType.Unicode)
 					{
-						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiString:
-							text = _sda.get_MultiStringAlt(obj.Hvo, flid, ws.Handle)?.Text;
-							break;
-						case CellarPropertyType.String:
-							text = _sda.get_StringProp(obj.Hvo, flid)?.Text;
-							break;
-						case CellarPropertyType.Unicode:
-							text = _sda.get_UnicodeProp(obj.Hvo, flid);
-							break;
-						default:
-							WalkUnsupported(node, obj, depth);
-							return;
+						text = _sda.get_UnicodeProp(hvo, flid);
 					}
-
+					else
+					{
+						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
+						// Review task 4: rich content (multiple runs, or props beyond the ws)
+						// makes the whole row read-only below.
+						rich |= HasRichContent(tss);
+						text = tss?.Text;
+					}
 					anyData |= !string.IsNullOrEmpty(text);
-					// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
-					var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
-					values.Add(new RegionWsValue(ws.Abbreviation, text ?? string.Empty, ws.DefaultFontName,
-						fontSize, ws.RightToLeftScript, ws.Id, node.BoldEmphasis));
-					if (type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
-						break; // single-alternative property: one row
-				}
+					return text;
+				}, fontSize, node.BoldEmphasis);
 
 				if (!anyData && HideWhenEmpty(node))
 					return;
 
 				var stableId = StableId(node, obj);
-				var editable = type != CellarPropertyType.Unicode;
+				// Review task 4: the plain-text setter below replaces the WHOLE alternative via
+				// MakeString, which would flatten embedded writing systems, styles, and any other
+				// run properties on the first keystroke. Until the rich TsString editor lands
+				// (gated on 6.13), a row whose current content is rich composes READ-ONLY so a
+				// keystroke cannot destroy it; plain single-run content stays editable.
+				var editable = type != CellarPropertyType.Unicode && !rich;
 				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
@@ -797,7 +857,6 @@ namespace SIL.FieldWorks.XWorks
 				if (!editable)
 					return;
 
-				var hvo = obj.Hvo;
 				// Edits key on the unique IETF tag (ws.Id): the user-editable Abbreviation can
 				// collide across writing systems, which both crashed composition (ToDictionary)
 				// and could misroute an edit to the wrong alternative. Unambiguous abbreviations
@@ -820,13 +879,65 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
 						return false;
-					var tss = TsStringUtils.MakeString(value ?? string.Empty, wsHandle);
-					if (type == CellarPropertyType.String)
-						_sda.SetString(hvo, flid, tss);
-					else
-						_sda.SetMultiStringAlt(hvo, flid, wsHandle, tss);
-					return true;
+					return WriteTextProp(hvo, flid, wsHandle, type, value);
 				};
+			}
+
+			// Review task 11: the ONE String-vs-multi text read dispatch every TsString-reading
+			// site shares (Unicode props return a raw string and stay with get_UnicodeProp at the
+			// call sites).
+			private ITsString ReadTextProp(int hvo, int flid, int ws, CellarPropertyType type)
+			{
+				switch (type)
+				{
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						return _sda.get_MultiStringAlt(hvo, flid, ws);
+					case CellarPropertyType.String:
+						return _sda.get_StringProp(hvo, flid);
+					default:
+						return null;
+				}
+			}
+
+			// Review task 11: the matching write dispatch (plain-text MakeString round-trip; the
+			// rich-content guard in WalkTextField keeps it away from rich strings).
+			private bool WriteTextProp(int hvo, int flid, int ws, CellarPropertyType type, string value)
+			{
+				var tss = TsStringUtils.MakeString(value ?? string.Empty, ws);
+				switch (type)
+				{
+					case CellarPropertyType.String:
+						_sda.SetString(hvo, flid, tss);
+						return true;
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						_sda.SetMultiStringAlt(hvo, flid, ws, tss);
+						return true;
+					default:
+						return false;
+				}
+			}
+
+			// Review task 4: "rich" = more than one run, or single-run properties beyond the
+			// writing system itself — exactly the content a plain-text MakeString round-trip
+			// would silently destroy.
+			private static bool HasRichContent(ITsString tss)
+			{
+				if (tss == null || tss.Length == 0)
+					return false;
+				if (tss.RunCount > 1)
+					return true;
+				var props = tss.get_Properties(0);
+				if (props.StrPropCount > 0)
+					return true;
+				for (var i = 0; i < props.IntPropCount; i++)
+				{
+					props.GetIntProp(i, out var tpt, out _);
+					if (tpt != (int)FwTextPropType.ktptWs)
+						return true;
+				}
+				return false;
 			}
 
 			private void WalkMorphTypeChooser(ViewNode node, ICmObject obj, int depth)
@@ -872,8 +983,11 @@ namespace SIL.FieldWorks.XWorks
 					// prompt AND a class conversion (MoStemAllomorph <-> MoAffixAllomorph). Assigning
 					// blindly would create a model-invalid combination (e.g. a stem allomorph with an
 					// affix morph type), so a boundary-crossing assignment is rejected until the
-					// class-conversion lane lands (review round 2).
-					if (TryClassifyMorphType(guid, out var toKind)
+					// class-conversion lane lands (review round 2). The GUID -> kind classification
+					// is the seam's single table (review consolidation: this file's 19-entry mirror
+					// dictionary is gone; MorphTypeGuidConsolidationTests pins the seam's table to
+					// the MoMorphTypeTags constants).
+					if (MorphTypeSwapLogic.TryClassify(guid, out var toKind)
 						&& (form is IMoStemAllomorph) != MorphTypeSwapLogic.IsStemType(toKind))
 					{
 						return false;
@@ -883,44 +997,27 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// Maps the fixed MoMorphTypeTags GUIDs onto the seam's MorphTypeKind so the pure
-			// stem/affix boundary logic (extracted from MorphTypeAtomicLauncher) can classify them.
-			private static readonly IReadOnlyDictionary<Guid, MorphTypeKind> MorphTypeKindByGuid =
-				new Dictionary<Guid, MorphTypeKind>
-				{
-					{ MoMorphTypeTags.kguidMorphRoot, MorphTypeKind.Root },
-					{ MoMorphTypeTags.kguidMorphStem, MorphTypeKind.Stem },
-					{ MoMorphTypeTags.kguidMorphBoundRoot, MorphTypeKind.BoundRoot },
-					{ MoMorphTypeTags.kguidMorphBoundStem, MorphTypeKind.BoundStem },
-					{ MoMorphTypeTags.kguidMorphParticle, MorphTypeKind.Particle },
-					{ MoMorphTypeTags.kguidMorphClitic, MorphTypeKind.Clitic },
-					{ MoMorphTypeTags.kguidMorphProclitic, MorphTypeKind.Proclitic },
-					{ MoMorphTypeTags.kguidMorphEnclitic, MorphTypeKind.Enclitic },
-					{ MoMorphTypeTags.kguidMorphPhrase, MorphTypeKind.Phrase },
-					{ MoMorphTypeTags.kguidMorphDiscontiguousPhrase, MorphTypeKind.DiscontiguousPhrase },
-					{ MoMorphTypeTags.kguidMorphPrefix, MorphTypeKind.Prefix },
-					{ MoMorphTypeTags.kguidMorphSuffix, MorphTypeKind.Suffix },
-					{ MoMorphTypeTags.kguidMorphInfix, MorphTypeKind.Infix },
-					{ MoMorphTypeTags.kguidMorphSimulfix, MorphTypeKind.Simulfix },
-					{ MoMorphTypeTags.kguidMorphSuprafix, MorphTypeKind.Suprafix },
-					{ MoMorphTypeTags.kguidMorphCircumfix, MorphTypeKind.Circumfix },
-					{ MoMorphTypeTags.kguidMorphPrefixingInterfix, MorphTypeKind.PrefixingInterfix },
-					{ MoMorphTypeTags.kguidMorphInfixingInterfix, MorphTypeKind.InfixingInterfix },
-					{ MoMorphTypeTags.kguidMorphSuffixingInterfix, MorphTypeKind.SuffixingInterfix }
-				};
-
-			private static bool TryClassifyMorphType(Guid guid, out MorphTypeKind kind)
-				=> MorphTypeKindByGuid.TryGetValue(guid, out kind);
-
 			// 6.3: an atomic possibility reference takes the chooser lane (legacy
 			// PossibilityAtomicReferenceSlice): options from the field's own list
 			// (ReferenceTargetOwner), write-back through the fenced session.
 			private void AddAtomicPossibilityChooser(ViewNode node, ICmObject obj, int depth, int flid,
 				ICmPossibilityList list, int targetHvo)
 			{
+				// Review task 6: the legacy atomic possibility launcher lets the user CLEAR the
+				// reference (PossibilityAtomicReferenceLauncher.OnLeave -> AddItem(null) when the
+				// box is emptied; only a layout-authored nullLabel="" forbids it, which no
+				// lexeme-editor part does), so the chooser leads with an explicit empty choice —
+				// labeled with the SAME localized "<Empty>" the WinForms launchers use
+				// (DetailControlsStrings.ksNullLabel). The morph-type chooser deliberately offers
+				// no empty option (MorphTypeAtomicLauncher.AllowEmptyItem == false).
+				var options = new List<RegionChoiceOption>
+				{
+					new RegionChoiceOption(string.Empty,
+						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
+				};
 				// B7 remainder: chooserInfo FlatList specs are not yet imported onto the node;
 				// until they are, the chooser renders the list's own hierarchy.
-				var options = BuildPossibilityOptions(list, flat: false);
+				options.AddRange(BuildPossibilityOptions(list, flat: false));
 				var selected = targetHvo == 0
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
@@ -934,6 +1031,13 @@ namespace SIL.FieldWorks.XWorks
 				var hvo = obj.Hvo;
 				OptionSetters[stableId] = key =>
 				{
+					// The empty option clears the reference — legacy AddItem(null), i.e.
+					// SetObjProp(hvo, flid, 0) — inside the same fenced session (task 6).
+					if (string.IsNullOrEmpty(key))
+					{
+						_sda.SetObjProp(hvo, flid, 0);
+						return true;
+					}
 					var possibility = ResolvePossibilityInList(list, key);
 					if (possibility == null)
 						return false;
@@ -1203,6 +1307,43 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
+			// Review task 2: legacy enumComboBox is a CLOSED combo over the layout's stringList
+			// labels (SliceFactory.cs case "enumcombobox" -> EnumComboSlice), never free-form
+			// input. Falling through to the Integer lane composed it as an unrestricted int
+			// editor whose SetInt could persist invalid enum values. Until the importer carries
+			// the layout's stringList ids onto the node (it currently drops them), the row
+			// composes READ-ONLY showing the raw stored value; the eventual fix is an option
+			// chooser fed by that stringList.
+			private void WalkEnumCombo(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+				{
+					WalkUnsupported(node, obj, depth);
+					return;
+				}
+
+				int current;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.Integer:
+						current = _sda.get_IntProp(obj.Hvo, flid);
+						break;
+					case CellarPropertyType.Boolean:
+						// Legacy EnumComboSlice serves boolean-backed enums too (e.g. the
+						// Allomorph Status combo over IsAbstract), via IntBoolPropertyConverter.
+						current = IntBoolPropertyConverter.GetBoolean(_sda, obj.Hvo, flid) ? 1 : 0;
+						break;
+					default:
+						WalkUnsupported(node, obj, depth);
+						return;
+				}
+
+				if (current == 0 && HideWhenEmpty(node))
+					return;
+				AddReadOnlyRow(node, obj, depth, current.ToString(CultureInfo.InvariantCulture));
+			}
+
 			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
@@ -1336,8 +1477,20 @@ namespace SIL.FieldWorks.XWorks
 							var hvo = obj.Hvo;
 							TextSetters[stableId] = (ws, value) =>
 							{
-								if (!int.TryParse(value, out var parsed))
+								// Review task 7 (clearing an int box): legacy IntegerSlice treats a
+								// non-numeric box — INCLUDING empty — as invalid on focus loss: it
+								// warns and restores the stored value, never committing empty as 0
+								// (BasicTypeSlices.cs, IntegerSlice.m_tb_LostFocus's
+								// Convert.ToInt32 FormatException path). Mirror that deliberately:
+								// empty/whitespace stages NOTHING (false), so the control restores
+								// the last committed value (its lastStaged advances only on
+								// success), and a clear-then-retype only ever stages the parseable
+								// intermediate states.
+								if (!int.TryParse(value, NumberStyles.Integer,
+									CultureInfo.InvariantCulture, out var parsed))
+								{
 									return false;
+								}
 								_sda.SetInt(hvo, flid, parsed);
 								return true;
 							};
@@ -1397,14 +1550,11 @@ namespace SIL.FieldWorks.XWorks
 			// time, so composing stays side-effect free and the edit context exists by then.
 			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, IRegionEditorPlugin plugin)
 			{
-				var editContextAccessor = _editContextAccessor;
-				var cache = _cache;
-				var services = _services;
-				// D4: a service-aware plugin (the launcher lane) gets the host services through the
-				// five-argument overload; classic plugins keep the original contract.
-				Func<Avalonia.Controls.Control> factory = plugin is IServiceAwareRegionEditorPlugin serviceAware
-					? () => serviceAware.BuildControl(obj, node, editContextAccessor?.Invoke(), cache, services)
-					: (Func<Avalonia.Controls.Control>)(() => plugin.BuildControl(obj, node, editContextAccessor?.Invoke(), cache));
+				// Review task 13: ONE plugin contract — the build context bundles everything a
+				// plugin can need (object, node, deferred edit-context accessor, cache, optional
+				// host services); the former IServiceAwareRegionEditorPlugin type test is gone.
+				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache, _services);
+				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
 				Fields.Add(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
@@ -1549,6 +1699,13 @@ namespace SIL.FieldWorks.XWorks
 					catch (Exception) { ghostFlid = 0; }
 				}
 
+				// Review task 3: with no resolvable ghost field AND no init method, typing could
+				// only MakeNewObject a bare object while the typed text silently vanished (nothing
+				// receives the string). No shipped layout authors such a ghost; render the prompt
+				// NON-editable (null) instead of destroying input on the first keystroke.
+				if (ghostFlid == 0 && string.IsNullOrEmpty(node.GhostInitMethod))
+					return null;
+
 				var ws = ResolveGhostWs(node.GhostWs);
 				if (ws == null)
 					return null;
@@ -1579,11 +1736,9 @@ namespace SIL.FieldWorks.XWorks
 						}
 						if (ghostFlid != 0)
 						{
-							var tss = TsStringUtils.MakeString(value ?? string.Empty, ws.Handle);
-							if ((CellarPropertyType)_mdc.GetFieldType(ghostFlid) == CellarPropertyType.String)
-								_sda.SetString(createdHvo, ghostFlid, tss);
-							else
-								_sda.SetMultiStringAlt(createdHvo, ghostFlid, ws.Handle, tss);
+							// Task 11: the shared 3-way text write dispatch.
+							WriteTextProp(createdHvo, ghostFlid, ws.Handle,
+								(CellarPropertyType)_mdc.GetFieldType(ghostFlid), value);
 						}
 						// B2: invoke the layout's ghostInitMethod by reflection on the newly created
 						// object, after the typed text lands — exactly GhostStringSliceView.
@@ -1792,7 +1947,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName)
 		{
-			var sources = Sources.Value;
+			var sources = GetSources();
 			if (sources == null)
 				return null;
 
@@ -1849,7 +2004,14 @@ namespace SIL.FieldWorks.XWorks
 				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)
+				{
+					// Review task 10: never a silent permanent failure — log, fall back to the
+					// 3-field first slice for THIS compose, and retry next time (GetSources).
+					SIL.Reporting.Logger.WriteEvent(
+						"FullEntryRegionComposer: no merged parts XML under '" + partsDirectory
+						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
+				}
 
 				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectory);
 				return new CompilerSources
@@ -1858,8 +2020,13 @@ namespace SIL.FieldWorks.XWorks
 					LayoutIndex = LayoutSourceLoader.IndexLayouts(layoutFiles)
 				};
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				// Review task 10: never a silent permanent failure — log, fall back to the
+				// 3-field first slice for THIS compose, and retry next time (GetSources).
+				SIL.Reporting.Logger.WriteError(
+					"FullEntryRegionComposer: failed to load layout sources; "
+					+ "falling back to the first slice for this compose.", e);
 				return null;
 			}
 		}

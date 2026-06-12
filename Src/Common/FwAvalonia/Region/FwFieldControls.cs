@@ -132,15 +132,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				if (editContext != null && field.IsEditable)
 				{
 					// TextChanged also fires when the template first applies the initial value, so a
-					// last-staged guard keeps construction and no-op events from staging.
+					// last-staged guard keeps construction and no-op events from staging. The guard
+					// only advances on a SUCCESSFUL stage: a failed TrySetText leaves lastStaged at
+					// the last text the domain actually received, so further edits (including retyping
+					// the same text) re-attempt instead of being suppressed forever.
 					var lastStaged = value.Value ?? string.Empty;
 					box.TextChanged += (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
 						if (text == lastStaged)
 							return;
-						lastStaged = text;
-						editContext.TrySetText(field, wsKey, text);
+						if (editContext.TrySetText(field, wsKey, text))
+							lastStaged = text;
 					};
 				}
 
@@ -255,7 +258,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (_gear != null)
 				content.Children.Add(_gear);
 			Content = content;
-			IsEnabled = editContext != null && field.IsEditable;
+			// Read-only rows stay ENABLED: disabling the whole button would suppress its pointer
+			// events (killing hover-reveal) and disable the nested configure gear — which is
+			// NAVIGATION (the "Edit the … list" jump), not editing. Like FwDialogLauncherField,
+			// only the value-editing affordance is withheld: no option flyout is wired below, so
+			// clicking the value of a read-only row does nothing.
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 

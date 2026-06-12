@@ -19,8 +19,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	///   InvalidOperationException → Control.MarshaledInvoke → BeginInvoke
 	///   → WindowsFormsSynchronizationContext.Post → MicroCom.Runtime.MicroComProxyBase.Finalize().
 	/// Installed as the UI thread's ambient context BEFORE Avalonia initializes, this wrapper is
-	/// what every proxy captures; it delegates to the real context but swallows marshal failures
-	/// whose only victim would be a moot native Release. WinForms will not displace it —
+	/// what every proxy captures; it delegates to the real context but swallows POST marshal
+	/// failures whose only victim would be a moot native Release (synchronous Send failures still
+	/// surface — the caller is waiting on the result). WinForms will not displace it —
 	/// InstallIfNeeded only replaces null/base-type contexts, never custom ones.
 	/// </summary>
 	public sealed class FinalizerSafeSynchronizationContext : SynchronizationContext
@@ -60,19 +61,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			}
 		}
 
-		public override void Send(SendOrPostCallback d, object state)
-		{
-			try
-			{
-				_inner.Send(d, state);
-			}
-			catch (InvalidOperationException)
-			{
-			}
-			catch (InvalidAsynchronousStateException)
-			{
-			}
-		}
+		// Send is NOT swallowed: the finalizer rationale above only covers Post (MicroCom proxy
+		// finalizers post their native Release). Send is a synchronous call whose caller is
+		// waiting on the result — silently skipping the callback would corrupt that caller's
+		// state, so marshal failures surface to it.
+		public override void Send(SendOrPostCallback d, object state) => _inner.Send(d, state);
 
 		public override SynchronizationContext CreateCopy()
 			=> new FinalizerSafeSynchronizationContext(_inner.CreateCopy());

@@ -182,7 +182,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			_validationBlock = new TextBlock
 			{
-				Foreground = Brushes.Firebrick,
+				Foreground = PocDensity.ValidationErrorBrush,
 				TextWrapping = TextWrapping.Wrap,
 				Margin = new Thickness(0, 4, 0, 2),
 				IsVisible = false
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					withRule.Children.Add(new Border
 					{
 						Height = 2,
-						Background = Brushes.LightGray,
+						Background = PocDensity.SectionRuleBrush,
 						Margin = new Thickness(0, 6, 0, 2)
 					});
 					withRule.Children.Add(header);
@@ -435,8 +435,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						HorizontalAlignment = HorizontalAlignment.Left
 					};
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					// Graceful degrade (legacy PictureSlice shows the path for a bad image), but
+					// never silently: record what failed to load and why.
+					System.Diagnostics.Debug.WriteLine(
+						$"Picture field '{field.StableId}' failed to load image '{path}': {e.Message}");
 					content = new TextBlock { Text = path, Foreground = Brushes.Gray };
 				}
 			}

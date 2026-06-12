@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -253,8 +254,12 @@ namespace SIL.FieldWorks.XWorks
 						TsStringUtils.MakeString("raced", Cache.DefaultVernWs)));
 				Assert.That(refreshes, Is.EqualTo(0), "refreshes are held while the surface's own session is open");
 
+				// The production completion path (RecordEditView.OnAvaloniaRegionEditCompleted):
+				// drop the held delivery and request ONE coalesced refresh covering both the
+				// completed edit and anything held during it.
 				editing = false;
-				controller.NotifyEditCompleted();
+				controller.DiscardHeldRefresh();
+				controller.RequestRefresh();
 				Assert.That(refreshes, Is.EqualTo(1), "the held refresh is delivered once on edit completion");
 			}
 		}
@@ -385,6 +390,72 @@ namespace SIL.FieldWorks.XWorks
 			var after = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
 			Assert.That(after.Any(f => f.Field == "Bibliography"), Is.True,
 				"the field appears once it has data");
+		}
+
+		// Review task 2: legacy enumComboBox is a CLOSED combo over the layout's stringList
+		// labels (EnumComboSlice) — it must never compose as a free-form editor that could
+		// persist invalid enum values. Until the importer carries the stringList ids, the row is
+		// READ-ONLY showing the raw stored value. The Allomorph Status slice
+		// (Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus) is the
+		// enumComboBox the entry walk reaches.
+		[Test]
+		public void Compose_EnumComboBox_ComposesReadOnly_NeverAFreeFormEditor()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.LexemeFormOA.IsAbstract = true);
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+
+			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Text), "a formatted value row");
+			Assert.That(row.IsEditable, Is.False,
+				"read-only until the stringList option chooser lands — never a raw int editor");
+			Assert.That(row.Values.Single().Value, Is.EqualTo("1"),
+				"the raw stored value renders (best effort without the stringList labels)");
+			Assert.That(composed.EditContext.TrySetText(row, "", "2"), Is.False,
+				"no setter is registered — nothing can persist an invalid enum value");
+		}
+
+		// Review task 4: the plain-text setter replaces the WHOLE alternative via MakeString, so
+		// a row whose current content is rich (multiple runs / props beyond the ws) composes
+		// READ-ONLY — one keystroke must not flatten embedded writing systems or styles. The
+		// editable rich-text editor is gated on 6.13.
+		[Test]
+		public void Compose_RichAlternative_ComposesReadOnly_SoAKeystrokeCannotFlattenIt()
+		{
+			// Plain single-run content stays editable.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("Smith 1999", Cache.DefaultAnalWs)));
+			var plain = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography");
+			Assert.That(plain.IsEditable, Is.True, "plain single-run content keeps the text editor");
+
+			// Now make the alternative rich: two runs in different writing systems.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bldr = TsStringUtils.MakeIncStrBldr();
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+				bldr.Append("Smith ");
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
+				bldr.Append("1999");
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var rich = composed.Model.Fields.Single(f => f.Field == "Bibliography");
+			Assert.That(rich.Values.Any(v => v.Value == "Smith 1999"), Is.True,
+				"the rich content still displays as text");
+			Assert.That(rich.IsEditable, Is.False,
+				"rich content composes read-only so a plain-text write-back cannot destroy runs");
+			Assert.That(composed.EditContext.TrySetText(rich,
+				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, "flattened"),
+				Is.False, "no setter is registered for the rich row");
+			Assert.That(m_entry.Bibliography.get_String(Cache.DefaultAnalWs).RunCount, Is.EqualTo(2),
+				"the runs survive");
 		}
 
 		[Test]
@@ -560,6 +631,14 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsCheckboxKind_AndToggle()
 		{
+			// Review task 2 made the enumComboBox-backed Allomorph Status row read-only, so this
+			// test now exercises a REAL checkbox slice: an alternate form's "Is Abstract Form"
+			// (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows under
+			// show-hidden) over the persisted IsAbstract boolean flid.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.AlternateFormsOS.Add(
+					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
+
 			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
 			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Kind == RegionFieldKind.Boolean);
 			Assert.That(boolField, Is.Not.Null, "the entry layout carries at least one checkbox field");
@@ -769,6 +848,29 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(translation.TypeRA, Is.Not.Null, "ghostInitMethod=SetTypeToFreeTrans ran");
 			Assert.That(translation.TypeRA.Guid, Is.EqualTo(CmPossibilityTags.kguidTranFreeTranslation),
 				"the new translation is typed Free Translation, like legacy");
+		}
+
+		// Review task 3: a ghost prompt whose layout authors NO ghost field (and no init method)
+		// must compose NON-editable — before this fix, typing into it called MakeNewObject and
+		// silently DISCARDED the typed text (nothing existed to receive the string). The shipped
+		// AlternateForms seq (LexEntryParts.xml:119, no ghost= attribute) is exactly that case.
+		[Test]
+		public void Compose_GhostWithoutGhostField_IsNotEditable_SoTypingCannotCreateAndDiscard()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var ghost = composed.Model.Fields.FirstOrDefault(f =>
+				f.Field == "AlternateForms" && f.StableId.EndsWith("/ghost"));
+			Assert.That(ghost, Is.Not.Null,
+				"the empty always-visible alternate-forms sequence still renders its prompt row");
+			Assert.That(ghost.IsEditable, Is.False,
+				"no ghost field anywhere to route the text: the prompt must not accept typing");
+
+			var before = m_entry.AlternateFormsOS.Count;
+			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "lost"),
+				Is.False, "no setter is registered for the non-editable prompt");
+			Assert.That(composed.EditContext.IsOpen, Is.False, "nothing staged, no session opened");
+			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(before),
+				"no bare object was created behind the user's back");
 		}
 
 		// B3 (xml-retirement-blockers) — conditional display: the real shipped variant/complex-form
@@ -1177,6 +1279,84 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sda.get_MultiStringAlt(m_entry.Hvo, m_flidEntryMulti, Cache.DefaultAnalWs).Text,
 				Is.EqualTo("high-low"), "one undo reverts the whole session, both custom edits included");
 			Assert.That(sda.get_StringProp(m_entry.Hvo, m_flidEntrySingle).Text, Is.EqualTo("from Smith"));
+		}
+
+		// Review task 5: a plain String prop reads the WHOLE string (get_StringProp), so the
+		// row's writing system must come from the STRING's own first run when there is content —
+		// not from the layout's ws= spec — and write-back must use that same ws (legacy
+		// StringSlice renders the string's own run properties). The layout ws only seeds an
+		// empty string.
+		[Test]
+		public void Compose_StringProp_DerivesTheRowWsFromTheStoredString_AndWritesBackSymmetrically()
+		{
+			var vern = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var sda = Cache.DomainDataByFlid;
+			// "Source Note" is a kwsAnal-selector String field, but the user typed vernacular.
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				sda.SetString(m_entry.Hvo, m_flidEntrySingle,
+					TsStringUtils.MakeString("vern note", vern.Handle)));
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var single = composed.Model.Fields.First(f => f.Label == "Source Note");
+			Assert.That(single.Values.Single().WsTag, Is.EqualTo(vern.Id),
+				"the row's ws (abbrev/font/RTL identity) follows the stored string's first run");
+
+			Assert.That(composed.EditContext.TrySetText(single, vern.Id, "edited note"), Is.True,
+				"the derived ws is also the row's write-back key");
+			composed.EditContext.Commit();
+			var stored = sda.get_StringProp(m_entry.Hvo, m_flidEntrySingle);
+			Assert.That(stored.Text, Is.EqualTo("edited note"));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 0), Is.EqualTo(vern.Handle),
+				"write-back keeps the string's own ws — read and write are symmetric");
+		}
+
+		[Test]
+		public void Compose_EmptyStringProp_FallsBackToTheLayoutWs()
+		{
+			ILexEntry bare = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				bare = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				bare.LexemeFormOA = morph;
+				morph.Form.set_String(Cache.DefaultVernWs, TsStringUtils.MakeString("gato", Cache.DefaultVernWs));
+			});
+
+			var composed = FullEntryRegionComposer.Compose(bare, Cache);
+			var single = composed.Model.Fields.First(f => f.Label == "Source Note" && f.ObjectHvo == bare.Hvo);
+			Assert.That(single.Values.Single().WsTag,
+				Is.EqualTo(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id),
+				"an empty String prop seeds from the field's own ws selector (kwsAnal)");
+		}
+
+		// Review task 7: clearing an int box must be SAFE. Legacy IntegerSlice treats a
+		// non-numeric box — including empty — as invalid on focus loss (warn + restore the
+		// stored value; Convert.ToInt32("") throws), never committing empty as 0. The composed
+		// setter mirrors that: empty/whitespace stages NOTHING, and the last successfully staged
+		// value is what a commit applies.
+		[Test]
+		public void Edit_IntegerField_EmptyAndWhitespace_StageNothing()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var number = composed.Model.Fields.First(f => f.Label == "Frequency Count");
+			var sda = Cache.DomainDataByFlid;
+
+			Assert.That(composed.EditContext.TrySetText(number, "", ""), Is.False,
+				"clearing the box stages nothing (legacy: invalid, restore)");
+			Assert.That(composed.EditContext.TrySetText(number, "", "   "), Is.False);
+			Assert.That(composed.EditContext.TrySetText(number, "", "not-a-number"), Is.False);
+			Assert.That(composed.EditContext.IsOpen, Is.False,
+				"rejected values must not leave an empty fence open");
+			Assert.That(sda.get_IntProp(m_entry.Hvo, m_flidEntryNumber), Is.EqualTo(42),
+				"the stored value is untouched");
+
+			// Clear-then-retype: only the parseable states stage; commit applies the LAST one.
+			Assert.That(composed.EditContext.TrySetText(number, "", "5"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(number, "", ""), Is.False,
+				"a clear after a valid stage still stages nothing");
+			Assert.That(composed.EditContext.TrySetText(number, "", "55"), Is.True);
+			composed.EditContext.Commit();
+			Assert.That(sda.get_IntProp(m_entry.Hvo, m_flidEntryNumber), Is.EqualTo(55));
 		}
 
 		[Test]

@@ -101,4 +101,16 @@
     <value>Edit the {0} list</value>
     <comment>Tooltip/label of a configure gear whose list-editor jump was derived from the row's possibility list; {0} is the list name (mirrors the legacy chooser's "Edit the … list" links).</comment>
   </data>
+  <data name="ksLexemeFormLabel" xml:space="preserve">
+    <value>Lexeme Form</value>
+    <comment>Label of the lexeme-form row in the first-slice entry view (compiled label override and authored fallback).</comment>
+  </data>
+  <data name="ksMorphTypeLabel" xml:space="preserve">
+    <value>Morph Type</value>
+    <comment>Label of the morph-type row in the first-slice entry view (authored fallback).</comment>
+  </data>
+  <data name="ksGlossLabel" xml:space="preserve">
+    <value>Gloss</value>
+    <comment>Label of the gloss row in the first-slice entry view (authored fallback).</comment>
+  </data>
 </root>

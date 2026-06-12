@@ -67,5 +67,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 
 		/// <summary>Compact context-menu item height floor (legacy items are ~22px, Fluent ~32px).</summary>
 		public const double MenuItemMinHeight = 22.0;
+
+		// ---- Centralized chrome brushes: no hardcoded colors at the use sites, one place to tune.
+
+		/// <summary>The option picker panel surface (a light selection panel, not a menu).</summary>
+		public static readonly Avalonia.Media.IBrush PickerBackgroundBrush = Avalonia.Media.Brushes.White;
+
+		/// <summary>The option picker panel border.</summary>
+		public static readonly Avalonia.Media.IBrush PickerBorderBrush = Avalonia.Media.Brushes.LightGray;
+
+		/// <summary>Inline validation-error text in the region edit footer.</summary>
+		public static readonly Avalonia.Media.IBrush ValidationErrorBrush = Avalonia.Media.Brushes.Firebrick;
+
+		/// <summary>The heavy 2px rule above top-level section headers (legacy heavy separator).</summary>
+		public static readonly Avalonia.Media.IBrush SectionRuleBrush = Avalonia.Media.Brushes.LightGray;
 	}
 }

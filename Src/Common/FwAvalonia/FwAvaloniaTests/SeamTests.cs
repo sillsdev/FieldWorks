@@ -12,7 +12,8 @@ namespace FwAvaloniaTests
 	/// 16.1 — the crash guard for WinForms-hosted Avalonia: MicroCom proxy finalizers post their
 	/// native Release through the captured SynchronizationContext; when the WinForms marshaling
 	/// window is gone that post throws on the FINALIZER thread and terminates the process. The
-	/// wrapper swallows exactly those marshal failures and passes everything else through.
+	/// wrapper swallows exactly those marshal failures on POST (the finalizer lane) and passes
+	/// everything else through — synchronous Send failures still surface to the waiting caller.
 	/// </summary>
 	[TestFixture]
 	public class FinalizerSafeSynchronizationContextTests
@@ -42,7 +43,9 @@ namespace FwAvaloniaTests
 			var guarded = new FinalizerSafeSynchronizationContext(new DeadTargetContext());
 			Assert.DoesNotThrow(() => guarded.Post(_ => { }, null),
 				"the exact failure mode of MicroComProxyBase.Finalize must not propagate");
-			Assert.DoesNotThrow(() => guarded.Send(_ => { }, null));
+			Assert.Throws<ObjectDisposedException>(() => guarded.Send(_ => { }, null),
+				"Send is synchronous caller work, not a finalizer Release — a silently skipped " +
+				"callback would corrupt the waiting caller, so the failure must surface");
 		}
 
 		[Test]

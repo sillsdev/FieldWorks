@@ -96,6 +96,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		private void OnCompanionControlSizeChanged(object sender, EventArgs e)
 			=> UpdateCompanionStripHeight();
 
+		/// <summary>
+		/// SetCompanionControls promises companion lifetime stays with the caller, but
+		/// <see cref="System.Windows.Forms.Control.Dispose(bool)"/> disposes parented children —
+		/// so detach the companions (and their SizeChanged hooks) BEFORE base disposal runs.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _companionStrip != null)
+			{
+				for (var i = _companionStrip.Controls.Count - 1; i >= 0; i--)
+				{
+					var companion = _companionStrip.Controls[i];
+					companion.SizeChanged -= OnCompanionControlSizeChanged;
+					_companionStrip.Controls.RemoveAt(i); // never dispose: the caller owns it
+				}
+			}
+			base.Dispose(disposing);
+		}
+
 		// The strip auto-sizes to its stacked children and collapses (hidden, zero-height) when empty.
 		private void UpdateCompanionStripHeight()
 		{

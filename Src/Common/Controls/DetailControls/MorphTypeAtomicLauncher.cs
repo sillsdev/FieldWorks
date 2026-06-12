@@ -455,6 +455,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		// Review consolidation (morph-type GUID knowledge): the single source of truth for the
+		// stem/affix classification is now MorphTypeSwapLogic in FwAvalonia/Seams
+		// (IsStemType(Guid) over its GUID -> MorphTypeKind table); the Avalonia composer consumes
+		// it there. This legacy WinForms copy cannot delegate yet because DetailControls does not
+		// reference FwAvalonia; MorphTypeGuidConsolidationTests (xWorksTests) pins this guid set
+		// to the seam's so the two cannot drift until this launcher retires with its surface.
 		internal bool IsStemType(IMoMorphType type)
 		{
 			if (type == null)
@@ -473,5 +479,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return true;
 			return false;
 		}
+	}
+
+	/// <summary>
+	/// Exposes the legacy launchers' localized strings to the Avalonia region composer so the
+	/// migrated choosers reuse the SAME translated resources instead of minting duplicate resx
+	/// entries (<c>DetailControlsStrings</c> itself is internal to this assembly). Parked in this
+	/// file only because it is the launcher file the migration already touches; move it to its
+	/// own file with the next DetailControls sweep.
+	/// </summary>
+	public static class DetailControlsResourceAccess
+	{
+		/// <summary>
+		/// The empty-choice label of the atomic reference launchers ("&lt;Empty&gt;",
+		/// <c>ksNullLabel</c> — AtomicReferenceLauncher.cs:81, ReferenceComboBoxSlice.cs:77).
+		/// </summary>
+		public static string NullItemLabel => DetailControlsStrings.ksNullLabel;
 	}
 }

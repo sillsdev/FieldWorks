@@ -75,5 +75,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// possibility list (the legacy chooser dialog's "Edit the … list" link text).
 		/// </summary>
 		public static string EditListFormat => Resources.GetString("ksEditListFormat");
+
+		/// <summary>"Lexeme Form" — first-slice row label (compiled override and authored fallback).</summary>
+		public static string LexemeFormLabel => Resources.GetString("ksLexemeFormLabel");
+
+		/// <summary>"Morph Type" — first-slice row label (authored fallback).</summary>
+		public static string MorphTypeLabel => Resources.GetString("ksMorphTypeLabel");
+
+		/// <summary>"Gloss" — first-slice row label (authored fallback).</summary>
+		public static string GlossLabel => Resources.GetString("ksGlossLabel");
 	}
 }

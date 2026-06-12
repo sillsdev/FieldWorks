@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 	/// opening its own UOW while the fence holds the write lock would throw, the same hazard the
 	/// undo guard exists for.
 	/// </summary>
-	public sealed class WinFormsLegacyDialogLauncher : ILegacyDialogLauncher
+	public sealed class WinFormsLegacyDialogLauncher : ILegacyDialogLauncher, IDisposable
 	{
 		private const string LexTextControlsDll = "LexTextControls.dll";
 		private const string MsaDialogClass = "SIL.FieldWorks.LexText.Controls.MsaInflectionFeatureListDlg";
@@ -80,6 +80,11 @@ namespace SIL.FieldWorks.XWorks
 		private readonly PropertyTable _propertyTable;
 		private readonly Func<Form> _ownerForm;
 		private readonly Action _beforeLaunch;
+		// SoundPlayer.Play() streams asynchronously: the player must outlive the call or playback
+		// is cut off (the legacy AudioVisualLauncher keeps an m_player field for the same
+		// lifetime reason). Released when the next play starts; the last one lives with this
+		// launcher (which the host keeps for its own lifetime).
+		private System.Media.SoundPlayer _player;
 
 		public WinFormsLegacyDialogLauncher(LcmCache cache, Mediator mediator,
 			PropertyTable propertyTable, Func<Form> ownerForm, Action beforeLaunch = null)
@@ -89,6 +94,13 @@ namespace SIL.FieldWorks.XWorks
 			_propertyTable = propertyTable;
 			_ownerForm = ownerForm;
 			_beforeLaunch = beforeLaunch;
+		}
+
+		/// <summary>Releases the held media player (legacy AudioVisualLauncher.Dispose parity).</summary>
+		public void Dispose()
+		{
+			_player?.Dispose();
+			_player = null;
 		}
 
 		public bool LaunchFor(ICmObject obj, ViewNode node)
@@ -204,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// AudioVisualLauncher.HandleChooser, minus the WinForms slice: SoundPlayer for a real wav
 		// (sniffed by RIFF/WAVE header, like legacy), the OS default app for everything else.
-		private static bool PlayMedia(ICmObject obj)
+		private bool PlayMedia(ICmObject obj)
 		{
 			var file = DialogLauncherPlugins.ResolveMediaFile(obj);
 			if (file == null)
@@ -218,8 +230,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (IsWavFile(path))
 			{
-				using (var player = new System.Media.SoundPlayer(path))
-					player.Play();
+				// Play() is asynchronous; disposing the player immediately can stop playback.
+				// Keep it alive in the field until the next play (or the launcher goes away).
+				_player?.Dispose();
+				_player = new System.Media.SoundPlayer(path);
+				_player.Play();
 			}
 			else
 			{

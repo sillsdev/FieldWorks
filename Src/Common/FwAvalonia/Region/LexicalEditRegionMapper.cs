@@ -81,24 +81,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>
-		/// Maps a node's editor to a renderable kind. Heuristic and deliberately small for the first
-		/// slice; extend as more editors gain Avalonia renderers. Obsolete editors are unsupported;
-		/// atomic-reference/chooser editors render as choosers; everything else is treated as text.
+		/// Maps a node's editor to a renderable kind. Obsolete editors are unsupported; the
+		/// chooser categories render as choosers; everything else is treated as text — the
+		/// deliberately small first-slice projection. The editor-string knowledge itself lives
+		/// ONCE, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/> (review consolidation:
+		/// this method previously kept its own substring heuristics, the third copy beside the
+		/// composer's switch and EditorKindMap's sets).
 		/// </summary>
 		private static RegionFieldKind ClassifyKind(ViewNode node)
 		{
 			if (node.EditorClassification == EditorClassification.Obsolete)
 				return RegionFieldKind.Unsupported;
 
-			var editor = node.RawEditor ?? string.Empty;
-			if (editor.IndexOf("atomicreference", System.StringComparison.OrdinalIgnoreCase) >= 0
-				|| editor.IndexOf("chooser", System.StringComparison.OrdinalIgnoreCase) >= 0
-				|| editor.IndexOf("morphtype", System.StringComparison.OrdinalIgnoreCase) >= 0)
+			switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
 			{
-				return RegionFieldKind.Chooser;
+				case RegionEditorCategory.MorphTypeChooser:
+				case RegionEditorCategory.AtomicReferenceChooser:
+					return RegionFieldKind.Chooser;
+				default:
+					return RegionFieldKind.Text;
 			}
-
-			return RegionFieldKind.Text;
 		}
 	}
 }

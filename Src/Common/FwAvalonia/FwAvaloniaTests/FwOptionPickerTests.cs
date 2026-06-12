@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
@@ -225,6 +226,66 @@ namespace FwAvaloniaTests
 			RaiseKey(picker.FilterBox, Key.Enter);
 			Assert.That(committed.Single().Key, Is.EqualTo("e-casa"),
 				"Enter commits the first search result by default");
+		}
+
+		[AvaloniaTest]
+		public void PointerRelease_OnTheListScrollbar_DoesNotCommit()
+		{
+			// Enough options to overflow the capped list, so the scrollbar is a real part of
+			// the gesture surface.
+			var options = Enumerable.Range(0, 60)
+				.Select(i => new RegionChoiceOption("k" + i, "Option " + i))
+				.ToList();
+			var picker = new FwOptionPicker(options, null, "Domains");
+			var committed = new List<RegionChoiceOption>();
+			picker.OptionCommitted += committed.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var scrollBar = picker.OptionsList.GetVisualDescendants().OfType<ScrollBar>()
+				.FirstOrDefault(b => b.Orientation == Avalonia.Layout.Orientation.Vertical);
+			Assert.That(scrollBar, Is.Not.Null, "the list template carries a vertical scrollbar");
+
+			RaiseRelease(scrollBar, window);
+
+			Assert.That(committed, Is.Empty,
+				"a release landing on the scrollbar (not an option row) must not commit the highlight");
+		}
+
+		[AvaloniaTest]
+		public void PointerRelease_OnAnOptionRow_StillCommits()
+		{
+			var (picker, window, committed, _) = ShowStatic();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OptionsList.SelectedIndex = 2; // the press selects; the release completes
+			var container = picker.OptionsList.ContainerFromIndex(2);
+			Assert.That(container, Is.Not.Null, "the option's container is realized");
+
+			RaiseRelease(container, window);
+
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-weather" }),
+				"a release that lands on an option row commits the highlighted option");
+		}
+
+		// A pointer release routed from a SPECIFIC template part: the commit guard keys off where
+		// the release landed (e.Source), which headless window clicks cannot steer onto the
+		// scrollbar deterministically.
+		private static void RaiseRelease(Control source, Window window)
+		{
+			source.RaiseEvent(new PointerReleasedEventArgs(source,
+				new Pointer(Pointer.GetNextFreeId(), PointerType.Mouse, true),
+				window, default, 0,
+				new PointerPointProperties(RawInputModifiers.None,
+					PointerUpdateKind.LeftButtonReleased),
+				KeyModifiers.None, MouseButton.Left));
+			Dispatcher.UIThread.RunJobs();
 		}
 	}
 }

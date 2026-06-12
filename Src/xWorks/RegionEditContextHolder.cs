@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.ComponentModel;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -28,6 +30,8 @@ namespace SIL.FieldWorks.XWorks
 	public sealed class RegionEditContextHolder
 	{
 		private IActionHandlerExtensions m_undoHook;
+		private Form m_deactivateForm;
+		private EventHandler m_settleOnDeactivate;
 
 		/// <summary>The context currently bound to the shown region, or null.</summary>
 		public IRegionEditContext Current { get; private set; }
@@ -98,6 +102,32 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			m_undoHook.DoingUndoOrRedo -= OnDoingUndoOrRedo;
 			m_undoHook = null;
+		}
+
+		/// <summary>
+		/// Settles whenever the given top-level window deactivates. The undo guard is per-stack
+		/// and cannot reach other windows' undo stacks, so an open session must close before the
+		/// user can focus another window and undo there (re-entering the UOW write lock).
+		/// Detaches any previously attached form first; a null form is a no-op.
+		/// </summary>
+		public void AttachDeactivateHook(Form form)
+		{
+			DetachDeactivateHook();
+			if (form == null)
+				return;
+			m_settleOnDeactivate = (sender, e) => Settle();
+			form.Deactivate += m_settleOnDeactivate;
+			m_deactivateForm = form;
+		}
+
+		/// <summary>Stops settling on window deactivation. Safe to call when not attached.</summary>
+		public void DetachDeactivateHook()
+		{
+			if (m_deactivateForm == null)
+				return;
+			m_deactivateForm.Deactivate -= m_settleOnDeactivate;
+			m_deactivateForm = null;
+			m_settleOnDeactivate = null;
 		}
 
 		private void OnDoingUndoOrRedo(CancelEventArgs e)

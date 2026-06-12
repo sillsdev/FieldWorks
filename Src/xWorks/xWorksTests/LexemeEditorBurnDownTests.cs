@@ -198,8 +198,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public string LegacyClassName { get; }
 
-			public Avalonia.Controls.Control BuildControl(ICmObject obj, ViewNode node,
-				IRegionEditContext editContext, LcmCache cache) => null;
+			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context) => null;
 		}
 
 		[Test]
@@ -282,14 +281,13 @@ namespace SIL.FieldWorks.XWorks
 
 			public string LegacyClassName => AvaloniaCompanionSlices.MessageSliceClassName;
 
-			public Avalonia.Controls.Control BuildControl(ICmObject obj, ViewNode node,
-				IRegionEditContext editContext, LcmCache cache)
+			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context)
 			{
 				BuildCalls++;
-				LastObject = obj;
-				LastNode = node;
-				LastEditContext = editContext;
-				LastCache = cache;
+				LastObject = context.Target;
+				LastNode = context.Node;
+				LastEditContext = context.EditContext;
+				LastCache = context.Cache;
 				return null; // never rendered in this fixture; the view's guard lane covers null
 			}
 		}

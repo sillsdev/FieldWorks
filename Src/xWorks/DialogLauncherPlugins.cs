@@ -17,11 +17,11 @@ namespace SIL.FieldWorks.XWorks
 	/// + "..." button) whose button calls the host-injected <see cref="ILegacyDialogLauncher"/>
 	/// seam with the row's (object, node). The pane stays WinForms-free; the WinForms dialog is
 	/// the sanctioned coexistence carve-out and lives behind the seam. Without injected services
-	/// the value still renders and the button is disabled with a tooltip. The fenced edit context
-	/// is unused: the dialog commits through its own UOW and the refresh controller re-renders via
-	/// PropChanged.
+	/// (context.Services null, or no launcher in them) the value still renders and the button is
+	/// disabled with a tooltip. The fenced edit context is unused: the dialog commits through its
+	/// own UOW and the refresh controller re-renders via PropChanged.
 	/// </summary>
-	public sealed class LauncherRegionPlugin : IServiceAwareRegionEditorPlugin
+	public sealed class LauncherRegionPlugin : IRegionEditorPlugin
 	{
 		private readonly Func<ICmObject, ViewNode, LcmCache, string> _valueReader;
 
@@ -34,20 +34,17 @@ namespace SIL.FieldWorks.XWorks
 
 		public string LegacyClassName { get; }
 
-		public Control BuildControl(ICmObject obj, ViewNode node, IRegionEditContext editContext,
-			LcmCache cache)
-			=> BuildControl(obj, node, editContext, cache, null);
-
-		public Control BuildControl(ICmObject obj, ViewNode node, IRegionEditContext editContext,
-			LcmCache cache, RegionEditorServices services)
+		public Control BuildControl(RegionEditorBuildContext context)
 		{
+			var obj = context?.Target;
+			var node = context?.Node;
 			if (obj == null || node == null)
 				return null;
 
 			string value;
 			try
 			{
-				value = _valueReader(obj, node, cache) ?? string.Empty;
+				value = _valueReader(obj, node, context.Cache) ?? string.Empty;
 			}
 			catch (Exception e)
 			{
@@ -56,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 				value = string.Empty;
 			}
 
-			var launcher = services?.LegacyDialogLauncher;
+			var launcher = context.Services?.LegacyDialogLauncher;
 			Action launch = launcher == null
 				? (Action)null
 				: () =>

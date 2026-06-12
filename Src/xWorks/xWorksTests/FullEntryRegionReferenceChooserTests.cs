@@ -271,11 +271,15 @@ namespace SIL.FieldWorks.XWorks
 				"possAtomicReference takes the chooser lane, like the morph type");
 			Assert.That(status.IsEditable, Is.True);
 			Assert.That(status.SelectedOptionKey, Is.EqualTo(m_statusConfirmed.Guid.ToString()));
+			// Review task 6: the empty choice leads (the legacy launcher lets the user clear the
+			// reference), then the field's possibility list in list order (ReferenceTargetOwner).
 			Assert.That(status.Options.Select(o => o.Key), Is.EqualTo(new[]
 				{
-					m_statusConfirmed.Guid.ToString(), m_statusPending.Guid.ToString()
+					string.Empty, m_statusConfirmed.Guid.ToString(), m_statusPending.Guid.ToString()
 				}),
-				"options come from the field's possibility list (ReferenceTargetOwner), in list order");
+				"empty option first, then the list's options in list order");
+			Assert.That(status.Options[0].Name, Is.Not.Null.And.Not.Empty,
+				"the empty choice carries the launchers' localized label (ksNullLabel), never blank");
 
 			Assert.That(composed.EditContext.TrySetOption(status, m_statusPending.Guid.ToString()), Is.True);
 			composed.EditContext.Commit();
@@ -283,6 +287,43 @@ namespace SIL.FieldWorks.XWorks
 
 			Cache.ActionHandlerAccessor.Undo();
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
+		}
+
+		// Review task 6: legacy PossibilityAtomicReferenceLauncher.OnLeave commits an emptied box
+		// as AddItem(null) — i.e. the reference CLEARS. The composed chooser's empty option does
+		// the same through the fenced session (SetObjProp(hvo, flid, 0)).
+		[Test]
+		public void Edit_AtomicChooser_EmptyOption_ClearsTheReference()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() => m_sense.StatusRA = m_statusConfirmed);
+
+			var composed = Compose();
+			var status = composed.Model.Fields.Single(f => f.Field == "Status" && f.ObjectHvo == m_sense.Hvo);
+
+			Assert.That(composed.EditContext.TrySetOption(status, string.Empty), Is.True,
+				"the empty option stages a clear");
+			composed.EditContext.Commit();
+			Assert.That(m_sense.StatusRA, Is.Null, "the reference cleared, like legacy AddItem(null)");
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed),
+				"the clear is one step on the global undo stack");
+		}
+
+		// The morph-type chooser must NOT gain the empty choice: legacy
+		// MorphTypeAtomicLauncher.AllowEmptyItem is false (a form always has a morph type).
+		[Test]
+		public void Compose_MorphTypeChooser_OffersNoEmptyOption()
+		{
+			var composed = Compose();
+			var morphType = composed.Model.Fields
+				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+
+			Assert.That(morphType.Options.Select(o => o.Key), Has.None.EqualTo(string.Empty),
+				"MorphTypeAtomicLauncher.AllowEmptyItem == false — no empty choice here");
+			Assert.That(composed.EditContext.TrySetOption(morphType, string.Empty), Is.False,
+				"an empty key must not clear the morph type");
 		}
 
 		[Test]

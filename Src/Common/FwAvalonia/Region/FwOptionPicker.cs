@@ -13,6 +13,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 using SIL.FieldWorks.Common.FwAvalonia.Poc;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
@@ -51,8 +52,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_searchOptions = searchOptions;
 
 			// A selection-filter panel, not a menu: light border + a hint of elevation.
-			Background = Brushes.White;
-			BorderBrush = Brushes.LightGray;
+			Background = PocDensity.PickerBackgroundBrush;
+			BorderBrush = PocDensity.PickerBorderBrush;
 			BorderThickness = new Thickness(1);
 			CornerRadius = new CornerRadius(3);
 			Padding = new Thickness(4);
@@ -100,8 +101,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			OptionsList.AddHandler(InputElement.KeyDownEvent, OnListKeyDown,
 				Avalonia.Interactivity.RoutingStrategies.Tunnel);
 			// Click commits: selection lands on pointer press; the release completes the gesture.
+			// Releases on the list's OTHER template parts (scrollbar, padding) bubble through this
+			// handler too and must not commit — only a release that landed on an option row counts.
 			OptionsList.AddHandler(InputElement.PointerReleasedEvent,
-				(s, e) => CommitHighlighted(),
+				(s, e) =>
+				{
+					if (IsReleaseOverOwnItem(e.Source))
+						CommitHighlighted();
+				},
 				Avalonia.Interactivity.RoutingStrategies.Bubble);
 
 			Child = new StackPanel
@@ -137,6 +144,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				?? (OptionsList.ItemsSource as IEnumerable<RegionChoiceOption>)?.FirstOrDefault();
 			if (option != null)
 				OptionCommitted?.Invoke(option);
+		}
+
+		// True only when the routed event source sits inside a ListBoxItem of THIS picker's list —
+		// the guard that keeps scrollbar/track/padding releases from committing the highlight.
+		private bool IsReleaseOverOwnItem(object source)
+		{
+			var item = (source as Visual)?.GetSelfAndVisualAncestors()
+				.OfType<ListBoxItem>().FirstOrDefault();
+			return item != null && item.GetVisualAncestors().Contains(OptionsList);
 		}
 
 		private void ApplyFilter(string query)

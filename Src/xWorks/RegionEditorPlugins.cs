@@ -30,25 +30,50 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Builds the Avalonia control that replaces the legacy slice for one composed row. Invoked
-		/// lazily by the view (never during compose); the composer hands the region's own edit
-		/// context so plugin edits ride the same fenced session as every other row.
+		/// lazily by the view (never during compose); the context carries the region's own edit
+		/// context so plugin edits ride the same fenced session as every other row, plus the
+		/// optional host services (review task 13: the former IServiceAwareRegionEditorPlugin
+		/// marker interface and its five-argument overload collapsed into this ONE contract).
 		/// </summary>
-		Control BuildControl(ICmObject obj, ViewNode node, IRegionEditContext editContext, LcmCache cache);
+		Control BuildControl(RegionEditorBuildContext context);
 	}
 
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D4 — the back-compatible extension of
-	/// <see cref="IRegionEditorPlugin"/> for plugins that need host-injected services (today the
-	/// <see cref="ILegacyDialogLauncher"/> seam): the composer calls the five-argument overload
-	/// when the plugin implements this interface, passing whatever <see cref="RegionEditorServices"/>
-	/// the host supplied to Compose (null when none — services are always optional). Existing
-	/// plugins keep the original four-argument contract untouched.
+	/// Review task 13 — everything the composer hands a plugin factory, bundled into one contract:
+	/// the row's object and typed node, the region's edit context (resolved lazily through the
+	/// composer's deferred accessor — the context object is created during compose, BEFORE the
+	/// edit context exists; plugin factories run at render time, after), the cache, and the
+	/// host-injected <see cref="RegionEditorServices"/> (D4; null when the host supplies none —
+	/// services are always optional and plugins must tolerate null).
 	/// </summary>
-	public interface IServiceAwareRegionEditorPlugin : IRegionEditorPlugin
+	public sealed class RegionEditorBuildContext
 	{
-		/// <summary>As <see cref="IRegionEditorPlugin.BuildControl"/>, plus the host services (may be null).</summary>
-		Control BuildControl(ICmObject obj, ViewNode node, IRegionEditContext editContext, LcmCache cache,
-			RegionEditorServices services);
+		private readonly Func<IRegionEditContext> _editContextAccessor;
+
+		public RegionEditorBuildContext(ICmObject target, ViewNode node,
+			Func<IRegionEditContext> editContextAccessor, LcmCache cache,
+			RegionEditorServices services = null)
+		{
+			Target = target;
+			Node = node;
+			_editContextAccessor = editContextAccessor;
+			Cache = cache;
+			Services = services;
+		}
+
+		/// <summary>The composed row's own object (the slice's object in legacy terms).</summary>
+		public ICmObject Target { get; }
+
+		/// <summary>The row's typed view node (layout identity, field, label, menu bindings).</summary>
+		public ViewNode Node { get; }
+
+		/// <summary>The region's edit context, resolved on read (null until the region composed).</summary>
+		public IRegionEditContext EditContext => _editContextAccessor?.Invoke();
+
+		public LcmCache Cache { get; }
+
+		/// <summary>Host-injected services (the legacy-dialog launcher seam); may be null.</summary>
+		public RegionEditorServices Services { get; }
 	}
 
 	/// <summary>

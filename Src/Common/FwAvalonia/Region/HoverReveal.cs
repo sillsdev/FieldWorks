@@ -38,11 +38,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>The opacity fade duration (the "modern feel" transition).</summary>
 		internal static readonly TimeSpan FadeDuration = TimeSpan.FromMilliseconds(120);
 
+		// The reveal registration of an affordance: stamped the first time the affordance is
+		// attached, looked up (and merged into) by every later Attach. The property is the
+		// idempotence anchor — without it each Attach call would stack an independent handler
+		// set with its own watched list, and the groups would fight over the opacity.
+		private static readonly AttachedProperty<RevealGroup> RevealGroupProperty =
+			AvaloniaProperty.RegisterAttached<Control, RevealGroup>("HoverRevealGroup", typeof(HoverReveal));
+
 		/// <summary>
 		/// Wires <paramref name="affordances"/> to reveal while the pointer is over any of
 		/// <paramref name="hoverSources"/> (or over an affordance itself) and hide otherwise.
 		/// Idempotent per affordance: attaching again (the view widening the hover surface to the
-		/// row after the control wired itself) only adds the new sources.
+		/// row after the control wired itself) merges into the existing registration — one handler
+		/// set, one watched list — instead of stacking a second independent one.
 		/// </summary>
 		public static void Attach(IReadOnlyList<Control> hoverSources, IReadOnlyList<Control> affordances)
 		{
@@ -50,6 +58,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (targets.Count == 0)
 				return;
 			var sources = (hoverSources ?? Array.Empty<Control>()).Where(s => s != null).Distinct().ToList();
+
+			// Resolve the registration this call lands in: the first already-registered target's
+			// group wins; targets registered in OTHER groups merge into it (an Attach spanning
+			// previously separate registrations unifies them — they reveal together from then on).
+			RevealGroup group = null;
+			foreach (var affordance in targets)
+			{
+				var existing = affordance.GetValue(RevealGroupProperty);
+				if (existing == null)
+					continue;
+				if (group == null)
+					group = existing;
+				else
+					existing.MergeInto(group);
+			}
+			if (group == null)
+				group = new RevealGroup();
 
 			foreach (var affordance in targets)
 			{
@@ -63,29 +88,92 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						Duration = FadeDuration
 					});
 				}
+
+				if (group.ContainsTarget(affordance))
+				{
+					// Already wired (possibly under a since-merged group): just re-point the stamp.
+					affordance.SetValue(RevealGroupProperty, group);
+					continue;
+				}
+
+				group.AddTarget(affordance);
+				affordance.SetValue(RevealGroupProperty, group);
+				// The affordances are hover sources too: moving onto the gear keeps it revealed.
+				group.Watch(affordance);
+				// Accessibility: opacity-hidden affordances stay focusable, so Tab reveals them.
+				// The handlers resolve the group at fire time, so they survive later merges.
+				affordance.GotFocus += (s, e) => group.RevealAll();
+				affordance.LostFocus += (s, e) => group.Update();
 			}
-			SetRevealed(targets, false);
 
-			// The affordances are hover sources too: moving onto the gear keeps it revealed.
-			var watched = sources.Concat(targets).Distinct().ToList();
+			foreach (var source in sources)
+				group.Watch(source);
 
-			void Update()
+			// Initial/merged state: hidden unless something is already hovered or focused.
+			group.Update();
+		}
+
+		// One reveal state machine per merged registration: the targets that reveal together and
+		// the controls whose hover drives them. Merging leaves a forwarding pointer behind, so
+		// handlers subscribed against an absorbed group keep working against the merged one.
+		private sealed class RevealGroup
+		{
+			private RevealGroup _mergedInto;
+			private readonly List<Control> _targets = new List<Control>();
+			private readonly List<Control> _watched = new List<Control>();
+
+			private RevealGroup Resolve()
 			{
-				var reveal = watched.Any(c => c.IsPointerOver) || targets.Any(a => a.IsFocused);
-				SetRevealed(targets, reveal);
+				var group = this;
+				while (group._mergedInto != null)
+					group = group._mergedInto;
+				return group;
 			}
 
-			foreach (var control in watched)
+			public bool ContainsTarget(Control affordance) => Resolve()._targets.Contains(affordance);
+
+			public void AddTarget(Control affordance) => Resolve()._targets.Add(affordance);
+
+			/// <summary>Watches a hover source, subscribing its pointer handlers exactly once.</summary>
+			public void Watch(Control control)
 			{
+				var group = Resolve();
+				if (group._watched.Contains(control))
+					return;
+				group._watched.Add(control);
 				control.PointerEntered += (s, e) => Update();
 				control.PointerExited += (s, e) => Update();
 			}
 
-			foreach (var affordance in targets)
+			public void RevealAll() => SetRevealed(Resolve()._targets, true);
+
+			public void Update()
 			{
-				// Accessibility: opacity-hidden affordances stay focusable, so Tab reveals them.
-				affordance.GotFocus += (s, e) => SetRevealed(targets, true);
-				affordance.LostFocus += (s, e) => Update();
+				var group = Resolve();
+				var reveal = group._watched.Any(c => c.IsPointerOver) || group._targets.Any(a => a.IsFocused);
+				SetRevealed(group._targets, reveal);
+			}
+
+			/// <summary>Folds this registration into <paramref name="other"/> (no-op when equal).</summary>
+			public void MergeInto(RevealGroup other)
+			{
+				var source = Resolve();
+				var target = other.Resolve();
+				if (source == target)
+					return;
+				foreach (var affordance in source._targets)
+				{
+					if (!target._targets.Contains(affordance))
+						target._targets.Add(affordance);
+				}
+				foreach (var watched in source._watched)
+				{
+					if (!target._watched.Contains(watched))
+						target._watched.Add(watched);
+				}
+				source._targets.Clear();
+				source._watched.Clear();
+				source._mergedInto = target;
 			}
 		}
 
