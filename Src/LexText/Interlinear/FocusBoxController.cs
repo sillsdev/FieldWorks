@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_sandbox.IsDirty; }
 		}
 
-		private bool suppressFocusChange = false;
+		private bool m_suppressFocusChange = false;
 
 		// There is no logical reason for other buttons ever to get the focus. But .NET helpfully focuses the link words button
 		// as we hide the focus box. And in some other circumstance, which I can't even figure out, it focuses the menu button.
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.IText
 			}
 			finally
 			{
-				if (!suppressFocusChange)
+				if (!m_suppressFocusChange)
 				{
 					Focus();
 				}
@@ -317,15 +317,20 @@ namespace SIL.FieldWorks.IText
 
 		public void UpdateField(int hvo, int flid)
 		{
+			if (IsDisposed || m_sandbox == null)
+			{
+				return;
+			}
+
 			try
 			{
 				// This fixes LT-22539.
-				suppressFocusChange = true;
+				m_suppressFocusChange = true;
 				m_sandbox.UpdateField(hvo, flid);
 			}
 			finally
 			{
-				suppressFocusChange = false;
+				m_suppressFocusChange = false;
 			}
 		}
 

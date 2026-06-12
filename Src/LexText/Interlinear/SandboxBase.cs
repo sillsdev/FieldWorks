@@ -1658,9 +1658,15 @@ namespace SIL.FieldWorks.IText
 
 		public void UpdateField(int hvo, int flid)
 		{
+			CheckDisposed();
+			if (!m_cache.ServiceLocator.IsValidObjectId(hvo))
+			{
+				return;
+			}
 			ICmObject hvoObject = Caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			if (hvoObject is ILexSense lexSense && lexSense.Owner is ILexEntry lexEntry)
 			{
+				// This lex sense changed.  Update morphs that use it.
 				foreach (int hvoMorph in GetHvoMorphsForLexSense(hvo))
 				{
 					// This fixes LT-22534.
@@ -1675,6 +1681,7 @@ namespace SIL.FieldWorks.IText
 					{
 						if (sense.MorphoSyntaxAnalysisRA == msa)
 						{
+							// This lex sense changed.  Update morphs that use it.
 							foreach (int hvoMorph in GetHvoMorphsForLexSense(sense.Hvo))
 							{
 								// This fixes LT-22541.
