@@ -29,10 +29,10 @@ function Read-Snapshot {
 }
 
 function To-StringSet {
-	param([Parameter(Mandatory = $true)][object[]]$Items)
+	param([Parameter(Mandatory = $true)][AllowEmptyCollection()][object[]]$Items)
 	$set = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
 	foreach ($item in $Items) { $null = $set.Add([string]$item) }
-	return $set
+	return ,$set
 }
 
 function Diff-Sets {
@@ -52,6 +52,28 @@ function Diff-Sets {
 	}
 
 	return [pscustomobject]@{ Added = $added; Removed = $removed }
+}
+
+function ConvertTo-PropertyMap {
+	param([Parameter(Mandatory = $false)]$Value)
+
+	$map = @{}
+	if ($null -eq $Value) {
+		return $map
+	}
+
+	if ($Value -is [System.Collections.IDictionary]) {
+		foreach ($key in $Value.Keys) {
+			$map[[string]$key] = $Value[$key]
+		}
+		return $map
+	}
+
+	foreach ($property in $Value.PSObject.Properties) {
+		$map[[string]$property.Name] = $property.Value
+	}
+
+	return $map
 }
 
 $before = Read-Snapshot -Path $BeforeSnapshotPath
@@ -100,9 +122,9 @@ foreach ($k in $afterRegByPath.Keys) { $null = $allRegPaths.Add($k) }
 
 foreach ($path in ($allRegPaths | Sort-Object)) {
 	$beforeValues = @{}
-	if ($beforeRegByPath.ContainsKey($path)) { $beforeValues = $beforeRegByPath[$path].Values }
+	if ($beforeRegByPath.ContainsKey($path)) { $beforeValues = ConvertTo-PropertyMap -Value $beforeRegByPath[$path].Values }
 	$afterValues = @{}
-	if ($afterRegByPath.ContainsKey($path)) { $afterValues = $afterRegByPath[$path].Values }
+	if ($afterRegByPath.ContainsKey($path)) { $afterValues = ConvertTo-PropertyMap -Value $afterRegByPath[$path].Values }
 
 	$allNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
 	foreach ($n in $beforeValues.Keys) { $null = $allNames.Add([string]$n) }
@@ -123,7 +145,7 @@ foreach ($path in ($allRegPaths | Sort-Object)) {
 		}
 		if ([string]$bn -ne [string]$an) {
 			$regDiffCount++
-			if ($regDiffCount -le $MaxListItems) { $reportLines.Add("  ~ $path\\$n: '$bn' -> '$an'") }
+			if ($regDiffCount -le $MaxListItems) { $reportLines.Add("  ~ ${path}\\${n}: '$bn' -> '$an'") }
 		}
 	}
 }

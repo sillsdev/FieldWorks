@@ -38,9 +38,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
-    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
-    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.2" />
+  <PackageReference Include="WixToolset.Bal.wixext" />
+  <PackageReference Include="WixToolset.Util.wixext" />
+  <PackageReference Include="WixToolset.NetFx.wixext" />
   </ItemGroup>
 
   <ItemGroup>

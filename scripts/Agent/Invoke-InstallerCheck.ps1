@@ -52,6 +52,31 @@ function New-DirectoryIfMissing {
 	}
 }
 
+function Invoke-InstallerWithResult {
+	param(
+		[Parameter(Mandatory = $true)]
+		[hashtable]$InstallerArguments
+	)
+
+	$result = $null
+	foreach ($item in @(& "$repoRoot\scripts\Agent\Invoke-Installer.ps1" @InstallerArguments)) {
+		if ($null -ne $item -and $item.PSObject.Properties.Match('ExitCode').Count -gt 0 -and $item.PSObject.Properties.Match('InstallerType').Count -gt 0) {
+			$result = $item
+			continue
+		}
+
+		if ($null -ne $item) {
+			Write-Host $item
+		}
+	}
+
+	if ($null -eq $result) {
+		throw "Invoke-Installer did not return a structured result."
+	}
+
+	return $result
+}
+
 $repoRoot = Resolve-RepoRoot
 
 if ([string]::IsNullOrWhiteSpace($LogRoot)) {
@@ -75,10 +100,17 @@ Write-Output "Collecting snapshot: before install"
 & "$repoRoot\scripts\Agent\Collect-InstallerSnapshot.ps1" -OutputPath $beforePath -Name 'before-install' -MaxFileCount $MaxFileCount
 
 Write-Output "Running installer"
-$installResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType $InstallerType -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $RunId -Arguments $InstallArguments -IncludeTempLogs -PassThru -NoExit
-
-if ($null -eq $installResult) {
-	throw "Invoke-Installer did not return a result."
+$installResult = Invoke-InstallerWithResult -InstallerArguments @{
+	InstallerType = $InstallerType
+	Configuration = $Configuration
+	Platform = $Platform
+	InstallerPath = $InstallerPath
+	LogRoot = $LogRoot
+	RunId = $RunId
+	Arguments = $InstallArguments
+	IncludeTempLogs = $true
+	PassThru = $true
+	NoExit = $true
 }
 
 $exitCode = [int]$installResult.ExitCode
@@ -97,7 +129,18 @@ if ($RunUninstall) {
 	} else {
 		Write-Output "Running uninstall"
 		$uninstallRunId = "$RunId-uninstall"
-		$uninstallResult = & "$repoRoot\scripts\Agent\Invoke-Installer.ps1" -InstallerType 'Bundle' -Configuration $Configuration -Platform $Platform -InstallerPath $InstallerPath -LogRoot $LogRoot -RunId $uninstallRunId -Arguments $UninstallArguments -IncludeTempLogs -PassThru -NoExit
+		$uninstallResult = Invoke-InstallerWithResult -InstallerArguments @{
+			InstallerType = 'Bundle'
+			Configuration = $Configuration
+			Platform = $Platform
+			InstallerPath = $InstallerPath
+			LogRoot = $LogRoot
+			RunId = $uninstallRunId
+			Arguments = $UninstallArguments
+			IncludeTempLogs = $true
+			PassThru = $true
+			NoExit = $true
+		}
 		$uninstallExit = [int]$uninstallResult.ExitCode
 		Write-Output "Uninstall exit code: $uninstallExit"
 

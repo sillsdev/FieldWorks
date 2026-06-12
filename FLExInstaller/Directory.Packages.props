@@ -9,7 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup Label="Installer Packages">
+		<PackageVersion Include="System.Resources.Extensions" Version="9.0.16" />
+		<PackageVersion Include="WixToolset.Bal.wixext" Version="6.0.2" />
 		<PackageVersion Include="WixToolset.Dtf.CustomAction" Version="6.0.0" />
 		<PackageVersion Include="WixToolset.Dtf.WindowsInstaller" Version="6.0.0" />
+		<PackageVersion Include="WixToolset.Heat" Version="6.0.2" />
+		<PackageVersion Include="WixToolset.NetFx.wixext" Version="6.0.2" />
+		<PackageVersion Include="WixToolset.UI.wixext" Version="6.0.2" />
+		<PackageVersion Include="WixToolset.Util.wixext" Version="6.0.2" />
 	</ItemGroup>
 </Project>

@@ -13,8 +13,10 @@
 	  Installer validation:
 	  - Harvested inputs include many versionless resource/data files that trigger ICE60.
 	  - We intentionally allow downgrades (single-instance policy), which triggers ICE61.
+	  - Newtonsoft.Json is intentionally authored as both a private copy and a GAC assembly to match
+	    the legacy installer, which triggers ICE30 under WiX 6 validation.
 	-->
-	<SuppressIces>ICE60;ICE61</SuppressIces>
+	<SuppressIces>ICE30;ICE60;ICE61</SuppressIces>
   </PropertyGroup>
 
   <!--
@@ -74,10 +76,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
-	<PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
-	<PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.2" />
-	<PackageReference Include="WixToolset.Heat" Version="6.0.2" />
+	<PackageReference Include="WixToolset.UI.wixext" />
+	<PackageReference Include="WixToolset.Util.wixext" />
+	<PackageReference Include="WixToolset.NetFx.wixext" />
+	<PackageReference Include="WixToolset.Heat" />
   </ItemGroup>
 
   <ItemGroup>

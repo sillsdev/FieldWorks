@@ -227,4 +227,4 @@ $json = $snapshot | ConvertTo-Json -Depth 10
 Set-Content -LiteralPath $outPath -Value $json -Encoding UTF8
 
 Write-Output "Wrote snapshot: $outPath"
-Write-Output ("UninstallEntries: {0}, RegistryRoots: {1}, Files: {2}" -f $snapshot.UninstallEntries.Count, $snapshot.Registry.Count, $snapshot.Files.Count)
+Write-Output ("UninstallEntries: {0}, RegistryRoots: {1}, Files: {2}" -f @($snapshot.UninstallEntries).Count, @($snapshot.Registry).Count, @($snapshot.Files).Count)

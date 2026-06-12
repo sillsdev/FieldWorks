@@ -67,6 +67,23 @@
 	  <Custom Action="DeleteRegistryVersionNumber" Before="RemoveRegistryValues" Condition="(NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
 	  <Custom Action="CheckPatchValue" Before="CheckUpgradeValue" Condition="PATCHNEWSUMMARYSUBJECT=&quot;Small Update Patch&quot;" />
 	  <Custom Action="CheckUpgradeValue" After="InstallFinalize" Condition="WIX_UPGRADE_DETECTED" />
+	  <!-- LT-20524: The InstallUISequence does not run for silent (/quiet, /qn) or basic (/qb) installs
+	       (UILevel &lt; 4), so the directory-resolution actions below must also run here; otherwise
+	       APPFOLDER/DATAFOLDER/HARVESTDATAFOLDER stay unset and files (including the ICU data that
+	       ICU_DATA points at) install to the wrong locations. Reduced (/passive, UILevel 4) and full
+	       UI installs continue to resolve these in the InstallUISequence, so the UILevel guard keeps
+	       this from overriding a user-chosen path. VerifyDataPath populates REGDATAFOLDER (used by the
+	       conditions below) and always returns Success, so it is safe in a silent install. -->
+	  <Custom Action="SetDefDataFolder" After="FindRelatedProducts" Condition="UILevel &lt; 4" />
+	  <Custom Action="VerifyDataPath" After="SetDefDataFolder" Condition="UILevel &lt; 4" />
+	  <Custom Action="UseDefAppFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (NOT REGAPPFOLDER) and (NOT OVRAPPFOLDER)" />
+	  <Custom Action="UseOvrAppFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (NOT REGAPPFOLDER) and (OVRAPPFOLDER)" />
+	  <Custom Action="UseRegAppFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (REGAPPFOLDER)" />
+	  <Custom Action="UseDefDataFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (NOT REGDATAFOLDER) and (NOT OVRDATAFOLDER)" />
+	  <Custom Action="UseOvrDataFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (NOT REGDATAFOLDER) and (OVRDATAFOLDER)" />
+	  <Custom Action="UseRegDataFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (REGDATAFOLDER)" />
+	  <Custom Action="UseDefHarvestDataFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (NOT OVRHARVESTDATAFOLDER)" />
+	  <Custom Action="UseOvrHarvestDataFolder" After="AppSearch" Condition="(UILevel &lt; 4) and (OVRHARVESTDATAFOLDER)" />
 	  <?include ../Common/CustomActionSteps.wxi?>
 	</InstallExecuteSequence>
 
