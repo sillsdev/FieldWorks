@@ -1978,6 +1978,9 @@
   <data name="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Is_Abstract_Form_fld_Allomorph.htm</value>
   </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-AllomorphStatus" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Allomorph_Status_field.htm</value>
+  </data>
   <data name="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-Form" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Affix_allomorph_fld.htm</value>
   </data>

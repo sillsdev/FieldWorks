@@ -3868,6 +3868,15 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Allomorph_Status_field.htm.
+        /// </summary>
+        internal static string khtpField_lexiconEdit_AlternateFormsSection_AllomorphStatus {
+            get {
+                return ResourceManager.GetString("khtpField-lexiconEdit-AlternateFormsSection-AllomorphStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Is_Abstract_Form_fld_Allomorph.htm.
         /// </summary>
         internal static string khtpField_lexiconEdit_AlternateFormsSection_IsAbstract {
