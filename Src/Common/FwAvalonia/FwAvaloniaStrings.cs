@@ -69,5 +69,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>"{0} settings" — accessible name of a chooser's hover-revealed settings gear.</summary>
 		public static string FieldSettingsFormat => Resources.GetString("ksFieldSettings");
+
+		/// <summary>
+		/// "Edit the {0} list" — label/tooltip of a configure-gear jump derived from the row's
+		/// possibility list (the legacy chooser dialog's "Edit the … list" link text).
+		/// </summary>
+		public static string EditListFormat => Resources.GetString("ksEditListFormat");
 	}
 }

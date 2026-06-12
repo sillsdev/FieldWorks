@@ -126,6 +126,11 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(mainDictionary);
 				mainDictionary.Name.SetAnalysisDefaultWritingSystem("Main Dictionary");
 			}
+
+			// Gear = configure: the morph-type chooser's list-editor jump is DERIVED from the
+			// list (its chooserInfo carries only a title), so the list itself must exist.
+			if (Cache.LangProject.LexDbOA.MorphTypesOA == null)
+				Cache.LangProject.LexDbOA.MorphTypesOA = listFactory.Create();
 		}
 
 		private ComposedEntryRegion Compose(bool showHidden = false)
@@ -317,17 +322,91 @@ namespace SIL.FieldWorks.XWorks
 				"legacy m_guidLink stays Guid.Empty for this link — a plain tool jump");
 		}
 
-		// GAP 1 control: a chooserInfo without links (MorphologyParts.xml:280-283, title only)
-		// composes a chooser row with NO jump links — the link lane is data-driven, never invented.
+		// Gear = configure: a chooser whose layout authored NO chooserLink (MorphologyParts.xml's
+		// MorphTypeBasic chooserInfo is title-only) still resolves its list-editor jump by
+		// DERIVATION from the row's possibility list — LexDb.MorphTypes maps to the lists-area
+		// morphTypeEdit tool, exactly the legacy AreaListener.GetToolForList clerk-table walk
+		// (AreaListener.cs:388-418 over Lists/areaConfiguration.xml's MorphTypeList clerk +
+		// Lists/Edit/toolConfiguration.xml's morphTypeEdit tool).
 		[Test]
-		public void Compose_MorphTypeChooser_HasNoJumpLinks()
+		public void Compose_MorphTypeChooser_DerivesTheMorphTypeEditJump_FromItsList()
 		{
 			var composed = Compose();
 			var morphType = composed.Model.Fields
 				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
 
-			Assert.That(morphType.ChooserLinks, Is.Empty,
-				"MoForm-Detail-MorphTypeBasic's chooserInfo carries only a title, no chooserLink");
+			Assert.That(morphType.ChooserLinks, Has.Count.EqualTo(1),
+				"no authored link, but the morph-type list resolves a lists-area editor");
+			Assert.That(morphType.ChooserLinks[0].Tool, Is.EqualTo("morphTypeEdit"));
+			Assert.That(morphType.ChooserLinks[0].TargetGuid, Is.Null, "a plain tool jump");
+		}
+
+		// The derived lane never overrides an authored link, and the derivation itself mirrors
+		// the legacy clerk table: shipped lists by (owner class, owning field); ownerless custom
+		// lists by the dynamically generated Name-without-spaces + "Edit" tool
+		// (AreaListener.GetCustomListToolName); anything unmapped resolves to NO tool → no gear.
+		[Test]
+		public void ResolveListEditorTool_MirrorsTheLegacyListsAreaMapping()
+		{
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+				Cache.LangProject.SemanticDomainListOA), Is.EqualTo("semanticDomainEdit"));
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+				Cache.LangProject.StatusOA), Is.EqualTo("statusEdit"));
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+				Cache.LangProject.LexDbOA.UsageTypesOA), Is.EqualTo("usageTypeEdit"));
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+				Cache.LangProject.AnthroListOA), Is.EqualTo("anthroEdit"));
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(
+				Cache.LangProject.LexDbOA.PublicationTypesOA), Is.EqualTo("publicationsEdit"));
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(null), Is.Null);
+		}
+
+		[Test]
+		public void ResolveListEditorTool_CustomOwnerlessList_DerivesTheGeneratedToolName()
+		{
+			ICmPossibilityList custom = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				custom = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>()
+					.CreateUnowned("Bird Species", Cache.DefaultAnalWs);
+			});
+
+			// Legacy AreaListener.GetCustomListToolName: Name without whitespace + "Edit" — the
+			// tool name the lists area generates for the custom list's dynamic tool node.
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(custom),
+				Is.EqualTo("BirdSpeciesEdit"));
+		}
+
+		[Test]
+		public void ResolveListEditorTool_OwnedListOutsideTheListsArea_ResolvesNoTool()
+		{
+			// LangProject.CheckLists is a possibility-list home with NO lists-area tool (it is
+			// excluded even from translated-list export): no tool → the composer adds no link →
+			// the row draws no gear.
+			ICmPossibilityList checkList = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				checkList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LangProject.CheckListsOC.Add(checkList);
+			});
+
+			Assert.That(FullEntryRegionComposer.ResolveListEditorTool(checkList), Is.Null,
+				"a list with no resolvable lists-area editor yields no jump (and no gear)");
+		}
+
+		// The authored-link-wins half: Publish In carries the layout's own chooserLink, so the
+		// derived lane must not add a second link (first goto wins at the gear).
+		[Test]
+		public void Compose_PublishIn_AuthoredLinkWins_NoDerivedDuplicate()
+		{
+			var composed = Compose();
+			var publishIn = composed.Model.Fields.Single(f => f.Field == "PublishIn"
+				&& f.Kind == RegionFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
+
+			Assert.That(publishIn.ChooserLinks, Has.Count.EqualTo(1),
+				"the authored goto link rides alone — derivation only fills gaps");
+			Assert.That(publishIn.ChooserLinks[0].Label, Is.EqualTo("Edit the Publications list"),
+				"the authored (localizable) label is kept, not the derived format");
 		}
 
 		// B7: a chooserInfo guicontrol "...FlatList" spec means the legacy chooser presents the list

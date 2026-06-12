@@ -97,4 +97,8 @@
     <value>{0} settings</value>
     <comment>Accessible name of the hover-revealed settings gear on a chooser field; {0} is the field label (e.g. "Morph Type settings").</comment>
   </data>
+  <data name="ksEditListFormat" xml:space="preserve">
+    <value>Edit the {0} list</value>
+    <comment>Tooltip/label of a configure gear whose list-editor jump was derived from the row's possibility list; {0} is the list name (mirrors the legacy chooser's "Edit the … list" links).</comment>
+  </data>
 </root>

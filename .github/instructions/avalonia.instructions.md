@@ -9,6 +9,11 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 ## Purpose & Scope
 - Provide a consistent way to **create, build, test, and preview** Avalonia UI modules in FieldWorks.
 - Applies to the Advanced Entry Avalonia work under `specs/010-advanced-entry-view/` and future Avalonia modules.
+- This file covers mechanics (build, layout, logging, preview). The
+  migration playbook, decided architecture patterns, and parity/evidence
+  rules live in the skills under `.claude/skills/` — start with
+  `fieldworks-winforms-to-avalonia-migration` (hub) and
+  `fieldworks-avalonia-ui`.
 
 ## Key Rules
 

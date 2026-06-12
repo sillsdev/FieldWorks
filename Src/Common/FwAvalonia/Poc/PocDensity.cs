@@ -52,5 +52,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 
 		/// <summary>Legacy splitter width (Slice.cs SplitterWidth = 5).</summary>
 		public const double SplitterWidth = 5.0;
+
+		// ---- Popup density tokens: the legacy WinForms menus/choosers are far denser than the
+		// ---- Fluent theme defaults; option pickers and context menus mirror that spacing.
+
+		/// <summary>Compact padding of one option row in the option picker (legacy menu spacing).</summary>
+		public static readonly Thickness OptionItemPadding = new Thickness(6, 2, 6, 2);
+
+		/// <summary>The option picker's list cap: off-screen content scrolls instead of growing.</summary>
+		public const double OptionListMaxHeight = 320.0;
+
+		/// <summary>Compact context-menu item padding (legacy WinForms menu density, not Fluent).</summary>
+		public static readonly Thickness MenuItemPadding = new Thickness(8, 3, 8, 3);
+
+		/// <summary>Compact context-menu item height floor (legacy items are ~22px, Fluent ~32px).</summary>
+		public const double MenuItemMinHeight = 22.0;
 	}
 }

@@ -139,6 +139,95 @@ namespace SIL.FieldWorks.XWorks
 			return options;
 		}
 
+		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
+		// Research (gear = configure): when a legacy jump's target object is owned by a
+		// CmPossibilityList, LinkListener.FollowActiveLink (Src/xWorks/LinkListener.cs:507-517)
+		// publishes "GetToolForList", handled by AreaListener.GetToolForList
+		// (Src/LexText/LexTextDll/AreaListener.cs:388-418): it walks the lists-area tools in the
+		// window configuration, resolves each tool's clerk recordList (owner=/property=) to the
+		// actual list through the SDA, and returns the first tool whose clerk edits that list;
+		// unmatched (ownerless = user custom) lists derive Name-without-spaces + "Edit"
+		// (AreaListener.GetCustomListToolName, AreaListener.cs:832-835 — the tool name the lists
+		// area generates dynamically per custom list, AreaListener.CreateCustomToolNode).
+		// The composer runs without a window configuration, so the clerk table itself
+		// (DistFiles/Language Explorer/Configuration/Lists/areaConfiguration.xml clerks ↔
+		// Lists/Edit/toolConfiguration.xml tools) is mirrored here, keyed (owner class, owning
+		// field name). Owned lists missing from the table have no lists-area editor → null → no
+		// gear on rows backed by them.
+		private static readonly IReadOnlyDictionary<(string Owner, string Field), string> ListEditorToolByOwnerField =
+			new Dictionary<(string, string), string>
+			{
+				{ ("LangProject", "AffixCategories"), "affixCategoryEdit" },
+				{ ("LangProject", "AnnotationDefs"), "annotationDefEdit" },
+				{ ("LangProject", "AnthroList"), "anthroEdit" },
+				{ ("LangProject", "ConfidenceLevels"), "confidenceEdit" },
+				{ ("LangProject", "Education"), "educationEdit" },
+				{ ("LangProject", "GenreList"), "genresEdit" },
+				{ ("LangProject", "Locations"), "locationsEdit" },
+				{ ("LangProject", "People"), "peopleEdit" },
+				{ ("LangProject", "Positions"), "positionsEdit" },
+				{ ("LangProject", "Restrictions"), "restrictionsEdit" },
+				{ ("LangProject", "Roles"), "roleEdit" },
+				{ ("LangProject", "SemanticDomainList"), "semanticDomainEdit" },
+				{ ("LangProject", "Status"), "statusEdit" },
+				{ ("LangProject", "TextMarkupTags"), "textMarkupTagsEdit" },
+				{ ("LangProject", "TimeOfDay"), "timeOfDayEdit" },
+				{ ("LangProject", "TranslationTags"), "translationTypeEdit" },
+				{ ("LexDb", "ComplexEntryTypes"), "complexEntryTypeEdit" },
+				{ ("LexDb", "DialectLabels"), "dialectsListEdit" },
+				{ ("LexDb", "DomainTypes"), "domainTypeEdit" },
+				{ ("LexDb", "ExtendedNoteTypes"), "extNoteTypeEdit" },
+				{ ("LexDb", "Languages"), "languagesListEdit" },
+				{ ("LexDb", "MorphTypes"), "morphTypeEdit" },
+				{ ("LexDb", "PublicationTypes"), "publicationsEdit" },
+				{ ("LexDb", "References"), "lexRefEdit" },
+				{ ("LexDb", "SenseTypes"), "senseTypeEdit" },
+				{ ("LexDb", "Status"), "senseStatusEdit" },
+				{ ("LexDb", "UsageTypes"), "usageTypeEdit" },
+				{ ("LexDb", "VariantEntryTypes"), "variantEntryTypeEdit" },
+				{ ("DsDiscourseData", "ChartMarkers"), "chartmarkEdit" },
+				{ ("DsDiscourseData", "ConstChartTempl"), "charttempEdit" },
+				{ ("RnResearchNbk", "RecTypes"), "recTypeEdit" }
+			};
+
+		/// <summary>
+		/// Resolves the lists-area tool that edits <paramref name="list"/> — the configure gear's
+		/// jump target when the layout authored no explicit chooserLink. Mirrors legacy
+		/// <c>AreaListener.GetToolForList</c>: shipped lists match the lists-area clerk table by
+		/// (owner class, owning field); ownerless lists are user custom lists, whose dynamically
+		/// generated tool is Name-without-spaces + "Edit"; anything else resolves to null (no
+		/// lists-area editor exists, so the row gets no gear).
+		/// </summary>
+		internal static string ResolveListEditorTool(ICmPossibilityList list)
+		{
+			if (list == null)
+				return null;
+
+			if (list.Owner == null)
+			{
+				// Legacy AreaListener.GetCustomListToolName (custom lists are ownerless).
+				var name = list.Name?.BestAnalysisAlternative?.Text;
+				return string.IsNullOrEmpty(name) || name == "***"
+					? null
+					: name.Replace(" ", string.Empty) + "Edit";
+			}
+
+			string fieldName;
+			try
+			{
+				var mdc = (IFwMetaDataCacheManaged)list.Cache.DomainDataByFlid.MetaDataCache;
+				fieldName = mdc.GetFieldName(list.OwningFlid);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			return ListEditorToolByOwnerField.TryGetValue((list.Owner.ClassName, fieldName), out var tool)
+				? tool
+				: null;
+		}
+
 		private sealed class ComposeState
 		{
 			private readonly LcmCache _cache;
@@ -486,19 +575,22 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// B7: project the node's imported chooserLink metadata onto the row — the legacy
-			// chooser dialog's "Edit the … list" jump links (ReallySimpleListChooser.
-			// InitializeExtras, ReallySimpleListChooser.cs:887-926). Only the "goto" kind is
-			// implemented: it is the ONLY kind the lexeme-editor layouts use (all 95 shipped
-			// chooserLinks are type="goto"); legacy "dialog"/"simple" links need ChooserCommand
-			// lanes and are logged + skipped, never half-dispatched. The target guid stays empty
-			// like legacy m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels
-			// localize through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
-			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node)
+			// B7: project the row's list-editor jump (the configure gear's direct dispatch target).
+			// The node's imported chooserLink metadata wins — the legacy chooser dialog's "Edit
+			// the … list" jump links (ReallySimpleListChooser.InitializeExtras,
+			// ReallySimpleListChooser.cs:887-926). Only the "goto" kind is implemented: it is the
+			// ONLY kind the lexeme-editor layouts use (all 95 shipped chooserLinks are
+			// type="goto"); legacy "dialog"/"simple" links need ChooserCommand lanes and are
+			// logged + skipped, never half-dispatched. The target guid stays empty like legacy
+			// m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels localize
+			// through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
+			// When the layout authored NO goto link but the row IS backed by a possibility list,
+			// the tool derives from the list the same way the legacy jump lane does (see
+			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
+			// therefore NO gear on that row.
+			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node,
+				ICmPossibilityList list = null)
 			{
-				if (node.ChooserLinks.Count == 0)
-					return null;
-
 				List<RegionChooserLink> links = null;
 				foreach (var link in node.ChooserLinks)
 				{
@@ -511,6 +603,21 @@ namespace SIL.FieldWorks.XWorks
 					}
 					(links ?? (links = new List<RegionChooserLink>()))
 						.Add(new RegionChooserLink(Localize(link.Label), link.Tool));
+				}
+
+				if (links == null && list != null)
+				{
+					var tool = ResolveListEditorTool(list);
+					if (tool != null)
+					{
+						var listName = list.Name?.BestAnalysisAlternative?.Text ?? string.Empty;
+						links = new List<RegionChooserLink>
+						{
+							new RegionChooserLink(string.Format(CultureInfo.CurrentCulture,
+								SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.EditListFormat,
+								listName), tool)
+						};
+					}
 				}
 
 				return links;
@@ -730,10 +837,10 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
+				var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 				if (_morphTypeOptions == null)
 				{
 					_morphTypeOptions = new List<RegionChoiceOption>();
-					var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 					if (morphTypes != null)
 					{
 						foreach (var possibility in morphTypes.ReallyReallyAllPossibilities.OfType<IMoMorphType>()
@@ -752,7 +859,7 @@ namespace SIL.FieldWorks.XWorks
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: BuildChooserLinks(node, morphTypes)));
 
 				OptionSetters[stableId] = optionKey =>
 				{
@@ -822,7 +929,7 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
-					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node)));
+					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				OptionSetters[stableId] = key =>
@@ -856,7 +963,7 @@ namespace SIL.FieldWorks.XWorks
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				ReferenceAddSetters[stableId] = key =>

@@ -224,14 +224,20 @@ change's surfaces.
   fenced session, duplicate/garbage/unknown keys rejected without opening it), covered by
   `FullEntryRegionReferenceChooserTests`. `BuildPossibilityOptions(flat:)` implements the
   FlatList guicontrol semantics.
-- **Status (jump links landed, 2026-06-11):** `chooserLink` now imports onto the typed node
-  (`ViewNode.ChooserLinks`: type/label/tool/target, the legacy reader's exact vocabulary;
-  canonical JSON reserves the `chooserLinks` block, closing B7's share of the cross-cutting
-  schema deadline) and threads through the composer onto chooser/reference-vector rows
-  (`LexicalEditRegionField.ChooserLinks`, "goto" only — all 95 shipped links are goto); the
-  gear flyouts render the links and `RecordEditView` dispatches the legacy jump (mediator
-  `FollowLink`, `FwLinkArgs(tool, Guid.Empty)` exactly like
-  `ReallySimpleListChooser.HandleAnyJump`). REMAINING: import `chooserInfo`'s OTHER facets
+- **Status (jump links landed, 2026-06-11; gear semantics reworked, 2026-06-12):**
+  `chooserLink` imports onto the typed node (`ViewNode.ChooserLinks`:
+  type/label/tool/target, the legacy reader's exact vocabulary; canonical JSON reserves the
+  `chooserLinks` block, closing B7's share of the cross-cutting schema deadline) and threads
+  through the composer onto chooser/reference-vector rows
+  (`LexicalEditRegionField.ChooserLinks`, "goto" only — all 95 shipped links are goto).
+  Surfacing (reworked): the row's hover gear DIRECTLY dispatches the jump (gear = configure;
+  first goto wins; no link items in option flyouts), and rows whose layout authored no link
+  derive the tool from their possibility list via the mirrored legacy lists-area clerk table
+  (`FullEntryRegionComposer.ResolveListEditorTool`, the `AreaListener.GetToolForList` lane;
+  ownerless custom lists derive Name-without-spaces + "Edit"; unresolvable lists draw no
+  gear). `RecordEditView` dispatches the legacy jump (mediator `FollowLink`,
+  `FwLinkArgs(tool, Guid.Empty)` exactly like `ReallySimpleListChooser.HandleAnyJump`).
+  REMAINING: import `chooserInfo`'s OTHER facets
   (title/text/textparam/flidTextParam/guicontrol — still reported as `slice-content-dropped`)
   and thread the flat/title specs to the composer call sites (the composer currently passes
   `flat: false`).
