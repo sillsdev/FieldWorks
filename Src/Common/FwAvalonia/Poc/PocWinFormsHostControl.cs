@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
@@ -18,6 +19,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 	{
 		private static readonly object s_initGate = new object();
 		private static bool s_isAvaloniaInitialized;
+		private static readonly TraceSwitch s_interopTrace =
+			new TraceSwitch("FwAvaloniaHostInterop", "WinForms/Avalonia keyboard interop diagnostics");
 
 		private readonly WinFormsAvaloniaControlHost _host;
 		private readonly Panel _companionStrip;
@@ -38,6 +41,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 				Name = "AvaloniaHost",
 				AccessibleName = FwAvaloniaStrings.AvaloniaHostName
 			};
+			_host.PreviewKeyDown += OnHostPreviewKeyDown;
 
 			// Hybrid companion lane: designated WinForms-only legacy slices (e.g. the Chorus
 			// Messages notes bar) stack in this strip above the Avalonia surface. Collapsed and
@@ -58,6 +62,69 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 			// edge, the Avalonia host fills the remainder.
 			Controls.Add(_companionStrip);
 			Clear();
+		}
+
+		private void LogInterop(string message)
+		{
+			if (s_interopTrace.TraceInfo)
+				Trace.WriteLine("[PocWinFormsHostControl] " + message);
+		}
+
+		private static bool IsDirectionalKey(int keyCode)
+		{
+			switch (keyCode)
+			{
+				case 0x26: // VK_UP
+				case 0x28: // VK_DOWN
+				case 0x25: // VK_LEFT
+				case 0x27: // VK_RIGHT
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		// WinForms treats the arrow keys as command/navigation keys at the message-loop level.
+		// When the embedded Avalonia HWND has focus, that means WinForms can consume the key before
+		// Avalonia's input pipeline ever sees it. The desktop Preview Host works (no WinForms host),
+		// while RecordEditView does not — the classic interop symptom reported in Avalonia issue
+		// #16046 and in WinForms host integrations generally. Keep the decision testable.
+		private static bool ShouldBypassWinFormsDirectionalKeyHandling(bool hostContainsFocus, int keyCode)
+			=> hostContainsFocus && IsDirectionalKey(keyCode);
+
+		private void OnHostPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			var keyCode = (int)(e.KeyData & Keys.KeyCode);
+			if (ShouldBypassWinFormsDirectionalKeyHandling(_host != null && _host.ContainsFocus, keyCode))
+			{
+				e.IsInputKey = true;
+				LogInterop("PreviewKeyDown -> IsInputKey=true for " + ((Keys)keyCode));
+			}
+		}
+
+		protected override bool IsInputKey(Keys keyData)
+		{
+			var keyCode = (int)(keyData & Keys.KeyCode);
+			if (ShouldBypassWinFormsDirectionalKeyHandling(_host != null && _host.ContainsFocus, keyCode))
+			{
+				LogInterop("IsInputKey -> true for " + ((Keys)keyCode));
+				return true;
+			}
+
+			return base.IsInputKey(keyData);
+		}
+
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			var keyCode = (int)(keyData & Keys.KeyCode);
+			if (ShouldBypassWinFormsDirectionalKeyHandling(_host != null && _host.ContainsFocus, keyCode))
+			{
+				LogInterop("ProcessCmdKey bypass for " + ((Keys)keyCode)
+					+ " while Avalonia host contains focus.");
+				return false;
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		/// <summary>
@@ -105,6 +172,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		{
 			if (disposing && _companionStrip != null)
 			{
+				if (_host != null)
+					_host.PreviewKeyDown -= OnHostPreviewKeyDown;
 				for (var i = _companionStrip.Controls.Count - 1; i >= 0; i--)
 				{
 					var companion = _companionStrip.Controls[i];
@@ -153,11 +222,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 			// editor (by stable automation id) and caret across the swap — otherwise every
 			// auto-commit re-show would dump keyboard focus.
 			var focusMemento = RegionFocusMemory.Capture(_host.Content as Avalonia.Controls.Control);
-			_host.Content = view;
 			if (focusMemento != null)
+				RegionFocusMemory.TryRestoreScroll(view, focusMemento);
+			_host.Content = view;
+			if (!string.IsNullOrEmpty(focusMemento?.AutomationId))
 			{
 				Avalonia.Threading.Dispatcher.UIThread.Post(
-					() => RegionFocusMemory.TryRestore(view, focusMemento),
+					() => RegionFocusMemory.TryRestoreFocus(view, focusMemento),
 					Avalonia.Threading.DispatcherPriority.Input);
 			}
 			Show();

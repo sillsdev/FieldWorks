@@ -84,6 +84,8 @@ namespace FwAvaloniaTests
 			slice.MorphTypeChooser.Button.Focus();
 			slice.MorphTypeChooser.Open();
 			Dispatcher.UIThread.RunJobs();
+			Assert.That(slice.MorphTypeChooser.Picker, Is.Not.Null,
+				"the POC morph-type popup uses the shared select-from-list control");
 
 			var suffix = entry.MorphTypeOptions.Single(o => o.Key == "suffix");
 			slice.MorphTypeChooser.Select(suffix);
@@ -121,6 +123,7 @@ namespace FwAvaloniaTests
 			Assert.That(AutomationProperties.GetAutomationId(slice.LexemeFormEditor.Boxes[0]), Is.EqualTo("LexemeFormEditor.seh"));
 			Assert.That(AutomationProperties.GetAutomationId(slice.SenseGlossEditor), Is.EqualTo("SenseGlossEditor"));
 			Assert.That(AutomationProperties.GetAutomationId(slice.MorphTypeChooser.Button), Is.EqualTo("MorphTypeChooser.Button"));
+			Assert.That(AutomationProperties.GetAutomationId(slice.MorphTypeChooser.Picker.FilterBox), Is.EqualTo("MorphTypeChooser.Search"));
 		}
 
 		[AvaloniaTest]
@@ -134,7 +137,7 @@ namespace FwAvaloniaTests
 			Assert.That(second, Is.EqualTo(first), "POC semantic snapshot must be deterministic for parity comparison");
 			// Sanity: the snapshot captures the three fields and their editor kinds.
 			Assert.That(first, Does.Contain("Lexeme Form | editor=multiws-text"));
-			Assert.That(first, Does.Contain("Morph Type | editor=popup-chooser"));
+			Assert.That(first, Does.Contain("Morph Type | editor=shared-option-picker"));
 			Assert.That(first, Does.Contain("Gloss | editor=multiws-text"));
 		}
 
@@ -147,7 +150,7 @@ namespace FwAvaloniaTests
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine($"#0 | Lexeme Form | editor=multiws-text | ws={WsList(slice.LexemeFormEditor)}");
-			sb.AppendLine($"#1 | Morph Type | editor=popup-chooser | value={slice.Entry.MorphTypeKey}");
+			sb.AppendLine($"#1 | Morph Type | editor=shared-option-picker | value={slice.Entry.MorphTypeKey}");
 			sb.AppendLine($"#2 | Gloss | editor=multiws-text | ws={WsList(slice.SenseGlossEditor)}");
 			return sb.ToString();
 		}

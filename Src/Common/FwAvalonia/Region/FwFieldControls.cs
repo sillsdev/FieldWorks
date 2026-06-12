@@ -212,7 +212,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// FieldWorks-owned chooser field (task 6.3): a button opening a flyout of service-backed options
 	/// (the options come from the LCModel-sourced region model, not the control). The flyout is the
-	/// shared compact <see cref="FwOptionPicker"/> — OPTIONS ONLY, no link items. Committing an
+	/// shared compact <see cref="FwOptionPicker"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
+	/// no link items. Committing an
 	/// option stages it through the edit context, closes the flyout, and returns focus to the button
 	/// — the popup-focus-return behavior the seam specs require. Without an edit context the chooser
 	/// is a read-only display of the current selection.
@@ -275,11 +276,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// "+"/chooser click = OPTIONS ONLY: the one compact filterable picker, zero links.
 			var picker = new FwOptionPicker(field.Options, null, automationId);
-			var flyout = new Flyout
-			{
-				Placement = PlacementMode.BottomEdgeAlignedLeft,
-				Content = picker
-			};
+			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
 			picker.OptionCommitted += option =>
@@ -327,7 +324,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// FieldWorks-owned editable reference-vector field (6.3/B8): the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
-	/// is the shared compact <see cref="FwOptionPicker"/> (OPTIONS ONLY, zero link items): the
+	/// is the shared compact <see cref="FwOptionPicker"/> (AutoCompleteBox-based OPTIONS ONLY,
+	/// zero link items): the
 	/// possibility tree indented by <see cref="RegionChoiceOption.Depth"/> for enumerated lists,
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
 	/// enumerate — D3), both behind the same filter box and virtualized capped list.
@@ -419,12 +417,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// "+" = OPTIONS ONLY: the one compact filterable picker — static options enumerate
 			// (with Depth hierarchy), search-backed vectors ride the host search delegate (D3).
 			// No link items ever ride this flyout.
-			var picker = new FwOptionPicker(field.Options, field.SearchOptions, automationId);
-			var flyout = new Flyout
-			{
-				Placement = PlacementMode.BottomEdgeAlignedLeft,
-				Content = picker
-			};
+			var picker = new FwOptionPicker(field.Options, field.SearchOptions, automationId,
+				field.Items.Select(i => i.Key));
+			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
 			picker.OptionCommitted += option =>
 			{

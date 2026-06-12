@@ -46,6 +46,17 @@ lifetime. Canonical code to imitate:
   `AutomationProperties.Name` on user-facing controls.
 - UI logic stays in bindings/view models where practical; avoid
   logic-heavy code-behind.
+- For any Avalonia "select from a list" surface, prefer the shared
+  `FwOptionPicker` pattern in `Src/Common/FwAvalonia/Region/FwOptionPicker.cs`
+  (AutoCompleteBox-based, keyboard-safe, search-capable, compact density)
+  over ad hoc `ListBox` popups or one-off editable selectors. Reach for a raw
+  `ComboBox` only when the UX explicitly needs an always-visible inline combo
+  rather than the shared flyout selector.
+- Do not fix Avalonia keyboard, focus, filtering, selection, popup, or
+  rendering bugs by patching `System.Windows.Forms` hosts, WinForms
+  interop message handling, or other legacy host-only routes unless the
+  task explicitly targets interop behavior. Default to fixing the issue
+  inside the Avalonia control tree or Avalonia-owned seams.
 - Marshal to the UI thread through `IUiScheduler` (or Avalonia dispatcher
   in non-region code); no hidden `Task.Run`, no sync-over-async.
 - Keep preview data lightweight unless the change explicitly opts into

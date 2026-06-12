@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
@@ -132,6 +133,28 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void ChooserFlyout_StripsTheHeavyGreyPresenterChrome_SoThePickerOwnsTheOnlyBorder()
+		{
+			// The "thick grey border" was the default Fluent FlyoutPresenter (its grey padding +
+			// border) wrapping the picker. The option flyout must zero that chrome so the picker's
+			// own thin border is the single visible boundary.
+			var (view, _, _) = ShowEditable();
+			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
+
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+
+			var picker = (FwOptionPicker)flyout.Content;
+			var presenter = picker.GetVisualAncestors().OfType<FlyoutPresenter>().FirstOrDefault();
+			Assert.That(presenter, Is.Not.Null, "the picker is hosted inside a flyout presenter");
+			Assert.That(presenter.Padding, Is.EqualTo(new Thickness(0)),
+				"no thick grey padding wraps the picker — the heavy presenter chrome is stripped");
+			Assert.That(presenter.BorderThickness, Is.EqualTo(new Thickness(0)),
+				"no heavy grey presenter border — the picker draws the single clean border");
+		}
+
+		[AvaloniaTest]
 		public void ChooserChange_StagesOptionKeyThroughTheEditContext()
 		{
 			var (view, context, _) = ShowEditable();
@@ -139,7 +162,10 @@ namespace FwAvaloniaTests
 			Assert.That(chooser, Is.Not.Null, "the chooser renders as the owned flyout field");
 			Assert.That(chooser.ValueText, Is.EqualTo("stem"), "shows the current selection");
 
-			var picker = (FwOptionPicker)((Flyout)chooser.Flyout).Content;
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1; // "suffix"
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -240,7 +266,10 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var picker = (FwOptionPicker)((Flyout)chooser.Flyout).Content;
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
@@ -359,18 +388,21 @@ namespace FwAvaloniaTests
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "Components.Add");
 
-			var picker = (FwOptionPicker)((Flyout)addButton.Flyout).Content;
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
 			var searchBox = picker.FilterBox;
 			Assert.That(AutomationProperties.GetAutomationId(searchBox), Is.EqualTo("Components.Search"));
 			var results = picker.OptionsList;
 			Assert.That(AutomationProperties.GetAutomationId(results), Is.EqualTo("Components.Options"));
-			Assert.That(results.ItemsSource, Is.Null,
+			Assert.That(picker.CurrentItems, Is.Empty,
 				"nothing is enumerated before the user types — lexicons search, lists enumerate");
 
 			searchBox.Text = "ca";
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(queries, Does.Contain("ca"), "typing drives the field's search delegate");
-			var shown = ((IEnumerable<RegionChoiceOption>)results.ItemsSource).ToList();
+			var shown = picker.CurrentItems;
 			Assert.That(shown.Select(o => o.Key), Is.EqualTo(new[] { "e-casa", "e-cantar" }));
 
 			results.SelectedIndex = 1;
@@ -481,7 +513,10 @@ namespace FwAvaloniaTests
 			var (vector, context) = ShowVector(() => gestures++);
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
-			var picker = (FwOptionPicker)((Flyout)addButton.Flyout).Content;
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
 
 			picker.OptionsList.SelectedIndex = 1; // "Pocket"
 			picker.CommitHighlighted();
@@ -645,11 +680,12 @@ namespace FwAvaloniaTests
 				new FakeRegionEditContext(), request => { });
 
 			var picker = (FwOptionPicker)((Flyout)chooser.Flyout).Content;
-			var parts = ((StackPanel)picker.Child).Children;
-			Assert.That(parts, Has.Count.EqualTo(2),
-				"the options flyout is exactly filter box + list — ZERO link items");
-			Assert.That(parts[0], Is.SameAs(picker.FilterBox));
-			Assert.That(parts[1], Is.SameAs(picker.OptionsList));
+			Assert.That(picker.GetVisualDescendants().OfType<AutoCompleteBox>(), Is.Empty,
+				"the options flyout is the shared inline filter+list picker — no nested selector control");
+			Assert.That(picker.GetVisualDescendants().Contains(picker.OptionsList), Is.True,
+				"the options render inline in the one compact filterable picker — ZERO link items");
+			Assert.That(AutomationProperties.GetAutomationId(picker.FilterBox), Is.EqualTo("MorphTypeChooser.Search"));
+			Assert.That(AutomationProperties.GetAutomationId(picker.OptionsList), Is.EqualTo("MorphTypeChooser.Options"));
 		}
 
 		[AvaloniaTest]

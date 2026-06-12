@@ -22,13 +22,13 @@ using SIL.FieldWorks.Common.FwAvalonia.Region;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The ONE compact filterable option picker (FwOptionPicker) behind every option dropdown:
-	/// a selection-filter panel (filter box auto-focused on open, watermarked with the search
-	/// prompt) over a VIRTUALIZED list capped at the density token height, item spacing pinned
-	/// to the compact legacy values (never the Fluent defaults), hierarchy preserved by Depth
-	/// indent. Typing filters live (case-insensitive contains for static options; the host
-	/// search delegate for search-backed pickers); Down/Up move the highlight, Enter commits
-	/// the highlighted option (first match by default), Escape dismisses, click commits.
+	/// The ONE compact filterable option picker (FwOptionPicker) behind every Avalonia select-from-
+	/// list surface: an AutoCompleteBox-based selector whose embedded search box auto-focuses on
+	/// open, whose popup list stays virtualized/capped at the density token height, and whose item
+	/// spacing stays pinned to the compact legacy values (never the Fluent defaults) while preserving
+	/// possibility-list hierarchy by Depth indent. Static options filter by contains; search-backed
+	/// pickers populate through the host delegate; Down/Up/Enter/Escape follow the stock selector
+	/// path while the wrapper preserves FieldWorks commit/dismiss semantics.
 	/// </summary>
 	[TestFixture]
 	public class FwOptionPickerTests
@@ -57,20 +57,53 @@ namespace FwAvaloniaTests
 			return (picker, window, committed, dismissed);
 		}
 
-		private static void RaiseKey(Control target, Key key)
+		private static (FwOptionPicker picker, Window window, List<RegionChoiceOption> committed) ShowStaticWithUnavailable(
+			params string[] unavailableKeys)
+		{
+			var picker = new FwOptionPicker(Tree(), null, "Domains", unavailableKeys);
+			var committed = new List<RegionChoiceOption>();
+			picker.OptionCommitted += committed.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window, committed);
+		}
+
+		private static void RaiseKey(Control target, Key key, bool handled = false)
 		{
 			target.RaiseEvent(new KeyEventArgs
 			{
 				RoutedEvent = InputElement.KeyDownEvent,
 				Key = key,
-				Source = target
+				Source = target,
+				Handled = handled
 			});
 			Dispatcher.UIThread.RunJobs();
 		}
 
 		private static IReadOnlyList<RegionChoiceOption> Items(FwOptionPicker picker)
-			=> (picker.OptionsList.ItemsSource as IEnumerable<RegionChoiceOption>)?.ToList()
-				?? new List<RegionChoiceOption>();
+			=> picker.CurrentItems;
+
+		[AvaloniaTest]
+		public void OptionsRenderInline_InsideThePickerItself_NoSecondFloatingDropdown()
+		{
+			// The thick grey border + flaky arrow keys came from AutoCompleteBox opening a SECOND
+			// popup (PART_SuggestionsContainer) nested inside the host flyout. The picker must show
+			// its filter box AND its options list inside its OWN visual tree — the host flyout is
+			// the only popup — so there is no separate grey-chromed dropdown surface to fight.
+			var (picker, _, _, _) = ShowStatic();
+			picker.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.GetVisualDescendants().OfType<AutoCompleteBox>(), Is.Empty,
+				"the picker no longer hosts an AutoCompleteBox (and its nested grey dropdown popup)");
+			Assert.That(picker.GetVisualDescendants().Contains(picker.FilterBox), Is.True,
+				"the filter box is part of the picker's own (single-popup) visual tree");
+			Assert.That(picker.GetVisualDescendants().Contains(picker.OptionsList), Is.True,
+				"the options list renders INLINE under the filter box — not in a second floating popup");
+		}
 
 		[AvaloniaTest]
 		public void OpensWithFilterFocused_Watermarked_AndAllOptionsListed()
@@ -131,6 +164,46 @@ namespace FwAvaloniaTests
 
 			RaiseKey(picker.FilterBox, Key.Enter);
 			Assert.That(committed.Single().Key, Is.EqualTo("u-sky"), "Enter commits the highlighted option");
+		}
+
+		[AvaloniaTest]
+		public void RealHeadlessKeyPresses_OnTheFocusedFilterBox_MoveAndCommitSelections()
+		{
+			var (picker, window, committed, _) = ShowStatic();
+
+			window.KeyPressQwerty(PhysicalKey.ArrowDown, RawInputModifiers.None);
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(1),
+				"a real Down keypress on the focused filter box should move the selector highlight");
+
+			window.KeyTextInput("s");
+			Assert.That(Items(picker).Select(o => o.Key), Is.EqualTo(new[] { "u", "u-sky", "p" }),
+				"typing through the headless input path should update the filtered result set");
+
+			window.KeyPressQwerty(PhysicalKey.ArrowDown, RawInputModifiers.None);
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(1),
+				"Down should still move through the filtered result set on the real key path");
+
+			window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-sky" }),
+				"Enter should commit the highlighted filtered option on the real headless key path");
+		}
+
+		[AvaloniaTest]
+		public void HandledArrowKeys_FromTheFilterBox_StillMoveTheFilteredSelection()
+		{
+			var (picker, window, committed, _) = ShowStatic();
+
+			window.KeyTextInput("s");
+			Assert.That(Items(picker).Select(o => o.Key), Is.EqualTo(new[] { "u", "u-sky", "p" }),
+				"filtering leaves the matching subset in list order");
+
+			RaiseKey(picker.FilterBox, Key.Down, handled: true);
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(1),
+				"Down should still advance even when the TextBox already handled the key");
+
+			RaiseKey(picker.FilterBox, Key.Enter, handled: true);
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-sky" }),
+				"Enter should commit the highlighted filtered option through the same handled event path");
 		}
 
 		[AvaloniaTest]
@@ -216,7 +289,7 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(picker.OptionsList.ItemsSource, Is.Null,
+			Assert.That(picker.CurrentItems, Is.Empty,
 				"lexicons search, lists enumerate: nothing materializes before the user types");
 
 			window.KeyTextInput("ca");
@@ -226,6 +299,32 @@ namespace FwAvaloniaTests
 			RaiseKey(picker.FilterBox, Key.Enter);
 			Assert.That(committed.Single().Key, Is.EqualTo("e-casa"),
 				"Enter commits the first search result by default");
+		}
+
+		[AvaloniaTest]
+		public void UnavailableOptions_AreGreyedOut_AndSkippedByDefaultSelectionAndCommit()
+		{
+			var (picker, window, committed) = ShowStaticWithUnavailable("u", "u-sky");
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"default selection skips options that are already selected elsewhere");
+
+			var texts = picker.OptionsList.GetVisualDescendants().OfType<TextBlock>()
+				.Where(t => Tree().Any(o => o.Name == t.Text))
+				.ToDictionary(t => t.Text, t => t);
+			Assert.That(texts["Universe"].Opacity, Is.LessThan(1.0), "already-selected options are visually muted");
+			Assert.That(texts["Sky"].Opacity, Is.LessThan(1.0));
+			Assert.That(texts["Weather"].Opacity, Is.EqualTo(1.0).Within(0.01));
+
+			RaiseKey(picker.FilterBox, Key.Up);
+			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
+				"keyboard navigation does not land on unavailable choices");
+
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-weather" }),
+				"commit ignores unavailable options and uses the first enabled choice");
 		}
 
 		[AvaloniaTest]

@@ -327,6 +327,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_MorphTypeChooser_DefaultsToLegacyReferenceTargetCandidates()
+		{
+			var composed = Compose();
+			var morphType = composed.Model.Fields
+				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+
+			var expected = ((IMoForm)m_entry.LexemeFormOA)
+				.ReferenceTargetCandidates(MoFormTags.kflidMorphType)
+				.OfType<IMoMorphType>()
+				.Select(mt => mt.Guid.ToString())
+				.OrderBy(g => g)
+				.ToList();
+
+			Assert.That(morphType.Options.Select(o => o.Key).OrderBy(g => g), Is.EqualTo(expected),
+				"the default MorphType chooser must mirror the legacy filtered candidate set");
+			Assert.That(morphType.Options.Any(o => o.Name == "bound root"), Is.True,
+				"same-side stem-like options stay available");
+			Assert.That(morphType.Options.Any(o => o.Name == "infix"), Is.False,
+				"crossing into affix-only types requires the legacy 'Show all types' lane, not the default chooser");
+		}
+
+		[Test]
 		public void Edit_AtomicChooser_RejectsKeysOutsideTheList_WithoutOpeningASession()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,

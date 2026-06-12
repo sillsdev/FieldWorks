@@ -952,14 +952,12 @@ namespace SIL.FieldWorks.XWorks
 				if (_morphTypeOptions == null)
 				{
 					_morphTypeOptions = new List<RegionChoiceOption>();
-					if (morphTypes != null)
+					foreach (var possibility in form.ReferenceTargetCandidates(MoFormTags.kflidMorphType)
+						.OfType<IMoMorphType>()
+						.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
 					{
-						foreach (var possibility in morphTypes.ReallyReallyAllPossibilities.OfType<IMoMorphType>()
-							.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
-						{
-							_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
-								possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
-						}
+						_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+							possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
 					}
 				}
 				var options = _morphTypeOptions;
