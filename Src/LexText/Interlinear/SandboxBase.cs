@@ -3,29 +3,29 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 //#define TraceMouseCalls		// uncomment this line to trace mouse messages
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Text;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Utils;
+using Icu.Collation;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FdoUi;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-using XCore;
 using SIL.WritingSystems;
-using Icu.Collation;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1654,6 +1654,43 @@ namespace SIL.FieldWorks.IText
 		{
 			return CreateSecondaryAndCopyStrings(flidChoices, hvoMain, flidMain, kSbWord,
 				m_caches.MainCache.MainCacheAccessor, m_caches.DataAccess as IVwCacheDa);
+		}
+
+		public void UpdateField(int hvo, int flid)
+		{
+			CheckDisposed();
+			if (!m_cache.ServiceLocator.IsValidObjectId(hvo))
+			{
+				return;
+			}
+			ICmObject hvoObject = Caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			if (hvoObject is ILexSense lexSense)
+			{
+				// This lex sense changed.  Update morphs that use it.
+				foreach (int hvoMorph in GetHvoMorphsForLexSense(hvo))
+				{
+					// This fixes LT-22534.
+					EstablishDefaultSense(hvoMorph, lexSense.Entry, lexSense, null);
+				}
+			}
+			if (hvoObject != null && hvoObject.Owner is IMoMorphSynAnalysis msa)
+			{
+				if (msa.Owner is ILexEntry entry)
+				{
+					foreach (var sense in entry.AllSenses)
+					{
+						if (sense.MorphoSyntaxAnalysisRA == msa)
+						{
+							// This lex sense changed.  Update morphs that use it.
+							foreach (int hvoMorph in GetHvoMorphsForLexSense(sense.Hvo))
+							{
+								// This fixes LT-22541.
+								EstablishDefaultSense(hvoMorph, entry, sense, null);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -3954,6 +3991,22 @@ namespace SIL.FieldWorks.IText
 				lexSensesForMorphs.Add(m_caches.RealHvo(hvoMorphSense));
 			}
 			return lexSensesForMorphs;
+		}
+
+		private IList<int> GetHvoMorphsForLexSense(int lexSense)
+		{
+			IList<int> hvoMorphs = new List<int>();
+			int cmorphs = m_caches.DataAccess.get_VecSize(kSbWord, ktagSbWordMorphs);
+			for (int i = 0; i < cmorphs; i++)
+			{
+				int hvoMorph = m_caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, i);
+				int hvoMorphSense = m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphGloss);
+				if (m_caches.RealHvo(hvoMorphSense) == lexSense)
+				{
+					hvoMorphs.Add(hvoMorph);
+				}
+			}
+			return hvoMorphs;
 		}
 
 		/// <summary>
