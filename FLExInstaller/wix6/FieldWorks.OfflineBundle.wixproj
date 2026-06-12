@@ -44,18 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-  <WixExtension Include="WixToolset.BootstrapperApplications.wixext">
-    <HintPath>$(MSBuildProjectDirectory)\..\..\packages\wixtoolset.bal.wixext\6.0.2\wixext6\WixToolset.BootstrapperApplications.wixext.dll</HintPath>
-  </WixExtension>
-  <WixExtension Include="WixToolset.Util.wixext">
-    <HintPath>$(MSBuildProjectDirectory)\..\..\packages\wixtoolset.util.wixext\6.0.2\wixext6\WixToolset.Util.wixext.dll</HintPath>
-  </WixExtension>
-  <WixExtension Include="WixToolset.Netfx.wixext">
-    <HintPath>$(MSBuildProjectDirectory)\..\..\packages\wixtoolset.netfx.wixext\6.0.2\wixext6\WixToolset.Netfx.wixext.dll</HintPath>
-  </WixExtension>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="Shared\Base\OfflineBundle.wxs" />
   </ItemGroup>
 
