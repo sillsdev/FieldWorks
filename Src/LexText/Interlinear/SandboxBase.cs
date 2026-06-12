@@ -1664,20 +1664,20 @@ namespace SIL.FieldWorks.IText
 				return;
 			}
 			ICmObject hvoObject = Caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			if (hvoObject is ILexSense lexSense && lexSense.Owner is ILexEntry lexEntry)
+			if (hvoObject is ILexSense lexSense)
 			{
 				// This lex sense changed.  Update morphs that use it.
 				foreach (int hvoMorph in GetHvoMorphsForLexSense(hvo))
 				{
 					// This fixes LT-22534.
-					EstablishDefaultSense(hvoMorph, lexEntry, lexSense, null);
+					EstablishDefaultSense(hvoMorph, lexSense.Entry, lexSense, null);
 				}
 			}
 			if (hvoObject != null && hvoObject.Owner is IMoMorphSynAnalysis msa)
 			{
 				if (msa.Owner is ILexEntry entry)
 				{
-					foreach (var sense in entry.SensesOS)
+					foreach (var sense in entry.AllSenses)
 					{
 						if (sense.MorphoSyntaxAnalysisRA == msa)
 						{
