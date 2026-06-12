@@ -519,6 +519,7 @@ namespace SIL.FieldWorks.IText
 			// (separator)
 			// 5) Add Line > (submenu of currently hidden lines)
 			// 6) Configure Interlinear...
+			// 7) Help
 
 			if (Vc != null && Vc.LineChoices != null && !isRibbonMenu) // just to be safe; shouldn't happen
 			{
@@ -554,12 +555,29 @@ namespace SIL.FieldWorks.IText
 					menu.Items.Add(addLineSubMenu);
 			}
 
-			// 6) Last, but not least, add a link to the Configure Interlinear dialog
+			// 6) Add a link to the Configure Interlinear dialog
 			var configLink = new ToolStripMenuItem(ITextStrings.ksConfigureLinkText);
 			configLink.Click += new EventHandler(configLink_Click); // TODO: Figure out how to pass more parameters
 			menu.Items.Add(configLink);
 
+			// 7) Add Help.
+			if (Vc != null && Vc.LineChoices != null && !isRibbonMenu)
+			{
+				if (Vc.LineChoices.EnabledLineSpecs[ilineChoice].Flid == InterlinLineChoices.kflidMedia)
+				{
+					ImageCollection smallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
+					Image imgHelp = smallImages.GetImage("Help");
+					menu.Items.Add(new ToolStripMenuItem("Help...", null, this.OnMediaHelp));
+				}
+			}
+
 			return menu;
+		}
+
+		public void OnMediaHelp(object sender, EventArgs args)
+		{
+			CheckDisposed();
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpField-Interlinear-Media");
 		}
 
 		private void AddHideLineMenuItem(ContextMenuStrip menu,
