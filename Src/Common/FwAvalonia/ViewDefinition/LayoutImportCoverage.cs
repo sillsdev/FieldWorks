@@ -43,11 +43,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"if", "ifnot", "choice", "where", "otherwise"
 			};
 
+		// B7: chooserLink imports as typed metadata; chooserInfo is handled as the link container
+		// (its OTHER attributes — title/text/guicontrol/… — stay measured as unhandled below).
 		private static readonly HashSet<string> HandledPartsFileElements =
 			new HashSet<string>(StringComparer.Ordinal)
 			{
 				"PartInventory", "bin", "part", "slice", "seq", "obj",
-				"if", "ifnot", "choice", "where", "otherwise"
+				"if", "ifnot", "choice", "where", "otherwise",
+				"chooserInfo", "chooserLink"
 			};
 
 		/// <summary>
@@ -171,6 +174,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// B3: the parsed condition vocabulary; publishing-only condition forms
 					// (stringaltequals etc.) stay measured as unhandled.
 					return XmlLayoutImporter.HandledConditionAttributes.Contains(attributeName);
+				case "chooserLink":
+					// B7: the typed jump-link vocabulary.
+					return XmlLayoutImporter.HandledChooserLinkAttributes.Contains(attributeName);
+				case "chooserInfo":
+					// B7 remainder: only the chooserLink children import; chooserInfo's own
+					// attributes (title/text/textparam/flidTextParam/guicontrol/helpBrowser) do not.
+					return false;
 				case "choice":
 				case "otherwise":
 					return false; // these carry no attributes in the shipped files

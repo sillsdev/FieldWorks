@@ -9,15 +9,15 @@ so they weight the vocabulary by how often real layouts use it.
 
 - Detail layouts imported: **136** (non-detail layouts skipped: 594)
 - Typed nodes produced: **1128**
-- Element occurrence coverage: **75.5%** (6269 handled / 2031 unhandled)
-- Attribute occurrence coverage: **55.5%** (14276 handled / 11435 unhandled)
+- Element occurrence coverage: **77.8%** (6456 handled / 1844 unhandled)
+- Attribute occurrence coverage: **56.6%** (14560 handled / 11151 unhandled)
 
 ## Import diagnostics by code
 
 | Code (severity) | Count |
 |---|---|
 | `unhandled-attribute (Info)` | 715 |
-| `slice-content-dropped (Info)` | 497 |
+| `slice-content-dropped (Info)` | 330 |
 | `dynamic-editor (Info)` | 122 |
 | `unresolved-part (Error)` | 63 |
 | `unhandled-attribute (Warning)` | 5 |
@@ -76,8 +76,6 @@ so they weight the vocabulary by how often real layouts use it.
 | `para` | 131 |
 | `deParams` | 126 |
 | `configureMlString` | 99 |
-| `chooserLink` | 94 |
-| `chooserInfo` | 93 |
 | `forecolor` | 89 |
 | `span` | 65 |
 | `bold` | 52 |
@@ -133,9 +131,6 @@ so they weight the vocabulary by how often real layouts use it.
 | `seq@inheritSeps` | 109 |
 | `deParams@ws` | 102 |
 | `configureMlString@field` | 99 |
-| `chooserLink@label` | 94 |
-| `chooserLink@tool` | 94 |
-| `chooserLink@type` | 94 |
 | `layout@tagForWs` | 87 |
 | `forecolor@value` | 85 |
 | `string@class` | 77 |
@@ -247,7 +242,6 @@ so they weight the vocabulary by how often real layouts use it.
 | `RecordChangeHandler@class` | 2 |
 | `RecordChangeHandler@listName` | 2 |
 | `chooserInfo@helpBrowser` | 2 |
-| `chooserLink@target` | 2 |
 | `deParams@editable` | 2 |
 | `part@indent` | 2 |
 | `picture@height` | 2 |

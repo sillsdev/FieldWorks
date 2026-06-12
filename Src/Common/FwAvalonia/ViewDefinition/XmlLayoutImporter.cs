@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
@@ -43,6 +44,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				"localizationKey", "labelId", "automationId", "surface", "menu", "hotlinks",
 				"ghost", "ghostWs", "ghostClass", "ghostLabel", "ghostInitMethod"
 			};
+
+		// B7: the chooserLink attribute vocabulary the importer consumes (the legacy reader's exact
+		// set, ReallySimpleListChooser.cs:887-926). The shipped files carry type/label/tool on all 94
+		// links and target on 2 (grammar-area slot links).
+		public static readonly HashSet<string> HandledChooserLinkAttributes =
+			new HashSet<string>(System.StringComparer.Ordinal) { "type", "label", "tool", "target" };
 
 		// B3: the condition vocabulary the importer parses into ViewCondition — exactly the forms the
 		// shipped DETAIL layouts use (audited 2026-06-11 over DistFiles .../Parts: boolequals 44,
@@ -285,12 +292,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					ReportUnhandledAttributes(contentEl, HandledSliceAttributes, "slice", stableId, diagnostics);
 					ReportSubstitutionValues(contentEl, HandledSliceAttributes, stableId, diagnostics);
 
+					var chooserLinks = new List<ViewChooserLink>();
 					var childElements = new List<XElement>();
 					foreach (var child in contentEl.Elements())
 					{
 						if (child.Name.LocalName == "slice" || child.Name.LocalName == "seq" || child.Name.LocalName == "obj")
 						{
 							childElements.Add(child);
+						}
+						else if (child.Name.LocalName == "chooserInfo")
+						{
+							// B7: the chooser jump links import as typed metadata (the legacy
+							// "Edit the … list" links, ReallySimpleListChooser.InitializeExtras);
+							// chooserInfo's other facets (title/text/guicontrol/textparam) are still
+							// reported, not silently dropped.
+							ImportChooserInfo(child, stableId, chooserLinks, diagnostics);
 						}
 						else if (child.Name.LocalName != "properties")
 						{
@@ -333,7 +349,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						return new ViewNode(stableId, ViewNodeKind.Group, label, abbreviation, field, editor,
 							classification, ws, visibility, expansion, indented, null, children,
 							localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
-							menuId, contextMenuId, hotlinksId);
+							menuId, contextMenuId, hotlinksId,
+							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -345,7 +362,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 						menuId, contextMenuId, hotlinksId,
 						customEditorClass: Attr(contentEl, "class"),
-						customEditorAssembly: Attr(contentEl, "assemblyPath"));
+						customEditorAssembly: Attr(contentEl, "assemblyPath"),
+						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null);
 				}
 				case "obj":
 				case "seq":
@@ -438,6 +456,40 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "unknown-part-content",
 						$"Unsupported part content element '{contentEl.Name.LocalName}'.", stableId));
 					return null;
+			}
+		}
+
+		// B7: import a slice's <chooserInfo> — the chooserLink jump links become typed metadata in
+		// document order, mirroring the legacy reader's attribute set exactly
+		// (ReallySimpleListChooser.cs:887-926: type defaults to "goto", label/tool/target verbatim).
+		// chooserInfo's OTHER facets (title/text/textparam/flidTextParam/guicontrol/helpBrowser) are
+		// not imported yet; they keep the slice-content-dropped report so the B7 remainder stays
+		// measured rather than silently lost.
+		private static void ImportChooserInfo(
+			XElement chooserInfoEl, string stableId, List<ViewChooserLink> chooserLinks,
+			List<ViewDiagnostic> diagnostics)
+		{
+			foreach (var linkEl in chooserInfoEl.Elements("chooserLink"))
+			{
+				chooserLinks.Add(new ViewChooserLink(
+					Attr(linkEl, "type"),
+					Attr(linkEl, "label"),
+					Attr(linkEl, "tool"),
+					Attr(linkEl, "target")));
+				ReportUnhandledAttributes(linkEl, HandledChooserLinkAttributes, "chooserLink", stableId, diagnostics);
+			}
+
+			var droppedFacets = chooserInfoEl.Attributes()
+				.Select(a => a.Name.LocalName)
+				.Concat(chooserInfoEl.Elements()
+					.Where(e => e.Name.LocalName != "chooserLink")
+					.Select(e => "<" + e.Name.LocalName + ">"))
+				.ToList();
+			if (droppedFacets.Count > 0)
+			{
+				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
+					$"Slice content child <chooserInfo> facets ({string.Join(", ", droppedFacets)}) are not imported; only chooserLink is.",
+					stableId));
 			}
 		}
 

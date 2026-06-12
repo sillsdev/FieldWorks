@@ -705,7 +705,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm.ShowRegion(region, editContext,
 				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
-				OnRegionMenuRequested);
+				OnRegionMenuRequested, OnRegionLinkRequested);
 		}
 
 		/// <summary>
@@ -879,6 +879,44 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Debug.WriteLine("Region context menu failed: " + e);
 			}
+		}
+
+		/// <summary>
+		/// B7: follows a chooser jump link (e.g. "Edit the Publications list" on Publish In) the
+		/// EXACT way the legacy chooser does on link click — the dialog closes, then
+		/// <c>ReallySimpleListChooser.HandleAnyJump</c> posts <c>FollowLink</c> with the
+		/// <c>FwLinkArgs(tool, guid)</c> built from the layout's <c>chooserLink</c>
+		/// (ReallySimpleListChooser.cs:900/1657). Here the flyout has already closed; any open
+		/// fenced edit session settles first (the jump navigates away from this record), then the
+		/// same mediator message posts.
+		/// </summary>
+		private void OnRegionLinkRequested(RegionLinkRequest request)
+		{
+			try
+			{
+				m_regionEditContext.Settle();
+#pragma warning disable 618 // legacy parity: ReallySimpleListChooser.HandleAnyJump posts the same way
+				m_mediator.PostMessage("FollowLink", BuildFollowLinkArgs(request));
+#pragma warning restore 618
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Region chooser link jump failed: " + e);
+			}
+		}
+
+		/// <summary>
+		/// The legacy translation: <c>new FwLinkArgs(sTool, m_guidLink)</c> — the tool from the
+		/// layout's chooserLink, the target guid empty unless the link resolved one (none of the
+		/// lexeme-editor chooserInfos set <c>flidTextParam</c>, so empty mirrors legacy exactly).
+		/// Internal so the mapping is unit-testable without a mediator.
+		/// </summary>
+		internal static FwLinkArgs BuildFollowLinkArgs(RegionLinkRequest request)
+		{
+			var target = Guid.Empty;
+			if (!string.IsNullOrEmpty(request.Link.TargetGuid))
+				Guid.TryParse(request.Link.TargetGuid, out target);
+			return new FwLinkArgs(request.Link.Tool, target);
 		}
 
 		// Approved baseline adapter "command-menu-routing" (13.4): the hidden legacy DataTree +

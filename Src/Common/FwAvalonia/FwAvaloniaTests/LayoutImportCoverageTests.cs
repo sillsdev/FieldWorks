@@ -38,6 +38,18 @@ namespace FwAvaloniaTests
   <part id='LexEntry-Detail-Senses'>
     <seq field='Senses'/>
   </part>
+  <part id='LexEntry-Detail-PublishIn'>
+    <slice field='PublishIn' label='Publish Entry In' editor='defaultVectorReference'>
+      <chooserInfo>
+        <chooserLink type='goto' label='Edit the Publications list' tool='publicationsEdit'/>
+      </chooserInfo>
+    </slice>
+  </part>
+  <part id='LexEntry-Detail-MorphTypeTitled'>
+    <slice field='MorphType' label='Morph Type' editor='MorphTypeAtomicReference'>
+      <chooserInfo title='Choose Morpheme Type'/>
+    </slice>
+  </part>
   <part id='LexEntry-Detail-SubstitutionWs'>
     <slice label='Subst' editor='string' field='X' ws='$ws=vernacular'/>
   </part>
@@ -174,6 +186,44 @@ namespace FwAvaloniaTests
 </layout>");
 
 			Assert.That(model.Diagnostics.Any(d => d.Code == "injected-child-dropped"), Is.True);
+		}
+
+		// B7: the chooserLink jump links import as typed metadata on the slice node — the exact
+		// shape LexEntryParts.xml:48-53 gives the Publish In field (the legacy chooser dialog's
+		// "Edit the Publications list" link, ReallySimpleListChooser.cs:887-900).
+		[Test]
+		public void ChooserInfo_ChooserLinks_ImportOntoTheTypedNode()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='PublishIn'/>
+</layout>");
+
+			var node = model.Roots.Single();
+			Assert.That(node.ChooserLinks, Has.Count.EqualTo(1));
+			var link = node.ChooserLinks[0];
+			Assert.That(link.Type, Is.EqualTo("goto"));
+			Assert.That(link.Label, Is.EqualTo("Edit the Publications list"));
+			Assert.That(link.Tool, Is.EqualTo("publicationsEdit"));
+			Assert.That(link.Target, Is.Null, "no target attribute in the Publications link");
+			Assert.That(model.Diagnostics.Where(d => d.Code == "slice-content-dropped"), Is.Empty,
+				"a chooserInfo that only carries links is fully consumed");
+		}
+
+		// B7 remainder: chooserInfo's OTHER facets (title/text/guicontrol/…) stay reported, not
+		// silently dropped, so the remaining gap is still measured.
+		[Test]
+		public void ChooserInfo_NonLinkFacets_AreStillReported()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='T'>
+  <part ref='MorphTypeTitled'/>
+</layout>");
+
+			Assert.That(model.Roots.Single().ChooserLinks, Is.Empty);
+			var diag = model.Diagnostics.Single(d => d.Code == "slice-content-dropped");
+			Assert.That(diag.Severity, Is.EqualTo(ViewDiagnosticSeverity.Info));
+			Assert.That(diag.Message, Does.Contain("title"));
 		}
 
 		[Test]

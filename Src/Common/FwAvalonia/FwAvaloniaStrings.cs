@@ -66,5 +66,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>Tooltip of a disabled launcher button: no host dialog service (D4).</summary>
 		public static string LauncherUnavailable => Resources.GetString("ksLauncherUnavailable");
+
+		/// <summary>"{0} settings" — accessible name of a chooser's hover-revealed settings gear.</summary>
+		public static string FieldSettingsFormat => Resources.GetString("ksFieldSettings");
 	}
 }

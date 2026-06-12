@@ -93,4 +93,8 @@
     <value>This field is edited in a dialog that is not available in this view.</value>
     <comment>Tooltip of the disabled launcher button when the host provides no dialog service (D4).</comment>
   </data>
+  <data name="ksFieldSettings" xml:space="preserve">
+    <value>{0} settings</value>
+    <comment>Accessible name of the hover-revealed settings gear on a chooser field; {0} is the field label (e.g. "Morph Type settings").</comment>
+  </data>
 </root>

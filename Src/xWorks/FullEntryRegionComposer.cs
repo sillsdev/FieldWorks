@@ -486,6 +486,36 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
+			// B7: project the node's imported chooserLink metadata onto the row — the legacy
+			// chooser dialog's "Edit the … list" jump links (ReallySimpleListChooser.
+			// InitializeExtras, ReallySimpleListChooser.cs:887-926). Only the "goto" kind is
+			// implemented: it is the ONLY kind the lexeme-editor layouts use (all 95 shipped
+			// chooserLinks are type="goto"); legacy "dialog"/"simple" links need ChooserCommand
+			// lanes and are logged + skipped, never half-dispatched. The target guid stays empty
+			// like legacy m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels
+			// localize through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
+			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node)
+			{
+				if (node.ChooserLinks.Count == 0)
+					return null;
+
+				List<RegionChooserLink> links = null;
+				foreach (var link in node.ChooserLinks)
+				{
+					if (!string.Equals(link.Type, "goto", StringComparison.OrdinalIgnoreCase)
+						|| string.IsNullOrEmpty(link.Label) || string.IsNullOrEmpty(link.Tool))
+					{
+						System.Diagnostics.Debug.WriteLine(
+							$"chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
+						continue;
+					}
+					(links ?? (links = new List<RegionChooserLink>()))
+						.Add(new RegionChooserLink(Localize(link.Label), link.Tool));
+				}
+
+				return links;
+			}
+
 			// The three section-header construction sites (group header, summary slice, sequence
 			// banner) build the identical collapsible header row; one helper keeps them from drifting.
 			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
@@ -721,7 +751,8 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
-					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
+					chooserLinks: BuildChooserLinks(node)));
 
 				OptionSetters[stableId] = optionKey =>
 				{
@@ -791,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
-					objectHvo: obj.Hvo));
+					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node)));
 
 				var hvo = obj.Hvo;
 				OptionSetters[stableId] = key =>
@@ -824,7 +855,8 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
+					chooserLinks: BuildChooserLinks(node)));
 
 				var hvo = obj.Hvo;
 				ReferenceAddSetters[stableId] = key =>
@@ -927,7 +959,8 @@ namespace SIL.FieldWorks.XWorks
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry)));
+					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry),
+					chooserLinks: BuildChooserLinks(node)));
 
 				ReferenceAddSetters[stableId] = key =>
 				{

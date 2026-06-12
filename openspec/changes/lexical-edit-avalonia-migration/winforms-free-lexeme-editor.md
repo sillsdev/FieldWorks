@@ -162,6 +162,30 @@ Status (wave 4, 2026-06-11): LANDED.
   rows light up with zero further plugin work. Choose/replace media file (vs play) rides the
   media lane (6.12) like the native player.
 
+### Post-wave gap fixes (user-reported, 2026-06-11): LANDED
+
+- **Chooser jump links (gear flyouts):** the legacy chooser dialog's "Edit the … list"
+  LinkLabels (`ReallySimpleListChooser.InitializeExtras`/`AddLink`, kGotoLink →
+  `PostMessage("FollowLink", new FwLinkArgs(tool, m_guidLink))`) are recreated end to end:
+  `<chooserInfo><chooserLink type/label/tool/target>` imports onto the typed node
+  (`ViewNode.ChooserLinks`, canonical-JSON `chooserLinks` block — B7's schema reservation),
+  the composer projects the "goto" links (the only kind the lexeme-editor layouts use; all 95
+  shipped links are goto) onto chooser AND reference-vector rows
+  (`LexicalEditRegionField.ChooserLinks`), the gear/+ flyouts render them below the options
+  (`RegionLinkChrome`), and the click rides a `RegionLinkRequest` host callback that
+  `RecordEditView.OnRegionLinkRequested` dispatches as the identical legacy jump (settle, then
+  mediator `FollowLink` with `FwLinkArgs(tool, Guid.Empty)` — no lexeme-editor chooserInfo
+  sets `flidTextParam`). chooserInfo's other facets (title/text/guicontrol FlatList) remain
+  the measured B7 remainder.
+- **Lexeme Form gear:** the legacy Lexeme Form slice's button is its slice TREE-NODE MENU
+  (`MoForm-Detail-AsLexemeForm` binds `menu="mnuDataTree-LexemeForm"`: Show in Concordance /
+  Swap with Allomorph / Convert to Affix Process/Allomorph) — NOT a chooser launcher (the
+  morph-type chooser with the `MorphTypeSwapLogic` gate is the child Morph Type row, which
+  already has its gear). Recreated data-driven: any text row whose layout carries a `menu=`
+  binding draws the same hover-revealed `RegionChrome` gear, and clicking it raises the SAME
+  slice-menu `RegionMenuRequest` a label right-click raises — the host shows the identical
+  xCore menu. Nothing is hardcoded to "LexemeForm".
+
 ### D5. Governance: the burn-down is enforced by tests, not intentions
 
 - The companion-strip designated set may only **shrink** (pinned: a test asserts its exact

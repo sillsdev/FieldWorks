@@ -111,6 +111,53 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// A list-editor jump link on a chooser/reference-vector row (B7): the legacy chooser dialog's
+	/// "Edit the … list" LinkLabel (<c>ReallySimpleListChooser.AddLink</c> with
+	/// <c>LinkType.kGotoLink</c>), composed from the layout's <c>chooserLink type="goto"</c>
+	/// metadata. Clicking it asks the host to jump to the tool that edits the underlying list.
+	/// </summary>
+	public sealed class RegionChooserLink
+	{
+		public RegionChooserLink(string label, string tool, string targetGuid = null)
+		{
+			Label = label;
+			Tool = tool;
+			TargetGuid = targetGuid;
+		}
+
+		/// <summary>The localized link text (e.g. "Edit the Publications list").</summary>
+		public string Label { get; }
+
+		/// <summary>The destination tool (e.g. publicationsEdit) of the legacy FwLinkArgs jump.</summary>
+		public string Tool { get; }
+
+		/// <summary>
+		/// The jump's target object guid string, or null for a plain tool jump — the legacy chooser
+		/// passes <c>Guid.Empty</c> (<c>m_guidLink</c>) unless a <c>flidTextParam</c> resolved one,
+		/// and none of the lexeme-editor parts carry that.
+		/// </summary>
+		public string TargetGuid { get; }
+	}
+
+	/// <summary>
+	/// A request to follow a chooser jump link (B7): the host dispatches it the way the legacy
+	/// chooser does on link click — mediator <c>FollowLink</c> with <c>FwLinkArgs(tool, target)</c>
+	/// (<c>ReallySimpleListChooser.HandleAnyJump</c>).
+	/// </summary>
+	public sealed class RegionLinkRequest
+	{
+		public RegionLinkRequest(LexicalEditRegionField field, RegionChooserLink link)
+		{
+			Field = field;
+			Link = link;
+		}
+
+		public LexicalEditRegionField Field { get; }
+
+		public RegionChooserLink Link { get; }
+	}
+
+	/// <summary>
 	/// A field on a lexical-edit region, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IRegionValueProvider"/>. This is the product contract that replaces the
 	/// lossy hand-written POC DTO: structure comes from the typed view definition, values from the
@@ -142,8 +189,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string ghostPrompt = null,
 			IReadOnlyList<RegionChoiceOption> items = null,
 			Func<Control> controlFactory = null,
-			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null)
+			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null,
+			IReadOnlyList<RegionChooserLink> chooserLinks = null)
 		{
+			ChooserLinks = chooserLinks ?? new List<RegionChooserLink>();
 			Items = items ?? new List<RegionChoiceOption>();
 			ControlFactory = controlFactory;
 			SearchOptions = searchOptions;
@@ -237,6 +286,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <see cref="ControlFactory"/>, a plain delegate keeps this layer LCModel-free.
 		/// </summary>
 		public Func<string, IReadOnlyList<RegionChoiceOption>> SearchOptions { get; }
+
+		/// <summary>
+		/// The list-editor jump links of a chooser/reference-vector row (B7): composed from the
+		/// layout's <c>chooserLink type="goto"</c> metadata (e.g. "Edit the Publications list" →
+		/// publicationsEdit). The gear flyout surfaces them below the options; clicking raises the
+		/// host's <c>RegionLinkRequest</c> callback. Empty for rows without chooser metadata.
+		/// </summary>
+		public IReadOnlyList<RegionChooserLink> ChooserLinks { get; }
 	}
 
 	/// <summary>Which legacy menu lane a right-click maps to (section 13).</summary>

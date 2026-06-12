@@ -115,6 +115,17 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.AnthroListOA.PossibilitiesOS.Add(anthro);
 				anthro.Name.SetAnalysisDefaultWritingSystem("Kinship");
 			}
+
+			// B7: the Publications list behind Publish In / Show As Headword In — the field whose
+			// legacy chooser carries the "Edit the Publications list" jump link.
+			if (Cache.LangProject.LexDbOA.PublicationTypesOA == null)
+				Cache.LangProject.LexDbOA.PublicationTypesOA = listFactory.Create();
+			if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count == 0)
+			{
+				var mainDictionary = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(mainDictionary);
+				mainDictionary.Name.SetAnalysisDefaultWritingSystem("Main Dictionary");
+			}
 		}
 
 		private ComposedEntryRegion Compose(bool showHidden = false)
@@ -283,6 +294,40 @@ namespace SIL.FieldWorks.XWorks
 				"a possibility from ANOTHER list must not be assignable");
 			Assert.That(composed.EditContext.IsOpen, Is.False);
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
+		}
+
+		// GAP 1 / B7: the layout's chooserLink metadata composes onto the row — LexEntryParts.xml:48-53
+		// gives Publish In <chooserLink type="goto" label="Edit the Publications list"
+		// tool="publicationsEdit"/>, the legacy chooser dialog's jump LinkLabel
+		// (ReallySimpleListChooser.cs:887-900: AddLink(label, kGotoLink, new FwLinkArgs(tool,
+		// m_guidLink)) with m_guidLink = Guid.Empty — no flidTextParam on this part).
+		[Test]
+		public void Compose_PublishIn_CarriesThePublicationsJumpLink_WithEmptyTarget()
+		{
+			var composed = Compose();
+			var publishIn = composed.Model.Fields.Single(f => f.Field == "PublishIn"
+				&& f.Kind == RegionFieldKind.ReferenceVector && f.ObjectHvo == m_entry.Hvo);
+
+			Assert.That(publishIn.ChooserLinks, Has.Count.EqualTo(1),
+				"the Publish In row carries the layout's jump link");
+			var link = publishIn.ChooserLinks[0];
+			Assert.That(link.Label, Is.EqualTo("Edit the Publications list"));
+			Assert.That(link.Tool, Is.EqualTo("publicationsEdit"));
+			Assert.That(link.TargetGuid, Is.Null,
+				"legacy m_guidLink stays Guid.Empty for this link — a plain tool jump");
+		}
+
+		// GAP 1 control: a chooserInfo without links (MorphologyParts.xml:280-283, title only)
+		// composes a chooser row with NO jump links — the link lane is data-driven, never invented.
+		[Test]
+		public void Compose_MorphTypeChooser_HasNoJumpLinks()
+		{
+			var composed = Compose();
+			var morphType = composed.Model.Fields
+				.Single(f => f.Field == "MorphType" && f.Kind == RegionFieldKind.Chooser);
+
+			Assert.That(morphType.ChooserLinks, Is.Empty,
+				"MoForm-Detail-MorphTypeBasic's chooserInfo carries only a title, no chooserLink");
 		}
 
 		// B7: a chooserInfo guicontrol "...FlatList" spec means the legacy chooser presents the list
