@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?if $(sys.BUILDARCH) = x64 ?>
-<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\0.9.7\runtimes\EcDistFiles\MergeModules\x64\Release" ?>
+<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\__EncodingConvertersCoreVersion__\runtimes\EcDistFiles\MergeModules\x64\Release" ?>
 <?else?>
-<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\0.9.7\runtimes\EcDistFiles\MergeModules\x86\Release" ?>
+<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\__EncodingConvertersCoreVersion__\runtimes\EcDistFiles\MergeModules\x86\Release" ?>
 <?endif?>
 <!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>

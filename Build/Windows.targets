@@ -84,7 +84,7 @@
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests (x64 only) -->
 	<PropertyGroup>
-		<ECNugetVersion>0.9.7</ECNugetVersion>
+		<ECNugetVersion Condition="'$(ECNugetVersion)'==''">$(EncodingConvertersCoreVersion)</ECNugetVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
