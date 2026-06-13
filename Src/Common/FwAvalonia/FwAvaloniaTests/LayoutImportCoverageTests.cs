@@ -805,6 +805,11 @@ namespace FwAvaloniaTests
 			var repoRoot = FindRepoRoot();
 			var (layouts, parts) = LoadShippedFiles(repoRoot);
 
+			var entry = ImportShippedLayout(repoRoot, layouts, parts, "LexEntry", "Normal");
+			var variantOf = FindNode(entry.Roots, n => n.Field == "EntryRefs" && n.ForVariant);
+			Assert.That(variantOf, Is.Not.Null, "the hidden top-level Variant of ghost row keeps its legacy forVariant flag");
+			Assert.That(variantOf.Label, Is.EqualTo("Variant of"));
+
 			// LexExampleSentence/Normal reaches TranslationsAllA: seq Translations ghost=Translation
 			// ghostWs=analysis ghostInitMethod=SetTypeToFreeTrans (implicit class CmTranslation).
 			var example = ImportShippedLayout(repoRoot, layouts, parts, "LexExampleSentence", "Normal");

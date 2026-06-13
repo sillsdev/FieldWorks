@@ -372,6 +372,12 @@ change's surfaces.
   Per-surface 9.4 must enumerate which dynamic editors that surface's layouts reach; the
   companion strip is the documented lane for the ones that must stay WinForms (Chorus UI),
   and the D4 launcher lane is the documented lane for dialog-launcher slices.
+- **Status (2026-06-12) — D3 ghost-reference lane landed** (`winforms-free-lexeme-editor.md`
+  D3): `GhostLexRefSlice` no longer falls back to the unsupported row. The composer absorbs it
+  as an editable search-backed `ReferenceVector` row and creates the missing `LexEntryRef` on
+  first add with the legacy complex-form vs variant semantics. Burn-down: the class moved from
+  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`; `LexReferenceMultiSlice` remains
+  the only D3 follow-up in this family.
 
 ### B12. Native viewing/render coupling
 

@@ -85,12 +85,12 @@ the 6.3 separator-bar/add-slot affordance. **Add** uses type-ahead search over t
 (headword prefix match via the entry repository) rather than materializing the whole lexicon
 as options — possibility lists enumerate; lexicons search.
 
-`LexReferenceMultiSlice` (relations) and `GhostLexRefSlice` are explicitly **next in this
-lane, not this wave**: the multi-slice generates one row per relation type and needs the
-relation-type model walk; it reuses the same row/affordance once that walk exists. Recorded
-as the lane's follow-up so it cannot silently fall off the list.
+`LexReferenceMultiSlice` (relations) is explicitly **next in this lane**: the multi-slice
+generates one row per relation type and needs the relation-type model walk; it reuses the
+same row/affordance once that walk exists. Recorded as the lane's follow-up so it cannot
+silently fall off the list.
 
-Status (wave 3, 2026-06-11): LANDED. The composer recognizes non-virtual entry/sense-target
+Status (wave 3, 2026-06-12): LANDED. The composer recognizes non-virtual entry/sense-target
 reference vectors (signature LexEntry/LexSense, or CmObject under the
 `EntrySequenceReferenceSlice` layout identity — ComponentLexemes/PrimaryLexemes) and composes
 an editable `ReferenceVector` row whose add slot carries
@@ -107,6 +107,15 @@ the slice's VIRTUAL back-ref fields (ComplexFormEntries, Subentries,
 VisibleComplexFormBackRefs, VariantFormEntries) still render read-only — their writes land on
 the other entry's LexEntryRef (the legacy `AddNewObjectsToProperty` overrides) and ride the
 D3 follow-up together with the relations walk.
+
+Top-level ghost lexical-reference rows landed in the same lane on 2026-06-12:
+`GhostLexRefSlice` now composes as an editable search-backed `ReferenceVector` row instead of
+the unsupported placeholder. The empty `Components` row is always available; the hidden
+`Variant of` ghost row appears under Show Hidden Fields. On first add, the setter creates the
+missing `LexEntryRef` with the legacy semantics (`krtComplexForm` vs `krtVariant`, seeded
+unspecified type, complex-form primary-lexeme coupling, one undo step). Pinned by
+`GhostLexRefSliceTests`; the class moved from `ExplicitlyDeferredClassNames` to
+`LaneAbsorbedClassNames` ("D3 ghost reference-vector lane").
 
 ### D4. Dialog launchers: Avalonia row + legacy dialog through a host service
 

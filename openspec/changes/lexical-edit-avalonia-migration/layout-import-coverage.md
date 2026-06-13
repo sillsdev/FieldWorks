@@ -10,13 +10,13 @@ so they weight the vocabulary by how often real layouts use it.
 - Detail layouts imported: **136** (non-detail layouts skipped: 594)
 - Typed nodes produced: **1139**
 - Element occurrence coverage: **77.8%** (6468 handled / 1844 unhandled)
-- Attribute occurrence coverage: **56.7%** (14585 handled / 11152 unhandled)
+- Attribute occurrence coverage: **56.7%** (14586 handled / 11151 unhandled)
 
 ## Import diagnostics by code
 
 | Code (severity) | Count |
 |---|---|
-| `unhandled-attribute (Info)` | 715 |
+| `unhandled-attribute (Info)` | 714 |
 | `slice-content-dropped (Info)` | 330 |
 | `dynamic-editor (Info)` | 122 |
 | `unresolved-part (Error)` | 62 |
@@ -273,7 +273,6 @@ so they weight the vocabulary by how often real layouts use it.
 | `seq@checkForEmptyItems` | 1 |
 | `seq@numdelay` | 1 |
 | `seq@targetClass` | 1 |
-| `slice@forVariant` | 1 |
 | `slice@labelws` | 1 |
 | `slice@optionalWs` | 1 |
 | `slice@refreshDataTreeOnChange` | 1 |

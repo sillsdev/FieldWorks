@@ -34,7 +34,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
 				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
-				"localizationKey", "labelId", "automationId", "surface", "menu", "contextMenu", "hotlinks"
+				"localizationKey", "labelId", "automationId", "surface", "menu", "contextMenu", "hotlinks",
+				"forVariant"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -361,6 +362,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						classification, ws, visibility, expansion, indented, null, children,
 						localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 						menuId, contextMenuId, hotlinksId,
+						forVariant: ParseOptionalBool(Attr(contentEl, "forVariant")) ?? false,
 						customEditorClass: Attr(contentEl, "class"),
 						customEditorAssembly: Attr(contentEl, "assemblyPath"),
 						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null);
@@ -730,6 +732,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case "unsupported": return SurfaceRouting.Unsupported;
 				default: return SurfaceRouting.Inherit;
 			}
+		}
+
+		private static bool? ParseOptionalBool(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+				return null;
+			if (bool.TryParse(value, out var parsed))
+				return parsed;
+			return null;
 		}
 
 		private static ViewVisibility ParseVisibility(string value)

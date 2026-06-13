@@ -194,8 +194,7 @@ namespace SIL.FieldWorks.XWorks
 				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" },
 				// Lexical relations need the relation-type model walk; recorded as the D3 lane's
 				// follow-up so they cannot silently fall off the list.
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 follow-up" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 follow-up" }
+				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 follow-up" }
 				// AudioVisualSlice graduated to LauncherRoutedClassNames in wave 4 (D4).
 			};
 
@@ -212,7 +211,8 @@ namespace SIL.FieldWorks.XWorks
 		public static readonly IReadOnlyDictionary<string, string> LaneAbsorbedClassNames =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" }
+				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" },
+				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" }
 			};
 	}
 }

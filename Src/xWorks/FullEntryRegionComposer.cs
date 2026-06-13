@@ -673,6 +673,13 @@ namespace SIL.FieldWorks.XWorks
 
 			private void WalkField(ViewNode node, ICmObject obj, int depth)
 			{
+				if (string.Equals(node.CustomEditorClass, GhostLexRefSliceClassName, StringComparison.Ordinal)
+					&& obj is ILexEntry ghostLexEntry)
+				{
+					AddGhostLexRefVector(node, ghostLexEntry, depth);
+					return;
+				}
+
 				// winforms-free-lexeme-editor.md D1: a custom slice resolves plugin registry →
 				// companion strip → unsupported row, in that order and never the other way. The
 				// registry is consulted FIRST so a migrated class composes as a real in-tree
@@ -1118,7 +1125,87 @@ namespace SIL.FieldWorks.XWorks
 			internal const string EntrySequenceSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
 
+			internal const string GhostLexRefSliceClassName =
+				"SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice";
+
 			private const int MaxEntrySearchResults = 50;
+
+			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
+			{
+				var stableId = StableId(node, entry);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: entry.Hvo, items: Array.Empty<RegionChoiceOption>(),
+					searchOptions: query => SearchGhostLexRefTargets(query, entry)));
+
+				ReferenceAddSetters[stableId] = key => TryCreateGhostEntryRef(entry, node.ForVariant, key);
+			}
+
+			private IReadOnlyList<RegionChoiceOption> SearchGhostLexRefTargets(string query, ILexEntry owningEntry)
+			{
+				if (string.IsNullOrWhiteSpace(query))
+					return Array.Empty<RegionChoiceOption>();
+				query = query.Trim();
+
+				return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+					.Where(entry => entry != owningEntry && MatchesHeadwordPrefix(entry, query))
+					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
+					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
+					.Take(MaxEntrySearchResults)
+					.ToList();
+			}
+
+			private bool TryCreateGhostEntryRef(ILexEntry entry, bool forVariant, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null)
+					return false;
+
+				var targetEntry = target as ILexEntry ?? (target as ILexSense)?.Entry;
+				if (targetEntry == entry)
+					return false;
+
+				if (forVariant ? entry.VariantEntryRefs.Any() : entry.ComplexFormEntryRefs.Any())
+					return false;
+
+				var ler = entry.Services.GetInstance<ILexEntryRefFactory>().Create();
+				entry.EntryRefsOS.Add(ler);
+
+				if (forVariant)
+				{
+					const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
+					var type = entry.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
+						.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
+					ler.VariantEntryTypesRS.Add(type);
+					ler.RefType = LexEntryRefTags.krtVariant;
+					ler.HideMinorEntry = 0;
+				}
+				else
+				{
+					const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
+					var type = entry.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+						.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
+					ler.RefType = LexEntryRefTags.krtComplexForm;
+					ler.ComplexEntryTypesRS.Add(type);
+					ler.HideMinorEntry = 0;
+					ler.PrimaryLexemesRS.Add(target);
+					entry.ChangeRootToStem();
+				}
+
+				try
+				{
+					ler.ComponentLexemesRS.Add(target);
+				}
+				catch (ArgumentException)
+				{
+					entry.EntryRefsOS.Remove(ler);
+					return false;
+				}
+
+				return true;
+			}
 
 			// The lane's gate: a NON-virtual reference vector whose destination signature is
 			// LexEntry/LexSense — or CmObject when the layout identity is the legacy
