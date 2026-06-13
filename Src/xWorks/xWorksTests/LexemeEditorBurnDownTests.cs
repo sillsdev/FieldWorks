@@ -131,12 +131,11 @@ namespace SIL.FieldWorks.XWorks
 			// D5: deferral is only legitimate with the gate it rides spelled out (seeded from the
 			// decision doc: D3 follow-ups, wave 3/4 lanes, and the 6.13 Views-text long pole).
 			// Wave 4 (D4): AudioVisualSlice graduated out of this set into the launcher lane.
-			// GhostLexRefSlice graduated into the D3 absorbed lane once empty Components / Variant of
-			// rows composed as native search-backed reference vectors.
+			// Wave 3 absorbed both the ghost and multislice relation lanes into the composer once
+			// the typed relation walk existed; only ReversalIndexEntrySlice still rides 6.13.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" },
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 follow-up" }
+				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" }
 			};
 			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames, Is.EquivalentTo(expected));
 			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames.Values,
@@ -151,10 +150,13 @@ namespace SIL.FieldWorks.XWorks
 			// (no plugin: the composer recognizes them by metadata + the legacy class identity).
 			// GhostLexRefSlice joins the same absorbed family: empty Components / Variant of rows are
 			// search-backed reference vectors whose first add creates the missing LexEntryRef.
+			// LexReferenceMultiSlice joined once the composer walked ILexReference objects directly
+			// and emitted one Avalonia row per relation with forward/reverse label semantics.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" }
+				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" },
+				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation lane" }
 			};
 			Assert.That(LexemeEditorBurnDown.LaneAbsorbedClassNames, Is.EquivalentTo(expected));
 			Assert.That(LexemeEditorBurnDown.LaneAbsorbedClassNames.Values, Has.All.Not.Empty,

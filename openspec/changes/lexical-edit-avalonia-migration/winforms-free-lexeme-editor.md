@@ -85,11 +85,6 @@ the 6.3 separator-bar/add-slot affordance. **Add** uses type-ahead search over t
 (headword prefix match via the entry repository) rather than materializing the whole lexicon
 as options — possibility lists enumerate; lexicons search.
 
-`LexReferenceMultiSlice` (relations) is explicitly **next in this lane**: the multi-slice
-generates one row per relation type and needs the relation-type model walk; it reuses the
-same row/affordance once that walk exists. Recorded as the lane's follow-up so it cannot
-silently fall off the list.
-
 Status (wave 3, 2026-06-12): LANDED. The composer recognizes non-virtual entry/sense-target
 reference vectors (signature LexEntry/LexSense, or CmObject under the
 `EntrySequenceReferenceSlice` layout identity — ComponentLexemes/PrimaryLexemes) and composes
@@ -116,6 +111,20 @@ missing `LexEntryRef` with the legacy semantics (`krtComplexForm` vs `krtVariant
 unspecified type, complex-form primary-lexeme coupling, one undo step). Pinned by
 `GhostLexRefSliceTests`; the class moved from `ExplicitlyDeferredClassNames` to
 `LaneAbsorbedClassNames` ("D3 ghost reference-vector lane").
+
+`LexReferenceMultiSlice` landed in the same lane on 2026-06-12: the composer now walks the
+resolved `ILexReference` objects directly and emits one Avalonia relation row per reference,
+instead of leaving the legacy generator as a deferred custom-slice placeholder. The row label
+matches the legacy forward/reverse logic (tree/asymmetric reverse sides use the reverse name;
+unidirectional rows only exist on the forward side), the displayed targets match the legacy
+side-specific target selection (current object excluded; reverse tree/asymmetric rows show only
+the root side), and the row binds its `ObjectHvo` to the `ILexReference` so the existing menu
+adapter continues to resolve delete/replace/detail commands against the hidden legacy slice.
+Collection/sequence/unidirectional/tree-root relations reuse the Avalonia `ReferenceVector`
+affordance for in-pane add/remove; pair/asymmetric/reverse-tree rows remain non-editable in the
+row and keep their menu-driven edit flows. Pinned by `LexReferenceMultiSliceTests`; the class
+moved from `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`
+("D3 lexical relation lane").
 
 ### D4. Dialog launchers: Avalonia row + legacy dialog through a host service
 

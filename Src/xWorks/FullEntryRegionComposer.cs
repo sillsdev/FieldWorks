@@ -673,6 +673,12 @@ namespace SIL.FieldWorks.XWorks
 
 			private void WalkField(ViewNode node, ICmObject obj, int depth)
 			{
+				if (string.Equals(node.CustomEditorClass, LexReferenceMultiSliceClassName, StringComparison.Ordinal))
+				{
+					AddLexicalRelationRows(node, obj, depth);
+					return;
+				}
+
 				if (string.Equals(node.CustomEditorClass, GhostLexRefSliceClassName, StringComparison.Ordinal)
 					&& obj is ILexEntry ghostLexEntry)
 				{
@@ -1104,10 +1110,294 @@ namespace SIL.FieldWorks.XWorks
 			internal const string EntrySequenceSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
 
+			internal const string LexReferenceMultiSliceClassName =
+				"SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice";
+
 			internal const string GhostLexRefSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice";
 
 			private const int MaxEntrySearchResults = 50;
+
+			private sealed class LexicalRelationRowModel
+			{
+				public ILexReference Relation;
+				public string Label;
+				public string MenuId;
+				public bool IsEditable;
+				public LexRefTypeTags.MappingTypes MappingType;
+				public bool IsReverseSide;
+				public IReadOnlyList<ICmObject> Targets;
+			}
+
+			private void AddLexicalRelationRows(ViewNode node, ICmObject obj, int depth)
+			{
+				var relations = GetLexicalRelations(obj, node.Field);
+				if (relations.Count == 0)
+					return;
+
+				foreach (var relation in relations)
+				{
+					var row = DescribeLexicalRelationRow(relation, obj);
+					if (row == null)
+						continue;
+
+					var stableId = StableId(node, obj) + "/lexref:" + relation.Guid;
+					var items = row.Targets
+						.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+						.ToList();
+					Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null;
+					if (row.IsEditable)
+						searchOptions = query => SearchLexicalRelationTargets(query, obj, relation, row.MappingType);
+
+					Fields.Add(new LexicalEditRegionField(stableId, row.Label, node.Field, node.WritingSystem,
+						RegionFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
+						node.LocalizationKey, node.Routing, null, null, null,
+						isEditable: row.IsEditable, indent: depth, menuId: row.MenuId,
+						contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+						objectHvo: relation.Hvo, items: items,
+						searchOptions: searchOptions));
+
+					if (!row.IsEditable)
+						continue;
+
+					ReferenceAddSetters[stableId] = key => TryAddLexicalRelationTarget(obj, relation, row.MappingType, key);
+					ReferenceRemoveSetters[stableId] = key => TryRemoveLexicalRelationTarget(relation, key);
+				}
+			}
+
+			private IReadOnlyList<ILexReference> GetLexicalRelations(ICmObject obj, string fieldName)
+			{
+				if (obj == null || string.IsNullOrEmpty(fieldName))
+					return Array.Empty<ILexReference>();
+
+				var refs = SIL.LCModel.Utils.ReflectionHelper.GetProperty(obj, fieldName);
+				if (refs is System.Collections.Generic.IEnumerable<int> refIds)
+				{
+					var repository = _cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
+					return refIds.Select(repository.GetObject).Where(r => r != null).ToList();
+				}
+
+				var refsObjs = refs as System.Collections.IEnumerable;
+				if (refsObjs == null)
+					return Array.Empty<ILexReference>();
+
+				return refsObjs.Cast<ILexReference>().Where(r => r != null).ToList();
+			}
+
+			private LexicalRelationRowModel DescribeLexicalRelationRow(ILexReference relation, ICmObject current)
+			{
+				var type = relation?.Owner as ILexRefType;
+				if (type == null)
+					return null;
+
+				var targets = relation.TargetsRS.Cast<ICmObject>().ToList();
+				if (targets.Count == 0)
+					return null;
+
+				var mapping = (LexRefTypeTags.MappingTypes)type.MappingType;
+				var firstIsCurrent = targets[0].Hvo == current.Hvo;
+				var isReverseSide = false;
+				IReadOnlyList<ICmObject> displayTargets;
+
+				switch (mapping)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+						if (!firstIsCurrent)
+							return null;
+						displayTargets = targets.Skip(1).ToList();
+						break;
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+						isReverseSide = !firstIsCurrent;
+						displayTargets = firstIsCurrent
+							? targets.Skip(1).ToList()
+							: targets.Take(1).ToList();
+						break;
+					default:
+						displayTargets = targets.Where(target => target.Hvo != current.Hvo).ToList();
+						break;
+				}
+
+				if (displayTargets.Count == 0)
+					return null;
+
+				return new LexicalRelationRowModel
+				{
+					Relation = relation,
+					Label = ResolveLexicalRelationLabel(type, isReverseSide),
+					MenuId = ResolveLexicalRelationMenuId(mapping, isReverseSide),
+					IsEditable = CanEditLexicalRelation(mapping, isReverseSide),
+					MappingType = mapping,
+					IsReverseSide = isReverseSide,
+					Targets = displayTargets
+				};
+			}
+
+			private static string ResolveLexicalRelationLabel(ILexRefType type, bool reverse)
+			{
+				string label;
+				if (reverse)
+				{
+					label = type.ReverseName.BestAnalysisVernacularAlternative?.Text;
+					if (string.IsNullOrEmpty(label))
+						label = type.ReverseAbbreviation.BestAnalysisAlternative?.Text;
+				}
+				else
+				{
+					label = type.ShortName;
+					if (string.IsNullOrEmpty(label))
+						label = type.Abbreviation.BestAnalysisAlternative?.Text;
+				}
+
+				return string.IsNullOrEmpty(label)
+					? "***"
+					: label;
+			}
+
+			private static string ResolveLexicalRelationMenuId(LexRefTypeTags.MappingTypes mappingType, bool reverse)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+						return "mnuDataTree-DeleteReplaceLexReference";
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						return reverse ? "mnuDataTree-DeleteReplaceLexReference" : "mnuDataTree-DeleteAddLexReference";
+					default:
+						return "mnuDataTree-DeleteAddLexReference";
+				}
+			}
+
+			private static bool CanEditLexicalRelation(LexRefTypeTags.MappingTypes mappingType, bool reverse)
+			{
+				if (reverse)
+					return false;
+
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						return true;
+					default:
+						return false;
+				}
+			}
+
+			private IReadOnlyList<RegionChoiceOption> SearchLexicalRelationTargets(string query,
+				ICmObject current, ILexReference relation, LexRefTypeTags.MappingTypes mappingType)
+			{
+				if (string.IsNullOrWhiteSpace(query))
+					return Array.Empty<RegionChoiceOption>();
+				query = query.Trim();
+
+				var present = new HashSet<int>(relation.TargetsRS.Select(target => target.Hvo));
+				return EnumerateLexicalRelationCandidates(mappingType)
+					.Where(target => target.Hvo != current.Hvo && !present.Contains(target.Hvo)
+						&& StartsWithIgnoreCase(ResolveEntryOrSenseName(target), query))
+					.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
+					.Take(MaxEntrySearchResults)
+					.ToList();
+			}
+
+			private IEnumerable<ICmObject> EnumerateLexicalRelationCandidates(LexRefTypeTags.MappingTypes mappingType)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+						return _cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Cast<ICmObject>();
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+						return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>();
+					default:
+						return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>()
+							.Concat(_cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Cast<ICmObject>());
+				}
+			}
+
+			private bool TryAddLexicalRelationTarget(ICmObject current, ILexReference relation,
+				LexRefTypeTags.MappingTypes mappingType, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null || target.Hvo == current.Hvo || !IsLexicalRelationTargetAllowed(mappingType, target))
+					return false;
+
+				if (relation.TargetsRS.Any(existing => existing.Hvo == target.Hvo))
+					return false;
+
+				relation.TargetsRS.Add(target);
+				return true;
+			}
+
+			private bool TryRemoveLexicalRelationTarget(ILexReference relation, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null)
+					return false;
+
+				var existing = relation.TargetsRS.FirstOrDefault(item => item.Hvo == target.Hvo);
+				if (existing == null)
+					return false;
+
+				relation.TargetsRS.Remove(existing);
+				if (relation.TargetsRS.Count < 2)
+					_cache.DomainDataByFlid.DeleteObj(relation.Hvo);
+				return true;
+			}
+
+			private static bool IsLexicalRelationTargetAllowed(LexRefTypeTags.MappingTypes mappingType, ICmObject target)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+						return target is ILexSense;
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+						return target is ILexEntry;
+					default:
+						return target is ILexEntry || target is ILexSense;
+				}
+			}
 
 			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
 			{

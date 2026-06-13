@@ -191,10 +191,7 @@ namespace SIL.FieldWorks.XWorks
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				// Views-based native text editing; rides the rich-TsString gate (D4/D6).
-				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" },
-				// Lexical relations need the relation-type model walk; recorded as the D3 lane's
-				// follow-up so they cannot silently fall off the list.
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 follow-up" }
+				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" }
 				// AudioVisualSlice graduated to LauncherRoutedClassNames in wave 4 (D4).
 			};
 
@@ -212,7 +209,8 @@ namespace SIL.FieldWorks.XWorks
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" }
+				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" },
+				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation lane" }
 			};
 	}
 }

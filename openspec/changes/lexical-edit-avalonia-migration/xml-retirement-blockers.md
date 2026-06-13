@@ -376,8 +376,15 @@ change's surfaces.
   D3): `GhostLexRefSlice` no longer falls back to the unsupported row. The composer absorbs it
   as an editable search-backed `ReferenceVector` row and creates the missing `LexEntryRef` on
   first add with the legacy complex-form vs variant semantics. Burn-down: the class moved from
-  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`; `LexReferenceMultiSlice` remains
-  the only D3 follow-up in this family.
+  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`.
+- **Status (2026-06-12) — D3 lexical-relation lane landed** (`winforms-free-lexeme-editor.md`
+  D3): `LexReferenceMultiSlice` no longer falls back to the deferred custom-slice path. The
+  composer walks the resolved `ILexReference` objects directly and emits one Avalonia relation
+  row per reference, preserving the legacy forward/reverse label logic and side-specific target
+  selection while binding the row to the `ILexReference` HVO so the existing menu adapter keeps
+  delete/replace/detail commands working. Burn-down: the class moved from
+  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`; `ReversalIndexEntrySlice` remains
+  the only lexeme-editor custom slice still explicitly deferred behind 6.13.
 
 ### B12. Native viewing/render coupling
 
