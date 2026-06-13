@@ -6,16 +6,16 @@
 ## 1. Establish the roadmap and gates
 
 - [x] 1.1 Record the Hybrid decision and rationale (`Docs/avalonia-migration-approach-comparison.md`).
-- [x] 1.2 Define the ordered sequence POC → DataTree region → Lexical Edit → Shell with gates 0–2
+- [x] 1.2 Define the ordered sequence phase-0 spike → DataTree region → Lexical Edit → Shell with gates 0–2
       (`design.md`).
 - [x] 1.3 Define the overlap resolution (SliceSpec ⊂ typed IR; IDataTreeView ⊂ two-adapter flag)
       (`design.md`, and `datatree-model-view-separation/hybrid-alignment.md`).
 
 ## 2. Stand up the entry-point change
 
-- [x] 2.1 Create the `lexical-edit-avalonia-poc-spike` change (proposal, design, tasks, spec,
-      test-plan) as Phase 0.
-- [ ] 2.2 Confirm the POC flag, host-bridge, slice, and parity tasks match Gate 0 before the spike
+- [x] 2.1 Record the Phase 0 entry-point spike artifacts and fold their surviving guidance into
+      `lexical-edit-avalonia-migration/poc-retiring.md`.
+- [ ] 2.2 Confirm the phase-0 spike flag, host-bridge, slice, and parity tasks match Gate 0 before the spike
       starts.
 
 ## 3. Align the referenced changes to the sequence
@@ -30,5 +30,5 @@
 ## 4. Validation
 
 - [ ] 4.1 Verify each referenced change's gate definitions are consistent with gates 0–2 here.
-- [ ] 4.2 Keep this roadmap updated as the POC evidence lands and estimates firm up.
+- [ ] 4.2 Keep this roadmap updated as the phase-0 spike evidence lands and estimates firm up.
 - [ ] 4.3 Run `CI: Full local check` before commit/push of roadmap and aligned docs.

@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.XWorks
 				"the neutral rich-text projection must round-trip back to a TsString without flattening runs");
 			Assert.That(TsStringUtils.GetWsOfRun(roundTripped, 0), Is.EqualTo(Cache.DefaultVernWs));
 			Assert.That(TsStringUtils.GetWsOfRun(roundTripped, 1), Is.EqualTo(Cache.DefaultAnalWs));
-			Assert.That(roundTripped.get_Properties(roundTripped.get_MinOfRun(1))
+			Assert.That(roundTripped.get_Properties(1)
 				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 		}
 

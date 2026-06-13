@@ -96,13 +96,12 @@ This change therefore sits at the boundary between LCModel text, Avalonia text p
 1. Land the OpenSpec split and update lexical-edit migration to treat the old 6.13 line item as a dependency pointer instead of the full plan.
 2. Implement the managed run adapter, owned Avalonia control shell, and write-back path for single- and multi-writing-system string fields under the existing non-default Avalonia route.
 3. Wire clipboard, drag/drop, ghost realization, shared undo, and coexistence refresh through the existing seams and add the corresponding headless and xWorks integration tests.
-4. Add RTL and complex-script fixtures, collect realized-window manual evidence, and record typing-latency budgets at 100% and 150% DPI.
+4. Add RTL and complex-script fixtures, using Khmer as the canonical complex-script lane, collect realized-window manual evidence, and record typing-latency budgets at 100% and 150% DPI.
 5. Update lexical-edit manifests and blocker docs to record which native Views text blockers this change closes, while leaving `StText` and any unsupported object-content cases explicitly deferred.
 
 **Rollback:** Legacy UI mode remains the shipping fallback throughout this change. No default-switch claim or shell-routing change should depend on partially complete text-foundation work.
 
 ## Open Questions
 
-- Which complex-script fixture should be the canonical manual-evidence lane for this change: Khmer, Devanagari, or Thai?
 - How much existing run formatting must the first implementation preserve beyond the run properties already present in lexicon fields today?
 - Do any migrated lexicon fields require embedded-object or ORC editing in the first parity wave, or can that remain explicitly deferred with `StText`?

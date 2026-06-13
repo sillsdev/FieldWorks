@@ -177,7 +177,7 @@ P0 parity status (7.4): lexeme form ✔ editable multi-WS · citation form ✔ �
 senses structure ✔ headers/indent per sense · gloss ✔ per-sense editable · definition ✔ (ifdata) ·
 bibliography/restrictions/etc ✔ via metadata walk · variants/complex-form sections ✔ structure
 (reference rows read-only) · custom fields ✘ (9.x B1) · ghost lines ✘ (B2) · rich TsString runs ✘
-(6.13 gate).
+(6.13 gate, now tracked in `openspec/changes/avalonia-multi-writing-system-text-foundation/`).
 
 ## 7. Phasing
 

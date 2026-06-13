@@ -1,11 +1,11 @@
 ## 1. OpenSpec Alignment
 
-- [ ] 1.1 Update `CONTEXT.md` and the change docs under `openspec/changes/avalonia-multi-writing-system-text-foundation/` to use the repo terms `ITsString`, multi-writing-system text, and IME composition consistently. [Docs]
-- [ ] 1.2 Update `openspec/changes/lexical-edit-avalonia-migration/tasks.md` task 6.13 and related gate references to point at `openspec/changes/avalonia-multi-writing-system-text-foundation/` as the owning change. [OpenSpec]
+- [x] 1.1 Update `CONTEXT.md` and the change docs under `openspec/changes/avalonia-multi-writing-system-text-foundation/` to use the repo terms `ITsString`, multi-writing-system text, and IME composition consistently. [Docs]
+- [x] 1.2 Update `openspec/changes/lexical-edit-avalonia-migration/tasks.md` task 6.13 and related gate references to point at `openspec/changes/avalonia-multi-writing-system-text-foundation/` as the owning change. [OpenSpec]
 
 ## 2. Managed Text Model
 
-- [ ] 2.1 Add an `ITsString` to managed-run projection in `Src/Common/FwAvalonia/Region/` that preserves text, writing-system assignments, and supported run properties without flattening to plain text. [Managed C#]
+- [x] 2.1 Add an `ITsString` to managed-run projection in `Src/Common/FwAvalonia/Region/` that preserves text, writing-system assignments, and supported run properties without flattening to plain text. [Managed C#]
 - [ ] 2.2 Add the inverse write-back path in `Src/Common/FwAvalonia/Region/` so edited runs rebuild managed `ITsString` values through LCModel APIs. [Managed C#]
 - [ ] 2.3 Add Unicode cluster handling for combining marks, surrogate pairs, and zero-width joiner sequences in the editor model so caret movement and deletion operate on user-visible grapheme clusters. [Managed C#]
 
@@ -41,8 +41,8 @@
 
 ## 8. Manual and Performance Evidence
 
-- [ ] 8.1 Extend `TestLangProj/` or companion evidence fixtures with one RTL and one complex-script writing-system scenario suitable for both automated and manual runs. [Managed C# Tests + Data]
-- [ ] 8.2 Capture realized-window manual evidence for one RTL and one complex-script editing path using the FieldWorks host and record the artifact locations in this change. [Manual]
+- [ ] 8.1 Extend `TestLangProj/` or companion evidence fixtures with one RTL and one Khmer complex-script writing-system scenario suitable for both automated and manual runs. [Managed C# Tests + Data]
+- [ ] 8.2 Capture realized-window manual evidence for one RTL and one Khmer editing path using the FieldWorks host and record the artifact locations in this change. [Manual]
 - [ ] 8.3 Add a typing-latency harness and record thresholds at 100% and 150% DPI for the new editor in the lexical-edit performance docs or manifests. [Performance]
 
 ## 9. Localization and Handoffs

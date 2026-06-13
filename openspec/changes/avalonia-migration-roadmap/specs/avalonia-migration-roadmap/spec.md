@@ -8,7 +8,7 @@ its predecessor's gate evidence exists.
 
 #### Scenario: A phase is blocked without its gate
 - **WHEN** a later phase is proposed to start
-- **THEN** the preceding gate's evidence (POC evidence, region parity, or regional manifest) SHALL be
+- **THEN** the preceding gate's evidence (phase-0 spike evidence, region parity, or regional manifest) SHALL be
   present and passing before that phase begins
 
 #### Scenario: Shell waits for the regional gates

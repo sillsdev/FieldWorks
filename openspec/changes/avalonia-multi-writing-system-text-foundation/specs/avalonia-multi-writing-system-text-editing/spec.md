@@ -45,7 +45,7 @@ The Avalonia text editor SHALL support RTL and mixed-direction text with correct
 #### Scenario: RTL parity claim requires realized-window evidence
 - **WHEN** the change claims editing parity for RTL text
 - **THEN** it SHALL include automated evidence for mixed-direction rendering and selection behavior
-- **AND** it SHALL include realized-window or manual evidence for at least one RTL writing system.
+- **AND** it SHALL include realized-window or manual evidence for at least one RTL writing system and Khmer as the canonical complex-script writing-system lane.
 
 ### Requirement: Ghost text fields materialize through the same text foundation
 Ghost text rows that currently depend on legacy string slices SHALL materialize their backing objects and initial text through the Avalonia text foundation and the existing fenced edit-session boundary.

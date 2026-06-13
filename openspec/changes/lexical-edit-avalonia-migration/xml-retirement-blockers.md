@@ -396,7 +396,7 @@ change's surfaces.
   fonts/keyboards, IME composition, RTL/bidi) passes.
 - **Measured prevalence:** see `native-views-audit.md` §8.1.3/8.1.4 (full table with
   file:line); the multi-WS plain-text lane exists, the TsString rich lane does not.
-- **Addressed by:** 6.13 (GATE), 6.x editors, 8.3 (managed replacement), 8.4 (done —
+- **Addressed by:** `openspec/changes/avalonia-multi-writing-system-text-foundation/` (former 6.13 gate), 6.x editors, 8.3 (managed replacement), 8.4 (done —
   enforcement via `EngineIsolationAuditTests`), 8.5 (adapter removal after replacement tests).
 - **Retirement risk if unaddressed:** Absolute. While any field on a surface falls back to the
   legacy slice stack, that surface still loads layout XML at runtime; 9.4 for that surface is

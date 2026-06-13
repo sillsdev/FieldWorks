@@ -104,8 +104,7 @@ namespace SIL.FieldWorks.XWorks
 			var runs = new List<RegionTextRun>();
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
-				var runStart = tss.get_MinOfRun(irun);
-				var props = tss.get_Properties(runStart);
+				var props = tss.get_Properties(irun);
 				var wsHandle = TsStringUtils.GetWsOfRun(tss, irun);
 				var wsTag = wsHandle > 0 ? writingSystemFactory.GetStrFromWs(wsHandle) : null;
 				var namedStyle = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
