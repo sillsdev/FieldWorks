@@ -63,7 +63,10 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class FullEntryRegionComposer
 	{
-		private const int MaxDepth = 6;
+		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
+		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
+		// detail paths (e.g. sense -> extended note -> example -> nested custom fields).
+		private const int MaxDepth = 12;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
 
 		// Review task 10: deliberately NOT a Lazy — a failed load must not be cached as null for
@@ -1613,6 +1616,27 @@ namespace SIL.FieldWorks.XWorks
 						node.AutomationId, node.LocalizationKey, node.Routing,
 						new List<RegionWsValue> { new RegionWsValue("", path ?? string.Empty) },
 						null, null, isEditable: false, indent: depth));
+
+					var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+					if (_visited.Add((picture.Hvo, layoutName)))
+					{
+						try
+						{
+							var compiled = CompileForObject(_cache, picture, layoutName);
+							if (compiled != null)
+							{
+								foreach (var child in compiled.Roots)
+								{
+									if (child.Kind == ViewNodeKind.CustomFieldPlaceholder)
+										Walk(child, picture, depth + 1);
+								}
+							}
+						}
+						finally
+						{
+							_visited.Remove((picture.Hvo, layoutName));
+						}
+					}
 				}
 			}
 

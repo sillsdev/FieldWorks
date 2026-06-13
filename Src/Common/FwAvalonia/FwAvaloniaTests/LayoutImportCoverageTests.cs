@@ -651,7 +651,6 @@ namespace FwAvaloniaTests
 				{ "LexReference-ShowSingleReference", 1 },
 				{ "LexSense-HeavySummary", 1 },
 				{ "LexSense-ImportResidue", 1 },
-				{ "LexSense-Pictures", 1 },
 				{ "MoAlloAdhocProhib-Message", 1 },
 				{ "MoEndoCompound-HeadLast", 2 },
 				{ "MoExoCompound-ToMsa", 1 },
@@ -671,8 +670,8 @@ namespace FwAvaloniaTests
 
 			Assert.That(report.UnresolvedPartRefs, Is.EquivalentTo(legacyUnresolvable),
 				"the unresolved-part set changed; if a part was added/renamed update this set, if a "
-				+ "resolution rule regressed fix the resolver (B10 baseline: 63 occurrences, was 259)");
-			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(63),
+				+ "resolution rule regressed fix the resolver (B10 baseline: 62 occurrences, was 259)");
+			Assert.That(report.UnresolvedPartRefs.Values.Sum(), Is.EqualTo(62),
 				"B10 unresolved-part occurrence ceiling");
 		}
 

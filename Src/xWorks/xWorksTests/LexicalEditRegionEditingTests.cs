@@ -1092,14 +1092,41 @@ namespace SIL.FieldWorks.XWorks
 	public class FullEntryRegionComposerCustomFieldTests : MemoryOnlyBackendProviderTestBase
 	{
 		private ILexEntry m_entry;
+		private ILexExampleSentence m_example;
+		private ILexExampleSentence m_noteExample;
+		private IMoForm m_alternateForm;
+		private ILexPronunciation m_pronunciation;
+		private ILexEtymology m_etymology;
+		private ILexEntryRef m_entryRef;
+		private ILexExtendedNote m_extendedNote;
+		private ICmPicture m_picture;
+		private ICmTranslation m_translation;
+		private ICmTranslation m_noteTranslation;
 		private GenDate m_genDate;
+		private GenDate m_moFormGenDate;
+		private GenDate m_exampleGenDate;
 		private IMoMorphType m_listItem;
+		private IMoMorphType m_secondListItem;
 		private bool m_fieldsCreated;
 		private int m_flidEntryMulti;
 		private int m_flidEntrySingle;
 		private int m_flidEntryDate;
 		private int m_flidEntryListRef;
 		private int m_flidEntryNumber;
+		private int m_flidMoFormSingle;
+		private int m_flidMoFormDate;
+		private int m_flidMoFormListRef;
+		private int m_flidMoFormListVector;
+		private int m_flidExampleSingle;
+		private int m_flidExampleDate;
+		private int m_flidExampleListRef;
+		private int m_flidExampleListVector;
+		private int m_flidPronunciationSingle;
+		private int m_flidEtymologySingle;
+		private int m_flidEntryRefSingle;
+		private int m_flidExtendedNoteSingle;
+		private int m_flidTranslationSingle;
+		private int m_flidPictureSingle;
 		private int m_flidSenseSingle;
 
 		public override void TestSetup()
@@ -1116,6 +1143,56 @@ namespace SIL.FieldWorks.XWorks
 				m_entry.SensesOS.Add(sense);
 				sense.Gloss.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("house", Cache.DefaultAnalWs));
 
+				m_example = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+				sense.ExamplesOS.Add(m_example);
+				m_example.Example.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("una casa", Cache.DefaultVernWs));
+				var translationType = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>()
+					.GetObject(CmPossibilityTags.kguidTranFreeTranslation);
+				m_translation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>()
+					.Create(m_example, translationType);
+				m_translation.Translation.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("a house", Cache.DefaultAnalWs));
+				m_example.TranslationsOC.Add(m_translation);
+
+				m_alternateForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				m_entry.AlternateFormsOS.Add(m_alternateForm);
+				m_alternateForm.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("casita", Cache.DefaultVernWs));
+
+				m_pronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				m_entry.PronunciationsOS.Add(m_pronunciation);
+				m_pronunciation.Form.set_String(Cache.DefaultPronunciationWs,
+					TsStringUtils.MakeString("kasa", Cache.DefaultPronunciationWs));
+
+				m_etymology = Cache.ServiceLocator.GetInstance<ILexEtymologyFactory>().Create();
+				m_entry.EtymologyOS.Add(m_etymology);
+				m_etymology.Gloss.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("borrowed", Cache.DefaultAnalWs));
+
+				m_entryRef = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+				m_entry.EntryRefsOS.Add(m_entryRef);
+
+				m_extendedNote = Cache.ServiceLocator.GetInstance<ILexExtendedNoteFactory>().Create();
+				sense.ExtendedNoteOS.Add(m_extendedNote);
+				m_extendedNote.ExtendedNoteTypeRA = CreateExtendedNoteType("Usage");
+				m_extendedNote.Discussion.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("note discussion", Cache.DefaultAnalWs));
+				m_noteExample = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+				m_extendedNote.ExamplesOS.Add(m_noteExample);
+				m_noteExample.Example.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("otra casa", Cache.DefaultVernWs));
+				m_noteTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>()
+					.Create(m_noteExample, translationType);
+				m_noteTranslation.Translation.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("another house", Cache.DefaultAnalWs));
+				m_noteExample.TranslationsOC.Add(m_noteTranslation);
+
+				m_picture = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+				sense.PicturesOS.Add(m_picture);
+				m_picture.Caption.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("picture caption", Cache.DefaultAnalWs));
+
 				var sda = Cache.DomainDataByFlid;
 				sda.SetMultiStringAlt(m_entry.Hvo, m_flidEntryMulti, Cache.DefaultAnalWs,
 					TsStringUtils.MakeString("high-low", Cache.DefaultAnalWs));
@@ -1127,10 +1204,51 @@ namespace SIL.FieldWorks.XWorks
 				((ISilDataAccessManaged)sda).SetGenDate(m_entry.Hvo, m_flidEntryDate, m_genDate);
 				m_listItem = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
 					.OfType<IMoMorphType>().First();
+				m_secondListItem = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
+					.OfType<IMoMorphType>().Skip(1).First();
 				sda.SetObjProp(m_entry.Hvo, m_flidEntryListRef, m_listItem.Hvo);
 				sda.SetInt(m_entry.Hvo, m_flidEntryNumber, 42);
 				sda.SetString(sense.Hvo, m_flidSenseSingle,
 					TsStringUtils.MakeString("sense note", Cache.DefaultAnalWs));
+				sda.SetString(m_entry.LexemeFormOA.Hvo, m_flidMoFormSingle,
+					TsStringUtils.MakeString("root allomorph note", Cache.DefaultVernWs));
+				m_moFormGenDate = new GenDate(GenDate.PrecisionType.Approximate, 1, 2, 2018, true);
+				((ISilDataAccessManaged)sda).SetGenDate(m_entry.LexemeFormOA.Hvo, m_flidMoFormDate,
+					m_moFormGenDate);
+				sda.SetObjProp(m_entry.LexemeFormOA.Hvo, m_flidMoFormListRef, m_listItem.Hvo);
+				sda.Replace(m_entry.LexemeFormOA.Hvo, m_flidMoFormListVector, 0, 0,
+					new[] { m_listItem.Hvo, m_secondListItem.Hvo }, 2);
+				sda.SetString(m_alternateForm.Hvo, m_flidMoFormSingle,
+					TsStringUtils.MakeString("alternate allomorph note", Cache.DefaultVernWs));
+				((ISilDataAccessManaged)sda).SetGenDate(m_alternateForm.Hvo, m_flidMoFormDate,
+					m_moFormGenDate);
+				sda.SetObjProp(m_alternateForm.Hvo, m_flidMoFormListRef, m_secondListItem.Hvo);
+				sda.Replace(m_alternateForm.Hvo, m_flidMoFormListVector, 0, 0,
+					new[] { m_secondListItem.Hvo }, 1);
+				sda.SetString(m_example.Hvo, m_flidExampleSingle,
+					TsStringUtils.MakeString("example note", Cache.DefaultAnalWs));
+				m_exampleGenDate = new GenDate(GenDate.PrecisionType.Approximate, 6, 7, 2016, true);
+				((ISilDataAccessManaged)sda).SetGenDate(m_example.Hvo, m_flidExampleDate,
+					m_exampleGenDate);
+				sda.SetObjProp(m_example.Hvo, m_flidExampleListRef, m_listItem.Hvo);
+				sda.Replace(m_example.Hvo, m_flidExampleListVector, 0, 0,
+					new[] { m_listItem.Hvo, m_secondListItem.Hvo }, 2);
+				sda.SetString(m_noteExample.Hvo, m_flidExampleSingle,
+					TsStringUtils.MakeString("extended note example", Cache.DefaultAnalWs));
+				sda.SetString(m_pronunciation.Hvo, m_flidPronunciationSingle,
+					TsStringUtils.MakeString("pron note", Cache.DefaultAnalWs));
+				sda.SetString(m_etymology.Hvo, m_flidEtymologySingle,
+					TsStringUtils.MakeString("etymology note", Cache.DefaultAnalWs));
+				sda.SetString(m_entryRef.Hvo, m_flidEntryRefSingle,
+					TsStringUtils.MakeString("entry ref note", Cache.DefaultAnalWs));
+				sda.SetString(m_extendedNote.Hvo, m_flidExtendedNoteSingle,
+					TsStringUtils.MakeString("extended note custom", Cache.DefaultAnalWs));
+				sda.SetString(m_translation.Hvo, m_flidTranslationSingle,
+					TsStringUtils.MakeString("translation custom", Cache.DefaultAnalWs));
+				sda.SetString(m_noteTranslation.Hvo, m_flidTranslationSingle,
+					TsStringUtils.MakeString("note translation custom", Cache.DefaultAnalWs));
+				sda.SetString(m_picture.Hvo, m_flidPictureSingle,
+					TsStringUtils.MakeString("picture note", Cache.DefaultAnalWs));
 			});
 		}
 
@@ -1153,8 +1271,51 @@ namespace SIL.FieldWorks.XWorks
 				Cache.LangProject.LexDbOA.MorphTypesOA.Guid);
 			m_flidEntryNumber = MakeCustomField("Frequency Count", LexEntryTags.kClassId,
 				CellarPropertyType.Integer, 0);
+			m_flidMoFormSingle = MakeCustomField("Allomorph Note", MoFormTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsVern);
+			m_flidMoFormDate = MakeCustomField("Allomorph Date", MoFormTags.kClassId,
+				CellarPropertyType.GenDate, 0);
+			m_flidMoFormListRef = MakeCustomField("Allomorph Category", MoFormTags.kClassId,
+				CellarPropertyType.ReferenceAtomic, 0, CmPossibilityTags.kClassId,
+				Cache.LangProject.LexDbOA.MorphTypesOA.Guid);
+			m_flidMoFormListVector = MakeCustomField("Allomorph Tags", MoFormTags.kClassId,
+				CellarPropertyType.ReferenceSequence, 0, CmPossibilityTags.kClassId,
+				Cache.LangProject.LexDbOA.MorphTypesOA.Guid);
+			m_flidExampleSingle = MakeCustomField("Example Note", LexExampleSentenceTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidExampleDate = MakeCustomField("Example Date", LexExampleSentenceTags.kClassId,
+				CellarPropertyType.GenDate, 0);
+			m_flidExampleListRef = MakeCustomField("Example Category", LexExampleSentenceTags.kClassId,
+				CellarPropertyType.ReferenceAtomic, 0, CmPossibilityTags.kClassId,
+				Cache.LangProject.LexDbOA.MorphTypesOA.Guid);
+			m_flidExampleListVector = MakeCustomField("Example Tags", LexExampleSentenceTags.kClassId,
+				CellarPropertyType.ReferenceSequence, 0, CmPossibilityTags.kClassId,
+				Cache.LangProject.LexDbOA.MorphTypesOA.Guid);
+			m_flidPronunciationSingle = MakeCustomField("Pronunciation Note", LexPronunciationTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidEtymologySingle = MakeCustomField("Etymology Note", LexEtymologyTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidEntryRefSingle = MakeCustomField("Entry Ref Note", LexEntryRefTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidExtendedNoteSingle = MakeCustomField("Extended Note Custom", LexExtendedNoteTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidTranslationSingle = MakeCustomField("Translation Note", CmTranslationTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+			m_flidPictureSingle = MakeCustomField("Picture Note", CmPictureTags.kClassId,
+				CellarPropertyType.String, WritingSystemServices.kwsAnal);
 			m_flidSenseSingle = MakeCustomField("Sense Source", LexSenseTags.kClassId,
 				CellarPropertyType.String, WritingSystemServices.kwsAnal);
+		}
+
+		private ICmPossibility CreateExtendedNoteType(string name)
+		{
+			if (Cache.LangProject.LexDbOA.ExtendedNoteTypesOA == null)
+				Cache.LangProject.LexDbOA.ExtendedNoteTypesOA =
+					Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var item = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			Cache.LangProject.LexDbOA.ExtendedNoteTypesOA.PossibilitiesOS.Add(item);
+			item.Name.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString(name, Cache.DefaultAnalWs));
+			return item;
 		}
 
 		private int MakeCustomField(string userLabel, int classId, CellarPropertyType type,
@@ -1254,6 +1415,111 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void Compose_CustomFields_ExpandInNestedAllomorphAndExampleLayouts()
+		{
+			ILexEntry affixEntry = null;
+			IMoAffixAllomorph affixLexemeForm = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				affixEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				affixLexemeForm = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+				affixEntry.LexemeFormOA = affixLexemeForm;
+				affixLexemeForm.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("-ka", Cache.DefaultVernWs));
+				Cache.DomainDataByFlid.SetString(affixLexemeForm.Hvo, m_flidMoFormSingle,
+					TsStringUtils.MakeString("affix allomorph note", Cache.DefaultVernWs));
+			});
+
+			var fields = Compose();
+			var rootAllomorph = fields.FirstOrDefault(f => f.Label == "Allomorph Note"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var alternateAllomorph = fields.FirstOrDefault(f => f.Label == "Allomorph Note"
+				&& f.ObjectHvo == m_alternateForm.Hvo);
+			var rootAllomorphDate = fields.FirstOrDefault(f => f.Label == "Allomorph Date"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var rootAllomorphCategory = fields.FirstOrDefault(f => f.Label == "Allomorph Category"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var rootAllomorphTags = fields.FirstOrDefault(f => f.Label == "Allomorph Tags"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var exampleField = fields.FirstOrDefault(f => f.Label == "Example Note"
+				&& f.ObjectHvo == m_example.Hvo);
+			var exampleDate = fields.FirstOrDefault(f => f.Label == "Example Date"
+				&& f.ObjectHvo == m_example.Hvo);
+			var exampleCategory = fields.FirstOrDefault(f => f.Label == "Example Category"
+				&& f.ObjectHvo == m_example.Hvo);
+			var exampleTags = fields.FirstOrDefault(f => f.Label == "Example Tags"
+				&& f.ObjectHvo == m_example.Hvo);
+
+			Assert.That(rootAllomorph, Is.Not.Null,
+				"the lexeme-form layout expands MoForm custom fields inside AsLexemeFormBasic");
+			Assert.That(rootAllomorph.Values.Single().Value, Is.EqualTo("root allomorph note"));
+			Assert.That(alternateAllomorph, Is.Not.Null,
+				"the alternate-form layout expands MoForm custom fields inside the allomorph sequence");
+			Assert.That(alternateAllomorph.Values.Single().Value, Is.EqualTo("alternate allomorph note"));
+			Assert.That(fields.Count(f => f.Label == "Allomorph Note"), Is.EqualTo(2),
+				"one MoForm custom row is emitted per visited allomorph object");
+			Assert.That(rootAllomorphDate, Is.Not.Null,
+				"nested MoForm GenDate custom fields render in the lexeme-form layout");
+			Assert.That(rootAllomorphDate.IsEditable, Is.False);
+			Assert.That(rootAllomorphDate.Values.Single().Value, Is.EqualTo(m_moFormGenDate.ToLongString()));
+			Assert.That(rootAllomorphCategory, Is.Not.Null,
+				"nested MoForm atomic custom references render as chooser rows");
+			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
+			Assert.That(rootAllomorphCategory.IsEditable, Is.True);
+			Assert.That(rootAllomorphCategory.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
+			Assert.That(rootAllomorphTags, Is.Not.Null,
+				"nested MoForm vector custom references render as reference-vector rows");
+			Assert.That(rootAllomorphTags.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector));
+			Assert.That(rootAllomorphTags.IsEditable, Is.True);
+			Assert.That(rootAllomorphTags.Items.Select(i => i.Key),
+				Does.Contain(m_listItem.Guid.ToString()).And.Contain(m_secondListItem.Guid.ToString()));
+			Assert.That(exampleField, Is.Not.Null,
+				"the example detail layout expands LexExampleSentence custom fields");
+			Assert.That(exampleField.Values.Single().Value, Is.EqualTo("example note"));
+			Assert.That(exampleDate, Is.Not.Null,
+				"example custom GenDate fields render in the nested example layout");
+			Assert.That(exampleDate.Values.Single().Value, Is.EqualTo(m_exampleGenDate.ToLongString()));
+			Assert.That(exampleCategory, Is.Not.Null,
+				"example custom atomic references render as chooser rows");
+			Assert.That(exampleCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
+			Assert.That(exampleCategory.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
+			Assert.That(exampleTags, Is.Not.Null,
+				"example custom possibility vectors render as editable reference vectors");
+			Assert.That(exampleTags.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector));
+			Assert.That(exampleTags.Items.Select(i => i.Key),
+				Does.Contain(m_listItem.Guid.ToString()).And.Contain(m_secondListItem.Guid.ToString()));
+
+			var affixFields = FullEntryRegionComposer.Compose(affixEntry, Cache).Model.Fields;
+			var affixCustom = affixFields.FirstOrDefault(f => f.Label == "Allomorph Note"
+				&& f.ObjectHvo == affixLexemeForm.Hvo);
+			Assert.That(affixCustom, Is.Not.Null,
+				"the affix lexeme-form layout also expands MoForm custom fields");
+			Assert.That(affixCustom.Values.Single().Value, Is.EqualTo("affix allomorph note"));
+		}
+
+		[Test]
+		public void Compose_CustomFields_ExpandInPreviouslyMissingNestedDetailLayouts()
+		{
+			var fields = Compose();
+			Assert.That(fields.Any(f => f.Label == "Pronunciation Note" && f.ObjectHvo == m_pronunciation.Hvo),
+				Is.True, "pronunciation custom fields should render in the pronunciation detail layout");
+			Assert.That(fields.Any(f => f.Label == "Etymology Note" && f.ObjectHvo == m_etymology.Hvo),
+				Is.True, "etymology custom fields should render in the etymology detail layout");
+			Assert.That(fields.Any(f => f.Label == "Entry Ref Note" && f.ObjectHvo == m_entryRef.Hvo),
+				Is.True, "entry-reference custom fields should render in the entry-ref detail layout");
+			Assert.That(fields.Any(f => f.Label == "Extended Note Custom" && f.ObjectHvo == m_extendedNote.Hvo),
+				Is.True, "extended-note custom fields should render in the extended-note detail layout");
+			Assert.That(fields.Any(f => f.Label == "Example Note" && f.ObjectHvo == m_noteExample.Hvo),
+				Is.True, "the example Notes layout should render LexExampleSentence custom fields");
+			Assert.That(fields.Any(f => f.Label == "Translation Note" && f.ObjectHvo == m_translation.Hvo),
+				Is.True, "translation custom fields should render in the TranslationAndType layout");
+			Assert.That(fields.Any(f => f.Label == "Translation Note" && f.ObjectHvo == m_noteTranslation.Hvo),
+				Is.True, "translation custom fields should render in the Translation layout used by note examples");
+			Assert.That(fields.Any(f => f.Label == "Picture Note" && f.ObjectHvo == m_picture.Hvo),
+				Is.True, "picture custom fields should render in the picture detail layout");
+		}
+
+		[Test]
 		public void Edit_CustomFields_StageThroughTheFencedSession_AsOneUndoStep()
 		{
 			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
@@ -1279,6 +1545,121 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sda.get_MultiStringAlt(m_entry.Hvo, m_flidEntryMulti, Cache.DefaultAnalWs).Text,
 				Is.EqualTo("high-low"), "one undo reverts the whole session, both custom edits included");
 			Assert.That(sda.get_StringProp(m_entry.Hvo, m_flidEntrySingle).Text, Is.EqualTo("from Smith"));
+		}
+
+		[Test]
+		public void Edit_CustomFields_OnNestedAllomorphAndExampleLayouts_StageThroughTheFencedSession()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var rootAllomorph = composed.Model.Fields.First(f => f.Label == "Allomorph Note"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var rootAllomorphCategory = composed.Model.Fields.First(f => f.Label == "Allomorph Category"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var rootAllomorphTags = composed.Model.Fields.First(f => f.Label == "Allomorph Tags"
+				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+			var alternateAllomorph = composed.Model.Fields.First(f => f.Label == "Allomorph Note"
+				&& f.ObjectHvo == m_alternateForm.Hvo);
+			var exampleField = composed.Model.Fields.First(f => f.Label == "Example Note"
+				&& f.ObjectHvo == m_example.Hvo);
+			var exampleCategory = composed.Model.Fields.First(f => f.Label == "Example Category"
+				&& f.ObjectHvo == m_example.Hvo);
+			var exampleTags = composed.Model.Fields.First(f => f.Label == "Example Tags"
+				&& f.ObjectHvo == m_example.Hvo);
+			var sda = Cache.DomainDataByFlid;
+
+			Assert.That(composed.EditContext.TrySetText(rootAllomorph,
+				rootAllomorph.Values.Single().WsTag, "root note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(alternateAllomorph,
+				alternateAllomorph.Values.Single().WsTag, "alternate note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(exampleField,
+				exampleField.Values.Single().WsTag, "example note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetOption(rootAllomorphCategory,
+				m_secondListItem.Guid.ToString()), Is.True);
+			Assert.That(composed.EditContext.TryAddReferenceItem(rootAllomorphTags,
+				m_secondListItem.Guid.ToString()), Is.False,
+				"adding a duplicate nested custom vector item is rejected");
+			Assert.That(composed.EditContext.TryRemoveReferenceItem(rootAllomorphTags,
+				m_listItem.Guid.ToString()), Is.True);
+			Assert.That(composed.EditContext.TrySetOption(exampleCategory,
+				m_secondListItem.Guid.ToString()), Is.True);
+			Assert.That(composed.EditContext.TryRemoveReferenceItem(exampleTags,
+				m_secondListItem.Guid.ToString()), Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(sda.get_StringProp(m_entry.LexemeFormOA.Hvo, m_flidMoFormSingle).Text,
+				Is.EqualTo("root note edited"));
+			Assert.That(sda.get_ObjectProp(m_entry.LexemeFormOA.Hvo, m_flidMoFormListRef),
+				Is.EqualTo(m_secondListItem.Hvo));
+			Assert.That(sda.get_VecSize(m_entry.LexemeFormOA.Hvo, m_flidMoFormListVector), Is.EqualTo(1));
+			Assert.That(sda.get_VecItem(m_entry.LexemeFormOA.Hvo, m_flidMoFormListVector, 0),
+				Is.EqualTo(m_secondListItem.Hvo));
+			Assert.That(sda.get_StringProp(m_alternateForm.Hvo, m_flidMoFormSingle).Text,
+				Is.EqualTo("alternate note edited"));
+			Assert.That(sda.get_StringProp(m_example.Hvo, m_flidExampleSingle).Text,
+				Is.EqualTo("example note edited"));
+			Assert.That(sda.get_ObjectProp(m_example.Hvo, m_flidExampleListRef),
+				Is.EqualTo(m_secondListItem.Hvo));
+			Assert.That(sda.get_VecSize(m_example.Hvo, m_flidExampleListVector), Is.EqualTo(1));
+			Assert.That(sda.get_VecItem(m_example.Hvo, m_flidExampleListVector, 0),
+				Is.EqualTo(m_listItem.Hvo));
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(sda.get_StringProp(m_entry.LexemeFormOA.Hvo, m_flidMoFormSingle).Text,
+				Is.EqualTo("root allomorph note"));
+			Assert.That(sda.get_ObjectProp(m_entry.LexemeFormOA.Hvo, m_flidMoFormListRef),
+				Is.EqualTo(m_listItem.Hvo));
+			Assert.That(sda.get_VecSize(m_entry.LexemeFormOA.Hvo, m_flidMoFormListVector), Is.EqualTo(2));
+			Assert.That(sda.get_StringProp(m_alternateForm.Hvo, m_flidMoFormSingle).Text,
+				Is.EqualTo("alternate allomorph note"));
+			Assert.That(sda.get_StringProp(m_example.Hvo, m_flidExampleSingle).Text,
+				Is.EqualTo("example note"));
+			Assert.That(sda.get_ObjectProp(m_example.Hvo, m_flidExampleListRef),
+				Is.EqualTo(m_listItem.Hvo));
+			Assert.That(sda.get_VecSize(m_example.Hvo, m_flidExampleListVector), Is.EqualTo(2));
+		}
+
+		[Test]
+		public void Edit_CustomFields_OnPreviouslyMissingNestedDetailLayouts_StageThroughTheFencedSession()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var pron = composed.Model.Fields.First(f => f.Label == "Pronunciation Note" && f.ObjectHvo == m_pronunciation.Hvo);
+			var etym = composed.Model.Fields.First(f => f.Label == "Etymology Note" && f.ObjectHvo == m_etymology.Hvo);
+			var entryRef = composed.Model.Fields.First(f => f.Label == "Entry Ref Note" && f.ObjectHvo == m_entryRef.Hvo);
+			var extNote = composed.Model.Fields.First(f => f.Label == "Extended Note Custom" && f.ObjectHvo == m_extendedNote.Hvo);
+			var noteExample = composed.Model.Fields.First(f => f.Label == "Example Note" && f.ObjectHvo == m_noteExample.Hvo);
+			var translation = composed.Model.Fields.First(f => f.Label == "Translation Note" && f.ObjectHvo == m_translation.Hvo);
+			var noteTranslation = composed.Model.Fields.First(f => f.Label == "Translation Note" && f.ObjectHvo == m_noteTranslation.Hvo);
+			var picture = composed.Model.Fields.First(f => f.Label == "Picture Note" && f.ObjectHvo == m_picture.Hvo);
+			var sda = Cache.DomainDataByFlid;
+
+			Assert.That(composed.EditContext.TrySetText(pron, pron.Values.Single().WsTag, "pron note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(etym, etym.Values.Single().WsTag, "etym note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(entryRef, entryRef.Values.Single().WsTag, "entry ref edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(extNote, extNote.Values.Single().WsTag, "extended note edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(noteExample, noteExample.Values.Single().WsTag, "note example edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(translation, translation.Values.Single().WsTag, "translation edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(noteTranslation, noteTranslation.Values.Single().WsTag, "note translation edited"), Is.True);
+			Assert.That(composed.EditContext.TrySetText(picture, picture.Values.Single().WsTag, "picture edited"), Is.True);
+			composed.EditContext.Commit();
+
+			Assert.That(sda.get_StringProp(m_pronunciation.Hvo, m_flidPronunciationSingle).Text, Is.EqualTo("pron note edited"));
+			Assert.That(sda.get_StringProp(m_etymology.Hvo, m_flidEtymologySingle).Text, Is.EqualTo("etym note edited"));
+			Assert.That(sda.get_StringProp(m_entryRef.Hvo, m_flidEntryRefSingle).Text, Is.EqualTo("entry ref edited"));
+			Assert.That(sda.get_StringProp(m_extendedNote.Hvo, m_flidExtendedNoteSingle).Text, Is.EqualTo("extended note edited"));
+			Assert.That(sda.get_StringProp(m_noteExample.Hvo, m_flidExampleSingle).Text, Is.EqualTo("note example edited"));
+			Assert.That(sda.get_StringProp(m_translation.Hvo, m_flidTranslationSingle).Text, Is.EqualTo("translation edited"));
+			Assert.That(sda.get_StringProp(m_noteTranslation.Hvo, m_flidTranslationSingle).Text, Is.EqualTo("note translation edited"));
+			Assert.That(sda.get_StringProp(m_picture.Hvo, m_flidPictureSingle).Text, Is.EqualTo("picture edited"));
+
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(sda.get_StringProp(m_pronunciation.Hvo, m_flidPronunciationSingle).Text, Is.EqualTo("pron note"));
+			Assert.That(sda.get_StringProp(m_etymology.Hvo, m_flidEtymologySingle).Text, Is.EqualTo("etymology note"));
+			Assert.That(sda.get_StringProp(m_entryRef.Hvo, m_flidEntryRefSingle).Text, Is.EqualTo("entry ref note"));
+			Assert.That(sda.get_StringProp(m_extendedNote.Hvo, m_flidExtendedNoteSingle).Text, Is.EqualTo("extended note custom"));
+			Assert.That(sda.get_StringProp(m_noteExample.Hvo, m_flidExampleSingle).Text, Is.EqualTo("extended note example"));
+			Assert.That(sda.get_StringProp(m_translation.Hvo, m_flidTranslationSingle).Text, Is.EqualTo("translation custom"));
+			Assert.That(sda.get_StringProp(m_noteTranslation.Hvo, m_flidTranslationSingle).Text, Is.EqualTo("note translation custom"));
+			Assert.That(sda.get_StringProp(m_picture.Hvo, m_flidPictureSingle).Text, Is.EqualTo("picture note"));
 		}
 
 		// Review task 5: a plain String prop reads the WHOLE string (get_StringProp), so the

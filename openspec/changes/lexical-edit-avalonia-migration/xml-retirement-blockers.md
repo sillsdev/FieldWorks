@@ -50,23 +50,36 @@ change's surfaces.
   (`FullEntryRegionComposer.WalkCustomFields`, covered by
   `FullEntryRegionComposerCustomFieldTests`) expands every `CustomFieldPlaceholder` node at
   compose time from live MDC metadata, mirroring legacy `DataTree.EnsureCustomFields` +
-  `SliceFactory.MakeAutoCustomSlice`: per visited object (entry/sense/allomorph/example) it
-  enumerates the class's (and base classes') custom fields, emits rows labeled by the field's
-  Userlabel at the placeholder position in creation (flid) order, and renders by
-  `CellarPropertyType` — String/MultiString/MultiUnicode as editable text rows (multi-WS per
+  `SliceFactory.MakeAutoCustomSlice`: per visited object it enumerates the class's (and base
+  classes') custom fields, emits rows labeled by the field's Userlabel at the placeholder
+  position in creation (flid) order, and renders by `CellarPropertyType`. Verified on
+  2026-06-12 with focused xWorks coverage across the shipped Lexical Edit detail paths:
+  `LexEntry` root rows, `LexSense` rows, `LexExampleSentence` rows, nested `MoForm` rows reached
+  through the lexeme-form and alternate-form layouts, and the previously missing nested detail
+  objects that now carry explicit insertion points (`LexPronunciation`, `LexEtymology`,
+  `LexEntryRef`, `LexExtendedNote`, `CmTranslation`, `CmPicture`, plus `LexExampleSentence`
+  under the `Notes` layout). Supported kinds on those paths now include String/MultiString/
+  MultiUnicode as editable text rows (multi-WS per
   the field's WsSelector, staged through the same setter registry/fenced session as authored
-  fields, one undo step), Integer editable, GenDate read-only formatted, atomic/sequence
-  possibility references as read-only joined names, OwningAtomic StText as read-only
-  paragraphs. Custom rows are visibility=always like the legacy generated parts (no
-  `visibility` attribute, `DataTree.cs:2435`): empty custom fields stay visible regardless of
-  "show hidden fields". **Deferred:** chooser write-back for reference custom fields (rides
-  the 6.3 service-backed chooser lane), StText editing, and the `<generate>` compile-time
-  expansion (9.2/9.3), which remains a `generated-content-dropped` Warning in the importer.
+  fields, one undo step), Integer editable, GenDate read-only formatted, possibility-list
+  atomic references as editable chooser rows, possibility-list sequences as editable
+  `ReferenceVector` rows, and OwningAtomic `StText` as read-only paragraphs. Non-list
+  reference custom fields still fall back to read-only joined names, matching the current
+  generic reference lane. Custom rows are visibility=always like the legacy generated parts
+  (no `visibility` attribute, `DataTree.cs:2435`): empty custom fields stay visible regardless
+  of "show hidden fields". The 2026-06-12 pass also fixed two infrastructure blockers that had
+  been hiding valid custom rows on deep/nested surfaces: the composer depth backstop now allows
+  the shipped extended-note example path, and the imported detail inventory now resolves the
+  `LexSense-Pictures` part instead of classifying it as unresolved. **Deferred:** editable non-list reference custom fields (if product
+  needs them), `StText` editing, and the `<generate>` compile-time expansion (9.2/9.3), which
+  remains a `generated-content-dropped` Warning in the importer and is now the main B1 gap for
+  content that depends on generated `jtview` lanes rather than the detail-surface placeholder.
 - **Retirement risk if unaddressed:** ~~Severe~~ Reduced for the composed detail surface:
-  custom-field data is now visible and (text/int) editable there. Customer custom fields still
-  vanish on any surface that consumes only the imported typed definitions without the
-  composer's runtime expansion, and reference custom fields are read-only until 6.3 — both
-  must clear before 9.4 signs off a surface.
+  custom-field data is now visible across the placeholder-backed composed detail surface, with
+  text/int and possibility-list chooser/vector fields editable there. Customer custom fields
+  still vanish on any surface that consumes only the imported typed definitions without the
+  composer's runtime expansion, and generated `jtview`-driven custom content remains outside
+  this coverage — both must clear before 9.4 signs off a surface.
 
 ### B2. Ghost items (`ghost`/`ghostWs`/`ghostClass` and friends)
 

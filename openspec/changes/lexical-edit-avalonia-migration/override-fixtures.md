@@ -21,7 +21,7 @@ Each family must have input files, expected typed IR or diagnostics, and mismatc
 |---|---|---|
 | Shipped `LexEntry-detail-Normal` | Top-level identity fields, lexeme form, citation form, pronunciations, senses | Stable node IDs, class/flid binding, editor kind, visibility, focus order, accessibility ID/name. |
 | Nested senses and ghost entries | Senses with subsenses, examples, ghost labels/init methods | Ghost metadata and lazy item templates survive compilation without recursive expansion loops. |
-| Custom fields | Entry/sense/allomorph custom scalar, multistring, possibility-list fields | Custom field placeholders resolve deterministically and retain flid/type/writing-system metadata. |
+| Custom fields | Entry, sense, example, allomorph, pronunciation, etymology, entry-ref, extended-note, translation, and picture custom scalar/multistring/GenDate/possibility-list fields | Custom field placeholders resolve deterministically on every shipped detail-surface insertion point and retain flid/type/writing-system metadata. |
 | Dictionary configuration migration | Current, pre-8.3, alpha, beta-style dictionary configs from xWorks tests | Migrator output remains schema-valid and typed-definition import preserves order and labels. |
 | Reversal configuration migration | Reversal language variants, subentries, missing or invalid reversal writing systems | Reversal-specific labels and writing-system options are preserved or diagnosed. |
 | Duplicate/shared nodes | Shared senses, referenced complex forms, duplicate custom nodes | Stable node IDs remain unique; referenced nodes do not duplicate children accidentally. |

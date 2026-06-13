@@ -8,9 +8,9 @@ so they weight the vocabulary by how often real layouts use it.
 ## Summary
 
 - Detail layouts imported: **136** (non-detail layouts skipped: 594)
-- Typed nodes produced: **1128**
-- Element occurrence coverage: **77.8%** (6456 handled / 1844 unhandled)
-- Attribute occurrence coverage: **56.6%** (14560 handled / 11151 unhandled)
+- Typed nodes produced: **1139**
+- Element occurrence coverage: **77.8%** (6468 handled / 1844 unhandled)
+- Attribute occurrence coverage: **56.7%** (14585 handled / 11152 unhandled)
 
 ## Import diagnostics by code
 
@@ -19,7 +19,7 @@ so they weight the vocabulary by how often real layouts use it.
 | `unhandled-attribute (Info)` | 715 |
 | `slice-content-dropped (Info)` | 330 |
 | `dynamic-editor (Info)` | 122 |
-| `unresolved-part (Error)` | 63 |
+| `unresolved-part (Error)` | 62 |
 | `unhandled-attribute (Warning)` | 5 |
 | `unknown-part-content (Warning)` | 2 |
 | `sublayout-dropped (Info)` | 1 |
@@ -54,7 +54,6 @@ so they weight the vocabulary by how often real layouts use it.
 | `LexReference-ShowSingleReference` | 1 |
 | `LexSense-HeavySummary` | 1 |
 | `LexSense-ImportResidue` | 1 |
-| `LexSense-Pictures` | 1 |
 | `MoAlloAdhocProhib-Message` | 1 |
 | `MoExoCompound-ToMsa` | 1 |
 | `MoInflAffixSlot-Optional` | 1 |
@@ -115,7 +114,7 @@ so they weight the vocabulary by how often real layouts use it.
 |---|---|
 | `part@after` | 1469 |
 | `part@before` | 1467 |
-| `part@type` | 1066 |
+| `part@type` | 1067 |
 | `part@ws` | 940 |
 | `part@wsType` | 730 |
 | `part@css` | 729 |
