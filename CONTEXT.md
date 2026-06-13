@@ -28,6 +28,9 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Writing system**: A configured language/script/orthography used to store and display text.
 - **Vernacular writing system**: A writing system used for source-language data.
 - **Analysis writing system**: A writing system used for glosses, definitions, translated labels, and analysis-oriented text.
+- **`ITsString` / TsString**: The LCModel-managed text model used for lexicon and Views text, including run-level writing-system and style properties. Cross-framework clipboard and drag/drop interchange serializes it through `TsStringWrapper` XML.
+- **Multi-writing-system text**: A text value or field that exposes one or more writing-system alternatives and may also preserve run-level writing-system and style metadata inside a single `ITsString`.
+- **IME composition**: The transient input-method editing state before text is committed. Treat composition behavior and committed text behavior as separate test and parity concerns.
 - **Lexicon**: The lexical data and editing experience in FLEx.
 - **Interlinear text**: Text annotated with multiple aligned linguistic analysis lines.
 - **Morphology**: The part of the system and data model concerned with morphemes, rules, and word analysis.
