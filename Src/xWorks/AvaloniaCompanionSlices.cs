@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 
 	/// <summary>
 	/// The hybrid "companion strip" lane for designated WinForms-only custom slices: the Avalonia
-	/// surface is itself hosted in WinForms (PocWinFormsHostControl inside RecordEditView), so a
+	/// surface is itself hosted in WinForms (LexicalEditHostControl inside RecordEditView), so a
 	/// legacy slice whose editor cannot be rendered inside Avalonia (today: the Chorus Send/Receive
 	/// Messages notes bar, which hosts Chorus.UI.Notes.Bar.NotesBarView) is instantiated for real and
 	/// stacked in a WinForms strip above the Avalonia host instead of rendering as a grey

@@ -17,13 +17,13 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
 	/// The ONE compact, filterable select-from-list control every Avalonia option surface uses:
-	/// the chooser's single-select flyout, the reference vector's "+" add flyout, and the POC
+	/// the chooser's single-select flyout, the reference vector's "+" add flyout, and preview
 	/// morph-type chooser. It is a small NATIVE composite — a <see cref="TextBox"/> filter box
 	/// stacked over a <see cref="ListBox"/> of options — shown INLINE inside the host flyout. The
 	/// host flyout is therefore the only popup; there is no second floating dropdown surface (the
@@ -84,8 +84,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// A single clean selection panel: a thin light border + white surface. The HOST flyout's
 			// own Fluent presenter chrome (the heavy grey, padded, bordered box) is stripped by
 			// CreateOptionFlyout, so this is the ONLY border the user sees around the options.
-			Background = PocDensity.PickerBackgroundBrush;
-			BorderBrush = PocDensity.PickerBorderBrush;
+			Background = FwAvaloniaDensity.PickerBackgroundBrush;
+			BorderBrush = FwAvaloniaDensity.PickerBorderBrush;
 			BorderThickness = new Thickness(1);
 			CornerRadius = new CornerRadius(3);
 			Padding = new Thickness(4);
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_filterBox = new TextBox
 			{
 				MinHeight = 0,
-				Padding = PocDensity.EditorPadding,
+				Padding = FwAvaloniaDensity.EditorPadding,
 				Background = Brushes.Transparent,
 				BorderBrush = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// misfires and the typed query keeps capturing keystrokes.
 				Focusable = false,
 				SelectionMode = SelectionMode.Single,
-				MaxHeight = PocDensity.OptionListMaxHeight,
+				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
 				Background = Brushes.Transparent,
 				BorderBrush = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Builds the host flyout for an option picker with the Fluent <c>FlyoutPresenter</c>'s heavy
 		/// grey chrome (its padding, border, and grey background) stripped to nothing — so the
 		/// picker's own thin border is the ONLY boundary the user sees, instead of the default thick
-		/// grey box wrapping it. Every option surface (chooser, "+" vector add, POC morph chooser)
+		/// grey box wrapping it. Every option surface (chooser, "+" vector add, preview chooser)
 		/// opens through here so the chrome stays consistent.
 		/// </summary>
 		public static Flyout CreateOptionFlyout(FwOptionPicker picker, PlacementMode placement)
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 
 			var theme = new ControlTheme(typeof(ListBoxItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, PocDensity.OptionItemPadding));
+			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
 			theme.Setters.Add(new Setter(ListBoxItem.MinHeightProperty, 0d));
 			return theme;
 		}

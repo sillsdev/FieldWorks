@@ -197,8 +197,8 @@ Status (wave 4, 2026-06-11): LANDED.
   items (`RegionLinkChrome` deleted). Every option dropdown is the ONE compact filterable
   picker `FwOptionPicker` (Region/FwOptionPicker.cs): a selection-filter panel (light
   border), filter TextBox on top (auto-focused on open, ksSearchPrompt watermark) over a
-  VIRTUALIZED list capped at `PocDensity.OptionListMaxHeight` (320), item padding pinned to
-  the legacy WinForms menu density (`PocDensity.OptionItemPadding`, (6,2)), hierarchy via the
+  VIRTUALIZED list capped at `FwAvaloniaDensity.OptionListMaxHeight` (320), item padding pinned to
+  the legacy WinForms menu density (`FwAvaloniaDensity.OptionItemPadding`, (6,2)), hierarchy via the
   existing Depth indent. Typing filters live (case-insensitive contains; the search-backed
   vector forwards the query to the D3 `SearchOptions` delegate); Down/Up move, Enter commits
   the highlighted option (first match by default), Esc closes, click commits. Staging is
@@ -207,7 +207,7 @@ Status (wave 4, 2026-06-11): LANDED.
   (the earlier gap fix) is gone; the slice menu (`menu="mnuDataTree-LexemeForm"` etc.) stays
   on right-click only — the label/value right-click lanes are unchanged.
 - **Context-menu density:** `RegionMenuFlyout` items pin the explicit compact legacy padding
-  (`PocDensity.MenuItemPadding`/`MenuItemMinHeight`), not the Fluent defaults; long menus
+  (`FwAvaloniaDensity.MenuItemPadding`/`MenuItemMinHeight`), not the Fluent defaults; long menus
   keep the presenter's scrolling.
 
 ### D5. Governance: the burn-down is enforced by tests, not intentions

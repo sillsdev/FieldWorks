@@ -12,7 +12,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<string> writingSystemFocused,
 			Action<RegionMenuRequest> menuRequested = null)
 		{
-			Spacing = PocDensity.RowSpacing;
+			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
@@ -48,11 +48,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var abbrev = new TextBlock
 				{
 					Text = value.WsAbbrev,
-					MinWidth = PocDensity.WsAbbrevWidth,
+					MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
 					VerticalAlignment = VerticalAlignment.Top,
 					Margin = new Thickness(0, 1, 4, 0),
-					FontSize = PocDensity.WsAbbrevFontSize,
-					Foreground = PocDensity.WsAbbrevBrush
+					FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+					Foreground = FwAvaloniaDensity.WsAbbrevBrush
 				};
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var box = new TextBox
 				{
 					Text = value.Value,
-					Padding = PocDensity.EditorPadding,
+					Padding = FwAvaloniaDensity.EditorPadding,
 					MinHeight = 0,
 					AcceptsReturn = false,
 					IsReadOnly = editContext == null || !field.IsEditable,
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<RegionLinkRequest> linkRequested = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
-			Padding = PocDensity.EditorPadding;
+			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
 			HorizontalAlignment = HorizontalAlignment.Left;
 			Background = Brushes.Transparent;
@@ -409,7 +409,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				MinWidth = 0,
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
-				Foreground = PocDensity.WsAbbrevBrush
+				Foreground = FwAvaloniaDensity.WsAbbrevBrush
 			};
 			AutomationProperties.SetAutomationId(addButton, automationId + ".Add");
 			AutomationProperties.SetName(addButton, FwAvaloniaStrings.AddItem);

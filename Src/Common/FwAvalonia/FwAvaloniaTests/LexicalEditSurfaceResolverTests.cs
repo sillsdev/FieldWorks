@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
 
 namespace FwAvaloniaTests
 {
@@ -87,17 +87,17 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Audits the POC assembly's references to prove it carries no native Views or Graphite
-	/// dependency, satisfying the spike's "no native viewing or Graphite" requirement at the
+	/// Audits the FwAvalonia assembly's references to prove it carries no native Views or Graphite
+	/// dependency, satisfying the migration's "no native viewing or Graphite" requirement at the
 	/// assembly-reference level (the headless render test proves it at runtime).
 	/// </summary>
 	[TestFixture]
-	public class PocAssemblyReferenceAuditTests
+	public class FwAvaloniaAssemblyReferenceAuditTests
 	{
 		[Test]
-		public void PocAssembly_HasNoNativeViewsOrGraphiteReferences()
+		public void FwAvaloniaAssembly_HasNoNativeViewsOrGraphiteReferences()
 		{
-			var referenced = typeof(PocLexEntrySlice).Assembly.GetReferencedAssemblies();
+			var referenced = typeof(LexicalEditRegionView).Assembly.GetReferencedAssemblies();
 			var forbidden = new[] { "Graphite", "ViewsInterfaces", "Views.dll", "RootSite", "Gecko", "Geckofx" };
 
 			foreach (var name in referenced.Select(r => r.Name))
@@ -107,7 +107,7 @@ namespace FwAvaloniaTests
 					Assert.That(
 						name.IndexOf(bad, StringComparison.OrdinalIgnoreCase),
 						Is.LessThan(0),
-						$"POC assembly must not reference '{bad}', but references '{name}'.");
+						$"FwAvalonia assembly must not reference '{bad}', but references '{name}'.");
 				}
 			}
 		}

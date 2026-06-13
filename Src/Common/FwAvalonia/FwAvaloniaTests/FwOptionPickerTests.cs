@@ -16,7 +16,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 
 namespace FwAvaloniaTests
@@ -248,7 +247,7 @@ namespace FwAvaloniaTests
 
 			var container = picker.OptionsList.ContainerFromIndex(0) as ListBoxItem;
 			Assert.That(container, Is.Not.Null, "the first option's container is realized");
-			Assert.That(container.Padding, Is.EqualTo(PocDensity.OptionItemPadding),
+			Assert.That(container.Padding, Is.EqualTo(FwAvaloniaDensity.OptionItemPadding),
 				"item padding mirrors the legacy WinForms menu spacing (~6,2), not Fluent");
 			Assert.That(container.MinHeight, Is.EqualTo(0d), "no Fluent minimum row height");
 		}
@@ -260,7 +259,7 @@ namespace FwAvaloniaTests
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(picker.OptionsList.MaxHeight, Is.EqualTo(PocDensity.OptionListMaxHeight),
+			Assert.That(picker.OptionsList.MaxHeight, Is.EqualTo(FwAvaloniaDensity.OptionListMaxHeight),
 				"the list caps at the density token (~320) so long lists scroll");
 			Assert.That(picker.OptionsList.GetVisualDescendants().OfType<VirtualizingStackPanel>().Any(),
 				Is.True, "the items panel is a VirtualizingStackPanel — the ~1800-node semantic" +

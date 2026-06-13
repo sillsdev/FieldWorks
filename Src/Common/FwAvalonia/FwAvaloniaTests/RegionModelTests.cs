@@ -80,6 +80,40 @@ namespace FwAvaloniaTests
 			Assert.That(lexeme.AutomationId, Is.EqualTo("LexemeFormEditor"));
 		}
 
+		private sealed class RichRegionValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "dog", richText: new RegionRichTextValue(
+						"dog",
+						new List<RegionTextRun>
+						{
+							new RegionTextRun("do", "qaa-x-one"),
+							new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+						},
+						richXml: "<AStr ws='qaa-x-one'><Run ws='qaa-x-one'>do</Run><Run ws='qaa-x-two' namedStyle='Emphasis'>g</Run></AStr>",
+						requiresRichEditor: true))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
+		[Test]
+		public void RichTextFields_AreProjectedReadOnly_UntilTheOwnedRichEditorLands()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
+			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
+
+			Assert.That(lexeme.IsEditable, Is.False,
+				"a row carrying rich-text runs must stay read-only until the owned rich editor replaces the plain-text lane");
+			Assert.That(lexeme.Values.Single().RichText, Is.Not.Null);
+			Assert.That(lexeme.Values.Single().RichText.Runs.Select(r => r.WritingSystemTag),
+				Is.EqualTo(new[] { "qaa-x-one", "qaa-x-two" }));
+		}
+
 		[Test]
 		public void ChooserField_IsClassifiedAsChooser_WithOptionsAndSelection()
 		{
@@ -127,6 +161,15 @@ namespace FwAvaloniaTests
 
 			var model = LexicalEditRegionMapper.FromViewDefinition(def, new FakeRegionValueProvider());
 			Assert.That(model.Diagnostics, Has.Count.EqualTo(1));
+		}
+
+		[Test]
+		public void GraphemeClusters_KhmerSyllable_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("កាx");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"Khmer base+vowel stays one grapheme cluster; the following Latin character starts a new cluster");
 		}
 	}
 

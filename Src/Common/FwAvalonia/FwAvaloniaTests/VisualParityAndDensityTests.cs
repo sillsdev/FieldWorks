@@ -12,7 +12,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -136,12 +136,12 @@ namespace FwAvaloniaTests
 		[Test]
 		public void DensityTokens_MatchTheCompactWinFormsBaseline()
 		{
-			Assert.That(PocDensity.LabelColumnWidth, Is.EqualTo(96d));
-			Assert.That(PocDensity.WsAbbrevWidth, Is.EqualTo(28d));
-			Assert.That(PocDensity.RowSpacing, Is.EqualTo(1d));
-			Assert.That(PocDensity.FieldSpacing, Is.EqualTo(2d));
-			Assert.That(PocDensity.EditorPadding, Is.EqualTo(new Thickness(3, 1, 3, 1)));
-			Assert.That(PocDensity.SliceMargin, Is.EqualTo(new Thickness(4, 2, 4, 2)));
+			Assert.That(FwAvaloniaDensity.LabelColumnWidth, Is.EqualTo(96d));
+			Assert.That(FwAvaloniaDensity.WsAbbrevWidth, Is.EqualTo(28d));
+			Assert.That(FwAvaloniaDensity.RowSpacing, Is.EqualTo(1d));
+			Assert.That(FwAvaloniaDensity.FieldSpacing, Is.EqualTo(2d));
+			Assert.That(FwAvaloniaDensity.EditorPadding, Is.EqualTo(new Thickness(3, 1, 3, 1)));
+			Assert.That(FwAvaloniaDensity.SliceMargin, Is.EqualTo(new Thickness(4, 2, 4, 2)));
 		}
 	}
 }

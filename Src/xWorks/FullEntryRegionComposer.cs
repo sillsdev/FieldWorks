@@ -824,29 +824,29 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var anyData = false;
-				var rich = false;
 				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
 				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
 				// Review task 12: the per-ws value rows build through the shared factory
 				// (LexicalEditRegionBuilder uses the same one), this lane only supplies the text.
-				var values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+				IReadOnlyList<RegionWsValue> values;
+				if (type == CellarPropertyType.Unicode)
 				{
-					string text;
-					if (type == CellarPropertyType.Unicode)
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
 					{
-						text = _sda.get_UnicodeProp(hvo, flid);
-					}
-					else
+						var text = _sda.get_UnicodeProp(hvo, flid);
+						anyData |= !string.IsNullOrEmpty(text);
+						return text;
+					}, fontSize, node.BoldEmphasis);
+				}
+				else
+				{
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
 					{
 						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
-						// Review task 4: rich content (multiple runs, or props beyond the ws)
-						// makes the whole row read-only below.
-						rich |= HasRichContent(tss);
-						text = tss?.Text;
-					}
-					anyData |= !string.IsNullOrEmpty(text);
-					return text;
-				}, fontSize, node.BoldEmphasis);
+						anyData |= !string.IsNullOrEmpty(tss?.Text);
+						return tss;
+					}, _cache.WritingSystemFactory, fontSize, node.BoldEmphasis);
+				}
 
 				if (!anyData && HideWhenEmpty(node))
 					return;
@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.XWorks
 				// run properties on the first keystroke. Until the rich TsString editor lands
 				// (gated on 6.13), a row whose current content is rich composes READ-ONLY so a
 				// keystroke cannot destroy it; plain single-run content stays editable.
-				var editable = type != CellarPropertyType.Unicode && !rich;
+				var editable = type != CellarPropertyType.Unicode && !values.Any(v => v.RequiresRichEditor);
 				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
@@ -927,27 +927,6 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						return false;
 				}
-			}
-
-			// Review task 4: "rich" = more than one run, or single-run properties beyond the
-			// writing system itself — exactly the content a plain-text MakeString round-trip
-			// would silently destroy.
-			private static bool HasRichContent(ITsString tss)
-			{
-				if (tss == null || tss.Length == 0)
-					return false;
-				if (tss.RunCount > 1)
-					return true;
-				var props = tss.get_Properties(0);
-				if (props.StrPropCount > 0)
-					return true;
-				for (var i = 0; i < props.IntPropCount; i++)
-				{
-					props.GetIntProp(i, out var tpt, out _);
-					if (tpt != (int)FwTextPropType.ktptWs)
-						return true;
-				}
-				return false;
 			}
 
 			private void WalkMorphTypeChooser(ViewNode node, ICmObject obj, int depth)

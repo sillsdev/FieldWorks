@@ -4,13 +4,13 @@
 
 using Avalonia;
 
-namespace SIL.FieldWorks.Common.FwAvalonia.Poc
+namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// Density tokens chosen to match the compact WinForms DataTree baseline (the "density"
-	/// half of the fidelity question). Centralized so the parity comparison can tune one place.
+	/// Shared density and style tokens chosen to match the compact WinForms DataTree baseline.
+	/// Centralized so parity tuning lands in one place.
 	/// </summary>
-	public static class PocDensity
+	public static class FwAvaloniaDensity
 	{
 		/// <summary>Width of the field label column.</summary>
 		public const double LabelColumnWidth = 96d;
@@ -29,9 +29,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 
 		/// <summary>Compact margin around the slice.</summary>
 		public static readonly Thickness SliceMargin = new Thickness(4, 2, 4, 2);
-
-		// ---- Visual-fidelity tokens (section 12), sampled from the committed legacy render
-		// ---- baseline + DataTree/Slice constants. One place to tune the legacy look.
 
 		/// <summary>Slice label text (legacy label hue from the committed baseline pixels).</summary>
 		public static readonly Avalonia.Media.IBrush LabelBrush =
@@ -53,9 +50,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 		/// <summary>Legacy splitter width (Slice.cs SplitterWidth = 5).</summary>
 		public const double SplitterWidth = 5.0;
 
-		// ---- Popup density tokens: the legacy WinForms menus/choosers are far denser than the
-		// ---- Fluent theme defaults; option pickers and context menus mirror that spacing.
-
 		/// <summary>Compact padding of one option row in the option picker (legacy menu spacing).</summary>
 		public static readonly Thickness OptionItemPadding = new Thickness(6, 2, 6, 2);
 
@@ -67,8 +61,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 
 		/// <summary>Compact context-menu item height floor (legacy items are ~22px, Fluent ~32px).</summary>
 		public const double MenuItemMinHeight = 22.0;
-
-		// ---- Centralized chrome brushes: no hardcoded colors at the use sites, one place to tune.
 
 		/// <summary>The option picker panel surface (a light selection panel, not a menu).</summary>
 		public static readonly Avalonia.Media.IBrush PickerBackgroundBrush = Avalonia.Media.Brushes.White;

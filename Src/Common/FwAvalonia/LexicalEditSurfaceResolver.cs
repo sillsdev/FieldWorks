@@ -20,8 +20,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	}
 
 	/// <summary>
-	/// Pure-logic resolver for the two-adapter feature flag described in
-	/// lexical-edit-avalonia-poc-spike. Default is WinForms; Avalonia is selected by a persisted
+	/// Pure-logic resolver for the two-adapter feature flag carried forward from the original
+	/// in-process Avalonia spike. Default is WinForms; Avalonia is selected by a persisted
 	/// `UIMode = New` preference or by an explicit override used in tests.
 	/// This type has no Avalonia dependency so it can be unit tested without a UI runtime.
 	/// </summary>

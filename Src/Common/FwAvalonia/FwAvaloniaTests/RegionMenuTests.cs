@@ -260,7 +260,7 @@ namespace FwAvaloniaTests
 		}
 
 		// Context-menu density: every item pins the explicit compact padding/height of the legacy
-		// WinForms menus (PocDensity tokens), never the (much taller) Fluent theme defaults —
+		// WinForms menus (FwAvaloniaDensity tokens), never the (much taller) Fluent theme defaults —
 		// nested submenu items included.
 		[AvaloniaTest]
 		public void RegionMenuFlyout_ItemDensity_IsPinnedCompact_IncludingSubmenus()
@@ -278,14 +278,14 @@ namespace FwAvaloniaTests
 			Assert.That(top, Has.Count.EqualTo(2));
 			foreach (var item in top)
 			{
-				Assert.That(item.Padding, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.MenuItemPadding),
+				Assert.That(item.Padding, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.MenuItemPadding),
 					$"'{item.Header}' pads at legacy WinForms menu density, not the Fluent default");
-				Assert.That(item.MinHeight, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.MenuItemMinHeight),
+				Assert.That(item.MinHeight, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.MenuItemMinHeight),
 					$"'{item.Header}' row height mirrors the legacy ~22px menu items");
 			}
 
 			var child = (MenuItem)top[1].Items[0];
-			Assert.That(child.Padding, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.MenuItemPadding),
+			Assert.That(child.Padding, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.MenuItemPadding),
 				"submenu items compact too");
 		}
 

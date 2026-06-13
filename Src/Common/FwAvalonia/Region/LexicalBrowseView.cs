@@ -12,7 +12,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				{
 					Text = Columns[c].Label ?? Columns[c].Field,
 					FontWeight = FontWeight.Bold,
-					Margin = new Thickness(PocDensity.EditorPadding.Left, 2, PocDensity.EditorPadding.Right, 2)
+					Margin = new Thickness(FwAvaloniaDensity.EditorPadding.Left, 2, FwAvaloniaDensity.EditorPadding.Right, 2)
 				};
 				AutomationProperties.SetAutomationId(cell, $"BrowseHeader.{Columns[c].Field}");
 				Grid.SetColumn(cell, c);

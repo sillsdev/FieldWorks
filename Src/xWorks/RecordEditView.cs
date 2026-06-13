@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -69,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 		private LexicalEditSurface m_lexicalEditSurface;
 		private readonly LexicalEditSurfaceFactory m_lexicalEditSurfaceFactory;
 		private readonly LexicalEditSurfaceSelectionService m_surfaceSelectionService = new LexicalEditSurfaceSelectionService();
-		private PocWinFormsHostControl m_avaloniaEntryForm;
+		private LexicalEditHostControl m_avaloniaEntryForm;
 		private bool m_legacySurfaceInitialized;
 		private RecordClerkNavigationContext m_recordNavigationContext;
 		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
@@ -121,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm = dataEntryForm;
 			m_lexicalEditSurfaceFactory = new LexicalEditSurfaceFactory(
 				() => m_dataEntryForm,
-				() => new PocWinFormsHostControl());
+				() => new LexicalEditHostControl());
 			m_dataEntryForm.CurrentSliceChanged += m_dataEntryForm_CurrentSliceChanged;
 
 			// This call is required by the Windows.Forms Form Designer.
@@ -597,7 +596,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm != null)
 				return;
 
-			m_avaloniaEntryForm = (PocWinFormsHostControl)m_lexicalEditSurfaceFactory.Create(LexicalEditSurface.Avalonia);
+			m_avaloniaEntryForm = (LexicalEditHostControl)m_lexicalEditSurfaceFactory.Create(LexicalEditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))

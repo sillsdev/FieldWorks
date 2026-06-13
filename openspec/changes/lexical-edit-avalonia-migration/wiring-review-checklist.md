@@ -38,7 +38,7 @@ to each PR that touches surface selection, `PropertyTable`/mediator routing, or 
 
 - [ ] Product route uses a **typed-definition-backed region model** (`LexicalEditRegionModel`), not a
       lossy `LexicalEditPocMapper` DTO or preview host code.
-- [ ] Preview-only artifacts (`PocEntryDto`, `PocPreviewDataProvider`, sample data) are not on any
+- [ ] Preview-only artifacts (`LexicalEditPreviewDataProvider`, `LexicalEditPreviewScenario`, sample data) are not on any
       product route.
 - [ ] Product-facing strings are localizable; remaining prototype strings are called out as gaps.
 - [ ] Stable, nonlocalized `AutomationId`s on user-facing controls; localized names/tooltips allowed.

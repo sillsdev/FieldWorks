@@ -12,15 +12,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <see cref="LexicalEditRegionModel"/> (task 4.8). It flattens the visible leaf field nodes,
 	/// classifies each into a <see cref="RegionFieldKind"/> from its editor, and asks the supplied
 	/// <see cref="IRegionValueProvider"/> for live values. This is the typed-definition-backed
-	/// replacement for the lossy hand-written POC DTO mapping: structure is owned by the view
+	/// replacement for the old detached preview DTO mapping: structure is owned by the view
 	/// definition, not by a bespoke three-field projection.
 	/// </summary>
 	public static class LexicalEditRegionMapper
 	{
-		public static LexicalEditRegionModel FromViewDefinition(ViewDefinitionModel definition, IRegionValueProvider values)
+		public static LexicalEditRegionModel FromViewDefinition(
+			ViewDefinitionModel definition,
+			IRegionValueProvider values)
 		{
-			if (definition == null) throw new System.ArgumentNullException(nameof(definition));
-			if (values == null) throw new System.ArgumentNullException(nameof(values));
+			if (definition == null)
+				throw new System.ArgumentNullException(nameof(definition));
+			if (values == null)
+				throw new System.ArgumentNullException(nameof(values));
 
 			var fields = new List<LexicalEditRegionField>();
 			foreach (var root in definition.Roots)
@@ -28,10 +32,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				CollectFields(root, values, fields, 0);
 			}
 
-			return new LexicalEditRegionModel(definition.ClassName, definition.LayoutName, fields, definition.Diagnostics);
+			return new LexicalEditRegionModel(
+				definition.ClassName,
+				definition.LayoutName,
+				fields,
+				definition.Diagnostics);
 		}
 
-		private static void CollectFields(ViewNode node, IRegionValueProvider values, List<LexicalEditRegionField> output, int depth)
+		private static void CollectFields(
+			ViewNode node,
+			IRegionValueProvider values,
+			List<LexicalEditRegionField> output,
+			int depth)
 		{
 			if (node.Visibility == ViewVisibility.Never)
 				return;
@@ -41,12 +53,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				output.Add(BuildField(node, values, depth));
 			}
-			else if (node.Kind == ViewNodeKind.Group && !string.IsNullOrEmpty(node.Label) && node.Children.Count > 0)
+			else if (
+				node.Kind == ViewNodeKind.Group
+				&& !string.IsNullOrEmpty(node.Label)
+				&& node.Children.Count > 0)
 			{
 				// Section header row (legacy grouping slice); children indent one level under it.
-				output.Add(new LexicalEditRegionField(node.StableId, node.Label, node.Field, node.WritingSystem,
-					RegionFieldKind.Header, node.EditorClassification, node.AutomationId, node.LocalizationKey,
-					node.Routing, null, null, null, isEditable: false, indent: depth));
+				output.Add(
+					new LexicalEditRegionField(
+						node.StableId,
+						node.Label,
+						node.Field,
+						node.WritingSystem,
+						RegionFieldKind.Header,
+						node.EditorClassification,
+						node.AutomationId,
+						node.LocalizationKey,
+						node.Routing,
+						null,
+						null,
+						null,
+						isEditable: false,
+						indent: depth));
 				childDepth = depth + 1;
 			}
 
@@ -56,17 +84,32 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		private static LexicalEditRegionField BuildField(ViewNode node, IRegionValueProvider values, int depth)
+		private static LexicalEditRegionField BuildField(
+			ViewNode node,
+			IRegionValueProvider values,
+			int depth)
 		{
 			var kind = ClassifyKind(node);
 			IReadOnlyList<RegionWsValue> wsValues = null;
 			IReadOnlyList<RegionChoiceOption> options = null;
 			string selected = null;
+			var isEditable = true;
 
 			switch (kind)
 			{
 				case RegionFieldKind.Text:
 					wsValues = values.GetValues(node);
+					if (wsValues != null)
+					{
+						foreach (var value in wsValues)
+						{
+							if (value != null && value.RequiresRichEditor)
+							{
+								isEditable = false;
+								break;
+							}
+						}
+					}
 					break;
 				case RegionFieldKind.Chooser:
 					options = values.GetOptions(node);
@@ -75,9 +118,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 
 			return new LexicalEditRegionField(
-				node.StableId, node.Label, node.Field, node.WritingSystem, kind, node.EditorClassification,
-				node.AutomationId, node.LocalizationKey, node.Routing, wsValues, options, selected,
-				isEditable: true, indent: depth);
+				node.StableId,
+				node.Label,
+				node.Field,
+				node.WritingSystem,
+				kind,
+				node.EditorClassification,
+				node.AutomationId,
+				node.LocalizationKey,
+				node.Routing,
+				wsValues,
+				options,
+				selected,
+				isEditable: isEditable,
+				indent: depth);
 		}
 
 		/// <summary>

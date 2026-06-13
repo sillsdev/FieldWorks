@@ -58,6 +58,7 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Webonary**: An online dictionary publishing service that FieldWorks integrates with as an export target. Implemented in xWorks (`UploadToWebonaryController`, `WebonaryClient`).
 - **Utility**: A user-invoked data maintenance or migration tool (e.g. resetting homographs, removing parser annotations, fixing duplicate analyses). Utilities implement `IUtility` (`FwCoreDlgs`), are registered in `UtilityCatalogInclude.xml` via reflection, and run through `UtilityDlg` (Tools > Utilities menu).
 - **DistFiles**: Runtime assets copied into outputs or installers.
+- **Preview vs POC**: In the Avalonia migration, **preview** means a lightweight sample or design-time path that reuses the shared region renderer; **POC** refers only to the retired spike/evidence vocabulary and should not name live runtime code paths.
 ## Repo-Wide Invariants
 - Native C++ builds before managed code generation and managed projects.
 - `build.ps1` is the canonical build entry point.

@@ -4,6 +4,10 @@ Lexical Edit is the main editing surface in FLEx, but its current WinForms/DataT
 
 Current branch scope is judged by the branch-only diff against `main`, not by same-day commit timestamps. This Phase 1/2 branch now contains OpenSpec planning, migration-review skills, legacy WinForms/DataTree/XMLViews characterization coverage, the net48 `FwAvalonia` spike, a net48 `FwAvaloniaPreviewHost` + preview-host UIA harness, typed view-definition and seam foundation code, and product-facing app-wide lexical-edit UI mode wiring through existing `RecordEditView` hosts. The older net8 `AdvancedEntry.Avalonia` prototype remains on `010-advanced-entry-preview-prototype` as a separate prototype track.
 
+The detached spike-only `Poc*` runtime stack has now been retired in favor of the shared
+region-model preview path documented in `poc-retiring.md`; the old
+`lexical-edit-avalonia-poc-spike` change is folded forward and removed.
+
 ## What Changes
 
 - Migrate the Advanced Entry Speckit research, parity checklist, and task intent into OpenSpec under a broader Lexical Edit migration change.
@@ -19,6 +23,8 @@ Current branch scope is judged by the branch-only diff against `main`, not by sa
 - Define automation strategy: UIA2/FlaUI-style tests for legacy WinForms workflow reachability; Avalonia.Headless tests for new controls; layered unit/integration tests for IR, LCModel, refresh, and transactions.
 - Keep Avalonia build and test participation on the normal repo scripts (`./build.ps1`, `./test.ps1`). The legacy-vs-Avalonia choice is a runtime product behavior switch, not a separate build lane.
 - Allow Avalonia package updates or targeted upstream/local control work when stock controls cannot preserve FieldWorks density, interaction semantics, OpenType/HarfBuzz text, or TreeView requirements.
+- Retire the detached POC renderer/data path once the shared region renderer can serve both
+	product and preview, so preview stays lightweight without carrying a duplicate UI stack.
 
 ## Non-goals
 

@@ -225,15 +225,15 @@ namespace FwAvaloniaTests
 			var rule = view.GetVisualDescendants().OfType<Border>()
 				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "SliceRule.0");
 			Assert.That(rule, Is.Not.Null);
-			Assert.That(rule.Background, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.SliceRuleBrush));
+			Assert.That(rule.Background, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.SliceRuleBrush));
 
 			// 12.3/12.4: WS abbreviation + label use the legacy-sampled tokens.
 			var abbrev = view.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "en");
-			Assert.That(abbrev.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.WsAbbrevBrush));
-			Assert.That(abbrev.FontSize, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.WsAbbrevFontSize));
+			Assert.That(abbrev.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevBrush));
+			Assert.That(abbrev.FontSize, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.WsAbbrevFontSize));
 			var label = view.GetVisualDescendants().OfType<TextBlock>()
 				.First(t => AutomationProperties.GetAutomationId(t) == "f1.Label");
-			Assert.That(label.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.Poc.PocDensity.LabelBrush));
+			Assert.That(label.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelBrush));
 		}
 
 		[AvaloniaTest]

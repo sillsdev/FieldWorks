@@ -10,7 +10,7 @@ using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			=> new Avalonia.Controls.Shapes.Path
 			{
 				Data = GearGeometry,
-				Fill = PocDensity.WsAbbrevBrush,
+				Fill = FwAvaloniaDensity.WsAbbrevBrush,
 				Width = 14,
 				Height = 14,
 				Stretch = Stretch.Uniform,

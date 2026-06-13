@@ -4,6 +4,10 @@ Lexical Edit currently depends on a WinForms/DataTree/DetailControls stack that 
 
 This branch is the current foundation-and-integration slice: it documents the architecture, keeps legacy characterization tests that protect Phase 3 refactors, and now includes the net48 `FwAvalonia` spike, typed view-definition/seam foundation code, a net48 `FwAvaloniaPreviewHost` + preview-host UIA smoke tests, and product-facing app-wide lexical-edit UI mode wiring through existing `RecordEditView` hosts. The older net8 Preview Host/AdvancedEntry prototype remains intentionally split to `010-advanced-entry-preview-prototype` as a separate prototype track. Branch scope should be reviewed against the branch-only diff from `main`, not inferred from same-day commit timestamps.
 
+The earlier detached `Poc*` renderer/data stack is now retired. Preview and product both ride the
+shared region renderer boundary; the fold-forward plan and the symbol/name mapping live in
+`poc-retiring.md`.
+
 Important current constraints:
 - `DataTree`, `Slice`, `SliceFactory`, launchers, `RecordEditView`, XMLViews browse/table views, and xCore mediator behavior are tightly coupled.
 - XML Parts/Layout carries real customer customizations and behavior such as custom fields, ghost items, visibility rules, and chooser hints.

@@ -10,15 +10,15 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// A data-driven Avalonia view that renders a <see cref="LexicalEditRegionModel"/> (task 4.8). Unlike
-	/// <c>PocLexEntrySlice</c>, which hard-codes three fields over a detached DTO, this view builds one
-	/// row per region field from the typed view definition, so the same renderer scales as more fields
-	/// are added to the definition. Each field's renderer is chosen from its <see cref="RegionFieldKind"/>.
+	/// A data-driven Avalonia view that renders a <see cref="LexicalEditRegionModel"/> (task 4.8).
+	/// It builds one row per region field from the typed view definition, so the same renderer scales
+	/// from preview scenarios to product-backed layouts. Each field's renderer is chosen from its
+	/// <see cref="RegionFieldKind"/>.
 	/// Stable, nonlocalized automation ids come from the field (falling back to the stable node id).
 	///
 	/// Editing (tasks 6.8/6.10, autosave 14.4): when an <see cref="IRegionEditContext"/> is supplied,
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly IRegionEditContext _editContext;
 		private readonly Action<string> _writingSystemFocused;
 		private readonly List<List<Control>> _rowControls = new List<List<Control>>();
-		private static double s_labelColumnWidth = PocDensity.LabelColumnWidth;
+		private static double s_labelColumnWidth = FwAvaloniaDensity.LabelColumnWidth;
 		private TextBlock _validationBlock;
 
 		private readonly Func<string, bool?> _getExpansionState;
@@ -69,11 +69,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// the legacy slice splitter; its position is remembered for the session.
 			var grid = new Grid
 			{
-				Margin = PocDensity.SliceMargin,
+				Margin = FwAvaloniaDensity.SliceMargin,
 				ColumnDefinitions = new ColumnDefinitions
 				{
 					new ColumnDefinition(s_labelColumnWidth, GridUnitType.Pixel),
-					new ColumnDefinition(PocDensity.SplitterWidth, GridUnitType.Pixel),
+					new ColumnDefinition(FwAvaloniaDensity.SplitterWidth, GridUnitType.Pixel),
 					new ColumnDefinition(GridLength.Star)
 				}
 			};
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				ResizeDirection = GridResizeDirection.Columns,
 				Background = Brushes.Transparent, // legacy splitter is window-colored/invisible (12.6)
-				Width = PocDensity.SplitterWidth
+				Width = FwAvaloniaDensity.SplitterWidth
 			};
 			AutomationProperties.SetAutomationId(splitter, "LexicalEditRegionView.Splitter");
 			Grid.SetColumn(splitter, 1);
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				if (i < model.Fields.Count - 1)
 				{
-					var rule = new Border { Background = PocDensity.SliceRuleBrush, Height = 1 };
+					var rule = new Border { Background = FwAvaloniaDensity.SliceRuleBrush, Height = 1 };
 					AutomationProperties.SetAutomationId(rule, $"SliceRule.{i}");
 					Grid.SetRow(rule, i * 2 + 1);
 					// 14.3: the rule underlines the VALUE side only; the label panel stays clean.
@@ -182,14 +182,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			_validationBlock = new TextBlock
 			{
-				Foreground = PocDensity.ValidationErrorBrush,
+				Foreground = FwAvaloniaDensity.ValidationErrorBrush,
 				TextWrapping = TextWrapping.Wrap,
 				Margin = new Thickness(0, 4, 0, 2),
 				IsVisible = false
 			};
 			AutomationProperties.SetAutomationId(_validationBlock, "RegionEditor.ValidationErrors");
 
-			var footer = new StackPanel { Margin = PocDensity.SliceMargin };
+			var footer = new StackPanel { Margin = FwAvaloniaDensity.SliceMargin };
 			footer.Children.Add(_validationBlock);
 			return footer;
 		}
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						Background = Brushes.Transparent,
 						BorderThickness = new Thickness(0),
 						Padding = new Thickness(0),
-						Margin = new Thickness(indent.Left, 4, 0, PocDensity.FieldSpacing)
+						Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing)
 					};
 					header = button;
 				}
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					{
 						Text = field.Label ?? field.Field ?? string.Empty,
 						FontWeight = FontWeight.Bold,
-						Margin = new Thickness(indent.Left, 4, 0, PocDensity.FieldSpacing),
+						Margin = new Thickness(indent.Left, 4, 0, FwAvaloniaDensity.FieldSpacing),
 						// 14.2: a null background only hit-tests the glyphs; the whole header area
 						// must take the right-click.
 						Background = Brushes.Transparent
@@ -267,7 +267,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					withRule.Children.Add(new Border
 					{
 						Height = 2,
-						Background = PocDensity.SectionRuleBrush,
+						Background = FwAvaloniaDensity.SectionRuleBrush,
 						Margin = new Thickness(0, 6, 0, 2)
 					});
 					withRule.Children.Add(header);
@@ -285,11 +285,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var labelBlock = new TextBlock
 			{
 				Text = field.Label ?? field.Field ?? string.Empty,
-				Margin = new Thickness(indent.Left, 1, 6, PocDensity.FieldSpacing),
+				Margin = new Thickness(indent.Left, 1, 6, FwAvaloniaDensity.FieldSpacing),
 				VerticalAlignment = VerticalAlignment.Top,
 				TextAlignment = TextAlignment.Left, // legacy labels are left-aligned in the label panel
-				Foreground = PocDensity.LabelBrush,
-				FontSize = PocDensity.LabelFontSize,
+				Foreground = FwAvaloniaDensity.LabelBrush,
+				FontSize = FwAvaloniaDensity.LabelFontSize,
 				// 14.2: a null background only hit-tests the glyphs; the whole label area must take
 				// the right-click for the slice menu.
 				Background = Brushes.Transparent
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_rowControls[row].Add(labelBlock);
 
 			var editor = BuildEditor(field, automationId);
-			editor.Margin = new Thickness(0, 0, 0, PocDensity.FieldSpacing);
+			editor.Margin = new Thickness(0, 0, 0, FwAvaloniaDensity.FieldSpacing);
 			Grid.SetRow(editor, row * 2);
 			Grid.SetColumn(editor, 2);
 			grid.Children.Add(editor);

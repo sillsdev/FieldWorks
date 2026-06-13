@@ -449,6 +449,10 @@ namespace SIL.FieldWorks.XWorks
 			var rich = composed.Model.Fields.Single(f => f.Field == "Bibliography");
 			Assert.That(rich.Values.Any(v => v.Value == "Smith 1999"), Is.True,
 				"the rich content still displays as text");
+			Assert.That(rich.Values.Single().RichText, Is.Not.Null,
+				"the shared value projection now preserves the rich-run metadata for the future owned editor");
+			Assert.That(rich.Values.Single().RequiresRichEditor, Is.True,
+				"the row advertises that the plain-text lane must not edit it");
 			Assert.That(rich.IsEditable, Is.False,
 				"rich content composes read-only so a plain-text write-back cannot destroy runs");
 			Assert.That(composed.EditContext.TrySetText(rich,
@@ -456,6 +460,43 @@ namespace SIL.FieldWorks.XWorks
 				Is.False, "no setter is registered for the rich row");
 			Assert.That(m_entry.Bibliography.get_String(Cache.DefaultAnalWs).RunCount, Is.EqualTo(2),
 				"the runs survive");
+		}
+
+		[Test]
+		public void Build_RichLexemeForm_ComposesReadOnly_AndRoundTripsRunMetadata()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bldr = TsStringUtils.MakeIncStrBldr();
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
+				bldr.Append("ផ្ទះ");
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Emphasis");
+				bldr.Append(" house");
+				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, bldr.GetString());
+			});
+
+			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
+			var form = model.Fields.Single(f => f.Field == "Form");
+
+			Assert.That(form.IsEditable, Is.False,
+				"the first-slice builder must not leave a rich TsString editable through the plain-text setter");
+			Assert.That(form.Values.Single().RichText, Is.Not.Null);
+			Assert.That(form.Values.Single().RichText.Runs.Count, Is.EqualTo(2));
+			Assert.That(form.Values.Single().RichText.Runs[0].Text, Is.EqualTo("ផ្ទះ"));
+			Assert.That(form.Values.Single().RichText.Runs[1].NamedStyle, Is.EqualTo("Emphasis"));
+
+			var roundTripped = RegionRichTextAdapter.ToTsString(form.Values.Single().RichText,
+				Cache.WritingSystemFactory, Cache.DefaultVernWs);
+			Assert.That(roundTripped.Text, Is.EqualTo("ផ្ទះ house"));
+			Assert.That(roundTripped.RunCount, Is.EqualTo(2),
+				"the neutral rich-text projection must round-trip back to a TsString without flattening runs");
+			Assert.That(TsStringUtils.GetWsOfRun(roundTripped, 0), Is.EqualTo(Cache.DefaultVernWs));
+			Assert.That(TsStringUtils.GetWsOfRun(roundTripped, 1), Is.EqualTo(Cache.DefaultAnalWs));
+			Assert.That(roundTripped.get_Properties(roundTripped.get_MinOfRun(1))
+				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 		}
 
 		[Test]

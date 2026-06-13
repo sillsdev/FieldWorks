@@ -52,7 +52,7 @@ switch until cutover. Concretely:
   a hidden legacy `DataTree`. This was violated (the POC drove `m_dataEntryForm.ShowObject` then hid
   it); it is now an audited invariant.
 - Replace the **lossy `LexicalEditPocMapper` DTO** on the product route with a
-  **typed-definition-backed region model** (4.8); keep `PocEntryDto` for the preview host only.
+  **typed-definition-backed region model** (4.8); keep only lightweight preview region-model scenarios on the preview path.
 - Build the **selection, clipboard, and drag-and-drop bridges** (3.12/3.13/3.14) as bidirectional
   adapters over the shared xCore/LCModel/OS substrate; do not re-plumb legacy internals. Clipboard
   and DnD speak the legacy `"TsString"` OS format so native-Views surfaces interoperate unchanged.

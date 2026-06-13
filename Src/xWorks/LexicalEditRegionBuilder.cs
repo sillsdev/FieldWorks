@@ -98,11 +98,11 @@ namespace SIL.FieldWorks.XWorks
 			return RegionValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
 				{
-					var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle)?.Text;
-					if (string.IsNullOrEmpty(text) && ws.Handle == _cache.DefaultVernWs)
-						text = _entry.CitationForm.get_String(ws.Handle)?.Text; // legacy fallback, default ws only
+					var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle);
+					if ((text == null || text.Length == 0) && ws.Handle == _cache.DefaultVernWs)
+						text = _entry.CitationForm.get_String(ws.Handle); // legacy fallback, default ws only
 					return text;
-				});
+				}, _cache.WritingSystemFactory);
 		}
 
 		private IReadOnlyList<RegionWsValue> GetGlossValues()
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 			var gloss = _entry.SensesOS[0].Gloss;
 			return RegionValueFactory.BuildMultiWsValues(
 				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
-				ws => gloss.get_String(ws.Handle)?.Text);
+				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
 		}
 
 		/// <summary>

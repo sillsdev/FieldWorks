@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <see cref="MenuFlyout"/> (15.1) — the same items, enablement, checkmarks, and submenus the
 	/// legacy WinForms adapter menu shows, with Avalonia chrome. Density: every item carries the
 	/// explicit compact padding/height of the legacy WinForms menus
-	/// (<see cref="Poc.PocDensity.MenuItemPadding"/>/<see cref="Poc.PocDensity.MenuItemMinHeight"/>,
+	/// (<see cref="FwAvaloniaDensity.MenuItemPadding"/>/<see cref="FwAvaloniaDensity.MenuItemMinHeight"/>,
 	/// not the Fluent theme defaults); long menus keep the presenter's scrolling.
 	/// </summary>
 	public static class RegionMenuFlyout
@@ -86,8 +86,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					IsEnabled = item.IsEnabled,
 					// Legacy WinForms menu density, pinned explicitly (the Fluent defaults pad
 					// context menus far taller than the legacy adapter menu).
-					Padding = Poc.PocDensity.MenuItemPadding,
-					MinHeight = Poc.PocDensity.MenuItemMinHeight
+					Padding = FwAvaloniaDensity.MenuItemPadding,
+					MinHeight = FwAvaloniaDensity.MenuItemMinHeight
 				};
 				if (item.IsChecked)
 					menuItem.Icon = new TextBlock { Text = "✓" };

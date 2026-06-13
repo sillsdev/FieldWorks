@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -57,21 +58,95 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// One text run inside a writing-system value's managed rich-text projection. This keeps the
+	/// Avalonia contract LCModel-free while preserving the run boundaries and supported properties the
+	/// product text model already carries.
+	/// </summary>
+	public sealed class RegionTextRun
+	{
+		public RegionTextRun(string text, string writingSystemTag = null, string namedStyle = null,
+			string fontFamily = null, int fontSizeMilliPoints = 0, bool bold = false,
+			bool italic = false, bool underline = false, string objectData = null)
+		{
+			Text = text ?? string.Empty;
+			WritingSystemTag = writingSystemTag;
+			NamedStyle = namedStyle;
+			FontFamily = fontFamily;
+			FontSizeMilliPoints = fontSizeMilliPoints;
+			Bold = bold;
+			Italic = italic;
+			Underline = underline;
+			ObjectData = objectData;
+		}
+
+		public string Text { get; }
+		public string WritingSystemTag { get; }
+		public string NamedStyle { get; }
+		public string FontFamily { get; }
+		public int FontSizeMilliPoints { get; }
+		public bool Bold { get; }
+		public bool Italic { get; }
+		public bool Underline { get; }
+		public string ObjectData { get; }
+	}
+
+	/// <summary>
+	/// LCModel-free rich-text projection for one writing-system alternative. The source rich XML is
+	/// preserved so the product edge can reconstruct the original <c>ITsString</c> losslessly before
+	/// the owned editor starts modifying runs.
+	/// </summary>
+	public sealed class RegionRichTextValue
+	{
+		public RegionRichTextValue(string plainText, IReadOnlyList<RegionTextRun> runs,
+			string richXml = null, bool requiresRichEditor = false)
+		{
+			PlainText = plainText ?? string.Empty;
+			Runs = runs ?? new List<RegionTextRun>();
+			RichXml = richXml;
+			RequiresRichEditor = requiresRichEditor;
+			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
+		}
+
+		public string PlainText { get; }
+		public IReadOnlyList<RegionTextRun> Runs { get; }
+		public string RichXml { get; }
+		public bool RequiresRichEditor { get; }
+		public IReadOnlyList<int> GraphemeClusterStarts { get; }
+	}
+
+	/// <summary>
+	/// Unicode grapheme-cluster boundaries for a region text value. The editor layer uses this to keep
+	/// caret movement and deletion on user-visible characters instead of raw UTF-16 code units.
+	/// </summary>
+	public static class RegionTextGraphemeClusters
+	{
+		public static IReadOnlyList<int> GetClusterStarts(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return Array.Empty<int>();
+
+			return StringInfo.ParseCombiningCharacters(text);
+		}
+	}
+
+	/// <summary>
 	/// One writing-system alternative's value plus the rendering metadata legacy slices honor
 	/// (project font, flow direction) and the stable WS tag the keyboard-switch seam keys on (6.2).
 	/// </summary>
 	public sealed class RegionWsValue
 	{
 		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
-			bool rightToLeft = false, string wsTag = null, bool bold = false)
+			bool rightToLeft = false, string wsTag = null, bool bold = false,
+			RegionRichTextValue richText = null)
 		{
 			WsAbbrev = wsAbbrev;
-			Value = value;
+			Value = value ?? richText?.PlainText ?? string.Empty;
 			FontFamily = fontFamily;
 			FontSize = fontSize;
 			RightToLeft = rightToLeft;
 			WsTag = wsTag;
 			Bold = bold;
+			RichText = richText;
 		}
 
 		/// <summary>Bold emphasis (the lexeme form's legacy &lt;properties&gt; bold).</summary>
@@ -87,6 +162,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Stable writing-system tag (e.g. BCP-47 id) for per-WS keyboard activation on focus.</summary>
 		public string WsTag { get; }
+
+		/// <summary>Optional rich-text projection of the value's original TsString runs.</summary>
+		public RegionRichTextValue RichText { get; }
+
+		/// <summary>
+		/// Whether this alternative already carries content the plain-text editor must not flatten.
+		/// Until the owned rich-text editor lands, the row must compose read-only when this is true.
+		/// </summary>
+		public bool RequiresRichEditor => RichText != null && RichText.RequiresRichEditor;
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
@@ -160,7 +244,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// A field on a lexical-edit region, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IRegionValueProvider"/>. This is the product contract that replaces the
-	/// lossy hand-written POC DTO: structure comes from the typed view definition, values from the
+	/// old detached preview DTO path: structure comes from the typed view definition, values from the
 	/// provider, so the region scales to arbitrary layouts instead of three fixed fields.
 	/// </summary>
 	public sealed class LexicalEditRegionField

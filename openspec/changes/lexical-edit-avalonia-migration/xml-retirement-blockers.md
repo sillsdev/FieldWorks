@@ -350,7 +350,7 @@ change's surfaces.
   `RecordEditView` promotes designated classes (`AvaloniaCompanionSlices`, today only
   MessageSlice): it instantiates the real legacy slice through `DynamicLoader` + the DataTree
   install recipe (Cache → Object → FinishInit), docks its NotesBarView in a WinForms
-  "companion strip" above the Avalonia host (`PocWinFormsHostControl.SetCompanionControls`),
+  "companion strip" above the Avalonia host (`LexicalEditHostControl.SetCompanionControls`),
   and removes the grey unsupported row from the model the region shows. If Chorus/S-R is
   unavailable the lane degrades to nothing (logged), never an error row. Known trade-off: the
   strip is pinned above the region, not at the slice's legacy mid-tree position between Import

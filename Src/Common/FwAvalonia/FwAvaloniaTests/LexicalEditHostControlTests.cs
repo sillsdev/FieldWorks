@@ -4,16 +4,16 @@
 
 using System.Reflection;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace FwAvaloniaTests
 {
 	[TestFixture]
-	public class PocWinFormsHostControlTests
+	public class LexicalEditHostControlTests
 	{
 		private static bool ShouldBypass(bool hostContainsFocus, int keyCode)
 		{
-			var method = typeof(PocWinFormsHostControl).GetMethod(
+			var method = typeof(LexicalEditHostControl).GetMethod(
 				"ShouldBypassWinFormsDirectionalKeyHandling",
 				BindingFlags.NonPublic | BindingFlags.Static);
 			Assert.That(method, Is.Not.Null, "test seam missing");
@@ -23,18 +23,18 @@ namespace FwAvaloniaTests
 		[Test]
 		public void DirectionalKeys_AreBypassed_WhenAvaloniaHostContainsFocus()
 		{
-			Assert.That(ShouldBypass(true, 0x26), Is.True); // Up
-			Assert.That(ShouldBypass(true, 0x28), Is.True); // Down
-			Assert.That(ShouldBypass(true, 0x25), Is.True); // Left
-			Assert.That(ShouldBypass(true, 0x27), Is.True); // Right
+			Assert.That(ShouldBypass(true, 0x26), Is.True);
+			Assert.That(ShouldBypass(true, 0x28), Is.True);
+			Assert.That(ShouldBypass(true, 0x25), Is.True);
+			Assert.That(ShouldBypass(true, 0x27), Is.True);
 		}
 
 		[Test]
 		public void NonDirectionalKeys_AndUnfocusedHost_AreNotBypassed()
 		{
-			Assert.That(ShouldBypass(false, 0x26), Is.False); // Up
-			Assert.That(ShouldBypass(true, 0x0D), Is.False); // Enter
-			Assert.That(ShouldBypass(true, 0x09), Is.False); // Tab
+			Assert.That(ShouldBypass(false, 0x26), Is.False);
+			Assert.That(ShouldBypass(true, 0x0D), Is.False);
+			Assert.That(ShouldBypass(true, 0x09), Is.False);
 		}
 	}
 }

@@ -60,11 +60,11 @@ namespace FwAvaloniaPreviewHostTests
 			EnsureInteractiveDesktop();
 			var window = StartPreviewHostAndWaitForWindow();
 
-			Assert.That(window.Current.Name, Is.EqualTo("Lexical Edit POC (Preview)"));
+			Assert.That(window.Current.Name, Is.EqualTo("Lexical Edit (Preview)"));
 			Assert.That(FindByAutomationId(window, "LexemeFormEditor.seh"), Is.Not.Null);
 			Assert.That(FindByAutomationId(window, "LexemeFormEditor.en"), Is.Not.Null);
 			Assert.That(FindByAutomationId(window, "SenseGlossEditor.en"), Is.Not.Null);
-			Assert.That(FindByAutomationId(window, "MorphTypeChooser.Button"), Is.Not.Null);
+			Assert.That(FindByAutomationId(window, "MorphTypeChooser"), Is.Not.Null);
 		}
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace FwAvaloniaPreviewHostTests
 		{
 			EnsureInteractiveDesktop();
 			var window = StartPreviewHostAndWaitForWindow();
-			var button = FindByAutomationId(window, "MorphTypeChooser.Button");
+			var button = FindByAutomationId(window, "MorphTypeChooser");
 			Assert.That(button, Is.Not.Null, "Morph type button should be reachable in the automation tree.");
 
 			var invoke = button.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
@@ -113,7 +113,7 @@ namespace FwAvaloniaPreviewHostTests
 			var list = WaitForElement(
 				() => AutomationElement.RootElement.FindFirst(
 					TreeScope.Subtree,
-					new PropertyCondition(AutomationElement.AutomationIdProperty, "MorphTypeChooser.List")));
+					new PropertyCondition(AutomationElement.AutomationIdProperty, "MorphTypeChooser.Options")));
 
 			Assert.That(list, Is.Not.Null, "Invoking the button should show the popup list.");
 			var suffix = list.FindFirst(
@@ -141,7 +141,7 @@ namespace FwAvaloniaPreviewHostTests
 				StartInfo = new ProcessStartInfo
 				{
 					FileName = exePath,
-					Arguments = "--module lexical-edit-poc --data sample",
+					Arguments = "--module lexical-edit-preview --data sample",
 					WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
 					UseShellExecute = false
 				}
