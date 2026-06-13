@@ -19,6 +19,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public override UpdateSettings Update { get; set; }
 
+		public override string UIMode { get; set; }
+
 		public override string LocalKeyboards { get; set; }
 
 		/// <summary />

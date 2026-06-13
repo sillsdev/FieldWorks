@@ -53,7 +53,10 @@ Use names that tell the story in sorted order:
 - `02-before-<screen>.png`
 - `03-after-<screen>.png`
 - `04-after-<related-screen>.png`
+- Path 3 parity bundle: `01-winforms-<scenario>.png`, `02-avalonia-<scenario>.png`, `03-diff-<scenario>.png`
 - `sequence-<scenario>-001.png`, `sequence-<scenario>-002.png`, ...
+
+When the task is migration parity, capture matched WinForms and Avalonia framing for the same scenario id and store them under `openspec/changes/<change-id>/evidence/parity/<scenario-id>/` so the visual lane lines up with the semantic snapshot and the workflow/accessibility evidence.
 
 ## Expected Signals
 

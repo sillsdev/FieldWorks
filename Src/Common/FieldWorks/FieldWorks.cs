@@ -2912,6 +2912,8 @@ namespace SIL.FieldWorks
 				EnsureValidReversalIndexConfigFile(app.Cache);
 				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
+				s_activeMainWnd.PropTable.SetProperty("UIMode", string.IsNullOrWhiteSpace(s_appSettings.UIMode) ? "Legacy" : s_appSettings.UIMode, false);
+				s_activeMainWnd.PropTable.SetPropertyPersistence("UIMode", false);
 			}
 			catch (StartupException ex)
 			{
@@ -3862,6 +3864,25 @@ namespace SIL.FieldWorks
 			if (s_cache != null && !s_cache.IsDisposed)
 			{
 				DataUpdateMonitor.ClearSemaphore();
+
+				// Defense in depth: an undo task somebody left open (e.g. an editing surface that
+				// failed to close its fenced session) would make the shutdown Save() throw "Commit
+				// at wrong place." and lose ALL unsaved work. Roll the leaked task back HERE, on
+				// the UI thread that owns the UOW write lock — CommitAndDisposeCache may run on the
+				// progress dialog's worker thread, where the rollback would be rejected.
+				var actionHandler = s_cache.ActionHandlerAccessor;
+				if (actionHandler.CurrentDepth > 0)
+				{
+					Logger.WriteEvent("Shutdown found an undo task still open; rolling it back so the save can proceed.");
+					try
+					{
+						actionHandler.Rollback(0);
+					}
+					catch (Exception e)
+					{
+						Logger.WriteError(e);
+					}
+				}
 
 				using (var progressDlg = new ProgressDialogWithTask(s_threadHelper))
 				{

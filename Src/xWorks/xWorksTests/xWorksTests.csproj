@@ -4,7 +4,8 @@
     <AssemblyName>xWorksTests</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
+    <OutputType>Library</OutputType>    <!-- AVA2001: see xWorks.csproj — the compile-only Avalonia reference drags the analyzer along. -->
+    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903,AVA2001</NoWarn>
     <IsTestProject>true</IsTestProject>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
@@ -22,7 +23,15 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Compile-only (PrivateAssets): fake IRegionEditorPlugin implementations in
+         LexemeEditorBurnDownTests name Avalonia.Controls.Control (winforms-free-lexeme-editor.md
+         D1); the runtime assemblies are already in the shared output via FwAvalonia. -->
+    <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
+    <!-- Avalonia's transitive analyzer carrier; IncludeAssets="none" keeps the AVA* analyzers out. -->
+    <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
     <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
+    <!-- D2: ChorusNotesContractTests read notes back through real LibChorus repositories. -->
+    <PackageReference Include="SIL.Chorus.LibChorus" />
     <PackageReference Include="DocumentFormat.OpenXml" />
     <PackageReference Include="ProDotNetZip" />
     <PackageReference Include="icu.net" />
@@ -45,6 +54,8 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>
