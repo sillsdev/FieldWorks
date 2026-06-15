@@ -542,15 +542,15 @@ namespace SIL.FieldWorks.XWorks
 					var dictionarySubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSenseNode.DictionaryNodeOptions;
 					cacheHc.ksSubSenseNumberStyle = dictionarySubSenseOptions.NumberingStyle;
 					cacheHc.ksParentSenseNumberStyle = dictionarySubSenseOptions.ParentSenseNumberingStyle;
-				}
 
-				// And for subsubsenses
-				var dictionarySubSubSenseNode = dictionarySubSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
-				if (dictionarySubSubSenseNode != null)
-				{
-					var dictionarySubSubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSubSenseNode.DictionaryNodeOptions;
-					cacheHc.ksSubSubSenseNumberStyle = dictionarySubSubSenseOptions.NumberingStyle;
-					cacheHc.ksParentSubSenseNumberStyle = dictionarySubSubSenseOptions.ParentSenseNumberingStyle;
+					// And for subsubsenses
+					var dictionarySubSubSenseNode = dictionarySubSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+					if (dictionarySubSubSenseNode != null)
+					{
+						var dictionarySubSubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSubSenseNode.DictionaryNodeOptions;
+						cacheHc.ksSubSubSenseNumberStyle = dictionarySubSubSenseOptions.NumberingStyle;
+						cacheHc.ksParentSubSenseNumberStyle = dictionarySubSubSenseOptions.ParentSenseNumberingStyle;
+					}
 				}
 			}
 		}
