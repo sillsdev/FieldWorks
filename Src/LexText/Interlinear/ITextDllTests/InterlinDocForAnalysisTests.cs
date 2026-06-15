@@ -558,6 +558,11 @@ namespace SIL.FieldWorks.IText
 			throw new NotImplementedException();
 		}
 
+		public void UpdateField(int hvo, int flid)
+		{
+			throw new NotImplementedException();
+		}
+
 		public int MultipleAnalysisColor
 		{
 			set { ; }

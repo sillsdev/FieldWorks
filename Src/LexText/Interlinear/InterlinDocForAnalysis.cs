@@ -113,12 +113,9 @@ namespace SIL.FieldWorks.IText
 					MoveFocusBoxIntoPlace();
 				}
 			}
-			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null
-				&& tag == LexSenseTags.kflidGloss && FocusBox.ContainsLexEntry(hvo))
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null)
 			{
-				// Somebody changed something in the sandbox.  Reset the focus box to reflect the change.
-				FocusBox.SelectOccurrence(FocusBox.SelectedOccurrence);
-				MoveFocusBoxIntoPlace();
+				FocusBox.UpdateField(hvo, tag);
 			}
 		}
 
