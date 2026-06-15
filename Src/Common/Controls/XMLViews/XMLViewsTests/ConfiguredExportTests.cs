@@ -431,6 +431,47 @@ namespace XMLViewsTests
 			Assert.That(data, Is.EqualTo("\u0131"), "When using Azerbaijani casing, dotted and undotted I's are different letters.");
 		}
 
+		[Test]
+		public void XHTMLExportGetLeadChar_SingleCodepointLetterNotFoldedIntoSimilarDigraph()
+		{
+			// A headword beginning with U+0493 (CYRILLIC SMALL LETTER GHE WITH STROKE) must be filed under its own
+			// letter header, not folded into the visually-similar primary digraph U+0433 U+030A (ghe + combining
+			// ring above). GetLeadChar previously matched the lead character with a culture-sensitive
+			// String.StartsWith; on .NET Framework (Windows NLS) the linguistic collation treats U+0493 as
+			// equivalent to U+0433 U+030A, so the primary-digraph check returned the digraph for a U+0493 headword
+			// and every such entry was merged into the digraph's section with no letter header of its own.
+			const string ghe = "\u0433";          // CYRILLIC SMALL LETTER GHE
+			const string gheCap = "\u0413";       // CYRILLIC CAPITAL LETTER GHE
+			const string gheStroke = "\u0493";    // CYRILLIC SMALL LETTER GHE WITH STROKE
+			const string gheStrokeCap = "\u0492"; // CYRILLIC CAPITAL LETTER GHE WITH STROKE
+			const string gje = "\u0453";          // CYRILLIC SMALL LETTER GJE
+			const string gjeCap = "\u0403";       // CYRILLIC CAPITAL LETTER GJE
+			const string ring = "\u030a";         // COMBINING RING ABOVE
+			const string caron = "\u030c";        // COMBINING CARON
+			const string a = "\u0430";            // CYRILLIC SMALL LETTER A
+
+			// icuRules below encode:  &ghe < gje <<< gjeCap < (ghe+ring) <<< (gheCap+ring)
+			//                  then:  &gheStroke < (gheStroke+caron) <<< (gheStrokeCap+caron) < (gheStroke+ring) <<< (gheStrokeCap+ring)
+			// (ghe+ring) = U+0433 U+030A is a primary digraph; gheStroke = U+0493 is its own primary letter.
+			var icuRules =
+				"&" + ghe + "<" + gje + "<<<" + gjeCap + "<" + ghe + ring + "<<<" + gheCap + ring + Environment.NewLine +
+				"&" + gheStroke + "<" + gheStroke + caron + "<<<" + gheStrokeCap + caron +
+					"<" + gheStroke + ring + "<<<" + gheStrokeCap + ring;
+
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("kca", out var wsDef);
+			wsDef.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = icuRules };
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
+
+			string data = null;
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(
+				gheStroke + a, "kca", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
+			Assert.That(data, Is.EqualTo(gheStroke),
+				"Headword U+0493 U+0430 must be filed under U+0493 (ghe with stroke), not folded into the U+0433 U+030A digraph.");
+		}
+
 		/// <summary>
 		/// Test verifies minimal behavior added for sort rules other than Toolbox and ICU
 		/// (which currently does something minimal, enough to prevent crashes).

@@ -672,7 +672,9 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach (var ignorableString in ignorablesLongToShort)
 				{
 					// if the headword starts with the ignorable chop it off.
-					if (headwordLC.StartsWith(ignorableString))
+					// Ordinal comparison: a culture-sensitive match could chop a prefix that is only
+					// linguistically (not code-point) equal to an ignorable string.
+					if (headwordLC.StartsWith(ignorableString, StringComparison.Ordinal))
 					{
 						headwordLC = headwordLC.Substring(ignorableString.Length);
 						break;
@@ -683,10 +685,14 @@ namespace SIL.FieldWorks.Common.Controls
 				return ""; // check again
 
 			// If the headword begins with a primary digraph then use that as the first character without doing any replacement.
+			// The comparison must be ordinal: the default (culture-sensitive) StartsWith performs a linguistic match,
+			// which on .NET Framework (Windows NLS) treats distinct letters such as ғ (U+0493) and the digraph
+			// г̊ (U+0433 U+030A) as equivalent. That wrongly folded ғ headwords into the г̊ letter group, so they
+			// never received their own letter header. See ConfiguredExportTests.GetLeadChar tests.
 			string firstChar = null;
 			foreach (var primaryDigraph in wsDigraphMap[ws.Id].Where(digraph => digraph.Value == CollationLevel.primary))
 			{
-				if (headwordLC.StartsWith(cf.ToLower(primaryDigraph.Key)))
+				if (headwordLC.StartsWith(cf.ToLower(primaryDigraph.Key), StringComparison.Ordinal))
 					firstChar = cf.ToLower(primaryDigraph.Key);
 			}
 
@@ -725,7 +731,9 @@ namespace SIL.FieldWorks.Common.Controls
 				firstChar = headwordLC.Substring(0, cnt);
 				foreach (var sortChar in sortChars)
 				{
-					if (headwordLC.StartsWith(sortChar))
+					// Ordinal comparison: see the note on the primary-digraph check above. A culture-sensitive
+					// match here would re-introduce the same digraph-folding bug (e.g. ғ folded into г̊).
+					if (headwordLC.StartsWith(sortChar, StringComparison.Ordinal))
 					{
 						if (firstChar.Length < sortChar.Length)
 							firstChar = sortChar;
