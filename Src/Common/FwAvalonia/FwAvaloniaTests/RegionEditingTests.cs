@@ -25,6 +25,8 @@ namespace FwAvaloniaTests
 	internal sealed class FakeRegionEditContext : IRegionEditContext
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
+		public readonly List<(string Field, string Ws, RegionRichTextValue Value)> RichTextEdits
+			= new List<(string, string, RegionRichTextValue)>();
 		public readonly List<(string Field, string Key)> OptionEdits = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceAdds = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceRemoves = new List<(string, string)>();
@@ -52,6 +54,12 @@ namespace FwAvaloniaTests
 		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
 			TextEdits.Add((field.Field, ws, value));
+			return true;
+		}
+
+		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		{
+			RichTextEdits.Add((field.Field, ws, value));
 			return true;
 		}
 
@@ -101,6 +109,26 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => "g1";
 		}
 
+		private sealed class RichEditingValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "dog", wsTag: "qaa-x-rich",
+						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+							new[]
+							{
+								new RegionTextRun("do", "qaa-x-rich"),
+								new RegionTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
+							}))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
 			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
@@ -110,6 +138,19 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context, window);
+		}
+
+		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
+			InMemoryFwClipboard clipboard) ShowRichEditable()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
+			var context = new FakeRegionEditContext();
+			var clipboard = new InMemoryFwClipboard();
+			var view = new LexicalEditRegionView(model, context, clipboard: clipboard);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (view, context, window, clipboard);
 		}
 
 		private static T Find<T>(Control view, string automationId) where T : Control
@@ -130,6 +171,48 @@ namespace FwAvaloniaTests
 
 			Assert.That(context.TextEdits, Has.Count.EqualTo(1));
 			Assert.That(context.TextEdits[0], Is.EqualTo(("Form", "vern", "perro")));
+		}
+
+		[AvaloniaTest]
+		public void RichTextChange_StagesThroughTheRichEditContext_AndPreservesRunMetadata()
+		{
+			var (view, context, _, _) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			Assert.That(box, Is.Not.Null);
+			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
+
+			box.Text = "dug";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits, Is.Empty, "rich rows stage through the rich-text seam, not the plain-text setter");
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.PlainText, Is.EqualTo("dug"));
+			Assert.That(rich.Runs.Select(r => r.Text), Is.EqualTo(new[] { "du", "g" }));
+			Assert.That(rich.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
+				"the unchanged trailing run keeps its style metadata");
+		}
+
+		[AvaloniaTest]
+		public void RichTextCopy_UsesTheSharedClipboardPayload()
+		{
+			var (view, _, _, clipboard) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			box.SelectionStart = 0;
+			box.SelectionEnd = box.Text.Length;
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = box.ContextFlyout as MenuFlyout;
+			var copyItem = flyout?.Items.OfType<MenuItem>().Single();
+			Assert.That(copyItem, Is.Not.Null);
+			copyItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			var payload = clipboard.GetText();
+			Assert.That(payload, Is.Not.Null);
+			Assert.That(payload.PlainText, Is.EqualTo("dog"));
+			Assert.That(payload.RichText, Is.Not.Null);
+			Assert.That(payload.RichText.Runs[1].NamedStyle, Is.EqualTo("Emphasis"));
 		}
 
 		[AvaloniaTest]
@@ -526,7 +609,7 @@ namespace FwAvaloniaTests
 			Assert.That(gestures, Is.EqualTo(1), "a successful add completes the gesture exactly once");
 
 			context.ReferenceGestureResult = false;
-			picker.OptionsList.SelectedIndex = 0;
+			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(2), "the second stage was attempted");

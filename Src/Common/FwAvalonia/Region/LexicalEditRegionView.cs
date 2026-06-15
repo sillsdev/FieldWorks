@@ -11,6 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<RegionMenuRequest> _menuRequested;
 		private readonly Action<RegionLinkRequest> _linkRequested;
+		private readonly IFwClipboard _clipboard;
 
 		/// <summary>
 		/// Optional expansion-state hooks (11.8): <paramref name="getExpansionState"/> supplies the
@@ -51,7 +53,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
 			Action<RegionMenuRequest> menuRequested = null,
-			Action<RegionLinkRequest> linkRequested = null)
+			Action<RegionLinkRequest> linkRequested = null,
+			IFwClipboard clipboard = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
 			_editContext = editContext;
@@ -60,6 +63,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_expansionChanged = expansionChanged;
 			_menuRequested = menuRequested;
 			_linkRequested = linkRequested;
+			_clipboard = clipboard;
 
 			Name = "LexicalEditRegionView";
 			AutomationProperties.SetAutomationId(this, "LexicalEditRegionView");
@@ -493,7 +497,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Owned controls (tasks 6.1/6.2/6.3): multi-WS text field with project fonts, RTL flow, and
 		// per-WS keyboard focus callback; service-backed flyout chooser with popup focus return.
 		private Control BuildText(LexicalEditRegionField field, string automationId)
-			=> new FwMultiWsTextField(field, automationId, _editContext, _writingSystemFocused, _menuRequested);
+			=> new FwMultiWsTextField(field, automationId, _editContext, _writingSystemFocused,
+				_menuRequested, _clipboard);
 
 		private Control BuildChooser(LexicalEditRegionField field, string automationId)
 			=> new FwChooserField(field, automationId, _editContext, _linkRequested);

@@ -140,6 +140,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			return true;
 		}
 
+		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		{
+			IsOpen = true;
+			return true;
+		}
+
 		public bool TrySetOption(LexicalEditRegionField field, string optionKey)
 		{
 			IsOpen = true;

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -98,12 +99,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	public sealed class RegionRichTextValue
 	{
 		public RegionRichTextValue(string plainText, IReadOnlyList<RegionTextRun> runs,
-			string richXml = null, bool requiresRichEditor = false)
+			string richXml = null, bool requiresRichEditor = false, bool canEditRichText = true)
 		{
 			PlainText = plainText ?? string.Empty;
 			Runs = runs ?? new List<RegionTextRun>();
 			RichXml = richXml;
 			RequiresRichEditor = requiresRichEditor;
+			CanEditRichText = canEditRichText;
 			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
 		}
 
@@ -111,6 +113,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<RegionTextRun> Runs { get; }
 		public string RichXml { get; }
 		public bool RequiresRichEditor { get; }
+		public bool CanEditRichText { get; }
 		public IReadOnlyList<int> GraphemeClusterStarts { get; }
 	}
 
@@ -120,12 +123,193 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public static class RegionTextGraphemeClusters
 	{
+		private const char ZeroWidthJoiner = '\u200D';
+
 		public static IReadOnlyList<int> GetClusterStarts(string text)
 		{
 			if (string.IsNullOrEmpty(text))
 				return Array.Empty<int>();
 
-			return StringInfo.ParseCombiningCharacters(text);
+			var starts = StringInfo.ParseCombiningCharacters(text);
+			if (starts.Length <= 1)
+				return starts;
+
+			var collapsed = new List<int> { starts[0] };
+			for (var i = 1; i < starts.Length; i++)
+			{
+				var boundary = starts[i];
+				var hasJoinerBefore = boundary > 0 && text[boundary - 1] == ZeroWidthJoiner;
+				var hasJoinerAfter = boundary < text.Length && text[boundary] == ZeroWidthJoiner;
+				if (!hasJoinerBefore && !hasJoinerAfter)
+					collapsed.Add(boundary);
+			}
+
+			return collapsed;
+		}
+	}
+
+	/// <summary>
+	/// Plain-text edit helpers over the neutral rich-text model. This lets the first owned rich-text
+	/// field preserve unaffected run metadata while the user edits the combined visible string.
+	/// </summary>
+	public static class RegionRichTextEditAlgorithms
+	{
+		public static RegionRichTextValue ApplyPlainTextEdit(RegionRichTextValue current, string updatedPlainText)
+		{
+			updatedPlainText = updatedPlainText ?? string.Empty;
+			if (current == null)
+			{
+				return FromRuns(updatedPlainText,
+					new List<RegionTextRun> { new RegionTextRun(updatedPlainText) });
+			}
+
+			if (current.PlainText == updatedPlainText)
+				return current;
+
+			if (current.Runs == null || current.Runs.Count == 0)
+			{
+				return FromRuns(updatedPlainText,
+					string.IsNullOrEmpty(updatedPlainText)
+						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
+						: new[] { new RegionTextRun(updatedPlainText) },
+					canEditRichText: current.CanEditRichText);
+			}
+
+			var original = current.PlainText ?? string.Empty;
+			var prefix = 0;
+			while (prefix < original.Length && prefix < updatedPlainText.Length
+				&& original[prefix] == updatedPlainText[prefix])
+			{
+				prefix++;
+			}
+
+			var suffix = 0;
+			while (suffix < original.Length - prefix && suffix < updatedPlainText.Length - prefix
+				&& original[original.Length - 1 - suffix] == updatedPlainText[updatedPlainText.Length - 1 - suffix])
+			{
+				suffix++;
+			}
+
+			var originalEditEnd = original.Length - suffix;
+			var replacement = updatedPlainText.Substring(prefix, updatedPlainText.Length - prefix - suffix);
+			var spans = BuildRunSpans(current.Runs);
+
+			if (spans.Count == 0)
+			{
+				return FromRuns(updatedPlainText,
+					string.IsNullOrEmpty(updatedPlainText)
+						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
+						: new[] { new RegionTextRun(updatedPlainText) },
+					canEditRichText: current.CanEditRichText);
+			}
+
+			var startRun = FindRunIndex(spans, prefix, preferNextAtBoundary: prefix < original.Length);
+			var endRun = originalEditEnd > prefix
+				? FindRunIndex(spans, originalEditEnd - 1, preferNextAtBoundary: false)
+				: startRun;
+
+			var newRuns = new List<RegionTextRun>();
+			for (var i = 0; i < startRun; i++)
+				newRuns.Add(spans[i].Run);
+
+			var startSpan = spans[startRun];
+			var endSpan = spans[endRun];
+			var startPrefix = startSpan.Run.Text.Substring(0, Math.Max(0, prefix - startSpan.Start));
+			var endSuffixLength = Math.Max(0, endSpan.End - originalEditEnd);
+			var endSuffix = endSuffixLength == 0
+				? string.Empty
+				: endSpan.Run.Text.Substring(endSpan.Run.Text.Length - endSuffixLength, endSuffixLength);
+
+			if (startRun == endRun)
+			{
+				var merged = startPrefix + replacement + endSuffix;
+				if (merged.Length > 0)
+					newRuns.Add(CloneRun(startSpan.Run, merged));
+			}
+			else
+			{
+				var left = startPrefix + replacement;
+				if (left.Length > 0)
+					newRuns.Add(CloneRun(startSpan.Run, left));
+				if (endSuffix.Length > 0)
+					newRuns.Add(CloneRun(endSpan.Run, endSuffix));
+			}
+
+			for (var i = endRun + 1; i < spans.Count; i++)
+				newRuns.Add(spans[i].Run);
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			return FromRuns(updatedPlainText, compacted, canEditRichText: current.CanEditRichText);
+		}
+
+		public static RegionRichTextValue FromRuns(string plainText, IReadOnlyList<RegionTextRun> runs,
+			string richXml = null, bool canEditRichText = true)
+		{
+			return new RegionRichTextValue(plainText, runs, richXml,
+				requiresRichEditor: RequiresRichEditor(runs),
+				canEditRichText: canEditRichText);
+		}
+
+		private static bool RequiresRichEditor(IReadOnlyList<RegionTextRun> runs)
+		{
+			if (runs == null || runs.Count == 0)
+				return false;
+			if (runs.Count > 1)
+				return true;
+
+			var run = runs[0];
+			return !string.IsNullOrEmpty(run.NamedStyle)
+				|| !string.IsNullOrEmpty(run.FontFamily)
+				|| run.FontSizeMilliPoints > 0
+				|| run.Bold
+				|| run.Italic
+				|| run.Underline
+				|| !string.IsNullOrEmpty(run.ObjectData);
+		}
+
+		private static RegionTextRun CloneRun(RegionTextRun source, string text)
+			=> new RegionTextRun(text, source.WritingSystemTag, source.NamedStyle, source.FontFamily,
+				source.FontSizeMilliPoints, source.Bold, source.Italic, source.Underline, source.ObjectData);
+
+		private static int FindRunIndex(IReadOnlyList<RunSpan> spans, int position, bool preferNextAtBoundary)
+		{
+			for (var i = 0; i < spans.Count; i++)
+			{
+				if (position < spans[i].End)
+					return i;
+				if (preferNextAtBoundary && position == spans[i].End && i + 1 < spans.Count)
+					return i + 1;
+			}
+
+			return spans.Count - 1;
+		}
+
+		private static List<RunSpan> BuildRunSpans(IReadOnlyList<RegionTextRun> runs)
+		{
+			var spans = new List<RunSpan>();
+			var start = 0;
+			foreach (var run in runs)
+			{
+				var text = run?.Text ?? string.Empty;
+				var end = start + text.Length;
+				spans.Add(new RunSpan(run, start, end));
+				start = end;
+			}
+			return spans;
+		}
+
+		private sealed class RunSpan
+		{
+			public RunSpan(RegionTextRun run, int start, int end)
+			{
+				Run = run;
+				Start = start;
+				End = end;
+			}
+
+			public RegionTextRun Run { get; }
+			public int Start { get; }
+			public int End { get; }
 		}
 	}
 
@@ -167,10 +351,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public RegionRichTextValue RichText { get; }
 
 		/// <summary>
-		/// Whether this alternative already carries content the plain-text editor must not flatten.
-		/// Until the owned rich-text editor lands, the row must compose read-only when this is true.
+		/// Whether this alternative already carries content that requires the run-aware editor path.
 		/// </summary>
 		public bool RequiresRichEditor => RichText != null && RichText.RequiresRichEditor;
+
+		/// <summary>
+		/// Whether the current rich-text content can be edited by the managed rich-text field. Values
+		/// carrying unsupported object data remain read-only until their owner task lands.
+		/// </summary>
+		public bool CanEditRichText => RichText == null || RichText.CanEditRichText;
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>

@@ -753,7 +753,8 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm.ShowRegion(region, editContext,
 				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
-				OnRegionMenuRequested, OnRegionLinkRequested);
+				OnRegionMenuRequested, OnRegionLinkRequested,
+				new FwTsStringClipboard(Cache.WritingSystemFactory));
 		}
 
 		/// <summary>

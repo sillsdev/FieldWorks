@@ -123,7 +123,8 @@ namespace SIL.FieldWorks.XWorks
 				tss.Text ?? string.Empty,
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
-				RequiresRichEditor(tss));
+				RequiresRichEditor(tss),
+				canEditRichText: runs.TrueForAll(run => string.IsNullOrEmpty(run.ObjectData)));
 		}
 
 		internal static ITsString ToTsString(RegionRichTextValue richText,

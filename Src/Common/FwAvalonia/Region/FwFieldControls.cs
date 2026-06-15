@@ -13,6 +13,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -36,7 +37,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string automationId,
 			IRegionEditContext editContext,
 			Action<string> writingSystemFocused,
-			Action<RegionMenuRequest> menuRequested = null)
+			Action<RegionMenuRequest> menuRequested = null,
+			IFwClipboard clipboard = null)
 		{
 			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
@@ -44,6 +46,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			foreach (var value in field.Values)
 			{
+				var currentRich = value.RichText;
 				// Legacy look (12.3): small raised blue abbreviation hanging at the value start.
 				var abbrev = new TextBlock
 				{
@@ -115,9 +118,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					var copyItem = new MenuItem { Header = FwAvaloniaStrings.Copy };
 					copyItem.Click += async (s2, e2) =>
 					{
-						var top = TopLevel.GetTopLevel(box);
-						if (top?.Clipboard != null)
-							await top.Clipboard.SetTextAsync(box.SelectedText?.Length > 0 ? box.SelectedText : box.Text ?? string.Empty);
+						await CopySelectionAsync(box, currentRich, clipboard);
 					};
 					box.ContextFlyout = new MenuFlyout { Items = { copyItem } };
 				}
@@ -137,14 +138,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// the last text the domain actually received, so further edits (including retyping
 					// the same text) re-attempt instead of being suppressed forever.
 					var lastStaged = value.Value ?? string.Empty;
+					RegionRichTextValue pendingRichOverride = null;
 					box.TextChanged += (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
 						if (text == lastStaged)
 							return;
+						if (currentRich != null && currentRich.RequiresRichEditor)
+						{
+							var updatedRich = pendingRichOverride
+								?? RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, text);
+							pendingRichOverride = null;
+							if (editContext.TrySetRichText(field, wsKey, updatedRich))
+							{
+								lastStaged = text;
+								currentRich = updatedRich;
+							}
+							return;
+						}
+
 						if (editContext.TrySetText(field, wsKey, text))
 							lastStaged = text;
 					};
+
+					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
+					{
+						box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+						{
+							if ((e.KeyModifiers & KeyModifiers.Control) == 0)
+								return;
+
+							if (e.Key == Key.C)
+							{
+								CopySelectionAsync(box, currentRich, clipboard).GetAwaiter().GetResult();
+								e.Handled = true;
+								return;
+							}
+
+							if (e.Key != Key.V)
+								return;
+
+							var payload = clipboard.GetText();
+							if (payload == null)
+								return;
+
+							var existingText = box.Text ?? string.Empty;
+							var selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+							var selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+							var replacement = payload.PlainText ?? string.Empty;
+							var newText = existingText.Remove(selectionStart, selectionEnd - selectionStart)
+								.Insert(selectionStart, replacement);
+
+							if (payload.RichText != null && selectionStart == 0 && selectionEnd == existingText.Length)
+								pendingRichOverride = payload.RichText;
+							else
+								pendingRichOverride = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, newText);
+
+							box.Text = newText;
+							box.CaretIndex = selectionStart + replacement.Length;
+							e.Handled = true;
+						}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					}
 				}
 
 				if (writingSystemFocused != null && !string.IsNullOrEmpty(value.WsTag))
@@ -170,6 +224,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Text rows have no hover-revealed chrome (the slice menu is right-click only).</summary>
 		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
+
+		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
+			RegionRichTextValue richText, IFwClipboard clipboard)
+		{
+			var selectedText = box.SelectedText;
+			var useWholeValue = string.IsNullOrEmpty(selectedText) || selectedText == (box.Text ?? string.Empty);
+
+			if (clipboard != null)
+			{
+				clipboard.SetText(useWholeValue
+					? new FwClipboardText(box.Text ?? string.Empty, richText?.RichXml, richText)
+					: new FwClipboardText(selectedText ?? string.Empty));
+				return;
+			}
+
+			var top = TopLevel.GetTopLevel(box);
+			if (top?.Clipboard != null)
+				await top.Clipboard.SetTextAsync(useWholeValue ? (box.Text ?? string.Empty) : (selectedText ?? string.Empty));
+		}
 	}
 
 	/// <summary>

@@ -6,13 +6,13 @@
 ## 2. Managed Text Model
 
 - [x] 2.1 Add an `ITsString` to managed-run projection in `Src/Common/FwAvalonia/Region/` that preserves text, writing-system assignments, and supported run properties without flattening to plain text. [Managed C#]
-- [ ] 2.2 Add the inverse write-back path in `Src/Common/FwAvalonia/Region/` so edited runs rebuild managed `ITsString` values through LCModel APIs. [Managed C#]
-- [ ] 2.3 Add Unicode cluster handling for combining marks, surrogate pairs, and zero-width joiner sequences in the editor model so caret movement and deletion operate on user-visible grapheme clusters. [Managed C#]
+- [x] 2.2 Add the inverse write-back path in `Src/Common/FwAvalonia/Region/` so edited runs rebuild managed `ITsString` values through LCModel APIs. [Managed C#]
+- [x] 2.3 Add Unicode cluster handling for combining marks, surrogate pairs, and zero-width joiner sequences in the editor model so caret movement and deletion operate on user-visible grapheme clusters. [Managed C#]
 
 ## 3. Owned Avalonia Editor Control
 
 - [ ] 3.1 Add a FieldWorks-owned Avalonia text editor control under `Src/Common/FwAvalonia/Region/` that renders the managed run model without native Views dependencies. [Managed C#]
-- [ ] 3.2 Wire the control into the existing lexical-edit region path in `Src/Common/FwAvalonia/` and `Src/xWorks/` for `StringSlice` and `MultiStringSlice` replacement candidates. [Managed C#]
+- [x] 3.2 Wire the control into the existing lexical-edit region path in `Src/Common/FwAvalonia/` and `Src/xWorks/` for `StringSlice` and `MultiStringSlice` replacement candidates. [Managed C#]
 - [ ] 3.3 Preserve supported run formatting on no-op saves and text edits without adding a separate style-authoring UI. [Managed C#]
 
 ## 4. Writing-System and IME Behavior
@@ -29,15 +29,15 @@
 
 ## 6. Coexistence Integration
 
-- [ ] 6.1 Reuse `IFwClipboard`, `FwTsStringClipboard`, and `FwDragDropData` in `Src/Common/FwAvalonia/` and `Src/xWorks/` for Avalonia rich-text copy, paste, and drag/drop round-trips. [Managed C#]
+- [x] 6.1 Reuse `IFwClipboard`, `FwTsStringClipboard`, and `FwDragDropData` in `Src/Common/FwAvalonia/` and `Src/xWorks/` for Avalonia rich-text copy, paste, and drag/drop round-trips. [Managed C#]
 - [ ] 6.2 Replace ghost-text realization for the migrated string fields so first-commit creation no longer depends on legacy `GhostStringSlice`. [Managed C#]
-- [ ] 6.3 Add coexistence coverage in `Src/xWorks/xWorksTests/` proving styled `ITsString` commits refresh legacy surfaces and remain one shared undo step. [Managed C# Tests]
+- [x] 6.3 Add coexistence coverage in `Src/xWorks/xWorksTests/` proving styled `ITsString` commits refresh legacy surfaces and remain one shared undo step. [Managed C# Tests]
 
 ## 7. Automated Evidence
 
-- [ ] 7.1 Add headless tests in `Src/Common/FwAvalonia/FwAvaloniaTests/` for run round-trip fidelity, no-op save preservation, and Unicode cluster editing. [Managed C# Tests]
+- [x] 7.1 Add headless tests in `Src/Common/FwAvalonia/FwAvaloniaTests/` for run round-trip fidelity, no-op save preservation, and Unicode cluster editing. [Managed C# Tests]
 - [ ] 7.2 Add headless tests for IME state transitions and mixed-direction caret or selection behavior in `Src/Common/FwAvalonia/FwAvaloniaTests/`. [Managed C# Tests]
-- [ ] 7.3 Add clipboard or drag/drop integration tests in `Src/xWorks/xWorksTests/` covering Avalonia to legacy and legacy to Avalonia `TsString` interchange. [Managed C# Tests]
+- [x] 7.3 Add clipboard or drag/drop integration tests in `Src/xWorks/xWorksTests/` covering Avalonia to legacy and legacy to Avalonia `TsString` interchange. [Managed C# Tests]
 
 ## 8. Manual and Performance Evidence
 
@@ -53,6 +53,6 @@
 
 ## 10. Validation
 
-- [ ] 10.1 Run targeted `./test.ps1` filters for the new `FwAvaloniaTests` and `xWorksTests` text-foundation suites after each implementation slice. [Validation]
+- [x] 10.1 Run targeted `./test.ps1` filters for the new `FwAvaloniaTests` and `xWorksTests` text-foundation suites after each implementation slice. [Validation]
 - [ ] 10.2 Run `./build.ps1` after the managed changes are complete and confirm the normal repo build graph still exercises the Avalonia projects and tests. [Validation]
 - [ ] 10.3 Run `CI: Full local check` and review the updated automated plus manual evidence bundle before using this change as a parity gate. [Validation]

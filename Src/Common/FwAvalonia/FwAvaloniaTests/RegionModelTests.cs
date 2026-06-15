@@ -101,17 +101,64 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
+		private sealed class UnsupportedRichRegionValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "link", richText: new RegionRichTextValue(
+						"link",
+						new List<RegionTextRun>
+						{
+							new RegionTextRun("link", "qaa-x-one", objectData: "\uF8FFhttps://software.sil.org")
+						},
+						richXml: "<AStr ws='qaa-x-one'><Run ws='qaa-x-one' objData='x'>link</Run></AStr>",
+						requiresRichEditor: true,
+						canEditRichText: false))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
 		[Test]
-		public void RichTextFields_AreProjectedReadOnly_UntilTheOwnedRichEditorLands()
+		public void RichTextFields_AreProjectedEditable_WhenRichRowsCanRoundTrip()
 		{
 			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
 			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
 
-			Assert.That(lexeme.IsEditable, Is.False,
-				"a row carrying rich-text runs must stay read-only until the owned rich editor replaces the plain-text lane");
+			Assert.That(lexeme.IsEditable, Is.True,
+				"rows carrying rich-text runs stay editable when the value advertises rich edit support");
 			Assert.That(lexeme.Values.Single().RichText, Is.Not.Null);
 			Assert.That(lexeme.Values.Single().RichText.Runs.Select(r => r.WritingSystemTag),
 				Is.EqualTo(new[] { "qaa-x-one", "qaa-x-two" }));
+		}
+
+		[Test]
+		public void RichTextFields_WithUnsupportedObjectData_AreProjectedReadOnly()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(),
+				new UnsupportedRichRegionValueProvider());
+			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
+
+			Assert.That(lexeme.IsEditable, Is.False,
+				"rows with unsupported object-data runs must stay read-only until the owner task lands");
+			Assert.That(lexeme.Values.Single().CanEditRichText, Is.False);
+		}
+
+		[Test]
+		public void RichTextEditAlgorithm_NoOpEdit_ReturnsOriginalInstance()
+		{
+			var original = RegionRichTextEditAlgorithms.FromRuns("dog", new[]
+			{
+				new RegionTextRun("do", "qaa-x-one"),
+				new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+			});
+
+			var result = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(original, "dog");
+			Assert.That(result, Is.SameAs(original),
+				"a no-op edit should keep the exact rich payload so save-without-changes preserves runs");
 		}
 
 		[Test]
@@ -170,6 +217,33 @@ namespace FwAvaloniaTests
 
 			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
 				"Khmer base+vowel stays one grapheme cluster; the following Latin character starts a new cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_CombiningMarkSequence_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("a\u0301b");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"Latin base plus combining acute stays one cluster; the trailing letter starts the next cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_SurrogatePairEmoji_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("\U0001F600x");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"A surrogate-pair emoji stays one cluster; the following Latin character starts a new cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_ZwjFamilySequence_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("\U0001F468\u200D\U0001F469\u200D\U0001F467z");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 8 }),
+				"A ZWJ family sequence is one cluster; the following Latin character starts the next cluster");
 		}
 	}
 

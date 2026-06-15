@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -103,6 +104,40 @@ namespace SIL.FieldWorks.XWorks
 			// Idempotence: a second cancel/commit is a safe no-op.
 			context.Cancel();
 			context.Commit();
+		}
+
+		[Test]
+		public void Commit_RichStyledFormEdit_RefreshesDisplayedEntry_AndIsOneUndoStep()
+		{
+			var refreshes = 0;
+			using (new AvaloniaRegionRefreshController(
+				Cache, () => m_entry, () => false, () => refreshes++, new RefreshCoordinator()))
+			{
+				var context = new LexicalEditRegionEditContext(m_entry, Cache);
+				var rich = RegionRichTextEditAlgorithms.FromRuns("perro", new[]
+				{
+					new RegionTextRun("per", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id),
+					new RegionTextRun("ro", Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id,
+						namedStyle: "Emphasis")
+				});
+
+				Assert.That(context.TrySetRichText(F("Form"), "vern", rich), Is.True);
+				context.Commit();
+
+				var stored = m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs);
+				Assert.That(stored.Text, Is.EqualTo("perro"));
+				Assert.That(stored.RunCount, Is.EqualTo(2), "rich staging preserves run boundaries");
+				Assert.That(stored.get_Properties(1)
+					.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
+				Assert.That(refreshes, Is.GreaterThanOrEqualTo(1),
+					"a styled rich commit on the displayed entry must signal refresh through the shared PropChanged bus");
+			}
+
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True,
+				"the rich commit lands on the same global undo stack legacy surfaces use");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(LexemeText, Is.EqualTo("casa"),
+				"one undo reverts the whole rich commit in one shared step");
 		}
 
 		[Test]
@@ -450,16 +485,26 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(rich.Values.Any(v => v.Value == "Smith 1999"), Is.True,
 				"the rich content still displays as text");
 			Assert.That(rich.Values.Single().RichText, Is.Not.Null,
-				"the shared value projection now preserves the rich-run metadata for the future owned editor");
+				"the shared value projection now preserves the rich-run metadata for the owned editor");
 			Assert.That(rich.Values.Single().RequiresRichEditor, Is.True,
 				"the row advertises that the plain-text lane must not edit it");
-			Assert.That(rich.IsEditable, Is.False,
-				"rich content composes read-only so a plain-text write-back cannot destroy runs");
+			Assert.That(rich.IsEditable, Is.True,
+				"rich content is now editable through the run-aware editor path");
 			Assert.That(composed.EditContext.TrySetText(rich,
 				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, "flattened"),
-				Is.False, "no setter is registered for the rich row");
-			Assert.That(m_entry.Bibliography.get_String(Cache.DefaultAnalWs).RunCount, Is.EqualTo(2),
-				"the runs survive");
+				Is.False, "the plain-text setter must reject rich rows so it cannot flatten them");
+
+			var updated = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(
+				rich.Values.Single().RichText, "Smith 2001");
+			Assert.That(composed.EditContext.TrySetRichText(rich,
+				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id, updated), Is.True);
+			composed.EditContext.Commit();
+
+			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(stored.Text, Is.EqualTo("Smith 2001"));
+			Assert.That(stored.RunCount, Is.EqualTo(2), "the rich edit must preserve run boundaries");
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 0), Is.EqualTo(Cache.DefaultAnalWs));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 1), Is.EqualTo(Cache.DefaultVernWs));
 		}
 
 		[Test]
@@ -481,12 +526,29 @@ namespace SIL.FieldWorks.XWorks
 			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
 			var form = model.Fields.Single(f => f.Field == "Form");
 
-			Assert.That(form.IsEditable, Is.False,
-				"the first-slice builder must not leave a rich TsString editable through the plain-text setter");
+			Assert.That(form.IsEditable, Is.True,
+				"the first-slice builder now exposes rich TsString fields through the run-aware editor path");
 			Assert.That(form.Values.Single().RichText, Is.Not.Null);
 			Assert.That(form.Values.Single().RichText.Runs.Count, Is.EqualTo(2));
 			Assert.That(form.Values.Single().RichText.Runs[0].Text, Is.EqualTo("ផ្ទះ"));
 			Assert.That(form.Values.Single().RichText.Runs[1].NamedStyle, Is.EqualTo("Emphasis"));
+
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			Assert.That(context.TrySetText(form, form.Values.Single().WsTag, "flattened"), Is.False,
+				"the plain-text setter must reject rich rows so it cannot flatten the TsString");
+
+			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(form.Values.Single().RichText,
+				"ផ្ទះថ្មី house");
+			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag, edited), Is.True);
+			context.Commit();
+
+			var stored = m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs);
+			Assert.That(stored.Text, Is.EqualTo("ផ្ទះថ្មី house"));
+			Assert.That(stored.RunCount, Is.EqualTo(2));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 0), Is.EqualTo(Cache.DefaultVernWs));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 1), Is.EqualTo(Cache.DefaultAnalWs));
+ 			Assert.That(stored.get_Properties(1)
+				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 
 			var roundTripped = RegionRichTextAdapter.ToTsString(form.Values.Single().RichText,
 				Cache.WritingSystemFactory, Cache.DefaultVernWs);
@@ -497,6 +559,30 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(TsStringUtils.GetWsOfRun(roundTripped, 1), Is.EqualTo(Cache.DefaultAnalWs));
 			Assert.That(roundTripped.get_Properties(1)
 				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
+		}
+
+		[Test]
+		public void Build_RichLexemeForm_WithObjectData_ComposesReadOnly_AndRejectsRichWriteBack()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var text = TsStringUtils.MakeString("link", Cache.DefaultVernWs);
+				var bldr = text.GetBldr();
+				bldr.SetStrPropValue(0, bldr.Length, (int)FwTextPropType.ktptObjData,
+					((char)FwObjDataTypes.kodtExternalPathName) + "https://software.sil.org/fieldworks");
+				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, bldr.GetString());
+			});
+
+			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
+			var form = model.Fields.Single(f => f.Field == "Form");
+			Assert.That(form.IsEditable, Is.False,
+				"rows carrying unsupported object-data runs must stay read-only for now");
+			Assert.That(form.Values.Single().CanEditRichText, Is.False);
+
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag,
+				form.Values.Single().RichText), Is.False,
+				"edit contexts must reject rich writes when the model marks runs unsupported");
 		}
 
 		[Test]
@@ -1854,6 +1940,24 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(dataObject.GetDataPresent(SIL.FieldWorks.Common.RootSites.TsStringWrapper.TsStringFormat), Is.True,
 				"text drags carry the legacy rich lane");
 			Assert.That(dataObject.GetData(System.Windows.Forms.DataFormats.UnicodeText), Is.EqualTo("casa"));
+		}
+
+		[Test]
+		public void TextDrag_FromAvaloniaPayload_LegacyClipboardBridgeReadsBothRichAndNeutralLanes()
+		{
+			var clipboard = new FwTsStringClipboard(Cache.WritingSystemFactory);
+			var richPayload = clipboard.FromTsString(TsStringUtils.MakeString("casa", Cache.DefaultVernWs));
+			var dataObject = FwDragDropData.CreateTextDataObject(richPayload);
+
+			ClipboardUtils.SetDataObject(dataObject, true, 3, 50);
+
+			var readBack = clipboard.GetText();
+			Assert.That(readBack, Is.Not.Null);
+			Assert.That(readBack.RichXml, Is.Not.Null.And.Not.Empty,
+				"legacy readers must still see the TsString lane from an Avalonia-originated drag payload");
+			Assert.That(readBack.RichText, Is.Not.Null,
+				"the same payload must project the neutral rich lane for Avalonia consumers");
+			Assert.That(readBack.PlainText, Is.EqualTo("casa"));
 		}
 	}
 }

@@ -38,6 +38,10 @@ namespace SIL.FieldWorks.XWorks
 		public abstract bool TrySetText(LexicalEditRegionField regionField, string ws, string value);
 
 		/// <inheritdoc />
+		public virtual bool TrySetRichText(LexicalEditRegionField regionField, string ws,
+			RegionRichTextValue value) => false;
+
+		/// <inheritdoc />
 		public abstract bool TrySetOption(LexicalEditRegionField regionField, string optionKey);
 
 		/// <inheritdoc />

@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					{
 						foreach (var value in wsValues)
 						{
-							if (value != null && value.RequiresRichEditor)
+							if (value != null && !value.CanEditRichText)
 							{
 								isEditable = false;
 								break;

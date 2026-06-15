@@ -23,10 +23,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// </summary>
 	public sealed class FwClipboardText
 	{
-		public FwClipboardText(string plainText, string richXml = null)
+		public FwClipboardText(string plainText, string richXml = null,
+			Region.RegionRichTextValue richText = null)
 		{
 			PlainText = plainText ?? string.Empty;
 			RichXml = richXml;
+			RichText = richText;
 		}
 
 		/// <summary>The plain-text lane (always present; possibly empty).</summary>
@@ -34,6 +36,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 
 		/// <summary>The FieldWorks rich lane (TsString XML), or null when only plain text is available.</summary>
 		public string RichXml { get; }
+
+		/// <summary>
+		/// LCModel-free projection of the rich lane for Avalonia controls. Null when the clipboard only
+		/// carries plain text or when the producer did not provide a neutral run model.
+		/// </summary>
+		public Region.RegionRichTextValue RichText { get; }
 	}
 
 	/// <summary>

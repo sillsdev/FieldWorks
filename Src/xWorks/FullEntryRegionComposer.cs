@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 				state.Walk(node, entry, 0);
 
 			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters,
-				state.ReferenceAddSetters, state.ReferenceRemoveSetters);
+				state.ReferenceAddSetters, state.ReferenceRemoveSetters, state.RichTextSetters);
 			composedContext = context;
 			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
@@ -247,6 +247,8 @@ namespace SIL.FieldWorks.XWorks
 			public readonly List<LexicalEditRegionField> Fields = new List<LexicalEditRegionField>();
 			public readonly Dictionary<string, Func<string, string, bool>> TextSetters
 				= new Dictionary<string, Func<string, string, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<string, RegionRichTextValue, bool>> RichTextSetters
+				= new Dictionary<string, Func<string, RegionRichTextValue, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<string, bool>> OptionSetters
 				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
 			// 6.3: reference-vector add/remove staging, keyed like the other setters by StableId.
@@ -863,7 +865,7 @@ namespace SIL.FieldWorks.XWorks
 				// run properties on the first keystroke. Until the rich TsString editor lands
 				// (gated on 6.13), a row whose current content is rich composes READ-ONLY so a
 				// keystroke cannot destroy it; plain single-run content stays editable.
-				var editable = type != CellarPropertyType.Unicode && !values.Any(v => v.RequiresRichEditor);
+				var editable = type != CellarPropertyType.Unicode && values.All(v => v.CanEditRichText);
 				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
@@ -897,6 +899,12 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					return WriteTextProp(hvo, flid, wsHandle, type, value);
 				};
+				RichTextSetters[stableId] = (wsKey, value) =>
+				{
+					if (value == null || wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
+						return false;
+					return WriteRichTextProp(hvo, flid, wsHandle, type, value);
+				};
 			}
 
 			// Review task 11: the ONE String-vs-multi text read dispatch every TsString-reading
@@ -921,6 +929,24 @@ namespace SIL.FieldWorks.XWorks
 			private bool WriteTextProp(int hvo, int flid, int ws, CellarPropertyType type, string value)
 			{
 				var tss = TsStringUtils.MakeString(value ?? string.Empty, ws);
+				switch (type)
+				{
+					case CellarPropertyType.String:
+						_sda.SetString(hvo, flid, tss);
+						return true;
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						_sda.SetMultiStringAlt(hvo, flid, ws, tss);
+						return true;
+					default:
+						return false;
+				}
+			}
+
+			private bool WriteRichTextProp(int hvo, int flid, int ws, CellarPropertyType type,
+				RegionRichTextValue value)
+			{
+				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, ws);
 				switch (type)
 				{
 					case CellarPropertyType.String:
@@ -2419,6 +2445,7 @@ namespace SIL.FieldWorks.XWorks
 	public sealed class ComposedRegionEditContext : RegionEditContextBase
 	{
 		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
+		private readonly IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> _richTextSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceAddSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceRemoveSetters;
@@ -2429,10 +2456,12 @@ namespace SIL.FieldWorks.XWorks
 			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> optionSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> referenceAddSetters = null,
-			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null)
+			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null,
+			IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> richTextSetters = null)
 			: base(cache, entry)
 		{
 			_textSetters = textSetters;
+			_richTextSetters = richTextSetters ?? new Dictionary<string, Func<string, RegionRichTextValue, bool>>();
 			_optionSetters = optionSetters;
 			_referenceAddSetters = referenceAddSetters ?? new Dictionary<string, Func<string, bool>>();
 			_referenceRemoveSetters = referenceRemoveSetters ?? new Dictionary<string, Func<string, bool>>();
@@ -2440,7 +2469,20 @@ namespace SIL.FieldWorks.XWorks
 
 		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
+			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
+				return false;
+
 			if (field == null || !_textSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(ws, value));
+		}
+
+		public override bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		{
+			if (field != null && field.Values.Any(v => !v.CanEditRichText))
+				return false;
+
+			if (field == null || !_richTextSetters.TryGetValue(field.StableId, out var setter))
 				return false;
 			return Stage(() => setter(ws, value));
 		}

@@ -34,6 +34,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		bool TrySetText(LexicalEditRegionField field, string ws, string value);
 
+		/// <summary>
+		/// Stages a run-aware text value for a field. The supplied rich-text payload is LCModel-free and
+		/// preserves the run metadata needed to rebuild the product <c>ITsString</c> without flattening.
+		/// </summary>
+		bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value);
+
 		/// <summary>Stages a chooser selection by option key (opening the session on the first edit).</summary>
 		bool TrySetOption(LexicalEditRegionField field, string optionKey);
 

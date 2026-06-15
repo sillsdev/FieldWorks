@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
@@ -176,11 +177,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
 			Action<RegionMenuRequest> menuRequested = null,
-			Action<RegionLinkRequest> linkRequested = null)
+			Action<RegionLinkRequest> linkRequested = null,
+			IFwClipboard clipboard = null)
 		{
 			if (region == null) throw new ArgumentNullException(nameof(region));
 			var view = new LexicalEditRegionView(region, editContext, writingSystemFocused,
-				getExpansionState, expansionChanged, menuRequested, linkRequested);
+				getExpansionState, expansionChanged, menuRequested, linkRequested, clipboard);
 			view.EditCompleted += (s, e) => RegionEditCompleted?.Invoke(this, EventArgs.Empty);
 
 			var focusMemento = RegionFocusMemory.Capture(_host.Content as Avalonia.Controls.Control);
