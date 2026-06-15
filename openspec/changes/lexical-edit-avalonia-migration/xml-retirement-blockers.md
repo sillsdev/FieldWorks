@@ -28,6 +28,11 @@ layouts actually use it. Where the census spans all shipped layouts (including t
 layouts), that is noted; the detail-lane import diagnostics are the binding numbers for this
 change's surfaces.
 
+Status update (2026-06-15, `avalonia-multi-writing-system-text-foundation`):
+- Completed text-foundation evidence now closes the rich multi-WS text round-trip, grapheme-cluster safety, shared TsString clipboard/drag-drop interchange, and coexistence refresh/undo lanes for migrated lexical string fields.
+- `MultiStringSlice`/`StringSlice`/`GhostStringSlice` are no longer blockers for the migrated lexical detail surface.
+- Remaining text blockers stay explicit: `StText` editing is deferred, and object-content rich runs remain read-only until a supported editable/object-aware lane is implemented.
+
 ---
 
 ## Blocker register

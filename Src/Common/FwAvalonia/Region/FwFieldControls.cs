@@ -132,6 +132,87 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				if (editContext != null && field.IsEditable)
 				{
+					int? selectionAnchor = null;
+					box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+					{
+						if ((e.KeyModifiers & KeyModifiers.Control) != 0)
+							return;
+
+						if (e.Key != Key.Left && e.Key != Key.Right)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+								selectionAnchor = null;
+							return;
+						}
+
+						var physicalLeft = e.Key == Key.Left;
+						var hasShift = (e.KeyModifiers & KeyModifiers.Shift) != 0;
+						var text = box.Text ?? string.Empty;
+						var runs = currentRich?.Runs;
+
+						if (!hasShift && box.SelectionStart != box.SelectionEnd)
+						{
+							var collapse = RegionBidirectionalTextNavigation.CollapseSelectionEdge(text, runs,
+								box.SelectionStart, box.SelectionEnd, physicalLeft, value.RightToLeft);
+							box.CaretIndex = collapse;
+							box.SelectionStart = collapse;
+							box.SelectionEnd = collapse;
+							selectionAnchor = null;
+							e.Handled = true;
+							return;
+						}
+
+						var currentCaret = box.SelectionStart == box.SelectionEnd
+							? box.CaretIndex
+							: box.SelectionEnd;
+						var nextCaret = RegionBidirectionalTextNavigation.MoveCaret(text, runs,
+							currentCaret, physicalLeft, value.RightToLeft);
+
+						if (hasShift)
+						{
+							if (!selectionAnchor.HasValue)
+								selectionAnchor = box.SelectionStart == box.SelectionEnd
+									? currentCaret
+									: box.SelectionStart;
+
+							var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+								selectionAnchor.Value, nextCaret);
+							box.SelectionStart = normalized.Start;
+							box.SelectionEnd = normalized.End;
+							box.CaretIndex = nextCaret;
+						}
+						else
+						{
+							selectionAnchor = null;
+							box.CaretIndex = nextCaret;
+							box.SelectionStart = nextCaret;
+							box.SelectionEnd = nextCaret;
+						}
+
+						e.Handled = true;
+					}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+
+					box.AddHandler(InputElement.PointerReleasedEvent, (s, e) =>
+					{
+						var text = box.Text ?? string.Empty;
+						if (box.SelectionStart == box.SelectionEnd)
+						{
+							var normalizedCaret = RegionBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text,
+								box.CaretIndex);
+							if (normalizedCaret != box.CaretIndex)
+								box.CaretIndex = normalizedCaret;
+							return;
+						}
+
+						var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+							box.SelectionStart, box.SelectionEnd);
+						if (normalized.Start == box.SelectionStart && normalized.End == box.SelectionEnd)
+							return;
+
+						box.SelectionStart = normalized.Start;
+						box.SelectionEnd = normalized.End;
+					}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+
 					// TextChanged also fires when the template first applies the initial value, so a
 					// last-staged guard keeps construction and no-op events from staging. The guard
 					// only advances on a SUCCESSFUL stage: a failed TrySetText leaves lastStaged at

@@ -245,6 +245,99 @@ namespace FwAvaloniaTests
 			Assert.That(starts, Is.EqualTo(new[] { 0, 8 }),
 				"A ZWJ family sequence is one cluster; the following Latin character starts the next cluster");
 		}
+
+		[Test]
+		public void ImeCompositionState_ComposeCancelCommit_LeavesCommittedTextUntouchedUntilCommit()
+		{
+			var ime = new RegionImeCompositionState("hello world");
+			const string thaiGa = "\u0E01\u0E32";
+
+			ime.Begin(6, 11, thaiGa);
+			Assert.That(ime.IsActive, Is.True);
+			Assert.That(ime.CommittedText, Is.EqualTo("hello world"),
+				"composition is editor-local and must not mutate committed text until commit");
+			Assert.That(ime.DisplayText, Is.EqualTo("hello " + thaiGa));
+
+			var canceled = ime.Cancel();
+			Assert.That(canceled, Is.EqualTo("hello world"));
+			Assert.That(ime.IsActive, Is.False);
+
+			ime.Begin(6, 11, thaiGa);
+			var committed = ime.Commit();
+			Assert.That(committed, Is.EqualTo("hello " + thaiGa));
+			Assert.That(ime.IsActive, Is.False);
+		}
+
+		[Test]
+		public void ImeCompositionState_Backspace_DeletesWithinActiveCompositionOnly()
+		{
+			var ime = new RegionImeCompositionState("cat");
+			ime.Begin(3, 3, "a\u0301b");
+
+			var afterBackspace = ime.Backspace();
+			Assert.That(afterBackspace, Is.EqualTo("cata\u0301"),
+				"Backspace removes the last grapheme in composition text before touching committed text");
+			Assert.That(ime.CommittedText, Is.EqualTo("cat"));
+
+			afterBackspace = ime.Backspace();
+			Assert.That(afterBackspace, Is.EqualTo("cat"));
+			Assert.That(ime.CommittedText, Is.EqualTo("cat"));
+		}
+
+		[Test]
+		public void RichTextEditAlgorithm_InsertAtRunBoundary_PreservesNeighborRunMetadata()
+		{
+			var original = RegionRichTextEditAlgorithms.FromRuns("abc\u05d0\u05d1\u05d2", new[]
+			{
+				new RegionTextRun("abc", "qaa-x-left", namedStyle: "LeftStyle"),
+				new RegionTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl", namedStyle: "RtlStyle")
+			});
+
+			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(original, "abcX\u05d0\u05d1\u05d2");
+
+			Assert.That(edited.Runs.Select(r => r.Text), Is.EqualTo(new[] { "abcX", "\u05d0\u05d1\u05d2" }));
+			Assert.That(edited.Runs[0].NamedStyle, Is.EqualTo("LeftStyle"));
+			Assert.That(edited.Runs[1].NamedStyle, Is.EqualTo("RtlStyle"),
+				"inserts at run boundaries must not leak style metadata across the boundary");
+		}
+
+		[Test]
+		public void BidirectionalCaretNavigation_MapsArrowKeysThroughActiveRunDirection()
+		{
+			const string mixed = "abc \u05d0\u05d1\u05d2 xyz";
+			var rich = RegionRichTextEditAlgorithms.FromRuns(mixed, new[]
+			{
+				new RegionTextRun("abc ", "qaa-x-left"),
+				new RegionTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl"),
+				new RegionTextRun(" xyz", "qaa-x-left")
+			});
+
+			var insideRtl = 5;
+			var afterLeft = RegionBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, insideRtl,
+				physicalLeft: true, defaultRightToLeft: true);
+			Assert.That(afterLeft, Is.EqualTo(6),
+				"inside RTL run, Left arrow advances logically");
+
+			var afterRight = RegionBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, afterLeft,
+				physicalLeft: false, defaultRightToLeft: true);
+			Assert.That(afterRight, Is.EqualTo(5),
+				"inside RTL run, Right arrow moves logically backward");
+		}
+
+		[Test]
+		public void SelectionAndHitTest_NormalizeToWholeGraphemeClusters()
+		{
+			const string text = "a\U0001F469\u200D\U0001F467b";
+
+			var normalizedRange = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text, 2, 4);
+			Assert.That(normalizedRange.Start, Is.EqualTo(1));
+			Assert.That(normalizedRange.End, Is.EqualTo(6),
+				"selection covering part of a ZWJ cluster expands to whole user-visible character");
+
+			var normalizedCaret = RegionBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text, 3);
+			Assert.That(normalizedCaret, Is.EqualTo(1),
+				"hit-test caret in the middle of a grapheme snaps to cluster start");
+		}
 	}
 
 	[TestFixture]

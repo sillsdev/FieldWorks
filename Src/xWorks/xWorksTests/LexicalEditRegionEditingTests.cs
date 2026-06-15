@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
@@ -386,11 +387,53 @@ namespace SIL.FieldWorks.XWorks
 			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
 				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
-			Assert.That(lexemeForm.Label, Is.EqualTo("Lexeme Form"));
+			Assert.That(lexemeForm.Label,
+				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
+				"labels resolve through the StringTable lane used by layout composition");
 			Assert.That(lexemeForm.MenuId, Is.EqualTo("mnuDataTree-LexemeForm"),
 				"the layout's slice menu rides the row — it feeds the hover gear AND label right-click");
 			Assert.That(lexemeForm.ContextMenuId, Is.EqualTo("mnuDataTree-LexemeFormContext"),
 				"the in-string context menu binding survives alongside");
+		}
+
+		[Test]
+		public void Compose_RichTextReplacement_PreservesStringTableLabels_AndFwAvaloniaMessageLane()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
+				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+
+			Assert.That(lexemeForm.Label,
+				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
+				"field labels continue to resolve through StringTable after rich-text row projection");
+			Assert.That(FwAvaloniaStrings.LexemeFormRequired, Is.Not.Null.And.Not.Empty,
+				"product-facing validation message text remains sourced from FwAvaloniaStrings.resx");
+		}
+
+		[Test]
+		public void TestLangProj_WritingSystemStore_ContainsRtlAndKhmerFixtures()
+		{
+			var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (dir != null && !File.Exists(Path.Combine(dir.FullName,
+				"TestLangProj", "WritingSystemStore", "ar-IQ.ldml")))
+				dir = dir.Parent;
+
+			Assert.That(dir, Is.Not.Null,
+				"expected to find TestLangProj/WritingSystemStore while walking up from the test directory");
+			var wsStore = Path.Combine(dir.FullName, "TestLangProj", "WritingSystemStore");
+
+			var rtlPath = Path.Combine(wsStore, "ar-IQ.ldml");
+			var khmerPath = Path.Combine(wsStore, "km.ldml");
+
+			Assert.That(File.Exists(rtlPath), Is.True, "RTL scenario fixture must exist");
+			Assert.That(File.Exists(khmerPath), Is.True, "Khmer complex-script fixture must exist");
+
+			var rtl = File.ReadAllText(rtlPath);
+			var khmer = File.ReadAllText(khmerPath);
+			Assert.That(rtl, Does.Contain("right-to-left"));
+			Assert.That(khmer, Does.Contain("type=\"km\""));
+			Assert.That(khmer, Does.Contain("Khmr"),
+				"Khmer fixture declares the Khmer script for automation/manual scenario setup");
 		}
 
 		// Review finding A: compiled definitions are memoized per (class, layout) for the lifetime

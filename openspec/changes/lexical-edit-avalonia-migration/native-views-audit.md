@@ -14,6 +14,12 @@ Related enforcement already in place: `Src/Common/FwAvalonia/FwAvaloniaTests/Eng
 `ViewsInterfaces`/`RootSite`/`SimpleRootSite`/Graphite/Gecko assemblies and from naming
 `IVwRootBox`, `IVwEnv`, `IVwGraphics`, `RootSiteControl`, `ManagedVwWindow`, etc. in source.
 
+Status update (2026-06-15, `avalonia-multi-writing-system-text-foundation`):
+- Closed blocker lanes for migrated lexical text rows: managed `ITsString` run projection/write-back, grapheme-cluster-safe editing (combining marks/surrogates/ZWJ), shared TsString clipboard+drag/drop interchange, and coexistence refresh/undo for styled commits.
+- `MultiStringSlice`, `StringSlice`, and `GhostStringSlice` now have owned Avalonia editing coverage with focused automated evidence.
+- Still deferred: `StTextSlice` multi-paragraph editing.
+- Still deferred: rich runs with unsupported object-content payloads remain read-only in the Avalonia lane.
+
 ---
 
 ## 8.1 Inventory

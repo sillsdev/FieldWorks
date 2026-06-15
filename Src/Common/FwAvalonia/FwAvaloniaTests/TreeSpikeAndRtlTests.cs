@@ -5,9 +5,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
+using Avalonia.Headless;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless.NUnit;
+using Avalonia.Input;
+using Avalonia.Input.Raw;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -135,6 +138,125 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.TextEdits.Single().Value, Is.EqualTo(ArabicHouse + " " + ArabicBig),
 				"Arabic text round-trips the staging path unmangled");
+		}
+
+		[AvaloniaTest]
+		public void MixedDirectionValue_SelectionAndCaretStayLogicalWhileStagingEdits()
+		{
+			const string mixed = "abc \u05D0\u05D1\u05D2 123";
+			var field = new LexicalEditRegionField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+				EditorClassification.Known, "MixedEditor", null, SurfaceRouting.Product,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+				},
+				null, null);
+
+			var context = new FakeRegionEditContext();
+			var control = new FwMultiWsTextField(field, "MixedEditor", context, null);
+			var window = new Window { Content = control, Width = 420, Height = 80 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = control.GetVisualDescendants().OfType<TextBox>().Single();
+			box.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			box.SelectionStart = 4;
+			box.SelectionEnd = 7;
+			Assert.That(box.SelectedText, Is.EqualTo("\u05D0\u05D1\u05D2"),
+				"selection should operate on logical string indices even when visual order is RTL");
+
+			box.CaretIndex = box.Text.Length;
+			box.Text = mixed + " !";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits.Single().Value, Is.EqualTo(mixed + " !"));
+		}
+
+		[AvaloniaTest]
+		public void MixedDirectionArrowKeys_HonorActiveRunDirection_AndShiftSelection()
+		{
+			const string mixed = "abc \u05D0\u05D1\u05D2 xyz";
+			var field = new LexicalEditRegionField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+				EditorClassification.Known, "MixedArrowEditor", null, SurfaceRouting.Product,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("ar", mixed, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+				},
+				null, null);
+
+			var control = new FwMultiWsTextField(field, "MixedArrowEditor", new FakeRegionEditContext(), null);
+			var window = new Window { Content = control, Width = 420, Height = 80 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = control.GetVisualDescendants().OfType<TextBox>().Single();
+			box.Focus();
+			box.CaretIndex = 5; // inside the Hebrew run.
+			Dispatcher.UIThread.RunJobs();
+
+			window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(box.CaretIndex, Is.EqualTo(6),
+				"inside RTL run, Left arrow advances logically to the next code-point cluster");
+
+			window.KeyPressQwerty(PhysicalKey.ArrowLeft, RawInputModifiers.None);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(box.CaretIndex, Is.EqualTo(7),
+				"repeated Left arrows continue logical forward movement inside RTL run");
+		}
+
+		[AvaloniaTest]
+		public void MirroredPunctuationSelection_StaysStableInRtlValue()
+		{
+			const string value = "(\u05d0\u05d1\u05d2)";
+			var field = new LexicalEditRegionField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+				EditorClassification.Known, "RtlParenEditor", null, SurfaceRouting.Product,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+				},
+				null, null);
+
+			var control = new FwMultiWsTextField(field, "RtlParenEditor", new FakeRegionEditContext(), null);
+			var window = new Window { Content = control, Width = 420, Height = 80 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = control.GetVisualDescendants().OfType<TextBox>().Single();
+			box.SelectionStart = 1;
+			box.SelectionEnd = 4;
+			Assert.That(box.SelectedText, Is.EqualTo("\u05d0\u05d1\u05d2"));
+		}
+
+		[AvaloniaTest]
+		public void MixedDirectionNumbers_EditAtBoundaryStagesExpectedLogicalText()
+		{
+			const string value = "\u05d0\u05d1\u05d2 123";
+			var context = new FakeRegionEditContext();
+			var field = new LexicalEditRegionField(
+				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", RegionFieldKind.Text,
+				EditorClassification.Known, "RtlNumbersEditor", null, SurfaceRouting.Product,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("ar", value, "Scheherazade New", 0, rightToLeft: true, wsTag: "ar")
+				},
+				null, null);
+
+			var control = new FwMultiWsTextField(field, "RtlNumbersEditor", context, null);
+			var window = new Window { Content = control, Width = 420, Height = 80 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = control.GetVisualDescendants().OfType<TextBox>().Single();
+			box.Text = "\u05d0\u05d1\u05d2-123";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits.Single().Value, Is.EqualTo("\u05d0\u05d1\u05d2-123"));
 		}
 	}
 }

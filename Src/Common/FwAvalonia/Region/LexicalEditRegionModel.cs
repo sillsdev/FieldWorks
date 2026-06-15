@@ -149,6 +149,276 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// Caret/selection helpers for mixed-direction text editing. Navigation uses grapheme-cluster
+	/// boundaries and maps left/right keys through the active run direction so RTL/LTR spans behave
+	/// like legacy editors without native Views hit-testing services.
+	/// </summary>
+	public static class RegionBidirectionalTextNavigation
+	{
+		public static int MoveCaret(string text, IReadOnlyList<RegionTextRun> runs, int caretIndex,
+			bool physicalLeft, bool defaultRightToLeft)
+		{
+			text = text ?? string.Empty;
+			var index = Clamp(caretIndex, 0, text.Length);
+			if (text.Length == 0)
+				return 0;
+
+			var activeRtl = IsActiveRunRightToLeft(text, runs, index, defaultRightToLeft);
+			var moveForward = activeRtl ? physicalLeft : !physicalLeft;
+			return moveForward ? NextClusterBoundary(text, index) : PreviousClusterBoundary(text, index);
+		}
+
+		public static int CollapseSelectionEdge(string text, IReadOnlyList<RegionTextRun> runs,
+			int selectionStart, int selectionEnd, bool physicalLeft, bool defaultRightToLeft)
+		{
+			text = text ?? string.Empty;
+			var start = Clamp(Math.Min(selectionStart, selectionEnd), 0, text.Length);
+			var end = Clamp(Math.Max(selectionStart, selectionEnd), 0, text.Length);
+			if (start == end)
+				return start;
+
+			var activeRtl = IsActiveRunRightToLeft(text, runs, end, defaultRightToLeft);
+			var collapseToEnd = activeRtl ? physicalLeft : !physicalLeft;
+			return collapseToEnd ? end : start;
+		}
+
+		public static RegionSelectionRange NormalizeSelectionToClusters(string text,
+			int selectionStart, int selectionEnd)
+		{
+			text = text ?? string.Empty;
+			var start = Clamp(Math.Min(selectionStart, selectionEnd), 0, text.Length);
+			var end = Clamp(Math.Max(selectionStart, selectionEnd), 0, text.Length);
+			if (start == end)
+				return new RegionSelectionRange(start, end);
+
+			var normalizedStart = PreviousClusterBoundary(text, start);
+			var normalizedEnd = NextClusterBoundary(text, end);
+			return new RegionSelectionRange(normalizedStart, normalizedEnd);
+		}
+
+		public static int NormalizeHitTestCaretIndex(string text, int caretIndex)
+		{
+			text = text ?? string.Empty;
+			var index = Clamp(caretIndex, 0, text.Length);
+			if (index == text.Length)
+				return index;
+			return PreviousClusterBoundary(text, index);
+		}
+
+		private static bool IsActiveRunRightToLeft(string text, IReadOnlyList<RegionTextRun> runs,
+			int caretIndex, bool defaultRightToLeft)
+		{
+			var byText = ProbeDirectionFromText(text, caretIndex);
+			if (byText.HasValue)
+				return byText.Value;
+
+			if (runs == null || runs.Count == 0)
+				return defaultRightToLeft;
+
+			var index = Clamp(caretIndex, 0, text.Length);
+			var offset = 0;
+			for (var i = 0; i < runs.Count; i++)
+			{
+				var run = runs[i];
+				var runLength = run?.Text?.Length ?? 0;
+				if (index <= offset + runLength)
+				{
+					var runText = run?.Text ?? string.Empty;
+					var withinRun = Clamp(index - offset, 0, runText.Length);
+					var probe = ProbeDirectionFromText(runText, withinRun);
+					if (probe.HasValue)
+						return probe.Value;
+					break;
+				}
+
+				offset += runLength;
+			}
+
+			return defaultRightToLeft;
+		}
+
+		private static bool? ProbeDirectionFromText(string text, int caretIndex)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+
+			var probeIndex = caretIndex >= text.Length
+				? text.Length - 1
+				: Math.Max(0, caretIndex);
+
+			for (var i = probeIndex; i >= 0; i--)
+			{
+				var direction = GetDirection(text[i]);
+				if (direction.HasValue)
+					return direction.Value;
+			}
+
+			for (var i = probeIndex + 1; i < text.Length; i++)
+			{
+				var direction = GetDirection(text[i]);
+				if (direction.HasValue)
+					return direction.Value;
+			}
+
+			return null;
+		}
+
+		private static bool? GetDirection(char ch)
+		{
+			if (IsRightToLeftCharacter(ch))
+				return true;
+			if (char.IsLetterOrDigit(ch))
+				return false;
+			return null;
+		}
+
+		private static bool IsRightToLeftCharacter(char ch)
+		{
+			return (ch >= '\u0590' && ch <= '\u08FF')
+				|| (ch >= '\uFB1D' && ch <= '\uFEFC');
+		}
+
+		private static int PreviousClusterBoundary(string text, int index)
+		{
+			if (index <= 0 || string.IsNullOrEmpty(text))
+				return 0;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			for (var i = starts.Count - 1; i >= 0; i--)
+			{
+				if (starts[i] < index)
+					return starts[i];
+			}
+
+			return 0;
+		}
+
+		private static int NextClusterBoundary(string text, int index)
+		{
+			if (string.IsNullOrEmpty(text))
+				return 0;
+			if (index >= text.Length)
+				return text.Length;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			for (var i = 0; i < starts.Count; i++)
+			{
+				if (starts[i] > index)
+					return starts[i];
+			}
+
+			return text.Length;
+		}
+
+		private static int Clamp(int value, int min, int max)
+			=> Math.Max(min, Math.Min(max, value));
+	}
+
+	public struct RegionSelectionRange
+	{
+		public RegionSelectionRange(int start, int end)
+		{
+			Start = start;
+			End = end;
+		}
+
+		public int Start { get; }
+		public int End { get; }
+	}
+
+	/// <summary>
+	/// Editor-local IME composition state for one text lane. Composition updates stay detached from
+	/// committed text until <see cref="Commit"/>; <see cref="Cancel"/> discards pending text and
+	/// <see cref="Backspace"/> edits only the active composition payload.
+	/// </summary>
+	public sealed class RegionImeCompositionState
+	{
+		public RegionImeCompositionState(string committedText = "")
+		{
+			CommittedText = committedText ?? string.Empty;
+		}
+
+		public string CommittedText { get; }
+		public bool IsActive => _compositionStart >= 0;
+		public int CompositionStart => _compositionStart;
+		public string CompositionText => _compositionText;
+
+		public string DisplayText
+		{
+			get
+			{
+				if (!IsActive)
+					return CommittedText;
+
+				return CommittedText.Substring(0, _compositionStart)
+					+ _compositionText
+					+ CommittedText.Substring(_compositionEnd);
+			}
+		}
+
+		public void Begin(int selectionStart, int selectionEnd, string initialComposition)
+		{
+			var start = Math.Max(0, Math.Min(selectionStart, selectionEnd));
+			var end = Math.Min(CommittedText.Length, Math.Max(selectionStart, selectionEnd));
+			_compositionStart = start;
+			_compositionEnd = end;
+			_compositionText = initialComposition ?? string.Empty;
+		}
+
+		public void Update(string compositionText)
+		{
+			if (!IsActive)
+				return;
+
+			_compositionText = compositionText ?? string.Empty;
+		}
+
+		public string Backspace()
+		{
+			if (!IsActive || _compositionText.Length == 0)
+				return DisplayText;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(_compositionText);
+			if (starts.Count <= 1)
+			{
+				_compositionText = string.Empty;
+				return DisplayText;
+			}
+
+			var removeAt = starts[starts.Count - 1];
+			_compositionText = _compositionText.Substring(0, removeAt);
+			return DisplayText;
+		}
+
+		public string Cancel()
+		{
+			Reset();
+			return CommittedText;
+		}
+
+		public string Commit()
+		{
+			if (!IsActive)
+				return CommittedText;
+
+			var committed = DisplayText;
+			Reset();
+			return committed;
+		}
+
+		private void Reset()
+		{
+			_compositionStart = -1;
+			_compositionEnd = -1;
+			_compositionText = string.Empty;
+		}
+
+		private int _compositionStart = -1;
+		private int _compositionEnd = -1;
+		private string _compositionText = string.Empty;
+	}
+
+	/// <summary>
 	/// Plain-text edit helpers over the neutral rich-text model. This lets the first owned rich-text
 	/// field preserve unaffected run metadata while the user edits the combined visible string.
 	/// </summary>
