@@ -254,16 +254,16 @@ namespace SIL.PcPatrFLEx
 				if (selectedText != null)
 				{
 					lbTexts.SelectedIndex = Texts.IndexOf(selectedText);
-				}
-				var selectedSegment = SegmentsInListBox.Where(s => s.Segment.Guid.ToString() == RetrievedLastSegment).FirstOrDefault();
-				if (selectedSegment != null)
-				{
-					int index = SegmentsInListBox.IndexOf(selectedSegment);
-					lbSegments.SelectedIndex = index;
-					if (lbSegments.GetSelected(0) && index != 0)
+					var selectedSegment = SegmentsInListBox.Where(s => s.Segment.Guid.ToString() == RetrievedLastSegment).FirstOrDefault();
+					if (selectedSegment != null)
 					{
-						// Only select the non-initial one
-						lbSegments.SetSelected(0, false);
+						int index = SegmentsInListBox.IndexOf(selectedSegment);
+						lbSegments.SelectedIndex = index;
+						if (lbSegments.GetSelected(0) && index != 0)
+						{
+							// Only select the non-initial one
+							lbSegments.SetSelected(0, false);
+						}
 					}
 				}
 			}
