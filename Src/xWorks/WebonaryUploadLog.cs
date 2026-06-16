@@ -21,12 +21,14 @@ namespace SIL.FieldWorks.XWorks
 			public DateTime Timestamp { get; }
 			public WebonaryStatusCondition Status { get; }
 			public string Message { get; }
+			public string Version { get; } // Current FieldWorks version
 
-			public UploadLogEntry(WebonaryStatusCondition status, string message)
+			public UploadLogEntry(WebonaryStatusCondition status, string message, string version)
 			{
 				Timestamp = DateTime.UtcNow;
 				Status = status;
 				Message = message;
+				Version = version;
 			}
 		}
 
@@ -45,7 +47,10 @@ namespace SIL.FieldWorks.XWorks
 
 		public Task LogAsync(WebonaryStatusCondition level, string message)
 		{
-			var logEntry = new UploadLogEntry(level,  message);
+			var assembly = System.Reflection.Assembly.GetEntryAssembly();
+			var version = assembly != null ? System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion
+				: "unable to get assembly for version info";
+			var logEntry = new UploadLogEntry(level, message, version);
 			string jsonLogEntry;
 			using (var sw = new StringWriter())
 			{
