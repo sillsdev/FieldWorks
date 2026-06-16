@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_model == args.ConfigurationPicked)
 					return;
 				_model = args.ConfigurationPicked;
-				SetConfigureHomographParameters(_model, cache);
+				SetConfigureHomographParameters(_propertyTable, cache);
 				RefreshView(); // isChangeInDictionaryModel: true, because we update the current config in the PropertyTable when we save the model.
 			};
 
@@ -501,38 +501,58 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Sets Parameters for Numbering styles.
+		/// Sets parameters for sense numbering styles.
+		/// Note: homograph parameters are used for sense numbers in both the dictionary and reversal. They are never used for reversal numbers.
+		/// So, homograph parameters should always be set based on the dictionary configuration and not the reversal index configuration.
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="cache"></param>
-		public static void SetConfigureHomographParameters(DictionaryConfigurationModel model, LcmCache cache)
+		public static void SetConfigureHomographParameters(PropertyTable propertyTable, LcmCache cache)
 		{
 			var cacheHc = cache.ServiceLocator.GetInstance<HomographConfiguration>();
-			if (model.HomographConfiguration == null)
+
+			// Load the dictionary configuration.
+			var dictionaryConfigPath = propertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty);
+			var dictionaryModel = new DictionaryConfigurationModel(dictionaryConfigPath, cache);
+			if (dictionaryModel.HomographConfiguration == null)
 			{
-				model.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
+				dictionaryModel.HomographConfiguration = new DictionaryHomographConfiguration(new HomographConfiguration());
 			}
-			model.HomographConfiguration.ExportToHomographConfiguration(cacheHc);
-			if (model.Parts.Count == 0) return;
-			var mainEntryNode = model.Parts[0];
-			//Sense Node
-			string senseType = (mainEntryNode.DisplayLabel == "Reversal Entry") ? "Referenced Senses" : "Senses";
-			var senseNode = mainEntryNode.Children.Where(prop => prop.Label == senseType).FirstOrDefault();
-			if (senseNode == null) return;
-			var senseOptions = (DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions;
-			cacheHc.ksSenseNumberStyle = senseOptions.NumberingStyle;
-			//SubSense Node
-			var subSenseNode = senseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
-			if (subSenseNode == null) return;
-			var subSenseOptions = (DictionaryNodeSenseOptions)subSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSenseNumberStyle = subSenseOptions.NumberingStyle;
-			cacheHc.ksParentSenseNumberStyle = subSenseOptions.ParentSenseNumberingStyle;
-			//SubSubSense Node
-			var subSubSenseNode = subSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
-			if (subSubSenseNode == null) return;
-			var subSubSenseOptions = (DictionaryNodeSenseOptions)subSubSenseNode.DictionaryNodeOptions;
-			cacheHc.ksSubSubSenseNumberStyle = subSubSenseOptions.NumberingStyle;
-			cacheHc.ksParentSubSenseNumberStyle = subSubSenseOptions.ParentSenseNumberingStyle;
+
+			ConfigurableDictionaryNode dictionarySenseNode = null;
+
+			if (dictionaryModel.Parts.Count > 0)
+			{
+				// Find the "Senses" node in the dictionary configuration
+				var dictionaryMainEntry = dictionaryModel.Parts[0];
+				dictionarySenseNode = dictionaryMainEntry.Children
+					.Where(prop => prop.Label == "Senses").FirstOrDefault();
+			}
+
+			if (dictionarySenseNode != null)
+			{
+				var dictionarySenseOptions = (DictionaryNodeSenseOptions)dictionarySenseNode.DictionaryNodeOptions;
+				// Apply the dictionary sense numbering styles to the cache
+				cacheHc.ksSenseNumberStyle = dictionarySenseOptions.NumberingStyle;
+
+				// Similarly for subsenses
+				var dictionarySubSenseNode = dictionarySenseNode.Children.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+				if (dictionarySubSenseNode != null)
+				{
+					var dictionarySubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSenseNode.DictionaryNodeOptions;
+					cacheHc.ksSubSenseNumberStyle = dictionarySubSenseOptions.NumberingStyle;
+					cacheHc.ksParentSenseNumberStyle = dictionarySubSenseOptions.ParentSenseNumberingStyle;
+
+					// And for subsubsenses
+					var dictionarySubSubSenseNode = dictionarySubSenseNode.ReferencedOrDirectChildren.Where(prop => prop.Label == "Subsenses").FirstOrDefault();
+					if (dictionarySubSubSenseNode != null)
+					{
+						var dictionarySubSubSenseOptions = (DictionaryNodeSenseOptions)dictionarySubSubSenseNode.DictionaryNodeOptions;
+						cacheHc.ksSubSubSenseNumberStyle = dictionarySubSubSenseOptions.NumberingStyle;
+						cacheHc.ksParentSubSenseNumberStyle = dictionarySubSubSenseOptions.ParentSenseNumberingStyle;
+					}
+				}
+			}
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
