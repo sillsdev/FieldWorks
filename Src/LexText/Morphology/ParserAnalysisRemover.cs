@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_dlg.ProgressBar.Step = 1;
 
 			// stop parser if it's running.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, m_dlg.PropTable?.GetWindow()));
 
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			// Interlin display may be affected.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null, m_dlg.PropTable?.GetWindow()));
 		}
 
 		#endregion IUtility implementation

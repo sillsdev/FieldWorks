@@ -441,8 +441,8 @@ namespace XCore
 
 			InitializeComponent();
 
-			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
-			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject);
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh, this);
+			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject, this);
 		}
 
 		/// <summary>
@@ -802,7 +802,7 @@ namespace XCore
 
 			// Add the content control
 			// Note: We should be able to do it directly, since everything needed is in the default properties.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.SetInitialContentObject, m_windowConfigurationNode));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SetInitialContentObject, m_windowConfigurationNode, this));
 			m_sidebarAdapter.FinishInit();
 			m_menuBarAdapter.FinishInit();
 
@@ -1230,8 +1230,10 @@ namespace XCore
 		/// <returns></returns>
 		private void SetInitialContentObject(object windowConfigurationNode)
 		{
-			// We only want to handle this if there are no other listeners
-			if (Subscriber.Subscriptions[EventConstants.SetInitialContentObject].Count > 1)
+			// We only want to handle this if there are no other listeners for this window
+			// (count only subscriptions in this window's scope or with no scope).
+			if (Subscriber.Subscriptions[EventConstants.SetInitialContentObject]
+					.Count(subscription => subscription.Value == null || ReferenceEquals(subscription.Value, this)) > 1)
 				return;
 			CheckDisposed();
 
@@ -1789,8 +1791,8 @@ namespace XCore
 
 			UpdateControls();
 
-			// Notify any subscribers that the application is idle.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.Idle, null));
+			// Notify this window's subscribers that the application is idle.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.Idle, null, this));
 		}
 
 		/// <summary>
@@ -1912,7 +1914,7 @@ namespace XCore
 		{
 			CheckDisposed();
 
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, this));
 			this.Close();
 
 			return true;
@@ -2243,7 +2245,7 @@ namespace XCore
 			m_widgetUpdateTimer.Enabled = false;
 
 			e.Cancel = false;
-			Publisher.Publish(new PublisherParameterObject(EventConstants.ConsideringClosing, e));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ConsideringClosing, e, this));
 			if (e.Cancel)
 			{
 				m_widgetUpdateTimer.Enabled = true;

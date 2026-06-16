@@ -1375,7 +1375,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 				if (old != newObj)
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this, m_propertyTable.GetWindow()));
 			}
 		}
 
@@ -2102,8 +2102,8 @@ namespace SIL.FieldWorks.XWorks
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
-			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
-			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
+			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord, m_propertyTable.GetWindow());
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
@@ -2312,7 +2312,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						m_list.CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
-					Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, m_propertyTable.GetWindow()));
 				}
 				finally
 				{
@@ -2539,7 +2539,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var retObj = new ReturnObject(argument);
-				Publisher.Publish(new PublisherParameterObject(EventConstants.DialogInsertItemInVector, retObj));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.DialogInsertItemInVector, retObj, m_propertyTable.GetWindow()));
 				if (retObj.ReturnValue)
 					return true;
 			}
@@ -3160,13 +3160,13 @@ namespace SIL.FieldWorks.XWorks
 			// For now, we'll not try to be concerned about restoring scroll position
 			// in a context where we're reloading after suppressing a reload.
 			if (!m_fReloadingDueToMissingObject)
-				Publisher.Publish(new PublisherParameterObject(EventConstants.SaveScrollPosition, this));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SaveScrollPosition, this, m_propertyTable.GetWindow()));
 		}
 
 		private void m_list_DoneReload(object sender, EventArgs e)
 		{
 			if (!m_fReloadingDueToMissingObject)
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RestoreScrollPosition, this));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RestoreScrollPosition, this, m_propertyTable.GetWindow()));
 		}
 
 		internal ListUpdateHelper UpdateHelper { get; set; }

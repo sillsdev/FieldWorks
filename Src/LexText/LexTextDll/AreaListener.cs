@@ -154,11 +154,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
-			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject);
-			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
-			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
-			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
-			Subscriber.Subscribe(EventConstants.GetToolForList, GetToolForList);
+			Subscriber.Subscribe(EventConstants.SetInitialContentObject, SetInitialContentObject, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.GetToolForList, GetToolForList, m_propertyTable.GetWindow());
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;

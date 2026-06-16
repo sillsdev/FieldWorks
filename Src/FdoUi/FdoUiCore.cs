@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.FdoUi
 			try
 			{
 				// Don't postpone PropChanged (cf. LT-22095).
-				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false, propertyTable.GetWindow()));
 				var cache = propertyTable.GetValue<LcmCache>("cache");
 				switch (classId)
 				{
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			finally
 			{
-				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true, propertyTable.GetWindow()));
 			}
 		}
 
@@ -1026,7 +1026,7 @@ namespace SIL.FieldWorks.FdoUi
 				object command = this;
 				if (m_command != null)
 					command = m_command;
-				Publisher.Publish(new PublisherParameterObject(EventConstants.DeleteRecord, command));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.DeleteRecord, command, m_propertyTable.GetWindow()));
 			}
 			else
 			{

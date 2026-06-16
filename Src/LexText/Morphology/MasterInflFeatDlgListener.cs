@@ -36,7 +36,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		public MasterInflFeatDlgListener()
 		{
-			Subscriber.Subscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector);
+		}
+
+		public override void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
+		{
+			base.Init(mediator, propertyTable, configurationParameters);
+			Subscriber.Subscribe(EventConstants.DialogInsertItemInVector, DialogInsertItemInVector, propertyTable.GetWindow());
 		}
 
 		#endregion Construction and Initialization

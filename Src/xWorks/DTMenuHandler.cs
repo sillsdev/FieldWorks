@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_configuration = configurationParameters;
-			Subscriber.Subscribe(EventConstants.DataTreeDelete, DataTreeDelete);
+			Subscriber.Subscribe(EventConstants.DataTreeDelete, DataTreeDelete, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>

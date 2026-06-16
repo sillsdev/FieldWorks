@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid)));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid), m_propertyTable.GetWindow()));
 			}
 		}
 

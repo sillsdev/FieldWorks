@@ -4404,8 +4404,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (PersistenceProvder != null)
 				RestorePreferences();
 
-			Subscriber.Subscribe(EventConstants.PostponePropChanged, PostponePropChanged);
-			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField);
+			Subscriber.Subscribe(EventConstants.PostponePropChanged, PostponePropChanged, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField, m_propertyTable.GetWindow());
 		}
 
 		public IxCoreColleague[] GetMessageTargets()

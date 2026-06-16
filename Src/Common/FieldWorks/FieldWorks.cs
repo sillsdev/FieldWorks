@@ -1849,7 +1849,7 @@ namespace SIL.FieldWorks
 									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									if (Form.ActiveForm is IxWindow mainWindow)
 									{
-										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport));
+										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport, null, mainWindow));
 									}
 									else
 									{

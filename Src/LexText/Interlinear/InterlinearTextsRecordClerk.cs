@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.IText
 		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
 			// Only needs to handle changes if this RecordClerk is being used in the GUI.
-			Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
+			Subscriber.Subscribe(EventConstants.AddTexts, AddTexts, m_propertyTable.GetWindow());
 
 			base.ActivateUI(useRecordTreeBar, updateStatusBar);
 		}
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.IText
 			{
 				// Tell the user we're turning off the filter, and then do it.
 				MessageBox.Show(ITextStrings.ksTurningOffFilter, ITextStrings.ksNote, MessageBoxButtons.OK);
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RemoveFilters, this));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RemoveFilters, this, m_propertyTable.GetWindow()));
 				m_activeMenuBarFilter = null;
 			}
 			SaveOnChangeRecord(); // commit any changes before we create a new text.
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.IText
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
 			{
-				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("interlinearEdit", CurrentObject.Guid)));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("interlinearEdit", CurrentObject.Guid), m_propertyTable.GetWindow()));
 			}
 			return true;
 		}

@@ -11,6 +11,7 @@
 using System.Xml;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {
@@ -137,8 +138,10 @@ namespace XCore
 	/// <summary>
 	/// This is an interface implemented by xWindow (and perhaps other main window classes?)
 	/// that allows a few of their key functions to be called by things that don't reference xCore.
+	/// A main window is also the Pub/Sub delivery scope (IPubSubScope): messages published with a
+	/// window as their scope are delivered only to subscribers that subscribed with the same window.
 	/// </summary>
-	public interface IxWindow : IMediatorProvider, IPropertyTableProvider
+	public interface IxWindow : IMediatorProvider, IPropertyTableProvider, IPubSubScope
 	{
 		/// <summary>
 		/// Call this for the duration of a block of code where we don't want idle events.

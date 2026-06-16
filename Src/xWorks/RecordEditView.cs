@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.XWorks
 			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
 
-			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
 		}
 
 		/// -----------------------------------------------------------------------------------

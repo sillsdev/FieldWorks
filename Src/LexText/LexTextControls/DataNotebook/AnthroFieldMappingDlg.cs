@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			// Show the ConfigureCustomFields dialog (by publisher to avoid circular dependencies)
 			Publisher.Publish(new PublisherParameterObject(EventConstants.ConfigureCustomFields,
-				new Tuple<Mediator, PropertyTable, string>(m_mediator, m_propertyTable, AreaConstants.notebook)));
+				new Tuple<Mediator, PropertyTable, string>(m_mediator, m_propertyTable, AreaConstants.notebook), m_propertyTable.GetWindow()));
 			// Now, clean up our map of possible field targets and reload the field combo list.
 			List<int> delFields = new List<int>();
 			foreach (int key in m_mapFlidName.Keys)

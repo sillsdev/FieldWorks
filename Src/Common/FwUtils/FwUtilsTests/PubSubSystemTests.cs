@@ -205,6 +205,147 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(subscriber2.One, Is.True); // Did not change.
 		}
 
+		/// <summary>
+		/// A scoped publish goes to same-scope and unscoped subscribers, but not to
+		/// subscribers with a different scope.
+		/// </summary>
+		[Test]
+		public void Scoped_Publish_Delivers_Only_To_Matching_Scope_And_Unscoped_Subscribers()
+		{
+			// Set up.
+			var scopeA = new TestPubSubScope();
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { One = true };
+			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { One = true };
+			var unscopedSubscriber = new ScopeAwareSubscriber(null) { One = true };
+			subscriberA.DoSubscriptions();
+			subscriberB.DoSubscriptions();
+			unscopedSubscriber.DoSubscriptions();
+
+			// Run test.
+			FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false, scopeA));
+			Assert.That(subscriberA.One, Is.False); // Same scope: delivered.
+			Assert.That(subscriberB.One, Is.True); // Different scope: not delivered.
+			Assert.That(unscopedSubscriber.One, Is.False); // Unscoped subscriber: delivered.
+
+			subscriberA.DoUnsubscriptions();
+			subscriberB.DoUnsubscriptions();
+			unscopedSubscriber.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// An unscoped publish is process-wide: every subscriber receives it, scoped or not.
+		/// </summary>
+		[Test]
+		public void Unscoped_Publish_Delivers_To_Scoped_And_Unscoped_Subscribers()
+		{
+			// Set up.
+			var scopedSubscriber = new ScopeAwareSubscriber(new TestPubSubScope()) { One = true };
+			var unscopedSubscriber = new ScopeAwareSubscriber(null) { One = true };
+			scopedSubscriber.DoSubscriptions();
+			unscopedSubscriber.DoSubscriptions();
+
+			// Run test.
+			FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false));
+			Assert.That(scopedSubscriber.One, Is.False); // Delivered.
+			Assert.That(unscopedSubscriber.One, Is.False); // Delivered.
+
+			scopedSubscriber.DoUnsubscriptions();
+			unscopedSubscriber.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// The scope must survive the EndOfActionManager round trip through the idle queue.
+		/// </summary>
+		[Test]
+		public void Scope_Is_Preserved_Through_PublishAtEndOfAction()
+		{
+			// Set up.
+			var scopeA = new TestPubSubScope();
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { Two = int.MinValue };
+			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { Two = int.MinValue };
+			subscriberA.DoSubscriptions();
+			subscriberB.DoSubscriptions();
+
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, scopeA));
+
+			// Nothing is delivered until the idle queue drains.
+			Assert.That(subscriberA.Two, Is.EqualTo(int.MinValue));
+			Assert.That(subscriberB.Two, Is.EqualTo(int.MinValue));
+
+			// SUT - Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
+
+			Assert.That(subscriberA.Two, Is.EqualTo(int.MaxValue)); // Same scope: delivered.
+			Assert.That(subscriberB.Two, Is.EqualTo(int.MinValue)); // Different scope: not delivered.
+
+			subscriberA.DoUnsubscriptions();
+			subscriberB.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// EndOfAction coalescing is per (message, scope): the same message queued from two
+		/// scopes is delivered to both, while a re-publish from the same scope overwrites.
+		/// </summary>
+		[Test]
+		public void PublishAtEndOfAction_Coalesces_Per_Scope()
+		{
+			// Set up.
+			var scopeA = new TestPubSubScope();
+			var scopeB = new TestPubSubScope();
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { Two = int.MinValue };
+			var subscriberB = new ScopeAwareSubscriber(scopeB) { Two = int.MinValue };
+			subscriberA.DoSubscriptions();
+			subscriberB.DoSubscriptions();
+
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, 1, scopeA));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, 2, scopeB));
+			// Same scope again: coalesces with (overwrites) the first scopeA publish.
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, 3, scopeA));
+
+			// SUT - Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
+
+			Assert.That(subscriberA.Two, Is.EqualTo(3)); // Latest scopeA publish won.
+			Assert.That(subscriberB.Two, Is.EqualTo(2)); // scopeB publish survived independently.
+
+			subscriberA.DoUnsubscriptions();
+			subscriberB.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// Prefix subscriptions honor the same scope rule as specific subscriptions:
+		/// scoped publishes skip other-scope prefix subscribers and reach same-scope and
+		/// unscoped ones; non-matching prefixes are never delivered.
+		/// </summary>
+		[Test]
+		public void Prefix_Subscriptions_Honor_Scope()
+		{
+			// Set up.
+			var scopeA = new TestPubSubScope();
+			var subscriberA = new PrefixScopeAwareSubscriber(scopeA);
+			var subscriberB = new PrefixScopeAwareSubscriber(new TestPubSubScope());
+			var unscopedSubscriber = new PrefixScopeAwareSubscriber(null);
+			subscriberA.DoSubscriptions();
+			subscriberB.DoSubscriptions();
+			unscopedSubscriber.DoSubscriptions();
+
+			// Run test.
+			FwUtils.Publisher.Publish(new PublisherParameterObject("PrefixedMessageOne", 7, scopeA));
+			Assert.That(subscriberA.LastMessage, Is.EqualTo("PrefixedMessageOne")); // Same scope: delivered.
+			Assert.That(subscriberB.LastMessage, Is.Null); // Different scope: not delivered.
+			Assert.That(unscopedSubscriber.LastMessage, Is.EqualTo("PrefixedMessageOne")); // Unscoped subscriber: delivered.
+
+			subscriberA.LastMessage = null;
+			unscopedSubscriber.LastMessage = null;
+			FwUtils.Publisher.Publish(new PublisherParameterObject("UnrelatedMessage", 7, scopeA));
+			Assert.That(subscriberA.LastMessage, Is.Null); // Prefix does not match: not delivered.
+			Assert.That(unscopedSubscriber.LastMessage, Is.Null);
+
+			subscriberA.DoUnsubscriptions();
+			subscriberB.DoUnsubscriptions();
+			unscopedSubscriber.DoUnsubscriptions();
+		}
+
 		[Test]
 		[TestCase(null)]
 		[TestCase("")]
@@ -550,6 +691,81 @@ namespace SIL.FieldWorks.Common.FwUtils
 			private void MessageTwoHandler(object newValue)
 			{
 				Two = (int)newValue;
+			}
+		}
+
+		private sealed class TestPubSubScope : IPubSubScope
+		{
+		}
+
+		private sealed class PrefixScopeAwareSubscriber
+		{
+			private readonly IPubSubScope _scope;
+
+			internal PrefixScopeAwareSubscriber(IPubSubScope scope)
+			{
+				_scope = scope;
+			}
+
+			internal string LastMessage { get; set; }
+
+			/// <summary>
+			/// This is the subscribed prefix handler for messages starting with "PrefixedMessage".
+			/// </summary>
+			private void PrefixedMessageHandler(string message, object newValue)
+			{
+				LastMessage = message;
+			}
+
+			internal void DoSubscriptions()
+			{
+				FwUtils.Subscriber.PrefixSubscribe("PrefixedMessage", PrefixedMessageHandler, _scope);
+			}
+
+			internal void DoUnsubscriptions()
+			{
+				FwUtils.Subscriber.PrefixUnsubscribe("PrefixedMessage", PrefixedMessageHandler);
+			}
+		}
+
+		private sealed class ScopeAwareSubscriber
+		{
+			private readonly IPubSubScope _scope;
+
+			internal ScopeAwareSubscriber(IPubSubScope scope)
+			{
+				_scope = scope;
+			}
+
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			/// <summary>
+			/// This is the subscribed message handler for "MessageOne" message.
+			/// </summary>
+			private void MessageOneHandler(object newValue)
+			{
+				One = (bool)newValue;
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for the SelectionChanged message.
+			/// </summary>
+			private void SelectionChangedHandler(object newValue)
+			{
+				Two = (int)newValue;
+			}
+
+			internal void DoSubscriptions()
+			{
+				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler, _scope);
+				FwUtils.Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChangedHandler, _scope);
+			}
+
+			internal void DoUnsubscriptions()
+			{
+				FwUtils.Subscriber.Unsubscribe("MessageOne", MessageOneHandler);
+				FwUtils.Subscriber.Unsubscribe(EventConstants.SelectionChanged, SelectionChangedHandler);
 			}
 		}
 

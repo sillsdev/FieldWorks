@@ -195,9 +195,9 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("LinkListener", this, true);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
 
-			Subscriber.Subscribe(EventConstants.AddContextToHistory, AddContextToHistory);
-			Subscriber.Subscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink);
-			Subscriber.Subscribe(EventConstants.FollowLink, FollowLink);
+			Subscriber.Subscribe(EventConstants.AddContextToHistory, AddContextToHistory, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.FollowLink, FollowLink, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>
@@ -418,7 +418,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
-			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexiconEdit", guids[guids.Length - 1])));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]), m_propertyTable.GetWindow()));
 			return true;
 		}
 
@@ -512,7 +512,7 @@ namespace SIL.FieldWorks.XWorks
 							// Thus we've created this method (on AreaListener) which we call through the FwUtils Publisher/Subscriber.
 							var parameters = new object[2];
 							parameters[0] = majorObject;
-							Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
+							Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters, m_propertyTable.GetWindow()));
 							realTool = (string)parameters[1];
 							break;
 						case RnResearchNbkTags.kClassId:
@@ -555,7 +555,7 @@ namespace SIL.FieldWorks.XWorks
 						true);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
-				Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, m_lnkActive.ToolName));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, m_lnkActive.ToolName, m_propertyTable.GetWindow()));
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)

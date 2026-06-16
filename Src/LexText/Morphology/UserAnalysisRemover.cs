@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			});
 
-			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null, m_dlg.PropTable?.GetWindow()));
 
 		}
 

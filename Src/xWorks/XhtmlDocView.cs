@@ -713,7 +713,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				// Jump to field on idle to allow JumpToRecord to finish.
 				object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
-				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.JumpToField, arguments));
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.JumpToField, arguments, propertyTable.GetWindow()));
 			}
 		}
 
@@ -1520,7 +1520,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (progressDlg.IsCanceling)
 					{
-						Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, "lexiconEdit"));
+						Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, "lexiconEdit", m_propertyTable.GetWindow()));
 					}
 					else
 					{

@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this, m_propertyTable.GetWindow()));
 				}
 				else
 				{

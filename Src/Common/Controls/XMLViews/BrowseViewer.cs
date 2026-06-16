@@ -3298,7 +3298,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xbv.Init(mediator, propertyTable, configurationParameters);
 			m_xbv.AccessibleName = "BrowseViewer";
 			m_mediator = mediator;
-			Subscriber.Subscribe(EventConstants.RemoveFilters, RemoveFilters);
+			Subscriber.Subscribe(EventConstants.RemoveFilters, RemoveFilters, propertyTable.GetWindow());
 		}
 		/// <summary>
 		/// Should not be called if disposed.

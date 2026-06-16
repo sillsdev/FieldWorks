@@ -572,7 +572,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
-				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform)));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform), m_propertyTable.GetWindow()));
 				ChangesWereMade = true;
 
 
@@ -1537,10 +1537,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					else
 					{
-						Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfOld));
+						Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfOld, RespellSda?.PropTable?.GetWindow()));
 					}
 				}
-				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfNew));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.ItemDataModified, wfNew, RespellSda?.PropTable?.GetWindow()));
 				uuow.RollBack = false;
 			}
 		}

@@ -775,8 +775,8 @@ namespace SIL.FieldWorks.IText
 			m_fullyInitialized = true;
 			RefreshPaneBar();
 
-			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
-			Subscriber.Subscribe(EventConstants.RefreshInterlin, RefreshInterlin);
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.RefreshInterlin, RefreshInterlin, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>
@@ -1356,7 +1356,7 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, link));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, link, m_propertyTable.GetWindow()));
 			}
 		}
 

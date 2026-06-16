@@ -2630,7 +2630,7 @@ namespace SIL.FieldWorks.IText
 			private void OnSelectEditLexicalEntry(object sender, EventArgs args)
 			{
 				ILexEntry lexEntry = GetLexEntry();
-				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, lexEntry.Hvo));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, lexEntry.Hvo, m_sandbox.m_propertyTable?.GetWindow()));
 			}
 
 			private ILexEntry GetLexEntry()

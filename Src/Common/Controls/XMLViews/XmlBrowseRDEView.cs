@@ -104,8 +104,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// Use the ones in fakeFlid, and any we create.
 			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
 
-			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
-			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
 		}
 
 		#endregion Construction, initialization, and disposal.

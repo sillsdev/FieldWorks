@@ -1767,7 +1767,7 @@ namespace SIL.FieldWorks.Common.Controls
 						FwLinkArgs linkArgs = new FwLinkArgs(url);
 						linkArgs.DisplayErrorMsg = false;
 						var retObj = new ReturnObject(linkArgs);
-						Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj));
+						Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj, m_xbv?.m_bv?.PropTable?.GetWindow()));
 						if (retObj.ReturnValue)
 							return;
 					}

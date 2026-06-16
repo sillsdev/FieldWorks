@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
 					// We need to handle this the same way as the delete command in the slice menu.
-					Publisher.Publish(new PublisherParameterObject(EventConstants.DataTreeDelete, null));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.DataTreeDelete, null, m_propertyTable.GetWindow()));
 				else
 					DeleteObjectFromVector(sel, cvsli, hvoObj, LexEdStrings.ksUndoDeleteRef, LexEdStrings.ksRedoDeleteRef);
 			}

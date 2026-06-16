@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 						SaveModel();
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
-						Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
+						Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists", _propertyTable.GetWindow()));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);

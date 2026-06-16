@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
-					// we have been disposed by now
+					// we have been disposed by now.
 					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewMessages, null));
 				}
 			}
@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
-					// we have been disposed by now
+					// we have been disposed by now.
 					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewLiftMessages, null));
 				}
 			}
@@ -1512,7 +1512,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
 				var args = new LocalLinkArgs { Link = e.JumpUrl };
-				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args, _propertyTable.GetWindow()));
 			}
 		}
 

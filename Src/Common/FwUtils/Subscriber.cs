@@ -13,10 +13,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	internal sealed class Subscriber : ISubscriber
 	{
-		private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions =
-			new Dictionary<string, HashSet<Action<object>>>();
-		private readonly Dictionary<string, HashSet<Action<string, object>>> _prefixSubscriptions =
-			new Dictionary<string, HashSet<Action<string, object>>>();
+		private readonly Dictionary<string, Dictionary<Action<object>, IPubSubScope>> _subscriptions =
+			new Dictionary<string, Dictionary<Action<object>, IPubSubScope>>();
+		private readonly Dictionary<string, Dictionary<Action<string, object>, IPubSubScope>> _prefixSubscriptions =
+			new Dictionary<string, Dictionary<Action<string, object>, IPubSubScope>>();
 
 		#region Implementation of ISubscriber
 
@@ -27,16 +27,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="message">The message being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when <paramref name="message"/>
 		/// has been published</param>
-		public void Subscribe(string message, Action<object> messageHandler)
+		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// When non-null, scoped publishes of <paramref name="message"/> are delivered only if they
+		/// carry the same scope. Null subscribes will receive messages from all publishers.
+		/// See <see cref="IPubSubScope"/>.</param>
+		public void Subscribe(string message, Action<object> messageHandler, IPubSubScope scope = null)
 		{
 			if (!_subscriptions.TryGetValue(message, out var subscribers))
 			{
-				subscribers = new HashSet<Action<object>>();
+				subscribers = new Dictionary<Action<object>, IPubSubScope>();
 				_subscriptions.Add(message, subscribers);
 			}
 			// NB: If an ill-behaved subscribing object registers the same delegate more than once
-			// for the same message, then only one registration will 'take'.
-			subscribers.Add(messageHandler);
+			// for the same message, then only one registration will 'take' (the latest scope wins).
+			subscribers[messageHandler] = scope;
 		}
 
 		/// <summary>
@@ -50,16 +54,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="messagePrefix">The message prefix being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when a message that
 		/// begins with <paramref name="messagePrefix"/> has been published.</param>
-		public void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler)
+		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// When non-null, scoped publishes of matching messages are delivered only if they
+		/// carry the same scope. Null subscribes will receive messages from all publishers.
+		/// See <see cref="IPubSubScope"/>.</param>
+		public void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler, IPubSubScope scope = null)
 		{
 			if (!_prefixSubscriptions.TryGetValue(messagePrefix, out var prefixSubscribers))
 			{
-				prefixSubscribers = new HashSet<Action<string, object>>();
+				prefixSubscribers = new Dictionary<Action<string, object>, IPubSubScope>();
 				_prefixSubscriptions.Add(messagePrefix, prefixSubscribers);
 			}
 			// NB: If an ill-behaved subscribing object registers the same delegate more than once
-			// for the same message, then only one registration will 'take'.
-			prefixSubscribers.Add(messageHandler);
+			// for the same message, then only one registration will 'take' (the latest scope wins).
+			prefixSubscribers[messageHandler] = scope;
 		}
 
 		/// <summary>
@@ -103,17 +111,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Get all current subscriptions.
+		/// Get all current subscriptions: per message, each handler with the scope it subscribed
+		/// under (null scope = process-wide).
 		/// </summary>
-		public IReadOnlyDictionary<string, HashSet<Action<object>>> Subscriptions =>
-			new ReadOnlyDictionary<string, HashSet<Action<object>>>(_subscriptions);
+		public IReadOnlyDictionary<string, Dictionary<Action<object>, IPubSubScope>> Subscriptions =>
+			new ReadOnlyDictionary<string, Dictionary<Action<object>, IPubSubScope>>(_subscriptions);
 
 		/// <summary>
-		/// Get all the current prefix subscriptions. If a message starts with one of these
+		/// Get all the current prefix subscriptions: per prefix, each handler with the scope it
+		/// subscribed under (null scope = process-wide). If a message starts with one of these
 		/// prefixes then the prefix subscribers will get notified.
 		/// </summary>
-		public IReadOnlyDictionary<string, HashSet<Action<string, object>>> PrefixSubscriptions =>
-			new ReadOnlyDictionary<string, HashSet<Action<string, object>>>(_prefixSubscriptions);
+		public IReadOnlyDictionary<string, Dictionary<Action<string, object>, IPubSubScope>> PrefixSubscriptions =>
+			new ReadOnlyDictionary<string, Dictionary<Action<string, object>, IPubSubScope>>(_prefixSubscriptions);
 
 		#endregion
 	}
