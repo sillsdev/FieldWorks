@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							FwLinkArgs linkArgs = new FwLinkArgs(url);
 							linkArgs.DisplayErrorMsg = false;
 							var retObj = new ReturnObject(linkArgs);
-							Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj));
+							Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, retObj, PropertyTable?.GetWindow()));
 							if (retObj.ReturnValue)
 								return;
 						}

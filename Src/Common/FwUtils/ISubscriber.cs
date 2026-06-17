@@ -20,11 +20,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="message">The message being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when <paramref name="message"/>
 		/// has been published</param>
-		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// <param name="scope">Delivery scope, normally the subscriber's main window; pass null to subscribe process-wide.
 		/// When non-null, scoped publishes of <paramref name="message"/> are delivered only if they
 		/// carry the same scope. Null subscribes will receive messages from all publishers.
 		/// See <see cref="IPubSubScope"/>.</param>
-		void Subscribe(string message, Action<object> messageHandler, IPubSubScope scope = null);
+		void Subscribe(string message, Action<object> messageHandler, IPubSubScope scope);
 
 		/// <summary>
 		/// An object subscribes to messages that begin with <paramref name="messagePrefix"/> using
@@ -37,11 +37,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="messagePrefix">The message prefix being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when a message that
 		/// begins with <paramref name="messagePrefix"/> has been published.</param>
-		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// <param name="scope">Delivery scope, normally the subscriber's main window; pass null to subscribe process-wide.
 		/// When non-null, scoped publishes of matching messages are delivered only if they
 		/// carry the same scope. Null subscribes will receive messages from all publishers.
 		/// See <see cref="IPubSubScope"/>.</param>
-		void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler, IPubSubScope scope = null);
+		void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler, IPubSubScope scope);
 
 		/// <summary>
 		/// Register end of interest (unsubscribe) of an object in receiving <paramref name="message"/>

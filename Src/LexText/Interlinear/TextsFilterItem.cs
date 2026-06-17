@@ -19,15 +19,17 @@ namespace SIL.FieldWorks.IText
 	public class TextsFilterItem : NoChangeFilterComboItem
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
-		public TextsFilterItem(ITsString tssName, LcmCache cache, Mediator mediator) : base(tssName)
+		public TextsFilterItem(ITsString tssName, LcmCache cache, Mediator mediator, PropertyTable propertyTable) : base(tssName)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		public override bool Invoke()
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.AddTexts, this));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddTexts, this, m_propertyTable?.GetWindow()));
 
 			return false; // Whatever the user did, we don't currently count it as changing the filter.
 		}

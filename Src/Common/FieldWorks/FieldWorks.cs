@@ -478,7 +478,8 @@ namespace SIL.FieldWorks
 
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, null));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, null,
+				fwApp.ActiveMainWindow as IxWindow));
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -1847,9 +1848,11 @@ namespace SIL.FieldWorks
 								if (projectLaunched)
 								{
 									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-									if (Form.ActiveForm is IxWindow mainWindow)
+									if (Form.ActiveForm is IxWindow)
 									{
-										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport, null, mainWindow));
+										// SFMImport's subscriber is the app-level LexTextApp, which cannot be scoped,
+										// so this is intentionally published with a null (process-wide) scope.
+										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport, null, null));
 									}
 									else
 									{

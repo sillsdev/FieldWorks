@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public sealed class PublisherParameterObject
 	{
-		public PublisherParameterObject(string message, object data = null, IPubSubScope scope = null)
+		public PublisherParameterObject(string message, object data, IPubSubScope scope)
 		{
 			if (string.IsNullOrWhiteSpace(message))
 			{

@@ -216,7 +216,7 @@ namespace LexTextDllTests
 			parameters[0] = list;
 
 			// SUT: publish exactly as LinkListener.FollowActiveLink does.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters, null));
 
 			// Verify: the configured tool name was returned via the payload.
 			Assert.That(parameters[1], Is.EqualTo("myConfiguredListEdit"));
@@ -243,7 +243,7 @@ namespace LexTextDllTests
 			parameters[0] = customList;
 
 			// SUT
-			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetToolForList, parameters, null));
 
 			// Verify: whitespace stripped from the name, with "Edit" appended.
 			Assert.That(parameters[1], Is.EqualTo("MyCustomListEdit"));

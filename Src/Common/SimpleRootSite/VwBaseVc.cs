@@ -210,6 +210,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal Mediator Mediator { get; set; }
 
+		/// <summary>
+		/// PropertyTable is supplied during first real layout by the root site (see SetupVc).
+		/// </summary>
+		protected internal PropertyTable PropertyTable { get; set; }
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Perform whatever action is appropriate when the user clicks on a hot link
@@ -236,7 +241,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// See if we can handle it (via our own LinkListener) without starting a process.
 				var args = new LocalLinkArgs { Link = url };
-				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args, PropertyTable?.GetWindow()));
 				if (args.LinkHandledLocally)
 				{
 					return;
