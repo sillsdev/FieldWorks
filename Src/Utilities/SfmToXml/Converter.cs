@@ -2583,7 +2583,11 @@ namespace Sfm2Xml
 			processedText = processedText.Trim();	// remove whitespace
 
 			// make sure the data is only in the following range:
-			// 0x09, 0x0a, 0x0d, 0x20-0xd7ff, 0xe000-0xfffd
+			// 0x09, 0x0a, 0x0d, 0x20-0xd7ff, 0xe000-0xfffd, 0x10000-0x10ffff
+			// The last range (supplementary planes) is encoded in .NET strings as
+			// surrogate pairs (a high surrogate 0xd800-0xdbff followed by a low
+			// surrogate 0xdc00-0xdfff). These are valid XML characters and must be
+			// preserved; only lone/unpaired surrogates are invalid (LT-20644).
 			// not using foreach so chars can be removed during processing w/o messing up the iterator
 			System.Text.StringBuilder strTemp = new System.Text.StringBuilder(processedText);
 			int lastPos = strTemp.Length;
@@ -2596,6 +2600,10 @@ namespace Sfm2Xml
 					c == 0x09 || c == 0x0d || c== 0x0a)
 				{
 					pos++;	// valid data
+				}
+				else if (char.IsHighSurrogate(c) && pos + 1 < lastPos && char.IsLowSurrogate(strTemp[pos + 1]))
+				{
+					pos += 2;	// valid surrogate pair (supplementary-plane character)
 				}
 				else
 				{
