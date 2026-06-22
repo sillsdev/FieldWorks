@@ -10,6 +10,12 @@
 > Avalonia path — true under the new policy too), the inventory tables below as reference, and the
 > Gecko/browser/PDF classification (sections still owned by lexical-edit tasks 5.5–5.8).
 
+## Handoff Notes (2026-06-15, from `avalonia-multi-writing-system-text-foundation`)
+
+- Managed `ITsString` rich-run projection/edit/write-back landed for lexical text rows, including coexistence clipboard/drag-drop and shared undo/refresh behavior; this closes text-foundation blockers without changing Graphite fallback policy.
+- The Avalonia text lane now has automated coverage for Unicode grapheme boundaries (combining marks/surrogate pairs/ZWJ), IME composition-state transitions, and mixed-direction selection regressions; these results should be consumed by `graphite-transition-support` as input evidence, not as a policy override.
+- Explicitly deferred for Graphite-policy tracking: `StText` editing and unsupported object-content rich runs (read-only lane). Keep these in the G-classification backlog until dedicated support lands.
+
 This plan treats Graphite and native Views rendering as a migration risk, not as a solved problem. The key correction from re-research: Avalonia using Skia/HarfBuzz does not automatically prove Graphite parity. HarfBuzz Graphite2 shaping is optional and its own documentation says Graphite2 support is currently not enabled by default when building HarfBuzz.
 
 ## 1. Current Repo Inventory

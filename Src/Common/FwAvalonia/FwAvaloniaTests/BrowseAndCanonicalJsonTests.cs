@@ -147,6 +147,7 @@ namespace FwAvaloniaTests
 				ghostWs: "analysis",
 				ghostClass: "LexSense",
 				ghostLabel: "Gloss",
+				forVariant: true,
 				ghostInitMethod: "SetMorphTypeToRoot",
 				condition: new ViewCondition(
 					negated: true,
@@ -201,6 +202,7 @@ namespace FwAvaloniaTests
 				Assert.That(r.GhostWs, Is.EqualTo("analysis"), nameof(r.GhostWs));
 				Assert.That(r.GhostClass, Is.EqualTo("LexSense"), nameof(r.GhostClass));
 				Assert.That(r.GhostLabel, Is.EqualTo("Gloss"), nameof(r.GhostLabel));
+				Assert.That(r.ForVariant, Is.True, nameof(r.ForVariant));
 				Assert.That(r.GhostInitMethod, Is.EqualTo("SetMorphTypeToRoot"), nameof(r.GhostInitMethod));
 				Assert.That(r.Condition, Is.Not.Null, nameof(r.Condition));
 				Assert.That(r.Condition.Negated, Is.True, "Condition.Negated");

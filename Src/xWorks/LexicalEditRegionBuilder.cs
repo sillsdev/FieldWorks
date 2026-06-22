@@ -91,33 +91,29 @@ namespace SIL.FieldWorks.XWorks
 		// Tasks 6.2/6.13 (multi-WS read path): one row per *current* writing system — the same
 		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
 		// with the project's per-WS default font so both surfaces show the same record consistently.
+		// Review task 12: the per-ws row projection is the shared RegionValueFactory recipe (the
+		// composer uses the same one); only the text reads live here.
 		private IReadOnlyList<RegionWsValue> GetLexemeFormValues()
 		{
-			var values = new List<RegionWsValue>();
-			foreach (var ws in _cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
-			{
-				var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle)?.Text;
-				if (string.IsNullOrEmpty(text) && ws.Handle == _cache.DefaultVernWs)
-					text = _entry.CitationForm.get_String(ws.Handle)?.Text; // legacy fallback, default ws only
-				values.Add(new RegionWsValue(ws.Abbreviation, text ?? string.Empty, ws.DefaultFontName, 0,
-					ws.RightToLeftScript, ws.Id));
-			}
-
-			return values;
+			return RegionValueFactory.BuildMultiWsValues(
+				_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems, ws =>
+				{
+					var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle);
+					if ((text == null || text.Length == 0) && ws.Handle == _cache.DefaultVernWs)
+						text = _entry.CitationForm.get_String(ws.Handle); // legacy fallback, default ws only
+					return text;
+				}, _cache.WritingSystemFactory);
 		}
 
 		private IReadOnlyList<RegionWsValue> GetGlossValues()
 		{
-			var values = new List<RegionWsValue>();
 			if (_entry.SensesOS.Count == 0)
-				return values;
+				return new List<RegionWsValue>();
 
 			var gloss = _entry.SensesOS[0].Gloss;
-			foreach (var ws in _cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-				values.Add(new RegionWsValue(ws.Abbreviation, gloss.get_String(ws.Handle)?.Text ?? string.Empty,
-					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id));
-
-			return values;
+			return RegionValueFactory.BuildMultiWsValues(
+				_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems,
+				ws => gloss.get_String(ws.Handle), _cache.WritingSystemFactory);
 		}
 
 		/// <summary>
@@ -149,19 +145,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <inheritdoc />
 		public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
 		{
-			var options = new List<RegionChoiceOption>();
 			if (fieldNode.Field != MorphTypeField)
-				return options;
+				return new List<RegionChoiceOption>();
 
 			// Task 4.10: chooser options come from the project's morph-type possibility list, keyed by
 			// guid, so every project-defined morph type (phrase, clitic, infix, ...) is offered instead
 			// of a hardcoded subset.
 			var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 			if (morphTypes == null)
-				return options;
+				return new List<RegionChoiceOption>();
 
-			AddPossibilities(morphTypes.PossibilitiesOS, options);
-			return options;
+			// Review task 12: the shared flattener (document order, hierarchy as Depth, and the
+			// composer's name-fallback rule — this builder's old analysis→vernacular fallback is
+			// subsumed by ShortName's own legacy resolution; see RegionValueFactory).
+			return RegionValueFactory.BuildPossibilityOptions(morphTypes, flat: false);
 		}
 
 		/// <inheritdoc />
@@ -171,18 +168,6 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 
 			return _entry.LexemeFormOA?.MorphTypeRA?.Guid.ToString();
-		}
-
-		private static void AddPossibilities(IEnumerable<ICmPossibility> possibilities, List<RegionChoiceOption> options)
-		{
-			foreach (var possibility in possibilities)
-			{
-				var name = possibility.Name.BestAnalysisAlternative?.Text;
-				if (string.IsNullOrEmpty(name))
-					name = possibility.Name.BestVernacularAlternative?.Text ?? possibility.Guid.ToString();
-				options.Add(new RegionChoiceOption(possibility.Guid.ToString(), name));
-				AddPossibilities(possibility.SubPossibilitiesOS, options);
-			}
 		}
 
 		private string GetLexemeFormText()

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
@@ -24,6 +25,8 @@ namespace FwAvaloniaTests
 	internal sealed class FakeRegionEditContext : IRegionEditContext
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
+		public readonly List<(string Field, string Ws, RegionRichTextValue Value)> RichTextEdits
+			= new List<(string, string, RegionRichTextValue)>();
 		public readonly List<(string Field, string Key)> OptionEdits = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceAdds = new List<(string, string)>();
 		public readonly List<(string Field, string Key)> ReferenceRemoves = new List<(string, string)>();
@@ -51,6 +54,12 @@ namespace FwAvaloniaTests
 		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
 			TextEdits.Add((field.Field, ws, value));
+			return true;
+		}
+
+		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		{
+			RichTextEdits.Add((field.Field, ws, value));
 			return true;
 		}
 
@@ -100,6 +109,26 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => "g1";
 		}
 
+		private sealed class RichEditingValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "dog", wsTag: "qaa-x-rich",
+						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+							new[]
+							{
+								new RegionTextRun("do", "qaa-x-rich"),
+								new RegionTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
+							}))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
 			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
@@ -109,6 +138,19 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			return (view, context, window);
+		}
+
+		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
+			InMemoryFwClipboard clipboard) ShowRichEditable()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichEditingValueProvider());
+			var context = new FakeRegionEditContext();
+			var clipboard = new InMemoryFwClipboard();
+			var view = new LexicalEditRegionView(model, context, clipboard: clipboard);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (view, context, window, clipboard);
 		}
 
 		private static T Find<T>(Control view, string automationId) where T : Control
@@ -132,6 +174,70 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void RichTextChange_StagesThroughTheRichEditContext_AndPreservesRunMetadata()
+		{
+			var (view, context, _, _) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			Assert.That(box, Is.Not.Null);
+			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
+
+			box.Text = "dug";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits, Is.Empty, "rich rows stage through the rich-text seam, not the plain-text setter");
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.PlainText, Is.EqualTo("dug"));
+			Assert.That(rich.Runs.Select(r => r.Text), Is.EqualTo(new[] { "du", "g" }));
+			Assert.That(rich.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
+				"the unchanged trailing run keeps its style metadata");
+		}
+
+		[AvaloniaTest]
+		public void RichTextCopy_UsesTheSharedClipboardPayload()
+		{
+			var (view, _, _, clipboard) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			box.SelectionStart = 0;
+			box.SelectionEnd = box.Text.Length;
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = box.ContextFlyout as MenuFlyout;
+			var copyItem = flyout?.Items.OfType<MenuItem>().Single();
+			Assert.That(copyItem, Is.Not.Null);
+			copyItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			var payload = clipboard.GetText();
+			Assert.That(payload, Is.Not.Null);
+			Assert.That(payload.PlainText, Is.EqualTo("dog"));
+			Assert.That(payload.RichText, Is.Not.Null);
+			Assert.That(payload.RichText.Runs[1].NamedStyle, Is.EqualTo("Emphasis"));
+		}
+
+		[AvaloniaTest]
+		public void ChooserFlyout_StripsTheHeavyGreyPresenterChrome_SoThePickerOwnsTheOnlyBorder()
+		{
+			// The "thick grey border" was the default Fluent FlyoutPresenter (its grey padding +
+			// border) wrapping the picker. The option flyout must zero that chrome so the picker's
+			// own thin border is the single visible boundary.
+			var (view, _, _) = ShowEditable();
+			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
+
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+
+			var picker = (FwOptionPicker)flyout.Content;
+			var presenter = picker.GetVisualAncestors().OfType<FlyoutPresenter>().FirstOrDefault();
+			Assert.That(presenter, Is.Not.Null, "the picker is hosted inside a flyout presenter");
+			Assert.That(presenter.Padding, Is.EqualTo(new Thickness(0)),
+				"no thick grey padding wraps the picker — the heavy presenter chrome is stripped");
+			Assert.That(presenter.BorderThickness, Is.EqualTo(new Thickness(0)),
+				"no heavy grey presenter border — the picker draws the single clean border");
+		}
+
+		[AvaloniaTest]
 		public void ChooserChange_StagesOptionKeyThroughTheEditContext()
 		{
 			var (view, context, _) = ShowEditable();
@@ -139,8 +245,12 @@ namespace FwAvaloniaTests
 			Assert.That(chooser, Is.Not.Null, "the chooser renders as the owned flyout field");
 			Assert.That(chooser.ValueText, Is.EqualTo("stem"), "shows the current selection");
 
-			var options = (ListBox)((Flyout)chooser.Flyout).Content;
-			options.SelectedItem = "suffix";
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 1; // "suffix"
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.OptionEdits, Has.Count.EqualTo(1));
@@ -239,8 +349,12 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var options = (ListBox)((Flyout)chooser.Flyout).Content;
-			options.SelectedIndex = 1;
+			var flyout = (Flyout)chooser.Flyout;
+			flyout.ShowAt(chooser);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 1;
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.OptionEdits, Has.Count.EqualTo(1),
@@ -357,24 +471,29 @@ namespace FwAvaloniaTests
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "Components.Add");
 
-			var flyoutPanel = (StackPanel)((Flyout)addButton.Flyout).Content;
-			var searchBox = flyoutPanel.Children.OfType<TextBox>().Single();
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			var searchBox = picker.FilterBox;
 			Assert.That(AutomationProperties.GetAutomationId(searchBox), Is.EqualTo("Components.Search"));
-			var results = flyoutPanel.Children.OfType<ListBox>().Single();
-			Assert.That(results.ItemsSource, Is.Null,
+			var results = picker.OptionsList;
+			Assert.That(AutomationProperties.GetAutomationId(results), Is.EqualTo("Components.Options"));
+			Assert.That(picker.CurrentItems, Is.Empty,
 				"nothing is enumerated before the user types — lexicons search, lists enumerate");
 
 			searchBox.Text = "ca";
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(queries, Does.Contain("ca"), "typing drives the field's search delegate");
-			var shown = ((IEnumerable<RegionChoiceOption>)results.ItemsSource).ToList();
+			var shown = picker.CurrentItems;
 			Assert.That(shown.Select(o => o.Key), Is.EqualTo(new[] { "e-casa", "e-cantar" }));
 
 			results.SelectedIndex = 1;
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
 			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("ComponentLexemes", "e-cantar")),
-				"selecting a search result stages the result's key through TryAddReferenceItem");
+				"committing a search result stages the result's key through TryAddReferenceItem");
 		}
 
 		[AvaloniaTest]
@@ -477,16 +596,21 @@ namespace FwAvaloniaTests
 			var (vector, context) = ShowVector(() => gestures++);
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
-			var list = (ListBox)((Flyout)addButton.Flyout).Content;
+			var flyout = (Flyout)addButton.Flyout;
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
 
-			list.SelectedIndex = 1; // "Pocket"
+			picker.OptionsList.SelectedIndex = 1; // "Pocket"
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
 			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("PublishIn", "p2")));
 			Assert.That(gestures, Is.EqualTo(1), "a successful add completes the gesture exactly once");
 
 			context.ReferenceGestureResult = false;
-			list.SelectedIndex = 0;
+			picker.OptionsList.SelectedIndex = 1;
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(2), "the second stage was attempted");
 			Assert.That(gestures, Is.EqualTo(1), "a failed add must NOT complete the gesture");
@@ -584,35 +708,31 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// GAP 1 / B7 — list-editor jump links in the gear flyouts: a chooser or reference-vector row
-	/// whose layout carries <c>chooserLink</c> metadata shows the legacy "Edit the … list" link
-	/// below the options (the ReallySimpleListChooser LinkLabel); clicking it closes the flyout and
-	/// raises the host's <see cref="RegionLinkRequest"/> callback, which dispatches the legacy
-	/// mediator FollowLink jump.
-	/// GAP 2 — the legacy slice tree-node menu button: a text row with a layout <c>menu=</c>
-	/// binding (the Lexeme Form's mnuDataTree-LexemeForm) gets the SAME hover-revealed gear, and
-	/// clicking it raises the slice-menu request a label right-click raises.
+	/// GEAR = CONFIGURE (the B7 rework): a chooser or reference-vector row whose supporting list
+	/// resolved a list-editor target (a goto <see cref="RegionChooserLink"/>) draws the gear, and
+	/// clicking it DIRECTLY raises the host's <see cref="RegionLinkRequest"/> — no flyout, no
+	/// context menu. Option flyouts (single-select chooser click, vector "+") are OPTIONS ONLY:
+	/// they contain zero link items. Rows without a resolvable list editor draw no gear; text
+	/// rows NEVER draw one (the Lexeme Form slice menu reverted to right-click only).
 	/// </summary>
 	[TestFixture]
-	public class RegionChooserLinkAndSliceMenuGearTests
+	public class RegionConfigureGearTests
 	{
-		private static IReadOnlyList<Button> LinkButtons(Control flyoutContent, string automationId)
-			=> ((StackPanel)flyoutContent).Children.OfType<Button>()
-				.Where(b => (AutomationProperties.GetAutomationId(b) ?? "")
-					.StartsWith(automationId + ".Link.", StringComparison.Ordinal))
-				.ToList();
+		private static LexicalEditRegionField LinkedChooserField() => new LexicalEditRegionField(
+			"MoForm/x/#0", "Morph Type", "MorphType", null,
+			RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
+			SurfaceRouting.Inherit, null,
+			new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1",
+			chooserLinks: new List<RegionChooserLink>
+			{
+				new RegionChooserLink("Edit the Morpheme Types list", "morphTypeEdit"),
+				new RegionChooserLink("Edit something else", "otherEdit") // first goto wins
+			});
 
 		[AvaloniaTest]
-		public void ChooserFlyout_ShowsTheJumpLink_BelowTheOptions_AndClickRaisesTheLinkRequest()
+		public void ChooserGear_Click_DispatchesTheFirstResolvedJump_NoFlyoutNoMenu()
 		{
-			var field = new LexicalEditRegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
-				RegionFieldKind.Chooser, EditorClassification.Known, "MorphTypeChooser", null,
-				SurfaceRouting.Inherit, null,
-				new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1",
-				chooserLinks: new List<RegionChooserLink>
-				{
-					new RegionChooserLink("Edit the Publications list", "publicationsEdit")
-				});
+			var field = LinkedChooserField();
 			var requests = new List<RegionLinkRequest>();
 			var context = new FakeRegionEditContext();
 			var chooser = new FwChooserField(field, "MorphTypeChooser", context, requests.Add);
@@ -620,27 +740,39 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var content = (StackPanel)((Flyout)chooser.Flyout).Content;
-			Assert.That(content.Children.OfType<ListBox>().Count(), Is.EqualTo(1),
-				"the options list still fronts the flyout");
-			Assert.That(content.Children.OfType<Border>().Count(), Is.EqualTo(1),
-				"a separator rule divides options from the link lane");
-			var links = LinkButtons(content, "MorphTypeChooser");
-			Assert.That(links, Has.Count.EqualTo(1));
-			Assert.That(AutomationProperties.GetName(links[0]), Is.EqualTo("Edit the Publications list"));
+			var gear = chooser.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "MorphTypeChooser.Settings");
+			Assert.That(gear.Flyout, Is.Null, "the gear carries no flyout");
+			Assert.That(gear.ContextFlyout, Is.Null, "the gear carries no context menu");
+			Assert.That(AutomationProperties.GetName(gear), Does.Contain("Morph Type"));
 
-			links[0].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			gear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(requests, Has.Count.EqualTo(1), "the link click raises the host callback");
+			Assert.That(requests, Has.Count.EqualTo(1), "the gear click raises RegionLinkRequest directly");
 			Assert.That(requests[0].Field, Is.SameAs(field));
-			Assert.That(requests[0].Link.Tool, Is.EqualTo("publicationsEdit"));
-			Assert.That(requests[0].Link.Label, Is.EqualTo("Edit the Publications list"));
-			Assert.That(context.OptionEdits, Is.Empty, "a jump is not an edit");
+			Assert.That(requests[0].Link.Tool, Is.EqualTo("morphTypeEdit"), "the FIRST goto link wins");
+			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.False, "no flyout opened from the gear");
+			Assert.That(context.OptionEdits, Is.Empty, "a configure jump is not an edit");
 		}
 
 		[AvaloniaTest]
-		public void VectorFlyout_ShowsTheJumpLink_AndClickRaisesTheLinkRequest()
+		public void ChooserFlyout_IsOptionsOnly_ZeroLinkItems()
+		{
+			var chooser = new FwChooserField(LinkedChooserField(), "MorphTypeChooser",
+				new FakeRegionEditContext(), request => { });
+
+			var picker = (FwOptionPicker)((Flyout)chooser.Flyout).Content;
+			Assert.That(picker.GetVisualDescendants().OfType<AutoCompleteBox>(), Is.Empty,
+				"the options flyout is the shared inline filter+list picker — no nested selector control");
+			Assert.That(picker.GetVisualDescendants().Contains(picker.OptionsList), Is.True,
+				"the options render inline in the one compact filterable picker — ZERO link items");
+			Assert.That(AutomationProperties.GetAutomationId(picker.FilterBox), Is.EqualTo("MorphTypeChooser.Search"));
+			Assert.That(AutomationProperties.GetAutomationId(picker.OptionsList), Is.EqualTo("MorphTypeChooser.Options"));
+		}
+
+		[AvaloniaTest]
+		public void VectorGear_Click_DispatchesTheJumpDirectly_AndTheAddFlyoutHasNoLinks()
 		{
 			var field = new LexicalEditRegionField("LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
 				RegionFieldKind.ReferenceVector, EditorClassification.Known, "PublishIn", null,
@@ -661,11 +793,14 @@ namespace FwAvaloniaTests
 
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
-			var content = (StackPanel)((Flyout)addButton.Flyout).Content;
-			var links = LinkButtons(content, "PublishIn");
-			Assert.That(links, Has.Count.EqualTo(1), "the vector gear/+ flyout carries the jump link too");
+			Assert.That(((Flyout)addButton.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+				"the + opens the one compact picker — options only, no link lane");
 
-			links[0].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			var gear = vector.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Settings");
+			Assert.That(gear.Flyout, Is.Null, "the vector gear has no flyout either");
+
+			gear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(requests, Has.Count.EqualTo(1));
@@ -675,27 +810,42 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void ChooserWithoutLinksOrCallback_KeepsTheBareOptionsList()
+		public void RowsWithoutAResolvableListEditor_HaveNoGear()
 		{
-			var field = new LexicalEditRegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
+			// No links: no gear, even with a host callback.
+			var noLinks = new LexicalEditRegionField("MoForm/x/#0", "Morph Type", "MorphType", null,
 				RegionFieldKind.Chooser, EditorClassification.Known, "PlainChooser", null,
 				SurfaceRouting.Inherit, null,
 				new List<RegionChoiceOption> { new RegionChoiceOption("g1", "stem") }, "g1");
-			var chooser = new FwChooserField(field, "PlainChooser", new FakeRegionEditContext(),
+			var chooser = new FwChooserField(noLinks, "PlainChooser", new FakeRegionEditContext(),
 				request => { });
+			Assert.That(chooser.HoverAffordances, Is.Empty, "no resolvable list editor, no gear");
+			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+				"the options picker still opens from the value click");
 
-			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<ListBox>(),
-				"no links: the flyout content stays the bare options list");
+			// Links but no host callback (nothing to dispatch through): no gear either.
+			var noCallback = new FwChooserField(LinkedChooserField(), "NoCallbackChooser",
+				new FakeRegionEditContext());
+			Assert.That(noCallback.HoverAffordances, Is.Empty, "no host bridge, no gear");
+
+			// A vector without links: bars + "+" only — no Settings button at all.
+			var vectorField = new LexicalEditRegionField("LexEntry/x/#1", "Publish Entry In",
+				"PublishIn", null, RegionFieldKind.ReferenceVector, EditorClassification.Known,
+				"PlainVector", null, SurfaceRouting.Inherit, null,
+				new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
+				null, isEditable: true, indent: 0, items: new List<RegionChoiceOption>());
+			var vector = new FwReferenceVectorField(vectorField, "PlainVector",
+				new FakeRegionEditContext(), null, request => { });
+			Assert.That(vector.Children.OfType<Button>()
+					.Any(b => AutomationProperties.GetAutomationId(b) == "PlainVector.Settings"),
+				Is.False, "no resolvable list editor, no vector gear");
 		}
 
-		// GAP 2: the legacy Lexeme Form slice's button is its slice TREE-NODE MENU
-		// (MoForm-Detail-AsLexemeForm binds menu="mnuDataTree-LexemeForm": Show in Concordance,
-		// Swap with Allomorph, Convert to Affix Process/Allomorph) — NOT a chooser launcher; the
-		// morph-type chooser w/ swap gate lives on the child Morph Type row, which already has a
-		// gear. So a text row with a menu binding gets the same hover-revealed gear raising the
-		// SAME slice-menu request a label right-click raises — data-driven from `menu=`.
+		// REVERT (gears never open context menus): the Lexeme Form text row draws NO gear; its
+		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label lane in
+		// the region view (RegionMenuTests) and the in-string lane below are unchanged.
 		[AvaloniaTest]
-		public void TextRowWithSliceMenuBinding_GetsTheHoverGear_AndClickRaisesTheSliceMenuRequest()
+		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{
 			var field = new LexicalEditRegionField("MoStemAllomorph/AsLexemeFormBasic/#0", "Lexeme Form",
 				"Form", null, RegionFieldKind.Text, EditorClassification.Known, "LexemeFormRow", null,
@@ -703,7 +853,7 @@ namespace FwAvaloniaTests
 				new List<RegionWsValue>
 				{
 					new RegionWsValue("vern", "casa"),
-					new RegionWsValue("ipa", "kasa") // the gear rides the FIRST row only
+					new RegionWsValue("ipa", "kasa")
 				},
 				null, null, isEditable: true, indent: 0, menuId: "mnuDataTree-LexemeForm");
 			var requests = new List<RegionMenuRequest>();
@@ -713,44 +863,12 @@ namespace FwAvaloniaTests
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var gears = text.GetVisualDescendants().OfType<Button>()
-				.Where(b => AutomationProperties.GetAutomationId(b) == "LexemeFormRow.Settings")
-				.ToList();
-			Assert.That(gears, Has.Count.EqualTo(1), "one gear, on the first alternative's row");
-			var gear = gears[0];
-			Assert.That(((IHoverAffordanceProvider)text).HoverAffordances, Does.Contain(gear),
-				"the gear is hover-revealed chrome, like the chooser's");
-			Assert.That(gear.Opacity, Is.EqualTo(0d), "starts hidden until row hover");
-			Assert.That(AutomationProperties.GetName(gear), Does.Contain("Lexeme Form"));
-
-			gear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-			Dispatcher.UIThread.RunJobs();
-
-			Assert.That(requests, Has.Count.EqualTo(1), "the gear raises the host menu bridge");
-			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.SliceMenu),
-				"same lane as a label right-click — the host shows mnuDataTree-LexemeForm");
-			Assert.That(requests[0].Field.MenuId, Is.EqualTo("mnuDataTree-LexemeForm"));
-		}
-
-		[AvaloniaTest]
-		public void TextRowWithoutMenuBinding_OrWithoutTheHostBridge_HasNoGear()
-		{
-			var noMenu = new LexicalEditRegionField("x/#0", "Citation Form", "CitationForm", null,
-				RegionFieldKind.Text, EditorClassification.Known, "NoMenuRow", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("vern", "casa") }, null, null);
-			var withoutMenu = new FwMultiWsTextField(noMenu, "NoMenuRow", new FakeRegionEditContext(),
-				null, request => { });
-			Assert.That(((IHoverAffordanceProvider)withoutMenu).HoverAffordances, Is.Empty,
-				"no menu binding, no gear");
-
-			var withMenu = new LexicalEditRegionField("x/#1", "Lexeme Form", "Form", null,
-				RegionFieldKind.Text, EditorClassification.Known, "NoBridgeRow", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("vern", "casa") }, null, null,
-				isEditable: true, indent: 0, menuId: "mnuDataTree-LexemeForm");
-			var withoutBridge = new FwMultiWsTextField(withMenu, "NoBridgeRow",
-				new FakeRegionEditContext(), null);
-			Assert.That(((IHoverAffordanceProvider)withoutBridge).HoverAffordances, Is.Empty,
-				"no host menu bridge, no gear (it could do nothing)");
+			Assert.That(text.GetVisualDescendants().OfType<Button>()
+					.Any(b => AutomationProperties.GetAutomationId(b) == "LexemeFormRow.Settings"),
+				Is.False, "the Lexeme Form slice-menu gear is reverted — text rows draw no gear");
+			Assert.That(((IHoverAffordanceProvider)text).HoverAffordances, Is.Empty,
+				"text rows expose no hover-revealed chrome");
+			Assert.That(requests, Is.Empty, "nothing dispatched a menu request on construction");
 		}
 	}
 

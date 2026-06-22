@@ -23,7 +23,7 @@ explicit evidence for remaining prototype strings.
   (default `RootNamespace` = project name `FwAvalonia`), which the accessor's base name
   matches.
 - All 8 keys have live consumers: `LexicalEditRegionView` (Save/Cancel/UnsupportedEditor),
-  `PocWinFormsHostControl.ShowNoEntry` (NoEntrySelected), `RecordEditView.cs:419`
+  `LexicalEditHostControl.Clear` (NoEntrySelected), `RecordEditView.cs:419`
   (EntryTypeUnsupported), `LexicalEditRegionEditContext.cs:110/130` (LexemeFormRequired,
   Undo/RedoEditEntry).
 - `FwAvaloniaStringsTests` (`FwAvaloniaTests/RegionEditingTests.cs:217-230`) proves every key
@@ -63,9 +63,9 @@ satellite dll is a follow-on check once it exists.
 - All automation selectors are nonlocalized code constants, never resource lookups:
   `LexicalEditRegionView`, `RegionEditor.Save`, `RegionEditor.Cancel`,
   `RegionEditor.ValidationErrors`, per-field ids from the IR (`field.AutomationId` falling
-  back to `StableId`, plus `.Label`/`.{wsAbbrev}` suffixes), `PocWinFormsHostControl`/
-  `AvaloniaHost`/`RecordEditView.AvaloniaPoc` on the WinForms host.
-- Locked by tests: `PocLexEntrySliceTests` (stable Avalonia automation metadata),
+  back to `StableId`, plus `.Label`/`.{wsAbbrev}` suffixes), `LexicalEditHostControl`/
+  `AvaloniaHost`/`RecordEditView.AvaloniaHost` on the WinForms host.
+- Locked by tests: `LexicalEditPreviewTests` (stable Avalonia automation metadata),
   `WinFormsUiaSmokeTests` (nonlocalized filter-combo ids), and the region editing suites
   (tasks 2.12, 6.8, 6.9).
 
@@ -101,20 +101,16 @@ Census method: grep of multi-word string literals over `Src/Common/FwAvalonia` e
 ### Resx-backed (correct)
 - All consumers listed in section 1.
 
-### Preview-host-only (acceptable by contract; `Poc*` files are preview-only — task 4.8/7.9)
-- `Poc/PocLexEntrySlice.cs:24,47,48` — "Lexical Edit POC Slice", "Lexeme Form", "Morph Type".
-- `Poc/MorphTypePopupChooser.cs:35,56` — "Morph type options", "Morph Type" (reached only via
-  `PocLexEntrySlice`/`ShowEntry`, which is preview-host-only).
-- `Poc/PocPreviewWindow.cs:22`, `Poc/PocEntryDto.cs` sample data,
-  `Poc/PocPreviewDataProvider.cs` ws/font literals, `Preview/AssemblyPreviewModules.cs:6`
-  ("Lexical Edit POC" module name).
-- **Note:** `Poc/PocWinFormsHostControl.cs` is *not* preview-only despite the prefix — it is
-  the product WinForms host (`RecordEditView.cs:69,98,520`). Its strings are classified below.
+### Preview-host-only (acceptable by contract; detached `Poc*` files retired)
+- The old `Poc*` preview files were deleted by `poc-retiring.md`.
+- Remaining preview-only literals live in `Preview/LexicalEditPreviewSupport.cs` sample values,
+  writing-system tags/font hints, and `Preview/AssemblyPreviewModules.cs` preview module metadata.
+- These values do not participate in any product route.
 
 ### Automation/accessibility identifiers (correctly nonlocalized)
 - `LexicalEditRegionView` ids, `RegionEditor.*` ids, field ids (section 3).
-- `PocWinFormsHostControl.cs:28,29,36` — `Name`/`AccessibleName` values
-  "PocWinFormsHostControl", "RecordEditView.AvaloniaPoc", "AvaloniaHost" (selector-shaped,
+- `LexicalEditHostControl.cs:32,33,42` — `Name`/`AccessibleName` values
+  "LexicalEditHostControl", "RecordEditView.AvaloniaHost", "AvaloniaHost" (selector-shaped,
   used by host contract tests).
 
 ### Developer/diagnostic strings (nonlocalized by design, not user-surfaced)
@@ -126,12 +122,12 @@ Census method: grep of multi-word string literals over `Src/Common/FwAvalonia` e
 - `LexicalEditFirstSlice.cs:122-124` `authored-fallback` diagnostic message.
 
 ### GAP — needs migration before broader rollout
-- **GAP-L2 (screen-reader-visible English on product controls):**
-  `Region/LexicalEditRegionView.cs:42` — `AutomationProperties.SetName(this, "Lexical Edit
-  Region")`; `Poc/PocWinFormsHostControl.cs:37` — `AccessibleName = "Avalonia Host"`.
-  `AutomationId` must stay nonlocalized, but UIA *Name* is announced by screen readers and
-  should be resx-backed (the Save/Cancel buttons already set localized Names — these two
-  container names are the stragglers). Low severity, two strings.
+- **GAP-L2 (host-level accessibility naming):**
+  `LexicalEditRegionView` now reads its UIA Name from `FwAvaloniaStrings.LexicalEditRegionName`,
+  but the outer WinForms host keeps selector-shaped `AccessibleName` values
+  (`RecordEditView.AvaloniaHost`, `RecordEditView.AvaloniaHost.CompanionStrip`) for testability.
+  If those names are considered screen-reader visible in practice, route the announced name through
+  a localized field while preserving stable nonlocalized selector ids separately.
 - **GAP-L3 (field-label localization lane not wired):** the region renders `field.Label` raw
   (`LexicalEditRegionView.cs:178,185`). Labels originate in shipped layout XML (English) via
   the importer, and `LexicalEditFirstSlice.cs:90` additionally stamps the literal
@@ -155,7 +151,7 @@ Census method: grep of multi-word string literals over `Src/Common/FwAvalonia` e
 | Stable automation IDs (nonlocalized) | **PASS** (code constants, test-locked) |
 | Localized user messages (placeholder/unsupported/validation/undo-redo) | **PASS** |
 | UI-mode labels in `LexOptionsDlg` use resx | **PASS** (`LexTextControls.resx`, test-locked; in-code literals are fallbacks only) |
-| Explicit evidence for remaining prototype strings | **DONE** — census above; preview-only strings confined to `Poc*` preview paths; **GAP-L2** (2 UIA names) and **GAP-L3** (field-label localization lane) are the open items |
+| Explicit evidence for remaining prototype strings | **DONE** — census above; preview-only strings confined to the shared preview-support path; **GAP-L2** (host accessibility naming) and **GAP-L3** (field-label localization lane) are the open items |
 
 Open actions: (1) add `<RootNamespace>FwAvalonia</RootNamespace>` and verify the localization
 build produces `FwAvalonia.resources.dll` (GAP-L1); (2) move the two container UIA names to

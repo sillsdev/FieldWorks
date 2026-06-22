@@ -20,8 +20,8 @@ changes into one minimal-risk path and defines the gates between them.
 
 ## What Changed (as-built)
 
-- **Phase 0 (POC spike):** completed. In-process host bridge proven; product wiring evidence
-  exists. See `lexical-edit-avalonia-poc-spike/spike-evidence.md`.
+- **Phase 0 (entry-point spike):** completed and folded forward. In-process host bridge proven; product
+  wiring evidence exists. See `lexical-edit-avalonia-migration/poc-retiring.md`.
 - **Phase 1 (first migrated region):** completed via `lexical-edit-avalonia-migration` sections 3–4.
   The boundary is the region-model path (`ViewDefinitionModel` → `LexicalEditRegionModel`), not the
   originally-planned DataTree extraction. `DataTree` is frozen on the legacy side. Gate 1 passed.
@@ -47,7 +47,8 @@ changes into one minimal-risk path and defines the gates between them.
 
 ## Referenced changes (not duplicated here)
 
-- `lexical-edit-avalonia-poc-spike` — the entry-point proof of concept (Phase 0, complete).
+- `lexical-edit-avalonia-migration/poc-retiring.md` — the folded-forward record of the Phase 0
+  entry-point spike and its retirement.
 - `lexical-edit-avalonia-migration` — the regional program spine (Phase 1 complete, Phases 2–6 in progress).
 - `datatree-model-view-separation` — **superseded as Phase 1**; optional legacy maintenance only.
   See `datatree-model-view-separation/hybrid-alignment.md`.

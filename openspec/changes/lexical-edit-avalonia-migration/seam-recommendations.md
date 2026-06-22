@@ -8,9 +8,10 @@ This note records the recommended seam direction for the Lexical Edit Avalonia m
 > They live on the prototype branch `010-advanced-entry-preview-prototype` and were never merged here.
 > What this branch actually contains is: the typed seam interfaces in `FwAvalonia/Seams/ISeams.cs`
 > (5 with pure-logic implementations, `IXCoreCommandBridge`/`IRecordNavigationContext` contract-only,
-> `IEditSession` with a `PocEditSession` DTO-snapshot stub), the typed view-definition IR under
-> `FwAvalonia/ViewDefinition/`, and the feature-flagged POC host (`FwAvalonia/Poc/` +
-> `RecordEditView`). The "Current implementation" lines below have been re-labelled accordingly:
+> `IEditSession` as a seam contract only), the typed view-definition IR under
+> `FwAvalonia/ViewDefinition/`, the shared preview path at the region-model boundary, and the
+> feature-flagged live host (`LexicalEditHostControl` + `RecordEditView`). The "Current
+> implementation" lines below have been re-labelled accordingly:
 > the prototype is a **reference to reproduce behind the seam**, not shipped code in this branch.
 > See `seam-domain-comparison.md` for the per-domain before/ideal/now/recommended breakdown.
 
@@ -49,10 +50,10 @@ boundary (`LexicalEditSurfaceResolver`/`Factory` + the new `LexicalEditSurfaceSe
 switch until cutover. Concretely:
 
 - Enforce the **active-host contract** (3.10): the active Avalonia path must not instantiate or drive
-  a hidden legacy `DataTree`. This was violated (the POC drove `m_dataEntryForm.ShowObject` then hid
+  a hidden legacy `DataTree`. This was violated (the original spike drove `m_dataEntryForm.ShowObject` then hid
   it); it is now an audited invariant.
 - Replace the **lossy `LexicalEditPocMapper` DTO** on the product route with a
-  **typed-definition-backed region model** (4.8); keep `PocEntryDto` for the preview host only.
+  **typed-definition-backed region model** (4.8); keep only lightweight preview region-model scenarios on the preview path.
 - Build the **selection, clipboard, and drag-and-drop bridges** (3.12/3.13/3.14) as bidirectional
   adapters over the shared xCore/LCModel/OS substrate; do not re-plumb legacy internals. Clipboard
   and DnD speak the legacy `"TsString"` OS format so native-Views surfaces interoperate unchanged.
@@ -73,7 +74,7 @@ Supporting docs:
 
 ## Edit Sessions
 
-**Current implementation (this branch):** `IEditSession` is defined; the only implementation is `PocEditSession`, which snapshots/restores the **detached POC DTO**, not LCModel. A real fenced LCModel undo-task session (`AdvancedEntryEditSession`, with `Save()`/`Cancel()`) exists **only on the prototype branch** `010-advanced-entry-preview-prototype` and is the reference to reproduce behind `IEditSession`.
+**Current implementation (this branch):** `IEditSession` is defined as the seam contract; the old detached preview stub was retired with `poc-retiring.md`. Product editing now rides `IRegionEditContext` plus the real LCModel-backed region session on the xWorks side, while a real fenced LCModel undo-task session (`AdvancedEntryEditSession`, with `Save()`/`Cancel()`) still exists **only on the prototype branch** `010-advanced-entry-preview-prototype` as the reference to reproduce behind `IEditSession`.
 
 **Recommendation:** Keep the direct LCModel fenced undo-task model for the first editable slice, then extract a FieldWorks-owned edit-session seam only with lifecycle, rollback, and global undo/redo tests.
 

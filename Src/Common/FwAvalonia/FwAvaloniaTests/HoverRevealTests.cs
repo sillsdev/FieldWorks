@@ -12,6 +12,7 @@ using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -22,12 +23,13 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Hover-reveal chrome (UI polish): the chooser's settings gear and the reference vector's
+	/// Hover-reveal chrome (UI polish): the chooser's configure gear and the reference vector's
 	/// separator bars + "+" launcher start hidden (opacity 0, not hit-testable, but still in
 	/// layout and in the UIA tree), fade in while the pointer is over the row (label or editor),
-	/// and fade out when it leaves — driven here by REAL headless mouse input. Behavior is pinned
-	/// unchanged: the same flyouts open and the same staging calls fire once revealed, and the
-	/// row's layout height is identical hidden vs revealed (no reflow).
+	/// and fade out when it leaves — driven here by REAL headless mouse input. Gear semantics:
+	/// the gear renders only because these rows RESOLVE a list-editor target (chooserLinks), and
+	/// clicking it dispatches the jump directly — no flyout. The "+"/value click opens the
+	/// options picker, and staging still fires from it.
 	/// </summary>
 	[TestFixture]
 	public class HoverRevealTests
@@ -41,7 +43,11 @@ namespace FwAvaloniaTests
 				new RegionChoiceOption("g1", "stem"),
 				new RegionChoiceOption("g2", "suffix")
 			},
-			"g1");
+			"g1",
+			chooserLinks: new List<RegionChooserLink>
+			{
+				new RegionChooserLink("Edit the Morpheme Types list", "morphTypeEdit")
+			});
 
 		private static LexicalEditRegionField VectorField() => new LexicalEditRegionField(
 			"LexEntry/x/#1", "Publish Entry In", "PublishIn", null,
@@ -53,21 +59,27 @@ namespace FwAvaloniaTests
 				new RegionChoiceOption("p2", "Pocket")
 			},
 			null, isEditable: true, indent: 0,
-			items: new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") });
+			items: new List<RegionChoiceOption> { new RegionChoiceOption("p1", "Main Dictionary") },
+			chooserLinks: new List<RegionChooserLink>
+			{
+				new RegionChooserLink("Edit the Publications list", "publicationsEdit")
+			});
 
-		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) Show()
+		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window,
+			List<RegionLinkRequest> linkRequests) Show()
 		{
 			var model = new LexicalEditRegionModel("LexEntry", "test",
 				new List<LexicalEditRegionField> { ChooserField(), VectorField() },
 				new List<ViewDiagnostic>());
 			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
+			var linkRequests = new List<RegionLinkRequest>();
+			var view = new LexicalEditRegionView(model, context, linkRequested: linkRequests.Add);
 			var window = new Window { Content = view, Width = 500, Height = 300 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
 			Dispatcher.UIThread.RunJobs();
-			return (view, context, window);
+			return (view, context, window, linkRequests);
 		}
 
 		private static T Find<T>(Control view, string automationId) where T : Control
@@ -121,7 +133,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void Affordances_StartHidden_ByOpacity_StillInLayoutAndUiaTree()
 		{
-			var (view, _, _) = Show();
+			var (view, _, _, _) = Show();
 
 			var gear = Gear(view);
 			Assert.That(gear, Is.Not.Null, "the gear is always in the tree (UIA/automation)");
@@ -151,7 +163,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HoverOverChooser_RevealsGear_AndLeavingHidesItAgain()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, _) = Show();
 			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
 			var gear = Gear(view);
 
@@ -167,7 +179,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HoverOverRowLabel_AlsoReveals_TheWholeRowIsTheHoverSurface()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, _) = Show();
 			var label = Find<TextBlock>(view, "MorphTypeChooser.Label");
 			var gear = Gear(view);
 
@@ -185,7 +197,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void HoverOverVectorRow_RevealsBarsAndPlus_AndLeavingHides()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, _) = Show();
 			var vector = Find<FwReferenceVectorField>(view, "PublishIn");
 			var affordances = VectorAffordances(view);
 
@@ -203,7 +215,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void KeyboardFocus_OnAnAffordance_Reveals_AndLosingFocusHides()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, _) = Show();
 			var addButton = Find<Button>(view, "PublishIn.Add");
 			var affordances = VectorAffordances(view);
 
@@ -221,10 +233,12 @@ namespace FwAvaloniaTests
 			PumpUntilOpacity(addButton, 0d, "the launcher fades out after focus leaves");
 		}
 
+		// GEAR = CONFIGURE: clicking the revealed gear DIRECTLY dispatches the list-editor jump
+		// (RegionLinkRequest with the row's resolved tool) — no flyout, no menu, no staging.
 		[AvaloniaTest]
-		public void ClickingTheGearAfterReveal_OpensTheSameFlyout_AndSelectionStillStages()
+		public void ClickingTheGearAfterReveal_DispatchesTheListEditorJump_NoFlyoutOpens()
 		{
-			var (view, context, window) = Show();
+			var (view, context, window, linkRequests) = Show();
 			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
 			var gear = Gear(view);
 
@@ -232,35 +246,35 @@ namespace FwAvaloniaTests
 			Assert.That(gear.IsHitTestVisible, Is.True);
 
 			ClickAt(window, gear);
-			var flyout = (Flyout)chooser.Flyout;
-			Assert.That(flyout.IsOpen, Is.True, "clicking the revealed gear opens the SAME chooser flyout");
 
-			var options = (ListBox)flyout.Content;
-			options.SelectedIndex = 1;
-			Dispatcher.UIThread.RunJobs();
-
-			Assert.That(context.OptionEdits, Has.Count.EqualTo(1), "behavior unchanged: selection stages");
-			Assert.That(context.OptionEdits[0], Is.EqualTo(("MorphType", "g2")));
-			Assert.That(chooser.SelectedKey, Is.EqualTo("g2"));
-			Assert.That(chooser.ValueText, Is.EqualTo("suffix"));
+			Assert.That(linkRequests, Has.Count.EqualTo(1),
+				"the gear click raises RegionLinkRequest directly");
+			Assert.That(linkRequests[0].Link.Tool, Is.EqualTo("morphTypeEdit"),
+				"the resolved list-editor tool rides the request");
+			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.False,
+				"NO flyout opens from the gear — it configures, it does not choose");
+			Assert.That(context.OptionEdits, Is.Empty, "a configure jump is not an edit");
 		}
 
 		[AvaloniaTest]
-		public void ClickingValueText_StillOpensTheFlyout_LikeTheLegacyCombo()
+		public void ClickingValueText_OpensTheOptionPicker_LikeTheLegacyCombo()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, linkRequests) = Show();
 			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
 
 			// No hover dance needed for the value itself: click anywhere on the button opens.
 			ClickAt(window, chooser);
 			Assert.That(((Flyout)chooser.Flyout).IsOpen, Is.True,
 				"click-anywhere-on-value still opens the chooser");
+			Assert.That(((Flyout)chooser.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
+				"the options render in the one compact filterable picker");
+			Assert.That(linkRequests, Is.Empty, "the value click never dispatches the jump");
 		}
 
 		[AvaloniaTest]
-		public void ClickingTheRevealedPlus_OpensTheAddFlyout_AndAddStillStages()
+		public void ClickingTheRevealedPlus_OpensThePickerFlyout_AndCommitStillStages()
 		{
-			var (view, context, window) = Show();
+			var (view, context, window, _) = Show();
 			var vector = Find<FwReferenceVectorField>(view, "PublishIn");
 			var addButton = Find<Button>(view, "PublishIn.Add");
 
@@ -269,46 +283,41 @@ namespace FwAvaloniaTests
 
 			ClickAt(window, addButton);
 			var flyout = (Flyout)addButton.Flyout;
-			Assert.That(flyout.IsOpen, Is.True, "the revealed + opens the same add flyout");
+			Assert.That(flyout.IsOpen, Is.True, "the revealed + opens the add picker");
 
-			var list = (ListBox)flyout.Content;
-			list.SelectedIndex = 1;
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 1;
+			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1), "behavior unchanged: add stages");
 			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("PublishIn", "p2")));
 		}
 
-		// Bug "gear icons not showing" (a): the reference vector row gets the SAME hover-revealed
-		// gear (the "this value has a supporting list" affordance); clicking it opens the IDENTICAL
-		// flyout instance the "+" launcher opens — no new behavior.
+		// GEAR = CONFIGURE on the vector row too: the hover-revealed gear dispatches the resolved
+		// list-editor jump directly; only the "+" opens the add picker.
 		[AvaloniaTest]
-		public void VectorRowHover_RevealsTheGear_AndGearClick_OpensTheSameFlyoutAsThePlus()
+		public void VectorRowHover_RevealsTheGear_AndGearClick_DispatchesTheJumpDirectly()
 		{
-			var (view, context, window) = Show();
+			var (view, context, window, linkRequests) = Show();
 			var vector = Find<FwReferenceVectorField>(view, "PublishIn");
 			var gear = Find<Button>(view, "PublishIn.Settings");
 			var addButton = Find<Button>(view, "PublishIn.Add");
-			Assert.That(gear, Is.Not.Null, "the vector row carries a settings gear");
+			Assert.That(gear, Is.Not.Null, "a resolved list-editor target draws the gear");
 			Assert.That(gear.Opacity, Is.EqualTo(0d), "the gear starts hidden like the bars/+");
 			Assert.That(VectorAffordances(view), Does.Contain(gear), "the gear reveals with the row chrome");
+			Assert.That(gear.Flyout, Is.Null, "the gear carries NO flyout — it dispatches directly");
 
 			MoveMouseOver(window, vector);
 			Assert.That(gear.IsHitTestVisible, Is.True, "row hover reveals the gear");
 			PumpUntilOpacity(gear, 1d, "the gear fades in alongside bars/+");
 
-			Assert.That(gear.Flyout, Is.SameAs(addButton.Flyout),
-				"the gear opens the SAME flyout instance as the + launcher");
 			ClickAt(window, gear);
-			var flyout = (Flyout)gear.Flyout;
-			Assert.That(flyout.IsOpen, Is.True, "clicking the revealed gear opens the add/options flyout");
 
-			// Behavior unchanged: selecting from the gear-opened flyout stages like the + path.
-			var list = (ListBox)flyout.Content;
-			list.SelectedIndex = 1;
-			Dispatcher.UIThread.RunJobs();
-			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
-			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("PublishIn", "p2")));
+			Assert.That(linkRequests, Has.Count.EqualTo(1), "the gear click raises the host jump");
+			Assert.That(linkRequests[0].Link.Tool, Is.EqualTo("publicationsEdit"));
+			Assert.That(((Flyout)addButton.Flyout).IsOpen, Is.False, "the add picker stays closed");
+			Assert.That(context.ReferenceAdds, Is.Empty, "a configure jump never stages");
 		}
 
 		private static (FwDialogLauncherField row, Window window, Control focusPark) ShowLauncher(Action launch)
@@ -373,10 +382,54 @@ namespace FwAvaloniaTests
 			Assert.That(() => row.Launch(), Throws.Nothing, "launching without a callback is a no-op");
 		}
 
+		// Idempotence regression: controls attach their own affordances in their constructors and
+		// the region view attaches AGAIN to widen the hover surface to the row. Before the merge
+		// fix each Attach stacked an independent handler set with its own watched list, and the
+		// LAST registration could hide the affordance while the pointer was still over a source
+		// only an EARLIER registration watched (correctness depended on the superset attaching
+		// last). Attaching the SUBSET last here proves the registrations merge.
+		[AvaloniaTest]
+		public void Attach_MergesRepeatedRegistrations_RegardlessOfOrder()
+		{
+			var rowSurface = new Border { Width = 200, Height = 40, Background = Brushes.Transparent };
+			var editor = new Border { Width = 200, Height = 40, Background = Brushes.Transparent };
+			var gear = new Button { Content = "*", Width = 20, Height = 20 };
+			var focusPark = new TextBox();
+			var window = new Window
+			{
+				Content = new StackPanel { Children = { rowSurface, editor, gear, focusPark } },
+				Width = 500,
+				Height = 300
+			};
+			HoverReveal.Attach(new Control[] { rowSurface, editor }, new Control[] { gear }); // superset first
+			HoverReveal.Attach(new Control[] { editor }, new Control[] { gear });             // subset last
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+
+			// Hover the source only the FIRST registration named...
+			MoveMouseOver(window, rowSurface);
+			Assert.That(gear.IsHitTestVisible, Is.True, "a first-registration source still reveals");
+
+			// ...then a focus blip on the gear forces a LostFocus re-evaluation of the hover
+			// state. The merged registration still sees the pointer over rowSurface; stacked
+			// registrations fought, and the last one hid the gear (it never watched rowSurface).
+			gear.Focus();
+			Dispatcher.UIThread.RunJobs();
+			focusPark.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(gear.IsHitTestVisible, Is.True,
+				"one merged watched list decides the state — not whichever Attach ran last");
+
+			MoveMouseFarAway(window);
+			Assert.That(gear.IsHitTestVisible, Is.False, "leaving every merged source still hides");
+		}
+
 		[AvaloniaTest]
 		public void RowLayoutHeight_DoesNotChange_BetweenHiddenAndRevealed()
 		{
-			var (view, _, window) = Show();
+			var (view, _, window, _) = Show();
 			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
 			var vector = Find<FwReferenceVectorField>(view, "PublishIn");
 

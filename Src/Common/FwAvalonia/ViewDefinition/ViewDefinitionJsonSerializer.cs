@@ -93,6 +93,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "ghostWs", node.GhostWs);
 			AddIfPresent(o, "ghostClass", node.GhostClass);
 			AddIfPresent(o, "ghostLabel", node.GhostLabel);
+			if (node.ForVariant)
+				o["forVariant"] = true;
 			AddIfPresent(o, "ghostInitMethod", node.GhostInitMethod);
 			if (node.Condition != null)
 				o["condition"] = WriteCondition(node.Condition);
@@ -208,6 +210,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				(string)o["ghostWs"],
 				(string)o["ghostClass"],
 				(string)o["ghostLabel"],
+				(bool?)o["forVariant"] ?? false,
 				ghostInitMethod: (string)o["ghostInitMethod"],
 				condition: ReadCondition((JObject)o["condition"]),
 				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList());

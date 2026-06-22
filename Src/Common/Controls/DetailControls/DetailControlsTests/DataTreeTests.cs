@@ -223,14 +223,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Captures the normalized semantic snapshot that the Avalonia POC slice
-		/// (lexical-edit-avalonia-poc-spike) must reproduce, and proves the snapshot is
+		/// Captures the normalized semantic snapshot that the Avalonia first-slice parity path
+		/// must reproduce, and proves the snapshot is
 		/// deterministic across realizations. Every expected value here is already proven by
 		/// <see cref="CfAndBib_SemanticSliceBaselineCapturesStableBindingsAndFocusOrder"/>; this test
 		/// only locks the reusable snapshot format used by parity comparison.
 		/// </summary>
 		[Test]
-		public void SemanticSnapshot_CfAndBib_IsStableAndCapturesPocBaseline()
+		public void SemanticSnapshot_CfAndBib_IsStableAndCapturesAvaloniaParityBaseline()
 		{
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				$"#1 | label=Bibliography | field=Bibliography | flid={bibFlid} | editor=multistring | vis=ifdata | a11y=Bibliography" + Environment.NewLine;
 
 			string snapshot = BuildSemanticSnapshot();
-			Assert.That(snapshot, Is.EqualTo(expected), "POC parity baseline (semantic snapshot) changed.");
+			Assert.That(snapshot, Is.EqualTo(expected), "Avalonia parity baseline (semantic snapshot) changed.");
 
 			// Determinism: realizing the same object again must yield a byte-for-byte identical snapshot,
 			// which is the property the Avalonia parity comparison relies on.
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Builds a deterministic, normalized semantic snapshot of the currently realized slices.
 		/// One line per slice: focus order, label, field, flid, editor kind, visibility, and
-		/// accessibility name. This is the reusable format the Avalonia POC parity comparison keys on.
+		/// accessibility name. This is the reusable format the Avalonia parity comparison keys on.
 		/// </summary>
 		private string BuildSemanticSnapshot()
 		{

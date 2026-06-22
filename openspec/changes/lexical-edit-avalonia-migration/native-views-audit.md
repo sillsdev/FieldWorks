@@ -14,6 +14,12 @@ Related enforcement already in place: `Src/Common/FwAvalonia/FwAvaloniaTests/Eng
 `ViewsInterfaces`/`RootSite`/`SimpleRootSite`/Graphite/Gecko assemblies and from naming
 `IVwRootBox`, `IVwEnv`, `IVwGraphics`, `RootSiteControl`, `ManagedVwWindow`, etc. in source.
 
+Status update (2026-06-15, `avalonia-multi-writing-system-text-foundation`):
+- Closed blocker lanes for migrated lexical text rows: managed `ITsString` run projection/write-back, grapheme-cluster-safe editing (combining marks/surrogates/ZWJ), shared TsString clipboard+drag/drop interchange, and coexistence refresh/undo for styled commits.
+- `MultiStringSlice`, `StringSlice`, and `GhostStringSlice` now have owned Avalonia editing coverage with focused automated evidence.
+- Still deferred: `StTextSlice` multi-paragraph editing.
+- Still deferred: rich runs with unsupported object-content payloads remain read-only in the Avalonia lane.
+
 ---
 
 ## 8.1 Inventory
@@ -129,6 +135,87 @@ therefore means "the Avalonia region cannot claim parity until a managed replace
 | `TsStringWrapper` clipboard format | **Retained shared seam** (not a blocker) | Deliberately adopted as the cross-surface clipboard contract (task 3.13) | [E] |
 | `PrintRootSite` / printing | **Non-migrated-region-only / later phase** | Region printing flows are not in the current parity scope | [J] |
 | `ManagedVwWindow` | **Already retired** | See 8.1.1 | [E] |
+
+---
+
+## 8.3 Region-local viewing/render/editor replacement (managed/Avalonia)
+
+Date: 2026-06-15. With the multi-writing-system text foundation
+(`avalonia-multi-writing-system-text-foundation`) landed, the migrated region now provides every
+native-Views viewing capability itself, in managed/Avalonia form. This is the **positive** map
+(what now provides each capability); `EngineIsolationAuditTests` is the **negative** audit (the
+production assembly names/loads no native symbol). Both are asserted in code — the positive side by
+`RegionViewingServiceReplacementTests` against the machine-checked `RegionViewingServices`
+descriptor (`Src/Common/FwAvalonia/Region/RegionViewingServices.cs`).
+
+| Native capability | Superseded native symbol | Managed/Avalonia owner (in `FwAvalonia`) | Evidence |
+|---|---|---|---|
+| Text shaping | `IRenderEngine` (Uniscribe/Graphite) | Avalonia text stack (Skia/HarfBuzz) inside `FwMultiWsTextField` | `RegionViewingServiceReplacementTests`; `EngineIsolationAuditTests` (no `IRenderEngine*`) |
+| Measurement / layout | `IVwEnv` | Avalonia layout over `LexicalEditRegionView` panels | render/visual suites; no `IVwEnv` named |
+| Selection metadata | `IVwSelection` | `RegionBidirectionalTextNavigation` + `RegionSelectionRange` over the run model | `RegionEditingTests` (mixed-direction caret/selection) |
+| Hit testing | `IVwRootBox.MakeSelAt` | Avalonia `TextBox` hit test, cluster-normalized by `RegionTextGraphemeClusters` | `RegionEditingTests`; `TreeSpikeAndRtlTests` |
+| Scrolling | `SimpleRootSite` auto-scroll | Avalonia `ScrollViewer` wrapper in `LexicalEditRegionView` (task 11.12) | viewing-parity suite (60-row overflow) |
+| Rendering | `IVwDrawRootBuffered` | Avalonia renderer (Skia); parity frame captured from it (task 6.9) | `VisualParityCaptureTests` |
+| Editor realization | `RootSiteControl` slices | Owned controls over the IR: `FwMultiWsTextField` / `FwChooserField` / `FwReferenceVectorField` / `FwDialogLauncherField` + `RegionRichTextEditAlgorithms` + `RegionImeCompositionState` | `RegionEditingTests`, `RegionModelTests`, foundation suites |
+
+**Deferred (named, not silent)** — recorded in `RegionViewingServices.Deferred` and asserted by the
+test:
+- **StText multi-paragraph editing** — paragraph/document editing out of the first text wave; `sttext`
+  fields render read-only content, full editing stays in the legacy view. Owner: foundation StText
+  follow-on.
+- **Embedded-object (ORC) rich-run editing** — ORCs are not a structural feature of the default
+  lexeme string editors (census: `multistring`(118)/`string`(15) editors are plain; structural
+  object content lives in `sttext`(11)). ORC-bearing values render **read-only with an explicit
+  affordance** (`FwAvaloniaStrings.EmbeddedObjectReadOnly`), preserve the `TsString` losslessly, and
+  stay editable in the legacy view (`RegionViewingServiceReplacementTests`). Revisit if real data
+  shows common ORC runs in plain string fields.
+- **Context-menu command routing** — see §8.5 (the one remaining region-driven native adapter).
+
+## 8.4 Runtime non-instantiation evidence
+
+Date: 2026-06-09 (refreshed 2026-06-15). The migrated region does not instantiate or call native
+Views/C++ viewing/rendering/editor infrastructure at runtime for display or editing:
+- `EngineIsolationAuditTests` — assembly references + source symbols (the production Avalonia
+  assembly cannot even load native Views).
+- `RecordEditViewActiveHostContractTests` — the live product host never initializes/drives the
+  hidden legacy `DataTree` under Avalonia mode (a fresh load leaves `m_legacySurfaceInitialized ==
+  false`; the empty `DataTree()` ctor realizes no slices/RootSites — `DataTree.cs:573`).
+- headless render/editing suites run the full region path with no native Views present.
+The single contract-gated exception (command-menu routing) is §8.5.
+
+## 8.5 Removal / disable of region-local native viewing adapters
+
+Date: 2026-06-15. There is **no region-local native viewing/render/editor adapter to physically
+delete** — the Avalonia region was built clean (`FwAvalonia` references no native Views, enforced by
+`EngineIsolationAuditTests`). "Disable" is therefore achieved structurally, in three layers:
+
+1. **Viewing/render/editor adapter — disabled.** Under Avalonia mode the host never initializes the
+   legacy surface, so no slice/RootSite is realized (active-host contract, task 3.10;
+   `RecordEditViewActiveHostContractTests`). The `RecordEditView` ctor eagerly allocates an *empty*
+   `DataTree` (`new DataTree()`), but that ctor instantiates **no** native Views — it only sets
+   WinForms styles and empty collections (`DataTree.cs:573`). Making the field lazy was evaluated and
+   **declined**: 67 `m_dataEntryForm` use-sites and a subclass that injects its own `DataTree` through
+   the protected ctor (`InterlinearTextsRecordEditView`/`StTextDataTree`, `InfoPane.cs:177`) make it
+   high blast-radius for **zero** native-Views benefit, since the empty control carries no adapter
+   until `ShowObject` builds slices — which the contract already prevents.
+2. **Command-routing adapter — retained, contract-gated, scheduled.** On first right-click the
+   Avalonia surface lazily builds a hidden, detached legacy `DataTree` + `DTMenuHandler`
+   (`EnsureMenuCommandAdapter`, `RecordEditView.cs:976`) solely to supply the colleague chain +
+   `CurrentSlice` context the legacy xCore command handlers need. This **does** realize native Views,
+   but only through the active-host contract's explicitly-approved `command-menu-routing` baseline
+   adapter (task 3.10/13.4) and never on screen. It is classified as a command/service dependency
+   (the viewing-vs-service line of §8.2/§8.7), and its removal is owned by the shell-phase xCore
+   command-pipeline migration (`avalonia-command-focus` global phase, task 10.9).
+3. **Shared native Views code — retained for non-migrated consumers.** `Src/views`,
+   `ViewsInterfaces`, `SimpleRootSite`, `RootSite`, and the `DataTree`/slice stack stay available for
+   the explicit legacy UI mode (selectable per task 1.9), the parity baseline, and the
+   Grammar/Notebook/Lists/Words/Notebook fallbacks and other areas inventoried in §8.6. Removal is
+   repo-wide and gated there, not by this region.
+
+Net: the region's native **viewing/render/editor** seam is decommissioned (disabled by
+construction); the only native code the region still drives at runtime is the contract-gated
+command-routing adapter, named for shell-phase removal. Enforced by `EngineIsolationAuditTests`,
+`RecordEditViewActiveHostContractTests`, and `RegionViewingServiceReplacementTests`.
 
 ---
 

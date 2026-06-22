@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 			WritePrimaryNotesFile(LegacyAnnotationXml); // an S/R pulling a note from a teammate
 
 			Assert.That(notified.Wait(TimeSpan.FromSeconds(10)), Is.True,
-				"the repository's FileSystemWatcher must surface NotifyOfStaleList as NotesChanged");
+				"the store's own debounced file watcher must surface an external write as NotesChanged");
 		}
 	}
 

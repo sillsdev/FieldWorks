@@ -40,7 +40,7 @@ outlive WinForms.
 
 | Domain | Seam | Before | Ideal | Now | Recommended (coexist year) |
 |---|---|---|---|---|---|
-| Edit session (commit/cancel/dirty) | `IEditSession` | Slices write LCModel inline, fenced ad hoc | One fenced LCModel session per edit | `PocEditSession` snapshots the **DTO**, not LCModel; real fenced session is on the prototype branch only | Reproduce the prototype's LCModel-fenced session behind `IEditSession` for the first product editor (6.x) |
+| Edit session (commit/cancel/dirty) | `IEditSession` | Slices write LCModel inline, fenced ad hoc | One fenced LCModel session per edit | The detached preview stub is retired; product editing rides LCModel-backed region edit contexts while `IEditSession` remains the seam contract | Reproduce the prototype's LCModel-fenced session behind `IEditSession` for the first product editor (6.x) |
 | Undo/redo | (`IUndoRedoCoordinator`, not built) | LCModel `IActionHandler` stack authoritative | Global LCModel undo authoritative; control-local text undo as leaf | Local save/cancel only | Global undo = LCModel always; let Avalonia `TextBox` keep local text undo; commits route through the session |
 | LCModel access / write-back | `IEditSession` + region builder | Slices read+write LCModel objects directly | Avalonia binds to a model-backed region VM; writes via session | Product route built a **read-only lossy** projection (`LexicalEditPocMapper`); replaced by typed-definition-backed region model (4.8) | Region model is the product contract; rich editing + write-back through the session is 6.x/7.x |
 | Validation | validation seam | Inline in slices / native | Domain validation + Avalonia `INotifyDataErrorInfo` adapter | None on this branch (prototype-branch only) | Reproduce behind the seam when the first editable slice lands |
@@ -60,9 +60,9 @@ outlive WinForms.
 
 | Domain | Seam | Before | Ideal | Now | Recommended (coexist year) |
 |---|---|---|---|---|---|
-| WS text / fonts / IME | `IWritingSystemTextService` | Native Views shaping + project WS fonts | Managed WS service feeds Avalonia text (HarfBuzz/OpenType) | POC bakes font into the DTO; region field now carries ws + (optional) font hints | Build a real WS→font/flow service from project settings; verify IME per-WS on 11.x |
-| Choosers / popups | `IChooserService` | WinForms modal chooser dialogs | Avalonia flyouts + service-backed chooser model | POC `MorphTypePopupChooser` = hardcoded flyout | Real chooser **service** returning LCModel-sourced options; watch 11.x popup-DPI |
-| Native rendering (RootSite/Views/Graphite) | audit test | Everything via native Views/C++ + Graphite | Excluded from Avalonia default path | POC audited to have zero Graphite/Views/RootSite refs | Keep the audit gate; legacy keeps native rendering until deleted |
+| WS text / fonts / IME | `IWritingSystemTextService` | Native Views shaping + project WS fonts | Managed WS service feeds Avalonia text (HarfBuzz/OpenType) | Preview now uses shared region-model sample data; region fields already carry ws + (optional) font hints | Build a real WS→font/flow service from project settings; verify IME per-WS on 11.x |
+| Choosers / popups | `IChooserService` | WinForms modal chooser dialogs | Avalonia flyouts + service-backed chooser model | Shared `FwChooserField` now serves both preview and product paths | Real chooser **service** returning LCModel-sourced options; watch 11.x popup-DPI |
+| Native rendering (RootSite/Views/Graphite) | audit test | Everything via native Views/C++ + Graphite | Excluded from Avalonia default path | The phase-0 spike and current region are audited to have zero Graphite/Views/RootSite refs on the Avalonia path | Keep the audit gate; legacy keeps native rendering until deleted |
 
 ## E. Infrastructure
 

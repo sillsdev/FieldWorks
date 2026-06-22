@@ -49,7 +49,8 @@ are unchanged. What changes is where the boundary types connect:
 
 ## Sequencing and gates
 
-- **Enter** this region only after the POC spike (`lexical-edit-avalonia-poc-spike`) passes **Gate 0**
+- **Enter** this region only after the phase-0 spike evidence now summarized in
+  `lexical-edit-avalonia-migration/poc-retiring.md` passes **Gate 0**
   (host bridge proven, density acceptable, dual-run flag works).
 - **Exit** this region at **Gate 1**: `AvaloniaDataTreeView` consumes the same
   `DataTreeModel`/`SliceSpec` as WinForms, is selected by the flag, matches the semantic + density

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -27,6 +28,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <inheritdoc />
 		public override bool TrySetText(LexicalEditRegionField regionField, string ws, string value)
 		{
+			if (regionField != null && regionField.Values.Any(v => v.RequiresRichEditor))
+				return false;
+
 			switch (regionField?.Field)
 			{
 				case "Form":
@@ -50,6 +54,42 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					EnsureOpen();
 					Entry.SensesOS[0].Gloss.set_String(wsHandle, TsStringUtils.MakeString(value ?? string.Empty, wsHandle));
+					return true;
+				}
+				default:
+					return false;
+			}
+		}
+
+		public override bool TrySetRichText(LexicalEditRegionField regionField, string ws,
+			RegionRichTextValue value)
+		{
+			if (regionField != null && regionField.Values.Any(v => !v.CanEditRichText))
+				return false;
+
+			switch (regionField?.Field)
+			{
+				case "Form":
+				{
+					if (!TryResolveWsHandle(ws, vernacular: true, out var wsHandle))
+						return false;
+					EnsureOpen();
+					var text = RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle);
+					if (Entry.LexemeFormOA != null)
+						Entry.LexemeFormOA.Form.set_String(wsHandle, text);
+					else
+						Entry.CitationForm.set_String(wsHandle, text);
+					return true;
+				}
+				case "Gloss":
+				{
+					if (Entry.SensesOS.Count == 0)
+						return false;
+					if (!TryResolveWsHandle(ws, vernacular: false, out var wsHandle))
+						return false;
+					EnsureOpen();
+					Entry.SensesOS[0].Gloss.set_String(wsHandle,
+						RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle));
 					return true;
 				}
 				default:

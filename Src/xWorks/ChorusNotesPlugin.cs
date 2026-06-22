@@ -47,8 +47,15 @@ namespace SIL.FieldWorks.XWorks
 		private readonly AnnotationRepository _primary;
 		private readonly List<AnnotationRepository> _additional = new List<AnnotationRepository>();
 		private readonly MultiSourceAnnotationRepository _all;
-		private readonly StoreObserver _observer;
+		private readonly List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
+		private readonly object _watchGate = new object();
+		private System.Threading.Timer _notesChangedDebounce;
 		private bool _disposed;
+
+		// Coalesces FileSystemWatcher bursts (one save raises several events) and gives the
+		// repository's OWN reload of the same file (same event, its watcher thread) time to land
+		// before consumers re-query. The legacy bar polled at 500 ms; half that keeps us snappier.
+		private const int NotesChangedDebounceMilliseconds = 250;
 
 		/// <summary>
 		/// Opens (creating as needed, §1) the project's lexicon notes store: the primary repository
@@ -76,13 +83,59 @@ namespace SIL.FieldWorks.XWorks
 			}
 			_all = new MultiSourceAnnotationRepository(_primary, _additional.Cast<IAnnotationRepository>());
 
-			// External refresh (§6): each repository owns a FileSystemWatcher on its file and raises
-			// NotifyOfStaleList on external change (e.g. after S/R); observing surfaces that as
-			// NotesChanged — no legacy 500 ms polling timer.
-			_observer = new StoreObserver(this);
-			_primary.AddObserver(_observer, progress);
+			// External refresh (§6): watch each notes file OURSELVES instead of registering an
+			// IAnnotationRepositoryObserver. The shipped LibChorus enumerates its observer list on
+			// its FileSystemWatcher thread with no lock (AnnotationRepository.UnderlyingFileChanged
+			// → _observers.ForEach), so Add/RemoveObserver from any other thread can race that
+			// enumeration — and the resulting InvalidOperationException on an IO-completion thread
+			// terminates the PROCESS. Owning the watcher leaves the repository's observer list
+			// untouched after construction (only its internal key index, registered in its ctor,
+			// remains) and gives this store a teardown it fully controls. Local writes raise
+			// NotesChanged directly from the mutating methods instead.
+			WatchNotesFile(_primary.AnnotationFilePath);
 			foreach (var repository in _additional)
-				repository.AddObserver(_observer, progress);
+				WatchNotesFile(repository.AnnotationFilePath);
+		}
+
+		private void WatchNotesFile(string path)
+		{
+			var watcher = new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetFileName(path))
+			{
+				NotifyFilter = NotifyFilters.LastWrite
+			};
+			watcher.Changed += OnNotesFileChanged;
+			watcher.Created += OnNotesFileChanged;
+			watcher.EnableRaisingEvents = true;
+			_watchers.Add(watcher);
+		}
+
+		// Runs on the watcher's IO-completion thread: an escaping exception there terminates the
+		// process, so everything is guarded; the debounce timer turns an event burst into one raise.
+		private void OnNotesFileChanged(object sender, FileSystemEventArgs e)
+		{
+			try
+			{
+				lock (_watchGate)
+				{
+					if (_disposed)
+						return;
+					if (_notesChangedDebounce == null)
+					{
+						_notesChangedDebounce = new System.Threading.Timer(
+							_ => RaiseNotesChanged(), null,
+							NotesChangedDebounceMilliseconds, System.Threading.Timeout.Infinite);
+					}
+					else
+					{
+						_notesChangedDebounce.Change(
+							NotesChangedDebounceMilliseconds, System.Threading.Timeout.Infinite);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteError("ChorusNotesStore: notes file watcher failed.", ex);
+			}
 		}
 
 		/// <summary>Full path of <c>Lexicon.fwstub.ChorusNotes</c>.</summary>
@@ -95,7 +148,21 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public event EventHandler NotesChanged;
 
-		private void RaiseNotesChanged() => NotesChanged?.Invoke(this, EventArgs.Empty);
+		// Raised from the debounce timer's pool thread or a mutating method's calling thread; an
+		// exception escaping a pool thread terminates the process, so consumer failures are logged.
+		private void RaiseNotesChanged()
+		{
+			if (_disposed)
+				return;
+			try
+			{
+				NotesChanged?.Invoke(this, EventArgs.Empty);
+			}
+			catch (Exception ex)
+			{
+				Logger.WriteError("ChorusNotesStore: a NotesChanged consumer failed.", ex);
+			}
+		}
 
 		/// <summary>
 		/// The silfw link new FLEx lexicon notes carry (contract §4, verbatim template from
@@ -147,6 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			annotation.AddMessage(Environment.UserName, null, text); // null status inherits "" (§5.4)
 			_all.AddAnnotation(annotation); // multi-source routes new notes to the primary (§3.3)
 			_primary.SaveNowIfNeeded(new NullProgress()); // immediate flush (§5.2)
+			RaiseNotesChanged(); // local writes notify directly (no repository observer; see ctor)
 			return annotation;
 		}
 
@@ -157,6 +225,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			annotation.AddMessage(Environment.UserName, null, text);
 			SaveOwnerOf(annotation);
+			RaiseNotesChanged();
 			return true;
 		}
 
@@ -174,6 +243,7 @@ namespace SIL.FieldWorks.XWorks
 			annotation.SetStatus(Environment.UserName,
 				annotation.IsClosed ? Annotation.Open : Annotation.Closed);
 			SaveOwnerOf(annotation);
+			RaiseNotesChanged();
 			return true;
 		}
 
@@ -218,40 +288,32 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>Dispose order per §6: unhook, then dispose — Dispose performs the final SaveNowIfNeeded.</summary>
+		/// <summary>
+		/// Dispose order per §6: stop OUR watchers and debounce first (under the gate, so an
+		/// in-flight watcher callback observes _disposed), then dispose the repositories — each
+		/// repository's Dispose performs the final SaveNowIfNeeded.
+		/// </summary>
 		public void Dispose()
 		{
-			if (_disposed)
-				return;
-			_disposed = true;
-			_primary.RemoveObserver(_observer);
-			foreach (var repository in _additional)
-				repository.RemoveObserver(_observer);
+			lock (_watchGate)
+			{
+				if (_disposed)
+					return;
+				_disposed = true;
+				foreach (var watcher in _watchers)
+				{
+					watcher.EnableRaisingEvents = false;
+					watcher.Changed -= OnNotesFileChanged;
+					watcher.Created -= OnNotesFileChanged;
+					watcher.Dispose();
+				}
+				_watchers.Clear();
+				_notesChangedDebounce?.Dispose();
+				_notesChangedDebounce = null;
+			}
 			_primary.Dispose();
 			foreach (var repository in _additional)
 				repository.Dispose();
-		}
-
-		private sealed class StoreObserver : IAnnotationRepositoryObserver
-		{
-			private readonly ChorusNotesStore _store;
-
-			public StoreObserver(ChorusNotesStore store)
-			{
-				_store = store;
-			}
-
-			public void Initialize(Func<IEnumerable<Annotation>> allAnnotationsFunction, IProgress progress)
-			{
-			}
-
-			public void NotifyOfAddition(Annotation annotation) => _store.RaiseNotesChanged();
-
-			public void NotifyOfModification(Annotation annotation) => _store.RaiseNotesChanged();
-
-			public void NotifyOfDeletion(Annotation annotation) => _store.RaiseNotesChanged();
-
-			public void NotifyOfStaleList() => _store.RaiseNotesChanged();
 		}
 	}
 
@@ -403,8 +465,10 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public string LegacyClassName => AvaloniaCompanionSlices.MessageSliceClassName;
 
-		public Control BuildControl(ICmObject obj, ViewNode node, IRegionEditContext editContext, LcmCache cache)
+		public Control BuildControl(RegionEditorBuildContext context)
 		{
+			var obj = context?.Target;
+			var cache = context?.Cache;
 			if (obj == null || cache == null)
 				return null;
 			ChorusNotesStore store = null;

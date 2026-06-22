@@ -80,6 +80,7 @@
 				<part ref="Comment" label="Following Comment" visibility="ifdata"/>
 				<part ref="Bibliography" label="Bibliographic Source" visibility="ifdata"/>
 				<part ref="Note" label="Etymology Note" visibility="ifdata"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
@@ -97,6 +98,7 @@
 		<part ref="CVPattern" label="CV Pattern"/>
 		<part ref="Tone"/>
 		<part ref="Location"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part ref="PublishIn" label="Publish Pronunciation In"/>
 	</layout>
 
@@ -106,10 +108,12 @@
 		<part ref="ComplexEntryTypes"/>
 		<part ref="ComponentLexemes"/>
 		<part ref="Summary" visibility="ifdata"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 	</layout>
 
 	<layout class="LexEntryRef" type="detail" name="Publication">
 		<part ref="PrimaryLexemes"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 	</layout>
 
 	<layout class="LexEntryRef" type="detail" name="VariantSection">
@@ -118,6 +122,7 @@
 		<part ref="RefVariantEntryTypes"/>
 		<part ref="RefShowMinorEntry"/>
 		<part ref="RefSummary" visibility="ifdata"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 	</layout>
 
 

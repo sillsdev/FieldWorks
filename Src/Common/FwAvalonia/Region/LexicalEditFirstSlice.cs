@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				var roots = new List<ViewNode>
 				{
-					StampProductLeaf(formNode, "LexemeFormEditor", "Lexeme Form"),
+					StampProductLeaf(formNode, "LexemeFormEditor", FwAvaloniaStrings.LexemeFormLabel),
 					StampProductLeaf(morphTypeNode, "MorphTypeChooser", null),
 					StampProductLeaf(glossNode, "SenseGlossEditor", null)
 				};
@@ -113,9 +113,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			var roots = new List<ViewNode>
 			{
-				Leaf("LexEntry/identity/#0", "Lexeme Form", "Form", "multistring", "all vernacular", "LexemeFormEditor"),
-				Leaf("LexEntry/identity/#1", "Morph Type", "MorphType", "morphtypeatomicreference", null, "MorphTypeChooser"),
-				Leaf("LexEntry/identity/#2", "Gloss", "Gloss", "multistring", "all analysis", "SenseGlossEditor")
+				Leaf("LexEntry/identity/#0", FwAvaloniaStrings.LexemeFormLabel, "Form", "multistring", "all vernacular", "LexemeFormEditor"),
+				Leaf("LexEntry/identity/#1", FwAvaloniaStrings.MorphTypeLabel, "MorphType", "morphtypeatomicreference", null, "MorphTypeChooser"),
+				Leaf("LexEntry/identity/#2", FwAvaloniaStrings.GlossLabel, "Gloss", "multistring", "all analysis", "SenseGlossEditor")
 			};
 
 			var diagnostics = new[]

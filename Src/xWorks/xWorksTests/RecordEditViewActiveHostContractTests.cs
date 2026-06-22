@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -88,6 +89,19 @@ namespace SIL.FieldWorks.XWorks
 			var legacyDataTree = (DataTree)GetPrivateFieldValue(control, "m_dataEntryForm");
 			Assert.That(panel.Controls.Contains(legacyDataTree), Is.False,
 				"The dormant legacy DataTree must not remain parented in the panel while Avalonia is the active surface.");
+
+			// The host's contract instance is built from the approved baseline-adapter set when the
+			// Avalonia surface activates — NOT constructed ad hoc at an assert site from the very
+			// adapter id it then asserts (which could never fail). An unlisted id must trip it.
+			var contract = (ActiveHostContract)GetPrivateFieldValue(control, "m_activeHostContract");
+			Assert.That(contract, Is.Not.Null,
+				"Activating the Avalonia surface must build the host's active-host contract.");
+			Assert.That(contract.ActiveSurface, Is.EqualTo(LexicalEditSurfaceKind.Avalonia));
+			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed(RecordEditView.CommandMenuRoutingAdapterId),
+				Throws.Nothing, "The approved command-menu-routing baseline adapter stays permitted.");
+			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed("unlisted-adapter"),
+				Throws.InvalidOperationException,
+				"An adapter id outside the approved set must trip the contract.");
 
 			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
 			// headless xWorks harness does not provide, so we do not assert the host was created here. The

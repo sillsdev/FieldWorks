@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -57,21 +59,574 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// One text run inside a writing-system value's managed rich-text projection. This keeps the
+	/// Avalonia contract LCModel-free while preserving the run boundaries and supported properties the
+	/// product text model already carries.
+	/// </summary>
+	public sealed class RegionTextRun
+	{
+		public RegionTextRun(string text, string writingSystemTag = null, string namedStyle = null,
+			string fontFamily = null, int fontSizeMilliPoints = 0, bool bold = false,
+			bool italic = false, bool underline = false, string objectData = null)
+		{
+			Text = text ?? string.Empty;
+			WritingSystemTag = writingSystemTag;
+			NamedStyle = namedStyle;
+			FontFamily = fontFamily;
+			FontSizeMilliPoints = fontSizeMilliPoints;
+			Bold = bold;
+			Italic = italic;
+			Underline = underline;
+			ObjectData = objectData;
+		}
+
+		public string Text { get; }
+		public string WritingSystemTag { get; }
+		public string NamedStyle { get; }
+		public string FontFamily { get; }
+		public int FontSizeMilliPoints { get; }
+		public bool Bold { get; }
+		public bool Italic { get; }
+		public bool Underline { get; }
+		public string ObjectData { get; }
+	}
+
+	/// <summary>
+	/// LCModel-free rich-text projection for one writing-system alternative. The source rich XML is
+	/// preserved so the product edge can reconstruct the original <c>ITsString</c> losslessly before
+	/// the owned editor starts modifying runs.
+	/// </summary>
+	public sealed class RegionRichTextValue
+	{
+		public RegionRichTextValue(string plainText, IReadOnlyList<RegionTextRun> runs,
+			string richXml = null, bool requiresRichEditor = false, bool canEditRichText = true)
+		{
+			PlainText = plainText ?? string.Empty;
+			Runs = runs ?? new List<RegionTextRun>();
+			RichXml = richXml;
+			RequiresRichEditor = requiresRichEditor;
+			CanEditRichText = canEditRichText;
+			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
+		}
+
+		public string PlainText { get; }
+		public IReadOnlyList<RegionTextRun> Runs { get; }
+		public string RichXml { get; }
+		public bool RequiresRichEditor { get; }
+		public bool CanEditRichText { get; }
+		public IReadOnlyList<int> GraphemeClusterStarts { get; }
+	}
+
+	/// <summary>
+	/// Unicode grapheme-cluster boundaries for a region text value. The editor layer uses this to keep
+	/// caret movement and deletion on user-visible characters instead of raw UTF-16 code units.
+	/// </summary>
+	public static class RegionTextGraphemeClusters
+	{
+		private const char ZeroWidthJoiner = '\u200D';
+
+		public static IReadOnlyList<int> GetClusterStarts(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return Array.Empty<int>();
+
+			var starts = StringInfo.ParseCombiningCharacters(text);
+			if (starts.Length <= 1)
+				return starts;
+
+			var collapsed = new List<int> { starts[0] };
+			for (var i = 1; i < starts.Length; i++)
+			{
+				var boundary = starts[i];
+				var hasJoinerBefore = boundary > 0 && text[boundary - 1] == ZeroWidthJoiner;
+				var hasJoinerAfter = boundary < text.Length && text[boundary] == ZeroWidthJoiner;
+				if (!hasJoinerBefore && !hasJoinerAfter)
+					collapsed.Add(boundary);
+			}
+
+			return collapsed;
+		}
+	}
+
+	/// <summary>
+	/// Caret/selection helpers for mixed-direction text editing. Navigation uses grapheme-cluster
+	/// boundaries and maps left/right keys through the active run direction so RTL/LTR spans behave
+	/// like legacy editors without native Views hit-testing services.
+	/// </summary>
+	public static class RegionBidirectionalTextNavigation
+	{
+		public static int MoveCaret(string text, IReadOnlyList<RegionTextRun> runs, int caretIndex,
+			bool physicalLeft, bool defaultRightToLeft)
+		{
+			text = text ?? string.Empty;
+			var index = Clamp(caretIndex, 0, text.Length);
+			if (text.Length == 0)
+				return 0;
+
+			var activeRtl = IsActiveRunRightToLeft(text, runs, index, defaultRightToLeft);
+			var moveForward = activeRtl ? physicalLeft : !physicalLeft;
+			return moveForward ? NextClusterBoundary(text, index) : PreviousClusterBoundary(text, index);
+		}
+
+		public static int CollapseSelectionEdge(string text, IReadOnlyList<RegionTextRun> runs,
+			int selectionStart, int selectionEnd, bool physicalLeft, bool defaultRightToLeft)
+		{
+			text = text ?? string.Empty;
+			var start = Clamp(Math.Min(selectionStart, selectionEnd), 0, text.Length);
+			var end = Clamp(Math.Max(selectionStart, selectionEnd), 0, text.Length);
+			if (start == end)
+				return start;
+
+			var activeRtl = IsActiveRunRightToLeft(text, runs, end, defaultRightToLeft);
+			var collapseToEnd = activeRtl ? physicalLeft : !physicalLeft;
+			return collapseToEnd ? end : start;
+		}
+
+		public static RegionSelectionRange NormalizeSelectionToClusters(string text,
+			int selectionStart, int selectionEnd)
+		{
+			text = text ?? string.Empty;
+			var start = Clamp(Math.Min(selectionStart, selectionEnd), 0, text.Length);
+			var end = Clamp(Math.Max(selectionStart, selectionEnd), 0, text.Length);
+			if (start == end)
+				return new RegionSelectionRange(start, end);
+
+			var normalizedStart = PreviousClusterBoundary(text, start);
+			var normalizedEnd = NextClusterBoundary(text, end);
+			return new RegionSelectionRange(normalizedStart, normalizedEnd);
+		}
+
+		public static int NormalizeHitTestCaretIndex(string text, int caretIndex)
+		{
+			text = text ?? string.Empty;
+			var index = Clamp(caretIndex, 0, text.Length);
+			if (index == text.Length)
+				return index;
+			return PreviousClusterBoundary(text, index);
+		}
+
+		private static bool IsActiveRunRightToLeft(string text, IReadOnlyList<RegionTextRun> runs,
+			int caretIndex, bool defaultRightToLeft)
+		{
+			var byText = ProbeDirectionFromText(text, caretIndex);
+			if (byText.HasValue)
+				return byText.Value;
+
+			if (runs == null || runs.Count == 0)
+				return defaultRightToLeft;
+
+			var index = Clamp(caretIndex, 0, text.Length);
+			var offset = 0;
+			for (var i = 0; i < runs.Count; i++)
+			{
+				var run = runs[i];
+				var runLength = run?.Text?.Length ?? 0;
+				if (index <= offset + runLength)
+				{
+					var runText = run?.Text ?? string.Empty;
+					var withinRun = Clamp(index - offset, 0, runText.Length);
+					var probe = ProbeDirectionFromText(runText, withinRun);
+					if (probe.HasValue)
+						return probe.Value;
+					break;
+				}
+
+				offset += runLength;
+			}
+
+			return defaultRightToLeft;
+		}
+
+		private static bool? ProbeDirectionFromText(string text, int caretIndex)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+
+			var probeIndex = caretIndex >= text.Length
+				? text.Length - 1
+				: Math.Max(0, caretIndex);
+
+			for (var i = probeIndex; i >= 0; i--)
+			{
+				var direction = GetDirection(text[i]);
+				if (direction.HasValue)
+					return direction.Value;
+			}
+
+			for (var i = probeIndex + 1; i < text.Length; i++)
+			{
+				var direction = GetDirection(text[i]);
+				if (direction.HasValue)
+					return direction.Value;
+			}
+
+			return null;
+		}
+
+		private static bool? GetDirection(char ch)
+		{
+			if (IsRightToLeftCharacter(ch))
+				return true;
+			if (char.IsLetterOrDigit(ch))
+				return false;
+			return null;
+		}
+
+		private static bool IsRightToLeftCharacter(char ch)
+		{
+			return (ch >= '\u0590' && ch <= '\u08FF')
+				|| (ch >= '\uFB1D' && ch <= '\uFEFC');
+		}
+
+		private static int PreviousClusterBoundary(string text, int index)
+		{
+			if (index <= 0 || string.IsNullOrEmpty(text))
+				return 0;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			for (var i = starts.Count - 1; i >= 0; i--)
+			{
+				if (starts[i] < index)
+					return starts[i];
+			}
+
+			return 0;
+		}
+
+		private static int NextClusterBoundary(string text, int index)
+		{
+			if (string.IsNullOrEmpty(text))
+				return 0;
+			if (index >= text.Length)
+				return text.Length;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(text);
+			for (var i = 0; i < starts.Count; i++)
+			{
+				if (starts[i] > index)
+					return starts[i];
+			}
+
+			return text.Length;
+		}
+
+		private static int Clamp(int value, int min, int max)
+			=> Math.Max(min, Math.Min(max, value));
+	}
+
+	public struct RegionSelectionRange
+	{
+		public RegionSelectionRange(int start, int end)
+		{
+			Start = start;
+			End = end;
+		}
+
+		public int Start { get; }
+		public int End { get; }
+	}
+
+	/// <summary>
+	/// Editor-local IME composition state for one text lane. Composition updates stay detached from
+	/// committed text until <see cref="Commit"/>; <see cref="Cancel"/> discards pending text and
+	/// <see cref="Backspace"/> edits only the active composition payload.
+	/// <para>STATUS (2026-06-15): this is the managed composition model from the multi-writing-system
+	/// text foundation, exercised by the foundation's IME-state tests. The live <see cref="FwFieldControls"/>
+	/// editor currently relies on Avalonia's native <c>TextBox</c> IME (which already composes), so this
+	/// model is forward foundation for explicit composition control, not yet on the editor's input
+	/// path. Wiring it end-to-end is tracked by the foundation change, not this one — see the §18
+	/// review note in <c>lexical-edit-avalonia-migration/tasks.md</c>.</para>
+	/// </summary>
+	public sealed class RegionImeCompositionState
+	{
+		public RegionImeCompositionState(string committedText = "")
+		{
+			CommittedText = committedText ?? string.Empty;
+		}
+
+		public string CommittedText { get; }
+		public bool IsActive => _compositionStart >= 0;
+		public int CompositionStart => _compositionStart;
+		public string CompositionText => _compositionText;
+
+		public string DisplayText
+		{
+			get
+			{
+				if (!IsActive)
+					return CommittedText;
+
+				return CommittedText.Substring(0, _compositionStart)
+					+ _compositionText
+					+ CommittedText.Substring(_compositionEnd);
+			}
+		}
+
+		public void Begin(int selectionStart, int selectionEnd, string initialComposition)
+		{
+			var start = Math.Max(0, Math.Min(selectionStart, selectionEnd));
+			var end = Math.Min(CommittedText.Length, Math.Max(selectionStart, selectionEnd));
+			_compositionStart = start;
+			_compositionEnd = end;
+			_compositionText = initialComposition ?? string.Empty;
+		}
+
+		public void Update(string compositionText)
+		{
+			if (!IsActive)
+				return;
+
+			_compositionText = compositionText ?? string.Empty;
+		}
+
+		public string Backspace()
+		{
+			if (!IsActive || _compositionText.Length == 0)
+				return DisplayText;
+
+			var starts = RegionTextGraphemeClusters.GetClusterStarts(_compositionText);
+			if (starts.Count <= 1)
+			{
+				_compositionText = string.Empty;
+				return DisplayText;
+			}
+
+			var removeAt = starts[starts.Count - 1];
+			_compositionText = _compositionText.Substring(0, removeAt);
+			return DisplayText;
+		}
+
+		public string Cancel()
+		{
+			Reset();
+			return CommittedText;
+		}
+
+		public string Commit()
+		{
+			if (!IsActive)
+				return CommittedText;
+
+			var committed = DisplayText;
+			Reset();
+			return committed;
+		}
+
+		private void Reset()
+		{
+			_compositionStart = -1;
+			_compositionEnd = -1;
+			_compositionText = string.Empty;
+		}
+
+		private int _compositionStart = -1;
+		private int _compositionEnd = -1;
+		private string _compositionText = string.Empty;
+	}
+
+	/// <summary>
+	/// Plain-text edit helpers over the neutral rich-text model. This lets the first owned rich-text
+	/// field preserve unaffected run metadata while the user edits the combined visible string.
+	/// </summary>
+	public static class RegionRichTextEditAlgorithms
+	{
+		public static RegionRichTextValue ApplyPlainTextEdit(RegionRichTextValue current, string updatedPlainText)
+		{
+			updatedPlainText = updatedPlainText ?? string.Empty;
+			if (current == null)
+			{
+				return FromRuns(updatedPlainText,
+					new List<RegionTextRun> { new RegionTextRun(updatedPlainText) });
+			}
+
+			if (current.PlainText == updatedPlainText)
+				return current;
+
+			if (current.Runs == null || current.Runs.Count == 0)
+			{
+				return FromRuns(updatedPlainText,
+					string.IsNullOrEmpty(updatedPlainText)
+						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
+						: new[] { new RegionTextRun(updatedPlainText) },
+					canEditRichText: current.CanEditRichText);
+			}
+
+			var original = current.PlainText ?? string.Empty;
+			var prefix = 0;
+			while (prefix < original.Length && prefix < updatedPlainText.Length
+				&& original[prefix] == updatedPlainText[prefix])
+			{
+				prefix++;
+			}
+
+			var suffix = 0;
+			while (suffix < original.Length - prefix && suffix < updatedPlainText.Length - prefix
+				&& original[original.Length - 1 - suffix] == updatedPlainText[updatedPlainText.Length - 1 - suffix])
+			{
+				suffix++;
+			}
+
+			var originalEditEnd = original.Length - suffix;
+			var replacement = updatedPlainText.Substring(prefix, updatedPlainText.Length - prefix - suffix);
+			var spans = BuildRunSpans(current.Runs);
+
+			if (spans.Count == 0)
+			{
+				return FromRuns(updatedPlainText,
+					string.IsNullOrEmpty(updatedPlainText)
+						? (IReadOnlyList<RegionTextRun>)Array.Empty<RegionTextRun>()
+						: new[] { new RegionTextRun(updatedPlainText) },
+					canEditRichText: current.CanEditRichText);
+			}
+
+			// A pure insertion (nothing removed) defers to legacy TsString behavior: the inserted text
+			// inherits the PRECEDING run's properties — it attaches to the run that ends at the
+			// insertion point, not the following run. (Position 0 falls to the first run, since
+			// nothing precedes it.) Replacements/deletions keep the containing-run logic below.
+			var startRun = originalEditEnd == prefix
+				? FindInsertionRunIndex(spans, prefix)
+				: FindRunIndex(spans, prefix, preferNextAtBoundary: prefix < original.Length);
+			var endRun = originalEditEnd > prefix
+				? FindRunIndex(spans, originalEditEnd - 1, preferNextAtBoundary: false)
+				: startRun;
+
+			var newRuns = new List<RegionTextRun>();
+			for (var i = 0; i < startRun; i++)
+				newRuns.Add(spans[i].Run);
+
+			var startSpan = spans[startRun];
+			var endSpan = spans[endRun];
+			var startPrefix = startSpan.Run.Text.Substring(0, Math.Max(0, prefix - startSpan.Start));
+			var endSuffixLength = Math.Max(0, endSpan.End - originalEditEnd);
+			var endSuffix = endSuffixLength == 0
+				? string.Empty
+				: endSpan.Run.Text.Substring(endSpan.Run.Text.Length - endSuffixLength, endSuffixLength);
+
+			if (startRun == endRun)
+			{
+				var merged = startPrefix + replacement + endSuffix;
+				if (merged.Length > 0)
+					newRuns.Add(CloneRun(startSpan.Run, merged));
+			}
+			else
+			{
+				var left = startPrefix + replacement;
+				if (left.Length > 0)
+					newRuns.Add(CloneRun(startSpan.Run, left));
+				if (endSuffix.Length > 0)
+					newRuns.Add(CloneRun(endSpan.Run, endSuffix));
+			}
+
+			for (var i = endRun + 1; i < spans.Count; i++)
+				newRuns.Add(spans[i].Run);
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			return FromRuns(updatedPlainText, compacted, canEditRichText: current.CanEditRichText);
+		}
+
+		public static RegionRichTextValue FromRuns(string plainText, IReadOnlyList<RegionTextRun> runs,
+			string richXml = null, bool canEditRichText = true)
+		{
+			return new RegionRichTextValue(plainText, runs, richXml,
+				requiresRichEditor: RequiresRichEditor(runs),
+				canEditRichText: canEditRichText);
+		}
+
+		private static bool RequiresRichEditor(IReadOnlyList<RegionTextRun> runs)
+		{
+			if (runs == null || runs.Count == 0)
+				return false;
+			if (runs.Count > 1)
+				return true;
+
+			var run = runs[0];
+			return !string.IsNullOrEmpty(run.NamedStyle)
+				|| !string.IsNullOrEmpty(run.FontFamily)
+				|| run.FontSizeMilliPoints > 0
+				|| run.Bold
+				|| run.Italic
+				|| run.Underline
+				|| !string.IsNullOrEmpty(run.ObjectData);
+		}
+
+		private static RegionTextRun CloneRun(RegionTextRun source, string text)
+			=> new RegionTextRun(text, source.WritingSystemTag, source.NamedStyle, source.FontFamily,
+				source.FontSizeMilliPoints, source.Bold, source.Italic, source.Underline, source.ObjectData);
+
+		private static int FindRunIndex(IReadOnlyList<RunSpan> spans, int position, bool preferNextAtBoundary)
+		{
+			for (var i = 0; i < spans.Count; i++)
+			{
+				if (position < spans[i].End)
+					return i;
+				if (preferNextAtBoundary && position == spans[i].End && i + 1 < spans.Count)
+					return i + 1;
+			}
+
+			return spans.Count - 1;
+		}
+
+		// The run a pure insertion attaches to, deferring to legacy: the run that CONTAINS the
+		// insertion point or ends exactly at it (the preceding run at a boundary), so the inserted
+		// text inherits that run's properties. Position 0 has no preceding run and falls to the first.
+		private static int FindInsertionRunIndex(IReadOnlyList<RunSpan> spans, int position)
+		{
+			for (var i = 0; i < spans.Count; i++)
+			{
+				if (position > spans[i].Start && position <= spans[i].End)
+					return i;
+			}
+
+			return 0;
+		}
+
+		private static List<RunSpan> BuildRunSpans(IReadOnlyList<RegionTextRun> runs)
+		{
+			var spans = new List<RunSpan>();
+			var start = 0;
+			foreach (var run in runs)
+			{
+				var text = run?.Text ?? string.Empty;
+				var end = start + text.Length;
+				spans.Add(new RunSpan(run, start, end));
+				start = end;
+			}
+			return spans;
+		}
+
+		private sealed class RunSpan
+		{
+			public RunSpan(RegionTextRun run, int start, int end)
+			{
+				Run = run;
+				Start = start;
+				End = end;
+			}
+
+			public RegionTextRun Run { get; }
+			public int Start { get; }
+			public int End { get; }
+		}
+	}
+
+	/// <summary>
 	/// One writing-system alternative's value plus the rendering metadata legacy slices honor
 	/// (project font, flow direction) and the stable WS tag the keyboard-switch seam keys on (6.2).
 	/// </summary>
 	public sealed class RegionWsValue
 	{
 		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
-			bool rightToLeft = false, string wsTag = null, bool bold = false)
+			bool rightToLeft = false, string wsTag = null, bool bold = false,
+			RegionRichTextValue richText = null)
 		{
 			WsAbbrev = wsAbbrev;
-			Value = value;
+			Value = value ?? richText?.PlainText ?? string.Empty;
 			FontFamily = fontFamily;
 			FontSize = fontSize;
 			RightToLeft = rightToLeft;
 			WsTag = wsTag;
 			Bold = bold;
+			RichText = richText;
 		}
 
 		/// <summary>Bold emphasis (the lexeme form's legacy &lt;properties&gt; bold).</summary>
@@ -87,6 +642,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Stable writing-system tag (e.g. BCP-47 id) for per-WS keyboard activation on focus.</summary>
 		public string WsTag { get; }
+
+		/// <summary>Optional rich-text projection of the value's original TsString runs.</summary>
+		public RegionRichTextValue RichText { get; }
+
+		/// <summary>
+		/// Whether this alternative already carries content that requires the run-aware editor path.
+		/// </summary>
+		public bool RequiresRichEditor => RichText != null && RichText.RequiresRichEditor;
+
+		/// <summary>
+		/// Whether the current rich-text content can be edited by the managed rich-text field. Values
+		/// carrying unsupported object data remain read-only until their owner task lands.
+		/// </summary>
+		public bool CanEditRichText => RichText == null || RichText.CanEditRichText;
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
@@ -160,7 +729,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// A field on a lexical-edit region, projected from a typed <see cref="ViewNode"/> and bound to live
 	/// values by an <see cref="IRegionValueProvider"/>. This is the product contract that replaces the
-	/// lossy hand-written POC DTO: structure comes from the typed view definition, values from the
+	/// old detached preview DTO path: structure comes from the typed view definition, values from the
 	/// provider, so the region scales to arbitrary layouts instead of three fixed fields.
 	/// </summary>
 	public sealed class LexicalEditRegionField

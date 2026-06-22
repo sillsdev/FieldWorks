@@ -1,6 +1,7 @@
 # WinForms-Free Lexeme Editor — Decisions and Burn-Down
 
-Status: ACTIVE (decisions approved; waves landing behind tests)
+Status: ACTIVE (decisions approved; waves landed; 2026-06-12 UX-semantics rework landed —
+gear = configure-jump only, options-only `FwOptionPicker` flyouts, compact menu density)
 Owner lane: lexical-edit-avalonia-migration, follows B11 (dynamic editors) and the
 companion-strip coexistence lane recorded in `xml-retirement-blockers.md`.
 
@@ -84,12 +85,7 @@ the 6.3 separator-bar/add-slot affordance. **Add** uses type-ahead search over t
 (headword prefix match via the entry repository) rather than materializing the whole lexicon
 as options — possibility lists enumerate; lexicons search.
 
-`LexReferenceMultiSlice` (relations) and `GhostLexRefSlice` are explicitly **next in this
-lane, not this wave**: the multi-slice generates one row per relation type and needs the
-relation-type model walk; it reuses the same row/affordance once that walk exists. Recorded
-as the lane's follow-up so it cannot silently fall off the list.
-
-Status (wave 3, 2026-06-11): LANDED. The composer recognizes non-virtual entry/sense-target
+Status (wave 3, 2026-06-12): LANDED. The composer recognizes non-virtual entry/sense-target
 reference vectors (signature LexEntry/LexSense, or CmObject under the
 `EntrySequenceReferenceSlice` layout identity — ComponentLexemes/PrimaryLexemes) and composes
 an editable `ReferenceVector` row whose add slot carries
@@ -106,6 +102,29 @@ the slice's VIRTUAL back-ref fields (ComplexFormEntries, Subentries,
 VisibleComplexFormBackRefs, VariantFormEntries) still render read-only — their writes land on
 the other entry's LexEntryRef (the legacy `AddNewObjectsToProperty` overrides) and ride the
 D3 follow-up together with the relations walk.
+
+Top-level ghost lexical-reference rows landed in the same lane on 2026-06-12:
+`GhostLexRefSlice` now composes as an editable search-backed `ReferenceVector` row instead of
+the unsupported placeholder. The empty `Components` row is always available; the hidden
+`Variant of` ghost row appears under Show Hidden Fields. On first add, the setter creates the
+missing `LexEntryRef` with the legacy semantics (`krtComplexForm` vs `krtVariant`, seeded
+unspecified type, complex-form primary-lexeme coupling, one undo step). Pinned by
+`GhostLexRefSliceTests`; the class moved from `ExplicitlyDeferredClassNames` to
+`LaneAbsorbedClassNames` ("D3 ghost reference-vector lane").
+
+`LexReferenceMultiSlice` landed in the same lane on 2026-06-12: the composer now walks the
+resolved `ILexReference` objects directly and emits one Avalonia relation row per reference,
+instead of leaving the legacy generator as a deferred custom-slice placeholder. The row label
+matches the legacy forward/reverse logic (tree/asymmetric reverse sides use the reverse name;
+unidirectional rows only exist on the forward side), the displayed targets match the legacy
+side-specific target selection (current object excluded; reverse tree/asymmetric rows show only
+the root side), and the row binds its `ObjectHvo` to the `ILexReference` so the existing menu
+adapter continues to resolve delete/replace/detail commands against the hidden legacy slice.
+Collection/sequence/unidirectional/tree-root relations reuse the Avalonia `ReferenceVector`
+affordance for in-pane add/remove; pair/asymmetric/reverse-tree rows remain non-editable in the
+row and keep their menu-driven edit flows. Pinned by `LexReferenceMultiSliceTests`; the class
+moved from `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`
+("D3 lexical relation lane").
 
 ### D4. Dialog launchers: Avalonia row + legacy dialog through a host service
 
@@ -163,28 +182,42 @@ Status (wave 4, 2026-06-11): LANDED.
   media lane (6.12) like the native player.
 
 ### Post-wave gap fixes (user-reported, 2026-06-11): LANDED
+### UX-semantics rework (user direction, 2026-06-11/12): LANDED
 
-- **Chooser jump links (gear flyouts):** the legacy chooser dialog's "Edit the … list"
-  LinkLabels (`ReallySimpleListChooser.InitializeExtras`/`AddLink`, kGotoLink →
-  `PostMessage("FollowLink", new FwLinkArgs(tool, m_guidLink))`) are recreated end to end:
-  `<chooserInfo><chooserLink type/label/tool/target>` imports onto the typed node
-  (`ViewNode.ChooserLinks`, canonical-JSON `chooserLinks` block — B7's schema reservation),
-  the composer projects the "goto" links (the only kind the lexeme-editor layouts use; all 95
-  shipped links are goto) onto chooser AND reference-vector rows
-  (`LexicalEditRegionField.ChooserLinks`), the gear/+ flyouts render them below the options
-  (`RegionLinkChrome`), and the click rides a `RegionLinkRequest` host callback that
-  `RecordEditView.OnRegionLinkRequested` dispatches as the identical legacy jump (settle, then
-  mediator `FollowLink` with `FwLinkArgs(tool, Guid.Empty)` — no lexeme-editor chooserInfo
-  sets `flidTextParam`). chooserInfo's other facets (title/text/guicontrol FlatList) remain
-  the measured B7 remainder.
-- **Lexeme Form gear:** the legacy Lexeme Form slice's button is its slice TREE-NODE MENU
-  (`MoForm-Detail-AsLexemeForm` binds `menu="mnuDataTree-LexemeForm"`: Show in Concordance /
-  Swap with Allomorph / Convert to Affix Process/Allomorph) — NOT a chooser launcher (the
-  morph-type chooser with the `MorphTypeSwapLogic` gate is the child Morph Type row, which
-  already has its gear). Recreated data-driven: any text row whose layout carries a `menu=`
-  binding draws the same hover-revealed `RegionChrome` gear, and clicking it raises the SAME
-  slice-menu `RegionMenuRequest` a label right-click raises — the host shows the identical
-  xCore menu. Nothing is hardcoded to "LexemeForm".
+- **Gear = CONFIGURE, never choose:** the gear on a chooser/reference-vector row DIRECTLY
+  dispatches the list-editor jump (`RegionGearChrome` → `RegionLinkRequest` →
+  `RecordEditView.OnRegionLinkRequested` → settle + mediator `FollowLink` with
+  `FwLinkArgs(tool, Guid.Empty)`); no flyout, no context menu ever opens from a gear. The
+  gear renders ONLY when a list-edit target resolves: (a) the node's imported
+  `<chooserInfo><chooserLink type="goto">` wins (B7's import lane — `ViewNode.ChooserLinks`,
+  canonical-JSON `chooserLinks` block; all 95 shipped links are goto; first goto wins when
+  several ride one row); (b) else the composer DERIVES the tool from the row's possibility
+  list, mirroring the legacy generic jump lane: `LinkListener.FollowActiveLink`
+  (Src/xWorks/LinkListener.cs:507-517) publishes `GetToolForList`, answered by
+  `AreaListener.GetToolForList` (Src/LexText/LexTextDll/AreaListener.cs:388-418) walking the
+  lists-area tools' clerks (`Lists/areaConfiguration.xml` recordList owner=/property= ↔
+  `Lists/Edit/toolConfiguration.xml` tools); the composer mirrors that clerk table statically
+  (`FullEntryRegionComposer.ListEditorToolByOwnerField`, keyed (owner class, owning field) —
+  so morph type/semantic domains/usages/status gears work too) and derives ownerless custom
+  lists as Name-without-spaces + "Edit" (`AreaListener.GetCustomListToolName`). A list with
+  no resolvable editor tool → NO gear on that row. chooserInfo's other facets
+  (title/text/guicontrol FlatList) remain the measured B7 remainder.
+- **"+" and single-select chooser click = OPTIONS ONLY:** option flyouts carry zero link
+  items (`RegionLinkChrome` deleted). Every option dropdown is the ONE compact filterable
+  picker `FwOptionPicker` (Region/FwOptionPicker.cs): a selection-filter panel (light
+  border), filter TextBox on top (auto-focused on open, ksSearchPrompt watermark) over a
+  VIRTUALIZED list capped at `FwAvaloniaDensity.OptionListMaxHeight` (320), item padding pinned to
+  the legacy WinForms menu density (`FwAvaloniaDensity.OptionItemPadding`, (6,2)), hierarchy via the
+  existing Depth indent. Typing filters live (case-insensitive contains; the search-backed
+  vector forwards the query to the D3 `SearchOptions` delegate); Down/Up move, Enter commits
+  the highlighted option (first match by default), Esc closes, click commits. Staging is
+  unchanged (`TrySetOption` / `TryAddReferenceItem`).
+- **Lexeme Form gear: REVERTED.** Gears never open menus, so the text-row slice-menu gear
+  (the earlier gap fix) is gone; the slice menu (`menu="mnuDataTree-LexemeForm"` etc.) stays
+  on right-click only — the label/value right-click lanes are unchanged.
+- **Context-menu density:** `RegionMenuFlyout` items pin the explicit compact legacy padding
+  (`FwAvaloniaDensity.MenuItemPadding`/`MenuItemMinHeight`), not the Fluent defaults; long menus
+  keep the presenter's scrolling.
 
 ### D5. Governance: the burn-down is enforced by tests, not intentions
 

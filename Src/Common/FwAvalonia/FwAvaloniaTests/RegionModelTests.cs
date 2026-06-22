@@ -80,6 +80,87 @@ namespace FwAvaloniaTests
 			Assert.That(lexeme.AutomationId, Is.EqualTo("LexemeFormEditor"));
 		}
 
+		private sealed class RichRegionValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "dog", richText: new RegionRichTextValue(
+						"dog",
+						new List<RegionTextRun>
+						{
+							new RegionTextRun("do", "qaa-x-one"),
+							new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+						},
+						richXml: "<AStr ws='qaa-x-one'><Run ws='qaa-x-one'>do</Run><Run ws='qaa-x-two' namedStyle='Emphasis'>g</Run></AStr>",
+						requiresRichEditor: true))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
+		private sealed class UnsupportedRichRegionValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "link", richText: new RegionRichTextValue(
+						"link",
+						new List<RegionTextRun>
+						{
+							new RegionTextRun("link", "qaa-x-one", objectData: "\uF8FFhttps://software.sil.org")
+						},
+						richXml: "<AStr ws='qaa-x-one'><Run ws='qaa-x-one' objData='x'>link</Run></AStr>",
+						requiresRichEditor: true,
+						canEditRichText: false))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
+		[Test]
+		public void RichTextFields_AreProjectedEditable_WhenRichRowsCanRoundTrip()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new RichRegionValueProvider());
+			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
+
+			Assert.That(lexeme.IsEditable, Is.True,
+				"rows carrying rich-text runs stay editable when the value advertises rich edit support");
+			Assert.That(lexeme.Values.Single().RichText, Is.Not.Null);
+			Assert.That(lexeme.Values.Single().RichText.Runs.Select(r => r.WritingSystemTag),
+				Is.EqualTo(new[] { "qaa-x-one", "qaa-x-two" }));
+		}
+
+		[Test]
+		public void RichTextFields_WithUnsupportedObjectData_AreProjectedReadOnly()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(),
+				new UnsupportedRichRegionValueProvider());
+			var lexeme = model.Fields.Single(f => f.Field == "LexemeForm");
+
+			Assert.That(lexeme.IsEditable, Is.False,
+				"rows with unsupported object-data runs must stay read-only until the owner task lands");
+			Assert.That(lexeme.Values.Single().CanEditRichText, Is.False);
+		}
+
+		[Test]
+		public void RichTextEditAlgorithm_NoOpEdit_ReturnsOriginalInstance()
+		{
+			var original = RegionRichTextEditAlgorithms.FromRuns("dog", new[]
+			{
+				new RegionTextRun("do", "qaa-x-one"),
+				new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+			});
+
+			var result = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(original, "dog");
+			Assert.That(result, Is.SameAs(original),
+				"a no-op edit should keep the exact rich payload so save-without-changes preserves runs");
+		}
+
 		[Test]
 		public void ChooserField_IsClassifiedAsChooser_WithOptionsAndSelection()
 		{
@@ -127,6 +208,135 @@ namespace FwAvaloniaTests
 
 			var model = LexicalEditRegionMapper.FromViewDefinition(def, new FakeRegionValueProvider());
 			Assert.That(model.Diagnostics, Has.Count.EqualTo(1));
+		}
+
+		[Test]
+		public void GraphemeClusters_KhmerSyllable_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("កាx");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"Khmer base+vowel stays one grapheme cluster; the following Latin character starts a new cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_CombiningMarkSequence_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("a\u0301b");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"Latin base plus combining acute stays one cluster; the trailing letter starts the next cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_SurrogatePairEmoji_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("\U0001F600x");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 2 }),
+				"A surrogate-pair emoji stays one cluster; the following Latin character starts a new cluster");
+		}
+
+		[Test]
+		public void GraphemeClusters_ZwjFamilySequence_IsOneUserVisibleCluster()
+		{
+			var starts = RegionTextGraphemeClusters.GetClusterStarts("\U0001F468\u200D\U0001F469\u200D\U0001F467z");
+
+			Assert.That(starts, Is.EqualTo(new[] { 0, 8 }),
+				"A ZWJ family sequence is one cluster; the following Latin character starts the next cluster");
+		}
+
+		[Test]
+		public void ImeCompositionState_ComposeCancelCommit_LeavesCommittedTextUntouchedUntilCommit()
+		{
+			var ime = new RegionImeCompositionState("hello world");
+			const string thaiGa = "\u0E01\u0E32";
+
+			ime.Begin(6, 11, thaiGa);
+			Assert.That(ime.IsActive, Is.True);
+			Assert.That(ime.CommittedText, Is.EqualTo("hello world"),
+				"composition is editor-local and must not mutate committed text until commit");
+			Assert.That(ime.DisplayText, Is.EqualTo("hello " + thaiGa));
+
+			var canceled = ime.Cancel();
+			Assert.That(canceled, Is.EqualTo("hello world"));
+			Assert.That(ime.IsActive, Is.False);
+
+			ime.Begin(6, 11, thaiGa);
+			var committed = ime.Commit();
+			Assert.That(committed, Is.EqualTo("hello " + thaiGa));
+			Assert.That(ime.IsActive, Is.False);
+		}
+
+		[Test]
+		public void ImeCompositionState_Backspace_DeletesWithinActiveCompositionOnly()
+		{
+			var ime = new RegionImeCompositionState("cat");
+			ime.Begin(3, 3, "a\u0301b");
+
+			var afterBackspace = ime.Backspace();
+			Assert.That(afterBackspace, Is.EqualTo("cata\u0301"),
+				"Backspace removes the last grapheme in composition text before touching committed text");
+			Assert.That(ime.CommittedText, Is.EqualTo("cat"));
+
+			afterBackspace = ime.Backspace();
+			Assert.That(afterBackspace, Is.EqualTo("cat"));
+			Assert.That(ime.CommittedText, Is.EqualTo("cat"));
+		}
+
+		[Test]
+		public void RichTextEditAlgorithm_InsertAtRunBoundary_PreservesNeighborRunMetadata()
+		{
+			var original = RegionRichTextEditAlgorithms.FromRuns("abc\u05d0\u05d1\u05d2", new[]
+			{
+				new RegionTextRun("abc", "qaa-x-left", namedStyle: "LeftStyle"),
+				new RegionTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl", namedStyle: "RtlStyle")
+			});
+
+			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(original, "abcX\u05d0\u05d1\u05d2");
+
+			Assert.That(edited.Runs.Select(r => r.Text), Is.EqualTo(new[] { "abcX", "\u05d0\u05d1\u05d2" }));
+			Assert.That(edited.Runs[0].NamedStyle, Is.EqualTo("LeftStyle"));
+			Assert.That(edited.Runs[1].NamedStyle, Is.EqualTo("RtlStyle"),
+				"inserts at run boundaries must not leak style metadata across the boundary");
+		}
+
+		[Test]
+		public void BidirectionalCaretNavigation_MapsArrowKeysThroughActiveRunDirection()
+		{
+			const string mixed = "abc \u05d0\u05d1\u05d2 xyz";
+			var rich = RegionRichTextEditAlgorithms.FromRuns(mixed, new[]
+			{
+				new RegionTextRun("abc ", "qaa-x-left"),
+				new RegionTextRun("\u05d0\u05d1\u05d2", "qaa-x-rtl"),
+				new RegionTextRun(" xyz", "qaa-x-left")
+			});
+
+			var insideRtl = 5;
+			var afterLeft = RegionBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, insideRtl,
+				physicalLeft: true, defaultRightToLeft: true);
+			Assert.That(afterLeft, Is.EqualTo(6),
+				"inside RTL run, Left arrow advances logically");
+
+			var afterRight = RegionBidirectionalTextNavigation.MoveCaret(mixed, rich.Runs, afterLeft,
+				physicalLeft: false, defaultRightToLeft: true);
+			Assert.That(afterRight, Is.EqualTo(5),
+				"inside RTL run, Right arrow moves logically backward");
+		}
+
+		[Test]
+		public void SelectionAndHitTest_NormalizeToWholeGraphemeClusters()
+		{
+			const string text = "a\U0001F469\u200D\U0001F467b";
+
+			var normalizedRange = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text, 2, 4);
+			Assert.That(normalizedRange.Start, Is.EqualTo(1));
+			Assert.That(normalizedRange.End, Is.EqualTo(6),
+				"selection covering part of a ZWJ cluster expands to whole user-visible character");
+
+			var normalizedCaret = RegionBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text, 3);
+			Assert.That(normalizedCaret, Is.EqualTo(1),
+				"hit-test caret in the middle of a grapheme snaps to cluster start");
 		}
 	}
 

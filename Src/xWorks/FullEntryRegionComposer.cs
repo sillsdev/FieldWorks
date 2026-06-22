@@ -63,9 +63,29 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public static class FullEntryRegionComposer
 	{
-		private const int MaxDepth = 6;
+		// The visited (hvo, layout) guard is the real recursion stop. This depth cap is only a
+		// backstop for malformed layouts, so it must still allow the deepest shipped lexeme-edit
+		// detail paths (e.g. sense -> extended note -> example -> nested custom fields).
+		private const int MaxDepth = 12;
 		private static readonly ViewDefinitionCompiler Compiler = new ViewDefinitionCompiler();
-		private static readonly Lazy<CompilerSources> Sources = new Lazy<CompilerSources>(LoadSources);
+
+		// Review task 10: deliberately NOT a Lazy — a failed load must not be cached as null for
+		// the process lifetime (the old behavior: one transient IO hiccup silently demoted every
+		// future compose to the 3-field first slice). A successful load is immutable and cached
+		// forever; a failure logs (see LoadSources) and is retried on the next compose.
+		private static readonly object SourcesSync = new object();
+		private static CompilerSources s_sources;
+
+		private static CompilerSources GetSources()
+		{
+			var sources = s_sources;
+			if (sources != null)
+				return sources;
+			lock (SourcesSync)
+			{
+				return s_sources ?? (s_sources = LoadSources());
+			}
+		}
 
 		// Review finding A (observable memoization): counts the expensive snapshot builds (layout
 		// lookup + layout.ToString() + fingerprint + compile). A repeat compose must not grow it.
@@ -108,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 				state.Walk(node, entry, 0);
 
 			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters,
-				state.ReferenceAddSetters, state.ReferenceRemoveSetters);
+				state.ReferenceAddSetters, state.ReferenceRemoveSetters, state.RichTextSetters);
 			composedContext = context;
 			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
@@ -119,24 +139,102 @@ namespace SIL.FieldWorks.XWorks
 		/// chooser options, hierarchy carried as <see cref="RegionChoiceOption.Depth"/> — exactly
 		/// the indented tree the legacy chooser shows. <paramref name="flat"/> (a chooserInfo
 		/// "FlatList" guicontrol spec, e.g. PeopleFlatList) keeps the order but suppresses the
-		/// hierarchy, like the legacy flat chooser.
+		/// hierarchy, like the legacy flat chooser. Review task 12: the implementation lives in
+		/// the shared <see cref="RegionValueFactory"/> so this composer and
+		/// <see cref="LexicalEditRegionBuilder"/> cannot drift; this wrapper keeps the composer's
+		/// established internal surface (and its tests).
 		/// </summary>
 		internal static IReadOnlyList<RegionChoiceOption> BuildPossibilityOptions(
 			ICmPossibilityList list, bool flat)
-		{
-			var options = new List<RegionChoiceOption>();
-			void Add(ICmPossibility possibility, int depth)
+			=> RegionValueFactory.BuildPossibilityOptions(list, flat);
+
+		// The legacy generic possibility-list → lists-area-tool derivation, mirrored statically.
+		// Research (gear = configure): when a legacy jump's target object is owned by a
+		// CmPossibilityList, LinkListener.FollowActiveLink (Src/xWorks/LinkListener.cs:507-517)
+		// publishes "GetToolForList", handled by AreaListener.GetToolForList
+		// (Src/LexText/LexTextDll/AreaListener.cs:388-418): it walks the lists-area tools in the
+		// window configuration, resolves each tool's clerk recordList (owner=/property=) to the
+		// actual list through the SDA, and returns the first tool whose clerk edits that list;
+		// unmatched (ownerless = user custom) lists derive Name-without-spaces + "Edit"
+		// (AreaListener.GetCustomListToolName, AreaListener.cs:832-835 — the tool name the lists
+		// area generates dynamically per custom list, AreaListener.CreateCustomToolNode).
+		// The composer runs without a window configuration, so the clerk table itself
+		// (DistFiles/Language Explorer/Configuration/Lists/areaConfiguration.xml clerks ↔
+		// Lists/Edit/toolConfiguration.xml tools) is mirrored here, keyed (owner class, owning
+		// field name). Owned lists missing from the table have no lists-area editor → null → no
+		// gear on rows backed by them.
+		private static readonly IReadOnlyDictionary<(string Owner, string Field), string> ListEditorToolByOwnerField =
+			new Dictionary<(string, string), string>
 			{
-				options.Add(new RegionChoiceOption(possibility.Guid.ToString(),
-					possibility.Name.BestAnalysisAlternative?.Text ?? possibility.ShortName ?? possibility.Guid.ToString(),
-					flat ? 0 : depth));
-				foreach (var sub in possibility.SubPossibilitiesOS)
-					Add(sub, depth + 1);
+				{ ("LangProject", "AffixCategories"), "affixCategoryEdit" },
+				{ ("LangProject", "AnnotationDefs"), "annotationDefEdit" },
+				{ ("LangProject", "AnthroList"), "anthroEdit" },
+				{ ("LangProject", "ConfidenceLevels"), "confidenceEdit" },
+				{ ("LangProject", "Education"), "educationEdit" },
+				{ ("LangProject", "GenreList"), "genresEdit" },
+				{ ("LangProject", "Locations"), "locationsEdit" },
+				{ ("LangProject", "People"), "peopleEdit" },
+				{ ("LangProject", "Positions"), "positionsEdit" },
+				{ ("LangProject", "Restrictions"), "restrictionsEdit" },
+				{ ("LangProject", "Roles"), "roleEdit" },
+				{ ("LangProject", "SemanticDomainList"), "semanticDomainEdit" },
+				{ ("LangProject", "Status"), "statusEdit" },
+				{ ("LangProject", "TextMarkupTags"), "textMarkupTagsEdit" },
+				{ ("LangProject", "TimeOfDay"), "timeOfDayEdit" },
+				{ ("LangProject", "TranslationTags"), "translationTypeEdit" },
+				{ ("LexDb", "ComplexEntryTypes"), "complexEntryTypeEdit" },
+				{ ("LexDb", "DialectLabels"), "dialectsListEdit" },
+				{ ("LexDb", "DomainTypes"), "domainTypeEdit" },
+				{ ("LexDb", "ExtendedNoteTypes"), "extNoteTypeEdit" },
+				{ ("LexDb", "Languages"), "languagesListEdit" },
+				{ ("LexDb", "MorphTypes"), "morphTypeEdit" },
+				{ ("LexDb", "PublicationTypes"), "publicationsEdit" },
+				{ ("LexDb", "References"), "lexRefEdit" },
+				{ ("LexDb", "SenseTypes"), "senseTypeEdit" },
+				{ ("LexDb", "Status"), "senseStatusEdit" },
+				{ ("LexDb", "UsageTypes"), "usageTypeEdit" },
+				{ ("LexDb", "VariantEntryTypes"), "variantEntryTypeEdit" },
+				{ ("DsDiscourseData", "ChartMarkers"), "chartmarkEdit" },
+				{ ("DsDiscourseData", "ConstChartTempl"), "charttempEdit" },
+				{ ("RnResearchNbk", "RecTypes"), "recTypeEdit" }
+			};
+
+		/// <summary>
+		/// Resolves the lists-area tool that edits <paramref name="list"/> — the configure gear's
+		/// jump target when the layout authored no explicit chooserLink. Mirrors legacy
+		/// <c>AreaListener.GetToolForList</c>: shipped lists match the lists-area clerk table by
+		/// (owner class, owning field); ownerless lists are user custom lists, whose dynamically
+		/// generated tool is Name-without-spaces + "Edit"; anything else resolves to null (no
+		/// lists-area editor exists, so the row gets no gear).
+		/// </summary>
+		internal static string ResolveListEditorTool(ICmPossibilityList list)
+		{
+			if (list == null)
+				return null;
+
+			if (list.Owner == null)
+			{
+				// Legacy AreaListener.GetCustomListToolName (custom lists are ownerless).
+				var name = list.Name?.BestAnalysisAlternative?.Text;
+				return string.IsNullOrEmpty(name) || name == "***"
+					? null
+					: name.Replace(" ", string.Empty) + "Edit";
 			}
 
-			foreach (var possibility in list.PossibilitiesOS)
-				Add(possibility, 0);
-			return options;
+			string fieldName;
+			try
+			{
+				var mdc = (IFwMetaDataCacheManaged)list.Cache.DomainDataByFlid.MetaDataCache;
+				fieldName = mdc.GetFieldName(list.OwningFlid);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			return ListEditorToolByOwnerField.TryGetValue((list.Owner.ClassName, fieldName), out var tool)
+				? tool
+				: null;
 		}
 
 		private sealed class ComposeState
@@ -149,6 +247,8 @@ namespace SIL.FieldWorks.XWorks
 			public readonly List<LexicalEditRegionField> Fields = new List<LexicalEditRegionField>();
 			public readonly Dictionary<string, Func<string, string, bool>> TextSetters
 				= new Dictionary<string, Func<string, string, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<string, RegionRichTextValue, bool>> RichTextSetters
+				= new Dictionary<string, Func<string, RegionRichTextValue, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<string, bool>> OptionSetters
 				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
 			// 6.3: reference-vector add/remove staging, keyed like the other setters by StableId.
@@ -466,17 +566,17 @@ namespace SIL.FieldWorks.XWorks
 				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
 				{
 					case CellarPropertyType.String:
-						rawEditor = "string";
+						rawEditor = EditorKindMap.StringEditor;
 						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
 						break;
 					case CellarPropertyType.MultiUnicode:
 					case CellarPropertyType.MultiString:
-						rawEditor = "multistring";
+						rawEditor = EditorKindMap.MultiStringEditor;
 						wsSpec = WritingSystemServices.GetMagicWsNameFromId(_mdc.GetFieldWs(flid));
 						break;
 					default:
 						// Resolved by CellarPropertyType in WalkOtherField, like autoCustom.
-						rawEditor = "autocustom";
+						rawEditor = EditorKindMap.AutoCustomEditor;
 						break;
 				}
 
@@ -486,31 +586,52 @@ namespace SIL.FieldWorks.XWorks
 					null, null, menuId: "mnuDataTree-Help");
 			}
 
-			// B7: project the node's imported chooserLink metadata onto the row — the legacy
-			// chooser dialog's "Edit the … list" jump links (ReallySimpleListChooser.
-			// InitializeExtras, ReallySimpleListChooser.cs:887-926). Only the "goto" kind is
-			// implemented: it is the ONLY kind the lexeme-editor layouts use (all 95 shipped
-			// chooserLinks are type="goto"); legacy "dialog"/"simple" links need ChooserCommand
-			// lanes and are logged + skipped, never half-dispatched. The target guid stays empty
-			// like legacy m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels
-			// localize through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
-			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node)
+			// B7: project the row's list-editor jump (the configure gear's direct dispatch target).
+			// The node's imported chooserLink metadata wins — the legacy chooser dialog's "Edit
+			// the … list" jump links (ReallySimpleListChooser.InitializeExtras,
+			// ReallySimpleListChooser.cs:887-926). Only the "goto" kind is implemented: it is the
+			// ONLY kind the lexeme-editor layouts use (all 95 shipped chooserLinks are
+			// type="goto"); legacy "dialog"/"simple" links need ChooserCommand lanes and are
+			// logged + skipped, never half-dispatched. The target guid stays empty like legacy
+			// m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels localize
+			// through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
+			// When the layout authored NO goto link but the row IS backed by a possibility list,
+			// the tool derives from the list the same way the legacy jump lane does (see
+			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
+			// therefore NO gear on that row.
+			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node,
+				ICmPossibilityList list = null)
 			{
-				if (node.ChooserLinks.Count == 0)
-					return null;
-
 				List<RegionChooserLink> links = null;
 				foreach (var link in node.ChooserLinks)
 				{
 					if (!string.Equals(link.Type, "goto", StringComparison.OrdinalIgnoreCase)
 						|| string.IsNullOrEmpty(link.Label) || string.IsNullOrEmpty(link.Tool))
 					{
-						System.Diagnostics.Debug.WriteLine(
-							$"chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
+						// Review task 10: skipped links must be visible in the product log, not
+						// only on a debugger (the legacy "dialog"/"simple" kinds wait on the
+						// ChooserCommand lanes).
+						SIL.Reporting.Logger.WriteEvent(
+							$"FullEntryRegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
 					}
 					(links ?? (links = new List<RegionChooserLink>()))
 						.Add(new RegionChooserLink(Localize(link.Label), link.Tool));
+				}
+
+				if (links == null && list != null)
+				{
+					var tool = ResolveListEditorTool(list);
+					if (tool != null)
+					{
+						var listName = list.Name?.BestAnalysisAlternative?.Text ?? string.Empty;
+						links = new List<RegionChooserLink>
+						{
+							new RegionChooserLink(string.Format(CultureInfo.CurrentCulture,
+								SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.EditListFormat,
+								listName), tool)
+						};
+					}
 				}
 
 				return links;
@@ -554,6 +675,19 @@ namespace SIL.FieldWorks.XWorks
 
 			private void WalkField(ViewNode node, ICmObject obj, int depth)
 			{
+				if (string.Equals(node.CustomEditorClass, LexReferenceMultiSliceClassName, StringComparison.Ordinal))
+				{
+					AddLexicalRelationRows(node, obj, depth);
+					return;
+				}
+
+				if (string.Equals(node.CustomEditorClass, GhostLexRefSliceClassName, StringComparison.Ordinal)
+					&& obj is ILexEntry ghostLexEntry)
+				{
+					AddGhostLexRefVector(node, ghostLexEntry, depth);
+					return;
+				}
+
 				// winforms-free-lexeme-editor.md D1: a custom slice resolves plugin registry →
 				// companion strip → unsupported row, in that order and never the other way. The
 				// registry is consulted FIRST so a migrated class composes as a real in-tree
@@ -572,34 +706,37 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var fieldCountBeforeDispatch = Fields.Count;
-				var editor = (node.RawEditor ?? "").ToLowerInvariant();
-				switch (editor)
+				// Review task 8: the editor-string → category knowledge lives ONCE, in
+				// EditorKindMap (the same FwAvalonia home the importer's classification and the
+				// mapper's kind projection use); this switch only routes categories. Categories
+				// without a dedicated lane here (AtomicReferenceChooser, Grouping, Other) refine
+				// by CellarPropertyType in WalkOtherField — that LCModel knowledge stays in the
+				// composer.
+				switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
 				{
-					case "multistring":
-					case "string":
+					case RegionEditorCategory.Text:
 						WalkTextField(node, obj, depth);
 						break;
-					case "morphtypeatomicreference":
+					case RegionEditorCategory.MorphTypeChooser:
 						WalkMorphTypeChooser(node, obj, depth);
 						break;
-					case "summary":
+					case RegionEditorCategory.Summary:
 						// Summary slices are section header rows in legacy too.
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
-					case "lit":
+					case RegionEditorCategory.Literal:
 						// Literal text row: the label IS the content.
 						AddReadOnlyRow(node, obj, depth, string.Empty);
 						break;
-					case "picture":
-					case "image":
+					case RegionEditorCategory.Picture:
 						WalkPictures(node, obj, depth);
 						break;
-					case "jtview":
+					case RegionEditorCategory.EmbeddedView:
 						// Embedded formatted view: render the object's summary text read-only (the
 						// full embedded-view replacement rides the table/IR work).
 						AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
 						break;
-					case "command":
+					case RegionEditorCategory.Command:
 						// Command slices render their button; execution arrives with the xCore
 						// command bridge (shell phase).
 						Fields.Add(new LexicalEditRegionField(StableId(node, obj),
@@ -607,6 +744,9 @@ namespace SIL.FieldWorks.XWorks
 							RegionFieldKind.Command, node.EditorClassification, node.AutomationId,
 							node.LocalizationKey, node.Routing, null, null, null,
 							isEditable: false, indent: depth));
+						break;
+					case RegionEditorCategory.EnumCombo:
+						WalkEnumCombo(node, obj, depth);
 						break;
 					default:
 						WalkOtherField(node, obj, depth);
@@ -644,43 +784,88 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var type = (CellarPropertyType)_mdc.GetFieldType(flid);
-				var systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				var values = new List<RegionWsValue>();
-				var anyData = false;
-				foreach (var ws in systems)
+				switch (type)
 				{
-					string text;
-					switch (type)
-					{
-						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiString:
-							text = _sda.get_MultiStringAlt(obj.Hvo, flid, ws.Handle)?.Text;
-							break;
-						case CellarPropertyType.String:
-							text = _sda.get_StringProp(obj.Hvo, flid)?.Text;
-							break;
-						case CellarPropertyType.Unicode:
-							text = _sda.get_UnicodeProp(obj.Hvo, flid);
-							break;
-						default:
-							WalkUnsupported(node, obj, depth);
-							return;
-					}
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+					case CellarPropertyType.String:
+					case CellarPropertyType.Unicode:
+						break;
+					default:
+						WalkUnsupported(node, obj, depth);
+						return;
+				}
 
-					anyData |= !string.IsNullOrEmpty(text);
-					// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
-					var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
-					values.Add(new RegionWsValue(ws.Abbreviation, text ?? string.Empty, ws.DefaultFontName,
-						fontSize, ws.RightToLeftScript, ws.Id, node.BoldEmphasis));
-					if (type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
-						break; // single-alternative property: one row
+				var hvo = obj.Hvo;
+				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
+				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
+					&& systems.Count > 0)
+				{
+					// Single-alternative property: one row. Review task 5 (plain String props):
+					// get_StringProp reads the WHOLE string regardless of the layout ws= spec, but
+					// the row's display metadata (abbreviation/font/RTL) and write-back previously
+					// took the spec's FIRST writing system — asymmetric when the stored string was
+					// typed in another ws (legacy StringSlice renders the string's own run
+					// properties). Derive the row's ws from the existing string's first run; the
+					// layout ws only seeds an EMPTY string.
+					var rowWs = systems[0];
+					if (type == CellarPropertyType.String)
+					{
+						var existing = _sda.get_StringProp(hvo, flid);
+						if (existing != null && existing.Length > 0)
+						{
+							var runWs = TsStringUtils.GetWsOfRun(existing, 0);
+							if (runWs > 0)
+							{
+								try
+								{
+									rowWs = _cache.ServiceLocator.WritingSystemManager.Get(runWs);
+								}
+								catch (Exception)
+								{
+									// Unknown run ws: keep the layout writing system.
+								}
+							}
+						}
+					}
+					systems = new[] { rowWs };
+				}
+
+				var anyData = false;
+				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
+				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// Review task 12: the per-ws value rows build through the shared factory
+				// (LexicalEditRegionBuilder uses the same one), this lane only supplies the text.
+				IReadOnlyList<RegionWsValue> values;
+				if (type == CellarPropertyType.Unicode)
+				{
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					{
+						var text = _sda.get_UnicodeProp(hvo, flid);
+						anyData |= !string.IsNullOrEmpty(text);
+						return text;
+					}, fontSize, node.BoldEmphasis);
+				}
+				else
+				{
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					{
+						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
+						anyData |= !string.IsNullOrEmpty(tss?.Text);
+						return tss;
+					}, _cache.WritingSystemFactory, fontSize, node.BoldEmphasis);
 				}
 
 				if (!anyData && HideWhenEmpty(node))
 					return;
 
 				var stableId = StableId(node, obj);
-				var editable = type != CellarPropertyType.Unicode;
+				// Review task 4: the plain-text setter below replaces the WHOLE alternative via
+				// MakeString, which would flatten embedded writing systems, styles, and any other
+				// run properties on the first keystroke. Until the rich TsString editor lands
+				// (gated on 6.13), a row whose current content is rich composes READ-ONLY so a
+				// keystroke cannot destroy it; plain single-run content stays editable.
+				var editable = type != CellarPropertyType.Unicode && values.All(v => v.CanEditRichText);
 				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
@@ -690,7 +875,6 @@ namespace SIL.FieldWorks.XWorks
 				if (!editable)
 					return;
 
-				var hvo = obj.Hvo;
 				// Edits key on the unique IETF tag (ws.Id): the user-editable Abbreviation can
 				// collide across writing systems, which both crashed composition (ToDictionary)
 				// and could misroute an edit to the wrong alternative. Unambiguous abbreviations
@@ -713,13 +897,68 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
 						return false;
-					var tss = TsStringUtils.MakeString(value ?? string.Empty, wsHandle);
-					if (type == CellarPropertyType.String)
-						_sda.SetString(hvo, flid, tss);
-					else
-						_sda.SetMultiStringAlt(hvo, flid, wsHandle, tss);
-					return true;
+					return WriteTextProp(hvo, flid, wsHandle, type, value);
 				};
+				RichTextSetters[stableId] = (wsKey, value) =>
+				{
+					if (value == null || wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
+						return false;
+					return WriteRichTextProp(hvo, flid, wsHandle, type, value);
+				};
+			}
+
+			// Review task 11: the ONE String-vs-multi text read dispatch every TsString-reading
+			// site shares (Unicode props return a raw string and stay with get_UnicodeProp at the
+			// call sites).
+			private ITsString ReadTextProp(int hvo, int flid, int ws, CellarPropertyType type)
+			{
+				switch (type)
+				{
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						return _sda.get_MultiStringAlt(hvo, flid, ws);
+					case CellarPropertyType.String:
+						return _sda.get_StringProp(hvo, flid);
+					default:
+						return null;
+				}
+			}
+
+			// Review task 11: the matching write dispatch (plain-text MakeString round-trip; the
+			// rich-content guard in WalkTextField keeps it away from rich strings).
+			private bool WriteTextProp(int hvo, int flid, int ws, CellarPropertyType type, string value)
+			{
+				var tss = TsStringUtils.MakeString(value ?? string.Empty, ws);
+				switch (type)
+				{
+					case CellarPropertyType.String:
+						_sda.SetString(hvo, flid, tss);
+						return true;
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						_sda.SetMultiStringAlt(hvo, flid, ws, tss);
+						return true;
+					default:
+						return false;
+				}
+			}
+
+			private bool WriteRichTextProp(int hvo, int flid, int ws, CellarPropertyType type,
+				RegionRichTextValue value)
+			{
+				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, ws);
+				switch (type)
+				{
+					case CellarPropertyType.String:
+						_sda.SetString(hvo, flid, tss);
+						return true;
+					case CellarPropertyType.MultiUnicode:
+					case CellarPropertyType.MultiString:
+						_sda.SetMultiStringAlt(hvo, flid, ws, tss);
+						return true;
+					default:
+						return false;
+				}
 			}
 
 			private void WalkMorphTypeChooser(ViewNode node, ICmObject obj, int depth)
@@ -730,18 +969,16 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 
+				var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
 				if (_morphTypeOptions == null)
 				{
 					_morphTypeOptions = new List<RegionChoiceOption>();
-					var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
-					if (morphTypes != null)
+					foreach (var possibility in form.ReferenceTargetCandidates(MoFormTags.kflidMorphType)
+						.OfType<IMoMorphType>()
+						.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
 					{
-						foreach (var possibility in morphTypes.ReallyReallyAllPossibilities.OfType<IMoMorphType>()
-							.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
-						{
-							_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
-								possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
-						}
+						_morphTypeOptions.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+							possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
 					}
 				}
 				var options = _morphTypeOptions;
@@ -752,7 +989,7 @@ namespace SIL.FieldWorks.XWorks
 					node.LocalizationKey, node.Routing, null, options, form.MorphTypeRA?.Guid.ToString(),
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: BuildChooserLinks(node, morphTypes)));
 
 				OptionSetters[stableId] = optionKey =>
 				{
@@ -765,8 +1002,11 @@ namespace SIL.FieldWorks.XWorks
 					// prompt AND a class conversion (MoStemAllomorph <-> MoAffixAllomorph). Assigning
 					// blindly would create a model-invalid combination (e.g. a stem allomorph with an
 					// affix morph type), so a boundary-crossing assignment is rejected until the
-					// class-conversion lane lands (review round 2).
-					if (TryClassifyMorphType(guid, out var toKind)
+					// class-conversion lane lands (review round 2). The GUID -> kind classification
+					// is the seam's single table (review consolidation: this file's 19-entry mirror
+					// dictionary is gone; MorphTypeGuidConsolidationTests pins the seam's table to
+					// the MoMorphTypeTags constants).
+					if (MorphTypeSwapLogic.TryClassify(guid, out var toKind)
 						&& (form is IMoStemAllomorph) != MorphTypeSwapLogic.IsStemType(toKind))
 					{
 						return false;
@@ -776,44 +1016,27 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// Maps the fixed MoMorphTypeTags GUIDs onto the seam's MorphTypeKind so the pure
-			// stem/affix boundary logic (extracted from MorphTypeAtomicLauncher) can classify them.
-			private static readonly IReadOnlyDictionary<Guid, MorphTypeKind> MorphTypeKindByGuid =
-				new Dictionary<Guid, MorphTypeKind>
-				{
-					{ MoMorphTypeTags.kguidMorphRoot, MorphTypeKind.Root },
-					{ MoMorphTypeTags.kguidMorphStem, MorphTypeKind.Stem },
-					{ MoMorphTypeTags.kguidMorphBoundRoot, MorphTypeKind.BoundRoot },
-					{ MoMorphTypeTags.kguidMorphBoundStem, MorphTypeKind.BoundStem },
-					{ MoMorphTypeTags.kguidMorphParticle, MorphTypeKind.Particle },
-					{ MoMorphTypeTags.kguidMorphClitic, MorphTypeKind.Clitic },
-					{ MoMorphTypeTags.kguidMorphProclitic, MorphTypeKind.Proclitic },
-					{ MoMorphTypeTags.kguidMorphEnclitic, MorphTypeKind.Enclitic },
-					{ MoMorphTypeTags.kguidMorphPhrase, MorphTypeKind.Phrase },
-					{ MoMorphTypeTags.kguidMorphDiscontiguousPhrase, MorphTypeKind.DiscontiguousPhrase },
-					{ MoMorphTypeTags.kguidMorphPrefix, MorphTypeKind.Prefix },
-					{ MoMorphTypeTags.kguidMorphSuffix, MorphTypeKind.Suffix },
-					{ MoMorphTypeTags.kguidMorphInfix, MorphTypeKind.Infix },
-					{ MoMorphTypeTags.kguidMorphSimulfix, MorphTypeKind.Simulfix },
-					{ MoMorphTypeTags.kguidMorphSuprafix, MorphTypeKind.Suprafix },
-					{ MoMorphTypeTags.kguidMorphCircumfix, MorphTypeKind.Circumfix },
-					{ MoMorphTypeTags.kguidMorphPrefixingInterfix, MorphTypeKind.PrefixingInterfix },
-					{ MoMorphTypeTags.kguidMorphInfixingInterfix, MorphTypeKind.InfixingInterfix },
-					{ MoMorphTypeTags.kguidMorphSuffixingInterfix, MorphTypeKind.SuffixingInterfix }
-				};
-
-			private static bool TryClassifyMorphType(Guid guid, out MorphTypeKind kind)
-				=> MorphTypeKindByGuid.TryGetValue(guid, out kind);
-
 			// 6.3: an atomic possibility reference takes the chooser lane (legacy
 			// PossibilityAtomicReferenceSlice): options from the field's own list
 			// (ReferenceTargetOwner), write-back through the fenced session.
 			private void AddAtomicPossibilityChooser(ViewNode node, ICmObject obj, int depth, int flid,
 				ICmPossibilityList list, int targetHvo)
 			{
+				// Review task 6: the legacy atomic possibility launcher lets the user CLEAR the
+				// reference (PossibilityAtomicReferenceLauncher.OnLeave -> AddItem(null) when the
+				// box is emptied; only a layout-authored nullLabel="" forbids it, which no
+				// lexeme-editor part does), so the chooser leads with an explicit empty choice —
+				// labeled with the SAME localized "<Empty>" the WinForms launchers use
+				// (DetailControlsStrings.ksNullLabel). The morph-type chooser deliberately offers
+				// no empty option (MorphTypeAtomicLauncher.AllowEmptyItem == false).
+				var options = new List<RegionChoiceOption>
+				{
+					new RegionChoiceOption(string.Empty,
+						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
+				};
 				// B7 remainder: chooserInfo FlatList specs are not yet imported onto the node;
 				// until they are, the chooser renders the list's own hierarchy.
-				var options = BuildPossibilityOptions(list, flat: false);
+				options.AddRange(BuildPossibilityOptions(list, flat: false));
 				var selected = targetHvo == 0
 					? null
 					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
@@ -822,11 +1045,18 @@ namespace SIL.FieldWorks.XWorks
 					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
-					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node)));
+					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				OptionSetters[stableId] = key =>
 				{
+					// The empty option clears the reference — legacy AddItem(null), i.e.
+					// SetObjProp(hvo, flid, 0) — inside the same fenced session (task 6).
+					if (string.IsNullOrEmpty(key))
+					{
+						_sda.SetObjProp(hvo, flid, 0);
+						return true;
+					}
 					var possibility = ResolvePossibilityInList(list, key);
 					if (possibility == null)
 						return false;
@@ -856,7 +1086,7 @@ namespace SIL.FieldWorks.XWorks
 					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
 					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items,
-					chooserLinks: BuildChooserLinks(node)));
+					chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
 				ReferenceAddSetters[stableId] = key =>
@@ -906,7 +1136,371 @@ namespace SIL.FieldWorks.XWorks
 			internal const string EntrySequenceSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
 
+			internal const string LexReferenceMultiSliceClassName =
+				"SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice";
+
+			internal const string GhostLexRefSliceClassName =
+				"SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice";
+
 			private const int MaxEntrySearchResults = 50;
+
+			private sealed class LexicalRelationRowModel
+			{
+				public ILexReference Relation;
+				public string Label;
+				public string MenuId;
+				public bool IsEditable;
+				public LexRefTypeTags.MappingTypes MappingType;
+				public bool IsReverseSide;
+				public IReadOnlyList<ICmObject> Targets;
+			}
+
+			private void AddLexicalRelationRows(ViewNode node, ICmObject obj, int depth)
+			{
+				var relations = GetLexicalRelations(obj, node.Field);
+				if (relations.Count == 0)
+					return;
+
+				foreach (var relation in relations)
+				{
+					var row = DescribeLexicalRelationRow(relation, obj);
+					if (row == null)
+						continue;
+
+					var stableId = StableId(node, obj) + "/lexref:" + relation.Guid;
+					var items = row.Targets
+						.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+						.ToList();
+					Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null;
+					if (row.IsEditable)
+						searchOptions = query => SearchLexicalRelationTargets(query, obj, relation, row.MappingType);
+
+					Fields.Add(new LexicalEditRegionField(stableId, row.Label, node.Field, node.WritingSystem,
+						RegionFieldKind.ReferenceVector, node.EditorClassification, node.AutomationId,
+						node.LocalizationKey, node.Routing, null, null, null,
+						isEditable: row.IsEditable, indent: depth, menuId: row.MenuId,
+						contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+						objectHvo: relation.Hvo, items: items,
+						searchOptions: searchOptions));
+
+					if (!row.IsEditable)
+						continue;
+
+					ReferenceAddSetters[stableId] = key => TryAddLexicalRelationTarget(obj, relation, row.MappingType, key);
+					ReferenceRemoveSetters[stableId] = key => TryRemoveLexicalRelationTarget(relation, key);
+				}
+			}
+
+			private IReadOnlyList<ILexReference> GetLexicalRelations(ICmObject obj, string fieldName)
+			{
+				if (obj == null || string.IsNullOrEmpty(fieldName))
+					return Array.Empty<ILexReference>();
+
+				var refs = SIL.LCModel.Utils.ReflectionHelper.GetProperty(obj, fieldName);
+				if (refs is System.Collections.Generic.IEnumerable<int> refIds)
+				{
+					var repository = _cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
+					return refIds.Select(repository.GetObject).Where(r => r != null).ToList();
+				}
+
+				var refsObjs = refs as System.Collections.IEnumerable;
+				if (refsObjs == null)
+					return Array.Empty<ILexReference>();
+
+				return refsObjs.Cast<ILexReference>().Where(r => r != null).ToList();
+			}
+
+			private LexicalRelationRowModel DescribeLexicalRelationRow(ILexReference relation, ICmObject current)
+			{
+				var type = relation?.Owner as ILexRefType;
+				if (type == null)
+					return null;
+
+				var targets = relation.TargetsRS.Cast<ICmObject>().ToList();
+				if (targets.Count == 0)
+					return null;
+
+				var mapping = (LexRefTypeTags.MappingTypes)type.MappingType;
+				var firstIsCurrent = targets[0].Hvo == current.Hvo;
+				var isReverseSide = false;
+				IReadOnlyList<ICmObject> displayTargets;
+
+				switch (mapping)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+						if (!firstIsCurrent)
+							return null;
+						displayTargets = targets.Skip(1).ToList();
+						break;
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+						isReverseSide = !firstIsCurrent;
+						displayTargets = firstIsCurrent
+							? targets.Skip(1).ToList()
+							: targets.Take(1).ToList();
+						break;
+					default:
+						displayTargets = targets.Where(target => target.Hvo != current.Hvo).ToList();
+						break;
+				}
+
+				if (displayTargets.Count == 0)
+					return null;
+
+				return new LexicalRelationRowModel
+				{
+					Relation = relation,
+					Label = ResolveLexicalRelationLabel(type, isReverseSide),
+					MenuId = ResolveLexicalRelationMenuId(mapping, isReverseSide),
+					IsEditable = CanEditLexicalRelation(mapping, isReverseSide),
+					MappingType = mapping,
+					IsReverseSide = isReverseSide,
+					Targets = displayTargets
+				};
+			}
+
+			private static string ResolveLexicalRelationLabel(ILexRefType type, bool reverse)
+			{
+				string label;
+				if (reverse)
+				{
+					label = type.ReverseName.BestAnalysisVernacularAlternative?.Text;
+					if (string.IsNullOrEmpty(label))
+						label = type.ReverseAbbreviation.BestAnalysisAlternative?.Text;
+				}
+				else
+				{
+					label = type.ShortName;
+					if (string.IsNullOrEmpty(label))
+						label = type.Abbreviation.BestAnalysisAlternative?.Text;
+				}
+
+				return string.IsNullOrEmpty(label)
+					? "***"
+					: label;
+			}
+
+			private static string ResolveLexicalRelationMenuId(LexRefTypeTags.MappingTypes mappingType, bool reverse)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+						return "mnuDataTree-DeleteReplaceLexReference";
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						return reverse ? "mnuDataTree-DeleteReplaceLexReference" : "mnuDataTree-DeleteAddLexReference";
+					default:
+						return "mnuDataTree-DeleteAddLexReference";
+				}
+			}
+
+			private static bool CanEditLexicalRelation(LexRefTypeTags.MappingTypes mappingType, bool reverse)
+			{
+				if (reverse)
+					return false;
+
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+						return true;
+					default:
+						return false;
+				}
+			}
+
+			private IReadOnlyList<RegionChoiceOption> SearchLexicalRelationTargets(string query,
+				ICmObject current, ILexReference relation, LexRefTypeTags.MappingTypes mappingType)
+			{
+				if (string.IsNullOrWhiteSpace(query))
+					return Array.Empty<RegionChoiceOption>();
+				query = query.Trim();
+
+				var present = new HashSet<int>(relation.TargetsRS.Select(target => target.Hvo));
+				return EnumerateLexicalRelationCandidates(mappingType)
+					.Where(target => target.Hvo != current.Hvo && !present.Contains(target.Hvo)
+						&& StartsWithIgnoreCase(ResolveEntryOrSenseName(target), query))
+					.Select(target => new RegionChoiceOption(target.Guid.ToString(), ResolveEntryOrSenseName(target)))
+					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
+					.Take(MaxEntrySearchResults)
+					.ToList();
+			}
+
+			private IEnumerable<ICmObject> EnumerateLexicalRelationCandidates(LexRefTypeTags.MappingTypes mappingType)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+						return _cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Cast<ICmObject>();
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+						return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>();
+					default:
+						return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().Cast<ICmObject>()
+							.Concat(_cache.ServiceLocator.GetInstance<ILexSenseRepository>().AllInstances().Cast<ICmObject>());
+				}
+			}
+
+			private bool TryAddLexicalRelationTarget(ICmObject current, ILexReference relation,
+				LexRefTypeTags.MappingTypes mappingType, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null || target.Hvo == current.Hvo || !IsLexicalRelationTargetAllowed(mappingType, target))
+					return false;
+
+				if (relation.TargetsRS.Any(existing => existing.Hvo == target.Hvo))
+					return false;
+
+				relation.TargetsRS.Add(target);
+				return true;
+			}
+
+			private bool TryRemoveLexicalRelationTarget(ILexReference relation, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null)
+					return false;
+
+				var existing = relation.TargetsRS.FirstOrDefault(item => item.Hvo == target.Hvo);
+				if (existing == null)
+					return false;
+
+				relation.TargetsRS.Remove(existing);
+				if (relation.TargetsRS.Count < 2)
+					_cache.DomainDataByFlid.DeleteObj(relation.Hvo);
+				return true;
+			}
+
+			private static bool IsLexicalRelationTargetAllowed(LexRefTypeTags.MappingTypes mappingType, ICmObject target)
+			{
+				switch (mappingType)
+				{
+					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+					case LexRefTypeTags.MappingTypes.kmtSensePair:
+					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+					case LexRefTypeTags.MappingTypes.kmtSenseTree:
+						return target is ILexSense;
+					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+					case LexRefTypeTags.MappingTypes.kmtEntryPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+					case LexRefTypeTags.MappingTypes.kmtEntryTree:
+						return target is ILexEntry;
+					default:
+						return target is ILexEntry || target is ILexSense;
+				}
+			}
+
+			private void AddGhostLexRefVector(ViewNode node, ILexEntry entry, int depth)
+			{
+				var stableId = StableId(node, entry);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: entry.Hvo, items: Array.Empty<RegionChoiceOption>(),
+					searchOptions: query => SearchGhostLexRefTargets(query, entry)));
+
+				ReferenceAddSetters[stableId] = key => TryCreateGhostEntryRef(entry, node.ForVariant, key);
+			}
+
+			private IReadOnlyList<RegionChoiceOption> SearchGhostLexRefTargets(string query, ILexEntry owningEntry)
+			{
+				if (string.IsNullOrWhiteSpace(query))
+					return Array.Empty<RegionChoiceOption>();
+				query = query.Trim();
+
+				return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances()
+					.Where(entry => entry != owningEntry && MatchesHeadwordPrefix(entry, query))
+					.Select(entry => new RegionChoiceOption(entry.Guid.ToString(), ResolveEntryOrSenseName(entry)))
+					.OrderBy(option => option.Name, StringComparer.OrdinalIgnoreCase)
+					.Take(MaxEntrySearchResults)
+					.ToList();
+			}
+
+			private bool TryCreateGhostEntryRef(ILexEntry entry, bool forVariant, string key)
+			{
+				var target = ResolveEntryOrSense(key);
+				if (target == null)
+					return false;
+
+				var targetEntry = target as ILexEntry ?? (target as ILexSense)?.Entry;
+				if (targetEntry == entry)
+					return false;
+
+				if (forVariant ? entry.VariantEntryRefs.Any() : entry.ComplexFormEntryRefs.Any())
+					return false;
+
+				var ler = entry.Services.GetInstance<ILexEntryRefFactory>().Create();
+				entry.EntryRefsOS.Add(ler);
+
+				if (forVariant)
+				{
+					const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
+					var type = entry.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
+						.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
+					ler.VariantEntryTypesRS.Add(type);
+					ler.RefType = LexEntryRefTags.krtVariant;
+					ler.HideMinorEntry = 0;
+				}
+				else
+				{
+					const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
+					var type = entry.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
+						.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
+					ler.RefType = LexEntryRefTags.krtComplexForm;
+					ler.ComplexEntryTypesRS.Add(type);
+					ler.HideMinorEntry = 0;
+					ler.PrimaryLexemesRS.Add(target);
+					entry.ChangeRootToStem();
+				}
+
+				try
+				{
+					ler.ComponentLexemesRS.Add(target);
+				}
+				catch (ArgumentException)
+				{
+					entry.EntryRefsOS.Remove(ler);
+					return false;
+				}
+
+				return true;
+			}
 
 			// The lane's gate: a NON-virtual reference vector whose destination signature is
 			// LexEntry/LexSense — or CmObject when the layout identity is the legacy
@@ -1096,6 +1690,43 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
+			// Review task 2: legacy enumComboBox is a CLOSED combo over the layout's stringList
+			// labels (SliceFactory.cs case "enumcombobox" -> EnumComboSlice), never free-form
+			// input. Falling through to the Integer lane composed it as an unrestricted int
+			// editor whose SetInt could persist invalid enum values. Until the importer carries
+			// the layout's stringList ids onto the node (it currently drops them), the row
+			// composes READ-ONLY showing the raw stored value; the eventual fix is an option
+			// chooser fed by that stringList.
+			private void WalkEnumCombo(ViewNode node, ICmObject obj, int depth)
+			{
+				var flid = GetFlid(obj, node.Field);
+				if (flid == 0)
+				{
+					WalkUnsupported(node, obj, depth);
+					return;
+				}
+
+				int current;
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.Integer:
+						current = _sda.get_IntProp(obj.Hvo, flid);
+						break;
+					case CellarPropertyType.Boolean:
+						// Legacy EnumComboSlice serves boolean-backed enums too (e.g. the
+						// Allomorph Status combo over IsAbstract), via IntBoolPropertyConverter.
+						current = IntBoolPropertyConverter.GetBoolean(_sda, obj.Hvo, flid) ? 1 : 0;
+						break;
+					default:
+						WalkUnsupported(node, obj, depth);
+						return;
+				}
+
+				if (current == 0 && HideWhenEmpty(node))
+					return;
+				AddReadOnlyRow(node, obj, depth, current.ToString(CultureInfo.InvariantCulture));
+			}
+
 			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
@@ -1229,8 +1860,20 @@ namespace SIL.FieldWorks.XWorks
 							var hvo = obj.Hvo;
 							TextSetters[stableId] = (ws, value) =>
 							{
-								if (!int.TryParse(value, out var parsed))
+								// Review task 7 (clearing an int box): legacy IntegerSlice treats a
+								// non-numeric box — INCLUDING empty — as invalid on focus loss: it
+								// warns and restores the stored value, never committing empty as 0
+								// (BasicTypeSlices.cs, IntegerSlice.m_tb_LostFocus's
+								// Convert.ToInt32 FormatException path). Mirror that deliberately:
+								// empty/whitespace stages NOTHING (false), so the control restores
+								// the last committed value (its lastStaged advances only on
+								// success), and a clear-then-retype only ever stages the parseable
+								// intermediate states.
+								if (!int.TryParse(value, NumberStyles.Integer,
+									CultureInfo.InvariantCulture, out var parsed))
+								{
 									return false;
+								}
 								_sda.SetInt(hvo, flid, parsed);
 								return true;
 							};
@@ -1290,14 +1933,11 @@ namespace SIL.FieldWorks.XWorks
 			// time, so composing stays side-effect free and the edit context exists by then.
 			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, IRegionEditorPlugin plugin)
 			{
-				var editContextAccessor = _editContextAccessor;
-				var cache = _cache;
-				var services = _services;
-				// D4: a service-aware plugin (the launcher lane) gets the host services through the
-				// five-argument overload; classic plugins keep the original contract.
-				Func<Avalonia.Controls.Control> factory = plugin is IServiceAwareRegionEditorPlugin serviceAware
-					? () => serviceAware.BuildControl(obj, node, editContextAccessor?.Invoke(), cache, services)
-					: (Func<Avalonia.Controls.Control>)(() => plugin.BuildControl(obj, node, editContextAccessor?.Invoke(), cache));
+				// Review task 13: ONE plugin contract — the build context bundles everything a
+				// plugin can need (object, node, deferred edit-context accessor, cache, optional
+				// host services); the former IServiceAwareRegionEditorPlugin type test is gone.
+				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache, _services);
+				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
 				Fields.Add(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
@@ -1358,6 +1998,27 @@ namespace SIL.FieldWorks.XWorks
 						node.AutomationId, node.LocalizationKey, node.Routing,
 						new List<RegionWsValue> { new RegionWsValue("", path ?? string.Empty) },
 						null, null, isEditable: false, indent: depth));
+
+					var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
+					if (_visited.Add((picture.Hvo, layoutName)))
+					{
+						try
+						{
+							var compiled = CompileForObject(_cache, picture, layoutName);
+							if (compiled != null)
+							{
+								foreach (var child in compiled.Roots)
+								{
+									if (child.Kind == ViewNodeKind.CustomFieldPlaceholder)
+										Walk(child, picture, depth + 1);
+								}
+							}
+						}
+						finally
+						{
+							_visited.Remove((picture.Hvo, layoutName));
+						}
+					}
 				}
 			}
 
@@ -1442,6 +2103,13 @@ namespace SIL.FieldWorks.XWorks
 					catch (Exception) { ghostFlid = 0; }
 				}
 
+				// Review task 3: with no resolvable ghost field AND no init method, typing could
+				// only MakeNewObject a bare object while the typed text silently vanished (nothing
+				// receives the string). No shipped layout authors such a ghost; render the prompt
+				// NON-editable (null) instead of destroying input on the first keystroke.
+				if (ghostFlid == 0 && string.IsNullOrEmpty(node.GhostInitMethod))
+					return null;
+
 				var ws = ResolveGhostWs(node.GhostWs);
 				if (ws == null)
 					return null;
@@ -1472,11 +2140,9 @@ namespace SIL.FieldWorks.XWorks
 						}
 						if (ghostFlid != 0)
 						{
-							var tss = TsStringUtils.MakeString(value ?? string.Empty, ws.Handle);
-							if ((CellarPropertyType)_mdc.GetFieldType(ghostFlid) == CellarPropertyType.String)
-								_sda.SetString(createdHvo, ghostFlid, tss);
-							else
-								_sda.SetMultiStringAlt(createdHvo, ghostFlid, ws.Handle, tss);
+							// Task 11: the shared 3-way text write dispatch.
+							WriteTextProp(createdHvo, ghostFlid, ws.Handle,
+								(CellarPropertyType)_mdc.GetFieldType(ghostFlid), value);
 						}
 						// B2: invoke the layout's ghostInitMethod by reflection on the newly created
 						// object, after the typed text lands — exactly GhostStringSliceView.
@@ -1685,7 +2351,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName)
 		{
-			var sources = Sources.Value;
+			var sources = GetSources();
 			if (sources == null)
 				return null;
 
@@ -1742,7 +2408,14 @@ namespace SIL.FieldWorks.XWorks
 				var partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
 				var partsXml = LayoutSourceLoader.LoadMergedPartsXml(partsDirectory);
 				if (partsXml == null)
+				{
+					// Review task 10: never a silent permanent failure — log, fall back to the
+					// 3-field first slice for THIS compose, and retry next time (GetSources).
+					SIL.Reporting.Logger.WriteEvent(
+						"FullEntryRegionComposer: no merged parts XML under '" + partsDirectory
+						+ "'; falling back to the first slice (will retry on the next compose).");
 					return null;
+				}
 
 				var layoutFiles = LayoutSourceLoader.LoadLayoutFiles(partsDirectory);
 				return new CompilerSources
@@ -1751,8 +2424,13 @@ namespace SIL.FieldWorks.XWorks
 					LayoutIndex = LayoutSourceLoader.IndexLayouts(layoutFiles)
 				};
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				// Review task 10: never a silent permanent failure — log, fall back to the
+				// 3-field first slice for THIS compose, and retry next time (GetSources).
+				SIL.Reporting.Logger.WriteError(
+					"FullEntryRegionComposer: failed to load layout sources; "
+					+ "falling back to the first slice for this compose.", e);
 				return null;
 			}
 		}
@@ -1767,6 +2445,7 @@ namespace SIL.FieldWorks.XWorks
 	public sealed class ComposedRegionEditContext : RegionEditContextBase
 	{
 		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
+		private readonly IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> _richTextSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceAddSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceRemoveSetters;
@@ -1777,10 +2456,12 @@ namespace SIL.FieldWorks.XWorks
 			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> optionSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> referenceAddSetters = null,
-			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null)
+			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null,
+			IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> richTextSetters = null)
 			: base(cache, entry)
 		{
 			_textSetters = textSetters;
+			_richTextSetters = richTextSetters ?? new Dictionary<string, Func<string, RegionRichTextValue, bool>>();
 			_optionSetters = optionSetters;
 			_referenceAddSetters = referenceAddSetters ?? new Dictionary<string, Func<string, bool>>();
 			_referenceRemoveSetters = referenceRemoveSetters ?? new Dictionary<string, Func<string, bool>>();
@@ -1788,7 +2469,20 @@ namespace SIL.FieldWorks.XWorks
 
 		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
+			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
+				return false;
+
 			if (field == null || !_textSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(ws, value));
+		}
+
+		public override bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
+		{
+			if (field != null && field.Values.Any(v => !v.CanEditRichText))
+				return false;
+
+			if (field == null || !_richTextSetters.TryGetValue(field.StableId, out var setter))
 				return false;
 			return Stage(() => setter(ws, value));
 		}

@@ -12,7 +12,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -24,54 +25,61 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// slices get from <c>EditingHelper.SetKeyboardForWs</c>). Write-through staging goes to the
 	/// edit context when one is supplied; otherwise the field is read-only display.
 	/// The plain-text lane only: the rich TsString editor is the 6.13 gate.
-	/// Chrome: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
-	/// mnuDataTree-LexemeForm with Swap/Convert commands) gets the SAME hover-revealed settings
-	/// gear the chooser draws — the modern replacement for the legacy slice tree-node dropdown
-	/// button — which raises the host menu callback exactly like a right-click on the row label
-	/// (DataTree realizes the same xCore menu either way).
+	/// Menus: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
+	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
+	/// label/value right-click lanes) — text rows draw NO gear. The gear is reserved for the
+	/// "configure the supporting list" jump on chooser/vector rows; it never opens a menu.
 	/// </summary>
 	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider
 	{
-		private readonly List<Control> _affordances = new List<Control>();
-
 		public FwMultiWsTextField(
 			LexicalEditRegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action<string> writingSystemFocused,
-			Action<RegionMenuRequest> menuRequested = null)
+			Action<RegionMenuRequest> menuRequested = null,
+			IFwClipboard clipboard = null)
 		{
-			Spacing = PocDensity.RowSpacing;
+			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			foreach (var value in field.Values)
 			{
+				var currentRich = value.RichText;
 				// Legacy look (12.3): small raised blue abbreviation hanging at the value start.
 				var abbrev = new TextBlock
 				{
 					Text = value.WsAbbrev,
-					MinWidth = PocDensity.WsAbbrevWidth,
+					MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
 					VerticalAlignment = VerticalAlignment.Top,
 					Margin = new Thickness(0, 1, 4, 0),
-					FontSize = PocDensity.WsAbbrevFontSize,
-					Foreground = PocDensity.WsAbbrevBrush
+					FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+					Foreground = FwAvaloniaDensity.WsAbbrevBrush
 				};
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
 				// Local values outrank the theme's pointer-over/focus setters, so the editor stays flat.
+				// Task 8.3 deferral (embedded-object/ORC editing): a value carrying an embedded
+				// object the managed editor cannot yet rebuild stays READ-ONLY — and says so
+				// explicitly (tooltip), rather than presenting an editable box whose edits would be
+				// silently rejected by the edit context. The original TsString is preserved
+				// losslessly, so the field round-trips and remains fully editable in the legacy view.
+				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText;
 				var box = new TextBox
 				{
 					Text = value.Value,
-					Padding = PocDensity.EditorPadding,
+					Padding = FwAvaloniaDensity.EditorPadding,
 					MinHeight = 0,
 					AcceptsReturn = false,
-					IsReadOnly = editContext == null || !field.IsEditable,
+					IsReadOnly = valueIsReadOnly,
 					FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
 					BorderThickness = new Thickness(0),
 					Background = Brushes.Transparent,
 					TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
 				};
+				if (!value.CanEditRichText)
+					ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
 				if (!string.IsNullOrEmpty(value.FontFamily))
 					box.FontFamily = new FontFamily(value.FontFamily);
 				if (value.FontSize > 0)
@@ -118,9 +126,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					var copyItem = new MenuItem { Header = FwAvaloniaStrings.Copy };
 					copyItem.Click += async (s2, e2) =>
 					{
-						var top = TopLevel.GetTopLevel(box);
-						if (top?.Clipboard != null)
-							await top.Clipboard.SetTextAsync(box.SelectedText?.Length > 0 ? box.SelectedText : box.Text ?? string.Empty);
+						await CopySelectionAsync(box, currentRich, clipboard);
 					};
 					box.ContextFlyout = new MenuFlyout { Items = { copyItem } };
 				}
@@ -132,19 +138,156 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
 
-				if (editContext != null && field.IsEditable)
+				if (editContext != null && field.IsEditable && value.CanEditRichText)
 				{
+					int? selectionAnchor = null;
+					box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+					{
+						if ((e.KeyModifiers & KeyModifiers.Control) != 0)
+							return;
+
+						if (e.Key != Key.Left && e.Key != Key.Right)
+						{
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+								selectionAnchor = null;
+							return;
+						}
+
+						var physicalLeft = e.Key == Key.Left;
+						var hasShift = (e.KeyModifiers & KeyModifiers.Shift) != 0;
+						var text = box.Text ?? string.Empty;
+						var runs = currentRich?.Runs;
+
+						if (!hasShift && box.SelectionStart != box.SelectionEnd)
+						{
+							var collapse = RegionBidirectionalTextNavigation.CollapseSelectionEdge(text, runs,
+								box.SelectionStart, box.SelectionEnd, physicalLeft, value.RightToLeft);
+							box.CaretIndex = collapse;
+							box.SelectionStart = collapse;
+							box.SelectionEnd = collapse;
+							selectionAnchor = null;
+							e.Handled = true;
+							return;
+						}
+
+						var currentCaret = box.SelectionStart == box.SelectionEnd
+							? box.CaretIndex
+							: box.SelectionEnd;
+						var nextCaret = RegionBidirectionalTextNavigation.MoveCaret(text, runs,
+							currentCaret, physicalLeft, value.RightToLeft);
+
+						if (hasShift)
+						{
+							if (!selectionAnchor.HasValue)
+								selectionAnchor = box.SelectionStart == box.SelectionEnd
+									? currentCaret
+									: box.SelectionStart;
+
+							var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+								selectionAnchor.Value, nextCaret);
+							box.SelectionStart = normalized.Start;
+							box.SelectionEnd = normalized.End;
+							box.CaretIndex = nextCaret;
+						}
+						else
+						{
+							selectionAnchor = null;
+							box.CaretIndex = nextCaret;
+							box.SelectionStart = nextCaret;
+							box.SelectionEnd = nextCaret;
+						}
+
+						e.Handled = true;
+					}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+
+					box.AddHandler(InputElement.PointerReleasedEvent, (s, e) =>
+					{
+						var text = box.Text ?? string.Empty;
+						if (box.SelectionStart == box.SelectionEnd)
+						{
+							var normalizedCaret = RegionBidirectionalTextNavigation.NormalizeHitTestCaretIndex(text,
+								box.CaretIndex);
+							if (normalizedCaret != box.CaretIndex)
+								box.CaretIndex = normalizedCaret;
+							return;
+						}
+
+						var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
+							box.SelectionStart, box.SelectionEnd);
+						if (normalized.Start == box.SelectionStart && normalized.End == box.SelectionEnd)
+							return;
+
+						box.SelectionStart = normalized.Start;
+						box.SelectionEnd = normalized.End;
+					}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+
 					// TextChanged also fires when the template first applies the initial value, so a
-					// last-staged guard keeps construction and no-op events from staging.
+					// last-staged guard keeps construction and no-op events from staging. The guard
+					// only advances on a SUCCESSFUL stage: a failed TrySetText leaves lastStaged at
+					// the last text the domain actually received, so further edits (including retyping
+					// the same text) re-attempt instead of being suppressed forever.
 					var lastStaged = value.Value ?? string.Empty;
+					RegionRichTextValue pendingRichOverride = null;
 					box.TextChanged += (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
 						if (text == lastStaged)
 							return;
-						lastStaged = text;
-						editContext.TrySetText(field, wsKey, text);
+						if (currentRich != null && currentRich.RequiresRichEditor)
+						{
+							var updatedRich = pendingRichOverride
+								?? RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, text);
+							pendingRichOverride = null;
+							if (editContext.TrySetRichText(field, wsKey, updatedRich))
+							{
+								lastStaged = text;
+								currentRich = updatedRich;
+							}
+							return;
+						}
+
+						if (editContext.TrySetText(field, wsKey, text))
+							lastStaged = text;
 					};
+
+					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
+					{
+						box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+						{
+							if ((e.KeyModifiers & KeyModifiers.Control) == 0)
+								return;
+
+							if (e.Key == Key.C)
+							{
+								CopySelectionAsync(box, currentRich, clipboard).GetAwaiter().GetResult();
+								e.Handled = true;
+								return;
+							}
+
+							if (e.Key != Key.V)
+								return;
+
+							var payload = clipboard.GetText();
+							if (payload == null)
+								return;
+
+							var existingText = box.Text ?? string.Empty;
+							var selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+							var selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+							var replacement = payload.PlainText ?? string.Empty;
+							var newText = existingText.Remove(selectionStart, selectionEnd - selectionStart)
+								.Insert(selectionStart, replacement);
+
+							if (payload.RichText != null && selectionStart == 0 && selectionEnd == existingText.Length)
+								pendingRichOverride = payload.RichText;
+							else
+								pendingRichOverride = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(currentRich, newText);
+
+							box.Text = newText;
+							box.CaretIndex = selectionStart + replacement.Length;
+							e.Handled = true;
+						}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					}
 				}
 
 				if (writingSystemFocused != null && !string.IsNullOrEmpty(value.WsTag))
@@ -158,127 +301,95 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var rowPanel = new DockPanel
 				{
 					// 14.2: a null background only hit-tests the glyphs — the whole row must
-					// receive hover so the gear reveal works over the gaps.
+					// receive hover/right-click over the gaps too.
 					Background = Brushes.Transparent
 				};
 				DockPanel.SetDock(abbrev, Dock.Left);
 				rowPanel.Children.Add(abbrev);
-
-				// The legacy slice tree-node menu button (every slice has one; the layout's `menu=`
-				// names what it opens — mnuDataTree-LexemeForm on the Lexeme Form, mnuDataTree-Help
-				// elsewhere): a hover-revealed gear on the FIRST alternative's row that raises the
-				// same host menu bridge a label right-click does.
-				if (Children.Count == 0 && menuRequested != null && !string.IsNullOrEmpty(field.MenuId))
-				{
-					var gearButton = RegionChrome.CreateGearButton();
-					AutomationProperties.SetAutomationId(gearButton, automationId + ".Settings");
-					AutomationProperties.SetName(gearButton, string.Format(FwAvaloniaStrings.FieldSettingsFormat,
-						field.Label ?? field.Field ?? automationId));
-					gearButton.Click += (s2, e2) =>
-					{
-						// The menu drops from the gear, like the legacy tree-node button's menu.
-						var screen = gearButton.PointToScreen(new Point(0, gearButton.Bounds.Height));
-						menuRequested(new RegionMenuRequest(field, RegionMenuKind.SliceMenu, screen.X, screen.Y));
-					};
-					DockPanel.SetDock(gearButton, Dock.Right);
-					rowPanel.Children.Add(gearButton);
-					_affordances.Add(gearButton);
-				}
-
 				rowPanel.Children.Add(box);
 				Children.Add(rowPanel);
 			}
-
-			// The gear hides until hover; the whole field panel is a hover source (the region view
-			// widens the surface to the row's label too, via IHoverAffordanceProvider).
-			if (_affordances.Count > 0)
-				HoverReveal.Attach(new Control[] { this }, _affordances);
 		}
 
-		/// <summary>The slice-menu gear (rows with a legacy `menu=` binding); empty otherwise.</summary>
-		public IReadOnlyList<Control> HoverAffordances => _affordances;
+		/// <summary>Text rows have no hover-revealed chrome (the slice menu is right-click only).</summary>
+		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
+
+		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
+			RegionRichTextValue richText, IFwClipboard clipboard)
+		{
+			var selectedText = box.SelectedText;
+			var useWholeValue = string.IsNullOrEmpty(selectedText) || selectedText == (box.Text ?? string.Empty);
+
+			if (clipboard != null)
+			{
+				clipboard.SetText(useWholeValue
+					? new FwClipboardText(box.Text ?? string.Empty, richText?.RichXml, richText)
+					: new FwClipboardText(selectedText ?? string.Empty));
+				return;
+			}
+
+			var top = TopLevel.GetTopLevel(box);
+			if (top?.Clipboard != null)
+				await top.Clipboard.SetTextAsync(useWholeValue ? (box.Text ?? string.Empty) : (selectedText ?? string.Empty));
+		}
 	}
 
 	/// <summary>
-	/// The list-editor jump links shared by the chooser and reference-vector gear flyouts (B7):
-	/// the legacy chooser dialog's "Edit the … list" LinkLabels (ReallySimpleListChooser.AddLink,
-	/// LinkType.kGotoLink), drawn below the options as link-styled items after a thin rule.
-	/// Clicking one closes the flyout and raises the host's <see cref="RegionLinkRequest"/>
-	/// callback — the host dispatches the legacy mediator FollowLink jump.
+	/// GEAR = CONFIGURE: the shared gear semantics of the chooser and reference-vector rows.
+	/// Clicking the gear DIRECTLY dispatches the list-editor jump — the host's
+	/// <see cref="RegionLinkRequest"/> callback rides the same lane the legacy chooser dialog's
+	/// "Edit the … list" LinkLabel rides (ReallySimpleListChooser.AddLink kGotoLink →
+	/// FollowLink). NO flyout, NO context menu opens from the gear; option flyouts carry zero
+	/// link items. The gear renders ONLY when a list-edit target resolved at compose time (the
+	/// row carries at least one goto <see cref="RegionChooserLink"/>); the FIRST link wins when
+	/// several resolved (rare). Rows without a resolvable list editor draw no gear at all.
 	/// </summary>
-	internal static class RegionLinkChrome
+	internal static class RegionGearChrome
 	{
 		/// <summary>
-		/// Returns <paramref name="optionsContent"/> unchanged when the row carries no links (or no
-		/// callback), else the options stacked over a separator rule and one link item per
-		/// <see cref="RegionChooserLink"/>.
+		/// Builds the configure gear for a row, or null when no list-edit target resolves
+		/// (no links on the row, or no host callback to dispatch through).
 		/// </summary>
-		internal static Control WithChooserLinks(Control optionsContent, LexicalEditRegionField field,
-			string automationId, Action<RegionLinkRequest> linkRequested, Flyout flyout)
+		internal static Button CreateConfigureGear(LexicalEditRegionField field, string automationId,
+			Action<RegionLinkRequest> linkRequested)
 		{
 			if (linkRequested == null || field.ChooserLinks.Count == 0)
-				return optionsContent;
+				return null;
 
-			var panel = new StackPanel { Spacing = 2 };
-			panel.Children.Add(optionsContent);
-			panel.Children.Add(new Border
+			var link = field.ChooserLinks[0]; // first goto wins
+			var gear = RegionChrome.CreateGearButton();
+			AutomationProperties.SetAutomationId(gear, automationId + ".Settings");
+			AutomationProperties.SetName(gear, string.Format(FwAvaloniaStrings.FieldSettingsFormat,
+				field.Label ?? field.Field ?? automationId));
+			ToolTip.SetTip(gear, link.Label);
+			gear.Click += (s, e) =>
 			{
-				Height = 1,
-				Background = Brushes.LightGray,
-				Margin = new Thickness(0, 4, 0, 2)
-			});
-
-			for (var i = 0; i < field.ChooserLinks.Count; i++)
-			{
-				var link = field.ChooserLinks[i];
-				var item = new Button
-				{
-					Content = new TextBlock
-					{
-						Text = link.Label,
-						Foreground = Brushes.RoyalBlue,
-						TextDecorations = TextDecorations.Underline
-					},
-					Background = Brushes.Transparent,
-					BorderThickness = new Thickness(0),
-					Padding = new Thickness(4, 2, 4, 2),
-					MinHeight = 0,
-					HorizontalAlignment = HorizontalAlignment.Left,
-					Cursor = new Cursor(StandardCursorType.Hand)
-				};
-				AutomationProperties.SetAutomationId(item, automationId + ".Link." + i);
-				AutomationProperties.SetName(item, link.Label ?? string.Empty);
-				item.Click += (s, e) =>
-				{
-					// Legacy order: the chooser dialog closes (Cancel) and THEN the jump posts
-					// (m_lblLink1_LinkClicked → HandleAnyJump); here the flyout hides, then the
-					// host callback dispatches FollowLink.
-					flyout?.Hide();
-					linkRequested(new RegionLinkRequest(field, link));
-				};
-				panel.Children.Add(item);
-			}
-
-			return panel;
+				linkRequested(new RegionLinkRequest(field, link));
+				e.Handled = true;
+			};
+			return gear;
 		}
 	}
 
 	/// <summary>
 	/// FieldWorks-owned chooser field (task 6.3): a button opening a flyout of service-backed options
-	/// (the options come from the LCModel-sourced region model, not the control). Selecting an option
-	/// stages it through the edit context, closes the flyout, and returns focus to the button — the
-	/// popup-focus-return behavior the seam specs require. Without an edit context the chooser is a
-	/// read-only display of the current selection.
-	/// Chrome (hover-reveal polish): the button is transparent/borderless — the value text reads
-	/// flat like the legacy combo — and a settings-gear icon fades in on row hover (the modern
-	/// "this value has a supporting list" affordance). Clicking anywhere on the value still opens
-	/// the same flyout; staging and automation ids are unchanged.
+	/// (the options come from the LCModel-sourced region model, not the control). The flyout is the
+	/// shared compact <see cref="FwOptionPicker"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
+	/// no link items. Committing an
+	/// option stages it through the edit context, closes the flyout, and returns focus to the button
+	/// — the popup-focus-return behavior the seam specs require. Without an edit context the chooser
+	/// is a read-only display of the current selection.
+	/// Chrome: the button is transparent/borderless — the value text reads flat like the legacy
+	/// combo. When the row's supporting list resolved a list-editor target (a composed goto
+	/// <see cref="RegionChooserLink"/>), a hover-revealed CONFIGURE gear sits after the value and
+	/// directly dispatches the host jump (<see cref="RegionGearChrome"/>) — it never opens the
+	/// options. Rows without a resolvable list editor draw no gear.
 	/// </summary>
 	public sealed class FwChooserField : Button, IHoverAffordanceProvider
 	{
 		private string _selectedKey;
 		private readonly TextBlock _valueText;
-		private readonly Control _gear;
+		private readonly Button _gear;
 
 		public FwChooserField(
 			LexicalEditRegionField field,
@@ -287,7 +398,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<RegionLinkRequest> linkRequested = null)
 		{
 			_selectedKey = field.SelectedOptionKey;
-			Padding = PocDensity.EditorPadding;
+			Padding = FwAvaloniaDensity.EditorPadding;
 			MinHeight = 0;
 			HorizontalAlignment = HorizontalAlignment.Left;
 			Background = Brushes.Transparent;
@@ -297,14 +408,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				Text = CurrentName(field),
 				VerticalAlignment = VerticalAlignment.Center
 			};
-			_gear = CreateGear(automationId, field.Label ?? field.Field ?? automationId);
-			Content = new StackPanel
+			var content = new StackPanel
 			{
 				Orientation = Orientation.Horizontal,
 				Spacing = 6,
-				Children = { _valueText, _gear }
+				Children = { _valueText }
 			};
-			IsEnabled = editContext != null && field.IsEditable;
+			// GEAR = CONFIGURE: only a resolved list-edit target draws the gear; clicking it
+			// dispatches the jump directly (a nested Button handles its own click, so the
+			// chooser's flyout does NOT open from a gear click).
+			_gear = RegionGearChrome.CreateConfigureGear(field, automationId, linkRequested);
+			if (_gear != null)
+				content.Children.Add(_gear);
+			Content = content;
+			// Read-only rows stay ENABLED: disabling the whole button would suppress its pointer
+			// events (killing hover-reveal) and disable the nested configure gear — which is
+			// NAVIGATION (the "Edit the … list" jump), not editing. Like FwDialogLauncherField,
+			// only the value-editing affordance is withheld: no option flyout is wired below, so
+			// clicking the value of a read-only row does nothing.
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
@@ -315,31 +436,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (editContext == null || !field.IsEditable)
 				return;
 
-			var list = new ListBox
-			{
-				ItemsSource = field.Options.Select(o => o.Name).ToList(),
-				MinWidth = 120
-			};
-			AutomationProperties.SetAutomationId(list, automationId + ".Options");
-
-			var flyout = new Flyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
-			// B7: the layout's chooserLink jump links render below the options, like the legacy
-			// chooser dialog's link labels; without links the content stays the bare options list.
-			flyout.Content = RegionLinkChrome.WithChooserLinks(list, field, automationId, linkRequested, flyout);
+			// "+"/chooser click = OPTIONS ONLY: the one compact filterable picker, zero links.
+			var picker = new FwOptionPicker(field.Options, null, automationId);
+			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
-			list.SelectionChanged += (s, e) =>
+			picker.OptionCommitted += option =>
 			{
-				// The list items were materialized in field.Options order, so the selected INDEX is
-				// the only safe way back to the option: display names may repeat across options.
-				var index = list.SelectedIndex;
-				if (index < 0 || index >= field.Options.Count)
-					return;
-				var option = field.Options[index];
-				if (option.Key == _selectedKey)
-					return;
-
-				if (editContext.TrySetOption(field, option.Key))
+				// The options are the field's own RegionChoiceOption instances, so the committed
+				// option's key is exact even when display names repeat across options.
+				if (option.Key != _selectedKey && editContext.TrySetOption(field, option.Key))
 				{
 					_selectedKey = option.Key;
 					_valueText.Text = option.Name;
@@ -347,6 +453,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				flyout.Hide();
 				Focus(); // popup focus return: back to the launcher
+			};
+			picker.Dismissed += (s, e) =>
+			{
+				flyout.Hide();
+				Focus();
 			};
 		}
 
@@ -360,22 +471,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>The display text of the current selection (what the value TextBlock shows).</summary>
 		public string ValueText => _valueText.Text;
 
-		/// <summary>The settings gear is the chooser's only hover-revealed affordance.</summary>
-		public IReadOnlyList<Control> HoverAffordances => new[] { _gear };
+		/// <summary>The configure gear (only when a list-edit target resolved); empty otherwise.</summary>
+		public IReadOnlyList<Control> HoverAffordances
+			=> _gear == null ? Array.Empty<Control>() : new Control[] { _gear };
 
 		private static string CurrentName(LexicalEditRegionField field)
 		{
 			var selected = field.Options.FirstOrDefault(o => o.Key == field.SelectedOptionKey);
 			return selected?.Name ?? string.Empty;
-		}
-
-		// The shared gear icon (RegionChrome) with this row's automation identity.
-		private static Control CreateGear(string automationId, string label)
-		{
-			var gear = RegionChrome.CreateGearIcon();
-			AutomationProperties.SetAutomationId(gear, automationId + ".Settings");
-			AutomationProperties.SetName(gear, string.Format(FwAvaloniaStrings.FieldSettingsFormat, label));
-			return gear;
 		}
 	}
 
@@ -383,12 +486,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// FieldWorks-owned editable reference-vector field (6.3/B8): the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
-	/// lists the possibility tree indented by <see cref="RegionChoiceOption.Depth"/> (the legacy
-	/// chooser tree; virtualized ListBox so the ~1800-node semantic-domain list stays usable).
+	/// is the shared compact <see cref="FwOptionPicker"/> (AutoCompleteBox-based OPTIONS ONLY,
+	/// zero link items): the
+	/// possibility tree indented by <see cref="RegionChoiceOption.Depth"/> for enumerated lists,
+	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
+	/// enumerate — D3), both behind the same filter box and virtualized capped list.
 	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
-	/// Chrome (hover-reveal polish): the separator bars, the "+" launcher, and the settings gear
-	/// (which opens the SAME flyout as the "+") fade in on row hover only — items/text stay always
-	/// visible; flyout, staging, and automation ids are unchanged.
+	/// Chrome (hover-reveal polish): the separator bars, the "+" launcher, and — only when the
+	/// row's list resolved a list-editor target — the CONFIGURE gear (which directly dispatches
+	/// the host jump, never a flyout: <see cref="RegionGearChrome"/>) fade in on row hover; the
+	/// items/text stay always visible.
 	/// </summary>
 	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider
 	{
@@ -464,86 +571,50 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				MinWidth = 0,
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
-				Foreground = PocDensity.WsAbbrevBrush
+				Foreground = FwAvaloniaDensity.WsAbbrevBrush
 			};
 			AutomationProperties.SetAutomationId(addButton, automationId + ".Add");
 			AutomationProperties.SetName(addButton, FwAvaloniaStrings.AddItem);
 
-			var list = new ListBox
-			{
-				ItemsSource = field.SearchOptions == null ? field.Options : null,
-				MaxHeight = 320,
-				MinWidth = 180,
-				ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<RegionChoiceOption>(
-					(option, _) => option == null
-						? null
-						: new TextBlock
-						{
-							Text = option.Name,
-							Margin = new Thickness(option.Depth * 14, 0, 0, 0)
-						})
-			};
-			AutomationProperties.SetAutomationId(list, automationId + ".Options");
-
-			// D3 (winforms-free-lexeme-editor.md): a search-backed vector (lexicons search, lists
-			// enumerate) fronts the same virtualized results list with a type-ahead search box —
-			// the whole lexicon is never materialized as options.
-			Control flyoutContent = list;
-			if (field.SearchOptions != null)
-			{
-				var searchBox = new TextBox
-				{
-					Watermark = FwAvaloniaStrings.SearchPrompt,
-					MinWidth = 180
-				};
-				AutomationProperties.SetAutomationId(searchBox, automationId + ".Search");
-				AutomationProperties.SetName(searchBox, FwAvaloniaStrings.SearchPrompt);
-				var search = field.SearchOptions;
-				searchBox.TextChanged += (s, e) =>
-					list.ItemsSource = search(searchBox.Text ?? string.Empty);
-				flyoutContent = new StackPanel
-				{
-					Spacing = PocDensity.RowSpacing,
-					Children = { searchBox, list }
-				};
-			}
-
-			var flyout = new Flyout { Placement = PlacementMode.BottomEdgeAlignedLeft };
-			// B7: the layout's chooserLink jump links render below the options/search, like the
-			// legacy chooser dialog's link labels.
-			flyout.Content = RegionLinkChrome.WithChooserLinks(flyoutContent, field, automationId,
-				linkRequested, flyout);
+			// "+" = OPTIONS ONLY: the one compact filterable picker — static options enumerate
+			// (with Depth hierarchy), search-backed vectors ride the host search delegate (D3).
+			// No link items ever ride this flyout.
+			var picker = new FwOptionPicker(field.Options, field.SearchOptions, automationId,
+				field.Items.Select(i => i.Key));
+			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
-			list.SelectionChanged += (s, e) =>
+			picker.OptionCommitted += option =>
 			{
-				var added = list.SelectedItem is RegionChoiceOption option
-					&& editContext.TryAddReferenceItem(field, option.Key);
+				var added = editContext.TryAddReferenceItem(field, option.Key);
 				flyout.Hide();
-				list.SelectedItem = null;
 				addButton.Focus(); // popup focus return, like the chooser
 				// Only a successful stage completes the gesture (commit + host re-show).
 				if (added)
 					gestureCompleted?.Invoke();
 			};
+			picker.Dismissed += (s, e) =>
+			{
+				flyout.Hide();
+				addButton.Focus();
+			};
 			Children.Add(addButton);
 			_affordances.Add(addButton);
 
-			// The hover-revealed settings gear (the "this value has a supporting list" affordance,
-			// identical to the chooser's): it opens the SAME options/add flyout as the "+".
-			var gearButton = RegionChrome.CreateGearButton();
-			gearButton.Flyout = flyout;
-			AutomationProperties.SetAutomationId(gearButton, automationId + ".Settings");
-			AutomationProperties.SetName(gearButton, string.Format(FwAvaloniaStrings.FieldSettingsFormat,
-				field.Label ?? field.Field ?? automationId));
-			Children.Add(gearButton);
-			_affordances.Add(gearButton);
+			// GEAR = CONFIGURE (only when the row's list resolved a list-editor target): clicking
+			// dispatches the host jump directly — it does NOT open the add flyout.
+			var gearButton = RegionGearChrome.CreateConfigureGear(field, automationId, linkRequested);
+			if (gearButton != null)
+			{
+				Children.Add(gearButton);
+				_affordances.Add(gearButton);
+			}
 
 			// Bars, launcher, and gear hide until hover; the whole field panel is a hover source
 			// (the region view widens the surface to the row's label too). Items stay always visible.
 			HoverReveal.Attach(new Control[] { this }, _affordances);
 		}
 
-		/// <summary>The separator bars, "+" launcher, and gear reveal on row hover (chrome only).</summary>
+		/// <summary>The separator bars, "+" launcher, and configure gear reveal on row hover.</summary>
 		public IReadOnlyList<Control> HoverAffordances => _affordances;
 
 		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item

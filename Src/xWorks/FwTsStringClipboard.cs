@@ -52,8 +52,11 @@ namespace SIL.FieldWorks.XWorks
 			var plain = dataObject.GetData(DataFormats.UnicodeText) as string;
 			if (wrapper == null && plain == null)
 				return null;
+			var richText = wrapper == null ? null : RegionRichTextAdapter.FromTsString(
+				TsStringSerializer.DeserializeTsStringFromXml(wrapper.Xml, _writingSystemFactory),
+				_writingSystemFactory);
 
-			return new FwClipboardText(plain ?? PlainTextFromXml(wrapper.Xml), wrapper?.Xml);
+			return new FwClipboardText(plain ?? PlainTextFromXml(wrapper.Xml), wrapper?.Xml, richText);
 		}
 
 		/// <inheritdoc />
@@ -93,7 +96,8 @@ namespace SIL.FieldWorks.XWorks
 				throw new System.ArgumentNullException(nameof(tsString));
 
 			var plain = (tsString.Text ?? string.Empty).Normalize(NormalizationForm.FormC);
-			return new FwClipboardText(plain, TsStringUtils.GetXmlRep(tsString, _writingSystemFactory, 0));
+			return new FwClipboardText(plain, TsStringUtils.GetXmlRep(tsString, _writingSystemFactory, 0),
+				RegionRichTextAdapter.FromTsString(tsString, _writingSystemFactory));
 		}
 
 		/// <summary>

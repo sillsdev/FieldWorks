@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
@@ -15,11 +16,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// `avalonia-edit-sessions` and `avalonia-undo-redo` seam specs require. This layer stays
 	/// LCModel-free so the Avalonia view can drive editing without a domain dependency; tests use a
 	/// fake context.
+	/// Extends <see cref="IEditSession"/> (the staging-neutral IsOpen/Commit/Cancel fence) so the two
+	/// previously-parallel edit-session contracts are one: any region context IS an edit session.
 	/// </summary>
-	public interface IRegionEditContext
+	public interface IRegionEditContext : IEditSession
 	{
-		/// <summary>Whether an edit session is currently open (a staged edit has occurred).</summary>
-		bool IsOpen { get; }
 
 		/// <summary>
 		/// Stages a text value for a field (opening the session on the first edit). Returns false when
@@ -33,6 +34,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// where the same field name (e.g. Gloss) occurs once per sense.
 		/// </summary>
 		bool TrySetText(LexicalEditRegionField field, string ws, string value);
+
+		/// <summary>
+		/// Stages a run-aware text value for a field. The supplied rich-text payload is LCModel-free and
+		/// preserves the run metadata needed to rebuild the product <c>ITsString</c> without flattening.
+		/// </summary>
+		bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value);
 
 		/// <summary>Stages a chooser selection by option key (opening the session on the first edit).</summary>
 		bool TrySetOption(LexicalEditRegionField field, string optionKey);
@@ -56,10 +63,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		IReadOnlyList<string> Validate();
 
-		/// <summary>Commits the open session as a single undoable step. No-op when no session is open.</summary>
-		void Commit();
-
-		/// <summary>Cancels the open session, rolling back every staged edit. No-op when no session is open.</summary>
-		void Cancel();
+		// IsOpen, Commit(), and Cancel() are inherited from IEditSession: Commit ends the open
+		// session as a single undoable step and Cancel rolls back every staged edit; both no-op when
+		// no session is open.
 	}
 }

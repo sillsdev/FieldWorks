@@ -28,6 +28,11 @@ layouts actually use it. Where the census spans all shipped layouts (including t
 layouts), that is noted; the detail-lane import diagnostics are the binding numbers for this
 change's surfaces.
 
+Status update (2026-06-15, `avalonia-multi-writing-system-text-foundation`):
+- Completed text-foundation evidence now closes the rich multi-WS text round-trip, grapheme-cluster safety, shared TsString clipboard/drag-drop interchange, and coexistence refresh/undo lanes for migrated lexical string fields.
+- `MultiStringSlice`/`StringSlice`/`GhostStringSlice` are no longer blockers for the migrated lexical detail surface.
+- Remaining text blockers stay explicit: `StText` editing is deferred, and object-content rich runs remain read-only until a supported editable/object-aware lane is implemented.
+
 ---
 
 ## Blocker register
@@ -50,23 +55,36 @@ change's surfaces.
   (`FullEntryRegionComposer.WalkCustomFields`, covered by
   `FullEntryRegionComposerCustomFieldTests`) expands every `CustomFieldPlaceholder` node at
   compose time from live MDC metadata, mirroring legacy `DataTree.EnsureCustomFields` +
-  `SliceFactory.MakeAutoCustomSlice`: per visited object (entry/sense/allomorph/example) it
-  enumerates the class's (and base classes') custom fields, emits rows labeled by the field's
-  Userlabel at the placeholder position in creation (flid) order, and renders by
-  `CellarPropertyType` — String/MultiString/MultiUnicode as editable text rows (multi-WS per
+  `SliceFactory.MakeAutoCustomSlice`: per visited object it enumerates the class's (and base
+  classes') custom fields, emits rows labeled by the field's Userlabel at the placeholder
+  position in creation (flid) order, and renders by `CellarPropertyType`. Verified on
+  2026-06-12 with focused xWorks coverage across the shipped Lexical Edit detail paths:
+  `LexEntry` root rows, `LexSense` rows, `LexExampleSentence` rows, nested `MoForm` rows reached
+  through the lexeme-form and alternate-form layouts, and the previously missing nested detail
+  objects that now carry explicit insertion points (`LexPronunciation`, `LexEtymology`,
+  `LexEntryRef`, `LexExtendedNote`, `CmTranslation`, `CmPicture`, plus `LexExampleSentence`
+  under the `Notes` layout). Supported kinds on those paths now include String/MultiString/
+  MultiUnicode as editable text rows (multi-WS per
   the field's WsSelector, staged through the same setter registry/fenced session as authored
-  fields, one undo step), Integer editable, GenDate read-only formatted, atomic/sequence
-  possibility references as read-only joined names, OwningAtomic StText as read-only
-  paragraphs. Custom rows are visibility=always like the legacy generated parts (no
-  `visibility` attribute, `DataTree.cs:2435`): empty custom fields stay visible regardless of
-  "show hidden fields". **Deferred:** chooser write-back for reference custom fields (rides
-  the 6.3 service-backed chooser lane), StText editing, and the `<generate>` compile-time
-  expansion (9.2/9.3), which remains a `generated-content-dropped` Warning in the importer.
+  fields, one undo step), Integer editable, GenDate read-only formatted, possibility-list
+  atomic references as editable chooser rows, possibility-list sequences as editable
+  `ReferenceVector` rows, and OwningAtomic `StText` as read-only paragraphs. Non-list
+  reference custom fields still fall back to read-only joined names, matching the current
+  generic reference lane. Custom rows are visibility=always like the legacy generated parts
+  (no `visibility` attribute, `DataTree.cs:2435`): empty custom fields stay visible regardless
+  of "show hidden fields". The 2026-06-12 pass also fixed two infrastructure blockers that had
+  been hiding valid custom rows on deep/nested surfaces: the composer depth backstop now allows
+  the shipped extended-note example path, and the imported detail inventory now resolves the
+  `LexSense-Pictures` part instead of classifying it as unresolved. **Deferred:** editable non-list reference custom fields (if product
+  needs them), `StText` editing, and the `<generate>` compile-time expansion (9.2/9.3), which
+  remains a `generated-content-dropped` Warning in the importer and is now the main B1 gap for
+  content that depends on generated `jtview` lanes rather than the detail-surface placeholder.
 - **Retirement risk if unaddressed:** ~~Severe~~ Reduced for the composed detail surface:
-  custom-field data is now visible and (text/int) editable there. Customer custom fields still
-  vanish on any surface that consumes only the imported typed definitions without the
-  composer's runtime expansion, and reference custom fields are read-only until 6.3 — both
-  must clear before 9.4 signs off a surface.
+  custom-field data is now visible across the placeholder-backed composed detail surface, with
+  text/int and possibility-list chooser/vector fields editable there. Customer custom fields
+  still vanish on any surface that consumes only the imported typed definitions without the
+  composer's runtime expansion, and generated `jtview`-driven custom content remains outside
+  this coverage — both must clear before 9.4 signs off a surface.
 
 ### B2. Ghost items (`ghost`/`ghostWs`/`ghostClass` and friends)
 
@@ -224,14 +242,20 @@ change's surfaces.
   fenced session, duplicate/garbage/unknown keys rejected without opening it), covered by
   `FullEntryRegionReferenceChooserTests`. `BuildPossibilityOptions(flat:)` implements the
   FlatList guicontrol semantics.
-- **Status (jump links landed, 2026-06-11):** `chooserLink` now imports onto the typed node
-  (`ViewNode.ChooserLinks`: type/label/tool/target, the legacy reader's exact vocabulary;
-  canonical JSON reserves the `chooserLinks` block, closing B7's share of the cross-cutting
-  schema deadline) and threads through the composer onto chooser/reference-vector rows
-  (`LexicalEditRegionField.ChooserLinks`, "goto" only — all 95 shipped links are goto); the
-  gear flyouts render the links and `RecordEditView` dispatches the legacy jump (mediator
-  `FollowLink`, `FwLinkArgs(tool, Guid.Empty)` exactly like
-  `ReallySimpleListChooser.HandleAnyJump`). REMAINING: import `chooserInfo`'s OTHER facets
+- **Status (jump links landed, 2026-06-11; gear semantics reworked, 2026-06-12):**
+  `chooserLink` imports onto the typed node (`ViewNode.ChooserLinks`:
+  type/label/tool/target, the legacy reader's exact vocabulary; canonical JSON reserves the
+  `chooserLinks` block, closing B7's share of the cross-cutting schema deadline) and threads
+  through the composer onto chooser/reference-vector rows
+  (`LexicalEditRegionField.ChooserLinks`, "goto" only — all 95 shipped links are goto).
+  Surfacing (reworked): the row's hover gear DIRECTLY dispatches the jump (gear = configure;
+  first goto wins; no link items in option flyouts), and rows whose layout authored no link
+  derive the tool from their possibility list via the mirrored legacy lists-area clerk table
+  (`FullEntryRegionComposer.ResolveListEditorTool`, the `AreaListener.GetToolForList` lane;
+  ownerless custom lists derive Name-without-spaces + "Edit"; unresolvable lists draw no
+  gear). `RecordEditView` dispatches the legacy jump (mediator `FollowLink`,
+  `FwLinkArgs(tool, Guid.Empty)` exactly like `ReallySimpleListChooser.HandleAnyJump`).
+  REMAINING: import `chooserInfo`'s OTHER facets
   (title/text/textparam/flidTextParam/guicontrol — still reported as `slice-content-dropped`)
   and thread the flat/title specs to the composer call sites (the composer currently passes
   `flat: false`).
@@ -331,7 +355,7 @@ change's surfaces.
   `RecordEditView` promotes designated classes (`AvaloniaCompanionSlices`, today only
   MessageSlice): it instantiates the real legacy slice through `DynamicLoader` + the DataTree
   install recipe (Cache → Object → FinishInit), docks its NotesBarView in a WinForms
-  "companion strip" above the Avalonia host (`PocWinFormsHostControl.SetCompanionControls`),
+  "companion strip" above the Avalonia host (`LexicalEditHostControl.SetCompanionControls`),
   and removes the grey unsupported row from the model the region shows. If Chorus/S-R is
   unavailable the lane degrades to nothing (logged), never an error row. Known trade-off: the
   strip is pinned above the region, not at the slice's legacy mid-tree position between Import
@@ -353,6 +377,19 @@ change's surfaces.
   Per-surface 9.4 must enumerate which dynamic editors that surface's layouts reach; the
   companion strip is the documented lane for the ones that must stay WinForms (Chorus UI),
   and the D4 launcher lane is the documented lane for dialog-launcher slices.
+- **Status (2026-06-12) — D3 ghost-reference lane landed** (`winforms-free-lexeme-editor.md`
+  D3): `GhostLexRefSlice` no longer falls back to the unsupported row. The composer absorbs it
+  as an editable search-backed `ReferenceVector` row and creates the missing `LexEntryRef` on
+  first add with the legacy complex-form vs variant semantics. Burn-down: the class moved from
+  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`.
+- **Status (2026-06-12) — D3 lexical-relation lane landed** (`winforms-free-lexeme-editor.md`
+  D3): `LexReferenceMultiSlice` no longer falls back to the deferred custom-slice path. The
+  composer walks the resolved `ILexReference` objects directly and emits one Avalonia relation
+  row per reference, preserving the legacy forward/reverse label logic and side-specific target
+  selection while binding the row to the `ILexReference` HVO so the existing menu adapter keeps
+  delete/replace/detail commands working. Burn-down: the class moved from
+  `ExplicitlyDeferredClassNames` to `LaneAbsorbedClassNames`; `ReversalIndexEntrySlice` remains
+  the only lexeme-editor custom slice still explicitly deferred behind 6.13.
 
 ### B12. Native viewing/render coupling
 
@@ -364,7 +401,7 @@ change's surfaces.
   fonts/keyboards, IME composition, RTL/bidi) passes.
 - **Measured prevalence:** see `native-views-audit.md` §8.1.3/8.1.4 (full table with
   file:line); the multi-WS plain-text lane exists, the TsString rich lane does not.
-- **Addressed by:** 6.13 (GATE), 6.x editors, 8.3 (managed replacement), 8.4 (done —
+- **Addressed by:** `openspec/changes/avalonia-multi-writing-system-text-foundation/` (former 6.13 gate), 6.x editors, 8.3 (managed replacement), 8.4 (done —
   enforcement via `EngineIsolationAuditTests`), 8.5 (adapter removal after replacement tests).
 - **Retirement risk if unaddressed:** Absolute. While any field on a surface falls back to the
   legacy slice stack, that surface still loads layout XML at runtime; 9.4 for that surface is

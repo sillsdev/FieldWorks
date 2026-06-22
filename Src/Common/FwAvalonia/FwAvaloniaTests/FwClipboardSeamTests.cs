@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace FwAvaloniaTests
@@ -23,12 +24,15 @@ namespace FwAvaloniaTests
 		public void InMemoryClipboard_RoundTripsBothLanes()
 		{
 			var clipboard = new InMemoryFwClipboard();
-			clipboard.SetText(new FwClipboardText("plain", "<Str><Run ws='en'>plain</Run></Str>"));
+			clipboard.SetText(new FwClipboardText("plain", "<Str><Run ws='en'>plain</Run></Str>",
+				RegionRichTextEditAlgorithms.FromRuns("plain", new[] { new RegionTextRun("plain", "en") })));
 
 			var payload = clipboard.GetText();
 			Assert.That(clipboard.ContainsText(), Is.True);
 			Assert.That(payload.PlainText, Is.EqualTo("plain"));
 			Assert.That(payload.RichXml, Does.Contain("Run"));
+			Assert.That(payload.RichText, Is.Not.Null);
+			Assert.That(payload.RichText.Runs[0].WritingSystemTag, Is.EqualTo("en"));
 		}
 
 		[Test]

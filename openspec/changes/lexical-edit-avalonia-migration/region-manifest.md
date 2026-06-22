@@ -164,7 +164,8 @@ passes) and was evaluated against the composed full-entry view:
 | Gate | Status | Evidence |
 |---|---|---|
 | Switch contract | **Pass** | `LexicalEditSurfaceSelectionService` + `RecordEditViewSwitchTests` (every consumer declared, both modes) |
-| Symbol audit | **Pass** | `EngineIsolationAuditTests` + `RecordEditViewActiveHostContractTests` |
+| Symbol audit | **Pass** | `EngineIsolationAuditTests` (negative) + `RecordEditViewActiveHostContractTests` |
+| Viewing/render seam (8.3/8.5) | **Pass** (current scope) | Every native viewing capability replaced managed — `RegionViewingServices` map + `RegionViewingServiceReplacementTests` (positive); only the contract-gated command-routing adapter remains (shell-phase, task 8.10); StText/ORC deferred + named |
 | Layout gate (semantic) | **Partial** | Typed snapshots deterministic; full-tree semantic comparison vs legacy DataTree output for the composed view still to run |
 | Edit gate | **Pass** (current scope) | Fenced session save/cancel/one-global-undo-step/refresh interaction (`LexicalEditRegionEditingTests`, `FullEntryRegionComposerTests`) |
 | Validation gate | **Partial** | Required-field rule + deterministic localized messages; severity/async lanes pend richer rules |
@@ -176,8 +177,10 @@ passes) and was evaluated against the composed full-entry view:
 P0 parity status (7.4): lexeme form ✔ editable multi-WS · citation form ✔ · morph type ✔ chooser ·
 senses structure ✔ headers/indent per sense · gloss ✔ per-sense editable · definition ✔ (ifdata) ·
 bibliography/restrictions/etc ✔ via metadata walk · variants/complex-form sections ✔ structure
-(reference rows read-only) · custom fields ✘ (9.x B1) · ghost lines ✘ (B2) · rich TsString runs ✘
-(6.13 gate).
+(reference rows read-only) · custom fields ✘ (9.x B1) · ghost lines ✔ (foundation 6.2) · rich
+TsString runs ✔ (managed run model from `avalonia-multi-writing-system-text-foundation`; embedded-object
+(ORC) runs read-only with explicit affordance, StText multi-paragraph deferred — see
+`native-views-audit.md` §8.3).
 
 ## 7. Phasing
 

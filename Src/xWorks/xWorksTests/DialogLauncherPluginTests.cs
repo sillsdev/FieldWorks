@@ -60,6 +60,11 @@ namespace SIL.FieldWorks.XWorks
 				false, null, Array.Empty<ViewNode>(), customEditorClass: legacyClassName,
 				customEditorAssembly: "LexEdDll.dll");
 
+		// Task 13: the one plugin contract takes the bundled build context (services optional).
+		private RegionEditorBuildContext Ctx(ICmObject obj, ViewNode node,
+			RegionEditorServices services = null)
+			=> new RegionEditorBuildContext(obj, node, () => null, Cache, services);
+
 		private IMoStemMsa MakeStemMsaWithFeatures(out IFsFeatStruc fs)
 		{
 			IMoStemMsa msa = null;
@@ -106,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			var services = new RegionEditorServices { LegacyDialogLauncher = fake };
 
 			var control = DialogLauncherPlugins.CreateAudioVisual()
-				.BuildControl(media, node, null, Cache, services);
+				.BuildControl(Ctx(media, node, services));
 
 			Assert.That(control, Is.InstanceOf<FwDialogLauncherField>());
 			var row = (FwDialogLauncherField)control;
@@ -126,14 +131,13 @@ namespace SIL.FieldWorks.XWorks
 			var media = MakePronunciationMedia(null);
 			var node = LauncherNode("MediaFile", DialogLauncherPlugins.AudioVisualSliceClassName, "Media File");
 
-			// Both the four-argument (classic) and five-argument (null services) paths degrade the
-			// same way: value renders, button disabled.
+			// Null services and services WITHOUT a launcher degrade the same way: value renders,
+			// button disabled (task 13: one contract, services optional inside the context).
 			var plugin = DialogLauncherPlugins.CreateAudioVisual();
 			foreach (var control in new[]
 			{
-				plugin.BuildControl(media, node, null, Cache),
-				plugin.BuildControl(media, node, null, Cache, null),
-				plugin.BuildControl(media, node, null, Cache, new RegionEditorServices())
+				plugin.BuildControl(Ctx(media, node)),
+				plugin.BuildControl(Ctx(media, node, new RegionEditorServices()))
 			})
 			{
 				Assert.That(control, Is.InstanceOf<FwDialogLauncherField>());
@@ -153,7 +157,7 @@ namespace SIL.FieldWorks.XWorks
 			var services = new RegionEditorServices { LegacyDialogLauncher = fake };
 
 			var row = (FwDialogLauncherField)DialogLauncherPlugins.CreateMsaInflectionFeatures()
-				.BuildControl(msa, node, null, Cache, services);
+				.BuildControl(Ctx(msa, node, services));
 
 			// MsaInflectionFeatureListDlgLauncherView renders the structure with
 			// CmAnalObjectVc kfragShortName — i.e. the feature structure's ShortName.
@@ -209,35 +213,28 @@ namespace SIL.FieldWorks.XWorks
 				"a non-media object degrades to an empty value");
 		}
 
-		private sealed class FakeServiceAwarePlugin : IServiceAwareRegionEditorPlugin
+		// Task 13: the former IServiceAwareRegionEditorPlugin marker is gone — EVERY plugin sees
+		// the host services (possibly null) through the one build context.
+		private sealed class FakeServicesProbePlugin : IRegionEditorPlugin
 		{
 			public RegionEditorServices LastServices;
-			public int FiveArgCalls;
-			public int FourArgCalls;
+			public int BuildCalls;
 
 			public string LegacyClassName => AvaloniaCompanionSlices.MessageSliceClassName;
 
-			public Avalonia.Controls.Control BuildControl(ICmObject obj, ViewNode node,
-				IRegionEditContext editContext, LcmCache cache)
+			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context)
 			{
-				FourArgCalls++;
-				return null;
-			}
-
-			public Avalonia.Controls.Control BuildControl(ICmObject obj, ViewNode node,
-				IRegionEditContext editContext, LcmCache cache, RegionEditorServices services)
-			{
-				FiveArgCalls++;
-				LastServices = services;
+				BuildCalls++;
+				LastServices = context.Services;
 				return null;
 			}
 		}
 
 		[Test]
-		public void Compose_ThreadsHostServicesIntoServiceAwarePluginFactories()
+		public void Compose_ThreadsHostServicesIntoPluginFactories()
 		{
 			var registry = new RegionEditorPluginRegistry();
-			var plugin = new FakeServiceAwarePlugin();
+			var plugin = new FakeServicesProbePlugin();
 			registry.Register(plugin);
 			var services = new RegionEditorServices { LegacyDialogLauncher = new FakeLegacyDialogLauncher() };
 
@@ -246,24 +243,23 @@ namespace SIL.FieldWorks.XWorks
 			var row = composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.Custom);
 			row.ControlFactory();
 
-			Assert.That(plugin.FiveArgCalls, Is.EqualTo(1),
-				"a service-aware plugin builds through the five-argument overload");
-			Assert.That(plugin.FourArgCalls, Is.EqualTo(0));
+			Assert.That(plugin.BuildCalls, Is.EqualTo(1),
+				"the plugin builds through the one context-based contract");
 			Assert.That(plugin.LastServices, Is.SameAs(services),
 				"the factory closes over the host's own services instance");
 		}
 
 		[Test]
-		public void Compose_WithoutServices_HandsServiceAwarePluginsNull()
+		public void Compose_WithoutServices_HandsPluginsNullServices()
 		{
 			var registry = new RegionEditorPluginRegistry();
-			var plugin = new FakeServiceAwarePlugin();
+			var plugin = new FakeServicesProbePlugin();
 			registry.Register(plugin);
 
 			var composed = FullEntryRegionComposer.Compose(m_entry, Cache, plugins: registry);
 			composed.Model.Fields.Single(f => f.Kind == RegionFieldKind.Custom).ControlFactory();
 
-			Assert.That(plugin.FiveArgCalls, Is.EqualTo(1));
+			Assert.That(plugin.BuildCalls, Is.EqualTo(1));
 			Assert.That(plugin.LastServices, Is.Null, "services are optional by contract (default null)");
 		}
 	}

@@ -373,7 +373,7 @@ flowchart TB
 
 The earlier `010-advanced-entry-view-phase-1-2` state had a clean seam layer and a clean typed IR that
 were each built to "not change behavior" — so neither was wired into the live app — while the only
-end-to-end rendering path (the POC) bypassed both and used a hand-written lossy DTO. This is why
+end-to-end rendering path (the original detached spike) bypassed both and used a hand-written lossy DTO. This is why
 Sections 3 and 4 would not "finish cleanly": the tasks sit on the seams *between* tracks. (Section 4.8
 and the active-host contract in 3.10 close the worst of these gaps.)
 
@@ -384,14 +384,14 @@ flowchart TB
     DT["DataTree + SliceFactory + launchers"]:::legacy
   end
   subgraph A["Track A: Clean Seams"]
-    Ports["8 port interfaces<br/>5 implemented, 2 contract-only, 1 POC stub"]:::port
+    Ports["8 port interfaces<br/>5 implemented, 2 contract-only, 1 retired preview stub"]:::port
   end
   subgraph B["Track B: Typed IR"]
     IR["ViewDefinitionModel<br/>compiled from XML, cached, tested"]:::model
   end
-  subgraph C["Track C: Working POC"]
-    DTO["PocEntryDto<br/>hand-written, 3 fields, lossy"]:::poc
-    Slice["PocLexEntrySlice + WinFormsAvaloniaControlHost"]:::poc
+  subgraph C["Track C: Retired detached spike"]
+    DTO["Detached sample DTO<br/>hand-written, 3 fields, lossy"]:::retired
+    Slice["One-off slice + WinFormsAvaloniaControlHost"]:::retired
   end
   REV -->|reads UIMode| DTO
   REV -->|drove a HIDDEN live| DT
@@ -402,7 +402,7 @@ flowchart TB
   classDef legacy fill:#fff7ed,stroke:#f97316,color:#431407;
   classDef port fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
   classDef model fill:#f3e8ff,stroke:#7e22ce,color:#3b0764;
-  classDef poc fill:#dcfce7,stroke:#16a34a,color:#052e16;
+  classDef retired fill:#dcfce7,stroke:#16a34a,color:#052e16;
 ```
 
 ## 8. Convergence Target (Path 3) and Coexistence Cooperation

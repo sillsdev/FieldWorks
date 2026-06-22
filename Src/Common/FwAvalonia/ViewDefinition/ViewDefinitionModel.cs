@@ -349,6 +349,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string ghostWs = null,
 			string ghostClass = null,
 			string ghostLabel = null,
+			bool forVariant = false,
 			string customEditorClass = null,
 			string customEditorAssembly = null,
 			string ghostInitMethod = null,
@@ -380,6 +381,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			GhostWs = ghostWs;
 			GhostClass = ghostClass;
 			GhostLabel = ghostLabel;
+			ForVariant = forVariant;
 			CustomEditorClass = customEditorClass;
 			CustomEditorAssembly = customEditorAssembly;
 			GhostInitMethod = ghostInitMethod;
@@ -458,6 +460,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>Legacy `ghostLabel=`: the row label shown while the object does not exist yet.</summary>
 		public string GhostLabel { get; }
+
+		/// <summary>
+		/// Legacy `forVariant=` on ghost lexical-reference rows: when true, first add creates a
+		/// variant <c>LexEntryRef</c>; otherwise it creates a complex-form one.
+		/// </summary>
+		public bool ForVariant { get; }
 
 		/// <summary>
 		/// For a legacy dynamically loaded slice (<c>editor="Custom"</c>), the fully qualified slice
@@ -577,6 +585,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// B7: chooser links likewise ride the snapshot so a lossy round trip fails loudly.
 			if (node.ChooserLinks.Count > 0)
 				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
+			if (node.ForVariant)
+				sb.Append(" | forVariant=1");
 			return sb.ToString();
 		}
 	}

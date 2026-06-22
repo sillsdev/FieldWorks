@@ -32,7 +32,7 @@ lexical-edit tasks.
 
 **Goals:**
 - One ordered plan with explicit gates and a clear overlap resolution.
-- Start with a small POC, then the densest real screen (Lexical Edit via the DataTree region).
+- Start with a small phase-0 spike, then the densest real screen (Lexical Edit via the DataTree region).
 - Keep everything behind a default-off flag with WinForms as the safe default during transition.
 - Preserve functional fidelity and density; pixel-perfect is explicitly not required.
 
@@ -42,13 +42,13 @@ lexical-edit tasks.
 
 ## Decisions
 
-### 1. Sequence: POC → first migrated region → Lexical Edit → Shell
+### 1. Sequence: phase-0 spike → first migrated region → Lexical Edit → Shell
 
-**Decision:** Phase 0 is the POC spike; Phase 1 is the first migrated region via the region-model
+**Decision:** Phase 0 is the entry-point spike; Phase 1 is the first migrated region via the region-model
 path (lexical-edit-avalonia-migration sections 3–4); Phases 2–6 are the continued lexical-edit
 program; Phase 7+ is the shell, gated on the regional gates.
 
-**Rationale:** Banks cheapest risk reduction first (POC), then the typed-IR + surface-seam
+**Rationale:** Banks cheapest risk reduction first (phase-0 spike), then the typed-IR + surface-seam
 foundation that all further Avalonia screens build on, and defers the most expensive work (shell)
 until the regional pattern is proven. The `DataTree` internal extraction was originally planned as
 Phase 1 but is superseded: bypassing DataTree entirely on the Avalonia path is both simpler and
@@ -77,9 +77,9 @@ manifest gates pass.
 
 ```mermaid
 flowchart TB
-  subgraph P0["Phase 0 — POC spike (lexical-edit-avalonia-poc-spike)"]
+  subgraph P0["Phase 0 — entry-point spike (folded into lexical-edit-avalonia-migration)"]
     direction LR
-    A0["Flag + in-proc host bridge<br/>one slice (3 editors)<br/>density/parity evidence"]:::poc
+    A0["Flag + in-proc host bridge<br/>one slice (3 editors)<br/>density/parity evidence"]:::spike
   end
   subgraph P1["Phase 1 — First migrated region (lexical-edit-avalonia-migration §3–4)"]
     direction LR
@@ -100,7 +100,7 @@ flowchart TB
 
   P0 --> G0 --> P1 --> G1 --> P2 --> G2 --> P7
 
-  classDef poc fill:#fef9c3,stroke:#ca8a04,color:#422006;
+  classDef spike fill:#fef9c3,stroke:#ca8a04,color:#422006;
   classDef region fill:#f3e8ff,stroke:#7e22ce,color:#3b0764;
   classDef spine fill:#dcfce7,stroke:#16a34a,color:#052e16;
   classDef shell fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
@@ -109,7 +109,7 @@ flowchart TB
 
 ### Gate definitions
 
-- **Gate 0 (POC → region):** in-process net48 host bridge proven (or fallback recorded); density
+- **Gate 0 (phase-0 spike → region):** in-process net48 host bridge proven (or fallback recorded); density
   delta acceptable at 100% and 150% DPI; the same build runs either surface behind the flag;
   `spike-evidence.md` gives go.
 - **Gate 1 (first region → continued program):** `LexicalEditRegionView` renders
@@ -189,4 +189,4 @@ flowchart TD
 - WinForms stays the default until each region's gate passes; the flag default is WinForms.
 - Each phase is independently valuable and reversible; stalling at any phase still leaves value.
 - No native Views deletion or Graphite default-path removal until the region manifest proves it.
-- The POC converts the roadmap's remaining estimates into measured numbers before the region starts.
+- The phase-0 spike converts the roadmap's remaining estimates into measured numbers before the region starts.

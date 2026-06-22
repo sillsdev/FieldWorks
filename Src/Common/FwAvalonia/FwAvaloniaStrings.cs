@@ -22,6 +22,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string UnsupportedEditor => Resources.GetString("ksUnsupportedEditor");
 
+		/// <summary>
+		/// Tooltip on a text row whose value carries an embedded object (ORC) the managed editor
+		/// holds read-only (task 8.3 deferral — embedded-object editing rides a later wave).
+		/// </summary>
+		public static string EmbeddedObjectReadOnly => Resources.GetString("ksEmbeddedObjectReadOnly");
+
 		public static string Save => Resources.GetString("ksSave");
 
 		public static string Cancel => Resources.GetString("ksCancel");
@@ -69,5 +75,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>"{0} settings" — accessible name of a chooser's hover-revealed settings gear.</summary>
 		public static string FieldSettingsFormat => Resources.GetString("ksFieldSettings");
+
+		/// <summary>
+		/// "Edit the {0} list" — label/tooltip of a configure-gear jump derived from the row's
+		/// possibility list (the legacy chooser dialog's "Edit the … list" link text).
+		/// </summary>
+		public static string EditListFormat => Resources.GetString("ksEditListFormat");
+
+		/// <summary>"Lexeme Form" — first-slice row label (compiled override and authored fallback).</summary>
+		public static string LexemeFormLabel => Resources.GetString("ksLexemeFormLabel");
+
+		/// <summary>"Morph Type" — first-slice row label (authored fallback).</summary>
+		public static string MorphTypeLabel => Resources.GetString("ksMorphTypeLabel");
+
+		/// <summary>"Gloss" — first-slice row label (authored fallback).</summary>
+		public static string GlossLabel => Resources.GetString("ksGlossLabel");
 	}
 }

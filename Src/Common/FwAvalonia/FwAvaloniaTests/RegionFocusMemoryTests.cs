@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
@@ -49,6 +50,25 @@ namespace FwAvaloniaTests
 		private static LexicalEditRegionView NewView()
 			=> new LexicalEditRegionView(LexicalEditRegionMapper.FromViewDefinition(Definition(), new Provider()));
 
+		private static LexicalEditRegionView NewLongView()
+		{
+			var roots = new List<ViewNode>();
+			for (var i = 0; i < 60; i++)
+			{
+				roots.Add(new ViewNode("LexEntry/identity/#" + i, ViewNodeKind.Field, "Field " + i, null,
+					"Form", "multistring", EditorClassification.Known, "vernacular",
+					ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
+					automationId: "Field" + i, routing: SurfaceRouting.Product));
+			}
+			var definition = new ViewDefinitionModel("LexEntry", "identity", "detail", roots,
+				new List<ViewDiagnostic>());
+			return new LexicalEditRegionView(LexicalEditRegionMapper.FromViewDefinition(definition, new Provider()));
+		}
+
+		private static ScrollViewer FindScroller(Control root)
+			=> root.GetVisualDescendants().OfType<ScrollViewer>()
+				.FirstOrDefault(s => AutomationProperties.GetAutomationId(s) == "LexicalEditRegionView.Scroll");
+
 		private static TextBox FindEditor(Control root, string automationId)
 		{
 			foreach (var visual in root.GetVisualDescendants())
@@ -89,22 +109,34 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void Capture_ReturnsNull_WhenFocusIsOutsideTheView()
+		public void Capture_WhenFocusIsOutsideTheView_PreservesScrollButNotFocus()
 		{
-			var view = NewView();
+			var view = NewLongView();
 			var other = new TextBox();
-			var panel = new StackPanel();
+			var panel = new Grid();
+			panel.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+			panel.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+			Grid.SetRow(view, 0);
+			Grid.SetRow(other, 1);
 			panel.Children.Add(view);
 			panel.Children.Add(other);
 			var window = new Window { Content = panel, Width = 420, Height = 240 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
+			var scroller = FindScroller(view);
+			Assert.That(scroller, Is.Not.Null);
+			scroller.Offset = new Avalonia.Vector(0, 42);
+			Dispatcher.UIThread.RunJobs();
 
 			other.Focus();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(RegionFocusMemory.Capture(view), Is.Null,
-				"focus outside the region must not be captured (re-shows must not steal it)");
+			var memento = RegionFocusMemory.Capture(view);
+			Assert.That(memento, Is.Not.Null);
+			Assert.That(memento.AutomationId, Is.Null,
+				"focus outside the region must not be restored into the view");
+			Assert.That(memento.VerticalOffset, Is.EqualTo(42).Within(0.5),
+				"scroll continuity still matters when a context menu/popup owns focus");
 		}
 
 		[AvaloniaTest]
@@ -116,7 +148,72 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			var memento = new RegionFocusMemory.Memento("NoSuchEditor.vern", 0);
-			Assert.That(RegionFocusMemory.TryRestore(view, memento), Is.False);
+			Assert.That(RegionFocusMemory.TryRestoreFocus(view, memento), Is.False);
+		}
+
+		[AvaloniaTest]
+		public void CaptureAndRestore_CarryScrollOffset_AcrossAViewRebuild()
+		{
+			var first = NewLongView();
+			var window = new Window { Content = first, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var scroller = FindScroller(first);
+			Assert.That(scroller, Is.Not.Null);
+			var top = FindEditor(first, "Field0.vern");
+			Assert.That(top, Is.Not.Null);
+			top.Focus();
+			scroller.Offset = new Avalonia.Vector(0, 120);
+			Dispatcher.UIThread.RunJobs();
+
+			var memento = RegionFocusMemory.Capture(first);
+			Assert.That(memento, Is.Not.Null);
+
+			var second = NewLongView();
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(RegionFocusMemory.TryRestore(second, memento), Is.True);
+			Dispatcher.UIThread.RunJobs();
+
+			var restoredScroller = FindScroller(second);
+			Assert.That(restoredScroller.Offset.Y, Is.EqualTo(120).Within(0.5),
+				"rebuilding the region should keep the user at the same scroll position instead of jumping back to the top");
+		}
+
+		[AvaloniaTest]
+		public void TryRestoreScroll_Works_WhenMementoHasNoFocusedEditor()
+		{
+			var first = NewLongView();
+			var other = new TextBox();
+			var panel = new Grid();
+			panel.RowDefinitions.Add(new RowDefinition(1, GridUnitType.Star));
+			panel.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+			Grid.SetRow(first, 0);
+			Grid.SetRow(other, 1);
+			panel.Children.Add(first);
+			panel.Children.Add(other);
+			var window = new Window { Content = panel, Width = 420, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var scroller = FindScroller(first);
+			scroller.Offset = new Avalonia.Vector(0, 88);
+			other.Focus();
+			Dispatcher.UIThread.RunJobs();
+
+			var memento = RegionFocusMemory.Capture(first);
+			Assert.That(memento.AutomationId, Is.Null);
+
+			var second = NewLongView();
+			Assert.That(RegionFocusMemory.TryRestoreScroll(second, memento), Is.True);
+			window.Content = second;
+			Dispatcher.UIThread.RunJobs();
+			var restoredScroller = FindScroller(second);
+			Assert.That(restoredScroller, Is.Not.Null);
+			Assert.That(restoredScroller.Offset.Y, Is.EqualTo(88).Within(0.5),
+				"scroll continuity must not depend on focus being inside the view");
 		}
 	}
 }

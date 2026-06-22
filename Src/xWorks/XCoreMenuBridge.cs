@@ -71,9 +71,17 @@ namespace SIL.FieldWorks.XWorks
 			return items;
 		}
 
-		// xCore labels mark the accelerator with '_' (WinForms '&'); Avalonia headers show it raw.
+		// xCore labels mark the accelerator with a single '_' before the mnemonic character (the
+		// WinForms adapters translate it: label.Replace("_", "&")); Avalonia headers show the text
+		// raw, so strip only that first marker — any later underscore is literal label content
+		// (e.g. a user-defined item name) and must survive.
 		private static string StripAccelerator(string text)
-			=> (text ?? string.Empty).Replace("_", string.Empty);
+		{
+			if (string.IsNullOrEmpty(text))
+				return string.Empty;
+			var marker = text.IndexOf('_');
+			return marker < 0 ? text : text.Remove(marker, 1);
+		}
 
 		// Hidden items can strand separators at the edges or double them up.
 		private static void TrimSeparators(List<RegionMenuItem> items)
