@@ -26,6 +26,24 @@ capture evidence after the target state is visible.
 This skill is intentionally organized as a small index plus route-specific
 navigation files. Read only the route files needed for the task.
 
+## Setup First (if `winforms_*` tools are missing)
+
+If `ToolSearch "winforms"` finds no tools, the MCP server is not registered for
+**Claude Code** — most often because it is only in `.vscode/mcp.json` (VS Code's
+file), not the repo-root `.mcp.json` (Claude Code's file). Read
+`references/mcp-setup.md`, then:
+
+1. Ensure repo-root `.mcp.json` registers `winforms-mcp` (committed here; the
+   Windows-robust `cmd /c npx` form).
+2. Run `scripts/Preflight-WinFormsMcp.ps1` to confirm node/npx, the package, and
+   a built `Output/Debug/FieldWorks.exe`.
+3. **Reconnect/restart Claude Code** (MCP servers load at session start) and
+   **approve** the project server when prompted. Confirm with `claude mcp list`
+   and `ToolSearch "winforms"`.
+
+The MCP **client** launches the server — no script starts it; the preflight only
+verifies that launch will succeed.
+
 ## Core Rules
 
 - Prefer WinForms MCP UIA2 tools for fresh FieldWorks runtime automation because
@@ -72,7 +90,9 @@ navigation files. Read only the route files needed for the task.
   destination or workflow.
 - `references/how-to-update.md`: rules for adding or revising navigation paths.
 - `references/mcp-selection.md`: rules for choosing WinForms MCP or WinApp MCP.
+- `references/mcp-setup.md`: enabling the `winforms_*` tools for Claude Code (`.mcp.json`, reconnect).
 - `references/research.md`: source-backed rationale for this structure.
+- `scripts/Preflight-WinFormsMcp.ps1`: pre-session check (node/npx, package, build, `.mcp.json`).
 
 When a task names a destination, read the matching navigation file. When a task
 discovers a better route or a fragile selector, read and update
@@ -85,6 +105,8 @@ discovers a better route or a fragile selector, read and update
 - Writing System Properties > Font tab: `navigation/writing-system-font-options.md`
 - Styles dialog > Font tab: `navigation/styles-font-tab.md`
 - Manual screenshot evidence: `navigation/screenshot-evidence.md`
+- WinForms ↔ Avalonia parity capture: `navigation/winforms-avalonia-parity.md`
+- Enable the MCP tools for Claude Code: `references/mcp-setup.md`
 - MCP driver selection: `references/mcp-selection.md`
 
 ## Screenshot Evidence
