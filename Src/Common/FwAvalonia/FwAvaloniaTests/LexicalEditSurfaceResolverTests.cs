@@ -21,46 +21,33 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Resolve_DefaultsToWinForms_WhenFlagUnset()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(envReader: _ => null);
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms));
-		}
-
-		[TestCase("1")]
-		[TestCase("true")]
-		[TestCase("TRUE")]
-		[TestCase("on")]
-		[TestCase("yes")]
-		public void Resolve_SelectsAvalonia_WhenFlagTruthy(string value)
-		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
-				envReader: name => name == LexicalEditSurfaceResolver.FlagEnvVar ? value : null);
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.Avalonia));
-		}
-
-		[TestCase("")]
-		[TestCase("0")]
-		[TestCase("false")]
-		[TestCase("off")]
-		[TestCase("nonsense")]
-		public void Resolve_StaysWinForms_WhenFlagFalsy(string value)
-		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
-				envReader: name => name == LexicalEditSurfaceResolver.FlagEnvVar ? value : null);
+			var surface = LexicalEditSurfaceResolver.Resolve();
 			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms));
 		}
 
 		[Test]
-		public void Resolve_OverrideWinsOverEnvironment()
+		public void Resolve_OverrideWinsOverPersistedUIMode()
 		{
-			// Environment says "on", but the explicit override says off -> WinForms.
 			var winForms = LexicalEditSurfaceResolver.Resolve(
-				envReader: _ => "1", overrideEnabled: false);
+				overrideEnabled: false,
+				uiMode: LexicalEditSurfaceResolver.NewUIMode);
 			Assert.That(winForms, Is.EqualTo(LexicalEditSurface.WinForms));
 
-			// Environment unset, but override says on -> Avalonia.
 			var avalonia = LexicalEditSurfaceResolver.Resolve(
-				envReader: _ => null, overrideEnabled: true);
+				overrideEnabled: true,
+				uiMode: LexicalEditSurfaceResolver.LegacyUIMode);
 			Assert.That(avalonia, Is.EqualTo(LexicalEditSurface.Avalonia));
+		}
+
+		[TestCase(LexicalEditSurfaceResolver.LegacyUIMode, LexicalEditSurface.WinForms)]
+		[TestCase(LexicalEditSurfaceResolver.NewUIMode, LexicalEditSurface.Avalonia)]
+		[TestCase(null, LexicalEditSurface.WinForms)]
+		[TestCase("", LexicalEditSurface.WinForms)]
+		[TestCase("SomethingElse", LexicalEditSurface.WinForms)]
+		public void Resolve_UsesPersistedUIMode(string uiMode, LexicalEditSurface expected)
+		{
+			var surface = LexicalEditSurfaceResolver.Resolve(uiMode: uiMode);
+			Assert.That(surface, Is.EqualTo(expected));
 		}
 	}
 

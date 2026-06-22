@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 {
@@ -40,7 +41,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 			Clear();
 		}
 
-		/// <summary>Displays the given lexical-entry DTO in the Avalonia POC slice.</summary>
+		/// <summary>
+		/// Displays a typed-definition-backed region model in the Avalonia surface (task 4.8). This is the
+		/// product render path; it replaces <see cref="ShowEntry"/>, which renders the lossy preview DTO.
+		/// </summary>
+		public void ShowRegion(LexicalEditRegionModel region)
+		{
+			if (region == null) throw new ArgumentNullException(nameof(region));
+			_host.Content = new LexicalEditRegionView(region);
+			Show();
+		}
+
+		/// <summary>
+		/// Displays the given lexical-entry DTO in the Avalonia POC slice. Preview/sample only: the
+		/// product route uses <see cref="ShowRegion"/> with a typed-definition-backed region model.
+		/// </summary>
 		public void ShowEntry(PocEntryDto entry)
 		{
 			if (entry == null) throw new ArgumentNullException(nameof(entry));

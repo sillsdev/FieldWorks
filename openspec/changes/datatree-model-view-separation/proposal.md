@@ -1,5 +1,17 @@
 ## Why
 
+> **Status note (2026-06-09 — superseded as migration gate).** This change was originally planned
+> as Phase 1 of the Avalonia migration (the first concrete migrated region). That plan is superseded:
+> the migration boundary is the region-model path (`ViewDefinitionModel`/`LexicalEditRegionModel`),
+> not a `DataTree` internal extraction. `DataTree` is frozen on the legacy side and will be deleted
+> at end of the ~1-year coexistence phase. Extracting `DataTreeModel`/`SliceSpec`/`IDataTreeView`
+> would invest in a class being deleted. See `datatree-model-view-separation/hybrid-alignment.md`
+> and `avalonia-migration-roadmap/design.md` for the full context.
+>
+> **What remains valid:** Partial-class split and additional characterization test coverage are
+> worthwhile as optional legacy maintenance while `DataTree` is still alive. `DataTreeModel`,
+> `SliceSpec`, and `IDataTreeView` should not be built.
+
 DataTree.cs (currently ~4.7k lines on this branch) is a God Class that fuses XML layout parsing, slice lifecycle management, WinForms layout/paint, focus navigation, mediator messaging, data-change notification, and persistence into a single `UserControl`. This makes it difficult to reason about in isolation and blocks straightforward reuse when the project migrates from WinForms to Avalonia. The same problem extends to Slice.cs. With the Avalonia migration on the roadmap, we need a UI-framework-agnostic model layer so both WinForms and Avalonia views can coexist during the transition period.
 
 ### Current implementation snapshot (2026-02-28)

@@ -2,7 +2,7 @@
 
 This map records the characterization coverage needed before refactoring the standard Lexical Edit path toward Avalonia. It separates current repo behavior from proposed seams so Phase 3 does not proceed on invented interfaces.
 
-This Phase 1/2 foundation branch keeps legacy WinForms/DataTree/XMLViews characterization and planning. The Avalonia Preview Host and `AdvancedEntry.Avalonia` prototype coverage referenced below lives on `010-advanced-entry-preview-prototype`; product launcher wiring lives on `010-advanced-entry-product-launcher-spike`.
+This Phase 1/2 branch now carries legacy WinForms/DataTree/XMLViews characterization and planning, the net48 `FwAvalonia` spike and preview host, typed view-definition/seam foundation code, and product-facing app-wide lexical-edit UI mode wiring through existing `RecordEditView` hosts. The older net8 `AdvancedEntry.Avalonia` prototype remains on `010-advanced-entry-preview-prototype` as a separate prototype track. Branch scope should be checked against the branch-only diff from `main`, not inferred from same-day commit timestamps.
 
 ## Coverage Status Legend
 
@@ -50,9 +50,9 @@ The proposed `MorphTypeSwapController` does not exist. Phase 3 should extract fr
 |---|---|---|---|
 | Browse host | [Src/xWorks/RecordBrowseView.cs](Src/xWorks/RecordBrowseView.cs) | Existing xWorks tests plus `FilterBar_HeaderAndFilterControlsExposeReachableBaseline` for header order and filter/chooser reachability | Sort-state and keyboard-navigation baselines remain for table migration work. |
 | XML table renderer | [Src/Common/Controls/XMLViews/XmlView.cs](Src/Common/Controls/XMLViews/XmlView.cs) | Existing XMLViews reset/refresh tests | UIA2 or equivalent smoke harness before claiming parity. |
-| Chooser forms | [Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs](Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs) and [Src/Common/Controls/XMLViews/ChooserCommandBase.cs](Src/Common/Controls/XMLViews/ChooserCommandBase.cs) | Existing isolated chooser tests, not enough for migration parity | Keyboard search, expand/collapse, double-click commit, cancel, invalid target, and transaction rollback. |
+| Chooser forms | [Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs](Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs) and [Src/Common/Controls/XMLViews/ChooserCommandBase.cs](Src/Common/Controls/XMLViews/ChooserCommandBase.cs) | Existing isolated chooser tests plus `WinFormsUiaSmokeTests` realized-window smoke for chooser tree and cancel-button invoke reachability | Keyboard search, expand/collapse, accept/cancel outcome semantics, invalid target, and transaction rollback still need deeper parity coverage. |
 
-A net48 `System.Windows.Automation` harness now exists for `FwAvaloniaPreviewHost` (`FwAvaloniaPreviewHostTests/PreviewHostUiaTests.cs`). Legacy WinForms launcher/chooser/XMLViews parity still uses in-process smoke substitutes on this branch; a full WinForms UIA2/FlaUI parity harness remains a later infrastructure decision.
+A net48 `System.Windows.Automation` harness now exists for both `FwAvaloniaPreviewHost` (`FwAvaloniaPreviewHostTests/PreviewHostUiaTests.cs`) and legacy WinForms reachability smoke (`xWorksTests/WinFormsUiaSmokeTests.cs`). The current branch now has true UIA smoke for morph-type launcher/chooser reachability and XMLViews filter-bar combo reachability; deeper shell-level workflow/accessibility parity is still a later infrastructure decision.
 
 ## 5. Layout Overrides and Dictionary Configuration
 
@@ -65,23 +65,23 @@ A net48 `System.Windows.Automation` harness now exists for `FwAvaloniaPreviewHos
 
 Override handling must be evidence-first: every selected fixture needs input XML/CSS, expected typed definition or diagnostic output, and an artifact path on mismatch.
 
-## 6. AdvancedEntry Avalonia Seams
+## 6. Avalonia Seams and Net48 Foundations
 
-The implementation and net8 test evidence for these seams has been split to `010-advanced-entry-preview-prototype`. This foundation branch keeps the seam map so Phase 3 work does not treat prototype coverage as production parity.
+The older net8-specific prototype coverage remains split to `010-advanced-entry-preview-prototype`, but this branch now contains net48 `FwAvalonia` seam contracts, typed view-definition foundation code, and net48 preview-host smoke coverage. The table below distinguishes current branch evidence from the still-separate prototype lane so Phase 3 work does not over-claim either one.
 
 | Seam | Current Source | Current Coverage | Required Before First Editable Slice |
 |---|---|---|---|
-| Edit session | Prototype branch | Save/cancel/nested-session tests on prototype branch | Decide direct LCModel fenced undo-task vs staged draft semantics; add global undo/redo-after-save tests before product editing. |
-| Validation | Prototype branch | Required-field, deterministic order, lazy skip tests on prototype branch | `INotifyDataErrorInfo` or `DataValidationErrors` adapter, localization/resource key, severity, async stale-result suppression. |
-| Command/focus | Prototype branch | Local shortcut and view-model command tests on prototype branch | Text-editor focus/caret restore and popup focus return remain Phase 6 control work. XCore bridge remains shell-phase work. |
-| UI scheduling | Prototype branch | Headless dispatcher tests on prototype branch | Thin scheduler fake with cancellation, exception propagation, and no false completion for `Post`. |
-| Lifetime | Prototype branch | Save/cancel lifetime, late-loader disposal, close cancellation, and DataContext unsubscribe checks on prototype branch | Broader leak instrumentation remains for shell/global lifetime work. |
+| Edit session | Current branch `Src/Common/FwAvalonia/Seams` + `PocEditSession`; older prototype branch keeps additional experiments | `SeamTests` contract coverage plus `PocLexEntrySliceTests` commit/cancel behavior over detached POC data | Replace detached preview-only semantics with LCModel-backed product edit-session coverage and global undo/redo-after-save tests before product editing. |
+| Validation | Current branch seam specs + typed model metadata; older prototype branch keeps extra net8-specific experimentation | Current branch has typed model/view-definition foundation but not full product validation presentation evidence | `INotifyDataErrorInfo` or `DataValidationErrors` adapter, localization/resource key, severity, async stale-result suppression, and product-path tests. |
+| Command/focus | Current branch seam contracts/specs plus preview-host UIA smoke; older prototype branch keeps extra local-command experiments | Preview-host UIA smoke proves stable automation identities and popup reachability for the POC host | Text-editor focus/caret restore, popup focus return in product hosts, and real XCore bridge behavior remain Phase 6 and shell-phase work. |
+| UI scheduling | Current branch `IUiScheduler`/`ImmediateUiScheduler` | `SeamTests` cover the current thin scheduler seam | Cancellation, exception propagation, and no false completion for deferred work in product paths. |
+| Lifetime | Current branch `IRegionLifetime`/`RegionLifetime` | `SeamTests` cover the current thin lifetime seam | Broader leak instrumentation and shell/global lifetime work remain future tasks. |
 
 ## 7. Snapshot Normalization
 
 | Surface | Current Source | Current Coverage | Remaining Phase 4 Work |
 |---|---|---|---|
-| Presentation IR semantic snapshots | Prototype branch | Normalized LexEntry detail snapshot coverage moved to `010-advanced-entry-preview-prototype` | Replace placeholders with first-class class/flid/object/writing-system metadata once the typed definition model carries them; add foundation-level fixtures before claiming production parity. |
+| Presentation IR semantic snapshots | Current branch `Src/Common/FwAvalonia/ViewDefinition` plus `ViewDefinitionTests`; older prototype branch keeps extra control-level experiments | Current branch covers determinism, stable IDs, field binding, editor classification, writing-system metadata, visibility, and expansion over the typed view-definition model | Add first-class localization/resource identity, accessibility identity, product-vs-preview routing metadata, and broader override fixtures before claiming production parity. |
 
 ## 8. Hard Gates Before Phase 3 Refactor
 
@@ -102,12 +102,24 @@ Additional global gates:
 
 Path 3 is the migration-quality lane for judging visual fidelity: one scenario bundle combines semantic parity, visual/density parity, and accessibility/workflow parity so reviewers and AI can inspect the same evidence set.
 
+Canonical bundle contract for every Path 3 scenario, even when only the legacy side exists so far:
+
+- `scenarioId`: stable scenario identifier shared by all artifacts.
+- `bundleId`: concrete artifact-set identifier for the scenario run.
+- `failureSummaryId`: one ID reused by semantic, visual, workflow/accessibility, and diff artifacts.
+- `semantic`: semantic snapshot artifact.
+- `visual.legacy`: matched WinForms screenshot(s).
+- `workflow.legacy`: workflow/accessibility evidence for the legacy surface.
+- `visual.avalonia`, `workflow.avalonia`, `performance`: either present artifacts or an explicit `pending` marker.
+
+Legacy baselines are therefore first-class Path 3 bundles, not ad hoc precursor artifacts.
+
 | Lane | Source of Truth | Current Status | Path 3 Blocking Gaps |
 |---|---|---|---|
 | Semantic parity | `DataTreeTests` semantic baseline + typed IR snapshots | Partial | Broader fixture set for ghost/custom-field/accessibility identity; selected override fixtures. |
-| Visual parity | WinForms render baselines and Avalonia rendered frames/screenshots | Partial | Canonical scenario bundle format; live Avalonia screenshots once the host work lands; matched DPI/framing rules. |
+| Visual parity | WinForms render baselines and Avalonia rendered frames/screenshots | Partial | Live Avalonia screenshots once the host work lands; matched DPI/framing rules. |
 | Workflow/accessibility parity | UIA2/FlaUI/Appium on live windows; in-repo smoke substitutes meanwhile | Partial | Task 2.4 true UIA2/FlaUI baselines; remaining 2.7 keyboard/IME/focus-restoration/localization work. |
-| Failure evidence | `RenderFailureArtifactBundler`, semantic snapshots, trace/log output | Partial | Unified failure summary id shared across semantic, visual, and workflow lanes. |
+| Failure evidence | `RenderFailureArtifactBundler`, semantic snapshots, trace/log output | Partial | Shared `failureSummaryId` wiring across semantic, visual, and workflow lanes. |
 
 Path 3 blockers before a region can claim strong visual fidelity:
 

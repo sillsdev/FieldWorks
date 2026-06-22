@@ -2,7 +2,7 @@
 
 Lexical Edit currently depends on a WinForms/DataTree/DetailControls stack that interprets XML Parts/Layout into `Slice` controls, launchers, chooser dialogs, nested `ViewSlice` content, and Views-backed rendering. The Advanced Entry Speckit work under `specs/010-advanced-entry-view/` already proves several useful ideas: a net8 Avalonia module, Preview Host, Presentation IR, XML contract loading, caching, headless tests, and parity checklist. The new target is larger: migrate the real Lexical Edit surface while preserving user interaction, density, writing-system behavior, and customizability, then retire XML after the Avalonia switch is proven.
 
-This branch is the foundation slice: it documents the architecture, keeps legacy characterization tests that protect Phase 3 refactors, and now includes a net48 `FwAvaloniaPreviewHost` + preview-host UIA smoke tests for the current POC module. The older net8 Preview Host/AdvancedEntry prototype remains intentionally split to `010-advanced-entry-preview-prototype`, and product launcher wiring is intentionally split to `010-advanced-entry-product-launcher-spike`.
+This branch is the current foundation-and-integration slice: it documents the architecture, keeps legacy characterization tests that protect Phase 3 refactors, and now includes the net48 `FwAvalonia` spike, typed view-definition/seam foundation code, a net48 `FwAvaloniaPreviewHost` + preview-host UIA smoke tests, and product-facing app-wide lexical-edit UI mode wiring through existing `RecordEditView` hosts. The older net8 Preview Host/AdvancedEntry prototype remains intentionally split to `010-advanced-entry-preview-prototype` as a separate prototype track. Branch scope should be reviewed against the branch-only diff from `main`, not inferred from same-day commit timestamps.
 
 Important current constraints:
 - `DataTree`, `Slice`, `SliceFactory`, launchers, `RecordEditView`, XMLViews browse/table views, and xCore mediator behavior are tightly coupled.
@@ -19,10 +19,12 @@ Important current constraints:
 - Make Lexical Edit refactorable and testable before replacing major UI surfaces.
 - Use XML Parts/Layout as an import/compatibility contract during transition, not as the final runtime abstraction.
 - Introduce typed view-definition and Presentation IR interfaces suitable for dependency injection, semantic parity tests, and Avalonia rendering.
+- Make the lexical-edit UI mode an app-wide product switch while keeping each current `RecordEditView` consumer on an explicit contract: supported Avalonia surface, explicit legacy fallback, or explicit blocked state.
 - Preserve interaction behavior, information density, writing-system fonts, OpenType/HarfBuzz shaping behavior, nested structures, popup choosers, table views, and TreeView-heavy views.
 - Decommission native Graphite/rendering from the default Lexical Edit path: Graphite work starts when the migration starts, and Avalonia does not become the default screen until Graphite dependencies are classified and either replaced, retained behind legacy fallback/export boundaries, or blocked with explicit diagnostics and rollback.
 - Decommission C++ viewing/rendering dependencies by migrated region so completed Avalonia regions do not use native Views, `RootSite`, `IVwEnv`, `ManagedVwWindow`, or equivalent C++ display/layout/editor infrastructure at runtime. Custom linguistics services may remain when they are exposed through explicit service seams and do not own Avalonia viewing or editing surfaces.
 - Extend render verification to capture semantic output, not only pixels and timings.
+- Keep Avalonia code and tests on the normal repo build/test path; build strategy must not become the way we select legacy vs Avalonia behavior.
 
 **Non-Goals:**
 - No one-shot rewrite of DataTree, XMLViews, and Lexical Edit.
@@ -129,6 +131,25 @@ Important current constraints:
 - Phase-two shell migration: invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` instead of redefining them there.
 - Deferred or separate-track options: package-first edit sessions, package-first undo/redo, and heavy region-lifetime frameworks remain available only if the pivot triggers documented in `seam-recommendations.md` are met.
 
+### 12. The lexical-edit UI mode is global, but host behavior is explicit per consumer
+
+**Decision:** The lexical-edit UI mode is app-wide. Changing it affects every host that routes through `RecordEditView` or a later replacement, but each host must declare its behavior under both modes: supported Avalonia surface, explicit legacy fallback, or explicit blocked state with a deliberate product-facing message.
+
+**Rationale:** A single product switch keeps user behavior simple and prevents hidden feature islands, but a global setting cannot imply that every consumer is equally migrated. The contract must therefore stay explicit per host so unsupported surfaces do not drift into ambiguous best-effort routing.
+
+**Alternatives considered:**
+- Per-screen or preview-only flags: rejected because they obscure the product contract and make it harder to audit what the user actually gets.
+- Implicit fallback decided inside each host without a manifest: rejected because it hides migration status and encourages silent lossy routing.
+
+### 13. Avalonia build and test coverage stays on the normal repo workflow
+
+**Decision:** Avalonia projects and tests participate in the normal repo build and test flow. `./build.ps1` and `./test.ps1` remain the integration entry points; runtime UI mode selects behavior after build, not which code is built or validated.
+
+**Rationale:** Branch-local or optional build lanes are useful as temporary implementation details but should not define product confidence. Reviewers need one build/test story for both legacy and Avalonia code paths.
+
+**Alternatives considered:**
+- Separate `BuildAvalonia` or preview-only validation lanes as the main evidence path: rejected because they make product validation depend on opt-in behavior rather than the normal repo workflow.
+
 ## Native Dependency Classification
 
 The classification rule is based on the role of the native code, not the implementation language alone. If native code owns what the user is viewing or editing, it is not brought into completed Avalonia regions. If native code supplies custom linguistics capability that supports FieldWorks' role in documenting many languages, it may remain behind an explicit service seam.
@@ -198,18 +219,20 @@ Pick a representative lexical path, such as LexEntry morph type plus nested sens
 ## Migration Plan
 
 1. Freeze current behavior with targeted unit/integration/render/UIA2 baselines, including undo/redo, focus, keyboard/IME, accessibility, localization, customer overrides, and disposal behavior.
-2. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic, following `avalonia-ui-scheduler`, `avalonia-lifetime`, and the local phase of `avalonia-command-focus`.
-3. Start Graphite/native rendering decommissioning: inventory affected project settings, fonts, render engines, Gecko/PDF paths, tests, docs, and build artifacts; prove no default-path claim depends on unverified Graphite behavior.
-4. Define migrated-region manifests and hard gates for each proposed Avalonia region.
-5. Extend render verification with normalized semantic snapshots, visual/timing evidence, performance budgets, and failure bundles.
-6. Build typed view-definition and XML import as the compatibility compiler.
-7. Replace text foundation, simple controls, edit sessions, validation, undo/redo routing, and hover/popups in Avalonia using owned editor controls, following `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local phase of `avalonia-command-focus`.
-8. Replace table/browse views with virtualized Avalonia table/tree structures.
-9. Replace slices and full Lexical Edit views with Avalonia surfaces over the typed contract.
-10. Audit the migrated region's runtime call graph and remove/disable native viewing/rendering/editor dependencies for that region, while classifying custom linguistics engines as service seams when they do not own the Avalonia UI surface.
-11. Add managed canonical view-definition authoring and migration tooling.
-12. Retire runtime XML only after parity gates pass for production layouts, custom fields, user overrides, dynamic editors, unsupported constructs, and fallback behavior.
-13. Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` once Lexical Edit regional seams are proven.
+2. Define the app-wide lexical-edit UI mode contract and explicit per-host behavior matrix before expanding product wiring beyond the first hosts.
+3. Introduce DI-friendly services around DataTree refresh, view-definition source/import/compile/cache, editor selection, command/property/navigation state, edit sessions, UI dispatch, lifetime, LCModel access, and launcher logic, following `avalonia-ui-scheduler`, `avalonia-lifetime`, and the local phase of `avalonia-command-focus`.
+4. Keep Avalonia build/test integration on the normal repo scripts while the runtime UI mode remains the only product selection mechanism.
+5. Start Graphite/native rendering decommissioning: inventory affected project settings, fonts, render engines, Gecko/PDF paths, tests, docs, and build artifacts; prove no default-path claim depends on unverified Graphite behavior.
+6. Define migrated-region manifests and hard gates for each proposed Avalonia region.
+7. Extend render verification with normalized semantic snapshots, visual/timing evidence, performance budgets, and failure bundles.
+8. Build typed view-definition and XML import as the compatibility compiler.
+9. Replace text foundation, simple controls, edit sessions, validation, undo/redo routing, and hover/popups in Avalonia using owned editor controls, following `avalonia-edit-sessions`, `avalonia-validation`, `avalonia-undo-redo`, and the local phase of `avalonia-command-focus`.
+10. Replace table/browse views with virtualized Avalonia table/tree structures.
+11. Replace slices and full Lexical Edit views with Avalonia surfaces over the typed contract.
+12. Audit the migrated region's runtime call graph and remove/disable native viewing/rendering/editor dependencies for that region, while classifying custom linguistics engines as service seams when they do not own the Avalonia UI surface.
+13. Add managed canonical view-definition authoring and migration tooling.
+14. Retire runtime XML only after parity gates pass for production layouts, custom fields, user overrides, dynamic editors, unsupported constructs, and fallback behavior.
+15. Invoke the shell-global phase of `avalonia-command-focus`, `avalonia-ui-scheduler`, and `avalonia-lifetime` through `fieldworks-avalonia-shell-migration` once Lexical Edit regional seams are proven.
 
 ## Open Questions
 

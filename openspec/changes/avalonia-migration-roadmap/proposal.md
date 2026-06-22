@@ -1,5 +1,12 @@
 ## Why
 
+> **Status note (2026-06-09).** The original proposal planned `datatree-model-view-separation` as
+> Phase 1. Execution diverged: Phase 1 was built directly as the region-model path
+> (`ViewDefinitionModel`/`LexicalEditRegionModel`) inside `lexical-edit-avalonia-migration`, bypassing
+> DataTree internals entirely. Gate 1 has passed. `datatree-model-view-separation` is formally
+> superseded as a migration gate (task 1.13 done 2026-06-09). The active vocabulary and gate
+> definitions are in `design.md`; this proposal is preserved as the historical rationale.
+
 Two planning sets exist for moving FieldWorks to Avalonia: an older DataTree model/view separation
 (`datatree-model-view-separation`) and a newer end-to-end program
 (`lexical-edit-avalonia-migration` + `fieldworks-avalonia-shell-migration`). They overlap and need a
@@ -9,23 +16,20 @@ preserving **functional fidelity and density** (not pixel-perfect), with the new
 **feature flag** so the same build runs either Avalonia or the legacy WinForms controls.
 
 This change is the **umbrella roadmap**. It does not introduce code. It sequences the existing
-changes into one minimal-risk path, defines the gates between them, and resolves the overlap between
-the two plans (the DataTree split becomes the concrete first migrated region inside the lexical-edit
-program).
+changes into one minimal-risk path and defines the gates between them.
 
-## What Changes
+## What Changed (as-built)
 
-- Adopt the **Hybrid** approach: the lexical-edit program is the spine (typed view definition,
-  seams, parity automation, Graphite/native decommissioning, two-adapter flag, then the shell); the
-  DataTree model/view split is executed as the **first concrete migrated region** inside it.
-- Add a **proof-of-concept spike** (`lexical-edit-avalonia-poc-spike`) as the entry point, before the
-  regional migration, to de-risk the host bridge, fidelity/density, and the dual-run flag.
-- Define the **ordered sequence and gates** across all changes so no phase starts before its
-  predecessor's evidence exists.
-- Reconcile vocabulary between the two plans: Plan A's `SliceSpec` is a concrete realization of Plan
-  B's typed view-definition node; Plan A's `IDataTreeView` is selected by Plan B's two-adapter flag.
-- Keep the comparison analysis (`Docs/avalonia-migration-approach-comparison.md`) as the rationale of
-  record for choosing the Hybrid.
+- **Phase 0 (POC spike):** completed. In-process host bridge proven; product wiring evidence
+  exists. See `lexical-edit-avalonia-poc-spike/spike-evidence.md`.
+- **Phase 1 (first migrated region):** completed via `lexical-edit-avalonia-migration` sections 3–4.
+  The boundary is the region-model path (`ViewDefinitionModel` → `LexicalEditRegionModel`), not the
+  originally-planned DataTree extraction. `DataTree` is frozen on the legacy side. Gate 1 passed.
+  See `avalonia-migration-roadmap/design.md` for the updated Gate 1 definition and vocabulary.
+- **`datatree-model-view-separation`** is superseded as a migration gate. Optional legacy maintenance
+  only; does not gate Avalonia feature work.
+- **Phases 2–6** (continued `lexical-edit-avalonia-migration`): in progress.
+- **Phase 7+** (shell): deferred until regional gates are proven.
 
 ## Non-goals
 
@@ -38,14 +42,15 @@ program).
 
 ### New Capabilities
 
-- `avalonia-migration-roadmap`: The ordered, gated sequence and overlap resolution that governs how
-  the proof-of-concept, DataTree region split, lexical-edit migration, and shell migration proceed.
+- `avalonia-migration-roadmap`: The ordered, gated sequence that governs how the proof-of-concept,
+  first migrated region, lexical-edit migration, and shell migration proceed.
 
 ## Referenced changes (not duplicated here)
 
-- `lexical-edit-avalonia-poc-spike` — the entry-point proof of concept (this roadmap's Phase 0).
-- `datatree-model-view-separation` — the first concrete migrated region (this roadmap's Phase 1).
-- `lexical-edit-avalonia-migration` — the regional program spine (Phases 2–6).
+- `lexical-edit-avalonia-poc-spike` — the entry-point proof of concept (Phase 0, complete).
+- `lexical-edit-avalonia-migration` — the regional program spine (Phase 1 complete, Phases 2–6 in progress).
+- `datatree-model-view-separation` — **superseded as Phase 1**; optional legacy maintenance only.
+  See `datatree-model-view-separation/hybrid-alignment.md`.
 - `fieldworks-avalonia-shell-migration` — the application-wide shell migration (Phase 7+), gated.
 - `detail-controls-testability`, `retire-linux-era-view-shims`, `render-speedup-benchmark` —
   supporting/companion work that reduces risk but does not gate the main sequence.

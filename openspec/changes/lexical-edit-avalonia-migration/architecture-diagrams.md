@@ -368,3 +368,86 @@ flowchart TB
   classDef future fill:#dcfce7,stroke:#16a34a,color:#052e16;
   classDef decom fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray: 6 4,color:#450a0a;
 ```
+
+## 7. Current Branch State Before Convergence: Three Disconnected Tracks
+
+The earlier `010-advanced-entry-view-phase-1-2` state had a clean seam layer and a clean typed IR that
+were each built to "not change behavior" — so neither was wired into the live app — while the only
+end-to-end rendering path (the POC) bypassed both and used a hand-written lossy DTO. This is why
+Sections 3 and 4 would not "finish cleanly": the tasks sit on the seams *between* tracks. (Section 4.8
+and the active-host contract in 3.10 close the worst of these gaps.)
+
+```mermaid
+flowchart TB
+  subgraph Legacy["Legacy WinForms — the real product"]
+    REV["RecordEditView"]:::legacy
+    DT["DataTree + SliceFactory + launchers"]:::legacy
+  end
+  subgraph A["Track A: Clean Seams"]
+    Ports["8 port interfaces<br/>5 implemented, 2 contract-only, 1 POC stub"]:::port
+  end
+  subgraph B["Track B: Typed IR"]
+    IR["ViewDefinitionModel<br/>compiled from XML, cached, tested"]:::model
+  end
+  subgraph C["Track C: Working POC"]
+    DTO["PocEntryDto<br/>hand-written, 3 fields, lossy"]:::poc
+    Slice["PocLexEntrySlice + WinFormsAvaloniaControlHost"]:::poc
+  end
+  REV -->|reads UIMode| DTO
+  REV -->|drove a HIDDEN live| DT
+  DTO --> Slice
+  A -. not wired to anything .-> Legacy
+  B -. consumed by nobody .-> C
+  C -. ignored A and B .-> A
+  classDef legacy fill:#fff7ed,stroke:#f97316,color:#431407;
+  classDef port fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+  classDef model fill:#f3e8ff,stroke:#7e22ce,color:#3b0764;
+  classDef poc fill:#dcfce7,stroke:#16a34a,color:#052e16;
+```
+
+## 8. Convergence Target (Path 3) and Coexistence Cooperation
+
+The clean seam is the **surface-selection boundary** plus the **typed IR as the data contract** — not
+legacy re-plumbed through every port. Legacy stays frozen behind the switch until cutover. During the
+~1-year coexistence, concurrent WinForms and Avalonia UI classes cooperate through a **shared selection
+bus** and a **shared clipboard**, both bidirectional.
+
+```mermaid
+flowchart TB
+  XML["XML Layout<br/>(transitional, retire later)"]:::legacy --> IR["Typed IR<br/>ViewDefinitionModel ✅"]:::model
+  LCM["LCModel"]:::model --> Region["IR-backed region model<br/>LexicalEditRegionModel ✅ (4.8)"]:::model
+  IR --> Region
+
+  Region --> Switch{"Surface-selection service ✅<br/>per-host: supported / fallback / blocked (3.9)"}:::seam
+  Switch -->|Legacy host| LWF["Legacy WinForms<br/>UNTOUCHED"]:::legacy
+  Switch -->|Avalonia host| AV["Avalonia host<br/>renders region model"]:::future
+
+  Audit["Active-host contract ✅ (3.10)<br/>Avalonia must NOT drive a hidden DataTree"]:::test
+  AV --- Audit
+
+  subgraph Substrate["Shared substrate (cooperation, bidirectional)"]
+    Sel["Selection bus<br/>xCore RecordClerk / PropertyTable<br/>'current lexeme'"]:::port
+    Clip["Clipboard<br/>OS clipboard + FieldWorks WS text format"]:::port
+  end
+  LWF <--> Sel
+  AV <--> Sel
+  LWF <--> Clip
+  AV <--> Clip
+
+  Ports["Shared ports — Avalonia-side only<br/>edit-session · refresh · command/focus<br/>(legacy NOT re-plumbed — throwaway avoided)"]:::port
+  AV --- Ports
+
+  classDef legacy fill:#fff7ed,stroke:#f97316,color:#431407;
+  classDef future fill:#dcfce7,stroke:#16a34a,color:#052e16;
+  classDef model fill:#f3e8ff,stroke:#7e22ce,color:#3b0764;
+  classDef port fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+  classDef seam fill:#fde68a,stroke:#b45309,color:#422006;
+  classDef test fill:#fef9c3,stroke:#ca8a04,color:#422006;
+```
+
+**Engineering tradeoffs accepted to reach this:** legacy is not wired through the shared ports
+(two controllers coexist, but legacy regression risk → ~0 and it is deleted at cutover); shared ports
+stay partly contract-only until the shell phase; the IR carries metadata only for nodes that ship;
+coarse hosting on 11.x; and the dense table control (TreeView does not virtualize; TreeDataGrid went
+commercial in Oct 2025 with weak editing/accessibility; ItemsRepeater is being retired) is a deliberate
+later decision, not a default.

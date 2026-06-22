@@ -64,6 +64,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_printLayout;
 		private LexicalEditSurface m_lexicalEditSurface;
 		private readonly LexicalEditSurfaceFactory m_lexicalEditSurfaceFactory;
+		private readonly LexicalEditSurfaceSelectionService m_surfaceSelectionService = new LexicalEditSurfaceSelectionService();
 		private PocWinFormsHostControl m_avaloniaEntryForm;
 		private bool m_legacySurfaceInitialized;
 
@@ -343,9 +344,11 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.CurrentObject == null || Clerk.SuspendLoadingRecordUntilOnJumpToRecord)
 			{
-				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
+				if (ShouldUseAvaloniaLexicalEdit)
 				{
-					m_dataEntryForm.Hide();
+					// Active-host contract (task 3.10): do not touch the legacy DataTree while Avalonia is active.
+					if (m_avaloniaEntryForm == null)
+						EnsureAvaloniaSurfaceInitialized();
 					m_avaloniaEntryForm.Hide();
 					m_avaloniaEntryForm.Clear();
 				}
@@ -358,22 +361,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 			try
 			{
-				if (!m_legacySurfaceInitialized)
+				// Active-host contract (task 3.10): when the Avalonia surface is active we do NOT initialize
+				// or drive the legacy DataTree. Only the active surface is created and shown.
+				if (ShouldUseAvaloniaLexicalEdit)
 				{
-					var localPersistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-					if (localPersistContext != "")
-						localPersistContext = m_vectorName + "." + localPersistContext + ".DataTree";
-					else
-						localPersistContext = m_vectorName + ".DataTree";
-					EnsureLegacySurfaceInitialized(localPersistContext);
+					if (m_avaloniaEntryForm == null)
+						EnsureAvaloniaSurfaceInitialized();
 				}
-				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm == null)
+				else
 				{
-					EnsureAvaloniaSurfaceInitialized();
+					if (!m_legacySurfaceInitialized)
+					{
+						var localPersistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
+						if (localPersistContext != "")
+							localPersistContext = m_vectorName + "." + localPersistContext + ".DataTree";
+						else
+							localPersistContext = m_vectorName + ".DataTree";
+						EnsureLegacySurfaceInitialized(localPersistContext);
+					}
+					m_dataEntryForm.Show();
 				}
 
-				if (!ShouldUseAvaloniaLexicalEdit)
-					m_dataEntryForm.Show();
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
 				ICmObject obj = Clerk.CurrentObject;
 
@@ -386,14 +394,13 @@ namespace SIL.FieldWorks.XWorks
 
 				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
 				{
-					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, true);
-					m_dataEntryForm.Hide();
-					m_avaloniaEntryForm.Show();
-					var dto = LexicalEditPocMapper.CreateDto(obj, Cache);
-					if (dto == null)
-						m_avaloniaEntryForm.ShowMessage("Avalonia lexical-edit POC is currently available only for LexEntry records.");
+					// Task 4.8: the product route builds a typed-definition-backed region model, not the
+					// lossy POC DTO (which is now preview-host only).
+					var region = LexicalEditRegionBuilder.Build(obj, Cache);
+					if (region == null)
+						m_avaloniaEntryForm.ShowMessage("Avalonia lexical edit is currently available only for LexEntry records.");
 					else
-						m_avaloniaEntryForm.ShowEntry(dto);
+						m_avaloniaEntryForm.ShowRegion(region);
 				}
 				else
 				{
@@ -425,11 +432,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()
 		{
+			// Task 3.9: route the per-host decision through the explicit selection service rather than
+			// inferring product routing ad hoc from settings/PropertyTable state.
 			var uiMode = m_propertyTable != null
 				? m_propertyTable.GetStringProperty(LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode)
 				: LexicalEditSurfaceResolver.LegacyUIMode;
+			var toolName = m_propertyTable != null
+				? m_propertyTable.GetStringProperty("currentContentControl", string.Empty)
+				: string.Empty;
 
-			return LexicalEditSurfaceResolver.Resolve(uiMode: uiMode);
+			return m_surfaceSelectionService.Decide(uiMode, toolName).Surface;
 		}
 
 		private void EnsureLegacySurfaceInitialized(string persistContext)
@@ -439,7 +451,6 @@ namespace SIL.FieldWorks.XWorks
 
 			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
 
-			Clerk.UpdateRecordTreeBarIfNeeded();
 			SetupSliceFilter();
 			m_dataEntryForm.Dock = DockStyle.Fill;
 			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
@@ -505,6 +516,11 @@ namespace SIL.FieldWorks.XWorks
 
 			base.SetupDataContext();
 
+			// InitBase() calls SetupDataContext() before RecordEditView.Init() resolves the surface, so
+			// resolve it here too — otherwise the first surface initialization would use the ctor default
+			// (WinForms) and the active-host contract (task 3.10) would be violated for an Avalonia start.
+			m_lexicalEditSurface = ResolveConfiguredLexicalEditSurface();
+
 			//this will normally be the same name as the view, e.g. "basicEdit". This plus the name of the vector
 			//should give us a unique context for the dataTree control parameters.
 
@@ -515,16 +531,16 @@ namespace SIL.FieldWorks.XWorks
 			else
 				persistContext=m_vectorName+".DataTree";
 
-			EnsureLegacySurfaceInitialized(persistContext);
-			if (ShouldUseAvaloniaLexicalEdit)
+			// Surface-agnostic: the record list bar must update regardless of which detail surface is active.
+			Clerk.UpdateRecordTreeBarIfNeeded();
+
+			// Active-host contract (task 3.10): initialize only the active surface; the inactive surface is
+			// not instantiated or driven. The legacy DataTree is initialized here only when legacy is active;
+			// the Avalonia surface is created lazily in ShowRecordOnIdle so its construction stays on the
+			// idle path (the inactive legacy DataTree is never built).
+			if (!ShouldUseAvaloniaLexicalEdit)
 			{
-				EnsureAvaloniaSurfaceInitialized();
-				m_dataEntryForm.Hide();
-				m_avaloniaEntryForm.Show();
-				m_avaloniaEntryForm.BringToFront();
-			}
-			else
-			{
+				EnsureLegacySurfaceInitialized(persistContext);
 				m_avaloniaEntryForm?.Hide();
 				m_dataEntryForm.Show();
 				m_dataEntryForm.BringToFront();

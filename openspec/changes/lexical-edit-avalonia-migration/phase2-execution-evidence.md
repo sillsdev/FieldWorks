@@ -2,7 +2,7 @@
 
 This is a behavioral coverage report for the Phase 2 "Test Coverage Before Refactor" gate of `lexical-edit-avalonia-migration`. It is not a line-coverage percentage. The goal is to show which Phase 3 refactor surfaces now have executable characterization tests, where the tests live, and which gaps remain too large or too infrastructural to mark complete honestly.
 
-This narrowed Phase 1/2 branch keeps OpenSpec planning plus legacy WinForms/DataTree/XMLViews characterization coverage. It now also contains the net48 `FwAvalonia` spike, a net48 `FwAvaloniaPreviewHost`, and `System.Windows.Automation` UIA smoke tests for the preview host. The older net8 `AdvancedEntry.Avalonia` prototype and its net8-specific host/test bootstrap remain split to `010-advanced-entry-preview-prototype`. Product command/menu wiring has been split to `010-advanced-entry-product-launcher-spike`. The unrelated `RecordList` sorting change was dropped from this scope.
+This Phase 1/2 branch now keeps OpenSpec planning plus legacy WinForms/DataTree/XMLViews characterization coverage, the net48 `FwAvalonia` spike, typed view-definition and seam foundation code, a net48 `FwAvaloniaPreviewHost`, `System.Windows.Automation` UIA smoke tests for the preview host, and product-facing app-wide lexical-edit UI mode wiring through existing `RecordEditView` hosts. The older net8 `AdvancedEntry.Avalonia` prototype and its net8-specific host/test bootstrap remain split to `010-advanced-entry-preview-prototype` as a separate prototype track. Branch scope should be reviewed against the branch-only diff from `main`, not inferred from same-day commit timestamps.
 
 ---
 
@@ -43,9 +43,12 @@ The tests below are the new coverage added from that audit.
 - `FilterBar_HeaderAndFilterControlsExposeReachableBaseline`
   - Adds an in-repo XMLViews smoke baseline for browse-table header order and filter reachability (`Lexeme Form` filter-for path and `Morph Type` chooser filter path) without adding a new UIA2 dependency.
 
-### Split Avalonia Prototype Boundary
+### Avalonia Foundation vs Prototype Boundary
 
-The following coverage belongs to `010-advanced-entry-preview-prototype`, not this branch: edit-session save/cancel tests, Presentation IR snapshot tests, descriptor metadata tests, validation determinism tests, Avalonia view-model lifetime tests, and snapshot failure artifacts. This branch keeps the plan and identifies those seams, but does not claim the prototype implementation as Phase 1/2 foundation evidence.
+The older net8 prototype branch still owns extra prototype-specific experiments, but this branch now contains real net48 `FwAvalonia` and typed view-definition foundation evidence. The separation is therefore:
+
+- **Current branch evidence:** net48 `FwAvalonia` contracts/tests, typed view-definition model/importer/compiler/cache tests, net48 preview-host smoke tests, render failure artifact bundling, and product-facing UI-mode wiring tests.
+- **Still split to `010-advanced-entry-preview-prototype`:** net8-specific host/bootstrap experiments and any prototype-only implementation that has not yet been promoted to the net48/product path.
 
 ---
 
@@ -55,12 +58,12 @@ The following coverage belongs to `010-advanced-entry-preview-prototype`, not th
 | :--- | :--- | :--- | :--- |
 | 2.1 DataTree refresh state transitions and postponed `PropChanged` behavior | Covered | `MorphTypeAtomicLauncherTests`: LT-22414 tests plus `DoNotRefresh_ClearedRefreshListNeededBeforeRelease_DoesNotRefresh` | Nested `DoNotRefresh` semantics are still a design question for Phase 3 extraction. |
 | 2.2 Launcher pure-logic tests, morph type swap, chooser paths | Covered for Phase 2 | Full `IsStemType` matrix; no-data-loss checks; pure positive data-loss classifiers; launcher click smoke path; morph swap refresh regression tests | Full modal OK/Cancel chooser-result handling remains a Phase 3 seam-extraction target. |
-| 2.3 Semantic baseline capture | Partially covered for legacy boundary | `DataTreeTests.CfAndBib_SemanticSliceBaselineCapturesStableBindingsAndFocusOrder` | Typed IR/snapshot normalization moved to the preview prototype branch; ghost-state and override fixture coverage remain future work. |
-| 2.4 Focused UIA2 smoke baselines | Not complete; smoke substitute only | `LauncherButtonClick_WithValidObject_ReachesChooserDecisionPath`; `FilterBar_HeaderAndFilterControlsExposeReachableBaseline` | Full UIA2/FlaUI/Appium parity harness remains future work and must not be implied by these in-repo smoke tests. |
-| 2.5 Failure artifact bundling | Not covered in this branch | None in the narrowed foundation branch | Snapshot/render artifact bundling moved with the prototype and still needs render-parity evidence later. |
-| 2.6 Undo/redo and LCModel transaction characterization | Not covered in this branch | None in the narrowed foundation branch | Edit-session and commit-fence characterization moved to `010-advanced-entry-preview-prototype`. |
-| 2.7 Keyboard/IME, focus restoration, accessibility metadata, localization, disposal/unsubscribe | Not covered in this branch | None in the narrowed foundation branch | True text-editor IME, popup focus restoration, accessibility metadata, localization, and disposal coverage remain future/prototype work. |
-| 2.8 Snapshot normalization rules | Not covered in this branch | None in the narrowed foundation branch | Normalized Presentation IR snapshots moved to `010-advanced-entry-preview-prototype`; Phase 4 still needs first-class class/flid/object/writing-system metadata. |
+| 2.3 Semantic baseline capture | Covered for legacy boundary; partial for typed IR | `DataTreeTests.CfAndBib_SemanticSliceBaselineCapturesStableBindingsAndFocusOrder`; current-branch `ViewDefinitionTests` cover deterministic typed snapshot output | Broader ghost-state, accessibility-identity, and override-fixture coverage remain future work. |
+| 2.4 Focused UIA2 smoke baselines | Covered for realized-window reachability smoke | `xWorksTests/WinFormsUiaSmokeTests`: realized-window UIA smoke for morph-type launcher invoke-pattern reachability, morph-type chooser tree + cancel-button invoke reachability, and XMLViews filter-bar combo reachability; preview-host UIA smoke remains in `FwAvaloniaPreviewHostTests` | Broader shell-level workflow/accessibility parity and richer chooser outcome semantics still remain future work. |
+| 2.5 Failure artifact bundling | Covered in this branch | `RenderFailureArtifactBundler` and `RenderFailureArtifactBundlerTests` in the current branch | Broader parity-bundle stitching still remains future work. |
+| 2.6 Undo/redo and LCModel transaction characterization | Covered for current legacy/editor-candidate boundary | `DataTreeUndoRedoCharacterizationTests` in the current branch | Product-path Avalonia edit-session/commit-fence coverage remains future work. |
+| 2.7 Keyboard/IME, focus restoration, accessibility metadata, localization, disposal/unsubscribe | Covered for current first-slice characterization scope | `DataTreeDisposalCharacterizationTests`; `MorphTypeAtomicLauncherTests.DoNotRefresh_RemainingSliceRestoresFocus_AfterRefreshRebuild`; `PocLexEntrySliceTests` focused Unicode text entry + stable automation metadata; `LexOptionsDlgTests.UIModeControls_ReadDisplayTextFromResx` | Deeper live-app IME composition remains a richer future parity lane, but current first-slice characterization coverage is now present in-repo. |
+| 2.8 Snapshot normalization rules | Covered for current typed view-definition foundation | Current-branch `ViewDefinitionTests` plus `ViewDefinitionModel.ToSnapshot` normalization | Phase 4 still needs first-class localization/resource identity, accessibility identity, and broader override fixtures. |
 
 ---
 

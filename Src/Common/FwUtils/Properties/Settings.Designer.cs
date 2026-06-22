@@ -9,20 +9,20 @@
 //------------------------------------------------------------------------------
 
 namespace SIL.FieldWorks.Common.FwUtils.Properties {
-    
-    
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
+
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
+
         public static Settings Default {
             get {
                 return defaultInstance;
             }
         }
-        
+
         /// <summary>
         /// Setting controlling the updating of the Global WS Store
         /// </summary>
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["UpdateGlobalWSStore"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting to store Reporting options
         /// </summary>
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["Reporting"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting controlling getting updates
         /// </summary>
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["UIMode"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting indicating that the Settings need to be upgraded
         /// </summary>
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["CallUpgrade"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting to store current keyboard assignments for writing systems
         /// </summary>
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["LocalKeyboards"] = value;
             }
         }
-        
+
         /// <summary>
         /// Stores last used user for webonary export
         /// </summary>
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["WebonaryUser"] = value;
             }
         }
-        
+
         /// <summary>
         /// stores last password for webonary export
         /// </summary>

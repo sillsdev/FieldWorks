@@ -94,6 +94,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	}
 
 	/// <summary>
+	/// Product-vs-preview routing for a node that can appear on a globally switchable surface (task 4.7).
+	/// <c>Inherit</c> defers to the region/host decision; <c>Product</c> is wired through real
+	/// LCModel-backed contracts; <c>Preview</c> is preview-host/sample only; <c>Unsupported</c> renders a
+	/// resource-backed unsupported state instead of pretending to be a product editor.
+	/// </summary>
+	public enum SurfaceRouting
+	{
+		/// <summary>Defer to the enclosing region/host routing decision (default).</summary>
+		Inherit,
+
+		/// <summary>Product surface: must use real edit-session/domain contracts.</summary>
+		Product,
+
+		/// <summary>Preview/sample only: detached DTO models are allowed.</summary>
+		Preview,
+
+		/// <summary>Explicitly unsupported: render a resource-backed unsupported state.</summary>
+		Unsupported
+	}
+
+	/// <summary>
 	/// A diagnostic raised while importing/compiling a view definition. Carries the layout part and
 	/// node path so unsupported constructs are reported, not silently dropped (task 4.4 / 3.8).
 	/// </summary>
@@ -141,7 +162,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			ViewExpansion expansion,
 			bool indented,
 			string targetLayout,
-			IReadOnlyList<ViewNode> children)
+			IReadOnlyList<ViewNode> children,
+			string localizationKey = null,
+			string automationId = null,
+			SurfaceRouting routing = SurfaceRouting.Inherit)
 		{
 			StableId = stableId;
 			Kind = kind;
@@ -156,6 +180,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			Indented = indented;
 			TargetLayout = targetLayout;
 			Children = children ?? (IReadOnlyList<ViewNode>)Array.Empty<ViewNode>();
+			LocalizationKey = localizationKey;
+			AutomationId = automationId;
+			Routing = routing;
 		}
 
 		/// <summary>Deterministic identity derived from the node's path (stable across realizations).</summary>
@@ -186,6 +213,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		public string TargetLayout { get; }
 
 		public IReadOnlyList<ViewNode> Children { get; }
+
+		/// <summary>
+		/// Optional localization/resource key for this node's user-facing text (task 4.7). Null when the
+		/// source carries no key; the label is then treated as a literal. Carried so a globally switchable
+		/// surface can resolve localized strings without re-deriving them from incidental layout text.
+		/// </summary>
+		public string LocalizationKey { get; }
+
+		/// <summary>
+		/// Optional stable, nonlocalized accessibility identity for this node (task 4.7), stamped on the
+		/// rendered control's <c>AutomationProperties.AutomationId</c>. Null when not authored.
+		/// </summary>
+		public string AutomationId { get; }
+
+		/// <summary>Product-vs-preview routing for this node (task 4.7). Defaults to <see cref="SurfaceRouting.Inherit"/>.</summary>
+		public SurfaceRouting Routing { get; }
 	}
 
 	/// <summary>
@@ -248,11 +291,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				$"{indent}{node.StableId} | {node.Kind} | label={node.Label} | field={node.Field} | " +
 				$"editor={node.RawEditor}({node.EditorClassification}) | ws={node.WritingSystem} | " +
 				$"vis={node.Visibility} | exp={node.Expansion} | indent={(node.Indented ? "1" : "0")} | " +
-				$"target={node.TargetLayout}");
+				$"target={node.TargetLayout}{AppendMetadata(node)}");
 			foreach (var child in node.Children)
 			{
 				AppendNode(sb, child, depth + 1);
 			}
+		}
+
+		// Task 4.7 metadata is appended only when present so existing semantic baselines (which carry no
+		// localization/accessibility/routing metadata) keep their exact snapshot.
+		private static string AppendMetadata(ViewNode node)
+		{
+			var sb = new StringBuilder();
+			if (!string.IsNullOrEmpty(node.LocalizationKey))
+				sb.Append($" | loc={node.LocalizationKey}");
+			if (!string.IsNullOrEmpty(node.AutomationId))
+				sb.Append($" | autoId={node.AutomationId}");
+			if (node.Routing != SurfaceRouting.Inherit)
+				sb.Append($" | routing={node.Routing}");
+			return sb.ToString();
 		}
 	}
 }

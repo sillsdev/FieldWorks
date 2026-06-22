@@ -71,13 +71,20 @@ The 20 passing tests cover:
 These require the full FieldWorks app to build and run, which is heavier than this isolated spike and
 was intentionally deferred to keep the default build safe:
 
-1. **In-process embedding into `RecordEditView`** via `WinFormsAvaloniaControlHost` under the live
-   net48 message loop and DPI settings (task 2.3). The package-level feasibility is proven; the live
-   embedding is not.
+1. ~~**In-process embedding into `RecordEditView`** via `WinFormsAvaloniaControlHost` under the live
+   net48 message loop and DPI settings (task 2.3).~~ **CLOSED (2026-06-09).** The live embedding now
+   exists in product code: `RecordEditView` routes the lexicon edit tool through
+   `LexicalEditSurfaceSelectionService` to an in-process Avalonia host (`PocWinFormsHostControl` /
+   `LexicalEditRegionView`) under the real net48 message loop, with preview-host UIA smoke tests and
+   `RecordEditViewActiveHostContractTests` driving the real mediator/idle path. Note: the embedding
+   was delivered through the lexical-edit program's region-model boundary, not the
+   `datatree-model-view-separation` route this report anticipated — see lexical-edit task 1.13 for
+   the roadmap reconciliation.
 2. **DPI density measurement** at 100% and 150% and **side-by-side screenshots** of flag-off vs
-   flag-on in the running app (tasks 0.2, 4.2, 4.3).
+   flag-on in the running app (tasks 0.2, 4.2, 4.3). Still open.
 3. **Avalonia.Headless render-frame** native/Graphite runtime assertion beyond the reference audit
-   (task 4.4 is covered at the reference level; a rendered-frame assertion is not added).
+   (task 4.4 is covered at the reference level; a rendered-frame assertion is not added). Still open;
+   tracked by lexical-edit tasks 6.9/8.4.
 
 ## Go / No-Go
 
@@ -97,4 +104,5 @@ and gated by Gate 0.
   this spike's two-adapter flag. The first regional task is to embed the proven slice into
   `RecordEditView` behind the flag and capture the DPI density evidence.
 - Keep the spike projects isolated until Gate 0's live-embedding evidence is captured, then add them
-  to `FieldWorks.proj` and `FieldWorks.sln` per `avalonia.instructions.md`.
+  to `FieldWorks.proj` and `FieldWorks.sln` per `avalonia.instructions.md`. **(2026-06-09: the
+  live-embedding evidence now exists, so this integration is due — tracked as lexical-edit task 1.11.)**
