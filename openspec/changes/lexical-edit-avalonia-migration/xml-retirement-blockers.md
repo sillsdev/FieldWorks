@@ -218,6 +218,14 @@ change's surfaces.
 - **Retirement risk if unaddressed:** Medium-high. Choosers open with wrong/missing titles,
   guidance text, and jump links; reference-field workflows degrade. Blocks 9.4 for surfaces
   whose fields are chooser-driven (most reference fields).
+- **Status (6.3 landed):** reference write-back is live — atomic possibility references take
+  the chooser lane (options from `ReferenceTargetOwner`, cross-list writes rejected) and
+  possibility vectors compose as editable `ReferenceVector` rows (add/remove through the
+  fenced session, duplicate/garbage/unknown keys rejected without opening it), covered by
+  `FullEntryRegionReferenceChooserTests`. `BuildPossibilityOptions(flat:)` implements the
+  FlatList guicontrol semantics; REMAINING: import `chooserInfo`/`chooserLink` onto the typed
+  node and thread the flat/title/link specs to the composer call sites (the composer currently
+  passes `flat: false`).
 
 ### B8. TreeView-heavy views
 
@@ -232,6 +240,11 @@ change's surfaces.
 - **Retirement risk if unaddressed:** Medium. Large semantic-domain/possibility trees freeze
   or scroll badly; accessibility tree explodes. Gates choosers (B7) and any tree-shaped
   surface's 9.4.
+- **Status (6.3/B8 landed):** the 7.6 recommendation is implemented for chooser trees —
+  hierarchy is flattened in the model (`RegionChoiceOption.Depth`, document order, pinned by
+  tests) and rendered as an indented, virtualized `ListBox` flyout (`FwReferenceVectorField`),
+  not a stock `TreeView`, so deep lists (semantic domains) stay scalable. The record-bar tree
+  and 6.4 sense/term trees remain on the 7.6/6.4 lanes.
 
 ### B9. Parameter substitution (`$ws`, `$fieldName`, `{0}`, `param`)
 

@@ -39,5 +39,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static string GhostAddPromptFormat => Resources.GetString("ksGhostAddPrompt");
 
 		public static string Copy => Resources.GetString("ksCopy");
+
+		/// <summary>"Remove" — reference-vector item context command (6.3).</summary>
+		public static string Remove => Resources.GetString("ksRemove");
+
+		/// <summary>"Add item" — reference-vector add-slot launcher name (6.3).</summary>
+		public static string AddItem => Resources.GetString("ksAddItem");
 	}
 }

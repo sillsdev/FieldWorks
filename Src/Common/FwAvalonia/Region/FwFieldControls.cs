@@ -225,4 +225,105 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return selected?.Name ?? string.Empty;
 		}
 	}
+
+	/// <summary>
+	/// FieldWorks-owned editable reference-vector field (6.3/B8): the current items rendered
+	/// inline, each followed by the thin grey separator bar legacy reference slices draw
+	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
+	/// lists the possibility tree indented by <see cref="RegionChoiceOption.Depth"/> (the legacy
+	/// chooser tree; virtualized ListBox so the ~1800-node semantic-domain list stays usable).
+	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
+	/// </summary>
+	public sealed class FwReferenceVectorField : StackPanel
+	{
+		public FwReferenceVectorField(
+			LexicalEditRegionField field,
+			string automationId,
+			IRegionEditContext editContext)
+		{
+			Orientation = Orientation.Horizontal;
+			AutomationProperties.SetAutomationId(this, automationId);
+			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
+
+			var editable = editContext != null && field.IsEditable;
+			foreach (var item in field.Items)
+			{
+				var text = new TextBlock
+				{
+					Text = item.Name,
+					VerticalAlignment = VerticalAlignment.Center,
+					Margin = new Thickness(0, 0, 4, 0)
+				};
+				AutomationProperties.SetAutomationId(text, automationId + ".Item." + item.Key);
+				if (editable)
+				{
+					var removeItem = new MenuItem { Header = FwAvaloniaStrings.Remove };
+					var key = item.Key;
+					removeItem.Click += (s, e) => editContext.TryRemoveReferenceItem(field, key);
+					text.ContextFlyout = new MenuFlyout { Items = { removeItem } };
+				}
+				Children.Add(text);
+				Children.Add(SeparatorBar());
+			}
+
+			if (!editable)
+				return;
+
+			// The legacy empty add slot: a trailing bar (added above for the last item; one leads
+			// the launcher when the vector is empty) plus the chooser launcher.
+			if (field.Items.Count == 0)
+				Children.Add(SeparatorBar());
+
+			var addButton = new Button
+			{
+				Content = "+",
+				Padding = new Thickness(4, 0, 4, 0),
+				MinHeight = 0,
+				MinWidth = 0,
+				Background = Brushes.Transparent,
+				BorderThickness = new Thickness(0),
+				Foreground = PocDensity.WsAbbrevBrush
+			};
+			AutomationProperties.SetAutomationId(addButton, automationId + ".Add");
+			AutomationProperties.SetName(addButton, FwAvaloniaStrings.AddItem);
+
+			var list = new ListBox
+			{
+				ItemsSource = field.Options,
+				MaxHeight = 320,
+				MinWidth = 180,
+				ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<RegionChoiceOption>(
+					(option, _) => option == null
+						? null
+						: new TextBlock
+						{
+							Text = option.Name,
+							Margin = new Thickness(option.Depth * 14, 0, 0, 0)
+						})
+			};
+			AutomationProperties.SetAutomationId(list, automationId + ".Options");
+			var flyout = new Flyout { Content = list, Placement = PlacementMode.BottomEdgeAlignedLeft };
+			addButton.Flyout = flyout;
+			list.SelectionChanged += (s, e) =>
+			{
+				if (list.SelectedItem is RegionChoiceOption option)
+					editContext.TryAddReferenceItem(field, option.Key);
+				flyout.Hide();
+				list.SelectedItem = null;
+				addButton.Focus(); // popup focus return, like the chooser
+			};
+			Children.Add(addButton);
+		}
+
+		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item
+		// (and fronting the add slot) — the affordance that marks where content can be added.
+		private static Control SeparatorBar() => new Border
+		{
+			Width = 2,
+			Height = 14,
+			Background = Brushes.LightGray,
+			Margin = new Thickness(2, 0, 6, 0),
+			VerticalAlignment = VerticalAlignment.Center
+		};
+	}
 }

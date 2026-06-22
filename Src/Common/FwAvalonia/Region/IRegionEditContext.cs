@@ -38,6 +38,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		bool TrySetOption(LexicalEditRegionField field, string optionKey);
 
 		/// <summary>
+		/// Stages adding an item (by option key) to a <see cref="RegionFieldKind.ReferenceVector"/>
+		/// row (6.3). Returns false — WITHOUT opening the session — for keys outside the field's
+		/// possibility list, duplicates, or non-vector rows, like the legacy chooser.
+		/// </summary>
+		bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey);
+
+		/// <summary>
+		/// Stages removing an item (by option key) from a <see cref="RegionFieldKind.ReferenceVector"/>
+		/// row. Returns false — without opening the session — when the item is not in the vector.
+		/// </summary>
+		bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey);
+
+		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are
 		/// user-facing (validation seam, deterministic order).
 		/// </summary>

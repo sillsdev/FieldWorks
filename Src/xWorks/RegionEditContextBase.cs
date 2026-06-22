@@ -41,6 +41,14 @@ namespace SIL.FieldWorks.XWorks
 		public abstract bool TrySetOption(LexicalEditRegionField regionField, string optionKey);
 
 		/// <inheritdoc />
+		/// <remarks>Reference-vector editing (6.3) exists only on composed regions; the first-slice
+		/// fallback has no vector rows, so the base rejects.</remarks>
+		public virtual bool TryAddReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
+
+		/// <inheritdoc />
+		public virtual bool TryRemoveReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
+
+		/// <inheritdoc />
 		public IReadOnlyList<string> Validate()
 		{
 			// Validation seam (minimal rule set, deterministic order): an entry must keep some
