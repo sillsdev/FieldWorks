@@ -22,24 +22,52 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		Chooser,
 
 		/// <summary>An editor with no supported region rendering (renders an unsupported state).</summary>
-		Unsupported
+		Unsupported,
+
+		/// <summary>A section/group header row (full-layout composition; not an editor).</summary>
+		Header,
+
+		/// <summary>A boolean field rendered as a checkbox.</summary>
+		Boolean,
+
+		/// <summary>A picture/image row: the value is the image file path, the label its caption.</summary>
+		Image,
+
+		/// <summary>A command row rendered as a button (execution rides command routing, shell phase).</summary>
+		Command
 	}
 
-	/// <summary>One writing-system alternative's value plus the font hints needed to render it.</summary>
+	/// <summary>
+	/// One writing-system alternative's value plus the rendering metadata legacy slices honor
+	/// (project font, flow direction) and the stable WS tag the keyboard-switch seam keys on (6.2).
+	/// </summary>
 	public sealed class RegionWsValue
 	{
-		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0)
+		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
+			bool rightToLeft = false, string wsTag = null, bool bold = false)
 		{
 			WsAbbrev = wsAbbrev;
 			Value = value;
 			FontFamily = fontFamily;
 			FontSize = fontSize;
+			RightToLeft = rightToLeft;
+			WsTag = wsTag;
+			Bold = bold;
 		}
+
+		/// <summary>Bold emphasis (the lexeme form's legacy &lt;properties&gt; bold).</summary>
+		public bool Bold { get; }
 
 		public string WsAbbrev { get; }
 		public string Value { get; }
 		public string FontFamily { get; }
 		public double FontSize { get; }
+
+		/// <summary>Whether this writing system's script is right-to-left (sets editor flow direction).</summary>
+		public bool RightToLeft { get; }
+
+		/// <summary>Stable writing-system tag (e.g. BCP-47 id) for per-WS keyboard activation on focus.</summary>
+		public string WsTag { get; }
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
@@ -75,8 +103,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			SurfaceRouting routing,
 			IReadOnlyList<RegionWsValue> values,
 			IReadOnlyList<RegionChoiceOption> options,
-			string selectedOptionKey)
+			string selectedOptionKey,
+			bool isEditable = true,
+			int indent = 0,
+			bool isCollapsible = false,
+			bool isInitiallyExpanded = true,
+			string menuId = null,
+			string contextMenuId = null,
+			string hotlinksId = null,
+			int objectHvo = 0,
+			string ghostPrompt = null)
 		{
+			GhostPrompt = ghostPrompt;
+			IsEditable = isEditable;
+			Indent = indent;
+			IsCollapsible = isCollapsible;
+			IsInitiallyExpanded = isInitiallyExpanded;
+			MenuId = menuId;
+			ContextMenuId = contextMenuId;
+			HotlinksId = hotlinksId;
+			ObjectHvo = objectHvo;
 			StableId = stableId;
 			Label = label;
 			Field = field;
@@ -91,6 +137,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			SelectedOptionKey = selectedOptionKey;
 		}
 
+		/// <summary>
+		/// Non-null for a legacy ghost row (the object does not exist yet): the gray add-prompt shown
+		/// as a watermark that clears on focus; typing creates the object through the ghost setter.
+		/// </summary>
+		public string GhostPrompt { get; }
+
 		public string StableId { get; }
 		public string Label { get; }
 		public string Field { get; }
@@ -103,6 +155,64 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<RegionWsValue> Values { get; }
 		public IReadOnlyList<RegionChoiceOption> Options { get; }
 		public string SelectedOptionKey { get; }
+
+		/// <summary>False for display-only fields (e.g. reference fields without chooser write-back yet).</summary>
+		public bool IsEditable { get; }
+
+		/// <summary>Nesting depth for full-layout composition (indents the row like legacy slices).</summary>
+		public int Indent { get; }
+
+		/// <summary>Whether a header row toggles collapse/expand of the rows nested under it.</summary>
+		public bool IsCollapsible { get; }
+
+		/// <summary>Initial expansion state of a collapsible header (from the layout's expansion attr).</summary>
+		public bool IsInitiallyExpanded { get; }
+
+		/// <summary>Legacy slice menu id (layout `menu=`) for right-click on the row/label (13.x).</summary>
+		public string MenuId { get; }
+
+		/// <summary>Legacy in-string context menu id (`contextMenu=`) for right-click inside the value.</summary>
+		public string ContextMenuId { get; }
+
+		/// <summary>Legacy hotlinks menu id for section headers.</summary>
+		public string HotlinksId { get; }
+
+		/// <summary>The LCModel object this row is bound to (command-target context for menus).</summary>
+		public int ObjectHvo { get; }
+	}
+
+	/// <summary>Which legacy menu lane a right-click maps to (section 13).</summary>
+	public enum RegionMenuKind
+	{
+		/// <summary>The slice menu (layout `menu=`), legacy right-click on the tree node/label.</summary>
+		SliceMenu,
+
+		/// <summary>The in-string menu (`contextMenu=`), legacy right-click inside the value view.</summary>
+		ContextMenu,
+
+		/// <summary>The section hotlinks commands.</summary>
+		Hotlinks
+	}
+
+	/// <summary>
+	/// A request to show a legacy-defined context menu for a region row (section 13): the host
+	/// resolves the menu id against the xCore window configuration and shows the same menu the
+	/// legacy slice shows, at the given screen point, with the row's bound object as command target.
+	/// </summary>
+	public sealed class RegionMenuRequest
+	{
+		public RegionMenuRequest(LexicalEditRegionField field, RegionMenuKind kind, int screenX, int screenY)
+		{
+			Field = field;
+			Kind = kind;
+			ScreenX = screenX;
+			ScreenY = screenY;
+		}
+
+		public LexicalEditRegionField Field { get; }
+		public RegionMenuKind Kind { get; }
+		public int ScreenX { get; }
+		public int ScreenY { get; }
 	}
 
 	/// <summary>

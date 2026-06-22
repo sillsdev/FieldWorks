@@ -162,9 +162,9 @@ namespace FwAvaloniaTests
 			Assert.That(lexemeBox, Is.Not.Null, "the text field should render a per-ws box with a stable automation id");
 			Assert.That(lexemeBox.Text, Is.EqualTo("dog"));
 
-			var chooser = view.GetVisualDescendants().OfType<ComboBox>()
+			var chooser = view.GetVisualDescendants().OfType<Button>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == "MorphTypeChooser");
-			Assert.That(chooser, Is.Not.Null, "the chooser field should render a combo box");
+			Assert.That(chooser, Is.Not.Null, "the chooser field should render the owned flyout chooser");
 		}
 	}
 }

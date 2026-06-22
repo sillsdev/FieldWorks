@@ -25,26 +25,38 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var fields = new List<LexicalEditRegionField>();
 			foreach (var root in definition.Roots)
 			{
-				CollectFields(root, values, fields);
+				CollectFields(root, values, fields, 0);
 			}
 
 			return new LexicalEditRegionModel(definition.ClassName, definition.LayoutName, fields, definition.Diagnostics);
 		}
 
-		private static void CollectFields(ViewNode node, IRegionValueProvider values, List<LexicalEditRegionField> output)
+		private static void CollectFields(ViewNode node, IRegionValueProvider values, List<LexicalEditRegionField> output, int depth)
 		{
-			if (node.Kind == ViewNodeKind.Field && node.Visibility != ViewVisibility.Never)
+			if (node.Visibility == ViewVisibility.Never)
+				return;
+
+			var childDepth = depth;
+			if (node.Kind == ViewNodeKind.Field)
 			{
-				output.Add(BuildField(node, values));
+				output.Add(BuildField(node, values, depth));
+			}
+			else if (node.Kind == ViewNodeKind.Group && !string.IsNullOrEmpty(node.Label) && node.Children.Count > 0)
+			{
+				// Section header row (legacy grouping slice); children indent one level under it.
+				output.Add(new LexicalEditRegionField(node.StableId, node.Label, node.Field, node.WritingSystem,
+					RegionFieldKind.Header, node.EditorClassification, node.AutomationId, node.LocalizationKey,
+					node.Routing, null, null, null, isEditable: false, indent: depth));
+				childDepth = depth + 1;
 			}
 
 			foreach (var child in node.Children)
 			{
-				CollectFields(child, values, output);
+				CollectFields(child, values, output, childDepth);
 			}
 		}
 
-		private static LexicalEditRegionField BuildField(ViewNode node, IRegionValueProvider values)
+		private static LexicalEditRegionField BuildField(ViewNode node, IRegionValueProvider values, int depth)
 		{
 			var kind = ClassifyKind(node);
 			IReadOnlyList<RegionWsValue> wsValues = null;
@@ -64,7 +76,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			return new LexicalEditRegionField(
 				node.StableId, node.Label, node.Field, node.WritingSystem, kind, node.EditorClassification,
-				node.AutomationId, node.LocalizationKey, node.Routing, wsValues, options, selected);
+				node.AutomationId, node.LocalizationKey, node.Routing, wsValues, options, selected,
+				isEditable: true, indent: depth);
 		}
 
 		/// <summary>

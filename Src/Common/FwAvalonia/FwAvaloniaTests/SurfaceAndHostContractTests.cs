@@ -82,59 +82,18 @@ namespace FwAvaloniaTests
 			Assert.That(contract.PermitsLegacyDataTreeDrive("other"), Is.False);
 			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False);
 		}
-	}
 
-	/// <summary>Proves the task 3.5 host/surface contract is satisfiable by a fake host.</summary>
-	[TestFixture]
-	public class HostSurfaceContractTests
-	{
-		private sealed class FakeSurface : ILexicalEditSurface
-		{
-			public FakeSurface(LexicalEditSurfaceKind kind) { Kind = kind; }
-			public LexicalEditSurfaceKind Kind { get; }
-			public bool IsInitialized { get; private set; }
-			public object ShownRecord { get; private set; }
-			public bool Visible { get; private set; }
-			public void EnsureInitialized() => IsInitialized = true;
-			public void ShowRecord(object record) { EnsureInitialized(); ShownRecord = record; Visible = true; }
-			public void Hide() => Visible = false;
-			public bool TrySetFocus() => Visible;
-			public bool TryShowContextMenu(object context) => Visible;
-			public void PrepareToReplace() { }
-		}
-
-		private sealed class FakeHost : ILexicalEditHost
-		{
-			private readonly FakeSurface _legacy = new FakeSurface(LexicalEditSurfaceKind.Legacy);
-			private readonly FakeSurface _avalonia = new FakeSurface(LexicalEditSurfaceKind.Avalonia);
-			public LexicalEditSurfaceKind ActiveSurface { get; private set; } = LexicalEditSurfaceKind.Legacy;
-			public System.Collections.Generic.IReadOnlyList<ILexicalEditSurface> Surfaces => new ILexicalEditSurface[] { _legacy, _avalonia };
-			public FakeSurface Legacy => _legacy;
-			public FakeSurface Avalonia => _avalonia;
-
-			public void ReplaceSurface(LexicalEditSurfaceKind kind, object record)
-			{
-				var active = kind == LexicalEditSurfaceKind.Avalonia ? _avalonia : _legacy;
-				var inactive = kind == LexicalEditSurfaceKind.Avalonia ? _legacy : _avalonia;
-				inactive.PrepareToReplace();
-				inactive.Hide();
-				active.ShowRecord(record);
-				ActiveSurface = kind;
-			}
-		}
-
+		// Section 13.4: "command-menu-routing" is the approved adapter under which RecordEditView
+		// lazily initializes the HIDDEN legacy DataTree + DTMenuHandler purely as the command-target
+		// colleague chain for context menus — never shown, never the active surface.
 		[Test]
-		public void ReplaceSurface_ActivatesOnlyTheChosenSurface()
+		public void Avalonia_CommandMenuRouting_IsAnApprovableAdapter_ForContextMenuCommands()
 		{
-			var host = new FakeHost();
-			host.ReplaceSurface(LexicalEditSurfaceKind.Avalonia, "entry-1");
-
-			Assert.That(host.ActiveSurface, Is.EqualTo(LexicalEditSurfaceKind.Avalonia));
-			Assert.That(host.Avalonia.Visible, Is.True);
-			Assert.That(host.Avalonia.ShownRecord, Is.EqualTo("entry-1"));
-			Assert.That(host.Legacy.Visible, Is.False);
-			// The inactive (legacy) surface was never driven to show a record.
-			Assert.That(host.Legacy.ShownRecord, Is.Null);
+			var contract = ActiveHostContract.ForAvalonia("command-menu-routing");
+			Assert.That(contract.PermitsLegacyDataTreeDrive("command-menu-routing"), Is.True);
+			Assert.DoesNotThrow(() => contract.AssertLegacyDataTreeDriveAllowed("command-menu-routing"));
+			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False,
+				"undeclared legacy drives stay forbidden while Avalonia is active");
 		}
 	}
 }

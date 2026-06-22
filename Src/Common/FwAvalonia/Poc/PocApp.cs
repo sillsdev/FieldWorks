@@ -30,9 +30,5 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 			=> AppBuilder.Configure<PocApp>()
 				.UsePlatformDetect()
 				.LogToTrace();
-
-		/// <summary>Creates the POC slice control for the given entry (the embeddable Avalonia content).</summary>
-		public static PocLexEntrySlice CreateSlice(PocEntryDto entry)
-			=> new PocLexEntrySlice(entry);
 	}
 }

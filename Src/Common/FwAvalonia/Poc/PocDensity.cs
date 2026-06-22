@@ -29,5 +29,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 
 		/// <summary>Compact margin around the slice.</summary>
 		public static readonly Thickness SliceMargin = new Thickness(4, 2, 4, 2);
+
+		// ---- Visual-fidelity tokens (section 12), sampled from the committed legacy render
+		// ---- baseline + DataTree/Slice constants. One place to tune the legacy look.
+
+		/// <summary>Slice label text (legacy label hue from the committed baseline pixels).</summary>
+		public static readonly Avalonia.Media.IBrush LabelBrush =
+			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0x66, 0x66, 0xB8));
+
+		/// <summary>Slice label size: legacy 10pt (Slice.cs m_fontLabel).</summary>
+		public const double LabelFontSize = 13.0;
+
+		/// <summary>Writing-system abbreviation: small raised blue (legacy AbbreviationTextProperties).</summary>
+		public static readonly Avalonia.Media.IBrush WsAbbrevBrush =
+			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0x46, 0x82, 0xB4));
+
+		/// <summary>Writing-system abbreviation size (smaller than content, legacy style).</summary>
+		public const double WsAbbrevFontSize = 11.0;
+
+		/// <summary>The 1px rule between slices (DataTree.PaintLinesBetweenSlices, Color.LightGray).</summary>
+		public static readonly Avalonia.Media.IBrush SliceRuleBrush = Avalonia.Media.Brushes.LightGray;
+
+		/// <summary>Legacy splitter width (Slice.cs SplitterWidth = 5).</summary>
+		public const double SplitterWidth = 5.0;
 	}
 }

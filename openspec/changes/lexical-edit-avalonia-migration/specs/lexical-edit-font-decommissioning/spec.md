@@ -1,16 +1,26 @@
 ## ADDED Requirements
 
-### Requirement: Graphite decommissioning starts with the migration
+> **Superseded (2026-06-09):** the former first requirement here ("Graphite decommissioning starts
+> with the migration" / "Avalonia SHALL never support Graphite" / "Default screen is blocked by
+> Graphite dependency") is replaced by the `graphite-transition-support` change: Graphite remains
+> supported on legacy surfaces until the M2 sunset milestone, and Avalonia surfaces raise a graded
+> warning instead of blocking. The requirement below preserves only the part that survives — the
+> native-engine isolation of the Avalonia path.
 
-The Lexical Edit Avalonia migration SHALL begin Graphite decommissioning immediately, even when Avalonia work is hidden behind preview hosts, feature flags, or non-default entry points. Avalonia SHALL never support Graphite.
+### Requirement: The Avalonia path never loads the native Graphite engine
 
-#### Scenario: Migration start creates Graphite retirement work
-- **WHEN** implementation begins for Lexical Edit Avalonia migration
-- **THEN** the task plan SHALL include inventory, migration, and validation tasks for retiring Graphite from the default path
+Avalonia surfaces SHALL NOT load or call `GraphiteEngineClass`, `FwGrEngine`, `GraphiteSegment`, or
+native Views render-engine selection. Graphite *support* during the transition (legacy-surface
+rendering, Avalonia warnings, sunset milestones) is governed by `graphite-transition-support`; this
+requirement governs only engine isolation, which holds under every transition path.
 
-#### Scenario: Default screen is blocked by Graphite dependency
-- **WHEN** Avalonia is proposed as the default Lexical Edit screen
-- **THEN** Graphite dependencies SHALL be fully retired from the default path or explicitly classified as unsupported legacy dependencies outside that path
+#### Scenario: Engine isolation is audited per region
+- **WHEN** a region manifest audit runs over migrated Avalonia production code
+- **THEN** it SHALL find no reference to native Graphite engine or native Views shaping symbols
+
+#### Scenario: Graphite presence does not block an Avalonia default
+- **WHEN** Avalonia is proposed as a default surface while Graphite-enabled writing systems exist
+- **THEN** the decision SHALL be governed by `graphite-transition-support` warning/classification coverage, not by Graphite retirement
 
 ### Requirement: Graphite code, settings, and assets are inventoried
 

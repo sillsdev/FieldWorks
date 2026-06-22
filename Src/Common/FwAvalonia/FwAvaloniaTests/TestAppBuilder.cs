@@ -14,11 +14,14 @@ namespace FwAvaloniaTests
 	/// <summary>
 	/// Headless Avalonia application builder for the POC tests. Uses <see cref="PocApp"/> so the
 	/// Fluent theme is applied and the pure-C# controls receive templates under the headless platform.
+	/// Skia drawing (instead of the null headless drawing backend) enables rendered-frame capture for
+	/// visual parity evidence (task 6.9); all other headless behavior (input, focus, layout) is unchanged.
 	/// </summary>
 	public static class TestAppBuilder
 	{
 		public static AppBuilder BuildAvaloniaApp()
 			=> AppBuilder.Configure<PocApp>()
-				.UseHeadless(new AvaloniaHeadlessPlatformOptions());
+				.UseSkia()
+				.UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
 	}
 }

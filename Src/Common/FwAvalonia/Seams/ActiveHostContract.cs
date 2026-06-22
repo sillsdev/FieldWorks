@@ -8,6 +8,16 @@ using System.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
+	/// <summary>Which framework renders a lexical-edit surface.</summary>
+	public enum LexicalEditSurfaceKind
+	{
+		/// <summary>The legacy WinForms DataTree/Slice surface.</summary>
+		Legacy,
+
+		/// <summary>The Avalonia surface.</summary>
+		Avalonia
+	}
+
 	/// <summary>
 	/// The active-host contract for a migrated region (task 3.10): the visible Avalonia path SHALL NOT
 	/// instantiate or drive hidden legacy <c>DataTree</c>/menu infrastructure, except through an

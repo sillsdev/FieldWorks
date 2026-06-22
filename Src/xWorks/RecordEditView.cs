@@ -6,10 +6,13 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Poc;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.Seams;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
 using XCore;
@@ -67,6 +70,21 @@ namespace SIL.FieldWorks.XWorks
 		private readonly LexicalEditSurfaceSelectionService m_surfaceSelectionService = new LexicalEditSurfaceSelectionService();
 		private PocWinFormsHostControl m_avaloniaEntryForm;
 		private bool m_legacySurfaceInitialized;
+		private RecordClerkNavigationContext m_recordNavigationContext;
+		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
+		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
+		private readonly RegionEditContextHolder m_regionEditContext = new RegionEditContextHolder();
+		private AvaloniaRegionRefreshController m_avaloniaRefreshController;
+		// Settle-on-deactivate hook (review round 2): the undo guard is per-stack and cannot reach
+		// other windows' undo stacks, so settle when this view's top-level window loses activation.
+		private EventHandler m_settleOnDeactivate;
+		private Form m_guardedForm;
+		// Hybrid companion lane: the real WinForms slices (today the Chorus Messages notes bar)
+		// promoted out of the Avalonia model into the host's companion strip, plus their editor
+		// controls (reparented into the strip, so the slice's Dispose no longer reaches them).
+		// Recreated per shown record; torn down on record change/clear/dispose.
+		private readonly List<Slice> m_companionSlices = new List<Slice>();
+		private readonly List<Control> m_companionControls = new List<Control>();
 
 		//// <summary>
 		//// used to associate menu commands with the slice that sent them
@@ -166,8 +184,28 @@ namespace SIL.FieldWorks.XWorks
 				if (m_dataEntryForm != null)
 				{
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
-					m_dataEntryForm.Dispose();
+					if (m_legacySurfaceInitialized)
+						m_dataEntryForm.Dispose();
+					else if (m_panel != null && m_panel.Controls.Contains(m_dataEntryForm))
+						m_panel.Controls.Remove(m_dataEntryForm);
 				}
+				// Teardown order matters: stop the event/notification plumbing FIRST so the
+				// settle's commit/rollback PropChanged cannot re-enter a dying view, then settle
+				// (auto-save 14.4 extends to teardown: a valid pending edit commits, invalid rolls
+				// back), and only then drop the context.
+				if (m_avaloniaEntryForm != null)
+					m_avaloniaEntryForm.RegionEditCompleted -= OnAvaloniaRegionEditCompleted;
+				if (m_guardedForm != null && m_settleOnDeactivate != null)
+				{
+					m_guardedForm.Deactivate -= m_settleOnDeactivate;
+					m_guardedForm = null;
+					m_settleOnDeactivate = null;
+				}
+				m_regionEditContext.DetachUndoGuard();
+				m_avaloniaRefreshController?.Dispose();
+				m_regionEditContext.Settle();
+				m_regionEditContext.Clear();
+				TearDownCompanionSlices();
 				m_avaloniaEntryForm?.Dispose();
 				m_menuHandler?.Dispose();
 				if (!string.IsNullOrEmpty(m_titleField))
@@ -175,6 +213,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_dataEntryForm = null;
 			m_avaloniaEntryForm = null;
+			m_avaloniaRefreshController = null;
 
 			base.Dispose(disposing);
 		}
@@ -207,6 +246,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.ResumeIdleProcessing();
 			}
+
+			// Selection bridge (task 3.12): the real mediator broadcast delivered a record navigation
+			// for this host's clerk, so let bridge subscribers (the Avalonia surface) follow it.
+			m_recordNavigationContext?.NotifyCurrentRecordChanged();
 			return true;	//we handled this.
 		}
 
@@ -235,8 +278,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (!ShouldUseAvaloniaLexicalEdit && m_dataEntryForm != null)
+			if (ShouldUseAvaloniaLexicalEdit)
+			{
+				// Auto-save (14.4): leaving the tool/area settles any open fenced session the same
+				// way legacy slices save as the user moves on.
+				m_regionEditContext.Settle();
+			}
+			else if (m_dataEntryForm != null)
+			{
 				m_dataEntryForm.PrepareToGoAway();
+			}
 			return base.PrepareToGoAway();
 		}
 
@@ -256,6 +307,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
+			// Viewing parity (11.x): the View → Show Hidden Fields toggle re-resolves the Avalonia
+			// region just like it rebuilds the legacy DataTree.
+			if (name != null && name.StartsWith("ShowHiddenFields-", StringComparison.Ordinal))
+			{
+				if (ShouldUseAvaloniaLexicalEdit)
+					RefreshAvaloniaRegion();
+				return;
+			}
+
 			if (name != LexicalEditSurfaceResolver.UIModePropertyName)
 				return;
 
@@ -263,6 +323,11 @@ namespace SIL.FieldWorks.XWorks
 			if (newSurface == m_lexicalEditSurface)
 				return;
 
+			// Settle any open fenced session BEFORE flipping the surface: ShowRecord's settle (and
+			// ShowRecordOnIdle's) is gated on ShouldUseAvaloniaLexicalEdit, which is already false
+			// once m_lexicalEditSurface changes — without this, flipping UIMode mid-edit would let
+			// Clerk.SaveOnChangeRecord force-commit invalid staged state (review round 2).
+			m_regionEditContext.Settle();
 			m_lexicalEditSurface = newSurface;
 			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, true));
 		}
@@ -337,6 +402,11 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(m_dataEntryForm != null);
 
 			var rni = (RecordNavigationInfo) parameter;
+			// Auto-save (14.4) must run BEFORE the clerk's save-on-change-record:
+			// RecordClerk.SaveOnChangeRecord force-EndUndoTasks any open undo task wholesale
+			// (LT-16673), which would commit invalid staged state past the validation gate.
+			if (ShouldUseAvaloniaLexicalEdit)
+				m_regionEditContext.Settle();
 			bool oldSuppressSaveOnChangeRecord = Clerk.SuppressSaveOnChangeRecord;
 			Clerk.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			PrepCacheForNewRecord();
@@ -347,13 +417,15 @@ namespace SIL.FieldWorks.XWorks
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
 					// Active-host contract (task 3.10): do not touch the legacy DataTree while Avalonia is active.
-					if (m_avaloniaEntryForm == null)
-						EnsureAvaloniaSurfaceInitialized();
-					m_avaloniaEntryForm.Hide();
+					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
+					m_regionEditContext.Clear();
+					EnsureAvaloniaSurfaceActive();
+					TearDownCompanionSlices();
 					m_avaloniaEntryForm.Clear();
 				}
 				else
 				{
+					EnsureLegacySurfaceVisible();
 					m_dataEntryForm.Hide();
 					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
 				}
@@ -365,21 +437,12 @@ namespace SIL.FieldWorks.XWorks
 				// or drive the legacy DataTree. Only the active surface is created and shown.
 				if (ShouldUseAvaloniaLexicalEdit)
 				{
-					if (m_avaloniaEntryForm == null)
-						EnsureAvaloniaSurfaceInitialized();
+					EnsureAvaloniaSurfaceActive();
 				}
 				else
 				{
-					if (!m_legacySurfaceInitialized)
-					{
-						var localPersistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-						if (localPersistContext != "")
-							localPersistContext = m_vectorName + "." + localPersistContext + ".DataTree";
-						else
-							localPersistContext = m_vectorName + ".DataTree";
-						EnsureLegacySurfaceInitialized(localPersistContext);
-					}
-					m_dataEntryForm.Show();
+					EnsureLegacySurfaceInitialized();
+					EnsureLegacySurfaceVisible();
 				}
 
 				// Enhance: Maybe do something here to allow changing the templates without the starting the application.
@@ -394,13 +457,11 @@ namespace SIL.FieldWorks.XWorks
 
 				if (ShouldUseAvaloniaLexicalEdit && m_avaloniaEntryForm != null)
 				{
-					// Task 4.8: the product route builds a typed-definition-backed region model, not the
-					// lossy POC DTO (which is now preview-host only).
-					var region = LexicalEditRegionBuilder.Build(obj, Cache);
-					if (region == null)
-						m_avaloniaEntryForm.ShowMessage("Avalonia lexical edit is currently available only for LexEntry records.");
-					else
-						m_avaloniaEntryForm.ShowRegion(region);
+					// Sections 6/7: the product route composes the COMPLETE entry view from the live
+					// compiled layouts (full cross-object walk, headers, ifdata) and falls back to the
+					// fixed first slice only if composition fails; both are editable through the fenced
+					// LCModel session (6.8/6.10) with refresh propagation (3.15).
+					ShowAvaloniaEntry(obj);
 				}
 				else
 				{
@@ -430,6 +491,21 @@ namespace SIL.FieldWorks.XWorks
 			return !IsFocusedPane || rni.SuppressFocusChange;
 		}
 
+		/// <summary>
+		/// The bidirectional selection bridge for this host's clerk (task 3.12). Created on first use so
+		/// the clerk is initialized. Surfaces (including the Avalonia host) follow the current-record bus
+		/// through its event and publish their own selection back through it.
+		/// </summary>
+		internal IRecordNavigationContext RecordNavigationContext
+		{
+			get
+			{
+				if (m_recordNavigationContext == null && Clerk != null)
+					m_recordNavigationContext = new RecordClerkNavigationContext(Clerk);
+				return m_recordNavigationContext;
+			}
+		}
+
 		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()
 		{
 			// Task 3.9: route the per-host decision through the explicit selection service rather than
@@ -444,12 +520,30 @@ namespace SIL.FieldWorks.XWorks
 			return m_surfaceSelectionService.Decide(uiMode, toolName).Surface;
 		}
 
-		private void EnsureLegacySurfaceInitialized(string persistContext)
+		// This plus the name of the vector gives a unique context for the DataTree control
+		// parameters (e.g. "lexicon.basicEdit.DataTree").
+		private string DataTreePersistContext
+		{
+			get
+			{
+				var persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
+				return string.IsNullOrEmpty(persistContext)
+					? m_vectorName + ".DataTree"
+					: m_vectorName + "." + persistContext + ".DataTree";
+			}
+		}
+
+		private void EnsureLegacySurfaceInitialized()
 		{
 			if (m_legacySurfaceInitialized)
 				return;
 
-			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
+			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
+
+			// In Avalonia mode Init skips the stylesheet (the legacy tree is inactive); the lazy
+			// command-routing adapter still needs it before ShowObject builds slices.
+			if (m_dataEntryForm.StyleSheet == null)
+				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
 			SetupSliceFilter();
 			m_dataEntryForm.Dock = DockStyle.Fill;
@@ -465,8 +559,7 @@ namespace SIL.FieldWorks.XWorks
 			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
 
-			if (!m_panel.Controls.Contains(m_dataEntryForm))
-				m_panel.Controls.Add(m_dataEntryForm);
+			AttachLegacySurfaceToPanel();
 
 			m_legacySurfaceInitialized = true;
 		}
@@ -478,8 +571,418 @@ namespace SIL.FieldWorks.XWorks
 
 			m_avaloniaEntryForm = (PocWinFormsHostControl)m_lexicalEditSurfaceFactory.Create(LexicalEditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
+			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
+		}
+
+		/// <summary>
+		/// Task 3.15: subscribe the Avalonia surface to the real PropChanged bus so external edits to
+		/// the displayed entry (legacy surfaces, refresh-driven reloads) re-resolve the region.
+		/// Refreshes are held while this surface's own edit session is open and delivered on completion.
+		/// </summary>
+		private void EnsureAvaloniaRefreshController()
+		{
+			if (m_avaloniaRefreshController != null)
+				return;
+
+			// The controller owns the ONE coalesced, editing-aware refresh queue (PropChanged
+			// deliveries and host-requested re-shows alike); the host only supplies UI-thread
+			// deferral, so a late-queued refresh still re-checks "is the user typing now?" inside
+			// the controller's runner before recomposing.
+			m_avaloniaRefreshController = new AvaloniaRegionRefreshController(
+				Cache,
+				() => Clerk?.CurrentObject,
+				() => m_regionEditContext.Current?.IsOpen == true,
+				RefreshAvaloniaRegion,
+				new RefreshCoordinator(),
+				ScheduleOnUiThread);
+			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
+			// (LockRecursionException); the guard settles the pending edit instead.
+			m_regionEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			// The guard only hooks THIS window's undo stack — it cannot reach other windows' stacks,
+			// so Ctrl+Z in another window while this one holds an open session would still re-enter
+			// the write lock. Mitigate by settling whenever this view's top-level window deactivates
+			// (the user must focus another window before they can undo there).
+			var form = FindForm();
+			if (form != null)
+			{
+				m_settleOnDeactivate = (s, e) => m_regionEditContext.Settle();
+				form.Deactivate += m_settleOnDeactivate;
+				m_guardedForm = form;
+			}
+		}
+
+		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
+		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
+		// that triggered an auto-save) unwind before the view is rebuilt.
+		private void ScheduleOnUiThread(Action runner)
+		{
+			if (IsDisposed)
+				return;
+			if (IsHandleCreated)
+				BeginInvoke(runner);
+			else
+				runner();
+		}
+
+		/// <summary>
+		/// Shows the Avalonia surface for a record: the composed full-entry view when the record is a
+		/// lexical entry (first-slice fallback if composition fails), or the resource-backed
+		/// unsupported state otherwise.
+		/// </summary>
+		private void ShowAvaloniaEntry(ICmObject obj)
+		{
+			// Auto-save (14.4): a session still open from the previous record/edit settles before
+			// the region is replaced (commit when valid, roll back when not) — the same policy
+			// every host path shares; Replace's cancel-on-displace stays the safety net.
+			m_regionEditContext.Settle();
+
+			// 13.4 adapter hygiene: the hidden command-routing DataTree must never answer mediator
+			// commands for a PREVIOUS record — reset it whenever the shown record changes; the next
+			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
+			// the main menu could silently target the entry that was last right-clicked.
+			if (m_legacySurfaceInitialized && m_dataEntryForm?.Root != null && obj != null
+				&& m_dataEntryForm.Root.Hvo != obj.Hvo)
+			{
+				m_dataEntryForm.Reset();
+			}
+
+			if (!(obj is ILexEntry lexEntry))
+			{
+				m_regionEditContext.Clear();
+				TearDownCompanionSlices();
+				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
+				return;
+			}
+
+			// Viewing parity (11.x): honor the same View → Show Hidden Fields setting legacy DataTree
+			// reads (ShowHiddenFields-{tool}, local settings).
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			var showHidden = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false,
+				PropertyTable.SettingsGroup.LocalSettings);
+
+			LexicalEditRegionModel region = null;
+			IRegionEditContext editContext = null;
+			ComposedEntryRegion composed = null;
+			try
+			{
+				composed = FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden);
+				if (composed != null)
+				{
+					region = composed.Model;
+					editContext = composed.EditContext;
+				}
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Full-entry composition failed; falling back to the first slice: " + e);
+			}
+
+			if (region == null)
+			{
+				region = LexicalEditRegionBuilder.Build(lexEntry, Cache);
+				editContext = new LexicalEditRegionEditContext(lexEntry, Cache);
+			}
+
+			// Hybrid companion lane: WinForms-only custom slices (the Chorus Messages notes bar)
+			// are realized for real in the host's companion strip and their placeholder rows are
+			// removed from the Avalonia model. Always runs (also clears the strip on fallback or
+			// when the layout no longer reaches a companion slice).
+			region = PromoteCompanionSlices(composed, region);
+
+			// Re-showing mid-edit (record navigation, refresh delivery, Show Hidden Fields, window
+			// activation) must cancel the displaced context's open fenced session — orphaning the
+			// open undo task makes the shutdown Save throw "Commit at wrong place".
+			m_regionEditContext.Replace(editContext);
+
+			EnsureAvaloniaRefreshController();
+			m_avaloniaEntryForm.ShowRegion(region, editContext,
+				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
+				GetPersistedExpansionState, PersistExpansionState,
+				OnRegionMenuRequested);
+		}
+
+		/// <summary>
+		/// Hybrid companion lane: tears down the previous companions, instantiates the real legacy
+		/// slice for each designated WinForms-only custom editor the composer found (today the
+		/// Chorus Messages notes bar — its NotesBarView cannot render inside Avalonia), hands the
+		/// slices' editor controls to the host's companion strip, and returns the region model with
+		/// the promoted placeholder rows removed. When the slice cannot be created (Chorus
+		/// unavailable) the row degrades to nothing — logged by AvaloniaCompanionSlices.
+		/// </summary>
+		private LexicalEditRegionModel PromoteCompanionSlices(ComposedEntryRegion composed,
+			LexicalEditRegionModel region)
+		{
+			TearDownCompanionSlices();
+
+			var promotions = AvaloniaCompanionSlices.SelectPromotions(composed?.CustomEditorFields);
+			if (promotions.Count == 0)
+				return region;
+
+			var companionControls = new List<Control>();
+			var promotedIds = new List<string>();
+			foreach (var binding in promotions)
+			{
+				// The unsupported row never renders for a designated companion slice, whether or
+				// not the real slice could be created.
+				promotedIds.Add(binding.FieldStableId);
+
+				var slice = AvaloniaCompanionSlices.CreateCompanionSlice(binding, Cache);
+				if (slice == null)
+					continue;
+				var control = slice.Control;
+				if (control == null)
+				{
+					slice.Dispose();
+					continue;
+				}
+
+				// Track both: the strip reparents the control out of the slice, so the slice's
+				// Dispose no longer disposes it — TearDownCompanionSlices owns both lifetimes.
+				m_companionSlices.Add(slice);
+				m_companionControls.Add(control);
+				companionControls.Add(control);
+			}
+
+			if (companionControls.Count > 0)
+				m_avaloniaEntryForm.SetCompanionControls(companionControls);
+			return AvaloniaCompanionSlices.RemovePromotedFields(region, promotedIds);
+		}
+
+		/// <summary>
+		/// Disposes the companion slices created for the previously shown record and empties the
+		/// host's companion strip. The strip never disposes anything itself; this view created the
+		/// slices, so it disposes them (the editor control first — it was reparented into the strip
+		/// and is no longer reachable from the slice — then the slice, which releases its backing
+		/// services, e.g. MessageSlice's ChorusSystem).
+		/// </summary>
+		private void TearDownCompanionSlices()
+		{
+			if (m_companionSlices.Count == 0 && m_companionControls.Count == 0)
+				return;
+
+			if (m_avaloniaEntryForm != null && !m_avaloniaEntryForm.IsDisposed)
+				m_avaloniaEntryForm.SetCompanionControls(null);
+
+			foreach (var control in m_companionControls)
+			{
+				if (!control.IsDisposed)
+					control.Dispose();
+			}
+			m_companionControls.Clear();
+
+			foreach (var slice in m_companionSlices)
+			{
+				if (!slice.IsDisposed)
+					slice.Dispose();
+			}
+			m_companionSlices.Clear();
+		}
+
+		/// <summary>
+		/// Section 13: shows the SAME xCore-defined context menu the legacy slice shows, over the
+		/// Avalonia surface — the menu ids come from the layout (imported into the typed IR), the menu
+		/// is materialized from the window configuration and dispatched through the mediator, exactly
+		/// the legacy `DTMenuHandler.MakeSliceContextMenu` recipe (menu + mnuDataTree-Object; in-string
+		/// menus add mnuDataTree-MultiStringSlice). Command targeting (13.4) uses the approved baseline
+		/// adapter "command-menu-routing": the legacy DataTree + DTMenuHandler are initialized lazily and
+		/// kept HIDDEN purely as the command-target colleague chain, with CurrentSlice pointed at the
+		/// slice bound to the clicked row's object — never shown, never the active surface.
+		/// </summary>
+		private void OnRegionMenuRequested(RegionMenuRequest request)
+		{
+			try
+			{
+				// An adapter failure must not suppress the menu itself: items that need the hidden
+				// colleague chain disable, everything else still works (and the failure is logged).
+				try
+				{
+					EnsureMenuCommandAdapter(request.Field.ObjectHvo);
+				}
+				catch (Exception adapterError)
+				{
+					Debug.WriteLine("Region menu command adapter failed: " + adapterError);
+				}
+
+				var ids = new List<string>();
+				switch (request.Kind)
+				{
+					case RegionMenuKind.ContextMenu:
+						ids.Add(request.Field.ContextMenuId);
+						ids.Add("mnuDataTree-MultiStringSlice");
+						ids.Add("mnuDataTree-Object");
+						break;
+					case RegionMenuKind.Hotlinks:
+						ids.Add(request.Field.HotlinksId);
+						break;
+					default:
+						ids.Add(request.Field.MenuId);
+						if (!string.IsNullOrEmpty(request.Field.HotlinksId))
+							ids.Add(request.Field.HotlinksId); // section link commands stay reachable
+						ids.Add("mnuDataTree-Object");
+						break;
+				}
+
+				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
+				var window = m_propertyTable.GetValue<XWindow>("window");
+
+				// 15.1: render the SAME xCore menu natively in Avalonia (identical items, enablement,
+				// and mediator dispatch — only the chrome changes). The WinForms adapter menu remains
+				// the fallback so a materialization failure never costs the user the menu.
+				try
+				{
+					var items = XCoreMenuBridge.BuildMenuItems(window, idArray);
+					if (items.Count > 0)
+					{
+						m_avaloniaEntryForm.ShowContextMenu(items);
+						return;
+					}
+				}
+				catch (Exception nativeMenuError)
+				{
+					Debug.WriteLine("Avalonia-native menu failed; falling back to the adapter menu: "
+						+ nativeMenuError);
+				}
+
+				window.ShowContextMenu(idArray,
+					new System.Drawing.Point(request.ScreenX, request.ScreenY), null, null);
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Region context menu failed: " + e);
+			}
+		}
+
+		// Approved baseline adapter "command-menu-routing" (13.4): the hidden legacy DataTree +
+		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
+		// handlers require. Created lazily on first right-click; never attached/visible while the
+		// Avalonia surface is active.
+		private void EnsureMenuCommandAdapter(int targetHvo)
+		{
+			// The active-host contract (3.10) is enforced, not just documented: driving the hidden
+			// legacy DataTree is legal only through this approved baseline adapter.
+			ActiveHostContract.ForAvalonia("command-menu-routing")
+				.AssertLegacyDataTreeDriveAllowed("command-menu-routing");
+
+			if (!m_legacySurfaceInitialized)
+			{
+				EnsureLegacySurfaceInitialized();
+				DetachLegacySurfaceFromPanel(); // adapter only: the Avalonia surface stays active
+			}
+			// 15.4: display logic gating on Visible (e.g. OnDisplayDataTreeInsert) treats the hidden
+			// adapter tree as active.
+			m_dataEntryForm.IsExternalCommandAdapter = true;
+
+			var current = Clerk?.CurrentObject;
+			if (current == null)
+				return;
+			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
+
+			if (targetHvo == 0)
+				return;
+			foreach (var sliceObj in m_dataEntryForm.Slices)
+			{
+				if (sliceObj is Slice slice && slice.Object != null && slice.Object.Hvo == targetHvo)
+				{
+					m_dataEntryForm.CurrentSlice = slice;
+					break;
+				}
+			}
+		}
+
+		// Viewing parity (11.8): expansion state persists per header stable id — in-session through the
+		// dictionary, across sessions through PropertyTable local settings, the legacy ExpansionStateKey
+		// behavior. Per-instance (review round 1): a process-wide static leaked state across
+		// projects/windows for the app lifetime.
+		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
+
+		private bool? GetPersistedExpansionState(string stableId)
+		{
+			if (m_expansionStates.TryGetValue(stableId, out var expanded))
+				return expanded;
+			var stored = m_propertyTable?.GetStringProperty("LexEditExpansion:" + stableId, null,
+				PropertyTable.SettingsGroup.LocalSettings);
+			return stored == null ? (bool?)null : stored == "1";
+		}
+
+		private void PersistExpansionState(string stableId, bool expanded)
+		{
+			m_expansionStates[stableId] = expanded;
+			if (m_propertyTable == null)
+				return;
+			var key = "LexEditExpansion:" + stableId;
+			m_propertyTable.SetProperty(key, expanded ? "1" : "0", PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
+		// Re-resolves and re-shows the region for the current record from current domain state
+		// (after an external edit or this surface's commit/cancel).
+		private void RefreshAvaloniaRegion()
+		{
+			if (m_avaloniaEntryForm == null || !ShouldUseAvaloniaLexicalEdit)
+				return;
+			var current = Clerk?.CurrentObject;
+			if (current == null)
+				return;
+
+			ShowAvaloniaEntry(current);
+		}
+
+		private void OnAvaloniaRegionEditCompleted(object sender, EventArgs e)
+		{
+			// ONE re-show covers the completed edit AND any refresh held during it (the old
+			// NotifyEditCompleted + direct-refresh pair recomposed twice per commit): drop the held
+			// delivery and request a single coalesced refresh through the controller's queue.
+			if (m_avaloniaRefreshController != null)
+			{
+				m_avaloniaRefreshController.DiscardHeldRefresh();
+				m_avaloniaRefreshController.RequestRefresh();
+			}
+			else
+			{
+				RefreshAvaloniaRegion();
+			}
+		}
+
+		private void EnsureAvaloniaSurfaceActive()
+		{
+			if (m_avaloniaEntryForm == null)
+				EnsureAvaloniaSurfaceInitialized();
+
+			DetachLegacySurfaceFromPanel();
+			m_avaloniaEntryForm.Show();
+			m_avaloniaEntryForm.BringToFront();
+		}
+
+		private void EnsureLegacySurfaceVisible()
+		{
+			AttachLegacySurfaceToPanel();
+			// The legacy DataTree builds its own MessageSlice/ChorusSystem; release the Avalonia
+			// lane's companions so two Chorus systems never sit on the project at once.
+			TearDownCompanionSlices();
+			m_avaloniaEntryForm?.Hide();
+			m_dataEntryForm.Show();
+			m_dataEntryForm.BringToFront();
+		}
+
+		private void AttachLegacySurfaceToPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			if (!m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Add(m_dataEntryForm);
+		}
+
+		private void DetachLegacySurfaceFromPanel()
+		{
+			if (m_dataEntryForm == null || m_panel == null)
+				return;
+
+			m_dataEntryForm.Hide();
+			if (m_panel.Controls.Contains(m_dataEntryForm))
+				m_panel.Controls.Remove(m_dataEntryForm);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -521,16 +1024,6 @@ namespace SIL.FieldWorks.XWorks
 			// (WinForms) and the active-host contract (task 3.10) would be violated for an Avalonia start.
 			m_lexicalEditSurface = ResolveConfiguredLexicalEditSurface();
 
-			//this will normally be the same name as the view, e.g. "basicEdit". This plus the name of the vector
-			//should give us a unique context for the dataTree control parameters.
-
-			string persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-
-			if (persistContext !="")
-				persistContext=m_vectorName+"."+persistContext+".DataTree";
-			else
-				persistContext=m_vectorName+".DataTree";
-
 			// Surface-agnostic: the record list bar must update regardless of which detail surface is active.
 			Clerk.UpdateRecordTreeBarIfNeeded();
 
@@ -540,10 +1033,12 @@ namespace SIL.FieldWorks.XWorks
 			// idle path (the inactive legacy DataTree is never built).
 			if (!ShouldUseAvaloniaLexicalEdit)
 			{
-				EnsureLegacySurfaceInitialized(persistContext);
-				m_avaloniaEntryForm?.Hide();
-				m_dataEntryForm.Show();
-				m_dataEntryForm.BringToFront();
+				EnsureLegacySurfaceInitialized();
+				EnsureLegacySurfaceVisible();
+			}
+			else
+			{
+				DetachLegacySurfaceFromPanel();
 			}
 		}
 
@@ -609,10 +1104,13 @@ namespace SIL.FieldWorks.XWorks
 			if(!m_fullyInitialized)
 				return;
 
-			if (!ShouldUseAvaloniaLexicalEdit && m_dataEntryForm != null) // Unlikely it is null, but I have observed it..JohnT.
+			// Legacy mode: the DataTree + menu handler are the normal targets. Avalonia mode: they
+			// participate ONLY once the lazy "command-menu-routing" baseline adapter exists (13.4),
+			// so the legacy command handlers can resolve and execute the context-menu commands.
+			if (m_legacySurfaceInitialized && m_dataEntryForm != null)
 				collector.Add(m_dataEntryForm);
 
-			if (!ShouldUseAvaloniaLexicalEdit && m_menuHandler != null)
+			if (m_legacySurfaceInitialized && m_menuHandler != null)
 				collector.Add(m_menuHandler);
 		}
 

@@ -8,6 +8,77 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
 namespace FwAvaloniaTests
 {
+	/// <summary>
+	/// 16.1 — the crash guard for WinForms-hosted Avalonia: MicroCom proxy finalizers post their
+	/// native Release through the captured SynchronizationContext; when the WinForms marshaling
+	/// window is gone that post throws on the FINALIZER thread and terminates the process. The
+	/// wrapper swallows exactly those marshal failures and passes everything else through.
+	/// </summary>
+	[TestFixture]
+	public class FinalizerSafeSynchronizationContextTests
+	{
+		private sealed class DeadTargetContext : System.Threading.SynchronizationContext
+		{
+			public override void Post(System.Threading.SendOrPostCallback d, object state)
+				=> throw new InvalidOperationException("Invoke or BeginInvoke cannot be called on a control until the window handle has been created.");
+
+			public override void Send(System.Threading.SendOrPostCallback d, object state)
+				=> throw new ObjectDisposedException("marshaling control");
+		}
+
+		private sealed class RecordingContext : System.Threading.SynchronizationContext
+		{
+			public int Posts;
+			public override void Post(System.Threading.SendOrPostCallback d, object state)
+			{
+				Posts++;
+				d(state);
+			}
+		}
+
+		[Test]
+		public void Post_SwallowsDeadMarshalingTargetFailures_InsteadOfKillingTheProcess()
+		{
+			var guarded = new FinalizerSafeSynchronizationContext(new DeadTargetContext());
+			Assert.DoesNotThrow(() => guarded.Post(_ => { }, null),
+				"the exact failure mode of MicroComProxyBase.Finalize must not propagate");
+			Assert.DoesNotThrow(() => guarded.Send(_ => { }, null));
+		}
+
+		[Test]
+		public void Post_DelegatesToTheRealContext_WhenAlive()
+		{
+			var inner = new RecordingContext();
+			var guarded = new FinalizerSafeSynchronizationContext(inner);
+			var ran = false;
+			guarded.Post(_ => ran = true, null);
+			Assert.That(inner.Posts, Is.EqualTo(1));
+			Assert.That(ran, Is.True, "normal posts flow through unchanged");
+		}
+
+		[Test]
+		public void Install_WrapsTheAmbientContext_AndIsIdempotent()
+		{
+			var original = System.Threading.SynchronizationContext.Current;
+			try
+			{
+				System.Threading.SynchronizationContext.SetSynchronizationContext(
+					new System.Threading.SynchronizationContext());
+				FinalizerSafeSynchronizationContext.InstallOnCurrentThread();
+				var installed = System.Threading.SynchronizationContext.Current;
+				Assert.That(installed, Is.InstanceOf<FinalizerSafeSynchronizationContext>());
+
+				FinalizerSafeSynchronizationContext.InstallOnCurrentThread();
+				Assert.That(System.Threading.SynchronizationContext.Current, Is.SameAs(installed),
+					"re-install must not double-wrap");
+			}
+			finally
+			{
+				System.Threading.SynchronizationContext.SetSynchronizationContext(original);
+			}
+		}
+	}
+
 	[TestFixture]
 	public class RefreshCoordinatorTests
 	{
@@ -44,35 +115,6 @@ namespace FwAvaloniaTests
 			var c = new RefreshCoordinator();
 			c.BeginSuspend();
 			Assert.That(c.EndSuspend(), Is.False);
-		}
-	}
-
-	[TestFixture]
-	public class LexicalEditorRegistryTests
-	{
-		[Test]
-		public void Resolve_ReturnsFallback_ForUnregisteredKey()
-		{
-			var registry = new LexicalEditorRegistry(fallbackHandler: "legacy");
-			Assert.That(registry.IsRegistered("multistring"), Is.False);
-			Assert.That(registry.Resolve("multistring"), Is.EqualTo("legacy"));
-		}
-
-		[Test]
-		public void Resolve_ReturnsRegisteredHandler_OverFallback()
-		{
-			var registry = new LexicalEditorRegistry(fallbackHandler: "legacy");
-			registry.Register("multistring", "avalonia-text");
-			Assert.That(registry.IsRegistered("multistring"), Is.True);
-			Assert.That(registry.Resolve("multistring"), Is.EqualTo("avalonia-text"));
-		}
-
-		[Test]
-		public void Register_RejectsNullHandlerAndEmptyKey()
-		{
-			var registry = new LexicalEditorRegistry();
-			Assert.That(() => registry.Register("k", null), Throws.ArgumentNullException);
-			Assert.That(() => registry.Register("", "h"), Throws.ArgumentException);
 		}
 	}
 
@@ -121,17 +163,6 @@ namespace FwAvaloniaTests
 			Assert.That(scheduler.IsOnUiThread, Is.True);
 		}
 
-		[Test]
-		public void InMemoryPropertyStateStore_RoundTripsTypedValues()
-		{
-			var store = new InMemoryPropertyStateStore();
-			store.Set("count", 7);
-			Assert.That(store.TryGet<int>("count", out var v), Is.True);
-			Assert.That(v, Is.EqualTo(7));
-			Assert.That(store.TryGet<string>("count", out _), Is.False, "wrong type should not match");
-			Assert.That(store.Remove("count"), Is.True);
-			Assert.That(store.TryGet<int>("count", out _), Is.False);
-		}
 	}
 
 	[TestFixture]

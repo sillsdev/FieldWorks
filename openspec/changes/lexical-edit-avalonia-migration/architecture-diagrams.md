@@ -410,7 +410,10 @@ flowchart TB
 The clean seam is the **surface-selection boundary** plus the **typed IR as the data contract** — not
 legacy re-plumbed through every port. Legacy stays frozen behind the switch until cutover. During the
 ~1-year coexistence, concurrent WinForms and Avalonia UI classes cooperate through a **shared selection
-bus** and a **shared clipboard**, both bidirectional.
+bus**, a **shared clipboard**, and **cross-surface drag-and-drop** (all bidirectional; DnD reuses the
+clipboard payload formats — product decision 2026-06-09). Cross-surface **refresh propagation**, one
+**global undo/redo stack**, and **dialog ownership/modality** are coexistence gates on the first
+editable slice (tasks 3.15, 6.8/6.10, 3.16).
 
 ```mermaid
 flowchart TB
@@ -426,13 +429,19 @@ flowchart TB
   AV --- Audit
 
   subgraph Substrate["Shared substrate (cooperation, bidirectional)"]
-    Sel["Selection bus<br/>xCore RecordClerk / PropertyTable<br/>'current lexeme'"]:::port
-    Clip["Clipboard<br/>OS clipboard + FieldWorks WS text format"]:::port
+    Sel["Selection bus ✅ (3.12)<br/>xCore RecordClerk / PropertyTable<br/>'current lexeme'"]:::port
+    Clip["Clipboard (3.13)<br/>OS clipboard + legacy 'TsString' format"]:::port
+    Dnd["Drag &amp; drop (3.14)<br/>OS DnD, same payloads as clipboard"]:::port
+    Refresh["Refresh propagation (3.15)<br/>PropChanged / F5 reach both surfaces"]:::port
   end
   LWF <--> Sel
   AV <--> Sel
   LWF <--> Clip
   AV <--> Clip
+  LWF <--> Dnd
+  AV <--> Dnd
+  LWF <--> Refresh
+  AV <--> Refresh
 
   Ports["Shared ports — Avalonia-side only<br/>edit-session · refresh · command/focus<br/>(legacy NOT re-plumbed — throwaway avoided)"]:::port
   AV --- Ports

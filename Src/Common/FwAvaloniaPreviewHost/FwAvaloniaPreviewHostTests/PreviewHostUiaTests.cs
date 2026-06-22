@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
 using NUnit.Framework;
@@ -63,6 +65,37 @@ namespace FwAvaloniaPreviewHostTests
 			Assert.That(FindByAutomationId(window, "LexemeFormEditor.en"), Is.Not.Null);
 			Assert.That(FindByAutomationId(window, "SenseGlossEditor.en"), Is.Not.Null);
 			Assert.That(FindByAutomationId(window, "MorphTypeChooser.Button"), Is.Not.Null);
+		}
+
+		/// <summary>
+		/// Task 7.11 (names/order lane): the realized Avalonia surface exposes the same field labels
+		/// the legacy DataTree slices carry, as UIA Names, in the legacy top-to-bottom order — so a
+		/// screen reader announces the same vocabulary on both surfaces. The keyboard-traversal
+		/// assistive smoke extends this once the chooser-dialog path (6.3/3.16) lands.
+		/// </summary>
+		[Test]
+		public void PreviewHost_UiaTree_ExposesLegacyFieldLabels_InLegacyOrder()
+		{
+			EnsureInteractiveDesktop();
+			var window = StartPreviewHostAndWaitForWindow();
+
+			var expectedLegacyLabels = new[] { "Lexeme Form", "Morph Type", "Gloss" };
+			var all = window.FindAll(TreeScope.Descendants, Condition.TrueCondition);
+			var names = new List<string>();
+			foreach (AutomationElement element in all)
+			{
+				var name = element.Current.Name;
+				if (!string.IsNullOrEmpty(name))
+					names.Add(name);
+			}
+
+			var positions = expectedLegacyLabels
+				.Select(label => names.FindIndex(n => n.StartsWith(label, StringComparison.Ordinal)))
+				.ToList();
+			Assert.That(positions, Is.All.GreaterThanOrEqualTo(0),
+				"every legacy slice label must be announced by the Avalonia surface: "
+				+ string.Join(" | ", names.Take(40)));
+			Assert.That(positions, Is.Ordered, "labels appear in the legacy top-to-bottom order");
 		}
 
 		[Test]

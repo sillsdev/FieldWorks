@@ -6,69 +6,73 @@ using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Builds the product Lexical Edit region model from the typed view definition plus live LCModel
-	/// values (task 4.8). This is the typed-definition-backed replacement for
-	/// <see cref="LexicalEditPocMapper"/>: structure is expressed as a <see cref="ViewDefinitionModel"/>
-	/// (the same IR vocabulary the XML importer produces), and this type only supplies values via
-	/// <see cref="IRegionValueProvider"/>. The first-slice definition is authored here for the LexEntry
-	/// identity fields; the next step is to compile it from the live layout inventory so the region scales
-	/// to the full layout. Values are read on the UI thread; write-back goes through the LCModel edit
-	/// session (tasks 6.x), not this builder.
+	/// values (tasks 4.8/4.10). Structure comes from <see cref="LexicalEditFirstSlice"/>, which compiles
+	/// the shipped layout inventory through <c>ViewDefinitionCompiler</c>; the authored definition
+	/// remains only as an explicit, diagnosed fallback. This type supplies values via
+	/// <see cref="IRegionValueProvider"/>: text from the entry, and morph-type chooser options sourced
+	/// from the project's LCModel morph-type possibility list (no hardcoded option set). Values are read
+	/// on the UI thread; write-back goes through the LCModel edit session (tasks 6.x), not this builder.
 	/// </summary>
 	public sealed class LexicalEditRegionBuilder : IRegionValueProvider
 	{
-		private const string LexemeFormField = "LexemeForm";
+		// Field names as they appear in the compiled shipped layouts (MoForm AsLexemeForm slice,
+		// MoForm MorphTypeBasic slice, LexSense GlossAllA slice).
+		private const string LexemeFormField = "Form";
 		private const string GlossField = "Gloss";
 		private const string MorphTypeField = "MorphType";
 
-		private readonly ILexEntry _entry;
+		private static readonly Lazy<ViewDefinitionModel> FirstSliceDefinition =
+			new Lazy<ViewDefinitionModel>(CompileOrFallback);
 
-		private LexicalEditRegionBuilder(ILexEntry entry)
+		private readonly ILexEntry _entry;
+		private readonly LcmCache _cache;
+
+		private LexicalEditRegionBuilder(ILexEntry entry, LcmCache cache)
 		{
 			_entry = entry;
+			_cache = cache;
 		}
 
 		/// <summary>
 		/// Builds a region model for the current record, or null if it is not a <see cref="ILexEntry"/>
-		/// (the caller then shows an explicit unsupported state). <paramref name="cache"/> is reserved for
-		/// the writing-system/font service that will replace the placeholder ws abbreviations.
+		/// (the caller then shows an explicit unsupported state).
 		/// </summary>
 		public static LexicalEditRegionModel Build(ICmObject obj, LcmCache cache)
 		{
 			if (!(obj is ILexEntry entry))
 				return null;
 
-			var definition = BuildFirstSliceDefinition();
-			var provider = new LexicalEditRegionBuilder(entry);
-			return LexicalEditRegionMapper.FromViewDefinition(definition, provider);
+			var provider = new LexicalEditRegionBuilder(entry, cache);
+			return LexicalEditRegionMapper.FromViewDefinition(FirstSliceDefinition.Value, provider);
 		}
 
 		/// <summary>
-		/// The typed view definition for the LexEntry identity first slice, expressed in the IR vocabulary
-		/// with stable ids, writing-system metadata, accessibility ids, and product routing. Authored for
-		/// now; replace with a live layout compile (ViewDefinitionCompiler) as the region grows.
+		/// Task 4.10: compile the first-slice definition from the live shipped layout inventory. The
+		/// authored definition (which carries an `authored-fallback` diagnostic) is used only when the
+		/// layout directory is unavailable or a shipped layout no longer yields the expected nodes.
 		/// </summary>
-		internal static ViewDefinitionModel BuildFirstSliceDefinition()
+		private static ViewDefinitionModel CompileOrFallback()
 		{
-			var roots = new List<ViewNode>
+			string partsDirectory = null;
+			try
 			{
-				Leaf("LexEntry/identity/#0", "Lexeme Form", LexemeFormField, "multistring", "vernacular", "LexemeFormEditor"),
-				Leaf("LexEntry/identity/#1", "Morph Type", MorphTypeField, "morphtypeatomicreference", null, "MorphTypeChooser"),
-				Leaf("LexEntry/identity/#2", "Gloss", GlossField, "multistring", "analysis", "SenseGlossEditor")
-			};
+				partsDirectory = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Parts");
+			}
+			catch (ApplicationException)
+			{
+				// No FieldWorks code directory in this environment (bare harness); use the fallback.
+			}
 
-			return new ViewDefinitionModel("LexEntry", "identity", "detail", roots, Array.Empty<ViewDiagnostic>());
+			return LexicalEditFirstSlice.CompileFromLayoutDirectory(partsDirectory)
+				?? LexicalEditFirstSlice.AuthoredFallback();
 		}
-
-		private static ViewNode Leaf(string stableId, string label, string field, string editor, string ws, string automationId)
-			=> new ViewNode(stableId, ViewNodeKind.Field, label, null, field, editor,
-				EditorClassification.Known, ws, ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null,
-				localizationKey: null, automationId: automationId, routing: SurfaceRouting.Product);
 
 		/// <inheritdoc />
 		public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
@@ -76,33 +80,109 @@ namespace SIL.FieldWorks.XWorks
 			switch (fieldNode.Field)
 			{
 				case LexemeFormField:
-					return new List<RegionWsValue> { new RegionWsValue("vern", GetLexemeFormText()) };
+					return GetLexemeFormValues();
 				case GlossField:
-					return new List<RegionWsValue> { new RegionWsValue("anal", GetFirstSenseGloss()) };
+					return GetGlossValues();
 				default:
 					return new List<RegionWsValue>();
+			}
+		}
+
+		// Tasks 6.2/6.13 (multi-WS read path): one row per *current* writing system — the same
+		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
+		// with the project's per-WS default font so both surfaces show the same record consistently.
+		private IReadOnlyList<RegionWsValue> GetLexemeFormValues()
+		{
+			var values = new List<RegionWsValue>();
+			foreach (var ws in _cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			{
+				var text = _entry.LexemeFormOA?.Form?.get_String(ws.Handle)?.Text;
+				if (string.IsNullOrEmpty(text) && ws.Handle == _cache.DefaultVernWs)
+					text = _entry.CitationForm.get_String(ws.Handle)?.Text; // legacy fallback, default ws only
+				values.Add(new RegionWsValue(ws.Abbreviation, text ?? string.Empty, ws.DefaultFontName, 0,
+					ws.RightToLeftScript, ws.Id));
+			}
+
+			return values;
+		}
+
+		private IReadOnlyList<RegionWsValue> GetGlossValues()
+		{
+			var values = new List<RegionWsValue>();
+			if (_entry.SensesOS.Count == 0)
+				return values;
+
+			var gloss = _entry.SensesOS[0].Gloss;
+			foreach (var ws in _cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				values.Add(new RegionWsValue(ws.Abbreviation, gloss.get_String(ws.Handle)?.Text ?? string.Empty,
+					ws.DefaultFontName, 0, ws.RightToLeftScript, ws.Id));
+
+			return values;
+		}
+
+		/// <summary>
+		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when its editor
+		/// row gains focus on the Avalonia surface — the behavior legacy slices get from
+		/// <c>EditingHelper.SetKeyboardForWs</c> (task 6.2). Unknown tags fall back to the default keyboard.
+		/// </summary>
+		public static void ActivateKeyboardForWritingSystem(LcmCache cache, string wsTag)
+		{
+			try
+			{
+				foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				{
+					if (ws.Id == wsTag)
+					{
+						ws.LocalKeyboard?.Activate();
+						return;
+					}
+				}
+
+				SIL.Keyboarding.Keyboard.Controller.ActivateDefaultKeyboard();
+			}
+			catch (Exception)
+			{
+				// Keyboard switching must never take down editing; legacy swallows comparable failures.
 			}
 		}
 
 		/// <inheritdoc />
 		public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
 		{
+			var options = new List<RegionChoiceOption>();
 			if (fieldNode.Field != MorphTypeField)
-				return new List<RegionChoiceOption>();
+				return options;
 
-			return new List<RegionChoiceOption>
-			{
-				new RegionChoiceOption("stem", "stem"),
-				new RegionChoiceOption("root", "root"),
-				new RegionChoiceOption("prefix", "prefix"),
-				new RegionChoiceOption("suffix", "suffix")
-			};
+			// Task 4.10: chooser options come from the project's morph-type possibility list, keyed by
+			// guid, so every project-defined morph type (phrase, clitic, infix, ...) is offered instead
+			// of a hardcoded subset.
+			var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
+			if (morphTypes == null)
+				return options;
+
+			AddPossibilities(morphTypes.PossibilitiesOS, options);
+			return options;
 		}
 
 		/// <inheritdoc />
 		public string GetSelectedOptionKey(ViewNode fieldNode)
 		{
-			return fieldNode.Field == MorphTypeField ? GetMorphTypeKey() : null;
+			if (fieldNode.Field != MorphTypeField)
+				return null;
+
+			return _entry.LexemeFormOA?.MorphTypeRA?.Guid.ToString();
+		}
+
+		private static void AddPossibilities(IEnumerable<ICmPossibility> possibilities, List<RegionChoiceOption> options)
+		{
+			foreach (var possibility in possibilities)
+			{
+				var name = possibility.Name.BestAnalysisAlternative?.Text;
+				if (string.IsNullOrEmpty(name))
+					name = possibility.Name.BestVernacularAlternative?.Text ?? possibility.Guid.ToString();
+				options.Add(new RegionChoiceOption(possibility.Guid.ToString(), name));
+				AddPossibilities(possibility.SubPossibilitiesOS, options);
+			}
 		}
 
 		private string GetLexemeFormText()
@@ -120,20 +200,6 @@ namespace SIL.FieldWorks.XWorks
 			if (_entry.SensesOS.Count == 0)
 				return string.Empty;
 			return _entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text ?? string.Empty;
-		}
-
-		private string GetMorphTypeKey()
-		{
-			var type = _entry.LexemeFormOA?.MorphTypeRA;
-			if (type == null)
-				return "stem";
-			if (type.Guid == MoMorphTypeTags.kguidMorphPrefix)
-				return "prefix";
-			if (type.Guid == MoMorphTypeTags.kguidMorphSuffix)
-				return "suffix";
-			if (type.Guid == MoMorphTypeTags.kguidMorphRoot || type.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
-				return "root";
-			return "stem";
 		}
 	}
 }
