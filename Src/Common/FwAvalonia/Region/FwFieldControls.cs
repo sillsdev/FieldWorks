@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			var list = new ListBox
 			{
-				ItemsSource = field.Options,
+				ItemsSource = field.SearchOptions == null ? field.Options : null,
 				MaxHeight = 320,
 				MinWidth = 180,
 				ItemTemplate = new Avalonia.Controls.Templates.FuncDataTemplate<RegionChoiceOption>(
@@ -302,7 +302,31 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						})
 			};
 			AutomationProperties.SetAutomationId(list, automationId + ".Options");
-			var flyout = new Flyout { Content = list, Placement = PlacementMode.BottomEdgeAlignedLeft };
+
+			// D3 (winforms-free-lexeme-editor.md): a search-backed vector (lexicons search, lists
+			// enumerate) fronts the same virtualized results list with a type-ahead search box —
+			// the whole lexicon is never materialized as options.
+			Control flyoutContent = list;
+			if (field.SearchOptions != null)
+			{
+				var searchBox = new TextBox
+				{
+					Watermark = FwAvaloniaStrings.SearchPrompt,
+					MinWidth = 180
+				};
+				AutomationProperties.SetAutomationId(searchBox, automationId + ".Search");
+				AutomationProperties.SetName(searchBox, FwAvaloniaStrings.SearchPrompt);
+				var search = field.SearchOptions;
+				searchBox.TextChanged += (s, e) =>
+					list.ItemsSource = search(searchBox.Text ?? string.Empty);
+				flyoutContent = new StackPanel
+				{
+					Spacing = PocDensity.RowSpacing,
+					Children = { searchBox, list }
+				};
+			}
+
+			var flyout = new Flyout { Content = flyoutContent, Placement = PlacementMode.BottomEdgeAlignedLeft };
 			addButton.Flyout = flyout;
 			list.SelectionChanged += (s, e) =>
 			{
@@ -325,5 +349,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Margin = new Thickness(2, 0, 6, 0),
 			VerticalAlignment = VerticalAlignment.Center
 		};
+	}
+
+	/// <summary>
+	/// FieldWorks-owned dialog-launcher row (winforms-free-lexeme-editor.md D4): the legacy
+	/// <c>*DlgLauncherSlice</c> pattern — the field's current value as read-only text plus the
+	/// trailing "..." launcher button. The button invokes a host-injected callback (the
+	/// ILegacyDialogLauncher seam on the xWorks side; this layer stays LCModel-free, so the
+	/// callback is a plain delegate). Without a callback the button renders DISABLED with an
+	/// explanatory tooltip — the value still shows, the affordance is visibly unavailable.
+	/// </summary>
+	public sealed class FwDialogLauncherField : DockPanel
+	{
+		private readonly Action _launch;
+		private readonly Button _button;
+
+		public FwDialogLauncherField(string value, string label, Action launch)
+		{
+			_launch = launch;
+			Value = value ?? string.Empty;
+			LastChildFill = true;
+			AutomationProperties.SetName(this, label ?? string.Empty);
+
+			// The legacy ButtonLauncher ellipsis button, docked at the row's end like m_panel.
+			_button = new Button
+			{
+				Content = "...",
+				Padding = new Thickness(6, 0, 6, 0),
+				MinHeight = 0,
+				MinWidth = 0,
+				VerticalAlignment = VerticalAlignment.Center,
+				IsEnabled = launch != null
+			};
+			AutomationProperties.SetName(_button, FwAvaloniaStrings.LaunchDialog);
+			if (launch == null)
+			{
+				// D4 degradation: no host dialog service — the button shows but cannot launch.
+				ToolTip.SetTip(_button, FwAvaloniaStrings.LauncherUnavailable);
+			}
+			_button.Click += (s, e) => Launch();
+
+			var text = new TextBlock
+			{
+				Text = value ?? string.Empty,
+				VerticalAlignment = VerticalAlignment.Center,
+				TextWrapping = TextWrapping.Wrap,
+				Margin = new Thickness(0, 0, 6, 0)
+			};
+			AutomationProperties.SetName(text, label ?? string.Empty);
+
+			DockPanel.SetDock(_button, Dock.Right);
+			Children.Add(_button);
+			Children.Add(text);
+		}
+
+		/// <summary>The displayed value text (the legacy launcher view's rendering).</summary>
+		public string Value { get; }
+
+		/// <summary>Whether a launcher callback was injected (the button is enabled).</summary>
+		public bool CanLaunch => _launch != null;
+
+		/// <summary>The button-click path; a no-op without an injected callback.</summary>
+		public void Launch() => _launch?.Invoke();
 	}
 }

@@ -108,7 +108,7 @@ namespace FwAvaloniaTests
 			return (view, context, window);
 		}
 
-		private static T Find<T>(LexicalEditRegionView view, string automationId) where T : Control
+		private static T Find<T>(Control view, string automationId) where T : Control
 			=> view.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
@@ -315,6 +315,87 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(box.Watermark, Is.EqualTo("Click here to add Lexeme Form"),
 				"leaving without typing restores the prompt");
+		}
+
+		// winforms-free-lexeme-editor.md D3 — a search-backed reference vector (SearchOptions
+		// non-null): the add slot opens a SEARCH flyout (type-ahead TextBox + virtualized results
+		// list) instead of materializing a full options list; selecting a result stages through
+		// TryAddReferenceItem; the separator-bar affordance and item remove behavior are unchanged.
+		[AvaloniaTest]
+		public void SearchBackedReferenceVector_SearchFlyout_RendersAndStagesSelectedResult()
+		{
+			var queries = new List<string>();
+			var lexicon = new List<RegionChoiceOption>
+			{
+				new RegionChoiceOption("e-casa", "casa"),
+				new RegionChoiceOption("e-cantar", "cantar"),
+				new RegionChoiceOption("e-perro", "perro")
+			};
+			var field = new LexicalEditRegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components", null,
+				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
+				searchOptions: query =>
+				{
+					queries.Add(query);
+					return lexicon.Where(o => o.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+						.ToList();
+				});
+			var context = new FakeRegionEditContext();
+			var vector = new FwReferenceVectorField(field, "Components", context);
+			var window = new Window { Content = vector, Width = 480, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			// The 6.3 affordances are unchanged: item text + trailing separator bar + add launcher.
+			Assert.That(Find<TextBlock>(vector, "Components.Item.e-burro"), Is.Not.Null);
+			Assert.That(vector.Children.OfType<Border>().Count(), Is.GreaterThanOrEqualTo(1),
+				"the separator-bar affordance stays");
+			var addButton = vector.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Components.Add");
+
+			var flyoutPanel = (StackPanel)((Flyout)addButton.Flyout).Content;
+			var searchBox = flyoutPanel.Children.OfType<TextBox>().Single();
+			Assert.That(AutomationProperties.GetAutomationId(searchBox), Is.EqualTo("Components.Search"));
+			var results = flyoutPanel.Children.OfType<ListBox>().Single();
+			Assert.That(results.ItemsSource, Is.Null,
+				"nothing is enumerated before the user types — lexicons search, lists enumerate");
+
+			searchBox.Text = "ca";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(queries, Does.Contain("ca"), "typing drives the field's search delegate");
+			var shown = ((IEnumerable<RegionChoiceOption>)results.ItemsSource).ToList();
+			Assert.That(shown.Select(o => o.Key), Is.EqualTo(new[] { "e-casa", "e-cantar" }));
+
+			results.SelectedIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
+			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("ComponentLexemes", "e-cantar")),
+				"selecting a search result stages the result's key through TryAddReferenceItem");
+		}
+
+		[AvaloniaTest]
+		public void SearchBackedReferenceVector_ItemRemove_StillStagesThroughTheContext()
+		{
+			var field = new LexicalEditRegionField("LexEntryRef/x/#0", "Components", "ComponentLexemes",
+				null, RegionFieldKind.ReferenceVector, EditorClassification.Known, "Components2", null,
+				SurfaceRouting.Inherit, null, null, null, isEditable: true, indent: 0,
+				items: new List<RegionChoiceOption> { new RegionChoiceOption("e-burro", "burro") },
+				searchOptions: query => new List<RegionChoiceOption>());
+			var context = new FakeRegionEditContext();
+			var vector = new FwReferenceVectorField(field, "Components2", context);
+			var window = new Window { Content = vector, Width = 480, Height = 240 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var item = Find<TextBlock>(vector, "Components2.Item.e-burro");
+			var removeItem = (MenuItem)((MenuFlyout)item.ContextFlyout).Items[0];
+			removeItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.ReferenceRemoves, Has.Count.EqualTo(1));
+			Assert.That(context.ReferenceRemoves[0], Is.EqualTo(("ComponentLexemes", "e-burro")),
+				"the remove behavior is unchanged for search-backed vectors");
 		}
 
 		[AvaloniaTest]

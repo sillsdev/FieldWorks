@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
+using Avalonia.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
@@ -42,7 +44,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <see cref="IRegionEditContext.TryAddReferenceItem"/>/<see cref="IRegionEditContext.TryRemoveReferenceItem"/> —
 		/// the legacy possibility-vector slice with its trailing type-ahead add slot.
 		/// </summary>
-		ReferenceVector
+		ReferenceVector,
+
+		/// <summary>
+		/// A plugin-claimed custom editor (winforms-free-lexeme-editor.md D1): the row carries a
+		/// <see cref="LexicalEditRegionField.ControlFactory"/> built by the composer from the
+		/// claiming <c>IRegionEditorPlugin</c>; the view renders the factory's control in the value
+		/// column at the slice's real position, falling back to the unsupported rendering when the
+		/// factory is missing or fails.
+		/// </summary>
+		Custom
 	}
 
 	/// <summary>
@@ -129,9 +140,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			string hotlinksId = null,
 			int objectHvo = 0,
 			string ghostPrompt = null,
-			IReadOnlyList<RegionChoiceOption> items = null)
+			IReadOnlyList<RegionChoiceOption> items = null,
+			Func<Control> controlFactory = null,
+			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null)
 		{
 			Items = items ?? new List<RegionChoiceOption>();
+			ControlFactory = controlFactory;
+			SearchOptions = searchOptions;
 			GhostPrompt = ghostPrompt;
 			IsEditable = isEditable;
 			Indent = indent;
@@ -203,6 +218,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>The LCModel object this row is bound to (command-target context for menus).</summary>
 		public int ObjectHvo { get; }
+
+		/// <summary>
+		/// For a <see cref="RegionFieldKind.Custom"/> row (winforms-free-lexeme-editor.md D1): the
+		/// deferred control factory the claiming plugin supplied via the composer. The view invokes
+		/// it at render time and places the returned control in the value column; null (or a
+		/// failing factory) renders the unsupported row instead. Null for every other kind.
+		/// </summary>
+		public Func<Control> ControlFactory { get; }
+
+		/// <summary>
+		/// For a <see cref="RegionFieldKind.ReferenceVector"/> row whose targets are searched rather
+		/// than enumerated (winforms-free-lexeme-editor.md D3 — possibility lists enumerate, lexicons
+		/// search): a type-ahead search delegate the composer supplied (e.g. a headword-prefix search
+		/// over the entry repository). When non-null the add slot opens a search flyout instead of the
+		/// full <see cref="Options"/> list; selecting a result stages through
+		/// <see cref="IRegionEditContext.TryAddReferenceItem"/> with the result's key. Like
+		/// <see cref="ControlFactory"/>, a plain delegate keeps this layer LCModel-free.
+		/// </summary>
+		public Func<string, IReadOnlyList<RegionChoiceOption>> SearchOptions { get; }
 	}
 
 	/// <summary>Which legacy menu lane a right-click maps to (section 13).</summary>
