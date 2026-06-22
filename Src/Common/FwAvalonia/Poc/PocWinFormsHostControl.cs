@@ -122,11 +122,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Poc
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
-			Action<RegionMenuRequest> menuRequested = null)
+			Action<RegionMenuRequest> menuRequested = null,
+			Action<RegionLinkRequest> linkRequested = null)
 		{
 			if (region == null) throw new ArgumentNullException(nameof(region));
 			var view = new LexicalEditRegionView(region, editContext, writingSystemFocused,
-				getExpansionState, expansionChanged, menuRequested);
+				getExpansionState, expansionChanged, menuRequested, linkRequested);
 			view.EditCompleted += (s, e) => RegionEditCompleted?.Invoke(this, EventArgs.Empty);
 
 			// Focus continuity (14.4): re-shows replace the whole view, so carry the focused

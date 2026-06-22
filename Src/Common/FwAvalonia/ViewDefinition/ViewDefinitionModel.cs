@@ -282,6 +282,41 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	}
 
 	/// <summary>
+	/// A chooser jump link imported from the legacy <c>&lt;chooserInfo&gt;&lt;chooserLink&gt;</c>
+	/// element (B7, xml-retirement-blockers): the cross-tool "Edit the … list" link the legacy
+	/// chooser dialog shows (<c>ReallySimpleListChooser.InitializeExtras</c>,
+	/// ReallySimpleListChooser.cs:887-926). Attributes are preserved verbatim: <see cref="Type"/>
+	/// defaults to "goto" like the legacy reader; <see cref="Target"/> carries the rare
+	/// <c>target=</c> attribute ("TopPOS") that only the grammar-area "simple" link consumes.
+	/// </summary>
+	public sealed class ViewChooserLink
+	{
+		public ViewChooserLink(string type, string label, string tool, string target = null)
+		{
+			Type = string.IsNullOrEmpty(type) ? "goto" : type;
+			Label = label;
+			Tool = tool;
+			Target = target;
+		}
+
+		/// <summary>Legacy <c>type=</c> ("goto"/"dialog"/"simple"); defaults to "goto" like the legacy reader.</summary>
+		public string Type { get; }
+
+		/// <summary>Legacy <c>label=</c>, the link text (localized through the StringTable lane at compose time).</summary>
+		public string Label { get; }
+
+		/// <summary>Legacy <c>tool=</c>, the destination tool of the FwLinkArgs jump (e.g. publicationsEdit).</summary>
+		public string Tool { get; }
+
+		/// <summary>Legacy <c>target=</c> (rare; "TopPOS" in the grammar area). Null when absent.</summary>
+		public string Target { get; }
+
+		/// <summary>Deterministic summary used by <see cref="ViewDefinitionModel.ToSnapshot"/>.</summary>
+		public override string ToString()
+			=> $"{Type}:{Tool}:{Label}{(string.IsNullOrEmpty(Target) ? string.Empty : ":" + Target)}";
+	}
+
+	/// <summary>
 	/// An immutable typed view-definition node. This is the framework-neutral migration contract that
 	/// both the legacy WinForms adapter and the future Avalonia adapter consume instead of raw XML.
 	/// In the hybrid roadmap this is the typed node that the DataTree region's <c>SliceSpec</c> realizes.
@@ -317,7 +352,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string customEditorClass = null,
 			string customEditorAssembly = null,
 			string ghostInitMethod = null,
-			ViewCondition condition = null)
+			ViewCondition condition = null,
+			IReadOnlyList<ViewChooserLink> chooserLinks = null)
 		{
 			StableId = stableId;
 			Kind = kind;
@@ -348,6 +384,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			CustomEditorAssembly = customEditorAssembly;
 			GhostInitMethod = ghostInitMethod;
 			Condition = condition;
+			ChooserLinks = chooserLinks ?? (IReadOnlyList<ViewChooserLink>)Array.Empty<ViewChooserLink>();
 		}
 
 		/// <summary>Deterministic identity derived from the node's path (stable across realizations).</summary>
@@ -447,6 +484,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// which renders when no sibling condition passed). Evaluated per object at compose time.
 		/// </summary>
 		public ViewCondition Condition { get; }
+
+		/// <summary>
+		/// The chooser jump links from the slice's <c>&lt;chooserInfo&gt;</c> (B7), in document order
+		/// (legacy shows at most two). Empty for nodes without chooser metadata.
+		/// </summary>
+		public IReadOnlyList<ViewChooserLink> ChooserLinks { get; }
 	}
 
 	/// <summary>
@@ -531,6 +574,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// rides the snapshot — JSON round-trip equality fails if condition metadata is dropped.
 			if (node.Condition != null)
 				sb.Append($" | cond=[{node.Condition}]");
+			// B7: chooser links likewise ride the snapshot so a lossy round trip fails loudly.
+			if (node.ChooserLinks.Count > 0)
+				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
 			return sb.ToString();
 		}
 	}

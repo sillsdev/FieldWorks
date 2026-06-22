@@ -161,7 +161,12 @@ namespace FwAvaloniaTests
 					intMemberOf: "2,3,7",
 					lengthAtLeast: 1,
 					lengthAtMost: 4,
-					guidEquals: "d7f713da-e8cf-11d3-9764-00c04f186933"));
+					guidEquals: "d7f713da-e8cf-11d3-9764-00c04f186933"),
+				chooserLinks: new List<ViewChooserLink>
+				{
+					new ViewChooserLink("goto", "Edit the Publications list", "publicationsEdit"),
+					new ViewChooserLink("simple", "Add a slot", "MakeInflAffixSlotChooserCommand", "TopPOS")
+				});
 			var model = new ViewDefinitionModel("LexEntry", "Normal", "detail",
 				new List<ViewNode> { node }, new List<ViewDiagnostic>());
 
@@ -212,6 +217,15 @@ namespace FwAvaloniaTests
 				Assert.That(r.Condition.LengthAtMost, Is.EqualTo(4), "Condition.LengthAtMost");
 				Assert.That(r.Condition.GuidEquals, Is.EqualTo("d7f713da-e8cf-11d3-9764-00c04f186933"),
 					"Condition.GuidEquals");
+				// B7: the chooser jump-link block (label/tool/type/target) survives, including the
+				// "goto" default-type omission.
+				Assert.That(r.ChooserLinks, Has.Count.EqualTo(2), nameof(r.ChooserLinks));
+				Assert.That(r.ChooserLinks[0].Type, Is.EqualTo("goto"), "ChooserLinks[0].Type");
+				Assert.That(r.ChooserLinks[0].Label, Is.EqualTo("Edit the Publications list"), "ChooserLinks[0].Label");
+				Assert.That(r.ChooserLinks[0].Tool, Is.EqualTo("publicationsEdit"), "ChooserLinks[0].Tool");
+				Assert.That(r.ChooserLinks[0].Target, Is.Null, "ChooserLinks[0].Target");
+				Assert.That(r.ChooserLinks[1].Type, Is.EqualTo("simple"), "ChooserLinks[1].Type");
+				Assert.That(r.ChooserLinks[1].Target, Is.EqualTo("TopPOS"), "ChooserLinks[1].Target");
 			});
 		}
 	}

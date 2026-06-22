@@ -16,9 +16,11 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// winforms-free-lexeme-editor.md D4 (wave 4) — the dialog-launcher row control: the field's
-	/// current value as read-only text plus the legacy "..." launcher button. The button invokes
-	/// the injected callback (the host's ILegacyDialogLauncher seam on the xWorks side); without a
-	/// callback the button renders disabled with an explanatory tooltip, and the value still shows.
+	/// current value as read-only text plus the launcher button, drawn as the shared hover-revealed
+	/// settings gear (it replaced the legacy always-visible "..."). The button invokes the injected
+	/// callback (the host's ILegacyDialogLauncher seam on the xWorks side); without a callback the
+	/// button renders disabled with an explanatory tooltip, and the value still shows. Hover-reveal
+	/// behavior itself is pinned in <see cref="HoverRevealTests"/>.
 	/// </summary>
 	[TestFixture]
 	public class DialogLauncherFieldTests
@@ -35,7 +37,7 @@ namespace FwAvaloniaTests
 			=> row.GetVisualDescendants().OfType<Button>().Single();
 
 		[AvaloniaTest]
-		public void RendersTheValueText_AndTheEllipsisButton()
+		public void RendersTheValueText_AndTheGearLauncherButton()
 		{
 			var (row, _) = Show(new FwDialogLauncherField("[NOUN: common]", "Inflection Features", () => { }));
 
@@ -45,8 +47,10 @@ namespace FwAvaloniaTests
 			Assert.That(row.Value, Is.EqualTo("[NOUN: common]"));
 
 			var button = LauncherButton(row);
-			Assert.That(button.Content, Is.EqualTo("..."), "the legacy launcher ellipsis");
+			Assert.That(button.Content, Is.InstanceOf<Avalonia.Controls.Shapes.Path>(),
+				"the launcher draws the shared settings gear (the legacy '...' is gone)");
 			Assert.That(button.IsEnabled, Is.True);
+			Assert.That(button.IsVisible, Is.True, "hidden by opacity on idle, never collapsed");
 		}
 
 		[AvaloniaTest]

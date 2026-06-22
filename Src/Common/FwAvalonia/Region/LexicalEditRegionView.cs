@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly Func<string, bool?> _getExpansionState;
 		private readonly Action<string, bool> _expansionChanged;
 		private readonly Action<RegionMenuRequest> _menuRequested;
+		private readonly Action<RegionLinkRequest> _linkRequested;
 
 		/// <summary>
 		/// Optional expansion-state hooks (11.8): <paramref name="getExpansionState"/> supplies the
@@ -49,7 +50,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
 			Action<string, bool> expansionChanged = null,
-			Action<RegionMenuRequest> menuRequested = null)
+			Action<RegionMenuRequest> menuRequested = null,
+			Action<RegionLinkRequest> linkRequested = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
 			_editContext = editContext;
@@ -57,6 +59,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_getExpansionState = getExpansionState;
 			_expansionChanged = expansionChanged;
 			_menuRequested = menuRequested;
+			_linkRequested = linkRequested;
 
 			Name = "LexicalEditRegionView";
 			AutomationProperties.SetAutomationId(this, "LexicalEditRegionView");
@@ -306,6 +309,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Grid.SetColumn(editor, 2);
 			grid.Children.Add(editor);
 			_rowControls[row].Add(editor);
+
+			// Hover-reveal chrome: the WHOLE row is the hover surface for an editor's secondary
+			// affordances (chooser gear, vector bars/launcher) — hovering the label reveals too.
+			if (editor is IHoverAffordanceProvider provider && provider.HoverAffordances.Count > 0)
+				HoverReveal.Attach(new Control[] { labelBlock, editor }, provider.HoverAffordances);
 		}
 
 		// Section 13: right-click on a label/header surfaces the legacy slice menu (or the section's
@@ -387,7 +395,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				case RegionFieldKind.Custom:
 					return BuildCustom(field, automationId);
 				case RegionFieldKind.ReferenceVector:
-					return new FwReferenceVectorField(field, automationId, _editContext);
+					// Reference add/remove gestures commit immediately (legacy chooser-dialog
+					// behavior): the staged session would otherwise sit open — LCModel broadcasts
+					// PropChanged only at EndUndoTask and the row's Items are a compose-time
+					// snapshot, so the user would see no change. The gesture-completed callback
+					// runs the SAME validation-gated OnSave the focus-loss autosave uses, whose
+					// EditCompleted re-show rebuilds the row from domain truth.
+					return new FwReferenceVectorField(field, automationId, _editContext,
+						_editContext == null ? (Action)null : OnSave, _linkRequested);
 				case RegionFieldKind.Chooser:
 					return BuildChooser(field, automationId);
 				case RegionFieldKind.Boolean:
@@ -477,7 +492,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			=> new FwMultiWsTextField(field, automationId, _editContext, _writingSystemFocused, _menuRequested);
 
 		private Control BuildChooser(LexicalEditRegionField field, string automationId)
-			=> new FwChooserField(field, automationId, _editContext);
+			=> new FwChooserField(field, automationId, _editContext, _linkRequested);
 
 		// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin's own
 		// Avalonia control in the value column, at the slice's real position. Guarded lane: a

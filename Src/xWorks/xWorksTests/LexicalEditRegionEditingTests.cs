@@ -333,6 +333,26 @@ namespace SIL.FieldWorks.XWorks
 				"the senses sequence renders a section header");
 		}
 
+		// GAP 2: the legacy Lexeme Form slice's button is its slice TREE-NODE MENU — MoForm-Detail-
+		// AsLexemeForm (MorphologyParts.xml:219-221) binds menu="mnuDataTree-LexemeForm"
+		// (DataTreeInclude.xml:336-341: Show in Concordance / Swap with Allomorph / Convert to
+		// Affix Process/Allomorph), not a chooser launcher. The composed Lexeme Form text row must
+		// carry that binding so the view can draw its hover gear and the host can show the SAME
+		// xCore menu — data-driven from `menu=`, not hardcoded to "LexemeForm".
+		[Test]
+		public void Compose_LexemeFormRow_CarriesItsLegacySliceMenuBinding()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var lexemeForm = composed.Model.Fields.Single(f => f.Field == "Form"
+				&& f.Kind == RegionFieldKind.Text && f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
+
+			Assert.That(lexemeForm.Label, Is.EqualTo("Lexeme Form"));
+			Assert.That(lexemeForm.MenuId, Is.EqualTo("mnuDataTree-LexemeForm"),
+				"the layout's slice menu rides the row — it feeds the hover gear AND label right-click");
+			Assert.That(lexemeForm.ContextMenuId, Is.EqualTo("mnuDataTree-LexemeFormContext"),
+				"the in-string context menu binding survives alongside");
+		}
+
 		// Review finding A: compiled definitions are memoized per (class, layout) for the lifetime
 		// of the loaded sources — a repeat compose serves every layout from the memo instead of
 		// rebuilding and re-fingerprinting the ~300KB parts snapshot per object per compose.

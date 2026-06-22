@@ -96,9 +96,35 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			AddIfPresent(o, "ghostInitMethod", node.GhostInitMethod);
 			if (node.Condition != null)
 				o["condition"] = WriteCondition(node.Condition);
+			// B7: the chooser jump-link block, reserved in the canonical schema (xml-retirement-blockers
+			// cross-cutting deadline) — label/tool/type/target exactly as the legacy chooserLink carries.
+			if (node.ChooserLinks.Count > 0)
+				o["chooserLinks"] = new JArray(node.ChooserLinks.Select(WriteChooserLink));
 			if (node.Children.Count > 0)
 				o["children"] = new JArray(node.Children.Select(WriteNode));
 			return o;
+		}
+
+		private static JObject WriteChooserLink(ViewChooserLink link)
+		{
+			var o = new JObject();
+			// "goto" is the legacy default; anything else must be explicit.
+			if (!string.Equals(link.Type, "goto", StringComparison.Ordinal))
+				o["type"] = link.Type;
+			AddIfPresent(o, "label", link.Label);
+			AddIfPresent(o, "tool", link.Tool);
+			AddIfPresent(o, "target", link.Target);
+			return o;
+		}
+
+		private static ViewChooserLink ReadChooserLink(JToken token)
+		{
+			var o = (JObject)token;
+			return new ViewChooserLink(
+				(string)o["type"],
+				(string)o["label"],
+				(string)o["tool"],
+				(string)o["target"]);
 		}
 
 		// B3: the structured conditional-display metadata (legacy <if>/<ifnot>/<where>), reserved in
@@ -183,7 +209,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				(string)o["ghostClass"],
 				(string)o["ghostLabel"],
 				ghostInitMethod: (string)o["ghostInitMethod"],
-				condition: ReadCondition((JObject)o["condition"]));
+				condition: ReadCondition((JObject)o["condition"]),
+				chooserLinks: ((JArray)o["chooserLinks"])?.Select(ReadChooserLink).ToList());
 		}
 
 		private static T ParseEnum<T>(JObject o, string name, T fallback) where T : struct

@@ -223,9 +223,18 @@ change's surfaces.
   possibility vectors compose as editable `ReferenceVector` rows (add/remove through the
   fenced session, duplicate/garbage/unknown keys rejected without opening it), covered by
   `FullEntryRegionReferenceChooserTests`. `BuildPossibilityOptions(flat:)` implements the
-  FlatList guicontrol semantics; REMAINING: import `chooserInfo`/`chooserLink` onto the typed
-  node and thread the flat/title/link specs to the composer call sites (the composer currently
-  passes `flat: false`).
+  FlatList guicontrol semantics.
+- **Status (jump links landed, 2026-06-11):** `chooserLink` now imports onto the typed node
+  (`ViewNode.ChooserLinks`: type/label/tool/target, the legacy reader's exact vocabulary;
+  canonical JSON reserves the `chooserLinks` block, closing B7's share of the cross-cutting
+  schema deadline) and threads through the composer onto chooser/reference-vector rows
+  (`LexicalEditRegionField.ChooserLinks`, "goto" only — all 95 shipped links are goto); the
+  gear flyouts render the links and `RecordEditView` dispatches the legacy jump (mediator
+  `FollowLink`, `FwLinkArgs(tool, Guid.Empty)` exactly like
+  `ReallySimpleListChooser.HandleAnyJump`). REMAINING: import `chooserInfo`'s OTHER facets
+  (title/text/textparam/flidTextParam/guicontrol — still reported as `slice-content-dropped`)
+  and thread the flat/title specs to the composer call sites (the composer currently passes
+  `flat: false`).
 
 ### B8. TreeView-heavy views
 
@@ -370,10 +379,11 @@ B2 (ghost), B3 (conditionals), and B7 (chooser metadata) share one deadline: the
 JSON schema must **reserve their representation before Layer-1 shipped-definition generation
 freezes** (`canonical-view-definition-design.md` §5 open question 4), or the generated files
 take an early breaking `formatVersion` bump. This is a design-ordering blocker for 9.2, ahead
-of any runtime work. **Status (2026-06-11): B2 and B3 representations are now reserved and
-shipping** — ghost metadata (`ghost`/`ghostWs`/`ghostClass`/`ghostLabel`/`ghostInitMethod`)
-and the `condition` object both serialize/deserialize in `ViewDefinitionJsonSerializer` with
-round-trip coverage; only B7's chooser-metadata block remains to reserve.
+of any runtime work. **Status (2026-06-11): B2, B3, and B7's link block are now reserved and
+shipping** — ghost metadata (`ghost`/`ghostWs`/`ghostClass`/`ghostLabel`/`ghostInitMethod`),
+the `condition` object, and the `chooserLinks` array all serialize/deserialize in
+`ViewDefinitionJsonSerializer` with round-trip coverage; chooserInfo's non-link facets
+(title/text/guicontrol) are the only chooser metadata still to reserve.
 
 ## The gate, restated
 
