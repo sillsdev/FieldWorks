@@ -317,6 +317,33 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	}
 
 	/// <summary>
+	/// The option list of a legacy <c>enumComboBox</c> slice, imported from its
+	/// <c>&lt;deParams&gt;&lt;stringList&gt;</c> element (review task 2: the importer previously dropped
+	/// this, so the enum row could only render the raw stored integer read-only). The enum's stored
+	/// integer is the 0-based INDEX into <see cref="Ids"/> (legacy <c>EnumComboSlice</c> maps the combo's
+	/// <c>SelectedIndex</c> straight to the property). The labels themselves resolve through the legacy
+	/// StringTable lane at compose time (<c>StringTable.GetStringsFromStringListNode</c> over
+	/// <see cref="Ids"/> within <see cref="Group"/>), so this carrier stays English-free.
+	/// </summary>
+	public sealed class ViewStringList
+	{
+		public ViewStringList(IReadOnlyList<string> ids, string group)
+		{
+			Ids = ids ?? Array.Empty<string>();
+			Group = group;
+		}
+
+		/// <summary>The string ids in option order; the stored enum int indexes this list.</summary>
+		public IReadOnlyList<string> Ids { get; }
+
+		/// <summary>The optional StringTable group path the ids resolve within (legacy <c>group=</c>).</summary>
+		public string Group { get; }
+
+		public override string ToString()
+			=> $"{(string.IsNullOrEmpty(Group) ? string.Empty : Group + ":")}{string.Join(",", Ids)}";
+	}
+
+	/// <summary>
 	/// An immutable typed view-definition node. This is the framework-neutral migration contract that
 	/// both the legacy WinForms adapter and the future Avalonia adapter consume instead of raw XML.
 	/// In the hybrid roadmap this is the typed node that the DataTree region's <c>SliceSpec</c> realizes.
@@ -354,8 +381,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string customEditorAssembly = null,
 			string ghostInitMethod = null,
 			ViewCondition condition = null,
-			IReadOnlyList<ViewChooserLink> chooserLinks = null)
+			IReadOnlyList<ViewChooserLink> chooserLinks = null,
+			ViewStringList enumStringList = null)
 		{
+			EnumStringList = enumStringList;
 			StableId = stableId;
 			Kind = kind;
 			Label = label;
@@ -498,6 +527,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// (legacy shows at most two). Empty for nodes without chooser metadata.
 		/// </summary>
 		public IReadOnlyList<ViewChooserLink> ChooserLinks { get; }
+
+		/// <summary>
+		/// For a legacy <c>enumComboBox</c> slice, the option list imported from its
+		/// <c>&lt;deParams&gt;&lt;stringList&gt;</c> (review task 2). Null for every other node. The
+		/// stored enum integer indexes <see cref="ViewStringList.Ids"/>.
+		/// </summary>
+		public ViewStringList EnumStringList { get; }
 	}
 
 	/// <summary>
@@ -585,6 +621,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// B7: chooser links likewise ride the snapshot so a lossy round trip fails loudly.
 			if (node.ChooserLinks.Count > 0)
 				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
+			// NOTE: EnumStringList (review task 2) is deliberately NOT in the snapshot. The canonical
+			// JSON serializer does not yet persist it, so adding it here would break the lossless
+			// JSON round-trip parity test. The importer carrier is covered directly by
+			// RegionEditorParityTests instead. Add it here in the same change that teaches
+			// ViewDefinitionJsonSerializer to round-trip it.
 			if (node.ForVariant)
 				sb.Append(" | forVariant=1");
 			return sb.ToString();

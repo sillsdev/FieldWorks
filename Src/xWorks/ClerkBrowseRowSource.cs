@@ -3,7 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -41,13 +45,24 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="BrowseColumnEditSpec"/>) — so edits route through the proven fenced-LCModel path and
 	/// unsupported/unsafe targets stay read-only rather than risking a wrong-object write.
 	/// </summary>
-	internal sealed class ClerkBrowseRowSource : IBrowseRowSource, IBrowseEditSource, IBrowseSortSource,
-		IBrowseFilterPresetSource, IBrowseRichCellSource
+	internal sealed class ClerkBrowseRowSource : IBrowseRowSource, IBrowseEditSource, IBrowseMultiSortSource,
+		IBrowseFilterPresetSource, IBrowseRichCellSource, IBrowseBulkEditSource, IBrowseBulkCopySource,
+		IBrowseBulkClearSource, IBrowseBulkDeleteSource, IBrowseBulkReplaceSource, IBrowseBulkTransduceSource,
+		IBrowseColumnMetadataSource, IBrowseClickCopySource
 	{
 		private readonly RecordClerk _clerk;
 		private readonly IBrowseColumnSource _browseViewer;
 		private readonly LcmCache _cache;
 		private ClerkBrowseEditContext _editContext;
+
+		// Bulk-edit preview overlay (Phase 1 List Choice): the managed in-memory replacement for the legacy
+		// fake-flid XMLViewsDataCache. Keyed by (object hvo, column) — NOT row index — so a previewed value
+		// follows its object across a re-sort/reload (same stable-identity contract the checked set uses).
+		// GetCellValues/GetRichCell consult this overlay FIRST (overlay-over-finder), so a previewed cell
+		// displays the chosen option's display name without any model mutation; ClearBulkEditPreview empties
+		// it. PreviewBulkEdit stores the display name; ApplyBulkEdit applies the option KEY via the edit
+		// context and commits ONCE.
+		private readonly Dictionary<(int hvo, int col), string> _bulkPreview = new Dictionary<(int, int), string>();
 
 		public ClerkBrowseRowSource(RecordClerk clerk, IBrowseColumnSource browseViewer, LcmCache cache)
 		{
@@ -68,7 +83,26 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (rowIndex < 0 || rowIndex >= RowCount)
 				return Array.Empty<string>();
-			return RawCells(ClerkIndex(rowIndex));
+			var cells = RawCells(ClerkIndex(rowIndex));
+			// Overlay-over-finder: if a bulk-edit preview is pending for this row's object, show the
+			// previewed display value in the affected column(s) instead of the model's current text — no
+			// model mutation, exactly the legacy fake-flid preview behavior. Only allocates a copy when an
+			// overlay actually applies to this row, so the common (no-preview) path stays allocation-free.
+			if (_bulkPreview.Count == 0)
+				return cells;
+			var hvo = HvoAt(rowIndex);
+			if (hvo == 0)
+				return cells;
+			List<string> overlaid = null;
+			for (var col = 0; col < cells.Count; col++)
+			{
+				if (!_bulkPreview.TryGetValue((hvo, col), out var preview))
+					continue;
+				if (overlaid == null)
+					overlaid = new List<string>(cells);
+				overlaid[col] = preview;
+			}
+			return overlaid ?? cells;
 		}
 
 		private IReadOnlyList<string> RawCells(int clerkIndex)
@@ -98,6 +132,11 @@ namespace SIL.FieldWorks.XWorks
 		public IReadOnlyList<RegionWsValue> GetRichCell(int rowIndex, int columnIndex)
 		{
 			if (rowIndex < 0 || rowIndex >= RowCount || columnIndex < 0 || columnIndex >= _browseViewer.ColumnCount)
+				return null;
+			// A previewed cell falls back to the plain-text path (null here) so the owned renderer shows the
+			// overlay value GetCellValues now returns — the rich finder would otherwise re-read the unchanged
+			// model and the preview would not appear in a rich-rendered column.
+			if (_bulkPreview.Count > 0 && _bulkPreview.ContainsKey((HvoAt(rowIndex), columnIndex)))
 				return null;
 			var item = _clerk.SortItemProvider.SortItemAt(ClerkIndex(rowIndex));
 			var tss = _browseViewer.GetRowCellTsString(item, columnIndex);
@@ -205,12 +244,163 @@ namespace SIL.FieldWorks.XWorks
 
 		public void SetFilterPreset(int columnIndex, BrowseFilterPreset preset)
 		{
+			// Map each preset to the SAME legacy matcher class FilterBar.MakeCombo uses (built here as a clerk
+			// RecordFilter via the column source's MakeColumnFilter), so the owned filter row narrows the real
+			// list identically. The Yes/No/Zero presets resolve to an exact match on the legacy localized
+			// tokens INSIDE MakeColumnFilter (which owns XMLViewsStrings); the GreaterThan presets are inclusive
+			// integer ranges ("1,maxint" / "2,maxint"), matching FilterBar's RangeIntMatcher(1,..)/(2,..).
 			RecordFilter filter = null;
-			if (preset == BrowseFilterPreset.Blanks)
-				filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.Blank, null);
-			else if (preset == BrowseFilterPreset.NonBlanks)
-				filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.NonBlank, null);
+			switch (preset)
+			{
+				case BrowseFilterPreset.Blanks:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.Blank, null);
+					break;
+				case BrowseFilterPreset.NonBlanks:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.NonBlank, null);
+					break;
+				case BrowseFilterPreset.MoreThanOneLine:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.MoreThanOneLine, null);
+					break;
+				case BrowseFilterPreset.ExactlyOneLine:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.ExactlyOneLine, null);
+					break;
+				case BrowseFilterPreset.Yes:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.Yes, null);
+					break;
+				case BrowseFilterPreset.No:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.No, null);
+					break;
+				case BrowseFilterPreset.Zero:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.Zero, null);
+					break;
+				case BrowseFilterPreset.GreaterThanZero:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.IntRange,
+						"1," + int.MaxValue.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					break;
+				case BrowseFilterPreset.GreaterThanOne:
+					filter = _browseViewer.MakeColumnFilter(columnIndex, BrowseColumnFilterKind.IntRange,
+						"2," + int.MaxValue.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					break;
+			}
 			ApplyColumnFilter(columnIndex, filter);
+		}
+
+		public void SetFilterPattern(int columnIndex, BrowseFilterForSpec spec)
+		{
+			// "Filter For…" (FilterBar FindComboItem/SimpleMatchDlg parity): build the SAME managed matcher the
+			// legacy dialog produces for the chosen match style (via MakePatternColumnFilter) so the owned
+			// filter row narrows the real clerk list identically. A null/empty pattern clears the column filter.
+			var filter = string.IsNullOrEmpty(spec?.MatchText)
+				? null
+				: _browseViewer.MakePatternColumnFilter(columnIndex, spec.MatchText, ToMatchType(spec.MatchType), spec.MatchCase);
+			ApplyColumnFilter(columnIndex, filter);
+		}
+
+		public void SetFilterStringListValue(int columnIndex, string value, bool exclude)
+		{
+			// stringList enumerated-value preset (FilterBar parity): an exact whole-cell match on the value,
+			// inverted ("Exclude X") when requested — the SAME ExactMatcher/InvertMatcher pair FilterBar uses.
+			var filter = _browseViewer.MakeStringListColumnFilter(columnIndex, value, exclude);
+			ApplyColumnFilter(columnIndex, filter);
+		}
+
+		public void SetFilterDate(int columnIndex, BrowseDateFilterSpec spec)
+		{
+			// "Restrict Date…" (FilterBar RestrictDateComboItem/SimpleDateMatchDlg parity): build the SAME legacy
+			// DateTimeMatcher the dialog produces for the chosen relation + date(s) (via MakeDateColumnFilter) so
+			// the owned filter row narrows the real clerk list identically. A null spec clears the column filter.
+			var filter = spec == null
+				? null
+				: _browseViewer.MakeDateColumnFilter(columnIndex, ToDateMatchKind(spec.MatchType),
+					spec.Start, spec.End, spec.HandleGenDate);
+			ApplyColumnFilter(columnIndex, filter);
+		}
+
+		public void SetFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys)
+		{
+			// "Choose…" (FilterBar ListChoiceComboItem parity): build the SAME legacy ListChoiceFilter
+			// (ColumnSpecFilter) the chooser produces from the chosen possibility-item keys (via
+			// MakeListChoiceColumnFilter) so the owned filter row narrows the real clerk list identically. An
+			// empty/null selection clears the column filter.
+			var filter = chosenKeys == null || chosenKeys.Count == 0
+				? null
+				: _browseViewer.MakeListChoiceColumnFilter(columnIndex, chosenKeys);
+			ApplyColumnFilter(columnIndex, filter);
+		}
+
+		// Maps the FwAvalonia-layer date relation to the XMLViews date-matcher selector (1:1).
+		private static BrowseDateMatchKind ToDateMatchKind(BrowseDateMatch match)
+		{
+			switch (match)
+			{
+				case BrowseDateMatch.NotOn:
+					return BrowseDateMatchKind.NotOn;
+				case BrowseDateMatch.OnOrBefore:
+					return BrowseDateMatchKind.OnOrBefore;
+				case BrowseDateMatch.OnOrAfter:
+					return BrowseDateMatchKind.OnOrAfter;
+				case BrowseDateMatch.Between:
+					return BrowseDateMatchKind.Between;
+				default:
+					return BrowseDateMatchKind.On;
+			}
+		}
+
+		// Maps the FwAvalonia-layer match style to the XMLViews matcher selector (1:1).
+		private static BrowsePatternMatchType ToMatchType(BrowsePatternMatch match)
+		{
+			switch (match)
+			{
+				case BrowsePatternMatch.AtStart:
+					return BrowsePatternMatchType.AtStart;
+				case BrowsePatternMatch.AtEnd:
+					return BrowsePatternMatchType.AtEnd;
+				case BrowsePatternMatch.WholeItem:
+					return BrowsePatternMatchType.WholeItem;
+				case BrowsePatternMatch.Regex:
+					return BrowsePatternMatchType.Regex;
+				default:
+					return BrowsePatternMatchType.Anywhere;
+			}
+		}
+
+		// ----- IBrowseColumnMetadataSource: let the owned header/filter UI read raw column-spec attributes -----
+
+		/// <summary>
+		/// The raw value of a column-spec attribute (e.g. <c>cansortbylength</c>, <c>multipara</c>,
+		/// <c>sortType</c>), delegated to the column source so the Avalonia header/filter UI gates its
+		/// type-specific sort toggles and presets on the SAME attributes the legacy surface does.
+		/// </summary>
+		public string GetColumnSpecAttribute(int columnIndex, string attrName)
+		{
+			return _browseViewer.GetColumnSpecAttribute(columnIndex, attrName);
+		}
+
+		/// <summary>
+		/// The enumerated display values of a <c>sortType="stringList"</c> column (read off the column spec the
+		/// SAME way the legacy FilterBar reads them), or null when not a stringList column — so the owned filter
+		/// flyout can offer one exact-match preset per value (plus "Exclude X" variants when more than two).
+		/// </summary>
+		public string[] GetColumnStringList(int columnIndex)
+		{
+			return _browseViewer.GetColumnStringList(columnIndex);
+		}
+
+		/// <summary>
+		/// The possibility-list items of a chooser (<c>bulkEdit</c>/<c>chooserFilter</c>) column as LCModel-free
+		/// <see cref="RegionChoiceOption"/>s (key = possibility guid, name = display, depth = nesting), or null
+		/// when the column is not a chooser column — so the owned filter flyout can gate the "Choose…" entry and
+		/// the host can build the chooser items from them.
+		/// </summary>
+		public IReadOnlyList<RegionChoiceOption> GetColumnChooserList(int columnIndex)
+		{
+			var items = _browseViewer.GetColumnChooserList(columnIndex);
+			if (items == null)
+				return null;
+			var options = new List<RegionChoiceOption>(items.Count);
+			foreach (var item in items)
+				options.Add(new RegionChoiceOption(item.Key, item.Label, item.Depth));
+			return options;
 		}
 
 		// Applies (or clears, when null) one column's clerk filter as a delta against the prior one for
@@ -227,6 +417,32 @@ namespace SIL.FieldWorks.XWorks
 			_clerk.OnChangeFilter(new FilterChangeEventArgs(newFilter, previous));
 		}
 
+		/// <summary>
+		/// Configure-Columns apply (P1 step 6): after the shown column set/order changed, any per-column filter
+		/// or sort built against the OLD column INDEXES would now misapply to a DIFFERENT field (the
+		/// _columnClerkFilters / clerk sorter / bulk preview are index-keyed, and the indexes just shifted). The
+		/// safe P1 resolution is to CLEAR them rather than risk a wrong-column write: drop each active column
+		/// filter from the clerk's AndFilter as a precise delta, discard the bulk-edit preview overlay, and reset
+		/// the clerk to its default sort. The clerk reloads and republishes, refreshing the table. (Re-resolving
+		/// a surviving filter/sort by column KEY is the P2 refinement.)
+		/// </summary>
+		public bool ResetColumnState()
+		{
+			_bulkPreview.Clear();
+			if (_columnClerkFilters.Count == 0)
+				return false;
+			// Remove every active per-column filter as a delta so any non-column (default/link) filter is kept.
+			// This is the load-bearing safety: a contains/blank filter built against the OLD Gloss-column index
+			// would otherwise narrow rows by whatever field now sits at that index after the reorder.
+			foreach (var entry in _columnClerkFilters.ToList())
+				_clerk.OnChangeFilter(new FilterChangeEventArgs(null, entry.Value));
+			_columnClerkFilters.Clear();
+			return true;
+		}
+
+		/// <summary>Test seam: the count of per-column clerk filters currently tracked at this seam.</summary>
+		internal int ActiveColumnFilterCount => _columnClerkFilters.Count;
+
 		// ----- IBrowseSortSource (rendering cutover F1): drive the clerk sorter DIRECTLY -----
 
 		// Build the column's managed sorter and apply it through the clerk (real, persisted sort that
@@ -240,6 +456,43 @@ namespace SIL.FieldWorks.XWorks
 			if (sorter == null)
 				return;
 			_clerk.OnSorterChanged(sorter, _browseViewer.GetColumnName(columnIndex), isDefaultSort: false);
+		}
+
+		// ----- IBrowseMultiSortSource (Task 2: multi-column sort through product) -----
+
+		// Build the clerk's COMBINED sorter from the priority-ordered key list and apply it through the clerk,
+		// matching the legacy BrowseViewer Shift+click path: a single key sorts by that column's finder; two
+		// or more keys are wrapped in an AndSorter (primary first, then each subsequent column as a tie-break),
+		// the same composite type the legacy header builds (BrowseViewer.SortByColumn / AreSortersCompatible).
+		// Keys whose column has no sortable finder (no key to sort by) are skipped; if none survive, no-op so
+		// the current sort is left untouched. The clerk reload republishes RestoreScrollPosition, refreshing
+		// the owned table — the same single-rebuild authority the single-column Sort relies on.
+		public void Sort(IReadOnlyList<BrowseSortKey> keys)
+		{
+			if (keys == null || keys.Count == 0)
+				return;
+
+			var sorters = new ArrayList();
+			string primaryColName = null;
+			foreach (var key in keys)
+			{
+				// Carry the per-key legacy header toggles (Sort From End / Sort By Length) into the sorter so the
+				// owned header's "Sort From End"/"Sort By Length" reorder identically to the WinForms header.
+				var sorter = _browseViewer.MakeColumnSorter(key.Column, key.Ascending, key.SortedFromEnd, key.SortedByLength);
+				if (sorter == null)
+					continue; // column has no sortable finder — nothing to add for this key
+				sorters.Add(sorter);
+				if (primaryColName == null)
+					primaryColName = _browseViewer.GetColumnName(key.Column);
+			}
+
+			if (sorters.Count == 0)
+				return;
+
+			RecordSorter combined = sorters.Count == 1
+				? (RecordSorter)sorters[0]
+				: new AndSorter(sorters);
+			_clerk.OnSorterChanged(combined, primaryColName, isDefaultSort: false);
 		}
 
 		// ----- IBrowseEditSource (6.x) -----
@@ -296,6 +549,998 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_browseViewer.GetColumnEditAttributes(columnIndex, out var field, out var ws, out var transduce);
 			return BrowseColumnEditSpec.FromColumnAttributes(field, ws, transduce);
+		}
+
+		/// <summary>
+		/// The columns eligible as a bulk List-Choice target (Phase 1): editable columns whose write target
+		/// is the unambiguous, entry-anchored possibility set by an option key
+		/// (<see cref="BrowseColumnEditSpec.IsListChoiceTarget"/> — today Morph Type). A column whose write
+		/// target is ambiguous/multi-sense is excluded (it is never a supported edit field), so the bar can
+		/// never offer a target that would risk a wrong-object bulk write. Returns each column's index and
+		/// display name; the product bar drives <see cref="PreviewBulkEdit"/>/<see cref="ApplyBulkEdit"/>.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> ListChoiceTargets()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsListChoiceTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// The selectable possibility options for a bulk List-Choice target column (key = possibility guid,
+		/// name = display name), or empty when the column is not a list-choice target. Sourced from the
+		/// project's Morph Types list (the same candidate set the detail-pane chooser offers). The product
+		/// bar binds these into its <see cref="SIL.FieldWorks.Common.FwAvalonia.Region.FwOptionPicker"/>.
+		/// </summary>
+		public IReadOnlyList<RegionChoiceOption> ListChoiceOptions(int columnIndex)
+		{
+			if (columnIndex < 0 || columnIndex >= _browseViewer.ColumnCount
+				|| !EditSpec(columnIndex).IsListChoiceTarget)
+				return Array.Empty<RegionChoiceOption>();
+			var options = new List<RegionChoiceOption>();
+			var morphTypes = _cache.LangProject.LexDbOA?.MorphTypesOA;
+			if (morphTypes == null)
+				return options;
+			foreach (var possibility in morphTypes.ReallyReallyAllPossibilities
+				.OfType<IMoMorphType>()
+				.OrderBy(mt => mt.Name.BestAnalysisAlternative?.Text, StringComparer.Ordinal))
+			{
+				options.Add(new RegionChoiceOption(possibility.Guid.ToString(),
+					possibility.Name.BestAnalysisAlternative?.Text ?? possibility.Guid.ToString()));
+			}
+			return options;
+		}
+
+		// ----- IBrowseBulkEditSource (3c, Phase 1 List Choice) -----
+
+		// Stages an in-memory preview of the chosen option's DISPLAY NAME into the given column for the
+		// given rows, keyed by each row's stable object hvo (so it survives a re-sort/reload). No model
+		// mutation — GetCellValues/GetRichCell consult the overlay so the previewed text shows like the
+		// legacy fake-flid preview. The view refreshes after this call to realize the overlay.
+		public void PreviewBulkEdit(int columnIndex, IReadOnlyList<int> rowIndexes, string value)
+		{
+			if (rowIndexes == null || !EditSpec(columnIndex).IsListChoiceTarget)
+				return;
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo != 0)
+					_bulkPreview[(hvo, columnIndex)] = value ?? string.Empty;
+			}
+		}
+
+		// Discards every pending preview (the legacy "clear preview" / overlay reset).
+		public void ClearBulkEditPreview() => _bulkPreview.Clear();
+
+		// Commits the bulk edit across the given rows as ONE undoable step: open the edit context's batch
+		// fence, apply the option KEY to each row's list-choice field through the shared context (the same
+		// proven fenced-LCModel write path the detail pane's chooser uses), then end the batch once. value is
+		// the option KEY (a possibility guid) — the preview overlay holds the display NAME, but apply writes
+		// the key. Per-row writes the context rejects (an invalid key, a class-conversion guard) are skipped;
+		// the batch still closes as one step. A throwing write rolls the whole batch back.
+		public void ApplyBulkEdit(int columnIndex, IReadOnlyList<int> rowIndexes, string value, IRegionEditContext context)
+		{
+			var editSpec = EditSpec(columnIndex);
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null || !editSpec.IsListChoiceTarget)
+				return;
+
+			// The product context is the batch-fenced ClerkBrowseEditContext; a fake test context need not
+			// support batching — fall back to a single Commit so the parity gate (CommitCount==1) still holds.
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var rowIndex in rowIndexes)
+				{
+					var field = BuildListChoiceField(rowIndex, columnIndex, editSpec);
+					if (field != null)
+						context.TrySetOption(field, value);
+				}
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		// ----- Phase 2 bulk edit (Bulk Copy: source column -> target column) -----
+		//
+		// Bulk Copy does NOT widen the generic IBrowseBulkEditSource contract (which carries a single value):
+		// preview/apply here need (srcCol, targetCol, mode) so the bar calls these directly through the host
+		// (RecordBrowseView), NOT through LexicalBrowseView's IBrowseBulkEditSource. Both REUSE the Phase-1
+		// machinery: PreviewBulkCopy writes the COMPUTED string into the SAME hvo-keyed _bulkPreview overlay
+		// GetCellValues consults (no model mutation); ApplyBulkCopy writes the target via the SAME batch-fenced
+		// ClerkBrowseEditContext (one UOW across N rows, CommitCount==1) — TrySetText on the target field.
+
+		/// <summary>
+		/// Every column as a bulk-copy SOURCE candidate (index + display name). The source is read-only — its
+		/// cell string is READ, never written — so any column the table shows is a valid source. The bar pairs
+		/// this with <see cref="CopyTargets"/> (the writable subset) and disables Apply when source == target.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> CopySourceColumns()
+		{
+			var cols = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+				cols.Add((col, _browseViewer.GetColumnName(col)));
+			return cols;
+		}
+
+		/// <summary>
+		/// The columns eligible as a bulk-copy TARGET: entry-anchored, editable TEXT columns the edit context
+		/// can write SAFELY (<see cref="BrowseColumnEditSpec.IsCopyTarget"/> — today the Lexeme Form). Ambiguous
+		/// multi-sense / sense-path text columns are excluded, so a copy can never risk a wrong-object write.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> CopyTargets()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsCopyTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// Stages a Bulk-Copy preview: for each checked row READ the SOURCE column's cell string and compute
+		/// the new TARGET value per <paramref name="mode"/> (see <see cref="ComputeCopiedValue"/>), then store
+		/// the computed display string in the SAME hvo-keyed overlay <see cref="GetCellValues"/> consults for
+		/// the TARGET column — no model mutation. A no-op when the target is not a safe copy target.
+		/// </summary>
+		public void PreviewBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator,
+			IReadOnlyList<int> rowIndexes)
+		{
+			if (rowIndexes == null || sourceColumn == targetColumn || !EditSpec(targetColumn).IsCopyTarget)
+				return;
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo == 0)
+					continue;
+				var cells = GetCellValues(rowIndex); // overlay-aware read; the source is read-only
+				var source = sourceColumn < cells.Count ? cells[sourceColumn] : string.Empty;
+				var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+				if (!TryComputeCopiedValue(currentTarget, source, mode, separator, out var newValue))
+					continue; // DoNothingIfNonEmpty on a non-empty target: leave it untouched
+				_bulkPreview[(hvo, targetColumn)] = newValue ?? string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Commits a Bulk Copy across the given rows as ONE undoable step: open the batch fence, recompute each
+		/// row's TARGET value from the SOURCE cell per <paramref name="mode"/> and write it via the shared
+		/// fenced edit context (<c>TrySetText</c> on the target field), then end the batch once. Reuses the
+		/// Phase-1 batch (one UOW, CommitCount==1). Rows the context rejects are skipped; a throwing write
+		/// rolls the whole batch back. A no-op when the target is not a safe copy target or source == target.
+		/// </summary>
+		public void ApplyBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator,
+			IReadOnlyList<int> rowIndexes, IRegionEditContext context)
+		{
+			var targetSpec = EditSpec(targetColumn);
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null
+				|| sourceColumn == targetColumn || !targetSpec.IsCopyTarget)
+				return;
+
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var rowIndex in rowIndexes)
+				{
+					var cells = GetCellValues(rowIndex);
+					var source = sourceColumn < cells.Count ? cells[sourceColumn] : string.Empty;
+					var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+					if (!TryComputeCopiedValue(currentTarget, source, mode, separator, out var newValue))
+						continue; // DoNothingIfNonEmpty on a non-empty target
+					var field = BuildCopyTargetField(rowIndex, targetColumn, targetSpec);
+					if (field != null)
+						context.TrySetText(field, targetSpec.WritingSystemTag, newValue ?? string.Empty);
+				}
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		// The bulk-copy modes' value semantics, shared by preview and apply so they never diverge. Returns
+		// false ONLY for the DoNothingIfNonEmpty case where the target is already non-empty (the row is then
+		// left entirely untouched — no overlay, no write); otherwise sets the computed value and returns true.
+		//   Append  : target + separator + source when the target is non-empty, else just source.
+		//   Replace : source overwrites target unconditionally.
+		//   DoNothingIfNonEmpty : fill only empty targets (source); skip non-empty ones.
+		internal static bool TryComputeCopiedValue(string currentTarget, string source, BulkCopyMode mode,
+			string separator, out string newValue)
+		{
+			source = source ?? string.Empty;
+			var targetEmpty = string.IsNullOrEmpty(currentTarget);
+			switch (mode)
+			{
+				case BulkCopyMode.Replace:
+					newValue = source;
+					return true;
+				case BulkCopyMode.DoNothingIfNonEmpty:
+					if (!targetEmpty)
+					{
+						newValue = null;
+						return false;
+					}
+					newValue = source;
+					return true;
+				case BulkCopyMode.Append:
+				default:
+					newValue = targetEmpty ? source : currentTarget + (separator ?? string.Empty) + source;
+					return true;
+			}
+		}
+
+		// ----- Phase 3 bulk edit (Bulk Clear: empty a target text column) -----
+		//
+		// Bulk Clear is the non-destructive half of the legacy Delete tab (object-Delete stays DEFERRED). It
+		// carries no value — just the target column — so like Bulk Copy it goes through these direct host
+		// methods, NOT the generic single-value IBrowseBulkEditSource contract. Both REUSE the Phase-1
+		// machinery: PreviewBulkClear writes the EMPTY string into the SAME hvo-keyed _bulkPreview overlay
+		// GetCellValues consults (so the cell shows blank, no model mutation); ApplyBulkClear empties the
+		// target via the SAME batch-fenced ClerkBrowseEditContext (one UOW across N rows, CommitCount==1) —
+		// TrySetText(targetField, ws, "") — and an already-empty target is a harmless no-op write.
+
+		/// <summary>
+		/// The columns eligible as a bulk-CLEAR TARGET: the SAME conservative set of entry-anchored, editable
+		/// TEXT columns Bulk Copy targets (<see cref="BrowseColumnEditSpec.IsClearTarget"/> — today the Lexeme
+		/// Form). Ambiguous multi-sense / sense-path text columns are excluded, so a clear can never risk
+		/// emptying the wrong object. Returns each column's index and display name.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> ClearTargets()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsClearTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// Stages a Bulk-Clear preview: for each checked row store the EMPTY string in the SAME hvo-keyed
+		/// overlay <see cref="GetCellValues"/> consults for the TARGET column, so the cell renders blank — no
+		/// model mutation. A no-op when the target is not a safe clear target.
+		/// </summary>
+		public void PreviewBulkClear(int targetColumn, IReadOnlyList<int> rowIndexes)
+		{
+			if (rowIndexes == null || !EditSpec(targetColumn).IsClearTarget)
+				return;
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo != 0)
+					_bulkPreview[(hvo, targetColumn)] = string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Commits a Bulk Clear across the given rows as ONE undoable step: open the batch fence, write EMPTY
+		/// to each row's TARGET field via the shared fenced edit context (<c>TrySetText</c> with an empty
+		/// string), then end the batch once. Reuses the Phase-1 batch (one UOW, CommitCount==1). An
+		/// already-empty target is a harmless no-op; rows the context rejects are skipped; a throwing write
+		/// rolls the whole batch back. A no-op when the target is not a safe clear target.
+		/// </summary>
+		public void ApplyBulkClear(int targetColumn, IReadOnlyList<int> rowIndexes, IRegionEditContext context)
+		{
+			var targetSpec = EditSpec(targetColumn);
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null || !targetSpec.IsClearTarget)
+				return;
+
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var rowIndex in rowIndexes)
+				{
+					var field = BuildCopyTargetField(rowIndex, targetColumn, targetSpec);
+					if (field != null)
+						context.TrySetText(field, targetSpec.WritingSystemTag, string.Empty);
+				}
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		// ----- Delete Rows (destructive mode of the legacy Delete tab) -----
+		//
+		// Mirrors BulkEditBar's DeleteSelectedObjects / AllowDeleteItem / VerifyRowDeleteAllowable. The browse rows
+		// are the clerk's list objects (ILexEntry in the lexicon browse, resolved via HvoAt -> RootObjectHvo). Each
+		// checked row is CLASSIFIED as deletable vs blocked by the per-row guards before any delete; only deletable
+		// objects are deleted, in ONE undoable UOW through the batch-fenced ClerkBrowseEditContext (BeginBatch /
+		// TryDeleteObject per object / EndBatch(commit) — the SAME single-UOW boundary the bulk-write paths use),
+		// followed by orphan cleanup (the modern replacement for CmObject.DeleteOrphanedObjects).
+
+		/// <summary>A clerk-backed source can delete objects (it has the LCModel cache + action handler).</summary>
+		public bool CanDeleteRows => true;
+
+		/// <summary>
+		/// Partitions the (checked) rows into deletable vs blocked, applying the per-row deletion guards
+		/// (<see cref="AllowDeleteRow"/>): an object that would violate a constraint (the only sense of an entry,
+		/// or an object that cannot be safely resolved/deleted at this slice) is BLOCKED. Safety first: a row is
+		/// deletable ONLY when the guard definitively allows it. Returns the deletable row indexes; the blocked
+		/// ones are reported via <paramref name="blockedRowIndexes"/> so the view can mark them.
+		/// </summary>
+		public IReadOnlyList<int> ClassifyDeletableRows(IReadOnlyList<int> rowIndexes, out IReadOnlyList<int> blockedRowIndexes)
+		{
+			var deletable = new List<int>();
+			var blocked = new List<int>();
+			blockedRowIndexes = blocked;
+			if (rowIndexes == null)
+				return deletable;
+
+			// The set of hvos being deleted in THIS pass — needed for the only-sense guard (deleting the first
+			// sense is allowed only if some OTHER sense survives, i.e. is NOT also checked for deletion).
+			var candidateHvos = new HashSet<int>();
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo != 0)
+					candidateHvos.Add(hvo);
+			}
+
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo != 0 && AllowDeleteRow(hvo, candidateHvos))
+					deletable.Add(rowIndex);
+				else
+					blocked.Add(rowIndex);
+			}
+			return deletable;
+		}
+
+		/// <summary>
+		/// Deletes the OBJECTS behind the given (deletable) rows as ONE undoable change through the batch-fenced
+		/// edit context, then runs orphan cleanup (<see cref="DeleteOrphans"/>) inside the SAME UOW so the whole
+		/// thing — deletions + cascade + orphan sweep — is a single undo step. Re-guards each row at delete time so
+		/// a guard can never be bypassed by a stale preview. A throwing delete rolls the whole batch back. Returns
+		/// the number of objects actually deleted.
+		/// </summary>
+		public int DeleteRows(IReadOnlyList<int> rowIndexes, IRegionEditContext context)
+		{
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null)
+				return 0;
+
+			// Resolve the victim hvos up front (the row indexes shift as objects are deleted, so capture identities
+			// first), re-guarding each one so the destructive delete enforces the guards at the moment of delete.
+			var candidateHvos = new HashSet<int>();
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo != 0)
+					candidateHvos.Add(hvo);
+			}
+			var victims = new List<int>();
+			foreach (var hvo in candidateHvos)
+				if (AllowDeleteRow(hvo, candidateHvos))
+					victims.Add(hvo);
+			if (victims.Count == 0)
+				return 0;
+
+			var batched = context as ClerkBrowseEditContext;
+			var deleted = 0;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var hvo in victims)
+				{
+					if (batched != null)
+					{
+						if (batched.TryDeleteObject(hvo))
+							deleted++;
+					}
+					else if (_cache.ServiceLocator.IsValidObjectId(hvo))
+					{
+						// A non-batching (test) context: delete directly; the caller is responsible for the UOW.
+						_cache.ServiceLocator.GetObject(hvo).Delete();
+						deleted++;
+					}
+				}
+				// Orphan cleanup runs inside the same batch UOW (the modern replacement for the legacy
+				// CmObject.DeleteOrphanedObjects): sweep LexReferences left with no targets and MSAs no sense uses.
+				if (deleted > 0)
+					DeleteOrphans();
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+			return deleted;
+		}
+
+		/// <summary>
+		/// The per-row deletion guard, mirroring BulkEditBar.AllowDeleteItem. An ILexEntry deletes cleanly (the
+		/// expected list-items class for the lexicon browse). An ILexSense is blocked when it is the ONLY sense of
+		/// its owning entry that is not also being deleted (the legacy only-sense guard). Anything that does not
+		/// resolve to a safely-deletable object is BLOCKED (safety first: never delete what the legacy path would
+		/// block). <paramref name="candidateHvos"/> is the full set being deleted in this pass (for the only-sense
+		/// survivor check).
+		/// </summary>
+		/// <summary>Test seam: exercise the per-row deletion guard (<see cref="AllowDeleteRow"/>) on a specific hvo.</summary>
+		internal bool TestAllowDeleteRow(int hvo, HashSet<int> candidateHvos) => AllowDeleteRow(hvo, candidateHvos);
+
+		private bool AllowDeleteRow(int hvo, HashSet<int> candidateHvos)
+		{
+			if (hvo == 0 || !_cache.ServiceLocator.IsValidObjectId(hvo))
+				return false;
+			var obj = _cache.ServiceLocator.GetObject(hvo);
+			if (obj == null)
+				return false;
+
+			// The expected, cleanly-deletable list-items class for the lexicon browse: an entry deletes (cascading
+			// its owned senses/MSAs/etc. through the LCModel ownership model).
+			if (obj is ILexEntry)
+				return true;
+
+			// Only-sense guard (BulkEditBar.AllowDeleteItem, the sense branch): deleting a sense is blocked when it
+			// would leave its owning entry with no senses. Deleting the FIRST sense is allowed only if some other
+			// sense survives (is not also being deleted); a non-first sense is always deletable.
+			if (obj is ILexSense sense)
+			{
+				if (!(sense.Owner is ILexEntry entry))
+					return true; // a subsense's owner is a sense, never the only sense of the entry — OK to delete.
+				var senses = entry.SensesOS;
+				if (senses.Count <= 1)
+					return false; // can't delete the only sense.
+				for (var i = 0; i < senses.Count; i++)
+				{
+					var ownedSense = senses[i];
+					if (ownedSense.Hvo == hvo)
+					{
+						if (i != 0)
+							return true; // senses other than the first are never blocked.
+						continue; // first sense: keep scanning for a surviving sibling.
+					}
+					if (!candidateHvos.Contains(ownedSense.Hvo))
+						return true; // a sibling sense is NOT being deleted, so the entry keeps a sense — OK.
+				}
+				return false; // this is the first sense and every other sense is also being deleted.
+			}
+
+			// PARITY: the legacy AllowDeleteItem also allows deleting a GHOST-owner object when its ghost child
+			// already exists (CanDeleteItemOfClassOrGhostOwner via GhostParentHelper), and VerifyRowDeleteAllowable
+			// blocks a row whose bulkDeleteIfZero count property is non-zero. Both need the column-spec's ghost /
+			// bulkDeleteIfZero metadata (m_ghostParentHelper / m_sBulkDeleteIfZero) and the GhostParentHelper, which
+			// are not surfaced at this row-source slice (the browse here is entry-anchored). Per the safety rule we
+			// BLOCK any object that is neither a plainly-deletable entry nor a guarded sense, rather than risk
+			// deleting something the legacy ghost/bulkDeleteIfZero path would have blocked. (Deferred: wire the
+			// ghost-owner allowance + bulkDeleteIfZero block once the column-spec metadata is exposed to this seam.)
+			return false;
+		}
+
+		/// <summary>
+		/// Orphan cleanup run inside the bulk-delete UOW — the modern replacement for the legacy
+		/// CmObject.DeleteOrphanedObjects (which was SQL-based and compiled out under WANTPPORT). Sweeps the two
+		/// orphan kinds an entry/sense deletion can leave behind: LexReference objects that have lost all their
+		/// targets, and MoMorphSynAnalysis objects no sense in their owning entry uses any more. Mirrors the
+		/// LiftMerger's DeleteOrphans (the established in-repo pattern for this cleanup).
+		/// </summary>
+		private void DeleteOrphans()
+		{
+			// LexReferences with no surviving targets (a cross-reference whose endpoints were just deleted).
+			var deadRefs = new List<ILexReference>();
+			foreach (var lr in _cache.ServiceLocator.GetInstance<ILexReferenceRepository>().AllInstances())
+				if (lr.TargetsRS.Count == 0)
+					deadRefs.Add(lr);
+			foreach (var lr in deadRefs)
+				if (lr.IsValidObject)
+					lr.Delete();
+
+			// MSAs no longer used by any sense of their owning entry (a sense that referenced them was deleted).
+			var deadMsas = new List<IMoMorphSynAnalysis>();
+			foreach (var msa in _cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().AllInstances())
+			{
+				if (!(msa.Owner is ILexEntry entry))
+					continue;
+				var used = false;
+				foreach (var ls in entry.AllSenses)
+				{
+					if (ls.MorphoSyntaxAnalysisRA == msa)
+					{
+						used = true;
+						break;
+					}
+				}
+				if (!used)
+					deadMsas.Add(msa);
+			}
+			foreach (var msa in deadMsas)
+				if (msa.IsValidObject)
+					msa.Delete();
+		}
+
+		// ----- Find/Replace Phase 1 (Bulk Replace: find/replace over a target text column) -----
+		//
+		// Bulk Replace does NOT widen IBrowseBulkEditSource (which carries a single value): preview/apply need
+		// the find/replace SPEC, so the bar calls these directly through the host (RecordBrowseView). It REUSES
+		// the Phase-1 machinery: PreviewBulkReplace writes the COMPUTED replaced string into the SAME hvo-keyed
+		// _bulkPreview overlay GetCellValues consults (no model mutation); ApplyBulkReplace writes the target via
+		// the SAME batch-fenced ClerkBrowseEditContext (one UOW across N rows, CommitCount==1) — TrySetText on
+		// the target field.
+		//
+		// P1 APPROACH (as-built decision): the replace runs in MANAGED CODE (System.Text.RegularExpressions when
+		// the spec uses regex, else a literal contains-replace honoring MatchCase/MatchWholeWord), NOT through
+		// the COM IVwPattern.FindIn/ReplacementText round-trip. This keeps the producer headless-testable and
+		// avoids a TsString round-trip on the single-WS plain-text cells. The spec's MatchDiacritics and
+		// MatchWritingSystem are P1 NO-OPS — a faithful diacritic/WS-collation match needs the IVwPattern path
+		// (deferred P2 refinement, along with the modeless app-wide Find/Replace and full TsString find). The
+		// dialog grays those options so the user is not misled.
+
+		/// <summary>
+		/// The columns eligible as a bulk-REPLACE TARGET: the SAME conservative set of entry-anchored, editable
+		/// TEXT columns Bulk Copy/Clear target (<see cref="BrowseColumnEditSpec.IsReplaceTarget"/> — today the
+		/// Lexeme Form). Ambiguous multi-sense / sense-path text columns are excluded, so a replace can never
+		/// write the wrong object. Returns each column's index and display name.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> ReplaceTargets()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsReplaceTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// Stages a Bulk-Replace preview: for each checked row READ the TARGET column's current cell string,
+		/// apply the find/replace <paramref name="spec"/> (see <see cref="ComputeReplaced"/>), and store the
+		/// result in the SAME hvo-keyed overlay <see cref="GetCellValues"/> consults — no model mutation. A
+		/// no-op when the target is not a safe replace target, the spec is null, or the find text is empty.
+		/// </summary>
+		public void PreviewBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec)
+		{
+			if (rowIndexes == null || spec == null || string.IsNullOrEmpty(spec.FindText)
+				|| !EditSpec(targetColumn).IsReplaceTarget)
+				return;
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo == 0)
+					continue;
+				var cells = GetCellValues(rowIndex); // overlay-aware read
+				var current = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+				_bulkPreview[(hvo, targetColumn)] = ComputeReplaced(current, spec) ?? string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Commits a Bulk Replace across the given rows as ONE undoable step: open the batch fence, recompute
+		/// each row's TARGET value by applying the find/replace <paramref name="spec"/> to the current cell text
+		/// and write it via the shared fenced edit context (<c>TrySetText</c> on the target field), then end the
+		/// batch once. Reuses the Phase-1 batch (one UOW, CommitCount==1). Rows the context rejects are skipped;
+		/// a throwing write rolls the whole batch back. A no-op when the target is not a safe replace target, the
+		/// spec is null, or the find text is empty.
+		/// </summary>
+		public void ApplyBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec,
+			IRegionEditContext context)
+		{
+			var targetSpec = EditSpec(targetColumn);
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null || spec == null
+				|| string.IsNullOrEmpty(spec.FindText) || !targetSpec.IsReplaceTarget)
+				return;
+
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var rowIndex in rowIndexes)
+				{
+					var cells = GetCellValues(rowIndex);
+					var current = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+					var newValue = ComputeReplaced(current, spec) ?? string.Empty;
+					// Skip rows the pattern leaves unchanged so an unmatched row is not a needless no-op write.
+					if (string.Equals(newValue, current ?? string.Empty, StringComparison.Ordinal))
+						continue;
+					var field = BuildCopyTargetField(rowIndex, targetColumn, targetSpec);
+					if (field != null)
+						context.TrySetText(field, targetSpec.WritingSystemTag, newValue);
+				}
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		/// <summary>
+		/// The P1 managed find/replace over a single cell string, shared by preview and apply so they never
+		/// diverge. Regex mode (<see cref="BulkReplaceSpec.UseRegularExpressions"/>) uses
+		/// <see cref="System.Text.RegularExpressions.Regex.Replace(string,string)"/> (the spec's ReplaceText is
+		/// the .NET replacement, so $1 backrefs work); literal mode does a contains-replace honoring
+		/// <see cref="BulkReplaceSpec.MatchCase"/> and <see cref="BulkReplaceSpec.MatchWholeWord"/>. An empty
+		/// find text returns the input unchanged. MatchDiacritics/MatchWritingSystem are P1 no-ops. An invalid
+		/// regex returns the input unchanged (the dialog gates an invalid pattern off OK, so apply never sees
+		/// one; this is the defensive belt). The match is exposed for unit testing.
+		/// </summary>
+		internal static string ComputeReplaced(string input, BulkReplaceSpec spec)
+		{
+			input = input ?? string.Empty;
+			if (spec == null || string.IsNullOrEmpty(spec.FindText))
+				return input;
+
+			if (spec.UseRegularExpressions)
+			{
+				try
+				{
+					return Regex.Replace(input, spec.FindText, spec.ReplaceText ?? string.Empty);
+				}
+				catch (ArgumentException)
+				{
+					// An uncompilable pattern: leave the cell unchanged (the dialog already blocks OK on it).
+					return input;
+				}
+			}
+
+			return LiteralReplace(input, spec.FindText, spec.ReplaceText ?? string.Empty,
+				spec.MatchCase, spec.MatchWholeWord);
+		}
+
+		// Literal (non-regex) find/replace over a string: case-sensitive iff matchCase; when matchWholeWord the
+		// matched run must be bounded by non-word characters (or string ends) on both sides, like the legacy
+		// whole-word option. Replaces ALL occurrences (the legacy ReplaceAll bulk semantics). Implemented by a
+		// manual scan so case-insensitivity and the whole-word boundary check share one pass.
+		private static string LiteralReplace(string input, string find, string replace, bool matchCase,
+			bool matchWholeWord)
+		{
+			var comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+			var result = new StringBuilder(input.Length);
+			var pos = 0;
+			while (pos <= input.Length - find.Length)
+			{
+				var match = input.IndexOf(find, pos, comparison);
+				if (match < 0)
+					break;
+				var wholeWordOk = !matchWholeWord || IsWholeWordMatch(input, match, find.Length);
+				if (wholeWordOk)
+				{
+					result.Append(input, pos, match - pos);
+					result.Append(replace);
+					pos = match + find.Length;
+				}
+				else
+				{
+					// Not a whole-word boundary: emit one char and keep scanning so overlapping spots are tried.
+					result.Append(input, pos, match - pos + 1);
+					pos = match + 1;
+				}
+			}
+			result.Append(input, pos, input.Length - pos);
+			return result.ToString();
+		}
+
+		// True when the [start, start+length) run is bounded by a non-word character (or a string end) on both
+		// sides — the whole-word boundary test (word chars = letters/digits/underscore, like \w).
+		private static bool IsWholeWordMatch(string input, int start, int length)
+		{
+			var before = start - 1;
+			var after = start + length;
+			var leftOk = before < 0 || !IsWordChar(input[before]);
+			var rightOk = after >= input.Length || !IsWordChar(input[after]);
+			return leftOk && rightOk;
+		}
+
+		private static bool IsWordChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+
+		// ----- Process / Transduce (run a converter over a SOURCE column into a TARGET column) -----
+		//
+		// The non-destructive Process tab (legacy m_transduceTab): for each checked row READ the SOURCE column's
+		// plain text, run the chosen converter over it, then compute the TARGET value honoring the SAME
+		// Append/Replace/DoNothingIfNonEmpty non-empty-target semantics Bulk Copy uses (TryComputeCopiedValue —
+		// the converted text plays the role of the "source" the copy machinery appends/replaces/skips). It
+		// REUSES the Phase-1 machinery: PreviewBulkTransduce writes the computed string into the SAME hvo-keyed
+		// _bulkPreview overlay GetCellValues consults (no model mutation); ApplyBulkTransduce writes the target
+		// via the SAME batch-fenced ClerkBrowseEditContext (one UOW across N rows, CommitCount==1) — TrySetText.
+		// The converter is an LCModel/EncConverters-free IBulkTransduceConverter; the product edge wraps each
+		// real Unicode-to-Unicode IEncConverter in one of these, so this seam stays headless-testable.
+
+		/// <summary>
+		/// The columns eligible as a bulk-TRANSDUCE TARGET: the SAME conservative set of entry-anchored,
+		/// editable TEXT columns Bulk Copy/Clear/Replace target (<see cref="BrowseColumnEditSpec.IsTransduceTarget"/>
+		/// — today the Lexeme Form). Ambiguous multi-sense / sense-path text columns are excluded, so a transduce
+		/// can never write the wrong object. Returns each column's index and display name.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> TransduceColumns()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsTransduceTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// Stages a Bulk-Transduce preview: for each checked row READ the SOURCE column's cell string, run the
+		/// <paramref name="converter"/> over it, compute the new TARGET value per <paramref name="mode"/> (see
+		/// <see cref="TryComputeCopiedValue"/>), and store the result in the SAME hvo-keyed overlay
+		/// <see cref="GetCellValues"/> consults for the TARGET column — no model mutation. A no-op when the target
+		/// is not a safe transduce target, source == target, or no converter is supplied.
+		/// </summary>
+		public void PreviewBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator, IReadOnlyList<int> rowIndexes)
+		{
+			if (rowIndexes == null || converter == null || sourceColumn == targetColumn
+				|| !EditSpec(targetColumn).IsTransduceTarget)
+				return;
+			foreach (var rowIndex in rowIndexes)
+			{
+				var hvo = HvoAt(rowIndex);
+				if (hvo == 0)
+					continue;
+				var cells = GetCellValues(rowIndex); // overlay-aware read; the source is read-only
+				var source = sourceColumn < cells.Count ? cells[sourceColumn] : string.Empty;
+				var converted = Transduce(converter, source);
+				var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+				if (!TryComputeCopiedValue(currentTarget, converted, mode, separator, out var newValue))
+					continue; // DoNothingIfNonEmpty on a non-empty target: leave it untouched
+				_bulkPreview[(hvo, targetColumn)] = newValue ?? string.Empty;
+			}
+		}
+
+		/// <summary>
+		/// Commits a Bulk Transduce across the given rows as ONE undoable step: open the batch fence, recompute
+		/// each row's TARGET value from the converter-transformed SOURCE cell per <paramref name="mode"/> and
+		/// write it via the shared fenced edit context (<c>TrySetText</c> on the target field), then end the batch
+		/// once. Reuses the Phase-1 batch (one UOW, CommitCount==1). Rows the context rejects are skipped; a
+		/// throwing write rolls the whole batch back. A no-op when the target is not a safe transduce target,
+		/// source == target, or no converter is supplied.
+		/// </summary>
+		public void ApplyBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator, IReadOnlyList<int> rowIndexes, IRegionEditContext context)
+		{
+			var targetSpec = EditSpec(targetColumn);
+			if (rowIndexes == null || rowIndexes.Count == 0 || context == null || converter == null
+				|| sourceColumn == targetColumn || !targetSpec.IsTransduceTarget)
+				return;
+
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				foreach (var rowIndex in rowIndexes)
+				{
+					var cells = GetCellValues(rowIndex);
+					var source = sourceColumn < cells.Count ? cells[sourceColumn] : string.Empty;
+					var converted = Transduce(converter, source);
+					var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+					if (!TryComputeCopiedValue(currentTarget, converted, mode, separator, out var newValue))
+						continue; // DoNothingIfNonEmpty on a non-empty target
+					var field = BuildCopyTargetField(rowIndex, targetColumn, targetSpec);
+					if (field != null)
+						context.TrySetText(field, targetSpec.WritingSystemTag, newValue ?? string.Empty);
+				}
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		// Runs the converter over the source cell text, treating a null/empty source as empty and tolerating a
+		// converter that throws (a misconfigured EncConverter): an empty source is never converted (no work),
+		// and a throwing convert leaves the source text unchanged rather than aborting the whole bulk run.
+		internal static string Transduce(IBulkTransduceConverter converter, string source)
+		{
+			source = source ?? string.Empty;
+			if (converter == null || source.Length == 0)
+				return source;
+			try
+			{
+				return converter.Convert(source) ?? string.Empty;
+			}
+			catch
+			{
+				return source;
+			}
+		}
+
+		// ----- Click Copy (interactive per-click copy of a clicked source cell into a target column) -----
+		//
+		// The interactive bulk mode (legacy m_clickCopyTab / xbv_ClickCopy): with the Click Copy tab active the
+		// user CLICKS a source cell and that text is copied into the target column on the SAME row, per click. It
+		// REUSES the batch machinery's value join (TryComputeCopiedValue with Append/Replace, the legacy
+		// append/overwrite directivity) and the SAME batch-fenced ClerkBrowseEditContext as a SINGLE-row UOW
+		// (BeginBatch/EndBatch around one TrySetText), so each click commits as exactly ONE undoable step —
+		// matching the legacy BeginUndoTask/EndUndoTask around one SetNewValue.
+
+		/// <summary>
+		/// The columns eligible as a Click Copy TARGET: the SAME conservative set of entry-anchored, editable TEXT
+		/// columns Bulk Copy targets (<see cref="BrowseColumnEditSpec.IsCopyTarget"/> — today the Lexeme Form), so
+		/// a click can never write the wrong object. Returns each column's index and display name.
+		/// </summary>
+		public IReadOnlyList<(int Column, string Label)> ClickCopyTargets()
+		{
+			var targets = new List<(int, string)>();
+			for (var col = 0; col < _browseViewer.ColumnCount; col++)
+			{
+				if (EditSpec(col).IsCopyTarget)
+					targets.Add((col, _browseViewer.GetColumnName(col)));
+			}
+			return targets;
+		}
+
+		/// <summary>
+		/// Applies a Click Copy for ONE clicked cell: READ the clicked SOURCE cell's text, compute the new TARGET
+		/// value per <paramref name="mode"/> (word vs reorder/whole-field) and the append/overwrite directivity
+		/// (<paramref name="append"/> + <paramref name="separator"/>, reusing <see cref="TryComputeCopiedValue"/>),
+		/// and write the target via the shared batch-fenced edit context as ONE undoable step. A no-op when the
+		/// target is not a safe copy target, source == target, or the source cell is empty (nothing to copy).
+		/// </summary>
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
+			string separator, bool append, IRegionEditContext context)
+		{
+			var targetSpec = EditSpec(targetColumn);
+			if (context == null || sourceColumn == targetColumn || !targetSpec.IsCopyTarget
+				|| rowIndex < 0 || rowIndex >= RowCount)
+				return;
+
+			var cells = GetCellValues(rowIndex);
+			var sourceText = sourceColumn >= 0 && sourceColumn < cells.Count ? cells[sourceColumn] : string.Empty;
+			// A click on an empty source cell copies nothing — the legacy bar likewise has no word to copy.
+			if (string.IsNullOrEmpty(sourceText))
+				return;
+
+			var copied = ComputeClickCopySource(sourceText, mode);
+			var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
+			// Append directivity → Append join (target + separator + copied); Overwrite → Replace (copied wins).
+			var joinMode = append ? BulkCopyMode.Append : BulkCopyMode.Replace;
+			if (!TryComputeCopiedValue(currentTarget, copied, joinMode, separator, out var newValue))
+				return;
+
+			var batched = context as ClerkBrowseEditContext;
+			batched?.BeginBatch();
+			try
+			{
+				var field = BuildCopyTargetField(rowIndex, targetColumn, targetSpec);
+				if (field != null)
+					context.TrySetText(field, targetSpec.WritingSystemTag, newValue ?? string.Empty);
+			}
+			catch
+			{
+				if (batched != null)
+					batched.EndBatch(commit: false);
+				else
+					context.Cancel();
+				throw;
+			}
+
+			if (batched != null)
+				batched.EndBatch(commit: true);
+			else
+				context.Commit();
+		}
+
+		// The text a Click Copy lifts from the clicked SOURCE cell, by mode. CELL-LEVEL today: both Word and
+		// Reorder copy the WHOLE cell text (the cell is the click granularity at this seam).
+		// PARITY: word-granularity is deferred — the legacy bar's ClickCopyEventArgs carries the clicked word and
+		// its character offset (IchStartWord) from the native Views hit-test, which lets Word copy just the
+		// clicked word and Reorder rotate the cell to lead with it. The managed browse cell renders a single
+		// TextBlock with no per-word hit-test, so the clicked word/offset is not available here; forcing a
+		// fragile word split would risk wrong-token copies. The word/reorder radio is wired through to the model
+		// (this mode parameter) so the choice is preserved; both currently copy the full cell text until the rich
+		// cell exposes a clicked-word offset.
+		internal static string ComputeClickCopySource(string sourceText, ClickCopyMode mode)
+		{
+			return sourceText ?? string.Empty;
+		}
+
+		// Builds the entry-anchored TEXT field a bulk copy writes for a row (the Lexeme Form), bound to the
+		// row's object hvo, so the edit context resolves the right entry and TrySetText writes the target.
+		private LexicalEditRegionField BuildCopyTargetField(int rowIndex, int columnIndex, BrowseColumnEditSpec editSpec)
+		{
+			var hvo = HvoAt(rowIndex);
+			if (hvo == 0 || editSpec.EditField == null)
+				return null;
+			var wsTag = editSpec.WritingSystemTag;
+			return new LexicalEditRegionField(
+				stableId: $"browse/{rowIndex}/{columnIndex}",
+				label: _browseViewer.GetColumnName(columnIndex),
+				field: editSpec.EditField,
+				writingSystem: wsTag,
+				kind: RegionFieldKind.Text,
+				editorClassification: EditorClassification.Known,
+				automationId: $"BrowseCell.{rowIndex}.{columnIndex}",
+				localizationKey: null,
+				routing: SurfaceRouting.Product,
+				values: null,
+				options: null,
+				selectedOptionKey: null,
+				isEditable: true,
+				objectHvo: hvo);
+		}
+
+		// Builds the field a List-Choice bulk write targets for a row: the entry-anchored possibility field
+		// (e.g. MorphType) bound to the row's object hvo, so the edit context resolves the right entry and
+		// sets the reference by option key. Unlike GetEditField this is independent of inline transduce
+		// editability — the List Choice column is a possibility-reference column, not an inline text cell.
+		private LexicalEditRegionField BuildListChoiceField(int rowIndex, int columnIndex, BrowseColumnEditSpec editSpec)
+		{
+			var hvo = HvoAt(rowIndex);
+			if (hvo == 0 || editSpec.ListChoiceField == null)
+				return null;
+			return new LexicalEditRegionField(
+				stableId: $"browse/{rowIndex}/{columnIndex}",
+				label: _browseViewer.GetColumnName(columnIndex),
+				field: editSpec.ListChoiceField,
+				writingSystem: editSpec.WritingSystemTag,
+				kind: RegionFieldKind.Chooser,
+				editorClassification: EditorClassification.Known,
+				automationId: $"BrowseCell.{rowIndex}.{columnIndex}",
+				localizationKey: null,
+				routing: SurfaceRouting.Product,
+				values: null,
+				options: null,
+				selectedOptionKey: null,
+				isEditable: true,
+				objectHvo: hvo);
 		}
 	}
 }

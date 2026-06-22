@@ -25,8 +25,12 @@
     <comment>Shown in place of a field whose editor has no Avalonia renderer.</comment>
   </data>
   <data name="ksEmbeddedObjectReadOnly" xml:space="preserve">
-    <value>This text contains an embedded object and is read-only in the new view. Use the classic view to edit it.</value>
-    <comment>Tooltip on a read-only text row whose value carries an embedded object (ORC) the new editor cannot edit yet (task 8.3 deferral).</comment>
+    <value>This text contains formatting that cannot be edited in this view and is read-only here. Use the classic view to edit it.</value>
+    <comment>Tooltip on a read-only text row whose value carries content the new editor would corrupt on edit: an embedded object (ORC), or a run property (e.g. colour, offset, superscript) the new editor does not round-trip. Editing stays available in the classic view.</comment>
+  </data>
+  <data name="ksAudioRecordingReadOnly" xml:space="preserve">
+    <value>(audio recording — play or record it in the classic view)</value>
+    <comment>Placeholder shown in a read-only text row for a voice/audio (IsVoice) writing system: the new view cannot yet play or record audio, so the row is read-only and the data stays visible/diagnosable rather than a blank editable box that would corrupt the recording on edit.</comment>
   </data>
   <data name="ksSave" xml:space="preserve">
     <value>Save</value>
@@ -44,9 +48,29 @@
     <value>Redo Edit Entry</value>
     <comment>Redo label for the fenced lexical-edit session; appears in the Edit menu.</comment>
   </data>
+  <data name="ksUndoChangeToFormat" xml:space="preserve">
+    <value>Undo change to {0}</value>
+    <comment>Field-specific undo label for the fenced lexical-edit session when a single field's edit opened it; {0} is the field label (e.g. "Undo change to Gloss"). Mirrors the legacy DetailControls ksUndoChangeTo wording.</comment>
+  </data>
+  <data name="ksRedoChangeToFormat" xml:space="preserve">
+    <value>Redo change to {0}</value>
+    <comment>Field-specific redo label for the fenced lexical-edit session; {0} is the field label (e.g. "Redo change to Gloss"). Mirrors the legacy DetailControls ksRedoChangeTo wording.</comment>
+  </data>
   <data name="ksLexemeFormRequired" xml:space="preserve">
     <value>A Lexeme Form (or Citation Form) is required.</value>
     <comment>Validation message when an entry would be saved without any lexeme/citation form text.</comment>
+  </data>
+  <data name="ksEditDiscardedInvalid" xml:space="preserve">
+    <value>Your changes were not saved because the entry is not valid:
+
+{0}
+
+The previous values have been restored. Switch to the classic view to finish the edit.</value>
+    <comment>Warning shown when navigating away from (or closing) an entry whose pending edit fails validation; the invalid edit is rolled back rather than silently lost. {0} is the validation reason(s), one per line.</comment>
+  </data>
+  <data name="ksEditDiscardedInvalidTitle" xml:space="preserve">
+    <value>Changes Not Saved</value>
+    <comment>Title of the warning shown when a pending lexical edit was rolled back on navigate because it failed validation.</comment>
   </data>
   <data name="ksLexicalEditRegionName" xml:space="preserve">
     <value>Lexical Edit Region</value>
@@ -72,6 +96,10 @@
   </data>
   <data name="ksSearchPrompt" xml:space="preserve">
     <value>Type to search</value>
+  </data>
+  <data name="ksAddSelected" xml:space="preserve">
+    <value>Add</value>
+    <comment>Confirm button of the multi-select reference-vector add picker; commits all checked items in one step.</comment>
   </data>
   <data name="ksChorusAddNote" xml:space="preserve">
     <value>Add note</value>
@@ -117,9 +145,29 @@
     <value>Gloss</value>
     <comment>Label of the gloss row in the first-slice entry view (authored fallback).</comment>
   </data>
+  <data name="ksFieldOptionsMenu" xml:space="preserve">
+    <value>Field options</value>
+    <comment>Accessible name and tooltip of the hover-revealed "⋮" (vertical ellipsis) button on a field row that opens the field's options menu (Field Visibility / Move Field / Help).</comment>
+  </data>
+  <data name="ksCharacterStyle" xml:space="preserve">
+    <value>Character style</value>
+    <comment>Accessible name and tooltip of the character-style picker affordance on an editable text row; opens the list of the project's character styles to apply to the current selection.</comment>
+  </data>
+  <data name="ksDefaultCharacterStyle" xml:space="preserve">
+    <value>Default (no style)</value>
+    <comment>The leading entry of the character-style picker; selecting it clears any named character style on the current selection, reverting it to the paragraph's default.</comment>
+  </data>
+  <data name="ksWritingSystem" xml:space="preserve">
+    <value>Writing System</value>
+    <comment>Accessible name and tooltip of the writing-system picker affordance on an editable text row (Phase 4): opens the list of the project's writing systems to retag the current selection.</comment>
+  </data>
   <data name="ksSelectAllRows" xml:space="preserve">
     <value>Select all rows</value>
     <comment>Accessible name for the browse table's check-all checkbox column.</comment>
+  </data>
+  <data name="ksConfigureColumnsMenu" xml:space="preserve">
+    <value>Configure Columns...</value>
+    <comment>Browse header context-menu entry that opens the Configure Columns dialog.</comment>
   </data>
   <data name="ksFilterShowAll" xml:space="preserve">
     <value>Show All</value>
@@ -132,5 +180,97 @@
   <data name="ksFilterNonBlanks" xml:space="preserve">
     <value>Non-blanks</value>
     <comment>Browse filter-row preset narrowing a column to rows whose cell is non-blank.</comment>
+  </data>
+  <data name="ksBulkEditListChoice" xml:space="preserve">
+    <value>List Choice</value>
+    <comment>Bulk-edit bar tab: set a list/possibility reference (e.g. Morph Type) across the checked rows.</comment>
+  </data>
+  <data name="ksBulkEditTarget" xml:space="preserve">
+    <value>Target:</value>
+    <comment>Bulk-edit bar label for the target-column dropdown.</comment>
+  </data>
+  <data name="ksBulkEditPreview" xml:space="preserve">
+    <value>Preview</value>
+    <comment>Bulk-edit bar button: preview the chosen value across the checked rows without changing data.</comment>
+  </data>
+  <data name="ksBulkEditApply" xml:space="preserve">
+    <value>Apply</value>
+    <comment>Bulk-edit bar button: apply the chosen value across the checked rows as one undoable change.</comment>
+  </data>
+  <data name="ksBulkEditBarName" xml:space="preserve">
+    <value>Bulk Edit</value>
+    <comment>Accessible name of the bulk-edit bar panel.</comment>
+  </data>
+  <data name="ksBulkCopyTab" xml:space="preserve">
+    <value>Bulk Copy</value>
+    <comment>Bulk-edit bar tab: copy one column's text into another across the checked rows.</comment>
+  </data>
+  <data name="ksBulkCopySource" xml:space="preserve">
+    <value>Source:</value>
+    <comment>Bulk Copy tab label for the source-column dropdown (the column whose text is copied from).</comment>
+  </data>
+  <data name="ksBulkCopyAppend" xml:space="preserve">
+    <value>Append</value>
+    <comment>Bulk Copy mode: append the source to a non-empty target (with a separator), else set it directly.</comment>
+  </data>
+  <data name="ksBulkCopyReplace" xml:space="preserve">
+    <value>Replace</value>
+    <comment>Bulk Copy mode: the source overwrites the target unconditionally.</comment>
+  </data>
+  <data name="ksBulkCopyDoNothing" xml:space="preserve">
+    <value>Don't overwrite</value>
+    <comment>Bulk Copy mode: only fill empty targets; leave targets that already have text untouched.</comment>
+  </data>
+  <data name="ksBulkClearTab" xml:space="preserve">
+    <value>Clear</value>
+    <comment>Bulk-edit bar tab: empty a target text column (e.g. Lexeme Form) across the checked rows.</comment>
+  </data>
+  <data name="ksBulkReplaceTab" xml:space="preserve">
+    <value>Bulk Replace</value>
+    <comment>Bulk-edit bar tab: run a find/replace over a target text column across the checked rows.</comment>
+  </data>
+  <data name="ksBulkReplaceSetup" xml:space="preserve">
+    <value>Setup…</value>
+    <comment>Bulk Replace tab button: opens the Find/Replace pattern dialog to configure the replace.</comment>
+  </data>
+  <data name="ksBulkReplaceNoPattern" xml:space="preserve">
+    <value>(no pattern set)</value>
+    <comment>Bulk Replace summary placeholder shown before the user configures a find/replace pattern.</comment>
+  </data>
+  <data name="ksBrowseSortFromEnd" xml:space="preserve">
+    <value>Sort From End</value>
+    <comment>Browse header context-menu toggle: suffix-oriented sort on the reversed text of the column.</comment>
+  </data>
+  <data name="ksBrowseSortByLength" xml:space="preserve">
+    <value>Sort By Length</value>
+    <comment>Browse header context-menu toggle (shown only for columns whose spec allows it): sort by cell length.</comment>
+  </data>
+  <data name="ksBrowseFilterMoreThanOneLine" xml:space="preserve">
+    <value>More Than One Line</value>
+    <comment>Browse filter-row preset for multi-paragraph columns: rows whose cell spans more than one line.</comment>
+  </data>
+  <data name="ksBrowseFilterExactlyOneLine" xml:space="preserve">
+    <value>Exactly One Line</value>
+    <comment>Browse filter-row preset for multi-paragraph columns: rows whose cell is exactly one (non-empty) line.</comment>
+  </data>
+  <data name="ksBrowseFilterYes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Browse filter-row preset (exact match) for Yes/No columns.</comment>
+  </data>
+  <data name="ksBrowseFilterNo" xml:space="preserve">
+    <value>No</value>
+    <comment>Browse filter-row preset (exact match) for Yes/No columns.</comment>
+  </data>
+  <data name="ksBrowseFilterZero" xml:space="preserve">
+    <value>Zero</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is exactly zero.</comment>
+  </data>
+  <data name="ksBrowseFilterGreaterThanZero" xml:space="preserve">
+    <value>Greater Than Zero</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is greater than zero.</comment>
+  </data>
+  <data name="ksBrowseFilterGreaterThanOne" xml:space="preserve">
+    <value>Greater Than One</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is greater than one.</comment>
   </data>
 </root>

@@ -377,4 +377,390 @@ namespace FwAvaloniaTests
 			Assert.That(chooser, Is.Not.Null, "the chooser field should render the owned flyout chooser");
 		}
 	}
+
+	/// <summary>
+	/// Phase 2 (pure): <see cref="RegionRichTextEditAlgorithms.ApplySpanFormatting"/> splits runs at the
+	/// selection boundaries and sets the chosen attribute only on covered runs, leaving the rest of the
+	/// value's run metadata untouched — across run boundaries, partial runs, grapheme clusters, and the
+	/// lossy read-only guard.
+	/// </summary>
+	[TestFixture]
+	public class RegionSpanFormattingTests
+	{
+		private static RegionRichTextValue TwoRunDog() => RegionRichTextEditAlgorithms.FromRuns("dog", new[]
+		{
+			new RegionTextRun("do", "qaa-x-one"),
+			new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+		});
+
+		// Selection fully inside the FIRST run: the run splits into bold "do"-prefix... here the whole
+		// first run is covered, so it becomes one bold run; the styled trailing run is untouched.
+		[Test]
+		public void ApplySpanFormatting_CoveringFirstRun_BoldsOnlyThatRun()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
+				RegionRunFormat.Bold, true);
+
+			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(result.Runs[0].Bold, Is.True, "the covered run gets bold");
+			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
+			Assert.That(result.Runs[1].Bold, Is.False, "the uncovered run is untouched");
+			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "uncovered run keeps its style");
+			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+		}
+
+		// A PARTIAL-run selection splits that run: "d" stays plain, "o" goes bold, "g" untouched.
+		[Test]
+		public void ApplySpanFormatting_PartialRun_SplitsAndBoldsOnlyTheCoveredSlice()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 2,
+				RegionRunFormat.Bold, true);
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+				"the first run splits at the selection boundary");
+			Assert.That(result.Runs[0].Bold, Is.False);
+			Assert.That(result.Runs[1].Bold, Is.True, "only the covered slice is bold");
+			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
+				"the split slice inherits its source run's metadata");
+			Assert.That(result.Runs[2].Bold, Is.False);
+		}
+
+		// A selection that SPANS a run boundary bolds across both runs, splitting each as needed.
+		[Test]
+		public void ApplySpanFormatting_AcrossRunBoundary_BoldsBothCoveredSlices()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 3,
+				RegionRunFormat.Bold, true);
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(result.Runs[0].Bold, Is.False, "the leading slice outside the span stays plain");
+			Assert.That(result.Runs[1].Bold, Is.True, "the tail of run 1 inside the span is bold");
+			Assert.That(result.Runs[2].Bold, Is.True, "run 2 (fully covered) is bold");
+			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Emphasis"),
+				"the bolded run keeps its other metadata");
+		}
+
+		[Test]
+		public void ApplySpanFormatting_Italic_And_Underline_SetTheCorrectAttribute()
+		{
+			var italic = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
+				RegionRunFormat.Italic, true);
+			Assert.That(italic.Runs[0].Italic, Is.True);
+			Assert.That(italic.Runs[0].Bold, Is.False);
+			Assert.That(italic.Runs[0].Underline, Is.False);
+
+			var underline = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
+				RegionRunFormat.Underline, true);
+			Assert.That(underline.Runs[0].Underline, Is.True);
+			Assert.That(underline.Runs[0].Bold, Is.False);
+		}
+
+		[Test]
+		public void ApplySpanFormatting_TogglingOff_ClearsTheAttribute()
+		{
+			var bolded = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 1, 2,
+				RegionRunFormat.Bold, true);
+			Assert.That(bolded.Runs.First(r => r.Text == "o").Bold, Is.True);
+
+			var cleared = RegionRichTextEditAlgorithms.ApplySpanFormatting(bolded, 1, 2,
+				RegionRunFormat.Bold, false);
+			Assert.That(cleared.Runs.Any(r => r.Bold), Is.False, "the attribute is cleared over the span");
+			Assert.That(cleared.PlainText, Is.EqualTo("dog"));
+		}
+
+		[Test]
+		public void ApplySpanFormatting_ZeroLengthSelection_IsNoOp()
+		{
+			var original = TwoRunDog();
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(original, 1, 1,
+				RegionRunFormat.Bold, true);
+			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+		}
+
+		// Phase 2 test (d) at the pure layer: a lossy value is read-only and is returned unchanged.
+		[Test]
+		public void ApplySpanFormatting_LossyValue_ReturnsUnchanged()
+		{
+			var lossy = new RegionRichTextValue("coloured",
+				new[] { new RegionTextRun("coloured", "qaa-x-one") },
+				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
+			Assert.That(lossy.CanEditRichText, Is.False);
+
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(lossy, 0, 4,
+				RegionRunFormat.Bold, true);
+			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never reformatted");
+		}
+
+		// Grapheme-cluster safety: a selection whose boundaries fall inside a combining cluster snaps
+		// OUTWARD so the cluster is never split (matching the bidi navigation's boundary logic).
+		[Test]
+		public void ApplySpanFormatting_RespectsGraphemeClusterBoundaries()
+		{
+			// "a" + (e + combining acute U+0301) + "b": indices 0='a',1='e',2=U+0301,3='b'.
+			const string text = "aéb";
+			var value = RegionRichTextEditAlgorithms.FromRuns(text,
+				new[] { new RegionTextRun(text, "qaa-x-one") });
+
+			// Selecting [1,2) lands inside the e-acute cluster; it must snap out to cover the whole cluster.
+			var result = RegionRichTextEditAlgorithms.ApplySpanFormatting(value, 1, 2,
+				RegionRunFormat.Bold, true);
+
+			var boldText = string.Concat(result.Runs.Where(r => r.Bold).Select(r => r.Text));
+			Assert.That(boldText, Is.EqualTo("é"),
+				"the combining cluster is bolded whole, never split mid-character");
+		}
+
+		[Test]
+		public void SpanFullyHasFormat_ReportsWhetherTheWholeSpanCarriesTheAttribute()
+		{
+			var bolded = RegionRichTextEditAlgorithms.ApplySpanFormatting(TwoRunDog(), 0, 2,
+				RegionRunFormat.Bold, true);
+
+			Assert.That(RegionRichTextEditAlgorithms.SpanFullyHasFormat(bolded, 0, 2, RegionRunFormat.Bold),
+				Is.True, "the fully-bolded span reports all-on (so the UI toggles off next)");
+			Assert.That(RegionRichTextEditAlgorithms.SpanFullyHasFormat(bolded, 0, 3, RegionRunFormat.Bold),
+				Is.False, "extending into the plain tail is not all-on");
+			Assert.That(RegionRichTextEditAlgorithms.SpanFullyHasFormat(bolded, 1, 1, RegionRunFormat.Bold),
+				Is.False, "a collapsed span has nothing to toggle off");
+		}
+	}
+
+	/// <summary>
+	/// Phase 3 (pure): <see cref="RegionRichTextEditAlgorithms.ApplySpanNamedStyle"/> splits runs at the
+	/// selection boundaries and sets/clears the named character style only on covered runs, cluster-safe,
+	/// honoring the lossy read-only guard; <see cref="RegionRichTextEditAlgorithms.SpanNamedStyle"/>
+	/// reports the common style across the span (null when mixed/none).
+	/// </summary>
+	[TestFixture]
+	public class RegionSpanNamedStyleTests
+	{
+		// "do" (plain) + "g" (Emphasis) — a run boundary at index 2.
+		private static RegionRichTextValue TwoRunDog() => RegionRichTextEditAlgorithms.FromRuns("dog", new[]
+		{
+			new RegionTextRun("do", "qaa-x-one"),
+			new RegionTextRun("g", "qaa-x-two", namedStyle: "Emphasis")
+		});
+
+		[Test]
+		public void ApplySpanNamedStyle_CoveringFirstRun_StylesOnlyThatRun()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 0, 2, "Strong");
+
+			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(result.Runs[0].NamedStyle, Is.EqualTo("Strong"), "the covered run gets the style");
+			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "other metadata is preserved");
+			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"), "the uncovered styled run is untouched");
+			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_PartialRun_SplitsAndStylesOnlyTheCoveredSlice()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 1, 2, "Strong");
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+				"the first run splits at the selection boundary");
+			Assert.That(result.Runs[0].NamedStyle, Is.Null);
+			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Strong"), "only the covered slice gets the style");
+			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-one"),
+				"the split slice inherits its source run's metadata");
+			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Emphasis"));
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_AcrossRunBoundary_StylesBothCoveredSlices()
+		{
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 1, 3, "Strong");
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(result.Runs[0].NamedStyle, Is.Null, "the leading slice outside the span keeps no style");
+			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Strong"), "the tail of run 1 inside the span is styled");
+			Assert.That(result.Runs[2].NamedStyle, Is.EqualTo("Strong"),
+				"run 2 (fully covered) is restyled, overwriting its previous Emphasis");
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_NullStyle_ClearsTheStyleOverTheSpan()
+		{
+			// The trailing run carries "Emphasis"; clearing over [2,3) drops it, leaving no styled run.
+			var cleared = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 2, 3, null);
+
+			Assert.That(cleared.PlainText, Is.EqualTo("dog"));
+			Assert.That(cleared.Runs.Any(r => !string.IsNullOrEmpty(r.NamedStyle)), Is.False,
+				"clearing removes the named style over the span");
+			Assert.That(cleared.RichXml, Is.Null);
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_ZeroLengthSelection_IsNoOp()
+		{
+			var original = TwoRunDog();
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(original, 1, 1, "Strong");
+			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_LossyValue_ReturnsUnchanged()
+		{
+			var lossy = new RegionRichTextValue("coloured",
+				new[] { new RegionTextRun("coloured", "qaa-x-one") },
+				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
+			Assert.That(lossy.CanEditRichText, Is.False);
+
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(lossy, 0, 4, "Strong");
+			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never restyled");
+		}
+
+		[Test]
+		public void ApplySpanNamedStyle_RespectsGraphemeClusterBoundaries()
+		{
+			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' — combining cluster at [1,3)
+			var value = RegionRichTextEditAlgorithms.FromRuns(text,
+				new[] { new RegionTextRun(text, "qaa-x-one") });
+
+			var result = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(value, 1, 2, "Strong");
+
+			var styledText = string.Concat(result.Runs
+				.Where(r => r.NamedStyle == "Strong").Select(r => r.Text));
+			Assert.That(styledText, Is.EqualTo("é"),
+				"the combining cluster is styled whole, never split mid-character");
+		}
+
+		[Test]
+		public void SpanNamedStyle_ReportsCommonStyle_OrNullWhenMixedOrNone()
+		{
+			var styled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(TwoRunDog(), 0, 3, "Strong");
+			Assert.That(RegionRichTextEditAlgorithms.SpanNamedStyle(styled, 0, 3), Is.EqualTo("Strong"),
+				"a uniformly styled span reports its common style");
+
+			// Original: "do" plain + "g" Emphasis -> mixed across [0,3).
+			Assert.That(RegionRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 0, 3), Is.Null,
+				"a span whose runs carry different styles reports null (mixed)");
+
+			// A span entirely within the plain first run reports null (no style).
+			Assert.That(RegionRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 0, 2), Is.Null,
+				"a span carrying no style reports null");
+
+			// A span entirely within the styled run reports that style.
+			Assert.That(RegionRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 2, 3), Is.EqualTo("Emphasis"));
+
+			Assert.That(RegionRichTextEditAlgorithms.SpanNamedStyle(TwoRunDog(), 1, 1), Is.Null,
+				"a collapsed span reports null");
+		}
+	}
+
+	/// <summary>
+	/// Phase 4 (pure): <see cref="RegionRichTextEditAlgorithms.RetagSpanWritingSystem"/> splits runs at
+	/// the selection boundaries and sets the writing-system tag only on covered runs, cluster-safe,
+	/// honoring the lossy read-only guard; <see cref="RegionRichTextEditAlgorithms.SpanWritingSystem"/>
+	/// reports the common writing system across the span (null when mixed).
+	/// </summary>
+	[TestFixture]
+	public class RegionSpanWritingSystemTests
+	{
+		// "do" (qaa-x-one) + "g" (qaa-x-two) — a run boundary at index 2.
+		private static RegionRichTextValue TwoRunDog() => RegionRichTextEditAlgorithms.FromRuns("dog", new[]
+		{
+			new RegionTextRun("do", "qaa-x-one", namedStyle: "Emphasis"),
+			new RegionTextRun("g", "qaa-x-two")
+		});
+
+		[Test]
+		public void RetagSpanWritingSystem_CoveringFirstRun_RetagsOnlyThatRun()
+		{
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 0, 2, "fr");
+
+			Assert.That(result.PlainText, Is.EqualTo("dog"), "plain text is never changed");
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "do", "g" }));
+			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("fr"), "the covered run gets the new ws");
+			Assert.That(result.Runs[0].NamedStyle, Is.EqualTo("Emphasis"), "other metadata is preserved");
+			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("qaa-x-two"), "the uncovered run keeps its ws");
+			Assert.That(result.RichXml, Is.Null, "no RichXml so ToTsString takes the run-replay path");
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_PartialRun_SplitsAndRetagsOnlyTheCoveredSlice()
+		{
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 1, 2, "fr");
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }),
+				"the first run splits at the selection boundary");
+			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"));
+			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "only the covered slice is retagged");
+			Assert.That(result.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
+				"the split slice inherits its source run's metadata");
+			Assert.That(result.Runs[2].WritingSystemTag, Is.EqualTo("qaa-x-two"));
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_AcrossRunBoundary_RetagsBothCoveredSlices()
+		{
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(TwoRunDog(), 1, 3, "fr");
+
+			Assert.That(result.Runs.Select(r => r.Text), Is.EqualTo(new[] { "d", "o", "g" }));
+			Assert.That(result.Runs[0].WritingSystemTag, Is.EqualTo("qaa-x-one"), "the leading slice keeps its ws");
+			Assert.That(result.Runs[1].WritingSystemTag, Is.EqualTo("fr"), "the tail of run 1 inside the span is retagged");
+			Assert.That(result.Runs[2].WritingSystemTag, Is.EqualTo("fr"), "run 2 (fully covered) is retagged");
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_EmptyWsTag_IsNoOp()
+		{
+			var original = TwoRunDog();
+			Assert.That(RegionRichTextEditAlgorithms.RetagSpanWritingSystem(original, 0, 2, null),
+				Is.SameAs(original), "a run must always carry a ws; a null tag is a no-op");
+			Assert.That(RegionRichTextEditAlgorithms.RetagSpanWritingSystem(original, 0, 2, string.Empty),
+				Is.SameAs(original), "an empty tag is a no-op too");
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_ZeroLengthSelection_IsNoOp()
+		{
+			var original = TwoRunDog();
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(original, 1, 1, "fr");
+			Assert.That(result, Is.SameAs(original), "a collapsed selection is a no-op");
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_LossyValue_ReturnsUnchanged()
+		{
+			var lossy = new RegionRichTextValue("coloured",
+				new[] { new RegionTextRun("coloured", "qaa-x-one") },
+				richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true);
+			Assert.That(lossy.CanEditRichText, Is.False);
+
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(lossy, 0, 4, "fr");
+			Assert.That(result, Is.SameAs(lossy), "a lossy/read-only value is never retagged");
+		}
+
+		[Test]
+		public void RetagSpanWritingSystem_RespectsGraphemeClusterBoundaries()
+		{
+			const string text = "aéb"; // 'a', 'e'+combining-acute, 'b' — combining cluster at [1,3)
+			var value = RegionRichTextEditAlgorithms.FromRuns(text,
+				new[] { new RegionTextRun(text, "qaa-x-one") });
+
+			var result = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(value, 1, 2, "fr");
+
+			var retaggedText = string.Concat(result.Runs
+				.Where(r => r.WritingSystemTag == "fr").Select(r => r.Text));
+			Assert.That(retaggedText, Is.EqualTo("é"),
+				"the combining cluster is retagged whole, never split mid-character");
+		}
+
+		[Test]
+		public void SpanWritingSystem_ReportsCommonWs_OrNullWhenMixed()
+		{
+			// "do" qaa-x-one + "g" qaa-x-two.
+			Assert.That(RegionRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 0, 2), Is.EqualTo("qaa-x-one"),
+				"a span entirely within one run reports that run's ws");
+			Assert.That(RegionRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 0, 3), Is.Null,
+				"a span whose runs carry different ws reports null (mixed)");
+			Assert.That(RegionRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 2, 3), Is.EqualTo("qaa-x-two"));
+			Assert.That(RegionRichTextEditAlgorithms.SpanWritingSystem(TwoRunDog(), 1, 1), Is.Null,
+				"a collapsed span reports null");
+		}
+	}
 }

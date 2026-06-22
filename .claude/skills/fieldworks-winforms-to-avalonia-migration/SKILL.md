@@ -73,9 +73,11 @@ off — it is the per-region definition of done.
    harness (architecture-patterns.md §13) — at the surface layer
    (`FwAvaloniaTests`) and, for domain claims like real list narrowing/undo, the
    real-clerk layer (`xWorksTests`). These replace deferred "live verification."
-8. **Localize.** Apply `fieldworks-localization-review`; field labels go
-   through the StringTable lane, product messages through
-   `FwAvaloniaStrings.resx`.
+8. **Localize.** Apply `fieldworks-localization-review`; field labels stay
+  on the StringTable lane, while Avalonia chrome joins the existing
+  LocalizationManager/L10NSharp XLIFF catalog (prefer existing
+  Palaso/Chorus ids when semantics and markup match; otherwise add
+  unique Avalonia-prefixed ids in that catalog).
 9. **Retire and gate.** Run the symbol audit
    (`Src/Common/FwAvalonia/FwAvaloniaTests/EngineIsolationAuditTests.cs`),
    active-host contract tests

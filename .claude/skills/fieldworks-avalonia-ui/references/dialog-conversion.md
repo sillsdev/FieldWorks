@@ -131,6 +131,34 @@ different surface). In the view: use tight `Margin="8"` / `Spacing="4"–"6"` (s
 and let `ShowModal`'s compact size defaults (420×320) fit the content — don't pass large explicit sizes.
 If a control type still looks roomy, add its compact setter to `CompactDialogStyles` (one place, all dialogs).
 
+## 2a-bis. Dialog spacing — use the shared tokens, never margin literals
+
+`Src/Common/FwAvaloniaDialogs/DialogTheme.axaml` is the single spacing/border system; every dialog view
+constructor calls `DialogThemeBootstrap.Apply(this)` (copied from the template), which adds the theme to
+the dialog body's own `Styles` so the tokens resolve and the `fwFieldHost` styles apply, and sets the
+root `DialogWindowPadding` in code (a control's own `Styles` target descendants, not itself). Works in
+both the runtime host path and the headless tests. Hard rules:
+
+- **Every dialog root carries `DialogWindowPadding`.** Put `Classes="fwDialogRoot"` on the root
+  `UserControl` (the `fwDialogRoot` style sets `Padding` to `DialogWindowPadding` = 12) and DROP the old
+  root `Margin="8"`/`"12"`. So content can never butt the chrome, even if a view forgets its own margin.
+- **No text-bearing or `PART_*Host` control with 0 padding.** Each injected native-control host border
+  carries `Classes="fwFieldHost"` (the style gives it `DialogFieldBorderThickness` + `DialogFieldPadding`
+  + `DialogFieldBorderBrush`) so the embedded `FwMultiWsTextField`/`FwOptionPicker` gets a real frame and
+  breathing room. Never leave a host border with no `BorderThickness`.
+- **OK/Cancel use the standard button strip gap.** The button strip is `Spacing="{StaticResource
+  DialogButtonStripGap}" Margin="{StaticResource DialogControlGapAbove}"`.
+- **Never hardcode a margin/spacing literal — use a token.** Tokens (in `DialogTheme.axaml`):
+  `DialogWindowPadding` (12), `DialogControlGap` (8), `DialogLabelFieldGap` (6),
+  `DialogButtonStripGap` (8), `DialogMinControlHeight` (24), `DialogFieldBorderThickness` (1),
+  `DialogFieldPadding` (4), `DialogFieldBorderBrush`, plus the directional Thickness helpers
+  (`DialogControlGapAbove`, `DialogLabelFieldGapBelow`, `DialogColumnGutter`, `DialogTabContentPadding`,
+  `DialogIconGap`, …). Add a new token to `DialogTheme.axaml` rather than inlining a number.
+- **Regression gate:** the headless `DialogLayoutAssert.AssertNoCrowding(view)` tripwire (in
+  `FwAvaloniaDialogsTests`) runs in every dialog's realized-view test (call it from the test's `Show`
+  helper after `UpdateLayout()`). It fails on zero-area text, overlapping siblings, a `PART_*Host` border
+  with no frame, or a `fwDialogRoot` with no padding. A new dialog inherits the gate by calling it.
+
 ## 2b. Real settings via a DTO seam; live-apply over restart
 
 The VM stays LCModel/PropertyTable-free. Carry real settings across the boundary with a **plain DTO**
@@ -165,16 +193,15 @@ binding/command behavior is proven by the headless tests.
 
 ## 5. Localization (don't ship hardcoded strings)
 
-Dialog text is **product messages → `.resx`** (apply `fieldworks-localization-review`). Each Avalonia UI
-project owns its own resources: the foundation uses `FwAvaloniaStrings`; the dialog kit uses
-**`FwAvaloniaDialogsStrings`** (`Src/Common/FwAvaloniaDialogs/FwAvaloniaDialogsStrings.resx` + the
-hand-written accessor `FwAvaloniaDialogsStrings.cs`). To add a dialog's strings:
+Dialog text is **product messages → the existing LocalizationManager/L10NSharp XLIFF catalog**
+(apply `fieldworks-localization-review`). In practice, the dialog kit still exposes the
+hand-written static accessor **`FwAvaloniaDialogsStrings`**, but that accessor should resolve through
+LocalizationManager at runtime. To add a dialog's strings:
 
-1. Add `<data name="ksXxx"><value>…</value><comment>translator note</comment></data>` entries to
-   `FwAvaloniaDialogsStrings.resx` (the `.resx` is auto-embedded; the project's `<RootNamespace>` is what
-   makes the Crowdin satellite build work — never drop it).
-2. Add a `public static string Xxx => Resources.GetString("ksXxx");` property to the accessor (mirror
-   `FwAvaloniaStrings.cs`; `ResourceManager("FwAvaloniaDialogs.FwAvaloniaDialogsStrings", …)`).
+1. Reuse an existing `Palaso`/`Chorus` id only when the semantics and markup really match. Otherwise,
+  mint a unique Avalonia-prefixed id in the existing catalog.
+2. Add or update the accessor property so it resolves through LocalizationManager (typically via a shared
+  Avalonia helper) and carries the inline English default used by product/runtime fallback.
 3. Bind from XAML with **`{x:Static res:FwAvaloniaDialogsStrings.Xxx}`** (declare
    `xmlns:res="clr-namespace:FwAvaloniaDialogs"`). Use it for `Content`, `Header`, `Text`, and the
    `ShowModal` title.
@@ -183,7 +210,8 @@ Rules: **`AutomationId` stays a nonlocalized literal**; visible text (which is a
 a `ContentControl`) is localized. Combo/list *values* that are codes or data (e.g. `"en"`, channel names)
 are not UI strings — leave them. Test it: assert the accessor resolves (`…GeneralTab == "General"`) and
 that a control's `Content` equals the accessor value (proves the `x:Static` binding), per
-`OptionsDialogTests`.
+`OptionsDialogTests`. If legacy Avalonia `.resx` files still exist in the repo, treat them as cleanup debt,
+not as the active source of truth.
 
 ## 6. Gotchas learned in the spike
 

@@ -70,10 +70,13 @@ namespace FwAvaloniaTests
 			return true;
 		}
 
+		/// <summary>What the next option stage reports (false = rejected, e.g. an unparseable date).</summary>
+		public bool OptionResult = true;
+
 		public bool TrySetOption(LexicalEditRegionField field, string optionKey)
 		{
 			OptionEdits.Add((field.Field, optionKey));
-			return true;
+			return OptionResult;
 		}
 
 		public IReadOnlyList<string> Validate() => ValidateResult;
@@ -148,6 +151,26 @@ namespace FwAvaloniaTests
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
 		}
 
+		// A value the run-replay would corrupt on edit: the run-model itself carries only supported
+		// props, but the source TsString had a property the model does not round-trip (e.g. a colour),
+		// so the product edge flagged the projection lossy. Such a value must render read-only.
+		private sealed class LossyEditingValueProvider : IRegionValueProvider
+		{
+			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
+				=> new List<RegionWsValue>
+				{
+					new RegionWsValue("vern", "coloured", wsTag: "qaa-x-rich",
+						richText: new RegionRichTextValue("coloured",
+							new[] { new RegionTextRun("coloured", "qaa-x-rich") },
+							richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true))
+				};
+
+			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode)
+				=> new List<RegionChoiceOption>();
+
+			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
+		}
+
 		private static (LexicalEditRegionView view, FakeRegionEditContext context, Window window) ShowEditable()
 		{
 			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new EditingValueProvider());
@@ -210,6 +233,31 @@ namespace FwAvaloniaTests
 			Assert.That(rich.Runs.Select(r => r.Text), Is.EqualTo(new[] { "du", "g" }));
 			Assert.That(rich.Runs[1].NamedStyle, Is.EqualTo("Emphasis"),
 				"the unchanged trailing run keeps its style metadata");
+		}
+
+		// DATA-SAFETY (Phase 1, test a — rendering lane): a value flagged lossy (a run carries a
+		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
+		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
+		// never silently drop the property. The matching model/composer assertions live in xWorks's
+		// LexicalEditRegionEditingTests.Compose_RunWithUnsupportedProperty_ComposesReadOnly_*.
+		[AvaloniaTest]
+		public void LossyValue_RendersReadOnly_WithTooltip()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var context = new FakeRegionEditContext();
+			var view = new LexicalEditRegionView(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			Assert.That(box, Is.Not.Null);
+			Assert.That(box.IsReadOnly, Is.True,
+				"a lossy value stays read-only even with an edit context, so a keystroke cannot drop the property");
+			Assert.That(ToolTip.GetTip(box), Is.EqualTo(FwAvaloniaStrings.EmbeddedObjectReadOnly),
+				"the read-only lossy value surfaces the not-editable-here tooltip");
+			Assert.That(context.TextEdits, Is.Empty);
+			Assert.That(context.RichTextEdits, Is.Empty);
 		}
 
 		[AvaloniaTest]
@@ -422,6 +470,41 @@ namespace FwAvaloniaTests
 				"tag-less rows keep the abbreviation-suffixed id");
 		}
 
+		// ITEM 3 (voice/sound writing systems): a voice/audio (IsVoice) alternative composes as a
+		// read-only audio-placeholder value. The view must render it as a READ-ONLY box showing the
+		// placeholder (with the audio tooltip), never a blank editable box that would corrupt the
+		// recording on edit.
+		[AvaloniaTest]
+		public void AudioValue_RendersReadOnlyPlaceholder_NotAnEmptyEditableBox()
+		{
+			var field = new LexicalEditRegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
+				null, RegionFieldKind.Text, EditorClassification.Known, "AudioField", null,
+				SurfaceRouting.Inherit,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("aud", FwAvaloniaStrings.AudioRecordingReadOnly, wsTag: "qaa-Zxxx-x-audio",
+						isAudio: true)
+				}, null, null, isEditable: false);
+			var context = new FakeRegionEditContext();
+			var fieldControl = new FwMultiWsTextField(field, "AudioField", context, null);
+			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = fieldControl.GetVisualDescendants().OfType<TextBox>().Single();
+			Assert.That(box.IsReadOnly, Is.True,
+				"a voice/audio alternative is read-only (no editable box to corrupt the recording)");
+			Assert.That(box.Text, Is.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
+				"the audio placeholder is shown so the data is visible and diagnosable, not blank");
+			Assert.That(ToolTip.GetTip(box), Is.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
+				"the tooltip tells the user audio is edited in the classic view");
+
+			// Typing must not stage an edit (the row is read-only).
+			box.Text = "tampered";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(context.TextEdits, Is.Empty, "a read-only audio row never stages a text edit");
+		}
+
 		// 14.1 — the ghost add-prompt is a watermark: it disappears when the user clicks in, and
 		// comes back only if they leave without typing.
 		[AvaloniaTest]
@@ -507,12 +590,17 @@ namespace FwAvaloniaTests
 			var shown = picker.CurrentItems;
 			Assert.That(shown.Select(o => o.Key), Is.EqualTo(new[] { "e-casa", "e-cantar" }));
 
+			// The vector add slot is multi-select: highlight + CommitHighlighted CHECKS the row; the
+			// Add button (CommitChecked) commits the checked set. A single-item check commits one.
 			results.SelectedIndex = 1;
 			picker.CommitHighlighted();
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "e-cantar" }),
+				"committing a row in multi-select mode checks it rather than committing immediately");
+			picker.CommitChecked();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
 			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("ComponentLexemes", "e-cantar")),
-				"committing a search result stages the result's key through TryAddReferenceItem");
+				"committing the checked set stages the result's key through TryAddReferenceItem");
 		}
 
 		[AvaloniaTest]
@@ -621,15 +709,22 @@ namespace FwAvaloniaTests
 			var picker = (FwOptionPicker)flyout.Content;
 
 			picker.OptionsList.SelectedIndex = 1; // "Pocket"
-			picker.CommitHighlighted();
+			picker.CommitHighlighted(); // checks the row
+			picker.CommitChecked();     // Add button: commits the checked set as one batch
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1));
 			Assert.That(context.ReferenceAdds[0], Is.EqualTo(("PublishIn", "p2")));
 			Assert.That(gestures, Is.EqualTo(1), "a successful add completes the gesture exactly once");
 
+			// Re-open the flyout for a fresh picker (the previous batch hid it and cleared focus); a
+			// failed stage must not complete the gesture.
 			context.ReferenceGestureResult = false;
-			picker.OptionsList.SelectedIndex = 1;
-			picker.CommitHighlighted();
+			flyout.ShowAt(addButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker2 = (FwOptionPicker)flyout.Content;
+			picker2.OptionsList.SelectedIndex = 1;
+			picker2.CommitHighlighted();
+			picker2.CommitChecked();
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(2), "the second stage was attempted");
 			Assert.That(gestures, Is.EqualTo(1), "a failed add must NOT complete the gesture");
@@ -697,6 +792,405 @@ namespace FwAvaloniaTests
 
 			Assert.That(Find<TextBox>(view, "LexemeFormEditor.vern").IsReadOnly, Is.True);
 			Assert.That(Find<Button>(view, "RegionEditor.Save"), Is.Null, "display mode has no Save/Cancel footer");
+		}
+
+		// ---- Phase 2: character formatting (Ctrl+B/I/U) over a TextBox selection ----
+
+		private static void RaiseCtrlKey(TextBox box, Key key)
+		{
+			box.RaiseEvent(new KeyEventArgs
+			{
+				RoutedEvent = InputElement.KeyDownEvent,
+				Key = key,
+				KeyModifiers = KeyModifiers.Control,
+				Source = box
+			});
+		}
+
+		// Phase 2 test (b): Ctrl+B on a TextBox selection stages a TrySetRichText whose runs carry
+		// bold over EXACTLY the selected span, leaving the rest of the value plain.
+		[AvaloniaTest]
+		public void CtrlB_OnSelection_StagesBoldOverExactlyTheSelectedSpan()
+		{
+			var (view, context, _, _) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			Assert.That(box.Text, Is.EqualTo("dog"));
+			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
+
+			box.SelectionStart = 0; // select "do"
+			box.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+			RaiseCtrlKey(box, Key.B);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits, Is.Empty, "formatting stages through the rich-text seam");
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.PlainText, Is.EqualTo("dog"), "formatting never changes the plain text");
+
+			// Reconstruct which characters are bold from the run model.
+			var boldText = string.Concat(rich.Runs.Where(r => r.Bold).Select(r => r.Text));
+			var plainText = string.Concat(rich.Runs.Where(r => !r.Bold).Select(r => r.Text));
+			Assert.That(boldText, Is.EqualTo("do"), "exactly the selected span is bold");
+			Assert.That(plainText, Is.EqualTo("g"), "the unselected tail stays plain");
+			Assert.That(rich.RichXml, Is.Null,
+				"the formatted value drops RichXml so ToTsString re-emits the new bold via run-replay");
+		}
+
+		// Phase 2 test (c): a second Ctrl+B over the same span toggles bold back OFF.
+		[AvaloniaTest]
+		public void CtrlB_Twice_TogglesBoldOff()
+		{
+			var (view, context, _, _) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			box.SelectionStart = 0;
+			box.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+
+			RaiseCtrlKey(box, Key.B);
+			Dispatcher.UIThread.RunJobs();
+			RaiseCtrlKey(box, Key.B);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(2), "each gesture stages once");
+			var rich = context.RichTextEdits[1].Value;
+			Assert.That(rich.Runs.Any(r => r.Bold), Is.False, "the second gesture clears the bold it set");
+			Assert.That(rich.PlainText, Is.EqualTo("dog"));
+		}
+
+		// Phase 2 test (d): a lossy / read-only value never allows formatting (the whole rich-edit
+		// block is gated off, so no handler is even wired and nothing stages).
+		[AvaloniaTest]
+		public void CtrlB_OnLossyValue_DoesNotStageFormatting()
+		{
+			var model = LexicalEditRegionMapper.FromViewDefinition(SampleDefinition(), new LossyEditingValueProvider());
+			var context = new FakeRegionEditContext();
+			var view = new LexicalEditRegionView(model, context);
+			var window = new Window { Content = view, Width = 500, Height = 260 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			Assert.That(box.IsReadOnly, Is.True);
+			box.SelectionStart = 0;
+			box.SelectionEnd = box.Text.Length;
+			Dispatcher.UIThread.RunJobs();
+			RaiseCtrlKey(box, Key.B);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Is.Empty, "a lossy value is never reformatted");
+			Assert.That(context.TextEdits, Is.Empty);
+		}
+
+		// Phase 2: a collapsed caret (no selection) is a no-op (no pending-format-for-caret in Phase 2).
+		[AvaloniaTest]
+		public void CtrlB_WithNoSelection_StagesNothing()
+		{
+			var (view, context, _, _) = ShowRichEditable();
+			var box = Find<TextBox>(view, "LexemeFormEditor.qaa-x-rich");
+			box.SelectionStart = 1;
+			box.SelectionEnd = 1;
+			box.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+			RaiseCtrlKey(box, Key.B);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Is.Empty, "a collapsed caret has no span to format");
+		}
+
+		// ---- Phase 3: named character style picker over a TextBox selection ----
+
+		// A field carrying a rich value plus the project's available character styles, so the per-WS
+		// style picker affordance is built.
+		private static LexicalEditRegionField StyleableField(params string[] styles)
+		{
+			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("anal", "dog", wsTag: "qaa-x-rich",
+						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+							new[]
+							{
+								new RegionTextRun("do", "qaa-x-rich"),
+								new RegionTextRun("g", "qaa-x-rich", namedStyle: "Emphasis")
+							}))
+				},
+				null, null, isEditable: true, indent: 0)
+			{
+				AvailableNamedStyles = styles
+			};
+			return field;
+		}
+
+		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
+			ShowStyleable(LexicalEditRegionField field)
+		{
+			var context = new FakeRegionEditContext();
+			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
+			var window = new Window { Content = control, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (control, context, window);
+		}
+
+		// Phase 3 test (b): picking a style for a selection stages a TrySetRichText whose covered runs
+		// carry the style; the rest of the value is untouched.
+		[AvaloniaTest]
+		public void StylePicker_PickingAStyle_StagesItOverTheSelectedSpan()
+		{
+			var (control, context, _) = ShowStyleable(StyleableField("Strong", "Subtle Emphasis"));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			Assert.That(box, Is.Not.Null);
+			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
+
+			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
+			Assert.That(styleButton, Is.Not.Null, "an editable styleable row exposes the style affordance");
+
+			box.SelectionStart = 0; // select "do"
+			box.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = (Flyout)styleButton.Flyout;
+			flyout.ShowAt(styleButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			// Options: [0]=Default(no style), [1]=Strong, [2]=Subtle Emphasis.
+			picker.OptionsList.SelectedIndex = 1; // "Strong"
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits, Is.Empty, "styles stage through the rich-text seam");
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.PlainText, Is.EqualTo("dog"), "styling never changes the plain text");
+			var styledText = string.Concat(rich.Runs.Where(r => r.NamedStyle == "Strong").Select(r => r.Text));
+			Assert.That(styledText, Is.EqualTo("do"), "exactly the selected span carries the new style");
+			Assert.That(rich.Runs.First(r => r.Text == "g").NamedStyle, Is.EqualTo("Emphasis"),
+				"the unselected tail keeps its own style");
+			Assert.That(rich.RichXml, Is.Null,
+				"the restyled value drops RichXml so ToTsString re-emits the new style via run-replay");
+		}
+
+		// Phase 3 test (b, clear): the leading "Default (no style)" entry clears the style over the span.
+		[AvaloniaTest]
+		public void StylePicker_DefaultEntry_ClearsTheStyleOverTheSelectedSpan()
+		{
+			var (control, context, _) = ShowStyleable(StyleableField("Strong"));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+
+			box.SelectionStart = 2; // select the styled "g"
+			box.SelectionEnd = 3;
+			Dispatcher.UIThread.RunJobs();
+
+			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
+			var flyout = (Flyout)styleButton.Flyout;
+			flyout.ShowAt(styleButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 0; // "Default (no style)" -> clears
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.Runs.Any(r => !string.IsNullOrEmpty(r.NamedStyle)), Is.False,
+				"the Default entry cleared the named style over the selection");
+		}
+
+		// Phase 3 test (b, no-op): with no selection the picker commit stages nothing.
+		[AvaloniaTest]
+		public void StylePicker_WithNoSelection_StagesNothing()
+		{
+			var (control, context, _) = ShowStyleable(StyleableField("Strong"));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			box.SelectionStart = 1;
+			box.SelectionEnd = 1;
+			box.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+
+			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
+			var flyout = (Flyout)styleButton.Flyout;
+			flyout.ShowAt(styleButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 1;
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Is.Empty, "a collapsed caret has no span to style");
+		}
+
+		// Phase 3 test (b, gating): a row with no available styles exposes NO style affordance.
+		[AvaloniaTest]
+		public void StyleAffordance_Absent_WhenNoAvailableStyles()
+		{
+			var (control, _, _) = ShowStyleable(StyleableField(/* none */));
+			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.Style"), Is.Null,
+				"a field with no available character styles shows no style picker");
+		}
+
+		// Phase 3 test (b, gating): a lossy / read-only value exposes NO style affordance (the whole
+		// editable block is gated off), so styling can never be attempted.
+		[AvaloniaTest]
+		public void StyleAffordance_Absent_OnLossyReadOnlyValue()
+		{
+			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("anal", "coloured", wsTag: "qaa-x-rich",
+						richText: new RegionRichTextValue("coloured",
+							new[] { new RegionTextRun("coloured", "qaa-x-rich") },
+							richXml: "<Str/>", requiresRichEditor: true, lossyProperties: true))
+				},
+				null, null, isEditable: true, indent: 0)
+			{
+				AvailableNamedStyles = new[] { "Strong" }
+			};
+			var (control, context, _) = ShowStyleable(field);
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			Assert.That(box.IsReadOnly, Is.True, "a lossy value is read-only");
+			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.Style"), Is.Null,
+				"a lossy/read-only value exposes no style affordance");
+			Assert.That(context.RichTextEdits, Is.Empty);
+		}
+
+		// Phase 3 test (b, automation/accessibility): the affordance carries a stable automation id and
+		// accessible name.
+		[AvaloniaTest]
+		public void StyleAffordance_HasAutomationIdAndAccessibleName()
+		{
+			var (control, _, _) = ShowStyleable(StyleableField("Strong"));
+			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
+			Assert.That(styleButton, Is.Not.Null);
+			Assert.That(AutomationProperties.GetName(styleButton), Is.EqualTo(FwAvaloniaStrings.CharacterStyle));
+		}
+	}
+
+	/// <summary>
+	/// Phase 4: the per-run writing-system retag picker over a TextBox selection. An editable, non-lossy
+	/// row carrying the project's available writing systems exposes a "Writing System" affordance whose
+	/// FwOptionPicker commit retags the covered runs through TrySetRichText (same seam as Ctrl+B/I/U and
+	/// the style picker), leaving the rest of the value untouched. No clear entry: a run always carries a
+	/// writing system.
+	/// </summary>
+	[TestFixture]
+	public class RegionWritingSystemPickerTests
+	{
+		// A field carrying a rich value plus the project's available writing systems, so the per-WS retag
+		// picker affordance is built. The lane's own ws is "qaa-x-rich".
+		private static LexicalEditRegionField RetaggableField(params (string Tag, string Name)[] systems)
+		{
+			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
+				RegionFieldKind.Text, EditorClassification.Known, "BibEditor", null, SurfaceRouting.Inherit,
+				new List<RegionWsValue>
+				{
+					new RegionWsValue("anal", "dog", wsTag: "qaa-x-rich",
+						richText: RegionRichTextEditAlgorithms.FromRuns("dog",
+							new[]
+							{
+								new RegionTextRun("do", "qaa-x-rich"),
+								new RegionTextRun("g", "qaa-x-other")
+							}))
+				},
+				null, null, isEditable: true, indent: 0)
+			{
+				AvailableWritingSystems = systems
+					.Select(s => new RegionWritingSystemOption(s.Tag, s.Name)).ToList()
+			};
+			return field;
+		}
+
+		private static (FwMultiWsTextField control, FakeRegionEditContext context, Window window)
+			ShowRetaggable(params (string Tag, string Name)[] systems)
+		{
+			var field = RetaggableField(systems);
+			var context = new FakeRegionEditContext();
+			var control = new FwMultiWsTextField(field, "BibEditor", context, null);
+			var window = new Window { Content = control, Width = 480, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			return (control, context, window);
+		}
+
+		private static T Find<T>(Control root, string automationId) where T : Control
+			=> root.GetVisualDescendants().OfType<T>()
+				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
+
+		[AvaloniaTest]
+		public void WritingSystemPicker_PickingAWs_RetagsItOverTheSelectedSpan()
+		{
+			var (control, context, _) = ShowRetaggable(("fr", "French"), ("de", "German"));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			Assert.That(box, Is.Not.Null);
+			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
+
+			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
+			Assert.That(wsButton, Is.Not.Null, "an editable retaggable row exposes the ws affordance");
+
+			box.SelectionStart = 0; // select "do"
+			box.SelectionEnd = 2;
+			Dispatcher.UIThread.RunJobs();
+
+			var flyout = (Flyout)wsButton.Flyout;
+			flyout.ShowAt(wsButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			// Options: [0]=French(fr), [1]=German(de).
+			picker.OptionsList.SelectedIndex = 1; // German -> de
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.TextEdits, Is.Empty, "ws retag stages through the rich-text seam");
+			Assert.That(context.RichTextEdits, Has.Count.EqualTo(1));
+			var rich = context.RichTextEdits[0].Value;
+			Assert.That(rich.PlainText, Is.EqualTo("dog"), "retag never changes the plain text");
+			var retagged = string.Concat(rich.Runs.Where(r => r.WritingSystemTag == "de").Select(r => r.Text));
+			Assert.That(retagged, Is.EqualTo("do"), "exactly the selected span carries the new ws");
+			Assert.That(rich.Runs.First(r => r.Text == "g").WritingSystemTag, Is.EqualTo("qaa-x-other"),
+				"the unselected tail keeps its own ws");
+			Assert.That(rich.RichXml, Is.Null,
+				"the retagged value drops RichXml so ToTsString re-emits the new ws via run-replay");
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemPicker_WithNoSelection_StagesNothing()
+		{
+			var (control, context, _) = ShowRetaggable(("fr", "French"));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			box.SelectionStart = 1;
+			box.SelectionEnd = 1;
+			box.CaretIndex = 1;
+			Dispatcher.UIThread.RunJobs();
+
+			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
+			var flyout = (Flyout)wsButton.Flyout;
+			flyout.ShowAt(wsButton);
+			Dispatcher.UIThread.RunJobs();
+			var picker = (FwOptionPicker)flyout.Content;
+			picker.OptionsList.SelectedIndex = 0;
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(context.RichTextEdits, Is.Empty, "a collapsed caret has no span to retag");
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemAffordance_Absent_WhenNoAvailableWritingSystems()
+		{
+			var (control, _, _) = ShowRetaggable(/* none */);
+			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem"), Is.Null,
+				"a field with no available writing systems shows no ws picker");
+		}
+
+		[AvaloniaTest]
+		public void WritingSystemAffordance_HasAutomationIdAndAccessibleName()
+		{
+			var (control, _, _) = ShowRetaggable(("fr", "French"));
+			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
+			Assert.That(wsButton, Is.Not.Null);
+			Assert.That(AutomationProperties.GetName(wsButton), Is.EqualTo(FwAvaloniaStrings.WritingSystem));
 		}
 	}
 
@@ -891,12 +1385,12 @@ namespace FwAvaloniaTests
 		}
 	}
 
-	/// <summary>Task 6.11: the product-facing strings resolve from embedded .resx resources.</summary>
+	/// <summary>Task 6.11: the product-facing strings resolve through the Avalonia localization accessor.</summary>
 	[TestFixture]
 	public class FwAvaloniaStringsTests
 	{
 		[Test]
-		public void AllStrings_ResolveFromResources()
+		public void AllStrings_ResolveFromLocalizationAccessor()
 		{
 			Assert.That(FwAvaloniaStrings.NoEntrySelected, Is.Not.Null.And.Not.Empty);
 			Assert.That(FwAvaloniaStrings.EntryTypeUnsupported, Is.Not.Null.And.Not.Empty);

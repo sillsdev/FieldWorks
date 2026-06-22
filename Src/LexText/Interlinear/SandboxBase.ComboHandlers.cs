@@ -2271,6 +2271,23 @@ namespace SIL.FieldWorks.IText
 				IMoMorphType morphType;
 				GetMorphInfo(out tssForm, out tssFullForm, out morphType);
 
+				// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the
+				// Avalonia Find-Entry-to-Add-Allomorph dialog (the reusable entry-search/"go" kit dialog), which adds
+				// the typed form as an allomorph to the chosen entry in one undoable step; Legacy mode keeps the
+				// WinForms AddAllomorphDlg (including its type-mismatch warning + MSA-creation flow, deferred from the
+				// Avalonia launcher — see LcmAddAllomorphDialogLauncher's // PARITY note).
+				var uiMode = m_sandbox.m_propertyTable.GetStringProperty("UIMode", null);
+				if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+				{
+					var cacheNew = m_caches.MainCache;
+					var helpProvider = m_sandbox.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+					Form ownerNew = m_sandbox.FindForm();
+					ownerNew?.Activate(); // LT-2619: make the form active before showing the modal.
+					LcmAddAllomorphDialogLauncher.Show(cacheNew, m_sandbox.Mediator, m_sandbox.m_propertyTable,
+						tssFullForm, ownerNew, helpProvider);
+					return;
+				}
+
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
 					LcmCache cache = m_caches.MainCache;

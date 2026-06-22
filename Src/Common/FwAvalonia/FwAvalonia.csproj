@@ -34,6 +34,7 @@
 		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" PrivateAssets="all" />
 		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" PrivateAssets="all" />
 		<PackageReference Include="Avalonia.Win32.Interoperability" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="L10NSharp" />
 		<!-- Canonical view-definition JSON serialization (lexical-edit tasks 9.2/9.4); repo-standard pin. -->
 		<PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>

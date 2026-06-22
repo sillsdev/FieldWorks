@@ -34,6 +34,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Cell values for one row, one per column, materialized only when the row realizes.</summary>
 		IReadOnlyList<string> GetCellValues(int rowIndex);
+
+		/// <summary>
+		/// A STABLE identity for the object behind a row — its LCModel hvo — independent of the row's
+		/// current position (Task 20). The clerk re-indexes its list on every sort/filter/reload, so a row
+		/// INDEX is not a durable handle to an object; this is. The owned table keys its checked set (and
+		/// any future per-object state) by this identity and re-projects to indices at render, so a check
+		/// follows its object across a re-sort or a clerk-initiated reload instead of silently landing on a
+		/// different object that drifted into the old index. Returns 0 for an out-of-range row.
+		/// </summary>
+		int HvoAt(int rowIndex);
 	}
 
 	/// <summary>
@@ -86,17 +96,50 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		IReadOnlyList<RegionWsValue> GetRichCell(int rowIndex, int columnIndex);
 	}
 
-	/// <summary>One column of a (possibly multi-column) sort: the column index and its direction.</summary>
+	/// <summary>
+	/// A finished column-width drag (P1 step 5): the column's stable field token and its new pixel width, so
+	/// the host can persist the width back to the per-tool store keyed by the same identity the model uses.
+	/// </summary>
+	public struct BrowseColumnWidthChange
+	{
+		public BrowseColumnWidthChange(string field, double width)
+		{
+			Field = field;
+			Width = width;
+		}
+
+		public string Field { get; }
+		public double Width { get; }
+	}
+
+	/// <summary>
+	/// One column of a (possibly multi-column) sort: the column index, its direction, and the legacy
+	/// header toggles <see cref="SortedFromEnd"/> (suffix-oriented sort on the reversed text) and
+	/// <see cref="SortedByLength"/> — both default off so existing callers are unaffected.
+	/// </summary>
 	public struct BrowseSortKey
 	{
 		public BrowseSortKey(int column, bool ascending)
+			: this(column, ascending, false, false)
+		{
+		}
+
+		public BrowseSortKey(int column, bool ascending, bool sortedFromEnd, bool sortedByLength)
 		{
 			Column = column;
 			Ascending = ascending;
+			SortedFromEnd = sortedFromEnd;
+			SortedByLength = sortedByLength;
 		}
 
 		public int Column { get; }
 		public bool Ascending { get; }
+
+		/// <summary>The legacy "Sort From End" toggle (suffix-oriented sort on the reversed text).</summary>
+		public bool SortedFromEnd { get; }
+
+		/// <summary>The legacy "Sort By Length" toggle.</summary>
+		public bool SortedByLength { get; }
 	}
 
 	/// <summary>
@@ -130,7 +173,103 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>Only rows whose cell in this column is blank.</summary>
 		Blanks,
 		/// <summary>Only rows whose cell in this column is non-blank.</summary>
-		NonBlanks
+		NonBlanks,
+		/// <summary>multipara columns: only rows whose cell has more than one line.</summary>
+		MoreThanOneLine,
+		/// <summary>multipara columns: only rows whose cell has exactly one (non-empty) line.</summary>
+		ExactlyOneLine,
+		/// <summary>sortType=YesNo columns: only rows whose cell exactly matches "Yes".</summary>
+		Yes,
+		/// <summary>sortType=YesNo columns: only rows whose cell exactly matches "No".</summary>
+		No,
+		/// <summary>sortType=integer columns: only rows whose value is exactly zero.</summary>
+		Zero,
+		/// <summary>sortType=integer columns: only rows whose value is greater than zero.</summary>
+		GreaterThanZero,
+		/// <summary>sortType=integer columns: only rows whose value is greater than one.</summary>
+		GreaterThanOne
+	}
+
+	/// <summary>
+	/// The match style of the legacy FilterBar "Filter For…" dialog (anywhere / start / end / whole-item /
+	/// regex), carried LCModel-free through the seam so the owned view can request the matching legacy
+	/// matcher without referencing the COM pattern or the XMLViews layer. Mirrors
+	/// <c>BrowseViewer.BrowsePatternMatchType</c> 1:1; the product edge maps between them.
+	/// </summary>
+	public enum BrowsePatternMatch
+	{
+		/// <summary>Match anywhere in the cell (the dialog's default).</summary>
+		Anywhere,
+		/// <summary>Match at the start of the cell.</summary>
+		AtStart,
+		/// <summary>Match at the end of the cell.</summary>
+		AtEnd,
+		/// <summary>Match the whole cell exactly.</summary>
+		WholeItem,
+		/// <summary>Treat the pattern as a regular expression.</summary>
+		Regex
+	}
+
+	/// <summary>
+	/// An LCModel-free snapshot of a "Filter For…" pattern (the FilterBar <c>FindComboItem</c>/
+	/// <c>SimpleMatchDlg</c> result): the match text, the match style, and case-sensitivity. The result the
+	/// owned view's "Filter For…" dialog hands back, and the spec routed through
+	/// <see cref="IBrowseFilterPresetSource.SetFilterPattern"/> to build the matching legacy matcher. A plain
+	/// value object so it crosses the FwAvalonia / xWorks layers without dragging the dialog or COM pattern.
+	/// </summary>
+	public sealed class BrowseFilterForSpec
+	{
+		/// <summary>The text (or regex pattern, when <see cref="MatchType"/> is <see cref="BrowsePatternMatch.Regex"/>) to match.</summary>
+		public string MatchText { get; set; } = string.Empty;
+
+		/// <summary>The match style (anywhere / start / end / whole-item / regex).</summary>
+		public BrowsePatternMatch MatchType { get; set; } = BrowsePatternMatch.Anywhere;
+
+		/// <summary>Match case-sensitively (the dialog's Match Case checkbox).</summary>
+		public bool MatchCase { get; set; }
+	}
+
+	/// <summary>
+	/// The date relation of the legacy FilterBar "Restrict Date…" dialog (<c>SimpleDateMatchDlg</c>), carried
+	/// LCModel-free through the seam so the owned view can request the matching legacy <c>DateTimeMatcher</c>
+	/// without referencing it or the XMLViews layer. Mirrors <c>BrowseViewer.BrowseDateMatchKind</c> 1:1; the
+	/// product edge maps between them and to <c>DateTimeMatcher.DateMatchType</c>.
+	/// </summary>
+	public enum BrowseDateMatch
+	{
+		/// <summary>On the chosen day (the dialog's default — a one-day range).</summary>
+		On,
+		/// <summary>Not on the chosen day (the inverse of <see cref="On"/>).</summary>
+		NotOn,
+		/// <summary>On or before the chosen day.</summary>
+		OnOrBefore,
+		/// <summary>On or after the chosen day.</summary>
+		OnOrAfter,
+		/// <summary>Between the start and end days (inclusive).</summary>
+		Between
+	}
+
+	/// <summary>
+	/// An LCModel-free snapshot of a "Restrict Date…" filter (the FilterBar <c>RestrictDateComboItem</c>/
+	/// <c>SimpleDateMatchDlg</c> result): the relation, the start (and, for <see cref="BrowseDateMatch.Between"/>,
+	/// the end) date, and whether the column is a <c>genDate</c> column. The result the owned view's date dialog
+	/// hands back, routed through <see cref="IBrowseFilterPresetSource.SetFilterDate"/> to build the matching
+	/// legacy <c>DateTimeMatcher</c>. A plain value object so it crosses the FwAvalonia / xWorks layers without
+	/// dragging the dialog or the matcher.
+	/// </summary>
+	public sealed class BrowseDateFilterSpec
+	{
+		/// <summary>The date relation (on / not on / on-or-before / on-or-after / between).</summary>
+		public BrowseDateMatch MatchType { get; set; } = BrowseDateMatch.On;
+
+		/// <summary>The (start) date the relation applies to.</summary>
+		public DateTime Start { get; set; }
+
+		/// <summary>The end date — used only for <see cref="BrowseDateMatch.Between"/>.</summary>
+		public DateTime End { get; set; }
+
+		/// <summary>Whether the column holds <c>GenDate</c> values (vs a plain <c>DateTime</c>).</summary>
+		public bool HandleGenDate { get; set; }
 	}
 
 	/// <summary>
@@ -142,7 +281,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	{
 		/// <summary>Applies (or clears, when <see cref="BrowseFilterPreset.None"/>) a blank-aware preset on the column.</summary>
 		void SetFilterPreset(int columnIndex, BrowseFilterPreset preset);
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="spec"/> is null / has empty text) the FilterBar "Filter For…"
+		/// pattern match on a column — the universal pattern/substring filter. Mutually exclusive with the
+		/// free-text term and the blank-aware presets on the same column (the same one-filter-per-column rule).
+		/// </summary>
+		void SetFilterPattern(int columnIndex, BrowseFilterForSpec spec);
+
+		/// <summary>
+		/// Applies a <c>stringList</c> enumerated-value preset on a column: an exact match on
+		/// <paramref name="value"/>, inverted ("Exclude X") when <paramref name="exclude"/>. Mutually exclusive
+		/// with the other per-column filters (same one-filter-per-column rule).
+		/// </summary>
+		void SetFilterStringListValue(int columnIndex, string value, bool exclude);
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="spec"/> is null) the FilterBar "Restrict Date…" date-range
+		/// match on a date/genDate column — building the SAME legacy <c>DateTimeMatcher</c> the WinForms
+		/// <c>RestrictDateComboItem</c> produces. Mutually exclusive with the column's other filters.
+		/// </summary>
+		void SetFilterDate(int columnIndex, BrowseDateFilterSpec spec);
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="chosenKeys"/> is null/empty) the FilterBar "Choose…"
+		/// list-choice match on a chooser (<c>bulkEdit</c>/<c>chooserFilter</c>) column — building the SAME
+		/// legacy <c>ListChoiceFilter</c> (<c>ColumnSpecFilter</c>) the WinForms <c>ListChoiceComboItem</c>
+		/// produces from the chosen possibility-list items (keys are possibility guid strings). Mutually
+		/// exclusive with the column's other filters.
+		/// </summary>
+		void SetFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys);
 	}
+
+	/// <summary>
+	/// Optional capability the owned header/filter UI probes to read a column's raw spec attributes
+	/// (e.g. <c>cansortbylength</c>, <c>multipara</c>, <c>sortType</c>) so it can gate the legacy
+	/// type-specific sort toggles and filter presets on the SAME attributes the WinForms
+	/// <c>BrowseViewer</c> header / <c>FilterBar</c> gate on. A source that does not implement it
+	/// offers only the universal (blank-aware) presets and the always-available Sort From End toggle.
+	/// </summary>
+	public interface IBrowseColumnMetadataSource
+	{
+		/// <summary>The raw value of a column-spec attribute, or null when the column/attribute is absent.</summary>
+		string GetColumnSpecAttribute(int columnIndex, string attrName);
+
+		/// <summary>
+		/// The enumerated display values of a <c>sortType="stringList"</c> column (read the SAME way the legacy
+		/// FilterBar reads them from the column spec), or null when the column is not a stringList column. Lets
+		/// the owned filter flyout offer one exact-match preset per value (plus "Exclude X" variants when &gt;2).
+		/// </summary>
+		string[] GetColumnStringList(int columnIndex);
+
+		/// <summary>
+		/// The selectable possibility-list items of a chooser (<c>bulkEdit</c>/<c>chooserFilter</c>) column —
+		/// the candidate set the legacy FilterBar "Choose…" (<c>ListChoiceComboItem</c>) opens its chooser over,
+		/// as LCModel-free <see cref="RegionChoiceOption"/>s (key = possibility guid string, name = display).
+		/// Null when the column is not a chooser column, so the owned flyout gates the "Choose…" entry on the
+		/// SAME attributes the legacy FilterBar gates on.
+		/// </summary>
+		IReadOnlyList<RegionChoiceOption> GetColumnChooserList(int columnIndex);
+	}
+
 
 	/// <summary>
 	/// Optional capability for bulk-edit preview/apply over a managed in-memory model (3c) — the
@@ -163,6 +362,133 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// Optional capability for bulk-COPY preview/apply (Phase 2): copy one column's cell text into another
+	/// across the checked rows, per a <see cref="BulkCopyMode"/>. Kept SEPARATE from
+	/// <see cref="IBrowseBulkEditSource"/> (which carries a single value) because copy needs (source, target,
+	/// mode); the source itself reads the source cell, computes the new target value per the mode, stages it
+	/// in the SAME preview overlay (preview) or writes it through the edit context as ONE undoable step
+	/// (apply). The view supplies the checked row indexes and the shared edit context.
+	/// </summary>
+	public interface IBrowseBulkCopySource
+	{
+		/// <summary>Stages the computed copied value into the target column for the given rows; no model mutation.</summary>
+		void PreviewBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator,
+			IReadOnlyList<int> rowIndexes);
+
+		/// <summary>Commits the bulk copy through <paramref name="context"/> across the given rows as one step.</summary>
+		void ApplyBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator,
+			IReadOnlyList<int> rowIndexes, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// Optional capability for bulk-CLEAR preview/apply (Phase 3, the non-destructive half of the legacy
+	/// Delete tab): empty a target text column across the checked rows. Kept SEPARATE from
+	/// <see cref="IBrowseBulkEditSource"/> like Bulk Copy is — there is no value to carry, just the target
+	/// column — so it routes through these direct host methods rather than the generic single-value contract.
+	/// REUSES the same machinery: preview stages an empty string in the SAME overlay <c>GetCellValues</c>
+	/// consults (so the cell shows blank, no model mutation); apply writes empty via the SAME batch-fenced
+	/// edit context as ONE undoable step across N rows. Object-Delete (the destructive half) stays deferred.
+	/// </summary>
+	public interface IBrowseBulkClearSource
+	{
+		/// <summary>Stages an empty overlay into the target column for the given rows; no model mutation.</summary>
+		void PreviewBulkClear(int targetColumn, IReadOnlyList<int> rowIndexes);
+
+		/// <summary>Clears the target column to empty through <paramref name="context"/> across the given rows as one step.</summary>
+		void ApplyBulkClear(int targetColumn, IReadOnlyList<int> rowIndexes, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// Optional capability for the DESTRUCTIVE Delete-Rows mode of the legacy Delete tab: delete the checked
+	/// OBJECTS (not a field) in ONE undoable change, mirroring BulkEditBar's DeleteSelectedObjects path. Kept
+	/// SEPARATE from <see cref="IBrowseBulkClearSource"/> (clearing a field) because it deletes objects and must
+	/// honor per-row deletion guards (the only-sense / ghost / bulkDeleteIfZero rules in <c>AllowDeleteItem</c>):
+	/// a checked row may be BLOCKED from deletion. The producer classifies each checked row as deletable vs
+	/// blocked (<see cref="ClassifyDeletableRows"/>), the view marks them in the preview, and the destructive
+	/// delete runs through <see cref="DeleteRows"/> over ONLY the deletable rows in one UOW (plus orphan cleanup).
+	/// The confirmation dialog itself is owned by the product host (it windows), NOT this headless seam.
+	/// </summary>
+	public interface IBrowseBulkDeleteSource
+	{
+		/// <summary>Whether this source can perform object deletion at all (a real LCModel-backed source can).</summary>
+		bool CanDeleteRows { get; }
+
+		/// <summary>
+		/// Partitions the given (checked) rows into those that MAY be deleted and those BLOCKED by a per-row guard
+		/// (the only-sense / ghost / bulkDeleteIfZero rules), returning the row indexes that are deletable. Blocked
+		/// rows are reported separately so the view can mark them. Safety: a row is deletable ONLY when the guard
+		/// definitively allows it; when uncertain it is blocked (never delete what the legacy path would block).
+		/// </summary>
+		IReadOnlyList<int> ClassifyDeletableRows(IReadOnlyList<int> rowIndexes, out IReadOnlyList<int> blockedRowIndexes);
+
+		/// <summary>
+		/// Deletes the OBJECTS behind the given (already-classified-as-deletable) rows through
+		/// <paramref name="context"/> as ONE undoable change, then runs orphan cleanup. Returns the number of
+		/// objects actually deleted. The caller (the product host) has already confirmed with the user.
+		/// </summary>
+		int DeleteRows(IReadOnlyList<int> rowIndexes, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// Optional capability for bulk-REPLACE preview/apply (Find/Replace Phase 1): run a find/replace
+	/// (<see cref="BulkReplaceSpec"/>) over a target text column across the checked rows. Kept SEPARATE from
+	/// <see cref="IBrowseBulkEditSource"/> like Bulk Copy/Clear are — it carries a pattern, not a single value
+	/// — so it routes through these direct host methods. REUSES the same machinery: preview computes each
+	/// row's replaced TARGET cell string and stages it in the SAME overlay <c>GetCellValues</c> consults (no
+	/// model mutation); apply writes the replaced value via the SAME batch-fenced edit context as ONE undoable
+	/// step across N rows (the legacy ReplaceWithMethod semantics, applied in managed code in P1). The full
+	/// IVwPattern + diacritic/WS-collation match is the deferred P2 refinement.
+	/// </summary>
+	public interface IBrowseBulkReplaceSource
+	{
+		/// <summary>Stages the find/replace result into the target column for the given rows; no model mutation.</summary>
+		void PreviewBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec);
+
+		/// <summary>Commits the bulk replace through <paramref name="context"/> across the given rows as one step.</summary>
+		void ApplyBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// Optional capability for bulk-TRANSDUCE (Process) preview/apply (the non-destructive Process/Transduce
+	/// tab): run an <see cref="IBulkTransduceConverter"/> over a SOURCE column's cell text and write the result
+	/// into a TARGET column across the checked rows, honoring the Append/Replace/DoNothingIfNonEmpty mode (the
+	/// SAME non-empty-target semantics Bulk Copy uses). Kept SEPARATE from <see cref="IBrowseBulkEditSource"/>
+	/// like Bulk Copy is — it carries (source, converter, target, mode), not a single value — so it routes
+	/// through these direct host methods. REUSES the same machinery: preview computes each row's transduced
+	/// TARGET cell string and stages it in the SAME overlay <c>GetCellValues</c> consults (no model mutation);
+	/// apply writes the transduced value via the SAME batch-fenced edit context as ONE undoable step across N
+	/// rows. The source itself reads the source cell, runs the converter, and computes the new target value.
+	/// </summary>
+	public interface IBrowseBulkTransduceSource
+	{
+		/// <summary>Stages the converted source text into the target column for the given rows; no model mutation.</summary>
+		void PreviewBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator, IReadOnlyList<int> rowIndexes);
+
+		/// <summary>Commits the bulk transduce through <paramref name="context"/> across the given rows as one step.</summary>
+		void ApplyBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator, IReadOnlyList<int> rowIndexes, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// Optional capability for interactive Click Copy: copy the clicked SOURCE cell's text into a TARGET column
+	/// on the SAME row, per click (no Preview/Apply). Kept SEPARATE from the batch bulk interfaces because it
+	/// acts on ONE row (the clicked one) and commits per click. The producer reads the clicked source cell,
+	/// computes the new target value per the <see cref="ClickCopyMode"/> (word vs reorder/whole-field) and the
+	/// append/overwrite directivity (reusing the same Append/Replace join the batch copy uses), and writes the
+	/// target via the shared edit context as ONE undoable step.
+	/// </summary>
+	public interface IBrowseClickCopySource
+	{
+		/// <summary>
+		/// Copies the clicked source cell at (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>) into
+		/// <paramref name="targetColumn"/> on the same row through <paramref name="context"/> as one undoable step.
+		/// </summary>
+		void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode, string separator,
+			bool append, IRegionEditContext context);
+	}
+
+	/// <summary>
 	/// The virtualized Avalonia browse/table path over typed view definitions (task 7.1), built per
 	/// the control-selection matrix: stock <see cref="ListBox"/> virtualization
 	/// (<see cref="VirtualizingStackPanel"/>) with FieldWorks-owned row/header rendering — columns come
@@ -180,43 +506,202 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	public sealed class LexicalBrowseView : UserControl
 	{
 		private readonly IBrowseRowSource _rows;
+		// Capability probes resolved ONCE at construction (Task 19): the row source's optional capabilities
+		// are fixed for its lifetime, so re-probing `_rows is IBrowseXxx`/`as IBrowseXxx` at each call site
+		// only risked the gates drifting apart. Every method and the header/filter-row builders now gate on
+		// these readonly fields; a capability is supported iff its field is non-null.
 		private readonly IBrowseEditSource _editSource;
 		private readonly IBrowseRichCellSource _richSource;
+		private readonly IBrowseSortSource _sortSource;
+		private readonly IBrowseMultiSortSource _multiSortSource;
+		private readonly IBrowseFilterSource _filterSource;
+		private readonly IBrowseFilterPresetSource _filterPresetSource;
+		// Capability to read raw column-spec attributes (cansortbylength/multipara/sortType) so the header
+		// context menu and filter presets can gate the legacy type-specific entries on the same attributes.
+		private readonly IBrowseColumnMetadataSource _columnMetadataSource;
+		private readonly IBrowseBulkEditSource _bulkEditSource;
+		private readonly IBrowseBulkCopySource _bulkCopySource;
+		private readonly IBrowseBulkClearSource _bulkClearSource;
+		private readonly IBrowseBulkDeleteSource _bulkDeleteSource;
+		private readonly IBrowseBulkReplaceSource _bulkReplaceSource;
+		private readonly IBrowseBulkTransduceSource _bulkTransduceSource;
+		private readonly IBrowseClickCopySource _clickCopySource;
 		private readonly bool _showCheckboxColumn;
-		private readonly HashSet<int> _checkedRows = new HashSet<int>();
+		// Task 20: the checked set is keyed by STABLE OBJECT IDENTITY (IBrowseRowSource.HvoAt), not row
+		// index. The clerk re-indexes its list on every sort/filter/reload, so an index-keyed check would
+		// silently land on whatever object drifted into that index after a clerk-initiated reload (the
+		// wrong-object bulk-edit hazard). Keying by hvo means a check follows its object; the per-row
+		// checkbox and the public CheckedRows re-project these hvos to the CURRENT indices at render.
+		private readonly HashSet<int> _checkedHvos = new HashSet<int>();
+		// Delete-Rows preview overlay (the destructive mode of the Delete tab): keyed by stable object hvo (like
+		// the checked set), value = true when the row is BLOCKED from deletion by a guard (only-sense / ghost /
+		// bulkDeleteIfZero), false when it WILL be deleted. Empty when no delete preview is staged. BuildRow reads
+		// it to mark each affected row (will-delete vs blocked) — the parity of the legacy ShowEnabled column.
+		private readonly Dictionary<int, bool> _deletePreview = new Dictionary<int, bool>();
 		private readonly ListBox _list;
 		private readonly Grid _header;
 		private readonly Grid _filterRow;
 		private readonly TextBlock[] _sortGlyphs;
 		private readonly List<BrowseSortKey> _sortKeys = new List<BrowseSortKey>();
+		// Task 22: who rebuilds the row list after a sort/filter mutation. When the source routes the
+		// mutation to an external authority that RELOADS and then drives a refresh of its own (the product
+		// clerk: ClerkBrowseRowSource.Sort/SetFilter call OnSorterChanged/OnChangeFilter, the clerk reloads,
+		// and RecordBrowseView's reload subscription calls back RefreshRows), a local Refresh() here is a
+		// SECOND rebuild of the same final list. With this flag set the view skips that redundant local
+		// rebuild and lets the single external reload drive it; an in-memory source (no external reload)
+		// leaves it false so the local Refresh() remains the only rebuild. Glyph state is still updated
+		// locally on the user action so the indicator is immediate either way.
+		private readonly bool _externalReloadDrivesRefresh;
+		// The sort indicator state the header glyphs reflect. Task 22 NOTE (follow-up): in product the clerk
+		// is the single sort/filter authority; this local pair is updated on a USER sort through the Avalonia
+		// header (so the glyph is immediate) but is NOT yet re-derived from a clerk-DRIVEN re-sort (e.g. an
+		// external re-sort, or a sort via the still-live legacy viewer header underneath). Re-deriving it
+		// would need RecordBrowseView to map Clerk.Sorter back to a (column, direction) and push it via a new
+		// SetSortIndicator API on the clerk's reload signal — left as a follow-up to keep this change minimal
+		// and the delicate refresh flow unbroken. The double-refresh elimination (above) is the landed half.
 		private int _sortColumn = -1;
 		private bool _sortAscending = true;
 
+		// Per-column legacy header toggles (Sort From End / Sort By Length), keyed by column index. A toggle
+		// is sticky for its column: it is carried into the next sort of that column (and into a multi-column
+		// key for that column) so the chosen ordering survives a re-sort, mirroring the legacy
+		// StringFinderCompare flags the WinForms header context menu sets.
+		private readonly Dictionary<int, bool> _sortedFromEnd = new Dictionary<int, bool>();
+		private readonly Dictionary<int, bool> _sortedByLength = new Dictionary<int, bool>();
+
+		// Configure-Columns / width (P1 step 5): one shared per-column pixel-width source the header, filter,
+		// and row grids ALL read, so the three grids stay aligned by construction (they get identical numbers
+		// from this one array, not three independent Star splits). Seeded from the column model's persisted
+		// widths (default even split when unknown); a header GridSplitter drag rewrites the dragged column's
+		// width here, re-applies it to all three grids, and raises ColumnWidthChanged so the host persists it.
+		private readonly double[] _columnWidths;
+		private const double DefaultColumnWidth = 120d;
+		private const double SplitterWidth = 4d;
+
+		/// <summary>
+		/// Raised when the user finishes dragging a column's width (P1 step 5): the field token (StableId) of
+		/// the column and its new pixel width, so the host can persist it back to the per-tool store.
+		/// </summary>
+		public event EventHandler<BrowseColumnWidthChange> ColumnWidthChanged;
+
+		/// <summary>
+		/// Raised when the user invokes "Configure Columns" from a header cell's context menu (P1 step 7). The
+		/// host (RecordBrowseView), which owns the catalog + store + dialog, handles it and launches the dialog.
+		/// </summary>
+		public event EventHandler ConfigureColumnsRequested;
+
+		/// <summary>
+		/// Raised when the user invokes "Filter For…" from a column's filter flyout: the column index. The host
+		/// (RecordBrowseView), which owns the LCModel-aware dialog, opens the pattern-setup dialog over the
+		/// owning form and — on OK — routes the resulting <see cref="BrowseFilterForSpec"/> back through
+		/// <see cref="ApplyFilterPattern"/>. Modeled on <see cref="ConfigureColumnsRequested"/> so the view
+		/// stays LCModel/dialog-free.
+		/// </summary>
+		public event EventHandler<int> FilterForRequested;
+
+		/// <summary>
+		/// Raised when the user invokes "Restrict Date…" from a date/genDate column's filter flyout: the column
+		/// index. The host (RecordBrowseView), which owns the date dialog, opens it over the owning form and — on
+		/// OK — routes the resulting <see cref="BrowseDateFilterSpec"/> back through <see cref="ApplyFilterDate"/>.
+		/// Modeled on <see cref="FilterForRequested"/> so the view stays LCModel/dialog-free.
+		/// </summary>
+		public event EventHandler<int> RestrictDateRequested;
+
+		/// <summary>
+		/// Raised when the user invokes "Choose…" from a chooser (<c>bulkEdit</c>/<c>chooserFilter</c>) column's
+		/// filter flyout: the column index. The host (RecordBrowseView), which owns the (LCModel-aware) chooser,
+		/// builds the chooser items from the column's possibility list, opens the shared <c>ChooserDialog</c>, and
+		/// — on OK — routes the chosen item keys back through <see cref="ApplyFilterListChoice"/>. Modeled on
+		/// <see cref="FilterForRequested"/> so the view stays LCModel/dialog-free.
+		/// </summary>
+		public event EventHandler<int> ChooseListRequested;
+
+		/// <summary>
+		/// Raised when, with Click Copy mode active (<see cref="ClickCopyActive"/>), the user clicks a data cell:
+		/// the (rowIndex, columnIndex) of the clicked SOURCE cell. The host (RecordBrowseView) copies that cell's
+		/// text into the click-copy target column on the SAME row. The signal fires ONLY in click-copy mode and
+		/// is suppressed otherwise so it never interferes with normal selection/editing.
+		/// </summary>
+		public event EventHandler<(int RowIndex, int ColumnIndex)> CellClicked;
+
+		// When set, a data-cell click is a CLICK-COPY gesture: the cell raises CellClicked and the click is
+		// handled (not promoted to an inline edit / selection). Toggled by the host from the bulk bar's
+		// Click Copy tab selection. Default false so the table behaves exactly as before when the tab is inactive.
+		private bool _clickCopyActive;
+
+		/// <summary>
+		/// Whether Click Copy mode is active. While true a click on a data cell raises <see cref="CellClicked"/>
+		/// (with the clicked row/column) instead of beginning an inline edit, so the host can copy that cell into
+		/// the configured target column. Setting it false restores the normal click-to-edit / select behavior.
+		/// </summary>
+		public bool ClickCopyActive
+		{
+			get => _clickCopyActive;
+			set
+			{
+				if (_clickCopyActive == value)
+					return;
+				// Leaving an in-flight edit open while click-copy takes over would let a later commit fire under
+				// the wrong gesture; cancel any active editor as the mode switches on.
+				if (value)
+					CancelActiveCell();
+				_clickCopyActive = value;
+			}
+		}
+
 		public LexicalBrowseView(ViewDefinitionModel definition, IBrowseRowSource rows,
-			bool showCheckboxColumn = false)
+			bool showCheckboxColumn = false, bool externalReloadDrivesRefresh = false,
+			IReadOnlyDictionary<string, double> columnWidths = null)
 		{
 			if (definition == null) throw new ArgumentNullException(nameof(definition));
 			_rows = rows ?? throw new ArgumentNullException(nameof(rows));
+			_externalReloadDrivesRefresh = externalReloadDrivesRefresh;
 			_editSource = rows as IBrowseEditSource;
 			_richSource = rows as IBrowseRichCellSource;
+			_sortSource = rows as IBrowseSortSource;
+			_multiSortSource = rows as IBrowseMultiSortSource;
+			_filterSource = rows as IBrowseFilterSource;
+			_filterPresetSource = rows as IBrowseFilterPresetSource;
+			_columnMetadataSource = rows as IBrowseColumnMetadataSource;
+			_bulkEditSource = rows as IBrowseBulkEditSource;
+			_bulkCopySource = rows as IBrowseBulkCopySource;
+			_bulkClearSource = rows as IBrowseBulkClearSource;
+			_bulkDeleteSource = rows as IBrowseBulkDeleteSource;
+			_bulkReplaceSource = rows as IBrowseBulkReplaceSource;
+			_bulkTransduceSource = rows as IBrowseBulkTransduceSource;
+			_clickCopySource = rows as IBrowseClickCopySource;
 			_showCheckboxColumn = showCheckboxColumn;
 
 			Columns = definition.Roots.Where(n => n.Kind == ViewNodeKind.Field).ToList();
 			Name = "LexicalBrowseView";
 			AutomationProperties.SetAutomationId(this, "LexicalBrowseView");
 
+			// WinForms-density font baseline (12px) for the browse surface, applied to this view's own control
+			// subtree so it renders in both the runtime host and the headless tests. The table keeps its grid
+			// lines and bold headers (FwAvaloniaDensity / local setters) — this only drops the Fluent default font.
+			FwSurfaceStyles.Apply(this);
+
 			var columnCount = Columns.Count;
 			_sortGlyphs = new TextBlock[columnCount];
 
+			// Seed the one shared width source from the model's persisted widths (keyed by the column's field
+			// token), defaulting to an even fixed width where unknown. Header/filter/row grids all read this.
+			_columnWidths = new double[columnCount];
+			for (var c = 0; c < columnCount; c++)
+			{
+				_columnWidths[c] = columnWidths != null
+					&& columnWidths.TryGetValue(Columns[c].Field ?? string.Empty, out var w) && w > 0
+					? w
+					: DefaultColumnWidth;
+			}
+
 			_header = new Grid();
-			if (_showCheckboxColumn)
-				_header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-			foreach (var _ in Columns)
-				_header.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+			ApplyColumnWidths(_header);
 			if (_showCheckboxColumn)
 				_header.Children.Add(BuildCheckAllHeader());
 			for (var c = 0; c < columnCount; c++)
 				_header.Children.Add(BuildHeaderCell(c));
+			AddHeaderSplitters(_header);
 
 			_list = new ListBox
 			{
@@ -261,7 +746,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var layout = new DockPanel { Background = FwAvaloniaDensity.BrowseBackgroundBrush };
 			DockPanel.SetDock(_header, Dock.Top);
 			layout.Children.Add(_header);
-			if (_rows is IBrowseFilterSource)
+			if (_filterSource != null)
 			{
 				_filterRow = BuildFilterRow();
 				DockPanel.SetDock(_filterRow, Dock.Top);
@@ -282,6 +767,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Direction of the current sort (meaningful only when <see cref="SortColumn"/> >= 0).</summary>
 		public bool SortAscending => _sortAscending;
+
+		/// <summary>
+		/// The active multi-column sort keys in priority order (primary first), or empty when unsorted. A
+		/// single-column sort holds one key; Shift+click accumulates more. Exposed so callers/tests can
+		/// observe the accumulated sequence the source was last sorted by. Returns a snapshot.
+		/// </summary>
+		public IReadOnlyList<BrowseSortKey> SortKeys => _sortKeys.ToList();
 
 		/// <summary>
 		/// The selected row index, or -1 if none. Setting it selects the row and — because
@@ -310,15 +802,35 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void SortByColumn(int columnIndex)
 		{
-			if (!(_rows is IBrowseSortSource sortable) || columnIndex < 0 || columnIndex >= Columns.Count)
+			if (_sortSource == null || columnIndex < 0 || columnIndex >= Columns.Count)
 				return;
 
 			_sortAscending = columnIndex == _sortColumn ? !_sortAscending : true;
 			_sortColumn = columnIndex;
-			sortable.Sort(columnIndex, _sortAscending);
-			_checkedRows.Clear();
+			// A plain (non-Shift) click is a fresh SINGLE-column sort: collapse any accumulated multi-key
+			// sequence to just this column so a later Shift+click accumulates from the current single sort
+			// rather than stale prior keys. The column's sticky Sort From End / Sort By Length toggles are
+			// carried into the key so the chosen ordering survives the re-sort.
+			_sortKeys.Clear();
+			_sortKeys.Add(MakeSortKey(columnIndex, _sortAscending));
+			// Route through the multi-sort seam (which carries the toggle flags on the key) when the source
+			// supports it; otherwise fall back to the plain single-column sort (no toggle support there).
+			if (_multiSortSource != null)
+				_multiSortSource.Sort(_sortKeys);
+			else
+				_sortSource.Sort(columnIndex, _sortAscending);
+			// Task 20: checks are object-keyed, so a re-sort no longer needs to clear them — they follow
+			// their objects to the new positions (CheckedRows re-projects to the current indices).
 			UpdateSortGlyphs();
-			Refresh();
+			RefreshUnlessExternallyDriven(); // Task 22: clerk reload drives the single rebuild in product
+		}
+
+		// Builds a sort key for a column folding in its sticky Sort From End / Sort By Length toggle state.
+		private BrowseSortKey MakeSortKey(int columnIndex, bool ascending)
+		{
+			_sortedFromEnd.TryGetValue(columnIndex, out var fromEnd);
+			_sortedByLength.TryGetValue(columnIndex, out var byLength);
+			return new BrowseSortKey(columnIndex, ascending, fromEnd, byLength);
 		}
 
 		/// <summary>
@@ -341,6 +853,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>The cell currently hosting the active inline editor, or null when none is editing.</summary>
 		public bool HasActiveCellEdit => _activeCell != null;
 
+		// Task 22: rebuild locally ONLY when no external authority will. After a sort/filter the product
+		// clerk reloads and RecordBrowseView calls RefreshRows() (a Refresh) when the reload completes, so a
+		// local Refresh() here would be the second rebuild of the same list; skip it in that case. An
+		// in-memory source has no such reload, so it rebuilds here.
+		private void RefreshUnlessExternallyDriven()
+		{
+			if (!_externalReloadDrivesRefresh)
+				Refresh();
+		}
+
 		/// <summary>Re-realizes rows from the (possibly reordered/refiltered) source.</summary>
 		public void Refresh()
 		{
@@ -360,26 +882,111 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		// ----- 3c: checkbox-select column -----
 
-		/// <summary>The currently checked row indexes (3c), in ascending order.</summary>
-		public IReadOnlyList<int> CheckedRows => _checkedRows.OrderBy(i => i).ToList();
+		/// <summary>
+		/// The currently checked row indexes (3c), in ascending order — re-projected from the checked
+		/// objects' stable identities to their CURRENT positions (Task 20). A check whose object is no
+		/// longer in the list (filtered out, deleted) contributes no index; it reappears when its object
+		/// returns. This is what makes a check survive a re-sort/reload pointing at the same object.
+		/// </summary>
+		public IReadOnlyList<int> CheckedRows
+		{
+			get
+			{
+				var indexes = new List<int>();
+				for (var i = 0; i < _rows.RowCount; i++)
+					if (_checkedHvos.Contains(_rows.HvoAt(i)))
+						indexes.Add(i);
+				return indexes;
+			}
+		}
+
+		/// <summary>
+		/// The stable object identities (LCModel hvos) of the currently checked rows (Task 1 product
+		/// surface) — re-projected from the checked set to the objects still present in the list, in
+		/// ascending row order. This is the position-independent form of <see cref="CheckedRows"/>: a host
+		/// (RecordBrowseView) reads it to drive bulk-edit against object handles that survive a re-sort or a
+		/// clerk-initiated reload, rather than fragile row indexes. Returns a snapshot, not a live view.
+		/// </summary>
+		public IReadOnlyList<int> CheckedHvos
+		{
+			get
+			{
+				var hvos = new List<int>();
+				for (var i = 0; i < _rows.RowCount; i++)
+				{
+					var hvo = _rows.HvoAt(i);
+					if (hvo != 0 && _checkedHvos.Contains(hvo))
+						hvos.Add(hvo);
+				}
+				return hvos;
+			}
+		}
+
+		/// <summary>
+		/// Seeds the object-keyed checked set from a previous view's <see cref="CheckedHvos"/> (Configure-Columns
+		/// rebuild, P1 step 4): the inner view is swapped to re-project a changed column set/order, but a column
+		/// change must NOT drop the user's row selection — the checked set is keyed by stable object identity, so
+		/// it transfers verbatim and re-projects to the new view's rows. Refreshes so the checkboxes reflect it.
+		/// </summary>
+		public void SeedCheckedHvos(IEnumerable<int> hvos)
+		{
+			_checkedHvos.Clear();
+			if (hvos != null)
+				foreach (var hvo in hvos)
+					if (hvo != 0)
+						_checkedHvos.Add(hvo);
+			Refresh();
+		}
 
 		/// <summary>Checks every row (3c check-all), including de-realized rows.</summary>
 		public void CheckAll()
 		{
-			_checkedRows.Clear();
+			_checkedHvos.Clear();
 			for (var i = 0; i < _rows.RowCount; i++)
-				_checkedRows.Add(i);
+			{
+				var hvo = _rows.HvoAt(i);
+				if (hvo != 0)
+					_checkedHvos.Add(hvo);
+			}
 			Refresh();
 		}
 
 		/// <summary>Clears every row's check (3c uncheck-all).</summary>
 		public void UncheckAll()
 		{
-			_checkedRows.Clear();
+			_checkedHvos.Clear();
 			Refresh();
 		}
 
 		// ----- 3c: multi-column sort -----
+
+		/// <summary>
+		/// Accumulates <paramref name="columnIndex"/> as an additional (secondary, tertiary, …) sort key and
+		/// re-applies the combined multi-column sort — the Shift+click affordance mirroring the legacy
+		/// BrowseViewer's AndSorter accumulation. If the column is already an active key its DIRECTION
+		/// toggles (matching the legacy "same one, reverse direction" behavior); otherwise it is appended as
+		/// a lower-priority key, preserving the existing primary. A no-op when the source does not support
+		/// <see cref="IBrowseMultiSortSource"/> or the column is out of range.
+		/// </summary>
+		public void AddSortColumn(int columnIndex)
+		{
+			if (_multiSortSource == null || columnIndex < 0 || columnIndex >= Columns.Count)
+				return;
+
+			// Seed from the current single-column sort if no multi-key sequence is active yet, so the first
+			// Shift+click builds a (primary, secondary) pair rather than discarding the existing sort.
+			var keys = new List<BrowseSortKey>(_sortKeys);
+			if (keys.Count == 0 && _sortColumn >= 0)
+				keys.Add(MakeSortKey(_sortColumn, _sortAscending));
+
+			var existing = keys.FindIndex(k => k.Column == columnIndex);
+			if (existing >= 0)
+				keys[existing] = MakeSortKey(columnIndex, !keys[existing].Ascending); // toggle direction
+			else
+				keys.Add(MakeSortKey(columnIndex, true)); // new lower-priority key, ascending
+
+			SortByColumns(keys);
+		}
 
 		/// <summary>
 		/// Applies a combined multi-column sort (3c) when the source supports
@@ -387,7 +994,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void SortByColumns(IReadOnlyList<BrowseSortKey> keys)
 		{
-			if (keys == null || !(_rows is IBrowseMultiSortSource multi))
+			if (keys == null || _multiSortSource == null)
 				return;
 			_sortKeys.Clear();
 			foreach (var key in keys)
@@ -397,10 +1004,104 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				return;
 			_sortColumn = _sortKeys[0].Column;
 			_sortAscending = _sortKeys[0].Ascending;
-			_checkedRows.Clear();
-			multi.Sort(_sortKeys);
+			// Task 20: object-keyed checks follow their objects across the multi-column re-sort.
+			_multiSortSource.Sort(_sortKeys);
 			UpdateSortGlyphs();
-			Refresh();
+			RefreshUnlessExternallyDriven(); // Task 22: clerk reload drives the single rebuild in product
+		}
+
+		// ----- header context-menu sort toggles (legacy BrowseViewer "Sort From End" / "Sort By Length") -----
+
+		/// <summary>Whether the column's sticky "Sort From End" toggle is on (suffix-oriented sort).</summary>
+		public bool IsSortedFromEnd(int columnIndex)
+		{
+			_sortedFromEnd.TryGetValue(columnIndex, out var value);
+			return value;
+		}
+
+		/// <summary>Whether the column's sticky "Sort By Length" toggle is on.</summary>
+		public bool IsSortedByLength(int columnIndex)
+		{
+			_sortedByLength.TryGetValue(columnIndex, out var value);
+			return value;
+		}
+
+		/// <summary>
+		/// Test seam: a freshly-built header context menu for the column whose field token matches
+		/// <paramref name="field"/> (or null when unknown), so headless tests can observe the sort-toggle
+		/// entries and their current checked state without re-driving the (build-once) live header cell.
+		/// </summary>
+		public ContextMenu HeaderContextMenuFor(string field)
+		{
+			var index = IndexOfColumn(field);
+			return index < 0 ? null : BuildHeaderContextMenu(index, Columns[index]);
+		}
+
+		/// <summary>
+		/// Test seam: a freshly-built filter preset flyout for the column whose field token matches
+		/// <paramref name="field"/> (or null when unknown / the source offers no presets), so headless tests
+		/// can observe which type-specific presets a column type offers.
+		/// </summary>
+		public MenuFlyout PresetFlyoutFor(string field)
+		{
+			if (_filterPresetSource == null)
+				return null;
+			var index = IndexOfColumn(field);
+			return index < 0 ? null : BuildPresetFlyout(index, new TextBox());
+		}
+
+		// The shown-column index whose field token matches, or -1. (Columns is IReadOnlyList — no FindIndex.)
+		private int IndexOfColumn(string field)
+		{
+			for (var i = 0; i < Columns.Count; i++)
+				if (string.Equals(Columns[i].Field, field, StringComparison.Ordinal))
+					return i;
+			return -1;
+		}
+
+		/// <summary>
+		/// Toggles the legacy "Sort From End" flag on a column and re-sorts on it — the Avalonia counterpart
+		/// of the WinForms header context-menu toggle (<c>OnPropertyChanged("SortedFromEnd")</c>). The flag is
+		/// sticky (carried into the column's next sort key); toggling makes this column the active sort.
+		/// </summary>
+		public void ToggleSortedFromEnd(int columnIndex)
+		{
+			if (_sortSource == null || columnIndex < 0 || columnIndex >= Columns.Count)
+				return;
+			_sortedFromEnd.TryGetValue(columnIndex, out var current);
+			_sortedFromEnd[columnIndex] = !current;
+			ReSortColumnPreservingDirection(columnIndex);
+		}
+
+		/// <summary>
+		/// Toggles the legacy "Sort By Length" flag on a column and re-sorts on it — the Avalonia counterpart
+		/// of the WinForms header context-menu toggle (<c>OnPropertyChanged("SortedByLength")</c>). Only
+		/// meaningful for columns whose spec carries <c>cansortbylength="true"</c> (the UI gates the entry).
+		/// </summary>
+		public void ToggleSortedByLength(int columnIndex)
+		{
+			if (_sortSource == null || columnIndex < 0 || columnIndex >= Columns.Count)
+				return;
+			_sortedByLength.TryGetValue(columnIndex, out var current);
+			_sortedByLength[columnIndex] = !current;
+			ReSortColumnPreservingDirection(columnIndex);
+		}
+
+		// Re-applies the sort on a column after a toggle change, keeping the current direction when this
+		// column is already the active single sort (so toggling does not flip ascending/descending).
+		private void ReSortColumnPreservingDirection(int columnIndex)
+		{
+			var ascending = (columnIndex == _sortColumn) ? _sortAscending : true;
+			_sortAscending = ascending;
+			_sortColumn = columnIndex;
+			_sortKeys.Clear();
+			_sortKeys.Add(MakeSortKey(columnIndex, ascending));
+			if (_multiSortSource != null)
+				_multiSortSource.Sort(_sortKeys);
+			else
+				_sortSource.Sort(columnIndex, ascending);
+			UpdateSortGlyphs();
+			RefreshUnlessExternallyDriven();
 		}
 
 		// ----- 3c: column filter -----
@@ -411,28 +1112,88 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void ApplyFilter(int columnIndex, string text)
 		{
-			if (!(_rows is IBrowseFilterSource filter))
+			if (_filterSource == null)
 				return;
-			filter.SetFilter(columnIndex, text);
-			_checkedRows.Clear();
+			_filterSource.SetFilter(columnIndex, text);
+			// Task 20: checks are object-keyed — a filtered-out object's check is simply not projected
+			// (CheckedRows skips it) and reappears when its object returns, so bulk-edit never acts on a
+			// stale position and a transient filter doesn't silently discard the user's selection.
 			_list.SelectedIndex = -1;
-			Refresh();
+			RefreshUnlessExternallyDriven(); // Task 22: clerk reload drives the single rebuild in product
 		}
 
 		/// <summary>
 		/// Applies (or clears, when <see cref="BrowseFilterPreset.None"/>) a blank-aware filter preset (3c)
 		/// on a column through <see cref="IBrowseFilterPresetSource"/> — the FilterBar's prominent
-		/// "blanks / non-blanks" choices. The row count then reflects the narrowed set; checks/selection
-		/// clear because they are position-keyed (same contract as <see cref="ApplyFilter"/>).
+		/// "blanks / non-blanks" choices. The row count then reflects the narrowed set; selection clears
+		/// (position-based), while object-keyed checks survive (same contract as <see cref="ApplyFilter"/>).
 		/// </summary>
 		public void ApplyFilterPreset(int columnIndex, BrowseFilterPreset preset)
 		{
-			if (!(_rows is IBrowseFilterPresetSource filter))
+			if (_filterPresetSource == null)
 				return;
-			filter.SetFilterPreset(columnIndex, preset);
-			_checkedRows.Clear();
+			_filterPresetSource.SetFilterPreset(columnIndex, preset);
+			// Task 20: object-keyed checks survive the preset narrowing (see ApplyFilter).
 			_list.SelectedIndex = -1;
-			Refresh();
+			RefreshUnlessExternallyDriven(); // Task 22: clerk reload drives the single rebuild in product
+		}
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="spec"/> is null / has empty text) the FilterBar "Filter For…"
+		/// pattern match on a column through <see cref="IBrowseFilterPresetSource"/>. The host calls this with
+		/// the dialog result after handling <see cref="FilterForRequested"/>. Mutually exclusive with the
+		/// free-text term and blank-aware presets on the column (same contract as the other per-column filters).
+		/// </summary>
+		public void ApplyFilterPattern(int columnIndex, BrowseFilterForSpec spec)
+		{
+			if (_filterPresetSource == null)
+				return;
+			_filterPresetSource.SetFilterPattern(columnIndex, spec);
+			_list.SelectedIndex = -1;
+			RefreshUnlessExternallyDriven();
+		}
+
+		/// <summary>
+		/// Applies a <c>stringList</c> enumerated-value preset (exact match, or "Exclude X" inverse) on a column
+		/// through <see cref="IBrowseFilterPresetSource"/>. Mutually exclusive with the column's other filters.
+		/// </summary>
+		public void ApplyFilterStringListValue(int columnIndex, string value, bool exclude)
+		{
+			if (_filterPresetSource == null)
+				return;
+			_filterPresetSource.SetFilterStringListValue(columnIndex, value, exclude);
+			_list.SelectedIndex = -1;
+			RefreshUnlessExternallyDriven();
+		}
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="spec"/> is null) the FilterBar "Restrict Date…" date-range
+		/// match on a column through <see cref="IBrowseFilterPresetSource"/>. The host calls this with the dialog
+		/// result after handling <see cref="RestrictDateRequested"/>. Mutually exclusive with the column's other
+		/// filters (same contract as the other per-column filters).
+		/// </summary>
+		public void ApplyFilterDate(int columnIndex, BrowseDateFilterSpec spec)
+		{
+			if (_filterPresetSource == null)
+				return;
+			_filterPresetSource.SetFilterDate(columnIndex, spec);
+			_list.SelectedIndex = -1;
+			RefreshUnlessExternallyDriven();
+		}
+
+		/// <summary>
+		/// Applies (or clears, when <paramref name="chosenKeys"/> is null/empty) the FilterBar "Choose…"
+		/// list-choice match on a column through <see cref="IBrowseFilterPresetSource"/>. The host calls this with
+		/// the chosen possibility-item keys after handling <see cref="ChooseListRequested"/>. Mutually exclusive
+		/// with the column's other filters.
+		/// </summary>
+		public void ApplyFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys)
+		{
+			if (_filterPresetSource == null)
+				return;
+			_filterPresetSource.SetFilterListChoice(columnIndex, chosenKeys);
+			_list.SelectedIndex = -1;
+			RefreshUnlessExternallyDriven();
 		}
 
 		// ----- 3c: bulk edit -----
@@ -443,9 +1204,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void PreviewBulkEdit(int columnIndex, string value)
 		{
-			if (!(_rows is IBrowseBulkEditSource bulk))
+			if (_bulkEditSource == null)
 				return;
-			bulk.PreviewBulkEdit(columnIndex, CheckedRows, value);
+			_bulkEditSource.PreviewBulkEdit(columnIndex, CheckedRows, value);
 			Refresh();
 		}
 
@@ -455,10 +1216,207 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public void ApplyBulkEdit(int columnIndex, string value)
 		{
-			if (!(_rows is IBrowseBulkEditSource bulk) || _editSource == null)
+			if (_bulkEditSource == null || _editSource == null)
 				return;
-			bulk.ApplyBulkEdit(columnIndex, CheckedRows, value, _editSource.EditContext);
-			bulk.ClearBulkEditPreview();
+			_bulkEditSource.ApplyBulkEdit(columnIndex, CheckedRows, value, _editSource.EditContext);
+			_bulkEditSource.ClearBulkEditPreview();
+			Refresh();
+		}
+
+		/// <summary>
+		/// Previews a Bulk Copy (Phase 2): for each checked row the source computes the new target value from
+		/// the source column per <paramref name="mode"/> and stages it in the preview overlay, then the view
+		/// refreshes to show it. No model mutation.
+		/// </summary>
+		public void PreviewBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator)
+		{
+			if (_bulkCopySource == null)
+				return;
+			_bulkCopySource.PreviewBulkCopy(sourceColumn, targetColumn, mode, separator, CheckedRows);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Applies a Bulk Copy (Phase 2) across the checked rows through the shared edit session as ONE
+		/// undoable change, then clears the preview and refreshes.
+		/// </summary>
+		public void ApplyBulkCopy(int sourceColumn, int targetColumn, BulkCopyMode mode, string separator)
+		{
+			if (_bulkCopySource == null || _editSource == null)
+				return;
+			_bulkCopySource.ApplyBulkCopy(sourceColumn, targetColumn, mode, separator, CheckedRows, _editSource.EditContext);
+			_bulkEditSource?.ClearBulkEditPreview();
+			Refresh();
+		}
+
+		/// <summary>
+		/// Previews a Bulk Clear (Phase 3): for each checked row stages an empty overlay into the target
+		/// column, then refreshes so the cell shows blank. No model mutation.
+		/// </summary>
+		public void PreviewBulkClear(int targetColumn)
+		{
+			if (_bulkClearSource == null)
+				return;
+			_bulkClearSource.PreviewBulkClear(targetColumn, CheckedRows);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Applies a Bulk Clear (Phase 3) across the checked rows through the shared edit session as ONE
+		/// undoable change (each row's target text emptied), then clears the preview and refreshes.
+		/// </summary>
+		public void ApplyBulkClear(int targetColumn)
+		{
+			if (_bulkClearSource == null || _editSource == null)
+				return;
+			_bulkClearSource.ApplyBulkClear(targetColumn, CheckedRows, _editSource.EditContext);
+			_bulkEditSource?.ClearBulkEditPreview();
+			ClearDeletePreview();
+			Refresh();
+		}
+
+		// ----- Delete Rows (destructive mode of the Delete tab) -----
+
+		/// <summary>Whether the row source can delete objects (the Delete-Rows mode is offered only when true).</summary>
+		public bool CanDeleteRows => _bulkDeleteSource?.CanDeleteRows ?? false;
+
+		/// <summary>
+		/// Previews the Delete-Rows mode: classifies the checked rows into deletable vs blocked (the per-row
+		/// guards), stages the result in the delete-preview overlay so each affected row is marked, refreshes, and
+		/// returns the count that WOULD be deleted. No model mutation. 0 when the source cannot delete.
+		/// </summary>
+		public int PreviewDeleteRows()
+		{
+			_deletePreview.Clear();
+			if (_bulkDeleteSource == null || !_bulkDeleteSource.CanDeleteRows)
+				return 0;
+			var deletable = _bulkDeleteSource.ClassifyDeletableRows(CheckedRows, out var blocked);
+			foreach (var rowIndex in deletable)
+			{
+				var hvo = _rows.HvoAt(rowIndex);
+				if (hvo != 0)
+					_deletePreview[hvo] = false; // will be deleted
+			}
+			if (blocked != null)
+				foreach (var rowIndex in blocked)
+				{
+					var hvo = _rows.HvoAt(rowIndex);
+					if (hvo != 0)
+						_deletePreview[hvo] = true; // blocked
+				}
+			Refresh();
+			return deletable.Count;
+		}
+
+		/// <summary>
+		/// Counts how many checked rows are currently deletable (after the per-row guards), without staging a
+		/// preview — used by the host to size the confirmation dialog. 0 when the source cannot delete.
+		/// </summary>
+		public int CountDeletableRows()
+		{
+			if (_bulkDeleteSource == null || !_bulkDeleteSource.CanDeleteRows)
+				return 0;
+			return _bulkDeleteSource.ClassifyDeletableRows(CheckedRows, out _).Count;
+		}
+
+		/// <summary>
+		/// Applies the Delete-Rows mode: re-classifies the checked rows (so the guards are enforced at the moment
+		/// of delete, not just at preview), deletes ONLY the deletable objects through the shared edit session as
+		/// ONE undoable change (plus orphan cleanup), clears the preview, and refreshes. Returns the number of
+		/// objects deleted. The CONFIRMATION is the product host's responsibility (it windows); this method assumes
+		/// the caller has already confirmed and just performs the guarded, one-UOW delete.
+		/// </summary>
+		public int ApplyDeleteRows()
+		{
+			if (_bulkDeleteSource == null || _editSource == null || !_bulkDeleteSource.CanDeleteRows)
+				return 0;
+			var deletable = _bulkDeleteSource.ClassifyDeletableRows(CheckedRows, out _);
+			if (deletable.Count == 0)
+			{
+				ClearDeletePreview();
+				Refresh();
+				return 0;
+			}
+			var deleted = _bulkDeleteSource.DeleteRows(deletable, _editSource.EditContext);
+			_bulkEditSource?.ClearBulkEditPreview();
+			ClearDeletePreview();
+			Refresh();
+			return deleted;
+		}
+
+		/// <summary>Discards any staged Delete-Rows preview marking (the row markers disappear on next refresh).</summary>
+		public void ClearDeletePreview() => _deletePreview.Clear();
+
+		/// <summary>
+		/// Previews a Bulk Replace (Find/Replace Phase 1): for each checked row the source computes the replaced
+		/// TARGET cell string from the find/replace <paramref name="spec"/> and stages it in the preview overlay,
+		/// then the view refreshes to show it. No model mutation.
+		/// </summary>
+		public void PreviewBulkReplace(int targetColumn, BulkReplaceSpec spec)
+		{
+			if (_bulkReplaceSource == null || spec == null)
+				return;
+			_bulkReplaceSource.PreviewBulkReplace(targetColumn, CheckedRows, spec);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Applies a Bulk Replace (Find/Replace Phase 1) across the checked rows through the shared edit session
+		/// as ONE undoable change (each row's target text find/replaced), then clears the preview and refreshes.
+		/// </summary>
+		public void ApplyBulkReplace(int targetColumn, BulkReplaceSpec spec)
+		{
+			if (_bulkReplaceSource == null || _editSource == null || spec == null)
+				return;
+			_bulkReplaceSource.ApplyBulkReplace(targetColumn, CheckedRows, spec, _editSource.EditContext);
+			_bulkEditSource?.ClearBulkEditPreview();
+			Refresh();
+		}
+
+		/// <summary>
+		/// Previews a Bulk Transduce (Process): for each checked row reads the SOURCE column, runs the
+		/// <paramref name="converter"/> over its text, computes the TARGET value per <paramref name="mode"/>,
+		/// and stages it in the preview overlay, then refreshes so the cell shows the converted text. No
+		/// model mutation.
+		/// </summary>
+		public void PreviewBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator)
+		{
+			if (_bulkTransduceSource == null || converter == null)
+				return;
+			_bulkTransduceSource.PreviewBulkTransduce(sourceColumn, targetColumn, converter, mode, separator, CheckedRows);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Applies a Bulk Transduce (Process) across the checked rows through the shared edit session as ONE
+		/// undoable change (each row's target text set to the converted source value), then clears the preview
+		/// and refreshes.
+		/// </summary>
+		public void ApplyBulkTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter,
+			BulkCopyMode mode, string separator)
+		{
+			if (_bulkTransduceSource == null || _editSource == null || converter == null)
+				return;
+			_bulkTransduceSource.ApplyBulkTransduce(sourceColumn, targetColumn, converter, mode, separator,
+				CheckedRows, _editSource.EditContext);
+			_bulkEditSource?.ClearBulkEditPreview();
+			Refresh();
+		}
+
+		/// <summary>
+		/// Applies an interactive Click Copy: copies the clicked SOURCE cell at
+		/// (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>) into <paramref name="targetColumn"/> on
+		/// the SAME row through the shared edit session as ONE undoable change (the per-click unit), then refreshes
+		/// so the written target shows. A no-op when the source does not support Click Copy.
+		/// </summary>
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
+			string separator, bool append)
+		{
+			if (_clickCopySource == null || _editSource == null)
+				return;
+			_clickCopySource.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, mode, separator, append,
+				_editSource.EditContext);
 			Refresh();
 		}
 
@@ -494,7 +1452,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// Only wrap in a clickable header when the source can actually sort, so non-sortable
 			// browse surfaces keep a plain header and do not advertise an affordance they can't honor.
-			if (_rows is IBrowseSortSource)
+			if (_sortSource != null)
 			{
 				var button = new Button
 				{
@@ -508,17 +1466,205 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(button, $"BrowseHeaderButton.{column.Field}");
 				AutomationProperties.SetName(button, column.Label ?? column.Field);
 				var captured = columnIndex;
-				button.Click += (_, __) => SortByColumn(captured);
+				// Shift+click accumulates a SECONDARY (then tertiary, …) sort key — the legacy BrowseViewer
+				// Shift+click AndSorter affordance — when the source supports multi-column sort; a plain click
+				// is a single-column sort as before. The Click event carries no modifier state, so record the
+				// keyboard modifiers on the press that precedes the click and read them here.
+				var shiftTracker = false;
+				button.AddHandler(InputElement.PointerPressedEvent, (_, e) =>
+					shiftTracker = (e.KeyModifiers & KeyModifiers.Shift) == KeyModifiers.Shift,
+					RoutingStrategies.Tunnel);
+				button.Click += (_, __) =>
+				{
+					if (shiftTracker && _multiSortSource != null)
+						AddSortColumn(captured);
+					else
+						SortByColumn(captured);
+				};
+				button.ContextMenu = BuildHeaderContextMenu(columnIndex, column);
 				Grid.SetColumn(button, columnIndex + ColumnOffset);
 				return button;
 			}
 
+			content.ContextMenu = BuildHeaderContextMenu(columnIndex, column);
 			Grid.SetColumn(content, columnIndex + ColumnOffset);
 			return content;
 		}
 
+		// The header cell's right-click menu (P1 step 7): a "Configure Columns…" entry that raises
+		// ConfigureColumnsRequested so the host launches the LCModel-aware dialog. Built per header cell so the
+		// affordance is reachable from any column title, matching the legacy header context menu.
+		//
+		// When the source can sort, it also carries the legacy header toggles "Sort From End" (always present
+		// for a sortable column) and "Sort By Length" (only when the column spec carries cansortbylength="true",
+		// matching BrowseViewer.OnDisplaySortedByLength). Both are checkable and reflect the column's current
+		// sticky toggle state; toggling re-sorts on the column.
+		private ContextMenu BuildHeaderContextMenu(int columnIndex, ViewNode column)
+		{
+			var menu = new ContextMenu();
+			var field = column?.Field ?? string.Empty;
+
+			if (_sortSource != null)
+			{
+				var fromEnd = new MenuItem
+				{
+					Header = FwAvaloniaStrings.SortFromEnd,
+					ToggleType = MenuItemToggleType.CheckBox,
+					IsChecked = IsSortedFromEnd(columnIndex)
+				};
+				AutomationProperties.SetAutomationId(fromEnd, "BrowseHeaderSortFromEnd." + field);
+				fromEnd.Click += (_, __) => ToggleSortedFromEnd(columnIndex);
+				menu.Items.Add(fromEnd);
+
+				// "Sort By Length" is gated on the column spec's cansortbylength attribute (matching the legacy
+				// header), read through the optional column-metadata seam. Absent the seam it is never offered.
+				if (string.Equals(GetColumnSpecAttribute(columnIndex, "cansortbylength"), "true",
+					StringComparison.OrdinalIgnoreCase))
+				{
+					var byLength = new MenuItem
+					{
+						Header = FwAvaloniaStrings.SortByLength,
+						ToggleType = MenuItemToggleType.CheckBox,
+						IsChecked = IsSortedByLength(columnIndex)
+					};
+					AutomationProperties.SetAutomationId(byLength, "BrowseHeaderSortByLength." + field);
+					byLength.Click += (_, __) => ToggleSortedByLength(columnIndex);
+					menu.Items.Add(byLength);
+				}
+
+				menu.Items.Add(new Separator());
+			}
+
+			var item = new MenuItem { Header = FwAvaloniaStrings.ConfigureColumnsMenu };
+			AutomationProperties.SetAutomationId(item, "BrowseHeaderConfigureColumns." + field);
+			item.Click += (_, __) => ConfigureColumnsRequested?.Invoke(this, EventArgs.Empty);
+			menu.Items.Add(item);
+			return menu;
+		}
+
+		// Reads a column's raw spec attribute through the optional metadata seam (null when unsupported).
+		private string GetColumnSpecAttribute(int columnIndex, string attrName)
+		{
+			return _columnMetadataSource?.GetColumnSpecAttribute(columnIndex, attrName);
+		}
+
+		// Reads a stringList column's enumerated values through the optional metadata seam (null when
+		// unsupported or the column is not a stringList column).
+		private string[] GetColumnStringList(int columnIndex)
+		{
+			return _columnMetadataSource?.GetColumnStringList(columnIndex);
+		}
+
+		// Reads a chooser column's possibility-list items through the optional metadata seam (null when
+		// unsupported or the column is not a chooser column) — gates the "Choose…" flyout entry.
+		private IReadOnlyList<RegionChoiceOption> GetColumnChooserList(int columnIndex)
+		{
+			return _columnMetadataSource?.GetColumnChooserList(columnIndex);
+		}
+
 		// Leading column shift when the checkbox-select column is shown.
 		private int ColumnOffset => _showCheckboxColumn ? 1 : 0;
+
+		// Gives a grid the SAME column shape every grid in the table uses: the optional Auto checkbox column,
+		// then one pixel-width data column per shown column read from the ONE shared _columnWidths source. The
+		// header/filter/row grids all call this, so they get identical numbers and stay aligned by construction
+		// (P1 step 5) — replacing the old independent Star splits that could not be width-configured.
+		private void ApplyColumnWidths(Grid grid)
+		{
+			grid.ColumnDefinitions.Clear();
+			if (_showCheckboxColumn)
+				// FIXED width (not Auto): the filter row has no checkbox in column 0, so an Auto column
+				// there collapses to zero and shifts every filter cell out of line. See CheckboxColumnWidth.
+				grid.ColumnDefinitions.Add(new ColumnDefinition(
+					new GridLength(FwAvaloniaDensity.CheckboxColumnWidth, GridUnitType.Pixel)));
+			for (var c = 0; c < Columns.Count; c++)
+				grid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(_columnWidths[c], GridUnitType.Pixel)));
+		}
+
+		// Re-applies the shared widths to the header + filter grids and rebuilds the row grids (via Refresh) so
+		// a width change shows everywhere at once, all three reading the same source.
+		private void ReapplyColumnWidths()
+		{
+			ApplyColumnWidths(_header);
+			if (_filterRow != null)
+				ApplyColumnWidths(_filterRow);
+			Refresh();
+		}
+
+		// Overlays a thin draggable grab-handle on the trailing edge of each header column. Dragging it changes
+		// ONLY the shared _columnWidths entry for that column (kept >= a small minimum), re-applies to all three
+		// grids, and on release raises ColumnWidthChanged so the host persists the new width. A manual handle
+		// (not a per-grid GridSplitter) is used deliberately so the single shared width source drives all three
+		// grids together — a GridSplitter would resize only its own grid and desync the row/filter grids.
+		private void AddHeaderSplitters(Grid header)
+		{
+			for (var c = 0; c < Columns.Count; c++)
+			{
+				var captured = c;
+				var handle = new Border
+				{
+					Width = SplitterWidth,
+					Background = Brushes.Transparent,
+					HorizontalAlignment = HorizontalAlignment.Right,
+					Cursor = new Cursor(StandardCursorType.SizeWestEast)
+				};
+				AutomationProperties.SetAutomationId(handle, $"BrowseColumnSplitter.{Columns[c].Field}");
+				var dragging = false;
+				double startX = 0;
+				double startWidth = 0;
+				handle.PointerPressed += (_, e) =>
+				{
+					dragging = true;
+					startX = e.GetPosition(header).X;
+					startWidth = _columnWidths[captured];
+					e.Pointer.Capture(handle);
+					e.Handled = true;
+				};
+				handle.PointerMoved += (_, e) =>
+				{
+					if (!dragging)
+						return;
+					var delta = e.GetPosition(header).X - startX;
+					var newWidth = Math.Max(20d, startWidth + delta);
+					if (Math.Abs(newWidth - _columnWidths[captured]) < 0.5)
+						return;
+					_columnWidths[captured] = newWidth;
+					ReapplyColumnWidths();
+					e.Handled = true;
+				};
+				handle.PointerReleased += (_, e) =>
+				{
+					if (!dragging)
+						return;
+					dragging = false;
+					e.Pointer.Capture(null);
+					ColumnWidthChanged?.Invoke(this,
+						new BrowseColumnWidthChange(Columns[captured].Field, _columnWidths[captured]));
+					e.Handled = true;
+				};
+				Grid.SetColumn(handle, captured + ColumnOffset);
+				header.Children.Add(handle);
+			}
+		}
+
+		/// <summary>
+		/// Programmatically sets a column's pixel width and re-applies it across the three grids (P1 step 5
+		/// test seam + the rebuild-preserves-width path). Raises <see cref="ColumnWidthChanged"/> only when
+		/// <paramref name="notify"/> so a rebuild that re-seeds widths does not echo a spurious persist.
+		/// </summary>
+		public void SetColumnWidth(int columnIndex, double width, bool notify = false)
+		{
+			if (columnIndex < 0 || columnIndex >= Columns.Count || width <= 0)
+				return;
+			_columnWidths[columnIndex] = width;
+			ReapplyColumnWidths();
+			if (notify)
+				ColumnWidthChanged?.Invoke(this, new BrowseColumnWidthChange(Columns[columnIndex].Field, width));
+		}
+
+		/// <summary>The current pixel width of a column (default even width when never sized).</summary>
+		public double GetColumnWidth(int columnIndex)
+			=> columnIndex >= 0 && columnIndex < _columnWidths.Length ? _columnWidths[columnIndex] : 0d;
 
 		// A per-column filter row (the FilterBar replacement, 3c). Each column has ONE integrated filter
 		// box: type a term and press Enter to apply a contains filter; when the source supports blank-aware
@@ -528,12 +1674,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private Grid BuildFilterRow()
 		{
 			var grid = new Grid();
-			if (_showCheckboxColumn)
-				grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-			for (var c = 0; c < Columns.Count; c++)
-				grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+			ApplyColumnWidths(grid);
 
-			var supportsPresets = _rows is IBrowseFilterPresetSource;
+			var supportsPresets = _filterPresetSource != null;
 			for (var c = 0; c < Columns.Count; c++)
 			{
 				var cell = BuildFilterCell(c, supportsPresets);
@@ -600,21 +1743,146 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return frame;
 		}
 
-		// The Show All / Blanks / Non-blanks menu for a column's filter box. Picking an item applies the
-		// preset (Show All clears everything) and reflects the choice in the box text.
+		// The per-column filter preset menu. The universal blank-aware presets (Show All / Blanks /
+		// Non-blanks) are always offered; the type-specific ones below are gated on the column spec's
+		// multipara / sortType attributes — matching FilterBar.MakeCombo's per-column-type entries — read
+		// through the optional column-metadata seam. Picking an item applies the preset (Show All clears
+		// everything) and reflects the choice in the box text.
 		private MenuFlyout BuildPresetFlyout(int columnIndex, TextBox box)
 		{
 			var flyout = new MenuFlyout();
 			AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterShowAll, BrowseFilterPreset.None, showName: false);
 			AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterBlanks, BrowseFilterPreset.Blanks, showName: true);
 			AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterNonBlanks, BrowseFilterPreset.NonBlanks, showName: true);
+
+			// multipara="true" → the more-than/exactly-one-line presets (FilterBar's MoreThanOneLine/ExactlyOneLine).
+			if (string.Equals(GetColumnSpecAttribute(columnIndex, "multipara"), "true", StringComparison.OrdinalIgnoreCase))
+			{
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterMoreThanOneLine, BrowseFilterPreset.MoreThanOneLine, showName: true);
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterExactlyOneLine, BrowseFilterPreset.ExactlyOneLine, showName: true);
+			}
+
+			// sortType gates the Yes/No (exact) and integer (zero / >0 / >1) presets, matching FilterBar.
+			var sortType = GetColumnSpecAttribute(columnIndex, "sortType");
+			if (string.Equals(sortType, "YesNo", StringComparison.OrdinalIgnoreCase))
+			{
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterYes, BrowseFilterPreset.Yes, showName: true);
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterNo, BrowseFilterPreset.No, showName: true);
+			}
+			else if (string.Equals(sortType, "integer", StringComparison.OrdinalIgnoreCase))
+			{
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterZero, BrowseFilterPreset.Zero, showName: true);
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterGreaterThanZero, BrowseFilterPreset.GreaterThanZero, showName: true);
+				AddPresetItem(flyout, columnIndex, box, FwAvaloniaStrings.FilterGreaterThanOne, BrowseFilterPreset.GreaterThanOne, showName: true);
+			}
+			else if (string.Equals(sortType, "stringList", StringComparison.OrdinalIgnoreCase))
+			{
+				// sortType="stringList" → one exact-match preset per enumerated value, plus an "Exclude X"
+				// inverse for each when the list has more than two values (matching FilterBar.MakeCombo's
+				// stringList block). The values are read from the column spec through the metadata seam.
+				var values = GetColumnStringList(columnIndex);
+				if (values != null && values.Length > 0)
+				{
+					foreach (var value in values)
+						AddStringListItem(flyout, columnIndex, box, value, exclude: false);
+					if (values.Length > 2)
+						foreach (var value in values)
+							AddStringListItem(flyout, columnIndex, box,
+								string.Format(FwAvaloniaStrings.FilterExcludeFormat, value), exclude: true, value: value);
+				}
+			}
+
+			// sortType="date"/"genDate" → the FilterBar "Restrict Date…" entry: it opens a date-range dialog.
+			// The view raises RestrictDateRequested; the host owns the dialog and routes the chosen range back
+			// through ApplyFilterDate. Gated on the SAME sortType attribute the legacy FilterBar.MakeCombo gates on.
+			if (string.Equals(sortType, "date", StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(sortType, "genDate", StringComparison.OrdinalIgnoreCase))
+			{
+				AddRestrictDateItem(flyout, columnIndex);
+			}
+
+			// A chooser column (carrying bulkEdit=/chooserFilter=, surfaced through the metadata seam as a
+			// non-null possibility list) → the FilterBar "Choose…" (ListChoiceComboItem) entry: it opens the
+			// shared chooser over the column's possibility items. The view raises ChooseListRequested; the host
+			// builds the chooser items + owns the dialog and routes the chosen keys back through
+			// ApplyFilterListChoice. Gated on the SAME bulkEdit/chooserFilter attributes the legacy FilterBar
+			// gates on (the seam returns null for a non-chooser column).
+			if (GetColumnChooserList(columnIndex) != null)
+				AddChooseItem(flyout, columnIndex);
+
+			// "Filter For…" is universal in the legacy FilterBar (offered on EVERY column, not type-gated): it
+			// opens a small pattern-match dialog. The view raises FilterForRequested; the host owns the dialog
+			// and routes the result back through ApplyFilterPattern.
+			AddFilterForItem(flyout, columnIndex);
+
+			// PARITY: the only deferred FilterBar entry now is the spelling-errors preset (BadSpellingMatcher),
+			// which needs a per-WS spelling dictionary probe beyond this seam's matcher scope. Date "Restrict
+			// Date…" and the "Choose…" list-choice filter are implemented above.
+
 			return flyout;
+		}
+
+		// One stringList enumerated-value preset: the menu shows the (possibly "Exclude X"-formatted) label and,
+		// on click, clears the column's free-text term + any active preset and routes the chosen value through
+		// the stringList filter path, reflecting the label in the box. When excluding, the box shows the
+		// "Exclude X" label while the matcher is built from the raw enumerated value.
+		private void AddStringListItem(MenuFlyout flyout, int columnIndex, TextBox box, string label,
+			bool exclude, string value = null)
+		{
+			var matchValue = value ?? label;
+			var item = new MenuItem { Header = label };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterStringListItem."
+				+ (exclude ? "Exclude." : string.Empty) + matchValue + "."
+				+ (Columns[columnIndex].Field ?? string.Empty));
+			item.Click += (_, __) =>
+			{
+				ApplyFilter(columnIndex, string.Empty);
+				ApplyFilterPreset(columnIndex, BrowseFilterPreset.None);
+				ApplyFilterStringListValue(columnIndex, matchValue, exclude);
+				box.Text = label;
+			};
+			flyout.Items.Add(item);
+		}
+
+		// The universal "Filter For…" item: raises FilterForRequested so the host opens the pattern dialog.
+		private void AddFilterForItem(MenuFlyout flyout, int columnIndex)
+		{
+			var item = new MenuItem { Header = FwAvaloniaStrings.FilterFor };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterForItem."
+				+ (Columns[columnIndex].Field ?? string.Empty));
+			item.Click += (_, __) => FilterForRequested?.Invoke(this, columnIndex);
+			flyout.Items.Add(item);
+		}
+
+		// The date "Restrict Date…" item (date/genDate columns): raises RestrictDateRequested so the host opens
+		// the date-range dialog and routes the chosen range back through ApplyFilterDate.
+		private void AddRestrictDateItem(MenuFlyout flyout, int columnIndex)
+		{
+			var item = new MenuItem { Header = FwAvaloniaStrings.RestrictDate };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterRestrictDateItem."
+				+ (Columns[columnIndex].Field ?? string.Empty));
+			item.Click += (_, __) => RestrictDateRequested?.Invoke(this, columnIndex);
+			flyout.Items.Add(item);
+		}
+
+		// The "Choose…" list-choice item (chooser columns): raises ChooseListRequested so the host opens the
+		// shared chooser over the column's possibility items and routes the chosen keys back through
+		// ApplyFilterListChoice.
+		private void AddChooseItem(MenuFlyout flyout, int columnIndex)
+		{
+			var item = new MenuItem { Header = FwAvaloniaStrings.FilterChoose };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterChooseItem."
+				+ (Columns[columnIndex].Field ?? string.Empty));
+			item.Click += (_, __) => ChooseListRequested?.Invoke(this, columnIndex);
+			flyout.Items.Add(item);
 		}
 
 		private void AddPresetItem(MenuFlyout flyout, int columnIndex, TextBox box, string label,
 			BrowseFilterPreset preset, bool showName)
 		{
 			var item = new MenuItem { Header = label };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterPresetItem." + preset + "."
+				+ (Columns[columnIndex].Field ?? string.Empty));
 			item.Click += (_, __) =>
 			{
 				// A preset and a typed term are mutually exclusive: clear the contains filter, apply the
@@ -657,6 +1925,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private Control BuildCheckAllHeader()
 		{
+			// Size/padding come from the GLOBAL deterministic FwCheckBoxStyle (applied via FwSurfaceStyles.Apply
+			// on this view) so the box is font-proportional and never inflates the header row — no per-control
+			// scale/padding hack here. Only the leading margin (filter-row alignment) is set locally.
 			var checkAll = new CheckBox
 			{
 				Margin = new Thickness(FwAvaloniaDensity.EditorPadding.Left, 0, FwAvaloniaDensity.EditorPadding.Right, 0),
@@ -690,10 +1961,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			var columnCount = Columns.Count;
 			var grid = new Grid();
-			if (_showCheckboxColumn)
-				grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-			for (var c = 0; c < columnCount; c++)
-				grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+			ApplyColumnWidths(grid);
 
 			if (row != null)
 			{
@@ -714,11 +1982,39 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				}
 			}
 
+			// Delete-Rows preview marking (parity of the legacy ShowEnabled column): when a delete preview is
+			// staged, a row scheduled for deletion is dimmed with a strikethrough-style "(will be deleted)"
+			// marker, and a row blocked by a guard is dimmed with a "(cannot be deleted)" marker — so the user
+			// sees exactly which checked rows the delete will and will NOT touch before confirming.
+			Control content = grid;
+			if (row != null && _deletePreview.Count > 0)
+			{
+				var hvo = _rows.HvoAt(row.Index);
+				if (hvo != 0 && _deletePreview.TryGetValue(hvo, out var blocked))
+				{
+					grid.Opacity = 0.55;
+					var marker = new TextBlock
+					{
+						Text = blocked ? FwAvaloniaStrings.BulkDeleteBlockedMarker : FwAvaloniaStrings.BulkDeleteWillDeleteMarker,
+						FontStyle = FontStyle.Italic,
+						VerticalAlignment = VerticalAlignment.Center,
+						Margin = new Thickness(FwAvaloniaDensity.EditorPadding.Left, 0, FwAvaloniaDensity.EditorPadding.Right, 0)
+					};
+					AutomationProperties.SetAutomationId(marker,
+						blocked ? $"BrowseDeleteBlocked.{row.Index}" : $"BrowseDeleteMark.{row.Index}");
+					var overlay = new DockPanel { LastChildFill = true };
+					DockPanel.SetDock(marker, Dock.Right);
+					overlay.Children.Add(marker);
+					overlay.Children.Add(grid);
+					content = overlay;
+				}
+			}
+
 			// Thin row separator under each row; the per-cell right border (above) draws the column lines —
 			// together they form the faint grid of the legacy XMLViews browse over the white surface.
 			return new Border
 			{
-				Child = grid,
+				Child = content,
 				BorderBrush = FwAvaloniaDensity.BrowseGridLineBrush,
 				BorderThickness = new Thickness(0, 0, 0, 1)
 			};
@@ -736,19 +2032,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// virtualization (a row scrolled out and back is re-realized reading the same set).
 		private Control BuildRowCheckbox(int rowIndex)
 		{
+			// Task 20: the checkbox reflects/toggles the OBJECT's check state (keyed by its stable hvo), so
+			// the visible state is correct after the clerk re-indexes and a re-realized row reads the same
+			// object's state. The hvo is resolved once per realization (the row's position is fixed for the
+			// life of this container — a reorder rebuilds containers).
+			var hvo = _rows.HvoAt(rowIndex);
+			// Size/padding come from the GLOBAL deterministic FwCheckBoxStyle (applied via FwSurfaceStyles.Apply
+			// on this view) so the box is font-proportional and never inflates the row — no per-control
+			// scale/padding hack here. Only the leading margin (column alignment) is set locally.
 			var check = new CheckBox
 			{
-				IsChecked = _checkedRows.Contains(rowIndex),
+				IsChecked = hvo != 0 && _checkedHvos.Contains(hvo),
 				Margin = new Thickness(FwAvaloniaDensity.EditorPadding.Left, 0, FwAvaloniaDensity.EditorPadding.Right, 0),
 				VerticalAlignment = VerticalAlignment.Center
 			};
 			AutomationProperties.SetAutomationId(check, $"BrowseCheck.{rowIndex}");
 			check.IsCheckedChanged += (_, __) =>
 			{
+				if (hvo == 0)
+					return;
 				if (check.IsChecked == true)
-					_checkedRows.Add(rowIndex);
+					_checkedHvos.Add(hvo);
 				else
-					_checkedRows.Remove(rowIndex);
+					_checkedHvos.Remove(hvo);
 			};
 			return check;
 		}
@@ -762,10 +2068,32 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Everything non-editable is a read-only TextBlock / rich-rendered cell.
 		private Control BuildCell(int rowIndex, int columnIndex, string display)
 		{
+			Control cell;
 			if (_editSource != null && _editSource.IsColumnEditable(columnIndex))
-				return new EditableCellHost(this, rowIndex, columnIndex, BuildReadOnlyCell(rowIndex, columnIndex, display));
+				cell = new EditableCellHost(this, rowIndex, columnIndex, BuildReadOnlyCell(rowIndex, columnIndex, display));
+			else
+				cell = BuildReadOnlyCell(rowIndex, columnIndex, display);
 
-			return BuildReadOnlyCell(rowIndex, columnIndex, display);
+			AttachClickCopyGesture(cell, rowIndex, columnIndex);
+			return cell;
+		}
+
+		// In Click Copy mode a data-cell click is a COPY gesture, not a select/edit: handle the press in the
+		// TUNNEL phase (so it runs BEFORE the EditableCellHost's own tunnel handler that would otherwise begin an
+		// edit, and before the ListBoxItem selection), raise CellClicked with the cell's (row, column), and mark
+		// the event handled so it neither edits nor selects. When click-copy is inactive this is inert and the
+		// cell keeps its normal behavior. A right-click is left alone so context menus still work.
+		private void AttachClickCopyGesture(Control cell, int rowIndex, int columnIndex)
+		{
+			cell.AddHandler(InputElement.PointerPressedEvent, (_, e) =>
+			{
+				if (!_clickCopyActive)
+					return;
+				if (e.GetCurrentPoint(cell).Properties.IsRightButtonPressed)
+					return;
+				CellClicked?.Invoke(this, (rowIndex, columnIndex));
+				e.Handled = true;
+			}, RoutingStrategies.Tunnel);
 		}
 
 		// The read-only face of any cell (also the resting face of an editable cell).
@@ -911,6 +2239,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			private void OnPointerPressed(object sender, PointerPressedEventArgs e)
 			{
+				// In Click Copy mode a click is a COPY gesture, not an edit: don't promote this editable cell to
+				// its editor (the owner's click-copy interceptor handles the click and raises CellClicked).
+				if (_owner._clickCopyActive)
+					return;
 				if (_editor == null)
 					Activate();
 			}
@@ -960,10 +2292,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				if (field == null)
 					return;
 				var automationId = $"BrowseCell.{_rowIndex}.{_columnIndex}";
-				_editor = field.Kind == RegionFieldKind.Chooser
-					? (Control)new FwChooserField(field, automationId, context)
-					: new FwMultiWsTextField(field, automationId, context,
-						writingSystemFocused: _ => { }, showWritingSystemAbbreviation: false);
+				// Task 21: route through the shared RegionFieldKind→control factory (same dispatch as the
+				// detail pane). The dense browse cell suppresses the WS-abbreviation gutter and supplies no
+				// menu/link callbacks; it owns commit itself (Enter/Tab on the active-cell session), so the
+				// reference-vector Save callback is left null — the factory then just stages.
+				_editor = RegionFieldControlFactory.Build(field, automationId, new RegionFieldControlContext(
+					editContext: context,
+					writingSystemFocused: _ => { },
+					showWritingSystemAbbreviation: false));
 				Content = _editor;
 				_editor.Focus();
 			}

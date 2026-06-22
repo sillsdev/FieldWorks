@@ -18,14 +18,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// body, so EVERY dialog shown through the kit inherits it automatically — new dialogs need no
 	/// per-dialog density work. Scoped to the dialog's control subtree (added to its <c>Styles</c>), so
 	/// it never affects the region/table surfaces, which own their own density (<see cref="FwAvaloniaDensity"/>).
+	///
+	/// AUTHORITATIVE SOURCE: the same density setters now also live in <c>DialogTheme.axaml</c> (applied by
+	/// <c>DialogThemeBootstrap.Apply</c> in every dialog view ctor), so the density renders in the headless
+	/// dialog tests too — which apply only the theme, never this runtime chokepoint. The values here are kept
+	/// numerically identical to the theme's so the runtime and headless paths can never diverge; change BOTH
+	/// together. This runtime apply is a belt-and-suspenders duplicate of the theme's (both are idempotent).
 	/// </summary>
 	public static class CompactDialogStyles
 	{
-		/// <summary>Dialog body font (≈ the legacy 8.25pt WinForms dialog font, vs the ~14px Fluent default).</summary>
+		/// <summary>Dialog body font (≈ the legacy Segoe UI 9pt WinForms dialog font, vs the ~14px Fluent
+		/// default). Mirrors <c>DialogFontSize</c> in DialogTheme.axaml.</summary>
 		public const double DialogFontSize = 12.0;
 
-		/// <summary>Min height for compact line controls (buttons/combos/text boxes), vs the Fluent ~32px floor.</summary>
-		public const double LineControlMinHeight = 23.0;
+		/// <summary>Min height for compact line controls (buttons/combos/text boxes), vs the Fluent ~32px floor.
+		/// Mirrors <c>DialogMinControlHeight</c> in DialogTheme.axaml.</summary>
+		public const double LineControlMinHeight = 22.0;
 
 		/// <summary>
 		/// Marks a control whose subtree already has the compact styles, so <see cref="Apply"/> is genuinely
@@ -52,10 +60,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			yield return Templated<Button>(new Thickness(8, 2), LineControlMinHeight);
 			yield return Templated<ComboBox>(new Thickness(6, 1), LineControlMinHeight);
-			yield return Templated<TextBox>(new Thickness(4, 1), LineControlMinHeight);
-			// Check boxes and tabs size to content (drop the Fluent min-height floor) for compact rows.
-			yield return Templated<CheckBox>(new Thickness(0, 0, 0, 0), 0);
+			yield return Templated<TextBox>(new Thickness(4, 2), LineControlMinHeight);
+			// Tabs size to content (drop the Fluent min-height floor) for compact rows.
 			yield return Templated<TabItem>(new Thickness(8, 3), 0);
+
+			// NOTE: the deterministic CheckBox style (FwCheckBoxStyle) is NOT added here. It is applied once,
+			// to every dialog body, by DialogThemeBootstrap.Apply (called from each dialog ctor in BOTH the
+			// runtime host and the headless dialog tests), so it reaches the headless lane that never runs this
+			// runtime chokepoint — and stays a single application rather than a double one.
 
 			yield return new Style(s => s.OfType<TextBlock>())
 			{

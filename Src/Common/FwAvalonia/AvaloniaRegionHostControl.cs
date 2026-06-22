@@ -45,6 +45,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Name = "AvaloniaHost",
 				AccessibleName = FwAvaloniaStrings.AvaloniaHostName
 			};
+			// Headless (test) platform: no Win32 top-level exists, so make the host's HWND reparent a
+			// deliberate no-op. The Avalonia content still constructs and lays out off-screen. No-op (and
+			// thus identical) on the real Win32 platform.
+			FwAvaloniaPlatform.GuardHeadlessEmbed(Host);
 			Host.PreviewKeyDown += OnHostPreviewKeyDown;
 
 			_companionStrip = new Panel

@@ -126,18 +126,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ExplicitlyDeferredClasses_EachCiteTheirGate()
+		public void ExplicitlyDeferredClasses_AreEmpty_EveryClassIsActivelyClassified()
 		{
-			// D5: deferral is only legitimate with the gate it rides spelled out (seeded from the
-			// decision doc: D3 follow-ups, wave 3/4 lanes, and the 6.13 Views-text long pole).
-			// Wave 4 (D4): AudioVisualSlice graduated out of this set into the launcher lane.
-			// Wave 3 absorbed both the ghost and multislice relation lanes into the composer once
-			// the typed relation walk existed; only ReversalIndexEntrySlice still rides 6.13.
-			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
-			{
-				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" }
-			};
-			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames, Is.EquivalentTo(expected));
+			// D5: deferral is only legitimate with the gate it rides spelled out. The set is now EMPTY:
+			// Wave 4 (D4) graduated AudioVisualSlice into the launcher lane, Wave 3 absorbed the ghost
+			// and multislice relation lanes into the composer, and ReversalIndexEntrySlice graduated to
+			// a native Avalonia plugin (ReversalIndexEntryPlugin) — the sense's reversal-entry forms
+			// compose as an editable multi-WS text field through the D1 plugin lane. Every census class
+			// is now actively classified (plugin / companion / launcher / lane-absorbed), none deferred.
+			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames, Is.Empty);
 			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames.Values,
 				Has.All.Not.Empty, "a deferral without a citation is a forgotten class, not a decision");
 		}
@@ -239,17 +236,22 @@ namespace SIL.FieldWorks.XWorks
 			// The burn-down measured: wave 2 (D2) promoted the Messages slice from
 			// CompanionDesignated to PluginRouted (ChorusNotesPlugin, the native notes bar over
 			// LibChorus); wave 3 (D3) was a composer lane, no plugin; wave 4 (D4) added the three
-			// dialog-launcher plugins. The census test above keeps every class in exactly one lane.
+			// dialog-launcher plugins; the reversal-entries editor (ReversalIndexEntryPlugin) graduated
+			// the last deferred class to a native Avalonia editable multi-WS text field. The census test
+			// above keeps every class in exactly one lane.
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[]
 				{
 					AvaloniaCompanionSlices.MessageSliceClassName,
+					ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName,
 					DialogLauncherPlugins.MsaFeatureSliceClassName,
 					DialogLauncherPlugins.PhonologicalFeatureSliceClassName,
 					DialogLauncherPlugins.AudioVisualSliceClassName
 				}));
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(AvaloniaCompanionSlices.MessageSliceClassName),
 				Is.InstanceOf<ChorusNotesPlugin>());
+			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
+				Is.InstanceOf<ReversalIndexEntryPlugin>());
 		}
 	}
 

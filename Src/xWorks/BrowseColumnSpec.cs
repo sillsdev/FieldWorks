@@ -56,17 +56,23 @@ namespace SIL.FieldWorks.XWorks
 			ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null);
 
 		/// <summary>
-		/// Snapshots every column's metadata from the (F1: still-live) browse viewer via its public,
-		/// read-only column accessors — touching none of the viewer's edit/filter internals.
+		/// Snapshots every column's metadata from the column source via its read-only column accessors —
+		/// touching none of the source's edit/filter internals. Typed as <see cref="IBrowseColumnSource"/>
+		/// (which both the F1 live <see cref="BrowseViewer"/> and the F2 viewer-free provider satisfy)
+		/// because the loop only reads <see cref="IBrowseColumnSource.ColumnCount"/>/
+		/// <see cref="IBrowseColumnSource.GetColumnName"/>/
+		/// <see cref="IBrowseColumnSource.GetColumnEditAttributes"/>/
+		/// <see cref="IBrowseColumnSource.IsColumnEditable"/> — this is the pure widening that unblocks the
+		/// F2 viewer-free swap.
 		/// </summary>
-		public static IReadOnlyList<BrowseColumnSpec> Snapshot(BrowseViewer viewer)
+		public static IReadOnlyList<BrowseColumnSpec> Snapshot(IBrowseColumnSource columnSource)
 		{
-			var specs = new List<BrowseColumnSpec>(viewer.ColumnCount);
-			for (var i = 0; i < viewer.ColumnCount; i++)
+			var specs = new List<BrowseColumnSpec>(columnSource.ColumnCount);
+			for (var i = 0; i < columnSource.ColumnCount; i++)
 			{
-				viewer.GetColumnEditAttributes(i, out var field, out var ws, out var transduce);
-				specs.Add(new BrowseColumnSpec(i, viewer.GetColumnName(i), field, ws, transduce,
-					viewer.IsColumnEditable(i)));
+				columnSource.GetColumnEditAttributes(i, out var field, out var ws, out var transduce);
+				specs.Add(new BrowseColumnSpec(i, columnSource.GetColumnName(i), field, ws, transduce,
+					columnSource.IsColumnEditable(i)));
 			}
 			return specs;
 		}

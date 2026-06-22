@@ -17,7 +17,7 @@ so they weight the vocabulary by how often real layouts use it.
 | Code (severity) | Count |
 |---|---|
 | `unhandled-attribute (Info)` | 714 |
-| `slice-content-dropped (Info)` | 330 |
+| `slice-content-dropped (Info)` | 319 |
 | `dynamic-editor (Info)` | 122 |
 | `unresolved-part (Error)` | 62 |
 | `unhandled-attribute (Warning)` | 5 |

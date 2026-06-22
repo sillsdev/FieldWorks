@@ -38,6 +38,8 @@ namespace FwAvaloniaTests
 			public IReadOnlyList<string> GetCellValues(int rowIndex) =>
 				new[] { $"lexeme {rowIndex}", $"gloss {rowIndex}" };
 
+			public int HvoAt(int rowIndex) => rowIndex + 1;
+
 			public IRegionEditContext EditContext => Context;
 
 			public bool IsColumnEditable(int columnIndex) => columnIndex == 1;

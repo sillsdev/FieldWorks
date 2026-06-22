@@ -16,6 +16,7 @@ namespace FwAvaloniaDialogs
 	{
 		public OptionsDialogView()
 		{
+			DialogThemeBootstrap.Apply(this);
 			InitializeComponent();
 		}
 	}

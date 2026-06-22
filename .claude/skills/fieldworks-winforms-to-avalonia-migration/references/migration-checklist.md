@@ -81,8 +81,16 @@ definition of done. Items map to the workflow phases in SKILL.md.
 
 - [ ] Field labels resolve through the StringTable lane via the IR's
       `LocalizationKey`
-- [ ] Product messages in `FwAvaloniaStrings.resx` with translator comments
-- [ ] New csprojs carry `<RootNamespace>` (Crowdin satellite build)
+- [ ] Avalonia chrome resolves through the existing LocalizationManager
+      XLIFF catalog; existing `Palaso`/`Chorus` ids are reused only when
+      semantics and markup match, otherwise unique Avalonia-prefixed ids are
+      added there
+- [ ] The accessor-owned English defaults remain the single Avalonia chrome
+      source of truth; no parallel Avalonia-only string source is introduced
+- [ ] New csprojs carry `<RootNamespace>` while any legacy Avalonia `.resx`
+      artifact remains (Crowdin satellite build)
+- [ ] Product, preview-host, and headless-test paths each prove their
+      LocalizationManager bootstrap or intentional English fallback
 - [ ] AutomationIds nonlocalized; automation Names localized
 - [ ] Reviewed with `fieldworks-localization-review`
 

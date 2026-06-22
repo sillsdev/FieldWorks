@@ -102,6 +102,7 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 
 			var runs = new List<RegionTextRun>();
+			var lossyProperties = false;
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
 				var props = tss.get_Properties(irun);
@@ -115,6 +116,8 @@ namespace SIL.FieldWorks.XWorks
 				var italic = props.GetIntPropValues((int)FwTextPropType.ktptItalic, out _) > 0;
 				var underline = props.GetIntPropValues((int)FwTextPropType.ktptUnderline, out _) > 0;
 
+				lossyProperties |= RunCarriesUnsupportedProperty(props);
+
 				runs.Add(new RegionTextRun(tss.get_RunText(irun), wsTag, namedStyle, fontFamily,
 					fontSize > 0 ? fontSize : 0, bold, italic, underline, objectData));
 			}
@@ -124,7 +127,55 @@ namespace SIL.FieldWorks.XWorks
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
 				RequiresRichEditor(tss),
-				canEditRichText: runs.TrueForAll(run => string.IsNullOrEmpty(run.ObjectData)));
+				canEditRichText: runs.TrueForAll(run => string.IsNullOrEmpty(run.ObjectData)),
+				lossyProperties: lossyProperties);
+		}
+
+		// The TsString text properties the RegionTextRun model captures in FromTsString AND re-emits in
+		// ToTsString's run-replay path. Any other int/string property on a run is silently dropped the
+		// first time the plain text changes (the edit skips the lossless RichXml fast-path), so a run
+		// carrying one outside this set is flagged lossy and the value is held read-only. ktptWs is
+		// supported (replayed as the run's writing system) and so is ktptObjData (its presence already
+		// forces read-only via CanEditRichText, but it is "round-tripped" enough not to count as lossy).
+		private static readonly HashSet<int> SupportedIntProps = new HashSet<int>
+		{
+			(int)FwTextPropType.ktptWs,
+			(int)FwTextPropType.ktptFontSize,
+			(int)FwTextPropType.ktptBold,
+			(int)FwTextPropType.ktptItalic,
+			(int)FwTextPropType.ktptUnderline,
+		};
+
+		private static readonly HashSet<int> SupportedStrProps = new HashSet<int>
+		{
+			(int)FwTextPropType.ktptNamedStyle,
+			(int)FwTextPropType.ktptFontFamily,
+			(int)FwTextPropType.ktptObjData,
+		};
+
+		/// <summary>
+		/// Enumerates a run's int and string TsString text properties (<see cref="ITsTextProps"/>) and
+		/// returns true when ANY of them is outside the set the adapter both reads and replays — i.e. a
+		/// property the run-replay path would drop on the first edit (e.g. ktptForeColor, ktptBackColor,
+		/// ktptOffset, ktptSuperscript). The lossless RichXml still preserves it for full-fidelity display.
+		/// </summary>
+		private static bool RunCarriesUnsupportedProperty(ITsTextProps props)
+		{
+			for (var i = 0; i < props.IntPropCount; i++)
+			{
+				props.GetIntProp(i, out var tpt, out _);
+				if (!SupportedIntProps.Contains(tpt))
+					return true;
+			}
+
+			for (var i = 0; i < props.StrPropCount; i++)
+			{
+				props.GetStrProp(i, out var tpt);
+				if (!SupportedStrProps.Contains(tpt))
+					return true;
+			}
+
+			return false;
 		}
 
 		internal static ITsString ToTsString(RegionRichTextValue richText,

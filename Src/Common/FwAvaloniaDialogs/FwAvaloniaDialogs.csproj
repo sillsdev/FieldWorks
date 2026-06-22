@@ -36,6 +36,13 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
 
+	<!-- WinForms framework assembly: the generic dialog launcher scaffold takes an IWin32Window owner and
+	     calls AvaloniaDialogHost.ShowModal (FwAvalonia) which is owned by a WinForms modal Form during
+	     coexistence (dialog-ownership.md). net48 SDK-style projects need this referenced explicitly. -->
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
 	<!-- Reuse the foundation's owned writing-system-aware field controls + product strings inside dialogs. -->
 	<ItemGroup>
 		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />

@@ -27,7 +27,7 @@ namespace FwAvaloniaTests
 		// A managed in-memory source implementing every Stage-3c capability. Column 1 (Gloss) is an
 		// editable text column with a preview overlay model standing in for the legacy fake-flid cache.
 		private sealed class BulkSource : IBrowseRowSource, IBrowseEditSource, IBrowseMultiSortSource,
-			IBrowseFilterSource, IBrowseBulkEditSource
+			IBrowseFilterSource, IBrowseBulkEditSource, IBrowseBulkReplaceSource, IBrowseClickCopySource
 		{
 			private readonly List<string> _gloss = Enumerable.Range(0, 20).Select(i => $"gloss {i}").ToList();
 			private readonly Dictionary<int, string> _preview = new Dictionary<int, string>();
@@ -46,6 +46,10 @@ namespace FwAvaloniaTests
 				var gloss = _preview.TryGetValue(logical, out var p) ? p : _gloss[logical];
 				return new[] { $"lexeme {logical}", gloss };
 			}
+
+			// Stable identity (Task 20): the logical row, +1, so a check follows its object across the
+			// in-memory sort/filter that reorders/narrows _visible.
+			public int HvoAt(int rowIndex) => _visible[rowIndex] + 1;
 
 			// edit
 			public IRegionEditContext EditContext => Context;
@@ -94,6 +98,36 @@ namespace FwAvaloniaTests
 					_gloss[_visible[r]] = value;
 				context.Commit();
 			}
+
+			// bulk replace (Find/Replace P1): a trivial literal find/replace over the gloss cell, staged in the
+			// same preview overlay (preview) or committed once across the rows (apply).
+			public readonly List<(int Column, IReadOnlyList<int> Rows, BulkReplaceSpec Spec)> Replaced
+				= new List<(int, IReadOnlyList<int>, BulkReplaceSpec)>();
+
+			public void PreviewBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec)
+			{
+				foreach (var r in rowIndexes)
+					_preview[_visible[r]] = _gloss[_visible[r]].Replace(spec.FindText, spec.ReplaceText ?? string.Empty);
+			}
+
+			public void ApplyBulkReplace(int targetColumn, IReadOnlyList<int> rowIndexes, BulkReplaceSpec spec, IRegionEditContext context)
+			{
+				Replaced.Add((targetColumn, rowIndexes, spec));
+				foreach (var r in rowIndexes)
+					_gloss[_visible[r]] = _gloss[_visible[r]].Replace(spec.FindText, spec.ReplaceText ?? string.Empty);
+				context.Commit();
+			}
+
+			// click copy: records each per-click copy and commits ONE step (the per-click unit).
+			public readonly List<(int Source, int Target, int Row, ClickCopyMode Mode, string Sep, bool Append)> ClickCopies
+				= new List<(int, int, int, ClickCopyMode, string, bool)>();
+
+			public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
+				string separator, bool append, IRegionEditContext context)
+			{
+				ClickCopies.Add((sourceColumn, targetColumn, rowIndex, mode, separator, append));
+				context.Commit();
+			}
 		}
 
 		private sealed class ChooserSource : IBrowseRowSource, IBrowseEditSource
@@ -101,6 +135,7 @@ namespace FwAvaloniaTests
 			public readonly FakeRegionEditContext Context = new FakeRegionEditContext();
 			public int RowCount => 5;
 			public IReadOnlyList<string> GetCellValues(int rowIndex) => new[] { $"e{rowIndex}", "noun" };
+			public int HvoAt(int rowIndex) => rowIndex + 1;
 			public IRegionEditContext EditContext => Context;
 			public bool IsColumnEditable(int columnIndex) => columnIndex == 1;
 			public LexicalEditRegionField GetEditField(int rowIndex, int columnIndex) => new LexicalEditRegionField(
@@ -254,6 +289,94 @@ namespace FwAvaloniaTests
 			Assert.That(source.Applied, Has.Count.EqualTo(1));
 			Assert.That(source.Applied[0].Rows.Count, Is.EqualTo(20), "bulk apply touches all checked rows");
 			Assert.That(source.Context.CommitCount, Is.EqualTo(1), "apply commits once through the edit session");
+		}
+
+		[AvaloniaTest]
+		public void BulkReplace_PreviewDoesNotCommit_ApplyCommitsThroughTheSession()
+		{
+			var source = new BulkSource();
+			var view = Show(source, checkboxes: true);
+			view.CheckAll();
+			Dispatcher.UIThread.RunJobs();
+
+			var spec = new BulkReplaceSpec { FindText = "gloss", ReplaceText = "GLOSS" };
+			view.PreviewBulkReplace(1, spec);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(source.Context.CommitCount, Is.EqualTo(0), "preview does not mutate the model");
+			Assert.That(source.GetCellValues(0)[1], Is.EqualTo("GLOSS 0"), "preview overlay shows the replaced value");
+
+			view.ApplyBulkReplace(1, spec);
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(source.Replaced, Has.Count.EqualTo(1));
+			Assert.That(source.Replaced[0].Rows.Count, Is.EqualTo(20), "bulk replace touches all checked rows");
+			Assert.That(source.Context.CommitCount, Is.EqualTo(1), "apply commits once through the edit session");
+		}
+
+		// ----- Click Copy: the table's cell-click signal -----
+
+		// Raises a left-button PointerPressed on the cell at (row, col), the way a click would arrive.
+		private static void ClickCell(LexicalBrowseView view, int row, int col)
+		{
+			var cell = view.GetVisualDescendants().OfType<Control>()
+				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == $"BrowseCell.{row}.{col}");
+			Assert.That(cell, Is.Not.Null, $"cell {row}.{col} is realized");
+			var root = (Avalonia.Visual)cell.GetVisualRoot();
+			cell.RaiseEvent(new Avalonia.Input.PointerPressedEventArgs(
+				cell,
+				new Avalonia.Input.Pointer(Avalonia.Input.Pointer.GetNextFreeId(), Avalonia.Input.PointerType.Mouse, true),
+				root, default, 0,
+				new Avalonia.Input.PointerPointProperties(
+					Avalonia.Input.RawInputModifiers.LeftMouseButton, Avalonia.Input.PointerUpdateKind.LeftButtonPressed),
+				Avalonia.Input.KeyModifiers.None));
+		}
+
+		[AvaloniaTest]
+		public void ClickCopy_ActiveMode_ForwardsCellClick_WithRowAndColumn()
+		{
+			var source = new BulkSource();
+			var view = Show(source);
+			var signals = new List<(int Row, int Col)>();
+			view.CellClicked += (_, c) => signals.Add((c.RowIndex, c.ColumnIndex));
+
+			view.ClickCopyActive = true;
+			ClickCell(view, 2, 0); // click a SOURCE cell (the read-only Lexeme Form column)
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(signals, Has.Count.EqualTo(1), "an active-mode cell click raises CellClicked once");
+			Assert.That(signals[0], Is.EqualTo((2, 0)), "the signal carries the clicked (row, column)");
+		}
+
+		[AvaloniaTest]
+		public void ClickCopy_InactiveMode_DoesNotForwardCellClick()
+		{
+			var source = new BulkSource();
+			var view = Show(source);
+			var signals = new List<(int Row, int Col)>();
+			view.CellClicked += (_, c) => signals.Add((c.RowIndex, c.ColumnIndex));
+
+			// Mode is OFF: clicking a cell must NOT raise the click-copy signal (normal selection/editing only).
+			ClickCell(view, 2, 0);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(signals, Is.Empty, "no click-copy signal fires while the mode is inactive");
+		}
+
+		[AvaloniaTest]
+		public void ClickCopy_ActiveMode_DoesNotBeginAnInlineEditOnTheClickedCell()
+		{
+			var source = new BulkSource();
+			var view = Show(source);
+
+			// Column 1 (Gloss) is an editable cell. With click-copy active, clicking it must COPY (signal), not
+			// promote to an inline editor — the gesture is intercepted before the editable host activates.
+			view.ClickCopyActive = true;
+			var copied = false;
+			view.CellClicked += (_, __) => copied = true;
+			ClickCell(view, 0, 1);
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(copied, Is.True, "the click was treated as a copy gesture");
+			Assert.That(view.HasActiveCellEdit, Is.False, "the editable cell did not enter edit mode");
 		}
 	}
 }

@@ -46,6 +46,9 @@ namespace FwAvaloniaTests
 				return new[] { $"lexeme {logical}", $"gloss {logical}" };
 			}
 
+			// Stable identity (Task 20): the logical row, +1, so it follows the object across a re-sort.
+			public int HvoAt(int rowIndex) => (_reversed ? (RowCount - 1 - rowIndex) : rowIndex) + 1;
+
 			public void Sort(int columnIndex, bool ascending)
 			{
 				SortCalls.Add((columnIndex, ascending));
@@ -57,6 +60,7 @@ namespace FwAvaloniaTests
 		{
 			public int RowCount => 5;
 			public IReadOnlyList<string> GetCellValues(int rowIndex) => new[] { $"r{rowIndex}", $"g{rowIndex}" };
+			public int HvoAt(int rowIndex) => rowIndex + 1;
 		}
 
 		private static ViewDefinitionModel TwoColumnDefinition() => new ViewDefinitionModel(

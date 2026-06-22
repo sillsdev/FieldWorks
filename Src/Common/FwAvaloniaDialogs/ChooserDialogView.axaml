@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.ChooserDialogView"
+             x:DataType="vm:ChooserDialogViewModel"
+             x:Name="Root"
+             Classes="fwDialogRoot"
+             MinWidth="320" MinHeight="300">
+	<!-- The reusable chooser dialog. FLAT mode (Phase 1): a prompt over the shared FwOptionPicker (hosted as a
+	     code-behind child since the picker is a native composite, not an MVVM-bindable control) + OK/Cancel/Help.
+	     HIERARCHICAL mode (Phase 2): a search box over a VIRTUALIZING TreeView of the candidates (folded from their
+	     Depth sequence); while a search term is active the tree is hidden and a FLAT filtered results list is shown
+	     instead (so filtered-tree expansion virtualization is sidestepped). Single-select returns the clicked
+	     node's key; multi-select shows per-node checkboxes (independent checks — legacy default). Visible text is
+	     localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="Chooser.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="Chooser.Cancel"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
+			        IsVisible="{Binding HasHelp}"
+			        Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="Chooser.Help"/>
+		</StackPanel>
+
+		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"
+		           IsVisible="{Binding HasPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
+		           AutomationProperties.AutomationId="Chooser.Prompt"/>
+
+		<!-- FLAT mode: the owned FwOptionPicker is injected here in code-behind (see ChooserDialogView.axaml.cs). -->
+		<Border Name="PART_PickerHost" Classes="fwFieldHost" IsVisible="{Binding !IsHierarchical}"
+		        AutomationProperties.AutomationId="Chooser.PickerHost"/>
+
+		<!-- HIERARCHICAL mode: search box over (tree | flat filtered results). -->
+		<DockPanel IsVisible="{Binding IsHierarchical}">
+			<TextBox DockPanel.Dock="Top" Name="PART_SearchBox"
+			         Text="{Binding SearchText, Mode=TwoWay}"
+			         Watermark="{x:Static res:FwAvaloniaDialogsStrings.ChooserSearchPrompt}"
+			         Margin="{StaticResource DialogLabelFieldGapBelow}"
+			         AutomationProperties.AutomationId="Chooser.Search"/>
+
+			<!-- The collapsible, virtualizing tree (shown when no search term is active). -->
+			<TreeView Name="PART_Tree"
+			          IsVisible="{Binding IsTreeVisible}"
+			          ItemsSource="{Binding TreeRoots}"
+			          SelectionChanged="OnTreeSelectionChanged"
+			          AutomationProperties.AutomationId="Chooser.Tree">
+				<TreeView.Styles>
+					<!-- Bind each container's expansion state to its node so the VM/keyboard can collapse/expand. -->
+					<Style Selector="TreeViewItem" x:DataType="vm:ChooserTreeNode">
+						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+					</Style>
+				</TreeView.Styles>
+				<TreeView.ItemTemplate>
+					<TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="vm:ChooserTreeNode">
+						<!-- Whole-row toggle (multi-select lists/trees): a transparent-background row owns the click so
+						     clicking anywhere on the row (label area, not only the box) toggles the item. The CheckBox is
+						     display-only (IsHitTestVisible=False) so a click on the box routes to the SAME row handler and
+						     toggles exactly once (no double-toggle). Shift is read off the gesture for range select. -->
+						<Border Background="Transparent" PointerReleased="OnRowPointerReleased">
+							<StackPanel Orientation="Horizontal">
+								<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
+								          IsVisible="{Binding #Root.DataContext.IsMultiSelect}"
+								          IsHitTestVisible="False"
+								          VerticalAlignment="Center"
+								          Margin="0,0,4,0"
+								          MinWidth="0" MinHeight="0"
+								          AutomationProperties.AutomationId="Chooser.Tree.Check"
+								          AutomationProperties.Name="{Binding Name}"/>
+								<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+					</TreeDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+
+			<!-- The flat filtered results (shown while a search term is active). -->
+			<ListBox Name="PART_SearchResults"
+			         IsVisible="{Binding IsSearchActive}"
+			         ItemsSource="{Binding FilteredResults}"
+			         SelectionChanged="OnSearchResultSelectionChanged"
+			         AutomationProperties.AutomationId="Chooser.SearchResults">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="vm:ChooserTreeNode">
+						<!-- Same whole-row toggle as the tree (see the tree template): the transparent row owns the click
+						     so the label area toggles, the display-only box never double-toggles, and shift ranges. -->
+						<Border Background="Transparent" PointerReleased="OnRowPointerReleased">
+							<StackPanel Orientation="Horizontal">
+								<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
+								          IsVisible="{Binding #Root.DataContext.IsMultiSelect}"
+								          IsHitTestVisible="False"
+								          VerticalAlignment="Center"
+								          Margin="0,0,4,0"
+								          MinWidth="0" MinHeight="0"
+								          AutomationProperties.AutomationId="Chooser.SearchResults.Check"
+								          AutomationProperties.Name="{Binding Name}"/>
+								<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</DockPanel>
+	</DockPanel>
+</UserControl>

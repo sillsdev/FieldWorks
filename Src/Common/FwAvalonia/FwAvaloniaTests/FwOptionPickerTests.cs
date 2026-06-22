@@ -17,6 +17,8 @@ using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
+using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
+using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
 
 namespace FwAvaloniaTests
 {
@@ -107,7 +109,12 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void OpensWithFilterFocused_Watermarked_AndAllOptionsListed()
 		{
-			var (picker, _, _, _) = ShowStatic();
+			var (picker, window, _, _) = ShowStatic();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			DialogSnapshot.Capture(window, "FwOptionPicker-01-initial");
+			DialogLayoutAssert.AssertNoCrowding(picker);
 
 			Assert.That(picker.FilterBox.IsFocused, Is.True,
 				"the filter box auto-focuses when the picker attaches (flyout open)");
@@ -126,6 +133,12 @@ namespace FwAvaloniaTests
 			var (picker, window, _, _) = ShowStatic();
 
 			window.KeyTextInput("EaTh"); // headless text input into the focused filter box
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			DialogSnapshot.Capture(window, "FwOptionPicker-02-filtered-search");
+			DialogLayoutAssert.AssertNoCrowding(picker);
 
 			Assert.That(picker.FilterBox.Text, Is.EqualTo("EaTh"));
 			Assert.That(Items(picker).Select(o => o.Name), Is.EqualTo(new[] { "Weather" }),
@@ -153,13 +166,18 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void DownAndUp_MoveTheHighlight_AndEnterCommitsIt()
 		{
-			var (picker, _, committed, _) = ShowStatic();
+			var (picker, window, committed, _) = ShowStatic();
 
 			RaiseKey(picker.FilterBox, Key.Down);
 			RaiseKey(picker.FilterBox, Key.Down);
 			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2), "Down moves the highlight");
 			RaiseKey(picker.FilterBox, Key.Up);
 			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(1), "Up moves it back");
+
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			DialogSnapshot.Capture(window, "FwOptionPicker-05-selected");
+			DialogLayoutAssert.AssertNoCrowding(picker);
 
 			RaiseKey(picker.FilterBox, Key.Enter);
 			Assert.That(committed.Single().Key, Is.EqualTo("u-sky"), "Enter commits the highlighted option");
@@ -229,6 +247,9 @@ namespace FwAvaloniaTests
 			var (picker, window, _, _) = ShowStatic();
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
+
+			DialogSnapshot.Capture(window, "FwOptionPicker-03-depth-indented");
+			DialogLayoutAssert.AssertNoCrowding(picker);
 
 			var texts = picker.OptionsList.GetVisualDescendants().OfType<TextBlock>()
 				.Where(t => Tree().Any(o => o.Name == t.Text))
@@ -307,6 +328,9 @@ namespace FwAvaloniaTests
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
+			DialogSnapshot.Capture(window, "FwOptionPicker-04-unavailable-grayed");
+			DialogLayoutAssert.AssertNoCrowding(picker);
+
 			Assert.That(picker.OptionsList.SelectedIndex, Is.EqualTo(2),
 				"default selection skips options that are already selected elsewhere");
 
@@ -370,6 +394,296 @@ namespace FwAvaloniaTests
 
 			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-weather" }),
 				"a release that lands on an option row commits the highlighted option");
+		}
+
+		// ===== Multi-select mode (the legacy multi-check chooser) =====
+
+		private static (FwOptionPicker picker, Window window, List<IReadOnlyList<RegionChoiceOption>> batches)
+			ShowMultiSelect(IReadOnlyList<RegionChoiceOption> options = null,
+				Func<string, IReadOnlyList<RegionChoiceOption>> search = null)
+		{
+			var picker = new FwOptionPicker(options ?? Tree(), search, "Domains", null, multiSelect: true);
+			var batches = new List<IReadOnlyList<RegionChoiceOption>>();
+			picker.OptionsCommitted += batches.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window, batches);
+		}
+
+		private static Button AddButton(FwOptionPicker picker)
+			=> picker.GetVisualDescendants().OfType<Button>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "Domains.AddSelected");
+
+		[AvaloniaTest]
+		public void MultiSelect_RowCommit_ChecksRatherThanCommitting_AndAddCommitsTheWholeSet()
+		{
+			var (picker, window, batches) = ShowMultiSelect();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsMultiSelect, Is.True);
+			var add = AddButton(picker);
+			Assert.That(add.IsEnabled, Is.False, "nothing checked yet: Add is disabled");
+
+			// Check two rows: Enter on the highlight toggles, then highlight another and Enter.
+			picker.OptionsList.SelectedIndex = 1; // "Sky"
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(batches, Is.Empty, "a row commit in multi-select mode does NOT commit immediately");
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "u-sky" }));
+			Assert.That(add.IsEnabled, Is.True, "a checked item enables Add");
+
+			picker.OptionsList.SelectedIndex = 3; // "Person"
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "u-sky", "p" }), "checks accumulate in order");
+
+			add.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(batches, Has.Count.EqualTo(1), "Add commits the whole set in ONE batch");
+			Assert.That(batches[0].Select(o => o.Key), Is.EqualTo(new[] { "u-sky", "p" }),
+				"the batch carries every checked item, in check order");
+			Assert.That(picker.CheckedKeys, Is.Empty, "the set clears after commit so a re-open starts fresh");
+		}
+
+		[AvaloniaTest]
+		public void MultiSelect_ShiftRange_ChecksTheContiguousRangeFromTheAnchor()
+		{
+			var (picker, window, _) = ShowMultiSelect();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			// Plain-toggle row 1 ("Sky") — this becomes the range anchor.
+			picker.OptionsList.SelectedIndex = 1;
+			RaiseKey(picker.FilterBox, Key.Enter);
+			var anchorKey = picker.CheckedKeys.Single();
+
+			// Shift-toggle row 3 ("Person"): the whole visible range 1..3 is checked, anchor included.
+			picker.OptionsList.SelectedIndex = 3;
+			var targetKey = ((RegionChoiceOption)picker.OptionsList.SelectedItem).Key;
+			picker.ToggleHighlightedRange();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.CheckedKeys, Has.Count.EqualTo(3), "shift-range checks the contiguous range 1..3");
+			Assert.That(picker.CheckedKeys, Does.Contain(anchorKey).And.Contain(targetKey));
+
+			// Shift-toggle back to row 1 from the SAME anchor clears the range (target now unchecks).
+			picker.OptionsList.SelectedIndex = 3;
+			picker.ToggleHighlightedRange();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(picker.CheckedKeys, Is.Empty, "re-ranging to a checked target clears the range");
+		}
+
+		[AvaloniaTest]
+		public void MultiSelect_RowCommit_Twice_TogglesTheCheckOff()
+		{
+			var (picker, window, _) = ShowMultiSelect();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OptionsList.SelectedIndex = 1;
+			RaiseKey(picker.FilterBox, Key.Enter); // check
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "u-sky" }));
+			RaiseKey(picker.FilterBox, Key.Enter); // uncheck
+			Assert.That(picker.CheckedKeys, Is.Empty, "committing a checked row again unchecks it");
+			Assert.That(AddButton(picker).IsEnabled, Is.False, "nothing checked: Add disabled again");
+		}
+
+		[AvaloniaTest]
+		public void MultiSelect_ChecksPersistAcrossSearchReQueries_AndCommitTogether()
+		{
+			var lexicon = new List<RegionChoiceOption>
+			{
+				new RegionChoiceOption("e-casa", "casa"),
+				new RegionChoiceOption("e-cantar", "cantar"),
+				new RegionChoiceOption("e-perro", "perro")
+			};
+			Func<string, IReadOnlyList<RegionChoiceOption>> search = q =>
+				lexicon.Where(o => o.Name.StartsWith(q, StringComparison.OrdinalIgnoreCase)).ToList();
+			var (picker, window, batches) = ShowMultiSelect(search: search);
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			// First query: check "casa".
+			picker.FilterBox.Text = "ca";
+			Dispatcher.UIThread.RunJobs();
+			picker.OptionsList.SelectedIndex = 0; // casa
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "e-casa" }));
+
+			// Second query (different results): check "perro". The casa check must persist even
+			// though casa is no longer in the current result set.
+			picker.FilterBox.Text = "pe";
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(picker.CurrentItems.Select(o => o.Key), Is.EqualTo(new[] { "e-perro" }));
+			picker.OptionsList.SelectedIndex = 0; // perro
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(picker.CheckedKeys, Is.EqualTo(new[] { "e-casa", "e-perro" }),
+				"a check made under an earlier query survives a later re-query");
+
+			AddButton(picker).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(batches[0].Select(o => o.Key), Is.EqualTo(new[] { "e-casa", "e-perro" }),
+				"the batch resolves keys that scrolled out of the current result set");
+		}
+
+		[AvaloniaTest]
+		public void SingleSelect_Default_HasNoAddButton_AndCommitsImmediately()
+		{
+			var (picker, window, committed, _) = ShowStatic();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsMultiSelect, Is.False);
+			Assert.That(picker.GetVisualDescendants().OfType<Button>()
+				.Any(b => AutomationProperties.GetAutomationId(b) == "Domains.AddSelected"), Is.False,
+				"single-select mode has no Add button");
+			Assert.That(picker.GetVisualDescendants().OfType<CheckBox>(), Is.Empty,
+				"single-select mode renders no row checkboxes");
+
+			picker.OptionsList.SelectedIndex = 1;
+			RaiseKey(picker.FilterBox, Key.Enter);
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "u-sky" }),
+				"single-select commits the one highlighted item immediately (unchanged)");
+		}
+
+		[AvaloniaTest]
+		public void MultiSelect_RendersACheckboxPerRow()
+		{
+			var (picker, window, _) = ShowMultiSelect();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var checks = picker.OptionsList.GetVisualDescendants().OfType<CheckBox>().ToList();
+			Assert.That(checks, Is.Not.Empty, "each multi-select row carries a leading checkbox");
+			Assert.That(checks.All(c => c.IsChecked != true), Is.True, "nothing is checked initially");
+		}
+
+		// ===== Dropdown (collapsed) mode (the MorphType picker) =====
+
+		private static (FwOptionPicker picker, Window window, List<RegionChoiceOption> committed) ShowDropdown(
+			IReadOnlyList<RegionChoiceOption> options = null)
+		{
+			var picker = new FwOptionPicker(options ?? Tree(), null, "Domains", dropdown: true);
+			var committed = new List<RegionChoiceOption>();
+			picker.OptionCommitted += committed.Add;
+			var window = new Window { Content = picker, Width = 400, Height = 420 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			return (picker, window, committed);
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_CollapsedByDefault_ShowsSelection_PopupClosed_NoFilterFocus()
+		{
+			var (picker, window, _) = ShowDropdown();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsDropdown, Is.True, "the picker was built in dropdown mode");
+			Assert.That(picker.IsDropdownOpen, Is.False, "the option list popup is collapsed by default");
+			Assert.That(picker.FilterBox.IsFocused, Is.False,
+				"a collapsed dropdown does NOT auto-focus the filter (unlike the inline flyout)");
+			Assert.That(picker.DropdownText, Is.EqualTo("Universe"),
+				"the collapsed box shows the current (first enabled) selection");
+			// The toggle box must be reachable by automation id (the host/test contract).
+			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
+				.SingleOrDefault(b => AutomationProperties.GetAutomationId(b) == "Domains.Dropdown");
+			Assert.That(toggle, Is.Not.Null, "the collapsed dropdown exposes a stable toggle automation id");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_Open_ShowsTheOptionListOnTop_FilterFocused()
+		{
+			var (picker, window, _) = ShowDropdown();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsDropdownOpen, Is.True, "clicking/opening the box pops the option list up");
+			// The list + filter render in the popup's own top-level (on top), realized from the option set.
+			Assert.That(picker.OptionsList.GetVisualDescendants().OfType<TextBlock>()
+				.Any(t => t.Text == "Universe"), Is.True, "the option list renders when the popup is open");
+			Assert.That(picker.FilterBox.IsFocused, Is.True, "opening focuses the filter, so typing filters live");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_Pick_CommitsAndCollapsesShowingTheNewSelection()
+		{
+			var (picker, window, committed) = ShowDropdown();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+
+			picker.OptionsList.SelectedIndex = 3; // "Person"
+			picker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(committed.Select(o => o.Key), Is.EqualTo(new[] { "p" }),
+				"picking a row commits the highlighted option (single-select semantics, unchanged)");
+			Assert.That(picker.IsDropdownOpen, Is.False, "a pick collapses the dropdown back");
+			Assert.That(picker.DropdownText, Is.EqualTo("Person"),
+				"the collapsed box now shows the newly chosen value");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_ExternalSelectionMove_UpdatesTheCollapsedLabel()
+		{
+			// The VM's derive-on-type reselection sets OptionsList.SelectedIndex directly; the collapsed
+			// label must follow it even while the popup is closed.
+			var (picker, _, _) = ShowDropdown();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(picker.DropdownText, Is.EqualTo("Universe"));
+
+			picker.OptionsList.SelectedIndex = 3; // "Person"
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.DropdownText, Is.EqualTo("Person"),
+				"an external SelectedIndex move (the VM reselection) updates the collapsed label");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_Escape_ClosesWithoutCommitting()
+		{
+			var (picker, window, committed) = ShowDropdown();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(picker.IsDropdownOpen, Is.True);
+
+			RaiseKey(picker.FilterBox, Key.Escape);
+
+			Assert.That(picker.IsDropdownOpen, Is.False, "Escape collapses the dropdown");
+			Assert.That(committed, Is.Empty, "Escape never commits");
+		}
+
+		[AvaloniaTest]
+		public void InlineMode_HasNoDropdownToggle_AndIsNotDropdown()
+		{
+			// Proof the existing (default) consumers are UNCHANGED: no collapsed toggle, IsDropdown false,
+			// the filter+list still render inline in the picker's own tree.
+			var (picker, window, _, _) = ShowStatic();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsDropdown, Is.False, "the default picker is inline, not dropdown");
+			Assert.That(picker.GetVisualDescendants().OfType<ToggleButton>(), Is.Empty,
+				"inline mode renders no collapsed dropdown toggle");
+			Assert.That(picker.GetVisualDescendants().Contains(picker.FilterBox), Is.True,
+				"the filter box still renders inline under the picker (unchanged)");
 		}
 
 		// A pointer release routed from a SPECIFIC template part: the commit guard keys off where

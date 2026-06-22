@@ -199,6 +199,45 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// glyph: 8 teeth on a 24-unit canvas rendered at ~14px in the muted ws-abbreviation hue.
 		private static readonly Geometry GearGeometry = CreateGearGeometry();
 
+		// A vertical ellipsis ("⋮", the "kebab" field-menu glyph): three stacked dots on the same
+		// 24-unit canvas, drawn as model EllipseGeometry (no stream context) so it renders in the
+		// headless unit tests that build these controls with no Avalonia platform loaded.
+		private static readonly Geometry KebabGeometry = CreateKebabGeometry();
+
+		/// <summary>The "⋮" field-options glyph, in the muted affordance hue.</summary>
+		internal static Control CreateKebabIcon()
+			=> new Avalonia.Controls.Shapes.Path
+			{
+				Data = KebabGeometry,
+				Fill = FwAvaloniaDensity.WsAbbrevBrush,
+				Width = 14,
+				Height = 14,
+				Stretch = Stretch.Uniform,
+				VerticalAlignment = VerticalAlignment.Center
+			};
+
+		/// <summary>A flat (transparent, borderless) button carrying the "⋮" glyph as its face.</summary>
+		internal static Button CreateKebabButton()
+			=> new Button
+			{
+				Content = CreateKebabIcon(),
+				Padding = new Thickness(2, 0, 2, 0),
+				MinHeight = 0,
+				MinWidth = 0,
+				Background = Brushes.Transparent,
+				BorderThickness = new Thickness(0),
+				VerticalAlignment = VerticalAlignment.Top
+			};
+
+		private static Geometry CreateKebabGeometry()
+		{
+			const double cx = 12, radius = 1.7;
+			var dots = new GeometryGroup();
+			foreach (var cy in new[] { 5.0, 12.0, 19.0 })
+				dots.Children.Add(new EllipseGeometry { Center = new Point(cx, cy), RadiusX = radius, RadiusY = radius });
+			return dots;
+		}
+
 		/// <summary>The gear icon itself, for hosts that carry it inside their own click surface.</summary>
 		internal static Control CreateGearIcon()
 			=> new Avalonia.Controls.Shapes.Path

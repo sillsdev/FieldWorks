@@ -110,10 +110,20 @@ namespace SIL.FieldWorks.XWorks
 			public void GetColumnEditAttributes(int icol, out string field, out string ws, out string transduce)
 			{ field = null; ws = null; transduce = null; }
 			public bool IsColumnEditable(int icol) => false;
+			public IReadOnlyList<BrowseColumnInfo> GetAvailableColumns() => Array.Empty<BrowseColumnInfo>();
+			public string GetColumnKey(int icol) => null;
 			public IReadOnlyList<string> GetRowCellStrings(IManyOnePathSortItem item) => Array.Empty<string>();
 			public ITsString GetRowCellTsString(IManyOnePathSortItem item, int icol) => null;
 			public RecordSorter MakeColumnSorter(int dataColumnIndex, bool ascending) => null;
+			public RecordSorter MakeColumnSorter(int dataColumnIndex, bool ascending, bool sortedFromEnd, bool sortedByLength) => null;
 			public RecordFilter MakeColumnFilter(int dataColumnIndex, BrowseColumnFilterKind kind, string text) => null;
+			public RecordFilter MakePatternColumnFilter(int dataColumnIndex, string pattern, BrowsePatternMatchType matchType, bool matchCase) => null;
+			public RecordFilter MakeStringListColumnFilter(int dataColumnIndex, string value, bool exclude) => null;
+			public string[] GetColumnStringList(int dataColumnIndex) => null;
+			public string GetColumnSpecAttribute(int icol, string attrName) => null;
+			public RecordFilter MakeDateColumnFilter(int dataColumnIndex, BrowseDateMatchKind kind, System.DateTime start, System.DateTime end, bool handleGenDate) => null;
+			public IReadOnlyList<BrowseChooserItem> GetColumnChooserList(int dataColumnIndex) => null;
+			public RecordFilter MakeListChoiceColumnFilter(int dataColumnIndex, IReadOnlyList<string> chosenKeys) => null;
 		}
 
 		[Test]

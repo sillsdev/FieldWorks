@@ -80,10 +80,35 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
+			Debug.Assert(cache != null);
+
+			// New-UI gate (mirrors the Options dialog gate): in New mode launch the Avalonia Insert Entry dialog;
+			// Legacy mode (and the Interlinear/affix-slot callers, which use other SetDlgInfo overloads directly)
+			// keep the WinForms InsertEntryDlg. Both paths MasterRefresh + JumpToRecord to the created entry.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var (entry, newby) = LcmInsertEntryDialogLauncher.Show(cache, m_mediator, m_propertyTable,
+					Form.ActiveForm, tssForm: null, helpProvider: helpProvider);
+				// Jump to the resulting entry whether it was newly created OR an existing entry the user chose from
+				// the matching-entries pane (the legacy "Go to similar entry" outcome, newby == false). The legacy
+				// WinForms path likewise JumpToRecord's for both. A MasterRefresh is only needed for a new entry.
+				if (entry != null)
+				{
+#pragma warning disable 618 // suppress obsolete warning
+					if (newby)
+						m_mediator.SendMessage("MasterRefresh", null);
+					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
+#pragma warning restore 618
+				}
+				retObj.ReturnValue = true; // We "handled" the message, regardless of what happened.
+				return;
+			}
+
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
-				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
-				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, m_persistProvider);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
@@ -153,6 +178,28 @@ namespace SIL.FieldWorks.LexText.Controls
 			Debug.Assert(currentEntry != null);
 			if (currentEntry == null)
 				return false;
+
+			// New-UI gate (mirrors the Insert Entry / Options dialog gates): in New mode launch the Avalonia Merge
+			// Entry dialog (the reusable entry-search/"go" kit dialog); Legacy mode keeps the WinForms MergeEntryDlg.
+			// Both paths merge the current entry INTO the chosen survivor in one undoable step, then JumpToRecord.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var survivor = LcmMergeEntryDialogLauncher.Show(cache, m_mediator, m_propertyTable, currentEntry,
+					Form.ActiveForm, fLoseNoTextData, helpProvider);
+				if (survivor != null)
+				{
+					MessageBox.Show(null,
+						LexTextControls.ksEntriesHaveBeenMerged,
+						LexTextControls.ksMergeReport,
+						MessageBoxButtons.OK, MessageBoxIcon.Information);
+#pragma warning disable 618 // suppress obsolete warning
+					m_mediator.SendMessage("JumpToRecord", survivor.Hvo);
+#pragma warning restore 618
+				}
+				return true;
+			}
 
 			using (MergeEntryDlg dlg = new MergeEntryDlg())
 			{

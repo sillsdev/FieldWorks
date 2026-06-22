@@ -221,20 +221,33 @@ Tests: `RegionCustomFieldRenderingTests.cs`.
 
 ## 11. Localization lanes
 
-**Decision.** Two lanes:
+**Decision.** Two runtime lanes:
 
 - **Field labels** resolve through the legacy StringTable lane
   (`XmlUtils.GetLocalizedAttributeValue`, `strings-{locale}.xml`) at render
   time; the IR carries `LocalizationKey` per node, never baked English.
-- **Product messages** (Save, Cancel, validation, unsupported-row text)
-  live in `Src/Common/FwAvalonia/FwAvaloniaStrings.resx` with translator
-  comments.
+- **Avalonia chrome** (Save, Cancel, validation, unsupported-row text,
+  dialog labels, accessible names) joins the existing
+  LocalizationManager/L10NSharp XLIFF catalog already loaded by the
+  product host. Prefer existing `Palaso`/`Chorus` ids only when semantics
+  and markup truly match; otherwise add unique Avalonia-prefixed ids in
+  that same catalog so collisions do not leak `&` mnemonics or unrelated
+  translations into Avalonia surfaces.
+
+**Current source of truth.** The hand-written accessor classes
+(`FwAvaloniaStrings`, `FwAvaloniaDialogsStrings`) own the English defaults
+used at runtime. Any leftover Avalonia `.resx` files are legacy artifacts,
+not the active runtime lane.
 
 **Gotchas.** SDK-style csprojs need an explicit `<RootNamespace>` element
 or the Crowdin satellite-assembly build
 (`Build/Src/FwBuildTasks/Localization/ProjectLocalizer.cs`) fails — verify
-when adding any new Avalonia project. English-on-Avalonia where legacy
-shows translations is a parity failure, not cosmetics.
+when adding any new Avalonia project while any legacy `.resx` artifact still exists.
+LocalizationManager must be initialized once per product, preview-host, or
+headless-test process before Avalonia chrome is requested; reuse the
+product startup path when available and use a minimal English bootstrap for
+non-product hosts. English-on-Avalonia where legacy shows translations is a
+parity failure, not cosmetics.
 
 ## 12. Density and performance
 

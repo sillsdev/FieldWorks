@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (!TryResolveWsHandle(ws, vernacular: true, out var wsHandle))
 						return false;
-					EnsureOpen();
+					// ITEM 1: name the field in the undo label (e.g. "Undo change to Lexeme Form").
+					EnsureOpen(FieldLabel(regionField));
 					var text = TsStringUtils.MakeString(value ?? string.Empty, wsHandle);
 					// Mirror the read fallback: entries without a lexeme form object edit the citation form.
 					if (Entry.LexemeFormOA != null)
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					if (!TryResolveWsHandle(ws, vernacular: false, out var wsHandle))
 						return false;
-					EnsureOpen();
+					EnsureOpen(FieldLabel(regionField));
 					Entry.SensesOS[0].Gloss.set_String(wsHandle, TsStringUtils.MakeString(value ?? string.Empty, wsHandle));
 					return true;
 				}
@@ -73,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (!TryResolveWsHandle(ws, vernacular: true, out var wsHandle))
 						return false;
-					EnsureOpen();
+					EnsureOpen(FieldLabel(regionField));
 					var text = RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle);
 					if (Entry.LexemeFormOA != null)
 						Entry.LexemeFormOA.Form.set_String(wsHandle, text);
@@ -87,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					if (!TryResolveWsHandle(ws, vernacular: false, out var wsHandle))
 						return false;
-					EnsureOpen();
+					EnsureOpen(FieldLabel(regionField));
 					Entry.SensesOS[0].Gloss.set_String(wsHandle,
 						RegionRichTextAdapter.ToTsString(value, Cache.WritingSystemFactory, wsHandle));
 					return true;
@@ -147,9 +148,13 @@ namespace SIL.FieldWorks.XWorks
 			if (!repository.TryGetObject(guid, out var morphType))
 				return false;
 
-			EnsureOpen();
+			EnsureOpen(FieldLabel(regionField));
 			Entry.LexemeFormOA.MorphTypeRA = morphType;
 			return true;
 		}
+
+		// ITEM 1: the human-readable field label that names the undo step, falling back to the field name.
+		private static string FieldLabel(LexicalEditRegionField regionField)
+			=> string.IsNullOrEmpty(regionField?.Label) ? regionField?.Field : regionField.Label;
 	}
 }

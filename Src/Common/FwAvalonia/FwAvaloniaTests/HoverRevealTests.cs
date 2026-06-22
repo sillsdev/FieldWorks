@@ -287,7 +287,8 @@ namespace FwAvaloniaTests
 
 			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
-			picker.CommitHighlighted();
+			picker.CommitHighlighted(); // multi-select: checks the row
+			picker.CommitChecked();     // Add: commits the checked set
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.ReferenceAdds, Has.Count.EqualTo(1), "behavior unchanged: add stages");

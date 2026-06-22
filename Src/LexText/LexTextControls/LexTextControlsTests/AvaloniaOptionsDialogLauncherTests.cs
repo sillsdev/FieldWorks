@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -10,6 +11,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
 using SIL.Settings;
+using XCore;
 
 namespace LexTextControlsTests
 {
@@ -252,6 +254,136 @@ namespace LexTextControlsTests
 					"DTD processing is prohibited, so a DOCTYPE makes the load fail safely rather than resolve entities");
 			}
 			finally { File.Delete(path); }
+		}
+
+		// ----- ApplyPlugins install/uninstall diff (against temp source/target dirs) -----
+
+		[Test]
+		public void ApplyPlugins_ToggledOn_InstallsConfigFiles()
+		{
+			using (var dirs = new TempPluginDirs())
+			using (var mediator = new Mediator())
+			{
+				// Source plugin layout: Available Plugins/Demo/Demo.fwlayout (the configfile to install).
+				var srcDemo = Directory.CreateDirectory(Path.Combine(dirs.PluginRoot, "Demo"));
+				File.WriteAllText(Path.Combine(srcDemo.FullName, "Demo.fwlayout"), "layout");
+				var doc = ManagerDoc("Demo", "DemoTarget", "Demo.fwlayout");
+
+				// User toggled it ON (Installed=true) when it was NOT previously installed.
+				var plugin = new PluginOption("Demo", "A demo", installed: false);
+				plugin.Installed = true;
+				var state = StateWith(plugin);
+				var docs = new Dictionary<string, XmlDocument> { ["Demo"] = doc };
+
+				var changed = SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyPlugins(
+					mediator, state, docs, dirs.PluginRoot, dirs.ExtensionRoot);
+
+				Assert.That(changed, Is.True, "toggling a plugin on reports an update");
+				var installed = Path.Combine(dirs.ExtensionRoot, "DemoTarget", "Demo.fwlayout");
+				Assert.That(File.Exists(installed), Is.True, "the configfile is copied into the target extension dir");
+			}
+		}
+
+		[Test]
+		public void ApplyPlugins_ToggledOff_UninstallsTargetDir()
+		{
+			using (var dirs = new TempPluginDirs())
+			using (var mediator = new Mediator())
+			{
+				// The target extension dir already exists (the plugin was installed).
+				var target = Directory.CreateDirectory(Path.Combine(dirs.ExtensionRoot, "DemoTarget"));
+				File.WriteAllText(Path.Combine(target.FullName, "Demo.fwlayout"), "layout");
+				var doc = ManagerDoc("Demo", "DemoTarget", "Demo.fwlayout");
+
+				// User toggled it OFF: WasInstalled=true (constructed installed) then Installed=false.
+				var plugin = new PluginOption("Demo", "A demo", installed: true);
+				plugin.Installed = false;
+				var state = StateWith(plugin);
+				var docs = new Dictionary<string, XmlDocument> { ["Demo"] = doc };
+
+				var changed = SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyPlugins(
+					mediator, state, docs, dirs.PluginRoot, dirs.ExtensionRoot);
+
+				Assert.That(changed, Is.True, "toggling a plugin off reports an update");
+				Assert.That(Directory.Exists(target.FullName), Is.False, "the target extension dir is deleted on uninstall");
+			}
+		}
+
+		[Test]
+		public void ApplyPlugins_Unchanged_DoesNothing()
+		{
+			using (var dirs = new TempPluginDirs())
+			using (var mediator = new Mediator())
+			{
+				var doc = ManagerDoc("Demo", "DemoTarget", "Demo.fwlayout");
+
+				// Installed == WasInstalled (both true): no install, no uninstall.
+				var stillInstalled = new PluginOption("Demo", "A demo", installed: true);
+				// And a never-installed, still-unchecked one (both false).
+				var stillAbsent = new PluginOption("Other", "Another", installed: false);
+				var state = StateWith(stillInstalled, stillAbsent);
+				var docs = new Dictionary<string, XmlDocument> { ["Demo"] = doc, ["Other"] = ManagerDoc("Other", "OtherTarget", "Other.fwlayout") };
+
+				var changed = SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyPlugins(
+					mediator, state, docs, dirs.PluginRoot, dirs.ExtensionRoot);
+
+				Assert.That(changed, Is.False, "no toggled plugin means no install/uninstall and no reported update");
+				Assert.That(Directory.GetFileSystemEntries(dirs.ExtensionRoot), Is.Empty,
+					"an unchanged plugin set must not touch the filesystem");
+			}
+		}
+
+		[Test]
+		public void ApplyPlugins_NullMediator_DoesNothing()
+		{
+			using (var dirs = new TempPluginDirs())
+			{
+				var plugin = new PluginOption("Demo", "A demo", installed: false);
+				plugin.Installed = true;
+				var state = StateWith(plugin);
+				var docs = new Dictionary<string, XmlDocument> { ["Demo"] = ManagerDoc("Demo", "DemoTarget", "Demo.fwlayout") };
+
+				var changed = SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ApplyPlugins(
+					null, state, docs, dirs.PluginRoot, dirs.ExtensionRoot);
+
+				Assert.That(changed, Is.False, "no mediator => plugins are unavailable, so nothing applies");
+				Assert.That(Directory.GetFileSystemEntries(dirs.ExtensionRoot), Is.Empty);
+			}
+		}
+
+		private static OptionsState StateWith(params PluginOption[] plugins) =>
+			new OptionsState { PluginsAvailable = true, Plugins = plugins.ToList() };
+
+		/// <summary>Builds a minimal, well-formed ExtensionManager-style manager doc (no dlls node, so install
+		/// copies only the named configfile into a temp target dir).</summary>
+		private static XmlDocument ManagerDoc(string name, string targetDir, string configFileName)
+		{
+			var doc = new XmlDocument();
+			doc.LoadXml(
+				$"<manager name='{name}' description='d'><configfiles targetdir='{targetDir}'><file name='{configFileName}'/></configfiles></manager>");
+			return doc;
+		}
+
+		/// <summary>A pair of temp dirs (the Available-Plugins source root and the extension target root) cleaned
+		/// up on dispose, so the install/uninstall tests never touch the real install layout.</summary>
+		private sealed class TempPluginDirs : System.IDisposable
+		{
+			private readonly string _root;
+			public string PluginRoot { get; }
+			public string ExtensionRoot { get; }
+
+			public TempPluginDirs()
+			{
+				_root = Path.Combine(Path.GetTempPath(), "FwOptApplyPlugins_" + System.Guid.NewGuid().ToString("N"));
+				PluginRoot = Directory.CreateDirectory(Path.Combine(_root, "Available Plugins")).FullName;
+				ExtensionRoot = Directory.CreateDirectory(Path.Combine(_root, "Configuration")).FullName;
+			}
+
+			public void Dispose()
+			{
+				if (Directory.Exists(_root))
+					Directory.Delete(_root, true);
+			}
 		}
 
 		private static string WriteTemp(string content)

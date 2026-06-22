@@ -151,6 +151,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
 		{
 			registry.Register(new ChorusNotesPlugin());
+			registry.Register(new ReversalIndexEntryPlugin());
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
@@ -190,9 +191,11 @@ namespace SIL.FieldWorks.XWorks
 		public static readonly IReadOnlyDictionary<string, string> ExplicitlyDeferredClassNames =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				// Views-based native text editing; rides the rich-TsString gate (D4/D6).
-				{ "SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice", "gate 6.13" }
 				// AudioVisualSlice graduated to LauncherRoutedClassNames in wave 4 (D4).
+				// ReversalIndexEntrySlice graduated to a native Avalonia plugin (ReversalIndexEntryPlugin):
+				// the sense's reversal-entry forms now compose as an editable multi-WS text field through
+				// the D1 plugin lane, retiring the lone Unsupported row. It is therefore PluginRouted, no
+				// longer deferred. This set is now EMPTY — every census class is actively classified.
 			};
 
 		/// <summary>

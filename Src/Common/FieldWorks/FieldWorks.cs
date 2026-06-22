@@ -27,6 +27,7 @@ using L10NSharp.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
@@ -3665,9 +3666,15 @@ namespace SIL.FieldWorks
 				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				var additionalLocalizationMethods = new[]
+				{
+					typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetString), new[] { typeof(string), typeof(string), typeof(string), typeof(string) }),
+					typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetPalasoString), new[] { typeof(string), typeof(string), typeof(string) }),
+					typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetChorusString), new[] { typeof(string), typeof(string), typeof(string) })
+				}.Where(method => method != null).ToArray();
 				// First create localization manager for Chorus with english
 				LocalizationManagerWinforms.Create("en",
-					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" });
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" }, additionalLocalizationMethods);
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
 				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
@@ -3680,7 +3687,7 @@ namespace SIL.FieldWorks
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-					userL10nBaseDir, null, new[] { "SIL.Windows.Forms" });
+					userL10nBaseDir, null, new[] { "SIL.Windows.Forms", "SIL.FieldWorks.Common.FwAvalonia", "FwAvaloniaDialogs" }, additionalLocalizationMethods);
 			}
 			catch (Exception e)
 			{

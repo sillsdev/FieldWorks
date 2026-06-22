@@ -11,6 +11,8 @@ using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
+using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the PNG harness
+using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geometry tripwire
 
 namespace FwAvaloniaTests
 {
@@ -37,9 +39,26 @@ namespace FwAvaloniaTests
 			=> row.GetVisualDescendants().OfType<Button>().Single();
 
 		[AvaloniaTest]
+		public void EmptyRow_WithLauncher_RendersTheGearButton_NoValueText()
+		{
+			// Initial stage: a launchable field whose value is not set yet — the read-only value area is empty
+			// but the (hover-revealed) gear launcher is present and enabled.
+			var (row, window) = Show(new FwDialogLauncherField(string.Empty, "Inflection Features", () => { }));
+
+			DialogSnapshot.Capture(window, "DialogLauncherField-01-initial");
+			DialogLayoutAssert.AssertNoCrowding(row);
+
+			Assert.That(row.Value, Is.Empty);
+			Assert.That(LauncherButton(row).IsEnabled, Is.True, "a host callback makes the launcher available");
+		}
+
+		[AvaloniaTest]
 		public void RendersTheValueText_AndTheGearLauncherButton()
 		{
-			var (row, _) = Show(new FwDialogLauncherField("[NOUN: common]", "Inflection Features", () => { }));
+			var (row, window) = Show(new FwDialogLauncherField("[NOUN: common]", "Inflection Features", () => { }));
+
+			DialogSnapshot.Capture(window, "DialogLauncherField-02-with-value");
+			DialogLayoutAssert.AssertNoCrowding(row);
 
 			var value = row.GetVisualDescendants().OfType<TextBlock>()
 				.FirstOrDefault(t => t.Text == "[NOUN: common]");
@@ -67,7 +86,10 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void WithoutACallback_TheButtonIsDisabled_WithATooltip_AndTheValueStillShows()
 		{
-			var (row, _) = Show(new FwDialogLauncherField("hello.wav", "Media File", null));
+			var (row, window) = Show(new FwDialogLauncherField("hello.wav", "Media File", null));
+
+			DialogSnapshot.Capture(window, "DialogLauncherField-03-disabled-no-service");
+			DialogLayoutAssert.AssertNoCrowding(row);
 
 			Assert.That(row.CanLaunch, Is.False);
 			var button = LauncherButton(row);

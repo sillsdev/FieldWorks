@@ -79,6 +79,44 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(0));
 		}
 
+		// ITEM 2 (invalid-edit-on-navigate UX): a Settle that rolls back because validation FAILED must
+		// SURFACE the reason (returned + the InvalidEditRolledBack hook fires), not silently discard the
+		// edit. The data is still rolled back safely; only the silence is fixed.
+		[Test]
+		public void Settle_InvalidOpenSession_SurfacesTheValidationReason_NotASilentRollback()
+		{
+			var holder = new RegionEditContextHolder();
+			IReadOnlyList<string> surfaced = null;
+			holder.InvalidEditRolledBack = reasons => surfaced = reasons;
+			holder.Replace(OpenSessionWith("")); // clears the required lexeme form -> validation fails
+
+			var returned = holder.Settle();
+
+			Assert.That(returned, Is.Not.Empty, "Settle returns the reasons it rolled back on");
+			Assert.That(returned, Contains.Item(
+				SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.LexemeFormRequired));
+			Assert.That(surfaced, Is.EqualTo(returned),
+				"the host hook fires with the same reasons so the user is told, not left guessing");
+			Assert.That(holder.Current.IsOpen, Is.False, "the edit is still rolled back (the safe close)");
+			Assert.That(LexemeText, Is.EqualTo("casa"), "the invalid edit is discarded, but not silently");
+		}
+
+		// ITEM 2: a clean commit and a nothing-to-settle no-op must NOT fire the warning hook.
+		[Test]
+		public void Settle_ValidCommitOrNoOp_DoesNotSurfaceAnyValidationReason()
+		{
+			var fired = 0;
+			var holder = new RegionEditContextHolder();
+			holder.InvalidEditRolledBack = _ => fired++;
+
+			Assert.That(holder.Settle(), Is.Empty, "nothing open settles to no reasons");
+
+			holder.Replace(OpenSessionWith("perro")); // a VALID edit
+			Assert.That(holder.Settle(), Is.Empty, "a clean commit reports no validation reasons");
+			Assert.That(fired, Is.EqualTo(0), "the warning hook never fires for a clean settle");
+			Assert.That(LexemeText, Is.EqualTo("perro"));
+		}
+
 		// Each undo test needs a PRIOR committed bundle (CanUndo requires one) and must never leak
 		// an open session into the shared fixture cache, hence the try/finally shape.
 		private void WithPriorUndoStepAndOpenSession(Action<LexicalEditRegionEditContext> test)

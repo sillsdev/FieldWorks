@@ -182,6 +182,78 @@ namespace FwAvaloniaTests
 				"rebuilding the region should keep the user at the same scroll position instead of jumping back to the top");
 		}
 
+		// A single-text-field view whose editor's stable automation id is exactly <paramref name="stableId"/>
+		// + ".vern" (null AutomationId falls back to StableId; the WS suffix is the WsTag). This lets the
+		// test reproduce the ghost id ("…@ownerHvo/ghost.vern") and its real successor ("…@newHvo.vern").
+		private static LexicalEditRegionView ViewWithEditorId(string stableId)
+		{
+			var field = new LexicalEditRegionField(stableId, "Lexeme Form", "Form", "vernacular",
+				RegionFieldKind.Text, EditorClassification.Known, /*automationId*/ null, null,
+				SurfaceRouting.Product,
+				new List<RegionWsValue> { new RegionWsValue("vern", "casa", wsTag: "vern") },
+				null, null);
+			var model = new LexicalEditRegionModel("LexEntry", "Normal",
+				new List<LexicalEditRegionField> { field }, new List<ViewDiagnostic>());
+			return new LexicalEditRegionView(model);
+		}
+
+		// Post-ghost-commit focus continuity (legacy RestoreSelection): the user types into a ghost
+		// add-prompt, the object is created, and the host recomposes into a NEW real editor whose stable
+		// id carries the created object's hvo and drops the "/ghost" marker. RegionFocusMemory must carry
+		// focus from the "/ghost" editor into that successor even though the ids differ.
+		[AvaloniaTest]
+		public void TryRestore_AfterGhostCommit_LandsFocus_InTheNewRealEditor()
+		{
+			// The ghost id embeds the OWNER's hvo (the object did not exist yet) plus "/ghost".
+			var ghost = ViewWithEditorId("LexEntry/Normal/#3@111/ghost");
+			var window = new Window { Content = ghost, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			var ghostEditor = FindEditor(ghost, "LexEntry/Normal/#3@111/ghost.vern");
+			Assert.That(ghostEditor, Is.Not.Null, "the ghost editor carries the /ghost stable id");
+			ghostEditor.Focus();
+			ghostEditor.CaretIndex = 2;
+			Dispatcher.UIThread.RunJobs();
+
+			var memento = RegionFocusMemory.Capture(ghost);
+			Assert.That(memento.AutomationId, Is.EqualTo("LexEntry/Normal/#3@111/ghost.vern"));
+
+			// After commit + recompose: same node, the NEW object's hvo, no "/ghost" marker.
+			var real = ViewWithEditorId("LexEntry/Normal/#3@222");
+			window.Content = real;
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(RegionFocusMemory.TryRestore(real, memento), Is.True,
+				"focus must continue into the recomposed real field");
+			Dispatcher.UIThread.RunJobs();
+
+			var realEditor = FindEditor(real, "LexEntry/Normal/#3@222.vern");
+			Assert.That(realEditor, Is.Not.Null);
+			Assert.That(realEditor.IsFocused, Is.True,
+				"the new real editor owns focus after the ghost->real recompose (legacy RestoreSelection parity)");
+			Assert.That(realEditor.CaretIndex, Is.EqualTo(2), "the caret carries into the successor");
+		}
+
+		// The ghost successor matcher must not poach focus for an UNRELATED field that merely shares the
+		// writing system: only the same node-stable prefix qualifies as the successor.
+		[AvaloniaTest]
+		public void TryRestore_AfterGhostCommit_DoesNotMatch_AnUnrelatedField()
+		{
+			var ghost = ViewWithEditorId("LexEntry/Normal/#3@111/ghost");
+			var window = new Window { Content = ghost, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			FindEditor(ghost, "LexEntry/Normal/#3@111/ghost.vern").Focus();
+			Dispatcher.UIThread.RunJobs();
+			var memento = RegionFocusMemory.Capture(ghost);
+
+			// A different node (#9) that also has a .vern editor must NOT be treated as the successor.
+			var unrelated = ViewWithEditorId("LexEntry/Normal/#9@222");
+			Assert.That(RegionFocusMemory.TryRestoreFocus(unrelated, memento), Is.False,
+				"only the same node-stable prefix is the ghost's successor, not any same-ws editor");
+		}
+
 		[AvaloniaTest]
 		public void TryRestoreScroll_Works_WhenMementoHasNoFocusedEditor()
 		{

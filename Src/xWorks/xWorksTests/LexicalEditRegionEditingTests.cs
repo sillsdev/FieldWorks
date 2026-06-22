@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -166,6 +167,83 @@ namespace SIL.FieldWorks.XWorks
 				"a guid that is not a morph type must not stage");
 			Assert.That(context.TrySetOption(F("Gloss"), "x"), Is.False);
 			Assert.That(context.IsOpen, Is.False, "rejected edits must not open the fence");
+		}
+
+		// ITEM 1: editing a single field opens the fenced session with a field-specific undo label
+		// (e.g. "Undo change to Gloss"), mirroring the legacy per-slice "Undo change to {field}" labels,
+		// instead of the generic "Undo Edit Entry".
+		[Test]
+		public void TrySetText_Gloss_OpensSessionWithFieldSpecificUndoLabel()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			try
+			{
+				Assert.That(context.TrySetText(F("Gloss"), "anal", "dog"), Is.True);
+				Assert.That(context.IsOpen, Is.True);
+			}
+			finally
+			{
+				// Commit so the fenced task lands on the undo stack (GetUndoText reads the committed
+				// top, not an in-flight task); also guarantees no open task leaks into the next test.
+				context.Commit();
+			}
+
+			var expected = string.Format(CultureInfo.CurrentCulture,
+				FwAvaloniaStrings.UndoChangeToFormat, "Gloss");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Does.Contain("Gloss"),
+				"the committed session's undo label names the field being edited");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(expected),
+				"the field-specific 'Undo change to {0}' label is used, not the generic one");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(),
+				Is.Not.EqualTo(FwAvaloniaStrings.UndoEditEntry));
+		}
+
+		// ITEM 1: the label is fixed at the first staged edit (the field that opens the session names
+		// it); a later edit to a different field in the SAME session does not relabel it.
+		[Test]
+		public void FirstStagedField_FixesTheUndoLabel_ForTheWholeSession()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			try
+			{
+				Assert.That(context.TrySetText(F("Form"), "vern", "perro"), Is.True);
+				Assert.That(context.TrySetText(F("Gloss"), "anal", "dog"), Is.True);
+			}
+			finally
+			{
+				context.Commit();
+			}
+
+			// The first staged field was Form, so the whole one-step session is labelled by Form,
+			// not relabelled by the later Gloss edit.
+			var expected = string.Format(CultureInfo.CurrentCulture,
+				FwAvaloniaStrings.UndoChangeToFormat, "Form");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(expected),
+				"the first staged field names the label; a later same-session edit does not relabel it");
+		}
+
+		// ITEM 1: the batch/bulk path that opens the session with NO single field keeps the generic
+		// "Undo Edit Entry" label (the field-specific labels are only for single-field edits).
+		[Test]
+		public void Stage_WithoutAFieldLabel_KeepsTheGenericUndoLabel()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			try
+			{
+				Assert.That(context.Stage(() =>
+				{
+					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+						TsStringUtils.MakeString("batch", Cache.DefaultVernWs));
+					return true;
+				}), Is.True);
+			}
+			finally
+			{
+				context.Commit();
+			}
+
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo(FwAvaloniaStrings.UndoEditEntry),
+				"a session opened with no single field uses the generic label, not a field-specific one");
 		}
 
 		[Test]
@@ -449,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
 				"field labels continue to resolve through StringTable after rich-text row projection");
 			Assert.That(FwAvaloniaStrings.LexemeFormRequired, Is.Not.Null.And.Not.Empty,
-				"product-facing validation message text remains sourced from FwAvaloniaStrings.resx");
+				"product-facing validation message text remains sourced from the Avalonia localization accessor");
 		}
 
 		[Test]
@@ -512,14 +590,17 @@ namespace SIL.FieldWorks.XWorks
 				"the field appears once it has data");
 		}
 
-		// Review task 2: legacy enumComboBox is a CLOSED combo over the layout's stringList
-		// labels (EnumComboSlice) — it must never compose as a free-form editor that could
-		// persist invalid enum values. Until the importer carries the stringList ids, the row is
-		// READ-ONLY showing the raw stored value. The Allomorph Status slice
+		// Parity update: the legacy enumComboBox is a CLOSED combo over the layout's stringList
+		// labels (EnumComboSlice) — legacy is EDITABLE. The importer now carries the
+		// <deParams><stringList> ids/group onto the node, so the composer renders an EDITABLE
+		// option Chooser fed by that localized list (FullEntryRegionComposer.WalkEnumCombo +
+		// EditorKindMap). The stored enum integer is the 0-based index into the ids; committing a
+		// valid option index sets the property, while the closed combo rejects any out-of-range
+		// index so it can never persist an invalid enum value. The Allomorph Status slice
 		// (Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus) is the
-		// enumComboBox the entry walk reaches.
+		// enumComboBox the entry walk reaches; it is backed by the IsAbstract boolean flid.
 		[Test]
-		public void Compose_EnumComboBox_ComposesReadOnly_NeverAFreeFormEditor()
+		public void Compose_EnumComboBox_ComposesAsEditableStringListChooser()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.LexemeFormOA.IsAbstract = true);
@@ -528,21 +609,35 @@ namespace SIL.FieldWorks.XWorks
 			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Text), "a formatted value row");
-			Assert.That(row.IsEditable, Is.False,
-				"read-only until the stringList option chooser lands — never a raw int editor");
-			Assert.That(row.Values.Single().Value, Is.EqualTo("1"),
-				"the raw stored value renders (best effort without the stringList labels)");
-			Assert.That(composed.EditContext.TrySetText(row, "", "2"), Is.False,
-				"no setter is registered — nothing can persist an invalid enum value");
+			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Chooser),
+				"the enumComboBox composes as an editable closed option chooser, like legacy");
+			Assert.That(row.IsEditable, Is.True, "legacy enum combos are editable");
+			Assert.That(row.Options, Is.Not.Null.And.Not.Empty,
+				"the localized stringList labels are exposed as the chooser options");
+			Assert.That(row.Options.Select(o => o.Key),
+				Is.EquivalentTo(row.Options.Select((o, i) => i.ToString(CultureInfo.InvariantCulture))),
+				"option keys are the 0-based enum indices the stored int maps to");
+			Assert.That(row.SelectedOptionKey, Is.EqualTo("1"),
+				"the stored enum int (IsAbstract == true -> 1) selects the matching option");
+
+			// An out-of-range index is rejected by the closed combo — no invalid enum persists.
+			Assert.That(composed.EditContext.TrySetOption(row,
+				row.Options.Count.ToString(CultureInfo.InvariantCulture)), Is.False,
+				"an out-of-range option index is rejected so no invalid enum value can persist");
+
+			// Committing a valid in-range option index sets the enum int.
+			Assert.That(composed.EditContext.TrySetOption(row, "0"), Is.True,
+				"a valid option index commits through the registered setter");
+			composed.EditContext.Commit();
+			Assert.That(m_entry.LexemeFormOA.IsAbstract, Is.False,
+				"option index 0 wrote the enum int back through the boolean-backed flid");
 		}
 
-		// Review task 4: the plain-text setter replaces the WHOLE alternative via MakeString, so
-		// a row whose current content is rich (multiple runs / props beyond the ws) composes
-		// READ-ONLY — one keystroke must not flatten embedded writing systems or styles. The
-		// editable rich-text editor is gated on 6.13.
+		// Multi-run/styled content IS editable as plain-text-over-preserved-runs: the plain-text
+		// setter rejects rich rows (so it can never flatten them), while a keystroke replays the
+		// untouched runs around the edit through the rich setter, preserving every run's metadata.
 		[Test]
-		public void Compose_RichAlternative_ComposesReadOnly_SoAKeystrokeCannotFlattenIt()
+		public void Compose_RichAlternative_StaysEditable_AndAKeystrokePreservesUntouchedRuns()
 		{
 			// Plain single-run content stays editable.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -593,7 +688,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Build_RichLexemeForm_ComposesReadOnly_AndRoundTripsRunMetadata()
+		public void Build_RichLexemeForm_StaysEditable_AndRoundTripsRunMetadata()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -668,6 +763,384 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag,
 				form.Values.Single().RichText), Is.False,
 				"edit contexts must reject rich writes when the model marks runs unsupported");
+		}
+
+		// DATA-SAFETY (Phase 1, test a): a run carrying a TsString property the RegionTextRun model
+		// does NOT round-trip (here ktptForeColor) would be SILENTLY DROPPED on the first keystroke
+		// (the plain-text-changed edit skips the lossless RichXml fast-path and replays only the
+		// supported props). The value is held READ-ONLY rather than corrupting on edit; full fidelity
+		// stays in the classic view.
+		[Test]
+		public void Compose_RunWithUnsupportedProperty_ComposesReadOnly_SoAnEditCannotDropIt()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var text = TsStringUtils.MakeString("coloured", Cache.DefaultAnalWs);
+				var bldr = text.GetBldr();
+				// A foreground colour is preserved in the rich XML for display but is NOT one of the
+				// run properties the adapter re-emits, so an edit would drop it.
+				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptForeColor,
+					(int)FwTextPropVar.ktpvDefault, 0x0000FF);
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
+			});
+
+			var rich = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography");
+			Assert.That(rich.Values.Single().RichText.LossyProperties, Is.True,
+				"the run's foreground colour is not round-tripped by the run model, so it is lossy");
+			Assert.That(rich.Values.Single().CanEditRichText, Is.False,
+				"a lossy value must be held read-only so a keystroke cannot drop the colour");
+			Assert.That(rich.IsEditable, Is.False,
+				"the composed row is read-only when its only value cannot be edited safely");
+
+			// The lossless RichXml still drives full-fidelity display: round-tripping the unedited
+			// value reproduces the original TsString, colour and all (test c, lossy variant).
+			var roundTripped = RegionRichTextAdapter.ToTsString(rich.Values.Single().RichText,
+				Cache.WritingSystemFactory, Cache.DefaultAnalWs);
+			Assert.That(roundTripped.get_Properties(0)
+				.GetIntPropValues((int)FwTextPropType.ktptForeColor, out _), Is.EqualTo(0x0000FF),
+				"the lossless RichXml round-trip preserves the colour for display");
+			// The matching headless test that the lossy value RENDERS a read-only editor with the
+			// not-editable-here tooltip lives in FwAvaloniaTests (the Avalonia rendering lane):
+			// LexicalEditRegionEditingTests.LossyValue_RendersReadOnly_WithTooltip.
+		}
+
+		// DATA-SAFETY (Phase 1, test b): a multi-run value carrying ONLY supported properties
+		// (named style + per-run WS + bold) STAYS editable, and a mid-run keystroke preserves every
+		// untouched run's properties through the full FromTsString -> edit -> ToTsString round-trip.
+		[Test]
+		public void Edit_MidRunKeystroke_OnSupportedMultiRunValue_PreservesEveryUntouchedRunProperty()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bldr = TsStringUtils.MakeIncStrBldr();
+				// Run 0: analysis WS, named style + bold.
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Emphasis");
+				bldr.SetIntPropValues((int)FwTextPropType.ktptBold,
+					(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				bldr.Append("Smith");
+				// Run 1: vernacular WS, plain (a different WS forces a run boundary).
+				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptBold, -1, -1);
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
+				bldr.Append(" 1999");
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, bldr.GetString());
+			});
+
+			var rich = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography");
+			Assert.That(rich.Values.Single().RichText.LossyProperties, Is.False,
+				"named style + per-run WS + bold are all round-tripped, so the value is not lossy");
+			Assert.That(rich.IsEditable, Is.True, "a value with only supported props stays editable");
+
+			// Mid-run keystroke INSIDE run 1 ("1999" -> "19999"): legacy insertion attaches to the
+			// preceding (containing) run, so run 0's style/bold must survive untouched.
+			var value = rich.Values.Single();
+			var edited = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(value.RichText, "Smith 19999");
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var richField = composed.Model.Fields.Single(f => f.Field == "Bibliography");
+			Assert.That(composed.EditContext.TrySetRichText(richField,
+				richField.Values.Single().WsTag, edited), Is.True);
+			composed.EditContext.Commit();
+
+			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(stored.Text, Is.EqualTo("Smith 19999"));
+			Assert.That(stored.RunCount, Is.EqualTo(2), "the keystroke kept the run boundary");
+			// Run 0 untouched: WS, named style and bold all survive the edit round-trip.
+			Assert.That(stored.get_RunText(0), Is.EqualTo("Smith"));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 0), Is.EqualTo(Cache.DefaultAnalWs));
+			Assert.That(stored.get_Properties(0)
+				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
+			Assert.That(stored.get_Properties(0)
+				.GetIntPropValues((int)FwTextPropType.ktptBold, out _),
+				Is.EqualTo((int)FwTextToggleVal.kttvForceOn), "run 0's bold survived the mid-run edit");
+			// Run 1 carries the edit and keeps its own WS.
+			Assert.That(stored.get_RunText(1), Is.EqualTo(" 19999"));
+			Assert.That(TsStringUtils.GetWsOfRun(stored, 1), Is.EqualTo(Cache.DefaultVernWs));
+		}
+
+		// PHASE 2 (test e): applying bold over a selected span, then committing through the edit
+		// context, stores a TsString whose covered span is bold while the rest stays plain — i.e.
+		// ApplySpanFormatting's new bold run round-trips through ToTsString into the domain.
+		[Test]
+		public void Edit_ApplySpanFormatting_BoldOverSpan_RoundTripsThroughToTsString()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				// A single plain run "important note".
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("important note", Cache.DefaultAnalWs));
+			});
+
+			var composedBefore = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var richField = composedBefore.Model.Fields.Single(f => f.Field == "Bibliography");
+			var value = richField.Values.Single();
+			Assert.That(value.RichText.LossyProperties, Is.False);
+
+			// Bold the first word "important" (indices 0..9).
+			var formatted = RegionRichTextEditAlgorithms.ApplySpanFormatting(value.RichText, 0, 9,
+				RegionRunFormat.Bold, true);
+			Assert.That(formatted.PlainText, Is.EqualTo("important note"),
+				"formatting never changes the plain text");
+
+			Assert.That(composedBefore.EditContext.TrySetRichText(richField, value.WsTag, formatted),
+				Is.True);
+			composedBefore.EditContext.Commit();
+
+			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(stored.Text, Is.EqualTo("important note"));
+			Assert.That(stored.RunCount, Is.EqualTo(2), "the span boundary split the value into two runs");
+			Assert.That(stored.get_RunText(0), Is.EqualTo("important"));
+			Assert.That(stored.get_Properties(0)
+				.GetIntPropValues((int)FwTextPropType.ktptBold, out _),
+				Is.EqualTo((int)FwTextToggleVal.kttvForceOn), "the selected span is bold in the domain");
+			Assert.That(stored.get_RunText(1), Is.EqualTo(" note"));
+			Assert.That(stored.get_Properties(1)
+				.GetIntPropValues((int)FwTextPropType.ktptBold, out _), Is.LessThanOrEqualTo(0),
+				"the unselected tail stays non-bold");
+		}
+
+		// PHASE 3 (test c): applying a NAMED CHARACTER STYLE over a selected span, then committing
+		// through the edit context, stores a TsString whose covered span carries ktptNamedStyle while
+		// the rest stays unstyled. Clearing the style removes it.
+		[Test]
+		public void Edit_ApplySpanNamedStyle_OverSpan_RoundTripsKtptNamedStyleThroughToTsString()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("important note", Cache.DefaultAnalWs));
+			});
+
+			var composedBefore = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var richField = composedBefore.Model.Fields.Single(f => f.Field == "Bibliography");
+			var value = richField.Values.Single();
+			Assert.That(value.RichText.LossyProperties, Is.False);
+
+			// Style the first word "important" (indices 0..9) with the built-in "Emphasis" style.
+			var styled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(value.RichText, 0, 9, "Emphasis");
+			Assert.That(styled.PlainText, Is.EqualTo("important note"),
+				"styling never changes the plain text");
+
+			Assert.That(composedBefore.EditContext.TrySetRichText(richField, value.WsTag, styled), Is.True);
+			composedBefore.EditContext.Commit();
+
+			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(stored.Text, Is.EqualTo("important note"));
+			Assert.That(stored.RunCount, Is.EqualTo(2), "the span boundary split the value into two runs");
+			Assert.That(stored.get_RunText(0), Is.EqualTo("important"));
+			Assert.That(stored.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptNamedStyle),
+				Is.EqualTo("Emphasis"), "the selected span carries the named style in the domain");
+			Assert.That(stored.get_RunText(1), Is.EqualTo(" note"));
+			Assert.That(stored.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptNamedStyle),
+				Is.Null, "the unstyled tail carries no named style");
+
+			// Now CLEAR the style back off the same span and round-trip again: ktptNamedStyle is gone.
+			var composedAfter = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var afterField = composedAfter.Model.Fields.Single(f => f.Field == "Bibliography");
+			var afterValue = afterField.Values.Single();
+			var cleared = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(afterValue.RichText, 0, 9, null);
+			Assert.That(composedAfter.EditContext.TrySetRichText(afterField, afterValue.WsTag, cleared), Is.True);
+			composedAfter.EditContext.Commit();
+
+			var storedCleared = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(storedCleared.Text, Is.EqualTo("important note"));
+			for (var i = 0; i < storedCleared.RunCount; i++)
+				Assert.That(storedCleared.get_Properties(i).GetStrPropValue((int)FwTextPropType.ktptNamedStyle),
+					Is.Null, "clearing removed the named style across the value");
+		}
+
+		// PHASE 3 (test d): the composer supplies the project's CHARACTER style names onto each editable
+		// text field's AvailableNamedStyles (the host seam the per-WS style picker reads), sourced from
+		// Cache.LangProject.StylesOC filtered to character-type styles. Paragraph styles are excluded.
+		[Test]
+		public void Compose_SuppliesCharacterStyleNames_OnEditableTextField()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				var strong = fact.Create();
+				Cache.LangProject.StylesOC.Add(strong);
+				strong.Name = "Strong";
+				strong.Type = StyleType.kstCharacter;
+				var para = fact.Create();
+				Cache.LangProject.StylesOC.Add(para);
+				para.Name = "Block Quote";
+				para.Type = StyleType.kstParagraph;
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var editableText = composed.Model.Fields
+				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
+			Assert.That(editableText.AvailableNamedStyles, Does.Contain("Strong"),
+				"the composer stamps the project's character style names onto editable text rows");
+			Assert.That(editableText.AvailableNamedStyles, Does.Not.Contain("Block Quote"),
+				"paragraph-type styles are excluded — only character styles are offered");
+		}
+
+		// PHASE 4 (test d): the composer supplies the project's WRITING SYSTEMS onto each editable text
+		// field's AvailableWritingSystems (the host seam the per-WS retag picker reads), sourced from the
+		// project's analysis + vernacular writing systems. Each option carries the stable IETF tag.
+		[Test]
+		public void Compose_SuppliesWritingSystemOptions_OnEditableTextField()
+		{
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var editableText = composed.Model.Fields
+				.First(f => f.Kind == RegionFieldKind.Text && f.IsEditable);
+
+			Assert.That(editableText.AvailableWritingSystems, Is.Not.Empty,
+				"the composer stamps the project's writing systems onto editable text rows");
+			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			Assert.That(editableText.AvailableWritingSystems.Select(w => w.Tag), Does.Contain(analTag),
+				"the analysis writing system is offered");
+			Assert.That(editableText.AvailableWritingSystems.Select(w => w.Tag), Does.Contain(vernTag),
+				"the vernacular writing system is offered");
+			Assert.That(editableText.AvailableWritingSystems.All(w => !string.IsNullOrEmpty(w.DisplayName)),
+				Is.True, "every offered writing system carries a display name");
+		}
+
+		// PHASE 4 (test c): a per-run writing-system retag round-trips through the composed edit context,
+		// preserving ktptWs on exactly the retagged span when the rebuilt TsString is stored.
+		[Test]
+		public void RetagWritingSystem_RoundTripsKtptWs_OverTheSpan_AndCommits()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("alpha beta", Cache.DefaultAnalWs));
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var field = composed.Model.Fields.Single(f => f.Field == "Bibliography");
+			var value = field.Values.Single();
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+
+			// Retag "alpha" (the first 5 chars) to the vernacular ws.
+			var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(value.RichText, 0, 5, vernTag);
+			Assert.That(composed.EditContext.TrySetRichText(field, value.WsTag, retagged), Is.True);
+			composed.EditContext.Commit();
+
+			var stored = m_entry.Bibliography.get_String(Cache.DefaultAnalWs);
+			Assert.That(stored.Text, Is.EqualTo("alpha beta"), "retag never changes the text");
+			Assert.That(stored.RunCount, Is.GreaterThanOrEqualTo(2), "the retag split the value into runs");
+			// The first run carries the vernacular ws; a later run carries the analysis ws.
+			Assert.That(SIL.LCModel.Core.Text.TsStringUtils.GetWsOfRun(stored, 0),
+				Is.EqualTo(Cache.DefaultVernWs), "the retagged span carries ktptWs = the new writing system");
+			Assert.That(SIL.LCModel.Core.Text.TsStringUtils.GetWsOfRun(stored, stored.RunCount - 1),
+				Is.EqualTo(Cache.DefaultAnalWs), "the untouched tail keeps its original writing system");
+		}
+
+		// TASK 2 (reversal plugin, test a): a sense with a reversal entry composes an EDITABLE reversal
+		// row through the ReversalIndexEntryPlugin — not the lone Unsupported row.
+		[Test]
+		public void Compose_SenseWithReversalEntry_ComposesEditableReversalRow_NotUnsupported()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>()
+					.FindOrCreateIndexForWs(Cache.DefaultAnalWs);
+				var riEntry = revIndex.FindOrCreateReversalEntry("dwelling");
+				riEntry.SensesRS.Add(m_entry.SensesOS[0]);
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+
+			// The reversal slice composes a Custom (plugin) row, never an Unsupported row.
+			var reversalRow = composed.Model.Fields
+				.FirstOrDefault(f => f.Kind == RegionFieldKind.Custom
+					&& (f.Field == "ReferringReversalIndexEntries"
+						|| (f.Label != null && f.Label.IndexOf("Reversal", System.StringComparison.OrdinalIgnoreCase) >= 0)));
+			Assert.That(reversalRow, Is.Not.Null, "the reversal slice composes as a plugin (Custom) row");
+			Assert.That(reversalRow.ControlFactory, Is.Not.Null, "the row carries the plugin control factory");
+
+			// Building the control yields an editable FwMultiWsTextField (not the unsupported rendering).
+			var control = reversalRow.ControlFactory();
+			Assert.That(control,
+				Is.InstanceOf<SIL.FieldWorks.Common.FwAvalonia.Region.FwMultiWsTextField>(),
+				"the reversal plugin builds the editable multi-WS reversal-forms field");
+		}
+
+		// TASK 2 (reversal plugin, test b): editing a reversal form stages/commits through the edit
+		// context — the reversal entry's ReversalForm is updated, on the same fenced session as the region.
+		[Test]
+		public void ReversalPlugin_EditingAForm_StagesAndCommitsThroughTheEditContext()
+		{
+			IReversalIndexEntry riEntry = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>()
+					.FindOrCreateIndexForWs(Cache.DefaultAnalWs);
+				riEntry = revIndex.FindOrCreateReversalEntry("dwelling");
+				riEntry.SensesRS.Add(m_entry.SensesOS[0]);
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var sense = m_entry.SensesOS[0];
+			var plugin = new ReversalIndexEntryPlugin();
+			// Reuse the composer's resolved node so the plugin gets real metadata; resolve via the plugin
+			// directly with a build context closing over the composed edit context.
+			var node = composed.Model.Fields.First(f => f.Kind == RegionFieldKind.Custom
+				&& f.ObjectHvo == sense.Hvo);
+			var buildContext = new RegionEditorBuildContext(sense, null, () => composed.EditContext, Cache);
+			var reversalControl = (SIL.FieldWorks.Common.FwAvalonia.Region.FwMultiWsTextField)
+				plugin.BuildControl(buildContext);
+			Assert.That(reversalControl, Is.Not.Null);
+
+			// Stage an edit through the reversal context exposed by building the field's own context. We
+			// drive the edit through the composed edit context indirectly: the field staged via the
+			// plugin's ReversalRegionEditContext. Address it directly to assert the data path.
+			var field = new SIL.FieldWorks.Common.FwAvalonia.Region.LexicalEditRegionField(
+				"reversal/" + sense.Hvo, "Reversal Entries", "ReferringReversalIndexEntries", null,
+				SIL.FieldWorks.Common.FwAvalonia.Region.RegionFieldKind.Text,
+				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.EditorClassification.Known,
+				"ReversalEntriesEditor", null,
+				SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.SurfaceRouting.Product, null, null, null);
+			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			var entryByWsKey = new Dictionary<string, IReversalIndexEntry> { [analTag] = riEntry };
+			var reversalContext = new ReversalRegionEditContext(Cache, composed.EditContext, entryByWsKey);
+
+			Assert.That(reversalContext.TrySetText(field, analTag, "abode"), Is.True,
+				"editing an existing reversal form stages through the reversal edit context");
+			reversalContext.Commit();
+
+			Assert.That(riEntry.ReversalForm.get_String(Cache.DefaultAnalWs).Text, Is.EqualTo("abode"),
+				"the committed edit updated the reversal entry's form");
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True,
+				"the reversal edit lands on the shared global undo stack");
+		}
+
+		// DATA-SAFETY (Phase 1, test c): ToTsString of an UNEDITED value reproduces the original
+		// TsString exactly via the lossless RichXml fast-path.
+		[Test]
+		public void RoundTrip_UneditedValue_ReproducesOriginalTsString()
+		{
+			ITsString original = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var bldr = TsStringUtils.MakeIncStrBldr();
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Emphasis");
+				bldr.Append("Smith ");
+				bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+					(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
+				bldr.Append("1999");
+				original = bldr.GetString();
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs, original);
+			});
+
+			var value = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography").Values.Single();
+
+			var roundTripped = RegionRichTextAdapter.ToTsString(value.RichText,
+				Cache.WritingSystemFactory, Cache.DefaultAnalWs);
+			Assert.That(roundTripped.Equals(original), Is.True,
+				"an unedited value round-trips identically through the lossless RichXml path");
 		}
 
 		[Test]
@@ -1572,10 +2045,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.IsEditable, Is.True);
 			Assert.That(single.Values.Single().Value, Is.EqualTo("from Smith"));
 
-			// GenDate: read-only, formatted exactly like the existing GenDate rows.
+			// GenDate: an editable Date row (parity — legacy GenDateSlice is editable), formatted
+			// exactly like the existing GenDate rows.
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
-			Assert.That(date.IsEditable, Is.False, "GenDate stays read-only (matches existing GenDate rows)");
+			Assert.That(date.Kind, Is.EqualTo(RegionFieldKind.Date), "GenDate composes as an editable Date row");
+			Assert.That(date.IsEditable, Is.True, "GenDate is editable (matches existing GenDate rows)");
 			Assert.That(date.Values.Single().Value, Is.EqualTo(m_genDate.ToLongString()));
 
 			// Possibility-list reference: the 6.3 chooser lane makes custom reference rows
@@ -1672,7 +2147,9 @@ namespace SIL.FieldWorks.XWorks
 				"one MoForm custom row is emitted per visited allomorph object");
 			Assert.That(rootAllomorphDate, Is.Not.Null,
 				"nested MoForm GenDate custom fields render in the lexeme-form layout");
-			Assert.That(rootAllomorphDate.IsEditable, Is.False);
+			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(RegionFieldKind.Date),
+				"GenDate composes as an editable Date row");
+			Assert.That(rootAllomorphDate.IsEditable, Is.True, "GenDate is editable (parity with legacy)");
 			Assert.That(rootAllomorphDate.Values.Single().Value, Is.EqualTo(m_moFormGenDate.ToLongString()));
 			Assert.That(rootAllomorphCategory, Is.Not.Null,
 				"nested MoForm atomic custom references render as chooser rows");

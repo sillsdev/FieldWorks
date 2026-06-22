@@ -33,6 +33,10 @@ namespace FwAvaloniaTests
 				Materialized++;
 				return new[] { $"lexeme {rowIndex}", $"gloss {rowIndex}" };
 			}
+
+			// Stable identity (Task 20). NOT counted as a materialization — and not called during render
+			// for a checkbox-less table — so the lazy-realization assertions are unaffected.
+			public int HvoAt(int rowIndex) => rowIndex + 1;
 		}
 
 		private static ViewDefinitionModel TwoColumnDefinition() => new ViewDefinitionModel(

@@ -51,6 +51,7 @@ namespace FwAvaloniaTests
 			private static readonly string[] Cols = { "Form", "Gloss" };
 			public int RowCount => _visible.Count;
 			public int LogicalIndexAt(int rowIndex) => _visible[rowIndex];
+			public int HvoAt(int rowIndex) => _visible[rowIndex] + 1; // Task 20: stable per-record identity
 			public IReadOnlyList<string> GetCellValues(int rowIndex)
 				=> Cols.Select(c => _store.Records[_visible[rowIndex]][c]).ToList();
 
@@ -66,6 +67,20 @@ namespace FwAvaloniaTests
 				return preset == BrowseFilterPreset.Blanks ? blank
 					: preset == BrowseFilterPreset.NonBlanks ? !blank : true;
 			});
+
+			public void SetFilterPattern(int columnIndex, BrowseFilterForSpec spec) => Rebuild(i =>
+				string.IsNullOrEmpty(spec?.MatchText) ||
+				_store.Records[i][Cols[columnIndex]].IndexOf(spec.MatchText,
+					spec.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase) >= 0);
+
+			public void SetFilterStringListValue(int columnIndex, string value, bool exclude) => Rebuild(i =>
+			{
+				var match = string.Equals(_store.Records[i][Cols[columnIndex]], value, StringComparison.OrdinalIgnoreCase);
+				return exclude ? !match : match;
+			});
+
+			public void SetFilterDate(int columnIndex, BrowseDateFilterSpec spec) { /* not exercised here */ }
+			public void SetFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys) { /* not exercised here */ }
 
 			private void Rebuild(Func<int, bool> keep)
 				=> _visible = Enumerable.Range(0, _store.Records.Count).Where(keep).ToList();
@@ -275,6 +290,7 @@ namespace FwAvaloniaTests
 			public int Loaded;
 			public int RowCount => Loaded;
 			public IReadOnlyList<string> GetCellValues(int rowIndex) => new[] { "e" + rowIndex, string.Empty };
+			public int HvoAt(int rowIndex) => rowIndex + 1;
 			public IReadOnlyList<RegionWsValue> GetRichCell(int rowIndex, int columnIndex)
 				=> new[] { new RegionWsValue("en", "e" + rowIndex, wsTag: "en") };
 		}

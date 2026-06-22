@@ -14,6 +14,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
@@ -150,18 +151,43 @@ namespace FwAvaloniaTests
 			=> view.GetVisualDescendants().OfType<T>()
 				.First(c => AutomationProperties.GetAutomationId(c) == automationId);
 
+		private static T FindOrNull<T>(Visual view, string automationId) where T : Visual
+			=> view.GetVisualDescendants().OfType<T>()
+				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
+
+		// The field-options "⋮" affordance opens the menu on a click OR keyboard activation; both arrive
+		// as Button.Click, so raising it exercises the same path the icon does (no hit-test dependence on
+		// the hover-reveal opacity state).
+		private static void ClickKebab(Button kebab)
+		{
+			kebab.RaiseEvent(new RoutedEventArgs { RoutedEvent = Button.ClickEvent });
+			Dispatcher.UIThread.RunJobs();
+		}
+
 		[AvaloniaTest]
-		public void RightClick_OnLabel_RaisesTheSliceMenuRequest_WithTheLegacyMenuId()
+		public void FieldMenuButton_OnLabelRow_RaisesTheSliceMenuRequest_WithTheLegacyMenuId()
 		{
 			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
 
-			RightClick(Find<TextBlock>(view, "Gloss.Label"));
+			// The "⋮" field-options button (which replaced right-click) opens the slice menu.
+			ClickKebab(Find<Button>(view, "Gloss.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
 			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.SliceMenu));
 			Assert.That(requests[0].Field.MenuId, Is.EqualTo("mnuDataTree-Help"));
 			Assert.That(requests[0].Field.ObjectHvo, Is.EqualTo(1234),
 				"the request carries the bound object so command routing can target it");
+		}
+
+		[AvaloniaTest]
+		public void RightClick_OnLabel_NoLongerRaisesAnyRequest()
+		{
+			var (view, requests) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			// Right-click was retired in favor of the "⋮" button — the label no longer opens the menu.
+			RightClick(Find<TextBlock>(view, "Gloss.Label"));
+
+			Assert.That(requests, Is.Empty, "the slice menu now opens only from the field-options button");
 		}
 
 		[AvaloniaTest]
@@ -180,16 +206,65 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void RightClick_OnHotlinksOnlyHeader_RaisesTheHotlinksRequest()
+		public void FieldMenuButton_OnHotlinksOnlyHeader_RaisesTheHotlinksRequest()
 		{
 			var (view, requests) = Show(Field("Senses", RegionFieldKind.Header,
 				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
 
-			RightClick(Find<Button>(view, "Senses"));
+			// The header's "⋮" button raises the hotlinks request; the collapsible toggle (id "Senses")
+			// is a SEPARATE button that still toggles the section.
+			ClickKebab(Find<Button>(view, "Senses.FieldMenu"));
 
 			Assert.That(requests, Has.Count.EqualTo(1));
 			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.Hotlinks));
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
+		}
+
+		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header shows
+		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "⋮" kebab.
+		[AvaloniaTest]
+		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
+		{
+			var (view, _) = Show(Field("Senses", RegionFieldKind.Header,
+				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
+
+			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
+			Assert.That(strip, Is.Not.Null, "a header with a HotlinksId renders the inline command strip");
+			// Always visible — NOT hover-gated like the kebab (Opacity 0 / not hit-testable at rest).
+			Assert.That(strip.IsVisible, Is.True, "the strip stays in the tree");
+			Assert.That(strip.Opacity, Is.EqualTo(1d), "the strip is fully visible at rest, not hover-gated");
+			Assert.That(strip.IsHitTestVisible, Is.True, "the strip is clickable at rest");
+			Assert.That(AutomationProperties.GetName(strip), Is.EqualTo(FwAvaloniaStrings.FieldOptionsMenu),
+				"a screen reader announces the always-visible commands affordance");
+
+			// The hover kebab is kept alongside the always-visible strip.
+			var kebab = FindOrNull<Button>(view, "Senses.FieldMenu");
+			Assert.That(kebab, Is.Not.Null, "the kebab is retained next to the inline strip");
+			Assert.That(kebab.Opacity, Is.EqualTo(0d), "the kebab stays hover-gated (the strip is the always-visible twin)");
+		}
+
+		[AvaloniaTest]
+		public void HotlinksStrip_Activating_RaisesTheSameHotlinksRequest_AsTheKebab()
+		{
+			var (view, requests) = Show(Field("Senses", RegionFieldKind.Header,
+				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
+
+			// Activating the strip arrives as Button.Click (mouse OR keyboard), the same path the kebab uses.
+			ClickKebab(Find<Button>(view, "Senses.Hotlinks"));
+
+			Assert.That(requests, Has.Count.EqualTo(1));
+			Assert.That(requests[0].Kind, Is.EqualTo(RegionMenuKind.Hotlinks),
+				"the strip dispatches the SAME hotlinks request the kebab raises");
+			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
+		}
+
+		[AvaloniaTest]
+		public void HotlinksStrip_IsAbsent_ForHeaderWithoutHotlinks()
+		{
+			var (view, _) = Show(Field("Notes", RegionFieldKind.Header, menuId: "mnuDataTree-Object"));
+
+			Assert.That(FindOrNull<Button>(view, "Notes.Hotlinks"), Is.Null,
+				"a header carrying only a slice menu (no hotlinks) gets no inline command strip");
 		}
 
 		// 15.2 — exactly one menu: a bridged value box must NOT keep the TextBox theme flyout
@@ -219,6 +294,30 @@ namespace FwAvaloniaTests
 
 			Assert.That(requests, Is.Empty,
 				"rows without a legacy menu binding keep local behavior (Copy flyout) only");
+			Assert.That(FindOrNull<Button>(view, "Comment.FieldMenu"), Is.Null,
+				"a row with no menu/hotlinks binding gets no field-options button");
+		}
+
+		[AvaloniaTest]
+		public void FieldMenuButton_IsHiddenAtRest_RevealedOnHover_AndKeyboardAddressable()
+		{
+			var (view, _) = Show(Field("Gloss", RegionFieldKind.Text, menuId: "mnuDataTree-Help"));
+
+			var kebab = Find<Button>(view, "Gloss.FieldMenu");
+			// Accessibility: a localized name so a screen reader announces the affordance.
+			Assert.That(AutomationProperties.GetName(kebab), Is.EqualTo(FwAvaloniaStrings.FieldOptionsMenu));
+			// Stays in layout/focusable at rest (so Tab reaches it) but hidden by opacity until revealed.
+			Assert.That(kebab.IsVisible, Is.True, "the button stays in the tree (focusable) at rest");
+			Assert.That(kebab.Opacity, Is.EqualTo(0d), "hidden by opacity until the row is hovered/focused");
+			Assert.That(kebab.IsHitTestVisible, Is.False, "and not clickable until revealed");
+			Assert.That(kebab.Focusable, Is.True, "Tab can reach the field-options button");
+
+			// Focusing it (the keyboard path) reveals it synchronously (hit-testable); the opacity then
+			// fades in over the transition — the same mechanism HoverRevealTests covers in detail.
+			kebab.Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(kebab.IsFocused, Is.True, "the opacity-hidden button is keyboard-focusable");
+			Assert.That(kebab.IsHitTestVisible, Is.True, "keyboard focus reveals the field-options button");
 		}
 
 		// 15.1 — the host-resolved xCore items render as a native Avalonia flyout: items in order,

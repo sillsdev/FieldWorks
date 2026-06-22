@@ -106,6 +106,58 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void NestedCollapse_SurvivesParentCollapseAndReExpand_LikeLegacy()
+		{
+			// Three indent levels: parent (0) -> child header (1) -> grandchild rows (2), plus a
+			// sibling row directly under the parent (indent 1) that is NOT under the collapsed child.
+			var view = Show(
+				Header("parent", "Sense 1", 0),
+				Header("child", "Examples", 1),
+				Text("grand1", "Example sentence", 2),
+				Text("grand2", "Translation", 2),
+				Text("sibling", "Gloss", 1));
+
+			TextBox Box(string idPrefix) => view.GetVisualDescendants().OfType<TextBox>()
+				.First(t => (AutomationProperties.GetAutomationId(t) ?? "").StartsWith(idPrefix));
+			Button Toggle(string id) => view.GetVisualDescendants().OfType<Button>()
+				.First(b => AutomationProperties.GetAutomationId(b) == id);
+			void Click(Button b)
+			{
+				b.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+				Dispatcher.UIThread.RunJobs();
+			}
+			// The child header's toggle button lives in the row that the parent owns; assert against
+			// that row's visibility via the button's effective visibility.
+			var childToggle = Toggle("child");
+
+			// All visible to start.
+			Assert.That(Box("grand1").IsEffectivelyVisible, Is.True);
+			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True);
+			Assert.That(childToggle.IsEffectivelyVisible, Is.True);
+
+			// (1) Collapse the child -> grandchild rows hide; the sibling under the parent is unaffected.
+			Click(childToggle);
+			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False, "collapsing the child hides grandchildren");
+			Assert.That(Box("grand2").IsEffectivelyVisible, Is.False);
+			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True, "the parent-level sibling stays visible");
+
+			// (2) Collapse the parent -> everything under it hides, including the child header row.
+			Click(Toggle("parent"));
+			Assert.That(childToggle.IsEffectivelyVisible, Is.False, "collapsing the parent hides the child header");
+			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False);
+			Assert.That(Box("sibling").IsEffectivelyVisible, Is.False);
+
+			// (3) Re-expand the parent -> the child header row and the sibling reappear, but the
+			// grandchild rows STAY hidden because the child is still collapsed (nested-collapse fidelity).
+			Click(Toggle("parent"));
+			Assert.That(childToggle.IsEffectivelyVisible, Is.True, "re-expanding the parent shows the child header");
+			Assert.That(Box("sibling").IsEffectivelyVisible, Is.True, "the parent-level sibling reappears");
+			Assert.That(Box("grand1").IsEffectivelyVisible, Is.False,
+				"the grandchildren stay hidden: the child is still collapsed (this fails the old blanket Apply)");
+			Assert.That(Box("grand2").IsEffectivelyVisible, Is.False);
+		}
+
+		[AvaloniaTest]
 		public void InitiallyCollapsedSection_StartsHidden_PerLayoutExpansion()
 		{
 			var view = Show(
@@ -258,6 +310,67 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(context.OptionEdits, Has.Count.EqualTo(1));
 			Assert.That(context.OptionEdits[0], Is.EqualTo(("Exclude", "true")));
+		}
+
+		// Layout parity (row-height-edit-parity): a field renders at the SAME row height whether the view
+		// is read-only display or editable. The per-WS editor boxes always measured identically, but the
+		// editable view used to wrap the field grid in a StackPanel while the read-only view put the bare
+		// grid straight in the ScrollViewer; the two arrange contexts rounded the grid's Auto rows to
+		// whole-pixel heights 1px differently, so toggling edit shifted every row's height and offset (the
+		// reported defect: editable and read-only rows had different vertical rhythm). The fix wraps the
+		// grid identically in both states, so realizing the same model read-only and editable yields
+		// pixel-identical row heights AND row offsets for every field — toggling edit never moves the layout.
+		[AvaloniaTest]
+		public void RowHeights_AreIdentical_ReadOnlyAndEditable()
+		{
+			var fields = new[]
+			{
+				MultiWsText("d0", "Lexeme Form", ("seh", "casa"), ("pt", "casa")),
+				MultiWsText("d1", "Citation Form", ("seh", "casa")),
+				MultiWsText("d2", "Gloss", ("en", "house"), ("pt", "casa")),
+			};
+			var model = new LexicalEditRegionModel("LexEntry", "detail", fields.ToList(),
+				new List<ViewDiagnostic>());
+
+			FwMultiWsTextField Editor(LexicalEditRegionView v, string id)
+				=> v.GetVisualDescendants().OfType<FwMultiWsTextField>()
+					.First(f => AutomationProperties.GetAutomationId(f) == id);
+
+			var roView = new LexicalEditRegionView(model);
+			var w1 = new Window { Content = roView, Width = 520, Height = 420 };
+			w1.Show();
+			Dispatcher.UIThread.RunJobs();
+			w1.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			var edView = new LexicalEditRegionView(model, new FakeRegionEditContext());
+			var w2 = new Window { Content = edView, Width = 520, Height = 420 };
+			w2.Show();
+			Dispatcher.UIThread.RunJobs();
+			w2.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			foreach (var id in new[] { "d0", "d1", "d2" })
+			{
+				var ro = Editor(roView, id);
+				var ed = Editor(edView, id);
+				Assert.That(ro.Bounds.Height, Is.GreaterThan(0), $"{id}: the read-only row must realize");
+				Assert.That(ed.Bounds.Height, Is.EqualTo(ro.Bounds.Height),
+					$"{id}: an editable field row must be the SAME height as the read-only row");
+				Assert.That(ed.Bounds.Y, Is.EqualTo(ro.Bounds.Y),
+					$"{id}: an editable field row must sit at the SAME vertical offset as the read-only row");
+			}
+		}
+
+		private static LexicalEditRegionField MultiWsText(string id, string label,
+			params (string abbrev, string value)[] values)
+		{
+			var wsValues = new List<RegionWsValue>();
+			foreach (var v in values)
+				wsValues.Add(new RegionWsValue(v.abbrev, v.value, wsTag: v.abbrev));
+			return new LexicalEditRegionField(id, label, label, null, RegionFieldKind.Text,
+				EditorClassification.Known, id, null, SurfaceRouting.Product, wsValues, null, null,
+				isEditable: true);
 		}
 	}
 }

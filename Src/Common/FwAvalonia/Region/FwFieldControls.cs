@@ -24,7 +24,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// per-WS keyboard activation on focus through the supplied callback (the same behavior legacy
 	/// slices get from <c>EditingHelper.SetKeyboardForWs</c>). Write-through staging goes to the
 	/// edit context when one is supplied; otherwise the field is read-only display.
-	/// The plain-text lane only: the rich TsString editor is the 6.13 gate.
+	/// Multi-run/styled content IS editable here as plain-text-over-preserved-runs: the original
+	/// TsString runs are projected into <see cref="RegionRichTextValue"/>, a keystroke replays the
+	/// untouched runs around the edit, and the edit context rebuilds the TsString. A value is held
+	/// read-only ONLY when that replay would corrupt it — an embedded object the runs cannot rebuild,
+	/// or a run carrying a TsString property the model does not round-trip
+	/// (<see cref="RegionRichTextValue.CanEditRichText"/>); such a value shows the explanatory tooltip
+	/// and stays full-fidelity in the classic view.
 	/// Menus: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
 	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
 	/// label/value right-click lanes) — text rows draw NO gear. The gear is reserved for the
@@ -68,11 +74,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
 				// Local values outrank the theme's pointer-over/focus setters, so the editor stays flat.
-				// Task 8.3 deferral (embedded-object/ORC editing): a value carrying an embedded
-				// object the managed editor cannot yet rebuild stays READ-ONLY — and says so
-				// explicitly (tooltip), rather than presenting an editable box whose edits would be
-				// silently rejected by the edit context. The original TsString is preserved
-				// losslessly, so the field round-trips and remains fully editable in the legacy view.
+				// Data-safety read-only: a value whose plain-text run-replay would corrupt it stays
+				// READ-ONLY — and says so explicitly (tooltip) — rather than presenting an editable box
+				// whose first keystroke silently drops content. Two cases feed CanEditRichText: a run
+				// carrying an embedded object (ORC) the managed editor cannot rebuild, and a run carrying
+				// a TsString property the RegionTextRun model does not round-trip (e.g. fore/back colour,
+				// offset, superscript). The original TsString is preserved losslessly (RichXml), so the
+				// field round-trips and remains fully editable in the classic view.
 				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText;
 				var box = new TextBox
 				{
@@ -86,7 +94,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					Background = Brushes.Transparent,
 					TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
 				};
-				if (!value.CanEditRichText)
+				// ITEM 3: a voice/audio writing system has no sound player in this view yet, so the row
+				// is read-only and says why (a distinct message from the rich-content read-only case).
+				if (value.IsAudio)
+					ToolTip.SetTip(box, FwAvaloniaStrings.AudioRecordingReadOnly);
+				else if (!value.CanEditRichText)
 					ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
 				if (!string.IsNullOrEmpty(value.FontFamily))
 					box.FontFamily = new FontFamily(value.FontFamily);
@@ -159,6 +171,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var wsKey = string.IsNullOrEmpty(value.WsTag) ? value.WsAbbrev : value.WsTag;
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
+
+				// Phase 3: the character-style picker affordance for THIS lane, built only on an editable,
+				// non-lossy value that has available character styles to offer (else suppressed). Captured
+				// here so it can be added to the row panel after the editable wiring below populates it.
+				Control styleAffordance = null;
+				// Phase 4: the per-run writing-system picker affordance for THIS lane (same pattern as the
+				// style affordance: editable + non-lossy + available writing systems to offer).
+				Control wsAffordance = null;
 
 				if (editContext != null && field.IsEditable && value.CanEditRichText)
 				{
@@ -278,6 +298,290 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					box.TextChanged += textChanged;
 					_teardown.Add(() => box.TextChanged -= textChanged);
 
+					// Phase 2 — character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
+					// underline on the TextBox's current selection. We chose keyboard shortcuts over a
+					// floating toolbar: they match the legacy Views editor (FwEditingHelper's
+					// Ctrl+B/I/U), need no extra chrome in the dense detail rows, and act on the same
+					// SelectionStart..SelectionEnd the bidi/clipboard handlers already use. The gesture
+					// only stages when the selection is non-empty (a collapsed caret is a no-op for
+					// Phase 2 — no pending-format-for-the-next-insert yet) and only on an editable,
+					// non-lossy value (this whole block is gated on value.CanEditRichText already).
+					EventHandler<KeyEventArgs> formatKeyDown = (s, e) =>
+					{
+						if ((e.KeyModifiers & KeyModifiers.Control) == 0)
+							return;
+
+						RegionRunFormat which;
+						switch (e.Key)
+						{
+							case Key.B: which = RegionRunFormat.Bold; break;
+							case Key.I: which = RegionRunFormat.Italic; break;
+							case Key.U: which = RegionRunFormat.Underline; break;
+							default: return;
+						}
+
+						var selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+						var selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+						if (selectionStart == selectionEnd)
+						{
+							// Collapsed caret: no span to format. Swallow so Ctrl+B/I/U never inserts a
+							// control char into the value, but stage nothing.
+							e.Handled = true;
+							return;
+						}
+
+						// A row may carry only plain text (no projected rich value yet); synthesize a
+						// single-run rich projection so the first formatting gesture has runs to split.
+						var richSource = currentRich
+							?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+								new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+
+						// Toggle: if the entire selection already carries the attribute, turn it off.
+						var turnOn = !RegionRichTextEditAlgorithms.SpanFullyHasFormat(
+							richSource, selectionStart, selectionEnd, which);
+						var formatted = RegionRichTextEditAlgorithms.ApplySpanFormatting(
+							richSource, selectionStart, selectionEnd, which, turnOn);
+
+						if (!ReferenceEquals(formatted, richSource)
+							&& editContext.TrySetRichText(field, wsKey, formatted))
+						{
+							currentRich = formatted;
+							lastStaged = box.Text ?? string.Empty;
+						}
+
+						e.Handled = true;
+					};
+					box.AddHandler(InputElement.KeyDownEvent, formatKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, formatKeyDown));
+
+					// Phase 3 — apply/clear a NAMED CHARACTER STYLE over the selection. The affordance is
+					// a small "Style" button that opens the shared FwOptionPicker (single-select) seeded
+					// with a leading "Default (no style)" entry that CLEARS the style, followed by the
+					// project's available character style names. It acts on the TextBox's current
+					// SelectionStart..SelectionEnd; committing calls ApplySpanNamedStyle and stages through
+					// TrySetRichText — exactly the rich-text seam Ctrl+B/I/U uses. Only built when the field
+					// actually carries available styles (so plain-text-only projects show no affordance);
+					// the whole block is already gated on the editable, non-lossy value.
+					if (field.AvailableNamedStyles != null && field.AvailableNamedStyles.Count > 0)
+					{
+						// The picker's option set: a clear-style entry (empty key) plus one option per
+						// available character style (the style name is both key and display name).
+						var styleOptions = new List<RegionChoiceOption>
+						{
+							new RegionChoiceOption(string.Empty, FwAvaloniaStrings.DefaultCharacterStyle)
+						};
+						foreach (var styleName in field.AvailableNamedStyles)
+						{
+							if (!string.IsNullOrEmpty(styleName))
+								styleOptions.Add(new RegionChoiceOption(styleName, styleName));
+						}
+
+						var styleButton = new Button
+						{
+							Content = FwAvaloniaStrings.CharacterStyle,
+							Padding = new Thickness(6, 0, 6, 0),
+							MinHeight = 0,
+							MinWidth = 0,
+							Background = Brushes.Transparent,
+							BorderThickness = new Thickness(0),
+							Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+							FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+							VerticalAlignment = VerticalAlignment.Top
+						};
+						var styleAutomationId = automationId + "." + wsKey + ".Style";
+						AutomationProperties.SetAutomationId(styleButton, styleAutomationId);
+						AutomationProperties.SetName(styleButton, FwAvaloniaStrings.CharacterStyle);
+						ToolTip.SetTip(styleButton, FwAvaloniaStrings.CharacterStyle);
+
+						var stylePicker = new FwOptionPicker(styleOptions, null, styleAutomationId);
+						var styleFlyout = FwOptionPicker.CreateOptionFlyout(stylePicker,
+							PlacementMode.BottomEdgeAlignedLeft);
+
+						// The selection the gesture acts on, snapshotted when the picker opens (the click
+						// moves focus off the TextBox; capturing here keeps the span the user had selected).
+						var styleSpanStart = 0;
+						var styleSpanEnd = 0;
+
+						Action<RegionChoiceOption> styleCommitted = option =>
+						{
+							styleFlyout.Hide();
+
+							// Prefer the snapshot taken when the picker opened; fall back to the live
+							// selection (e.g. a test that sets the selection then calls ShowAt directly).
+							var selectionStart = styleSpanStart;
+							var selectionEnd = styleSpanEnd;
+							if (selectionStart == selectionEnd)
+							{
+								selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+								selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+							}
+
+							if (selectionStart == selectionEnd)
+								return; // no span: nothing to (re)style (no pending caret style in Phase 3)
+
+							// A row may still carry only plain text (no projected rich value yet);
+							// synthesize a single-run projection so the first style gesture has runs.
+							var richSource = currentRich
+								?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+									new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+
+							// The clear-style entry carries an empty key -> null clears the named style.
+							var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
+							var restyled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(
+								richSource, selectionStart, selectionEnd, styleName);
+
+							if (!ReferenceEquals(restyled, richSource)
+								&& editContext.TrySetRichText(field, wsKey, restyled))
+							{
+								currentRich = restyled;
+								lastStaged = box.Text ?? string.Empty;
+							}
+						};
+						stylePicker.OptionCommitted += styleCommitted;
+						EventHandler styleDismissed = (s2, e2) => styleFlyout.Hide();
+						stylePicker.Dismissed += styleDismissed;
+
+						// The button opens its assigned flyout on click (like FwChooserField); this handler
+						// only pre-selects the picker row matching the selection's current common style so
+						// the user sees what is applied (mixed/none -> the Default entry leads). No explicit
+						// ShowAt — that would double-open against the button's own flyout opening.
+						EventHandler<Avalonia.Interactivity.RoutedEventArgs> styleClicked = (s2, e2) =>
+						{
+							styleSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+							styleSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+							var current = currentRich == null
+								? null
+								: RegionRichTextEditAlgorithms.SpanNamedStyle(currentRich, styleSpanStart, styleSpanEnd);
+							var index = string.IsNullOrEmpty(current)
+								? 0
+								: styleOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
+							stylePicker.OptionsList.SelectedIndex = index < 0 ? 0 : index;
+						};
+						styleButton.Click += styleClicked;
+
+						styleButton.Flyout = styleFlyout;
+						styleAffordance = styleButton;
+						_teardown.Add(() =>
+						{
+							stylePicker.OptionCommitted -= styleCommitted;
+							stylePicker.Dismissed -= styleDismissed;
+							styleButton.Click -= styleClicked;
+							styleButton.Flyout = null;
+						});
+					}
+
+					// Phase 4 — retag the WRITING SYSTEM of a selection. The affordance is a small "Writing
+					// System" button opening the shared FwOptionPicker (single-select) seeded with the
+					// project's available writing systems (tag = key, display name = caption). It acts on the
+					// TextBox's current SelectionStart..SelectionEnd; committing calls RetagSpanWritingSystem
+					// and stages through TrySetRichText — the same rich-text seam Ctrl+B/I/U and the style
+					// picker use. Built only when the field carries available writing systems; the whole block
+					// is already gated on the editable, non-lossy value. There is no "clear" entry: a run must
+					// always carry a writing system, so the picker offers only real project writing systems.
+					if (field.AvailableWritingSystems != null && field.AvailableWritingSystems.Count > 0)
+					{
+						var wsOptions = new List<RegionChoiceOption>();
+						foreach (var wsOption in field.AvailableWritingSystems)
+						{
+							if (wsOption != null && !string.IsNullOrEmpty(wsOption.Tag))
+								wsOptions.Add(new RegionChoiceOption(wsOption.Tag,
+									string.IsNullOrEmpty(wsOption.DisplayName) ? wsOption.Tag : wsOption.DisplayName));
+						}
+
+						if (wsOptions.Count > 0)
+						{
+							var wsButton = new Button
+							{
+								Content = FwAvaloniaStrings.WritingSystem,
+								Padding = new Thickness(6, 0, 6, 0),
+								MinHeight = 0,
+								MinWidth = 0,
+								Background = Brushes.Transparent,
+								BorderThickness = new Thickness(0),
+								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+								VerticalAlignment = VerticalAlignment.Top
+							};
+							var wsAutomationId = automationId + "." + wsKey + ".WritingSystem";
+							AutomationProperties.SetAutomationId(wsButton, wsAutomationId);
+							AutomationProperties.SetName(wsButton, FwAvaloniaStrings.WritingSystem);
+							ToolTip.SetTip(wsButton, FwAvaloniaStrings.WritingSystem);
+
+							var wsPicker = new FwOptionPicker(wsOptions, null, wsAutomationId);
+							var wsFlyout = FwOptionPicker.CreateOptionFlyout(wsPicker,
+								PlacementMode.BottomEdgeAlignedLeft);
+
+							// The selection the gesture acts on, snapshotted when the picker opens (the click
+							// moves focus off the TextBox; capturing here keeps the span the user had selected).
+							var wsSpanStart = 0;
+							var wsSpanEnd = 0;
+
+							Action<RegionChoiceOption> wsCommitted = option =>
+							{
+								wsFlyout.Hide();
+
+								var selectionStart = wsSpanStart;
+								var selectionEnd = wsSpanEnd;
+								if (selectionStart == selectionEnd)
+								{
+									selectionStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+									selectionEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+								}
+
+								if (selectionStart == selectionEnd)
+									return; // no span: nothing to retag (no pending caret ws in Phase 4)
+								if (string.IsNullOrEmpty(option?.Key))
+									return; // a run must always carry a writing system
+
+								// A row may still carry only plain text (no projected rich value yet);
+								// synthesize a single-run projection so the first retag gesture has runs.
+								var richSource = currentRich
+									?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+										new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+
+								var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(
+									richSource, selectionStart, selectionEnd, option.Key);
+
+								if (!ReferenceEquals(retagged, richSource)
+									&& editContext.TrySetRichText(field, wsKey, retagged))
+								{
+									currentRich = retagged;
+									lastStaged = box.Text ?? string.Empty;
+								}
+							};
+							wsPicker.OptionCommitted += wsCommitted;
+							EventHandler wsDismissed = (s2, e2) => wsFlyout.Hide();
+							wsPicker.Dismissed += wsDismissed;
+
+							// Like the style affordance: pre-select the picker row matching the selection's
+							// current common writing system so the user sees what is applied (mixed -> the
+							// first entry leads). No explicit ShowAt — the button opens its own flyout.
+							EventHandler<Avalonia.Interactivity.RoutedEventArgs> wsClicked = (s2, e2) =>
+							{
+								wsSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+								wsSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+								var current = currentRich == null
+									? null
+									: RegionRichTextEditAlgorithms.SpanWritingSystem(currentRich, wsSpanStart, wsSpanEnd);
+								var index = string.IsNullOrEmpty(current)
+									? -1
+									: wsOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
+								wsPicker.OptionsList.SelectedIndex = index < 0 ? 0 : index;
+							};
+							wsButton.Click += wsClicked;
+
+							wsButton.Flyout = wsFlyout;
+							wsAffordance = wsButton;
+							_teardown.Add(() =>
+							{
+								wsPicker.OptionCommitted -= wsCommitted;
+								wsPicker.Dismissed -= wsDismissed;
+								wsButton.Click -= wsClicked;
+								wsButton.Flyout = null;
+							});
+						}
+					}
+
 					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
 					{
 						EventHandler<KeyEventArgs> clipboardKeyDown = (s, e) =>
@@ -343,6 +647,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				{
 					DockPanel.SetDock(abbrev, Dock.Left);
 					rowPanel.Children.Add(abbrev);
+				}
+				// Phase 4: the writing-system affordance docks at the row's trailing edge, added first so it
+				// sits at the outer edge (DockPanel fills with its last child). Present only on editable,
+				// non-lossy rows that carry available writing systems.
+				if (wsAffordance != null)
+				{
+					DockPanel.SetDock(wsAffordance, Dock.Right);
+					rowPanel.Children.Add(wsAffordance);
+				}
+				// Phase 3: the character-style affordance docks at the row's trailing edge so the value box
+				// fills the remaining width (added before the box, since DockPanel fills with its last
+				// child). Present only on editable, non-lossy rows that carry available character styles.
+				if (styleAffordance != null)
+				{
+					DockPanel.SetDock(styleAffordance, Dock.Right);
+					rowPanel.Children.Add(styleAffordance);
 				}
 				rowPanel.Children.Add(box);
 				Children.Add(rowPanel);
@@ -586,9 +906,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// the host jump, never a flyout: <see cref="RegionGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
 	/// </summary>
-	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider
+	public sealed class FwReferenceVectorField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
 		private readonly List<Control> _affordances = new List<Control>();
+		// Teardown for the per-item Remove handlers, the add picker's OptionCommitted/Dismissed
+		// subscriptions, the gear click, and the option flyout — so a recycled vector cell releases
+		// every closure it wired and drops its flyout, mirroring FwChooserField/FwMultiWsTextField
+		// (Task C: the field previously wired all of these with NO teardown, leaking the editor path
+		// when VirtualizingStackPanel discards the container). Empty for read-only rows.
+		private readonly List<Action> _teardown = new List<Action>();
+		private bool _disposed;
 
 		/// <summary>
 		/// <paramref name="gestureCompleted"/> (optional, like the other field callbacks): invoked
@@ -628,13 +955,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				{
 					var removeItem = new MenuItem { Header = FwAvaloniaStrings.Remove };
 					var key = item.Key;
-					removeItem.Click += (s, e) =>
+					EventHandler<Avalonia.Interactivity.RoutedEventArgs> removeClick = (s, e) =>
 					{
 						// Only a successful stage completes the gesture (commit + host re-show).
 						if (editContext.TryRemoveReferenceItem(field, key))
 							gestureCompleted?.Invoke();
 					};
-					text.ContextFlyout = new MenuFlyout { Items = { removeItem } };
+					removeItem.Click += removeClick;
+					var itemText = text;
+					itemText.ContextFlyout = new MenuFlyout { Items = { removeItem } };
+					_teardown.Add(() =>
+					{
+						removeItem.Click -= removeClick;
+						itemText.ContextFlyout = null;
+					});
 				}
 				Children.Add(text);
 				AddSeparatorBar();
@@ -667,25 +1001,44 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// "+" = OPTIONS ONLY: the one compact filterable picker — static options enumerate
 			// (with Depth hierarchy), search-backed vectors ride the host search delegate (D3).
-			// No link items ever ride this flyout.
+			// No link items ever ride this flyout. The vector add slot opens in MULTI-SELECT mode
+			// (checkboxes + an "Add" button): the user checks several candidates and commits the
+			// whole set in ONE edit-context batch (one undoable step), like the legacy multi-check
+			// chooser. Atomic choosers (FwChooserField) stay single-select.
 			var picker = new FwOptionPicker(field.Options, field.SearchOptions, automationId,
-				field.Items.Select(i => i.Key));
+				field.Items.Select(i => i.Key), multiSelect: true);
 			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
-			picker.OptionCommitted += option =>
+			// Commit the whole checked set as ONE batch: every staged add rides the SAME open edit
+			// context (the host commits once via gestureCompleted), so the multi-add is one undoable
+			// step. A batch with at least one successful stage completes the gesture; an all-rejected
+			// batch (every key a duplicate/invalid) leaves the row unchanged, like single add.
+			Action<IReadOnlyList<RegionChoiceOption>> committedSet = options =>
 			{
-				var added = editContext.TryAddReferenceItem(field, option.Key);
+				var anyAdded = false;
+				foreach (var option in options)
+				{
+					if (editContext.TryAddReferenceItem(field, option.Key))
+						anyAdded = true;
+				}
 				flyout.Hide();
 				addButton.Focus(); // popup focus return, like the chooser
-				// Only a successful stage completes the gesture (commit + host re-show).
-				if (added)
+				if (anyAdded)
 					gestureCompleted?.Invoke();
 			};
-			picker.Dismissed += (s, e) =>
+			EventHandler dismissed = (s, e) =>
 			{
 				flyout.Hide();
 				addButton.Focus();
 			};
+			picker.OptionsCommitted += committedSet;
+			picker.Dismissed += dismissed;
+			_teardown.Add(() =>
+			{
+				picker.OptionsCommitted -= committedSet;
+				picker.Dismissed -= dismissed;
+				addButton.Flyout = null;
+			});
 			Children.Add(addButton);
 			_affordances.Add(addButton);
 
@@ -705,6 +1058,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>The separator bars, "+" launcher, and configure gear reveal on row hover.</summary>
 		public IReadOnlyList<Control> HoverAffordances => _affordances;
+
+		/// <summary>
+		/// The count of still-attached subscriptions/handlers — zero after <see cref="Dispose"/>.
+		/// Exposed so a recycling test can assert the editor released every handler it wired (Task C).
+		/// </summary>
+		public int AttachedHandlerCount => _teardown.Count;
+
+		/// <summary>
+		/// Detaches the per-item Remove handlers and the add picker's subscriptions and drops the option
+		/// flyout so a recycled reference-vector cell does not retain its closures (Task C). Idempotent;
+		/// a no-op for read-only rows (none wired). The host (LexicalEditRegionView / EditableCellHost)
+		/// already disposes IDisposable editors on teardown, so wiring IDisposable here is enough.
+		/// </summary>
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+			_disposed = true;
+			foreach (var detach in _teardown)
+				detach();
+			_teardown.Clear();
+		}
 
 		// The legacy VwSeparatorBox: a ~2px, font-height, light grey vertical bar after each item
 		// (and fronting the add slot) — the affordance that marks where content can be added.

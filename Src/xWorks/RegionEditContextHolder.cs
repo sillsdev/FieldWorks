@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
@@ -37,6 +38,17 @@ namespace SIL.FieldWorks.XWorks
 		public IRegionEditContext Current { get; private set; }
 
 		/// <summary>
+		/// ITEM 2 (invalid-edit-on-navigate UX): invoked when <see cref="Settle"/> rolls back an open
+		/// session because validation FAILED, carrying the user-facing validation reasons. The pending
+		/// edit is still rolled back (the safe close that keeps the UOW write lock from stranding), but
+		/// this hook lets the host TELL the user why their edit was discarded rather than losing it
+		/// silently (the old behavior surfaced only a Logger line). Null = no host wired (tests/headless),
+		/// in which case the rollback stays silent exactly as before. Never fired for a clean commit, a
+		/// no-op settle (nothing open), or a settle that threw (those still only log).
+		/// </summary>
+		public Action<IReadOnlyList<string>> InvalidEditRolledBack { get; set; }
+
+		/// <summary>
 		/// Makes <paramref name="next"/> the current context, cancelling the previous context's
 		/// open session (if any). Re-assigning the same instance is a no-op so a live edit is
 		/// never killed by redundant wiring. Hosts normally <see cref="Settle"/> first; this
@@ -60,18 +72,36 @@ namespace SIL.FieldWorks.XWorks
 		/// Auto-save (14.4): closes any open session — committing when validation is clean,
 		/// rolling back otherwise (an invalid state is never silently persisted). No-op when
 		/// nothing is open.
+		/// ITEM 2: when the close is a rollback FORCED BY a validation failure, the validation
+		/// reasons are returned (and <see cref="InvalidEditRolledBack"/> is fired) so the host can tell
+		/// the user why their edit was discarded — the data is rolled back safely, but never silently.
 		/// </summary>
-		public void Settle()
+		/// <returns>
+		/// The validation reasons that forced a rollback, or an empty list when the session committed
+		/// cleanly, nothing was open, or the settle threw (those paths still only log).
+		/// </returns>
+		public IReadOnlyList<string> Settle()
 		{
 			var current = Current;
 			if (current == null || !current.IsOpen)
-				return;
+				return System.Array.Empty<string>();
 			try
 			{
-				if (current.Validate().Count == 0)
+				var errors = current.Validate();
+				if (errors.Count == 0)
+				{
 					current.Commit();
-				else
-					current.Cancel();
+					return System.Array.Empty<string>();
+				}
+
+				// Invalid: roll back (the safe close), but surface WHY so the edit is not lost silently.
+				current.Cancel();
+				var reasons = errors as IReadOnlyList<string> ?? new List<string>(errors);
+				SIL.Reporting.Logger.WriteEvent(
+					"RegionEditContextHolder.Settle: pending edit rolled back because it failed validation: "
+					+ string.Join("; ", reasons));
+				InvalidEditRolledBack?.Invoke(reasons);
+				return reasons;
 			}
 			catch (System.Exception e)
 			{
@@ -80,6 +110,7 @@ namespace SIL.FieldWorks.XWorks
 				SIL.Reporting.Logger.WriteError(e);
 				if (current.IsOpen)
 					current.Cancel();
+				return System.Array.Empty<string>();
 			}
 		}
 

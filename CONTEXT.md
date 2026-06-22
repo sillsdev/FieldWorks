@@ -59,6 +59,10 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Utility**: A user-invoked data maintenance or migration tool (e.g. resetting homographs, removing parser annotations, fixing duplicate analyses). Utilities implement `IUtility` (`FwCoreDlgs`), are registered in `UtilityCatalogInclude.xml` via reflection, and run through `UtilityDlg` (Tools > Utilities menu).
 - **DistFiles**: Runtime assets copied into outputs or installers.
 - **Preview vs POC**: In the Avalonia migration, **preview** means a lightweight sample or design-time path that reuses the shared region renderer; **POC** refers only to the retired spike/evidence vocabulary and should not name live runtime code paths.
+- **StringTable lane**: The legacy data-driven localization path for XML/layout-owned labels and attributes, resolved through `StringTable.Table.LocalizeAttributeValue(...)` / `XmlUtils.GetLocalizedAttributeValue(...)` against the `strings-<locale>.xml` files.
+- **`.resx` lane**: Project-owned compiled resources resolved through `ResourceManager` and shipped as satellite assemblies. This is the current lane for Avalonia product-message or chrome strings in `FwAvalonia` and `FwAvaloniaDialogs`.
+- **LocalizationManager / L10NSharp lane**: The XLIFF-backed UI-localization path initialized by the product host (`FieldWorks.InitializeLocalizationManager`). It supports runtime UI-language switching and translator collection mode, but any host or test process that touches it must initialize at least one `LocalizationManager` first.
+- **Avalonia chrome strings**: User-visible Avalonia surface text that is not a data-driven field label — buttons, tab headers, tooltips, dialog titles, validation messages, accessible names, and similar shell/UI text.
 ## Repo-Wide Invariants
 - Native C++ builds before managed code generation and managed projects.
 - `build.ps1` is the canonical build entry point.

@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -122,6 +124,70 @@ namespace SIL.FieldWorks.XWorks
 			context.Cancel();
 			Assert.That(LexemeOf(m_entryA), Is.EqualTo("aaa"), "cancel rolls back the staged edit");
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False);
+		}
+
+		// ----- Phase 1 List Choice batch fence (one UOW across N rows) -----
+
+		// A browse-cell MorphType field for a row (the List-Choice write path; set by option key = guid).
+		private static LexicalEditRegionField MorphTypeField(int hvo) => new LexicalEditRegionField(
+			$"browse/{hvo}/2", "Morph Type", "MorphType", null, RegionFieldKind.Chooser,
+			EditorClassification.Known, "Cell", null, SurfaceRouting.Product,
+			values: null, options: null, selectedOptionKey: null, isEditable: true, objectHvo: hvo);
+
+		// A morph type from the standard list that differs from BOTH entries' current morph type, so the
+		// write is observable. Picked by repository (the list is seeded by LCM) rather than by localized name.
+		private IMoMorphType ADistinctMorphType()
+		{
+			var current = new HashSet<IMoMorphType>(new[]
+			{
+				m_entryA.LexemeFormOA.MorphTypeRA, m_entryB.LexemeFormOA.MorphTypeRA
+			});
+			var target = Cache.LangProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities
+				.OfType<IMoMorphType>().FirstOrDefault(mt => !current.Contains(mt));
+			Assert.That(target, Is.Not.Null, "need a morph type distinct from the rows' current types");
+			return target;
+		}
+
+		[Test]
+		public void Batch_AppliesMorphTypeAcrossRows_AsOneUndoStep()
+		{
+			var context = new ClerkBrowseEditContext(Cache);
+			var target = ADistinctMorphType();
+			var origA = m_entryA.LexemeFormOA.MorphTypeRA;
+			var origB = m_entryB.LexemeFormOA.MorphTypeRA;
+
+			// The batch fence: open ONE outer task, write both rows' MorphType, end it once.
+			context.BeginBatch();
+			Assert.That(context.TrySetOption(MorphTypeField(m_entryA.Hvo), target.Guid.ToString()), Is.True);
+			Assert.That(context.TrySetOption(MorphTypeField(m_entryB.Hvo), target.Guid.ToString()), Is.True,
+				"a second row's write retargets the per-object delegate WITHIN the open batch");
+			context.EndBatch();
+
+			Assert.That(m_entryA.LexemeFormOA.MorphTypeRA, Is.EqualTo(target), "row A got the chosen morph type");
+			Assert.That(m_entryB.LexemeFormOA.MorphTypeRA, Is.EqualTo(target), "row B got the chosen morph type");
+
+			// ONE undo step reverts BOTH rows — the parity gate (a bulk edit is a single undoable change).
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(m_entryA.LexemeFormOA.MorphTypeRA, Is.EqualTo(origA), "the single undo reverts row A");
+			Assert.That(m_entryB.LexemeFormOA.MorphTypeRA, Is.EqualTo(origB), "the single undo reverts row B too");
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False,
+				"the whole bulk edit was ONE step — there is no second step to undo");
+		}
+
+		[Test]
+		public void Batch_RollsBackEverything_WhenEndedWithCommitFalse()
+		{
+			var context = new ClerkBrowseEditContext(Cache);
+			var target = ADistinctMorphType();
+			var origA = m_entryA.LexemeFormOA.MorphTypeRA;
+
+			context.BeginBatch();
+			Assert.That(context.TrySetOption(MorphTypeField(m_entryA.Hvo), target.Guid.ToString()), Is.True);
+			context.EndBatch(commit: false);
+
+			Assert.That(m_entryA.LexemeFormOA.MorphTypeRA, Is.EqualTo(origA), "an aborted batch leaves the model untouched");
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False, "an aborted batch creates no undo step");
 		}
 	}
 }

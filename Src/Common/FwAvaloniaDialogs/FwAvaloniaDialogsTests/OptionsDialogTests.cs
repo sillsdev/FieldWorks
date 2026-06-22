@@ -10,6 +10,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FwAvaloniaDialogs;
+using FwAvaloniaTests.VisualChecks; // DialogSnapshot — the per-stage PNG harness (linked in via the csproj)
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 
@@ -41,14 +42,31 @@ namespace FwAvaloniaDialogsTests
 			Plugins = new List<PluginOption> { new PluginOption("Concorder", "A concordance tool", false) }
 		};
 
-		private static (OptionsDialogView view, OptionsDialogViewModel vm) Show(OptionsState state = null)
+		private static (OptionsDialogView view, OptionsDialogViewModel vm) Show(
+			OptionsState state = null, string stageName = "Options-01-initial")
 		{
 			var vm = new OptionsDialogViewModel(state ?? SampleState());
 			var view = new OptionsDialogView { DataContext = vm };
 			var window = new Window { Content = view, Width = 480, Height = 380 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			// Capture the realized stage BEFORE asserting, so the PNG exists for visual review even if the assert fails.
+			// The view is already hosted in `window`; snapshot that window (capturing the view again would re-parent it).
+			DialogSnapshot.Capture(window, stageName);
+			DialogLayoutAssert.AssertNoCrowding(view);
 			return (view, vm);
+		}
+
+		// Re-pump the realized surface and snapshot a later interaction stage (edited values, applied mode, etc.).
+		// Snapshots the view's hosting window (the view already has a visual parent).
+		private static void Capture(Control view, string stageName)
+		{
+			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			DialogSnapshot.Capture((Window)view.GetVisualRoot(), stageName);
 		}
 
 		private static T FindByAutomationId<T>(Control root, string id) where T : Control
@@ -63,7 +81,7 @@ namespace FwAvaloniaDialogsTests
 
 			Assert.That(checkBox.IsChecked, Is.False);
 			vm.AutoOpenLastProject = true;
-			Dispatcher.UIThread.RunJobs();
+			Capture(view, "Options-02-checkbox-toggled");
 			Assert.That(checkBox.IsChecked, Is.True, "compiled binding must propagate VM -> control");
 
 			checkBox.IsChecked = false;
@@ -87,9 +105,10 @@ namespace FwAvaloniaDialogsTests
 			var state = SampleState();
 			string applied = null;
 			state.ApplyUiModeLive = mode => applied = mode;
-			var (_, vm) = Show(state);
+			var (view, vm) = Show(state);
 
 			vm.SelectedUiMode = vm.UiModes.First(o => o.Code == "New");
+			Capture(view, "Options-03-mode-pending-apply");
 			Assert.That(vm.CanApplyMode, Is.True);
 
 			vm.ApplyModeCommand.Execute(null);
@@ -125,7 +144,7 @@ namespace FwAvaloniaDialogsTests
 		{
 			var state = SampleState();
 			state.UpdatesTabVisible = false;
-			var (view, _) = Show(state);
+			var (view, _) = Show(state, "Options-04-updates-tab-hidden");
 			var updatesTab = view.GetVisualDescendants().OfType<TabItem>()
 				.First(t => Equals(t.Header, FwAvaloniaDialogsStrings.UpdatesTab));
 			Assert.That(updatesTab.IsVisible, Is.False, "the Updates tab hides off-Windows / when unavailable");
@@ -189,10 +208,10 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(calls, Is.EqualTo(1), "WireClose must unsubscribe on dispose");
 		}
 
-		// --- Localization: strings resolve from the embedded .resx and bind into the XAML. ---
+		// --- Localization: strings resolve from the shared accessor and bind into the XAML. ---
 
 		[Test]
-		public void Strings_ResolveFromEmbeddedResx()
+		public void Strings_ResolveFromSharedAccessor()
 		{
 			Assert.That(FwAvaloniaDialogsStrings.GeneralTab, Is.EqualTo("General"));
 			Assert.That(FwAvaloniaDialogsStrings.Ok, Is.EqualTo("OK"));
@@ -206,7 +225,7 @@ namespace FwAvaloniaDialogsTests
 			var (view, _) = Show();
 			var ok = FindByAutomationId<Button>(view, "Options.Ok");
 			Assert.That(ok.Content, Is.EqualTo(FwAvaloniaDialogsStrings.Ok),
-				"the OK button text must come from the resource accessor, not a literal");
+				"the OK button text must come from the shared localization accessor, not a literal");
 		}
 	}
 }

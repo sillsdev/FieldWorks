@@ -19,6 +19,7 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Settings;
 using SIL.Utils;
+using AvControl = Avalonia.Controls.Control;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -31,6 +32,13 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// (Privacy → Updates → UI mode → UI language → Plugins → Save → auto-open → restart prompt). It is shown
 	/// only when <c>UIMode == New</c>; Legacy keeps the WinForms dialog.
 	///
+	/// This is the FIRST concrete subclass of the generic <see cref="AvaloniaDialogLauncher{TState,TViewModel,TPayload}"/>
+	/// dialog-kit scaffold: it implements the LCModel-aware <c>BuildState</c>/<c>CreateViewModel</c>/
+	/// <c>CreateView</c>/<c>Apply</c> steps; the scaffold owns the build-VM → ShowModal → dispose → return
+	/// loop. The public static <see cref="Show"/> entry point (kept for the existing callers in LexTextApp and
+	/// WelcomeToFieldWorksDlg) constructs an instance and runs it. A second dialog reuses the scaffold rather
+	/// than copying this launch plumbing.
+	///
 	/// SANCTIONED DIVERGENCES FROM LexOptionsDlg (intentional design choices, not bugs — the next migrator
 	/// should not "restore parity" here):
 	///  1. Lexical Edit UI mode is applied LIVE (no restart). Legacy required a restart to switch the mode;
@@ -42,11 +50,35 @@ namespace SIL.FieldWorks.LexText.Controls
 	///     effect on the (still-prompted) restart, matching how <c>FieldWorks.SetUICulture()</c> reads the
 	///     same registry value at startup. Everything else mirrors the legacy apply.
 	/// </summary>
-	public static class AvaloniaOptionsDialogLauncher
+	public sealed class AvaloniaOptionsDialogLauncher
+		: AvaloniaDialogLauncher<OptionsState, OptionsDialogViewModel, AvaloniaOptionsDialogLauncher.OptionsPayload>
 	{
 		private const string UIModePropertyName = "UIMode";
 		private const string LegacyUIMode = "Legacy";
 		private const string NewUIMode = "New";
+
+		// Live-settings context captured at construction; the scaffold's Run loop calls BuildState then Apply
+		// against this same context, so the plugin docs harvested while building the state are reused on apply.
+		private readonly LcmCache _cache;
+		private readonly Mediator _mediator;
+		private readonly PropertyTable _propertyTable;
+		private readonly FwApplicationSettingsBase _settings;
+		private readonly FwApp _app;
+		private readonly IWin32Window _owner;
+		private readonly string _userWs;
+		private readonly Dictionary<string, XmlDocument> _pluginDocs = new Dictionary<string, XmlDocument>();
+
+		private AvaloniaOptionsDialogLauncher(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
+			FwApplicationSettingsBase settings, FwApp app, IWin32Window owner)
+		{
+			_cache = cache;
+			_mediator = mediator;
+			_propertyTable = propertyTable;
+			_settings = settings;
+			_app = app;
+			_owner = owner;
+			_userWs = cache?.ServiceLocator.WritingSystemManager.UserWritingSystem.Id ?? "en";
+		}
 
 		/// <summary>
 		/// The single New-mode gate both launch sites share (LexTextApp's <c>OnLaunchConnectedDialog</c> and
@@ -59,7 +91,18 @@ namespace SIL.FieldWorks.LexText.Controls
 		public static bool ShouldUseAvaloniaOptionsDialog(string currentUiMode) =>
 			string.Equals(currentUiMode, NewUIMode, StringComparison.OrdinalIgnoreCase);
 
-		/// <summary>Outcome the caller acts on (the same signals LexTextApp reads after LexOptionsDlg).</summary>
+		/// <summary>The dialog-specific follow-up signals (the same payload LexTextApp reads after the dialog).</summary>
+		public struct OptionsPayload
+		{
+			public bool WritingSystemChanged;
+			public bool PluginsUpdated;
+		}
+
+		/// <summary>
+		/// Outcome the caller acts on (the same signals LexTextApp reads after LexOptionsDlg). Kept as the
+		/// launcher's public return shape for the existing callers; internally it is projected from the
+		/// scaffold's <see cref="DialogOutcome{TPayload}"/>.
+		/// </summary>
 		public struct Result
 		{
 			public bool Accepted;
@@ -76,21 +119,41 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-			var userWs = cache?.ServiceLocator.WritingSystemManager.UserWritingSystem.Id ?? "en";
-			var pluginDocs = new Dictionary<string, XmlDocument>();
-			var state = BuildState(cache, mediator, settings, app, userWs, pluginDocs);
+			var launcher = new AvaloniaOptionsDialogLauncher(cache, mediator, propertyTable, settings, app, owner);
+			var outcome = launcher.Run(owner);
+			if (!outcome.Accepted)
+				return new Result { Accepted = false };
+			return new Result
+			{
+				Accepted = true,
+				WritingSystemChanged = outcome.Payload.WritingSystemChanged,
+				PluginsUpdated = outcome.Payload.PluginsUpdated
+			};
+		}
+
+		// ----- scaffold steps -----
+
+		protected override string DialogTitle => FwAvaloniaDialogsStrings.OptionsTitle;
+		protected override int DialogWidth => 430;
+		protected override int DialogHeight => 360;
+
+		protected override OptionsState BuildState()
+		{
+			var state = BuildState(_cache, _mediator, _settings, _app, _userWs, _pluginDocs);
 			// The "Apply" button switches the Lexical Edit UI mode LIVE (no restart): broadcasting the
 			// PropertyTable "UIMode" property re-resolves the open lexical surfaces.
-			state.ApplyUiModeLive = mode => ApplyUiModeLive(propertyTable, settings, mode);
-
-			var vm = new OptionsDialogViewModel(state);
-			var view = new OptionsDialogView { DataContext = vm };
-			var ok = AvaloniaDialogHost.ShowModal(owner, view, vm, FwAvaloniaDialogsStrings.OptionsTitle, 430, 360);
-			if (ok != true)
-				return new Result { Accepted = false };
-
-			return Apply(cache, mediator, propertyTable, settings, app, userWs, state, pluginDocs, owner);
+			state.ApplyUiModeLive = mode => ApplyUiModeLive(_propertyTable, _settings, mode);
+			return state;
 		}
+
+		protected override OptionsDialogViewModel CreateViewModel(OptionsState state) =>
+			new OptionsDialogViewModel(state);
+
+		protected override AvControl CreateView(OptionsDialogViewModel viewModel) =>
+			new OptionsDialogView { DataContext = viewModel };
+
+		protected override OptionsPayload Apply(OptionsState state) =>
+			Apply(_cache, _mediator, _propertyTable, _settings, _app, _userWs, state, _pluginDocs, _owner);
 
 		// ----- build the state from the live settings -----
 
@@ -249,7 +312,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// ----- apply the edited state back to the live settings (mirrors LexOptionsDlg.m_btnOK_Click) -----
 
-		private static Result Apply(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
+		private static OptionsPayload Apply(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			FwApplicationSettingsBase settings, FwApp app, string userWs, OptionsState state,
 			IDictionary<string, XmlDocument> pluginDocs, IWin32Window owner)
 		{
@@ -309,13 +372,24 @@ namespace SIL.FieldWorks.LexText.Controls
 				app.RegistrySettings.AutoOpenLastEditedProject = state.AutoOpenLastProject;
 
 			if (restartRequired)
-				MessageBox.Show(owner, LexTextControls.RestartToForSettingsToTakeEffect_Content,
-					LexTextControls.RestartToForSettingsToTakeEffect_Title);
+				// Avalonia message box (kit) instead of raw WinForms MessageBox — same OK-only prompt text,
+				// hosted in a WinForms-owned modal window via AvaloniaDialogHost so the confirmation matches
+				// the rest of the New-mode surface (dialog-ownership.md).
+				FwMessageBox.Show(owner, LexTextControls.RestartToForSettingsToTakeEffect_Content,
+					LexTextControls.RestartToForSettingsToTakeEffect_Title, FwMessageBoxButtons.Ok);
 
-			return new Result { Accepted = true, WritingSystemChanged = wsChanged, PluginsUpdated = pluginsUpdated };
+			return new OptionsPayload { WritingSystemChanged = wsChanged, PluginsUpdated = pluginsUpdated };
 		}
 
-		private static bool ApplyPlugins(Mediator mediator, OptionsState state, IDictionary<string, XmlDocument> pluginDocs)
+		/// <summary>
+		/// Diffs each plugin's edited <see cref="PluginOption.Installed"/> against its
+		/// <see cref="PluginOption.WasInstalled"/> and mutates the filesystem accordingly: toggled-on
+		/// (Installed &amp;&amp; !WasInstalled) installs, toggled-off (!Installed &amp;&amp; WasInstalled)
+		/// uninstalls, and unchanged does nothing. Returns true when at least one plugin was installed or
+		/// uninstalled. Internal so the diff/dispatch can be tested against temp source/target dirs without a
+		/// live mediator-driven dialog (InternalsVisibleTo("LexTextControlsTests")).
+		/// </summary>
+		internal static bool ApplyPlugins(Mediator mediator, OptionsState state, IDictionary<string, XmlDocument> pluginDocs)
 		{
 			if (mediator == null || state.Plugins == null || state.Plugins.Count == 0)
 				return false;
@@ -325,8 +399,21 @@ namespace SIL.FieldWorks.LexText.Controls
 				"Available Plugins");
 			var baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory,
 				Path.Combine("Language Explorer", "Configuration"));
-			var updated = false;
+			return ApplyPlugins(mediator, state, pluginDocs, basePluginPath, baseExtensionPath);
+		}
 
+		/// <summary>
+		/// The pure diff/dispatch core of <see cref="ApplyPlugins(Mediator,OptionsState,IDictionary{string,XmlDocument})"/>,
+		/// taking the source/target roots explicitly so a test can drive install/uninstall against temp
+		/// directories instead of the real install layout. Returns true when at least one plugin changed.
+		/// </summary>
+		internal static bool ApplyPlugins(Mediator mediator, OptionsState state,
+			IDictionary<string, XmlDocument> pluginDocs, string basePluginPath, string baseExtensionPath)
+		{
+			if (mediator == null || state.Plugins == null || state.Plugins.Count == 0)
+				return false;
+
+			var updated = false;
 			foreach (var plugin in state.Plugins)
 			{
 				if (!pluginDocs.TryGetValue(plugin.Name, out var doc))

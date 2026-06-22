@@ -295,6 +295,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 					var chooserLinks = new List<ViewChooserLink>();
 					var childElements = new List<XElement>();
+					ViewStringList enumStringList = null;
 					foreach (var child in contentEl.Elements())
 					{
 						if (child.Name.LocalName == "slice" || child.Name.LocalName == "seq" || child.Name.LocalName == "obj")
@@ -308,6 +309,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							// chooserInfo's other facets (title/text/guicontrol/textparam) are still
 							// reported, not silently dropped.
 							ImportChooserInfo(child, stableId, chooserLinks, diagnostics);
+						}
+						else if (child.Name.LocalName == "deParams")
+						{
+							// Review task 2: an enumComboBox slice's options live in
+							// <deParams><stringList ids=.. group=..> (EnumComboSlice.PopulateCombo).
+							// Carry that onto the node so the row can render a CLOSED option chooser
+							// instead of degrading to a free-form int editor that could persist an
+							// invalid enum value. The labels resolve through the StringTable lane at
+							// compose time, so only the ids/group ride the IR.
+							enumStringList = ImportStringList(child, stableId, diagnostics);
 						}
 						else if (child.Name.LocalName != "properties")
 						{
@@ -365,7 +376,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						forVariant: ParseOptionalBool(Attr(contentEl, "forVariant")) ?? false,
 						customEditorClass: Attr(contentEl, "class"),
 						customEditorAssembly: Attr(contentEl, "assemblyPath"),
-						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null);
+						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
+						enumStringList: enumStringList);
 				}
 				case "obj":
 				case "seq":
@@ -493,6 +505,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					$"Slice content child <chooserInfo> facets ({string.Join(", ", droppedFacets)}) are not imported; only chooserLink is.",
 					stableId));
 			}
+		}
+
+		// Review task 2: import an enumComboBox slice's <deParams><stringList ids=.. group=..> into the
+		// typed ViewStringList. The labels themselves stay out of the IR (they resolve through the
+		// StringTable lane at compose time); only the ids and the optional group path ride. A deParams
+		// without a stringList, or a stringList without ids, is reported rather than silently dropped.
+		private static ViewStringList ImportStringList(
+			XElement deParamsEl, string stableId, List<ViewDiagnostic> diagnostics)
+		{
+			var stringListEl = deParamsEl.Element("stringList");
+			if (stringListEl == null)
+			{
+				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Info, "slice-content-dropped",
+					"Slice content child <deParams> has no <stringList>; it is not imported.", stableId));
+				return null;
+			}
+
+			var ids = Attr(stringListEl, "ids");
+			if (string.IsNullOrEmpty(ids))
+			{
+				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "enum-stringlist-dropped",
+					"<stringList> has no 'ids'; the enum option list could not be imported.", stableId));
+				return null;
+			}
+
+			var idList = ids.Split(',')
+				.Select(s => s.Trim())
+				.Where(s => s.Length > 0)
+				.ToList();
+			if (idList.Count == 0)
+			{
+				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Warning, "enum-stringlist-dropped",
+					$"<stringList ids='{ids}'> yielded no option ids.", stableId));
+				return null;
+			}
+
+			return new ViewStringList(idList, Attr(stringListEl, "group"));
 		}
 
 		// B3: a conditional wrapper's children are part content (<slice>/<seq>/<obj>, possibly nested

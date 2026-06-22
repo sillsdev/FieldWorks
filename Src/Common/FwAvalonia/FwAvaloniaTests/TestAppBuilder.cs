@@ -21,8 +21,11 @@ namespace FwAvaloniaTests
 	public static class TestAppBuilder
 	{
 		public static AppBuilder BuildAvaloniaApp()
-			=> AppBuilder.Configure<FwAvaloniaApp>()
+			{
+				FwAvaloniaLocalizationBootstrap.EnsureInitialized();
+				return AppBuilder.Configure<FwAvaloniaApp>()
 				.UseSkia()
 				.UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
+			}
 	}
 }

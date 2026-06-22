@@ -21,12 +21,21 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly LcmCache _cache;
 		private readonly int _depth;
+		// True only when THIS session actually opened the LCModel undo task. The action handler does not
+		// support NESTED BeginUndoTask ("Nested tasks are not supported"), so when a task is already open
+		// (CurrentDepth > 0) — e.g. a bulk-edit batch fence opened the one outer task and the per-row write
+		// path's own session is constructed inside it — this session JOINS that task instead of opening a
+		// second one, and its Commit/Cancel become no-ops (the OUTER owner ends/rolls back the task). This
+		// mirrors the legacy RootSiteEditingHelper rule (open a real task only at CurrentDepth == 0).
+		private readonly bool _ownsTask;
 
 		public LcmRegionEditSession(LcmCache cache, string undoLabel, string redoLabel)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_depth = cache.ActionHandlerAccessor.CurrentDepth;
-			cache.DomainDataByFlid.BeginUndoTask(undoLabel, redoLabel);
+			_ownsTask = _depth == 0;
+			if (_ownsTask)
+				cache.DomainDataByFlid.BeginUndoTask(undoLabel, redoLabel);
 			IsOpen = true;
 		}
 
@@ -39,7 +48,8 @@ namespace SIL.FieldWorks.XWorks
 			if (!IsOpen)
 				return;
 			IsOpen = false;
-			if (TaskStillOpen)
+			// A joined (non-owning) session leaves the outer task open for its owner to end as one step.
+			if (_ownsTask && TaskStillOpen)
 				_cache.DomainDataByFlid.EndUndoTask();
 		}
 
@@ -49,7 +59,8 @@ namespace SIL.FieldWorks.XWorks
 			if (!IsOpen)
 				return;
 			IsOpen = false;
-			if (TaskStillOpen)
+			// A joined session never rolls back the outer task — only its owner does, on a batch abort.
+			if (_ownsTask && TaskStillOpen)
 				_cache.ActionHandlerAccessor.Rollback(_depth);
 		}
 

@@ -41,6 +41,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		Command,
 
 		/// <summary>
+		/// An editable date / generic-date row (legacy <c>DateSlice</c>/<c>GenDateSlice</c>): a text
+		/// entry whose committed string is parsed and staged through
+		/// <see cref="IRegionEditContext.TrySetOption"/>. <see cref="LexicalEditRegionField.DateKind"/>
+		/// selects exact-date vs generic-date (precision/approximation/era) parsing; both reject
+		/// unparseable input rather than corrupt the stored value.
+		/// </summary>
+		Date,
+
+		/// <summary>
 		/// An editable reference vector (6.3/B8): current items plus the possibility list's options
 		/// (hierarchy on <see cref="RegionChoiceOption.Depth"/>), edited through
 		/// <see cref="IRegionEditContext.TryAddReferenceItem"/>/<see cref="IRegionEditContext.TryRemoveReferenceItem"/> —
@@ -56,6 +65,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// factory is missing or fails.
 		/// </summary>
 		Custom
+	}
+
+	/// <summary>
+	/// The date flavor of a <see cref="RegionFieldKind.Date"/> row: an exact calendar date (legacy
+	/// <c>DateSlice</c>, a <c>Time</c> LCModel property) or a generic/vague date (legacy
+	/// <c>GenDateSlice</c>, a <c>GenDate</c> LCModel property) that can be partial and carry a
+	/// precision/approximation/era qualifier.
+	/// </summary>
+	public enum RegionDateKind
+	{
+		/// <summary>An exact calendar date/time (LCModel <c>Time</c> property).</summary>
+		Date,
+
+		/// <summary>A generic (vague) date (LCModel <c>GenDate</c> property).</summary>
+		GenDate
 	}
 
 	/// <summary>
@@ -99,13 +123,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	public sealed class RegionRichTextValue
 	{
 		public RegionRichTextValue(string plainText, IReadOnlyList<RegionTextRun> runs,
-			string richXml = null, bool requiresRichEditor = false, bool canEditRichText = true)
+			string richXml = null, bool requiresRichEditor = false, bool canEditRichText = true,
+			bool lossyProperties = false)
 		{
 			PlainText = plainText ?? string.Empty;
 			Runs = runs ?? new List<RegionTextRun>();
 			RichXml = richXml;
 			RequiresRichEditor = requiresRichEditor;
-			CanEditRichText = canEditRichText;
+			LossyProperties = lossyProperties;
+			// A value the plain-text run-replay path would corrupt (an embedded object the runs
+			// cannot rebuild, OR a run carrying a TsString property the RegionTextRun model does not
+			// round-trip) is held read-only: editing it would silently drop that property the first
+			// time the plain text changes (the lossless RichXml fast-path is skipped after an edit).
+			CanEditRichText = canEditRichText && !lossyProperties;
 			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
 		}
 
@@ -114,6 +144,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public string RichXml { get; }
 		public bool RequiresRichEditor { get; }
 		public bool CanEditRichText { get; }
+
+		/// <summary>
+		/// Whether at least one run carries a TsString text property the <see cref="RegionTextRun"/>
+		/// model does NOT round-trip (e.g. foreground/background colour, character offset,
+		/// super/subscript — anything beyond ws/named-style/font-family/font-size/bold/italic/underline/
+		/// object-data). The neutral run-replay in <c>RegionRichTextAdapter.ToTsString</c> re-emits only
+		/// the supported set, so a first edit (which skips the lossless RichXml fast-path) would silently
+		/// drop the extra property. Such a value is shown read-only with the embedded-object tooltip
+		/// rather than corrupting on edit; the lossless RichXml round-trip still drives full-fidelity
+		/// display.
+		/// </summary>
+		public bool LossyProperties { get; }
+
 		public IReadOnlyList<int> GraphemeClusterStarts { get; }
 	}
 
@@ -429,11 +472,413 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// Which character-formatting attribute a span-formatting gesture toggles (Phase 2): the
+	/// supported, round-tripped emphasis set (<see cref="RegionTextRun.Bold"/>/<see cref="RegionTextRun.Italic"/>/
+	/// <see cref="RegionTextRun.Underline"/>). These are exactly the three int props
+	/// <c>RegionRichTextAdapter.ToTsString</c> re-emits, so a formatted run round-trips losslessly.
+	/// </summary>
+	public enum RegionRunFormat
+	{
+		/// <summary>Bold emphasis (ktptBold).</summary>
+		Bold,
+
+		/// <summary>Italic emphasis (ktptItalic).</summary>
+		Italic,
+
+		/// <summary>Underline (ktptUnderline).</summary>
+		Underline
+	}
+
+	/// <summary>
 	/// Plain-text edit helpers over the neutral rich-text model. This lets the first owned rich-text
 	/// field preserve unaffected run metadata while the user edits the combined visible string.
 	/// </summary>
 	public static class RegionRichTextEditAlgorithms
 	{
+		/// <summary>
+		/// Phase 2: applies (or clears) one character-formatting attribute over the half-open span
+		/// <c>[start, end)</c>, returning a NEW <see cref="RegionRichTextValue"/> with the same plain
+		/// text. Runs are split at the selection boundaries (reusing the same run-span machinery as
+		/// <see cref="ApplyPlainTextEdit"/>); every run fully covered by the span gets the attribute set
+		/// to <paramref name="on"/> while runs outside the span keep their metadata untouched.
+		/// <para>The selection is snapped OUTWARD to Unicode grapheme-cluster boundaries (the same
+		/// boundaries the bidi navigation uses) so a combining cluster is never split mid-character.</para>
+		/// <para>A zero-length (collapsed) selection — after clamping/snapping — is a no-op (the original
+		/// value is returned). Phase 2 does not carry a pending caret format; that is deferred.</para>
+		/// <para>The result intentionally carries NO <c>RichXml</c>: the lossless XML fast-path in
+		/// <c>RegionRichTextAdapter.ToTsString</c> would otherwise re-emit the ORIGINAL runs (the plain
+		/// text is unchanged), dropping the new emphasis. Clearing it forces the run-replay path, which
+		/// re-emits the bold/italic/underline the runs now carry.</para>
+		/// </summary>
+		public static RegionRichTextValue ApplySpanFormatting(RegionRichTextValue value, int start, int end,
+			RegionRunFormat which, bool on)
+		{
+			if (value == null)
+				return null;
+			if (!value.CanEditRichText)
+				return value; // a lossy / embedded-object value is read-only; never reformatted
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return value; // zero-length selection: no-op (no pending caret format in Phase 2)
+
+			// Snap the span outward to grapheme-cluster boundaries so a combining cluster is never
+			// split mid-character: floor the start to the cluster boundary at-or-before it, ceil the
+			// end to the boundary at-or-after it (a boundary index is left where it is).
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return value;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			if (spans.Count == 0)
+				return value;
+
+			var newRuns = new List<RegionTextRun>();
+			foreach (var span in spans)
+			{
+				// Three (possibly empty) slices of this run: before the span, inside it, after it.
+				var beforeLen = Math.Max(0, Math.Min(span.End, lo) - span.Start);
+				var afterLen = Math.Max(0, span.End - Math.Max(span.Start, hi));
+				var insideLen = (span.End - span.Start) - beforeLen - afterLen;
+				var runText = span.Run.Text ?? string.Empty;
+
+				if (beforeLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(0, beforeLen)));
+				if (insideLen > 0)
+					newRuns.Add(WithFormat(CloneRun(span.Run, runText.Substring(beforeLen, insideLen)), which, on));
+				if (afterLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(beforeLen + insideLen, afterLen)));
+			}
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			// richXml stays null (see remarks): forces the lossy-aware run-replay, preserving the edit.
+			return FromRuns(text, compacted, canEditRichText: value.CanEditRichText);
+		}
+
+		/// <summary>
+		/// Phase 3: applies (or clears) a NAMED CHARACTER STYLE over the half-open span <c>[start, end)</c>,
+		/// returning a NEW <see cref="RegionRichTextValue"/> with the same plain text. Reuses the same
+		/// run-split + grapheme-cluster-safe machinery as <see cref="ApplySpanFormatting"/>: every run fully
+		/// covered by the (cluster-snapped) span has its <see cref="RegionTextRun.NamedStyle"/> set to
+		/// <paramref name="styleName"/> while runs outside the span keep their metadata untouched.
+		/// <para>A null/empty <paramref name="styleName"/> CLEARS the named style over the span (the
+		/// covered runs revert to the default/no-style paragraph style), matching the picker's
+		/// "Default/None" entry.</para>
+		/// <para>The span is snapped OUTWARD to Unicode grapheme-cluster boundaries so a combining cluster
+		/// is never split mid-character. A zero-length (collapsed) selection — after clamping/snapping — is
+		/// a no-op (the original value is returned). Lossy / read-only values are returned unchanged.</para>
+		/// <para>The result carries NO <c>RichXml</c> (same reason as <see cref="ApplySpanFormatting"/>):
+		/// the lossless XML fast-path would otherwise re-emit the ORIGINAL runs (plain text is unchanged),
+		/// dropping the new style; clearing it forces the run-replay path, which re-emits the
+		/// <c>ktptNamedStyle</c> the runs now carry.</para>
+		/// </summary>
+		public static RegionRichTextValue ApplySpanNamedStyle(RegionRichTextValue value, int start, int end,
+			string styleName)
+		{
+			if (value == null)
+				return null;
+			if (!value.CanEditRichText)
+				return value; // a lossy / embedded-object value is read-only; never restyled
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return value; // zero-length selection: no-op (no pending caret style in Phase 3)
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return value;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			if (spans.Count == 0)
+				return value;
+
+			// Normalize an empty style name to null so cleared runs carry no style (not "").
+			var normalizedStyle = string.IsNullOrEmpty(styleName) ? null : styleName;
+
+			var newRuns = new List<RegionTextRun>();
+			foreach (var span in spans)
+			{
+				// Three (possibly empty) slices of this run: before the span, inside it, after it.
+				var beforeLen = Math.Max(0, Math.Min(span.End, lo) - span.Start);
+				var afterLen = Math.Max(0, span.End - Math.Max(span.Start, hi));
+				var insideLen = (span.End - span.Start) - beforeLen - afterLen;
+				var runText = span.Run.Text ?? string.Empty;
+
+				if (beforeLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(0, beforeLen)));
+				if (insideLen > 0)
+					newRuns.Add(WithNamedStyle(CloneRun(span.Run, runText.Substring(beforeLen, insideLen)), normalizedStyle));
+				if (afterLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(beforeLen + insideLen, afterLen)));
+			}
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			// richXml stays null (see remarks): forces the run-replay, preserving the new/cleared style.
+			return FromRuns(text, compacted, canEditRichText: value.CanEditRichText);
+		}
+
+		/// <summary>
+		/// Phase 4: retags the WRITING SYSTEM over the half-open span <c>[start, end)</c>, returning a
+		/// NEW <see cref="RegionRichTextValue"/> with the same plain text. Reuses the same run-split +
+		/// grapheme-cluster-safe machinery as <see cref="ApplySpanFormatting"/>/<see cref="ApplySpanNamedStyle"/>:
+		/// every run fully covered by the (cluster-snapped) span has its
+		/// <see cref="RegionTextRun.WritingSystemTag"/> set to <paramref name="wsTag"/> while runs outside
+		/// the span keep their metadata untouched. The per-run ws tag is exactly what
+		/// <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>, so a retagged run round-trips
+		/// losslessly into the product <c>ITsString</c>.
+		/// <para>A null/empty <paramref name="wsTag"/> is a no-op (a run must always carry a writing system;
+		/// the picker only offers real project writing systems, never a "clear").</para>
+		/// <para>The span is snapped OUTWARD to Unicode grapheme-cluster boundaries so a combining cluster
+		/// is never split mid-character. A zero-length (collapsed) selection — after clamping/snapping — is
+		/// a no-op (the original value is returned). Lossy / read-only values are returned unchanged.</para>
+		/// <para>The result carries NO <c>RichXml</c> (same reason as <see cref="ApplySpanFormatting"/>):
+		/// the lossless XML fast-path would otherwise re-emit the ORIGINAL runs (plain text is unchanged),
+		/// dropping the new writing system; clearing it forces the run-replay path, which re-emits the
+		/// <c>ktptWs</c> the runs now carry.</para>
+		/// </summary>
+		public static RegionRichTextValue RetagSpanWritingSystem(RegionRichTextValue value, int start, int end,
+			string wsTag)
+		{
+			if (value == null)
+				return null;
+			if (!value.CanEditRichText)
+				return value; // a lossy / embedded-object value is read-only; never retagged
+			if (string.IsNullOrEmpty(wsTag))
+				return value; // a run must always carry a writing system; no "clear" gesture
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return value; // zero-length selection: no-op (no pending caret ws in Phase 4)
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return value;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			if (spans.Count == 0)
+				return value;
+
+			var newRuns = new List<RegionTextRun>();
+			foreach (var span in spans)
+			{
+				// Three (possibly empty) slices of this run: before the span, inside it, after it.
+				var beforeLen = Math.Max(0, Math.Min(span.End, lo) - span.Start);
+				var afterLen = Math.Max(0, span.End - Math.Max(span.Start, hi));
+				var insideLen = (span.End - span.Start) - beforeLen - afterLen;
+				var runText = span.Run.Text ?? string.Empty;
+
+				if (beforeLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(0, beforeLen)));
+				if (insideLen > 0)
+					newRuns.Add(WithWritingSystem(CloneRun(span.Run, runText.Substring(beforeLen, insideLen)), wsTag));
+				if (afterLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(beforeLen + insideLen, afterLen)));
+			}
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			// richXml stays null (see remarks): forces the run-replay, preserving the new ws tag.
+			return FromRuns(text, compacted, canEditRichText: value.CanEditRichText);
+		}
+
+		/// <summary>
+		/// Phase 4 writing-system probe: the writing-system tag COMMON to the whole (cluster-snapped,
+		/// half-open) span <c>[start, end)</c>, or null when the runs overlapping the span carry different
+		/// tags (mixed). The picker uses this to show the current span's writing system as selected. An
+		/// empty / collapsed span returns null.
+		/// </summary>
+		public static string SpanWritingSystem(RegionRichTextValue value, int start, int end)
+		{
+			if (value == null)
+				return null;
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return null;
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return null;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			string common = null;
+			var sawAny = false;
+			foreach (var span in spans)
+			{
+				if (span.End <= lo || span.Start >= hi)
+					continue; // run does not overlap the span
+				var tag = string.IsNullOrEmpty(span.Run.WritingSystemTag) ? null : span.Run.WritingSystemTag;
+				if (!sawAny)
+				{
+					common = tag;
+					sawAny = true;
+				}
+				else if (!string.Equals(common, tag, StringComparison.Ordinal))
+				{
+					return null; // mixed across the span
+				}
+			}
+
+			return common;
+		}
+
+		/// <summary>
+		/// Phase 3 style probe: the named character style COMMON to the whole (cluster-snapped, half-open)
+		/// span <c>[start, end)</c>, or null when the runs overlapping the span carry different styles
+		/// (mixed) OR no style. The picker uses this to show the current span's style as selected (and to
+		/// distinguish a uniform "no style" from a mixed selection: both report null here, but the picker
+		/// can still apply or clear). An empty / collapsed span returns null.
+		/// </summary>
+		public static string SpanNamedStyle(RegionRichTextValue value, int start, int end)
+		{
+			if (value == null)
+				return null;
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return null;
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return null;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			string common = null;
+			var sawAny = false;
+			foreach (var span in spans)
+			{
+				if (span.End <= lo || span.Start >= hi)
+					continue; // run does not overlap the span
+				var style = string.IsNullOrEmpty(span.Run.NamedStyle) ? null : span.Run.NamedStyle;
+				if (!sawAny)
+				{
+					common = style;
+					sawAny = true;
+				}
+				else if (!string.Equals(common, style, StringComparison.Ordinal))
+				{
+					return null; // mixed across the span
+				}
+			}
+
+			return common;
+		}
+
+		/// <summary>
+		/// Phase 2 toggle probe: true when EVERY run overlapping the (cluster-snapped, half-open) span
+		/// <c>[start, end)</c> already carries <paramref name="which"/>. The UI uses this to decide a
+		/// Ctrl+B/I/U gesture's direction — an all-on selection toggles off, otherwise it turns on.
+		/// An empty / collapsed span returns false (nothing to toggle off).
+		/// </summary>
+		public static bool SpanFullyHasFormat(RegionRichTextValue value, int start, int end, RegionRunFormat which)
+		{
+			if (value == null)
+				return false;
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return false;
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return false;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			foreach (var span in spans)
+			{
+				if (span.End <= lo || span.Start >= hi)
+					continue; // run does not overlap the span
+				if (!HasFormat(span.Run, which))
+					return false;
+			}
+
+			return true;
+		}
+
+		// Largest cluster-start boundary that is <= index (the cluster the index sits in starts here).
+		private static int ClusterFloor(IReadOnlyList<int> clusterStarts, int index)
+		{
+			var floor = 0;
+			for (var i = 0; i < clusterStarts.Count; i++)
+			{
+				if (clusterStarts[i] <= index)
+					floor = clusterStarts[i];
+				else
+					break;
+			}
+			return floor;
+		}
+
+		// Smallest cluster boundary that is >= index (text length is always a boundary).
+		private static int ClusterCeiling(IReadOnlyList<int> clusterStarts, int textLength, int index)
+		{
+			for (var i = 0; i < clusterStarts.Count; i++)
+			{
+				if (clusterStarts[i] >= index)
+					return clusterStarts[i];
+			}
+			return textLength;
+		}
+
+		private static bool HasFormat(RegionTextRun run, RegionRunFormat which)
+		{
+			switch (which)
+			{
+				case RegionRunFormat.Bold: return run.Bold;
+				case RegionRunFormat.Italic: return run.Italic;
+				case RegionRunFormat.Underline: return run.Underline;
+				default: return false;
+			}
+		}
+
+		private static RegionTextRun WithFormat(RegionTextRun run, RegionRunFormat which, bool on)
+		{
+			var bold = which == RegionRunFormat.Bold ? on : run.Bold;
+			var italic = which == RegionRunFormat.Italic ? on : run.Italic;
+			var underline = which == RegionRunFormat.Underline ? on : run.Underline;
+			return new RegionTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
+				run.FontSizeMilliPoints, bold, italic, underline, run.ObjectData);
+		}
+
+		// Phase 3: a copy of the run with its named style replaced (null clears it); every other
+		// property is preserved so a restyled slice keeps its WS, font, and emphasis.
+		private static RegionTextRun WithNamedStyle(RegionTextRun run, string namedStyle)
+		{
+			return new RegionTextRun(run.Text, run.WritingSystemTag, namedStyle, run.FontFamily,
+				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, run.ObjectData);
+		}
+
+		// Phase 4: a copy of the run with its writing-system tag replaced; every other property is
+		// preserved so a retagged slice keeps its named style, font, and emphasis.
+		private static RegionTextRun WithWritingSystem(RegionTextRun run, string wsTag)
+		{
+			return new RegionTextRun(run.Text, wsTag, run.NamedStyle, run.FontFamily,
+				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, run.ObjectData);
+		}
+
 		public static RegionRichTextValue ApplyPlainTextEdit(RegionRichTextValue current, string updatedPlainText)
 		{
 			updatedPlainText = updatedPlainText ?? string.Empty;
@@ -621,7 +1066,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	{
 		public RegionWsValue(string wsAbbrev, string value, string fontFamily = null, double fontSize = 0,
 			bool rightToLeft = false, string wsTag = null, bool bold = false,
-			RegionRichTextValue richText = null)
+			RegionRichTextValue richText = null, bool isAudio = false)
 		{
 			WsAbbrev = wsAbbrev;
 			Value = value ?? richText?.PlainText ?? string.Empty;
@@ -631,6 +1076,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			WsTag = wsTag;
 			Bold = bold;
 			RichText = richText;
+			IsAudio = isAudio;
 		}
 
 		/// <summary>Bold emphasis (the lexeme form's legacy &lt;properties&gt; bold).</summary>
@@ -651,6 +1097,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public RegionRichTextValue RichText { get; }
 
 		/// <summary>
+		/// ITEM 3: whether this alternative belongs to a voice/audio (IsVoice) writing system. The new
+		/// view cannot yet play or record audio, so such a row is composed READ-ONLY with an audio
+		/// placeholder — the recording stays visible/diagnosable instead of presenting a blank editable
+		/// box whose first keystroke would corrupt the stored recording. Editing stays in the classic view.
+		/// </summary>
+		public bool IsAudio { get; }
+
+		/// <summary>
 		/// Whether this alternative already carries content that requires the run-aware editor path.
 		/// </summary>
 		public bool RequiresRichEditor => RichText != null && RichText.RequiresRichEditor;
@@ -660,6 +1114,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// carrying unsupported object data remain read-only until their owner task lands.
 		/// </summary>
 		public bool CanEditRichText => RichText == null || RichText.CanEditRichText;
+	}
+
+	/// <summary>
+	/// Phase 4: one project writing system the per-run WS retag picker can offer (its stable IETF tag
+	/// plus a display name). The tag is what <see cref="RegionTextRun.WritingSystemTag"/> carries and
+	/// what <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>; the display name is what
+	/// the picker shows. Kept LCModel-free so the composer is the only edge that knows about the cache.
+	/// </summary>
+	public sealed class RegionWritingSystemOption
+	{
+		public RegionWritingSystemOption(string tag, string displayName)
+		{
+			Tag = tag;
+			DisplayName = displayName;
+		}
+
+		/// <summary>The stable IETF writing-system tag (e.g. "en", "fr"), the run's <c>ktptWs</c> identity.</summary>
+		public string Tag { get; }
+
+		/// <summary>The user-facing display name (e.g. "English", the abbreviation, or the full ws name).</summary>
+		public string DisplayName { get; }
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
@@ -763,8 +1238,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			IReadOnlyList<RegionChoiceOption> items = null,
 			Func<Control> controlFactory = null,
 			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null,
-			IReadOnlyList<RegionChooserLink> chooserLinks = null)
+			IReadOnlyList<RegionChooserLink> chooserLinks = null,
+			RegionDateKind dateKind = RegionDateKind.Date)
 		{
+			DateKind = dateKind;
 			ChooserLinks = chooserLinks ?? new List<RegionChooserLink>();
 			Items = items ?? new List<RegionChoiceOption>();
 			ControlFactory = controlFactory;
@@ -812,6 +1289,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public string SelectedOptionKey { get; }
 
 		/// <summary>
+		/// For a <see cref="RegionFieldKind.Date"/> row, whether it edits an exact date or a generic
+		/// (vague) date. Ignored for every other kind. Defaults to <see cref="RegionDateKind.Date"/>.
+		/// </summary>
+		public RegionDateKind DateKind { get; }
+
+		/// <summary>
 		/// The CURRENT items of a <see cref="RegionFieldKind.ReferenceVector"/> row, in vector order
 		/// (key = possibility guid, name = display name). Empty for other kinds.
 		/// </summary>
@@ -840,6 +1323,45 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>The LCModel object this row is bound to (command-target context for menus).</summary>
 		public int ObjectHvo { get; }
+
+		/// <summary>
+		/// The class of the compiled view definition this row was projected from (advanced-entry-view):
+		/// the entry's own fields carry "LexEntry"; a row from a descended object (a sense, an allomorph)
+		/// carries that object's layout class. Paired with <see cref="LayoutName"/> it keys the per-project
+		/// <c>ViewDefinitionOverride</c> store so the per-field gear-menu commands (Field Visibility / Move
+		/// Field) target the right layout. Set by the composer at compose time (null on rows built outside
+		/// the full-entry composer, e.g. the first-slice fallback).
+		/// </summary>
+		public string ClassName { get; set; }
+
+		/// <summary>
+		/// The layout name of the compiled view definition this row was projected from (e.g. "Normal").
+		/// See <see cref="ClassName"/>.
+		/// </summary>
+		public string LayoutName { get; set; }
+
+		/// <summary>
+		/// Phase 3 (rich-text named character styles): the project's available CHARACTER-type style names
+		/// the per-WS editor offers when restyling a selection (sourced by the composer from the project's
+		/// styles — <c>Cache.LangProject.StylesOC</c> filtered to character styles). Empty when no
+		/// stylesheet is reachable or the field is not a styleable text row; the style picker affordance is
+		/// then suppressed. The host seam: a settable list the composer populates at compose time (like
+		/// <see cref="ClassName"/>/<see cref="LayoutName"/>), keeping this FwAvalonia layer LCModel-free.
+		/// A test can supply its own list directly.
+		/// </summary>
+		public IReadOnlyList<string> AvailableNamedStyles { get; set; } = Array.Empty<string>();
+
+		/// <summary>
+		/// Phase 4 (rich-text per-run writing-system retag): the project's available writing systems
+		/// (stable IETF tag + display name) the per-WS editor offers when retagging a selection — sourced
+		/// by the composer from <c>Cache</c> (analysis + vernacular writing systems). Empty when no
+		/// writing-system list is reachable or the field is not a retaggable text row; the WS picker
+		/// affordance is then suppressed. The host seam: a settable list the composer populates at compose
+		/// time (like <see cref="AvailableNamedStyles"/>), keeping this FwAvalonia layer LCModel-free. A
+		/// test can supply its own list directly.
+		/// </summary>
+		public IReadOnlyList<RegionWritingSystemOption> AvailableWritingSystems { get; set; }
+			= Array.Empty<RegionWritingSystemOption>();
 
 		/// <summary>
 		/// For a <see cref="RegionFieldKind.Custom"/> row (winforms-free-lexeme-editor.md D1): the

@@ -12,8 +12,10 @@ using System.Xml;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
@@ -79,6 +81,12 @@ namespace SIL.FieldWorks.XWorks
 		// today only the legacy-dialog launcher seam (this view is the sanctioned WinForms
 		// carve-out; the pane itself stays WinForms-free).
 		private RegionEditorServices m_regionEditorServices;
+		// advanced-entry-view: the per-project home of the sparse view-definition override patches that
+		// drive the Avalonia surface's per-field Field Visibility / Move Field commands. Lazily built from
+		// the project ConfigurationSettings folder; the Avalonia surface reads it at Compose and the gear
+		// menu writes it. The legacy WinForms DataTree path NEVER touches this — it keeps its Inventory
+		// store untouched.
+		private ViewDefinitionOverrideStore m_viewOverrideStore;
 		// 13.4: the approved baseline-adapter ids — the ONLY routes allowed to drive hidden legacy
 		// infrastructure while Avalonia is active. Keep in sync with the region manifest's
 		// allowedAdapters (openspec/changes/lexical-edit-avalonia-migration/region-manifest.md);
@@ -224,6 +232,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// ITEM 2 (invalid-edit-on-navigate UX): the host's response when <see cref="Settle"/> rolled
+		/// back a pending lexical edit because it failed validation. The data was already rolled back
+		/// safely; this only tells the user WHY, so a cleared-required-field edit is not silently lost
+		/// on navigate/close. The host is the sanctioned WinForms carve-out (the Avalonia pane stays
+		/// WinForms-free), so the warning uses the standard WinForms MessageBox over this control's form.
+		/// </summary>
+		private void ShowInvalidEditRolledBackWarning(IReadOnlyList<string> reasons)
+		{
+			if (reasons == null || reasons.Count == 0 || IsDisposed)
+				return;
+			var message = string.Format(
+				System.Globalization.CultureInfo.CurrentCulture,
+				FwAvaloniaStrings.EditDiscardedInvalidFormat,
+				string.Join(Environment.NewLine, reasons));
+			MessageBox.Show(FindForm(), message, FwAvaloniaStrings.EditDiscardedInvalidTitle,
+				MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		/// <summary>
 		/// The ordering-sensitive teardown of the Avalonia surface plumbing — this is the ONE
 		/// place that ordering lives. Teardown order matters: stop the event/notification
 		/// plumbing FIRST so the settle's commit/rollback PropChanged cannot re-enter a dying
@@ -237,6 +264,7 @@ namespace SIL.FieldWorks.XWorks
 				m_avaloniaEntryForm.RegionEditCompleted -= OnAvaloniaRegionEditCompleted;
 			m_regionEditContext.DetachDeactivateHook();
 			m_regionEditContext.DetachUndoGuard();
+			m_regionEditContext.InvalidEditRolledBack = null;
 			m_avaloniaRefreshController?.Dispose();
 			SettleRegionEdits();
 			m_regionEditContext.Clear();
@@ -629,6 +657,11 @@ namespace SIL.FieldWorks.XWorks
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
 			m_regionEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
+			// ITEM 2 (invalid-edit-on-navigate UX): when Settle rolls back a pending edit because it
+			// failed validation (e.g. the required lexeme form was cleared, then the user navigated
+			// away), tell the user WHY rather than discarding it silently. The rollback still happens
+			// (the safe close that keeps the open undo task from stranding); we only surface the reason.
+			m_regionEditContext.InvalidEditRolledBack = ShowInvalidEditRolledBackWarning;
 			// The guard only hooks THIS window's undo stack — it cannot reach other windows' stacks,
 			// so Ctrl+Z in another window while this one holds an open session would still re-enter
 			// the write lock. Mitigate by settling whenever this view's top-level window deactivates
@@ -718,7 +751,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				composed = FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
-					services: EnsureRegionEditorServices());
+					services: EnsureRegionEditorServices(), overrides: ResolveViewOverride);
 				if (composed != null)
 				{
 					region = composed.Model;
@@ -760,7 +793,8 @@ namespace SIL.FieldWorks.XWorks
 				wsTag => LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(Cache, wsTag),
 				GetPersistedExpansionState, PersistExpansionState,
 				OnRegionMenuRequested, OnRegionLinkRequested,
-				new FwTsStringClipboard(Cache.WritingSystemFactory));
+				new FwTsStringClipboard(Cache.WritingSystemFactory),
+				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
 		}
 
 		/// <summary>
@@ -915,7 +949,11 @@ namespace SIL.FieldWorks.XWorks
 				// the fallback so a materialization failure never costs the user the menu.
 				try
 				{
-					var items = XCoreMenuBridge.BuildMenuItems(window, idArray);
+					// advanced-entry-view: retarget the per-field Field Visibility / Move Field commands
+					// to the project override layer for the Avalonia surface; every other command (Help,
+					// inserts, writing-system menu, ...) keeps its normal mediator dispatch.
+					var interceptor = BuildOverrideCommandInterceptor(request.Field);
+					var items = XCoreMenuBridge.BuildMenuItems(window, idArray, interceptor);
 					if (items.Count > 0)
 					{
 						m_avaloniaEntryForm.ShowContextMenu(items);
@@ -934,6 +972,152 @@ namespace SIL.FieldWorks.XWorks
 			catch (Exception e)
 			{
 				Logger.WriteError("Region context menu failed.", e);
+			}
+		}
+
+		// advanced-entry-view: the per-(class, layout) override file lives in this project's
+		// ConfigurationSettings folder (canonical-view-definition-design.md Layer 2). Built lazily and
+		// reused; one store per view instance, so it caches the patches it has loaded.
+		private ViewDefinitionOverrideStore ViewOverrideStore
+		{
+			get
+			{
+				if (m_viewOverrideStore == null && Cache?.ProjectId?.ProjectFolder != null)
+				{
+					m_viewOverrideStore = new ViewDefinitionOverrideStore(
+						LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder));
+				}
+
+				return m_viewOverrideStore;
+			}
+		}
+
+		// The resolver the composer calls for each compiled (class, layout); null result = shipped
+		// definition. A load failure is logged, not fatal — compose then uses the shipped definition.
+		private ViewDefinitionOverride ResolveViewOverride(string className, string layoutName)
+			=> ViewOverrideStore?.TryGet(className, layoutName,
+				(path, error) => Logger.WriteError("Failed to load view-definition override '" + path
+					+ "'; using the shipped definition.", error));
+
+		/// <summary>
+		/// advanced-entry-view: builds the interceptor that retargets the per-field Field Visibility and
+		/// Move Field commands to the project override layer for the Avalonia surface. Returns null
+		/// (intercept nothing — every command keeps its normal mediator dispatch) when the clicked row
+		/// carries no (class, layout) context, e.g. the first-slice fallback rows; that keeps the legacy
+		/// behavior intact when the override layer cannot be addressed.
+		/// </summary>
+		private Func<ChoiceBase, RegionMenuItem> BuildOverrideCommandInterceptor(LexicalEditRegionField field)
+		{
+			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
+				|| ViewOverrideStore == null)
+			{
+				return null;
+			}
+
+			var templateId = ViewDefinitionOverrideEditor.StripRuntimeSuffix(field.StableId);
+			// Locate the clicked node in the field's OWN compiled model (with any current override
+			// already applied), so visibility checkmarks and move enablement reflect the live state.
+			ViewNodeLocation location = null;
+			try
+			{
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(field.ObjectHvo, out var fieldObj))
+				{
+					var model = FullEntryRegionComposer.CompileForObject(Cache, fieldObj, field.LayoutName,
+						ResolveViewOverride);
+					if (model != null)
+						location = ViewDefinitionOverrideEditor.LocateTarget(model, templateId);
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Resolving the field's override target failed; the gear-menu field "
+					+ "commands fall back to the legacy path for this row.", e);
+				return null;
+			}
+
+			if (location == null)
+				return null; // unknown/stale target: leave commands on the legacy path rather than guess.
+
+			return choice =>
+			{
+				switch (choice.HelpId)
+				{
+					case "CmdAlwaysVisible":
+						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Always);
+					case "CmdIfData":
+						return VisibilityItem(choice, field, templateId, location, ViewVisibility.IfData);
+					case "CmdNormallyHidden":
+						return VisibilityItem(choice, field, templateId, location, ViewVisibility.Never);
+					case "CmdDataTree-MoveFieldUp":
+						return MoveItem(choice, field, location, up: true);
+					case "CmdDataTree-MoveFieldDown":
+						return MoveItem(choice, field, location, up: false);
+					default:
+						return null; // not a field command: keep its normal mediator dispatch.
+				}
+			};
+		}
+
+		// A Field Visibility menu item: checked when it is the field's current visibility, executes the
+		// SetVisibility override mutation (idempotent — re-choosing the current value is a harmless write).
+		private RegionMenuItem VisibilityItem(ChoiceBase choice, LexicalEditRegionField field,
+			string templateId, ViewNodeLocation location, ViewVisibility target)
+		{
+			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var isChecked = location.Visibility == target;
+			return new RegionMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
+				execute: () => ApplyFieldVisibility(field, templateId, target));
+		}
+
+		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
+		private RegionMenuItem MoveItem(ChoiceBase choice, LexicalEditRegionField field,
+			ViewNodeLocation location, bool up)
+		{
+			var label = XCoreMenuBridge.StripAccelerator(choice.GetDisplayProperties().Text);
+			var canMove = up ? location.CanMoveUp : location.CanMoveDown;
+			return new RegionMenuItem(label, isEnabled: canMove, isChecked: false, children: null,
+				execute: canMove ? (Action)(() => ApplyMoveField(field, location, up)) : null);
+		}
+
+		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
+		private void ApplyFieldVisibility(LexicalEditRegionField field, string templateId, ViewVisibility target)
+		{
+			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
+				visibility: target);
+			MutateOverrideAndRefresh(field, op);
+		}
+
+		// Writes a ReorderChildren op on the field's PARENT (the sibling order with this field swapped one
+		// position) into the project override and recomposes. A no-op when the move is not possible.
+		private void ApplyMoveField(LexicalEditRegionField field, ViewNodeLocation location, bool up)
+		{
+			var moved = ViewDefinitionOverrideEditor.ComputeMovedOrder(location.SiblingOrder, location.Index, up);
+			if (moved == null || string.IsNullOrEmpty(location.ParentStableId))
+				return; // first/last/only sibling, or a root-level row with no parent to reorder.
+			var op = new ViewOverrideOperation(ViewOverrideOperationKind.ReorderChildren,
+				location.ParentStableId, childOrder: moved);
+			MutateOverrideAndRefresh(field, op);
+		}
+
+		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and recomposes the
+		// Avalonia region so the change is visible immediately. The legacy DataTree/Inventory is untouched.
+		private void MutateOverrideAndRefresh(LexicalEditRegionField field, ViewOverrideOperation op)
+		{
+			try
+			{
+				var store = ViewOverrideStore;
+				if (store == null)
+					return;
+
+				var existing = store.TryGet(field.ClassName, field.LayoutName)
+					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
+				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
+				store.Save(merged);
+				RefreshAvaloniaRegion();
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Applying the field override failed.", e);
 			}
 		}
 
@@ -1004,14 +1188,69 @@ namespace SIL.FieldWorks.XWorks
 
 			if (targetHvo == 0)
 				return;
+
+			// Targeting hardening (Task B): the legacy command handlers act on m_dataEntryForm.CurrentSlice,
+			// so the adapter must point CurrentSlice at the slice bound to the clicked row's object. A first
+			// pass over the already-realized slices handles the common case (small sequences build their
+			// slices instantly). When the target lives inside an UNREALIZED DummyObjectSlice (a sequence with
+			// >= DataTree.kInstantSliceMax items builds lazy placeholders whose Object is the OWNER, not the
+			// target), no real slice carries the target hvo yet — realize the lazy slices and retry rather
+			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
+			// mutate the wrong object or, for Merge's class guard, silently fail.
+			if (TrySetCurrentSliceForHvo(targetHvo))
+				return;
+
+			if (RealizeLazySlicesAndRetry(targetHvo))
+				return;
+
+			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
+			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
+			// command). Clear it so command handlers see "no current slice" and no-op, and log so the
+			// degradation is diagnosable from the field rather than only in a debugger.
+			m_dataEntryForm.CurrentSlice = null;
+			Logger.WriteEvent(string.Format(
+				"Region menu command adapter found no DataTree slice for target hvo {0}; CurrentSlice was "
+				+ "cleared so the command no-ops rather than mis-targeting another object.", targetHvo));
+		}
+
+		// Points CurrentSlice at the (already-realized) slice whose bound object is targetHvo. Returns
+		// false when no realized slice matches (the target may still be inside an unrealized dummy).
+		private bool TrySetCurrentSliceForHvo(int targetHvo)
+		{
 			foreach (var sliceObj in m_dataEntryForm.Slices)
 			{
-				if (sliceObj is Slice slice && slice.Object != null && slice.Object.Hvo == targetHvo)
+				if (sliceObj is Slice slice && slice.IsRealSlice && slice.Object != null
+					&& slice.Object.Hvo == targetHvo)
 				{
 					m_dataEntryForm.CurrentSlice = slice;
-					break;
+					return true;
 				}
 			}
+			return false;
+		}
+
+		// Forces every lazy DummyObjectSlice to become real, then retries the hvo match. A dummy stands
+		// in for a run of objects in a sequence and reports its OWNER as its Object, so the target hvo
+		// cannot match until the dummy is realized into the per-object slices. DataTree.FieldAt(i)
+		// realizes the slice at index i in place (replacing the dummy); we walk by index because the
+		// collection mutates as dummies expand.
+		private bool RealizeLazySlicesAndRetry(int targetHvo)
+		{
+			try
+			{
+				for (var i = 0; i < m_dataEntryForm.Slices.Count; i++)
+				{
+					if (m_dataEntryForm.Slices[i] is Slice slice && !slice.IsRealSlice)
+						m_dataEntryForm.FieldAt(i); // realizes the dummy at i in place
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Realizing lazy DataTree slices for region command targeting failed.", e);
+				return false;
+			}
+
+			return TrySetCurrentSliceForHvo(targetHvo);
 		}
 
 		// Viewing parity (11.8): expansion state persists per header stable id — in-session through the
@@ -1036,6 +1275,39 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			var key = "LexEditExpansion:" + stableId;
 			m_propertyTable.SetProperty(key, expanded ? "1" : "0", PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
+		// Viewing parity (Task C2): the label/value splitter width persists per tool — in-session
+		// through the host's remembered field, ACROSS sessions through a PropertyTable local setting,
+		// mirroring the expansion-persistence pattern above and the legacy slice-splitter behavior
+		// (the former host-only field was process-scoped and lost on shutdown). Keyed by tool so each
+		// detail tool keeps its own column width. Returns null when nothing has been persisted yet,
+		// so the view falls back to the density default.
+		private string LabelColumnWidthKey
+			=> "LexEditLabelColumnWidth:" + m_propertyTable?.GetStringProperty("currentContentControl", string.Empty);
+
+		private double? GetPersistedLabelColumnWidth()
+		{
+			var stored = m_propertyTable?.GetStringProperty(LabelColumnWidthKey, null,
+				PropertyTable.SettingsGroup.LocalSettings);
+			if (string.IsNullOrEmpty(stored))
+				return null;
+			// Invariant culture so a width written under one locale parses under another.
+			return double.TryParse(stored, System.Globalization.NumberStyles.Float,
+				System.Globalization.CultureInfo.InvariantCulture, out var width) && width > 0
+				? (double?)width
+				: null;
+		}
+
+		private void PersistLabelColumnWidth(double width)
+		{
+			if (m_propertyTable == null || width <= 0)
+				return;
+			var key = LabelColumnWidthKey;
+			m_propertyTable.SetProperty(key,
+				width.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				PropertyTable.SettingsGroup.LocalSettings, false);
 			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
