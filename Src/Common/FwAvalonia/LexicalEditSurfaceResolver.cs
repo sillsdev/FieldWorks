@@ -27,10 +27,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public static class LexicalEditSurfaceResolver
 	{
-		private static readonly string[] SupportedAvaloniaToolNames =
+		// Stage 2.2: tool support now comes from an app-wide registry rather than a hardcoded array. The
+		// default registry is seeded with the tools that ship with Avalonia support, so the static
+		// convenience methods below keep their exact original behavior.
+		private static readonly LexicalEditSurfaceRegistry DefaultRegistry =
+			LexicalEditSurfaceRegistry.CreateDefault();
+
+		// Tools whose BROWSE/table surface can render on the Avalonia owned table (Stage 3 product
+		// wiring). Kept separate from the edit-surface registry because the browse table is a distinct
+		// surface; both are gated by the same `UIMode = New` preference.
+		// - "lexiconEdit": the Lexicon Edit tool's left Entries pane (the primary requested target;
+		//   its currentContentControl is the tool value "lexiconEdit", same as the right edit pane).
+		// - "lexiconBrowse": the standalone Lexicon > Browse tool.
+		private static readonly string[] SupportedAvaloniaBrowseToolNames =
 		{
 			"lexiconEdit",
-			"lexiconEditPopup"
+			"lexiconBrowse"
 		};
 
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>
@@ -48,16 +60,34 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			bool? overrideEnabled = null,
 			string uiMode = null,
 			string currentToolName = null)
+			=> Resolve(DefaultRegistry, overrideEnabled, uiMode, currentToolName);
+
+		/// <summary>
+		/// Registry-aware resolution (Stage 2.2): tool support comes from <paramref name="registry"/> rather
+		/// than a hardcoded list, so a host can register additional tools without editing this type. A null
+		/// registry uses the shipped default. Same precedence as the static overload: tool gate first, then
+		/// explicit override, then the persisted UI-mode preference.
+		/// </summary>
+		public static LexicalEditSurface Resolve(
+			LexicalEditSurfaceRegistry registry,
+			bool? overrideEnabled = null,
+			string uiMode = null,
+			string currentToolName = null)
 		{
-			if (!SupportsAvaloniaForTool(currentToolName))
-			{
+			registry = registry ?? DefaultRegistry;
+			return ResolveFromPreference(registry.SupportsAvalonia(currentToolName), overrideEnabled, uiMode);
+		}
+
+		// The single surface-precedence implementation shared by the edit (Resolve) and browse
+		// (ResolveBrowse) gates: a closed tool gate is always WinForms; otherwise an explicit override
+		// wins; otherwise the persisted UI-mode preference decides.
+		private static LexicalEditSurface ResolveFromPreference(bool toolGateOpen, bool? overrideEnabled, string uiMode)
+		{
+			if (!toolGateOpen)
 				return LexicalEditSurface.WinForms;
-			}
 
 			if (overrideEnabled.HasValue)
-			{
 				return overrideEnabled.Value ? LexicalEditSurface.Avalonia : LexicalEditSurface.WinForms;
-			}
 
 			return string.Equals(uiMode, NewUIMode, StringComparison.OrdinalIgnoreCase)
 				? LexicalEditSurface.Avalonia
@@ -68,11 +98,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			=> surface == LexicalEditSurface.Avalonia ? NewUIMode : LegacyUIMode;
 
 		public static bool SupportsAvaloniaForTool(string currentToolName)
+			=> DefaultRegistry.SupportsAvalonia(currentToolName);
+
+		/// <summary>
+		/// Resolves the surface for a BROWSE/table tool (Stage 3). Unlike <see cref="SupportsAvaloniaForTool"/>
+		/// a blank/unknown tool does NOT opt in — the Avalonia browse table is enabled only for explicitly
+		/// listed browse tools, so unrelated browse surfaces keep the legacy <c>BrowseViewer</c>.
+		/// </summary>
+		public static LexicalEditSurface ResolveBrowse(
+			bool? overrideEnabled = null,
+			string uiMode = null,
+			string currentToolName = null)
+			=> ResolveFromPreference(SupportsAvaloniaBrowseForTool(currentToolName), overrideEnabled, uiMode);
+
+		/// <summary>Whether the named browse/table tool is approved for the Avalonia owned table.</summary>
+		public static bool SupportsAvaloniaBrowseForTool(string currentToolName)
 		{
 			if (string.IsNullOrWhiteSpace(currentToolName))
-				return true;
+				return false;
 
-			foreach (var toolName in SupportedAvaloniaToolNames)
+			foreach (var toolName in SupportedAvaloniaBrowseToolNames)
 			{
 				if (string.Equals(toolName, currentToolName, StringComparison.OrdinalIgnoreCase))
 					return true;

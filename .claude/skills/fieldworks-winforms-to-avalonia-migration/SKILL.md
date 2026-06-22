@@ -34,6 +34,7 @@ top) for the decision, the why, and the gotchas. Quick map:
 | Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/ISeams.cs` | `references/seam-catalog.md` |
 | Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Region/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md §6 |
 | Dialog ownership across the WinForms/Avalonia boundary | `openspec/changes/lexical-edit-avalonia-migration/dialog-ownership.md` | §7 |
+| Headless integration-test harness (scenario/workflow drivers + real-clerk layer) | `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`, `Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs` | architecture-patterns.md §13 |
 
 ## Workflow
 
@@ -66,7 +67,12 @@ off — it is the per-region definition of done.
 7. **Prove parity.** Build the evidence bundle defined in
    `references/parity-evidence.md` (semantic + visual + workflow lanes).
    Apply `fieldworks-semantic-render-parity` and
-   `fieldworks-uia2-parity-testing`.
+   `fieldworks-uia2-parity-testing`. **Front-and-center: write headless
+   integration tests that walk the surface's real scenarios/workflows**
+   (filter → clear, select → detail follows, edit → refresh, navigate) via the
+   harness (architecture-patterns.md §13) — at the surface layer
+   (`FwAvaloniaTests`) and, for domain claims like real list narrowing/undo, the
+   real-clerk layer (`xWorksTests`). These replace deferred "live verification."
 8. **Localize.** Apply `fieldworks-localization-review`; field labels go
    through the StringTable lane, product messages through
    `FwAvaloniaStrings.resx`.

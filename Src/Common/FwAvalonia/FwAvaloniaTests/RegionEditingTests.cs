@@ -49,6 +49,13 @@ namespace FwAvaloniaTests
 		public int CommitCount;
 		public int CancelCount;
 
+		/// <summary>The text edits actually CAPTURED by a Commit (those staged since the last commit/cancel
+		/// boundary) — models "commit captures staged, cancel discards" so tests can assert WHICH value was
+		/// committed, not merely that a commit happened.</summary>
+		public readonly List<(string Field, string Ws, string Value)> CommittedTextEdits
+			= new List<(string, string, string)>();
+		private int _stagedBoundary;
+
 		public bool IsOpen => TextEdits.Count + OptionEdits.Count > 0 && CommitCount == 0 && CancelCount == 0;
 
 		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
@@ -71,9 +78,21 @@ namespace FwAvaloniaTests
 
 		public IReadOnlyList<string> Validate() => ValidateResult;
 
-		public void Commit() => CommitCount++;
+		public void Commit()
+		{
+			// Capture everything staged since the last boundary — that is what this commit "writes".
+			for (var i = _stagedBoundary; i < TextEdits.Count; i++)
+				CommittedTextEdits.Add(TextEdits[i]);
+			_stagedBoundary = TextEdits.Count;
+			CommitCount++;
+		}
 
-		public void Cancel() => CancelCount++;
+		public void Cancel()
+		{
+			// Discard everything staged since the last boundary — a cancelled session writes nothing.
+			_stagedBoundary = TextEdits.Count;
+			CancelCount++;
+		}
 	}
 
 	/// <summary>

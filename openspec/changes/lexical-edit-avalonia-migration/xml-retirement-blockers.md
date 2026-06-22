@@ -75,7 +75,11 @@ Status update (2026-06-15, `avalonia-multi-writing-system-text-foundation`):
   of "show hidden fields". The 2026-06-12 pass also fixed two infrastructure blockers that had
   been hiding valid custom rows on deep/nested surfaces: the composer depth backstop now allows
   the shipped extended-note example path, and the imported detail inventory now resolves the
-  `LexSense-Pictures` part instead of classifying it as unresolved. **Deferred:** editable non-list reference custom fields (if product
+  `LexSense-Pictures` part — as a `<seq field="Pictures" layout="Normal">` rendering each `CmPicture`
+  via its own detail layout (the standard owned-sequence idiom). This corrects the earlier malformed
+  `editor="picture"` form, which cast the owning `LexSense` to `ICmPicture` and crashed the legacy
+  DataTree; the seq form is crash-free and lets the composer walk into each picture's fields
+  (including custom fields). **Deferred:** editable non-list reference custom fields (if product
   needs them), `StText` editing, and the `<generate>` compile-time expansion (9.2/9.3), which
   remains a `generated-content-dropped` Warning in the importer and is now the main B1 gap for
   content that depends on generated `jtview` lanes rather than the detail-surface placeholder.

@@ -49,6 +49,27 @@ bundle contract provenance:
 Headless and desktop are different lanes: a headless smoke test is never a
 UIA2 baseline, and desktop workflow claims need realized-window evidence.
 
+### 2a. Headless integration scenarios (the prioritized default)
+
+Behavior and workflow claims are proven **first** by Avalonia **headless
+integration tests that script real user scenarios** — not deferred to manual
+"live verification," and not a unit test that pokes a handler. Two fidelities
+(pick by what the claim needs), both on `./test.ps1`:
+
+- **Surface-workflow** (`FwAvaloniaTests`): co-host the owned control(s) in a
+  headless window and drive them through page-object drivers (filter, clear,
+  select, type, commit), asserting observable state. Proves control + seam
+  round-trips (e.g. select-row→detail-follows, edit→cell-refresh).
+- **Real-domain** (`xWorksTests`): a real `RecordClerk` over an in-memory
+  LCModel cache, asserting the real list narrows/reorders/restores — the
+  domain-fidelity claim that used to require running FLEx.
+
+Harness + how it scales across phases: architecture-patterns.md §13 and
+`openspec/changes/shared-editable-virtualized-table/headless-integration-harness.md`.
+A surface is not "ready for manual testing" until its key workflows have headless
+scenario coverage; manual/UIA2 desktop runs then confirm pixel/native-tree axes
+the headless lane cannot.
+
 ## 3. Evidence language (claim-downgrading taxonomy)
 
 When verifying task checkboxes or PR claims, scan the evidence text for
@@ -60,6 +81,11 @@ these words and downgrade the claim accordingly:
 - **skipped** — the test exists but did not run; no evidence.
 - **future / planned** — work item, not evidence.
 - **partial** — name exactly which axes are proven and which are not.
+- **live-verification-only / manual-only** — a behavior/workflow claim resting
+  solely on running FLEx by hand. Downgrade it: nearly all such claims (filter,
+  sort, selection, edit→refresh, navigation, list narrowing) are provable by a
+  headless integration scenario (§2a). Manual is the supplement for pixel/native
+  axes, not the primary proof.
 
 A checked task whose evidence says any of the above is a review blocker:
 either the evidence improves or the checkbox is unchecked.

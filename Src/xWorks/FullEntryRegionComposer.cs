@@ -641,9 +641,11 @@ namespace SIL.FieldWorks.XWorks
 			// banner) build the identical collapsible header row; one helper keeps them from drifting.
 			private void AddHeader(ViewNode node, ICmObject obj, int depth, string label)
 			{
-				Fields.Add(new LexicalEditRegionField(StableId(node, obj), label, node.Field, node.WritingSystem,
-					RegionFieldKind.Header, node.EditorClassification, node.AutomationId, node.LocalizationKey,
-					node.Routing, null, null, null, isEditable: false, indent: depth,
+				// Header row construction is shared with the thin mapper (task 18.11) — one construction
+				// site so the two projectors cannot drift. The composer passes its LCModel-enriched values.
+				Fields.Add(RegionStructureProjector.BuildHeaderField(
+					StableId(node, obj), label, node.Field, node.WritingSystem, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, depth,
 					isCollapsible: true, isInitiallyExpanded: node.Expansion != ViewExpansion.Collapsed,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo));
 			}
@@ -662,7 +664,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(label))
 					AddHeader(node, obj, depth, label);
 
-				var childDepth = string.IsNullOrEmpty(label) ? depth : depth + 1;
+				var childDepth = RegionStructureProjector.ChildIndent(label, depth);
 				foreach (var child in node.Children)
 					Walk(child, obj, childDepth);
 
@@ -719,6 +721,9 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					case RegionEditorCategory.MorphTypeChooser:
 						WalkMorphTypeChooser(node, obj, depth);
+						break;
+					case RegionEditorCategory.MsaChooser:
+						WalkMsaChooser(node, obj, depth);
 						break;
 					case RegionEditorCategory.Summary:
 						// Summary slices are section header rows in legacy too.
@@ -1012,6 +1017,50 @@ namespace SIL.FieldWorks.XWorks
 						return false;
 					}
 					form.MorphTypeRA = morphType;
+					return true;
+				};
+			}
+
+			// The sense grammatical-info (MSA) chooser — the editable lane for editor="msaReferenceComboBox"
+			// (legacy MSAReferenceComboBoxSlice). Offers the project's Parts of Speech; selecting one
+			// find-or-creates the matching MSA on the OWNING ENTRY and assigns it to THIS sense via the
+			// liblcm SandboxMSA setter (which owns the stem/affix find-or-create + old-MSA cleanup), inside
+			// the fenced session. Only the Part-of-Speech level is offered here; feature-structure "Details"
+			// (the legacy "Specify…" dialog) rides the later dialog-launcher work.
+			private void WalkMsaChooser(ViewNode node, ICmObject obj, int depth)
+			{
+				var posList = _cache.LangProject.PartsOfSpeechOA;
+				if (!(obj is ILexSense sense) || posList == null)
+				{
+					WalkOtherField(node, obj, depth);
+					return;
+				}
+
+				var options = BuildPossibilityOptions(posList, flat: false);
+				var selected = (sense.MorphoSyntaxAnalysisRA as IMoStemMsa)?.PartOfSpeechRA?.Guid.ToString();
+
+				var stableId = StableId(node, obj);
+				Fields.Add(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, posList)));
+
+				OptionSetters[stableId] = key =>
+				{
+					if (!Guid.TryParse(key, out var guid)
+						|| !_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(guid, out var pos))
+						return false;
+					// Reuse the legacy domain path: liblcm find-or-creates the right MSA (stem/affix per the
+					// sense's morph type) on the owning entry, assigns it, and drops the now-unused old MSA.
+					var generic = new SandboxGenericMSA
+					{
+						MsaType = sense.GetDesiredMsaType(),
+						MainPOS = pos
+					};
+					if (sense.MorphoSyntaxAnalysisRA is IMoStemMsa existingStem)
+						generic.FromPartsOfSpeech = existingStem.FromPartsOfSpeechRC;
+					sense.SandboxMSA = generic;
 					return true;
 				};
 			}
@@ -2515,10 +2564,21 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wasOpen = IsOpen;
 			EnsureOpen();
-			var staged = setter();
-			if (!staged && !wasOpen)
-				Cancel();
-			return staged;
+			try
+			{
+				var staged = setter();
+				if (!staged && !wasOpen)
+					Cancel();
+				return staged;
+			}
+			catch
+			{
+				// A throwing setter must not strand an empty fence holding the UOW write lock with
+				// refreshes gated; roll back the session this call opened, then rethrow.
+				if (!wasOpen)
+					Cancel();
+				throw;
+			}
 		}
 	}
 }

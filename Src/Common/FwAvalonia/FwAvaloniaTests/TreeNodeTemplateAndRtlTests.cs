@@ -21,13 +21,13 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 6.4 — TreeView spike: multiple translations per sense rendered as compact
+	/// Task 6.4 — TreeView node-template density: multiple translations per sense rendered as compact
 	/// multi-writing-system node templates. Per the control-selection matrix, stock TreeView is
-	/// acceptable only for bounded trees (it does not virtualize); this spike proves the node
-	/// template density story it was kept for.
+	/// acceptable only for bounded trees (it does not virtualize); this fixture is the kept proof of the
+	/// node-template density story.
 	/// </summary>
 	[TestFixture]
-	public class SenseTreeSpikeTests
+	public class SenseTreeNodeTemplateTests
 	{
 		private sealed class SenseNode
 		{

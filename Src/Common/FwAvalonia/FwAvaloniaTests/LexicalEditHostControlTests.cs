@@ -13,7 +13,9 @@ namespace FwAvaloniaTests
 	{
 		private static bool ShouldBypass(bool hostContainsFocus, int keyCode)
 		{
-			var method = typeof(LexicalEditHostControl).GetMethod(
+			// Stage 2.1: the directional-key interop now lives in the reusable base host
+			// (AvaloniaRegionHostControl), shared by every region host — not the lexical-edit subclass.
+			var method = typeof(AvaloniaRegionHostControl).GetMethod(
 				"ShouldBypassWinFormsDirectionalKeyHandling",
 				BindingFlags.NonPublic | BindingFlags.Static);
 			Assert.That(method, Is.Not.Null, "test seam missing");

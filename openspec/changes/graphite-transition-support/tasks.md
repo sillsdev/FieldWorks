@@ -1,5 +1,10 @@
 # Tasks
 
+> **⚠ SUPERSEDED (2026-06-15)** by the full-removal decision (program §11.1). Tasks below that
+> implement *retention/warn/sunset* are historical. **Salvaged & still live:** 1.3 and 1.4 (the
+> G0–G3 classifier + its font fixtures) — repurposed to enumerate dropped scripts for the
+> document-and-notify obligation; and the `DefaultFontFeatures` keep-for-OpenType-export rule.
+
 ## 1. Policy and Inventory (M0 → M1)
 
 - [ ] 1.1 Adopt the Path A decision and record the Path B pivot-trigger threshold with the product owner (design.md Open Question 1); confirm the M2 definition ("Avalonia default for Lexical Edit + majority of `RecordEditView` consumers") as the sunset milestone.

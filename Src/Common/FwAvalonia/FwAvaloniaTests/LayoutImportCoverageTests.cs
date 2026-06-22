@@ -651,6 +651,8 @@ namespace FwAvaloniaTests
 				{ "LexReference-ShowSingleReference", 1 },
 				{ "LexSense-HeavySummary", 1 },
 				{ "LexSense-ImportResidue", 1 },
+				// (LexSense `Pictures` now resolves to the seq-based LexSense-Detail-Pictures part, so it is
+				// no longer in the unresolvable set — see LexSenseParts.xml.)
 				{ "MoAlloAdhocProhib-Message", 1 },
 				{ "MoEndoCompound-HeadLast", 2 },
 				{ "MoExoCompound-ToMsa", 1 },

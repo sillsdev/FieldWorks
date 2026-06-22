@@ -336,86 +336,6 @@ function Get-RepoStamp {
 	}
 }
 
-function Test-IsNet48CompatibleProject {
-	param([string]$ProjectPath)
-
-	try {
-		[xml]$projectXml = Get-Content -LiteralPath $ProjectPath -Raw
-		$frameworks = @()
-		foreach ($propertyGroup in $projectXml.Project.PropertyGroup) {
-			if ($propertyGroup.TargetFramework) {
-				$frameworks += [string]$propertyGroup.TargetFramework
-			}
-			if ($propertyGroup.TargetFrameworks) {
-				$frameworks += ([string]$propertyGroup.TargetFrameworks -split ';')
-			}
-		}
-
-		$frameworks = $frameworks |
-			Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-			ForEach-Object { $_.Trim() }
-
-		if ($frameworks.Count -eq 0) {
-			Write-Host "Skipping Avalonia project with no TargetFramework metadata: $ProjectPath" -ForegroundColor Yellow
-			return $false
-		}
-
-		return $frameworks -contains 'net48'
-	}
-	catch {
-		Write-Host "Skipping Avalonia project whose target frameworks could not be read: $ProjectPath" -ForegroundColor Yellow
-		return $false
-	}
-}
-
-function Get-AvaloniaProjectList {
-	param(
-		[string]$RepoRoot,
-		[bool]$IncludeTests
-	)
-
-	$projects = New-Object System.Collections.Generic.List[string]
-
-	function Add-ProjectIfPresent {
-		param([string]$Path)
-		if (-not [string]::IsNullOrWhiteSpace($Path) -and (Test-Path $Path) -and -not $projects.Contains($Path)) {
-			if (Test-IsNet48CompatibleProject -ProjectPath $Path) {
-				$projects.Add($Path)
-			}
-			else {
-				Write-Host "Skipping non-net48 Avalonia project: $Path" -ForegroundColor Yellow
-			}
-		}
-	}
-
-	# Shared Avalonia library on this branch.
-	Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvalonia/FwAvalonia.csproj")
-
-	# Optional module projects (e.g. Src/LexText/AdvancedEntry.Avalonia/*.csproj).
-	$srcRoot = Join-Path $RepoRoot "Src"
-	if (Test-Path $srcRoot) {
-		$moduleProjects = Get-ChildItem -Path $srcRoot -Recurse -Filter *.csproj -ErrorAction SilentlyContinue |
-			Where-Object {
-				$dirName = $_.Directory.Name
-				$dirName -match '\.Avalonia$'
-			}
-		foreach ($project in $moduleProjects) {
-			Add-ProjectIfPresent $project.FullName
-		}
-	}
-
-	# Optional preview host. Net8-only hosts are intentionally skipped while this branch targets net48.
-	Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHost.csproj")
-
-	# Avalonia test project only when tests are already being built/run.
-	if ($IncludeTests) {
-		Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvalonia/FwAvaloniaTests/FwAvaloniaTests.csproj")
-		Add-ProjectIfPresent (Join-Path $RepoRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHostTests/FwAvaloniaPreviewHostTests.csproj")
-	}
-
-	return $projects.ToArray()
-}
-
 function Get-BuildStampPath {
 	param(
 		[Parameter(Mandatory = $true)][string]$RepoRoot,
@@ -838,37 +758,13 @@ try {
 			$stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
 			$stampObject | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $stampPath -Encoding UTF8
 
+			# Avalonia projects (including the XAML-compiled FwAvaloniaDialogs) build as first-class
+			# members of the main traversal above — in parallel and in dependency order — so there is
+			# no separate serial Avalonia build pass here. Iterate on a single project afterward with
+			# `dotnet build <project>.csproj` or the in-solution Visual Studio build.
 			Write-Host ""
 			Write-Host "[OK] Build complete!" -ForegroundColor Green
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
-
-			Write-Host ""
-			Write-Host "Building net48-compatible Avalonia projects present on this branch..." -ForegroundColor Cyan
-
-			$avaloniaProjects = Get-AvaloniaProjectList -RepoRoot $PSScriptRoot -IncludeTests ($BuildTests -or $RunTests)
-			if ($avaloniaProjects.Count -gt 0 -and (Test-Path $projectPath)) {
-				$normalizedMainProjectPath = (Resolve-Path $projectPath).Path
-				$avaloniaProjects = @($avaloniaProjects | Where-Object { (Resolve-Path $_).Path -ne $normalizedMainProjectPath })
-			}
-			if ($avaloniaProjects.Count -eq 0) {
-				Write-Host "No additional net48-compatible Avalonia projects were found on this branch." -ForegroundColor Yellow
-			}
-			else {
-				foreach ($avaloniaProject in $avaloniaProjects) {
-					Invoke-MSBuild `
-						-Arguments @($avaloniaProject, '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", '/v:minimal', '/nologo') `
-						-Description ("Avalonia project: {0}" -f [System.IO.Path]::GetFileNameWithoutExtension($avaloniaProject))
-				}
-			}
-
-			$previewHostPath = Join-Path $PSScriptRoot "Src/Common/FwAvaloniaPreviewHost/FwAvaloniaPreviewHost.csproj"
-			if (-not (Test-Path $previewHostPath)) {
-				Write-Host "Avalonia preview host is not present on this branch." -ForegroundColor Yellow
-				Write-Host "The existing host lives on '010-advanced-entry-preview-prototype' and is net8-based, so it is outside this branch's net48-only policy." -ForegroundColor Yellow
-			}
-			elseif (-not (Test-IsNet48CompatibleProject -ProjectPath $previewHostPath)) {
-				Write-Host "Avalonia preview host exists but is not net48-compatible, so it was skipped." -ForegroundColor Yellow
-			}
 		}
 
 		if ($BuildInstaller -or $BuildPatch) {

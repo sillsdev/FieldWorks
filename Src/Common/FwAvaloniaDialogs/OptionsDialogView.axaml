@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.OptionsDialogView"
+             x:DataType="vm:OptionsDialogViewModel"
+             MinWidth="460" MinHeight="380">
+	<!-- The Tools → Options dialog: the four real tabs (General, Plugins, Privacy, Updates) wired to the
+	     product OptionsState. Visible text is localized via FwAvaloniaDialogsStrings (.resx); AutomationIds
+	     stay stable + nonlocalized. Combo item *values* are settings codes (language/channel/mode), not UI. -->
+	<DockPanel Margin="8">
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="6" Margin="0,8,0,0">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="Options.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="Options.Cancel"/>
+		</StackPanel>
+
+		<TabControl AutomationProperties.AutomationId="Options.Tabs">
+			<!-- General -->
+			<TabItem Header="{x:Static res:FwAvaloniaDialogsStrings.GeneralTab}">
+				<StackPanel Margin="6" Spacing="4">
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.UiLanguageLabel}"/>
+					<ComboBox ItemsSource="{Binding UiLanguages}" SelectedItem="{Binding SelectedUiLanguage}"
+					          MinWidth="220" HorizontalAlignment="Left"
+					          AutomationProperties.AutomationId="Options.General.UiLanguage"/>
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.UiLanguageNote}"
+					           TextWrapping="Wrap" Opacity="0.8"/>
+
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.LexicalEditUiLabel}" Margin="0,6,0,0"/>
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<ComboBox ItemsSource="{Binding UiModes}" SelectedItem="{Binding SelectedUiMode}"
+						          MinWidth="160"
+						          AutomationProperties.AutomationId="Options.General.UiMode"/>
+						<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Apply}"
+						        Command="{Binding ApplyModeCommand}" IsEnabled="{Binding CanApplyMode}"
+						        AutomationProperties.AutomationId="Options.General.ApplyMode"/>
+					</StackPanel>
+
+					<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.AutoOpenLastProject}"
+					          IsChecked="{Binding AutoOpenLastProject}" Margin="0,6,0,0"
+					          AutomationProperties.AutomationId="Options.General.AutoOpenLastProject"/>
+				</StackPanel>
+			</TabItem>
+
+			<!-- Plugins -->
+			<TabItem Header="{x:Static res:FwAvaloniaDialogsStrings.PluginsTab}">
+				<Panel Margin="6">
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.PluginsUnavailableNote}"
+					           TextWrapping="Wrap" IsVisible="{Binding !PluginsAvailable}"
+					           AutomationProperties.AutomationId="Options.Plugins.Unavailable"/>
+					<ListBox ItemsSource="{Binding Plugins}" IsVisible="{Binding PluginsAvailable}"
+					         AutomationProperties.AutomationId="Options.Plugins.List">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="vm:PluginOption">
+								<StackPanel>
+									<CheckBox Content="{Binding Name}" IsChecked="{Binding Installed}"/>
+									<TextBlock Text="{Binding Description}" Opacity="0.8" Margin="24,0,0,4"/>
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Panel>
+			</TabItem>
+
+			<!-- Privacy -->
+			<TabItem Header="{x:Static res:FwAvaloniaDialogsStrings.PrivacyTab}">
+				<StackPanel Margin="6" Spacing="4">
+					<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.PrivacyNote}" TextWrapping="Wrap"/>
+					<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.OkToPing}"
+					          IsChecked="{Binding OkToPingBasicUsageData}"
+					          AutomationProperties.AutomationId="Options.Privacy.OkToPing"/>
+				</StackPanel>
+			</TabItem>
+
+			<!-- Updates (Windows only) -->
+			<TabItem Header="{x:Static res:FwAvaloniaDialogsStrings.UpdatesTab}"
+			         IsVisible="{Binding UpdatesTabVisible}">
+				<StackPanel Margin="6" Spacing="4">
+					<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.AutoUpdate}"
+					          IsChecked="{Binding AutoUpdate}"
+					          AutomationProperties.AutomationId="Options.Updates.AutoUpdate"/>
+					<StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding AutoUpdate}">
+						<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.UpdateChannelLabel}"
+						           VerticalAlignment="Center"/>
+						<ComboBox ItemsSource="{Binding UpdateChannels}" SelectedItem="{Binding SelectedUpdateChannel}"
+						          MinWidth="160"
+						          AutomationProperties.AutomationId="Options.Updates.Channel"/>
+					</StackPanel>
+					<TextBlock Text="{Binding SelectedChannelDescription}" TextWrapping="Wrap" Opacity="0.8"
+					           IsVisible="{Binding AutoUpdate}"/>
+				</StackPanel>
+			</TabItem>
+		</TabControl>
+	</DockPanel>
+</UserControl>

@@ -45,6 +45,38 @@ modernization, cutover) lands last.
 
 ---
 
+## 1a. Post-review revision status (2026-06-15)
+
+This plan was reviewed **stage-by-stage by 13 independent subagents** (one per stage), each grounded
+in repo inspection + targeted web research. Full evidence is in `reviews/stage-NN-*.md`; the
+cross-comparison is in `reviews/00-cross-comparison-synthesis.md`. **Read the synthesis before
+creating epics.** Headlines:
+
+- **The 13 stages and their ordering are confirmed sound** — including the contested calls (dialogs
+  before shell; the .NET 10 + Avalonia 12 jump kept late). The late runtime jump is in fact *forced*:
+  Avalonia 12 dropped `netstandard2.0`/net48 (repo pins **Avalonia 11.3.17** for exactly this reason),
+  and the one-CLR rule means net48 can't be left until the WinForms host (Stage 11) is gone.
+- **Sizing is the main problem.** Eight stages (**3, 6, 7, 8, 9, 10, 11, 13**) are too coarse for a
+  single epic and decompose into the gated sub-epics mapped in synthesis §6. JIRA epics should be
+  created from that sub-epic map, not from the one-row-per-stage table in §4.
+- **Several "build" items are already built** (JSON view-def serializer, 10k-row read-only browse,
+  custom-field rendering, host bridge, command-bridge seam, chooser virtualization, AutomationId
+  convention). Stages 1–4 are largely *finish / re-home / generalize*, not *build*.
+- **Stage 9 is the gravity well and the #1 correctness risk:** its scope text is too narrow for what
+  Stages 6b and 7A depend on (in-memory presentation cache / `CachePair`, hit-test combo editing,
+  aligned interlinear grid). Expanded below; decomposed in synthesis §6.
+- **Conflicts/double-bookings resolved** in synthesis §3 (surface registry → Stage 2 only; dictionary
+  preview → Stage 10 only; Find/Replace + Styles dialogs → Stage 9-gated, not junior Stage 5; native
+  Graphite + Views deletion → Stage 13, not 10/9; ViewsInterfaces split to keep `IVwCacheDa`).
+- **Missing dependency edges** (synthesis §7), most importantly **`S9 → S6`**.
+- **A user decision must be re-opened — Graphite vs. Awami Nastaliq** — see §11.
+
+The per-stage prose in §6 below is **retained as the scope baseline**; where a review supersedes it,
+the change is captured in the synthesis and flagged inline. Sub-epic decomposition (synthesis §6) is
+the authoritative structure for JIRA.
+
+---
+
 ## 2. Guiding principles (research-grounded; some already chosen by the repo)
 
 1. **Strangler Fig, never big-bang.** Keep shipping FieldWorks on Windows; build Avalonia
@@ -225,6 +257,17 @@ Turn the lexical-edit one-off into a reusable, documented platform a mid/junior 
 - **Validation:** a junior+Claude migrates one trivial surface (e.g. a single simple dialog) end-to-end
   using only the kit + runbook, with a green parity bundle. That is the gate.
 
+> **Post-review (reviews/stage-01).** Deliver **two kits**, not one: the **region/IR** scaffolding (feeds
+> Stages 4/6) *and* an **MVVM-dialog** scaffolding (CommunityToolkit.Mvvm + compiled bindings + first
+> `.axaml`; feeds Stage 5's ~200-dialog reservoir). The repo today has **zero `.axaml` and no
+> CommunityToolkit.Mvvm** — this stage is the program's first XAML/MVVM adoption, so that toolchain (and a
+> dialog-flavored evidence bundle without an IR semantic anchor) must be explicit here, not assumed in
+> Stage 5. The validation gate (migrate a dialog) currently exercises only the dialog kit — add a region
+> mini-surface so both are proven. "Freeze the seam catalog" → **"version + amendment protocol"** (it still
+> grows via Stages 3/9). Mark the region template **provisional** until Stage 4 closes (its exemplar gates
+> are still Partial). Much is already reusable (`FwFieldControls`/`FwOptionPicker` are surface-agnostic;
+> AutomationId convention + `<RootNamespace>` already in place) — this is generalization, not green-field.
+
 #### Stage 2 — Coexistence shell spine & host contracts  *(senior)*
 Generalize the host bridge and surface switch beyond Lexical Edit so any surface can coexist.
 - Generalize `LexicalEditHostControl` → a reusable `WinFormsAvaloniaControlHost`-based region host.
@@ -237,6 +280,17 @@ Generalize the host bridge and surface switch beyond Lexical Edit so any surface
   contracts) without yet replacing the shell.
 - Apply `fieldworks-ui-wiring-review`.
 
+> **Post-review (reviews/stage-02).** Feasibility is high and the riskiest dependency is **already retired**:
+> the build ships on net48 + Avalonia 11.3.17 with `WinFormsAvaloniaControlHost` in production. Five of six
+> deliverables are **generalizations of existing code**, not net-new. **This stage — not Stage 1 — owns** the
+> app-wide surface registry (resolve the Stage 1/2 double-booking) **and a living surface-census artifact**
+> (the asset Stage 8's straggler-sweep presumes). **Name the exact ownership ports** Stage 2 extracts
+> (lifetime, main-window, active-window registry, dialog owner, dispatcher, shutdown, modal state) and declare
+> them the **single source of truth shared with Stage 11** — reuse `IUiScheduler`/`IRegionLifetime`, don't
+> redefine. Disambiguate "dual-run build" as a **CI build matrix**, not just the `UIMode` preference. Fix
+> `LexicalEditSurfaceResolver` so unregistered tools default to **legacy/blocked, never silent Avalonia**. All
+> Stage-2 theming/host code must be **Av12-delta-localized** (theming APIs change 11→12).
+
 #### Stage 3 — Shared editable virtualized grid/tree control  *(senior)*
 The identified off-the-shelf gap; build it once, many surfaces depend on it.
 - Spike & decide: owned virtualizing list/table over `VirtualizingStackPanel` vs. fully-owned realization
@@ -246,6 +300,18 @@ The identified off-the-shelf gap; build it once, many surfaces depend on it.
 - Prove against **large fixtures**: 10k-row browse, 253-slice detail, at **100% and 150% DPI**, within the
   measured legacy performance budget.
 - **Do not** build on TreeDataGrid (display-only, licensing). Record the decision in the manifest.
+
+> **Post-review (mis-sized — reviews/stage-03).** The **tree half is largely already solved**: the detail
+> surface is a flat indented stack (already rendered by `LexicalEditRegionView`, budget tops at 253 slices —
+> below where virtualization matters) and the unbounded chooser is **already virtualized** (`FwOptionPicker`).
+> Re-scope to **"editable virtualized *table* + indented row chrome."** The table is the real, unsolved work
+> (`LexicalBrowseView` is **read-only**; legacy `BrowseViewer`/`BulkEditBar`/`FilterBar` are ~15K LOC of
+> editing/bulk-edit/filter). Ship **consumer-gated sub-milestones**: **3a read@scale** (unblocks 7/8 display)
+> → **3b editable cells** (unblocks Stage 4 — top priority) → **3c bulk-edit/checkbox/filter** (unblocks 8).
+> The no-TreeDataGrid call is now **stronger** (FOSS repo archived 2025-10; editing behind a commercial
+> license). Promote **custom AutomationPeer** to a first-class item (zero exist in-repo; virtualized UIA
+> enumeration is non-trivial). Make the spike measure **scroll/expand on production fixtures**, not just
+> realization count.
 
 ### Track II — Surface migration (parallel, hand-off-friendly)
 
@@ -257,6 +323,19 @@ Close the open Stage-0 items so this region is 100% green and becomes the copy-m
 - **JSON view-definition** serialization + override migrator + runtime-XML-disable for the gated surface (9.x).
 - Path-3 bundle completeness across all entry scenarios; region manifest fully green.
 
+> **Post-review (scope stale — reviews/stage-04).** Several items are already built: the **JSON serializer
+> exists** (`ViewDefinitionJsonSerializer.cs`; the open 9.x work is the **override migrator** +
+> **runtime-XML-disable** + override fixtures), the **browse table is built and 10k-row-proven** (open work
+> = re-home onto the Stage-3 control at 150% DPI), and **custom fields / reference vectors / pictures /
+> pronunciation already render** in the 2524-line `FullEntryRegionComposer`. Reword items 1 & 4 as
+> **"re-home / finish," not "build."** The real heart is **latency + 150% DPI budgets** and flipping the
+> manifest §6 rows (Layout/Validation/Accessibility/Performance) from **Partial** (today's verdict: "Default
+> stays Legacy"). Add an explicit **exemplar-quality exit criterion** — unify the dual projector and document
+> `RegionViewingServices` + the plugin burn-down as the **copy-me contract** — or Stages 6/8 will clone a
+> 2524-line composer. Disambiguate the exit gate: **"manifest green + enable-able"** ≠ "enabled by default"
+> (the latter wrongly inherits Stage 10/13 default-path validation). "Rich references" = reference vectors,
+> **not** rich text; StText/ORC editing is **Stage 9**.
+
 #### Stage 5 — Global dialogs & choosers  *(junior-friendly, 4–6 parallel streams)*
 ~200 dialogs; mostly mechanical, file-creating, low merge contention — the main hand-off reservoir.
 - `Src/FwCoreDlgs/` first (most reused): Font, Styles, Apply-Style, Writing-System setup, New-Project
@@ -267,12 +346,33 @@ Close the open Stage-0 items so this region is 100% green and becomes the copy-m
   by the host form (`dialog-ownership.md`); new Avalonia dialog *content* is fine inside the host.
 - Each dialog: parity bundle + AutomationIds + localization review.
 
+> **Post-review (modal tension resolved — reviews/stage-05).** The "no Avalonia modal windows during
+> coexistence" rule does **not** block Stage 5. The mechanism is the **content/chrome split**: replace a
+> dialog's *body* with an Avalonia view hosted via `WinFormsAvaloniaControlHost` inside a thin WinForms
+> `Form` that still owns `ShowDialog`/modality. Make this **host-wrapped-body contract the first rule of the
+> epic** (juniors must not write `new Window().ShowDialog()` — the unsupported path). `S5 → S11` is a
+> *finishing* edge (Stage 11 later strips the WinForms wrapper), not a block. **Re-tier the backlog:**
+> Tier A junior (small, Views-free), Tier B mid (New-Project wizard, WS-setup, Project-props, Valid-Chars),
+> **Tier C → Stage 9** (`FwFindReplaceDlg`, `FwStylesDlg` host `IVwRootSite`/`SimpleRootSite` — *not* junior
+> work). The dialog-authoring stack (CommunityToolkit.Mvvm, compiled bindings, dialog scaffolding) must come
+> from Stage 1; allow a code-behind exception so proven owned controls embed in XAML dialogs without rewrite.
+
 #### Stage 6 — Lexicon completion + Grammar/Morphology detail  *(mid)*
 Detail-view-heavy areas that reuse region/composer + plugin registry directly.
 - Lexicon (`Src/LexText/Lexicon`, `LexTextControls`) remaining slices/launchers (MSA, references, examples).
 - Morphology (`Src/LexText/Morphology`): inflection features/classes, phonological environments, categories.
 - Grammar detail editors via `FdoUi` editors (POS, inflection, phonological features).
 - Custom slice classes → plugin registry with burn-down tracking.
+
+> **Post-review (mis-bundled across 3 substrates — reviews/stage-06).** Split into **6a** Lexicon detail
+> (mid; truly reuses region/composer + plugin registry — references are already `LaneAbsorbed`), **6b**
+> Morphology/grammar **document editors** (`InflAffixTemplateSlice`, `RuleFormulaSlice`×4,
+> `PhEnvStrRepresentationSlice`, `InterlinearSlice` — these are **Views-based document surfaces; re-parent
+> under Stage 9**), and **6c** the four `FdoUi` editors (**bulk-edit-bar controls on the browse surface →
+> move to Stage 8**, gated on Stage 3). **Add the missing edges** `S9 → S6` (the plan's single biggest graph
+> error), `S3 → S6`, `S5 → S6` (every MSA/feature launcher opens a dialog — row is 6, dialog body is 5).
+> Promote `FwDialogLauncherField` to a first-class `RegionFieldKind`. Extend the existing
+> `LexemeEditorBurnDownTests` census to morphology/grammar layouts to make burn-down concrete.
 
 #### Stage 7 — Texts & Words / Interlinear + Discourse  *(senior; depends on Stage 9)*
 The most complex non-shell surface; Views-engine-heavy document rendering.
@@ -282,10 +382,28 @@ The most complex non-shell surface; Views-engine-heavy document rendering.
 - Import wizards (SFM, LinguaLinks) — can be split to Stage-5-style hand-off.
 - Depends on the managed document engine (Stage 9) and shared tables (Stage 3).
 
+> **Post-review (mis-sized; 5 surfaces, 1–2 orders of magnitude apart in Views coupling — reviews/stage-07).**
+> Split: **7A interlinear + Sandbox** (~27K lines; the deepest Views construction in FieldWorks — private
+> `VwCacheDa` via `CachePair`, hit-test combo editing, aligned grid; **senior; hard-blocks on extended Stage
+> 9** — confirm 9.0 covers these constructs), **7B constituent chart** (`ConstituentChartLogic` is ~5.5K lines
+> of **pure logic that ports as-is**; rendering is ~1.8K lines → **Stage 3 grid**, not Stage 9), **7C
+> concordance/statistics** (`UserControl`, no `IVwEnv` in host — Stage-5-class), **7D import wizards**
+> (junior/MVVM per §11.3). Only RawTextPane (plain StText) is clearly inside Stage 9 as currently scoped.
+> Move 7C/7D off the Stage-9 critical path; rebalance 7B toward Stage 3.
+
 #### Stage 8 — Notebook, Lists, Dictionary-config UI, remaining tools  *(mid)*
 - Notebook area, Lists editors, bulk-edit surfaces.
 - Dictionary configuration dialogs (`DictionaryConfigurationDlg` family) and config preview wiring.
 - Remaining utilities/tools; sweep for stragglers via the surface registry.
+
+> **Post-review (grab-bag — reviews/stage-08).** Split **8a** Notebook/Lists/bulk-edit (region/composer +
+> shared grid; **bulk-edit `BulkEditBar` is the real engineering item, gated on Stage 3**) and **8b**
+> dictionary-config dialogs (already MVP with `IDictionary*View` + `*Controller` — unusually **MVVM-ready**;
+> use the Stage-5 idiom, not the region pattern). **Move "config preview wiring" out — the preview is Gecko
+> and belongs to Stage 10** (`DictionaryConfigurationDlg` hard-requires `GeckoWebBrowser`); the XHTML/CSS
+> generators are framework-agnostic (reclassify non-UI). Add **Stage 3 and Stage 9** to the dependency row.
+> The "straggler sweep" presumes a **living surface-census artifact** that does not exist yet — hoist it
+> into Stage 1/2 (see Stage 2 post-review).
 
 ### Track III — The long pole (native engine; senior, parallel with Track II)
 
@@ -304,6 +422,19 @@ multi-WS editing is already managed — `FwMultiWsTextField`.)
   any residual native call survives transitionally.
 - Forbidden-symbol audit stays green on every migrated surface.
 
+> **Post-review (decompose; scope is too narrow — synthesis §3/§6).** This is the program's long pole and
+> is **not one stage**. Decompose: **9.0 spike + G0–G3 coverage scan (gate)** → **9.1 multi-paragraph
+> `StText`** → **9.2 owned selection/caret model** (the ~14.4K-LOC `IVwSelection` replacement) →
+> **9.3 owned `TextLayout`-based layout/box model** → **9.4 embedded objects / tables / footnotes /
+> overlays**. Reframe scope as the **DELTA over the landed field foundation** (`FwMultiWsTextField` is stock
+> `TextBox`-per-WS with bolt-on bidi/grapheme/`ITsString` write-back — *not* a managed engine; it explicitly
+> deferred `StText` and ORC editing). **Critically, add the constructs Stage 7A needs** that the bullets
+> above omit: a secondary in-memory presentation cache/decorator editing model (replacing
+> `CachePair`/`VwCacheDa`), icon/picture-anchored hit-test combo editing, and the aligned multi-line
+> interlinear grid layout — include a Sandbox/interlinear scenario in the 9.0 spike or 7A stalls late.
+> Build-vs-extend: extend the foundation for 9.1; **build** an owned selection/layout layer for 9.2+ (open
+> Avalonia bidi/caret `TextBox` defects don't scale to documents). Native `Src/views` deletion is **Stage 13**.
+
 #### Stage 10 — Browser/PDF & dictionary-preview replacement; **Graphite full removal**  *(senior)*
 - Replace Gecko/XULRunner-based dictionary preview & PDF export (`GeckoWebBrowser`, `GeckofxHtmlToPdf`).
 - Managed print/preview parity.
@@ -311,6 +442,19 @@ multi-WS editing is already managed — `FwMultiWsTextField`.)
   `graphite-transition-support`'s per-WS "classify-and-warn" compromise. Remove the native Graphite engine
   (`GraphiteEngineClass`) and its references from the codebase, not just from the default path. Gated on
   Stage 9 proving HarfBuzz/managed shaping covers the formerly-Graphite scripts.
+
+> **Post-review (split + correct — reviews/stage-10).** Split **10A** (Gecko/PDF/preview) and **10B**
+> (Graphite). They have different gates and blast radius. **10A:** the preview is generated as managed
+> XHTML/CSS (`LcmXhtmlGenerator`/`CssGenerator`) — Gecko only *displays* it, so replacement is "render this
+> HTML" (Avalonia WebView in Av12, or CoreWebView2); **decouple the process-wide XULRunner bootstrap first**
+> (`FieldWorks.cs` hard-fails without it); PDF is one call site → `CoreWebView2.PrintToPdfAsync`. **10B:**
+> the `RenderEngineFactory` Graphite branch is shared by **legacy** WinForms+Views surfaces, so **native
+> deletion must wait for Stage 13** (deleting at 10 breaks legacy); Stage 10B only removes Graphite from the
+> *managed/Avalonia* path and runs the **G0–G3 classifier** as pre-removal evidence. **Keep
+> `DefaultFontFeatures`** (LCModel-owned, reused for OpenType export — do not delete). Add superseded banners
+> to `graphite-transition-support`'s four files. ⚠ See §11.1 — the **Awami Nastaliq** gap may block "full
+> removal" outright. Note Av12's WebView (10A's preferred impl) creates an **`S10 ↔ S12` ordering tension**
+> to resolve.
 
 ### Track IV — Shell, runtime modernization & cutover
 
@@ -327,6 +471,19 @@ multi-WS editing is already managed — `FwMultiWsTextField`.)
 - Retire `FlexUIAdapter` default behavior; route mediator/PropertyTable through the typed command bridge.
 - Migrate screens area-by-area into the Avalonia main-screen registry.
 
+> **Post-review (a second program in one row — reviews/stage-11).** Decompose into **11a** app-lifetime/
+> windowing (critical path — re-homing the `Form dialogOwner` seams threaded through ~15 lifecycle methods;
+> `xWindow.cs` *is* a 2,498-line `Form`), **11b** Main.xml typed-shell compiler (the *easy* part — reuses the
+> `ViewDefinition/` pipeline; types already have runtime peers), **11c** command/state bridge (the seams
+> already exist in `ISeams.cs`), **11d** navigation/panes (owned controls replacing SilSidePane/MultiPane/
+> CollapsingSplitContainer — comparable to the Stage-3 build), **11e** screen registry + area-by-area, **11f**
+> startup/installer/default-switch + FlexUIAdapter (~3.2K lines) removal. State the **Stage 2/11 split
+> explicitly** (2 = ports + contract design; 11 = implementation + shell-scope + default switch — *not*
+> redefinition). Add a **dialog-modality re-host task in 11a** to flip Stage-5 content from WinForms-owned to
+> `Window`-owned at the switch. Enumerate which areas must be Avalonia before the switch (Interlinear/Stage 7
+> is likely a legacy island). 11 code must be **Av12-delta-localized** (`XWindow : Form` + `Application.Run()`
+> pin the process to net48/Av11 through all of 11).
+
 #### Stage 12 — Runtime & toolchain modernization (.NET 10 + Avalonia 12)  *(senior)*
 The chartered "move to modern tools" jump, sequenced late by design.
 - Port the surviving managed codebase from **.NET Framework 4.8 → .NET 10** (WinForms-on-net48 host is gone
@@ -334,9 +491,21 @@ The chartered "move to modern tools" jump, sequenced late by design.
 - Bump **Avalonia 11.x → 12**; resolve breaking changes flagged during coexistence (new code was written
   Avalonia-12-ready to minimize this).
 - One CLR per process: this is a coordinated whole-process bump, not a per-project trickle. Land it behind
-  the green build/test/CI gate; retarget `net48`/`net8` multi-targeting in test projects accordingly
-  (apply `fieldworks-managed-netfx-review`).
+  the green build/test/CI gate (apply `fieldworks-managed-netfx-review`).
 - Prerequisite for cross-platform (net48 is Windows-only; .NET 10 is not).
+
+> **Post-review (synthesis §3/§5; reviews/stage-12).** The late, coordinated, one-CLR shape is **forced,
+> not just wise**: Avalonia 12 dropped `netstandard2.0`/net48 (repo pins **Avalonia 11.3.17** with an
+> in-repo comment to this effect), so the Av11→12 bump is *impossible* until the process leaves net48,
+> which can't happen until the WinForms host (Stage 11) is gone. Corrections: (1) the repo is **uniformly
+> net48 (130 projects, no net8 multi-targeting)** — this is a **single-target port**, not a "retarget
+> multi-targeting"; the `fieldworks-managed-netfx-review` net48-vs-net8/C#7.3 premise is itself stale
+> (repo defaults C#8). (2) Don't split net10 vs Av12 (coupled), but insert an **intermediate green
+> checkpoint: net10 + Avalonia 11.3.17** (legal — 11.3.x is netstandard2.0) to decouple the two biggest
+> risk sources. (3) **Add an explicit NUnit 3 → 4 deliverable** — Avalonia 12 headless requires NUnit 4
+> (repo pins NUnit 3.14.0 across ~40 test projects). (4) Restate "Av12-ready" as **"Av12-delta-localized"**:
+> confine unavoidable 11-only APIs (clipboard `IDataObject`→`IAsyncDataTransfer`, binding, focus, theming)
+> to named seams, enforced by a Stage 2/11 exit gate.
 
 #### Stage 13 — Final cutover, native decommission & cross-platform enablement  *(senior)*
 - Flip the global default to Avalonia after all region/shell manifests pass.
@@ -350,6 +519,20 @@ The chartered "move to modern tools" jump, sequenced late by design.
   build + headless + smoke. Held to this final stage by decision (2026-06-15) — no cross-platform validation
   cost is incurred earlier in the program.
 - Final cross-cutting gates: accessibility (Narrator/NVDA spot-checks), localization parity, performance.
+
+> **Post-review (five workstreams in one — reviews/stage-13).** Split **13a** flip + bake (flip `UIMode`
+> default; **WinForms stays as live rollback**, reversible), **13b** decommission (**irreversible deletion**,
+> gated on 13a's bake metric), **13c** cross-platform + final gates. The irreversible step must not share a
+> stage with the reversible one it rolls back to. **Correct the COM-retirement scope:** `ViewsInterfaces.cs`
+> defines render interfaces *alongside* `IVwCacheDa` (a **data-access** contract used by 45+ projects) —
+> **split it; keep data-access behind a seam, delete only render interfaces** (`ITsString` is already safe,
+> lives in `Src/Kernel`). Use a **leaf-first deletion runbook** (consumers → DetailControls/XMLViews →
+> RootSite → SimpleRootSite → ManagedVwDrawRootBuffered → ViewsInterfaces split → `Src/views` → render COM);
+> native Graphite deletes here too. `retire-linux-era-view-shims` lands **first** (preserves VwTextStore/
+> IViewInputMgr/ManagedVwDrawRootBuffered). **De-risk the cross-platform deferral within the decision:** run
+> the OS-portable `Avalonia.Headless` lane on Linux CI **from Stage 1**, lint Windows-only APIs as code is
+> written, stand up a Linux/macOS **compile-only** build at end of Stage 12, and budget an explicit
+> integration-debug sub-phase in 13c. Linux/macOS **packaging is net-new** (WiX6 is Windows-only).
 
 ---
 
@@ -400,7 +583,9 @@ skipped / future / partial* is a review blocker (`parity-evidence.md`).
 | Coexistence threading/focus/modality bugs | Med | Med | WinForms owns all modality until Stage 11; `dialog-ownership.md` rules; finalizer-safe sync context |
 | Scope drift / mixed PRs | Med | Med | `fieldworks-migration-scope-review`; one surface per PR; skill retrospective in same PR |
 | Shell migration timing pulled too early | Low | High | Gate 11 on enough of Stages 5–8; existing roadmap already defers shell |
-| HarfBuzz/managed shaping doesn't cover formerly-Graphite scripts | Med | High | Stage 9 spike verifies coverage *before* Stage 10 removes Graphite; removal gated on the spike result |
+| Graphite-only scripts (Awami Nastaliq) lose support — **accepted loss** (decision §11.1) | High (confirmed) | Med (mitigated by comms) | Stage 9.0 G0–G3 scan enumerates exact dropped scripts; **document + notify affected users with migration guidance** before removal ships (Stage 10B/13 deliverable); native deletion stays Stage 13 |
+| Stage 9 scope too narrow for Stage 7 interlinear/sandbox (in-memory cache, hit-test combo, aligned grid) | Med | High | Add interlinear/sandbox scenario to the Stage 9.0 spike; make the Stage 9↔7A engine seam explicit before freezing the 9 API |
+| Stage decomposition deferred — coarse epics hide critical-path bottlenecks | Med | Med | Create JIRA epics from the sub-epic map (synthesis §6), not the one-row-per-stage table; ship consumer-gated sub-milestones (esp. Stage 3a/3b/3c) |
 | .NET 10 / Avalonia 12 breaking changes ripple late | Med | Med | New code written Av12-ready; jump sequenced after WinForms is mostly gone so the port surface is smaller; `fieldworks-managed-netfx-review` |
 | Cross-platform regressions surface only at the end | Med | Med | Accepted tradeoff (held to Stage 13 by decision); headless tests are cross-platform-capable from Stage 1 to catch logic regressions early even though OS smoke is deferred |
 
@@ -409,7 +594,9 @@ skipped / future / partial* is a review blocker (`parity-evidence.md`).
 ## 10. JIRA structure suggestion
 
 - **1 program/initiative:** "FieldWorks → Avalonia complete migration."
-- **13 epics:** one per stage above.
+- **Epics: use the sub-epic map in `reviews/00-cross-comparison-synthesis.md` §6**, not the one-row-per-stage
+  table in §4. Eight stages (3, 6, 7, 8, 9, 10, 11, 13) decompose into gated sub-epics (e.g. 3a/3b/3c,
+  6a/6b/6c, 7A–7D, 9.0–9.4, 10A/10B, 11a–11f, 13a/13b/13c); the other five map 1:1.
 - **Issues under each epic:** one per surface/dialog/control, carrying the §7 Definition of Done as a
   checklist and the region-manifest fields as acceptance criteria.
 - **Labels:** `track-foundation | track-surfaces | track-longpole | track-shell`, `lead-junior|mid|senior`,
@@ -424,10 +611,18 @@ skipped / future / partial* is a review blocker (`parity-evidence.md`).
 
 ## 11. Decisions (resolved 2026-06-15)
 
-1. **Graphite → fully managed only.** Graphite is sunset and *removed* from the codebase (not warned),
-   superseding the per-WS compromise in `graphite-transition-support`. Complex-script shaping is
-   HarfBuzz/managed. Reflected in Stages 9 and 10; the Stage 9 spike must verify HarfBuzz coverage for
-   formerly-Graphite scripts before Stage 10 removes the engine.
+1. **Graphite → fully removed, fully managed only. RESOLVED 2026-06-15: accept the loss, document + notify.**
+   The Stage 9 review confirmed HarfBuzz covers the large majority of formerly-Graphite scripts (SIL itself
+   dropped Graphite from Charis/Doulos v7 in 2025) **except Graphite-only scripts such as Awami Nastaliq
+   (Urdu/Arabic Nastaliq), which have no OpenType/HarfBuzz path.** The decision is to **remove Graphite
+   entirely anyway** — no escape-hatch, no gating on an external Nastaliq solution. **Obligation incurred:**
+   the program must (a) run the Stage 9.0 LDML **G0–G3 coverage scan** (salvaged from
+   `graphite-transition-support`) to enumerate the **exact** dropped-script list and affected projects,
+   (b) **document** the dropped scripts and (c) **notify affected users with migration guidance** before the
+   removal ships. This user-comms deliverable is now part of Stage 10B / Stage 13, not optional. Engineering
+   sequencing unchanged: Stage 10B removes Graphite from the managed/Avalonia path; **native
+   `GraphiteEngineClass` deletion stays in Stage 13** (deleting earlier breaks *legacy* surfaces that still
+   use it during coexistence).
 2. **Cross-platform held to the final stage (13).** No Linux/macOS validation cost is incurred earlier;
    headless tests stay cross-platform-capable so logic regressions are still caught during the program.
 3. **New standalone dialogs/wizards use modern Avalonia MVVM — CommunityToolkit.Mvvm + compiled bindings —
@@ -442,10 +637,37 @@ skipped / future / partial* is a review blocker (`parity-evidence.md`).
    build time. The **owned writing-system-aware field controls** (`FwMultiWsTextField`, `FwOptionPicker`)
    are still reused *inside* dialogs wherever WS-aware text or chooser fields appear. Net rule:
    **region pattern for IR-driven surfaces; MVVM + compiled bindings for dialogs/wizards/shell.**
+   **RESOLVED 2026-06-15 — the XAML-compiler/MSBuild question is decided: yes, adopt Avalonia XAML +
+   CommunityToolkit.Mvvm.** To keep the documented "pure-C#, no XAML" guarantee of the **foundation**
+   project (`Src/Common/FwAvalonia`) intact, XAML/MVVM dialogs live in a **dedicated XAML-enabled project**
+   (e.g. `Src/Common/FwAvaloniaDialogs`), not in the foundation. That project enables the Avalonia XAML
+   compiler + `EnableDefaultAvaloniaItems` + compiled bindings (`x:CompileBindings`) and references
+   CommunityToolkit.Mvvm (added to `Directory.Packages.props`). The owned field controls remain consumable
+   from the foundation. The one-time MSBuild integration (proving Avalonia's XAML targets compose with the
+   repo's customized build on net48) is the **first task of Stage 1.2** and the gating spike for Stage 5 —
+   it is now unblocked (decision made), no longer "needs an owner decision."
 4. **Upgrade the look; keep the functionality.** Adopt a modernized **Fluent-based** ControlTheme rather
    than mimicking the legacy WinForms chrome. The contract is functional fidelity + density (asserted by
    the semantic/workflow/perf parity lanes); the visual lane permits an intentional restyle. This is the
    chartered UX upgrade, not a regression.
+5. **150% DPI parity deferred to post-100%-conversion (decided 2026-06-15).** During coexistence, DPI
+   problems are handled by the **WinForms fallback** (a user on a scaled display can run WinForms-only),
+   so 150% DPI mixed-mode parity is **not a coexistence/Stage-4 gate**. Full 150% DPI validation happens
+   once the app is fully Avalonia — there is then no mixed-mode WinForms-vs-Avalonia DPI surface to
+   reconcile, and it can be tested properly end-to-end. (Stage 4's exit stays "manifest green +
+   enable-able"; the DPI lane is explicitly out of that gate.)
+6. **Standard Avalonia input paths first; custom IME is "do not build unless there is no other way"
+   (decided 2026-06-15).** All text input rides the **stock Avalonia `TextBox`** (TSF on Windows, IBus on
+   Linux) + **libpalaso per-writing-system keyboard activation, including Keyman keyboards** — the platform
+   and Keyman do the input-method work. The managed `RegionImeCompositionState` composition model is
+   **forward foundation only and is consciously NOT wired** onto the live input path (**task 18.10 = will
+   not build** unless the standard path is *demonstrated* insufficient for a specific scenario, verified on
+   a real desktop with the relevant Keyman/IME keyboard). *Rationale:* FieldWorks' historical custom IME
+   (`VwTextStore`, the IBus handler) existed only because the native **Views** editing surface was
+   non-standard and couldn't receive platform input on its own; a standard control offloads that to the OS
+   + Keyman, so custom composition is unnecessary by default. **Document/Sandbox surfaces (Stages 7/9)
+   should likewise move toward standard input controls** where feasible (so they too inherit platform IME),
+   rather than re-creating a custom text store — a *later* goal, not now.
 
 ### Remaining open question (spike decides, not blocking epic creation)
 

@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					return new Memento(id, (focused as TextBox)?.CaretIndex ?? -1, verticalOffset);
 			}
 
-			return null;
+			return new Memento(null, -1, verticalOffset);
 		}
 
 		/// <summary>

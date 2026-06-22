@@ -646,7 +646,7 @@
 						</properties>
 						<obj field="PartOfSpeech" layout="Name"/>
 						<lit>&#32;</lit>
-						<obj field="MsFeatures" layout="publication"/>
+						<obj field="MsFeatures" layout="Browse"/>
 					</para>
 				</where>
 				<otherwise>
@@ -658,7 +658,7 @@
 						<lit translate="do not translate">&#32;&#32;(</lit>
 						<obj field="InflectionClass" layout="Abbreviation"/>
 						<lit translate="do not translate">)&#32;</lit>
-						<obj field="MsFeatures" layout="publication"/>
+						<obj field="MsFeatures" layout="Browse"/>
 					</para>
 				</otherwise>
 			</choice>

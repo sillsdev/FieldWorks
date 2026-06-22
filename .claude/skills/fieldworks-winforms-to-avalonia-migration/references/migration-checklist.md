@@ -63,6 +63,13 @@ definition of done. Items map to the workflow phases in SKILL.md.
 
 ## Phase 7 — Parity evidence
 
+- [ ] **Headless integration scenarios cover the surface's key workflows**
+      (filter → clear, select → detail follows, edit → commit → refresh,
+      navigate), driven via the harness (architecture-patterns.md §13) on
+      `./test.ps1` — surface layer in an Avalonia-headless assembly, plus the
+      real-clerk layer (`xWorksTests`) for domain claims like list narrowing/
+      sort/undo. No behavior/workflow claim left to "live verification" that a
+      headless scenario could prove (parity-evidence.md §2a / §3)
 - [ ] Path 3 bundle produced per scenario (see parity-evidence.md §1)
 - [ ] Semantic, visual, workflow, and performance lanes each prove their
       own axis; no lane substitutes for another

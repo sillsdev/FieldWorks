@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvaloniaDialogs (Stage 1.2 dialog-MVVM kit; decision 2026-06-15)
+
+		The dedicated XAML-enabled project for hand-authored Avalonia dialogs/wizards. Kept SEPARATE
+		from the pure-C# foundation (Src/Common/FwAvalonia) so the foundation keeps its documented
+		"independent of the Avalonia XAML compiler" guarantee; this project is where the XAML compiler
+		+ CommunityToolkit.Mvvm + compiled bindings live. Builds as a first-class member of the main
+		FieldWorks.proj traversal (in parallel, after its FwAvalonia dependency); restored via
+		FieldWorks.sln.
+
+		Targets net48 (Avalonia 11.3.x is the last line shipping netstandard2.0 — see
+		Directory.Packages.props). The first real consumer is the Tools->Options dialog.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work
+		     (localization-review.md GAP-L1). -->
+		<RootNamespace>FwAvaloniaDialogs</RootNamespace>
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<!-- Auto-include *.axaml as AvaloniaXaml items and compile XAML at build time. -->
+		<EnableDefaultAvaloniaItems>true</EnableDefaultAvaloniaItems>
+		<!-- Bindings are statically checked at build time (the key payoff of the MVVM decision). -->
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+	</ItemGroup>
+
+	<!-- Reuse the foundation's owned writing-system-aware field controls + product strings inside dialogs. -->
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
+	</ItemGroup>
+
+	<!-- The test project lives in the nested FwAvaloniaDialogsTests/ folder. Exclude it from this
+	     library's default SDK globbing so the library doesn't try to compile NUnit/Headless test code
+	     (mirrors FwAvalonia.csproj's exclusion of FwAvaloniaTests). -->
+	<ItemGroup>
+		<Compile Remove="FwAvaloniaDialogsTests/**/*.cs" />
+		<AvaloniaXaml Remove="FwAvaloniaDialogsTests/**/*.axaml" />
+	</ItemGroup>
+
+</Project>

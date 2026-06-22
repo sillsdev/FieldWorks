@@ -211,5 +211,9 @@
 		<!-- Skia-enabled headless rendering for visual parity frame capture (lexical-edit task 6.9).
 		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
 		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
+		<!-- MVVM for hand-authored Avalonia dialogs (Stage 1.2 decision 2026-06-15). 8.x ships
+		     netstandard2.0 source generators, so it works on net48; used only by the dedicated
+		     XAML-enabled FwAvaloniaDialogs project, not the pure-C# FwAvalonia foundation. -->
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 </Project>

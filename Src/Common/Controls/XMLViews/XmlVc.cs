@@ -5074,6 +5074,12 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class NodeChildrenDisplayCommand : NodeDisplayCommand
 	{
+		// Optional "part ref" node that called the part whose children we display. When non-null it is
+		// passed down as the caller so that child fragments (e.g. multilingual strings) can resolve
+		// attributes such as "ws" from it. This mirrors XmlVc's behavior where the "part" case is the
+		// one thing that calls ProcessChildren with a non-null caller.
+		readonly XmlNode m_caller;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NodeChildrenDisplayCommand"/> class.
@@ -5085,14 +5091,39 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="NodeChildrenDisplayCommand"/> class that
+		/// carries a caller (part ref) node down to the children being displayed.
+		/// </summary>
+		/// <param name="node">The node whose children are displayed.</param>
+		/// <param name="caller">The calling part ref node (may be null).</param>
+		/// ------------------------------------------------------------------------------------
+		public NodeChildrenDisplayCommand(XmlNode node, XmlNode caller)
+			: base(node)
+		{
+			m_caller = caller;
+		}
+
+		/// <summary>
+		/// The calling part ref node, or null if none was supplied.
+		/// </summary>
+		public XmlNode Caller
+		{
+			get { return m_caller; }
+		}
+
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
-			vc.ProcessChildren(Node, vwenv, hvo);
+			if (m_caller == null)
+				vc.ProcessChildren(Node, vwenv, hvo);
+			else
+				vc.ProcessChildren(Node, vwenv, hvo, m_caller);
 		}
 
 		internal override void DetermineNeededFields(XmlVc vc, int fragId, NeededPropertyInfo info)
 		{
-			DetermineNeededFieldsForChildren(vc, Node, null, info);
+			DetermineNeededFieldsForChildren(vc, Node, m_caller, info);
 		}
 
 		// Make it work sensibly as a hash key
@@ -5108,7 +5139,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public override bool Equals(object obj)
 		{
-			return base.Equals(obj) && obj is NodeChildrenDisplayCommand;
+			var other = obj as NodeChildrenDisplayCommand;
+			return other != null && base.Equals(obj) && other.m_caller == m_caller;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5122,7 +5154,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return base.GetHashCode() ^ (m_caller == null ? 0 : m_caller.GetHashCode());
 		}
 
 

@@ -374,6 +374,48 @@ namespace SIL.FieldWorks.XWorks
 				"the senses sequence renders a section header");
 		}
 
+		[Test]
+		public void Compose_GrammaticalInfo_IsEditablePosChooser_AndSetterFindsOrCreatesMsa()
+		{
+			IPartOfSpeech noun = null, verb = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var posFactory = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+				noun = posFactory.Create();
+				Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(noun);
+				noun.Name.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("Noun", Cache.DefaultAnalWs));
+				verb = posFactory.Create();
+				Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(verb);
+				verb.Name.set_String(Cache.DefaultAnalWs, TsStringUtils.MakeString("Verb", Cache.DefaultAnalWs));
+
+				var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				m_entry.MorphoSyntaxAnalysesOC.Add(msa);
+				msa.PartOfSpeechRA = noun;
+				m_entry.SensesOS[0].MorphoSyntaxAnalysisRA = msa;
+			});
+
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var gramInfo = composed.Model.Fields.SingleOrDefault(f =>
+				f.Field == "MorphoSyntaxAnalysis" && f.Kind == RegionFieldKind.Chooser
+				&& f.ObjectHvo == m_entry.SensesOS[0].Hvo);
+
+			Assert.That(gramInfo, Is.Not.Null, "the sense Grammatical Info slice composes as an editable POS chooser");
+			Assert.That(gramInfo.IsEditable, Is.True);
+			Assert.That(gramInfo.SelectedOptionKey, Is.EqualTo(noun.Guid.ToString()),
+				"the current MSA's part of speech is pre-selected");
+			Assert.That(gramInfo.Options.Any(o => o.Key == verb.Guid.ToString()), Is.True,
+				"the project's parts of speech are offered as options");
+
+			// Choosing a different POS find-or-creates the matching MSA on the entry and assigns it to THIS sense.
+			Assert.That(composed.EditContext.TrySetOption(gramInfo, verb.Guid.ToString()), Is.True);
+			composed.EditContext.Commit();
+
+			var resultMsa = m_entry.SensesOS[0].MorphoSyntaxAnalysisRA as IMoStemMsa;
+			Assert.That(resultMsa, Is.Not.Null, "the sense still has a stem MSA after the edit");
+			Assert.That(resultMsa.PartOfSpeechRA, Is.EqualTo(verb),
+				"the sense's grammatical info now points at the chosen part of speech");
+		}
+
 		// GAP 2: the legacy Lexeme Form slice's button is its slice TREE-NODE MENU — MoForm-Detail-
 		// AsLexemeForm (MorphologyParts.xml:219-221) binds menu="mnuDataTree-LexemeForm"
 		// (DataTreeInclude.xml:336-341: Show in Concordance / Swap with Allomorph / Convert to

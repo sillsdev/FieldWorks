@@ -30,15 +30,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// label/value right-click lanes) — text rows draw NO gear. The gear is reserved for the
 	/// "configure the supporting list" jump on chooser/vector rows; it never opens a menu.
 	/// </summary>
-	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider
+	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
+		// Teardown actions registered as each handler/subscription is wired, so a recycled or
+		// active-cell-deactivated field can detach EVERY handler (several capture closures over box,
+		// currentRich, clipboard) and release its flyouts — preventing the handler-closure leak on the
+		// editor path when VirtualizingStackPanel discards the container (Task 4).
+		private readonly List<Action> _teardown = new List<Action>();
+		private bool _disposed;
+
 		public FwMultiWsTextField(
 			LexicalEditRegionField field,
 			string automationId,
 			IRegionEditContext editContext,
 			Action<string> writingSystemFocused,
 			Action<RegionMenuRequest> menuRequested = null,
-			IFwClipboard clipboard = null)
+			IFwClipboard clipboard = null,
+			bool showWritingSystemAbbreviation = true)
 		{
 			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
@@ -92,12 +100,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// 14.1: the legacy ghost add-prompt is a watermark — it disappears the moment the
 					// user clicks in (focus), and reappears only if they leave without typing.
 					box.Watermark = field.GhostPrompt;
-					box.GotFocus += (s2, e2) => box.Watermark = string.Empty;
-					box.LostFocus += (s2, e2) =>
+					EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
+					EventHandler<Avalonia.Interactivity.RoutedEventArgs> ghostLost = (s2, e2) =>
 					{
 						if (string.IsNullOrEmpty(box.Text))
 							box.Watermark = field.GhostPrompt;
 					};
+					box.GotFocus += ghostGot;
+					box.LostFocus += ghostLost;
+					_teardown.Add(() => { box.GotFocus -= ghostGot; box.LostFocus -= ghostLost; });
 				}
 
 				// Section 13: a row with a legacy `contextMenu=` binding shows the SAME xCore-defined
@@ -105,20 +116,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// path), routed through the host bridge. Rows without one keep the local Copy menu.
 				if (menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId))
 				{
-					box.AddHandler(InputElement.PointerPressedEvent, (s2, e2) =>
+					EventHandler<PointerPressedEventArgs> menuPressed = (s2, e2) =>
 					{
 						if (!e2.GetCurrentPoint(box).Properties.IsRightButtonPressed)
 							return;
 						var screen = box.PointToScreen(e2.GetPosition(box));
 						menuRequested(new RegionMenuRequest(field, RegionMenuKind.ContextMenu, screen.X, screen.Y));
 						e2.Handled = true;
-					}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					};
+					EventHandler<ContextRequestedEventArgs> swallowContext = (s2, e2) => e2.Handled = true;
+					box.AddHandler(InputElement.PointerPressedEvent, menuPressed,
+						Avalonia.Interactivity.RoutingStrategies.Tunnel);
 					// 15.2: exactly ONE menu — drop the TextBox theme flyout (Cut/Copy/Paste, which
 					// opens from ContextRequested on right-button RELEASE) so only the bridged menu
 					// shows, and swallow the request so nothing else opens.
 					box.ContextFlyout = null;
-					box.AddHandler(Control.ContextRequestedEvent, (s2, e2) => e2.Handled = true,
+					box.AddHandler(Control.ContextRequestedEvent, swallowContext,
 						Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					_teardown.Add(() =>
+					{
+						box.RemoveHandler(InputElement.PointerPressedEvent, menuPressed);
+						box.RemoveHandler(Control.ContextRequestedEvent, swallowContext);
+					});
 				}
 				else
 				{
@@ -129,6 +148,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						await CopySelectionAsync(box, currentRich, clipboard);
 					};
 					box.ContextFlyout = new MenuFlyout { Items = { copyItem } };
+					// The flyout's MenuItem.Click closure captures box/clipboard; drop the flyout so the
+					// recycled cell does not retain them.
+					_teardown.Add(() => box.ContextFlyout = null);
 				}
 				// Both edits AND the per-row automation id (which RegionFocusMemory keys focus
 				// restore on) address the writing system by its unique IETF tag (WsTag): the
@@ -141,7 +163,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				if (editContext != null && field.IsEditable && value.CanEditRichText)
 				{
 					int? selectionAnchor = null;
-					box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+					EventHandler<KeyEventArgs> navKeyDown = (s, e) =>
 					{
 						if ((e.KeyModifiers & KeyModifiers.Control) != 0)
 							return;
@@ -198,9 +220,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						}
 
 						e.Handled = true;
-					}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					};
+					box.AddHandler(InputElement.KeyDownEvent, navKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, navKeyDown));
 
-					box.AddHandler(InputElement.PointerReleasedEvent, (s, e) =>
+					EventHandler<PointerReleasedEventArgs> pointerReleased = (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
 						if (box.SelectionStart == box.SelectionEnd)
@@ -219,7 +243,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 						box.SelectionStart = normalized.Start;
 						box.SelectionEnd = normalized.End;
-					}, Avalonia.Interactivity.RoutingStrategies.Bubble);
+					};
+					box.AddHandler(InputElement.PointerReleasedEvent, pointerReleased, Avalonia.Interactivity.RoutingStrategies.Bubble);
+					_teardown.Add(() => box.RemoveHandler(InputElement.PointerReleasedEvent, pointerReleased));
 
 					// TextChanged also fires when the template first applies the initial value, so a
 					// last-staged guard keeps construction and no-op events from staging. The guard
@@ -228,7 +254,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// the same text) re-attempt instead of being suppressed forever.
 					var lastStaged = value.Value ?? string.Empty;
 					RegionRichTextValue pendingRichOverride = null;
-					box.TextChanged += (s, e) =>
+					EventHandler<TextChangedEventArgs> textChanged = (s, e) =>
 					{
 						var text = box.Text ?? string.Empty;
 						if (text == lastStaged)
@@ -249,10 +275,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						if (editContext.TrySetText(field, wsKey, text))
 							lastStaged = text;
 					};
+					box.TextChanged += textChanged;
+					_teardown.Add(() => box.TextChanged -= textChanged);
 
 					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
 					{
-						box.AddHandler(InputElement.KeyDownEvent, (s, e) =>
+						EventHandler<KeyEventArgs> clipboardKeyDown = (s, e) =>
 						{
 							if ((e.KeyModifiers & KeyModifiers.Control) == 0)
 								return;
@@ -286,7 +314,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							box.Text = newText;
 							box.CaretIndex = selectionStart + replacement.Length;
 							e.Handled = true;
-						}, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+						};
+						box.AddHandler(InputElement.KeyDownEvent, clipboardKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+						_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, clipboardKeyDown));
 					}
 				}
 
@@ -295,7 +325,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// Per-WS keyboard switching (6.2): activate this writing system's keyboard when
 					// its editor gains focus, exactly as legacy slices do per selection.
 					var wsTag = value.WsTag;
-					box.GotFocus += (s, e) => writingSystemFocused(wsTag);
+					EventHandler<GotFocusEventArgs> wsFocus = (s, e) => writingSystemFocused(wsTag);
+					box.GotFocus += wsFocus;
+					_teardown.Add(() => box.GotFocus -= wsFocus);
 				}
 
 				var rowPanel = new DockPanel
@@ -304,8 +336,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// receive hover/right-click over the gaps too.
 					Background = Brushes.Transparent
 				};
-				DockPanel.SetDock(abbrev, Dock.Left);
-				rowPanel.Children.Add(abbrev);
+				// A browse cell is single-writing-system per column, so the per-WS abbreviation gutter
+				// (legacy detail-pane chrome) is suppressed there — it would otherwise show "vern"/"anal"
+				// in front of every editable cell, which the WinForms browse never does.
+				if (showWritingSystemAbbreviation)
+				{
+					DockPanel.SetDock(abbrev, Dock.Left);
+					rowPanel.Children.Add(abbrev);
+				}
 				rowPanel.Children.Add(box);
 				Children.Add(rowPanel);
 			}
@@ -313,6 +351,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>Text rows have no hover-revealed chrome (the slice menu is right-click only).</summary>
 		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
+
+		/// <summary>
+		/// The count of still-attached handler/subscription teardowns — zero after <see cref="Dispose"/>.
+		/// Exposed so a recycling test can assert the editor released every handler it wired (Task 4).
+		/// </summary>
+		public int AttachedHandlerCount => _teardown.Count;
+
+		/// <summary>
+		/// Detaches every wired handler (the navigation/clipboard KeyDown, pointer, TextChanged, ghost
+		/// focus, context-menu, and WS-keyboard handlers) and drops the flyouts that retain closures over
+		/// this cell, so the VirtualizingStackPanel can collect a recycled cell without leaking the editor
+		/// path. Idempotent.
+		/// </summary>
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+			_disposed = true;
+			foreach (var detach in _teardown)
+				detach();
+			_teardown.Clear();
+		}
 
 		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
 			RegionRichTextValue richText, IFwClipboard clipboard)
@@ -385,11 +445,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// directly dispatches the host jump (<see cref="RegionGearChrome"/>) — it never opens the
 	/// options. Rows without a resolvable list editor draw no gear.
 	/// </summary>
-	public sealed class FwChooserField : Button, IHoverAffordanceProvider
+	public sealed class FwChooserField : Button, IHoverAffordanceProvider, IDisposable
 	{
 		private string _selectedKey;
 		private readonly TextBlock _valueText;
 		private readonly Button _gear;
+		// Teardown for the gear click and picker subscriptions so a recycled chooser cell releases the
+		// closures it wired and drops its option flyout (Task 4). Empty for read-only rows.
+		private readonly List<Action> _teardown = new List<Action>();
+		private bool _disposed;
 
 		public FwChooserField(
 			LexicalEditRegionField field,
@@ -441,7 +505,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
-			picker.OptionCommitted += option =>
+			Action<RegionChoiceOption> committed = option =>
 			{
 				// The options are the field's own RegionChoiceOption instances, so the committed
 				// option's key is exact even when display names repeat across options.
@@ -454,11 +518,36 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				flyout.Hide();
 				Focus(); // popup focus return: back to the launcher
 			};
-			picker.Dismissed += (s, e) =>
+			EventHandler dismissed = (s, e) =>
 			{
 				flyout.Hide();
 				Focus();
 			};
+			picker.OptionCommitted += committed;
+			picker.Dismissed += dismissed;
+			_teardown.Add(() =>
+			{
+				picker.OptionCommitted -= committed;
+				picker.Dismissed -= dismissed;
+				Flyout = null;
+			});
+		}
+
+		/// <summary>The count of still-attached subscriptions — zero after <see cref="Dispose"/>.</summary>
+		public int AttachedHandlerCount => _teardown.Count;
+
+		/// <summary>
+		/// Detaches the picker subscriptions and drops the option flyout so a recycled chooser cell does
+		/// not retain its closures (Task 4). Idempotent; a no-op for read-only chooser rows (none wired).
+		/// </summary>
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+			_disposed = true;
+			foreach (var detach in _teardown)
+				detach();
+			_teardown.Clear();
 		}
 
 		// Restyled chrome only — the control keeps the Button theme (template, flyout-on-click,

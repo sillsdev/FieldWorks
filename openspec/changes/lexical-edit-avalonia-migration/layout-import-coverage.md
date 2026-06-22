@@ -10,7 +10,7 @@ so they weight the vocabulary by how often real layouts use it.
 - Detail layouts imported: **136** (non-detail layouts skipped: 594)
 - Typed nodes produced: **1139**
 - Element occurrence coverage: **77.8%** (6468 handled / 1844 unhandled)
-- Attribute occurrence coverage: **56.7%** (14586 handled / 11151 unhandled)
+- Attribute occurrence coverage: **56.7%** (14585 handled / 11151 unhandled)
 
 ## Import diagnostics by code
 

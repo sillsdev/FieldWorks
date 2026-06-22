@@ -58,24 +58,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				&& !string.IsNullOrEmpty(node.Label)
 				&& node.Children.Count > 0)
 			{
-				// Section header row (legacy grouping slice); children indent one level under it.
-				output.Add(
-					new LexicalEditRegionField(
-						node.StableId,
-						node.Label,
-						node.Field,
-						node.WritingSystem,
-						RegionFieldKind.Header,
-						node.EditorClassification,
-						node.AutomationId,
-						node.LocalizationKey,
-						node.Routing,
-						null,
-						null,
-						null,
-						isEditable: false,
-						indent: depth));
-				childDepth = depth + 1;
+				// Section header row (legacy grouping slice); children indent one level under it. The
+				// header construction and indent rule are shared with the full composer (task 18.11).
+				output.Add(RegionStructureProjector.BuildHeaderField(
+					node.StableId, node.Label, node.Field, node.WritingSystem, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, depth));
+				childDepth = RegionStructureProjector.ChildIndent(node.Label, depth);
 			}
 
 			foreach (var child in node.Children)

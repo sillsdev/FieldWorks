@@ -30,6 +30,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>An atomic-reference editor that renders as a chooser row.</summary>
 		AtomicReferenceChooser,
 
+		/// <summary>The sense grammatical-info (MSA) chooser (<c>msaReferenceComboBox</c> and the
+		/// deriv/infl MSA variants): a Part-of-Speech chooser whose write find-or-creates the MSA on
+		/// the owning entry (legacy <c>MSAReferenceComboBoxSlice</c>).</summary>
+		MsaChooser,
+
 		/// <summary>A <c>summary</c> slice: a section header row in legacy too.</summary>
 		Summary,
 
@@ -221,6 +226,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				case "defaultatomicreference":
 				case "defaultatomicreferencedisabled":
 					return RegionEditorCategory.AtomicReferenceChooser;
+				case "msareferencecombobox":
+				case "derivmsareference":
+				case "inflmsareference":
+					return RegionEditorCategory.MsaChooser;
 				default:
 					return RegionEditorCategory.Other;
 			}

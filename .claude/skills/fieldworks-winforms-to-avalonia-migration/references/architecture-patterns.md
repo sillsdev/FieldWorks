@@ -238,12 +238,20 @@ shows translations is a parity failure, not cosmetics.
 
 ## 12. Density and performance
 
-**Decision.** Visual density (row spacing, gutters, box heights) is owned
+**Decision.** Visual *density* (row spacing, gutters, box heights) is owned
 by FieldWorks density constants, measured against legacy WinForms
 baselines. Performance budgets are measured, not estimated: capture legacy
 init/populate/total timings with the characterization harness, then hold
 Avalonia to within 20% of legacy total (or record an explicitly accepted
 delta in the region manifest).
+
+> **Density parity ≠ look parity (migration-program decision 2026-06-15).** The
+> program is chartered to *upgrade the look*: it adopts a modernized Fluent-based
+> theme rather than mimicking legacy WinForms chrome. Keep this distinction sharp —
+> *density* (information per screen, alignment, gutters) stays matched to legacy
+> baselines and is asserted by the parity lanes; *styling* (colors, control
+> templates, focus visuals, corner radii) may intentionally diverge. The visual
+> parity lane therefore checks density/layout, not pixel-for-pixel chrome.
 
 **Canonical code.** `Src/Common/FwAvalonia/Poc/PocDensity.cs`;
 legacy harness
@@ -254,3 +262,36 @@ Tests: `VisualParityAndDensityTests.cs`.
 **Gotchas.** Validate virtualization against the large fixtures (253-slice
 detail, 10k-row browse) before committing a control choice. Include the
 150% DPI path — it exposes real layout regressions.
+
+## 13. Headless integration-test harness (scenarios & workflows)
+
+**Decision (2026-06-16).** Avalonia **headless integration tests that walk real
+scenarios/workflows are the front-and-center verification style** — preferred
+over deferring to "live verification" or unit tests that poke handlers. Build in
+**two fidelities** (hosting Avalonia vs. standing up the real domain differ in
+cost/risk): a **surface-workflow** layer in an Avalonia-headless assembly
+(`FwAvaloniaTests`) — co-host the owned control(s) and drive them through
+page-object drivers (filter/clear/select/type/commit), asserting observable
+state and round-trips like select→detail and edit→refresh; and a **real-domain**
+layer (`xWorksTests`) — a real `RecordClerk` over an in-memory LCModel cache
+asserting the real list narrows/reorders/restores, replacing "needs live
+verification" for domain claims. A read-only grid needs **neither**: cell/sort/
+filter extraction runs through `CollectorEnv : IVwEnv` (managed, SDA-only, no
+`RootBox`), so the cutover is seam re-sourcing, not a text-engine rewrite.
+
+**Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaTests/Workflows/HeadlessWorkflowHarness.cs`
+(`HeadlessStage`, `BrowseTableDriver`, `LexicalEditorDriver`), exemplar
+`FwAvaloniaTests/BrowseEditorIntegrationTests.cs`, real-domain
+`Src/xWorks/xWorksTests/ClerkRoutedFilterTests.cs`. Provenance + the per-phase
+expansion plan:
+`openspec/changes/shared-editable-virtualized-table/headless-integration-harness.md`.
+
+**Gotchas.** Never add `[assembly: AvaloniaTestApplication]` to `xWorksTests`
+(it changes the host for ~1400 tests) — Avalonia hosting lives only in dedicated
+Avalonia-headless assemblies; the full-stack co-host (real clerk → adapter →
+view) belongs in a *new* such project. On the restored test base, create domain
+objects directly (a nested `NonUndoableUnitOfWorkHelper.Do` throws "Nested tasks
+are not supported"). Stand the entries clerk up with the `ConfiguredXHTMLGeneratorTests`/
+`RecordListTests` recipe (`MockFwX(App|Window)`, `<recordList owner='LexDb'
+property='Entries'/>`, then `ActivateUI` + `SetSuppressingLoadList(false)` +
+`ReloadList`) or it stays empty. Pump the dispatcher after every acting verb.

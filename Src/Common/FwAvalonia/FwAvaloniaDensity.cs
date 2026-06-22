@@ -27,6 +27,20 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Compact padding inside text editors.</summary>
 		public static readonly Thickness EditorPadding = new Thickness(3, 1, 3, 1);
 
+		/// <summary>Compact padding for a browse/table row container (no vertical padding; height comes
+		/// from <see cref="BrowseRowMinHeight"/>), matching the legacy XMLViews row inset.</summary>
+		public static readonly Thickness BrowseRowPadding = new Thickness(3, 0, 3, 0);
+
+		/// <summary>Compact browse/table row height (legacy XMLViews rows are ~17px), replacing the
+		/// taller Fluent ListBoxItem floor.</summary>
+		public const double BrowseRowMinHeight = 18d;
+
+		/// <summary>The selected browse/table row fill — the legacy pale blue (XmlBrowseViewBaseVc
+		/// kclrBackgroundSelRow 0xFFE6D7 = RGB 215,230,255) rather than the Fluent accent, so the whole
+		/// selected row (including the first column) reads as highlighted like the WinForms browse.</summary>
+		public static readonly Avalonia.Media.IBrush SelectedRowBrush =
+			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0xD7, 0xE6, 0xFF));
+
 		/// <summary>Compact margin around the slice.</summary>
 		public static readonly Thickness SliceMargin = new Thickness(4, 2, 4, 2);
 
@@ -46,6 +60,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>The 1px rule between slices (DataTree.PaintLinesBetweenSlices, Color.LightGray).</summary>
 		public static readonly Avalonia.Media.IBrush SliceRuleBrush = Avalonia.Media.Brushes.LightGray;
+
+		/// <summary>The thin grid line between browse rows and columns (the legacy XMLViews table draws
+		/// faint cell separators); a touch lighter than LightGray so the grid reads as structure, not chrome.</summary>
+		public static readonly Avalonia.Media.IBrush BrowseGridLineBrush =
+			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0xDC, 0xDC, 0xDC));
+
+		/// <summary>The browse table surface fill — plain white like the legacy XMLViews browse, rather
+		/// than the Fluent panel tint.</summary>
+		public static readonly Avalonia.Media.IBrush BrowseBackgroundBrush = Avalonia.Media.Brushes.White;
 
 		/// <summary>Legacy splitter width (Slice.cs SplitterWidth = 5).</summary>
 		public const double SplitterWidth = 5.0;

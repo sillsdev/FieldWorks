@@ -23,10 +23,16 @@ description: "Review or change FieldWorks user-facing strings: .resx resources, 
    `LocalizationKey` per node; never bake English label text into the IR or
    region model.
 2. **Product messages** (Save, Cancel, validation errors, unsupported-row
-   text) live in `Src/Common/FwAvalonia/FwAvaloniaStrings.resx` with
-   translator comments; accessor class `FwAvaloniaStrings.cs`; key coverage
-   locked by tests in
-   `Src/Common/FwAvalonia/FwAvaloniaTests/RegionEditingTests.cs`.
+   text, dialog labels) live in a `.resx` with translator comments + a
+   hand-written static accessor (`ResourceManager("RootNamespace.ResxBase", …)`).
+   **Each Avalonia UI project owns its own product-message resources** (so each
+   produces its own Crowdin satellite, keyed off the project's `<RootNamespace>`):
+   - Foundation: `Src/Common/FwAvalonia/FwAvaloniaStrings.resx` + `FwAvaloniaStrings.cs`
+     (key coverage locked by `FwAvaloniaTests/RegionEditingTests.cs`).
+   - Dialog kit: `Src/Common/FwAvaloniaDialogs/FwAvaloniaDialogsStrings.resx` +
+     `FwAvaloniaDialogsStrings.cs`. XAML binds via `{x:Static res:FwAvaloniaDialogsStrings.Xxx}`;
+     `AutomationId` stays a nonlocalized literal. See the
+     `fieldworks-avalonia-ui` skill's `references/dialog-conversion.md` §5.
 
 ## Required Checks
 

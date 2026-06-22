@@ -14,12 +14,15 @@ using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,6 +38,13 @@ namespace SIL.FieldWorks.XWorks
 		///
 		/// </summary>
 		protected BrowseViewer m_browseViewer;
+		// Stage 3 product wiring: when UIMode=New for the lexiconBrowse tool, an Avalonia table is shown
+		// on top of the (still fully-functional) legacy BrowseViewer as a read-only mirror; selecting a
+		// row forwards to the clerk. Null and inert in the default (Legacy) path.
+		private LexicalBrowseHostControl m_avaloniaBrowseHost;
+		private ClerkBrowseRowSource m_avaloniaRowSource;
+		// Reentrancy guard for the two-way selection bridge (Avalonia row <-> clerk current record).
+		private bool m_syncingAvaloniaSelection;
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByClerk;
@@ -69,6 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+				Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded);
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
@@ -90,9 +101,18 @@ namespace SIL.FieldWorks.XWorks
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
 					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
 				}
+				if (m_avaloniaEditSda != null && m_avaloniaEditNotifier != null)
+					m_avaloniaEditSda.RemoveNotification(m_avaloniaEditNotifier);
+				if (m_avaloniaBrowseHost != null)
+				{
+					m_avaloniaBrowseHost.RowSelected -= OnAvaloniaRowSelected;
+					m_avaloniaBrowseHost.Dispose();
+				}
 				if (components != null)
 					components.Dispose();
 			}
+			m_avaloniaBrowseHost = null;
+			m_avaloniaRowSource = null;
 			m_browseViewer = null;
 			// m_mediator = null; // No, or the superclass call will crash.
 
@@ -319,6 +339,192 @@ namespace SIL.FieldWorks.XWorks
 			Controls.Add(m_browseViewer);
 			m_browseViewer.BringToFront();
 			m_browseViewer.ResumeLayout();
+
+			TryActivateAvaloniaBrowse();
+		}
+
+		/// <summary>
+		/// Stage 3 product wiring: when the lexiconBrowse tool is in `UIMode = New`, overlay the owned
+		/// Avalonia table (read-only mirror) on top of the legacy <see cref="BrowseViewer"/>. The legacy
+		/// viewer stays constructed and fully functional underneath (it keeps driving the clerk, sort,
+		/// filter, and the rest of FLEx); the Avalonia table forwards row selection to the clerk so
+		/// navigation works. In the default `Legacy` mode this is a no-op and nothing changes.
+		/// </summary>
+		private void TryActivateAvaloniaBrowse()
+		{
+			if (m_browseViewer == null || m_avaloniaBrowseHost != null)
+				return;
+
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			var uiMode = m_propertyTable.GetStringProperty(
+				LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode);
+			if (LexicalEditSurfaceResolver.ResolveBrowse(null, uiMode, toolName) != LexicalEditSurface.Avalonia)
+				return;
+
+			var definition = BuildColumnDefinition();
+			m_avaloniaRowSource = new ClerkBrowseRowSource(Clerk, m_browseViewer, Cache);
+			m_avaloniaBrowseHost = new LexicalBrowseHostControl { Dock = DockStyle.Fill };
+			m_avaloniaBrowseHost.RowSelected += OnAvaloniaRowSelected;
+			Controls.Add(m_avaloniaBrowseHost);
+			m_avaloniaBrowseHost.BringToFront(); // paint over the legacy viewer (which stays functional)
+			m_avaloniaBrowseHost.ShowBrowse(definition, m_avaloniaRowSource);
+			RegisterAvaloniaEditNotification();
+			// Subscribe to the clerk's post-reload publish HERE — during SetupDataContext, i.e. BEFORE the
+			// deferred initial list load completes (RecordView's ListUpdateHelper loads on dispose at the end
+			// of InitBase). Subscribing now means the INITIAL DoneReload is caught and the mirror refreshes to
+			// the full row count; subscribing later (in Init) missed it and could leave only a subset showing.
+			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded);
+		}
+
+		/// <summary>
+		/// Mediator broadcast handler (xCore reflection-invoked). When the UI mode flips between Legacy and
+		/// New, switch the table to match — symmetrically with <see cref="RecordEditView"/>, so the left
+		/// Entries pane and the detail pane never end up half-switched (one on Avalonia, one on legacy).
+		/// New→legacy tears the overlay down and reveals the still-live legacy BrowseViewer; legacy→New
+		/// re-activates the overlay and re-syncs the current record.
+		/// </summary>
+		public void OnPropertyChanged(string name)
+		{
+			CheckDisposed();
+			if (name != LexicalEditSurfaceResolver.UIModePropertyName || m_browseViewer == null)
+				return;
+
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			var uiMode = m_propertyTable.GetStringProperty(
+				LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode);
+			var wantAvalonia = LexicalEditSurfaceResolver.ResolveBrowse(null, uiMode, toolName) == LexicalEditSurface.Avalonia;
+
+			if (wantAvalonia && m_avaloniaBrowseHost == null)
+			{
+				TryActivateAvaloniaBrowse();
+				MirrorClerkSelectionToAvalonia();
+			}
+			else if (!wantAvalonia && m_avaloniaBrowseHost != null)
+			{
+				DeactivateAvaloniaBrowse();
+			}
+		}
+
+		// Tears the Avalonia overlay down (live legacy↔New switch). The legacy BrowseViewer was never
+		// disposed — it stays docked underneath — so revealing it is just removing the overlay and
+		// bringing it forward. Mirrors the disposal sequence in Dispose so a later Dispose is a no-op.
+		private void DeactivateAvaloniaBrowse()
+		{
+			// Balance the subscription set up in TryActivateAvaloniaBrowse, so a later re-activate does not
+			// double-subscribe (which would refresh the mirror twice per reload).
+			Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded);
+			if (m_avaloniaEditSda != null && m_avaloniaEditNotifier != null)
+				m_avaloniaEditSda.RemoveNotification(m_avaloniaEditNotifier);
+			m_avaloniaEditNotifier = null;
+			m_avaloniaEditSda = null;
+			if (m_avaloniaBrowseHost != null)
+			{
+				m_avaloniaBrowseHost.RowSelected -= OnAvaloniaRowSelected;
+				Controls.Remove(m_avaloniaBrowseHost);
+				m_avaloniaBrowseHost.Dispose();
+				m_avaloniaBrowseHost = null;
+			}
+			m_avaloniaRowSource = null;
+			m_browseViewer?.BringToFront();
+		}
+
+		private ISilDataAccess m_avaloniaEditSda;
+		private IVwNotifyChange m_avaloniaEditNotifier;
+		private bool m_avaloniaRefreshPending;
+
+		// Refresh the table when a model change touches the current row's object (or one it owns),
+		// coalescing a unit-of-work's many PropChanged into one refresh. The legacy browse does this via
+		// its RootSite PropChanged sink; the Avalonia mirror has none, so an edit in the detail pane that
+		// stays on the same record would otherwise leave the table stale.
+		private void RegisterAvaloniaEditNotification()
+		{
+			if (m_avaloniaEditNotifier != null)
+				return;
+			m_avaloniaEditSda = Cache.DomainDataByFlid;
+			m_avaloniaEditNotifier = new AvaloniaBrowseEditNotifier(this);
+			m_avaloniaEditSda.AddNotification(m_avaloniaEditNotifier);
+		}
+
+		private void OnAvaloniaModelChanged(int hvo)
+		{
+			if (m_avaloniaBrowseHost == null || m_avaloniaRefreshPending || !IsHandleCreated || !AffectsCurrentRow(hvo))
+				return;
+			m_avaloniaRefreshPending = true;
+			BeginInvoke((Action)(() =>
+			{
+				m_avaloniaRefreshPending = false;
+				if (m_avaloniaBrowseHost == null || IsDisposed)
+					return;
+				var prev = m_syncingAvaloniaSelection;
+				m_syncingAvaloniaSelection = true;
+				try
+				{
+					m_avaloniaBrowseHost.RefreshRows();
+					if (Clerk.CurrentIndex >= 0)
+						m_avaloniaBrowseHost.SelectRow(Clerk.CurrentIndex);
+				}
+				finally { m_syncingAvaloniaSelection = prev; }
+			}));
+		}
+
+		private bool AffectsCurrentRow(int hvo)
+		{
+			var current = Clerk?.CurrentObject;
+			if (current == null || hvo == 0)
+				return false;
+			if (hvo == current.Hvo)
+				return true;
+			if (!Cache.ServiceLocator.IsValidObjectId(hvo))
+				return false;
+			for (var obj = Cache.ServiceLocator.GetObject(hvo); obj != null; obj = obj.Owner)
+				if (obj.Hvo == current.Hvo)
+					return true;
+			return false;
+		}
+
+		private sealed class AvaloniaBrowseEditNotifier : IVwNotifyChange
+		{
+			private readonly RecordBrowseView _owner;
+			public AvaloniaBrowseEditNotifier(RecordBrowseView owner) { _owner = owner; }
+			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+				=> _owner.OnAvaloniaModelChanged(hvo);
+		}
+
+		private ViewDefinitionModel BuildColumnDefinition()
+		{
+			// Own the column model: snapshot each column's real metadata (label, stable field token from
+			// field/transduce, writing system, editability) into a managed BrowseColumnSpec, then project
+			// to the typed view definition — instead of fabricating "col{i}" tokens. The snapshot is the
+			// seam that decouples the table's columns from the live viewer (F2 sources it without one).
+			return BrowseColumnSpec.ToViewDefinition(BrowseColumnSpec.Snapshot(m_browseViewer));
+		}
+
+		private void OnAvaloniaRowSelected(object sender, int rowIndex)
+		{
+			if (m_syncingAvaloniaSelection)
+				return; // selection originated from the clerk mirror, not the user — don't echo it back
+			var hvo = m_avaloniaRowSource?.HvoAt(rowIndex) ?? 0;
+			if (hvo != 0)
+				Clerk.JumpToRecord(hvo);
+		}
+
+		// Revision 2 (architecture-review): mirror the clerk's current record into the Avalonia table so
+		// it follows external navigation (links, the edit view changing record). Guarded against the
+		// Avalonia->clerk echo above.
+		private void MirrorClerkSelectionToAvalonia()
+		{
+			if (m_avaloniaBrowseHost == null || m_syncingAvaloniaSelection)
+				return;
+			m_syncingAvaloniaSelection = true;
+			try
+			{
+				m_avaloniaBrowseHost.RefreshRows();
+				m_avaloniaBrowseHost.SelectRow(Clerk.CurrentIndex);
+			}
+			finally
+			{
+				m_syncingAvaloniaSelection = false;
+			}
 		}
 
 		/// <summary>
@@ -680,6 +886,22 @@ namespace SIL.FieldWorks.XWorks
 
 			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+
+			// Backstop refresh: by now InitBase has finished and the list is fully loaded, so re-read the
+			// full row count into the mirror. The clerk-reload subscription was set up earlier (in
+			// TryActivateAvaloniaBrowse) so the initial DoneReload — and every later reload — already
+			// refreshes the mirror; this one-time refresh covers the case where no reload was published.
+			if (m_avaloniaBrowseHost != null)
+				MirrorClerkSelectionToAvalonia();
+		}
+
+		// Fires after the clerk's record list finishes (re)loading — e.g. the initial load, a filter or sort
+		// change, or a refresh. Re-reads the (now complete) row count into the Avalonia mirror.
+		private void OnClerkListReloaded(object sender)
+		{
+			if (m_avaloniaBrowseHost == null || !ReferenceEquals(sender, Clerk))
+				return;
+			MirrorClerkSelectionToAvalonia();
 		}
 
 		private void CheckExpectedListItemsClassInSync()
@@ -805,6 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 			string propName = Clerk.PersistedIndexProperty;
 			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
 			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			MirrorClerkSelectionToAvalonia();
 		}
 
 		/// <summary>

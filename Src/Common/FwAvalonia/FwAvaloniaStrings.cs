@@ -42,6 +42,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string AvaloniaHostName => Resources.GetString("ksAvaloniaHostName");
 
+		/// <summary>Accessible name for the browse table's check-all checkbox column (3c).</summary>
+		public static string SelectAllRows => Resources.GetString("ksSelectAllRows");
+
+		/// <summary>"Show All" — the browse filter preset that clears a column's blank-aware filter (3c).</summary>
+		public static string FilterShowAll => Resources.GetString("ksFilterShowAll");
+
+		/// <summary>"Blanks" — browse filter preset narrowing a column to rows whose cell is blank (3c).</summary>
+		public static string FilterBlanks => Resources.GetString("ksFilterBlanks");
+
+		/// <summary>"Non-blanks" — browse filter preset narrowing a column to rows whose cell is non-blank (3c).</summary>
+		public static string FilterNonBlanks => Resources.GetString("ksFilterNonBlanks");
+
 		public static string GhostAddPromptFormat => Resources.GetString("ksGhostAddPrompt");
 
 		public static string Copy => Resources.GetString("ksCopy");

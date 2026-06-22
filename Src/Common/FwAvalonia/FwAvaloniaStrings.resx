@@ -117,4 +117,20 @@
     <value>Gloss</value>
     <comment>Label of the gloss row in the first-slice entry view (authored fallback).</comment>
   </data>
+  <data name="ksSelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
+    <comment>Accessible name for the browse table's check-all checkbox column.</comment>
+  </data>
+  <data name="ksFilterShowAll" xml:space="preserve">
+    <value>Show All</value>
+    <comment>Browse filter-row preset that clears a column's blank-aware filter (mirrors the legacy FilterBar "Show All").</comment>
+  </data>
+  <data name="ksFilterBlanks" xml:space="preserve">
+    <value>Blanks</value>
+    <comment>Browse filter-row preset narrowing a column to rows whose cell is blank.</comment>
+  </data>
+  <data name="ksFilterNonBlanks" xml:space="preserve">
+    <value>Non-blanks</value>
+    <comment>Browse filter-row preset narrowing a column to rows whose cell is non-blank.</comment>
+  </data>
 </root>

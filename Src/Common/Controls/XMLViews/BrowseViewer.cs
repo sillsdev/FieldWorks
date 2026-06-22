@@ -11,6 +11,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -167,7 +168,21 @@ namespace SIL.FieldWorks.Common.Controls
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
-	public class BrowseViewer : XCoreUserControl, ISnapSplitPosition, IxCoreContentControl, IPostLayoutInit, IRefreshableRoot
+	/// <summary>
+	/// The kind of blank-aware column filter the owned Avalonia table requests from
+	/// <see cref="BrowseViewer.MakeColumnFilter"/> (rendering-cutover F1): a contains-text match, or the
+	/// FilterBar's blank / non-blank presets.
+	/// </summary>
+	public enum BrowseColumnFilterKind
+	{
+		/// <summary>Case/diacritic-insensitive "contains" match on the supplied text.</summary>
+		Contains,
+		/// <summary>Match rows whose cell is blank.</summary>
+		Blank,
+		/// <summary>Match rows whose cell is non-blank.</summary>
+		NonBlank
+	}
+	public class BrowseViewer : XCoreUserControl, ISnapSplitPosition, IxCoreContentControl, IPostLayoutInit, IRefreshableRoot, IBrowseColumnSource
 	{
 		/// <summary>
 		/// Check state for items (check and uncheck only).
@@ -635,6 +650,132 @@ namespace SIL.FieldWorks.Common.Controls
 		public string GetColumnName(int icol)
 		{
 			return XmlUtils.GetAttributeValue(ColumnSpecs[icol], "label");
+		}
+
+		/// <summary>
+		/// Stage 3 (Avalonia browse): whether a column is inline-editable, mirroring the STATIC part of the
+		/// legacy transduce rule (<see cref="XmlBrowseViewBaseVc.AllowEdit"/>): a column with a
+		/// <c>commitChanges</c> hook is not editable; otherwise it is editable when explicitly
+		/// <c>editable="true"</c>, OR when it carries a <c>transduce</c> target and is not explicitly
+		/// <c>editable="false"</c>. (The per-row <c>editif</c> refinement and the click-copy override are
+		/// legacy dynamic behaviors the read-only mirror does not replicate; the Avalonia edit path further
+		/// narrows this to columns whose write target the edit context supports — see ClerkBrowseRowSource.)
+		/// This is why the lexicon browse's transduce columns — Lexeme Form, Gloss, etc. — report editable,
+		/// matching WinForms, rather than the old "explicit editable=true only" default.
+		/// </summary>
+		public bool IsColumnEditable(int icol)
+		{
+			CheckDisposed();
+			var node = ColumnSpecs[icol];
+			if (XmlUtils.GetOptionalAttributeValue(node, "commitChanges", null) != null)
+				return false;
+			if (XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", false))
+				return true;
+			return XmlUtils.GetOptionalAttributeValue(node, "transduce", null) != null
+				&& XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
+		}
+
+		/// <summary>
+		/// Stage 3 (Avalonia browse): the raw <c>field</c>/<c>ws</c>/<c>transduce</c> attributes of a column
+		/// spec. The lexicon browse drives its editable cells through <c>transduce</c> targets (e.g.
+		/// <c>LexEntry.LexemeForm.Form</c>, <c>LexSense.Gloss</c>) rather than a plain <c>field</c>, so the
+		/// adapter needs the transduce target to map the cell to a supported write.
+		/// </summary>
+		public void GetColumnEditAttributes(int icol, out string field, out string ws, out string transduce)
+		{
+			CheckDisposed();
+			field = XmlUtils.GetOptionalAttributeValue(ColumnSpecs[icol], "field");
+			ws = XmlUtils.GetOptionalAttributeValue(ColumnSpecs[icol], "ws");
+			transduce = XmlUtils.GetOptionalAttributeValue(ColumnSpecs[icol], "transduce");
+		}
+
+		/// <summary>
+		/// Stage 3 (Avalonia browse): sort by a data column index (excluding the check-box column),
+		/// reusing the exact legacy header-click path — so the owned table's header click drives the
+		/// clerk's sort identically to a legacy header click (including the click-again-reverses toggle).
+		/// No-op without a filter bar, matching the legacy "can't sort without a filter bar" rule.
+		/// </summary>
+		public void SortByDataColumn(int dataColumnIndex)
+		{
+			CheckDisposed();
+			if (m_filterBar == null || dataColumnIndex < 0)
+				return;
+			// The legacy handler expects the DISPLAY column index, which includes the check-box offset.
+			m_lvHeader_ColumnLeftClick(this,
+				new ColumnClickEventArgs(dataColumnIndex + m_filterBar.ColumnOffset));
+		}
+
+		// Lazily-built per-column finders for the Stage-3 Avalonia browse mirror (below). Reuses the
+		// same LayoutFinder machinery the legacy sort/filter use so the owned table renders faithful
+		// cell text without re-implementing the Views engine.
+		private IStringFinder[] m_avaloniaColumnFinders;
+
+		/// <summary>
+		/// Stage 3 (Avalonia browse mirror): the display strings for one row (sort item), one entry per
+		/// column, using the same per-column <see cref="IStringFinder"/>s the legacy sort/filter use.
+		/// The owned Avalonia table calls this through an <c>IBrowseRowSource</c> adapter so it shows the
+		/// same cell text as the legacy browse without owning the Views-engine rendering path.
+		/// </summary>
+		public IReadOnlyList<string> GetRowCellStrings(IManyOnePathSortItem item)
+		{
+			CheckDisposed();
+			if (item == null)
+				return new string[0];
+			EnsureAvaloniaColumnFinders();
+			var result = new string[m_avaloniaColumnFinders.Length];
+			for (int i = 0; i < m_avaloniaColumnFinders.Length; i++)
+			{
+				try
+				{
+					string[] strings = m_avaloniaColumnFinders[i].Strings(item, false);
+					result[i] = strings == null ? string.Empty : string.Join(" ", strings);
+				}
+				catch
+				{
+					// A column whose finder cannot evaluate this row (e.g. needs a live sda not wired in
+					// the mirror) renders blank rather than failing the whole row.
+					result[i] = string.Empty;
+				}
+			}
+			return result;
+		}
+
+		private void EnsureAvaloniaColumnFinders()
+		{
+			if (m_avaloniaColumnFinders != null)
+				return;
+			IApp app = m_propertyTable.GetValue<IApp>("App");
+			List<XmlNode> specs = ColumnSpecs;
+			m_avaloniaColumnFinders = new IStringFinder[specs.Count];
+			for (int i = 0; i < specs.Count; i++)
+				m_avaloniaColumnFinders[i] = LayoutFinder.CreateFinder(m_cache, specs[i], BrowseView.Vc, app);
+		}
+
+		/// <summary>
+		/// Rendering-cutover (F1): the faithful per-cell display <see cref="ITsString"/> for one column —
+		/// the finder's key, with run boundaries, writing systems, and styles preserved — so the owned
+		/// Avalonia table can render rich, WS-aware cells instead of the lossy joined string of
+		/// <see cref="GetRowCellStrings"/>. Returns null when the column's finder has no key implementation
+		/// (e.g. integer/sort-method columns) or cannot evaluate this row, so the caller falls back to the
+		/// plain-text path for that cell. (Uses the same managed <c>CollectorEnv</c> path as sort/filter —
+		/// no native Views rendering.)
+		/// </summary>
+		public ITsString GetRowCellTsString(IManyOnePathSortItem item, int icol)
+		{
+			CheckDisposed();
+			if (item == null)
+				return null;
+			EnsureAvaloniaColumnFinders();
+			if (icol < 0 || icol >= m_avaloniaColumnFinders.Length)
+				return null;
+			try
+			{
+				return m_avaloniaColumnFinders[icol].Key(item);
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -3177,6 +3318,80 @@ namespace SIL.FieldWorks.Common.Controls
 				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Rendering-cutover (F1): build a clerk sorter for a data column (excluding the check-box column),
+		/// using the SAME managed finder/comparer the legacy header-click path uses — so the owned Avalonia
+		/// header can drive <c>Clerk.OnSorterChanged</c> directly (real, persisted sort) instead of routing
+		/// through the legacy header UI (<see cref="SortByDataColumn"/>). <paramref name="ascending"/> false
+		/// reverses the comparer. Returns null when the column has no sortable finder spec.
+		/// </summary>
+		public RecordSorter MakeColumnSorter(int dataColumnIndex, bool ascending)
+		{
+			CheckDisposed();
+			var specs = m_xbv.Vc.ColumnSpecs;
+			if (dataColumnIndex < 0 || dataColumnIndex >= specs.Count)
+				return null;
+			var colSpec = specs[dataColumnIndex];
+			var colWs = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, 0);
+			var finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, m_propertyTable.GetValue<IApp>("App"));
+			var comparer = new StringFinderCompare(finder, new WritingSystemComparer(colWs));
+			if (!ascending)
+				comparer.Reverse();
+			return new GenRecordSorter(comparer);
+		}
+
+		/// <summary>
+		/// Rendering-cutover (F1): build a clerk filter for a data column (excluding the check-box column),
+		/// using the SAME managed finder + matcher classes the legacy FilterBar uses — so the owned Avalonia
+		/// filter row can drive <c>Clerk.OnChangeFilter</c> directly (real list narrowing + persistence)
+		/// rather than the client-side display projection. The matcher is a contains/blank/non-blank match
+		/// (the presets the owned filter row offers); the ICU-aware pattern mirrors
+		/// <c>FilterBar.MatchAnywherePattern</c>. Returns null for an empty contains term or a column with
+		/// no filterable finder spec.
+		/// </summary>
+		public RecordFilter MakeColumnFilter(int dataColumnIndex, BrowseColumnFilterKind kind, string text)
+		{
+			CheckDisposed();
+			var specs = m_xbv.Vc.ColumnSpecs;
+			if (dataColumnIndex < 0 || dataColumnIndex >= specs.Count)
+				return null;
+			var colSpec = specs[dataColumnIndex];
+			var colWs = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, 0);
+			var finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, m_propertyTable.GetValue<IApp>("App"));
+
+			IMatcher matcher;
+			switch (kind)
+			{
+				case BrowseColumnFilterKind.Blank:
+					matcher = new BlankMatcher();
+					break;
+				case BrowseColumnFilterKind.NonBlank:
+					matcher = new NonBlankMatcher();
+					break;
+				default:
+					if (string.IsNullOrEmpty(text))
+						return null;
+					matcher = new AnywhereMatcher(MakeAnywherePattern(text, colWs.Handle));
+					break;
+			}
+			matcher.WritingSystemFactory = m_cache.WritingSystemFactory;
+			return new FilterBarCellFilter(finder, matcher);
+		}
+
+		// Mirrors FilterBar.MatchAnywherePattern: an ICU-aware, case/diacritic-insensitive contains pattern.
+		private IVwPattern MakeAnywherePattern(string str, int ws)
+		{
+			var pattern = VwPatternClass.Create();
+			pattern.MatchOldWritingSystem = false;
+			pattern.MatchDiacritics = false;
+			pattern.MatchWholeWord = false;
+			pattern.MatchCase = false;
+			pattern.UseRegularExpressions = false;
+			pattern.Pattern = TsStringUtils.MakeString(str, ws);
+			pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+			return pattern;
 		}
 
 		private void m_xbv_SelectedIndexChanged(object sender, EventArgs e)

@@ -1,5 +1,19 @@
 # Graphite Transition Support
 
+> **⚠ SUPERSEDED (2026-06-15) by the Avalonia migration-program decision.** The program resolved
+> **"Graphite fully removed, fully managed only — accept the loss, document + notify"** (see
+> `avalonia-migration-roadmap/complete-migration-program.md` §11.1). This change's core posture
+> (Path A: *keep* Graphite via per-writing-system classify-and-warn, no native removal until an M2
+> sunset) is therefore **no longer the plan** — Graphite is removed outright, including the native
+> engine. **What survives and is salvaged** into the migration program: the **G0–G3 writing-system/
+> font classification service** (tasks 1.3–1.4), repurposed from a "warn" gate into the evidence that
+> **enumerates the exact dropped-script list + affected projects** so the program can document the
+> loss and notify affected users with migration guidance (a Stage 9.0 → Stage 10B/13 deliverable);
+> and the settings-preservation rule for `IsGraphiteEnabled`/`DefaultFontFeatures` (the latter is
+> kept for OpenType export, not deleted). Native Graphite deletion lands in **Stage 13** (deleting
+> earlier breaks legacy surfaces still using it during coexistence). Preserved below as historical
+> rationale and as the source of the salvaged classifier.
+
 ## Why
 
 The lexical-edit migration plan currently treats Graphite as a hard blocker: "Avalonia SHALL never

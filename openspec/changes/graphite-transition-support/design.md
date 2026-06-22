@@ -1,5 +1,12 @@
 # Graphite Transition Support — Design
 
+> **⚠ SUPERSEDED (2026-06-15).** The migration program chose full Graphite removal
+> ("accept the loss, document + notify"), not the Path A classify-and-warn retention designed here
+> (see `avalonia-migration-roadmap/complete-migration-program.md` §11.1 and
+> `reviews/00-cross-comparison-synthesis.md` §4). The **G0–G3 classifier design** in this document is
+> salvaged as the basis for the dropped-script enumeration / user-notification deliverable; the
+> retention/sunset machinery is historical.
+
 ## Context
 
 Graphite is SIL's smart-font shaping technology for scripts OpenType handles poorly or not at all.

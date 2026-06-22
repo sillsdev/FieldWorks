@@ -48,6 +48,33 @@ Append one entry per completed migration (newest first). Keep entries to
 ~10 lines: link to the change, what was migrated, what was learned, which
 skill files changed.
 
+### 2026-06 — Entries browse-table rendering cutover + headless integration harness
+
+- Change: `openspec/changes/shared-editable-virtualized-table/`
+  (`rendering-cutover-design.md`, `headless-integration-harness.md`).
+- Migrated: the lexicon Entries table off the native C++ Views rendering for its
+  surface — owned WS-aware cell renderer (`BrowseCellRenderer`), rich-cell value
+  source via `RegionRichTextAdapter.FromTsString`, and clerk-routed sort/filter
+  (`BrowseViewer.MakeColumnSorter`/`MakeColumnFilter` → `Clerk.OnSorterChanged`/
+  `OnChangeFilter`) replacing the lossy string mirror and the client-side filter
+  projection. Legacy `BrowseViewer` still constructed underneath (F1); its
+  retirement is F2/Stage-13.
+- Key lessons now encoded: **headless integration scenario tests are the
+  front-and-center verification style** (new architecture-patterns.md §13;
+  parity-evidence.md §2a + the "live-verification-only" downgrade;
+  migration-checklist.md Phase 7 gate; SKILL.md workflow step 7 + quick map).
+  A read-only grid needs **neither the C++ engine** (cell/sort/filter extraction
+  runs through the managed `CollectorEnv : IVwEnv`, no `RootBox`) **nor live
+  verification** (real `RecordClerk` narrowing is provable headlessly). Two-layer
+  harness: surface-workflow drivers in an Avalonia-headless assembly + real-clerk
+  layer in `xWorksTests`. Gotchas: never put `[AvaloniaTestApplication]` in
+  `xWorksTests` (~1400 tests share the host); the restored test base holds the
+  undoable task open (no nested `NonUndoableUnitOfWorkHelper`); `OnChangeFilter`
+  takes an (added, removed) delta that `RecordList` composes into its `AndFilter`.
+- Skill files changed: `references/architecture-patterns.md` (§13),
+  `references/parity-evidence.md` (§2a, §3), `references/migration-checklist.md`
+  (Phase 7), `SKILL.md` (quick map + workflow step 7), this ledger.
+
 ### 2026-06 — Lexical Edit (full entry view), phases 1–2 (seed entry)
 
 - Change: `openspec/changes/lexical-edit-avalonia-migration/` (plus

@@ -23,10 +23,11 @@ validation boundary.
   routing and host/listener wiring separately from plan/test changes
   (apply `fieldworks-ui-wiring-review`).
 - Verify checked tasks match evidence language; downgrade claims when
-  evidence says substitute, placeholder, skipped, future, or partial —
-  the taxonomy is defined in
+  evidence says substitute, placeholder, skipped, future, partial, or
+  live-verification-only — the taxonomy is defined in
   `fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`
-  §"Evidence language".
+  §"Evidence language". A behavior/workflow claim with no headless integration
+  scenario (parity-evidence.md §2a) when one is feasible is a downgrade.
 - Confirm validation gates are explicit: OpenSpec validation
   (`openspec validate <change> --strict`), targeted tests, normal
   `./build.ps1` and `./test.ps1` coverage for Avalonia, and

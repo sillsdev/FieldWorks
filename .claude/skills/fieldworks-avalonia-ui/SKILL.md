@@ -34,6 +34,51 @@ lifetime. Canonical code to imitate:
 - Headless test setup: `Src/Common/FwAvalonia/FwAvaloniaTests/TestAppBuilder.cs`;
   examples in `RegionEditingTests.cs`, `VisualParityAndDensityTests.cs`
 - Density constants: `Src/Common/FwAvalonia/Poc/PocDensity.cs`
+- **Dialog kit (XAML + CommunityToolkit.Mvvm + compiled bindings):**
+  `Src/Common/FwAvaloniaDialogs/` — `OptionsDialogView.axaml`/`.axaml.cs` +
+  `OptionsDialogViewModel.cs`; headless tests in `FwAvaloniaDialogsTests/`.
+  This is the verified template for hand-authored dialogs — see
+  "Converting a WinForms dialog (MVVM kit)" below.
+
+## Converting a WinForms dialog (MVVM kit)
+
+Hand-authored dialogs/wizards use **XAML + CommunityToolkit.Mvvm + compiled
+bindings** — NOT the region/IR pattern (that is only for XML-view-definition
+surfaces). Decided 2026-06-15; rationale in
+`avalonia-migration-roadmap/complete-migration-program.md` §11.3. Full
+step-by-step + the working template:
+`references/dialog-conversion.md`. The shape, per dialog:
+
+1. **View** `XyzDialogView.axaml` (+ `.axaml.cs`): a `UserControl` (not a
+   `Window` — see modality below), `x:DataType` set to the view-model,
+   compiled `{Binding}`s, and a stable `AutomationProperties.AutomationId`
+   on every interactive control. Reuse owned controls (`FwMultiWsTextField`,
+   `FwOptionPicker`) for writing-system fields and list pickers.
+2. **View-model** `XyzDialogViewModel.cs`: `ObservableObject` with
+   `[ObservableProperty]` state and `[RelayCommand]` actions; expose the
+   result (e.g. `Accepted`). Keep it LCModel-free for the view; bind real
+   settings/domain through the app-settings/edit-session seams.
+3. **Tests** `XyzDialogTests.cs` (headless `[AvaloniaTest]`): assert the
+   compiled bindings propagate both directions and the commands fire — this
+   is the per-dialog definition of done.
+
+Rules specific to dialogs:
+
+- **It lives in `Src/Common/FwAvaloniaDialogs/`** (the dedicated XAML project),
+  never in the pure-C# `FwAvalonia` foundation. Add new dialog projects to
+  `FieldWorks.sln` (restore + VS) but build them in `build.ps1`'s Avalonia
+  loop; keep the XAML compile off the main `FieldWorks.proj` traversal (the
+  exclude pattern there). Exclude any nested test folder from the library's
+  compile glob (`<Compile Remove="XxxTests/**/*.cs"/>`).
+- **Modality during coexistence:** no Avalonia `Window.ShowDialog`. Show the
+  dialog `UserControl` via **`AvaloniaDialogHost.ShowModal(owner, view, vm, title)`**
+  (in `Src/Common/FwAvalonia/`), which hosts it in a WinForms-owned modal `Form`
+  (per the hub's `dialog-ownership.md`). The view-model implements
+  **`IDialogViewModel`** and raises `CloseRequested(bool)` from OK/Cancel — no
+  windowing in the VM. A dialog is "view + VM + `ShowModal`."
+- **Scope:** simple/confirmation/settings dialogs are good junior+AI work;
+  Views-engine-coupled dialogs (Find/Replace, Styles host `IVwRootSite`)
+  belong with the document engine (Stage 9), NOT this kit.
 
 ## Required Checks
 

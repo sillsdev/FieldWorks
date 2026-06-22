@@ -330,12 +330,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Editor-local IME composition state for one text lane. Composition updates stay detached from
 	/// committed text until <see cref="Commit"/>; <see cref="Cancel"/> discards pending text and
 	/// <see cref="Backspace"/> edits only the active composition payload.
-	/// <para>STATUS (2026-06-15): this is the managed composition model from the multi-writing-system
-	/// text foundation, exercised by the foundation's IME-state tests. The live <see cref="FwFieldControls"/>
-	/// editor currently relies on Avalonia's native <c>TextBox</c> IME (which already composes), so this
-	/// model is forward foundation for explicit composition control, not yet on the editor's input
-	/// path. Wiring it end-to-end is tracked by the foundation change, not this one — see the §18
-	/// review note in <c>lexical-edit-avalonia-migration/tasks.md</c>.</para>
+	/// <para>STATUS / DECISION (2026-06-15): this stays **forward foundation and is consciously NOT wired**
+	/// onto the editor's input path ("do not build unless there is no other way"). The live
+	/// <see cref="FwFieldControls"/> editor relies on the standard Avalonia <c>TextBox</c> (TSF on Windows,
+	/// IBus on Linux) plus libpalaso per-writing-system keyboard activation — **including Keyman** — so
+	/// ordinary IME/Keyman composition already works through the platform with no custom code. The historical
+	/// custom IME integration (native <c>VwTextStore</c>/IBus handler) existed only because the native Views
+	/// surface was non-standard; a standard control offloads input to the OS + Keyman. Build explicit
+	/// composition control here only if the standard path is *demonstrated* insufficient for a specific
+	/// scenario (verified on a real desktop with the relevant Keyman/IME keyboard). See task 18.10 and
+	/// <c>avalonia-migration-roadmap/complete-migration-program.md</c> §11.6.</para>
 	/// </summary>
 	public sealed class RegionImeCompositionState
 	{
