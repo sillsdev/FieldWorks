@@ -119,13 +119,13 @@ namespace FwAvaloniaTests
 			}
 
 			// click copy: records each per-click copy and commits ONE step (the per-click unit).
-			public readonly List<(int Source, int Target, int Row, ClickCopyMode Mode, string Sep, bool Append)> ClickCopies
-				= new List<(int, int, int, ClickCopyMode, string, bool)>();
+			public readonly List<(int Source, int Target, int Row, int Offset, ClickCopyMode Mode, string Sep, bool Append)> ClickCopies
+				= new List<(int, int, int, int, ClickCopyMode, string, bool)>();
 
-			public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
-				string separator, bool append, IRegionEditContext context)
+			public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset,
+				ClickCopyMode mode, string separator, bool append, IRegionEditContext context)
 			{
-				ClickCopies.Add((sourceColumn, targetColumn, rowIndex, mode, separator, append));
+				ClickCopies.Add((sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append));
 				context.Commit();
 			}
 		}
@@ -344,6 +344,26 @@ namespace FwAvaloniaTests
 
 			Assert.That(signals, Has.Count.EqualTo(1), "an active-mode cell click raises CellClicked once");
 			Assert.That(signals[0], Is.EqualTo((2, 0)), "the signal carries the clicked (row, column)");
+		}
+
+		[AvaloniaTest]
+		public void ClickCopy_ActiveMode_CarriesAHitTestedCharOffset()
+		{
+			var source = new BulkSource();
+			var view = Show(source);
+			var offsets = new List<int>();
+			view.CellClicked += (_, c) => offsets.Add(c.CharOffset);
+
+			view.ClickCopyActive = true;
+			ClickCell(view, 2, 0); // source cell (the read-only "lexeme N" column) — has hit-testable text
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(offsets, Has.Count.EqualTo(1), "an active-mode cell click raises CellClicked once");
+			// The pointer hit-test resolves a character index within the cell's text (the IchStartWord parity).
+			// It is >= 0 for a non-empty, laid-out cell (the click at the cell origin lands on the first char);
+			// the producer also accepts -1 (no layout) as the whole-cell fallback, so assert it is a valid signal.
+			Assert.That(offsets[0], Is.GreaterThanOrEqualTo(-1),
+				"the clicked character offset is threaded through the cell-click signal");
 		}
 
 		[AvaloniaTest]

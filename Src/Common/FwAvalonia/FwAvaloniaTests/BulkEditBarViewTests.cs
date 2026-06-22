@@ -185,8 +185,8 @@ namespace FwAvaloniaTests
 				=> TransduceApplies.Add((sourceColumn, targetColumn, converter, mode));
 
 			// ----- Click Copy -----
-			public readonly List<(int Source, int Target, int Row, ClickCopyMode Mode, string Sep, bool Append)> ClickCopies
-				= new List<(int, int, int, ClickCopyMode, string, bool)>();
+			public readonly List<(int Source, int Target, int Row, int Offset, ClickCopyMode Mode, string Sep, bool Append)> ClickCopies
+				= new List<(int, int, int, int, ClickCopyMode, string, bool)>();
 
 			public IReadOnlyList<BulkEditTarget> ClickCopyTargets() => new[]
 			{
@@ -194,9 +194,9 @@ namespace FwAvaloniaTests
 				new BulkEditTarget(1, "Citation Form")
 			};
 
-			public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
-				string separator, bool append)
-				=> ClickCopies.Add((sourceColumn, targetColumn, rowIndex, mode, separator, append));
+			public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset,
+				ClickCopyMode mode, string separator, bool append)
+				=> ClickCopies.Add((sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append));
 		}
 
 		private static BulkEditBarView Show(FakeBulkEditHost host, out BulkEditBarViewModel vm)
@@ -770,6 +770,47 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
+		public void Transduce_Setup_RefreshesConverterList_PreservingSelectionByName()
+		{
+			// §19f.3: Setup launches the EncConverters dialog (host hook) and re-publishes the refreshed list,
+			// preserving the current selection by NAME when it still exists.
+			var host = new FakeBulkEditHost { CheckedRowCount = 1 };
+			host.NextSetupConverters = new IBulkTransduceConverter[]
+			{
+				new FakeBulkEditHost.UpperConverter("ALT"),
+				new FakeBulkEditHost.UpperConverter("NEWCONV")
+			};
+			var bar = Show(host, out var vm);
+			var trd = vm.BulkTransduce;
+			trd.SelectedConverter = trd.Converters.First(c => c.Name == "ALT"); // selection that survives setup
+			Dispatcher.UIThread.RunJobs();
+
+			trd.Setup();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(host.TransduceSetupCount, Is.EqualTo(1), "Setup launches the converter-management hook once");
+			Assert.That(trd.Converters.Select(c => c.Name), Is.EquivalentTo(new[] { "ALT", "NEWCONV" }),
+				"the refreshed list is published (the new converter appears)");
+			Assert.That(trd.SelectedConverter?.Name, Is.EqualTo("ALT"),
+				"the prior selection is preserved by name across the refresh");
+		}
+
+		[AvaloniaTest]
+		public void Transduce_Setup_Cancelled_LeavesConverterListUntouched()
+		{
+			// A null setup result (cancel / unavailable) leaves the picker untouched.
+			var host = new FakeBulkEditHost { CheckedRowCount = 1, NextSetupConverters = null };
+			var bar = Show(host, out var vm);
+			var trd = vm.BulkTransduce;
+			var before = trd.Converters.Select(c => c.Name).ToList();
+
+			trd.Setup();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(trd.Converters.Select(c => c.Name), Is.EqualTo(before), "a cancelled Setup is a no-op on the list");
+		}
+
+		[AvaloniaTest]
 		public void Transduce_Apply_IsDisabled_UntilSourceConverterTargetAndCheckedRows()
 		{
 			var host = new FakeBulkEditHost { CheckedRowCount = 0 };
@@ -966,11 +1007,12 @@ namespace FwAvaloniaTests
 			cc.Separator = "; ";
 			cc.Append = false; // overwrite
 
-			// A simulated click on a SOURCE cell at (row 4, column 0).
-			cc.Copy(rowIndex: 4, sourceColumn: 0);
+			// A simulated click on a SOURCE cell at (row 4, column 0), clicked character offset 6.
+			cc.Copy(rowIndex: 4, sourceColumn: 0, charOffset: 6);
 
 			Assert.That(host.ClickCopies, Has.Count.EqualTo(1));
-			Assert.That(host.ClickCopies[0], Is.EqualTo((0, 1, 4, ClickCopyMode.Reorder, "; ", false)));
+			Assert.That(host.ClickCopies[0], Is.EqualTo((0, 1, 4, 6, ClickCopyMode.Reorder, "; ", false)),
+				"the clicked character offset threads through to the host so Word/Reorder can resolve the word");
 		}
 
 		[AvaloniaTest]

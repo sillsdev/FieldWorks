@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.LexReferenceDetailsDialogView"
+             x:DataType="vm:LexReferenceDetailsDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="340" MinHeight="260">
+	<!-- "Reference Set Details" (Phase-1 §19g): edit a lexical reference's name + optional comment/note over
+	     OK/Cancel. The Avalonia replacement for the WinForms LexReferenceDetailsDlg. OK is always enabled
+	     (a reference set may carry an empty name/note). Visible text is localized via FwAvaloniaDialogsStrings;
+	     AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="LexReferenceDetails.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="LexReferenceDetails.Cancel"/>
+		</StackPanel>
+
+		<StackPanel Spacing="{StaticResource DialogLabelFieldGap}">
+			<TextBlock Text="{Binding Explanation}" TextWrapping="Wrap"
+			           AutomationProperties.AutomationId="LexReferenceDetails.Explanation"/>
+
+			<TextBlock Text="{Binding NameLabel}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="LexReferenceDetails.NameLabel"/>
+			<TextBox Text="{Binding ReferenceName}"
+			         AutomationProperties.AutomationId="LexReferenceDetails.Name"
+			         AutomationProperties.Name="{Binding NameLabel}"/>
+
+			<TextBlock Text="{Binding CommentLabel}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="LexReferenceDetails.CommentLabel"/>
+			<TextBox Text="{Binding ReferenceComment}"
+			         AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80"
+			         AutomationProperties.AutomationId="LexReferenceDetails.Comment"
+			         AutomationProperties.Name="{Binding CommentLabel}"/>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

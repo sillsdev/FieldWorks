@@ -112,9 +112,12 @@ namespace SIL.FieldWorks.XWorks
 			public RecordFilter MakeStringListColumnFilter(int dataColumnIndex, string value, bool exclude) => throw new NotSupportedException();
 			public string[] GetColumnStringList(int dataColumnIndex) => throw new NotSupportedException();
 			public string GetColumnSpecAttribute(int icol, string attrName) => throw new NotSupportedException();
+			public string GetBulkEditSpecAttribute(string attrName) => null;
 			public RecordFilter MakeDateColumnFilter(int dataColumnIndex, BrowseDateMatchKind kind, System.DateTime start, System.DateTime end, bool handleGenDate) => throw new NotSupportedException();
 			public IReadOnlyList<BrowseChooserItem> GetColumnChooserList(int dataColumnIndex) => throw new NotSupportedException();
 			public RecordFilter MakeListChoiceColumnFilter(int dataColumnIndex, IReadOnlyList<string> chosenKeys) => throw new NotSupportedException();
+			public bool ColumnSupportsSpellingFilter(int dataColumnIndex) => throw new NotSupportedException();
+			public RecordFilter MakeSpellingErrorColumnFilter(int dataColumnIndex) => throw new NotSupportedException();
 		}
 	}
 }

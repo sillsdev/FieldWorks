@@ -63,6 +63,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public event EventHandler<Region.BrowseColumnWidthChange> ColumnWidthChanged;
 
 		/// <summary>
+		/// Raised with (fromIndex, toIndex) when the user drag-reorders a column header (§19f.6). The host
+		/// (RecordBrowseView) reorders + persists the column model and rebuilds the view.
+		/// </summary>
+		public event EventHandler<(int FromIndex, int ToIndex)> ColumnReordered;
+
+		/// <summary>
+		/// Raised with (rowIndex, commandKey) when the user chooses a data-row context-menu command (§19f.1).
+		/// The host routes the key to the command system (mediator).
+		/// </summary>
+		public event EventHandler<(int RowIndex, string CommandKey)> RowCommandInvoked;
+
+		/// <summary>
+		/// Raised with the new object's hvo (0 when nothing was created) AFTER the host control has committed a
+		/// Rapid-Data-Entry new row through the row source (§19f.7) and refreshed the table. The product edge
+		/// (RecordBrowseView) handles it to e.g. navigate the clerk to the new record.
+		/// </summary>
+		public event EventHandler<int> NewRowCommitted;
+
+		/// <summary>
 		/// Shows the browse table for the given column definition and lazy row source. Selecting a row
 		/// raises <see cref="RowSelected"/> so the host can forward the selection to the record clerk.
 		/// When <paramref name="showCheckboxColumn"/> is set, the table shows the legacy-parity
@@ -110,6 +129,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				_view.RestrictDateRequested -= OnRestrictDateRequested;
 				_view.ChooseListRequested -= OnChooseListRequested;
 				_view.ColumnWidthChanged -= OnColumnWidthChanged;
+				_view.ColumnReordered -= OnColumnReordered;
+				_view.RowCommandInvoked -= OnRowCommandInvoked;
+				_view.NewRowCommitRequested -= OnNewRowCommitRequested;
 			}
 			// Task 22: in product the row source is clerk-backed — a sort/filter routes to the clerk, which
 			// reloads and then drives a single RefreshRows() (RecordBrowseView's reload subscription). Tell
@@ -123,6 +145,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_view.RestrictDateRequested += OnRestrictDateRequested;
 			_view.ChooseListRequested += OnChooseListRequested;
 			_view.ColumnWidthChanged += OnColumnWidthChanged;
+			_view.ColumnReordered += OnColumnReordered;
+			_view.RowCommandInvoked += OnRowCommandInvoked;
+			_view.NewRowCommitRequested += OnNewRowCommitRequested;
 
 			if (checkedHvos != null)
 				_view.SeedCheckedHvos(checkedHvos);
@@ -145,7 +170,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					if (_view != null)
 						_view.ClickCopyActive = active;
 				};
-				_view.CellClicked += (_, cell) => clickCopyVm.Copy(cell.RowIndex, cell.ColumnIndex);
+				_view.CellClicked += (_, cell) => clickCopyVm.Copy(cell.RowIndex, cell.ColumnIndex, cell.CharOffset);
 				var layout = new Avalonia.Controls.DockPanel();
 				Avalonia.Controls.DockPanel.SetDock(_bulkEditBar, Avalonia.Controls.Dock.Bottom);
 				layout.Children.Add(_bulkEditBar);
@@ -184,6 +209,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private void OnColumnWidthChanged(object sender, Region.BrowseColumnWidthChange e)
 			=> ColumnWidthChanged?.Invoke(this, e);
+
+		private void OnColumnReordered(object sender, (int FromIndex, int ToIndex) e)
+			=> ColumnReordered?.Invoke(this, e);
+
+		private void OnRowCommandInvoked(object sender, (int RowIndex, string CommandKey) e)
+			=> RowCommandInvoked?.Invoke(this, e);
+
+		// §19f.7: commit the typed RDE new-row through the row source's CommitNewRow (one UOW), refresh the
+		// table so the new object appears, and surface the new hvo to the product edge. The row source owns the
+		// edit context and the factory/UOW; the host control just bridges the view's commit request to it.
+		private void OnNewRowCommitRequested(object sender, IReadOnlyList<string> values)
+		{
+			var rde = _rows as Region.IBrowseRdeSource;
+			var edit = _rows as Region.IBrowseEditSource;
+			if (rde == null || !rde.RdeEnabled || edit == null)
+				return;
+			var newHvo = rde.CommitNewRow(values, edit.EditContext);
+			_view?.Refresh();
+			NewRowCommitted?.Invoke(this, newHvo);
+		}
+
+		/// <summary>§19f.9: the CSV of the table's visible columns + current (filtered/sorted) rows, for the host to write to a file.</summary>
+		public string ExportVisibleCsv() => _view?.ExportVisibleCsv() ?? string.Empty;
 
 		/// <summary>The object-keyed checked hvos of the current view (empty when no checkbox column / view).</summary>
 		public IReadOnlyList<int> CheckedHvosSnapshot =>
@@ -243,9 +291,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			=> _view?.ApplyBulkTransduce(sourceColumn, targetColumn, converter, mode, separator);
 
 		/// <summary>Applies an interactive Click Copy (clicked source cell → target column on the same row) as one undoable step.</summary>
-		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, Region.ClickCopyMode mode,
-			string separator, bool append)
-			=> _view?.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, mode, separator, append);
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset,
+			Region.ClickCopyMode mode, string separator, bool append)
+			=> _view?.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append);
 
 		/// <summary>Re-realizes the table so a cleared preview overlay disappears from the cells (Phase 1).</summary>
 		public void RefreshAfterPreviewChange() => _view?.Refresh();
@@ -289,6 +337,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				_view.RestrictDateRequested -= OnRestrictDateRequested;
 				_view.ChooseListRequested -= OnChooseListRequested;
 				_view.ColumnWidthChanged -= OnColumnWidthChanged;
+				_view.ColumnReordered -= OnColumnReordered;
+				_view.RowCommandInvoked -= OnRowCommandInvoked;
+				_view.NewRowCommitRequested -= OnNewRowCommitRequested;
 			}
 			base.Dispose(disposing);
 		}

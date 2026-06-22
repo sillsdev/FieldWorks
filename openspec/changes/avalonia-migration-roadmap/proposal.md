@@ -28,8 +28,14 @@ changes into one minimal-risk path and defines the gates between them.
   See `avalonia-migration-roadmap/design.md` for the updated Gate 1 definition and vocabulary.
 - **`datatree-model-view-separation`** is superseded as a migration gate. Optional legacy maintenance
   only; does not gate Avalonia feature work.
-- **Phases 2–6** (continued `lexical-edit-avalonia-migration`): in progress.
-- **Phase 7+** (shell): deferred until regional gates are proven.
+- **Phases 2–6** (continued `lexical-edit-avalonia-migration`): in progress. This is **Phase 1 of the
+  two-phase split — derisk all functional behavior** with WinForms still switchable, everything hosted
+  through the WinForms shell, and no code deleted (its remaining functional burn-down is
+  `lexical-edit-avalonia-migration/tasks.md` §19).
+- **Phase 7+** (shell / cutover): now owned by **`avalonia-end-game`** (Phase 2 of the split — the
+  cutover), which **absorbs and supersedes `fieldworks-avalonia-shell-migration`** (2026-06-20) and adds
+  the net48 → .NET 10 retarget and true Windows/macOS/Linux cutover. Gated on the Phase-1 functional
+  parity burn-down reaching zero.
 
 ## Non-goals
 
@@ -52,7 +58,12 @@ changes into one minimal-risk path and defines the gates between them.
 - `lexical-edit-avalonia-migration` — the regional program spine (Phase 1 complete, Phases 2–6 in progress).
 - `datatree-model-view-separation` — **superseded as Phase 1**; optional legacy maintenance only.
   See `datatree-model-view-separation/hybrid-alignment.md`.
-- `fieldworks-avalonia-shell-migration` — the application-wide shell migration (Phase 7+), gated.
+- `avalonia-end-game` — **Phase 2 (cutover): Phase 7+ / shell**, kill WinForms, retarget net48 → .NET 10,
+  and go true cross-platform (Windows/macOS/Linux). Absorbs and supersedes
+  `fieldworks-avalonia-shell-migration`. Gated on the Phase-1 functional parity burn-down reaching zero.
+- `fieldworks-avalonia-shell-migration` — **superseded by `avalonia-end-game`** (2026-06-20); preserved as
+  historical detail for the shell composition, lifetime, command bridge, and decommissioning seams that
+  `avalonia-end-game` consumes.
 - `detail-controls-testability`, `retire-linux-era-view-shims`, `render-speedup-benchmark` —
   supporting/companion work that reduces risk but does not gate the main sequence.
 

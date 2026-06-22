@@ -68,6 +68,23 @@ namespace FwAvaloniaDialogs
 
 		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey) => false;
 
+		// §19a: the Insert Entry dialog has no StText fields, so paragraph CRUD is rejected.
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value) => false;
+
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName) => false;
+
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex) => false;
+
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex) => false;
+
+		// §19d: the in-memory create-flow context (Insert Entry) does not stage pictures/audio device work.
+		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata) => false;
+		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile) => false;
+		public bool TryDeletePicture(LexicalEditRegionField field) => false;
+		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata) => false;
+		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata) => false;
+
 		public IReadOnlyList<string> Validate() => Array.Empty<string>();
 
 		public void Commit() => IsOpen = false;

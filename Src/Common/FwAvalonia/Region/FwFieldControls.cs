@@ -52,7 +52,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<string> writingSystemFocused,
 			Action<RegionMenuRequest> menuRequested = null,
 			IFwClipboard clipboard = null,
-			bool showWritingSystemAbbreviation = true)
+			bool showWritingSystemAbbreviation = true,
+			IRegionMediaServices mediaServices = null,
+			Action save = null)
 		{
 			Spacing = FwAvaloniaDensity.RowSpacing;
 			AutomationProperties.SetAutomationId(this, automationId);
@@ -60,6 +62,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			foreach (var value in field.Values)
 			{
+				// §19d: a voice/audio (IsVoice) alternative renders the owned play/record/clear panel
+				// instead of a text editor — the recording is no longer a blanket read-only placeholder.
+				// The value's text is the audio FILENAME; play/record/clear route through the media seam +
+				// edit context (write/clear the filename through the SAME text setter every WS row uses).
+				if (value.IsAudio)
+				{
+					var audioRow = BuildAudioRow(field, automationId, value, editContext, mediaServices, save);
+					Children.Add(audioRow);
+					continue;
+				}
+
 				var currentRich = value.RichText;
 				// Legacy look (12.3): small raised blue abbreviation hanging at the value start.
 				var abbrev = new TextBlock
@@ -179,6 +192,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// Phase 4: the per-run writing-system picker affordance for THIS lane (same pattern as the
 				// style affordance: editable + non-lossy + available writing systems to offer).
 				Control wsAffordance = null;
+				// §19c: the external-link insert/edit prompt and the generic ORC-delete affordance for THIS
+				// lane (editable + non-lossy). The link is fully editable here; any ORC kind is deletable.
+				Control linkAffordance = null;
+				Control orcDeleteAffordance = null;
 
 				if (editContext != null && field.IsEditable && value.CanEditRichText)
 				{
@@ -379,6 +396,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						var styleButton = new Button
 						{
 							Content = FwAvaloniaStrings.CharacterStyle,
+							// 19i.2: keep editor focus so the named-style applies to the live selection span
+							// (LostFocus collapses the TextBox selection to caret → empty span → no-op apply).
+							Focusable = false,
 							Padding = new Thickness(6, 0, 6, 0),
 							MinHeight = 0,
 							MinWidth = 0,
@@ -493,6 +513,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							var wsButton = new Button
 							{
 								Content = FwAvaloniaStrings.WritingSystem,
+								// 19i.2: keep editor focus so the per-run WS retag targets the live selection span
+								// (LostFocus collapses the TextBox selection to caret → empty span → no-op).
+								Focusable = false,
 								Padding = new Thickness(6, 0, 6, 0),
 								MinHeight = 0,
 								MinWidth = 0,
@@ -582,6 +605,161 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						}
 					}
 
+						// §19c — external-link insert / edit prompt. A small "Link" button opens a flyout with
+						// a URL TextBox + Apply (the dialog-light prompt the decision calls for). On open it
+						// snapshots the selection and, when that selection sits on an existing link run,
+						// pre-fills the URL for editing. Apply over a real selection inserts/edits the link
+						// through RegionRichTextEditAlgorithms and stages via TrySetRichText (the same seam the
+						// style/ws pickers use). Built on every editable, non-lossy lane (link needs no host list).
+						{
+							var urlBox = new TextBox
+							{
+								Watermark = FwAvaloniaStrings.LinkUrlPrompt,
+								MinWidth = 220,
+								Padding = FwAvaloniaDensity.EditorPadding,
+								MinHeight = 0
+							};
+							AutomationProperties.SetAutomationId(urlBox, automationId + "." + wsKey + ".Link.Url");
+							AutomationProperties.SetName(urlBox, FwAvaloniaStrings.LinkUrlPrompt);
+							var applyButton = new Button
+							{
+								Content = FwAvaloniaStrings.LinkApply,
+								Padding = new Thickness(6, 0, 6, 0),
+								MinHeight = 0
+							};
+							AutomationProperties.SetAutomationId(applyButton, automationId + "." + wsKey + ".Link.Apply");
+							AutomationProperties.SetName(applyButton, FwAvaloniaStrings.LinkApply);
+							var linkPanel = new StackPanel
+							{
+								Orientation = Orientation.Horizontal,
+								Spacing = 4,
+								Children = { urlBox, applyButton }
+							};
+							var linkFlyout = new Flyout
+							{
+								Content = linkPanel,
+								Placement = PlacementMode.BottomEdgeAlignedLeft
+							};
+							var linkButton = new Button
+							{
+								Content = FwAvaloniaStrings.Link,
+								// 19i.2: keep editor focus so the selection span survives opening the flyout
+								// (LostFocus collapses the TextBox selection to caret → empty span → no-op apply).
+								Focusable = false,
+								Padding = new Thickness(6, 0, 6, 0),
+								MinHeight = 0,
+								MinWidth = 0,
+								Background = Brushes.Transparent,
+								BorderThickness = new Thickness(0),
+								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+								VerticalAlignment = VerticalAlignment.Top,
+								Flyout = linkFlyout
+							};
+							AutomationProperties.SetAutomationId(linkButton, automationId + "." + wsKey + ".Link");
+							AutomationProperties.SetName(linkButton, FwAvaloniaStrings.Link);
+							ToolTip.SetTip(linkButton, FwAvaloniaStrings.Link);
+
+							var linkSpanStart = 0;
+							var linkSpanEnd = 0;
+							EventHandler<Avalonia.Interactivity.RoutedEventArgs> linkOpened = (s2, e2) =>
+							{
+								linkSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+								linkSpanEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+								var existing = currentRich == null
+									? -1
+									: RegionRichTextEditAlgorithms.FirstOrcRunStart(currentRich, linkSpanStart, linkSpanEnd);
+								urlBox.Text = string.Empty;
+								if (existing >= 0 && currentRich != null)
+								{
+									var run = RunAt(currentRich, existing);
+									if (run != null && run.OrcKind == RegionOrcKind.ExternalLink)
+										urlBox.Text = run.HyperlinkUrl ?? string.Empty;
+								}
+							};
+							linkButton.Click += linkOpened;
+							EventHandler<Avalonia.Interactivity.RoutedEventArgs> linkApply = (s2, e2) =>
+							{
+								linkFlyout.Hide();
+								var url = urlBox.Text;
+								if (string.IsNullOrEmpty(url))
+									return; // a blank URL inserts/edits nothing
+
+								var richSource = currentRich
+									?? RegionRichTextEditAlgorithms.FromRuns(box.Text ?? string.Empty,
+										new[] { new RegionTextRun(box.Text ?? string.Empty, value.WsTag) });
+
+								var onLink = RegionRichTextEditAlgorithms.FirstOrcRunStart(richSource, linkSpanStart, linkSpanEnd);
+								var run = onLink >= 0 ? RunAt(richSource, onLink) : null;
+								RegionRichTextValue updated;
+								if (run != null && run.OrcKind == RegionOrcKind.ExternalLink)
+									updated = RegionRichTextEditAlgorithms.EditHyperlinkUrl(richSource, onLink, url);
+								else
+									updated = RegionRichTextEditAlgorithms.ApplyHyperlink(richSource, linkSpanStart, linkSpanEnd, url);
+
+								if (!ReferenceEquals(updated, richSource)
+									&& editContext.TrySetRichText(field, wsKey, updated))
+								{
+									currentRich = updated;
+									lastStaged = box.Text ?? string.Empty;
+								}
+							};
+							applyButton.Click += linkApply;
+							linkAffordance = linkButton;
+							_teardown.Add(() =>
+							{
+								linkButton.Click -= linkOpened;
+								applyButton.Click -= linkApply;
+								linkButton.Flyout = null;
+							});
+						}
+
+						// §19c — generic ORC delete. Removes the FIRST embedded object (ANY kind: link,
+						// picture, footnote, other) overlapping the current selection. Picture/footnote
+						// insert+edit are DEFERRED, but ANY ORC is deletable here so the new view is never
+						// stuck with an object it cannot remove.
+						{
+							var deleteButton = new Button
+							{
+								Content = FwAvaloniaStrings.DeleteEmbeddedObject,
+								// 19i.2: non-focusable so clicking does not blur the editor and collapse the
+								// selection before the handler locates the ORC overlapping it.
+								Focusable = false,
+								Padding = new Thickness(6, 0, 6, 0),
+								MinHeight = 0,
+								MinWidth = 0,
+								Background = Brushes.Transparent,
+								BorderThickness = new Thickness(0),
+								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+								VerticalAlignment = VerticalAlignment.Top
+							};
+							AutomationProperties.SetAutomationId(deleteButton, automationId + "." + wsKey + ".OrcDelete");
+							AutomationProperties.SetName(deleteButton, FwAvaloniaStrings.DeleteEmbeddedObject);
+							ToolTip.SetTip(deleteButton, FwAvaloniaStrings.DeleteEmbeddedObject);
+							EventHandler<Avalonia.Interactivity.RoutedEventArgs> orcDelete = (s2, e2) =>
+							{
+								if (currentRich == null)
+									return;
+								var selStart = Math.Min(box.SelectionStart, box.SelectionEnd);
+								var selEnd = Math.Max(box.SelectionStart, box.SelectionEnd);
+								var orcStart = RegionRichTextEditAlgorithms.FirstOrcRunStart(currentRich, selStart, selEnd);
+								if (orcStart < 0)
+									return; // no ORC under the selection
+								var updated = RegionRichTextEditAlgorithms.DeleteOrcRun(currentRich, orcStart);
+								if (!ReferenceEquals(updated, currentRich)
+									&& editContext.TrySetRichText(field, wsKey, updated))
+								{
+									currentRich = updated;
+									box.Text = updated.PlainText;
+									lastStaged = updated.PlainText;
+								}
+							};
+							deleteButton.Click += orcDelete;
+							orcDeleteAffordance = deleteButton;
+							_teardown.Add(() => deleteButton.Click -= orcDelete);
+						}
+
 					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
 					{
 						EventHandler<KeyEventArgs> clipboardKeyDown = (s, e) =>
@@ -659,14 +837,93 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// Phase 3: the character-style affordance docks at the row's trailing edge so the value box
 				// fills the remaining width (added before the box, since DockPanel fills with its last
 				// child). Present only on editable, non-lossy rows that carry available character styles.
+				// §19c: the generic ORC-delete and external-link affordances trail (right), before the
+				// style affordance, on editable non-lossy rows.
+				if (orcDeleteAffordance != null)
+				{
+					DockPanel.SetDock(orcDeleteAffordance, Dock.Right);
+					rowPanel.Children.Add(orcDeleteAffordance);
+				}
+				if (linkAffordance != null)
+				{
+					DockPanel.SetDock(linkAffordance, Dock.Right);
+					rowPanel.Children.Add(linkAffordance);
+				}
 				if (styleAffordance != null)
 				{
 					DockPanel.SetDock(styleAffordance, Dock.Right);
 					rowPanel.Children.Add(styleAffordance);
 				}
-				rowPanel.Children.Add(box);
+				// §19c per-run font display: differing runs render a read-along per-run-font TextBlock
+				// swapping to the editable box on focus; a uniform value renders the bare box.
+				rowPanel.Children.Add(BuildValueContentWithFontSwap(field, automationId, wsKey, box,
+					currentRich, !valueIsReadOnly));
 				Children.Add(rowPanel);
 			}
+		}
+
+		// §19c: the per-run font display + focus swap (shared shape with FwStructuredTextField). When the
+		// value's runs warrant a per-run font display, wrap the editable box and a read-along TextBlock in a
+		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
+		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
+		private Control BuildValueContentWithFontSwap(LexicalEditRegionField field, string automationId,
+			string wsKey, TextBox box, RegionRichTextValue currentRich, bool editable)
+		{
+			if (currentRich == null || !RegionRichTextChrome.ShouldRenderPerRunFontDisplay(currentRich))
+				return box;
+
+			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
+			var display = RegionRichTextChrome.BuildPerRunFontDisplay(currentRich, field.WritingSystemFonts,
+				automationId + "." + wsKey + ".Display", rtl);
+
+			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
+			// of layout, so they never overlap): the per-run-font display shows while unfocused; a pointer
+			// press swaps in the editable box and focuses it. On blur the box collapses, the display returns.
+			var panel = new Panel { Background = Brushes.Transparent };
+			panel.Children.Add(display);
+			panel.Children.Add(box);
+			display.IsVisible = true;
+			box.IsVisible = false;
+
+			if (editable)
+			{
+				EventHandler<PointerPressedEventArgs> displayPressed = (s, e) =>
+				{
+					box.IsVisible = true;
+					display.IsVisible = false;
+					box.Focus();
+				};
+				display.AddHandler(InputElement.PointerPressedEvent, displayPressed,
+					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				EventHandler<Avalonia.Interactivity.RoutedEventArgs> lost = (s, e) =>
+				{
+					box.IsVisible = false;
+					display.IsVisible = true;
+				};
+				box.LostFocus += lost;
+				_teardown.Add(() =>
+				{
+					display.RemoveHandler(InputElement.PointerPressedEvent, displayPressed);
+					box.LostFocus -= lost;
+				});
+			}
+
+			return panel;
+		}
+
+		// §19c: the run that STARTS at plain-text offset start, or null.
+		private static RegionTextRun RunAt(RegionRichTextValue rich, int start)
+		{
+			if (rich?.Runs == null)
+				return null;
+			var offset = 0;
+			foreach (var run in rich.Runs)
+			{
+				if (offset == start)
+					return run;
+				offset += run.Text?.Length ?? 0;
+			}
+			return null;
 		}
 
 		/// <summary>Text rows have no hover-revealed chrome (the slice menu is right-click only).</summary>
@@ -677,6 +934,98 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Exposed so a recycling test can assert the editor released every handler it wired (Task 4).
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
+
+		// §19d: the owned play/record/clear panel for a voice (IsVoice) writing-system alternative. The
+		// value's text is the audio FILENAME (empty = no recording). Play is offered when a filename is
+		// present (the media seam resolves it to the project media folder and plays it); Record captures a
+		// new file (Windows; disabled with a tooltip where unavailable) and writes the returned filename
+		// through the text setter; Clear empties the value. Read-only display (no buttons) when no edit
+		// context or no media seam is supplied (the browse-cell / preview path). LCModel-free throughout.
+		private Control BuildAudioRow(LexicalEditRegionField field, string automationId, RegionWsValue value,
+			IRegionEditContext editContext, IRegionMediaServices mediaServices, Action save)
+		{
+			var wsKey = string.IsNullOrEmpty(value.WsTag) ? value.WsAbbrev : value.WsTag;
+			var row = new StackPanel
+			{
+				Orientation = Orientation.Horizontal,
+				Spacing = FwAvaloniaDensity.RowSpacing,
+				VerticalAlignment = VerticalAlignment.Center
+			};
+			AutomationProperties.SetAutomationId(row, automationId + "." + wsKey);
+			AutomationProperties.SetName(row, (field.Label ?? automationId) + " " + value.WsAbbrev);
+
+			var abbrev = new TextBlock
+			{
+				Text = value.WsAbbrev,
+				MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
+				VerticalAlignment = VerticalAlignment.Center,
+				Margin = new Thickness(0, 1, 4, 0),
+				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+				Foreground = FwAvaloniaDensity.WsAbbrevBrush
+			};
+			row.Children.Add(abbrev);
+
+			var hasRecording = !string.IsNullOrEmpty(value.Value);
+			var label = new TextBlock
+			{
+				Text = hasRecording ? value.Value : FwAvaloniaStrings.AudioNoRecording,
+				Foreground = hasRecording ? Brushes.Black : Brushes.Gray,
+				VerticalAlignment = VerticalAlignment.Center
+			};
+			AutomationProperties.SetAutomationId(label, automationId + "." + wsKey + ".file");
+			row.Children.Add(label);
+
+			var editable = editContext != null && field.IsEditable && mediaServices != null;
+			if (!editable)
+			{
+				// Read-only display: keep the audio recording visible/diagnosable (the prior placeholder
+				// case), but no longer behind a fake editable text box.
+				ToolTip.SetTip(label, FwAvaloniaStrings.AudioRecordingReadOnly);
+				return row;
+			}
+
+			if (hasRecording)
+			{
+				var play = MakeAudioButton(FwAvaloniaStrings.AudioPlay, automationId + "." + wsKey + ".play");
+				play.Click += (s, e) => mediaServices.PlayAudio(value.Value);
+				row.Children.Add(play);
+			}
+
+			var record = MakeAudioButton(FwAvaloniaStrings.AudioRecord, automationId + "." + wsKey + ".record");
+			record.IsEnabled = mediaServices.CanRecordAudio;
+			if (!mediaServices.CanRecordAudio)
+				ToolTip.SetTip(record, FwAvaloniaStrings.AudioRecordUnavailable);
+			record.Click += (s, e) =>
+			{
+				var fileName = mediaServices.RecordAudio();
+				if (string.IsNullOrEmpty(fileName))
+					return;
+				if (editContext.TrySetText(field, wsKey, fileName))
+					save?.Invoke();
+			};
+			row.Children.Add(record);
+
+			if (hasRecording)
+			{
+				var clear = MakeAudioButton(FwAvaloniaStrings.AudioClear, automationId + "." + wsKey + ".clear");
+				clear.Click += (s, e) =>
+				{
+					if (editContext.TrySetText(field, wsKey, string.Empty))
+						save?.Invoke();
+				};
+				row.Children.Add(clear);
+			}
+
+			return row;
+		}
+
+		private static Button MakeAudioButton(string text, string automationId)
+		{
+			var button = new Button { Content = text, MinHeight = 0, Padding = FwAvaloniaDensity.EditorPadding };
+			AutomationProperties.SetAutomationId(button, automationId);
+			AutomationProperties.SetName(button, text);
+			return button;
+		}
 
 		/// <summary>
 		/// Detaches every wired handler (the navigation/clipboard KeyDown, pointer, TextChanged, ghost

@@ -15,10 +15,11 @@ using SIL.WritingSystems;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// ITEM 3 (voice/sound writing systems): the composer resolves WS rows, and a voice/audio (IsVoice)
-	/// writing system stores a recording rather than text. With no Avalonia sound player yet, such an
-	/// alternative must compose as a READ-ONLY row carrying an explicit audio placeholder — visible and
-	/// diagnosable — instead of a blank EDITABLE box whose first keystroke would corrupt the recording.
+	/// §19d (voice/sound writing systems): the composer resolves WS rows, and a voice/audio (IsVoice)
+	/// writing system stores a recording (its filename) rather than text. The alternative is flagged
+	/// IsAudio and composes its REAL filename on an EDITABLE row — the owned audio field renders
+	/// play/record/clear affordances and writes/clears the filename through the text setter. It is no
+	/// longer a blanket read-only placeholder.
 	/// </summary>
 	[TestFixture]
 	public class FullEntryRegionVoiceWsTests : MemoryOnlyBackendProviderTestBase
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_VoiceWritingSystem_ComposesAReadOnlyAudioPlaceholderRow_NotAnEmptyEditableRow()
+		public void Compose_VoiceWritingSystem_ComposesAnEditableAudioRow_CarryingTheRealFilename()
 		{
 			Assert.That(m_audioWs.IsVoice, Is.True, "precondition: the writing system is a voice WS");
 
@@ -69,15 +70,22 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(audioValues, Is.Not.Empty,
 				"the composer must surface the voice writing system's alternative, not drop it");
 
+			// Every voice-WS alternative is flagged IsAudio (so the view renders play/record/clear) and sits
+			// on an EDITABLE row (record/clear write the filename through the text setter). §19d removed the
+			// blanket read-only placeholder.
 			foreach (var x in audioValues)
 			{
 				Assert.That(x.Value.IsAudio, Is.True,
-					"a voice WS alternative is flagged IsAudio (read-only audio placeholder)");
-				Assert.That(x.Value.Value, Is.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
-					"it shows the localized audio placeholder, not a blank/raw value");
-				Assert.That(x.Field.IsEditable, Is.False,
-					"the row holding a voice alternative is read-only (no blank editable box that would corrupt the recording)");
+					"a voice WS alternative is flagged IsAudio so the view renders play/record affordances");
+				Assert.That(x.Value.Value, Is.Not.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
+					"§19d: the value is the REAL recording filename (or empty), never the old read-only placeholder");
+				Assert.That(x.Field.IsEditable, Is.True,
+					"§19d: the audio row is editable — record/clear write the filename through the text setter");
 			}
+
+			// The Citation Form's voice alternative carries the actual recording filename (so play/clear work).
+			Assert.That(audioValues.Any(x => x.Value.Value == "casa.wav"), Is.True,
+				"§19d: the field with a recording carries its real filename, not a placeholder");
 		}
 	}
 }

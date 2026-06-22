@@ -377,10 +377,34 @@ namespace SIL.FieldWorks.LexText.Controls
 				pt.HideForm();
 			}
 
+			SandboxGenericMSA dummyMsa = new SandboxGenericMSA();
+			dummyMsa.MsaType = m_sense.GetDesiredMsaType();
+
+			// New-UI gate (mirrors the Insert Entry / Add New Sense / Options dialog gates): in New mode launch the
+			// Avalonia "Create New Grammatical Info." dialog (the grammatical-info box -> an MSA); Legacy mode keeps
+			// the WinForms MsaCreatorDlg. Both paths assign the chosen MSA to the sense in one undoable step.
+			var uiModeNew = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiModeNew))
+			{
+				var helpProviderNew = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var sandboxMsa = LcmMsaCreatorDialogLauncher.Show(Cache, m_mediator, m_propertyTable, m_sense.Entry,
+					dummyMsa, 0, false, null, ParentForm, helpProviderNew, out var chosenBoxMsa);
+				if (sandboxMsa == null)
+					return false;
+				Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
+					String.Format(LexTextControls.ksRedoSetX, FieldName));
+				m_sense.SandboxMSA = sandboxMsa;
+				// §19b Stage 3 PARITY closure: round-trip the box's chosen inflection features onto the resolved
+				// (find-or-created) MSA — SandboxGenericMSA carries none — in the SAME undo task as the assign.
+				SIL.FieldWorks.LexText.Controls.LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(
+					Cache, m_sense, chosenBoxMsa);
+				Cache.DomainDataByFlid.EndUndoTask();
+				LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
+				return true;
+			}
+
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
-				SandboxGenericMSA dummyMsa = new SandboxGenericMSA();
-				dummyMsa.MsaType = m_sense.GetDesiredMsaType();
 				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa, 0, false, null);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
@@ -413,6 +437,33 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			SandboxGenericMSA dummyMsa = SandboxGenericMSA.Create(m_sense.MorphoSyntaxAnalysisRA);
+
+			// New-UI gate (mirrors AddNewMsa above): in New mode launch the Avalonia "Create New Grammatical Info."
+			// dialog seeded from the existing MSA; Legacy mode keeps the WinForms MsaCreatorDlg. Both paths assign
+			// the chosen MSA to the sense in one undoable step. PARITY: like the legacy edit branch this assigns
+			// m_sense.SandboxMSA (find-or-create on the sense), not originalMsa.UpdateOrReplace — the
+			// UpdateOrReplace edit branch lives in MSADlgLauncher (also gated).
+			var uiModeNew = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiModeNew))
+			{
+				var helpProviderNew = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var sandboxMsa = LcmMsaCreatorDialogLauncher.Show(Cache, m_mediator, m_propertyTable, m_sense.Entry,
+					dummyMsa, m_sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc, ParentForm, helpProviderNew,
+					out var chosenBoxMsa);
+				if (sandboxMsa == null)
+					return false;
+				Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
+					String.Format(LexTextControls.ksRedoSetX, FieldName));
+				m_sense.SandboxMSA = sandboxMsa;
+				// §19b Stage 3 PARITY closure: round-trip the box's chosen inflection features onto the resolved MSA
+				// (find-or-create on the sense) — SandboxGenericMSA carries none — in the SAME undo task as the assign.
+				SIL.FieldWorks.LexText.Controls.LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(
+					Cache, m_sense, chosenBoxMsa);
+				Cache.DomainDataByFlid.EndUndoTask();
+				LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
+				return true;
+			}
+
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
 				dlg.SetDlgInfo(Cache, m_persistProvider, m_mediator, m_propertyTable, m_sense.Entry, dummyMsa,

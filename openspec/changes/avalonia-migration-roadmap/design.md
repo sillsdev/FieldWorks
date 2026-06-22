@@ -24,9 +24,10 @@ of extracting a model layer from `DataTree`, Phase 1 built a typed IR path (`Vie
 `DataTree.cs` into `DataTreeModel`/`SliceSpec`/`IDataTreeView`. Refactoring the internals of a class
 that will be deleted in ~1 year is throwaway. DataTree stays frozen as the legacy surface.
 
-**Plan B — `lexical-edit-avalonia-migration` (+ `fieldworks-avalonia-shell-migration`)**: the
+**Plan B — `lexical-edit-avalonia-migration` (+ `avalonia-end-game`)**: the
 end-to-end program. This is the active plan. Phase 1 was executed as sections 3–4 of the
-lexical-edit tasks.
+lexical-edit tasks. Phase 7+ / shell is now owned by `avalonia-end-game` (the cutover), which absorbs
+and supersedes `fieldworks-avalonia-shell-migration` (2026-06-20).
 
 ## Goals / Non-Goals
 
@@ -89,9 +90,9 @@ flowchart TB
     direction LR
     A2["Seams → typed IR + XML import →<br/>Avalonia editors/tables →<br/>parity + Graphite/native gates"]:::spine
   end
-  subgraph P7["Phase 7+ — Shell (fieldworks-avalonia-shell-migration)"]
+  subgraph P7["Phase 7+ — Shell / cutover (avalonia-end-game, absorbs fieldworks-avalonia-shell-migration)"]
     direction LR
-    A7["Shell contracts → Avalonia shell →<br/>screen migration → default switch"]:::shell
+    A7["Shell contracts → Avalonia shell → screen migration →<br/>net48→net10 retarget → kill WinForms →<br/>Win/macOS/Linux cutover"]:::shell
   end
 
   G0{"Gate 0<br/>host bridge proven +<br/>density acceptable +<br/>flag dual-run works"}:::gate

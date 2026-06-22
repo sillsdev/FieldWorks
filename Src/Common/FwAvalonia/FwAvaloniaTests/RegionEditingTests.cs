@@ -56,12 +56,16 @@ namespace FwAvaloniaTests
 			= new List<(string, string, string)>();
 		private int _stagedBoundary;
 
-		public bool IsOpen => TextEdits.Count + OptionEdits.Count > 0 && CommitCount == 0 && CancelCount == 0;
+		public bool IsOpen => TextEdits.Count + OptionEdits.Count + ParagraphTextEdits.Count > 0
+			&& CommitCount == 0 && CancelCount == 0;
+
+		/// <summary>What the next text stage reports (false = rejected, e.g. a non-numeric integer).</summary>
+		public bool TextResult = true;
 
 		public bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
 			TextEdits.Add((field.Field, ws, value));
-			return true;
+			return TextResult;
 		}
 
 		public bool TrySetRichText(LexicalEditRegionField field, string ws, RegionRichTextValue value)
@@ -77,6 +81,86 @@ namespace FwAvaloniaTests
 		{
 			OptionEdits.Add((field.Field, optionKey));
 			return OptionResult;
+		}
+
+		// §19a: recorded StText paragraph CRUD traffic, so the structured-text editor can be asserted
+		// without LCModel. Each list captures the (field, paragraph index, value) the editor staged.
+		public readonly List<(string Field, int Index, RegionRichTextValue Value)> ParagraphTextEdits
+			= new List<(string, int, RegionRichTextValue)>();
+		public readonly List<(string Field, int Index, string Style)> ParagraphStyleEdits
+			= new List<(string, int, string)>();
+		public readonly List<(string Field, int AfterIndex)> ParagraphInserts = new List<(string, int)>();
+		public readonly List<(string Field, int Index)> ParagraphDeletes = new List<(string, int)>();
+
+		/// <summary>What the next paragraph CRUD stage reports (false = rejected, e.g. delete-the-only-para).</summary>
+		public bool ParagraphGestureResult = true;
+
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
+		{
+			ParagraphTextEdits.Add((field.Field, paragraphIndex, value));
+			return ParagraphGestureResult;
+		}
+
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName)
+		{
+			ParagraphStyleEdits.Add((field.Field, paragraphIndex, styleName));
+			return ParagraphGestureResult;
+		}
+
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		{
+			ParagraphInserts.Add((field.Field, afterParagraphIndex));
+			return ParagraphGestureResult;
+		}
+
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		{
+			ParagraphDeletes.Add((field.Field, paragraphIndex));
+			return ParagraphGestureResult;
+		}
+
+		// §19d: recorded picture traffic, so the picture field view can be asserted without LCModel.
+		public readonly List<(string Field, string SourceFile, RegionPictureMetadata Metadata)> PictureInserts
+			= new List<(string, string, RegionPictureMetadata)>();
+		public readonly List<(string Field, string SourceFile)> PictureReplaces = new List<(string, string)>();
+		public readonly List<string> PictureDeletes = new List<string>();
+		public readonly List<(string Field, RegionPictureMetadata Metadata)> PictureMetadataEdits
+			= new List<(string, RegionPictureMetadata)>();
+		public readonly List<(string Field, string Ws, int Caret, string SourceFile)> PictureOrcInserts
+			= new List<(string, string, int, string)>();
+
+		/// <summary>What the next picture gesture reports (false = rejected, e.g. a missing file).</summary>
+		public bool PictureGestureResult = true;
+
+		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
+		{
+			PictureInserts.Add((field.Field, sourceFile, metadata));
+			return PictureGestureResult;
+		}
+
+		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
+		{
+			PictureReplaces.Add((field.Field, sourceFile));
+			return PictureGestureResult;
+		}
+
+		public bool TryDeletePicture(LexicalEditRegionField field)
+		{
+			PictureDeletes.Add(field.Field);
+			return PictureGestureResult;
+		}
+
+		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
+		{
+			PictureMetadataEdits.Add((field.Field, metadata));
+			return PictureGestureResult;
+		}
+
+		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata)
+		{
+			PictureOrcInserts.Add((field.Field, ws, caretPosition, sourceFile));
+			return PictureGestureResult;
 		}
 
 		public IReadOnlyList<string> Validate() => ValidateResult;
@@ -477,31 +561,31 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void AudioValue_RendersReadOnlyPlaceholder_NotAnEmptyEditableBox()
 		{
+			// §19d: a voice/audio alternative is NO LONGER a blanket read-only placeholder. With no media
+			// seam (the browse-cell / preview path) it renders the filename label read-only (no editable box,
+			// no play/record buttons) — the recording stays visible/diagnosable, but never behind a fake
+			// editable TextBox whose first keystroke would corrupt it.
 			var field = new LexicalEditRegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
 				null, RegionFieldKind.Text, EditorClassification.Known, "AudioField", null,
 				SurfaceRouting.Inherit,
 				new List<RegionWsValue>
 				{
-					new RegionWsValue("aud", FwAvaloniaStrings.AudioRecordingReadOnly, wsTag: "qaa-Zxxx-x-audio",
-						isAudio: true)
-				}, null, null, isEditable: false);
+					new RegionWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
+				}, null, null, isEditable: true);
 			var context = new FakeRegionEditContext();
+			// No media seam supplied → read-only display.
 			var fieldControl = new FwMultiWsTextField(field, "AudioField", context, null);
 			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			var box = fieldControl.GetVisualDescendants().OfType<TextBox>().Single();
-			Assert.That(box.IsReadOnly, Is.True,
-				"a voice/audio alternative is read-only (no editable box to corrupt the recording)");
-			Assert.That(box.Text, Is.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
-				"the audio placeholder is shown so the data is visible and diagnosable, not blank");
-			Assert.That(ToolTip.GetTip(box), Is.EqualTo(FwAvaloniaStrings.AudioRecordingReadOnly),
-				"the tooltip tells the user audio is edited in the classic view");
-
-			// Typing must not stage an edit (the row is read-only).
-			box.Text = "tampered";
-			Dispatcher.UIThread.RunJobs();
+			Assert.That(fieldControl.GetVisualDescendants().OfType<TextBox>().Any(), Is.False,
+				"an audio alternative no longer renders an editable text box (no fake editor to corrupt the recording)");
+			Assert.That(fieldControl.GetVisualDescendants().OfType<Button>().Any(), Is.False,
+				"with no media seam there are no play/record affordances (read-only display)");
+			var label = fieldControl.GetVisualDescendants().OfType<TextBlock>()
+				.FirstOrDefault(t => t.Text == "casa.wav");
+			Assert.That(label, Is.Not.Null, "the recording filename stays visible/diagnosable");
 			Assert.That(context.TextEdits, Is.Empty, "a read-only audio row never stages a text edit");
 		}
 

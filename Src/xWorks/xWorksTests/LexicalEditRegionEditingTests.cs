@@ -609,8 +609,9 @@ namespace SIL.FieldWorks.XWorks
 			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Chooser),
-				"the enumComboBox composes as an editable closed option chooser, like legacy");
+			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.EnumCombo),
+				"§19e: the enumComboBox composes as the dedicated closed enum-combo kind (a non-editable "
+				+ "drop-down), not the search/flyout chooser — so a free-form enum value can never be typed in");
 			Assert.That(row.IsEditable, Is.True, "legacy enum combos are editable");
 			Assert.That(row.Options, Is.Not.Null.And.Not.Empty,
 				"the localized stringList labels are exposed as the chooser options");
@@ -741,8 +742,11 @@ namespace SIL.FieldWorks.XWorks
 				.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Emphasis"));
 		}
 
+		// §19c: an external-link ORC is NO LONGER a blanket read-only block — it composes EDITABLE (the
+		// link is insert/edit/delete here, the ORC is deletable), and a rich write-back round-trips the
+		// link's ObjData losslessly through the adapter.
 		[Test]
-		public void Build_RichLexemeForm_WithObjectData_ComposesReadOnly_AndRejectsRichWriteBack()
+		public void Build_RichLexemeForm_WithLinkObjData_ComposesEditable_AndRichWriteBackRoundTripsTheLink()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -755,14 +759,82 @@ namespace SIL.FieldWorks.XWorks
 
 			var model = LexicalEditRegionBuilder.Build(m_entry, Cache);
 			var form = model.Fields.Single(f => f.Field == "Form");
-			Assert.That(form.IsEditable, Is.False,
-				"rows carrying unsupported object-data runs must stay read-only for now");
-			Assert.That(form.Values.Single().CanEditRichText, Is.False);
+			Assert.That(form.IsEditable, Is.True,
+				"a link ORC is editable (§19c): no longer a blanket read-only block");
+			var value = form.Values.Single();
+			Assert.That(value.CanEditRichText, Is.True);
+			Assert.That(value.RichText.Runs.Single().OrcKind, Is.EqualTo(RegionOrcKind.ExternalLink));
+			Assert.That(value.RichText.Runs.Single().HyperlinkUrl,
+				Is.EqualTo("https://software.sil.org/fieldworks"));
 
 			var context = new LexicalEditRegionEditContext(m_entry, Cache);
-			Assert.That(context.TrySetRichText(form, form.Values.Single().WsTag,
-				form.Values.Single().RichText), Is.False,
-				"edit contexts must reject rich writes when the model marks runs unsupported");
+			Assert.That(context.TrySetRichText(form, value.WsTag, value.RichText), Is.True,
+				"a link-bearing value writes back through the rich seam");
+			context.Commit();
+
+			var stored = m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs);
+			var objData = stored.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptObjData);
+			Assert.That(objData, Is.Not.Null.And.Length.GreaterThan(0),
+				"the link's ObjData round-trips back into the stored TsString");
+			Assert.That(objData[0], Is.EqualTo((char)FwObjDataTypes.kodtExternalPathName));
+			Assert.That(objData.Substring(1), Is.EqualTo("https://software.sil.org/fieldworks"));
+		}
+
+		// §19c T4 (real-cache workflow): edit a run-bearing field → apply a named character style over a
+		// span → retag another span's writing system → insert a hyperlink → commit → recompose → verify the
+		// run props (ktptNamedStyle, ktptWs) and the link ObjData all round-tripped through the adapter, as
+		// ONE undoable step on the global stack.
+		[Test]
+		public void Workflow_StyleSpan_RetagSpan_InsertLink_RoundTripsThroughTheComposedContext()
+		{
+			// 'fr' must EXIST as a known writing system (so the per-run retag target resolves), but it must
+			// NOT be added to the current ANALYSIS writing systems — doing so would give the Bibliography
+			// multistring a second value row and break the single-value assertions below. A run's writing
+			// system is independent of the field's displayed-WS list, so GetOrSet alone is the right target.
+			string frTag = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out var fr);
+				frTag = fr.Id;
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("alpha beta gamma", Cache.DefaultAnalWs));
+			});
+
+			var region = FullEntryRegionComposer.Compose(m_entry, Cache);
+			var field = region.Model.Fields.Single(f => f.Field == "Bibliography");
+			Assert.That(field.IsEditable, Is.True);
+			var wsTag = field.Values.Single().WsTag;
+			var rich = field.Values.Single().RichText;
+
+			// Apply "Emphasis" over "alpha" (0..5), link "beta" (6..10), retag "gamma" (11..16) to French.
+			rich = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(rich, 0, 5, "Emphasis");
+			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
+			rich = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(rich, 11, 16, frTag);
+			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
+			rich = RegionRichTextEditAlgorithms.ApplyHyperlink(rich, 6, 10, "https://software.sil.org");
+			Assert.That(region.EditContext.TrySetRichText(field, wsTag, rich), Is.True);
+
+			region.EditContext.Commit();
+
+			// Recompose from the committed cache and verify every run prop round-tripped.
+			var reopened = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography").Values.Single().RichText;
+			Assert.That(reopened.PlainText, Is.EqualTo("alpha beta gamma"));
+			var styled = string.Concat(reopened.Runs.Where(r => r.NamedStyle == "Emphasis").Select(r => r.Text));
+			Assert.That(styled, Is.EqualTo("alpha"), "the named style round-tripped on its span");
+			var retagged = string.Concat(reopened.Runs.Where(r => r.WritingSystemTag == frTag).Select(r => r.Text));
+			Assert.That(retagged, Is.EqualTo("gamma"), "the ws retag round-tripped on its span");
+			var linkRun = reopened.Runs.Single(r => r.OrcKind == RegionOrcKind.ExternalLink);
+			Assert.That(linkRun.Text, Is.EqualTo("beta"));
+			Assert.That(linkRun.HyperlinkUrl, Is.EqualTo("https://software.sil.org"),
+				"the link ObjData round-tripped");
+
+			// One undo reverts the whole gesture sequence (one fenced session).
+			Cache.ActionHandlerAccessor.Undo();
+			var afterUndo = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields
+				.Single(f => f.Field == "Bibliography").Values.Single().RichText;
+			Assert.That(afterUndo.Runs.Any(r => r.OrcKind == RegionOrcKind.ExternalLink), Is.False,
+				"one undo reverts the whole §19c gesture session");
 		}
 
 		// DATA-SAFETY (Phase 1, test a): a run carrying a TsString property the RegionTextRun model
@@ -2045,13 +2117,19 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.IsEditable, Is.True);
 			Assert.That(single.Values.Single().Value, Is.EqualTo("from Smith"));
 
-			// GenDate: an editable Date row (parity — legacy GenDateSlice is editable), formatted
-			// exactly like the existing GenDate rows.
+			// GenDate: an editable Date row (parity — legacy GenDateSlice is editable). 19i.1: the value is the
+			// canonical YEAR-granular form the qualifier editor round-trips — NOT gen.ToLongString(). m_genDate is
+			// March 14, 2020; ToLongString() would interleave the DAY ("14"), which the year-granular editor would
+			// mis-read as the year and store on the next commit (silent corruption to year 14). The user sees
+			// year/precision/era combos, never this raw string.
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
 			Assert.That(date.Kind, Is.EqualTo(RegionFieldKind.Date), "GenDate composes as an editable Date row");
 			Assert.That(date.IsEditable, Is.True, "GenDate is editable (matches existing GenDate rows)");
-			Assert.That(date.Values.Single().Value, Is.EqualTo(m_genDate.ToLongString()));
+			Assert.That(date.Values.Single().Value, Is.EqualTo("About AD 2020"),
+				"GenDate value is the year-granular canonical form, not the month/day long string");
+			Assert.That(date.Values.Single().Value, Does.Not.Contain("14"),
+				"the day must never leak into the year-granular value (19i.1 corruption guard)");
 
 			// Possibility-list reference: the 6.3 chooser lane makes custom reference rows
 			// editable too — options from the field's own list, current selection carried.
@@ -2150,7 +2228,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(RegionFieldKind.Date),
 				"GenDate composes as an editable Date row");
 			Assert.That(rootAllomorphDate.IsEditable, Is.True, "GenDate is editable (parity with legacy)");
-			Assert.That(rootAllomorphDate.Values.Single().Value, Is.EqualTo(m_moFormGenDate.ToLongString()));
+			// 19i.1: canonical year-granular value (m_moFormGenDate is Jan 2, 2018), not the month/day long string.
+			Assert.That(rootAllomorphDate.Values.Single().Value, Is.EqualTo("About AD 2018"));
 			Assert.That(rootAllomorphCategory, Is.Not.Null,
 				"nested MoForm atomic custom references render as chooser rows");
 			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
@@ -2167,7 +2246,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(exampleField.Values.Single().Value, Is.EqualTo("example note"));
 			Assert.That(exampleDate, Is.Not.Null,
 				"example custom GenDate fields render in the nested example layout");
-			Assert.That(exampleDate.Values.Single().Value, Is.EqualTo(m_exampleGenDate.ToLongString()));
+			// 19i.1: canonical year-granular value (m_exampleGenDate is Jun 7, 2016), not the month/day long string.
+			Assert.That(exampleDate.Values.Single().Value, Is.EqualTo("About AD 2016"));
 			Assert.That(exampleCategory, Is.Not.Null,
 				"example custom atomic references render as chooser rows");
 			Assert.That(exampleCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));

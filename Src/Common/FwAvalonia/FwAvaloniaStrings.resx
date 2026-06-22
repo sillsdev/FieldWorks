@@ -161,6 +161,22 @@ The previous values have been restored. Switch to the classic view to finish the
     <value>Writing System</value>
     <comment>Accessible name and tooltip of the writing-system picker affordance on an editable text row (Phase 4): opens the list of the project's writing systems to retag the current selection.</comment>
   </data>
+  <data name="ksAddParagraph" xml:space="preserve">
+    <value>Add paragraph</value>
+    <comment>Accessible name and tooltip of the per-paragraph "add paragraph" affordance in an editable structured-text (StText) field.</comment>
+  </data>
+  <data name="ksDeleteParagraph" xml:space="preserve">
+    <value>Delete paragraph</value>
+    <comment>Accessible name and tooltip of the per-paragraph "delete paragraph" affordance in an editable structured-text (StText) field.</comment>
+  </data>
+  <data name="ksParagraphStyle" xml:space="preserve">
+    <value>Paragraph Style</value>
+    <comment>Accessible name and tooltip of the per-paragraph style picker in an editable structured-text (StText) field; opens the list of the project's paragraph styles to apply to this paragraph.</comment>
+  </data>
+  <data name="ksDefaultParagraphStyle" xml:space="preserve">
+    <value>Default</value>
+    <comment>The leading entry of the paragraph-style picker; selecting it clears any named paragraph style on the paragraph, reverting it to the default.</comment>
+  </data>
   <data name="ksSelectAllRows" xml:space="preserve">
     <value>Select all rows</value>
     <comment>Accessible name for the browse table's check-all checkbox column.</comment>

@@ -11,6 +11,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -753,6 +754,21 @@ namespace SIL.FieldWorks.Common.Controls
 			if (icol < 0 || icol >= ColumnSpecs.Count || string.IsNullOrEmpty(attrName))
 				return null;
 			return XmlUtils.GetOptionalAttributeValue(ColumnSpecs[icol], attrName);
+		}
+
+		/// <summary>
+		/// Stage 3 (Avalonia browse): the raw value of a browse-view-level (bulk-edit) spec attribute, read off the
+		/// SAME <c>browseview</c> spec node (<see cref="m_nodeSpec"/>) the legacy <see cref="BulkEditBar"/> reads at
+		/// construction. The Avalonia Delete-Rows guard reads <c>bulkDeleteIfZero</c> and
+		/// <c>bulkEditListItemsGhostFields</c> through this so the row source can mirror the legacy
+		/// <c>AllowDeleteItem</c>/<c>VerifyRowDeleteAllowable</c> guards. Returns null when the attribute is absent.
+		/// </summary>
+		public string GetBulkEditSpecAttribute(string attrName)
+		{
+			CheckDisposed();
+			if (string.IsNullOrEmpty(attrName) || m_nodeSpec == null)
+				return null;
+			return XmlUtils.GetOptionalAttributeValue(m_nodeSpec, attrName);
 		}
 
 		/// <summary>
@@ -3787,6 +3803,77 @@ namespace SIL.FieldWorks.Common.Controls
 			var filter = new ColumnSpecFilter(m_cache, ListMatchOptions.Any, hvos.ToArray(), colSpec);
 			filter.MakeUserVisible(true);
 			return filter;
+		}
+
+		/// <summary>
+		/// Whether the legacy FilterBar would offer "Spelling Errors" on this column. Mirrors
+		/// <c>FilterBar.MakeCombo</c>'s gate + <c>AddSpellingErrorsIfAppropriate</c> exactly: the column is NOT a
+		/// chooser/list column (<c>bulkEdit</c>/<c>chooserFilter</c> empty), its layout is not one for which a
+		/// spelling filter is meaningless (Pronunciation / CVPattern — LT-9047), and a spelling dictionary is
+		/// available for the column's writing system (the SAME <c>SpellingHelper.GetSpellChecker</c> probe
+		/// <c>RootSiteEditingHelper.GetDictionary</c> performs). The dictionary probe is a RUNTIME check — it is
+		/// false in an environment with no installed dictionary for the WS, exactly as the WinForms FilterBar
+		/// then omits the item.
+		/// </summary>
+		public bool ColumnSupportsSpellingFilter(int dataColumnIndex)
+		{
+			CheckDisposed();
+			var specs = m_xbv.Vc.ColumnSpecs;
+			if (dataColumnIndex < 0 || dataColumnIndex >= specs.Count)
+				return false;
+			var colSpec = specs[dataColumnIndex];
+
+			// Not offered on a chooser/list column (FilterBar makes a chooser for those instead).
+			if (!string.IsNullOrEmpty(GetChooserBeSpec(colSpec)))
+				return false;
+
+			// LT-9047: for certain fields filtering on spelling errors just doesn't make sense.
+			var layout = XmlUtils.GetOptionalAttributeValue(colSpec, "layout",
+				XmlUtils.GetOptionalAttributeValue(colSpec, "label", ""));
+			switch (layout)
+			{
+				case "Pronunciation":
+				case "CVPattern":
+					return false;
+			}
+
+			// A spelling dictionary must be available for the column's writing system. Resolved the SAME way
+			// MakeColumnFilter resolves the column WS, with FilterBar's default-vernacular fallback.
+			var ws = SpellingFilterWritingSystem(colSpec);
+			return ws != 0 && SpellingHelper.GetSpellChecker(ws, m_cache.WritingSystemFactory) != null;
+		}
+
+		/// <summary>
+		/// Builds the legacy FilterBar "Spelling Errors" filter: a <see cref="FilterBarCellFilter"/> over the
+		/// column's finder with the SAME <see cref="BadSpellingMatcher"/> the WinForms FilterBar installs, so
+		/// the owned filter row narrows the real clerk list to rows whose cell has a spelling error in the
+		/// column's writing system. Returns null for a column out of range / with no filterable finder.
+		/// </summary>
+		public RecordFilter MakeSpellingErrorColumnFilter(int dataColumnIndex)
+		{
+			CheckDisposed();
+			var specs = m_xbv.Vc.ColumnSpecs;
+			if (dataColumnIndex < 0 || dataColumnIndex >= specs.Count)
+				return null;
+			var colSpec = specs[dataColumnIndex];
+			var finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_xbv.Vc, m_propertyTable.GetValue<IApp>("App"));
+
+			var ws = SpellingFilterWritingSystem(colSpec);
+			IMatcher matcher = new BadSpellingMatcher(ws);
+			matcher.WritingSystemFactory = m_cache.WritingSystemFactory;
+			return new FilterBarCellFilter(finder, matcher);
+		}
+
+		// The writing system the spelling-errors filter checks, resolved the SAME way FilterBar.MakeCombo
+		// resolves it: the column's ws param / ws attribute, falling back to the default vernacular WS when the
+		// spec names none (so a string column with no explicit ws still gets a sensible spell-check language).
+		private int SpellingFilterWritingSystem(XmlNode colSpec)
+		{
+			var colWs = WritingSystemServices.GetWritingSystem(m_cache, colSpec, null, 0);
+			var ws = colWs?.Handle ?? 0;
+			if (ws == 0)
+				ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			return ws;
 		}
 
 		// Builds the IVwPattern for "Filter For…", mirroring SimpleMatchDlg.ResultingMatcher: case-aware (the

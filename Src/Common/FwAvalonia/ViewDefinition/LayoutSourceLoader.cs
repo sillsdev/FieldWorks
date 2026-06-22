@@ -110,5 +110,74 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 			return index;
 		}
+
+		/// <summary>
+		/// §20.1.4 (F-1): indexes layouts by (class, type, name) → ALL matching variants in file-then-document
+		/// order. Unlike <see cref="IndexLayouts"/> (3-key first-wins), this keeps every <c>choiceGuid</c>
+		/// variant so a caller with a record's layout-choice GUID can pick the right one. Legacy DataTree
+		/// distinguishes e.g. the 11 <c>RnGenericRec/detail/Normal</c> layouts only by <c>choiceGuid</c>; a
+		/// first-wins 3-key lookup would collapse them all to the document-first (Analysis) layout.
+		/// </summary>
+		public static Dictionary<(string ClassName, string Type, string Name), List<XElement>> IndexLayoutsByChoice(
+			IEnumerable<XElement> layoutFiles)
+		{
+			var index = new Dictionary<(string, string, string), List<XElement>>();
+			foreach (var file in layoutFiles)
+			{
+				foreach (var layout in file.Descendants("layout"))
+				{
+					var className = (string)layout.Attribute("class");
+					var type = (string)layout.Attribute("type");
+					var name = (string)layout.Attribute("name");
+					if (className == null || type == null || name == null)
+					{
+						continue;
+					}
+
+					var key = (className, type, name);
+					if (!index.TryGetValue(key, out var variants))
+					{
+						variants = new List<XElement>();
+						index[key] = variants;
+					}
+					variants.Add(layout);
+				}
+			}
+
+			return index;
+		}
+
+		/// <summary>
+		/// §20.1.4 (F-1): from a (class,type,name) variant list (see <see cref="IndexLayoutsByChoice"/>),
+		/// pick the layout matching <paramref name="choiceGuid"/> (case-insensitive, mirroring legacy
+		/// <c>DataTree.GetTemplateForObjLayout</c>): an exact <c>choiceGuid</c> match wins; otherwise the
+		/// variant with NO <c>choiceGuid</c> attribute is the fallback; otherwise the first variant. A blank
+		/// <paramref name="choiceGuid"/> selects the choiceGuid-less fallback (or the first), preserving the
+		/// old first-wins behavior for layouts that do not use a layoutChoiceField.
+		/// </summary>
+		public static XElement SelectLayoutForChoice(IReadOnlyList<XElement> variants, string choiceGuid)
+		{
+			if (variants == null || variants.Count == 0)
+			{
+				return null;
+			}
+
+			XElement choicelessFallback = null;
+			foreach (var layout in variants)
+			{
+				var lcg = (string)layout.Attribute("choiceGuid");
+				if (!string.IsNullOrEmpty(choiceGuid)
+					&& string.Equals(lcg, choiceGuid, StringComparison.OrdinalIgnoreCase))
+				{
+					return layout; // exact choiceGuid match wins.
+				}
+				if (string.IsNullOrEmpty(lcg) && choicelessFallback == null)
+				{
+					choicelessFallback = layout; // first choiceGuid-less variant is the fallback.
+				}
+			}
+
+			return choicelessFallback ?? variants[0];
+		}
 	}
 }

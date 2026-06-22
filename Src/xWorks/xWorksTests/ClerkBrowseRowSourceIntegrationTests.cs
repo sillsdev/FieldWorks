@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Filters;
 using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -683,6 +684,103 @@ namespace SIL.FieldWorks.XWorks
 				"keys that resolve to no possibility build no filter, leaving the list unchanged");
 		}
 
+		// ----- "Spelling Errors" filter (FilterBar BadSpellingMatcher parity) -----
+		//
+		// RUNTIME-ONLY ASPECT: ColumnSupportsSpellingFilter's positive result depends on a per-WS spelling
+		// dictionary being installed (SpellingHelper.GetSpellChecker), which is not provisioned in the headless
+		// test environment — so the AVAILABILITY probe legitimately reports false here for every column. These
+		// tests therefore exercise (1) the deterministic STRUCTURAL half of the gate (a chooser column is never
+		// offered the item, no matter the dictionary), and (2) the real PRODUCT matcher build + routing + apply:
+		// MakeSpellingErrorColumnFilter returns the legacy FilterBarCellFilter wrapping a real BadSpellingMatcher,
+		// and SetFilterSpellingErrors applies it through the seam. With no dictionary the BadSpellingMatcher
+		// matches nothing (its SpellCheckMethod returns false for a null dict), so the filtered set FOLLOWS the
+		// matcher: the list empties, and clearing restores it — proving the seam routes to and applies the
+		// matcher even though the dictionary-dependent narrowing can't be positively observed headlessly.
+
+		[Test]
+		public void ColumnSupportsSpellingFilter_RunsWithoutThrowing_AndIsFalseForAChooserColumn()
+		{
+			// The structural gate (independent of the runtime dictionary probe): a chooser/list column is NEVER
+			// offered the spelling-errors item, exactly as FilterBar makes a chooser for those instead.
+			var col = FirstChooserColumn();
+			Assume.That(col, Is.GreaterThanOrEqualTo(0), "the lexicon browse shows a chooser column (Morph Type)");
+			Assert.That(m_bv.ColumnSupportsSpellingFilter(col), Is.False,
+				"a chooser/list column never supports the spelling-errors filter");
+
+			// The probe is total over the shown columns (no throw) and safe out of range.
+			for (var i = 0; i < m_bv.ColumnCount; i++)
+				Assert.That(() => m_bv.ColumnSupportsSpellingFilter(i), Throws.Nothing,
+					$"the spell-support probe runs without throwing on shown column {i}");
+			Assert.That(m_bv.ColumnSupportsSpellingFilter(-1), Is.False, "out-of-range reads false, not a throw");
+			Assert.That(m_bv.ColumnSupportsSpellingFilter(m_bv.ColumnCount), Is.False);
+		}
+
+		[Test]
+		public void MakeSpellingErrorColumnFilter_BuildsTheRealLegacyBadSpellingMatcher()
+		{
+			var col = FirstSortableColumn(); // a real string column with a finder
+			Assume.That(col, Is.GreaterThanOrEqualTo(0), "need a filterable text column");
+
+			var filter = m_bv.MakeSpellingErrorColumnFilter(col);
+			Assert.That(filter, Is.InstanceOf<FilterBarCellFilter>(),
+				"the spelling-errors filter is the legacy FilterBarCellFilter over the column's finder");
+			var cellFilter = (FilterBarCellFilter)filter;
+			Assert.That(cellFilter.Matcher, Is.InstanceOf<BadSpellingMatcher>(),
+				"it wraps the REAL legacy BadSpellingMatcher (the product spelling matcher, not a stand-in)");
+
+			// Out of range is null, not a throw.
+			Assert.That(m_bv.MakeSpellingErrorColumnFilter(-1), Is.Null);
+			Assert.That(m_bv.MakeSpellingErrorColumnFilter(m_bv.ColumnCount), Is.Null);
+		}
+
+		[Test]
+		public void SetFilterSpellingErrors_AppliesTheMatcherThroughTheSeam_FilteredSetFollowsTheMatcher()
+		{
+			var source = NewSource();
+			var col = FirstSortableColumn();
+			Assume.That(col, Is.GreaterThanOrEqualTo(0));
+			var full = source.RowCount;
+			Assume.That(full, Is.GreaterThan(0));
+
+			// The matcher's own verdict is the ground truth (runtime-dependent: whether a word is "misspelled"
+			// depends on whatever spelling checker the environment has for the WS — which is not provisioned
+			// headlessly). Evaluate the SAME legacy BadSpellingMatcher filter the seam builds on each original
+			// row up front, so the test asserts the filtered set FOLLOWS the matcher rather than a fixed
+			// direction. The filter needs a Cache (BadSpellingMatcher requires it) before Accept.
+			var clerk = Clerk;
+			var probe = m_bv.MakeSpellingErrorColumnFilter(col);
+			probe.Cache = Cache;
+			var expectedHvos = new HashSet<int>();
+			for (var i = 0; i < clerk.ListSize; i++)
+			{
+				var item = clerk.SortItemProvider.SortItemAt(i);
+				if (probe.Accept(item))
+					expectedHvos.Add(item.RootObjectHvo);
+			}
+
+			// Apply the spelling-errors filter through the seam: it must be tracked as the column's active clerk
+			// filter, and the surviving rows must be EXACTLY the rows the matcher accepts (the filtered set
+			// follows the matcher) — proving the seam built and APPLIED the real legacy matcher.
+			source.SetFilterSpellingErrors(col);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assert.That(source.ActiveColumnFilterCount, Is.EqualTo(1),
+				"the spelling-errors filter is tracked as the column's active clerk filter");
+			Assert.That(source.RowCount, Is.EqualTo(expectedHvos.Count),
+				"the narrowed list size equals the count of rows the BadSpellingMatcher accepts");
+			Assert.That(source.RowCount, Is.LessThanOrEqualTo(full), "a spelling filter never grows the list");
+			var survivingHvos = new HashSet<int>(Enumerable.Range(0, source.RowCount).Select(source.HvoAt));
+			Assert.That(survivingHvos, Is.EquivalentTo(expectedHvos),
+				"the surviving rows are exactly the ones the matcher accepts (the filtered set follows the matcher)");
+
+			// Mutual exclusivity / replacement: clearing the column's filter (a delta against the prior spelling
+			// filter, not an AND-stack) restores the full list.
+			source.SetFilter(col, string.Empty);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assert.That(source.ActiveColumnFilterCount, Is.EqualTo(0), "clearing removes the spelling filter");
+			Assert.That(source.RowCount, Is.EqualTo(full),
+				"the clear removed the prior spelling filter rather than stacking with it (mutual exclusivity holds)");
+		}
+
 		[Test]
 		public void GetCellValues_And_GetRichCell_AgreeOnEmptiness()
 		{
@@ -1015,6 +1113,59 @@ namespace SIL.FieldWorks.XWorks
 
 		// ----- Click Copy (interactive per-click copy of a clicked source cell into a target column) -----
 
+		// Pure word-extraction unit tests (the managed parity of native-Views GrowToWord): given the cell text +
+		// the clicked character offset, ExtractClickedWord returns the single clicked word. These exercise the
+		// boundary cases (word start/middle/end, punctuation, leading/trailing spaces, gaps, empty) directly so
+		// the product gesture only has to supply the offset.
+		[TestCase("alpha beta gamma", 0, "alpha")]   // start of first word
+		[TestCase("alpha beta gamma", 2, "alpha")]   // middle of first word
+		[TestCase("alpha beta gamma", 4, "alpha")]   // last char of first word
+		[TestCase("alpha beta gamma", 6, "beta")]    // start of middle word
+		[TestCase("alpha beta gamma", 8, "beta")]    // middle of middle word
+		[TestCase("alpha beta gamma", 11, "gamma")]  // start of last word
+		[TestCase("alpha beta gamma", 15, "gamma")]  // last char of last word
+		[TestCase("alpha beta gamma", 16, "gamma")]  // end of text → last word
+		[TestCase("alpha beta gamma", 5, "beta")]    // the gap between alpha/beta → following word (GrowToWord fwd)
+		[TestCase("word", 0, "word")]                // single word, start
+		[TestCase("word", 4, "word")]                // single word, end-of-text
+		[TestCase("don't stop", 2, "don't")]         // punctuation inside a word stays in the word
+		[TestCase("  leading text", 0, "leading")]   // leading space → first real word
+		[TestCase("trailing   ", 8, "trailing")]     // click in trailing whitespace → preceding word
+		[TestCase("", 0, "")]                         // empty cell → empty word
+		[TestCase("   ", 1, "")]                      // all whitespace → empty word
+		public void ExtractClickedWord_ReturnsTheClickedWord(string text, int offset, string expected)
+		{
+			Assert.That(ClerkBrowseRowSource.ExtractClickedWord(text, offset), Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void ComputeClickCopySource_NegativeOffset_FallsBackToWholeCell()
+		{
+			// No hit-testable layout (charOffset < 0): both modes copy the whole cell (conservative fallback).
+			Assert.That(ClerkBrowseRowSource.ComputeClickCopySource("alpha beta", ClickCopyMode.Word, -1),
+				Is.EqualTo("alpha beta"));
+			Assert.That(ClerkBrowseRowSource.ComputeClickCopySource("alpha beta", ClickCopyMode.Reorder, -1),
+				Is.EqualTo("alpha beta"));
+		}
+
+		[Test]
+		public void ComputeClickCopySource_WordMode_LiftsTheClickedWord()
+		{
+			Assert.That(ClerkBrowseRowSource.ComputeClickCopySource("alpha beta gamma", ClickCopyMode.Word, 8),
+				Is.EqualTo("beta"));
+		}
+
+		[Test]
+		public void ComputeClickCopySource_ReorderMode_RotatesToLeadWithTheClickedWord()
+		{
+			// Click in "gamma" (offset 11): rotate to lead with it, mirroring the legacy IchStartWord rotation.
+			Assert.That(ClerkBrowseRowSource.ComputeClickCopySource("alpha beta gamma", ClickCopyMode.Reorder, 11),
+				Is.EqualTo("gamma, alpha beta "));
+			// Click in the FIRST word (wordStart 0): nothing to rotate (legacy guards on IchStartWord > 0).
+			Assert.That(ClerkBrowseRowSource.ComputeClickCopySource("alpha beta gamma", ClickCopyMode.Reorder, 2),
+				Is.EqualTo("alpha beta gamma"));
+		}
+
 		[Test]
 		public void ClickCopyTargets_MatchCopyTargets_IncludeLexemeForm()
 		{
@@ -1039,8 +1190,9 @@ namespace SIL.FieldWorks.XWorks
 			var clickedRow = 0;
 			var sourceText = source.GetCellValues(clickedRow)[sourceCol];
 
-			// Overwrite (append: false) → the clicked source cell replaces the target on that ROW only.
-			source.ApplyClickCopy(sourceCol, target, clickedRow, ClickCopyMode.Word, " ", append: false, source.EditContext);
+			// Overwrite (append: false) → the clicked source cell replaces the target on that ROW only. charOffset
+			// -1 (no hit-testable layout) is the whole-cell fallback, so the whole source cell is copied.
+			source.ApplyClickCopy(sourceCol, target, clickedRow, charOffset: -1, ClickCopyMode.Word, " ", append: false, source.EditContext);
 			((MockFwXWindow)m_window).ProcessPendingItems();
 
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True, "a click commits the copy");
@@ -1053,6 +1205,39 @@ namespace SIL.FieldWorks.XWorks
 			((MockFwXWindow)m_window).ProcessPendingItems();
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False,
 				"the click copy was exactly ONE undoable unit");
+		}
+
+		[Test]
+		public void ClickCopy_WordMode_WithOffset_CopiesOnlyTheClickedWord_InOneUndoStep()
+		{
+			var source = NewSource();
+			var target = FirstCopyTargetColumn(source);
+			Assume.That(target, Is.GreaterThanOrEqualTo(0), "need an entry-anchored text copy target");
+			var sourceCol = FirstCopySourceColumnWithText(source, target);
+			Assume.That(sourceCol, Is.GreaterThanOrEqualTo(0), "need a distinct source column with text");
+			Assume.That(source.RowCount, Is.GreaterThan(0));
+
+			var clickedRow = 0;
+			var sourceText = source.GetCellValues(clickedRow)[sourceCol];
+			Assume.That(string.IsNullOrEmpty(sourceText), Is.False);
+
+			// Click at the FIRST character of the source cell — Word mode copies only that word (the parity of the
+			// native-Views GrowToWord), which equals the whole cell only when the cell is a single word.
+			var offset = 0;
+			var expectedWord = ClerkBrowseRowSource.ExtractClickedWord(sourceText, offset);
+
+			source.ApplyClickCopy(sourceCol, target, clickedRow, offset, ClickCopyMode.Word, " ", append: false, source.EditContext);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True, "a click commits the copy");
+			var after = NewSource();
+			Assert.That(after.GetCellValues(clickedRow)[target], Is.EqualTo(expectedWord),
+				"Word mode with a clicked offset copies just the clicked word into the target");
+
+			Cache.ActionHandlerAccessor.Undo();
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False,
+				"the word click copy was exactly ONE undoable unit");
 		}
 
 		[Test]
@@ -1070,7 +1255,7 @@ namespace SIL.FieldWorks.XWorks
 			ClerkBrowseRowSource.TryComputeCopiedValue(cells[target], cells[sourceCol], BulkCopyMode.Append, "; ",
 				out var expected);
 
-			source.ApplyClickCopy(sourceCol, target, clickedRow, ClickCopyMode.Reorder, "; ", append: true, source.EditContext);
+			source.ApplyClickCopy(sourceCol, target, clickedRow, charOffset: -1, ClickCopyMode.Reorder, "; ", append: true, source.EditContext);
 			((MockFwXWindow)m_window).ProcessPendingItems();
 
 			var after = NewSource();
@@ -1094,7 +1279,7 @@ namespace SIL.FieldWorks.XWorks
 			var otherRow = 1;
 			var otherBefore = source.GetCellValues(otherRow)[target];
 
-			source.ApplyClickCopy(sourceCol, target, 0, ClickCopyMode.Word, " ", append: false, source.EditContext);
+			source.ApplyClickCopy(sourceCol, target, 0, charOffset: -1, ClickCopyMode.Word, " ", append: false, source.EditContext);
 			((MockFwXWindow)m_window).ProcessPendingItems();
 
 			var after = NewSource();
@@ -1116,7 +1301,7 @@ namespace SIL.FieldWorks.XWorks
 			var undoBefore = Cache.ActionHandlerAccessor.CanUndo();
 
 			// source == target: a self-copy never writes.
-			source.ApplyClickCopy(target, target, 0, ClickCopyMode.Word, " ", append: false, source.EditContext);
+			source.ApplyClickCopy(target, target, 0, charOffset: -1, ClickCopyMode.Word, " ", append: false, source.EditContext);
 			((MockFwXWindow)m_window).ProcessPendingItems();
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.EqualTo(undoBefore),
 				"a source==target click copy is a no-op");
@@ -1132,7 +1317,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			if (emptyCol >= 0)
 			{
-				source.ApplyClickCopy(emptyCol, target, 0, ClickCopyMode.Word, " ", append: false, source.EditContext);
+				source.ApplyClickCopy(emptyCol, target, 0, charOffset: -1, ClickCopyMode.Word, " ", append: false, source.EditContext);
 				((MockFwXWindow)m_window).ProcessPendingItems();
 				Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.EqualTo(undoBefore),
 					"clicking an empty source cell copies nothing");
@@ -1342,6 +1527,67 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(ClerkBrowseRowSource.ComputeReplaced("hello",
 				new BulkReplaceSpec { FindText = "", ReplaceText = "x" }),
 				Is.EqualTo("hello"), "an empty find is a no-op");
+		}
+
+		// ----- §19f.2: Find/Replace P2 — diacritic-insensitive matching (MatchDiacritics OFF, legacy default) -----
+
+		[Test]
+		public void ComputeReplaced_DiacriticInsensitive_MatchesAccentedCell_AndPreservesSurroundingDiacritics()
+		{
+			// MatchDiacritics defaults OFF: an unaccented pattern matches the accented run, and only that run is
+			// replaced — the rest of the cell (including other diacritics) is preserved.
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("café déjà",
+				new BulkReplaceSpec { FindText = "cafe", ReplaceText = "tea" }),
+				Is.EqualTo("tea déjà"), "diacritic-insensitive find matches 'café' and leaves 'déjà' intact");
+		}
+
+		[Test]
+		public void ComputeReplaced_DiacriticSensitive_DoesNotMatchAcrossAccents()
+		{
+			// MatchDiacritics ON: the unaccented pattern must NOT match the accented cell.
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("café",
+				new BulkReplaceSpec { FindText = "cafe", ReplaceText = "tea", MatchDiacritics = true }),
+				Is.EqualTo("café"), "diacritic-sensitive find does not match an accented form");
+		}
+
+		[Test]
+		public void ComputeReplaced_DiacriticInsensitive_MatchesPrecomposedAndDecomposed()
+		{
+			// A combining-accent (decomposed) cell matches a precomposed pattern, and vice versa.
+			var decomposed = "café"; // e + combining acute
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced(decomposed,
+				new BulkReplaceSpec { FindText = "café", ReplaceText = "X" }),
+				Is.EqualTo("X"), "decomposed cell matches a precomposed find diacritic-insensitively");
+		}
+
+		[Test]
+		public void ComputeReplaced_DiacriticInsensitive_StillHonorsCaseAndWholeWord()
+		{
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("Café cafe",
+				new BulkReplaceSpec { FindText = "cafe", ReplaceText = "x", MatchCase = true }),
+				Is.EqualTo("Café x"), "case-sensitivity still applies under diacritic-insensitivity");
+
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("café cafeteria",
+				new BulkReplaceSpec { FindText = "cafe", ReplaceText = "x", MatchWholeWord = true }),
+				Is.EqualTo("x cafeteria"), "whole-word still bounds the match under diacritic-insensitivity");
+		}
+
+		[Test]
+		public void ComputeReplaced_DiacriticInsensitive_AllDiacriticFind_DoesNotReplace()
+		{
+			// A find text that strips to empty (all combining marks) must not match everywhere.
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("hello",
+				new BulkReplaceSpec { FindText = "́", ReplaceText = "x" }),
+				Is.EqualTo("hello"), "an all-diacritic find replaces nothing");
+		}
+
+		[Test]
+		public void ComputeReplaced_DiacriticInsensitive_RtlScript_NoSpuriousMatch()
+		{
+			// An unrelated find text must not match an RTL/complex-script cell.
+			Assert.That(ClerkBrowseRowSource.ComputeReplaced("שלום", // Hebrew "shalom"
+				new BulkReplaceSpec { FindText = "cafe", ReplaceText = "x" }),
+				Is.EqualTo("שלום"), "no spurious match in an unrelated script");
 		}
 
 		[Test]
@@ -1776,6 +2022,169 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(deleted, Is.EqualTo(0), "no rows → nothing deleted");
 			Assert.That(NewSource().RowCount, Is.EqualTo(totalBefore), "the row set is unchanged");
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.EqualTo(undoBefore), "an empty delete writes nothing");
+		}
+
+		// ----- Ghost-owner allowance (the bulkEditListItemsGhostFields path of AllowDeleteItem) -----
+		//
+		// When a bulk-edit target field re-roots the list-items class to a ghost target (here LexPronunciation, one
+		// of the EntryOrSenseBulkEdit bulkEditListItemsGhostFields), the list shows the existing CHILDREN of that
+		// class PLUS the childless ghost-OWNER entries. The legacy bar deletes a child of the expected class
+		// (same/subclass), allows deleting a ghost owner whose child already exists (deleting that child), and
+		// blocks a childless ghost owner. The OLD AllowDeleteRow blocked ANY non-entry/non-sense row, so it
+		// over-blocked these pronunciation rows; these tests pin the faithful behavior.
+
+		// Re-roots the live browse/clerk to LexPronunciation by choosing the Pronunciation-Location bulk target,
+		// exactly as Pronunciations_ListChoice_Locations does, so the row source sees the ghost-target list.
+		private void SwitchToPronunciationList()
+		{
+			m_bulkEditBar.SwitchTab("ListChoice");
+			m_bv.ShowColumn("Location");
+			m_bulkEditBar.SetTargetField("Pronunciation-Location");
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assume.That(m_bv.ListItemsClass, Is.EqualTo(LexPronunciationTags.kClassId),
+				"selecting the Pronunciation-Location target re-roots the list-items class to LexPronunciation");
+		}
+
+		private ILexEntry AddPronunciationTo(string headword)
+		{
+			var entry = Cache.LangProject.LexDbOA.Entries.FirstOrDefault(e => e.HeadWord.Text == headword);
+			Assume.That(entry, Is.Not.Null, "the test entry exists");
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var pronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+				entry.PronunciationsOS.Add(pronunciation);
+				pronunciation.Form.set_String(Cache.DefaultVernWs, "pron");
+			});
+			return entry;
+		}
+
+		[Test]
+		public void DeleteRows_GhostTargetClassRow_IsDeletable_DeletesTheChild_InOneUndoStep()
+		{
+			// Give one entry a pronunciation (so it appears as a LexPronunciation child row), then re-root the list.
+			var entryWithPron = AddPronunciationTo("pus");
+			var pronHvo = entryWithPron.PronunciationsOS[0].Hvo;
+			SwitchToPronunciationList();
+			var source = NewSource();
+
+			// Find the row whose object is the pronunciation child.
+			var pronRow = Enumerable.Range(0, source.RowCount).FirstOrDefault(i => source.HvoAt(i) == pronHvo);
+			Assume.That(source.HvoAt(pronRow), Is.EqualTo(pronHvo), "the pronunciation child is a row in the re-rooted list");
+
+			// A same-class (ghost-target) row is deletable now — the OLD guard blocked any non-entry/non-sense row.
+			var deletable = source.ClassifyDeletableRows(new List<int> { pronRow }, out var blocked);
+			Assert.That(deletable, Does.Contain(pronRow), "a LexPronunciation row (the expected list-items class) is deletable");
+			Assert.That(blocked, Does.Not.Contain(pronRow));
+			Assert.That(source.TestResolveDeleteTarget(pronHvo), Is.EqualTo(pronHvo),
+				"a same-class row deletes itself");
+
+			var deleted = source.DeleteRows(new List<int> { pronRow }, source.EditContext);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assert.That(deleted, Is.EqualTo(1), "the pronunciation child was deleted");
+			Assert.That(Cache.ServiceLocator.IsValidObjectId(pronHvo), Is.False, "the pronunciation is gone");
+			Assert.That(Cache.ServiceLocator.IsValidObjectId(entryWithPron.Hvo), Is.True, "the owning entry survives");
+
+			// ONE undo step restores the pronunciation child.
+			Cache.ActionHandlerAccessor.Undo();
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			Assert.That(Cache.ServiceLocator.IsValidObjectId(pronHvo), Is.True, "a single undo restored the deleted child");
+		}
+
+		[Test]
+		public void DeleteRows_GhostOwnerWithChild_ResolvesToTheChild_ChildlessOwnerIsBlocked()
+		{
+			// entryWithPron has a pronunciation child; the other test entries do not. Re-root to LexPronunciation.
+			var entryWithPron = AddPronunciationTo("pus");
+			var pronHvo = entryWithPron.PronunciationsOS[0].Hvo;
+			SwitchToPronunciationList();
+			var source = NewSource();
+
+			// A ghost OWNER entry (not the expected pronunciation class) with an existing child is ALLOWED, and the
+			// resolved delete target is the child pronunciation — NOT the entry (GhostParentHelper.GetOwnerOfTargetProperty).
+			var candidates = new HashSet<int> { entryWithPron.Hvo };
+			Assert.That(source.TestAllowDeleteRow(entryWithPron.Hvo, candidates), Is.True,
+				"a ghost-owner entry whose child pronunciation already exists is deletable");
+			Assert.That(source.TestResolveDeleteTarget(entryWithPron.Hvo), Is.EqualTo(pronHvo),
+				"the ghost-owner row resolves to its existing child (the delete handles the ghost parent)");
+
+			// A childless ghost OWNER entry (no pronunciation) is BLOCKED — there is nothing of the expected class.
+			var childlessEntry = Cache.LangProject.LexDbOA.Entries
+				.FirstOrDefault(e => e.PronunciationsOS.Count == 0);
+			Assume.That(childlessEntry, Is.Not.Null, "there is an entry without a pronunciation");
+			Assert.That(source.TestAllowDeleteRow(childlessEntry.Hvo, new HashSet<int> { childlessEntry.Hvo }), Is.False,
+				"a childless ghost owner is blocked (nothing of the expected class to delete)");
+			Assert.That(source.TestResolveDeleteTarget(childlessEntry.Hvo), Is.EqualTo(0),
+				"a childless ghost owner resolves to no delete target");
+		}
+
+		// ----- bulkDeleteIfZero (VerifyRowDeleteAllowable parity) -----
+
+		[Test]
+		public void DeleteRows_BulkDeleteIfZero_BlocksNonZeroCount_AllowsZero()
+		{
+			// The live lexicon spec has no bulkDeleteIfZero; wrap the viewer to supply one naming an int property
+			// (HomographNumber) so the guard reads it via reflection on the row object exactly as the legacy bar does.
+			var source = new ClerkBrowseRowSource(Clerk, new BulkDeleteIfZeroColumnSource(m_bv, "HomographNumber"), Cache);
+			Assume.That(source.RowCount, Is.GreaterThan(0));
+
+			var entries = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().ToList();
+			var zeroEntry = entries.FirstOrDefault(e => e.HomographNumber == 0);
+			var nonZeroEntry = entries.FirstOrDefault(e => e.HomographNumber != 0);
+			if (nonZeroEntry == null)
+			{
+				// Force a non-zero homograph number on some entry so the block path is exercised deterministically.
+				nonZeroEntry = entries.First();
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => nonZeroEntry.HomographNumber = 3);
+				zeroEntry = entries.FirstOrDefault(e => e.Hvo != nonZeroEntry.Hvo && e.HomographNumber == 0);
+			}
+			Assume.That(zeroEntry, Is.Not.Null, "need an entry with a zero count");
+
+			var candidates = new HashSet<int> { zeroEntry.Hvo, nonZeroEntry.Hvo };
+			Assert.That(source.TestAllowDeleteRow(nonZeroEntry.Hvo, candidates), Is.False,
+				"a row whose bulkDeleteIfZero count is non-zero is blocked");
+			Assert.That(source.TestAllowDeleteRow(zeroEntry.Hvo, candidates), Is.True,
+				"a row whose bulkDeleteIfZero count is zero is deletable");
+		}
+
+		// A thin decorator over the live BrowseViewer that overrides ONLY GetBulkEditSpecAttribute to supply a
+		// bulkDeleteIfZero property name — so the bulkDeleteIfZero guard can be exercised against a real LCModel
+		// object graph without a dedicated wordform tool/config. Every other member delegates to the real viewer.
+		private sealed class BulkDeleteIfZeroColumnSource : IBrowseColumnSource
+		{
+			private readonly IBrowseColumnSource _inner;
+			private readonly string _bulkDeleteIfZero;
+			public BulkDeleteIfZeroColumnSource(IBrowseColumnSource inner, string bulkDeleteIfZero)
+			{ _inner = inner; _bulkDeleteIfZero = bulkDeleteIfZero; }
+			public int ColumnCount => _inner.ColumnCount;
+			public string GetColumnName(int icol) => _inner.GetColumnName(icol);
+			public void GetColumnEditAttributes(int icol, out string field, out string ws, out string transduce)
+				=> _inner.GetColumnEditAttributes(icol, out field, out ws, out transduce);
+			public bool IsColumnEditable(int icol) => _inner.IsColumnEditable(icol);
+			public IReadOnlyList<BrowseColumnInfo> GetAvailableColumns() => _inner.GetAvailableColumns();
+			public string GetColumnKey(int icol) => _inner.GetColumnKey(icol);
+			public IReadOnlyList<string> GetRowCellStrings(IManyOnePathSortItem item) => _inner.GetRowCellStrings(item);
+			public SIL.LCModel.Core.KernelInterfaces.ITsString GetRowCellTsString(IManyOnePathSortItem item, int icol)
+				=> _inner.GetRowCellTsString(item, icol);
+			public RecordSorter MakeColumnSorter(int dataColumnIndex, bool ascending) => _inner.MakeColumnSorter(dataColumnIndex, ascending);
+			public RecordSorter MakeColumnSorter(int dataColumnIndex, bool ascending, bool sortedFromEnd, bool sortedByLength)
+				=> _inner.MakeColumnSorter(dataColumnIndex, ascending, sortedFromEnd, sortedByLength);
+			public RecordFilter MakeColumnFilter(int dataColumnIndex, BrowseColumnFilterKind kind, string text)
+				=> _inner.MakeColumnFilter(dataColumnIndex, kind, text);
+			public RecordFilter MakePatternColumnFilter(int dataColumnIndex, string pattern, BrowsePatternMatchType matchType, bool matchCase)
+				=> _inner.MakePatternColumnFilter(dataColumnIndex, pattern, matchType, matchCase);
+			public RecordFilter MakeStringListColumnFilter(int dataColumnIndex, string value, bool exclude)
+				=> _inner.MakeStringListColumnFilter(dataColumnIndex, value, exclude);
+			public string[] GetColumnStringList(int dataColumnIndex) => _inner.GetColumnStringList(dataColumnIndex);
+			public string GetColumnSpecAttribute(int icol, string attrName) => _inner.GetColumnSpecAttribute(icol, attrName);
+			public string GetBulkEditSpecAttribute(string attrName)
+				=> attrName == "bulkDeleteIfZero" ? _bulkDeleteIfZero : _inner.GetBulkEditSpecAttribute(attrName);
+			public RecordFilter MakeDateColumnFilter(int dataColumnIndex, BrowseDateMatchKind kind, System.DateTime start, System.DateTime end, bool handleGenDate)
+				=> _inner.MakeDateColumnFilter(dataColumnIndex, kind, start, end, handleGenDate);
+			public IReadOnlyList<BrowseChooserItem> GetColumnChooserList(int dataColumnIndex) => _inner.GetColumnChooserList(dataColumnIndex);
+			public RecordFilter MakeListChoiceColumnFilter(int dataColumnIndex, IReadOnlyList<string> chosenKeys)
+				=> _inner.MakeListChoiceColumnFilter(dataColumnIndex, chosenKeys);
+			public bool ColumnSupportsSpellingFilter(int dataColumnIndex) => _inner.ColumnSupportsSpellingFilter(dataColumnIndex);
+			public RecordFilter MakeSpellingErrorColumnFilter(int dataColumnIndex) => _inner.MakeSpellingErrorColumnFilter(dataColumnIndex);
 		}
 	}
 

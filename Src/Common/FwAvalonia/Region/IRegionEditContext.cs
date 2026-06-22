@@ -58,6 +58,84 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey);
 
 		/// <summary>
+		/// §19a: stages a run-aware text edit to ONE paragraph of a
+		/// <see cref="RegionFieldKind.StructuredText"/> (StText) field, opening the session on the first
+		/// edit. Returns false — WITHOUT opening the session — for a non-StText row, an out-of-range
+		/// paragraph index, or an ORC/lossy (read-only) paragraph. Like the run-aware single-WS path,
+		/// the rich payload preserves run metadata so the product <c>ITsString</c> rebuilds without
+		/// flattening.
+		/// </summary>
+		bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value);
+
+		/// <summary>
+		/// §19a: stages setting (or clearing, when <paramref name="styleName"/> is null/empty) the named
+		/// paragraph style of ONE paragraph of a <see cref="RegionFieldKind.StructuredText"/> field.
+		/// Returns false — without opening the session — for a non-StText row or an out-of-range index.
+		/// </summary>
+		bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName);
+
+		/// <summary>
+		/// §19a: stages inserting a new empty paragraph AFTER <paramref name="afterParagraphIndex"/> in a
+		/// <see cref="RegionFieldKind.StructuredText"/> field (a negative index inserts at the start).
+		/// Returns false — without opening the session — for a non-StText row. The structural gesture
+		/// commits immediately and the host re-shows (the model's paragraph list is a compose snapshot).
+		/// </summary>
+		bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex);
+
+		/// <summary>
+		/// §19a: stages deleting paragraph <paramref name="paragraphIndex"/> of a
+		/// <see cref="RegionFieldKind.StructuredText"/> field. Returns false — without opening the
+		/// session — for a non-StText row, an out-of-range index, or when it would delete the only
+		/// paragraph (the StText always keeps at least one, like the legacy editor).
+		/// </summary>
+		bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex);
+
+		/// <summary>
+		/// §19d: inserts a NEW picture (an <c>ICmPicture</c>) into the picture-collection field
+		/// <paramref name="field"/> from the source image file <paramref name="sourceFile"/>, with the
+		/// supplied <paramref name="metadata"/> (caption/description/license/creator). The structural
+		/// gesture commits immediately and the host re-shows (the picture rows are a compose-time
+		/// snapshot). Returns false — WITHOUT opening the session — for a non-picture field, a missing
+		/// source file, or a field that does not accept pictures.
+		/// </summary>
+		bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata);
+
+		/// <summary>
+		/// §19d: replaces the image FILE of the existing picture <paramref name="field"/> represents
+		/// (an Image row carries one <c>ICmPicture</c> via <see cref="LexicalEditRegionField.PictureHvo"/>)
+		/// with <paramref name="sourceFile"/>, leaving its caption/metadata intact. Returns false —
+		/// without opening the session — for a non-picture row, an unresolvable picture, or a missing file.
+		/// </summary>
+		bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile);
+
+		/// <summary>
+		/// §19d: deletes the picture <paramref name="field"/> represents from its owning collection.
+		/// Returns false — without opening the session — for a non-picture row or an unresolvable picture.
+		/// </summary>
+		bool TryDeletePicture(LexicalEditRegionField field);
+
+		/// <summary>
+		/// §19d: updates the metadata (caption/description, and license/creator when the file metadata is
+		/// writable) of the picture <paramref name="field"/> represents. The caption/description are real
+		/// <c>ICmPicture</c> multistring properties (always written); license/creator are applied to the
+		/// image file's Palaso metadata only when the file is present/writable. Returns false — without
+		/// opening the session — for a non-picture row or an unresolvable picture.
+		/// </summary>
+		bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata);
+
+		/// <summary>
+		/// §19d (closes §19c's picture-ORC deferral): inserts a picture ORC into the rich-text VALUE of a
+		/// text field at <paramref name="caretPosition"/> — creates the <c>ICmPicture</c> from
+		/// <paramref name="sourceFile"/> (with <paramref name="metadata"/>) and inserts the
+		/// <c>kodtGuidMoveableObjDisp</c> run referencing it, like legacy
+		/// <c>FwEditingHelper.InsertPicture</c>. The gesture commits immediately and the host re-shows.
+		/// Returns false — without opening the session — for a field whose writing system cannot be
+		/// resolved, a missing source file, or a field that does not carry editable rich text.
+		/// </summary>
+		bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata);
+
+		/// <summary>
 		/// Validates the staged state. Empty result means commit may proceed; messages are
 		/// user-facing (validation seam, deterministic order).
 		/// </summary>

@@ -18,7 +18,9 @@ namespace FwAvaloniaDialogs
 	{
 		private Border _lexemeFormHost;
 		private Border _morphTypeHost;
+		private Border _complexFormTypeHost;
 		private Border _glossHost;
+		private Border _msaHost;
 
 		public InsertEntryDialogView()
 		{
@@ -26,7 +28,9 @@ namespace FwAvaloniaDialogs
 			InitializeComponent();
 			_lexemeFormHost = this.FindControl<Border>("PART_LexemeFormHost");
 			_morphTypeHost = this.FindControl<Border>("PART_MorphTypeHost");
+			_complexFormTypeHost = this.FindControl<Border>("PART_ComplexFormTypeHost");
 			_glossHost = this.FindControl<Border>("PART_GlossHost");
+			_msaHost = this.FindControl<Border>("PART_MsaSection");
 			DataContextChanged += (s, e) => InjectControls();
 			InjectControls();
 		}
@@ -42,8 +46,12 @@ namespace FwAvaloniaDialogs
 				_lexemeFormHost.Child = vm?.LexemeFormField;
 			if (_morphTypeHost != null)
 				_morphTypeHost.Child = vm?.MorphTypePicker;
+			if (_complexFormTypeHost != null)
+				_complexFormTypeHost.Child = vm?.ComplexFormTypePicker;
 			if (_glossHost != null)
 				_glossHost.Child = vm?.GlossField;
+			if (_msaHost != null)
+				_msaHost.Child = vm?.MsaGroupBox;
 		}
 	}
 }

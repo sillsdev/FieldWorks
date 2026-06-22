@@ -1,5 +1,12 @@
 ## Why
 
+> **Status note (2026-06-20).** This change is **folded into and superseded by `avalonia-end-game`**
+> (Phase 2 of the FieldWorks Avalonia migration). `avalonia-end-game` absorbs the Avalonia default
+> shell, application/window lifetime, command bridge, screen registry, dialog/service abstractions, and
+> final WinForms decommissioning specified here, and adds the net48 → .NET 10 retarget and true
+> Windows/macOS/Linux cutover. This proposal is preserved as historical detail; the active Phase-2 plan
+> lives in `openspec/changes/avalonia-end-game/`.
+
 The Lexical Edit Avalonia migration proves the first high-risk regional replacement, but FieldWorks will still start and compose its application through a WinForms/XCore shell. A second phase is needed to replace application lifetime, windowing, navigation, menus, dialogs, and main-screen hosting with Avalonia so the final default product is a fully Avalonia app rather than an Avalonia island inside the old shell.
 
 ## What Changes

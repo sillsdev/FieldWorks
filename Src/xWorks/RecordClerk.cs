@@ -1191,6 +1191,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
+			// PARITY §19g: the Import/Export dialogs (ExportDialog / NotebookExportDialog here; LiftImportDlg,
+			// LexImportWizard, CombineImportDlg, NotebookImportWiz on the import side) are NOT migrated in this
+			// pass. They are multi-page, menu-driven wizards wrapping OS file-picker flows (which on the Avalonia
+			// side must route through IStorageProvider) and FXT/SFM transform pipelines — each is a project-sized
+			// slice rather than a bounded lexical-edit/browse dialog. Kept on the legacy WinForms path.
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 			if (areaChoice == "notebook")
 			{

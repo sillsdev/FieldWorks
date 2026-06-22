@@ -131,5 +131,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>The heavy 2px rule above top-level section headers (legacy heavy separator).</summary>
 		public static readonly Avalonia.Media.IBrush SectionRuleBrush = Avalonia.Media.Brushes.LightGray;
+
+		/// <summary>The horizontal indent applied per hierarchy level in an indented possibility list / POS
+		/// tree row (the legacy chooser tree's per-depth inset). One source of truth so the tree picker and
+		/// the option picker's depth-indented rows indent identically.</summary>
+		public const double TreeIndentPerLevel = 14d;
+
+		/// <summary>Compact width of the collapsed dropdown chooser (POS picker and similar) so the
+		/// collapsed control reads as a field-sized box rather than shrinking to its current text.</summary>
+		public const double DropdownMinWidth = 160d;
 	}
 }

@@ -301,3 +301,184 @@ fixes implemented this pass, doc corrections applied, and genuinely-deferred ite
 **PR-readiness blockers (process/manual — must run before opening the PR; not code):**
 - [ ] 18.12 Run the full `./build.ps1` + `./test.ps1` traversal (tasks 10.6/10.7) and the foundation's full CI (its 10.3) — managed changes were validated through the normal MSBuild outputs `test.ps1` consumes, but the full native+managed graph has not been run this pass.
 - [ ] 18.13 Attach a filled `wiring-review-checklist.md` (task 10.12) and verify per-manifest evidence (task 10.8); capture the foundation's realized-window manual RTL + Khmer evidence (its task 8.2).
+
+## 19. Phase-1 functional parity burn-down — pre-PR derisk (added 2026-06-20)
+
+**Phase boundary (explicit).** This change is **Phase 1: derisk all functional behavior**. Goal: convert as much
+*functional* UI as possible so testers can shake out bugs, with **WinForms still switchable in/out** (the
+runtime UI-mode switch), **everything still hosted through the WinForms shell**, and **no code deleted**.
+Full linguistic depth is a primary requirement on every migrated screen — **no functional regression**; the
+*only* intentional drop is Graphite shaping (rendered via OpenType/HarfBuzz instead, per
+`graphite-transition-support`). The frame rip-out — kill WinForms, retarget net48 → net10, true cross-platform
+cutover — is **Phase 2 = `avalonia-end-game`** and is explicitly OUT of this change. Everything below is
+**managed C#/Avalonia work**: an audit confirmed no remaining functional item needs FieldWorks C++ (the native
+`ITsString`/writing-system kernel is the retained data model consumed via managed interop, not a renderer;
+Views/Graphite/Uniscribe are replaced and isolation-tested; file/font pickers use Avalonia managed APIs).
+
+**Already landed (this change + the 2026-06 work session), for context — NOT re-listed below:** the region
+detail surface + typed view-definition IR; the browse table with all column display/sort (single/multi/from-end/
+by-length)/filters (blank/preset/multipara/YesNo/integer/pattern "Filter For…"/date-restrict/list-choice/
+stringList/spelling) + checkbox-select + column config/width + virtualization + density; the full bulk-edit bar
+(List Choice, Bulk Copy, Clear, Bulk Replace P1, Process/Transduce, Click Copy incl. word-level, object-Delete
+with ghost/bulkDeleteIfZero guards); the dialog kit (modal host, base VM, launcher) + InsertEntry (+ matching-
+entries, MorphType dropdown, **MSA editor**: POS tree-chooser, affix type, slot, secondary POS, **inflection
+class**, **complex-form type**), **create-new-POS from the GOLD catalog**, **AddNewSense**, **MsaCreator**,
+EntryGo family + Merge + Link{EntryOrSense,Allomorph,MSA} (+ sense path), Chooser (flat/tree + shift-range),
+FindReplace/FilterFor/DateRangeFilter/ConfigureColumns/Options/MessageBox; the WinForms-density visual system
+(tokens, deterministic checkbox/radio sizing, dialog spacing/borders) + per-stage PNG snapshot harness + the
+`AssertNoCrowding` geometry tripwire across every surface. The items below are the **remaining** functional gaps.
+
+### 19.0 Testing rubric — MANDATORY for every §19 item (added 2026-06-20)
+
+No §19 item is "done" until it satisfies ALL of these test categories, and each category's tasks
+**explicitly include them** (a group's "Tests + PNG" line is shorthand for this full rubric). Default to
+real/integrated coverage over isolated units; prefer Avalonia.Headless `[AvaloniaTest]` + real/in-memory
+LCModel for adapters.
+
+- **(T0) Test research** — BEFORE building, enumerate the WinForms behavior, the edge cases, and the real
+  user workflows for the category in a short per-category research note (matrix of behaviors × edge cases ×
+  workflows). The test suite is derived from this matrix; the note ships with the item. This is an explicit,
+  trackable sub-task (`*.T0`) for every group below.
+- **(T1) Unit** — every control/VM/adapter behavior in isolation (headless).
+- **(T2) Integration (multi-item, REQUIRED where possible)** — combine multiple items in ONE realized
+  headless scenario rather than testing each alone: e.g. edit text + add paragraph + apply style + undo on
+  one surface; InsertEntry exercising MorphType + MSA + inflection-class + complex-form + create-POS together;
+  a browse row edited + filtered + sorted + bulk-edited in one fixture. Assert the items compose correctly
+  (state, undo grouping, refresh) — not just that each works alone.
+- **(T3) Edge cases** — empty / boundary / invalid / error / RTL + complex-script (Khmer) / large-data /
+  rapid-or-interleaved gestures / cancel-vs-commit / re-entrancy, per category.
+- **(T4) Workflow** — end-to-end user task sequences for the category (e.g. "create entry → add sense → set
+  POS → add inflection feature → save → reopen and verify"; "filter browse → multi-select → bulk delete →
+  undo"). These are the tester-facing journeys, run headlessly.
+- **(T5) Visual** — per-stage PNG capture + `AssertNoCrowding`, reviewed against the six subjective-quality
+  questions; full-project test run to catch order-dependence.
+
+Each group `19x` therefore carries (at least) `19x.T0` test-research and integration/edge/workflow test tasks
+in addition to its build tasks. Cross-category integration journeys are tracked under §19h.
+
+### 19a. Structured multi-paragraph text (StText) — highest-frequency gap
+- [x] 19a.1 Add a `RegionFieldKind.StructuredText` + managed multi-paragraph editor (`FwStructuredTextField`: paragraph add/delete/edit, per-paragraph named style) for Entry.Comment, Sense.Definition/Discussion, example fields — was **read-only** (regression), now editable. LCModel-free view; xWorks `AddStructuredText` edit-context adapter writes StTxtPara in one UOW. (Done 2026-06-20; ORC paragraphs stay read-only → §19c.3.)
+- [x] 19a.T0 Test-research note: matrix of StTextSlice behaviors × edge cases × workflows (`sttext-test-research.md`; the test suite derives from it). (Done 2026-06-20.)
+- [x] 19a.T1 Unit (headless): editor read-only baseline, staging, multi-paragraph, Enter-inserts, Backspace-deletes, only-paragraph-not-deletable, style applies, ORC read-only, Dispose teardown (9) + adapter round-trip/undo/redo/insert/delete/style/cancel on real in-memory LCModel (6).
+- [x] 19a.T2 Integration (multi-item): StText edit combined with sibling field edits + add/delete paragraph + style on ONE realized region surface; assert undo grouping + refresh compose correctly with the rest of the detail view. (`StructuredTextIntegrationTests`: `EditCitation_AndParagraphText_CommitTogether_AsOneUndoStep_OnFocusLoss`, `AddParagraph_IsItsOwnImmediateUndoStep_AndReShowKeepsSiblingState`, `CombinedGestures_TextEdit_Add_Style_ProduceOrderedDistinctUndoSteps`.)
+- [x] 19a.T3 Edge: empty StText, single-vs-multi paragraph, RTL + complex-script (Khmer) paragraph, rapid interleaved add/delete, cancel-vs-commit, ORC paragraph interleaved with editable ones. (`StructuredTextEdgeCaseTests`, 8 — incl. `RtlAndComplexScript_ParagraphStagesAndRoundTrips_LosslessRuns` with Arabic + Khmer.)
+- [x] 19a.T4 Workflow: edit Definition → add paragraph → apply paragraph style → save → reopen → verify round-trip (headless, real cache). (`StructuredTextWorkflowTests`.)
+- [x] 19a.T5 Visual: per-stage PNG (`Region-StText-01..04`) + `AssertNoCrowding`; full-project run green.
+
+### 19b. Feature structures (FsFeatStruc) — inflection / gloss (MGA) / phonological
+- [x] 19b.1 Build a reusable LCModel-free **feature-structure tree editor** control (feature → value selection, nested, cardinality) — mirror the FwPosChooser pattern (kit control + LCModel-aware adapter). (`FwFeatureStructureEditor` + `FwFeatureStructureAdapter`; Done 2026-06.)
+- [x] 19b.2 Wire it into the MSA editor (`FwMsaGroupBox`) for inflection features on inflectional/derivational MSAs. // PARITY §19b: sense-editor gloss features (MGA) NOT wired in Phase 1 — the multi-gloss feature path stays on the legacy slice (deferred; Stage 2 wiring).
+- [x] 19b.3 Migrate the feature dialogs: `MsaInflectionFeatureListDlg`, `PhonologicalFeatureChooserDlg` (Launcher/Slice/View under `Src/LexText/Lexicon`) — reuse the tree editor + Chooser kit; create-feature flow analogous to create-POS. // PARITY §19b: master-list editors (`MasterInflectionFeatureListDlg`, `MasterPhonologicalFeatureListDlg`) + GOLD-catalog create-feature import deferred (Stage 3).
+- [x] 19b.4 Tests + PNG per feature-editor surface; parity fixtures. (`FwFeatureStructureEditorTests` 25 + `FwFeatureStructureAdapterTests` 10 + `FwMsaGroupBoxTests`; PNG `FwFeatureStructureEditor-01..04`.)
+
+### 19c. Rich-text depth (over the existing run model)
+- [x] 19c.1 Named character/paragraph **styles**: a style picker + apply-to-selection/clear UI in the multistring/StText editors (`FwStructuredTextField` style flyout; `RegionRichTextEditAlgorithms.ApplySpanNamedStyle`). // PARITY §19c.1: this is style *apply*; the Styles *management* dialog (FwStylesDlg) is §19g.2 (deferred, Views-coupled).
+- [x] 19c.2 Per-run **writing system**: render runs in their per-run WS font and allow run-granularity WS retag in the editor (`RetagSpanWritingSystem`; model carries `WritingSystemTag`).
+- [x] 19c.3 **ORC embedded objects**: external links (`kodtExternalPathName`) insert/edit/delete via `ApplyHyperlink`; pictures (`kodtGuidMoveableObjDisp`) insert/caption/delete via `TryInsertPictureOrc` (§19d). // PARITY §19c.3: footnote (`kodtOwnNameGuidHot`/`kodtNameGuidHot`) full-edit is render+delete only — full footnote editing is scripture-coupled (deferred).
+- [x] 19c.4 Tests + PNG (mixed-script run, styled run, ORC round-trip + edit). (`StructuredTextRichDepthTests`, 8.)
+
+### 19d. Media & pictures
+- [x] 19d.1 **Audio / voice writing systems**: play + record + clear affordances for IsVoice WS values via `IRegionMediaServices` (`BuildAudioRow`; the value's text is the audio filename). // PARITY §19d.1: cross-platform (non-Windows) recording is deferred to avalonia-end-game — the record affordance disables with a tooltip where the platform can't record.
+- [x] 19d.2 **Pictures (CmPicture)**: insert/replace/delete + caption/license/creator metadata in the **detail view** (`RegionPictureEditor` + `LcmRegionMediaServices` + `PicturePropertiesDialog` via Avalonia managed file picker). // PARITY (19i.10): the **in-cell browse** picture editor is wired view-side but NOT reached in product — `ClerkBrowseRowSource.GetEditField` returns `Text` (no picture column in the stock lexicon browse view); deferred with §19f.3 / §20.2.
+- [x] 19d.3 Tests + PNG. (`PictureAndAudioFieldTests` 12 + `RegionPictureAndAudioEditingTests` 8 + `PicturePropertiesDialogTests`.)
+
+### 19e. Field-type completeness (detail editors)
+- [x] 19e.1 **Enum closed-combo** field (closed combo over the layout stringList) — dedicated `RegionFieldKind.EnumCombo` + closed `ComboBox` editor (rejects free text); composer `WalkEnumCombo` routes to it.
+- [x] 19e.2 **Integer** field numeric validation — dedicated `RegionFieldKind.Integer` numeric editor (rejects non-numeric keystrokes + reject-and-restore on bad commit); int-parse setter unchanged.
+- [x] 19e.3 **GenDate qualifiers** (circa / precision / era) UI via `FwGenDateField` (year + precision Before/On/About/After + era AD/BC), composing a `GenDate.TryParse`-compatible long-string; **exact-date** calendar picker (`CalendarDatePicker`) alongside the parse-on-commit text box.
+- [x] 19e.4 **Specialized reference vectors**: semantic-domain 2-level tree (option `Depth`, already present — pinned) + ghost LexRef vector (already present — pinned). // PARITY §19e: notebook/`IText` ghost-vector creation context is not reachable from the entry composer (out of slice).
+- [x] 19e.5 **Embedded view (jtview)** nested layouts (importer captures `param`/`layout` as `TargetLayout`; composer `WalkEmbeddedView` recurses the nested layout, visited-set guards cycles — // PARITY §19e note for arbitrarily deep nests); **literal/"lit"** slices → `RegionFieldKind.Literal` static renderer; **field-visibility toggle** ("show hidden fields") honored by the composer's `showHiddenFields` flag (no legacy `maybe` value — see field-types-test-research §note); **per-field writing-system visibility** override (`visibleWritingSystems`) imported + applied.
+- [x] 19e.6 Tests + PNG for each (T0 research note; T1 factory/composer; T2 integration surface; T3 edges; T4 real-cache workflow; T5 PNG stages reviewed).
+
+### 19f. Browse functional remainders (behind the shell, switchable)
+- [x] 19f.1 **Right-click ROW context menu** (FULL): `IBrowseRowMenuSource` seam + `BrowseRowCommand` (key/label/enabled/separator); the data cell builds the menu lazily on right-click (host commands + universal Copy/Paste), raises `RowCommandInvoked`; `RecordBrowseView.OnAvaloniaRowCommandInvoked` jumps the clerk to the row's object then broadcasts the key via `Publisher`.
+- [x] 19f.2 **RDE (Rapid Data Entry)** (CORE): `IBrowseRdeSource` seam + a docked new-row (one editor per RDE-editable column, prompt watermark); Enter commits via `NewRowCommitRequested` → host-control `CommitNewRow` (one UOW) → `NewRowCommitted(hvo)`; all-blank never commits. // PARITY §19f.7: clerk-backed `CommitNewRow` factory invocation (reads `EditRowAssembly/Class/SaveMethod`) + the `RDEMergeXxx` post-UOW merge are scoped — the standard lexicon browse is not an RDE view.
+- [x] 19f.3 In-cell **picture** editing (FULL view-side): an editable cell whose `GetEditField` returns `RegionFieldKind.Image` realizes the §19d picture field control (insert/replace/delete via `IRegionMediaServices`); the `ClerkBrowseEditContext` picture lane carries the write. **Per-cell UIA** (FULL realized cells): each realized cell exposes Name `"{column}: {text}"`. // PARITY §19f.3: clerk-backed picture-column classification + media-services browse wiring (no picture column in default views); per-cell peers for de-realized rows.
+- [x] 19f.4 **Find/Replace P2** (FULL): `ClerkBrowseRowSource.ComputeReplaced` now does diacritic-INSENSITIVE matching (NFD-decompose + combining-mark strip + index-map splice into the original) when `MatchDiacritics` off, and `ComputeReplacedForColumn` adds WS-collation whole-cell equality via `Icu.Collation.Collator` (primary/tertiary strength). **Transduce "Setup…"** was ALREADY wired (`LaunchConverterSetup`→`AddCnvtrDlg`, `BulkTransduceTabViewModel.Setup` refresh) — T1 tests added.
+- [x] 19f.5 Cell **copy/paste** (FULL): Ctrl+C copies the cell text to the clipboard; Ctrl+V (and the menu Paste) stages into an editable cell through the shared edit context (non-editable rejects). Header **drag-reorder** (FULL): a header drag raises `ColumnReordered`; `RecordBrowseView.OnAvaloniaColumnReordered` reorders the shown-key order + persists via the same `ApplyConfiguredColumns` path the Configure dialog uses. **Export** (FULL bounded): `BrowseCsvExporter` + `LexicalBrowseView.ExportVisibleCsv` (RFC-4180). // PARITY §19f → avalonia-end-game: OS print + the full legacy ConfiguredExport (XHTML/XML).
+- [x] 19f.6 Tests + PNG: T0 `browse-remainders-test-research.md`; T1 view tests (`LexicalBrowseRemaindersTests`) + matcher tests (`ClerkBrowseRowSourceIntegrationTests`) + transduce-setup (`BulkEditBarViewTests`); T2 compose-on-one-view integration; T3 edges; T5 PNG stages (RDE row, row menu) reviewed + `AssertNoCrowding`.
+
+### 19g. Remaining functional dialogs (reachable from editing; behind the shell)
+- [x] 19g.1 **Writing System properties / Add-WS** (font, direction) — Avalonia managed (`WritingSystemPropertiesDialog`). // PARITY §19g.1: SLDR lookup + encoding-converters + advanced tabs deferred (bounded).
+- [~] 19g.2 **Styles** dialog (manage/apply character & paragraph styles) — DEFERRED to Stage 9 / `avalonia-end-game`: `FwStylesDlg` is Views-engine-coupled. Style *apply* ships in §19c.1; style *management* is the deferred piece.
+- [x] 19g.3 **Delete-confirmation** (entry/sense + orphan warnings) — pairs with the browse Delete tab + detail delete (`DeleteConfirmationDialog`).
+- [x] 19g.4 **LexReferenceDetails** + **Character-map / special-char insert** (`SpecialCharacterDialog`) migrated; **Lex Options** OptionsDialog base exists. // PARITY §19g.4: **Reversal-entry** GO/move + **Occurrence** min/max pickers are non-lexical-tool surfaces (deferred).
+- [~] 19g.5 Import/Export (LIFT/SFM/CSV) dialogs — DEFERRED (lower priority; Avalonia managed file picker). Out of the Phase-1 lexical-edit slice.
+- [x] 19g.6 Tests + PNG per shipped dialog (`DeleteConfirmationDialogTests` 6, `LexReferenceDetailsDialogTests` 5, `WritingSystemPropertiesDialogTests` 6, `SpecialCharacterDialogTests` 6).
+
+### 19h. Verification & PR-readiness (close the derisk phase)
+- [x] 19h.1 Verify end-to-end **context-menu command execution** (insert/delete/move/merge slice) on the Avalonia surface, not just menu rendering (relates to §13/§15). (`RegionCommandAdapterHardeningTests` + `RecordEditViewActiveHostContractTests`; `RowCommandInvoked → OnAvaloniaRowCommandInvoked` jumps the clerk then broadcasts via `Publisher`, covered by `LexicalBrowseRemaindersTests`.)
+- [x] 19h.2 Verify **undo granularity** (one step per field/gesture) and **expansion/splitter-state persistence** end-to-end. (Undo: `StructuredTextIntegrationTests.CombinedGestures_..._ProduceOrderedDistinctUndoSteps`; expansion: `RegionViewingParityTests.ExpansionState_PersistsThroughTheSuppliedStore_AndAppliesOnRebuild`; splitter: per-host persistence in `LexicalEditHostControl`.)
+- [~] 19h.3 Full `./build.ps1` + `./test.ps1` native+managed traversal green (rolls up 18.12) — **DONE**: build `[OK]`, managed sweep 1621 green (FwAvaloniaTests 797 / FwAvaloniaDialogsTests 311 / xWorks region+browse 345 / LexText launcher 168); Khmer + RTL **headless** evidence in `StructuredTextEdgeCaseTests`. **OPEN**: filled `wiring-review-checklist.md` + per-manifest evidence; *manual* realized-window (non-headless) RTL/Khmer evidence (needs a human-run app session).
+- [ ] 19h.4 Tester burn-down: ship the switchable Avalonia mode to testers, triage reported bugs, drive the Phase-1 defect list to zero before the Phase-1 PR / before starting `avalonia-end-game`. **(GATE — requires human testers; cannot be closed autonomously.)**
+
+### 19i. Cross-cutting review fix sweep (verified findings — 2026-06-21)
+Source: multi-agent review→adversarial-verify workflow (`xcut-review-2026-06-21.json`). Only ground-truth-confirmed defects listed.
+- [x] 19i.1 **[HIGH] GenDate year corruption (data loss).** FIXED: the composer now emits the canonical year-granular form from the GenDate model's structured parts (`FullEntryRegionComposer.AddDateField` + `MapGenDatePrecision`), never `gen.ToLongString()`, so the year-granular editor can no longer digit-scan the DAY as the year. View parse made defensive. Tests: `Compose_CustomFields_*` now assert "About AD 2020/2018/2016" + `Does.Not.Contain("14")` (real month/day GenDates).
+- [x] 19i.2 **[HIGH] Rich-text span gestures are a no-op in production.** FIXED: `Focusable=false` on all span-applying triggers — shared `RegionRichTextChrome.BuildSpanPicker` (covers char-style + WS pickers) + the 4 inline buttons (paragraph-style in `FwStructuredTextField`; char-style/WS/link/ORC-delete in `FwFieldControls`). Guard test 19i.9.
+- [ ] 19i.3 **[HIGH→MED] Browse data-row right-click shows no host commands.** `ClerkBrowseRowSource` does not implement `IBrowseRowMenuSource` (only the test fake does) → product menu emits only Copy/Paste; legacy raised `mnuBrowseView` (Delete Entry, Show in Concordance). Fix: implement product `IBrowseRowMenuSource` on `ClerkBrowseRowSource`. (Corrects 19f.1 overclaim.)
+- [ ] 19i.4 **[HIGH→MED] WS-properties & SpecialCharacter dialogs have no product caller.** Built + headless-tested but unwired; `FwXWindow.cs:1543-1561` still builds legacy `FwWritingSystemSetupDlg` ("not yet gated"). Fix: gate the launchers behind UIMode=New. (Corrects 19g.1/.4 overclaim.)
+- [ ] 19i.5 **[HIGH→MED] DeleteConfirmation wired only for LexReference deletes.** Standard delete paths (`RecordClerk.cs:1518`, `FdoUiCore.cs:1036`) build legacy `ConfirmDeleteObjectDlg` with no UIMode gate. Fix: gate the two standard delete paths. (Corrects 19g.3 overclaim.)
+- [ ] 19i.6 **[MED] StText editor missing Lexicon Lookup / Add-to-Lexicon.** `RegionFieldControlFactory.cs:110-118` does not forward `context.MenuRequested` to `FwStructuredTextField` (multistring case at 138-140 does). Fix: thread `menuRequested` into `FwStructuredTextField`; surface in-text Lexicon Lookup/Add to Lexicon.
+- [ ] 19i.7 **[MED] StText editor missing Hyperlink / ORC-insert affordance.** `FwStructuredTextField.BuildParagraphRow` builds no Link/OrcDelete control; `FwFieldControls.cs:637-749` does. Algorithms already exist (`LexicalEditRegionModel.cs:810,842,881`). Fix: add link/ORC affordances reusing those methods. (Cross-cutting theme: `FwStructuredTextField` is systematically thinner than `FwFieldControls` — one capability-parity sweep.)
+- [ ] 19i.8 **[MED] GenDate drops month/day granularity** (legacy `GenDateChooserDlg` had it). Fix: add month/day controls (also fully closes 19i.1), OR keep year-only + `// PARITY` note + the corruption guard.
+- [x] 19i.9 **[TEST] Focus-invariant guard added.** `StructuredTextRichDepthTests.RichTextTriggerButtons_AreNonFocusable_...` asserts the char-style/WS/paragraph-style triggers all have `Focusable==false` — the invariant the prior `flyout.ShowAt()`/direct-selection tests could not catch. (Headless real-pointer hit-testing is fragile; the Focusable invariant is the durable, non-routable guard.)
+- [x] 19i.10 **[DOC] PARITY-note + checklist corrections.** DONE: `// PARITY (19i.10)` markers added in `FwStructuredTextField` (Enter-insert / Backspace-no-merge are paragraph-granular, mid-text split + non-empty merge deferred) and `FwMsaGroupBox` (inline inflection-feature editor is net-new, not a legacy box widget); 19d.2 qualified to detail-view-only. Remaining note: CSV export still lacks a user-reachable trigger (`ExportVisibleCsv` has no menu/toolbar caller) — folded into §20 browse work.
+
+### 20. Whole-tool Avalonia surface generalization (Grammar / Lists / Notebook / Words) — DO NOT DEFER
+Wire the migrated core primitives into the four remaining tools' main UI. Source map: `xcut-review-2026-06-21.json` §C.
+- [ ] 20.1 **Shared composer + edit-context generalization (gates ALL edit surfaces).**
+  - [x] 20.1.1 (L) DONE: `Compose(ICmObject obj, LcmCache, string layoutName="Normal", ...)` overload added; the `ILexEntry` overload delegates; model now uses `obj.ClassName`/`layoutName` not hardcoded `"LexEntry"/"Normal"`. Build + 224 region/composer tests green.
+  - [x] 20.1.2 (M) DONE: `RegionEditContextBase` ctor takes `ICmObject root` (`RootObject`; `Entry => RootObject as ILexEntry`); `Validate()` is `virtual` and guards the lexeme rule on entry-roots (no-op + overridable for other classes); undo/redo labels via overridable `DefaultUndoLabel`/`DefaultRedoLabel`. `ComposedRegionEditContext` ctor takes `ICmObject root`. Backward-compatible (lexicon path unchanged); green.
+  - [x] 20.1.3 (M) DONE: `RecordEditView.ShowAvaloniaEntry` composes ANY `ICmObject` root (LexEntry keeps its first-slice fallback; other classes show the unsupported state if compose returns null, never NRE); `IsChangeWithinEntry` generalized to walk the owner chain to the current record (class-agnostic, equivalent for entries). Build + 211 region/guard/switch/active-host tests green. (Safe today: no non-lexicon tool reaches this until §20.2/20.3 registers it.)
+  - [ ] 20.1.4 (L) Add `layoutChoiceField`/`choiceGuid` (4-key) resolution to the compiler mirroring `DataTree.GetTemplateForObjLayout`; thread layout name from RecordEditView into Compose — FullEntryRegionComposer.cs:3309-3346. **CONFIRMED PREREQUISITE for Notebook/Lists edit:** Notebook/Edit/toolConfiguration.xml:32 uses `layout="Normal" layoutChoiceField="Type"` (RnGenericRec's layout is chosen by the record's Type possibility), so `Compose(obj,"Normal")` alone won't pick the type-specific layout. This gates 20.3.1/20.3.2 edit registration; until it lands a non-entry edit compose returns the safe unsupported message (no crash — 20.1.3 guard).
+- [~] 20.2 **Per-tool browse enablement (quick wins; independent of 20.1).** Registration + safety gate DONE & unit-green; real-app render validation is tester burn-down (19h.4).
+  - [x] 20.2.1 (S) DONE: registered `notebookEdit` + `notebookBrowse` in `SupportedAvaloniaBrowseToolNames` (names verified in Notebook config). Resolver test covers them.
+  - [~] 20.2.2 (S) Grammar: the FLAT-table grammar editors are registered via 20.2.7; the tree-navigated grammar tools wait on the 20.2.6 owned tree. (No separate general "Grammar browse" tool beyond these.)
+  - [x] 20.2.3 (S) DONE: `ClerkBrowseRowSource.DeleteOrphans` now gated by `IsLexiconListItems()` (runs only when the clerk's list-items class is LexEntry/LexSense) — a non-lexicon bulk-delete skips the LexReference/MSA sweep. Lexicon path unchanged; 156 clerk-browse/delete tests green.
+  - [x] 20.2.4 (S) DONE: registered `Analyses` + `toolBulkEditWordforms` (names verified in Words config).
+  - [ ] 20.2.5 (M) Implement the "special" dynamic FilterComboItem lane (TextsFilterItem "Choose Texts…") in the owned table — LexicalBrowseView.cs:2032-2088. (Words concordance filter polish; not blocking the list.)
+  - [ ] 20.2.6 (L) Avalonia hierarchical record-navigation tree-bar host for Lists (replaces `PossibilityTreeBarHandler`); depends on Stage-3 owned virtualized tree — new FwAvalonia control; RecordBarTreeHandler.cs:204-332.
+  - [x] 20.2.7 (S) DONE: registered `featureTypesAdvancedEdit` + `reversalToolReversalIndexPOS` (the flat-table Lists/Grammar editors; names verified in config). Resolver test covers all six new tools.
+### 20.1.4 Shared edit-surface foundation (blocks ALL of 20.3) — from the verified plan (`xcut-review` edit-plan + plan-review, 2026-06-21)
+Root cause confirmed: `LayoutSourceLoader.FindLayout`/`IndexLayouts` key only on (class,type,name), first-wins, so all **11** `RnGenericRec/detail/Normal` choiceGuid variants collapse to the Analysis layout. **Architecture rule (plan-review D3):** every net-new editor keeps the rendering control in FwAvalonia/`*.Avalonia` and routes ALL LCModel reads/writes through the xWorks plugin / `RegionEditorServices` adapter (never LCModel in the view) — explicitly applies to GB-4 BasicIPASymbol, GB-6 PhEnvStrRepresentation, GB-8 RuleFormula, W-5 interlinear.
+- [x] 20.1.4a (M) DONE+green: F-1 4-key resolution — `LayoutSourceLoader.IndexLayoutsByChoice` (keeps all variants) + `SelectLayoutForChoice` (exact choiceGuid → choiceGuid-less fallback → first; case-insensitive). 7 unit tests incl. cache-collision negative case.
+- [x] 20.1.4b (M) DONE+green: F-2 — composer `CompilerSources.LayoutIndex` is the choice-aware map; `CompileForObject`/`CompileForClass` thread choiceGuid; `CompiledModels` keyed by (ClassId,LayoutName,choiceGuid); `ResolveLayoutChoiceGuid` reads the record's layoutChoiceField possibility GUID. 200 composer/region + 131 layout tests green.
+- [x] 20.1.4c (S) DONE+green: F-3 — `RecordEditView.ShowAvaloniaEntry` passes `m_layoutName`/`m_layoutChoiceField` (config-sourced) into `Compose` for non-entry roots.
+- [ ] 20.1.4d (S) F-4 edit-gate seam: static `DefaultSupportedEditTools` array + `area==lists && persistContext==listsEdit` predicate for dynamic custom lists — LexicalEditSurfaceRegistry.cs:22; LexicalEditSurfaceResolver.cs:47-60.
+- [ ] 20.1.4e (M) F-5 import `<sublayout>` + capture `LayoutChoiceField` on ViewNodes (round-trip; today dropped with `sublayout-dropped` diagnostic) — XmlLayoutImporter.cs:137-143; ViewDefinitionModel.cs:448.
+- [ ] 20.1.4f (M) F-6 choiceGuid dimension in the override resolver + per-field gear stamp. **(plan-review D4: explicit dep of LE-7 and NB-2 — silent loss of per-field overrides on the new layout key otherwise.)**
+- [~] 20.1.4g (M) F-7 composer-core parity: **toggleValue invert DONE+green** — `ViewNode.ToggleValue` (imported from the slice's `toggleValue=`) inverts the Boolean lane read display + write commit; 2 import unit tests + 148 import / 89 composer regression green. REMAINING: checkboxwithrefresh restyle-on-toggle; ValuesSorted read-virtual / Values write-real owned-seq split (feature-system); ref-vector read-only→editable lane scaffold.
+- [x] 20.1.4h (M) DONE+green: F-8 — `RegionEditContextBase.Validate()` is virtual + class-keyed; added the CmPossibility Name/Abbreviation rule (`FwAvaloniaStrings.PossibilityNameOrAbbreviationRequired`) alongside the LexEntry lexeme rule; other classes validate clean. 53 edit-context/validate tests green. (Undo-label per-class override remains cosmetic follow-on.)
+
+- [ ] 20.3 **Per-tool edit enablement (depend on 20.1.4).** **(plan-review D2: before per-tool GO for Grammar-bespoke + Words, run the same `<part>`/`<slice>` layout-vs-plan diff that found D1 — design-complete ≠ parity-verified.)**
+  - [ ] 20.3.1 **Lists** (cheapest; foundation proof-case; all S/M):
+    - [ ] (S) LE-3 `RegionEditorPluginRegistry.Resolve` base-class walk for `FeatureSystemInflectionFeatureListDlgLauncherSlice` — RegionEditorPlugins.cs:122.
+    - [ ] (M) LE-R register Lists tools via the area/persistContext predicate — LexicalEditSurfaceRegistry.cs:22.
+    - [ ] (M) LE-4 CmPossibility Name/Abbreviation validation via F-8 — RegionEditContextBase.cs:101.
+    - [ ] (M) LE-7 CmCustomItem WsSelector→CmPossibilityA/V/AV/VA layout pick (dep F-6) — RecordEditView.cs:772.
+    - [ ] (M) LE-8 MoInflAffixSlot Slots editable vector lane OR cited deferral — FullEntryRegionComposer.cs:2470.
+  - [ ] 20.3.2 **Notebook**:
+    - [x] (S) NB-R DONE: registered `notebookEdit` in the edit registry (layout resolves via §20.1.4 layoutChoiceField="Type"). Core fields compose; participants/see-also/subrecords degrade read-only until NB-3/4/5 (20.1.3 guard, no crash). Behind UIMode=New.
+    - [ ] (S) NB-1 `field="Self"` self-descent — FullEntryRegionComposer.cs:3066.
+    - [ ] (M) NB-2 editable recursive SubRecords sequence (dep F-5,F-6) — FullEntryRegionComposer.cs:3084.
+    - [ ] (M) NB-3 Text-field ghost two-level owning-chain create (IText→ContentsOA(StText)→StTxtPara) — FullEntryRegionComposer.cs:2954.
+    - [ ] (M) NB-4 `RecordReferenceVectorSlice` editable lane + RecordGoDlg add — FullEntryRegionComposer.cs:2424; RecordGoSearchEngine.cs.
+    - [ ] (L) NB-5 `RoledParticipantsSlice` editor (roleless + per-role groups; MakeDefaultRoledParticipant on first edit) — RegionEditorPlugins.cs:151; RoledParticipantsSlice.cs:66.
+    - [ ] (S) NB-6 **(plan-review D1)** enumerate ALL 7 `editor="sttext"` Normal-layout fields — Discussion + Hypothesis, Conclusions, ExternalMaterials, FurtherQuestions, ResearchPlan, PersonalNotes — in the verify-only list, the 20.5.3 T2 fixture, and the 20.5.6 burn-down census (covered by the StText lane; zero net-new editor, but invisible to the enumeration-driven safety nets otherwise). NotebookParts.xml:9,13,231,305,313,317.
+    - [ ] (S) NB-7 **(plan-review missing)** confirm the composer honors the `_CustomFieldPlaceholder` marker (Notebook.fwlayout:407 `customFields="here"`) so RnGenericRec custom fields don't silently vanish; add a block if not.
+  - [ ] 20.3.3 **Grammar POS + features**:
+    - [~] (S) GPF-R PARTIAL: registered `posEdit` (MSA/feature launchers already plugin-claimed). `featuresAdvancedEdit`/`phonologicalFeaturesAdvancedEdit` pending the F-7 composer-core parity (toggleValue/read-virtual) so they compose faithfully.
+    - [ ] (L) GPF-2 PartOfSpeech parity (consumes F-7 toggleValue/restyle) — FullEntryRegionComposer.cs:2482.
+    - [ ] (M) GPF-3 feature-system detail (consumes F-7 read-virtual/write-real).
+    - [ ] (L) GPF-4 `InflAffixTemplateSlice` INLINE interactive grid (companion-strip or new Avalonia grid; NOT a dialog launcher — it is an XmlView root-site grid) — AvaloniaCompanionSlices.cs:61; MorphologyParts.xml:1530.
+  - [→] 20.3.4 **Grammar bespoke rule tools** — DESCOPED to its own change **`avalonia-rule-formula-editor`** (GB-1..13: rule-formula grid, metathesis, phon-rule recursion, IPA/env-string/adhoc/natural-class editors). The XL rule-formula grid (ex-GB-8) is each its own project per the §20 plan-review; pulled out of Phase 1 here on 2026-06-21.
+  - [→] 20.3.5 **Words interlinear** — DESCOPED to its own change **`avalonia-interlinear-editor`** (W-1..6: WfiWordform nested-tree compose, read-only interlinear renderer, editable Sandbox-role morph-bundle editor + write-back/MSA-prune, side-effects, command bridge). The XL editable interlinear (ex-W-5) is its own project; pulled out of Phase 1 here on 2026-06-21.
+- [ ] 20.4 **Per-tool dialogs** (Avalonia or retained-legacy companion): Lists (CustomListDlg, MasterCategoryListDlg, SimpleListChooser launcher); Grammar list-level master-feature dialogs (FsClosedFeature/FsComplexFeature add; MSA/phonological launchers already plugin-claimed); Notebook (import/export, InsertRecordDlg for NB-2 subrecord insert, RecordGoDlg for NB-4 add); Words (GotoWfiWordform for W-6, spelling-dictionary dialogs).
+- [ ] 20.5 **Tests + parity PNG evidence:**
+  - [ ] 20.5.1 Foundation T1: choiceGuid resolution/GUID-case/override/memoization **+ the cache-collision negative case (two different choiceGuids on one class → two distinct compiled models, not a collision — plan-review missing block)**; sublayout round-trip; `SublayoutElement` no-drop (LayoutImportCoverageTests.cs:133); toggleValue invert; read-virtual/write-real; pluggable `Validate()`.
+  - [ ] 20.5.2 Cross-tool `RecordEditViewSwitchTests` — flip each tool to Avalonia as it registers (extend LexicalEditSurfaceResolverTests). Foundation-owned, not per-tool-duplicated.
+  - [ ] 20.5.3 T2 no-Unsupported compose per registered tool over a POPULATED object: RnGenericRec (incl. subrecords / participants / see-also / Text-ghost / **all 7 StText fields per D1**); CmPossibility default/EditComplex/EditVariant/DialectEdit; PartOfSpeech incl. toggled Active; FsClosedFeature ValuesSorted→Values; all six rule tools; WfiWordform full tree.
+  - [ ] 20.5.4 T4 workflow per editing block (commit round-trip, side-effects, insert/delete/reorder, command dispatch, write-back + MSA prune).
+  - [ ] 20.5.5 T5 render/semantic PNG baselines per newly-enabled surface vs WinForms.
+  - [ ] 20.5.6 `LexemeEditorBurnDown` census update for every newly-claimed slice class (incl. the 7 Notebook StText fields per D1) + documented deferrals.

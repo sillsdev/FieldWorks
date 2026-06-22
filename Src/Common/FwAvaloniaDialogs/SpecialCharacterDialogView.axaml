@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.SpecialCharacterDialogView"
+             x:DataType="vm:SpecialCharacterDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="380" MinHeight="320">
+	<!-- Special-character / Unicode insert picker (Phase-1 §19g): a filterable list of insertable characters over
+	     a gated Insert + Cancel. Net-new (the legacy Format > Special character shells out to the OS charmap).
+	     Visible text localized via FwAvaloniaDialogsStrings; AutomationIds stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.SpecialCharacterInsert}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="SpecialCharacter.Insert"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="SpecialCharacter.Cancel"/>
+		</StackPanel>
+
+		<TextBox DockPanel.Dock="Top" Text="{Binding Filter}"
+		         Watermark="{Binding FilterPrompt}"
+		         Margin="{StaticResource DialogLabelFieldGapBelow}"
+		         AutomationProperties.AutomationId="SpecialCharacter.Filter"
+		         AutomationProperties.Name="{Binding FilterPrompt}"/>
+
+		<TextBlock DockPanel.Dock="Bottom" Text="{Binding MustSelectMessage}"
+		           Foreground="Red" TextWrapping="Wrap" Margin="{StaticResource DialogControlGapAbove}"
+		           IsVisible="{Binding !IsValid}"
+		           AutomationProperties.AutomationId="SpecialCharacter.ValidationError"/>
+
+		<ListBox ItemsSource="{Binding VisibleCharacters}"
+		         SelectedItem="{Binding Selected}"
+		         AutomationProperties.AutomationId="SpecialCharacter.List">
+			<ListBox.ItemTemplate>
+				<DataTemplate x:DataType="vm:SpecialCharacterItem">
+					<TextBlock Text="{Binding Display}"/>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</DockPanel>
+</UserControl>

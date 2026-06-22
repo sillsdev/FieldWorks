@@ -91,8 +91,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
 		}
 
-		[TestCase("posEdit")]
-		[TestCase("notebookEdit")]
+		// §20.3 / §20.5.2: tools whose record-edit surface is NOT yet registered still fall back to legacy under
+		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate; Analyses = the Words
+		// interlinear edit, pending the W-4/W-5 editor — its BROWSE list is Avalonia, but its EDIT detail is not.)
 		[TestCase("domainTypeEdit")]
 		[TestCase("Analyses")]
 		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
@@ -109,6 +110,28 @@ namespace SIL.FieldWorks.XWorks
 				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
 				Is.EqualTo(LexicalEditSurface.WinForms),
 				"Tool '{0}' should explicitly fall back to legacy while Avalonia support is not yet implemented.",
+				toolValue);
+		}
+
+		// §20.3 / §20.5.2: the edit tools now registered on the Avalonia surface (their record-edit detail
+		// composes through the class-general composer + 4-key layout resolution). They resolve to Avalonia
+		// under New mode — the per-tool flip the plan calls for as each registers.
+		[TestCase("notebookEdit")]
+		[TestCase("posEdit")]
+		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView(toolValue);
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null, "Expected RecordEditView for tool '{0}'.", toolValue);
+			Assert.That(
+				GetPrivateFieldValue(control, "m_lexicalEditSurface"),
+				Is.EqualTo(LexicalEditSurface.Avalonia),
+				"Tool '{0}' is registered for the Avalonia edit surface (§20.3), so New mode resolves to Avalonia.",
 				toolValue);
 		}
 

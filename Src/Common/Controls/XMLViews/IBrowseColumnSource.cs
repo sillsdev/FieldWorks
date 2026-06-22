@@ -75,6 +75,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		string GetColumnSpecAttribute(int icol, string attrName);
 
+		/// <summary>
+		/// The raw value of a browse-view-level (bulk-edit) spec attribute, or null when absent — read off the
+		/// SAME <c>browseview</c> spec node the legacy <c>BulkEditBar</c> reads at construction. The Avalonia
+		/// Delete-Rows guard reads <c>bulkDeleteIfZero</c> (the named int property that must be zero for a row to
+		/// be deletable) and <c>bulkEditListItemsGhostFields</c> (the ghost-parent class/field list) through this,
+		/// so the row source can mirror the legacy <c>AllowDeleteItem</c>/<c>VerifyRowDeleteAllowable</c> guards
+		/// without the FwAvalonia layer ever seeing the spec. Kept generic (one accessor) so the interface grows
+		/// by one member rather than one method per attribute.
+		/// </summary>
+		string GetBulkEditSpecAttribute(string attrName);
+
 		/// <summary>Whether a column is inline-editable per the legacy transduce rule.</summary>
 		bool IsColumnEditable(int icol);
 
@@ -144,6 +155,24 @@ namespace SIL.FieldWorks.Common.Controls
 		/// null for an empty selection or a column that is not a chooser column.
 		/// </summary>
 		RecordFilter MakeListChoiceColumnFilter(int dataColumnIndex, IReadOnlyList<string> chosenKeys);
+
+		/// <summary>
+		/// Whether the legacy FilterBar would offer its "Spelling Errors" entry on this column — the SAME gate
+		/// <c>FilterBar.AddSpellingErrorsIfAppropriate</c> applies: the column is NOT a chooser/list column,
+		/// its layout is not one for which a spelling filter is meaningless (Pronunciation / CVPattern), AND a
+		/// spelling dictionary is available for the column's writing system. Lets the owned filter flyout gate
+		/// the "Spelling Errors" entry on the SAME conditions the WinForms FilterBar gates on. (The dictionary
+		/// probe is a runtime check — false in an environment with no installed dictionary for the WS.)
+		/// </summary>
+		bool ColumnSupportsSpellingFilter(int dataColumnIndex);
+
+		/// <summary>
+		/// Builds the legacy FilterBar "Spelling Errors" filter (the <c>BadSpellingMatcher</c> path): a filter
+		/// that keeps only rows whose cell in this column contains a mis-spelled word in the column's writing
+		/// system, over the column's finder — the SAME matcher the WinForms FilterBar installs. Returns null
+		/// when the column has no filterable finder.
+		/// </summary>
+		RecordFilter MakeSpellingErrorColumnFilter(int dataColumnIndex);
 	}
 
 	/// <summary>

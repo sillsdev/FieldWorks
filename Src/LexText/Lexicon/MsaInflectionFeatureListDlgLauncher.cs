@@ -51,6 +51,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			// New-UI gate (Phase-1 §19b Stage 3): in New mode launch the Avalonia inflection-feature chooser (the
+			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
+			// MsaInflectionFeatureListDlg. Both rebuild the slice's IFsFeatStruc (null is valid — all features removed).
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				HandleChooserAvalonia();
+				return;
+			}
+
 			VectorReferenceLauncher vrl = null;
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
@@ -147,6 +157,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// The New-UI inflection-feature chooser path (Phase-1 §19b Stage 3): resolve the owning object + flid from the
+		/// slice exactly as the legacy HandleChooser does, run the Avalonia <see cref="LcmInflectionFeatureChooserLauncher"/>,
+		/// and on OK re-init the launcher view with the rebuilt FS (null when all features were removed — valid).
+		/// </summary>
+		private void HandleChooserAvalonia()
+		{
+			Slice parentSlice = Slice;
+			IFsFeatStruc originalFs = m_obj as IFsFeatStruc;
+			int owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
+			ICmObject owner = originalFs == null ? parentSlice.Object : originalFs.Owner;
+			var helpProvider = m_propertyTable.GetValue<SIL.FieldWorks.Common.FwUtils.IHelpTopicProvider>(
+				"HelpTopicProvider", null);
+
+			var resultFs = LcmInflectionFeatureChooserLauncher.ShowForOwner(m_cache, m_mediator, m_propertyTable,
+				originalFs, owner, owningFlid, parentSlice.FindForm(), helpProvider, out var accepted);
+			if (!accepted)
+				return;
+			// dlg.FS will be null if all inflection features have been removed — a valid state for the slice.
+			m_obj = resultFs;
+			if (!IsDisposed)
+				m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, resultFs);
 		}
 
 		protected override void OnClick(Object sender, EventArgs arguments)

@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.CreateFeatureDialogView"
+             x:DataType="vm:CreateFeatureDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="320" MinHeight="180">
+	<!-- The minimal "Create New Feature" / "Create New Feature Value" name-entry dialog (Phase-1 §19b Stage 3): a
+	     name + optional abbreviation, over OK/Cancel. OK is gated on a non-empty name. The captions come from the VM
+	     (the same view serves the feature and value flows). Visible text is localized via FwAvaloniaDialogsStrings;
+	     AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="CreateFeature.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="CreateFeature.Cancel"/>
+		</StackPanel>
+
+		<StackPanel Spacing="{StaticResource DialogLabelFieldGap}">
+			<TextBlock Text="{Binding NameLabel}"
+			           AutomationProperties.AutomationId="CreateFeature.NameLabel"/>
+			<TextBox Text="{Binding Name}"
+			         AutomationProperties.AutomationId="CreateFeature.Name"
+			         AutomationProperties.Name="{Binding NameLabel}"/>
+
+			<TextBlock Text="{Binding AbbreviationLabel}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="CreateFeature.AbbrLabel"/>
+			<TextBox Text="{Binding Abbreviation}"
+			         AutomationProperties.AutomationId="CreateFeature.Abbr"
+			         AutomationProperties.Name="{Binding AbbreviationLabel}"/>
+
+			<TextBlock Text="{Binding NameRequiredMessage}"
+			           Foreground="Red" TextWrapping="Wrap" Margin="{StaticResource DialogControlGapAbove}"
+			           IsVisible="{Binding !IsValid}"
+			           AutomationProperties.AutomationId="CreateFeature.ValidationError"/>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

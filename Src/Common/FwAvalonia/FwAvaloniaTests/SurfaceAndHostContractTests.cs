@@ -24,7 +24,10 @@ namespace FwAvaloniaTests
 		[Test]
 		public void NewMode_UnmigratedTool_IsExplicitLegacyFallback()
 		{
-			var decision = _service.Decide("New", "posEdit");
+			// domainTypeEdit (a Lists CmPossibility tool) is not yet registered for the Avalonia edit surface
+			// (pending the §20.3.1 F-4 predicate), so New mode is an explicit legacy fallback. (posEdit/notebookEdit
+			// are now registered — §20.3 — and resolve to Avalonia; covered by RecordEditViewSwitchTests.)
+			var decision = _service.Decide("New", "domainTypeEdit");
 			Assert.That(decision.Surface, Is.EqualTo(LexicalEditSurface.WinForms));
 			Assert.That(decision.Behavior, Is.EqualTo(HostUiBehavior.ExplicitLegacyFallback));
 		}

@@ -311,6 +311,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// exclusive with the column's other filters.
 		/// </summary>
 		void SetFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys);
+
+		/// <summary>
+		/// Applies the FilterBar "Spelling Errors" match on a column — building the SAME legacy
+		/// <c>BadSpellingMatcher</c> filter the WinForms FilterBar installs, so only rows whose cell in this
+		/// column contains a mis-spelled word (in the column's writing system) survive. Mutually exclusive with
+		/// the column's other filters (same one-filter-per-column rule). Only meaningful on a column the
+		/// metadata seam reports via <see cref="IBrowseColumnMetadataSource.ColumnSupportsSpellingFilter"/>.
+		/// </summary>
+		void SetFilterSpellingErrors(int columnIndex);
 	}
 
 	/// <summary>
@@ -340,6 +349,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// SAME attributes the legacy FilterBar gates on.
 		/// </summary>
 		IReadOnlyList<RegionChoiceOption> GetColumnChooserList(int columnIndex);
+
+		/// <summary>
+		/// Whether the owned filter flyout should offer the "Spelling Errors" entry on the column — true only
+		/// when the legacy FilterBar would offer it (a string column that is not a chooser/Pronunciation/CVPattern
+		/// column AND whose writing system has a spelling dictionary available). The dictionary probe is a runtime
+		/// check, so this is false in an environment with no installed dictionary for the column's WS — exactly as
+		/// the WinForms FilterBar then omits the item. Routed (when chosen) through
+		/// <see cref="IBrowseFilterPresetSource.SetFilterSpellingErrors"/>.
+		/// </summary>
+		bool ColumnSupportsSpellingFilter(int columnIndex);
 	}
 
 
@@ -483,9 +502,81 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// Copies the clicked source cell at (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>) into
 		/// <paramref name="targetColumn"/> on the same row through <paramref name="context"/> as one undoable step.
+		/// <paramref name="charOffset"/> is the character index within the source cell text the click landed on
+		/// (so Word mode can copy just the clicked word and Reorder can rotate the cell to lead with that word,
+		/// mirroring the legacy <c>IchStartWord</c>); pass a negative value when no offset is available (the
+		/// whole-cell fallback).
 		/// </summary>
-		void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode, string separator,
-			bool append, IRegionEditContext context);
+		void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset, ClickCopyMode mode,
+			string separator, bool append, IRegionEditContext context);
+	}
+
+	/// <summary>
+	/// One command a data-row right-click context menu offers (§19f.1): an LCModel-free
+	/// (key + label + enabled) descriptor the host supplies and the view renders. The legacy
+	/// <c>RightMouseClickedEvent</c> let the host pop an xCore menu whose commands the app command
+	/// infrastructure resolved/enabled; this carries the same intent across the seam without the COM
+	/// selection or the mediator. Clicking an enabled item raises <see cref="LexicalBrowseView.RowCommandInvoked"/>
+	/// with its <see cref="Key"/>; the host routes it to the command system.
+	/// </summary>
+	public sealed class BrowseRowCommand
+	{
+		public BrowseRowCommand(string key, string label, bool enabled = true)
+		{
+			Key = key ?? string.Empty;
+			Label = label ?? string.Empty;
+			Enabled = enabled;
+		}
+
+		/// <summary>Stable command key the host routes (e.g. a mediator command id). A null/empty key is a separator.</summary>
+		public string Key { get; }
+
+		/// <summary>The menu item's display label.</summary>
+		public string Label { get; }
+
+		/// <summary>Whether the item is enabled (a disabled item is shown greyed, matching the legacy update-handler gating).</summary>
+		public bool Enabled { get; }
+
+		/// <summary>True when this is a separator (no key) rather than a clickable command.</summary>
+		public bool IsSeparator => string.IsNullOrEmpty(Key);
+	}
+
+	/// <summary>
+	/// Optional capability a row source implements to supply the data-row right-click context menu (§19f.1) —
+	/// the LCModel-free parity of the legacy <c>RightMouseClickedEvent</c> row menu. The host returns the
+	/// command set for the right-clicked row (so per-row enablement reflects the object); the view builds the
+	/// Avalonia <c>ContextMenu</c> and raises <see cref="LexicalBrowseView.RowCommandInvoked"/> when an entry is
+	/// chosen. A source that does not implement this (or returns no commands) shows no data-row menu.
+	/// </summary>
+	public interface IBrowseRowMenuSource
+	{
+		/// <summary>The commands offered for the right-clicked row, or null/empty for no menu.</summary>
+		IReadOnlyList<BrowseRowCommand> GetRowCommands(int rowIndex);
+	}
+
+	/// <summary>
+	/// Optional capability a row source implements to support Rapid-Data-Entry (§19f.7): a virtual "new row"
+	/// at the bottom of the browse whose typed cell values commit into a NEW object. The view shows the
+	/// new-row affordance for the editable columns and, on commit (Enter on the new row), raises
+	/// <see cref="LexicalBrowseView.NewRowCommitRequested"/>; the host commits via
+	/// <see cref="CommitNewRow"/> (the product edge runs the factory/UOW and returns the new hvo). The CORE
+	/// common-case (Collect-Words-style single new entry) ships; deep multi-field RDE templates + the
+	/// post-UOW merge are scoped (// PARITY §19f). A source that does not implement this shows no new row.
+	/// </summary>
+	public interface IBrowseRdeSource
+	{
+		/// <summary>Whether the RDE new-row is offered (a real LCModel-backed RDE source reports true).</summary>
+		bool RdeEnabled { get; }
+
+		/// <summary>The columns the RDE new-row lets the user type into (entry-anchored editable text columns).</summary>
+		IReadOnlyList<int> RdeEditableColumns { get; }
+
+		/// <summary>
+		/// Commits the typed new-row <paramref name="values"/> (one per editable column, in
+		/// <see cref="RdeEditableColumns"/> order) as a NEW object through <paramref name="context"/> in one
+		/// undoable change, returning the new object's hvo (0 when nothing was created — e.g. all-blank).
+		/// </summary>
+		int CommitNewRow(IReadOnlyList<string> values, IRegionEditContext context);
 	}
 
 	/// <summary>
@@ -526,6 +617,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly IBrowseBulkReplaceSource _bulkReplaceSource;
 		private readonly IBrowseBulkTransduceSource _bulkTransduceSource;
 		private readonly IBrowseClickCopySource _clickCopySource;
+		// §19f.1 / §19f.7: the optional data-row context-menu and Rapid-Data-Entry capabilities.
+		private readonly IBrowseRowMenuSource _rowMenuSource;
+		private readonly IBrowseRdeSource _rdeSource;
 		private readonly bool _showCheckboxColumn;
 		// Task 20: the checked set is keyed by STABLE OBJECT IDENTITY (IBrowseRowSource.HvoAt), not row
 		// index. The clerk re-indexes its list on every sort/filter/reload, so an index-keyed check would
@@ -541,6 +635,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly ListBox _list;
 		private readonly Grid _header;
 		private readonly Grid _filterRow;
+		// §19f.7: the Rapid-Data-Entry new-row control (null when the source does not support RDE), and the
+		// per-RDE-column text boxes keyed by column index so a commit can read the typed values and reset them.
+		private readonly Control _rdeRow;
+		private readonly Dictionary<int, TextBox> _rdeBoxes = new Dictionary<int, TextBox>();
 		private readonly TextBlock[] _sortGlyphs;
 		private readonly List<BrowseSortKey> _sortKeys = new List<BrowseSortKey>();
 		// Task 22: who rebuilds the row list after a sort/filter mutation. When the source routes the
@@ -591,6 +689,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public event EventHandler ConfigureColumnsRequested;
 
 		/// <summary>
+		/// Raised when the user drag-reorders a column header (§19f.6): the column's current display index and
+		/// the index it was dropped at. The host (RecordBrowseView), which owns the column model + store,
+		/// reorders + persists (the same store the Configure-Columns dialog writes) and rebuilds the view.
+		/// Modeled on <see cref="ColumnWidthChanged"/> so the view stays model/store-free. A no-op drop on the
+		/// same column raises nothing.
+		/// </summary>
+		public event EventHandler<(int FromIndex, int ToIndex)> ColumnReordered;
+
+		/// <summary>
 		/// Raised when the user invokes "Filter For…" from a column's filter flyout: the column index. The host
 		/// (RecordBrowseView), which owns the LCModel-aware dialog, opens the pattern-setup dialog over the
 		/// owning form and — on OK — routes the resulting <see cref="BrowseFilterForSpec"/> back through
@@ -618,11 +725,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Raised when, with Click Copy mode active (<see cref="ClickCopyActive"/>), the user clicks a data cell:
-		/// the (rowIndex, columnIndex) of the clicked SOURCE cell. The host (RecordBrowseView) copies that cell's
-		/// text into the click-copy target column on the SAME row. The signal fires ONLY in click-copy mode and
-		/// is suppressed otherwise so it never interferes with normal selection/editing.
+		/// the (rowIndex, columnIndex) of the clicked SOURCE cell and the character offset within that cell's text
+		/// the pointer landed on (<c>CharOffset</c>; -1 when the cell has no hit-testable text layout — the
+		/// whole-cell fallback). The host (RecordBrowseView) copies that cell into the click-copy target column on
+		/// the SAME row, using the offset to lift just the clicked word (Word mode) or rotate the cell to lead with
+		/// it (Reorder), mirroring the legacy native-Views <c>IchStartWord</c>. The signal fires ONLY in click-copy
+		/// mode and is suppressed otherwise so it never interferes with normal selection/editing.
 		/// </summary>
-		public event EventHandler<(int RowIndex, int ColumnIndex)> CellClicked;
+		public event EventHandler<(int RowIndex, int ColumnIndex, int CharOffset)> CellClicked;
+
+		/// <summary>
+		/// Raised when the user chooses a command from a data-row right-click context menu (§19f.1): the
+		/// (rowIndex, commandKey) of the chosen command. The host (RecordBrowseView) routes the key to the
+		/// command system (mediator), the parity of the legacy <c>RightMouseClickedEvent</c> menu. Fires only
+		/// for enabled, non-separator commands the row-menu source supplied.
+		/// </summary>
+		public event EventHandler<(int RowIndex, string CommandKey)> RowCommandInvoked;
+
+		/// <summary>
+		/// Raised when the user commits the Rapid-Data-Entry new row (§19f.7) — Enter on a non-blank new row:
+		/// the typed values, one per RDE-editable column (in <see cref="IBrowseRdeSource.RdeEditableColumns"/>
+		/// order). The host commits via the source's <see cref="IBrowseRdeSource.CommitNewRow"/> and refreshes
+		/// so the new object appears. Fires only when the source supports RDE and the row carries some text.
+		/// </summary>
+		public event EventHandler<IReadOnlyList<string>> NewRowCommitRequested;
 
 		// When set, a data-cell click is a CLICK-COPY gesture: the cell raises CellClicked and the click is
 		// handled (not promoted to an inline edit / selection). Toggled by the host from the bulk bar's
@@ -670,6 +796,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_bulkReplaceSource = rows as IBrowseBulkReplaceSource;
 			_bulkTransduceSource = rows as IBrowseBulkTransduceSource;
 			_clickCopySource = rows as IBrowseClickCopySource;
+			_rowMenuSource = rows as IBrowseRowMenuSource;
+			_rdeSource = rows as IBrowseRdeSource;
 			_showCheckboxColumn = showCheckboxColumn;
 
 			Columns = definition.Roots.Where(n => n.Kind == ViewNodeKind.Field).ToList();
@@ -751,6 +879,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				_filterRow = BuildFilterRow();
 				DockPanel.SetDock(_filterRow, Dock.Top);
 				layout.Children.Add(_filterRow);
+			}
+			// §19f.7: the Rapid-Data-Entry "new row" docks at the BOTTOM (always visible, below the scrolling
+			// list) when the source supports RDE — the parity of XmlBrowseRDEView's virtual new-row. Typing into
+			// its editable cells and pressing Enter commits a new object through the source.
+			if (_rdeSource != null && _rdeSource.RdeEnabled)
+			{
+				_rdeRow = BuildRdeRow();
+				DockPanel.SetDock(_rdeRow, Dock.Bottom);
+				layout.Children.Add(_rdeRow);
 			}
 			layout.Children.Add(_list);
 			Content = layout;
@@ -1050,6 +1187,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return index < 0 ? null : BuildPresetFlyout(index, new TextBox());
 		}
 
+		/// <summary>
+		/// Test seam (§19f.1): a freshly-built data-row context menu for (row, column), so headless tests can
+		/// observe the host's row commands + the copy/paste entries and their enabled state without driving a
+		/// live right-click (the menu is built lazily on open in product).
+		/// </summary>
+		public ContextMenu BuildRowContextMenuForTest(int rowIndex, int columnIndex)
+		{
+			var cells = _rows.GetCellValues(rowIndex);
+			var display = columnIndex >= 0 && columnIndex < cells.Count ? cells[columnIndex] : string.Empty;
+			return BuildRowContextMenu(rowIndex, columnIndex, display);
+		}
+
+		/// <summary>Test seam (§19f.4): runs the edit-context-routing core of a cell paste (no clipboard I/O).</summary>
+		public void PasteTextForTest(int rowIndex, int columnIndex, string text)
+			=> StagePasteIntoCell(rowIndex, columnIndex, text);
+
+		/// <summary>Test seam (§19f.6): raises <see cref="ColumnReordered"/> for (from, to) exactly as a header drag would.</summary>
+		public void RaiseColumnReorderForTest(int fromIndex, int toIndex)
+		{
+			if (fromIndex == toIndex)
+				return;
+			ColumnReordered?.Invoke(this, (fromIndex, toIndex));
+		}
+
 		// The shown-column index whose field token matches, or -1. (Columns is IReadOnlyList — no FindIndex.)
 		private int IndexOfColumn(string field)
 		{
@@ -1192,6 +1353,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (_filterPresetSource == null)
 				return;
 			_filterPresetSource.SetFilterListChoice(columnIndex, chosenKeys);
+			_list.SelectedIndex = -1;
+			RefreshUnlessExternallyDriven();
+		}
+
+		/// <summary>
+		/// Applies the FilterBar "Spelling Errors" match on a column through <see cref="IBrowseFilterPresetSource"/>
+		/// — building the SAME legacy <c>BadSpellingMatcher</c> filter — so only rows whose cell has a spelling
+		/// error survive. Mutually exclusive with the column's other filters (same contract as the other per-column
+		/// filters). Only offered when the column reports spell-support through the metadata seam.
+		/// </summary>
+		public void ApplyFilterSpellingErrors(int columnIndex)
+		{
+			if (_filterPresetSource == null)
+				return;
+			_filterPresetSource.SetFilterSpellingErrors(columnIndex);
 			_list.SelectedIndex = -1;
 			RefreshUnlessExternallyDriven();
 		}
@@ -1408,14 +1584,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Applies an interactive Click Copy: copies the clicked SOURCE cell at
 		/// (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>) into <paramref name="targetColumn"/> on
 		/// the SAME row through the shared edit session as ONE undoable change (the per-click unit), then refreshes
-		/// so the written target shows. A no-op when the source does not support Click Copy.
+		/// so the written target shows. <paramref name="charOffset"/> is the clicked character index within the
+		/// source cell (the producer lifts the clicked word / rotates from it; -1 = whole-cell fallback). A no-op
+		/// when the source does not support Click Copy.
 		/// </summary>
-		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
-			string separator, bool append)
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset,
+			ClickCopyMode mode, string separator, bool append)
 		{
 			if (_clickCopySource == null || _editSource == null)
 				return;
-			_clickCopySource.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, mode, separator, append,
+			_clickCopySource.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append,
 				_editSource.EditContext);
 			Refresh();
 		}
@@ -1482,13 +1660,67 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						SortByColumn(captured);
 				};
 				button.ContextMenu = BuildHeaderContextMenu(columnIndex, column);
+				AttachHeaderReorderGesture(button, columnIndex);
 				Grid.SetColumn(button, columnIndex + ColumnOffset);
 				return button;
 			}
 
 			content.ContextMenu = BuildHeaderContextMenu(columnIndex, column);
+			AttachHeaderReorderGesture(content, columnIndex);
 			Grid.SetColumn(content, columnIndex + ColumnOffset);
 			return content;
+		}
+
+		// §19f.6: makes a header cell drag-reorderable. A press-and-drag horizontally past the half-width of a
+		// neighbor column drops the dragged column there; on release the view raises ColumnReordered(from, to)
+		// so the host reorders + persists the column model. The width-splitter grab lives on the column's
+		// trailing 4px (HorizontalAlignment.Right) and is handled in its OWN tunnel handler, so the two
+		// gestures do not collide: a press that lands on the splitter is consumed there first. A drop on the
+		// same column (a click, or a too-small drag) raises nothing.
+		private void AttachHeaderReorderGesture(Control headerCell, int columnIndex)
+		{
+			var dragging = false;
+			double startX = 0;
+			headerCell.AddHandler(InputElement.PointerPressedEvent, (_, e) =>
+			{
+				if (!e.GetCurrentPoint(headerCell).Properties.IsLeftButtonPressed)
+					return;
+				dragging = true;
+				startX = e.GetPosition(_header).X;
+			}, RoutingStrategies.Bubble, handledEventsToo: false);
+			headerCell.AddHandler(InputElement.PointerReleasedEvent, (_, e) =>
+			{
+				if (!dragging)
+					return;
+				dragging = false;
+				var endX = e.GetPosition(_header).X;
+				// Ignore a tiny movement (it is a click, possibly a sort) so a sort click is never a reorder.
+				if (Math.Abs(endX - startX) < 8d)
+					return;
+				var target = ColumnIndexAtX(endX);
+				if (target < 0 || target == columnIndex)
+					return;
+				ColumnReordered?.Invoke(this, (columnIndex, target));
+				e.Handled = true;
+			}, RoutingStrategies.Bubble, handledEventsToo: false);
+		}
+
+		// The display column index whose horizontal band contains pixel X in header space, or -1 when X is in
+		// the leading checkbox column / out of range. Walks the shared per-column widths (the same source the
+		// three grids read) so the hit test matches the rendered layout.
+		private int ColumnIndexAtX(double x)
+		{
+			var left = _showCheckboxColumn ? FwAvaloniaDensity.CheckboxColumnWidth : 0d;
+			if (x < left)
+				return -1;
+			for (var c = 0; c < _columnWidths.Length; c++)
+			{
+				var right = left + _columnWidths[c];
+				if (x < right)
+					return c;
+				left = right;
+			}
+			return _columnWidths.Length - 1; // past the last column → drop at the end
 		}
 
 		// The header cell's right-click menu (P1 step 7): a "Configure Columns…" entry that raises
@@ -1560,6 +1792,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private IReadOnlyList<RegionChoiceOption> GetColumnChooserList(int columnIndex)
 		{
 			return _columnMetadataSource?.GetColumnChooserList(columnIndex);
+		}
+
+		// Whether the column reports spell-support through the optional metadata seam (false when unsupported,
+		// or when no spelling dictionary is available for the column's WS) — gates the "Spelling Errors" entry.
+		private bool ColumnSupportsSpellingFilter(int columnIndex)
+		{
+			return _columnMetadataSource?.ColumnSupportsSpellingFilter(columnIndex) ?? false;
 		}
 
 		// Leading column shift when the checkbox-select column is shown.
@@ -1665,6 +1904,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>The current pixel width of a column (default even width when never sized).</summary>
 		public double GetColumnWidth(int columnIndex)
 			=> columnIndex >= 0 && columnIndex < _columnWidths.Length ? _columnWidths[columnIndex] : 0d;
+
+		/// <summary>
+		/// §19f.9: renders the VISIBLE columns + the current (filtered/sorted) row set as CSV through
+		/// <see cref="BrowseCsvExporter"/>. The header line is the shown column labels; each row line is the
+		/// row's materialized cell strings (the same the table displays). A pure read over the row source — no
+		/// model mutation — so the host can write it to a file. Reflects the current filter (RowCount) and sort.
+		/// </summary>
+		public string ExportVisibleCsv()
+		{
+			var headers = Columns.Select(c => c.Label ?? c.Field ?? string.Empty).ToList();
+			var rows = new List<IReadOnlyList<string>>(_rows.RowCount);
+			for (var i = 0; i < _rows.RowCount; i++)
+				rows.Add(_rows.GetCellValues(i));
+			return BrowseCsvExporter.ToCsv(headers, rows);
+		}
 
 		// A per-column filter row (the FilterBar replacement, 3c). Each column has ONE integrated filter
 		// box: type a term and press Enter to apply a contains filter; when the source supports blank-aware
@@ -1810,14 +2064,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (GetColumnChooserList(columnIndex) != null)
 				AddChooseItem(flyout, columnIndex);
 
+			// "Spelling Errors" (FilterBar BadSpellingMatcher) → only when the metadata seam reports the column
+			// supports it: the SAME gate the legacy FilterBar.AddSpellingErrorsIfAppropriate applies (a string
+			// column that is not a chooser/Pronunciation/CVPattern column AND whose writing system has a spelling
+			// dictionary available). The dictionary probe is a runtime check behind the seam, so the item is
+			// simply absent in an environment with no installed dictionary for the column's WS — matching the
+			// WinForms FilterBar, which then omits the item. Routed through ApplyFilterSpellingErrors.
+			if (ColumnSupportsSpellingFilter(columnIndex))
+				AddSpellingErrorsItem(flyout, columnIndex, box);
+
 			// "Filter For…" is universal in the legacy FilterBar (offered on EVERY column, not type-gated): it
 			// opens a small pattern-match dialog. The view raises FilterForRequested; the host owns the dialog
 			// and routes the result back through ApplyFilterPattern.
 			AddFilterForItem(flyout, columnIndex);
 
-			// PARITY: the only deferred FilterBar entry now is the spelling-errors preset (BadSpellingMatcher),
-			// which needs a per-WS spelling dictionary probe beyond this seam's matcher scope. Date "Restrict
-			// Date…" and the "Choose…" list-choice filter are implemented above.
+			// PARITY: every FilterBar entry now has an Avalonia counterpart — blank-aware presets, multipara,
+			// YesNo, integer, stringList, "Restrict Date…", "Choose…", "Filter For…", and (above) "Spelling
+			// Errors". No deferred filters remain.
 
 			return flyout;
 		}
@@ -1874,6 +2137,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetAutomationId(item, "BrowseFilterChooseItem."
 				+ (Columns[columnIndex].Field ?? string.Empty));
 			item.Click += (_, __) => ChooseListRequested?.Invoke(this, columnIndex);
+			flyout.Items.Add(item);
+		}
+
+		// The "Spelling Errors" item (string columns with a spell dictionary for their WS): on click it clears
+		// the column's free-text term + any active preset and routes through the spelling-errors filter seam
+		// (the legacy BadSpellingMatcher), reflecting the label in the box — the same mutually-exclusive
+		// one-filter-per-column behavior the other preset items use. Unlike "Filter For…"/"Choose…"/"Restrict
+		// Date…", there is no dialog: the filter is fully specified by the column, so it applies directly.
+		private void AddSpellingErrorsItem(MenuFlyout flyout, int columnIndex, TextBox box)
+		{
+			var item = new MenuItem { Header = FwAvaloniaStrings.FilterSpellingErrors };
+			AutomationProperties.SetAutomationId(item, "BrowseFilterSpellingErrorsItem."
+				+ (Columns[columnIndex].Field ?? string.Empty));
+			item.Click += (_, __) =>
+			{
+				ApplyFilter(columnIndex, string.Empty);
+				ApplyFilterPreset(columnIndex, BrowseFilterPreset.None);
+				ApplyFilterSpellingErrors(columnIndex);
+				box.Text = FwAvaloniaStrings.FilterSpellingErrors;
+			};
 			flyout.Items.Add(item);
 		}
 
@@ -1955,6 +2238,101 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					continue;
 				glyph.Text = c == _sortColumn ? (_sortAscending ? "▲" : "▼") : string.Empty;
 			}
+		}
+
+		// §19f.7: builds the Rapid-Data-Entry new-row — one text box per RDE-editable column (aligned to the
+		// same shared widths as the data grid), seeded with a prompt watermark. Enter in any box commits the
+		// typed values as a new object (via NewRowCommitRequested → the source's CommitNewRow) and resets the
+		// row for the next entry. Non-editable columns get an inert placeholder so the grid stays aligned. This
+		// is the CORE common-case new-entry row; deep multi-field RDE templates + the legacy post-UOW merge are
+		// scoped. PARITY §19f.7: multi-field RDE templates, the per-tool RDE column subset, and the RDEMergeXxx
+		// post-commit merge pass (XmlBrowseRDEView.DoMerges).
+		private Control BuildRdeRow()
+		{
+			var grid = new Grid { Background = FwAvaloniaDensity.BrowseBackgroundBrush };
+			ApplyColumnWidths(grid);
+			AutomationProperties.SetAutomationId(grid, "BrowseRdeNewRow");
+
+			var editable = new HashSet<int>(_rdeSource.RdeEditableColumns ?? Array.Empty<int>());
+			for (var c = 0; c < Columns.Count; c++)
+			{
+				Control cell;
+				if (editable.Contains(c))
+				{
+					var box = new TextBox
+					{
+						Watermark = c == FirstRdeColumn(editable) ? FwAvaloniaStrings.RdeNewRowPrompt : string.Empty,
+						Padding = FwAvaloniaDensity.EditorPadding,
+						MinHeight = 0,
+						VerticalContentAlignment = VerticalAlignment.Center,
+						Margin = new Thickness(1)
+					};
+					AutomationProperties.SetAutomationId(box, $"BrowseRdeCell.{c}");
+					box.KeyDown += (_, e) =>
+					{
+						if (e.Key != Key.Enter)
+							return;
+						CommitRdeRow();
+						e.Handled = true;
+					};
+					_rdeBoxes[c] = box;
+					cell = box;
+				}
+				else
+				{
+					cell = new Border { Background = FwAvaloniaDensity.BrowseBackgroundBrush };
+				}
+				var framed = WithColumnGridLine(cell);
+				Grid.SetColumn(framed, c + ColumnOffset);
+				grid.Children.Add(framed);
+			}
+
+			return new Border
+			{
+				Child = grid,
+				BorderBrush = FwAvaloniaDensity.BrowseGridLineBrush,
+				BorderThickness = new Thickness(0, 1, 0, 0) // a separator above the new-row, distinguishing it
+			};
+		}
+
+		private static int FirstRdeColumn(HashSet<int> editable)
+		{
+			var min = int.MaxValue;
+			foreach (var c in editable)
+				if (c < min)
+					min = c;
+			return min == int.MaxValue ? -1 : min;
+		}
+
+		/// <summary>
+		/// Commits the Rapid-Data-Entry new row (§19f.7): gathers the typed values (one per RDE-editable column,
+		/// in <see cref="IBrowseRdeSource.RdeEditableColumns"/> order), and — when at least one is non-blank —
+		/// raises <see cref="NewRowCommitRequested"/> so the host creates the object, then clears the boxes and
+		/// refocuses the first for the next entry. An all-blank row is a no-op (no empty object is created).
+		/// </summary>
+		public void CommitRdeRow()
+		{
+			if (_rdeSource == null || !_rdeSource.RdeEnabled)
+				return;
+			var columns = _rdeSource.RdeEditableColumns ?? Array.Empty<int>();
+			var values = new List<string>(columns.Count);
+			var anyText = false;
+			foreach (var c in columns)
+			{
+				var text = (_rdeBoxes.TryGetValue(c, out var box) ? box.Text : null) ?? string.Empty;
+				values.Add(text);
+				if (!string.IsNullOrWhiteSpace(text))
+					anyText = true;
+			}
+			if (!anyText)
+				return; // all-blank: never create an empty object (the legacy CanGotoNextRow minimum-data gate)
+
+			NewRowCommitRequested?.Invoke(this, values);
+
+			foreach (var box in _rdeBoxes.Values)
+				box.Text = string.Empty;
+			if (columns.Count > 0 && _rdeBoxes.TryGetValue(columns[0], out var first))
+				first.Focus();
 		}
 
 		private Control BuildRow(BrowseRow row)
@@ -2075,7 +2453,133 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				cell = BuildReadOnlyCell(rowIndex, columnIndex, display);
 
 			AttachClickCopyGesture(cell, rowIndex, columnIndex);
+			AttachCellMenuAndClipboard(cell, rowIndex, columnIndex, display);
 			return cell;
+		}
+
+		// §19f.1 + §19f.4: a data cell carries the right-click ROW context menu (when the source supplies row
+		// commands) and the Ctrl+C / Ctrl+V clipboard gestures. The menu is built lazily on open so per-row
+		// command enablement is read at click time (matching the legacy update-handler gating). Copy/paste are
+		// inert in Click-Copy mode (that gesture owns the click) and a paste only writes through the editable
+		// cell's edit context — a non-editable cell rejects it.
+		private void AttachCellMenuAndClipboard(Control cell, int rowIndex, int columnIndex, string display)
+		{
+			// A data cell always carries a right-click menu — the host's row commands (when supplied) PLUS the
+			// universal cell Copy/Paste. Build it lazily on the right-button press so the command set / enabled
+			// state reflects the row's current state at click time (the legacy update-handler gating). In Click
+			// Copy mode the click is a copy gesture, so the menu is suppressed.
+			cell.AddHandler(InputElement.PointerPressedEvent, (_, e) =>
+			{
+				if (_clickCopyActive || !e.GetCurrentPoint(cell).Properties.IsRightButtonPressed)
+					return;
+				cell.ContextMenu = BuildRowContextMenu(rowIndex, columnIndex, display);
+			}, RoutingStrategies.Tunnel);
+
+			// Ctrl+C copies the cell's text; Ctrl+V pastes into an editable cell through the edit context.
+			cell.AddHandler(InputElement.KeyDownEvent, (_, e) =>
+			{
+				if (_clickCopyActive || (e.KeyModifiers & KeyModifiers.Control) != KeyModifiers.Control)
+					return;
+				if (e.Key == Key.C)
+				{
+					CopyCellToClipboard(rowIndex, columnIndex);
+					e.Handled = true;
+				}
+				else if (e.Key == Key.V)
+				{
+					PasteClipboardIntoCell(rowIndex, columnIndex);
+					e.Handled = true;
+				}
+			}, RoutingStrategies.Bubble, handledEventsToo: false);
+		}
+
+		// Builds the data-row context menu from the source's per-row commands (§19f.1), or null when there are
+		// none. A command with no key renders as a separator; an enabled command raises RowCommandInvoked.
+		private ContextMenu BuildRowContextMenu(int rowIndex, int columnIndex, string display)
+		{
+			var menu = new ContextMenu();
+
+			var commands = _rowMenuSource?.GetRowCommands(rowIndex);
+			if (commands != null)
+			{
+				foreach (var command in commands)
+				{
+					if (command == null)
+						continue;
+					if (command.IsSeparator)
+					{
+						menu.Items.Add(new Separator());
+						continue;
+					}
+					var item = new MenuItem { Header = command.Label, IsEnabled = command.Enabled };
+					AutomationProperties.SetAutomationId(item, $"BrowseRowCommand.{rowIndex}.{command.Key}");
+					var key = command.Key;
+					item.Click += (_, __) => RowCommandInvoked?.Invoke(this, (rowIndex, key));
+					menu.Items.Add(item);
+				}
+			}
+
+			// Cell copy/paste are always offered (they need no host commands): Copy is enabled when the cell has
+			// text; Paste is enabled only on an editable cell (the same edit-context gate Ctrl+V honors).
+			if (menu.Items.Count > 0)
+				menu.Items.Add(new Separator());
+			var copy = new MenuItem { Header = FwAvaloniaStrings.CellCopy, IsEnabled = !string.IsNullOrEmpty(display) };
+			AutomationProperties.SetAutomationId(copy, $"BrowseCellCopy.{rowIndex}.{columnIndex}");
+			copy.Click += (_, __) => CopyCellToClipboard(rowIndex, columnIndex);
+			menu.Items.Add(copy);
+			var paste = new MenuItem
+			{
+				Header = FwAvaloniaStrings.CellPaste,
+				IsEnabled = _editSource != null && _editSource.IsColumnEditable(columnIndex)
+			};
+			AutomationProperties.SetAutomationId(paste, $"BrowseCellPaste.{rowIndex}.{columnIndex}");
+			paste.Click += (_, __) => PasteClipboardIntoCell(rowIndex, columnIndex);
+			menu.Items.Add(paste);
+
+			return menu;
+		}
+
+		// Copies the cell's display text to the Avalonia clipboard (§19f.4 Ctrl+C parity). Plain text is the
+		// portable form a paste into any editable cell / external app can consume; rich runs are not flattened
+		// to lose data because the cell display IS the flattened text the user sees.
+		private void CopyCellToClipboard(int rowIndex, int columnIndex)
+		{
+			var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+			if (clipboard == null)
+				return;
+			var cells = _rows.GetCellValues(rowIndex);
+			var text = columnIndex >= 0 && columnIndex < cells.Count ? cells[columnIndex] : string.Empty;
+			clipboard.SetTextAsync(text ?? string.Empty);
+		}
+
+		// Pastes the clipboard text into an editable cell through the shared edit context (§19f.4 Ctrl+V
+		// parity): begins the cell's editor and stages the pasted text via the edit field's set-text seam, so
+		// the write rides the SAME commit/undo path as a typed edit. A non-editable cell rejects the paste.
+		private async void PasteClipboardIntoCell(int rowIndex, int columnIndex)
+		{
+			if (_editSource == null || !_editSource.IsColumnEditable(columnIndex))
+				return;
+			var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
+			if (clipboard == null)
+				return;
+			var text = await clipboard.GetTextAsync();
+			if (text == null)
+				return;
+			StagePasteIntoCell(rowIndex, columnIndex, text);
+		}
+
+		// The edit-context-routing core of a paste, shared by the Ctrl+V / menu paste and the test seam: begin
+		// (or re-target) the editable cell's session so the write rides the active-cell commit path, then stage
+		// the text through the shared context. A no-op when the cell is not editable / has no field.
+		private void StagePasteIntoCell(int rowIndex, int columnIndex, string text)
+		{
+			if (_editSource == null || !_editSource.IsColumnEditable(columnIndex))
+				return;
+			var field = _editSource.GetEditField(rowIndex, columnIndex);
+			if (field == null)
+				return;
+			BeginCellEdit(rowIndex, columnIndex);
+			_editSource.EditContext.TrySetText(field, field.WritingSystem, text ?? string.Empty);
 		}
 
 		// In Click Copy mode a data-cell click is a COPY gesture, not a select/edit: handle the press in the
@@ -2091,9 +2595,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					return;
 				if (e.GetCurrentPoint(cell).Properties.IsRightButtonPressed)
 					return;
-				CellClicked?.Invoke(this, (rowIndex, columnIndex));
+				// Pointer -> character offset within the clicked cell's text (the managed parity of the native
+				// Views IchStartWord): hit-test the pointer against the cell's rendered TextBlock layout. -1 when
+				// the cell has no hit-testable layout (e.g. an empty cell) so the producer falls back to whole-cell.
+				var charOffset = HitTestCharOffset(cell, e);
+				CellClicked?.Invoke(this, (rowIndex, columnIndex, charOffset));
 				e.Handled = true;
 			}, RoutingStrategies.Tunnel);
+		}
+
+		// Hit-tests the pointer position against the cell's rendered TextBlock to return the character index the
+		// click landed on, or -1 when no TextBlock layout can be hit (empty cell / non-text content). Pure text
+		// geometry — keeps the view LCModel-free; the word is extracted downstream from (cell text + this offset).
+		private static int HitTestCharOffset(Control cell, PointerEventArgs e)
+		{
+			// The cell content may be a bare TextBlock (plain path) or the rich BrowseCellRenderer's TextBlock; in
+			// both cases the displayed glyphs live on a descendant TextBlock. Pick the one actually under the
+			// pointer (a multi-WS rich cell can hold more than one) so the offset is in that run's text.
+			var blocks = cell.GetSelfAndVisualDescendants().OfType<TextBlock>().ToList();
+			if (blocks.Count == 0)
+				return -1;
+			TextBlock target = null;
+			foreach (var block in blocks)
+			{
+				var p = e.GetPosition(block);
+				if (p.X >= 0 && p.Y >= 0 && p.X <= block.Bounds.Width && p.Y <= block.Bounds.Height)
+				{
+					target = block;
+					break;
+				}
+			}
+			target = target ?? blocks[0];
+			var layout = target.TextLayout;
+			if (layout == null)
+				return -1;
+			var point = e.GetPosition(target);
+			var hit = layout.HitTestPoint(point);
+			return hit.TextPosition;
 		}
 
 		// The read-only face of any cell (also the resting face of an editable cell).
@@ -2110,13 +2648,37 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				{
 					var richCell = BrowseCellRenderer.Build(richValues);
 					AutomationProperties.SetAutomationId(richCell, $"BrowseCell.{rowIndex}.{columnIndex}");
+					// §19f.8: per-cell accessible name "{column}: {text}" so a screen reader announces the
+					// column AND the content for a realized cell (the legacy WinForms browse exposed neither).
+					ApplyCellAccessibleName(richCell, columnIndex, RichCellText(richValues));
 					return richCell;
 				}
 			}
 
 			var cell = new TextBlock { Text = display, Margin = new Thickness(3, 1) };
 			AutomationProperties.SetAutomationId(cell, $"BrowseCell.{rowIndex}.{columnIndex}");
+			ApplyCellAccessibleName(cell, columnIndex, display);
 			return cell;
+		}
+
+		// §19f.8: gives a realized cell the accessible name "{columnLabel}: {cellText}" (just the label when
+		// the cell is empty) so an assistive client announces both column and value. Virtualization-aware peer
+		// recycling for DE-realized rows stays the table-level synthesized per-row peers below.
+		// PARITY §19f.8: per-cell peers for de-realized rows (the realized window is what a reader navigates).
+		private void ApplyCellAccessibleName(Control cell, int columnIndex, string text)
+		{
+			var label = columnIndex >= 0 && columnIndex < Columns.Count
+				? (Columns[columnIndex].Label ?? Columns[columnIndex].Field ?? string.Empty)
+				: string.Empty;
+			AutomationProperties.SetName(cell, string.IsNullOrEmpty(text) ? label : $"{label}: {text}");
+		}
+
+		// Flattens a rich cell's WS values to the text a screen reader should hear (the runs' text joined).
+		private static string RichCellText(IReadOnlyList<RegionWsValue> richValues)
+		{
+			if (richValues == null || richValues.Count == 0)
+				return string.Empty;
+			return string.Join(" ", richValues.Select(v => v?.Value).Where(t => !string.IsNullOrEmpty(t)));
 		}
 
 		// ----- Task 3: active edit-session scoping -----

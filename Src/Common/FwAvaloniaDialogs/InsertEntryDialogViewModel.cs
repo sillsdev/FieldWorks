@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 
 namespace FwAvaloniaDialogs
@@ -48,6 +49,29 @@ namespace FwAvaloniaDialogs
 		// Set true when OK runs because the user chose to use an existing matched entry (legacy DialogResult.Yes),
 		// so ApplyChanges snapshots the chosen existing-entry id instead of a create payload.
 		private bool _useExisting;
+		// The morph-type → MsaType map (the launcher-supplied data the kit uses to drive the MSA box live without
+		// LCModel — the lift of MSAGroupBox.MorphTypePreference); null disables the morph-type-driven reconfigure.
+		private readonly IReadOnlyDictionary<string, FwMsaType> _morphTypeToMsaType;
+		// The launcher-supplied slot provider (main-POS id -> slot options), re-run when the MSA box's main POS
+		// changes while inflectional; null leaves the slot list empty (the kit stays LCModel-free).
+		private readonly Func<string, IReadOnlyList<FwInflectionSlot>> _slotsForPos;
+		// The launcher-supplied inflection-class provider (main-POS id -> inflection-class options), re-run when the
+		// MSA box's main POS changes (stem/root); null leaves the picker with only the "<None>" row.
+		private readonly Func<string, IReadOnlyList<FwInflectionClass>> _inflClassesForPos;
+		// The launcher-supplied inflection-feature-system provider (main-POS id -> feature nodes), re-run when the MSA
+		// box's main POS changes (infl/deriv); null leaves the feature editor empty (§19b Stage 2).
+		private readonly Func<string, IReadOnlyList<FwFeatureNode>> _inflFeaturesForPos;
+		// Guards re-entrancy while the VM seeds the MSA box's main POS during a slot refeed.
+		private string _lastSlotPosId;
+		// The complex-form type options the picker shows (the launcher-supplied types with a leading "<Not
+		// Applicable>" row whose key is the empty string). The live chosen key is the empty string for Not-Applicable.
+		private readonly IReadOnlyList<RegionChoiceOption> _complexFormTypes;
+		private string _complexFormTypeKey;
+		// The morph-type → complex-form gating map (the data lift of EnableComplexFormTypeCombo); null defaults every
+		// morph type to the WinForms "default" branch (enabled, reset to Not-Applicable).
+		private readonly IReadOnlyDictionary<string, ComplexFormGating> _complexFormGating;
+		// The sentinel key of the leading "<Not Applicable>" row (no complex-form type chosen).
+		private const string ComplexFormNotApplicableKey = "";
 
 		public InsertEntryDialogViewModel() : this(new InsertEntryDialogInput())
 		{
@@ -90,6 +114,70 @@ namespace FwAvaloniaDialogs
 			HasMatchSearch = _searchMatches != null;
 			if (HasMatchSearch)
 				RefreshMatches();
+
+			// The grammatical-info (MSA) section (Stage 3): the LCModel-free FwMsaGroupBox, fed the project POS
+			// hierarchy + slot options + initial MsaType/POS by the launcher. The dialog's morph-type selection drives
+			// the box's MsaType LIVE (the launcher supplies the morph-type → MsaType map as data, so the kit stays
+			// LCModel-free), mirroring how WinForms InsertEntryDlg wires MSAGroupBox.MorphTypePreference.
+			_morphTypeToMsaType = _input.MorphTypeToMsaType;
+			_slotsForPos = _input.SlotsForPos;
+			_inflClassesForPos = _input.InflectionClassesForPos;
+			_inflFeaturesForPos = _input.InflectionFeaturesForPos;
+			MsaGroupBox = new FwMsaGroupBox();
+			MsaGroupBox.SetPosNodes(_input.PosNodes ?? Array.Empty<FwPosNode>());
+			MsaGroupBox.MsaType = ResolveMsaType(_morphTypeKey, _input.InitialMsaType);
+			MsaGroupBox.MainPosId = _input.InitialMainPosId;
+			RefreshSlotsForCurrentPos();
+			RefreshInflectionClassesForCurrentPos();
+			RefreshInflectionFeaturesForCurrentPos();
+			MsaGroupBox.InflectionClassId = _input.InitialInflectionClassId;
+			MsaGroupBox.SetInflectionFeatureAssignments(_input.InitialInflectionFeatures);
+			// A user POS pick inside the box re-runs the slot provider (so the slot list follows the main POS, the
+			// legacy ResetSlotCombo on AfterSelect). Slot/secondary picks need no VM reaction (read on OK).
+			MsaGroupBox.MsaChanged += OnMsaChanged;
+			// The MAIN POS change also re-feeds the inflection-class options AND the inflection-feature system for the
+			// new POS (the parity of the WinForms POS-change path that resets the inflection-class/feature tree).
+			MsaGroupBox.MainPosChanged += _ =>
+			{
+				RefreshInflectionClassesForCurrentPos();
+				RefreshInflectionFeaturesForCurrentPos();
+			};
+			// Forward the box's create-feature / create-value requests (Stage 3 wires the feature dialogs).
+			MsaGroupBox.CreateNewFeatureRequested += () => CreateNewFeatureRequested?.Invoke();
+			MsaGroupBox.CreateNewValueRequested += id => CreateNewValueRequested?.Invoke(id);
+			// Create-new-POS (Stage 4): the inline "Create a new Part of Speech..." affordance is wired through to
+			// the host's create-POS flow. Subscribe to EACH chooser's request directly (not the box's merged
+			// CreateNewPosRequested, which does not say which chooser fired) so the VM-level event carries the target
+			// (main vs secondary). The host (LcmCreatePartOfSpeechLauncher via LcmInsertEntryDialogLauncher) opens the
+			// master-category catalog, creates the POS in the project, then calls AcceptCreatedMainPos /
+			// AcceptCreatedSecondaryPos so the requesting chooser adds + selects the new POS.
+			MsaGroupBox.MainPosChooser.CreateNewPosRequested += () => CreateNewPosRequested?.Invoke(FwPosTarget.Main);
+			MsaGroupBox.SecondaryPosChooser.CreateNewPosRequested +=
+				() => CreateNewPosRequested?.Invoke(FwPosTarget.Secondary);
+
+			// The Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): the same collapsed
+			// FwOptionPicker dropdown the morph type uses, populated from the launcher's complex-form types with a
+			// leading "<Not Applicable>" row (key = empty string, the legacy DummyEntryType slot at index 0). The
+			// chosen key flows into the payload; the picker's enabled state + selection follow the morph type via the
+			// launcher-supplied gating map (the lift of EnableComplexFormTypeCombo).
+			_complexFormGating = _input.ComplexFormGatingByMorphType;
+			var complexTypes = new List<RegionChoiceOption>
+			{
+				new RegionChoiceOption(ComplexFormNotApplicableKey,
+					FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeNotApplicable)
+			};
+			complexTypes.AddRange(_input.ComplexFormTypes ?? Array.Empty<RegionChoiceOption>());
+			_complexFormTypes = complexTypes;
+			_complexFormTypeKey = string.IsNullOrEmpty(_input.InitialComplexFormTypeKey)
+				? ComplexFormNotApplicableKey
+				: _input.InitialComplexFormTypeKey;
+			ComplexFormTypePicker = new FwOptionPicker(_complexFormTypes, searchOptions: null,
+				automationId: "InsertEntry.ComplexFormType", dropdown: true);
+			ComplexFormTypePicker.OptionCommitted += OnComplexFormTypeCommitted;
+			SelectComplexFormTypeInPicker(_complexFormTypeKey);
+			// Gate the picker for the morph type the dialog opens with (the WinForms order: the combo is filled, then
+			// EnableComplexFormTypeCombo runs for the initial morph type).
+			ApplyComplexFormGating();
 		}
 
 		/// <summary>The owned per-vernacular-WS lexeme-form editor the view mounts.</summary>
@@ -100,6 +188,25 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>The owned per-analysis-WS gloss editor the view mounts.</summary>
 		public FwMultiWsTextField GlossField { get; }
+
+		/// <summary>
+		/// The owned grammatical-info (MSA) editor the view mounts — the LCModel-free <see cref="FwMsaGroupBox"/>.
+		/// Reconfigures live as the morph-type selection changes; its <see cref="FwSandboxMsa"/> is snapshotted on OK.
+		/// </summary>
+		public FwMsaGroupBox MsaGroupBox { get; }
+
+		/// <summary>
+		/// The owned Complex Form Type picker the view mounts — a collapsed <see cref="FwOptionPicker"/> dropdown
+		/// (WinForms <c>m_cbComplexFormType</c> parity, LT-21666). Its enabled state + selection follow the morph
+		/// type via the launcher-supplied gating map; the chosen type id is snapshotted on OK.
+		/// </summary>
+		public FwOptionPicker ComplexFormTypePicker { get; }
+
+		/// <summary>
+		/// The current chosen complex-form type key (complex-entry-type guid string); the empty string means
+		/// "&lt;Not Applicable&gt;" (no complex-form type chosen). Reselected/reset as the morph type changes.
+		/// </summary>
+		public string ComplexFormTypeKey => _complexFormTypeKey;
 
 		/// <summary>The prompt shown above the fields; empty hides it (see <see cref="HasPrompt"/>).</summary>
 		public string Prompt { get; }
@@ -218,6 +325,12 @@ namespace FwAvaloniaDialogs
 		{
 			_morphTypeKey = option?.Key;
 			OnPropertyChanged(nameof(MorphTypeKey));
+			// Drive the MSA box's grammatical-info class from the chosen morph type (the legacy
+			// InsertEntryDlg → MSAGroupBox.MorphTypePreference wiring), reconfiguring its widgets live.
+			ApplyMorphTypeToMsaBox();
+			// Re-gate the complex-form picker for the new morph type (the lift of EnableComplexFormTypeCombo,
+			// which WinForms runs on every morph-type change via cbMorphType_SelectedIndexChanged).
+			ApplyComplexFormGating();
 		}
 
 		private void SelectMorphTypeInPicker(string key)
@@ -235,6 +348,175 @@ namespace FwAvaloniaDialogs
 			}
 			if (index >= 0)
 				MorphTypePicker.OptionsList.SelectedIndex = index;
+		}
+
+		// ----- complex-form type picker <-> chosen-key mirroring + morph-type gating (LT-21666) -----
+
+		private void OnComplexFormTypeCommitted(RegionChoiceOption option)
+		{
+			// A null/empty key is the "<Not Applicable>" row (no complex-form type chosen).
+			_complexFormTypeKey = option?.Key ?? ComplexFormNotApplicableKey;
+			OnPropertyChanged(nameof(ComplexFormTypeKey));
+		}
+
+		// Selects the complex-form picker row for a key WITHOUT going through CommitHighlighted (which would close the
+		// dropdown popup / re-raise OptionCommitted). Setting OptionsList.SelectedIndex syncs the collapsed label via
+		// the picker's SelectionChanged handler; we mirror the chosen key into the VM directly here. Used both for the
+		// initial selection and for the morph-type gating reset, neither of which should re-fire the commit path.
+		private void SelectComplexFormTypeInPicker(string key)
+		{
+			key = key ?? ComplexFormNotApplicableKey;
+			var index = -1;
+			for (var i = 0; i < _complexFormTypes.Count; i++)
+			{
+				if (string.Equals(_complexFormTypes[i].Key, key, StringComparison.Ordinal))
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index < 0)
+			{
+				index = 0; // fall back to "<Not Applicable>" if the key is unknown
+				key = ComplexFormNotApplicableKey;
+			}
+			ComplexFormTypePicker.OptionsList.SelectedIndex = index;
+			if (!string.Equals(_complexFormTypeKey, key, StringComparison.Ordinal))
+			{
+				_complexFormTypeKey = key;
+				OnPropertyChanged(nameof(ComplexFormTypeKey));
+			}
+		}
+
+		// Gates the complex-form picker for the current morph type — the data lift of EnableComplexFormTypeCombo:
+		//   * DisabledNotApplicable (bound-root/root): force the selection to "<Not Applicable>" then disable.
+		//   * EnabledKeepSelection (phrase/discontiguous-phrase): enable, LEAVE the selection (LT-21666).
+		//   * EnabledNotApplicable (default): enable, reset the selection to "<Not Applicable>".
+		// A morph type absent from the map (or a null map) takes the default branch.
+		private void ApplyComplexFormGating()
+		{
+			if (ComplexFormTypePicker == null)
+				return;
+			var gating = ComplexFormGating.EnabledNotApplicable;
+			if (_complexFormGating != null && _morphTypeKey != null
+				&& _complexFormGating.TryGetValue(_morphTypeKey, out var mapped))
+				gating = mapped;
+
+			switch (gating)
+			{
+				case ComplexFormGating.DisabledNotApplicable:
+					SelectComplexFormTypeInPicker(ComplexFormNotApplicableKey);
+					ComplexFormTypePicker.IsEnabled = false;
+					break;
+				case ComplexFormGating.EnabledKeepSelection:
+					ComplexFormTypePicker.IsEnabled = true;
+					// Do not change the selection (parity with the phrase branch — LT-21666).
+					break;
+				default: // EnabledNotApplicable
+					SelectComplexFormTypeInPicker(ComplexFormNotApplicableKey);
+					ComplexFormTypePicker.IsEnabled = true;
+					break;
+			}
+		}
+
+		// ----- grammatical-info (MSA) section: morph-type-driven reconfigure + slot refeed (Stage 3) -----
+
+		// Maps the current morph-type key to an MsaType (via the launcher-supplied data map) and sets it on the box,
+		// reconfiguring its widgets live — the LCModel-free lift of MSAGroupBox.MorphTypePreference. Then re-feeds the
+		// slot list, since the visible widgets (and the relevant POS) may have changed.
+		private void ApplyMorphTypeToMsaBox()
+		{
+			if (MsaGroupBox == null)
+				return;
+			MsaGroupBox.MsaType = ResolveMsaType(_morphTypeKey, MsaGroupBox.MsaType);
+			RefreshSlotsForCurrentPos();
+		}
+
+		// Resolves a morph-type key to an MsaType through the launcher map, falling back to the supplied default when
+		// the key is unmapped (the legacy "leave it alone if already better" is approximated by the caller's default).
+		private FwMsaType ResolveMsaType(string morphTypeKey, FwMsaType fallback)
+		{
+			if (_morphTypeToMsaType != null && morphTypeKey != null
+				&& _morphTypeToMsaType.TryGetValue(morphTypeKey, out var msaType))
+				return msaType;
+			return fallback;
+		}
+
+		// Re-runs the launcher's slot provider for the MSA box's current main POS and refeeds the Slot combo (the
+		// legacy ResetSlotCombo). The box only shows slots when inflectional, so this is harmless for other types.
+		private void RefreshSlotsForCurrentPos()
+		{
+			if (MsaGroupBox == null || _slotsForPos == null)
+				return;
+			var posId = MsaGroupBox.MainPosId;
+			_lastSlotPosId = posId;
+			MsaGroupBox.SetSlots(_slotsForPos(posId) ?? Array.Empty<FwInflectionSlot>());
+		}
+
+		// Re-runs the launcher's inflection-class provider for the box's current main POS and refeeds the picker (the
+		// box shows it only for stem/root, so this is harmless for other types).
+		private void RefreshInflectionClassesForCurrentPos()
+		{
+			if (MsaGroupBox == null || _inflClassesForPos == null)
+				return;
+			MsaGroupBox.SetInflectionClasses(
+				_inflClassesForPos(MsaGroupBox.MainPosId) ?? Array.Empty<FwInflectionClass>());
+		}
+
+		// Re-runs the launcher's inflection-feature-system provider for the box's current main POS (§19b Stage 2).
+		private void RefreshInflectionFeaturesForCurrentPos()
+		{
+			if (MsaGroupBox == null || _inflFeaturesForPos == null)
+				return;
+			MsaGroupBox.SetInflectionFeatureNodes(
+				_inflFeaturesForPos(MsaGroupBox.MainPosId) ?? Array.Empty<FwFeatureNode>());
+		}
+
+		// A user pick inside the MSA box. When the MAIN POS changed, re-run the slot provider so the slot list follows
+		// it (the legacy AfterSelect -> ResetSlotCombo). Slot/secondary picks need no reaction (read on OK).
+		private void OnMsaChanged(FwSandboxMsa msa)
+		{
+			if (_slotsForPos != null && !string.Equals(msa?.MainPosId, _lastSlotPosId, StringComparison.Ordinal))
+				RefreshSlotsForCurrentPos();
+		}
+
+		/// <summary>
+		/// Raised when the user clicks the inline "Create a new Part of Speech..." row in EITHER POS chooser,
+		/// carrying which chooser fired (<see cref="FwPosTarget.Main"/> or <see cref="FwPosTarget.Secondary"/>). The
+		/// host (the LCModel-aware launcher) opens the master-category catalog, creates the POS in the project, then
+		/// calls <see cref="AcceptCreatedMainPos"/> / <see cref="AcceptCreatedSecondaryPos"/> with the new node so the
+		/// requesting chooser adds + selects it. The VM itself performs NO create (it stays LCModel-free); a request
+		/// with no host subscribed is a harmless no-op. (Stage 4 replaced the Stage-3 // TODO no-op.)
+		/// </summary>
+		public event Action<FwPosTarget> CreateNewPosRequested;
+
+		/// <summary>Raised when the user clicks "Create a new feature..." in the inflection-feature editor (§19b Stage 2).</summary>
+		public event Action CreateNewFeatureRequested;
+
+		/// <summary>Raised when the user invokes a closed feature's "Add a value..." affordance (§19b Stage 2).</summary>
+		public event Action<string> CreateNewValueRequested;
+
+		/// <summary>
+		/// Host callback after a successful create-POS flow (Stage 4): re-feeds the freshly rebuilt project POS
+		/// hierarchy (which now INCLUDES the new POS, at its real catalog depth) to BOTH choosers so the new category
+		/// appears in each, then selects the new POS in the chooser that REQUESTED the create (<paramref name="target"/>).
+		/// Selecting after the refresh (rather than via the chooser's own append-and-select <c>AcceptCreatedNode</c>)
+		/// avoids a duplicate row — the node is already present from the refreshed list. <paramref name="refreshedNodes"/>
+		/// is the host's rebuilt list (it includes <paramref name="created"/>); a null/absent <paramref name="created"/>
+		/// just refreshes. The VM stays LCModel-free (the host built both the node and the list).
+		/// </summary>
+		public void AcceptCreatedPos(FwPosTarget target, FwPosNode created, IReadOnlyList<FwPosNode> refreshedNodes)
+		{
+			if (MsaGroupBox == null)
+				return;
+			MsaGroupBox.SetPosNodes(refreshedNodes ?? Array.Empty<FwPosNode>());
+			if (created == null)
+				return;
+			// Select via the box's seed setter (the node is already in the refreshed list, so no append/duplicate).
+			if (target == FwPosTarget.Secondary)
+				MsaGroupBox.SecondaryPosId = created.Id;
+			else
+				MsaGroupBox.MainPosId = created.Id;
 		}
 
 		// ----- live morph-type derivation on lexeme-form change (legacy tbLexicalForm_TextChanged) -----
@@ -269,6 +551,12 @@ namespace FwAvaloniaDialogs
 				_morphTypeKey = typeKey;
 				OnPropertyChanged(nameof(MorphTypeKey));
 				SelectMorphTypeInPicker(typeKey);
+				// Reconfigure the MSA box for the derived morph type too (the legacy SetMorphType also re-runs
+				// MSAGroupBox.MorphTypePreference), so the grammatical-info widgets follow the affix marker.
+				ApplyMorphTypeToMsaBox();
+				// Re-gate the complex-form picker for the derived morph type (the legacy SetMorphType path also
+				// re-runs EnableComplexFormTypeCombo).
+				ApplyComplexFormGating();
 			}
 
 			// Re-set the marker-adjusted form into the staged bag (legacy BestForm = sAdjusted). Guard re-entrancy
@@ -326,7 +614,17 @@ namespace FwAvaloniaDialogs
 			// it instead of creating a duplicate (the legacy m_fNewlyCreated = false outcome). Otherwise it stays null
 			// and the launcher creates a new entry from the form/gloss/morph-type values (Create path unchanged).
 			var chosenExistingId = _useExisting ? SelectedMatch?.Id : null;
-			Result = new InsertEntryPayload(formByWs, glossByWs, _morphTypeKey, chosenExistingId);
+			// Snapshot the chosen grammatical info (MSA) from the box — the launcher resolves the POS/slot ids back to
+			// LCModel objects and find-or-creates the MSA on the new sense (the legacy m_msaGroupBox.SandboxMSA path).
+			// The use-existing outcome carries no MSA (no entry is created).
+			var msa = _useExisting ? null : MsaGroupBox?.SandboxMsa;
+			// The chosen complex-form type (WinForms m_complexType parity, LT-21666): the empty "<Not Applicable>"
+			// key carries through as null so the launcher adds no ILexEntryRef. The use-existing outcome carries none.
+			var complexFormTypeKey = (_useExisting || string.IsNullOrEmpty(_complexFormTypeKey))
+				? null
+				: _complexFormTypeKey;
+			Result = new InsertEntryPayload(formByWs, glossByWs, _morphTypeKey, chosenExistingId, msa,
+				complexFormTypeKey);
 		}
 
 		private static IReadOnlyDictionary<string, string> SnapshotNonEmpty(IReadOnlyDictionary<string, string> staged)

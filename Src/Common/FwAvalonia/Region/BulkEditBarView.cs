@@ -211,11 +211,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Copies the text of the clicked SOURCE cell at (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>)
 		/// into the Click Copy <paramref name="targetColumn"/> on the SAME row, per the <paramref name="mode"/>
 		/// (word vs reorder/whole-field), joining the existing target value per <paramref name="append"/> (append
-		/// with <paramref name="separator"/> vs overwrite). Commits as ONE undoable change — the per-click unit.
-		/// Inert when no overlay is active or the target column is not a safe Click Copy target.
+		/// with <paramref name="separator"/> vs overwrite). <paramref name="charOffset"/> is the clicked character
+		/// index within the source cell (the producer lifts the clicked word / rotates from it; -1 = whole-cell).
+		/// Commits as ONE undoable change — the per-click unit. Inert when no overlay is active or the target
+		/// column is not a safe Click Copy target.
 		/// </summary>
-		void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode, string separator,
-			bool append);
+		void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset, ClickCopyMode mode,
+			string separator, bool append);
 
 		// ----- Delete Rows (the destructive mode of the legacy Delete tab) -----
 
@@ -973,14 +975,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>
 		/// Handles one click-copy gesture: copies the clicked SOURCE cell at
 		/// (<paramref name="rowIndex"/>, <paramref name="sourceColumn"/>) into the chosen target column on the
-		/// SAME row, honoring the mode + separator + append/overwrite. A no-op when no target is chosen or the
-		/// click hit the target column itself (self-copy).
+		/// SAME row, honoring the mode + separator + append/overwrite. <paramref name="charOffset"/> is the clicked
+		/// character index within the source cell (carried through so Word lifts just the clicked word and Reorder
+		/// rotates from it; -1 = whole-cell). A no-op when no target is chosen or the click hit the target column
+		/// itself (self-copy).
 		/// </summary>
-		public void Copy(int rowIndex, int sourceColumn)
+		public void Copy(int rowIndex, int sourceColumn, int charOffset = -1)
 		{
 			if (_selectedTarget == null || sourceColumn == _selectedTarget.Column)
 				return;
-			_host.ApplyClickCopy(sourceColumn, _selectedTarget.Column, rowIndex, _mode, _separator, _append);
+			_host.ApplyClickCopy(sourceColumn, _selectedTarget.Column, rowIndex, charOffset, _mode, _separator, _append);
 		}
 
 		private void OnPropertyChanged([CallerMemberName] string name = null)

@@ -81,6 +81,7 @@ namespace FwAvaloniaTests
 
 			public void SetFilterDate(int columnIndex, BrowseDateFilterSpec spec) { /* not exercised here */ }
 			public void SetFilterListChoice(int columnIndex, IReadOnlyList<string> chosenKeys) { /* not exercised here */ }
+			public void SetFilterSpellingErrors(int columnIndex) { /* not exercised here */ }
 
 			private void Rebuild(Func<int, bool> keep)
 				=> _visible = Enumerable.Range(0, _store.Records.Count).Where(keep).ToList();
@@ -105,6 +106,15 @@ namespace FwAvaloniaTests
 			public bool TrySetOption(LexicalEditRegionField field, string optionKey) => false;
 			public bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey) => false;
 			public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey) => false;
+			public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value) => false;
+			public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName) => false;
+			public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex) => false;
+			public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex) => false;
+			public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata) => false;
+			public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile) => false;
+			public bool TryDeletePicture(LexicalEditRegionField field) => false;
+			public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata) => false;
+			public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition, string sourceFile, RegionPictureMetadata metadata) => false;
 			public IReadOnlyList<string> Validate() => Array.Empty<string>();
 			public void Commit()
 			{

@@ -244,6 +244,9 @@ namespace FwAvaloniaTests
 			var image = new LexicalEditRegionField("pic", "A picture", "Pictures", null, RegionFieldKind.Image,
 				EditorClassification.Known, "PictureRow", null, SurfaceRouting.Inherit,
 				new List<RegionWsValue> { new RegionWsValue("", png) }, null, null, isEditable: false);
+			// §19d: an existing picture (PictureHvo != 0) renders its image; with no media seam supplied by
+			// this viewing-parity Show() there are no edit affordances, so the row IS the Image directly.
+			image.PictureHvo = 99;
 			var command = new LexicalEditRegionField("cmd", "Insert Sound", "Cmd", null, RegionFieldKind.Command,
 				EditorClassification.Known, "CommandRow", null, SurfaceRouting.Inherit, null, null, null,
 				isEditable: false);

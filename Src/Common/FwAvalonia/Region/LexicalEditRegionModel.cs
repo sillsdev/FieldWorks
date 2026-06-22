@@ -64,7 +64,46 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// column at the slice's real position, falling back to the unsupported rendering when the
 		/// factory is missing or fails.
 		/// </summary>
-		Custom
+		Custom,
+
+		/// <summary>
+		/// §19a: an editable multi-paragraph structured-text (StText) field — the legacy
+		/// <c>StTextSlice</c>'s RootSite rich editor. The row carries an ordered
+		/// <see cref="LexicalEditRegionField.Paragraphs"/> list (each a run-aware
+		/// <see cref="RegionParagraph"/> with a per-paragraph named style); the owned
+		/// <c>FwStructuredTextField</c> edits paragraph text, adds/deletes paragraphs, and sets the
+		/// per-paragraph style, each as one undoable step through the edit context's paragraph CRUD
+		/// seam (<see cref="IRegionEditContext.TrySetParagraphText"/> et al.). An ORC-bearing paragraph
+		/// stays read-only/preserved (§19c.3), like the run-aware text path.
+		/// </summary>
+		StructuredText,
+
+		/// <summary>
+		/// §19e: a closed enum combo (legacy <c>EnumComboSlice</c>) — a drop-down over the layout's
+		/// <c>stringList</c> labels carried as the field's <see cref="LexicalEditRegionField.Options"/>
+		/// (key = the 0-based option index that IS the stored enum integer). The owned closed
+		/// <c>ComboBox</c> commits the selected option's key through
+		/// <see cref="IRegionEditContext.TrySetOption"/>; it is non-editable by construction, so an
+		/// out-of-range / free-form enum value can never be typed in (the regression a free-form int
+		/// editor would allow). With no edit context the combo renders disabled (read-only display).
+		/// </summary>
+		EnumCombo,
+
+		/// <summary>
+		/// §19e: an integer field (legacy <c>IntegerSlice</c>) — a single-line numeric entry whose
+		/// committed text is staged through <see cref="IRegionEditContext.TrySetText"/> (the composer's
+		/// int-parsing setter). The owned editor rejects non-numeric keystrokes as you type and, like the
+		/// legacy slice, restores the last committed value when a commit is rejected (e.g. empty or
+		/// overflow), so a non-numeric/empty value can never reach the int property.
+		/// </summary>
+		Integer,
+
+		/// <summary>
+		/// §19e: a literal / "lit" slice (legacy <c>MessageSlice</c>) — static label text rendered
+		/// read-only in the value column (the label/message text IS the content). Carries no editable
+		/// value and no setter.
+		/// </summary>
+		Literal
 	}
 
 	/// <summary>
@@ -80,6 +119,31 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>A generic (vague) date (LCModel <c>GenDate</c> property).</summary>
 		GenDate
+	}
+
+	/// <summary>
+	/// §19c — the kind of an embedded object (ORC) a run carries, classified LCModel-free from the
+	/// FIRST character of <see cref="RegionTextRun.ObjectData"/> (the value the xWorks adapter projects
+	/// from the TsString's <c>ktptObjData</c>). The numeric tags mirror
+	/// <c>SIL.LCModel.Core.KernelInterfaces.FwObjDataTypes</c> — the view layer is LCModel-free, so it
+	/// reads the opaque <c>ObjectData</c> string the adapter produced rather than the enum itself.
+	/// </summary>
+	public enum RegionOrcKind
+	{
+		/// <summary>The run carries no embedded object (plain text).</summary>
+		None,
+
+		/// <summary>An external link / hyperlink (<c>kodtExternalPathName</c>, tag 4): insert/edit/delete here (§19c).</summary>
+		ExternalLink,
+
+		/// <summary>A picture/image (<c>kodtGuidMoveableObjDisp</c>, tag 8): render + deletable here; insert/caption DONE in §19d (picture insert flow + IRegionEditContext.TryInsertPictureOrc).</summary>
+		Picture,
+
+		/// <summary>A footnote (<c>kodtOwnNameGuidHot</c> tag 5 / <c>kodtNameGuidHot</c> tag 3): render + deletable; full edit DEFERRED (scripture).</summary>
+		Footnote,
+
+		/// <summary>Any other embedded-object kind: render + deletable (no insert/edit lane here).</summary>
+		Other
 	}
 
 	/// <summary>
@@ -113,6 +177,45 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public bool Italic { get; }
 		public bool Underline { get; }
 		public string ObjectData { get; }
+
+		// §19c ORC-kind tags, mirroring FwObjDataTypes (the LCModel-free view reads the first char of
+		// ObjectData rather than the enum). External link = kodtExternalPathName (4); picture =
+		// kodtGuidMoveableObjDisp (8); footnote = kodtOwnNameGuidHot (5) / kodtNameGuidHot (3).
+		internal const char ObjDataExternalLink = (char)4;
+		internal const char ObjDataPicture = (char)8;
+		internal const char ObjDataFootnoteOwn = (char)5;
+		internal const char ObjDataFootnoteName = (char)3;
+
+		/// <summary>§19c: whether this run carries an embedded object (ORC) — any non-empty ObjectData.</summary>
+		public bool IsOrc => !string.IsNullOrEmpty(ObjectData);
+
+		/// <summary>
+		/// §19c: the embedded-object kind, classified from the first character of <see cref="ObjectData"/>
+		/// (mirroring FwObjDataTypes). <see cref="RegionOrcKind.None"/> for a plain-text run.
+		/// </summary>
+		public RegionOrcKind OrcKind
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(ObjectData))
+					return RegionOrcKind.None;
+				switch (ObjectData[0])
+				{
+					case ObjDataExternalLink: return RegionOrcKind.ExternalLink;
+					case ObjDataPicture: return RegionOrcKind.Picture;
+					case ObjDataFootnoteOwn:
+					case ObjDataFootnoteName: return RegionOrcKind.Footnote;
+					default: return RegionOrcKind.Other;
+				}
+			}
+		}
+
+		/// <summary>
+		/// §19c: the URL of an external-link ORC run (the <see cref="ObjectData"/> after its leading tag
+		/// char), or null when this run is not a hyperlink.
+		/// </summary>
+		public string HyperlinkUrl
+			=> OrcKind == RegionOrcKind.ExternalLink ? ObjectData.Substring(1) : null;
 	}
 
 	/// <summary>
@@ -131,10 +234,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			RichXml = richXml;
 			RequiresRichEditor = requiresRichEditor;
 			LossyProperties = lossyProperties;
-			// A value the plain-text run-replay path would corrupt (an embedded object the runs
-			// cannot rebuild, OR a run carrying a TsString property the RegionTextRun model does not
-			// round-trip) is held read-only: editing it would silently drop that property the first
-			// time the plain text changes (the lossless RichXml fast-path is skipped after an edit).
+			// §19c: an embedded object (ORC) NO LONGER forces the value read-only — a link ORC is fully
+			// editable (insert/edit/delete) and ANY ORC run is deletable, so the run-replay path rebuilds
+			// the value with its ObjectData preserved. A value is held read-only ONLY when an edit would
+			// SILENTLY DROP data: a run carrying a TsString property the RegionTextRun model does not
+			// round-trip (colour, offset, superscript — flagged lossyProperties) since the first plain-text
+			// edit skips the lossless RichXml fast-path. The explicit canEditRichText flag still lets a
+			// caller force read-only for a reason unrelated to runs (e.g. a voice/audio alternative).
 			CanEditRichText = canEditRichText && !lossyProperties;
 			GraphemeClusterStarts = RegionTextGraphemeClusters.GetClusterStarts(PlainText);
 		}
@@ -693,6 +799,160 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		/// <summary>
+		/// §19c: applies an EXTERNAL-LINK ORC (a hyperlink) over the half-open span <c>[start, end)</c>,
+		/// returning a NEW <see cref="RegionRichTextValue"/> with the same plain text whose covered runs
+		/// carry the link's <c>ObjectData</c> (the <c>kodtExternalPathName</c> tag char + the URL) — the
+		/// model side of <c>FwEditingHelper.AddHyperlink</c>. Reuses the same run-split + cluster-snap
+		/// machinery as the style/ws helpers. A collapsed selection or a null/empty URL is a no-op (the
+		/// original value is returned). Lossy / read-only values are returned unchanged. The result drops
+		/// <c>RichXml</c> so the adapter re-emits the new ObjectData via run-replay.
+		/// </summary>
+		public static RegionRichTextValue ApplyHyperlink(RegionRichTextValue value, int start, int end,
+			string url)
+		{
+			if (value == null)
+				return null;
+			if (!value.CanEditRichText)
+				return value;
+			if (string.IsNullOrEmpty(url))
+				return value; // an empty URL inserts no link
+
+			var text = value.PlainText ?? string.Empty;
+			var lo = Math.Max(0, Math.Min(start, end));
+			var hi = Math.Min(text.Length, Math.Max(start, end));
+			if (lo >= hi)
+				return value; // collapsed selection: nothing to link
+
+			var clusters = RegionTextGraphemeClusters.GetClusterStarts(text);
+			lo = ClusterFloor(clusters, lo);
+			hi = ClusterCeiling(clusters, text.Length, hi);
+			if (lo >= hi)
+				return value;
+
+			var objData = RegionTextRun.ObjDataExternalLink + url;
+			return WithSpanObjectData(value, lo, hi, objData);
+		}
+
+		/// <summary>
+		/// §19c: edits the URL of the external-link ORC run that contains plain-text position
+		/// <paramref name="position"/>, returning a NEW value with that run's <c>ObjectData</c> rewritten
+		/// to the new URL. A position that is not inside a link run, or a null/empty URL, is a no-op. The
+		/// result drops <c>RichXml</c> so the adapter re-emits via run-replay.
+		/// </summary>
+		public static RegionRichTextValue EditHyperlinkUrl(RegionRichTextValue value, int position, string url)
+		{
+			if (value == null)
+				return null;
+			if (!value.CanEditRichText || string.IsNullOrEmpty(url))
+				return value;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var objData = RegionTextRun.ObjDataExternalLink + url;
+			var changed = false;
+			var newRuns = new List<RegionTextRun>();
+			foreach (var span in spans)
+			{
+				if (!changed && span.Run.OrcKind == RegionOrcKind.ExternalLink
+					&& position >= span.Start && position < span.End)
+				{
+					newRuns.Add(WithObjectData(span.Run, objData));
+					changed = true;
+				}
+				else
+				{
+					newRuns.Add(span.Run);
+				}
+			}
+
+			if (!changed)
+				return value;
+			return FromRuns(value.PlainText ?? string.Empty,
+				newRuns.Where(r => !string.IsNullOrEmpty(r.Text)).ToList(),
+				canEditRichText: value.CanEditRichText);
+		}
+
+		/// <summary>
+		/// §19c: deletes the ORC run that STARTS at plain-text position <paramref name="orcStart"/>
+		/// (removing its text — typically the single object-replacement char), returning a NEW value.
+		/// Generic delete: ANY ORC kind (link, picture, footnote, other) is removable. A position that is
+		/// not the start of an ORC run is a no-op. The result drops <c>RichXml</c> so the adapter re-emits
+		/// via run-replay.
+		/// </summary>
+		public static RegionRichTextValue DeleteOrcRun(RegionRichTextValue value, int orcStart)
+		{
+			if (value == null)
+				return null;
+
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			var target = spans.FirstOrDefault(s => s.Run.IsOrc && s.Start == orcStart);
+			if (target == null)
+				return value; // no ORC run starts here
+
+			var newRuns = spans.Where(s => s != target).Select(s => s.Run)
+				.Where(r => !string.IsNullOrEmpty(r.Text)).ToList();
+			var newText = string.Concat(newRuns.Select(r => r.Text));
+			return FromRuns(newText, newRuns, canEditRichText: value.CanEditRichText);
+		}
+
+		/// <summary>
+		/// §19c: the plain-text START offset of the FIRST ORC run overlapping the half-open span
+		/// <c>[start, end)</c> (a collapsed selection probes the run at that caret), or -1 when no ORC run
+		/// overlaps. The UI uses this to enable "delete embedded object" / "edit link" over a selection.
+		/// </summary>
+		public static int FirstOrcRunStart(RegionRichTextValue value, int start, int end)
+		{
+			if (value == null)
+				return -1;
+			var lo = Math.Min(start, end);
+			var hi = Math.Max(start, end);
+			foreach (var span in BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>()))
+			{
+				if (!span.Run.IsOrc)
+					continue;
+				// Overlap (treating a collapsed caret as a zero-width point inside the run).
+				var overlaps = lo == hi ? (lo >= span.Start && lo < span.End) : (span.Start < hi && span.End > lo);
+				if (overlaps)
+					return span.Start;
+			}
+			return -1;
+		}
+
+		// §19c: clones every run fully covered by [lo, hi) with the supplied ObjectData (splitting the
+		// boundary runs), preserving all other run metadata; runs outside the span are untouched. The
+		// result drops RichXml (like the style/ws helpers) so the adapter re-emits via run-replay.
+		private static RegionRichTextValue WithSpanObjectData(RegionRichTextValue value, int lo, int hi,
+			string objData)
+		{
+			var spans = BuildRunSpans(value.Runs ?? Array.Empty<RegionTextRun>());
+			if (spans.Count == 0)
+				return value;
+
+			var newRuns = new List<RegionTextRun>();
+			foreach (var span in spans)
+			{
+				var beforeLen = Math.Max(0, Math.Min(span.End, lo) - span.Start);
+				var afterLen = Math.Max(0, span.End - Math.Max(span.Start, hi));
+				var insideLen = (span.End - span.Start) - beforeLen - afterLen;
+				var runText = span.Run.Text ?? string.Empty;
+
+				if (beforeLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(0, beforeLen)));
+				if (insideLen > 0)
+					newRuns.Add(WithObjectData(CloneRun(span.Run, runText.Substring(beforeLen, insideLen)), objData));
+				if (afterLen > 0)
+					newRuns.Add(CloneRun(span.Run, runText.Substring(beforeLen + insideLen, afterLen)));
+			}
+
+			var compacted = newRuns.Where(run => !string.IsNullOrEmpty(run.Text)).ToList();
+			return FromRuns(value.PlainText ?? string.Empty, compacted, canEditRichText: value.CanEditRichText);
+		}
+
+		// §19c: a copy of the run with its ObjectData replaced; every other property is preserved.
+		private static RegionTextRun WithObjectData(RegionTextRun run, string objData)
+			=> new RegionTextRun(run.Text, run.WritingSystemTag, run.NamedStyle, run.FontFamily,
+				run.FontSizeMilliPoints, run.Bold, run.Italic, run.Underline, objData);
+
+		/// <summary>
 		/// Phase 4 writing-system probe: the writing-system tag COMMON to the whole (cluster-snapped,
 		/// half-open) span <c>[start, end)</c>, or null when the runs overlapping the span carry different
 		/// tags (mixed). The picker uses this to show the current span's writing system as selected. An
@@ -1117,6 +1377,68 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// §19d: the editable metadata of a picture (an <c>ICmPicture</c>), projected LCModel-free so the
+	/// picture-properties dialog and the edit-context seam exchange it without a domain dependency. Caption
+	/// and Description are real <c>ICmPicture</c> multistring properties (the adapter always writes them);
+	/// License and Creator live in the image file's Palaso metadata and the adapter applies them only when
+	/// the file is present/writable. Every field is optional — a null/empty value clears the property.
+	/// </summary>
+	public sealed class RegionPictureMetadata
+	{
+		public RegionPictureMetadata(string caption = null, string description = null,
+			string license = null, string creator = null)
+		{
+			Caption = caption;
+			Description = description;
+			License = license;
+			Creator = creator;
+		}
+
+		/// <summary>The picture caption (<c>ICmPicture.Caption</c>, best analysis alternative).</summary>
+		public string Caption { get; }
+
+		/// <summary>The picture description (<c>ICmPicture.Description</c>, best analysis alternative).</summary>
+		public string Description { get; }
+
+		/// <summary>The image's license (file Palaso metadata; applied when the file is writable).</summary>
+		public string License { get; }
+
+		/// <summary>The image's creator/artist (file Palaso metadata; applied when the file is writable).</summary>
+		public string Creator { get; }
+	}
+
+	/// <summary>
+	/// §19a: one paragraph of an editable multi-paragraph structured-text (StText) field, projected
+	/// LCModel-free. The paragraph's text is the SAME run-aware <see cref="RegionRichTextValue"/> the
+	/// rest of the text path edits (so the lossless RichXml round-trip and the
+	/// <see cref="RegionRichTextValue.CanEditRichText"/> read-only safety carry over verbatim); the
+	/// per-paragraph named style is the legacy <c>StPara.StyleName</c>. An ORC-bearing / lossy paragraph
+	/// is held read-only (<see cref="CanEditText"/> false) and preserved, exactly as a lossy single-WS
+	/// value is — full editing of such a paragraph stays in the classic view (§19c.3).
+	/// </summary>
+	public sealed class RegionParagraph
+	{
+		public RegionParagraph(RegionRichTextValue text, string paragraphStyle = null)
+		{
+			Text = text ?? RegionRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<RegionTextRun>());
+			ParagraphStyle = paragraphStyle;
+		}
+
+		/// <summary>The paragraph's run-aware text (the same model the single-WS text editor edits).</summary>
+		public RegionRichTextValue Text { get; }
+
+		/// <summary>The paragraph's named style id (legacy <c>StPara.StyleName</c>), or null for the default.</summary>
+		public string ParagraphStyle { get; }
+
+		/// <summary>
+		/// Whether this paragraph's text can be edited by the managed editor. False for an ORC-bearing /
+		/// lossy paragraph (§19c.3): it renders read-only with the embedded-object tooltip and is
+		/// preserved losslessly, like a lossy single-WS value (<see cref="RegionRichTextValue.CanEditRichText"/>).
+		/// </summary>
+		public bool CanEditText => Text == null || Text.CanEditRichText;
+	}
+
+	/// <summary>
 	/// Phase 4: one project writing system the per-run WS retag picker can offer (its stable IETF tag
 	/// plus a display name). The tag is what <see cref="RegionTextRun.WritingSystemTag"/> carries and
 	/// what <c>RegionRichTextAdapter.ToTsString</c> re-emits as <c>ktptWs</c>; the display name is what
@@ -1135,6 +1457,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>The user-facing display name (e.g. "English", the abbreviation, or the full ws name).</summary>
 		public string DisplayName { get; }
+	}
+
+	/// <summary>
+	/// §19c (per-run font rendering): the font a writing system renders with, supplied LCModel-free by the
+	/// host (the composer reads it from the project's per-ws <c>DefaultFontName</c>). The per-run-font
+	/// display layer maps each run's <see cref="RegionTextRun.WritingSystemTag"/> through the field's
+	/// <see cref="LexicalEditRegionField.WritingSystemFonts"/> map to this descriptor; a run also overrides
+	/// the family with its own <see cref="RegionTextRun.FontFamily"/> when set, and its
+	/// bold/italic/named-style toggles still apply on top.
+	/// </summary>
+	public sealed class RegionRunFont
+	{
+		public RegionRunFont(string fontFamily, bool rightToLeft = false)
+		{
+			FontFamily = fontFamily;
+			RightToLeft = rightToLeft;
+		}
+
+		/// <summary>The writing system's default font family name (e.g. "Charis SIL").</summary>
+		public string FontFamily { get; }
+
+		/// <summary>Whether the writing system's script is right-to-left.</summary>
+		public bool RightToLeft { get; }
 	}
 
 	/// <summary>A chooser option (key + display name).</summary>
@@ -1239,8 +1584,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Func<Control> controlFactory = null,
 			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null,
 			IReadOnlyList<RegionChooserLink> chooserLinks = null,
-			RegionDateKind dateKind = RegionDateKind.Date)
+			RegionDateKind dateKind = RegionDateKind.Date,
+			IReadOnlyList<RegionParagraph> paragraphs = null)
 		{
+			Paragraphs = paragraphs ?? Array.Empty<RegionParagraph>();
 			DateKind = dateKind;
 			ChooserLinks = chooserLinks ?? new List<RegionChooserLink>();
 			Items = items ?? new List<RegionChoiceOption>();
@@ -1362,6 +1709,47 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public IReadOnlyList<RegionWritingSystemOption> AvailableWritingSystems { get; set; }
 			= Array.Empty<RegionWritingSystemOption>();
+
+		/// <summary>
+		/// §19c (per-run font rendering): a map from writing-system tag to the font that ws renders with
+		/// (<see cref="RegionRunFont"/>), supplied by the composer from each ws's <c>DefaultFontName</c>.
+		/// The owned editors use it to draw the inline-display-on-blur per-run font layer for a value /
+		/// paragraph whose runs differ by ws or style. Empty when no font info is reachable; the display
+		/// layer then falls back to the editor's single font. Kept a settable map so this layer stays
+		/// LCModel-free (like <see cref="AvailableWritingSystems"/>); a test can supply its own.
+		/// </summary>
+		public IReadOnlyDictionary<string, RegionRunFont> WritingSystemFonts { get; set; }
+			= new Dictionary<string, RegionRunFont>();
+
+		/// <summary>
+		/// §19a: the ordered paragraphs of a <see cref="RegionFieldKind.StructuredText"/> row (each a
+		/// run-aware <see cref="RegionParagraph"/> with a per-paragraph named style). Empty for every
+		/// other kind. The owned <c>FwStructuredTextField</c> renders one editor row per paragraph.
+		/// </summary>
+		public IReadOnlyList<RegionParagraph> Paragraphs { get; }
+
+		/// <summary>
+		/// §19a: the project's available PARAGRAPH-type style names the structured-text editor offers in
+		/// its per-paragraph style picker (the host seam the composer populates from
+		/// <c>Cache.LangProject.StylesOC</c> filtered to paragraph styles — like
+		/// <see cref="AvailableNamedStyles"/> for character styles). Empty when no styles are reachable;
+		/// the per-paragraph style picker affordance is then suppressed. A test can supply its own list.
+		/// </summary>
+		public IReadOnlyList<string> AvailableParagraphStyles { get; set; } = Array.Empty<string>();
+
+		/// <summary>
+		/// §19d: for a <see cref="RegionFieldKind.Image"/> row, the HVO of the <c>ICmPicture</c> the row
+		/// represents (0 for the empty "insert a picture" ghost row). The edit-context seam keys the
+		/// replace/delete/metadata gestures on this so they target the right picture. Set by the composer.
+		/// </summary>
+		public int PictureHvo { get; set; }
+
+		/// <summary>
+		/// §19d: for a <see cref="RegionFieldKind.Image"/> row, the current editable metadata of the
+		/// picture (caption/description/license/creator) the properties dialog seeds from. Null on a
+		/// non-picture row or the empty ghost row. Set by the composer.
+		/// </summary>
+		public RegionPictureMetadata PictureMetadata { get; set; }
 
 		/// <summary>
 		/// For a <see cref="RegionFieldKind.Custom"/> row (winforms-free-lexeme-editor.md D1): the

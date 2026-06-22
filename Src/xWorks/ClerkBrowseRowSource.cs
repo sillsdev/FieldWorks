@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using SIL.FieldWorks.Common.Controls;
@@ -17,6 +18,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -44,6 +46,15 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="ClerkBrowseEditContext"/> supports SAFELY against the row's entry (see
 	/// <see cref="BrowseColumnEditSpec"/>) — so edits route through the proven fenced-LCModel path and
 	/// unsupported/unsafe targets stay read-only rather than risking a wrong-object write.
+	///
+	/// PARITY §19f.7 (RDE): the Avalonia Rapid-Data-Entry surface (the new-row UI, the
+	/// <c>IBrowseRdeSource</c> seam, the view's commit gesture, and the host-control commit routing) ships
+	/// fully view-side. This clerk-backed source does NOT implement <c>IBrowseRdeSource</c>, so the standard
+	/// lexicon browse shows no new-row — correctly, because it is not an RDE view. A product RDE surface needs
+	/// a source that reads the legacy RDE column attributes (<c>EditRowAssembly</c>/<c>EditRowClass</c>/
+	/// <c>EditRowSaveMethod</c>) and reflection-invokes the factory in one UOW (the parity of
+	/// <c>XmlBrowseRDEView.CreateObjectFromEntryRow</c>) plus the optional post-UOW <c>RDEMergeXxx</c> merge —
+	/// scoped here. The seam is fully exercised by the headless RDE tests over a fake source.
 	/// </summary>
 	internal sealed class ClerkBrowseRowSource : IBrowseRowSource, IBrowseEditSource, IBrowseMultiSortSource,
 		IBrowseFilterPresetSource, IBrowseRichCellSource, IBrowseBulkEditSource, IBrowseBulkCopySource,
@@ -328,6 +339,17 @@ namespace SIL.FieldWorks.XWorks
 			ApplyColumnFilter(columnIndex, filter);
 		}
 
+		public void SetFilterSpellingErrors(int columnIndex)
+		{
+			// "Spelling Errors" (FilterBar BadSpellingMatcher parity): build the SAME legacy BadSpellingMatcher
+			// filter (via MakeSpellingErrorColumnFilter) so the owned filter row narrows the real clerk list to
+			// rows whose cell has a spelling error in the column's writing system. Mutually exclusive with the
+			// column's other filters (applied as a delta against the prior column filter, same one-filter-per-
+			// column rule). A column the viewer reports as unfilterable builds null (a no-op clear).
+			var filter = _browseViewer.MakeSpellingErrorColumnFilter(columnIndex);
+			ApplyColumnFilter(columnIndex, filter);
+		}
+
 		// Maps the FwAvalonia-layer date relation to the XMLViews date-matcher selector (1:1).
 		private static BrowseDateMatchKind ToDateMatchKind(BrowseDateMatch match)
 		{
@@ -401,6 +423,18 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var item in items)
 				options.Add(new RegionChoiceOption(item.Key, item.Label, item.Depth));
 			return options;
+		}
+
+		/// <summary>
+		/// Whether the owned filter flyout should offer "Spelling Errors" on the column — delegated to the column
+		/// source, which applies the SAME gate the legacy FilterBar does (not a chooser/list column, not a
+		/// Pronunciation/CVPattern layout, AND a spelling dictionary is available for the column's writing
+		/// system). The dictionary probe is a runtime check, so this is false in an environment with no installed
+		/// dictionary for the column's WS — exactly as the WinForms FilterBar then omits the item.
+		/// </summary>
+		public bool ColumnSupportsSpellingFilter(int columnIndex)
+		{
+			return _browseViewer.ColumnSupportsSpellingFilter(columnIndex);
 		}
 
 		// Applies (or clears, when null) one column's clerk filter as a delta against the prior one for
@@ -881,22 +915,26 @@ namespace SIL.FieldWorks.XWorks
 
 		// ----- Delete Rows (destructive mode of the legacy Delete tab) -----
 		//
-		// Mirrors BulkEditBar's DeleteSelectedObjects / AllowDeleteItem / VerifyRowDeleteAllowable. The browse rows
-		// are the clerk's list objects (ILexEntry in the lexicon browse, resolved via HvoAt -> RootObjectHvo). Each
-		// checked row is CLASSIFIED as deletable vs blocked by the per-row guards before any delete; only deletable
-		// objects are deleted, in ONE undoable UOW through the batch-fenced ClerkBrowseEditContext (BeginBatch /
-		// TryDeleteObject per object / EndBatch(commit) — the SAME single-UOW boundary the bulk-write paths use),
-		// followed by orphan cleanup (the modern replacement for CmObject.DeleteOrphanedObjects).
+		// Faithfully mirrors BulkEditBar's DeleteSelectedObjects / AllowDeleteItem / VerifyRowDeleteAllowable. The
+		// browse rows are the clerk's list objects (an entry in the entry-anchored lexicon browse, a pronunciation /
+		// sense / ... when a bulk-edit target field re-rooted the list-items class), resolved via HvoAt ->
+		// RootObjectHvo. Each checked row is CLASSIFIED as deletable vs blocked by the per-row guards
+		// (AllowDeleteRow: bulkDeleteIfZero + only-sense + same-class-or-ghost-owner) before any delete; only the
+		// deletable rows' RESOLVED targets (the row object, or a ghost owner's existing child) are deleted, in ONE
+		// undoable UOW through the batch-fenced ClerkBrowseEditContext (BeginBatch / TryDeleteObject per object /
+		// EndBatch(commit) — the SAME single-UOW boundary the bulk-write paths use), followed by orphan cleanup
+		// (the modern replacement for CmObject.DeleteOrphanedObjects).
 
 		/// <summary>A clerk-backed source can delete objects (it has the LCModel cache + action handler).</summary>
 		public bool CanDeleteRows => true;
 
 		/// <summary>
 		/// Partitions the (checked) rows into deletable vs blocked, applying the per-row deletion guards
-		/// (<see cref="AllowDeleteRow"/>): an object that would violate a constraint (the only sense of an entry,
-		/// or an object that cannot be safely resolved/deleted at this slice) is BLOCKED. Safety first: a row is
-		/// deletable ONLY when the guard definitively allows it. Returns the deletable row indexes; the blocked
-		/// ones are reported via <paramref name="blockedRowIndexes"/> so the view can mark them.
+		/// (<see cref="AllowDeleteRow"/>): a row is BLOCKED when a guard forbids it — a non-zero bulkDeleteIfZero
+		/// count, the only sense of an entry, a childless ghost owner, or an object whose class is neither the
+		/// expected list-items class nor a ghost owner of it. Safety first: a row is deletable ONLY when the guard
+		/// definitively allows it. Returns the deletable row indexes; the blocked ones are reported via
+		/// <paramref name="blockedRowIndexes"/> so the view can mark them.
 		/// </summary>
 		public IReadOnlyList<int> ClassifyDeletableRows(IReadOnlyList<int> rowIndexes, out IReadOnlyList<int> blockedRowIndexes)
 		{
@@ -948,10 +986,19 @@ namespace SIL.FieldWorks.XWorks
 				if (hvo != 0)
 					candidateHvos.Add(hvo);
 			}
+			// Map each allowed row to the object it actually deletes (ResolveDeleteTarget): the row object itself for
+			// a same/subclass-of-expected row, or the ghost helper's existing child for a ghost-owner row (the
+			// legacy hvoToDelete computation). Dedup so two rows resolving to the same target delete it once.
 			var victims = new List<int>();
+			var seen = new HashSet<int>();
 			foreach (var hvo in candidateHvos)
-				if (AllowDeleteRow(hvo, candidateHvos))
-					victims.Add(hvo);
+			{
+				if (!AllowDeleteRow(hvo, candidateHvos))
+					continue;
+				var target = ResolveDeleteTarget(hvo);
+				if (target != 0 && seen.Add(target))
+					victims.Add(target);
+			}
 			if (victims.Count == 0)
 				return 0;
 
@@ -976,7 +1023,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 				// Orphan cleanup runs inside the same batch UOW (the modern replacement for the legacy
 				// CmObject.DeleteOrphanedObjects): sweep LexReferences left with no targets and MSAs no sense uses.
-				if (deleted > 0)
+				// §20.2.3: those orphans arise ONLY from deleting LexEntry/LexSense — a non-lexicon browse
+				// (Notebook RnGenericRec, a Grammar/Lists clerk) must NOT run a lexicon-wide sweep, so it is
+				// gated on the clerk's list-items class. (Must stay gated before any non-lexicon browse registers.)
+				if (deleted > 0 && IsLexiconListItems())
 					DeleteOrphans();
 			}
 			catch
@@ -995,17 +1045,23 @@ namespace SIL.FieldWorks.XWorks
 			return deleted;
 		}
 
-		/// <summary>
-		/// The per-row deletion guard, mirroring BulkEditBar.AllowDeleteItem. An ILexEntry deletes cleanly (the
-		/// expected list-items class for the lexicon browse). An ILexSense is blocked when it is the ONLY sense of
-		/// its owning entry that is not also being deleted (the legacy only-sense guard). Anything that does not
-		/// resolve to a safely-deletable object is BLOCKED (safety first: never delete what the legacy path would
-		/// block). <paramref name="candidateHvos"/> is the full set being deleted in this pass (for the only-sense
-		/// survivor check).
-		/// </summary>
 		/// <summary>Test seam: exercise the per-row deletion guard (<see cref="AllowDeleteRow"/>) on a specific hvo.</summary>
 		internal bool TestAllowDeleteRow(int hvo, HashSet<int> candidateHvos) => AllowDeleteRow(hvo, candidateHvos);
 
+		/// <summary>Test seam: the object a row would actually delete (the row object, or a ghost owner's child).</summary>
+		internal int TestResolveDeleteTarget(int hvo) => ResolveDeleteTarget(hvo);
+
+		/// <summary>
+		/// The per-row deletion guard, a faithful mirror of BulkEditBar.AllowDeleteItem + VerifyRowDeleteAllowable.
+		/// The order matters: the bulkDeleteIfZero block (VerifyRowDeleteAllowable) is checked first and BLOCKS any
+		/// row whose named int count property is non-zero; then the only-sense guard (the sense branch, applied only
+		/// when no ghost helper handles this list); then the general case
+		/// (CanDeleteItemOfClassOrGhostOwner) — a row is deletable when its class is the same/subclass of the clerk's
+		/// expected list-items class, OR a ghost helper for that class says the row is a ghost-OWNER whose ghost
+		/// child already exists. Anything else is BLOCKED (safety first: never delete what the legacy path would
+		/// block). <paramref name="candidateHvos"/> is the full set being deleted in this pass (only-sense survivor
+		/// check).
+		/// </summary>
 		private bool AllowDeleteRow(int hvo, HashSet<int> candidateHvos)
 		{
 			if (hvo == 0 || !_cache.ServiceLocator.IsValidObjectId(hvo))
@@ -1014,15 +1070,19 @@ namespace SIL.FieldWorks.XWorks
 			if (obj == null)
 				return false;
 
-			// The expected, cleanly-deletable list-items class for the lexicon browse: an entry deletes (cascading
-			// its owned senses/MSAs/etc. through the LCModel ownership model).
-			if (obj is ILexEntry)
-				return true;
+			// bulkDeleteIfZero (VerifyRowDeleteAllowable): a row is deletable only when the named int property reads
+			// zero (e.g. a WfiWordform with FullConcordanceCount > 0 must NOT be deleted). Applied to every row.
+			if (!VerifyRowDeleteAllowable(obj))
+				return false;
 
-			// Only-sense guard (BulkEditBar.AllowDeleteItem, the sense branch): deleting a sense is blocked when it
-			// would leave its owning entry with no senses. Deleting the FIRST sense is allowed only if some other
-			// sense survives (is not also being deleted); a non-first sense is always deletable.
-			if (obj is ILexSense sense)
+			var ghostHelper = GhostHelperForExpectedClass();
+			var expectedClass = ExpectedListItemsClass;
+
+			// Only-sense guard (AllowDeleteItem, the sense branch): deleting a sense is blocked when it would leave
+			// its owning entry with no senses — but, exactly like the legacy bar, ONLY when no ghost helper handles
+			// this list (clsid == LexSense && m_ghostParentHelper == null). Deleting the FIRST sense is allowed only
+			// if some other sense survives (is not also being deleted); a non-first sense is always deletable.
+			if (obj is ILexSense sense && ghostHelper == null)
 			{
 				if (!(sense.Owner is ILexEntry entry))
 					return true; // a subsense's owner is a sense, never the only sense of the entry — OK to delete.
@@ -1044,15 +1104,95 @@ namespace SIL.FieldWorks.XWorks
 				return false; // this is the first sense and every other sense is also being deleted.
 			}
 
-			// PARITY: the legacy AllowDeleteItem also allows deleting a GHOST-owner object when its ghost child
-			// already exists (CanDeleteItemOfClassOrGhostOwner via GhostParentHelper), and VerifyRowDeleteAllowable
-			// blocks a row whose bulkDeleteIfZero count property is non-zero. Both need the column-spec's ghost /
-			// bulkDeleteIfZero metadata (m_ghostParentHelper / m_sBulkDeleteIfZero) and the GhostParentHelper, which
-			// are not surfaced at this row-source slice (the browse here is entry-anchored). Per the safety rule we
-			// BLOCK any object that is neither a plainly-deletable entry nor a guarded sense, rather than risk
-			// deleting something the legacy ghost/bulkDeleteIfZero path would have blocked. (Deferred: wire the
-			// ghost-owner allowance + bulkDeleteIfZero block once the column-spec metadata is exposed to this seam.)
+			// General case (CanDeleteItemOfClassOrGhostOwner): allow deletion for the class we expect to be bulk
+			// editing (an entry in the entry-anchored lexicon browse; a pronunciation/etc. when the target field
+			// switched the list-items class), cascading owned objects through the LCModel ownership model.
+			if (DomainObjectServices.IsSameOrSubclassOf(_cache.DomainDataByFlid.MetaDataCache, obj.ClassID, expectedClass))
+				return true;
+
+			// Ghost-owner allowance: when a ghost helper for the expected class exists, a row that is a ghost OWNER
+			// (e.g. an entry standing in for a not-yet-created pronunciation) is deletable ONLY when its ghost child
+			// already exists — in which case the delete targets the child (see ResolveDeleteTarget). A childless
+			// ghost owner is blocked (there is nothing of the expected class to delete).
+			if (ghostHelper != null && ghostHelper.IsGhostOwnerClass(hvo) && !ghostHelper.IsGhostOwnerChildless(hvo))
+				return true;
+
 			return false;
+		}
+
+		// The clerk's expected list-items class (LexEntry in the entry-anchored browse; LexPronunciation / LexSense
+		// / ... when a bulk-edit target field re-rooted the list). The legacy m_expectedListItemsClassId.
+		private int ExpectedListItemsClass => _clerk.ListItemsClass;
+
+		// The single ghost helper whose TargetClass matches the expected list-items class, mirroring the legacy
+		// UpdateCurrentGhostParentHelper(): the bar builds GhostParentHelpers from the browseview spec's
+		// bulkEditListItemsGhostFields and picks the one whose TargetClass == m_expectedListItemsClassId. Lazily
+		// built once from the spec attribute (a class.field list like "LexDb.AllPossiblePronunciations,..."), then
+		// re-selected per expected class — kept LCModel-free at the FwAvalonia layer (the spec attribute is read
+		// through the IBrowseColumnSource seam; the GhostParentHelper evaluation stays here in xWorks/XMLViews).
+		private List<GhostParentHelper> _ghostHelpers;
+		private GhostParentHelper GhostHelperForExpectedClass()
+		{
+			if (_ghostHelpers == null)
+			{
+				_ghostHelpers = new List<GhostParentHelper>();
+				var ghostFields = _browseViewer.GetBulkEditSpecAttribute("bulkEditListItemsGhostFields");
+				if (!string.IsNullOrEmpty(ghostFields))
+				{
+					foreach (var classAndField in ghostFields.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+					{
+						var helper = GhostParentHelper.CreateIfPossible(_cache.ServiceLocator, classAndField.Trim());
+						if (helper != null)
+							_ghostHelpers.Add(helper);
+					}
+				}
+			}
+			var expectedClass = ExpectedListItemsClass;
+			foreach (var helper in _ghostHelpers)
+				if (helper.TargetClass == expectedClass)
+					return helper;
+			return null;
+		}
+
+		// VerifyRowDeleteAllowable parity: when the browseview spec names a bulkDeleteIfZero property, the row is
+		// deletable only when that int property on the row object reads zero (a non-zero count blocks the delete,
+		// e.g. a still-referenced wordform). Read by reflection on the CmObject, exactly as the legacy bar does.
+		// No bulkDeleteIfZero attribute → always allowed (the lexicon browse case).
+		private string _bulkDeleteIfZero;
+		private bool _bulkDeleteIfZeroResolved;
+		private PropertyInfo _bulkDeleteIfZeroProp;
+		private bool VerifyRowDeleteAllowable(ICmObject obj)
+		{
+			if (!_bulkDeleteIfZeroResolved)
+			{
+				_bulkDeleteIfZero = _browseViewer.GetBulkEditSpecAttribute("bulkDeleteIfZero");
+				_bulkDeleteIfZeroResolved = true;
+			}
+			if (string.IsNullOrEmpty(_bulkDeleteIfZero))
+				return true;
+			if (_bulkDeleteIfZeroProp == null)
+				_bulkDeleteIfZeroProp = obj.GetType().GetProperty(_bulkDeleteIfZero);
+			if (_bulkDeleteIfZeroProp == null)
+				return true; // the property is not on this object type — nothing to gate on.
+			var value = _bulkDeleteIfZeroProp.GetValue(obj, null);
+			return !(value is int count) || count == 0;
+		}
+
+		// The object a checked row actually deletes, mirroring the legacy delete loop's hvoToDelete computation: the
+		// row object itself when it is the same/subclass of the expected list-items class, otherwise the ghost
+		// helper's target child (GetOwnerOfTargetProperty — the existing child of a ghost owner). Returns 0 when no
+		// deletable target resolves (a childless ghost owner / wrong class), so DeleteRows skips it.
+		private int ResolveDeleteTarget(int hvo)
+		{
+			if (hvo == 0 || !_cache.ServiceLocator.IsValidObjectId(hvo))
+				return 0;
+			var obj = _cache.ServiceLocator.GetObject(hvo);
+			if (obj == null)
+				return 0;
+			if (DomainObjectServices.IsSameOrSubclassOf(_cache.DomainDataByFlid.MetaDataCache, obj.ClassID, ExpectedListItemsClass))
+				return hvo;
+			var ghostHelper = GhostHelperForExpectedClass();
+			return ghostHelper != null ? ghostHelper.GetOwnerOfTargetProperty(hvo) : 0;
 		}
 
 		/// <summary>
@@ -1062,6 +1202,17 @@ namespace SIL.FieldWorks.XWorks
 		/// targets, and MoMorphSynAnalysis objects no sense in their owning entry uses any more. Mirrors the
 		/// LiftMerger's DeleteOrphans (the established in-repo pattern for this cleanup).
 		/// </summary>
+		/// <summary>§20.2.3: true when this browse's clerk edits LexEntry/LexSense (or a subclass) — the only
+		/// lists whose bulk delete leaves the LexReference/MSA orphans <see cref="DeleteOrphans"/> sweeps. Every
+		/// other tool (Notebook, Lists, Grammar, Words) skips the lexicon-wide sweep.</summary>
+		private bool IsLexiconListItems()
+		{
+			var mdc = _cache.DomainDataByFlid.MetaDataCache;
+			var cls = ExpectedListItemsClass;
+			return DomainObjectServices.IsSameOrSubclassOf(mdc, cls, LexEntryTags.kClassId)
+				|| DomainObjectServices.IsSameOrSubclassOf(mdc, cls, LexSenseTags.kClassId);
+		}
+
 		private void DeleteOrphans()
 		{
 			// LexReferences with no surviving targets (a cross-reference whose endpoints were just deleted).
@@ -1148,7 +1299,7 @@ namespace SIL.FieldWorks.XWorks
 					continue;
 				var cells = GetCellValues(rowIndex); // overlay-aware read
 				var current = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
-				_bulkPreview[(hvo, targetColumn)] = ComputeReplaced(current, spec) ?? string.Empty;
+				_bulkPreview[(hvo, targetColumn)] = ComputeReplacedForColumn(current, spec, targetColumn) ?? string.Empty;
 			}
 		}
 
@@ -1176,7 +1327,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var cells = GetCellValues(rowIndex);
 					var current = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
-					var newValue = ComputeReplaced(current, spec) ?? string.Empty;
+					var newValue = ComputeReplacedForColumn(current, spec, targetColumn) ?? string.Empty;
 					// Skip rows the pattern leaves unchanged so an unmatched row is not a needless no-op write.
 					if (string.Equals(newValue, current ?? string.Empty, StringComparison.Ordinal))
 						continue;
@@ -1201,14 +1352,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The P1 managed find/replace over a single cell string, shared by preview and apply so they never
+		/// The managed find/replace over a single cell string, shared by preview and apply so they never
 		/// diverge. Regex mode (<see cref="BulkReplaceSpec.UseRegularExpressions"/>) uses
 		/// <see cref="System.Text.RegularExpressions.Regex.Replace(string,string)"/> (the spec's ReplaceText is
 		/// the .NET replacement, so $1 backrefs work); literal mode does a contains-replace honoring
-		/// <see cref="BulkReplaceSpec.MatchCase"/> and <see cref="BulkReplaceSpec.MatchWholeWord"/>. An empty
-		/// find text returns the input unchanged. MatchDiacritics/MatchWritingSystem are P1 no-ops. An invalid
-		/// regex returns the input unchanged (the dialog gates an invalid pattern off OK, so apply never sees
-		/// one; this is the defensive belt). The match is exposed for unit testing.
+		/// <see cref="BulkReplaceSpec.MatchCase"/> and <see cref="BulkReplaceSpec.MatchWholeWord"/>.
+		///
+		/// §19f.2 (Find/Replace P2): when <see cref="BulkReplaceSpec.MatchDiacritics"/> is OFF (the legacy
+		/// default — diacritic-INSENSITIVE), the match is run over a Unicode-NFD-decomposed, combining-mark-
+		/// stripped projection of both the input and the find text, then the replacement is spliced back at the
+		/// matched span of the ORIGINAL string (so the cell keeps its diacritics outside the match). This is the
+		/// managed parity of the native IVwPattern <c>MatchDiacritics=false</c> behavior. WS-collation
+		/// (<see cref="BulkReplaceSpec.MatchWritingSystem"/>) primary-strength equality is layered by the
+		/// instance overload <see cref="ComputeReplacedWithCollation"/>, which has the WS locale.
+		///
+		/// An empty find text returns the input unchanged. An invalid regex returns the input unchanged (the
+		/// dialog gates an invalid pattern off OK, so apply never sees one; this is the defensive belt).
 		/// </summary>
 		internal static string ComputeReplaced(string input, BulkReplaceSpec spec)
 		{
@@ -1229,8 +1388,164 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			// §19f.2: diacritic-INSENSITIVE literal match (MatchDiacritics OFF, the legacy default). The
+			// diacritic-SENSITIVE path (MatchDiacritics ON) is the plain literal scan.
+			if (!spec.MatchDiacritics)
+				return DiacriticInsensitiveReplace(input, spec.FindText, spec.ReplaceText ?? string.Empty,
+					spec.MatchCase, spec.MatchWholeWord);
+
 			return LiteralReplace(input, spec.FindText, spec.ReplaceText ?? string.Empty,
 				spec.MatchCase, spec.MatchWholeWord);
+		}
+
+		/// <summary>
+		/// §19f.2 (Find/Replace P2): the column-aware find/replace. It first runs the shared
+		/// <see cref="ComputeReplaced"/> (regex / diacritic-insensitive / literal). Then, when the spec requests
+		/// <see cref="BulkReplaceSpec.MatchWritingSystem"/> AND that string match left the cell unchanged, it
+		/// tries a WS-COLLATION (ICU primary-strength) WHOLE-CELL equality against the find text: if the whole
+		/// cell is collation-equivalent to the find text in the column's writing system, the cell is replaced
+		/// with the replacement. This is the managed parity of the native IVwPattern <c>MatchOldWritingSystem</c>
+		/// /<c>IcuLocale</c> equality for the common whole-field case. PARITY §19f.2: collation-aware SUBSTRING
+		/// matching (a collation match inside a larger cell) — the native engine's finer sub-span case — stays
+		/// scoped; the whole-cell collation equality covers the dominant filter/replace usage. Uses icu.net's
+		/// <c>Icu.Collation.Collator</c> at primary strength so accent/case-equivalent forms compare equal.
+		/// </summary>
+		private string ComputeReplacedForColumn(string input, BulkReplaceSpec spec, int targetColumn)
+		{
+			var replaced = ComputeReplaced(input, spec);
+			if (spec == null || !spec.MatchWritingSystem || spec.UseRegularExpressions
+				|| string.IsNullOrEmpty(spec.FindText))
+				return replaced;
+			// Only consider the collation whole-cell equality when the string match did not already change it
+			// (so a substring replace is not double-applied), and the cell is non-empty.
+			if (!string.Equals(replaced, input ?? string.Empty, StringComparison.Ordinal)
+				|| string.IsNullOrEmpty(input))
+				return replaced;
+
+			var locale = ColumnIcuLocale(targetColumn);
+			if (CollationEquivalent(input, spec.FindText, locale, spec.MatchCase))
+				return spec.ReplaceText ?? string.Empty;
+			return replaced;
+		}
+
+		// The ICU locale id for a column's writing system (so a collator can be created), or null when unknown.
+		private string ColumnIcuLocale(int columnIndex)
+		{
+			var wsTag = EditSpec(columnIndex).WritingSystemTag;
+			if (string.IsNullOrEmpty(wsTag))
+				return null;
+			try
+			{
+				var handle = _cache.WritingSystemFactory.GetWsFromStr(wsTag);
+				if (handle == 0)
+					return wsTag;
+				return _cache.WritingSystemFactory.GetStrFromWs(handle);
+			}
+			catch
+			{
+				return wsTag;
+			}
+		}
+
+		// True when two strings are collation-equivalent in the given locale at primary strength (ignoring
+		// accents; ignoring case too unless matchCase, in which case tertiary strength). Falls back to an
+		// ordinal/ignore-case compare when no collator can be built for the locale.
+		private static bool CollationEquivalent(string a, string b, string locale, bool matchCase)
+		{
+			if (string.IsNullOrEmpty(locale))
+				return string.Equals(a, b, matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+			try
+			{
+				using (var collator = Icu.Collation.Collator.Create(locale, Icu.Collation.Collator.Fallback.FallbackAllowed))
+				{
+					collator.Strength = matchCase
+						? Icu.Collation.CollationStrength.Tertiary
+						: Icu.Collation.CollationStrength.Primary;
+					return collator.Compare(a, b) == 0;
+				}
+			}
+			catch
+			{
+				return string.Equals(a, b, matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
+		// §19f.2: a diacritic-insensitive literal find/replace. Both the input and the find text are projected
+		// to their NFD-decomposed, combining-mark-stripped form (so "café" matches "cafe" either way); the scan
+		// runs over the stripped projections, and each match maps back to a span of the ORIGINAL input via an
+		// index map so the replacement is spliced in while the rest of the cell keeps its diacritics. All
+		// occurrences are replaced (legacy ReplaceAll). MatchCase / MatchWholeWord are honored on the stripped
+		// forms (whole-word boundaries are tested against the original text so combining marks do not split a
+		// word). When the find text strips to empty (it was all diacritics) nothing is replaced.
+		private static string DiacriticInsensitiveReplace(string input, string find, string replace,
+			bool matchCase, bool matchWholeWord)
+		{
+			var inputStripped = StripDiacritics(input, out var indexMap);
+			var findStripped = StripDiacritics(find, out _);
+			if (findStripped.Length == 0)
+				return input;
+
+			var comparison = matchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+			var result = new StringBuilder(input.Length);
+			var strippedPos = 0;   // scan position in the stripped input
+			var originalCopied = 0; // how much of the ORIGINAL input has been emitted
+			while (strippedPos <= inputStripped.Length - findStripped.Length)
+			{
+				var match = inputStripped.IndexOf(findStripped, strippedPos, comparison);
+				if (match < 0)
+					break;
+				// Map the stripped match span back to original-string indices.
+				var origStart = indexMap[match];
+				var origEnd = match + findStripped.Length < indexMap.Count
+					? indexMap[match + findStripped.Length]
+					: input.Length;
+				var wholeWordOk = !matchWholeWord || IsWholeWordMatch(input, origStart, origEnd - origStart);
+				if (wholeWordOk)
+				{
+					result.Append(input, originalCopied, origStart - originalCopied);
+					result.Append(replace);
+					originalCopied = origEnd;
+					strippedPos = match + findStripped.Length;
+				}
+				else
+				{
+					strippedPos = match + 1; // not a whole-word boundary: keep scanning past this spot
+				}
+			}
+			result.Append(input, originalCopied, input.Length - originalCopied);
+			return result.ToString();
+		}
+
+		// NFD-decomposes a string and drops its combining marks, returning the stripped base text PLUS an index
+		// map: indexMap[i] is the index in the ORIGINAL string at which the i-th stripped (base) character
+		// began. The map has one extra trailing entry only implicitly (callers clamp to input.Length). Uses
+		// String.Normalize (BMP-correct for the Latin/diacritic case the legacy MatchDiacritics targets); a
+		// surrogate base char advances the original index by its UTF-16 length.
+		private static string StripDiacritics(string text, out List<int> indexMap)
+		{
+			indexMap = new List<int>(text.Length);
+			var sb = new StringBuilder(text.Length);
+			// Walk the ORIGINAL by grapheme-ish base: normalize each original char's contribution. Decomposing
+			// the whole string then re-mapping is ambiguous, so decompose per base char and keep its origin.
+			var i = 0;
+			while (i < text.Length)
+			{
+				var charLen = char.IsHighSurrogate(text[i]) && i + 1 < text.Length ? 2 : 1;
+				var unit = text.Substring(i, charLen);
+				var decomposed = unit.Normalize(NormalizationForm.FormD);
+				foreach (var ch in decomposed)
+				{
+					var category = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+					if (category == System.Globalization.UnicodeCategory.NonSpacingMark
+						|| category == System.Globalization.UnicodeCategory.SpacingCombiningMark
+						|| category == System.Globalization.UnicodeCategory.EnclosingMark)
+						continue; // drop combining marks
+					sb.Append(ch);
+					indexMap.Add(i); // every stripped base char maps to where this original unit began
+				}
+				i += charLen;
+			}
+			return sb.ToString();
 		}
 
 		// Literal (non-regex) find/replace over a string: case-sensitive iff matchCase; when matchWholeWord the
@@ -1434,7 +1749,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and write the target via the shared batch-fenced edit context as ONE undoable step. A no-op when the
 		/// target is not a safe copy target, source == target, or the source cell is empty (nothing to copy).
 		/// </summary>
-		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset, ClickCopyMode mode,
 			string separator, bool append, IRegionEditContext context)
 		{
 			var targetSpec = EditSpec(targetColumn);
@@ -1448,7 +1763,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(sourceText))
 				return;
 
-			var copied = ComputeClickCopySource(sourceText, mode);
+			var copied = ComputeClickCopySource(sourceText, mode, charOffset);
 			var currentTarget = targetColumn < cells.Count ? cells[targetColumn] : string.Empty;
 			// Append directivity → Append join (target + separator + copied); Overwrite → Replace (copied wins).
 			var joinMode = append ? BulkCopyMode.Append : BulkCopyMode.Replace;
@@ -1478,18 +1793,93 @@ namespace SIL.FieldWorks.XWorks
 				context.Commit();
 		}
 
-		// The text a Click Copy lifts from the clicked SOURCE cell, by mode. CELL-LEVEL today: both Word and
-		// Reorder copy the WHOLE cell text (the cell is the click granularity at this seam).
-		// PARITY: word-granularity is deferred — the legacy bar's ClickCopyEventArgs carries the clicked word and
-		// its character offset (IchStartWord) from the native Views hit-test, which lets Word copy just the
-		// clicked word and Reorder rotate the cell to lead with it. The managed browse cell renders a single
-		// TextBlock with no per-word hit-test, so the clicked word/offset is not available here; forcing a
-		// fragile word split would risk wrong-token copies. The word/reorder radio is wired through to the model
-		// (this mode parameter) so the choice is preserved; both currently copy the full cell text until the rich
-		// cell exposes a clicked-word offset.
-		internal static string ComputeClickCopySource(string sourceText, ClickCopyMode mode)
+		// The text a Click Copy lifts from the clicked SOURCE cell, by mode + clicked character offset — the
+		// managed parity of the legacy xbv_ClickCopy WORD path. The view hit-tests the pointer against the cell's
+		// rendered TextBlock to a character index (the IchStartWord parity), which this maps to a word boundary:
+		//   Word    : copy just the clicked word (legacy tssNew = e.Word).
+		//   Reorder : rotate the cell to LEAD with the clicked word — source[wordStart..] + ", " + source[..wordStart]
+		//             (legacy: tsb = source after IchStartWord, append ", ", append source before IchStartWord).
+		// charOffset < 0 (no hit-testable layout) falls back to the WHOLE cell for both modes, the conservative
+		// "copy what was clicked" behavior when the click can't be resolved to a word.
+		internal static string ComputeClickCopySource(string sourceText, ClickCopyMode mode, int charOffset)
 		{
-			return sourceText ?? string.Empty;
+			sourceText = sourceText ?? string.Empty;
+			if (sourceText.Length == 0)
+				return string.Empty;
+			if (charOffset < 0)
+				return sourceText; // no clicked-word offset available — copy the whole cell (whole-cell fallback)
+
+			var wordStart = WordStartOffset(sourceText, charOffset);
+			if (mode == ClickCopyMode.Reorder)
+			{
+				// Rotate the cell to lead with the clicked word, mirroring the legacy IchStartWord rotation. When
+				// the click is already on the first word (wordStart == 0) there is nothing to rotate (legacy guards
+				// on IchStartWord > 0), so the whole cell is copied unchanged.
+				if (wordStart <= 0)
+					return sourceText;
+				return sourceText.Substring(wordStart) + ", " + sourceText.Substring(0, wordStart);
+			}
+			// Word mode: just the clicked word.
+			return ExtractClickedWord(sourceText, charOffset);
+		}
+
+		/// <summary>
+		/// The single word containing (or, when the click landed on a separator, adjoining) the character at
+		/// <paramref name="charOffset"/> in <paramref name="text"/> — the managed parity of the native Views
+		/// GrowToWord. A "word" is a maximal run of non-whitespace characters; a click in the gap between words
+		/// associates with the following word (or the preceding one at end-of-text). Returns the empty string for
+		/// empty text. Pure and unit-testable so the gesture only has to supply the offset.
+		/// </summary>
+		internal static string ExtractClickedWord(string text, int charOffset)
+		{
+			text = text ?? string.Empty;
+			if (text.Length == 0)
+				return string.Empty;
+			var start = WordStartOffset(text, charOffset);
+			var end = start;
+			while (end < text.Length && !char.IsWhiteSpace(text[end]))
+				end++;
+			return text.Substring(start, end - start);
+		}
+
+		/// <summary>
+		/// The character index of the START of the word the click at <paramref name="charOffset"/> associates
+		/// with: the offset is clamped into range, then advanced past any whitespace it landed on (a click in the
+		/// gap binds to the FOLLOWING word, matching GrowToWord), then walked back to the first non-whitespace
+		/// character of that word. Returns <c>text.Length</c> only for all-whitespace tails with no following word.
+		/// </summary>
+		private static int WordStartOffset(string text, int charOffset)
+		{
+			if (charOffset < 0)
+				charOffset = 0;
+			if (charOffset > text.Length)
+				charOffset = text.Length;
+			// A click at end-of-text, or on whitespace, has no character under it; bind to the preceding word so
+			// an end-of-cell click still copies the last word rather than nothing.
+			if (charOffset == text.Length || char.IsWhiteSpace(text[charOffset]))
+			{
+				// Prefer the FOLLOWING word when the click is in an interior gap (parity with GrowToWord forward
+				// association); fall back to the preceding word at the trailing whitespace / end of the cell.
+				var fwd = charOffset;
+				while (fwd < text.Length && char.IsWhiteSpace(text[fwd]))
+					fwd++;
+				if (fwd < text.Length)
+					charOffset = fwd;
+				else
+				{
+					// No following word (trailing whitespace / end): step back to the last word's last character.
+					var back = charOffset - 1;
+					while (back >= 0 && char.IsWhiteSpace(text[back]))
+						back--;
+					if (back < 0)
+						return text.Length; // all whitespace — no word
+					charOffset = back;
+				}
+			}
+			var start = charOffset;
+			while (start > 0 && !char.IsWhiteSpace(text[start - 1]))
+				start--;
+			return start;
 		}
 
 		// Builds the entry-anchored TEXT field a bulk copy writes for a row (the Lexeme Form), bound to the

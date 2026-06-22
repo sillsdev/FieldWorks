@@ -129,6 +129,47 @@ namespace SIL.FieldWorks.XWorks
 		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
 			=> For(field)?.TryRemoveReferenceItem(field, optionKey) ?? false;
 
+		// §19a: StText paragraph CRUD — browse cells never carry an StText field, so these delegate to the
+		// per-row context (which has no paragraph setters registered) and reject. Present for the interface.
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
+			=> For(field)?.TrySetParagraphText(field, paragraphIndex, value) ?? false;
+
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName)
+			=> For(field)?.TrySetParagraphStyle(field, paragraphIndex, styleName) ?? false;
+
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+			=> For(field)?.TryInsertParagraph(field, afterParagraphIndex) ?? false;
+
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+			=> For(field)?.TryDeleteParagraph(field, paragraphIndex) ?? false;
+
+		// §19d: picture editing in-cell ties to §19f.3 (in-cell ballooning) and is not wired on the browse
+		// surface yet — delegate to the per-row context (whose first-slice base rejects). The detail-view
+		// picture path ships fully; the same insert/edit lane reaches a browse picture cell when §19f.3
+		// realizes a picture cell editor.
+		// §19f.5 UPDATE: the in-cell picture editor is now realized VIEW-side — an editable cell whose field
+			// is RegionFieldKind.Image renders the shared §19d picture field control (insert/replace/delete +
+			// RegionPictureDialogResult); these methods carry the write to the per-row context. The lane reaches
+			// a browse picture cell as soon as the row source returns an Image-kind GetEditField for one.
+			// PARITY §19f.5: the clerk-backed row source does not yet CLASSIFY a picture column nor wire
+			// IRegionMediaServices through the browse host (the default lexicon browse views carry no picture
+			// column), so no picture cell is realized in product today; the view + edit-context lane are ready.
+		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
+			=> For(field)?.TryInsertPicture(field, sourceFile, metadata) ?? false;
+
+		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
+			=> For(field)?.TryReplacePictureFile(field, sourceFile) ?? false;
+
+		public bool TryDeletePicture(LexicalEditRegionField field)
+			=> For(field)?.TryDeletePicture(field) ?? false;
+
+		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
+			=> For(field)?.TrySetPictureMetadata(field, metadata) ?? false;
+
+		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata)
+			=> For(field)?.TryInsertPictureOrc(field, ws, caretPosition, sourceFile, metadata) ?? false;
+
 		public IReadOnlyList<string> Validate() => _current?.Validate() ?? new List<string>();
 
 		// Commit/Cancel end the current row's session AND drop the cached delegate, so the next edit

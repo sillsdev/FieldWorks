@@ -2481,6 +2481,17 @@ namespace SIL.FieldWorks.IText
 					tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoForm, ktagSbNamedObjName, m_sandbox.RawWordformWs);
 				}
 				int newSenseID = 0;
+				// New-UI gate (mirrors the Insert Entry / Add Allomorph / Options dialog gates): in New mode launch
+				// the Avalonia Add New Sense dialog (gloss + grammatical-info box -> a new sense), created in one
+				// undoable step; Legacy mode keeps the WinForms AddNewSenseDlg.
+				var uiMode = m_sandbox.m_propertyTable.GetStringProperty("UIMode", null);
+				if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+				{
+					Form ownerNew = m_sandbox.FindForm();
+					ownerNew?.Activate(); // LT-2619: make the form active before showing the modal.
+					return LcmAddNewSenseDialogLauncher.Show(m_caches.MainCache, m_sandbox.Mediator,
+						m_sandbox.m_propertyTable, le, tssForm, ownerNew, m_helpTopicProvider);
+				}
 				// This 'using' system is important,
 				// because it calls Dispose on the dlg,
 				// when it goes out of scope.

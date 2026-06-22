@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.WritingSystemPropertiesDialogView"
+             x:DataType="vm:WritingSystemPropertiesDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="360" MinHeight="300">
+	<!-- Writing System properties / Add-WS bounded core (Phase-1 §19g): name, abbreviation, default font,
+	     right-to-left direction, sort label, over a gated OK + Cancel. The bounded managed core of the WinForms
+	     FwWritingSystemSetupDlg (SLDR/converters/merge/advanced = PARITY deferral). Visible text localized via
+	     FwAvaloniaDialogsStrings; AutomationIds stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="WritingSystemProperties.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="WritingSystemProperties.Cancel"/>
+		</StackPanel>
+
+		<StackPanel Spacing="{StaticResource DialogLabelFieldGap}">
+			<TextBlock Text="{Binding NameLabel}"
+			           AutomationProperties.AutomationId="WritingSystemProperties.NameLabel"/>
+			<TextBox Text="{Binding Name}"
+			         AutomationProperties.AutomationId="WritingSystemProperties.Name"
+			         AutomationProperties.Name="{Binding NameLabel}"/>
+
+			<TextBlock Text="{Binding AbbreviationLabel}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="WritingSystemProperties.AbbrLabel"/>
+			<TextBox Text="{Binding Abbreviation}"
+			         AutomationProperties.AutomationId="WritingSystemProperties.Abbr"
+			         AutomationProperties.Name="{Binding AbbreviationLabel}"/>
+
+			<TextBlock Text="{Binding FontLabel}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="WritingSystemProperties.FontLabel"/>
+			<ComboBox ItemsSource="{Binding AvailableFonts}" SelectedItem="{Binding SelectedFont}"
+			          HorizontalAlignment="Stretch"
+			          AutomationProperties.AutomationId="WritingSystemProperties.Font"
+			          AutomationProperties.Name="{Binding FontLabel}"/>
+
+			<TextBlock Text="{Binding SortLabelCaption}" Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="WritingSystemProperties.SortLabel"/>
+			<TextBox Text="{Binding SortLabel}"
+			         AutomationProperties.AutomationId="WritingSystemProperties.Sort"
+			         AutomationProperties.Name="{Binding SortLabelCaption}"/>
+
+			<CheckBox Content="{Binding RightToLeftLabel}" IsChecked="{Binding RightToLeft}"
+			          Margin="{StaticResource DialogControlGapAbove}"
+			          AutomationProperties.AutomationId="WritingSystemProperties.Rtl"/>
+
+			<TextBlock Text="{Binding ValidationMessage}"
+			           Foreground="Red" TextWrapping="Wrap" Margin="{StaticResource DialogControlGapAbove}"
+			           IsVisible="{Binding !IsValid}"
+			           AutomationProperties.AutomationId="WritingSystemProperties.ValidationError"/>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

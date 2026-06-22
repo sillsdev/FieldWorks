@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.XWorks
 		// today only the legacy-dialog launcher seam (this view is the sanctioned WinForms
 		// carve-out; the pane itself stays WinForms-free).
 		private RegionEditorServices m_regionEditorServices;
+		private SIL.FieldWorks.Common.FwAvalonia.Region.IRegionMediaServices m_regionMediaServices;
 		// advanced-entry-view: the per-project home of the sparse view-definition override patches that
 		// drive the Avalonia surface's per-field Field Visibility / Move Field commands. Lazily built from
 		// the project ConfigurationSettings folder; the Avalonia surface reads it at Compose and the gear
@@ -679,8 +680,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (changed == null || current == null)
 				return false;
-			var owningEntry = changed as ILexEntry ?? changed.OwnerOfClass<ILexEntry>();
-			return owningEntry != null && owningEntry.Hvo == current.Hvo;
+			// §20.1.3: class-agnostic — a change is "within" the displayed record when the changed object IS
+			// the record or is OWNED (at any depth) by it. The old code special-cased ILexEntry via
+			// OwnerOfClass<ILexEntry>(); walking the owner chain up to the current record is equivalent for an
+			// entry root AND correct for any other record class (RnGenericRec, CmPossibility, …) so their edits
+			// also trigger the coalesced refresh.
+			for (var o = changed; o != null; o = o.Owner)
+				if (o.Hvo == current.Hvo)
+					return true;
+			return false;
 		}
 
 		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
@@ -731,13 +739,19 @@ namespace SIL.FieldWorks.XWorks
 				m_dataEntryForm.Reset();
 			}
 
-			if (!(obj is ILexEntry lexEntry))
+			if (obj == null)
 			{
 				m_regionEditContext.Clear();
 				TearDownCompanionSlices();
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
+
+			// §20.1.3: the composer is class-general — compose the structured view for ANY record root
+			// (LexEntry for the lexicon tool; RnGenericRec / CmPossibility / PartOfSpeech once other tools
+			// register). Only a LexEntry has the first-slice fallback below; any other class that fails to
+			// compose shows the unsupported message (never a NRE).
+			var lexEntry = obj as ILexEntry;
 
 			// Viewing parity (11.x): honor the same View → Show Hidden Fields setting legacy DataTree
 			// reads (ShowHiddenFields-{tool}, local settings).
@@ -750,8 +764,16 @@ namespace SIL.FieldWorks.XWorks
 			ComposedEntryRegion composed = null;
 			try
 			{
-				composed = FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
-					services: EnsureRegionEditorServices(), overrides: ResolveViewOverride);
+				composed = lexEntry != null
+					? FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
+						services: EnsureRegionEditorServices(), overrides: ResolveViewOverride)
+					// §20.1.3/§20.1.4: non-entry roots compose against the tool's configured layout
+					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
+					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
+					: FullEntryRegionComposer.Compose(obj, Cache,
+						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
+						services: EnsureRegionEditorServices(), overrides: ResolveViewOverride,
+						layoutChoiceField: m_layoutChoiceField);
 				if (composed != null)
 				{
 					region = composed.Model;
@@ -767,6 +789,15 @@ namespace SIL.FieldWorks.XWorks
 
 			if (region == null)
 			{
+				if (lexEntry == null)
+				{
+					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
+					// rather than crash. (This path is only reachable once a non-lexicon tool registers.)
+					m_regionEditContext.Clear();
+					TearDownCompanionSlices();
+					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
+					return;
+				}
 				region = LexicalEditRegionBuilder.Build(lexEntry, Cache);
 				editContext = new LexicalEditRegionEditContext(lexEntry, Cache);
 			}
@@ -794,7 +825,8 @@ namespace SIL.FieldWorks.XWorks
 				GetPersistedExpansionState, PersistExpansionState,
 				OnRegionMenuRequested, OnRegionLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
-				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
+				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
+				EnsureRegionMediaServices());
 		}
 
 		/// <summary>
@@ -806,6 +838,20 @@ namespace SIL.FieldWorks.XWorks
 		/// The dialog commits through its own UOW, so the refresh controller's PropChanged
 		/// subscription re-renders the region after the dialog closes — no explicit refresh here.
 		/// </summary>
+		// §19d: the host media seam (picture file pick + properties dialog + audio play/record). Created
+		// lazily and reused; the file picker resolves the Avalonia IStorageProvider off the live hosted
+		// surface, the dialog is owned by this host's WinForms Form, and audio rides libpalaso's device.
+		private SIL.FieldWorks.Common.FwAvalonia.Region.IRegionMediaServices EnsureRegionMediaServices()
+		{
+			if (m_regionMediaServices == null)
+			{
+				m_regionMediaServices = new LcmRegionMediaServices(Cache,
+					() => FindForm(),
+					() => m_avaloniaEntryForm?.HostedContent);
+			}
+			return m_regionMediaServices;
+		}
+
 		private RegionEditorServices EnsureRegionEditorServices()
 		{
 			if (m_regionEditorServices == null)

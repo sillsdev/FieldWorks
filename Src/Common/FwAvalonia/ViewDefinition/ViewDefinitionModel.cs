@@ -382,8 +382,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			string ghostInitMethod = null,
 			ViewCondition condition = null,
 			IReadOnlyList<ViewChooserLink> chooserLinks = null,
-			ViewStringList enumStringList = null)
+			ViewStringList enumStringList = null,
+			IReadOnlyList<string> visibleWritingSystems = null,
+			bool toggleValue = false)
 		{
+			ToggleValue = toggleValue;
+			VisibleWritingSystems = visibleWritingSystems;
 			EnumStringList = enumStringList;
 			StableId = stableId;
 			Kind = kind;
@@ -444,6 +448,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>For object/sequence nodes, the destination layout name (deep expansion is deferred).</summary>
 		public string TargetLayout { get; }
+
+		/// <summary>
+		/// §19e: an optional per-field writing-system visibility override (legacy
+		/// <c>visibleWritingSystems</c> on a multistring slice / its persisted layout property): the ordered
+		/// list of writing-system specs/tags the field should show, restricting the layout's full ws= set.
+		/// Null when the field carries no override (show the full configured set). Each entry is the raw
+		/// spec the legacy attribute carries (an ICU locale / ws id), resolved against the project's writing
+		/// systems by the composer.
+		/// </summary>
+		public IReadOnlyList<string> VisibleWritingSystems { get; }
 
 		public IReadOnlyList<ViewNode> Children { get; }
 
@@ -534,6 +548,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// stored enum integer indexes <see cref="ViewStringList.Ids"/>.
 		/// </summary>
 		public ViewStringList EnumStringList { get; }
+
+		/// <summary>
+		/// §20.1.4 (F-7): legacy <c>toggleValue="true"</c> on a boolean slice — the displayed checkbox shows
+		/// the LOGICAL INVERSE of the stored property (BasicTypeSlices.cs:181-203 inverts on both read and
+		/// write). The composer's Boolean lane inverts read display + write commit when this is set so e.g. a
+		/// PartOfSpeech "Final" / inflection-class flag round-trips with the same sense the WinForms slice shows.
+		/// </summary>
+		public bool ToggleValue { get; }
 	}
 
 	/// <summary>

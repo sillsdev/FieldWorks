@@ -68,6 +68,9 @@ namespace FwAvaloniaDialogs
 		// m_linkSimilarEntry link "Go to similar entry").
 		public static string InsertEntryMatchingEntriesLabel => Text("FwAvaloniaDialogs.InsertEntryMatchingEntriesLabel", "Similar Entries");
 		public static string InsertEntryUseSelectedEntry => Text("FwAvaloniaDialogs.InsertEntryUseSelectedEntry", "Go to similar entry");
+		// The grammatical-info section caption in the Insert Entry dialog (the legacy InsertEntryDlg m_msaGroupBox
+		// group-box caption "Grammatical Information").
+		public static string InsertEntryGrammaticalInfoLabel => Text("FwAvaloniaDialogs.InsertEntryGrammaticalInfoLabel", "Grammatical Information");
 
 		// Find/Replace pattern-setup dialog (Find/Replace Phase 1, bulk replace).
 		public static string FindReplaceTitle => Text("FwAvaloniaDialogs.FindReplaceTitle", "Find and Replace");
@@ -168,5 +171,182 @@ namespace FwAvaloniaDialogs
 		// over; {0} is the current entry, {1} the chosen survivor, {2} a newline.
 		public static string MergeConfirm => Text("FwAvaloniaDialogs.Merge.Confirm",
 			"Entry \"{0}\" will be merged into \"{1}\",\nresulting in one entry.");
+
+		// MSA (grammatical-info) group box — the FwMsaGroupBox composite mirroring the WinForms MSAGroupBox.
+		// Seed text matches the canonical legacy LexTextControls.resx / MSAGroupBox.resx wording (ampersand
+		// mnemonics dropped — the Avalonia controls don't use WinForms-style accelerators) so the English
+		// fallback is identical and translation memory carries over.
+
+		// The Affix Type picker label + its three options (MSAGroupBox.resx m_lAfxType "Affix &Type:" and the
+		// combo items seeded from LexTextControls.ksNotSure / ksInflectional / ksDerivational).
+		public static string MsaAffixTypeLabel => Text("FwAvaloniaDialogs.Msa.AffixTypeLabel", "Affix Type");
+		public static string MsaAffixTypeNotSure => Text("FwAvaloniaDialogs.Msa.AffixTypeNotSure", "Not Sure");
+		public static string MsaAffixTypeInflectional => Text("FwAvaloniaDialogs.Msa.AffixTypeInflectional", "Inflectional");
+		public static string MsaAffixTypeDerivational => Text("FwAvaloniaDialogs.Msa.AffixTypeDerivational", "Derivational");
+
+		// The Main-POS field label, which the WinForms box retitles per MsaType (LexTextControls.ksCategor_y for
+		// stem/root, ksAttachesToCategor_y for every affix type).
+		public static string MsaCategoryLabel => Text("FwAvaloniaDialogs.Msa.CategoryLabel", "Category");
+		public static string MsaAttachesToCategoryLabel => Text("FwAvaloniaDialogs.Msa.AttachesToCategoryLabel", "Attaches to Category");
+
+		// The Slot/Secondary-POS field label, which the WinForms box retitles per MsaType
+		// (LexTextControls.ks_FillsSlot for inflectional, ksC_hangesToCategory for derivational).
+		public static string MsaFillsSlotLabel => Text("FwAvaloniaDialogs.Msa.FillsSlotLabel", "Fills Slot");
+		public static string MsaChangesToCategoryLabel => Text("FwAvaloniaDialogs.Msa.ChangesToCategoryLabel", "Changes to Category");
+
+		// Create-a-new-Part-of-Speech catalog chooser (MSA-port Stage 4) — the inline "Create a new Part of
+		// Speech..." affordance opens the master-category (GOLDEtic) catalog as a hierarchical single-select
+		// ChooserDialog. Seed text matches the canonical legacy MasterCategoryListDlg.resx wording ($this.Text
+		// "Add from Catalog" and the label1 instruction prompt) so the English fallback is identical and the
+		// translation memory carries over. APPEND-ONLY.
+		public static string CreatePosTitle => Text("FwAvaloniaDialogs.CreatePos.Title", "Add from Catalog");
+		public static string CreatePosPrompt => Text("FwAvaloniaDialogs.CreatePos.Prompt",
+			"Choose a grammatical category (Part of Speech) from the following Catalog. The category you choose will be added to the list of categories for this FieldWorks Project.");
+
+		// Add New Sense dialog (MSA-port Stage 5) — the Avalonia replacement for the WinForms AddNewSenseDlg
+		// (a read-only citation form + an editable gloss + the grammatical-info group box -> a new ILexSense).
+		// Seed text matches the canonical legacy AddNewSenseDlg.resx wording (label2 "Citation Form:" and label1
+		// "Gloss:", ampersand mnemonics + trailing colons dropped — the Avalonia labels carry neither) and the
+		// shared LexTextControls.ksFillInGloss / ksMissingInformation OK-gate messages, so the English fallback is
+		// identical and the translation memory carries over. APPEND-ONLY.
+		public static string AddNewSenseTitle => Text("FwAvaloniaDialogs.AddNewSense.Title", "Add New Sense");
+		public static string AddNewSenseCitationFormLabel => Text("FwAvaloniaDialogs.AddNewSense.CitationFormLabel", "Citation Form");
+		public static string AddNewSenseGlossLabel => Text("FwAvaloniaDialogs.AddNewSense.GlossLabel", "Gloss");
+		public static string AddNewSenseGrammaticalInfoLabel => Text("FwAvaloniaDialogs.AddNewSense.GrammaticalInfoLabel", "Grammatical Information");
+		// The legacy OK gate when the gloss is empty (LexTextControls.ksFillInGloss "Please fill in the gloss.").
+		public static string AddNewSenseFillInGloss => Text("FwAvaloniaDialogs.AddNewSense.FillInGloss", "Please fill in the gloss.");
+
+		// Create New Grammatical Info. dialog (MSA-port Stage 5) — the Avalonia replacement for the WinForms
+		// MsaCreatorDlg (a read-only lexical entry + read-only senses + the grammatical-info group box -> an MSA).
+		// Seed text matches the canonical legacy MsaCreatorDlg.resx wording ($this.Text "Create New Grammatical
+		// Info.", label1 "Lexical Entry:" and label2 "Senses:", trailing colons dropped) so the English fallback is
+		// identical and the translation memory carries over. APPEND-ONLY.
+		public static string MsaCreatorTitle => Text("FwAvaloniaDialogs.MsaCreator.Title", "Create New Grammatical Info.");
+		public static string MsaCreatorLexicalEntryLabel => Text("FwAvaloniaDialogs.MsaCreator.LexicalEntryLabel", "Lexical Entry");
+		public static string MsaCreatorSensesLabel => Text("FwAvaloniaDialogs.MsaCreator.SensesLabel", "Senses");
+		public static string MsaCreatorGrammaticalInfoLabel => Text("FwAvaloniaDialogs.MsaCreator.GrammaticalInfoLabel", "Grammatical Information");
+		public static string MsaCreatorCreate => Text("FwAvaloniaDialogs.MsaCreator.Create", "Create");
+
+		// The inflection-class picker label (MSA-port Stage 6) shown for the stem/root MSA — the inflection class
+		// of the selected main POS (the legacy InsertEntryDlg inflection-class affordance, IMoStemMsa.InflectionClassRA,
+		// driven by InflectionClassPopupTreeManager). Seed text matches the canonical field label "Inflection Class"
+		// (the m3 InflectionClass field label / DataTree "Inflection Class" slice). APPEND-ONLY.
+		public static string MsaInflectionClassLabel => Text("FwAvaloniaDialogs.Msa.InflectionClassLabel", "Inflection Class");
+		// The "<None>" row in the inflection-class picker (empty selection is valid). Seeded from the shared
+		// "<None>" / not-sure wording the WinForms inflection-class tree uses (AddNotSureItem).
+		public static string MsaInflectionClassNone => Text("FwAvaloniaDialogs.Msa.InflectionClassNone", "<None>");
+
+		// Complex Form Type picker in the Insert Entry dialog — the Avalonia parity of the WinForms
+		// InsertEntryDlg m_cbComplexFormType combo (LT-21666). Seed text matches the canonical legacy wording:
+		// the field caption (InsertEntryDlg.resx m_complexTypeLabel "Complex Form Type") and the leading
+		// "<Not Applicable>" item (LexTextControls.ksNotApplicable). APPEND-ONLY.
+		public static string InsertEntryComplexFormTypeLabel => Text("FwAvaloniaDialogs.InsertEntry.ComplexFormTypeLabel", "Complex Form Type");
+		public static string InsertEntryComplexFormTypeNotApplicable => Text("FwAvaloniaDialogs.InsertEntry.ComplexFormTypeNotApplicable", "<Not Applicable>");
+
+		// Feature-structure editor (FsFeatStruc tree editor, Phase-1 §19b Stage 1) — the Avalonia replacement
+		// for the WinForms FeatureStructureTreeView / MsaInflectionFeatureListDlg / PhonologicalFeatureChooserDlg.
+		// Seed text matches the canonical legacy wording so the English fallback is identical and the
+		// translation memory carries over: the unspecified value radio mirrors the legacy "None of the above"
+		// (LexTextControls.ksNoneOfTheAbove), shortened to "<None>" for the compact new-view tree; the create
+		// affordances mirror the MasterInflectionFeatureListDlg "create a feature" / feature-system "add value"
+		// flows. APPEND-ONLY.
+
+		/// <summary>The unspecified value radio leading/trailing a closed feature's values (legacy "None of the above" / AddNotSureItem). Selecting it clears that feature's assignment.</summary>
+		public static string FeatureEditorNone => Text("FwAvaloniaDialogs.FeatureEditor.None", "<None>");
+
+		/// <summary>Inline affordance at the bottom of the feature tree that raises CreateNewFeatureRequested (legacy MasterInflectionFeatureListDlg create-feature link).</summary>
+		public static string FeatureEditorCreateFeature => Text("FwAvaloniaDialogs.FeatureEditor.CreateFeature", "Create a new feature...");
+
+		/// <summary>"Add a value to {0}..." — the per-closed-feature affordance that raises CreateNewValueRequested ({0} = the feature name).</summary>
+		public static string FeatureEditorCreateValueFormat => Text("FwAvaloniaDialogs.FeatureEditor.CreateValueFormat", "Add a value to {0}...");
+
+		/// <summary>Accessible name of the feature-structure editor control.</summary>
+		public static string FeatureEditorName => Text("FwAvaloniaDialogs.FeatureEditor.Name", "Feature structure");
+
+		// MSA inflection-feature editor (Phase-1 §19b Stage 2) — the inflection-feature column the FwMsaGroupBox
+		// shows for inflectional/derivational MSAs (where the WinForms box's "Inflection Features" affordance opens
+		// MsaInflectionFeatureListDlg over IMoInflAffMsa.InflFeatsOA / IMoDerivAffMsa.FromMsFeaturesOA). Seed text
+		// matches the canonical legacy field caption ("Inflection Features"). APPEND-ONLY.
+		public static string MsaInflectionFeaturesLabel => Text("FwAvaloniaDialogs.Msa.InflectionFeaturesLabel", "Inflection Features");
+
+		// Standalone feature-structure chooser dialogs (Phase-1 §19b Stage 3) — the Avalonia replacements for the
+		// WinForms MsaInflectionFeatureListDlg (assign inflection feature values to an MSA's IFsFeatStruc) and
+		// PhonologicalFeatureChooserDlg (the phonological feature system). Each hosts the shared
+		// FwFeatureStructureEditor over OK/Cancel/Help. Seed text matches the canonical legacy wording (the dialog
+		// captions + prompts from the StringTable FeatureChooser group) so the English fallback is identical and the
+		// translation memory carries over. APPEND-ONLY.
+		public static string InflectionFeatureChooserTitle => Text("FwAvaloniaDialogs.FeatureChooser.InflectionTitle", "Inflection Feature Information");
+		public static string InflectionFeatureChooserPrompt => Text("FwAvaloniaDialogs.FeatureChooser.InflectionPrompt", "Choose the inflection feature values for this item.");
+		public static string PhonologicalFeatureChooserTitle => Text("FwAvaloniaDialogs.FeatureChooser.PhonologicalTitle", "Phonological Feature Information");
+		public static string PhonologicalFeatureChooserPrompt => Text("FwAvaloniaDialogs.FeatureChooser.PhonologicalPrompt", "Choose the phonological feature values for this item.");
+
+		// Create-a-new-feature dialog (Phase-1 §19b Stage 3) — the Avalonia replacement for the
+		// MasterInflectionFeatureListDlg / MasterPhonologicalFeatureListDlg blank-create affordance (create a new
+		// closed feature in the feature system, naming it; the phonological variant auto-creates the +/- values).
+		// Seed text matches the canonical legacy create-feature dialog wording. APPEND-ONLY.
+		public static string CreateFeatureTitle => Text("FwAvaloniaDialogs.CreateFeature.Title", "Create New Feature");
+		public static string CreateFeatureNameLabel => Text("FwAvaloniaDialogs.CreateFeature.NameLabel", "Name");
+		public static string CreateFeatureAbbrLabel => Text("FwAvaloniaDialogs.CreateFeature.AbbrLabel", "Abbreviation");
+		public static string CreateFeatureNameRequired => Text("FwAvaloniaDialogs.CreateFeature.NameRequired", "Enter a name for the feature.");
+
+		// Create-a-new-value dialog (Phase-1 §19b Stage 3) — the Avalonia replacement for adding a symbolic value to
+		// an existing closed feature (the feature-system value editor flow the WinForms "add value" reached).
+		// APPEND-ONLY.
+		public static string CreateValueTitle => Text("FwAvaloniaDialogs.CreateValue.Title", "Create New Feature Value");
+		public static string CreateValueNameLabel => Text("FwAvaloniaDialogs.CreateValue.NameLabel", "Name");
+		public static string CreateValueAbbrLabel => Text("FwAvaloniaDialogs.CreateValue.AbbrLabel", "Abbreviation");
+		public static string CreateValueNameRequired => Text("FwAvaloniaDialogs.CreateValue.NameRequired", "Enter a name for the value.");
+
+		// Picture-properties dialog (§19d) — the Avalonia replacement for the WinForms PicturePropertiesDialog
+		// (file pick + caption/description/license/creator). Seed text mirrors the canonical legacy picture
+		// metadata labels. APPEND-ONLY.
+		public static string PicturePropertiesTitle => Text("FwAvaloniaDialogs.PictureProperties.Title", "Picture Properties");
+		public static string PicturePropertiesCaptionLabel => Text("FwAvaloniaDialogs.PictureProperties.CaptionLabel", "Caption");
+		public static string PicturePropertiesDescriptionLabel => Text("FwAvaloniaDialogs.PictureProperties.DescriptionLabel", "Description");
+		public static string PicturePropertiesLicenseLabel => Text("FwAvaloniaDialogs.PictureProperties.LicenseLabel", "License");
+		public static string PicturePropertiesCreatorLabel => Text("FwAvaloniaDialogs.PictureProperties.CreatorLabel", "Creator");
+		public static string PicturePropertiesImageLabel => Text("FwAvaloniaDialogs.PictureProperties.ImageLabel", "Image file");
+		public static string PicturePropertiesChooseImage => Text("FwAvaloniaDialogs.PictureProperties.ChooseImage", "Choose image...");
+		public static string PicturePropertiesNoFile => Text("FwAvaloniaDialogs.PictureProperties.NoFile", "(no file chosen)");
+		public static string PicturePropertiesInsert => Text("FwAvaloniaDialogs.PictureProperties.Insert", "Insert");
+
+		// Reference Set Details dialog (§19g) — the Avalonia replacement for the WinForms LexReferenceDetailsDlg
+		// (edit a lexical reference's name + comment/note). Seed text mirrors the canonical legacy resx
+		// (label1 "&Name", label3 "&Comment", lblExplanation). APPEND-ONLY.
+		public static string LexReferenceDetailsTitle => Text("FwAvaloniaDialogs.LexReferenceDetails.Title", "Reference Set Details");
+		public static string LexReferenceDetailsNameLabel => Text("FwAvaloniaDialogs.LexReferenceDetails.NameLabel", "Name");
+		public static string LexReferenceDetailsCommentLabel => Text("FwAvaloniaDialogs.LexReferenceDetails.CommentLabel", "Comment");
+		public static string LexReferenceDetailsExplanation => Text("FwAvaloniaDialogs.LexReferenceDetails.Explanation",
+			"Enter a name or comment about this specific reference set. For now it is visible only in this dialog.");
+
+		// Delete-confirmation dialog (§19g) — the Avalonia replacement for the WinForms ConfirmDeleteObjectDlg
+		// (confirm deleting an entry/sense/reference, with the affected-object summary + optional orphan note).
+		// Seed text mirrors the canonical legacy ConfirmDeleteObjectDlg.resx (label1 top message, label2 bottom
+		// question) and the m_deleteButton "&Delete" caption. APPEND-ONLY.
+		public static string DeleteConfirmationTopMessage => Text("FwAvaloniaDialogs.DeleteConfirmation.TopMessage",
+			"You are deleting the following item:");
+		public static string DeleteConfirmationBottomQuestion => Text("FwAvaloniaDialogs.DeleteConfirmation.BottomQuestion",
+			"Do you want to continue with the deletion?");
+		public static string DeleteConfirmationDelete => Text("FwAvaloniaDialogs.DeleteConfirmation.Delete", "Delete");
+
+		// Special-character / Unicode insert picker (§19g) — a net-new Avalonia picker (no WinForms truth dialog;
+		// the legacy Format > Special character shells out to the OS charmap). APPEND-ONLY.
+		public static string SpecialCharacterTitle => Text("FwAvaloniaDialogs.SpecialCharacter.Title", "Insert Special Character");
+		public static string SpecialCharacterFilterPrompt => Text("FwAvaloniaDialogs.SpecialCharacter.FilterPrompt", "Type to filter by name or code");
+		public static string SpecialCharacterInsert => Text("FwAvaloniaDialogs.SpecialCharacter.Insert", "Insert");
+		public static string SpecialCharacterMustSelect => Text("FwAvaloniaDialogs.SpecialCharacter.MustSelect", "Select a character to insert.");
+
+		// Writing System properties / Add-WS core (§19g) — the Avalonia bounded core of the WinForms
+		// FwWritingSystemSetupDlg (name, abbreviation, font, direction, sort). Full SLDR/converters/merge is a
+		// documented PARITY deferral. APPEND-ONLY.
+		public static string WritingSystemPropertiesTitle => Text("FwAvaloniaDialogs.WritingSystemProperties.Title", "Writing System Properties");
+		public static string WritingSystemPropertiesNameLabel => Text("FwAvaloniaDialogs.WritingSystemProperties.NameLabel", "Name");
+		public static string WritingSystemPropertiesAbbrLabel => Text("FwAvaloniaDialogs.WritingSystemProperties.AbbrLabel", "Abbreviation");
+		public static string WritingSystemPropertiesFontLabel => Text("FwAvaloniaDialogs.WritingSystemProperties.FontLabel", "Default font");
+		public static string WritingSystemPropertiesRightToLeft => Text("FwAvaloniaDialogs.WritingSystemProperties.RightToLeft", "Right-to-left script");
+		public static string WritingSystemPropertiesSortLabel => Text("FwAvaloniaDialogs.WritingSystemProperties.SortLabel", "Sorting");
+		public static string WritingSystemPropertiesNameRequired => Text("FwAvaloniaDialogs.WritingSystemProperties.NameRequired", "Enter a name for the writing system.");
+		public static string WritingSystemPropertiesAbbrRequired => Text("FwAvaloniaDialogs.WritingSystemProperties.AbbrRequired", "Enter an abbreviation.");
+		public static string WritingSystemPropertiesInvalidTag => Text("FwAvaloniaDialogs.WritingSystemProperties.InvalidTag", "The writing system tag is not valid.");
 	}
 }

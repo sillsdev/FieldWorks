@@ -19,7 +19,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	public sealed class LexicalEditSurfaceRegistry
 	{
 		// The tools that shipped supporting the Avalonia surface (the former hardcoded list).
-		private static readonly string[] DefaultSupportedTools = { "lexiconEdit", "lexiconEditPopup" };
+		// §20.3: tools whose record EDIT/detail surface is approved for the Avalonia composer. The class-general
+		// composer + 4-key layout resolution (§20.1.4) make these compose; per-tool editor gaps (e.g. Notebook
+		// participants/subrecords NB-4/NB-5) degrade to read-only/unsupported rows, never a crash (20.1.3 guard),
+		// and are tracked in §20.3. All gated behind UIMode=New (off by default). The many Lists CmPossibility
+		// editors register via an area/persistContext predicate (F-4 follow-on), not enumerated here.
+		private static readonly string[] DefaultSupportedTools =
+		{
+			"lexiconEdit", "lexiconEditPopup",
+			"notebookEdit", // §20.3.2 Notebook RnGenericRec (layout resolved via layoutChoiceField="Type")
+			"posEdit"       // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
+		};
 
 		private readonly HashSet<string> _supported = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

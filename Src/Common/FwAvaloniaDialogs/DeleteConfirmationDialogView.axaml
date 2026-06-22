@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.DeleteConfirmationDialogView"
+             x:DataType="vm:DeleteConfirmationDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="360" MinHeight="220">
+	<!-- Delete-confirmation (Phase-1 §19g): the Avalonia replacement for ConfirmDeleteObjectDlg. A warning glyph,
+	     the top message, the affected-object summary (DeletionTextTSS), an optional orphan/relation note, and the
+	     confirm question (hidden when the object cannot be deleted), over a gated Delete + Cancel. Visible text
+	     localized via FwAvaloniaDialogsStrings; AutomationIds stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{Binding DeleteButtonText}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="DeleteConfirmation.Delete"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="DeleteConfirmation.Cancel"/>
+		</StackPanel>
+
+		<DockPanel>
+			<TextBlock DockPanel.Dock="Left" Text="&#x26A0;" FontSize="28" Foreground="#FFC07000"
+			           VerticalAlignment="Top" Margin="{StaticResource DialogIconGap}"
+			           AutomationProperties.AutomationId="DeleteConfirmation.WarningIcon"/>
+			<StackPanel Spacing="{StaticResource DialogLabelFieldGap}">
+				<TextBlock Text="{Binding TopMessage}" TextWrapping="Wrap"
+				           AutomationProperties.AutomationId="DeleteConfirmation.TopMessage"/>
+				<TextBlock Text="{Binding Summary}" TextWrapping="Wrap" FontWeight="SemiBold"
+				           AutomationProperties.AutomationId="DeleteConfirmation.Summary"/>
+				<TextBlock Text="{Binding Note}" TextWrapping="Wrap" IsVisible="{Binding HasNote}"
+				           Margin="{StaticResource DialogControlGapAbove}"
+				           AutomationProperties.AutomationId="DeleteConfirmation.Note"/>
+				<TextBlock Text="{Binding BottomQuestion}" TextWrapping="Wrap" IsVisible="{Binding CanDelete}"
+				           Margin="{StaticResource DialogControlGapAbove}"
+				           AutomationProperties.AutomationId="DeleteConfirmation.BottomQuestion"/>
+			</StackPanel>
+		</DockPanel>
+	</DockPanel>
+</UserControl>

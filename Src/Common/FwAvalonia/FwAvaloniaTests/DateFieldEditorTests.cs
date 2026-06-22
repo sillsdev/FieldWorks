@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
@@ -38,14 +39,18 @@ namespace FwAvaloniaTests
 
 		private static (TextBox Box, Window Window) Show(FakeRegionEditContext ctx, string display)
 		{
+			// §19e: the editable exact-date editor is a text box + calendar picker row; extract the text box
+			// (the canonical parse-on-commit entry) for the value assertions.
 			var control = RegionFieldControlFactory.Build(DateField(display), "DateCreated.Auto",
 				new RegionFieldControlContext(editContext: ctx));
-			var box = (TextBox)control;
-			var window = new Window { Content = box, Width = 320, Height = 80 };
+			var window = new Window { Content = control, Width = 340, Height = 80 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 			window.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
+			var box = control as TextBox
+				?? Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(control)
+					.OfType<TextBox>().First();
 			return (box, window);
 		}
 

@@ -109,19 +109,43 @@ namespace SIL.FieldWorks.XWorks
 		private sealed class CompilerSources
 		{
 			public string PartsXml;
-			public Dictionary<(string ClassName, string Type, string Name), XElement> LayoutIndex;
-			public readonly ConcurrentDictionary<(int ClassId, string LayoutName), ViewDefinitionModel> CompiledModels
-				= new ConcurrentDictionary<(int, string), ViewDefinitionModel>();
+			// §20.1.4 (F-2): the layout index keeps ALL (class,type,name) variants so a choiceGuid can pick
+			// the right one (legacy distinguishes e.g. 11 RnGenericRec/Normal layouts only by choiceGuid).
+			public Dictionary<(string ClassName, string Type, string Name), List<XElement>> LayoutIndex;
+			// Memoized per (starting class, layout, choiceGuid) — choiceGuid is part of the identity so two
+			// record Types on the same class compile to two distinct models (never a cache collision).
+			public readonly ConcurrentDictionary<(int ClassId, string LayoutName, string ChoiceGuid), ViewDefinitionModel> CompiledModels
+				= new ConcurrentDictionary<(int, string, string), ViewDefinitionModel>();
 		}
 
 		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
 			RegionEditorPluginRegistry plugins = null, RegionEditorServices services = null,
 			ViewDefinitionOverrideResolver overrides = null)
-		{
-			if (entry == null) throw new ArgumentNullException(nameof(entry));
-			if (cache == null) throw new ArgumentNullException(nameof(cache));
+			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, services, overrides);
 
-			var root = CompileForObject(cache, entry, "Normal", overrides);
+		/// <summary>
+		/// §20.1: compose the structured region for ANY record root + starting layout — the lexicon's
+		/// LexEntry/Normal, a Notebook RnGenericRec, a Lists CmPossibility, a Grammar PartOfSpeech, etc. The
+		/// compile/walk engine is already class-general (<see cref="CompileForObject"/> keys on the object's
+		/// ClassID and compiles each descended object's own layout); this overload parameterizes the root
+		/// object and the starting layout instead of hardcoding LexEntry/"Normal", so wiring a new tool onto
+		/// the Avalonia surface needs only its registration + (when its layout uses one) a layoutChoiceField.
+		/// </summary>
+		public static ComposedEntryRegion Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
+			bool showHiddenFields = false, RegionEditorPluginRegistry plugins = null,
+			RegionEditorServices services = null, ViewDefinitionOverrideResolver overrides = null,
+			string layoutChoiceField = null)
+		{
+			if (obj == null) throw new ArgumentNullException(nameof(obj));
+			if (cache == null) throw new ArgumentNullException(nameof(cache));
+			if (string.IsNullOrEmpty(layoutName)) layoutName = "Normal";
+
+			// §20.1.4 (F-2): when the tool's layout is type-selected (e.g. Notebook RnGenericRec uses
+			// layoutChoiceField="Type"), resolve the record's chosen possibility GUID so CompileForObject
+			// picks the matching layout variant instead of the document-first one.
+			var choiceGuid = ResolveLayoutChoiceGuid(cache, obj, layoutChoiceField);
+
+			var root = CompileForObject(cache, obj, layoutName, choiceGuid, overrides);
 			if (root == null)
 				return null;
 
@@ -135,13 +159,15 @@ namespace SIL.FieldWorks.XWorks
 				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, services, overrides);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
-				state.Walk(node, entry, 0);
+				state.Walk(node, obj, 0);
 			state.ExitModel();
 
-			var context = new ComposedRegionEditContext(cache, entry, state.TextSetters, state.OptionSetters,
-				state.ReferenceAddSetters, state.ReferenceRemoveSetters, state.RichTextSetters);
+			var context = new ComposedRegionEditContext(cache, obj, state.TextSetters, state.OptionSetters,
+				state.ReferenceAddSetters, state.ReferenceRemoveSetters, state.RichTextSetters,
+				state.ParagraphTextSetters, state.ParagraphStyleSetters, state.ParagraphInsertSetters,
+				state.ParagraphDeleteSetters);
 			composedContext = context;
-			var model = new LexicalEditRegionModel("LexEntry", "Normal", state.Fields, root.Diagnostics);
+			var model = new LexicalEditRegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
 		}
 
@@ -267,6 +293,16 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<string, bool>> ReferenceRemoveSetters
 				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
+			// §19a: StText paragraph CRUD staging, keyed like the other setters by StableId. Text/style
+			// take the paragraph index plus the value; insert/delete take the index.
+			public readonly Dictionary<string, Func<int, RegionRichTextValue, bool>> ParagraphTextSetters
+				= new Dictionary<string, Func<int, RegionRichTextValue, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<int, string, bool>> ParagraphStyleSetters
+				= new Dictionary<string, Func<int, string, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<int, bool>> ParagraphInsertSetters
+				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
+			public readonly Dictionary<string, Func<int, bool>> ParagraphDeleteSetters
+				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
 			// Companion lane: the unsupported rows that are really legacy dynamic custom slices,
 			// keyed by the row's StableId (see ComposedEntryRegion.CustomEditorFields).
 			public readonly List<ComposedCustomEditorField> CustomEditorFields
@@ -296,11 +332,20 @@ namespace SIL.FieldWorks.XWorks
 			// LexicalEditRegionField.AvailableNamedStyles (the host seam the per-WS style picker reads).
 			// Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
 			private IReadOnlyList<string> _characterStyleNames;
+			// §19a (paragraph styles): the project's PARAGRAPH-type style names, computed once per compose
+			// from Cache.LangProject.StylesOC and stamped onto every editable StText row's
+			// LexicalEditRegionField.AvailableParagraphStyles (the host seam the per-paragraph style picker
+			// reads). Sorted by name for a stable picker order; empty when no stylesheet/styles are reachable.
+			private IReadOnlyList<string> _paragraphStyleNames;
 			// Phase 4 (per-run writing-system retag): the project's writing systems (analysis + vernacular),
 			// computed once per compose from Cache and stamped onto every editable text row's
 			// LexicalEditRegionField.AvailableWritingSystems (the host seam the per-WS retag picker reads).
 			// Empty when no writing systems are reachable; the WS picker affordance is then suppressed.
 			private IReadOnlyList<RegionWritingSystemOption> _writingSystemOptions;
+			// §19c (per-run font rendering): a map from ws tag to that ws's default font (+ RTL), computed
+			// once per compose from the project's analysis + vernacular writing systems and stamped onto
+			// every editable text / StText row so the owned editors can draw the per-run font display.
+			private IReadOnlyDictionary<string, RegionRunFont> _writingSystemFonts;
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
 				= new Dictionary<(int, string), (string, string)>();
 
@@ -369,6 +414,32 @@ namespace SIL.FieldWorks.XWorks
 				return _characterStyleNames;
 			}
 
+			// §19a (paragraph styles): the project's paragraph-type style names, sourced from
+			// Cache.LangProject.StylesOC filtered to StyleType.kstParagraph — the set the legacy StText
+			// paragraph-style combo offers. Computed once per compose and memoized; any failure reaching the
+			// styles (a bare/partial cache in a test) yields an empty list, which suppresses the per-paragraph
+			// style picker. The host seam: the composer is the LCModel-aware edge that supplies the names.
+			private IReadOnlyList<string> ParagraphStyleNames()
+			{
+				if (_paragraphStyleNames != null)
+					return _paragraphStyleNames;
+				try
+				{
+					var styles = _cache.LangProject?.StylesOC;
+					_paragraphStyleNames = styles == null
+						? (IReadOnlyList<string>)Array.Empty<string>()
+						: styles.Where(s => s.Type == StyleType.kstParagraph && !string.IsNullOrEmpty(s.Name))
+							.Select(s => s.Name)
+							.OrderBy(name => name, StringComparer.Ordinal)
+							.ToList();
+				}
+				catch (Exception)
+				{
+					_paragraphStyleNames = Array.Empty<string>();
+				}
+				return _paragraphStyleNames;
+			}
+
 			// Phase 4 (per-run writing-system retag): the project's writing systems (analysis + vernacular,
 			// in that legacy order, deduped by handle), each as a (stable IETF tag, display name) option the
 			// FwAvalonia per-WS retag picker offers. The display name is the ws's full display label
@@ -409,6 +480,40 @@ namespace SIL.FieldWorks.XWorks
 					_writingSystemOptions = Array.Empty<RegionWritingSystemOption>();
 				}
 				return _writingSystemOptions;
+			}
+
+			// §19c (per-run font rendering): each project writing system's default font + RTL, keyed by
+			// its IETF tag, so the owned editors can render a multi-run value with TRUE per-run fonts.
+			// Computed once per compose and memoized; any failure yields an empty map.
+			private IReadOnlyDictionary<string, RegionRunFont> WritingSystemFonts()
+			{
+				if (_writingSystemFonts != null)
+					return _writingSystemFonts;
+				try
+				{
+					var map = new Dictionary<string, RegionRunFont>(StringComparer.Ordinal);
+					void AddAll(IEnumerable<CoreWritingSystemDefinition> systems)
+					{
+						if (systems == null)
+							return;
+						foreach (var ws in systems)
+						{
+							if (ws == null || string.IsNullOrEmpty(ws.Id) || map.ContainsKey(ws.Id))
+								continue;
+							map[ws.Id] = new RegionRunFont(ws.DefaultFontName, ws.RightToLeftScript);
+						}
+					}
+
+					var langProject = _cache.LangProject;
+					AddAll(langProject?.CurrentAnalysisWritingSystems);
+					AddAll(langProject?.CurrentVernacularWritingSystems);
+					_writingSystemFonts = map;
+				}
+				catch (Exception)
+				{
+					_writingSystemFonts = new Dictionary<string, RegionRunFont>();
+				}
+				return _writingSystemFonts;
 			}
 
 			// advanced-entry-view: every CompileForObject in the walk goes through here so the per-project
@@ -858,16 +963,24 @@ namespace SIL.FieldWorks.XWorks
 						AddHeader(node, obj, depth, Localize(node.Label) ?? node.Field);
 						break;
 					case RegionEditorCategory.Literal:
-						// Literal text row: the label IS the content.
-						AddReadOnlyRow(node, obj, depth, string.Empty);
+						// §19e: a literal/"lit" slice (legacy MessageSlice) — static label text rendered as
+						// the row content by the dedicated Literal renderer (the label IS the content).
+						AddLiteralRow(node, obj, depth);
 						break;
 					case RegionEditorCategory.Picture:
 						WalkPictures(node, obj, depth);
 						break;
 					case RegionEditorCategory.EmbeddedView:
-						// Embedded formatted view: render the object's summary text read-only (the
-						// full embedded-view replacement rides the table/IR work).
-						AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
+						// §19e: an embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
+						// nested layout's fields INLINE for this same object, at depth+1 — the recursive
+						// sub-view the legacy XmlView renders. WalkEmbeddedView reuses the proven
+						// CompileForObjectWithOverrides/EnterModel/Walk descent (the visited-set guards
+						// cycles); when the nested layout cannot be resolved it degrades to the prior
+						// read-only ShortName row rather than vanishing.
+						// PARITY §19e: arbitrarily deep / hand-authored jtview nests are not exhaustively
+						// reproduced — the visited-set caps recursion at one pass per (object, layout), the
+						// common single-level embed.
+						WalkEmbeddedView(node, obj, depth);
 						break;
 					case RegionEditorCategory.Command:
 						// Command slices render their button; execution arrives with the xCore
@@ -931,6 +1044,11 @@ namespace SIL.FieldWorks.XWorks
 
 				var hvo = obj.Hvo;
 				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
+				// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems) restricts
+				// the resolved set to the authored subset (in the override's order), intersected with the
+				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
+				// the field entirely (defensive — a stale override must never blank a real field).
+				systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
 				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
 					&& systems.Count > 0)
 				{
@@ -1006,8 +1124,13 @@ namespace SIL.FieldWorks.XWorks
 						if (ws.IsVoice)
 						{
 							anyAudio = true;
+							// §19d: a voice (IsVoice) alternative stores the audio FILENAME as its value. We
+							// now keep the real filename (not a placeholder) so the owned audio field can play
+							// the file and clear/replace the value; isAudio:true tells the view to render the
+							// play/record affordances instead of a plain text box. The recording is no longer a
+							// blanket read-only placeholder.
 							rebuilt.Add(new RegionWsValue(ws.Abbreviation,
-								SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.AudioRecordingReadOnly,
+								values[i]?.Value ?? string.Empty,
 								ws.DefaultFontName, fontSize,
 								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
 						}
@@ -1031,8 +1154,12 @@ namespace SIL.FieldWorks.XWorks
 				// superscript, …). Both feed CanEditRichText; the lossless original is preserved for
 				// display and stays fully editable in the classic view. Unicode props (no run
 				// structure) keep the plain-text setter.
-				var editable = type != CellarPropertyType.Unicode && !anyAudio
-					&& values.All(v => v.CanEditRichText);
+				// §19d: an audio (voice WS) row IS editable now — the owned audio field plays/records/clears
+				// the filename value through the SAME text setter (a voice alternative is a multistring alt
+				// whose text is the filename). It stays out of the rich-text/style pickers (handled by the
+				// view's IsAudio branch), but the row must be editable so its text setter is registered.
+				var editable = type != CellarPropertyType.Unicode
+					&& values.All(v => v.CanEditRichText || v.IsAudio);
 				var textField = new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, RegionFieldKind.Text, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
@@ -1048,6 +1175,8 @@ namespace SIL.FieldWorks.XWorks
 					// Phase 4: the same editable run-bearing row can be retagged per-run to another project
 					// writing system, so it gets the project's writing systems for the per-WS retag picker.
 					textField.AvailableWritingSystems = WritingSystemOptions();
+					// §19c: and the per-ws fonts so a multi-run value renders with TRUE per-run fonts.
+					textField.WritingSystemFonts = WritingSystemFonts();
 				}
 				AddField(textField);
 
@@ -2181,8 +2310,11 @@ namespace SIL.FieldWorks.XWorks
 					: null;
 
 				var stableId = StableId(node, obj);
+				// §19e: a dedicated closed-combo kind (legacy EnumComboSlice) — a non-editable drop-down
+				// over the stringList options, never a free-form chooser/text box. The option key is the
+				// 0-based enum index that IS the stored int.
 				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+					node.WritingSystem, RegionFieldKind.EnumCombo, node.EditorClassification, node.AutomationId,
 					node.LocalizationKey, node.Routing, null, options, selectedKey, isEditable: true,
 					indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
 
@@ -2282,15 +2414,17 @@ namespace SIL.FieldWorks.XWorks
 								return;
 							}
 
-							// Structured text renders its paragraph contents (StTextSlice's view).
+							// §19a: structured text is now an EDITABLE multi-paragraph row (the legacy
+							// StTextSlice rich editor) — paragraph text, add/delete paragraphs, and
+							// per-paragraph named style, each one undoable step. ORC-bearing paragraphs
+							// stay read-only/preserved (§19c.3). Replaces the old read-only flatten.
 							if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
 							{
-								var paragraphs = stText.ParagraphsOS.OfType<IStTxtPara>()
-									.Select(par => par.Contents?.Text ?? string.Empty);
-								var text = string.Join(Environment.NewLine, paragraphs);
-								if (string.IsNullOrWhiteSpace(text) && HideWhenEmpty(node))
+								var anyText = stText.ParagraphsOS.OfType<IStTxtPara>()
+									.Any(par => !string.IsNullOrWhiteSpace(par.Contents?.Text));
+								if (!anyText && HideWhenEmpty(node))
 									return;
-								AddReadOnlyRow(node, obj, depth, text);
+								AddStructuredText(node, obj, depth, flid, stText);
 								return;
 							}
 
@@ -2358,7 +2492,13 @@ namespace SIL.FieldWorks.XWorks
 						case CellarPropertyType.Boolean:
 						{
 							var stableId = StableId(node, obj);
-							var isChecked = _sda.get_BooleanProp(obj.Hvo, flid);
+							// §20.1.4 (F-7): a toggleValue= slice displays the logical INVERSE of the stored
+							// boolean (legacy BasicTypeSlices.cs:181-203 inverts on read AND write). Invert the
+							// displayed check and the committed value so the checkbox round-trips with the same
+							// sense the WinForms slice shows.
+							var toggle = node.ToggleValue;
+							var stored = _sda.get_BooleanProp(obj.Hvo, flid);
+							var isChecked = toggle ? !stored : stored;
 							AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
 								node.Field, node.WritingSystem, RegionFieldKind.Boolean,
 								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
@@ -2368,7 +2508,7 @@ namespace SIL.FieldWorks.XWorks
 							{
 								if (!bool.TryParse(key, out var value))
 									return false;
-								_sda.SetBoolean(hvo, flid, value);
+								_sda.SetBoolean(hvo, flid, toggle ? !value : value);
 								return true;
 							};
 							return;
@@ -2379,8 +2519,11 @@ namespace SIL.FieldWorks.XWorks
 							var current = _sda.get_IntProp(obj.Hvo, flid);
 							if (current == 0 && HideWhenEmpty(node))
 								return;
+							// §19e: a dedicated Integer kind (legacy IntegerSlice) — a numeric editor that
+							// rejects non-numeric keystrokes and restores on a rejected commit, instead of a
+							// plain Text editor whose only guard was the setter.
 							AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
-								node.Field, node.WritingSystem, RegionFieldKind.Text,
+								node.Field, node.WritingSystem, RegionFieldKind.Integer,
 								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
 								new List<RegionWsValue> { new RegionWsValue("", current.ToString()) },
 								null, null, isEditable: true, indent: depth));
@@ -2474,7 +2617,15 @@ namespace SIL.FieldWorks.XWorks
 					{
 						gen = new GenDate();
 					}
-					display = gen.IsEmpty ? string.Empty : gen.ToLongString();
+					// 19i.1 (data-loss fix): emit the YEAR-granular canonical form the GenDate qualifier editor
+					// round-trips (precision word + era + year), built from the model's STRUCTURED parts — never
+					// gen.ToLongString(). A long string with month/day ("Friday, June 15, 1990") would make the
+					// year-granular editor digit-scan the DAY ("15") as the year and overwrite the real year on
+					// the next commit. The qualifier editor edits at year granularity (month/day not surfaced —
+					// tracked as tasks.md 19i.8); the model keeps month/day until the user commits a change.
+					display = gen.IsEmpty
+						? string.Empty
+						: FwGenDateField.Compose(gen.Year, MapGenDatePrecision(gen.Precision), gen.IsAD);
 				}
 				else
 				{
@@ -2526,6 +2677,36 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
+			// 19i.1: map the LCModel GenDate precision onto the view's LCModel-free GenDatePrecision so the
+			// composer can emit the canonical year-granular value the qualifier editor round-trips.
+			private static GenDatePrecision MapGenDatePrecision(GenDate.PrecisionType precision)
+			{
+				switch (precision)
+				{
+					case GenDate.PrecisionType.Before: return GenDatePrecision.Before;
+					case GenDate.PrecisionType.Approximate: return GenDatePrecision.Approximate;
+					case GenDate.PrecisionType.After: return GenDatePrecision.After;
+					default: return GenDatePrecision.Exact;
+				}
+			}
+
+			// §19e: a literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
+			// static content. Routed to RegionFieldKind.Literal so the view renders it as static text in the
+			// value column rather than an (empty) editable row. The content is carried in the value slot so
+			// the renderer shows the message even when there is no separate label column.
+			private void AddLiteralRow(ViewNode node, ICmObject obj, int depth)
+			{
+				// The "lit" slice's label/message text IS the content (legacy MessageSlice). The region's
+				// label column is left empty and the message rides the value slot so it renders ONCE, as the
+				// static gray content the legacy slice shows — not duplicated in both columns.
+				var message = Localize(node.Label) ?? node.Field ?? string.Empty;
+				AddField(new LexicalEditRegionField(StableId(node, obj), string.Empty,
+					node.Field, node.WritingSystem, RegionFieldKind.Literal, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing,
+					new List<RegionWsValue> { new RegionWsValue("", message) }, null, null,
+					isEditable: false, indent: depth, objectHvo: obj.Hvo));
+			}
+
 			private void AddReadOnlyRow(ViewNode node, ICmObject obj, int depth, string display)
 			{
 				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
@@ -2534,6 +2715,102 @@ namespace SIL.FieldWorks.XWorks
 					new List<RegionWsValue> { new RegionWsValue("", display ?? string.Empty) }, null, null,
 					isEditable: false, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
+			}
+
+			// §19a: the editable multi-paragraph structured-text (StText) row — the managed replacement
+			// for the legacy StTextSlice. Builds one RegionParagraph per StTxtPara (run-aware text +
+			// per-paragraph named style; an ORC/lossy paragraph stays read-only/preserved, §19c.3) and
+			// registers the four paragraph-CRUD setters that mutate the LCModel StText inside the open
+			// fenced session — text/style writes are one undo step (focus-loss autosave), add/delete one
+			// undo step (immediate commit + host re-show). The closures verify the StText/paragraph still
+			// exists on each call (a Cancel can roll an insert/StText creation back under a still-shown view).
+			private void AddStructuredText(ViewNode node, ICmObject obj, int depth, int flid, IStText stText)
+			{
+				var paragraphs = new List<RegionParagraph>();
+				foreach (var par in stText.ParagraphsOS.OfType<IStTxtPara>())
+				{
+					var rich = RegionRichTextAdapter.FromTsString(par.Contents, _cache.WritingSystemFactory);
+					paragraphs.Add(new RegionParagraph(rich, par.StyleName));
+				}
+
+				var stableId = StableId(node, obj);
+				// The field is editable when the field itself is not hidden and EVERY paragraph round-trips
+				// (no ORC/lossy paragraph). A lossy paragraph holds its own row read-only via CanEditText, but
+				// the row's structural affordances (add/delete) stay available, so the field stays editable.
+				var field = new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.StructuredText, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
+				field.AvailableParagraphStyles = ParagraphStyleNames();
+				// §19c: the StText paragraph rows also expose the run-level character-style + ws pickers and
+				// the per-run font display, so they get the same host-supplied lists as the single-WS rows.
+				field.AvailableNamedStyles = CharacterStyleNames();
+				field.AvailableWritingSystems = WritingSystemOptions();
+				field.WritingSystemFonts = WritingSystemFonts();
+				AddField(field);
+
+				var stTextHvo = stText.Hvo;
+				var defaultWs = _cache.DefaultAnalWs;
+				var repo = _cache.ServiceLocator.GetInstance<IStTextRepository>();
+
+				// Re-resolve the StText each call (it must survive a Cancel that rolled an edit back); null
+				// when the StText was deleted out from under the still-shown view.
+				IStText Live() => repo.TryGetObject(stTextHvo, out var live) ? live : null;
+
+				ParagraphTextSetters[stableId] = (index, value) =>
+				{
+					var live = Live();
+					if (live == null || value == null || index < 0)
+						return false;
+					var paras = live.ParagraphsOS;
+					// Index may point one past the end of an StText whose paragraphs were never created
+					// (the editor always shows >= 1 row); create empty paragraphs up to the index.
+					while (paras.Count <= index)
+						live.InsertNewTextPara(paras.Count, null);
+					if (!(paras[index] is IStTxtPara para))
+						return false;
+					para.Contents = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, defaultWs);
+					return true;
+				};
+
+				ParagraphStyleSetters[stableId] = (index, styleName) =>
+				{
+					var live = Live();
+					if (live == null || index < 0 || index >= live.ParagraphsOS.Count)
+						return false;
+					if (!(live.ParagraphsOS[index] is IStTxtPara para))
+						return false;
+					// LCModel forbids a null/empty paragraph StyleName; "clear" means revert to the default
+					// paragraph style (legacy StVc seeds StText paragraphs with "Normal").
+					para.StyleName = string.IsNullOrEmpty(styleName)
+						? StyleServices.NormalStyleName
+						: styleName;
+					return true;
+				};
+
+				ParagraphInsertSetters[stableId] = afterIndex =>
+				{
+					var live = Live();
+					if (live == null)
+						return false;
+					// Insert AFTER the given index (a negative index inserts at the start); clamp into range.
+					var pos = afterIndex < 0 ? 0 : Math.Min(afterIndex + 1, live.ParagraphsOS.Count);
+					live.InsertNewTextPara(pos, null);
+					return true;
+				};
+
+				ParagraphDeleteSetters[stableId] = index =>
+				{
+					var live = Live();
+					if (live == null || index < 0 || index >= live.ParagraphsOS.Count)
+						return false;
+					// The StText always keeps at least one paragraph, like the legacy editor.
+					if (live.ParagraphsOS.Count <= 1)
+						return false;
+					live.ParagraphsOS.RemoveAt(index);
+					return true;
+				};
 			}
 
 			// winforms-free-lexeme-editor.md D1: the plugin-claimed row — RegionFieldKind.Custom
@@ -2578,8 +2855,19 @@ namespace SIL.FieldWorks.XWorks
 				var count = _sda.get_VecSize(obj.Hvo, flid);
 				if (count == 0)
 				{
+					// §19d: an empty picture field shows an editable "insert a picture" ghost row (PictureHvo
+					// 0) so the user can add the first picture, instead of the field vanishing. The view's
+					// insert affordance routes through TryInsertPicture against this field's owner+flid.
 					if (!HideWhenEmpty(node))
-						AddGhostPrompt(node, obj, depth);
+					{
+						var emptyField = new LexicalEditRegionField($"{StableId(node, obj)}/pic-empty",
+							Localize(node.Label) ?? node.Field, node.Field, null, RegionFieldKind.Image,
+							node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
+							new List<RegionWsValue> { new RegionWsValue("", string.Empty) },
+							null, null, isEditable: true, indent: depth, objectHvo: obj.Hvo);
+						emptyField.PictureHvo = 0;
+						AddField(emptyField);
+					}
 					return;
 				}
 
@@ -2602,11 +2890,18 @@ namespace SIL.FieldWorks.XWorks
 					{
 					}
 
-					AddField(new LexicalEditRegionField($"{StableId(node, obj)}/pic{i}", caption,
+					// §19d: the picture row is now EDITABLE (replace/delete/edit-metadata + insert-another),
+					// carrying the picture's HVO (the edit context keys the replace/delete/metadata gestures
+					// on it) and its current metadata (the properties dialog seeds from it). owner+flid via
+					// ObjectHvo drives insert-another. The value column still shows the thumbnail/path.
+					var pictureField = new LexicalEditRegionField($"{StableId(node, obj)}/pic{i}", caption,
 						node.Field, null, RegionFieldKind.Image, node.EditorClassification,
 						node.AutomationId, node.LocalizationKey, node.Routing,
 						new List<RegionWsValue> { new RegionWsValue("", path ?? string.Empty) },
-						null, null, isEditable: false, indent: depth));
+						null, null, isEditable: true, indent: depth, objectHvo: obj.Hvo);
+					pictureField.PictureHvo = picture.Hvo;
+					pictureField.PictureMetadata = RegionPictureEditor.ReadMetadata(picture);
+					AddField(pictureField);
 
 					var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
 					if (_visited.Add((picture.Hvo, layoutName)))
@@ -2882,6 +3177,49 @@ namespace SIL.FieldWorks.XWorks
 				return (menu, hotlinks);
 			}
 
+			// §19e: an embedded formatted view (legacy jtview / ViewSlice over an XmlView). The jtview's
+			// param/layout names a layout to render for the SAME object inline; we compile that layout and
+			// walk its fields at depth+1, exactly as DescendInto walks a descended object's layout. The
+			// visited-set guards against a layout that (directly or transitively) re-enters itself. When the
+			// nested layout is empty/unresolvable, degrade to the legacy read-only ShortName row so the
+			// field never silently vanishes.
+			private void WalkEmbeddedView(ViewNode node, ICmObject obj, int depth)
+			{
+				var layoutName = node.TargetLayout;
+				if (string.IsNullOrEmpty(layoutName))
+				{
+					AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
+					return;
+				}
+
+				if (!_visited.Add((obj.Hvo, layoutName)))
+				{
+					// Already composing this (object, layout) higher in the stack — a cyclic jtview nest.
+					AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
+					return;
+				}
+
+				try
+				{
+					var compiled = CompileForObjectWithOverrides(obj, layoutName);
+					if (compiled != null && compiled.Roots.Count > 0)
+					{
+						EnterModel(compiled);
+						foreach (var child in compiled.Roots)
+							Walk(child, obj, depth + 1);
+						ExitModel();
+					}
+					else
+					{
+						AddReadOnlyRow(node, obj, depth, obj.ShortName ?? string.Empty);
+					}
+				}
+				finally
+				{
+					_visited.Remove((obj.Hvo, layoutName));
+				}
+			}
+
 			private void DescendInto(ViewNode node, ICmObject target, int depth)
 			{
 				var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
@@ -2944,6 +3282,29 @@ namespace SIL.FieldWorks.XWorks
 		// no kwsPronunciation branch), initialized on demand the same way legacy
 		// DefaultPronunciationWritingSystem initializes it. Empty/unknown specs take
 		// GetWritingSystemList's own analysis default — the legacy default for unmarked fields.
+		// §19e: filter the resolved writing systems to a per-field visibleWritingSystems override (in the
+		// override's order), matching each spec against the ws Id (IETF tag). No override (null/empty) keeps
+		// the full set; an override that matches nothing also keeps the full set, so a stale override can
+		// never blank a real field (legacy degrades the same way — StringSliceUtils intersects with valid
+		// definitions and falls back to the configured default). Exposed (internal) so the per-field WS
+		// filter has a focused unit test independent of a live layout carrying the attribute.
+		internal static IReadOnlyList<CoreWritingSystemDefinition> ApplyVisibleWritingSystems(
+			IReadOnlyList<CoreWritingSystemDefinition> systems, IReadOnlyList<string> visible)
+		{
+			if (visible == null || visible.Count == 0 || systems == null || systems.Count == 0)
+				return systems;
+
+			var byId = systems.ToDictionary(ws => ws.Id, System.StringComparer.OrdinalIgnoreCase);
+			var result = new List<CoreWritingSystemDefinition>();
+			var seen = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+			foreach (var spec in visible)
+			{
+				if (byId.TryGetValue(spec, out var ws) && seen.Add(ws.Id))
+					result.Add(ws);
+			}
+			return result.Count > 0 ? result : systems;
+		}
+
 		internal static IReadOnlyList<CoreWritingSystemDefinition> ResolveWritingSystems(LcmCache cache, string spec)
 		{
 			var magicId = WritingSystemServices.GetMagicWsIdFromName(spec);
@@ -2965,8 +3326,41 @@ namespace SIL.FieldWorks.XWorks
 		/// does (e.g. MoStemAllomorph → MoForm) for both layout lookup and part resolution.
 		/// Memoized per (starting class, layout) for the lifetime of the loaded sources (finding A).
 		/// </summary>
+		/// <summary>
+		/// §20.1.4 (F-2): resolve the layout-choice GUID for a record whose detail layout is type-selected via
+		/// a <c>layoutChoiceField</c> (e.g. RnGenericRec/Normal keyed on the record's <c>Type</c> possibility).
+		/// Returns the chosen possibility's GUID string, or null when there is no choice field / no value /
+		/// the field is not an atomic object reference — mirroring legacy DataTree, which then falls back to
+		/// the choiceGuid-less layout variant.
+		/// </summary>
+		internal static string ResolveLayoutChoiceGuid(LcmCache cache, ICmObject obj, string layoutChoiceField)
+		{
+			if (obj == null || string.IsNullOrEmpty(layoutChoiceField))
+				return null;
+			try
+			{
+				var mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
+				var flid = mdc.GetFieldId2(obj.ClassID, layoutChoiceField, true);
+				if (flid == 0)
+					return null;
+				var targetHvo = cache.DomainDataByFlid.get_ObjectProp(obj.Hvo, flid);
+				if (targetHvo == 0 || !cache.ServiceLocator.IsValidObjectId(targetHvo))
+					return null;
+				return cache.ServiceLocator.GetObject(targetHvo).Guid.ToString();
+			}
+			catch (Exception)
+			{
+				// A non-atomic field (or any metadata mismatch) just means "no choice" → choiceGuid-less layout.
+				return null;
+			}
+		}
+
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName)
-			=> CompileForObject(cache, obj, layoutName, null);
+			=> CompileForObject(cache, obj, layoutName, null, null);
+
+		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
+			ViewDefinitionOverrideResolver overrides)
+			=> CompileForObject(cache, obj, layoutName, null, overrides);
 
 		/// <summary>
 		/// Compiles (with the legacy base-class walk) and, when <paramref name="overrides"/> supplies a
@@ -2977,14 +3371,14 @@ namespace SIL.FieldWorks.XWorks
 		/// the process-wide cache that other projects/classes read.
 		/// </summary>
 		internal static ViewDefinitionModel CompileForObject(LcmCache cache, ICmObject obj, string layoutName,
-			ViewDefinitionOverrideResolver overrides)
+			string choiceGuid, ViewDefinitionOverrideResolver overrides)
 		{
 			var sources = GetSources();
 			if (sources == null)
 				return null;
 
-			var shipped = sources.CompiledModels.GetOrAdd((obj.ClassID, layoutName),
-				key => CompileForClass(cache, key.ClassId, key.LayoutName, sources));
+			var shipped = sources.CompiledModels.GetOrAdd((obj.ClassID, layoutName, choiceGuid ?? string.Empty),
+				key => CompileForClass(cache, key.ClassId, key.LayoutName, key.ChoiceGuid, sources));
 			if (shipped == null || overrides == null)
 				return shipped;
 
@@ -2997,7 +3391,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static ViewDefinitionModel CompileForClass(LcmCache cache, int classId, string layoutName,
-			CompilerSources sources)
+			string choiceGuid, CompilerSources sources)
 		{
 			Interlocked.Increment(ref s_snapshotCompileCount);
 
@@ -3009,8 +3403,15 @@ namespace SIL.FieldWorks.XWorks
 			while (true)
 			{
 				className = mdc.GetClassName(clsid);
-				if (sources.LayoutIndex.TryGetValue((className, "detail", layoutName), out layout))
-					break;
+				// §20.1.4 (F-1/F-2): pick the choiceGuid-matching variant (exact match, else the choiceGuid-less
+				// fallback, else first) so a record's layoutChoiceField selects the right layout instead of the
+				// document-first one.
+				if (sources.LayoutIndex.TryGetValue((className, "detail", layoutName), out var variants))
+				{
+					layout = LayoutSourceLoader.SelectLayoutForChoice(variants, choiceGuid);
+					if (layout != null)
+						break;
+				}
 				if (clsid == 0)
 					return null;
 				var baseId = mdc.GetBaseClsId(clsid);
@@ -3058,7 +3459,7 @@ namespace SIL.FieldWorks.XWorks
 				return new CompilerSources
 				{
 					PartsXml = partsXml,
-					LayoutIndex = LayoutSourceLoader.IndexLayouts(layoutFiles)
+					LayoutIndex = LayoutSourceLoader.IndexLayoutsByChoice(layoutFiles)
 				};
 			}
 			catch (Exception e)
@@ -3086,22 +3487,35 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceAddSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceRemoveSetters;
+		// §19a: StText paragraph CRUD setters, keyed by StableId.
+		private readonly IReadOnlyDictionary<string, Func<int, RegionRichTextValue, bool>> _paragraphTextSetters;
+		private readonly IReadOnlyDictionary<string, Func<int, string, bool>> _paragraphStyleSetters;
+		private readonly IReadOnlyDictionary<string, Func<int, bool>> _paragraphInsertSetters;
+		private readonly IReadOnlyDictionary<string, Func<int, bool>> _paragraphDeleteSetters;
 
 		public ComposedRegionEditContext(
 			LcmCache cache,
-			ILexEntry entry,
+			ICmObject root, // §20.1: any record root (LexEntry today; RnGenericRec/CmPossibility/PartOfSpeech once other tools are wired)
 			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> optionSetters,
 			IReadOnlyDictionary<string, Func<string, bool>> referenceAddSetters = null,
 			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null,
-			IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> richTextSetters = null)
-			: base(cache, entry)
+			IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> richTextSetters = null,
+			IReadOnlyDictionary<string, Func<int, RegionRichTextValue, bool>> paragraphTextSetters = null,
+			IReadOnlyDictionary<string, Func<int, string, bool>> paragraphStyleSetters = null,
+			IReadOnlyDictionary<string, Func<int, bool>> paragraphInsertSetters = null,
+			IReadOnlyDictionary<string, Func<int, bool>> paragraphDeleteSetters = null)
+			: base(cache, root)
 		{
 			_textSetters = textSetters;
 			_richTextSetters = richTextSetters ?? new Dictionary<string, Func<string, RegionRichTextValue, bool>>();
 			_optionSetters = optionSetters;
 			_referenceAddSetters = referenceAddSetters ?? new Dictionary<string, Func<string, bool>>();
 			_referenceRemoveSetters = referenceRemoveSetters ?? new Dictionary<string, Func<string, bool>>();
+			_paragraphTextSetters = paragraphTextSetters ?? new Dictionary<string, Func<int, RegionRichTextValue, bool>>();
+			_paragraphStyleSetters = paragraphStyleSetters ?? new Dictionary<string, Func<int, string, bool>>();
+			_paragraphInsertSetters = paragraphInsertSetters ?? new Dictionary<string, Func<int, bool>>();
+			_paragraphDeleteSetters = paragraphDeleteSetters ?? new Dictionary<string, Func<int, bool>>();
 		}
 
 		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
@@ -3144,6 +3558,142 @@ namespace SIL.FieldWorks.XWorks
 			if (field == null || !_referenceRemoveSetters.TryGetValue(field.StableId, out var setter))
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
+		}
+
+		public override bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex,
+			RegionRichTextValue value)
+		{
+			if (field == null || !_paragraphTextSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
+		}
+
+		public override bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex,
+			string styleName)
+		{
+			if (field == null || !_paragraphStyleSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
+		}
+
+		public override bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		{
+			if (field == null || !_paragraphInsertSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
+		}
+
+		public override bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		{
+			if (field == null || !_paragraphDeleteSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			return Stage(() => setter(paragraphIndex), FieldLabelFor(field));
+		}
+
+		// §19d: picture insert/replace/delete/metadata + ORC. Unlike the text/option setters (closures the
+		// composer captured), picture ops need the cache directly (create/delete the ICmPicture, resolve a
+		// file into the project's Pictures folder), so they run here against the shared Cache/owner. Each is
+		// one undoable step via the fenced Stage. A non-picture field rejects WITHOUT opening the session.
+		public override bool TryInsertPicture(LexicalEditRegionField field, string sourceFile,
+			RegionPictureMetadata metadata)
+		{
+			if (field == null || field.Kind != RegionFieldKind.Image)
+				return false;
+			var owner = ResolveObject(field.ObjectHvo);
+			var flid = ResolveFlid(owner, field.Field);
+			if (owner == null || flid == 0)
+				return false;
+			return Stage(() => RegionPictureEditor.CreatePicture(Cache, owner, flid, sourceFile, metadata) != null,
+				FieldLabelFor(field));
+		}
+
+		public override bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
+		{
+			var picture = ResolvePicture(field);
+			if (picture == null)
+				return false;
+			return Stage(() => RegionPictureEditor.ReplaceFile(Cache, picture, sourceFile), FieldLabelFor(field));
+		}
+
+		public override bool TryDeletePicture(LexicalEditRegionField field)
+		{
+			var picture = ResolvePicture(field);
+			if (picture == null)
+				return false;
+			return Stage(() => RegionPictureEditor.Delete(picture), FieldLabelFor(field));
+		}
+
+		public override bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
+		{
+			var picture = ResolvePicture(field);
+			if (picture == null)
+				return false;
+			return Stage(() => RegionPictureEditor.SetMetadata(Cache, picture, metadata), FieldLabelFor(field));
+		}
+
+		public override bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata)
+		{
+			// §19c→§19d: the picture ORC rides the field's rich-text setter — we read the current value,
+			// let InsertORCAt build the ORC run, and write the new TsString back through the SAME run-aware
+			// setter the rich-text edits use, so it is one undoable step and re-shows from domain truth.
+			if (field == null || !_richTextSetters.TryGetValue(field.StableId, out var setter))
+				return false;
+			if (field.Values.Any(v => !v.CanEditRichText))
+				return false;
+			return Stage(() =>
+			{
+				var wsHandle = ResolveWsForField(field, ws);
+				if (wsHandle == 0)
+					return false;
+				var current = field.Values.FirstOrDefault(v => string.Equals(v.WsTag, ws, StringComparison.Ordinal))
+					?? field.Values.FirstOrDefault();
+				var currentTss = RegionRichTextAdapter.ToTsString(current?.RichText, Cache.WritingSystemFactory, wsHandle);
+				var withOrc = RegionPictureEditor.InsertPictureOrc(Cache, currentTss, caretPosition, sourceFile, metadata);
+				if (withOrc == null)
+					return false;
+				var rebuilt = RegionRichTextAdapter.FromTsString(withOrc, Cache.WritingSystemFactory);
+				return setter(ws, rebuilt);
+			}, FieldLabelFor(field));
+		}
+
+		private ICmObject ResolveObject(int hvo)
+		{
+			if (hvo == 0)
+				return Entry;
+			return Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var obj) ? obj : null;
+		}
+
+		private int ResolveFlid(ICmObject owner, string fieldName)
+		{
+			if (owner == null || string.IsNullOrEmpty(fieldName))
+				return 0;
+			try
+			{
+				var mdc = (IFwMetaDataCacheManaged)Cache.DomainDataByFlid.MetaDataCache;
+				return mdc.GetFieldId2(owner.ClassID, fieldName, true);
+			}
+			catch (Exception)
+			{
+				return 0;
+			}
+		}
+
+		private ICmPicture ResolvePicture(LexicalEditRegionField field)
+		{
+			if (field == null || field.Kind != RegionFieldKind.Image || field.PictureHvo == 0)
+				return null;
+			return Cache.ServiceLocator.ObjectRepository.TryGetObject(field.PictureHvo, out var obj)
+				? obj as ICmPicture
+				: null;
+		}
+
+		private int ResolveWsForField(LexicalEditRegionField field, string ws)
+		{
+			if (string.IsNullOrEmpty(ws))
+				return Cache.DefaultVernWs;
+			var resolved = Cache.WritingSystemFactory.GetWsFromStr(ws);
+			return resolved > 0 ? resolved : Cache.DefaultVernWs;
 		}
 
 		// ITEM 1: the human-readable field label that names the undo step, falling back to the

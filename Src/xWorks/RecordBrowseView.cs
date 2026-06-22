@@ -128,6 +128,8 @@ namespace SIL.FieldWorks.XWorks
 					m_avaloniaBrowseHost.RestrictDateRequested -= OnRestrictDateRequested;
 					m_avaloniaBrowseHost.ChooseListRequested -= OnChooseListRequested;
 					m_avaloniaBrowseHost.ColumnWidthChanged -= OnAvaloniaColumnWidthChanged;
+					m_avaloniaBrowseHost.ColumnReordered -= OnAvaloniaColumnReordered;
+					m_avaloniaBrowseHost.RowCommandInvoked -= OnAvaloniaRowCommandInvoked;
 					m_avaloniaBrowseHost.Dispose();
 				}
 				if (components != null)
@@ -400,6 +402,8 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaBrowseHost.RestrictDateRequested += OnRestrictDateRequested;
 			m_avaloniaBrowseHost.ChooseListRequested += OnChooseListRequested;
 			m_avaloniaBrowseHost.ColumnWidthChanged += OnAvaloniaColumnWidthChanged;
+			m_avaloniaBrowseHost.ColumnReordered += OnAvaloniaColumnReordered;
+			m_avaloniaBrowseHost.RowCommandInvoked += OnAvaloniaRowCommandInvoked;
 			Controls.Add(m_avaloniaBrowseHost);
 			m_avaloniaBrowseHost.BringToFront(); // paint over the legacy viewer (which stays functional)
 			// Legacy parity: the BrowseViewer shows a per-row select column + select-all; enable the same on
@@ -466,6 +470,8 @@ namespace SIL.FieldWorks.XWorks
 				m_avaloniaBrowseHost.RestrictDateRequested -= OnRestrictDateRequested;
 				m_avaloniaBrowseHost.ChooseListRequested -= OnChooseListRequested;
 				m_avaloniaBrowseHost.ColumnWidthChanged -= OnAvaloniaColumnWidthChanged;
+				m_avaloniaBrowseHost.ColumnReordered -= OnAvaloniaColumnReordered;
+				m_avaloniaBrowseHost.RowCommandInvoked -= OnAvaloniaRowCommandInvoked;
 				Controls.Remove(m_avaloniaBrowseHost);
 				m_avaloniaBrowseHost.Dispose();
 				m_avaloniaBrowseHost = null;
@@ -855,6 +861,40 @@ namespace SIL.FieldWorks.XWorks
 			var hvo = m_avaloniaRowSource?.HvoAt(rowIndex) ?? 0;
 			if (hvo != 0)
 				Clerk.JumpToRecord(hvo);
+		}
+		
+		// 19f.6: a header drag-reorder. Move the dragged column key from its old display position to the
+		// new one in the current shown-key order, then reuse the SAME ApplyConfiguredColumns path the
+		// Configure-Columns dialog uses (re-align live viewer, rebuild + persist the model, clear stale
+		// column state, rebuild the surface preserving selection + checked set). The legacy BrowseViewer
+		// .m_lvHeader_ColumnDragDropReordered did the same reorder-then-rebuild on Vc.ColumnSpecs.
+		private void OnAvaloniaColumnReordered(object sender, (int FromIndex, int ToIndex) e)
+		{
+			if (m_browseColumnModel == null)
+				return;
+			var keys = m_browseColumnModel.ShownKeys?.ToList();
+			if (keys == null || e.FromIndex < 0 || e.FromIndex >= keys.Count
+				|| e.ToIndex < 0 || e.ToIndex >= keys.Count || e.FromIndex == e.ToIndex)
+				return;
+			var moved = keys[e.FromIndex];
+			keys.RemoveAt(e.FromIndex);
+			keys.Insert(e.ToIndex, moved);
+			ApplyConfiguredColumns(keys);
+		}
+		
+		// 19f.1: a data-row context-menu command. Route the chosen command key the SAME way the legacy
+		// RightMouseClickedEvent host did: jump the clerk to the right-clicked row's object (so the command
+		// acts on it), then broadcast the command id through the mediator. A command with no handler is a
+		// harmless no-op (matching the legacy update-handler gating).
+		private void OnAvaloniaRowCommandInvoked(object sender, (int RowIndex, string CommandKey) e)
+		{
+			if (string.IsNullOrEmpty(e.CommandKey) || m_avaloniaRowSource == null)
+				return;
+			var hvo = m_avaloniaRowSource.HvoAt(e.RowIndex);
+			if (hvo != 0)
+				Clerk.JumpToRecord(hvo);
+			// Broadcast via the modern Publisher (Mediator.SendMessage is obsolete); no subscriber = no-op.
+				Publisher?.Publish(new PublisherParameterObject(e.CommandKey));
 		}
 
 		// Revision 2 (architecture-review): mirror the clerk's current record into the Avalonia table so
@@ -1769,9 +1809,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <inheritdoc />
-		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, ClickCopyMode mode,
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset, ClickCopyMode mode,
 			string separator, bool append)
-			=> m_avaloniaBrowseHost?.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, mode, separator, append);
+			=> m_avaloniaBrowseHost?.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append);
 
 		#endregion IBulkEditBarHost
 

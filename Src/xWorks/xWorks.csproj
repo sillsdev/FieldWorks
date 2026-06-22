@@ -53,6 +53,8 @@
     <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
     <PackageReference Include="SIL.LCModel.Utils" />
     <PackageReference Include="SIL.Lift" />
+    <!-- §19d: voice-WS audio play/record (the libpalaso ISimpleAudioSession the legacy slice uses). -->
+    <PackageReference Include="SIL.Media" />
     <PackageReference Include="SIL.Windows.Forms" />
     <PackageReference Include="SIL.Windows.Forms.Archiving" />
     <PackageReference Include="SIL.WritingSystems" />

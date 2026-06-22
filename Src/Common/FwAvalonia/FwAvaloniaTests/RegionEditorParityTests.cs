@@ -10,6 +10,7 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
@@ -37,16 +38,18 @@ namespace FwAvaloniaTests
 				values: new List<RegionWsValue> { new RegionWsValue("", display) },
 				options: null, selectedOptionKey: null, isEditable: true, dateKind: dateKind);
 
+		// §19e: the exact-date editor is now a text box + calendar picker row; the text box (the
+		// canonical parse-on-commit entry) is extracted from that row for these parity assertions.
 		private static TextBox BuildDate(FakeRegionEditContext ctx, RegionDateKind kind, string display,
 			System.Action save = null)
 		{
 			var control = RegionFieldControlFactory.Build(DateField(ctx, kind, display), "When.Auto",
 				new RegionFieldControlContext(editContext: ctx, save: save));
-			var box = (TextBox)control;
-			var window = new Window { Content = box, Width = 320, Height = 80 };
+			var window = new Window { Content = control, Width = 320, Height = 80 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
-			return box;
+			return control as TextBox
+				?? control.GetVisualDescendants().OfType<TextBox>().First();
 		}
 
 		[AvaloniaTest]
@@ -69,15 +72,32 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void DateEdit_CommitsOnFocusLoss()
 		{
+			// §19e: an EXACT date keeps the parse-on-commit text box; focus loss stages the typed string.
+			// (The generic-date row is now the structured qualifier editor — covered by FwGenDateField tests.)
 			var ctx = new FakeRegionEditContext();
-			var box = BuildDate(ctx, RegionDateKind.GenDate, "2000");
+			var box = BuildDate(ctx, RegionDateKind.Date, "January 1, 2000");
 
-			box.Text = "approximately 1850";
+			box.Text = "March 5, 2010";
 			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo("approximately 1850"));
+			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo("March 5, 2010"));
+		}
+
+		[AvaloniaTest]
+		public void GenDate_StructuredEditor_StagesAComposedQualifierString()
+		{
+			// §19e: the generic-date row is the structured qualifier editor (year + precision + era), not a
+			// free-text box. Changing a qualifier stages the recomposed GenDate.TryParse-compatible string.
+			var ctx = new FakeRegionEditContext();
+			var control = RegionFieldControlFactory.Build(DateField(ctx, RegionDateKind.GenDate, "AD 2000"),
+				"When.Auto", new RegionFieldControlContext(editContext: ctx, save: () => { }));
+			Assert.That(control, Is.InstanceOf<FwGenDateField>());
+			((FwGenDateField)control).SetForTest(1850, GenDatePrecision.Approximate, true);
+
+			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
+			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo("About AD 1850"));
 		}
 
 		[AvaloniaTest]

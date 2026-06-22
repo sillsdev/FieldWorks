@@ -28,6 +28,14 @@ namespace LexTextControlsTests
 	{
 		private ILexEntry _casa;
 		private ILexEntry _cantar;
+		private IPartOfSpeech _verb;
+		private IPartOfSpeech _noun;
+		private IMoInflAffixSlot _tenseSlot;
+		private IMoInflClass _nounWeak;
+		private ILexEntryType _compoundType;
+		// An inflectable closed feature on the Verb POS (Tense {past, present}) for the §19b inflection-feature tests.
+		private IFsClosedFeature _tenseFeature;
+		private IFsSymFeatVal _pastValue;
 
 		// The base opens an undoable UOW in TestSetup and calls CreateTestData() inside it, so data is created
 		// directly here with NO UOW wrapper (a nested task would throw "Nested tasks are not supported").
@@ -36,6 +44,48 @@ namespace LexTextControlsTests
 			base.CreateTestData();
 			_casa = MakeEntry("casa", "house");
 			_cantar = MakeEntry("cantar", "to sing");
+
+			// A small POS hierarchy + an inflectional-affix slot on the verb, so the MSA find-or-create can be exercised.
+			_verb = MakePos("Verb");
+			_noun = MakePos("Noun");
+			_tenseSlot = Cache.ServiceLocator.GetInstance<IMoInflAffixSlotFactory>().Create();
+			_verb.AffixSlotsOC.Add(_tenseSlot);
+			_tenseSlot.Name.set_String(Cache.DefaultAnalWs, "Tense");
+
+			// An inflection class on the noun, so the Stage 6 inflection-class set can be exercised.
+			_nounWeak = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			_noun.InflectionClassesOC.Add(_nounWeak);
+			_nounWeak.Name.set_String(Cache.DefaultAnalWs, "Weak");
+
+			// A complex-form type, so the LT-21666 complex-form ILexEntryRef create can be exercised.
+			_compoundType = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.Add(_compoundType);
+			_compoundType.Name.set_String(Cache.DefaultAnalWs, "Compound");
+
+			// An inflectable closed feature on the verb (Tense {past, present}), so the §19b inflection-feature
+			// editor feed + the IFsFeatStruc round-trip can be exercised on an inflectional-affix MSA.
+			_tenseFeature = Cache.ServiceLocator.GetInstance<IFsClosedFeatureFactory>().Create();
+			Cache.LangProject.MsFeatureSystemOA.FeaturesOC.Add(_tenseFeature);
+			_tenseFeature.Name.set_String(Cache.DefaultAnalWs, "Tense");
+			_pastValue = MakeSymValue(_tenseFeature, "past");
+			MakeSymValue(_tenseFeature, "present");
+			_verb.InflectableFeatsRC.Add(_tenseFeature);
+		}
+
+		private IFsSymFeatVal MakeSymValue(IFsClosedFeature feature, string name)
+		{
+			var val = Cache.ServiceLocator.GetInstance<IFsSymFeatValFactory>().Create();
+			feature.ValuesOC.Add(val);
+			val.Name.set_String(Cache.DefaultAnalWs, name);
+			return val;
+		}
+
+		private IPartOfSpeech MakePos(string name)
+		{
+			var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			Cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			pos.Name.set_String(Cache.DefaultAnalWs, name);
+			return pos;
 		}
 
 		private ILexEntry MakeEntry(string lexemeForm, string gloss)
@@ -221,6 +271,342 @@ namespace LexTextControlsTests
 				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
 			Assert.That(created, Is.Not.Null);
 			Assert.That(repo.Count, Is.EqualTo(before + 1), "the create path adds exactly one entry");
+		}
+
+		// ----- grammatical-info (MSA) feed + find-or-create on commit (Stage 3) -----
+
+		[Test]
+		public void BuildInput_WiresTheMsaSection()
+		{
+			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
+			Assert.That(input.PosNodes, Is.Not.Empty, "the project POS hierarchy is fed to the MSA box");
+			Assert.That(input.MorphTypeToMsaType, Is.Not.Null.And.Not.Empty,
+				"the morph-type → MsaType map is supplied so the kit reconfigures live without LCModel");
+			Assert.That(input.SlotsForPos, Is.Not.Null, "the per-POS slot provider is wired");
+			Assert.That(input.InitialMsaType, Is.EqualTo(FwMsaType.Stem), "the box opens stem (the default morph type)");
+		}
+
+		[Test]
+		public void BuildPosNodes_ProjectsThePartsOfSpeechAsGuidKeyedNodes()
+		{
+			var nodes = LcmInsertEntryDialogLauncher.BuildPosNodes(Cache);
+			Assert.That(nodes.Any(n => n.Id == _verb.Guid.ToString() && n.Name == "Verb"), Is.True,
+				"the POS nodes carry the project parts of speech, keyed by guid string");
+			Assert.That(nodes.Any(n => n.Id == _noun.Guid.ToString() && n.Name == "Noun"), Is.True);
+		}
+
+		[Test]
+		public void MorphTypeToMsaTypeMap_MapsStemAndAffixFamilies()
+		{
+			var map = LcmInsertEntryDialogLauncher.BuildMorphTypeToMsaTypeMap(Cache);
+			Assert.That(map[MoMorphTypeTags.kguidMorphStem.ToString()], Is.EqualTo(FwMsaType.Stem),
+				"stem maps to Stem (MorphTypePreference parity)");
+			Assert.That(map[MoMorphTypeTags.kguidMorphRoot.ToString()], Is.EqualTo(FwMsaType.Root),
+				"root maps to Root");
+			Assert.That(map[MoMorphTypeTags.kguidMorphSuffix.ToString()], Is.EqualTo(FwMsaType.Unclassified),
+				"an affix maps to Unclassified (the box then refines to Infl/Deriv)");
+		}
+
+		[Test]
+		public void BuildSlots_ReturnsThePosAffixSlots()
+		{
+			var slots = LcmInsertEntryDialogLauncher.BuildSlots(Cache, _verb.Guid.ToString(),
+				MoMorphTypeTags.kguidMorphSuffix.ToString());
+			Assert.That(slots.Any(s => s.Id == _tenseSlot.Guid.ToString() && s.Name == "Tense"), Is.True,
+				"the verb's inflectional-affix slot is offered, keyed by guid string");
+		}
+
+		[Test]
+		public void CreateNewEntry_StemMsa_FindOrCreatesAStemMsaWithTheChosenPos()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString(),
+				msa: new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1), "a sense was created");
+			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+			Assert.That(msa, Is.InstanceOf<IMoStemMsa>(), "a stem MSA was found-or-created on the sense");
+			Assert.That(((IMoStemMsa)msa).PartOfSpeechRA, Is.SameAs(_noun),
+				"the chosen main POS is set on the created stem MSA");
+		}
+
+		[Test]
+		public void ApplyInflectionClass_StemMsa_SetsTheChosenClassOnTheNewEntrySense()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString(),
+				inflectionClassId: _nounWeak.Guid.ToString());
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
+
+			// Build the entry (find-or-creates the stem MSA), then apply the inflection class as CreateNewEntry does.
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyInflectionClass(Cache, entry, msa);
+
+			var stemMsa = entry.SensesOS[0].MorphoSyntaxAnalysisRA as IMoStemMsa;
+			Assert.That(stemMsa, Is.Not.Null);
+			Assert.That(stemMsa.InflectionClassRA, Is.SameAs(_nounWeak),
+				"the chosen inflection class is set on the new entry's stem MSA (the SetEntryMsa parity)");
+		}
+
+		[Test]
+		public void BuildInput_FeedsTheInflectionClassProvider()
+		{
+			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
+			Assert.That(input.InflectionClassesForPos, Is.Not.Null, "the inflection-class provider is wired");
+			Assert.That(input.InflectionClassesForPos(_noun.Guid.ToString()).Select(c => c.Name),
+				Does.Contain("Weak"), "the provider returns the selected POS's classes");
+		}
+
+		[Test]
+		public void CreateNewEntry_InflectionalMsa_FindOrCreatesAnInflAffixMsaWithPosAndSlot()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-s" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphSuffix.ToString(),
+				msa: new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
+					slotId: _tenseSlot.Guid.ToString()));
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+
+			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+			Assert.That(msa, Is.InstanceOf<IMoInflAffMsa>(), "an inflectional-affix MSA was created");
+			var inflMsa = (IMoInflAffMsa)msa;
+			Assert.That(inflMsa.PartOfSpeechRA, Is.SameAs(_verb), "the chosen main POS is set");
+			Assert.That(inflMsa.SlotsRC, Does.Contain(_tenseSlot), "the chosen slot is attached to the infl MSA");
+		}
+
+		[Test]
+		public void CreateNewEntry_DerivationalMsa_FindOrCreatesADerivMsaWithMainAndSecondaryPos()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-er" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphSuffix.ToString(),
+				msa: new FwSandboxMsa(FwMsaType.Derivational, mainPosId: _verb.Guid.ToString(),
+					secondaryPosId: _noun.Guid.ToString()));
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+
+			var msa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+			Assert.That(msa, Is.InstanceOf<IMoDerivAffMsa>(), "a derivational-affix MSA was created");
+			var derivMsa = (IMoDerivAffMsa)msa;
+			Assert.That(derivMsa.FromPartOfSpeechRA, Is.SameAs(_verb), "the chosen 'attaches to' POS is the from-POS");
+			Assert.That(derivMsa.ToPartOfSpeechRA, Is.SameAs(_noun), "the chosen 'changes to' POS is the to-POS");
+		}
+
+		// ----- inflection features (§19b Stage 2): feed + find-or-create + IFsFeatStruc round-trip -----
+
+		[Test]
+		public void BuildInput_FeedsTheInflectionFeatureProvider()
+		{
+			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
+			Assert.That(input.InflectionFeaturesForPos, Is.Not.Null, "the inflection-feature-system provider is wired");
+			var nodes = input.InflectionFeaturesForPos(_verb.Guid.ToString());
+			Assert.That(nodes.Any(n => n.Id == _tenseFeature.Guid.ToString() && n.Kind == FwFeatureNodeKind.Closed),
+				Is.True, "the provider returns the selected POS's inflectable features");
+			Assert.That(nodes.Any(n => n.Id == _pastValue.Guid.ToString() && n.Kind == FwFeatureNodeKind.Value),
+				Is.True, "with their symbolic values");
+		}
+
+		[Test]
+		public void BuildInflectionFeatures_UnknownPos_IsEmpty()
+		{
+			Assert.That(LcmInsertEntryDialogLauncher.BuildInflectionFeatures(Cache, "not-a-guid"), Is.Empty);
+		}
+
+		// T2 integration: one realized create exercises morph type (suffix) + MSA POS + slot + INFLECTION FEATURE
+		// together; the find-or-created infl MSA composes all of them, and the IFsFeatStruc round-trips.
+		[Test]
+		public void Show_InflectionalAffix_ComposesMsaPosSlotAndInflectionFeatures()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var msa = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
+				slotId: _tenseSlot.Guid.ToString(),
+				inflectionFeatures: new[]
+				{
+					new FwFeatureValueAssignment(_tenseFeature.Guid.ToString(), _pastValue.Guid.ToString())
+				});
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-s" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
+
+			// Build the entry (find-or-creates the infl MSA), then apply the inflection features as CreateNewEntry does.
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+
+			var inflMsa = (IMoInflAffMsa)entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+			// POS + slot compose with the features on the SAME MSA.
+			Assert.That(inflMsa.PartOfSpeechRA, Is.SameAs(_verb), "the main POS composes");
+			Assert.That(inflMsa.SlotsRC, Does.Contain(_tenseSlot), "the slot composes");
+			Assert.That(inflMsa.InflFeatsOA, Is.Not.Null, "the inflection FS is built on the infl MSA");
+			var readBack = FwFeatureStructureAdapter.ReadAssignments(inflMsa.InflFeatsOA);
+			Assert.That(readBack.Single().ValueId, Is.EqualTo(_pastValue.Guid.ToString()),
+				"the chosen inflection feature value round-trips into the IFsFeatStruc");
+		}
+
+		// T4 workflow: create entry → inflectional affix → pick POS → assign an inflection feature value → commit →
+		// reopen (read the FS back as the MsaCreator edit path would) → verify the IFsFeatStruc round-tripped.
+		[Test]
+		public void Workflow_CreateInflAffix_AssignFeature_Commit_Reopen_RoundTrips()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var msa = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString(),
+				inflectionFeatures: new[]
+				{
+					new FwFeatureValueAssignment(_tenseFeature.Guid.ToString(), _pastValue.Guid.ToString())
+				});
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "-ed" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphSuffix.ToString(), msa: msa);
+
+			// Commit (the launcher's create path).
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+
+			// "Reopen": resolve the persisted MSA's FS the way the MsaCreator edit path seeds the editor, and verify
+			// the assignment set the editor would show matches what was committed.
+			var committedMsa = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+			var reopened = FwFeatureStructureAdapter.ReadAssignments(
+				FwFeatureStructureAdapter.GetInflectionFeatures(committedMsa));
+			Assert.That(reopened.Count, Is.EqualTo(1), "the reopened MSA shows exactly the committed feature");
+			Assert.That(reopened[0].ClosedFeatureId, Is.EqualTo(_tenseFeature.Guid.ToString()));
+			Assert.That(reopened[0].ValueId, Is.EqualTo(_pastValue.Guid.ToString()),
+				"the inflection feature round-tripped through create → persist → reopen");
+		}
+
+		[Test]
+		public void CreateNewEntry_StemMsa_WritesNoInflectionFeatures()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			// A stem MSA carrying (incorrectly) some inflection features — the adapter must no-op (scope is infl/deriv).
+			var msa = new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString());
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString(), msa: msa);
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, entry.SensesOS[0], msa);
+
+			Assert.That(entry.SensesOS[0].MorphoSyntaxAnalysisRA, Is.InstanceOf<IMoStemMsa>(),
+				"a stem MSA is unaffected by the inflection-feature apply");
+		}
+
+		[Test]
+		public void BuildEntryComponents_NoChosenMsa_FallsBackToTheMorphTypeDefault()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "gato" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString()); // msa null
+
+			var components = LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload);
+			Assert.That(components.MSA, Is.Not.Null,
+				"a null chosen MSA still yields the morph-type's default MSA descriptor (older-caller parity)");
+			Assert.That(components.MSA.MsaType, Is.EqualTo(MsaType.kStem), "stem morph type defaults to a stem MSA");
+		}
+
+		// ----- complex-form type feed + complex-form ILexEntryRef on create (LT-21666) -----
+
+		[Test]
+		public void BuildInput_WiresTheComplexFormTypeSection()
+		{
+			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
+			Assert.That(input.ComplexFormTypes.Any(o => o.Key == _compoundType.Guid.ToString() && o.Name == "Compound"),
+				Is.True, "the project's complex-form types populate the picker, keyed by guid string");
+			Assert.That(input.InitialComplexFormTypeKey, Is.Null, "the picker opens at <Not Applicable>");
+			Assert.That(input.ComplexFormGatingByMorphType, Is.Not.Null.And.Not.Empty,
+				"the morph-type → complex-form gating map is supplied (EnableComplexFormTypeCombo parity)");
+		}
+
+		[Test]
+		public void ComplexFormGatingMap_MirrorsEnableComplexFormTypeCombo()
+		{
+			var map = LcmInsertEntryDialogLauncher.BuildComplexFormGatingMap(Cache);
+			Assert.That(map[MoMorphTypeTags.kguidMorphRoot.ToString()],
+				Is.EqualTo(ComplexFormGating.DisabledNotApplicable), "root disables + forces Not-Applicable");
+			Assert.That(map[MoMorphTypeTags.kguidMorphBoundRoot.ToString()],
+				Is.EqualTo(ComplexFormGating.DisabledNotApplicable), "bound root disables + forces Not-Applicable");
+			Assert.That(map[MoMorphTypeTags.kguidMorphPhrase.ToString()],
+				Is.EqualTo(ComplexFormGating.EnabledKeepSelection), "phrase enables + keeps the selection");
+			Assert.That(map[MoMorphTypeTags.kguidMorphStem.ToString()],
+				Is.EqualTo(ComplexFormGating.EnabledNotApplicable), "stem takes the default (enabled, reset)");
+		}
+
+		[Test]
+		public void CreateNewEntry_WithComplexFormType_AddsAComplexFormEntryRefInOneUow()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "casa grande" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphPhrase.ToString(),
+				complexFormTypeKey: _compoundType.Guid.ToString());
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyComplexFormType(Cache, entry, payload.ComplexFormTypeKey);
+
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1), "a complex-form entry ref is added to the new entry");
+			var ler = entry.EntryRefsOS[0];
+			Assert.That(ler.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm),
+				"the entry ref is a complex-form ref (CreateNewEntryInternal parity)");
+			Assert.That(ler.ComplexEntryTypesRS, Does.Contain(_compoundType),
+				"the chosen complex-form type is added to the ref's ComplexEntryTypesRS");
+		}
+
+		[Test]
+		public void CreateNewEntry_NotApplicable_AddsNoEntryRef()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "gato" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString(),
+				complexFormTypeKey: null); // <Not Applicable>
+
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+			LcmInsertEntryDialogLauncher.ApplyComplexFormType(Cache, entry, payload.ComplexFormTypeKey);
+
+			Assert.That(entry.EntryRefsOS, Is.Empty,
+				"<Not Applicable> adds no complex-form entry ref (CreateNewEntryInternal m_fComplexForm false)");
+		}
+
+		[Test]
+		public void ApplyComplexFormType_UnresolvableId_AddsNoEntryRef()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var payload = new InsertEntryPayload(
+				new System.Collections.Generic.Dictionary<string, string> { [vernTag] = "perro" },
+				new System.Collections.Generic.Dictionary<string, string>(),
+				MoMorphTypeTags.kguidMorphStem.ToString());
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>()
+				.Create(LcmInsertEntryDialogLauncher.BuildEntryComponents(Cache, payload));
+
+			LcmInsertEntryDialogLauncher.ApplyComplexFormType(Cache, entry, "not-a-guid");
+			Assert.That(entry.EntryRefsOS, Is.Empty, "an unresolvable complex-form id adds nothing");
 		}
 	}
 }

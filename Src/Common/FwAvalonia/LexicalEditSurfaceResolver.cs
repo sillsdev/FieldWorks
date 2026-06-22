@@ -39,10 +39,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// - "lexiconEdit": the Lexicon Edit tool's left Entries pane (the primary requested target;
 		//   its currentContentControl is the tool value "lexiconEdit", same as the right edit pane).
 		// - "lexiconBrowse": the standalone Lexicon > Browse tool.
+		// §20.2: the BROWSE/list surface is class-agnostic (ClerkBrowseRowSource keys on the clerk's columns,
+		// not LexEntry), and the bulk-delete orphan sweep is now gated to lexicon list-items (§20.2.3), so
+		// flat-list non-lexicon tools opt their LIST pane into the Avalonia table here. (Their EDIT detail
+		// stays WinForms until registered in the separate LexicalEditSurfaceRegistry — §20.3.) Lists tools are
+		// NOT here: they navigate via a hierarchical tree bar, which needs the §20.2.6 owned tree first.
 		private static readonly string[] SupportedAvaloniaBrowseToolNames =
 		{
 			"lexiconEdit",
-			"lexiconBrowse"
+			"lexiconBrowse",
+			// §20.2.1 Notebook (RnGenericRec — a flat record list).
+			"notebookEdit",
+			"notebookBrowse",
+			// §20.2.4 Words (WfiWordform analyses list + bulk-edit wordforms).
+			"Analyses",
+			"toolBulkEditWordforms",
+			// §20.2.7 Grammar flat-table editors (POS-category advanced list + reversal-index POS).
+			"featureTypesAdvancedEdit",
+			"reversalToolReversalIndexPOS"
 		};
 
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>

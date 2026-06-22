@@ -17,12 +17,14 @@ namespace FwAvaloniaDialogs
 	{
 		public InsertEntryPayload(IReadOnlyDictionary<string, string> lexemeFormByWs,
 			IReadOnlyDictionary<string, string> glossByWs, string morphTypeKey,
-			string chosenExistingEntryId = null)
+			string chosenExistingEntryId = null, FwSandboxMsa msa = null, string complexFormTypeKey = null)
 		{
 			LexemeFormByWs = lexemeFormByWs ?? new Dictionary<string, string>();
 			GlossByWs = glossByWs ?? new Dictionary<string, string>();
 			MorphTypeKey = morphTypeKey;
 			ChosenExistingEntryId = chosenExistingEntryId;
+			Msa = msa;
+			ComplexFormTypeKey = complexFormTypeKey;
 		}
 
 		/// <summary>The lexeme-form alternatives, keyed by writing-system tag (only non-empty alternatives).</summary>
@@ -41,6 +43,24 @@ namespace FwAvaloniaDialogs
 		/// a duplicate; null means create a new entry from the form/gloss/morph-type values above.
 		/// </summary>
 		public string ChosenExistingEntryId { get; }
+
+		/// <summary>
+		/// The chosen grammatical info (MSA) — the LCModel-free <see cref="FwSandboxMsa"/> the hosted
+		/// <see cref="FwMsaGroupBox"/> emitted (MsaType + main/secondary POS ids + slot id). The launcher resolves
+		/// the ids back to LCModel objects, builds a real <c>SandboxGenericMSA</c>, and find-or-creates the MSA on the
+		/// new entry's first sense (exactly as the WinForms <c>InsertEntryDlg</c> does). Null when the dialog had no
+		/// MSA section configured (the launcher then falls back to the morph-type's default MSA).
+		/// </summary>
+		public FwSandboxMsa Msa { get; }
+
+		/// <summary>
+		/// The chosen complex-form type key (complex-entry-type guid string) — the WinForms <c>m_complexType</c>
+		/// parity (LT-21666). Null/empty when the user left the picker at "&lt;Not Applicable&gt;": the launcher then
+		/// adds NO <c>ILexEntryRef</c>. When non-null the launcher creates a complex-form <c>ILexEntryRef</c> on the
+		/// new entry (<c>RefType = krtComplexForm</c>) and adds the resolved <c>ILexEntryType</c> to its
+		/// <c>ComplexEntryTypesRS</c>, exactly as <c>CreateNewEntryInternal</c> does. (No components are added.)
+		/// </summary>
+		public string ComplexFormTypeKey { get; }
 
 		/// <summary>An empty payload (no values, no morph type) for a cancelled dialog.</summary>
 		public static InsertEntryPayload Empty =>

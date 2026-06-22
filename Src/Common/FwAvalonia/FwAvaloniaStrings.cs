@@ -17,6 +17,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string NoEntrySelected => Text("FwAvalonia.NoEntrySelected", "No entry selected");
 
+		// §19e — structured generic-date (GenDate) qualifier editor (legacy GenDateChooserDlg).
+		public static string GenDateYear => Text("FwAvalonia.GenDateYear", "Year");
+
+		public static string GenDateEra => Text("FwAvalonia.GenDateEra", "Era");
+
+		public static string GenDateEraAd => Text("FwAvalonia.GenDateEraAd", "AD");
+
+		public static string GenDateEraBc => Text("FwAvalonia.GenDateEraBc", "BC");
+
+		public static string GenDatePrecision => Text("FwAvalonia.GenDatePrecision", "Precision");
+
+		public static string GenDatePrecisionBefore => Text("FwAvalonia.GenDatePrecisionBefore", "Before");
+
+		public static string GenDatePrecisionOn => Text("FwAvalonia.GenDatePrecisionOn", "On");
+
+		public static string GenDatePrecisionAbout => Text("FwAvalonia.GenDatePrecisionAbout", "About");
+
+		public static string GenDatePrecisionAfter => Text("FwAvalonia.GenDatePrecisionAfter", "After");
+
 		public static string EntryTypeUnsupported => Text("FwAvalonia.EntryTypeUnsupported", "This entry type is not yet supported in the new view.");
 
 		public static string UnsupportedEditor => Text("FwAvalonia.UnsupportedEditor", "This field is not yet supported in the new view.");
@@ -48,6 +67,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static string RedoChangeToFormat => Text("FwAvalonia.RedoChangeToFormat", "Redo change to {0}");
 
 		public static string LexemeFormRequired => Text("FwAvalonia.LexemeFormRequired", "Lexeme Form is required.");
+
+		/// <summary>§20.3.1 (LE-4): validation message when a list item (CmPossibility) has neither a Name nor an Abbreviation.</summary>
+		public static string PossibilityNameOrAbbreviationRequired => Text("FwAvalonia.PossibilityNameOrAbbreviationRequired", "A name or abbreviation is required.");
 
 		/// <summary>
 		/// Warning shown when a pending lexical edit is rolled back on navigate/close because it fails
@@ -318,5 +340,122 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>Per-row delete preview marker shown on a checked row that is BLOCKED from deletion by a guard (e.g. the only sense).</summary>
 		public static string BulkDeleteBlockedMarker => Text("FwAvalonia.Bulk.DeleteBlockedMarker", "(cannot be deleted)");
+
+		// Seed text matches the canonical legacy wording in XMLViewsStrings (ksSpellingErrors) so the English
+		// fallback is identical to the classic browse FilterBar and translation memory carries over. APPEND-ONLY.
+		/// <summary>"Spelling Errors" — browse filter entry that keeps only rows whose cell contains a spelling error (FilterBar's BadSpellingMatcher), offered only on a string column whose writing system has a spelling dictionary.</summary>
+		public static string FilterSpellingErrors => Text("FwAvalonia.Browse.FilterSpellingErrors", "Spelling Errors");
+
+		// ----- Part-of-Speech chooser (MSA-port Stage 1: FwPosChooser) -----
+		// Seed text mirrors the legacy WinForms POS picker (POSPopupTreeManager / PopupTreeManager): the
+		// empty node shows "<Not sure>" by default (or "<Any>" when the host opts in via the empty-label
+		// override, as MSAGroupBox does), and the inline create affordance is the tree's "More..." item,
+		// reworded to the clearer "Create a new Part of Speech..." for the new view. APPEND-ONLY.
+
+		/// <summary>"&lt;Not sure&gt;" — the default empty / unspecified Part-of-Speech entry (legacy PopupTreeManager "&lt;Not sure&gt;").</summary>
+		public static string PosNotSure => Text("FwAvalonia.Pos.NotSure", "<Not sure>");
+
+		/// <summary>"&lt;Any&gt;" — the unspecified Part-of-Speech entry when the host treats unspecified as "any" (legacy MSAGroupBox NotSureIsAny).</summary>
+		public static string PosAny => Text("FwAvalonia.Pos.Any", "<Any>");
+
+		/// <summary>"Create a new Part of Speech..." — the inline create affordance at the bottom of the POS tree (legacy "More..." item that launched MasterCategoryListDlg).</summary>
+		public static string PosCreateNew => Text("FwAvalonia.Pos.CreateNew", "Create a new Part of Speech...");
+
+		/// <summary>Accessible name of the collapsed Part-of-Speech chooser dropdown.</summary>
+		public static string PosChooserName => Text("FwAvalonia.Pos.ChooserName", "Part of Speech");
+
+		// ----- Editable structured text (StText multi-paragraph fields, §19a) -----
+		// Seed text mirrors the legacy StTextSlice rich editor's paragraph operations. APPEND-ONLY.
+
+		/// <summary>Accessible name / tooltip of the per-paragraph "add paragraph" affordance in a structured-text field (§19a).</summary>
+		public static string AddParagraph => Text("FwAvalonia.StText.AddParagraph", "Add paragraph");
+
+		/// <summary>Accessible name / tooltip of the per-paragraph "delete paragraph" affordance in a structured-text field (§19a).</summary>
+		public static string DeleteParagraph => Text("FwAvalonia.StText.DeleteParagraph", "Delete paragraph");
+
+		/// <summary>
+		/// Accessible name / tooltip of the per-paragraph style picker in a structured-text field (§19a):
+		/// opens the list of the project's paragraph styles to apply to this paragraph.
+		/// </summary>
+		public static string ParagraphStyle => Text("FwAvalonia.StText.ParagraphStyle", "Paragraph Style");
+
+		/// <summary>
+		/// The "Default" entry that leads the paragraph-style picker (§19a): selecting it CLEARS any named
+		/// paragraph style on the paragraph, reverting it to the default.
+		/// </summary>
+		public static string DefaultParagraphStyle => Text("FwAvalonia.StText.DefaultParagraphStyle", "Default");
+
+		// ----- Rich-text DEPTH: external links + embedded objects (ORC), §19c. APPEND-ONLY. -----
+
+		/// <summary>
+		/// Accessible name / tooltip of the external-link affordance on an editable text row (§19c): opens
+		/// a small URL prompt that inserts a hyperlink over the selection, or edits an existing link's URL.
+		/// </summary>
+		public static string Link => Text("FwAvalonia.Link", "Link");
+
+		/// <summary>Watermark / accessible name of the URL entry in the link prompt flyout (§19c).</summary>
+		public static string LinkUrlPrompt => Text("FwAvalonia.LinkUrlPrompt", "Address (URL)");
+
+		/// <summary>The confirm button of the link prompt flyout: insert / update the hyperlink (§19c).</summary>
+		public static string LinkApply => Text("FwAvalonia.LinkApply", "Apply");
+
+		/// <summary>
+		/// Accessible name / tooltip of the delete-embedded-object affordance (§19c): removes the embedded
+		/// object (link, picture, footnote, …) under the selection. Any ORC kind is deletable here even
+		/// when its insert/edit lane lives elsewhere (picture insert/ORC DONE in §19d via the picture
+		/// insert flow; footnote insert deferred).
+		/// </summary>
+		public static string DeleteEmbeddedObject => Text("FwAvalonia.DeleteEmbeddedObject", "Delete embedded object");
+
+		// ----- Pictures (CmPicture editable parity, §19d). APPEND-ONLY. Seed text mirrors the legacy
+		// picture insert/properties/delete affordances (DTMenuHandler.OnInsertPicture / PictureSlice). -----
+
+		/// <summary>Insert-a-picture affordance on an empty picture field / "insert another" on a picture row (legacy Insert Picture).</summary>
+		public static string PictureInsert => Text("FwAvalonia.Picture.Insert", "Add a picture...");
+
+		/// <summary>Edit-picture-properties affordance (caption / license / creator + replace file) — legacy PicturePropertiesDialog.</summary>
+		public static string PictureProperties => Text("FwAvalonia.Picture.Properties", "Picture properties...");
+
+		/// <summary>Delete-picture affordance on a picture row.</summary>
+		public static string PictureDelete => Text("FwAvalonia.Picture.Delete", "Delete picture");
+
+		// ----- Audio (voice writing systems: play + record, §19d). APPEND-ONLY. Seed text mirrors the
+		// legacy voice-WS audio control (LabeledMultiStringView ShortSoundFieldControl play/record/delete). -----
+
+		/// <summary>Play affordance for an existing audio recording on a voice-WS row (legacy ShortSoundFieldControl play).</summary>
+		public static string AudioPlay => Text("FwAvalonia.Audio.Play", "Play");
+
+		/// <summary>Record affordance for a voice-WS row (legacy ShortSoundFieldControl record).</summary>
+		public static string AudioRecord => Text("FwAvalonia.Audio.Record", "Record");
+
+		/// <summary>Clear-the-recording affordance for a voice-WS row (legacy ShortSoundFieldControl delete).</summary>
+		public static string AudioClear => Text("FwAvalonia.Audio.Clear", "Clear");
+
+		/// <summary>Tooltip on the record affordance when recording is unavailable on this platform (cross-platform record deferred).</summary>
+		public static string AudioRecordUnavailable => Text("FwAvalonia.Audio.RecordUnavailable", "Recording is available on Windows in the new view; use the classic view on this platform.");
+
+		/// <summary>Placeholder shown for a voice-WS row that has no recording yet.</summary>
+		public static string AudioNoRecording => Text("FwAvalonia.Audio.NoRecording", "(no recording)");
+
+		// ----- Browse remainders (§19f). APPEND-ONLY. -----
+
+		/// <summary>Menu entry to copy the current browse cell's text to the clipboard (§19f.4, Ctrl+C parity).</summary>
+		public static string CellCopy => Text("FwAvalonia.Browse.CellCopy", "Copy");
+
+		/// <summary>Menu entry to paste the clipboard text into an editable browse cell (§19f.4, Ctrl+V parity).</summary>
+		public static string CellPaste => Text("FwAvalonia.Browse.CellPaste", "Paste");
+
+		/// <summary>The prompt shown in the empty Rapid-Data-Entry "new row" at the bottom of the browse (§19f.7).</summary>
+		public static string RdeNewRowPrompt => Text("FwAvalonia.Browse.RdeNewRowPrompt", "Type here to add a new entry...");
+
+		/// <summary>Menu/affordance label to export the visible browse columns and rows as CSV (§19f.9).</summary>
+		public static string ExportCsv => Text("FwAvalonia.Browse.ExportCsv", "Export visible rows (CSV)...");
+
+		// ----- StText (§19a) accessibility names. APPEND-ONLY. -----
+
+		/// <summary>Screen-reader name for one paragraph editor in a multi-paragraph StText field
+		/// (§19a). {0} = the field label, {1} = the 1-based paragraph number.</summary>
+		public static string StructuredTextParagraphName(string fieldLabel, int paragraphNumber)
+			=> string.Format(Text("FwAvalonia.StructuredText.ParagraphName", "{0} paragraph {1}"), fieldLabel, paragraphNumber);
 	}
 }

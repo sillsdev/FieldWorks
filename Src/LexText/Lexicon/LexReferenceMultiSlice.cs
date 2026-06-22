@@ -899,6 +899,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 								break;
 						}
 
+						// New-UI gate (§19g): in New mode confirm via the Avalonia delete dialog (summary =
+						// the object's DeletionTextTSS, note = the wording built above, gated by CanDelete); the
+						// removal runs in the launcher's UOW. Legacy mode keeps the WinForms dialog below.
+						var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+						if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+						{
+							if (LcmDeleteObjectLauncher.Confirm(m_cache, mainWindow,
+								lr.DeletionTextTSS?.Text, tisb.GetString()?.Text, lr.CanDelete, null,
+								LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation,
+								() => lr.TargetsRS.Remove(m_obj)))
+							{
+								UpdateForDelete(lr);
+							}
+							return;
+						}
+
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
@@ -962,6 +978,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							break;
 						}
 
+						// New-UI gate (§19g): in New mode confirm via the Avalonia delete dialog (summary =
+						// the object's DeletionTextTSS, note = the tree wording built above, gated by CanDelete);
+						// the DeleteObj runs in the launcher's UOW. Legacy mode keeps the WinForms dialog below.
+						var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+						if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+						{
+							if (LcmDeleteObjectLauncher.Confirm(m_cache, mainWindow,
+								lr.DeletionTextTSS?.Text, tisb.GetString()?.Text, lr.CanDelete, null,
+								LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation,
+								() => m_cache.DomainDataByFlid.DeleteObj(lr.Hvo)))
+							{
+								UpdateForDelete(lr);
+							}
+							return;
+						}
+
 						if (DialogResult.Yes == dlg.ShowDialog(mainWindow))
 						{
 							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoDeleteRelation, LexEdStrings.ksRedoDeleteRelation, m_obj, () =>
@@ -1000,6 +1032,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			else
 			{
+				// New-UI gate (§19g): in New mode use the Avalonia Reference Set Details dialog (seed + apply in
+				// one UOW happen in the launcher); legacy mode keeps the WinForms LexReferenceDetailsDlg.
+				var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+				if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+				{
+					var owner = m_propertyTable.GetValue<Form>("window");
+					LcmLexReferenceDetailsLauncher.Edit(m_cache, lr, owner,
+						LexEdStrings.ksUndoEditRefSetDetails, LexEdStrings.ksRedoEditRefSetDetails);
+					return;
+				}
 				using (var dlg = new LexReferenceDetailsDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					dlg.ReferenceName = lr.Name.AnalysisDefaultWritingSystem.Text;

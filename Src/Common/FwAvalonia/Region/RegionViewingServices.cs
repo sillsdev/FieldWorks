@@ -146,11 +146,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public static IReadOnlyList<DeferredViewingConcern> Deferred { get; } =
 			new List<DeferredViewingConcern>
 			{
-				new DeferredViewingConcern("StText multi-paragraph editing",
-					"Paragraph layout and document-style editing are materially broader than run-aware "
-					+ "string editing and were scoped out of the first text-foundation wave.",
-					"avalonia-multi-writing-system-text-foundation (StText follow-on)",
-					"sttext fields render read-only paragraph content; full editing stays in the legacy view."),
+				new DeferredViewingConcern("StText embedded-object (ORC) paragraph editing",
+					"§19a made StText fields editable (paragraph text, add/delete paragraphs, per-paragraph "
+					+ "named style, one undo step per gesture) via the owned FwStructuredTextField over the "
+					+ "paragraph CRUD seam. Only a paragraph whose runs carry an embedded object (ORC) or a "
+					+ "TsString property the run model does not round-trip stays out of scope (§19c.3), like "
+					+ "a lossy single-WS value.",
+					"§19c.3 (StText ORC rich-run editing)",
+					"an ORC/lossy paragraph renders read-only (the EmbeddedObjectReadOnly tooltip) and is "
+					+ "preserved losslessly; editable paragraphs around it are fully editable. Full editing "
+					+ "of an ORC paragraph stays in the legacy view."),
 				new DeferredViewingConcern("Embedded-object (ORC) rich-run editing",
 					"Object Replacement Character runs are not a structural feature of the default lexeme "
 					+ "string editors (census: multistring/string editors are plain; structural object "

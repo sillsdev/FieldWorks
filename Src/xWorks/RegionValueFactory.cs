@@ -127,7 +127,11 @@ namespace SIL.FieldWorks.XWorks
 				runs,
 				TsStringUtils.GetXmlRep(tss, writingSystemFactory, 0),
 				RequiresRichEditor(tss),
-				canEditRichText: runs.TrueForAll(run => string.IsNullOrEmpty(run.ObjectData)),
+				// §19c: an embedded object (ORC) no longer forces read-only — a link is fully editable and
+				// any ORC is deletable, both of which the run-replay path rebuilds with ObjectData
+				// preserved. Only a genuinely-unsupported run property (lossyProperties) still blocks
+				// editing, because that data WOULD be silently dropped on the first plain-text edit.
+				canEditRichText: true,
 				lossyProperties: lossyProperties);
 		}
 

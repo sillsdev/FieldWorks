@@ -164,6 +164,45 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			return true;
 		}
 
+		// §19a: the preview context accepts every gesture so the preview shows editable StText affordances.
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value)
+		{
+			IsOpen = true;
+			return true;
+		}
+
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName)
+		{
+			IsOpen = true;
+			return true;
+		}
+
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		{
+			IsOpen = true;
+			return true;
+		}
+
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		{
+			IsOpen = true;
+			return true;
+		}
+
+		// §19d: the preview support context stages pictures/audio as "accepted" so the preview renders the
+		// affordances; the preview never touches real LCModel/files (it is the detached preview path).
+		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
+		{ IsOpen = true; return true; }
+		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
+		{ IsOpen = true; return true; }
+		public bool TryDeletePicture(LexicalEditRegionField field)
+		{ IsOpen = true; return true; }
+		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
+		{ IsOpen = true; return true; }
+		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata)
+		{ IsOpen = true; return true; }
+
 		public IReadOnlyList<string> Validate()
 			=> Array.Empty<string>();
 

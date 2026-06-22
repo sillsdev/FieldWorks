@@ -46,11 +46,30 @@
 			<Border Name="PART_MorphTypeHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.MorphTypeHost"/>
 
+			<!-- Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): a collapsed
+			     FwOptionPicker dropdown placed next to the Morph Type, since the morph-type selection gates its
+			     enabled state. The owned picker is injected here in code-behind. -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeLabel"/>
+			<Border Name="PART_ComplexFormTypeHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeHost"/>
+
 			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGlossLabel}"
 			           AutomationProperties.AutomationId="InsertEntry.GlossLabel"/>
 			<!-- The owned FwMultiWsTextField is injected here in code-behind. -->
 			<Border Name="PART_GlossHost" Classes="fwFieldHost"
 			        AutomationProperties.AutomationId="InsertEntry.GlossHost"/>
+
+			<!-- Grammatical-info (MSA) section (Stage 3): the owned FwMsaGroupBox is injected here in code-behind. It
+			     is itself a dense, bordered group box (it supplies its own frame), so the host carries only the
+			     section caption above it; the box reconfigures live with the morph-type selection. -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGrammaticalInfoLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.GrammaticalInfoLabel"/>
+			<!-- The FwMsaGroupBox supplies its own dense border, so this host carries no frame of its own (it is
+			     intentionally NOT a PART_*Host fwFieldHost — a second frame around the group box would double-border
+			     it). -->
+			<Border Name="PART_MsaSection"
+			        AutomationProperties.AutomationId="InsertEntry.MsaSection"/>
 
 			<!-- Duplicate-detection "matching entries" pane (P2): the existing entries whose form matches what the
 			     user typed, so they can pick an existing entry rather than create a duplicate (the legacy

@@ -158,6 +158,26 @@ namespace FwAvaloniaTests
 			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms));
 		}
 
+		// §20.2: the flat-list non-lexicon tools whose browse/list pane opts into the Avalonia owned table
+		// under New mode (their EDIT detail stays WinForms until separately registered). Names verified
+		// against the shipped tool configuration XML.
+		[TestCase("notebookEdit")]            // §20.2.1 Notebook record list (RnGenericRec)
+		[TestCase("notebookBrowse")]          // §20.2.1 standalone Notebook Browse
+		[TestCase("Analyses")]                // §20.2.4 Words analyses list
+		[TestCase("toolBulkEditWordforms")]   // §20.2.4 Words bulk-edit
+		[TestCase("featureTypesAdvancedEdit")]      // §20.2.7 Grammar/Lists flat feature-types table
+		[TestCase("reversalToolReversalIndexPOS")]  // §20.2.7 reversal-index POS flat table
+		public void ResolveBrowse_RegisteredNonLexiconTool_NewMode_SelectsAvalonia(string toolName)
+		{
+			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(
+				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: toolName),
+				Is.EqualTo(LexicalEditSurface.Avalonia),
+				$"{toolName} browse opts into the Avalonia owned table under New mode (§20.2)");
+			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(currentToolName: toolName),
+				Is.EqualTo(LexicalEditSurface.WinForms),
+				$"{toolName} still defaults to the legacy BrowseViewer until New is chosen");
+		}
+
 		[Test]
 		public void ResolveBrowse_ExplicitOverride_WinsOverPreference()
 		{

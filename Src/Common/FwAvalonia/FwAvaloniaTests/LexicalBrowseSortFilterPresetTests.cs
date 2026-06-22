@@ -35,6 +35,11 @@ namespace FwAvaloniaTests
 			private readonly Dictionary<int, Dictionary<string, string>> _attrs;
 			private readonly Dictionary<int, string[]> _stringLists;
 			private readonly Dictionary<int, IReadOnlyList<RegionChoiceOption>> _chooserLists;
+			// The columns the (faked) spell-availability probe reports as supporting a spelling-errors filter —
+			// the seam/fake that stands in for the runtime per-WS spelling-dictionary check (which is not
+			// exercisable headlessly). Empty by default, so the item is absent unless a test opts a column in.
+			private readonly HashSet<int> _spellSupported;
+			public int LastSpellingErrorsColumn = -1;
 			public IReadOnlyList<BrowseSortKey> LastSortKeys;
 			public int LastPresetColumn = -1;
 			public BrowseFilterPreset LastPreset = BrowseFilterPreset.None;
@@ -51,12 +56,14 @@ namespace FwAvaloniaTests
 
 			public MetaRowSource(List<string[]> all, Dictionary<int, Dictionary<string, string>> attrs,
 				Dictionary<int, string[]> stringLists = null,
-				Dictionary<int, IReadOnlyList<RegionChoiceOption>> chooserLists = null)
+				Dictionary<int, IReadOnlyList<RegionChoiceOption>> chooserLists = null,
+				IEnumerable<int> spellSupportedColumns = null)
 			{
 				_all = all;
 				_attrs = attrs;
 				_stringLists = stringLists;
 				_chooserLists = chooserLists;
+				_spellSupported = new HashSet<int>(spellSupportedColumns ?? System.Array.Empty<int>());
 			}
 
 			public int RowCount => _all.Count;
@@ -98,6 +105,10 @@ namespace FwAvaloniaTests
 				LastListChoiceColumn = columnIndex;
 				LastListChoiceKeys = chosenKeys;
 			}
+
+			public void SetFilterSpellingErrors(int columnIndex) => LastSpellingErrorsColumn = columnIndex;
+
+			public bool ColumnSupportsSpellingFilter(int columnIndex) => _spellSupported.Contains(columnIndex);
 
 			public string GetColumnSpecAttribute(int columnIndex, string attrName)
 			{
@@ -602,6 +613,75 @@ namespace FwAvaloniaTests
 				"Restrict Date… is absent on a plain text column");
 			Assert.That(ids.Any(id => (id ?? "").Contains("ChooseItem")), Is.False,
 				"Choose… is absent on a plain text column");
+		}
+
+		// ----- "Spelling Errors" (BadSpellingMatcher, gated on per-WS spell-dictionary availability) -----
+
+		// Column 0 (Form) reports spell-support through the (faked) metadata probe; column 1 (Definition)
+		// does not — standing in for the runtime per-WS spelling-dictionary check, which cannot be exercised
+		// headlessly. The gating + routing under test are real; only the dictionary probe itself is faked.
+		private static MetaRowSource MakeSpellSource() => new MetaRowSource(
+			new List<string[]>
+			{
+				new[] { "teh", "a feline", "2" },
+				new[] { "dog", "a canine", "1" }
+			},
+			new Dictionary<int, Dictionary<string, string>>(),
+			spellSupportedColumns: new[] { 0 });
+
+		[AvaloniaTest]
+		public void SpellingErrors_OfferedOnlyOnAColumnThatReportsSpellSupport()
+		{
+			var view = Show(MakeSpellSource());
+
+			// Form (col 0) reports spell-support → the item is present.
+			Assert.That(PresetItemsFor(view, "Form").Any(m =>
+				AutomationProperties.GetAutomationId(m) == "BrowseFilterSpellingErrorsItem.Form"), Is.True,
+				"Spelling Errors is offered when the column reports a spelling dictionary for its WS");
+
+			// Definition (col 1) does NOT report spell-support → the item is absent.
+			Assert.That(PresetItemsFor(view, "Definition").Any(m =>
+				(AutomationProperties.GetAutomationId(m) ?? "").Contains("SpellingErrors")), Is.False,
+				"Spelling Errors is hidden on a column with no spelling dictionary for its WS");
+		}
+
+		[AvaloniaTest]
+		public void SpellingErrors_Absent_WhenNoColumnReportsSpellSupport()
+		{
+			// No column opts into spell-support (the default headless state: no installed dictionaries).
+			var source = new MetaRowSource(
+				new List<string[]> { new[] { "teh", "x", "1" } },
+				new Dictionary<int, Dictionary<string, string>>());
+			var view = Show(source);
+
+			foreach (var field in new[] { "Form", "Definition", "SenseCount" })
+				Assert.That(PresetItemsFor(view, field).Any(m =>
+					(AutomationProperties.GetAutomationId(m) ?? "").Contains("SpellingErrors")), Is.False,
+					$"Spelling Errors is absent on {field} when no spelling dictionary is available");
+		}
+
+		[AvaloniaTest]
+		public void SpellingErrors_Click_RoutesToTheSpellingFilterSeam_WithTheColumnIndex()
+		{
+			var source = MakeSpellSource();
+			var view = Show(source);
+
+			var item = MenuItemById(PresetItemsFor(view, "Form").ToList(), "BrowseFilterSpellingErrorsItem.Form");
+			Click(item);
+
+			Assert.That(source.LastSpellingErrorsColumn, Is.EqualTo(0),
+				"clicking Spelling Errors routes to SetFilterSpellingErrors with the clicked column index");
+		}
+
+		[AvaloniaTest]
+		public void ApplyFilterSpellingErrors_RoutesToTheSource()
+		{
+			var source = MakeSpellSource();
+			var view = Show(source);
+
+			view.ApplyFilterSpellingErrors(0);
+			Assert.That(source.LastSpellingErrorsColumn, Is.EqualTo(0),
+				"ApplyFilterSpellingErrors forwards the column to the spelling-filter seam");
 		}
 	}
 }

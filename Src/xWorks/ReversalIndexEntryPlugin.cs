@@ -197,6 +197,24 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey) => false;
 
+		// §19a: the Reversal Entries plugin edits multi-unicode reversal forms, not StText; reject
+		// paragraph CRUD (no StText rows are composed for this plugin).
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex, RegionRichTextValue value) => false;
+
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex, string styleName) => false;
+
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex) => false;
+
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex) => false;
+
+		// §19d: the Reversal Entries plugin edits reversal forms, not pictures/audio; reject picture gestures.
+		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata) => false;
+		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile) => false;
+		public bool TryDeletePicture(LexicalEditRegionField field) => false;
+		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata) => false;
+		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
+			string sourceFile, RegionPictureMetadata metadata) => false;
+
 		public IReadOnlyList<string> Validate() => _host?.Validate() ?? Array.Empty<string>();
 
 		public void Commit() => _host?.Commit();

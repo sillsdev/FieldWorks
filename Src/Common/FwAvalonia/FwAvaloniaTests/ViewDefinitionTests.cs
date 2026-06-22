@@ -43,6 +43,12 @@ namespace FwAvaloniaTests
   <part id='LexEntry-Detail-ObsoleteEditor'>
     <slice label='Old' editor='message' field='Y' ws='analysis'/>
   </part>
+  <part id='LexEntry-Detail-JtView'>
+    <slice label='Pronunciation' editor='jtview' field='Pronunciations' layout='PublishPron'/>
+  </part>
+  <part id='LexEntry-Detail-PerFieldWs'>
+    <slice label='Form' editor='multistring' field='CitationForm' ws='all analysis'/>
+  </part>
 </bin></PartInventory>";
 
 		private static ViewDefinitionModel Import(string layoutXml)
@@ -132,6 +138,61 @@ namespace FwAvaloniaTests
 
 			var placeholder = model.Roots[2];
 			Assert.That(placeholder.Kind, Is.EqualTo(ViewNodeKind.CustomFieldPlaceholder));
+		}
+
+		[Test]
+		public void Import_JtViewSlice_CapturesNestedLayoutAsTargetLayout()
+		{
+			// §19e: a jtview slice's param/layout names the nested layout to compose inline; it must ride
+			// the node as TargetLayout so the composer's WalkEmbeddedView can descend into it. The caller's
+			// param wins over the slice's layout attribute (legacy SliceFactory jtview).
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='JtV'>
+  <part ref='JtView' param='PronInEntry'/>
+</layout>");
+
+			var jt = model.Roots[0];
+			Assert.That(jt.RawEditor, Is.EqualTo("jtview"));
+			Assert.That(jt.TargetLayout, Is.EqualTo("PronInEntry"),
+				"the caller param supplies the nested layout for the embedded view");
+		}
+
+		[Test]
+		public void Import_JtViewSlice_FallsBackToSliceLayoutAttribute()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='JtV'>
+  <part ref='JtView'/>
+</layout>");
+			Assert.That(model.Roots[0].TargetLayout, Is.EqualTo("PublishPron"),
+				"with no caller param, the slice's own layout attribute is the nested layout");
+		}
+
+		[Test]
+		public void Import_VisibleWritingSystems_CapturesThePerFieldWsOverride()
+		{
+			// §19e: a per-field visibleWritingSystems override (on the part ref) restricts the displayed
+			// writing systems. The ordered specs ride the node for the composer to intersect with the set.
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='PFW'>
+  <part ref='PerFieldWs' visibleWritingSystems='fr en'/>
+</layout>");
+
+			var field = model.Roots[0];
+			Assert.That(field.VisibleWritingSystems, Is.Not.Null);
+			Assert.That(field.VisibleWritingSystems, Is.EqualTo(new[] { "fr", "en" }),
+				"the override's ordered specs ride the node");
+		}
+
+		[Test]
+		public void Import_NoVisibleWritingSystems_LeavesOverrideNull()
+		{
+			var model = Import(@"
+<layout class='LexEntry' type='detail' name='PFW'>
+  <part ref='PerFieldWs'/>
+</layout>");
+			Assert.That(model.Roots[0].VisibleWritingSystems, Is.Null,
+				"a field with no override shows the full configured set (null = no restriction)");
 		}
 
 		[Test]

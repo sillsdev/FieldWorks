@@ -78,6 +78,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The current Avalonia content, or null.</summary>
 		protected Avalonia.Controls.Control CurrentContent => Host.Content as Avalonia.Controls.Control;
 
+		/// <summary>
+		/// §19d: the current hosted Avalonia content (public accessor), so the product host can resolve the
+		/// surface's <c>TopLevel</c>/<c>IStorageProvider</c> for the managed file picker the picture media
+		/// seam uses. Null when no content is shown.
+		/// </summary>
+		public Avalonia.Controls.Control HostedContent => CurrentContent;
+
 		private void LogInterop(string message)
 		{
 			if (s_interopTrace.TraceInfo)

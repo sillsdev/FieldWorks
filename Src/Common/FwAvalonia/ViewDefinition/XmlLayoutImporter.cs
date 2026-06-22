@@ -27,7 +27,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
 				"ref", "label", "abbr", "visibility", "expansion", "param", "customFields",
-				"localizationKey", "labelId", "automationId", "surface", "menu", "hotlinks"
+				"localizationKey", "labelId", "automationId", "surface", "menu", "hotlinks",
+				"visibleWritingSystems"
 			};
 
 		public static readonly HashSet<string> HandledSliceAttributes =
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			{
 				"label", "abbr", "field", "ws", "editor", "visibility", "expansion",
 				"localizationKey", "labelId", "automationId", "surface", "menu", "contextMenu", "hotlinks",
-				"forVariant"
+				"forVariant", "visibleWritingSystems"
 			};
 
 		public static readonly HashSet<string> HandledObjSeqAttributes =
@@ -331,6 +332,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					var children = new List<ViewNode>();
 					BuildInlineChildren(childElements, parts, className, layoutType, stableId, children, diagnostics);
 
+					// §19e: a jtview slice (editor="jtview") names the nested layout to compose for this
+					// object in its caller's param (legacy SliceFactory jtview: param ?? node layout attr).
+					// Carry it as the node's TargetLayout so the composer's WalkEmbeddedView can recurse the
+					// nested layout's fields, exactly as an obj/seq descent does. Only jtview slices read it;
+					// every other editor leaves TargetLayout null.
+					string sliceTargetLayout = null;
+					if (string.Equals(editor, EditorKindMap.JtViewEditor, System.StringComparison.OrdinalIgnoreCase))
+						sliceTargetLayout = Attr(callerEl, "param") ?? Attr(contentEl, "layout");
+
+					// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems on a
+					// multistring slice or its persisted partRef property — a space/comma list of ws specs).
+					// Carry the ordered specs onto the node; the composer intersects them with the resolved
+					// ws= set so the field shows exactly that subset. Caller (partRef) wins over content,
+					// matching where the legacy editor persists the user's choice.
+					var visibleWss = ParseWsList(Attr(callerEl, "visibleWritingSystems")
+						?? Attr(contentEl, "visibleWritingSystems"));
+
 					// Caller children under a slice-content part (<indent>/<part> wrappers on a section
 					// part, e.g. AsLexemeForm's MorphTypeBasic) become child nodes, mirroring how
 					// DataTree.ProcessPartRefNode realizes them as indented child slices. Other caller
@@ -359,10 +377,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					if (classification == EditorClassification.GroupingNone && children.Count > 0)
 					{
 						return new ViewNode(stableId, ViewNodeKind.Group, label, abbreviation, field, editor,
-							classification, ws, visibility, expansion, indented, null, children,
+							classification, ws, visibility, expansion, indented, sliceTargetLayout, children,
 							localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 							menuId, contextMenuId, hotlinksId,
-							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null);
+							chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
+							visibleWritingSystems: visibleWss);
 					}
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
@@ -370,14 +389,18 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 					// the hybrid companion lane instead of an unsupported row. The attributes stay in
 					// the unhandled-attribute report (no Avalonia editor consumes them).
 					return new ViewNode(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
-						classification, ws, visibility, expansion, indented, null, children,
+						classification, ws, visibility, expansion, indented, sliceTargetLayout, children,
 						localizationKey, automationId, routing, boldEmphasis, fontScalePercent,
 						menuId, contextMenuId, hotlinksId,
 						forVariant: ParseOptionalBool(Attr(contentEl, "forVariant")) ?? false,
 						customEditorClass: Attr(contentEl, "class"),
 						customEditorAssembly: Attr(contentEl, "assemblyPath"),
 						chooserLinks: chooserLinks.Count > 0 ? chooserLinks : null,
-						enumStringList: enumStringList);
+						enumStringList: enumStringList,
+						visibleWritingSystems: visibleWss,
+						// §20.1.4 (F-7): legacy toggleValue= on a boolean slice (the displayed checkbox is the
+						// logical inverse of the stored property); carried so the composer inverts read+write.
+						toggleValue: ParseOptionalBool(Attr(contentEl, "toggleValue")) ?? false);
 				}
 				case "obj":
 				case "seq":
@@ -724,6 +747,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				expansion, indented, targetLayout, System.Array.Empty<ViewNode>(), localizationKey, automationId, routing);
 
 		private static string Attr(XElement el, string name) => (string)el.Attribute(name);
+
+		// §19e: split a legacy visibleWritingSystems value (the legacy slice persists a comma-delimited ICU
+		// locale list; layout authors also write space-separated). Null/blank => no override (full set).
+		private static IReadOnlyList<string> ParseWsList(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return null;
+			var parts = value.Split(new[] { ',', ' ', ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+			return parts.Length == 0 ? null : parts;
+		}
 
 		// Task 4.9: one diagnostic per attribute the importer does not consume. Functional drops
 		// (menus, ghost lines) are warnings; presentational drops (style, separators, numbering) are info.
