@@ -58,6 +58,7 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../Common/FwAvalonia/FwAvalonia.csproj" />
     <ProjectReference Include="../Common/Controls/DetailControls/DetailControls.csproj" />
     <ProjectReference Include="../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../Common/Controls/Widgets/Widgets.csproj" />

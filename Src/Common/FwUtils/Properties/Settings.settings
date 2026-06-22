@@ -11,6 +11,9 @@
     <Setting Name="Update" Description="Setting controlling getting updates" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Settings.UpdateSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="UIMode" Description="Preferred lexical-edit UI mode (Legacy or New)" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Legacy</Value>
+    </Setting>
     <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
