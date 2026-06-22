@@ -38,8 +38,23 @@ Verify it took: `claude mcp list` should show `winforms-mcp`, and `ToolSearch "w
 
 Note — **`cmd /c npx`, not bare `npx`**: on Windows, Claude Code spawns the command without a shell, and
 `npx` is a `.cmd`/`.ps1` shim that fails to spawn directly (and PowerShell mangles the leading `@` of the
-scoped package name). Wrapping in `cmd /c` is the reliable form. `HEADLESS=true` runs FieldWorks on a
-hidden desktop so it does not steal the foreground; `TFM=net48` matches the FieldWorks managed target.
+scoped package name). Wrapping in `cmd /c` is the reliable form. `TFM=net48` matches the FieldWorks managed
+target.
+
+**`HEADLESS=false` (visible) is the working default for FieldWorks.** `HEADLESS=true` runs the app on a
+hidden desktop, but FieldWorks' startup does NOT complete there if it shows any modal (and an invalid
+command-line arg makes it show a modal **usage dialog**) — the symptom is a blank window, empty UIA tree,
+loaded-but-flat memory, no main-window title. With `HEADLESS=false` FieldWorks starts on the real desktop
+(briefly visible) and both the UIA tree and `PrintWindow` screenshots work. Changing `HEADLESS` requires a
+Claude Code reconnect (the server reads env at launch). To capture WITHOUT reconnecting, launch FieldWorks
+yourself on the visible desktop and attach:
+```powershell
+$psi=[System.Diagnostics.ProcessStartInfo]::new('<repo>\Output\Debug\FieldWorks.exe')
+$psi.ArgumentList.Add('-db'); $psi.ArgumentList.Add('Sena 3'); $psi.UseShellExecute=$true
+[System.Diagnostics.Process]::Start($psi)
+```
+then `winforms_attach_to_process` (it always uses the visible desktop). Use `-db "<project>"` ONLY — there
+is no `-app` option; an unknown arg pops the blocking usage dialog.
 
 ## Preflight
 

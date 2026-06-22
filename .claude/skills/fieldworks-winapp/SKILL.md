@@ -23,6 +23,13 @@ FieldWorks Language Explorer desktop app through WinForms MCP or WinApp MCP.
 Keep the workflow grounded in the live UI tree: inspect first, interact second,
 capture evidence after the target state is visible.
 
+**Scope: legacy WinForms only.** This skill always runs FieldWorks in **Legacy
+(WinForms) UI mode** to scrape the legacy surface for "truth" screenshots,
+workflows, and behaviour (the migration parity baseline). The WinForms UIA2 MCP
+can only see WinForms — the Avalonia (New) surface is captured by a SEPARATE
+headless skill, never through this MCP. ALWAYS run
+`scripts/Set-FieldWorksLegacyMode.ps1` before launching (see Setup First).
+
 This skill is intentionally organized as a small index plus route-specific
 navigation files. Read only the route files needed for the task.
 
@@ -93,6 +100,9 @@ verifies that launch will succeed.
 - `references/mcp-setup.md`: enabling the `winforms_*` tools for Claude Code (`.mcp.json`, reconnect).
 - `references/research.md`: source-backed rationale for this structure.
 - `scripts/Preflight-WinFormsMcp.ps1`: pre-session check (node/npx, package, build, `.mcp.json`).
+- `scripts/Set-FieldWorksLegacyMode.ps1`: forces `UIMode=Legacy` — run before EVERY launch.
+- `scripts/Resolve-FieldWorksDevRegistry.ps1`: aligns the dev registry (`RootCodeDir`/`RootDataDir`) to
+  this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
 
 When a task names a destination, read the matching navigation file. When a task
 discovers a better route or a fragile selector, read and update
