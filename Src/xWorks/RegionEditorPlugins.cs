@@ -152,6 +152,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			registry.Register(new ChorusNotesPlugin());
 			registry.Register(new ReversalIndexEntryPlugin());
+			// avalonia-interlinear-editor (W-4): the native Avalonia interlinear editor for the Words
+			// Analyses detail pane, claiming the legacy InterlinearSlice. Read-only this wave; the
+			// editable write-back + MSA prune (W-5) layer onto the same plugin.
+			registry.Register(new InterlinearSlicePlugin());
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());

@@ -71,6 +71,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>§20.3.1 (LE-4): validation message when a list item (CmPossibility) has neither a Name nor an Abbreviation.</summary>
 		public static string PossibilityNameOrAbbreviationRequired => Text("FwAvalonia.PossibilityNameOrAbbreviationRequired", "A name or abbreviation is required.");
 
+		// avalonia-interlinear-editor — the per-line row labels down the left edge of the interlinear editor,
+		// mirroring the legacy InterlinVc label pile (Morphemes / Lex. Entries / Lex. Gloss / Lex. Gram. Info.).
+		public static string InterlinearMorphemesLabel => Text("FwAvalonia.InterlinearMorphemesLabel", "Morphemes");
+		public static string InterlinearLexEntriesLabel => Text("FwAvalonia.InterlinearLexEntriesLabel", "Lex. Entries");
+		public static string InterlinearGlossLabel => Text("FwAvalonia.InterlinearGlossLabel", "Lex. Gloss");
+		public static string InterlinearGramInfoLabel => Text("FwAvalonia.InterlinearGramInfoLabel", "Lex. Gram. Info.");
+
 		/// <summary>
 		/// Warning shown when a pending lexical edit is rolled back on navigate/close because it fails
 		/// validation (the edit is not silently lost — the user is told why). {0} is the validation reason(s).

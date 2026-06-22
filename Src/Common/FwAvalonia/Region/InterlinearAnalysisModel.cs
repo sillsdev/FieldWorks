@@ -17,9 +17,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	public sealed class InterlinearBundle
 	{
 		public InterlinearBundle(string morph, string gloss, string grammaticalInfo,
-			Guid? morphGuid = null, Guid? senseGuid = null, Guid? msaGuid = null)
+			Guid? morphGuid = null, Guid? senseGuid = null, Guid? msaGuid = null, string lexEntry = null)
 		{
 			Morph = morph ?? string.Empty;
+			LexEntry = lexEntry ?? string.Empty;
 			Gloss = gloss ?? string.Empty;
 			GrammaticalInfo = grammaticalInfo ?? string.Empty;
 			MorphGuid = morphGuid;
@@ -27,8 +28,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			MsaGuid = msaGuid;
 		}
 
-		/// <summary>The morph form text (vernacular).</summary>
+		/// <summary>The morph form text (vernacular) — the legacy interlinear "Morphemes" line.</summary>
 		public string Morph { get; }
+
+		/// <summary>The owning lex-entry headword (vernacular) — the legacy interlinear "Lex. Entries" line
+		/// (rendered by LexEntryVc), distinct from the morpheme form: the headword/citation form of the entry
+		/// the morph belongs to. Empty when the bundle has no chosen morph/entry.</summary>
+		public string LexEntry { get; }
 
 		/// <summary>The lexical gloss text (analysis).</summary>
 		public string Gloss { get; }

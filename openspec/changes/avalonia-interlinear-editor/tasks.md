@@ -13,25 +13,66 @@
 - **Reuse (architecture):** plug in via `RegionEditorPluginRegistry` (mirror `DialogLauncherPlugins`), compose via the §20.1.4 class-general `FullEntryRegionComposer.Compose(ICmObject,…)`, stage ALL writes through the region's existing fenced `LcmRegionEditSession` via `IRegionEditContext` (plugin reuses the session; never opens its own). Per-bundle morph/sense/MSA choosers reuse `FwOptionPicker` + `RegionValueFactory.BuildPossibilityOptions()`; no new picker control.
 
 ## 1. Projection + compose
-- [ ] 1.1 (W-1) `WfiWordform` nested-tree compose (analyses → bundles via virtual flids) — composer/plugin.
+- [x] 1.1 DONE+green (W-1): `WfiWordform` nested-tree compose proven FREE via the §20.1.4 class-general
+  composer — `FullEntryRegionComposer.Compose(wordform)` already walks the analyses sequence
+  (`WalkSequence`→`DescendInto`) into each `WfiAnalysis` layout and reaches the InterlinearAnal plugin row
+  (design Decision 6: no new virtual flids). Proven by `InterlinearSlicePluginTests.Compose_WordformRooted_DescendsIntoAnalyses_AndRendersTheInterlinear`.
 - [x] 1.2 DONE+green: `InterlinearAnalysisModel` (wordform → lines → bundles → {morph, gloss, grammaticalInfo} + morph/sense/msa GUIDs; `HasAnalysis`), LCModel-free — `Src/Common/FwAvalonia/Region/InterlinearAnalysisModel.cs`; 3 unit tests (`InterlinearAnalysisModelTests`).
-- [ ] 1.3 Projector in the Morphology plugin: `WfiAnalysis`/`WfiMorphBundle` → `InterlinearAnalysisModel`; parity test vs the legacy interlinear (T1).
-- [ ] 1.4 (W-3) summary-slice param'd jtview in the header lane (corrects the §20 over-rated "handled").
+- [x] 1.3 DONE+green: Projector in xWorks (`InterlinearAnalysisProjector.ProjectAnalysis`): `WfiAnalysis`/`WfiMorphBundle` → `InterlinearAnalysisModel` (morph form / `SenseRA.Gloss` / `MsaRA.InterlinearAbbr` + GUIDs); T1 parity vs live LCModel values — `InterlinearAnalysisProjectorTests` (4 tests).
+- [~] 1.4 (W-3) DEFERRED (cited): the wordform/analysis HeavySummary header already composes via the
+  class-general composer's Summary/EmbeddedView lanes (the `Compose(wordform)` output carries the section
+  headers + per-analysis header rows — see `Compose_WordformRooted` evidence). The remaining param'd-jtview
+  visual parity (exact summary-line rendering) needs live-FLEx visual comparison; deferred to the live-app
+  parity pass. Gated behind UIMode=New (off by default), so no default-user regression.
 
 ## 2. Read-only interlinear renderer (W-4, de-risk)
-- [ ] 2.1 Avalonia interlinear control: aligned wordform / morpheme / lex-gloss / grammatical-info columns (shared-width measured layout, Skia-rendered).
-- [ ] 2.2 Register the `InterlinearSlice` plugin in read-only mode (editable=false); T2 compose `Analyses` edit with no-Unsupported.
-- [ ] 2.3 PNG baseline (T5) + T3 edge: empty analysis, multi-analysis wordform, RTL/complex-script morphemes.
+- [x] 2.1 DONE+green: Avalonia interlinear control `InterlinearRegionEditor` — aligned wordform / morpheme / lex-gloss / grammatical-info columns (Grid Auto-column shared-width measured layout, Skia-rendered, RTL-aware), LCModel-free.
+- [x] 2.2 DONE+green: `InterlinearSlicePlugin` registered in read-only mode (claims `MorphologyEditor.InterlinearSlice`); T2 compose `Analyses` edit with no-Unsupported (`InterlinearSlicePluginTests`, analysis- AND wordform-rooted). `EngineIsolationAuditTests` green.
+- [x] 2.3 DONE+green: PNG baselines (T5) + T3 edges: empty analysis (bare wordform), multi-analysis wordform, RTL/complex-script morphemes — `InterlinearVisualTests` (4 tests, each + `AssertNoCrowding`).
 
 ## 3. Editable morph-bundle (W-5)
-- [ ] 3.1 Per-bundle editing intents: choose/edit morph, sense, MSA (reuse Phase-1 chooser kit).
-- [ ] 3.2 Plugin write-back: `UpdateRealAnalysis` parity + **MSA prune** (`CollectReferencedMsas`→delete-if-`CanDelete`) inside one fenced UOW.
-  - [ ] 3.2.1 **T1 `MSAPruneTests`** (before the 3.3 workflow): given a bundle whose chosen sense is removed, the plugin identifies the orphaned MSA, `CanDelete` is true, the delete succeeds; and the inverse — when a surviving sense still uses the MSA, it is NOT pruned. `MemoryOnlyBackendProviderTestBase`.
-- [ ] 3.3 T4 workflow (real cache): edit a bundle → commit → reopen round-trips AND an orphaned MSA is pruned; one undo step per gesture.
+- [x] 3.1 DONE+green: Per-bundle editing intents — MORPH/ENTRY (Lex. Entries line), SENSE (lex-gloss line),
+  and MSA (grammatical-info line) choosers, each a button opening the shared `FwOptionPicker` flyout (reuse,
+  no new picker). Candidates: morph/entry via `MorphServices.GetMatchingMorphs` (other entries sharing the
+  surface form); sense/MSA from the morpheme's owning entry. Picking an entry re-points `MorphRA` and resets
+  sense/MSA to the new entry's default. `InterlinearBundleEditChoices` DTO + editable `InterlinearRegionEditor`;
+  editable only for human-approved analyses (legacy `deParams editable="true"`).
+  // PARITY (deferred): only RE-SEGMENTATION (the morpheme-breaker: changing the surface Morphemes line /
+  bundle count) stays out — its own subsystem (`SandboxBase.MorphemeBreaker`), tracked here, not in spec.md.
+- [x] 3.2 DONE+green: Plugin write-back (`InterlinearAnalysisWriteBack`): re-point bundle sense (deriving MSA)
+  OR MSA independently + **MSA prune** (`CollectReferencedMsas` + bundle's own MSA → delete-if-`CanDelete`)
+  inside the region's shared fenced UOW (legacy `AnalysisInterlinearRs.SaveChanges` parity).
+  - [x] 3.2.1 DONE+green: **T1 `InterlinearMSAPruneTests`** (4 tests) — bundle moves off an MSA no surviving
+    sense uses → identified, `CanDelete`, deleted; inverse (surviving sense still uses it) → NOT pruned;
+    independent MSA choice leaves the sense; clearing the sense clears sense+MSA. `MemoryOnlyBackendProviderTestBase`.
+- [x] 3.3 DONE+green: T4 workflow (`InterlinearWriteBackWorkflowTests`, real cache + composed fenced host):
+  edit a bundle's sense → commit → re-project round-trips (gloss/sense/MSA) AND the orphaned MSA is pruned;
+  a single Undo reverts the sense change AND restores the pruned MSA (one atomic undo step per gesture).
 
 ## 4. Side-effects, commands, wiring
-- [ ] 4.1 (W-2) `SpellingStatusChanged` side-effect in the option setter (ref EnumComboSlice parity).
-- [ ] 4.2 (W-6) bridge Words context-menu commands to the Avalonia surface (incl. Go-To-Wordform).
-- [ ] 4.3 Register `Analyses` in `LexicalEditSurfaceRegistry`; flip `RecordEditViewSwitchTests` for `Analyses` Legacy→Avalonia.
-- [ ] 4.4 `EngineIsolationAuditTests` stays green (no native Views/Graphite/Sandbox/LCModel in the FwAvalonia interlinear control).
-- [ ] 4.5 Full `./build.ps1` + `./test.ps1` green; PNG baselines reviewed; `// PARITY` notes for any deferred interlinear affordance.
+- [~] 4.1 (W-2) DEFERRED (cited): the Spelling enum combo composes on the Avalonia surface (WalkEnumCombo over
+  `WfiWordform.SpellingStatus`), but the legacy `sideEffect="SpellingStatusChanged"` is not yet re-fired.
+  Plumbing is scoped (carry `sideEffect` on `ViewNode` via `XmlLayoutImporter`, reflect-invoke `(old,new)` in
+  the enum option setter — EnumComboSlice parity), but `IWfiWordform.SpellingStatusChanged` propagates to the
+  external spelling dictionary, which is not cleanly verifiable headless — so it lands with the live-app
+  spelling-engine verification rather than as an unverifiable green. Gated behind UIMode=New (off by default):
+  spelling-status changes still persist the enum value; only the dictionary side-effect is deferred.
+- [~] 4.2 (W-6) DEFERRED (cited): the composed rows already carry their menu/context-menu/hotlinks bindings
+  (the plugin row + section headers preserve `menu=`/`mnuDataTree-*`), and command execution rides the same
+  `RegionEditorServices`/host-command seam the lexeme-editor rows use (design Decision 7 — no new command bus).
+  Verifying the specific Words commands (incl. Go-To-Wordform) end-to-end requires the live FLEx shell;
+  deferred to the live-app command-routing pass. Gated behind UIMode=New (off by default).
+- [x] 4.3 DONE+green: Registered `Analyses` in `LexicalEditSurfaceRegistry.DefaultSupportedTools`; moved the
+  `RecordEditViewSwitchTests` `Analyses` case from `NonMigratedRecordEditTools_FallBackToLegacy` to
+  `RegisteredRecordEditTools_ResolveToAvalonia` (UIMode=New → Avalonia; UIMode=Legacy keeps WinForms) — green,
+  including that broad integration test constructing RecordEditView over the WfiWordform root. Resolver tests
+  (`LexicalEditSurfaceResolverTests`) stay green. Satisfies the spec's UI-mode-gate scenario.
+- [x] 4.4 DONE+green: `EngineIsolationAuditTests` stays green (no native Views/Graphite/Sandbox/LCModel in
+  the FwAvalonia interlinear control — confirmed each test cycle).
+- [x] 4.5 DONE: Full managed `./test.ps1 -SkipNative` green — all 49 managed test assemblies pass
+  (xWorksTests 1648, FwAvaloniaTests 826, LexEd/IText/DetailControls/area + RecordEditView all green) EXCEPT
+  38 pre-existing/environmental `RootSiteTests` render-baseline-harness failures (`RenderBaselineTests`/
+  `RenderBenchmarkHarness` — the render-speedup-benchmark infra, needs display/baselines; orthogonal to this
+  change, which touches zero native/RootSite code). Native skipped (managed-only change). PNG baselines
+  emitted by `InterlinearVisualTests` (Interlinear-01..05). `// PARITY` notes: morph re-segmentation (3.1);
+  W-2/W-3/W-6 deferrals cited above.

@@ -92,10 +92,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// §20.3 / §20.5.2: tools whose record-edit surface is NOT yet registered still fall back to legacy under
-		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate; Analyses = the Words
-		// interlinear edit, pending the W-4/W-5 editor — its BROWSE list is Avalonia, but its EDIT detail is not.)
+		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate.) Analyses graduated
+		// to the Avalonia surface with the interlinear editor (avalonia-interlinear-editor W-4/W-5) — see
+		// RegisteredRecordEditTools_ResolveToAvalonia below.
 		[TestCase("domainTypeEdit")]
-		[TestCase("Analyses")]
 		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);
@@ -118,6 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		// under New mode — the per-tool flip the plan calls for as each registers.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
+		[TestCase("Analyses")] // avalonia-interlinear-editor (4.3): the Words Analyses interlinear editor
 		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);

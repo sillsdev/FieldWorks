@@ -28,7 +28,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			"lexiconEdit", "lexiconEditPopup",
 			"notebookEdit", // §20.3.2 Notebook RnGenericRec (layout resolved via layoutChoiceField="Type")
-			"posEdit"       // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
+			"posEdit",      // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
+			"Analyses"      // avalonia-interlinear-editor (W-4/W-5): Words Analyses wordform interlinear editor
 		};
 
 		private readonly HashSet<string> _supported = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

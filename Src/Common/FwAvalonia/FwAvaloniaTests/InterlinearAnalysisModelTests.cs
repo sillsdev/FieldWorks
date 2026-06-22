@@ -23,8 +23,9 @@ namespace FwAvaloniaTests
 			var morph = Guid.NewGuid();
 			var sense = Guid.NewGuid();
 			var msa = Guid.NewGuid();
-			var b = new InterlinearBundle("ka-", "P",  "pfx", morph, sense, msa);
+			var b = new InterlinearBundle("ka-", "P",  "pfx", morph, sense, msa, lexEntry: "ka-");
 			Assert.That(b.Morph, Is.EqualTo("ka-"));
+			Assert.That(b.LexEntry, Is.EqualTo("ka-"), "the lex-entry headword line (legacy kflidLexEntries)");
 			Assert.That(b.Gloss, Is.EqualTo("P"));
 			Assert.That(b.GrammaticalInfo, Is.EqualTo("pfx"));
 			Assert.That(b.MorphGuid, Is.EqualTo(morph));
