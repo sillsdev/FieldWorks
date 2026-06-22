@@ -23,6 +23,8 @@ namespace FwAvaloniaTests
 			private readonly XElement _content;
 			public StubResolver(XElement content) { _content = content; }
 			public XElement ResolvePart(string className, string layoutType, string refName) => _content;
+			public System.Collections.Generic.IReadOnlyList<XElement> ResolvePartContents(string className, string layoutType, string refName)
+				=> _content == null ? System.Array.Empty<XElement>() : new[] { _content };
 			public XElement ResolvePartByRef(string refName) => _content;
 		}
 

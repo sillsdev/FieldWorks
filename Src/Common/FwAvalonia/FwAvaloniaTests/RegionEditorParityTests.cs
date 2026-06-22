@@ -239,6 +239,9 @@ namespace FwAvaloniaTests
 			public XElement ResolvePart(string className, string layoutType, string refName)
 				=> _parts.TryGetValue(refName, out var el) ? el : null;
 
+			public System.Collections.Generic.IReadOnlyList<XElement> ResolvePartContents(string className, string layoutType, string refName)
+				=> _parts.TryGetValue(refName, out var el) ? new[] { el } : System.Array.Empty<XElement>();
+
 			public XElement ResolvePartByRef(string refName)
 				=> _parts.TryGetValue(refName, out var el) ? el : null;
 		}

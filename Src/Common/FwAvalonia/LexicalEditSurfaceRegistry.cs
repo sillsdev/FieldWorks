@@ -29,7 +29,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			"lexiconEdit", "lexiconEditPopup",
 			"notebookEdit", // §20.3.2 Notebook RnGenericRec (layout resolved via layoutChoiceField="Type")
 			"posEdit",      // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
-			"Analyses"      // avalonia-interlinear-editor (W-4/W-5): Words Analyses wordform interlinear editor
+			"Analyses",     // avalonia-interlinear-editor (W-4/W-5): Words Analyses wordform interlinear editor
+			"PhonologicalRuleEdit", // avalonia-rule-formula-editor: regular (editable) + metathesis (editable, non-middle)
+			"EnvironmentEdit",      // §3.2: PhEnvironment composes Name/Description (Text) + the validated environment editor — full parity
+			"compoundRuleAdvancedEdit", // §2.5: MoEndoCompound/MoExoCompound compose Name/Description + Active + category Choosers editably
+			                            // (after the multi-child-part importer fix). // PARITY: MoAffixProcess (affix-process) stays read-only.
+			"naturalClassedit",         // §3.3: PhNCSegments (editable Segments phoneme vector) + PhNCFeatures (feature launcher) compose fully editably
+			"phonemeEdit",              // §3.1: Basic IPA symbol editor (with derive-on-commit) + Features launcher + editable Codes vector + Name
+			"AdhocCoprohibEdit"         // §3.4: leaf co-prohibitions editable (Key chooser + Adjacency + Others vector + Active);
+			                            // group Name/Desc/Active editable. // PARITY: nested MoAdhocProhibGr.Members recursive editing read-only.
 		};
 
 		private readonly HashSet<string> _supported = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

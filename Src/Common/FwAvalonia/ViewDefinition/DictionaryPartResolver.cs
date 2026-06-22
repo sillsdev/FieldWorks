@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
@@ -46,9 +47,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <inheritdoc />
 		public XElement ResolvePart(string className, string layoutType, string refName)
 		{
+			var contents = ResolvePartContents(className, layoutType, refName);
+			return contents.Count > 0 ? contents[0] : null;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<XElement> ResolvePartContents(string className, string layoutType, string refName)
+		{
 			if (string.IsNullOrEmpty(refName))
 			{
-				return null;
+				return System.Array.Empty<XElement>();
 			}
 
 			var type = string.IsNullOrEmpty(layoutType) ? "Detail" : layoutType;
@@ -56,10 +64,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// Bounded walk so a cyclic base-class map cannot loop.
 			for (var hop = 0; hop < 16 && !string.IsNullOrEmpty(currentClass); hop++)
 			{
-				if (TryGetContent($"{currentClass}-{type}-{refName}", out var content)
-					|| TryGetContent($"{currentClass}-Detail-{refName}", out content))
+				if (_partsById.TryGetValue($"{currentClass}-{type}-{refName}", out var part)
+					|| _partsById.TryGetValue($"{currentClass}-Detail-{refName}", out part))
 				{
-					return content;
+					// ALL child elements of the part — a part may hold several (e.g. the
+					// <if Disabled=true>/<if Disabled=false> enable/disable pair the grammar detail
+					// layouts use); legacy DataTree processes every child, so importing only the first
+					// dropped the active-state variant (LT: compound-rule Name/Description vanished).
+					return part.Elements().ToList();
 				}
 
 				if (_baseClassMap == null || !_baseClassMap.TryGetValue(currentClass, out currentClass))
@@ -68,7 +80,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				}
 			}
 
-			return null;
+			return System.Array.Empty<XElement>();
 		}
 
 		/// <inheritdoc />
@@ -102,24 +114,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 
 			return match;
-		}
-
-		private bool TryGetContent(string id, out XElement content)
-		{
-			content = null;
-			if (!_partsById.TryGetValue(id, out var part))
-			{
-				return false;
-			}
-
-			// The part's content is its first child element (slice/obj/seq).
-			foreach (var child in part.Elements())
-			{
-				content = child;
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

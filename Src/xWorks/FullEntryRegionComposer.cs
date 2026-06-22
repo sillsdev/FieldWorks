@@ -1417,6 +1417,51 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
+			// avalonia-rule-formula-editor: the atomic analog of AddGenericReferenceVector — an atomic
+			// reference whose target is NOT a possibility list (e.g. the ad-hoc co-prohibition Key
+			// FirstMorpheme/FirstAllomorph) composes as an editable chooser over the field's
+			// ReferenceTargetCandidates, with a leading empty option to clear (legacy launcher parity).
+			private void AddGenericAtomicChooser(ViewNode node, ICmObject obj, int depth, int flid,
+				IReadOnlyList<ICmObject> candidates, int targetHvo)
+			{
+				var candidateHvoByGuid = new Dictionary<Guid, int>();
+				var options = new List<RegionChoiceOption>
+				{
+					new RegionChoiceOption(string.Empty,
+						SIL.FieldWorks.Common.Framework.DetailControls.DetailControlsResourceAccess.NullItemLabel)
+				};
+				foreach (var cand in candidates)
+				{
+					if (candidateHvoByGuid.ContainsKey(cand.Guid))
+						continue;
+					candidateHvoByGuid[cand.Guid] = cand.Hvo;
+					options.Add(new RegionChoiceOption(cand.Guid.ToString(), cand.ShortName));
+				}
+				var selected = targetHvo == 0
+					? null
+					: _cache.ServiceLocator.ObjectRepository.GetObject(targetHvo).Guid.ToString();
+				var stableId = StableId(node, obj);
+				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.Chooser, node.EditorClassification, node.AutomationId,
+					node.LocalizationKey, node.Routing, null, options, selected, isEditable: true, indent: depth,
+					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
+					objectHvo: obj.Hvo));
+
+				var hvo = obj.Hvo;
+				OptionSetters[stableId] = key =>
+				{
+					if (string.IsNullOrEmpty(key))
+					{
+						_sda.SetObjProp(hvo, flid, 0); // clear the reference
+						return true;
+					}
+					if (!Guid.TryParse(key, out var guid) || !candidateHvoByGuid.TryGetValue(guid, out var newHvo))
+						return false;
+					_sda.SetObjProp(hvo, flid, newHvo);
+					return true;
+				};
+			}
+
 			// 6.3/B8: an editable possibility-vector row — current items in vector order plus the
 			// whole list as hierarchical options; add/remove stage through sda.Replace on the flid
 			// (the legacy VectorReferenceView update), one undo step per settled session.
@@ -1471,6 +1516,103 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 				};
 			}
+
+			// avalonia-rule-formula-editor: a reference vector whose targets are NOT a possibility list
+			// (e.g. PhNCSegments.Segments → phonemes, the ad-hoc RestOfAllos/RestOfMorphs → allomorphs/
+			// morphemes) — editable via the field's own ReferenceTargetCandidates (the canonical valid-target
+			// set the legacy choosers use). Options are the candidates' ShortNames; add validates the option
+			// guid against the candidate set (no invalid/cross-field writes, duplicates rejected) and remove
+			// resolves the guid via the repository — both Replace the vector, like the possibility-list path.
+			private void AddGenericReferenceVector(ViewNode node, ICmObject obj, int depth, int flid,
+				int count, IReadOnlyList<ICmObject> candidates)
+			{
+				var items = new List<RegionChoiceOption>();
+				for (var i = 0; i < count; i++)
+				{
+					var itemHvo = _sda.get_VecItem(obj.Hvo, flid, i);
+					items.Add(new RegionChoiceOption(
+						_cache.ServiceLocator.ObjectRepository.GetObject(itemHvo).Guid.ToString(),
+						ResolveShortName(itemHvo)));
+				}
+
+				var candidateHvoByGuid = new Dictionary<Guid, int>();
+				var options = new List<RegionChoiceOption>();
+				foreach (var cand in candidates)
+				{
+					if (candidateHvoByGuid.ContainsKey(cand.Guid))
+						continue;
+					candidateHvoByGuid[cand.Guid] = cand.Hvo;
+					options.Add(new RegionChoiceOption(cand.Guid.ToString(), cand.ShortName));
+				}
+
+				var stableId = StableId(node, obj);
+				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
+					node.WritingSystem, RegionFieldKind.ReferenceVector, node.EditorClassification,
+					node.AutomationId, node.LocalizationKey, node.Routing, null, options, null,
+					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
+
+				var hvo = obj.Hvo;
+				ReferenceAddSetters[stableId] = key =>
+				{
+					if (!Guid.TryParse(key, out var guid) || !candidateHvoByGuid.TryGetValue(guid, out var targetHvo))
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+						if (_sda.get_VecItem(hvo, flid, i) == targetHvo)
+							return false; // duplicates rejected, like the legacy chooser
+					_sda.Replace(hvo, flid, size, size, new[] { targetHvo }, 1);
+					return true;
+				};
+				ReferenceRemoveSetters[stableId] = key =>
+				{
+					if (!Guid.TryParse(key, out var guid)
+						|| !_cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var target))
+						return false;
+					var size = _sda.get_VecSize(hvo, flid);
+					for (var i = 0; i < size; i++)
+					{
+						if (_sda.get_VecItem(hvo, flid, i) != target.Hvo)
+							continue;
+						_sda.Replace(hvo, flid, i, i + 1, new int[0], 0);
+						return true;
+					}
+					return false;
+				};
+			}
+
+			// The field's valid reference targets (capped so a huge candidate set — entries/senses are
+			// already handled by the type-ahead path above — falls back to a read-only row rather than
+			// eagerly materializing thousands of options). Null on any failure or when out of range.
+			private IReadOnlyList<ICmObject> SafeReferenceTargetCandidates(ICmObject obj, int flid)
+			{
+				// Only REAL stored reference properties are safely editable by a blind sda.Replace/SetObjProp.
+				// A virtual/computed property (back-refs, derived collections) has no backing to write and the
+				// legacy editor itself gates editability on !IsVirtual (VectorReferenceView.ReadOnlyView), so
+				// such fields fall through to the read-only row instead of the generic editable chooser/vector.
+				if (flid == 0 || _mdc.get_IsVirtual(flid))
+					return null;
+				try
+				{
+					var candidates = obj.ReferenceTargetCandidates(flid);
+					if (candidates == null)
+						return null;
+					var list = new List<ICmObject>();
+					foreach (var c in candidates)
+					{
+						list.Add(c);
+						if (list.Count > MaxEditableVectorCandidates)
+							return null; // too large to enumerate eagerly; read-only fallback
+					}
+					return list;
+				}
+				catch
+				{
+					return null;
+				}
+			}
+
+			private const int MaxEditableVectorCandidates = 500;
 
 			// Resolves an option key to a possibility belonging to THIS field's list — garbage,
 			// unknown guids, and possibilities from OTHER lists all reject (no cross-list writes).
@@ -2396,6 +2538,18 @@ namespace SIL.FieldWorks.XWorks
 								return;
 							}
 
+							// avalonia-rule-formula-editor: an atomic ref whose targets are enumerable (e.g. the
+							// ad-hoc Key FirstMorpheme/FirstAllomorph) composes as an editable chooser over its
+							// ReferenceTargetCandidates (the atomic analog of the generic editable vector).
+							var atomicCandidates = SafeReferenceTargetCandidates(obj, flid);
+							if (atomicCandidates != null && atomicCandidates.Count > 0)
+							{
+								if (targetHvo == 0 && HideWhenEmpty(node))
+									return;
+								AddGenericAtomicChooser(node, obj, depth, flid, atomicCandidates, targetHvo);
+								return;
+							}
+
 							if (targetHvo == 0)
 							{
 								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
@@ -2474,6 +2628,20 @@ namespace SIL.FieldWorks.XWorks
 								if (count == 0 && HideWhenEmpty(node))
 									return;
 								AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
+								return;
+							}
+
+							// avalonia-rule-formula-editor: any remaining reference vector whose valid targets
+							// can be enumerated (e.g. natural-class Segments → phonemes, ad-hoc Others →
+							// allomorphs/morphemes) composes as an editable chooser-backed ReferenceVector,
+							// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
+							// handled above; the candidate cap guards any other large set into read-only.
+							var genericCandidates = SafeReferenceTargetCandidates(obj, flid);
+							if (genericCandidates != null && genericCandidates.Count > 0)
+							{
+								if (count == 0 && HideWhenEmpty(node))
+									return;
+								AddGenericReferenceVector(node, obj, depth, flid, count, genericCandidates);
 								return;
 							}
 

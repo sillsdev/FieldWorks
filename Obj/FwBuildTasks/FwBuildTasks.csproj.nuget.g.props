@@ -4,13 +4,13 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\Documents\repos\FieldWorks.worktrees\avalonia-interliner-editor\packages</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-interliner-editor\packages;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\Documents\repos\FieldWorks.worktrees\avalonia-rule-follower\packages</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-rule-follower\packages;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.14.3</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-interliner-editor\packages\" />
+    <SourceRoot Include="c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-rule-follower\packages\" />
     <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
@@ -22,7 +22,7 @@
     <Import Project="$(NuGetPackageRoot)\nunit3testadapter\5.2.0\build\net462\NUnit3TestAdapter.props" Condition="Exists('$(NuGetPackageRoot)\nunit3testadapter\5.2.0\build\net462\NUnit3TestAdapter.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgMicrosoft_Build_Framework Condition=" '$(PkgMicrosoft_Build_Framework)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-interliner-editor\packages\microsoft.build.framework\18.6.3</PkgMicrosoft_Build_Framework>
-    <PkgSIL_BuildTasks Condition=" '$(PkgSIL_BuildTasks)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-interliner-editor\packages\sil.buildtasks\3.2.0</PkgSIL_BuildTasks>
+    <PkgMicrosoft_Build_Framework Condition=" '$(PkgMicrosoft_Build_Framework)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-rule-follower\packages\microsoft.build.framework\18.6.3</PkgMicrosoft_Build_Framework>
+    <PkgSIL_BuildTasks Condition=" '$(PkgSIL_BuildTasks)' == '' ">c:\Users\johnm\Documents\repos\FieldWorks.worktrees\avalonia-rule-follower\packages\sil.buildtasks\3.2.0</PkgSIL_BuildTasks>
   </PropertyGroup>
 </Project>

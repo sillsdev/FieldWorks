@@ -119,6 +119,12 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
 		[TestCase("Analyses")] // avalonia-interlinear-editor (4.3): the Words Analyses interlinear editor
+		[TestCase("PhonologicalRuleEdit")] // avalonia-rule-formula-editor: regular + metathesis rule editors landed
+		[TestCase("EnvironmentEdit")]      // §3.2: environment editor + composer multi-child fix → full editable detail
+		[TestCase("compoundRuleAdvancedEdit")] // §2.5: headed/non-headed compound rules compose editably (affix-process read-only)
+		[TestCase("naturalClassedit")]         // §3.3: NC segments (editable phoneme vector) + NC features (launcher)
+		[TestCase("phonemeEdit")]              // §3.1: IPA symbol editor + derive-on-commit + editable Codes vector
+		[TestCase("AdhocCoprohibEdit")]        // §3.4: ad-hoc co-prohibition (Key chooser + Others vector editable; nested groups PARITY)
 		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);

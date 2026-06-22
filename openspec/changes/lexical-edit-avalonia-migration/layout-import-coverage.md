@@ -8,7 +8,7 @@ so they weight the vocabulary by how often real layouts use it.
 ## Summary
 
 - Detail layouts imported: **136** (non-detail layouts skipped: 594)
-- Typed nodes produced: **1139**
+- Typed nodes produced: **1221**
 - Element occurrence coverage: **77.8%** (6468 handled / 1844 unhandled)
 - Attribute occurrence coverage: **56.7%** (14585 handled / 11153 unhandled)
 
@@ -16,12 +16,12 @@ so they weight the vocabulary by how often real layouts use it.
 
 | Code (severity) | Count |
 |---|---|
-| `unhandled-attribute (Info)` | 717 |
-| `slice-content-dropped (Info)` | 319 |
-| `dynamic-editor (Info)` | 122 |
+| `unhandled-attribute (Info)` | 756 |
+| `slice-content-dropped (Info)` | 328 |
+| `dynamic-editor (Info)` | 131 |
 | `unresolved-part (Error)` | 62 |
+| `unknown-part-content (Warning)` | 8 |
 | `unhandled-attribute (Warning)` | 5 |
-| `unknown-part-content (Warning)` | 2 |
 | `sublayout-dropped (Info)` | 1 |
 | `unknown-editor (Warning)` | 1 |
 

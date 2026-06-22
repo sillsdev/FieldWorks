@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
@@ -19,6 +20,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// the part cannot be resolved.
 		/// </summary>
 		XElement ResolvePart(string className, string layoutType, string refName);
+
+		/// <summary>
+		/// Returns ALL content child elements of the resolved part (a part may carry several — e.g. the
+		/// <c>&lt;if Disabled=true&gt;</c>/<c>&lt;if Disabled=false&gt;</c> enable/disable pair the grammar
+		/// detail layouts use). Empty when the part cannot be resolved. The importer builds a node per child,
+		/// matching legacy DataTree (which processes every child of a part).
+		/// </summary>
+		IReadOnlyList<XElement> ResolvePartContents(string className, string layoutType, string refName);
 
 		/// <summary>
 		/// Returns the content element of a part by its ref name alone, used for caller-injected

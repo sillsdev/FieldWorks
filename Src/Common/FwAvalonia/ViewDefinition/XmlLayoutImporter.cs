@@ -181,8 +181,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				return;
 			}
 
-			var content = parts.ResolvePart(className, layoutType, refName);
-			if (content == null)
+			var contents = parts.ResolvePartContents(className, layoutType, refName);
+			if (contents.Count == 0)
 			{
 				diagnostics.Add(new ViewDiagnostic(ViewDiagnosticSeverity.Error, "unresolved-part",
 					$"Could not resolve part ref '{refName}' for class '{className}'.", stableId));
@@ -222,10 +222,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				return;
 			}
 
-			var node = BuildNode(content, callerEl, parts, className, layoutType, stableId, indented, diagnostics);
-			if (node != null)
+			// Build a node per content child. A single-child part (the common case) is unchanged; a
+			// multi-child part (the grammar <if Disabled=true>/<if Disabled=false> pair) imports every
+			// child so the per-object Conditional walk can render the matching branch.
+			for (var i = 0; i < contents.Count; i++)
 			{
-				output.Add(node);
+				// Each sibling after the first needs its own stable id so they don't collide.
+				var childStableId = i == 0 ? stableId : $"{parentPath}/#{output.Count}";
+				var node = BuildNode(contents[i], callerEl, parts, className, layoutType, childStableId,
+					indented, diagnostics);
+				if (node != null)
+				{
+					output.Add(node);
+				}
 			}
 		}
 

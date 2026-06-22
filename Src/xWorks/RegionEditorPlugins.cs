@@ -156,6 +156,14 @@ namespace SIL.FieldWorks.XWorks
 			// Analyses detail pane, claiming the legacy InterlinearSlice. Read-only this wave; the
 			// editable write-back + MSA prune (W-5) layer onto the same plugin.
 			registry.Register(new InterlinearSlicePlugin());
+			// avalonia-rule-formula-editor (1.4 / 2.3 / 2.5): the Grammar regular + metathesis + compound rule editors.
+			registry.Register(new RuleFormulaRegionEditorPlugin());
+			registry.Register(new MetaRuleFormulaRegionEditorPlugin());
+			registry.Register(new AffixRuleFormulaRegionEditorPlugin());
+			// avalonia-rule-formula-editor (3.2): the phonological-environment string editor.
+			registry.Register(new PhEnvironmentRegionEditorPlugin());
+			// avalonia-rule-formula-editor (3.1): the Basic IPA Symbol editor (derive-on-commit deferred).
+			registry.Register(new BasicIpaSymbolRegionEditorPlugin());
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
