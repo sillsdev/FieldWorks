@@ -103,6 +103,10 @@ verifies that launch will succeed.
 - `scripts/Set-FieldWorksLegacyMode.ps1`: forces `UIMode=Legacy` — run before EVERY launch.
 - `scripts/Resolve-FieldWorksDevRegistry.ps1`: aligns the dev registry (`RootCodeDir`/`RootDataDir`) to
   this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
+- `scripts/Install-VirtualDisplayDriver.ps1`: bootstraps the Virtual Display Driver (for the invisible
+  off-screen-monitor path; see `references/headless-rendering.md`).
+- `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
+  invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; use visible, or VDD off-screen, or RDP).
 
 When a task names a destination, read the matching navigation file. When a task
 discovers a better route or a fragile selector, read and update

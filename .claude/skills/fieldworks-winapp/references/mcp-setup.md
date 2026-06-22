@@ -41,11 +41,15 @@ Note — **`cmd /c npx`, not bare `npx`**: on Windows, Claude Code spawns the co
 scoped package name). Wrapping in `cmd /c` is the reliable form. `TFM=net48` matches the FieldWorks managed
 target.
 
-**`HEADLESS=false` (visible) is the working default for FieldWorks.** `HEADLESS=true` runs the app on a
-hidden desktop, but FieldWorks' startup does NOT complete there if it shows any modal (and an invalid
-command-line arg makes it show a modal **usage dialog**) — the symptom is a blank window, empty UIA tree,
-loaded-but-flat memory, no main-window title. With `HEADLESS=false` FieldWorks starts on the real desktop
-(briefly visible) and both the UIA tree and `PrintWindow` screenshots work. Changing `HEADLESS` requires a
+**`HEADLESS=false` (visible) is REQUIRED for FieldWorks — invisible mode does not work.** Tested
+empirically (2026-06-22): with the SAME correct command line (`-db "Sena 3"`, no modal), a **visible**
+launch renders the full app (UIA tree + screenshots work), while a **headless** launch stays blank — empty
+UIA tree, loaded-but-flat memory, no main-window title. FieldWorks' main window uses the native Views
+(C++/GDI) rendering engine, which needs a real interactive desktop; on the hidden desktop the main window
+never completes. This is independent of the arg/usage-dialog trap below — fixing the args does NOT make
+headless work. So FieldWorks WILL appear briefly on screen during capture; there is no invisible option for
+the legacy app. (An invalid arg ALSO blocks startup with the same blank signature, via an invisible modal
+usage dialog — fix the args too, but visible is the non-negotiable requirement.) Changing `HEADLESS` requires a
 Claude Code reconnect (the server reads env at launch). To capture WITHOUT reconnecting, launch FieldWorks
 yourself on the visible desktop and attach:
 ```powershell

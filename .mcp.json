@@ -4,7 +4,7 @@
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@fnrhombus/winforms-mcp"],
       "env": {
-        "HEADLESS": "true",
+        "HEADLESS": "false",
         "TFM": "net48",
         "TELEMETRY_OPTOUT": "true"
       }
