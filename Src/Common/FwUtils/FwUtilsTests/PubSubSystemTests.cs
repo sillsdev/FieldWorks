@@ -214,18 +214,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Set up.
 			var scopeA = new TestPubSubScope();
-			var subscriberA = new ScopeAwareSubscriber(scopeA) { One = true };
-			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { One = true };
-			var unscopedSubscriber = new ScopeAwareSubscriber(null) { One = true };
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { SelectionValue = int.MinValue };
+			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { SelectionValue = int.MinValue };
+			var unscopedSubscriber = new ScopeAwareSubscriber(null) { SelectionValue = int.MinValue };
 			subscriberA.DoSubscriptions();
 			subscriberB.DoSubscriptions();
 			unscopedSubscriber.DoSubscriptions();
 
 			// Run test.
-			FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false, scopeA));
-			Assert.That(subscriberA.One, Is.False); // Same scope: delivered.
-			Assert.That(subscriberB.One, Is.True); // Different scope: not delivered.
-			Assert.That(unscopedSubscriber.One, Is.False); // Unscoped subscriber: delivered.
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, scopeA));
+			Assert.That(subscriberA.SelectionValue, Is.EqualTo(int.MaxValue)); // Same scope: delivered.
+			Assert.That(subscriberB.SelectionValue, Is.EqualTo(int.MinValue)); // Different scope: not delivered.
+			Assert.That(unscopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Unscoped subscriber: delivered.
 
 			subscriberA.DoUnsubscriptions();
 			subscriberB.DoUnsubscriptions();
@@ -239,15 +239,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Unscoped_Publish_Delivers_To_Scoped_And_Unscoped_Subscribers()
 		{
 			// Set up.
-			var scopedSubscriber = new ScopeAwareSubscriber(new TestPubSubScope()) { One = true };
-			var unscopedSubscriber = new ScopeAwareSubscriber(null) { One = true };
+			var scopedSubscriber = new ScopeAwareSubscriber(new TestPubSubScope()) { SelectionValue = int.MinValue };
+			var unscopedSubscriber = new ScopeAwareSubscriber(null) { SelectionValue = int.MinValue };
 			scopedSubscriber.DoSubscriptions();
 			unscopedSubscriber.DoSubscriptions();
 
 			// Run test.
-			FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false));
-			Assert.That(scopedSubscriber.One, Is.False); // Delivered.
-			Assert.That(unscopedSubscriber.One, Is.False); // Delivered.
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			Assert.That(scopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
+			Assert.That(unscopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
 
 			scopedSubscriber.DoUnsubscriptions();
 			unscopedSubscriber.DoUnsubscriptions();
@@ -261,22 +261,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Set up.
 			var scopeA = new TestPubSubScope();
-			var subscriberA = new ScopeAwareSubscriber(scopeA) { Two = int.MinValue };
-			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { Two = int.MinValue };
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { SelectionValue = int.MinValue };
+			var subscriberB = new ScopeAwareSubscriber(new TestPubSubScope()) { SelectionValue = int.MinValue };
 			subscriberA.DoSubscriptions();
 			subscriberB.DoSubscriptions();
 
 			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, scopeA));
 
 			// Nothing is delivered until the idle queue drains.
-			Assert.That(subscriberA.Two, Is.EqualTo(int.MinValue));
-			Assert.That(subscriberB.Two, Is.EqualTo(int.MinValue));
+			Assert.That(subscriberA.SelectionValue, Is.EqualTo(int.MinValue));
+			Assert.That(subscriberB.SelectionValue, Is.EqualTo(int.MinValue));
 
 			// SUT - Process the EndOfActionManager IdleQueue.
 			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 
-			Assert.That(subscriberA.Two, Is.EqualTo(int.MaxValue)); // Same scope: delivered.
-			Assert.That(subscriberB.Two, Is.EqualTo(int.MinValue)); // Different scope: not delivered.
+			Assert.That(subscriberA.SelectionValue, Is.EqualTo(int.MaxValue)); // Same scope: delivered.
+			Assert.That(subscriberB.SelectionValue, Is.EqualTo(int.MinValue)); // Different scope: not delivered.
 
 			subscriberA.DoUnsubscriptions();
 			subscriberB.DoUnsubscriptions();
@@ -292,8 +292,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Set up.
 			var scopeA = new TestPubSubScope();
 			var scopeB = new TestPubSubScope();
-			var subscriberA = new ScopeAwareSubscriber(scopeA) { Two = int.MinValue };
-			var subscriberB = new ScopeAwareSubscriber(scopeB) { Two = int.MinValue };
+			var subscriberA = new ScopeAwareSubscriber(scopeA) { SelectionValue = int.MinValue };
+			var subscriberB = new ScopeAwareSubscriber(scopeB) { SelectionValue = int.MinValue };
 			subscriberA.DoSubscriptions();
 			subscriberB.DoSubscriptions();
 
@@ -305,8 +305,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT - Process the EndOfActionManager IdleQueue.
 			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 
-			Assert.That(subscriberA.Two, Is.EqualTo(3)); // Latest scopeA publish won.
-			Assert.That(subscriberB.Two, Is.EqualTo(2)); // scopeB publish survived independently.
+			Assert.That(subscriberA.SelectionValue, Is.EqualTo(3)); // Latest scopeA publish won.
+			Assert.That(subscriberB.SelectionValue, Is.EqualTo(2)); // scopeB publish survived independently.
 
 			subscriberA.DoUnsubscriptions();
 			subscriberB.DoUnsubscriptions();
@@ -737,34 +737,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 				_scope = scope;
 			}
 
-			internal bool One { get; set; }
-			internal int Two { get; set; }
+			internal int SelectionValue { get; set; }
 
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void MessageOneHandler(object newValue)
-			{
-				One = (bool)newValue;
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for the SelectionChanged message.
-			/// </summary>
 			private void SelectionChangedHandler(object newValue)
 			{
-				Two = (int)newValue;
+				SelectionValue = (int)newValue;
 			}
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler, _scope);
 				FwUtils.Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChangedHandler, _scope);
 			}
 
 			internal void DoUnsubscriptions()
 			{
-				FwUtils.Subscriber.Unsubscribe("MessageOne", MessageOneHandler);
 				FwUtils.Subscriber.Unsubscribe(EventConstants.SelectionChanged, SelectionChangedHandler);
 			}
 		}

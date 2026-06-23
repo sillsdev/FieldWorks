@@ -64,6 +64,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				m_events.Add(publisherParameterObject.Message, queued);
 			}
 			var sameScopeIndex = queued.FindIndex(e => ReferenceEquals(e.Scope, publisherParameterObject.Scope));
+			// If it is the same Message and scope then intentionally overwrite.
 			if (sameScopeIndex >= 0)
 			{
 				queued[sameScopeIndex] = publisherParameterObject;
