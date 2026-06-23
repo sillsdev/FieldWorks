@@ -11,6 +11,13 @@
 | **Canonical reference** | EntryGoDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![add-allomorph legacy](./images/add-allomorph-before.png) | ![add-allomorph avalonia](./images/add-allomorph-after.png) |
 ## What it is
 Search for an existing entry and add the typed form to it as an allomorph.
 

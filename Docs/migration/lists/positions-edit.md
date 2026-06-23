@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Positions (`positionsEdit`) (Sena 3, Legacy)](./images/positions-edit-01.png)
+
 ## What it is
 Edit the 'Positions' CmPossibility list.
 

@@ -14,11 +14,13 @@ A standalone feature-structure chooser: assigns feature values to an MSA's `IFsF
 features) or to the phonological feature system. Opens from the inflection-feature slice and the
 phonological-feature slice. **PARTIAL completeness** — see gotchas.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open a sense's inflection-feature slice
-     and click its chooser button. See .claude/skills/fieldworks-winapp. -->
-![Feature Chooser – initial](./images/feature-chooser-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![phonological-feature-chooser legacy](./images/phonological-feature-chooser-before.png) | ![phonological-feature-chooser avalonia](./images/phonological-feature-chooser-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Optional instruction prompt at top (may be empty).
 - [ ] Owned `FwFeatureStructureEditor`: hierarchical feature system with per-feature value assignment.

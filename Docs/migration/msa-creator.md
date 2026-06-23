@@ -14,11 +14,13 @@ Lets the user create (or edit) the grammatical info / morpho-syntactic analysis 
 choose the POS, slot, inflection class, and inflection features. Opens from the MSA slice and from the
 interlinear MSA popup. Returns a `SandboxGenericMSA` for the caller to apply.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open a lexical entry, on a sense's
-     grammatical-info slice choose "Create New Grammatical Info." See .claude/skills/fieldworks-winapp. -->
-![Create MSA – initial](./images/msa-creator-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![msa-creator legacy](./images/msa-creator-before.png) | ![msa-creator avalonia](./images/msa-creator-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Read-only lexical-entry headword shown at top.
 - [ ] Read-only senses summary shown on the edit path.

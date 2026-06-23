@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Text Markup Tags (`textMarkupTagsEdit`) (Sena 3, Legacy)](./images/text-markup-tags-edit-01.png)
+
 ## What it is
 Edit the 'Text Markup Tags' CmPossibility list.
 

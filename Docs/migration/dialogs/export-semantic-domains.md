@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form (nearest: OptionsDialog) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![export-semantic-domains legacy](./images/export-semantic-domains-before.png) | ![export-semantic-domains avalonia](./images/export-semantic-domains-after.png) |
 ## What it is
 Options dialog for exporting the semantic-domains list: choose the writing system and whether to show missing translations with English shown in red.
 

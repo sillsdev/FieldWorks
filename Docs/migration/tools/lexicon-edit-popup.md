@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Lexicon Edit Popup (`lexiconEditPopup`) (Sena 3, Legacy)](./images/lexicon-edit-popup-01.png)
+
 ## What it is
 Test/popup composite: dictionary preview over a RecordEditView edit pane for the current entry.
 

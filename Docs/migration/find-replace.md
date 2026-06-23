@@ -14,11 +14,17 @@ A spec-only modal that lets the user author a Find/Replace pattern for a bulk re
 column. OK snapshots the edited fields into a `FindReplacePattern`. There is NO find engine and NO
 modeless app-wide find/replace here — that is deferred to Phase 2.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open a browse view bulk-edit Find/Replace tab
-     and open the find/replace setup. See .claude/skills/fieldworks-winapp. -->
-![Find / Replace – initial](./images/find-replace-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![fw-find-replace legacy](./images/fw-find-replace-before.png) | ![fw-find-replace avalonia](./images/fw-find-replace-after.png) |
+
+Tabs (legacy):
+
+![find](./images/fw-find-replace-tab-find.png)
 ## Behaviour to preserve (parity checklist)
 - [ ] Find-text field (required) and Replace-text field.
 - [ ] "Use regular expressions" checkbox: disables/clears the literal-only options (match case, whole word).

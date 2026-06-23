@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (list of named configurations with rename/copy/delete) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![xml-doc-configure legacy](./images/xml-doc-configure-before.png) | ![xml-doc-configure avalonia](./images/xml-doc-configure-after.png) |
 ## What it is
 MVP "view" for managing stored dictionary configurations (rename/copy/delete/select). Displays the configurations in a `ListView` and reports user actions to `DictionaryConfigManager`. Implements `IDictConfigViewer`.
 

@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Document (`notebookDocument`) (Sena 3, Legacy)](./images/notebook-document-01.png)
+
 ## What it is
 Document view of notebook records.
 

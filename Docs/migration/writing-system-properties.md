@@ -15,11 +15,17 @@ font, right-to-left direction, and sort label. **PARTIAL** — the full `FwWriti
 (SLDR sharing, encoding converters, merge, the advanced script/region/variant editor, keyboard assignment,
 numbering/character-inventory tabs) is NOT ported.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open Format › Set up Writing Systems and
-     edit a writing system's properties. See .claude/skills/fieldworks-winapp. -->
-![Writing System Properties – initial](./images/writing-system-properties-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![fw-writing-system-setup legacy](./images/fw-writing-system-setup-before.png) | ![fw-writing-system-setup avalonia](./images/fw-writing-system-setup-after.png) |
+
+Tabs (legacy):
+
+![characters](./images/fw-writing-system-setup-tab-characters.png) ![converters](./images/fw-writing-system-setup-tab-converters.png) ![font](./images/fw-writing-system-setup-tab-font.png) ![general](./images/fw-writing-system-setup-tab-general.png) ![keyboard](./images/fw-writing-system-setup-tab-keyboard.png) ![numbers](./images/fw-writing-system-setup-tab-numbers.png) ![sorting](./images/fw-writing-system-setup-tab-sorting.png)
 ## Behaviour to preserve (parity checklist)
 - [ ] Name field (required, trimmed).
 - [ ] Abbreviation field (required, trimmed).

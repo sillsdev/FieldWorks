@@ -11,6 +11,17 @@
 | **Canonical reference** | tabs→OptionsDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![add-cnvtr legacy](./images/add-cnvtr-before.png) | ![add-cnvtr avalonia](./images/add-cnvtr-after.png) |
+
+Tabs (legacy):
+
+![advanced](./images/add-cnvtr-tab-advanced.png) ![properties](./images/add-cnvtr-tab-properties.png) ![test](./images/add-cnvtr-tab-test.png)
 ## What it is
 The dialog for adding/configuring encoding converters.
 

@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Word List Concordance (`wordListConcordance`) (Sena 3, Legacy)](./images/word-list-concordance-01.png)
+
 ## What it is
 Concordance driven by a word list, with occurrences table.
 

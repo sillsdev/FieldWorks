@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Inflection Features (`featuresAdvancedEdit`) (Sena 3, Legacy)](./images/features-advanced-edit-01.png)
+
 ## What it is
 Edit inflection feature definitions.
 

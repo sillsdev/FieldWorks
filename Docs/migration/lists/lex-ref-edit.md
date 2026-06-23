@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Lexical Relations (`lexRefEdit`) (Sena 3, Legacy)](./images/lex-ref-edit-01.png)
+
 ## What it is
 Edit the 'Lexical Relations' CmPossibility list.
 

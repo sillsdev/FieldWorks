@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Notebook Record Types (`recTypeEdit`) (Sena 3, Legacy)](./images/rec-type-edit-01.png)
+
 ## What it is
 Edit the 'Notebook Record Types' CmPossibility list.
 

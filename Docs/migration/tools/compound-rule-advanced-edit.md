@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Compound Rules (`compoundRuleAdvancedEdit`) (Sena 3, Legacy)](./images/compound-rule-advanced-edit-01.png)
+
 ## What it is
 Edit morphological compound rules.
 

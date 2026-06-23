@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Education Levels (`educationEdit`) (Sena 3, Legacy)](./images/education-edit-01.png)
+
 ## What it is
 Edit the 'Education Levels' CmPossibility list.
 

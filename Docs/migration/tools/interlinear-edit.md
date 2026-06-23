@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Interlinear Texts – Analyze tab (Sena 3)](./images/interlinear-edit-01.png)
+
 ## What it is
 Interlinear text editor (baseline/word/morph/gloss lines over texts).
 

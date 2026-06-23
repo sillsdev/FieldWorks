@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Grammar Sketch (`grammarSketch`) (Sena 3, Legacy)](./images/grammar-sketch-01.png)
+
 ## What it is
 Generated grammar sketch document.
 

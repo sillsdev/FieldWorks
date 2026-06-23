@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Publications (`publicationsEdit`) (Sena 3, Legacy)](./images/publications-edit-01.png)
+
 ## What it is
 Edit the 'Publications' CmPossibility list.
 

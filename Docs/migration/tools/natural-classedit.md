@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Natural Classes (`naturalClassedit`) (Sena 3, Legacy)](./images/natural-classedit-01.png)
+
 ## What it is
 Edit phonological natural classes.
 

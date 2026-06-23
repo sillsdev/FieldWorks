@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Problems (`lexiconProblems`) (Sena 3, Legacy)](./images/lexicon-problems-01.png)
+
 ## What it is
 View/edit parser/grammar problem items.
 

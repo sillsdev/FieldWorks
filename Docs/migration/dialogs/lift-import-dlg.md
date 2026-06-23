@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![lift-import legacy](./images/lift-import-before.png) | ![lift-import avalonia](./images/lift-import-after.png) |
 ## What it is
 Imports a LIFT lexicon file into the project.
 

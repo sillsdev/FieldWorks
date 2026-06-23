@@ -48,6 +48,36 @@ Append one entry per completed migration (newest first). Keep entries to
 ~10 lines: link to the change, what was migrated, what was learned, which
 skill files changed.
 
+### 2026-06 — Legacy truth-PNG capture toolkit (legacy-screenshot-capture)
+
+- Change: `openspec/changes/legacy-screenshot-capture/`. Produced the legacy WinForms screenshots
+  that back the `Docs/migration/` docs, after UIA2 (winforms-mcp) proved unable to navigate FLEx's
+  custom-drawn surfaces.
+- Built two non-UIA capture routes (details + recipes folded into the `fieldworks-winapp` skill):
+  (1) **launch-per-tool** — `FieldWorks.exe "silfw://…&tool=<toolId>"` (guid-less) +
+  PrintWindow; `scripts/migration-capture/Capture-LegacyTools.ps1` captured **67/67** tool/list
+  screens. (2) **dialog harness** — an `[Explicit]` NUnit fixture
+  (`LexTextControlsTests/ScreenshotHarnessTests.cs`) on the in-memory-cache base, constructing the
+  legacy dialog (ctor + `SetDlgInfo`) and `DrawToBitmap`-ing it; proven on the feature-chooser dialog.
+- Learned: (1) **UIA2 can't see SilSidePane/OutlookBar/tool-lists or Views content, and has no
+  coordinate-click** — don't plan a capture campaign around UIA navigation; drive via the supported
+  link mechanism / direct construction instead. (2) An empty `guid=` crashes `FwLinkArgs`; omit it —
+  `LinkListener` switches tools regardless. (3) A standalone capture exe is the expensive path
+  (reg-free COM manifest + cache + Mediator/PropertyTable/CmObjectUi); **piggybacking a test
+  project's existing bootstrap** is far cheaper. (4) `System.Drawing.Bitmap` is unavailable in
+  pwsh 7 — run capture scripts under Windows PowerShell 5.1. (5) Verify wiring/feasibility
+  empirically before scaling — the first "winforms-mcp will do it" plan was wrong.
+  (6) The dialog harness renders simple tree/list/feature dialogs headless, but FwTextBox/app-context
+  dialogs (InsertEntryDlg / AddNewSenseDlg / GoDlg family) assert/NRE without a real main window +
+  stylesheet (the "LcmStyleSheet" PropertyTable fallback was not enough) - capture those live or on
+  JIRA pickup. (7) The restored test base already holds an undoable task open - make model writes
+  directly, never inside a nested NonUndoableUnitOfWorkHelper ("Nested tasks are not supported").
+- Before/after pipeline: each migration doc shows legacy "before" + Avalonia "after" of the SAME
+  seeded data; "before" from this harness/script, "after" from the surface's
+  fieldworks-semantic-render-parity visual test; both attach to the JIRA ticket (Docs/migration/_TEMPLATE.md).
+- Skill files changed: `fieldworks-winapp/SKILL.md` (recipes + UIA limits + before/after + JIRA),
+  `fieldworks-semantic-render-parity/SKILL.md` (after-lane role), this ledger.
+
 ### 2026-06 — Phase-1 PR landing strategy (canonical-per-primitive, document-then-back-out)
 
 - Change: scratchpad `phase1-pr-prep-manifest.md`; branch `010-advanced-entry-view-phase-1-2`.

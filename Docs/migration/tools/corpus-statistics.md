@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Statistics (`corpusStatistics`) (Sena 3, Legacy)](./images/corpus-statistics-01.png)
+
 ## What it is
 Corpus statistics document.
 

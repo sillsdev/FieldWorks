@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form (nearest: OptionsDialog) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![dictionary-configuration-import legacy](./images/dictionary-configuration-import-before.png) | ![dictionary-configuration-import avalonia](./images/dictionary-configuration-import-after.png) |
 ## What it is
 Imports a dictionary configuration from a file: file-path text box + Browse, overwrite/don't-overwrite radio options, an explanation pane, and Import/Cancel/Help.
 

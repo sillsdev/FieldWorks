@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![anthro-field-mapping legacy](./images/anthro-field-mapping-before.png) | ![anthro-field-mapping avalonia](./images/anthro-field-mapping-after.png) |
 ## What it is
 Maps an imported field to an anthropology-category destination during Data Notebook import.
 

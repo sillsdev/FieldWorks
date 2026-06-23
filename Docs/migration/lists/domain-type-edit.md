@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Academic Domains (`domainTypeEdit`) (Sena 3, Legacy)](./images/domain-type-edit-01.png)
+
 ## What it is
 Edit the 'Academic Domains' CmPossibility list.
 

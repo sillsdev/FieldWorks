@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (list/table of fields with add/edit/delete) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![add-custom-field legacy](./images/add-custom-field-before.png) | ![add-custom-field avalonia](./images/add-custom-field-after.png) |
 ## What it is
 Lets the user add and manage custom fields on a class; shows existing custom fields in a `ListView` and edits the selected field's name/type/writing-system properties.
 

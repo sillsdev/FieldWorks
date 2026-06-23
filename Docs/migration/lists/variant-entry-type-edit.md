@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Variant Types (`variantEntryTypeEdit`) (Sena 3, Legacy)](./images/variant-entry-type-edit-01.png)
+
 ## What it is
 Edit the 'Variant Types' CmPossibility list.
 

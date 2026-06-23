@@ -13,11 +13,13 @@
 Lets the user edit a lexical reference set's name (its display label / "type" for this set) and an optional
 comment/note. Opens from the lexical-reference slice's "edit details" command.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open an entry with a lexical relation set,
-     choose its "Edit Reference Set Details" command. See .claude/skills/fieldworks-winapp. -->
-![Lex Reference Details – initial](./images/lex-reference-details-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![lex-reference-details legacy](./images/lex-reference-details-before.png) | ![lex-reference-details avalonia](./images/lex-reference-details-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Explanation / instructional text at top.
 - [ ] Name text field (single-line) with its label.

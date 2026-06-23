@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Text Chart Markers (`chartmarkEdit`) (Sena 3, Legacy)](./images/chartmark-edit-01.png)
+
 ## What it is
 Edit the 'Text Chart Markers' CmPossibility list.
 

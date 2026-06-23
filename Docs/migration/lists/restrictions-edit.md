@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Restrictions (`restrictionsEdit`) (Sena 3, Legacy)](./images/restrictions-edit-01.png)
+
 ## What it is
 Edit the 'Restrictions' CmPossibility list.
 

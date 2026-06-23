@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Reversal Indexes (`reversalToolEditComplete`) (Sena 3, Legacy)](./images/reversal-tool-edit-complete-01.png)
+
 ## What it is
 Browse/edit Reversal Index entries.
 

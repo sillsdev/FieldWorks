@@ -17,9 +17,19 @@
 ## What it is
 One or two sentences: what the user does with this screen and when it opens.
 
-## What it looks like
-![<screen> – initial](./images/<screen>-01.png)
-<!-- Add more PNGs for important states: filled, error, multi-select, etc. -->
+## What it looks like (before / after)
+Same seeded data in both, so the comparison is honest. Attach BOTH PNGs to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![<screen> legacy](./images/<screen>-before.png) | ![<screen> avalonia](./images/<screen>-after.png) |
+
+- **before** (legacy truth baseline): capture via the `fieldworks-winapp` skill — the launch-per-tool
+  script (tool screens) or the dialog harness (`ScreenshotHarnessTests`, dialogs). UIMode=Legacy, Sena 3.
+- **after** (Avalonia): rendered from the SAME data by the Avalonia visual test for this surface in
+  `FwAvaloniaDialogs(Tests)` / `FwAvaloniaTests` — the `fieldworks-semantic-render-parity` lane. Added
+  when the Avalonia surface exists (during this ticket's implementation).
+<!-- Add more rows for important states: filled, error, multi-select, etc. -->
 
 ## Behaviour to preserve (parity checklist)
 - [ ] …each interactive behaviour the legacy screen has

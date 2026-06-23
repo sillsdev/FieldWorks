@@ -14,11 +14,13 @@ Lets the user add a new sense to an existing lexical entry from the interlinear 
 combo: type a gloss (one row per analysis WS) and set the grammatical info (MSA), creating the sense
 in one undoable step. Opens from the Sandbox sense/morph combo's "Add new sense" item.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open an interlinear text, click a morpheme,
-     pick "Add new sense…" from the combo. See .claude/skills/fieldworks-winapp. -->
-![Add New Sense – initial](./images/add-new-sense-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![add-new-sense legacy](./images/add-new-sense-before.png) | ![add-new-sense avalonia](./images/add-new-sense-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Read-only citation form / headword shown at top (from the entry).
 - [ ] Editable gloss: one `FwMultiWsTextField` row per analysis WS.

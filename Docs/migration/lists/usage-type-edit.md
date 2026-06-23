@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Usages (`usageTypeEdit`) (Sena 3, Legacy)](./images/usage-type-edit-01.png)
+
 ## What it is
 Edit the 'Usages' CmPossibility list.
 

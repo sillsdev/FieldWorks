@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Exception "Features" (`ProdRestrictEdit`) (Sena 3, Legacy)](./images/prod-restrict-edit-01.png)
+
 ## What it is
 Edit exception 'features' (productivity restrictions).
 

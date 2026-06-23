@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Phonological Features (`phonologicalFeaturesAdvancedEdit`) (Sena 3, Legacy)](./images/phonological-features-advanced-edit-01.png)
+
 ## What it is
 Edit phonological feature definitions.
 

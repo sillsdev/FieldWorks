@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Annotation Definitions (`annotationDefEdit`) (Sena 3, Legacy)](./images/annotation-def-edit-01.png)
+
 ## What it is
 Edit the 'Annotation Definitions' CmPossibility list.
 

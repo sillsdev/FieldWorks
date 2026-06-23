@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Bulk Edit Reversal Entries (`reversalToolBulkEditReversalEntries`) (Sena 3, Legacy)](./images/reversal-tool-bulk-edit-reversal-entries-01.png)
+
 ## What it is
 Bulk-edit table over Reversal Index entries.
 

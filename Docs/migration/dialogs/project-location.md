@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form→nearest |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![project-location legacy](./images/project-location-before.png) | ![project-location avalonia](./images/project-location-after.png) |
 ## What it is
 Supports controlling the location and sharing of the project folder.
 

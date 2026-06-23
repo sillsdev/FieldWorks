@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form (nearest: OptionsDialog) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![headword-numbers legacy](./images/headword-numbers-before.png) | ![headword-numbers avalonia](./images/headword-numbers-after.png) |
 ## What it is
 Configures the display and manipulation of homograph/headword numbers (style, before/after text, subentry options). Implements `IHeadwordNumbersView` (MVC view).
 

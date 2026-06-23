@@ -15,6 +15,16 @@
 | **Canonical reference** | the kept canonical screen to copy when migrating (see Docs/migration/README.md) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![before](./images/<name>-before.png) | ![after](./images/<name>-after.png) |
+
+Same seeded data in both; attach both to the JIRA ticket. `before` = `fieldworks-winapp` capture
+(launch-per-tool script for tool screens; `ScreenshotHarnessTests` harness for dialogs). `after` =
+the Avalonia visual test for this surface (`fieldworks-semantic-render-parity` lane), added when the
+Avalonia surface is built.
+
 ## What it is
 <one line — what the user does with it / when it opens. Fill on pickup if unknown.>
 

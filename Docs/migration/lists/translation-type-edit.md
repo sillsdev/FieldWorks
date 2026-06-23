@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Translation Types (`translationTypeEdit`) (Sena 3, Legacy)](./images/translation-type-edit-01.png)
+
 ## What it is
 Edit the 'Translation Types' CmPossibility list.
 

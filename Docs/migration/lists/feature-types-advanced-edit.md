@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Feature Types (`featureTypesAdvancedEdit`) (Sena 3, Legacy)](./images/feature-types-advanced-edit-01.png)
+
 ## What it is
 Edit the 'Feature Types' CmPossibility list.
 

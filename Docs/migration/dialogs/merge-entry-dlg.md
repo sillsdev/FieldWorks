@@ -11,6 +11,13 @@
 | **Canonical reference** | EntryGoDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![merge-entry legacy](./images/merge-entry-before.png) | ![merge-entry avalonia](./images/merge-entry-after.png) |
 ## What it is
 Search for and select the entry to merge the current entry into.
 

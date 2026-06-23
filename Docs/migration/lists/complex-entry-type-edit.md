@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Complex Form Types (`complexEntryTypeEdit`) (Sena 3, Legacy)](./images/complex-entry-type-edit-01.png)
+
 ## What it is
 Edit the 'Complex Form Types' CmPossibility list.
 

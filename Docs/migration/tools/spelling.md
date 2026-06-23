@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![(Spelling Proto) (`spelling`) (Sena 3, Legacy)](./images/spelling-01.png)
+
 ## What it is
 Prototype spelling tool (browse table).
 

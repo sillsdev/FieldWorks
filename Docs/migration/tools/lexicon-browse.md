@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Browse (`lexiconBrowse`) (Sena 3, Legacy)](./images/lexicon-browse-01.png)
+
 ## What it is
 Browse/bulk-view table of lexical entries.
 

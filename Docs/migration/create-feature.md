@@ -14,11 +14,13 @@ A small dialog to create a new feature or feature value (Name + optional Abbrevi
 feature-structure editor, without going through the full master feature list. Invoked from the
 `FwFeatureStructureEditor` create-feature / add-value affordances.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open a feature-structure editor and use the
-     "create new feature/value" blank link. See .claude/skills/fieldworks-winapp. -->
-![Create Feature – initial](./images/create-feature-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![master-phonological-feature-list legacy](./images/master-phonological-feature-list-before.png) | ![master-phonological-feature-list avalonia](./images/master-phonological-feature-list-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Name text field (required).
 - [ ] Abbreviation text field (optional).

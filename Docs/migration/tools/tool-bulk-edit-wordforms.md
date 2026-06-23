@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Bulk Edit Wordforms (`toolBulkEditWordforms`) (Sena 3, Legacy)](./images/tool-bulk-edit-wordforms-01.png)
+
 ## What it is
 Bulk-edit table over wordforms.
 

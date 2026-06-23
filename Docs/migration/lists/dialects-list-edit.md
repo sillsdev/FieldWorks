@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Dialect Labels (`dialectsListEdit`) (Sena 3, Legacy)](./images/dialects-list-edit-01.png)
+
 ## What it is
 Edit the 'Dialect Labels' CmPossibility list.
 

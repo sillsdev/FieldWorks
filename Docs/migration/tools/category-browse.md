@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Categories Browse (`categoryBrowse`) (Sena 3, Legacy)](./images/category-browse-01.png)
+
 ## What it is
 Browse table of grammatical categories (Parts of Speech).
 

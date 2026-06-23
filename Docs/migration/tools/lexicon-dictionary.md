@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Dictionary (`lexiconDictionary`) (Sena 3, Legacy)](./images/lexicon-dictionary-01.png)
+
 ## What it is
 Formatted dictionary publication view of entries.
 

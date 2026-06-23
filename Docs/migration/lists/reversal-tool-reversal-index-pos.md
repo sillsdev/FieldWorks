@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Reversal Index Categories (`reversalToolReversalIndexPOS`) (Sena 3, Legacy)](./images/reversal-tool-reversal-index-pos-01.png)
+
 ## What it is
 Edit the 'Reversal Index Categories' CmPossibility list.
 

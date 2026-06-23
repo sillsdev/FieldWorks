@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Concordance (`concordance`) (Sena 3, Legacy)](./images/concordance-01.png)
+
 ## What it is
 Concordance search + occurrences table over the text corpus.
 

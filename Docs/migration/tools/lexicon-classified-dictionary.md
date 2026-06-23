@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Classified Dictionary (`lexiconClassifiedDictionary`) (Sena 3, Legacy)](./images/lexicon-classified-dictionary-01.png)
+
 ## What it is
 Dictionary entries organised/classified by semantic domain, as a document.
 

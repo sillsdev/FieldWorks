@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Genres (`genresEdit`) (Sena 3, Legacy)](./images/genres-edit-01.png)
+
 ## What it is
 Edit the 'Genres' CmPossibility list.
 

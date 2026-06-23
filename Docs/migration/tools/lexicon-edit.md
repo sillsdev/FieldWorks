@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Lexicon Edit (`lexiconEdit`) (Sena 3, Legacy)](./images/lexicon-edit-01.png)
+
 ## What it is
 Browse list + detail edit of lexical entries (the primary dictionary entry editor).
 

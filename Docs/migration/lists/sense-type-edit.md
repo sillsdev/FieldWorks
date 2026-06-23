@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Sense Types (`senseTypeEdit`) (Sena 3, Legacy)](./images/sense-type-edit-01.png)
+
 ## What it is
 Edit the 'Sense Types' CmPossibility list.
 

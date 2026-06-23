@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Semantic Domains (`semanticDomainEdit`) (Sena 3, Legacy)](./images/semantic-domain-edit-01.png)
+
 ## What it is
 Edit the 'Semantic Domains' CmPossibility list.
 

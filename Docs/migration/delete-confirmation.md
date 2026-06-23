@@ -13,11 +13,13 @@
 Confirms deletion of an object (e.g. a lexical relation): shows the affected item and asks the user to
 continue, with a gated "Delete" button. Opens from delete commands such as the lexical-reference slice.
 
-## What it looks like
-<!-- CAPTURE: launch legacy FLEx (UIMode=Legacy), open an entry with a lexical relation,
-     delete the relation to trigger the confirmation. See .claude/skills/fieldworks-winapp. -->
-![Delete Confirmation – initial](./images/delete-confirmation-01.png) <!-- TODO: capture -->
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
 
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![confirm-delete-object legacy](./images/confirm-delete-object-before.png) | ![confirm-delete-object avalonia](./images/confirm-delete-object-after.png) |
 ## Behaviour to preserve (parity checklist)
 - [ ] Top message ("You are deleting the following item:").
 - [ ] Summary of the affected object, shown in bold.

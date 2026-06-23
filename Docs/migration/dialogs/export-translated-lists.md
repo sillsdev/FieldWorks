@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (checked multi-select of lists + writing systems) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![export-translated-lists legacy](./images/export-translated-lists-before.png) | ![export-translated-lists avalonia](./images/export-translated-lists-after.png) |
 ## What it is
 Lets the user select specific lists to export and the specific writing systems to include, via two checkbox `ListView`s (`m_lvLists`, `m_lvWritingSystems`).
 

@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (pick a merge target from a list) with an owned preview control |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![merge-object legacy](./images/merge-object-before.png) | ![merge-object avalonia](./images/merge-object-after.png) |
 ## What it is
 Lets the user merge the current object into another object of the same kind: pick the target to merge into, with a preview/summary of the candidate.
 

@@ -11,6 +11,17 @@
 | **Canonical reference** | tabs→OptionsDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![fw-proj-properties legacy](./images/fw-proj-properties-before.png) | ![fw-proj-properties avalonia](./images/fw-proj-properties-after.png) |
+
+Tabs (legacy):
+
+![general](./images/fw-proj-properties-tab-general.png) ![linked-files](./images/fw-proj-properties-tab-linked-files.png) ![sharing](./images/fw-proj-properties-tab-sharing.png)
 ## What it is
 The Project Properties dialog — edits project-level settings (name, description, writing systems, linked-files location, etc.).
 

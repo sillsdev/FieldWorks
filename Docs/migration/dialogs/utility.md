@@ -11,6 +11,13 @@
 | **Canonical reference** | search+list→EntryGoDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![utility legacy](./images/utility-before.png) | ![utility avalonia](./images/utility-after.png) |
 ## What it is
 Presents the list of utilities defined in `Language Explorer\Configuration\UtilityCatalogInclude.xml`. Each utility implements `IUtility` and can set explanatory labels describing when it is needed and what it does.
 

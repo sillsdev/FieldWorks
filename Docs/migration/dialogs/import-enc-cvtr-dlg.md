@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![import-enc-cvtr legacy](./images/import-enc-cvtr-before.png) | ![import-enc-cvtr avalonia](./images/import-enc-cvtr-after.png) |
 ## What it is
 Chooses an encoding converter for a given writing system during import.
 

@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Affix Categories (`affixCategoryEdit`) (Sena 3, Legacy)](./images/affix-category-edit-01.png)
+
 ## What it is
 Edit the 'Affix Categories' CmPossibility list.
 

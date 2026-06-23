@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Time Of Day (`timeOfDayEdit`) (Sena 3, Legacy)](./images/time-of-day-edit-01.png)
+
 ## What it is
 Edit the 'Time Of Day' CmPossibility list.
 

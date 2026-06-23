@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form (nearest: OptionsDialog) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![dictionary-configuration-node-rename legacy](./images/dictionary-configuration-node-rename-before.png) | ![dictionary-configuration-node-rename avalonia](./images/dictionary-configuration-node-rename-after.png) |
 ## What it is
 Small single-field dialog to rename a node (duplicate label) in the dictionary configuration tree; inserts the node value into the description text.
 

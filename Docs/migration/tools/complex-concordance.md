@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Complex Concordance (`complexConcordance`) (Sena 3, Legacy)](./images/complex-concordance-01.png)
+
 ## What it is
 Complex (multi-criteria) concordance search + occurrences table.
 

@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form→nearest |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![add-new-user legacy](./images/add-new-user-before.png) | ![add-new-user avalonia](./images/add-new-user-after.png) |
 ## What it is
 Used by the User Properties dialog when the Add button is clicked, to add a new user.
 

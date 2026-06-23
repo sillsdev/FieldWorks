@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Category Edit (`posEdit`) (Sena 3, Legacy)](./images/pos-edit-01.png)
+
 ## What it is
 Edit the Parts of Speech (grammatical category) hierarchy with a detail editor.
 

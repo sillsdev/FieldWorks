@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Status (`statusEdit`) (Sena 3, Legacy)](./images/status-edit-01.png)
+
 ## What it is
 Edit the 'Status' CmPossibility list.
 

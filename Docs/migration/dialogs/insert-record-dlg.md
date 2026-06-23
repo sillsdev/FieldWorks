@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![insert-record legacy](./images/insert-record-before.png) | ![insert-record avalonia](./images/insert-record-after.png) |
 ## What it is
 Creates a new Data Notebook record (Notebook counterpart of InsertEntryDlg).
 

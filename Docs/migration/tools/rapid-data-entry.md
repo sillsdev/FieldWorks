@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Collect Words (`rapidDataEntry`) (Sena 3, Legacy)](./images/rapid-data-entry-01.png)
+
 ## What it is
 Rapid Data Entry: collect words by semantic domain (RDE).
 

@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![master-category-list legacy](./images/master-category-list-before.png) | ![master-category-list avalonia](./images/master-category-list-after.png) |
 ## What it is
 Pick a grammatical category (part of speech) from the GOLD master catalog tree and add it to the project.
 

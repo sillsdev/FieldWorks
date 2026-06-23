@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form (nearest: OptionsDialog) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![custom-list legacy](./images/custom-list-before.png) | ![custom-list avalonia](./images/custom-list-after.png) |
 ## What it is
 Creates a new TopicListEditor-style custom list: collects multilingual name/description plus hierarchy, sort-by, duplicate and display-by options, then creates the list.
 

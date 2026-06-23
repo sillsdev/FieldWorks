@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![People (`peopleEdit`) (Sena 3, Legacy)](./images/people-edit-01.png)
+
 ## What it is
 Edit the 'People' CmPossibility list.
 

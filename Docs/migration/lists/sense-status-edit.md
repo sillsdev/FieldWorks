@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Sense Status (`senseStatusEdit`) (Sena 3, Legacy)](./images/sense-status-edit-01.png)
+
 ## What it is
 Edit the 'Sense Status' CmPossibility list.
 

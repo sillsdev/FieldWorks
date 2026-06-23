@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Record Edit (`notebookEdit`) (Sena 3, Legacy)](./images/notebook-edit-01.png)
+
 ## What it is
 Browse list + detail edit of anthropology/notebook records.
 

@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Morpheme Types (`morphTypeEdit`) (Sena 3, Legacy)](./images/morph-type-edit-01.png)
+
 ## What it is
 Edit the 'Morpheme Types' CmPossibility list.
 

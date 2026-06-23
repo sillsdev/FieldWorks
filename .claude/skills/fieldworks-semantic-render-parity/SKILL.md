@@ -9,6 +9,17 @@ Shared definitions (Path 3 bundle, evidence lanes, artifact naming) live in
 `fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`.
 This skill covers how to build and review the snapshots themselves.
 
+## Role in the migration before/after pipeline
+This skill owns the **"after"** half of the migration-doc before/after pairs (see
+`fieldworks-winapp` and `Docs/migration/_TEMPLATE.md`). The **before** is the legacy WinForms truth
+PNG (captured by the `fieldworks-winapp` launch-per-tool script / dialog harness); the **after** is
+the Avalonia surface rendered **from the same seeded data** by its visual test in
+`FwAvaloniaDialogsTests`/`FwAvaloniaTests`, saved as `<name>-after.png` in the doc's `images/`. Use
+the same render/visual lane defined here (not a one-off screenshot) so the "after" doubles as the
+parity baseline, and both PNGs attach to the surface's JIRA ticket. When the surfaces should match,
+the semantic snapshot — not the side-by-side image — is the authoritative parity check; the images
+are the human-facing summary.
+
 ## Snapshot Discipline
 
 Semantic snapshots preserve behaviorally meaningful identity and omit

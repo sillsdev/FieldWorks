@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Languages (`languagesListEdit`) (Sena 3, Legacy)](./images/languages-list-edit-01.png)
+
 ## What it is
 Edit the 'Languages' CmPossibility list.
 

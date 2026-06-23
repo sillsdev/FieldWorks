@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Locations (`locationsEdit`) (Sena 3, Legacy)](./images/locations-edit-01.png)
+
 ## What it is
 Edit the 'Locations' CmPossibility list.
 

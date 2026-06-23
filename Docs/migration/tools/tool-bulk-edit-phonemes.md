@@ -12,6 +12,9 @@
 | **Canonical reference** | browse/table -> Lexicon Browse pane (LexicalBrowseView) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Bulk Edit Phoneme Features (`toolBulkEditPhonemes`) (Sena 3, Legacy)](./images/tool-bulk-edit-phonemes-01.png)
+
 ## What it is
 Bulk-assign phonological features to phonemes.
 

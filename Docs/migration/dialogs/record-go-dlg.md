@@ -11,6 +11,13 @@
 | **Canonical reference** | EntryGoDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![record-go legacy](./images/record-go-before.png) | ![record-go avalonia](./images/record-go-after.png) |
 ## What it is
 Go-to / find dialog for Data Notebook records (Notebook analog of GotoEntryDlg).
 

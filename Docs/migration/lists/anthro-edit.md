@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Anthropology Categories (`anthroEdit`) (Sena 3, Legacy)](./images/anthro-edit-01.png)
+
 ## What it is
 Edit the 'Anthropology Categories' CmPossibility list.
 

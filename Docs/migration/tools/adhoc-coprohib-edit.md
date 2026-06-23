@@ -12,6 +12,9 @@
 | **Canonical reference** | detail editor -> Lexicon Edit entry pane (FullEntryRegionComposer) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Ad hoc Rules (`AdhocCoprohibEdit`) (Sena 3, Legacy)](./images/adhoc-coprohib-edit-01.png)
+
 ## What it is
 Edit ad hoc co-occurrence prohibition rules.
 

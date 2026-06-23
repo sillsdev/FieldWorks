@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (credentials + checked multi-select of reversals/publications) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![upload-to-webonary legacy](./images/upload-to-webonary-before.png) | ![upload-to-webonary avalonia](./images/upload-to-webonary-after.png) |
 ## What it is
 Dialog for publishing dictionary data to the Webonary web site: site/credentials, publication and configuration choice, and a checkbox list of reversals (`reversalsCheckedListBox`) to include. Implements `IUploadToWebonaryView` (MVC view).
 

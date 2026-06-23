@@ -12,6 +12,9 @@
 | **Canonical reference** | n/a |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Word Analyses (`Analyses`) (Sena 3, Legacy)](./images/analyses-01.png)
+
 ## What it is
 Word Analyses morph-bundle editor (per-wordform analyses).
 

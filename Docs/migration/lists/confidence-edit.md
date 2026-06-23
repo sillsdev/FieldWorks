@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Confidence Levels (`confidenceEdit`) (Sena 3, Legacy)](./images/confidence-edit-01.png)
+
 ## What it is
 Edit the 'Confidence Levels' CmPossibility list.
 

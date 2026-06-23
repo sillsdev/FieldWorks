@@ -12,6 +12,9 @@
 | **Canonical reference** | tree -> ChooserDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like
+![Extended Note Types (`extNoteTypeEdit`) (Sena 3, Legacy)](./images/ext-note-type-edit-01.png)
+
 ## What it is
 Edit the 'Extended Note Types' CmPossibility list.
 

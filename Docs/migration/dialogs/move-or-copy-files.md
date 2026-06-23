@@ -11,6 +11,13 @@
 | **Canonical reference** | plain-form→nearest |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![move-or-copy-files legacy](./images/move-or-copy-files-before.png) | ![move-or-copy-files avalonia](./images/move-or-copy-files-after.png) |
 ## What it is
 Asks what to do with files when `LangProject.LinkedFilesRootDir` changes, or when linking a file from outside that root — move, copy into the linked-files root, or leave in place.
 

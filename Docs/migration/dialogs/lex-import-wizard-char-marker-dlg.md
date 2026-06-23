@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![lex-import-wizard-char-marker legacy](./images/lex-import-wizard-char-marker-before.png) | ![lex-import-wizard-char-marker avalonia](./images/lex-import-wizard-char-marker-after.png) |
 ## What it is
 Edits an inline character/begin-end marker mapping in the standard-format lexicon import wizard.
 
