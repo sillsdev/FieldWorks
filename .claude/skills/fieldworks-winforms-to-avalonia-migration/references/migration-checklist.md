@@ -4,6 +4,23 @@ Copy this checklist into your working notes (or the OpenSpec change tasks)
 at the start of a migration and keep it updated. It is the per-region
 definition of done. Items map to the workflow phases in SKILL.md.
 
+## Phase 0 — Phase-1 PR landing (only when reducing a derisk branch for merge)
+
+Use this when collapsing a large multi-surface derisk branch into a landable PR (see SKILL.md
+"Phase-1 Landing Strategy"). Skip for an ordinary single-region migration.
+
+- [ ] Canonical screen chosen per primitive (table / detail-editor / tree+multi-select / tabs
+      / owned-form / search-list); each is fully wired, green, and parity-evidenced
+- [ ] Every deferred WinForms screen has `Docs/migration/<screen>.md` (from `_TEMPLATE.md`) with
+      a live-FLEx PNG (capture via `fieldworks-winapp`), primitive, parity checklist, gotchas
+- [ ] JIRA ticket filed per deferred screen, linked from its doc
+- [ ] Each backed-out screen's wiring verified from the product call site (`file:line`) — NOT
+      from class names / comments / an Explore summary (those have given false "unwired" results)
+- [ ] Backed-out screens: view/VM/tests removed AND call site reverted to the legacy path
+- [ ] XL surfaces with their own openspec change split to a follow-up PR (not backed out);
+      shared composer infra stays in the spine PR
+- [ ] PR body is a manifest: canonical screens + why, deferred screens + doc/JIRA, split-out PRs
+
 ## Phase 1 — Inventory and scope
 
 - [ ] Legacy surface identified: entry points, layouts/parts, custom slice

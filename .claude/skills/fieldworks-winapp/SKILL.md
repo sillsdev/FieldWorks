@@ -33,6 +33,12 @@ headless skill, never through this MCP. ALWAYS run
 This skill is intentionally organized as a small index plus route-specific
 navigation files. Read only the route files needed for the task.
 
+**Migration-doc screenshots.** A common task is capturing the legacy "truth" PNGs for the
+Phase-1 migration docs (see the hub skill's "Phase-1 Landing Strategy"). Navigate to the
+legacy screen in Legacy mode, capture into `Docs/migration/images/<screen>-NN.png`, and
+reference it from `Docs/migration/<screen>.md` (template at `Docs/migration/_TEMPLATE.md`).
+Capture the important states (initial, filled, error, multi-select), not just the empty form.
+
 ## Setup First (if `winforms_*` tools are missing)
 
 If `ToolSearch "winforms"` finds no tools, the MCP server is not registered for

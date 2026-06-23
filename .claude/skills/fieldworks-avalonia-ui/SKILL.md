@@ -40,6 +40,15 @@ lifetime. Canonical code to imitate:
   This is the verified template for hand-authored dialogs — see
   "Converting a WinForms dialog (MVVM kit)" below.
 
+**Re-implementing a Phase-1 deferred screen (JIRA tickets).** Many screens were documented
+and backed out to land the Phase-1 PR; each has a ticket + a `Docs/migration/<screen>.md`
+(what it is, legacy PNGs, parity checklist, gotchas, the git sha of the backed-out stub).
+Start there: recover the stub from git history as a skeleton, copy the **canonical screen**
+for that primitive (the hub skill's "Phase-1 Landing Strategy" names them — e.g. ChooserDialog
+for tree/multi-select, OptionsDialog for tabs, InsertEntryDialog for owned-control forms), then
+follow the per-region Workflow. Re-wire the call site behind `UIMode=New` (Legacy keeps the
+WinForms path).
+
 ## Converting a WinForms dialog (MVVM kit)
 
 Hand-authored dialogs/wizards use **XAML + CommunityToolkit.Mvvm + compiled

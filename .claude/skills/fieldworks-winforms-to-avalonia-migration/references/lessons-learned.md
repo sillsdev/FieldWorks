@@ -48,6 +48,79 @@ Append one entry per completed migration (newest first). Keep entries to
 ~10 lines: link to the change, what was migrated, what was learned, which
 skill files changed.
 
+### 2026-06 — Phase-1 PR landing strategy (canonical-per-primitive, document-then-back-out)
+
+- Change: scratchpad `phase1-pr-prep-manifest.md`; branch `010-advanced-entry-view-phase-1-2`.
+- Decided how to land a sprawling derisk branch (~864 files / +140k): keep ONE canonical
+  screen per UI primitive (table/detail-editor/tree+multi-select/tabs/owned-form/search-list),
+  document every other deferred WinForms screen under `Docs/migration/` (md + live-FLEx PNG +
+  parity checklist + gotchas) and file a JIRA, then back the screen out (remove view/VM/tests +
+  unwire its call site). XL surfaces in their own openspec changes split to follow-up PRs
+  instead of backing out. Now encoded in SKILL.md "Phase-1 Landing Strategy" +
+  migration-checklist.md "Phase 0" + `Docs/migration/{README,_TEMPLATE}.md`.
+- Learned: (1) **`UIMode` defaults `"Legacy"`** (Settings.Designer.cs) and every Avalonia
+  surface gates on it, so "not breaking anything" is structural — back-out is for reviewability,
+  not safety; do it aggressively. (2) **Verify wiring from call sites, never from an Explore
+  summary** — an Explore sweep falsely flagged FilterFor/DateRange/FindReplace/SpecialChar as
+  "unwired spec-only" when three were instantiated in `RecordBrowseView.cs`; only SpecialChar +
+  WritingSystemProperties were genuinely unwired. Quote `file:line`. This repeats the standing
+  lesson: Explore agents reading excerpts in isolation produce false negatives/positives —
+  ground-truth before deleting. (3) The reusable *control* and the canonical *screen* are
+  different layers — keep all controls; keep one screen per primitive. (4) `ChooserDialog`
+  covers two named primitives (tree + multi-select) — one screen can be canonical for several.
+- Skill files changed: `SKILL.md` (Phase-1 Landing Strategy), `migration-checklist.md` (Phase 0),
+  `fieldworks-migration-scope-review` (Phase-1 split trigger), `fieldworks-winapp` (Docs/migration
+  capture pointer), this ledger.
+
+### 2026-06 — avalonia-rule-formula-editor + avalonia-interlinear-editor (two XL editors)
+
+- Changes: `openspec/changes/avalonia-rule-formula-editor/`, `.../avalonia-interlinear-editor/`.
+- Migrated: all 6 Grammar rule tools (`PhonologicalRuleEdit`, `EnvironmentEdit`,
+  `compoundRuleAdvancedEdit`, `naturalClassedit`, `phonemeEdit`, `AdhocCoprohibEdit`) — sectioned
+  LCModel-free `RuleFormulaModel` DTO, projector in **xWorks** (`RuleFormulaProjector`, NOT
+  Morphology — circular), read-only control + edit sink staging via the fenced
+  `RegionEditContextBase`; and the Words `Analyses` interlinear morph-bundle editor — NO
+  Sandbox/LCModel in the FwAvalonia view (`InterlinearAnalysisModel`), all reads/writes +
+  Sandbox-parity MSA-prune in the xWorks plugin (`InterlinearAnalysisProjector`/`WriteBack`).
+- Learned: (1) **Projectors/write-back live in xWorks, never in FwAvalonia** (xWorks has both
+  LCModel + FwAvalonia refs; Morphology→FwAvalonia would be circular). The view binds a
+  projection DTO; the plugin owns every LCModel touch. (2) **`ToFormulaString()`/oracle strings
+  are the parity contract** — encode the legacy rendering ("p → [V] / [C] __ #") as a test
+  oracle, not free-form. (3) Context sections need the atomic↔`PhSequenceContext` 0→1→2→1→0
+  transition (legacy `CreateSeqCtxt`); own the context FIRST, then set `FeatureStructureRA`
+  (else NRE). (4) MSA-prune parity: editable only for human-approved analyses (legacy
+  `deParams editable="true"`); write-back + prune on the region's shared fenced UOW (one undo
+  step). (5) Deferred with `// PARITY`: morph re-segmentation, MoAffixProcess affix-process
+  editing, metathesis middle/move, adhoc nested-group recursion — leaf editing ships, recursion defers.
+- Skill files changed: this ledger. New plugins added to `architecture-patterns.md` §5 list;
+  composer-generalization gotchas in §2 (see next entry).
+
+### 2026-06 — §20 class-general composer + the composer fixes that unblocked many tools
+
+- Change: `openspec/changes/lexical-edit-avalonia-migration/` §20 + §19i fix sweep.
+- Generalized the entry composer to any `ICmObject` (`Compose(ICmObject, layout, choiceGuid)`;
+  `RegionEditContextBase`/`ComposedRegionEditContext` on `ICmObject`), unblocking notebookEdit /
+  posEdit / Lists / the rule tools. Three regression-free composer fixes were the gating work:
+- Learned: (1) **Layout choice resolution is 4-key**, not 1 — `LayoutSourceLoader` had collapsed
+  11 RnGenericRec variants to Analysis; thread `choiceGuid` + `ResolveLayoutChoiceGuid` and memo
+  by it (root blocker for Notebook/Lists edit). (2) **Multi-child `<if Disabled=true>`/`<if
+  Disabled=false>` pairs** were imported as only the first child — `DictionaryPartResolver` must
+  return `part.Elements()` (all children); each `<if>`→Conditional node. This made
+  MoExoCompound's Name/Description/Active/category-pickers compose. (3) **Generic editable
+  reference vector + atomic chooser** (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via
+  `ReferenceTargetCandidates`) live in the SHARED `WalkOtherField` fallthrough — gate out
+  virtual/computed props (`if (flid==0 || _mdc.get_IsVirtual(flid)) return null;`), mirroring
+  legacy `VectorReferenceView.cs:440` (`!get_IsVirtual`), so back-refs/derived collections stay
+  read-only (no blind `Replace` corruption). Decision: keep the generic global path — legacy
+  editing is itself fully metadata-driven (one `AtomicReferenceSlice`/`ReferenceVectorSlice` per
+  field type, ZERO per-class allow-list), so narrowing to grammar classes would be an
+  anti-pattern. (4) §19i data-loss: a GenDate composer that emitted `ToLongString()` corrupted
+  year-granular dates — emit the canonical year-granular form. (5) Shared-composer changes are
+  high blast-radius — MEASURE it (lexicon/notebook/back-ref suites, 192 tests) and run full
+  `./test.ps1`; the only failures should be the known 38 environmental data-sentinel ones.
+- Skill files changed: `architecture-patterns.md` §1/§2 (layout-choice 4-key + multi-child part
+  import + generic metadata-driven reference editing + virtual-prop gate), this ledger.
+
 ### 2026-06 — §19e remaining detail-editor field types to parity
 
 - Change: `openspec/changes/lexical-edit-avalonia-migration/field-types-test-research.md`.

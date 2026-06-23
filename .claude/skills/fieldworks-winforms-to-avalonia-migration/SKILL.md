@@ -86,6 +86,48 @@ off — it is the per-region definition of done.
 10. **Retrospective.** Update these skills — see "Keep this skill set
     current" below. This step is part of the migration, not optional polish.
 
+## Phase-1 Landing Strategy (canonical-per-primitive, document-then-back-out)
+
+The program runs in two phases. **Phase 1** = high-value feature/bugfix-grade
+migrations behind the `UIMode` flag (default `"Legacy"` —
+`Src/Common/FwUtils/Properties/Settings.Designer.cs`; every Avalonia surface gates on
+`UIMode=New` via `LexicalEditSurfaceRegistry` + `LexicalEditSurfaceResolver`, so default
+users see no change). **Phase 2** (`avalonia-end-game`) = net10 / multiplatform / shell
+conversion, gated until Phase-1 + tester burn-down complete.
+
+A Phase-1 derisk branch tends to accrete far more than one PR should carry (the first such
+branch reached ~864 files / +140k). Land it with this discipline:
+
+1. **One canonical screen per UI primitive.** Keep exactly one fully-wired, green,
+   parity-evidenced *consumer* per primitive as the reference teammates copy — distinct from
+   the reusable *control*, which you always keep. Current canonical map (the screens to copy):
+   - virtualized editable **TABLE** → Lexicon Browse/Edit pane (`LexicalBrowseView`)
+   - composed **detail editor** (DataTree replacement) → Lexicon Edit entry pane
+     (`FullEntryRegionComposer`); the same composer also drives `notebookEdit`/`posEdit`
+   - **tree + multi-selector** → `ChooserDialog` (one screen covers both)
+   - **tabs** → `OptionsDialog`; **owned-control composite form** → `InsertEntryDialog`;
+     **search+list** → `EntryGoDialog`
+2. **Document every deferred screen, then back it out.** For each WinForms screen not kept,
+   write `Docs/migration/<screen>.md` (use `Docs/migration/_TEMPLATE.md`) with a legacy PNG
+   captured from live FLEx (apply `fieldworks-winapp` / winforms-mcp), the primitive, the
+   parity checklist, and gotchas; file a JIRA ticket; then remove the Avalonia view/VM/tests
+   **and unwire its call site back to the legacy path**. Because the flag defaults off, this
+   is safe to do aggressively — the goal is a reviewable PR and a clean starting point per
+   ticket, not runtime safety.
+3. **Split XL surfaces into their own follow-up PRs** rather than backing them out, when they
+   already live in isolated openspec changes/worktrees (e.g. `avalonia-rule-formula-editor`,
+   `avalonia-interlinear-editor`). Keep shared composer infra in the spine PR.
+4. **Verify wiring from call sites, never from a summary.** Whether a dialog is wired (and
+   thus needs its call site reverted) is determined by reading the product call site
+   (`RecordBrowseView`, the `Lcm*Launcher`s), not by class names, comments, or an Explore
+   agent's claim — those have produced false "unwired" negatives. Quote the `file:line`.
+5. **The PR body is a manifest:** name each canonical screen and why; list each backed-out
+   screen with its doc path + JIRA id; name the split-out follow-up PRs.
+
+Re-implementers picking up a JIRA ticket: start from the named canonical screen for that
+primitive, read its doc's parity checklist + gotchas, recover the backed-out stub from git
+history as a starting point, then run the normal per-region Workflow above.
+
 ## Hard Rules
 
 - Active Avalonia hosts must not instantiate or drive hidden legacy

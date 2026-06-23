@@ -46,6 +46,21 @@ identical IR) because parity snapshots key off it. Track element/attribute
 import coverage explicitly; an unimported construct must surface as a
 diagnostic node, not vanish.
 
+- **Layout choice is a 4-key resolution, not 1.** A class can have many layout
+  variants selected by a `layoutChoiceField`/choice-guid (e.g. 11 `RnGenericRec`
+  variants). `LayoutSourceLoader` originally collapsed them to one (Analysis),
+  which silently broke Notebook/Lists edit composition. Index layouts by choice
+  (`IndexLayoutsByChoice`/`SelectLayoutForChoice`), thread the `choiceGuid` through
+  the composer (`ResolveLayoutChoiceGuid`), and memo by it. Tests:
+  `LayoutChoiceResolutionTests`.
+- **Multi-child parts must import every child element.** A part whose body is an
+  enable/disable pair — `<if Disabled="true">…</if><if Disabled="false">…</if>` —
+  imported as only its first child, so the active-state variant vanished (Name/
+  Description/Active on compound rules). `IPartResolver.ResolvePartContents` returns
+  `part.Elements()` (all children); the importer makes one node per child, each `<if>`
+  a Conditional that `WalkConditional` evaluates. This is shared infra — re-run full
+  `./test.ps1` after touching it.
+
 ## 2. Region model + composer (boundary above DataTree)
 
 **Decision.** The migration boundary sits at the region-model layer above
@@ -66,6 +81,30 @@ Tests: `RegionModelTests.cs`, `RegionEditingTests.cs`,
 **Gotchas.** The region model is presentation data, not LCModel objects —
 it is projected from `IRegionValueProvider` style seams so it can be built
 and tested off-thread without WinForms or a real project.
+
+- **The composer is class-general — compose any `ICmObject`, not just LexEntry.**
+  `Compose(ICmObject, layout, choiceGuid)` + `RegionEditContextBase`/
+  `ComposedRegionEditContext` on `ICmObject` let notebookEdit / posEdit / Lists / the
+  Grammar rule tools all ride one composer. New surfaces opt in by registering their
+  tool in `LexicalEditSurfaceRegistry`, not by editing the composer.
+- **Generic reference editing mirrors legacy's metadata-driven model — keep it
+  global, gate on `IsVirtual`.** Editable reference vectors/atomic choosers
+  (`AddGenericReferenceVector`/`AddGenericAtomicChooser` via `ReferenceTargetCandidates`)
+  live in the shared `WalkOtherField` fallthrough. Legacy editing is itself fully
+  metadata-driven — `SliceFactory` reuses ONE `AtomicReferenceSlice`/`ReferenceVectorSlice`
+  per field type across ALL classes with ZERO per-class allow-list — so narrowing the
+  generic path to specific classes is an anti-pattern. The one required guard:
+  `if (flid == 0 || _mdc.get_IsVirtual(flid)) return null;` — exactly the editability gate
+  legacy `VectorReferenceView.cs:440` uses (`!get_IsVirtual`), so back-refs and derived
+  collections stay read-only and never get a blind `Replace` (data-corruption risk).
+- **Shared-composer changes are high blast-radius.** Anything in the composer/importer
+  fallthrough touches LIVE lexicon/notebook/pos. Measure the radius (lexicon/notebook/
+  back-ref suites) and run full `./test.ps1`; the only expected failures are the known ~38
+  environmental data-sentinel ones (main-repo path), not regressions.
+- **Probe LCModel string grammars before composing a value editor.** A GenDate editor
+  that round-tripped through `ToLongString()` silently corrupted year-granular dates
+  (§19i data-loss). Emit the canonical granular form the model's `TryParse` accepts, not a
+  display string. Verify against the actual LCModel API, not assumptions.
 
 ## 3. Explicit surface selection per host
 
@@ -126,11 +165,26 @@ explicit "unsupported" row. Never silent mis-render. Keying by legacy class
 identity means zero layout edits and measurable burn-down (census vs.
 registry coverage).
 
-**Canonical code.** `Src/xWorks/RegionEditorPlugins.cs`,
+**Canonical code.** `Src/xWorks/RegionEditorPlugins.cs` (`RegisterBuiltins`),
 `Src/xWorks/ChorusNotesPlugin.cs`, registry contracts in
 `Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`.
+Registered plugins now include `ChorusNotesPlugin`, `ReversalIndexEntryPlugin`,
+`InterlinearSlicePlugin` (Words `Analyses` — own openspec change
+`avalonia-interlinear-editor`), the rule-formula family `RuleFormulaRegionEditorPlugin`/
+`MetaRuleFormulaRegionEditorPlugin`/`AffixRuleFormulaRegionEditorPlugin` +
+`PhEnvironmentRegionEditorPlugin` + `BasicIpaSymbolRegionEditorPlugin` (own openspec change
+`avalonia-rule-formula-editor`), and the dialog-launcher plugins
+`DialogLauncherPlugins.Create*` (MSA-inflection / phonological features / audio-visual).
 Tests: `Src/xWorks/xWorksTests/DialogLauncherPluginTests.cs`,
-`LexemeEditorBurnDownTests.cs`, `MessagesCompanionLaneTests.cs`.
+`LexemeEditorBurnDownTests.cs`, `MessagesCompanionLaneTests.cs`,
+`InterlinearSlicePluginTests.cs`, `RecordEditViewSwitchTests.cs`.
+
+**Projectors and write-back belong in xWorks, not FwAvalonia or the domain assembly.**
+A plugin's view stays LCModel-free and binds an LCModel-free projection DTO; the projector
+that reads LCModel and the write-back that mutates it live in xWorks (which references both
+LCModel and FwAvalonia). Putting a projector in `Morphology` would be circular. Encode the
+legacy rendering as a parity oracle string (e.g. rule-formula `ToFormulaString()` →
+"p → [V] / [C] __ #") and test against it, not free-form output.
 
 **When migrating a new surface:** census its custom slice classes first,
 check the registry for existing plugins, and add plugins (with tests) for
