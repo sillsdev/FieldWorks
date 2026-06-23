@@ -69,36 +69,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 
-				SandboxGenericMSA sandoxMSA = new SandboxGenericMSA();
-				sandoxMSA.MsaType = MSAType;
-				switch (MSAType)
-				{
-					case MsaType.kRoot: // Fall through
-					case MsaType.kStem:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						break;
-					}
-					case MsaType.kInfl:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						if (Slot != null && SlotIsValidForPos)
-							sandoxMSA.Slot = Slot;
-						break;
-					}
-					case MsaType.kDeriv:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						sandoxMSA.SecondaryPOS = SecondaryPOS;
-						break;
-					}
-					case MsaType.kUnclassified:
-					{
-						sandoxMSA.MainPOS = MainPOS;
-						break;
-					}
-				}
-				return sandoxMSA;
+				return MsaTypeRules.BuildSandboxMsa(MSAType, MainPOS, SecondaryPOS, Slot, SlotIsValidForPos);
 			}
 		}
 
@@ -127,7 +98,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					return; // Can't set it zero, no matter what, until PopupTree supports it.
 
 				m_selectedMainPOS = value;
-				if (MSAType != MsaType.kStem)
+				// Setting the category must not turn an affix entry into a stem (see ShouldForceStemForMainPos).
+				if (MsaTypeRules.ShouldForceStemForMainPos(MSAType))
 					MSAType = MsaType.kStem;
 				// In order to select the node, we must have loaded the tree.
 				TrySelectNode(m_tcMainPOS, m_selectedMainPOS.Hvo);
@@ -357,40 +329,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					ResetSlotCombo();
 				string sGuid = m_morphType.Guid.ToString();
 				Debug.Assert(sGuid != null && sGuid != String.Empty);
-				switch (sGuid)
-				{
-					case MoMorphTypeTags.kMorphStem:
-					case MoMorphTypeTags.kMorphBoundStem:
-					case MoMorphTypeTags.kMorphPhrase:
-					case MoMorphTypeTags.kMorphDiscontiguousPhrase:
-						MSAType = MsaType.kStem;
-						break;
-					case MoMorphTypeTags.kMorphProclitic:
-					case MoMorphTypeTags.kMorphClitic:
-					case MoMorphTypeTags.kMorphEnclitic:
-					case MoMorphTypeTags.kMorphParticle:
-					case MoMorphTypeTags.kMorphRoot:
-					case MoMorphTypeTags.kMorphBoundRoot:
-						MSAType = MsaType.kRoot;
-						break;
-					default:
-						/*
-						  MoMorphTypeTags.kMorphInfix
-						  MoMorphTypeTags.kMorphPrefix
-						  MoMorphTypeTags.kMorphSimulfix
-						  MoMorphTypeTags.kMorphSuffix
-						  MoMorphTypeTags.kMorphSuprafix
-						  MoMorphTypeTags.kMorphCircumfix
-						  MoMorphTypeTags.kMorphInfixingInterfix
-						  MoMorphTypeTags.kMorphPrefixingInterfix
-						  MoMorphTypeTags.kMorphSuffixingInterfix
-						*/
-						// It may already be set to a better type than MsaType.kUnclassified,
-						// so leave it alone, if it is.
-						if (MSAType == MsaType.kRoot || MSAType == MsaType.kStem)
-							MSAType = MsaType.kUnclassified;
-						break;
-				}
+				MSAType = MsaTypeRules.MsaTypeForMorphType(sGuid, MSAType);
 			}
 		}
 
