@@ -1037,6 +1037,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 		private void FindDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			if (m_htmlControl?.Browser?.Window == null)
+			{
+				return;
+			}
 			using (var executor = new AutoJSContext(m_htmlControl.Browser.Window))
 			{
 				// Javascript query to execute in the browser
@@ -1102,8 +1106,11 @@ namespace SIL.FieldWorks.XWorks
 
 			private void FindInBrowser(bool forward)
 			{
-				if (geckoBrowser == null)
+				if (geckoBrowser?.Window == null)
+				{
+					Close();
 					return;
+				}
 				int originalResultIndex = resultIndex;
 				using (var executor = new AutoJSContext(geckoBrowser.Window))
 				{
