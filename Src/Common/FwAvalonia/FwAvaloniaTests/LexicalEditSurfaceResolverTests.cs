@@ -163,12 +163,12 @@ namespace FwAvaloniaTests
 		// Phase1FollowUpBrowseTools) and restores the SelectsAvalonia expectations.
 
 		[Test]
-		public void ResolveBrowse_LexiconBrowse_NewMode_InertInBase_FallsBackToLegacy()
+		public void ResolveBrowse_LexiconBrowse_NewMode_YieldsAvalonia()
 		{
 			var surface = LexicalEditSurfaceResolver.ResolveBrowse(
 				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "lexiconBrowse");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
-				"the browse table is a follow-up surface, inert in the base PR (even under New)");
+			Assert.That(surface, Is.EqualTo(LexicalEditSurface.Avalonia),
+				"the browse table is activated by the table follow-up PR (under New)");
 		}
 
 		[Test]
@@ -180,14 +180,14 @@ namespace FwAvaloniaTests
 		}
 
 		[Test]
-		public void ResolveBrowse_LexiconEdit_NewMode_InertInBase_FallsBackToLegacy()
+		public void ResolveBrowse_LexiconEdit_NewMode_YieldsAvalonia()
 		{
 			// The Lexicon Edit tool's left Entries pane reports currentContentControl = "lexiconEdit".
-			// Inert in the base PR; the browse follow-up re-registers it.
+			// Activated by the table follow-up PR.
 			var surface = LexicalEditSurfaceResolver.ResolveBrowse(
 				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "lexiconEdit");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
-				"the browse table is a follow-up surface, inert in the base PR (even under New)");
+			Assert.That(surface, Is.EqualTo(LexicalEditSurface.Avalonia),
+				"the browse table is activated by the table follow-up PR (under New)");
 		}
 
 		[TestCase("concordance")]
@@ -209,24 +209,24 @@ namespace FwAvaloniaTests
 		[TestCase("toolBulkEditWordforms")]   // §20.2.4 Words bulk-edit
 		[TestCase("featureTypesAdvancedEdit")]      // §20.2.7 Grammar/Lists flat feature-types table
 		[TestCase("reversalToolReversalIndexPOS")]  // §20.2.7 reversal-index POS flat table
-		// Phase-1: the browse TABLE is a follow-up surface, INERT in the base PR, so these tools stay on the
-		// legacy BrowseViewer even under New. The browse follow-up re-registers them and restores Avalonia.
-		public void ResolveBrowse_RegisteredNonLexiconTool_NewMode_InertInBase(string toolName)
+		// §20.2: activated by the table follow-up PR — these flat-list tools' browse pane renders on the
+		// Avalonia owned table under New (their EDIT detail stays WinForms until separately registered).
+		public void ResolveBrowse_RegisteredNonLexiconTool_NewMode_YieldsAvalonia(string toolName)
 		{
 			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(
 				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: toolName),
-				Is.EqualTo(LexicalEditSurface.WinForms),
-				$"{toolName} browse is inert in the base PR (table is a follow-up); stays legacy even under New");
+				Is.EqualTo(LexicalEditSurface.Avalonia),
+				$"{toolName} browse is activated by the table follow-up PR; selects the Avalonia table under New");
 		}
 
 		[Test]
-		public void ResolveBrowse_ExplicitOverride_InertInBase()
+		public void ResolveBrowse_ExplicitOverride_YieldsAvalonia()
 		{
-			// With the browse table inert (no tool registered), even an explicit override cannot select the
-			// Avalonia table — the tool gate is checked first. The follow-up re-registers the browse tools.
+			// With the browse table activated (tool registered), an explicit override selects the Avalonia
+			// table: the tool gate is open, so the override wins over the persisted preference.
 			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(
 				overrideEnabled: true, uiMode: LexicalEditSurfaceResolver.LegacyUIMode,
-				currentToolName: "lexiconBrowse"), Is.EqualTo(LexicalEditSurface.WinForms));
+				currentToolName: "lexiconBrowse"), Is.EqualTo(LexicalEditSurface.Avalonia));
 		}
 
 		// --- Disabled-tools CSV round-trip (the "Manage Individual Features" persistence format). No prior
