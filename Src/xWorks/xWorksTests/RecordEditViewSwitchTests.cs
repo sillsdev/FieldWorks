@@ -165,13 +165,14 @@ namespace SIL.FieldWorks.XWorks
 				toolValue);
 		}
 
-		// §20.3 / §20.5.2: the detail-editor tools registered for the Avalonia surface in the BASE PR. They
-		// resolve to Avalonia under New mode. The interlinear (Analyses) and rule-formula tools (PhonologicalRuleEdit,
-		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are INERT in the
-		// base PR (see LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools); their follow-up PR re-registers them and
-		// adds the corresponding TestCase rows back here.
+		// §20.3 / §20.5.2: the detail-editor tools registered for the Avalonia surface. They resolve to
+		// Avalonia under New mode. "Analyses" was flipped on by the avalonia-interlinear-editor follow-up PR
+		// (this branch). The rule-formula tools (PhonologicalRuleEdit, EnvironmentEdit, compoundRuleAdvancedEdit,
+		// naturalClassedit, phonemeEdit, AdhocCoprohibEdit) remain INERT until their own follow-up PR (see
+		// LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools), which adds their TestCase rows back here.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
+		[TestCase("Analyses")]   // avalonia-interlinear-editor follow-up: flipped into DefaultSupportedTools
 		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)
 		{
 			m_propertyTable.SetProperty("UIMode", "New", true);

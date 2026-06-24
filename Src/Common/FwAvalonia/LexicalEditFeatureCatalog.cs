@@ -49,6 +49,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
 			new LexicalEditFeatureDescriptor("posEdit",
 				FwAvaloniaStrings.FeaturePosEditName, FwAvaloniaStrings.FeaturePosEditDescription,
+				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
+			new LexicalEditFeatureDescriptor("Analyses",
+				FwAvaloniaStrings.FeatureAnalysesName, FwAvaloniaStrings.FeatureAnalysesDescription,
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
 		};
 
