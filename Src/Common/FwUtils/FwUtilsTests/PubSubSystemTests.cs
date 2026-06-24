@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			unscopedSubscriber.DoSubscriptions();
 
 			// Run test.
-			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, null));
 			Assert.That(scopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
 			Assert.That(unscopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
 
