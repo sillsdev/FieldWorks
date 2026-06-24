@@ -1,0 +1,91 @@
+BACK-OUT DIALOGS WIRING ANALYSIS
+=================================
+
+1. AddNewSenseDialog
+   WIRED: YES
+   Call site: SandboxBase.ComboHandlers.cs:2492 - LcmAddNewSenseDialogLauncher.Show()
+   Product path: SandboxBase.ComboHandlers → LcmAddNewSenseDialogLauncher → AddNewSenseDialogView
+   Shared deps: FwMsaGroupBox, InMemoryRegionEditContext, FwFeatureNode (via AddNewSenseDialogViewModel)
+   
+2. MsaCreatorDialog
+   WIRED: YES
+   Call sites: 
+     - MSADlgLauncher.cs:67 - LcmMsaCreatorDialogLauncher.Show()
+     - MSAPopupTreeManager.cs:390 - LcmMsaCreatorDialogLauncher.Show()
+     - MSAPopupTreeManager.cs:450 - LcmMsaCreatorDialogLauncher.Show()
+   Product paths: MSADlgLauncher/MSAPopupTreeManager → LcmMsaCreatorDialogLauncher → MsaCreatorDialogView
+   Shared deps: FwMsaGroupBox, FwSandboxMsa, InMemoryRegionEditContext, FwFeatureStructureEditor
+   
+3. FeatureChooserDialog
+   WIRED: YES (via both inflection and phonological launchers)
+   Call sites:
+     - MsaInflectionFeatureListDlgLauncher.cs:176 - LcmInflectionFeatureChooserLauncher.ShowForOwner()
+     - PhonologicalFeatureListDlgLauncher.cs:124 - LcmPhonologicalFeatureChooserLauncher.Show()
+   Product paths: MSA feature/phonology slices → Lcm*FeatureChooserLauncher → FeatureChooserDialogView
+   Shared deps: FwFeatureStructureEditor, FwFeatureNode
+   
+4. CreateFeatureDialog
+   WIRED: YES (via multiple feature/phonology paths)
+   Call sites (via launchers):
+     - LcmInflectionFeatureChooserLauncher.cs:143 - calls LcmCreateFeatureLauncher.CreateFeature()
+     - LcmInflectionFeatureChooserLauncher.cs:153 - calls LcmCreateFeatureLauncher.AddValue()
+     - LcmPhonologicalFeatureChooserLauncher.cs:124 - calls LcmCreateFeatureLauncher.CreateFeature()
+     - LcmInflectionFeatureCreateWiring.cs:28 - calls LcmCreateFeatureLauncher.CreateFeature()
+   Product paths: Via feature chooser dialogs (which ARE wired)
+   Shared deps: None obvious (dialog is name-only input, no complex shared controls)
+   
+5. DeleteConfirmationDialog
+   WIRED: YES
+   Call sites:
+     - LexReferenceMultiSlice.cs:908 - LcmDeleteObjectLauncher.Confirm()
+     - LexReferenceMultiSlice.cs:987 - LcmDeleteObjectLauncher.Confirm()
+   Product paths: LexReferenceMultiSlice → LcmDeleteObjectLauncher → DeleteConfirmationDialogView
+   Shared deps: None (simple confirmation dialog)
+   
+6. LexReferenceDetailsDialog
+   WIRED: YES
+   Call site: LexReferenceMultiSlice.cs:1041 - LcmLexReferenceDetailsLauncher.Edit()
+   Product paths: LexReferenceMultiSlice → LcmLexReferenceDetailsLauncher → LexReferenceDetailsDialogView
+   Shared deps: None (name/comment text-only dialog)
+   
+7. SpecialCharacterDialog
+   WIRED: NO
+   Evidence: No Lcm launcher exists; no product call sites found
+   Only referenced in tests (SpecialCharacterDialogTests.cs)
+   Shared deps: None
+   
+8. WritingSystemPropertiesDialog
+   WIRED: NO
+   Evidence: No Lcm launcher exists; only legacy WinForms DummyWritingSystemPropertiesDialog referenced in tests
+   Product still uses WinForms FwWritingSystemSetupDlg (legacy)
+   Shared deps: None
+   
+9. ConfigureColumnsDialog
+   WIRED: NO
+   Evidence: No Lcm launcher exists; no product call sites found
+   Only referenced via dialog view/viewmodel files
+   Shared deps: None
+   
+10. DateRangeFilterDialog (DateRange)
+    WIRED: NO
+    Evidence: No Lcm launcher exists; no product call sites found
+    Only referenced in tests and via dialog files
+    Shared deps: None
+    
+11. FilterForDialog
+    WIRED: NO
+    Evidence: No Lcm launcher exists; no product call sites found
+    Only referenced in tests and via dialog files
+    Shared deps: None
+    
+12. FindReplaceDialog
+    WIRED: NO
+    Evidence: No Lcm launcher exists; product still uses legacy WinForms FwFindReplaceDlg
+    (ShowFindReplaceDialog in FwApp.cs uses FwFindReplaceDlg, not Avalonia)
+    Shared deps: None
+    
+13. PicturePropertiesDialog
+    WIRED: LEGACY (NOT using Avalonia)
+    Evidence: PictureSlice.cs:170 still uses legacy WinForms PicturePropertiesDialog
+    NOT the Avalonia version
+    Shared deps: None (legacy WinForms)

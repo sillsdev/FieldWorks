@@ -22,7 +22,6 @@ comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attac
 | Legacy (WinForms) — "before" | Avalonia (New) — "after" |
 |---|---|
 | ![entry-go legacy](./images/entry-go-before.png) | ![entry-go avalonia](./images/entry-go-after.png) |
-
 ## What it looks like (before / after)
 Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
 comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.

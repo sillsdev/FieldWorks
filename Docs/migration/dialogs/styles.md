@@ -11,6 +11,13 @@
 | **Canonical reference** | tabs→OptionsDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![fw-styles legacy](./images/fw-styles-before.png) | ![fw-styles avalonia](./images/fw-styles-after.png) |
 ## What it is
 The (new) Styles dialog — create, edit, and organize paragraph/character styles for the project.
 

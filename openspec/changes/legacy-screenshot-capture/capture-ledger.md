@@ -106,22 +106,93 @@ before/after block.
 ### Uncaptured dialogs — per-dialog blocker (from constructor/SetDlgInfo exceptions; option 2 = headless construct, so these need the live app or bespoke objects)
 | Dialog | Blocker (exact) | Disposition |
 |---|---|---|
-| dictionary-configuration | ctor: "requires GeckoWebBrowser … Xpcom.IsInitialized=False" | Gecko → live |
+| ~~fw-styles~~ | ~~NRE `FillStyleTable`; ctor needs `IVwRootSite`~~ | **CAPTURED LIVE** (Format→Styles…) — option 2b below |
+| ~~insert-record~~ | ~~"Failed to compute height of an FwTextBox"~~ | **CAPTURED LIVE** (Insert→Record) — option 2b below |
+| ~~restore-project~~ | ~~ctor needs `BackupFileSettings`~~ | **CAPTURED LIVE** (File→Project Management→Restore a Project…) — option 2b |
+| ~~fw-delete-project~~ | ~~NRE enumerating on-disk projects~~ | **CAPTURED LIVE** (File→Project Management→Delete Project…) — option 2b |
+| ~~dictionary-configuration~~ | ~~ctor: "requires GeckoWebBrowser … Xpcom.IsInitialized=False"~~ | **CAPTURED LIVE** (Tools→Configure→[1st `{0}`]) — Gecko preview rendered real data — option 2b |
 | xml-diagnostics | ctor takes `GeckoElement` | Gecko → live |
-| sfm-to-texts-and-words-mapping | `MissingManifestResourceException` (designer resource) | environmental |
-| fw-styles | NRE `FillStyleTable`; ctor needs `IVwRootSite` | live Views |
-| fw-apply-style | ctor needs `IVwRootSite` + real hvos | live Views |
-| insert-record | "Failed to compute height of an FwTextBox" | live Views/handle |
-| add-list / configure-list / picture-properties / valid-characters | ctor hangs (even ctor-only timed out) | live |
-| merge-writing-system | ctor wants `IEnumerable<WSListItemModel>` (internal model) | bespoke object |
+| sfm-to-texts-and-words-mapping | `MissingManifestResourceException` (designer resource) | live cascade (File→Import→…) — attemptable |
+| fw-apply-style | greyed unless live text selection (verified live) | live; needs editing context |
+| add-list / configure-list / picture-properties / valid-characters | ctor hangs (even ctor-only timed out) | live; sub-dialog or menu cascade |
+| merge-writing-system | ctor wants `IEnumerable<WSListItemModel>` (internal model) | sub-dialog of WS-properties (captured as parent) |
 | merge-object | `InitBrowseView` needs a populated candidate list (XMLView) | live/bespoke |
-| restore-project / missing-old-field-works | ctor needs `BackupFileSettings` / `RestoreProjectSettings` | bespoke object |
+| missing-old-field-works | ctor needs `RestoreProjectSettings` | live; only appears mid-restore |
 | phonological-feature-chooser | SetDlgInfo needs `IPhRegularRule` (none in Sena 3) | bespoke data |
-| fw-delete-project | NRE enumerating on-disk projects | environmental |
-| dictionary-config-mgr | NRE `LoadDataFromInventory(XmlNode)` (specific inventory node) | bespoke node |
+| dictionary-config-mgr | NRE `LoadDataFromInventory(XmlNode)` (specific inventory node) | live cascade (Tools→Configure→…) — attemptable |
 
 These were verified, not assumed — each fails in its **constructor** (or a Views/Gecko/XMLView init), so a
 headless harness cannot produce them. Captured via per-dialog override this round: **fw-chooser, utility**.
+
+## Option 2b — LIVE-APP menu-launched capture (native UIA + Win32) — unblocks the headless-impossible set
+- Script: `scripts/migration-capture/Capture-MenuDialogs.ps1`; manifest `manifests/menu-dialogs.csv`
+  (run under Windows PowerShell 5.1). Full technique recorded in memory `fieldworks-live-menu-dialog-capture`.
+- **Mechanism (single-level)**: launch FLEx live at the row's tool (guid-less silfw link, same as option 2),
+  find the top-level `MenuItem` via native `System.Windows.Automation`, `Invoke()` the leaf. Invoking a
+  modal-opening item makes UIA `Invoke()` **time out (0x80131505)** because the UI never goes idle — that
+  timeout is the success signal. Capture the modal with **Win32 `EnumWindows`+`PrintWindow`** (UIA hangs
+  while the modal blocks the UI thread); close read-only with `WM_CLOSE` (= Cancel).
+- **Mechanism (multi-level cascades — the part that took 7 attempts):** UIA `Expand`/`Invoke` does NOT open
+  FLEx's nested dropdowns. The working recipe is **real synthesized mouse input** on a **genuinely
+  foregrounded** window:
+  1. **Defeat the foreground lock** — a background process's `SetForegroundWindow` is ignored; tapping a
+     synthetic **Alt key** (`keybd_event` VK_MENU) first makes the OS honor it (verified: foreground match
+     False→True). Without this the clicks land on whatever window is actually on top (e.g. VS Code).
+  2. **Real mouse click** (`SetCursorPos`+`mouse_event`) at each item's screen rect opens a dropdown that
+     genuinely renders (the popup appears as a new top-level window) — unlike UIA Expand.
+  3. **Find items via Win32 `EnumWindows` → `AutomationElement.FromHandle`** per popup window
+     (`root::Descendants` never lists the popups).
+  4. **Match on a whitespace-normalized name** — FLEx sets each item's UIA `Name` to a DESPACED form
+     ("Project Management" → `ProjectManagement`, "Send/Receive" → `SendReceive`); exact-name matching is why
+     every multi-word label failed for 6 attempts.
+- **CAPTURED — 14 dialogs, all previously headless-impossible or uncaptured** (manifests
+  `menu-dialogs.csv` + `menu-dialogs-batch{2..5}.csv`):
+  - `fw-styles` (Format→Styles…) — full styles list + 5 tabs. → `styles.md`.
+  - `insert-record` (Insert→Record) — "New Record". → `insert-record-dlg.md`.
+  - `restore-project` (File→Project Management→Restore a Project…). → `restore-project.md`.
+  - `fw-delete-project` (File→Project Management→Delete Project…). → `delete-project.md`.
+  - `dictionary-configuration` (Tools→Configure→[1st `{0}`]) — layout tree + **Gecko preview with real Sena 3
+    data** ("kula V crecer"); the Gecko the headless ctor demanded is initialized in the running app. → `dictionary-configuration.md`.
+  - `restore-defaults` (Tools→Configure→Restore Defaults…). → `restore-defaults-dlg.md`.
+  - `configure-interlin` (Tools→Configure→Interlinear… "Configure Interlinear Lines"). → `configure-interlin-dialog.md`.
+  - `try-a-word` (Parser→Try a Word…). → `try-a-word-dlg.md`.
+  - `parser-parameters` (Parser→Edit Parser Parameters…). → `parser-parameters-dlg.md`.
+  - `interlinear-import` (File→Import→FLExText Interlinear…). → `interlinear-import-dlg.md`.
+  - `sfm-to-texts-and-words-mapping` (File→Import→Standard Format Words and Glosses…) — was the
+    `MissingManifestResourceException` headless blocker; renders fine live. → `sfm-to-texts-and-words-mapping-dlg.md`.
+  - `interlinear-export` (File→Export Interlinear…). → `interlinear-export-dialog.md`.
+  - `export-dialog` (File→Export… — base lexicon export chooser). → `export-dialog.md`.
+  - `help-about` (Help→About Language Explorer…). → `help-about.md`.
+  - `dictionary-configuration-manager` — **in-modal sub-dialog**: open Configure Dictionary, then click the
+    **Manage Layouts…** button (postClicks). Populated "Manage Dictionary Layouts" (layouts + publications). → `dictionary-configuration-manager.md`.
+  - (`notebook-export` existing headless capture re-wired to `notebook-export.md`.)
+- **KEY: FLEx dialog buttons are exposed to UIA as controlType `Pane`, not `Button`** (only combobox
+  dropdowns are `Button`). The in-modal `postClicks` matcher must search Name across {Button, **Pane**,
+  MenuItem, TabItem, Hyperlink, ListItem} — once it did, the button-launched sub-dialog set opened up
+  (dict-config-manager captured via "Manage Layouts…"). This corrects the earlier (wrong) conclusion that
+  "FLEx dialog buttons aren't UIA-discoverable" — they are, just as Pane.
+- **Context-gated leaves detected & reported `IsEnabled=false`** (need a specific tool/selection/file —
+  capturable live from the right context on pickup): `lingua-links-import` (needs a LinguaLinks file),
+  `discourse-export` (needs an active chart), `configure-list`/`add-list` (custom-list tool),
+  `merge-entry` (selected entry; already has a capture), `fw-apply-style` (text selection).
+  `filter-texts`/`import-word-set` use `defaultVisible=false` items not present in the tools tried.
+- **Read-only preserved**: each dialog opened and was closed with `WM_CLOSE` (= Cancel); no project was
+  restored/deleted (verified: restore showed "No project backups found"; delete's Delete button stayed disabled).
+- **Remaining floor (still genuinely uncaptured):**
+  - **Parent→child sub-dialogs** (valid-characters, merge-writing-system are buttons *inside* the
+    Writing-System-Properties dialog — itself captured headless as `writing-system-setup`, 7 tabs;
+    overwrite-existing-project only appears mid-restore).
+  - **Context-gated leaves** (greyed unless the right tool/selection is active, so unattended capture skips
+    them — the script detects `IsEnabled=false` and reports it): `configure-list`/`add-list` (Tools→Configure→
+    List… — needs a custom-list tool), `merge-entry` (Tools→Merge with entry… — needs an entry selected),
+    `fw-apply-style` (Format→Apply Style — needs a text selection). Capturable live from the right context on pickup.
+  - **Button sub-dialogs reachable via `postClicks`** (now working with Pane matching) but needing TAB
+    navigation first: valid-characters & merge-writing-system are buttons on non-default tabs of the
+    Writing-System-Properties dialog; the WS-Props tabs are a Win32 `SysTabControl` not cleanly exposed as
+    UIA `TabItem`, so selecting the right tab needs a coordinate click — a per-dialog discovery step left for pickup.
+  - **Flow-only dialogs**: overwrite-existing-project (appears only mid-restore), update-report (only on update),
+    sfm-to-texts later wizard pages — require performing the actual (destructive/stateful) action.
+  - **xml-diagnostics**: hidden Gecko diagnostic, no standard menu entry.
 
 - **Total: ~150 legacy truth PNGs across 132 docs** (67 tool/list + 66 dialog "before" + 18 per-tab,
   wired into 5 tabbed-dialog docs). Canonical-kept legacy dialogs (insert-entry/entry-go/lex-options) got

@@ -12,7 +12,16 @@
 | **JIRA** | LT-XXXXX |
 
 ## What it is
-Manages the set of dictionary configurations (rename, copy, delete, import, export) shown in a `ListView` (`configurationsListView`). The "Manage Views" entry point from `DictionaryConfigurationDlg`.
+Manages the set of dictionary configurations (rename, copy, delete, import, export) shown in a `ListView` (`configurationsListView`). The "Manage Configurations" sub-dialog launched from the Configure Dictionary dialog.
+
+## What it looks like (before / after)
+Legacy "before" captured live (Capture-MenuDialogs.ps1, option 2b) by opening Configure Dictionary
+(Tools→Configure) then clicking the **Manage Layouts…** button — the in-modal `postClicks` path. Avalonia
+"after" comes from the surface's FwAvaloniaDialogs(Tests) visual test; attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![dictionary-configuration-manager legacy](./images/dictionary-configuration-manager-before.png) | ![dictionary-configuration-manager avalonia](./images/dictionary-configuration-manager-after.png) |
 
 ## Notes / gotchas
 - The CURRENT manager (newer than `DictionaryConfigMgrDlg`); newed from `Src/xWorks/DictionaryConfigurationController.cs:367`. Logic lives in `DictionaryConfigurationManagerController`.

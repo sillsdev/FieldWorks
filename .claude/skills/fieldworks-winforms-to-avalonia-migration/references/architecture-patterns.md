@@ -243,22 +243,46 @@ seam.
 `SeamImplementations.cs`, `RefreshCoordinator.cs`.
 Tests: `SeamTests.cs`, `RegionEditingTests.cs`.
 
+**As-built (2026-06-23, ARCH-02).** `IUndoRedoCoordinator` is NOT yet a named
+abstraction in `ISeams.cs`. For the shipped LexEntry path, global undo/redo is
+handled directly by `RegionEditContextHolder.AttachUndoGuard` /
+`OnDoingUndoOrRedo` (`RegionEditContextHolder.cs:121-179`), coupled to
+`IActionHandlerExtensions` and `System.Windows.Forms.Form.Deactivate`: on a
+global undo/redo it settles + cancels the open fenced session to avoid LCModel
+UOW write-lock re-entrancy. The fenced `IEditSession` decision above is real
+(`RegionEditContextBase`/`RegionEditContextHolder`); only the *coordinator
+abstraction* is deferred. Extract `IUndoRedoCoordinator` when a second host
+needs it (Phase 2).
+
 **Gotchas.** Two undo stacks produce user-visible data weirdness. Never
 disable global undo while a session is dirty — route it. Defer PropChanged
 fan-out during multi-field edits until commit/cancel.
 
 ## 9. Validation
 
-**Decision.** Validation runs over immutable presentation snapshots, not
-live LCModel. Errors are ordered by presentation/focus order (deterministic
-for headless tests), skip unmaterialized lazy items, and carry node id,
-object/flid, severity, localized message key + args, and accessibility
-text. Only severity=Error blocks save; warnings do not. Stale async results
-(from older snapshots) are discarded.
+**Decision (target design).** Validation runs over immutable presentation
+snapshots, not live LCModel. Errors are ordered by presentation/focus order
+(deterministic for headless tests), skip unmaterialized lazy items, and carry
+node id, object/flid, severity, localized message key + args, and
+accessibility text. Only severity=Error blocks save; warnings do not. Stale
+async results (from older snapshots) are discarded.
 
-**Canonical code.** `IValidationService` in
-`Src/Common/FwAvalonia/Seams/ISeams.cs`; composer wiring in
-`Src/xWorks/FullEntryRegionComposer.cs`.
+**As-built (2026-06-23, ARCH-02).** `IValidationService` does NOT exist yet.
+The shipped validation is a `virtual RegionEditContextBase.Validate()`
+returning `List<string>` over **live** LCModel
+(`RegionEditContextBase.cs:101-128`, e.g.
+`entry.LexemeFormOA?.Form?.VernacularDefaultWritingSystem?.Text`) — pluggable
+by subclass + per-rule (the CmPossibility Name/Abbreviation rule), but with no
+severity model (all messages are Error-equivalent), no node-id/flid metadata,
+and no immutable-snapshot determinism. Treat the snapshot-based service above
+as the Phase-2 target, not current behavior. Do NOT claim deterministic
+snapshot validation until the service exists.
+
+**Canonical code (as-built).** `RegionEditContextBase.Validate()` (virtual) in
+`Src/xWorks/RegionEditContextBase.cs`; per-rule validation hooks wired by the
+composer in `Src/xWorks/FullEntryRegionComposer.cs`. The
+`IValidationService` seam in `Src/Common/FwAvalonia/Seams/ISeams.cs` is planned,
+not present.
 
 ## 10. Custom fields and ghost rows
 

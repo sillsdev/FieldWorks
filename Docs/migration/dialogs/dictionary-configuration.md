@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (tree + detail), but this is a large bespoke screen — see gotchas |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![dictionary-configuration legacy](./images/dictionary-configuration-before.png) | ![dictionary-configuration avalonia](./images/dictionary-configuration-after.png) |
 ## What it is
 The main Dictionary Configuration editor: a configuration tree (`DictionaryConfigurationTreeControl`) on the left, a per-node details pane (`DictionaryDetailsView` family) on the right, and a live HTML preview, with OK/Apply/Cancel and a "Manage Views" entry point. Implements `IDictionaryConfigurationView` (MVC view, driven by `DictionaryConfigurationController`).
 

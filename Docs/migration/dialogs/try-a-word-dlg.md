@@ -11,6 +11,13 @@
 | **Canonical reference** | InsertEntryDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![try-a-word legacy](./images/try-a-word-before.png) | ![try-a-word avalonia](./images/try-a-word-after.png) |
 ## What it is
 Runs the parser on a single word and shows the trace/results.
 

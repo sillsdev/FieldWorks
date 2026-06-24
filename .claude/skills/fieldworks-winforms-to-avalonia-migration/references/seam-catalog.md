@@ -22,15 +22,15 @@ Contents:
 | Seam | Purpose | Key rules |
 | --- | --- | --- |
 | `IEditSession` | Fenced LCModel undo-task lifecycle: Active → Saved/Canceled → Disposed | One undoable action per save; cancel rolls back without creating an undo action; writes outside a session are a bug |
-| `IUndoRedoCoordinator` | Routes global undo/redo through the LCModel action handler | Control-local text undo stays local until commit; never a parallel committed-state history; refresh region after global undo/redo |
-| `IValidationService` | Deterministic validation over immutable presentation snapshots | Focus-order error ordering; skip unmaterialized lazy items; localized message keys; only severity=Error blocks save; discard stale async results |
+| `IUndoRedoCoordinator` ⚠ *planned, not extracted (ARCH-02)* | Routes global undo/redo through the LCModel action handler | Control-local text undo stays local until commit; never a parallel committed-state history; refresh region after global undo/redo. **As-built:** done directly by `RegionEditContextHolder.AttachUndoGuard`/`OnDoingUndoOrRedo`, not a named seam (see architecture-patterns §8) |
+| `IValidationService` ⚠ *planned, not extracted (ARCH-02)* | Deterministic validation over immutable presentation snapshots | Focus-order error ordering; skip unmaterialized lazy items; localized message keys; only severity=Error blocks save; discard stale async results. **As-built:** a `virtual RegionEditContextBase.Validate()` over live LCModel returning `List<string>` (no severity/snapshot); the snapshot service is the Phase-2 target (see architecture-patterns §9) |
 | `IXCoreCommandBridge` | Bridges xCore mediator command routing to Avalonia commands | Region-local commands first; shell-scope wiring happens in the shell phase, not per region |
 | `IUiScheduler` | Thin UI-thread marshalling (`IsOnUiThread`, `Post`) | No hidden `Task.Run`; fakeable in tests; keeps threading visible at the seam |
 | `IRegionLifetime` | Region disposal discipline | Idempotent disposal, late-callback suppression, event-handler cleanup; protects against async work completing after close |
 | `ILexicalRefreshCoordinator` | Mirrors legacy `DoNotRefresh`/`RefreshListNeeded` gating (LT-22414) | Defer PropChanged fan-out during multi-field edits until commit/cancel; characterize legacy behavior before extending (`RefreshCoordinator.cs`) |
 | `IRecordNavigationContext` | Bidirectional selection bridge with the xCore "current record" bus | Follow external navigation and publish selection back; never reach into PropertyTable directly from a region |
 | `IFwClipboard` | Clipboard access without WinForms dependency | See `FwClipboardSeamTests.cs` |
-| `IHostSurface` (focus API) | Host-side focus save/restore around WinForms dialogs | Pairs with the dialog-ownership rules (architecture-patterns.md §7) |
+| `IHostSurface` (focus API) ⚠ *planned, not extracted (ARCH-02)* | Host-side focus save/restore around WinForms dialogs | Pairs with the dialog-ownership rules (architecture-patterns.md §7). **As-built:** focus save/restore is handled directly in the holder/host and `AvaloniaDialogHost`, not via a named seam |
 
 ## 2. Supporting seams
 

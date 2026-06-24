@@ -17,9 +17,9 @@ comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attac
 
 | Legacy (WinForms) — "before" | Avalonia (New) — "after" |
 |---|---|
-| ![notebook-export legacy](./images/notebook-export-before.png) | ![notebook-export avalonia](./images/notebook-export-after.png) |
+| ![export-dialog legacy](./images/export-dialog-before.png) | ![export-dialog avalonia](./images/export-dialog-after.png) |
 ## What it is
-XML-configurable export chooser: lists available export formats/targets in a `ListView` (`m_exportList`, columns data/format/extension/filter/description), the user picks one and runs the export (default is the main lexicon export). Subclassed for other areas (see `NotebookExportDialog`).
+XML-configurable export chooser: lists available export formats/targets in a `ListView` (`m_exportList`, columns data/format/extension/filter/description), the user picks one and runs the export (default is the main lexicon export). Subclassed for other areas (see NotebookExportDialog).
 
 ## Notes / gotchas
 - Base class is instantiated directly (main lexicon export) AND subclassed — migrate as a parameterised/overridable surface, not a one-off.

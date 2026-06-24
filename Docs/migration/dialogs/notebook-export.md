@@ -11,6 +11,13 @@
 | **Canonical reference** | ChooserDialog (list of export formats + Export action) |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![notebook-export legacy](./images/notebook-export-before.png) | ![notebook-export avalonia](./images/notebook-export-after.png) |
 ## What it is
 Subclass of `ExportDialog` that overrides export behaviour to export from the Data Notebook section of Language Explorer.
 

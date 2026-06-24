@@ -11,6 +11,13 @@
 | **Canonical reference** | OptionsDialog |
 | **JIRA** | LT-XXXXX |
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![parser-parameters legacy](./images/parser-parameters-before.png) | ![parser-parameters avalonia](./images/parser-parameters-after.png) |
 ## What it is
 Edits the active parser's parameters (XML-backed settings).
 
