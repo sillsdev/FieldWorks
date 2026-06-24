@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
+using Avalonia.VisualTree;
 using Avalonia.Win32.Interoperability;
 using AvControl = Avalonia.Controls.Control;
 
@@ -90,6 +92,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					// off-screen. No-op on the real Win32 platform, so the modal behavior is unchanged there.
 					FwAvaloniaPlatform.GuardHeadlessEmbed(host);
 					form.Controls.Add(host);
+
+					// A11Y-03 (legacy WinForms parity): focus the first input when the dialog opens so a
+					// keyboard / screen-reader user lands in a field, not on an unfocused window (and, with
+					// the per-view TabIndex, not on the OK/Cancel strip). Done on Shown so the hosted Avalonia
+					// content is realized. Best-effort: a no-op if nothing qualifies (never throws).
+					form.Shown += (s, e) => FocusInitialControl(dialogBody);
 
 					bool? result = null;
 					using (WireClose(viewModel, accepted =>
@@ -183,6 +191,53 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var chromeW = form.Width - form.ClientSize.Width;
 			var chromeH = form.Height - form.ClientSize.Height;
 			form.MinimumSize = new System.Drawing.Size(minW + Math.Max(0, chromeW), minH + Math.Max(0, chromeH));
+		}
+
+		/// <summary>
+		/// Focuses the first keyboard-focusable INPUT inside <paramref name="dialogBody"/> so a dialog opens
+		/// with the caret in its first field (legacy WinForms parity; A11Y-03). Buttons (OK/Cancel/Help) are
+		/// never the initial focus — initial focus belongs to an input, and Enter/Escape already activate the
+		/// default/cancel buttons. Returns the control it focused, or null if none qualifies. Factored out
+		/// (like <see cref="ApplySizing"/> / <see cref="WireClose"/>) so the selection contract is unit-testable
+		/// headlessly without spinning a real WinForms-hosted modal window; <see cref="ShowModal"/> invokes it
+		/// on the form's <c>Shown</c> event once the hosted Avalonia content is realized.
+		/// </summary>
+		public static AvControl FocusInitialControl(AvControl dialogBody)
+		{
+			if (dialogBody == null) throw new ArgumentNullException(nameof(dialogBody));
+
+			// The first tab stop, honoring the per-view tab order: a focusable control "inherits" the
+			// TabIndex of its section (e.g. the bottom button strip carries TabIndex=1, so its OK/Cancel
+			// buttons sort AFTER the content at the default 0). OrderBy is stable, so within one section the
+			// document/visual order from GetVisualDescendants is preserved. This is robust for dropdown-style
+			// pickers too (a ToggleButton is a Button, so a "skip buttons" rule would wrongly skip the only
+			// input), and it matches the TabIndex the views set.
+			int EffectiveTabIndex(AvControl c)
+			{
+				var max = 0;
+				Avalonia.Visual v = c;
+				while (v != null && !ReferenceEquals(v, dialogBody))
+				{
+					if (v is AvControl ctl && ctl.TabIndex > max)
+						max = ctl.TabIndex;
+					v = v.GetVisualParent();
+				}
+				return max;
+			}
+
+			// The first focusable INPUT in tab order — never a command button. If a picker-driven dialog
+			// exposes no focusable field (the kit's owned FwOptionPicker is deliberately Focusable=false and
+			// handles keys directly), focus nothing rather than landing on OK, where Enter would accept the
+			// dialog. So this is a no-op for picker dialogs (no regression) and focuses the first text field
+			// for text-first dialogs (InsertEntry/EntryGo).
+			var candidate = dialogBody.GetVisualDescendants()
+				.OfType<AvControl>()
+				.Where(c => c.Focusable && c.IsEffectivelyEnabled && c.IsEffectivelyVisible
+					&& !(c is Avalonia.Controls.Button))
+				.OrderBy(EffectiveTabIndex)
+				.FirstOrDefault();
+			candidate?.Focus();
+			return candidate;
 		}
 
 		/// <summary>

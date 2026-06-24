@@ -371,6 +371,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Accessible name of the collapsed Part-of-Speech chooser dropdown.</summary>
 		public static string PosChooserName => Text("FwAvalonia.Pos.ChooserName", "Part of Speech");
 
+		// ----- Rule-formula editor cell context menu (avalonia-rule-formula-editor, task 2.2) -----
+		// Seed text mirrors the legacy RegRuleFormulaControl cell operations. APPEND-ONLY.
+
+		/// <summary>"Delete" — rule-formula cell context-menu item that removes the cell from its group.</summary>
+		public static string RuleCellDelete => Text("FwAvalonia.RuleCell.Delete", "Delete");
+
+		/// <summary>"Insert before" — rule-formula cell context-menu item that opens the chooser to insert a new cell before this one.</summary>
+		public static string RuleCellInsertBefore => Text("FwAvalonia.RuleCell.InsertBefore", "Insert before");
+
 		// ----- Editable structured text (StText multi-paragraph fields, §19a) -----
 		// Seed text mirrors the legacy StTextSlice rich editor's paragraph operations. APPEND-ONLY.
 

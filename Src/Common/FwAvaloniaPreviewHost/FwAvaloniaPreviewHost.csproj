@@ -4,6 +4,7 @@
 		<AssemblyName>FwAvaloniaPreviewHost</AssemblyName>
 		<RootNamespace>SIL.FieldWorks.Common.FwAvalonia.PreviewHost</RootNamespace>
 		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
 		<LangVersion>latest</LangVersion>
 		<OutputType>WinExe</OutputType>
 		<Nullable>disable</Nullable>

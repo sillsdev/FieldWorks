@@ -21,6 +21,12 @@
 		     (ProjectLocalizer.GetResourceInfo) requires the element to produce satellite
 		     FwAvalonia.resources.dll assemblies for FwAvaloniaStrings.resx (localization-review.md GAP-L1). -->
 		<RootNamespace>FwAvalonia</RootNamespace>
+		<!-- TFM is net48 (NETFX-01, review 2026-06-23): the C# compiler accepts modern *syntax*, but
+		     features that need net8-only BCL/runtime support are OFF-LIMITS here and will fail at build
+		     or runtime, not at review: record types / 'init' setters (need IsExternalInit), Index/Range,
+		     default interface members, IAsyncEnumerable async-streams, nint/nuint. Pure-syntax C# 8
+		     (switch expressions, 'using var', '??=', static local functions) is fine on net48. build.ps1
+		     is the gate; keep this constraint in mind when adding code to this project. -->
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>

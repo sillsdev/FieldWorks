@@ -15,7 +15,9 @@
 	     node's key; multi-select shows per-node checkboxes (independent checks — legacy default). Visible text is
 	     localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
+		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
 			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"

@@ -15,6 +15,7 @@
 	-->
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 		<IsTestProject>true</IsTestProject>

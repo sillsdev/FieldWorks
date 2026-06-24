@@ -346,6 +346,12 @@ namespace SIL.FieldWorks.XWorks
 			// once per compose from the project's analysis + vernacular writing systems and stamped onto
 			// every editable text / StText row so the owned editors can draw the per-run font display.
 			private IReadOnlyDictionary<string, RegionRunFont> _writingSystemFonts;
+			// CHOICE-UNSAFE KEY (review 2026-06-23, ARCH-04): this cache key omits choiceGuid while the menu
+			// binding is derived from the compiled layout's root, which can differ per choice variant. It is
+			// correct ONLY because descent currently compiles every embedded object with choiceGuid=null
+			// (CompileForObjectWithOverrides), so within one compose there is no choice variance to collide.
+			// When ARCH-03 is fixed to thread choiceGuid through descent, change this key to
+			// (ClassId, LayoutName, choiceGuid) in the SAME change, or this becomes a wrong-menu bug.
 			private readonly Dictionary<(int ClassId, string LayoutName), (string MenuId, string HotlinksId)> _itemMenuBindings
 				= new Dictionary<(int, string), (string, string)>();
 

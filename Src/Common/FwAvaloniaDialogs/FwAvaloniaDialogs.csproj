@@ -18,6 +18,7 @@
 		<!-- Explicit RootNamespace so Crowdin/satellite-assembly localization builds work
 		     (localization-review.md GAP-L1). -->
 		<RootNamespace>FwAvaloniaDialogs</RootNamespace>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
 		<LangVersion>latest</LangVersion>
 		<Nullable>disable</Nullable>
 		<IsPackable>false</IsPackable>

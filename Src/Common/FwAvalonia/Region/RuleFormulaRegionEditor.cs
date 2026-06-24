@@ -169,9 +169,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			// Context menu: Delete this cell, and Insert-before (opens the chooser at this index). The
 			// insert-before item carries the picker as its OWN sub-flyout target via a click that shows it.
-			var deleteItem = new MenuItem { Header = "Delete" };
+			var deleteItem = new MenuItem { Header = FwAvaloniaStrings.RuleCellDelete };
 			deleteItem.Click += (s, e) => Sink?.DeleteCell(role, index);
-			var insertItem = new MenuItem { Header = "Insert before" };
+			var insertItem = new MenuItem { Header = FwAvaloniaStrings.RuleCellInsertBefore };
 			insertItem.Click += (s, e) => ShowChooser(button, role, index, replace: false);
 			button.ContextFlyout = new MenuFlyout { Items = { deleteItem, insertItem } };
 			return button;
