@@ -40,6 +40,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -344,6 +345,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					return ctx.Cache.ServiceLocator.WritingSystems.AllWritingSystems.ToList();
 			}
 			if (dt == "UtilityDlg" && pt == typeof(XmlNode)) return ctx.PropertyTable.GetValue<XmlNode>("WindowConfiguration");
+			if (dt == "FwApplyStyleDlg" && pt == typeof(int) && (p.Name ?? "").ToLowerInvariant().Contains("hvo")) return ctx.Cache.LangProject.Hvo;
+			// A bare SimpleRootSite satisfies IVwRootSite ctor params (fw-styles/fw-apply-style/insert-record).
+			if (typeof(IVwRootSite).IsAssignableFrom(pt)) { try { return new SimpleRootSite(); } catch { return null; } }
 			if (pt == typeof(LcmCache)) return ctx.Cache;
 			if (pt == typeof(Mediator)) return ctx.Mediator;
 			if (pt == typeof(PropertyTable)) return ctx.PropertyTable;

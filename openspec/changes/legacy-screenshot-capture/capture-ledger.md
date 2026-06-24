@@ -193,6 +193,24 @@ headless harness cannot produce them. Captured via per-dialog override this roun
   - **Flow-only dialogs**: overwrite-existing-project (appears only mid-restore), update-report (only on update),
     sfm-to-texts later wizard pages — require performing the actual (destructive/stateful) action.
   - **xml-diagnostics**: hidden Gecko diagnostic, no standard menu entry.
+- **Right-click context-menu capability built** (`rightClick` manifest field: right-click the first browse row,
+  then navigate the context menu via the same Pane-aware engine). Available for pickup, but the remaining
+  context-menu dialogs (respeller, related-words, edit-morph-breaks, MGA, complex-conc-*, find-example-sentence,
+  …) are each gated on a SPECIFIC tool + selected item type + context path that isn't reliably discoverable
+  unattended. These need a human to set the context, after which the built engine captures them.
+- **ROOT CAUSE of the unattended floor (verified empirically, not assumed):** FLEx's custom-drawn surfaces are
+  not exposed to UI Automation in the standard way, so the elements needed to *establish context* can't be
+  located unattended:
+  - **Dialog tabs** → WS-Properties reports **`TabItems found: 0`** (its tabs are a Win32 `SysTabControl` UIA
+    doesn't surface) — so valid-characters/merge-writing-system (buttons on non-default tabs) are unreachable.
+  - **Browse-view rows** → `Find-FirstRowCenter` returns nothing (rows aren't ListItem/DataItem/Custom in UIA),
+    so the right-click engine can't locate a data item to invoke a context menu (`rightclick-target-not-found`).
+  - **Context-gated menu items** → respeller's Tools→Spelling submenu is absent even in the Analyses tool with a
+    pre-selected row (the menu only materializes from a real in-view wordform selection UIA can't make).
+  (Buttons exposed as `Pane` and despaced menu names were solvable — these three are not, at the UIA layer.)
+  This is the true unattended boundary: **everything reachable by a main-menu path or an in-modal Pane button is
+  captured; the residue needs a live selection/tab/context that FLEx doesn't expose to UI automation, or appears
+  only during a destructive/error flow. The engine + per-dialog entry points are committed for interactive pickup.**
 
 - **Total: ~150 legacy truth PNGs across 132 docs** (67 tool/list + 66 dialog "before" + 18 per-tab,
   wired into 5 tabbed-dialog docs). Canonical-kept legacy dialogs (insert-entry/entry-go/lex-options) got
