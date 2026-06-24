@@ -30,7 +30,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			"lexiconEdit", "lexiconEditPopup",
 			"notebookEdit", // §20.3.2 Notebook RnGenericRec (layout resolved via layoutChoiceField="Type")
-			"posEdit"       // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
+			"posEdit",      // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
+			"Analyses"      // avalonia-interlinear-editor follow-up: Words Analyses morph-bundle editor (flipped on)
 		};
 
 		// PHASE-1 FOLLOW-UP surfaces — INERT in the base PR. The view-layer code for these ships (it lives in the
@@ -38,12 +39,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// "not supported" and they fall back to the legacy WinForms surface even under UIMode=New. Each follow-up PR
 		// ACTIVATES its surface by moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
 		// "flip"). Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
-		//   avalonia-interlinear-editor : "Analyses"
 		//   avalonia-rule-formula-editor: "PhonologicalRuleEdit","EnvironmentEdit","compoundRuleAdvancedEdit",
 		//                                 "naturalClassedit","phonemeEdit","AdhocCoprohibEdit"
+		// (avalonia-interlinear-editor "Analyses" was flipped into DefaultSupportedTools above by its follow-up PR.)
 		public static readonly string[] Phase1FollowUpSurfaceTools =
 		{
-			"Analyses",
 			"PhonologicalRuleEdit", "EnvironmentEdit", "compoundRuleAdvancedEdit",
 			"naturalClassedit", "phonemeEdit", "AdhocCoprohibEdit"
 		};

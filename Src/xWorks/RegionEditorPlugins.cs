@@ -152,11 +152,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			registry.Register(new ChorusNotesPlugin());
 			registry.Register(new ReversalIndexEntryPlugin());
-			// PHASE-1 FOLLOW-UP PRs: the avalonia-interlinear-editor (InterlinearSlicePlugin) and the
-			// avalonia-rule-formula-editor family (RuleFormulaRegionEditorPlugin, MetaRuleFormulaRegionEditorPlugin,
-			// AffixRuleFormulaRegionEditorPlugin, PhEnvironmentRegionEditorPlugin, BasicIpaSymbolRegionEditorPlugin)
-			// ship in their own follow-up PRs. Each follow-up adds its plugin file(s) back and restores the
-			// registration here, alongside the registry flip in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
+			// avalonia-interlinear-editor (W-4): the native Avalonia interlinear editor for the Words
+			// Analyses detail pane, claiming the legacy InterlinearSlice. Read-only this wave; the
+			// editable write-back + MSA prune (W-5) layer onto the same plugin.
+			registry.Register(new InterlinearSlicePlugin());
+			// PHASE-1 FOLLOW-UP PR: the avalonia-rule-formula-editor family (RuleFormulaRegionEditorPlugin,
+			// MetaRuleFormulaRegionEditorPlugin, AffixRuleFormulaRegionEditorPlugin, PhEnvironmentRegionEditorPlugin,
+			// BasicIpaSymbolRegionEditorPlugin) ships in its own follow-up PR, which restores those registrations
+			// here alongside the registry flip in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
