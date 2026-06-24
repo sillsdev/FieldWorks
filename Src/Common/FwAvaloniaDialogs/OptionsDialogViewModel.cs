@@ -34,12 +34,20 @@ namespace FwAvaloniaDialogs
 		// Updates
 		[ObservableProperty] private bool _autoUpdate;
 		[ObservableProperty] private NamedOption _selectedUpdateChannel;
+		// Which tab is shown; two-way bound to the TabControl. Defaults to the first tab; callers can open
+		// the dialog on a later tab via the initialTab ctor parameter (used by parity screenshots / deep links).
+		[ObservableProperty] private int _selectedTabIndex;
 
 		public OptionsDialogViewModel() : this(new OptionsState())
 		{
 		}
 
-		public OptionsDialogViewModel(OptionsState state)
+		/// <param name="initialTab">
+		/// Zero-based tab to show on open (0=General, 1=Plugins, 2=Privacy, 3=Updates). Out-of-range values
+		/// are clamped. Note: if the Updates tab is hidden (<see cref="UpdatesTabVisible"/> is false) index 3
+		/// has no visible tab to select.
+		/// </param>
+		public OptionsDialogViewModel(OptionsState state, int initialTab = 0)
 		{
 			_state = state ?? new OptionsState();
 
@@ -64,6 +72,9 @@ namespace FwAvaloniaDialogs
 
 			PluginsAvailable = _state.PluginsAvailable;
 			Plugins = _state.Plugins;
+
+			// Open on the requested tab (clamped to the four tab indices).
+			SelectedTabIndex = Math.Min(Math.Max(initialTab, 0), 3);
 		}
 
 		private const string LegacyMode = "Legacy";

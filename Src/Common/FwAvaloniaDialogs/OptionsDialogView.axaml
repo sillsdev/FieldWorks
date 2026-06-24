@@ -15,15 +15,18 @@
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
-			        Command="{Binding OkCommand}"
-			        AutomationProperties.AutomationId="Options.Ok"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
-			        Command="{Binding CancelCommand}"
-			        AutomationProperties.AutomationId="Options.Cancel"/>
+			<Button IsDefault="True" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="Options.Ok">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.OkMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="Options.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
 		</StackPanel>
 
-		<TabControl AutomationProperties.AutomationId="Options.Tabs">
+		<TabControl AutomationProperties.AutomationId="Options.Tabs"
+		            SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
 			<!-- General -->
 			<TabItem Header="{x:Static res:FwAvaloniaDialogsStrings.GeneralTab}">
 				<StackPanel Margin="{StaticResource DialogTabContentPadding}"

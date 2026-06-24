@@ -224,8 +224,40 @@ namespace FwAvaloniaDialogsTests
 		{
 			var (view, _) = Show();
 			var ok = FindByAutomationId<Button>(view, "Options.Ok");
-			Assert.That(ok.Content, Is.EqualTo(FwAvaloniaDialogsStrings.Ok),
-				"the OK button text must come from the shared localization accessor, not a literal");
+			// A11Y-01: the OK button now renders via an <AccessText> bound to the mnemonic accessor (so Alt+O
+			// works); the text still comes from the localization lane, not a literal.
+			var okAccess = ok.Content as AccessText;
+			Assert.That(okAccess, Is.Not.Null, "the OK button must render via AccessText for its Alt mnemonic");
+			Assert.That(okAccess.Text, Is.EqualTo(FwAvaloniaDialogsStrings.OkMnemonic),
+				"the OK button text must come from the localization accessor (mnemonic variant), not a literal");
+		}
+
+		// --- Initial tab: callers can open the dialog on a later tab (parity screenshots / deep links). ---
+
+		[Test]
+		public void InitialTab_SetsAndClampsSelectedTabIndex()
+		{
+			Assert.That(new OptionsDialogViewModel(SampleState()).SelectedTabIndex, Is.EqualTo(0), "defaults to the first tab");
+			Assert.That(new OptionsDialogViewModel(SampleState(), 2).SelectedTabIndex, Is.EqualTo(2), "opens on the requested tab");
+			Assert.That(new OptionsDialogViewModel(SampleState(), 99).SelectedTabIndex, Is.EqualTo(3), "clamps above the last tab");
+			Assert.That(new OptionsDialogViewModel(SampleState(), -1).SelectedTabIndex, Is.EqualTo(0), "clamps below the first tab");
+		}
+
+		[AvaloniaTest]
+		public void InitialTab_OpensDialogOnThatTab()
+		{
+			var vm = new OptionsDialogViewModel(SampleState(), 2); // Privacy
+			var view = new OptionsDialogView { DataContext = vm };
+			var window = new Window { Content = view, Width = 480, Height = 380 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			DialogSnapshot.Capture(window, "Options-initial-tab-privacy");
+
+			var tabs = FindByAutomationId<TabControl>(view, "Options.Tabs");
+			Assert.That(tabs.SelectedIndex, Is.EqualTo(2),
+				"the dialog must open on the tab requested at construction");
 		}
 	}
 }
