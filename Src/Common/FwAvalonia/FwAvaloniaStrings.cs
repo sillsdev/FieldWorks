@@ -497,5 +497,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string FeatureAnalysesName => Text("FwAvalonia.Feature.AnalysesName", "Words Analyses");
 		public static string FeatureAnalysesDescription => Text("FwAvalonia.Feature.AnalysesDescription", "The interlinear morph-bundle editor.");
+
+		/// <summary>Group heading for the avalonia-rule-formula-editor tool surfaces in the feature-manager dialog.</summary>
+		public static string FeatureGroupGrammarRuleEditors => Text("FwAvalonia.FeatureGroup.GrammarRuleEditors", "Grammar rule editors");
+
+		public static string FeaturePhonologicalRuleEditName => Text("FwAvalonia.Feature.PhonologicalRuleEditName", "Phonological Rules");
+		public static string FeaturePhonologicalRuleEditDescription => Text("FwAvalonia.Feature.PhonologicalRuleEditDescription", "The regular and metathesis rule editors.");
+
+		public static string FeatureEnvironmentEditName => Text("FwAvalonia.Feature.EnvironmentEditName", "Phonological Environments");
+		public static string FeatureEnvironmentEditDescription => Text("FwAvalonia.Feature.EnvironmentEditDescription", "The phonological-environment string editor.");
+
+		public static string FeatureCompoundRuleAdvancedEditName => Text("FwAvalonia.Feature.CompoundRuleAdvancedEditName", "Compound Rules");
+		public static string FeatureCompoundRuleAdvancedEditDescription => Text("FwAvalonia.Feature.CompoundRuleAdvancedEditDescription", "The compound-rule editor.");
+
+		public static string FeatureNaturalClassEditName => Text("FwAvalonia.Feature.NaturalClassEditName", "Natural Classes");
+		public static string FeatureNaturalClassEditDescription => Text("FwAvalonia.Feature.NaturalClassEditDescription", "The natural-class editor.");
+
+		public static string FeaturePhonemeEditName => Text("FwAvalonia.Feature.PhonemeEditName", "Phonemes");
+		public static string FeaturePhonemeEditDescription => Text("FwAvalonia.Feature.PhonemeEditDescription", "The Basic IPA symbol editor.");
+
+		public static string FeatureAdhocCoprohibEditName => Text("FwAvalonia.Feature.AdhocCoprohibEditName", "Ad Hoc Co-occurrence Rules");
+		public static string FeatureAdhocCoprohibEditDescription => Text("FwAvalonia.Feature.AdhocCoprohibEditDescription", "The ad hoc co-occurrence-rule editor.");
 	}
 }
