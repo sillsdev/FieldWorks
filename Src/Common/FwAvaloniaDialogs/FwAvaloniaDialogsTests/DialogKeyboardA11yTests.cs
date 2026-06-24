@@ -146,5 +146,28 @@ namespace FwAvaloniaDialogsTests
 			// begins on the button strip — inherent to the picker design and pre-existing, not a regression
 			// introduced or removable by this TabIndex change.
 		}
+
+		// --- A11Y-01: button mnemonics (Alt access keys) ---
+		// The kept dialogs render OK/Cancel/Help via an explicit <AccessText> bound to a dialog-local
+		// mnemonic string (e.g. "_OK"), so the '_' is parsed into an Alt access key regardless of theme.
+		// This proves the mnemonic is REGISTERED; activation in the real WinForms-hosted dialog also depends
+		// on Alt routing through the embedded host (covered by the desktop UIA lane, A11Y-04).
+
+		[AvaloniaTest]
+		public void Mnemonics_OkAndCancel_ParseAltAccessKeys()
+		{
+			var vm = new ChooserDialogViewModel(new ChooserDialogInput { Candidates = Candidates() });
+			var view = new ChooserDialogView { DataContext = vm };
+			var window = new Window { Content = view, Width = 360, Height = 420 };
+			Pump(window, view);
+
+			var okAccess = FindButton(view, "Chooser.Ok").GetVisualDescendants().OfType<AccessText>().FirstOrDefault();
+			var cancelAccess = FindButton(view, "Chooser.Cancel").GetVisualDescendants().OfType<AccessText>().FirstOrDefault();
+
+			Assert.That(okAccess, Is.Not.Null, "OK should render via AccessText so its '_' mnemonic is an access key");
+			Assert.That(char.ToUpperInvariant(okAccess.AccessKey), Is.EqualTo('O'), "Alt+O should activate OK");
+			Assert.That(cancelAccess, Is.Not.Null, "Cancel should render via AccessText");
+			Assert.That(char.ToUpperInvariant(cancelAccess.AccessKey), Is.EqualTo('C'), "Alt+C should activate Cancel");
+		}
 	}
 }

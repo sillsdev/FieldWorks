@@ -20,16 +20,18 @@
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
-			        Command="{Binding OkCommand}"
-			        AutomationProperties.AutomationId="Chooser.Ok"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
-			        Command="{Binding CancelCommand}"
-			        AutomationProperties.AutomationId="Chooser.Cancel"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
-			        IsVisible="{Binding HasHelp}"
-			        Command="{Binding HelpCommand}"
-			        AutomationProperties.AutomationId="Chooser.Help"/>
+			<Button IsDefault="True" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="Chooser.Ok">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.OkMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="Chooser.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+			<Button IsVisible="{Binding HasHelp}" Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="Chooser.Help">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.HelpMnemonic}"/>
+			</Button>
 		</StackPanel>
 
 		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"

@@ -275,6 +275,11 @@ namespace SIL.FieldWorks.XWorks
 			(m_regionEditorServices?.LegacyDialogLauncher as IDisposable)?.Dispose();
 			m_regionEditorServices = null;
 			m_avaloniaEntryForm?.Dispose();
+			// WIRE-01: null the host + refresh controller after disposing them. The recreation guards
+			// (EnsureAvaloniaSurfaceInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
+			// runtime flip New->Legacy->New rebuilds a fresh surface instead of re-showing a disposed one.
+			m_avaloniaEntryForm = null;
+			m_avaloniaRefreshController = null;
 		}
 
 		#endregion // Construction and Removal
@@ -377,7 +382,8 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			var newSurface = ResolveConfiguredLexicalEditSurface();
-			if (newSurface == m_lexicalEditSurface)
+			var oldSurface = m_lexicalEditSurface;
+			if (newSurface == oldSurface)
 				return;
 
 			// Settle any open fenced session BEFORE flipping the surface — without this, flipping
@@ -385,6 +391,12 @@ namespace SIL.FieldWorks.XWorks
 			// (review round 2).
 			SettleRegionEdits();
 			SetLexicalEditSurface(newSurface);
+			// WIRE-01: flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
+			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
+			// refresh controller does not keep walking the notification bus for the view's remaining life.
+			// TearDownAvaloniaSurface nulls the host + controller, so a later flip back to New rebuilds them.
+			if (oldSurface == LexicalEditSurface.Avalonia && newSurface != LexicalEditSurface.Avalonia)
+				TearDownAvaloniaSurface();
 			ShowRecord(new RecordNavigationInfo(Clerk, Clerk.SuppressSaveOnChangeRecord, false, true));
 		}
 

@@ -24,13 +24,14 @@
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
-			        Command="{Binding CancelCommand}"
-			        AutomationProperties.AutomationId="EntryGo.Cancel"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
-			        IsVisible="{Binding HasHelp}"
-			        Command="{Binding HelpCommand}"
-			        AutomationProperties.AutomationId="EntryGo.Help"/>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+			<Button IsVisible="{Binding HasHelp}" Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Help">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.HelpMnemonic}"/>
+			</Button>
 		</StackPanel>
 
 		<!-- Two regions side by side: the search column (left) and the extended description region (right),

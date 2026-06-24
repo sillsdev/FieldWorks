@@ -91,6 +91,47 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
 		}
 
+		// WIRE-01 (LT-22582): flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
+		// (not defer to Dispose), and a subsequent flip back to New must rebuild a fresh surface rather than
+		// re-show a disposed one (the pre-fix bug: TearDownAvaloniaSurface disposed but did not null the host,
+		// so EnsureAvaloniaSurfaceActive's `== null` guard skipped recreation and .Show()'d a disposed control).
+		[Test]
+		public void LexiconEditTool_FlipNewLegacyNew_TearsDownThenRebuildsAvaloniaSurface()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
+				"the Avalonia surface should own a refresh controller while active");
+
+			// Flip to Legacy: the host + refresh controller are disposed AND nulled now (WIRE-01).
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.WinForms));
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Null,
+				"flipping to Legacy must dispose+null the refresh controller, not leave it on the PropChanged bus");
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null,
+				"flipping to Legacy nulls the Avalonia host so a flip back rebuilds it cleanly");
+
+			// Flip back to New: must rebuild without re-showing a disposed host (the pre-fix crash).
+			Assert.DoesNotThrow(() =>
+			{
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				DrainMediatorAndIdleQueues();
+				EnsureCurrentRecord(control);
+			}, "flip back to New must rebuild the Avalonia surface, not re-show a disposed host");
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
+				"flipping back to New must rebuild the refresh controller");
+		}
+
 		// §20.3 / §20.5.2: tools whose record-edit surface is NOT yet registered still fall back to legacy under
 		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate.) Analyses graduated
 		// to the Avalonia surface with the interlinear editor (avalonia-interlinear-editor W-4/W-5) — see

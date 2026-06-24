@@ -16,16 +16,18 @@
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryCreate}" IsDefault="True"
-			        Command="{Binding OkCommand}"
-			        AutomationProperties.AutomationId="InsertEntry.Create"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
-			        Command="{Binding CancelCommand}"
-			        AutomationProperties.AutomationId="InsertEntry.Cancel"/>
-			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
-			        IsVisible="{Binding HasHelp}"
-			        Command="{Binding HelpCommand}"
-			        AutomationProperties.AutomationId="InsertEntry.Help"/>
+			<Button IsDefault="True" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Create">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryCreateMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+			<Button IsVisible="{Binding HasHelp}" Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Help">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.HelpMnemonic}"/>
+			</Button>
 		</StackPanel>
 
 		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"
