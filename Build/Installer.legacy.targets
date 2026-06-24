@@ -327,8 +327,12 @@
 			<!-- Installed in Program Files\Common Files -->
 			<BinFiles Remove="@(CustomInstallFiles)" />
 			<!-- Files used to customize the generic patchable installer -->
-			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi" />
+			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi" Exclude="$(fwrt)\FLExInstaller\CustomComponents.wxi" />
 		</ItemGroup>
+		<PropertyGroup>
+			<_CustomComponentsTemplate>$(fwrt)\FLExInstaller\CustomComponents.wxi</_CustomComponentsTemplate>
+			<_RenderedCustomComponentsPath>$(OverridesDestDir)\CustomComponents.wxi</_RenderedCustomComponentsPath>
+		</PropertyGroup>
 		<Copy
 			SourceFiles="@(FontFiles)"
 			OverwriteReadonlyFiles="true"
@@ -368,6 +372,21 @@
 			SourceFiles="@(OverrideFiles)"
 			OverwriteReadonlyFiles="true"
 			DestinationFolder="$(OverridesDestDir)"
+		/>
+		<ReadLinesFromFile
+			Condition="Exists('$(_CustomComponentsTemplate)')"
+			File="$(_CustomComponentsTemplate)">
+			<Output TaskParameter="Lines" ItemName="_CustomComponentsTemplateLines" />
+		</ReadLinesFromFile>
+		<PropertyGroup Condition="'@(_CustomComponentsTemplateLines)' != ''">
+			<_CustomComponentsTemplateContent>@(_CustomComponentsTemplateLines, '%0A')</_CustomComponentsTemplateContent>
+			<_CustomComponentsRenderedContent>$(_CustomComponentsTemplateContent.Replace('__EncodingConvertersCoreVersion__', '$(EncodingConvertersCoreVersion)'))</_CustomComponentsRenderedContent>
+		</PropertyGroup>
+		<WriteLinesToFile
+			Condition="'$(_CustomComponentsRenderedContent)' != ''"
+			File="$(_RenderedCustomComponentsPath)"
+			Lines="$(_CustomComponentsRenderedContent)"
+			Overwrite="true"
 		/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata" />
 	</Target>
