@@ -17,11 +17,11 @@ comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attac
 
 | Legacy (WinForms) — "before" | Avalonia (New) — "after" |
 |---|---|
-| ![fw-update-report legacy](./images/fw-update-report-before.png) | ![fw-update-report avalonia](./images/fw-update-report-after.png) |
+| ![fw-styles-modified legacy](./images/fw-styles-modified-before.png) | ![fw-styles-modified avalonia](./images/fw-styles-modified-after.png) |
 ## What it is
 A message box displayed when the stylesheet has been modified, to notify the user that they may want to check their styles.
 
 ## Notes / gotchas
-- Subclass of `FwUpdateReportDlg` (report-style dialog).
+- Subclass of FwUpdateReportDlg (report-style dialog).
 
 > Stub. Deepen using `Docs/migration/_TEMPLATE.md` (capture legacy PNGs via the `fieldworks-winapp` skill) when this ticket is picked up.

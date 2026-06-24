@@ -18,6 +18,10 @@ comes from the surface's FwAvaloniaDialogs(Tests) visual test (same data); attac
 | Legacy (WinForms) — "before" | Avalonia (New) — "after" |
 |---|---|
 | ![fw-styles legacy](./images/fw-styles-before.png) | ![fw-styles avalonia](./images/fw-styles-after.png) |
+
+Tabs (legacy):
+
+![border](./images/fw-styles-tab-border.png) ![bullets](./images/fw-styles-tab-bullets.png) ![font](./images/fw-styles-tab-font.png) ![general](./images/fw-styles-tab-general.png) ![paragraph](./images/fw-styles-tab-paragraph.png)
 ## What it is
 The (new) Styles dialog — create, edit, and organize paragraph/character styles for the project.
 

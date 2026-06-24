@@ -14,6 +14,14 @@
 ## What it is
 The older jtview-layout configuration editor (the predecessor to `DictionaryConfigurationDlg`): builds a checkable `TreeView` (`m_tvParts`) from XML `<part>`/`<layout>` nodes and lets the user configure the Dictionary view. Implements `ILayoutConverter`.
 
+## What it looks like (before / after)
+Legacy "before" captured by the screenshot harness (ScreenshotHarnessTests, option 2). Avalonia "after"
+comes from the surface's FwAvaloniaDialogs(Tests) visual test; attach both to the JIRA ticket.
+
+| Legacy (WinForms) — "before" | Avalonia (New) — "after" |
+|---|---|
+| ![xml-doc-configure legacy](./images/xml-doc-configure-before.png) | ![xml-doc-configure avalonia](./images/xml-doc-configure-after.png) |
+
 ## Notes / gotchas
 - LARGE, COMPLEX legacy screen with a checkable parts `TreeView`, content `ListView` (writing systems / relation / complex-form / variant / minor-entry types), and per-node detail editing.
 - Tightly coupled to the XML jtview layout model (`<part ref>` traversal, `hideConfig` attributes) and `Common.RootSites`.

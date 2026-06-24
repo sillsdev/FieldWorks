@@ -67,6 +67,8 @@ public static class W{
   public static void Move(int x,int y){ SetCursorPos(x,y); }
   public static void Click(int x,int y){ SetCursorPos(x,y); System.Threading.Thread.Sleep(60); mouse_event(0x0002,0,0,0,IntPtr.Zero); mouse_event(0x0004,0,0,0,IntPtr.Zero); }
   public static void RightClick(int x,int y){ SetCursorPos(x,y); System.Threading.Thread.Sleep(60); mouse_event(0x0008,0,0,0,IntPtr.Zero); mouse_event(0x0010,0,0,0,IntPtr.Zero); }
+  // Ctrl+Tab: advances a focused WinForms TabControl to the next tab (used to walk tabs that aren't UIA TabItems).
+  public static void CtrlTab(){ keybd_event(0x11,0,0,IntPtr.Zero); keybd_event(0x09,0,0,IntPtr.Zero); keybd_event(0x09,0,0x0002,IntPtr.Zero); keybd_event(0x11,0,0x0002,IntPtr.Zero); }
   // Defeat the Windows foreground lock so the FLEx window becomes ACTIVE -> its WinForms menu
   // dropdowns/flyouts stay open through a multi-level cascade (a non-active window's dropdowns
   // collapse instantly, which is why background-driven cascades failed).
@@ -86,6 +88,7 @@ public static class W{
   public static string Title(IntPtr h){var sb=new StringBuilder(512);GetWindowText(h,sb,512);return sb.ToString();}
   public static void Save(IntPtr h,string path){R r;GetWindowRect(h,out r);int w=r.Rt-r.L,ht=r.B-r.T;if(w<1||ht<1)throw new Exception("zero-size window");using(var b=new Bitmap(w,ht))using(var g=Graphics.FromImage(b)){IntPtr hdc=g.GetHdc();PrintWindow(h,hdc,2u);g.ReleaseHdc(hdc);b.Save(path,ImageFormat.Png);}}
   public static void Close(IntPtr h){SendMessage(h,WM_CLOSE,IntPtr.Zero,IntPtr.Zero);}
+  public static int[] Rect(IntPtr h){R r;GetWindowRect(h,out r);return new int[]{r.L,r.T,r.Rt,r.B};}
 }
 "@
 
@@ -350,6 +353,34 @@ function Capture-One($row) {
   Start-Sleep -Milliseconds 1200   # let it finish painting
   $status = 'no-dialog'
   try { [W]::Save($dlg, $img); $status = "captured: '$dtitle'" } catch { $status = "capture-failed: $($_.Exception.Message)" }
+
+  # Optional: walk the dialog's tabs and capture each as <stem>-tab-<label>.png. WinForms TabControl tabs
+  # respond to Ctrl+Tab (they are not exposed as UIA TabItems), so cycle with the keyboard. tabLabels is a
+  # pipe-separated list naming each tab in order (the first label = the already-captured opening tab).
+  if ($row.PSObject.Properties['tabLabels'] -and $row.tabLabels) {
+    $labels = @($row.tabLabels -split '\|')
+    $stem = [System.IO.Path]::GetFileNameWithoutExtension($img) -replace '-before$',''
+    $imgDir = Split-Path $img
+    # tabClicks = pipe-separated "x,y" window-relative offsets of each tab header (read from the captured
+    # image). Clicking the header directly is reliable; Ctrl+Tab only advances once then moves focus within
+    # the page. If tabClicks is absent, fall back to Ctrl+Tab cycling.
+    $tabClicks = $null
+    if ($row.PSObject.Properties['tabClicks'] -and $row.tabClicks) { $tabClicks = @($row.tabClicks -split '\|') }
+    $tabsOk = 0
+    for ($ti = 0; $ti -lt $labels.Count; $ti++) {
+      [void][W]::Foreground($dlg)
+      if ($tabClicks -and $ti -lt $tabClicks.Count) {
+        $xy = $tabClicks[$ti] -split ':'
+        $r = [W]::Rect($dlg)
+        [W]::Click([int]$r[0] + [int]$xy[0], [int]$r[1] + [int]$xy[1])
+        Start-Sleep -Milliseconds 600
+      } elseif ($ti -gt 0) { [W]::CtrlTab(); Start-Sleep -Milliseconds 700 } else { Start-Sleep -Milliseconds 300 }
+      $tabImg = Join-Path $imgDir ("$stem-tab-" + ($labels[$ti] -replace '[^\w]','') + ".png")
+      try { [W]::Save($dlg, $tabImg); $tabsOk++ } catch {}
+    }
+    $status += " (+$tabsOk/$($labels.Count) tabs)"
+  }
+
   try { [W]::Close($dlg) } catch {}
   Start-Sleep -Milliseconds 400
   Close-Flex $p
