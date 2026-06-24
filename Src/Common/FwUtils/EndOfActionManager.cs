@@ -19,7 +19,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public sealed class EndOfActionManager
 	{
 		private bool m_initialized = false;
-		private readonly Dictionary<string, object> m_events = new Dictionary<string, object>();
+		// The events are grouped by message, and then by scope within each message. At most a message
+		// is queued once per scope (last one wins). Note: Null is a valid scope, it follows the same
+		// rules; queued once and last one wins, but null scope is unique in that the message is delivered
+		// to all subscribers regardless of their scope (null or not null).
+		private readonly Dictionary<string, List<PublisherParameterObject>> m_events = new Dictionary<string, List<PublisherParameterObject>>();
 
 		/// <summary>
 		/// Returns the EndOfAction event that is currently being published.
@@ -51,8 +55,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 
-			// Add the dictionary entry if the key is not present. Overwrite the value if the key is present.
-			m_events[publisherParameterObject.Message] = publisherParameterObject.Data;
+			// The whole parameter object is kept so the delivery scope survives until the idle publish.
+			// Group by both message and scope: overwrite an already-queued publish only if it has the
+			// same scope; publishes of the same message from different scopes are all delivered.
+			if (!m_events.TryGetValue(publisherParameterObject.Message, out var queued))
+			{
+				queued = new List<PublisherParameterObject>();
+				m_events.Add(publisherParameterObject.Message, queued);
+			}
+			var sameScopeIndex = queued.FindIndex(e => ReferenceEquals(e.Scope, publisherParameterObject.Scope));
+			// If it is the same Message and scope then intentionally overwrite.
+			if (sameScopeIndex >= 0)
+			{
+				queued[sameScopeIndex] = publisherParameterObject;
+			}
+			else
+			{
+				queued.Add(publisherParameterObject);
+			}
 		}
 
 		/// Should be private, but is public to support testing.
@@ -63,11 +83,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				foreach (var orderedEvent in EndOfActionOrder.Order)
 				{
-					if (m_events.TryGetValue(orderedEvent, out object data))
+					if (m_events.TryGetValue(orderedEvent, out var queuedEvents))
 					{
 						m_events.Remove(orderedEvent);
 						CurrentEndOfActionEvent = orderedEvent;
-						FwUtils.Publisher.Publish(new PublisherParameterObject(orderedEvent, data));
+						foreach (var publisherParameterObject in queuedEvents)
+						{
+							FwUtils.Publisher.Publish(publisherParameterObject);
+						}
 						CurrentEndOfActionEvent = null;
 					}
 

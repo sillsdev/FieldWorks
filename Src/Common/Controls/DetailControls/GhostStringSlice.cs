@@ -459,12 +459,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				int hvoNewObj;
 				try
 				{
-					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false, datatree.PropTable?.GetWindow()));
 					hvoNewObj = MakeRealObject(tssTyped);
 				}
 				finally
 				{
-					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true, datatree.PropTable?.GetWindow()));
 				}
 
 				// Now try to make a suitable selection in the slice that replaces this.

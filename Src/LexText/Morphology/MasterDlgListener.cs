@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

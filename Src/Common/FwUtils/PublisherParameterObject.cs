@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public sealed class PublisherParameterObject
 	{
-		public PublisherParameterObject(string message, object data = null)
+		public PublisherParameterObject(string message, object data = null, IPubSubScope scope = null)
 		{
 			if (string.IsNullOrWhiteSpace(message))
 			{
@@ -17,10 +17,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			Message = message;
 			Data = data;
+			Scope = scope;
 		}
 
 		public string Message { get; }
 		public object Data { get; }
+
+		/// <summary>
+		/// Delivery scope (normally the publishing main window). When non-null, only
+		/// subscribers that subscribed with the same scope (or with none) receive this publish.
+		/// A null scope publishes to all subscribers, regardless of their scope. See <see cref="IPubSubScope"/>.
+		/// </summary>
+		public IPubSubScope Scope { get; }
 	}
 
 	/// <summary>

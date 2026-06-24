@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 
-			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
 		}
 
 		protected override void GetMessageAdditionalTargets(System.Collections.Generic.List<IxCoreColleague> collector)

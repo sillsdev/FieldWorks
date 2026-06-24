@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists", m_propertyTable.GetWindow()));
 		}
 
 		/// <summary>

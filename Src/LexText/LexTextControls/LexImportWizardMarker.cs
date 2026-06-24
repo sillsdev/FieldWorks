@@ -1061,7 +1061,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 			Publisher.Publish(new PublisherParameterObject(EventConstants.ConfigureCustomFields,
-				new Tuple<Mediator, PropertyTable, string>(med, m_propertyTable, AreaConstants.lexicon)));
+				new Tuple<Mediator, PropertyTable, string>(med, m_propertyTable, AreaConstants.lexicon), m_propertyTable.GetWindow()));
 
 			// The above call can cause the Mediator to 'go away', so check it and
 			// restore the member variable for everyone else who may be surprised

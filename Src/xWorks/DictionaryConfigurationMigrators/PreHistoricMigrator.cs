@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
-			Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter, m_propertyTable.GetWindow()));
 			var controlNode = collector[0];
 			var parameters = controlNode.SelectSingleNode("parameters");
 			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");

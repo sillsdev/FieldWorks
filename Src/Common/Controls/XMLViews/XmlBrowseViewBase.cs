@@ -2085,9 +2085,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			SetSelectedRowHighlighting();//read the property table
 
-			Subscriber.Subscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
-			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
-			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh);
+			Subscriber.Subscribe(EventConstants.SaveScrollPosition, SaveScrollPosition, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, PrepareToRefresh, m_propertyTable.GetWindow());
 		}
 
 		#endregion XCore Colleague overrides

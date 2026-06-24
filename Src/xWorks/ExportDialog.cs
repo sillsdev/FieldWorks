@@ -518,7 +518,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
-			Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter, m_propertyTable.GetWindow()));
 			var controlNode = collector[0];
 			Debug.Assert(controlNode != null);
 			XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
@@ -1078,7 +1078,7 @@ namespace SIL.FieldWorks.XWorks
 			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			Publisher.Publish(new PublisherParameterObject(EventConstants.SaveAsWebpage, parameter));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SaveAsWebpage, parameter, m_propertyTable.GetWindow()));
 			m_progressDlg.Step(1000);
 			return null;
 		}

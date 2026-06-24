@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.IText
 			// Load any saved settings.
 			LoadSettings();
 
-			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>

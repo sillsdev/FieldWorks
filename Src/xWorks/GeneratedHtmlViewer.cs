@@ -789,9 +789,9 @@ namespace SIL.FieldWorks.XWorks
 
 			//add our current state to the history system
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
-			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty), m_propertyTable.GetWindow()));
 
-			Subscriber.Subscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
+			Subscriber.Subscribe(EventConstants.SaveAsWebpage, SaveAsWebpage, m_propertyTable.GetWindow());
 		}
 #if notnow
 		void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)

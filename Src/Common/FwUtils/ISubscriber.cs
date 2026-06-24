@@ -20,7 +20,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="message">The message being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when <paramref name="message"/>
 		/// has been published</param>
-		void Subscribe(string message, Action<object> messageHandler);
+		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// When non-null, scoped publishes of <paramref name="message"/> are delivered only if they
+		/// carry the same scope. Null subscribes will receive messages from all publishers.
+		/// See <see cref="IPubSubScope"/>.</param>
+		void Subscribe(string message, Action<object> messageHandler, IPubSubScope scope = null);
 
 		/// <summary>
 		/// An object subscribes to messages that begin with <paramref name="messagePrefix"/> using
@@ -33,7 +37,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="messagePrefix">The message prefix being subscribed to receive.</param>
 		/// <param name="messageHandler">The method on subscriber to call, when a message that
 		/// begins with <paramref name="messagePrefix"/> has been published.</param>
-		void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler);
+		/// <param name="scope">Optional delivery scope (normally the subscriber's main window).
+		/// When non-null, scoped publishes of matching messages are delivered only if they
+		/// carry the same scope. Null subscribes will receive messages from all publishers.
+		/// See <see cref="IPubSubScope"/>.</param>
+		void PrefixSubscribe(string messagePrefix, Action<string, object> messageHandler, IPubSubScope scope = null);
 
 		/// <summary>
 		/// Register end of interest (unsubscribe) of an object in receiving <paramref name="message"/>
@@ -52,14 +60,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		void PrefixUnsubscribe(string messagePrefix, Action<string, object> messageHandler);
 
 		/// <summary>
-		/// Get all current subscriptions.
+		/// Get all current subscriptions: per message, each handler with the scope it subscribed
+		/// under (null scope = process-wide).
 		/// </summary>
-		IReadOnlyDictionary<string, HashSet<Action<object>>> Subscriptions { get; }
+		IReadOnlyDictionary<string, Dictionary<Action<object>, IPubSubScope>> Subscriptions { get; }
 
 		/// <summary>
-		/// Get all the current prefix subscriptions. If a message starts with one of these
+		/// Get all the current prefix subscriptions: per prefix, each handler with the scope it
+		/// subscribed under (null scope = process-wide). If a message starts with one of these
 		/// prefixes then the prefix subscribers will get notified.
 		/// </summary>
-		IReadOnlyDictionary<string, HashSet<Action<string, object>>> PrefixSubscriptions { get; }
+		IReadOnlyDictionary<string, Dictionary<Action<string, object>, IPubSubScope>> PrefixSubscriptions { get; }
 	}
 }

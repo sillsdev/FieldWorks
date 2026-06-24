@@ -324,6 +324,22 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// The main window owning this property table (each main window registers itself under
+		/// "window" in its own table), or null when unavailable — a private or test property
+		/// table, or early window construction. Being an IxWindow, the result also serves as the
+		/// Pub/Sub delivery scope; a null scope means process-wide delivery, so "unavailable"
+		/// can only widen delivery, never lose a message.
+		/// </summary>
+		/// <remarks>Null-safe by design: unlike GetValue&lt;T&gt;, this never throws when the
+		/// "window" property holds a non-window (as some test fixtures do).</remarks>
+		public IxWindow GetWindow()
+		{
+			CheckDisposed();
+
+			return GetValue<object>("window") as IxWindow;
+		}
+
+		/// <summary>
 		/// Get the value of the property of the specified settingsGroup.
 		/// </summary>
 		/// <param name="name"></param>

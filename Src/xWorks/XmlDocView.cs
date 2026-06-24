@@ -798,7 +798,7 @@ namespace SIL.FieldWorks.XWorks
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
-			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid)));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid), m_propertyTable.GetWindow()));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
@@ -1269,7 +1269,7 @@ namespace SIL.FieldWorks.XWorks
 
 			InitBase(mediator, propertyTable, configurationParameters);
 
-			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
+			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>

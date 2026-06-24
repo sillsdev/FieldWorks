@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ILexRefType newKid = list.Services.GetInstance<ILexRefTypeFactory>().Create();
 			list.PossibilitiesOS.Add(newKid);
 			m_cache.DomainDataByFlid.EndUndoTask();
-			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexRefEdit", newKid.Guid)));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, new FwLinkArgs("lexRefEdit", newKid.Guid), m_propertyTable.GetWindow()));
 		}
 
 		protected void ExpandNewNode()

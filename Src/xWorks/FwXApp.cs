@@ -200,7 +200,7 @@ namespace SIL.FieldWorks.XWorks
 			FwXWindow fwxwnd = m_rgMainWindows.Count > 0 ? (FwXWindow)m_rgMainWindows[0] : null;
 			if (fwxwnd != null)
 			{
-				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link, fwxwnd));
 				bool topmost = fwxwnd.TopMost;
 				fwxwnd.TopMost = true;
 				fwxwnd.TopMost = topmost;

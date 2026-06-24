@@ -1428,7 +1428,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					CreateNewEntry();
 					if (DialogResult == DialogResult.Retry)
 					{
-						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, m_entry.Hvo));
+						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, m_entry.Hvo, m_propertyTable.GetWindow()));
 						DialogResult = DialogResult.OK;
 					}
 					break;

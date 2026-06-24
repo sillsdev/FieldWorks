@@ -314,7 +314,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("App", app, true);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
-			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry);
+			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry, this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1673,7 +1673,7 @@ namespace SIL.FieldWorks.XWorks
 			// REVIEW (Hasso) 2023.07: we had used MediatorSendMessageToAllNow as this needs to go to everyone right now.  This
 			// method on the mediator will not stop when the message is handled, nor is it deferred.
 			// REVIEW: do we need to replicate this urgency in PubSub?
-			Publisher.Publish(new PublisherParameterObject(EventConstants.PrepareToRefresh));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.PrepareToRefresh, null, this));
 		}
 
 		/// <summary>
@@ -1870,7 +1870,7 @@ namespace SIL.FieldWorks.XWorks
 				(m_app as FwXApp).OnMasterRefresh(null);
 
 				// Refresh the fonts on popup windows.
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindowFonts, null));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindowFonts, null, this));
 			}
 			return false;   // refresh already called if needed
 		}
@@ -2136,7 +2136,7 @@ namespace SIL.FieldWorks.XWorks
 			// into a situation where the main window was disposed of while the parser
 			// thread was trying to execute com calls on the UI thread and using the
 			// main form as the Invoke point.
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, this));
 			base.XWindow_Closing(sender, e);
 		}
 
@@ -2260,7 +2260,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (m_startupLink != null)
 			{
-				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_startupLink));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_startupLink, this));
 			}
 			UpdateControls();
 			return true;

@@ -86,9 +86,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
-			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
-			Subscriber.Subscribe(EventConstants.Idle, Idle);
+			Subscriber.Subscribe(EventConstants.StopParser, StopParser, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.Idle, Idle, m_propertyTable.GetWindow());
 		}
 
 		/// <summary>

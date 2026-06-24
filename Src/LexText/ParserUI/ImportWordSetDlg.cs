@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// xCore Mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		///
 		/// </summary>
@@ -72,6 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			//InitializeComponent();
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = propertyTable.GetValue<LcmCache>("cache");
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
@@ -208,10 +210,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, m_propertyTable.GetWindow()));
 			CreateWordsetFromFiles(m_paths);
 
-			Publisher.Publish(new PublisherParameterObject(EventConstants.FilterListChanged, null)); // let record clerk know the list of filters has changed.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FilterListChanged, null, m_propertyTable.GetWindow())); // let record clerk know the list of filters has changed.
 
 			DialogResult = DialogResult.OK;
 		}

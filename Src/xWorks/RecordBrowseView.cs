@@ -678,8 +678,8 @@ namespace SIL.FieldWorks.XWorks
 			// so call it again, since we are ready now.
 			ShowRecord();
 
-			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
-			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
 		}
 
 		private void CheckExpectedListItemsClassInSync()
