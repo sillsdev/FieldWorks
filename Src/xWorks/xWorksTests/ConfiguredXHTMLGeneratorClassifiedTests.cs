@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string senseXpath = senseContentXpath + "/span[@class='sense']";
 		private const string headwordXpath = senseXpath + "/span[@class='headword-classified']";
 		private const string definitionXpath = senseXpath + "/span[@class='definitionorgloss']";
+		private const string picturesXpath = senseXpath + "/span[@class='pictures']";
 
 		[OneTimeSetUp]
 		public override void FixtureSetup()
@@ -171,10 +172,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Builds the configuration for semantic domain with senses, optionally including grammatical info
+		/// Builds the configuration for semantic domain with senses, optionally including subsenses, grammatical info, or pictures
 		/// </summary>
 		private static ConfigurableDictionaryNode BuildSemanticDomainConfig(bool includeSubsenses = false,
-			bool includeGrammaticalInfo = false, bool numberSingleSense = false)
+			bool includeGrammaticalInfo = false, bool numberSingleSense = false, bool includePictures = false)
 		{
 			var abbrNode = new ConfigurableDictionaryNode
 			{
@@ -223,6 +224,27 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			senseChildren.Add(glossNode);
+
+
+			if (includePictures)
+			{
+				var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+				var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "analysis" }) };
+
+				var captionOrHeadwordNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CaptionOrHeadword",
+					DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var pictureNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+					FieldDescription = "PicturesOS",
+					CSSClassNameOverride = "Pictures",
+					Children = new List<ConfigurableDictionaryNode> { thumbNailNode, captionNode, captionOrHeadwordNode }
+				};
+				senseChildren.Add(pictureNode);
+			}
 
 			// Add subsense node if requested
 			if (includeSubsenses)
@@ -467,6 +489,110 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossXpath, 1);
 		}
 
+		[Test]
+		public void GenerateXHTMLForSemanticDomain_OneSenseWithSinglePicture()
+		{
+			// Create semantic domain
+			var domain = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domain);
+
+			// Create entry and sense
+			var testEntry = CXGTests.CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+
+			// Add picture to sense
+			sense.PicturesOS.Add(CXGTests.CreatePicture(Cache, true, "captionEn", "en"));
+			sense.PicturesOS[0].Caption.set_String(m_wsEn, TsStringUtils.MakeString("captionEn", m_wsEn));
+
+			// Associate semantic domain with sense
+			sense.SemanticDomainsRC.Add(domain);
+
+			// Create semantic domain configuration with pictures included
+			var config = BuildSemanticDomainConfig(includePictures: true);
+
+			// Create publication and decorator
+			var publication = CreateTestPublication("Test Publication");
+			testEntry.DoNotPublishInRC.Clear();
+			var decorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, publication);
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, config, decorator, DefaultSettings).ToString();
+			const string oneSenseWithPicture = picturesXpath + "/ div[@class='picture']/img[@class='photo' and @id]";
+			const string oneSenseWithPictureCaption = picturesXpath + "/ div[@class='picture']/div[@class='captionContent']/span[@class='caption']//span[text()='captionEn']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForSemanticDomain_PictureFileMissing()
+		{
+			// Create semantic domain
+			var domain = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domain);
+
+			// Create entry and sense
+			var testEntry = CXGTests.CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+
+			// Add picture to sense, except the file is missing (bool exists = false)
+			sense.PicturesOS.Add(CXGTests.CreatePicture(Cache, false));
+
+			// Associate semantic domain with sense
+			sense.SemanticDomainsRC.Add(domain);
+
+			// Create semantic domain configuration with pictures included
+			var config = BuildSemanticDomainConfig(includePictures: true);
+
+			// Create publication and decorator
+			var publication = CreateTestPublication("Test Publication");
+			testEntry.DoNotPublishInRC.Clear();
+			var decorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, publication);
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, config, decorator, DefaultSettings).ToString();
+			const string picturePathNoMatches = picturesXpath + "/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='captionEn']";
+
+			//This assert is dependent on the specific entry data created
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(picturesXpath, 0);
+		}
+
+		[Test]
+		public void GenerateXHTMLForSemanticDomain_CaptionOrHeadwordGetsCaption()
+		{
+			// Create semantic domain
+			var domain = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domain);
+
+			// Create entry and sense
+			var testEntry = CXGTests.CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+
+			// Add picture to sense
+			sense.PicturesOS.Add(CXGTests.CreatePicture(Cache, true, "captionEn", "en"));
+			sense.PicturesOS[0].Caption.set_String(m_wsEn, TsStringUtils.MakeString("captionEn", m_wsEn));
+
+			// Associate semantic domain with sense
+			sense.SemanticDomainsRC.Add(domain);
+
+			// Create semantic domain configuration with pictures included
+			var config = BuildSemanticDomainConfig(includePictures: true);
+
+			// Create publication and decorator
+			var publication = CreateTestPublication("Test Publication");
+			testEntry.DoNotPublishInRC.Clear();
+			var decorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, publication);
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, config, decorator, DefaultSettings).ToString();
+			const string captionOrHeadwordContainsCaption = picturesXpath+ "/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='captionEn']";
+
+			//This assert is dependent on the specific entry data created
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsCaption, 1);
+		}
 		#endregion Tests
 	}
 }
