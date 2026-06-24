@@ -1185,7 +1185,7 @@ namespace SIL.FieldWorks.Common.Controls
 					var specialItemName =
 						MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_));
 					var specialFilter = DynamicLoader.CreateObject(XmlUtils.FindNode(item.Spec, "dynamicloaderinfo"),
-						new object[] { specialItemName, m_cache, m_bv.Mediator }) as FilterComboItem;
+						new object[] { specialItemName, m_cache, m_bv.Mediator, m_bv.PropTable }) as FilterComboItem;
 					combo.Items.Add(specialFilter);
 					break;
 

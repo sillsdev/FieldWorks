@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var reversalDoc = new XmlDocument();
 			reversalDoc.LoadXml(m_contentControlReversal);
 			m_testControlRevNode = reversalDoc.DocumentElement;
-			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters, null);
 		}
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)

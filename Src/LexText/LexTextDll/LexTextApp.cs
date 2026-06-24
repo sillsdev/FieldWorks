@@ -77,7 +77,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (progressDlg != null)
 				progressDlg.Message = LexTextStrings.ksLoading_;
 
-			Subscriber.Subscribe(EventConstants.SFMImport, SFMImport);
+			// LexTextApp is the per-application object (no single window), so this is intentionally
+			// subscribed with a null (process-wide) scope.
+			Subscriber.Subscribe(EventConstants.SFMImport, SFMImport, null);
 		}
 
 		/// ------------------------------------------------------------------------------------

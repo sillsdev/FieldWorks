@@ -315,6 +315,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
 			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry, this);
+			Subscriber.Subscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields, this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -442,6 +443,7 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry);
+				Subscriber.Unsubscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields);
 
 				if (m_viewHelper != null)
 					m_viewHelper.Dispose();
@@ -1221,6 +1223,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			LaunchProjPropertiesDlg();
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Pub/Sub subscriber for ConfigureCustomFields. The payload tuple carries the publishing
+		/// window's Mediator/PropertyTable/area.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void ConfigureCustomFields(object args)
+		{
+			XWorksViewBase.ConfigureCustomFields(args);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// Run test.
 			Assert.That(subscriber.One, Is.True);
-			Assert.DoesNotThrow(() => FwUtils.Publisher.Publish(new PublisherParameterObject("BadBoy", false)));
+			Assert.DoesNotThrow(() => FwUtils.Publisher.Publish(new PublisherParameterObject("BadBoy", false, null)));
 			subscriber.DoUnsubscriptions();
 			SomeRandomMessageSubscriber.DoUnsubscriptions();
 			niceGuyMultipleSubscriber.DoUnsubscriptions();
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			unscopedSubscriber.DoSubscriptions();
 
 			// Run test.
-			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, null));
 			Assert.That(scopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
 			Assert.That(unscopedSubscriber.SelectionValue, Is.EqualTo(int.MaxValue)); // Delivered.
 
@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase(" ")]
 		public void IllFormedPublisherParameterObjectThrows(string message)
 		{
-			Assert.Throws<ArgumentNullException>(() => { var dummy = new PublisherParameterObject(message); });
+			Assert.Throws<ArgumentNullException>(() => { var dummy = new PublisherParameterObject(message, null, null); });
 		}
 
 		[Test]
@@ -362,9 +362,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.Throws<ArgumentNullException>(() => FwUtils.Publisher.Publish((IList<PublisherParameterObject>)null));
 			var publisherParameterObject = new List<PublisherParameterObject>();
 			Assert.Throws<InvalidOperationException>(() => FwUtils.Publisher.Publish(publisherParameterObject));
-			publisherParameterObject.Add(new PublisherParameterObject("MessageOne"));
+			publisherParameterObject.Add(new PublisherParameterObject("MessageOne", null, null));
 			Assert.Throws<InvalidOperationException>(() => FwUtils.Publisher.Publish(publisherParameterObject));
-			publisherParameterObject.Add(new PublisherParameterObject("MessageTwo"));
+			publisherParameterObject.Add(new PublisherParameterObject("MessageTwo", null, null));
 			Assert.DoesNotThrow(() => FwUtils.Publisher.Publish(publisherParameterObject));
 
 			// Test single message Publish method override.
@@ -390,8 +390,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(subscriber.One, Is.True);
 			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
-			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
-			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false, null));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, null));
 
 			// Confirm that nothing changed.
 			Assert.That(subscriber.First, Is.Null);
@@ -426,8 +426,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(subscriber.One, Is.True);
 			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
-			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
-			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, null));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false, null));
 
 			// Confirm that nothing changed.
 			Assert.That(subscriber.First, Is.Null);
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(subscriber.One, Is.True);
 			Assert.That(subscriber.Two, Is.EqualTo(int.MinValue));
 
-			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue, null));
 
 			// Confirm that nothing changed.
 			Assert.That(subscriber.First, Is.Null);
@@ -482,20 +482,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			internal static void PublishMessageOne()
 			{
-				FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false));
+				FwUtils.Publisher.Publish(new PublisherParameterObject("MessageOne", false, null));
 			}
 
 			internal static void PublishMessageTwo()
 			{
-				FwUtils.Publisher.Publish(new PublisherParameterObject("MessageTwo", 2));
+				FwUtils.Publisher.Publish(new PublisherParameterObject("MessageTwo", 2, null));
 			}
 
 			internal static void PublishBothMessages()
 			{
 				var messages = new List<PublisherParameterObject>
 				{
-					new PublisherParameterObject("MessageOne", false),
-					new PublisherParameterObject("MessageTwo", int.MaxValue)
+					new PublisherParameterObject("MessageOne", false, null),
+					new PublisherParameterObject("MessageTwo", int.MaxValue, null)
 				};
 				FwUtils.Publisher.Publish(messages);
 			}
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal static void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("SomeRandomMessage", SomeRandomMessageOneHandler);
+				FwUtils.Subscriber.Subscribe("SomeRandomMessage", SomeRandomMessageOneHandler, null);
 			}
 
 			internal static void DoUnsubscriptions()
@@ -545,8 +545,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler);
-				FwUtils.Subscriber.Subscribe("MessageTwo", MessageTwoHandler);
+				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler, null);
+				FwUtils.Subscriber.Subscribe("MessageTwo", MessageTwoHandler, null);
 			}
 
 			internal void DoUnsubscriptions()
@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("MessageOne", SecondMessageOneHandler);
+				FwUtils.Subscriber.Subscribe("MessageOne", SecondMessageOneHandler, null);
 			}
 
 			internal void DoUnsubscriptions()
@@ -593,14 +593,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (ShouldDoReentrantPublish)
 					{
 						// Bad boy! Re-entrant test should fail on this.
-						FwUtils.Publisher.Publish(new PublisherParameterObject("SomeRandomMessage", "Whatever"));
+						FwUtils.Publisher.Publish(new PublisherParameterObject("SomeRandomMessage", "Whatever", null));
 					}
 				}
 			}
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
+				FwUtils.Subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler, null);
 			}
 
 			internal void DoUnsubscriptions()
@@ -633,8 +633,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// Bad boy! Re-entrant test should fail on this.
 						var messages = new List<PublisherParameterObject>
 						{
-							new PublisherParameterObject("MessageOne", false),
-							new PublisherParameterObject("SomeRandomMessage", "Whatever")
+							new PublisherParameterObject("MessageOne", false, null),
+							new PublisherParameterObject("SomeRandomMessage", "Whatever", null)
 						};
 						FwUtils.Publisher.Publish(messages);
 					}
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("BadBoy", ReentrantBadBoyHandler);
+				FwUtils.Subscriber.Subscribe("BadBoy", ReentrantBadBoyHandler, null);
 			}
 
 			internal void DoUnsubscriptions()
@@ -667,8 +667,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler);
-				FwUtils.Subscriber.Subscribe("MessageTwo", MessageTwoHandler);
+				FwUtils.Subscriber.Subscribe("MessageOne", MessageOneHandler, null);
+				FwUtils.Subscriber.Subscribe("MessageTwo", MessageTwoHandler, null);
 			}
 
 			internal void DoUnsubscriptions()
@@ -763,8 +763,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			internal void DoSubscriptions()
 			{
-				FwUtils.Subscriber.Subscribe(EventConstants.RecordNavigation, RecordNavigationHandler);
-				FwUtils.Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChangedHandler);
+				FwUtils.Subscriber.Subscribe(EventConstants.RecordNavigation, RecordNavigationHandler, null);
+				FwUtils.Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChangedHandler, null);
 			}
 
 			internal void DoUnsubscriptions()

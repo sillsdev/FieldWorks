@@ -54,8 +54,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_services = services;
 			SetOverrideMdc(new ConcMdc(MetaDataCache as IFwMetaDataCacheManaged));
-
-			Subscriber.Subscribe(EventConstants.ItemDataModified, ItemDataModified);
 		}
 
 		internal const int kflidWfOccurrences = 899923; // occurrences of a wordform
@@ -552,6 +550,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;
+			Subscriber.Subscribe(EventConstants.ItemDataModified, ItemDataModified, propertyTable.GetWindow());
 		}
 
 		private InterestingTextList InterestingTextsList

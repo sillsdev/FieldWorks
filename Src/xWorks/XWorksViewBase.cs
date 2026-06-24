@@ -96,12 +96,6 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Data members
 
 		#region Construction and disposal
-		static XWorksViewBase()
-		{
-			// Subscribe to requests to display the ConfigureCustomFields dialog only once, not once per instance
-			Subscriber.Subscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields);
-		}
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
@@ -697,9 +691,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Display a dialog to allow users to modify Custom Fields
+		/// Display a dialog to allow users to modify Custom Fields. Shared utility invoked both by
+		/// the OnAddCustomField menu handler and by FwXWindow's ConfigureCustomFields subscription.
 		/// </summary>
-		private static void ConfigureCustomFields(object propTableAndArea)
+		internal static void ConfigureCustomFields(object propTableAndArea)
 		{
 			if (!(propTableAndArea is Tuple<Mediator, PropertyTable, string> args))
 			{

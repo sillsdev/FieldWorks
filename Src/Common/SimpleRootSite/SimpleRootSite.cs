@@ -6196,6 +6196,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// This really only needs to be done once but I can't find another reliable way to do it.
 				((VwBaseVc) vc).Mediator = m_mediator;
+				((VwBaseVc) vc).PropertyTable = m_propertyTable;
 			}
 		}
 

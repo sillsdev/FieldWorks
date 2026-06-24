@@ -90,9 +90,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
 
-			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
-			Subscriber.Subscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
-			Subscriber.Subscribe(EventConstants.ViewMessages, ViewMessages);
+			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary, _propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.ViewLiftMessages, ViewLiftMessages, _propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.ViewMessages, ViewMessages, _propertyTable.GetWindow());
 		}
 
 		public int Priority
@@ -344,12 +344,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				RefreshCacheWindowAndAll(app, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
-					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
-					// we have been disposed by now.
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewMessages, null));
+					// Send a message for the reopened instance to display the message viewer (used to be conflict report);
+					// we have been disposed by now. Scope to the newly reopened window so only its listener
+					// responds, not the listeners of any other open windows.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewMessages, null, newAppWindow));
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -494,12 +495,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				RefreshCacheWindowAndAll(app, fullProjectFileName);
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
-					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
-					// we have been disposed by now.
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewLiftMessages, null));
+					// Send a message for the reopened instance to display the message viewer (used to be conflict report);
+					// we have been disposed by now. Scope to the newly reopened window so only its listener
+					// responds, not the listeners of any other open windows.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewLiftMessages, null, newAppWindow));
 				}
 			}
 
@@ -873,7 +875,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser, null, _propertyTable.GetWindow()));
 		}
 
 		/// <summary>
