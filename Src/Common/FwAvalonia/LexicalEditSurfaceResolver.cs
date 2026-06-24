@@ -44,22 +44,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// flat-list non-lexicon tools opt their LIST pane into the Avalonia table here. (Their EDIT detail
 		// stays WinForms until registered in the separate LexicalEditSurfaceRegistry — §20.3.) Lists tools are
 		// NOT here: they navigate via a hierarchical tree bar, which needs the §20.2.6 owned tree first.
-		// PHASE-1: the Avalonia browse TABLE is a FOLLOW-UP surface and is INERT in the base PR — no tool is
-		// registered, so every list pane falls back to the legacy WinForms BrowseViewer even under UIMode=New.
-		// The table's view-layer code (LexicalBrowseView etc.) ships in base but stays dormant. The browse
-		// follow-up PR ACTIVATES it by moving its tool name(s) from Phase1FollowUpBrowseTools into this list.
-		// Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
+		// PHASE-1 TABLE FOLLOW-UP (this branch): the Avalonia owned browse table is ACTIVATED here by listing
+		// the tools whose list pane renders on it under UIMode=New. The table's view-layer code (LexicalBrowseView
+		// etc.) and its RecordBrowseView product wiring already shipped (dormant) in the base PR; this flip turns
+		// them on. The browse gate is separate from the edit-surface registry (LexicalEditSurfaceRegistry) because
+		// the table is a distinct surface; both are gated by the same `UIMode = New` preference.
 		private static readonly string[] SupportedAvaloniaBrowseToolNames =
 		{
-		};
-
-		// The browse tools the table follow-up PR will re-activate (the one-line "flip" — move into the array above).
-		public static readonly string[] Phase1FollowUpBrowseTools =
-		{
-			"lexiconEdit", "lexiconBrowse",
+			"lexiconEdit",   // the Lexicon Edit tool's left Entries pane (currentContentControl = "lexiconEdit")
+			"lexiconBrowse", // the standalone Lexicon > Browse tool
 			"notebookEdit", "notebookBrowse",       // §20.2.1 Notebook (RnGenericRec flat record list)
 			"Analyses", "toolBulkEditWordforms",    // §20.2.4 Words (wordform analyses + bulk edit)
 			"featureTypesAdvancedEdit", "reversalToolReversalIndexPOS" // §20.2.7 Grammar flat-table editors
+		};
+
+		// Now EMPTY: the browse/table follow-up has been flipped into SupportedAvaloniaBrowseToolNames above.
+		public static readonly string[] Phase1FollowUpBrowseTools =
+		{
 		};
 
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>
