@@ -18,6 +18,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.WritingSystems;
 using SIL.TestUtilities;
@@ -597,6 +598,66 @@ namespace SIL.FieldWorks.XWorks
 				"/w:body/w:p/w:r/w:br[@w:type='textWrapping']",
 				2,
 				WordNamespaceManager);
+		}
+
+		[Test]
+		public void GenerateWordDocForEntry_GeneratesNFC()
+		{
+			// FieldWorks stores strings as NFD (decomposed) in memory. All exported content should be NFC
+			// (LT-18177), matching the XHTML/Webonary export. This guards the Word export against emitting NFD.
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "ko" }),
+				Style = "Dictionary-Headword"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				Style = MainEntryParagraphStyleName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("ko") as CoreWritingSystemDefinition);
+			var wsKo = Cache.WritingSystemFactory.GetWsFromStr("ko");
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			// Decompose explicitly so the input is NFD regardless of how this source file stores the literal.
+			var nfdHeadword = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize("자ㄱㄴ시"); // Korean
+			entry.CitationForm.set_String(wsKo, TsStringUtils.MakeString(nfdHeadword, wsKo));
+			var storedHeadword = entry.CitationForm.get_String(wsKo);
+			Assert.That(storedHeadword.get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
+			Assert.That(storedHeadword.Text.Length, Is.EqualTo(6), "NFD headword should have 6 codepoints");
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			Assert.That(result, Is.Not.Null, "Results should have been generated");
+			var content = result.ToString();
+			Assert.That(content, Is.Not.Empty, "Results should have been generated");
+			Assert.That(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).IsNormalized(content),
+				"Resulting Word content should be NFComposed (NFC)");
+		}
+
+		[Test]
+		public void GenerateLetterHeaderDocFragment_GeneratesNFC()
+		{
+			// The letter header's letter derives from the NFD sort word (see GetSortWordForLetterHead) and its
+			// upper-cased form can be decomposed. All exported content should be NFC (LT-18177).
+			var wsString = Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultVernWs);
+			// Vietnamese "Ầ ầ" fully decomposed (A/a + combining circumflex + combining grave).
+			var nfdHeader = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize("Ầ ầ");
+			Assert.That(!CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).IsNormalized(nfdHeader),
+				"Sanity check: the header input should be NFDecomposed");
+
+			//SUT
+			var headerFrag = DocFragment.GenerateLetterHeaderDocFragment(nfdHeader,
+				WordStylesGenerator.LetterHeadingDisplayName, false, wsString);
+
+			var headerContent = headerFrag.ToString();
+			Assert.That(headerContent, Is.Not.Empty, "Header should have been generated");
+			Assert.That(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).IsNormalized(headerContent),
+				"Letter header content should be NFComposed (NFC)");
 		}
 
 		[Test]
