@@ -82,22 +82,30 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
 			{
+				// filter this entry from the list (or its owning entry when m_obj is a LexEntryRef).
+				ILexEntry le = m_obj.ClassID == LexEntryTags.kClassId
+					? m_obj as ILexEntry
+					: m_obj.OwnerOfClass<ILexEntry>();
+				string helpTopic = "khtpChooseLexicalEntryOrSense-" + ShowHelp.RemoveSpaces(this.Slice.Label);
+
+				// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the
+				// Avalonia Choose-Lexical-Entry-or-Sense dialog (the reusable entry-search/"go" kit dialog); Legacy
+				// mode keeps the WinForms LinkEntryOrSenseDlg. Both paths AddItem the chosen object the same way.
+				var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+				if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+				{
+					var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+					var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, le,
+						FindForm(), helpTopic, helpProvider);
+					if (chosen != null)
+						AddItem(chosen);
+					return;
+				}
+
 				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 				{
-					ILexEntry le = null;
-					if (m_obj.ClassID == LexEntryTags.kClassId)
-					{
-						// filter this entry from the list.
-						le = m_obj as ILexEntry;
-					}
-					else
-					{
-						// assume the owner is the entry (e.g. owner of LexEntryRef)
-						le = m_obj.OwnerOfClass<ILexEntry>();
-					}
 					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, le);
-					String str = ShowHelp.RemoveSpaces(this.Slice.Label);
-					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
+					dlg.SetHelpTopic(helpTopic);
 					if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 						AddItem(dlg.SelectedObject);
 				}
@@ -358,43 +366,58 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ObjectLabel result = null;
 			if (m_lexEntryRef != null)
 			{
+				// assume the owner is the entry (e.g. owner of LexEntryRef)
+				ILexEntry le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
+
+				// New-UI gate (mirrors the EntrySequence component-lexemes gate; this is its "Add a component"
+				// chooser-link command): in New mode launch the Avalonia Choose-Lexical-Entry-or-Sense dialog
+				// (entry path); Legacy mode keeps the WinForms LinkEntryOrSenseDlg. Both link the chosen object
+				// into PrimaryLexemes/ComponentLexemes the same way.
+				var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+				if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+				{
+					var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+					var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, le,
+						m_parentWindow, "khtpChooseLexicalEntryOrSense", helpProvider);
+					if (chosen != null)
+						LinkPrimaryLexeme(chosen);
+					return result;
+				}
+
 				using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 				{
-					ILexEntry le = null;
-					// assume the owner is the entry (e.g. owner of LexEntryRef)
-					le = m_lexEntryRef.OwnerOfClass<ILexEntry>();
 					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, le);
 					dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense");
 					if (dlg.ShowDialog(m_parentWindow) == DialogResult.OK)
-					{
-						ICmObject obj = dlg.SelectedObject;
-						if (obj != null)
-						{
-							if (!m_lexEntryRef.PrimaryLexemesRS.Contains(obj))
-							{
-								try
-								{
-									UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-										LexEdStrings.ksUndoCreatingEntry,
-										LexEdStrings.ksRedoCreatingEntry,
-										Cache.ActionHandlerAccessor,
-										() =>
-											{
-												if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
-													m_lexEntryRef.ComponentLexemesRS.Add(obj);
-												m_lexEntryRef.PrimaryLexemesRS.Add(obj);
-											});
-								}
-								catch (ArgumentException)
-								{
-									MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
-								}
-							}
-						}
-					}
+						LinkPrimaryLexeme(dlg.SelectedObject);
 				}
 			}
 			return result;
+		}
+
+		// Links the chosen object into the LexEntryRef's component + primary lexemes (the legacy on-OK action),
+		// shared by the New-UI and Legacy paths.
+		private void LinkPrimaryLexeme(ICmObject obj)
+		{
+			if (obj == null || m_lexEntryRef.PrimaryLexemesRS.Contains(obj))
+				return;
+			try
+			{
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					LexEdStrings.ksUndoCreatingEntry,
+					LexEdStrings.ksRedoCreatingEntry,
+					Cache.ActionHandlerAccessor,
+					() =>
+						{
+							if (!m_lexEntryRef.ComponentLexemesRS.Contains(obj))
+								m_lexEntryRef.ComponentLexemesRS.Add(obj);
+							m_lexEntryRef.PrimaryLexemesRS.Add(obj);
+						});
+			}
+			catch (ArgumentException)
+			{
+				MessageBoxes.ReportLexEntryCircularReference(m_lexEntryRef.Owner, obj, true);
+			}
 		}
 	}
 

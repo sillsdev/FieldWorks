@@ -19,10 +19,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 
 		internal static DateTime DefaultBuildDate = new DateTime(2001, 06, 23);
-		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2021 SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2021";
+		/// <summary>Default copyright string if the assembly carries no copyright attribute.
+		/// Computed so it can never ship frozen at the year somebody last edited this file.</summary>
+		public static readonly string kDefaultCopyrightString =
+			$"Copyright (c) 2002-{DateTime.Now.Year} SIL International";
+		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is false)
+		/// and the assembly carries no copyright attribute</summary>
+		public static readonly string kSensitiveCopyrightString =
+			$"Copyright (c) 2002-{DateTime.Now.Year}";
 
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;
@@ -173,9 +177,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the application version text
-				var appVersion = InternalProductVersion;
-				ParseInformationalVersion(m_assembly, out _, out var productDate);
+				// Set the application version text from the assembly this provider was built for;
+				// InternalProductVersion (the entry assembly) is only a fallback for assemblies
+				// that carry no version attributes of their own.
+				ParseInformationalVersion(m_assembly, out var appVersion, out var productDate);
+				if (string.IsNullOrEmpty(appVersion))
+					appVersion = InternalProductVersion;
 				string bitness;
 				switch (IntPtr.Size)
 				{
@@ -219,7 +226,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				case 3:
 				{
-					productType = " " + versionParts[2];
+					// FWBETAVERSION is empty for stable builds, leaving a trailing space in the
+					// informational version; don't let it leak into the parsed display strings.
+					if (!string.IsNullOrWhiteSpace(versionParts[2]))
+						productType = " " + versionParts[2].Trim();
 					goto case 2;
 				}
 				case 2:
@@ -250,14 +260,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the FieldWorks version text
+				// Set the FieldWorks version text. Parts: MAJOR.MINOR.REVISION.BUILDNUMBER STABILITY;
+				// STABILITY (Alpha/Beta/RC) is absent in stable builds, so index defensively and trim
+				// rather than leaking a placeholder or a trailing space into the About box.
 				ParseInformationalVersion(m_assembly, out var productVersion, out _);
-				// Fill the expected parts to document and avoid a crash if we get an odd informational version
-				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
 				var realParts = productVersion.Split('.', ' ');
-				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
+				var major = realParts.Length > 0 ? realParts[0] : "?";
+				var minor = realParts.Length > 1 ? realParts[1] : "?";
+				var stability = realParts.Length > 4 ? realParts[4] : string.Empty;
 
-				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
+				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{major}.{minor} {stability}".TrimEnd());
 			}
 		}
 
@@ -286,22 +298,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				// Get copyright information from assembly info. By doing this we don't have
-				// to update the splash screen each year.
-				string copyRight;
+				// to update the splash screen each year - in EITHER mode: the sensitive variant
+				// derives from the same attribute so its years stay current too.
+				string copyRight = null;
+				object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+				if (attributes != null && attributes.Length > 0)
+					copyRight = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+				if (string.IsNullOrEmpty(copyRight))
+					copyRight = m_fShowSILInfo ? kDefaultCopyrightString : kSensitiveCopyrightString;
 				if (!m_fShowSILInfo)
-					copyRight = kSensitiveCopyrightString;
-				else
-				{
-					object[] attributes = m_assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-					if (attributes != null && attributes.Length > 0)
-						copyRight = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-					else
-					{
-						// if we can't find it in the assembly info, use generic one (which
-						// might be out of date)
-						copyRight = kDefaultCopyrightString;
-					}
-				}
+					copyRight = copyRight.Replace("SIL International", string.Empty).TrimEnd();
 				// 00a9 is the copyright sign
 				return copyRight.Replace("(c)", "\u00a9");
 			}

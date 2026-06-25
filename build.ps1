@@ -758,6 +758,10 @@ try {
 			$stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
 			$stampObject | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $stampPath -Encoding UTF8
 
+			# Avalonia projects (including the XAML-compiled FwAvaloniaDialogs) build as first-class
+			# members of the main traversal above — in parallel and in dependency order — so there is
+			# no separate serial Avalonia build pass here. Iterate on a single project afterward with
+			# `dotnet build <project>.csproj` or the in-solution Visual Studio build.
 			Write-Host ""
 			Write-Host "[OK] Build complete!" -ForegroundColor Green
 			Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan

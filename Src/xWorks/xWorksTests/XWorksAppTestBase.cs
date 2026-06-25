@@ -543,6 +543,7 @@ namespace SIL.FieldWorks.XWorks
 		public virtual void FixtureInit()
 		{
 			EnsureIcuDataIsConfiguredForTests();
+			TestLocalizationManagerBootstrap.EnsureInitialized();
 
 			FwRegistrySettings.Init();
 			SetupEverythingButBase();
