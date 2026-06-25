@@ -10,6 +10,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -424,6 +425,11 @@ namespace SIL.FieldWorks.XWorks
 				// Only create paragraph, run, and text objects if string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
+					// All exported content should be NFC (LT-18177). The header letter derives from the NFD sort
+					// word (see ConfiguredLcmGenerator.GetSortWordForLetterHead) and its upper-cased form can be
+					// decomposed, so normalize before writing it into the run.
+					str = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(str);
+
 					// Don't add this paragraph before the first letter header. It results in an extra blank line.
 					if (!firstHeader)
 					{
@@ -538,6 +544,27 @@ namespace SIL.FieldWorks.XWorks
 			{
 				string str = ToString();
 				return str.Length;
+			}
+
+			/// <summary>
+			/// Normalizes the text in every run of the fragment to the given Unicode normalization form, in place.
+			/// FieldWorks keeps strings as NFD in memory, but all exported content should be NFC (LT-18177), to
+			/// match the XHTML/Webonary export. We normalize the text within the OpenXml text nodes rather than
+			/// round-tripping the fragment through a string so the document structure and styles are preserved.
+			/// </summary>
+			public void NormalizeText(FwNormalizationMode mode)
+			{
+				if (IsNullOrEmpty())
+					return;
+
+				var normalizer = CustomIcu.GetIcuNormalizer(mode);
+				foreach (WP.Text txt in DocBody.Descendants<WP.Text>())
+				{
+					// Setting Text only changes the run's text value; the xml:space attribute and all
+					// run/paragraph properties (i.e. the styles) are left untouched.
+					if (!string.IsNullOrEmpty(txt.Text))
+						txt.Text = normalizer.Normalize(txt.Text);
+				}
 			}
 
 			/// <summary>
