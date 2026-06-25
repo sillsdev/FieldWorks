@@ -242,9 +242,9 @@ namespace SIL.FieldWorks.XWorks
 			// avalonia-interlinear-editor (W-4): the InterlinearSlicePlugin claims the Words Analyses
 			// InterlinearSlice (a WfiAnalysis class, beyond the LexEntry/LexSense census above) — the
 			// native Avalonia interlinear editor, shipped read-only first.
-			// PHASE-1 FOLLOW-UP PR: the avalonia-rule-formula-editor family (five plugins: the three
-			// rule-formula grids plus the environment-string and Basic IPA symbol editors) ships in its
-			// own follow-up PR, which restores those registrations and adds their class names back here.
+			// avalonia-rule-formula-editor: the Grammar rule-editor family adds five plugins — the three
+			// rule-formula grids (regular/metathesis/compound) plus the two supporting bespoke editors
+			// (environment string, Basic IPA symbol). Each claims its legacy Morphology slice class.
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[]
 				{
@@ -253,7 +253,12 @@ namespace SIL.FieldWorks.XWorks
 					InterlinearSlicePlugin.InterlinearSliceClassName,
 					DialogLauncherPlugins.MsaFeatureSliceClassName,
 					DialogLauncherPlugins.PhonologicalFeatureSliceClassName,
-					DialogLauncherPlugins.AudioVisualSliceClassName
+					DialogLauncherPlugins.AudioVisualSliceClassName,
+					RuleFormulaRegionEditorPlugin.RegRuleFormulaSliceClassName,
+					MetaRuleFormulaRegionEditorPlugin.MetaRuleFormulaSliceClassName,
+					AffixRuleFormulaRegionEditorPlugin.AffixRuleFormulaSliceClassName,
+					PhEnvironmentRegionEditorPlugin.PhEnvStrRepresentationSliceClassName,
+					BasicIpaSymbolRegionEditorPlugin.BasicIPASymbolSliceClassName
 				}));
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(AvaloniaCompanionSlices.MessageSliceClassName),
 				Is.InstanceOf<ChorusNotesPlugin>());

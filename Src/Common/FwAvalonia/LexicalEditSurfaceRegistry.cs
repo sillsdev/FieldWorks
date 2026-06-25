@@ -31,21 +31,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			"lexiconEdit", "lexiconEditPopup",
 			"notebookEdit", // §20.3.2 Notebook RnGenericRec (layout resolved via layoutChoiceField="Type")
 			"posEdit",      // §20.3.3 Grammar PartOfSpeech (MSA/feature launchers already plugin-claimed)
-			"Analyses"      // avalonia-interlinear-editor follow-up: Words Analyses morph-bundle editor (flipped on)
+			"Analyses",     // avalonia-interlinear-editor follow-up: Words Analyses morph-bundle editor (flipped on)
+			"PhonologicalRuleEdit", // avalonia-rule-formula-editor: regular (editable) + metathesis (editable, non-middle)
+			"EnvironmentEdit",      // §3.2: PhEnvironment composes Name/Description (Text) + the validated environment editor — full parity
+			"compoundRuleAdvancedEdit", // §2.5: MoEndoCompound/MoExoCompound compose Name/Description + Active + category Choosers editably
+			                            // (after the multi-child-part importer fix). // PARITY: MoAffixProcess (affix-process) stays read-only.
+			"naturalClassedit",         // §3.3: PhNCSegments (editable Segments phoneme vector) + PhNCFeatures (feature launcher) compose fully editably
+			"phonemeEdit",              // §3.1: Basic IPA symbol editor (with derive-on-commit) + Features launcher + editable Codes vector + Name
+			"AdhocCoprohibEdit"         // §3.4: leaf co-prohibitions editable (Key chooser + Adjacency + Others vector + Active);
+			                            // group Name/Desc/Active editable. // PARITY: nested MoAdhocProhibGr.Members recursive editing read-only.
 		};
 
-		// PHASE-1 FOLLOW-UP surfaces — INERT in the base PR. The view-layer code for these ships (it lives in the
-		// same FwAvalonia/xWorks assemblies) but the tools are deliberately NOT registered, so the resolver returns
-		// "not supported" and they fall back to the legacy WinForms surface even under UIMode=New. Each follow-up PR
-		// ACTIVATES its surface by moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
-		// "flip"). Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
-		//   avalonia-rule-formula-editor: "PhonologicalRuleEdit","EnvironmentEdit","compoundRuleAdvancedEdit",
-		//                                 "naturalClassedit","phonemeEdit","AdhocCoprohibEdit"
-		// (avalonia-interlinear-editor "Analyses" was flipped into DefaultSupportedTools above by its follow-up PR.)
+		// PHASE-1 FOLLOW-UP edit surfaces — now EMPTY: both follow-up edit surfaces (avalonia-interlinear-editor
+		// "Analyses" and the avalonia-rule-formula-editor family) have been flipped into DefaultSupportedTools above
+		// by their follow-up PRs. The browse/table follow-up is gated separately by
+		// LexicalEditSurfaceResolver.Phase1FollowUpBrowseTools. Verified by InertFollowUpSurfacesFallBackToLegacy.
 		public static readonly string[] Phase1FollowUpSurfaceTools =
 		{
-			"PhonologicalRuleEdit", "EnvironmentEdit", "compoundRuleAdvancedEdit",
-			"naturalClassedit", "phonemeEdit", "AdhocCoprohibEdit"
 		};
 
 		private readonly HashSet<string> _supported = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
