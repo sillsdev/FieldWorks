@@ -239,16 +239,18 @@ namespace SIL.FieldWorks.XWorks
 			// dialog-launcher plugins; the reversal-entries editor (ReversalIndexEntryPlugin) graduated
 			// the last deferred class to a native Avalonia editable multi-WS text field. The census test
 			// above keeps every class in exactly one lane.
-			// PHASE-1 FOLLOW-UP PRs: the avalonia-interlinear-editor (InterlinearSlicePlugin) and the
-			// avalonia-rule-formula-editor family (five plugins: the three rule-formula grids plus the
-			// environment-string and Basic IPA symbol editors) ship in their own follow-up PRs. Each
-			// follow-up restores its plugin registration in RegionEditorPlugins.RegisterBuiltins and adds
-			// its class name(s) back to this census. The base registry is exactly the always-on lanes below.
+			// avalonia-interlinear-editor (W-4): the InterlinearSlicePlugin claims the Words Analyses
+			// InterlinearSlice (a WfiAnalysis class, beyond the LexEntry/LexSense census above) — the
+			// native Avalonia interlinear editor, shipped read-only first.
+			// PHASE-1 FOLLOW-UP PR: the avalonia-rule-formula-editor family (five plugins: the three
+			// rule-formula grids plus the environment-string and Basic IPA symbol editors) ships in its
+			// own follow-up PR, which restores those registrations and adds their class names back here.
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[]
 				{
 					AvaloniaCompanionSlices.MessageSliceClassName,
 					ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName,
+					InterlinearSlicePlugin.InterlinearSliceClassName,
 					DialogLauncherPlugins.MsaFeatureSliceClassName,
 					DialogLauncherPlugins.PhonologicalFeatureSliceClassName,
 					DialogLauncherPlugins.AudioVisualSliceClassName
@@ -257,6 +259,8 @@ namespace SIL.FieldWorks.XWorks
 				Is.InstanceOf<ChorusNotesPlugin>());
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
 				Is.InstanceOf<ReversalIndexEntryPlugin>());
+			Assert.That(RegionEditorPluginRegistry.Default.Resolve(InterlinearSlicePlugin.InterlinearSliceClassName),
+				Is.InstanceOf<InterlinearSlicePlugin>());
 		}
 	}
 
