@@ -562,6 +562,11 @@ namespace SIL.FieldWorks.IText
 			get; set;
 		}
 
+		public bool UsingWordCatGuess
+		{
+			get; set;
+		}
+
 		/// <summary>
 		/// Indicates the direction of flow of baseline that Sandbox is in.
 		/// (Only available after MakeRoot)
@@ -1581,6 +1586,7 @@ namespace SIL.FieldWorks.IText
 				int hvoSbWordPos = m_caches.DataAccess.get_ObjectProp(RootWordHvo, ktagSbWordPos);
 				m_caches.DataAccess.SetObjProp(RootWordHvo, ktagSbWordPos, hvoPos);
 				m_caches.DataAccess.SetInt(hvoPos, ktagSbNamedObjGuess, 1);
+				UsingWordCatGuess = true;
 				m_caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, RootWordHvo,
 					ktagSbWordPos, 0, 1, (hvoSbWordPos == 0 ? 0 : 1));
 			}
@@ -4045,7 +4051,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool ShouldSave(bool fSaveGuess)
 		{
-			return m_caches.DataAccess.IsDirty() || (fSaveGuess && UsingGuess);
+			return m_caches.DataAccess.IsDirty() || (fSaveGuess && (UsingGuess || UsingWordCatGuess));
 		}
 
 		/// <summary>
@@ -4064,6 +4070,7 @@ namespace SIL.FieldWorks.IText
 				CurrentAnalysisTree.Analysis = analMethod.Run();
 				obsoleteAna = analMethod.ObsoleteAnalysis;
 				UsingGuess = false;
+				UsingWordCatGuess = false;
 				MarkAsInitialState();
 			}
 			return CurrentAnalysisTree;
