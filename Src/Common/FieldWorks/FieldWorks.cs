@@ -3484,8 +3484,12 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static RemoteRequest CreateRequestor(int port, string requestType)
 		{
+			// LT-22069: connect via the IPv4 loopback literal rather than "localhost". Resolving
+			// "localhost" can try IPv6 (::1) first and wait ~2s for it to fail before falling back
+			// to IPv4, and that cost is paid on every first-contact to another FieldWorks process's
+			// remoting port. Using 127.0.0.1 avoids the name-resolution/IPv6 stall.
 			RemoteRequest requestor = (RemoteRequest)Activator.GetObject(typeof(RemoteRequest),
-				"tcp://localhost:" + port + "/" + requestType);
+				"tcp://127.0.0.1:" + port + "/" + requestType);
 			Func<bool> invoker = requestor.IsAlive;
 			IAsyncResult ar = invoker.BeginInvoke(null, null);
 			if (!ar.AsyncWaitHandle.WaitOne(1000, false))
