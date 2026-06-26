@@ -348,10 +348,23 @@ namespace SIL.FieldWorks.IText
 		protected void WriteItem(string itemType, ITsString tss)
 		{
 			m_writer.WriteStartElement("item");
+			if (itemType == "gls" || itemType == "pos")
+			{
+				WriteAnalysisStatus();
+			}
 			m_writer.WriteAttributeString("type", itemType);
 			int ws = GetWsFromTsString(tss);
 			WriteLangAndContent(ws, tss);
 			m_writer.WriteEndElement();
+		}
+
+		private void WriteAnalysisStatus()
+		{
+			StackItem top = this.PeekStack;
+			if (top != null && top.m_stringProps.ContainsKey(InterlinVc.ktagAnalysisStatus))
+			{
+				m_writer.WriteAttributeString("analysisStatus", top.m_stringProps[InterlinVc.ktagAnalysisStatus]);
+			}
 		}
 
 		private int GetWsFromTsString(ITsString tss)
@@ -601,6 +614,10 @@ namespace SIL.FieldWorks.IText
 		private void OpenItem(string itemType)
 		{
 			m_writer.WriteStartElement("item");
+			if (itemType == "gls" || itemType == "pos")
+			{
+				WriteAnalysisStatus();
+			}
 			m_writer.WriteAttributeString("type", itemType);
 			m_fItemIsOpen = true;
 		}
@@ -835,11 +852,7 @@ namespace SIL.FieldWorks.IText
 					break;
 				case InterlinVc.kfragMorphBundle:
 					m_writer.WriteStartElement("morphemes");
-					StackItem top = this.PeekStack;
-					if (top != null && top.m_stringProps.ContainsKey(InterlinVc.ktagAnalysisStatus))
-					{
-						m_writer.WriteAttributeString("analysisStatus", top.m_stringProps[InterlinVc.ktagAnalysisStatus]);
-					}
+					WriteAnalysisStatus();
 					break;
 				default:
 					break;
