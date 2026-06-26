@@ -1819,6 +1819,10 @@ namespace SIL.FieldWorks.IText
 				ITsTextProps disabledItemProperties = null;
 				if (m_sandbox.IsMorphFormLineEmpty)
 					disabledItemProperties = DisabledItemProperties();
+				AddItemToComboList(ITextStrings.ksCreateNewEntry_,
+					new EventHandler(OnSelectCreateNewEntry),
+					disabledItemProperties,
+					disabledItemProperties == null);
 				if (GetLexEntry() != null)
 				{
 					AddItemToComboList(ITextStrings.ksEditLexicalEntry_,
@@ -1826,10 +1830,6 @@ namespace SIL.FieldWorks.IText
 						disabledItemProperties,
 						disabledItemProperties == null);
 				}
-				AddItemToComboList(ITextStrings.ksCreateNewEntry_,
-					new EventHandler(OnSelectCreateNewEntry),
-					disabledItemProperties,
-					disabledItemProperties == null);
 				AddItemToComboList(ITextStrings.ksVariantOf_,
 					new EventHandler(OnSelectVariantOf),
 					disabledItemProperties,
