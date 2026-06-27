@@ -4,10 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
@@ -23,6 +25,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	{
 		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
+		// A dedicated morpher used only by the trace/Try-A-Word path. Tracing mutates the
+		// morpher's LexEntrySelector, RuleSelector, and TraceManager.IsTracing; keeping a
+		// separate morpher (with its own trace manager) ensures those mutations never corrupt
+		// the bulk m_morpher, which may be parsing concurrently on several threads.
+		private Morpher m_traceMorpher;
+		private FwXmlTraceManager m_traceMorpherTraceManager;
 		private Language m_language;
 		private readonly FwXmlTraceManager m_traceManager;
 		private readonly string m_outputDirectory;
@@ -30,6 +38,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
+		private int m_delReapps;
+		private int m_maxStemCount;
+
+		// Diagnostic perf counters (accumulated across all threads) splitting bulk-parse time
+		// into the lock-free morpher parse vs. the LCM-read mapping (GetMorphs under the read
+		// lock). Near-zero overhead; used by the parser concurrency benchmark.
+		public static long DiagMorpherParseTicks;
+		public static long DiagGetMorphsTicks;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
@@ -88,10 +104,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (m_morpher == null)
 				return null;
 
-			IEnumerable<Word> wordAnalyses;
+			IList<Word> wordAnalyses;
 			try
 			{
-				wordAnalyses = m_morpher.ParseWord(word, out _, m_guessRoots);
+				var morpherSw = Stopwatch.StartNew();
+				// Materialize the morpher results here, OUTSIDE the LCM read lock below. The
+				// morpher enumeration is the expensive, CPU-bound part and touches only the
+				// frozen HC grammar (not LCM), so keeping it off the read lock lets it run
+				// without holding the read lock for its whole duration.
+				wordAnalyses = m_morpher.ParseWord(word, out _, m_guessRoots).ToList();
+				morpherSw.Stop();
+				Interlocked.Add(ref DiagMorpherParseTicks, morpherSw.ElapsedTicks);
 			}
 			catch (Exception e)
 			{
@@ -99,6 +122,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			ParseResult result;
+			var getMorphsSw = Stopwatch.StartNew();
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				var analyses = new List<ParseAnalysis>();
@@ -113,6 +137,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				result = new ParseResult(analyses);
 			}
+			getMorphsSw.Stop();
+			Interlocked.Add(ref DiagGetMorphsTicks, getMorphsSw.ElapsedTicks);
 
 			return result;
 		}
@@ -144,6 +170,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void LoadParser()
 		{
 			m_morpher = null;
+			// Force the trace morpher to be rebuilt over the freshly loaded language.
+			m_traceMorpher = null;
+			m_traceMorpherTraceManager = null;
 
 			int delReapps = 0;
 			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
@@ -170,9 +199,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 			}
+			m_delReapps = delReapps;
+			m_maxStemCount = maxStemCount;
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
 			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
+		}
+
+		/// <summary>
+		/// Lazily builds (and returns) the morpher used for tracing. It shares the frozen,
+		/// read-only <see cref="m_language"/> with the bulk morpher but has its own mutable
+		/// state and its own trace manager, so enabling tracing or setting morpheme selectors
+		/// here cannot affect a bulk parse running on m_morpher.
+		/// </summary>
+		private Morpher GetTraceMorpher()
+		{
+			if (m_traceMorpher == null)
+			{
+				m_traceMorpherTraceManager = new FwXmlTraceManager(m_cache);
+				m_traceMorpher = new Morpher(m_traceMorpherTraceManager, m_language)
+				{
+					DeletionReapplications = m_delReapps,
+					MaxStemCount = m_maxStemCount,
+					MergeEquivalentAnalyses = m_mergeAnalyses
+				};
+			}
+			return m_traceMorpher;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
@@ -180,14 +232,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (m_morpher == null)
 				return null;
 
+			// Use the dedicated trace morpher so that setting selectors / IsTracing here cannot
+			// corrupt a bulk parse that may be running concurrently on m_morpher.
+			Morpher traceMorpher = GetTraceMorpher();
+
 			var doc = new XDocument();
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				if (selectTraceMorphs != null)
 				{
 					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
-					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
-					m_morpher.RuleSelector = rule =>
+					traceMorpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
+					traceMorpher.RuleSelector = rule =>
 					{
 						// Need to check if the rule is a morpheme and if it has a non-null msa id.
 						// If the rule comes from an irregularly inflected form, msa id will be null.
@@ -200,15 +256,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				else
 				{
-					m_morpher.LexEntrySelector = entry => true;
-					m_morpher.RuleSelector = rule => true;
+					traceMorpher.LexEntrySelector = entry => true;
+					traceMorpher.RuleSelector = rule => true;
 				}
-				m_morpher.TraceManager.IsTracing = tracing;
+				traceMorpher.TraceManager.IsTracing = tracing;
 				var wordformElem = new XElement("Wordform", new XAttribute("form", form));
 				try
 				{
 					object trace;
-					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, m_guessRoots))
+					foreach (Word wordAnalysis in traceMorpher.ParseWord(form, out trace, m_guessRoots))
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))

@@ -26,12 +26,17 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
+using SIL.Reporting;
 using XCore;
 using SIL.LCModel.DomainServices;
 using System.Xml.Linq;
@@ -122,7 +127,135 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public bool ParseAndUpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false)
+		/// <summary>
+		/// Indicates whether the active parser is safe to run on several wordforms concurrently.
+		/// Only the HermitCrab parser exposes a thread-safe, shared morpher; XAmple wraps a
+		/// single-instance native parser and must stay serial.
+		/// </summary>
+		internal bool SupportsParallelParsing => m_parser is HCParser;
+
+		/// <summary>
+		/// Property name used to override the bulk-parse concurrency from settings.
+		/// </summary>
+		internal const string MaxConcurrencyPropertyName = "ParserMaxConcurrency";
+
+		/// <summary>
+		/// The maximum number of wordforms to parse concurrently during bulk parsing.
+		/// Returns 1 (serial) unless the active parser is thread-safe (HermitCrab).
+		/// </summary>
+		/// <remarks>
+		/// Measured bulk HermitCrab parsing scales to only ~2.4x at 4 concurrent parses and
+		/// plateaus around ~2.8x thereafter on a representative project — the ceiling is inside
+		/// the HermitCrab morpher (shared compiled grammar / allocation-bound), not in this code.
+		/// So we default to a small cap that captures most of the available speed-up while
+		/// leaving cores free so the rest of the UI stays responsive during a "Parse All Words".
+		/// Override (up or down) with the "ParserMaxConcurrency" setting.
+		/// </remarks>
+		public int MaxDegreeOfParallelism
+		{
+			get
+			{
+				CheckDisposed();
+				if (!SupportsParallelParsing)
+					return 1;
+				int defaultDop = Math.Max(1, Math.Min(Environment.ProcessorCount - 1, 4));
+				int dop = m_propertyTable != null
+					? m_propertyTable.GetIntProperty(MaxConcurrencyPropertyName, defaultDop)
+					: defaultDop;
+				return Math.Max(1, dop);
+			}
+		}
+
+		/// <summary>
+		/// Parse a batch of wordforms, optionally in parallel, and file the results.
+		/// The grammar/lexicon update check is done once up front (it is not thread-safe and
+		/// must not run inside the parallel body). Each wordform's parse is CPU-bound and
+		/// lock-free; filing is enqueued to the thread-safe idle queue and still happens
+		/// serially on the UI thread.
+		/// </summary>
+		/// <param name="wordforms">The wordforms to parse.</param>
+		/// <param name="priority">The priority the parse is run at.</param>
+		/// <param name="checkParser">Whether this is a parser check (no model update).</param>
+		/// <param name="maxDegreeOfParallelism">Maximum wordforms to parse concurrently;
+		/// 1 means serial. Callers must pass 1 for parsers that are not thread-safe.</param>
+		public void ParseAndUpdateWordforms(IList<IWfiWordform> wordforms, ParserPriority priority, bool checkParser, int maxDegreeOfParallelism)
+		{
+			CheckDisposed();
+
+			if (wordforms.Count == 0)
+				return;
+
+			// Bring the grammar/lexicon up to date exactly once, on this (single) dispatcher
+			// thread, before any concurrent parsing begins (Update() is not thread-safe).
+			CheckNeedsUpdate();
+
+			// Instrumentation: batch wall-clock vs. summed per-wordform parse time lets us
+			// report the achieved parallelism and (together with ParseFiler's filing time) the
+			// parse:file split.
+			var batchTimer = Stopwatch.StartNew();
+			long summedWordMs = 0;
+
+			if (maxDegreeOfParallelism <= 1 || wordforms.Count == 1)
+			{
+				// Serial path: behaves exactly as the original one-wordform-at-a-time code,
+				// including letting unexpected exceptions propagate (so XAmple keeps its
+				// existing error handling).
+				foreach (IWfiWordform wordform in wordforms)
+				{
+					var wordTimer = Stopwatch.StartNew();
+					ParseAndUpdateWordform(wordform, priority, checkParser, ensureUpToDate: false);
+					summedWordMs += wordTimer.ElapsedMilliseconds;
+				}
+			}
+			else
+			{
+				// Parallel path (thread-safe parsers only). Guard each wordform so one
+				// unexpected exception cannot abort the whole batch (Gotcha #6).
+				var options = new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
+				Parallel.ForEach(wordforms, options, wordform =>
+				{
+					var wordTimer = Stopwatch.StartNew();
+					ParseAndUpdateWordformGuarded(wordform, priority, checkParser);
+					Interlocked.Add(ref summedWordMs, wordTimer.ElapsedMilliseconds);
+				});
+			}
+
+			batchTimer.Stop();
+			long wallMs = batchTimer.ElapsedMilliseconds;
+			double effectiveParallelism = wallMs > 0 ? summedWordMs / (double) wallMs : 0.0;
+			Logger.WriteMinorEvent(
+				"Parser batch: {0} wordforms in {1} ms wall (summed parse {2} ms, effective parallelism {3:0.0}x, maxDOP {4})",
+				wordforms.Count, wallMs, summedWordMs, effectiveParallelism, maxDegreeOfParallelism);
+		}
+
+		/// <summary>
+		/// Runs <see cref="ParseAndUpdateWordform"/> for one wordform, swallowing any unexpected
+		/// exception so that a single bad wordform cannot abort an entire parallel batch.
+		/// (HCParser already converts parse failures into ParseResult error results; this guards
+		/// against anything else.)
+		/// </summary>
+		private void ParseAndUpdateWordformGuarded(IWfiWordform wordform, ParserPriority priority, bool checkParser)
+		{
+			try
+			{
+				ParseAndUpdateWordform(wordform, priority, checkParser, ensureUpToDate: false);
+			}
+			catch (Exception)
+			{
+				// File an error result so clients still learn the parser finished with this wordform.
+				try
+				{
+					var parseResult = new ParseResult(string.Format(ParserCoreStrings.ksHCInvalidWordform, "", 0, "", ""));
+					m_parseFiler.ProcessParse(wordform, priority, parseResult, checkParser);
+				}
+				catch (Exception)
+				{
+					// Nothing more we can safely do for this wordform.
+				}
+			}
+		}
+
+		public bool ParseAndUpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false, bool ensureUpToDate = true)
 		{
 			CheckDisposed();
 
@@ -144,7 +277,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return false;
 			}
 
-			CheckNeedsUpdate();
+			// During a parallel batch the caller has already ensured the parser is up to date;
+			// Update() is not thread-safe so it must not run inside the parallel body.
+			if (ensureUpToDate)
+				CheckNeedsUpdate();
 			var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			var word = normalizer.Normalize(form.Text.Replace(' ', '.'));
 			ParseResult result = null;

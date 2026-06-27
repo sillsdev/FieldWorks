@@ -13,6 +13,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.Reporting;
 using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -167,12 +168,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			// update all of the wordforms in a batch, this might slow down the UI thread a little, if it causes too much unresponsiveness
 			// we can bail out early if there is a message in the Win32 message queue
-			IEnumerable<WordformUpdateWork> results;
+			WordformUpdateWork[] results;
 			lock (m_syncRoot)
 			{
 				results = m_workQueue.ToArray();
 				m_workQueue.Clear();
 			}
+
+			// Instrumentation: filing is the serial part of bulk parsing; time it so the
+			// parse:file split can be measured against the parse timings logged by ParserWorker.
+			var filingTimer = Stopwatch.StartNew();
 
 			// Update work.Wordform with its own NonUndoableUnitOfWorkHelper
 			// so that PropChanged will be triggered when it is updated below.
@@ -243,6 +248,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
 				}
 			});
+
+			filingTimer.Stop();
+			if (results.Length > 0)
+				Logger.WriteMinorEvent("Parser filing: {0} results filed in {1} ms", results.Length, filingTimer.ElapsedMilliseconds);
 			return true;
 		}
 
