@@ -188,6 +188,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
+			if (ClerkIsDisposed())
+			{
+				// This fixes LT-22589.
+				return;
+			}
 			if (Clerk == null || m_mainView == null || m_mediator == null || hvo != Clerk.CurrentObjectHvo)
 				return;
 
