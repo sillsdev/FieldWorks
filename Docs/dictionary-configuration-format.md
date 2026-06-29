@@ -1,6 +1,6 @@
 # The Dictionary Configuration File Format
 
-This document describes the `.fwdictconfig` file that drives how FieldWorks Language
+This document describes the `.fwdictconfig` file that controls how FieldWorks Language
 Explorer (FLEx) lays out a dictionary or reversal-index view, and shows how a technical
 user can make changes by editing the file directly — including changes the **Configure
 Dictionary** dialog cannot make on its own.
@@ -12,39 +12,28 @@ entry/sense structure of a dictionary.
 ## When you would edit the file by hand
 
 Almost everything in a configuration can be set from **Tools ▸ Configure ▸ Dictionary**.
-Hand-editing is for the cases the dialog does not expose. The motivating example, and the
-one this document walks through, is turning on **paragraph styling for a writing-system
-field** on a node where the dialog offers no control for it.
+Hand-editing is for the changes the dialog does not expose. This guide walks through two such
+edits — equally common, and each impossible from the dialog alone:
 
-The configuration model has two related option types for a field that displays in one or
-more writing systems:
+- **Paragraph display on a writing-system field** — render each writing system of a field as
+  its own styled paragraph instead of inline.
+- **Grouping fields under a heading** — collect several unrelated fields into one
+  organizational block.
 
-- `WritingSystemOptions` — the ordinary type. The field's writing systems are shown inline.
-- `WritingSystemAndParaOptions` — a superset that adds a single attribute,
-  `displayInParagraph`. When `true`, each writing system is rendered as its own paragraph,
-  and the owning node carries a paragraph style.
-
-The dialog shows a *"display in paragraphs"* checkbox **only on nodes that already carry
-`WritingSystemAndParaOptions`** — in the shipped configurations these are the
-analysis-writing-system note fields (Anthropology Note, Grammar Note, Discourse Note,
-General Note, and so on) and Encyclopedic Info. For a field that ships with plain
-`WritingSystemOptions` — for instance **Definition (or Gloss)** — the dialog gives you no
-way to switch it to the paragraph-capable type.
-
-> **In short:** the dialog can *toggle* `displayInParagraph` where the option type already
-> exists, but it cannot *add* the option type to a field that lacks it. Hand-editing is how
-> you add it. Once added, the dialog reads and respects the value; it does not strip it out.
+The principle is the same in both: the dialog can adjust a node that already has the
+structure in question, but it cannot *add* that structure. Hand-editing adds it — and once it
+is there, the dialog reads and preserves it.
 
 ## Where the files live
 
-There are two locations, and the difference matters.
+There are two locations.
 
 **Shipped defaults (read-only templates).** These are installed with FieldWorks under the
 program's `Language Explorer/DefaultConfigurations/` folder, e.g.
 `DefaultConfigurations/Dictionary/Lexeme.fwdictconfig`. FLEx treats these as factory
 templates and never writes to them: when you customize a configuration in the dialog, FLEx
 saves your changes to a project copy instead of back to the shipped file. They are also
-replaced wholesale every time FieldWorks is installed or upgraded.
+replaced every time FieldWorks is installed or upgraded.
 
 **Project copies (the editable ones).** When you customize a configuration, FLEx writes a
 copy into your project folder under:
@@ -54,7 +43,7 @@ copy into your project folder under:
 <ProjectFolder>/ConfigurationSettings/ReversalIndex/
 ```
 
-These project copies are the files you edit. Editing a shipped default is the wrong layer:
+These project copies are the files you edit. Don't edit a shipped default:
 the program will not persist UI changes there, your edits would be lost on the next
 upgrade, and the default only serves as the template that gets cloned into new projects —
 it has no effect on a project that already has its own copy.
@@ -79,8 +68,7 @@ explicit Remove — there is no Reset that would silently restore factory conten
 work.
 
 **Leave the `version` attribute unchanged.** A copy from a current FLEx is already at the
-current version, so the migration FLEx runs on upgrades skips it; changing the number
-invites a migration pass that can overwrite your edits. See *Appendix: configuration
+current version, so the migration FLEx runs on upgrades skips it. See *Appendix: configuration
 migration on upgrade* for the mechanics.
 
 ## Anatomy of the file
@@ -89,14 +77,10 @@ The root element is `DictionaryConfiguration`:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Lexeme-based (complex forms as main entries)"
-                         allPublications="true" isRootBased="false"
-                         version="26" lastModified="2025-02-26">
-  <ConfigurationItem name="Main Entry" isEnabled="true"
-                     style="Dictionary-Normal" styleType="paragraph"
-                     field="LexEntry" cssClassNameOverride="entry">
-    ...
-  </ConfigurationItem>
+<DictionaryConfiguration name="Lexeme-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="26" lastModified="2025-02-26">
+	<ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
+		...
+	</ConfigurationItem>
 </DictionaryConfiguration>
 ```
 
@@ -114,44 +98,51 @@ The attributes you will touch most often are:
 | `styleType` | `character` or `paragraph` — whether `style` is a character or paragraph style. Omitted means the default for the node. |
 | `cssClassNameOverride` | An alternate CSS class name for export. |
 
-Writing-system fields carry one of the two options elements described above as a child:
+Writing-system fields carry a writing-system options element as a child:
 
 ```xml
 <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-  <Option id="all analysis" isEnabled="true"/>
+	<Option id="all analysis" isEnabled="true"/>
 </WritingSystemOptions>
 ```
 
 `writingSystemType` is one of `vernacular`, `analysis`, `both`, `pronunciation`, or
 `reversal`. Each `Option` names a writing system (`id`) and whether it is shown.
 
-## Worked example: paragraph display on Definition (or Gloss)
+## Walkthrough: paragraph display on a writing-system field
 
-This is one illustrative case — *a "for instance,"* not the only field this applies to. The
-same two edits work on any node that has writing-system options.
+A field that displays in one or more writing systems carries one of two option types:
 
-As shipped, **Definition (or Gloss)** in `Lexeme.fwdictconfig` looks like this — plain
+- `WritingSystemOptions` — the ordinary type; the writing systems are shown inline.
+- `WritingSystemAndParaOptions` — a superset that adds the attribute `displayInParagraph`.
+  When `true`, each writing system renders as its own paragraph and the owning node carries a
+  paragraph style.
+
+The dialog shows a *"display in paragraphs"* checkbox **only on nodes that already carry
+`WritingSystemAndParaOptions`** — in the shipped configurations these are the
+analysis-writing-system note fields (Grammar Note, Discourse Note, General Note, and so on)
+and Encyclopedic Info. It cannot switch a plainly-configured field to the paragraph-capable
+type; that switch is the hand edit.
+
+**Definition (or Gloss)** is one such field — just a "for instance"; the same two edits work
+on any node with writing-system options. As shipped in `Lexeme.fwdictconfig` it uses plain
 writing-system options, displayed inline:
 
 ```xml
-<ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true"
-                   field="DefinitionOrGloss">
-  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
-    <Option id="all analysis" isEnabled="true"/>
-  </WritingSystemOptions>
+<ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
+	<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
+		<Option id="all analysis" isEnabled="true"/>
+	</WritingSystemOptions>
 </ConfigurationItem>
 ```
 
 To display each analysis writing system as its own styled paragraph, make **two** changes:
 
 ```xml
-<ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true"
-                   style="Dictionary-Normal" styleType="paragraph"
-                   field="DefinitionOrGloss">
-  <WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false"
-                               displayInParagraph="true">
-    <Option id="all analysis" isEnabled="true"/>
-  </WritingSystemAndParaOptions>
+<ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="DefinitionOrGloss">
+	<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="true">
+		<Option id="all analysis" isEnabled="true"/>
+	</WritingSystemAndParaOptions>
 </ConfigurationItem>
 ```
 
@@ -165,18 +156,73 @@ To display each analysis writing system as its own styled paragraph, make **two*
    usually create a dedicated paragraph style in **Format ▸ Styles** (for example
    `Dictionary-Definition`) and name it here.
 
-You can see the target shape in a shipped file: open `Root.fwdictconfig` and find
-`Grammar Note` (or any of the note fields). It already ships with
-`<WritingSystemAndParaOptions … displayInParagraph="false">`. Those nodes are exactly why
-the dialog shows a "display in paragraphs" checkbox for notes — and toggling that checkbox
-is all you are reproducing by hand for Definition. (For the note fields the dialog also
-assigns a paragraph style automatically when you check the box; when editing by hand you set
-the `style` yourself.)
+For the exact shipped shape, open `Root.fwdictconfig` and find `Grammar Note`: it already
+carries `<WritingSystemAndParaOptions … displayInParagraph="false">`, which is what the
+dialog's checkbox toggles. Toggling it there also assigns a paragraph style automatically;
+when editing by hand you set the `style` yourself.
 
 Save the file, reopen FLEx, and open the dictionary view. Each analysis writing system of
 the definition should now appear on its own line in the chosen paragraph style. Open
 Configure Dictionary and select the Definition node: the "display in paragraphs" checkbox is
 now present and checked, confirming the dialog has accepted your edit.
+
+## Walkthrough: grouping fields under a heading
+
+A *grouping node* collects several sibling fields under one heading, purely for organization;
+the model describes it as grouping "nodes which are not related in the model." It holds no
+data of its own — each child still reads its own field from the same entry or sense the
+group's siblings use — so the group is just a wrapper that can carry its own paragraph style
+and an (unpublished) description. The dialog can move nodes into and out of
+an existing group and edit a group's description, but it cannot create a group; that is a
+hand edit.
+
+A grouping node is an ordinary `ConfigurationItem` with a `<GroupingOptions>` child and the
+grouped items nested inside it. This is the shipped example — **References Section** in
+`Hybrid.fwdictconfig`, which gathers the component-reference fields into one styled block:
+
+```xml
+<ConfigurationItem name="References Section" isEnabled="true" before=" " after=" " styleType="paragraph" style="Block Quote" field="ReferencesSection">
+	<GroupingOptions displayGroupInParagraph="true" />
+	<ConfigurationItem name="Component References" ...> ... </ConfigurationItem>
+	<!-- more grouped items -->
+</ConfigurationItem>
+```
+
+Three things about the grouping node itself: `<GroupingOptions>` carries
+`displayGroupInParagraph` (whether the whole group renders as its own paragraph) and may hold
+descriptive text as its element content (a note to yourself — it is not published); the
+`field` value (`ReferencesSection`) is **not** a real model field but just a unique
+identifier for the group, so pick a distinctive name no sibling uses; and `styleType`/`style`
+on the `ConfigurationItem` style the group as a whole.
+
+The note fields — Grammar Note, Phonology Note, Semantics Note, Sociolinguistics Note,
+Discourse Note, and the rest — ship as separate, adjacent siblings; this is just a "for
+instance." To group them, wrap the note `ConfigurationItem`s in a new grouping node *in
+place*, so their fields still resolve against the same sense:
+
+```xml
+<ConfigurationItem name="Notes" isEnabled="true" styleType="paragraph" style="Block Quote" field="NotesGroup">
+	<GroupingOptions displayGroupInParagraph="true">Editorial notes, shown together</GroupingOptions>
+	<ConfigurationItem name="Grammar Note" before=" " between=" " isEnabled="true" field="GrammarNote">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
+			<Option id="all analysis" isEnabled="true"/>
+		</WritingSystemAndParaOptions>
+	</ConfigurationItem>
+	<ConfigurationItem name="Phonology Note" before=" " between=" " isEnabled="true" field="PhonologyNote">
+		<WritingSystemAndParaOptions writingSystemType="analysis" displayWSAbreviation="false" displayInParagraph="false">
+			<Option id="all analysis" isEnabled="true"/>
+		</WritingSystemAndParaOptions>
+	</ConfigurationItem>
+</ConfigurationItem>
+```
+
+Keep each grouped `ConfigurationItem` exactly as it was; you are only nesting it inside the
+wrapper. Any node can be brought into the group this way, as long as it sits at the same
+level as the group — that is, it must be one of the group's siblings.
+
+Save the file and reopen FLEx: the grouped fields now display together as one block, and in
+Configure Dictionary they appear nested under the **Notes** group, which you can select to
+edit its description or paragraph setting.
 
 ## What FLEx does when it opens your file
 
@@ -251,12 +297,12 @@ your changes) and do not raise it (a future FLEx expects to migrate from the rea
 | Element | Key attributes | Notes |
 | --- | --- | --- |
 | `WritingSystemOptions` | `writingSystemType`, `displayWSAbreviation` | Inline writing-system display. |
-| `WritingSystemAndParaOptions` | `writingSystemType`, `displayWSAbreviation`, **`displayInParagraph`** | Adds per-writing-system paragraph display. The focus of this document. |
+| `WritingSystemAndParaOptions` | `writingSystemType`, `displayWSAbreviation`, **`displayInParagraph`** | Adds per-writing-system paragraph display. See *Walkthrough: paragraph display on a writing-system field*. |
 | `ListTypeOptions` | `list` (`none`/`minor`/`complex`/`variant`/`sense`/`entry`/`note`) | A selectable list of items. |
 | `ComplexFormOptions` | `list`, **`displayEachComplexFormInParagraph`** | List options that can show each item in its own paragraph. |
 | `SenseOptions` | `numberingStyle`, `numberBefore`, `numberAfter`, `numberSingleSense`, `showSingleGramInfoFirst`, `displayEachSenseInParagraph`, `displayFirstSenseInline` | Sense numbering and layout. |
 | `PictureOptions` | `minimumHeight`/`Width`, `maximumHeight`/`Width`, `pictureLocation`, `stackPictures` | Picture sizing and placement. |
-| `GroupingOptions` | `displayGroupInParagraph` | Grouping node layout. |
+| `GroupingOptions` | `displayGroupInParagraph` | Wraps unrelated sibling nodes under one heading; its element text is an unpublished description. See *Walkthrough: grouping fields under a heading*. |
 
 `writingSystemType` values: `vernacular`, `analysis`, `both`, `pronunciation`, `reversal`.
 
