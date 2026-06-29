@@ -233,6 +233,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		internal bool ClerkIsDisposed()
+		{
+			return m_clerk?.IsDisposed == true;
+		}
+
 		public IPaneBar MainPaneBar
 		{
 			get
