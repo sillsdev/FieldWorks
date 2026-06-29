@@ -2489,6 +2489,8 @@ namespace SIL.FieldWorks.IText
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						// Let the exporter know that this is a guessed analysis.
+						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 					}
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
@@ -2526,6 +2528,8 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						// Let the exporter know that this is a guessed analysis.
+						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						m_vwenv.AddObj(m_hvoDefault, m_this, kfragLineChoices + choiceIndex);
 					}
 					break;
@@ -2575,6 +2579,8 @@ namespace SIL.FieldWorks.IText
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						// Let the exporter know that this is a guessed analysis.
+						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						var wa = (IWfiAnalysis) m_defaultObj;
 						int hvoPos = wa.CategoryRA != null ? wa.CategoryRA.Hvo : 0;
 						if (hvoPos == 0)
@@ -2594,7 +2600,11 @@ namespace SIL.FieldWorks.IText
 				case WfiGlossTags.kClassId:
 					m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
 					if (m_hvoWordBundleAnalysis == m_hvoWordform) // then our analysis is a guess
+					{
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						// Let the exporter know that this is a guessed analysis.
+						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
+					}
 					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
 					break;
 				default:
