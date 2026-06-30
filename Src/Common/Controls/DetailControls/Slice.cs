@@ -2938,6 +2938,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private int GetMoveableDepth()
 		{
+			if (Key == null)
+			{
+				return 0;
+			}
 			int count = 0;
 			foreach (object obj in Key)
 			{

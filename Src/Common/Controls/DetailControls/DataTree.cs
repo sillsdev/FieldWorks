@@ -5302,7 +5302,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_indent = indent;
 			m_node = node;
 			m_path = path;
-			m_key = path.ToArray(); // This fixes LT-22581.
 			m_obj = obj;
 			m_flid = flid;
 			m_ihvoMin = ihvoMin;
