@@ -15,8 +15,8 @@ Almost everything in a configuration can be set from **Tools ▸ Configure ▸ D
 Hand-editing is for the changes the dialog does not expose. This guide walks through two such
 edits — equally common, and each impossible from the dialog alone:
 
-- **Paragraph display on a writing-system field** — render each writing system of a field as
-  its own styled paragraph instead of inline.
+- **Paragraph display on a writing-system field** — show a writing-system field as its own
+  styled paragraph instead of inline within the entry.
 - **Grouping fields under a heading** — collect several unrelated fields into one
   organizational block.
 
@@ -115,8 +115,8 @@ A field that displays in one or more writing systems carries one of two option t
 
 - `WritingSystemOptions` — the ordinary type; the writing systems are shown inline.
 - `WritingSystemAndParaOptions` — a superset that adds the attribute `displayInParagraph`.
-  When `true`, each writing system renders as its own paragraph and the owning node carries a
-  paragraph style.
+  When `true`, the field is rendered as its own paragraph in the node's style instead of
+  inline; its writing systems still appear together within that paragraph.
 
 The dialog shows a *"display in paragraphs"* checkbox **only on nodes that already carry
 `WritingSystemAndParaOptions`** — in the shipped configurations these are the
@@ -136,7 +136,7 @@ writing-system options, displayed inline:
 </ConfigurationItem>
 ```
 
-To display each analysis writing system as its own styled paragraph, make **two** changes:
+To display the definition as its own styled paragraph, make **two** changes:
 
 ```xml
 <ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="DefinitionOrGloss">
@@ -161,10 +161,10 @@ carries `<WritingSystemAndParaOptions … displayInParagraph="false">`, which is
 dialog's checkbox toggles. Toggling it there also assigns a paragraph style automatically;
 when editing by hand you set the `style` yourself.
 
-Save the file, reopen FLEx, and open the dictionary view. Each analysis writing system of
-the definition should now appear on its own line in the chosen paragraph style. Open
-Configure Dictionary and select the Definition node: the "display in paragraphs" checkbox is
-now present and checked, confirming the dialog has accepted your edit.
+Save the file, reopen FLEx, and open the dictionary view. The definition should now appear as
+its own paragraph in the chosen style, rather than inline within the entry. Open Configure
+Dictionary and select the Definition node: the "display in paragraphs" checkbox is now
+present and checked, confirming the dialog has accepted your edit.
 
 ## Walkthrough: grouping fields under a heading
 
@@ -297,7 +297,7 @@ your changes) and do not raise it (a future FLEx expects to migrate from the rea
 | Element | Key attributes | Notes |
 | --- | --- | --- |
 | `WritingSystemOptions` | `writingSystemType`, `displayWSAbreviation` | Inline writing-system display. |
-| `WritingSystemAndParaOptions` | `writingSystemType`, `displayWSAbreviation`, **`displayInParagraph`** | Adds per-writing-system paragraph display. See *Walkthrough: paragraph display on a writing-system field*. |
+| `WritingSystemAndParaOptions` | `writingSystemType`, `displayWSAbreviation`, **`displayInParagraph`** | Displays the field as its own paragraph. See *Walkthrough: paragraph display on a writing-system field*. |
 | `ListTypeOptions` | `list` (`none`/`minor`/`complex`/`variant`/`sense`/`entry`/`note`) | A selectable list of items. |
 | `ComplexFormOptions` | `list`, **`displayEachComplexFormInParagraph`** | List options that can show each item in its own paragraph. |
 | `SenseOptions` | `numberingStyle`, `numberBefore`, `numberAfter`, `numberSingleSense`, `showSingleGramInfoFirst`, `displayEachSenseInParagraph`, `displayFirstSenseInline` | Sense numbering and layout. |
