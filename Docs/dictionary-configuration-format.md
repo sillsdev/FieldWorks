@@ -152,9 +152,8 @@ To display the definition as its own styled paragraph, make **two** changes:
    `<Option>` children stay exactly as they were.
 2. **Add a paragraph style to the `ConfigurationItem`**: `styleType="paragraph"` plus a
    `style` that names a **paragraph** style which already exists in the project. Here
-   `Dictionary-Normal` is used because it ships as a paragraph style; in practice you would
-   usually create a dedicated paragraph style in **Format ▸ Styles** (for example
-   `Dictionary-Definition`) and name it here.
+   `Dictionary-Normal` is used because it ships as a paragraph style; any paragraph style
+   listed in **Format ▸ Styles** can be used.
 
 For the exact shipped shape, open `Root.fwdictconfig` and find `Grammar Note`: it already
 carries `<WritingSystemAndParaOptions … displayInParagraph="false">`, which is what the
@@ -226,9 +225,8 @@ edit its description or paragraph setting.
 
 ## What FLEx does when it opens your file
 
-Every time FLEx loads a project configuration — not only during a version migration — it
-reconciles the file against the live project. Two of these steps directly affect
-hand-editing:
+Every time FLEx loads a project configuration, it reconciles the file against the live
+project. Two of these steps directly affect hand-editing:
 
 - **Styles are validated.** If a node's `style` names a style that does not exist in the
   project's stylesheet, FLEx silently clears the `style` attribute as it loads the file.
@@ -308,3 +306,4 @@ your changes) and do not raise it (a future FLEx expects to migrate from the rea
 
 Each list-style options element contains `<Option id="…" isEnabled="true|false"/>` children
 identifying the writing systems or list items, in display order.
+                                                                                                                                                                                                                    
