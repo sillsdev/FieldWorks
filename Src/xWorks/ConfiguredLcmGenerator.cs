@@ -429,9 +429,14 @@ namespace SIL.FieldWorks.XWorks
 					settings.ContentGenerator.EndEntry(xw);
 					xw.Flush();
 
-					// Do not normalize the string if exporting to word doc--it is not needed and will cause loss of document styles
-					if (bldr is LcmWordGenerator.DocFragment)
-						return bldr;
+					// All content should be in NFC (LT-18177). For Word export we normalize the text inside the
+					// OpenXml runs in place: normalizing bldr.ToString() and rebuilding a fragment from the string
+					// (as done below for XHTML) would discard the document's run and paragraph styles.
+					if (bldr is LcmWordGenerator.DocFragment wordFragment)
+					{
+						wordFragment.NormalizeText(FwNormalizationMode.knmNFC);
+						return wordFragment;
+					}
 
 					return settings.ContentGenerator.CreateFragment(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(bldr.ToString())); // All content should be in NFC (LT-18177)
 				}
