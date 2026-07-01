@@ -178,6 +178,10 @@ verifies that launch will succeed.
   this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
 - `scripts/Install-VirtualDisplayDriver.ps1`: bootstraps the Virtual Display Driver (for the invisible
   off-screen-monitor path; see `references/headless-rendering.md`).
+- `scripts/Launch-FieldWorksInvisible.ps1`: the default launcher for FieldWorks WinForms capture on this
+  dev machine — launches on the console desktop and moves the window onto the VDD virtual monitor so it
+  renders but stays invisible. Wraps `Set-FieldWorksLegacyMode.ps1` + `Resolve-FieldWorksDevRegistry.ps1`;
+  requires `Install-VirtualDisplayDriver.ps1` to have been run once.
 - `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
   invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; use visible, or VDD off-screen, or RDP).
 

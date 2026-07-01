@@ -66,5 +66,6 @@ questions (SliceFactory location, `DummyObjectSlice` lazy expansion, `StTextData
 resolved in favor of whatever keeps `SliceSpec` a faithful concrete instance of the program's typed
 node.
 
-See `Docs/avalonia-migration-approach-comparison.md` for the full rationale and
-`openspec/changes/avalonia-migration-roadmap/design.md` for the master sequence and gate definitions.
+See `openspec/changes/avalonia-migration-roadmap/design.md` for the master sequence and gate
+definitions (the original plan-comparison analysis this alignment was based on has since been removed
+as a superseded decision record).

@@ -10,12 +10,12 @@
   .\scripts\Agent\Run-AvaloniaPreview.ps1
 
 .EXAMPLE
-  .\scripts\Agent\Run-AvaloniaPreview.ps1 -Module lexical-edit-poc -Data sample
+  .\scripts\Agent\Run-AvaloniaPreview.ps1 -Module lexical-edit-preview -Data sample
 #>
 
 [CmdletBinding()]
 param(
-	[string]$Module = "lexical-edit-poc",
+	[string]$Module = "lexical-edit-preview",
 	[ValidateSet("empty", "sample")]
 	[string]$Data = "empty",
 	[ValidateSet("Debug", "Release")]

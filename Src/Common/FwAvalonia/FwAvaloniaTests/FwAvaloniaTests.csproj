@@ -61,7 +61,7 @@
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
-	<!-- This isolated spike test project does not use FieldWorks' shared test bootstrap
+	<!-- This isolated test project does not use FieldWorks' shared test bootstrap
 	     (SLDR/ICU/registry redirect and the RequiresSTAOnWindows/SetMessageBoxAdapter test
 	     attributes). The headless Avalonia tests do not touch LCModel, ICU, or the registry,
 	     so exclude the auto-injected shared AssemblyInfo files. -->

@@ -15,14 +15,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The existing WinForms DataTree/Slice surface (default).</summary>
 		WinForms,
 
-		/// <summary>The Avalonia proof-of-concept surface (flag-gated).</summary>
+		/// <summary>The Avalonia surface (flag-gated).</summary>
 		Avalonia
 	}
 
 	/// <summary>
-	/// Pure-logic resolver for the two-adapter feature flag carried forward from the original
-	/// in-process Avalonia spike. Default is WinForms; Avalonia is selected by a persisted
-	/// `UIMode = New` preference or by an explicit override used in tests.
+	/// Pure-logic resolver for the two-adapter feature flag that selects the active lexical-edit
+	/// surface. Default is WinForms; Avalonia is selected by a persisted `UIMode = New` preference
+	/// or by an explicit override used in tests.
 	/// This type has no Avalonia dependency so it can be unit tested without a UI runtime.
 	/// </summary>
 	public static class LexicalEditSurfaceResolver

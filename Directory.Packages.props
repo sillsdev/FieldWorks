@@ -162,11 +162,9 @@
 	-->
 	<ItemGroup Label="Test Infrastructure">
 		<!--
-			Align HarfBuzzSharp with Avalonia 11.3.x for the net48 Avalonia spike.
-			Avalonia.Skia 11.3.17 requires HarfBuzzSharp >= 8.3.1.1; keeping the
-			central pin lower causes NU1109 downgrade failures when the branch-local
-			Avalonia companion projects are built.
-			These remain non-product dependencies today (test/comparison + Avalonia spike).
+			Align HarfBuzzSharp with Avalonia 11.3.x. Avalonia.Skia 11.3.17 requires
+			HarfBuzzSharp >= 8.3.1.1; keeping the central pin lower causes NU1109
+			downgrade failures when the Avalonia projects are built.
 		-->
 		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
 		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
@@ -186,21 +184,21 @@
 
 	<!--
 		=============================================================
-		Avalonia (POC spike only: lexical-edit-avalonia-poc-spike)
+		Avalonia
 		Pinned to 11.3.x because it still ships netstandard2.0 assemblies and
 		can therefore load on .NET Framework 4.8. Avalonia 12.x dropped
 		netstandard2.0 (net8+ only) and cannot host in-process on net48.
 		avalonia.win32.interoperability provides WinFormsAvaloniaControlHost
-		(targets net461) for the in-process embedding evaluated by the spike.
-		These are referenced only by the isolated Src/Common/FwAvalonia spike
-		projects and are not part of the default product packaging.
+		(targets net461) for the in-process embedding used by the migration's
+		Phase-1 surfaces.
+		These are referenced by Src/Common/FwAvalonia and Src/Common/FwAvaloniaDialogs.
 		Exception: xWorks and xWorksTests carry a compile-only (PrivateAssets)
 		reference to the base Avalonia package so the IRegionEditorPlugin
 		contract (winforms-free-lexeme-editor.md D1) can type its control
 		factories; the runtime assemblies still ship with FwAvalonia.
 		=============================================================
 	-->
-	<ItemGroup Label="Avalonia (POC spike)">
+	<ItemGroup Label="Avalonia">
 		<PackageVersion Include="Avalonia" Version="11.3.17" />
 		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks can
 		     reference it with IncludeAssets="none": its AVA* analyzers must not run over the large

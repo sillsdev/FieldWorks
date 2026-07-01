@@ -33,7 +33,7 @@ lifetime. Canonical code to imitate:
   `Src/Common/FwAvalonia/Seams/ISeams.cs`
 - Headless test setup: `Src/Common/FwAvalonia/FwAvaloniaTests/TestAppBuilder.cs`;
   examples in `RegionEditingTests.cs`, `VisualParityAndDensityTests.cs`
-- Density constants: `Src/Common/FwAvalonia/Poc/PocDensity.cs`
+- Density constants: `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`
 - **Dialog kit (XAML + CommunityToolkit.Mvvm + compiled bindings):**
   `Src/Common/FwAvaloniaDialogs/` — `OptionsDialogView.axaml`/`.axaml.cs` +
   `OptionsDialogViewModel.cs`; headless tests in `FwAvaloniaDialogsTests/`.

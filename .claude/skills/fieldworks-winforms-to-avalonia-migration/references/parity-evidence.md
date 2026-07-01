@@ -113,8 +113,9 @@ Budgets are measured, never estimated:
 
 1. Capture legacy timings with the characterization harness
    (`Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeRenderTests.cs`)
-   on a named machine profile; thresholds are committed in
-   `DataTreeTimingBaselines.json`.
+   on a named machine profile; thresholds are generated into
+   `DataTreeTimingBaselines.json` (gitignored, regenerated per machine, not
+   checked into the repo).
 2. Hold the Avalonia surface to within 20% of measured legacy total, or
    record an explicitly accepted delta with justification in the region
    manifest.

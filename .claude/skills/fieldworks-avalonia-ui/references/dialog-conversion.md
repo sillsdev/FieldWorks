@@ -216,7 +216,7 @@ that a control's `Content` equals the accessor value (proves the `x:Static` bind
 `OptionsDialogTests`. If legacy Avalonia `.resx` files still exist in the repo, treat them as cleanup debt,
 not as the active source of truth.
 
-## 6. Gotchas learned in the spike
+## 6. Gotchas from building this dialog kit
 
 - **Nested test files leak into the library** unless excluded — the SDK glob compiles
   `FwAvaloniaDialogsTests/**/*.cs` into `FwAvaloniaDialogs` (which lacks NUnit/Headless refs) → CS0246.

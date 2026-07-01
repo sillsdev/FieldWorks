@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
-		FwAvaloniaDialogsTests (Stage 1.2 dialog-MVVM spike)
+		FwAvaloniaDialogsTests
 
 		Headless Avalonia tests for the XAML/MVVM dialog kit: proves compiled bindings and
 		CommunityToolkit.Mvvm commands work at runtime on net48. Builds with the main FieldWorks.proj

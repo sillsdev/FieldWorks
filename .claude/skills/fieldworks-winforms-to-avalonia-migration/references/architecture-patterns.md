@@ -344,10 +344,11 @@ delta in the region manifest).
 > templates, focus visuals, corner radii) may intentionally diverge. The visual
 > parity lane therefore checks density/layout, not pixel-for-pixel chrome.
 
-**Canonical code.** `Src/Common/FwAvalonia/Poc/PocDensity.cs`;
+**Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`;
 legacy harness
 `Src/Common/Controls/DetailControls/DetailControlsTests/DataTreeRenderTests.cs`;
-committed thresholds `DataTreeTimingBaselines.json` (same directory).
+generated thresholds `DataTreeTimingBaselines.json` (same directory; gitignored,
+regenerated per machine, not checked into the repo).
 Tests: `VisualParityAndDensityTests.cs`.
 
 **Gotchas.** Validate virtualization against the large fixtures (253-slice

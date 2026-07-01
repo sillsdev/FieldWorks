@@ -14,8 +14,9 @@
 > See `datatree-model-view-separation/hybrid-alignment.md` for the superseded banner and historical
 > content.
 
-The recommendation from `Docs/avalonia-migration-approach-comparison.md` was **Approach 3 then
-Approach 2**: a time-boxed proof-of-concept spike, then the Hybrid (Plan B as the spine). Execution
+The recommendation from the original plan-comparison analysis (Plan A "datatree-model-view-separation"
+vs. Plan B "lexical-edit-avalonia-migration") was **Approach 3 then Approach 2**: a time-boxed
+proof-of-concept spike, then the Hybrid (Plan B as the spine). Execution
 confirmed that approach but resolved the Phase 1 boundary differently from the original plan: instead
 of extracting a model layer from `DataTree`, Phase 1 built a typed IR path (`ViewDefinitionModel` →
 `LexicalEditRegionModel`) that bypasses `DataTree` entirely on the Avalonia side.

@@ -8,7 +8,7 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 
 ## Purpose & Scope
 - Provide a consistent way to **create, build, test, and preview** Avalonia UI modules in FieldWorks.
-- Applies to the Advanced Entry Avalonia work under `specs/010-advanced-entry-view/` and future Avalonia modules.
+- Applies to FieldWorks' Avalonia modules (the `FwAvalonia`/`FwAvaloniaDialogs` lexical-edit surfaces and their Preview Host) and future Avalonia work.
 - This file covers mechanics (build, layout, logging, preview). The
   migration playbook, decided architecture patterns, and parity/evidence
   rules live in the skills under `.claude/skills/` — start with
@@ -25,9 +25,9 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 - Do **not** rely on `dotnet build` for repo-wide builds; FieldWorks build targets include tasks that require full Visual Studio/MSBuild.
 
 ### Project locations & naming
-- Feature modules live under `Src/<Area>/<Feature>.Avalonia/`.
-  - Example: `Src/LexText/AdvancedEntry.Avalonia/`
-- Shared Avalonia utilities live under `Src/Common/FwAvalonia/`.
+- A new, self-contained feature module should live under `Src/<Area>/<Feature>.Avalonia/`.
+- Shared Avalonia utilities live under `Src/Common/FwAvalonia/` (region/composer framework, seams,
+  view-definition IR) and `Src/Common/FwAvaloniaDialogs/` (the MVVM dialog kit).
 - Preview tooling lives under `Src/Common/FwAvaloniaPreviewHost/`.
 
 ### Solution + traversal integration (required)
@@ -58,19 +58,22 @@ To preview UI without launching the full FieldWorks app, use the shared Preview 
 
 **Run the preview**
 - Use the agent script (build + run):
-  - `./scripts/Agent/Run-AvaloniaPreview.ps1 -Module advanced-entry -Data sample`
+  - `./scripts/Agent/Run-AvaloniaPreview.ps1 -Module lexical-edit-preview -Data sample`
 - Supported `-Data` modes depend on the module’s data provider; the current convention is:
   - `empty` (minimal/default DataContext)
   - `sample` (representative sample data)
 
 ## Expected Structure (current)
 
-- Module:
-  - `Src/LexText/AdvancedEntry.Avalonia/`
 - Shared utilities/contracts:
   - `Src/Common/FwAvalonia/`
-    - `Diagnostics/` (logging shim)
-    - `Preview/` (module registration + data provider contracts)
+    - `Region/` (composer, region model, field editors)
+    - `ViewDefinition/` (typed IR compiled from legacy XML layouts)
+    - `Seams/` (framework-neutral interfaces)
+    - `Preview/` (module registration + data provider contracts, e.g. `AssemblyPreviewModules.cs`
+      registers the `lexical-edit-preview` module)
+- Dialog kit:
+  - `Src/Common/FwAvaloniaDialogs/`
 - Preview host executable:
   - `Src/Common/FwAvaloniaPreviewHost/`
 - Launcher script:
@@ -88,9 +91,9 @@ To preview UI without launching the full FieldWorks app, use the shared Preview 
 ./test.ps1
 ```
 
-### Preview the Advanced Entry module
+### Preview the Lexical Edit module
 ```powershell
-./scripts/Agent/Run-AvaloniaPreview.ps1 -Module advanced-entry -Data sample
+./scripts/Agent/Run-AvaloniaPreview.ps1 -Module lexical-edit-preview -Data sample
 ```
 
 ## Notes & Constraints
