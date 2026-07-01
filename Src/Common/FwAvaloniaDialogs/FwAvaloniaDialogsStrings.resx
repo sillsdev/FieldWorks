@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksOptionsTitle" xml:space="preserve">
+    <value>Options</value>
+    <comment>Title of the Tools &gt; Options dialog.</comment>
+  </data>
+  <data name="ksGeneralTab" xml:space="preserve">
+    <value>General</value>
+    <comment>Header of the General tab in the Options dialog.</comment>
+  </data>
+  <data name="ksPluginsTab" xml:space="preserve">
+    <value>Plugins</value>
+    <comment>Header of the Plugins tab in the Options dialog.</comment>
+  </data>
+  <data name="ksPrivacyTab" xml:space="preserve">
+    <value>Privacy</value>
+    <comment>Header of the Privacy tab in the Options dialog.</comment>
+  </data>
+  <data name="ksUpdatesTab" xml:space="preserve">
+    <value>Updates</value>
+    <comment>Header of the Updates tab in the Options dialog (Windows only).</comment>
+  </data>
+  <data name="ksUiLanguageLabel" xml:space="preserve">
+    <value>User interface:</value>
+    <comment>Label preceding the user-interface language chooser on the General tab.</comment>
+  </data>
+  <data name="ksUiLanguageNote" xml:space="preserve">
+    <value>Some localizations are not complete and others need review. Contact FLEx_Localization@sil.org with any feedback.</value>
+    <comment>Note under the UI-language chooser about localization completeness.</comment>
+  </data>
+  <data name="ksLexicalEditUiLabel" xml:space="preserve">
+    <value>Lexical Edit UI mode:</value>
+    <comment>Label preceding the Lexical Edit UI mode (Legacy/New) chooser on the General tab.</comment>
+  </data>
+  <data name="ksUiModeLegacy" xml:space="preserve">
+    <value>Legacy</value>
+    <comment>Lexical Edit UI mode option: the classic WinForms surface.</comment>
+  </data>
+  <data name="ksUiModeNew" xml:space="preserve">
+    <value>New</value>
+    <comment>Lexical Edit UI mode option: the new Avalonia surface.</comment>
+  </data>
+  <data name="ksApply" xml:space="preserve">
+    <value>Apply</value>
+    <comment>Button to apply a Lexical Edit UI mode change live (no restart).</comment>
+  </data>
+  <data name="ksAutoOpenLastProject" xml:space="preserve">
+    <value>When I start Language Explorer, always open the last edited project automatically</value>
+    <comment>Checkbox on the General tab: auto-open the most recently edited project at startup.</comment>
+  </data>
+  <data name="ksPluginsUnavailableNote" xml:space="preserve">
+    <value>Open a project before configuring plugins.</value>
+    <comment>Shown on the Plugins tab when no project is open, so plugins cannot be configured.</comment>
+  </data>
+  <data name="ksPrivacyNote" xml:space="preserve">
+    <value>FieldWorks can send basic, anonymous usage data to help improve the program. No language data is ever sent.</value>
+    <comment>Explanatory note on the Privacy tab above the usage-data opt-in.</comment>
+  </data>
+  <data name="ksOkToPing" xml:space="preserve">
+    <value>Send basic anonymous usage data</value>
+    <comment>Checkbox on the Privacy tab: opt in to anonymous usage reporting.</comment>
+  </data>
+  <data name="ksAutoUpdate" xml:space="preserve">
+    <value>Automatically download and install updates</value>
+    <comment>Checkbox on the Updates tab: enable automatic update download/install.</comment>
+  </data>
+  <data name="ksUpdateChannelLabel" xml:space="preserve">
+    <value>Update channel:</value>
+    <comment>Label preceding the update-channel chooser on the Updates tab.</comment>
+  </data>
+  <data name="ksOk" xml:space="preserve">
+    <value>OK</value>
+    <comment>OK button that accepts the Options dialog.</comment>
+  </data>
+  <data name="ksHelp" xml:space="preserve">
+    <value>Help</value>
+    <comment>Help button on the chooser dialog; opens the dialog's help topic.</comment>
+  </data>
+  <data name="ksChooserEmptyOption" xml:space="preserve">
+    <value>&lt;Empty&gt;</value>
+    <comment>The leading "clear the value" row in the chooser dialog (an atomic field set to no value).</comment>
+  </data>
+  <data name="ksChooserMustSelect" xml:space="preserve">
+    <value>Please choose an item.</value>
+    <comment>Validation message shown (and OK disabled) when the chooser requires a selection but none is made.</comment>
+  </data>
+  <data name="ksChooserSearchPrompt" xml:space="preserve">
+    <value>Search…</value>
+    <comment>Watermark in the search box of the hierarchical chooser; typing filters to a flat list of matches.</comment>
+  </data>
+  <data name="ksCancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button that dismisses the Options dialog without applying changes.</comment>
+  </data>
+  <data name="ksYes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Yes button on a confirmation message box (affirmative choice).</comment>
+  </data>
+  <data name="ksNo" xml:space="preserve">
+    <value>No</value>
+    <comment>No button on a confirmation message box (negative choice).</comment>
+  </data>
+  <data name="ksIconInformation" xml:space="preserve">
+    <value>Information</value>
+    <comment>Accessible name announced for the information icon on a message box.</comment>
+  </data>
+  <data name="ksIconWarning" xml:space="preserve">
+    <value>Warning</value>
+    <comment>Accessible name announced for the warning icon on a message box.</comment>
+  </data>
+  <data name="ksIconError" xml:space="preserve">
+    <value>Error</value>
+    <comment>Accessible name announced for the error icon on a message box.</comment>
+  </data>
+  <data name="ksIconQuestion" xml:space="preserve">
+    <value>Question</value>
+    <comment>Accessible name announced for the question icon on a message box.</comment>
+  </data>
+  <data name="ksInsertEntryTitle" xml:space="preserve">
+    <value>Create Entry</value>
+    <comment>Title of the Insert Entry dialog (the New-UI replacement for InsertEntryDlg).</comment>
+  </data>
+  <data name="ksInsertEntryCreate" xml:space="preserve">
+    <value>Create</value>
+    <comment>Button that creates the new lexical entry in the Insert Entry dialog.</comment>
+  </data>
+  <data name="ksInsertEntryLexemeFormLabel" xml:space="preserve">
+    <value>Lexeme Form:</value>
+    <comment>Label above the lexeme-form field in the Insert Entry dialog.</comment>
+  </data>
+  <data name="ksInsertEntryMorphTypeLabel" xml:space="preserve">
+    <value>Morpheme Type:</value>
+    <comment>Label above the morpheme-type chooser in the Insert Entry dialog.</comment>
+  </data>
+  <data name="ksInsertEntryGlossLabel" xml:space="preserve">
+    <value>Gloss:</value>
+    <comment>Label above the gloss field in the Insert Entry dialog.</comment>
+  </data>
+  <data name="ksInsertEntryLexFormNotEmpty" xml:space="preserve">
+    <value>The lexeme form must not be empty.</value>
+    <comment>Validation message shown when the user tries to create an entry with an empty lexeme form.</comment>
+  </data>
+  <data name="ksFindReplaceTitle" xml:space="preserve">
+    <value>Find/Replace</value>
+    <comment>Title of the Find/Replace pattern-setup dialog used to configure a bulk replace.</comment>
+  </data>
+  <data name="ksFindReplaceFindLabel" xml:space="preserve">
+    <value>Find what:</value>
+    <comment>Label above the Find text box in the Find/Replace pattern-setup dialog.</comment>
+  </data>
+  <data name="ksFindReplaceReplaceLabel" xml:space="preserve">
+    <value>Replace with:</value>
+    <comment>Label above the Replace text box in the Find/Replace pattern-setup dialog.</comment>
+  </data>
+  <data name="ksFindReplaceMatchCase" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Find/Replace option: match the find text case-sensitively.</comment>
+  </data>
+  <data name="ksFindReplaceMatchDiacritics" xml:space="preserve">
+    <value>Match diacritics</value>
+    <comment>Find/Replace option: match diacritics exactly (not honored in this phase; the option is disabled).</comment>
+  </data>
+  <data name="ksFindReplaceMatchWholeWord" xml:space="preserve">
+    <value>Match whole word</value>
+    <comment>Find/Replace option: match only whole words.</comment>
+  </data>
+  <data name="ksFindReplaceMatchWritingSystem" xml:space="preserve">
+    <value>Match writing system</value>
+    <comment>Find/Replace option: constrain the match to a writing system (not honored in this phase; disabled).</comment>
+  </data>
+  <data name="ksFindReplaceUseRegex" xml:space="preserve">
+    <value>Use regular expressions</value>
+    <comment>Find/Replace option: treat the find text as a regular expression (disables the literal match options).</comment>
+  </data>
+  <data name="ksFindReplaceFindEmpty" xml:space="preserve">
+    <value>Enter the text to find.</value>
+    <comment>Validation message shown when the Find text is empty in the Find/Replace dialog.</comment>
+  </data>
+  <data name="ksFindReplaceInvalidRegex" xml:space="preserve">
+    <value>The regular expression is not valid.</value>
+    <comment>Validation message shown when the regular expression in the Find/Replace dialog does not compile.</comment>
+  </data>
+  <data name="ksConfigureColumnsTitle" xml:space="preserve">
+    <value>Configure Columns</value>
+    <comment>Title of the browse-table Configure Columns dialog.</comment>
+  </data>
+  <data name="ksConfigureColumnsAvailableLabel" xml:space="preserve">
+    <value>Available columns</value>
+    <comment>Label above the list of columns that can be added in the Configure Columns dialog.</comment>
+  </data>
+  <data name="ksConfigureColumnsShownLabel" xml:space="preserve">
+    <value>Columns shown</value>
+    <comment>Label above the list of currently-shown columns in the Configure Columns dialog.</comment>
+  </data>
+  <data name="ksConfigureColumnsAdd" xml:space="preserve">
+    <value>Add -&gt;</value>
+    <comment>Button that adds the selected available column to the shown list.</comment>
+  </data>
+  <data name="ksConfigureColumnsRemove" xml:space="preserve">
+    <value>&lt;- Remove</value>
+    <comment>Button that removes the selected shown column.</comment>
+  </data>
+  <data name="ksConfigureColumnsMoveUp" xml:space="preserve">
+    <value>Move Up</value>
+    <comment>Button that moves the selected shown column up one position.</comment>
+  </data>
+  <data name="ksConfigureColumnsMoveDown" xml:space="preserve">
+    <value>Move Down</value>
+    <comment>Button that moves the selected shown column down one position.</comment>
+  </data>
+  <data name="ksConfigureColumnsNeedsAColumn" xml:space="preserve">
+    <value>A browse view must have at least one column.</value>
+    <comment>Validation message shown when the user tries to remove the last shown column.</comment>
+  </data>
+</root>

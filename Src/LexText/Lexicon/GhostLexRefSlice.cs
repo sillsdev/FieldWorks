@@ -60,12 +60,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected override void HandleChooser()
 		{
 			Debug.Assert(m_obj.ClassID == LexEntryTags.kClassId);
+			ILexEntry le = m_obj as ILexEntry;
+			String str = ShowHelp.RemoveSpaces(this.Slice.Label);
+			string helpTopic = "khtpChooseLexicalEntryOrSense-" + str;
+
+			// New-UI gate (mirrors the EntrySequence gate): in New mode launch the Avalonia
+			// Choose-Lexical-Entry-or-Sense dialog (entry path — this ghost component/variant slice selects an
+			// entry); Legacy mode keeps the WinForms LinkEntryOrSenseDlg. Both AddItem the chosen object the same.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_obj.Cache, m_mediator, m_propertyTable, le,
+					FindForm(), helpTopic, helpProvider);
+				if (chosen != null)
+					AddItem(chosen);
+				return;
+			}
+
 			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 			{
-				ILexEntry le = m_obj as ILexEntry;
 				dlg.SetDlgInfo(m_obj.Cache, m_mediator, m_propertyTable, le);
-				String str = ShowHelp.RemoveSpaces(this.Slice.Label);
-				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
+				dlg.SetHelpTopic(helpTopic);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 

@@ -41,6 +41,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			// New-UI gate (Phase-1 §19b Stage 3): in New mode launch the Avalonia phonological-feature chooser (the
+			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
+			// PhonologicalFeatureChooserDlg (incl. its rule-constraint polarity surface, used from the rule editor).
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (SIL.FieldWorks.LexText.Controls.AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				HandleChooserAvalonia();
+				return;
+			}
+
 			// grammar/phonemes/phonological features/[...] (click chooser button)
 			using (PhonologicalFeatureChooserDlg dlg = new PhonologicalFeatureChooserDlg())
 			{
@@ -80,6 +90,46 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 						dlg.HandleJump();
 				}
+			}
+		}
+
+		/// <summary>
+		/// The New-UI phonological-feature chooser path (Phase-1 §19b Stage 3): resolve the existing FS + owning
+		/// object + flid from the slice exactly as the legacy HandleChooser does, run the Avalonia
+		/// <see cref="SIL.FieldWorks.LexText.Controls.LcmPhonologicalFeatureChooserLauncher"/>, and on OK update the
+		/// launcher view with the rebuilt FS.
+		/// </summary>
+		private void HandleChooserAvalonia()
+		{
+			IFsFeatStruc originalFs = null;
+			Slice parentSlice = Slice;
+			int parentSliceClass = parentSlice.Object.ClassID;
+			int owningFlid = (parentSlice as PhonologicalFeatureListDlgLauncherSlice).Flid;
+			switch (parentSliceClass)
+			{
+				case PhPhonemeTags.kClassId:
+					var phoneme = parentSlice.Object as IPhPhoneme;
+					if (phoneme.FeaturesOA != null)
+						originalFs = phoneme.FeaturesOA;
+					break;
+				case PhNCFeaturesTags.kClassId:
+					var features = parentSlice.Object as IPhNCFeatures;
+					if (features.FeaturesOA != null)
+						originalFs = features.FeaturesOA;
+					break;
+			}
+
+			var helpProvider = m_propertyTable.GetValue<SIL.FieldWorks.Common.FwUtils.IHelpTopicProvider>(
+				"HelpTopicProvider", null);
+			var resultFs = SIL.FieldWorks.LexText.Controls.LcmPhonologicalFeatureChooserLauncher.Show(
+				m_cache, m_mediator, m_propertyTable, originalFs, parentSlice.Object, owningFlid,
+				parentSlice.FindForm(), helpProvider, out var accepted);
+			if (!accepted)
+				return;
+			if (resultFs != null)
+			{
+				m_obj = resultFs;
+				m_PhonologicalFeatureListDlgLauncherView.UpdateFS(resultFs);
 			}
 		}
 

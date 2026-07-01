@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.AddNewSenseDialogView"
+             x:DataType="vm:AddNewSenseDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="360" MinHeight="240">
+	<!-- The reusable Add New Sense dialog (MSA-port Stage 5): a read-only citation form, an editable gloss field,
+	     and the grammatical-info group box, over Create/Cancel/Help. The gloss field + MSA box are owned native
+	     controls injected as code-behind children (set on DataContextChanged like InsertEntryDialogView). Visible
+	     text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="AddNewSense.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="AddNewSense.Cancel"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
+			        IsVisible="{Binding HasHelp}"
+			        Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="AddNewSense.Help"/>
+		</StackPanel>
+
+		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"
+		           IsVisible="{Binding HasPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
+		           AutomationProperties.AutomationId="AddNewSense.Prompt"/>
+
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<StackPanel Spacing="{StaticResource DialogControlGap}">
+			<!-- Read-only citation form (the entry the sense is added to). Shown flat (detail-value style), not a
+			     boxed input, since it is never edited. -->
+			<StackPanel IsVisible="{Binding HasCitationForm}" Spacing="{StaticResource DialogLabelFieldGap}">
+				<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.AddNewSenseCitationFormLabel}"
+				           AutomationProperties.AutomationId="AddNewSense.CitationFormLabel"/>
+				<TextBlock Text="{Binding CitationForm}" FontWeight="SemiBold"
+				           AutomationProperties.AutomationId="AddNewSense.CitationForm"
+				           AutomationProperties.Name="{Binding CitationForm}"/>
+			</StackPanel>
+
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.AddNewSenseGlossLabel}"
+			           AutomationProperties.AutomationId="AddNewSense.GlossLabel"/>
+			<!-- The owned editable FwMultiWsTextField (gloss) is injected here in code-behind. -->
+			<Border Name="PART_GlossHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="AddNewSense.GlossHost"/>
+
+			<!-- Grammatical-info (MSA) section: the owned FwMsaGroupBox is injected here in code-behind. It supplies
+			     its own dense border, so this host carries only the section caption above it (no second frame). -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.AddNewSenseGrammaticalInfoLabel}"
+			           AutomationProperties.AutomationId="AddNewSense.GrammaticalInfoLabel"/>
+			<Border Name="PART_MsaSection"
+			        AutomationProperties.AutomationId="AddNewSense.MsaSection"/>
+		</StackPanel>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

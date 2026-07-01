@@ -96,6 +96,10 @@
 	-->
 	<ItemGroup Label="SIL Localization">
 		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
+		<!-- L10NSharp v10 split the WinForms-specific types (LocalizationManagerWinforms) into a
+		     separate package. Most projects pick it up transitively; projects that reference it
+		     directly (e.g. FwAvaloniaTests) pin it here via the shared L10NSharp version. -->
+		<PackageVersion Include="L10NSharp.Windows.Forms" Version="$(L10NSharpVersion)" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
 		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />
 	</ItemGroup>
@@ -157,8 +161,19 @@
 		=============================================================
 	-->
 	<ItemGroup Label="Test Infrastructure">
-		<PackageVersion Include="HarfBuzzSharp" Version="7.3.0" />
-		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="7.3.0" />
+		<!--
+			Align HarfBuzzSharp with Avalonia 11.3.x for the net48 Avalonia spike.
+			Avalonia.Skia 11.3.17 requires HarfBuzzSharp >= 8.3.1.1; keeping the
+			central pin lower causes NU1109 downgrade failures when the branch-local
+			Avalonia companion projects are built.
+			These remain non-product dependencies today (test/comparison + Avalonia spike).
+		-->
+		<PackageVersion Include="HarfBuzzSharp" Version="8.3.1.1" />
+		<PackageVersion Include="HarfBuzzSharp.NativeAssets.Win32" Version="8.3.1.1" />
+		<!-- Pinned because multiple test projects copy this into the shared Output folder; without a
+		     single version the last-built project's copy breaks the others' binding redirects
+		     (observed: FwAvaloniaTests redirecting to 8.0.0.1 vs a 9.x dll from another graph). -->
+		<PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
 		<PackageVersion Include="Moq" Version="4.20.70" />
 		<PackageVersion Include="NUnit" Version="3.14.0" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
@@ -167,5 +182,42 @@
 		<PackageVersion Include="SkiaSharp" Version="2.88.9" />
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.9" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />
+	</ItemGroup>
+
+	<!--
+		=============================================================
+		Avalonia (POC spike only: lexical-edit-avalonia-poc-spike)
+		Pinned to 11.3.x because it still ships netstandard2.0 assemblies and
+		can therefore load on .NET Framework 4.8. Avalonia 12.x dropped
+		netstandard2.0 (net8+ only) and cannot host in-process on net48.
+		avalonia.win32.interoperability provides WinFormsAvaloniaControlHost
+		(targets net461) for the in-process embedding evaluated by the spike.
+		These are referenced only by the isolated Src/Common/FwAvalonia spike
+		projects and are not part of the default product packaging.
+		Exception: xWorks and xWorksTests carry a compile-only (PrivateAssets)
+		reference to the base Avalonia package so the IRegionEditorPlugin
+		contract (winforms-free-lexeme-editor.md D1) can type its control
+		factories; the runtime assemblies still ship with FwAvalonia.
+		=============================================================
+	-->
+	<ItemGroup Label="Avalonia (POC spike)">
+		<PackageVersion Include="Avalonia" Version="11.3.17" />
+		<!-- Transitive analyzer carrier (Avalonia -> Avalonia.BuildServices). Pinned so xWorks can
+		     reference it with IncludeAssets="none": its AVA* analyzers must not run over the large
+		     legacy xWorks codebase where warnings are errors (the compile-only Avalonia reference
+		     there exists only for the IRegionEditorPlugin contract, winforms-free-lexeme-editor.md D1). -->
+		<PackageVersion Include="Avalonia.BuildServices" Version="11.3.2" />
+		<PackageVersion Include="Avalonia.Desktop" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Win32.Interoperability" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Headless" Version="11.3.17" />
+		<PackageVersion Include="Avalonia.Headless.NUnit" Version="11.3.17" />
+		<!-- Skia-enabled headless rendering for visual parity frame capture (lexical-edit task 6.9).
+		     The HarfBuzzSharp 8.3.1.1 pin above was aligned for exactly this package. -->
+		<PackageVersion Include="Avalonia.Skia" Version="11.3.17" />
+		<!-- MVVM for hand-authored Avalonia dialogs (Stage 1.2 decision 2026-06-15). 8.x ships
+		     netstandard2.0 source generators, so it works on net48; used only by the dedicated
+		     XAML-enabled FwAvaloniaDialogs project, not the pure-C# FwAvalonia foundation. -->
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 </Project>

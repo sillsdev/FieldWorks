@@ -1134,19 +1134,23 @@ namespace SIL.FieldWorks.Common.Controls
 					collectOuterStructParts.Add(node);
 				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
 			}
-				// Review JohnT: In XmlVc, "part" is the one thing that calls ProcessChildren with non-null caller.
-				// this should make some difference here, but I can't figure what yet, or come up with a test that fails.
-				// We may need a "caller" argument to pass this down so it can be used in GetNodeForRelatedObject.
+				// In XmlVc, "part" is the one thing that calls ProcessChildren with a non-null caller (the
+				// part ref node). The off-screen cell-render path must do the same, otherwise children that
+				// read attributes such as "ws" from the caller (e.g. multilingual strings configured via the
+				// part ref) resolve nothing and render blank. So we capture the part ref node and carry it as
+				// the caller into the NodeChildrenDisplayCommand. (See LT- for the "Grammatical Info." blank
+				// column bug in the Avalonia browse table.)
 			case "part":
 			{
 				string layoutName = XmlUtils.GetOptionalAttributeValue(node, "ref");
 				if (layoutName != null)
 				{
 					// It's actually a part ref, in a layout, not a part looked up by one!
-					// Get the node it refers to, and make a command to process its children.
+					// Get the node it refers to, and make a command to process its children, passing this
+					// part ref node down as the caller so child fragments can resolve attributes from it.
 					XmlNode part = XmlVc.GetNodeForPart(hvo, layoutName, false, sda, layouts);
 					if (part != null)
-						return new NodeChildrenDisplayCommand(part); // display this object using the children of the part referenced.
+						return new NodeChildrenDisplayCommand(part, node); // display this object using the children of the part referenced.
 					else
 						return new NodeDisplayCommand(node); // no matching part, do default.
 				}

@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -52,10 +53,31 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			IMoMorphSynAnalysis originalMsa = m_obj as IMoMorphSynAnalysis;
+			ILexEntry entry = originalMsa.Owner as ILexEntry;
+			var titleForEdit = String.Format(LexEdStrings.ksEditX, Slice.Label);
+
+			// New-UI gate (mirrors the other MSA dialog gates): in New mode launch the Avalonia "Create New
+			// Grammatical Info." dialog seeded from the existing MSA; Legacy mode keeps the WinForms MsaCreatorDlg.
+			// Both paths UpdateOrReplace the existing MSA (only when it actually changed) in one undoable step.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var sandboxMsaNew = LcmMsaCreatorDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, entry,
+					SandboxGenericMSA.Create(originalMsa), originalMsa.Hvo, true, titleForEdit, FindForm(), helpProvider);
+				if (sandboxMsaNew != null && !originalMsa.EqualsMsa(sandboxMsaNew))
+				{
+					UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoEditFunction, LexEdStrings.ksRedoEditFunction, entry, () =>
+					{
+						originalMsa.UpdateOrReplace(sandboxMsaNew);
+					});
+				}
+				return;
+			}
+
 			using (MsaCreatorDlg dlg = new MsaCreatorDlg())
 			{
-				IMoMorphSynAnalysis originalMsa = m_obj as IMoMorphSynAnalysis;
-				ILexEntry entry = originalMsa.Owner as ILexEntry;
 				dlg.SetDlgInfo(m_cache,
 					m_persistProvider,
 					m_mediator,
@@ -64,7 +86,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					SandboxGenericMSA.Create(originalMsa),
 					originalMsa.Hvo,
 					true,
-					String.Format(LexEdStrings.ksEditX, Slice.Label));
+					titleForEdit);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
 					SandboxGenericMSA sandboxMsa = dlg.SandboxMSA;

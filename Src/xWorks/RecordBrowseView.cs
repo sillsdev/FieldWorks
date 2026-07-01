@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -14,19 +15,29 @@ using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.Common.FwAvalonia;
+using SIL.FieldWorks.Common.FwAvalonia.Region;
+using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
+using ECInterfaces;
+using SilEncConverters40;
+using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// RecordBrowseView is a table oriented view of the collection
 	/// </summary>
-	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion
+	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion,
+		IBulkEditBarHost
 	{
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 
@@ -35,6 +46,22 @@ namespace SIL.FieldWorks.XWorks
 		///
 		/// </summary>
 		protected BrowseViewer m_browseViewer;
+		// Stage 3 product wiring: when UIMode=New for the lexiconBrowse tool, an Avalonia table is shown
+		// on top of the (still fully-functional) legacy BrowseViewer as a read-only mirror; selecting a
+		// row forwards to the clerk. Null and inert in the default (Legacy) path.
+		private LexicalBrowseHostControl m_avaloniaBrowseHost;
+		private ClerkBrowseRowSource m_avaloniaRowSource;
+		// The column/cell/sort/filter seam the owned table sources from. In F1 this IS the live
+		// BrowseViewer; held as the interface so the F2 viewer-free provider drops in with no logic change
+		// (BuildColumnDefinition/the row source already read only IBrowseColumnSource members).
+		private IBrowseColumnSource m_avaloniaColumnSource;
+		// Configure-Columns (Avalonia P1): the per-tool persisted column choices (show/hide/reorder + width)
+		// and the LCModel-free owned model built from the column catalog + the store. Built lazily from
+		// Cache.ProjectId, mirroring RecordEditView.ViewOverrideStore.
+		private BrowseColumnConfigStore m_browseColumnStore;
+		private BrowseColumnModel m_browseColumnModel;
+		// Reentrancy guard for the two-way selection bridge (Avalonia row <-> clerk current record).
+		private bool m_syncingAvaloniaSelection;
 		private bool m_suppressRecordNavigation;
 		protected bool m_suppressShowRecord;
 		private bool m_fHandlingFilterChangedByClerk;
@@ -69,6 +96,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+				Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded);
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
@@ -90,9 +118,28 @@ namespace SIL.FieldWorks.XWorks
 					m_browseViewer.CheckBoxChanged -= OnCheckBoxChanged;
 					m_browseViewer.SortersCompatible -= Clerk.AreSortersCompatible;
 				}
+				if (m_avaloniaEditSda != null && m_avaloniaEditNotifier != null)
+					m_avaloniaEditSda.RemoveNotification(m_avaloniaEditNotifier);
+				if (m_avaloniaBrowseHost != null)
+				{
+					m_avaloniaBrowseHost.RowSelected -= OnAvaloniaRowSelected;
+					m_avaloniaBrowseHost.ConfigureColumnsRequested -= OnConfigureColumnsRequested;
+					m_avaloniaBrowseHost.FilterForRequested -= OnFilterForRequested;
+					m_avaloniaBrowseHost.RestrictDateRequested -= OnRestrictDateRequested;
+					m_avaloniaBrowseHost.ChooseListRequested -= OnChooseListRequested;
+					m_avaloniaBrowseHost.ColumnWidthChanged -= OnAvaloniaColumnWidthChanged;
+					m_avaloniaBrowseHost.ColumnReordered -= OnAvaloniaColumnReordered;
+					m_avaloniaBrowseHost.RowCommandInvoked -= OnAvaloniaRowCommandInvoked;
+					m_avaloniaBrowseHost.Dispose();
+				}
 				if (components != null)
 					components.Dispose();
 			}
+			m_avaloniaBrowseHost = null;
+			m_avaloniaRowSource = null;
+			m_avaloniaColumnSource = null;
+			m_browseColumnStore = null;
+			m_browseColumnModel = null;
 			m_browseViewer = null;
 			// m_mediator = null; // No, or the superclass call will crash.
 
@@ -319,6 +366,554 @@ namespace SIL.FieldWorks.XWorks
 			Controls.Add(m_browseViewer);
 			m_browseViewer.BringToFront();
 			m_browseViewer.ResumeLayout();
+
+			TryActivateAvaloniaBrowse();
+		}
+
+		/// <summary>
+		/// Stage 3 product wiring: when the lexiconBrowse tool is in `UIMode = New`, overlay the owned
+		/// Avalonia table (read-only mirror) on top of the legacy <see cref="BrowseViewer"/>. The legacy
+		/// viewer stays constructed and fully functional underneath (it keeps driving the clerk, sort,
+		/// filter, and the rest of FLEx); the Avalonia table forwards row selection to the clerk so
+		/// navigation works. In the default `Legacy` mode this is a no-op and nothing changes.
+		/// </summary>
+		private void TryActivateAvaloniaBrowse()
+		{
+			if (m_browseViewer == null || m_avaloniaBrowseHost != null)
+				return;
+
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			var uiMode = m_propertyTable.GetStringProperty(
+				LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode);
+			if (LexicalEditSurfaceResolver.ResolveBrowse(null, uiMode, toolName) != LexicalEditSurface.Avalonia)
+				return;
+
+			m_avaloniaColumnSource = m_browseViewer; // F1: the live viewer is the column source (F2 swaps a viewer-free provider here)
+			// Configure-Columns: align the live viewer's shown columns to the per-tool persisted choices BEFORE
+			// the first definition is built, so a returning user sees their saved show/hide/reorder. Builds the
+			// owned model from the catalog + store and (when a saved set exists) installs it on the viewer.
+			BuildBrowseColumnModel();
+			var definition = BuildColumnDefinition();
+			m_avaloniaRowSource = new ClerkBrowseRowSource(Clerk, m_avaloniaColumnSource, Cache);
+			m_avaloniaBrowseHost = new LexicalBrowseHostControl { Dock = DockStyle.Fill };
+			m_avaloniaBrowseHost.RowSelected += OnAvaloniaRowSelected;
+			m_avaloniaBrowseHost.ConfigureColumnsRequested += OnConfigureColumnsRequested;
+			m_avaloniaBrowseHost.FilterForRequested += OnFilterForRequested;
+			m_avaloniaBrowseHost.RestrictDateRequested += OnRestrictDateRequested;
+			m_avaloniaBrowseHost.ChooseListRequested += OnChooseListRequested;
+			m_avaloniaBrowseHost.ColumnWidthChanged += OnAvaloniaColumnWidthChanged;
+			m_avaloniaBrowseHost.ColumnReordered += OnAvaloniaColumnReordered;
+			m_avaloniaBrowseHost.RowCommandInvoked += OnAvaloniaRowCommandInvoked;
+			Controls.Add(m_avaloniaBrowseHost);
+			m_avaloniaBrowseHost.BringToFront(); // paint over the legacy viewer (which stays functional)
+			// Legacy parity: the BrowseViewer shows a per-row select column + select-all; enable the same on
+			// the Avalonia surface so the product browse offers selection. The user's checked objects are
+			// readable via m_avaloniaBrowseHost.CheckedRows (hvos) — the prerequisite for product bulk-edit.
+			// Passing THIS as the bulk-edit host docks the Phase-1 List Choice bar under the table; the bar
+			// stays LCModel-free and drives preview/apply back through this edge over the checked rows.
+			m_avaloniaBrowseHost.ShowBrowse(definition, m_avaloniaRowSource, showCheckboxColumn: true,
+				bulkEditHost: this, columnWidths: BuildColumnWidthMap());
+			RegisterAvaloniaEditNotification();
+			// Subscribe to the clerk's post-reload publish HERE — during SetupDataContext, i.e. BEFORE the
+			// deferred initial list load completes (RecordView's ListUpdateHelper loads on dispose at the end
+			// of InitBase). Subscribing now means the INITIAL DoneReload is caught and the mirror refreshes to
+			// the full row count; subscribing later (in Init) missed it and could leave only a subset showing.
+			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded, m_propertyTable.GetWindow());
+		}
+
+		/// <summary>
+		/// Mediator broadcast handler (xCore reflection-invoked). When the UI mode flips between Legacy and
+		/// New, switch the table to match — symmetrically with <see cref="RecordEditView"/>, so the left
+		/// Entries pane and the detail pane never end up half-switched (one on Avalonia, one on legacy).
+		/// New→legacy tears the overlay down and reveals the still-live legacy BrowseViewer; legacy→New
+		/// re-activates the overlay and re-syncs the current record.
+		/// </summary>
+		public void OnPropertyChanged(string name)
+		{
+			CheckDisposed();
+			if (name != LexicalEditSurfaceResolver.UIModePropertyName || m_browseViewer == null)
+				return;
+
+			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			var uiMode = m_propertyTable.GetStringProperty(
+				LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode);
+			var wantAvalonia = LexicalEditSurfaceResolver.ResolveBrowse(null, uiMode, toolName) == LexicalEditSurface.Avalonia;
+
+			if (wantAvalonia && m_avaloniaBrowseHost == null)
+			{
+				TryActivateAvaloniaBrowse();
+				MirrorClerkSelectionToAvalonia();
+			}
+			else if (!wantAvalonia && m_avaloniaBrowseHost != null)
+			{
+				DeactivateAvaloniaBrowse();
+			}
+		}
+
+		// Tears the Avalonia overlay down (live legacy↔New switch). The legacy BrowseViewer was never
+		// disposed — it stays docked underneath — so revealing it is just removing the overlay and
+		// bringing it forward. Mirrors the disposal sequence in Dispose so a later Dispose is a no-op.
+		private void DeactivateAvaloniaBrowse()
+		{
+			// Balance the subscription set up in TryActivateAvaloniaBrowse, so a later re-activate does not
+			// double-subscribe (which would refresh the mirror twice per reload).
+			Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, OnClerkListReloaded);
+			if (m_avaloniaEditSda != null && m_avaloniaEditNotifier != null)
+				m_avaloniaEditSda.RemoveNotification(m_avaloniaEditNotifier);
+			m_avaloniaEditNotifier = null;
+			m_avaloniaEditSda = null;
+			if (m_avaloniaBrowseHost != null)
+			{
+				m_avaloniaBrowseHost.RowSelected -= OnAvaloniaRowSelected;
+				m_avaloniaBrowseHost.ConfigureColumnsRequested -= OnConfigureColumnsRequested;
+				m_avaloniaBrowseHost.FilterForRequested -= OnFilterForRequested;
+				m_avaloniaBrowseHost.RestrictDateRequested -= OnRestrictDateRequested;
+				m_avaloniaBrowseHost.ChooseListRequested -= OnChooseListRequested;
+				m_avaloniaBrowseHost.ColumnWidthChanged -= OnAvaloniaColumnWidthChanged;
+				m_avaloniaBrowseHost.ColumnReordered -= OnAvaloniaColumnReordered;
+				m_avaloniaBrowseHost.RowCommandInvoked -= OnAvaloniaRowCommandInvoked;
+				Controls.Remove(m_avaloniaBrowseHost);
+				m_avaloniaBrowseHost.Dispose();
+				m_avaloniaBrowseHost = null;
+			}
+			m_avaloniaRowSource = null;
+			m_avaloniaColumnSource = null;
+			m_browseColumnModel = null;
+			m_browseViewer?.BringToFront();
+		}
+
+		private ISilDataAccess m_avaloniaEditSda;
+		private IVwNotifyChange m_avaloniaEditNotifier;
+		private bool m_avaloniaRefreshPending;
+
+		// Refresh the table when a model change touches the current row's object (or one it owns),
+		// coalescing a unit-of-work's many PropChanged into one refresh. The legacy browse does this via
+		// its RootSite PropChanged sink; the Avalonia mirror has none, so an edit in the detail pane that
+		// stays on the same record would otherwise leave the table stale.
+		private void RegisterAvaloniaEditNotification()
+		{
+			if (m_avaloniaEditNotifier != null)
+				return;
+			m_avaloniaEditSda = Cache.DomainDataByFlid;
+			m_avaloniaEditNotifier = new AvaloniaBrowseEditNotifier(this);
+			m_avaloniaEditSda.AddNotification(m_avaloniaEditNotifier);
+		}
+
+		private void OnAvaloniaModelChanged(int hvo)
+		{
+			if (m_avaloniaBrowseHost == null || m_avaloniaRefreshPending || !IsHandleCreated || !AffectsCurrentRow(hvo))
+				return;
+			m_avaloniaRefreshPending = true;
+			BeginInvoke((Action)(() =>
+			{
+				m_avaloniaRefreshPending = false;
+				if (m_avaloniaBrowseHost == null || IsDisposed)
+					return;
+				var prev = m_syncingAvaloniaSelection;
+				m_syncingAvaloniaSelection = true;
+				try
+				{
+					m_avaloniaBrowseHost.RefreshRows();
+					if (Clerk.CurrentIndex >= 0)
+						m_avaloniaBrowseHost.SelectRow(Clerk.CurrentIndex);
+				}
+				finally { m_syncingAvaloniaSelection = prev; }
+			}));
+		}
+
+		// Thin test seam (Task 23c): the owner-walk that decides whether a model change touches the current
+		// row's object (or one it owns) is the gate for the Avalonia mirror's refresh; this lets a
+		// real-clerk/real-cache test assert it without driving a PropChanged through the notifier.
+		internal bool AffectsCurrentRowForTest(int hvo) => AffectsCurrentRow(hvo);
+
+		private bool AffectsCurrentRow(int hvo)
+		{
+			var current = Clerk?.CurrentObject;
+			if (current == null || hvo == 0)
+				return false;
+			if (hvo == current.Hvo)
+				return true;
+			if (!Cache.ServiceLocator.IsValidObjectId(hvo))
+				return false;
+			for (var obj = Cache.ServiceLocator.GetObject(hvo); obj != null; obj = obj.Owner)
+				if (obj.Hvo == current.Hvo)
+					return true;
+			return false;
+		}
+
+		private sealed class AvaloniaBrowseEditNotifier : IVwNotifyChange
+		{
+			private readonly RecordBrowseView _owner;
+			public AvaloniaBrowseEditNotifier(RecordBrowseView owner) { _owner = owner; }
+			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+				=> _owner.OnAvaloniaModelChanged(hvo);
+		}
+
+		private ViewDefinitionModel BuildColumnDefinition()
+		{
+			// Own the column model: snapshot each column's real metadata (label, stable field token from
+			// field/transduce, writing system, editability) into a managed BrowseColumnSpec, then project
+			// to the typed view definition — instead of fabricating "col{i}" tokens. The snapshot is the
+			// seam that decouples the table's columns from the live viewer (F2 sources it without one).
+			// After Configure-Columns, the live viewer's ColumnSpecs ARE the shown set/order (we installed
+			// them via InstallColumnsByKey), so the snapshot already honors the model's shown set + order.
+			return BrowseColumnSpec.ToViewDefinition(BrowseColumnSpec.Snapshot(m_avaloniaColumnSource));
+		}
+
+		// The configure-columns tool key the per-tool store persists under (the active tool name).
+		private string BrowseColumnToolName()
+			=> m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+
+		// advanced-entry-view: the per-tool browse-column config file lives in this project's
+		// ConfigurationSettings folder (mirrors RecordEditView.ViewOverrideStore). Built lazily and reused.
+		private BrowseColumnConfigStore BrowseColumnStore
+		{
+			get
+			{
+				if (m_browseColumnStore == null && Cache?.ProjectId?.ProjectFolder != null)
+				{
+					m_browseColumnStore = new BrowseColumnConfigStore(
+						LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder));
+				}
+				return m_browseColumnStore;
+			}
+		}
+
+		// Builds the LCModel-free owned column model from the live viewer's catalog + the per-tool persisted
+		// choices, and — when a saved configuration exists — installs that shown set/order on the live viewer
+		// so the first Avalonia definition (and the legacy viewer underneath) both reflect the user's choices.
+		private void BuildBrowseColumnModel()
+		{
+			var available = new List<BrowseColumnChoice>();
+			foreach (var info in m_avaloniaColumnSource.GetAvailableColumns())
+				available.Add(new BrowseColumnChoice(info.Key, info.Label, info.HasWritingSystemOption));
+
+			var saved = BrowseColumnStore?.TryGet(BrowseColumnToolName(),
+				(path, error) => Logger.WriteError("Failed to load browse columns '" + path
+					+ "'; using the shipped default columns.", error));
+
+			IReadOnlyList<BrowseColumnEntry> shown;
+			if (saved != null && saved.Count > 0)
+			{
+				shown = saved.Select(c => new BrowseColumnEntry(c.Key, c.Width)).ToList();
+				// Re-align the live viewer to the saved keys so the snapshot below honors the saved set/order.
+				m_browseViewer.InstallColumnsByKey(saved.Select(c => c.Key).ToList());
+			}
+			else
+			{
+				// No saved config: the shipped default is whatever the viewer currently shows.
+				var defaults = new List<BrowseColumnEntry>();
+				for (var i = 0; i < m_avaloniaColumnSource.ColumnCount; i++)
+					defaults.Add(new BrowseColumnEntry(m_avaloniaColumnSource.GetColumnKey(i)));
+				shown = defaults;
+			}
+			m_browseColumnModel = new BrowseColumnModel(available, shown);
+		}
+
+		// Projects the model's per-column widths into a field-token→width map the Avalonia view seeds its
+		// column widths from. The view keys widths by the column's Field (ViewNode.Field == BrowseColumnSpec
+		// StableField), so map the model's catalog KEY-keyed width to the shown column's StableField.
+		private IReadOnlyDictionary<string, double> BuildColumnWidthMap()
+		{
+			var map = new Dictionary<string, double>();
+			if (m_browseColumnModel == null)
+				return map;
+			var specs = BrowseColumnSpec.Snapshot(m_avaloniaColumnSource);
+			for (var i = 0; i < specs.Count && i < m_avaloniaColumnSource.ColumnCount; i++)
+			{
+				var key = m_avaloniaColumnSource.GetColumnKey(i);
+				var width = m_browseColumnModel.WidthOf(key);
+				if (width.HasValue && width.Value > 0)
+					map[specs[i].StableField] = width.Value;
+			}
+			return map;
+		}
+
+		// Header context-menu "Configure Columns…" (P1 step 7): launch the LCModel-free dialog over the owned
+		// model's catalog + shown keys; on OK persist, re-align the live viewer, reset stale column sort/filter,
+		// and rebuild the Avalonia surface preserving selection + checked set (P1 steps 4 & 6).
+		private void OnConfigureColumnsRequested(object sender, EventArgs e)
+		{
+			if (m_avaloniaBrowseHost == null || m_browseColumnModel == null)
+				return;
+
+			var available = m_browseColumnModel.Available
+				.Select(c => new FwAvaloniaDialogs.ColumnChoiceItem(c.Key, c.Label))
+				.ToList();
+			var vm = new FwAvaloniaDialogs.ConfigureColumnsDialogViewModel(available, m_browseColumnModel.ShownKeys);
+			var view = new FwAvaloniaDialogs.ConfigureColumnsDialogView { DataContext = vm };
+			var accepted = AvaloniaDialogHost.ShowModal(FindForm(), view, vm,
+				FwAvaloniaDialogs.FwAvaloniaDialogsStrings.ConfigureColumnsTitle);
+			if (accepted != true || vm.ResultKeys == null)
+				return;
+
+			ApplyConfiguredColumns(vm.ResultKeys);
+		}
+
+		// Filter flyout "Filter For…" (browse column-filter parity): launch the LCModel-free pattern-setup
+		// dialog (the Avalonia counterpart of the legacy FilterBar SimpleMatchDlg) over the owning form; on OK
+		// translate the dialog result into the FwAvalonia-layer spec and route it back to the table, which
+		// drives the clerk's pattern filter through the row source.
+		private void OnFilterForRequested(object sender, int columnIndex)
+		{
+			if (m_avaloniaBrowseHost == null)
+				return;
+
+			var vm = new FwAvaloniaDialogs.FilterForDialogViewModel();
+			var view = new FwAvaloniaDialogs.FilterForDialogView { DataContext = vm };
+			var accepted = AvaloniaDialogHost.ShowModal(FindForm(), view, vm,
+				FwAvaloniaDialogs.FwAvaloniaDialogsStrings.FilterForTitle);
+			if (accepted != true || vm.Result == null)
+				return;
+
+			m_avaloniaBrowseHost.ApplyFilterPattern(columnIndex, ToFilterForSpec(vm.Result));
+		}
+
+		// The browse host/row-source speak the FwAvalonia-layer BrowseFilterForSpec (which cannot reference the
+		// dialog kit); the dialog speaks FilterForPattern. This translator is the single seam between them, kept
+		// here at the product edge where both layers are visible (mirrors ToPattern/FromPattern for replace).
+		private static SIL.FieldWorks.Common.FwAvalonia.Region.BrowseFilterForSpec ToFilterForSpec(
+			FwAvaloniaDialogs.FilterForPattern pattern)
+		{
+			return new SIL.FieldWorks.Common.FwAvalonia.Region.BrowseFilterForSpec
+			{
+				MatchText = pattern.MatchText ?? string.Empty,
+				MatchType = ToBrowseMatch(pattern.MatchType),
+				MatchCase = pattern.MatchCase
+			};
+		}
+
+		private static SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch ToBrowseMatch(
+			FwAvaloniaDialogs.FilterForMatchType type)
+		{
+			switch (type)
+			{
+				case FwAvaloniaDialogs.FilterForMatchType.AtStart:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch.AtStart;
+				case FwAvaloniaDialogs.FilterForMatchType.AtEnd:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch.AtEnd;
+				case FwAvaloniaDialogs.FilterForMatchType.WholeItem:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch.WholeItem;
+				case FwAvaloniaDialogs.FilterForMatchType.Regex:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch.Regex;
+				default:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowsePatternMatch.Anywhere;
+			}
+		}
+
+		// Filter flyout "Restrict Date…" (date/genDate column-filter parity): launch the LCModel-free date-range
+		// dialog (the Avalonia counterpart of the legacy FilterBar SimpleDateMatchDlg) over the owning form; on OK
+		// translate the dialog result into the FwAvalonia-layer spec and route it back to the table, which drives
+		// the clerk's DateTimeMatcher through the row source. The genDate-vs-date distinction is read off the
+		// column spec's sortType through the row-source metadata seam.
+		private void OnRestrictDateRequested(object sender, int columnIndex)
+		{
+			if (m_avaloniaBrowseHost == null || m_avaloniaRowSource == null)
+				return;
+
+			var sortType = m_avaloniaRowSource.GetColumnSpecAttribute(columnIndex, "sortType");
+			var handleGenDate = string.Equals(sortType, "genDate", System.StringComparison.OrdinalIgnoreCase);
+
+			var vm = new FwAvaloniaDialogs.DateRangeFilterDialogViewModel(null, handleGenDate);
+			var view = new FwAvaloniaDialogs.DateRangeFilterDialogView { DataContext = vm };
+			var accepted = AvaloniaDialogHost.ShowModal(FindForm(), view, vm,
+				FwAvaloniaDialogs.FwAvaloniaDialogsStrings.RestrictDateTitle);
+			if (accepted != true || vm.Result == null)
+				return;
+
+			m_avaloniaBrowseHost.ApplyFilterDate(columnIndex, ToDateFilterSpec(vm.Result));
+		}
+
+		// The browse host/row-source speak the FwAvalonia-layer BrowseDateFilterSpec; the dialog speaks
+		// DateRangeFilterPattern. This translator is the single seam between them (mirrors ToFilterForSpec).
+		private static SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateFilterSpec ToDateFilterSpec(
+			FwAvaloniaDialogs.DateRangeFilterPattern pattern)
+		{
+			return new SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateFilterSpec
+			{
+				MatchType = ToBrowseDateMatch(pattern.MatchType),
+				Start = pattern.Start,
+				End = pattern.End,
+				HandleGenDate = pattern.HandleGenDate
+			};
+		}
+
+		private static SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch ToBrowseDateMatch(
+			FwAvaloniaDialogs.DateRangeMatchType type)
+		{
+			switch (type)
+			{
+				case FwAvaloniaDialogs.DateRangeMatchType.NotOn:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch.NotOn;
+				case FwAvaloniaDialogs.DateRangeMatchType.OnOrBefore:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch.OnOrBefore;
+				case FwAvaloniaDialogs.DateRangeMatchType.OnOrAfter:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch.OnOrAfter;
+				case FwAvaloniaDialogs.DateRangeMatchType.Between:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch.Between;
+				default:
+					return SIL.FieldWorks.Common.FwAvalonia.Region.BrowseDateMatch.On;
+			}
+		}
+
+		// Filter flyout "Choose…" (chooser column-filter parity): build the chooser items from the column's
+		// possibility list (through the row-source metadata seam, LCModel-free RegionChoiceOptions), launch the
+		// SHARED Avalonia ChooserDialog (multi-select, flat or hierarchical when the items carry depth), and on OK
+		// route the chosen possibility keys back to the table, which drives the clerk's ListChoiceFilter through
+		// the row source. Reuses the existing ChooserDialog — does not duplicate it.
+		private void OnChooseListRequested(object sender, int columnIndex)
+		{
+			if (m_avaloniaBrowseHost == null || m_avaloniaRowSource == null)
+				return;
+
+			var options = m_avaloniaRowSource.GetColumnChooserList(columnIndex);
+			if (options == null || options.Count == 0)
+				return;
+
+			var hierarchical = false;
+			foreach (var o in options)
+				if (o.Depth > 0) { hierarchical = true; break; }
+
+			var input = new FwAvaloniaDialogs.ChooserDialogInput
+			{
+				Candidates = options,
+				SelectionMode = FwAvaloniaDialogs.ChooserSelectionMode.Multi,
+				Hierarchical = hierarchical,
+				ForbidEmptySelection = true,
+				Prompt = FwAvaloniaDialogs.FwAvaloniaDialogsStrings.FilterChoosePrompt
+			};
+			var vm = new FwAvaloniaDialogs.ChooserDialogViewModel(input);
+			var view = new FwAvaloniaDialogs.ChooserDialogView { DataContext = vm };
+			var accepted = AvaloniaDialogHost.ShowModal(FindForm(), view, vm,
+				FwAvaloniaDialogs.FwAvaloniaDialogsStrings.FilterChooseTitle);
+			if (accepted != true || vm.ChosenKeys == null || vm.ChosenKeys.Count == 0)
+				return;
+
+			m_avaloniaBrowseHost.ApplyFilterListChoice(columnIndex, vm.ChosenKeys);
+		}
+
+		// Applies a new shown column set/order from the dialog (also reused by tests): install on the live
+		// viewer by key, rebuild the owned model preserving widths, persist, clear stale column sort/filter so
+		// a reorder never misapplies, and rebuild the Avalonia surface preserving selection + checked set.
+		internal void ApplyConfiguredColumns(IReadOnlyList<string> orderedKeys)
+		{
+			if (orderedKeys == null || orderedKeys.Count == 0 || m_browseViewer == null)
+				return;
+
+			// 1) Re-align the live legacy viewer underneath (width preservation + sorter re-init) and learn the
+			//    keys that actually survived (a key with no matching column is dropped).
+			var installed = m_browseViewer.InstallColumnsByKey(orderedKeys);
+			if (installed.Count == 0)
+				return;
+
+			// 2) Rebuild the owned model from the catalog + the new shown set, carrying any known widths forward.
+			var available = m_browseColumnModel.Available;
+			var newShown = installed.Select(k => new BrowseColumnEntry(k, m_browseColumnModel.WidthOf(k))).ToList();
+			m_browseColumnModel = new BrowseColumnModel(available, newShown);
+
+			// 3) Persist the per-tool choices (empty/default deletes the file).
+			PersistBrowseColumns();
+
+			// 4) A reorder/show/hide shifts column indexes, so any column-index-keyed clerk filter/preview at the
+			//    row-source seam would now misapply to a DIFFERENT field — clear them (P1 step 6). The clerk
+			//    reload that follows republishes and refreshes the table.
+			m_avaloniaRowSource?.ResetColumnState();
+
+			// 5) Rebuild the Avalonia surface from the new definition, preserving the row source, selection, and
+			//    the object-keyed checked set (P1 step 4).
+			m_avaloniaBrowseHost.RebuildColumns(BuildColumnDefinition(), BuildColumnWidthMap());
+		}
+
+		// Persists the model's shown columns (key + width) under the active tool; an empty/default set deletes.
+		private void PersistBrowseColumns()
+		{
+			var store = BrowseColumnStore;
+			if (store == null || m_browseColumnModel == null)
+				return;
+			var columns = m_browseColumnModel.Shown
+				.Select(e => new BrowseColumnConfigEntry(e.Key, e.Width))
+				.ToList();
+			store.Save(BrowseColumnToolName(), columns);
+		}
+
+		// A finished column-width drag (P1 step 5): record the width on the model (mapping the dragged column's
+		// StableField back to its catalog key) and persist it under the active tool.
+		private void OnAvaloniaColumnWidthChanged(object sender, BrowseColumnWidthChange e)
+		{
+			if (m_browseColumnModel == null)
+				return;
+			var specs = BrowseColumnSpec.Snapshot(m_avaloniaColumnSource);
+			for (var i = 0; i < specs.Count && i < m_avaloniaColumnSource.ColumnCount; i++)
+			{
+				if (specs[i].StableField == e.Field)
+				{
+					m_browseColumnModel.SetWidth(m_avaloniaColumnSource.GetColumnKey(i), e.Width);
+					PersistBrowseColumns();
+					return;
+				}
+			}
+		}
+
+		private void OnAvaloniaRowSelected(object sender, int rowIndex)
+		{
+			if (m_syncingAvaloniaSelection)
+				return; // selection originated from the clerk mirror, not the user — don't echo it back
+			var hvo = m_avaloniaRowSource?.HvoAt(rowIndex) ?? 0;
+			if (hvo != 0)
+				Clerk.JumpToRecord(hvo);
+		}
+
+		// 19f.6: a header drag-reorder. Move the dragged column key from its old display position to the
+		// new one in the current shown-key order, then reuse the SAME ApplyConfiguredColumns path the
+		// Configure-Columns dialog uses (re-align live viewer, rebuild + persist the model, clear stale
+		// column state, rebuild the surface preserving selection + checked set). The legacy BrowseViewer
+		// .m_lvHeader_ColumnDragDropReordered did the same reorder-then-rebuild on Vc.ColumnSpecs.
+		private void OnAvaloniaColumnReordered(object sender, (int FromIndex, int ToIndex) e)
+		{
+			if (m_browseColumnModel == null)
+				return;
+			var keys = m_browseColumnModel.ShownKeys?.ToList();
+			if (keys == null || e.FromIndex < 0 || e.FromIndex >= keys.Count
+				|| e.ToIndex < 0 || e.ToIndex >= keys.Count || e.FromIndex == e.ToIndex)
+				return;
+			var moved = keys[e.FromIndex];
+			keys.RemoveAt(e.FromIndex);
+			keys.Insert(e.ToIndex, moved);
+			ApplyConfiguredColumns(keys);
+		}
+
+		// 19f.1: a data-row context-menu command. Route the chosen command key the SAME way the legacy
+		// RightMouseClickedEvent host did: jump the clerk to the right-clicked row's object (so the command
+		// acts on it), then broadcast the command id through the mediator. A command with no handler is a
+		// harmless no-op (matching the legacy update-handler gating).
+		private void OnAvaloniaRowCommandInvoked(object sender, (int RowIndex, string CommandKey) e)
+		{
+			if (string.IsNullOrEmpty(e.CommandKey) || m_avaloniaRowSource == null)
+				return;
+			var hvo = m_avaloniaRowSource.HvoAt(e.RowIndex);
+			if (hvo != 0)
+				Clerk.JumpToRecord(hvo);
+			// Broadcast via the modern Publisher (Mediator.SendMessage is obsolete); no subscriber = no-op.
+				Publisher?.Publish(new PublisherParameterObject(e.CommandKey, null, m_propertyTable.GetWindow()));
+		}
+
+		// Revision 2 (architecture-review): mirror the clerk's current record into the Avalonia table so
+		// it follows external navigation (links, the edit view changing record). Guarded against the
+		// Avalonia->clerk echo above.
+		private void MirrorClerkSelectionToAvalonia()
+		{
+			if (m_avaloniaBrowseHost == null || m_syncingAvaloniaSelection)
+				return;
+			m_syncingAvaloniaSelection = true;
+			try
+			{
+				m_avaloniaBrowseHost.RefreshRows();
+				m_avaloniaBrowseHost.SelectRow(Clerk.CurrentIndex);
+			}
+			finally
+			{
+				m_syncingAvaloniaSelection = false;
+			}
 		}
 
 		/// <summary>
@@ -680,6 +1275,22 @@ namespace SIL.FieldWorks.XWorks
 
 			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
+
+			// Backstop refresh: by now InitBase has finished and the list is fully loaded, so re-read the
+			// full row count into the mirror. The clerk-reload subscription was set up earlier (in
+			// TryActivateAvaloniaBrowse) so the initial DoneReload — and every later reload — already
+			// refreshes the mirror; this one-time refresh covers the case where no reload was published.
+			if (m_avaloniaBrowseHost != null)
+				MirrorClerkSelectionToAvalonia();
+		}
+
+		// Fires after the clerk's record list finishes (re)loading — e.g. the initial load, a filter or sort
+		// change, or a refresh. Re-reads the (now complete) row count into the Avalonia mirror.
+		private void OnClerkListReloaded(object sender)
+		{
+			if (m_avaloniaBrowseHost == null || !ReferenceEquals(sender, Clerk))
+				return;
+			MirrorClerkSelectionToAvalonia();
 		}
 
 		private void CheckExpectedListItemsClassInSync()
@@ -805,6 +1416,7 @@ namespace SIL.FieldWorks.XWorks
 			string propName = Clerk.PersistedIndexProperty;
 			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
 			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			MirrorClerkSelectionToAvalonia();
 		}
 
 		/// <summary>
@@ -833,10 +1445,375 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_browseViewer.CheckedItems; }
 		}
 
+		/// <summary>
+		/// The hvos of the objects the user has checked in the browse select column. When the Avalonia
+		/// table overlay is active it reflects that surface's selection (its checkbox column is enabled for
+		/// legacy parity); otherwise it falls back to the legacy <see cref="BrowseViewer.CheckedItems"/>.
+		/// This is the read the product uses to drive bulk-edit over the selected rows.
+		/// </summary>
+		public IReadOnlyList<int> CheckedObjectHvos
+		{
+			get
+			{
+				if (m_avaloniaBrowseHost != null)
+					return m_avaloniaBrowseHost.CheckedRows;
+				return m_browseViewer != null ? m_browseViewer.CheckedItems : (IReadOnlyList<int>)new List<int>();
+			}
+		}
+
 		private void m_browseViewer_ListModificationInProgressChanged(object sender, EventArgs e)
 		{
 			Clerk.ListModificationInProgress = m_browseViewer.ListModificationInProgress;
 		}
+
+		#region IBulkEditBarHost (Phase 1 List Choice)
+
+		// The product edge for the Avalonia bulk-edit bar. The bar/VM are LCModel-free; this edge supplies
+		// the eligible target columns and their options from the clerk-backed row source and runs
+		// preview/apply over the owned table's CHECKED rows. Inert when the Avalonia overlay is not active.
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> ListChoiceTargets()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.ListChoiceTargets())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<RegionChoiceOption> OptionsFor(int column)
+			=> m_avaloniaRowSource == null
+				? new List<RegionChoiceOption>()
+				: m_avaloniaRowSource.ListChoiceOptions(column);
+
+		/// <inheritdoc />
+		public int CheckedRowCount => CheckedObjectHvos.Count;
+
+		/// <inheritdoc />
+		public void Preview(int column, RegionChoiceOption option)
+		{
+			if (m_avaloniaBrowseHost == null || option == null)
+				return;
+			// The overlay shows the chosen option's DISPLAY NAME (PreviewBulkEdit stores the display value).
+			m_avaloniaBrowseHost.PreviewBulkEdit(column, option.Name);
+		}
+
+		/// <inheritdoc />
+		public void ClearPreview()
+		{
+			if (m_avaloniaRowSource == null)
+				return;
+			m_avaloniaRowSource.ClearBulkEditPreview();
+			// Also drop any staged Delete-Rows preview marking so switching mode / re-targeting clears it too.
+			m_avaloniaBrowseHost?.ClearDeletePreview();
+			m_avaloniaBrowseHost?.RefreshAfterPreviewChange();
+		}
+
+		/// <inheritdoc />
+		public void Apply(int column, RegionChoiceOption option)
+		{
+			if (m_avaloniaBrowseHost == null || option == null)
+				return;
+			// Apply writes the option KEY (the possibility guid) — the preview overlay held the display name.
+			m_avaloniaBrowseHost.ApplyBulkEdit(column, option.Key);
+		}
+
+		// The separator inserted between an existing (non-empty) target and the appended source text in
+		// Bulk Copy Append mode — a single space, matching the legacy bar's default.
+		private const string BulkCopySeparator = " ";
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> CopySourceColumns()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var cols = new List<BulkEditTarget>();
+			foreach (var c in m_avaloniaRowSource.CopySourceColumns())
+				cols.Add(new BulkEditTarget(c.Column, c.Label));
+			return cols;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> CopyTargets()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.CopyTargets())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public void PreviewCopy(int sourceColumn, int targetColumn, BulkCopyMode mode)
+			=> m_avaloniaBrowseHost?.PreviewBulkCopy(sourceColumn, targetColumn, mode, BulkCopySeparator);
+
+		/// <inheritdoc />
+		public void ApplyCopy(int sourceColumn, int targetColumn, BulkCopyMode mode)
+			=> m_avaloniaBrowseHost?.ApplyBulkCopy(sourceColumn, targetColumn, mode, BulkCopySeparator);
+
+		// ----- Phase 3: Bulk Clear -----
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> ClearTargets()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.ClearTargets())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public void PreviewClear(int targetColumn)
+			=> m_avaloniaBrowseHost?.PreviewBulkClear(targetColumn);
+
+		/// <inheritdoc />
+		public void ApplyClear(int targetColumn)
+			=> m_avaloniaBrowseHost?.ApplyBulkClear(targetColumn);
+
+		// ----- Delete Rows (the destructive mode of the legacy Delete tab) -----
+
+		/// <inheritdoc />
+		public bool CanDeleteRows => m_avaloniaBrowseHost?.CanDeleteRows ?? false;
+
+		/// <inheritdoc />
+		public int PreviewDeleteRows() => m_avaloniaBrowseHost?.PreviewDeleteRows() ?? 0;
+
+		/// <inheritdoc />
+		public int ApplyDeleteRows()
+		{
+			if (m_avaloniaBrowseHost == null)
+				return 0;
+
+			// Mirror CheckMultiDeleteConditionsAndReport: count the rows the per-row guards actually allow, then
+			// CONFIRM with the user before any destructive work. Nothing deletable / Cancel deletes nothing.
+			var deletableCount = m_avaloniaBrowseHost.CountDeletableRows();
+			if (deletableCount == 0)
+			{
+				m_avaloniaBrowseHost.ClearDeletePreview();
+				return 0;
+			}
+
+			var message = string.Format(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.BulkDeleteConfirmMessageFormat,
+				deletableCount);
+			var result = FwAvaloniaDialogs.FwMessageBox.Show(FindForm(), message,
+				SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaStrings.BulkDeleteConfirmTitle,
+				FwAvaloniaDialogs.FwMessageBoxButtons.OkCancel,
+				FwAvaloniaDialogs.FwMessageBoxIcon.Warning);
+			if (result != FwAvaloniaDialogs.FwMessageBoxResult.Ok)
+			{
+				// Cancel: leave the preview marking up so the user sees what would have been deleted; no mutation.
+				return 0;
+			}
+
+			// Confirmed: delete the checked, allowed objects in ONE undoable UOW (plus orphan cleanup), then the
+			// host clears the preview and refreshes the row set.
+			return m_avaloniaBrowseHost.ApplyDeleteRows();
+		}
+
+		// ----- Find/Replace Phase 1: Bulk Replace -----
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> ReplaceTargets()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.ReplaceTargets())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public BulkReplaceSpec ShowFindReplaceSetup(BulkReplaceSpec current)
+		{
+			if (m_avaloniaBrowseHost == null)
+				return null;
+
+			// Translate the foundation spec into the dialog kit's FindReplacePattern, run the spec-only modal
+			// over the owning WinForms form, and translate the OK result back. Cancel returns null (no change).
+			var pattern = ToPattern(current);
+			var vm = new FwAvaloniaDialogs.FindReplaceDialogViewModel(pattern);
+			var view = new FwAvaloniaDialogs.FindReplaceDialogView { DataContext = vm };
+			var accepted = AvaloniaDialogHost.ShowModal(FindForm(), view, vm,
+				FwAvaloniaDialogs.FwAvaloniaDialogsStrings.FindReplaceTitle);
+			if (accepted != true || vm.Result == null)
+				return null;
+			return FromPattern(vm.Result);
+		}
+
+		/// <inheritdoc />
+		public void PreviewReplace(int targetColumn, BulkReplaceSpec spec)
+			=> m_avaloniaBrowseHost?.PreviewBulkReplace(targetColumn, spec);
+
+		/// <inheritdoc />
+		public void ApplyReplace(int targetColumn, BulkReplaceSpec spec)
+			=> m_avaloniaBrowseHost?.ApplyBulkReplace(targetColumn, spec);
+
+		// The bar/row-source speak the FwAvalonia-layer BulkReplaceSpec (which cannot reference the dialog kit);
+		// the dialog speaks FindReplacePattern. These two translators are the single seam between them, kept here
+		// at the product edge where both layers are visible.
+		private static FwAvaloniaDialogs.FindReplacePattern ToPattern(BulkReplaceSpec spec)
+		{
+			spec = spec ?? new BulkReplaceSpec();
+			return new FwAvaloniaDialogs.FindReplacePattern
+			{
+				FindText = spec.FindText ?? string.Empty,
+				ReplaceText = spec.ReplaceText ?? string.Empty,
+				MatchCase = spec.MatchCase,
+				MatchDiacritics = spec.MatchDiacritics,
+				MatchWholeWord = spec.MatchWholeWord,
+				MatchWritingSystem = spec.MatchWritingSystem,
+				UseRegularExpressions = spec.UseRegularExpressions
+			};
+		}
+
+		private static BulkReplaceSpec FromPattern(FwAvaloniaDialogs.FindReplacePattern pattern)
+		{
+			return new BulkReplaceSpec
+			{
+				FindText = pattern.FindText ?? string.Empty,
+				ReplaceText = pattern.ReplaceText ?? string.Empty,
+				MatchCase = pattern.MatchCase,
+				MatchDiacritics = pattern.MatchDiacritics,
+				MatchWholeWord = pattern.MatchWholeWord,
+				MatchWritingSystem = pattern.MatchWritingSystem,
+				UseRegularExpressions = pattern.UseRegularExpressions
+			};
+		}
+
+		// ----- Process / Transduce -----
+
+		// An LCModel/EncConverters-free view of one Unicode-to-Unicode IEncConverter for the bar/row-source: its
+		// display name and a Convert(text) transform. The bar and the headless ClerkBrowseRowSource speak this
+		// (they cannot reference SilEncConverters40); this product edge is the single seam that wraps the real
+		// converter. Convert delegates to IEncConverter.Convert, which is what the legacy TransduceMethod runs.
+		private sealed class EncConverterAdapter : IBulkTransduceConverter
+		{
+			private readonly IEncConverter _converter;
+			public EncConverterAdapter(string name, IEncConverter converter)
+			{
+				Name = name;
+				_converter = converter;
+			}
+			public string Name { get; }
+			public string Convert(string input) => _converter.Convert(input ?? string.Empty);
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> TransduceSourceColumns()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var cols = new List<BulkEditTarget>();
+			foreach (var c in m_avaloniaRowSource.CopySourceColumns())
+				cols.Add(new BulkEditTarget(c.Column, c.Label));
+			return cols;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> TransduceColumns()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.TransduceColumns())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<IBulkTransduceConverter> AvailableConverters()
+		{
+			// Mirror the legacy InitConverterCombo filter: only the Unicode-to-Unicode (and Unicode-encoding)
+			// converters from the EncConverters pool are relevant to a plain-text transduce. A pool that cannot
+			// be accessed yields an empty list (the bar then offers no converter and Apply stays disabled).
+			var result = new List<IBulkTransduceConverter>();
+			IEncConverters pool;
+			try
+			{
+				pool = new EncConverters();
+			}
+			catch
+			{
+				return result;
+			}
+			foreach (string convName in pool.Keys)
+			{
+				IEncConverter conv;
+				try
+				{
+					conv = pool[convName];
+				}
+				catch
+				{
+					continue;
+				}
+				if (conv != null
+					&& (conv.ConversionType == ConvType.Unicode_to_Unicode
+						|| conv.ConversionType == ConvType.Unicode_to_from_Unicode))
+					result.Add(new EncConverterAdapter(convName, conv));
+			}
+			return result;
+		}
+
+		/// <inheritdoc />
+		public IReadOnlyList<IBulkTransduceConverter> LaunchConverterSetup()
+		{
+			// Launch the EncConverters management dialog exactly as the legacy m_transduceSetupButton_Click does
+			// (AddCnvtrDlg over the owning WinForms form), then re-read the converter list so a newly-added
+			// converter appears in the picker. The dialog is a WinForms modal owned by this product edge; the
+			// Avalonia bar only invokes this hook. Inert when the overlay is not active or the app/help services
+			// are unavailable.
+			if (m_avaloniaRowSource == null || m_propertyTable == null)
+				return null;
+			try
+			{
+				var app = m_propertyTable.GetValue<IApp>("App");
+				var help = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				using (var dlg = new AddCnvtrDlg(help, app, null))
+					dlg.ShowDialog(FindForm());
+			}
+			catch
+			{
+				// A failure to open the dialog (missing services / EC pool) must not crash the bar; just return
+				// the current converter list so the picker stays usable.
+			}
+			return AvailableConverters();
+		}
+
+		/// <inheritdoc />
+		public void PreviewTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter, BulkCopyMode mode)
+			=> m_avaloniaBrowseHost?.PreviewBulkTransduce(sourceColumn, targetColumn, converter, mode, BulkCopySeparator);
+
+		/// <inheritdoc />
+		public void ApplyTransduce(int sourceColumn, int targetColumn, IBulkTransduceConverter converter, BulkCopyMode mode)
+			=> m_avaloniaBrowseHost?.ApplyBulkTransduce(sourceColumn, targetColumn, converter, mode, BulkCopySeparator);
+
+		// ----- Click Copy (interactive per-click copy of a clicked source cell into a target column) -----
+
+		/// <inheritdoc />
+		public IReadOnlyList<BulkEditTarget> ClickCopyTargets()
+		{
+			if (m_avaloniaRowSource == null)
+				return new List<BulkEditTarget>();
+			var targets = new List<BulkEditTarget>();
+			foreach (var t in m_avaloniaRowSource.ClickCopyTargets())
+				targets.Add(new BulkEditTarget(t.Column, t.Label));
+			return targets;
+		}
+
+		/// <inheritdoc />
+		public void ApplyClickCopy(int sourceColumn, int targetColumn, int rowIndex, int charOffset, ClickCopyMode mode,
+			string separator, bool append)
+			=> m_avaloniaBrowseHost?.ApplyClickCopy(sourceColumn, targetColumn, rowIndex, charOffset, mode, separator, append);
+
+		#endregion IBulkEditBarHost
 
 		/// <summary>
 		/// Gives access to the BrowseViewer which implements most of the functionality.

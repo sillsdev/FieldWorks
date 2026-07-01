@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>FwAvaloniaPreviewHost</AssemblyName>
+		<RootNamespace>SIL.FieldWorks.Common.FwAvalonia.PreviewHost</RootNamespace>
+		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<LangVersion>latest</LangVersion>
+		<OutputType>WinExe</OutputType>
+		<Nullable>disable</Nullable>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Prefer32Bit>false</Prefer32Bit>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\net48\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia\FwAvalonia.csproj" />
+		<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="FwAvaloniaPreviewHostTests/**/*.cs" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.MsaCreatorDialogView"
+             x:DataType="vm:MsaCreatorDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="360" MinHeight="220">
+	<!-- The reusable "Create New Grammatical Info." dialog (MSA-port Stage 5): a read-only lexical entry + read-only
+	     senses summary, then the grammatical-info group box, over OK/Cancel/Help. The MSA box is an owned native
+	     control injected as a code-behind child (set on DataContextChanged like InsertEntryDialogView). Visible text
+	     is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.MsaCreatorCreate}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="MsaCreator.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="MsaCreator.Cancel"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
+			        IsVisible="{Binding HasHelp}"
+			        Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="MsaCreator.Help"/>
+		</StackPanel>
+
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<StackPanel Spacing="{StaticResource DialogControlGap}">
+			<!-- Read-only lexical entry (the entry whose grammatical info is being created/edited). Flat display. -->
+			<StackPanel IsVisible="{Binding HasLexicalEntry}" Spacing="{StaticResource DialogLabelFieldGap}">
+				<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.MsaCreatorLexicalEntryLabel}"
+				           AutomationProperties.AutomationId="MsaCreator.LexicalEntryLabel"/>
+				<TextBlock Text="{Binding LexicalEntry}" FontWeight="SemiBold"
+				           AutomationProperties.AutomationId="MsaCreator.LexicalEntry"
+				           AutomationProperties.Name="{Binding LexicalEntry}"/>
+			</StackPanel>
+
+			<!-- Read-only senses summary (the senses sharing the MSA being edited; only shown when editing). -->
+			<StackPanel IsVisible="{Binding HasSenses}" Spacing="{StaticResource DialogLabelFieldGap}">
+				<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.MsaCreatorSensesLabel}"
+				           AutomationProperties.AutomationId="MsaCreator.SensesLabel"/>
+				<TextBlock Text="{Binding Senses}" TextWrapping="Wrap"
+				           AutomationProperties.AutomationId="MsaCreator.Senses"
+				           AutomationProperties.Name="{Binding Senses}"/>
+			</StackPanel>
+
+			<!-- Grammatical-info (MSA) section: the owned FwMsaGroupBox is injected here in code-behind. It supplies
+			     its own dense border, so this host carries only the section caption above it (no second frame). -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.MsaCreatorGrammaticalInfoLabel}"
+			           AutomationProperties.AutomationId="MsaCreator.GrammaticalInfoLabel"/>
+			<Border Name="PART_MsaSection"
+			        AutomationProperties.AutomationId="MsaCreator.MsaSection"/>
+		</StackPanel>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

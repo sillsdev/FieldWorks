@@ -36,10 +36,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly Dictionary<string, bool> m_plugins = new Dictionary<string, bool>();
 		private readonly Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem> m_channels;
 		private readonly Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem> m_QaChannels;
+		private const string UIModePropertyName = "UIMode";
+		private const string LegacyUIMode = "Legacy";
+		private const string NewUIMode = "New";
 		private const string HelpTopic = "khtpLexOptions";
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		private FwApplicationSettingsBase m_settings;
+		private GroupBox m_uiModeGroup;
+		private Label m_uiModeLabel;
+		private ComboBox m_uiModeChooser;
+		private Button m_restartToApplyButton;
 		private FwApp App => m_propertyTable?.GetValue<FwApp>("App") ?? m_helpTopicProvider as FwApp;
 
 		public LexOptionsDlg()
@@ -63,6 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				[UpdateSettings.Channels.Testing] = new UpdateChannelMenuItem(UpdateSettings.Channels.Testing, "Test Model Change",
 					"This option is only for testing related to model changes - This will not install a real FieldWorks update")
 			};
+			InitializeUIModeControls();
 	  }
 
 		/// <summary>
@@ -75,6 +83,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 			m_okToPingCheckBox.Checked = m_settings.Reporting.OkToPingBasicUsageData;
+			SelectUIMode(NormalizeUIMode(m_settings.UIMode));
+			UpdateRestartToApplyButtonState();
 			if (Platform.IsWindows)
 			{
 				if (m_settings.Update == null)
@@ -126,6 +136,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (m_mediator != null && (oldBehavior != updateSettings.Behavior || oldChannel != updateSettings.Channel))
 				{
 					restartRequired = true;
+				}
+			}
+
+			var oldUiMode = NormalizeUIMode(m_settings.UIMode);
+			var newUiMode = SelectedUIMode;
+			if (oldUiMode != newUiMode)
+			{
+				restartRequired = true;
+				m_settings.UIMode = newUiMode;
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty(UIModePropertyName, newUiMode, true);
+					m_propertyTable.SetPropertyPersistence(UIModePropertyName, false);
 				}
 			}
 
@@ -250,8 +273,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			Close();
 			if(restartRequired)
 			{
-				MessageBox.Show(Owner, LexTextControls.RestartToForSettingsToTakeEffect_Content, LexTextControls.RestartToForSettingsToTakeEffect_Title);
+				ShowRestartRequiredPrompt();
 			}
+		}
+
+		protected virtual void ShowRestartRequiredPrompt()
+		{
+			MessageBox.Show(Owner, LexTextControls.RestartToForSettingsToTakeEffect_Content, LexTextControls.RestartToForSettingsToTakeEffect_Title);
 		}
 
 		/// <summary>
@@ -344,6 +372,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_settings = new FwApplicationSettings();
+			if (string.IsNullOrWhiteSpace(m_settings.UIMode))
+				m_settings.UIMode = LegacyUIMode;
 			m_sUserWs = FwRegistryHelper.FieldWorksRegistryKey.GetValue(FwRegistryHelper.UserLocaleValueName, "en") as string;
 			m_sNewUserWs = m_sUserWs;
 			m_userInterfaceChooser.Init(m_sUserWs);
@@ -408,6 +438,150 @@ namespace SIL.FieldWorks.LexText.Controls
 			public override string ToString()
 			{
 				return m_name;
+			}
+		}
+
+		private void InitializeUIModeControls()
+		{
+			m_uiModeGroup = new GroupBox();
+			m_uiModeLabel = new Label();
+			m_uiModeChooser = new ComboBox();
+			m_restartToApplyButton = new Button();
+
+			m_uiModeGroup.Text = GetOptionString("UiModeGroupTitle", "Lexical Edit UI:");
+			m_uiModeGroup.Left = groupBox1.Left;
+			m_uiModeGroup.Top = groupBox1.Bottom + 6;
+			m_uiModeGroup.Width = groupBox1.Width;
+			m_uiModeGroup.Height = 68;
+			m_uiModeGroup.Name = "m_uiModeGroup";
+
+			m_uiModeLabel.AutoSize = true;
+			m_uiModeLabel.Left = 6;
+			m_uiModeLabel.Top = 22;
+			m_uiModeLabel.Text = GetOptionString("UiModeLabel", "Mode:");
+			m_uiModeLabel.Name = "m_uiModeLabel";
+
+			m_uiModeChooser.DropDownStyle = ComboBoxStyle.DropDownList;
+			m_uiModeChooser.Left = 6;
+			m_uiModeChooser.Top = 38;
+			m_uiModeChooser.Name = "m_uiModeChooser";
+			m_uiModeChooser.SelectedIndexChanged += m_uiModeChooser_SelectedIndexChanged;
+
+			m_restartToApplyButton.Name = "m_restartToApplyButton";
+			m_restartToApplyButton.Text = GetOptionString("UiModeRestartToApply", "Restart to apply");
+			m_restartToApplyButton.UseVisualStyleBackColor = true;
+			m_restartToApplyButton.Enabled = false;
+			m_restartToApplyButton.Click += m_restartToApplyButton_Click;
+
+			var buttonWidth = Math.Max(110, TextRenderer.MeasureText(m_restartToApplyButton.Text, m_restartToApplyButton.Font).Width + 12);
+			m_restartToApplyButton.Width = buttonWidth;
+			m_restartToApplyButton.Height = m_uiModeChooser.Height + 2;
+			m_restartToApplyButton.Top = 37;
+			m_uiModeChooser.Width = Math.Max(120, m_uiModeGroup.Width - 18 - buttonWidth - 6);
+			m_uiModeChooser.Items.Add(new UiModeMenuItem(LegacyUIMode, GetOptionString("UiModeLegacy", "Legacy")));
+			m_uiModeChooser.Items.Add(new UiModeMenuItem(NewUIMode, GetOptionString("UiModeNew", "New")));
+			m_restartToApplyButton.Left = m_uiModeChooser.Right + 6;
+
+			m_uiModeGroup.Controls.Add(m_uiModeLabel);
+			m_uiModeGroup.Controls.Add(m_uiModeChooser);
+			m_uiModeGroup.Controls.Add(m_restartToApplyButton);
+			m_tabInterface.Controls.Add(m_uiModeGroup);
+
+			var delta = m_uiModeGroup.Bottom + 8 - label4.Top;
+			if (delta > 0)
+			{
+				label4.Top += delta;
+				m_autoOpenCheckBox.Top += delta;
+				tabControl1.Height += delta;
+				m_btnOK.Top += delta;
+				m_btnCancel.Top += delta;
+				m_btnHelp.Top += delta;
+				Height += delta;
+			}
+		}
+
+		private string SelectedUIMode
+		{
+			get
+			{
+				var item = m_uiModeChooser.SelectedItem as UiModeMenuItem;
+				return item != null ? item.Mode : LegacyUIMode;
+			}
+		}
+
+		private void m_uiModeChooser_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateRestartToApplyButtonState();
+		}
+
+		private void m_restartToApplyButton_Click(object sender, EventArgs e)
+		{
+			if (!IsUIModeRestartPending)
+				return;
+
+			m_btnOK_Click(sender, e);
+		}
+
+		private void SelectUIMode(string mode)
+		{
+			var desired = NormalizeUIMode(mode);
+			foreach (var item in m_uiModeChooser.Items)
+			{
+				var uiMode = item as UiModeMenuItem;
+				if (uiMode != null && uiMode.Mode == desired)
+				{
+					m_uiModeChooser.SelectedItem = uiMode;
+					return;
+				}
+			}
+		}
+
+		private static string NormalizeUIMode(string mode)
+		{
+			return string.Equals(mode, NewUIMode, StringComparison.OrdinalIgnoreCase)
+				? NewUIMode
+				: LegacyUIMode;
+		}
+
+		private bool IsUIModeRestartPending
+		{
+			get
+			{
+				if (m_settings == null)
+					return false;
+
+				return NormalizeUIMode(m_settings.UIMode) != SelectedUIMode;
+			}
+		}
+
+		private void UpdateRestartToApplyButtonState()
+		{
+			if (m_restartToApplyButton == null)
+				return;
+
+			m_restartToApplyButton.Enabled = IsUIModeRestartPending;
+		}
+
+		private static string GetOptionString(string resourceName, string fallback)
+		{
+			var value = LexTextControls.ResourceManager.GetString(resourceName, LexTextControls.Culture);
+			return string.IsNullOrEmpty(value) ? fallback : value;
+		}
+
+		private sealed class UiModeMenuItem
+		{
+			public UiModeMenuItem(string mode, string display)
+			{
+				Mode = mode;
+				Display = display;
+			}
+
+			public string Mode { get; }
+			private string Display { get; }
+
+			public override string ToString()
+			{
+				return Display;
 			}
 		}
 	}

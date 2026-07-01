@@ -51,6 +51,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			// New-UI gate (Phase-1 §19b Stage 3): in New mode launch the Avalonia inflection-feature chooser (the
+			// LCModel-free FwFeatureStructureEditor hosted over OK/Cancel); Legacy mode keeps the WinForms
+			// MsaInflectionFeatureListDlg. Both rebuild the slice's IFsFeatStruc (null is valid — all features removed).
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				HandleChooserAvalonia();
+				return;
+			}
+
 			VectorReferenceLauncher vrl = null;
 			using (MsaInflectionFeatureListDlg dlg = new MsaInflectionFeatureListDlg())
 			{
@@ -147,6 +157,44 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// The New-UI inflection-feature chooser path (Phase-1 §19b Stage 3): resolve the owning object + flid from the
+		/// slice exactly as the legacy HandleChooser does, run the Avalonia <see cref="LcmInflectionFeatureChooserLauncher"/>,
+		/// and on OK re-init the launcher view with the rebuilt FS (null when all features were removed — valid).
+		///
+		/// PARITY: the legacy dialog also exposes a "Add features to &lt;POS&gt;" LinkLabel that is clickable
+		/// independent of OK/Cancel (<see cref="MsaInflectionFeatureListDlg.linkLabel1_LinkClicked"/>); clicking it
+		/// sets DialogResult.Yes and closes without touching the FS, and the legacy HandleChooser's Yes branch then
+		/// either (a) finds a sibling VectorReferenceLauncher on PartOfSpeechTags.kflidInflectableFeats in the same
+		/// WinForms DataTree and calls its HandleExternalChooser() (LT-5913 — stay in the same tool, just swap which
+		/// chooser dialog is open), or (b) when no such sibling slice exists (LT-7167 — this slice is showing in a
+		/// different context, e.g. the main data-entry view) posts a "FollowLink" FwLinkArgs("posEdit",
+		/// dlg.HighestPOS.Guid) via m_mediator to jump to the POS editor tool. Both branches are anchored to the
+		/// WinForms DataTree/Slice/VectorReferenceLauncher control-tree walk and the legacy dialog's always-visible
+		/// link affordance — neither has an Avalonia equivalent yet (the FeatureChooserDialogViewModel has no signal
+		/// for "switch tools", and the Avalonia dialog does not sit inside a WinForms DataTree to search). Adding this
+		/// UI affordance + navigation is deferred rather than silently dropped; the OK/Cancel-only contract here means
+		/// a user who would have used the "Add features to POS" link currently has no New-UI equivalent action.
+		/// </summary>
+		private void HandleChooserAvalonia()
+		{
+			Slice parentSlice = Slice;
+			IFsFeatStruc originalFs = m_obj as IFsFeatStruc;
+			int owningFlid = (parentSlice as MsaInflectionFeatureListDlgLauncherSlice).Flid;
+			ICmObject owner = originalFs == null ? parentSlice.Object : originalFs.Owner;
+			var helpProvider = m_propertyTable.GetValue<SIL.FieldWorks.Common.FwUtils.IHelpTopicProvider>(
+				"HelpTopicProvider", null);
+
+			var resultFs = LcmInflectionFeatureChooserLauncher.ShowForOwner(m_cache, m_mediator, m_propertyTable,
+				originalFs, owner, owningFlid, parentSlice.FindForm(), helpProvider, out var accepted);
+			if (!accepted)
+				return;
+			// dlg.FS will be null if all inflection features have been removed — a valid state for the slice.
+			m_obj = resultFs;
+			if (!IsDisposed)
+				m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, resultFs);
 		}
 
 		protected override void OnClick(Object sender, EventArgs arguments)

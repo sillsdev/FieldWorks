@@ -108,6 +108,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public bool OnMoveReversalindexEntry(object cmd)
 		{
+			// PARITY §19g: the reversal-entry GO/move dialog (ReversalEntryGoDlg : BaseGoDlg) is NOT migrated in
+			// this pass. It rides the shared BaseGoDlg search/navigate infrastructure (the same lane as the
+			// EntryGo dialog) and serves the reversal-index TOOL surface, which is its own larger migration slice
+			// rather than a bounded lexical-edit/browse dialog. Kept on the legacy WinForms path.
 			using (var dlg = new ReversalEntryGoDlg())
 			{
 				Slice slice = m_dataEntryForm.CurrentSlice;
