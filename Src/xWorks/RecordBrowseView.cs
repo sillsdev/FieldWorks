@@ -46,9 +46,12 @@ namespace SIL.FieldWorks.XWorks
 		///
 		/// </summary>
 		protected BrowseViewer m_browseViewer;
-		// Stage 3 product wiring: when UIMode=New for the lexiconBrowse tool, an Avalonia table is shown
-		// on top of the (still fully-functional) legacy BrowseViewer as a read-only mirror; selecting a
-		// row forwards to the clerk. Null and inert in the default (Legacy) path.
+		// Stage 3 product wiring: the mechanism (not yet activated for any tool in this PR) that would show
+		// an Avalonia table on top of the (still fully-functional) legacy BrowseViewer as a read-only
+		// mirror when UIMode=New; selecting a row forwards to the clerk. Currently INERT for every tool,
+		// including lexiconBrowse — LexicalEditSurfaceResolver.SupportedAvaloniaBrowseToolNames is empty in
+		// this base PR, so ResolveBrowse always resolves WinForms regardless of UIMode; a follow-up PR
+		// activates it per-tool by moving names into that array. Null under every currently-live tool.
 		private LexicalBrowseHostControl m_avaloniaBrowseHost;
 		private ClerkBrowseRowSource m_avaloniaRowSource;
 		// The column/cell/sort/filter seam the owned table sources from. In F1 this IS the live
@@ -385,6 +388,9 @@ namespace SIL.FieldWorks.XWorks
 			var toolName = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
 			var uiMode = m_propertyTable.GetStringProperty(
 				LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode);
+			// Gated by LexicalEditSurfaceResolver.SupportedAvaloniaBrowseToolNames (currently empty — the
+			// Avalonia browse table is a Phase-1 follow-up surface and stays inert here). The follow-up PR
+			// activates it by moving a tool name from Phase1FollowUpBrowseTools into that array.
 			if (LexicalEditSurfaceResolver.ResolveBrowse(null, uiMode, toolName) != LexicalEditSurface.Avalonia)
 				return;
 

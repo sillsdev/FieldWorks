@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
@@ -166,6 +168,66 @@ namespace LexTextControlsTests
 				.ToList();
 			Assert.That(resolved, Is.EqualTo(new ICmObject[] { _verb }),
 				"chosen guid keys resolve back to the live objects (empty key => no object)");
+		}
+
+		// ----- ResolveObjects: guid-key -> object resolution (Apply's post-modal step) -----
+		//
+		// LcmChooserDialogLauncher has no public static Show(...) entry point yet (unlike its sibling
+		// LcmInsertEntryDialogLauncher) -- its ctor and ResolveObjects are both private, and nothing in the
+		// product constructs an instance yet (P3 wiring). We reach them the same way
+		// LcmFeatureChooserLauncherTests reaches its private-ctor launchers: Activator.CreateInstance with
+		// NonPublic|Instance. That also exercises the ctor's field assignments; the extra GetMethod/Invoke
+		// step reaches the private ResolveObjects method itself, which the existing round-trip test above
+		// deliberately does NOT do (it replicates the logic inline, so it moves no coverage on the method).
+
+		private static LcmChooserDialogLauncher MakeLauncher(LcmCache cache) =>
+			(LcmChooserDialogLauncher)Activator.CreateInstance(
+				typeof(LcmChooserDialogLauncher),
+				BindingFlags.NonPublic | BindingFlags.Instance, null,
+				new object[]
+				{
+					/* list */ null, ChooserSelectionMode.Single, /* current */ null,
+					/* allowEmpty */ false, cache, /* mediator */ null, /* propertyTable */ null,
+					/* helpProvider */ null, /* prompt */ null, /* helpTopic */ null, /* hierarchical */ false
+				}, null);
+
+		private static IReadOnlyList<ICmObject> InvokeResolveObjects(LcmChooserDialogLauncher launcher,
+			IReadOnlyList<string> keys)
+		{
+			var method = typeof(LcmChooserDialogLauncher).GetMethod("ResolveObjects",
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			return (IReadOnlyList<ICmObject>)method.Invoke(launcher, new object[] { keys });
+		}
+
+		[Test]
+		public void ResolveObjects_DropsEmptyAndUnresolvableKeys_ButKeepsValidGuidsInOrder()
+		{
+			// Guards against a real regression: a stale/garbage key (e.g. an object deleted between the
+			// dialog opening and OK) must be silently dropped, not throw or corrupt the result -- otherwise
+			// accepting the chooser would crash instead of just omitting the vanished item.
+			var launcher = MakeLauncher(Cache);
+			var staleGuid = Guid.NewGuid().ToString(); // well-formed guid, but resolves to nothing
+			var keys = new[] { _verb.Guid.ToString(), string.Empty, "not-a-guid", staleGuid, _noun.Guid.ToString() };
+
+			var resolved = InvokeResolveObjects(launcher, keys);
+
+			Assert.That(resolved, Is.EqualTo(new ICmObject[] { _verb, _noun }),
+				"the empty (\"<Empty>\" clear) key, unparsable key, and stale/unresolvable guid are all " +
+				"dropped, leaving only the keys that resolve, in chosen-key order");
+		}
+
+		[Test]
+		public void ResolveObjects_NullCacheOrNullKeys_ReturnsEmptyRatherThanThrowing()
+		{
+			// Apply always calls ResolveObjects with whatever the VM snapshotted; a null cache (never wired)
+			// or a null key list must degrade to "nothing chosen" rather than a NullReferenceException.
+			var launcherWithoutCache = MakeLauncher(null);
+			Assert.That(InvokeResolveObjects(launcherWithoutCache, new[] { _verb.Guid.ToString() }), Is.Empty,
+				"no cache => no repository to resolve against, so the result is empty rather than throwing");
+
+			var launcherWithCache = MakeLauncher(Cache);
+			Assert.That(InvokeResolveObjects(launcherWithCache, null), Is.Empty,
+				"a null key list (e.g. before ChosenKeys is ever snapshotted) resolves to no objects");
 		}
 	}
 }

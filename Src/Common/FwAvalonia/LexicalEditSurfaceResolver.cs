@@ -48,7 +48,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// registered, so every list pane falls back to the legacy WinForms BrowseViewer even under UIMode=New.
 		// The table's view-layer code (LexicalBrowseView etc.) ships in base but stays dormant. The browse
 		// follow-up PR ACTIVATES it by moving its tool name(s) from Phase1FollowUpBrowseTools into this list.
-		// Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
+		// Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests. The gate this array feeds is
+		// consulted at Src/xWorks/RecordBrowseView.cs:TryActivateAvaloniaBrowse (via ResolveBrowse below).
 		private static readonly string[] SupportedAvaloniaBrowseToolNames =
 		{
 		};

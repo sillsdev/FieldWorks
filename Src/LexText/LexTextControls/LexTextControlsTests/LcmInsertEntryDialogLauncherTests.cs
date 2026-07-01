@@ -512,6 +512,52 @@ namespace LexTextControlsTests
 				"a stem MSA is unaffected by the inflection-feature apply");
 		}
 
+		// ----- ApplyInflectionFeatures null guards -----
+		//
+		// Both MSAPopupTreeManager.AddNewMsa/EditExistingMsa (the New-UI "Create New Grammatical Info." gates) call
+		// ApplyInflectionFeatures INSIDE a Cache.DomainDataByFlid.BeginUndoTask/EndUndoTask pair, between the sense's
+		// MSA assignment and the undo task's close. Every other test above only exercises the non-null happy path;
+		// if either guard here regressed to a plain dereference, a null sense/chosen/msa reaching this call would
+		// throw a NullReferenceException mid-undo-task, leaving the undo stack unbalanced (BeginUndoTask with no
+		// matching EndUndoTask) instead of the documented, safe no-op.
+
+		[Test]
+		public void ApplyInflectionFeatures_SenseOverload_NullSense_DoesNotThrow()
+		{
+			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
+			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, (ILexSense)null, chosen));
+		}
+
+		[Test]
+		public void ApplyInflectionFeatures_SenseOverload_NullChosen_DoesNotThrow()
+		{
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			_cantar.SensesOS.Add(sense);
+			sense.SandboxMSA = new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = _noun };
+
+			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, sense, null));
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.InstanceOf<IMoStemMsa>(),
+				"a null chosen payload leaves the sense's already-assigned MSA untouched");
+		}
+
+		[Test]
+		public void ApplyInflectionFeatures_MsaOverload_NullMsa_DoesNotThrow()
+		{
+			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
+			Assert.DoesNotThrow(() =>
+				LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(Cache, (IMoMorphSynAnalysis)null, chosen));
+		}
+
+		[Test]
+		public void ApplyInflectionFeatures_MsaOverload_NullCache_DoesNotThrow()
+		{
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			_cantar.MorphoSyntaxAnalysesOC.Add(msa);
+			var chosen = new FwSandboxMsa(FwMsaType.Inflectional, mainPosId: _verb.Guid.ToString());
+
+			Assert.DoesNotThrow(() => LcmInsertEntryDialogLauncher.ApplyInflectionFeatures(null, msa, chosen));
+		}
+
 		[Test]
 		public void BuildEntryComponents_NoChosenMsa_FallsBackToTheMorphTypeDefault()
 		{

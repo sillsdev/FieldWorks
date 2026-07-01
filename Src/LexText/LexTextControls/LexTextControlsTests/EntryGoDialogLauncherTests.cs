@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Globalization;
 using System.Linq;
 using FwAvaloniaDialogs;
@@ -90,6 +91,15 @@ namespace LexTextControlsTests
 			Assert.That(msa, Is.SameAs(expectedMsa), "the chosen entry resolves to its first MSA");
 		}
 
+		[Test]
+		public void LinkMsa_Show_NullCache_Throws()
+		{
+			// The guard runs before the modal is ever shown, so it is reachable without a dialog loop. If it were
+			// missing, a null cache would NRE deep inside the search/resolve plumbing instead of failing fast.
+			Assert.That(() => LcmLinkMsaDialogLauncher.Show(null, null, null, _casa, null),
+				Throws.TypeOf<ArgumentNullException>());
+		}
+
 		// ----- Link Allomorph -----
 
 		[Test]
@@ -121,11 +131,61 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void LinkAllomorph_Search_ExcludesStartingEntry()
+		{
+			// Same copy-paste-prone exclusion as Link MSA/Link Entry-or-Sense: if the starting entry were not
+			// excluded here, a user could link an entry's allomorph to itself.
+			var search = LcmLinkAllomorphDialogLauncher.BuildSearch(Cache, null, null, _casa);
+
+			var results = search("ca"); // matches casa + cantar, but casa is the starting entry
+			Assert.That(results.Select(r => r.Id), Is.EqualTo(new[] { Hvo(_cantar) }),
+				"only the other matching entry (cantar) remains; the starting entry is excluded");
+		}
+
+		[Test]
 		public void LinkAllomorph_ResolvesChosenEntryToItsLexemeForm()
 		{
 			var allomorph = LcmLinkAllomorphDialogLauncher.ResolveSelectedAllomorph(Cache, Hvo(_casa));
 			Assert.That(allomorph, Is.SameAs(_casa.LexemeFormOA),
 				"the chosen entry resolves to its (first, non-abstract) lexeme form");
+		}
+
+		[Test]
+		public void LinkAllomorph_ResolvesToFirstNonAbstractAlternate_WhenLexemeFormIsAbstract()
+		{
+			// Mirrors the legacy combo's non-abstract-forms rule: when the lexeme form itself is abstract, the
+			// resolution must fall through to the first non-abstract ALTERNATE rather than returning the (unusable)
+			// abstract lexeme form or null. If this fell through incorrectly, the wrong allomorph (or none) would
+			// be linked.
+			_casa.LexemeFormOA.IsAbstract = true;
+			var concreteAlternate = SIL.LCModel.DomainServices.MorphServices.MakeMorph(_casa,
+				TsStringUtils.MakeString("casas", Cache.DefaultVernWs));
+
+			var allomorph = LcmLinkAllomorphDialogLauncher.ResolveSelectedAllomorph(Cache, Hvo(_casa));
+
+			Assert.That(allomorph, Is.SameAs(concreteAlternate),
+				"resolution skips the now-abstract lexeme form and returns the first non-abstract alternate");
+		}
+
+		[Test]
+		public void LinkAllomorph_ResolveSelectedAllomorph_UnknownId_ReturnsNull()
+		{
+			// If the chosen id doesn't resolve to a live entry (e.g. stale/cancelled selection), resolution must
+			// return null rather than throwing, so callers can treat it as "nothing chosen".
+			Assert.That(LcmLinkAllomorphDialogLauncher.ResolveSelectedAllomorph(Cache, "0"), Is.Null);
+		}
+
+		[Test]
+		public void LinkAllomorph_HasConcreteAllomorph_NullEntry_ReturnsFalse()
+		{
+			Assert.That(LcmLinkAllomorphDialogLauncher.HasConcreteAllomorph(null), Is.False);
+		}
+
+		[Test]
+		public void LinkAllomorph_Show_NullCache_Throws()
+		{
+			Assert.That(() => LcmLinkAllomorphDialogLauncher.Show(null, null, null, _casa, null),
+				Throws.TypeOf<ArgumentNullException>());
 		}
 
 		// ----- Link Entry or Sense -----
@@ -213,6 +273,13 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void LinkEntryOrSense_Show_NullCache_Throws()
+		{
+			Assert.That(() => LcmLinkEntryOrSenseDialogLauncher.Show(null, null, null, _casa, null),
+				Throws.TypeOf<ArgumentNullException>());
+		}
+
+		[Test]
 		public void LinkEntryOrSense_EntryOnlyConsumers_StillBuildEntryOnlyInput()
 		{
 			// Proof that the default (entry-only) BuildInput is unchanged for Merge/AddAllomorph/LinkAllomorph/LinkMSA
@@ -278,6 +345,14 @@ namespace LexTextControlsTests
 				"a form matching an existing allomorph reuses it rather than creating a duplicate");
 			Assert.That(_perro.AllAllomorphs.Count(), Is.EqualTo(allomorphsBefore),
 				"no new allomorph is created when one already matches");
+		}
+
+		[Test]
+		public void AddAllomorph_Show_NullCache_Throws()
+		{
+			var tssForm = TsStringUtils.MakeString("nuevo", Cache.DefaultVernWs);
+			Assert.That(() => LcmAddAllomorphDialogLauncher.Show(null, null, null, tssForm, null),
+				Throws.TypeOf<ArgumentNullException>());
 		}
 	}
 }

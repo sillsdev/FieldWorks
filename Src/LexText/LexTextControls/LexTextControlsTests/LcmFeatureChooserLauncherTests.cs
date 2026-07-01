@@ -2,7 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Linq;
+using System.Reflection;
 using FwAvaloniaDialogs;
 using NUnit.Framework;
 using SIL.FieldWorks.LexText.Controls;
@@ -182,6 +184,85 @@ namespace LexTextControlsTests
 			Assert.That(pos, Is.SameAs(_verb), "the inflection-affix MSA's POS resolves (GetPosFromCmObjectAndFlid)");
 		}
 
+		// ----- Show guard clauses: a null cache must fail fast at the public entry point, before any modal is built ---
+
+		[Test]
+		public void InflectionShow_NullCache_ThrowsArgumentNullException()
+		{
+			Assert.That(() => LcmInflectionFeatureChooserLauncher.Show(null, null, null, _verb, null, null,
+					MoInflAffMsaTags.kflidInflFeats, null, null, out _),
+				Throws.ArgumentNullException,
+				"a null cache must fail fast instead of NRE-ing later when the launcher builds its state");
+		}
+
+		[Test]
+		public void PhonologicalShow_NullCache_ThrowsArgumentNullException()
+		{
+			Assert.That(() => LcmPhonologicalFeatureChooserLauncher.Show(null, null, null, null, null,
+					MoInflAffMsaTags.kflidInflFeats, null, null, out _),
+				Throws.ArgumentNullException,
+				"a null cache must fail fast instead of NRE-ing later when the launcher builds its state");
+		}
+
+		// ----- Apply: the launcher must wire its own deleteWhenEmpty flag correctly (LT-13596 vs phonological keep) ---
+
+		[Test]
+		public void InflectionApply_EmptyAssignments_DeletesTheFs()
+		{
+			var msa = MakeInflMsa(); // created inside the base's open UOW
+			m_actionHandler.EndUndoTask();
+			var nodes = FwFeatureStructureAdapter.BuildNodes(_verb);
+
+			// Seed an existing FS with a real value so there is something to delete.
+			IFsFeatStruc fs = null;
+			UndoableUnitOfWorkHelper.Do("u", "r", Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				fs = FwFeatureStructureAdapter.ApplyFeaturesToOwner(Cache, msa.InflFeatsOA, msa,
+					MoInflAffMsaTags.kflidInflFeats, nodes,
+					new[] { new FwFeatureValueAssignment(_tense.Guid.ToString(), _past.Guid.ToString()) },
+					deleteWhenEmpty: true);
+			});
+			Assert.That(fs, Is.Not.Null, "seeding the FS with a value must succeed before we can test emptying it");
+
+			var launcher = TestableInflectionLauncher(_verb, fs, msa, MoInflAffMsaTags.kflidInflFeats);
+			launcher.BuildInput(Cache, _verb, fs); // populates the launcher's captured node system, as BuildState would
+
+			var resultFs = InvokeApply(launcher, null);
+
+			Assert.That(resultFs, Is.Null,
+				"the inflection launcher's Apply must wire deleteWhenEmpty:true so an emptied FS is deleted (LT-13596); " +
+				"wiring it wrong leaves a stale empty FS behind");
+		}
+
+		[Test]
+		public void PhonologicalApply_EmptyAssignments_KeepsTheFs()
+		{
+			var msa = MakeInflMsa(); // reuse the MSA's inflection-feats slot purely as a generic FS-owning flid
+			m_actionHandler.EndUndoTask();
+			var nodes = FwFeatureStructureAdapter.BuildNodes(_verb);
+
+			// Seed an existing FS with a real value so there is something that could (wrongly) be deleted.
+			IFsFeatStruc fs = null;
+			UndoableUnitOfWorkHelper.Do("u", "r", Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				fs = FwFeatureStructureAdapter.ApplyFeaturesToOwner(Cache, msa.InflFeatsOA, msa,
+					MoInflAffMsaTags.kflidInflFeats, nodes,
+					new[] { new FwFeatureValueAssignment(_tense.Guid.ToString(), _past.Guid.ToString()) },
+					deleteWhenEmpty: true);
+			});
+			Assert.That(fs, Is.Not.Null, "seeding the FS with a value must succeed before we can test emptying it");
+
+			var launcher = TestablePhonologicalLauncher(fs, msa, MoInflAffMsaTags.kflidInflFeats);
+			launcher.BuildInput(Cache, fs); // populates the launcher's captured node system, as BuildState would
+
+			var resultFs = InvokeApply(launcher, null);
+
+			Assert.That(resultFs, Is.Not.Null,
+				"the phonological launcher's Apply must wire deleteWhenEmpty:false so an emptied FS is kept, matching " +
+				"the legacy PhonologicalFeatureChooserDlg_Closing behavior; wiring it like the inflection launcher would " +
+				"wrongly delete the FS");
+		}
+
 		// ----- test helpers: build the (private-ctor) launchers via reflection-free internal entry isn't available,
 		//        so use a tiny shim that exposes BuildInput by constructing through the public Show path is overkill;
 		//        instead we test BuildInput through a minimal internal-accessible wrapper. -----
@@ -199,5 +280,17 @@ namespace LexTextControlsTests
 				typeof(LcmPhonologicalFeatureChooserLauncher),
 				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null,
 				new object[] { Cache, null, null, null, fs, owner, flid }, null);
+
+		// Invokes the protected-override "Apply(state)" step directly (the write-back the base's Run() calls after an
+		// OK) without going through the modal Run()/ShowModal loop. _viewModel is left null by construction, so Apply
+		// falls back to FeatureChooserPayload.Empty (an empty-but-non-null assignment set) -- exactly the "user chose
+		// nothing" case this covers. Returns the launcher's ResultFs after Apply runs.
+		private static IFsFeatStruc InvokeApply(object launcher, object state)
+		{
+			var applyMethod = launcher.GetType().GetMethod("Apply", BindingFlags.NonPublic | BindingFlags.Instance);
+			applyMethod.Invoke(launcher, new[] { state });
+			var resultFsProperty = launcher.GetType().GetProperty("ResultFs");
+			return (IFsFeatStruc)resultFsProperty.GetValue(launcher);
+		}
 	}
 }

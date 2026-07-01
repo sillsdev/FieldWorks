@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FwAvaloniaDialogs;
@@ -274,6 +275,97 @@ namespace LexTextControlsTests
 			Assert.That(LcmAddNewSenseDialogLauncher.FirstAllomorphMorphTypeGuid(_casa),
 				Is.EqualTo(MoMorphTypeTags.kguidMorphStem.ToString()),
 				"a stem entry's morph type resolves to the stem guid");
+		}
+
+		// ----- FirstAllomorphMorphTypeGuid: the AlternateFormsOS loop itself (not just the fallback) -----
+
+		[Test]
+		public void FirstAllomorphMorphTypeGuid_PrefersTheFirstAllomorphsMorphTypeOverTheLexemeForm()
+		{
+			// The legacy MorphTypePreference loop walks AlternateFormsOS FIRST and only falls back to the lexeme
+			// form when there is no allomorph with a morph type. Only the fallback branch had coverage before this
+			// test; if the loop body regressed (e.g. skipped straight to the fallback), a prefix/suffix entry would
+			// silently open the Add-Sense MSA box seeded as a stem instead of the correct affix class.
+			var prefixType = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+				.GetObject(MoMorphTypeTags.kguidMorphPrefix);
+			var allomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			_casa.AlternateFormsOS.Add(allomorph);
+			allomorph.MorphTypeRA = prefixType;
+
+			Assert.That(LcmAddNewSenseDialogLauncher.FirstAllomorphMorphTypeGuid(_casa),
+				Is.EqualTo(prefixType.Guid.ToString()),
+				"the first allomorph's own morph type wins over the entry's lexeme-form (stem) morph type");
+		}
+
+		// ----- BuildInput: the slot provider (only ever wired, never invoked, before this test) -----
+
+		[Test]
+		public void BuildInput_FeedsTheSlotProvider()
+		{
+			// InflectionClassesForPos and InflectionFeaturesForPos are both exercised by name elsewhere, but
+			// SlotsForPos itself was never actually called — only ever asserted non-null via the MSA-section shape.
+			// A regression here (e.g. passing the wrong morph-type guid through the closure) would silently leave
+			// the affix "Fills Slot" column empty for a real verb, with no test failing.
+			var input = LcmAddNewSenseDialogLauncher.BuildInput(Cache, _casa, tssCitationForm: null);
+
+			var slots = input.SlotsForPos(_verb.Guid.ToString());
+
+			Assert.That(slots.Select(s => s.Id), Does.Contain(_tenseSlot.Guid.ToString()),
+				"the slot provider resolves the chosen POS's affix slots (the Insert-Entry BuildSlots delegate)");
+		}
+
+		// ----- Show: the null-argument guard clauses (throw before the modal ever runs) -----
+
+		[Test]
+		public void Show_NullCache_ThrowsWithoutRunningTheModal()
+		{
+			// The guard clauses at the top of Show run before the launcher is even constructed, so they are reachable
+			// without touching the modal loop. If this regressed (e.g. the null check were removed or reordered
+			// after construction), a null cache would NRE deep inside BuildState instead of failing fast at the
+			// public entry point.
+			Assert.That(() => LcmAddNewSenseDialogLauncher.Show(null, null, null, _casa, null, null),
+				Throws.TypeOf<ArgumentNullException>());
+		}
+
+		[Test]
+		public void Show_NullEntry_ThrowsWithoutRunningTheModal()
+		{
+			Assert.That(() => LcmAddNewSenseDialogLauncher.Show(Cache, null, null, null, null, null),
+				Throws.TypeOf<ArgumentNullException>());
+		}
+
+		// ----- CreateSense: the gloss loop's writing-system edge cases -----
+
+		[Test]
+		public void CreateSense_SkipsEmptyGlossAlternatives()
+		{
+			// The lift of AddNewSenseDlg_Closing sets each NON-empty gloss alternative; an empty row must be
+			// skipped rather than stomping the sense's gloss for that writing system with an empty string.
+			var analTag = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			var payload = new AddNewSensePayload(
+				new Dictionary<string, string> { [analTag] = "" },
+				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
+
+			var sense = LcmAddNewSenseDialogLauncher.CreateSense(Cache, _casa, payload);
+
+			Assert.That(sense.Gloss.get_String(Cache.DefaultAnalWs).Text, Is.Null.Or.Empty,
+				"an empty gloss alternative is skipped, not written as an empty string");
+		}
+
+		[Test]
+		public void CreateSense_UnresolvableWritingSystemTag_FallsBackToTheDefaultAnalysisWs()
+		{
+			// If the payload's ws tag doesn't resolve to a live writing system (ws == 0 — e.g. a stale/garbled tag),
+			// the create must still land the gloss somewhere sane (the default analysis WS) rather than silently
+			// dropping the user's typed gloss text.
+			var payload = new AddNewSensePayload(
+				new Dictionary<string, string> { ["zzz-bogus-ws-tag"] = "home" },
+				new FwSandboxMsa(FwMsaType.Stem, mainPosId: _noun.Guid.ToString()));
+
+			var sense = LcmAddNewSenseDialogLauncher.CreateSense(Cache, _casa, payload);
+
+			Assert.That(sense.Gloss.get_String(Cache.DefaultAnalWs).Text, Is.EqualTo("home"),
+				"an unresolvable ws tag falls back to the default analysis writing system rather than losing the gloss");
 		}
 	}
 }

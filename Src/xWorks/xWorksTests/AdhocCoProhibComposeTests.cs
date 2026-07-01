@@ -11,6 +11,12 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
+	/// Groundwork note: this composer-level test landed in the phase1-base spine PR, one PR ahead of where the
+	/// stack description says it belongs (avalonia-rule-formula-editor is a follow-up PR). The tool-level flip
+	/// (AdhocCoprohibEdit) stays correctly gated off via LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools
+	/// regardless of what this composer can already do — this file only proves the composer machinery, not that
+	/// the tool is live.
+	///
 	/// avalonia-rule-formula-editor (task 3.4) — pins how the ad-hoc co-prohibition records compose on the
 	/// Avalonia surface, to scope the remaining work for the `AdhocCoprohibEdit` tool. The "Others" reference
 	/// vector should be editable (generic editable-vector fix); the "Key" (FirstMorpheme/FirstAllomorph) is a

@@ -11,6 +11,12 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
+	/// Groundwork note: this composer-level test landed in the phase1-base spine PR, one PR ahead of where the
+	/// stack description says it belongs (avalonia-rule-formula-editor is a follow-up PR). The tool-level flip
+	/// (compoundRuleAdvancedEdit) stays correctly gated off via LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools
+	/// regardless of what this composer can already do — this file only proves the composer machinery, not that
+	/// the tool is live.
+	///
 	/// avalonia-rule-formula-editor (task 2.5) — the headed/non-headed compound rules (MoEndoCompound /
 	/// MoExoCompound) are the category-based "Compound Rules" the user sees (Name/Description/Active +
 	/// Left/Right Member + Result categories) — NOT the MoAffixProcess formula grid. They compose from

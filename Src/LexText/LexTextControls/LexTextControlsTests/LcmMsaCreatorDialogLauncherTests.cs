@@ -155,6 +155,63 @@ namespace LexTextControlsTests
 				Is.Null, "the create path (no original MSA) seeds no inflection class");
 		}
 
+		[Test]
+		public void InflectionClassIdFromExistingMsa_MsaHvoNotFound_IsNull()
+		{
+			// A nonzero but nonexistent hvo (e.g. an MSA that was since deleted) must fail safe, not throw.
+			Assert.That(LcmMsaCreatorDialogLauncher.InflectionClassIdFromExistingMsa(Cache, hvoOriginalMsa: 999999),
+				Is.Null, "an hvo that no longer resolves to a real MSA seeds no inflection class");
+		}
+
+		[Test]
+		public void InflectionClassIdFromExistingMsa_StemMsa_ReturnsItsInflectionClassGuid()
+		{
+			// The switch's IMoStemMsa branch — currently only exercised indirectly via BuildInput; this pins the
+			// resolver function's own real (non-null-guard) behavior directly.
+			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			_noun.InflectionClassesOC.Add(inflClass);
+			inflClass.Name.set_String(Cache.DefaultAnalWs, "Weak");
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			_cantar.SensesOS.Add(sense);
+			sense.SandboxMSA = new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = _noun };
+			var stemMsa = (IMoStemMsa)sense.MorphoSyntaxAnalysisRA;
+			stemMsa.InflectionClassRA = inflClass;
+
+			Assert.That(LcmMsaCreatorDialogLauncher.InflectionClassIdFromExistingMsa(Cache, stemMsa.Hvo),
+				Is.EqualTo(inflClass.Guid.ToString()), "the stem MSA's own inflection class resolves");
+		}
+
+		[Test]
+		public void InflectionClassIdFromExistingMsa_DerivStepMsa_ReturnsItsInflectionClassGuid()
+		{
+			// The switch's IMoDerivStepMsa branch has no existing coverage at all (BuildInput's own tests only ever
+			// seed a stem or infl MSA) — a derivational-step edit would silently seed no inflection class if this
+			// branch regressed.
+			var inflClass = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			_verb.InflectionClassesOC.Add(inflClass);
+			inflClass.Name.set_String(Cache.DefaultAnalWs, "Strong");
+
+			var derivStepMsa = Cache.ServiceLocator.GetInstance<IMoDerivStepMsaFactory>().Create();
+			_cantar.MorphoSyntaxAnalysesOC.Add(derivStepMsa);
+			derivStepMsa.InflectionClassRA = inflClass;
+
+			Assert.That(LcmMsaCreatorDialogLauncher.InflectionClassIdFromExistingMsa(Cache, derivStepMsa.Hvo),
+				Is.EqualTo(inflClass.Guid.ToString()), "the deriv-step MSA's own inflection class resolves");
+		}
+
+		[Test]
+		public void InflectionClassIdFromExistingMsa_MsaTypeWithNoInflectionClass_IsNull()
+		{
+			// The switch's default branch: an MSA class that carries no InflectionClassRA at all (e.g. an
+			// inflectional-affix MSA) must resolve to null, not throw a cast/member-access error.
+			var inflAffMsa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			_cantar.MorphoSyntaxAnalysesOC.Add(inflAffMsa);
+
+			Assert.That(LcmMsaCreatorDialogLauncher.InflectionClassIdFromExistingMsa(Cache, inflAffMsa.Hvo),
+				Is.Null, "an MSA type with no inflection-class concept seeds none, rather than failing");
+		}
+
 		// ----- inflection-feature feed + seed from an existing MSA (§19b Stage 2 edit path) -----
 
 		[Test]
@@ -190,6 +247,33 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void InflectionFeaturesFromExistingMsa_ExistingInflMsa_ReturnsRealAssignments()
+		{
+			// The resolver function's own real (non-null-guard) read path — only exercised indirectly via BuildInput
+			// until now, so a regression in the read (as opposed to the seed/feed wiring) would not have been caught.
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			_cantar.MorphoSyntaxAnalysesOC.Add(msa);
+			msa.PartOfSpeechRA = _verb;
+			var nodes = FwFeatureStructureAdapter.BuildNodes(_verb);
+			FwFeatureStructureAdapter.ApplyInflectionFeatures(Cache, msa, nodes,
+				new[] { new FwFeatureValueAssignment(_tenseFeature.Guid.ToString(), _pastValue.Guid.ToString()) });
+
+			var assignments = LcmMsaCreatorDialogLauncher.InflectionFeaturesFromExistingMsa(Cache, msa.Hvo);
+
+			Assert.That(assignments, Is.Not.Null.And.Count.EqualTo(1));
+			Assert.That(assignments[0].ClosedFeatureId, Is.EqualTo(_tenseFeature.Guid.ToString()));
+			Assert.That(assignments[0].ValueId, Is.EqualTo(_pastValue.Guid.ToString()),
+				"the persisted feature value round-trips through the resolver directly");
+		}
+
+		[Test]
+		public void InflectionFeaturesFromExistingMsa_MsaHvoNotFound_IsNull()
+		{
+			Assert.That(LcmMsaCreatorDialogLauncher.InflectionFeaturesFromExistingMsa(Cache, hvoOriginalMsa: 999999),
+				Is.Null, "an hvo that no longer resolves to a real MSA seeds no inflection features");
+		}
+
+		[Test]
 		public void BuildSensesSummary_NoOriginalMsa_IsEmpty()
 		{
 			Assert.That(LcmMsaCreatorDialogLauncher.BuildSensesSummary(Cache, _cantar, hvoOriginalMsa: 0),
@@ -209,6 +293,13 @@ namespace LexTextControlsTests
 			var summary = LcmMsaCreatorDialogLauncher.BuildSensesSummary(Cache, _cantar, msaHvo);
 			Assert.That(summary, Is.Not.Null.And.Not.Empty,
 				"the senses sharing the original MSA are summarized (the legacy m_fwtbSenses loop)");
+		}
+
+		[Test]
+		public void BuildSensesSummary_MsaHvoNotFound_IsNull()
+		{
+			Assert.That(LcmMsaCreatorDialogLauncher.BuildSensesSummary(Cache, _cantar, hvoOriginalMsa: 999999),
+				Is.Null, "an hvo that no longer resolves to a real MSA summarizes no senses");
 		}
 	}
 }

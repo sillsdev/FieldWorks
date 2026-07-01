@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Globalization;
 using System.Linq;
 using FwAvaloniaDialogs;
@@ -114,6 +115,22 @@ namespace LexTextControlsTests
 		{
 			Assert.That(EntryGoLauncherShared.ResolveEntry(Cache, null), Is.Null);
 			Assert.That(EntryGoLauncherShared.ResolveEntry(Cache, "not-an-id"), Is.Null);
+		}
+
+		// ----- Show's null-cache guard runs BEFORE the launcher is constructed or any modal is touched -----
+
+		[Test]
+		public void Show_NullCache_ThrowsArgumentNullException_BeforeConstructingLauncherOrShowingAModal()
+		{
+			// LcmGoToEntryDialogLauncher.Show checks "cache == null" first thing, before `new
+			// LcmGoToEntryDialogLauncher(...)` / Run / AvaloniaDialogHost.ShowModal ever execute, so this guard is
+			// reachable and provable without any Avalonia/WinForms modal machinery. If this guard regressed (e.g.
+			// were deleted or reordered after the launcher construction/Run call), GoLinkEntryDlgListener.OnGotoLexEntry
+			// callers with a null cache would instead crash with a cryptic NullReferenceException deep inside
+			// BuildState/BuildInput rather than a clear, named ArgumentNullException.
+			var ex = Assert.Throws<ArgumentNullException>(() =>
+				LcmGoToEntryDialogLauncher.Show(null, mediator: null, propertyTable: null, owner: null));
+			Assert.That(ex.ParamName, Is.EqualTo("cache"));
 		}
 	}
 }
