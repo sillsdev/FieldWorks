@@ -56,8 +56,8 @@ skill files changed.
   (winforms-mcp) proved unable to navigate FLEx's custom-drawn surfaces.
 - Built two non-UIA capture routes (details + recipes folded into the `fieldworks-winapp` skill):
   (1) **launch-per-tool** — `FieldWorks.exe "silfw://…&tool=<toolId>"` (guid-less) +
-  PrintWindow; `scripts/migration-capture/Capture-LegacyTools.ps1` captured **67/67** tool/list
-  screens. (2) **dialog harness** — an `[Explicit]` NUnit fixture
+  PrintWindow; `scripts/migration-capture/Capture-LegacyTools.ps1` (also on `phase1-docs`) captured
+  **67/67** tool/list screens. (2) **dialog harness** — an `[Explicit]` NUnit fixture
   (`LexTextControlsTests/ScreenshotHarnessTests.cs`) on the in-memory-cache base, constructing the
   legacy dialog (ctor + `SetDlgInfo`) and `DrawToBitmap`-ing it; proven on the feature-chooser dialog.
 - Learned: (1) **UIA2 can't see SilSidePane/OutlookBar/tool-lists or Views content, and has no

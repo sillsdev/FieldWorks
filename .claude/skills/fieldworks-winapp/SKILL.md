@@ -61,8 +61,10 @@ Capture the important states (initial, filled, error, multi-select), not just th
   `FieldWorks.exe "silfw://localhost/link?app=flex&database=<proj>&server=&tool=<toolId>"`
   (sole arg; **omit `guid`** — an empty `guid=` crashes `FwLinkArgs` parsing; `LinkListener`
   switches tools regardless of guid). Script: `scripts/migration-capture/Capture-LegacyTools.ps1`
-  (run under Windows PowerShell 5.1 — `System.Drawing` `Bitmap` isn't available in pwsh 7; relaunch
-  per tool + graceful `CloseMainWindow` to release the project lock). Captured 67/67 tool/list screens.
+  on the `phase1-docs` branch (this capture tooling lives there alongside the `Docs/migration/` docs
+  it produces, not on the migration code branches) (run under Windows PowerShell 5.1 —
+  `System.Drawing` `Bitmap` isn't available in pwsh 7; relaunch per tool + graceful `CloseMainWindow`
+  to release the project lock). Captured 67/67 tool/list screens.
 
   **Dialogs — piggyback an in-memory-cache test fixture (no standalone exe).** A standalone capture
   exe needs its own reg-free COM manifest + cache bootstrap and per-dialog `Mediator`/`PropertyTable`/
