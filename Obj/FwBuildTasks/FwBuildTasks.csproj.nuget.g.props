@@ -21,7 +21,7 @@
     <Import Project="$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.props" Condition="Exists('$(NuGetPackageRoot)/nunit3testadapter/5.2.0/build/net462/NUnit3TestAdapter.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgMicrosoft_Build_Framework Condition=" '$(PkgMicrosoft_Build_Framework)' == '' ">/home/dependabot/dependabot-updater/repo/packages/microsoft.build.framework/18.6.3</PkgMicrosoft_Build_Framework>
+    <PkgMicrosoft_Build_Framework Condition=" '$(PkgMicrosoft_Build_Framework)' == '' ">/home/dependabot/dependabot-updater/repo/packages/microsoft.build.framework/18.7.1</PkgMicrosoft_Build_Framework>
     <PkgSIL_BuildTasks Condition=" '$(PkgSIL_BuildTasks)' == '' ">/home/dependabot/dependabot-updater/repo/packages/sil.buildtasks/3.2.0</PkgSIL_BuildTasks>
   </PropertyGroup>
 </Project>
