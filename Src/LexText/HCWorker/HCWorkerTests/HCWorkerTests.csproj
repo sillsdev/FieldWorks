@@ -27,6 +27,13 @@
   <ItemGroup>
     <PackageReference Include="SIL.Machine" />
     <PackageReference Include="SIL.Machine.Morphology.HermitCrab" />
+    <!-- Required by the injected AssemblyInfoForUiIndependentTests (ICU/SLDR/registry-redirect/
+         singleton-cleanup test attributes), not by the tests themselves. -->
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ServiceModel" />
@@ -34,9 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <!-- HCWorker for HCWorkerService; ParserCore for the shared IHCWorkerService contract, the
-         DTOs, PipeBindingFactory, and HCParser's Form/Msa key constants. -->
+         DTOs, PipeBindingFactory, and HCParser's Form/Msa key constants; FwUtils for the injected
+         test-assembly attributes. -->
     <ProjectReference Include="../HCWorker.csproj" />
     <ProjectReference Include="../../ParserCore/ParserCore.csproj" />
+    <ProjectReference Include="../../../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">

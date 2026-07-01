@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Annotations;
 using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HCWorker
 {
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HCWorker
 					{
 						FormId = formId,
 						FormId2 = ParseNullableIntProperty(allomorph.Properties, HCParser.FormID2) ?? 0,
-						IsAffixProcessAllomorph = allomorph is MorphologicalRules.AffixProcessAllomorph,
+						IsAffixProcessAllomorph = allomorph is AffixProcessAllomorph,
 						FormStr = formStr,
 						Guessed = allomorph.Guessed,
 						MsaId = ParseIntProperty(allomorph.Morpheme.Properties, HCParser.MsaID),

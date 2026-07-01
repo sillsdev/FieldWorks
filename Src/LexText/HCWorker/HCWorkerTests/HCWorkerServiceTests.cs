@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using NUnit.Framework;
+using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
 using SIL.Machine.Morphology.HermitCrab;
@@ -238,7 +239,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HCWorker
 			};
 			var suffixAllomorph = new AffixProcessAllomorph
 			{
-				Lhs = { Pattern<Word, int>.New("1").Annotation(any).OneOrMore.Value },
+				Lhs = { Pattern<Word, ShapeNode>.New("1").Annotation(any).OneOrMore.Value },
 				Rhs = { new CopyFromInput("1"), new InsertSegments(table, "+d") }
 			};
 			const int suffixFormId = 777;

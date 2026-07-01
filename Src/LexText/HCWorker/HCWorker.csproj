@@ -41,7 +41,13 @@
     <ProjectReference Include="../ParserCore/ParserCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
+    <!-- The test project lives in a subdirectory; keep its sources out of this SDK-style project's
+         recursive glob (mirrors ParserCore excluding ParserCoreTests). -->
+    <Compile Remove="HCWorkerTests/**" />
+    <None Remove="HCWorkerTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
