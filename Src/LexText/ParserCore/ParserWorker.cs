@@ -28,6 +28,7 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SIL.FieldWorks.Common.FwUtils;
@@ -195,7 +196,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var batchTimer = Stopwatch.StartNew();
 			long summedWordMs = 0;
 
-			if (maxDegreeOfParallelism <= 1 || wordforms.Count == 1)
+			if (m_parser is HCParser hcParser && maxDegreeOfParallelism > 1 && wordforms.Count > 1)
+			{
+				// Route the whole batch through the out-of-process worker in one call instead of
+				// an in-process Parallel.ForEach over individual ParseWord calls - the worker
+				// parallelizes internally under Server GC with no artificial cap (RUSTIFY-
+				// fieldworks-worker-design.md §5), so FieldWorks no longer needs (or benefits
+				// from) its own per-wordform parallel loop for HC. If the batch call fails outright
+				// (design §6: after HCWorkerClient's own retry-once), this falls back to the
+				// per-wordform guarded loop below rather than losing the run.
+				long? batchWordMs = ParseAndUpdateWordformsBatch(hcParser, wordforms, priority, checkParser);
+				if (batchWordMs.HasValue)
+				{
+					summedWordMs = batchWordMs.Value;
+				}
+				else
+				{
+					var options = new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
+					Parallel.ForEach(wordforms, options, wordform =>
+					{
+						var wordTimer = Stopwatch.StartNew();
+						ParseAndUpdateWordformGuarded(wordform, priority, checkParser);
+						Interlocked.Add(ref summedWordMs, wordTimer.ElapsedMilliseconds);
+					});
+				}
+			}
+			else if (maxDegreeOfParallelism <= 1 || wordforms.Count == 1)
 			{
 				// Serial path: behaves exactly as the original one-wordform-at-a-time code,
 				// including letting unexpected exceptions propagate (so XAmple keeps its
@@ -209,8 +235,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			else
 			{
-				// Parallel path (thread-safe parsers only). Guard each wordform so one
-				// unexpected exception cannot abort the whole batch (Gotcha #6).
+				// Parallel path (non-HC thread-safe parsers only - HC now batches above). Guard
+				// each wordform so one unexpected exception cannot abort the whole batch (Gotcha #6).
 				var options = new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism };
 				Parallel.ForEach(wordforms, options, wordform =>
 				{
@@ -253,6 +279,124 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					// Nothing more we can safely do for this wordform.
 				}
 			}
+		}
+
+		/// <summary>
+		/// One batch item's normalized form(s), gathered under a single read-lock pass instead of
+		/// once per wordform (Src\LexText\ParserCore\ParserWorker.cs's original ParseAndUpdateWordform
+		/// re-acquired the read lock per wordform; the batch RPC below needs no lock at all, so
+		/// there is no reason to keep doing that here).
+		/// </summary>
+		private class BatchItem
+		{
+			public IWfiWordform Wordform;
+			public string Word;
+			public string LowerWord;
+			public ITsString LowerText;
+		}
+
+		/// <summary>
+		/// Design §5's bulk path: gathers every wordform's normalized form (and, same as
+		/// ParseAndUpdateWordform, its lowercase variant when different) into one word list, makes
+		/// a single HCParser.ParseWordsBatch WCF round trip for the whole list, then files results
+		/// exactly as ParseAndUpdateWordform would have per wordform. Returns null if the batch
+		/// call itself failed (caller falls back to the per-wordform path), otherwise the batch's
+		/// wall-clock ms (there is no longer a meaningful per-wordform parse-time split once one
+		/// RPC covers the whole batch - see design §7's note that this instrumentation shifts to
+		/// worker-parse-time/IPC-overhead/LCM-lock-time instead).
+		/// </summary>
+		private long? ParseAndUpdateWordformsBatch(HCParser hcParser, IList<IWfiWordform> wordforms, ParserPriority priority, bool checkParser)
+		{
+			var items = new List<BatchItem>(wordforms.Count);
+			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+			{
+				var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
+				foreach (IWfiWordform wordform in wordforms)
+				{
+					ITsString form = wordform.IsValidObject ? wordform.Form.VernacularDefaultWritingSystem : null;
+					if (form == null || string.IsNullOrEmpty(form.Text))
+					{
+						items.Add(new BatchItem { Wordform = wordform });
+						continue;
+					}
+
+					var item = new BatchItem
+					{
+						Wordform = wordform,
+						Word = normalizer.Normalize(form.Text.Replace(' ', '.'))
+					};
+
+					var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
+					string sLower = cf.ToLower(form.Text);
+					if (sLower != form.Text)
+					{
+						item.LowerWord = normalizer.Normalize(sLower.Replace(' ', '.'));
+						item.LowerText = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
+					}
+					items.Add(item);
+				}
+			}
+
+			string[] batchWords = items
+				.SelectMany(i => new[] { i.Word, i.LowerWord })
+				.Where(w => w != null)
+				.Distinct()
+				.ToArray();
+			if (batchWords.Length == 0)
+			{
+				// Every wordform was invalid/empty; nothing to send the worker, but still file
+				// per-wordform so clients learn the parser finished with each of them.
+				foreach (BatchItem item in items)
+					FileInvalidWordform(item.Wordform, priority, checkParser);
+				return 0;
+			}
+
+			var wordTimer = Stopwatch.StartNew();
+			IDictionary<string, ParseResult> resultsByWord;
+			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksParsingX, batchWords[0]), m_taskUpdateHandler))
+			{
+				resultsByWord = hcParser.ParseWordsBatch(batchWords);
+			}
+			wordTimer.Stop();
+
+			if (resultsByWord == null)
+				return null;
+
+			long perWordMs = items.Count > 0 ? wordTimer.ElapsedMilliseconds / items.Count : 0;
+			foreach (BatchItem item in items)
+			{
+				if (item.Word == null)
+				{
+					FileInvalidWordform(item.Wordform, priority, checkParser);
+					continue;
+				}
+
+				ParseResult result;
+				if (!resultsByWord.TryGetValue(item.Word, out result))
+					result = new ParseResult(string.Format(ParserCoreStrings.ksHCInvalidWordform, "", 0, "", ""));
+				result.ParseTime = perWordMs;
+
+				if (item.LowerWord != null && resultsByWord.TryGetValue(item.LowerWord, out ParseResult lcResult))
+				{
+					lcResult.ParseTime = perWordMs;
+					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
+					{
+						// Don't turn lcText into a wordform here.
+						// This avoids a problem with broadcasting PropChanged (cf. LT-22079).
+						m_parseFiler.ProcessParse(item.LowerText, 0, lcResult, checkParser);
+					}
+				}
+
+				m_parseFiler.ProcessParse(item.Wordform, priority, result, checkParser);
+			}
+
+			return wordTimer.ElapsedMilliseconds;
+		}
+
+		private void FileInvalidWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser)
+		{
+			var parseResult = new ParseResult(string.Format(ParserCoreStrings.ksHCInvalidWordform, "", 0, "", ""));
+			m_parseFiler.ProcessParse(wordform, priority, parseResult, checkParser);
 		}
 
 		public bool ParseAndUpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false, bool ensureUpToDate = true)

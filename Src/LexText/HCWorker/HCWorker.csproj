@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>HCWorker</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.WordWorks.Parser.HCWorker</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+    <!-- Server GC is the whole point of this out-of-process worker: it lets bulk HermitCrab
+         parsing scale to ~10-12x, which FieldWorks.exe itself can't offer because it runs
+         Workstation GC for UI responsiveness (a process-wide setting fixed at startup). See
+         RUSTIFY-fieldworks-worker-design.md. App.config carries <gcServer enabled="true"/>. -->
+    <AppConfig>App.config</AppConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.Machine" />
+    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ParserCore supplies the shared WCF contract (IHCWorkerService + DTOs), PipeBindingFactory,
+         and the HCParser Form/Msa/InflType key-string constants, so the worker and the FieldWorks
+         client can never drift. Mirrors the established pattern of the sibling HC exe
+         GenerateHCConfig, which also references ParserCore. The worker never touches LCM/XAmple. -->
+    <ProjectReference Include="../ParserCore/ParserCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
