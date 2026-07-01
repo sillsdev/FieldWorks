@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -24,6 +25,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			// The legacy DataTree's ShowObject (driven by EnsureLegacySurfaceInitialized) needs the
+			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
+			// give the in-memory test project a writable temp path before the inventory bootstrap.
+			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
+				Cache.ProjectId.Name + ".junk");
 		}
 
 		[SetUp]
@@ -34,6 +40,11 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
+			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
+			// EnsureLegacySurfaceInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
+			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
+			// throws an NRE once the idle-queued show actually runs.
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateLexiconTestData);
 		}
@@ -232,24 +243,7 @@ namespace SIL.FieldWorks.XWorks
 			return field.GetValue(target);
 		}
 
-		private void DrainMediatorAndIdleQueues()
-		{
-			var idleQueue = m_window.Mediator.IdleQueue;
-			var processIdle = idleQueue.GetType().GetMethod("Application_Idle", BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(processIdle, Is.Not.Null, "Expected to access IdleQueue.Application_Idle for xWorks test pumping.");
-
-			for (var iteration = 0; iteration < 8; iteration++)
-			{
-				((MockFwXWindow)m_window).ProcessPendingItems();
-				if (idleQueue.Count == 0 && m_window.Mediator.JobItems == 0)
-					break;
-
-				if (idleQueue.Count > 0)
-					processIdle.Invoke(idleQueue, new object[] { this, EventArgs.Empty });
-			}
-
-			Application.DoEvents();
-		}
+		// DrainMediatorAndIdleQueues is inherited from XWorksAppTestBase.
 
 		private void EnsureCurrentRecord(RecordEditView control)
 		{

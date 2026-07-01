@@ -273,22 +273,6 @@ namespace SIL.FieldWorks.XWorks
 			return field.GetValue(target);
 		}
 
-		private void DrainMediatorAndIdleQueues()
-		{
-			var idleQueue = m_window.Mediator.IdleQueue;
-			var processIdle = idleQueue.GetType().GetMethod("Application_Idle", BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(processIdle, Is.Not.Null);
-
-			for (var iteration = 0; iteration < 8; iteration++)
-			{
-				((MockFwXWindow)m_window).ProcessPendingItems();
-				if (idleQueue.Count == 0 && m_window.Mediator.JobItems == 0)
-					break;
-				if (idleQueue.Count > 0)
-					processIdle.Invoke(idleQueue, new object[] { this, EventArgs.Empty });
-			}
-
-			Application.DoEvents();
-		}
+		// DrainMediatorAndIdleQueues is inherited from XWorksAppTestBase.
 	}
 }
