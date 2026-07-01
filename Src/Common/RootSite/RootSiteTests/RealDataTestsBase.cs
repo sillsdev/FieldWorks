@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,10 +22,28 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 	[TestFixture]
 	public abstract class RealDataTestsBase
 	{
-		private const string ReusableProjectName = "integration_test_data";
-		private const string ProjectMutexName =
-			@"Local\FieldWorks.RealDataTests.integration_test_data";
+		// The project name must be unique per checkout, not just per test run: FwNewLangProjectModel's
+		// wizard-step validation (CheckForUniqueProjectName) checks name uniqueness against the shared,
+		// registry-resolved FwDirectoryFinder.ProjectsDirectory - a real, correct thing for the shipping
+		// "New Project" wizard to do, but it means a fixed name here would collide with whatever another
+		// git worktree of this repo already created there, even though DbDirectory() (below) redirects
+		// where THIS worktree's copy actually lives. Suffixing with a short hash of this worktree's own
+		// source root keeps the name stable across repeated runs in the same worktree (so the mutex still
+		// serializes correctly and the "reusable" project is actually reused) while guaranteeing it never
+		// collides with a sibling worktree's project of the same logical name.
+		private static readonly string ReusableProjectName = "integration_test_data_" + WorktreeSuffix();
+		private static readonly string ProjectMutexName =
+			@"Local\FieldWorks.RealDataTests." + ReusableProjectName;
 		private const string TestProjectSentinelFileName = ".fieldworks-real-data-test-project";
+
+		private static string WorktreeSuffix()
+		{
+			using (var sha = SHA1.Create())
+			{
+				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(FwDirectoryFinder.SourceDirectory));
+				return BitConverter.ToString(hash, 0, 4).Replace("-", string.Empty).ToLowerInvariant();
+			}
+		}
 
 		protected FwNewLangProjectModel m_model;
 		protected LcmCache Cache;
@@ -138,7 +158,18 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 		protected string DbDirectory(string name)
 		{
-			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
+			// Deliberately NOT FwDirectoryFinder.ProjectsDirectory: that resolves through a per-machine
+			// registry override (HKCU/HKLM RootDataDir), by design, so the shipping app shares one
+			// Projects folder machine-wide regardless of which install launches it. For this fixture
+			// that's a liability rather than a feature: every git worktree of this repo shares the same
+			// registry value, so concurrent/successive test runs from different worktrees collide on the
+			// same physical "integration_test_data" folder (one worktree's TestSetup/TestTearDown can
+			// delete or rewrite another's mid-run). Anchor to this checkout's own DistFiles/Projects
+			// instead - the same SourceDirectory-derived, registry-free pattern already used by other
+			// real-cache test fixtures in this repo (e.g. ConfiguredXHTMLGeneratorTests, RecordListTests).
+			var worktreeProjectsDirectory = Path.Combine(
+				Path.GetDirectoryName(FwDirectoryFinder.SourceDirectory), "DistFiles", "Projects");
+			return Path.Combine(worktreeProjectsDirectory, name);
 		}
 
 		private void AcquireProjectMutex()
