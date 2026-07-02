@@ -1,0 +1,2 @@
+name,imagePath,tool,menuPath,tabLabels,tabClicks
+fw-styles,Docs/migration/dialogs/images/fw-styles-before.png,lexiconEdit,Format|Styles...,general|font|paragraph|bullets|border,237:53|266:53|308:53|393:53|503:53
