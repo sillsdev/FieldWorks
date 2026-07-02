@@ -122,6 +122,14 @@ namespace SIL.FieldWorks
 		// supports usage reporting has been run.
 		private static bool s_noPreviousReportingSettings;
 		private static ILcmUI s_ui;
+		// Telemetry session baseline (openspec/changes/telemetry-migration-baseline): identifies
+		// this process's session for correlating its SessionStart/SessionEnd events, and guards
+		// against both the clean-shutdown path (Main's finally) and the crash paths
+		// (HandleUnhandledException/HandleTopLevelError) reporting a session-end for the same
+		// session - whichever runs first wins.
+		private static string s_sessionId;
+		private static DateTime s_sessionStartUtc;
+		private static int s_sessionEndReported;
 		private static FwApplicationSettings s_appSettings;
 		#endregion
 
@@ -232,6 +240,18 @@ namespace SIL.FieldWorks
 #endif
 				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback, clientType: DesktopAnalytics.ClientType.Mixpanel))
 				{
+					// Forward-compatible marker (openspec/changes/telemetry-migration-baseline):
+					// constant today since this codebase has only one UI framework; a future
+					// Avalonia surface sets a different value on the same application property so
+					// all events/exceptions become segmentable by UI framework without any change
+					// to how they're tracked.
+					Analytics.SetApplicationProperty("UiFramework", "WinForms");
+
+					s_sessionId = Guid.NewGuid().ToString();
+					s_sessionStartUtc = DateTime.UtcNow;
+					s_sessionEndReported = 0;
+					AnalyticsOutbox.Track("SessionStart", new Dictionary<string, string> { { "SessionId", s_sessionId } });
+					AnalyticsOutbox.FlushInBackground();
 
 					Logger.WriteEvent("Starting app");
 					SetGlobalExceptionHandler();
@@ -385,16 +405,28 @@ namespace SIL.FieldWorks
 			}
 			catch (ApplicationException ex)
 			{
+				TryReportSessionEnd("crashed");
 				MessageBox.Show(ex.Message, FwUtils.ksSuiteName);
 				return 2;
 			}
 			catch (Exception ex)
 			{
+				TryReportSessionEnd("crashed");
 				SafelyReportException(ex, s_activeMainWnd, true);
 				return 2;
 			}
 			finally
 			{
+				// Covers the normal exit path (including early "return 0"s inside the try block,
+				// which still run through here) exactly once, regardless of how many return
+				// points exist - unlike trying to place this at "the end of" the using block,
+				// which any early return would skip past. The atomic guard in
+				// TryReportSessionEnd means this is a no-op if a crash path already reported the
+				// session's end first (openspec/changes/telemetry-migration-baseline).
+				TryReportSessionEnd("clean");
+				// Best-effort, time-bounded so it never materially delays shutdown; anything not
+				// reached is left for the next launch's startup sweep (design.md D9).
+				AnalyticsOutbox.FlushSync(TimeSpan.FromSeconds(2));
 				StaticDispose();
 				if (Xpcom.IsInitialized)
 				{
@@ -1068,12 +1100,12 @@ namespace SIL.FieldWorks
 		{
 			if (e.ExceptionObject is Exception exception)
 			{
-				Analytics.ReportException(exception, GetInnerExceptionInfo(exception));
+				AnalyticsOutbox.ReportException(exception, GetInnerExceptionInfo(exception));
 				DisplayError(exception, e.IsTerminating);
 			}
 			else
 			{
-				Analytics.ReportException(new Exception("Unknown Exception"),
+				AnalyticsOutbox.ReportException(new Exception("Unknown Exception"),
 					new Dictionary<string, string>
 					{
 						{
@@ -1086,6 +1118,31 @@ namespace SIL.FieldWorks
 				DisplayError(new ApplicationException(string.Format("Got unknown exception: {0}",
 					e.ExceptionObject)), false);
 			}
+
+			// AppDomain.UnhandledException is (on the classic .NET Framework desktop CLR) always
+			// terminating in practice; e.IsTerminating is trusted here rather than assumed.
+			if (e.IsTerminating)
+				TryReportSessionEnd("crashed");
+		}
+
+		/// <summary>
+		/// Reports the SessionEnd telemetry event exactly once per process, regardless of which
+		/// of the (potentially concurrent) shutdown/crash paths reaches it first.
+		/// See openspec/changes/telemetry-migration-baseline/design.md D10.
+		/// </summary>
+		/// <param name="outcome">"clean" or "crashed"</param>
+		private static void TryReportSessionEnd(string outcome)
+		{
+			if (Interlocked.CompareExchange(ref s_sessionEndReported, 1, 0) != 0)
+				return; // already reported by a different path
+
+			var durationSeconds = (DateTime.UtcNow - s_sessionStartUtc).TotalSeconds;
+			AnalyticsOutbox.Track("SessionEnd", new Dictionary<string, string>
+			{
+				{ "SessionId", s_sessionId },
+				{ "outcome", outcome },
+				{ "duration", durationSeconds.ToString("F1", CultureInfo.InvariantCulture) }
+			});
 		}
 
 		/// <summary>
@@ -1129,7 +1186,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleTopLevelError(object sender, ThreadExceptionEventArgs eventArgs)
 		{
-			Analytics.ReportException(eventArgs.Exception, GetInnerExceptionInfo(eventArgs.Exception));
+			AnalyticsOutbox.ReportException(eventArgs.Exception, GetInnerExceptionInfo(eventArgs.Exception));
 			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
 				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
@@ -1141,6 +1198,11 @@ namespace SIL.FieldWorks
 			if (DisplayError(eventArgs.Exception, false))
 			{
 				FwApp.InCrashedState = true;
+				// Unlike HandleUnhandledException, Application.ThreadException doesn't always
+				// terminate the app (see the comment on SetGlobalExceptionHandler) - this branch
+				// is specifically the "we've decided to exit" case, so it's the correct place to
+				// report a crashed session-end, not the top of this method.
+				TryReportSessionEnd("crashed");
 				Application.Exit();
 
 				// just to be sure

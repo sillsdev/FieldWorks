@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using DesktopAnalytics;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -53,7 +52,7 @@ namespace SIL.FieldWorks.Common.Controls
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
-			Analytics.Track("CreateFromSRRepo", new Dictionary<string, string>
+			AnalyticsOutbox.Track("CreateFromSRRepo", new Dictionary<string, string>
 			{
 				{ "type", obtainedProjectType.ToString() },
 				{ "modelVersion", LcmCache.ModelVersion.ToString() },
