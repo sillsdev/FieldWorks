@@ -284,7 +284,7 @@ jobs:
 
       - name: Tag, Create Release, and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b
         with:
             target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
             tag_name: build-${{ env.FW_BUILD_NUMBER }}
