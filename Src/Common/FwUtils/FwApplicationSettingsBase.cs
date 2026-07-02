@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		public abstract ReportingSettings Reporting { get; set; }
 		public abstract UpdateSettings Update { get; set; }
+		public abstract string UIMode { get; set; }
 		public abstract string LocalKeyboards { get; set; }
 		public abstract string WebonaryUser { get; set; }
 		public abstract string WebonaryPass { get; set; }

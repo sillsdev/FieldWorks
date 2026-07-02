@@ -388,6 +388,23 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// ReSharper restore LocalizableElement
 				return true;
 			}
+
+			// Migrated Options dialog: in New (Avalonia) UI mode, show the owned Avalonia Options dialog
+			// instead of the WinForms LexOptionsDlg. Legacy mode keeps the WinForms dialog, so a New-mode
+			// issue can never affect the default surface. Mirrors the SaveSettings trigger below.
+			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains("LexOptionsDlg")
+				&& wndActive != null
+				&& AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(wndActive.PropTable.GetStringProperty("UIMode", "Legacy")))
+			{
+				var oldWsUser = Cache.WritingSystemFactory.UserWs;
+				var settings = wndActive.PropTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+				var optionsResult = AvaloniaOptionsDialogLauncher.Show(Cache, wndActive.Mediator,
+					wndActive.PropTable, settings, this, ActiveForm);
+				if (optionsResult.Accepted && (oldWsUser != Cache.WritingSystemFactory.UserWs || optionsResult.PluginsUpdated))
+					wndActive.SaveSettings();
+				return true;
+			}
+
 			try
 			{
 				try

@@ -28,6 +28,20 @@ When you need Avalonia API details, patterns, or examples, you MUST use Context7
   - Build: `./build.ps1`
   - Tests: `./test.ps1`
 
+## Repo skills (read before designing anything)
+The migration playbook and decided architecture live in skills under
+`.claude/skills/` (picked up by Copilot and Claude Code alike):
+- `fieldworks-winforms-to-avalonia-migration` — hub playbook; its
+  `references/architecture-patterns.md` and `references/seam-catalog.md`
+  document the decided patterns (typed IR, region composer, owned controls,
+  seams). Do not reinvent abstractions those files already settle.
+- `fieldworks-avalonia-ui` — control/XAML/headless-test conventions and
+  canonical code to imitate.
+- Supporting reviews: `fieldworks-ui-wiring-review`,
+  `fieldworks-uia2-parity-testing`, `fieldworks-semantic-render-parity`,
+  `fieldworks-localization-review`, `fieldworks-migration-scope-review`,
+  `fieldworks-managed-netfx-review`.
+
 ## Avalonia development guidelines
 - Prefer MVVM patterns that are idiomatic for Avalonia.
 - Keep UI logic out of XAML code-behind where practical; use view models and bindings.

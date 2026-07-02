@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksNoEntrySelected" xml:space="preserve">
+    <value>No lexical entry selected.</value>
+    <comment>Placeholder shown in the Avalonia lexical-edit surface when no record is selected.</comment>
+  </data>
+  <data name="ksEntryTypeUnsupported" xml:space="preserve">
+    <value>The new lexical edit view is currently available only for lexical entry records. Other record types use the classic view.</value>
+    <comment>Shown when the Avalonia lexical-edit surface is asked to display a non-LexEntry record.</comment>
+  </data>
+  <data name="ksUnsupportedEditor" xml:space="preserve">
+    <value>(this field type is not supported in the new view yet)</value>
+    <comment>Shown in place of a field whose editor has no Avalonia renderer.</comment>
+  </data>
+  <data name="ksEmbeddedObjectReadOnly" xml:space="preserve">
+    <value>This text contains formatting that cannot be edited in this view and is read-only here. Use the classic view to edit it.</value>
+    <comment>Tooltip on a read-only text row whose value carries content the new editor would corrupt on edit: an embedded object (ORC), or a run property (e.g. colour, offset, superscript) the new editor does not round-trip. Editing stays available in the classic view.</comment>
+  </data>
+  <data name="ksAudioRecordingReadOnly" xml:space="preserve">
+    <value>(audio recording — play or record it in the classic view)</value>
+    <comment>Placeholder shown in a read-only text row for a voice/audio (IsVoice) writing system: the new view cannot yet play or record audio, so the row is read-only and the data stays visible/diagnosable rather than a blank editable box that would corrupt the recording on edit.</comment>
+  </data>
+  <data name="ksSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>Commit button of the Avalonia lexical-edit region editor.</comment>
+  </data>
+  <data name="ksCancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Cancel button of the Avalonia lexical-edit region editor.</comment>
+  </data>
+  <data name="ksUndoEditEntry" xml:space="preserve">
+    <value>Undo Edit Entry</value>
+    <comment>Undo label for the fenced lexical-edit session; appears in the Edit menu.</comment>
+  </data>
+  <data name="ksRedoEditEntry" xml:space="preserve">
+    <value>Redo Edit Entry</value>
+    <comment>Redo label for the fenced lexical-edit session; appears in the Edit menu.</comment>
+  </data>
+  <data name="ksUndoChangeToFormat" xml:space="preserve">
+    <value>Undo change to {0}</value>
+    <comment>Field-specific undo label for the fenced lexical-edit session when a single field's edit opened it; {0} is the field label (e.g. "Undo change to Gloss"). Mirrors the legacy DetailControls ksUndoChangeTo wording.</comment>
+  </data>
+  <data name="ksRedoChangeToFormat" xml:space="preserve">
+    <value>Redo change to {0}</value>
+    <comment>Field-specific redo label for the fenced lexical-edit session; {0} is the field label (e.g. "Redo change to Gloss"). Mirrors the legacy DetailControls ksRedoChangeTo wording.</comment>
+  </data>
+  <data name="ksLexemeFormRequired" xml:space="preserve">
+    <value>A Lexeme Form (or Citation Form) is required.</value>
+    <comment>Validation message when an entry would be saved without any lexeme/citation form text.</comment>
+  </data>
+  <data name="ksEditDiscardedInvalid" xml:space="preserve">
+    <value>Your changes were not saved because the entry is not valid:
+
+{0}
+
+The previous values have been restored. Switch to the classic view to finish the edit.</value>
+    <comment>Warning shown when navigating away from (or closing) an entry whose pending edit fails validation; the invalid edit is rolled back rather than silently lost. {0} is the validation reason(s), one per line.</comment>
+  </data>
+  <data name="ksEditDiscardedInvalidTitle" xml:space="preserve">
+    <value>Changes Not Saved</value>
+    <comment>Title of the warning shown when a pending lexical edit was rolled back on navigate because it failed validation.</comment>
+  </data>
+  <data name="ksLexicalEditRegionName" xml:space="preserve">
+    <value>Lexical Edit Region</value>
+    <comment>Screen-reader name of the Avalonia lexical-edit region surface.</comment>
+  </data>
+  <data name="ksAvaloniaHostName" xml:space="preserve">
+    <value>Lexical Edit (new view)</value>
+    <comment>Screen-reader name of the WinForms control hosting the Avalonia surface.</comment>
+  </data>
+  <data name="ksGhostAddPrompt" xml:space="preserve">
+    <value>Click here to add {0}.</value>
+    <comment>Ghost add-prompt line shown for an empty field section; {0} is the field label.</comment>
+  </data>
+  <data name="ksCopy" xml:space="preserve">
+    <value>Copy</value>
+    <comment>Context-menu command copying a field's text.</comment>
+  </data>
+  <data name="ksRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ksAddItem" xml:space="preserve">
+    <value>Add item</value>
+  </data>
+  <data name="ksSearchPrompt" xml:space="preserve">
+    <value>Type to search</value>
+  </data>
+  <data name="ksAddSelected" xml:space="preserve">
+    <value>Add</value>
+    <comment>Confirm button of the multi-select reference-vector add picker; commits all checked items in one step.</comment>
+  </data>
+  <data name="ksChorusAddNote" xml:space="preserve">
+    <value>Add note</value>
+    <comment>Add-note affordance of the Chorus Send/Receive notes bar (D2).</comment>
+  </data>
+  <data name="ksChorusAddMessage" xml:space="preserve">
+    <value>Add message</value>
+    <comment>Watermark of the append-message editor in a Chorus note's flyout.</comment>
+  </data>
+  <data name="ksChorusOk" xml:space="preserve">
+    <value>OK</value>
+    <comment>Confirm button of the Chorus notes flyouts.</comment>
+  </data>
+  <data name="ksChorusResolved" xml:space="preserve">
+    <value>Resolved</value>
+    <comment>Resolve (close/reopen) toggle of a Chorus note's flyout.</comment>
+  </data>
+  <data name="ksLaunchDialog" xml:space="preserve">
+    <value>Edit in dialog</value>
+    <comment>Accessible name of the "..." dialog-launcher button on a launcher row (D4).</comment>
+  </data>
+  <data name="ksLauncherUnavailable" xml:space="preserve">
+    <value>This field is edited in a dialog that is not available in this view.</value>
+    <comment>Tooltip of the disabled launcher button when the host provides no dialog service (D4).</comment>
+  </data>
+  <data name="ksFieldSettings" xml:space="preserve">
+    <value>{0} settings</value>
+    <comment>Accessible name of the hover-revealed settings gear on a chooser field; {0} is the field label (e.g. "Morph Type settings").</comment>
+  </data>
+  <data name="ksEditListFormat" xml:space="preserve">
+    <value>Edit the {0} list</value>
+    <comment>Tooltip/label of a configure gear whose list-editor jump was derived from the row's possibility list; {0} is the list name (mirrors the legacy chooser's "Edit the … list" links).</comment>
+  </data>
+  <data name="ksLexemeFormLabel" xml:space="preserve">
+    <value>Lexeme Form</value>
+    <comment>Label of the lexeme-form row in the first-slice entry view (compiled label override and authored fallback).</comment>
+  </data>
+  <data name="ksMorphTypeLabel" xml:space="preserve">
+    <value>Morph Type</value>
+    <comment>Label of the morph-type row in the first-slice entry view (authored fallback).</comment>
+  </data>
+  <data name="ksGlossLabel" xml:space="preserve">
+    <value>Gloss</value>
+    <comment>Label of the gloss row in the first-slice entry view (authored fallback).</comment>
+  </data>
+  <data name="ksFieldOptionsMenu" xml:space="preserve">
+    <value>Field options</value>
+    <comment>Accessible name and tooltip of the hover-revealed "⋮" (vertical ellipsis) button on a field row that opens the field's options menu (Field Visibility / Move Field / Help).</comment>
+  </data>
+  <data name="ksCharacterStyle" xml:space="preserve">
+    <value>Character style</value>
+    <comment>Accessible name and tooltip of the character-style picker affordance on an editable text row; opens the list of the project's character styles to apply to the current selection.</comment>
+  </data>
+  <data name="ksDefaultCharacterStyle" xml:space="preserve">
+    <value>Default (no style)</value>
+    <comment>The leading entry of the character-style picker; selecting it clears any named character style on the current selection, reverting it to the paragraph's default.</comment>
+  </data>
+  <data name="ksWritingSystem" xml:space="preserve">
+    <value>Writing System</value>
+    <comment>Accessible name and tooltip of the writing-system picker affordance on an editable text row (Phase 4): opens the list of the project's writing systems to retag the current selection.</comment>
+  </data>
+  <data name="ksAddParagraph" xml:space="preserve">
+    <value>Add paragraph</value>
+    <comment>Accessible name and tooltip of the per-paragraph "add paragraph" affordance in an editable structured-text (StText) field.</comment>
+  </data>
+  <data name="ksDeleteParagraph" xml:space="preserve">
+    <value>Delete paragraph</value>
+    <comment>Accessible name and tooltip of the per-paragraph "delete paragraph" affordance in an editable structured-text (StText) field.</comment>
+  </data>
+  <data name="ksParagraphStyle" xml:space="preserve">
+    <value>Paragraph Style</value>
+    <comment>Accessible name and tooltip of the per-paragraph style picker in an editable structured-text (StText) field; opens the list of the project's paragraph styles to apply to this paragraph.</comment>
+  </data>
+  <data name="ksDefaultParagraphStyle" xml:space="preserve">
+    <value>Default</value>
+    <comment>The leading entry of the paragraph-style picker; selecting it clears any named paragraph style on the paragraph, reverting it to the default.</comment>
+  </data>
+  <data name="ksSelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
+    <comment>Accessible name for the browse table's check-all checkbox column.</comment>
+  </data>
+  <data name="ksConfigureColumnsMenu" xml:space="preserve">
+    <value>Configure Columns...</value>
+    <comment>Browse header context-menu entry that opens the Configure Columns dialog.</comment>
+  </data>
+  <data name="ksFilterShowAll" xml:space="preserve">
+    <value>Show All</value>
+    <comment>Browse filter-row preset that clears a column's blank-aware filter (mirrors the legacy FilterBar "Show All").</comment>
+  </data>
+  <data name="ksFilterBlanks" xml:space="preserve">
+    <value>Blanks</value>
+    <comment>Browse filter-row preset narrowing a column to rows whose cell is blank.</comment>
+  </data>
+  <data name="ksFilterNonBlanks" xml:space="preserve">
+    <value>Non-blanks</value>
+    <comment>Browse filter-row preset narrowing a column to rows whose cell is non-blank.</comment>
+  </data>
+  <data name="ksBulkEditListChoice" xml:space="preserve">
+    <value>List Choice</value>
+    <comment>Bulk-edit bar tab: set a list/possibility reference (e.g. Morph Type) across the checked rows.</comment>
+  </data>
+  <data name="ksBulkEditTarget" xml:space="preserve">
+    <value>Target:</value>
+    <comment>Bulk-edit bar label for the target-column dropdown.</comment>
+  </data>
+  <data name="ksBulkEditPreview" xml:space="preserve">
+    <value>Preview</value>
+    <comment>Bulk-edit bar button: preview the chosen value across the checked rows without changing data.</comment>
+  </data>
+  <data name="ksBulkEditApply" xml:space="preserve">
+    <value>Apply</value>
+    <comment>Bulk-edit bar button: apply the chosen value across the checked rows as one undoable change.</comment>
+  </data>
+  <data name="ksBulkEditBarName" xml:space="preserve">
+    <value>Bulk Edit</value>
+    <comment>Accessible name of the bulk-edit bar panel.</comment>
+  </data>
+  <data name="ksBulkCopyTab" xml:space="preserve">
+    <value>Bulk Copy</value>
+    <comment>Bulk-edit bar tab: copy one column's text into another across the checked rows.</comment>
+  </data>
+  <data name="ksBulkCopySource" xml:space="preserve">
+    <value>Source:</value>
+    <comment>Bulk Copy tab label for the source-column dropdown (the column whose text is copied from).</comment>
+  </data>
+  <data name="ksBulkCopyAppend" xml:space="preserve">
+    <value>Append</value>
+    <comment>Bulk Copy mode: append the source to a non-empty target (with a separator), else set it directly.</comment>
+  </data>
+  <data name="ksBulkCopyReplace" xml:space="preserve">
+    <value>Replace</value>
+    <comment>Bulk Copy mode: the source overwrites the target unconditionally.</comment>
+  </data>
+  <data name="ksBulkCopyDoNothing" xml:space="preserve">
+    <value>Don't overwrite</value>
+    <comment>Bulk Copy mode: only fill empty targets; leave targets that already have text untouched.</comment>
+  </data>
+  <data name="ksBulkClearTab" xml:space="preserve">
+    <value>Clear</value>
+    <comment>Bulk-edit bar tab: empty a target text column (e.g. Lexeme Form) across the checked rows.</comment>
+  </data>
+  <data name="ksBulkReplaceTab" xml:space="preserve">
+    <value>Bulk Replace</value>
+    <comment>Bulk-edit bar tab: run a find/replace over a target text column across the checked rows.</comment>
+  </data>
+  <data name="ksBulkReplaceSetup" xml:space="preserve">
+    <value>Setup…</value>
+    <comment>Bulk Replace tab button: opens the Find/Replace pattern dialog to configure the replace.</comment>
+  </data>
+  <data name="ksBulkReplaceNoPattern" xml:space="preserve">
+    <value>(no pattern set)</value>
+    <comment>Bulk Replace summary placeholder shown before the user configures a find/replace pattern.</comment>
+  </data>
+  <data name="ksBrowseSortFromEnd" xml:space="preserve">
+    <value>Sort From End</value>
+    <comment>Browse header context-menu toggle: suffix-oriented sort on the reversed text of the column.</comment>
+  </data>
+  <data name="ksBrowseSortByLength" xml:space="preserve">
+    <value>Sort By Length</value>
+    <comment>Browse header context-menu toggle (shown only for columns whose spec allows it): sort by cell length.</comment>
+  </data>
+  <data name="ksBrowseFilterMoreThanOneLine" xml:space="preserve">
+    <value>More Than One Line</value>
+    <comment>Browse filter-row preset for multi-paragraph columns: rows whose cell spans more than one line.</comment>
+  </data>
+  <data name="ksBrowseFilterExactlyOneLine" xml:space="preserve">
+    <value>Exactly One Line</value>
+    <comment>Browse filter-row preset for multi-paragraph columns: rows whose cell is exactly one (non-empty) line.</comment>
+  </data>
+  <data name="ksBrowseFilterYes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Browse filter-row preset (exact match) for Yes/No columns.</comment>
+  </data>
+  <data name="ksBrowseFilterNo" xml:space="preserve">
+    <value>No</value>
+    <comment>Browse filter-row preset (exact match) for Yes/No columns.</comment>
+  </data>
+  <data name="ksBrowseFilterZero" xml:space="preserve">
+    <value>Zero</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is exactly zero.</comment>
+  </data>
+  <data name="ksBrowseFilterGreaterThanZero" xml:space="preserve">
+    <value>Greater Than Zero</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is greater than zero.</comment>
+  </data>
+  <data name="ksBrowseFilterGreaterThanOne" xml:space="preserve">
+    <value>Greater Than One</value>
+    <comment>Browse filter-row preset for integer columns: rows whose value is greater than one.</comment>
+  </data>
+</root>

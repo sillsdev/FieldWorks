@@ -65,6 +65,7 @@
 			<indent>
 				<part ref="Type" label="Type" />
 				<part ref="DiscussionAllA" label="Discussion" />
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 				<part ref="Examples" param="Notes"/>
 			</indent>
 		</part>
@@ -75,6 +76,7 @@
 		<part ref="ExampleAllV" label="Example" expansion="expanded" menu="mnuDataTree-Example">
 			<indent>
 				<part ref="TranslationsAllA" expansion="expanded" param="Translation"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
@@ -84,6 +86,7 @@
 		<part ref="Thumbnail" label="Thumbnail" visibility="never"/>
 		<part ref="CaptionA" label="Caption"/>
 		<part ref="FileName" label="File"/>
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 		<part ref="PublishIn" label="Publish Picture In"/>
 	</layout>
 	<layout class="CmFile" type="detail" name="Normal">
@@ -100,12 +103,14 @@
 		<part ref="TranslationAllA">
 			<indent>
 				<part ref="Type"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
 
 	<layout class="CmTranslation" type="detail" name="Translation">
 		<part ref="TranslationAllA" />
+		<part ref="_CustomFieldPlaceholder" customFields="here" />
 	</layout>
 
 	<layout class="LexReference" type="detail" name="ShowSingleReference">

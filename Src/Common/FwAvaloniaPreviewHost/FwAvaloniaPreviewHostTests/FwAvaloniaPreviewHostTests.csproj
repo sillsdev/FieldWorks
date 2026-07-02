@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+		<OutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\net48\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="UIAutomationClient" />
+		<Reference Include="UIAutomationTypes" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvaloniaPreviewHost.csproj" />
+		<Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+
+</Project>

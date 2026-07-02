@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 
@@ -134,26 +135,43 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			ILexRefType lrt = (ILexRefType)m_obj.Owner;
 			int type = lrt.MappingType;
+			bool useLinkDlg = false, sensesOnly = false, allowSenses = false;
+			switch ((LexRefTypeTags.MappingTypes)type)
+			{
+				case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					useLinkDlg = true; sensesOnly = true;
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					useLinkDlg = true; allowSenses = true;
+					break;
+			}
+			//This method is only called when we are Replacing the tree root of a Whole/Part lexical relation
+			var sTitle = String.Format(LexEdStrings.ksReplaceXEntry);
+
+			// New-UI gate (mirrors the EntrySequence gate): the LinkEntryOrSense relations use the Avalonia
+			// Choose-Lexical-Entry-or-Sense dialog in New mode; the entry-only kmtEntryTree keeps its EntryGoDlg.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (useLinkDlg && AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, null,
+					FindForm(), "khtpChooseLexicalRelationAdd", helpProvider, allowSenses: allowSenses,
+					sensesOnly: sensesOnly, title: sTitle, okButtonText: LexEdStrings.ks_Replace);
+				if (chosen != null)
+					AddItem(chosen);
+				return;
+			}
+
 			BaseGoDlg dlg = null;
 			try
 			{
-				switch ((LexRefTypeTags.MappingTypes)type)
-				{
-					case LexRefTypeTags.MappingTypes.kmtSenseTree:
-						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
-						break;
-					case LexRefTypeTags.MappingTypes.kmtEntryTree:
-						dlg = new EntryGoDlg();
-						break;
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-						dlg = new LinkEntryOrSenseDlg();
-						break;
-				}
+				dlg = useLinkDlg ? (BaseGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
+				if (useLinkDlg)
+					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = String.Format(LexEdStrings.ksReplaceXEntry), m_btnText = LexEdStrings.ks_Replace };
-				//This method is only called when we are Replacing the
-				//tree root of a Whole/Part lexical relation
+				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Replace };
 				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)

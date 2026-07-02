@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
@@ -53,6 +54,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
+			// New-UI gate (mirrors the Merge / Insert Entry / Options / EntrySequence gates): in New mode launch the
+			// Avalonia Choose-Lexical-Entry-or-Sense dialog locked to senses (the legacy SelectSensesOnly); Legacy
+			// mode keeps the WinForms LinkEntryOrSenseDlg. Both paths AddItem the chosen sense the same way.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				var chosen = LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, m_mediator, m_propertyTable, null,
+					FindForm(), "khtpChooseLexicalEntryOrSense", helpProvider, allowSenses: true, sensesOnly: true,
+					title: LexEdStrings.ksIdentifySense, okButtonText: LexEdStrings.ksSetReversal);
+				if (chosen != null)
+					AddItem(chosen);
+				return;
+			}
+
 			using (var dlg = new LinkEntryOrSenseDlg())
 			{
 				var wp = new WindowParams {m_title = LexEdStrings.ksIdentifySense, m_btnText = LexEdStrings.ksSetReversal};

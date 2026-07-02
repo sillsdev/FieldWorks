@@ -51,6 +51,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override void HandleChooser()
 		{
 			Form frm = FindForm();
+
+			// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the Avalonia
+			// Choose-Allomorph / Choose-MSA dialog (the reusable entry-search/"go" kit dialog); Legacy mode keeps the
+			// WinForms LinkAllomorphDlg / LinkMSADlg. Both paths AddItem the chosen object the same way.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))
+			{
+				var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				ICmObject chosen = m_obj is IMoAlloAdhocProhib
+					? (ICmObject)LcmLinkAllomorphDialogLauncher.Show(m_cache, m_mediator, m_propertyTable,
+						startingEntry: null, frm, helpProvider)
+					: LcmLinkMsaDialogLauncher.Show(m_cache, m_mediator, m_propertyTable,
+						startingEntry: null, frm, helpProvider);
+				if (chosen != null)
+					AddItem(chosen);
+				return;
+			}
+
 			WaitCursor wc = null;
 			BaseGoDlg dlg = null;
 			try
