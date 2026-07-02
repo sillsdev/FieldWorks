@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
@@ -127,6 +128,22 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			if (disposing)
 			{
+				// Final dwell-time record for whatever tool was active when the app is closing,
+				// so it isn't silently lost because no further tool switch occurs (bypasses the
+				// once-per-day throttle deliberately - this is a distinct, one-time-per-session
+				// closing signal, not a repeated "switched to" event).
+				if (!string.IsNullOrEmpty(m_lastActivatedToolName) && m_lastToolActivationUtc != DateTime.MinValue)
+				{
+					var finalDwellSeconds = (DateTime.UtcNow - m_lastToolActivationUtc).TotalSeconds;
+					AnalyticsOutbox.Track("SwitchToTool", new Dictionary<string, string>
+					{
+						{"area", m_lastActivatedAreaName ?? string.Empty},
+						{"tool", m_lastActivatedToolName},
+						{"duration", finalDwellSeconds.ToString("F1", CultureInfo.InvariantCulture)},
+						{"final", "true"}
+					});
+				}
+
 				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
 				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
@@ -164,6 +181,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private DateTime m_lastToolChange = DateTime.MinValue;
 		HashSet<string> m_toolsReportedToday = new HashSet<string>();
 
+		/// <summary>
+		/// Updated on every tool activation regardless of <see cref="m_toolsReportedToday"/>'s
+		/// once-per-day throttle, so a throttled-out revisit doesn't lose the timestamp needed to
+		/// compute dwell time for whichever activation next actually fires a SwitchToTool event.
+		/// </summary>
+		private DateTime m_lastToolActivationUtc = DateTime.MinValue;
+		private string m_lastActivatedToolName;
+		private string m_lastActivatedAreaName;
+
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
@@ -191,15 +217,26 @@ namespace SIL.FieldWorks.XWorks.LexText
 						m_lastToolChange = DateTime.Now;
 					}
 					string areaNameForReport = m_propertyTable.GetStringProperty("areaChoice", null);
+					// Dwell time since the tool was last activated, regardless of whether that
+					// prior activation actually fired a (throttled) event of its own.
+					double? dwellSeconds = m_lastToolActivationUtc == DateTime.MinValue
+						? (double?)null
+						: (DateTime.UtcNow - m_lastToolActivationUtc).TotalSeconds;
 					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
 					{
 						m_toolsReportedToday.Add(toolName);
-						DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
+						var eventProps = new Dictionary<string, string>
 						{
 							{"area", areaNameForReport},
 							{"tool", toolName}
-						});
+						};
+						if (dwellSeconds.HasValue)
+							eventProps["duration"] = dwellSeconds.Value.ToString("F1", CultureInfo.InvariantCulture);
+						AnalyticsOutbox.Track("SwitchToTool", eventProps);
 					}
+					m_lastToolActivationUtc = DateTime.UtcNow;
+					m_lastActivatedToolName = toolName;
+					m_lastActivatedAreaName = areaNameForReport;
 					break;
 
 				case "areaChoice":

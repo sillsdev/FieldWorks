@@ -25,6 +25,7 @@
     <PackageReference Include="icu.net" />
     <PackageReference Include="NAudio" />
     <PackageReference Include="NAudio.Lame" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="SIL.Core" />
     <PackageReference Include="SIL.Core.Desktop" />
     <PackageReference Include="SIL.DesktopAnalytics" />

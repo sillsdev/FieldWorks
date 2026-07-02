@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
 using XCore;
@@ -45,7 +46,7 @@ namespace SIL.FieldWorks.IText
 					return;
 				fileName = dlg.FileName;
 			}
-			DesktopAnalytics.Analytics.Track("ExportConcordanceResults", new Dictionary<string, string>());
+			AnalyticsOutbox.Track("ExportConcordanceResults", new Dictionary<string, string>());
 
 			using (var fs = new FileStream(fileName, FileMode.Create))
 			using (var textWriter = new StreamWriter(fs))
