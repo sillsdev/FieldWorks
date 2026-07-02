@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>HCWorkerTests</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.WordWorks.Parser.HCWorker</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <!-- Headless WCF/parse tests: no FieldWorks UI or LCM, so use the UI-independent test
+         assembly info rather than the full UI test harness. -->
+    <UseUiIndependentTestAssemblyInfo>true</UseUiIndependentTestAssemblyInfo>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.Machine" />
+    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" />
+    <!-- Required by the injected AssemblyInfoForUiIndependentTests (ICU/SLDR/registry-redirect/
+         singleton-cleanup test attributes), not by the tests themselves. -->
+    <PackageReference Include="SIL.LCModel.Core" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- HCWorker for HCWorkerService; ParserCore for the shared IHCWorkerService contract, the
+         DTOs, PipeBindingFactory, and HCParser's Form/Msa key constants; FwUtils for the injected
+         test-assembly attributes. -->
+    <ProjectReference Include="../HCWorker.csproj" />
+    <ProjectReference Include="../../ParserCore/ParserCore.csproj" />
+    <ProjectReference Include="../../../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

@@ -161,6 +161,69 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckAnalysisSize("Cats", 0, false);
 			CheckAnalysisSize("cats", 1, false);
 		}
+
+		/// <summary>
+		/// Parsing a batch of wordforms in parallel must produce exactly the same analyses as
+		/// parsing them one at a time (the key acceptance criterion for the concurrent bulk
+		/// parse). Two disjoint sets of identical-shaped wordforms are parsed, one serially and
+		/// one in parallel, and the resulting analyses are compared.
+		/// </summary>
+		[Test]
+		public void ParseAndUpdateWordforms_ParallelMatchesSerial()
+		{
+			IMoStemAllomorph catNForm = null;
+			IMoStemMsa catNMsa = null;
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
+			{
+				// Noun
+				ILexEntry catN = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				catNForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				catN.AlternateFormsOS.Add(catNForm);
+				catNForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catn", m_vernacularWS.Handle);
+				catNMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				catN.MorphoSyntaxAnalysesOC.Add(catNMsa);
+			});
+
+			// The same single-analysis result is returned for every (lowercase) wordform.
+			var sharedResult = new ParseResult(new[]
+			{
+				new ParseAnalysis(new[] { new ParseMorph(catNForm, catNMsa) })
+			});
+
+			// Disjoint sets of distinct lowercase wordforms so the two runs do not interfere.
+			// Lowercase forms also skip the lowercase-variant re-parse, keeping the test focused.
+			var serialForms = new[] { "able", "baker", "charlie", "dog", "easy", "foxtrot", "golf" };
+			var parallelForms = new[] { "hotel", "india", "juliet", "kilo", "lima", "mike", "november" };
+
+			Func<string[], int, Dictionary<string, int>> parseAll = (forms, maxDop) =>
+			{
+				var worker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
+				worker.Parser = new TestParserClass(sharedResult, null);
+				var wordforms = new List<IWfiWordform>();
+				foreach (string form in forms)
+					wordforms.Add(FindOrCreateWordform(form));
+
+				// SUT
+				worker.ParseAndUpdateWordforms(wordforms, ParserPriority.Low, false, maxDop);
+				ExecuteIdleQueue();
+
+				var counts = new Dictionary<string, int>();
+				foreach (IWfiWordform wf in wordforms)
+					counts[wf.Form.VernacularDefaultWritingSystem.Text] = wf.AnalysesOC.Count;
+				return counts;
+			};
+
+			Dictionary<string, int> serialCounts = parseAll(serialForms, 1);
+			Dictionary<string, int> parallelCounts = parseAll(parallelForms, 4);
+
+			// Every serially-parsed wordform got exactly one analysis.
+			foreach (string form in serialForms)
+				Assert.That(serialCounts[form], Is.EqualTo(1), "serial analysis count for " + form);
+			// The parallel batch produced the identical result for its (equivalent) wordforms:
+			// no dropped, duplicated, or missing analyses.
+			foreach (string form in parallelForms)
+				Assert.That(parallelCounts[form], Is.EqualTo(1), "parallel analysis count for " + form);
+		}
 		#endregion // Tests
 	}
 

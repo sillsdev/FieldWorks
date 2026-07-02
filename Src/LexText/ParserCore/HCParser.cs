@@ -4,10 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
@@ -22,7 +24,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class HCParser : DisposableBase, IParser
 	{
 		private readonly LcmCache m_cache;
-		private Morpher m_morpher;
+		// Out-of-process Server-GC worker proxy (RUSTIFY-fieldworks-worker-design.md) that now
+		// does the bulk/interactive parsing an in-process m_morpher used to do directly. Tracing/
+		// Try-a-Word (GetTraceMorpher/ParseToXml below) deliberately still runs in-process: its
+		// FwXmlTraceManager touches LCM inline while tracing, which the worker has no access to -
+		// see the design's §8 incremental-rollout note (bulk path first, interactive path already
+		// ported here since it needed no such LCM-touching trace manager; Try-a-Word is left for a
+		// follow-up).
+		private readonly HCWorkerClient m_workerClient;
+		// A dedicated morpher used only by the trace/Try-A-Word path. Tracing mutates the
+		// morpher's LexEntrySelector, RuleSelector, and TraceManager.IsTracing; keeping a
+		// separate morpher (with its own trace manager) ensures those mutations never corrupt
+		// the bulk m_morpher, which may be parsing concurrently on several threads.
+		private Morpher m_traceMorpher;
+		private FwXmlTraceManager m_traceMorpherTraceManager;
 		private Language m_language;
 		private readonly FwXmlTraceManager m_traceManager;
 		private readonly string m_outputDirectory;
@@ -30,11 +45,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
 		private bool m_mergeAnalyses;
+		private int m_delReapps;
+		private int m_maxStemCount;
+
+		// Diagnostic perf counters (accumulated across all threads) splitting bulk-parse time
+		// into the lock-free morpher parse vs. the LCM-read mapping (GetMorphs under the read
+		// lock). Near-zero overhead; used by the parser concurrency benchmark.
+		public static long DiagMorpherParseTicks;
+		public static long DiagGetMorphsTicks;
 
 		// the public const strings are for GenerateHCConfigForFLExTrans and HCSynthByGlossLib
 		internal const string CRuleID = "ID";
-		internal const string FormID = "ID";
-		internal const string FormID2 = "ID2";
+		// FormID/FormID2 are public so the out-of-process HCWorker (Src\LexText\HCWorker) can key
+		// the same Allomorph.Properties bag when it projects a parsed Word down to MorphDto[] -
+		// keeping the worker's id extraction and this class's GetMorphs consumption on one set of
+		// key strings.
+		public const string FormID = "ID";
+		public const string FormID2 = "ID2";
 		public const string InflTypeID = "InflTypeID";
 		public const string MsaID = "ID";
 		internal const string PRuleID = "ID";
@@ -50,6 +77,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public HCParser(LcmCache cache)
 		{
 			m_cache = cache;
+			m_workerClient = new HCWorkerClient();
 			m_traceManager = new FwXmlTraceManager(m_cache);
 			m_outputDirectory = Path.GetTempPath();
 			m_changeListener = new ParserModelChangeListener(m_cache);
@@ -85,13 +113,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			if (m_morpher == null)
+			if (m_language == null)
 				return null;
 
-			IEnumerable<Word> wordAnalyses;
+			WordAnalysisDto[] wordAnalyses;
 			try
 			{
-				wordAnalyses = m_morpher.ParseWord(word, out _, m_guessRoots);
+				var morpherSw = Stopwatch.StartNew();
+				// Round-trips to the worker process, OUTSIDE the LCM read lock below. The
+				// worker's parse is the expensive, CPU-bound part and touches only its own copy
+				// of the frozen HC grammar (not LCM), so keeping it off the read lock lets it run
+				// without holding the read lock for its whole duration - same reasoning as the
+				// in-process call this replaces, just across a process boundary now.
+				wordAnalyses = m_workerClient.ParseWord(word, m_guessRoots);
+				morpherSw.Stop();
+				Interlocked.Add(ref DiagMorpherParseTicks, morpherSw.ElapsedTicks);
 			}
 			catch (Exception e)
 			{
@@ -99,10 +135,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			ParseResult result;
+			var getMorphsSw = Stopwatch.StartNew();
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				var analyses = new List<ParseAnalysis>();
-				foreach (Word wordAnalysis in wordAnalyses)
+				foreach (WordAnalysisDto wordAnalysis in wordAnalyses)
 				{
 					List<MorphInfo> morphs;
 					if (GetMorphs(wordAnalysis, out morphs))
@@ -113,8 +150,55 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				result = new ParseResult(analyses);
 			}
+			getMorphsSw.Stop();
+			Interlocked.Add(ref DiagGetMorphsTicks, getMorphsSw.ElapsedTicks);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Bulk path (design §5): one WCF round trip for the whole batch of already-normalized
+		/// word forms, instead of ParserWorker's old per-wordform Parallel.ForEach each calling
+		/// the single-word ParseWord above. Returns null (rather than throwing) if the batch call
+		/// itself fails even after HCWorkerClient's own retry-once, so ParserWorker can fall back
+		/// to its per-wordform path for this run instead of losing it entirely (design §6).
+		/// </summary>
+		public IDictionary<string, ParseResult> ParseWordsBatch(string[] words)
+		{
+			CheckDisposed();
+
+			if (m_language == null || words.Length == 0)
+				return null;
+
+			IDictionary<string, WordAnalysisDto[]> wordAnalysesByWord;
+			try
+			{
+				wordAnalysesByWord = m_workerClient.ParseWordsBatch(words, m_guessRoots);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			var results = new Dictionary<string, ParseResult>();
+			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+			{
+				foreach (KeyValuePair<string, WordAnalysisDto[]> kvp in wordAnalysesByWord)
+				{
+					var analyses = new List<ParseAnalysis>();
+					foreach (WordAnalysisDto wordAnalysis in kvp.Value)
+					{
+						List<MorphInfo> morphs;
+						if (GetMorphs(wordAnalysis, out morphs))
+						{
+							analyses.Add(new ParseAnalysis(morphs.Select(mi =>
+								new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString))));
+						}
+					}
+					results[kvp.Key] = new ParseResult(analyses);
+				}
+			}
+			return results;
 		}
 
 		public XDocument TraceWordXml(string form, IEnumerable<int> selectTraceMorphs)
@@ -139,11 +223,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_changeListener.Dispose();
 				m_changeListener = null;
 			}
+			m_workerClient?.Dispose();
 		}
 
 		private void LoadParser()
 		{
-			m_morpher = null;
+			m_language = null;
+			// Force the trace morpher to be rebuilt over the freshly loaded language.
+			m_traceMorpher = null;
+			m_traceMorpherTraceManager = null;
 
 			int delReapps = 0;
 			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
@@ -170,15 +258,49 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 			}
-			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
-			m_morpher.MaxStemCount = maxStemCount;
-			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
+			m_delReapps = delReapps;
+			m_maxStemCount = maxStemCount;
+
+			// Ship the freshly loaded grammar to the worker (design §4/§5 "Grammar change"): the
+			// same HC.NET XML input format XmlLanguageLoader already reads, produced via
+			// XmlLanguageWriter.Save on the Language HCLoader.Load just built - no new
+			// serialization format, no changes to SIL.Machine.Morphology.HermitCrab itself.
+			string grammarFile = Path.Combine(m_outputDirectory, m_cache.ProjectId.Name + "HCGrammar.xml");
+			XmlLanguageWriter.Save(m_language, grammarFile);
+			string grammarXml = File.ReadAllText(grammarFile);
+			File.Delete(grammarFile);
+			m_workerClient.UpdateGrammar(grammarXml, delReapps, maxStemCount, m_mergeAnalyses);
+		}
+
+		/// <summary>
+		/// Lazily builds (and returns) the morpher used for tracing. It shares the frozen,
+		/// read-only <see cref="m_language"/> with the bulk morpher but has its own mutable
+		/// state and its own trace manager, so enabling tracing or setting morpheme selectors
+		/// here cannot affect a bulk parse running on m_morpher.
+		/// </summary>
+		private Morpher GetTraceMorpher()
+		{
+			if (m_traceMorpher == null)
+			{
+				m_traceMorpherTraceManager = new FwXmlTraceManager(m_cache);
+				m_traceMorpher = new Morpher(m_traceMorpherTraceManager, m_language)
+				{
+					DeletionReapplications = m_delReapps,
+					MaxStemCount = m_maxStemCount,
+					MergeEquivalentAnalyses = m_mergeAnalyses
+				};
+			}
+			return m_traceMorpher;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
 		{
-			if (m_morpher == null)
+			if (m_language == null)
 				return null;
+
+			// Use the dedicated trace morpher so that setting selectors / IsTracing here cannot
+			// corrupt a bulk parse that may be running concurrently on m_morpher.
+			Morpher traceMorpher = GetTraceMorpher();
 
 			var doc = new XDocument();
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
@@ -186,8 +308,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (selectTraceMorphs != null)
 				{
 					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
-					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
-					m_morpher.RuleSelector = rule =>
+					traceMorpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
+					traceMorpher.RuleSelector = rule =>
 					{
 						// Need to check if the rule is a morpheme and if it has a non-null msa id.
 						// If the rule comes from an irregularly inflected form, msa id will be null.
@@ -200,15 +322,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				else
 				{
-					m_morpher.LexEntrySelector = entry => true;
-					m_morpher.RuleSelector = rule => true;
+					traceMorpher.LexEntrySelector = entry => true;
+					traceMorpher.RuleSelector = rule => true;
 				}
-				m_morpher.TraceManager.IsTracing = tracing;
+				traceMorpher.TraceManager.IsTracing = tracing;
 				var wordformElem = new XElement("Wordform", new XAttribute("form", form));
 				try
 				{
 					object trace;
-					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, m_guessRoots))
+					foreach (Word wordAnalysis in traceMorpher.ParseWord(form, out trace, m_guessRoots))
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
@@ -419,6 +541,127 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					};
 
 				morphs[allomorph.Morpheme] = morphInfo;
+
+				switch ((form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid).ToString())
+				{
+					case MoMorphTypeTags.kMorphInfix:
+					case MoMorphTypeTags.kMorphInfixingInterfix:
+						if (result.Count == 0)
+							result.Add(morphInfo);
+						else
+							result.Insert(result.Count - 1, morphInfo);
+						break;
+
+					default:
+						result.Add(morphInfo);
+						break;
+				}
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// The LCM-object-resolution half of GetMorphs(Word,...) above, ported to run over the
+		/// worker's flat MorphDto[] instead of walking a live Word/Annotation&lt;ShapeNode&gt;/
+		/// Allomorph/Morpheme graph (the worker has no LcmCache, so it can't do these repository
+		/// lookups itself - see HCWorkerService.ToWordAnalysisDto and MorphDto's doc comment in
+		/// IHCWorkerService.cs). Every circumfix/infix-placement decision below is identical to
+		/// the Word-based version; only the source of FormId/FormId2/MsaId/InflTypeId/Guessed/
+		/// FormStr and the "have we seen this morpheme already" key (MorphemeIndex instead of a
+		/// Morpheme reference) changed.
+		/// </summary>
+		private bool GetMorphs(WordAnalysisDto wordAnalysis, out List<MorphInfo> result)
+		{
+			var morphs = new Dictionary<int, MorphInfo>();
+
+			var aprCircumfixes = new List<int>();
+			bool isSuffixPortionOfAprCircumfix = false;
+
+			result = new List<MorphInfo>();
+			foreach (MorphDto morphDto in wordAnalysis.Morphs)
+			{
+				// The worker already skips morphs with no FormId (HCWorkerService.
+				// ToWordAnalysisDto mirrors this method's Word-based twin's `if (formID == 0)
+				// continue;`), so every entry reaching here has one.
+				int formID = morphDto.FormId;
+
+				isSuffixPortionOfAprCircumfix = false;
+				int formID2 = morphDto.FormId2;
+				if (formID2 == 0 && morphDto.IsAffixProcessAllomorph)
+				{
+					// Per the Leipzig glossing rules (https://www.eva.mpg.de/lingua/resources/glossing-rules.php),
+					// circumfixes should appear both before and after the material they attach to.
+					// HC does not have an overt marker for a circumfix when it is an affix processing rule (aka APR).
+					// The following code determines when an APR is marked as a circumfix in FLEx and ensures the
+					// two instances of it as a morph are included in the result at the correct places.
+					// This is a fix for https://jira.sil.org/browse/LT-21447
+					IMoForm circumForm;
+					if (!m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out circumForm))
+					{
+						result = null;
+						return false;
+					}
+					if (circumForm.MorphTypeRA.Guid == MoMorphTypeTags.kguidMorphCircumfix)
+					{
+						if (aprCircumfixes.Contains(formID))
+						{
+							isSuffixPortionOfAprCircumfix = true;
+						}
+						else
+						{
+							// Remember this allomorph as an APR that is a circumfix
+							aprCircumfixes.Add(formID);
+						}
+					}
+				}
+
+				int curFormID;
+				MorphInfo morphInfo;
+				if (!morphs.TryGetValue(morphDto.MorphemeIndex, out morphInfo) || isSuffixPortionOfAprCircumfix)
+				{
+					curFormID = formID;
+				}
+				else if (formID2 > 0)
+				{
+					// circumfix
+					curFormID = formID2;
+				}
+				else
+				{
+					continue;
+				}
+
+				IMoForm form;
+				if (!m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(curFormID, out form))
+				{
+					result = null;
+					return false;
+				}
+
+				IMoMorphSynAnalysis msa;
+				if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(morphDto.MsaId, out msa))
+				{
+					result = null;
+					return false;
+				}
+
+				ILexEntryInflType inflType = null;
+				if (morphDto.InflTypeId > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(morphDto.InflTypeId, out inflType))
+				{
+					result = null;
+					return false;
+				}
+
+				morphInfo = new MorphInfo
+					{
+						Form = form,
+						GuessedString = morphDto.Guessed ? morphDto.FormStr : null,
+						Msa = msa,
+						InflType = inflType,
+						IsCircumfix = formID2 > 0
+					};
+
+				morphs[morphDto.MorphemeIndex] = morphInfo;
 
 				switch ((form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid).ToString())
 				{
