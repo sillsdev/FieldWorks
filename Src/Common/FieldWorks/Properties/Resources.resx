@@ -234,6 +234,10 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="ksBackupErrorDuringRestore" xml:space="preserve">
     <value>Do you want to continue with the restore?</value>
   </data>
+  <data name="ksCannotRestoreProjectInUse" xml:space="preserve">
+    <value>The project '{0}' cannot be restored because it is currently open in another program. Please close the project everywhere it is open and try the restore again.</value>
+    <comment>Message shown when a restore is attempted over a project that is still open (and its data file is locked) in another program. {0} is the project name.</comment>
+  </data>
   <data name="ksChangeProjectLocationFailed" xml:space="preserve">
     <value>Could not change Projects location</value>
   </data>

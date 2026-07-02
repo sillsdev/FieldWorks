@@ -136,6 +136,15 @@ namespace SIL.FieldWorks.Properties {
                 return ResourceManager.GetString("ksCancelButton", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The project &apos;{0}&apos; cannot be restored because it is currently open in another program. Please close the project everywhere it is open and try the restore again..
+        /// </summary>
+        internal static string ksCannotRestoreProjectInUse {
+            get {
+                return ResourceManager.GetString("ksCannotRestoreProjectInUse", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to FieldWorks is unable to move the following projects to the new location..
