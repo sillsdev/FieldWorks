@@ -38,6 +38,7 @@ using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.LCModel.DomainServices.DataMigration;
 using SIL.LCModel.Infrastructure;
@@ -2539,6 +2540,24 @@ namespace SIL.FieldWorks
 		private static void RestoreCurrentProject(FwRestoreProjectSettings restoreSettings,
 			Form dialogOwner)
 		{
+			// If the project we are about to restore already exists and is open (its data
+			// file is locked) in some other program, then block the restore before we overwrite any
+			// files. Otherwise we would destroy the opened project's data and eventually crash trying to
+			// reopen the locked project (LT-21913).
+			// We skip this check when 'this' process is the one that has the project open, since we already
+			// prompted the user and ExecuteWithAppsShutDown will release our own lock before restoring.
+			var projectPath = restoreSettings.Settings.FullProjectPath;
+			var weHaveProjectOpen = s_projectId != null &&
+				s_projectId.IsSameLocalProject(new ProjectId(projectPath));
+			if (!weHaveProjectOpen && restoreSettings.Settings.ProjectExists &&
+				ProjectLockingService.IsProjectLocked(projectPath))
+			{
+				MessageBox.Show(dialogOwner,
+					string.Format(Properties.Resources.ksCannotRestoreProjectInUse, restoreSettings.Settings.ProjectName),
+					Properties.Resources.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
 			// When we get here we can safely do the backup of the project because we either
 			// have no cache (and no other process has this project open), or we are the
 			// process that has this project open. (FWR-3344)
@@ -3805,6 +3824,27 @@ namespace SIL.FieldWorks
 					return;
 
 				s_projectId = projId; // Process needs to know its project
+			}
+			catch (StartupException e) when (e.InnerException is LcmFileLockedException)
+			{
+				// The action (e.g. a restore) succeeded, but the project could not be reopened
+				// afterwards because it is now open (and its file locked) in another program
+				// (LT-21913). This is a safety net for the narrow window where the project gets
+				// locked after RestoreCurrentProject's up-front check but before we reopen it
+				// here. Inform the user with a message box rather than crashing with the green
+				// error-reporting dialog. Any other StartupException is left to propagate so
+				// that unexpected failures still generate a crash report.
+				if (s_cache != null)
+				{
+					s_cache.Dispose();
+					s_cache = null;
+				}
+				// Dispose the partially-created application so that we end up with no running
+				// apps (which lets the process shut down cleanly, just as if the action had
+				// failed or been cancelled).
+				GracefullyShutDownApp(s_flexApp);
+				MessageBox.Show(e.Message, Properties.Resources.ksErrorCaption,
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			finally
 			{
