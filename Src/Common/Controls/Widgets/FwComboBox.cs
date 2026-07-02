@@ -1049,6 +1049,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
+			// LTB-3963: a second mouse-down (e.g. rapid clicks on the arrow button) can invoke
+			// this while the list is already dropped down. Form.Show(owner) throws an
+			// InvalidOperationException if the form is already visible, so when the dropdown
+			// is already showing there is nothing to do.
+			if (m_dropDownBox?.Form != null && m_dropDownBox.Form.Visible)
+				return;
+
 			Rectangle workingArea = Screen.GetWorkingArea(this);
 
 			Size sz = m_dropDownBox.Form.Size;
@@ -2153,7 +2160,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_listForm.Location = new Point(popupBounds.Left, popupBounds.Top);
 
 			if (m_activateOnShow)
-				m_listForm.Show(LaunchingForm);
+			{
+				// LTB-3963: Form.Show(owner) throws InvalidOperationException if the form
+				// is already visible; an already-visible dropdown does not need showing.
+				if (!m_listForm.Visible)
+					m_listForm.Show(LaunchingForm);
+			}
 			else
 				ShowInactiveTopmost(LaunchingForm, m_listForm);
 
@@ -2171,6 +2183,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				FocusAndCapture();
 			}
+			HideComboBoxForm -= HideComboBox; // ensure a repeated Launch never double-subscribes
 			HideComboBoxForm += HideComboBox;
 		}
 
@@ -2209,13 +2222,22 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		public void HideForm()
 		{
+			// LTB-3941: focus changes (e.g. while a view is being torn down) can invoke this
+			// after the ComboListBox has been disposed. Hiding a dropdown that no longer
+			// exists is a no-op, not an error.
+			if (IsDisposed)
+				return;
 			HideComboBoxForm?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void HideComboBox(object sender, EventArgs args)
 		{
-			CheckDisposed();
 			HideComboBoxForm -= HideComboBox; // remove to avoid recursive calls
+			// LTB-3941: a queued focus-change event can deliver this after the control was
+			// disposed; CheckDisposed() here used to crash with ObjectDisposedException.
+			// The dropdown is gone, so there is nothing to hide.
+			if (IsDisposed || Disposing)
+				return;
 
 			// There have been several historical bugs about Flex losing focus or failing to activate
 			// the right windows when dismissing combo boxes. LT-2962, LT-19219 and probably others.
