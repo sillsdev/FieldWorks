@@ -838,6 +838,9 @@ try {
 				$coverageReportDir = Join-Path $resultsDir "CoverageReport"
 				$coverageReportsGlob = Join-Path $resultsDir "*/coverage.cobertura.xml"
 				try {
+					# Restore the local tool manifest first (cheap no-op once already restored) so a fresh
+					# checkout/CI runner doesn't just warn and skip the report.
+					& dotnet tool restore 2>&1 | Out-Null
 					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html" 2>&1 |
 						Where-Object { $_ -notmatch '^\d{4}-\d\d-\d\dT' } # drop ReportGenerator's timestamped progress lines
 					$summaryPath = Join-Path $coverageReportDir "Summary.txt"

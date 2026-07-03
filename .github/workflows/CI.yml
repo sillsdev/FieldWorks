@@ -35,8 +35,16 @@ jobs:
         id: test
         shell: powershell
         run: |
-          .\test.ps1 -Configuration Debug -NoBuild -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
+          .\test.ps1 -Configuration Debug -NoBuild -Coverage -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: Output/Debug/TestResults/CoverageReport
+          if-no-files-found: warn
 
       - name: Summarize native test results
         if: ${{ always() }}
