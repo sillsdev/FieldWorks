@@ -164,6 +164,10 @@
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
 		<PackageVersion Include="NUnitForms" Version="1.3.1" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<!-- Cross-platform coverage collector (works under plain vstest.console.exe, unlike the VS-Enterprise-
+		     only "Code Coverage" collector) — registers the "XPlat Code Coverage" data collector used by
+		     test.ps1 -Coverage. -->
+		<PackageVersion Include="coverlet.collector" Version="6.0.4" />
 		<PackageVersion Include="SkiaSharp" Version="2.88.9" />
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.9" />
 		<PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />

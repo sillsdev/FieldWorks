@@ -44,6 +44,13 @@
 	Internal switch used when test.ps1 is invoked from build.ps1 -RunTests.
 	Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
 
+.PARAMETER Coverage
+	Collect code coverage via the coverlet.collector "XPlat Code Coverage" data collector (works under
+	plain vstest.console.exe on any Visual Studio edition, unlike the VS-Enterprise-only "Code Coverage"
+	collector). Writes one coverage.cobertura.xml per test host under Output/<Configuration>/TestResults,
+	then renders a merged summary + HTML report via the local ReportGenerator tool
+	(Output/<Configuration>/TestResults/CoverageReport).
+
 .EXAMPLE
 	.\test.ps1
 	Runs all tests in Debug configuration (builds first if needed).
@@ -69,6 +76,10 @@
 	.\test.ps1 -SkipManaged -TestProject TestGeneric
 	Uses the environment variable equivalent of -AllowAssertDialogs. Clear the variable after debugging.
 
+.EXAMPLE
+	.\test.ps1 -TestProject "Src/Common/FwAvalonia/FwAvaloniaTests" -Coverage
+	Runs FwAvaloniaTests with code coverage collection and prints a coverage summary.
+
 .NOTES
 	FieldWorks is x64-only. Tests run in 64-bit mode.
 #>
@@ -86,6 +97,7 @@ param(
 	[switch]$AllowAssertDialogs,
 	[switch]$SkipDependencyCheck,
 	[switch]$SkipWorktreeLock,
+	[switch]$Coverage,
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown'
 )
@@ -278,6 +290,28 @@ function Get-NUnitTestAdapterPaths {
 	}
 
 	return $adapterPaths.ToArray()
+}
+
+function Get-CoverageAdapterPath {
+	param(
+		[string]$RepoRoot
+	)
+
+	# vstest.console.exe (unlike `dotnet test`) does not auto-discover data collectors from NuGet
+	# packages; the coverlet.collector build folder must be passed explicitly via /TestAdapterPath,
+	# same as the NUnit adapter above.
+	$packagesPropsPath = Join-Path $RepoRoot 'Directory.Packages.props'
+	$version = Get-CentralPackageVersion -PackagesPropsPath $packagesPropsPath -PackageName 'coverlet.collector'
+	if ([string]::IsNullOrWhiteSpace($version)) {
+		return $null
+	}
+
+	$adapterPath = Join-Path $RepoRoot "packages/coverlet.collector/$version/build/netstandard2.0"
+	if (Test-Path -LiteralPath (Join-Path $adapterPath 'coverlet.collector.dll') -PathType Leaf) {
+		return $adapterPath
+	}
+
+	return $null
 }
 
 # =============================================================================
@@ -653,6 +687,16 @@ try {
 			$vstestArgs += "/TestAdapterPath:$adapterPath"
 		}
 
+		if ($Coverage) {
+			$coverageAdapterPath = Get-CoverageAdapterPath -RepoRoot $PSScriptRoot
+			if ($coverageAdapterPath) {
+				$vstestArgs += "/TestAdapterPath:$coverageAdapterPath"
+			}
+			else {
+				Write-Host "[WARN] -Coverage requested but coverlet.collector build folder was not found under packages/coverlet.collector. Run a build first so it restores." -ForegroundColor Yellow
+			}
+		}
+
 		# Logger configuration - verbosity goes with the console logger
 		$verbosityMap = @{
 			'quiet' = 'quiet'; 'q' = 'quiet'
@@ -670,6 +714,10 @@ try {
 
 		if ($ListTests) {
 			$vstestArgs += "/ListTests"
+		}
+
+		if ($Coverage) {
+			$vstestArgs += '/Collect:XPlat Code Coverage'
 		}
 
 		# =============================================================================
@@ -736,11 +784,18 @@ try {
 				foreach ($adapterPath in $nunitAdapterPaths) {
 					$singleArgs += "/TestAdapterPath:$adapterPath"
 				}
+				if ($Coverage -and $coverageAdapterPath) {
+					$singleArgs += "/TestAdapterPath:$coverageAdapterPath"
+				}
 				$singleArgs += "/Logger:trx;LogFileName=${dllName}_${timestamp}.trx"
 				$singleArgs += "/Logger:console;verbosity=$vstestVerbosity"
 
 				if ($TestFilter) {
 					$singleArgs += "/TestCaseFilter:$TestFilter"
+				}
+
+				if ($Coverage) {
+					$singleArgs += '/Collect:XPlat Code Coverage'
 				}
 
 				& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
@@ -766,6 +821,37 @@ try {
 			}
 
 			$script:testExitCode = $overallExitCode
+		}
+
+		# =============================================================================
+		# Coverage report (only when -Coverage was requested)
+		# =============================================================================
+
+		if ($Coverage -and -not $ListTests) {
+			$coverageFiles = Get-ChildItem -Path $resultsDir -Filter "coverage.cobertura.xml" -Recurse -ErrorAction SilentlyContinue
+			if (-not $coverageFiles -or $coverageFiles.Count -eq 0) {
+				Write-Host "[WARN] -Coverage was requested but no coverage.cobertura.xml files were produced under $resultsDir." -ForegroundColor Yellow
+			}
+			else {
+				Write-Host ""
+				Write-Host "Generating coverage report from $($coverageFiles.Count) file(s)..." -ForegroundColor Cyan
+				$coverageReportDir = Join-Path $resultsDir "CoverageReport"
+				$coverageReportsGlob = Join-Path $resultsDir "*/coverage.cobertura.xml"
+				try {
+					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html" 2>&1 |
+						Where-Object { $_ -notmatch '^\d{4}-\d\d-\d\dT' } # drop ReportGenerator's timestamped progress lines
+					$summaryPath = Join-Path $coverageReportDir "Summary.txt"
+					if (Test-Path -LiteralPath $summaryPath) {
+						Write-Host ""
+						Get-Content -LiteralPath $summaryPath | Write-Host
+						Write-Host ""
+						Write-Host "Full HTML coverage report: $(Join-Path $coverageReportDir 'index.html')" -ForegroundColor Gray
+					}
+				}
+				catch {
+					Write-Host "[WARN] ReportGenerator failed (is '.config/dotnet-tools.json' restored? run 'dotnet tool restore'): $_" -ForegroundColor Yellow
+				}
+			}
 		}
 	}
 	}
