@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvalonia.Preview
+
+		Dev-iteration sample/preview code for the Avalonia lexical-edit migration (PR #964 review §4
+		Finding F / Group 1 item 1), NOT shipped product behavior. Split into its own assembly so it
+		compiles exactly once and is referenced (not file-linked) by its two consumers:
+		FwAvaloniaPreviewHost (the standalone dev preview tool, itself not part of the shipped installer)
+		and FwAvaloniaTests (LexicalEditPreviewTests.cs exercises it headlessly). FwAvalonia.csproj
+		excludes this folder from its own compile, so none of this ever reaches the shipped FwAvalonia.dll.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<RootNamespace>SIL.FieldWorks.Common.FwAvalonia.Preview</RootNamespace>
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -298,6 +298,15 @@ namespace SIL.FieldWorks
 
 		private void m_btnOptions_Click(object sender, EventArgs e)
 		{
+			// Migrated Options dialog: in New (Avalonia) UI mode show the owned Avalonia Options dialog.
+			// This is the pre-project (bare-bones) path — no cache/mediator/project — so Plugins are
+			// unavailable. Legacy mode keeps the WinForms dialog.
+			var settings = new FwApplicationSettings();
+			if (AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(settings.UIMode))
+			{
+				AvaloniaOptionsDialogLauncher.Show(null, null, null, settings, null, this);
+				return;
+			}
 			var optionsDlg = new LexOptionsDlg();
 			optionsDlg.InitBareBones(m_helpTopicProvider);
 			optionsDlg.Show(this);

@@ -1,0 +1,627 @@
+{
+  "summary": "Cross-cutting verified review of all migrated Avalonia parts + per-tool wiring requirement map for Grammar/Lists/Notebook/Words",
+  "agentCount": 30,
+  "logs": [
+    "Review: 11 parts; confirmed findings = 27, uncertain = 1. Wiring mapped for 4 tools."
+  ],
+  "result": {
+    "confirmedReview": [
+      {
+        "part": "19a-stext",
+        "confirmed": [
+          {
+            "title": "Enter inserts an empty paragraph instead of splitting at the caret (parity gap + inaccurate doc)",
+            "verdict": "confirmed",
+            "evidence": "Core parity gap CONFIRMED. FwStructuredTextField.cs:126-134: the Enter branch of structuralKeyDown calls editContext.TryInsertParagraph(field, index) with NO caret-position or end-of-text guard, so any Enter inserts (test EnterAtParagraph_StagesAnInsertAfterIt, StructuredTextFieldTests.cs:133-151, fires Enter on a non-empty paragraph without moving the caret to the end and still expects exactly one insert). FullEntryRegionComposer.cs:2741-2748 ParagraphInsertSetters does live.InsertNewTextPara(pos, null) — an EMPTY paragraph. Legacy StTextSlice.cs:24-28 class doc states paragraphs support 'splitting and merging ... using the usual keyboard actions' (RootSite/StVc editor, StTextSlice.cs:33-34/281). So mid-text split is genuinely not implemented — a real behavioral gap. SCOPED DOWN: the finding's 'no // PARITY note' is literally true (grep PARITY in FwStructuredTextField.cs = no matches) BUT the simplification is NOT undocumented — sttext-editable-design.md:74-75 positively specifies 'Add paragraph: Enter at paragraph end ... TryInsertParagraph(after)' and sttext-test-research.md:23 (row B2) explicitly maps legacy 'Enter splits/inserts' to the simplified insert. The 'inaccurate doc' sub-claim is WEAK/partial: the inline comment FwStructuredTextField.cs:121-123 explicitly says 'StTextSlice's split-at-end behavior, simplified: we insert rather than split mid-text', which acknowledges the difference; only the class-doc one-liner (cs:25) loosely says 'Enter at a paragraph's end inserts' while the code has no end guard.",
+            "severity": "medium"
+          },
+          {
+            "title": "Backspace-at-start does not merge a non-empty paragraph into the previous one",
+            "verdict": "confirmed",
+            "evidence": "Parity gap CONFIRMED. FwStructuredTextField.cs:136-146: the Back branch only fires TryDeleteParagraph when string.IsNullOrEmpty(box.Text) && box.CaretIndex == 0 && paragraphCount > 1; there is no code path that appends a non-empty paragraph's text/runs to the previous paragraph (no merge). Composer ParagraphDeleteSetters (FullEntryRegionComposer.cs:2752-2762) only RemoveAt(index) with a keep-one guard — no text merge either. Legacy StTextSlice.cs:24-28 doc confirms merge was supported via keyboard. Tests confirm only delete-empty exists (StructuredTextFieldTests.cs:154-194: BackspaceInEmptyParagraph_StagesADelete and OnlyParagraph_...BackspaceDoesNotDelete; no merge test). SCOPED DOWN like finding 1: no in-code // PARITY note (grep empty), but NOT silent — sttext-editable-design.md:76-77 specifies 'Delete paragraph: Backspace in an empty paragraph (when >1) ... TryDeleteParagraph(index)' and sttext-test-research.md:24 (row B3) explicitly names legacy 'Backspace-merge' and maps it to the simplified delete. So 'silently dropped with no documentation' is overstated; the design/test docs document the simplification, only the code-level PARITY marker is absent.",
+            "severity": "medium"
+          },
+          {
+            "title": "Lexicon Lookup / Add to Lexicon not available on the Avalonia StText editor",
+            "verdict": "confirmed",
+            "evidence": "CONFIRMED. RegionFieldControlFactory.cs:110-118 (StructuredText case) constructs FwStructuredTextField passing only WritingSystemFocused, Save, Clipboard — it does NOT forward context.MenuRequested, whereas the default/FwMultiWsTextField case at cs:138-140 passes context.MenuRequested. FwStructuredTextField's constructor (cs:44-50) has no menuRequested parameter at all, so there is no path to surface an in-text context menu. The product view does supply it: LexicalEditRegionView.cs:586-594 BuildEditor builds RegionFieldControlContext with menuRequested: _menuRequested. Legacy affordances exist and are word-aware: StTextView.OnRightMouseUp shows mnuStTextChoices (StTextSlice.cs:355-366), carrying OnLexiconLookup (cs:95-113) and OnAddToLexicon (cs:171-203), both keyed off SelectionBeginningGrowToWord/GetWordLimitsOfSelection (cs:80-130) — a word-level affordance a field kebab cannot replicate. The row-level kebab (field.MenuId) is wired separately (LexicalEditRegionView.cs:409-429), so the gap is specifically the in-text Lexicon Lookup/Add to Lexicon. Parenthetical confirmed: FwStructuredTextField never sets/clears box.ContextFlyout (no occurrence in the file), unlike FwFieldControls.cs:158/175 which manages ContextFlyout, so the StText boxes keep Avalonia's default clipboard flyout. No // PARITY deferral note for this in FwStructuredTextField, and the §19a design's 'Deferred (named, not silent)' list (sttext-editable-design.md:132-139) covers only ORC paragraphs — Lexicon Lookup/Add to Lexicon is not listed.",
+            "severity": "medium"
+          },
+          {
+            "title": "Spell check absent across the Avalonia surface (cross-cutting, not StText-specific)",
+            "verdict": "confirmed",
+            "evidence": "CONFIRMED as a cross-cutting absence, correctly framed. Legacy StTextView.Init sets DoSpellCheck = true (StTextSlice.cs:282). Grep for DoSpellCheck|SpellCheck|IsSpellCheck|spellcheck (case-insensitive) across Src/Common/FwAvalonia returned no files — no spell-check support on the Avalonia surface. The finding's framing is supported by the docs: spell check is a documented surface-wide / document-text-engine deferral, not StText-specific — opentype-font-features views-migration-matrix.md:409-545 schedules spellcheck overlays for Phase 4 after selection geometry/paragraph parity, and avalonia-end-game proposal/spec keep spelling behind retained non-UI service seams out of the Avalonia editor path. Severity low and 'no StText-specific change needed' is the appropriate disposition.",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "19b-features (Feature structures + MSA group box + feature dialogs)",
+        "confirmed": [
+          {
+            "title": "Inflection-feature sibling order not sorted alphabetically (parity delta vs legacy)",
+            "verdict": "confirmed",
+            "severity": "medium",
+            "evidence": "Legacy: MsaInflectionFeatureListDlg.FinishLoading (MsaInflectionFeatureListDlg.cs:280-281) calls ExpandAll() then Sort(). FeatureStructureTreeView.Sort (FeatureStructureTreeView.cs:84-122) sorts each collection via list.Sort() using FeatureTreeNode.CompareTo (cs:429-435: by Text/display name) and recurses only into non-terminal levels (line 104-105 'sort all but terminal nodes'); value children stay in ValuesSorted/AddNode order (cs:144-147). Avalonia: BuildNodes iterates cur.InflectableFeatsRC in raw model order (FwFeatureStructureAdapter.cs:64), AddDefnNode iterates type.FeaturesRS in raw order (cs:106), NO sort; BuildPhonologicalNodes DOES OrderBy Name (cs:127), proving the omission is inflection-specific. RebuildTree is a pure depth-fold preserving _nodes order (FwFeatureStructureEditor.cs:408-445). Caller clean: LcmInflectionFeatureChooserLauncher.BuildInput->BuildNodes(pos) (cs:118)->Input.Nodes->Editor.SetNodes (FeatureChooserDialogViewModel.cs:46), no Sort/OrderBy. No test asserts sort order."
+          },
+          {
+            "title": "Phonological feature values show full Name instead of Abbreviation",
+            "verdict": "confirmed",
+            "severity": "medium",
+            "evidence": "Legacy PhonologicalFeatureChooserDlg.PopulateValuesCombo (PhonologicalFeatureChooserDlg.cs:400-405) uses val.Abbreviation.BestAnalysisAlternative ('+'/'-'). Avalonia BuildPhonologicalNodes emits values via ValueName (FwFeatureStructureAdapter.cs:131); ValueName returns val.Name?.BestAnalysisAlternative?.Text (cs:507-508), the full name. Caller clean: LcmPhonologicalFeatureChooserLauncher.BuildInput->BuildPhonologicalNodes (cs:101)->Input.Nodes->SetNodes (FeatureChooserDialogViewModel.cs:46). Finding's secondary claim correct: inflection legacy uses Name (FeatureStructureTreeView.cs:174), so single ValueName=Name helper is right for inflection but a visible delta for phonological."
+          },
+          {
+            "title": "FwMsaGroupBox doc/PARITY comments misframe net-new inflection-feature & inflection-class widgets as parity scope cuts",
+            "verdict": "confirmed",
+            "severity": "medium",
+            "evidence": "Legacy MSAGroupBox has only four widgets: m_tcMainPOS, m_tcSecondaryPOS, m_fwcbSlots, m_fwcbAffixTypes (MSAGroupBox.cs:44-50) plus MSAType; SandboxMSA getter sets only MsaType/MainPOS/SecondaryPOS/Slot (cs:66-101). MsaCreatorDlg hosts that plain box (MsaCreatorDlg.cs:37,152) returning only SandboxMSA (cs:56). FwMsaGroupBox.cs:533-534 attributes an 'Inflection Features affordance' to 'the legacy box' that the four-widget box never had -- the misframe. LcmMsaCreatorDialogLauncher.cs:299 itself admits 'SandboxGenericMSA carries no inflection-class field', so the MsaCreator inflection-class non-round-trip (cs:297-303) is an incomplete NEW capability, not a PARITY cut. The 572-574 comment ('legacy derivational MSA carries from/to ...') is accurate about the MSA model (IMoDerivAffMsa.FromMsFeaturesOA exists) and is NOT itself a misframe; confirmation rests on 533-534 + 299. No functional defect: Insert Entry / Add New Sense round-trip both (cs:296,302-303)."
+          },
+          {
+            "title": "Editor opens collapsed and selects nothing; legacy expanded all and selected the first node",
+            "verdict": "confirmed",
+            "severity": "low",
+            "evidence": "Legacy FinishLoading (MsaInflectionFeatureListDlg.cs:280-283): ExpandAll(), Sort(), SelectedNode=Nodes[0]. Avalonia ApplyAssignments calls ExpandAncestors only when chosen != null && !chosen.IsNone (FwFeatureStructureEditor.cs:489-490); RebuildTree seeds every closed feature's <None> radio as chosen (cs:447-457), so a fresh FS has all features IsNone, the 489 guard is false, ExpandAncestors never runs. No ExpandAll equivalent and no initial selection anywhere in SetNodes/RebuildTree/ApplyAssignments. Fresh FS renders fully collapsed, nothing selected; type-ahead filter mitigates. Not documented as a PARITY note."
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "19c-richtext: Rich-text depth (named styles / per-run WS / ORC)",
+        "confirmed": [
+          {
+            "title": "Rich-text-depth span gestures are a no-op in production: focusable affordance buttons steal focus and collapse the editor selection before the click handler reads it",
+            "verdict": "confirmed",
+            "evidence": "Reproduced via headless probe. Source: affordance buttons are plain focusable Button (RegionRichTextChrome.BuildSpanPicker FwStructuredTextField has no Focusable=false at RegionRichTextChrome.cs:96-107; BuildStyleAffordance styleButton FwStructuredTextField.cs:285; FwFieldControls.cs linkButton:637, deleteButton:713). Handlers read box.SelectionStart/End at click/open: FwStructuredTextField.cs:419-420 (onOpen) and :434-435 (commit fallback); FwFieldControls.cs:658-659 (link open), :732-733 (orc). FwOptionPicker.cs:150-151 sets list Focusable=false but trigger buttons are not guarded. Probe (single-run editable para, AvailableNamedStyles set, box visible+focused, sel 0,3): a REAL PointerPressed+PointerReleased on Discussion.Para.0.CharStyle drove box.IsFocused True->False and selection 0,3->0,0; flyout opened, picker committed 'Strong'; context.ParagraphTextEdits.Count=0 (NO style applied). Isolated blur probe: box.Focus() succeeded (IsFocused=True), blurTarget.Focus() -> IsFocused=False, selection 0,3->0,0 — Avalonia 11.3.17 collapses TextBox selection to caret on LostFocus. Control: same gesture via flyout.ShowAt()+CommitHighlighted() (no pointer) staged Count=1 styled='dog'. Affects all four gestures on both editors (shared box.SelectionStart/End-at-click pattern).",
+            "severity": "high"
+          },
+          {
+            "title": "Depth-picker tests route around the focus-collapse interaction, so the broken gesture stays green",
+            "verdict": "confirmed",
+            "evidence": "StructuredTextRichDepthTests.cs:99-108 (CharStyle) and :160-169 (WsRetag) set box.SelectionStart/End directly then call flyout.ShowAt(styleButton)/picker.OptionsList.SelectedIndex/picker.CommitHighlighted() — never a real PointerPressed/Click on the affordance button. RegionLinkOrcEditingTests.cs uses linkButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent))+flyout.ShowAt (e.g. :89-90, :127-128, :156-157, :189) — also no real pointer. My probe proved the production pointer path collapses the selection and stages nothing (Count=0) while these very paths stage 'do'/'dog' (Count=1). RaiseEvent(ClickEvent) and ShowAt() do not move focus off the TextBox, so the focus-collapse never fires in test — the suite asserts over a path that bypasses the production focus transition. Verdict tied to finding 1 (confirmed bug), so this masking is real, not a minor coverage nit.",
+            "severity": "medium"
+          },
+          {
+            "title": "Hyperlink / ORC insert affordance is missing on the StText editor while present on the multistring editor",
+            "verdict": "confirmed",
+            "evidence": "FwStructuredTextField.BuildParagraphRow (FwStructuredTextField.cs:74-234) builds only styleAffordance/charStyleAffordance/wsAffordance/addAffordance/deleteAffordance (declared :99-103, assigned :116-171) — no Link or OrcDelete control. The multistring editor FwFieldControls.cs builds both: linkButton at :637-705 and orc deleteButton at :712-749. Algorithms exist and are real: ApplyHyperlink (LexicalEditRegionModel.cs:810), EditHyperlinkUrl (:842), DeleteOrcRun (:881). No '// PARITY' note in FwStructuredTextField.cs scopes out link/ORC (grep returned nothing). tasks.md 19c.3 (lexical-edit-avalonia-migration/tasks.md:377) says external links 'insert/edit/delete' with no StText carve-out; the only documented StText restriction (§19c.3, file header :32-34) is that an ORC-BEARING paragraph is read-only, which does not cover inserting a link into a clean editable prose paragraph. RegionFieldControlFactory.cs:110-116 routes RegionFieldKind.StructuredText to new FwStructuredTextField, so prose fields (Definition/Discussion/Comment) — exactly where hyperlinks belong — get the editor that lacks the affordance. Asymmetry is real and undocumented.",
+            "severity": "medium"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "19d-media",
+        "confirmed": [
+          {
+            "title": "Task 19d.2 is checked complete but claims in-cell browse picture editing that is not realized in product",
+            "verdict": "confirmed",
+            "severity": "medium",
+            "evidence": "tasks.md (lexical-edit-avalonia-migration/tasks.md:382) marks 19d.2 [x] claiming picture insert/replace/delete/metadata 'in the detail view AND in-cell in browse', unqualified. In browse, ClerkBrowseEditContext.For (ClerkBrowseEditContext.cs:110) returns LexicalEditRegionEditContext, a sealed RegionEditContextBase subclass (LexicalEditRegionEditContext.cs:21) that does NOT override the picture methods (grep for TryInsertPicture/TryReplacePicture/TryDeletePicture in that file = 0 hits), so it inherits the rejecting base overrides (RegionEditContextBase.cs:75-90, all return false). Only ComposedRegionEditContext implements them (FullEntryRegionComposer.cs:3506-3543). Decisive product fact: ClerkBrowseRowSource.GetEditField (ClerkBrowseRowSource.cs:549-578) UNCONDITIONALLY returns kind: RegionFieldKind.Text and never classifies an Image column (grep RegionFieldKind.Image in that file = 0 hits); no IRegionMediaServices is threaded through the browse host. So no browse picture cell is realized in product -- noted honestly at ClerkBrowseEditContext.cs:146-156 ('PARITY 19f.5 ... no picture cell is realized in product today; the view + edit-context lane are ready'). The detail-view path IS complete + tested (RegionPictureAndAudioEditingTests.cs:105-200 insert/replace/delete/metadata/ORC; PictureAndAudioFieldTests.cs:85-295). The 19d.2 [x] text over-claims: shipped product is detail-view only and the browse deferral lives under a DIFFERENT task (19f.5 code note), not reflected in the 19d.2 checkbox."
+          }
+        ],
+        "uncertain": [
+          {
+            "title": "Picture-properties dialog is an undocumented reduction of the WinForms original (crop/edit toolbox, Art-of-Reading gallery, and Copy/Move/Leave file-location choice all dropped)",
+            "verdict": "uncertain",
+            "severity": "low",
+            "evidence": "The REDUCTION reproduces cleanly: Avalonia VM (PicturePropertiesDialogViewModel.cs:23-27,79-85) carries only caption/description/license/creator + ImageFile; the View (PicturePropertiesDialogView.cs) has NO crop/gallery/move/leave/file-location UI (grep = 0 matches). The sole write path RegionPictureEditor (CreatePicture/ReplaceFile/InsertPictureOrc) always passes CmFolderTags.DefaultPictureFolder (lines 46,60,107), so Move and Leave/link are structurally impossible. WinForms original confirms dropped features: ImageToolbox crop/edit (PicturePropertiesDialog.cs:21,66-68), ImageGallery/Art of Reading (cs:22,64 m_isAOR), FileLocationChoice Copy/Move/Leave (cs:40,50; ApplyMoveCopyOrLeaveFile:374-393 via MoveOrCopyFilesController). Narrower claims hold: Src-wide // PARITY grep on toolbox/crop/gallery/FileLocation/Copy/Move/Leave found NONE (only LcmRegionMediaServices.cs:33,169 audio record + ClerkBrowseEditContext.cs:154 browse column). HOWEVER 'undocumented/silent drop' is OVERSTATED: openspec/changes/lexical-edit-avalonia-migration/media-pictures-test-research.md (the 19d T0 note) documents the legacy copy/move/leave + ImageToolbox capability (line 15) and specifies a deliberately metadata-only replacement (Design decisions, lines 33-55: 'the dialog captures all four'; only four edit-seam methods). So the reduction is documented by design-scoping/omission, not silently -- though not flagged with an explicit deferral line the way audio cross-platform record IS (lines 57-65 + // PARITY marker). Net: real parity gap, framing partly refuted; proposed documentation fix is harmless."
+          }
+        ]
+      },
+      {
+        "part": "Field-type completeness (enum/int/GenDate/date/vector/jtview/literal/visibility) (19e-fieldtypes)",
+        "confirmed": [
+          {
+            "title": "FwGenDateField corrupts the year of any GenDate that has a month/day when a qualifier is edited",
+            "verdict": "confirmed",
+            "evidence": "Reproduced end-to-end by reflection probe against Output/Debug/SIL.LCModel.Core.dll. (1) new GenDate(Exact, month=6, day=15, year=1985, ad=true).ToLongString() => 'Saturday, June 15, 1985'. (2) Composer puts that exact string in the value slot: AddDateField sets display = gen.ToLongString() (FullEntryRegionComposer.cs:2590), gen read via get_GenDateProp (2584). (3) FwGenDateField.TryParseLongString (FwGenDateField.cs:222-234) seeds year from the FIRST run of digits; on 'Saturday, June 15, 1985' that run is '15' (reproduced: seed='15'). (4) Editing any qualifier fires Commit (precision/era handlers at FwGenDateField.cs:135-136), which composes from Year=15: Compose(15, Exact, AD) => 'AD 15' (FwGenDateField.cs:187-199). (5) GenDate.TryParse('AD 15') succeeds with Year=15 (reproduced), and the composer setter stores it (FullEntryRegionComposer.cs:2621-2623). A 1985 day-precise date silently becomes year 15. Mechanism is surface-independent: BuildDate routes EVERY editor='GenDate' slice to FwGenDateField unconditionally (RegionFieldControlFactory.cs:322-323). Reachable: DateOfBirth/DateOfDeath are editable editor='GenDate' slices (CmPossibilityParts.xml:257,265) and the legacy default value carries month/day (GenDateLauncher.cs:48 new GenDate(Exact, now.Month, now.Day, now.Year, true)). Test gap confirmed: every GenDate test uses month=0/day=0 year-only values (RegionDateEnumEditingTests.cs:85,90; FieldTypeVisualTests.cs:101,129,158), for which the first digit run IS the year, so the suite never exercises a month/day string. (Custom-field-on-entry routing through FwGenDateField inferred from the unconditional BuildDate route, not separately traced; the in-scope custom GenDate display at LexEntryParts.xml:411-412 is a read-only jtview <gendate format='short'> path.)",
+            "severity": "high"
+          },
+          {
+            "title": "GenDate editor drops month/day granularity vs legacy GenDateChooserDlg (parity regression)",
+            "verdict": "confirmed",
+            "evidence": "Legacy data-entry GenDate editing opens GenDateChooserDlg (GenDateLauncher.cs:38-62 HandleChooser) which exposes precision/month/day/year/era and builds new GenDate(precision, month, day, year, ad) (GenDateChooserDlg.cs:168-203, esp. 178-182 month/day combos). FwGenDateField offers only year + precision (Before/On/About/After) + era (FwGenDateField.cs:78-128); Compose emits only year (FwGenDateField.cs:187-199) — no month/day controls. So a user who set 'June 15, 1985' in legacy cannot reproduce it in Avalonia. No '// PARITY' note flags the omission: grep for PARITY in FwGenDateField.cs and the composer GenDate path returns nothing. tasks.md 19e.3 scopes the feature to 'year + precision Before/On/About/After + era AD/BC' but does not record month/day as an intentional deferral or note the corruption risk. NOTE: I do NOT confirm the sub-claim that the class comment 'asserting parity' is inaccurate — the comments (FwGenDateField.cs:37-44, 204-205) honestly describe the editor as 'year granularity, like the legacy chooser's year/precision/era controls' and never claim month/day parity; that sub-claim is overstated. Severity is calibratable: this capability gap shares the F1 root cause; the silent corruption (F1) is the genuine high-severity item, this gap reads closer to medium given the 19e.3 year-granularity scoping.",
+            "severity": "medium"
+          },
+          {
+            "title": "jtview / embedded-view behavior is untested beyond classification",
+            "verdict": "confirmed",
+            "evidence": "WalkEmbeddedView (FullEntryRegionComposer.cs:3135-3170) resolves node.TargetLayout, guards cycles via _visited (3144-3149), recurses children at depth+1 (3157-3158), and falls back to a read-only ShortName row for empty TargetLayout (3138-3142), cyclic nest (3147), and unresolved/empty compiled layout (3163). Tests touching the jtview/EmbeddedView concept stop at classification and import: EditorKindMapClassifyTests.cs:31,67 and RegionConsolidationTests.cs:114 assert editor-string->RegionEditorCategory.EmbeddedView; ViewDefinitionTests.cs:143-167 (Import_JtViewSlice_*) assert the IMPORTER captures TargetLayout ('PronInEntry'/'PublishPron'). The 'jtview' literals in ViewDefinitionOverrideEdgeCaseTests.cs:30,33 are the ViewDefinitionModel viewType parameter, not an editor='jtview' slice. No test invokes Compose on an actual jtview slice to verify nested fields are emitted at depth+1, that a cyclic nest degrades to ShortName without infinite recursion, or that an unresolved TargetLayout falls back to ShortName (grep for _visited/CompileForObjectWithOverrides in test dirs finds no composition test). Gap is the composition behavior specifically, not import.",
+            "severity": "medium"
+          },
+          {
+            "title": "Legacy enumComboBox sideEffect / refreshDataTreeOnChange are silently dropped",
+            "verdict": "confirmed",
+            "evidence": "Confirmed as described, NON-ISSUE today (no functional regression). Legacy EnumComboSlice invokes a sideEffect reflection method (EnumComboSlice.cs:219-225) and optionally RefreshList on refreshDataTreeOnChange (228-230). XmlLayoutImporter and all of FwAvalonia capture neither attribute (grep 'sideEffect|refreshDataTreeOnChange' over Src/Common/FwAvalonia returns nothing), and WalkEnumCombo's setter calls _sda.SetInt / IntBoolPropertyConverter directly with no side-effect or refresh (FullEntryRegionComposer.cs:2300-2315). In-scope entry-editor enumComboBox slices carry neither attribute: IsAbstract, Adjacency, Direction in MorphologyParts.xml (lines 239, 2406/2415, 2843/2851) have no sideEffect/refreshDataTreeOnChange. The attributes are used only on out-of-scope surfaces: WFIParts.xml (sideEffect), CmPossibilityParts.xml (refreshDataTreeOnChange). LexSenseParts.xml:527 uses sideEffectMethod on a 'multistring' Gloss editor, not an enumComboBox, so it is unrelated. No defect in scope; a // PARITY note is the only suggested follow-up.",
+            "severity": "low"
+          },
+          {
+            "title": "Exact-date Time field is editable in Avalonia where legacy DateSlice was read-only (note, not a defect)",
+            "verdict": "confirmed",
+            "evidence": "Confirmed as described, intentional enhancement (NOT a defect). Legacy DateSlice is display-only: RichTextBox ReadOnly=true (BasicTypeSlices.cs:373) and shows 'Date/Time not set' when unset (428). Avalonia: a visibility='never' Time field stays a read-only row (FullEntryRegionComposer.cs:2528-2536), but an always-shown Time field becomes an editable Date row via AddDateField(...RegionDateKind.Date) (2539-2542, AddField isEditable:true at 2604). The factory renders an editable TextBox (IsReadOnly = !field.IsEditable) plus a CalendarDatePicker (RegionFieldControlFactory.cs:317-417). The parse-on-commit setter rejects unparseable input via DateTime.TryParse (FullEntryRegionComposer.cs:2632-2638) so bad input cannot corrupt the field. This is a deliberate editability enhancement, surfaced only so the difference is not mistaken for a regression.",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "19f-browse-rem",
+        "confirmed": [
+          {
+            "title": "Data-row right-click menu shows no host commands in product (mnuBrowseView parity lost); task 19f.1 marked FULL is an overclaim",
+            "verdict": "confirmed",
+            "evidence": "Product wiring proven: RecordBrowseView constructs the row source as `new ClerkBrowseRowSource(Clerk, m_avaloniaColumnSource, Cache)` (RecordBrowseView.cs:397) and passes only that into the host. ClerkBrowseRowSource's class declaration (ClerkBrowseRowSource.cs:59-62) lists 13 capability interfaces but NOT IBrowseRowMenuSource. A repo-wide grep for `IBrowseRowMenuSource` returns the interface decl (LexicalBrowseView.cs:551), the view field/probe (`_rowMenuSource = rows as IBrowseRowMenuSource`, LexicalBrowseView.cs:621,799), and exactly ONE implementer: the TEST source `RemaindersSource` (LexicalBrowseRemaindersTests.cs:35). No product implementer exists. Therefore in product `_rowMenuSource` is null, BuildRowContextMenu's `_rowMenuSource?.GetRowCommands(rowIndex)` (LexicalBrowseView.cs:2502) yields null, and the menu adds only Cell Copy/Paste (LexicalBrowseView.cs:2526-2537). RecordBrowseView.OnAvaloniaRowCommandInvoked (RecordBrowseView.cs:889-898) can only fire if a command is chosen, which requires commands to exist — so it is dead in product. Parity-loss proof (the discriminating evidence, distinguishing this from RDE's genuine non-applicability): the legacy standard browse DID raise the rich row menu — RecordBrowseView.cs:290 `ui.HandleRightClick(m_mediator, m_propertyTable, sender, true, \"mnuBrowseView\")` (Delete Entry, Show in Concordance, etc.). Asymmetry: 19f.2 (RDE) wrote an explicit `// PARITY §19f.7` for its absent clerk-backed source AND ClerkBrowseRowSource's class comment documents the RDE deferral (lines 50-57), but 19f.1 (tasks.md:394) is marked `[x] ... (FULL): ... (host commands + universal Copy/Paste)` with NO PARITY note for the command-supply side, and the class comment never mentions a row-menu deferral. So FULL is an overclaim: the host-command half is unimplemented in product. CONTEXT for severity: 19f is the 'behind the shell, switchable' gated new path (tasks.md:393), not the default product surface — users hit this only in the new Avalonia browse.",
+            "severity": "high"
+          },
+          {
+            "title": "CSV export has no user-reachable trigger in the product browse",
+            "verdict": "confirmed",
+            "evidence": "The CSV computation is complete and the host bridge exists: BrowseCsvExporter.ToCsv (BrowseCsvExporter.cs:29, RFC-4180 quoting), LexicalBrowseView.ExportVisibleCsv (LexicalBrowseView.cs:1914), and the host hook LexicalBrowseHostControl.ExportVisibleCsv() (LexicalBrowseHostControl.cs:234). But a repo-wide grep for `ExportVisibleCsv` returns ONLY those two production members plus tests (LexicalBrowseRemaindersTests.cs:274,277) — zero product callers. RecordBrowseView has no Export/Csv reference at all (grep for `Export|Csv|CSV` in RecordBrowseView.cs: no matches), so no menu item, toolbar button, or command wires the host hook. Because the only bridge from any UI command into the new export is a C# call to `ExportVisibleCsv()` and there are no callers outside host/view/tests, no XML-defined menu/toolbar command can reach it either. tasks.md:398 marks 19f.5 Export `[x] (FULL bounded)`; its PARITY note defers only 'OS print + the full legacy ConfiguredExport', NOT the CSV trigger. browse-remainders-test-research.md:207 says it is 'surfaced via ExportVisibleCsv() + a host hook' — the hook exists but is not user-invokable. Scope: this is about the NEW ExportVisibleCsv trigger being unreachable; the legacy shell OnExport/ExportDialog path is out of scope and not asserted broken.",
+            "severity": "medium"
+          },
+          {
+            "title": "No test that RTL/complex-script text survives CSV export un-mangled",
+            "verdict": "confirmed",
+            "evidence": "The three CSV tests use ASCII only: ExportVisibleCsv_RendersHeadersAndRows (LexicalBrowseRemaindersTests.cs:274-282, 'Lexeme Form,Gloss' / 'lexeme 0,gloss 0'), Csv_QuotesFieldsWithCommasQuotesAndNewlines (285-298, ASCII with embedded comma/quote/newline), Csv_EmptyRows_YieldsHeaderOnly (301-305). The RTL Hebrew test at ClerkBrowseRowSourceIntegrationTests.cs:1585 (ComputeReplaced_DiacriticInsensitive_RtlScript_NoSpuriousMatch, asserts ComputeReplaced(\"שלום\", ...)) exercises the Find/Replace path, NOT the CSV path. No CSV test covers RTL/Hebrew/Arabic or combining marks. The finding's self-classification as a coverage nicety (not a defect) is correct: BrowseCsvExporter.Quote (BrowseCsvExporter.cs:53-60) triggers only on comma/quote/CR/LF, so RTL/complex-script content passes through byte-for-byte and cannot be mangled by the quoting logic.",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "19g-dialogs",
+        "confirmed": [
+          {
+            "title": "WS-props and SpecialCharacter dialogs are built + unit-tested but have zero product callers; tasks.md marks them done",
+            "verdict": "confirmed",
+            "evidence": "Grep for WritingSystemPropertiesDialogView/ViewModel and SpecialCharacterDialogView/ViewModel across Src (excluding tests) returns only the dialogs' own definitions plus two COMMENT lines in FwXWindow.cs (1552, 954) — no product caller, no Lcm*Launcher (Glob of Lcm*Launcher*.cs shows none for either). FwXWindow.cs:1543-1561 ShowWsPropsDialog unconditionally builds legacy FwWritingSystemSetupDlg; its own comment at 1553 admits 'this list-management call site is not yet gated onto it'. FwXWindow.cs:948-969 OnShowCharMap unconditionally shells charmap.exe/gucharmap (comment 952-956 calls SpecialCharacterDialog a NET-NEW picker for a 'future' insert affordance). Yet tasks.md:402 marks 19g.1 '[x] Avalonia managed (WritingSystemPropertiesDialog)' and tasks.md:405 marks 19g.4 SpecialCharacter '[x] migrated', with PARITY notes that defer only CONTENT (SLDR/converters/advanced tabs; reversal/occurrence pickers) — no wiring-deferral note. By contrast siblings 19g.2 and 19g.5 use '[~] DEFERRED' when unwired. The '[x]' against the code's own 'not yet gated' admission is a real checklist/reality mismatch. Counterpoint: roadmap convention may read '[x] Avalonia managed/migrated' as 'VM+view built and headless-tested', not 'product-wired'; under that reading the checklist is technically true. Wiring facts are airtight either way.",
+            "severity": "high"
+          },
+          {
+            "title": "DeleteConfirmation is wired only for LexReference relation deletes, not the primary entry/sense/browse delete paths",
+            "verdict": "confirmed",
+            "evidence": "LcmDeleteObjectLauncher.Confirm has exactly two callers, both LexReference relation deletes behind a New-UI gate: LexReferenceMultiSlice.cs:906-911 (DeleteReference pair, () => lr.TargetsRS.Remove) and :985-990 (tree, () => DeleteObj(lr.Hvo)). The standard delete paths build the legacy ConfirmDeleteObjectDlg with NO UIMode gate: RecordClerk.cs:1518 (DeleteRecord; ShowDialog at 1529, no ShouldUseAvaloniaOptionsDialog check anywhere in the method) and FdoUiCore.cs:1036 DeleteUnderlyingObject (ShowDialog at 1043, no gate). tasks.md:404 (19g.3) says the dialog 'pairs with the browse Delete tab + detail delete' — those two standard delete paths are not gated to the Avalonia launcher. Scope note: I confirmed the legacy paths are ungated; I did not separately confirm New mode routes deletes through RecordClerk/FdoUiCore vs an Avalonia shell path, so the precise user-visible effect is bounded to 'these standard delete paths are ungated'.",
+            "severity": "high"
+          },
+          {
+            "title": "LexReferenceDetails Avalonia dialog drops the Help button present in the legacy dialog (on a wired path)",
+            "verdict": "confirmed",
+            "evidence": "Legacy LexReferenceDetailsDlg.cs wires Help: const s_helpTopic='khtpReferenceSetDetails' (line 25), helpProvider.SetHelpKeyword (line 59), ShowHelp.ShowHelpTopic (line 208). The Avalonia LexReferenceDetailsDialogView.axaml has only OK (lines 17-19) and Cancel (20-22) buttons — no Help button, no HasHelp/HelpCommand binding. The launcher constructor LcmLexReferenceDetailsLauncher (lines 35-41) takes no IHelpTopicProvider, so Help is fully dropped, not just visually omitted. Peer Avalonia dialogs keep Help: EntryGoDialogView.axaml:28-31 and ChooserDialogView.axaml:27-30 both bind a Help button to HasHelp/HelpCommand. The LexReferenceDetails path is genuinely wired/live (gated at LexReferenceMultiSlice.cs:1038, calling LcmLexReferenceDetailsLauncher.Edit at 1041). No blanket 'Help deferred' note found.",
+            "severity": "low"
+          },
+          {
+            "title": "Wired Delete dialog uses generic 'Delete' title instead of the legacy class-specific 'Delete {class}'",
+            "verdict": "confirmed",
+            "evidence": "Legacy ConfirmDeleteObjectDlg.cs:162 sets Text = String.Format(FdoUiStrings.ksDeleteX, obj.DisplayNameOfClass). Both wired call sites pass title=null: LexReferenceMultiSlice.cs:909 and :988. LcmDeleteObjectLauncher.cs:43 falls back to FwAvaloniaDialogsStrings.DeleteConfirmationDelete when title is null/empty, and that string resolves to literal 'Delete' (FwAvaloniaDialogsStrings.cs:330 -> Text('FwAvaloniaDialogs.DeleteConfirmation.Delete','Delete')). So the wired dialog title is the generic 'Delete' rather than 'Delete {class}'. (Same string also drives the Delete button text per DeleteConfirmationDialogViewModel.cs:58.)",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "browse-core",
+        "confirmed": [],
+        "uncertain": []
+      },
+      {
+        "part": "dialog-kit",
+        "confirmed": [
+          {
+            "title": "Plain 'Go to lexical entry' (OnGotoLexEntry) is not gated to the Avalonia EntryGo dialog",
+            "verdict": "confirmed",
+            "evidence": "EntryDlgListener.cs:293-311 GoLinkEntryDlgListener.OnGotoLexEntry unconditionally does `using (var dlg = new EntryGoDlg())` and ShowDialog -> JumpToRecord, with NO UIMode/AvaloniaOptionsDialogLauncher gate. Contrast the two siblings in the SAME file: InsertEntryDlgListener.DialogInsertItemInVector gates at EntryDlgListener.cs:89-90 (`var uiMode = m_propertyTable.GetStringProperty(\"UIMode\",null); if(AvaloniaOptionsDialogLauncher.ShouldUseAvaloniaOptionsDialog(uiMode))`) -> LcmInsertEntryDialogLauncher.Show (93-94); MergeEntryDlgListener.RunMergeEntryDialog gates identically at 185-186 -> LcmMergeEntryDialogLauncher.Show (189). The legacy WinForms path is fully intact (not deleted), consistent with a switchable phase. The finding's fix premise also holds: EntryGoDialogViewModel.cs:15-16 documents it as the kit replacement for the 'EntryGoDlg/BaseGoDlg family' (general WS-aware entry search), so the plain-search case is supported. Scope check: grep for GotoLexEntry/GoLink/'Go to'/FindLexicalEntry across *.md returned nothing; tasks.md (openspec/changes/lexical-edit-avalonia-migration/tasks.md:326) enumerates kit scope as 'InsertEntry ... EntryGo family + Merge + Link{EntryOrSense,Allomorph,MSA} (+ sense path), Chooser (flat/tree + shift-range)' with NO listing of plain GoTo/GotoLexEntry and NO explicit deferral note. So this is an undocumented-but-bounded deferral on the intact legacy path, exactly as the finding (low) characterizes it -- not a contradicted [x] claim and not a render/behavior drop.",
+            "severity": "low"
+          },
+          {
+            "title": "Chooser kit lacks legacy Any/All/None match modes and goto/dialog/create-new links",
+            "verdict": "confirmed",
+            "evidence": "Legacy affordances exist as cited: ReallySimpleListChooser.cs:597 ShowAnyAllNoneButtons(ListMatchOptions,...) building m_AnyButton/m_AllButton (608-614); the goto/dialog/simple link region at :895-924 (AddLink kGotoLink / kDialogLink / AddSimpleLink); guicontrol browse-view swap ReplaceTreeView at :927-931. ChooserDialogViewModel.cs (read in full) implements flat/tree select, search, shift-range (ToggleChecked rangeFromAnchor 283-315), ForbidEmpty OK-gate (384-388), and Help (137-138) -- but has NO Any/All/None ListMatchOptions and NO links region. Kit-wide absence grep hardens this: `ListMatchOptions|MatchMode|AnyChecked|AllChecked|MatchAny` over Src/Common/FwAvaloniaDialogs/ returns only FilterForDialogViewModel.MatchAnywhere (an unrelated string-position toggle), and `LinkType|AddLink|kGotoLink|kDialogLink|CreateNew` returns only POS/feature CreateNew* events on the FeatureChooser/AddNewSense path -- none in ChooserDialogViewModel. Wiring claim holds: ChooseFromList (LcmChooserDialogLauncher.cs:94) has ZERO call sites (grep of `ChooseFromList(` finds only the declaration); the wired ChooserDialogViewModel consumers (FeatureChooserDialogViewModel, LcmCreatePartOfSpeechLauncher, LcmInflectionFeatureChooserLauncher, LcmPhonologicalFeatureChooserLauncher, RecordBrowseView) plus FwChooserField (tasks.md:85 §6.3) do not use match-modes or links. dialogs-test-research.md chooser content is filter/options-focused (rows 5, B4-B6) with no Any/All/None or links coverage, confirming the affordances are absent from the research doc. NOT a runtime regression (finding concedes this). Two nuances vs the finding text: (a) the '54 SimpleListChooser call sites' figure is not reproducible -- I measured 18 `new SimpleListChooser/ReallySimpleListChooser` instantiations and 77 total references; the substance is unaffected; (b) 'undocumented scope gap' is more precisely 'scoped by omission at tasks.md:326 with no explicit PARITY deferral note' -- the chooser scope IS bounded in tasks.md, just not the missing affordances.",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "region-core",
+        "confirmed": [
+          {
+            "title": "Label-column width persists on every LayoutUpdated, not only on user drag",
+            "verdict": "confirmed",
+            "evidence": "LexicalEditRegionView.cs:113-118 subscribes grid.LayoutUpdated and unconditionally calls _labelColumnWidthChanged?.Invoke(w.Value) whenever col 0 Width.IsAbsolute && Value>0. Col 0 is always GridUnitType.Pixel (LexicalEditRegionView.cs:98), so the condition holds on essentially every layout pass after first arrange. Grep confirms the ONLY subscription is line 113 and there is NO GridSplitter.DragCompleted handler and NO last-written-value guard (grep for DragCompleted/lastWritten/_lastWidth returned nothing). _labelColumnWidthChanged is wired to PersistLabelColumnWidth (RecordEditView.cs:798), which runs PropertyTable.SetProperty (RecordEditView.cs:1319-1328) on each invoke. PropertyTable.SetPropertyInternal (PropertyTable.cs:533-557) has change-detection, but PersistLabelColumnWidth passes doBroadcastIfChanged=false (RecordEditView.cs:1326), so the only saved work is the broadcast; the invoke + ToString + SetProperty + SetPropertyPersistence call path still executes every layout pass. Finding correctly scopes this as redundant persistence churn, not a correctness defect; the proposed fix (DragCompleted or last-written guard) is appropriate. Severity low is accurate.",
+            "severity": "low"
+          }
+        ],
+        "uncertain": []
+      },
+      {
+        "part": "crosscutting",
+        "confirmed": [],
+        "uncertain": []
+      }
+    ],
+    "wiring": [
+      {
+        "tool": "Lists (CmPossibility editors)",
+        "recordClasses": [
+          "CmPossibility",
+          "CmSemanticDomain",
+          "CmAnthroItem",
+          "CmAnnotationDefn",
+          "CmLocation",
+          "CmPerson",
+          "PartOfSpeech",
+          "MoMorphType",
+          "LexEntryType",
+          "LexRefType",
+          "CmCustomItem",
+          "CmPossibilityList (via PossibilityRecordList, owner of the edited items)",
+          "FsFeatStrucType (featureTypesAdvancedEdit — adjacent, NOT a CmPossibility, RecordBrowseView)"
+        ],
+        "toolNames": [
+          "domainTypeEdit",
+          "anthroEdit",
+          "complexEntryTypeEdit",
+          "confidenceEdit",
+          "dialectsListEdit",
+          "chartmarkEdit",
+          "charttempEdit",
+          "educationEdit",
+          "roleEdit",
+          "extNoteTypeEdit",
+          "genresEdit",
+          "languagesListEdit",
+          "lexRefEdit",
+          "locationsEdit",
+          "publicationsEdit",
+          "morphTypeEdit",
+          "peopleEdit",
+          "positionsEdit",
+          "restrictionsEdit",
+          "semanticDomainEdit",
+          "senseTypeEdit",
+          "statusEdit",
+          "textMarkupTagsEdit",
+          "translationTypeEdit",
+          "usageTypeEdit",
+          "variantEntryTypeEdit",
+          "recTypeEdit",
+          "timeOfDayEdit",
+          "featureTypesAdvancedEdit (adjacent: FsFeatStrucType, RecordBrowseView)",
+          "reversalToolReversalIndexPOS (separate ReversalPOSEdit config: PartOfSpeech under ReversalIndex)"
+        ],
+        "browseSurface": {
+          "readiness": "large",
+          "blockers": [
+            "Lists navigation is the HIERARCHICAL tree-bar (left RecordBar), NOT the flat Avalonia browse table. Every Lists clerk wires a WinForms tree-bar handler: SemanticDomainRdeTreeBarHandler / PossibilityTreeBarHandler (areaConfiguration.xml:351,361,371,381,391,401,411,422,433,443). PossibilityTreeBarHandler : TreeBarHandler : RecordBarHandler is WinForms, backed by System.Windows.Forms.TreeView (RecordBarTreeHandler.cs:16,204,332,342,490).",
+            "NO Avalonia hierarchical record-navigation tree-bar host exists. Grep of Src/Common/FwAvalonia for tree/hierarchical navigation finds only FwPosChooser.cs (a chooser-popup Border, not a left-pane navigator) and SenseTreeNodeTemplateTests (the entry-detail sense tree). The owned virtualized tree control this depends on is a Stage-3 deliverable not yet shipped (stage-08 epic lines 40-41, 110-112, 130).",
+            "Even the flat-table path (used only by featureTypesAdvancedEdit / reversalToolReversalIndexPOS via RecordBrowseView) is gated shut: ResolveBrowse opens only for SupportedAvaloniaBrowseToolNames = {lexiconEdit, lexiconBrowse} (LexicalEditSurfaceResolver.cs:42-46,108-127); no Lists tool matches, so RecordBrowseView.TryActivateAvaloniaBrowse returns early (RecordBrowseView.cs:388).",
+            "Reviewer-claim correction: the underlying ClerkBrowseRowSource IS genuinely clerk-driven/generic (RowCount==Clerk.ListSize, cells read from the clerk + IBrowseColumnSource, ClerkBrowseRowSource.cs:78-117) with no hard lexicon read-path coupling — so the FLAT table would render Lists. But that is the wrong surface for the navigation these tools use; it does not make the browse/navigation surface ready."
+          ],
+          "evidence": "areaConfiguration.xml:347-443 (PossibilityRecordList + tree-bar handlers); RecordBarTreeHandler.cs:16,204,332,342,490 (WinForms TreeView); LexicalEditSurfaceResolver.cs:42-46,108-127; RecordBrowseView.cs:388; ClerkBrowseRowSource.cs:64-117; stage-08-notebook-lists-dictconfig.md:38-41,109-113,130,140"
+        },
+        "editSurface": {
+          "readiness": "large",
+          "blockers": [
+            "Hard product gate rejects every non-LexEntry record: RecordEditView.ShowAvaloniaEntry does `if (!(obj is ILexEntry lexEntry)) { ... ShowMessage(EntryTypeUnsupported); return; }` (RecordEditView.cs:735-741). A CmPossibility never reaches the composer on the product route.",
+            "Tool gate is closed: LexicalEditSurfaceRegistry seeds only {lexiconEdit, lexiconEditPopup} (LexicalEditSurfaceRegistry.cs:22); no Lists tool is registered, so the selection service returns HostUiBehavior.ExplicitLegacyFallback under New mode (LexicalEditSurfaceSelectionService.cs:77-81). Proven for a Lists tool: domainTypeEdit asserts m_lexicalEditSurface == WinForms (RecordEditViewSwitchTests.cs:96-112).",
+            "Composer public entry point is LexEntry-typed and layout-hardcoded: Compose(ILexEntry entry, ...) compiles `\"Normal\"` (FullEntryRegionComposer.cs:117,124) and builds LexicalEditRegionModel(\"LexEntry\",\"Normal\",...) (line 146). Possibility editors use layout=default/EditComplex/EditVariant/DialectEdit/Reversal (toolConfiguration.xml) and the legacy detail path picks CmPossibilityA/V/AV/VA dynamically per list display props (DataTree.cs:2160-2178) — not 'Normal'.",
+            "Reviewer-claim correction (engine vs wrapper): the compile/walk ENGINE is already general — CompileForObject/CompileForClass key on obj.ClassID and climb the base-class chain for any class's 'detail' layout (FullEntryRegionComposer.cs:3289-3347), and the node walk is class-agnostic. So 'the composer can't handle CmPossibility' is too strong as stated: the blocker is in the LexEntry-bound WRAPPER (entry point, product gate, edit-context base), not the renderer engine."
+          ],
+          "evidence": "RecordEditView.cs:735-741,754; LexicalEditSurfaceRegistry.cs:22; LexicalEditSurfaceSelectionService.cs:77-81; RecordEditViewSwitchTests.cs:96-112; FullEntryRegionComposer.cs:117,124,146,3289-3347; DataTree.cs:2160-2178; RegionEditContextBase.cs:25-29,93-104"
+        },
+        "toolDialogs": [
+          "CustomListDlg (Src/xWorks/CustomListDlg.cs + CustomListDlg.Designer.cs) — WinForms create/configure custom list",
+          "DeleteCustomList (Src/xWorks/DeleteCustomList.cs) — WinForms",
+          "MasterCategoryListDlg (Src/LexText/LexTextControls/MasterCategoryListDlg.cs) — WinForms 'add from master' category dialog (POS/feature lists)",
+          "MasterListDlg (Src/LexText/LexTextControls/MasterListDlg.cs) — WinForms master-item picker",
+          "SimpleListChooser / ReallySimpleListChooser (Src/Common/Controls/DetailControls/SimpleListChooser.cs) — WinForms hierarchical possibility chooser used by list-item reference rows and the 'Edit the … list' jump (a partial Avalonia analogue FwPosChooser.cs exists for the POS chooser popup, but it is not the general list chooser/launcher)",
+          "PossibilityTreeBarHandler / SemanticDomainRdeTreeBarHandler context-menu operations (merge/move/promote/demote, add sub-item) driven through the WinForms RecordBar tree (RecordBarTreeHandler.cs)"
+        ],
+        "composerGaps": [
+          "Compose() is typed Compose(ILexEntry entry, ...) and the only product caller passes a LexEntry (RecordEditView.cs:754); there is no general Compose(ICmObject, ...) overload — a CmPossibility cannot be composed without a new entry point.",
+          "Layout is hardcoded to \"Normal\" (FullEntryRegionComposer.cs:124) and stamped into LexicalEditRegionModel(\"LexEntry\",\"Normal\") (line 146); possibility editors need the per-tool layout (default/EditComplex/EditVariant/DialectEdit/Reversal) and the legacy CmPossibilityA/V/AV/VA layout selection (DataTree.cs:2160-2178).",
+          "RegionEditContextBase requires a non-null ILexEntry and throws otherwise (RegionEditContextBase.cs:25-29); Entry is typed ILexEntry (line 33). A CmPossibility edit context cannot be constructed.",
+          "RegionEditContextBase.Validate() is hardcoded to LexEntry semantics — reads Entry.LexemeFormOA / Entry.CitationForm and emits LexemeFormRequired (RegionEditContextBase.cs:93-104). This rule is meaningless/incorrect for a CmPossibility (whose required field is Name/Abbreviation, not lexeme form).",
+          "ComposedRegionEditContext ctor also takes ILexEntry entry and forwards to the base (FullEntryRegionComposer.cs:3405-3417).",
+          "Undo/redo labels are entry-specific: UndoEditEntry/RedoEditEntry (RegionEditContextBase.cs:144-145) — would read 'Edit Entry' when editing a possibility-list item.",
+          "LexEntry-specific row builders (lexical-relation rows, ghost LexEntryRef vectors at FullEntryRegionComposer.cs:889-900,1756-1958) are dead for CmPossibility but their presence confirms the composer was authored against LexEntry; a possibility path needs none of them but the dispatch is keyed off LexEntry/LexSense/LexEntryRef types."
+        ],
+        "tasks": [
+          {
+            "title": "Generalize the composer entry point and edit-context base off ILexEntry: add a Compose(ICmObject, layoutName, ...) overload, make RegionEditContextBase/ComposedRegionEditContext take ICmObject, and parameterize the model's (class, layout) instead of hardcoding LexEntry/Normal",
+            "effort": "L",
+            "files": "Src/xWorks/FullEntryRegionComposer.cs (Compose:117-148, CompileForObject already generic, ComposedRegionEditContext:3405-3417); Src/xWorks/RegionEditContextBase.cs:25-33"
+          },
+          {
+            "title": "Replace the hardcoded LexEntry Validate() (LexemeFormOA/CitationForm) with a per-class/pluggable validation rule so a CmPossibility validates on Name/Abbreviation rather than lexeme form; likewise generalize the undo/redo labels (UndoEditEntry)",
+            "effort": "M",
+            "files": "Src/xWorks/RegionEditContextBase.cs:93-104,144-155"
+          },
+          {
+            "title": "Open the edit-surface gate for the Lists tools and remove the LexEntry-only product gate path: register the Lists tool ids (or route by record class), and replace RecordEditView's `!(obj is ILexEntry)` rejection with a general composed-region path",
+            "effort": "M",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceRegistry.cs:22; Src/xWorks/RecordEditView.cs:735-758"
+          },
+          {
+            "title": "Build an Avalonia hierarchical record-navigation tree-bar host (owned virtualized tree, expand/indent) to replace the WinForms PossibilityTreeBarHandler/SemanticDomainRdeTreeBarHandler RecordBar; depends on the Stage-3 owned tree control",
+            "effort": "L",
+            "files": "new Src/Common/FwAvalonia/... ; replaces Src/xWorks/RecordBarTreeHandler.cs:204-332 (PossibilityTreeBarHandler) and SemanticDomainRdeTreeBarHandler.cs"
+          },
+          {
+            "title": "Open the browse gate for the flat-table Lists tools (featureTypesAdvancedEdit, reversalToolReversalIndexPOS) by adding them to SupportedAvaloniaBrowseToolNames once their detail surface is ready",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceResolver.cs:42-46"
+          },
+          {
+            "title": "Provide Avalonia (or hybrid-companion) equivalents for the Lists-specific dialogs: CustomListDlg, DeleteCustomList, MasterCategoryListDlg, MasterListDlg, and the SimpleListChooser launcher used by list-item reference rows",
+            "effort": "L",
+            "files": "Src/xWorks/CustomListDlg.cs; Src/xWorks/DeleteCustomList.cs; Src/LexText/LexTextControls/MasterCategoryListDlg.cs; Src/LexText/LexTextControls/MasterListDlg.cs; Src/Common/Controls/DetailControls/SimpleListChooser.cs"
+          }
+        ]
+      },
+      {
+        "tool": "Notebook (RnGenericRec)",
+        "recordClasses": [
+          "RnGenericRec",
+          "RnResearchNbk (clerk owner: AllRecords)"
+        ],
+        "toolNames": [
+          "notebookEdit",
+          "notebookBrowse",
+          "notebookDocument"
+        ],
+        "browseSurface": {
+          "readiness": "registry-only",
+          "blockers": [
+            "Neither notebookBrowse nor notebookEdit is in LexicalEditSurfaceResolver.SupportedAvaloniaBrowseToolNames (only lexiconEdit, lexiconBrowse) — so RecordBrowseView.TryActivateAvaloniaBrowse's ResolveBrowse gate (RecordBrowseView.cs:388) always returns WinForms for Notebook. Enabling requires adding BOTH notebookBrowse (the standalone Browse tool) and notebookEdit (the left Entries/Records pane of the Edit MultiPane, whose currentContentControl is the tool value notebookEdit, same pattern the lexicon comment describes) to that array."
+          ],
+          "evidence": "RecordBrowseView is class-agnostic: TryActivateAvaloniaBrowse builds m_avaloniaRowSource = new ClerkBrowseRowSource(Clerk, m_browseViewer, Cache) (RecordBrowseView.cs:397) and reads columns from the tool's config XML; the Avalonia table is a READ-ONLY overlay mirroring the legacy BrowseViewer/clerk (RecordBrowseView.cs:374-416, MirrorClerkSelectionToAvalonia). No ILexEntry/LexEntry typing anywhere in the data path. The Notebook Browse config (Notebook/Browse/toolConfiguration.xml + browseDialogColumns.xml, listItemsClass=RnGenericRec) already drives the legacy viewer, so the same row source works for RnGenericRec. The ONLY lexicon coupling is the tool-name allowlist gate."
+        },
+        "editSurface": {
+          "readiness": "large",
+          "blockers": [
+            "notebookEdit is unregistered in LexicalEditSurfaceRegistry.DefaultSupportedTools (only lexiconEdit, lexiconEditPopup), so LexicalEditSurfaceSelectionService.Decide returns ExplicitLegacyFallback for Notebook — the Avalonia edit surface is never reached (LexicalEditSurfaceRegistry.cs:22, LexicalEditSurfaceSelectionService.cs:61-85). Must register notebookEdit.",
+            "ShowAvaloniaEntry hard-rejects any non-ILexEntry record: if (!(obj is ILexEntry lexEntry)) { ShowMessage(EntryTypeUnsupported); return; } (RecordEditView.cs:735-741). RnGenericRec would show the unsupported placeholder, never compose.",
+            "FullEntryRegionComposer.Compose is typed to ILexEntry entry and hardcodes layout \"Normal\" and the model class label \"LexEntry\" (FullEntryRegionComposer.cs:117, 124, 146). Needs an ICmObject overload + parameterized layout/class.",
+            "ComposedRegionEditContext (ctor takes ILexEntry, FullEntryRegionComposer.cs:3407) and its base RegionEditContextBase (ctor requires non-null ILexEntry, RegionEditContextBase.cs:25-28) are LexEntry-typed; ResolveObject(0) returns the LexEntry (FullEntryRegionComposer.cs:3569-3573).",
+            "RegionEditContextBase.Validate() hardcodes LexEntry semantics (Entry.LexemeFormOA / Entry.CitationForm, RegionEditContextBase.cs:93-104) — for an RnGenericRec this rule is meaningless/always-failing and must be made class-aware or pluggable.",
+            "layoutChoiceField=\"Type\" (Notebook/Edit/toolConfiguration.xml:32; Notebook.fwlayout:432 sublayout) selects a per-record-type layout via the Type possibility's choiceGuid. Legacy resolves it with a 4-key lookup {class, detail, name, choiceGuid} (DataTree.GetTemplateForObjLayout, DataTree.cs:2143-2224, with an explicit IRnGenericRec branch at 2194). The composer's CompileForClass keys only on (className, detail, layoutName) (FullEntryRegionComposer.cs:3322) with NO choiceGuid dimension, and ShowAvaloniaEntry passes neither m_layoutName nor m_layoutChoiceField (RecordEditView.cs:754). lexiconEdit does not use layoutChoiceField, so the composer never had to handle it — it is a Notebook-specific requirement."
+          ],
+          "evidence": "Affirm (a naive reviewer would wrongly flag these as blockers): the compile/walk ENGINE is genuinely class-general — CompileForObject keys on obj.ClassID and walks base classes (FullEntryRegionComposer.cs:3289-3346), LoadSources globs ALL layout files incl. NotebookParts.xml/Notebook.fwlayout (FullEntryRegionComposer.cs:3349-3372), and the Walk/condition/sequence logic operates on ICmObject. StText/paragraph editing is already generic (Paragraph*Setters; RegionEditContextBase Try*Paragraph). So the gaps are the LexEntry-typed seams (Compose/context/Validate signatures + the ShowAvaloniaEntry guard), layoutChoiceField, and the two unregistered Notebook custom slices — NOT the field-rendering engine. The four type sites all follow the lexicon plugin/seam pattern, but with multiple custom editors to migrate this is a large effort; drop to medium only if Participants + reference-vector rows ride the existing companion/unsupported lane read-only for a first cut."
+        },
+        "toolDialogs": [
+          "NotebookImportWiz (DataNotebook import wizard) — WinForms-only",
+          "NotebookExportDialog — WinForms-only",
+          "AnthroFieldMappingDlg (anthropology field mapping during import) — WinForms-only",
+          "InsertRecordDlg / InsertRecordDlgListener (Insert Record/Subrecord) — WinForms-only",
+          "RecordGoDlg / GoLinkRecordDlgListener (Find Record / Go To Record, Ctrl+F) — WinForms-only",
+          "Notebook Document tool (notebookDocument) is an XmlDocView read-only publication view (Notebook/Document/toolConfiguration.xml) — outside the browse/edit migration entirely, not an edit/browse surface"
+        ],
+        "composerGaps": [
+          "FullEntryRegionComposer.Compose(ILexEntry entry, ...) is ILexEntry-typed and hardcodes layout \"Normal\" + model class \"LexEntry\" (FullEntryRegionComposer.cs:117, 124, 146)",
+          "ComposedRegionEditContext ctor takes ILexEntry entry (FullEntryRegionComposer.cs:3405-3417); ResolveObject(0) defaults to the LexEntry (3569-3573)",
+          "RegionEditContextBase ctor requires non-null ILexEntry and exposes protected ILexEntry Entry (RegionEditContextBase.cs:25-33)",
+          "RegionEditContextBase.Validate() hardcodes LexemeFormOA/CitationForm — wrong for RnGenericRec (RegionEditContextBase.cs:93-104)",
+          "RecordEditView.ShowAvaloniaEntry guards on obj is ILexEntry and otherwise shows EntryTypeUnsupported (RecordEditView.cs:735-741); also never passes m_layoutChoiceField/m_layoutName into Compose (754)",
+          "No layoutChoiceField/choiceGuid dimension in the compiler: CompileForClass keys only on (className, detail, layoutName) (FullEntryRegionComposer.cs:3309-3346) vs legacy's 4-key {class,detail,name,choiceGuid} (DataTree.cs:2143-2224) — per-record-type RnGenericRec layout customizations are missed",
+          "RoledParticipantsSlice (NotebookParts.xml:50, editor=custom, LexEdDll) is not handled by the composer's named custom-editor cases (only LexReferenceMultiSlice/GhostLexRefSlice) nor registered in RegionEditorPluginRegistry.Default (RegionEditorPlugins.cs:151-157) — falls to unsupported/companion lane",
+          "RecordReferenceVectorSlice (NotebookParts.xml:141,146,151,156 — cross references / see-also / subrecord vectors) likewise unregistered/unhandled — falls to unsupported/companion lane"
+        ],
+        "tasks": [
+          {
+            "title": "Register notebookEdit + notebookBrowse for the Avalonia browse table",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceResolver.cs (SupportedAvaloniaBrowseToolNames)"
+          },
+          {
+            "title": "Generalize the composer/edit-context seams off ILexEntry to ICmObject (Compose overload, ComposedRegionEditContext, RegionEditContextBase, parameterize layout/class label) and lift the ShowAvaloniaEntry ILexEntry guard",
+            "effort": "L",
+            "files": "Src/xWorks/FullEntryRegionComposer.cs, Src/xWorks/RegionEditContextBase.cs, Src/xWorks/RecordEditView.cs"
+          },
+          {
+            "title": "Make Validate() class-aware/pluggable (LexEntry lexeme rule must not run for RnGenericRec)",
+            "effort": "M",
+            "files": "Src/xWorks/RegionEditContextBase.cs"
+          },
+          {
+            "title": "Add layoutChoiceField/choiceGuid resolution to the compiler so per-RnGenericRec-Type layout customizations are honored (mirror DataTree.GetTemplateForObjLayout 4-key lookup) and thread m_layoutChoiceField/m_layoutName from ShowAvaloniaEntry into Compose",
+            "effort": "L",
+            "files": "Src/xWorks/FullEntryRegionComposer.cs (CompileForClass/CompileForObject), Src/Common/FwAvalonia/ViewDefinition/*, Src/xWorks/RecordEditView.cs"
+          },
+          {
+            "title": "Provide Avalonia editors/plugins (or read-only companion-lane fallback) for RoledParticipantsSlice and RecordReferenceVectorSlice",
+            "effort": "L",
+            "files": "Src/xWorks/RegionEditorPlugins.cs, Src/LexText/Lexicon/RoledParticipantsSlice.cs (reference), NotebookParts.xml (reference)"
+          },
+          {
+            "title": "Register notebookEdit in LexicalEditSurfaceRegistry once the edit surface composes RnGenericRec",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceRegistry.cs"
+          }
+        ]
+      },
+      {
+        "tool": "Grammar (POS / MSA / phonology / many sub-tools)",
+        "recordClasses": [
+          "PartOfSpeech (categories clerk, owner LangProject.PartsOfSpeech)",
+          "MoCompoundRule -> MoEndoCompound / MoExoCompound (compoundRules clerk, MorphologicalData.CompoundRules)",
+          "PhPhoneme (phonemes clerk, MorphologicalData.Phonemes)",
+          "FsFeatDefn -> FsClosedFeature / FsComplexFeature (phonologicalfeatures clerk, PhFeatureSystem.PhonologicalFeatures; and features clerk, MsFeatureSystem.Features for inflection features)",
+          "PhNaturalClass -> PhNCSegments / PhNCFeatures (naturalClasses clerk, MorphologicalData.NaturalClasses)",
+          "PhEnvironment (environments clerk, MorphologicalData.Environments)",
+          "PhSegmentRule -> PhRegularRule / PhMetathesisRule (phonologicalRules clerk, MorphologicalData.PhonologicalRules)",
+          "MoAdhocProhib -> MoAlloAdhocProhib / MoMorphAdhocProhib / MoAdhocProhibGr (adhocCoprohibitions clerk, MorphologicalData.AdhocCoprohibitions)",
+          "CmPossibility (ProdRestrict clerk, MorphologicalData.ProdRestrict; exception 'features')",
+          "CmBaseAnnotation / LexEntry / LexSense / PhEnvironment (lexProblems clerk, LangProject.Problems via ProblemAnnotationFilter)"
+        ],
+        "toolNames": [
+          "posEdit",
+          "categoryBrowse",
+          "compoundRuleAdvancedEdit",
+          "phonemeEdit",
+          "phonologicalFeaturesAdvancedEdit",
+          "toolBulkEditPhonemes",
+          "naturalClassedit",
+          "EnvironmentEdit",
+          "PhonologicalRuleEdit",
+          "AdhocCoprohibEdit",
+          "featuresAdvancedEdit",
+          "ProdRestrictEdit",
+          "grammarSketch",
+          "lexiconProblems"
+        ],
+        "browseSurface": {
+          "readiness": "small",
+          "blockers": [
+            "No Grammar browse tool is in the Avalonia allowlist. LexicalEditSurfaceResolver.SupportedAvaloniaBrowseToolNames (LexicalEditSurfaceResolver.cs:42-46) only opts in 'lexiconEdit' and 'lexiconBrowse'; SupportsAvaloniaBrowseForTool returns false for any unlisted tool (lines 115-127), so every Grammar browse/MultiPane left pane (categoryBrowse, phonemeEdit's PhonemeList, compoundRuleAdvancedEdit's CompoundRuleList, etc.) stays on the legacy BrowseViewer. Fix = add the tool names.",
+            "Hidden lexicon assumption in the 'generic' row source: ClerkBrowseRowSource.DeleteRows (ClerkBrowseRowSource.cs:975-1027) unconditionally calls DeleteOrphans() (lines 1202+), which sweeps ALL ILexReference and ALL IMoMorphSynAnalysis instances and deletes orphans inside the same delete UOW, regardless of the clerk's list-items class. CanDeleteRows => true unconditionally (line 929). This delete path IS reachable on the Avalonia surface: the BulkEditBar exposes a DeleteRows mode (BulkEditBarView.cs:486-546) routed through IBulkEditBarHost.ApplyDeleteRows -> RecordBrowseView.ApplyDeleteRows (RecordBrowseView.cs:1588-1616) -> ClerkBrowseRowSource.DeleteRows. So deleting Grammar rows would run a lexicon-specific orphan sweep. Fix = gate DeleteOrphans to lexicon list-items classes (or skip when ExpectedListItemsClass is not LexEntry/LexSense)."
+          ],
+          "evidence": "Column/cell projection IS genuinely class-agnostic: TryActivateAvaloniaBrowse sets m_avaloniaColumnSource = m_browseViewer (RecordBrowseView.cs:391) and builds rows via ClerkBrowseRowSource(Clerk, ...). Cell values come from the live BrowseViewer's own column finders (ClerkBrowseRowSource.GetCellValues -> _browseViewer.GetRowCellStrings, cs:93-122; GetRowCellTsString, cs:153), driven by whatever columns the tool config declares - no LexEntry assumption in rendering, sorting, or filtering. The LexSense/LexEntry branches in AllowDeleteRow (cs:1082-1102) are conditional on obj type and stay inert for Grammar. Only the registry gate and the orphan sweep block Grammar; both are small, localized edits."
+        },
+        "editSurface": {
+          "readiness": "bespoke",
+          "blockers": [
+            "Tool gate closed: LexicalEditSurfaceRegistry.CreateDefault seeds only 'lexiconEdit' and 'lexiconEditPopup' (LexicalEditSurfaceRegistry.cs:22). No Grammar tool is registered, so ResolveConfiguredLexicalEditSurface (RecordEditView.cs:565-576) always returns WinForms for Grammar; the Avalonia composer is never invoked. Fix = RegisterSupportedTool per Grammar tool.",
+            "Host guard is LexEntry-only: ShowAvaloniaEntry rejects any non-LexEntry current object with FwAvaloniaStrings.EntryTypeUnsupported and returns (RecordEditView.cs:735-741). Every Grammar record (PartOfSpeech, PhPhoneme, FsFeatDefn, MoCompoundRule, ...) would hit this.",
+            "Edit-context base is LexEntry-bound: RegionEditContextBase ctor requires a non-null ILexEntry and Validate() reads Entry.LexemeFormOA / Entry.CitationForm (RegionEditContextBase.cs:25-29, 93-104). A Grammar record has no such context; a general (or per-class) edit context + validation rule must be built.",
+            "Per-tool variance is severe. Category/POS (posEdit) and the inflection/phonological Features tools (featuresAdvancedEdit, phonologicalFeaturesAdvancedEdit) are near-medium: text + possibility choosers, and the MSA-inflection-feature and phonological-feature dialogs are ALREADY plugin-claimed (RegionEditorPlugins.RegisterBuiltins, cs:155-156; explicitly noted forward-looking 'for the Grammar tools', cs:176-177). But compoundRuleAdvancedEdit, naturalClassedit, EnvironmentEdit, PhonologicalRuleEdit, AdhocCoprohibEdit, phonemeEdit are dominated by bespoke WinForms-only slices with NO Avalonia editor and NO plugin registration (see toolDialogs); their composed detail view would be mostly unsupported placeholder rows. Hence the bundle rates bespoke, not medium."
+          ],
+          "evidence": "The compile/walk ENGINE is genuinely class-general, not LexEntry-only: CompileForObject/CompileForClass (FullEntryRegionComposer.cs:3278-3347) take obj.ClassID, climb the class hierarchy for ANY class's 'detail' layout, and compile it; the whole Walk/WalkField/WalkGroup pipeline operates on ICmObject. The lexicon-specific field handlers (WalkMsaChooser, WalkMorphTypeChooser, AddLexicalRelationRows, AddGhostLexRefVector, ComponentLexemes coupling) are dispatched by editor classification / field name and stay inert for non-lexicon fields - they are not blockers. The LexEntry coupling that IS real lives in exactly three seams: Compose's ILexEntry entry point + hardcoded 'LexEntry'/'Normal' (cs:117-146), the RecordEditView line-735 guard, and RegionEditContextBase. So the reviewer's framing that the composer is LexEntry-only is half right (entry point + edit context yes; walk engine no) - the corrected blocker is the host guard + edit context + layout name, plus the per-tool bespoke slices."
+        },
+        "toolDialogs": [
+          "AffixRuleFormulaSlice / RegRuleFormulaSlice / MetaRuleFormulaSlice (SIL.FieldWorks.XWorks.MorphologyEditor.*, MorphologyParts.xml) - phonological/affix rule formula editors; WinForms-only, no Avalonia editor, not in RegionEditorPluginRegistry.Default",
+          "InflAffixTemplateSlice (MorphologyEditor) - inflectional affix template grid; WinForms-only, no plugin",
+          "AdhocCoProhibAtomicReferenceSlice / AdhocCoProhibVectorReferenceSlice (+ Disabled variants) (MorphologyEditor) - ad-hoc co-prohibition reference editors; WinForms-only, no plugin",
+          "PhEnvStrRepresentationSlice (MorphologyEditor) - phonological environment string-representation editor; WinForms-only, no plugin",
+          "BasicIPASymbolSlice (MorphologyEditor) - phoneme IPA symbol slice; WinForms-only, no plugin",
+          "MasterCategoryDlg via MasterCatDlgListener (areaConfiguration.xml:400) - POS chooser dialog; not in the ILegacyDialogLauncher seam",
+          "MasterInflFeatDlgListener / MasterPhonFeatDlgListener (areaConfiguration.xml:401-402) - feature-system master dialogs; only the per-object MsaInflectionFeatureListDlg + PhonologicalFeatureChooserDlg are wired (WinFormsLegacyDialogLauncher, LegacyDialogLauncher.cs:72-73,115-118), NOT these list-level master dialogs"
+        ],
+        "composerGaps": [
+          "Compose entry point is typed Compose(ILexEntry entry, ...) (FullEntryRegionComposer.cs:117); needs an ICmObject overload to compose any Grammar record.",
+          "Compose hardcodes the starting (class, layout) as 'LexEntry'/'Normal' (cs:124, 146). Grammar tools use other layouts: posEdit layout='default', phonemeEdit/compoundRuleAdvancedEdit layout='Edit' (toolConfiguration.xml:13,67,106). The composer would compile the wrong/missing layout for every Grammar class; the starting class+layout must come from the record + tool config.",
+          "ComposedRegionEditContext / RegionEditContextBase require ILexEntry and a lexeme-only Validate() (RegionEditContextBase.cs:25-29,93-104). A non-LexEntry edit context with a general (or per-class) validation rule is needed; today it throws on a null entry.",
+          "The bespoke Grammar slices (rule formula, infl-template, adhoc-coprohib, phon-env, IPA) have no RegionEditorPluginRegistry registration, so the otherwise-general walk emits them as unsupported placeholder rows (WalkField fallthrough, cs:907-991). Real editing for those tools needs new Avalonia plugins or companion-strip designation.",
+          "The required-lexeme validation (LexemeFormRequired) is the only Validate rule; Grammar classes need their own minimal validity rules (or none) rather than the lexeme check."
+        ],
+        "tasks": [
+          {
+            "title": "Register Grammar browse tool names in SupportedAvaloniaBrowseToolNames so their browse panes can opt into the Avalonia table",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceResolver.cs"
+          },
+          {
+            "title": "Gate ClerkBrowseRowSource.DeleteOrphans to lexicon list-items classes (skip the LexReference/MSA sweep when ExpectedListItemsClass is not LexEntry/LexSense) so a Grammar bulk-delete does not run a lexicon orphan sweep",
+            "effort": "S",
+            "files": "Src/xWorks/ClerkBrowseRowSource.cs"
+          },
+          {
+            "title": "Add an ICmObject Compose overload + per-record (class, layout) selection (default/Edit), threading the tool's layout from RecordEditView",
+            "effort": "M",
+            "files": "Src/xWorks/FullEntryRegionComposer.cs, Src/xWorks/RecordEditView.cs"
+          },
+          {
+            "title": "Generalize RegionEditContextBase off ILexEntry (general ICmObject context + per-class/empty Validate); replace the RecordEditView line-735 LexEntry-only guard",
+            "effort": "M",
+            "files": "Src/xWorks/RegionEditContextBase.cs, Src/xWorks/RecordEditView.cs"
+          },
+          {
+            "title": "Register the supported Grammar edit tools (start with posEdit + the Features tools that already have plugin-wired dialogs)",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceRegistry.cs"
+          },
+          {
+            "title": "Build Avalonia editors / launcher plugins for the bespoke Grammar slices (rule formula, infl-affix template, adhoc-coprohib, phon-env, IPA) and the MasterCategory/master-feature dialogs, or designate companion-strip fallbacks",
+            "effort": "L",
+            "files": "Src/xWorks/RegionEditorPlugins.cs, Src/xWorks/LegacyDialogLauncher.cs, Src/LexText/Morphology (MorphologyEditor slices)"
+          }
+        ]
+      },
+      {
+        "tool": "Words (WfiWordform / analyses / concordance)",
+        "recordClasses": [
+          "WfiWordform",
+          "WfiAnalysis",
+          "WfiGloss"
+        ],
+        "toolNames": [
+          "Analyses",
+          "toolBulkEditWordforms",
+          "concordance",
+          "complexConcordance",
+          "wordListConcordance"
+        ],
+        "browseSurface": {
+          "readiness": "small",
+          "blockers": [
+            "The Form column uses chooserFilter=\"special\" with a dynamically-loaded TextsFilterItem (\"Choose Texts...\") FilterComboItem from ITextDll (reusableBrowseControlConfiguration.xml:18-19). Legacy FilterBar.cs:1236-1245 handles the \"special\" case by DynamicLoader.CreateObject of an arbitrary WinForms FilterComboItem that opens its own chooser dialog. The Avalonia owned table's filter IR (LexicalBrowseView.cs:2032-2088) covers stringList, chooser bulkEdit/chooserFilter list-choice, YesNo, integer, and date presets, but NOT this arbitrary 'special' dynamic-filter-item lane. This is the one column construct that needs a new owned-control feature before parity.",
+            "The tool is not registered for the Avalonia browse surface: SupportsAvaloniaBrowseForTool only lists lexiconEdit/lexiconBrowse (LexicalEditSurfaceResolver.cs:42-46,115-127). A one-line registration opens the generic RecordBrowseView path, but no Words browse tool is currently approved.",
+            "The wordform list runs over a ConcordanceWordList recordList + ConcDecorator SDA decorator (areaConfiguration.xml:656-669); the owned table must read virtual columns (HumanApprovedAnalyses, OccurrenceCount, UserCount, etc.) through that decorator the same way it reads any XMLViewsDataCache decorator — verified-generic mechanism, not a blocker, but the decorator must be the table's SDA."
+          ],
+          "evidence": "DistFiles/Language Explorer/Configuration/Words/reusableBrowseControlConfiguration.xml:1-83 (RecordBrowseView WordformBrowseControl, wordListColumns); Src/Common/Controls/XMLViews/FilterBar.cs:1236-1245 (special dynamic FilterComboItem lane); Src/Common/FwAvalonia/Region/LexicalBrowseView.cs:2032-2088 (owned table supported filter types); Src/Common/FwAvalonia/LexicalEditSurfaceResolver.cs:42-46,108-127 (browse gate). The browse columns ARE generic XMLViews columns; the SpellingStatus stringList (bulkEdit=\"integer\"), Genres/AttestedPos complexListMultiple seq, and int columns all map to features the owned table already has. Only the special TextsFilterItem filter and the registration are missing -> small, not registry-only."
+        },
+        "editSurface": {
+          "readiness": "bespoke",
+          "blockers": [
+            "RecordEditView hard-gates the Avalonia compose path on ILexEntry: ShowAvaloniaEntry at RecordEditView.cs:735 does `if (!(obj is ILexEntry lexEntry)) { ... m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported); return; }`. WfiWordform is not an ILexEntry, so the Avalonia surface renders the 'entry type unsupported' message rather than a composed wordform view.",
+            "FullEntryRegionComposer.Compose is typed `Compose(ILexEntry entry, ...)` at FullEntryRegionComposer.cs:117 -- a compile-time LexEntry signature at the public entry point. (Note: the underlying engine is NOT LexEntry-bound -- see composerGaps -- but the wired entry point is.)",
+            "The WfiWordform/Normal layout's defining content is the interlinear analysis. Its core rows resolve to editor=\"Custom\" class=\"SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice\" (WFIParts.xml:134,139 -- the InterlinearAnal/InterlinearParse parts), a heavyweight WinForms morph-bundle interlinear editor. No plugin is registered for InterlinearSlice in RegionEditorPlugins.RegisterBuiltins (RegionEditorPlugins.cs:151-158 registers only ChorusNotes, ReversalIndexEntry, and three dialog launchers). So those rows compose as unsupported placeholder rows. Building the interlinear editor in Avalonia is a net-new bespoke surface, not a wiring change.",
+            "Tool not registered in LexicalEditSurfaceRegistry (only lexiconEdit/lexiconEditPopup, LexicalEditSurfaceRegistry.cs:22). Even after registration the ILexEntry gate and missing interlinear editor remain."
+          ],
+          "evidence": "Src/xWorks/RecordEditView.cs:735-741 (ILexEntry gate -> EntryTypeUnsupported), :754 (Compose(lexEntry)); Src/xWorks/FullEntryRegionComposer.cs:117 (Compose(ILexEntry)); DistFiles/Language Explorer/Configuration/Parts/WFI.fwlayout:5-57 (WfiWordform/Normal -> InterlinearAnal/InterlinearParse/ParserOpinion across WfiAnalysis Normal/AsParse/AsDisapproved and WfiGloss); DistFiles/Language Explorer/Configuration/Parts/WFIParts.xml:134,139 (InterlinearSlice Custom editor); Src/xWorks/RegionEditorPlugins.cs:151-158 (no InterlinearSlice plugin); Src/xWorks/xWorksTests/RecordEditViewSwitchTests.cs:97-113 (Analyses asserts WinForms ExplicitLegacyFallback under New UI mode). The Analyses tool's right pane is RecordEditView clerk=concordanceWords layout=Normal altTitleId=WfiWordform-Full (Words/Analyses/toolConfiguration.xml). Concordance tools (concordance/complexConcordance/wordListConcordance) have NO RecordEditView edit pane -- they are browse + interlinear ITextControl context only (Words/Concordance/toolConfiguration.xml:29-142), so this edit-surface blocker is specific to the Analyses tool's wordform pane."
+        },
+        "toolDialogs": [
+          "Go To Wordform dialog (CmdGoToWfiWordform / GotoWfiWordform message, areaConfiguration.xml:96,319,565) -- WinForms-only goto chooser",
+          "\"Choose Texts...\" special filter dialog: ITextDll TextsFilterItem FilterComboItem dynamically loaded on the Form column (reusableBrowseControlConfiguration.xml:18-19, dispatched via FilterBar.cs:1236-1245) -- WinForms-coupled custom filter dialog with no owned-table equivalent",
+          "Interlinear morph-bundle analysis editor (MorphologyEditorDll InterlinearSlice, WFIParts.xml:134,139) -- the in-tree WinForms interlinear analysis editor that is the substance of the WfiWordform edit view; no Avalonia counterpart",
+          "Bulk Edit bar for Bulk Edit Wordforms tool (toolBulkEditWordforms, BulkEdit/toolConfiguration.xml:11-16, bulkEdit=\"true\" over wordListColumns) -- owned BulkEditBarView exists in FwAvalonia but is not wired/registered for this Words tool"
+        ],
+        "composerGaps": [
+          "Engine is GENERAL, not LexEntry-only (REFUTES the likely 'composer is LexEntry-bound' blocker): CompileForObject(LcmCache, ICmObject, layoutName, overrides) at FullEntryRegionComposer.cs:497-498 compiles ANY ICmObject's class layout, and the Walk/WalkField/WalkSequence/WalkObjectAtom machinery resolves flids and types purely from IFwMetaDataCacheManaged (e.g. WalkField at :887, GetFlid-based dispatch) -- no LexEntry-specific branch. It already descends into arbitrary owned/reference objects of any class. So 'the engine cannot compose WfiWordform' is false.",
+          "The LexEntry assumption is ONLY at the public entry point: Compose is typed ILexEntry (FullEntryRegionComposer.cs:117) and the root walk is seeded from `entry` (:124,:137-138). Generalizing to Compose(ICmObject) (root = CompileForObject(cache, obj, 'Normal') and walking that object's roots) is a small change -- the internal context (ComposedRegionEditContext, edit-context accessor) is already object-generic.",
+          "The RecordEditView host applies the SAME ILexEntry gate twice: ShowAvaloniaEntry at RecordEditView.cs:735 and the IsChangeWithinEntry refresh predicate at :683 (`changed as ILexEntry ?? changed.OwnerOfClass<ILexEntry>()`). Both must be generalized to the current record's class for a WfiWordform edit surface.",
+          "Even with a general entry point, the WfiWordform/Normal content is dominated by editor=\"Custom\" InterlinearSlice rows (WFIParts.xml:134,139) for which no RegionEditor plugin exists (RegionEditorPlugins.cs:151-158); these compose as unsupported placeholders. The composer's plugin-registry -> companion -> unsupported chain (FullEntryRegionComposer.cs:907-917,986-991) handles them gracefully but does not RENDER them -- a real interlinear editor is required, which is why the edit surface is bespoke rather than a composer wiring gap."
+        ],
+        "tasks": [
+          {
+            "title": "Register Words browse tools (Analyses left pane, toolBulkEditWordforms) for the Avalonia owned table and verify generic RecordBrowseView path renders the wordform list over ConcordanceWordList/ConcDecorator",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceResolver.cs:42-46 (SupportedAvaloniaBrowseToolNames); Src/xWorks/RecordBrowseView.cs wiring; reusableBrowseControlConfiguration.xml"
+          },
+          {
+            "title": "Implement the 'special' dynamic FilterComboItem lane in the owned table so the Form column's TextsFilterItem ('Choose Texts...') filter works, or provide an Avalonia equivalent filter affordance",
+            "effort": "M",
+            "files": "Src/Common/FwAvalonia/Region/LexicalBrowseView.cs:2032-2088; bridge to ITextDll TextsFilterItem / FilterBar.cs:1236-1245 semantics"
+          },
+          {
+            "title": "Generalize the composer entry point: add Compose(ICmObject) overload that seeds the root walk from any object's compiled class/Normal layout, reusing the existing general CompileForObject/Walk engine",
+            "effort": "M",
+            "files": "Src/xWorks/FullEntryRegionComposer.cs:117-148"
+          },
+          {
+            "title": "Generalize RecordEditView's ILexEntry gates (ShowAvaloniaEntry compose path and IsChangeWithinEntry refresh predicate) to the current record class so WfiWordform records reach the composed surface instead of EntryTypeUnsupported",
+            "effort": "M",
+            "files": "Src/xWorks/RecordEditView.cs:683, :735-741, :754"
+          },
+          {
+            "title": "Build the Avalonia interlinear morph-bundle analysis editor (replacement for MorphologyEditorDll InterlinearSlice) and register it as a RegionEditor plugin so WfiAnalysis InterlinearAnal/InterlinearParse rows render; this is the bespoke core of the wordform edit view",
+            "effort": "L",
+            "files": "Src/xWorks/RegionEditorPlugins.cs:151-158 (register); new Avalonia interlinear editor; WFIParts.xml:134,139 reference"
+          },
+          {
+            "title": "Register the Analyses tool for the Avalonia edit surface and wire the WfiWordform-Full title / WordsEditToolMenuHandler context menus once the editor lands",
+            "effort": "S",
+            "files": "Src/Common/FwAvalonia/LexicalEditSurfaceRegistry.cs:22; Words/Analyses/toolConfiguration.xml; Src/xWorks/xWorksTests/RecordEditViewSwitchTests.cs:97-113 (update assertion)"
+          },
+          {
+            "title": "Wire the existing Avalonia BulkEditBarView to the Bulk Edit Wordforms tool (toolBulkEditWordforms) over the registered wordform browse",
+            "effort": "M",
+            "files": "Src/Common/FwAvalonia/Region/BulkEditBarView.cs; Words/BulkEdit/toolConfiguration.xml:11-16"
+          }
+        ]
+      }
+    ],
+    "synthesis": "# FieldWorks Avalonia Phase-1 Readiness Synthesis\n\n**Surface-status caveat (applies throughout):** The Avalonia browse/edit surface is gated \"behind the shell, switchable\" (tasks.md:393), not the default product surface. Every issue below is a **fix-before-default** defect, not a live-production hotfire. Severity reflects user impact *once the surface is switched on*.\n\n---\n\n## A. TOP CONFIRMED ISSUES TO FIX NOW (ordered by severity)\n\n### A.1 — BEHAVIOR FIXES (real defects, user-visible)\n\n**[HIGH] GenDate year corruption — silent data loss.** Part 19e. `FwGenDateField.TryParseLongString` (`FwGenDateField.cs:222-234`) seeds the year from the *first* digit run in the long string; for \"Saturday, June 15, 1985\" that run is \"15\". Editing any qualifier fires Commit which re-composes from `Year=15` (`FwGenDateField.cs:135-136,187-199`), and the composer stores it (`FullEntryRegionComposer.cs:2621-2623`). A 1985 day-precise date silently becomes year 15. Reachable on editable GenDate slices (DateOfBirth/DateOfDeath, `CmPossibilityParts.xml:257,265`); routed unconditionally via `RegionFieldControlFactory.cs:322-323`.\n**Fix:** Parse the year from the GenDate model, not a digit-scan of the localized long string — read `gen.Year` directly through the composer rather than re-parsing `ToLongString()`. Add a month/day-bearing test (all current tests use month=0/day=0, `RegionDateEnumEditingTests.cs:85,90`).\n\n**[HIGH] Rich-text span gestures are a no-op in production.** Part 19c (finding 1). Affordance trigger buttons are plain focusable `Button`s (`RegionRichTextChrome.cs:96-107`; `FwStructuredTextField.cs:285`; `FwFieldControls.cs:637,713`). Clicking one blurs the editor; Avalonia 11.3.17 collapses the TextBox selection to caret on LostFocus, so the click handler reads an empty selection (`FwStructuredTextField.cs:419-420,434-435`; `FwFieldControls.cs:658-659,732-733`) and stages nothing. Affects all four gestures (named style / per-run WS / link / ORC-delete) on both editors.\n**Fix:** Set `Focusable=false` on the trigger buttons, mirroring the working pattern at `FwOptionPicker.cs:150-151` (which guards its list but not its triggers). **Must be paired with A.3.1** — the tests route around this path, so the bug regresses silently otherwise.\n\n**[HIGH→MEDIUM, gated-overclaim group] — three checklist-vs-reality defects on the gated path:**\n- **Data-row right-click menu shows no host commands** (19f). `ClerkBrowseRowSource` does not implement `IBrowseRowMenuSource` (only the test `RemaindersSource` does, `LexicalBrowseRemaindersTests.cs:35`), so `_rowMenuSource` is null in product and `BuildRowContextMenu` emits only Copy/Paste (`LexicalBrowseView.cs:2502,2526-2537`). Legacy raised the rich `mnuBrowseView` (Delete Entry, Show in Concordance — `RecordBrowseView.cs:290`). tasks.md:394 marks 19f.1 `[x] (FULL)`. **Fix:** implement a product `IBrowseRowMenuSource` on `ClerkBrowseRowSource`, or correct the checklist + add a PARITY note (see E).\n- **WS-props & SpecialCharacter dialogs have zero product callers** (19g). Built + headless-tested but unwired; `FwXWindow.cs:1543-1561` still builds legacy `FwWritingSystemSetupDlg`, comment at 1553 admits \"not yet gated.\" tasks.md:402/405 mark `[x] managed/migrated`. **Fix:** wire the launchers, or change to `[~] DEFERRED` matching siblings 19g.2/.5.\n- **DeleteConfirmation wired only for LexReference relation deletes** (19g). The standard delete paths (`RecordClerk.cs:1518`, `FdoUiCore.cs:1036`) build legacy `ConfirmDeleteObjectDlg` with no UIMode gate; only `LexReferenceMultiSlice.cs:906-911,985-990` route to the Avalonia launcher. tasks.md:404 claims it \"pairs with the browse Delete tab + detail delete.\" **Fix:** gate the two standard delete paths, or scope the task text.\n\n**[MEDIUM] Lexicon Lookup / Add to Lexicon missing on the StText editor** (19a). `RegionFieldControlFactory.cs:110-118` does not forward `context.MenuRequested` to `FwStructuredTextField` (the multistring case at 138-140 does); the constructor has no `menuRequested` param (`cs:44-50`). Legacy word-level affordances exist (`StTextSlice.cs:95-203,355-366`). **Fix:** thread `menuRequested` into `FwStructuredTextField`; surface in-text Lexicon Lookup/Add to Lexicon.\n\n**[MEDIUM] Hyperlink / ORC insert affordance missing on the StText editor** (19c, finding 3). `FwStructuredTextField.BuildParagraphRow` builds no Link/OrcDelete control (`cs:74-234`); `FwFieldControls.cs:637-749` builds both. Algorithms exist (`LexicalEditRegionModel.cs:810,842,881`). Prose fields (Definition/Discussion/Comment) route to the editor lacking the affordance. **Fix:** add link/ORC affordances to `FwStructuredTextField`, reusing the existing model methods.\n\n**[MEDIUM] GenDate editor drops month/day granularity** (19e). `FwGenDateField` offers only year+precision+era (`cs:78-128,187-199`); legacy `GenDateChooserDlg` exposed month/day (`GenDateChooserDlg.cs:168-203`). Shares root cause with A.1's HIGH. **Fix:** add month/day controls (closes both the capability gap and the corruption surface), OR scope as intentional and add a `// PARITY` note + corruption guard.\n\n**[MEDIUM] Enter inserts an empty paragraph instead of splitting at caret** (19a). `FwStructuredTextField.cs:126-134` calls `TryInsertParagraph` with no caret/end-of-text guard; composer inserts an empty para (`FullEntryRegionComposer.cs:2741-2748`). Legacy supported mid-text split (`StTextSlice.cs:24-28`). **Documented** in design/test docs (sttext-editable-design.md:74-75) but no in-code marker. **Fix (if pursuing parity):** split runs at caret; otherwise add `// PARITY` + tighten the class-doc one-liner (`cs:25`).\n\n**[MEDIUM] Backspace-at-start does not merge a non-empty paragraph** (19a). `FwStructuredTextField.cs:136-146` only deletes empty paragraphs; no merge path. Same documentation status as Enter. **Fix:** implement merge, or add `// PARITY`.\n\n### A.2 — DOC / PARITY-NOTE FIXES (framing, not behavior)\n\n- **19d.2 over-claims in-cell browse picture editing** (19d). Browse picture cells are not realized in product (`ClerkBrowseRowSource.GetEditField` always returns `RegionFieldKind.Text`, `cs:549-578`); only detail-view is shipped + tested. The deferral is honestly noted under a *different* task (19f.5 code note, `ClerkBrowseEditContext.cs:146-156`). **Fix:** qualify the 19d.2 `[x]` text to \"detail-view only.\"\n- **FwMsaGroupBox doc misframes net-new widgets as parity cuts** (19b). `FwMsaGroupBox.cs:533-534` attributes an \"Inflection Features affordance\" to the legacy four-widget box that never had it. No functional defect. **Fix:** correct the comment.\n- **CSV export has no user-reachable trigger** (19f). `ExportVisibleCsv` (`LexicalBrowseView.cs:1914`, `LexicalBrowseHostControl.cs:234`) has zero product callers. **Fix:** add a menu/toolbar command, or note the trigger as deferred (current PARITY note defers only print + ConfiguredExport).\n- StText Enter/Backspace and GenDate month/day all want in-code `// PARITY` markers (their simplifications are documented in design docs but lack the code marker the repo convention uses elsewhere).\n\n### A.3 — TEST FIXES\n\n- **A.3.1 [paired with rich-text HIGH] Depth-picker tests route around the focus-collapse** (19c, finding 2). Tests call `flyout.ShowAt()` / `RaiseEvent(ClickEvent)` / set `SelectionStart/End` directly (`StructuredTextRichDepthTests.cs:99-108,160-169`; `RegionLinkOrcEditingTests.cs:89-90` etc.) — never a real pointer gesture, so they stay green over a broken path. **Fix:** add a real `PointerPressed`+`PointerReleased` test asserting a style is staged; must land with the `Focusable=false` fix.\n- **GenDate tests are year-only** — see A.1 HIGH; add a month/day-bearing case.\n\n### A.4 — NOT IN THE FIX LIST (confirmed but not defects — do not rank)\n\nEditable Time field (19e, intentional enhancement), enumComboBox sideEffect drop (19e, non-issue today, out-of-scope surfaces only), spell-check absence (19a, documented surface-wide Phase-4 deferral), RTL CSV coverage (19f, quoting can't mangle non-delimiter text), label-column persistence churn (region-core, redundant work not a correctness bug), editor-opens-collapsed (19b, mitigated by type-ahead, low). The **uncertain** picture-properties reduction (19d) is documented-by-design-scoping; keep it as a doc note, do not promote to a fix.\n\n---\n\n## B. CROSS-CUTTING THEMES\n\n1. **`FwStructuredTextField` is systematically thinner than `FwFieldControls`.** The StText editor is missing both Lexicon Lookup/Add-to-Lexicon (19a) and Hyperlink/ORC affordances (19c) that the multistring editor has — and prose fields (where these belong) route to the thin editor. Treat as one capability-parity sweep on `FwStructuredTextField`.\n2. **tasks.md `[x]` overclaims vs wiring reality.** 19d.2 (browse pictures), 19f.1 (host commands FULL), 19g.1/.4 (dialogs \"migrated\"), CSV trigger. Pattern: VM+view built and headless-tested, but no product caller/gate. Needs a checklist-audit pass (see E).\n3. **Tests route around production interaction paths.** Rich-text focus-collapse (19c) and GenDate year-only (19e) both pass because the test bypasses the real gesture/data shape. Where a fix lands, add a test that exercises the production path.\n4. **Simplifications documented in design docs but missing an in-code `// PARITY` marker.** StText Enter/Backspace, GenDate month/day. Repo convention elsewhere uses `// PARITY`; these rely on design/test-research docs only.\n5. **The `ILexEntry`-bound seam is the single bridge to whole-tool migration** (Section C). The compile/walk engine is already class-general; only three seams hardcode LexEntry.\n\n---\n\n## C. WIRING PLAN — Grammar / Lists / Notebook / Words onto main Avalonia UI\n\n### C.0 — SHARED COMPOSER GENERALIZATION (one work item; gates EVERY edit surface)\n\n**Verified once, reused for all four tools.** The compile/walk engine (`CompileForObject`/`CompileForClass`, `FullEntryRegionComposer.cs:3289-3347`) keys on `obj.ClassID` and is already class-general. The LexEntry coupling lives in exactly three seams:\n- `FullEntryRegionComposer.Compose(ILexEntry entry, ...)` + hardcoded `\"LexEntry\"/\"Normal\"` (`cs:117,124,146` — confirmed).\n- `RecordEditView.ShowAvaloniaEntry` guard `if (!(obj is ILexEntry lexEntry)) { ShowMessage(EntryTypeUnsupported); return; }` (`cs:735-741` — confirmed) plus the `IsChangeWithinEntry` refresh predicate (`cs:683`).\n- `RegionEditContextBase` ctor requires non-null `ILexEntry` (`cs:25-29` — confirmed), `Entry` typed `ILexEntry` (`cs:33`), and `Validate()` hardcodes `LexemeFormOA`/`CitationForm` → `LexemeFormRequired` (`cs:93-104`); undo/redo labels `UndoEditEntry`/`RedoEditEntry` (`cs:144-145`). `ComposedRegionEditContext` ctor forwards `ILexEntry` (`cs:3405-3417`).\n\n**Shared tasks (do these FIRST — nothing else unblocks without them):**\n- (L) Add `Compose(ICmObject obj, string layoutName, ...)` overload; parameterize the model's (class, layout) instead of `\"LexEntry\"/\"Normal\"`. Files: `FullEntryRegionComposer.cs:117-148,3405-3417`.\n- (M) Generalize `RegionEditContextBase`/`ComposedRegionEditContext` off `ILexEntry` → `ICmObject`; make `Validate()` per-class/pluggable (CmPossibility validates on Name/Abbreviation, RnGenericRec/Grammar have their own or none); generalize undo/redo labels. Files: `RegionEditContextBase.cs:25-33,93-104,144-155`.\n- (M) Replace the `RecordEditView:735` LexEntry-only guard and the `:683` refresh predicate with the current record's class. Files: `RecordEditView.cs:683,735-758`.\n\n### C.1 — QUICK WINS (cheapest first): browse registry enablement\n\nAll browse surfaces are blocked primarily by the tool-name allowlist `SupportedAvaloniaBrowseToolNames = {lexiconEdit, lexiconBrowse}` (`LexicalEditSurfaceResolver.cs:42-46,108-127`). The `ClerkBrowseRowSource` row/column path is verified class-agnostic.\n\n| Tool | Readiness | Work | Effort | Files |\n|---|---|---|---|---|\n| **Notebook browse** | registry-only | Add `notebookEdit` + `notebookBrowse` to the allowlist | **S** | `LexicalEditSurfaceResolver.cs:42-46` |\n| **Grammar browse** | small | Add Grammar browse tool names; **+ gate `ClerkBrowseRowSource.DeleteOrphans` to lexicon list-items classes** (else a Grammar bulk-delete runs a lexicon-wide LexReference/MSA orphan sweep, `cs:975-1027,1202+`) | **S+S** | `LexicalEditSurfaceResolver.cs:42-46`; `ClerkBrowseRowSource.cs:975+` |\n| **Words browse** | small | Register tool names; **+ implement the \"special\" `TextsFilterItem` (\"Choose Texts…\") dynamic-filter lane** the owned table lacks (`LexicalBrowseView.cs:2032-2088` vs `FilterBar.cs:1236-1245`) | **S+M** | `LexicalEditSurfaceResolver.cs:42-46`; `LexicalBrowseView.cs:2032-2088` |\n| **Lists browse** | large | Needs an Avalonia **hierarchical tree-bar host** (Lists navigate via WinForms `PossibilityTreeBarHandler`, `RecordBarTreeHandler.cs:204-332`); blocked on the **unshipped Stage-3 owned tree** (stage-08 lines 40-41,110-112,130). Flat-table only applies to `featureTypesAdvancedEdit`/`reversalToolReversalIndexPOS` | **L** | new `Src/Common/FwAvalonia/...`; `LexicalEditSurfaceResolver.cs:42-46` |\n\n### C.2 — EDIT SURFACES (all gate behind C.0; ordered by readiness)\n\n| Tool | Readiness | After C.0, remaining work | Effort | Files |\n|---|---|---|---|---|\n| **Notebook edit** | large | Register `notebookEdit` (`LexicalEditSurfaceRegistry.cs:22`); **add `layoutChoiceField`/`choiceGuid` resolution** (4-key lookup like `DataTree.GetTemplateForObjLayout`, `cs:2143-2224`; composer keys only 3, `cs:3322`); Avalonia editors/companion-fallback for `RoledParticipantsSlice` + `RecordReferenceVectorSlice` (`NotebookParts.xml:50,141-156`, unregistered in `RegionEditorPlugins.cs:151-157`) | **L** | `LexicalEditSurfaceRegistry.cs`; `FullEntryRegionComposer.cs`; `RegionEditorPlugins.cs` |\n| **Lists edit** | large | Register Lists tools; CmPossibility `Validate()` on Name/Abbreviation (covered by C.0 pluggable rule); per-tool layout (default/EditComplex/EditVariant/DialectEdit/Reversal + CmPossibilityA/V/AV/VA); Lists dialogs (C.3) | **M+L** | `LexicalEditSurfaceRegistry.cs:22`; `FullEntryRegionComposer.cs`; `RecordEditView.cs` |\n| **Grammar edit** | bespoke | posEdit + Features tools are near-medium (dialogs already plugin-claimed, `RegionEditorPlugins.cs:155-156,176-177`); but compoundRule/naturalClass/Environment/PhonologicalRule/AdhocCoprohib/phoneme are **bespoke WinForms-only slices** (rule-formula, infl-template, adhoc-coprohib, phon-env, IPA) with no plugin — net-new editors | **S (register POS/Features) + L (bespoke slices)** | `LexicalEditSurfaceRegistry.cs`; `RegionEditorPlugins.cs`; `Src/LexText/Morphology` |\n| **Words edit** | bespoke | Analyses pane is dominated by `InterlinearSlice` (`WFIParts.xml:134,139`), a **net-new Avalonia interlinear morph-bundle editor** — the bespoke core. Concordance tools have no edit pane | **L** | `RegionEditorPlugins.cs:151-158`; new interlinear editor |\n\n**Summary ordering:** C.0 (shared, mandatory) → Notebook/Grammar/Words **browse** (S–M quick wins) → Notebook/Lists **edit** (L, mostly wiring + layout) → Lists **browse** (L, blocked on Stage-3) → Grammar/Words **edit** (bespoke, likely beyond a first cut).\n\n---\n\n## D. RECOMMENDED OPENSPEC §20 TASK OUTLINE (paste-ready)\n\n```\n## 20. Whole-tool Avalonia surface generalization (Grammar / Lists / Notebook / Words)\n\n### 20.1 Shared composer + edit-context generalization (gates all edit surfaces)\n- [ ] 20.1.1 (L) Add Compose(ICmObject, layoutName, ...) overload; parameterize (class, layout)\n      instead of hardcoded \"LexEntry\"/\"Normal\" — FullEntryRegionComposer.cs:117-148,3405-3417\n- [ ] 20.1.2 (M) Generalize RegionEditContextBase/ComposedRegionEditContext off ILexEntry to\n      ICmObject; pluggable per-class Validate() (Name/Abbreviation for CmPossibility, none for\n      others); generalize Undo/Redo labels — RegionEditContextBase.cs:25-33,93-104,144-155\n- [ ] 20.1.3 (M) Replace RecordEditView ILexEntry guard + IsChangeWithinEntry predicate with the\n      current record's class — RecordEditView.cs:683,735-758\n- [ ] 20.1.4 (L) Add layoutChoiceField/choiceGuid (4-key) resolution to the compiler mirroring\n      DataTree.GetTemplateForObjLayout; thread m_layoutChoiceField/m_layoutName from\n      RecordEditView into Compose — FullEntryRegionComposer.cs:3309-3346; RecordEditView.cs:754\n\n### 20.2 Per-tool browse enablement (quick wins; independent of 20.1)\n- [ ] 20.2.1 (S) Register notebookEdit + notebookBrowse — LexicalEditSurfaceResolver.cs:42-46\n- [ ] 20.2.2 (S) Register Grammar browse tool names — LexicalEditSurfaceResolver.cs:42-46\n- [ ] 20.2.3 (S) Gate ClerkBrowseRowSource.DeleteOrphans to lexicon list-items classes so a\n      Grammar/non-lexicon bulk-delete skips the LexReference/MSA orphan sweep — ClerkBrowseRowSource.cs:975+\n- [ ] 20.2.4 (S) Register Words browse tools (Analyses left pane, toolBulkEditWordforms) — LexicalEditSurfaceResolver.cs:42-46\n- [ ] 20.2.5 (M) Implement the \"special\" dynamic FilterComboItem lane (TextsFilterItem \"Choose\n      Texts…\") in the owned table — LexicalBrowseView.cs:2032-2088 (FilterBar.cs:1236-1245 semantics)\n- [ ] 20.2.6 (L) Build an Avalonia hierarchical record-navigation tree-bar host for Lists\n      (replaces PossibilityTreeBarHandler/SemanticDomainRdeTreeBarHandler); depends on Stage-3\n      owned virtualized tree — new Src/Common/FwAvalonia/...; RecordBarTreeHandler.cs:204-332\n- [ ] 20.2.7 (S) Open the flat-table browse gate for featureTypesAdvancedEdit / reversalToolReversalIndexPOS — LexicalEditSurfaceResolver.cs:42-46\n\n### 20.3 Per-tool edit enablement (all depend on 20.1)\n- [ ] 20.3.1 (S) Register notebookEdit in LexicalEditSurfaceRegistry — LexicalEditSurfaceRegistry.cs:22\n- [ ] 20.3.2 (S) Register Lists tools in LexicalEditSurfaceRegistry — LexicalEditSurfaceRegistry.cs:22\n- [ ] 20.3.3 (S) Register posEdit + Features tools (dialogs already plugin-claimed) — LexicalEditSurfaceRegistry.cs:22\n- [ ] 20.3.4 (S) Register Analyses tool — LexicalEditSurfaceRegistry.cs:22\n- [ ] 20.3.5 (L) Notebook: Avalonia editors / read-only companion fallback for RoledParticipantsSlice\n      + RecordReferenceVectorSlice — RegionEditorPlugins.cs; NotebookParts.xml:50,141-156\n- [ ] 20.3.6 (L) Grammar bespoke slices: Avalonia editors/plugins for rule-formula, infl-affix\n      template, adhoc-coprohib, phon-env, IPA — RegionEditorPlugins.cs; Src/LexText/Morphology\n- [ ] 20.3.7 (L) Words: Avalonia interlinear morph-bundle editor (replaces InterlinearSlice) +\n      register plugin — RegionEditorPlugins.cs:151-158; WFIParts.xml:134,139\n- [ ] 20.3.8 (M) Wire Avalonia BulkEditBarView to toolBulkEditWordforms over the registered browse — BulkEditBarView.cs; Words/BulkEdit/toolConfiguration.xml:11-16\n\n### 20.4 Per-tool dialogs (Avalonia or hybrid-companion equivalents)\n- [ ] 20.4.1 (L) Lists: CustomListDlg, DeleteCustomList, MasterCategoryListDlg, MasterListDlg,\n      SimpleListChooser launcher — Src/xWorks/CustomListDlg.cs; Src/LexText/LexTextControls/*; SimpleListChooser.cs\n- [ ] 20.4.2 (L) Grammar: MasterCategory + master-feature (MasterInflFeat/MasterPhonFeat) list-level\n      dialogs (per-object ones already wired) — LegacyDialogLauncher.cs:72-73,115-118\n- [ ] 20.4.3 (M) Notebook: NotebookImportWiz, NotebookExportDialog, AnthroFieldMappingDlg,\n      InsertRecordDlg, RecordGoDlg (Avalonia or retained-legacy companion)\n- [ ] 20.4.4 (S) Words: Go To Wordform dialog (GotoWfiWordform) Avalonia/companion equivalent\n\n### 20.5 Tests + parity PNG evidence\n- [ ] 20.5.1 (M) RecordEditViewSwitchTests: flip Notebook/Lists/Grammar(POS,Features)/Analyses from\n      ExplicitLegacyFallback to Avalonia as each registers — RecordEditViewSwitchTests.cs:96-113\n- [ ] 20.5.2 (M) Composer tests for non-LexEntry classes (CmPossibility, RnGenericRec, PartOfSpeech)\n      incl. layoutChoiceField resolution and pluggable Validate()\n- [ ] 20.5.3 (M) Browse render/CSV tests over each newly-registered clerk (RnGenericRec, Grammar\n      classes, WfiWordform) through ClerkBrowseRowSource\n- [ ] 20.5.4 (M) Semantic snapshot + screenshot parity PNGs per newly-enabled browse/edit surface\n```\n\n---\n\n## E. RISKS / HUMAN DECISIONS\n\n1. **`[x]` overclaims — fix the wiring or correct the checklist?** 19d.2, 19f.1, 19g.1/.4, and the CSV trigger are marked done but unwired in product. Re-opening tasks vs. relabeling `[~] DEFERRED` + adding PARITY notes is a process call. **Note:** under a convention reading where `[x] managed/migrated` means \"VM+view built and headless-tested\" (not \"product-wired\"), the checklist is technically true — but that convention is applied inconsistently (siblings 19g.2/.5 use `[~]`). Decide the convention once and apply it uniformly.\n2. **Lists edit/browse is sequencing-blocked on the unshipped Stage-3 owned virtualized tree** (stage-08 lines 40-41,110-112,130). Lists navigation cannot be scheduled independently of that deliverable; do not promise Lists in a window that doesn't include Stage-3.\n3. **Grammar and Words edit surfaces are \"bespoke\"** — they require net-new Avalonia editors (Grammar rule-formula/infl-template/adhoc-coprohib/phon-env/IPA slices; Words interlinear morph-bundle editor). Decide whether these are in Phase-1 scope or deferred; a first cut could register them with read-only companion-lane fallback (unsupported placeholder rows) rather than full editors.\n4. **`DeleteOrphans` lexicon coupling** (`ClerkBrowseRowSource.cs:975+`) is a latent correctness risk the moment any non-lexicon browse tool is registered — the bulk-delete orphan sweep is lexicon-specific. 20.2.3 must land in the *same* change as any Grammar/non-lexicon browse registration, not after.\n5. **GenDate fix shape** — decide whether to (a) fix the parse to read the model year and add month/day controls (full parity), or (b) keep year-only and add a corruption guard + `// PARITY` note. Option (b) leaves the capability gap but removes the data-loss; option (a) is more work but closes both 19e findings.\n6. **Uncertain finding (do not action as a defect):** the picture-properties dialog reduction (19d) is a real parity reduction but documented by design-scoping (media-pictures-test-research.md lines 15,33-55); treat as a doc note, not a fix."
+  }
+}

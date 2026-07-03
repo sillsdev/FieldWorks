@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvalonia (lexical-edit-avalonia-migration)
+
+		Owning project for the Avalonia lexical-edit migration: typed view-definition IR,
+		migration seams, region model, and the first-slice controls. Part of the normal repo
+		build — included in the FieldWorks.proj traversal via the Src glob and listed in
+		FieldWorks.sln (lexical-edit task 1.11; gate history in
+		openspec/changes/avalonia-migration-roadmap).
+
+		Targets net48 for in-process hosting beside WinForms. Avalonia 11.3.x is the
+		last line that still ships netstandard2.0 assemblies and therefore loads on net48;
+		stay on the 11.x line until WinForms is removed. UI is built in pure C# (no XAML) to
+		keep the project independent of the Avalonia XAML compiler and the repo's customized
+		MSBuild.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<!-- Explicit (same as the SDK default) because the build localizer
+		     (ProjectLocalizer.GetResourceInfo) requires the element to produce satellite
+		     FwAvalonia.resources.dll assemblies for FwAvaloniaStrings.resx (localization-review.md GAP-L1). -->
+		<RootNamespace>FwAvalonia</RootNamespace>
+		<!-- TFM is net48 (NETFX-01, review 2026-06-23): the C# compiler accepts modern *syntax*, but
+		     features that need net8-only BCL/runtime support are OFF-LIMITS here and will fail at build
+		     or runtime, not at review: record types / 'init' setters (need IsExternalInit), Index/Range,
+		     default interface members, IAsyncEnumerable async-streams, nint/nuint. Pure-syntax C# 8
+		     (switch expressions, 'using var', '??=', static local functions) is fine on net48. build.ps1
+		     is the gate; keep this constraint in mind when adding code to this project. -->
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Desktop" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="Avalonia.Win32.Interoperability" ExcludeAssets="analyzers" PrivateAssets="all" />
+		<PackageReference Include="L10NSharp" />
+		<!-- Canonical view-definition JSON serialization (lexical-edit tasks 9.2/9.4); repo-standard pin. -->
+		<PackageReference Include="Newtonsoft.Json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
+	<!-- The test project lives in the nested FwAvaloniaTests/ folder. Exclude it from this
+	     library's default SDK globbing so production and test trees do not mix. -->
+	<ItemGroup>
+		<Compile Remove="FwAvaloniaTests/**/*.cs" />
+	</ItemGroup>
+
+	<!-- Preview/ is dev-iteration sample code for FwAvaloniaPreviewHost, not shipped product behavior
+	     (PR #964 review §4 Finding F). Exclude it here so it doesn't compile into the product DLL; it's
+	     linked back into FwAvaloniaPreviewHost.csproj instead, the only project that loads it. -->
+	<ItemGroup>
+		<Compile Remove="Preview/**/*.cs" />
+	</ItemGroup>
+
+</Project>
