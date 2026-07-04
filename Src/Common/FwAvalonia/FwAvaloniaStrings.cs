@@ -494,5 +494,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static string FeaturePosEditName => Text("FwAvalonia.Feature.PosEditName", "Grammar / Part of Speech");
 		public static string FeaturePosEditDescription => Text("FwAvalonia.Feature.PosEditDescription", "The Part of Speech editor.");
+
+		public static string FeatureAnalysesName => Text("FwAvalonia.Feature.AnalysesName", "Words Analyses");
+		public static string FeatureAnalysesDescription => Text("FwAvalonia.Feature.AnalysesDescription", "The interlinear morph-bundle editor.");
 	}
 }
