@@ -52,7 +52,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
 			new LexicalEditFeatureDescriptor("Analyses",
 				FwAvaloniaStrings.FeatureAnalysesName, FwAvaloniaStrings.FeatureAnalysesDescription,
-				FwAvaloniaStrings.FeatureGroupOtherRecordTypes)
+				FwAvaloniaStrings.FeatureGroupOtherRecordTypes),
+			new LexicalEditFeatureDescriptor("PhonologicalRuleEdit",
+				FwAvaloniaStrings.FeaturePhonologicalRuleEditName, FwAvaloniaStrings.FeaturePhonologicalRuleEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors),
+			new LexicalEditFeatureDescriptor("EnvironmentEdit",
+				FwAvaloniaStrings.FeatureEnvironmentEditName, FwAvaloniaStrings.FeatureEnvironmentEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors),
+			new LexicalEditFeatureDescriptor("compoundRuleAdvancedEdit",
+				FwAvaloniaStrings.FeatureCompoundRuleAdvancedEditName, FwAvaloniaStrings.FeatureCompoundRuleAdvancedEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors),
+			new LexicalEditFeatureDescriptor("naturalClassedit",
+				FwAvaloniaStrings.FeatureNaturalClassEditName, FwAvaloniaStrings.FeatureNaturalClassEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors),
+			new LexicalEditFeatureDescriptor("phonemeEdit",
+				FwAvaloniaStrings.FeaturePhonemeEditName, FwAvaloniaStrings.FeaturePhonemeEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors),
+			new LexicalEditFeatureDescriptor("AdhocCoprohibEdit",
+				FwAvaloniaStrings.FeatureAdhocCoprohibEditName, FwAvaloniaStrings.FeatureAdhocCoprohibEditDescription,
+				FwAvaloniaStrings.FeatureGroupGrammarRuleEditors)
 		};
 
 		/// <summary>The bare tool-name ids, in catalog order — what <see cref="LexicalEditSurfaceRegistry"/> registers by default.</summary>

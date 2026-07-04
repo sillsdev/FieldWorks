@@ -159,16 +159,20 @@ namespace SIL.FieldWorks.XWorks
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());
-			// PHASE-1 FOLLOW-UP PRs: ChorusNotesPlugin (the Chorus/FLExBridge notes bar, see above) and
-			// the avalonia-rule-formula-editor family (RuleFormulaRegionEditorPlugin,
-			// MetaRuleFormulaRegionEditorPlugin, AffixRuleFormulaRegionEditorPlugin, PhEnvironmentRegionEditorPlugin,
-			// BasicIpaSymbolRegionEditorPlugin) ship in their own follow-up PRs. Each follow-up adds its plugin
-			// file(s) back and restores the registration here, alongside the registry flip in
-			// LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
+			// PHASE-1 FOLLOW-UP PR: ChorusNotesPlugin (the Chorus/FLExBridge notes bar, see above) ships
+			// in its own follow-up PR, which restores the registration here.
 			// avalonia-interlinear-editor (W-4): the native Avalonia interlinear editor for the Words
 			// Analyses detail pane, claiming the legacy InterlinearSlice. Read-only this wave; the
 			// editable write-back + MSA prune (W-5) layer onto the same plugin.
 			registry.Register(new InterlinearSlicePlugin());
+			// avalonia-rule-formula-editor (1.4 / 2.3 / 2.5): the Grammar regular + metathesis + compound rule editors.
+			registry.Register(new RuleFormulaRegionEditorPlugin());
+			registry.Register(new MetaRuleFormulaRegionEditorPlugin());
+			registry.Register(new AffixRuleFormulaRegionEditorPlugin());
+			// avalonia-rule-formula-editor (3.2): the phonological-environment string editor.
+			registry.Register(new PhEnvironmentRegionEditorPlugin());
+			// avalonia-rule-formula-editor (3.1): the Basic IPA Symbol editor (derive-on-commit deferred).
+			registry.Register(new BasicIpaSymbolRegionEditorPlugin());
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
