@@ -619,6 +619,7 @@ namespace SIL.FieldWorks.FdoUi
 						IMoInflAffMsa msa = m_cache.ServiceLocator.GetInstance<IMoInflAffMsaRepository>().GetObject(hvoMsa);
 						fEnable = !EquivalentFs(fsTarget, msa?.InflFeatsOA);
 					}
+					return false; // This is a temporary fix to LT-22601. Don't do bulk edits of inflection features of affixes.
 				}
 			}
 			return fEnable;
