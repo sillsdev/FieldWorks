@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int> msaTuple = ProcessMsaHvo(msaHvo);
+			Tuple<int, int, int> msaTuple = ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
 			{
@@ -286,10 +286,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
 					if (lexEntryRef != null && lexEntryRef.ComponentLexemesRS.Count() > 0)
 					{
-						// make sure there is at least one component lexeme (LT-22328)
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
-						morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+						IMoStemMsa stemMsa = (IMoStemMsa)cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item3);
+						if (stemMsa != null)
+						{
+							// use the msa itself
+							morph = new ParseMorph(form, stemMsa, inflType);
+						}
+						else
+						{
+							// make sure there is at least one component lexeme (LT-22328)
+							ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+							morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+						}
 						return true;
 					}
 				}
@@ -300,10 +309,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return true;
 		}
 
-		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
+		private static Tuple<int, int, int> ProcessMsaHvo(string msaHvo)
 		{
 			string[] msaHvoParts = msaHvo.Split('.');
-			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
+			// the msa hvo has one part or three parts separated by a period.
+			// in the latter case, it is the lex entry hvo, the lex ref hvo, and the msa hvo
+			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[1]) : 0,
+				msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[2]) : 0);
 		}
 
 		public XDocument ParseWordXml(string word)
