@@ -13,6 +13,8 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
@@ -520,6 +522,73 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Assert.That(morphBundle.MsaRA, Is.Not.Null, "First bundle: msa is not null");
 				Assert.That(morphBundle.InflTypeRA, Is.Not.Null, "First bundle: infl type is not null");
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// LT-22563: XAmple's MSI DbRef for an irregularly inflected variant is
+		/// "lexEntryHvo.refIndex.msaHvo" (see LT-22422). TryCreateParseMorph must resolve the
+		/// specific msaHvo from that DbRef; it must not fall back to just the variant's
+		/// main/first sense, since that can be a different MSA than XAmple actually chose
+		/// when the underlying entry has more than one MSA.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TryCreateParseMorph_IrregularVariantWithMultipleMsas_UsesMsaFromDbRef()
+		{
+			ILexEntry crebV = null;
+			IMoStemAllomorph crebVForm = null;
+			IMoStemMsa firstMsa = null;
+			IMoStemMsa secondMsa = null;
+
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
+			{
+				// 'seek' has two senses/MSAs; 'creb' is an irregularly inflected variant of it.
+				ILexEntryInflType inflType = m_lexEntryInflTypeFactory.Create();
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(inflType);
+
+				ILexEntry seekV = m_entryFactory.Create();
+				IMoStemAllomorph seekVForm = m_stemAlloFactory.Create();
+				seekV.AlternateFormsOS.Add(seekVForm);
+				seekVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("seekVTEST", m_vernacularWS.Handle);
+				firstMsa = m_stemMsaFactory.Create();
+				seekV.MorphoSyntaxAnalysesOC.Add(firstMsa);
+				ILexSense firstSense = m_senseFactory.Create();
+				seekV.SensesOS.Add(firstSense);
+				firstSense.MorphoSyntaxAnalysisRA = firstMsa;
+				secondMsa = m_stemMsaFactory.Create();
+				seekV.MorphoSyntaxAnalysesOC.Add(secondMsa);
+				ILexSense secondSense = m_senseFactory.Create();
+				seekV.SensesOS.Add(secondSense);
+				secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+
+				crebV = m_entryFactory.Create();
+				crebVForm = m_stemAlloFactory.Create();
+				crebV.AlternateFormsOS.Add(crebVForm);
+				crebVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("crebVTEST", m_vernacularWS.Handle);
+				ILexEntryRef lexEntryRef = m_lexEntryRefFactory.Create();
+				crebV.EntryRefsOS.Add(lexEntryRef);
+				lexEntryRef.ComponentLexemesRS.Add(seekV);
+				lexEntryRef.VariantEntryTypesRS.Add(inflType);
+			});
+
+			// Mimic what XAmple echoes back for this kind of variant: MoForm DbRef is the
+			// allomorph hvo, and MSI DbRef is "lexEntryHvo.refIndex.msaHvo", pointing
+			// specifically at the *second* MSA of 'seek'.
+			var morphElem = new XElement("Morph",
+				new XElement("MoForm", new XAttribute("DbRef", crebVForm.Hvo)),
+				new XElement("MSI", new XAttribute("DbRef", string.Format("{0}.0.{1}", crebV.Hvo, secondMsa.Hvo))));
+
+			MethodInfo method = typeof(XAmpleParser).GetMethod("TryCreateParseMorph", BindingFlags.NonPublic | BindingFlags.Static);
+			var args = new object[] { Cache, morphElem, null };
+			var succeeded = (bool) method.Invoke(null, args);
+			var morph = (ParseMorph) args[2];
+
+			Assert.That(succeeded, Is.True);
+			Assert.That(morph, Is.Not.Null);
+			Assert.That(morph.Msa.Hvo, Is.EqualTo(secondMsa.Hvo),
+				"Should use the MSA hvo encoded in the MSI DbRef, not just the variant's first/main sense");
+			Assert.That(morph.Msa.Hvo, Is.Not.EqualTo(firstMsa.Hvo));
 		}
 
 		[Test]
