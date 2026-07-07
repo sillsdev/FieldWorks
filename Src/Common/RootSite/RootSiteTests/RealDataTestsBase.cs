@@ -151,11 +151,13 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 		protected string DbDirectory(string name)
 		{
-			// Deliberately NOT FwDirectoryFinder.ProjectsDirectory - allow for multiple worktrees
-			// of the same repo to run tests in parallel without colliding on the same project directory.
-			var worktreeProjectsDirectory = Path.Combine(
-				Path.GetDirectoryName(FwDirectoryFinder.SourceDirectory), "DistFiles", "Projects");
-			return Path.Combine(worktreeProjectsDirectory, name);
+			// FwDirectoryFinder.ProjectsDirectory is a real, machine-wide location - CreateNewLangProj
+			// (via ILcmDirectories.ProjectsDirectory) always creates the project there and can't be
+			// redirected to a worktree-local path, so this must agree with EnsureSafeProjectDirectory's
+			// expectation below. Cross-worktree collision avoidance comes from ReusableProjectName's
+			// worktree-hash suffix instead: different worktrees get different subdirectory names (and
+			// different mutex names) under this same shared directory.
+			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 		}
 
 		private void AcquireProjectMutex()
