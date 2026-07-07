@@ -190,7 +190,14 @@ namespace SIL.FieldWorks.Build.Tasks
 			// invocations for different files are unaffected and still run fully in parallel.
 			using (var manifestLock = new Mutex(false, ManifestLockName(manifestFile)))
 			{
-				manifestLock.WaitOne();
+				try
+				{
+					manifestLock.WaitOne();
+				}
+				catch (AbandonedMutexException)
+				{
+					// Prior holder crashed mid-write; .NET still grants us ownership here.
+				}
 				try
 				{
 					var doc = new XmlDocument { PreserveWhitespace = true };
