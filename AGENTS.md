@@ -8,6 +8,9 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Build with `.\build.ps1`.
 - Test with `.\test.ps1`.
 - Do not bypass repository scripts for normal build/test work.
+- Commit messages are linted by CI (gitlint, `.gitlint`): title ≤72 chars,
+	body lines ≤80 chars. Check with `gitlint --commits origin/main..HEAD`
+	before pushing.
 
 ## Critical constraints
 
