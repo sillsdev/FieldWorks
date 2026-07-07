@@ -212,13 +212,70 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private List<WSListItemModel> BuildWorkingList(ICollection<CoreWritingSystemDefinition> allForType, IList<CoreWritingSystemDefinition> currentForType)
 		{
 			var list = new List<WSListItemModel>();
-			// Don't reorder the writing systems here even though the lexical data fields are reordered (cf. LT-22136).
-			var wssInPreferredOrder = allForType;
+
+			// Because of the deserialization process, when restoring a project from backup,
+			// it is possible for the order of writing systems to differ between the all and current lists,
+			// even when they contain all the same elements.
+			// Synchronize the order of selected writing systems between the all and current lists (LT-19664 and LT-22570),
+			// while preserving the order of writing systems that are unselected in Format Writing Systems (cf. LT-22136).
+			var wssInPreferredOrder = SynchronizeWsList(allForType, currentForType);
 			foreach (var ws in wssInPreferredOrder)
 			{
 				list.Add(new WSListItemModel(currentForType.Contains(ws), ws, new CoreWritingSystemDefinition(ws, true)));
 			}
 			return list;
+		}
+
+		/// <summary>
+		/// Preserve the positions of elements that only appear in allWS and not in currentWS (these are WS that are unchecked in Format Writing Systems).
+		/// Synchronize the order of common elements that appear in both allWS and currentWS, using the relative order of the common elements from currentWS.
+		/// </summary>
+		/// <param name="allWsForType">The list of all writing systems, including WS that are unselected.</param>
+		/// <param name="currentWsForType">The list of all selected writing systems--excludes unselected writing systems.</param>
+		/// <returns></returns>
+		private List<CoreWritingSystemDefinition> SynchronizeWsList(ICollection<CoreWritingSystemDefinition> allWS, IList<CoreWritingSystemDefinition> currentWS)
+		{
+			var commonElements = currentWS.Where(ws => allWS.Contains(ws)).ToList();
+			if (commonElements.Any())
+			{
+				// Get the original indices of any allWS-only elements
+				var allOnlyElements = allWS.Select((ws, index) => new { ws, index })
+					.Where(x => !currentWS.Contains(x.ws))
+					.ToList();
+
+				// Build the updated, synchronized list
+				var updatedList = new List<CoreWritingSystemDefinition>();
+				var commonIndex = 0;
+				var allOnlyIndex = 0;
+
+				for (int i = 0; i < allWS.Count; i++)
+				{
+					// If the current index corresponds to an allWS-only element, add that element
+					if (allOnlyIndex < allOnlyElements.Count && allOnlyElements[allOnlyIndex].index == i)
+					{
+						updatedList.Add(allOnlyElements[allOnlyIndex].ws);
+						allOnlyIndex++;
+					}
+					// Otherwise add the next appearing common element
+					else if (commonIndex < commonElements.Count)
+					{
+						updatedList.Add(commonElements[commonIndex]);
+						commonIndex++;
+					}
+				}
+
+				// In case any common elements have not yet been added, add them now. We shouldn't encounter this, because currentWS should be a subset of allWS.
+				while (commonIndex < commonElements.Count)
+				{
+					updatedList.Add(commonElements[commonIndex]);
+					commonIndex++;
+				}
+				return updatedList;
+			}
+
+			// If there are no common elements, return the list of all WS.
+			return (List<CoreWritingSystemDefinition>)allWS;
+
 		}
 
 		/// <summary/>
