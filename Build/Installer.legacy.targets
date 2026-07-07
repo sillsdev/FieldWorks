@@ -113,13 +113,7 @@
 	<Target Name="RescuePatching">
 		<ItemGroup>
 			<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" /> -->
-			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.dll.config" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.pdb" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedVwWindow.manifest" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SimpleRootSite.manifest" />
-			<!-- ManagedLgIcuCollator.manifest dropped by #904 "Reduce optional COM usage"; the DLL still ships. -->
-			<RemovedSinceLastBase Include="$(dir-outputBase)/ManagedLgIcuCollator.manifest" />
+			<!-- Empty as of the base build cut after 1437; add entries here when a change stops emitting a file the base still ships. -->
 		</ItemGroup>
 		<WriteLinesToFile
 			File="%(RemovedSinceLastBase.FullPath)"
@@ -616,7 +610,7 @@
 		<!-- VisualC++ 14.1 runtime (VS 2015-2019) -->
 		<!-- FLEx Bridge -->
 		<DownloadFile
-			Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
+			Address="https://software.sil.org/downloads/r/fieldworks/FLExBridge_Offline_4.3.0.exe"
 			LocalFilename="FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"
