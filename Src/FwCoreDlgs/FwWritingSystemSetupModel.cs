@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// If there are no common elements, return the list of all WS.
-			return (List<CoreWritingSystemDefinition>)allWS;
+			return allWS.ToList();
 
 		}
 
