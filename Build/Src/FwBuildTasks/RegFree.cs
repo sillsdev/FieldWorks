@@ -184,14 +184,10 @@ namespace SIL.FieldWorks.Build.Tasks
 				? Executable + ".manifest"
 				: Output;
 
-			// Several EXE projects (FieldWorks, LCMBrowser, UnicodeCharEditor, GenerateHCConfig,
-			// ComManifestTestHost) each import RegFree.targets and generate manifests for the same
-			// shared managed assemblies (FwUtils.dll, SimpleRootSite.dll, ManagedVwWindow.dll) into
-			// the same $(OutDir). Under a parallel MSBuild build, their CreateComponentManifests
-			// targets can run in different MSBuild worker processes at the same time and race to
-			// read/write the exact same manifestFile - this cross-process mutex, keyed by the
-			// resolved output path, serializes only invocations targeting that same file; RegFree
-			// calls for different manifest files are unaffected and still run fully in parallel.
+			// Under a parallel MSBuild build, several EXE projects can process the same shared
+			// manifest in different worker processes at once and race to read/write it. This
+			// cross-process mutex serializes invocations targeting the same manifest file;
+			// invocations for different files are unaffected and still run fully in parallel.
 			using (var manifestLock = new Mutex(false, ManifestLockName(manifestFile)))
 			{
 				manifestLock.WaitOne();
@@ -383,13 +379,10 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Cross-process mutex name for serializing RegFree invocations that target the same
-		/// resolved <paramref name="manifestFile"/> path. <see cref="string.GetHashCode"/> is
-		/// deliberately not used here: .NET randomizes string hash codes per process for
-		/// security, so two different MSBuild worker processes could compute different hash
-		/// codes for the identical path, defeating cross-process synchronization entirely. MD5
-		/// (not used for anything security-sensitive here, just as a stable fingerprint) is
-		/// deterministic across processes, machines, and .NET versions.
+		/// Cross-process mutex name for the given manifest path. <see cref="string.GetHashCode"/>
+		/// is deliberately not used: .NET randomizes string hash codes per process, so different
+		/// worker processes could hash the same path differently and defeat the lock. MD5 is a
+		/// stable fingerprint here (not security-sensitive), deterministic across processes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private static string ManifestLockName(string manifestFile)
