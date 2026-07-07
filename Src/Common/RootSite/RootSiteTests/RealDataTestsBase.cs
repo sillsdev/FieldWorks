@@ -151,12 +151,8 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 		protected string DbDirectory(string name)
 		{
-			// FwDirectoryFinder.ProjectsDirectory is a real, machine-wide location - CreateNewLangProj
-			// (via ILcmDirectories.ProjectsDirectory) always creates the project there and can't be
-			// redirected to a worktree-local path, so this must agree with EnsureSafeProjectDirectory's
-			// expectation below. Cross-worktree collision avoidance comes from ReusableProjectName's
-			// worktree-hash suffix instead: different worktrees get different subdirectory names (and
-			// different mutex names) under this same shared directory.
+			// CreateNewLangProj always creates here and can't be redirected; collision avoidance
+			// across worktrees comes from ReusableProjectName's worktree-hash suffix instead.
 			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 		}
 
