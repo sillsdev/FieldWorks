@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int, int> msaTuple = ProcessMsaHvo(msaHvo);
+			Tuple<int, int, int> msaTuple = ParserXmlWriterExtensions.ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
 			{
@@ -307,15 +307,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// if it is anything else, we ignore it
 			morph = null;
 			return true;
-		}
-
-		private static Tuple<int, int, int> ProcessMsaHvo(string msaHvo)
-		{
-			string[] msaHvoParts = msaHvo.Split('.');
-			// the msa hvo has one part or three parts separated by a period.
-			// in the latter case, it is the lex entry hvo, the lex ref hvo, and the msa hvo
-			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[1]) : 0,
-				msaHvoParts.Length == 3 ? int.Parse(msaHvoParts[2]) : 0);
 		}
 
 		public XDocument ParseWordXml(string word)
