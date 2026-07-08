@@ -1461,7 +1461,7 @@ namespace SIL.FieldWorks.IText
 			bool fHasApprovedWordGloss = HasWordGloss() && (fDirty || fApproved);
 			bool fHasApprovedWordCat = HasWordCat() && (fDirty || fApproved);
 			// conditionally set up the word gloss and POS to correspond to monomorphemic lex morph entry info.
-			SyncMonomorphemicGlossAndPos(!fHasApprovedWordGloss, !fHasApprovedWordCat);
+			SyncMonomorphemicGlossAndPos(UsingGuess && !fHasApprovedWordGloss, UsingGuess && !fHasApprovedWordCat);
 			// Forget we had an existing wordform; otherwise, the program considers
 			// all changes to be editing the wordform, and since it belongs to the
 			// old analysis, the old analysis gets resurrected.
