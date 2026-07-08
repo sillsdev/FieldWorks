@@ -245,9 +245,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			//       required slots in affix templates.  The parser filer can ignore these.
 			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
 			//       The LexEntry is a variant form for the first set of LexEntryRefs.
-			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
-			//       The LexEntry is a variant form and the (non-zero) index indicates
-			//       which set of LexEntryRefs it is for.
+			// 4. <MSI DbRef="y.i.z"... and y is an hvo for a LexEntry, i is an index to the
+			//       LexEntryRef, and z is the hvo of the specific MSA (of that LexEntryRef's
+			//       target entry) that was used. The LexEntry is a variant form; i indicates
+			//       which set of LexEntryRefs it is for, and z indicates which of that entry's
+			//       MSAs to use, since it can have more than one (see LT-22422/LT-22563).
 			ICmObject objForm;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out objForm))
 			{
@@ -261,8 +263,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return true;
 			}
 
-			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
-			Tuple<int, int> msaTuple = ProcessMsaHvo(msaHvo);
+			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, an index to the LexEntryRef,
+			// another period and the MSA hvo
+			Tuple<int, int, int> msaTuple = ParserXmlWriterExtensions.ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
 			{
@@ -286,10 +289,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
 					if (lexEntryRef != null && lexEntryRef.ComponentLexemesRS.Count() > 0)
 					{
-						// make sure there is at least one component lexeme (LT-22328)
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
-						morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+						IMoStemMsa stemMsa = (IMoStemMsa)cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(msaTuple.Item3);
+						if (stemMsa != null)
+						{
+							// use the msa itself
+							morph = new ParseMorph(form, stemMsa, inflType);
+						}
+						else
+						{
+							// make sure there is at least one component lexeme (LT-22328)
+							ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+							morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+						}
 						return true;
 					}
 				}
@@ -298,12 +310,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// if it is anything else, we ignore it
 			morph = null;
 			return true;
-		}
-
-		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
-		{
-			string[] msaHvoParts = msaHvo.Split('.');
-			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
 		public XDocument ParseWordXml(string word)

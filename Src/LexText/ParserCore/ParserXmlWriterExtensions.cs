@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	internal static class ParserXmlWriterExtensions
 	{
-		private static Tuple<int, int, int> ProcessMsaHvo(string msaHvo)
+		public static Tuple<int, int, int> ProcessMsaHvo(string msaHvo)
 		{
 			string[] msaHvoParts = msaHvo.Split('.');
 			// the msa hvo has one part or three parts separated by a period.
