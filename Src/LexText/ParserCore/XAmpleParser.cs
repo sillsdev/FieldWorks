@@ -245,9 +245,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			//       required slots in affix templates.  The parser filer can ignore these.
 			// 3. <MSI DbRef="y"... and y is an hvo for a LexEntry.
 			//       The LexEntry is a variant form for the first set of LexEntryRefs.
-			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
-			//       The LexEntry is a variant form and the (non-zero) index indicates
-			//       which set of LexEntryRefs it is for.
+			// 4. <MSI DbRef="y.i.z"... and y is an hvo for a LexEntry, i is an index to the
+			//       LexEntryRef, and z is the hvo of the specific MSA (of that LexEntryRef's
+			//       target entry) that was used. The LexEntry is a variant form; i indicates
+			//       which set of LexEntryRefs it is for, and z indicates which of that entry's
+			//       MSAs to use, since it can have more than one (see LT-22422/LT-22563).
 			ICmObject objForm;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out objForm))
 			{
