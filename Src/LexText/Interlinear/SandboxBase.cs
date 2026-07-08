@@ -1412,7 +1412,7 @@ namespace SIL.FieldWorks.IText
 				}
 				if (hasMf)
 					// Wait until all of the morphemes have been loaded (cf. LT-22235).
-					CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
+					CopyLexEntryInfoToMonomorphemicWordGlossAndPos(fGuessing != 0);
 				if (bldrError.Length > 0)
 				{
 					var msg = bldrError.ToString().Trim();
@@ -1454,14 +1454,14 @@ namespace SIL.FieldWorks.IText
 			return fGuessing != 0;
 		}
 
-		internal void CopyLexEntryInfoToMonomorphemicWordGlossAndPos()
+		internal void CopyLexEntryInfoToMonomorphemicWordGlossAndPos(bool usingGuess)
 		{
 			bool fDirty = Caches.DataAccess.IsDirty();
-			bool fApproved = !UsingGuess;
+			bool fApproved = !usingGuess;
 			bool fHasApprovedWordGloss = HasWordGloss() && (fDirty || fApproved);
 			bool fHasApprovedWordCat = HasWordCat() && (fDirty || fApproved);
 			// conditionally set up the word gloss and POS to correspond to monomorphemic lex morph entry info.
-			SyncMonomorphemicGlossAndPos(!fHasApprovedWordGloss, !fHasApprovedWordCat);
+			SyncMonomorphemicGlossAndPos(usingGuess && !fHasApprovedWordGloss, usingGuess && !fHasApprovedWordCat);
 			// Forget we had an existing wordform; otherwise, the program considers
 			// all changes to be editing the wordform, and since it belongs to the
 			// old analysis, the old analysis gets resurrected.

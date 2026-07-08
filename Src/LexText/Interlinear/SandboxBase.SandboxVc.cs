@@ -550,14 +550,6 @@ namespace SIL.FieldWorks.IText
 				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,
 					(int)TptEditable.ktptNotEditable);
-				int wordPosHvo = vwenv.DataAccess.get_ObjectProp(hvo, ktagSbWordPos);
-				if (vwenv.DataAccess.get_IntProp(wordPosHvo, ktagSbNamedObjGuess) == 1)
-				{
-					// Show that the word category is guessed.
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
-						(int)FwTextPropVar.ktpvDefault,
-						InterlinVc.MachineGuessColor);
-				}
 				AddOptionalNamedObj(vwenv, hvo, ktagSbWordPos, ktagMissingWordPos,
 					kfragMissingWordPos, ktagWordPosIcon, ws, choiceIndex);
 			}
