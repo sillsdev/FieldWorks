@@ -261,7 +261,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return true;
 			}
 
-			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+			// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, an index to the LexEntryRef,
+			// another period and the MSA hvo
 			Tuple<int, int, int> msaTuple = ParserXmlWriterExtensions.ProcessMsaHvo(msaHvo);
 			ICmObject objMsa;
 			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
