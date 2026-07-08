@@ -255,7 +255,12 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
             if "exit" in content_lower:
                 ec_match = EXIT_CODE_RX.search(content)
                 if ec_match:
-                    current.exit_codes.append((lnum, int(ec_match.group(1))))
+                    # Informational only in boundary mode: tools such as Exec with
+                    # IgnoreExitCode log non-zero codes on healthy builds. Real
+                    # failures surface as errors or a "-- FAILED." project marker.
+                    # The synthetic fallback below still fails on exit codes, its
+                    # only signal.
+                    current.notable.append((lnum, content.strip()))
 
             if "error(s)" in content_lower:
                 if MSBUILD_ERROR_SUMMARY.search(content):
