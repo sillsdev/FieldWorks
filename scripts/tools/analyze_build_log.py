@@ -327,6 +327,7 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
             canonical.warnings.extend(step.warnings)
             canonical.exit_codes.extend(step.exit_codes)
             canonical.notable.extend(step.notable)
+            canonical.explicitly_failed = canonical.explicitly_failed or step.explicitly_failed
             if step.end_line and (canonical.end_line is None or step.end_line > canonical.end_line):
                 canonical.end_line = step.end_line
         else:
