@@ -134,6 +134,48 @@ def _enrich_pyro0305(groups: dict, log_path: Path, workspace_root: Optional[Path
 
 
 # ---------------------------------------------------------------------------
+# Bundled-download enrichments
+# ---------------------------------------------------------------------------
+
+_DOWNLOAD_RETRY_RX = re.compile(
+    r"Could not retrieve latest\s+(?P<url>https?://\S+?)\s*\.\s*Exceeded retry count",
+    re.IGNORECASE,
+)
+
+
+def _enrich_download_retry(groups: dict, log_path: Path, workspace_root: Optional[Path], error_line: int) -> list[RootCauseFinding]:
+    """Name the missing bundled download and locate where its address is pinned."""
+    url = groups["url"]
+    file_name = url.rstrip("/").rsplit("/", 1)[-1]
+
+    pins = []
+    if workspace_root:
+        build_dir = Path(workspace_root) / "Build"
+        if build_dir.is_dir():
+            for targets_file in sorted(build_dir.glob("*.targets")):
+                try:
+                    text = targets_file.read_text(
+                        encoding=_detect_encoding(targets_file), errors="replace")
+                except OSError:
+                    continue
+                for lnum, line in enumerate(text.splitlines(), 1):
+                    if url in line:
+                        pins.append(f"    Pinned at : Build/{targets_file.name}:{lnum}")
+
+    detail = pins + [
+        f"    URL       : {url}",
+        "    The server did not return the file (download retries exhausted, likely 404).",
+        "    Upload the file to the server, or repoint the pinned address to a published version.",
+    ]
+    return [RootCauseFinding(
+        error_code="DownloadFile",
+        error_line=error_line,
+        summary=f"Bundled download '{file_name}' is not available at the pinned address.",
+        detail=detail,
+    )]
+
+
+# ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
@@ -142,6 +184,11 @@ REGISTRY: list[ErrorEnrichment] = [
         name="WiX: component removed from feature (PYRO0305)",
         error_pattern=_PYRO0305_RX,
         enrich=_enrich_pyro0305,
+    ),
+    ErrorEnrichment(
+        name="Bundled installer download failed (DownloadFile retry exhaustion)",
+        error_pattern=_DOWNLOAD_RETRY_RX,
+        enrich=_enrich_download_retry,
     ),
 ]
 
