@@ -191,6 +191,36 @@ function New-TestRunSettingsForAssertDialogMode {
 	return $runSettingsPath
 }
 
+function New-TestRunSettingsForCoverage {
+	param(
+		[string]$SourcePath,
+		[string]$Configuration,
+		[bool]$Coverage
+	)
+
+	if (-not $Coverage) {
+		return $SourcePath
+	}
+
+	# coverlet.collector's "XPlat Code Coverage" data collector instruments every module with a
+	# matching .pdb next to the test assembly, and restores it afterward. FieldWorks test projects
+	# all share a single Output/<Configuration> folder rather than per-project bin folders, so with
+	# the default MaxCpuCount=0 (parallel testhosts), two testhosts can end up instrumenting/restoring
+	# the same shared product DLL (e.g. XMLViews.dll) at the same time, which fails with
+	# "being used by another process". Force serial testhost execution only for coverage runs.
+	[xml]$runSettings = Get-Content -LiteralPath $SourcePath -Raw
+	$runSettings.RunSettings.RunConfiguration.MaxCpuCount = '1'
+
+	$runSettingsDir = Join-Path $PSScriptRoot "Output/$Configuration"
+	if (-not (Test-Path $runSettingsDir)) {
+		New-Item -ItemType Directory -Force -Path $runSettingsDir | Out-Null
+	}
+
+	$runSettingsPath = Join-Path $runSettingsDir 'Test.coverage.runsettings'
+	$runSettings.Save($runSettingsPath)
+	return $runSettingsPath
+}
+
 $allowAssertDialogsForRun = $AllowAssertDialogs -or (Test-EnvironmentSwitchEnabled -Name 'FW_TEST_ALLOW_ASSERT_DIALOGS')
 
 function Add-UniquePath {
@@ -675,6 +705,10 @@ try {
 			-SourcePath $runSettingsSourcePath `
 			-Configuration $Configuration `
 			-AllowDialogs $allowAssertDialogsForRun
+		$runSettingsPath = New-TestRunSettingsForCoverage `
+			-SourcePath $runSettingsPath `
+			-Configuration $Configuration `
+			-Coverage $Coverage
 
 		$vstestArgs = @()
 		$vstestArgs += $testDlls
