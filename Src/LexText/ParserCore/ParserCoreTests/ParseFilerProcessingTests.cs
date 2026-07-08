@@ -101,6 +101,37 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_idleQueue.Clear();
 		}
 
+		/// <summary>
+		/// Creates a stem entry with two senses, each with its own MoStemMsa, so tests can
+		/// verify that a specific MSA (not just "the first one") gets resolved.
+		/// </summary>
+		private ILexEntry CreateStemEntryWithTwoMsas(string form, out IMoStemMsa firstMsa, out IMoStemMsa secondMsa)
+		{
+			ILexEntry entry = m_entryFactory.Create();
+			IMoStemAllomorph entryForm = m_stemAlloFactory.Create();
+			entry.AlternateFormsOS.Add(entryForm);
+			entryForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(form, m_vernacularWS.Handle);
+			firstMsa = m_stemMsaFactory.Create();
+			entry.MorphoSyntaxAnalysesOC.Add(firstMsa);
+			ILexSense firstSense = m_senseFactory.Create();
+			entry.SensesOS.Add(firstSense);
+			firstSense.MorphoSyntaxAnalysisRA = firstMsa;
+			secondMsa = m_stemMsaFactory.Create();
+			entry.MorphoSyntaxAnalysesOC.Add(secondMsa);
+			ILexSense secondSense = m_senseFactory.Create();
+			entry.SensesOS.Add(secondSense);
+			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+			return entry;
+		}
+
+		private static ParseMorph InvokeTryCreateParseMorph(LcmCache cache, XElement morphElem, out bool succeeded)
+		{
+			MethodInfo method = typeof(XAmpleParser).GetMethod("TryCreateParseMorph", BindingFlags.NonPublic | BindingFlags.Static);
+			var args = new object[] { cache, morphElem, null };
+			succeeded = (bool) method.Invoke(null, args);
+			return (ParseMorph) args[2];
+		}
+
 		#endregion // Non-tests
 
 		#region Setup and TearDown
@@ -547,20 +578,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				ILexEntryInflType inflType = m_lexEntryInflTypeFactory.Create();
 				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(inflType);
 
-				ILexEntry seekV = m_entryFactory.Create();
-				IMoStemAllomorph seekVForm = m_stemAlloFactory.Create();
-				seekV.AlternateFormsOS.Add(seekVForm);
-				seekVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("seekVTEST", m_vernacularWS.Handle);
-				firstMsa = m_stemMsaFactory.Create();
-				seekV.MorphoSyntaxAnalysesOC.Add(firstMsa);
-				ILexSense firstSense = m_senseFactory.Create();
-				seekV.SensesOS.Add(firstSense);
-				firstSense.MorphoSyntaxAnalysisRA = firstMsa;
-				secondMsa = m_stemMsaFactory.Create();
-				seekV.MorphoSyntaxAnalysesOC.Add(secondMsa);
-				ILexSense secondSense = m_senseFactory.Create();
-				seekV.SensesOS.Add(secondSense);
-				secondSense.MorphoSyntaxAnalysisRA = secondMsa;
+				ILexEntry seekV = CreateStemEntryWithTwoMsas("seekVTEST", out firstMsa, out secondMsa);
 
 				crebV = m_entryFactory.Create();
 				crebVForm = m_stemAlloFactory.Create();
@@ -579,16 +597,74 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				new XElement("MoForm", new XAttribute("DbRef", crebVForm.Hvo)),
 				new XElement("MSI", new XAttribute("DbRef", string.Format("{0}.0.{1}", crebV.Hvo, secondMsa.Hvo))));
 
-			MethodInfo method = typeof(XAmpleParser).GetMethod("TryCreateParseMorph", BindingFlags.NonPublic | BindingFlags.Static);
-			var args = new object[] { Cache, morphElem, null };
-			var succeeded = (bool) method.Invoke(null, args);
-			var morph = (ParseMorph) args[2];
+			bool succeeded;
+			ParseMorph morph = InvokeTryCreateParseMorph(Cache, morphElem, out succeeded);
 
 			Assert.That(succeeded, Is.True);
 			Assert.That(morph, Is.Not.Null);
 			Assert.That(morph.Msa.Hvo, Is.EqualTo(secondMsa.Hvo),
 				"Should use the MSA hvo encoded in the MSI DbRef, not just the variant's first/main sense");
 			Assert.That(morph.Msa.Hvo, Is.Not.EqualTo(firstMsa.Hvo));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// LT-22563: hardens the above test by giving the variant *two* EntryRefsOS (pointing
+		/// at two different base entries, each itself with two MSAs) and checking both possible
+		/// refIndex values. This guards both halves of the "lexEntryHvo.refIndex.msaHvo" DbRef:
+		/// picking the right LexEntryRef by index, and then the right MSA within that ref's
+		/// target entry -- not just the case where there is only one ref to pick from.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(0)]
+		[TestCase(1)]
+		public void TryCreateParseMorph_IrregularVariantWithMultipleEntryRefsAndMsas_UsesRefIndexAndMsaFromDbRef(int entryRefIndex)
+		{
+			ILexEntry crebV = null;
+			IMoStemAllomorph crebVForm = null;
+			IMoStemMsa believeSecondMsa = null;
+			IMoStemMsa seekSecondMsa = null;
+
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
+			{
+				ILexEntryInflType inflType = m_lexEntryInflTypeFactory.Create();
+				Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(inflType);
+
+				IMoStemMsa believeFirstMsa;
+				ILexEntry believeV = CreateStemEntryWithTwoMsas("believeVTEST2", out believeFirstMsa, out believeSecondMsa);
+				IMoStemMsa seekFirstMsa;
+				ILexEntry seekV = CreateStemEntryWithTwoMsas("seekVTEST2", out seekFirstMsa, out seekSecondMsa);
+
+				crebV = m_entryFactory.Create();
+				crebVForm = m_stemAlloFactory.Create();
+				crebV.AlternateFormsOS.Add(crebVForm);
+				crebVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("crebVTEST2", m_vernacularWS.Handle);
+
+				// EntryRefsOS[0] -> believeV, EntryRefsOS[1] -> seekV.
+				ILexEntryRef believeRef = m_lexEntryRefFactory.Create();
+				crebV.EntryRefsOS.Add(believeRef);
+				believeRef.ComponentLexemesRS.Add(believeV);
+				believeRef.VariantEntryTypesRS.Add(inflType);
+
+				ILexEntryRef seekRef = m_lexEntryRefFactory.Create();
+				crebV.EntryRefsOS.Add(seekRef);
+				seekRef.ComponentLexemesRS.Add(seekV);
+				seekRef.VariantEntryTypesRS.Add(inflType);
+			});
+
+			IMoStemMsa expectedMsa = entryRefIndex == 0 ? believeSecondMsa : seekSecondMsa;
+
+			var morphElem = new XElement("Morph",
+				new XElement("MoForm", new XAttribute("DbRef", crebVForm.Hvo)),
+				new XElement("MSI", new XAttribute("DbRef", string.Format("{0}.{1}.{2}", crebV.Hvo, entryRefIndex, expectedMsa.Hvo))));
+
+			bool succeeded;
+			ParseMorph morph = InvokeTryCreateParseMorph(Cache, morphElem, out succeeded);
+
+			Assert.That(succeeded, Is.True);
+			Assert.That(morph, Is.Not.Null);
+			Assert.That(morph.Msa.Hvo, Is.EqualTo(expectedMsa.Hvo),
+				string.Format("Should resolve EntryRefsOS[{0}] and the specific msa hvo encoded in the DbRef", entryRefIndex));
 		}
 
 		[Test]
