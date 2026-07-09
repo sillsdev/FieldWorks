@@ -481,7 +481,8 @@ namespace SIL.ToneParsFLEx
 				tbIntxCtlFile.Text,
 				inputFile,
 				GetDecompSeparationCharacter(),
-				Cache
+				Cache,
+				m_XAmpleParser
 			);
 			invoker.Extractor = Extractor;
 			invoker.ParsingStatus = lblParsingStatus;
@@ -786,7 +787,8 @@ namespace SIL.ToneParsFLEx
 				tbIntxCtlFile.Text,
 				"",
 				' ',
-				Cache
+				Cache,
+				m_XAmpleParser
 			);
 			if (File.Exists(invoker.ToneParsLogFile))
 			{

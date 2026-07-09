@@ -169,6 +169,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckDisposed();
 
 			var results = new StringBuilder(m_xample.ParseWord(word));
+			ParseResult result = ProcessParseResults(ref results);
+
+			return result;
+		}
+
+		public ParseResult ProcessParseResults(ref StringBuilder results)
+		{
 			results = results.Replace("DB_REF_HERE", "'0'");
 			results = results.Replace("<...>", "[...]");
 			var wordformElem = XElement.Parse(results.ToString());
