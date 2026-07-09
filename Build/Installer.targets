@@ -239,7 +239,7 @@
 	/>
 	<!-- FLEx Bridge -->
 	<DownloadFile
-	  Address="https://software.sil.org/downloads/r/fieldworks/FLExBridge_Offline_4.3.0.exe"
+	  Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.3.0.exe"
 	  DownloadsDir="$(WixLibsDir)"
 	  LocalFilename="FLExBridge_Offline.exe"
 	  Condition="!Exists('$(WixLibsDir)\FLExBridge_Offline.exe')"

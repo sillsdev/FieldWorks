@@ -610,7 +610,7 @@
 		<!-- VisualC++ 14.1 runtime (VS 2015-2019) -->
 		<!-- FLEx Bridge -->
 		<DownloadFile
-			Address="https://software.sil.org/downloads/r/fieldworks/FLExBridge_Offline_4.3.0.exe"
+			Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.3.0.exe"
 			LocalFilename="FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"
