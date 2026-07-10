@@ -252,7 +252,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>True if we are waiting to do a refresh on the view (will be done when the view
 		/// becomes visible); false otherwise</summary>
 		protected bool m_fRefreshPending = false;
-		private bool m_fForceNextRefreshDisplay;
 		private RefreshPhase m_refreshPhase;
 		private bool m_fRefreshReplayRequested;
 
@@ -1054,7 +1053,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (m_rootb?.Site == null)
 				return;
 
-			m_fForceNextRefreshDisplay = true;
 			if (!Visible || FindForm() == null)
 			{
 				m_fRefreshPending = true;
@@ -2535,17 +2533,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 
-			// PATH-L5: Skip the expensive selection save/restore and drawing
-			// suspension when the VwRootBox reports no pending changes.
-			// The root box's NeedsReconstruct flag is set by PropChanged,
-			// OnStylesheetChange, and other mutation paths. When false,
-			// Reconstruct() would be a no-op (PATH-R1), so we can avoid
-			// the managed overhead entirely.
-			if (!ShouldReconstructDisplay())
-			{
-				m_fRefreshPending = false;
-				return false;
-			}
+			// Always reconstruct here, even if the root box reports NeedsReconstruct == false.
+			// That flag only tracks mutations the root box itself can see (PropChanged,
+			// SetRootObjects, OnStylesheetChange). View constructors also read state the
+			// root box cannot see — e.g. the writing-system lists behind the labels in
+			// LabeledMultiStringView — and RefreshDisplay is the only way such changes
+			// reach the screen. Skipping based on NeedsReconstruct left stale writing
+			// system rows/labels in the Lexicon Edit detail pane (LT-22610).
 
 			// Rebuild the display... the drastic way.
 			SelectionRestorer restorer = CreateSelectionRestorer();
@@ -2560,7 +2554,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					m_rootb.Reconstruct();
 					m_fRefreshPending = false;
-					m_fForceNextRefreshDisplay = false;
 				}
 				if (reconstructStopwatch != null)
 				{
@@ -2603,11 +2596,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 					m_fRefreshPending = true;
 			});
-		}
-
-		private bool ShouldReconstructDisplay()
-		{
-			return m_fForceNextRefreshDisplay || m_rootb.NeedsReconstruct;
 		}
 
 		/// ------------------------------------------------------------------------------------
