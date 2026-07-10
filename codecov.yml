@@ -1,0 +1,20 @@
+# Codecov configuration (https://docs.codecov.com/docs/codecov-yaml)
+# Coverage is collected in CI by test.ps1 -Coverage (dotnet-coverage -> cobertura) and uploaded by
+# .github/workflows/CI.yml. Note: CI excludes the LongRunning/ByHand/SmokeTest/DesktopRequired test
+# categories, so absolute coverage numbers understate what the full suite exercises.
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true # report, but do not fail CI on total-coverage changes (yet)
+    patch:
+      default:
+        informational: true # report diff coverage on PRs without gating merges (yet)
+
+comment:
+  layout: "condensed_header, diff, files"
+  require_changes: true
+
+ignore:
+  - "**/*Tests/**" # test project sources; drop this if test-code coverage becomes interesting

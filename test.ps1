@@ -45,11 +45,12 @@
 	Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
 
 .PARAMETER Coverage
-	Collect code coverage via the coverlet.collector "XPlat Code Coverage" data collector (works under
-	plain vstest.console.exe on any Visual Studio edition, unlike the VS-Enterprise-only "Code Coverage"
-	collector). Writes one coverage.cobertura.xml per test host under Output/<Configuration>/TestResults,
-	then renders a merged summary + HTML report via the local ReportGenerator tool
-	(Output/<Configuration>/TestResults/CoverageReport).
+	Collect code coverage by wrapping vstest.console.exe with the dotnet-coverage tool (Microsoft
+	CodeCoverage CLI; free on any Visual Studio edition). Collection uses dynamic, in-memory
+	instrumentation, so nothing in the shared Output/<Configuration> folder is rewritten on disk and
+	parallel testhosts remain safe. Writes a merged coverage.cobertura.xml under
+	Output/<Configuration>/TestResults, then renders a summary + HTML report via the local
+	ReportGenerator tool (Output/<Configuration>/TestResults/CoverageReport).
 
 .EXAMPLE
 	.\test.ps1
@@ -191,36 +192,6 @@ function New-TestRunSettingsForAssertDialogMode {
 	return $runSettingsPath
 }
 
-function New-TestRunSettingsForCoverage {
-	param(
-		[string]$SourcePath,
-		[string]$Configuration,
-		[bool]$Coverage
-	)
-
-	if (-not $Coverage) {
-		return $SourcePath
-	}
-
-	# coverlet.collector's "XPlat Code Coverage" data collector instruments every module with a
-	# matching .pdb next to the test assembly, and restores it afterward. FieldWorks test projects
-	# all share a single Output/<Configuration> folder rather than per-project bin folders, so with
-	# the default MaxCpuCount=0 (parallel testhosts), two testhosts can end up instrumenting/restoring
-	# the same shared product DLL (e.g. XMLViews.dll) at the same time, which fails with
-	# "being used by another process". Force serial testhost execution only for coverage runs.
-	[xml]$runSettings = Get-Content -LiteralPath $SourcePath -Raw
-	$runSettings.RunSettings.RunConfiguration.MaxCpuCount = '1'
-
-	$runSettingsDir = Join-Path $PSScriptRoot "Output/$Configuration"
-	if (-not (Test-Path $runSettingsDir)) {
-		New-Item -ItemType Directory -Force -Path $runSettingsDir | Out-Null
-	}
-
-	$runSettingsPath = Join-Path $runSettingsDir 'Test.coverage.runsettings'
-	$runSettings.Save($runSettingsPath)
-	return $runSettingsPath
-}
-
 $allowAssertDialogsForRun = $AllowAssertDialogs -or (Test-EnvironmentSwitchEnabled -Name 'FW_TEST_ALLOW_ASSERT_DIALOGS')
 
 function Add-UniquePath {
@@ -320,28 +291,6 @@ function Get-NUnitTestAdapterPaths {
 	}
 
 	return $adapterPaths.ToArray()
-}
-
-function Get-CoverageAdapterPath {
-	param(
-		[string]$RepoRoot
-	)
-
-	# vstest.console.exe (unlike `dotnet test`) does not auto-discover data collectors from NuGet
-	# packages; the coverlet.collector build folder must be passed explicitly via /TestAdapterPath,
-	# same as the NUnit adapter above.
-	$packagesPropsPath = Join-Path $RepoRoot 'Directory.Packages.props'
-	$version = Get-CentralPackageVersion -PackagesPropsPath $packagesPropsPath -PackageName 'coverlet.collector'
-	if ([string]::IsNullOrWhiteSpace($version)) {
-		return $null
-	}
-
-	$adapterPath = Join-Path $RepoRoot "packages/coverlet.collector/$version/build/netstandard2.0"
-	if (Test-Path -LiteralPath (Join-Path $adapterPath 'coverlet.collector.dll') -PathType Leaf) {
-		return $adapterPath
-	}
-
-	return $null
 }
 
 # =============================================================================
@@ -705,10 +654,6 @@ try {
 			-SourcePath $runSettingsSourcePath `
 			-Configuration $Configuration `
 			-AllowDialogs $allowAssertDialogsForRun
-		$runSettingsPath = New-TestRunSettingsForCoverage `
-			-SourcePath $runSettingsPath `
-			-Configuration $Configuration `
-			-Coverage $Coverage
 
 		$vstestArgs = @()
 		$vstestArgs += $testDlls
@@ -719,16 +664,6 @@ try {
 		$nunitAdapterPaths = @(Get-NUnitTestAdapterPaths -RepoRoot $PSScriptRoot -TestDlls $testDlls)
 		foreach ($adapterPath in $nunitAdapterPaths) {
 			$vstestArgs += "/TestAdapterPath:$adapterPath"
-		}
-
-		if ($Coverage) {
-			$coverageAdapterPath = Get-CoverageAdapterPath -RepoRoot $PSScriptRoot
-			if ($coverageAdapterPath) {
-				$vstestArgs += "/TestAdapterPath:$coverageAdapterPath"
-			}
-			else {
-				Write-Host "[WARN] -Coverage requested but coverlet.collector build folder was not found under packages/coverlet.collector. Run a build first so it restores." -ForegroundColor Yellow
-			}
 		}
 
 		# Logger configuration - verbosity goes with the console logger
@@ -750,13 +685,21 @@ try {
 			$vstestArgs += "/ListTests"
 		}
 
-		if ($Coverage) {
-			$vstestArgs += '/Collect:XPlat Code Coverage'
-		}
-
 		# =============================================================================
 		# Run Tests
 		# =============================================================================
+
+		# When -Coverage is requested, the vstest invocation is wrapped with dotnet-coverage
+		# (see .config/dotnet-tools.json). Dynamic (in-memory) instrumentation via the CLR profiler
+		# never rewrites assemblies in the shared Output/<Configuration> folder, so parallel
+		# testhosts are safe and no MaxCpuCount workaround is needed.
+		$coverageOutputPath = $null
+		if ($Coverage -and -not $ListTests) {
+			$coverageOutputPath = Join-Path $resultsDir "coverage.cobertura.xml"
+			# Restore the local tool manifest (cheap no-op once restored) so dotnet-coverage and
+			# ReportGenerator are available on fresh checkouts/CI runners.
+			& dotnet tool restore 2>&1 | Out-Null
+		}
 
 		Write-Host ""
 		Write-Host "Running tests..." -ForegroundColor Cyan
@@ -764,12 +707,20 @@ try {
 			Write-Host "  NUnit adapter path: $adapterPath" -ForegroundColor DarkGray
 		}
 		Write-Host "  vstest.console.exe $($vstestArgs -join ' ')" -ForegroundColor DarkGray
+		if ($coverageOutputPath) {
+			Write-Host "  (wrapped in: dotnet tool run dotnet-coverage collect -f cobertura -o $coverageOutputPath)" -ForegroundColor DarkGray
+		}
 		Write-Host ""
 
 		$previousEap = $ErrorActionPreference
 		$ErrorActionPreference = 'Continue'
 		try {
-			& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			if ($coverageOutputPath) {
+				& dotnet tool run dotnet-coverage collect -f cobertura -o $coverageOutputPath --nologo $vstestPath @vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			}
+			else {
+				& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			}
 			# Don't overwrite a non-zero exit code from native tests with a zero exit code from these tests.
 			if ($LASTEXITCODE -ne 0) {
 				$script:testExitCode = $LASTEXITCODE
@@ -818,9 +769,6 @@ try {
 				foreach ($adapterPath in $nunitAdapterPaths) {
 					$singleArgs += "/TestAdapterPath:$adapterPath"
 				}
-				if ($Coverage -and $coverageAdapterPath) {
-					$singleArgs += "/TestAdapterPath:$coverageAdapterPath"
-				}
 				$singleArgs += "/Logger:trx;LogFileName=${dllName}_${timestamp}.trx"
 				$singleArgs += "/Logger:console;verbosity=$vstestVerbosity"
 
@@ -828,11 +776,13 @@ try {
 					$singleArgs += "/TestCaseFilter:$TestFilter"
 				}
 
-				if ($Coverage) {
-					$singleArgs += '/Collect:XPlat Code Coverage'
+				if ($coverageOutputPath) {
+					$singleCoverageOutput = Join-Path $resultsDir "coverage.${dllName}.cobertura.xml"
+					& dotnet tool run dotnet-coverage collect -f cobertura -o $singleCoverageOutput --nologo $vstestPath @singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
 				}
-
-				& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				else {
+					& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				}
 				$singleExitCode = $LASTEXITCODE
 				if ($singleExitCode -ne 0 -and $overallExitCode -eq 0) {
 					$overallExitCode = $singleExitCode
@@ -862,7 +812,7 @@ try {
 		# =============================================================================
 
 		if ($Coverage -and -not $ListTests) {
-			$coverageFiles = Get-ChildItem -Path $resultsDir -Filter "coverage.cobertura.xml" -Recurse -ErrorAction SilentlyContinue
+			$coverageFiles = Get-ChildItem -Path $resultsDir -Filter "coverage*.cobertura.xml" -ErrorAction SilentlyContinue
 			if (-not $coverageFiles -or $coverageFiles.Count -eq 0) {
 				Write-Host "[WARN] -Coverage was requested but no coverage.cobertura.xml files were produced under $resultsDir." -ForegroundColor Yellow
 			}
@@ -870,11 +820,8 @@ try {
 				Write-Host ""
 				Write-Host "Generating coverage report from $($coverageFiles.Count) file(s)..." -ForegroundColor Cyan
 				$coverageReportDir = Join-Path $resultsDir "CoverageReport"
-				$coverageReportsGlob = Join-Path $resultsDir "*/coverage.cobertura.xml"
+				$coverageReportsGlob = Join-Path $resultsDir "coverage*.cobertura.xml"
 				try {
-					# Restore the local tool manifest first (cheap no-op once already restored) so a fresh
-					# checkout/CI runner doesn't just warn and skip the report.
-					& dotnet tool restore 2>&1 | Out-Null
 					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html" 2>&1 |
 						Where-Object { $_ -notmatch '^\d{4}-\d\d-\d\dT' } # drop ReportGenerator's timestamped progress lines
 					$summaryPath = Join-Path $coverageReportDir "Summary.txt"

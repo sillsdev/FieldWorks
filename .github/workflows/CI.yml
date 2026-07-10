@@ -38,13 +38,13 @@ jobs:
           .\test.ps1 -Configuration Debug -NoBuild -Coverage -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload coverage report
+      - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+        uses: codecov/codecov-action@v5
         with:
-          name: coverage-report
-          path: Output/Debug/TestResults/CoverageReport
-          if-no-files-found: warn
+          files: Output/Debug/TestResults/coverage.cobertura.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
       - name: Summarize native test results
         if: ${{ always() }}
