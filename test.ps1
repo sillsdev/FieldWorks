@@ -695,10 +695,31 @@ try {
 		# testhosts are safe and no MaxCpuCount workaround is needed.
 		$coverageOutputPath = $null
 		if ($Coverage -and -not $ListTests) {
-			$coverageOutputPath = Join-Path $resultsDir "coverage.cobertura.xml"
+			# Remove stale coverage artifacts from prior runs. $resultsDir is not cleaned
+			# between runs, and the report step globs coverage*.cobertura.xml, so leftover
+			# per-assembly files would otherwise be merged into this run's report.
+			Get-ChildItem -Path $resultsDir -Filter "coverage*.cobertura.xml" -ErrorAction SilentlyContinue |
+				Remove-Item -Force -ErrorAction SilentlyContinue
+
 			# Restore the local tool manifest (cheap no-op once restored) so dotnet-coverage and
-			# ReportGenerator are available on fresh checkouts/CI runners.
-			& dotnet tool restore 2>&1 | Out-Null
+			# ReportGenerator are available on fresh checkouts/CI runners. If the tooling can't be
+			# restored (no dotnet on PATH, offline, etc.), fall back to running tests WITHOUT
+			# coverage rather than turning a tooling problem into a test failure.
+			$coverageToolingReady = $false
+			try {
+				& dotnet tool restore 2>&1 | Out-Null
+				$coverageToolingReady = ($LASTEXITCODE -eq 0)
+			}
+			catch {
+				$coverageToolingReady = $false
+			}
+
+			if ($coverageToolingReady) {
+				$coverageOutputPath = Join-Path $resultsDir "coverage.cobertura.xml"
+			}
+			else {
+				Write-Host "[WARN] Coverage tooling unavailable ('dotnet tool restore' failed); running tests WITHOUT coverage collection." -ForegroundColor Yellow
+			}
 		}
 
 		Write-Host ""
@@ -822,7 +843,10 @@ try {
 				$coverageReportDir = Join-Path $resultsDir "CoverageReport"
 				$coverageReportsGlob = Join-Path $resultsDir "coverage*.cobertura.xml"
 				try {
-					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html" 2>&1 |
+					# Also emit a single merged Cobertura (CoverageReport/Cobertura.xml) so downstream
+					# consumers (e.g. Codecov in CI) upload the full merged data, not just the primary
+					# coverage.cobertura.xml which is partial when the per-assembly retry path runs.
+					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html;Cobertura" 2>&1 |
 						Where-Object { $_ -notmatch '^\d{4}-\d\d-\d\dT' } # drop ReportGenerator's timestamped progress lines
 					$summaryPath = Join-Path $coverageReportDir "Summary.txt"
 					if (Test-Path -LiteralPath $summaryPath) {

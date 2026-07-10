@@ -44,7 +44,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          files: Output/Debug/TestResults/coverage.cobertura.xml
+          files: Output/Debug/TestResults/CoverageReport/Cobertura.xml
           flags: managed
           name: FieldWorks
 
