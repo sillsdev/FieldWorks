@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		/// <param name="originalName">The original name to be converted</param>
 		/// <returns>Converted name</returns>
-		internal static string ConvertNameToUseAnsiCharacters(string originalName)
+		public static string ConvertNameToUseAnsiCharacters(string originalName)
 		{
 			var sb = new StringBuilder();
 			char[] letters = originalName.ToCharArray();
@@ -168,13 +168,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			var results = new StringBuilder(m_xample.ParseWord(word));
-			ParseResult result = ProcessParseResults(ref results);
+			var results = m_xample.ParseWord(word);
+			ParseResult result = ProcessParseResults(results, m_cache);
 
 			return result;
 		}
 
-		public ParseResult ProcessParseResults(ref StringBuilder results)
+		public static ParseResult ProcessParseResults(String results, LcmCache cache)
 		{
 			results = results.Replace("DB_REF_HERE", "'0'");
 			results = results.Replace("<...>", "[...]");
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			ParseResult result;
-			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
+			using (new WorkerThreadReadHelper(cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				var analyses = new List<ParseAnalysis>();
 				foreach (XElement analysisElem in wordformElem.Descendants("WfiAnalysis"))
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (XElement morphElem in analysisElem.Descendants("Morph"))
 					{
 						ParseMorph morph;
-						if (!TryCreateParseMorph(m_cache, morphElem, out morph))
+						if (!TryCreateParseMorph(cache, morphElem, out morph))
 						{
 							skip = true;
 							break;

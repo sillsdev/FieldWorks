@@ -19,7 +19,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using System.Xml;
 using System;
 using XAmpleManagedWrapper;
@@ -56,15 +55,13 @@ namespace SIL.ToneParsFLEx
 
 		public const string kTPLexicon = "TPlex.txt";
 		public FLExDBExtractor Extractor { get; set; }
-		protected XAmpleParser XAmpleParser { get; set; }
 
 		public ToneParsInvoker(
 			string toneParsRuleFile,
 			string intxCtlFile,
 			string inputFile,
 			char decomp,
-			LcmCache cache,
-			XAmpleParser xAmpleParser
+			LcmCache cache
 		)
 		{
 			ToneParsRuleFile = toneParsRuleFile;
@@ -72,14 +69,9 @@ namespace SIL.ToneParsFLEx
 			InputFile = inputFile;
 			DecompSeparationChar = decomp;
 			Cache = cache;
-			DatabaseName = ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
+			DatabaseName = XAmpleParser.ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
 			InitFileNames();
 			Queue = new IdleQueue { IsPaused = true };
-			XAmpleParser = xAmpleParser;
-			if ( XAmpleParser == null )
-			{
-				XAmpleParser = new XAmpleParser(Cache, null);
-			}
 		}
 
 		private void InitFileNames()
@@ -89,33 +81,6 @@ namespace SIL.ToneParsFLEx
 			ToneParsBatchFile = Path.Combine(Path.GetTempPath(), "ToneParsFLEx.bat");
 			ToneParsCmdFile = Path.Combine(Path.GetTempPath(), "ToneParsCmd.cmd");
 			ToneParsLogFile = Path.Combine(Path.GetTempPath(), "ToneParsInvoker.log");
-		}
-
-		// following borrowed from SIL.FieldWorks.WordWorks.Parser (ParserCore.dll)
-		/// <summary>
-		/// Convert any characters in the name which are higher than 0x00FF to hex.
-		/// Neither XAmple nor PC-PATR can read a file name containing letters above 0x00FF.
-		/// </summary>
-		/// <param name="originalName">The original name to be converted</param>
-		/// <returns>Converted name</returns>
-		internal static string ConvertNameToUseAnsiCharacters(string originalName)
-		{
-			var sb = new StringBuilder();
-			char[] letters = originalName.ToCharArray();
-			foreach (var letter in letters)
-			{
-				int value = Convert.ToInt32(letter);
-				if (value > 255)
-				{
-					string hex = value.ToString("X4");
-					sb.Append(hex);
-				}
-				else
-				{
-					sb.Append(letter);
-				}
-			}
-			return sb.ToString();
 		}
 
 		private void CreateToneParsBatchFile()
@@ -691,8 +656,7 @@ namespace SIL.ToneParsFLEx
 				IWfiWordform thiswf = GetWordformFromString(wordform);
 				if (thiswf != null)
 				{
-					var sb = new StringBuilder(ParserFilerXMLString);
-					var parseResult = XAmpleParser.ProcessParseResults(ref sb);
+					var parseResult = XAmpleParser.ProcessParseResults(ParserFilerXMLString, Cache);
 					m_parseFiler.ProcessParse(thiswf, ParserPriority.Low, parseResult);
 				}
 				i++;

@@ -118,8 +118,7 @@ namespace SIL.DisambiguateInFLExDBTests
 			string toneParsRuleFile = Path.Combine(TestDataDir, "KvgTP.ctl");
 			string intxCtlFile = Path.Combine(TestDataDir, "KVGintx.ctl");
 			string inputFile = Path.Combine(TestDataDir, "KVGinput.txt");
-			XAmpleParser xampleParser = new XAmpleParser(MyCache, null);
-			invoker = new ToneParsInvoker(toneParsRuleFile, intxCtlFile, inputFile, '+', MyCache, xampleParser);
+			invoker = new ToneParsInvoker(toneParsRuleFile, intxCtlFile, inputFile, '+', MyCache);
 			CreateExpectedFileStrings();
 			File.Copy(Path.Combine(TestDataDir, "ToneParsInvoker.ana"), Path.Combine(Path.GetTempPath(), "ToneParsInvoker.ana"), true);
 			ToneParsInvokerOptions.Instance.VerifyInformation = true;
