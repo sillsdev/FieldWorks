@@ -24,6 +24,7 @@ You will receive:
    - Apply the minimal change set needed to satisfy acceptance signals.
 3. **Self-check**
    - Review for style, safety, and regression risk.
+   - Every new or changed decision/branch needs at least one test that actually exercises it — use `fieldworks-test-coverage` to verify with `test.ps1 -Coverage`, not just "a test file exists nearby." Document any accepted gap (e.g. requires a live/manual round-trip) rather than letting it pass silently.
    - For FieldWorks branches that will become PRs, use the review policy in `.github/instructions/review-analyzer.instructions.md` or run `pr-preflight` before handoff when risk or scope warrants it.
 4. **Update status**
    - Record what changed and any follow-up notes.

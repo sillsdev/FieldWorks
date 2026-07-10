@@ -23,6 +23,7 @@ You will receive:
    - Execute builds/tests or manual checks as appropriate.
    - For FieldWorks, run `./build.ps1 -Clean` before validation when switching branches or worktrees, upgrading package versions, suspecting stale `Obj/` or `Output/` artifacts, or any time you need a fully clean validation baseline.
    - After the clean step, rerun the normal scripted verification commands such as `./build.ps1`, `./test.ps1`, or the narrow scripted slice you are validating.
+   - When the change adds or edits behavior (not docs/test-only changes), also run `./test.ps1 -Coverage` for the touched project(s) — see `fieldworks-test-coverage` — and confirm the new/changed lines are actually exercised, not just that the suite passes.
 3. **Capture results**
    - Record pass/fail outcomes and any artifacts.
 4. **Report**
@@ -38,4 +39,5 @@ You will receive:
 <notes>
 - Use FieldWorks build/test scripts when applicable.
 - Use `rubric-verify` when execution-free scoring or explicit hard-gate review is requested.
+- Use `fieldworks-test-coverage` to check that new/changed lines are exercised, not just that tests pass.
 </notes>

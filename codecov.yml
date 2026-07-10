@@ -1,0 +1,19 @@
+# Codecov configuration (https://docs.codecov.com/docs/codecov-yaml)
+# Coverage comes from test.ps1 -Coverage in CI, which excludes the
+# LongRunning/ByHand/SmokeTest/DesktopRequired categories, so totals understate the full suite.
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true # report, but do not fail CI on total-coverage changes (yet)
+    patch:
+      default:
+        informational: true # report diff coverage on PRs without gating merges (yet)
+
+comment:
+  layout: "condensed_header, diff, files"
+  require_changes: true
+
+ignore:
+  - "**/*Tests/**" # test project sources; drop this if test-code coverage becomes interesting

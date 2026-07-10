@@ -74,8 +74,8 @@ categories:
         evidence: API diff or behavioral comparison note
       - id: test_coverage
         weight: 0.20
-        check: New or changed behavior has at least one corresponding test.
-        evidence: test names covering the change
+        check: New or changed behavior has at least one corresponding test that actually exercises the new/changed lines (not merely a nearby test file).
+        evidence: test names covering the change, ideally cross-checked with `test.ps1 -Coverage` (see `fieldworks-test-coverage`)
 
   - id: integrity
     weight: 0.25

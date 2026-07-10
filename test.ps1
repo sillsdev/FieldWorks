@@ -44,6 +44,12 @@
 	Internal switch used when test.ps1 is invoked from build.ps1 -RunTests.
 	Skips acquiring/releasing the same-worktree lock because the parent build already owns it.
 
+.PARAMETER Coverage
+	Collect code coverage by wrapping vstest.console.exe with the dotnet-coverage tool. Its dynamic,
+	in-memory instrumentation leaves the shared Output/<Configuration> assemblies untouched, so
+	parallel testhosts stay safe. Writes coverage.cobertura.xml under Output/<Configuration>/TestResults,
+	then renders a summary + HTML report via ReportGenerator. If coverage can't be collected, the run fails.
+
 .EXAMPLE
 	.\test.ps1
 	Runs all tests in Debug configuration (builds first if needed).
@@ -69,6 +75,10 @@
 	.\test.ps1 -SkipManaged -TestProject TestGeneric
 	Uses the environment variable equivalent of -AllowAssertDialogs. Clear the variable after debugging.
 
+.EXAMPLE
+	.\test.ps1 -TestProject "Src/Common/FwAvalonia/FwAvaloniaTests" -Coverage
+	Runs FwAvaloniaTests with code coverage collection and prints a coverage summary.
+
 .NOTES
 	FieldWorks is x64-only. Tests run in 64-bit mode.
 #>
@@ -86,6 +96,7 @@ param(
 	[switch]$AllowAssertDialogs,
 	[switch]$SkipDependencyCheck,
 	[switch]$SkipWorktreeLock,
+	[switch]$Coverage,
 	[ValidateSet('user', 'agent', 'unknown')]
 	[string]$StartedBy = 'unknown'
 )
@@ -291,6 +302,7 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+$script:coverageFailed = $false
 
 try {
 	if (-not $SkipWorktreeLock) {
@@ -676,18 +688,55 @@ try {
 		# Run Tests
 		# =============================================================================
 
+		# -Coverage wraps vstest with dotnet-coverage (see .config/dotnet-tools.json). Its dynamic,
+		# in-memory instrumentation never rewrites the shared Output/<Configuration> assemblies, so
+		# parallel testhosts stay safe.
+		$coverageOutputPath = $null
+		if ($Coverage -and -not $ListTests) {
+			# Drop stale per-run files; $resultsDir isn't cleaned and the report step globs them.
+			Get-ChildItem -Path $resultsDir -Filter "coverage*.cobertura.xml" -ErrorAction SilentlyContinue |
+				Remove-Item -Force -ErrorAction SilentlyContinue
+
+			# Restore the local tool manifest so the tools exist on fresh checkouts/CI. Coverage is
+			# opt-in, so if it can't be collected we mark the run failed instead of quietly skipping it.
+			$coverageToolingReady = $false
+			try {
+				& dotnet tool restore 2>&1 | Out-Null
+				$coverageToolingReady = ($LASTEXITCODE -eq 0)
+			}
+			catch {
+				$coverageToolingReady = $false
+			}
+
+			if ($coverageToolingReady) {
+				$coverageOutputPath = Join-Path $resultsDir "coverage.cobertura.xml"
+			}
+			else {
+				$script:coverageFailed = $true
+				Write-Host "[ERROR] Coverage tooling unavailable ('dotnet tool restore' failed); -Coverage was requested but cannot be collected." -ForegroundColor Red
+			}
+		}
+
 		Write-Host ""
 		Write-Host "Running tests..." -ForegroundColor Cyan
 		foreach ($adapterPath in $nunitAdapterPaths) {
 			Write-Host "  NUnit adapter path: $adapterPath" -ForegroundColor DarkGray
 		}
 		Write-Host "  vstest.console.exe $($vstestArgs -join ' ')" -ForegroundColor DarkGray
+		if ($coverageOutputPath) {
+			Write-Host "  (wrapped in: dotnet tool run dotnet-coverage collect -f cobertura -o $coverageOutputPath)" -ForegroundColor DarkGray
+		}
 		Write-Host ""
 
 		$previousEap = $ErrorActionPreference
 		$ErrorActionPreference = 'Continue'
 		try {
-			& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			if ($coverageOutputPath) {
+				& dotnet tool run dotnet-coverage collect -f cobertura -o $coverageOutputPath --nologo $vstestPath @vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			}
+			else {
+				& $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+			}
 			# Don't overwrite a non-zero exit code from native tests with a zero exit code from these tests.
 			if ($LASTEXITCODE -ne 0) {
 				$script:testExitCode = $LASTEXITCODE
@@ -743,7 +792,13 @@ try {
 					$singleArgs += "/TestCaseFilter:$TestFilter"
 				}
 
-				& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				if ($coverageOutputPath) {
+					$singleCoverageOutput = Join-Path $resultsDir "coverage.${dllName}.cobertura.xml"
+					& dotnet tool run dotnet-coverage collect -f cobertura -o $singleCoverageOutput --nologo $vstestPath @singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				}
+				else {
+					& $vstestPath $singleArgs 2>&1 | Tee-Object -Variable singleTestOutput
+				}
 				$singleExitCode = $LASTEXITCODE
 				if ($singleExitCode -ne 0 -and $overallExitCode -eq 0) {
 					$overallExitCode = $singleExitCode
@@ -766,6 +821,42 @@ try {
 			}
 
 			$script:testExitCode = $overallExitCode
+		}
+
+		# =============================================================================
+		# Coverage report (only when -Coverage was requested)
+		# =============================================================================
+
+		if ($Coverage -and -not $ListTests) {
+			$coverageFiles = Get-ChildItem -Path $resultsDir -Filter "coverage*.cobertura.xml" -ErrorAction SilentlyContinue
+			if (-not $coverageFiles -or $coverageFiles.Count -eq 0) {
+				$script:coverageFailed = $true
+				Write-Host "[ERROR] -Coverage was requested but no coverage.cobertura.xml files were produced under $resultsDir." -ForegroundColor Red
+			}
+			else {
+				Write-Host ""
+				Write-Host "Generating coverage report from $($coverageFiles.Count) file(s)..." -ForegroundColor Cyan
+				$coverageReportDir = Join-Path $resultsDir "CoverageReport"
+				$coverageReportsGlob = Join-Path $resultsDir "coverage*.cobertura.xml"
+				try {
+					# Emit a merged Cobertura (CoverageReport/Cobertura.xml) so CI uploads the full data,
+					# not just the primary file (partial when the per-assembly retry path runs).
+					& dotnet tool run reportgenerator "-reports:$coverageReportsGlob" "-targetdir:$coverageReportDir" "-reporttypes:TextSummary;Html;Cobertura" 2>&1 |
+						Where-Object { $_ -notmatch '^\d{4}-\d\d-\d\dT' } # drop timestamped progress lines
+					if ($LASTEXITCODE -ne 0) { throw "reportgenerator exited $LASTEXITCODE" }
+					$summaryPath = Join-Path $coverageReportDir "Summary.txt"
+					if (Test-Path -LiteralPath $summaryPath) {
+						Write-Host ""
+						Get-Content -LiteralPath $summaryPath | Write-Host
+						Write-Host ""
+						Write-Host "Full HTML coverage report: $(Join-Path $coverageReportDir 'index.html')" -ForegroundColor Gray
+					}
+				}
+				catch {
+					$script:coverageFailed = $true
+					Write-Host "[ERROR] ReportGenerator failed (is '.config/dotnet-tools.json' restored? run 'dotnet tool restore'): $_" -ForegroundColor Red
+				}
+			}
 		}
 	}
 	}
@@ -834,6 +925,13 @@ if ($testExitCode -ne 0 -and (Test-Path $vstestLogPath)) {
 		$nativeLogPath = Join-Path $PSScriptRoot "Output/$Configuration/<SuiteName>.exe.log"
 		Write-Host "  Logs for each native test suite: $nativeLogPath" -ForegroundColor Gray
 	}
+}
+
+# Coverage was requested but couldn't be collected/reported: fail the run even if tests passed.
+if ($script:coverageFailed -and $testExitCode -eq 0) {
+	$testExitCode = 1
+	Write-Host ""
+	Write-Host "[FAIL] Tests passed but code coverage collection failed (see [ERROR] above)." -ForegroundColor Red
 }
 
 if ($testExitCode -eq 0) {
