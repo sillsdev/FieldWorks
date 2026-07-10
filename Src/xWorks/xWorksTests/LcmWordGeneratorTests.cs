@@ -328,6 +328,103 @@ namespace SIL.FieldWorks.XWorks
 				Is.EqualTo(new[] { W14.OnOffValues.True, W14.OnOffValues.True }));
 		}
 
+		/// <summary>
+		/// LT-22351: default font features must survive the load from a style's persisted Rules
+		/// (liblcm BaseStyleInfo.ProcessStyleRules, sillsdev/liblcm#388) and reach the generated
+		/// Word styles. The sibling test above uses a TestStyle double whose ExplicitValue is set
+		/// in memory, which bypasses ProcessStyleRules; this one builds the style the way
+		/// LcmStyleSheet does in production - a real IStStyle wrapped in a BaseStyleInfo.
+		/// </summary>
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_DefaultFontFeaturesFromPersistedStyleRules_AddsWordTypographyProperties()
+		{
+			var styleName = "WordFeatureStylePersisted" + Guid.NewGuid().ToString("N");
+			var realStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = styleName;
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+			realStyle.Type = StyleType.kstCharacter;
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, "liga=0,lnum=1,pnum=1,calt=0,ss02=0,cv01=2");
+			realStyle.Rules = propsBldr.GetTextProps();
+
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+			styles.Add(new BaseStyleInfo(realStyle));
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(styleName, Cache.DefaultVernWs,
+					new ReadOnlyPropertyTable(m_propertyTable));
+
+				var runProps = style.GetFirstChild<StyleRunProperties>();
+				AssertWordTypographyProperties(runProps, W14.LigaturesValues.None, W14.NumberFormValues.Lining,
+					W14.NumberSpacingValues.Proportional, false, 2U, false);
+			}
+			finally
+			{
+				// The real IStStyle is undone after this test; do not leave a stale entry behind.
+				styles.Remove(styleName);
+			}
+		}
+
+		/// <summary>
+		/// LT-22351: a Normal style with its OWN default font features (loaded from its persisted
+		/// Rules, sillsdev/liblcm#388) must win over the writing system's DefaultFontFeatures
+		/// fallback in AddFontInfoWordStyles. The sibling test above covers only a Normal style
+		/// WITHOUT its own features (fallback branch).
+		/// </summary>
+		[Test]
+		public void GenerateCharacterStyleFromLcmStyleSheet_NormalStyleOwnFontFeatures_BeatWritingSystemDefaultFontFeatures()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
+			vernWs.DefaultFont = new FontDefinition("Charis SIL") { Features = "ss11=1,ss12=1" };
+
+			var realStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = WordStylesGenerator.NormalParagraphStyleName;
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+			realStyle.Type = StyleType.kstParagraph;
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, "ss02=1");
+			realStyle.Rules = propsBldr.GetTextProps();
+
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+			if (styles.Contains(WordStylesGenerator.NormalParagraphStyleName))
+				styles.Remove(WordStylesGenerator.NormalParagraphStyleName);
+			styles.Add(new BaseStyleInfo(realStyle));
+			try
+			{
+				var style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(
+					WordStylesGenerator.NormalParagraphStyleName,
+					vernWs.Handle,
+					new ReadOnlyPropertyTable(m_propertyTable));
+
+				var runProps = style.GetFirstChild<StyleRunProperties>();
+				Assert.That(runProps, Is.Not.Null);
+
+				// The font family still falls back to the WS default font...
+				var runFonts = runProps.GetFirstChild<RunFonts>();
+				Assert.That(runFonts, Is.Not.Null);
+				Assert.That(runFonts.Ascii?.Value, Is.EqualTo("Charis SIL"));
+
+				// ...but the style's own features win over the WS DefaultFontFeatures fallback.
+				var stylisticSets = runProps.GetFirstChild<W14.StylisticSets>();
+				Assert.That(stylisticSets, Is.Not.Null);
+				var styleSet = stylisticSets.Elements<W14.StyleSet>().Single();
+				Assert.That(styleSet.Id?.Value, Is.EqualTo(2U));
+				Assert.That(styleSet.Val?.Value, Is.EqualTo(W14.OnOffValues.True));
+			}
+			finally
+			{
+				// The real IStStyle is undone after this test; restore the fixture's Normal double.
+				styles.Remove(WordStylesGenerator.NormalParagraphStyleName);
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.NormalParagraphStyleName, IsParagraphStyle = true });
+			}
+		}
+
 		[Test]
 		[Category("ManualDocx")]
 		public void GenerateManualDocxArtifact_CharisBaseline_NoFontOptions()
