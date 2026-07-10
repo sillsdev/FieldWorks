@@ -23,7 +23,7 @@ If you need runnable output, use a Windows machine and run `./build.ps1` or `./t
 For first-time setup on a Windows development machine:
 
 - Install required software:
-	- Visual Studio 2022 with .NET desktop and C++ desktop workloads
+	- [Visual Studio 2022](https://aka.ms/vs/17/release/vs_community.exe) with .NET desktop and C++ desktop workloads
 	- Git for Windows
 - Run the setup script:
 ```powershell
