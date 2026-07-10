@@ -1,7 +1,6 @@
 # Codecov configuration (https://docs.codecov.com/docs/codecov-yaml)
-# Coverage is collected in CI by test.ps1 -Coverage (dotnet-coverage -> cobertura) and uploaded by
-# .github/workflows/CI.yml. Note: CI excludes the LongRunning/ByHand/SmokeTest/DesktopRequired test
-# categories, so absolute coverage numbers understate what the full suite exercises.
+# Coverage comes from test.ps1 -Coverage in CI, which excludes the
+# LongRunning/ByHand/SmokeTest/DesktopRequired categories, so totals understate the full suite.
 
 coverage:
   status:
