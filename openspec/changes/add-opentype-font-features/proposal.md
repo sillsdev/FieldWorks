@@ -16,7 +16,7 @@ The phase also needs explicit OpenType-first behavior for dual-technology fonts,
 - Add trace logging for malformed feature strings, malformed tags, filtered feature discovery, provider selection, native shaping failures, and fallback decisions.
 - Accept any syntactically valid OpenType tag name, including custom/private tags; reject malformed tags safely and log them instead of narrowing accepted tags to a registry allowlist.
 - Fix legacy truncation logic so overlong feature strings without comma boundaries fail safe.
-- Keep the existing style/font-feature inheritance path authoritative and retain only the minimal `StyleInfo` compatibility adapter needed for the current build graph to reload default `ktptFontVariations` from style rules.
+- Keep the existing style/font-feature inheritance path authoritative. (A minimal `StyleInfo` compatibility adapter originally reloaded default `ktptFontVariations` from style rules; it was removed under LT-22351 once liblcm's `BaseStyleInfo.ProcessStyleRules` gained the `ktptFontVariations` case — sillsdev/liblcm#388.)
 - Add UI/component tests for font-feature controls and high-level visual rendering tests proving feature settings change output.
 - Add robustness tests for malformed input, feature filtering, OpenType-preferred behavior, truncation safety, fallback behavior, CSS/DOCX export safety, and inheritance-path round-tripping.
 - Add a test-only HarfBuzzSharp + SkiaSharp comparison path for shaping/rendering confidence toward future Avalonia migration; this path is not a production renderer in Phase 1.
