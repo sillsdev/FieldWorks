@@ -2414,6 +2414,58 @@ namespace SIL.FieldWorks.XWorks
 				Does.Contain("font-feature-settings:\"!abc\" 2,\"a\\\"b\\\\\" 1"));
 		}
 
+		/// <summary>
+		/// LT-22351: liblcm's BaseStyleInfo.ProcessStyleRules previously dropped a style's
+		/// default ktptFontVariations (font features) when loading a style from its persisted
+		/// Rules. FieldWorks had a Styles-dialog-only adapter (StyleInfo.LoadDefaultFontFeatures)
+		/// that compensated for this, but the Dictionary Preview CSS generation path
+		/// (GenerateCssStyleFromLcmStyleSheet/AddFontInfoCss) reads plain BaseStyleInfo objects
+		/// straight out of LcmStyleSheet and had no such adapter, so default font features never
+		/// reached the preview CSS. This test builds the style the same way LcmStyleSheet does in
+		/// production - a real IStStyle with persisted Rules wrapped directly in a BaseStyleInfo,
+		/// not a TestStyle double with ExplicitValue set in memory - to prove the fix in liblcm
+		/// (sillsdev/liblcm#388) makes it all the way to the generated CSS.
+		/// </summary>
+		[Test]
+		public void GenerateCssForConfiguration_DefaultFontFeaturesFromPersistedStyleRules_ReachPreviewCss()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			const string styleName = "DefaultFontFeaturesStyle";
+			var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+			var realStyle = styleFactory.Create();
+			Cache.LanguageProject.StylesOC.Add(realStyle);
+			realStyle.Name = styleName;
+			realStyle.Context = ContextValues.Internal;
+			realStyle.Function = FunctionValues.Prose;
+			realStyle.Structure = StructureValues.Undefined;
+			realStyle.Type = StyleType.kstCharacter;
+
+			var propsBldr = TsStringUtils.MakePropsBldr();
+			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontVariations, "smcp=1");
+			realStyle.Rules = propsBldr.GetTextProps();
+
+			// Build the style the way LcmStyleSheet.LoadStyles does in production: a BaseStyleInfo
+			// wrapping the real, persisted IStStyle -- no TestStyle, no in-memory ExplicitValue.
+			var persistedStyle = new BaseStyleInfo(realStyle);
+			if (m_styleSheet.Styles.Contains(styleName))
+				m_styleSheet.Styles.Remove(styleName);
+			m_styleSheet.Styles.Add(persistedStyle);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = styleName,
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { headwordNode } };
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+
+			Assert.That(cssResult, Does.Contain("font-feature-settings:\"smcp\" 1"));
+		}
+
 		[Test]
 		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
 		{
