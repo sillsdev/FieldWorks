@@ -1,0 +1,59 @@
+name: Codecov upload with retry
+description: >-
+  Upload coverage files to Codecov, retrying the whole invocation once after a
+  backoff. The Codecov CLI retries individual HTTP requests, but
+  whole-invocation failures (503 storms, commit-creation errors) slip past
+  fail_ci_if_error, so the final step fails the job when neither attempt
+  succeeded.
+inputs:
+  token:
+    description: Codecov upload token
+    required: true
+  files:
+    description: Comma-separated coverage files to upload
+    required: true
+  flags:
+    description: Codecov flag for this upload
+    required: true
+  name:
+    description: Codecov upload name
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Upload to Codecov (attempt 1)
+      id: attempt1
+      continue-on-error: true
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+      with:
+        token: ${{ inputs.token }}
+        fail_ci_if_error: true
+        files: ${{ inputs.files }}
+        flags: ${{ inputs.flags }}
+        name: ${{ inputs.name }}
+
+    - name: Wait before Codecov retry
+      if: ${{ steps.attempt1.outcome == 'failure' }}
+      shell: powershell
+      run: Start-Sleep -Seconds 30
+
+    - name: Upload to Codecov (attempt 2)
+      id: attempt2
+      if: ${{ steps.attempt1.outcome == 'failure' }}
+      continue-on-error: true
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+      with:
+        token: ${{ inputs.token }}
+        fail_ci_if_error: true
+        files: ${{ inputs.files }}
+        flags: ${{ inputs.flags }}
+        name: ${{ inputs.name }}
+
+    - name: Verify Codecov upload succeeded
+      shell: powershell
+      run: |
+        $outcomes = @('${{ steps.attempt1.outcome }}', '${{ steps.attempt2.outcome }}')
+        if ($outcomes -contains 'success') { Write-Host 'Coverage uploaded to Codecov.'; exit 0 }
+        Write-Error 'Codecov upload failed after 2 attempts.'
+        exit 1

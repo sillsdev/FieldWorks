@@ -26,6 +26,13 @@
 	Allow FieldWorks Abort/Retry/Ignore assertion dialogs during this local test run.
 	Equivalent environment variable: FW_TEST_ALLOW_ASSERT_DIALOGS=1.
 
+.PARAMETER Coverage
+	Run the test executable under OpenCppCoverage and export
+	Output/<Configuration>/TestResults/native.<exe>.cobertura.xml. OpenCppCoverage is
+	debugger-based (needs only the build's .pdb files, never rewrites binaries); the covered run
+	is ~4x slower but produces identical test results. When the tool is not installed the tests
+	run bare with a warning instead of failing.
+
 .EXAMPLE
 	.\Invoke-CppTest.ps1 -TestProject TestGeneric
 	Build and run TestGeneric using MSBuild.
@@ -66,7 +73,9 @@ param(
 
 	[string]$LogPath,
 
-	[switch]$AllowAssertDialogs
+	[switch]$AllowAssertDialogs,
+
+	[switch]$Coverage
 )
 
 Set-StrictMode -Version Latest
@@ -95,28 +104,6 @@ function Test-EnvironmentSwitchEnabled {
 	}
 
 	return @('1', 'true', 'yes', 'on') -contains $value.Trim().ToLowerInvariant()
-}
-
-function Set-AssertDialogEnvironment {
-	param(
-		[bool]$AllowDialogs
-	)
-
-	if ($AllowDialogs) {
-		$env:AssertUiEnabled = 'true'
-		$env:AssertExceptionEnabled = 'false'
-		$env:FW_TEST_MODE = '0'
-		$env:FW_TEST_ALLOW_ASSERT_DIALOGS = '1'
-		Write-Host "[WARN] Interactive assertion dialogs are enabled for this local native test run." -ForegroundColor Yellow
-		return
-	}
-
-	# Suppress assertion dialog boxes (DebugProcs.dll checks these env vars).
-	# This prevents unattended tests from blocking on MessageBox popups.
-	$env:AssertUiEnabled = 'false'
-	$env:AssertExceptionEnabled = 'true'
-	# Unconditional test-mode override: bypasses registry AssertMessageBox key in DebugProcs.dll.
-	$env:FW_TEST_MODE = '1'
 }
 
 function Resolve-NativeTestExitCode {
@@ -166,18 +153,12 @@ function Resolve-NativeTestExitCode {
 Initialize-VsDevEnvironment
 
 $allowAssertDialogsForRun = $AllowAssertDialogs -or (Test-EnvironmentSwitchEnabled -Name 'FW_TEST_ALLOW_ASSERT_DIALOGS')
-Set-AssertDialogEnvironment -AllowDialogs $allowAssertDialogsForRun
+Set-TestAssertDialogEnvironment -AllowDialogs $allowAssertDialogsForRun
+if ($allowAssertDialogsForRun) {
+	Write-Host "[WARN] Interactive assertion dialogs are enabled for this local native test run." -ForegroundColor Yellow
+}
 
-# Suppress Windows Error Reporting and crash dialogs
-# SEM_FAILCRITICALERRORS = 0x0001
-# SEM_NOGPFAULTERRORBOX = 0x0002
-# SEM_NOOPENFILEERRORBOX = 0x8000
-$SetErrorModeSignature = @'
-[DllImport("kernel32.dll")]
-public static extern uint SetErrorMode(uint uMode);
-'@
-$Kernel32 = Add-Type -MemberDefinition $SetErrorModeSignature -Name 'Kernel32' -Namespace 'Win32' -PassThru
-$oldMode = $Kernel32::SetErrorMode(0x8003)
+Disable-CrashDialog
 
 # Resolve worktree path
 if (-not $WorktreePath) {
@@ -563,6 +544,32 @@ function Invoke-Run {
 		$argumentList += $TestArguments
 	}
 
+	$coberturaFile = $null
+	if ($Coverage) {
+		$coverageTool = Find-OpenCppCoverage
+		if ($coverageTool) {
+			$resultsDir = Join-Path $outputDir 'TestResults'
+			New-Item -ItemType Directory -Force -Path $resultsDir | Out-Null
+			$coberturaFile = Join-Path $resultsDir "native.$exeProcessName.cobertura.xml"
+			Remove-Item $coberturaFile -Force -ErrorAction SilentlyContinue
+
+			# The child exe inherits OpenCppCoverage's streams: test output still arrives on
+			# stdout, while OpenCppCoverage's own diagnostics go to stderr.
+			$argumentList = @(
+				'--export_type', "cobertura:$coberturaFile",
+				'--sources', (Join-Path $activeWorktreePath 'Src'),
+				'--modules', $outputDir,
+				'--working_dir', $outputDir,
+				'--', $runExePath
+			) + $argumentList
+			$runExePath = $coverageTool
+			Write-Host "Coverage: $coberturaFile" -ForegroundColor Gray
+		}
+		else {
+			Write-Host "[WARN] -Coverage requested but OpenCppCoverage.exe was not found (env OpenCppCoveragePath, PATH, or C:\Program Files\OpenCppCoverage); running native tests WITHOUT coverage collection. Install it, e.g.: choco install opencppcoverage --version=0.9.9.0 -y" -ForegroundColor Yellow
+		}
+	}
+
 	Write-Host "Running: $runExePath $($argumentList -join ' ')" -ForegroundColor Gray
 	Write-Host "Logging to: $LogPath" -ForegroundColor Gray
 
@@ -580,6 +587,8 @@ function Invoke-Run {
 	}
 
 	$process = Start-Process @startInfo
+	# Cache the handle: without it, PowerShell 5.1 cannot read ExitCode after the process exits.
+	$null = $process.Handle
 	$timedOut = $false
 	$terminatedAfterCompletion = $false
 	$summarySeenAt = $null
@@ -599,6 +608,7 @@ function Invoke-Run {
 			$timedOut = $true
 			Write-Host "Test run exceeded timeout (${TimeoutSeconds}s); terminating process..." -ForegroundColor Red
 			try { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue } catch {}
+			try { Get-Process -Name $exeProcessName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue } catch {}
 			break
 		}
 
@@ -607,7 +617,10 @@ function Invoke-Run {
 			$nextHeartbeatAt = (Get-Date).AddSeconds($heartbeatIntervalSeconds)
 		}
 
-		if (Test-Path $LogPath) {
+		# The post-summary grace kill is disabled under coverage: after the summary prints,
+		# OpenCppCoverage still needs several seconds to write the Cobertura export, and killing
+		# it there would truncate the file. Covered runs rely on TimeoutSeconds alone.
+		if ((Test-Path $LogPath) -and -not $coberturaFile) {
 			$recentOutput = Get-Content -Path $LogPath -Tail 25 -ErrorAction SilentlyContinue
 			if (($recentOutput -join "`n") -match $summaryPattern) {
 				if (-not $summarySeenAt) {
@@ -650,6 +663,23 @@ function Invoke-Run {
 		Write-Host "--- end output ---" -ForegroundColor Yellow
 	}
 
+	# A missing export is a coverage-tooling problem, not a test failure: report it loudly but
+	# let the test results stand. In CI the Codecov upload step fails on the missing file.
+	# After a timeout kill the export may be truncated, so it is discarded rather than rewritten.
+	if ($coberturaFile -and $timedOut) {
+		Remove-Item $coberturaFile -Force -ErrorAction SilentlyContinue
+		$coberturaFile = $null
+	}
+	if ($coberturaFile) {
+		if (Test-Path $coberturaFile) {
+			Convert-CoberturaPathsToRepoRelative -CoberturaFile $coberturaFile -RepoRoot $activeWorktreePath
+			Write-Host "Coverage written: $coberturaFile" -ForegroundColor Gray
+		}
+		else {
+			Write-Host "[WARN] OpenCppCoverage did not produce $coberturaFile; native coverage is missing for this run." -ForegroundColor Yellow
+		}
+	}
+
 	# Determine exit code using both the Unit++ summary and the real process exit code.
 	# When Unit++ reports failures/errors, prefer that count so the user sees the actionable
 	# test failure total. Fall back to the process exit code for crashes/teardown failures
@@ -657,10 +687,9 @@ function Invoke-Run {
 	$exitCode = -1
 	$summaryExitCode = $null
 	if (-not $timedOut) {
-		$summaryLine = $logTail | Where-Object { $_ -match 'Tests \[Ok-Fail-Error\]: \[\d+-\d+-\d+\]' } | Select-Object -Last 1
-		if ($summaryLine) {
-			$m = [regex]::Match($summaryLine, 'Tests \[Ok-Fail-Error\]: \[(\d+)-(\d+)-(\d+)\]')
-			$summaryExitCode = [int]$m.Groups[2].Value + [int]$m.Groups[3].Value
+		$summary = Get-UnitppSummary -LogContent $logTail
+		if ($summary) {
+			$summaryExitCode = $summary.Fail + $summary.Error
 		}
 	}
 	$exitCode = Resolve-NativeTestExitCode `
