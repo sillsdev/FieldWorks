@@ -38,8 +38,9 @@ jobs:
           .\test.ps1 -Configuration Debug -NoBuild -Coverage -TestFilter 'TestCategory!=LongRunning&TestCategory!=ByHand&TestCategory!=SmokeTest&TestCategory!=DesktopRequired'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      # Codecov uploads can fail on transient network/service errors, so retry a few times.
-      # Each attempt reuses the SHA-pinned action; the gate step below fails CI only if none succeed.
+      # The Codecov CLI retries individual HTTP requests, but whole-invocation failures (503 storms,
+      # commit-creation errors) slip past it. Add one step-level retry after a backoff; the gate step
+      # below fails CI if neither attempt succeeds.
       - name: Upload coverage to Codecov (attempt 1)
         id: codecov1
         if: ${{ !cancelled() }}
@@ -51,6 +52,11 @@ jobs:
           files: Output/Debug/TestResults/CoverageReport/Cobertura.xml
           flags: managed
           name: FieldWorks
+
+      - name: Wait before Codecov retry
+        if: ${{ !cancelled() && steps.codecov1.outcome == 'failure' }}
+        shell: powershell
+        run: Start-Sleep -Seconds 30
 
       - name: Upload coverage to Codecov (attempt 2)
         id: codecov2
@@ -64,25 +70,13 @@ jobs:
           flags: managed
           name: FieldWorks
 
-      - name: Upload coverage to Codecov (attempt 3)
-        id: codecov3
-        if: ${{ !cancelled() && steps.codecov1.outcome == 'failure' && steps.codecov2.outcome == 'failure' }}
-        continue-on-error: true
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: Output/Debug/TestResults/CoverageReport/Cobertura.xml
-          flags: managed
-          name: FieldWorks
-
       - name: Verify Codecov upload succeeded
         if: ${{ !cancelled() }}
         shell: powershell
         run: |
-          $outcomes = @('${{ steps.codecov1.outcome }}', '${{ steps.codecov2.outcome }}', '${{ steps.codecov3.outcome }}')
+          $outcomes = @('${{ steps.codecov1.outcome }}', '${{ steps.codecov2.outcome }}')
           if ($outcomes -contains 'success') { Write-Host 'Coverage uploaded to Codecov.'; exit 0 }
-          Write-Error 'Codecov upload failed after 3 attempts.'
+          Write-Error 'Codecov upload failed after 2 attempts.'
           exit 1
 
       - name: Summarize native test results
