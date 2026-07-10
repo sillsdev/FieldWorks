@@ -22,15 +22,18 @@ EXIT_CODE_RX = re.compile(
     r"(?:exit(?:ed)?\s+with\s+(?:exit\s+)?code|"
     r"completed\s+with\s+exit\s+code|"
     r"Process\s+completed\s+with\s+exit\s+code|"
+    r"with\s+exit\s+code|"
     r"Exit\s+code:)\s*(-?\d+)",
     re.IGNORECASE,
 )
 
 MSBUILD_ERROR_SUMMARY = re.compile(r"^\s*([1-9][0-9]*)\s+Error\(s\)", re.IGNORECASE)
 MSBUILD_WARN_SUMMARY = re.compile(r"^\s*([1-9][0-9]*)\s+Warning\(s\)", re.IGNORECASE)
+# The error code is optional: custom build tasks (e.g. FwBuildTasks' DownloadFile)
+# log via Log.LogError without a code, which MSBuild renders as "error : message".
 MSBUILD_DIAGNOSTIC_RX = re.compile(
     r"^\s*(?:(?P<node>\d+)>)?\s*(?P<source>.+?)\s*:\s*"
-    r"(?P<level>error|warning)\s+(?P<code>[A-Z]{2,}[0-9]{3,5})\s*:\s*(?P<message>.*)$",
+    r"(?P<level>error|warning)(?:\s+(?P<code>[A-Z]{2,}[0-9]{3,5}))?\s*:\s*(?P<message>.*)$",
     re.IGNORECASE,
 )
 
@@ -38,9 +41,11 @@ MSBUILD_PROJECT_START = re.compile(
     r"^\s*\d+>Project\s+\"([^\"]+)\".*\son\s+node\s+\d+\s+\(([^)]*(?:\([^)]*\)[^)]*)*)\)[.,]?\s*$",
     re.IGNORECASE,
 )
+# "build[a-z]*" covers compound targets such as BuildInstaller, BuildBaseInstaller,
+# and BuildPatch that a bare "build\b" would miss (no word boundary mid-word).
 _REAL_TARGETS = re.compile(
-    r"^\s*(?:default|build|rebuild|publish|pack|restore|clean|test"
-    r"|install|deploy|custombuild|buildpatch|customactions)\b",
+    r"^\s*(?:default|build[a-z]*|rebuild|publish|pack|restore|clean|test"
+    r"|install|deploy|custombuild|customactions)\b",
     re.IGNORECASE,
 )
 MSBUILD_PROJECT_DONE = re.compile(
@@ -84,10 +89,12 @@ class StepRecord:
     exit_codes: list = field(default_factory=list)
     notable: list = field(default_factory=list)
     end_line: Optional[int] = None
+    # Set when MSBuild prints 'Done Building Project "..." -- FAILED.'
+    explicitly_failed: bool = False
 
     @property
     def failed(self) -> bool:
-        return bool(self.errors) or any(c != 0 for _, c in self.exit_codes)
+        return bool(self.errors) or any(c != 0 for _, c in self.exit_codes) or self.explicitly_failed
 
     @property
     def first_failure_line(self) -> Optional[int]:
@@ -97,7 +104,11 @@ class StepRecord:
         bad_exits = [ln for ln, c in self.exit_codes if c != 0]
         if bad_exits:
             candidates.append(bad_exits[0])
-        return min(candidates) if candidates else None
+        if candidates:
+            return min(candidates)
+        if self.explicitly_failed:
+            return self.end_line or self.start_line
+        return None
 
     @property
     def exit_code_summary(self) -> str:
@@ -110,13 +121,24 @@ class StepRecord:
 # Core log parser (single streaming pass)
 # ---------------------------------------------------------------------------
 
-def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10) -> tuple[list[StepRecord], int]:
-    """Stream the log file once and return (steps, total_lines)."""
+# Lines captured after "Build FAILED." for the unattributed-failure safety net.
+_BUILD_FAILED_CAPTURE_LINES = 100
+
+
+def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10) -> tuple[list[StepRecord], int, Optional[list]]:
+    """Stream the log file once and return (steps, total_lines, build_failed_block).
+
+    build_failed_block is the MSBuild failure summary following the first
+    "Build FAILED." line (or None if the log never reports a failed build).
+    It guarantees a failure is surfaced even when no step can be attributed.
+    """
     steps: list[StepRecord] = []
     node_stack: dict[int, list[StepRecord]] = {}
     node_rolling: dict[int, deque] = {}
     pending_after: list[ErrorRecord] = []
     found_project_boundary = False
+    build_failed_block: list = []
+    build_failed_remaining = 0
     _DEFAULT_NODE = 0
 
     def get_rolling(node: int) -> deque:
@@ -127,18 +149,29 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
     def push_step(node: int, step: StepRecord) -> None:
         node_stack.setdefault(node, []).append(step)
 
-    def pop_step(node: int, lnum: int) -> None:
+    def pop_step(node: int, lnum: int, explicitly_failed: bool = False) -> None:
         stack = node_stack.get(node)
         if stack:
             step = stack.pop()
             if step.end_line is None:
                 step.end_line = lnum
+            if explicitly_failed:
+                step.explicitly_failed = True
             if not stack:
                 node_stack.pop(node, None)
 
     def top_step(node: int) -> Optional[StepRecord]:
         stack = node_stack.get(node)
         return stack[-1] if stack else None
+
+    def sole_open_step() -> Optional[StepRecord]:
+        """The single open step across all nodes, if unambiguous.
+
+        Diagnostics logged without a node prefix land on the default node;
+        when exactly one step is open anywhere, attribute them to it.
+        """
+        open_steps = [stack[-1] for stack in node_stack.values() if stack]
+        return open_steps[0] if len(open_steps) == 1 else None
 
     log_encoding = detect_text_encoding(log_path)
     total_lines = 0
@@ -157,6 +190,15 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
                     if err_rec._after_remaining > 0:
                         still_pending.append(err_rec)
                 pending_after = still_pending
+
+            if build_failed_remaining > 0:
+                build_failed_block.append((lnum, content))
+                build_failed_remaining -= 1
+                if "Time Elapsed" in content:
+                    build_failed_remaining = 0
+            elif not build_failed_block and content.strip() == "Build FAILED.":
+                build_failed_block.append((lnum, content.strip()))
+                build_failed_remaining = _BUILD_FAILED_CAPTURE_LINES
 
             _node_m = re.match(r'^\s*(\d+)>', content)
             node = int(_node_m.group(1)) if _node_m else _DEFAULT_NODE
@@ -182,10 +224,12 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
                 rolling.append((lnum, content))
                 done_targets = re.search(r'\(([^)]*(?:\([^)]*\)[^)]*)*)\)', content)
                 if not done_targets or _REAL_TARGETS.match(done_targets.group(1).strip()):
-                    pop_step(node, lnum)
+                    pop_step(node, lnum, explicitly_failed=content.rstrip().endswith("FAILED."))
                 continue
 
             current = top_step(node)
+            if current is None and node == _DEFAULT_NODE:
+                current = sole_open_step()
             if current is None:
                 rolling.append((lnum, content))
                 continue
@@ -211,7 +255,12 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
             if "exit" in content_lower:
                 ec_match = EXIT_CODE_RX.search(content)
                 if ec_match:
-                    current.exit_codes.append((lnum, int(ec_match.group(1))))
+                    # Informational only in boundary mode: tools such as Exec with
+                    # IgnoreExitCode log non-zero codes on healthy builds. Real
+                    # failures surface as errors or a "-- FAILED." project marker.
+                    # The synthetic fallback below still fails on exit codes, its
+                    # only signal.
+                    current.notable.append((lnum, content.strip()))
 
             if "error(s)" in content_lower:
                 if MSBUILD_ERROR_SUMMARY.search(content):
@@ -278,13 +327,14 @@ def parse_log(log_path: Path, context_before: int = 30, context_after: int = 10)
             canonical.warnings.extend(step.warnings)
             canonical.exit_codes.extend(step.exit_codes)
             canonical.notable.extend(step.notable)
+            canonical.explicitly_failed = canonical.explicitly_failed or step.explicitly_failed
             if step.end_line and (canonical.end_line is None or step.end_line > canonical.end_line):
                 canonical.end_line = step.end_line
         else:
             by_name[step.name] = step
             merged.append(step)
 
-    return merged, total_lines
+    return merged, total_lines, (build_failed_block or None)
 
 
 # ---------------------------------------------------------------------------
@@ -315,7 +365,8 @@ def _build_enrichment_index(findings: list) -> dict[int, list]:
 
 
 def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: Path,
-                          enrichment_findings: list, workspace: Optional[Path] = None) -> str:
+                          enrichment_findings: list, workspace: Optional[Path] = None,
+                          build_failed: Optional[list] = None) -> str:
     """Produce a GitHub-flavored markdown report."""
     lines = []
     w = lines.append
@@ -331,7 +382,18 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
     w("")
 
     if not failed_steps:
-        w("> No failed steps detected.")
+        if build_failed:
+            w("> :warning: MSBuild reported **Build FAILED.**, but the failure could not be "
+              "attributed to any step. Raw MSBuild failure summary:")
+            w("")
+            w("```")
+            for ln, text in build_failed[:60]:
+                w(f"{ln:>8}: {text}")
+            w("```")
+            w("")
+            w("If this error shape recurs, teach `scripts/tools/analyze_build_log.py` to recognize it.")
+        else:
+            w("> No failed steps detected.")
         return "\n".join(lines)
 
     # Step summary table
@@ -413,7 +475,8 @@ def write_report_markdown(steps: list[StepRecord], total_lines: int, log_path: P
     return "\n".join(lines)
 
 
-def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, workspace: Optional[Path] = None) -> None:
+def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, workspace: Optional[Path] = None,
+                            build_failed: Optional[list] = None) -> None:
     """Emit ::error:: workflow commands for GitHub annotation badges."""
 
     def _esc_msg(s: str) -> str:
@@ -423,6 +486,11 @@ def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, 
         return _esc_msg(s).replace(":", "%3A").replace(",", "%2C")
 
     loc_rx = re.compile(r"^(?P<file>.+?)(?:\((?P<line>\d+)(?:,(?P<col>\d+))?\))?$")
+
+    if build_failed and not any(s.failed for s in steps):
+        first_err = next((text for _, text in build_failed if ": error" in text.lower()),
+                         build_failed[0][1])
+        print(f"::error::Build FAILED (unattributed): {_esc_msg(first_err.strip()[:200])}")
 
     count = 0
     for step in steps:
@@ -442,7 +510,8 @@ def emit_github_annotations(steps: list[StepRecord], enrichment_findings: list, 
                 if lm and lm.group("col"):
                     props += f",col={lm.group('col')}"
                 code = diag.group("code")
-                msg = _esc_msg(f"{code}: {diag.group('message')}")
+                text = diag.group("message")
+                msg = _esc_msg(f"{code}: {text}" if code else text)
                 print(f"::error {props}::{msg}")
             else:
                 print(f"::error::{_esc_msg(err.message[:200])}")
@@ -484,20 +553,20 @@ def main():
     workspace = Path(args.workspace) if args.workspace else Path(os.environ.get("GITHUB_WORKSPACE", Path.cwd()))
 
     print(f"Analyzing {log_path.name} ({log_path.stat().st_size / 1_048_576:.1f} MB) ...")
-    steps, total_lines = parse_log(log_path, args.context, args.context_after)
+    steps, total_lines, build_failed = parse_log(log_path, args.context, args.context_after)
     print(f"{total_lines:,} lines parsed, {len(steps)} steps found.")
 
     failed = [s for s in steps if s.failed]
     enrichment_findings = run_enrichments(steps, log_path, workspace_root=workspace)
 
-    emit_github_annotations(steps, enrichment_findings, workspace)
-    markdown = write_report_markdown(steps, total_lines, log_path, enrichment_findings, workspace)
+    emit_github_annotations(steps, enrichment_findings, workspace, build_failed)
+    markdown = write_report_markdown(steps, total_lines, log_path, enrichment_findings, workspace, build_failed)
     write_github_step_summary(markdown)
 
     error_count = sum(len(s.errors) for s in failed)
     print(f"Build analysis: {error_count} error(s) in {len(failed)} failed step(s).")
 
-    if failed:
+    if failed or build_failed:
         sys.exit(1)
 
 
