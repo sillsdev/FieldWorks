@@ -72,9 +72,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void RefreshDisplay_Reconstructs_EvenWhenRootBoxReportsNoPendingChanges()
 		{
-			// LT-22610: view constructors read state the root box cannot see (e.g. the
-			// writing-system lists behind the labels in LabeledMultiStringView), so
-			// RefreshDisplay must always reconstruct, even when NeedsReconstruct is false.
+			// LT-22610: view constructors read state the root box can't see, so
+			// RefreshDisplay must reconstruct even when NeedsReconstruct is false.
 			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
 			m_rootbMock.Setup(rb => rb.Reconstruct());
 

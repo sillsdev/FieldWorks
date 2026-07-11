@@ -2533,13 +2533,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 
-			// Always reconstruct here, even if the root box reports NeedsReconstruct == false.
-			// That flag only tracks mutations the root box itself can see (PropChanged,
-			// SetRootObjects, OnStylesheetChange). View constructors also read state the
-			// root box cannot see — e.g. the writing-system lists behind the labels in
-			// LabeledMultiStringView — and RefreshDisplay is the only way such changes
-			// reach the screen. Skipping based on NeedsReconstruct left stale writing
-			// system rows/labels in the Lexicon Edit detail pane (LT-22610).
+			// Always reconstruct: view constructors read state the root box can't see
+			// (e.g. WS lists), so skipping on NeedsReconstruct left stale views (LT-22610).
 
 			// Rebuild the display... the drastic way.
 			SelectionRestorer restorer = CreateSelectionRestorer();
