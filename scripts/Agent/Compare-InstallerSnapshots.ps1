@@ -54,6 +54,28 @@ function Diff-Sets {
 	return [pscustomobject]@{ Added = $added; Removed = $removed }
 }
 
+function Get-DisplayNameList {
+	# Safely extract DisplayName values from a snapshot's UninstallEntries.
+	# Robust to $null, to a single unwrapped object, and to the empty object ({})
+	# that ConvertTo-Json can emit for an empty list (Collect-InstallerSnapshot serializes
+	# an empty List as {} in Windows PowerShell). Under Set-StrictMode, blindly reading
+	# $entry.DisplayName on such an object throws PropertyNotFoundException.
+	param([Parameter(Mandatory = $false)]$Entries)
+
+	$names = New-Object System.Collections.Generic.List[string]
+	if ($null -eq $Entries) { return ,$names }
+
+	foreach ($entry in @($Entries)) {
+		if ($null -eq $entry) { continue }
+		$prop = $entry.PSObject.Properties['DisplayName']
+		if ($null -eq $prop) { continue }
+		$value = [string]$prop.Value
+		if (-not [string]::IsNullOrWhiteSpace($value)) { $names.Add($value) }
+	}
+
+	return ,$names
+}
+
 function ConvertTo-PropertyMap {
 	param([Parameter(Mandatory = $false)]$Value)
 
@@ -86,14 +108,8 @@ $reportLines.Add("After:  $AfterSnapshotPath")
 $reportLines.Add("")
 
 # Uninstall entries
-$beforeProducts = @()
-foreach ($p in ($before.UninstallEntries | ForEach-Object { $_ })) {
-	$beforeProducts += ([string]$p.DisplayName)
-}
-$afterProducts = @()
-foreach ($p in ($after.UninstallEntries | ForEach-Object { $_ })) {
-	$afterProducts += ([string]$p.DisplayName)
-}
+$beforeProducts = Get-DisplayNameList -Entries $before.UninstallEntries
+$afterProducts = Get-DisplayNameList -Entries $after.UninstallEntries
 
 $diffProducts = Diff-Sets -Before (To-StringSet -Items $beforeProducts) -After (To-StringSet -Items $afterProducts)
 $reportLines.Add("Uninstall entries")
