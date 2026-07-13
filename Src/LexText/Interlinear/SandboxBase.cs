@@ -1178,7 +1178,7 @@ namespace SIL.FieldWorks.IText
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
 			cda.CacheVecProp(hvoSbWord, ktagSbWordMorphs, new int[0], 0);
-			if (gloss == null || analysis == null)
+			if (analysis == null)
 			{
 				if (fLookForDefaults)
 				{
@@ -4258,7 +4258,11 @@ namespace SIL.FieldWorks.IText
 			base.HandleSelectionChange(rootb, vwselNew);
 			if (!vwselNew.IsValid)
 				return;
-			m_editMonitor.DoPendingMorphemeUpdates();
+			if (m_editMonitor.NeedMorphemeUpdate)
+			{
+				m_editMonitor.DoPendingMorphemeUpdates();
+				CopyLexEntryInfoToMonomorphemicWordGlossAndPos(true);
+			}
 			if (!vwselNew.IsValid)
 				return;
 			DoActionOnIconSelection(vwselNew);
