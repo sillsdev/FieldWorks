@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -22,21 +20,10 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 	[TestFixture]
 	public abstract class RealDataTestsBase
 	{
-		// The project name must be unique per worktree, so that multiple worktrees of the same repo
-		// can run tests in parallel without colliding on the same project directory.
-		private static readonly string ReusableProjectName = "integration_test_data_" + WorktreeSuffix();
-		private static readonly string ProjectMutexName =
-			@"Local\FieldWorks.RealDataTests." + ReusableProjectName;
+		private const string ReusableProjectName = "integration_test_data";
+		private const string ProjectMutexName =
+			@"Local\FieldWorks.RealDataTests.integration_test_data";
 		private const string TestProjectSentinelFileName = ".fieldworks-real-data-test-project";
-
-		private static string WorktreeSuffix()
-		{
-			using (var sha = SHA1.Create())
-			{
-				var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(FwDirectoryFinder.SourceDirectory));
-				return BitConverter.ToString(hash, 0, 4).Replace("-", string.Empty).ToLowerInvariant();
-			}
-		}
 
 		protected FwNewLangProjectModel m_model;
 		protected LcmCache Cache;
@@ -151,8 +138,6 @@ namespace SIL.FieldWorks.Common.RootSites.RootSiteTests
 
 		protected string DbDirectory(string name)
 		{
-			// CreateNewLangProj always creates here and can't be redirected; collision avoidance
-			// across worktrees comes from ReusableProjectName's worktree-hash suffix instead.
 			return Path.Combine(FwDirectoryFinder.ProjectsDirectory, name);
 		}
 
