@@ -2,6 +2,14 @@
 
 Date: 2026-03-10
 
+> **Superseded 2026-07-10 (LT-22610, PR #1006):** the managed PATH-L5 gate
+> described below (`SimpleRootSite.RefreshDisplay()` skipping on
+> `NeedsReconstruct`) was removed — it missed managed-only view-constructor
+> state (e.g. writing-system display lists) invisible to the native flag,
+> causing stale views. `RefreshDisplay()` now always reconstructs. The native
+> PATH-R1 guard and dirtying paths documented here are unaffected and still
+> accurate.
+
 ## Purpose
 
 This document audits the parts of FieldWorks that can require a visual refresh after the PATH-L5 / PATH-R1 optimization work.
@@ -15,7 +23,7 @@ The recent `SetRootObjects()` fix in [Src/views/VwRootBox.cpp](../../../../Src/v
 ## Executive Summary
 
 - The native source of truth for whether a box tree needs rebuilding is `VwRootBox::m_fNeedsReconstruct` in [Src/views/VwRootBox.h](../../../../Src/views/VwRootBox.h).
-- The managed fast path is [SimpleRootSite.RefreshDisplay()](../../../../Src/Common/SimpleRootSite/SimpleRootSite.cs), which now skips managed overhead when `m_rootb.NeedsReconstruct == false`.
+- The managed fast path was [SimpleRootSite.RefreshDisplay()](../../../../Src/Common/SimpleRootSite/SimpleRootSite.cs) skipping managed overhead when `m_rootb.NeedsReconstruct == false`; this gate was removed in LT-22610 (see superseded note above) and `RefreshDisplay()` now always reconstructs.
 - The native fast path is `VwRootBox::Reconstruct()`, which now returns early when `m_fConstructed && !m_fNeedsReconstruct`.
 - The architecture is correct only if every semantic mutation that can stale the view either:
   - sets `m_fNeedsReconstruct = true` directly in native code, or
@@ -50,11 +58,11 @@ Confirmed native clearing paths:
 
 ### Managed refresh gate
 
-[SimpleRootSite.RefreshDisplay()](../../../../Src/Common/SimpleRootSite/SimpleRootSite.cs) does this:
+[SimpleRootSite.RefreshDisplay()](../../../../Src/Common/SimpleRootSite/SimpleRootSite.cs) did this (removed in LT-22610; step 3 no longer exists — see superseded note above):
 
 1. If a decorator is installed as `m_rootb.DataAccess`, call `decorator.Refresh()`.
 2. If the control is not visible, defer refresh.
-3. If `!m_rootb.NeedsReconstruct`, return without selection save/restore or drawing suspension.
+3. ~~If `!m_rootb.NeedsReconstruct`, return without selection save/restore or drawing suspension.~~
 4. Otherwise call `m_rootb.Reconstruct()`.
 
 This means the system has two layered assumptions:

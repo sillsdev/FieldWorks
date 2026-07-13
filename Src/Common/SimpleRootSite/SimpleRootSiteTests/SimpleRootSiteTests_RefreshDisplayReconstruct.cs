@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	}
 
 	[TestFixture]
-	public class RefreshDisplayNeedsReconstructTests
+	public class RefreshDisplayReconstructTests
 	{
 		private RefreshDisplayDummyRootSite m_site;
 		private Mock<IVwRootBox> m_rootbMock;
@@ -70,11 +70,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void RefreshDisplay_Reconstructs_EvenWhenRootBoxReportsNoPendingChanges()
+		public void RefreshDisplay_AlwaysReconstructs()
 		{
 			// LT-22610: view constructors read state the root box can't see, so
-			// RefreshDisplay must reconstruct even when NeedsReconstruct is false.
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
+			// RefreshDisplay must always reconstruct, regardless of NeedsReconstruct.
 			m_rootbMock.Setup(rb => rb.Reconstruct());
 
 			Assert.That(m_site.RefreshDisplay(), Is.False);
@@ -83,20 +82,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		[Test]
-		public void RefreshDisplay_Reconstructs_WhenRootBoxNeedsReconstruct()
+		public void NotifyDataAccessSemanticsChanged_Reconstructs()
 		{
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(true);
-			m_rootbMock.Setup(rb => rb.Reconstruct());
-
-			Assert.That(m_site.RefreshDisplay(), Is.False);
-			Assert.That(m_site.RefreshPending, Is.False);
-			m_rootbMock.Verify(rb => rb.Reconstruct(), Times.Once);
-		}
-
-		[Test]
-		public void NotifyDataAccessSemanticsChanged_Reconstructs_WhenRootBoxDoesNotNeedReconstruct()
-		{
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
 			m_rootbMock.Setup(rb => rb.Reconstruct());
 
 			m_site.NotifyDataAccessSemanticsChangedForTest();
@@ -108,7 +95,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		public void NotifyDataAccessSemanticsChanged_DefersUntilVisible()
 		{
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
 			m_rootbMock.Setup(rb => rb.Reconstruct());
 			m_site.Visible = false;
 
@@ -128,7 +114,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var replacementDataAccess = Mock.Of<ISilDataAccess>();
 			m_rootbMock.SetupSet(rb => rb.DataAccess = replacementDataAccess);
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
 
 			m_site.SetRootBoxDataAccessForTest(replacementDataAccess);
 
@@ -142,7 +127,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			var replacementDataAccess = Mock.Of<ISilDataAccess>();
 			m_rootbMock.SetupSet(rb => rb.DataAccess = replacementDataAccess);
-			m_rootbMock.SetupGet(rb => rb.NeedsReconstruct).Returns(false);
 			m_rootbMock.Setup(rb => rb.Reconstruct());
 
 			m_site.SetRootBoxDataAccessAndRefreshForTest(replacementDataAccess);
