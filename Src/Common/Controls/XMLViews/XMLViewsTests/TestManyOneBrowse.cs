@@ -449,5 +449,38 @@ namespace XMLViewsTests
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(9)); // the third sense, in which context we display the 4th SD
 		}
+
+		/// <summary>
+		/// Regression test for the part-ref caller-propagation fix in GetDisplayCommandForColumn1's "part"
+		/// case: in XmlVc, "part" is the one thing that calls ProcessChildren with a non-null caller, so a
+		/// <part ref="..."/> column-spec node must carry ITSELF down as the resulting
+		/// NodeChildrenDisplayCommand's Caller (not null), so that child fragments reading attributes such
+		/// as "ws" from the caller (as multilingual strings configured via the part ref do) can resolve
+		/// them. Before the fix, the caller was always dropped, which is what caused the "Grammatical Info."
+		/// blank-column bug in the Avalonia browse table's off-screen cell rendering.
+		/// </summary>
+		[Test]
+		public void GetDisplayCommandForColumn_PartRefNode_CarriesItselfAsCaller()
+		{
+			ArrayList list = new ArrayList();
+			XmlViewsUtils.CollectBrowseItems(1, m_columnList[0], list, null, m_mdc, m_sda, m_layouts);
+			IManyOnePathSortItem bvi = list[0] as IManyOnePathSortItem;
+
+			// A hand-built <part ref="Msas"/> node, exactly the shape XmlVc embeds inside a layout when it
+			// refers to another part by name (here reusing the existing LexEntry-Jt-Msas part from
+			// TestParts.xml via the same class+layoutName naming convention GetNodeForPart resolves).
+			var doc = new XmlDocument();
+			XmlElement partRefNode = doc.CreateElement("part");
+			partRefNode.SetAttribute("ref", "Msas");
+
+			int hvo;
+			NodeDisplayCommand cmd = XmlViewsUtils.GetDisplayCommandForColumn(bvi, partRefNode, null,
+				m_mdc, m_sda, m_layouts, out hvo, null);
+
+			var childrenCmd = cmd as NodeChildrenDisplayCommand;
+			Assert.That(childrenCmd, Is.Not.Null, "a resolvable part ref must yield a NodeChildrenDisplayCommand");
+			Assert.That(childrenCmd.Caller, Is.SameAs(partRefNode),
+				"the part ref node itself must be carried down as the caller so child fragments can resolve attributes from it");
+		}
 	}
 }
