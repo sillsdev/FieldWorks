@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 SIL International
+// Copyright (c) 2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using NUnit.Framework;
 using PtxUtils;
 using SIL.DisambiguateInFLExDB;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.ToneParsFLEx;
 using System;
