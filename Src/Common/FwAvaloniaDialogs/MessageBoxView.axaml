@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.MessageBoxView"
+             x:DataType="vm:MessageBoxViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="280" MinHeight="110">
+	<!-- Reusable message / confirmation dialog (the Avalonia analog of WinForms MessageBox). The message body
+	     and an optional severity glyph sit above a right-aligned button row; which buttons show is driven by the
+	     VM's Show* flags, and the labels come from FwAvaloniaDialogsStrings (.resx). AutomationIds are stable +
+	     nonlocalized. The default (affirmative) button is IsDefault; the cancel/no button is IsCancel so Esc and
+	     the window close map to it. -->
+	<DockPanel AutomationProperties.AutomationId="MessageBox.Root">
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<!-- OK (default when present). -->
+			<Button Content="{Binding OkLabel}" IsVisible="{Binding ShowOk}" IsDefault="{Binding ShowOk}"
+			        Command="{Binding ConfirmOkCommand}"
+			        AutomationProperties.AutomationId="MessageBox.Ok"/>
+			<!-- Yes (default when present, i.e. when OK is not). -->
+			<Button Content="{Binding YesLabel}" IsVisible="{Binding ShowYes}" IsDefault="{Binding ShowYes}"
+			        Command="{Binding YesCommand}"
+			        AutomationProperties.AutomationId="MessageBox.Yes"/>
+			<Button Content="{Binding NoLabel}" IsVisible="{Binding ShowNo}"
+			        Command="{Binding NoCommand}"
+			        AutomationProperties.AutomationId="MessageBox.No"/>
+			<!-- Cancel: IsCancel so Esc/window-close routes here when present. -->
+			<Button Content="{Binding CancelLabel}" IsVisible="{Binding ShowCancel}" IsCancel="{Binding ShowCancel}"
+			        Command="{Binding CloseCancelCommand}"
+			        AutomationProperties.AutomationId="MessageBox.Cancel"/>
+		</StackPanel>
+
+		<!-- Standard message-box body: the severity icon on the LEFT, vertically centered against the message
+		     text block (the conventional Windows MessageBox / WinForms arrangement), a fixed ~12px gap
+		     (DialogIconGap) between icon and text, and the message wrapping in the remaining width. The icon
+		     column is Auto (collapses to nothing when there is no icon); the text column takes the rest. -->
+		<Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+			<TextBlock Grid.Column="0" Text="{Binding IconGlyph}" IsVisible="{Binding ShowIcon}"
+			           FontSize="28" LineHeight="28" Margin="{StaticResource DialogIconGap}"
+			           VerticalAlignment="Center" HorizontalAlignment="Center"
+			           AutomationProperties.AutomationId="MessageBox.Icon"
+			           AutomationProperties.Name="{Binding IconAccessibleName}"/>
+			<TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap"
+			           VerticalAlignment="Center"
+			           AutomationProperties.AutomationId="MessageBox.Message"/>
+		</Grid>
+	</DockPanel>
+</UserControl>

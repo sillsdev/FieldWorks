@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "winforms-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@fnrhombus/winforms-mcp"],
+      "env": {
+        "HEADLESS": "false",
+        "TFM": "net48",
+        "TELEMETRY_OPTOUT": "true"
+      }
+    }
+  }
+}

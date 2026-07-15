@@ -62,6 +62,7 @@ For this repository, default to:
 
 - transient evidence: `Output/ManualEvidence/<ticket-or-change-id>/`
 - OpenSpec review evidence: `openspec/changes/<change-id>/evidence/manual-winapp/`
+- Path 3 parity bundle evidence: `openspec/changes/<change-id>/evidence/parity/<scenario-id>/`
 - ad hoc screenshots: `Output/ManualEvidence/screenshots/`
 
 Create the folder if needed. Do not put scratch screenshots in committed
@@ -73,6 +74,7 @@ Use sorted, descriptive names:
 
 - single capture: `<target>-<state>.png`
 - before/after: `01-before-<state>.png`, `02-after-<state>.png`
+- Path 3 parity: `01-winforms-<scenario>.png`, `02-avalonia-<scenario>.png`, `03-diff-<scenario>.png`
 - sequence: `step-01-<state>.png`, `step-02-<state>.png`
 - app tour: `<app>-<window-or-dialog>.png`
 - temporary fallback: `screenshot-YYYY-MM-DD-HHMMSS.png`
@@ -120,6 +122,10 @@ Use multiple captures when one image cannot tell the story:
 - redraw/focus/modal timing: a short ordered sequence rather than a single
   screenshot;
 - comparison: capture both images, then run a screenshot diff when available.
+
+For migration parity bundles, keep framing, DPI, zoom, and window size matched across WinForms and Avalonia captures whenever density, wrapping, or spacing is under review.
+
+For a Path 3 parity bundle, pair screenshots with the matching semantic snapshot and workflow/accessibility evidence for the same scenario id; a screenshot pair alone is not a full parity claim.
 
 For sequences, keep the same target, window size, and framing across captures
 unless the task is specifically about responsive or layout behavior.

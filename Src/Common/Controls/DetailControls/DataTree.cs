@@ -3429,6 +3429,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// True when this tree serves as the HIDDEN command-routing adapter for an externally
+		/// rendered surface (the approved "command-menu-routing" baseline adapter of the Avalonia
+		/// lexical-edit migration, tasks 13.4/15.4): display logic that gates on <c>Visible</c>
+		/// treats the adapter tree as active, since the user-visible surface lives elsewhere.
+		/// </summary>
+		public bool IsExternalCommandAdapter { get; set; }
+
+		/// <summary>
 		/// Set the handler which will be invoked when the user right-clicks on the
 		/// TreeNode portion of a slice, or for some other reason we need the context menu.
 		/// </summary>

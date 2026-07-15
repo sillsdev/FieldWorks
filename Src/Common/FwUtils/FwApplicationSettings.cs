@@ -37,6 +37,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			set => m_settings.Update = value;
 		}
 
+		public override string UIMode
+		{
+			get => m_settings.UIMode;
+			set => m_settings.UIMode = value;
+		}
+
+		public override string UIModeDisabledTools
+		{
+			get => m_settings.UIModeDisabledTools;
+			set => m_settings.UIModeDisabledTools = value;
+		}
+
 		public override string LocalKeyboards
 		{
 			get { return m_settings.LocalKeyboards; }

@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.FeatureChooserDialogView"
+             x:DataType="vm:FeatureChooserDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="320" MinHeight="260">
+	<!-- The standalone feature-structure chooser dialog (Phase-1 §19b Stage 3): an optional instruction prompt, then
+	     the shared FwFeatureStructureEditor tree, over OK/Cancel/Help. The editor is an owned native control injected
+	     as a code-behind child (set on DataContextChanged like MsaCreatorDialogView). Visible text is localized via
+	     FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. There is no OK gate (an empty pick is the
+	     valid "unspecified / delete the FS" outcome). -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="FeatureChooser.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="FeatureChooser.Cancel"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Help}"
+			        IsVisible="{Binding HasHelp}"
+			        Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="FeatureChooser.Help"/>
+		</StackPanel>
+
+		<StackPanel Spacing="{StaticResource DialogControlGap}">
+			<TextBlock Text="{Binding Prompt}" TextWrapping="Wrap"
+			           IsVisible="{Binding HasPrompt}"
+			           AutomationProperties.AutomationId="FeatureChooser.Prompt"/>
+			<!-- The owned FwFeatureStructureEditor is injected here in code-behind. It supplies its own dense
+			     border, so this host carries no second frame. -->
+			<Border Name="PART_FeatureSection"
+			        AutomationProperties.AutomationId="FeatureChooser.FeatureSection"/>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

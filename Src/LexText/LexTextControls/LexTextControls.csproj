@@ -4,7 +4,7 @@
     <AssemblyName>LexTextControls</AssemblyName>
     <RootNamespace>SIL.FieldWorks.LexText.Controls</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903,AVA2001</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -21,6 +21,11 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Compile-only Avalonia reference (the Options dialog launcher constructs the Avalonia OptionsDialogView
+         and calls AvaloniaDialogHost); the runtime Avalonia assemblies ship via FwAvalonia in the shared
+         output. IncludeAssets="none" on BuildServices keeps the AVA* analyzers out (see xWorks.csproj). -->
+    <PackageReference Include="Avalonia" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="Avalonia.BuildServices" IncludeAssets="none" PrivateAssets="all" />
     <PackageReference Include="CommonServiceLocator" Exclude="Build,Analyzers" />
     <PackageReference Include="ProDotNetZip" />
     <PackageReference Include="SIL.Core" />
@@ -51,6 +56,8 @@
     <ProjectReference Include="../../Common/Filters/Filters.csproj" />
     <ProjectReference Include="../../Common/Framework/Framework.csproj" />
     <ProjectReference Include="../../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../Common/FwAvalonia/FwAvalonia.csproj" />
+    <ProjectReference Include="../../Common/FwAvaloniaDialogs/FwAvaloniaDialogs.csproj" />
     <ProjectReference Include="../../Common/RootSite/RootSite.csproj" />
     <ProjectReference Include="../../Common/SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../Common/ViewsInterfaces/ViewsInterfaces.csproj" />

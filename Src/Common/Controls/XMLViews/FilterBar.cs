@@ -1072,8 +1072,63 @@ namespace SIL.FieldWorks.Common.Controls
 			combo.SelectedIndex = 0;
 			// Do this after selecting initial item, so we don't get a spurious notification.
 			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
-			combo.AccessibleName = "FwComboBox";
+			combo.Name = GetFilterComboAutomationId(item.Spec);
+			combo.AccessibleName = GetFilterComboAccessibleName(item.Spec);
 			Controls.Add(combo);
+		}
+
+		private static string GetFilterComboAutomationId(XmlNode spec)
+		{
+			return "FilterCombo." + SanitizeForAutomationId(GetFilterComboStableKey(spec));
+		}
+
+		private static string GetFilterComboAccessibleName(XmlNode spec)
+		{
+			var header = XmlUtils.GetOptionalAttributeValue(spec, "headerlabel", null);
+			if (!string.IsNullOrEmpty(header))
+				return header;
+
+			var label = XmlUtils.GetOptionalAttributeValue(spec, "label", null);
+			if (!string.IsNullOrEmpty(label))
+				return label;
+
+			return GetFilterComboStableKey(spec);
+		}
+
+		private static string GetFilterComboStableKey(XmlNode spec)
+		{
+			var layout = XmlUtils.GetOptionalAttributeValue(spec, "layout", null);
+			if (!string.IsNullOrEmpty(layout))
+				return layout;
+
+			var field = XmlUtils.GetOptionalAttributeValue(spec, "field", null);
+			var subfield = XmlUtils.GetOptionalAttributeValue(spec, "subfield", null);
+			if (!string.IsNullOrEmpty(field) && !string.IsNullOrEmpty(subfield))
+				return field + "." + subfield;
+			if (!string.IsNullOrEmpty(field))
+				return field;
+
+			var listId = XmlUtils.GetOptionalAttributeValue(spec, "list", null);
+			if (!string.IsNullOrEmpty(listId))
+				return listId;
+
+			var header = XmlUtils.GetOptionalAttributeValue(spec, "headerlabel", null);
+			if (!string.IsNullOrEmpty(header))
+				return header;
+
+			var label = XmlUtils.GetOptionalAttributeValue(spec, "label", null);
+			if (!string.IsNullOrEmpty(label))
+				return label;
+
+			return "Column";
+		}
+
+		private static string SanitizeForAutomationId(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+				return "Column";
+
+			return new string(value.Select(c => char.IsLetterOrDigit(c) || c == '_' || c == '.' ? c : '_').ToArray());
 		}
 
 		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
@@ -1225,7 +1280,8 @@ namespace SIL.FieldWorks.Common.Controls
 			combo.SelectedIndex = 0;
 			// Do this after selecting initial item, so we don't get a spurious notification.
 			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
-			combo.AccessibleName = "FwComboBox";
+			combo.Name = GetFilterComboAutomationId(item.Spec);
+			combo.AccessibleName = GetFilterComboAccessibleName(item.Spec);
 			Controls.Add(combo);
 		}
 

@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvaloniaDialogsTests
+
+		Headless Avalonia tests for the XAML/MVVM dialog kit: proves compiled bindings and
+		CommunityToolkit.Mvvm commands work at runtime on net48. Builds with the main FieldWorks.proj
+		test traversal under -BuildTests (restored via FieldWorks.sln), like every other *Tests project.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless.NUnit" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Skia" ExcludeAssets="analyzers" />
+		<PackageReference Include="System.Diagnostics.DiagnosticSource" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvaloniaDialogs.csproj" />
+		<ProjectReference Include="..\..\FwAvalonia\FwAvalonia.csproj" />
+	</ItemGroup>
+
+	<!-- Reuse the PNG snapshot harness (DialogSnapshot, owned by FwAvaloniaTests) so the dialog tests can
+	     capture a real Skia-rendered frame at each interaction stage for subjective visual review — a
+	     read-only link (one shared harness, no second copy), mirroring how FwAvaloniaTests links
+	     DialogLayoutAssert.cs. Skia headless drawing is already configured (UseHeadlessDrawing=false). -->
+	<ItemGroup>
+		<Compile Include="..\..\FwAvalonia\FwAvaloniaTests\Visual\DialogSnapshot.cs"
+		         Link="Visual\DialogSnapshot.cs" />
+	</ItemGroup>
+
+	<!-- Same isolation as FwAvaloniaTests: headless Avalonia tests don't use the shared FieldWorks
+	     test bootstrap (SLDR/ICU/registry redirect), so exclude the auto-injected AssemblyInfo files. -->
+	<ItemGroup>
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+
+</Project>

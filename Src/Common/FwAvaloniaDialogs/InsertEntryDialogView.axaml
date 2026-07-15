@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.InsertEntryDialogView"
+             x:DataType="vm:InsertEntryDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="360" MinHeight="260">
+	<!-- The reusable Insert Entry dialog (Phase 1): lexeme-form field + morph-type picker + gloss field, each
+	     an owned native control hosted as a code-behind child (set on DataContextChanged like ChooserDialogView),
+	     over Create/Cancel/Help. Visible text is localized via FwAvaloniaDialogsStrings; AutomationIds stay
+	     stable + nonlocalized. -->
+	<DockPanel>
+		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
+		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button IsDefault="True" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Create">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryCreateMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+			<Button IsVisible="{Binding HasHelp}" Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="InsertEntry.Help">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.HelpMnemonic}"/>
+			</Button>
+		</StackPanel>
+
+		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"
+		           IsVisible="{Binding HasPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
+		           AutomationProperties.AutomationId="InsertEntry.Prompt"/>
+
+		<!-- The fields + matches pane fill the remaining space; a ScrollViewer keeps everything reachable when the
+		     morph-type picker is open and the matching-entries list grows, so nothing clips in a short window. -->
+		<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+		<StackPanel Spacing="{StaticResource DialogControlGap}">
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryLexemeFormLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.LexemeFormLabel"/>
+			<!-- The owned FwMultiWsTextField is injected here in code-behind. -->
+			<Border Name="PART_LexemeFormHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="InsertEntry.LexemeFormHost"/>
+
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryMorphTypeLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.MorphTypeLabel"/>
+			<!-- The owned FwOptionPicker is injected here in code-behind. -->
+			<Border Name="PART_MorphTypeHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="InsertEntry.MorphTypeHost"/>
+
+			<!-- Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): a collapsed
+			     FwOptionPicker dropdown placed next to the Morph Type, since the morph-type selection gates its
+			     enabled state. The owned picker is injected here in code-behind. -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryComplexFormTypeLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeLabel"/>
+			<Border Name="PART_ComplexFormTypeHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="InsertEntry.ComplexFormTypeHost"/>
+
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGlossLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.GlossLabel"/>
+			<!-- The owned FwMultiWsTextField is injected here in code-behind. -->
+			<Border Name="PART_GlossHost" Classes="fwFieldHost"
+			        AutomationProperties.AutomationId="InsertEntry.GlossHost"/>
+
+			<!-- Grammatical-info (MSA) section (Stage 3): the owned FwMsaGroupBox is injected here in code-behind. It
+			     is itself a dense, bordered group box (it supplies its own frame), so the host carries only the
+			     section caption above it; the box reconfigures live with the morph-type selection. -->
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.InsertEntryGrammaticalInfoLabel}"
+			           AutomationProperties.AutomationId="InsertEntry.GrammaticalInfoLabel"/>
+			<!-- The FwMsaGroupBox supplies its own dense border, so this host carries no frame of its own (it is
+			     intentionally NOT a PART_*Host fwFieldHost — a second frame around the group box would double-border
+			     it). -->
+			<Border Name="PART_MsaSection"
+			        AutomationProperties.AutomationId="InsertEntry.MsaSection"/>
+
+			<!-- Duplicate-detection "matching entries" pane (P2): the existing entries whose form matches what the
+			     user typed, so they can pick an existing entry rather than create a duplicate (the legacy
+			     m_matchingObjectsBrowser + "Go to similar entry" link). Shown only when the launcher supplied a
+			     match search (HasMatchSearch). The list is a boxed, dense ListBox (fwFieldHost frame) per the
+			     dialog style system; rows show the headword over a quieter gloss line. -->
+			<StackPanel IsVisible="{Binding HasMatchSearch}" Spacing="{StaticResource DialogLabelFieldGap}">
+				<TextBlock Text="{Binding MatchingEntriesLabel}"
+				           Margin="{StaticResource DialogLabelGroupGapAbove}"
+				           AutomationProperties.AutomationId="InsertEntry.MatchingEntriesLabel"/>
+				<Border Classes="fwFieldHost">
+					<ListBox Name="PART_Matches" MinHeight="80" MaxHeight="160"
+					         ItemsSource="{Binding Matches}"
+					         SelectedItem="{Binding SelectedMatch, Mode=TwoWay}"
+					         AutomationProperties.AutomationId="InsertEntry.Matches">
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="vm:EntryGoSearchResult">
+								<StackPanel>
+									<TextBlock Text="{Binding Text}"
+									           AutomationProperties.Name="{Binding Text}"/>
+									<TextBlock Text="{Binding SubText}" Opacity="0.7"
+									           IsVisible="{Binding HasSubText}"/>
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Border>
+				<Button Content="{Binding UseSelectedEntryText}"
+				        HorizontalAlignment="Left"
+				        Command="{Binding UseSelectedEntryCommand}"
+				        AutomationProperties.AutomationId="InsertEntry.UseSelectedEntry"/>
+			</StackPanel>
+		</StackPanel>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

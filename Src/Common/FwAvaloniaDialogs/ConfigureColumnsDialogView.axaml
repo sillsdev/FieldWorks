@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.ConfigureColumnsDialogView"
+             x:DataType="vm:ConfigureColumnsDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="520" MinHeight="360">
+	<!-- The browse-table Configure Columns dialog (Avalonia P1: show/hide/reorder). Two list boxes
+	     (available / shown) with Add/Remove between them and Move Up/Move Down beside the shown list, over
+	     OK/Cancel. The LCModel-aware host maps the shown KEYS back to the live viewer on OK. Visible text is
+	     localized via FwAvaloniaDialogsStrings (.resx); AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="ConfigureColumns.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="ConfigureColumns.Cancel"/>
+		</StackPanel>
+
+		<Grid ColumnDefinitions="*,Auto,*,Auto" RowDefinitions="Auto,*">
+			<!-- Available columns -->
+			<TextBlock Grid.Row="0" Grid.Column="0"
+			           Text="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsAvailableLabel}"
+			           AutomationProperties.AutomationId="ConfigureColumns.AvailableLabel"/>
+			<ListBox Grid.Row="1" Grid.Column="0" Margin="{StaticResource DialogLabelFieldGapAbove}"
+			         ItemsSource="{Binding Available}"
+			         SelectedItem="{Binding SelectedAvailable}"
+			         AutomationProperties.AutomationId="ConfigureColumns.Available"/>
+
+			<!-- Add / Remove between the two lists -->
+			<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical"
+			            VerticalAlignment="Center" Spacing="{StaticResource DialogLabelFieldGap}"
+			            Margin="{StaticResource DialogColumnGutter}">
+				<Button Content="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsAdd}"
+				        Command="{Binding AddCommand}"
+				        AutomationProperties.AutomationId="ConfigureColumns.Add"/>
+				<Button Content="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsRemove}"
+				        Command="{Binding RemoveCommand}"
+				        AutomationProperties.AutomationId="ConfigureColumns.Remove"/>
+			</StackPanel>
+
+			<!-- Columns shown -->
+			<TextBlock Grid.Row="0" Grid.Column="2"
+			           Text="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsShownLabel}"
+			           AutomationProperties.AutomationId="ConfigureColumns.ShownLabel"/>
+			<ListBox Grid.Row="1" Grid.Column="2" Margin="{StaticResource DialogLabelFieldGapAbove}"
+			         ItemsSource="{Binding Shown}"
+			         SelectedItem="{Binding SelectedShown}"
+			         AutomationProperties.AutomationId="ConfigureColumns.Shown"/>
+
+			<!-- Move Up / Move Down beside the shown list -->
+			<StackPanel Grid.Row="1" Grid.Column="3" Orientation="Vertical"
+			            VerticalAlignment="Center" Spacing="{StaticResource DialogLabelFieldGap}"
+			            Margin="{StaticResource DialogColumnGutter}">
+				<Button Content="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsMoveUp}"
+				        Command="{Binding MoveUpCommand}"
+				        AutomationProperties.AutomationId="ConfigureColumns.MoveUp"/>
+				<Button Content="{x:Static res:FwAvaloniaDialogsStrings.ConfigureColumnsMoveDown}"
+				        Command="{Binding MoveDownCommand}"
+				        AutomationProperties.AutomationId="ConfigureColumns.MoveDown"/>
+			</StackPanel>
+		</Grid>
+	</DockPanel>
+</UserControl>

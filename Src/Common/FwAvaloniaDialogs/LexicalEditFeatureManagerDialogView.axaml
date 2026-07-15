@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.LexicalEditFeatureManagerDialogView"
+             x:DataType="vm:LexicalEditFeatureManagerDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="380" MinHeight="360">
+	<!-- "Manage Individual Features" (PR #964 review follow-up; replaces the WinForms LexicalEditFeatureManagerDlg
+	     whose absolute-positioned FlowLayoutPanel rows corrupted their own layout on a checkbox click): a search box
+	     over grouped, checkable feature rows (name + description), each group offering Select All/Deselect All over
+	     its currently-visible rows. Rows use the same CheckBox+description StackPanel shape as the Options Plugins
+	     tab (standard, ordinary controls — no custom-drawn rows). Visible text is localized via
+	     FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button IsDefault="True" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="FeatureManager.Ok">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.OkMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="FeatureManager.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+		</StackPanel>
+
+		<TextBox DockPanel.Dock="Top"
+		         Text="{Binding SearchText, Mode=TwoWay}"
+		         Watermark="{x:Static res:FwAvaloniaDialogsStrings.FeatureManagerSearchWatermark}"
+		         Margin="{StaticResource DialogLabelFieldGapBelow}"
+		         AutomationProperties.AutomationId="FeatureManager.Search"/>
+
+		<ScrollViewer>
+			<ItemsControl ItemsSource="{Binding Groups}" AutomationProperties.AutomationId="FeatureManager.Groups">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:FeatureGroupViewModel">
+						<StackPanel IsVisible="{Binding IsVisible}" Margin="{StaticResource DialogGroupSeparation}">
+							<Grid ColumnDefinitions="*,Auto,Auto">
+								<TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="Bold" VerticalAlignment="Center"/>
+								<Button Grid.Column="1" Content="{x:Static res:FwAvaloniaDialogsStrings.FeatureManagerSelectAll}"
+								        Command="{Binding SelectAllCommand}"
+								        AutomationProperties.AutomationId="FeatureManager.SelectAll"/>
+								<Button Grid.Column="2" Content="{x:Static res:FwAvaloniaDialogsStrings.FeatureManagerDeselectAll}"
+								        Command="{Binding DeselectAllCommand}"
+								        AutomationProperties.AutomationId="FeatureManager.DeselectAll"/>
+							</Grid>
+							<ItemsControl ItemsSource="{Binding Features}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="vm:FeatureOption">
+										<StackPanel IsVisible="{Binding IsVisible}" Margin="{StaticResource DialogSubItemIndent}">
+											<CheckBox Content="{Binding DisplayName}" IsChecked="{Binding Enabled}"
+											          FontWeight="Bold"
+											          AutomationProperties.AutomationId="FeatureManager.Feature"
+											          AutomationProperties.Name="{Binding DisplayName}"/>
+											<TextBlock Text="{Binding Description}" Opacity="0.8" TextWrapping="Wrap"
+											           Margin="{StaticResource DialogSubItemIndent}"/>
+										</StackPanel>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

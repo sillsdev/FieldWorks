@@ -28,6 +28,9 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Writing system**: A configured language/script/orthography used to store and display text.
 - **Vernacular writing system**: A writing system used for source-language data.
 - **Analysis writing system**: A writing system used for glosses, definitions, translated labels, and analysis-oriented text.
+- **`ITsString` / TsString**: The LCModel-managed text model used for lexicon and Views text, including run-level writing-system and style properties. Cross-framework clipboard and drag/drop interchange serializes it through `TsStringWrapper` XML.
+- **Multi-writing-system text**: A text value or field that exposes one or more writing-system alternatives and may also preserve run-level writing-system and style metadata inside a single `ITsString`.
+- **IME composition**: The transient input-method editing state before text is committed. Treat composition behavior and committed text behavior as separate test and parity concerns.
 - **Lexicon**: The lexical data and editing experience in FLEx.
 - **Interlinear text**: Text annotated with multiple aligned linguistic analysis lines.
 - **Morphology**: The part of the system and data model concerned with morphemes, rules, and word analysis.
@@ -55,6 +58,11 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Webonary**: An online dictionary publishing service that FieldWorks integrates with as an export target. Implemented in xWorks (`UploadToWebonaryController`, `WebonaryClient`).
 - **Utility**: A user-invoked data maintenance or migration tool (e.g. resetting homographs, removing parser annotations, fixing duplicate analyses). Utilities implement `IUtility` (`FwCoreDlgs`), are registered in `UtilityCatalogInclude.xml` via reflection, and run through `UtilityDlg` (Tools > Utilities menu).
 - **DistFiles**: Runtime assets copied into outputs or installers.
+- **Preview vs POC**: In the Avalonia migration, **preview** means a lightweight sample or design-time path that reuses the shared region renderer; **POC** refers only to the retired spike/evidence vocabulary and should not name live runtime code paths.
+- **StringTable lane**: The legacy data-driven localization path for XML/layout-owned labels and attributes, resolved through `StringTable.Table.LocalizeAttributeValue(...)` / `XmlUtils.GetLocalizedAttributeValue(...)` against the `strings-<locale>.xml` files.
+- **`.resx` lane**: Project-owned compiled resources resolved through `ResourceManager` and shipped as satellite assemblies. This is the current lane for Avalonia product-message or chrome strings in `FwAvalonia` and `FwAvaloniaDialogs`.
+- **LocalizationManager / L10NSharp lane**: The XLIFF-backed UI-localization path initialized by the product host (`FieldWorks.InitializeLocalizationManager`). It supports runtime UI-language switching and translator collection mode, but any host or test process that touches it must initialize at least one `LocalizationManager` first.
+- **Avalonia chrome strings**: User-visible Avalonia surface text that is not a data-driven field label — buttons, tab headers, tooltips, dialog titles, validation messages, accessible names, and similar shell/UI text.
 ## Repo-Wide Invariants
 - Native C++ builds before managed code generation and managed projects.
 - `build.ps1` is the canonical build entry point.

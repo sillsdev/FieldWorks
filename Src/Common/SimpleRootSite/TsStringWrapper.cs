@@ -18,11 +18,15 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Wraps a ITsString object so that it can be serialized to/from the clipboard
+	/// Wraps a ITsString object so that it can be serialized to/from the clipboard.
+	/// This type (with the <see cref="TsStringFormat"/> OS clipboard format) is the cross-framework
+	/// rich-text clipboard contract: legacy native-Views surfaces write/read it in
+	/// <c>EditingHelper</c>, and the Avalonia coexistence bridge (<c>FwTsStringClipboard</c> in
+	/// xWorks, task 3.13) speaks the same format so copy/paste round-trips between frameworks.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[Serializable]
-	internal class TsStringWrapper : ISerializable
+	public class TsStringWrapper : ISerializable
 	{
 		[NonSerialized]
 		private readonly string m_Xml;
@@ -35,6 +39,29 @@ namespace SIL.FieldWorks.Common.RootSites
 		public TsStringWrapper(ITsString tsString, ILgWritingSystemFactory writingSystemFactory)
 		{
 			m_Xml = TsStringUtils.GetXmlRep(tsString, writingSystemFactory, 0);
+		}
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Creates a wrapper directly from an already-serialized TsString XML representation
+		/// (as produced by <c>TsStringUtils.GetXmlRep</c>). Used by the cross-framework
+		/// clipboard bridge, which carries the XML lane without an ITsString in hand.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public static TsStringWrapper FromXml(string xml)
+		{
+			return new TsStringWrapper(xml);
+		}
+
+		private TsStringWrapper(string xml)
+		{
+			m_Xml = xml;
+		}
+
+		/// <summary>The serialized TsString XML representation this wrapper carries.</summary>
+		public string Xml
+		{
+			get { return m_Xml; }
 		}
 
 		/// --------------------------------------------------------------------------------

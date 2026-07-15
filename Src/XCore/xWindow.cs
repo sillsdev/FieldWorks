@@ -969,6 +969,30 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// Materializes the same merged ChoiceGroup that ShowContextMenu(string[]) shows, WITHOUT
+		/// creating any WinForms UI — for hosts that render the menu themselves (e.g. the Avalonia
+		/// lexical-edit surface) while keeping xCore display/dispatch semantics. Returns null when
+		/// none of the ids resolve. Callers should PopulateNow() before iterating.
+		/// </summary>
+		public ChoiceGroup GetContextMenuChoiceGroup(string[] menuIds)
+		{
+			CheckDisposed();
+
+			List<XmlNode> nodes = new List<XmlNode>(menuIds.Length);
+			foreach (string m in menuIds)
+			{
+				if (string.IsNullOrEmpty(m))
+					continue;
+				XmlNode node = GetContextMenuNodeFromMenuId(m);
+				if (node != null)
+					nodes.Add(node);
+			}
+			if (nodes.Count == 0)
+				return null;
+			return new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null);
+		}
+
+		/// <summary>
 		/// returns the configuration node for the given menu id.
 		/// </summary>
 		/// <param name="m"></param>
