@@ -16287,7 +16287,7 @@ or using a tool called AddGuids, and re-insert this comment. -->
                </f>
             </fs>
          </item>
-         <item guid="113f1954-77ed-45ea-9a18-a207d2d6abb1'" id="vBantuClass16Pl" type="value">
+         <item guid="113f1954-77ed-45ea-9a18-a207d2d6abb1" id="vBantuClass16Pl" type="value">
             <abbrev ws="en">16</abbrev>
             <term ws="en">NC 16</term>
             <def ws="en">Noun class 16 typically has a locative sense. Its behavior is highly language specific. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 16 are pa- / pá- / pá-. It may best be treated as derivational rather than inflectional.</def>
