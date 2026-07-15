@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.ServiceModel;
+using System.Text;
 using System.Threading;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -245,7 +247,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName, Uri projectUri, string name, string credentialsPassword, string repoIdentifier)
 		{
-			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
+			_pipeID = GeneratePipeId(projectFolder, command);
 			_flexBridgeTerminated = false;
 			changesReceived = false;
 			var args = "";
@@ -322,6 +324,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			LaunchFlexBridge(host, command, args, onNonBlockerCommandComplete, userCredentials, ref changesReceived, ref projectName);
 
 			return true;
+		}
+
+		/// <summary>
+		/// Generates the pipe ID embedded in the WCF endpoint names shared with FLEx Bridge, which
+		/// receives it via '-pipeID' and uses it verbatim. The project path is digested rather than
+		/// used directly (LT-22614): WCF hashes long pipe URIs with an algorithm that differs between
+		/// FieldWorks (net48, SHA256) and FLEx Bridge (net462, SHA1), so long paths silently broke all
+		/// bridge signalling; a short ID is always used literally on both sides. Must stay
+		/// deterministic per (projectFolder, command) so duplicate launches collide.
+		/// </summary>
+		private static string GeneratePipeId(string projectFolder, string command)
+		{
+			using (var sha = SHA256.Create())
+			{
+				// SHA256.Create() is stable across processes and FIPS-safe (unlike GetHashCode or MD5).
+				var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(projectFolder ?? string.Empty));
+				// First 8 bytes as hex: unique enough, and URI-safe where Base64 is not.
+				// (On .NET 5+ this would be Convert.ToHexString(digest.AsSpan(0, 8)).)
+				var token = BitConverter.ToString(digest, 0, 8).Replace("-", string.Empty);
+				return "SendReceive" + token + command;
+			}
 		}
 
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
