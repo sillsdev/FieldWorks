@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch,
 					0, vip.ApparentBuildDate, LcmCache.ModelVersion.ToString(), FLExBridgeHelper.LiftVersion, FLExBridgeHelper.FlexBridgeDataVersion);
 				CurrentFlexBridge = new FwUpdate(FLExBridgeHelper.FlexBridgeVersion, false, 0, FwUpdate.Typ.Patch,
-					flexBridgeDataVersion: FLExBridgeHelper.FlexBridgeDataVersion);
+					date: FLExBridgeHelper.FlexBridgeBuildDate, flexBridgeDataVersion: FLExBridgeHelper.FlexBridgeDataVersion);
 			}
 			LocalFWUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckUpdateInfo.xml");
 			LocalFBUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckFLExBridgeUpdateInfo.xml");
@@ -786,7 +786,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				bldr.Append('_').Append(BaseBuild);
 			}
 
-			return bldr.Append(" built ").Append(Date.ToString("yyyy-MM-dd")).Append(' ').Append(InstallerType).ToString();
+			// Omit the date when it is unknown rather than print 0001-01-01 (LT-22556)
+			if (Date != DateTime.MinValue)
+			{
+				bldr.Append(" built ").Append(Date.ToString("yyyy-MM-dd"));
+			}
+
+			return bldr.Append(' ').Append(InstallerType).ToString();
 		}
 
 		public int CompareTo(FwUpdate other)

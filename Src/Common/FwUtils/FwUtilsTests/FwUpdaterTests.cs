@@ -728,6 +728,53 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		[Test]
+		[Attributes.RequiresSTAOnWindows]
+		public void UpdateChooserDlg_IncludesDateWhenKnown()
+		{
+			var current = new FwUpdate(new Version("9.1.25"), true, 14, FwUpdate.Typ.Patch, date: new DateTime(2026, 5, 1));
+
+			using (var dlg = new FwUpdateChooserDlg(current, Enumerable.Empty<FwUpdate>()))
+			{
+				var instructions = dlg.Controls.Find("tbInstructions", true).Single().Text;
+				Assert.That(instructions, Does.Contain("9.1.25_b14 built 2026-05-01 installed"));
+			}
+		}
+
+		[Test]
+		[Attributes.RequiresSTAOnWindows]
+		public void UpdateChooserDlg_OmitsUnknownDate()
+		{
+			// The installed FLEx Bridge historically had no build date, which printed as 0001-01-01 (LT-22556)
+			var current = new FwUpdate(new Version("4.2.0"), false, 0, FwUpdate.Typ.Patch);
+
+			using (var dlg = new FwUpdateChooserDlg(current, Enumerable.Empty<FwUpdate>()))
+			{
+				var instructions = dlg.Controls.Find("tbInstructions", true).Single().Text;
+				Assert.That(instructions, Does.Contain("4.2.0_b0 installed"));
+				Assert.That(instructions, Does.Not.Contain("0001"));
+				Assert.That(instructions, Does.Not.Contain("date is invalid"), "LT-22556 must stay fixed");
+			}
+		}
+
+		[Test]
+		public void FwUpdate_ToString_IncludesDateWhenKnown()
+		{
+			var update = new FwUpdate(new Version("9.1.22"), true, 14, FwUpdate.Typ.Patch, date: new DateTime(2026, 6, 27));
+
+			Assert.That(update.ToString(), Is.EqualTo("9.1.22 built 2026-06-27 Patch"));
+		}
+
+		[Test]
+		public void FwUpdate_ToString_OmitsUnknownDate()
+		{
+			// Updates whose UpdateInfo has no parseable LastModified have no date (LT-22556)
+			var update = new FwUpdate(new Version("4.2.0"), false, 0, FwUpdate.Typ.Patch);
+
+			Assert.That(update.ToString(), Is.EqualTo("4.2.0 Patch"));
+			Assert.That(update.ToString(), Does.Not.Contain("0001"));
+		}
+
 		private static string Contents(string key, int size = 0, string modified = "2020-12-13T04:46:57.000Z",
 			string modelVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null)
 		{

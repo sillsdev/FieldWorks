@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -20,8 +21,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// FwUpdate.ToString does not always include the base build number (which could be informative) but does include the installer type,
 			// even though we have no way of knowing what that was for the current version; define our own relevant parts here.
+			// Omit the build date when it is unknown rather than print 0001-01-01 (LT-22556)
+			var built = current.Date == DateTime.MinValue ? string.Empty : $" built {current.Date:yyyy-MM-dd}";
 			tbInstructions.Text =
-				$"The following installers are available. You currently have {current.Version}_b{current.BaseBuild} built {current.Date:yyyy-MM-dd} installed. " +
+				$"The following installers are available. You currently have {current.Version}_b{current.BaseBuild}{built} installed. " +
 				"Additional patches may be available on the listed base (online and offline) installers. " +
 				"To download an update, double-click, or select it and click Download; another dialog will appear when the download is complete. " +
 				$"To install FieldWorks base installers, you may need to uninstall FLEx and then install manually from {FwDirectoryFinder.DownloadedUpdates}.";

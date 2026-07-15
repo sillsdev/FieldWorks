@@ -145,6 +145,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static Version FlexBridgeVersion { get; }
 
 		/// <summary>
+		/// The build date of the installed FLEx Bridge (its assembly file timestamp),
+		/// or DateTime.MinValue if FLEx Bridge is not installed (LT-22556)
+		/// </summary>
+		public static DateTime FlexBridgeBuildDate { get; }
+
+		/// <summary>
 		/// Event handler delegate that passes a jump URL.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -179,11 +185,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// and will also let users know that updating FLEx Bridge will require everyone to update at the same time (LT-20019, LT-20778)
 					?.GetRawConstantValue() as string ?? string.Empty;
 				FlexBridgeVersion = fbAssemblyWithConstants.GetName().Version;
+				FlexBridgeBuildDate = File.GetLastWriteTime(fbDllWithConstantsPath);
 			}
 			else
 			{
 				FlexBridgeDataVersion = null;
 				FlexBridgeVersion = null;
+				FlexBridgeBuildDate = DateTime.MinValue;
 			}
 #if DEBUG
 			// Don't pester developers who haven't set FLEx Bridge up.
