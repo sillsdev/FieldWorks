@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing;
@@ -619,6 +620,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			});
 		}
 
+		// Shared by the GetRootObject/GetChildObject gates. NoInlining keeps the Avalonia assembly load out
+		// of the gated callers' JIT (Legacy loader isolation).
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private ICmObject ShowAvaloniaLinkDialog(ILexEntry startingEntry, bool allowSenses, bool sensesOnly, string sTitle)
+		{
+			var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+			return LcmLinkEntryOrSenseDialogLauncher.Show(m_cache, Mediator, m_propertyTable, startingEntry,
+				FindForm(), "khtpChooseLexicalRelationAdd", helpProvider, allowSenses: allowSenses,
+				sensesOnly: sensesOnly, title: sTitle, okButtonText: LexEdStrings.ks_Add);
+		}
+
 		/// <summary>
 		/// This method is called when we are creating a new lexical relation slice.
 		/// If the user selects an item it's hvo is returned.
@@ -629,30 +641,40 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private ICmObject GetRootObject(ILexRefType lrt)
 		{
 			ICmObject first = null;
+			bool useLinkDlg = false, sensesOnly = false, allowSenses = false;
+			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
+			{
+				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+				case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					useLinkDlg = true; sensesOnly = true;
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+				case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					break;
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+					useLinkDlg = true; allowSenses = true;
+					break;
+				default:
+					Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
+					return null;
+			}
+			var sTitle = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.ReverseName.BestAnalysisAlternative.Text);
+
+			// New-UI gate (mirrors the EntrySequence gate): the LinkEntryOrSense relations use the Avalonia
+			// Choose-Lexical-Entry-or-Sense dialog in New mode; the entry-only mappings keep their EntryGoDlg.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (useLinkDlg && UIModeGates.ShouldUseAvaloniaUI(uiMode))
+				return ShowAvaloniaLinkDialog(null, allowSenses, sensesOnly, sTitle);
+
 			EntryGoDlg dlg = null;
 			try
 			{
-				switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
-				{
-					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
-					case LexRefTypeTags.MappingTypes.kmtSenseTree:
-						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
-						break;
-					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
-					case LexRefTypeTags.MappingTypes.kmtEntryTree:
-						dlg = new EntryGoDlg();
-						break;
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-						dlg = new LinkEntryOrSenseDlg();
-						break;
-					default:
-						Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
-						return null;
-				}
+				dlg = useLinkDlg ? (EntryGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
+				if (useLinkDlg)
+					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
 				Debug.Assert(dlg != null);
-				var wp = new WindowParams { m_title = String.Format(LexEdStrings.ksIdentifyXEntry, lrt.ReverseName.BestAnalysisAlternative.Text), m_btnText = LexEdStrings.ks_Add };
+				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
 				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -676,63 +698,72 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private ICmObject GetChildObject(ILexRefType lrt)
 		{
 			ICmObject first = null;
-			EntryGoDlg dlg = null;
+			bool useLinkDlg = false, sensesOnly = false, allowSenses = false;
 			string sTitle = string.Empty;
+			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
+			{
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
+					// Entry or sense pair with different Forward/Reverse
+					useLinkDlg = true; allowSenses = true;
+					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
+					break;
+
+				case LexRefTypeTags.MappingTypes.kmtSenseCollection:
+				case LexRefTypeTags.MappingTypes.kmtSensePair:
+				case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
+				case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
+				// Sense pair with different Forward/Reverse names
+				case LexRefTypeTags.MappingTypes.kmtSenseSequence:
+				case LexRefTypeTags.MappingTypes.kmtSenseTree:
+					useLinkDlg = true; sensesOnly = true;
+					sTitle = String.Format(LexEdStrings.ksIdentifyXSense, lrt.Name.BestAnalysisAlternative.Text);
+					break;
+
+				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
+				case LexRefTypeTags.MappingTypes.kmtEntryPair:
+				case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
+				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
+				// Entry pair with different Forward/Reverse names
+				case LexRefTypeTags.MappingTypes.kmtEntrySequence:
+				case LexRefTypeTags.MappingTypes.kmtEntryTree:
+					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntry, lrt.Name.BestAnalysisAlternative.Text);
+					break;
+
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
+				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
+					useLinkDlg = true; allowSenses = true;
+					sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
+					break;
+				default:
+					Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
+					return null;
+			}
+
+			// Don't display the current entry in the list of matching entries.  See LT-2611.
+			ICmObject objEntry = this.Object;
+			while (objEntry.ClassID == LexSenseTags.kClassId)
+				objEntry = objEntry.Owner;
+			Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
+			var startingEntry = objEntry as ILexEntry;
+
+			// New-UI gate (mirrors the EntrySequence gate): the LinkEntryOrSense relations use the Avalonia
+			// Choose-Lexical-Entry-or-Sense dialog in New mode; the entry-only mappings keep their EntryGoDlg.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (useLinkDlg && UIModeGates.ShouldUseAvaloniaUI(uiMode))
+				return ShowAvaloniaLinkDialog(startingEntry, allowSenses, sensesOnly, sTitle);
+
+			EntryGoDlg dlg = null;
 			try
 			{
-				switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
-				{
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
-						// Entry or sense pair with different Forward/Reverse
-						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = false;
-						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
-						break;
-
-					case LexRefTypeTags.MappingTypes.kmtSenseCollection:
-					case LexRefTypeTags.MappingTypes.kmtSensePair:
-					case LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
-					case LexRefTypeTags.MappingTypes.kmtSenseUnidirectional:
-					// Sense pair with different Forward/Reverse names
-					case LexRefTypeTags.MappingTypes.kmtSenseSequence:
-					case LexRefTypeTags.MappingTypes.kmtSenseTree:
-						dlg = new LinkEntryOrSenseDlg();
-						(dlg as LinkEntryOrSenseDlg).SelectSensesOnly = true;
-						sTitle = String.Format(LexEdStrings.ksIdentifyXSense, lrt.Name.BestAnalysisAlternative.Text);
-						break;
-
-					case LexRefTypeTags.MappingTypes.kmtEntryCollection:
-					case LexRefTypeTags.MappingTypes.kmtEntryPair:
-					case LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair:
-					case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
-					// Entry pair with different Forward/Reverse names
-					case LexRefTypeTags.MappingTypes.kmtEntrySequence:
-					case LexRefTypeTags.MappingTypes.kmtEntryTree:
-						dlg = new EntryGoDlg();
-						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntry, lrt.Name.BestAnalysisAlternative.Text);
-						break;
-
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-					case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
-						dlg = new LinkEntryOrSenseDlg();
-						sTitle = String.Format(LexEdStrings.ksIdentifyXLexEntryOrSense, lrt.Name.BestAnalysisAlternative.Text);
-						break;
-					default:
-						Debug.Assert(lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair || lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
-						return null;
-				}
+				dlg = useLinkDlg ? (EntryGoDlg)new LinkEntryOrSenseDlg() : new EntryGoDlg();
+				if (useLinkDlg)
+					((LinkEntryOrSenseDlg)dlg).SelectSensesOnly = sensesOnly;
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
-
-				// Don't display the current entry in the list of matching entries.  See LT-2611.
-				ICmObject objEntry = this.Object;
-				while (objEntry.ClassID == LexSenseTags.kClassId)
-					objEntry = objEntry.Owner;
-				Debug.Assert(objEntry.ClassID == LexEntryTags.kClassId);
-				dlg.StartingEntry = objEntry as ILexEntry;
+				dlg.StartingEntry = startingEntry;
 
 				dlg.SetDlgInfo(m_cache, wp, Mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");

@@ -69,6 +69,8 @@
     <ProjectReference Include="../../FdoUi/FdoUi.csproj" />
     <ProjectReference Include="../../FwCoreDlgs/FwCoreDlgs.csproj" />
     <ProjectReference Include="../../FwResources/FwResources.csproj" />
+    <ProjectReference Include="../FwAvalonia/FwAvalonia.csproj" />
+    <ProjectReference Include="../FwAvaloniaDialogs/FwAvaloniaDialogs.csproj" />
     <ProjectReference Include="../../LexText/LexTextDll/LexTextDll.csproj" />
     <ProjectReference Include="../../Utilities/Reporting/Reporting.csproj" />
     <ProjectReference Include="../../Utilities/XMLUtils/XMLUtils.csproj" />

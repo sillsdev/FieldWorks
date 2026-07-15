@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -359,6 +360,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <returns></returns>
+		// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private void ShowAvaloniaOptionsDialog(FwXWindow wndActive)
+		{
+			var oldWsUser = Cache.WritingSystemFactory.UserWs;
+			var settings = wndActive.PropTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			var optionsResult = AvaloniaOptionsDialogLauncher.Show(Cache, wndActive.Mediator,
+				wndActive.PropTable, settings, this, ActiveForm);
+			if (optionsResult.Accepted && (oldWsUser != Cache.WritingSystemFactory.UserWs || optionsResult.PluginsUpdated))
+				wndActive.SaveSettings();
+		}
+
 		public bool OnLaunchConnectedDialog(object commandObject)
 		{
 			CheckDisposed();
@@ -388,6 +401,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// ReSharper restore LocalizableElement
 				return true;
 			}
+
+			// Migrated Options dialog: in New (Avalonia) UI mode, show the owned Avalonia Options dialog
+			// instead of the WinForms LexOptionsDlg. Legacy mode keeps the WinForms dialog, so a New-mode
+			// issue can never affect the default surface. Mirrors the SaveSettings trigger below.
+			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains("LexOptionsDlg")
+				&& wndActive != null
+				&& UIModeGates.ShouldUseAvaloniaUI(wndActive.PropTable.GetStringProperty("UIMode", "Legacy")))
+			{
+				ShowAvaloniaOptionsDialog(wndActive);
+				return true;
+			}
+
 			try
 			{
 				try

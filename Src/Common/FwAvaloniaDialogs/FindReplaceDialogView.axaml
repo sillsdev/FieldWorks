@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.FindReplaceDialogView"
+             x:DataType="vm:FindReplaceDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="380" MinHeight="280">
+	<!-- The Find/Replace pattern-setup dialog (Find/Replace Phase 1): find/replace text + the legacy match
+	     options, over OK/Cancel. Spec-only modal (OK snapshots the FindReplacePattern into Result) — there is
+	     NO find engine and NO modeless app-wide dialog here (deferred P2). Visible text is localized via
+	     FwAvaloniaDialogsStrings (.resx); AutomationIds stay stable + nonlocalized. The diacritic/WS options
+	     are disabled (grayed) because the P1 managed replace cannot honor them yet. -->
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Ok}" IsDefault="True"
+			        Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="FindReplace.Ok"/>
+			<Button Content="{x:Static res:FwAvaloniaDialogsStrings.Cancel}" IsCancel="True"
+			        Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="FindReplace.Cancel"/>
+		</StackPanel>
+
+		<StackPanel Spacing="{StaticResource DialogLabelFieldGap}">
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceFindLabel}"
+			           AutomationProperties.AutomationId="FindReplace.FindLabel"/>
+			<TextBox Text="{Binding FindText}"
+			         AutomationProperties.AutomationId="FindReplace.FindText"
+			         AutomationProperties.Name="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceFindLabel}"/>
+
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceReplaceLabel}"
+			           Margin="{StaticResource DialogControlGapAbove}"
+			           AutomationProperties.AutomationId="FindReplace.ReplaceLabel"/>
+			<TextBox Text="{Binding ReplaceText}"
+			         AutomationProperties.AutomationId="FindReplace.ReplaceText"
+			         AutomationProperties.Name="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceReplaceLabel}"/>
+
+			<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceUseRegex}"
+			          IsChecked="{Binding UseRegularExpressions}" Margin="{StaticResource DialogControlGapAbove}"
+			          AutomationProperties.AutomationId="FindReplace.UseRegex"/>
+
+			<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceMatchCase}"
+			          IsChecked="{Binding MatchCase}" IsEnabled="{Binding LiteralOptionsEnabled}"
+			          AutomationProperties.AutomationId="FindReplace.MatchCase"/>
+			<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceMatchWholeWord}"
+			          IsChecked="{Binding MatchWholeWord}" IsEnabled="{Binding LiteralOptionsEnabled}"
+			          AutomationProperties.AutomationId="FindReplace.MatchWholeWord"/>
+
+			<!-- P1 no-ops: the managed replace cannot honor these yet (needs the P2 IVwPattern path), so they
+			     are disabled to avoid misleading the user. Carried on the POCO for parity/persistence. -->
+			<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceMatchDiacritics}"
+			          IsChecked="{Binding MatchDiacritics}" IsEnabled="False"
+			          AutomationProperties.AutomationId="FindReplace.MatchDiacritics"/>
+			<CheckBox Content="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceMatchWritingSystem}"
+			          IsChecked="{Binding MatchWritingSystem}" IsEnabled="False"
+			          AutomationProperties.AutomationId="FindReplace.MatchWritingSystem"/>
+
+			<TextBlock Text="{x:Static res:FwAvaloniaDialogsStrings.FindReplaceInvalidRegex}"
+			           Foreground="Red" TextWrapping="Wrap" Margin="{StaticResource DialogControlGapAbove}"
+			           IsVisible="{Binding HasInvalidRegex}"
+			           AutomationProperties.AutomationId="FindReplace.ValidationError"/>
+		</StackPanel>
+	</DockPanel>
+</UserControl>

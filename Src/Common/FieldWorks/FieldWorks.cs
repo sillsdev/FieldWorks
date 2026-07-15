@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -27,6 +28,7 @@ using L10NSharp.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
@@ -2934,6 +2936,10 @@ namespace SIL.FieldWorks
 				EnsureValidReversalIndexConfigFile(app.Cache);
 				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
+				s_activeMainWnd.PropTable.SetProperty("UIMode", ResolveUIMode(s_appSettings.UIMode), false);
+				s_activeMainWnd.PropTable.SetPropertyPersistence("UIMode", false);
+				s_activeMainWnd.PropTable.SetProperty("UIModeDisabledTools", s_appSettings.UIModeDisabledTools ?? string.Empty, false);
+				s_activeMainWnd.PropTable.SetPropertyPersistence("UIModeDisabledTools", false);
 			}
 			catch (StartupException ex)
 			{
@@ -2952,6 +2958,12 @@ namespace SIL.FieldWorks
 			fwMainWindow.Activated += FwMainWindowActivated;
 			fwMainWindow.Closing += FwMainWindowClosing;
 			return true;
+		}
+
+		/// <summary>A blank/whitespace UIMode setting defaults to "Legacy".</summary>
+		internal static string ResolveUIMode(string settingsUIMode)
+		{
+			return string.IsNullOrWhiteSpace(settingsUIMode) ? "Legacy" : settingsUIMode;
 		}
 
 		private static void EnsureValidReversalIndexConfigFile(LcmCache cache)
@@ -3689,9 +3701,10 @@ namespace SIL.FieldWorks
 				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				var additionalLocalizationMethods = GetAvaloniaLocalizationMethods();
 				// First create localization manager for Chorus with english
 				LocalizationManagerWinforms.Create("en",
-					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" });
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" }, additionalLocalizationMethods);
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
 				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
@@ -3704,13 +3717,44 @@ namespace SIL.FieldWorks
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-					userL10nBaseDir, null, new[] { "SIL.Windows.Forms" });
+					userL10nBaseDir, null, new[] { "SIL.Windows.Forms", "SIL.FieldWorks.Common.FwAvalonia", "FwAvaloniaDialogs" }, additionalLocalizationMethods);
 			}
 			catch (Exception e)
 			{
 				SafelyReportException(new FileNotFoundException(
 					"There was a problem setting up localizations for some dialogs, probably because they were not installed", e), null, false);
 			}
+		}
+
+		/// <summary>
+		/// A bad/missing FwAvalonia.dll must cost only the Avalonia dynamic strings, never the Chorus/Palaso
+		/// localization managers the caller goes on to create — so catch here, not in the caller's try/catch.
+		/// </summary>
+		private static MethodInfo[] GetAvaloniaLocalizationMethods()
+		{
+			try
+			{
+				return GetAvaloniaLocalizationMethodsCore();
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(new Exception("Avalonia localization methods unavailable; continuing without them", e));
+				return new MethodInfo[0];
+			}
+		}
+
+		/// <summary>
+		/// Kept in its own non-inlined method so a bad FwAvalonia.dll fails here, in the caller's try/catch, not at startup JIT.
+		/// </summary>
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private static MethodInfo[] GetAvaloniaLocalizationMethodsCore()
+		{
+			return new[]
+			{
+				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetString), new[] { typeof(string), typeof(string), typeof(string), typeof(string) }),
+				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetPalasoString), new[] { typeof(string), typeof(string), typeof(string) }),
+				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetChorusString), new[] { typeof(string), typeof(string), typeof(string) })
+			}.Where(method => method != null).ToArray();
 		}
 
 		internal static void SetLocalizationLanguage(LcmCache cache)

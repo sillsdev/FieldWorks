@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2026-06-15T00:00:00" />
+		<language
+			type="km" />
+		<script
+			type="Khmr" />
+	</identity>
+	<layout>
+		<orientation
+			characters="left-to-right" />
+	</layout>
+	<characters>
+		<exemplarCharacters>
+			[ក ខ គ ឃ ង ច ឆ ជ ឈ ញ ដ ឋ ឌ ឍ ណ ត ថ ទ ធ ន ប ផ ព ភ ម យ រ ល វ ស ហ ឡ អ]
+		</exemplarCharacters>
+	</characters>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Khm" />
+		<palaso:defaultFontFamily
+			value="Noto Sans Khmer" />
+		<palaso:languageName
+			value="Khmer" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+	</special>
+</ldml>

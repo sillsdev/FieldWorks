@@ -4,7 +4,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
@@ -123,6 +126,33 @@ namespace SIL.FieldWorks
 		}
 
 		#endregion
+
+		/// <summary/>
+		[TestCase(null, "Legacy")]
+		[TestCase("", "Legacy")]
+		[TestCase("  ", "Legacy")]
+		[TestCase("New", "New")]
+		[TestCase("Legacy", "Legacy")]
+		public void ResolveUIMode_BlankDefaultsToLegacy(string settingsUIMode, string expected)
+		{
+			Assert.That(FieldWorks.ResolveUIMode(settingsUIMode), Is.EqualTo(expected));
+		}
+
+		/// <summary>Pins the FwAvaloniaLocalization contract this method resolves via reflection.</summary>
+		[Test]
+		public void GetAvaloniaLocalizationMethods_ReturnsExpectedAvaloniaLocalizationEntryPoints()
+		{
+			var methods = (MethodInfo[])ReflectionHelper.GetResult(typeof(FieldWorks), "GetAvaloniaLocalizationMethods");
+
+			Assert.That(methods, Is.Not.Null);
+			Assert.That(methods.Select(m => m.Name), Is.EquivalentTo(new[]
+			{
+				nameof(FwAvaloniaLocalization.GetString),
+				nameof(FwAvaloniaLocalization.GetPalasoString),
+				nameof(FwAvaloniaLocalization.GetChorusString)
+			}));
+			Assert.That(methods, Has.All.Matches<MethodInfo>(m => m.DeclaringType == typeof(FwAvaloniaLocalization)));
+		}
 
 		/// <summary/>
 		[Test]
