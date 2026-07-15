@@ -2311,6 +2311,101 @@ namespace SIL.FieldWorks.IText
 			vwenv.CloseParagraph();
 		}
 
+		internal static ILexSense GuessWordSense(IWfiAnalysis wa)
+		{
+			if (wa.MeaningsOC.Count != 0)
+			{
+				return null;
+			}
+			// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+			ILexSense rootSense = null;
+			foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+			{
+				// Get the sense for morphBundle.
+				ILexSense sense = morphBundle.SenseRA;
+				if (sense == null && morphBundle.MorphRA != null)
+				{
+					ILexEntry lexEntry = morphBundle.MorphRA.Owner as ILexEntry;
+					if (lexEntry != null && lexEntry.SensesOS.Count > 0)
+					{
+						sense = lexEntry.SensesOS[0];
+					}
+				}
+				if (sense?.Gloss?.BestAnalysisAlternative == null)
+					continue;
+				// Consider the sense's gloss.
+				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+				bool fStem = msa is IMoStemMsa;
+				// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
+				// otherwise, use the first stem we find, if any.
+				if ((fStem && rootSense == null) || wa.MorphBundlesOS.Count == 1)
+					rootSense = sense;
+			}
+			return rootSense;
+		}
+
+		internal static ITsString GuessWordPOSName(IAnalysis analysis)
+		{
+			IPartOfSpeech lexPOS = GuessWordPOS(analysis);
+			if (lexPOS == null)
+				return null;
+			if (lexPOS.Abbreviation.BestAnalysisAlternative.Length > 0)
+				return lexPOS.Abbreviation.BestAnalysisAlternative;
+			return lexPOS.Name.BestAnalysisAlternative;
+		}
+
+		internal static IPartOfSpeech GuessWordPOS(IAnalysis analysis)
+		{
+			var wa = analysis.Analysis;
+			if (wa.CategoryRA != null)
+			{
+				return null;
+			}
+			// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+			IPartOfSpeech stemPOS = null;
+			IPartOfSpeech derivedPOS = null;
+			foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+			{
+				// Get the sense for morphBundle.
+				ILexSense sense = morphBundle.SenseRA;
+				if (sense == null && morphBundle.MorphRA != null)
+				{
+					if (morphBundle.MorphRA.Owner is ILexEntry lexEntry && lexEntry.SensesOS.Count > 0)
+					{
+						sense = lexEntry.SensesOS[0];
+					}
+				}
+				if (sense == null)
+					continue;
+				// Consider the sense's part of speech.
+				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+				bool fStem = msa is IMoStemMsa;
+				if (fStem)
+				{
+					IPartOfSpeech POS = (msa as IMoStemMsa).PartOfSpeechRA;
+					if (POS != stemPOS && stemPOS != null)
+					{
+						// found conflicting stems
+						return null;
+					}
+					else
+						stemPOS = POS;
+				}
+				else if (msa is IMoDerivAffMsa)
+				{
+					if (derivedPOS != null)
+						return null; // more than one DA
+					else
+						derivedPOS = (msa as IMoDerivAffMsa).ToPartOfSpeechRA;
+				}
+			}
+			if (stemPOS == null)
+				return null;
+
+			IPartOfSpeech lexPOS = derivedPOS ?? stemPOS;
+			return lexPOS;
+		}
+
 		/// <summary>
 		/// Implementation of displaying a word bundle as Method Object
 		/// </summary>
@@ -2495,7 +2590,7 @@ namespace SIL.FieldWorks.IText
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
 					{
-						ITsString rootGlossName = GetRootGlossName(wa);
+						ITsString rootGlossName = GuessWordSense(wa)?.Gloss?.BestAnalysisAlternative;
 						if (m_hvoDefault != m_hvoWordBundleAnalysis && rootGlossName != null)
 						{
 							// Display our best guess for the gloss.
@@ -2538,37 +2633,9 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			private ITsString GetRootGlossName(IWfiAnalysis wa)
-			{
-				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
-				ITsString rootGloss = null;
-				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
-				{
-					// Get the sense for morphBundle.
-					ILexSense sense = morphBundle.SenseRA;
-					if (sense == null && morphBundle.MorphRA != null)
-					{
-						ILexEntry lexEntry = morphBundle.MorphRA.Owner as ILexEntry;
-						if (lexEntry != null && lexEntry.SensesOS.Count > 0)
-						{
-							sense = lexEntry.SensesOS[0];
-						}
-					}
-					if (sense?.Gloss?.BestAnalysisAlternative == null)
-						continue;
-					// Consider the sense's gloss.
-					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
-					bool fStem = msa is IMoStemMsa;
-					// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
-					// otherwise, use the first stem we find, if any.
-					if ((fStem && rootGloss == null) || wa.MorphBundlesOS.Count == 1)
-						rootGloss = sense.Gloss.BestAnalysisAlternative;
-				}
-				return rootGloss;
-			}
-
 			private void DisplayWordPOS(int choiceIndex)
 			{
+				ITsString guessedPOSName = null;
 				switch(m_defaultObj.ClassID)
 				{
 				case WfiWordformTags.kClassId:
@@ -2581,19 +2648,14 @@ namespace SIL.FieldWorks.IText
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 						// Let the exporter know that this is a guessed analysis.
 						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
-						var wa = (IWfiAnalysis) m_defaultObj;
-						int hvoPos = wa.CategoryRA != null ? wa.CategoryRA.Hvo : 0;
-						if (hvoPos == 0)
-						{
-							ITsString rootPOSName = GetRootPOSName(wa);
-							if (rootPOSName != null)
-							{
-								// Display our best guess for the gloss.
-								m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
-								m_vwenv.AddString(rootPOSName);
-								break;
-							}
-						}
+						guessedPOSName = GuessWordPOSName((IAnalysis)m_defaultObj);
+					}
+					if (guessedPOSName != null)
+					{
+						// Display our best guess for the gloss.
+						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+						m_vwenv.AddString(guessedPOSName);
+						break;
 					}
 					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
 					break;
@@ -2604,63 +2666,20 @@ namespace SIL.FieldWorks.IText
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 						// Let the exporter know that this is a guessed analysis.
 						m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
+						guessedPOSName = GuessWordPOSName((IAnalysis)m_defaultObj);
+					}
+					if (guessedPOSName != null)
+					{
+						// Display our best guess for the gloss.
+						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+						m_vwenv.AddString(guessedPOSName);
+						break;
 					}
 					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
 					break;
 				default:
 					throw new Exception("Invalid type found in Segment analysis");
 				}
-			}
-
-			private ITsString GetRootPOSName(IWfiAnalysis wa)
-			{
-				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
-				IPartOfSpeech stemPOS = null;
-				IPartOfSpeech derivedPOS = null;
-				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
-				{
-					// Get the sense for morphBundle.
-					ILexSense sense = morphBundle.SenseRA;
-					if (sense == null && morphBundle.MorphRA != null)
-					{
-						if (morphBundle.MorphRA.Owner is ILexEntry lexEntry && lexEntry.SensesOS.Count > 0)
-						{
-							sense = lexEntry.SensesOS[0];
-						}
-					}
-					if (sense == null)
-						continue;
-					// Consider the sense's part of speech.
-					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
-					bool fStem = msa is IMoStemMsa;
-					if (fStem)
-					{
-						IPartOfSpeech POS = (msa as IMoStemMsa).PartOfSpeechRA;
-						if (POS != stemPOS && stemPOS != null)
-						{
-							// found conflicting stems
-							return null;
-						}
-						else
-							stemPOS = POS;
-					}
-					else if (msa is IMoDerivAffMsa)
-					{
-						if (derivedPOS != null)
-							return null; // more than one DA
-						else
-							derivedPOS = (msa as IMoDerivAffMsa).ToPartOfSpeechRA;
-					}
-				}
-				if (stemPOS == null)
-					return null;
-
-				IPartOfSpeech lexPOS = derivedPOS ?? stemPOS;
-				if (lexPOS == null)
-					return null;
-				if (lexPOS.Abbreviation.BestAnalysisAlternative.Length > 0)
-					return lexPOS.Abbreviation.BestAnalysisAlternative;
-				return lexPOS.Name.BestAnalysisAlternative;
 			}
 		}
 
