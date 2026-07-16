@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_spellCheckAdditions.Checked = settings.IncludeSpellCheckAdditions;
 			m_spellCheckAdditions.Enabled = settings.IncludeSpellCheckAdditions;
 			m_sendReceiveData.Checked = settings.IncludeSendReceiveData;
-			m_sendReceiveData.Enabled = false;
+			m_sendReceiveData.Enabled = settings.IncludeSendReceiveData;
 			if (m_rdoDefaultFolder.Checked)
 				m_lblDefaultBackupIncludes.Text = m_presenter.IncludesFiles(settings);
 			else
