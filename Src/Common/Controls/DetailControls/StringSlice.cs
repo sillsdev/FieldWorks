@@ -654,6 +654,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					s_fProcessingSelectionChanged = true;
 
+					// An insertion point in an empty field has no text to supply a ws, so its
+					// props fall back to the UI ws. Give it the slice's data-entry ws so the
+					// ws chooser and keyboard match what typing will produce (LT-22630).
+					if (!vwselNew.IsRange && FieldIsEmpty())
+					{
+						var propsBldr = TsStringUtils.MakePropsBldr();
+						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+							(int)FwTextPropVar.ktpvDefault,
+							StringSliceUtils.GetWsForEmptyField(m_ws, m_wsDefault, Cache.DefaultAnalWs));
+						vwselNew.SetTypingProps(propsBldr.GetTextProps());
+					}
+
 					// If the selection is entirely formattable ("IsSelectionInOneFormattableProp"), we don't need to do
 					// the following selection truncation.
 					var hlpr = SelectionHelper.Create(vwselNew, this);
