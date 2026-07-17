@@ -120,7 +120,7 @@ To update localizations, liblcm must be cloned locally to the location specified
 		<MakeDir Directories="$(DownloadsDir)" />
 		<Exec
 			WorkingDirectory="$(fwrt)"
-			Command="overcrowdin download -v -f $(CrowdinZip)"
+			Command="overcrowdin download -f $(CrowdinZip)"
 			ContinueOnError="$(OnFailedCrowdinDownload)"
 		/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)" />
