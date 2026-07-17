@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var chooser = MakeChooserWithExtantMsas(m_slot, cmd as XCore.Command))
 			{
-				chooser.ShowDialog();
+				chooser.ShowDialog(this);
 				if (chooser.DialogResult == DialogResult.OK)
 				{
 					if (chooser.ChosenObjects != null && chooser.ChosenObjects.Count() > 0)
