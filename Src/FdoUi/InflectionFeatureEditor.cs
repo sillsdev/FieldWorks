@@ -378,8 +378,42 @@ namespace SIL.FieldWorks.FdoUi
 						{
 							newFsTarget = FillInBlanks(fsTarget, ls);
 						}
-						IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
-						ls.MorphoSyntaxAnalysisRA = msmTarget;
+						if (ls.MorphoSyntaxAnalysisRA is IMoStemMsa)
+						{
+							IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
+							ls.MorphoSyntaxAnalysisRA = msmTarget;
+						}
+						else if (ls.MorphoSyntaxAnalysisRA is IMoInflAffMsa oldMsa)
+						{
+							// Make a copy of oldMsa.
+							IMoInflAffMsa newMsa = m_cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+							entry.MorphoSyntaxAnalysesOC.Add(newMsa);
+							newMsa.PartOfSpeechRA = oldMsa.PartOfSpeechRA;
+							newMsa.AffixCategoryRA = oldMsa.AffixCategoryRA;
+							foreach (var restriction in oldMsa.FromProdRestrictRC)
+							{
+								newMsa.FromProdRestrictRC.Add(restriction);
+							}
+							foreach (var slot in oldMsa.SlotsRC)
+							{
+								newMsa.SlotsRC.Add(slot);
+							}
+							if (newFsTarget != null)
+							{
+								// Always make a copy since InflFeatsOA is the owner.
+								IFsFeatStruc copy = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+								newMsa.InflFeatsOA = copy;
+								newFsTarget.SetCloneProperties(copy);
+							}
+							// Look for an existing Msa.
+							IMoInflAffMsa msaMatch = entry.MorphoSyntaxAnalysesOC.OfType<IMoInflAffMsa>()
+								.FirstOrDefault(msa => msa != newMsa && msa.EqualsMsa(newMsa));
+							ls.MorphoSyntaxAnalysisRA = msaMatch ?? newMsa;
+							if (msaMatch != null)
+							{
+								entry.MorphoSyntaxAnalysesOC.Remove(newMsa);
+							}
+						}
 					}
 				}
 			});
@@ -619,7 +653,6 @@ namespace SIL.FieldWorks.FdoUi
 						IMoInflAffMsa msa = m_cache.ServiceLocator.GetInstance<IMoInflAffMsaRepository>().GetObject(hvoMsa);
 						fEnable = !EquivalentFs(fsTarget, msa?.InflFeatsOA);
 					}
-					return false; // This is a temporary fix to LT-22601. Don't do bulk edits of inflection features of affixes.
 				}
 			}
 			return fEnable;
