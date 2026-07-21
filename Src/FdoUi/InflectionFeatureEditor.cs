@@ -405,14 +405,19 @@ namespace SIL.FieldWorks.FdoUi
 								newMsa.InflFeatsOA = copy;
 								newFsTarget.SetCloneProperties(copy);
 							}
-							// Look for an existing Msa.
 							IMoInflAffMsa msaMatch = entry.MorphoSyntaxAnalysesOC.OfType<IMoInflAffMsa>()
 								.FirstOrDefault(msa => msa != newMsa && msa.EqualsMsa(newMsa));
 							ls.MorphoSyntaxAnalysisRA = msaMatch ?? newMsa;
 							if (msaMatch != null)
 							{
+								// msaMatch got used instead of newMsa.
 								entry.MorphoSyntaxAnalysesOC.Remove(newMsa);
 							}
+						}
+						if (newFsTarget != null && newFsTarget != fsTarget && newFsTarget.ReferringObjects.Count == 0)
+						{
+							// Delete the feature structure created by FillInBlanks.
+							newFsTarget.Delete();
 						}
 					}
 				}
