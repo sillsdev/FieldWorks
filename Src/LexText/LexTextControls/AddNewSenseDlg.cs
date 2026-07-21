@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// get the current morph type from the lexical entry.
 			IMoMorphType mmt;
-			foreach (var mf in le.AlternateFormsOS)
+			foreach (var mf in le.AllAllomorphs)
 			{
 				mmt = mf.MorphTypeRA;
 				if (mmt != null)
