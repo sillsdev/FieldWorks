@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get { return _projectName; }
 			set
 			{
-				_projectName = value;
+				_projectName = value?.Trim();
 				_steps[(int)CurrentStep].IsComplete = IsProjectNameValid;
 				LoadProjectNameSetup();
 			}
