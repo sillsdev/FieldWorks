@@ -15,6 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
+using SIL.Xml;
 using XAmpleManagedWrapper;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -234,6 +235,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			XElement formElement = morphElem.Element("MoForm");
 			Debug.Assert(formElement != null);
+			if (formElement.GetOuterXml().Contains("DbRef=\"\""))
+			{
+				// For proclitics and enclitics, the form's HVO can end up being empty coming out of TonePars.
+				// This is because there are two entries with the same morphname since we have to treat these
+				// clitics as both affixes and stems.  Unlike XAmple, TonePars needs unique morphnames just like
+				// STAMP does.  See section 5 "Known problems," item 3 in the TonePars with FLEx user documentation.
+				// Ignore this case.
+				morph = null;
+				return false;
+			}
 			var formHvo = (string) formElement.Attribute("DbRef");
 
 			XElement msiElement = morphElem.Element("MSI");

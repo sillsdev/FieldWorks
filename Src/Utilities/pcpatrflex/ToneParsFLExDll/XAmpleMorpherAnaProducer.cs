@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using SIL.DisambiguateInFLExDB;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using XAmpleWithToneParse;
 
@@ -29,7 +30,7 @@ namespace SIL.ToneParsFLEx
 			Cache = cache;
 			IntxCtlFile = intxCtlFile;
 			InputFilePath = Path.Combine(Path.GetTempPath(), "ToneParsInvoker.txt");
-			DatabaseName = ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
+			DatabaseName = XAmpleParser.ConvertNameToUseAnsiCharacters(cache.ProjectId.Name);
 		}
 
 		public override void ProduceANA(SegmentToShow segmentToShow)
