@@ -2080,6 +2080,82 @@ namespace LexTextControlsTests
 			Assert.That(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry), Is.True);
 		}
 
+		// A Noun inflection class that has a Name but no Abbreviation.  When FLEx exports this
+		// to LIFT, the range-element has a <label> but no <abbrev>.  See s_LiftInflClassNoAbbrevRanges.
+		private static readonly string[] s_LiftInflClassNoAbbrevData = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"dog_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>dog</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<sense id=\"dog_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+			"<grammatical-info value=\"Noun\">",
+			"<trait name=\"Noun-infl-class\" value=\"PL\"/>",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>dog</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		// Note the <range-element> has a <label> but deliberately no <abbrev>, matching what FLEx
+		// exports for an inflection class that has no abbreviation.
+		private static readonly string[] s_LiftInflClassNoAbbrevRanges = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift-ranges>",
+			"<range id=\"Noun-infl-class\">",
+			"<range-element id=\"PL\">",
+			"<label>",
+			"<form lang=\"en\"><text>PL</text></form>",
+			"</label>",
+			"</range-element>",
+			"</range>",
+			"</lift-ranges>"
+		};
+
+		/// <summary>
+		/// LT-22612: An inflection class with no abbreviation was duplicated on every LIFT
+		/// export/import round trip (the count doubled each time), because the reuse check in
+		/// ProcessInflectionClassDefinition treated the empty (but non-null) abbrev supplied by
+		/// the LIFT parser as a mismatch.  Importing the same data twice must not create a
+		/// duplicate MoInflClass.
+		/// </summary>
+		[Test]
+		public void TestLiftImport_InflectionClassWithNoAbbrevIsNotDuplicatedOnReimport()
+		{
+			SetWritingSystems("fr");
+			var repoInflClass = Cache.ServiceLocator.GetInstance<IMoInflClassRepository>();
+			Assert.That(repoInflClass.Count, Is.EqualTo(0));
+
+			// First import creates the single "PL" inflection class.
+			var sOrigFile = CreateInputFile(s_LiftInflClassNoAbbrevData);
+			var sRangesFile = CreateInputRangesFile(s_LiftInflClassNoAbbrevRanges, Path.GetDirectoryName(sOrigFile));
+			var logFile = TryImportWithRanges(sOrigFile, sRangesFile, 1);
+			File.Delete(logFile);
+			Assert.That(repoInflClass.Count, Is.EqualTo(1), "first import should create exactly one inflection class");
+			var firstGuid = repoInflClass.AllInstances().First().Guid;
+
+			// Re-importing the same data (as happens on an export/import round trip) must reuse the
+			// existing inflection class rather than create a duplicate.
+			var sOrigFile2 = CreateInputFile(s_LiftInflClassNoAbbrevData);
+			var sRangesFile2 = CreateInputRangesFile(s_LiftInflClassNoAbbrevRanges, Path.GetDirectoryName(sOrigFile2));
+			logFile = TryImportWithRanges(sOrigFile2, sRangesFile2, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sRangesFile);
+			File.Delete(sOrigFile2);
+			File.Delete(sRangesFile2);
+			File.Delete(logFile);
+
+			Assert.That(repoInflClass.Count, Is.EqualTo(1), "re-import must not duplicate the inflection class (LT-22612)");
+			Assert.That(repoInflClass.AllInstances().First().Guid, Is.EqualTo(firstGuid), "the same inflection class should have been reused");
+		}
+
 		/// <summary>
 		/// LT-15516: Blank reversal entries were multiplying on import. Blank entries should be removed during
 		/// an import.

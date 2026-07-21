@@ -2229,6 +2229,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private bool HasMatchingUnicodeAlternative(ITsMultiString tsm, LiftMultiText text)
 		{
+			// An empty (or null) text has no value to compare, so treat it as a match.
+			// Note: The LIFT parser supplies an empty text for an absent element (e.g. <abbrev>). (LT-22612)
+			bool textHasData = false;
 			if (text != null && text.Keys != null)
 			{
 				foreach (string key in text.Keys)
@@ -2236,15 +2239,17 @@ namespace SIL.FieldWorks.LexText.Controls
 					int wsHvo = GetWsFromLiftLang(key);
 					string sValue = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
 						.Normalize(XmlUtils.DecodeXml(text[key].Text));
+					if (String.IsNullOrEmpty(sValue))
+						continue;
+					textHasData = true;
 					ITsString tssAlt = tsm.get_String(wsHvo);
-					if (String.IsNullOrEmpty(sValue) || (tssAlt == null || tssAlt.Length == 0))
+					if (tssAlt == null || tssAlt.Length == 0)
 						continue;
 					if (sValue.ToLowerInvariant() == tssAlt.Text.ToLowerInvariant())
 						return true;
 				}
-				return false;
 			}
-			return true;		// no data at all -- assume match (!!??)
+			return !textHasData;		// no usable data -- assume match
 		}
 
 
