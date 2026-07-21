@@ -382,8 +382,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region RootSite implementation
 		/// <summary>
-		/// This is a RootSiteControl that displays a non-multilingual string slice
-		/// Data entry should always default to the DefaultAnalWs writing system according to LT-22145
+		/// A RootSiteControl that displays a single string: a plain (non-multilingual)
+		/// string property, a Unicode property, or one alternative of a multilingual
+		/// property. When the field is empty, data entry uses the writing system
+		/// configured for the slice, defaulting to first analysis (LT-22145, LT-22630).
 		/// </summary>
 		class StringSliceView : RootSiteControl, INotifyControlInCurrentSlice
 		{
@@ -391,6 +393,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			readonly int m_hvoObj;
 			readonly int m_flid;
 			readonly int m_ws = -1; // -1 signifies not a multilingual property
+			int m_wsDefault; // ws to use in an empty field, from the 'wsempty' config attribute
+			CellarPropertyType m_propType;
 			IVwViewConstructor m_vc;
 
 			public StringSliceView(int hvo, int flid, int ws)
@@ -424,17 +428,53 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				set
 				{
 					CheckDisposed();
+					m_wsDefault = value;
 					if (m_vc is StringSliceVc)
 						(m_vc as StringSliceVc).DefaultWs = value;
 				}
 			}
 
+			/// <summary>
+			/// When the field is empty there is no adjacent text to give newly typed characters a
+			/// writing system, so supply the one configured for the slice (LT-22145, LT-22630).
+			/// Once the field has content, -1 lets typing inherit from the surrounding text.
+			/// Sets are ignored so input-language changes can't hijack an empty field.
+			/// </summary>
 			public override int WsPending
 			{
-				// Ignore requests to set pending writing system, this slice always deals with the DefaultAnalWs.
 				// ReSharper disable once ValueParameterNotUsed
 				set { }
-				get => Cache != null ? Cache.DefaultAnalWs : -1;
+				get
+				{
+					if (Cache == null || m_obj == null || !FieldIsEmpty())
+						return -1;
+					return StringSliceUtils.GetWsForEmptyField(m_ws, m_wsDefault, Cache.DefaultAnalWs);
+				}
+			}
+
+			/// <summary>
+			/// Is the string property this slice edits currently empty?
+			/// Unicode and unrecognized property types report false.
+			/// </summary>
+			private bool FieldIsEmpty()
+			{
+				if (!Cache.ServiceLocator.IsValidObjectId(m_hvoObj))
+					return false;
+				var sda = m_cache.DomainDataByFlid;
+				switch (m_propType)
+				{
+					case CellarPropertyType.String:
+						var tss = sda.get_StringProp(m_hvoObj, m_flid);
+						return tss == null || tss.Length == 0;
+					case CellarPropertyType.MultiString:
+					case CellarPropertyType.MultiUnicode:
+						if (m_ws <= 0)
+							return false;
+						var tssAlt = sda.get_MultiStringAlt(m_hvoObj, m_flid, m_ws);
+						return tssAlt == null || tssAlt.Length == 0;
+					default:
+						return false;
+				}
 			}
 			#region IDisposable override
 
@@ -569,6 +609,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
 
 				CellarPropertyType type = (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
+				m_propType = type;
 				if (type == CellarPropertyType.Unicode)
 				{
 					m_vc = new UnicodeStringSliceVc(m_flid, m_ws, m_cache);
@@ -612,6 +653,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				try
 				{
 					s_fProcessingSelectionChanged = true;
+
+					// An insertion point in an empty field has no text to supply a ws, so its
+					// props fall back to the UI ws. Give it the slice's data-entry ws so the
+					// ws chooser and keyboard match what typing will produce (LT-22630).
+					if (!vwselNew.IsRange && FieldIsEmpty())
+					{
+						var propsBldr = TsStringUtils.MakePropsBldr();
+						propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+							(int)FwTextPropVar.ktpvDefault,
+							StringSliceUtils.GetWsForEmptyField(m_ws, m_wsDefault, Cache.DefaultAnalWs));
+						vwselNew.SetTypingProps(propsBldr.GetTextProps());
+					}
 
 					// If the selection is entirely formattable ("IsSelectionInOneFormattableProp"), we don't need to do
 					// the following selection truncation.
