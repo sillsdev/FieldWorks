@@ -414,7 +414,9 @@ namespace SIL.ToneParsFLEx
 			int i = 0;
 			foreach (string msa in msaHvos)
 			{
-				if (msa == "<" || msa == "W" || msa == ">")
+				// When using XAmple, we need to check for particles (Prt) as well as words (W).
+				// Hermit Crab only has W's.
+				if (msa == "<" || msa == "W" || msa == "Prt" || msa == ">")
 					continue;
 				sb.Append("<Morph>\n");
 				sb.Append("<MoForm DbRef=\"");

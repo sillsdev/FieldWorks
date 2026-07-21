@@ -578,15 +578,7 @@ namespace SIL.ToneParsFLEx
 			string sSelectedIndicies = FormatSelectedSegmentIndices();
 			lblStatus.Text = sSelectedIndicies + "/" + lbSegments.Items.Count;
 			LastSegment = selectedSegmentToShow.Segment.Guid.ToString();
-			var ana = GetAnaForm(selectedSegmentToShow);
-			if (ana.Contains("\\a \n"))
-			{
-				btnParseSegment.Enabled = false;
-			}
-			else
-			{
-				btnParseSegment.Enabled = true;
-			}
+			btnParseSegment.Enabled = true;
 		}
 
 		private string FormatSelectedSegmentIndices()
