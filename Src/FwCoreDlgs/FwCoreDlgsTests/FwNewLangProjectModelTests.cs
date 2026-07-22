@@ -106,6 +106,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[TestCase("*", false)]
 		[TestCase("franç", false)] // upper ASCII is forbidden
 		[TestCase("\u0344", false)] // non-ASCII is forbidden
+		[TestCase("MyProject ", true)] // trailing space is trimmed, still valid
+		[TestCase("   ", false)] // whitespace-only trims to empty -> invalid
 		public void FwNewLangProjectModel_ProjectNameIsValid(string projName, bool expectedResult)
 		{
 			var testModel = new FwNewLangProjectModel
@@ -114,6 +116,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ProjectName = projName
 			};
 			Assert.That(testModel.IsProjectNameValid, Is.EqualTo(expectedResult));
+		}
+
+		/// <summary>
+		/// The name is trimmed of surrounding whitespace when stored, so the validated name matches
+		/// the name used to create the project directory. Windows strips trailing spaces from
+		/// folder names, so an untrimmed name crashes on creation.
+		/// </summary>
+		[TestCase("MyProject ", "MyProject", TestName = "TrailingSpace")]
+		[TestCase(" MyProject", "MyProject", TestName = "LeadingSpace")]
+		[TestCase("  MyProject  ", "MyProject", TestName = "SurroundingSpace")]
+		[TestCase("My Project", "My Project", TestName = "InteriorSpacePreserved")]
+		public void FwNewLangProjectModel_ProjectName_TrimsSurroundingWhitespace(string input, string expected)
+		{
+			var testModel = new FwNewLangProjectModel
+			{
+				LoadProjectNameSetup = () => { },
+				ProjectName = input
+			};
+			Assert.That(testModel.ProjectName, Is.EqualTo(expected));
 		}
 
 		/// <summary/>
