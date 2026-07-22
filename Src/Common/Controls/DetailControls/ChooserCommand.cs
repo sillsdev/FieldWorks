@@ -5,14 +5,12 @@
 using System;
 using System.Windows.Forms;
 using System.Linq;
-using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -47,7 +45,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_mediator, m_propertyTable,
 					m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
-				if (dlg.ShowDialog() == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
 					bool fCreated;
 					ILexEntry entry;
