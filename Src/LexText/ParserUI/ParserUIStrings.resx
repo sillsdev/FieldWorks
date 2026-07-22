@@ -205,6 +205,12 @@
   <data name="ksNumAnalysesToolTip" xml:space="preserve">
     <value>The number of analyses produced by the parser</value>
   </data>
+  <data name="ksNumChangedAnalyses" xml:space="preserve">
+    <value>Num Changed Analyses</value>
+  </data>
+  <data name="ksNumChangedAnalysesToolTip" xml:space="preserve">
+    <value>The number of analyses that have changed since the last parse</value>
+  </data>
   <data name="ksNumDisapprovedAnalyses" xml:space="preserve">
     <value>Disapproved Analyses</value>
   </data>
@@ -285,6 +291,12 @@
   </data>
   <data name="ksTotalAnalysesToolTip" xml:space="preserve">
     <value>The total number of analyses in the words parsed</value>
+  </data>
+  <data name="ksTotalChangedAnalyses" xml:space="preserve">
+    <value>Num Changed Analyses</value>
+  </data>
+  <data name="ksTotalChangedAnalysesToolTip" xml:space="preserve">
+    <value>The total number of changed analyses since the last parse</value>
   </data>
   <data name="ksTotalDisapprovedAnalyses" xml:space="preserve">
     <value>Disapproved Analyses</value>

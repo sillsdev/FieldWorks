@@ -169,6 +169,17 @@
 							</StackPanel>
 						</DataGridTextColumn.Header>
 					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding NumChangedAnalyses}">
+						<DataGridTextColumn.Header>
+							<StackPanel>
+								<Label Content="{x:Static local:ParserUIStrings.ksNumChangedAnalyses}"
+								   ToolTip="{x:Static local:ParserUIStrings.ksNumChangedAnalysesToolTip}"/>
+								<Separator/>
+								<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalChangedAnalysesToolTip}"
+								   Text="{Binding DataContext.ParserReport.TotalChangedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+							</StackPanel>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
 					<DataGridTextColumn Binding="{Binding ParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
 						<DataGridTextColumn.Header>
 							<StackPanel>
