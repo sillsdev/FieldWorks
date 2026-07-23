@@ -20,7 +20,10 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Build.Framework;
@@ -181,185 +184,222 @@ namespace SIL.FieldWorks.Build.Tasks
 				? Executable + ".manifest"
 				: Output;
 
-			try
+			// Under a parallel MSBuild build, several EXE projects can process the same shared
+			// manifest in different worker processes at once and race to read/write it. This
+			// cross-process mutex serializes invocations targeting the same manifest file;
+			// invocations for different files are unaffected and still run fully in parallel.
+			using (var manifestLock = new Mutex(false, ManifestLockName(manifestFile)))
 			{
-				var doc = new XmlDocument { PreserveWhitespace = true };
-
-				// Try to load existing manifest, or create empty document if it doesn't exist
-				if (File.Exists(manifestFile))
-				{
-					using (XmlReader reader = new XmlTextReader(manifestFile))
-					{
-						if (reader.MoveToElement())
-							doc.ReadNode(reader);
-					}
-				}
-				else
-				{
-					// Create a minimal valid XML document if manifest doesn't exist
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tCreating new manifest file {0}",
-						manifestFile
-					);
-				}
-
-				// Process all DLLs using direct type library parsing (no registry redirection needed)
-				var creator = new RegFreeCreator(doc, Log);
-				if (ExcludedClsids != null)
-				{
-					creator.AddExcludedClsids(GetFilesFrom(ExcludedClsids));
-				}
-
-				// Remove non-existing files from the list
-				itemsToProcess.RemoveAll(item => !File.Exists(item.ItemSpec));
-
-				string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
-				if (assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-				{
-					assemblyName = Path.GetFileNameWithoutExtension(assemblyName);
-				}
-				Debug.Assert(assemblyName != null);
-				// The C++ test programs won't run if an assemblyIdentity element exists.
-				//if (assemblyName.StartsWith("test"))
-				//	assemblyName = null;
-				string assemblyVersion = null;
 				try
 				{
-					assemblyVersion = FileVersionInfo.GetVersionInfo(Executable).FileVersion;
+					manifestLock.WaitOne();
 				}
-				catch
+				catch (AbandonedMutexException)
 				{
-					// just ignore
+					// Prior holder crashed mid-write; .NET still grants us ownership here.
 				}
-				if (string.IsNullOrEmpty(assemblyVersion))
+				try
 				{
-					assemblyVersion = "1.0.0.0";
-				}
-				else
-				{
-					// Ensure version has exactly 4 numeric parts for manifest compliance (Major.Minor.Build.Revision)
-					// Some assemblies might have 3-part versions (e.g. 1.1.0) or non-numeric suffixes
-					// (e.g. 9.3.5.local_20260119) which are invalid in SxS manifests.
-					// Always sanitize to extract only the leading digits from each part.
-					var parts = assemblyVersion.Split('.');
-					var newParts = new string[4];
-					for (int i = 0; i < 4; i++)
-					{
-						// Simple parsing to ensure we only get numbers
-						string part = "0";
-						if (i < parts.Length)
-						{
-							// Take only the leading digits from each version part
-							var digits = new string(parts[i].TakeWhile(char.IsDigit).ToArray());
-							if (!string.IsNullOrEmpty(digits))
-								part = digits;
-						}
-						newParts[i] = part;
-					}
-					assemblyVersion = string.Join(".", newParts);
-				}
+					var doc = new XmlDocument { PreserveWhitespace = true };
 
-				XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
-
-				foreach (string fileName in GetFilesFrom(ManagedAssemblies))
-				{
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tProcessing managed assembly {0}",
-						Path.GetFileName(fileName)
-					);
-					creator.ProcessManagedAssembly(root, fileName);
-				}
-
-				foreach (var item in itemsToProcess)
-				{
-					string fileName = item.ItemSpec;
-					if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
-						continue;
-
-					string server = item.GetMetadata("Server");
-					if (string.IsNullOrEmpty(server))
-						server = null;
-
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tProcessing library {0}",
-						Path.GetFileName(fileName)
-					);
-
-					// Process type library directly (no registry redirection needed)
-					creator.ProcessTypeLibrary(root, fileName, server);
-				}
-
-				// Process classes and interfaces from HKCR (where COM is already registered)
-				creator.ProcessClasses(root);
-				creator.ProcessInterfaces(root);
-
-				foreach (string fragmentName in GetFilesFrom(Fragments))
-				{
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tAdding fragment {0}",
-						Path.GetFileName(fragmentName)
-					);
-					creator.AddFragment(root, fragmentName);
-				}
-
-				foreach (string fragmentName in GetFilesFrom(AsIs))
-				{
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tAdding as-is fragment {0}",
-						Path.GetFileName(fragmentName)
-					);
-					creator.AddAsIs(root, fragmentName);
-				}
-
-				foreach (string assemblyFileName in GetFilesFrom(DependentAssemblies))
-				{
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tAdding dependent assembly {0}",
-						Path.GetFileName(assemblyFileName)
-					);
-					creator.AddDependentAssembly(root, assemblyFileName);
-				}
-
-				if (!HasRegFreeContent(doc))
-				{
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tNo registration-free content found for {0}; manifest will not be emitted.",
-						Path.GetFileName(manifestFile)
-					);
+					// Try to load existing manifest, or create empty document if it doesn't exist
 					if (File.Exists(manifestFile))
-						File.Delete(manifestFile);
-					return true;
-				}
+					{
+						using (XmlReader reader = new XmlTextReader(manifestFile))
+						{
+							if (reader.MoveToElement())
+								doc.ReadNode(reader);
+						}
+					}
+					else
+					{
+						// Create a minimal valid XML document if manifest doesn't exist
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tCreating new manifest file {0}",
+							manifestFile
+						);
+					}
 
-				var settings = new XmlWriterSettings
-				{
-					OmitXmlDeclaration = false,
-					NewLineOnAttributes = false,
-					NewLineChars = Environment.NewLine,
-					Indent = true,
-					IndentChars = "\t",
-				};
-				using (XmlWriter writer = XmlWriter.Create(manifestFile, settings))
-				{
-					doc.WriteContentTo(writer);
-				}
+					// Process all DLLs using direct type library parsing (no registry redirection needed)
+					var creator = new RegFreeCreator(doc, Log);
+					if (ExcludedClsids != null)
+					{
+						creator.AddExcludedClsids(GetFilesFrom(ExcludedClsids));
+					}
 
-				// Note: No unregistration needed - we never registered anything!
-				// Direct type library parsing doesn't touch the registry.
-			}
-			catch (Exception e)
-			{
-				Log.LogErrorFromException(e, true, true, null);
-				return false;
+					// Remove non-existing files from the list
+					itemsToProcess.RemoveAll(item => !File.Exists(item.ItemSpec));
+
+					string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
+					if (assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+					{
+						assemblyName = Path.GetFileNameWithoutExtension(assemblyName);
+					}
+					Debug.Assert(assemblyName != null);
+					// The C++ test programs won't run if an assemblyIdentity element exists.
+					//if (assemblyName.StartsWith("test"))
+					//	assemblyName = null;
+					string assemblyVersion = null;
+					try
+					{
+						assemblyVersion = FileVersionInfo.GetVersionInfo(Executable).FileVersion;
+					}
+					catch
+					{
+						// just ignore
+					}
+					if (string.IsNullOrEmpty(assemblyVersion))
+					{
+						assemblyVersion = "1.0.0.0";
+					}
+					else
+					{
+						// Ensure version has exactly 4 numeric parts for manifest compliance (Major.Minor.Build.Revision)
+						// Some assemblies might have 3-part versions (e.g. 1.1.0) or non-numeric suffixes
+						// (e.g. 9.3.5.local_20260119) which are invalid in SxS manifests.
+						// Always sanitize to extract only the leading digits from each part.
+						var parts = assemblyVersion.Split('.');
+						var newParts = new string[4];
+						for (int i = 0; i < 4; i++)
+						{
+							// Simple parsing to ensure we only get numbers
+							string part = "0";
+							if (i < parts.Length)
+							{
+								// Take only the leading digits from each version part
+								var digits = new string(parts[i].TakeWhile(char.IsDigit).ToArray());
+								if (!string.IsNullOrEmpty(digits))
+									part = digits;
+							}
+							newParts[i] = part;
+						}
+						assemblyVersion = string.Join(".", newParts);
+					}
+
+					XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
+
+					foreach (string fileName in GetFilesFrom(ManagedAssemblies))
+					{
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tProcessing managed assembly {0}",
+							Path.GetFileName(fileName)
+						);
+						creator.ProcessManagedAssembly(root, fileName);
+					}
+
+					foreach (var item in itemsToProcess)
+					{
+						string fileName = item.ItemSpec;
+						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
+							continue;
+
+						string server = item.GetMetadata("Server");
+						if (string.IsNullOrEmpty(server))
+							server = null;
+
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tProcessing library {0}",
+							Path.GetFileName(fileName)
+						);
+
+						// Process type library directly (no registry redirection needed)
+						creator.ProcessTypeLibrary(root, fileName, server);
+					}
+
+					// Process classes and interfaces from HKCR (where COM is already registered)
+					creator.ProcessClasses(root);
+					creator.ProcessInterfaces(root);
+
+					foreach (string fragmentName in GetFilesFrom(Fragments))
+					{
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tAdding fragment {0}",
+							Path.GetFileName(fragmentName)
+						);
+						creator.AddFragment(root, fragmentName);
+					}
+
+					foreach (string fragmentName in GetFilesFrom(AsIs))
+					{
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tAdding as-is fragment {0}",
+							Path.GetFileName(fragmentName)
+						);
+						creator.AddAsIs(root, fragmentName);
+					}
+
+					foreach (string assemblyFileName in GetFilesFrom(DependentAssemblies))
+					{
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tAdding dependent assembly {0}",
+							Path.GetFileName(assemblyFileName)
+						);
+						creator.AddDependentAssembly(root, assemblyFileName);
+					}
+
+					if (!HasRegFreeContent(doc))
+					{
+						Log.LogMessage(
+							MessageImportance.Low,
+							"\tNo registration-free content found for {0}; manifest will not be emitted.",
+							Path.GetFileName(manifestFile)
+						);
+						if (File.Exists(manifestFile))
+							File.Delete(manifestFile);
+						return true;
+					}
+
+					var settings = new XmlWriterSettings
+					{
+						OmitXmlDeclaration = false,
+						NewLineOnAttributes = false,
+						NewLineChars = Environment.NewLine,
+						Indent = true,
+						IndentChars = "\t",
+					};
+					using (XmlWriter writer = XmlWriter.Create(manifestFile, settings))
+					{
+						doc.WriteContentTo(writer);
+					}
+
+					// Note: No unregistration needed - we never registered anything!
+					// Direct type library parsing doesn't touch the registry.
+				}
+				catch (Exception e)
+				{
+					Log.LogErrorFromException(e, true, true, null);
+					return false;
+				}
+				finally
+				{
+					manifestLock.ReleaseMutex();
+				}
 			}
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Cross-process mutex name for the given manifest path. <see cref="string.GetHashCode"/>
+		/// is deliberately not used: .NET randomizes string hash codes per process, so different
+		/// worker processes could hash the same path differently and defeat the lock. MD5 is a
+		/// stable fingerprint here (not security-sensitive), deterministic across processes.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static string ManifestLockName(string manifestFile)
+		{
+			var normalizedPath = Path.GetFullPath(manifestFile).ToUpperInvariant();
+			using (var md5 = MD5.Create())
+			{
+				var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(normalizedPath));
+				return "FwRegFreeManifest_" + BitConverter.ToString(hash).Replace("-", "");
+			}
 		}
 
 		private static bool HasRegFreeContent(XmlDocument doc)

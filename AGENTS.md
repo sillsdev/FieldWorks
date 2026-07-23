@@ -14,6 +14,13 @@ Minimal, high-signal guidance for coding agents in this repository.
 - Native C++ must build before managed projects (enforced by `FieldWorks.proj` + `build.ps1`).
 - FieldWorks uses registration-free COM; do not register COM globally and do not add registry hacks.
 - Keep localization in `.resx`; do not hardcode translatable UI strings.
+- Comments: default terse — a one-line `///` summary on public members, and
+	inline `//` only where the code isn't self-evident. Expand (a block comment
+	or `<remarks>`) only when a maintainer could reasonably get it wrong:
+	non-obvious rationale, concurrency/ordering hazards, interop/platform quirks
+	and workarounds, a deliberate anti-obvious choice, or bug-driven behavior
+	(cite the `LT-####`). Narrative that isn't load-bearing belongs in the
+	commit/PR, not inline.
 
 ## Context model
 
