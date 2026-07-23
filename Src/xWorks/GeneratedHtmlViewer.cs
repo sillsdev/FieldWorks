@@ -1150,6 +1150,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (geckoBrowser == null)
 					throw new ApplicationException();
+				if (geckoBrowser.Window == null)
+				{
+					// This can happen when the user leaves the FLEx web browser-based tool
+					// while the find dialog is still open.  Close it and quit.
+					Close();
+					return;
+				}
 				using (var executor = new AutoJSContext(geckoBrowser.Window))
 				{
 					// Javascript query to execute in the browser
