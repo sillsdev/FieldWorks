@@ -625,6 +625,15 @@
 			<seq field="ExtendedNote" ghost="Discussion" ghostWs="analysis" ghostLabel="Extended Note" ghostAbbe="ext"
 				menu="mnuDataTree-ExtendedNotes"/>
 		</part>
+		<!-- Sense pictures: a sequence rendering each CmPicture via its own Normal detail layout (the
+		     standard owned-sequence idiom, like LexSense-Detail-ExampleList above). NOT editor="picture"
+		     on the Pictures sequence field — that cast the owning LexSense to ICmPicture and crashed the
+		     legacy DataTree (the malformed form this replaces). This makes sense pictures visible in the
+		     legacy Lexicon Edit pane; they have been silently omitted there for years because no
+		     LexSense-Detail-Pictures part existed to resolve the long-standing <part ref="Pictures"/>. -->
+		<part id="LexSense-Detail-Pictures" type="detail">
+			<seq field="Pictures" layout="Normal" menu="mnuDataTree-Picture"/>
+		</part>
 		<part id="LexSense-Jt-HeadWord" type="jtview">
 			<string field="HeadWord"/>
 		</part>
