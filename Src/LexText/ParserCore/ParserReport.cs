@@ -450,7 +450,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var found = false;
 				foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
 				{
-					if (pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+					var opinion = wfAnalysis.GetAgentOpinion(parserAgent);
+					if (opinion == Opinions.approves && pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
 					{
 						found = true;
 						break;

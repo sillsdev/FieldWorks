@@ -42,6 +42,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, ParserListener listener, Mediator mediator, LcmCache cache, PropertyTable propertyTable, string defaultComment)
 		{
 			InitializeComponent();
+			bool updatesAnalyses = propertyTable == null ? true : propertyTable.GetBoolProperty("CheckParserUpdatesAnalyses", true);
+			if (updatesAnalyses)
+			{
+				TotalChangedAnalyses.Visibility = Visibility.Collapsed;
+			}
 			parserReports.Sort((x, y) => y.Timestamp.CompareTo(x.Timestamp));
 			ParserReports = parserReports;
 			Listener = listener;

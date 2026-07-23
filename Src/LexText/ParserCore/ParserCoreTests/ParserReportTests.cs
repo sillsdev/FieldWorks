@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			});
 
 			var parseReport = new ParseReport(catWordform, result);
-			CheckParseReport(parseReport, numAnalyses: 4, numChangedAnalyses: 2, numApprovedMissing: 3, numDisapproved: 1, numNoOpinion: 2, parseTime: 10);
+			CheckParseReport(parseReport, numAnalyses: 4, numChangedAnalyses: 3, numApprovedMissing: 3, numDisapproved: 1, numNoOpinion: 2, parseTime: 10);
 
 			var errorResult = new ParseResult("error"){ ParseTime = 1 };
 			var errorReport = new ParseReport(catWordform, errorResult);
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			parserReport.AddParseReport("zero", zeroReport);
 			Assert.That(parserReport.ParseReports.ContainsKey("cat"), Is.True);
 			CheckParserReport(parserReport, numParseErrors: 1, numWords: 3,
-				numZeroParses: 2, totalAnalyses: 4, totalChangedAnalyses: 2, totalApprovedMissing: 3,
+				numZeroParses: 2, totalAnalyses: 4, totalChangedAnalyses: 3, totalApprovedMissing: 3,
 				totalDisapproved: 1, totalNoOpinion: 2, totalParseTime: 13);
 
 			// Check SubtractParseReport.
@@ -209,28 +209,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckParseReport(eeReport);
 
 			var epReport = parseReport.DiffParseReport(errorReport);
-			CheckParseReport(epReport, numAnalyses: 4, numChangedAnalyses: 2, numApprovedMissing: 3,
+			CheckParseReport(epReport, numAnalyses: 4, numChangedAnalyses: 3, numApprovedMissing: 3,
 				numDisapproved: 1, numNoOpinion: 2, parseTime: 9, errorMessage: "error => ");
 
 			var ezReport = errorReport.DiffParseReport(zeroReport);
 			CheckParseReport(ezReport, parseTime: -1, errorMessage: " => error");
 
 			var peReport = errorReport.DiffParseReport(parseReport);
-			CheckParseReport(peReport, numAnalyses: -4, numChangedAnalyses: -2, numApprovedMissing: -3,
+			CheckParseReport(peReport, numAnalyses: -4, numChangedAnalyses: -3, numApprovedMissing: -3,
 				numDisapproved: -1, numNoOpinion: -2, parseTime: -9, errorMessage: " => error");
 
 			var ppReport = parseReport.DiffParseReport(parseReport);
 			CheckParseReport(ppReport);
 
 			var pzReport = zeroReport.DiffParseReport(parseReport);
-			CheckParseReport(pzReport, numAnalyses: -4, numChangedAnalyses: -2, numApprovedMissing: -3,
+			CheckParseReport(pzReport, numAnalyses: -4, numChangedAnalyses: -3, numApprovedMissing: -3,
 				numDisapproved: -1, numNoOpinion: -2, parseTime: -8);
 
 			var zeReport = errorReport.DiffParseReport(zeroReport);
 			CheckParseReport(zeReport, parseTime: -1, errorMessage: " => error");
 
 			var zpReport = parseReport.DiffParseReport(zeroReport);
-			CheckParseReport(zpReport, numAnalyses: 4, numChangedAnalyses: 2, numApprovedMissing: 3,
+			CheckParseReport(zpReport, numAnalyses: 4, numChangedAnalyses: 3, numApprovedMissing: 3,
 				numDisapproved: 1, numNoOpinion: 2, parseTime: 8);
 
 			var zzReport = zeroReport.DiffParseReport(zeroReport);

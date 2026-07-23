@@ -95,6 +95,11 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksTotalAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"/>
 						</DataGridTextColumn.Header>
 					</DataGridTextColumn>
+					<DataGridTextColumn x:Name="TotalChangedAnalyses" Binding="{Binding ParserReport.TotalChangedAnalyses}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalChangedAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalChangedAnalysesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
 					<DataGridTextColumn Binding="{Binding ParserReport.TotalParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
 						<DataGridTextColumn.Header>
 							<Label Content="{x:Static local:ParserUIStrings.ksTotalParseTime}" ToolTip="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"/>

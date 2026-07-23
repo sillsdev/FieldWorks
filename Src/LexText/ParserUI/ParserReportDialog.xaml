@@ -169,7 +169,7 @@
 							</StackPanel>
 						</DataGridTextColumn.Header>
 					</DataGridTextColumn>
-					<DataGridTextColumn Binding="{Binding NumChangedAnalyses}">
+					<DataGridTextColumn x:Name="NumChangedAnalyses" Binding="{Binding NumChangedAnalyses}">
 						<DataGridTextColumn.Header>
 							<StackPanel>
 								<Label Content="{x:Static local:ParserUIStrings.ksNumChangedAnalyses}"
