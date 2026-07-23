@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="clerk"></param>
 		internal void UpdateClerkEditable(RecordClerk clerk)
 		{
-			if (clerk != null)
+			if (clerk?.IsDisposed == false)
 			{
 				clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(
 					m_configurationParameters,
