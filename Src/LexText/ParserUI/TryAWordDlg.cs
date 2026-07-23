@@ -366,6 +366,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		#endregion
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
+			if (!String.IsNullOrEmpty(m_htmlControl?.Browser?.DocumentTitle))
+			{
+				// Opening or closing the Find dialog only makes sense when showing parsing output.
+				// The initial and while tracing pages have titles; the parsing output page does not.
+				return;
+			}
 			var ctrl = e.CtrlKey;
 			if (ctrl && (char)e.KeyChar == 'f')
 			{
