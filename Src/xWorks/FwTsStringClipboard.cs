@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	/// surfaces already speak (<c>EditingHelper.SetTsStringOnClipboard</c>/<c>GetTsStringFromClipboard</c>):
 	/// the <see cref="TsStringWrapper.TsStringFormat"/> data format carrying a serialized
 	/// <see cref="TsStringWrapper"/> (TsString XML rep) plus an NFC-normalized <c>UnicodeText</c>
-	/// plain-text lane. Because both frameworks read and write the same formats, copy/paste
+	/// plain-text format. Because both frameworks read and write the same formats, copy/paste
 	/// round-trips bidirectionally during coexistence; see <see cref="FwClipboardText"/> for what
 	/// deliberately does not round-trip (ORC object references, external consumers, paragraph structure).
 	/// Goes through <see cref="ClipboardUtils"/> so tests can swap the OS clipboard for a stub.
@@ -66,9 +66,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Builds the dual-lane OS data object for a payload — the same entries legacy
+		/// Builds the dual-format OS data object for a payload — the same entries legacy
 		/// <c>EditingHelper.SetTsStringOnClipboard</c> writes, so legacy surfaces consume the rich
-		/// lane exactly as if another Views surface had produced it. Shared by the clipboard seam
+		/// format exactly as if another Views surface had produced it. Shared by the clipboard seam
 		/// (3.13) and the drag-and-drop bridge (3.14), which carry identical text payloads.
 		/// </summary>
 		public static DataObject CreateDataObject(FwClipboardText payload)
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.XWorks
 			return dataObject;
 		}
 
-		/// <summary>Builds the dual-lane payload from a TsString (rich + NFC plain text).</summary>
+		/// <summary>Builds the dual-format payload from a TsString (rich + NFC plain text).</summary>
 		public FwClipboardText FromTsString(ITsString tsString)
 		{
 			if (tsString == null)
@@ -101,8 +101,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Materializes the rich lane back into a TsString (writing systems resolved/added through the
-		/// factory), or null when the payload has no rich lane.
+		/// Materializes the rich format back into a TsString (writing systems resolved/added through the
+		/// factory), or null when the payload has no rich format.
 		/// </summary>
 		public ITsString ToTsString(FwClipboardText payload)
 		{

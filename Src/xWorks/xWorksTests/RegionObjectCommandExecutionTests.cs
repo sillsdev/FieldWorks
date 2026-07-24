@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sensesBefore = m_entry.SensesOS.Count;
 
-			// The Hotlinks lane is the production path for the section's quick-add affordance:
+			// Hotlinks is the production path for the section's quick-add affordance:
 			// OnRegionMenuRequested(Kind=Hotlinks) builds ONLY the HotlinksId menu through the same
 			// XCoreMenuBridge; mnuDataTree-Sense-Hotlinks offers "Insert Sense".
 			InvokeHotlinksCommand(m_entry.SensesOS[0].Hvo, "mnuDataTree-Sense-Hotlinks", "Insert Sense");
@@ -151,18 +151,18 @@ namespace SIL.FieldWorks.XWorks
 		// Delete Sense / Delete object
 		// ----------------------------------------------------------------------------------------
 
-		// Skipped (desktop lane): unlike Insert (always enabled), the Delete/Move/Demote/Merge sense
+		// Skipped (desktop environment only): unlike Insert (always enabled), the Delete/Move/Demote/Merge sense
 		// commands only materialize+enable when their xCore display handlers can compute live
 		// slice-sequence context (position in the owning sequence, owner relationships). That context
 		// comes from a laid-out, VISIBLE legacy DataTree; the command-routing adapter tree is hidden +
 		// detached while the Avalonia surface is active, so headlessly the items never reach the
 		// enabled state and the menu does not surface them. Hosting/laying out the detached tree in the
-		// test was tried and did not surface them — the gap is the full menu-display lane, not just
-		// slice layout. Runnable on the desktop lane where the legacy tree is shown. The InsertSense
+		// test was tried and did not surface them — the gap is the full menu-display path, not just
+		// slice layout. Runnable in the desktop environment where the legacy tree is shown. The InsertSense
 		// tests above exercise the same end-to-end adapter -> XCoreMenuBridge -> mediator -> UOW path
 		// headlessly, so the core execution+refresh seam is still covered.
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display lane; see note above. Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path; see note above. Runs in the desktop environment.")]
 		public void DeleteSense_RemovesSenseFromModel_AndComposedRegionReflectsIt()
 		{
 			AddSense("extra gloss");
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks
 		// ----------------------------------------------------------------------------------------
 
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display lane (Move command enablement needs live slice-sequence context). Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (Move command enablement needs live slice-sequence context). Runs in the desktop environment.")]
 		public void MoveDownThenMoveUp_ReordersSenses_AndRestoresOriginalOrder()
 		{
 			AddSense("second gloss");
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 		// ----------------------------------------------------------------------------------------
 
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display lane (Demote/Promote enablement needs live slice-sequence/owner context). Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (Demote/Promote enablement needs live slice-sequence/owner context). Runs in the desktop environment.")]
 		public void DemoteThenPromoteSense_MovesSenseBetweenOwners()
 		{
 			AddSense("second gloss");
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.XWorks
 		// ----------------------------------------------------------------------------------------
 
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display lane (the sense-merge command must materialize+enable before its class guard runs). Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (the sense-merge command must materialize+enable before its class guard runs). Runs in the desktop environment.")]
 		public void Merge_SenseClassGuard_OnlyTargetsMatchingClass()
 		{
 			AddSense("second gloss");

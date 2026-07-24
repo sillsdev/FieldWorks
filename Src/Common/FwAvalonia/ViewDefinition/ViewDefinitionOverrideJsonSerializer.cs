@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				["operations"] = new JArray(patch.Operations.Select(WriteOperation))
 			};
 
-			// Diagnostics are the audit lane: present only when the override had non-representable parts.
+			// Diagnostics are the audit record: present only when the override had non-representable parts.
 			if (patch.Diagnostics.Count > 0)
 				root["diagnostics"] = new JArray(patch.Diagnostics.Select(WriteDiagnostic));
 
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		// Parses an enum value from committed JSON, turning a null/garbage token into a controlled
-		// InvalidDataException (the load lane catches it) rather than a raw ArgumentException/NRE.
+		// InvalidDataException (the load path catches it) rather than a raw ArgumentException/NRE.
 		private static TEnum ParseEnum<TEnum>(string text, string field) where TEnum : struct
 		{
 			if (string.IsNullOrEmpty(text) || !Enum.TryParse<TEnum>(text, ignoreCase: false, out var value)

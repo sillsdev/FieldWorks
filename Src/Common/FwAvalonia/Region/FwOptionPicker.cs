@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_dropdown = dropdown && !multiSelect;
 
 			// A single clean selection panel: a thin light border + white surface. The HOST flyout's
-			// own Fluent presenter chrome (the heavy grey, padded, bordered box) is stripped by
+			// own Fluent presenter decorations (the heavy grey, padded, bordered box) is stripped by
 			// CreateOptionFlyout, so this is the ONLY border the user sees around the options.
 			Background = FwAvaloniaDensity.PickerBackgroundBrush;
 			BorderBrush = FwAvaloniaDensity.PickerBorderBrush;
@@ -192,14 +192,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (!_dropdown)
 			{
 				// Inline mode (every existing consumer): the filter+list panel IS the picker's content,
-				// and the picker's own thin border is the only chrome the host flyout shows.
+				// and the picker's own thin border is the only decoration the host flyout shows.
 				Child = layout;
 			}
 			else
 			{
 				// Dropdown mode: the picker collapses to a toggle button showing the current selection;
 				// the filter+list panel lives in a focus-gated Popup that opens ON TOP. The picker's own
-				// border becomes invisible chrome (the button supplies the box look) so it sits cleanly in
+				// border becomes invisible (the button supplies the box look) so it sits cleanly in
 				// the fwFieldHost frame.
 				Background = Brushes.Transparent;
 				BorderThickness = new Thickness(0);
@@ -402,10 +402,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Builds the host flyout for an option picker with the Fluent <c>FlyoutPresenter</c>'s heavy
-		/// grey chrome (its padding, border, and grey background) stripped to nothing — so the
+		/// grey decorations (its padding, border, and grey background) stripped to nothing — so the
 		/// picker's own thin border is the ONLY boundary the user sees, instead of the default thick
 		/// grey box wrapping it. Every option surface (chooser, "+" vector add, preview chooser)
-		/// opens through here so the chrome stays consistent.
+		/// opens through here so the styling stays consistent.
 		/// </summary>
 		public static Flyout CreateOptionFlyout(FwOptionPicker picker, PlacementMode placement)
 		{

@@ -14,7 +14,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D4 (wave 4) — the dialog-launcher lane: a claimed slice
+	/// winforms-free-lexeme-editor.md D4 (wave 4) — the dialog-launcher route: a claimed slice
 	/// builds an Avalonia value row + "..." button (<see cref="FwDialogLauncherField"/>) whose
 	/// button calls the host-injected <see cref="ILegacyDialogLauncher"/> seam with the row's
 	/// (object, node); without injected services the button renders disabled and launching is a

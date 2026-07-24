@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// winforms-free-lexeme-editor.md D5 — the burn-down is enforced by tests, not intentions:
 	/// every dynamically loaded custom slice the lexeme editor's part files actually use must be
-	/// classified in exactly one migration lane (plugin-routed / companion-designated /
+	/// classified in exactly one migration route (plugin-routed / companion-designated /
 	/// launcher-routed / explicitly deferred WITH the gate it rides), and the companion-strip
 	/// designated set may only shrink. A new custom slice appearing in the layouts fails the
 	/// census until a developer consciously classifies it.
@@ -73,25 +73,25 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (var cls in census)
 			{
-				var lanes = new List<string>();
+				var routes = new List<string>();
 				// D4: a launcher-routed class is DELIVERED through the plugin registry (its
 				// LauncherRegionPlugin claims it), so the registry claim plus the launcher list
-				// count as the one "LauncherRouted" lane, not two lanes.
+				// count as the one "LauncherRouted" route, not two routes.
 				var launcherRouted = LexemeEditorBurnDown.LauncherRoutedClassNames.ContainsKey(cls);
 				if (RegionEditorPluginRegistry.Default.Resolve(cls) != null && !launcherRouted)
-					lanes.Add("PluginRouted");
+					routes.Add("PluginRouted");
 				if (AvaloniaCompanionSlices.DesignatedClassNames.Contains(cls))
-					lanes.Add("CompanionDesignated");
+					routes.Add("CompanionDesignated");
 				if (launcherRouted)
-					lanes.Add("LauncherRouted");
+					routes.Add("LauncherRouted");
 				if (LexemeEditorBurnDown.ExplicitlyDeferredClassNames.ContainsKey(cls))
-					lanes.Add("ExplicitlyDeferred");
-				if (LexemeEditorBurnDown.LaneAbsorbedClassNames.ContainsKey(cls))
-					lanes.Add("LaneAbsorbed");
+					routes.Add("ExplicitlyDeferred");
+				if (LexemeEditorBurnDown.ComposerAbsorbedClassNames.ContainsKey(cls))
+					routes.Add("ComposerAbsorbed");
 
-				Assert.That(lanes.Count, Is.EqualTo(1),
-					$"'{cls}' must be classified in exactly one burn-down lane, found "
-					+ (lanes.Count == 0 ? "none" : string.Join(" + ", lanes))
+				Assert.That(routes.Count, Is.EqualTo(1),
+					$"'{cls}' must be classified in exactly one burn-down route, found "
+					+ (routes.Count == 0 ? "none" : string.Join(" + ", routes))
 					+ ". A new custom slice in the lexeme-editor layouts must be consciously classified "
 					+ "before it ships: register an IRegionEditorPlugin for it, designate it for the "
 					+ "WinForms companion strip, list it launcher-routed (wave 4), or defer it explicitly "
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 			// winforms-free-lexeme-editor.md D5: the companion-strip designated set may only SHRINK
 			// (a class graduates unsupported → companion → plugin, never the other way). Wave 2
 			// (ChorusNotesPlugin, D2) emptied it: the Messages slice graduated to the native
-			// Avalonia plugin, and the mechanism stays as the documented coexistence lane for
+			// Avalonia plugin, and the mechanism stays as the documented coexistence route for
 			// future tools' WinForms-only slices. If this assertion is failing because the set
 			// GREW, that is a new WinForms dependency inside the pane — do not edit this test
 			// without a written justification in the change doc.
@@ -126,16 +126,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ExplicitlyDeferredClasses_AreTheChorusNotesPhase1FollowUpLane_WithCitations()
+		public void ExplicitlyDeferredClasses_AreTheChorusNotesPhase1FollowUpRoute_WithCitations()
 		{
 			// D5: deferral is only legitimate with the gate it rides spelled out. Wave 4 (D4)
-			// graduated AudioVisualSlice into the launcher lane, Wave 3 absorbed the ghost and
-			// multislice relation lanes into the composer, and ReversalIndexEntrySlice graduated to
+			// graduated AudioVisualSlice into the launcher route, Wave 3 absorbed the ghost and
+			// multislice relation routes into the composer, and ReversalIndexEntrySlice graduated to
 			// a native Avalonia plugin (ReversalIndexEntryPlugin). MessageSlice (ChorusNotesPlugin)
 			// moved the OTHER direction for this base PR: the base-PR scoping decision treats it as a
 			// Phase-1 follow-up surface (the same status as the Avalonia browse table and the
 			// interlinear/rule-formula plugins), so RegisterBuiltins deliberately does not register it
-			// and the class rides this deferred lane until a follow-up PR restores the registration.
+			// and the class rides this deferred route until a follow-up PR restores the registration.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void LaneAbsorbedClasses_AreTheD3ReferenceVectorLane_WithCitations()
+		public void ComposerAbsorbedClasses_AreTheD3ReferenceVectorRoute_WithCitations()
 		{
 			// Wave 3 (D3): EntrySequenceReferenceSlice graduated out of ExplicitlyDeferred — its
 			// nodes now compose as editable ReferenceVector rows with type-ahead lexicon search
@@ -160,17 +160,17 @@ namespace SIL.FieldWorks.XWorks
 			// and emitted one Avalonia row per relation with forward/reverse label semantics.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation lane" }
+				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector route" },
+				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector route" },
+				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation route" }
 			};
-			Assert.That(LexemeEditorBurnDown.LaneAbsorbedClassNames, Is.EquivalentTo(expected));
-			Assert.That(LexemeEditorBurnDown.LaneAbsorbedClassNames.Values, Has.All.Not.Empty,
-				"a lane absorption without a citation is unverifiable");
+			Assert.That(LexemeEditorBurnDown.ComposerAbsorbedClassNames, Is.EquivalentTo(expected));
+			Assert.That(LexemeEditorBurnDown.ComposerAbsorbedClassNames.Values, Has.All.Not.Empty,
+				"an absorption without a citation is unverifiable");
 		}
 
 		[Test]
-		public void LauncherRoutedClasses_AreTheD4LauncherLane_WithCitations()
+		public void LauncherRoutedClasses_AreTheD4LauncherRoute_WithCitations()
 		{
 			// Wave 4 (D4): the dialog-launcher slices render as an Avalonia value row + "..."
 			// button calling the host's ILegacyDialogLauncher seam. AudioVisualSlice graduated
@@ -178,9 +178,9 @@ namespace SIL.FieldWorks.XWorks
 			// part files beyond the LexEntry/LexSense census — registered anyway, forward-looking.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher lane" },
-				{ DialogLauncherPlugins.PhonologicalFeatureSliceClassName, "D4 launcher lane" },
-				{ DialogLauncherPlugins.AudioVisualSliceClassName, "D4 launcher lane" }
+				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher route" },
+				{ DialogLauncherPlugins.PhonologicalFeatureSliceClassName, "D4 launcher route" },
+				{ DialogLauncherPlugins.AudioVisualSliceClassName, "D4 launcher route" }
 			};
 			Assert.That(LexemeEditorBurnDown.LauncherRoutedClassNames, Is.EquivalentTo(expected));
 			Assert.That(LexemeEditorBurnDown.LauncherRoutedClassNames.Values, Has.All.Not.Empty,
@@ -190,9 +190,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void LauncherRoutedClasses_AreEachClaimedByALauncherPlugin()
 		{
-			// The launcher lane is delivered through the D1 plugin registry: every launcher-routed
+			// The launcher route is delivered through the D1 plugin registry: every launcher-routed
 			// class must be claimed by a LauncherRegionPlugin in the default registry, or the row
-			// would silently fall back to the unsupported lane while the burn-down claims victory.
+			// would silently fall back to the unsupported path while the burn-down claims victory.
 			foreach (var cls in LexemeEditorBurnDown.LauncherRoutedClassNames.Keys)
 			{
 				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls),
@@ -244,18 +244,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The burn-down measured: wave 2 (D2) built ChorusNotesPlugin (the native notes bar over
 			// LibChorus), but the base-PR scoping decision keeps it UNREGISTERED here — it is a
-			// Phase-1 follow-up surface, so the Messages slice stays in the ExplicitlyDeferred lane
+			// Phase-1 follow-up surface, so the Messages slice stays in the ExplicitlyDeferred route
 			// (see the census test) rather than PluginRouted for this base PR; wave 3 (D3) was a
-			// composer lane, no plugin; wave 4 (D4) added the three dialog-launcher plugins; the
+			// composer route, no plugin; wave 4 (D4) added the three dialog-launcher plugins; the
 			// reversal-entries editor (ReversalIndexEntryPlugin) graduated the last deferred class to a
 			// native Avalonia editable multi-WS text field. The census test above keeps every class in
-			// exactly one lane.
+			// exactly one route.
 			// PHASE-1 FOLLOW-UP PRs: ChorusNotesPlugin (see above), the avalonia-interlinear-editor
 			// (InterlinearSlicePlugin), and the avalonia-rule-formula-editor family (five plugins: the
 			// three rule-formula grids plus the environment-string and Basic IPA symbol editors) ship in
 			// their own follow-up PRs. Each follow-up restores its plugin registration in
 			// RegionEditorPlugins.RegisterBuiltins and adds its class name(s) back to this census. The
-			// base registry is exactly the always-on lanes below.
+			// base registry is exactly the always-on routes below.
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[]
 				{
@@ -274,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// winforms-free-lexeme-editor.md D1 — the composer's resolution order for a custom slice is
 	/// plugin registry → companion strip (designated set) → unsupported row. A plugin claiming the
-	/// Messages slice's legacy class therefore wins over the companion lane: the node composes as a
+	/// Messages slice's legacy class therefore wins over the companion strip: the node composes as a
 	/// RegionFieldKind.Custom row carrying the plugin's deferred control factory, and the
 	/// companion-promotion list no longer sees it.
 	/// </summary>
@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.XWorks
 				LastNode = context.Node;
 				LastEditContext = context.EditContext;
 				LastCache = context.Cache;
-				return null; // never rendered in this fixture; the view's guard lane covers null
+				return null; // never rendered in this fixture; the view's null guard covers this
 			}
 		}
 
@@ -337,7 +337,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(composed.CustomEditorFields.Select(f => f.ClassName),
 				Has.No.Member(AvaloniaCompanionSlices.MessageSliceClassName),
-				"a plugin-claimed class never reaches the companion lane (D1 resolution order)");
+				"a plugin-claimed class never reaches the companion strip (D1 resolution order)");
 			Assert.That(plugin.BuildCalls, Is.EqualTo(0),
 				"compose defers control building to the view (factory, not control)");
 		}

@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			};
 		}
 
-		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph lane:
+		// The run-aware text-edit wiring shared with FwMultiWsTextField, narrowed to one paragraph editor:
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
 		// advances only on a successful stage so a failed write re-attempts.

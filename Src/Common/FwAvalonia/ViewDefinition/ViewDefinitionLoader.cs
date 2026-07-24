@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		Json
 	}
 
-	/// <summary>The model plus which source produced it and any load-lane diagnostics (e.g. fallback reasons).</summary>
+	/// <summary>The model plus which source produced it and any load-path diagnostics (e.g. fallback reasons).</summary>
 	public sealed class ViewDefinitionLoadResult
 	{
 		public ViewDefinitionLoadResult(
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// Resolves a view definition for a surface, disabling runtime XML for a gated (migrated) surface in
-	/// favor of the committed canonical JSON, while retaining the XML import as the audit/fallback lane
+	/// favor of the committed canonical JSON, while retaining the XML import as the audit/fallback path
 	/// (task 9.4, per `canonical-view-definition-design.md` §4 step 4). For a non-gated surface, or when the
 	/// JSON is missing or unreadable, it falls back to compiling the layout XML and records a diagnostic so
 	/// the fallback is explicit, never silent. The actual gate source (PropertyTable/region manifest) and
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		private readonly Func<ViewDefinitionSourceSnapshot, bool> _isGated;
 		private readonly Func<ViewDefinitionSourceSnapshot, string> _jsonProvider;
 
-		/// <param name="xmlCompiler">The XML import/compile lane (audit + fallback). Required.</param>
+		/// <param name="xmlCompiler">The XML import/compile path (audit + fallback). Required.</param>
 		/// <param name="isGated">True when the surface should load JSON instead of runtime XML. Defaults to never.</param>
 		/// <param name="jsonProvider">Returns the committed canonical JSON for the surface, or null/empty if none.</param>
 		public ViewDefinitionLoader(

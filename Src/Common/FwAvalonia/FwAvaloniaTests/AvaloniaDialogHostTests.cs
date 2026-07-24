@@ -168,7 +168,7 @@ namespace FwAvaloniaTests
 
 				Assert.That(form.FormBorderStyle, Is.EqualTo(FormBorderStyle.Sizable));
 				Assert.That(form.ClientSize, Is.EqualTo(new Size(500, 400)));
-				// MinimumSize is an outer size >= the client minimum (chrome added when a handle is realized).
+				// MinimumSize is an outer size >= the client minimum (window frame added when a handle is realized).
 				Assert.That(form.MinimumSize.Width, Is.GreaterThanOrEqualTo(500));
 				Assert.That(form.MinimumSize.Height, Is.GreaterThanOrEqualTo(400));
 			}

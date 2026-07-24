@@ -14,14 +14,14 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The hybrid companion-strip lane MECHANISM (winforms-free-lexeme-editor.md D1's second
+	/// The hybrid companion-strip MECHANISM (winforms-free-lexeme-editor.md D1's second
 	/// resolution slot): the composer carries legacy custom-editor identities (class/assembly,
 	/// keyed by the placeholder row's StableId) instead of dropping them, designated-class
 	/// selection picks slices for WinForms promotion, and the model filter removes exactly the
 	/// promoted rows. Since wave 2 (D2) the designated set is EMPTY — the Messages slice graduated
 	/// to the native ChorusNotesPlugin — so the mechanism is exercised here with an empty plugin
-	/// registry (to reach the placeholder lane at all) and a fake designated class; the strip
-	/// itself stays hidden in the product. The lane remains the documented coexistence path for
+	/// registry (to reach the placeholder path at all) and a fake designated class; the strip
+	/// itself stays hidden in the product. The mechanism remains the documented coexistence route for
 	/// future tools' WinForms-only custom slices (xml-retirement-blockers.md B11).
 	/// </summary>
 	[TestFixture]
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 			});
 		}
 
-		/// <summary>An empty registry keeps every custom class in the placeholder/companion lane.</summary>
+		/// <summary>An empty registry keeps every custom class in the placeholder/companion path.</summary>
 		private ComposedEntryRegion ComposeWithoutPlugins()
 			=> FullEntryRegionComposer.Compose(m_entry, Cache, plugins: new RegionEditorPluginRegistry());
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 				"the Messages slice binds the entry itself (field='Self')");
 
 			// StableId coordination: the binding keys exactly one row in the composed model — the
-			// placeholder rendering the companion lane replaces (the slice's field='Self' resolves
+			// placeholder rendering the companion strip replaces (the slice's field='Self' resolves
 			// to a reference-atomic flid, so the composer renders a read-only row, never an editor).
 			var rows = composed.Model.Fields.Where(f => f.StableId == binding.FieldStableId).ToList();
 			Assert.That(rows.Count, Is.EqualTo(1), "the binding's StableId addresses exactly one row");
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			// Wave 2 (D2) built ChorusNotesPlugin, but the base-PR scoping decision keeps it
 			// UNREGISTERED in the default registry: it is a Phase-1 follow-up surface (same status as
 			// the Avalonia browse table and the interlinear/rule-formula plugins), so the Messages node
-			// is NOT plugin-routed in this base PR — it stays in the composer's placeholder lane
+			// is NOT plugin-routed in this base PR — it stays in the composer's placeholder path
 			// (CustomEditorFields), same as any other unclaimed dynamically loaded slice. With the
 			// companion-designated set also empty, the companion strip stays hidden either way.
 			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);

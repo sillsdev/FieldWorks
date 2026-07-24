@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// Renders host-built <see cref="RegionMenuItem"/> trees as a native Avalonia
 	/// <see cref="MenuFlyout"/> (15.1) — the same items, enablement, checkmarks, and submenus the
-	/// legacy WinForms adapter menu shows, with Avalonia chrome. Density: every item carries the
+	/// legacy WinForms adapter menu shows, rendered with native Avalonia controls. Density: every item carries the
 	/// explicit compact padding/height of the legacy WinForms menus
 	/// (<see cref="FwAvaloniaDensity.MenuItemPadding"/>/<see cref="FwAvaloniaDensity.MenuItemMinHeight"/>,
 	/// not the Fluent theme defaults); long menus keep the presenter's scrolling.

@@ -31,9 +31,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <c>Theme</c> setter) carrying that template plus the checked/disabled state styles.
 	///
 	/// AUTHORITATIVE SOURCE: this C# builder is the single definition, mirroring <see cref="FwCheckBoxStyle"/>.
-	/// <see cref="FwSurfaceStyles"/> (browse / region / bulk-bar lane) adds it; the dialog lane adds it via
+	/// <see cref="FwSurfaceStyles"/> (browse / region / bulk-bar path) adds it; the dialog path adds it via
 	/// <c>DialogThemeBootstrap.Apply</c> (called by every dialog ctor, in BOTH the runtime host and the headless
-	/// dialog tests). One helper, both lanes.
+	/// dialog tests). One helper, both paths.
 	/// </summary>
 	public static class FwRadioButtonStyle
 	{

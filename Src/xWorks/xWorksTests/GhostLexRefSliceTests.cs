@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// D3 follow-up — the top-level ghost relation rows (`GhostLexRefSlice`) for empty Components /
-	/// Variant of must not fall back to the unsupported lane. They compose as editable
+	/// Variant of must not fall back to the unsupported row. They compose as editable
 	/// search-backed ReferenceVector rows and create the missing LexEntryRef on first add.
 	/// </summary>
 	[TestFixture]

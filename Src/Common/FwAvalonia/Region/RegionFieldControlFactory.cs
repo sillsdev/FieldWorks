@@ -562,7 +562,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		}
 
 		// winforms-free-lexeme-editor.md D1: a plugin-claimed custom slice renders its plugin's own Avalonia
-		// control in the value column, at the slice's real position. Guarded lane: a missing, null-returning,
+		// control in the value column, at the slice's real position. Null guard: a missing, null-returning,
 		// or throwing factory degrades to the explicit unsupported row — never a crash, never a silently
 		// blank row.
 		private static Control BuildCustom(LexicalEditRegionField field, string automationId)

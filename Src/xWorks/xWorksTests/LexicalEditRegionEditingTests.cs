@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(lexemeForm.Label,
 				Is.EqualTo(StringTable.Table.LocalizeAttributeValue("Lexeme Form")),
-				"labels resolve through the StringTable lane used by layout composition");
+				"labels resolve through the StringTable lookup used by layout composition");
 			Assert.That(lexemeForm.MenuId, Is.EqualTo("mnuDataTree-LexemeForm"),
 				"the layout's slice menu rides the row — it feeds the hover gear AND label right-click");
 			Assert.That(lexemeForm.ContextMenuId, Is.EqualTo("mnuDataTree-LexemeFormContext"),
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(rich.Values.Single().RichText, Is.Not.Null,
 				"the shared value projection now preserves the rich-run metadata for the owned editor");
 			Assert.That(rich.Values.Single().RequiresRichEditor, Is.True,
-				"the row advertises that the plain-text lane must not edit it");
+				"the row advertises that plain-text editing must not modify it");
 			Assert.That(rich.IsEditable, Is.True,
 				"rich content is now editable through the run-aware editor path");
 			Assert.That(composed.EditContext.TrySetText(rich,
@@ -873,7 +873,7 @@ namespace SIL.FieldWorks.XWorks
 				.GetIntPropValues((int)FwTextPropType.ktptForeColor, out _), Is.EqualTo(0x0000FF),
 				"the lossless RichXml round-trip preserves the colour for display");
 			// The matching headless test that the lossy value RENDERS a read-only editor with the
-			// not-editable-here tooltip lives in FwAvaloniaTests (the Avalonia rendering lane):
+			// not-editable-here tooltip lives in FwAvaloniaTests (the Avalonia rendering tests):
 			// LexicalEditRegionEditingTests.LossyValue_RendersReadOnly_WithTooltip.
 		}
 
@@ -1314,7 +1314,7 @@ namespace SIL.FieldWorks.XWorks
 					WritingSystemServices.kwsPronunciations, forceIncludeEnglish: false);
 				Assert.That(expected.Select(ws => ws.Handle), Is.EqualTo(new[] { ipa.Handle }));
 				Assert.That(actual.Select(ws => ws.Handle), Is.EqualTo(expected.Select(ws => ws.Handle)),
-					"pronunciation specs ride kwsPronunciations (legacy SliceFactory.GetWs lane), not vernacular defaults");
+					"pronunciation specs ride kwsPronunciations (legacy SliceFactory.GetWs path), not vernacular defaults");
 			}
 			finally
 			{
@@ -1441,7 +1441,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Review round 2: legacy MorphTypeAtomicLauncher gates stem<->affix morph-type swaps behind a
-		// data-loss prompt AND an allomorph class conversion. Until that class-conversion lane lands,
+		// data-loss prompt AND an allomorph class conversion. Until that class-conversion path lands,
 		// the composed chooser must reject a boundary-crossing assignment instead of creating a
 		// model-invalid stem-allomorph-with-affix-type.
 		[Test]
@@ -1483,7 +1483,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(composed.EditContext.TrySetText(ghost, ghost.Values[0].WsAbbrev, "casa"), Is.True);
 			composed.EditContext.Commit();
 
-			Assert.That(bare.LexemeFormOA, Is.Not.Null, "typing created the missing object (ghost= lane)");
+			Assert.That(bare.LexemeFormOA, Is.Not.Null, "typing created the missing object (ghost= path)");
 			Assert.That(bare.LexemeFormOA, Is.InstanceOf<IMoStemAllomorph>(),
 				"abstract MoForm defaults to a stem allomorph, like legacy CreateAllomorph");
 			Assert.That(bare.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text, Is.EqualTo("casa"),
@@ -2131,11 +2131,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(date.Values.Single().Value, Does.Not.Contain("14"),
 				"the day must never leak into the year-granular value (19i.1 corruption guard)");
 
-			// Possibility-list reference: the 6.3 chooser lane makes custom reference rows
+			// Possibility-list reference: the 6.3 chooser path makes custom reference rows
 			// editable too — options from the field's own list, current selection carried.
 			var listRef = fields.FirstOrDefault(f => f.Label == "Field Category");
 			Assert.That(listRef, Is.Not.Null);
-			Assert.That(listRef.IsEditable, Is.True, "custom possibility references take the 6.3 chooser lane");
+			Assert.That(listRef.IsEditable, Is.True, "custom possibility references take the 6.3 chooser path");
 			Assert.That(listRef.SelectedOptionKey, Is.EqualTo(m_listItem.Guid.ToString()));
 			Assert.That(listRef.Options.Select(o => o.Key), Does.Contain(m_listItem.Guid.ToString()),
 				"options come from the custom field's own possibility list");
@@ -2514,7 +2514,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var dataObject = FwDragDropData.CreateTextDataObject(payload);
 			Assert.That(dataObject.GetDataPresent(SIL.FieldWorks.Common.RootSites.TsStringWrapper.TsStringFormat), Is.True,
-				"text drags carry the legacy rich lane");
+				"text drags carry the legacy rich format");
 			Assert.That(dataObject.GetData(System.Windows.Forms.DataFormats.UnicodeText), Is.EqualTo("casa"));
 		}
 
@@ -2530,9 +2530,9 @@ namespace SIL.FieldWorks.XWorks
 			var readBack = clipboard.GetText();
 			Assert.That(readBack, Is.Not.Null);
 			Assert.That(readBack.RichXml, Is.Not.Null.And.Not.Empty,
-				"legacy readers must still see the TsString lane from an Avalonia-originated drag payload");
+				"legacy readers must still see the TsString format from an Avalonia-originated drag payload");
 			Assert.That(readBack.RichText, Is.Not.Null,
-				"the same payload must project the neutral rich lane for Avalonia consumers");
+				"the same payload must expose the neutral rich projection for Avalonia consumers");
 			Assert.That(readBack.PlainText, Is.EqualTo("casa"));
 		}
 	}

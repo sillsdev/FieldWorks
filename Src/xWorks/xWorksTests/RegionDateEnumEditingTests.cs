@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DateRoundTrip_ParseableCommits_GarbageRejected()
 		{
-			// Parseable: ConvertToSilTime/ConvertFromSilTime is the same lane the setter uses.
+			// Parseable: ConvertToSilTime/ConvertFromSilTime is the same path the setter uses.
 			Assert.That(DateTime.TryParse("March 5, 2010", CultureInfo.CurrentUICulture,
 				DateTimeStyles.None, out var parsed), Is.True);
 			var silTime = SilTime.ConvertToSilTime(parsed);

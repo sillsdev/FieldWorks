@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// One annotation on the notes bar, projected UI-free (chorus-notes-contract.md §5.6/§5.7):
 	/// class + open/closed state pick the glyph, the tooltip is precomputed by the store, and the
-	/// mutations (append a message, toggle resolved) write through the store's canonical save lane.
+	/// mutations (append a message, toggle resolved) write through the store's canonical save path.
 	/// </summary>
 	public interface IChorusNoteItem
 	{

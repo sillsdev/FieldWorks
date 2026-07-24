@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	/// 6.3 / B7 / B8 (xml-retirement-blockers) — reference chooser write-back: possibility-list
 	/// reference fields compose as EDITABLE rows instead of read-only joined text. Atomic refs
 	/// (possAtomicReference, e.g. Status) become Chooser rows whose options come from the field's
-	/// possibility list (legacy <c>obj.ReferenceTargetOwner(flid)</c>, the same lane
+	/// possibility list (legacy <c>obj.ReferenceTargetOwner(flid)</c>, the same path
 	/// PossibilityAtomicReferenceSlice uses); vector refs (possVectorReference /
 	/// SemDomVectorReference, e.g. Semantic Domains, Usages, Anthropology Categories) become
 	/// ReferenceVector rows carrying the current items plus the list's options, edited through
@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 			var status = composed.Model.Fields.Single(f => f.Field == "Status" && f.ObjectHvo == m_sense.Hvo);
 
 			Assert.That(status.Kind, Is.EqualTo(RegionFieldKind.Chooser),
-				"possAtomicReference takes the chooser lane, like the morph type");
+				"possAtomicReference takes the chooser path, like the morph type");
 			Assert.That(status.IsEditable, Is.True);
 			Assert.That(status.SelectedOptionKey, Is.EqualTo(m_statusConfirmed.Guid.ToString()));
 			// Review task 6: the empty choice leads (the legacy launcher lets the user clear the
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(morphType.Options.Any(o => o.Name == "bound root"), Is.True,
 				"same-side stem-like options stay available");
 			Assert.That(morphType.Options.Any(o => o.Name == "infix"), Is.False,
-				"crossing into affix-only types requires the legacy 'Show all types' lane, not the default chooser");
+				"crossing into affix-only types requires the legacy 'Show all types' path, not the default chooser");
 		}
 
 		[Test]
@@ -404,7 +404,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(morphType.ChooserLinks[0].TargetGuid, Is.Null, "a plain tool jump");
 		}
 
-		// The derived lane never overrides an authored link, and the derivation itself mirrors
+		// The derived link never overrides an authored link, and the derivation itself mirrors
 		// the legacy clerk table: shipped lists by (owner class, owning field); ownerless custom
 		// lists by the dynamically generated Name-without-spaces + "Edit" tool
 		// (AreaListener.GetCustomListToolName); anything unmapped resolves to NO tool → no gear.
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The authored-link-wins half: Publish In carries the layout's own chooserLink, so the
-		// derived lane must not add a second link (first goto wins at the gear).
+		// derivation must not add a second link (first goto wins at the gear).
 		[Test]
 		public void Compose_PublishIn_AuthoredLinkWins_NoDerivedDuplicate()
 		{

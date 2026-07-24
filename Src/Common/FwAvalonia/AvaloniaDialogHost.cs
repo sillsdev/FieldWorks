@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var minH = minHeight ?? height;
 
 			// MinimumSize is an OUTER (window) size in WinForms; converting the client minimum to an outer
-			// minimum needs a realized handle. Setting the client size first lets us derive the chrome delta.
+			// minimum needs a realized handle. Setting the client size first lets us derive the window-frame delta.
 			var initial = getRememberedSize?.Invoke() ?? new System.Drawing.Size(width, height);
 
 			// Clamp the (possibly stale/remembered) initial client size up to the client minimum.
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var initialH = Math.Max(initial.Height, minH);
 			form.ClientSize = new System.Drawing.Size(initialW, initialH);
 
-			// Derive the chrome delta from the realized form so MinimumSize (an outer size) corresponds to the
+			// Derive the window-frame delta from the realized form so MinimumSize (an outer size) corresponds to the
 			// requested CLIENT minimum. Falls back to the client minimum if the handle is not yet realized.
 			var chromeW = form.Width - form.ClientSize.Width;
 			var chromeH = form.Height - form.ClientSize.Height;

@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// and stays full-fidelity in the classic view.
 	/// Menus: a row whose layout binds a slice menu (`menu=`, e.g. the Lexeme Form's
 	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
-	/// label/value right-click lanes) — text rows draw NO gear. The gear is reserved for the
+	/// label/value right-click paths) — text rows draw NO gear. The gear is reserved for the
 	/// "configure the supporting list" jump on chooser/vector rows; it never opens a menu.
 	/// </summary>
 	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider, IDisposable
@@ -185,15 +185,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
 
-				// Phase 3: the character-style picker affordance for THIS lane, built only on an editable,
+				// Phase 3: the character-style picker affordance for THIS writing-system row, built only on an editable,
 				// non-lossy value that has available character styles to offer (else suppressed). Captured
 				// here so it can be added to the row panel after the editable wiring below populates it.
 				Control styleAffordance = null;
-				// Phase 4: the per-run writing-system picker affordance for THIS lane (same pattern as the
+				// Phase 4: the per-run writing-system picker affordance for THIS row (same pattern as the
 				// style affordance: editable + non-lossy + available writing systems to offer).
 				Control wsAffordance = null;
 				// §19c: the external-link insert/edit prompt and the generic ORC-delete affordance for THIS
-				// lane (editable + non-lossy). The link is fully editable here; any ORC kind is deletable.
+				// row (editable + non-lossy). The link is fully editable here; any ORC kind is deletable.
 				Control linkAffordance = null;
 				Control orcDeleteAffordance = null;
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// Phase 2 — character formatting over a selection. Ctrl+B/I/U toggle bold/italic/
 					// underline on the TextBox's current selection. We chose keyboard shortcuts over a
 					// floating toolbar: they match the legacy Views editor (FwEditingHelper's
-					// Ctrl+B/I/U), need no extra chrome in the dense detail rows, and act on the same
+					// Ctrl+B/I/U), need no extra decorations in the dense detail rows, and act on the same
 					// SelectionStart..SelectionEnd the bidi/clipboard handlers already use. The gesture
 					// only stages when the selection is non-empty (a collapsed caret is a no-op for
 					// Phase 2 — no pending-format-for-the-next-insert yet) and only on an editable,
@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						// snapshots the selection and, when that selection sits on an existing link run,
 						// pre-fills the URL for editing. Apply over a real selection inserts/edits the link
 						// through RegionRichTextEditAlgorithms and stages via TrySetRichText (the same seam the
-						// style/ws pickers use). Built on every editable, non-lossy lane (link needs no host list).
+						// style/ws pickers use). Built on every editable, non-lossy row (link needs no host list).
 						{
 							var urlBox = new TextBox
 							{
@@ -819,7 +819,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					Background = Brushes.Transparent
 				};
 				// A browse cell is single-writing-system per column, so the per-WS abbreviation gutter
-				// (legacy detail-pane chrome) is suppressed there — it would otherwise show "vern"/"anal"
+				// (a legacy detail-pane decoration) is suppressed there — it would otherwise show "vern"/"anal"
 				// in front of every editable cell, which the WinForms browse never does.
 				if (showWritingSystemAbbreviation)
 				{
@@ -926,7 +926,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return null;
 		}
 
-		/// <summary>Text rows have no hover-revealed chrome (the slice menu is right-click only).</summary>
+		/// <summary>Text rows have no hover-revealed affordances (the slice menu is right-click only).</summary>
 		public IReadOnlyList<Control> HoverAffordances => Array.Empty<Control>();
 
 		/// <summary>
@@ -1066,7 +1066,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// GEAR = CONFIGURE: the shared gear semantics of the chooser and reference-vector rows.
 	/// Clicking the gear DIRECTLY dispatches the list-editor jump — the host's
-	/// <see cref="RegionLinkRequest"/> callback rides the same lane the legacy chooser dialog's
+	/// <see cref="RegionLinkRequest"/> callback rides the same path the legacy chooser dialog's
 	/// "Edit the … list" LinkLabel rides (ReallySimpleListChooser.AddLink kGotoLink →
 	/// FollowLink). NO flyout, NO context menu opens from the gear; option flyouts carry zero
 	/// link items. The gear renders ONLY when a list-edit target resolved at compose time (the
@@ -1108,7 +1108,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// option stages it through the edit context, closes the flyout, and returns focus to the button
 	/// — the popup-focus-return behavior the seam specs require. Without an edit context the chooser
 	/// is a read-only display of the current selection.
-	/// Chrome: the button is transparent/borderless — the value text reads flat like the legacy
+	/// Styling: the button is transparent/borderless — the value text reads flat like the legacy
 	/// combo. When the row's supporting list resolved a list-editor target (a composed goto
 	/// <see cref="RegionChooserLink"/>), a hover-revealed CONFIGURE gear sits after the value and
 	/// directly dispatches the host jump (<see cref="RegionGearChrome"/>) — it never opens the
@@ -1219,7 +1219,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_teardown.Clear();
 		}
 
-		// Restyled chrome only — the control keeps the Button theme (template, flyout-on-click,
+		// Restyled appearance only — the control keeps the Button theme (template, flyout-on-click,
 		// focus, automation peer), not a lookup by this derived type's key.
 		protected override Type StyleKeyOverride => typeof(Button);
 
@@ -1250,7 +1250,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
 	/// enumerate — D3), both behind the same filter box and virtualized capped list.
 	/// Right-clicking an item offers Remove. Without an edit context the row is read-only display.
-	/// Chrome (hover-reveal polish): the separator bars, the "+" launcher, and — only when the
+	/// Hover-reveal polish: the separator bars, the "+" launcher, and — only when the
 	/// row's list resolved a list-editor target — the CONFIGURE gear (which directly dispatches
 	/// the host jump, never a flyout: <see cref="RegionGearChrome"/>) fade in on row hover; the
 	/// items/text stay always visible.
@@ -1282,7 +1282,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		{
 			Orientation = Orientation.Horizontal;
 			// 14.2-style hit-testing rule: a null background only hit-tests the glyphs — the WHOLE
-			// row must receive hover so the reveal chrome works over the gaps between items.
+			// row must receive hover so the reveal affordances work over the gaps between items.
 			Background = Brushes.Transparent;
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
@@ -1325,7 +1325,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			if (!editable)
 			{
-				// Read-only rows still get the hover-reveal chrome for their separator bars.
+				// Read-only rows still get the hover-reveal affordances for their separator bars.
 				HoverReveal.Attach(new Control[] { this }, _affordances);
 				return;
 			}

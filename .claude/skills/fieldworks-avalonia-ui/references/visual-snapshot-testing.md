@@ -1,12 +1,12 @@
 # Visual snapshot testing (PNG artifacts + layout tripwire)
 
 How to *see* what a headless Avalonia surface actually renders, and how to gate it. This is the
-subjective lane that complements the deterministic spacing/border standard
+subjective check that complements the deterministic spacing/border standard
 (`DialogTheme.axaml` tokens) and the `DialogLayoutAssert.AssertNoCrowding` tripwire documented in
 `SKILL.md` and `dialog-conversion.md`. Use it for **every** surface you build or change — dialogs,
 region (detail) views, and the browse table — not just dialogs.
 
-## Why both lanes
+## Why both checks
 
 - **`DialogLayoutAssert.AssertNoCrowding(view)`** — deterministic hard-fail. Catches zero-area text,
   sibling overlap, host-border frames missing, content butting padded edges, dialog-root padding.
@@ -106,8 +106,8 @@ Example: `Src/Common/FwAvalonia/FwAvaloniaTests/Visual/VisualSnapshotTests.cs`.
 
 `DialogLayoutAssert` was authored against dialog layouts; on grid-based region/browse surfaces a
 `GridSplitter` (region label/value column) and the browse column-splitter `Border` are drag handles that
-by design sit on a column boundary and overlap their neighbors — that is interaction chrome, not the
-content-overlap defect.
+by design sit on a column boundary and overlap their neighbors — that is splitter behavior by design,
+not the content-overlap defect.
 
 > **Folded in (durable fix done):** the splitter exclusion now lives *inside* the shared sibling-overlap
 > check — `DialogLayoutAssert.AssertSiblingsDoNotOverlap` skips any pair where either side is a `GridSplitter`
@@ -131,4 +131,3 @@ content-overlap defect.
   test projects get both the PNG harness and the geometry tripwire from a single copy of each.
 - Snapshots are ephemeral. Don't assert on pixels/bytes beyond "non-empty"; the PNG is for human/agent
   eyes, the geometry tripwire is the deterministic gate.
-```

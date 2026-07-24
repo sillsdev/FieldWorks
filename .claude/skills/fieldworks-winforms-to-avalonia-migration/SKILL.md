@@ -65,8 +65,8 @@ off — it is the per-region definition of done.
 6. **Wire the host.** Explicit per-host contract: supported Avalonia,
    explicit legacy fallback, or blocked. Apply `fieldworks-ui-wiring-review`.
 7. **Prove parity.** Build the evidence bundle defined in
-   `references/parity-evidence.md` (semantic + visual + workflow lanes).
-   Apply `fieldworks-semantic-render-parity` and
+   `references/parity-evidence.md` (semantic + visual + workflow evidence
+   types). Apply `fieldworks-semantic-render-parity` and
    `fieldworks-uia2-parity-testing`. **Front-and-center: write headless
    integration tests that walk the surface's real scenarios/workflows**
    (filter → clear, select → detail follows, edit → refresh, navigate) via the
@@ -181,12 +181,14 @@ tag): `git show <pin>:<file>` shows the canonical active arrays to restore.
   listed in parity-evidence.md §"Forbidden symbols" (enforced by
   `EngineIsolationAuditTests.cs`).
 - Evidence comes from the normal repo path: `./build.ps1` and `./test.ps1`.
-  Branch-only lanes or ad hoc commands are not integration evidence.
+  Branch-only build/test paths or ad hoc commands are not integration evidence.
 - One global undo/redo stack (LCModel action handler). Never a parallel
   Avalonia-only history for committed state.
 - Avalonia modal windows are not supported during coexistence; anything
   modal uses a WinForms dialog with the host form as owner (see
-  architecture-patterns.md §7).
+  architecture-patterns.md §7). When editing a dialog that exists in both
+  WinForms and Avalonia, apply `dialog-update` for the coexistence-sync
+  rules.
 - Performance budgets are measured against legacy baselines, not estimated
   (parity-evidence.md §"Performance budgets").
 

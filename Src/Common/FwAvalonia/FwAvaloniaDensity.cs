@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public static readonly Avalonia.Media.IBrush SliceRuleBrush = Avalonia.Media.Brushes.LightGray;
 
 		/// <summary>The thin grid line between browse rows and columns (the legacy XMLViews table draws
-		/// faint cell separators); a touch lighter than LightGray so the grid reads as structure, not chrome.</summary>
+		/// faint cell separators); a touch lighter than LightGray so the grid reads as structure, not decoration.</summary>
 		public static readonly Avalonia.Media.IBrush BrowseGridLineBrush =
 			new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.FromRgb(0xDC, 0xDC, 0xDC));
 

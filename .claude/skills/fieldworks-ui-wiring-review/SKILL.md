@@ -57,8 +57,8 @@ Avalonia, explicit legacy fallback, or blocked — never silent fallback:
   and driven while Avalonia is the active host.
 - A global setting changes unrelated screens without a manifest or
   explicit fallback story.
-- Build or test evidence relies mainly on branch-only optional lanes or ad
-  hoc commands.
+- Build or test evidence relies mainly on branch-only optional build/test
+  paths or ad hoc commands.
 
 ## Handoff
 

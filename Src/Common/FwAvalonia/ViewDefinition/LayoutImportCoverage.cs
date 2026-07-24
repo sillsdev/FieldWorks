@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// Runs the census and the import pass and returns the aggregated result. The optional
 		/// <paramref name="baseClassMap"/> (subclass → base class, see <see cref="BuildBaseClassMap"/>)
-		/// mirrors the metadata-driven class-hierarchy walk the production compile lane threads in from
+		/// mirrors the metadata-driven class-hierarchy walk the production compile path threads in from
 		/// the MDC (<c>FullEntryRegionComposer.CompileForClass</c>), so the measured unresolved-part
 		/// count reflects what production resolution actually drops.
 		/// </summary>
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// Builds the subclass → base class map from the LCModel master model XML
 		/// (<c>&lt;EntireModel&gt;&lt;CellarModule&gt;&lt;class id=... base=...&gt;</c>). This is the same
-		/// hierarchy the legacy detail lane walks via <c>IFwMetaDataCache.GetBaseClsId</c>
+		/// hierarchy the legacy detail view walks via <c>IFwMetaDataCache.GetBaseClsId</c>
 		/// (<c>DataTree.cs:2444-2461</c>), derived from metadata instead of a hand-maintained list.
 		/// </summary>
 		public static IReadOnlyDictionary<string, string> BuildBaseClassMap(XElement masterModel)

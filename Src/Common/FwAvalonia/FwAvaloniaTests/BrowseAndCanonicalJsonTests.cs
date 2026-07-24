@@ -89,7 +89,7 @@ namespace FwAvaloniaTests
 			var reloaded = ViewDefinitionJsonSerializer.Deserialize(json);
 
 			Assert.That(reloaded.ToSnapshot(), Is.EqualTo(compiled.ToSnapshot()),
-				"the canonical JSON lane must be lossless against the semantic snapshot");
+				"the canonical JSON round-trip must be lossless against the semantic snapshot");
 			Assert.That(json, Does.Contain("\"formatVersion\": 1"));
 		}
 
@@ -228,7 +228,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Task 9.3 (override-fixture lane): user-override-shaped layout XML — label/visibility overrides
+	/// Task 9.3 (override-fixture path): user-override-shaped layout XML — label/visibility overrides
 	/// and a hidden part — imports with the overrides surfaced in the typed IR.
 	/// </summary>
 	[TestFixture]
@@ -261,7 +261,7 @@ namespace FwAvaloniaTests
 			Assert.That(model.Roots[0].Label, Is.EqualTo("Sources"), "user label rename overrides the part label");
 			Assert.That(model.Roots[1].Visibility, Is.EqualTo(ViewVisibility.Never), "user hide is honored");
 
-			// And the override round-trips the canonical JSON lane too.
+			// And the override round-trips through canonical JSON too.
 			var reloaded = ViewDefinitionJsonSerializer.Deserialize(ViewDefinitionJsonSerializer.Serialize(model));
 			Assert.That(reloaded.ToSnapshot(), Is.EqualTo(model.ToSnapshot()));
 		}

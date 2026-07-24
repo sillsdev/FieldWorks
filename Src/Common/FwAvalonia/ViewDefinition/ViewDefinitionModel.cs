@@ -165,9 +165,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// vocabulary the shipped DETAIL layouts actually use is represented — <c>target</c>, <c>is</c>,
 	/// <c>excludesubclasses</c>, <c>field</c>, <c>boolequals</c>, <c>intequals</c>, <c>intlessthan</c>,
 	/// <c>intgreaterthan</c>, <c>intmemberof</c>, <c>lengthatleast</c>, <c>lengthatmost</c>,
-	/// <c>guidequals</c>. The publishing-lane-only forms (<c>stringequals</c>, <c>stringaltequals</c>,
+	/// <c>guidequals</c>. The publishing-only forms (<c>stringequals</c>, <c>stringaltequals</c>,
 	/// <c>hvoequals</c>, <c>flidequals</c>, <c>bidi</c>, <c>atleastoneis</c>, <c>func</c>, slash field
-	/// paths and <c>$</c>-substituted values) keep the importer's <c>conditional-dropped</c> lane.
+	/// paths and <c>$</c>-substituted values) keep the importer's <c>conditional-dropped</c> diagnostic.
 	/// </summary>
 	public sealed class ViewCondition
 	{
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>Legacy <c>type=</c> ("goto"/"dialog"/"simple"); defaults to "goto" like the legacy reader.</summary>
 		public string Type { get; }
 
-		/// <summary>Legacy <c>label=</c>, the link text (localized through the StringTable lane at compose time).</summary>
+		/// <summary>Legacy <c>label=</c>, the link text (localized through the StringTable lookup at compose time).</summary>
 		public string Label { get; }
 
 		/// <summary>Legacy <c>tool=</c>, the destination tool of the FwLinkArgs jump (e.g. publicationsEdit).</summary>
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// this, so the enum row could only render the raw stored integer read-only). The enum's stored
 	/// integer is the 0-based INDEX into <see cref="Ids"/> (legacy <c>EnumComboSlice</c> maps the combo's
 	/// <c>SelectedIndex</c> straight to the property). The labels themselves resolve through the legacy
-	/// StringTable lane at compose time (<c>StringTable.GetStringsFromStringListNode</c> over
+	/// StringTable lookup at compose time (<c>StringTable.GetStringsFromStringListNode</c> over
 	/// <see cref="Ids"/> within <see cref="Group"/>), so this carrier stays English-free.
 	/// </summary>
 	public sealed class ViewStringList
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// For a legacy dynamically loaded slice (<c>editor="Custom"</c>), the fully qualified slice
 		/// class (`class=`). Carried so hosts can promote designated WinForms-only custom slices
-		/// (e.g. the Chorus Messages notes bar) to a hybrid companion lane instead of rendering an
+		/// (e.g. the Chorus Messages notes bar) to a hybrid companion strip instead of rendering an
 		/// unsupported row. Null for every other node.
 		/// </summary>
 		public string CustomEditorClass { get; }
@@ -552,7 +552,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		/// <summary>
 		/// §20.1.4 (F-7): legacy <c>toggleValue="true"</c> on a boolean slice — the displayed checkbox shows
 		/// the LOGICAL INVERSE of the stored property (BasicTypeSlices.cs:181-203 inverts on both read and
-		/// write). The composer's Boolean lane inverts read display + write commit when this is set so e.g. a
+		/// write). The composer's Boolean case inverts read display + write commit when this is set so e.g. a
 		/// PartOfSpeech "Final" / inflection-class flag round-trips with the same sense the WinForms slice shows.
 		/// </summary>
 		public bool ToggleValue { get; }

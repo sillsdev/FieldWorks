@@ -32,10 +32,11 @@ description: "Guidance for FieldWorks Avalonia modules and the shared Preview Ho
 
 ### Solution + traversal integration (required)
 For every new Avalonia module or tool:
-- Add the project(s) to the traversal build so `./build.ps1` and `./test.ps1` naturally cover them:
-  - `FieldWorks.proj`
 - Add the project(s) to the solution so developers can open/build/debug in Visual Studio:
   - `FieldWorks.sln`
+- The traversal build picks up new projects automatically via `FieldWorks.proj`'s
+  `Src\**\*.csproj` glob once they are added to `FieldWorks.sln` — verify solution
+  membership rather than editing `FieldWorks.proj`.
 
 ### Logging (use FieldWorks diagnostics)
 - Module logging must route through the existing FieldWorks diagnostics pipeline (`System.Diagnostics`, `TraceSwitch`, `EnvVarTraceListener`).

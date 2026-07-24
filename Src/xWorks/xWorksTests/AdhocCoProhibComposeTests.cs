@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			var kinds = composed.Model.Fields.Select(f => f.Kind.ToString()).ToList();
 			TestContext.WriteLine("MoAdhocProhibGr composed field kinds: " + string.Join(", ", kinds));
 			// The group's own scalar fields compose editably (Name/Description Text + Active checkbox).
-			// // PARITY: the nested Members lane (recursive sub-prohibitions) is not yet composed.
+			// // PARITY: the nested Members rows (recursive sub-prohibitions) are not yet composed.
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Text), "Name/Description compose");
 			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Boolean), "Active composes");
 		}

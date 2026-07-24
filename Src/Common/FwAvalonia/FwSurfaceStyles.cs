@@ -89,14 +89,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				}
 			};
 
-			// The ONE deterministic, font-proportional CheckBox style (the same definition the dialog lane
+			// The ONE deterministic, font-proportional CheckBox style (the same definition the dialog path
 			// gets), so a browse/table/tree select checkbox is sized to FwAvaloniaDensity.CheckboxBoxSize and
 			// never inflates a row past BrowseRowMinHeight.
 			foreach (var checkBoxStyle in FwCheckBoxStyle.Build())
 				yield return checkBoxStyle;
 
 			// The ONE deterministic, font-proportional RadioButton style (its checkbox counterpart, the same
-			// definition the dialog lane gets), so a radio is sized to FwAvaloniaDensity.RadioBoxSize and never
+			// definition the dialog path gets), so a radio is sized to FwAvaloniaDensity.RadioBoxSize and never
 			// inflates a row past the text line.
 			foreach (var radioStyle in FwRadioButtonStyle.Build())
 				yield return radioStyle;

@@ -62,7 +62,7 @@ namespace FwAvaloniaDialogs
 			});
 
 			// The ONE deterministic, font-proportional CheckBox style (FwCheckBoxStyle — the single authority
-			// shared with the browse/region lane). Added here so BOTH dialog paths get it: the headless dialog
+			// shared with the browse/region surfaces). Added here so BOTH dialog paths get it: the headless dialog
 			// tests (which call only this bootstrap) AND the runtime host. It cannot live in DialogTheme.axaml
 			// because the compact box requires REPLACING the Fluent CheckBox template (whose hardcoded 20×20 box
 			// / 32px slot are local values a style selector cannot override), which the C# ControlTheme does.
@@ -70,7 +70,7 @@ namespace FwAvaloniaDialogs
 				dialogBody.Styles.Add(checkBoxStyle);
 
 			// The radio-button counterpart (FwRadioButtonStyle — the single authority shared with the
-			// browse/region lane), added here for the same reason and via the same path as the checkbox: it
+			// browse/region surfaces), added here for the same reason and via the same path as the checkbox: it
 			// REPLACES the Fluent RadioButton template (whose hardcoded ~20px ellipse on a tall slot are local
 			// values a style selector cannot override), so it cannot live in DialogTheme.axaml. Added in BOTH
 			// dialog paths — the headless tests and the runtime host.

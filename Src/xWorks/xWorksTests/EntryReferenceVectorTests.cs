@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 				"items display the headword");
 			Assert.That(field.Options, Is.Empty,
 				"lexicons SEARCH: the whole lexicon is never materialized as options");
-			Assert.That(field.SearchOptions, Is.Not.Null, "the add slot is the type-ahead search lane");
+			Assert.That(field.SearchOptions, Is.Not.Null, "the add slot is the type-ahead search path");
 		}
 
 		[Test]
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 			// sda.Replace removal needs no twin there. ShowComplexFormsIn is NOT cleared by
 			// LCModel — and the legacy slice's non-virtual remove path (VectorReferenceView →
 			// plain vector removal) adds no explicit coupling either, so retaining it is
-			// legacy-faithful (recorded in the D3 lane notes).
+			// legacy-faithful (recorded in the D3 deferred notes).
 			Assert.That(m_ref.PrimaryLexemesRS, Is.Empty,
 				"LCModel's remove side effects clear the departing component from PrimaryLexemes");
 			Assert.That(m_ref.ShowComplexFormsInRS.Select(s => s.Guid), Is.EqualTo(new[] { m_casa.Guid }),

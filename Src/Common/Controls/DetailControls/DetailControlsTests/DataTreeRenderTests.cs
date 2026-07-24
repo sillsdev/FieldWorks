@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
 	/// Snapshot tests using Verify for pixel-perfect validation of the full DataTree edit view,
-	/// including WinForms chrome (grey labels, icons, section headers, separators) and
+	/// including the WinForms decorations (grey labels, icons, section headers, separators) and
 	/// Views engine text content (rendered via VwDrawRootBuffered overlay).
 	/// </summary>
 	/// <remarks>
@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary>
 		/// Verifies a production-like DataTree rendering for a simple lex entry with 3 senses.
-		/// Captures grey labels, WS indicators, sense summaries, all WinForms chrome.
+		/// Captures grey labels, WS indicators, sense summaries, all WinForms decorations.
 		/// Uses DistFiles layouts plus test-time exclusions for unsupported/crashy parts.
 		/// </summary>
 		[Test]

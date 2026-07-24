@@ -5,7 +5,9 @@ contracts live in `Src/Common/FwAvalonia/Seams/ISeams.cs` with
 implementations in `SeamImplementations.cs` and tests in
 `Src/Common/FwAvalonia/FwAvaloniaTests/SeamTests.cs`. Per-seam design docs
 (current state, alternatives considered, required tests) live in
-`openspec/changes/lexical-edit-avalonia-migration/avalonia-*.md`.
+`openspec/changes/lexical-edit-avalonia-migration/` —
+`seam-recommendations.md`, `seam-domain-comparison.md`, and
+`region-manifest.md`.
 
 **Precedence note:** `openspec/changes/lexical-edit-avalonia-migration/seam-recommendations.md`
 and `region-manifest.md` are early pre-implementation drafts (2026-06-09). This file and

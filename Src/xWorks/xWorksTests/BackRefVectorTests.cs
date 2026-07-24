@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(field.Items.Single().Name, Is.EqualTo(m_complex.HeadWord.Text),
 				"items display the owning entry's headword");
 			Assert.That(field.Options, Is.Empty, "lexicons SEARCH: no full option list materialized");
-			Assert.That(field.SearchOptions, Is.Not.Null, "the add slot is the type-ahead search lane");
+			Assert.That(field.SearchOptions, Is.Not.Null, "the add slot is the type-ahead search path");
 			Assert.That(field.SearchOptions("cas").Select(r => r.Key), Does.Contain(m_complex2.Guid.ToString()),
 				"the search offers the entry's other complex forms not yet subentries");
 		}

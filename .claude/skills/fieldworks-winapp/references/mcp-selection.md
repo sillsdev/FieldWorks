@@ -9,11 +9,11 @@ and visible-desktop diagnostic path.
 Use WinForms MCP when:
 
 - launching FieldWorks yourself for verification or screenshot evidence;
-- the task can run in the background on a hidden desktop;
 - the target is a WinForms menu, dialog, button, tab, text box, combo box, or
   standard control;
 - you need `render_form` to preview a `.Designer.cs` surface;
-- foreground-window stealing would disrupt the developer.
+- foreground-window stealing would disrupt the developer (`PrintWindow` capture
+  and UIA pattern operations do not require foregrounding).
 
 Preferred tools:
 
@@ -25,9 +25,10 @@ Preferred tools:
   `winforms_type_text`, `winforms_set_value`, `winforms_select_item`;
 - evidence: `winforms_take_screenshot`, `winforms_render_form`.
 
-Headless-safe rule: prefer UIA pattern operations. Avoid `winforms_send_keys`,
-drag/drop, and double-click against headless processes because those rely on
-input simulation on the visible desktop.
+Prefer UIA pattern operations over `winforms_send_keys`, drag/drop, and
+double-click — they are more reliable and do not depend on focus. (The blanket
+bans on input simulation applied to the abandoned hidden-desktop mode; see
+`headless-rendering.md`.)
 
 ## Fallback: WinApp MCP UIA3
 
@@ -47,8 +48,9 @@ Useful tools include `mcp_winapp_launch_app`, `mcp_winapp_attach_to_app`,
 
 ## Dynamic Choice Procedure
 
-1. Decide whether the task requires visible desktop behavior.
-2. If not, choose WinForms MCP and launch FieldWorks headless.
+1. Decide whether the task requires foreground/focus/window-order behavior.
+2. If not, choose WinForms MCP and launch FieldWorks (it runs on the visible
+   console desktop; `HEADLESS=false` is the shipped config).
 3. Keep the returned process ID for screenshots and cleanup.
 4. Inspect the tree before interacting.
 5. If an element cannot be found or invoked through WinForms MCP, switch to
@@ -61,7 +63,8 @@ Useful tools include `mcp_winapp_launch_app`, `mcp_winapp_attach_to_app`,
 When updating a navigation path, record:
 
 - which driver was verified;
-- whether the process was launched headless or attached visibly;
+- whether the process was launched through the MCP or attached to a manual
+  launch;
 - stable automation IDs/names;
 - the successful tool sequence;
 - any driver-specific failure and the fallback that worked.

@@ -20,7 +20,7 @@ the same PR as the migration.
 | A new plugin for a custom slice class | `architecture-patterns.md` §5 canonical-code list; keep the burn-down test list current |
 | A new gotcha / failure mode (interop, DPI, fonts, focus, threading, lifetime…) | The Gotchas paragraph of the matching `architecture-patterns.md` section; if it is a review smell, also add a red flag to the most relevant satellite skill |
 | A new forbidden legacy symbol | `EngineIsolationAuditTests.cs` (the enforcement) and `parity-evidence.md` §4 (the documentation) — both in the same PR |
-| A new evidence lane, artifact type, or evidence-language term | `parity-evidence.md` |
+| A new evidence type, artifact type, or evidence-language term | `parity-evidence.md` |
 | A new mandatory step in the per-region process | `migration-checklist.md` (and the workflow list in SKILL.md if it is a new phase) |
 | A trigger phrase that failed to invoke a skill when it should have | The `description` frontmatter of that skill — add the missing vocabulary; keep descriptions quoted (YAML colons) and third-person |
 | A stale file pointer (file moved/renamed, openspec change archived) | Fix the pointer in whichever skill file holds it; prefer pointing at code and tests over change docs |
@@ -77,7 +77,7 @@ skill files changed.
   seeded data; "before" from this harness/script, "after" from the surface's
   fieldworks-semantic-render-parity visual test; both attach to the JIRA ticket (Docs/migration/_TEMPLATE.md).
 - Skill files changed: `fieldworks-winapp/SKILL.md` (recipes + UIA limits + before/after + JIRA),
-  `fieldworks-semantic-render-parity/SKILL.md` (after-lane role), this ledger.
+  `fieldworks-semantic-render-parity/SKILL.md` (the Avalonia "after" evidence role), this ledger.
 
 ### 2026-06 — Phase-1 PR landing strategy (canonical-per-primitive, document-then-back-out)
 

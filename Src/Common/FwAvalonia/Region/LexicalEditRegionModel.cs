@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>A footnote (<c>kodtOwnNameGuidHot</c> tag 5 / <c>kodtNameGuidHot</c> tag 3): render + deletable; full edit DEFERRED (scripture).</summary>
 		Footnote,
 
-		/// <summary>Any other embedded-object kind: render + deletable (no insert/edit lane here).</summary>
+		/// <summary>Any other embedded-object kind: render + deletable (no insert/edit path here).</summary>
 		Other
 	}
 
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// Editor-local IME composition state for one text lane. Composition updates stay detached from
+	/// Editor-local IME composition state for one text editor. Composition updates stay detached from
 	/// committed text until <see cref="Commit"/>; <see cref="Cancel"/> discards pending text and
 	/// <see cref="Backspace"/> edits only the active composition payload.
 	/// <para>STATUS / DECISION (2026-06-15): this stays **forward foundation and is consciously NOT wired**
@@ -1779,7 +1779,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<RegionChooserLink> ChooserLinks { get; }
 	}
 
-	/// <summary>Which legacy menu lane a right-click maps to (section 13).</summary>
+	/// <summary>Which legacy menu a right-click maps to (section 13).</summary>
 	public enum RegionMenuKind
 	{
 		/// <summary>The slice menu (layout `menu=`), legacy right-click on the tree node/label.</summary>

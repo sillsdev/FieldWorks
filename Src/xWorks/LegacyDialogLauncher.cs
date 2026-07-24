@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 	/// Dispatches on the node's legacy class identity:
 	/// <list type="bullet">
 	/// <item>MSA inflection features → <c>SIL.FieldWorks.LexText.Controls.MsaInflectionFeatureListDlg</c>
-	/// (reflection through <see cref="DynamicLoader"/>, exactly the layouts' own load lane — xWorks
+	/// (reflection through <see cref="DynamicLoader"/>, exactly the layouts' own load path — xWorks
 	/// cannot reference LexTextControls), the same SetDlgInfo recipe
 	/// MsaInflectionFeatureListDlgLauncher.HandleChooser uses; the dialog commits through its own
 	/// UOW in OnClosing, so returning true is "the dialog said OK".</item>
@@ -191,14 +191,14 @@ namespace SIL.FieldWorks.XWorks
 						return true;
 					case DialogResult.Yes:
 						// "Configure features" jump. The MSA dialog exposes the POS to jump to
-						// (the LT-7167 FollowLink fallback — the only lane available without a
+						// (the LT-7167 FollowLink fallback — the only path available without a
 						// sibling VectorReferenceLauncher slice); the Phon dialog owns its jump.
 						if (isMsaDialog)
 						{
 							if (_mediator != null
 								&& type.GetProperty("HighestPOS")?.GetValue(dialog) is ICmObject pos)
 							{
-#pragma warning disable 618 // legacy lane: PostMessage is how the launcher posts FollowLink
+#pragma warning disable 618 // legacy path: PostMessage is how the launcher posts FollowLink
 								_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", pos.Guid));
 #pragma warning restore 618
 							}

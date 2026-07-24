@@ -107,15 +107,15 @@ namespace SIL.FieldWorks.XWorks
 		// Task B — adapter targeting through (and past) lazy slices
 		// ----------------------------------------------------------------------------------------
 
-		// Skipped (desktop lane): realizing lazy DummyObjectSlices and pointing CurrentSlice at a deep
+		// Skipped (desktop environment only): realizing lazy DummyObjectSlices and pointing CurrentSlice at a deep
 		// target runs through DataTree.FieldAt/MakeSliceRealAt, which depend on a laid-out, VISIBLE
 		// tree (ClientRectangle width, AutoScrollPosition, MakeSliceVisible). The command-routing
 		// adapter tree is hidden + detached while the Avalonia surface is active, so headlessly the
-		// lazy slices do not realize and CurrentSlice cannot be resolved. Runnable on the desktop lane
+		// lazy slices do not realize and CurrentSlice cannot be resolved. Runnable in the desktop environment
 		// where the legacy tree is shown. (The DataTreeMove reachability tests cover the targeting/
 		// reachability logic that CAN be exercised without a live tree.)
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize lazy slices and resolve CurrentSlice; see note above. Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize lazy slices and resolve CurrentSlice; see note above. Runs in the desktop environment.")]
 		public void EnsureMenuCommandAdapter_TargetInLazySliceRange_RealizesAndTargetsTheRightObject()
 		{
 			// The entry has well over DataTree.kInstantSliceMax (20) senses, so the Senses sequence builds
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize slices and resolve/clear CurrentSlice; the hidden detached adapter tree never lays out headlessly. Runs on the desktop lane.")]
+		[Explicit("Requires the live (laid-out, visible) legacy DataTree to realize slices and resolve/clear CurrentSlice; the hidden detached adapter tree never lays out headlessly. Runs in the desktop environment.")]
 		public void EnsureMenuCommandAdapter_NoSliceMatchesHvo_ClearsCurrentSliceRatherThanMisTarget()
 		{
 			// First point the adapter at a real sense, so CurrentSlice is non-null...

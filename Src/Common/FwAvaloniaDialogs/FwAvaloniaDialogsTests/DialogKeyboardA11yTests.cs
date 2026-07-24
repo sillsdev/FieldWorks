@@ -25,7 +25,7 @@ namespace FwAvaloniaDialogsTests
 	/// fields-before-buttons; the Avalonia kit must match. These run on a realized headless surface and
 	/// assert the deterministic selection contract of <see cref="AvaloniaDialogHost.FocusInitialControl"/>
 	/// plus the per-view TabIndex that pushes the button strip last — independent of the WinForms-hosted
-	/// modal delivery path (that bridge is covered by the desktop UIA lane, A11Y-04).
+	/// modal delivery path (that bridge is covered by the desktop UIA environment, A11Y-04).
 	/// </summary>
 	[TestFixture]
 	public class DialogKeyboardA11yTests
@@ -152,7 +152,7 @@ namespace FwAvaloniaDialogsTests
 		// The kept dialogs render OK/Cancel/Help via an explicit <AccessText> bound to a dialog-local
 		// mnemonic string (e.g. "_OK"), so the '_' is parsed into an Alt access key regardless of theme.
 		// This proves the mnemonic is REGISTERED; activation in the real WinForms-hosted dialog also depends
-		// on Alt routing through the embedded host (covered by the desktop UIA lane, A11Y-04).
+		// on Alt routing through the embedded host (covered by the desktop UIA environment, A11Y-04).
 
 		[AvaloniaTest]
 		public void Mnemonics_OkAndCancel_ParseAltAccessKeys()

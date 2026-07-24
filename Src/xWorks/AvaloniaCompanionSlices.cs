@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// (an unsupported row, or a best-effort read-only rendering — e.g. the Messages slice's
 	/// field="Self" renders as read-only text).
 	/// <see cref="FieldStableId"/> is exactly the StableId of that row in the composed
-	/// <see cref="LexicalEditRegionModel"/>, so promotion to the companion lane can remove the row.
+	/// <see cref="LexicalEditRegionModel"/>, so promotion to the companion strip can remove the row.
 	/// </summary>
 	public sealed class ComposedCustomEditorField
 	{
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// The hybrid "companion strip" lane for designated WinForms-only custom slices: the Avalonia
+	/// The hybrid "companion strip" mechanism for designated WinForms-only custom slices: the Avalonia
 	/// surface is itself hosted in WinForms (LexicalEditHostControl inside RecordEditView), so a
 	/// legacy slice whose editor cannot be rendered inside Avalonia (today: the Chorus Send/Receive
 	/// Messages notes bar, which hosts Chorus.UI.Notes.Bar.NotesBarView) is instantiated for real and
@@ -64,14 +64,14 @@ namespace SIL.FieldWorks.XWorks
 		public const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
 
 		// The designated companion classes. EMPTY since wave 2 (winforms-free-lexeme-editor.md D2):
-		// the Messages slice — the lane's only designated class — graduated to the native
-		// ChorusNotesPlugin. The mechanism stays: it is the documented coexistence lane for future
+		// the Messages slice — the strip's only designated class — graduated to the native
+		// ChorusNotesPlugin. The mechanism stays: it is the documented coexistence route for future
 		// tools' WinForms-only custom slices (blocker register B11); with an empty set the
 		// RecordEditView companion strip simply never shows.
 		private static readonly HashSet<string> PromotedClassNames = new HashSet<string>(StringComparer.Ordinal);
 
 		/// <summary>
-		/// Read-only view of the designated companion classes for the burn-down governance lane
+		/// Read-only view of the designated companion classes for the burn-down governance route
 		/// (winforms-free-lexeme-editor.md D5): this set may only SHRINK — a class graduates
 		/// unsupported → companion → plugin, never the other way. Pinned by
 		/// LexemeEditorBurnDownTests; wave 2 (ChorusNotesPlugin, D2) emptied it.
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Testable seam: the designated set is empty since wave 2, so the mechanism's selection
-		// tests inject a fake designated class (MessagesCompanionLaneTests).
+		// tests inject a fake designated class (MessagesCompanionStripTests).
 		internal static IReadOnlyList<ComposedCustomEditorField> SelectPromotions(
 			IReadOnlyList<ComposedCustomEditorField> customEditorFields, ISet<string> designatedClassNames)
 		{
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// Graceful degradation: without a working Chorus system the Messages lane simply
+				// Graceful degradation: without a working Chorus system the Messages slice simply
 				// does not appear (legacy shows an empty bar at best); never take the view down.
 				Logger.WriteEvent($"Companion slice '{binding.ClassName}' unavailable; showing nothing for '{binding.Label}': {e}");
 				slice?.Dispose();

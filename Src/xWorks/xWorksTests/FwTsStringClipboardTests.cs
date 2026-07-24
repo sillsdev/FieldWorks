@@ -49,8 +49,8 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(payload, Is.Not.Null);
 			Assert.That(payload.PlainText, Is.EqualTo("casa house"));
-			Assert.That(payload.RichXml, Is.Not.Null.And.Not.Empty, "the rich lane must survive the clipboard");
-			Assert.That(payload.RichText, Is.Not.Null, "the neutral rich lane must be projected for Avalonia consumers");
+			Assert.That(payload.RichXml, Is.Not.Null.And.Not.Empty, "the rich format must survive the clipboard");
+			Assert.That(payload.RichText, Is.Not.Null, "the neutral rich projection must be present for Avalonia consumers");
 			Assert.That(payload.RichText.Runs.Count, Is.EqualTo(2));
 			Assert.That(payload.RichText.Runs[0].WritingSystemTag,
 				Is.EqualTo(Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id));
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(wrapper, Is.Not.Null, "legacy surfaces must find the TsString format the bridge wrote");
 			Assert.That(wrapper.GetTsString(Cache.WritingSystemFactory).Text, Is.EqualTo("casa house"));
 			Assert.That(dataObject.GetData(DataFormats.UnicodeText), Is.EqualTo("casa house"),
-				"the plain-text lane is present for external consumers");
+				"the plain-text format is present for external consumers");
 		}
 
 		[Test]
@@ -88,8 +88,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var payload = CreateClipboard().GetText();
 			Assert.That(payload, Is.Not.Null);
-			Assert.That(payload.RichXml, Is.Not.Null, "a legacy Views copy must surface the rich lane");
-			Assert.That(payload.RichText, Is.Not.Null, "legacy rich data is projected into the neutral Avalonia lane");
+			Assert.That(payload.RichXml, Is.Not.Null, "a legacy Views copy must surface the rich format");
+			Assert.That(payload.RichText, Is.Not.Null, "legacy rich data is projected into the neutral Avalonia format");
 			Assert.That(payload.RichText.Runs.Count, Is.EqualTo(2));
 			Assert.That(CreateClipboard().ToTsString(payload).Text, Is.EqualTo("casa house"));
 		}
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 			var payload = CreateClipboard().GetText();
 			Assert.That(payload, Is.Not.Null);
 			Assert.That(payload.PlainText, Is.EqualTo("plain only"));
-			Assert.That(payload.RichXml, Is.Null, "no rich lane is invented for external text");
+			Assert.That(payload.RichXml, Is.Null, "no rich format is invented for external text");
 		}
 
 		[Test]

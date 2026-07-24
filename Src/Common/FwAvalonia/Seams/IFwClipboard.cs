@@ -5,10 +5,10 @@
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// The cross-framework clipboard payload (task 3.13). Two lanes, written/read together:
+	/// The cross-framework clipboard payload (task 3.13). Two formats, written/read together:
 	/// - <see cref="PlainText"/>: the plain-text fallback every external consumer gets
 	///   (legacy writes it NFC-normalized to the OS <c>UnicodeText</c> format).
-	/// - <see cref="RichXml"/>: the FieldWorks rich lane — the TsString XML representation
+	/// - <see cref="RichXml"/>: the FieldWorks rich format — the TsString XML representation
 	///   (<c>TsStringUtils.GetXmlRep</c>), which is exactly what legacy native-Views copy/paste already
 	///   puts on the OS clipboard inside the <c>"TsString"</c> data format. Preserves writing-system
 	///   runs, styles, and string properties.
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// rich text bidirectionally during coexistence. What does NOT round-trip:
 	/// - embedded-object runs (ORCs: pictures, footnotes, object links) reference objects in the source
 	///   context; the text and properties survive but the object reference is not resolvable outside it;
-	/// - external (non-FieldWorks) consumers only see the plain-text lane — WS/style metadata drops;
+	/// - external (non-FieldWorks) consumers only see the plain-text format — WS/style metadata drops;
 	/// - paragraph-level structure beyond a single TsString is out of scope for this seam.
 	/// </summary>
 	public sealed class FwClipboardText
@@ -31,14 +31,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			RichText = richText;
 		}
 
-		/// <summary>The plain-text lane (always present; possibly empty).</summary>
+		/// <summary>The plain-text format (always present; possibly empty).</summary>
 		public string PlainText { get; }
 
-		/// <summary>The FieldWorks rich lane (TsString XML), or null when only plain text is available.</summary>
+		/// <summary>The FieldWorks rich format (TsString XML), or null when only plain text is available.</summary>
 		public string RichXml { get; }
 
 		/// <summary>
-		/// LCModel-free projection of the rich lane for Avalonia controls. Null when the clipboard only
+		/// LCModel-free projection of the rich format for Avalonia controls. Null when the clipboard only
 		/// carries plain text or when the producer did not provide a neutral run model.
 		/// </summary>
 		public Region.RegionRichTextValue RichText { get; }
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		/// <summary>Reads the current clipboard text, or null when the clipboard has no text.</summary>
 		FwClipboardText GetText();
 
-		/// <summary>Writes both lanes of the payload.</summary>
+		/// <summary>Writes both formats of the payload.</summary>
 		void SetText(FwClipboardText payload);
 	}
 
