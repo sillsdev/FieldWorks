@@ -5,15 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows.Forms;
 using FwAvaloniaDialogs;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using XCore;
 using AvControl = Avalonia.Controls.Control;
@@ -100,8 +95,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override string DialogTitle => FwAvaloniaDialogsStrings.MergeTitle;
 		protected override bool Resizable => true;
-		protected override int DialogWidth => 400;
-		protected override int DialogHeight => 360;
+		// Sized for the persistent multi-column matching list, above the view's minimums and the legacy
+		// BaseGoDlg design size (BaseGoDlg.resx: ClientSize 451x338, MinimumSize 459x365).
+		protected override int DialogWidth => 560;
+		protected override int DialogHeight => 440;
 
 		protected override EntryGoDialogInput BuildState() =>
 			BuildInput(_cache, _mediator, _propertyTable, _currentEntry);
@@ -127,89 +124,23 @@ namespace SIL.FieldWorks.LexText.Controls
 				HelpTopic = "khtpMergeEntry",
 				Search = search,
 				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				// The matching list's default columns (headword + glosses in their ws typography).
+				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
 		}
 
 		/// <summary>
-		/// Builds the search delegate the dialog drives: it reuses the shared <see cref="EntryGoSearchEngine"/> (the
-		/// SAME matching the legacy EntryGoDlg uses, cached on the property table like the legacy dialog) wrapped to
-		/// EXCLUDE the current entry's hvo, runs the legacy <see cref="EntryGoDlg.GetFields"/> field set for the
-		/// current vernacular default WS, and maps each matched hvo to a lightweight <see cref="EntryGoSearchResult"/>
-		/// (headword + a gloss preview). Internal so it is unit-testable against a real cache.
+		/// Builds the search delegate the dialog drives: the shared
+		/// <see cref="EntryGoLauncherShared.BuildEntrySearch"/> (the SAME matching the legacy EntryGoDlg uses, with
+		/// the per-column row values) wrapped to EXCLUDE the current entry's hvo — the merge invariant (you cannot
+		/// merge an entry with itself). Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable, ILexEntry currentEntry)
 		{
-			var engine = GetMergeSearchEngine(cache, mediator, propertyTable, currentEntry.Hvo);
-			var ws = cache.DefaultVernWs;
-			var repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-
-			return query =>
-			{
-				var fields = GetSearchFields(query ?? string.Empty, ws);
-				var hvos = engine.Search(fields);
-				var results = new List<EntryGoSearchResult>();
-				foreach (var hvo in hvos)
-				{
-					if (hvo == currentEntry.Hvo)
-						continue; // belt-and-braces on top of the engine's FilterResults
-					if (!repo.TryGetObject(hvo, out var entry))
-						continue;
-					results.Add(new EntryGoSearchResult(
-						hvo.ToString(CultureInfo.InvariantCulture),
-						HeadwordText(entry),
-						DescriptionText(entry)));
-				}
-				// Sort by headword for a stable, readable list (the legacy browser sorts its columns too).
-				return results.OrderBy(r => r.Text, StringComparer.CurrentCulture).ToList();
-			};
-		}
-
-		/// <summary>
-		/// Gets (creating + caching on the property table, like the legacy dialog) a search engine that uses the
-		/// legacy EntryGoDlg matching but excludes <paramref name="currentEntryHvo"/> — the merge invariant. When no
-		/// property table is supplied (tests) a fresh engine is built.
-		/// </summary>
-		private static MergeEntrySearchEngine GetMergeSearchEngine(LcmCache cache, Mediator mediator,
-			PropertyTable propertyTable, int currentEntryHvo)
-		{
-			MergeEntrySearchEngine engine;
-			if (propertyTable != null)
-			{
-				engine = (MergeEntrySearchEngine)SearchEngine.Get(mediator, propertyTable,
-					"AvaloniaMergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
-			}
-			else
-			{
-				engine = new MergeEntrySearchEngine(cache);
-			}
-			engine.CurrentEntryHvo = currentEntryHvo;
-			return engine;
-		}
-
-		/// <summary>
-		/// The legacy <see cref="EntryGoDlg.GetFields"/> field set, simplified to the vernacular forms (citation /
-		/// lexeme / alternate) for the merge search — the same fields the merge dialog primes with for the default
-		/// vernacular WS. Internal + static so the field building is unit-testable.
-		/// </summary>
-		internal static IEnumerable<SearchField> GetSearchFields(string str, int ws)
-		{
-			var tssKey = TsStringUtils.MakeString(str, ws);
-			yield return new SearchField(LexEntryTags.kflidCitationForm, tssKey);
-			yield return new SearchField(LexEntryTags.kflidLexemeForm, tssKey);
-			yield return new SearchField(LexEntryTags.kflidAlternateForms, tssKey);
-		}
-
-		private static string HeadwordText(ILexEntry entry)
-			=> entry.HeadWord?.Text ?? entry.HomographForm ?? entry.Hvo.ToString(CultureInfo.InvariantCulture);
-
-		// A short gloss preview for the description pane: the best-analysis gloss of the first sense, if any.
-		private static string DescriptionText(ILexEntry entry)
-		{
-			var firstSense = entry.SensesOS.FirstOrDefault();
-			var gloss = firstSense?.Gloss?.BestAnalysisAlternative?.Text;
-			return string.IsNullOrEmpty(gloss) ? HeadwordText(entry) : $"{HeadwordText(entry)} : {gloss}";
+			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
+				currentEntry.Hvo, "AvaloniaMergeEntrySearchEngine", filter: null);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)
@@ -232,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override MergePayload Apply(EntryGoDialogInput state)
 		{
-			var survivor = ResolveEntry(_viewModel?.ChosenId);
+			var survivor = EntryGoLauncherShared.ResolveEntry(_cache, _viewModel?.ChosenId);
 			Survivor = ConfirmAndMerge(_cache, survivor, _currentEntry, _loseNoTextData, DefaultConfirm);
 			return new MergePayload { Survivor = Survivor };
 		}
@@ -246,7 +177,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool DefaultConfirm(ILexEntry current, ILexEntry survivor)
 		{
 			var message = string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm,
-				HeadwordText(current), HeadwordText(survivor));
+				EntryGoLauncherShared.HeadwordText(current), EntryGoLauncherShared.HeadwordText(survivor));
 			var result = FwMessageBox.Show(_owner, message, FwAvaloniaDialogsStrings.MergeTitle,
 				FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning);
 			return result == FwMessageBoxResult.Yes;
@@ -277,17 +208,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return survivor;
 		}
 
-		private ILexEntry ResolveEntry(string id)
-		{
-			if (string.IsNullOrEmpty(id) || _cache == null)
-				return null;
-			if (!int.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hvo))
-				return null;
-			return _cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(hvo, out var entry)
-				? entry
-				: null;
-		}
-
 		/// <summary>
 		/// Performs the merge in ONE undoable step, identical to the legacy listener: the survivor absorbs the
 		/// current entry and its DateModified is bumped. Internal + static so the merge is unit-testable against a
@@ -310,25 +230,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (_helpProvider == null || string.IsNullOrEmpty(topic))
 				return;
 			ShowHelp.ShowHelpTopic(_helpProvider, topic);
-		}
-
-		/// <summary>
-		/// The merge-flavored search engine: the legacy EntryGoDlg matching with the current entry filtered out of
-		/// the results (you cannot merge an entry with itself). A direct lift of
-		/// <c>MergeEntryDlg.MergeEntrySearchEngine</c> so the Avalonia path uses the identical search semantics.
-		/// </summary>
-		private sealed class MergeEntrySearchEngine : EntryGoSearchEngine
-		{
-			public int CurrentEntryHvo { private get; set; }
-
-			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
-			{
-			}
-
-			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)
-			{
-				return results == null ? null : results.Where(hvo => hvo != CurrentEntryHvo);
-			}
 		}
 	}
 }

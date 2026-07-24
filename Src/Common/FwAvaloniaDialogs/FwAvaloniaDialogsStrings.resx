@@ -172,6 +172,15 @@
   <data name="FwAvaloniaDialogs.EntryGoMustSelectOption" xml:space="preserve">
     <value>Select an option.</value>
   </data>
+  <data name="FwAvaloniaDialogs.EntryGoHeadwordColumn" xml:space="preserve">
+    <value>Headword</value>
+  </data>
+  <data name="FwAvaloniaDialogs.EntryGoLexemeFormColumn" xml:space="preserve">
+    <value>Lexeme Form</value>
+  </data>
+  <data name="FwAvaloniaDialogs.EntryGoGlossesColumn" xml:space="preserve">
+    <value>Glosses</value>
+  </data>
   <data name="FwAvaloniaDialogs.Merge.Title" xml:space="preserve">
     <value>Merge Entry</value>
   </data>

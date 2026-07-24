@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -32,7 +33,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// SAME matching the legacy EntryGoDlg uses, cached on the property table when one is supplied) wrapped to
 		/// EXCLUDE <paramref name="excludedEntryHvo"/> (the legacy starting entry that cannot be a match) and an
 		/// optional caller <paramref name="filter"/> (e.g. LinkAllomorph's "drop entries whose forms are all
-		/// abstract"). Each surviving hvo is mapped to a lightweight row (headword + a gloss preview).
+		/// abstract"). Each surviving hvo is mapped to a row carrying the matching list's per-column values —
+		/// headword, lexeme form, and gloss(es), sourced the way the legacy matchingEntries browser columns are.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildEntrySearch(LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable, int excludedEntryHvo, string engineCacheKey,
@@ -55,10 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						continue;
 					if (filter != null && !filter(entry))
 						continue;
-					results.Add(new EntryGoSearchResult(
-						hvo.ToString(CultureInfo.InvariantCulture),
-						HeadwordText(entry),
-						DescriptionText(entry)));
+					results.Add(BuildEntryRow(entry));
 				}
 				return results.OrderBy(r => r.Text, StringComparer.CurrentCulture).ToList();
 			};
@@ -104,14 +103,13 @@ namespace SIL.FieldWorks.LexText.Controls
 						continue;
 					if (!senseMode)
 					{
-						results.Add(new EntryGoSearchResult(
-							hvo.ToString(CultureInfo.InvariantCulture),
-							HeadwordText(entry),
-							DescriptionText(entry)));
+						results.Add(BuildEntryRow(entry));
 						continue;
 					}
-					// Sense mode: one row per sense (the legacy m_fwcbSenses populated from entry.AllSenses).
+					// Sense mode: one row per sense (the legacy m_fwcbSenses populated from entry.AllSenses). The
+					// row's gloss column shows the SENSE's gloss (via the SubText fallback), not the entry's list.
 					var head = HeadwordText(entry);
+					var lexemeForm = LexemeFormText(entry);
 					foreach (var sense in entry.AllSenses)
 					{
 						results.Add(new EntryGoSearchResult(
@@ -119,7 +117,10 @@ namespace SIL.FieldWorks.LexText.Controls
 							head,
 							isSense: true,
 							subText: SenseGloss(sense),
-							description: $"{head} : {SenseGloss(sense)}"));
+							description: $"{head} : {SenseGloss(sense)}")
+						{
+							LexemeForm = lexemeForm
+						});
 					}
 				}
 				return senseMode
@@ -142,11 +143,47 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var wsId = ws.Id;
+			var spec = FieldSpecFor(ws);
+			spec.Focused = () => ActivateKeyboardForWritingSystem(cache, wsId);
+			return spec;
+		}
+
+		// The per-ws typography spec (font family + right-to-left) shared by the search box and the matching
+		// list's column specs — the same DefaultFontName derivation the region surface's value rows use.
+		private static EntryGoSearchFieldSpec FieldSpecFor(CoreWritingSystemDefinition ws)
+		{
 			return new EntryGoSearchFieldSpec
 			{
 				FontFamily = ws.DefaultFontName,
-				RightToLeft = ws.RightToLeftScript,
-				Focused = () => ActivateKeyboardForWritingSystem(cache, wsId)
+				RightToLeft = ws.RightToLeftScript
+			};
+		}
+
+		/// <summary>
+		/// Builds the matching list's default column spec — the legacy matchingEntries browser's default-visible
+		/// columns (areaConfiguration.xml: "Headword" ws=best vernoranal and "Glosses" ws=best analorvern; the
+		/// other columns are visibility="menu"): a Headword column in the default vernacular ws's typography and a
+		/// Glosses column in the default analysis ws's typography, headers from the kit's localized strings.
+		/// Internal so the derivation is unit-testable against a real cache.
+		/// </summary>
+		internal static IReadOnlyList<EntryGoResultColumn> BuildDefaultResultColumns(LcmCache cache)
+		{
+			var vernacular = FieldSpecFor(cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem);
+			var analysis = FieldSpecFor(cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem);
+			return new[]
+			{
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader,
+					Field = EntryGoResultField.Headword,
+					Typography = vernacular
+				},
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader,
+					Field = EntryGoResultField.Gloss,
+					Typography = analysis
+				}
 			};
 		}
 
@@ -208,8 +245,37 @@ namespace SIL.FieldWorks.LexText.Controls
 				: null;
 		}
 
+		// One matching-list row for an entry, carrying the per-column values the legacy matchingEntries browser
+		// columns show: the headword, the lexeme form, and the senses' glosses.
+		private static EntryGoSearchResult BuildEntryRow(ILexEntry entry)
+		{
+			return new EntryGoSearchResult(
+				entry.Hvo.ToString(CultureInfo.InvariantCulture),
+				HeadwordText(entry),
+				DescriptionText(entry))
+			{
+				LexemeForm = LexemeFormText(entry),
+				Gloss = GlossesText(entry)
+			};
+		}
+
 		internal static string HeadwordText(ILexEntry entry)
 			=> entry.HeadWord?.Text ?? entry.HomographForm ?? entry.Hvo.ToString(CultureInfo.InvariantCulture);
+
+		// The Lexeme Form column's value (the legacy LexemeFormForFindEntry part: LexemeForm.Form in the best
+		// vernacular-or-analysis ws).
+		internal static string LexemeFormText(ILexEntry entry)
+			=> entry.LexemeFormOA?.Form?.BestVernacularAnalysisAlternative?.Text ?? string.Empty;
+
+		// The Glosses column's value (the legacy GlossesForFindEntry part: the entry's senses' glosses in the
+		// best analysis-or-vernacular ws, comma-separated).
+		internal static string GlossesText(ILexEntry entry)
+		{
+			var glosses = entry.SensesOS
+				.Select(sense => sense.Gloss?.BestAnalysisVernacularAlternative?.Text)
+				.Where(gloss => !string.IsNullOrEmpty(gloss));
+			return string.Join(", ", glosses);
+		}
 
 		// A short gloss preview for the description pane: the best-analysis gloss of the first sense, if any.
 		private static string DescriptionText(ILexEntry entry)

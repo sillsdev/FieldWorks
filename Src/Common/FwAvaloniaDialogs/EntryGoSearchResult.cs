@@ -6,11 +6,13 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// A single lightweight, LCModel-free result row for the reusable Avalonia entry-search ("go") dialog — the
-	/// kit replacement for one row of the legacy <c>EntryGoDlg</c>/<c>BaseGoDlg</c> matching-entries browser. The
-	/// product edge (the LexText launcher) maps a matched <c>ILexEntry</c> into this row, so the Avalonia layer
-	/// never sees an <c>ICmObject</c>: <see cref="Id"/> is the entry's stable identity (hvo string, the legacy
-	/// <c>FwObjectSelectionEventArgs.Hvo</c>), <see cref="Text"/> is the headword/display the list shows, and
-	/// <see cref="Description"/> is the longer description the preview/description pane shows for the selected row.
+	/// kit replacement for one row of the legacy <c>EntryGoDlg</c>/<c>BaseGoDlg</c> matching-entries browser
+	/// (<c>MatchingObjectsBrowser</c>). The product edge (the LexText launcher) maps a matched <c>ILexEntry</c>
+	/// into this row, so the Avalonia layer never sees an <c>ICmObject</c>: <see cref="Id"/> is the entry's stable
+	/// identity (hvo string, the legacy <c>FwObjectSelectionEventArgs.Hvo</c>), <see cref="Text"/> is the headword,
+	/// and the per-column values (<see cref="LexemeForm"/>, <see cref="Gloss"/>) feed the persistent multi-column
+	/// matching list via <see cref="EntryGoResultColumn"/>. <see cref="Description"/> is the longer description an
+	/// opt-in description pane shows for the selected row.
 	/// </summary>
 	public sealed class EntryGoSearchResult
 	{
@@ -101,6 +103,40 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>True when there is a non-empty <see cref="SubText"/> (the gloss line) to show.</summary>
 		public bool HasSubText => !string.IsNullOrEmpty(SubText);
+
+		/// <summary>
+		/// The entry's lexeme form for the matching list's Lexeme Form column (the legacy browser's
+		/// "Lexeme Form" column: LexemeForm.Form in the best vernacular-or-analysis ws). Empty when the
+		/// consumer does not show that column.
+		/// </summary>
+		public string LexemeForm { get; set; } = string.Empty;
+
+		private string _gloss;
+
+		/// <summary>
+		/// The gloss(es) for the matching list's Glosses column (the legacy browser's "Glosses" column: the
+		/// senses' glosses in the best analysis-or-vernacular ws, comma-separated). Unset, it falls back to
+		/// <see cref="SubText"/> so a sense row's gloss shows in the column without the consumer setting both.
+		/// </summary>
+		public string Gloss
+		{
+			get => _gloss ?? SubText;
+			set => _gloss = value;
+		}
+
+		/// <summary>The display value of <paramref name="field"/> for this row — the matching list's cell text.</summary>
+		public string ValueFor(EntryGoResultField field)
+		{
+			switch (field)
+			{
+				case EntryGoResultField.LexemeForm:
+					return LexemeForm ?? string.Empty;
+				case EntryGoResultField.Gloss:
+					return Gloss ?? string.Empty;
+				default:
+					return Text ?? string.Empty;
+			}
+		}
 
 		/// <summary>The results list binds to <see cref="Text"/>; ToString keeps simple list rendering correct too.</summary>
 		public override string ToString() => Text ?? string.Empty;

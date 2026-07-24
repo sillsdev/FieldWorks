@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Automation;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
@@ -21,28 +20,31 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The reusable entry-search ("go") dialog (the Avalonia replacement for the legacy EntryGoDlg/BaseGoDlg
-	/// family; Merge Entry is the first consumer). It is a COMMIT-ON-SELECT picker: the view-model drives a search
-	/// box over a focus-gated matching-entries dropdown and a description pane, with no OK button. Typing narrows the
-	/// list; selecting a row updates the description; picking a row (double-click / Enter on the highlighted row, via
-	/// the CommitCommand) closes the dialog accepted with the chosen id; Cancel/Escape closes with no result. The
-	/// excluded id never appears. Runtime proof on a realized headless surface (compiled XAML on net48 +
-	/// source-generated commands).
+	/// family). PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as a PERSISTENT,
+	/// multi-column list under the search box, live-updating as the user types — a header row plus per-row column
+	/// cells built from the launcher's column spec (headword in the vernacular font, glosses in the analysis
+	/// font), never a focus-gated overlay. Up/Down in the search box move the list selection while the caret
+	/// stays in the box (the legacy m_tbForm_KeyDown behavior). It is a COMMIT-ON-SELECT picker with no OK
+	/// button: picking a row (double-click, or Enter in the box / on the list) closes accepted with the chosen
+	/// id; Cancel/Escape closes with no result. The excluded id never appears, and the right-side description
+	/// region exists only when a consumer opts in. Runtime proof on a realized headless surface (compiled XAML
+	/// on net48 + source-generated commands).
 	/// </summary>
 	[TestFixture]
 	public class EntryGoDialogTests
 	{
 		private static IReadOnlyList<EntryGoSearchResult> Entries() => new List<EntryGoSearchResult>
 		{
-			new EntryGoSearchResult("11", "casa", "casa : house"),
-			new EntryGoSearchResult("12", "cantar", "cantar : to sing"),
-			new EntryGoSearchResult("13", "perro", "perro : dog"),
+			new EntryGoSearchResult("11", "casa", "casa : house") { LexemeForm = "casa", Gloss = "house" },
+			new EntryGoSearchResult("12", "cantar", "cantar : to sing") { LexemeForm = "cantar", Gloss = "to sing" },
+			new EntryGoSearchResult("13", "perro", "perro : dog") { LexemeForm = "perro", Gloss = "dog" },
 			new EntryGoSearchResult("99", "current", "current : the starting entry")
 		};
 
 		// A simple in-memory "contains" search over the sample rows, honoring the excluded id (so the provider
 		// itself never returns the current entry — mirrors the launcher's FilterResults wrapper).
 		private static EntryGoDialogInput Input(string excludedId = null, string initialQuery = null,
-			string title = null, string okText = null)
+			string title = null, string okText = null, string descriptionLabel = "Description")
 		{
 			var all = Entries();
 			return new EntryGoDialogInput
@@ -52,7 +54,7 @@ namespace FwAvaloniaDialogsTests
 				ExcludedId = excludedId,
 				InitialQuery = initialQuery,
 				SearchPrompt = "Lexical Entries",
-				DescriptionLabel = "Description",
+				DescriptionLabel = descriptionLabel,
 				Search = query => all
 					.Where(e => excludedId == null || e.Id != excludedId)
 					.Where(e => string.IsNullOrEmpty(query)
@@ -66,9 +68,9 @@ namespace FwAvaloniaDialogsTests
 		{
 			var vm = new EntryGoDialogViewModel(input);
 			var view = new EntryGoDialogView { DataContext = vm };
-			// The redesigned two-column EntryGo (search + on-top dropdown | description region) has MinWidth=480;
-			// the capture window must exceed it (plus the Cancel-strip height) or the snapshot clips both edges.
-			AvaloniaDialogTestHarness.Realize(view, 620, 420, stageName, forceRenderTick: true);
+			// The persistent-matching-list EntryGo has MinWidth=440/MinHeight=340; the capture window must
+			// exceed both (plus the button-strip height) or the snapshot clips the edges.
+			AvaloniaDialogTestHarness.Realize(view, 620, 460, stageName, forceRenderTick: true);
 			return (view, vm);
 		}
 
@@ -78,9 +80,12 @@ namespace FwAvaloniaDialogsTests
 		private static T FindByAutomationId<T>(Control root, string id) where T : Control
 			=> AvaloniaDialogTestHarness.FindByAutomationId<T>(root, id);
 
-		// Focus the search field (the way a user clicking/tabbing into it does), which the view feeds into the
-		// view-model's IsSearchFocused — the gate that opens the on-top results dropdown. Re-pumps + relayouts so
-		// the realized Popup opens before a snapshot/assert.
+		// The persistent matching list (always in the tree, under the search box).
+		private static ListBox ResultsList(Control view)
+			=> FindByAutomationId<ListBox>(view, "EntryGo.Results");
+
+		// Focus the search field (the way a user clicking/tabbing into it does) and re-pump so focus-driven
+		// behavior (the writing-system keyboard callback) runs before an assert.
 		private static void FocusSearch(Control view)
 		{
 			var box = FindByAutomationId<TextBox>(view, "EntryGo.Search");
@@ -91,23 +96,6 @@ namespace FwAvaloniaDialogsTests
 			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
 			Dispatcher.UIThread.RunJobs();
 		}
-
-		// The results dropdown Popup (the focus-gated, on-top overlay anchored to the search box).
-		private static Popup ResultsPopup(Control view)
-			=> view.GetVisualDescendants().OfType<Popup>()
-				.First(p => p.Name == "PART_ResultsPopup");
-
-		// The dropdown renders ON TOP via an overlay-popup host attached to the WINDOW's overlay layer — a branch
-		// OUTSIDE the dialog UserControl's own subtree (proof it escapes the dialog content bounds). So search the
-		// visual ROOT (the hosting window), not just the view, to find the realized dropdown content.
-		private static T FindInRootByAutomationId<T>(Control view, string id) where T : Control
-			=> ((Window)view.GetVisualRoot()).GetVisualDescendants().OfType<T>()
-				.First(c => AutomationProperties.GetAutomationId(c) == id);
-
-		// The realized results ListBox (the focus-gated dropdown's list), found from the window root because the
-		// dropdown is hosted in the window's overlay layer (outside the dialog's own subtree).
-		private static ListBox ResultsList(Control view)
-			=> FindInRootByAutomationId<ListBox>(view, "EntryGo.Results");
 
 		// Raise the result list's double-click gesture (the commit-on-select gesture the code-behind listens for).
 		private static void DoubleClickResults(Control view)
@@ -122,6 +110,14 @@ namespace FwAvaloniaDialogsTests
 		{
 			var list = ResultsList(view);
 			list.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+			Dispatcher.UIThread.RunJobs();
+		}
+
+		// Raise a key on the SEARCH BOX (the arrow-key / Enter navigation the code-behind tunnels on the box).
+		private static void PressKeyOnSearchBox(Control view, Key key)
+		{
+			var box = FindByAutomationId<TextBox>(view, "EntryGo.Search");
+			box.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = key });
 			Dispatcher.UIThread.RunJobs();
 		}
 
@@ -151,6 +147,174 @@ namespace FwAvaloniaDialogsTests
 			vm.SearchText = "cas";
 			Dispatcher.UIThread.RunJobs();
 			Assert.That(vm.Results.Select(r => r.Id), Is.EqualTo(new[] { "11" }), "a longer query narrows further");
+		}
+
+		// ===== The persistent multi-column matching list (PARITY: MatchingObjectsBrowser — the legacy browse
+		// view fills the dialog body, always visible, live-updating; the default columns are the legacy
+		// matchingEntries browser's default-visible set: Headword + Glosses). =====
+
+		[AvaloniaTest]
+		public void ResultsList_IsPersistent_AndRendersRowsWithoutFocus()
+		{
+			var (view, vm) = Show(Input());
+			var list = ResultsList(view);
+
+			// The list is in the tree and showing its rows with NO focus anywhere near the search box —
+			// the legacy embedded-browser shape, not a focus-gated overlay.
+			Assert.That(list.IsVisible, Is.True, "the matching list is always visible");
+			Assert.That(vm.Results.Count, Is.GreaterThan(0), "the list is primed from the (empty) initial query");
+			Assert.That(list.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "casa"), Is.True,
+				"the realized list renders the matching rows without any focus gating");
+		}
+
+		[AvaloniaTest]
+		public void ResultsList_StaysInTree_WhenNoMatches()
+		{
+			var (view, vm) = Show(Input());
+			vm.SearchText = "zzz-no-match";
+			Dispatcher.UIThread.RunJobs();
+			Capture(view, "EntryGo-06-empty-list");
+
+			Assert.That(vm.Results.Count, Is.EqualTo(0), "a query with no matches empties the list");
+			var list = ResultsList(view);
+			Assert.That(list.IsVisible, Is.True,
+				"the empty bordered list area stays (the legacy browser stays put when a search has no matches)");
+		}
+
+		[AvaloniaTest]
+		public void HeaderRow_ShowsTheDefaultLocalizedColumnHeaders()
+		{
+			// No ResultColumns on the input → the kit default: Headword + Glosses (the legacy matchingEntries
+			// browser's default-visible columns), headers from the localized strings.
+			var (view, vm) = Show(Input());
+			Assert.That(vm.Columns.Select(c => c.Field),
+				Is.EqualTo(new[] { EntryGoResultField.Headword, EntryGoResultField.Gloss }));
+
+			var header = FindByAutomationId<Grid>(view, "EntryGo.ResultsHeader");
+			var headerTexts = header.Children.OfType<TextBlock>().Select(t => t.Text).ToList();
+			Assert.That(headerTexts, Is.EqualTo(new[]
+			{
+				FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader,
+				FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader
+			}), "the header row shows the localized default column headers");
+		}
+
+		[AvaloniaTest]
+		public void Rows_CarryThePerColumnValues()
+		{
+			var (view, _) = Show(Input());
+			var list = ResultsList(view);
+
+			// Each realized row renders one cell per column: the headword and the gloss.
+			var cellTexts = list.GetVisualDescendants().OfType<TextBlock>().Select(t => t.Text).ToList();
+			Assert.That(cellTexts, Has.Member("casa").And.Member("house"),
+				"a row shows its headword and gloss cells");
+			Assert.That(cellTexts, Has.Member("cantar").And.Member("to sing"));
+		}
+
+		[AvaloniaTest]
+		public void ColumnSpec_DrivesHeadersAndPerColumnTypography()
+		{
+			// A consumer-supplied column spec: three columns including Lexeme Form, with vernacular typography
+			// (font + RTL) on the vernacular columns and a different font on the gloss column.
+			var input = Input();
+			input.ResultColumns = new[]
+			{
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader,
+					Field = EntryGoResultField.Headword,
+					Typography = new EntryGoSearchFieldSpec { FontFamily = "Charis SIL", RightToLeft = true }
+				},
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoLexemeFormColumnHeader,
+					Field = EntryGoResultField.LexemeForm,
+					Typography = new EntryGoSearchFieldSpec { FontFamily = "Charis SIL" }
+				},
+				new EntryGoResultColumn
+				{
+					Header = FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader,
+					Field = EntryGoResultField.Gloss,
+					Typography = new EntryGoSearchFieldSpec { FontFamily = "Segoe UI" }
+				}
+			};
+			var (view, vm) = Show(input, "EntryGo-07-custom-columns");
+			Assert.That(vm.Columns.Count, Is.EqualTo(3), "the consumer's column spec wins over the default");
+
+			var header = FindByAutomationId<Grid>(view, "EntryGo.ResultsHeader");
+			Assert.That(header.Children.OfType<TextBlock>().Select(t => t.Text),
+				Is.EqualTo(new[] { "Headword", "Lexeme Form", "Glosses" }),
+				"the header row follows the consumer's column spec");
+
+			// The realized headword cell renders in the vernacular font + RTL; the gloss cell in the analysis font.
+			var list = ResultsList(view);
+			var headwordCell = list.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "casa");
+			Assert.That(headwordCell.FontFamily.Name, Is.EqualTo("Charis SIL"),
+				"a vernacular column's cells render in the vernacular font");
+			Assert.That(headwordCell.FlowDirection, Is.EqualTo(FlowDirection.RightToLeft),
+				"an RTL vernacular column flips its cells' flow");
+			var glossCell = list.GetVisualDescendants().OfType<TextBlock>().First(t => t.Text == "house");
+			Assert.That(glossCell.FontFamily.Name, Is.EqualTo("Segoe UI"),
+				"an analysis column's cells render in the analysis font");
+		}
+
+		// ===== Arrow-key navigation from the search box (PARITY: BaseGoDlg.m_tbForm_KeyDown — Up/Down in the
+		// find box move the matching-browser selection while the caret stays in the box). =====
+
+		[AvaloniaTest]
+		public void DownArrowInSearchBox_MovesSelectionDownTheList()
+		{
+			var (view, vm) = Show(Input());
+			Assert.That(vm.SelectedResult, Is.Null, "nothing is selected initially");
+
+			PressKeyOnSearchBox(view, Key.Down);
+			Assert.That(vm.SelectedResult?.Id, Is.EqualTo("11"), "the first Down selects the first row");
+
+			PressKeyOnSearchBox(view, Key.Down);
+			Capture(view, "EntryGo-08-arrow-selection");
+			Assert.That(vm.SelectedResult?.Id, Is.EqualTo("12"), "the next Down moves the selection down");
+		}
+
+		[AvaloniaTest]
+		public void UpArrowInSearchBox_MovesSelectionUpTheList()
+		{
+			var (view, vm) = Show(Input());
+			vm.SelectedResult = vm.Results.First(r => r.Id == "13");
+
+			PressKeyOnSearchBox(view, Key.Up);
+			Assert.That(vm.SelectedResult?.Id, Is.EqualTo("12"), "Up moves the selection up");
+
+			PressKeyOnSearchBox(view, Key.Up);
+			PressKeyOnSearchBox(view, Key.Up);
+			Assert.That(vm.SelectedResult?.Id, Is.EqualTo("11"), "Up stops at the first row (legacy SelectPrevious)");
+		}
+
+		[AvaloniaTest]
+		public void EnterInSearchBox_CommitsTheHighlightedRow()
+		{
+			var (view, vm) = Show(Input());
+			vm.SelectedResult = vm.Results.First(r => r.Id == "12");
+			bool? closed = null;
+			vm.CloseRequested += (s, accepted) => closed = accepted;
+
+			PressKeyOnSearchBox(view, Key.Enter);
+			Assert.That(closed, Is.True, "Enter in the search box commits the highlighted row + closes accepted");
+			Assert.That(vm.Accepted, Is.True);
+			Assert.That(vm.ChosenId, Is.EqualTo("12"));
+		}
+
+		[AvaloniaTest]
+		public void EnterInSearchBox_WithNoSelection_DoesNotCommit()
+		{
+			var (view, vm) = Show(Input());
+			Assert.That(vm.SelectedResult, Is.Null);
+			bool? closed = null;
+			vm.CloseRequested += (s, accepted) => closed = accepted;
+
+			PressKeyOnSearchBox(view, Key.Enter);
+			Assert.That(closed, Is.Null, "Enter with nothing highlighted is a no-op (commit gated off)");
+			Assert.That(vm.Accepted, Is.Null);
 		}
 
 		// ----- selection gates the commit-on-select path -----
@@ -187,7 +351,6 @@ namespace FwAvaloniaDialogsTests
 		public void DoubleClickingAResult_CommitsAndClosesAccepted()
 		{
 			var (view, vm) = Show(Input());
-			FocusSearch(view); // open the dropdown so its list is realized in the overlay
 			vm.SelectedResult = vm.Results.First(r => r.Id == "13");
 			Capture(view, "EntryGo-03-result-highlighted");
 			bool? closed = null;
@@ -203,7 +366,6 @@ namespace FwAvaloniaDialogsTests
 		public void PressingEnterOnTheHighlightedResult_CommitsAndClosesAccepted()
 		{
 			var (view, vm) = Show(Input());
-			FocusSearch(view);
 			vm.SelectedResult = vm.Results.First(r => r.Id == "12");
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
@@ -218,7 +380,6 @@ namespace FwAvaloniaDialogsTests
 		public void DoubleClickWithNothingSelected_DoesNotCommit()
 		{
 			var (view, vm) = Show(Input());
-			FocusSearch(view);
 			vm.SelectedResult = null;
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
@@ -263,7 +424,32 @@ namespace FwAvaloniaDialogsTests
 				"the VM defensively drops the excluded id even when the provider returns it");
 		}
 
-		// ----- description pane updates on selection -----
+		// ===== The right-side description region is OPT-IN: it exists only for a consumer that supplies a
+		// description label (the pane caption) or rich row content; otherwise the code-behind removes the entire
+		// right column from the tree and the persistent matching list takes the full width. =====
+
+		[AvaloniaTest]
+		public void DescriptionRegion_AbsentFromTree_WhenTheConsumerSuppliesNone()
+		{
+			var (view, vm) = Show(Input(descriptionLabel: null), "EntryGo-09-no-description-region");
+			Assert.That(vm.HasDescriptionRegion, Is.False,
+				"no label and no rich content: the consumer did not opt into the region");
+
+			Assert.That(view.GetVisualDescendants()
+					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.DescriptionRegion"),
+				Is.False, "the description region is removed from the tree entirely");
+			Assert.That(view.GetVisualDescendants()
+					.Any(c => c is Control ctrl && AutomationProperties.GetAutomationId(ctrl) == "EntryGo.Description"),
+				Is.False, "no orphaned description text remains");
+
+			// With the region gone the matching list claims (nearly) the full dialog width.
+			var grid = FindByAutomationId<Grid>(view, "EntryGo.ResultsHeader");
+			var list = ResultsList(view);
+			var body = view.GetVisualDescendants().OfType<Grid>().First(g => g.Name == "PART_BodyGrid");
+			Assert.That(list.Bounds.Width, Is.GreaterThan(body.Bounds.Width * 0.9),
+				"the matching list takes the full width when no description region is present");
+			Assert.That(grid.IsVisible, Is.True);
+		}
 
 		[AvaloniaTest]
 		public void DescriptionPane_UpdatesOnSelection()
@@ -278,88 +464,6 @@ namespace FwAvaloniaDialogsTests
 			var pane = FindByAutomationId<TextBlock>(view, "EntryGo.Description");
 			Assert.That(pane.Text, Is.EqualTo("casa : house"), "the bound description pane shows the selected row's description");
 		}
-
-		// ===== Focus-gated on-top results dropdown (the filter-combo behavior): the matching-entries list is an
-		// overlay that is hidden until the search field is focused (and there are matches), renders ON TOP, and is
-		// allowed to expand past the dialog bounds. =====
-
-		[AvaloniaTest]
-		public void ResultsDropdown_HiddenUntilSearchFocused_ShowsOnFocus()
-		{
-			var (view, vm) = Show(Input(), "EntryGo-01-initial");
-			var popup = ResultsPopup(view);
-
-			// Initial (not focused): the list is primed but the dropdown is CLOSED — no permanently-open list.
-			Assert.That(vm.Results.Count, Is.GreaterThan(0), "the list is primed from the initial query");
-			Assert.That(vm.IsSearchFocused, Is.False, "the search field is not focused initially");
-			Assert.That(vm.ShowResultsDropdown, Is.False, "the dropdown is gated closed until the field is focused");
-			Assert.That(popup.IsOpen, Is.False, "the realized dropdown Popup is closed before focus");
-
-			// Focusing the search field opens the on-top dropdown (the rows become visible).
-			FocusSearch(view);
-			Capture(view, "EntryGo-02-search-focused-dropdown");
-			Assert.That(vm.IsSearchFocused, Is.True, "focusing the field sets IsSearchFocused");
-			Assert.That(vm.ShowResultsDropdown, Is.True, "the dropdown shows once focused with matches");
-			Assert.That(popup.IsOpen, Is.True, "the realized dropdown Popup opens on focus");
-
-			// The dropdown content is realized via the WINDOW's overlay-popup host (a branch OUTSIDE the dialog's own
-			// subtree — proof the overlay escapes the dialog content bounds) — the rows show.
-			var results = FindInRootByAutomationId<ListBox>(view, "EntryGo.Results");
-			Assert.That(results.GetVisualDescendants().OfType<TextBlock>().Any(t => t.Text == "casa"), Is.True,
-				"the focused dropdown renders the matching rows on top");
-		}
-
-		[AvaloniaTest]
-		public void ResultsDropdown_ClosesWhenNoMatches()
-		{
-			var (view, vm) = Show(Input());
-			FocusSearch(view);
-			Assert.That(vm.ShowResultsDropdown, Is.True, "focused with matches: open");
-
-			vm.SearchText = "zzz-no-match";
-			Dispatcher.UIThread.RunJobs();
-			Assert.That(vm.Results.Count, Is.EqualTo(0), "a query with no matches empties the list");
-			Assert.That(vm.ShowResultsDropdown, Is.False,
-				"the dropdown closes when the focused field has no matching rows");
-		}
-
-		[AvaloniaTest]
-		public void ResultsDropdown_ClosesWhenSearchLosesFocus()
-		{
-			var (view, vm) = Show(Input());
-			FocusSearch(view);
-			var popup = ResultsPopup(view);
-			Assert.That(vm.ShowResultsDropdown, Is.True);
-			Assert.That(popup.IsOpen, Is.True, "the realized dropdown is open while focused");
-
-			// Leaving the search field clears IsSearchFocused (the view's LostFocus handler), which the dropdown's
-			// open state is bound to. Drive that un-focus signal (headless focus-manager blur is not deterministic,
-			// so set the same flag the LostFocus handler sets) and confirm the REALIZED dropdown closes.
-			vm.IsSearchFocused = false;
-			Dispatcher.UIThread.RunJobs();
-			view.UpdateLayout();
-			Dispatcher.UIThread.RunJobs();
-			Assert.That(vm.ShowResultsDropdown, Is.False, "the dropdown hides when the field loses focus");
-			Assert.That(popup.IsOpen, Is.False, "the realized dropdown closes when the field is no longer focused");
-		}
-
-		[AvaloniaTest]
-		public void ResultsDropdown_SelectingARow_StillSetsTheChosenId()
-		{
-			// Selection through the focused dropdown still drives the commit gate + the chosen id.
-			var (view, vm) = Show(Input());
-			FocusSearch(view);
-
-			vm.SelectedResult = vm.Results.First(r => r.Id == "13");
-			Capture(view, "EntryGo-03-result-selected-with-description");
-			Assert.That(vm.CommitCommand.CanExecute(null), Is.True, "a dropdown selection enables commit");
-
-			vm.CommitCommand.Execute(null);
-			Assert.That(vm.ChosenId, Is.EqualTo("13"), "commit still snapshots the selected row's id");
-		}
-
-		// ===== Right-side extended description region: renders a result's RICH content for the highlighted entry,
-		// and falls back to the plain description string for text-only consumers. =====
 
 		// An entry-search input where one row carries a RICH description payload (an arbitrary Avalonia control — a
 		// formatted, multi-line preview) and the others carry only plain text, so we exercise both region paths.
@@ -397,6 +501,7 @@ namespace FwAvaloniaDialogsTests
 			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
 			Capture(view, "EntryGo-04-rich-description");
 
+			Assert.That(vm.HasDescriptionRegion, Is.True, "a consumer with a label/rich content keeps the region");
 			Assert.That(vm.HasDescriptionContent, Is.True, "the highlighted row carries a rich payload");
 			Assert.That(vm.SelectedDescriptionContent, Is.Not.Null);
 
@@ -497,6 +602,15 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(FwAvaloniaDialogsStrings.EntryGoSearchWatermark, Is.Not.Null.And.Not.Empty);
 		}
 
+		[Test]
+		public void ColumnHeaderStrings_ResolveWithTheLegacyWording()
+		{
+			// Seeded from the legacy matchingEntries browser column labels so translation memory carries over.
+			Assert.That(FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader, Is.EqualTo("Headword"));
+			Assert.That(FwAvaloniaDialogsStrings.EntryGoLexemeFormColumnHeader, Is.EqualTo("Lexeme Form"));
+			Assert.That(FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader, Is.EqualTo("Glosses"));
+		}
+
 		// ===== Opt-in entry/sense capability (the Link-Entry-or-Sense surface): the toggle shows senses, selecting
 		// a sense returns its id and flags it as a sense, and entry mode still returns an entry. =====
 
@@ -569,6 +683,8 @@ namespace FwAvaloniaDialogsTests
 				"sense mode lists each matching entry's senses");
 			Assert.That(vm.Results.All(r => r.IsSense), Is.True, "sense-mode rows are senses");
 			Assert.That(vm.Results.First().HasSubText, Is.True, "a sense row carries the gloss sub-line");
+			Assert.That(vm.Results.First().Gloss, Is.EqualTo(vm.Results.First().SubText),
+				"the gloss column shows the sense row's gloss via the SubText fallback");
 		}
 
 		[AvaloniaTest]
@@ -627,9 +743,10 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// ===== Opt-in dependent auxiliary selection (the LinkMSA/LinkAllomorph surface): with a resolver supplied
-		// the dialog is two-stage — picking an entry populates the auxiliary options, Enter/double-click is stage-1
-		// select (not commit), and OK commits only once both an entry and an option are chosen. Without the spec
-		// the commit-on-select behavior above is unchanged (those tests all run against a null spec). =====
+		// the dialog is two-stage — picking an entry populates the auxiliary options (shown UNDER the matching
+		// list, the legacy combo position), Enter/double-click is stage-1 select (not commit), and OK commits only
+		// once both an entry and an option are chosen. Without the spec the commit-on-select behavior above is
+		// unchanged (those tests all run against a null spec). =====
 
 		// An auxiliary-selection input over the sample entries: "casa" (11) resolves to TWO options (its MSAs),
 		// "cantar" (12) to ONE, "perro" (13) to none. Resolver invocations are recorded for the tests.
@@ -725,7 +842,6 @@ namespace FwAvaloniaDialogsTests
 		public void Auxiliary_EnterOnResults_IsStageOneSelect_NotCommit()
 		{
 			var (view, vm) = Show(AuxiliaryInput(new List<string>()));
-			FocusSearch(view);
 			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
 			bool? closed = null;
 			vm.CloseRequested += (s, accepted) => closed = accepted;
@@ -733,14 +849,12 @@ namespace FwAvaloniaDialogsTests
 			PressEnterOnResults(view);
 			Assert.That(closed, Is.Null, "Enter with a spec present selects the entry (stage 1), never commits");
 			Assert.That(vm.Accepted, Is.Null, "the dialog stays open for the auxiliary pick");
-			Assert.That(vm.IsSearchFocused, Is.False, "stage 1 dismisses the results dropdown");
 
-			// Stage 1 closed the dropdown but the box never lost REAL keyboard focus (so Focus() is a no-op);
-			// re-open via the same flag the focus handler drives, then pump so the overlay list re-realizes.
-			vm.IsSearchFocused = true;
-			FocusSearch(view);
 			DoubleClickResults(view);
 			Assert.That(closed, Is.Null, "a double-click is likewise stage-1 only when the spec is present");
+
+			PressKeyOnSearchBox(view, Key.Enter);
+			Assert.That(closed, Is.Null, "Enter in the search box is also stage-1 only in two-stage mode");
 		}
 
 		[AvaloniaTest]

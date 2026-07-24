@@ -5,20 +5,24 @@
              x:Class="FwAvaloniaDialogs.EntryGoDialogView"
              x:DataType="vm:EntryGoDialogViewModel"
              Classes="fwDialogRoot"
-             MinWidth="480" MinHeight="320">
+             MinWidth="440" MinHeight="340">
 	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
-	     EntryGoDlg/BaseGoDlg family (Merge Entry is the first consumer). The advanced layout puts the search box on
-	     the LEFT with its matching-entries list as a focus-gated, ON-TOP dropdown (a Popup anchored to the box that
-	     escapes the dialog bounds, like a filter combo — visible only while the field is focused and there are
-	     matches), and an extended description region on the RIGHT that hosts rich content (formatted text, pictures,
-	     arbitrary controls) for the highlighted entry, degrading to the plain description string. The OK button
-	     text + title + prompts come from the launcher so each EntryGoDlg child re-skins the same dialog. Visible
-	     text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	     EntryGoDlg/BaseGoDlg family. PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as
+	     a PERSISTENT, multi-column list under the search box — the shape of the legacy BaseGoDlg's embedded
+	     MatchingObjectsBrowser — live-updating as the user types (an empty search shows an empty bordered area,
+	     never a focus-gated overlay). A header row + per-row column cells are built by the code-behind from the
+	     view-model's Columns (header text, result field, per-column writing-system typography), so a vernacular
+	     column renders in the vernacular font and a gloss column in the analysis font. Up/Down in the search box
+	     move the list selection without leaving the box (the legacy m_tbForm_KeyDown behavior). The optional
+	     auxiliary picker sits UNDER the matching list (its legacy position), and the right-side description region
+	     exists only when the consumer opts in (HasDescriptionRegion) — otherwise the list takes the full width.
+	     The OK button text + title + prompts come from the launcher so each EntryGoDlg child re-skins the same
+	     dialog. Visible text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
 	<DockPanel>
-		<!-- Commit-on-select: there is NO OK button. Picking a result (double-click a row, or Enter on the highlighted
-		     row) commits + closes accepted (wired in code-behind to the CommitCommand). The button strip keeps only a
-		     single Cancel affordance (Escape / the window close button also cancel, via IsCancel) plus the optional
-		     Help, so the strip never reads as an empty placeholder.
+		<!-- Commit-on-select: there is NO OK button. Picking a result (double-click a row, or Enter in the search
+		     box / on the highlighted row) commits + closes accepted (wired in code-behind to the CommitCommand).
+		     The button strip keeps only a single Cancel affordance (Escape / the window close button also cancel,
+		     via IsCancel) plus the optional Help, so the strip never reads as an empty placeholder.
 		     EXCEPT in two-stage auxiliary mode (HasAuxiliarySelection): picking a result is stage 1, and PART_OkButton
 		     below commits stage 2 (gated on both selections). For single-stage consumers the code-behind REMOVES
 		     PART_OkButton from the tree entirely so the commit-on-select surface stays byte-identical. -->
@@ -41,10 +45,13 @@
 			</Button>
 		</StackPanel>
 
-		<!-- Two regions side by side: the search column (left) and the extended description region (right),
-		     separated by the shared column-gutter token. -->
-		<Grid ColumnDefinitions="*,Auto,1.2*">
-			<!-- ===== LEFT: the search column (toggle + prompt + search box + the on-top results dropdown). ===== -->
+		<!-- The search column (always present) and the OPT-IN description region on the right, separated by the
+		     shared column-gutter token. When the consumer supplies no description label/content the code-behind
+		     removes the gutter + region from the tree and zeroes their grid columns, so the matching list takes
+		     the full dialog width. -->
+		<Grid Name="PART_BodyGrid" ColumnDefinitions="1.4*,Auto,*">
+			<!-- ===== LEFT: the search column (toggle + prompt + search box + the persistent matching list, with
+			     the optional auxiliary picker under the list). ===== -->
 			<DockPanel Grid.Column="0">
 				<!-- Entry/Sense mode toggle (opt-in: the legacy LinkEntryOrSenseDlg "Entry"/"Specific Sense" radios).
 				     Hidden for entry-only consumers; disabled (but shown) when the consumer locks it to senses only. -->
@@ -63,9 +70,8 @@
 					             AutomationProperties.AutomationId="EntryGo.SenseMode"/>
 				</StackPanel>
 
-				<!-- Search box (with optional prompt above it). The matching-entries list is NOT a permanently-open
-				     control below it — it is the focus-gated Popup anchored to the box (PART_ResultsPopup), so the
-				     space under the box stays clear until the user is in the field. -->
+				<!-- Search box (with optional prompt above it). Typing re-runs the search and the persistent list
+				     below live-updates; Up/Down move the list selection while the caret stays here (code-behind). -->
 				<TextBlock DockPanel.Dock="Top" Text="{Binding SearchPrompt}" TextWrapping="Wrap"
 				           IsVisible="{Binding HasSearchPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
 				           AutomationProperties.AutomationId="EntryGo.SearchPrompt"/>
@@ -74,46 +80,11 @@
 				         Watermark="{x:Static res:FwAvaloniaDialogsStrings.EntryGoSearchWatermark}"
 				         AutomationProperties.AutomationId="EntryGo.Search"/>
 
-				<!-- The matching-entries list as an ON-TOP, focus-gated dropdown: a Popup anchored to the search box
-				     (PlacementTarget) so it renders in its own top-level layer and is allowed to EXPAND PAST the
-				     dialog bounds rather than being clipped inside them (like a filter combo). It opens only when the
-				     field is focused AND there are matches (ShowResultsDropdown); light dismiss stays off so clicking
-				     a row selects it without the overlay stealing the dismiss. The bordered list mirrors the dialog
-				     style system's boxed-input look. IsHitTestVisible=False on the empty filler keeps the rest of the
-				     left column clear when the dropdown is closed. -->
-				<Popup Name="PART_ResultsPopup"
-				       PlacementTarget="{Binding #PART_SearchBox}"
-				       Placement="BottomEdgeAlignedLeft"
-				       IsLightDismissEnabled="False"
-				       IsOpen="{Binding ShowResultsDropdown}">
-					<Border Classes="fwFieldHost"
-					        Background="{DynamicResource ThemeBackgroundBrush}"
-					        MinWidth="220" MaxHeight="220"
-					        AutomationProperties.AutomationId="EntryGo.ResultsPopup">
-						<ListBox Name="PART_Results"
-						         ItemsSource="{Binding Results}"
-						         SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
-						         AutomationProperties.AutomationId="EntryGo.Results">
-							<ListBox.ItemTemplate>
-								<DataTemplate x:DataType="vm:EntryGoSearchResult">
-									<!-- Headword, with the sense gloss as a quieter second line for sense rows (HasSubText). -->
-									<StackPanel>
-										<TextBlock Text="{Binding Text}"
-										           AutomationProperties.Name="{Binding Text}"/>
-										<TextBlock Text="{Binding SubText}" Opacity="0.7"
-										           IsVisible="{Binding HasSubText}"/>
-									</StackPanel>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</Border>
-				</Popup>
-
-				<!-- Dependent auxiliary picker (two-stage mode only): the per-entry option list the legacy
-				     LinkMSADlg/LinkAllomorphDlg combos showed under the matching list. Hidden until the consumer
-				     supplies an auxiliary spec AND an entry is selected (ShowAuxiliaryOptions); a lone option
-				     auto-selects in the VM, and OK stays gated until an option is chosen. -->
-				<StackPanel DockPanel.Dock="Top"
+				<!-- Dependent auxiliary picker (two-stage mode only), UNDER the matching list — its legacy position
+				     (the per-entry combo LinkMSADlg/LinkAllomorphDlg showed below the browser). Hidden until the
+				     consumer supplies an auxiliary spec AND an entry is selected (ShowAuxiliaryOptions); a lone
+				     option auto-selects in the VM, and OK stays gated until an option is chosen. -->
+				<StackPanel DockPanel.Dock="Bottom"
 				            IsVisible="{Binding ShowAuxiliaryOptions}"
 				            Margin="{StaticResource DialogControlGapAbove}"
 				            AutomationProperties.AutomationId="EntryGo.AuxiliarySection">
@@ -135,18 +106,31 @@
 					</Border>
 				</StackPanel>
 
-				<!-- Filler so the left column claims its share of the grid even with the dropdown closed. -->
-				<Border DockPanel.Dock="Top"/>
+				<!-- The PERSISTENT matching list (PARITY: MatchingObjectsBrowser). A bordered header row + rows with
+				     aligned proportional columns, filling the dialog body under the search box; it stays in the tree
+				     even when empty. The header grid and the row template are built by the code-behind from the VM's
+				     Columns so the column count, headers, and per-column typography are launcher-driven. -->
+				<Border Classes="fwFieldHost" Margin="{StaticResource DialogControlGapAbove}"
+				        AutomationProperties.AutomationId="EntryGo.ResultsRegion">
+					<DockPanel>
+						<Grid DockPanel.Dock="Top" Name="PART_ResultsHeader"
+						      AutomationProperties.AutomationId="EntryGo.ResultsHeader"/>
+						<ListBox Name="PART_Results"
+						         ItemsSource="{Binding Results}"
+						         SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+						         AutomationProperties.AutomationId="EntryGo.Results"/>
+					</DockPanel>
+				</Border>
 			</DockPanel>
 
-			<!-- The column gutter between the search column and the description region. -->
-			<Border Grid.Column="1" Margin="{StaticResource DialogColumnGutter}"/>
+			<!-- The column gutter between the search column and the (opt-in) description region. -->
+			<Border Grid.Column="1" Name="PART_DescriptionGutter" Margin="{StaticResource DialogColumnGutter}"/>
 
-			<!-- ===== RIGHT: the extended description region — rich content for the highlighted entry, with the
-			     plain description string as the graceful fallback. The region is a boxed, dense frame matching the
-			     dialog style system; it hosts arbitrary content via a ContentControl (formatted text, pictures, a
-			     composite preview) and shows the plain TextBlock only when no rich payload is supplied. ===== -->
-			<DockPanel Grid.Column="2">
+			<!-- ===== RIGHT (opt-in): the description region — rich content for the highlighted entry, with the
+			     plain description string as the graceful fallback. Present ONLY when the consumer supplies a
+			     description label or rich row content (HasDescriptionRegion); the code-behind removes it (and its
+			     grid column) otherwise so the matching list takes the full width. ===== -->
+			<DockPanel Grid.Column="2" Name="PART_DescriptionColumn">
 				<TextBlock DockPanel.Dock="Top" Text="{Binding DescriptionLabel}"
 				           IsVisible="{Binding HasDescriptionLabel}"
 				           Margin="{StaticResource DialogLabelFieldGapBelow}"

@@ -93,8 +93,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override string DialogTitle => FwAvaloniaDialogsStrings.AddAllomorphTitle;
 		protected override bool Resizable => true;
-		protected override int DialogWidth => 400;
-		protected override int DialogHeight => 360;
+		// Sized for the persistent multi-column matching list, above the view's minimums and the legacy
+		// BaseGoDlg design size (BaseGoDlg.resx: ClientSize 451x338, MinimumSize 459x365).
+		protected override int DialogWidth => 560;
+		protected override int DialogHeight => 440;
 
 		protected override EntryGoDialogInput BuildState() =>
 			BuildInput(_cache, _mediator, _propertyTable, _tssForm);
@@ -118,7 +120,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				HelpTopic = "khtpFindEntryToAddAllomorph",
 				Search = BuildSearch(cache, mediator, propertyTable),
 				// The search box types the vernacular form being added (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				// The matching list's default columns (headword + glosses in their ws typography).
+				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
 		}
 
