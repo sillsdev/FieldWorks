@@ -46,8 +46,8 @@ namespace FwAvaloniaTests.VisualChecks
 	}
 
 	/// <summary>
-	/// Region/browse visual coverage: the owned non-dialog surfaces (the lexical-edit detail view and the
-	/// browse table) get the SAME treatment as dialogs — a real PNG snapshot for subjective review AND the
+	/// Region visual coverage: the owned non-dialog surface (the lexical-edit detail view)
+	/// gets the SAME treatment as dialogs — a real PNG snapshot for subjective review AND the
 	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text / crowding) —
 	/// so the visual standard is one standard across every Avalonia surface, not dialogs only.
 	/// Capture happens BEFORE the assertion so the artifact exists for review even when the assertion fails.
@@ -56,7 +56,7 @@ namespace FwAvaloniaTests.VisualChecks
 	/// so these tests just call AssertNoCrowding directly — no in-test splitter workaround.
 	/// </summary>
 	[TestFixture]
-	public class RegionAndBrowseSnapshotTests
+	public class RegionSnapshotTests
 	{
 		[AvaloniaTest]
 		public void RegionEditView_RendersCleanly()
@@ -149,67 +149,6 @@ namespace FwAvaloniaTests.VisualChecks
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
-		[AvaloniaTest]
-		public void BrowseTable_RendersCleanly()
-		{
-			// Browse stage: the grid surface keeps its column/row lines and bold headers, now at the denser
-			// WinForms font.
-			var view = new LexicalBrowseView(BrowseDefinition(), new TwoRowBrowseSource());
-
-			DialogSnapshot.Capture(view, "Browse-01-initial", width: 480, height: 200);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
-
-		// ----- realistic browse fixture (8 columns, several rows, no LCModel) -----
-
-		[AvaloniaTest]
-		public void BrowseTable_RealisticHeaders_RenderCleanly()
-		{
-			// The full header row of a realistic lexical browse: 8 columns (Form, Citation, Gloss, POS, …) with
-			// bold headers and grid lines, captured wide enough that no column header clips.
-			var view = new LexicalBrowseView(RealisticBrowseDefinition(), new RealisticBrowseSource());
-
-			DialogSnapshot.Capture(view, "Browse-02-headers", width: 1040, height: 240);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
-
-		[AvaloniaTest]
-		public void BrowseTable_MultiColumn_RendersCleanly()
-		{
-			// The realistic 8-column grid with several data rows realized — the multi-column density check:
-			// grid lines between columns, the WinForms-density row height, no cell value clipped.
-			var view = new LexicalBrowseView(RealisticBrowseDefinition(), new RealisticBrowseSource());
-
-			DialogSnapshot.Capture(view, "Browse-03-multi-column", width: 1040, height: 320);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
-
-		[AvaloniaTest]
-		public void BrowseTable_FilterRow_RendersCleanly()
-		{
-			// The source implements IBrowseFilterSource, so the view shows the per-column filter bar beneath the
-			// headers (the FilterBar replacement). Confirms the filter row aligns with the columns and does not
-			// crowd the header above or the rows below.
-			var view = new LexicalBrowseView(RealisticBrowseDefinition(), new RealisticBrowseSource());
-
-			DialogSnapshot.Capture(view, "Browse-04-filter-row", width: 1040, height: 320);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
-
-		[AvaloniaTest]
-		public void BrowseTable_Selected_RendersCleanly()
-		{
-			// A checkbox column plus a selected row: the legacy whole-row pale-blue selection highlight and the
-			// per-row checkboxes (one checked). Confirms the selection fill spans the full row across every cell
-			// and the checkbox column aligns with its header.
-			var view = new LexicalBrowseView(RealisticBrowseDefinition(), new RealisticBrowseSource(),
-				showCheckboxColumn: true);
-			view.SelectedRowIndex = 1;
-			view.CheckAll();
-
-			DialogSnapshot.Capture(view, "Browse-05-selected", width: 1040, height: 320);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
 
 		// ----- minimal surface fixtures (no LCModel) -----
 
@@ -224,32 +163,12 @@ namespace FwAvaloniaTests.VisualChecks
 					automationId: "GlossEditor", routing: SurfaceRouting.Product)
 			}, new List<ViewDiagnostic>());
 
-		private static ViewDefinitionModel BrowseDefinition() => new ViewDefinitionModel(
-			"LexEntry", "browse", "browse", new List<ViewNode>
-			{
-				new ViewNode("b/#0", ViewNodeKind.Field, "Form", null, "Form", "string",
-					EditorClassification.Known, "vernacular", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null),
-				new ViewNode("b/#1", ViewNodeKind.Field, "Gloss", null, "Gloss", "string",
-					EditorClassification.Known, "analysis", ViewVisibility.Always, ViewExpansion.NotApplicable, false, null, null)
-			}, new List<ViewDiagnostic>());
-
 		private sealed class TwoFieldProvider : IRegionValueProvider
 		{
 			public IReadOnlyList<RegionWsValue> GetValues(ViewNode fieldNode)
 				=> new[] { new RegionWsValue("en", fieldNode.Field == "Form" ? "casa" : "house", wsTag: "en") };
 			public IReadOnlyList<RegionChoiceOption> GetOptions(ViewNode fieldNode) => Array.Empty<RegionChoiceOption>();
 			public string GetSelectedOptionKey(ViewNode fieldNode) => null;
-		}
-
-		private sealed class TwoRowBrowseSource : IBrowseRowSource, IBrowseRichCellSource
-		{
-			private static readonly string[][] Rows = { new[] { "casa", "house" }, new[] { "perro", "dog" } };
-			public int RowCount => Rows.Length;
-			public int LogicalIndexAt(int rowIndex) => rowIndex;
-			public int HvoAt(int rowIndex) => rowIndex + 1;
-			public IReadOnlyList<string> GetCellValues(int rowIndex) => Rows[rowIndex];
-			public IReadOnlyList<RegionWsValue> GetRichCell(int rowIndex, int columnIndex)
-				=> new[] { new RegionWsValue("en", Rows[rowIndex][columnIndex], wsTag: "en") };
 		}
 
 		// ----- realistic region fixture builders (fields built directly so kinds beyond Text/Chooser —
@@ -338,50 +257,5 @@ namespace FwAvaloniaTests.VisualChecks
 				isEditable: true, items: itemList);
 		}
 
-		// ----- realistic browse fixture builders (8 columns, several rows, no LCModel) -----
-
-		private static ViewDefinitionModel RealisticBrowseDefinition()
-		{
-			string[][] columns =
-			{
-				new[] { "Form", "vernacular" },
-				new[] { "Citation", "vernacular" },
-				new[] { "Gloss", "analysis" },
-				new[] { "Grammatical Info.", "analysis" },
-				new[] { "Morph Type", "analysis" },
-				new[] { "Pronunciation", "vernacular" },
-				new[] { "Variants", "vernacular" },
-				new[] { "Date Created", "analysis" }
-			};
-			var nodes = new List<ViewNode>();
-			for (var c = 0; c < columns.Length; c++)
-				nodes.Add(new ViewNode("b/#" + c, ViewNodeKind.Field, columns[c][0], null, columns[c][0], "string",
-					EditorClassification.Known, columns[c][1], ViewVisibility.Always, ViewExpansion.NotApplicable,
-					false, null, null));
-			return new ViewDefinitionModel("LexEntry", "browse", "browse", nodes, new List<ViewDiagnostic>());
-		}
-
-		// A realistic lexical browse row source: 6 rows over the 8 columns, with a free-text filter capability
-		// (IBrowseFilterSource) so the filter bar renders. The filter is a display-only no-op here (LCModel-free):
-		// the test only needs the row to RENDER, not narrow.
-		private sealed class RealisticBrowseSource : IBrowseRowSource, IBrowseRichCellSource, IBrowseFilterSource
-		{
-			private static readonly string[][] Rows =
-			{
-				new[] { "casa", "casa", "house", "Noun", "stem", "ˈka.za", "kasa", "3 Jun 2026" },
-				new[] { "perro", "perro", "dog", "Noun", "stem", "ˈpe.ro", "perru", "1 Jan 2025" },
-				new[] { "cantar", "cantar", "to sing", "Verb", "stem", "kanˈtar", "cantá", "14 Feb 2024" },
-				new[] { "rojo", "rojo", "red", "Adjective", "stem", "ˈro.xo", "roxu", "9 Sep 2023" },
-				new[] { "rápido", "rápido", "fast", "Adverb", "stem", "ˈra.pi.ðo", "rápidu", "30 Nov 2022" },
-				new[] { "agua", "agua", "water", "Noun", "stem", "ˈa.ɣwa", "augua", "22 Aug 2021" }
-			};
-			public int RowCount => Rows.Length;
-			public int LogicalIndexAt(int rowIndex) => rowIndex;
-			public int HvoAt(int rowIndex) => rowIndex + 1;
-			public IReadOnlyList<string> GetCellValues(int rowIndex) => Rows[rowIndex];
-			public IReadOnlyList<RegionWsValue> GetRichCell(int rowIndex, int columnIndex)
-				=> new[] { new RegionWsValue("en", Rows[rowIndex][columnIndex], wsTag: "en") };
-			public void SetFilter(int columnIndex, string text) { /* render-only fixture: no narrowing */ }
-		}
 	}
 }

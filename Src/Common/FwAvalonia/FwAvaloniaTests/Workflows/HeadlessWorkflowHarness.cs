@@ -17,11 +17,11 @@ namespace FwAvaloniaTests.Workflows
 	/// <summary>
 	/// Reusable headless-integration scaffolding for driving migrated Avalonia surfaces through real
 	/// USER SCENARIOS and WORKFLOWS — the front-and-center test style for the whole WinForms→Avalonia
-	/// program (all 13 phases), not just the browse table. The pieces:
+	/// program (all 13 phases). The pieces:
 	///
 	///  • <see cref="HeadlessStage"/> — hosts one or more Avalonia controls in a headless window and
 	///    pumps the dispatcher, so a test reads/acts on a realized visual tree exactly as a user would.
-	///  • <see cref="BrowseTableDriver"/> / <see cref="LexicalEditorDriver"/> — page-object "drivers"
+	///  • <see cref="LexicalEditorDriver"/> — a page-object "driver"
 	///    that expose intent-level verbs (filter, clear, select, read cell, type, commit) over a hosted
 	///    surface, so scenario tests read like a script and stay stable as the control internals change.
 	///
@@ -63,54 +63,6 @@ namespace FwAvaloniaTests.Workflows
 			=> block == null ? null
 				: !string.IsNullOrEmpty(block.Text) ? block.Text
 				: string.Concat(block.Inlines?.OfType<Run>().Select(r => r.Text) ?? Enumerable.Empty<string>());
-	}
-
-	/// <summary>
-	/// Scenario driver for the owned browse table (<see cref="LexicalBrowseView"/>): the verbs a user
-	/// performs — read row count, read a cell, select/sort/filter — without reaching into the control's
-	/// visual tree from the test. Pumps the dispatcher after each acting verb so the visual tree is
-	/// settled before the next assertion.
-	/// </summary>
-	public sealed class BrowseTableDriver
-	{
-		private readonly LexicalBrowseView _view;
-		private readonly HeadlessStage _stage;
-
-		public BrowseTableDriver(LexicalBrowseView view, HeadlessStage stage)
-		{
-			_view = view ?? throw new ArgumentNullException(nameof(view));
-			_stage = stage;
-		}
-
-		public LexicalBrowseView View => _view;
-
-		/// <summary>The number of rows currently shown (after any active filter).</summary>
-		public int RowCount => _view.RowList.ItemCount;
-
-		public int SelectedRow => _view.SelectedRowIndex;
-
-		/// <summary>Reads the realized cell text at (row, column); null when the row is not realized.</summary>
-		public string CellText(int row, int column) => HeadlessStage.ReadText(
-			_view.GetVisualDescendants().OfType<TextBlock>()
-				.FirstOrDefault(t => AutomationProperties.GetAutomationId(t) == $"BrowseCell.{row}.{column}"));
-
-		public void SelectRow(int row) { _view.SelectedRowIndex = row; _stage?.Pump(); }
-
-		public void Filter(int column, string text) { _view.ApplyFilter(column, text); _stage?.Pump(); }
-
-		public void ClearFilter(int column) { _view.ApplyFilter(column, string.Empty); _stage?.Pump(); }
-
-		public void FilterPreset(int column, BrowseFilterPreset preset)
-		{ _view.ApplyFilterPreset(column, preset); _stage?.Pump(); }
-
-		public void Sort(int column) { _view.SortByColumn(column); _stage?.Pump(); }
-
-		public void CheckAll() { _view.CheckAll(); _stage?.Pump(); }
-
-		public IReadOnlyCollection<int> CheckedRows => _view.CheckedRows;
-
-		/// <summary>Re-reads rows from the source (what the host does after a model change).</summary>
-		public void Refresh() { _view.Refresh(); _stage?.Pump(); }
 	}
 
 	/// <summary>

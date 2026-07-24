@@ -16,10 +16,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// The small bundle of (all-nullable) collaborators a <see cref="RegionFieldKind"/> editor needs,
 	/// passed to <see cref="RegionFieldControlFactory.Build"/> so the SAME field→control dispatch serves
-	/// both the detail-pane region view (<c>LexicalEditRegionView.BuildEditor</c>, full callbacks) and the
-	/// browse table's in-cell editor (<c>LexicalBrowseView.EditableCellHost</c>, gutter/abbreviation and
-	/// the menu callbacks null). Every member is optional: a null edit context yields read-only display; a
-	/// null callback simply disables that affordance. Task 21 — one switch, so new kinds live in one place.
+	/// every hosting surface (today the detail-pane region view, <c>LexicalEditRegionView.BuildEditor</c>;
+	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
+	/// edit context yields read-only display; a null callback simply disables that affordance.
+	/// Task 21 — one switch, so new kinds live in one place.
 	/// </summary>
 	public sealed class RegionFieldControlContext
 	{
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>Per-WS keyboard activation callback for text fields (null → no keyboard switch).</summary>
 		public Action<string> WritingSystemFocused { get; }
 
-		/// <summary>Right-click slice/section menu callback (null on the browse cell surface today).</summary>
+		/// <summary>Right-click slice/section menu callback (null on surfaces without a slice menu).</summary>
 		public Action<RegionMenuRequest> MenuRequested { get; }
 
 		/// <summary>Hyperlink follow callback for choosers/vectors (null → no link affordance).</summary>
@@ -66,14 +66,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Validation-gated commit invoked when a reference-vector add/remove gesture completes (the detail
-		/// pane's autosave). Null on surfaces that drive commit themselves (the browse cell commits on
+		/// pane's autosave). Null on surfaces that drive commit themselves (an in-cell editor commits on
 		/// Enter/Tab through its own active-cell session), in which case the vector field just stages.
 		/// </summary>
 		public Action Save { get; }
 
 		/// <summary>
-		/// Whether a multi-WS text field shows its per-WS abbreviation gutter. The detail pane shows it; the
-		/// dense browse cell suppresses it (matching the legacy in-cell editor).
+		/// Whether a multi-WS text field shows its per-WS abbreviation gutter. The detail pane shows it;
+		/// a dense in-cell editor suppresses it (matching the legacy in-cell editor).
 		/// </summary>
 		public bool ShowWritingSystemAbbreviation { get; }
 	}
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// EndUndoTask and the row's Items are a compose-time snapshot, so the user would see no
 					// change. The gesture-completed callback runs the SAME validation-gated save the
 					// focus-loss autosave uses, whose re-show rebuilds the row from domain truth. A surface
-					// that owns its own commit (the browse cell) passes a null Save and just stages.
+					// that owns its own commit (an in-cell editor) passes a null Save and just stages.
 					return new FwReferenceVectorField(field, automationId, context.EditContext,
 						context.EditContext == null ? null : context.Save, context.LinkRequested);
 				case RegionFieldKind.StructuredText:
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// insert / replace / properties / delete — when the host supplies an edit context + media seam.
 		// An empty field (PictureHvo 0) shows only the insert affordance ("Add a picture"). A missing
 		// file shows its path. With no edit context / media seam the row is read-only display (the legacy
-		// browse-cell / preview path), preserving the prior behavior. All affordances route LCModel-free
+		// in-cell / preview path), preserving the prior behavior. All affordances route LCModel-free
 		// through the edit context's picture methods + the media seam (file pick / properties dialog).
 		private static Control BuildImage(LexicalEditRegionField field, string automationId,
 			RegionFieldControlContext context)

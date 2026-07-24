@@ -40,7 +40,7 @@ tests, and gives XML a retirement path.
 (caches by immutable source-snapshot fingerprint),
 `ViewDefinitionJsonSerializer.cs`, `LayoutImportCoverage.cs`.
 Tests: `Src/Common/FwAvalonia/FwAvaloniaTests/ViewDefinitionTests.cs`,
-`LayoutImportCoverageTests.cs`, `BrowseAndCanonicalJsonTests.cs`.
+`LayoutImportCoverageTests.cs`, `CanonicalJsonTests.cs`.
 
 **Gotchas.** Compilation must stay deterministic (same source snapshot →
 identical IR) because parity snapshots key off it. Track element/attribute
@@ -138,8 +138,9 @@ TreeDataGrid:
   `ListBox`/`VirtualizingStackPanel` — flatten in the model, virtualize
   with stock primitives, own the row.
 - Browse/table (XMLViews replacement): owned virtualized table — flattened
-  row list + shared column header + owned cell layout
-  (`Src/Common/FwAvalonia/Region/LexicalBrowseView.cs`).
+  row list + shared column header + owned cell layout. (The Phase-1
+  implementation was removed from PR #964 in review; the pattern returns
+  with the browse-table PR.)
 - Bounded popup trees (≤500 items): stock `TreeView` with an explicit
   item-count ceiling, validated at 100%/150% DPI.
 - Unbounded trees: the owned flattened virtualized list with
@@ -167,15 +168,15 @@ identity means zero layout edits and measurable burn-down (census vs.
 registry coverage).
 
 **Canonical code.** `Src/xWorks/RegionEditorPlugins.cs` (`RegisterBuiltins`),
-`Src/xWorks/ChorusNotesPlugin.cs`, registry contracts in
+registry contracts in
 `Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`.
-Registered plugins now include `ChorusNotesPlugin`, `ReversalIndexEntryPlugin`,
-`InterlinearSlicePlugin` (Words `Analyses` — own openspec change
-`avalonia-interlinear-editor`), the rule-formula family `RuleFormulaRegionEditorPlugin`/
-`MetaRuleFormulaRegionEditorPlugin`/`AffixRuleFormulaRegionEditorPlugin` +
-`PhEnvironmentRegionEditorPlugin` + `BasicIpaSymbolRegionEditorPlugin` (own openspec change
-`avalonia-rule-formula-editor`), and the dialog-launcher plugins
+Registered plugins are `ReversalIndexEntryPlugin` and the dialog-launcher plugins
 `DialogLauncherPlugins.Create*` (MSA-inflection / phonological features / audio-visual).
+Future PRs add the Chorus notes-bar plugin, `InterlinearSlicePlugin` (Words `Analyses` — own
+openspec change `avalonia-interlinear-editor`), and the rule-formula family
+`RuleFormulaRegionEditorPlugin`/`MetaRuleFormulaRegionEditorPlugin`/
+`AffixRuleFormulaRegionEditorPlugin` + `PhEnvironmentRegionEditorPlugin` +
+`BasicIpaSymbolRegionEditorPlugin` (own openspec change `avalonia-rule-formula-editor`).
 Tests: `Src/xWorks/xWorksTests/DialogLauncherPluginTests.cs`,
 `LexemeEditorBurnDownTests.cs`, `MessagesCompanionStripTests.cs`,
 `InterlinearSlicePluginTests.cs`, `RecordEditViewSwitchTests.cs`.

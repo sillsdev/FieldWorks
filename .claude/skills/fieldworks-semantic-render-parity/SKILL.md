@@ -52,7 +52,7 @@ cause is the XML import, slice filtering, editor registry, or rendering.
   `Src/Common/FwAvalonia/ViewDefinition/ViewDefinitionModel.cs`
 - Snapshot/parity tests:
   `Src/Common/FwAvalonia/FwAvaloniaTests/RegionViewingParityTests.cs`,
-  `ViewDefinitionTests.cs`, `BrowseAndCanonicalJsonTests.cs`,
+  `ViewDefinitionTests.cs`, `CanonicalJsonTests.cs`,
   `Path3BundleTests.cs`
 - Import coverage tracking: `LayoutImportCoverageTests.cs` and
   `Src/Common/FwAvalonia/ViewDefinition/LayoutImportCoverage.cs`

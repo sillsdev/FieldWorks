@@ -116,9 +116,8 @@ namespace SIL.FieldWorks.XWorks
 		public void CompanionDesignatedSet_IsEmpty_AndMayOnlyShrink()
 		{
 			// winforms-free-lexeme-editor.md D5: the companion-strip designated set may only SHRINK
-			// (a class graduates unsupported → companion → plugin, never the other way). Wave 2
-			// (ChorusNotesPlugin, D2) emptied it: the Messages slice graduated to the native
-			// Avalonia plugin, and the mechanism stays as the documented coexistence route for
+			// (a class graduates unsupported → companion → plugin, never the other way). It is
+			// empty in this PR, and the mechanism stays as the documented coexistence route for
 			// future tools' WinForms-only slices. If this assertion is failing because the set
 			// GREW, that is a new WinForms dependency inside the pane — do not edit this test
 			// without a written justification in the change doc.
@@ -126,21 +125,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ExplicitlyDeferredClasses_AreTheChorusNotesPhase1FollowUpRoute_WithCitations()
+		public void ExplicitlyDeferredClasses_AreTheUnmigratedChorusNotesBar_WithCitations()
 		{
 			// D5: deferral is only legitimate with the gate it rides spelled out. Wave 4 (D4)
 			// graduated AudioVisualSlice into the launcher route, Wave 3 absorbed the ghost and
 			// multislice relation routes into the composer, and ReversalIndexEntrySlice graduated to
-			// a native Avalonia plugin (ReversalIndexEntryPlugin). MessageSlice (ChorusNotesPlugin)
-			// moved the OTHER direction for this base PR: the base-PR scoping decision treats it as a
-			// Phase-1 follow-up surface (the same status as the Avalonia browse table and the
-			// interlinear/rule-formula plugins), so RegisterBuiltins deliberately does not register it
-			// and the class rides this deferred route until a follow-up PR restores the registration.
+			// a native Avalonia plugin (ReversalIndexEntryPlugin). MessageSlice (the Chorus notes bar)
+			// is not migrated in this PR: no plugin claims it, so the class rides this deferred route
+			// until a future PR adds a notes-bar plugin and registers it.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{
 					AvaloniaCompanionSlices.MessageSliceClassName,
-					"Phase-1 follow-up surface (ChorusNotesPlugin gated off in base PR)"
+					"Chorus notes bar not migrated in this PR (read-only placeholder row)"
 				}
 			};
 			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames, Is.EquivalentTo(expected));
@@ -242,20 +239,16 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DefaultRegistry_BuiltinsAreExactlyTheLandedWaves()
 		{
-			// The burn-down measured: wave 2 (D2) built ChorusNotesPlugin (the native notes bar over
-			// LibChorus), but the base-PR scoping decision keeps it UNREGISTERED here — it is a
-			// Phase-1 follow-up surface, so the Messages slice stays in the ExplicitlyDeferred route
-			// (see the census test) rather than PluginRouted for this base PR; wave 3 (D3) was a
-			// composer route, no plugin; wave 4 (D4) added the three dialog-launcher plugins; the
-			// reversal-entries editor (ReversalIndexEntryPlugin) graduated the last deferred class to a
-			// native Avalonia editable multi-WS text field. The census test above keeps every class in
-			// exactly one route.
-			// PHASE-1 FOLLOW-UP PRs: ChorusNotesPlugin (see above), the avalonia-interlinear-editor
-			// (InterlinearSlicePlugin), and the avalonia-rule-formula-editor family (five plugins: the
-			// three rule-formula grids plus the environment-string and Basic IPA symbol editors) ship in
-			// their own follow-up PRs. Each follow-up restores its plugin registration in
-			// RegionEditorPlugins.RegisterBuiltins and adds its class name(s) back to this census. The
-			// base registry is exactly the always-on routes below.
+			// The Chorus notes bar (MessageSlice) is not migrated in this PR: no plugin claims it, so
+			// the Messages slice stays in the ExplicitlyDeferred route (see the census test) rather
+			// than PluginRouted; wave 3 (D3) was a composer route, no plugin; wave 4 (D4) added the
+			// three dialog-launcher plugins; the reversal-entries editor (ReversalIndexEntryPlugin)
+			// graduated the last deferred class to a native Avalonia editable multi-WS text field. The
+			// census test above keeps every class in exactly one route.
+			// FUTURE PRs: the notes-bar plugin, the interlinear editor, and the rule-formula editor
+			// family each add their plugin registration in RegionEditorPlugins.RegisterBuiltins and add
+			// their class name(s) back to this census. The base registry is exactly the always-on
+			// routes below.
 			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
 				Is.EquivalentTo(new[]
 				{
@@ -265,7 +258,7 @@ namespace SIL.FieldWorks.XWorks
 					DialogLauncherPlugins.AudioVisualSliceClassName
 				}));
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(AvaloniaCompanionSlices.MessageSliceClassName),
-				Is.Null, "ChorusNotesPlugin is a Phase-1 follow-up surface and must not be registered in the base PR");
+				Is.Null, "the Chorus notes bar is not migrated in this PR, so nothing may claim MessageSlice");
 			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
 				Is.InstanceOf<ReversalIndexEntryPlugin>());
 		}

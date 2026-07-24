@@ -142,7 +142,6 @@ namespace FwAvaloniaTests
 			Assert.That(FwAvaloniaDensity.FieldSpacing, Is.EqualTo(2d));
 			Assert.That(FwAvaloniaDensity.EditorPadding, Is.EqualTo(new Thickness(3, 1, 3, 1)));
 			Assert.That(FwAvaloniaDensity.SliceMargin, Is.EqualTo(new Thickness(4, 2, 4, 2)));
-			Assert.That(FwAvaloniaDensity.BrowseRowPadding, Is.EqualTo(new Thickness(3, 0, 3, 0)));
 			Assert.That(FwAvaloniaDensity.BrowseRowMinHeight, Is.EqualTo(18d));
 		}
 	}

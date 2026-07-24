@@ -33,11 +33,8 @@ and "fixes" it, thrashing the code.
 | Picture Properties | `Src/FwCoreDlgs/PicturePropertiesDialog.cs` | `Src/Common/FwAvaloniaDialogs/PicturePropertiesDialogView.cs` + `PicturePropertiesDialogViewModel.cs` |
 | Phonological Feature Chooser | `Src/LexText/LexTextControls/PhonologicalFeatureChooserDlg.cs` | `Src/Common/FwAvaloniaDialogs/FeatureChooserDialogView.axaml.cs` + `FeatureChooserDialogViewModel.cs` |
 | Entry Go (jump to entry) | `Src/LexText/LexTextControls/EntryGoDlg.cs` | `Src/Common/FwAvaloniaDialogs/EntryGoDialogView.axaml.cs` + `EntryGoDialogViewModel.cs` |
-| Configure Columns (browse) | `Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs` | `Src/Common/FwAvaloniaDialogs/ConfigureColumnsDialogView.axaml.cs` + `ConfigureColumnsDialogViewModel.cs` |
-| Possibility/list chooser (FilterBar "choose") | `Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs` (+ `Src/Common/Controls/DetailControls/SimpleListChooser.cs`) | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml.cs` + `ChooserDialogViewModel.cs`; edge: `Src/LexText/LexTextControls/LcmChooserDialogLauncher.cs` |
+| Possibility/list chooser (FilterBar "choose") | `Src/Common/Controls/XMLViews/ReallySimpleListChooser.cs` (+ `Src/Common/Controls/DetailControls/SimpleListChooser.cs`) | `Src/Common/FwAvaloniaDialogs/ChooserDialogView.axaml.cs` + `ChooserDialogViewModel.cs`; edge: a product launcher lands with the ReallySimpleListChooser migration |
 | Create feature / add feature value | `Src/LexText/LexTextControls/MasterInflectionFeatureListDlg.cs` / `MasterPhonologicalFeatureListDlg.cs` | `Src/Common/FwAvaloniaDialogs/CreateFeatureDialogView.axaml.cs` + `CreateFeatureDialogViewModel.cs`; edge: `Src/LexText/LexTextControls/LcmCreateFeatureLauncher.cs` |
-| Date range filter (FilterBar) | `Src/Common/Controls/XMLViews/SimpleDateMatchDlg.cs` | `Src/Common/FwAvaloniaDialogs/DateRangeFilterDialogView.axaml.cs` + `DateRangeFilterDialogViewModel.cs` |
-| Filter For… (FilterBar text match) | `Src/Common/Controls/XMLViews/SimpleMatchDlg.cs` | `Src/Common/FwAvaloniaDialogs/FilterForDialogView.axaml.cs` + `FilterForDialogViewModel.cs` |
 
 Symbols in the rules below use Tools → Options as the worked example.
 

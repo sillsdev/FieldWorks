@@ -35,38 +35,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private static readonly LexicalEditSurfaceRegistry DefaultRegistry =
 			LexicalEditSurfaceRegistry.CreateDefault();
 
-		// Tools whose BROWSE/table surface can render on the Avalonia owned table (Stage 3 product
-		// wiring). Kept separate from the edit-surface registry because the browse table is a distinct
-		// surface; both are gated by the same `UIMode = New` preference.
-		// - "lexiconEdit": the Lexicon Edit tool's left Entries pane (the primary requested target;
-		//   its currentContentControl is the tool value "lexiconEdit", same as the right edit pane).
-		// - "lexiconBrowse": the standalone Lexicon > Browse tool.
-		// §20.2: the BROWSE/list surface is class-agnostic (ClerkBrowseRowSource keys on the clerk's columns,
-		// not LexEntry), and the bulk-delete orphan sweep is now gated to lexicon list-items (§20.2.3), so
-		// flat-list non-lexicon tools opt their LIST pane into the Avalonia table here. (Their EDIT detail
-		// stays WinForms until registered in the separate LexicalEditSurfaceRegistry — §20.3.) Lists tools are
-		// NOT here: they navigate via a hierarchical tree bar, which needs the §20.2.6 owned tree first.
-		// PHASE-1: the Avalonia browse TABLE is a FOLLOW-UP surface and is INERT in the base PR — no tool is
-		// registered, so every list pane falls back to the legacy WinForms BrowseViewer even under UIMode=New.
-		// The table's view-layer code (LexicalBrowseView etc.) ships in base but stays dormant. The
-		// phase1-followup-table branch/PR (stacked on phase1-followup-rule, per PR #964's description) ACTIVATES
-		// it by moving its tool name(s) from Phase1FollowUpBrowseTools into this list.
-		// Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests. The gate this array feeds is
-		// consulted at Src/xWorks/RecordBrowseView.cs:TryActivateAvaloniaBrowse (via ResolveBrowse below).
-		private static readonly string[] SupportedAvaloniaBrowseToolNames =
-		{
-		};
-
-		// The browse tools the phase1-followup-table branch/PR will re-activate (the one-line "flip" — move
-		// into the array above).
-		public static readonly string[] Phase1FollowUpBrowseTools =
-		{
-			"lexiconEdit", "lexiconBrowse",
-			"notebookEdit", "notebookBrowse",       // §20.2.1 Notebook (RnGenericRec flat record list)
-			"Analyses", "toolBulkEditWordforms",    // §20.2.4 Words (wordform analyses + bulk edit)
-			"featureTypesAdvancedEdit", "reversalToolReversalIndexPOS" // §20.2.7 Grammar flat-table editors
-		};
-
 		/// <summary>Property/app-setting key storing the preferred lexical-edit UI mode.</summary>
 		public const string UIModePropertyName = "UIMode";
 		public const string LegacyUIMode = "Legacy";
@@ -131,9 +99,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			return ResolveFromPreference(registry.SupportsAvalonia(currentToolName), overrideEnabled, uiMode);
 		}
 
-		// The single surface-precedence implementation shared by the edit (Resolve) and browse
-		// (ResolveBrowse) gates: a closed tool gate is always WinForms; otherwise an explicit override
-		// wins; otherwise the persisted UI-mode preference decides.
+		// The single surface-precedence implementation behind the edit gate: a closed tool gate is
+		// always WinForms; otherwise an explicit override wins; otherwise the persisted UI-mode
+		// preference decides.
 		private static LexicalEditSurface ResolveFromPreference(bool toolGateOpen, bool? overrideEnabled, string uiMode)
 		{
 			if (!toolGateOpen)
@@ -152,31 +120,5 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		public static bool SupportsAvaloniaForTool(string currentToolName)
 			=> DefaultRegistry.SupportsAvalonia(currentToolName);
-
-		/// <summary>
-		/// Resolves the surface for a BROWSE/table tool (Stage 3). Unlike <see cref="SupportsAvaloniaForTool"/>
-		/// a blank/unknown tool does NOT opt in — the Avalonia browse table is enabled only for explicitly
-		/// listed browse tools, so unrelated browse surfaces keep the legacy <c>BrowseViewer</c>.
-		/// </summary>
-		public static LexicalEditSurface ResolveBrowse(
-			bool? overrideEnabled = null,
-			string uiMode = null,
-			string currentToolName = null)
-			=> ResolveFromPreference(SupportsAvaloniaBrowseForTool(currentToolName), overrideEnabled, uiMode);
-
-		/// <summary>Whether the named browse/table tool is approved for the Avalonia owned table.</summary>
-		public static bool SupportsAvaloniaBrowseForTool(string currentToolName)
-		{
-			if (string.IsNullOrWhiteSpace(currentToolName))
-				return false;
-
-			foreach (var toolName in SupportedAvaloniaBrowseToolNames)
-			{
-				if (string.Equals(toolName, currentToolName, StringComparison.OrdinalIgnoreCase))
-					return true;
-			}
-
-			return false;
-		}
 	}
 }
