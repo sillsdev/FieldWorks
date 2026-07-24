@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			zeroReport = new ParseReport(zeroWordform, zeroResult);
 			CheckParseReport(zeroReport, parseTime: 2);
 
-			var parserReport = new ParserReport(Cache);
+			var parserReport = new ParserReport(Cache, null);
 			parserReport.SourceText = "Testbed";
 			parserReport.AddParseReport("cat", parseReport);
 			parserReport.AddParseReport("error", errorReport);

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Policy;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -91,6 +92,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int TotalChangedAnalyses { get; set; }
 
 		/// <summary>
+		/// Whether changes were recorded in ChangedAnalyses.
+		/// </summary>
+		public bool ChangesRecorded { get; set; }
+
+		/// <summary>
 		/// Parse reports for each word
 		/// </summary>
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
@@ -118,12 +124,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReports = new Dictionary<string, ParseReport>();
 		}
 
-		public ParserReport(LcmCache cache)
+		public ParserReport(LcmCache cache, PropertyTable propertyTable)
 		{
 			ProjectName = cache.LanguageProject.ShortName;
 			MachineName = Environment.MachineName;
 			Timestamp = DateTime.UtcNow.ToFileTime();
 			ParseReports = new Dictionary<string, ParseReport>();
+			bool updatesAnalyses = propertyTable == null ? true : propertyTable.GetBoolProperty("CheckParserUpdatesAnalyses", true);
+			ChangesRecorded = !updatesAnalyses;
 		}
 
 		/// <summary>
