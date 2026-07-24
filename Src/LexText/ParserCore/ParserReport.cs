@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Policy;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -86,6 +87,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int TotalUserNoOpinionAnalyses { get; set; }
 
 		/// <summary>
+		/// Total number of parse analyses that changed since the last parse
+		/// </summary>
+		public int TotalChangedAnalyses { get; set; }
+
+		/// <summary>
+		/// Whether changes were recorded in ChangedAnalyses.
+		/// </summary>
+		public bool ChangesRecorded { get; set; }
+
+		/// <summary>
 		/// Parse reports for each word
 		/// </summary>
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
@@ -113,12 +124,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReports = new Dictionary<string, ParseReport>();
 		}
 
-		public ParserReport(LcmCache cache)
+		public ParserReport(LcmCache cache, PropertyTable propertyTable)
 		{
 			ProjectName = cache.LanguageProject.ShortName;
 			MachineName = Environment.MachineName;
 			Timestamp = DateTime.UtcNow.ToFileTime();
 			ParseReports = new Dictionary<string, ParseReport>();
+			bool updatesAnalyses = propertyTable == null ? true : propertyTable.GetBoolProperty("CheckParserUpdatesAnalyses", true);
+			ChangesRecorded = !updatesAnalyses;
 		}
 
 		/// <summary>
@@ -132,6 +145,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			NumWords += 1;
 			TotalParseTime += report.ParseTime;
 			TotalAnalyses += report.NumAnalyses;
+			TotalChangedAnalyses += report.NumChangedAnalyses;
 			TotalUserApprovedAnalysesMissing += report.NumUserApprovedAnalysesMissing;
 			TotalUserDisapprovedAnalyses += report.NumUserDisapprovedAnalyses;
 			TotalUserNoOpinionAnalyses += report.NumUserNoOpinionAnalyses;
@@ -245,6 +259,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
 			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
 			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
+			diff.TotalChangedAnalyses = TotalChangedAnalyses - other.TotalChangedAnalyses;
 			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
 			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
 			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
@@ -295,6 +310,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (TotalParseTime != other.TotalParseTime) return false;
 
 			if (TotalAnalyses != other.TotalAnalyses) return false;
+
+			if (TotalChangedAnalyses != other.TotalChangedAnalyses) return false;
 
 			if (TotalUserApprovedAnalysesMissing != other.TotalUserApprovedAnalysesMissing) return false;
 
@@ -358,6 +375,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public int NumUserNoOpinionAnalyses { get; set; }
 
+		/// <summary>
+		/// Number of analyses that changed since the last parse
+		/// </summary>
+		public int NumChangedAnalyses { get; set; }
+
 		public ParseReport() { }
 
 		/// <summary>
@@ -409,7 +431,45 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					NumUserNoOpinionAnalyses++;
 
 			}
-
+			// Count changed analyses.
+			var parserAgent = wordform.Cache.LanguageProject.DefaultParserAgent;
+			foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+			{
+				var opinion = wfAnalysis.GetAgentOpinion(parserAgent);
+				if (opinion == Opinions.approves)
+				{
+					var found = false;
+					foreach (ParseAnalysis pAnalysis in result.Analyses)
+					{
+						if (pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+						{
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+					{
+						NumChangedAnalyses++;
+					}
+				}
+			}
+			foreach (ParseAnalysis pAnalysis in result.Analyses)
+			{
+				var found = false;
+				foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+				{
+					var opinion = wfAnalysis.GetAgentOpinion(parserAgent);
+					if (opinion == Opinions.approves && pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+					{
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					NumChangedAnalyses++;
+				}
+			}
 		}
 
 		/// <summary>
@@ -420,6 +480,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReport diffReport = new ParseReport
 			{
 				NumAnalyses = NumAnalyses - oldReport.NumAnalyses,
+				NumChangedAnalyses = NumChangedAnalyses - oldReport.NumChangedAnalyses,
 				NoParse = NoParse - oldReport.NoParse,
 				NumUserApprovedAnalysesMissing = NumUserApprovedAnalysesMissing - oldReport.NumUserApprovedAnalysesMissing,
 				NumUserDisapprovedAnalyses = NumUserDisapprovedAnalyses - oldReport.NumUserDisapprovedAnalyses,
@@ -451,6 +512,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (ErrorMessage != other.ErrorMessage) return false;
 
 			if (NumAnalyses != other.NumAnalyses) return false;
+
+			if (NumChangedAnalyses != other.NumChangedAnalyses) return false;
 
 			if (NumUserApprovedAnalysesMissing != other.NumUserApprovedAnalysesMissing) return false;
 

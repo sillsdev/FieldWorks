@@ -304,6 +304,24 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Num Changed Analyses.
+        /// </summary>
+        public static string ksNumChangedAnalyses {
+            get {
+                return ResourceManager.GetString("ksNumChangedAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of analyses that have changed since the last parse.
+        /// </summary>
+        public static string ksNumChangedAnalysesToolTip {
+            get {
+                return ResourceManager.GetString("ksNumChangedAnalysesToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disapproved Analyses.
         /// </summary>
         public static string ksNumDisapprovedAnalyses {
@@ -624,6 +642,24 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksTotalAnalysesToolTip {
             get {
                 return ResourceManager.GetString("ksTotalAnalysesToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Num Changed Analyses.
+        /// </summary>
+        public static string ksTotalChangedAnalyses {
+            get {
+                return ResourceManager.GetString("ksTotalChangedAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The total number of changed analyses since the last parse.
+        /// </summary>
+        public static string ksTotalChangedAnalysesToolTip {
+            get {
+                return ResourceManager.GetString("ksTotalChangedAnalysesToolTip", resourceCulture);
             }
         }
         
