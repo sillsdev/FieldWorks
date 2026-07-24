@@ -138,22 +138,6 @@ namespace SIL.FieldWorks
 			Assert.That(FieldWorks.ResolveUIMode(settingsUIMode), Is.EqualTo(expected));
 		}
 
-		/// <summary>Pins the FwAvaloniaLocalization contract this method resolves via reflection.</summary>
-		[Test]
-		public void GetAvaloniaLocalizationMethods_ReturnsExpectedAvaloniaLocalizationEntryPoints()
-		{
-			var methods = (MethodInfo[])ReflectionHelper.GetResult(typeof(FieldWorks), "GetAvaloniaLocalizationMethods");
-
-			Assert.That(methods, Is.Not.Null);
-			Assert.That(methods.Select(m => m.Name), Is.EquivalentTo(new[]
-			{
-				nameof(FwAvaloniaLocalization.GetString),
-				nameof(FwAvaloniaLocalization.GetPalasoString),
-				nameof(FwAvaloniaLocalization.GetChorusString)
-			}));
-			Assert.That(methods, Has.All.Matches<MethodInfo>(m => m.DeclaringType == typeof(FwAvaloniaLocalization)));
-		}
-
 		/// <summary/>
 		[Test]
 		public void EnsureValidLinkedFilesFolderCore_IfUsingDefaultDir_CreatesDirIfNotExist()

@@ -1,6 +1,6 @@
 ---
 name: fieldworks-localization-review
-description: "Review or change FieldWorks user-facing strings: LocalizationManager/XLIFF and legacy .resx resources, localization keys, the StringTable lane for field labels, Crowdin-facing assets, and localization-sensitive automation metadata. Use whenever a change adds or edits any user-visible text in WinForms or Avalonia, adds a new UI project, touches resource files, or claims localization parity — even for a single new label or error message."
+description: "Review or change FieldWorks user-facing strings: LocalizationManager/XLIFF and legacy .resx resources, localization keys, the StringTable strategy for XML-configuration labels, Crowdin-facing assets, and localization-sensitive automation metadata. Use whenever a change adds or edits any user-visible text in WinForms or Avalonia, adds a new UI project, touches resource files, or claims localization parity — even for a single new label or error message."
 ---
 
 # FieldWorks Localization Review
@@ -15,26 +15,42 @@ description: "Review or change FieldWorks user-facing strings: LocalizationManag
 - Automation metadata where `Name`, tooltip, or label is localized but
   stable `AutomationId` must remain nonlocalized.
 
-## The Two Runtime Lanes (Avalonia surfaces)
+## The Localization Strategies
 
-1. **Field labels** come from layout data and resolve through the legacy
-   StringTable lane (`XmlUtils.GetLocalizedAttributeValue`,
-   `strings-{locale}.xml`) at render time. The view-definition IR carries a
-   `LocalizationKey` per node; never bake English label text into the IR or
-   region model.
-2. **Avalonia chrome** (Save, Cancel, validation errors, unsupported-row
-   text, dialog labels, accessible names) should resolve through the
-   existing LocalizationManager/L10NSharp XLIFF catalog already loaded by
-   the product host. Prefer existing `Palaso`/`Chorus` ids only when their
-   semantics and markup truly match; otherwise add unique Avalonia-prefixed
-   ids to avoid collisions.
+1. **Field labels** (text originating in XML configuration: layout/part
+   labels, browse column headings, XCore menu labels) come from layout data
+   and resolve through the StringTable strategy
+   (`XmlUtils.GetLocalizedAttributeValue`, `strings-{locale}.xml`) at
+   render time. The view-definition IR carries a `LocalizationKey` per
+   node; never bake English label text into the IR or region model.
+2. **FieldWorks-owned UI text** — WinForms *and* Avalonia forms, controls,
+   and dialogs (Save, Cancel, validation errors, unsupported-row text,
+   dialog labels, accessible names) — lives in the owning project's
+   `.resx`; translations ship as Crowdin-built satellite assemblies. This
+   matches the official Avalonia localization guidance
+   (https://docs.avaloniaui.net/docs/app-development/localizing). For the
+   Avalonia projects, `FwAvaloniaStrings`/`FwAvaloniaDialogsStrings` are
+   thin accessors resolving via `ResourceManager` over
+   `FwAvaloniaStrings.resx`/`FwAvaloniaDialogsStrings.resx`; a missing
+   entry falls back to the string id so drift is visible, and
+   `AvaloniaLocalizationTests` pins every accessor property against the
+   neutral resx. No live UI-language switching is needed: FLEx already
+   shows a restart-required prompt on UI-language change (LexOptionsDlg),
+   matching the Avalonia doc's caveat that x:Static/resx does not
+   live-update.
+3. **L10NSharp/XLIFF** is only for UI supplied by Palaso, FlexBridge, or
+   Chorus (or a FieldWorks form hosting an L10NSharp widget). Never add
+   L10NSharp usage for FieldWorks-owned strings, and never borrow
+   `Palaso`/`Chorus` catalog ids (e.g. "Common.Help") for FieldWorks-owned
+   text — put such strings in the project resx with FwAvalonia-owned keys.
 
-**Current source of truth.** For Avalonia chrome, the authoritative runtime
-and English-default source is the accessor code (`FwAvaloniaStrings.cs`,
-`FwAvaloniaDialogsStrings.cs`) plus the XLIFF ids it calls. Legacy Avalonia
-`.resx` files may still exist in the repo, but they are not the runtime lane
-and should not be treated as authoritative unless a task explicitly retires
-or updates them.
+**Current source of truth.** For FieldWorks-owned Avalonia UI text, the
+neutral `.resx` is the authoritative English source; the accessor classes
+(`FwAvaloniaStrings.cs`, `FwAvaloniaDialogsStrings.cs`) are thin
+`ResourceManager` wrappers over it, not an independent string source.
+`FwAvaloniaLocalization`/`FwAvaloniaLocalizationBootstrap` were deleted, and
+`FieldWorks.InitializeLocalizationManager` no longer registers FwAvalonia
+namespaces.
 
 ## Required Checks
 
@@ -44,14 +60,17 @@ or updates them.
   and diagnostics are localized before a product path is exposed.
 - Stable `AutomationId` and other selectors remain nonlocalized; localized
   names, tooltips, and labels may vary by locale.
-- Localization ids and inline English defaults stay aligned with existing
-  Crowdin and repo conventions.
-- New SDK-style csprojs declare `<RootNamespace>` explicitly — the Crowdin
-  satellite-assembly build
+- Resource keys and neutral-resx English entries stay aligned with existing
+  Crowdin and repo conventions (same seed English as any WinForms twin so
+  Crowdin translation memory matches).
+- New SDK-style csprojs declare `<RootNamespace>` explicitly — it keeps
+  satellite resource names stable, and the Crowdin satellite-assembly build
   (`Build/Src/FwBuildTasks/Localization/ProjectLocalizer.cs`) fails
-  without it if a legacy `.resx` artifact is still being carried.
-- Non-product hosts that request Avalonia chrome prove their
-  LocalizationManager bootstrap or their intentional English fallback.
+  without it.
+- Resx satellites need no runtime bootstrap; only hosts exercising genuine
+  Palaso/FlexBridge/Chorus-supplied UI need an L10NSharp
+  LocalizationManager, and those prove their bootstrap or their
+  intentional English fallback.
 - If localization parity is claimed, tests or evidence cover the localized
   path and confirm selectors do not depend on localized text. English on
   the Avalonia surface where legacy shows translations is a parity
@@ -62,8 +81,9 @@ or updates them.
 - Hardcoded English text in product C#, XAML, or product-facing
   preview-promotion paths.
 - Field labels rendered raw from the IR without StringTable resolution.
-- Reusing a `Palaso`/`Chorus` id whose semantics or mnemonic markup do not
-  actually match the Avalonia surface.
+- New L10NSharp usage — or a borrowed `Palaso`/`Chorus` catalog id — for a
+  FieldWorks-owned string; those belong in the project resx with
+  FieldWorks-owned keys.
 - Tests or automation selectors depending on localized labels when stable
   IDs exist or are required.
 - A product route reusing preview-only placeholder text.
@@ -72,13 +92,14 @@ or updates them.
 
 ## Handoff
 
-List the XLIFF ids, accessor defaults, or legacy resource files touched,
+List the resx keys, accessor properties, StringTable entries, or XLIFF ids
+(Palaso/FlexBridge/Chorus UI only) touched,
 remaining hardcoded product strings, automation identity strategy, and
 whether localized behavior has executable evidence or is still pending.
 
 ## Keep This Skill Current
 
-When a new localization lane, Crowdin constraint, or resource convention
+When a new localization strategy, Crowdin constraint, or resource convention
 appears (or a gap like the `<RootNamespace>` one is found), record it here
 in the same PR; route durable lessons through
 `fieldworks-winforms-to-avalonia-migration/references/lessons-learned.md`.

@@ -101,8 +101,9 @@
 	<ItemGroup Label="SIL Localization">
 		<PackageVersion Include="L10NSharp" Version="$(L10NSharpVersion)" />
 		<!-- L10NSharp v10 split the WinForms-specific types (LocalizationManagerWinforms) into a
-		     separate package. Most projects pick it up transitively; projects that reference it
-		     directly (e.g. FwAvaloniaTests) pin it here via the shared L10NSharp version. -->
+		     separate package. No project references it directly (it flows transitively from the
+		     Palaso stack); with CentralPackageTransitivePinningEnabled this pin keeps the
+		     transitive version aligned with the shared L10NSharp version. -->
 		<PackageVersion Include="L10NSharp.Windows.Forms" Version="$(L10NSharpVersion)" />
 		<PackageVersion Include="SIL.Chorus.L10ns" Version="3.0.1" />
 		<PackageVersion Include="SIL.LibPalaso.L10ns" Version="$(SilLibPalasoL10nsVersion)" />

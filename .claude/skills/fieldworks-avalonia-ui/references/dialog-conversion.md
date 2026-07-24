@@ -210,15 +210,16 @@ binding/command behavior is proven by the headless tests.
 
 ## 5. Localization (don't ship hardcoded strings)
 
-Dialog text is **product messages → the existing LocalizationManager/L10NSharp XLIFF catalog**
-(apply `fieldworks-localization-review`). In practice, the dialog kit still exposes the
-hand-written static accessor **`FwAvaloniaDialogsStrings`**, but that accessor should resolve through
-LocalizationManager at runtime. To add a dialog's strings:
+Dialog text is **FieldWorks-owned UI text → the project `.resx`** (apply
+`fieldworks-localization-review`). The dialog kit exposes the static accessor
+**`FwAvaloniaDialogsStrings`**, which resolves via `ResourceManager` over
+`FwAvaloniaDialogsStrings.resx`; translations ship as Crowdin-built satellite assemblies. To add a
+dialog's strings:
 
-1. Reuse an existing `Palaso`/`Chorus` id only when the semantics and markup really match. Otherwise,
-  mint a unique Avalonia-prefixed id in the existing catalog.
-2. Add or update the accessor property so it resolves through LocalizationManager (typically via a shared
-  Avalonia helper) and carries the inline English default used by product/runtime fallback.
+1. Add the entry to `FwAvaloniaDialogsStrings.resx` — the neutral resx is the English source of truth.
+  Use the same seed English as the WinForms twin so Crowdin translation memory matches.
+2. Add the matching accessor property (`AvaloniaLocalizationTests` pins each accessor against the
+  neutral resx; a missing entry falls back to the string id so drift is visible).
 3. Bind from XAML with **`{x:Static res:FwAvaloniaDialogsStrings.Xxx}`** (declare
    `xmlns:res="clr-namespace:FwAvaloniaDialogs"`). Use it for `Content`, `Header`, `Text`, and the
    `ShowModal` title.

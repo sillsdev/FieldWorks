@@ -13,13 +13,470 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <!--
-    Intentionally empty of <data> entries (same finding as FwAvalonia.csproj's sibling FwAvaloniaStrings.resx,
-    PR #964 review Finding E / cleanup #2, missed here on first pass). Runtime string lookup for the Avalonia
-    MVVM dialogs goes through FwAvaloniaLocalization.GetPalasoString/GetChorusString (L10NSharp/XLIFF), not
-    this file's ResourceManager lane; the previous 57 ks*-prefixed keys here were never read by anything at
-    runtime. The file itself stays in place because FwAvaloniaDialogs.csproj's <RootNamespace> (see the
-    comment there; explicit RootNamespace requirement for the satellite-assembly localizer is tracked in
-    the `fieldworks-localization-review` skill) exists so the build localizer can still produce a
-    FwAvaloniaDialogs.resources.dll satellite assembly for this project.
+    Neutral (English) source of truth for FwAvaloniaDialogs user-visible strings, resolved at runtime
+    through ResourceManager by the accessor class (the FieldWorks .resx localization strategy).
+    Translations arrive as satellite assemblies built by the localization pipeline
+    (Build/Src/FwBuildTasks/Localization/ProjectLocalizer.cs; the csproj's explicit
+    RootNamespace keeps the satellite resource names stable).
   -->
+  <data name="FwAvaloniaDialogs.OptionsTitle" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="FwAvaloniaDialogs.GeneralTab" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PluginsTab" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PrivacyTab" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UpdatesTab" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UiLanguageLabel" xml:space="preserve">
+    <value>UI language</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UiLanguageNote" xml:space="preserve">
+    <value>Changing the UI language requires restarting FieldWorks.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LexicalEditUiLabel" xml:space="preserve">
+    <value>Lexical Edit UI</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UiModeLegacy" xml:space="preserve">
+    <value>Legacy</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UiModeNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UiModeBetaWarning" xml:space="preserve">
+    <value>Beta: the New mode is incomplete; some features are not yet available.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ManageIndividualFeatures" xml:space="preserve">
+    <value>Manage Individual Features...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AutoOpenLastProject" xml:space="preserve">
+    <value>Open the last project automatically</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PluginsUnavailableNote" xml:space="preserve">
+    <value>Plugin management is not available in the new dialog yet.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PrivacyNote" xml:space="preserve">
+    <value>Choose whether FieldWorks may send anonymous usage data.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.OkToPing" xml:space="preserve">
+    <value>Allow anonymous usage reporting</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AutoUpdate" xml:space="preserve">
+    <value>Install updates automatically</value>
+  </data>
+  <data name="FwAvaloniaDialogs.UpdateChannelLabel" xml:space="preserve">
+    <value>Update channel</value>
+  </data>
+  <data name="FwAvaloniaDialogs.OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="FwAvaloniaDialogs.OkMnemonic" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CancelMnemonic" xml:space="preserve">
+    <value>_Cancel</value>
+  </data>
+  <data name="FwAvaloniaDialogs.HelpMnemonic" xml:space="preserve">
+    <value>_Help</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ChooserEmptyOption" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ChooserMustSelect" xml:space="preserve">
+    <value>Select an item.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ChooserSearchPrompt" xml:space="preserve">
+    <value>Type to search</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureManagerTitle" xml:space="preserve">
+    <value>Manage Individual Features</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureManagerSearchWatermark" xml:space="preserve">
+    <value>Search by name or description...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureManagerSelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureManagerDeselectAll" xml:space="preserve">
+    <value>Deselect All</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryTitle" xml:space="preserve">
+    <value>Insert Entry</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryCreate" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryCreateMnemonic" xml:space="preserve">
+    <value>C_reate</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryLexemeFormLabel" xml:space="preserve">
+    <value>Lexeme Form</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryMorphTypeLabel" xml:space="preserve">
+    <value>Morph Type</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryGlossLabel" xml:space="preserve">
+    <value>Gloss</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryLexFormNotEmpty" xml:space="preserve">
+    <value>Lexeme Form is required.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryMatchingEntriesLabel" xml:space="preserve">
+    <value>Similar Entries</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryUseSelectedEntry" xml:space="preserve">
+    <value>Go to similar entry</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryGrammaticalInfoLabel" xml:space="preserve">
+    <value>Grammatical Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceTitle" xml:space="preserve">
+    <value>Find and Replace</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceFindLabel" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceReplaceLabel" xml:space="preserve">
+    <value>Replace with</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceMatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceMatchDiacritics" xml:space="preserve">
+    <value>Match diacritics</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceMatchWholeWord" xml:space="preserve">
+    <value>Match whole word</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceMatchWritingSystem" xml:space="preserve">
+    <value>Match writing system</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceUseRegex" xml:space="preserve">
+    <value>Use regular expressions</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceFindEmpty" xml:space="preserve">
+    <value>Enter text to find.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FindReplaceInvalidRegex" xml:space="preserve">
+    <value>The regular expression is invalid.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsTitle" xml:space="preserve">
+    <value>Configure Columns</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsAvailableLabel" xml:space="preserve">
+    <value>Available columns</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsShownLabel" xml:space="preserve">
+    <value>Shown columns</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsMoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsMoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="FwAvaloniaDialogs.ConfigureColumnsNeedsAColumn" xml:space="preserve">
+    <value>At least one column must remain visible.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="FwAvaloniaDialogs.No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="FwAvaloniaDialogs.IconInformation" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.IconWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="FwAvaloniaDialogs.IconQuestion" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="FwAvaloniaDialogs.EntryGoMustSelect" xml:space="preserve">
+    <value>Select an entry.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.EntryGoSearchWatermark" xml:space="preserve">
+    <value>Type to search</value>
+  </data>
+  <data name="FwAvaloniaDialogs.EntryGoResultsLabel" xml:space="preserve">
+    <value>Lexical Entries</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Merge.Title" xml:space="preserve">
+    <value>Merge Entry</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Merge.OkButton" xml:space="preserve">
+    <value>Merge</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.Title" xml:space="preserve">
+    <value>Find Entry to Add Allomorph</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.OkButton" xml:space="preserve">
+    <value>Add Allomorph...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.Undo" xml:space="preserve">
+    <value>Undo add allomorph</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.Redo" xml:space="preserve">
+    <value>Redo add allomorph</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkEntryOrSense.Title" xml:space="preserve">
+    <value>Choose Lexical Entry or Sense</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkAllomorph.Title" xml:space="preserve">
+    <value>Choose Allomorph</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkMsa.Title" xml:space="preserve">
+    <value>Choose Morpheme and Grammatical Info.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.Title" xml:space="preserve">
+    <value>Filter for items containing...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.MatchLabel" xml:space="preserve">
+    <value>Enter text to search for:</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.Anywhere" xml:space="preserve">
+    <value>Anywhere</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.AtStart" xml:space="preserve">
+    <value>At start</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.AtEnd" xml:space="preserve">
+    <value>At end</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.WholeItem" xml:space="preserve">
+    <value>Whole item</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.Regex" xml:space="preserve">
+    <value>Match for regular expression</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.MatchCase" xml:space="preserve">
+    <value>Match case</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.Empty" xml:space="preserve">
+    <value>Enter text to filter for.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterFor.InvalidRegex" xml:space="preserve">
+    <value>The regular expression is not valid.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.Title" xml:space="preserve">
+    <value>Restrict Date</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.RelationLabel" xml:space="preserve">
+    <value>Show items where the date is:</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.DateLabel" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.EndLabel" xml:space="preserve">
+    <value>and</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.On" xml:space="preserve">
+    <value>on</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.NotOn" xml:space="preserve">
+    <value>not on</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.OnOrBefore" xml:space="preserve">
+    <value>on or before</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.OnOrAfter" xml:space="preserve">
+    <value>on or after</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.Between" xml:space="preserve">
+    <value>between</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.NoDate" xml:space="preserve">
+    <value>Choose a date.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.RestrictDate.RangeInverted" xml:space="preserve">
+    <value>The end date must be on or after the start date.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterChoose.Title" xml:space="preserve">
+    <value>Choose Items</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FilterChoose.Prompt" xml:space="preserve">
+    <value>Choose the items to filter for:</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkEntryOrSense.EntryRadio" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkEntryOrSense.SenseRadio" xml:space="preserve">
+    <value>Specific Sense</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Merge.Confirm" xml:space="preserve">
+    <value>Entry "{0}" will be merged into "{1}",
+resulting in one entry.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.AffixTypeLabel" xml:space="preserve">
+    <value>Affix Type</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.AffixTypeNotSure" xml:space="preserve">
+    <value>Not Sure</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.AffixTypeInflectional" xml:space="preserve">
+    <value>Inflectional</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.AffixTypeDerivational" xml:space="preserve">
+    <value>Derivational</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.CategoryLabel" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.AttachesToCategoryLabel" xml:space="preserve">
+    <value>Attaches to Category</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.FillsSlotLabel" xml:space="preserve">
+    <value>Fills Slot</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.ChangesToCategoryLabel" xml:space="preserve">
+    <value>Changes to Category</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreatePos.Title" xml:space="preserve">
+    <value>Add from Catalog</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreatePos.Prompt" xml:space="preserve">
+    <value>Choose a grammatical category (Part of Speech) from the following Catalog. The category you choose will be added to the list of categories for this FieldWorks Project.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddNewSense.Title" xml:space="preserve">
+    <value>Add New Sense</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddNewSense.CitationFormLabel" xml:space="preserve">
+    <value>Citation Form</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddNewSense.GlossLabel" xml:space="preserve">
+    <value>Gloss</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddNewSense.GrammaticalInfoLabel" xml:space="preserve">
+    <value>Grammatical Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddNewSense.FillInGloss" xml:space="preserve">
+    <value>Please fill in the gloss.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.MsaCreator.Title" xml:space="preserve">
+    <value>Create New Grammatical Info.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.MsaCreator.LexicalEntryLabel" xml:space="preserve">
+    <value>Lexical Entry</value>
+  </data>
+  <data name="FwAvaloniaDialogs.MsaCreator.SensesLabel" xml:space="preserve">
+    <value>Senses</value>
+  </data>
+  <data name="FwAvaloniaDialogs.MsaCreator.GrammaticalInfoLabel" xml:space="preserve">
+    <value>Grammatical Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.MsaCreator.Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.InflectionClassLabel" xml:space="preserve">
+    <value>Inflection Class</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.InflectionClassNone" xml:space="preserve">
+    <value>&lt;None&gt;</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntry.ComplexFormTypeLabel" xml:space="preserve">
+    <value>Complex Form Type</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntry.ComplexFormTypeNotApplicable" xml:space="preserve">
+    <value>&lt;Not Applicable&gt;</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureEditor.None" xml:space="preserve">
+    <value>&lt;None&gt;</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureEditor.CreateFeature" xml:space="preserve">
+    <value>Create a new feature...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureEditor.CreateValueFormat" xml:space="preserve">
+    <value>Add a value to {0}...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureEditor.Name" xml:space="preserve">
+    <value>Feature structure</value>
+  </data>
+  <data name="FwAvaloniaDialogs.Msa.InflectionFeaturesLabel" xml:space="preserve">
+    <value>Inflection Features</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureChooser.InflectionTitle" xml:space="preserve">
+    <value>Inflection Feature Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureChooser.InflectionPrompt" xml:space="preserve">
+    <value>Choose the inflection feature values for this item.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureChooser.PhonologicalTitle" xml:space="preserve">
+    <value>Phonological Feature Information</value>
+  </data>
+  <data name="FwAvaloniaDialogs.FeatureChooser.PhonologicalPrompt" xml:space="preserve">
+    <value>Choose the phonological feature values for this item.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateFeature.Title" xml:space="preserve">
+    <value>Create New Feature</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateFeature.NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateFeature.AbbrLabel" xml:space="preserve">
+    <value>Abbreviation</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateFeature.NameRequired" xml:space="preserve">
+    <value>Enter a name for the feature.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateValue.Title" xml:space="preserve">
+    <value>Create New Feature Value</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateValue.NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateValue.AbbrLabel" xml:space="preserve">
+    <value>Abbreviation</value>
+  </data>
+  <data name="FwAvaloniaDialogs.CreateValue.NameRequired" xml:space="preserve">
+    <value>Enter a name for the value.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.Title" xml:space="preserve">
+    <value>Picture Properties</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.CaptionLabel" xml:space="preserve">
+    <value>Caption</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.DescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.LicenseLabel" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.CreatorLabel" xml:space="preserve">
+    <value>Creator</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.ImageLabel" xml:space="preserve">
+    <value>Image file</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.ChooseImage" xml:space="preserve">
+    <value>Choose image...</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.NoFile" xml:space="preserve">
+    <value>(no file chosen)</value>
+  </data>
+  <data name="FwAvaloniaDialogs.PictureProperties.Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
 </root>

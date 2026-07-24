@@ -3701,10 +3701,9 @@ namespace SIL.FieldWorks
 				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				var additionalLocalizationMethods = GetAvaloniaLocalizationMethods();
 				// First create localization manager for Chorus with english
 				LocalizationManagerWinforms.Create("en",
-					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" }, additionalLocalizationMethods);
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, new[] { "Chorus", "LibChorus" });
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
 				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
@@ -3716,45 +3715,16 @@ namespace SIL.FieldWorks
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				// FieldWorks-owned Avalonia strings resolve through resx/ResourceManager (satellite
+				// assemblies), not L10NSharp, so only the Palaso-supplied namespaces register here.
 				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-					userL10nBaseDir, null, new[] { "SIL.Windows.Forms", "SIL.FieldWorks.Common.FwAvalonia", "FwAvaloniaDialogs" }, additionalLocalizationMethods);
+					userL10nBaseDir, null, new[] { "SIL.Windows.Forms" });
 			}
 			catch (Exception e)
 			{
 				SafelyReportException(new FileNotFoundException(
 					"There was a problem setting up localizations for some dialogs, probably because they were not installed", e), null, false);
 			}
-		}
-
-		/// <summary>
-		/// A bad/missing FwAvalonia.dll must cost only the Avalonia dynamic strings, never the Chorus/Palaso
-		/// localization managers the caller goes on to create — so catch here, not in the caller's try/catch.
-		/// </summary>
-		private static MethodInfo[] GetAvaloniaLocalizationMethods()
-		{
-			try
-			{
-				return GetAvaloniaLocalizationMethodsCore();
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError(new Exception("Avalonia localization methods unavailable; continuing without them", e));
-				return new MethodInfo[0];
-			}
-		}
-
-		/// <summary>
-		/// Kept in its own non-inlined method so a bad FwAvalonia.dll fails here, in the caller's try/catch, not at startup JIT.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.NoInlining)]
-		private static MethodInfo[] GetAvaloniaLocalizationMethodsCore()
-		{
-			return new[]
-			{
-				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetString), new[] { typeof(string), typeof(string), typeof(string), typeof(string) }),
-				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetPalasoString), new[] { typeof(string), typeof(string), typeof(string) }),
-				typeof(FwAvaloniaLocalization).GetMethod(nameof(FwAvaloniaLocalization.GetChorusString), new[] { typeof(string), typeof(string), typeof(string) })
-			}.Where(method => method != null).ToArray();
 		}
 
 		internal static void SetLocalizationLanguage(LcmCache cache)

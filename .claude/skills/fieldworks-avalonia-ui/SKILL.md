@@ -122,13 +122,11 @@ Rules specific to dialogs:
 
 - Use current Avalonia docs for uncertain APIs; do not guess dispatcher,
   headless, automation, or binding behavior.
-- Keep field labels on the StringTable lane. Product-facing Avalonia chrome
-  should join the existing LocalizationManager/L10NSharp XLIFF catalog,
-  preferably by reusing existing `Palaso`/`Chorus` ids when they actually
-  match; otherwise add unique Avalonia-prefixed ids there. The current
-  English-default source is the accessor code, not a parallel Avalonia
-  `.resx` runtime lane. Prototype hardcoded strings must be called out as
-  gaps.
+- Keep field labels on the StringTable strategy. Product-facing
+  FieldWorks-owned strings go in the project `.resx` and are consumed via
+  the string accessor (`FwAvaloniaStrings`/`FwAvaloniaDialogsStrings`),
+  never hardcoded; the neutral resx is the English source of truth.
+  Prototype hardcoded strings must be called out as gaps.
 - Stamp stable, nonlocalized `AutomationProperties.AutomationId` (derived
   from IR `StableId` where applicable) and localized
   `AutomationProperties.Name` on user-facing controls.
@@ -153,9 +151,9 @@ Rules specific to dialogs:
 - Headless tests: simulate input on `Window`, flush with
   `Dispatcher.UIThread.RunJobs()`, and capture visual regression frames
   with Skia (`UseHeadlessDrawing=false` + `CaptureRenderedFrame()`).
-- If Avalonia chrome uses LocalizationManager, bootstrap it once per
-  preview-host or headless-test process before localized strings are
-  requested; do not pay that cost per test.
+- Resx satellite assemblies need no runtime bootstrap; only tests that
+  exercise genuine Chorus-supplied UI need an L10NSharp
+  LocalizationManager.
 - Evidence runs through `./build.ps1` and `./test.ps1` via the normal repo
   graph, not branch-only build paths.
 

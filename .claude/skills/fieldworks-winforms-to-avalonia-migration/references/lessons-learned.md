@@ -251,7 +251,9 @@ skill files changed.
   internals); owned dense controls over stock grids; explicit
   unsupported rows over silent fallback; one global undo stack; WinForms
   dialogs own all modality during coexistence; measured (not estimated)
-  performance budgets; StringTable + `.resx` dual localization lanes;
+  performance budgets; StringTable + `.resx` dual localization lanes
+  (terminology since revised: see architecture-patterns.md §11 —
+  localization strategies);
   `<RootNamespace>` required for Crowdin satellite builds.
 - Skill set restructured (this commit): skills moved from
   `.github/skills/` to `.claude/skills/` per AI_GOVERNANCE no-mirror rule;
