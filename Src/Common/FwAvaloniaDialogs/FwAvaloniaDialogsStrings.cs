@@ -110,6 +110,11 @@ namespace FwAvaloniaDialogs
 		// The two-stage OK gate when the dependent auxiliary picker has no chosen option yet (legacy: the
 		// LinkMSADlg/LinkAllomorphDlg OK button stayed disabled while the per-entry combo was empty).
 		public static string EntryGoMustSelectOption => Text("FwAvaloniaDialogs.EntryGoMustSelectOption");
+		// Matching-list column headers. Seed text matches the canonical legacy matchingEntries browser column
+		// labels (areaConfiguration.xml: "Headword", "Lexeme Form", "Glosses") so translation memory carries over.
+		public static string EntryGoHeadwordColumnHeader => Text("FwAvaloniaDialogs.EntryGoHeadwordColumn");
+		public static string EntryGoLexemeFormColumnHeader => Text("FwAvaloniaDialogs.EntryGoLexemeFormColumn");
+		public static string EntryGoGlossesColumnHeader => Text("FwAvaloniaDialogs.EntryGoGlossesColumn");
 
 		// Merge Entry consumer of the entry-search dialog (legacy MergeEntryDlg / EntryGoDlg wording).
 		public static string MergeTitle => Text("FwAvaloniaDialogs.Merge.Title");

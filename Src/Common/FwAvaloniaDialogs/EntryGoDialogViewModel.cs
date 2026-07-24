@@ -13,30 +13,40 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// View-model for the reusable Avalonia entry-search ("go") dialog — the kit replacement for the legacy
-	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + matching-entries list +
-	/// description pane + OK/Cancel/Help). Its first concrete consumer is Merge Entry; the same VM later re-skins
-	/// for the other EntryGoDlg children with only title/button/prompt/filter differences (supplied through
-	/// <see cref="EntryGoDialogInput"/>).
+	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list +
+	/// OK/Cancel/Help). Its first concrete consumer is Merge Entry; the same VM re-skins for the other EntryGoDlg
+	/// children with only title/button/prompt/filter differences (supplied through <see cref="EntryGoDialogInput"/>).
 	///
 	/// The VM is LCModel-free: the launcher hands it an <see cref="EntryGoDialogInput"/> carrying a
 	/// <see cref="EntryGoDialogInput.Search"/> delegate (the SAME matching the legacy EntryGoSearchEngine uses, with
-	/// the current entry already excluded) plus the configurable title/OK/prompt/description text, and reads a
-	/// <see cref="ChosenId"/> back when the user commits. Typing re-runs the search and narrows the
-	/// <see cref="Results"/> list; selecting a row updates the <see cref="Description"/> pane.
+	/// the current entry already excluded) plus the configurable title/OK/prompt text, and reads a
+	/// <see cref="ChosenId"/> back when the user commits.
 	///
-	/// This dialog is a COMMIT-ON-SELECT picker (a combo-with-context), not a modal with OK/Cancel: there is no OK
-	/// button. Picking a row IS accepting it — the view raises <see cref="CommitCommand"/> on a double-click of a
-	/// result or Enter on the highlighted row, which snapshots the selection into <see cref="ChosenId"/> (via
-	/// <see cref="ApplyChanges"/>) and closes the dialog accepted. Cancel is Escape / the window close button (the
-	/// inherited <c>CancelCommand</c>, surfaced as a single Cancel affordance for discoverability). The excluded id
-	/// never appears (defensive guard on top of the launcher's filter).
+	/// PARITY (MatchingObjectsBrowser): the <see cref="Results"/> list is a PERSISTENT, multi-column matching list
+	/// filling the dialog body — the shape of the legacy <c>BaseGoDlg</c>'s embedded <c>MatchingObjectsBrowser</c> —
+	/// live-updating as the user types (never a focus-gated overlay; an empty search shows an empty list area).
+	/// <see cref="Columns"/> carries the column presentation (the legacy default-visible columns Headword + Glosses
+	/// when the consumer supplies none), and <see cref="SelectNextResult"/>/<see cref="SelectPreviousResult"/> mirror
+	/// the legacy Up/Down-arrow-in-the-search-box selection moves (BaseGoDlg.m_tbForm_KeyDown →
+	/// MatchingObjectsBrowser.SelectNext/SelectPrevious).
+	///
+	/// This dialog is a COMMIT-ON-SELECT picker: there is no OK button. Picking a row IS accepting it — the view
+	/// raises <see cref="CommitCommand"/> on a double-click of a result or Enter (in the search box or on the list),
+	/// which snapshots the selection into <see cref="ChosenId"/> (via <see cref="ApplyChanges"/>) and closes the
+	/// dialog accepted. Cancel is Escape / the window close button (the inherited <c>CancelCommand</c>, surfaced as
+	/// a single Cancel affordance for discoverability). The excluded id never appears (defensive guard on top of the
+	/// launcher's filter).
 	///
 	/// EXCEPT when the consumer supplies <see cref="EntryGoDialogInput.AuxiliaryOptions"/> (the legacy per-entry
 	/// combo LinkMSADlg/LinkAllomorphDlg showed under the matching list): the dialog is then TWO-STAGE. Picking a
 	/// result is stage 1 — it invokes the resolver to populate <see cref="AuxiliaryOptions"/> (a single option
-	/// auto-selects) and <see cref="CommitCommand"/> only closes the results dropdown instead of committing — and
-	/// the inherited OK commits stage 2, gated on both an entry and an auxiliary option being chosen
-	/// (<see cref="ChosenAuxiliaryKey"/> carries the option's key). Consumers without the spec are unaffected.
+	/// auto-selects) and <see cref="CommitCommand"/> does not commit — and the inherited OK commits stage 2, gated
+	/// on both an entry and an auxiliary option being chosen (<see cref="ChosenAuxiliaryKey"/> carries the option's
+	/// key). Consumers without the spec are unaffected.
+	///
+	/// The right-side description region is OPT-IN: it exists only when the consumer supplies a
+	/// <see cref="EntryGoDialogInput.DescriptionLabel"/> or rich per-row description content
+	/// (<see cref="HasDescriptionRegion"/>); otherwise the matching list takes the full dialog width.
 	/// </summary>
 	public partial class EntryGoDialogViewModel : DialogViewModelBase
 	{
@@ -83,10 +93,21 @@ namespace FwAvaloniaDialogs
 			// The field initializer sets _isSenseMode so OnIsSenseModeChanged does not fire during construction.
 			_isSenseMode = _input.SensesOnly;
 
+			// The matching list's column presentation: the consumer's ordered spec, or the kit default
+			// (headword + glosses — the legacy matchingEntries browser's default-visible columns).
+			Columns = _input.ResultColumns != null && _input.ResultColumns.Count > 0
+				? _input.ResultColumns
+				: EntryGoResultColumn.DefaultColumns();
+
 			// Prime the list from the initial query (the legacy "launch with the current headword"); the field
 			// initializer sets _searchText so OnSearchTextChanged does not fire during construction.
 			_searchText = _input.InitialQuery ?? string.Empty;
 			RunSearch(_searchText);
+
+			// The right-side description region is opt-in: only a consumer that supplies a label (the pane's
+			// caption) or rich per-row content gets the pane; everyone else gives the matching list the full
+			// width (the legacy BaseGoDlg has no description pane at all).
+			HasDescriptionRegion = HasDescriptionLabel || Results.Any(r => r.HasDescriptionContent);
 		}
 
 		/// <summary>The dialog title (e.g. "Merge Entry").</summary>
@@ -106,6 +127,20 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>True when there is a non-empty <see cref="DescriptionLabel"/> to show.</summary>
 		public bool HasDescriptionLabel { get; }
+
+		/// <summary>
+		/// True when the consumer opted into the right-side description region — by supplying a
+		/// <see cref="DescriptionLabel"/> or rows carrying rich description content. False removes the region
+		/// entirely so the persistent matching list takes the full dialog width.
+		/// </summary>
+		public bool HasDescriptionRegion { get; }
+
+		/// <summary>
+		/// The matching list's ordered column presentation (header + result field + writing-system typography per
+		/// column) — the consumer's <see cref="EntryGoDialogInput.ResultColumns"/>, or the kit default of headword +
+		/// glosses (the legacy matchingEntries browser's default-visible columns).
+		/// </summary>
+		public IReadOnlyList<EntryGoResultColumn> Columns { get; }
 
 		/// <summary>The help topic id carried for the Help button.</summary>
 		public string HelpTopic { get; }
@@ -186,24 +221,36 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public bool HasDescriptionContent => SelectedResult?.HasDescriptionContent ?? false;
 
-		// ----- focus-gated results dropdown (the filter-combo behavior): the matching-entries list is an on-top
-		// overlay that shows ONLY while the user is in the search field and there are rows to pick, and hides
-		// otherwise (no permanently-open list). The view feeds IsSearchFocused from the search box's focus. -----
+		// ----- arrow-key selection moves from the search box. PARITY (BaseGoDlg.m_tbForm_KeyDown): Up/Down in
+		// the legacy find box move the MatchingObjectsBrowser selection (SelectPrevious/SelectNext) while the
+		// caret stays in the box; the view forwards the search box's Up/Down keys here. -----
 
 		/// <summary>
-		/// True while the search field is focused / actively being searched. The view sets this from the search
-		/// TextBox's GotFocus/LostFocus so the results overlay only shows when the user is in the field. Changing
-		/// it re-evaluates <see cref="ShowResultsDropdown"/>.
+		/// Moves the matching-list selection to the next row (the legacy Down-arrow-in-the-search-box move,
+		/// MatchingObjectsBrowser.SelectNext). With nothing selected it selects the first row — the state the
+		/// legacy browser reached by auto-selecting the first result of every search.
 		/// </summary>
-		[ObservableProperty]
-		private bool _isSearchFocused;
+		public void SelectNextResult()
+		{
+			if (Results.Count == 0)
+				return;
+			var index = SelectedResult == null ? -1 : Results.IndexOf(SelectedResult);
+			if (index + 1 < Results.Count)
+				SelectedResult = Results[index + 1];
+		}
 
 		/// <summary>
-		/// True when the results overlay should be VISIBLE: the search field is focused AND there is at least one
-		/// matching row. Mirrors a filter-combo dropdown — closed until the user is in the field with matches, never
-		/// a permanently-open list. The view binds the dropdown's open state to this.
+		/// Moves the matching-list selection to the previous row (the legacy Up-arrow-in-the-search-box move,
+		/// MatchingObjectsBrowser.SelectPrevious); a first-row or empty selection stays put.
 		/// </summary>
-		public bool ShowResultsDropdown => IsSearchFocused && Results.Count > 0;
+		public void SelectPreviousResult()
+		{
+			if (Results.Count == 0 || SelectedResult == null)
+				return;
+			var index = Results.IndexOf(SelectedResult);
+			if (index > 0)
+				SelectedResult = Results[index - 1];
+		}
 
 		// ----- dependent auxiliary selection (opt-in two-stage mode): the per-entry option picker the legacy
 		// LinkMSADlg/LinkAllomorphDlg combos provided, populated from the resolver when a result is selected. -----
@@ -264,24 +311,17 @@ namespace FwAvaloniaDialogs
 		/// <summary>
 		/// The commit-on-select path: snapshots the selected row into <see cref="ChosenId"/> (via
 		/// <see cref="ApplyChanges"/>) and closes the dialog ACCEPTED, exactly as a legacy OK would have. The view
-		/// raises this on a double-click of a result row or Enter on the highlighted row (there is no OK button).
-		/// In two-stage mode (<see cref="HasAuxiliarySelection"/>) the same gesture is only STAGE 1 — it closes the
-		/// results dropdown so the populated auxiliary picker is in view, and the inherited OK commits instead.
-		/// Gated on <see cref="CanCommit"/> so it is a no-op when nothing is selected; the defensive re-check makes a
-		/// direct Execute call honor the gate too.
+		/// raises this on a double-click of a result row or Enter — in the search box or on the highlighted row
+		/// (there is no OK button). In two-stage mode (<see cref="HasAuxiliarySelection"/>) the same gesture is only
+		/// STAGE 1 — the pick already populated the auxiliary picker (see OnSelectedResultChanged) and the inherited
+		/// OK commits instead. Gated on <see cref="CanCommit"/> so it is a no-op when nothing is selected; the
+		/// defensive re-check makes a direct Execute call honor the gate too.
 		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanCommit))]
 		private void Commit()
 		{
-			if (!CanCommit)
+			if (!CanCommit || HasAuxiliarySelection)
 				return;
-			if (HasAuxiliarySelection)
-			{
-				// Stage 1 of the two-stage flow: the pick already populated the auxiliary options (see
-				// OnSelectedResultChanged); just dismiss the dropdown so the picker + OK are in view.
-				IsSearchFocused = false;
-				return;
-			}
 			ApplyChanges();
 			RequestClose(true);
 		}
@@ -333,12 +373,6 @@ namespace FwAvaloniaDialogs
 			SelectedAuxiliaryOption = AuxiliaryOptions.Count == 1 ? AuxiliaryOptions[0] : null;
 		}
 
-		// Raised by the source generator when IsSearchFocused changes; re-evaluate the dropdown gate.
-		partial void OnIsSearchFocusedChanged(bool value)
-		{
-			OnPropertyChanged(nameof(ShowResultsDropdown));
-		}
-
 		// Raised by the source generator when IsSenseMode changes (the Entry/Sense toggle flips); keep the inverse
 		// Entry radio in sync and re-run the search in the new mode (the legacy m_radioButtonClick handler).
 		partial void OnIsSenseModeChanged(bool value)
@@ -375,9 +409,6 @@ namespace FwAvaloniaDialogs
 			SelectedResult = previouslyChosen == null
 				? null
 				: Results.FirstOrDefault(r => string.Equals(r.Id, previouslyChosen, StringComparison.Ordinal));
-
-			// The result count gates the focus-driven dropdown (it hides when a query narrows to no matches).
-			OnPropertyChanged(nameof(ShowResultsDropdown));
 		}
 
 		// ----- commit gating (kit convention): a row must be selected to commit (legacy m_btnOK.Enabled =

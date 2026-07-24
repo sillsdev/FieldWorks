@@ -54,6 +54,14 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public EntryGoSearchFieldSpec SearchField { get; set; }
 
+		/// <summary>
+		/// The ordered column set for the persistent matching list (the legacy MatchingObjectsBrowser's
+		/// multi-column browse view): each column carries a localized header, the result field it shows, and
+		/// per-column writing-system typography. Null/empty falls back to
+		/// <see cref="EntryGoResultColumn.DefaultColumns"/> (headword + glosses, the legacy default-visible set).
+		/// </summary>
+		public IReadOnlyList<EntryGoResultColumn> ResultColumns { get; set; }
+
 		// ----- Opt-in entry/sense capability (the legacy LinkEntryOrSenseDlg Entry/Sense radio). Entry-only
 		// consumers (Merge, AddAllomorph, LinkAllomorph, LinkMSA) leave these defaults and are unaffected. -----
 

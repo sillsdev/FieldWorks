@@ -2,9 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Media;
 
 namespace FwAvaloniaDialogs
@@ -12,42 +14,54 @@ namespace FwAvaloniaDialogs
 	/// <summary>
 	/// The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
 	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. A XAML-authored UserControl bound to
-	/// <see cref="EntryGoDialogViewModel"/> with compiled bindings — a search box whose matching-entries list is a
-	/// focus-gated, on-top dropdown (a <c>Popup</c> that escapes the dialog bounds, like a filter combo), an extended
-	/// description region on the right that hosts rich content for the highlighted entry (degrading to the plain
-	/// description string), and Cancel/Help. This is a COMMIT-ON-SELECT picker — there is no OK button: picking a
-	/// result (double-click a row, or Enter on the highlighted row) commits + closes accepted via the view-model's
-	/// <c>CommitCommand</c>; Cancel / Escape / the window close button cancel. Selection and search are MVVM; the
-	/// code-behind only (a) feeds the search box's focus into the view-model so the dropdown shows ONLY while the
-	/// field is focused, (b) translates the result list's double-click / Enter gesture into the commit command,
+	/// <see cref="EntryGoDialogViewModel"/> with compiled bindings.
+	///
+	/// PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as a PERSISTENT, multi-column
+	/// list under the search box — the shape of the legacy BaseGoDlg's embedded <c>MatchingObjectsBrowser</c> —
+	/// live-updating as the user types. The header row and the row template are built here from the view-model's
+	/// <see cref="EntryGoDialogViewModel.Columns"/> (header text, result field, per-column writing-system
+	/// typography), so a vernacular column renders in the vernacular font and a gloss column in the analysis font.
+	/// Up/Down in the search box move the list selection while the caret stays in the box (the legacy
+	/// <c>BaseGoDlg.m_tbForm_KeyDown</c> → <c>SelectPrevious/SelectNext</c> behavior), and Enter commits the
+	/// highlighted row.
+	///
+	/// This is a COMMIT-ON-SELECT picker — there is no OK button: picking a result (double-click a row, or Enter)
+	/// commits + closes accepted via the view-model's <c>CommitCommand</c>; Cancel / Escape / the window close
+	/// button cancel. Selection and search are MVVM; the code-behind only (a) builds the column header + row cells
+	/// from the column spec, (b) translates the double-click / Enter / arrow-key gestures into VM calls,
 	/// (c) removes the two-stage OK button from the tree for single-stage consumers (with an auxiliary spec the
-	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>), and
-	/// (d) applies the opt-in <see cref="EntryGoSearchFieldSpec"/> to the search box — the writing system's font,
-	/// right-to-left flow, and a keyboard-switch callback on focus (the legacy BaseGoDlg vernacular FwTextBox
-	/// behavior). A null spec leaves the box at kit defaults.
+	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>),
+	/// (d) removes the opt-in right-side description region from the tree when the consumer supplies no label or
+	/// rich content, so the matching list takes the full width, and (e) applies the opt-in
+	/// <see cref="EntryGoSearchFieldSpec"/> to the search box — the writing system's font, right-to-left flow, and
+	/// a keyboard-switch callback on focus (the legacy BaseGoDlg vernacular FwTextBox behavior).
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
 	/// <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
 	public partial class EntryGoDialogView : UserControl
 	{
+		// Mirrors the theme's ListBoxItem Padding (4,1) so the header cells align with the row cells below them.
+		private static readonly Thickness HeaderInset = new Thickness(4, 1);
+		// Horizontal gap between column cells (numerically the theme's DialogControlGap).
+		private static readonly Thickness CellGap = new Thickness(0, 0, 6, 0);
+
 		public EntryGoDialogView()
 		{
 			DialogThemeBootstrap.Apply(this);
 			InitializeComponent();
 
-			// Feed the search box's focus into the view-model's IsSearchFocused so the results dropdown is gated to
-			// "the user is in the search field" (the filter-combo behavior). The dropdown is a Popup top-level, so
-			// the box keeps logical focus while the user mouses over its rows.
 			var searchBox = this.FindControl<TextBox>("PART_SearchBox");
 			if (searchBox != null)
 			{
+				// The opt-in spec's focus callback: the launcher activates the writing system's keyboard here
+				// (the legacy vernacular FwTextBox switched keyboards on focus). Null spec/callback means no-op.
 				searchBox.GotFocus += OnSearchBoxGotFocus;
-				searchBox.LostFocus += OnSearchBoxLostFocus;
+				// Up/Down move the matching-list selection without leaving the box; Enter commits (see handler).
+				searchBox.AddHandler(KeyDownEvent, OnSearchBoxKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 			}
 
-			// Commit-on-select gestures on the results list: a double-click of a row, or Enter on the highlighted
-			// row, commits the selection + closes accepted (the kit's CommitCommand). The list lives inside the
-			// focus-gated Popup, so wire it from code-behind once it is realized.
+			// Commit-on-select gestures on the matching list itself: a double-click of a row, or Enter on the
+			// highlighted row, commits the selection + closes accepted (the kit's CommitCommand).
 			var results = this.FindControl<ListBox>("PART_Results");
 			if (results != null)
 			{
@@ -58,6 +72,13 @@ namespace FwAvaloniaDialogs
 			// The OK button exists only for two-stage auxiliary consumers; single-stage (commit-on-select) consumers
 			// keep their exact OK-less surface, so remove it from the tree (not merely hide it) once the VM arrives.
 			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
+
+			// The description region is opt-in; consumers that supply no label or rich content lose the entire
+			// right column (removed from the tree) and the matching list takes the full width.
+			DataContextChanged += OnDataContextChangedRemoveDescriptionRegionIfUnused;
+
+			// The matching list's header + row cells come from the VM's column spec, so build them on VM arrival.
+			DataContextChanged += OnDataContextChangedBuildResultColumns;
 
 			// The search box's writing-system presentation (font / RTL) comes from the opt-in spec on the VM, so
 			// apply it once the VM arrives; a null spec touches nothing (the plain kit search box).
@@ -83,14 +104,117 @@ namespace FwAvaloniaDialogs
 				searchBox.FlowDirection = FlowDirection.RightToLeft;
 		}
 
+		// The writing-system typography application for a matching-list cell: font family / point size (zero
+		// keeps the kit default) and right-to-left flow, from the column's LCModel-free spec (the same
+		// value-application rules the search box uses; the spec's Focused callback is ignored for columns).
+		private static void ApplyColumnTypography(TextBlock cell, EntryGoSearchFieldSpec spec)
+		{
+			if (spec == null)
+				return;
+			if (!string.IsNullOrEmpty(spec.FontFamily))
+				cell.FontFamily = new FontFamily(spec.FontFamily);
+			if (spec.FontSize > 0)
+				cell.FontSize = spec.FontSize;
+			if (spec.RightToLeft)
+				cell.FlowDirection = FlowDirection.RightToLeft;
+		}
+
 		private void OnDataContextChangedRemoveOkIfSingleStage(object sender, System.EventArgs e)
 		{
 			var vm = ViewModel;
 			if (vm == null || vm.HasAuxiliarySelection)
 				return;
 			var okButton = this.FindControl<Button>("PART_OkButton");
-			(okButton?.Parent as Avalonia.Controls.Panel)?.Children.Remove(okButton);
+			(okButton?.Parent as Panel)?.Children.Remove(okButton);
 		}
+
+		// Removes the opt-in description region (and its gutter) from the tree when the consumer supplied neither
+		// a description label nor rich row content, zeroing their grid columns so the persistent matching list
+		// takes the full dialog width (the legacy BaseGoDlg surface, which has no description pane).
+		private void OnDataContextChangedRemoveDescriptionRegionIfUnused(object sender, System.EventArgs e)
+		{
+			var vm = ViewModel;
+			if (vm == null || vm.HasDescriptionRegion)
+				return;
+			var grid = this.FindControl<Grid>("PART_BodyGrid");
+			var gutter = this.FindControl<Border>("PART_DescriptionGutter");
+			var region = this.FindControl<DockPanel>("PART_DescriptionColumn");
+			if (grid == null)
+				return;
+			if (gutter != null)
+				grid.Children.Remove(gutter);
+			if (region != null)
+				grid.Children.Remove(region);
+			if (grid.ColumnDefinitions.Count == 3)
+			{
+				grid.ColumnDefinitions[1].Width = new GridLength(0);
+				grid.ColumnDefinitions[2].Width = new GridLength(0);
+			}
+		}
+
+		// Builds the matching list's header row + row template from the VM's column spec: one proportional (star)
+		// grid column per spec column, the localized header text on top, and per-column writing-system typography
+		// on both the header's alignment grid and each row cell. Rows are immutable snapshots, so cell text is
+		// assigned directly rather than bound.
+		private void OnDataContextChangedBuildResultColumns(object sender, System.EventArgs e)
+		{
+			var vm = ViewModel;
+			if (vm == null)
+				return;
+			var columns = vm.Columns;
+			var header = this.FindControl<Grid>("PART_ResultsHeader");
+			var results = this.FindControl<ListBox>("PART_Results");
+			if (columns == null || columns.Count == 0 || header == null || results == null)
+				return;
+
+			header.ColumnDefinitions.Clear();
+			header.Children.Clear();
+			header.Margin = HeaderInset;
+			for (var i = 0; i < columns.Count; i++)
+			{
+				var column = columns[i];
+				header.ColumnDefinitions.Add(new ColumnDefinition(ColumnWidth(column)));
+				var cell = new TextBlock
+				{
+					Text = column.Header ?? string.Empty,
+					FontWeight = FontWeight.SemiBold,
+					Margin = CellGap,
+					TextTrimming = TextTrimming.CharacterEllipsis
+				};
+				Grid.SetColumn(cell, i);
+				header.Children.Add(cell);
+			}
+
+			results.ItemTemplate = new FuncDataTemplate<EntryGoSearchResult>((row, _) => BuildRow(row, columns));
+		}
+
+		// One matching-list row: a grid with the same proportional columns as the header, each cell showing the
+		// row's value for that column's field in the column's typography (vernacular vs analysis fonts).
+		private static Control BuildRow(EntryGoSearchResult row,
+			System.Collections.Generic.IReadOnlyList<EntryGoResultColumn> columns)
+		{
+			var grid = new Grid();
+			if (row != null)
+				AutomationProperties.SetName(grid, row.Text ?? string.Empty);
+			for (var i = 0; i < columns.Count; i++)
+			{
+				var column = columns[i];
+				grid.ColumnDefinitions.Add(new ColumnDefinition(ColumnWidth(column)));
+				var cell = new TextBlock
+				{
+					Text = row?.ValueFor(column.Field) ?? string.Empty,
+					Margin = CellGap,
+					TextTrimming = TextTrimming.CharacterEllipsis
+				};
+				ApplyColumnTypography(cell, column.Typography);
+				Grid.SetColumn(cell, i);
+				grid.Children.Add(cell);
+			}
+			return grid;
+		}
+
+		private static GridLength ColumnWidth(EntryGoResultColumn column) =>
+			new GridLength(column.Width > 0 ? column.Width : 1, GridUnitType.Star);
 
 		private EntryGoDialogViewModel ViewModel => DataContext as EntryGoDialogViewModel;
 
@@ -109,6 +233,43 @@ namespace FwAvaloniaDialogs
 				e.Handled = true;
 		}
 
+		// Keyboard handling in the search box. PARITY (BaseGoDlg.m_tbForm_KeyDown): Up/Down move the matching-list
+		// selection (SelectPrevious/SelectNext) while the caret stays in the box; Enter commits the highlighted row
+		// (the legacy AcceptButton). In two-stage auxiliary mode Enter is stage-1 only (CommitCommand no-ops) and
+		// the OK button commits.
+		private void OnSearchBoxKeyDown(object sender, KeyEventArgs e)
+		{
+			var vm = ViewModel;
+			if (vm == null)
+				return;
+			switch (e.Key)
+			{
+				case Key.Down:
+					vm.SelectNextResult();
+					ScrollSelectionIntoView();
+					e.Handled = true;
+					break;
+				case Key.Up:
+					vm.SelectPreviousResult();
+					ScrollSelectionIntoView();
+					e.Handled = true;
+					break;
+				case Key.Enter:
+					if (TryCommit())
+						e.Handled = true;
+					break;
+			}
+		}
+
+		// Keeps the arrow-key-moved selection visible in the matching list while focus stays in the search box.
+		private void ScrollSelectionIntoView()
+		{
+			var results = this.FindControl<ListBox>("PART_Results");
+			var selected = ViewModel?.SelectedResult;
+			if (results != null && selected != null)
+				results.ScrollIntoView(selected);
+		}
+
 		// Runs the commit-on-select command when it can execute (a row is selected). Returns true when it committed.
 		private bool TryCommit()
 		{
@@ -121,20 +282,9 @@ namespace FwAvaloniaDialogs
 
 		private void OnSearchBoxGotFocus(object sender, GotFocusEventArgs e)
 		{
-			if (ViewModel != null)
-				ViewModel.IsSearchFocused = true;
 			// The opt-in spec's focus callback: the launcher activates the writing system's keyboard here (the
 			// legacy vernacular FwTextBox switched keyboards on focus). Null spec/callback means no-op.
 			ViewModel?.SearchField?.Focused?.Invoke();
-		}
-
-		private void OnSearchBoxLostFocus(object sender, RoutedEventArgs e)
-		{
-			// Closing the dropdown when the field loses focus is the filter-combo behavior. Selecting a row inside
-			// the Popup (a separate top-level) does not move keyboard focus out of the box in the headless/owned-host
-			// path, so this fires only on a real focus change away from the search field.
-			if (ViewModel != null)
-				ViewModel.IsSearchFocused = false;
 		}
 	}
 }

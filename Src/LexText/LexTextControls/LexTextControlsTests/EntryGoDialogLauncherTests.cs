@@ -388,5 +388,72 @@ namespace LexTextControlsTests
 			Assert.That(LcmLinkEntryOrSenseDialogLauncher.BuildInput(Cache, null, null, _casa).SearchField,
 				Is.Not.Null);
 		}
+
+		// ----- The persistent matching list's per-column values + default column spec (the legacy
+		// matchingEntries browser's default-visible columns: Headword + Glosses) -----
+
+		[Test]
+		public void SharedSearch_PopulatesLexemeFormAndGlossColumnValues()
+		{
+			// The shared result builder sources each column's content the way the legacy browser columns do:
+			// LexemeForm.Form (best vernacular-or-analysis) and the senses' glosses (best analysis-or-vernacular).
+			var search = LcmGoToEntryDialogLauncher.BuildSearch(Cache, null, null);
+
+			var casa = search("casa").Single(r => r.Id == Hvo(_casa));
+			Assert.That(casa.LexemeForm, Is.EqualTo("casa"), "the row carries the entry's lexeme form");
+			Assert.That(casa.Gloss, Is.EqualTo("house"), "the row carries the senses' gloss(es)");
+		}
+
+		[Test]
+		public void GlossesText_JoinsMultipleSenseGlosses()
+		{
+			// The Glosses column shows every sense's gloss comma-separated (the legacy GlossesForFindEntry
+			// part: a seq over Senses with sep ", ").
+			var second = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			_casa.SensesOS.Add(second);
+			second.Gloss.set_String(Cache.DefaultAnalWs, "home");
+
+			Assert.That(EntryGoLauncherShared.GlossesText(_casa), Is.EqualTo("house, home"));
+		}
+
+		[Test]
+		public void BuildDefaultResultColumns_CarriesLegacyHeadersAndWsTypography()
+		{
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+
+			var columns = EntryGoLauncherShared.BuildDefaultResultColumns(Cache);
+
+			Assert.That(columns.Select(c => c.Field), Is.EqualTo(new[]
+			{
+				EntryGoResultField.Headword,
+				EntryGoResultField.Gloss
+			}), "the default columns are the legacy default-visible set: Headword + Glosses");
+			Assert.That(columns[0].Header, Is.EqualTo(FwAvaloniaDialogsStrings.EntryGoHeadwordColumnHeader));
+			Assert.That(columns[1].Header, Is.EqualTo(FwAvaloniaDialogsStrings.EntryGoGlossesColumnHeader));
+			Assert.That(columns[0].Typography?.FontFamily, Is.EqualTo(vernWs.DefaultFontName),
+				"the headword column renders in the default vernacular ws's font");
+			Assert.That(columns[0].Typography?.RightToLeft, Is.EqualTo(vernWs.RightToLeftScript));
+			Assert.That(columns[1].Typography?.FontFamily, Is.EqualTo(analWs.DefaultFontName),
+				"the glosses column renders in the default analysis ws's font");
+		}
+
+		[Test]
+		public void GoFamilyBuildInputs_CarryTheDefaultResultColumns()
+		{
+			// Every Go-family consumer shows the same persistent multi-column matching list, so each BuildInput
+			// carries the shared default column spec.
+			var tssForm = TsStringUtils.MakeString("nuevo", Cache.DefaultVernWs);
+			Assert.That(LcmGoToEntryDialogLauncher.BuildInput(Cache, null, null).ResultColumns, Is.Not.Empty);
+			Assert.That(LcmMergeEntryDialogLauncher.BuildInput(Cache, null, null, _casa).ResultColumns,
+				Is.Not.Empty);
+			Assert.That(LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm).ResultColumns,
+				Is.Not.Empty);
+			Assert.That(LcmLinkAllomorphDialogLauncher.BuildInput(Cache, null, null, _casa).ResultColumns,
+				Is.Not.Empty);
+			Assert.That(LcmLinkMsaDialogLauncher.BuildInput(Cache, null, null, _casa).ResultColumns, Is.Not.Empty);
+			Assert.That(LcmLinkEntryOrSenseDialogLauncher.BuildInput(Cache, null, null, _casa).ResultColumns,
+				Is.Not.Empty);
+		}
 	}
 }

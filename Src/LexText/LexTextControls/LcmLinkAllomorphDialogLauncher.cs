@@ -82,8 +82,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override string DialogTitle => FwAvaloniaDialogsStrings.LinkAllomorphTitle;
 		protected override bool Resizable => true;
-		protected override int DialogWidth => 400;
-		protected override int DialogHeight => 360;
+		// Sized for the persistent multi-column matching list, above the view's minimums and the legacy
+		// BaseGoDlg design size (BaseGoDlg.resx: ClientSize 451x338, MinimumSize 459x365).
+		protected override int DialogWidth => 560;
+		protected override int DialogHeight => 440;
 
 		protected override EntryGoDialogInput BuildState() =>
 			BuildInput(_cache, _mediator, _propertyTable, _startingEntry);
@@ -106,7 +108,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				AuxiliaryLabel = FwAvaloniaDialogsStrings.LinkAllomorphAllomorphLabel,
 				AuxiliaryOptions = result => GetAllomorphOptions(cache, result?.Id),
 				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				// The matching list's default columns (headword + glosses in their ws typography).
+				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
 		}
 
