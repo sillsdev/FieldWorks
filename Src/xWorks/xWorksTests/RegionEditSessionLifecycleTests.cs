@@ -144,6 +144,62 @@ namespace SIL.FieldWorks.XWorks
 			Cache.ActionHandlerAccessor.Undo();
 		}
 
+		// A depth check alone cannot distinguish "our task is still open" from "our task was
+		// force-ended and someone ELSE has since opened a new one" — a stale Commit/Cancel would
+		// end or roll back the interloper's task. The session pins task identity with the
+		// undoable-sequence count, so the stale closers must no-op and leave the new task intact.
+		[Test]
+		public void Commit_AfterForceEndAndAnotherTaskOpened_LeavesTheOtherTaskOpen()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			context.TrySetText(FormField, "vern", "perro");
+			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
+			Cache.DomainDataByFlid.BeginUndoTask("Undo interloper", "Redo interloper");
+			try
+			{
+				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("gato", Cache.DefaultVernWs));
+
+				Assert.That(() => context.Commit(), Throws.Nothing);
+				Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(1),
+					"the stale Commit must not end the OTHER task that opened after the force-end");
+			}
+			finally
+			{
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				Cache.ActionHandlerAccessor.Undo(); // interloper edit
+				Cache.ActionHandlerAccessor.Undo(); // the force-ended edit
+			}
+			Assert.That(LexemeText, Is.EqualTo("casa"));
+		}
+
+		[Test]
+		public void Cancel_AfterForceEndAndAnotherTaskOpened_DoesNotRollBackTheOtherTask()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			context.TrySetText(FormField, "vern", "perro");
+			Cache.ActionHandlerAccessor.EndUndoTask(); // what RecordClerk.SaveOnChangeRecord does
+			Cache.DomainDataByFlid.BeginUndoTask("Undo interloper", "Redo interloper");
+			try
+			{
+				m_entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs,
+					TsStringUtils.MakeString("gato", Cache.DefaultVernWs));
+
+				Assert.That(() => context.Cancel(), Throws.Nothing);
+				Assert.That(Cache.ActionHandlerAccessor.CurrentDepth, Is.EqualTo(1),
+					"the stale Cancel must not roll back the OTHER task that opened after the force-end");
+				Assert.That(LexemeText, Is.EqualTo("gato"),
+					"the interloper task's staged change must survive the stale Cancel");
+			}
+			finally
+			{
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				Cache.ActionHandlerAccessor.Undo(); // interloper edit
+				Cache.ActionHandlerAccessor.Undo(); // the force-ended edit
+			}
+			Assert.That(LexemeText, Is.EqualTo("casa"));
+		}
+
 		private string LexemeText => m_entry.LexemeFormOA.Form.get_String(Cache.DefaultVernWs).Text;
 	}
 }

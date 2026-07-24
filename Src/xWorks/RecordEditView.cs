@@ -461,15 +461,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// This plus the name of the vector gives a unique context for the DataTree control
-		// parameters (e.g. "lexicon.basicEdit.DataTree").
+		// parameters (e.g. "lexicon.basicEdit.DataTree"). The null-attribute shape must stay
+		// byte-identical to the original inline logic ("<vector>..DataTree", double dot): the key
+		// addresses users' persisted DataTree state, so changing it silently resets their layout.
 		private string DataTreePersistContext
 		{
 			get
 			{
 				var persistContext = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "persistContext");
-				return string.IsNullOrEmpty(persistContext)
-					? m_vectorName + ".DataTree"
-					: m_vectorName + "." + persistContext + ".DataTree";
+				return persistContext != ""
+					? m_vectorName + "." + persistContext + ".DataTree"
+					: m_vectorName + ".DataTree";
 			}
 		}
 

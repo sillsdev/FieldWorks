@@ -147,6 +147,19 @@ namespace FwAvaloniaTests
 				"a supported tool still defaults to the safe WinForms surface until New is chosen");
 		}
 
+		[TestCase("New", "New")]
+		[TestCase("new", "New")]
+		[TestCase("NEW", "New")]
+		[TestCase("Legacy", "Legacy")]
+		[TestCase("", "Legacy")]
+		[TestCase("   ", "Legacy")]
+		[TestCase(null, "Legacy")]
+		[TestCase("garbage", "Legacy")]
+		public void NormalizeUIMode_FailsClosedToLegacy(string input, string expected)
+		{
+			Assert.That(LexicalEditSurfaceResolver.NormalizeUIMode(input), Is.EqualTo(expected));
+		}
+
 		// --- Disabled-tools CSV round-trip (the "Manage Individual Features" persistence format). No prior
 		// test exercised ParseDisabledTools/SerializeDisabledTools/IsToolDisabledByUser at all. ---
 

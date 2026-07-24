@@ -350,8 +350,13 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// Lexical Edit UI mode: applied LIVE (no restart) — broadcasting the PropertyTable "UIMode"
 			// property re-resolves the open lexical surfaces (matches LexOptionsDlg.m_btnOK_Click).
+			// Compared against the PropertyTable's LIVE value (falling back to settings) so a
+			// table/settings disagreement is healed by OK rather than skipped as "no change".
 			var newUiMode = NormalizeUiMode(state.UiMode);
-			if (NormalizeUiMode(settings.UIMode) != newUiMode)
+			var currentUiMode = NormalizeUiMode(propertyTable == null
+				? settings.UIMode
+				: propertyTable.GetStringProperty(UIModePropertyName, settings.UIMode));
+			if (currentUiMode != newUiMode)
 				ApplyUiModeLive(propertyTable, settings, newUiMode);
 
 			// Per-feature disable set (New mode): persist + broadcast so open surfaces re-resolve, mirroring
@@ -528,7 +533,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		internal static string NormalizeUiMode(string mode) =>
-			string.Equals(mode, NewUIMode, StringComparison.OrdinalIgnoreCase) ? NewUIMode : LegacyUIMode;
+			LexicalEditSurfaceResolver.NormalizeUIMode(mode);
 
 		internal static string NormalizeWs(string ws) => ws == "en-US" ? "en" : ws;
 

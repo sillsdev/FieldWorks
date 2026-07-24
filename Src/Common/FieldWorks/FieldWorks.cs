@@ -2936,10 +2936,9 @@ namespace SIL.FieldWorks
 				EnsureValidReversalIndexConfigFile(app.Cache);
 				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
-				s_activeMainWnd.PropTable.SetProperty("UIMode", ResolveUIMode(s_appSettings.UIMode), false);
-				s_activeMainWnd.PropTable.SetPropertyPersistence("UIMode", false);
-				s_activeMainWnd.PropTable.SetProperty("UIModeDisabledTools", s_appSettings.UIModeDisabledTools ?? string.Empty, false);
-				s_activeMainWnd.PropTable.SetPropertyPersistence("UIModeDisabledTools", false);
+				// The UIMode/UIModeDisabledTools properties are seeded by FwXWindow.InitMediatorValues
+				// BEFORE LoadUI creates the content views — seeding here would be too late for the
+				// initial surface resolution (LT-22625 review).
 			}
 			catch (StartupException ex)
 			{
@@ -2958,12 +2957,6 @@ namespace SIL.FieldWorks
 			fwMainWindow.Activated += FwMainWindowActivated;
 			fwMainWindow.Closing += FwMainWindowClosing;
 			return true;
-		}
-
-		/// <summary>A blank/whitespace UIMode setting defaults to "Legacy".</summary>
-		internal static string ResolveUIMode(string settingsUIMode)
-		{
-			return string.IsNullOrWhiteSpace(settingsUIMode) ? "Legacy" : settingsUIMode;
 		}
 
 		private static void EnsureValidReversalIndexConfigFile(LcmCache cache)

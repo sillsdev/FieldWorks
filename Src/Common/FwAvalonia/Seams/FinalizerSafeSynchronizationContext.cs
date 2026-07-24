@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
@@ -26,6 +27,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// </summary>
 	public sealed class FinalizerSafeSynchronizationContext : SynchronizationContext
 	{
+		private static readonly TraceSwitch s_interopTrace =
+			new TraceSwitch("FwAvaloniaHostInterop", "WinForms/Avalonia hosting interop diagnostics");
+
 		private readonly SynchronizationContext _inner;
 
 		/// <summary>Public for tests; product code installs via <see cref="InstallOnCurrentThread"/>.</summary>
@@ -50,15 +54,51 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 			{
 				_inner.Post(d, state);
 			}
-			catch (InvalidOperationException)
+			catch (InvalidOperationException e)
 			{
-				// Marshaling window gone (ObjectDisposedException is a subtype) — the posted work,
-				// a finalizer's native Release, is moot.
+				// Marshaling window gone (ObjectDisposedException is a subtype) — for a MicroCom
+				// finalizer's native Release the posted work is moot; anything else was collateral.
+				ReportSwallowedPost(d, e);
 			}
-			catch (InvalidAsynchronousStateException)
+			catch (InvalidAsynchronousStateException e)
 			{
 				// Destination thread exited.
+				ReportSwallowedPost(d, e);
 			}
+		}
+
+		/// <summary>
+		/// True when the callback is a MicroCom finalizer post (the crash class this wrapper exists
+		/// for) — identified by the callback's declaring type living in the MicroCom runtime.
+		/// Pinned against the referenced Avalonia assemblies by FinalizerSafeSyncContextTests so an
+		/// Avalonia bump that relocates the namespace fails the build instead of reopening the crash.
+		/// </summary>
+		public static bool IsMicroComCallback(SendOrPostCallback d) =>
+			d?.Method?.DeclaringType?.FullName?.StartsWith("MicroCom.", StringComparison.Ordinal) == true;
+
+		/// <summary>
+		/// Invoked when a NON-MicroCom post is dropped (e.g. an async continuation that will now
+		/// never resume). Defaults to <see cref="Debug.Fail(string)"/> so Debug builds surface
+		/// teardown bugs loudly; Release builds only log. Tests substitute a recorder.
+		/// </summary>
+		public static Action<string> NonMicroComDropHandler = message => Debug.Fail(message);
+
+		// A swallowed MicroCom Release is expected and harmless (verbose trace). Anything else is a
+		// DROPPED callback, so it logs as a warning and routes through the loud-in-Debug handler.
+		private static void ReportSwallowedPost(SendOrPostCallback d, Exception e)
+		{
+			var target = d?.Method == null
+				? "<unknown>"
+				: (d.Method.DeclaringType?.FullName ?? "<global>") + "." + d.Method.Name;
+			if (IsMicroComCallback(d))
+			{
+				Trace.WriteLineIf(s_interopTrace.TraceVerbose,
+					$"[FinalizerSafeSyncContext] Swallowed moot MicroCom post ({e.GetType().Name}): {target}");
+				return;
+			}
+			Trace.WriteLineIf(s_interopTrace.TraceWarning,
+				$"[FinalizerSafeSyncContext] DROPPED post ({e.GetType().Name}): {target} — the callback will never run");
+			NonMicroComDropHandler($"FinalizerSafeSynchronizationContext dropped a non-MicroCom post: {target} ({e.GetType().Name})");
 		}
 
 		// Send is NOT swallowed: the finalizer rationale above only covers Post (MicroCom proxy

@@ -21,6 +21,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly LcmCache _cache;
 		private readonly int _depth;
+		// Identity of the undo stack at open: if the clerk force-ends this session's task, the
+		// sequence count advances, so a depth match alone no longer proves the OPEN task is ours.
+		private readonly int _undoableSequenceCountAtOpen;
 		// True only when THIS session actually opened the LCModel undo task. The action handler does not
 		// support NESTED BeginUndoTask ("Nested tasks are not supported"), so when a task is already open
 		// (CurrentDepth > 0) — e.g. a bulk-edit batch fence opened the one outer task and the per-row write
@@ -33,6 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_depth = cache.ActionHandlerAccessor.CurrentDepth;
+			_undoableSequenceCountAtOpen = cache.ActionHandlerAccessor.UndoableSequenceCount;
 			_ownsTask = _depth == 0;
 			if (_ownsTask)
 				cache.DomainDataByFlid.BeginUndoTask(undoLabel, redoLabel);
@@ -66,7 +70,13 @@ namespace SIL.FieldWorks.XWorks
 
 		// RecordClerk.SaveOnChangeRecord (LT-16673) force-ends any open undo task on record change,
 		// closing this session's task underneath it. Ending or rolling back again would throw
-		// ("Rollback not supported in the current state"), so both closers check first.
-		private bool TaskStillOpen => _cache.ActionHandlerAccessor.CurrentDepth > _depth;
+		// ("Rollback not supported in the current state") — and if ANOTHER task has opened since,
+		// a depth check alone would end/roll back that unrelated task. The sequence count advances
+		// when our task is force-ended, so both conditions together identify the open task as ours.
+		// (A force-Rollback by a third party leaves the count unchanged and stays undetected; that
+		// is not the LT-16673 path.)
+		private bool TaskStillOpen =>
+			_cache.ActionHandlerAccessor.CurrentDepth > _depth
+			&& _cache.ActionHandlerAccessor.UndoableSequenceCount == _undoableSequenceCountAtOpen;
 	}
 }
