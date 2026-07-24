@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// The production type-mismatch confirmation: a modal Yes/No warning box parented to the remembered owner,
 		/// carrying the legacy <c>CreateAllomorphTypeMismatchDlg</c> title + warning + question. Returns true only
-		/// when the user confirms (Yes). Factored to a delegate seam so <see cref="PerformAddAllomorph"/> is
+		/// when the user confirms (Yes). A delegate seam so <see cref="PerformAddAllomorph"/> is
 		/// unit-testable without spinning the modal.
 		/// </summary>
 		private bool DefaultConfirmTypeMismatch(string warning, string question)

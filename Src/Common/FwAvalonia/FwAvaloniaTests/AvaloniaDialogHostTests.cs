@@ -144,7 +144,7 @@ namespace FwAvaloniaTests
 		// --- Sizing / min-size / size-persistence (Task: resizable ShowModal). ShowModal itself spins a real
 		// modal loop (not headless-runnable), so these cover the extracted ApplySizing helper that ShowModal
 		// delegates to: border style, min-size, and the get-hook that seeds the initial (remembered) size.
-		// SANCTIONED EXCEPTION to the no-WinForms-Forms-in-tests rule (review, July 2026): these are bare
+		// SANCTIONED EXCEPTION to the no-WinForms-Forms-in-tests rule: these are bare
 		// `new Form()` property bags — no designer tree, never shown, no message loop — and the subject
 		// under test IS Form property manipulation (frame delta, FixedDialog min-size semantics), which a
 		// fake would untest. App dialogs/designer Forms remain banned; test presenters for those. ---

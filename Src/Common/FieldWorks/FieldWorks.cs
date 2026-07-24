@@ -2938,7 +2938,7 @@ namespace SIL.FieldWorks
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
 				// The UIMode/UIModeDisabledTools properties are seeded by FwXWindow.InitMediatorValues
 				// BEFORE LoadUI creates the content views — seeding here would be too late for the
-				// initial surface resolution (LT-22625 review).
+				// initial surface resolution.
 			}
 			catch (StartupException ex)
 			{

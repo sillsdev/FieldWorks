@@ -9,7 +9,7 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// LT-22625 review: the UI-mode properties must be in the PropertyTable BEFORE LoadUI creates
+	/// The UI-mode properties must be in the PropertyTable BEFORE LoadUI creates
 	/// the content views — RecordEditView resolves its surface during window construction, so a
 	/// window created with a persisted UIMode=New must see "New" at that moment or it comes up on
 	/// the Legacy surface. FwXWindow.InitMediatorValues seeds via this helper; these tests pin the

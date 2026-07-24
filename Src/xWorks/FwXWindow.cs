@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
-			// LT-22625 review: seed the UI-mode properties BEFORE LoadUI creates the content views —
+			// Seed the UI-mode properties BEFORE LoadUI creates the content views —
 			// RecordEditView resolves its surface during window construction, so seeding any later
 			// (or relying on the app to do it after NewMainAppWnd returns) leaves a persisted
 			// UIMode=New coming up on the Legacy surface until the setting is toggled again.

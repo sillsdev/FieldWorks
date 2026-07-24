@@ -56,8 +56,6 @@ namespace FwAvaloniaDialogs
 			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
 		}
 
-		// Removes PART_OkButton for single-stage consumers so the commit-on-select picker keeps no OK button at all
-		// (parity with the pre-auxiliary surface); two-stage consumers keep it as the stage-2 commit.
 		private void OnDataContextChangedRemoveOkIfSingleStage(object sender, System.EventArgs e)
 		{
 			var vm = ViewModel;
