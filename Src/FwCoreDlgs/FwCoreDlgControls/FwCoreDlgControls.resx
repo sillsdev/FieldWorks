@@ -170,14 +170,17 @@
   <data name="kstidFeatureValue" xml:space="preserve">
     <value>Value #{0}</value>
   </data>
-  <data name="kstidOpenTypeFeatureValueOff" xml:space="preserve">
-    <value>Off</value>
+  <data name="kstidOpenTypeFeatureValueNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Shown as the first (default) choice for a multi-valued character-variant feature.</comment>
   </data>
-  <data name="kstidOpenTypeFeatureValueOn" xml:space="preserve">
-    <value>On</value>
+  <data name="kstidOpenTypeFeatureStylisticSet" xml:space="preserve">
+    <value>Stylistic Set {0}</value>
+    <comment>Fallback label for a stylistic set the font does not name. {0} is the set number.</comment>
   </data>
-  <data name="kstidOpenTypeFeature_aalt" xml:space="preserve">
-    <value>Access All Alternates</value>
+  <data name="kstidOpenTypeFeatureCharacterVariant" xml:space="preserve">
+    <value>Character Variant {0}</value>
+    <comment>Fallback label for a character variant the font does not name. {0} is the variant number.</comment>
   </data>
   <data name="kstidOpenTypeFeature_c2sc" xml:space="preserve">
     <value>Small Capitals From Capitals</value>
@@ -187,9 +190,6 @@
   </data>
   <data name="kstidOpenTypeFeature_case" xml:space="preserve">
     <value>Case-Sensitive Forms</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ccmp" xml:space="preserve">
-    <value>Glyph Composition/Decomposition</value>
   </data>
   <data name="kstidOpenTypeFeature_clig" xml:space="preserve">
     <value>Contextual Ligatures</value>
@@ -220,21 +220,6 @@
   </data>
   <data name="kstidOpenTypeFeature_smcp" xml:space="preserve">
     <value>Small Capitals</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ss01" xml:space="preserve">
-    <value>Stylistic Set 1</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ss02" xml:space="preserve">
-    <value>Stylistic Set 2</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ss03" xml:space="preserve">
-    <value>Stylistic Set 3</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ss04" xml:space="preserve">
-    <value>Stylistic Set 4</value>
-  </data>
-  <data name="kstidOpenTypeFeature_ss05" xml:space="preserve">
-    <value>Stylistic Set 5</value>
   </data>
   <data name="kstidOpenTypeFeature_tnum" xml:space="preserve">
     <value>Tabular Figures</value>
