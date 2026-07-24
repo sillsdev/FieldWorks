@@ -18,7 +18,9 @@ namespace FwAvaloniaDialogs
 	/// result (double-click a row, or Enter on the highlighted row) commits + closes accepted via the view-model's
 	/// <c>CommitCommand</c>; Cancel / Escape / the window close button cancel. Selection and search are MVVM; the
 	/// code-behind only (a) feeds the search box's focus into the view-model so the dropdown shows ONLY while the
-	/// field is focused, and (b) translates the result list's double-click / Enter gesture into the commit command.
+	/// field is focused, (b) translates the result list's double-click / Enter gesture into the commit command, and
+	/// (c) removes the two-stage OK button from the tree for single-stage consumers (with an auxiliary spec the
+	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>).
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
 	/// <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
@@ -48,6 +50,21 @@ namespace FwAvaloniaDialogs
 				results.DoubleTapped += OnResultsDoubleTapped;
 				results.KeyDown += OnResultsKeyDown;
 			}
+
+			// The OK button exists only for two-stage auxiliary consumers; single-stage (commit-on-select) consumers
+			// keep their exact OK-less surface, so remove it from the tree (not merely hide it) once the VM arrives.
+			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
+		}
+
+		// Removes PART_OkButton for single-stage consumers so the commit-on-select picker keeps no OK button at all
+		// (parity with the pre-auxiliary surface); two-stage consumers keep it as the stage-2 commit.
+		private void OnDataContextChangedRemoveOkIfSingleStage(object sender, System.EventArgs e)
+		{
+			var vm = ViewModel;
+			if (vm == null || vm.HasAuxiliarySelection)
+				return;
+			var okButton = this.FindControl<Button>("PART_OkButton");
+			(okButton?.Parent as Avalonia.Controls.Panel)?.Children.Remove(okButton);
 		}
 
 		private EntryGoDialogViewModel ViewModel => DataContext as EntryGoDialogViewModel;

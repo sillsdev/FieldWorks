@@ -625,5 +625,153 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(FwAvaloniaDialogsStrings.LinkEntryOrSenseEntryRadio, Is.EqualTo("Entry"));
 			Assert.That(FwAvaloniaDialogsStrings.LinkEntryOrSenseSenseRadio, Is.EqualTo("Specific Sense"));
 		}
+
+		// ===== Opt-in dependent auxiliary selection (the LinkMSA/LinkAllomorph surface): with a resolver supplied
+		// the dialog is two-stage — picking an entry populates the auxiliary options, Enter/double-click is stage-1
+		// select (not commit), and OK commits only once both an entry and an option are chosen. Without the spec
+		// the commit-on-select behavior above is unchanged (those tests all run against a null spec). =====
+
+		// An auxiliary-selection input over the sample entries: "casa" (11) resolves to TWO options (its MSAs),
+		// "cantar" (12) to ONE, "perro" (13) to none. Resolver invocations are recorded for the tests.
+		private static EntryGoDialogInput AuxiliaryInput(List<string> resolvedIds)
+		{
+			var input = Input();
+			input.AuxiliaryLabel = "Grammatical Info.";
+			input.AuxiliaryOptions = result =>
+			{
+				resolvedIds.Add(result?.Id);
+				switch (result?.Id)
+				{
+					case "11":
+						return new List<EntryGoAuxiliaryOption>
+						{
+							new EntryGoAuxiliaryOption("msa-noun", "noun"),
+							new EntryGoAuxiliaryOption("msa-verb", "verb")
+						};
+					case "12":
+						return new List<EntryGoAuxiliaryOption>
+						{
+							new EntryGoAuxiliaryOption("form-cantar", "cantar")
+						};
+					default:
+						return new List<EntryGoAuxiliaryOption>();
+				}
+			};
+			return input;
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_SpecAbsent_SectionHiddenAndNoOkButton()
+		{
+			// The single-stage picker keeps its exact surface: no auxiliary section showing, no OK in the tree.
+			var (view, vm) = Show(Input());
+			Assert.That(vm.HasAuxiliarySelection, Is.False, "a null spec means the feature is off");
+			Assert.That(vm.ShowAuxiliaryOptions, Is.False);
+			var section = FindByAutomationId<StackPanel>(view, "EntryGo.AuxiliarySection");
+			Assert.That(section.IsVisible, Is.False, "the auxiliary section stays hidden without a spec");
+			Assert.That(view.GetVisualDescendants().OfType<Button>()
+					.Any(b => AutomationProperties.GetAutomationId(b) == "EntryGo.Ok"), Is.False,
+				"the OK button is removed from the tree for single-stage consumers");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_SelectingAnEntry_InvokesResolverAndShowsOptions()
+		{
+			var resolvedIds = new List<string>();
+			var (view, vm) = Show(AuxiliaryInput(resolvedIds), "EntryGoAux-01-initial");
+			Assert.That(vm.HasAuxiliarySelection, Is.True);
+			Assert.That(resolvedIds, Is.Empty, "the resolver is not invoked before an entry is picked");
+
+			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
+			Capture(view, "EntryGoAux-02-options-shown");
+			Assert.That(resolvedIds, Is.EqualTo(new[] { "11" }), "picking an entry invokes the resolver once");
+			Assert.That(vm.AuxiliaryOptions.Select(o => o.Text), Is.EqualTo(new[] { "noun", "verb" }),
+				"the resolver's options populate the picker in order");
+			Assert.That(vm.ShowAuxiliaryOptions, Is.True, "the auxiliary section shows once an entry is picked");
+			var section = FindByAutomationId<StackPanel>(view, "EntryGo.AuxiliarySection");
+			Assert.That(section.IsVisible, Is.True);
+			var list = FindByAutomationId<ListBox>(view, "EntryGo.AuxiliaryOptions");
+			Assert.That(list.ItemCount, Is.EqualTo(2), "the bound options list realizes both options");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_SingleOption_AutoSelects()
+		{
+			var (_, vm) = Show(AuxiliaryInput(new List<string>()));
+			vm.SelectedResult = vm.Results.First(r => r.Id == "12"); // one option only
+			Assert.That(vm.SelectedAuxiliaryOption, Is.Not.Null, "a lone option auto-selects");
+			Assert.That(vm.SelectedAuxiliaryOption.Key, Is.EqualTo("form-cantar"));
+			Assert.That(vm.OkCommand.CanExecute(null), Is.True, "the auto-selected option satisfies the OK gate");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_OkGatedOnBothSelections()
+		{
+			var (view, vm) = Show(AuxiliaryInput(new List<string>()), "EntryGoAux-03-ok-gating");
+			var ok = FindByAutomationId<Button>(view, "EntryGo.Ok");
+			Assert.That(ok.IsVisible, Is.True, "two-stage consumers get an OK button");
+			Assert.That(vm.OkCommand.CanExecute(null), Is.False, "no entry selected: OK gated off");
+
+			vm.SelectedResult = vm.Results.First(r => r.Id == "11"); // two options, none auto-selected
+			Assert.That(vm.SelectedAuxiliaryOption, Is.Null, "several options: the user must choose one");
+			Assert.That(vm.OkCommand.CanExecute(null), Is.False, "an entry alone does not satisfy the OK gate");
+
+			vm.SelectedAuxiliaryOption = vm.AuxiliaryOptions.First(o => o.Key == "msa-verb");
+			Capture(view, "EntryGoAux-04-both-selected");
+			Assert.That(vm.OkCommand.CanExecute(null), Is.True, "an entry AND an option enable OK");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_EnterOnResults_IsStageOneSelect_NotCommit()
+		{
+			var (view, vm) = Show(AuxiliaryInput(new List<string>()));
+			FocusSearch(view);
+			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
+			bool? closed = null;
+			vm.CloseRequested += (s, accepted) => closed = accepted;
+
+			PressEnterOnResults(view);
+			Assert.That(closed, Is.Null, "Enter with a spec present selects the entry (stage 1), never commits");
+			Assert.That(vm.Accepted, Is.Null, "the dialog stays open for the auxiliary pick");
+			Assert.That(vm.IsSearchFocused, Is.False, "stage 1 dismisses the results dropdown");
+
+			// Stage 1 closed the dropdown but the box never lost REAL keyboard focus (so Focus() is a no-op);
+			// re-open via the same flag the focus handler drives, then pump so the overlay list re-realizes.
+			vm.IsSearchFocused = true;
+			FocusSearch(view);
+			DoubleClickResults(view);
+			Assert.That(closed, Is.Null, "a double-click is likewise stage-1 only when the spec is present");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_Ok_CommitsTheChosenKey()
+		{
+			var (_, vm) = Show(AuxiliaryInput(new List<string>()));
+			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
+			vm.SelectedAuxiliaryOption = vm.AuxiliaryOptions.First(o => o.Key == "msa-verb");
+			bool? closed = null;
+			vm.CloseRequested += (s, accepted) => closed = accepted;
+
+			vm.OkCommand.Execute(null);
+			Assert.That(closed, Is.True, "OK commits stage 2 and closes accepted");
+			Assert.That(vm.Accepted, Is.True);
+			Assert.That(vm.ChosenId, Is.EqualTo("11"), "the chosen entry id is snapshotted");
+			Assert.That(vm.ChosenAuxiliaryKey, Is.EqualTo("msa-verb"), "the chosen option's key is snapshotted");
+		}
+
+		[AvaloniaTest]
+		public void Auxiliary_ChangingTheEntry_RepopulatesOptions()
+		{
+			var resolvedIds = new List<string>();
+			var (_, vm) = Show(AuxiliaryInput(resolvedIds));
+			vm.SelectedResult = vm.Results.First(r => r.Id == "11");
+			vm.SelectedAuxiliaryOption = vm.AuxiliaryOptions.First();
+
+			vm.SelectedResult = vm.Results.First(r => r.Id == "13"); // no options for this entry
+			Assert.That(resolvedIds, Is.EqualTo(new[] { "11", "13" }), "each entry pick re-invokes the resolver");
+			Assert.That(vm.AuxiliaryOptions, Is.Empty, "the previous entry's options are cleared");
+			Assert.That(vm.SelectedAuxiliaryOption, Is.Null, "the stale option selection is cleared");
+			Assert.That(vm.OkCommand.CanExecute(null), Is.False, "no options: OK stays gated (legacy empty combo)");
+		}
 	}
 }

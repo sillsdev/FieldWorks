@@ -31,10 +31,10 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// entry to an <c>IMoMorphSynAnalysis</c> (exposed via <see cref="SelectedObject"/>); it performs no model
 	/// mutation of its own.
 	///
-	/// PARITY: the legacy dialog shows a combo of ALL of the chosen entry's MSAs and defaults to the first
-	/// (<c>m_fwcbFunctions.SelectedItem = Items[0]</c>); this slice resolves to that same first MSA. Picking a
-	/// non-first MSA from a multi-MSA entry is deferred (the kit result list carries one row per entry, not per
-	/// MSA) — see the // PARITY comment on <see cref="ResolveSelectedMsa"/>.
+	/// PARITY: like the legacy dialog's combo of ALL of the chosen entry's MSAs, this launcher supplies the kit's
+	/// dependent auxiliary picker (<see cref="EntryGoDialogInput.AuxiliaryOptions"/>) with one option per MSA in
+	/// legacy order (each displayed by its <c>InterlinearName</c>, keyed by its Guid) and resolves the CHOSEN MSA
+	/// on OK — see <see cref="ResolveSelectedMsa"/>.
 	/// </summary>
 	public sealed class LcmLinkMsaDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmLinkMsaDialogLauncher.LinkMsaPayload>
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			public IMoMorphSynAnalysis Msa;
 		}
 
-		/// <summary>The MSA the user chose (the first MSA of the chosen entry), or null when cancelled.</summary>
+		/// <summary>The MSA the user chose in the auxiliary picker, or null when cancelled.</summary>
 		public IMoMorphSynAnalysis SelectedObject { get; private set; }
 
 		/// <summary>
@@ -93,7 +93,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Builds the LCModel-free <see cref="EntryGoDialogInput"/> for the Link-MSA consumer: the legacy title /
 		/// shared OK / "Lexical Entries" prompt, the starting entry's hvo as the excluded id (the legacy
-		/// <c>m_startingEntry</c> cannot be a match), and a search over the shared <see cref="EntryGoSearchEngine"/>.
+		/// <c>m_startingEntry</c> cannot be a match), a search over the shared <see cref="EntryGoSearchEngine"/>, and
+		/// the grammatical-info auxiliary picker (the legacy <c>m_fwcbFunctions</c> combo of the chosen entry's MSAs).
 		/// Internal so the input + search are unit-testable against a real cache without running the modal.
 		/// </summary>
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
@@ -105,8 +106,27 @@ namespace SIL.FieldWorks.LexText.Controls
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				ExcludedId = startingEntry?.Hvo.ToString(CultureInfo.InvariantCulture),
 				HelpTopic = "khtpInsertMorphemeChooseFunction",
-				Search = BuildSearch(cache, mediator, propertyTable, startingEntry)
+				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
+				AuxiliaryLabel = FwAvaloniaDialogsStrings.LinkMsaGrammaticalInfoLabel,
+				AuxiliaryOptions = result => GetMsaOptions(cache, result?.Id)
 			};
+		}
+
+		/// <summary>
+		/// The auxiliary options for a selected entry row: one option per MSA of the entry, in the legacy combo's
+		/// order (<c>MorphoSyntaxAnalysesOC</c>, the order LinkMSADlg's <c>HandleMatchingSelectionChanged</c> added
+		/// them), displayed by <c>InterlinearName</c> (the legacy <c>LMsa.ToString</c>) and keyed by the MSA's Guid.
+		/// Internal so it is unit-testable against a real cache.
+		/// </summary>
+		internal static IReadOnlyList<EntryGoAuxiliaryOption> GetMsaOptions(LcmCache cache, string entryId)
+		{
+			var entry = EntryGoLauncherShared.ResolveEntry(cache, entryId);
+			if (entry == null)
+				return new EntryGoAuxiliaryOption[0];
+			return entry.MorphoSyntaxAnalysesOC
+				.Select(msa => new EntryGoAuxiliaryOption(msa.Guid.ToString(),
+					msa.InterlinearName ?? msa.Hvo.ToString(CultureInfo.InvariantCulture)))
+				.ToList();
 		}
 
 		/// <summary>
@@ -132,25 +152,34 @@ namespace SIL.FieldWorks.LexText.Controls
 			new EntryGoDialogView { DataContext = viewModel };
 
 		/// <summary>
-		/// Applies the OK result: resolves the chosen entry to its (first) MSA and exposes it via
-		/// <see cref="SelectedObject"/>. No model mutation here — the caller performs the on-OK action.
+		/// Applies the OK result: resolves the chosen entry + the auxiliary pick to the CHOSEN MSA and exposes it
+		/// via <see cref="SelectedObject"/>. No model mutation here — the caller performs the on-OK action.
 		/// </summary>
 		protected override LinkMsaPayload Apply(EntryGoDialogInput state)
 		{
-			SelectedObject = ResolveSelectedMsa(_cache, _viewModel?.ChosenId);
+			SelectedObject = ResolveSelectedMsa(_cache, _viewModel?.ChosenId, _viewModel?.ChosenAuxiliaryKey);
 			return new LinkMsaPayload { Msa = SelectedObject };
 		}
 
 		/// <summary>
-		/// Resolves the chosen entry's id to a grammatical-info / MSA object. PARITY: the legacy LinkMSADlg builds a
-		/// combo of ALL of the entry's <c>MorphoSyntaxAnalysesOC</c> and default-selects the FIRST item; this slice
-		/// returns that same first MSA. Choosing a non-first MSA is deferred (the kit's one-row-per-entry result
-		/// list cannot carry per-MSA rows cleanly). Internal so it is unit-testable against a real cache.
+		/// Resolves the chosen entry's id + the auxiliary pick to a grammatical-info / MSA object. PARITY: like the
+		/// legacy LinkMSADlg combo of ALL of the entry's <c>MorphoSyntaxAnalysesOC</c>, the MSA whose Guid matches
+		/// <paramref name="msaKey"/> (the chosen auxiliary option) is returned; a missing/unresolved key falls back
+		/// to the first MSA (the legacy combo's default selection). Internal so it is unit-testable against a real
+		/// cache.
 		/// </summary>
-		internal static IMoMorphSynAnalysis ResolveSelectedMsa(LcmCache cache, string entryId)
+		internal static IMoMorphSynAnalysis ResolveSelectedMsa(LcmCache cache, string entryId, string msaKey = null)
 		{
 			var entry = EntryGoLauncherShared.ResolveEntry(cache, entryId);
-			return entry?.MorphoSyntaxAnalysesOC.FirstOrDefault();
+			if (entry == null)
+				return null;
+			if (!string.IsNullOrEmpty(msaKey) && Guid.TryParse(msaKey, out var msaGuid))
+			{
+				var chosen = entry.MorphoSyntaxAnalysesOC.FirstOrDefault(msa => msa.Guid == msaGuid);
+				if (chosen != null)
+					return chosen;
+			}
+			return entry.MorphoSyntaxAnalysesOC.FirstOrDefault();
 		}
 
 		private void OnHelpRequested(string topic)

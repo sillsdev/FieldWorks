@@ -107,6 +107,9 @@ namespace FwAvaloniaDialogs
 		public static string EntryGoMustSelect => Text("FwAvaloniaDialogs.EntryGoMustSelect");
 		public static string EntryGoSearchWatermark => Text("FwAvaloniaDialogs.EntryGoSearchWatermark");
 		public static string EntryGoResultsLabel => Text("FwAvaloniaDialogs.EntryGoResultsLabel");
+		// The two-stage OK gate when the dependent auxiliary picker has no chosen option yet (legacy: the
+		// LinkMSADlg/LinkAllomorphDlg OK button stayed disabled while the per-entry combo was empty).
+		public static string EntryGoMustSelectOption => Text("FwAvaloniaDialogs.EntryGoMustSelectOption");
 
 		// Merge Entry consumer of the entry-search dialog (legacy MergeEntryDlg / EntryGoDlg wording).
 		public static string MergeTitle => Text("FwAvaloniaDialogs.Merge.Title");
@@ -118,14 +121,33 @@ namespace FwAvaloniaDialogs
 		public static string AddAllomorphUndo => Text("FwAvaloniaDialogs.AddAllomorph.Undo");
 		public static string AddAllomorphRedo => Text("FwAvaloniaDialogs.AddAllomorph.Redo");
 
+		// Add Allomorph type-mismatch confirmation (the legacy CreateAllomorphTypeMismatchDlg popped when the
+		// morpheme type deduced from the typed form's punctuation disagrees with the entry's existing forms). Seed
+		// text matches the canonical legacy wording (CreateAllomorphTypeMismatchDlg.resx $this.Text plus the
+		// ITextStrings.ksSelectedLexEntryXisaY / ksAreYouSureAddZtoX / ksNoForm messages and the DialogStrings
+		// "NoMorphType" fallback) so the English fallback is identical and translation memory carries over.
+		public static string AddAllomorphMismatchTitle => Text("FwAvaloniaDialogs.AddAllomorph.MismatchTitle");
+		/// <summary>"The selected lexical entry ({0}) is a {1}." — {0} the entry's headword, {1} its lexeme form's morph type.</summary>
+		public static string AddAllomorphMismatchWarning => Text("FwAvaloniaDialogs.AddAllomorph.MismatchWarning");
+		/// <summary>"Are you sure you want to add the {0} allomorph ({1}) to this entry?" — {0} the deduced morph type, {1} the typed form.</summary>
+		public static string AddAllomorphMismatchQuestion => Text("FwAvaloniaDialogs.AddAllomorph.MismatchQuestion");
+		public static string AddAllomorphNoMorphType => Text("FwAvaloniaDialogs.AddAllomorph.NoMorphType");
+		public static string AddAllomorphNoForm => Text("FwAvaloniaDialogs.AddAllomorph.NoForm");
+
 		// Link Entry or Sense consumer of the entry-search dialog (legacy LinkEntryOrSenseDlg wording).
 		public static string LinkEntryOrSenseTitle => Text("FwAvaloniaDialogs.LinkEntryOrSense.Title");
 
 		// Link Allomorph consumer of the entry-search dialog (legacy LinkAllomorphDlg wording).
 		public static string LinkAllomorphTitle => Text("FwAvaloniaDialogs.LinkAllomorph.Title");
+		// The auxiliary-picker label (legacy LinkAllomorphDlg.resx label3 "&Allomorph:", ampersand mnemonic and
+		// trailing colon dropped per the kit's label conventions) so the translation memory carries over.
+		public static string LinkAllomorphAllomorphLabel => Text("FwAvaloniaDialogs.LinkAllomorph.AllomorphLabel");
 
 		// Link MSA consumer of the entry-search dialog (legacy LinkMSADlg wording).
 		public static string LinkMsaTitle => Text("FwAvaloniaDialogs.LinkMsa.Title");
+		// The auxiliary-picker label (legacy LinkMSADlg.resx label3 "&Grammatical Info.:", ampersand mnemonic and
+		// trailing colon dropped per the kit's label conventions) so the translation memory carries over.
+		public static string LinkMsaGrammaticalInfoLabel => Text("FwAvaloniaDialogs.LinkMsa.GrammaticalInfoLabel");
 
 		// Link Entry or Sense entry/sense toggle (the legacy LinkEntryOrSenseDlg m_rbEntry / m_rbSense radios). Seed
 		// text matches the canonical legacy LinkEntryOrSenseDlg.resx wording (ampersand accelerators dropped — the

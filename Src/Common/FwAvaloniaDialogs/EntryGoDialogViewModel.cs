@@ -30,12 +30,20 @@ namespace FwAvaloniaDialogs
 	/// <see cref="ApplyChanges"/>) and closes the dialog accepted. Cancel is Escape / the window close button (the
 	/// inherited <c>CancelCommand</c>, surfaced as a single Cancel affordance for discoverability). The excluded id
 	/// never appears (defensive guard on top of the launcher's filter).
+	///
+	/// EXCEPT when the consumer supplies <see cref="EntryGoDialogInput.AuxiliaryOptions"/> (the legacy per-entry
+	/// combo LinkMSADlg/LinkAllomorphDlg showed under the matching list): the dialog is then TWO-STAGE. Picking a
+	/// result is stage 1 — it invokes the resolver to populate <see cref="AuxiliaryOptions"/> (a single option
+	/// auto-selects) and <see cref="CommitCommand"/> only closes the results dropdown instead of committing — and
+	/// the inherited OK commits stage 2, gated on both an entry and an auxiliary option being chosen
+	/// (<see cref="ChosenAuxiliaryKey"/> carries the option's key). Consumers without the spec are unaffected.
 	/// </summary>
 	public partial class EntryGoDialogViewModel : DialogViewModelBase
 	{
 		private readonly EntryGoDialogInput _input;
 		private readonly Func<string, IReadOnlyList<EntryGoSearchResult>> _search;
 		private readonly Func<string, bool, IReadOnlyList<EntryGoSearchResult>> _searchByMode;
+		private readonly Func<EntryGoSearchResult, IReadOnlyList<EntryGoAuxiliaryOption>> _auxiliaryResolver;
 		private readonly string _excludedId;
 
 		public EntryGoDialogViewModel() : this(new EntryGoDialogInput())
@@ -64,6 +72,13 @@ namespace FwAvaloniaDialogs
 			// consumers leave these false and never see the toggle.
 			ShowModeToggle = _input.ShowEntrySenseToggle && _searchByMode != null;
 			ModeToggleEnabled = ShowModeToggle && !_input.SensesOnly;
+
+			// Opt-in dependent auxiliary selection (the legacy LinkMSADlg/LinkAllomorphDlg per-entry combo). With a
+			// resolver supplied the dialog is two-stage (entry pick, then option pick, then OK); without one the
+			// commit-on-select behavior below is unchanged.
+			_auxiliaryResolver = _input.AuxiliaryOptions;
+			HasAuxiliarySelection = _auxiliaryResolver != null;
+			AuxiliaryLabel = _input.AuxiliaryLabel ?? string.Empty;
 			// The field initializer sets _isSenseMode so OnIsSenseModeChanged does not fire during construction.
 			_isSenseMode = _input.SensesOnly;
 
@@ -183,6 +198,35 @@ namespace FwAvaloniaDialogs
 		/// </summary>
 		public bool ShowResultsDropdown => IsSearchFocused && Results.Count > 0;
 
+		// ----- dependent auxiliary selection (opt-in two-stage mode): the per-entry option picker the legacy
+		// LinkMSADlg/LinkAllomorphDlg combos provided, populated from the resolver when a result is selected. -----
+
+		/// <summary>
+		/// True when the consumer supplied an auxiliary-options resolver, making the dialog two-stage (entry pick,
+		/// then option pick, then OK). False keeps the single-stage commit-on-select picker with no OK button.
+		/// </summary>
+		public bool HasAuxiliarySelection { get; }
+
+		/// <summary>The label shown above the auxiliary picker (e.g. "Grammatical Info."); empty when unset.</summary>
+		public string AuxiliaryLabel { get; }
+
+		/// <summary>The auxiliary options for the currently selected result (empty until an entry is picked).</summary>
+		public ObservableCollection<EntryGoAuxiliaryOption> AuxiliaryOptions { get; } =
+			new ObservableCollection<EntryGoAuxiliaryOption>();
+
+		/// <summary>The currently-selected auxiliary option; null gates OK off in two-stage mode.</summary>
+		[ObservableProperty]
+		private EntryGoAuxiliaryOption _selectedAuxiliaryOption;
+
+		/// <summary>
+		/// True when the auxiliary picker section should show: the consumer opted into auxiliary selection AND an
+		/// entry is selected (stage 1 done). The legacy combo likewise only filled in once a match was highlighted.
+		/// </summary>
+		public bool ShowAuxiliaryOptions => HasAuxiliarySelection && SelectedResult != null;
+
+		/// <summary>The chosen auxiliary option's key, snapshotted on OK; null when the feature is off or cancelled.</summary>
+		public string ChosenAuxiliaryKey { get; private set; }
+
 		/// <summary>The chosen result's id (the legacy hvo string), snapshotted on OK; null until then.</summary>
 		public string ChosenId { get; private set; }
 
@@ -214,6 +258,8 @@ namespace FwAvaloniaDialogs
 		/// The commit-on-select path: snapshots the selected row into <see cref="ChosenId"/> (via
 		/// <see cref="ApplyChanges"/>) and closes the dialog ACCEPTED, exactly as a legacy OK would have. The view
 		/// raises this on a double-click of a result row or Enter on the highlighted row (there is no OK button).
+		/// In two-stage mode (<see cref="HasAuxiliarySelection"/>) the same gesture is only STAGE 1 — it closes the
+		/// results dropdown so the populated auxiliary picker is in view, and the inherited OK commits instead.
 		/// Gated on <see cref="CanCommit"/> so it is a no-op when nothing is selected; the defensive re-check makes a
 		/// direct Execute call honor the gate too.
 		/// </summary>
@@ -222,6 +268,13 @@ namespace FwAvaloniaDialogs
 		{
 			if (!CanCommit)
 				return;
+			if (HasAuxiliarySelection)
+			{
+				// Stage 1 of the two-stage flow: the pick already populated the auxiliary options (see
+				// OnSelectedResultChanged); just dismiss the dropdown so the picker + OK are in view.
+				IsSearchFocused = false;
+				return;
+			}
 			ApplyChanges();
 			RequestClose(true);
 		}
@@ -240,8 +293,37 @@ namespace FwAvaloniaDialogs
 			OnPropertyChanged(nameof(Description));
 			OnPropertyChanged(nameof(SelectedDescriptionContent));
 			OnPropertyChanged(nameof(HasDescriptionContent));
+			if (HasAuxiliarySelection)
+			{
+				RefreshAuxiliaryOptions(value);
+				OnPropertyChanged(nameof(ShowAuxiliaryOptions));
+			}
 			CommitCommand.NotifyCanExecuteChanged();
 			RefreshCanOk();
+		}
+
+		// Raised by the source generator when the auxiliary option changes; re-evaluate the two-stage OK gate.
+		partial void OnSelectedAuxiliaryOptionChanged(EntryGoAuxiliaryOption value)
+		{
+			RefreshCanOk();
+		}
+
+		// Repopulates the auxiliary picker from the resolver for the newly selected result (stage 1 of the
+		// two-stage flow): clears the old options, asks the resolver for the entry's options, and auto-selects a
+		// lone option (the legacy combos default-selected their first item; with several we make the user choose).
+		private void RefreshAuxiliaryOptions(EntryGoSearchResult result)
+		{
+			AuxiliaryOptions.Clear();
+			if (result != null)
+			{
+				var options = _auxiliaryResolver?.Invoke(result) ?? Array.Empty<EntryGoAuxiliaryOption>();
+				foreach (var option in options)
+				{
+					if (option != null)
+						AuxiliaryOptions.Add(option);
+				}
+			}
+			SelectedAuxiliaryOption = AuxiliaryOptions.Count == 1 ? AuxiliaryOptions[0] : null;
 		}
 
 		// Raised by the source generator when IsSearchFocused changes; re-evaluate the dropdown gate.
@@ -298,16 +380,21 @@ namespace FwAvaloniaDialogs
 		{
 			if (SelectedResult == null)
 				yield return FwAvaloniaDialogsStrings.EntryGoMustSelect;
+			// Two-stage mode also needs an auxiliary option (legacy: OK disabled while the combo is empty).
+			if (HasAuxiliarySelection && SelectedAuxiliaryOption == null)
+				yield return FwAvaloniaDialogsStrings.EntryGoMustSelectOption;
 		}
 
 		/// <summary>
-		/// Snapshots the selected row's id into <see cref="ChosenId"/> when the user commits (and whether it was a
-		/// sense into <see cref="ChosenIsSense"/>) so the launcher resolves it as the right kind.
+		/// Snapshots the selected row's id into <see cref="ChosenId"/> when the user commits (whether it was a
+		/// sense into <see cref="ChosenIsSense"/>, and — in two-stage mode — the chosen option's key into
+		/// <see cref="ChosenAuxiliaryKey"/>) so the launcher resolves it as the right kind.
 		/// </summary>
 		protected override void ApplyChanges()
 		{
 			ChosenId = SelectedResult?.Id;
 			ChosenIsSense = SelectedResult?.IsSense ?? false;
+			ChosenAuxiliaryKey = HasAuxiliarySelection ? SelectedAuxiliaryOption?.Key : null;
 		}
 	}
 }

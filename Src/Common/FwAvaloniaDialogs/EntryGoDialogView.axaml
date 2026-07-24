@@ -18,12 +18,19 @@
 		<!-- Commit-on-select: there is NO OK button. Picking a result (double-click a row, or Enter on the highlighted
 		     row) commits + closes accepted (wired in code-behind to the CommitCommand). The button strip keeps only a
 		     single Cancel affordance (Escape / the window close button also cancel, via IsCancel) plus the optional
-		     Help, so the strip never reads as an empty placeholder. -->
+		     Help, so the strip never reads as an empty placeholder.
+		     EXCEPT in two-stage auxiliary mode (HasAuxiliarySelection): picking a result is stage 1, and PART_OkButton
+		     below commits stage 2 (gated on both selections). For single-stage consumers the code-behind REMOVES
+		     PART_OkButton from the tree entirely so the commit-on-select surface stays byte-identical. -->
 		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
 		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
 		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
 		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
 		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Name="PART_OkButton" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Ok">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.OkMnemonic}"/>
+			</Button>
 			<Button IsCancel="True" Command="{Binding CancelCommand}"
 			        AutomationProperties.AutomationId="EntryGo.Cancel">
 				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
@@ -101,6 +108,32 @@
 						</ListBox>
 					</Border>
 				</Popup>
+
+				<!-- Dependent auxiliary picker (two-stage mode only): the per-entry option list the legacy
+				     LinkMSADlg/LinkAllomorphDlg combos showed under the matching list. Hidden until the consumer
+				     supplies an auxiliary spec AND an entry is selected (ShowAuxiliaryOptions); a lone option
+				     auto-selects in the VM, and OK stays gated until an option is chosen. -->
+				<StackPanel DockPanel.Dock="Top"
+				            IsVisible="{Binding ShowAuxiliaryOptions}"
+				            Margin="{StaticResource DialogControlGapAbove}"
+				            AutomationProperties.AutomationId="EntryGo.AuxiliarySection">
+					<TextBlock Text="{Binding AuxiliaryLabel}"
+					           Margin="{StaticResource DialogLabelFieldGapBelow}"
+					           AutomationProperties.AutomationId="EntryGo.AuxiliaryLabel"/>
+					<Border Classes="fwFieldHost">
+						<ListBox MaxHeight="120"
+						         ItemsSource="{Binding AuxiliaryOptions}"
+						         SelectedItem="{Binding SelectedAuxiliaryOption, Mode=TwoWay}"
+						         AutomationProperties.AutomationId="EntryGo.AuxiliaryOptions">
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="vm:EntryGoAuxiliaryOption">
+									<TextBlock Text="{Binding Text}"
+									           AutomationProperties.Name="{Binding Text}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Border>
+				</StackPanel>
 
 				<!-- Filler so the left column claims its share of the grid even with the dropdown closed. -->
 				<Border DockPanel.Dock="Top"/>
