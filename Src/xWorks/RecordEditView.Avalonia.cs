@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Viewing parity (11.8): expansion state persists per header stable id — in-session through the
 		// dictionary, across sessions through PropertyTable local settings, the legacy ExpansionStateKey
-		// behavior. Per-instance (review round 1): a process-wide static leaked state across
+		// behavior. Per-instance deliberately: a process-wide static would leak state across
 		// projects/windows for the app lifetime.
 		private readonly Dictionary<string, bool> m_expansionStates = new Dictionary<string, bool>();
 
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.XWorks
 			(m_regionEditorServices?.LegacyDialogLauncher as IDisposable)?.Dispose();
 			m_regionEditorServices = null;
 			m_avaloniaEntryForm?.Dispose();
-			// WIRE-01: null the host + refresh controller after disposing them. The recreation guards
+			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaSurfaceInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh surface instead of re-showing a disposed one.
 			m_avaloniaEntryForm = null;
@@ -803,7 +803,7 @@ namespace SIL.FieldWorks.XWorks
 			if (targetHvo == 0)
 				return;
 
-			// Targeting hardening (Task B): the legacy command handlers act on m_dataEntryForm.CurrentSlice,
+			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
 			// so the adapter must point CurrentSlice at the slice bound to the clicked row's object. A first
 			// pass over the already-realized slices handles the common case (small sequences build their
 			// slices instantly). When the target lives inside an UNREALIZED DummyObjectSlice (a sequence with
@@ -886,10 +886,10 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence(key, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
-		// Viewing parity (Task C2): the label/value splitter width persists per tool — in-session
+		// Viewing parity: the label/value splitter width persists per tool — in-session
 		// through the host's remembered field, ACROSS sessions through a PropertyTable local setting,
 		// mirroring the expansion-persistence pattern above and the legacy slice-splitter behavior
-		// (the former host-only field was process-scoped and lost on shutdown). Keyed by tool so each
+		// (a host-only field would be process-scoped and lost on shutdown). Keyed by tool so each
 		// detail tool keeps its own column width. Returns null when nothing has been persisted yet,
 		// so the view falls back to the density default.
 		private string LabelColumnWidthKey

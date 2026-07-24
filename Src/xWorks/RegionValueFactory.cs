@@ -13,12 +13,12 @@ using SIL.LCModel.Core.WritingSystems;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Review task 12 — the ONE home for the two value-projection recipes that
-	/// <see cref="FullEntryRegionComposer"/> and <see cref="LexicalEditRegionBuilder"/> had each
-	/// grown separately: the per-writing-system value rows and the possibility-list option
-	/// flattening. Sharing them here is what keeps the two surfaces from drifting — they HAD
-	/// drifted: the builder's option-name fallback walked analysis → vernacular while the
-	/// composer's walked analysis → ShortName (see <see cref="BuildPossibilityOptions"/> for the
+	/// The ONE home for the two value-projection recipes that
+	/// <see cref="FullEntryRegionComposer"/> and <see cref="LexicalEditRegionBuilder"/> both
+	/// consume: the per-writing-system value rows and the possibility-list option
+	/// flattening. Sharing them here is what keeps the two surfaces from drifting
+	/// (e.g. an option-name fallback walking analysis → vernacular on one surface and
+	/// analysis → ShortName on the other; see <see cref="BuildPossibilityOptions"/> for the
 	/// deliberate resolution).
 	/// </summary>
 	internal static class RegionValueFactory

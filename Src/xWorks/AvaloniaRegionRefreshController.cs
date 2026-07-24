@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// gated through an <see cref="ILexicalRefreshCoordinator"/> (suspend/pending, the LT-22414
 	/// model) and delivered once on edit completion, so a half-typed edit is never stomped.
 	///
-	/// Delivery is coalesced through the host's <c>schedule</c> delegate (review round 1): one
+	/// Delivery is coalesced through the host's <c>schedule</c> delegate: one
 	/// committed undo task or external bulk edit raises one PropChanged per changed property, and
 	/// recomposing the region synchronously per notification both froze the UI on bursts and
 	/// reentrantly tore down the view while Commit/Cancel were still on the stack. With a scheduler
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 				// _refreshQueued stays true UNTIL the refresh completes: a rebuild can itself raise
 				// PropChanged (e.g. a settle-commit inside it), and those notifications are already
 				// covered — the recompose reads current domain state — so they must coalesce into
-				// this delivery instead of queueing a second identical one (review round 2).
+				// this delivery instead of queueing a second identical one.
 				try
 				{
 					if (_disposed)

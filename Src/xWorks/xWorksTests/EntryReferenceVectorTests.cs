@@ -13,7 +13,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D3 (wave 3) — entry-reference vectors: the legacy
+	/// winforms-free-lexeme-editor.md D3 — entry-reference vectors: the legacy
 	/// <c>EntrySequenceReferenceSlice</c> fields (ComponentLexemes/PrimaryLexemes on LexEntryRef,
 	/// targeting ILexEntry OR ILexSense) compose as EDITABLE ReferenceVector rows whose items are
 	/// headwords and whose ADD is a type-ahead lexicon search (<see cref="LexicalEditRegionField.SearchOptions"/>)

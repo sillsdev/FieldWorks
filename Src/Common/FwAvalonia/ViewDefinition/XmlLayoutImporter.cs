@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 						}
 						else if (child.Name.LocalName == "deParams")
 						{
-							// Review task 2: an enumComboBox slice's options live in
+							// An enumComboBox slice's options live in
 							// <deParams><stringList ids=.. group=..> (EnumComboSlice.PopulateCombo).
 							// Carry that onto the node so the row can render a CLOSED option chooser
 							// instead of degrading to a free-form int editor that could persist an
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			}
 		}
 
-		// Review task 2: import an enumComboBox slice's <deParams><stringList ids=.. group=..> into the
+		// Imports an enumComboBox slice's <deParams><stringList ids=.. group=..> into the
 		// typed ViewStringList. The labels themselves stay out of the IR (they resolve through the
 		// StringTable lookup at compose time); only the ids and the optional group path ride. A deParams
 		// without a stringList, or a stringList without ids, is reported rather than silently dropped.

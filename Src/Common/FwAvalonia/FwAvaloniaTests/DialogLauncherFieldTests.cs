@@ -17,7 +17,7 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D4 (wave 4) — the dialog-launcher row control: the field's
+	/// winforms-free-lexeme-editor.md D4 — the dialog-launcher row control: the field's
 	/// current value as read-only text plus the launcher button, drawn as the shared hover-revealed
 	/// settings gear (it replaced the legacy always-visible "..."). The button invokes the injected
 	/// callback (the host's ILegacyDialogLauncher seam on the xWorks side); without a callback the

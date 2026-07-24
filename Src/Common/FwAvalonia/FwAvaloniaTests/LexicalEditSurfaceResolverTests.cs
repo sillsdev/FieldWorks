@@ -50,8 +50,8 @@ namespace FwAvaloniaTests
 			Assert.That(surface, Is.EqualTo(expected));
 		}
 
-		// --- Tool-gating contract (characterization; Stage 2.2 / migration-program review). ---
-		// The currentToolName gate was previously untested. These lock the safety property the
+		// --- Tool-gating contract (characterization; Stage 2.2). ---
+		// These lock the safety property the
 		// migration cares about: an unrecognized tool must NEVER silently resolve to Avalonia, even
 		// when UIMode=New or an explicit override is on. A null/whitespace tool means "no tool
 		// context supplied" and intentionally delegates to the UIMode/override preference (it is NOT
@@ -250,7 +250,7 @@ namespace FwAvaloniaTests
 	}
 
 	/// <summary>
-	/// Stage 2.2: the app-wide surface registry generalizes the formerly-hardcoded supported-tool list.
+	/// Stage 2.2: the app-wide surface registry is the single supported-tool list.
 	/// A tool opts into the Avalonia surface by registration; unregistered tools never resolve to Avalonia.
 	/// </summary>
 	[TestFixture]

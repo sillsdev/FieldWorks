@@ -21,17 +21,17 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task B + Task C hardening for the Avalonia lexical-edit object-command path.
+	/// Hardening for the Avalonia lexical-edit object-command path.
 	///
-	/// Task B — <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
+	/// <c>EnsureMenuCommandAdapter</c> targeting: when the target hvo's slice is a lazy,
 	/// unrealized <c>DummyObjectSlice</c> (a sequence with &gt;= <c>DataTree.kInstantSliceMax</c> items
-	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), the old code found no
-	/// matching slice and left CurrentSlice pointed wherever the previous interaction left it — so the
-	/// command mis-targeted or (for Merge's class guard) silently failed. The hardened code realizes the
+	/// builds lazy placeholders whose <c>Object</c> is the OWNER, not the target), a naive walk finds no
+	/// matching slice and leaves CurrentSlice pointed wherever the previous interaction left it — the
+	/// command mis-targets or (for Merge's class guard) silently fails. The adapter realizes the
 	/// lazy slices and retries, and fails LOUD (clears CurrentSlice + logs) when no slice can be produced.
 	///
-	/// Task C2 — splitter width SESSION persistence: the host's remembered label-column width was
-	/// process-only; the product host now routes a PropertyTable LocalSetting so the width survives across
+	/// Splitter width SESSION persistence: the host's remembered label-column width is
+	/// process-only, so the product host routes a PropertyTable LocalSetting so the width survives across
 	/// sessions, mirroring the expansion-persistence pattern.
 	/// </summary>
 	[TestFixture]
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ----------------------------------------------------------------------------------------
-		// Task B — adapter targeting through (and past) lazy slices
+		// Adapter targeting through (and past) lazy slices
 		// ----------------------------------------------------------------------------------------
 
 		// Skipped (desktop environment only): realizing lazy DummyObjectSlices and pointing CurrentSlice at a deep
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// ----------------------------------------------------------------------------------------
-		// Task C2 — splitter width persists to a PropertyTable LocalSetting (round-trips across sessions)
+		// Splitter width persists to a PropertyTable LocalSetting (round-trips across sessions)
 		// ----------------------------------------------------------------------------------------
 
 		[Test]
@@ -176,8 +176,8 @@ namespace SIL.FieldWorks.XWorks
 				BindingFlags.Instance | BindingFlags.NonPublic);
 			var read = typeof(RecordEditView).GetMethod("GetPersistedLabelColumnWidth",
 				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(persist, Is.Not.Null, "splitter persistence setter must exist (Task C2 wiring)");
-			Assert.That(read, Is.Not.Null, "splitter persistence getter must exist (Task C2 wiring)");
+			Assert.That(persist, Is.Not.Null, "splitter persistence setter must exist");
+			Assert.That(read, Is.Not.Null, "splitter persistence getter must exist");
 
 			// Nothing persisted yet -> null, so the view falls back to the density default.
 			Assert.That(read.Invoke(m_view, null), Is.Null,
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 				"the persisted width round-trips through the getter");
 
 			// It really landed in the PropertyTable local settings keyed by the current tool, marked
-			// persistent (so it survives across sessions, unlike the former process-only host field).
+			// persistent (so it survives across sessions, unlike a process-only host field).
 			var key = "LexEditLabelColumnWidth:lexiconEdit";
 			var stored = m_propertyTable.GetStringProperty(key, null, PropertyTable.SettingsGroup.LocalSettings);
 			Assert.That(stored, Is.Not.Null.And.Not.Empty,

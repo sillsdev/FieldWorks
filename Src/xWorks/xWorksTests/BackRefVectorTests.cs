@@ -13,7 +13,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task 1 — virtual back-reference editable writes. The Subentries and VisibleComplexFormBackRefs
+	/// Virtual back-reference editable writes. The Subentries and VisibleComplexFormBackRefs
 	/// virtual vectors are OWNED by the OTHER entry's LexEntryRef, so the composer routes add/remove
 	/// across objects (legacy EntrySequenceReferenceLauncher.AddNewObjectsToProperty /
 	/// RemoveFromPropertyAt): Subentries writes the chosen complex-form entry's

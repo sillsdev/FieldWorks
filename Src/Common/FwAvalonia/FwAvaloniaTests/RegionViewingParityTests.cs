@@ -316,11 +316,11 @@ namespace FwAvaloniaTests
 		}
 
 		// Layout parity (row-height-edit-parity): a field renders at the SAME row height whether the view
-		// is read-only display or editable. The per-WS editor boxes always measured identically, but the
-		// editable view used to wrap the field grid in a StackPanel while the read-only view put the bare
-		// grid straight in the ScrollViewer; the two arrange contexts rounded the grid's Auto rows to
-		// whole-pixel heights 1px differently, so toggling edit shifted every row's height and offset (the
-		// reported defect: editable and read-only rows had different vertical rhythm). The fix wraps the
+		// is read-only display or editable. The per-WS editor boxes always measure identically, but a
+		// bare grid straight in the ScrollViewer and a grid wrapped in a StackPanel are two arrange
+		// contexts that round the grid's Auto rows to whole-pixel heights 1px differently — wrapping
+		// only one of the two states shifts every row's height and offset on the edit toggle
+		// (editable and read-only rows get a different vertical rhythm). The view wraps the
 		// grid identically in both states, so realizing the same model read-only and editable yields
 		// pixel-identical row heights AND row offsets for every field — toggling edit never moves the layout.
 		[AvaloniaTest]

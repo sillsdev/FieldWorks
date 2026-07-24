@@ -63,18 +63,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>The Chorus Send/Receive notes bar (LexEntryParts.xml part "LexEntry-Detail-Messages").</summary>
 		public const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
 
-		// The designated companion classes. EMPTY since wave 2 (winforms-free-lexeme-editor.md D2):
-		// the Messages slice — the strip's only designated class — graduated to the native
-		// ChorusNotesPlugin. The mechanism stays: it is the documented coexistence route for future
-		// tools' WinForms-only custom slices (blocker register B11); with an empty set the
-		// RecordEditView companion strip simply never shows.
+		// The designated companion classes. Currently EMPTY (winforms-free-lexeme-editor.md D2):
+		// no class is designated — the Messages slice rides the deferred placeholder route instead
+		// (see LexemeEditorBurnDown). The mechanism stays: it is the documented coexistence route
+		// for future tools' WinForms-only custom slices (blocker register B11); with an empty set
+		// the RecordEditView companion strip simply never shows.
 		private static readonly HashSet<string> PromotedClassNames = new HashSet<string>(StringComparer.Ordinal);
 
 		/// <summary>
 		/// Read-only view of the designated companion classes for the burn-down governance route
 		/// (winforms-free-lexeme-editor.md D5): this set may only SHRINK — a class graduates
-		/// unsupported → companion → plugin, never the other way. Pinned by
-		/// LexemeEditorBurnDownTests; wave 2 (ChorusNotesPlugin, D2) emptied it.
+		/// unsupported → companion → plugin, never the other way. Currently empty (D2);
+		/// pinned by LexemeEditorBurnDownTests.
 		/// </summary>
 		public static IReadOnlyCollection<string> DesignatedClassNames => PromotedClassNames;
 
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 			return SelectPromotions(customEditorFields, PromotedClassNames);
 		}
 
-		// Testable seam: the designated set is empty since wave 2, so the mechanism's selection
+		// Testable seam: the product designated set is empty, so the mechanism's selection
 		// tests inject a fake designated class (MessagesCompanionStripTests).
 		internal static IReadOnlyList<ComposedCustomEditorField> SelectPromotions(
 			IReadOnlyList<ComposedCustomEditorField> customEditorFields, ISet<string> designatedClassNames)

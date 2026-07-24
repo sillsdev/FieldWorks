@@ -15,7 +15,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Editor-type parity, real-domain side (Task A): the composer renders user-editable date/generic-date
+	/// Editor-type parity, real-domain side: the composer renders user-editable date/generic-date
 	/// fields as editable Date rows while keeping DateCreated/DateModified (visibility="never") read-only by
 	/// design, and the write-back parses SAFELY — a parseable date/gendate round-trips through the real
 	/// LCModel <see cref="SilTime"/>/<see cref="GenDate"/> APIs, an unparseable one is rejected and never

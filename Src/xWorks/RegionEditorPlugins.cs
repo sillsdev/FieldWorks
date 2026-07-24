@@ -32,14 +32,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Builds the Avalonia control that replaces the legacy slice for one composed row. Invoked
 		/// lazily by the view (never during compose); the context carries the region's own edit
 		/// context so plugin edits ride the same fenced session as every other row, plus the
-		/// optional host services (review task 13: the former IServiceAwareRegionEditorPlugin
-		/// marker interface and its five-argument overload collapsed into this ONE contract).
+		/// optional host services. This is the ONE plugin contract — there is no separate
+		/// service-aware marker interface or overload.
 		/// </summary>
 		Control BuildControl(RegionEditorBuildContext context);
 	}
 
 	/// <summary>
-	/// Review task 13 — everything the composer hands a plugin factory, bundled into one contract:
+	/// Everything the composer hands a plugin factory, bundled into one contract:
 	/// the row's object and typed node, the region's edit context (resolved lazily through the
 	/// composer's deferred accessor — the context object is created during compose, BEFORE the
 	/// edit context exists; plugin factories run at render time, after), the cache, and the
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		/// <summary>
 		/// Classes that render as an Avalonia value row plus a legacy-dialog launcher button
-		/// through the ILegacyDialogLauncher host seam (D4, wave 4), each WITH its citation. These
+		/// through the ILegacyDialogLauncher host seam (D4), each WITH its citation. These
 		/// classes are ALSO claimed in the default plugin registry (by a
 		/// <see cref="LauncherRegionPlugin"/>); the census counts that pairing as the single
 		/// "LauncherRouted" route. The MSA/phonological launchers live in MSA/FsFeatStruc part
@@ -190,11 +190,10 @@ namespace SIL.FieldWorks.XWorks
 		public static readonly IReadOnlyDictionary<string, string> ExplicitlyDeferredClassNames =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				// AudioVisualSlice graduated to LauncherRoutedClassNames in wave 4 (D4).
-				// ReversalIndexEntrySlice graduated to a native Avalonia plugin (ReversalIndexEntryPlugin):
-				// the sense's reversal-entry forms now compose as an editable multi-WS text field through
-				// the D1 plugin route, retiring the lone Unsupported row. It is therefore PluginRouted, no
-				// longer deferred.
+				// AudioVisualSlice rides LauncherRoutedClassNames (D4).
+				// ReversalIndexEntrySlice rides a native Avalonia plugin (ReversalIndexEntryPlugin):
+				// the sense's reversal-entry forms compose as an editable multi-WS text field through
+				// the D1 plugin route. It is therefore PluginRouted, not deferred.
 				// MessageSlice (the Chorus notes bar) is not yet migrated: no plugin claims it, so the
 				// class rides this deferred route and the Messages node composes as the read-only
 				// placeholder row until a notes-bar plugin is added (see
@@ -205,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Classes absorbed by a composer route (no plugin needed: the composer recognizes the node
 		/// by metadata and composes a native editable row), each WITH the route that absorbed it.
-		/// Wave 3: EntrySequenceReferenceSlice's entry-reference vectors compose as editable
+		/// EntrySequenceReferenceSlice's entry-reference vectors compose as editable
 		/// ReferenceVector rows with type-ahead lexicon search (D3). Deferred note for that route:
 		/// the slice's VIRTUAL back-ref fields (ComplexFormEntries, Subentries,
 		/// VisibleComplexFormBackRefs, VariantFormEntries) still render read-only — their writes

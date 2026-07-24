@@ -144,8 +144,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// the same StackPanel, whether or not an edit context is present. A bare grid placed straight in
 			// the ScrollViewer is arranged against the full viewport extent, while a grid inside a StackPanel
 			// is arranged against its own desired height; those two arrange contexts round the grid's Auto
-			// content rows to whole-pixel heights 1px differently, so toggling edit (which previously swapped
-			// the bare grid for a StackPanel wrapper) shifted every row by 1px — the reported rhythm mismatch.
+			// content rows to whole-pixel heights 1px differently, so wrapping only in the editable state
+			// would shift every row by 1px on the edit toggle — a visible rhythm mismatch.
 			// Wrapping identically in both states keeps the rows pixel-for-pixel stable across the toggle; the
 			// validation footer is the only edit-only child added.
 			var panel = new StackPanel();
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// only those exist) through the host bridge — the same menu ids legacy DTMenuHandler resolves from
 		// the layout. The affordance is a hover/keyboard-focus-revealed "⋮" button in a thin left gutter
 		// (it REPLACED right-click): clicking or pressing Enter/Space on it raises the SAME RegionMenuRequest
-		// right-click used to, anchored at the icon. Returns <paramref name="inner"/> wrapped with that
+		// as right-click, anchored at the icon. Returns <paramref name="inner"/> wrapped with that
 		// gutter for the row, and reports the revealed kebab (or null) so the caller folds it into the row's
 		// hover group. With no host bridge the content is returned unwrapped, so non-product views
 		// (previews/tests with no menu callback) are unchanged.
@@ -578,7 +578,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			public bool Expanded;
 		}
 
-		// Task 21: the field→control dispatch is shared with the browse in-cell editor through
+		// The field→control dispatch is shared with the browse in-cell editor through
 		// RegionFieldControlFactory. The detail pane passes its full callback set (per-WS keyboard, slice
 		// menu, link, clipboard) and routes reference-vector gesture completion to its validation-gated
 		// OnSave (the autosave). New RegionFieldKinds are added once, in the factory.

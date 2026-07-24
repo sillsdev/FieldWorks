@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 				"possAtomicReference takes the chooser path, like the morph type");
 			Assert.That(status.IsEditable, Is.True);
 			Assert.That(status.SelectedOptionKey, Is.EqualTo(m_statusConfirmed.Guid.ToString()));
-			// Review task 6: the empty choice leads (the legacy launcher lets the user clear the
+			// The empty choice leads (the legacy launcher lets the user clear the
 			// reference), then the field's possibility list in list order (ReferenceTargetOwner).
 			Assert.That(status.Options.Select(o => o.Key), Is.EqualTo(new[]
 				{
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_sense.StatusRA, Is.EqualTo(m_statusConfirmed));
 		}
 
-		// Review task 6: legacy PossibilityAtomicReferenceLauncher.OnLeave commits an emptied box
+		// Legacy PossibilityAtomicReferenceLauncher.OnLeave commits an emptied box
 		// as AddItem(null) — i.e. the reference CLEARS. The composed chooser's empty option does
 		// the same through the fenced session (SetObjProp(hvo, flid, 0)).
 		[Test]

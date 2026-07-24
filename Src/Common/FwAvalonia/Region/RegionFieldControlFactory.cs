@@ -79,10 +79,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// The single <see cref="RegionFieldKind"/>→Avalonia-control dispatch (Task 21). Previously the detail
+	/// The single <see cref="RegionFieldKind"/>→Avalonia-control dispatch. The detail
 	/// pane (<c>LexicalEditRegionView.BuildEditor</c>, all 7 kinds) and the browse in-cell editor
-	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset that had DIVERGED) hand-rolled their
-	/// own dispatch; both now route here, so adding a kind (or changing how a kind is built) happens once.
+	/// (<c>EditableCellHost.Activate</c>, a 2-kind Chooser/Text subset) both route here rather than
+	/// hand-rolling their own dispatch, so adding a kind (or changing how a kind is built) happens once.
 	/// The factory is pure (static) — all per-surface variation arrives through the
 	/// <see cref="RegionFieldControlContext"/>.
 	/// </summary>

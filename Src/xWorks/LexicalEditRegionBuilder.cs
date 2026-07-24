@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.XWorks
 		// Tasks 6.2/6.13 (multi-WS read path): one row per *current* writing system — the same
 		// "all vernacular"/"all analysis" semantics the compiled slice definitions carry — rendered
 		// with the project's per-WS default font so both surfaces show the same record consistently.
-		// Review task 12: the per-ws row projection is the shared RegionValueFactory recipe (the
+		// The per-ws row projection is the shared RegionValueFactory recipe (the
 		// composer uses the same one); only the text reads live here.
 		private IReadOnlyList<RegionWsValue> GetLexemeFormValues()
 		{
@@ -155,8 +155,8 @@ namespace SIL.FieldWorks.XWorks
 			if (morphTypes == null)
 				return new List<RegionChoiceOption>();
 
-			// Review task 12: the shared flattener (document order, hierarchy as Depth, and the
-			// composer's name-fallback rule — this builder's old analysis→vernacular fallback is
+			// The shared flattener (document order, hierarchy as Depth, and the
+			// composer's name-fallback rule — an analysis→vernacular fallback is
 			// subsumed by ShortName's own legacy resolution; see RegionValueFactory).
 			return RegionValueFactory.BuildPossibilityOptions(morphTypes, flat: false);
 		}

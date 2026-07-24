@@ -14,7 +14,7 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D4 (wave 4) — the dialog-launcher route: a claimed slice
+	/// winforms-free-lexeme-editor.md D4 — the dialog-launcher route: a claimed slice
 	/// builds an Avalonia value row + "..." button (<see cref="FwDialogLauncherField"/>) whose
 	/// button calls the host-injected <see cref="ILegacyDialogLauncher"/> seam with the row's
 	/// (object, node); without injected services the button renders disabled and launching is a
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 				false, null, Array.Empty<ViewNode>(), customEditorClass: legacyClassName,
 				customEditorAssembly: "LexEdDll.dll");
 
-		// Task 13: the one plugin contract takes the bundled build context (services optional).
+		// The one plugin contract takes the bundled build context (services optional).
 		private RegionEditorBuildContext Ctx(ICmObject obj, ViewNode node,
 			RegionEditorServices services = null)
 			=> new RegionEditorBuildContext(obj, node, () => null, Cache, services);
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.XWorks
 			var node = LauncherNode("MediaFile", DialogLauncherPlugins.AudioVisualSliceClassName, "Media File");
 
 			// Null services and services WITHOUT a launcher degrade the same way: value renders,
-			// button disabled (task 13: one contract, services optional inside the context).
+			// button disabled (one contract, services optional inside the context).
 			var plugin = DialogLauncherPlugins.CreateAudioVisual();
 			foreach (var control in new[]
 			{
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 				"a non-media object degrades to an empty value");
 		}
 
-		// Task 13: the former IServiceAwareRegionEditorPlugin marker is gone — EVERY plugin sees
+		// There is no service-aware marker interface — EVERY plugin sees
 		// the host services (possibly null) through the one build context.
 		private sealed class FakeServicesProbePlugin : IRegionEditorPlugin
 		{

@@ -318,8 +318,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 	/// <summary>
 	/// The option list of a legacy <c>enumComboBox</c> slice, imported from its
-	/// <c>&lt;deParams&gt;&lt;stringList&gt;</c> element (review task 2: the importer previously dropped
-	/// this, so the enum row could only render the raw stored integer read-only). The enum's stored
+	/// <c>&lt;deParams&gt;&lt;stringList&gt;</c> element (without it the enum row could only render
+	/// the raw stored integer read-only). The enum's stored
 	/// integer is the 0-based INDEX into <see cref="Ids"/> (legacy <c>EnumComboSlice</c> maps the combo's
 	/// <c>SelectedIndex</c> straight to the property). The labels themselves resolve through the legacy
 	/// StringTable lookup at compose time (<c>StringTable.GetStringsFromStringListNode</c> over
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// For a legacy <c>enumComboBox</c> slice, the option list imported from its
-		/// <c>&lt;deParams&gt;&lt;stringList&gt;</c> (review task 2). Null for every other node. The
+		/// <c>&lt;deParams&gt;&lt;stringList&gt;</c>. Null for every other node. The
 		/// stored enum integer indexes <see cref="ViewStringList.Ids"/>.
 		/// </summary>
 		public ViewStringList EnumStringList { get; }
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// B7: chooser links likewise ride the snapshot so a lossy round trip fails loudly.
 			if (node.ChooserLinks.Count > 0)
 				sb.Append($" | links=[{string.Join(";", node.ChooserLinks)}]");
-			// NOTE: EnumStringList (review task 2) is deliberately NOT in the snapshot. The canonical
+			// NOTE: EnumStringList is deliberately NOT in the snapshot. The canonical
 			// JSON serializer does not yet persist it, so adding it here would break the lossless
 			// JSON round-trip parity test. The importer carrier is covered directly by
 			// RegionEditorParityTests instead. Add it here in the same change that teaches

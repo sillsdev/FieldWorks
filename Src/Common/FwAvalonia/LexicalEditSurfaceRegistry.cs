@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace SIL.FieldWorks.Common.FwAvalonia
 {
 	/// <summary>
-	/// App-wide registry of which tools support the Avalonia lexical-edit surface (Stage 2.2: generalizes
-	/// the previously-hardcoded supported-tool list so new tools opt into the Avalonia surface by
+	/// App-wide registry of which tools support the Avalonia lexical-edit surface (Stage 2.2: the
+	/// single supported-tool list — new tools opt into the Avalonia surface by
 	/// registration rather than by editing <see cref="LexicalEditSurfaceResolver"/>).
 	///
 	/// Contract (matching the resolver's safety property): a null/blank tool name means "no tool context",
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		// subrecords NB-4/NB-5) degrade to read-only/unsupported rows, never a crash (20.1.3 guard), and
 		// are tracked in §20.3. All gated behind UIMode=New (off by default). The many Lists CmPossibility
 		// editors register via an area/persistContext predicate (F-4 follow-on), not enumerated here.
-		// PHASE-1 BASE (active now): the composed detail-editor tools. These ship ON in the base PR — all still
+		// The composed detail-editor tools ship ON — all still
 		// gated behind UIMode=New (off by default), so no visible change to existing users.
 		// Sourced from LexicalEditFeatureCatalog — the single list of "tools with a working Avalonia
 		// surface today," also used to build the per-tool checkbox list in the feature-manager dialog.
@@ -38,10 +38,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			return result;
 		}
 
-		// PHASE-1 FOLLOW-UP surfaces — INERT in the base PR. The view-layer code for these ships (it lives in the
+		// FOLLOW-UP surfaces — currently INERT. The view-layer code for these ships (it lives in the
 		// same FwAvalonia/xWorks assemblies) but the tools are deliberately NOT registered, so the resolver returns
-		// "not supported" and they fall back to the legacy WinForms surface even under UIMode=New. Each follow-up PR
-		// ACTIVATES its surface by moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
+		// "not supported" and they fall back to the legacy WinForms surface even under UIMode=New. Activating a
+		// surface means moving its tool name(s) from this list into DefaultSupportedTools above (the one-line
 		// "flip"). Verified by InertFollowUpSurfacesFallBackToLegacy in the resolver tests.
 		//   avalonia-interlinear-editor : "Analyses"
 		//   avalonia-rule-formula-editor: "PhonologicalRuleEdit","EnvironmentEdit","compoundRuleAdvancedEdit",

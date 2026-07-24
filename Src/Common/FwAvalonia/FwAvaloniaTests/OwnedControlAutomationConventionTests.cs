@@ -20,8 +20,8 @@ namespace FwAvaloniaTests
 	/// Stage 1.5 (developer-enablement kit) convention guard: owned field controls MUST stamp a stable,
 	/// nonlocalized <c>AutomationId</c> derived from the field's stable id, a localized <c>Name</c>, and
 	/// per-writing-system value boxes suffixed under that id. The stamping is implemented in
-	/// <c>FwFieldControls</c>; this test makes the convention executable (per the migration-program review
-	/// finding that conventions were implemented but unenforced), so a future owned control that forgets
+	/// <c>FwFieldControls</c>; this test makes the convention executable (a convention that is
+	/// implemented but unenforced silently rots), so a future owned control that forgets
 	/// an AutomationId fails CI rather than silently breaking automation/accessibility identity.
 	/// </summary>
 	[TestFixture]
