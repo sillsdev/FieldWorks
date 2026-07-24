@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips — a
 		// contract constructed at the assert site from the very id it then asserts could never fail.
 		private ActiveHostContract m_activeHostContract;
-		// Hybrid companion lane: the real WinForms slices (today the Chorus Messages notes bar)
+		// Hybrid companion strip: the real WinForms slices (today the Chorus Messages notes bar)
 		// promoted out of the Avalonia model into the host's companion strip, plus their editor
 		// controls (reparented into the strip, so the slice's Dispose no longer reaches them).
 		// Recreated per shown record; torn down on record change/clear/dispose.
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 				editContext = new LexicalEditRegionEditContext(lexEntry, Cache);
 			}
 
-			// Hybrid companion lane: WinForms-only custom slices (the Chorus Messages notes bar)
+			// Hybrid companion strip: WinForms-only custom slices (the Chorus Messages notes bar)
 			// are realized for real in the host's companion strip and their placeholder rows are
 			// removed from the Avalonia model. Always runs (also clears the strip on fallback or
 			// when the layout no longer reaches a companion slice).
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Hybrid companion lane: tears down the previous companions, instantiates the real legacy
+		/// Hybrid companion strip: tears down the previous companions, instantiates the real legacy
 		/// slice for each designated WinForms-only custom editor the composer found (today the
 		/// Chorus Messages notes bar — its NotesBarView cannot render inside Avalonia), hands the
 		/// slices' editor controls to the host's companion strip, and returns the region model with
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.XWorks
 				var window = m_propertyTable.GetValue<XWindow>("window");
 
 				// 15.1: render the SAME xCore menu natively in Avalonia (identical items, enablement,
-				// and mediator dispatch — only the chrome changes). The WinForms adapter menu remains
+				// and mediator dispatch — only the rendering changes). The WinForms adapter menu remains
 				// the fallback so a materialization failure never costs the user the menu.
 				try
 				{

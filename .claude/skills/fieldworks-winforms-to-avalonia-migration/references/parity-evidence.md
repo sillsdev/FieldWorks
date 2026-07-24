@@ -7,7 +7,7 @@ redefining them.
 Contents:
 
 1. The Path 3 bundle (triangulated parity evidence)
-2. Evidence lanes and what each can prove
+2. Evidence types and what each can prove
 3. Evidence language (claim-downgrading taxonomy)
 4. Forbidden symbols (engine isolation)
 5. Performance budgets
@@ -15,7 +15,7 @@ Contents:
 
 ## 1. The Path 3 bundle (triangulated parity evidence)
 
-"Path 3" is the migration-quality visual-fidelity lane. A single artifact
+"Path 3" is the migration-quality visual-fidelity evidence type. A single artifact
 cannot prove a region is migrated; the bundle triangulates. For one
 scenario id, produce:
 
@@ -30,24 +30,25 @@ scenario id, produce:
 - `workflow.legacy.md` / `workflow.avalonia.md` — accessibility/keyboard
   workflow evidence (UIA2 on realized windows for desktop claims)
 - `performance.json` — init/populate/refresh timings
-- `failure-summary.md` — when something fails, classify the broken lane
-  with diagnostics; do not hand reviewers a raw image diff
+- `failure-summary.md` — when something fails, classify which evidence
+  type failed with diagnostics; do not hand reviewers a raw image diff
 
 Canonical harness: `Src/Common/FwAvalonia/FwAvaloniaTests/Path3BundleTests.cs`;
 bundle contract provenance:
 `openspec/changes/lexical-edit-avalonia-migration/coverage-map.md` §9.
 
-## 2. Evidence lanes and what each can prove
+## 2. Evidence types and what each can prove
 
-| Lane | Tooling | Proves | Cannot prove |
+| Evidence type | Tooling | Proves | Cannot prove |
 | --- | --- | --- | --- |
 | Semantic snapshot | IR `ToSnapshot()`, JSON per scenario | Binding, labels, editor kind, visibility, ghost state, focus order, WS metadata, accessibility identity | Typography, density, wrapping, native rendering |
-| Visual/render | Avalonia.Headless Skia capture; legacy screenshots | Layout, density, fonts, wrapping | Why a field is missing (semantic lane explains that) |
+| Visual/render | Avalonia.Headless Skia capture; legacy screenshots | Layout, density, fonts, wrapping | Why a field is missing (semantic evidence explains that) |
 | Workflow/accessibility | Avalonia.Headless input simulation; UIA2/FlaUI on realized windows | Focus movement, invoke paths, chooser reachability, keyboard shortcuts, native automation tree | Pixel fidelity |
 | Performance | Timing harness + committed baselines | Budgets vs. measured legacy | Anything functional |
 
-Headless and desktop are different lanes: a headless smoke test is never a
-UIA2 baseline, and desktop workflow claims need realized-window evidence.
+Headless and desktop are different environments: a headless smoke test is
+never a UIA2 baseline, and desktop workflow claims need realized-window
+evidence.
 
 ### 2a. Headless integration scenarios (the prioritized default)
 
@@ -68,7 +69,7 @@ Harness + how it scales across phases: architecture-patterns.md §13 and
 `openspec/changes/shared-editable-virtualized-table/headless-integration-harness.md`.
 A surface is not "ready for manual testing" until its key workflows have headless
 scenario coverage; manual/UIA2 desktop runs then confirm pixel/native-tree axes
-the headless lane cannot.
+the headless environment cannot.
 
 ## 3. Evidence language (claim-downgrading taxonomy)
 
@@ -127,8 +128,10 @@ Budgets are measured, never estimated:
 ## 6. Artifact naming
 
 `{scenarioId}/{bundleId}/semantic.json`, `visual.legacy.png`,
-`visual.avalonia.png`, `workflow.legacy.md`, `workflow.avalonia.md`,
-`performance.json`, `failure-summary.md`.
+`visual.avalonia.png`, `visual.diff.png` (optional diff artifact),
+`workflow.legacy.md`, `workflow.avalonia.md`, `performance.json`,
+`failure-summary.md`. Manual/hand captures use the same layout with a
+`bundleId` of the form `manual-YYYYMMDD`.
 
 Snapshots must normalize away pixel bounds, transient generated names,
 timestamps, machine paths, and culture-dependent ordering — see

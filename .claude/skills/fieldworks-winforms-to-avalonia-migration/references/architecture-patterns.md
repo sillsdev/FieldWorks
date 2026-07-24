@@ -19,6 +19,7 @@ Contents:
 10. Custom fields and ghost rows
 11. Localization lanes
 12. Density and performance
+13. Headless integration-test harness (scenarios & workflows)
 
 ## 1. Typed view-definition IR (the long-term contract)
 
@@ -142,7 +143,7 @@ TreeDataGrid:
 - Bounded popup trees (≤500 items): stock `TreeView` with an explicit
   item-count ceiling, validated at 100%/150% DPI.
 - Unbounded trees: the owned flattened virtualized list with
-  expander/indent row chrome.
+  expander/indent row decorations.
 
 **Why.** Stock grids fit poorly with nested senses, multi-WS alternatives,
 custom choosers, dense rows, and FieldWorks keyboard behavior; owning the
@@ -176,7 +177,7 @@ Registered plugins now include `ChorusNotesPlugin`, `ReversalIndexEntryPlugin`,
 `avalonia-rule-formula-editor`), and the dialog-launcher plugins
 `DialogLauncherPlugins.Create*` (MSA-inflection / phonological features / audio-visual).
 Tests: `Src/xWorks/xWorksTests/DialogLauncherPluginTests.cs`,
-`LexemeEditorBurnDownTests.cs`, `MessagesCompanionLaneTests.cs`,
+`LexemeEditorBurnDownTests.cs`, `MessagesCompanionStripTests.cs`,
 `InterlinearSlicePluginTests.cs`, `RecordEditViewSwitchTests.cs`.
 
 **Projectors and write-back belong in xWorks, not FwAvalonia or the domain assembly.**
@@ -338,11 +339,15 @@ delta in the region manifest).
 
 > **Density parity ≠ look parity (migration-program decision 2026-06-15).** The
 > program is chartered to *upgrade the look*: it adopts a modernized Fluent-based
-> theme rather than mimicking legacy WinForms chrome. Keep this distinction sharp —
-> *density* (information per screen, alignment, gutters) stays matched to legacy
-> baselines and is asserted by the parity lanes; *styling* (colors, control
-> templates, focus visuals, corner radii) may intentionally diverge. The visual
-> parity lane therefore checks density/layout, not pixel-for-pixel chrome.
+> theme rather than mimicking the legacy WinForms look and feel. Keep this
+> distinction sharp — *density* (information per screen, alignment, gutters) stays
+> matched to legacy baselines and is asserted by the parity evidence types;
+> *styling* (colors, control templates, focus visuals, corner radii) may
+> intentionally diverge. The visual-parity evidence type therefore checks
+> density/layout, not pixel-for-pixel appearance. The density tokens and
+> per-surface border/font rules that this parity is measured against live in
+> `fieldworks-avalonia-ui/references/style-system.md`, even where styling
+> intentionally diverges.
 
 **Canonical code.** `Src/Common/FwAvalonia/FwAvaloniaDensity.cs`;
 legacy harness

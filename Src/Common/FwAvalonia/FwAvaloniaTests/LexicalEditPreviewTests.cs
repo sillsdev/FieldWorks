@@ -17,7 +17,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Headless tests for the preview-host sample path over the shared lexical-edit region renderer.
-	/// These keep the preview lane honest without preserving a second detached slice/editor stack.
+	/// These keep the preview path honest without preserving a second detached slice/editor stack.
 	/// </summary>
 	[TestFixture]
 	public class LexicalEditPreviewTests

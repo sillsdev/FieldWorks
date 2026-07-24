@@ -40,27 +40,18 @@ lifetime. Canonical code to imitate:
   This is the verified template for hand-authored dialogs — see
   "Converting a WinForms dialog (MVVM kit)" below.
 
-**Re-implementing a Phase-1 deferred screen (JIRA tickets).** Many screens were documented
-and backed out to land the Phase-1 PR; each has a ticket + a `Docs/migration/<screen>.md`
-(what it is, legacy PNGs, parity checklist, gotchas, the git sha of the backed-out stub).
-**`Docs/migration/` (including `_TEMPLATE.md`) lives on the separate, never-merged
-`phase1-docs` branch, not in this checkout** — pull the doc from that branch rather than
-assuming it exists in your working tree. Start there: recover the stub from git history as a skeleton, copy the **canonical screen**
-for that primitive (the hub skill's "Phase-1 Landing Strategy" names them — e.g. ChooserDialog
-for tree/multi-select, OptionsDialog for tabs, InsertEntryDialog for owned-control forms), then
-follow the per-region Workflow. Re-wire the call site behind `UIMode=New` (Legacy keeps the
-WinForms path).
+**Re-implementing a Phase-1 deferred screen (JIRA tickets).** The full recipe (per-screen
+`Docs/migration/<screen>.md` on the never-merged `phase1-docs` branch, stub recovery from git
+history, which canonical screen to copy, `UIMode=New` re-wiring) is canonical in the migration
+hub skill — `.claude/skills/fieldworks-winforms-to-avalonia-migration/SKILL.md`; start there.
 
 ## Converting a WinForms dialog (MVVM kit)
 
 Hand-authored dialogs/wizards use **XAML + CommunityToolkit.Mvvm + compiled
 bindings** — NOT the region/IR pattern (that is only for XML-view-definition
-surfaces). Decided 2026-06-15; the original rationale doc
-(`avalonia-migration-roadmap/complete-migration-program.md` §11.3) was
-relocated to the `phase1-docs` branch and is not present here — this dialog
-kit's own template (below and `references/dialog-conversion.md`) is the
-proven shape that decision produced. Full step-by-step + the working
-template: `references/dialog-conversion.md`. The shape, per dialog:
+surfaces). Full step-by-step, the working template, and the decision
+history/rationale pointer: `references/dialog-conversion.md`. The shape, per
+dialog:
 
 1. **View** `XyzDialogView.axaml` (+ `.axaml.cs`): a `UserControl` (not a
    `Window` — see modality below), `x:DataType` set to the view-model,
@@ -72,69 +63,57 @@ template: `references/dialog-conversion.md`. The shape, per dialog:
    result (e.g. `Accepted`). Keep it LCModel-free for the view; bind real
    settings/domain through the app-settings/edit-session seams.
 3. **Tests** `XyzDialogTests.cs` (headless `[AvaloniaTest]`): assert the
-   compiled bindings propagate both directions and the commands fire, AND
-   capture a PNG at **each interaction stage** (empty, populated, error/disabled,
-   post-action) for visual review — this is the per-dialog definition of done.
+   compiled bindings propagate both directions and the commands fire, plus
+   the per-stage PNG captures and subjective checks under "Dialog spacing"
+   below — together, the per-dialog definition of done.
 
 ### Style system (density + borders, per surface)
 
-The font/density tokens and the field-border rule are a GLOBAL system, calibrated to WinForms density
-(~12px font, ~22px control height) — not the roomy Fluent defaults — and applied per-control-tree (the only
-mechanism that renders in BOTH the runtime host and the headless tests). Full detail, the calibrated numbers,
-and the per-surface intent: **`references/style-system.md`**. The short version:
-
-- **Dialog inputs are BOXED** (`TextBox`/`ComboBox`, and the `PART_*Host` borders wrapping owned editors get a
-  visible 1px gray border via `Border.fwFieldHost`); **detail/region values are FLAT** with subtle separators
-  (the DataTree look — do not box them); **browse keeps its grid lines** — just denser font everywhere.
-- One source of truth per family: dialog density/borders in `DialogTheme.axaml` (applied by
-  `DialogThemeBootstrap.Apply`); region/browse font in `FwSurfaceStyles` (applied in those view ctors).
-- **Borders/colors that must render headlessly use a CONCRETE value, never a Fluent `DynamicResource`** — the
-  field-host border is `#FF7A7A7A`, because `ControlStrokeColorDefault` resolved to nothing headlessly.
+The font/density tokens and the field-border rule are a GLOBAL system, calibrated to WinForms density —
+not the roomy Fluent defaults — and applied per-control-tree (the only mechanism that renders in BOTH the
+runtime host and the headless tests). Full detail, the calibrated numbers, and the per-surface intent:
+**`references/style-system.md`**. Headlines: **dialog inputs are BOXED** (`Border.fwFieldHost`),
+**detail/region values are FLAT** with subtle separators, **browse keeps its grid lines** — just denser
+font everywhere; one source of truth per family (`DialogTheme.axaml` for dialogs, `FwSurfaceStyles` for
+region/browse); anything that must render headlessly uses a **CONCRETE value, never a Fluent
+`DynamicResource`**.
 
 ### Dialog spacing
 
 All dialog spacing/borders come from the shared tokens in
 `Src/Common/FwAvaloniaDialogs/DialogTheme.axaml` (applied to each dialog body by
 `DialogThemeBootstrap.Apply(this)`, called from every dialog view ctor). See `style-system.md`'s "Dialog
-spacing tokens" table for the current calibrated values (window padding, control gap, label-field gap,
-min control height, field padding, font size) — that table is the single source of truth; don't copy the
-numbers here too. Hard rules:
+spacing tokens" table for the current calibrated values — that table is the single source of truth; don't
+copy the numbers here too. Headlines (full rules + rationale:
+`references/dialog-conversion.md` §2a-bis):
 
-- **Every dialog root carries `DialogWindowPadding`** — put `Classes="fwDialogRoot"` on the root
-  `UserControl` and drop any root `Margin` literal.
-- **No text-bearing or `PART_*Host` control with 0 padding** — host borders carry `Classes="fwFieldHost"`
-  (a real border + `DialogFieldPadding`); never leave a host border without a `BorderThickness`.
-- **OK/Cancel use the standard button strip gap** (`DialogButtonStripGap` + `DialogControlGapAbove`).
-- **Never hardcode a margin/spacing literal — use a token** (`DialogControlGap`, `DialogLabelFieldGap`,
-  …); add a new token to `DialogTheme.axaml` rather than inlining a number.
+- Every dialog root carries `Classes="fwDialogRoot"` (window padding); no root `Margin` literal.
+- No text-bearing or `PART_*Host` control with 0 padding — host borders carry `Classes="fwFieldHost"`.
+- OK/Cancel use the standard button-strip gap tokens.
+- Never hardcode a margin/spacing literal — use a token; add new tokens to `DialogTheme.axaml`.
 - The headless `DialogLayoutAssert.AssertNoCrowding(view)` tripwire gates this in every dialog's
-  realized-view test. Full detail: `references/dialog-conversion.md` §2a-bis.
-- **Capture a PNG at EACH stage and look at it (hard rule, part of the per-dialog definition of done).**
-  Every dialog test captures `DialogSnapshot.Capture(view, "<Surface>-<NN>-<stage>")` (→ gitignored
-  per-surface folder `Output/Snapshots/<Surface>/<NN>-<stage>.png`) at every meaningful UI state it drives — empty/initial, populated,
-  validation-error / OK-disabled, post-action — *before* any `AssertNoCrowding`. After running the dialog
-  tests, the agent MUST **Read each per-stage PNG** and explicitly answer the **six subjective-quality
-  questions** per image — (1) alignment of words/columns/icons/labels, (2) appropriate spacing between
-  words/fields/graphics, (3) borders/containment, (4) clipping/overflow, (5) overlap, (6) legibility &
-  consistency — writing the answers down, not just glancing. An off-looking PNG is a real finding even when
-  `AssertNoCrowding` passes. The loop is: capture → run → Read each PNG → answer the six questions → fix
-  view/token → re-capture. Applies to region/browse surfaces too. Full checklist + workflow:
-  `references/visual-snapshot-testing.md`.
+  realized-view test.
+- **Capture a PNG at EACH interaction stage via `DialogSnapshot.Capture(view, "<Surface>-<NN>-<stage>")`
+  (→ flat gitignored folder `Output/Snapshots/<Surface>-<NN>-<stage>.png`), then Read each PNG and answer
+  the six subjective-quality questions — a hard rule and part of the per-dialog definition of done,
+  for region/browse surfaces too.** The canonical checklist, the six questions, and the
+  capture → run → Read → judge → fix → re-capture loop: `references/visual-snapshot-testing.md`.
 
 Rules specific to dialogs:
 
 - **It lives in `Src/Common/FwAvaloniaDialogs/`** (the dedicated XAML project),
-  never in the pure-C# `FwAvalonia` foundation. Add new dialog projects to
-  `FieldWorks.sln` (restore + VS) but build them in `build.ps1`'s Avalonia
-  loop; keep the XAML compile off the main `FieldWorks.proj` traversal (the
-  exclude pattern there). Exclude any nested test folder from the library's
-  compile glob (`<Compile Remove="XxxTests/**/*.cs"/>`).
-- **Modality during coexistence:** no Avalonia `Window.ShowDialog`. Show the
-  dialog `UserControl` via **`AvaloniaDialogHost.ShowModal(owner, view, vm, title)`**
-  (in `Src/Common/FwAvalonia/`), which hosts it in a WinForms-owned modal `Form`
-  (per the hub's `dialog-ownership.md`). The view-model implements
-  **`IDialogViewModel`** and raises `CloseRequested(bool)` from OK/Cancel — no
-  windowing in the VM. A dialog is "view + VM + `ShowModal`."
+  never in the pure-C# `FwAvalonia` foundation. Avalonia projects — including
+  the XAML-compiled ones — are ordinary members of the `FieldWorks.proj`
+  traversal (the `Src` glob); a new dialog project just needs adding to
+  `FieldWorks.sln` (restore + VS). Exclude any nested test folder from the
+  library's compile glob (`<Compile Remove="XxxTests/**/*.cs"/>`).
+- **Modality during coexistence:** no Avalonia `Window.ShowDialog` — show the
+  dialog `UserControl` via **`AvaloniaDialogHost.ShowModal`**; the view-model
+  implements **`IDialogViewModel`** and raises `CloseRequested(bool)` from
+  OK/Cancel. Mechanics + code: `references/dialog-conversion.md` §2.
+- **Coexistence sync with the WinForms twin:** while both implementations
+  ship, they are edited together — the apply-order mirroring, divergence
+  register, and paired-edit rules live in the `dialog-update` skill.
 - **Scope:** simple/confirmation/settings dialogs are good junior+AI work;
   Views-engine-coupled dialogs (Find/Replace, Styles host `IVwRootSite`)
   belong with the document engine (Stage 9), NOT this kit.
@@ -178,7 +157,7 @@ Rules specific to dialogs:
   preview-host or headless-test process before localized strings are
   requested; do not pay that cost per test.
 - Evidence runs through `./build.ps1` and `./test.ps1` via the normal repo
-  graph, not branch-only lanes.
+  graph, not branch-only build paths.
 
 ## Review Red Flags
 

@@ -16,8 +16,8 @@ a dialog, a browse table. The WinForms side needs the live app (this skill); the
 - Run `../scripts/Preflight-WinFormsMcp.ps1` (build present, package resolves).
 - A project with the relevant data (e.g. Words ▸ Analyses parity needs **parsed wordform analyses** — a
   bare project shows an empty interlinear). Restore per `project-loading.md`.
-- Evidence folder: `Output/ManualEvidence/<change-id>/` (gitignored) or the change's OpenSpec evidence
-  dir if it should join review history.
+- Evidence folders and parity-bundle naming: see `screenshot-evidence.md` (canonical parity
+  layout defined in the migration skill's `references/parity-evidence.md` §6).
 
 ## The two captures
 
@@ -25,10 +25,11 @@ a dialog, a browse table. The WinForms side needs the live app (this skill); the
 1. `winforms_launch_app` → `path = <repo>\Output\Debug\FieldWorks.exe`; keep the `pid`.
 2. Open the project (`project-loading.md`) and navigate to the surface (e.g. Words area → Analyses tool →
    select a wordform that HAS an analysis). `winforms_get_element_tree` first to confirm the target.
-3. `winforms_take_screenshot` (pass the `pid` so the hidden-desktop window is captured) →
-   `Output/ManualEvidence/<change-id>/winforms-<surface>-<stage>.png`.
+3. `winforms_take_screenshot` (pass the `pid` so the right window is captured via `PrintWindow`) →
+   save as the legacy baseline (`visual.legacy.png` in the parity bundle; see `screenshot-evidence.md`).
 4. For workflow parity, exercise the gesture (`winforms_click_element` / `winforms_set_value` /
-   `winforms_select_item`) and capture each stage. Headless-safe ops only (see SKILL.md "Core Rules").
+   `winforms_select_item`) and capture each stage. Prefer element-targeted ops (see SKILL.md
+   "MCP Selection").
 
 ### After — Avalonia (headless, no app)
 The Avalonia surfaces render through the Skia headless harness in tests, **not** through this MCP:

@@ -28,10 +28,10 @@ namespace SIL.FieldWorks.XWorks
 	/// plain-text-over-preserved-runs <c>TrySetRichText</c> staging every other text row uses, so the
 	/// edit rides the region's SAME fenced undo step.</para>
 	/// <para>DATA-SAFE SCOPE: this editor edits the form text of EXISTING reversal entries only.
-	/// Creating a new reversal index entry (typing a new form on an empty lane) and deleting one
+	/// Creating a new reversal index entry (typing a new form on an empty row) and deleting one
 	/// (clearing a form) are the legacy slice's risky parses-of-semicolon-separated-lists +
-	/// find-or-create lane (ReversalIndexEntrySlice.ReplaceReversalIndexEntries) and are DEFERRED here:
-	/// a sense with no reversal entry for a given index simply shows no lane for it, and clearing a
+	/// find-or-create path (ReversalIndexEntrySlice.ReplaceReversalIndexEntries) and are DEFERRED here:
+	/// a sense with no reversal entry for a given index simply shows no row for it, and clearing a
 	/// form to empty stores an empty form (it does not delete the entry). Phase 5 (ORC) is not needed.</para>
 	/// </summary>
 	public sealed class ReversalIndexEntryPlugin : IRegionEditorPlugin
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 			return StageOnHost(() =>
 			{
 				// ReversalForm is multi-unicode (plain text): re-emit the run-replay as a plain string in
-				// the lane's writing system. The per-run rich projection still drives display/formatting,
+				// the row's writing system. The per-run rich projection still drives display/formatting,
 				// but the stored property carries no run structure.
 				var tss = RegionRichTextAdapter.ToTsString(value, _cache.WritingSystemFactory, wsHandle);
 				entry.ReversalForm.set_String(wsHandle,

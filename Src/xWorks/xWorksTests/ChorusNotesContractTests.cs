@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(note.Messages.Count(), Is.EqualTo(3));
 			Assert.That(note.Messages.Last().Status, Is.EqualTo(Annotation.Open));
 
-			// The toggles persisted through the canonical save lane (§4: never write the file directly).
+			// The toggles persisted through the canonical save path (§4: never write the file directly).
 			using (var fresh = AnnotationRepository.FromString("id",
 				File.ReadAllText(PrimaryNotesPath)))
 			{
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 			var control = plugin.BuildControl(context);
 
 			Assert.That(control, Is.Null,
-				"a Phase-1 follow-up plugin must degrade to null (the composer's placeholder-row lane), "
+				"a Phase-1 follow-up plugin must degrade to null (the composer's placeholder-row fallback), "
 				+ "never instantiate the live ChorusNotesBarControl");
 		}
 	}

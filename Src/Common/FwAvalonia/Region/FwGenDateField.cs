@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// NOT a localized full-calendar long string, so the first digit run IS the year (19i.1 fixed the prior
 		// data-loss where a "June 15, 1990" long string made the digit-scan grab the DAY "15"). The scan stays
 		// defensive: if ever fed a long string, it reads the precision word, the AD/BC marker, and the first
-		// digit run. The qualifier editor edits at year granularity (the calendar day picker is the exact-date lane).
+		// digit run. The qualifier editor edits at year granularity (the calendar day picker is the exact-date path).
 		private static void TryParseLongString(string text, out int year, out GenDatePrecision precision,
 			out bool isAd)
 		{

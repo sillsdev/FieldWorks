@@ -37,8 +37,8 @@ See the script headers and `../references/mcp-setup.md`.
    - `path`: `<workspace>\\Output\\Debug\\FieldWorks.exe`
    - `arguments`: **`-db "<Project Name>"` ONLY** (e.g. `-db "Sena 3"`). The valid options are
      `-db / -locale / -restore / -include / -help` — there is **NO `-app` option**. Passing an unknown arg
-     (e.g. `-app Flex`) pops a modal **usage dialog** that blocks startup; on a hidden/headless desktop that
-     modal is invisible and the app looks "stuck with a blank window and an empty UIA tree" (loaded ~450 MB,
+     (e.g. `-app Flex`) pops a modal **usage dialog** that blocks startup; if that modal goes unnoticed the
+     app looks "stuck with a blank window and an empty UIA tree" (loaded ~450 MB,
      responding, but no main window). If you see that signature, the launch arguments are wrong.
    - Project names with a space need real quoting. `winforms_launch_app` passes `arguments` as one string;
      if the project does not open, launch via `[System.Diagnostics.ProcessStartInfo]` with
@@ -50,9 +50,9 @@ See the script headers and `../references/mcp-setup.md`.
 4. Inspect the tree with `winforms_get_element_tree` before interacting.
 5. Use `winforms_click_menu_item`, `winforms_find_element`,
    `winforms_click_element`, `winforms_type_text`, `winforms_set_value`, and
-   `winforms_select_item` for headless-safe interaction.
+   `winforms_select_item` for element-targeted interaction.
 6. Capture screenshots with `winforms_take_screenshot`. Prefer passing the
-   FieldWorks `pid` so the server can use the hidden-desktop window directly.
+   FieldWorks `pid` so the server captures the right window via `PrintWindow`.
 
 ## Fallback Steps: WinApp MCP UIA3
 
@@ -82,10 +82,11 @@ See the script headers and `../references/mcp-setup.md`.
 
 ## Known Workarounds
 
-- In WinForms MCP headless mode, avoid `winforms_send_keys`, drag/drop, and
-  double-click. Use UIA pattern operations such as `winforms_type_text`,
-  `winforms_set_value`, `winforms_select_item`, and single
-  `winforms_click_element` calls.
+- Prefer UIA pattern operations (`winforms_type_text`, `winforms_set_value`,
+  `winforms_select_item`, single `winforms_click_element` calls) over
+  `winforms_send_keys`, drag/drop, and double-click — they are more reliable.
+  (The blanket bans on input simulation applied to the abandoned hidden-desktop
+  mode; see `../references/headless-rendering.md`.)
 - `mcp_winapp_wait_for_input_idle` may return `not implemented` for
   FieldWorks. Use snapshots and desktop-window order instead.
 - `mcp_winapp_take_screenshot` captures the foreground surface. Bring

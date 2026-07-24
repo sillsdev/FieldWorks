@@ -15,9 +15,9 @@ using SIL.FieldWorks.Common.FwAvalonia;
 namespace SIL.FieldWorks.Common.FwAvalonia.Region
 {
 	/// <summary>
-	/// A field editor whose chrome includes hover-revealed affordances (the chooser's settings
+	/// A field editor whose row decorations include hover-revealed affordances (the chooser's settings
 	/// gear, the reference vector's separator bars and "+" launcher). The region view reads this
-	/// to widen the hover surface to the WHOLE row (label + editor) — chrome only, no behavior.
+	/// to widen the hover surface to the WHOLE row (label + editor) — presentation only, no behavior.
 	/// </summary>
 	public interface IHoverAffordanceProvider
 	{
@@ -26,12 +26,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// Modern hover-reveal chrome for secondary affordances: the affordances start hidden by
+	/// Modern hover-reveal presentation for secondary affordances: the affordances start hidden by
 	/// OPACITY (they stay in layout — rows never reflow — and stay in the UIA tree, focusable),
 	/// fade in (~120ms) while the pointer is over any hover source or any affordance (entering
 	/// the gear itself must not flicker it away), and fade out when the pointer leaves them all.
 	/// Keyboard access: an affordance gaining focus (Tab) also reveals; losing focus hides again
-	/// unless the pointer is over. Pure chrome — no flyout, staging, or automation-id changes.
+	/// unless the pointer is over. Pure presentation — no flyout, staging, or automation-id changes.
 	/// </summary>
 	public static class HoverReveal
 	{
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// The shared hover-affordance chrome: every field whose value has a supporting list/dialog
+	/// The shared hover-affordance icon factory: every field whose value has a supporting list/dialog
 	/// (chooser, reference vector, dialog launcher) draws the IDENTICAL settings-gear icon from
 	/// this one factory, so the affordance reads the same across all rows.
 	/// </summary>

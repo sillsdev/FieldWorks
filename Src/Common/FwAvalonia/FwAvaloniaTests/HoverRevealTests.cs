@@ -23,7 +23,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Hover-reveal chrome (UI polish): the chooser's configure gear and the reference vector's
+	/// Hover-reveal affordances (UI polish): the chooser's configure gear and the reference vector's
 	/// separator bars + "+" launcher start hidden (opacity 0, not hit-testable, but still in
 	/// layout and in the UIA tree), fade in while the pointer is over the row (label or editor),
 	/// and fade out when it leaves — driven here by REAL headless mouse input. Gear semantics:
@@ -155,7 +155,7 @@ namespace FwAvaloniaTests
 				Assert.That(affordance.IsVisible, Is.True);
 			}
 
-			// The vector's item text is always visible — only the chrome hides.
+			// The vector's item text is always visible — only the affordances hide.
 			var item = Find<TextBlock>(view, "PublishIn.Item.p1");
 			Assert.That(item.Opacity, Is.EqualTo(1d));
 		}
@@ -306,7 +306,7 @@ namespace FwAvaloniaTests
 			var addButton = Find<Button>(view, "PublishIn.Add");
 			Assert.That(gear, Is.Not.Null, "a resolved list-editor target draws the gear");
 			Assert.That(gear.Opacity, Is.EqualTo(0d), "the gear starts hidden like the bars/+");
-			Assert.That(VectorAffordances(view), Does.Contain(gear), "the gear reveals with the row chrome");
+			Assert.That(VectorAffordances(view), Does.Contain(gear), "the gear reveals with the row affordances");
 			Assert.That(gear.Flyout, Is.Null, "the gear carries NO flyout — it dispatches directly");
 
 			MoveMouseOver(window, vector);

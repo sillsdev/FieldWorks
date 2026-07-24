@@ -12,8 +12,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The product side of the cross-surface drag-and-drop bridge (task 3.14): builds and reads the
 	/// shared OS data objects both WinForms (`DoDragDrop`/`AllowDrop`) and Avalonia (`DragDrop`)
-	/// surfaces exchange. Text drags reuse the clipboard seam's dual-lane payload
-	/// (<see cref="FwTsStringClipboard.CreateDataObject"/>: legacy `"TsString"` rich lane +
+	/// surfaces exchange. Text drags reuse the clipboard seam's dual-format payload
+	/// (<see cref="FwTsStringClipboard.CreateDataObject"/>: legacy `"TsString"` rich format +
 	/// `UnicodeText`); object moves carry the framework-neutral
 	/// <see cref="FwRecordKeyPayload"/> guid key plus a plain-text label for external drops.
 	/// Legacy in-surface reorder DnD (`SliceTreeNode`, `RecordBarTreeHandler`) stays surface-local
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 			return cache.ServiceLocator.ObjectRepository.TryGetObject(payload.ObjectGuid, out record);
 		}
 
-		/// <summary>Builds the data object for dragging text (same dual-lane payload as copy/paste).</summary>
+		/// <summary>Builds the data object for dragging text (same dual-format payload as copy/paste).</summary>
 		public static DataObject CreateTextDataObject(FwClipboardText payload)
 			=> FwTsStringClipboard.CreateDataObject(payload);
 	}

@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(row.Items.Select(i => i.Key), Is.EqualTo(new[] { secondSense.Guid.ToString() }));
 				Assert.That(row.Items.Single().Name,
 					Is.EqualTo(secondSense.OwnerOutlineNameForWs(Cache.DefaultVernWs).Text),
-					"sense targets display their owner-outline name, like the existing entry/sense reference lane");
+					"sense targets display their owner-outline name, like the existing entry/sense reference path");
 				Assert.That(row.MenuId, Is.EqualTo("mnuDataTree-DeleteAddLexReference"));
 			});
 		}

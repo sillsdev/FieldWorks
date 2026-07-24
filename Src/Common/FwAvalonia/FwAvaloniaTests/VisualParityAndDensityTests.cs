@@ -20,7 +20,7 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Task 6.9 — control-level visual parity capture: with Skia-backed headless drawing the region
-	/// view renders real frames that are saved as parity artifacts (the Avalonia visual lane of the
+	/// view renders real frames that are saved as parity artifacts (the Avalonia visual evidence of the
 	/// Path 3 bundle). Stable automation ids on user-facing controls are locked by the other suites.
 	/// </summary>
 	[TestFixture]
@@ -64,7 +64,7 @@ namespace FwAvaloniaTests
 					"avalonia-region-first-slice.png");
 				frame.Save(artifact);
 				Assert.That(new FileInfo(artifact).Length, Is.GreaterThan(0),
-					"the captured frame is the Avalonia visual lane artifact for Path 3 bundles");
+					"the captured frame is the Avalonia visual-evidence artifact for Path 3 bundles");
 				TestContext.WriteLine($"avalonia visual parity frame: {artifact}");
 			}
 		}

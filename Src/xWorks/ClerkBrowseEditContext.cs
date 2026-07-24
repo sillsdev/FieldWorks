@@ -145,15 +145,15 @@ namespace SIL.FieldWorks.XWorks
 
 		// §19d: picture editing in-cell ties to §19f.3 (in-cell ballooning) and is not wired on the browse
 		// surface yet — delegate to the per-row context (whose first-slice base rejects). The detail-view
-		// picture path ships fully; the same insert/edit lane reaches a browse picture cell when §19f.3
+		// picture path ships fully; the same insert/edit path reaches a browse picture cell when §19f.3
 		// realizes a picture cell editor.
 		// §19f.5 UPDATE: the in-cell picture editor is now realized VIEW-side — an editable cell whose field
 			// is RegionFieldKind.Image renders the shared §19d picture field control (insert/replace/delete +
-			// RegionPictureDialogResult); these methods carry the write to the per-row context. The lane reaches
+			// RegionPictureDialogResult); these methods carry the write to the per-row context. This path reaches
 			// a browse picture cell as soon as the row source returns an Image-kind GetEditField for one.
 			// PARITY §19f.5: the clerk-backed row source does not yet CLASSIFY a picture column nor wire
 			// IRegionMediaServices through the browse host (the default lexicon browse views carry no picture
-			// column), so no picture cell is realized in product today; the view + edit-context lane are ready.
+			// column), so no picture cell is realized in product today; the view + edit-context paths are ready.
 		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
 			=> For(field)?.TryInsertPicture(field, sourceFile, metadata) ?? false;
 

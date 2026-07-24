@@ -118,7 +118,7 @@ namespace FwAvaloniaTests
 		public void ConditionalElements_WithSubstitutionValues_StillDropWithDiagnostics()
 		{
 			// B3 imports supported conditionals; a $-substituted condition value (the <generate>
-			// custom-field shape) still needs runtime substitution (B9), so it keeps the drop lane.
+			// custom-field shape) still needs runtime substitution (B9), so it keeps the drop diagnostic.
 			var model = Import(@"
 <layout class='LexEntry' type='detail' name='T'>
   <if target='$fieldName' is='StText'><part ref='CitationForm'/></if>
@@ -267,7 +267,7 @@ namespace FwAvaloniaTests
 	/// import as typed Conditional/ChoiceGroup nodes carrying structured ViewCondition metadata —
 	/// the condition forms the shipped detail layouts use (boolequals/intequals/intlessthan/
 	/// intmemberof/lengthatleast/lengthatmost/guidequals/is/target) — and round-trip canonical JSON.
-	/// Unsupported (publishing-lane) forms keep the conditional-dropped lane.
+	/// Unsupported (publishing-only) forms keep the conditional-dropped diagnostic.
 	/// </summary>
 	[TestFixture]
 	public class ConditionalImportTests
@@ -385,7 +385,7 @@ namespace FwAvaloniaTests
 		[Test]
 		public void UnsupportedPublishingConditionForm_KeepsTheDropLane()
 		{
-			// stringaltequals/ws is publishing-lane vocabulary (XmlVc string tests, all on Jt parts in
+			// stringaltequals/ws is publishing-only vocabulary (XmlVc string tests, all on Jt parts in
 			// the shipped files); evaluating it wrongly would hide/show the wrong fields, so it drops.
 			var model = Import("LexSense", "PublishingDropped");
 
@@ -616,7 +616,7 @@ namespace FwAvaloniaTests
 		/// resolves every shipped part ref that legacy DataTree resolves. What remains is EXACTLY the
 		/// set of layout refs with no <c>{class-chain}-Detail-{ref}</c> part anywhere in the shipped
 		/// inventories — refs legacy DataTree also silently omits ("Just omit the missing part",
-		/// DataTree.cs:2455-2457; the detail lane has no PartGenerator). Asserting the exact set keeps
+		/// DataTree.cs:2455-2457; the detail view has no PartGenerator). Asserting the exact set keeps
 		/// both regressions (new unresolved refs) and silent improvements (parts added) visible.
 		/// </summary>
 		[Test]
@@ -629,7 +629,7 @@ namespace FwAvaloniaTests
 			// Every entry below was verified to have no matching part id (case-insensitive) on the
 			// class or any base class in the shipped *Parts.xml files; legacy omits them too. Most are
 			// summary/section header parts that were never shipped, plus the DateCreated/DateModified
-			// refs Notebook hides (visibility='never') whose parts never existed in the detail lane.
+			// refs Notebook hides (visibility='never') whose parts never existed in the detail view.
 			var legacyUnresolvable = new SortedDictionary<string, int>(StringComparer.Ordinal)
 			{
 				{ "CmAnthroItem-Summary", 1 },
@@ -719,7 +719,7 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: the first-slice lane's hand-maintained MoForm map (4.10) is now subsumed by the
+		/// B10 fixture: the first-slice path's hand-maintained MoForm map (4.10) is now subsumed by the
 		/// metadata-driven hierarchy — MoStemAllomorph's 'AsLexemeFormBasic' resolves with no hand map.
 		/// </summary>
 		[Test]
@@ -779,7 +779,7 @@ namespace FwAvaloniaTests
 		/// B2 fixture: the shipped lexeme-form ghost configuration must arrive complete on the typed
 		/// node — ghost/ghostWs/ghostLabel, the explicit ghostClass (MoStemAllomorph, differing from
 		/// the abstract MoForm field signature) AND the ghostInitMethod hook (SetMorphTypeToRoot) the
-		/// 14.1 lane used to drop.
+		/// 14.1 import path used to drop.
 		/// </summary>
 		[Test]
 		public void ShippedLexEntryNormal_LexemeFormNode_CarriesTheFullGhostConfiguration()

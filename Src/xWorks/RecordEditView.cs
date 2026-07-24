@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.XWorks
 
 			AttachLegacySurfaceToPanel();
 			// The legacy DataTree builds its own MessageSlice/ChorusSystem; release the Avalonia
-			// lane's companions so two Chorus systems never sit on the project at once.
+			// surface's companions so two Chorus systems never sit on the project at once.
 			TearDownCompanionSlices();
 			m_avaloniaEntryForm?.Hide();
 			m_dataEntryForm.Show();

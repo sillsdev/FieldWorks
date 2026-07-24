@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// <c>*Parts.xml</c> into a single <c>&lt;PartInventory&gt;</c> and loads the <c>*.fwlayout</c>
 	/// files, both in ordinal filename order so the merge is deterministic. Shared by
 	/// <c>LexicalEditFirstSlice</c> (FwAvalonia) and <c>FullEntryRegionComposer</c> (xWorks) so the
-	/// two compile lanes cannot drift apart. Directory resolution (FwDirectoryFinder vs an explicit
+	/// two compile paths cannot drift apart. Directory resolution (FwDirectoryFinder vs an explicit
 	/// test path) stays with the caller; this class only reads a directory it is given.
 	/// </summary>
 	public static class LayoutSourceLoader

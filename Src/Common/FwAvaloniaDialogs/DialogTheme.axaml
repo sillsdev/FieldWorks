@@ -95,7 +95,7 @@
 	<!-- CheckBox FONT only. The deterministic, font-proportional BOX SIZE is applied separately by
 	     DialogThemeBootstrap.Apply via the shared C# FwCheckBoxStyle (a ControlTheme that REPLACES the Fluent
 	     template — the hardcoded 20×20 box / 32px slot are local values a style setter cannot override). That
-	     same helper is the single authority the browse/region lane uses, so checkboxes are one global size. -->
+	     same helper is the single authority the browse/region surfaces use, so checkboxes are one global size. -->
 	<Style Selector="CheckBox">
 		<Setter Property="FontSize" Value="12"/>
 	</Style>

@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		// read-only placeholder/"unsupported" row (never a crash, never silently missing — see
 		// FullEntryRegionMessagesCompanionTests). The follow-up PR restores the registration here
 		// alongside the ChorusNotesPlugin.IsPhase1FollowUp flip (see ChorusNotesPlugin.cs).
-		// Wave 3 (D3) is a composer lane, not a plugin. Wave 4 (D4) landed the dialog-launcher
+		// Wave 3 (D3) is a composer route, not a plugin. Wave 4 (D4) landed the dialog-launcher
 		// plugins: value row + "..." button calling the host's ILegacyDialogLauncher seam. The
 		// LexemeEditorBurnDownTests census measures coverage as they land.
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D5 — the lexeme editor's burn-down lanes that are not
+	/// winforms-free-lexeme-editor.md D5 — the lexeme editor's burn-down routes that are not
 	/// expressed in code elsewhere. Together with the plugin registry (<see cref="RegionEditorPluginRegistry"/>)
 	/// and the companion designated set (<see cref="AvaloniaCompanionSlices.DesignatedClassNames"/>),
 	/// these classify every custom slice class in the lexeme-editor census; the
@@ -185,20 +185,20 @@ namespace SIL.FieldWorks.XWorks
 		/// through the ILegacyDialogLauncher host seam (D4, wave 4), each WITH its citation. These
 		/// classes are ALSO claimed in the default plugin registry (by a
 		/// <see cref="LauncherRegionPlugin"/>); the census counts that pairing as the single
-		/// "LauncherRouted" lane. The MSA/phonological launchers live in MSA/FsFeatStruc part
+		/// "LauncherRouted" route. The MSA/phonological launchers live in MSA/FsFeatStruc part
 		/// files, beyond the LexEntry/LexSense census — registered anyway, forward-looking, for
 		/// the per-sense "Grammatical Info. Details" sections and the Grammar tools.
 		/// </summary>
 		public static readonly IReadOnlyDictionary<string, string> LauncherRoutedClassNames =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher lane" },
-				{ DialogLauncherPlugins.PhonologicalFeatureSliceClassName, "D4 launcher lane" },
-				{ DialogLauncherPlugins.AudioVisualSliceClassName, "D4 launcher lane" }
+				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher route" },
+				{ DialogLauncherPlugins.PhonologicalFeatureSliceClassName, "D4 launcher route" },
+				{ DialogLauncherPlugins.AudioVisualSliceClassName, "D4 launcher route" }
 			};
 
 		/// <summary>
-		/// Explicitly deferred classes, each WITH the gate/lane it rides (D5: deferral is only
+		/// Explicitly deferred classes, each WITH the gate/route it rides (D5: deferral is only
 		/// legitimate with a citation — "documented, not forgotten").
 		/// </summary>
 		public static readonly IReadOnlyDictionary<string, string> ExplicitlyDeferredClassNames =
@@ -207,11 +207,11 @@ namespace SIL.FieldWorks.XWorks
 				// AudioVisualSlice graduated to LauncherRoutedClassNames in wave 4 (D4).
 				// ReversalIndexEntrySlice graduated to a native Avalonia plugin (ReversalIndexEntryPlugin):
 				// the sense's reversal-entry forms now compose as an editable multi-WS text field through
-				// the D1 plugin lane, retiring the lone Unsupported row. It is therefore PluginRouted, no
+				// the D1 plugin route, retiring the lone Unsupported row. It is therefore PluginRouted, no
 				// longer deferred.
 				// MessageSlice (ChorusNotesPlugin) is a PHASE-1 FOLLOW-UP surface (base-PR scoping
 				// decision): the plugin exists and is built, but RegisterBuiltins deliberately does not
-				// register it in this base PR, so the class rides this deferred lane — same gate/status
+				// register it in this base PR, so the class rides this deferred route — same gate/status
 				// as the Avalonia browse table and the interlinear/rule-formula plugins — until a
 				// follow-up PR restores the registration (see RegionEditorPluginRegistry.RegisterBuiltins
 				// and ChorusNotesPlugin.IsPhase1FollowUp).
@@ -219,21 +219,21 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 		/// <summary>
-		/// Classes absorbed by a composer lane (no plugin needed: the composer recognizes the node
-		/// by metadata and composes a native editable row), each WITH the lane that absorbed it.
+		/// Classes absorbed by a composer route (no plugin needed: the composer recognizes the node
+		/// by metadata and composes a native editable row), each WITH the route that absorbed it.
 		/// Wave 3: EntrySequenceReferenceSlice's entry-reference vectors compose as editable
-		/// ReferenceVector rows with type-ahead lexicon search (D3). Deferred note for that lane:
+		/// ReferenceVector rows with type-ahead lexicon search (D3). Deferred note for that route:
 		/// the slice's VIRTUAL back-ref fields (ComplexFormEntries, Subentries,
 		/// VisibleComplexFormBackRefs, VariantFormEntries) still render read-only — their writes
 		/// land on the other entry's LexEntryRef (the legacy launcher's AddNewObjectsToProperty
 		/// overrides) and ride the D3 follow-up with the relation-type walk.
 		/// </summary>
-		public static readonly IReadOnlyDictionary<string, string> LaneAbsorbedClassNames =
+		public static readonly IReadOnlyDictionary<string, string> ComposerAbsorbedClassNames =
 			new Dictionary<string, string>(StringComparer.Ordinal)
 			{
-				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector lane" },
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation lane" }
+				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector route" },
+				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector route" },
+				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation route" }
 			};
 	}
 }

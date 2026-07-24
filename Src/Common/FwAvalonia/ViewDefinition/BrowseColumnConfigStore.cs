@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		}
 
 		// Returns the parsed columns, or null when the file's version mismatches or its tool header disagrees
-		// (a renamed/hand-edited file is not used). Throws on malformed JSON so the load lane logs + degrades.
+		// (a renamed/hand-edited file is not used). Throws on malformed JSON so the load path logs + degrades.
 		public static IReadOnlyList<BrowseColumnConfigEntry> Deserialize(string json, string expectedTool)
 		{
 			if (string.IsNullOrEmpty(json))

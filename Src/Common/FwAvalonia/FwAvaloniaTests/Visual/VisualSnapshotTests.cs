@@ -18,7 +18,7 @@ namespace FwAvaloniaTests.VisualChecks
 	/// <summary>
 	/// Self-test for the <see cref="DialogSnapshot"/> PNG harness: every visual headless test can emit a
 	/// real Skia-rendered frame to the gitignored ephemeral folder so the agent (via Read) and the user can
-	/// eyeball whether the surface looks right — the subjective lane that complements the deterministic
+	/// eyeball whether the surface looks right — the subjective check that complements the deterministic
 	/// <see cref="DialogLayoutAssert"/> tripwire. The PNG is ALWAYS produced, even when sanity is clean.
 	/// </summary>
 	[TestFixture]
@@ -51,7 +51,7 @@ namespace FwAvaloniaTests.VisualChecks
 	/// shared <see cref="DialogLayoutAssert"/> hard-fail tripwire (overlap / zero-area text / crowding) —
 	/// so the visual standard is one standard across every Avalonia surface, not dialogs only.
 	/// Capture happens BEFORE the assertion so the artifact exists for review even when the assertion fails.
-	/// The crowding tripwire itself now skips SPLITTER CHROME (a GridSplitter / any "Splitter"-named control
+	/// The crowding tripwire itself now skips SPLITTER CONTROLS (a GridSplitter / any "Splitter"-named control
 	/// straddles a column boundary by design); that splitter-aware exception lives inside DialogLayoutAssert,
 	/// so these tests just call AssertNoCrowding directly — no in-test splitter workaround.
 	/// </summary>

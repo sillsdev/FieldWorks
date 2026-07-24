@@ -56,9 +56,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 		// B3: the condition vocabulary the importer parses into ViewCondition — exactly the forms the
 		// shipped DETAIL layouts use (audited 2026-06-11 over DistFiles .../Parts: boolequals 44,
 		// intequals 9, lengthatleast/-most 8, intmemberof 2, intlessthan 5, guidequals 2, is/target on
-		// where clauses). Publishing-lane-only forms (stringequals, stringaltequals, hvoequals,
+		// where clauses). Publishing-only forms (stringequals, stringaltequals, hvoequals,
 		// flidequals, bidi, atleastoneis, func, index, ws, class, flid) are NOT parsed; a condition
-		// carrying one keeps the conditional-dropped lane so it is never evaluated wrongly.
+		// carrying one keeps the conditional-dropped diagnostic so it is never evaluated wrongly.
 		public static readonly HashSet<string> HandledConditionAttributes =
 			new HashSet<string>(System.StringComparer.Ordinal)
 			{
@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 							// <deParams><stringList ids=.. group=..> (EnumComboSlice.PopulateCombo).
 							// Carry that onto the node so the row can render a CLOSED option chooser
 							// instead of degrading to a free-form int editor that could persist an
-							// invalid enum value. The labels resolve through the StringTable lane at
+							// invalid enum value. The labels resolve through StringTable at
 							// compose time, so only the ids/group ride the IR.
 							enumStringList = ImportStringList(child, stableId, diagnostics);
 						}
@@ -395,7 +395,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 					// Dynamic custom slices keep their legacy class/assembly identity so the host can
 					// promote designated WinForms-only editors (e.g. the Chorus Messages notes bar) to
-					// the hybrid companion lane instead of an unsupported row. The attributes stay in
+					// the hybrid companion strip instead of an unsupported row. The attributes stay in
 					// the unhandled-attribute report (no Avalonia editor consumes them).
 					return new ViewNode(stableId, ViewNodeKind.Field, label, abbreviation, field, editor,
 						classification, ws, visibility, expansion, indented, sliceTargetLayout, children,
@@ -541,7 +541,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		// Review task 2: import an enumComboBox slice's <deParams><stringList ids=.. group=..> into the
 		// typed ViewStringList. The labels themselves stay out of the IR (they resolve through the
-		// StringTable lane at compose time); only the ids and the optional group path ride. A deParams
+		// StringTable lookup at compose time); only the ids and the optional group path ride. A deParams
 		// without a stringList, or a stringList without ids, is reported rather than silently dropped.
 		private static ViewStringList ImportStringList(
 			XElement deParamsEl, string stableId, List<ViewDiagnostic> diagnostics)
@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		// B3: parse an <if>/<ifnot>/<where> element's condition attributes into the typed
 		// ViewCondition, or report conditional-dropped and return null when the element uses a
-		// condition form outside the supported (detail-lane) vocabulary — never half-evaluate.
+		// condition form outside the supported detail-view vocabulary — never half-evaluate.
 		private static ViewCondition TryParseCondition(
 			XElement el, bool negated, string stableId, List<ViewDiagnostic> diagnostics)
 		{

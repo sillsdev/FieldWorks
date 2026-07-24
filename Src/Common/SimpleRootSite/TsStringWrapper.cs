@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Creates a wrapper directly from an already-serialized TsString XML representation
 		/// (as produced by <c>TsStringUtils.GetXmlRep</c>). Used by the cross-framework
-		/// clipboard bridge, which carries the XML lane without an ITsString in hand.
+		/// clipboard bridge, which carries the serialized XML without an ITsString in hand.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public static TsStringWrapper FromXml(string xml)

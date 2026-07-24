@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 	/// The cross-surface drag-and-drop payload contract (task 3.14). Both WinForms and Avalonia
 	/// surfaces drag from and drop onto each other through the OS DnD pipeline using the same shared
 	/// formats the clipboard seam (3.13) established:
-	/// - text drags: the legacy <c>"TsString"</c> OS format (rich lane) + <c>UnicodeText</c> (plain lane);
+	/// - text drags: the legacy <c>"TsString"</c> OS format (rich) + <c>UnicodeText</c> (plain) — the dual-format pair;
 	/// - object moves: the <see cref="RecordKeyFormat"/> string payload defined here (a guid-based
 	///   record key), framework-neutral and resolvable on either side via the LCModel object repository.
 	/// In-surface reorder semantics stay surface-local; specific drag interactions land with their

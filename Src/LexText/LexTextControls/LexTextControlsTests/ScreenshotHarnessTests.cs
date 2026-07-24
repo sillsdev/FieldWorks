@@ -18,7 +18,7 @@
 // DATA FLAVORS (CaptureContext): "sena3" = read-only temp COPY of Sena 3 (real stylesheet + data);
 // "minimal" = in-memory base cache. BEFORE/AFTER: this emits "<name>-before.png"; the Avalonia
 // "<name>-after.png" comes from the surface's FwAvaloniaDialogs(Tests) visual test (the
-// fieldworks-semantic-render-parity lane, same flavor); both attach to the JIRA ticket.
+// fieldworks-semantic-render-parity evidence type, same flavor); both attach to the JIRA ticket.
 //
 // Run: .\test.ps1 -SkipNative -TestProject LexTextControlsTests -TestFilter "FullyQualifiedName~ScreenshotHarness"
 
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ctor == null) throw new Exception("no usable ctor");
 				dlg = (Form)ctor.Invoke(ctor.GetParameters().Select(p => ArgFor(p, ctx)).ToArray());
 			}
-			if (ctorOnly) return dlg; // capture chrome only (skip the data-populating SetDlgInfo that hangs/NREs)
+			if (ctorOnly) return dlg; // capture the empty dialog shell only (skip the data-populating SetDlgInfo that hangs/NREs)
 			var sdi = t.GetMethods().Where(m => m.Name == "SetDlgInfo" && !m.IsGenericMethod)
 				.OrderByDescending(m => m.GetParameters().Length).FirstOrDefault();
 			if (sdi != null)
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Reflect over a dialog assembly and auto-capture every constructable Form. ctorOnly=false runs
-		/// the full SetDlgInfo (populated data); ctorOnly=true captures just the ctor-built chrome (the
+		/// the full SetDlgInfo (populated data); ctorOnly=true captures just the ctor-built shell (the
 		/// fallback for dialogs whose SetDlgInfo hangs/NREs — still a valid layout "before").
 		/// </summary>
 		private void ReflectSweep(string dll, string docRelDir, CaptureContext ctx, ISet<string> skip, bool ctorOnly)
@@ -427,12 +427,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (!ctorOnly)
 				{
 					// Full pass: skip the matching-entries family — its SetDlgInfo builds a BrowseViewer
-					// synchronously and blocks. (The ctor-only pass below captures their chrome instead.)
+					// synchronously and blocks. (The ctor-only pass below captures their shell instead.)
 					bool goFamily = false;
 					for (var b = t; b != null; b = b.BaseType) if (b.Name == "BaseGoDlg") { goFamily = true; break; }
 					if (goFamily || t.Name == "InsertEntryDlg" || t.Name == "AddNewSenseDlg") continue;
 				}
-				// Chrome (ctor-only) renders fast or hangs — short timeout; full pass allows a bit longer.
+				// Shell (ctor-only) renders fast or hangs — short timeout; full pass allows a bit longer.
 				Cap(name, docRelDir, () => ReflectBuild(t, ctx, ctorOnly), timeoutSec: ctorOnly ? 6 : 10);
 			}
 		}
@@ -496,10 +496,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					var done = new HashSet<string> { "feature-chooser", "msa-inflection-feature-list", "msa-creator" };
 					// Pass A — full SetDlgInfo (populated data); matching-entries family skipped (hangs).
 					foreach (var dll in dlls) ReflectSweep(dll, "dialogs", sena, done, ctorOnly: false);
-					// Lock in pass-A successes so the chrome pass doesn't overwrite a populated shot.
+					// Lock in pass-A successes so the shell pass does not overwrite a populated shot.
 					foreach (var line in m_log.ToArray())
 						if (line.StartsWith("captured")) done.Add(line.Substring(8).Trim());
-					// Pass B — ctor-only CHROME for everything still un-captured (matching-entries, Gecko,
+					// Pass B — ctor-only SHELL for everything still un-captured (matching-entries, Gecko,
 					// clerk-backed, SetDlgInfo-NRE): construct the dialog, skip the hanging SetDlgInfo, and
 					// capture its layout. Empty of data but a structurally accurate "before".
 					foreach (var dll in dlls) ReflectSweep(dll, "dialogs", sena, done, ctorOnly: true);

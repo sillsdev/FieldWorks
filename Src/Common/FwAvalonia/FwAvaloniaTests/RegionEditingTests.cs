@@ -319,7 +319,7 @@ namespace FwAvaloniaTests
 				"the unchanged trailing run keeps its style metadata");
 		}
 
-		// DATA-SAFETY (Phase 1, test a — rendering lane): a value flagged lossy (a run carries a
+		// DATA-SAFETY (Phase 1, test a — rendering tests): a value flagged lossy (a run carries a
 		// TsString property the model does not round-trip) renders a READ-ONLY editor with the
 		// not-editable-here tooltip, even though an edit context is supplied — so a keystroke can
 		// never silently drop the property. The matching model/composer assertions live in xWorks's
@@ -370,7 +370,7 @@ namespace FwAvaloniaTests
 		public void ChooserFlyout_StripsTheHeavyGreyPresenterChrome_SoThePickerOwnsTheOnlyBorder()
 		{
 			// The "thick grey border" was the default Fluent FlyoutPresenter (its grey padding +
-			// border) wrapping the picker. The option flyout must zero that chrome so the picker's
+			// border) wrapping the picker. The option flyout must zero those decorations so the picker's
 			// own thin border is the single visible boundary.
 			var (view, _, _) = ShowEditable();
 			var chooser = Find<FwChooserField>(view, "MorphTypeChooser");
@@ -383,7 +383,7 @@ namespace FwAvaloniaTests
 			var presenter = picker.GetVisualAncestors().OfType<FlyoutPresenter>().FirstOrDefault();
 			Assert.That(presenter, Is.Not.Null, "the picker is hosted inside a flyout presenter");
 			Assert.That(presenter.Padding, Is.EqualTo(new Thickness(0)),
-				"no thick grey padding wraps the picker — the heavy presenter chrome is stripped");
+				"no thick grey padding wraps the picker — the heavy presenter decorations are stripped");
 			Assert.That(presenter.BorderThickness, Is.EqualTo(new Thickness(0)),
 				"no heavy grey presenter border — the picker draws the single clean border");
 		}
@@ -1163,7 +1163,7 @@ namespace FwAvaloniaTests
 	public class RegionWritingSystemPickerTests
 	{
 		// A field carrying a rich value plus the project's available writing systems, so the per-WS retag
-		// picker affordance is built. The lane's own ws is "qaa-x-rich".
+		// picker affordance is built. The field's own ws is "qaa-x-rich".
 		private static LexicalEditRegionField RetaggableField(params (string Tag, string Name)[] systems)
 		{
 			var field = new LexicalEditRegionField("LexEntry/x/#0", "Bibliography", "Bibliography", null,
@@ -1391,7 +1391,7 @@ namespace FwAvaloniaTests
 			var addButton = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Add");
 			Assert.That(((Flyout)addButton.Flyout).Content, Is.TypeOf<FwOptionPicker>(),
-				"the + opens the one compact picker — options only, no link lane");
+				"the + opens the one compact picker — options only, no link items");
 
 			var gear = vector.GetVisualDescendants().OfType<Button>()
 				.Single(b => AutomationProperties.GetAutomationId(b) == "PublishIn.Settings");
@@ -1439,8 +1439,8 @@ namespace FwAvaloniaTests
 		}
 
 		// REVERT (gears never open context menus): the Lexeme Form text row draws NO gear; its
-		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label lane in
-		// the region view (RegionMenuTests) and the in-string lane below are unchanged.
+		// slice menu (menu="mnuDataTree-LexemeForm") stays on right-click only — the label path in
+		// the region view (RegionMenuTests) and the in-string path below are unchanged.
 		[AvaloniaTest]
 		public void TextRows_NeverDrawAGear_TheSliceMenuStaysOnRightClickOnly()
 		{
@@ -1464,7 +1464,7 @@ namespace FwAvaloniaTests
 					.Any(b => AutomationProperties.GetAutomationId(b) == "LexemeFormRow.Settings"),
 				Is.False, "the Lexeme Form slice-menu gear is reverted — text rows draw no gear");
 			Assert.That(((IHoverAffordanceProvider)text).HoverAffordances, Is.Empty,
-				"text rows expose no hover-revealed chrome");
+				"text rows expose no hover-revealed affordances");
 			Assert.That(requests, Is.Empty, "nothing dispatched a menu request on construction");
 		}
 	}

@@ -13,7 +13,7 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
       / owned-form / search-list); each is fully wired, green, and parity-evidenced
 - [ ] Every deferred WinForms screen has `Docs/migration/<screen>.md` (from `_TEMPLATE.md`) with
       a live-FLEx PNG (capture via `fieldworks-winapp`), primitive, parity checklist, gotchas
-      (`Docs/migration/` lives on the separate `phase1-docs` branch, not the spine PR checkout)
+      (for where `Docs/migration/` lives, see SKILL.md "Phase-1 Landing Strategy")
 - [ ] JIRA ticket filed per deferred screen, linked from its doc
 - [ ] Each backed-out screen's wiring verified from the product call site (`file:line`) — NOT
       from class names / comments / an Explore summary (those have given false "unwired" results)
@@ -41,7 +41,8 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
       accessibility identity)
 - [ ] Legacy timing baseline measured and committed
 - [ ] Legacy UIA smoke coverage exists for launcher/chooser reachability
-- [ ] All characterization tests run via `./test.ps1` (not branch-only lanes)
+- [ ] All characterization tests run via `./test.ps1` (not branch-only
+      build/test paths)
 
 ## Phase 3 — Seams
 
@@ -65,8 +66,8 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
       unsupported row (no silent fallback)
 - [ ] Custom-field placeholders expand from LCModel metadata at compile
       time; ghost rows are runtime state only
-- [ ] Stable AutomationIds derived from StableId
-      (`{StableId}`, `{StableId}.Label`, `{StableId}.{WsAbbrev}`)
+- [ ] Stable AutomationIds derived from StableId per the scheme in
+      `fieldworks-uia2-parity-testing` §"Automation Identity"
 
 ## Phase 6 — Host wiring
 
@@ -89,8 +90,8 @@ Use this when collapsing a large multi-surface derisk branch into a landable PR 
       sort/undo. No behavior/workflow claim left to "live verification" that a
       headless scenario could prove (parity-evidence.md §2a / §3)
 - [ ] Path 3 bundle produced per scenario (see parity-evidence.md §1)
-- [ ] Semantic, visual, workflow, and performance lanes each prove their
-      own axis; no lane substitutes for another
+- [ ] Semantic, visual, workflow, and performance evidence types each prove
+      their own axis; none substitutes for another
 - [ ] Performance within budget (≤ legacy total × 1.2, or accepted delta
       recorded)
 - [ ] 100% and 150% DPI captured

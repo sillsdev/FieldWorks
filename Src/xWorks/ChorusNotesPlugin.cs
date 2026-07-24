@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// winforms-free-lexeme-editor.md D2 / chorus-notes-contract.md — the UI-free core of the
 	/// Avalonia Chorus notes bar: owns the LibChorus repository wiring the legacy
 	/// <c>ChorusSystem.WinForms.CreateNotesBar</c> did (contract §3), and every read/write goes
-	/// through the same files, ref-URL/key shapes, and canonical save lane legacy `MessageSlice`
+	/// through the same files, ref-URL/key shapes, and canonical save path legacy `MessageSlice`
 	/// used — FLExBridge/S&amp;R and the legacy bar see ONE notes store. No UI types here; the
 	/// Avalonia pixels live in <see cref="ChorusNotesBarControl"/>, bridged by
 	/// <see cref="ChorusNotesEntryModel"/>. Pinned by ChorusNotesContractTests (contract §8).
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		// Always write through the repository's canonical save lane (under the saving mutex), never
+		// Always write through the repository's canonical save path (under the saving mutex), never
 		// the file directly (§4). Save unconditionally: an in-place message append must reach disk
 		// even if this LibChorus build's dirty flag misses it.
 		private void SaveOwnerOf(Annotation annotation)
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void MessageEditorFocused()
 		{
-			// §7c: switch the keyboard to the analysis WS — the same lane the region's own editors
+			// §7c: switch the keyboard to the analysis WS — the same path the region's own editors
 			// use for per-WS keyboards.
 			if (!string.IsNullOrEmpty(_analysisWsTag))
 				LexicalEditRegionBuilder.ActivateKeyboardForWritingSystem(_cache, _analysisWsTag);
@@ -509,9 +509,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception e)
 			{
-				// Graceful degradation, same policy as the companion lane: without a usable notes
-				// store the row degrades to the explicit unsupported row (the view's guard lane for
-				// a null factory result) — never take the pane down.
+				// Graceful degradation, same policy as the companion strip: without a usable notes
+				// store the row degrades to the explicit unsupported row (the view's null guard for
+				// a factory result) — never take the pane down.
 				Logger.WriteEvent($"ChorusNotesPlugin: notes bar unavailable for '{obj.Guid}': {e}");
 				store?.Dispose();
 				return null;

@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 	/// base-class walk), emitting section headers, indentation, per-writing-system editable text
 	/// fields, the morph-type chooser, read-only reference rows, and `ifdata` hiding — every field
 	/// bound to LCModel through metadata (class/field → flid) and editable through the fenced
-	/// session. Labels localize through the same <see cref="StringTable"/> lane legacy slices use.
+	/// session. Labels localize through the same <see cref="StringTable"/> lookup legacy slices use.
 	/// Unsupported constructs render an explicit unsupported row (visibility=always) or are skipped
 	/// (ifdata), never silently mis-rendered; compile diagnostics ride the region model.
 	/// </summary>
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<int, bool>> ParagraphDeleteSetters
 				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
-			// Companion lane: the unsupported rows that are really legacy dynamic custom slices,
+			// Companion strip: the unsupported rows that are really legacy dynamic custom slices,
 			// keyed by the row's StableId (see ComposedEntryRegion.CustomEditorFields).
 			public readonly List<ComposedCustomEditorField> CustomEditorFields
 				= new List<ComposedCustomEditorField>();
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					case ViewNodeKind.CustomFieldPlaceholder:
 						// B1 (xml-retirement-blockers): runtime expansion of `customFields="here"` from
-						// live MDC metadata. The `<generate>` compile-time lane stays 9.2/9.3.
+						// live MDC metadata. The `<generate>` compile-time path stays 9.2/9.3.
 						WalkCustomFields(node, obj, depth);
 						break;
 					case ViewNodeKind.Conditional:
@@ -596,7 +596,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// B3: evaluate the imported condition per object, mirroring XmlVc.ConditionPasses exactly
-			// as the legacy detail lane invokes it (DataTree.cs:2639-2696 over XmlVc.cs:3276-3290):
+			// as the legacy detail path invokes it (DataTree.cs:2639-2696 over XmlVc.cs:3276-3290):
 			// resolve the target object, then every test present must pass; <ifnot> negates the result.
 			private bool ConditionPasses(ViewCondition condition, ICmObject obj)
 			{
@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// One synthesized node per custom field, typed like MakeAutoCustomSlice's editor
-			// switch: String/MultiString/MultiUnicode take the text lane (multi-WS per the field's
+			// switch: String/MultiString/MultiUnicode take the text path (multi-WS per the field's
 			// WsSelector, resolved through the same legacy magic-ws pair WalkTextField uses);
 			// Integer stays an editable int row, GenDate a read-only formatted row, references
 			// read-only joined names (chooser write-back rides 6.3), and OwningAtomic StText
@@ -830,12 +830,12 @@ namespace SIL.FieldWorks.XWorks
 			// the … list" jump links (ReallySimpleListChooser.InitializeExtras,
 			// ReallySimpleListChooser.cs:887-926). Only the "goto" kind is implemented: it is the
 			// ONLY kind the lexeme-editor layouts use (all 95 shipped chooserLinks are
-			// type="goto"); legacy "dialog"/"simple" links need ChooserCommand lanes and are
+			// type="goto"); legacy "dialog"/"simple" links need ChooserCommand paths and are
 			// logged + skipped, never half-dispatched. The target guid stays empty like legacy
 			// m_guidLink (no lexeme-editor chooserInfo sets flidTextParam); labels localize
-			// through the same StringTable lane as XmlUtils.GetLocalizedAttributeValue.
+			// through the same StringTable lookup as XmlUtils.GetLocalizedAttributeValue.
 			// When the layout authored NO goto link but the row IS backed by a possibility list,
-			// the tool derives from the list the same way the legacy jump lane does (see
+			// the tool derives from the list the same way the legacy jump path does (see
 			// ResolveListEditorTool); a list with no resolvable editor tool yields no link — and
 			// therefore NO gear on that row.
 			private IReadOnlyList<RegionChooserLink> BuildChooserLinks(ViewNode node,
@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// Review task 10: skipped links must be visible in the product log, not
 						// only on a debugger (the legacy "dialog"/"simple" kinds wait on the
-						// ChooserCommand lanes).
+						// ChooserCommand paths).
 						SIL.Reporting.Logger.WriteEvent(
 							$"FullEntryRegionComposer: chooserLink type '{link.Type}' (tool '{link.Tool}') on {node.StableId} is not the goto kind the lexeme editor uses; skipped.");
 						continue;
@@ -933,7 +933,8 @@ namespace SIL.FieldWorks.XWorks
 				// companion strip → unsupported row, in that order and never the other way. The
 				// registry is consulted FIRST so a migrated class composes as a real in-tree
 				// Avalonia editor (a RegionFieldKind.Custom row carrying the plugin's control
-				// factory); only unclaimed classes fall through to the companion/unsupported lanes.
+				// factory); only unclaimed classes fall through to the companion strip or the
+				// unsupported row.
 				if (!string.IsNullOrEmpty(node.CustomEditorClass))
 				{
 					var plugin = _plugins?.Resolve(node.CustomEditorClass);
@@ -950,7 +951,7 @@ namespace SIL.FieldWorks.XWorks
 				// Review task 8: the editor-string → category knowledge lives ONCE, in
 				// EditorKindMap (the same FwAvalonia home the importer's classification and the
 				// mapper's kind projection use); this switch only routes categories. Categories
-				// without a dedicated lane here (AtomicReferenceChooser, Grouping, Other) refine
+				// without a dedicated case here (AtomicReferenceChooser, Grouping, Other) refine
 				// by CellarPropertyType in WalkOtherField — that LCModel knowledge stays in the
 				// composer.
 				switch (EditorKindMap.ClassifyRegionFieldKind(node.RawEditor))
@@ -1005,7 +1006,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 				}
 
-				// Companion lane (second in the D1 resolution order, after the plugin registry
+				// Companion strip (second in the D1 resolution order, after the plugin registry
 				// claim above): a dynamically loaded custom slice (editor="Custom" class=...)
 				// keeps its legacy class/assembly identity, keyed by the StableId of the row the
 				// dispatch above produced for it — whether that was the explicit unsupported row or
@@ -1092,7 +1093,7 @@ namespace SIL.FieldWorks.XWorks
 				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
 				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
 				// Review task 12: the per-ws value rows build through the shared factory
-				// (LexicalEditRegionBuilder uses the same one), this lane only supplies the text.
+				// (LexicalEditRegionBuilder uses the same one), this path only supplies the text.
 				IReadOnlyList<RegionWsValue> values;
 				if (type == CellarPropertyType.Unicode)
 				{
@@ -1316,7 +1317,7 @@ namespace SIL.FieldWorks.XWorks
 					// prompt AND a class conversion (MoStemAllomorph <-> MoAffixAllomorph). Assigning
 					// blindly would create a model-invalid combination (e.g. a stem allomorph with an
 					// affix morph type), so a boundary-crossing assignment is rejected until the
-					// class-conversion lane lands (review round 2). The GUID -> kind classification
+					// class-conversion path lands (review round 2). The GUID -> kind classification
 					// is the seam's single table (review consolidation: this file's 19-entry mirror
 					// dictionary is gone; MorphTypeGuidConsolidationTests pins the seam's table to
 					// the MoMorphTypeTags constants).
@@ -1330,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// The sense grammatical-info (MSA) chooser — the editable lane for editor="msaReferenceComboBox"
+			// The sense grammatical-info (MSA) chooser — the editable path for editor="msaReferenceComboBox"
 			// (legacy MSAReferenceComboBoxSlice). Offers the project's Parts of Speech; selecting one
 			// find-or-creates the matching MSA on the OWNING ENTRY and assigns it to THIS sense via the
 			// liblcm SandboxMSA setter (which owns the stem/affix find-or-create + old-MSA cleanup), inside
@@ -1374,7 +1375,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			// 6.3: an atomic possibility reference takes the chooser lane (legacy
+			// 6.3: an atomic possibility reference takes the chooser path (legacy
 			// PossibilityAtomicReferenceSlice): options from the field's own list
 			// (ReferenceTargetOwner), write-back through the fenced session.
 			private void AddAtomicPossibilityChooser(ViewNode node, ICmObject obj, int depth, int flid,
@@ -1631,7 +1632,7 @@ namespace SIL.FieldWorks.XWorks
 				return possibility.OwningList == list ? possibility : null;
 			}
 
-			// ---- winforms-free-lexeme-editor.md D3: the entry-reference vector lane ----
+			// ---- winforms-free-lexeme-editor.md D3: the entry-reference vector path ----
 
 			internal const string EntrySequenceSliceClassName =
 				"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
@@ -2002,13 +2003,13 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 
-			// The lane's gate: a NON-virtual reference vector whose destination signature is
+			// This path's gate: a NON-virtual reference vector whose destination signature is
 			// LexEntry/LexSense — or CmObject when the layout identity is the legacy
 			// EntrySequenceReferenceSlice (ComponentLexemes/PrimaryLexemes sign ILexEntryOrLexSense
 			// as plain CmObject). Virtual back-ref vectors (ComplexFormEntries, Subentries,
 			// VisibleComplexFormBackRefs, VariantFormEntries) stay read-only this wave: their writes
 			// land on the OTHER entry's LexEntryRef, not on this flid (the legacy launcher's
-			// AddNewObjectsToProperty overrides) — recorded as the lane's deferred note.
+			// AddNewObjectsToProperty overrides) — recorded as this path's deferred note.
 			private bool IsEntryOrSenseReferenceVector(ViewNode node, int flid)
 			{
 				if (_mdc.get_IsVirtual(flid))
@@ -2031,7 +2032,7 @@ namespace SIL.FieldWorks.XWorks
 			// D3: the editable entry/sense-reference vector — current refs as headword items, remove
 			// in-pane, add via type-ahead headword-prefix search over the entry repository (never the
 			// whole lexicon as options). Writes ride sda.Replace on the flid inside the fenced
-			// session, like the possibility lane, plus the legacy ComponentLexemes coupling below.
+			// session, like the possibility path, plus the legacy ComponentLexemes coupling below.
 			private void AddEntryReferenceVector(ViewNode node, ICmObject obj, int depth, int flid, int count)
 			{
 				var items = new List<RegionChoiceOption>();
@@ -2139,7 +2140,7 @@ namespace SIL.FieldWorks.XWorks
 				VisibleComplexFormBackRefs
 			}
 
-			// The lane's gate: a VIRTUAL reference vector on a LexEntry/LexSense whose field name
+			// This path's gate: a VIRTUAL reference vector on a LexEntry/LexSense whose field name
 			// is one of the back-ref relationships we can write across objects safely. Everything
 			// else (including VariantFormEntryBackRefs, whose legacy add inserts a NEW variant
 			// entry rather than choosing an existing ref) stays read-only.
@@ -2362,7 +2363,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// D3's type-ahead lane: case-insensitive headword-prefix search over the entry
+			// D3's type-ahead path: case-insensitive headword-prefix search over the entry
 			// repository (headword/citation form/lexeme form), excluding the pane's own entry and
 			// the vector's current members (read live, so a staged add drops out of the next
 			// search), capped at MaxEntrySearchResults, ordered by headword.
@@ -2403,7 +2404,7 @@ namespace SIL.FieldWorks.XWorks
 			// input. The importer now carries the <deParams><stringList> ids/group onto the node,
 			// so the row composes an EDITABLE option chooser fed by that list — the stored enum
 			// integer is the 0-based index into the ids (EnumComboSlice maps SelectedIndex straight
-			// to the property), and the labels resolve through the same StringTable lane the legacy
+			// to the property), and the labels resolve through the same StringTable lookup the legacy
 			// slice uses (GetStringsFromStringListNode). The option chooser is CLOSED, so it can
 			// never persist an out-of-range enum value (the free-form int editor regression). When
 			// the layout carries no stringList (none could be imported), the row degrades to a
@@ -2535,7 +2536,7 @@ namespace SIL.FieldWorks.XWorks
 							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
 
 							// 6.3: an atomic ref whose target owner is a possibility list takes the
-							// chooser lane (legacy PossibilityAtomicReferenceSlice), like morph type.
+							// chooser path (legacy PossibilityAtomicReferenceSlice), like morph type.
 							if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 							{
 								if (targetHvo == 0 && HideWhenEmpty(node))
@@ -3105,7 +3106,7 @@ namespace SIL.FieldWorks.XWorks
 			// Viewing parity (11.14) + 14.1: empty always-visible object/sequence fields show the
 			// legacy ghost add-prompt as a WATERMARK on an editable row — clicking in clears the
 			// prompt, and typing creates the missing object inside the fenced session (the legacy
-			// ghost-slice create-on-edit lane), routing the text into the layout's ghost field
+			// ghost-slice create-on-edit path), routing the text into the layout's ghost field
 			// (ghost=/ghostWs=, e.g. the new allomorph's Form).
 			private void AddGhostPrompt(ViewNode node, ICmObject obj, int depth)
 			{
@@ -3136,7 +3137,7 @@ namespace SIL.FieldWorks.XWorks
 				public Func<string, string, bool> Setter;
 			}
 
-			// The create-on-edit half of the ghost lane: resolve the owning field's destination class
+			// The create-on-edit half of the ghost path: resolve the owning field's destination class
 			// (the layout's ghostClass when the model class is abstract; MoStemAllomorph for MoForm,
 			// matching legacy CreateAllomorph; Gloss-on-LexSense when no ghost field is authored) and
 			// build a setter that creates the object inside the open session — cancel rolls the
@@ -3450,7 +3451,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// Layout ws= spec resolution (the composer's read AND write writing-system lists): the
 		// legacy pair — WritingSystemServices.GetMagicWsIdFromName then GetWritingSystemList —
-		// exactly as SliceFactory's multistring lane resolves it, so list membership and ordering
+		// exactly as SliceFactory's multistring path resolves it, so list membership and ordering
 		// ("analysis vernacular" vs "vernacular analysis") match legacy slices. Pronunciation
 		// specs ride the project's pronunciation list (kwsPronunciations; GetWritingSystemList has
 		// no kwsPronunciation branch), initialized on demand the same way legacy

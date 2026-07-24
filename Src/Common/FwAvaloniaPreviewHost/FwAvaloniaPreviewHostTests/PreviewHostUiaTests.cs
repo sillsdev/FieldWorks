@@ -68,7 +68,7 @@ namespace FwAvaloniaPreviewHostTests
 		}
 
 		/// <summary>
-		/// Task 7.11 (names/order lane): the realized Avalonia surface exposes the same field labels
+		/// Task 7.11 (names/order coverage): the realized Avalonia surface exposes the same field labels
 		/// the legacy DataTree slices carry, as UIA Names, in the legacy top-to-bottom order — so a
 		/// screen reader announces the same vocabulary on both surfaces. The keyboard-traversal
 		/// assistive smoke extends this once the chooser-dialog path (6.3/3.16) lands.

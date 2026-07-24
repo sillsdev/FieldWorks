@@ -39,6 +39,8 @@ and "fixes" it, thrashing the code.
 | Date range filter (FilterBar) | `Src/Common/Controls/XMLViews/SimpleDateMatchDlg.cs` | `Src/Common/FwAvaloniaDialogs/DateRangeFilterDialogView.axaml.cs` + `DateRangeFilterDialogViewModel.cs` |
 | Filter For… (FilterBar text match) | `Src/Common/Controls/XMLViews/SimpleMatchDlg.cs` | `Src/Common/FwAvaloniaDialogs/FilterForDialogView.axaml.cs` + `FilterForDialogViewModel.cs` |
 
+Symbols in the rules below use Tools → Options as the worked example.
+
 The Avalonia side splits into three layers — keep the split when you edit:
 - **View (`*.axaml`)** — controls + bindings only. No LCModel, no WinForms.
 - **ViewModel (`*ViewModel.cs`)** — edits a plain **state DTO**, exposes
@@ -69,13 +71,15 @@ paired dialog:
    (e.g. writing-system change before vs after plugin install).
 4. **Visibility/enable drift.** WinForms shows the button only in New mode; the
    Avalonia copy shows it always (or never). Mirror the gate
-   (`UpdateManageFeaturesButtonVisibility` ↔ `ManageFeaturesVisible`).
+   (e.g., in the Options pair: `UpdateManageFeaturesButtonVisibility` ↔
+   `ManageFeaturesVisible`).
 5. **String/localization drift.** Wording, mnemonics, or the `.resx`/XLIFF key
    updated on one side only → inconsistent UI and broken translation memory.
    Both sides must carry the same seed English (see `fieldworks-localization-review`).
 6. **State DTO / persisted-key mismatch.** The DTO field, the settings property,
    and the `PropertyTable` broadcast key must all agree
-   (`UIModeDisabledTools` ↔ `LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName`).
+   (e.g., in the Options pair: `UIModeDisabledTools` ↔
+   `LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName`).
    A rename on one side leaves the other writing a dead key.
 7. **Test blind spot.** Headless Avalonia tests pass while the WinForms form (or
    the live modal-host input path) is broken, because the tests exercise
@@ -92,20 +96,23 @@ Do these, in order, on any paired-dialog change:
    other side is out of scope, stop and say so explicitly.
 2. **Share the source of truth, don't copy it.** Prefer one list/rule both
    consume over two hand-maintained copies:
-   - `LexicalEditFeatureCatalog` is the single catalog behind both the WinForms
-     button and the Avalonia dialog — extend it, not two lists.
+   - e.g., in the Options pair: `LexicalEditFeatureCatalog` is the single catalog
+     behind both the WinForms button and the Avalonia dialog — extend it, not
+     two lists.
    - Apply/normalize/gate helpers should be shared or mirrored with a pointer
-     comment (`NormalizeUiMode`, `ParseDisabledTools`/`SerializeDisabledTools`).
-3. **Mirror the apply order.** The launcher's `Apply()` is explicitly written to
-   follow `LexOptionsDlg.m_btnOK_Click`'s order. Keep that ordering and cite the
-   WinForms method in a comment when you add a step.
+     comment (e.g., in the Options pair: `NormalizeUiMode`,
+     `ParseDisabledTools`/`SerializeDisabledTools`).
+3. **Mirror the apply order.** Keep the two sides' apply/OK ordering identical
+   and cite the counterpart method in a comment when you add a step. Worked
+   example: the Options launcher's `Apply()` is explicitly written to follow
+   `LexOptionsDlg.m_btnOK_Click`'s order.
 4. **Cross-reference in comments.** Each side names its counterpart
-   (`// parity with LexOptionsDlg.m_manageFeaturesButton`). A grep for the
+   (e.g. `// parity with LexOptionsDlg.m_manageFeaturesButton`). A grep for the
    partner symbol should always find the other side.
 5. **Parity tests, not just binding tests.** Assert the *behavior* both dialogs
    promise: field persists on OK, control hidden in Legacy/shown in New,
    validation blocks OK, disabled-tools round-trips. Put the DTO/launcher apply
-   under test (see `AvaloniaOptionsDialogLauncherTests`, `LexOptionsDlgTests`,
+   under test (see e.g. `AvaloniaOptionsDialogLauncherTests`, `LexOptionsDlgTests`,
    `OptionsDialogTests`).
 6. **Record approved divergences** in the launcher/class doc as a
    `KNOWN GAP`/`APPROVED DIVERGENCE` block with the reason **and the approver**.
@@ -119,7 +126,7 @@ Do these, in order, on any paired-dialog change:
 - [ ] Both implementations edited (WinForms form; Avalonia view + view-model +
       state DTO + launcher build & apply).
 - [ ] Same controls, visibility gates, validation, and apply order on both.
-- [ ] Same seed strings + `.resx`/XLIFF keys on both (localization lane).
+- [ ] Same seed strings + `.resx`/XLIFF keys on both (localization strategy).
 - [ ] DTO field ↔ settings property ↔ `PropertyTable` key all agree.
 - [ ] Parity tests assert the behavior (persist / gate / validate), not just a
       binding.

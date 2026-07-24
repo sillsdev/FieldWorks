@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ONE realized region surface hosting BOTH field controls over the SAME composed edit context:
 		/// the sibling multistring (<see cref="FwMultiWsTextField"/>) and the StText
 		/// (<see cref="FwStructuredTextField"/>) in one StackPanel. We realize the field controls directly
-		/// (rather than the whole <see cref="LexicalEditRegionView"/> chrome, whose GridSplitter needs an
+		/// (rather than the whole <see cref="LexicalEditRegionView"/> surface, whose GridSplitter needs an
 		/// input/cursor platform the bare headless xWorksTests host does not register) and wire the SAME
 		/// commit semantics the view's autosave/gesture path uses:
 		///   * structural gestures (add/delete/style) commit immediately + raise the re-show, via the

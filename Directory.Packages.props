@@ -196,10 +196,12 @@
 		(targets net461) for the in-process embedding used by the migration's
 		Phase-1 surfaces.
 		These are referenced by Src/Common/FwAvalonia and Src/Common/FwAvaloniaDialogs.
-		Exception: xWorks and xWorksTests carry a compile-only (PrivateAssets)
-		reference to the base Avalonia package so the IRegionEditorPlugin
-		contract (winforms-free-lexeme-editor.md D1) can type its control
-		factories; the runtime assemblies still ship with FwAvalonia.
+		Exception: xWorks and xWorksTests reference the base Avalonia package with
+		IncludeAssets="compile" PrivateAssets="all". IRegionEditorPlugin.BuildControl
+		returns Avalonia.Controls.Control, so compiling xWorks needs Avalonia's
+		reference assemblies; the reference contributes nothing at runtime and is
+		not visible to dependent projects — Avalonia's runtime assemblies reach
+		Output via FwAvalonia's normal PackageReference.
 		=============================================================
 	-->
 	<ItemGroup Label="Avalonia">

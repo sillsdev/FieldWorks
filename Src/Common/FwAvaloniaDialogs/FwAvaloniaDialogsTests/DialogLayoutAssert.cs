@@ -83,10 +83,10 @@ namespace FwAvaloniaDialogsTests
 				{
 					for (var j = i + 1; j < kids.Count; j++)
 					{
-						// Skip a pair where either side is SPLITTER CHROME. A GridSplitter (or a Border/control
+						// Skip a pair where either side is a SPLITTER. A GridSplitter (or a Border/control
 						// whose Name/AutomationId contains "Splitter", e.g. the browse column-splitter) is a drag
 						// handle that by design sits ON a column boundary and overlaps its neighbors — that is
-						// interaction chrome, not the content-overlap defect this tripwire hunts for.
+						// expected splitter behavior, not the content-overlap defect this tripwire hunts for.
 						if (IsSplitterChrome(kids[i]) || IsSplitterChrome(kids[j]))
 							continue;
 						var a = kids[i].Bounds;
@@ -145,7 +145,7 @@ namespace FwAvaloniaDialogsTests
 		}
 
 		// ----- (5) the dialog root carries a nonzero window padding (the structural anti-crowding guarantee:
-		// content never butts the chrome even if a view omits its own margin). Only enforced when a root is
+		// content never butts the dialog frame even if a view omits its own margin). Only enforced when a root is
 		// actually present (a `fwDialogRoot` UserControl) so the helper still works on ad-hoc test roots. -----
 
 		private static void AssertDialogRootHasWindowPadding(Control root, IEnumerable<Control> all)
@@ -159,7 +159,7 @@ namespace FwAvaloniaDialogsTests
 			{
 				var p = uc.Padding;
 				Assert.That(p.Left + p.Top + p.Right + p.Bottom, Is.GreaterThan(0),
-					$"dialog root {Describe(uc)} (.fwDialogRoot) must carry a nonzero window padding so content does not crowd the chrome");
+					$"dialog root {Describe(uc)} (.fwDialogRoot) must carry a nonzero window padding so content does not crowd the dialog frame");
 			}
 		}
 
@@ -184,9 +184,9 @@ namespace FwAvaloniaDialogsTests
 		// control the dialog author placed directly in the logical tree.
 		private static bool IsTemplateGenerated(StyledElement e) => e.TemplatedParent != null;
 
-		// Splitter chrome (a GridSplitter, or any control whose Name / AutomationId contains "Splitter")
+		// A splitter (a GridSplitter, or any control whose Name / AutomationId contains "Splitter")
 		// is a drag handle that by design straddles a column boundary and overlaps its neighbors. It is
-		// interaction chrome, not the content-overlap defect, so the sibling-overlap check skips it.
+		// expected splitter behavior, not the content-overlap defect, so the sibling-overlap check skips it.
 		private static bool IsSplitterChrome(Control c)
 			=> c is GridSplitter
 				|| (c.Name ?? string.Empty).IndexOf("Splitter", System.StringComparison.Ordinal) >= 0

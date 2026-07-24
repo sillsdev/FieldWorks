@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// Editing (tasks 6.8/6.10, autosave 14.4): when an <see cref="IRegionEditContext"/> is supplied,
 	/// field editors stage writes through it (which opens the fenced LCModel session on the first
 	/// edit) and the session auto-commits on focus loss — the legacy save-as-you-go behavior, one
-	/// undo step per field, no Save/Cancel chrome. Validation failures show inline and block the
+	/// undo step per field, no Save/Cancel buttons. Validation failures show inline and block the
 	/// commit; Escape rolls the session back. Without a context the view is read-only display.
 	/// </summary>
 	public sealed class LexicalEditRegionView : UserControl
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			grid.Children.Add(editor);
 			_rowControls[row].Add(editor);
 
-			// Hover-reveal chrome: the WHOLE row (label cell + editor) is the hover/focus surface for its
+			// Hover-reveal affordances: the WHOLE row (label cell + editor) is the hover/focus surface for its
 			// secondary affordances — the field-options "⋮" and any editor affordances (chooser gear,
 			// vector bars/launcher). Both attach against the same sources so they reveal together.
 			var hoverSources = new Control[] { labelCell, editor };
@@ -468,7 +468,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			};
 			AutomationProperties.SetAutomationId(link, automationId + ".Hotlinks");
 			// Reuse the existing localized affordance name; the strip is the always-visible twin of the
-			// kebab's hotlinks lane, so it announces the same "field options"/commands intent.
+			// kebab's hotlinks section, so it announces the same "field options"/commands intent.
 			AutomationProperties.SetName(link, FwAvaloniaStrings.FieldOptionsMenu);
 			ToolTip.SetTip(link, FwAvaloniaStrings.FieldOptionsMenu);
 			link.Click += (s, e) =>

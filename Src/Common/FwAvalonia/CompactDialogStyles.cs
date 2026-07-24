@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 			// NOTE: the deterministic CheckBox style (FwCheckBoxStyle) is NOT added here. It is applied once,
 			// to every dialog body, by DialogThemeBootstrap.Apply (called from each dialog ctor in BOTH the
-			// runtime host and the headless dialog tests), so it reaches the headless lane that never runs this
+			// runtime host and the headless dialog tests), so it reaches the headless path that never runs this
 			// runtime chokepoint — and stays a single application rather than a double one.
 
 			yield return new Style(s => s.OfType<TextBlock>())

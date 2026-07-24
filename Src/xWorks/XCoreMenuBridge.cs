@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <see cref="RegionMenuItem"/> model the Avalonia surface renders as a native MenuFlyout.
 	/// Labels, enablement, checkmarks, submenus, and execution all run through the SAME xCore
 	/// machinery the WinForms adapter uses (GetDisplayProperties → mediator Display* round-trip;
-	/// OnClick → mediator command dispatch) — only the chrome changes. Because this consumes the
+	/// OnClick → mediator command dispatch) — only the rendering changes. Because this consumes the
 	/// shared engine, it serves every DTMenuHandler-hosting tool (Grammar, Notebook, Lists,
 	/// Words), not just the Lexicon.
 	/// </summary>

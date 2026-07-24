@@ -87,7 +87,7 @@ namespace FwAvaloniaTests
 		public void EmptyStText_ShowsOneEditableRow_NoCrash()
 		{
 			// The composer can hand an empty paragraph list for a not-yet-materialized StText; the editor
-			// must still show ONE empty editable row (StTextSlice.OnEnter's create-on-edit lane).
+			// must still show ONE empty editable row (StTextSlice.OnEnter's create-on-edit path).
 			var field = Field(new List<RegionParagraph>());
 			var context = new FakeRegionEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });

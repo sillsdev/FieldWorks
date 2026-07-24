@@ -20,7 +20,7 @@ using XCore;
 namespace SIL.FieldWorks.Common.RenderVerification
 {
 	/// <summary>
-	/// Harness for rendering a full DataTree (the lex entry edit view with all WinForms chrome)
+	/// Harness for rendering a full DataTree (the lex entry edit view with all WinForms decorations)
 	/// and capturing composite bitmaps that include grey labels, icons, expand/collapse buttons,
 	/// writing system indicators, section headers, and Views engine text content.
 	/// </summary>
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.Common.RenderVerification
 		}
 
 		/// <summary>
-		/// Captures the DataTree as a composite bitmap. WinForms chrome (grey labels, icons,
+		/// Captures the DataTree as a composite bitmap. WinForms decorations (grey labels, icons,
 		/// section headers, separators) is captured via DrawToBitmap; Views engine content
 		/// inside ViewSlices is overlaid via VwDrawRootBuffered for each RootSite.
 		/// </summary>

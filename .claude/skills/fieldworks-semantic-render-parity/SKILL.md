@@ -5,20 +5,19 @@ description: "Capture or review FieldWorks parity evidence: semantic snapshots, 
 
 # FieldWorks Semantic Render Parity
 
-Shared definitions (Path 3 bundle, evidence lanes, artifact naming) live in
+Shared definitions (Path 3 bundle, evidence types, artifact naming) live in
 `fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md`.
 This skill covers how to build and review the snapshots themselves.
 
 ## Role in the migration before/after pipeline
 This skill owns the **"after"** half of the migration-doc before/after pairs (see
-`fieldworks-winapp` and `Docs/migration/_TEMPLATE.md`). **`Docs/migration/` (including
-`_TEMPLATE.md`) lives on the separate, never-merged `phase1-docs` branch, not in this
-checkout** — pull it from that branch rather than assuming it exists in your working tree.
+`fieldworks-winapp` and `Docs/migration/_TEMPLATE.md`; for where `Docs/migration/`
+lives, see the hub skill's "Phase-1 Landing Strategy").
 The **before** is the legacy WinForms truth
 PNG (captured by the `fieldworks-winapp` launch-per-tool script / dialog harness); the **after** is
 the Avalonia surface rendered **from the same seeded data** by its visual test in
 `FwAvaloniaDialogsTests`/`FwAvaloniaTests`, saved as `<name>-after.png` in the doc's `images/`. Use
-the same render/visual lane defined here (not a one-off screenshot) so the "after" doubles as the
+the same render/visual evidence type defined here (not a one-off screenshot) so the "after" doubles as the
 parity baseline, and both PNGs attach to the surface's JIRA ticket. When the surfaces should match,
 the semantic snapshot — not the side-by-side image — is the authoritative parity check; the images
 are the human-facing summary.
@@ -66,7 +65,8 @@ cause is the XML import, slice filtering, editor registry, or rendering.
   a raw diff image).
 - A semantic snapshot is not a substitute for visual/render parity when
   typography, density, wrapping, or native rendering seams are under
-  review — and vice versa. One lane per axis; see parity-evidence.md §2.
+  review — and vice versa. One evidence type per axis; see
+  parity-evidence.md §2.
 - Control-level Avalonia visual evidence may come from Avalonia.Headless
   rendered frames when the scenario is explicitly control-scoped; desktop
   workflow/accessibility claims still need live-window evidence.
@@ -86,7 +86,7 @@ cause is the XML import, slice filtering, editor registry, or rendering.
 
 State whether evidence is semantic, visual, accessibility/workflow, or
 performance parity, and identify remaining unproven axes. When a Path 3
-bundle is used, name each artifact and which lane it proves.
+bundle is used, name each artifact and which evidence type it proves.
 
 ## Keep This Skill Current
 

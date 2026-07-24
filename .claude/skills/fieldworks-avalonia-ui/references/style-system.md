@@ -3,6 +3,8 @@
 The single source of truth for **font/density tokens** and the **field-border rule** across every
 FieldWorks Avalonia surface. The goal is WinForms density (tight, Segoe-UI-9pt-ish) — NOT the roomy
 Fluent defaults — with each surface matching its *own* WinForms predecessor rather than one uniform look.
+Density/layout is what must match WinForms; styling (colors and control *look*) is chartered to diverge
+toward the Fluent theme per the migration hub's `architecture-patterns.md` §12.
 
 ## Why a global token system (and why it renders headlessly)
 
@@ -37,7 +39,9 @@ sit inside a `Border.fwFieldHost` that supplies the box.
 in `DialogTheme.axaml`, `FwSurfaceStyles.SurfaceFontSize`, and `CompactDialogStyles.DialogFontSize` are all 12
 and must stay equal.
 
-**Control height:** `TextBox`/`ComboBox`/`Button` `MinHeight = 22` (WinForms ~22px, not Fluent ~32px).
+**Control height:** `TextBox`/`ComboBox`/`Button` `MinHeight = 24` (WinForms runs ~21-23px; 24 is the
+pointer-accessibility floor — see the "Why `DialogMinControlHeight` is 24, not 22" note below — still far
+from Fluent's ~32px).
 `CheckBox`/`TabItem`/`ListBoxItem` drop the min-height floor to 0 and size to content.
 
 **Paddings:** `TextBox 4,2` · `ComboBox 6,1` · `Button 8,2` · `TabItem 8,3` · `ListBoxItem 4,1`.
@@ -53,7 +57,8 @@ leaves the tall layout slot, which still inflates the row — the rejected hack,
 `14×14`, and (c) collapses the inner template `Grid` (the Fluent `Height=32` slot, reached via
 `CheckBox /template/ Grid#RootGrid > Grid`) to `14` — so the layout footprint, not just the paint, is the box.
 The `CheckGlyph` rides a `Viewbox` inside that grid and auto-scales to the new box. Net: a row with a checkbox
-is no taller than a text row (`BrowseRowMinHeight = 18`). This is **global, both lanes**: `FwSurfaceStyles`
+is no taller than a text row (`BrowseRowMinHeight = 18`). This is **global — applied in both render
+paths: the runtime host and the headless test renderer**: `FwSurfaceStyles`
 (region/browse) and `CompactDialogStyles` (dialog runtime) both call `FwCheckBoxStyle.Build()`, and
 `DialogTheme.axaml` mirrors the SAME selectors as XAML for the headless dialog tests — the `14` in the XAML must
 stay equal to `CheckboxBoxSize`. Part names verified against `Avalonia.Themes.Fluent 11.3.6`
@@ -68,7 +73,7 @@ with a compact `ControlTheme`: an outer `Ellipse#FwRadio_Box` pinned to `14×14`
 `Ellipse#FwRadio_Dot` (~45% of the box) revealed on `:checked`, the label after a `CheckboxLabelGap` (6px)
 `StackPanel.Spacing`, `MinHeight=0`/`MinWidth=0`, `VerticalAlignment=Center`. Concrete brushes (white fill, gray
 `#7A7A7A` stroke, blue `#005FB8` accent stroke + dot when checked, gray when disabled) — NOT Fluent
-`DynamicResource`s (hard rule 1). **Global, both lanes**, wired in the SAME two places as the checkbox:
+`DynamicResource`s (hard rule 1). **Global in both render paths**, wired in the SAME two places as the checkbox:
 `FwSurfaceStyles.Build()` (region/browse/bulk-bar) and `DialogThemeBootstrap.Apply` (dialogs — runtime host AND
 headless tests). It is NOT in `DialogTheme.axaml` (the template replace must be a C# `ControlTheme`) and NOT in
 `CompactDialogStyles` (the bootstrap already covers both dialog paths). The headless no-inflation test mirrors
