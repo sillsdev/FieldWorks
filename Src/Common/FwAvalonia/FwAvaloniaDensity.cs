@@ -27,20 +27,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Compact padding inside text editors.</summary>
 		public static readonly Thickness EditorPadding = new Thickness(3, 1, 3, 1);
 
-		/// <summary>Compact padding for a browse/table row container (no vertical padding; height comes
-		/// from <see cref="BrowseRowMinHeight"/>), matching the legacy XMLViews row inset.</summary>
-		public static readonly Thickness BrowseRowPadding = new Thickness(3, 0, 3, 0);
-
-		/// <summary>Compact browse/table row height (legacy XMLViews rows are ~17px), replacing the
-		/// taller Fluent ListBoxItem floor.</summary>
+		/// <summary>Compact list/table row height (legacy XMLViews rows are ~17px), replacing the
+		/// taller Fluent ListBoxItem floor. Also the row-height budget the checkbox/radio glyph
+		/// sizes below are derived from.</summary>
 		public const double BrowseRowMinHeight = 18d;
-
-		/// <summary>Fixed width of the leading select-checkbox column. It MUST be fixed (not
-		/// <c>GridLength.Auto</c>): the header and row grids size an Auto column to the checkbox they
-		/// contain, but the filter row has no checkbox in column 0, so an Auto column there collapses to
-		/// zero and shifts every filter cell out of line with its header/data column. A fixed width keeps
-		/// the header, filter, and row grids reserving identical leading space.</summary>
-		public const double CheckboxColumnWidth = 28d;
 
 		/// <summary>
 		/// The DETERMINISTIC, GLOBAL checkbox glyph-box size (px), a fixed function of the surface font

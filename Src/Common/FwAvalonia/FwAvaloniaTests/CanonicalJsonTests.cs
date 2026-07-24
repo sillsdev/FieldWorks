@@ -5,63 +5,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Avalonia.Controls;
-using Avalonia.Headless.NUnit;
-using Avalonia.Threading;
-using Avalonia.VisualTree;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 
 namespace FwAvaloniaTests
 {
-	/// <summary>
-	/// Task 7.1 — the virtualized browse/table path: a 10k-row source realizes only visible rows and
-	/// materializes only realized cells.
-	/// </summary>
-	[TestFixture]
-	public class LexicalBrowseViewTests
-	{
-		private sealed class CountingRowSource : IBrowseRowSource
-		{
-			public int Materialized;
-
-			public int RowCount => 10_000;
-
-			public IReadOnlyList<string> GetCellValues(int rowIndex)
-			{
-				Materialized++;
-				return new[] { $"lexeme {rowIndex}", $"gloss {rowIndex}" };
-			}
-
-			// Stable identity (Task 20). NOT counted as a materialization — and not called during render
-			// for a checkbox-less table — so the lazy-realization assertions are unaffected.
-			public int HvoAt(int rowIndex) => rowIndex + 1;
-		}
-
-		private static ViewDefinitionModel TwoColumnDefinition() => ViewDefinitionTestBuilders.TwoColumnBrowseDefinition();
-
-		[AvaloniaTest]
-		public void TenThousandRows_RealizeOnlyTheVisibleWindow()
-		{
-			var source = new CountingRowSource();
-			var view = new LexicalBrowseView(TwoColumnDefinition(), source);
-			var window = new Window { Content = view, Width = 480, Height = 320 };
-			window.Show();
-			Dispatcher.UIThread.RunJobs();
-
-			var realized = view.GetVisualDescendants().OfType<ListBoxItem>().Count();
-			Assert.That(realized, Is.GreaterThan(0), "visible rows realize");
-			Assert.That(realized, Is.LessThan(100), $"virtualization must cap realization (realized {realized} of 10000)");
-			Assert.That(source.Materialized, Is.LessThan(300),
-				$"cells materialize only for realized rows (materialized {source.Materialized} of 10000)");
-
-			var header = view.GetVisualDescendants().OfType<TextBlock>()
-				.FirstOrDefault(t => Avalonia.Automation.AutomationProperties.GetAutomationId(t) == "BrowseHeader.Form");
-			Assert.That(header?.Text, Is.EqualTo("Lexeme Form"), "columns come from the typed definition");
-		}
-	}
-
 	/// <summary>
 	/// Tasks 9.2/9.4 — canonical JSON: the typed IR round-trips losslessly (snapshot-identical), the
 	/// shipped first slice serializes and reloads with runtime XML fully out of the loop, and version

@@ -18,8 +18,8 @@ namespace SIL.FieldWorks.XWorks
 	/// resolution slot): the composer carries legacy custom-editor identities (class/assembly,
 	/// keyed by the placeholder row's StableId) instead of dropping them, designated-class
 	/// selection picks slices for WinForms promotion, and the model filter removes exactly the
-	/// promoted rows. Since wave 2 (D2) the designated set is EMPTY — the Messages slice graduated
-	/// to the native ChorusNotesPlugin — so the mechanism is exercised here with an empty plugin
+	/// promoted rows. The designated set is EMPTY — no shipped class needs WinForms promotion —
+	/// so the mechanism is exercised here with an empty plugin
 	/// registry (to reach the placeholder path at all) and a fake designated class; the strip
 	/// itself stays hidden in the product. The mechanism remains the documented coexistence route for
 	/// future tools' WinForms-only custom slices (xml-retirement-blockers.md B11).
@@ -74,26 +74,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_WithTheDefaultRegistry_TheMessagesSliceIsAPhase1FollowUpSurface_NotCompanionMaterial()
+		public void Compose_WithTheDefaultRegistry_TheMessagesSliceIsUnclaimed_NotCompanionMaterial()
 		{
-			// Wave 2 (D2) built ChorusNotesPlugin, but the base-PR scoping decision keeps it
-			// UNREGISTERED in the default registry: it is a Phase-1 follow-up surface (same status as
-			// the Avalonia browse table and the interlinear/rule-formula plugins), so the Messages node
-			// is NOT plugin-routed in this base PR — it stays in the composer's placeholder path
-			// (CustomEditorFields), same as any other unclaimed dynamically loaded slice. With the
-			// companion-designated set also empty, the companion strip stays hidden either way.
+			// The Chorus notes bar is not migrated in this PR, so no plugin claims MessageSlice: the
+			// Messages node stays in the composer's placeholder path (CustomEditorFields), same as any
+			// other unclaimed dynamically loaded slice. With the companion-designated set also empty,
+			// the companion strip stays hidden either way.
 			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
 
 			Assert.That(composed.CustomEditorFields.Select(f => f.ClassName),
 				Has.Member(AvaloniaCompanionSlices.MessageSliceClassName),
-				"with ChorusNotesPlugin gated off, the Messages slice is unclaimed and keeps its placeholder identity");
+				"with no notes-bar plugin, the Messages slice is unclaimed and keeps its placeholder identity");
 			var custom = composed.Model.Fields.Where(f => f.Kind == RegionFieldKind.Custom
 				&& f.Label == "Messages").ToList();
 			Assert.That(custom, Is.Empty,
 				"an unclaimed class never composes as a plugin's Custom row (D1 resolution order)");
 
 			Assert.That(AvaloniaCompanionSlices.SelectPromotions(composed.CustomEditorFields), Is.Empty,
-				"nothing promotes: the designated set is empty since wave 2, so RecordEditView's "
+				"nothing promotes: the designated set is empty, so RecordEditView's "
 				+ "companion strip never shows");
 		}
 

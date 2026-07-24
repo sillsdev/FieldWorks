@@ -142,60 +142,6 @@
   <data name="FwAvaloniaDialogs.InsertEntryGrammaticalInfoLabel" xml:space="preserve">
     <value>Grammatical Information</value>
   </data>
-  <data name="FwAvaloniaDialogs.FindReplaceTitle" xml:space="preserve">
-    <value>Find and Replace</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceFindLabel" xml:space="preserve">
-    <value>Find</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceReplaceLabel" xml:space="preserve">
-    <value>Replace with</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceMatchCase" xml:space="preserve">
-    <value>Match case</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceMatchDiacritics" xml:space="preserve">
-    <value>Match diacritics</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceMatchWholeWord" xml:space="preserve">
-    <value>Match whole word</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceMatchWritingSystem" xml:space="preserve">
-    <value>Match writing system</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceUseRegex" xml:space="preserve">
-    <value>Use regular expressions</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceFindEmpty" xml:space="preserve">
-    <value>Enter text to find.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FindReplaceInvalidRegex" xml:space="preserve">
-    <value>The regular expression is invalid.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsTitle" xml:space="preserve">
-    <value>Configure Columns</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsAvailableLabel" xml:space="preserve">
-    <value>Available columns</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsShownLabel" xml:space="preserve">
-    <value>Shown columns</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsAdd" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsRemove" xml:space="preserve">
-    <value>Remove</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsMoveUp" xml:space="preserve">
-    <value>Move up</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsMoveDown" xml:space="preserve">
-    <value>Move down</value>
-  </data>
-  <data name="FwAvaloniaDialogs.ConfigureColumnsNeedsAColumn" xml:space="preserve">
-    <value>At least one column must remain visible.</value>
-  </data>
   <data name="FwAvaloniaDialogs.Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -249,75 +195,6 @@
   </data>
   <data name="FwAvaloniaDialogs.LinkMsa.Title" xml:space="preserve">
     <value>Choose Morpheme and Grammatical Info.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.Title" xml:space="preserve">
-    <value>Filter for items containing...</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.MatchLabel" xml:space="preserve">
-    <value>Enter text to search for:</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.Anywhere" xml:space="preserve">
-    <value>Anywhere</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.AtStart" xml:space="preserve">
-    <value>At start</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.AtEnd" xml:space="preserve">
-    <value>At end</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.WholeItem" xml:space="preserve">
-    <value>Whole item</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.Regex" xml:space="preserve">
-    <value>Match for regular expression</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.MatchCase" xml:space="preserve">
-    <value>Match case</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.Empty" xml:space="preserve">
-    <value>Enter text to filter for.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterFor.InvalidRegex" xml:space="preserve">
-    <value>The regular expression is not valid.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.Title" xml:space="preserve">
-    <value>Restrict Date</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.RelationLabel" xml:space="preserve">
-    <value>Show items where the date is:</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.DateLabel" xml:space="preserve">
-    <value>Date</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.EndLabel" xml:space="preserve">
-    <value>and</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.On" xml:space="preserve">
-    <value>on</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.NotOn" xml:space="preserve">
-    <value>not on</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.OnOrBefore" xml:space="preserve">
-    <value>on or before</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.OnOrAfter" xml:space="preserve">
-    <value>on or after</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.Between" xml:space="preserve">
-    <value>between</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.NoDate" xml:space="preserve">
-    <value>Choose a date.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.RestrictDate.RangeInverted" xml:space="preserve">
-    <value>The end date must be on or after the start date.</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterChoose.Title" xml:space="preserve">
-    <value>Choose Items</value>
-  </data>
-  <data name="FwAvaloniaDialogs.FilterChoose.Prompt" xml:space="preserve">
-    <value>Choose the items to filter for:</value>
   </data>
   <data name="FwAvaloniaDialogs.LinkEntryOrSense.EntryRadio" xml:space="preserve">
     <value>Entry</value>

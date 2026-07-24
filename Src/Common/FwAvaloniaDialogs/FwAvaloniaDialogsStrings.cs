@@ -95,28 +95,6 @@ namespace FwAvaloniaDialogs
 		// group-box caption "Grammatical Information").
 		public static string InsertEntryGrammaticalInfoLabel => Text("FwAvaloniaDialogs.InsertEntryGrammaticalInfoLabel");
 
-		// Find/Replace pattern-setup dialog (Find/Replace Phase 1, bulk replace).
-		public static string FindReplaceTitle => Text("FwAvaloniaDialogs.FindReplaceTitle");
-		public static string FindReplaceFindLabel => Text("FwAvaloniaDialogs.FindReplaceFindLabel");
-		public static string FindReplaceReplaceLabel => Text("FwAvaloniaDialogs.FindReplaceReplaceLabel");
-		public static string FindReplaceMatchCase => Text("FwAvaloniaDialogs.FindReplaceMatchCase");
-		public static string FindReplaceMatchDiacritics => Text("FwAvaloniaDialogs.FindReplaceMatchDiacritics");
-		public static string FindReplaceMatchWholeWord => Text("FwAvaloniaDialogs.FindReplaceMatchWholeWord");
-		public static string FindReplaceMatchWritingSystem => Text("FwAvaloniaDialogs.FindReplaceMatchWritingSystem");
-		public static string FindReplaceUseRegex => Text("FwAvaloniaDialogs.FindReplaceUseRegex");
-		public static string FindReplaceFindEmpty => Text("FwAvaloniaDialogs.FindReplaceFindEmpty");
-		public static string FindReplaceInvalidRegex => Text("FwAvaloniaDialogs.FindReplaceInvalidRegex");
-
-		// Configure-Columns dialog (Avalonia browse, P1: show/hide/reorder).
-		public static string ConfigureColumnsTitle => Text("FwAvaloniaDialogs.ConfigureColumnsTitle");
-		public static string ConfigureColumnsAvailableLabel => Text("FwAvaloniaDialogs.ConfigureColumnsAvailableLabel");
-		public static string ConfigureColumnsShownLabel => Text("FwAvaloniaDialogs.ConfigureColumnsShownLabel");
-		public static string ConfigureColumnsAdd => Text("FwAvaloniaDialogs.ConfigureColumnsAdd");
-		public static string ConfigureColumnsRemove => Text("FwAvaloniaDialogs.ConfigureColumnsRemove");
-		public static string ConfigureColumnsMoveUp => Text("FwAvaloniaDialogs.ConfigureColumnsMoveUp");
-		public static string ConfigureColumnsMoveDown => Text("FwAvaloniaDialogs.ConfigureColumnsMoveDown");
-		public static string ConfigureColumnsNeedsAColumn => Text("FwAvaloniaDialogs.ConfigureColumnsNeedsAColumn");
-
 		// Message-box buttons (shared by FwMessageBox / MessageBoxViewModel) and severity-icon accessible names.
 		public static string Yes => Text("FwAvaloniaDialogs.Yes");
 		public static string No => Text("FwAvaloniaDialogs.No");
@@ -148,38 +126,6 @@ namespace FwAvaloniaDialogs
 
 		// Link MSA consumer of the entry-search dialog (legacy LinkMSADlg wording).
 		public static string LinkMsaTitle => Text("FwAvaloniaDialogs.LinkMsa.Title");
-
-		// "Filter For…" pattern-match dialog (browse column filter parity). Seed text matches the canonical
-		// legacy SimpleMatchDlg wording so the English fallback is identical and translation memory carries over.
-		public static string FilterForTitle => Text("FwAvaloniaDialogs.FilterFor.Title");
-		public static string FilterForMatchLabel => Text("FwAvaloniaDialogs.FilterFor.MatchLabel");
-		public static string FilterForAnywhere => Text("FwAvaloniaDialogs.FilterFor.Anywhere");
-		public static string FilterForAtStart => Text("FwAvaloniaDialogs.FilterFor.AtStart");
-		public static string FilterForAtEnd => Text("FwAvaloniaDialogs.FilterFor.AtEnd");
-		public static string FilterForWholeItem => Text("FwAvaloniaDialogs.FilterFor.WholeItem");
-		public static string FilterForRegex => Text("FwAvaloniaDialogs.FilterFor.Regex");
-		public static string FilterForMatchCase => Text("FwAvaloniaDialogs.FilterFor.MatchCase");
-		public static string FilterForEmpty => Text("FwAvaloniaDialogs.FilterFor.Empty");
-		public static string FilterForInvalidRegex => Text("FwAvaloniaDialogs.FilterFor.InvalidRegex");
-
-		// "Restrict Date…" date-range dialog (browse date/genDate column filter parity). The relation labels seed
-		// from the canonical legacy SimpleDateMatchDlg type-combo wording so the English fallback is identical and
-		// translation memory carries over.
-		public static string RestrictDateTitle => Text("FwAvaloniaDialogs.RestrictDate.Title");
-		public static string RestrictDateRelationLabel => Text("FwAvaloniaDialogs.RestrictDate.RelationLabel");
-		public static string RestrictDateDateLabel => Text("FwAvaloniaDialogs.RestrictDate.DateLabel");
-		public static string RestrictDateEndLabel => Text("FwAvaloniaDialogs.RestrictDate.EndLabel");
-		public static string RestrictDateOn => Text("FwAvaloniaDialogs.RestrictDate.On");
-		public static string RestrictDateNotOn => Text("FwAvaloniaDialogs.RestrictDate.NotOn");
-		public static string RestrictDateOnOrBefore => Text("FwAvaloniaDialogs.RestrictDate.OnOrBefore");
-		public static string RestrictDateOnOrAfter => Text("FwAvaloniaDialogs.RestrictDate.OnOrAfter");
-		public static string RestrictDateBetween => Text("FwAvaloniaDialogs.RestrictDate.Between");
-		public static string RestrictDateNoDate => Text("FwAvaloniaDialogs.RestrictDate.NoDate");
-		public static string RestrictDateRangeInverted => Text("FwAvaloniaDialogs.RestrictDate.RangeInverted");
-
-		// "Choose…" list-choice chooser title (browse chooser column filter parity).
-		public static string FilterChooseTitle => Text("FwAvaloniaDialogs.FilterChoose.Title");
-		public static string FilterChoosePrompt => Text("FwAvaloniaDialogs.FilterChoose.Prompt");
 
 		// Link Entry or Sense entry/sense toggle (the legacy LinkEntryOrSenseDlg m_rbEntry / m_rbSense radios). Seed
 		// text matches the canonical legacy LinkEntryOrSenseDlg.resx wording (ampersand accelerators dropped — the

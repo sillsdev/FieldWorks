@@ -124,13 +124,5 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.False, "no undo step was created");
 		}
 
-		[TestCase(null, "vern")]
-		[TestCase("", "vern")]
-		[TestCase("$ws=analysis", "anal")]
-		[TestCase("$ws=vernacular", "vern")]
-		[TestCase("es", "es")]
-		[TestCase("reversal", "reversal")]
-		public void NormalizeWs_MapsMagicSpecsToAliases(string input, string expected)
-			=> Assert.That(BrowseColumnEditSpec.NormalizeWs(input), Is.EqualTo(expected));
 	}
 }

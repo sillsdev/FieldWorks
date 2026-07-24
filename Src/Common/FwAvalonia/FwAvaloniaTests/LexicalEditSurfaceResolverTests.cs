@@ -103,10 +103,9 @@ namespace FwAvaloniaTests
 				"the tool gate is checked first and must defeat an explicit override for an unregistered tool");
 		}
 
-		// --- Phase-1 inert follow-up surfaces (interlinear, rule-formula, browse table). ---
-		// These surfaces' view-layer code ships in the base PR but their tools are deliberately NOT
-		// registered, so even UIMode=New falls back to the legacy WinForms surface. Each follow-up PR
-		// activates its surface by moving its tool name(s) into the active registry list.
+		// --- Deferred edit surfaces (interlinear, rule-formula). Their tools are deliberately NOT
+		// registered, so even UIMode=New falls back to the legacy WinForms surface. A future PR
+		// activates each surface by moving its tool name(s) into the active registry list.
 
 		[Test]
 		public void InertFollowUpSurfacesFallBackToLegacy_EditSurface()
@@ -114,20 +113,12 @@ namespace FwAvaloniaTests
 			foreach (var tool in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools)
 			{
 				Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.False,
-					$"deferred edit-surface tool '{tool}' must be inert (unregistered) in the base PR");
+					$"deferred edit-surface tool '{tool}' must be inert (unregistered) in this PR");
 				Assert.That(
 					LexicalEditSurfaceResolver.Resolve(uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: tool),
 					Is.EqualTo(LexicalEditSurface.WinForms),
 					$"deferred tool '{tool}' must fall back to WinForms even under UIMode=New");
 			}
-		}
-
-		[Test]
-		public void InertFollowUpSurfacesFallBackToLegacy_BrowseTable()
-		{
-			foreach (var tool in LexicalEditSurfaceResolver.Phase1FollowUpBrowseTools)
-				Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaBrowseForTool(tool), Is.False,
-					$"the browse table is a follow-up: tool '{tool}' must be inert in the base PR");
 		}
 
 		[TestCase("lexiconEdit")]
@@ -154,79 +145,6 @@ namespace FwAvaloniaTests
 			var surface = LexicalEditSurfaceResolver.Resolve(currentToolName: "lexiconEdit");
 			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
 				"a supported tool still defaults to the safe WinForms surface until New is chosen");
-		}
-
-		// ----- Browse surface (Stage 3 product wiring, from editable-table) -----
-
-		// NOTE: the browse TABLE is a Phase-1 FOLLOW-UP surface, INERT in the base PR — so these now assert the
-		// legacy fallback even under New. The browse follow-up PR re-registers the browse tools (see
-		// Phase1FollowUpBrowseTools) and restores the SelectsAvalonia expectations.
-
-		[Test]
-		public void ResolveBrowse_LexiconBrowse_NewMode_InertInBase_FallsBackToLegacy()
-		{
-			var surface = LexicalEditSurfaceResolver.ResolveBrowse(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "lexiconBrowse");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
-				"the browse table is a follow-up surface, inert in the base PR (even under New)");
-		}
-
-		[Test]
-		public void ResolveBrowse_LexiconBrowse_DefaultsToWinForms_WhenPreferenceUnset()
-		{
-			var surface = LexicalEditSurfaceResolver.ResolveBrowse(currentToolName: "lexiconBrowse");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
-				"the browse table still defaults to the safe legacy BrowseViewer until New is chosen");
-		}
-
-		[Test]
-		public void ResolveBrowse_LexiconEdit_NewMode_InertInBase_FallsBackToLegacy()
-		{
-			// The Lexicon Edit tool's left Entries pane reports currentContentControl = "lexiconEdit".
-			// Inert in the base PR; the browse follow-up re-registers it.
-			var surface = LexicalEditSurfaceResolver.ResolveBrowse(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "lexiconEdit");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
-				"the browse table is a follow-up surface, inert in the base PR (even under New)");
-		}
-
-		[TestCase("concordance")]
-		[TestCase("")]               // blank tool does NOT opt a browse surface in
-		[TestCase(null)]
-		public void ResolveBrowse_NonBrowseOrBlankTool_StaysWinForms_EvenInNewMode(string toolName)
-		{
-			var surface = LexicalEditSurfaceResolver.ResolveBrowse(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: toolName);
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms));
-		}
-
-		// §20.2: the flat-list non-lexicon tools whose browse/list pane opts into the Avalonia owned table
-		// under New mode (their EDIT detail stays WinForms until separately registered). Names verified
-		// against the shipped tool configuration XML.
-		[TestCase("notebookEdit")]            // §20.2.1 Notebook record list (RnGenericRec)
-		[TestCase("notebookBrowse")]          // §20.2.1 standalone Notebook Browse
-		[TestCase("Analyses")]                // §20.2.4 Words analyses list
-		[TestCase("toolBulkEditWordforms")]   // §20.2.4 Words bulk-edit
-		[TestCase("featureTypesAdvancedEdit")]      // §20.2.7 Grammar/Lists flat feature-types table
-		[TestCase("reversalToolReversalIndexPOS")]  // §20.2.7 reversal-index POS flat table
-		// Phase-1: the browse TABLE is a follow-up surface, INERT in the base PR, so these tools stay on the
-		// legacy BrowseViewer even under New. The browse follow-up re-registers them and restores Avalonia.
-		public void ResolveBrowse_RegisteredNonLexiconTool_NewMode_InertInBase(string toolName)
-		{
-			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: toolName),
-				Is.EqualTo(LexicalEditSurface.WinForms),
-				$"{toolName} browse is inert in the base PR (table is a follow-up); stays legacy even under New");
-		}
-
-		[Test]
-		public void ResolveBrowse_ExplicitOverride_InertInBase()
-		{
-			// With the browse table inert (no tool registered), even an explicit override cannot select the
-			// Avalonia table — the tool gate is checked first. The follow-up re-registers the browse tools.
-			Assert.That(LexicalEditSurfaceResolver.ResolveBrowse(
-				overrideEnabled: true, uiMode: LexicalEditSurfaceResolver.LegacyUIMode,
-				currentToolName: "lexiconBrowse"), Is.EqualTo(LexicalEditSurface.WinForms));
 		}
 
 		// --- Disabled-tools CSV round-trip (the "Manage Individual Features" persistence format). No prior

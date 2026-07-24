@@ -82,18 +82,6 @@
   <data name="FwAvalonia.PossibilityNameOrAbbreviationRequired" xml:space="preserve">
     <value>A name or abbreviation is required.</value>
   </data>
-  <data name="FwAvalonia.InterlinearMorphemesLabel" xml:space="preserve">
-    <value>Morphemes</value>
-  </data>
-  <data name="FwAvalonia.InterlinearLexEntriesLabel" xml:space="preserve">
-    <value>Lex. Entries</value>
-  </data>
-  <data name="FwAvalonia.InterlinearGlossLabel" xml:space="preserve">
-    <value>Lex. Gloss</value>
-  </data>
-  <data name="FwAvalonia.InterlinearGramInfoLabel" xml:space="preserve">
-    <value>Lex. Gram. Info.</value>
-  </data>
   <data name="FwAvalonia.EditDiscardedInvalid" xml:space="preserve">
     <value>Your edit was discarded because it is invalid: {0}</value>
   </data>
@@ -108,21 +96,6 @@
   </data>
   <data name="FwAvalonia.AvaloniaHostName" xml:space="preserve">
     <value>Avalonia host</value>
-  </data>
-  <data name="FwAvalonia.SelectAllRows" xml:space="preserve">
-    <value>Select all rows</value>
-  </data>
-  <data name="FwAvalonia.ConfigureColumnsMenu" xml:space="preserve">
-    <value>Configure Columns...</value>
-  </data>
-  <data name="FwAvalonia.FilterShowAll" xml:space="preserve">
-    <value>Show All</value>
-  </data>
-  <data name="FwAvalonia.FilterBlanks" xml:space="preserve">
-    <value>Blanks</value>
-  </data>
-  <data name="FwAvalonia.FilterNonBlanks" xml:space="preserve">
-    <value>Non-blanks</value>
   </data>
   <data name="FwAvalonia.GhostAddPrompt" xml:space="preserve">
     <value>Type to add {0}</value>
@@ -141,18 +114,6 @@
   </data>
   <data name="FwAvalonia.AddSelected" xml:space="preserve">
     <value>Add</value>
-  </data>
-  <data name="FwAvalonia.ChorusAddNote" xml:space="preserve">
-    <value>Add note</value>
-  </data>
-  <data name="FwAvalonia.ChorusAddMessage" xml:space="preserve">
-    <value>Add message</value>
-  </data>
-  <data name="FwAvalonia.ChorusOk" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="FwAvalonia.ChorusResolved" xml:space="preserve">
-    <value>Resolved</value>
   </data>
   <data name="FwAvalonia.LaunchDialog" xml:space="preserve">
     <value>Open dialog</value>
@@ -187,152 +148,6 @@
   <data name="FwAvalonia.WritingSystem" xml:space="preserve">
     <value>Writing System</value>
   </data>
-  <data name="FwAvalonia.BulkEditListChoice" xml:space="preserve">
-    <value>List Choice</value>
-  </data>
-  <data name="FwAvalonia.BulkEditTarget" xml:space="preserve">
-    <value>Target:</value>
-  </data>
-  <data name="FwAvalonia.BulkEditPreview" xml:space="preserve">
-    <value>Preview</value>
-  </data>
-  <data name="FwAvalonia.BulkEditApply" xml:space="preserve">
-    <value>Apply</value>
-  </data>
-  <data name="FwAvalonia.BulkEditBarName" xml:space="preserve">
-    <value>Bulk edit bar</value>
-  </data>
-  <data name="FwAvalonia.BulkCopyTab" xml:space="preserve">
-    <value>Bulk Copy</value>
-  </data>
-  <data name="FwAvalonia.BulkCopySource" xml:space="preserve">
-    <value>Source:</value>
-  </data>
-  <data name="FwAvalonia.BulkCopyAppend" xml:space="preserve">
-    <value>Append</value>
-  </data>
-  <data name="FwAvalonia.BulkCopyReplace" xml:space="preserve">
-    <value>Replace</value>
-  </data>
-  <data name="FwAvalonia.BulkCopyDoNothing" xml:space="preserve">
-    <value>Don't overwrite</value>
-  </data>
-  <data name="FwAvalonia.BulkClearTab" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="FwAvalonia.BulkReplaceTab" xml:space="preserve">
-    <value>Bulk Replace</value>
-  </data>
-  <data name="FwAvalonia.BulkReplaceSetup" xml:space="preserve">
-    <value>Setup...</value>
-  </data>
-  <data name="FwAvalonia.BulkReplaceNoPattern" xml:space="preserve">
-    <value>No find/replace pattern configured.</value>
-  </data>
-  <data name="FwAvalonia.Bulk.Transduce" xml:space="preserve">
-    <value>Process</value>
-  </data>
-  <data name="FwAvalonia.Bulk.TransduceConverter" xml:space="preserve">
-    <value>Converter:</value>
-  </data>
-  <data name="FwAvalonia.Bulk.TransduceSetup" xml:space="preserve">
-    <value>Setup...</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopy" xml:space="preserve">
-    <value>Click Copy</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyModeLabel" xml:space="preserve">
-    <value>Copy what?</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyWord" xml:space="preserve">
-    <value>Word</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyReorder" xml:space="preserve">
-    <value>Reorder (whole field)</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopySeparator" xml:space="preserve">
-    <value>Separator:</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyAppend" xml:space="preserve">
-    <value>Append, separated by:</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyOverwrite" xml:space="preserve">
-    <value>Overwrite</value>
-  </data>
-  <data name="FwAvalonia.Bulk.ClickCopyChooseTarget" xml:space="preserve">
-    <value>Please select a target column for click copy</value>
-  </data>
-  <data name="FwAvalonia.Browse.SortFromEnd" xml:space="preserve">
-    <value>Sort From End</value>
-  </data>
-  <data name="FwAvalonia.Browse.SortByLength" xml:space="preserve">
-    <value>Sort By Length</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterMoreThanOneLine" xml:space="preserve">
-    <value>More than one line</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterExactlyOneLine" xml:space="preserve">
-    <value>Exactly one line</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterYes" xml:space="preserve">
-    <value>yes</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterNo" xml:space="preserve">
-    <value>no</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterZero" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterGreaterThanZero" xml:space="preserve">
-    <value>Greater than 0</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterGreaterThanOne" xml:space="preserve">
-    <value>Greater than 1</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterFor" xml:space="preserve">
-    <value>Filter for...</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterExcludeFormat" xml:space="preserve">
-    <value>Exclude {0}</value>
-  </data>
-  <data name="FwAvalonia.Browse.RestrictDate" xml:space="preserve">
-    <value>Restrict...</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterChoose" xml:space="preserve">
-    <value>Choose...</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteWhatLabel" xml:space="preserve">
-    <value>Delete what?</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteModeClearField" xml:space="preserve">
-    <value>Clear Field</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteModeDeleteRows" xml:space="preserve">
-    <value>Delete Rows</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteApply" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeletePreview" xml:space="preserve">
-    <value>Preview</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteConfirmTitle" xml:space="preserve">
-    <value>Confirm Multiple Deletions</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteConfirmMessageFormat" xml:space="preserve">
-    <value>You are about to delete {0} item(s). This cannot be undone if too many objects are affected.
-
-Do you wish to continue?</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteWillDeleteMarker" xml:space="preserve">
-    <value>(will be deleted)</value>
-  </data>
-  <data name="FwAvalonia.Bulk.DeleteBlockedMarker" xml:space="preserve">
-    <value>(cannot be deleted)</value>
-  </data>
-  <data name="FwAvalonia.Browse.FilterSpellingErrors" xml:space="preserve">
-    <value>Spelling Errors</value>
-  </data>
   <data name="FwAvalonia.Pos.NotSure" xml:space="preserve">
     <value>&lt;Not sure&gt;</value>
   </data>
@@ -344,12 +159,6 @@ Do you wish to continue?</value>
   </data>
   <data name="FwAvalonia.Pos.ChooserName" xml:space="preserve">
     <value>Part of Speech</value>
-  </data>
-  <data name="FwAvalonia.RuleCell.Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="FwAvalonia.RuleCell.InsertBefore" xml:space="preserve">
-    <value>Insert before</value>
   </data>
   <data name="FwAvalonia.StText.AddParagraph" xml:space="preserve">
     <value>Add paragraph</value>
@@ -398,18 +207,6 @@ Do you wish to continue?</value>
   </data>
   <data name="FwAvalonia.Audio.NoRecording" xml:space="preserve">
     <value>(no recording)</value>
-  </data>
-  <data name="FwAvalonia.Browse.CellCopy" xml:space="preserve">
-    <value>Copy</value>
-  </data>
-  <data name="FwAvalonia.Browse.CellPaste" xml:space="preserve">
-    <value>Paste</value>
-  </data>
-  <data name="FwAvalonia.Browse.RdeNewRowPrompt" xml:space="preserve">
-    <value>Type here to add a new entry...</value>
-  </data>
-  <data name="FwAvalonia.Browse.ExportCsv" xml:space="preserve">
-    <value>Export visible rows (CSV)...</value>
   </data>
   <data name="FwAvalonia.StructuredText.ParagraphName" xml:space="preserve">
     <value>{0} paragraph {1}</value>

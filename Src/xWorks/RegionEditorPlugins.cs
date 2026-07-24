@@ -143,28 +143,20 @@ namespace SIL.FieldWorks.XWorks
 			return registry;
 		}
 
-		// The builtin plugin list. Wave 2 (D2) built ChorusNotesPlugin — the native Avalonia notes
-		// bar over LibChorus — but per the base-PR scoping decision it is NOT registered here: it
-		// ships as a PHASE-1 FOLLOW-UP surface, exactly like the Avalonia browse table and the
-		// interlinear/rule-formula plugins below, rather than going live under the base PR's
-		// UIMode=New surfaces (lexiconEdit/lexiconEditPopup/notebookEdit/posEdit). With no plugin
-		// claiming AvaloniaCompanionSlices.MessageSliceClassName, the Messages node falls back to the
-		// D1 resolution order's next slot: the companion-designated set (currently empty), then the
-		// read-only placeholder/"unsupported" row (never a crash, never silently missing — see
-		// FullEntryRegionMessagesCompanionTests). The follow-up PR restores the registration here
-		// alongside the ChorusNotesPlugin.IsPhase1FollowUp flip (see ChorusNotesPlugin.cs).
-		// Wave 3 (D3) is a composer route, not a plugin. Wave 4 (D4) landed the dialog-launcher
-		// plugins: value row + "..." button calling the host's ILegacyDialogLauncher seam. The
-		// LexemeEditorBurnDownTests census measures coverage as they land.
+		// The builtin plugin list. The Chorus notes bar (MessageSlice) is NOT migrated in this PR:
+		// with no plugin claiming AvaloniaCompanionSlices.MessageSliceClassName, the Messages node
+		// falls back to the D1 resolution order's next slot — the companion-designated set (currently
+		// empty), then the read-only placeholder/"unsupported" row (never a crash, never silently
+		// missing — see FullEntryRegionMessagesCompanionTests). A future PR adds that plugin and
+		// registers it here. Wave 3 (D3) is a composer route, not a plugin. Wave 4 (D4) landed the
+		// dialog-launcher plugins: value row + "..." button calling the host's ILegacyDialogLauncher
+		// seam. The LexemeEditorBurnDownTests census measures coverage as plugins land.
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());
-			// PHASE-1 FOLLOW-UP PRs: ChorusNotesPlugin (the Chorus/FLExBridge notes bar, see above),
-			// the avalonia-interlinear-editor (InterlinearSlicePlugin), and the avalonia-rule-formula-editor
-			// family (RuleFormulaRegionEditorPlugin, MetaRuleFormulaRegionEditorPlugin,
-			// AffixRuleFormulaRegionEditorPlugin, PhEnvironmentRegionEditorPlugin, BasicIpaSymbolRegionEditorPlugin)
-			// ship in their own follow-up PRs. Each follow-up adds its plugin file(s) back and restores the
-			// registration here, alongside the registry flip in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
+			// FUTURE PRs: the Chorus/FLExBridge notes bar plugin (see above), the interlinear editor,
+			// and the rule-formula editor family each add their plugin file(s) and register here,
+			// alongside the registry flip in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
@@ -209,13 +201,11 @@ namespace SIL.FieldWorks.XWorks
 				// the sense's reversal-entry forms now compose as an editable multi-WS text field through
 				// the D1 plugin route, retiring the lone Unsupported row. It is therefore PluginRouted, no
 				// longer deferred.
-				// MessageSlice (ChorusNotesPlugin) is a PHASE-1 FOLLOW-UP surface (base-PR scoping
-				// decision): the plugin exists and is built, but RegisterBuiltins deliberately does not
-				// register it in this base PR, so the class rides this deferred route — same gate/status
-				// as the Avalonia browse table and the interlinear/rule-formula plugins — until a
-				// follow-up PR restores the registration (see RegionEditorPluginRegistry.RegisterBuiltins
-				// and ChorusNotesPlugin.IsPhase1FollowUp).
-				{ AvaloniaCompanionSlices.MessageSliceClassName, "Phase-1 follow-up surface (ChorusNotesPlugin gated off in base PR)" }
+				// MessageSlice (the Chorus notes bar) is not migrated in this PR: no plugin claims it, so
+				// the class rides this deferred route and the Messages node composes as the read-only
+				// placeholder row until a future PR adds a notes-bar plugin (see
+				// RegionEditorPluginRegistry.RegisterBuiltins).
+				{ AvaloniaCompanionSlices.MessageSliceClassName, "Chorus notes bar not migrated in this PR (read-only placeholder row)" }
 			};
 
 		/// <summary>

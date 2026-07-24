@@ -27,7 +27,7 @@ Two hard rules that fall out of headless rendering:
 |---|---|---|---|
 | **Dialog text inputs** (`TextBox`/`ComboBox`, and the `PART_*Host` boxes wrapping owned multistring/option editors) | classic WinForms dialog inputs | **clearly boxed** — visible 1px gray border + tight padding | `DialogTheme.axaml` (`fwFieldHost` style + `TextBox`/`ComboBox` setters) |
 | **Detail / region view** (`LexicalEditRegionView`) | the DataTree | **flat** with subtle 1px field separators — do NOT box every value | flat structure via `FwAvaloniaDensity` literals; font via `FwSurfaceStyles` |
-| **Browse table** (`LexicalBrowseView`) | XMLViews browse | **grid** — keep column/row lines + bold headers, just denser font | grid via `FwAvaloniaDensity`; font via `FwSurfaceStyles` |
+| **Browse table** (future PR) | XMLViews browse | **grid** — keep column/row lines + bold headers, just denser font | grid via `FwAvaloniaDensity`; font via `FwSurfaceStyles` |
 
 The key distinction: **dialog inputs get a box; detail values do not.** The detail view's owned editors are
 deliberately borderless/transparent (flat like the legacy RootSite). Only in a *dialog* does an owned editor
@@ -81,12 +81,12 @@ the checkbox's: `RadioButton_OnStyledSurface_IsFontProportional_AndDoesNotExceed
 `LexicalBrowseDensityTests.cs` asserts the ring is exactly `RadioBoxSize`, the control is ≤ `BrowseRowMinHeight`,
 and the dot opacity goes 0 → 1 on `:checked`.
 
-**Group separation:** adjacent logical control GROUPS (e.g. a radio group followed by a checkbox group, as in
-`FilterForDialogView`) get a little visual distance so they read as distinct rather than butting together:
+**Group separation:** adjacent logical control GROUPS (e.g. a radio group followed by a checkbox group)
+get a little visual distance so they read as distinct rather than butting together:
 `FwAvaloniaDensity.GroupSeparation` (8px) + the dialog tokens `DialogGroupSeparation` (`Thickness 0,8,0,0`) and
-`DialogGroupSeparatorBrush` (concrete `LightGray`) in `DialogTheme.axaml`. `FilterForDialogView` draws a thin
-1px `Border` hairline with that brush + margin between its match-style radio group and its regex/Match-case
-checkbox group. Use the thin line + whitespace for the clearest cases; whitespace alone where a line would be
+`DialogGroupSeparatorBrush` (concrete `LightGray`) in `DialogTheme.axaml`. A dialog draws a thin
+1px `Border` hairline with that brush + margin between adjacent groups (e.g. a radio group and a
+checkbox group). Use the thin line + whitespace for the clearest cases; whitespace alone where a line would be
 too heavy.
 
 **Dialog spacing tokens (`DialogTheme.axaml` `Styles.Resources`) — THE single source of truth for these
@@ -155,9 +155,9 @@ values already in `DialogTheme.axaml`.
   the path the headless dialog tests use, so they render at the same density as runtime. At runtime
   `AvaloniaDialogHost.ShowModal` additionally calls `CompactDialogStyles.Apply` — a belt-and-suspenders C#
   duplicate of the same values (both idempotent; keep the two numerically identical).
-- **Region / browse** — `FwSurfaceStyles.Apply(this)` in `LexicalEditRegionView` and `LexicalBrowseView`
-  ctors adds the **font-only** baseline (TextBlock/TextBox → 12px). The flat-with-separators (region) and
-  grid (browse) structure come from `FwAvaloniaDensity` literals, which are concrete and already render
+- **Region / browse** — `FwSurfaceStyles.Apply(this)` in the `LexicalEditRegionView`
+  ctor adds the **font-only** baseline (TextBlock/TextBox → 12px). The flat-with-separators (region)
+  structure comes from `FwAvaloniaDensity` literals, which are concrete and already render
   headlessly; `FwSurfaceStyles` exists only to drop the Fluent default font those literals don't touch.
 
 ## Changing the density

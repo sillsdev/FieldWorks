@@ -101,7 +101,7 @@ classes, so passing tests alone do not satisfy the review step.
 
 ## Region / browse coverage and the splitter exception
 
-The same gate applies to non-dialog owned surfaces (`LexicalEditRegionView`, `LexicalBrowseView`).
+The same gate applies to non-dialog owned surfaces (`LexicalEditRegionView`).
 Example: `Src/Common/FwAvalonia/FwAvaloniaTests/Visual/VisualSnapshotTests.cs`.
 
 `DialogLayoutAssert` was authored against dialog layouts; on grid-based region/browse surfaces a

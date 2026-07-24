@@ -30,7 +30,7 @@ top) for the decision, the why, and the gotchas. Quick map:
 | Region model + composer (boundary sits *above* DataTree) | `Src/xWorks/FullEntryRegionComposer.cs`, `Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`, `LexicalEditRegionMapper.cs` | §2 |
 | Explicit surface selection per host (`HostUiBehavior`) | `Src/Common/FwAvalonia/LexicalEditSurfaceSelectionService.cs` | §3 |
 | Owned dense controls, not stock property grids | `Src/Common/FwAvalonia/Region/FwFieldControls.cs`, `FwOptionPicker.cs`, `RegionMenuFlyout.cs` | §4 |
-| Plugin registry for custom/legacy slice classes | `Src/xWorks/RegionEditorPlugins.cs`, `Src/xWorks/ChorusNotesPlugin.cs` | §5 |
+| Plugin registry for custom/legacy slice classes | `Src/xWorks/RegionEditorPlugins.cs` | §5 |
 | Seam contracts (edit session, undo, validation, scheduler, lifetime, refresh) | `Src/Common/FwAvalonia/Seams/ISeams.cs` | `references/seam-catalog.md` |
 | Writing-system-aware text fields (font, RTL, keyboard per WS) | `Src/Common/FwAvalonia/Region/FwFieldControls.cs` (`FwMultiWsTextField`) | architecture-patterns.md §6 |
 | Dialog ownership across the WinForms/Avalonia boundary | `openspec/changes/lexical-edit-avalonia-migration/dialog-ownership.md` | §7 |
@@ -99,7 +99,6 @@ branch reached ~864 files / +140k). Land it with this discipline:
 1. **One canonical screen per UI primitive.** Keep exactly one fully-wired, green,
    parity-evidenced *consumer* per primitive as the reference teammates copy — distinct from
    the reusable *control*, which you always keep. Current canonical map (the screens to copy):
-   - virtualized editable **TABLE** → Lexicon Browse/Edit pane (`LexicalBrowseView`)
    - composed **detail editor** (DataTree replacement) → Lexicon Edit entry pane
      (`FullEntryRegionComposer`); the same composer also drives `notebookEdit`/`posEdit`
    - **tree + multi-selector** → `ChooserDialog` (one screen covers both)
