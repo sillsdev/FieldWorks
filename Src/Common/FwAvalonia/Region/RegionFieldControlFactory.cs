@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// every hosting surface (today the detail-pane region view, <c>LexicalEditRegionView.BuildEditor</c>;
 	/// any future in-cell editor passes only the collaborators it has). Every member is optional: a null
 	/// edit context yields read-only display; a null callback simply disables that affordance.
-	/// Task 21 — one switch, so new kinds live in one place.
+	/// One switch, so new kinds live in one place.
 	/// </summary>
 	public sealed class RegionFieldControlContext
 	{
@@ -144,9 +144,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// §19d: pictures render the actual image (legacy PictureSlice) PLUS the edit affordances —
 		// insert / replace / properties / delete — when the host supplies an edit context + media seam.
 		// An empty field (PictureHvo 0) shows only the insert affordance ("Add a picture"). A missing
-		// file shows its path. With no edit context / media seam the row is read-only display (the legacy
-		// in-cell / preview path), preserving the prior behavior. All affordances route LCModel-free
-		// through the edit context's picture methods + the media seam (file pick / properties dialog).
+		// file shows its path. With no edit context / media seam the row is read-only display. All
+		// affordances route LCModel-free through the edit context's picture methods + the media seam
+		// (file pick / properties dialog).
 		private static Control BuildImage(LexicalEditRegionField field, string automationId,
 			RegionFieldControlContext context)
 		{

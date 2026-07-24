@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_WithTheDefaultRegistry_TheMessagesSliceIsUnclaimed_NotCompanionMaterial()
 		{
-			// The Chorus notes bar is not migrated in this PR, so no plugin claims MessageSlice: the
+			// The Chorus notes bar is not yet migrated, so no plugin claims MessageSlice: the
 			// Messages node stays in the composer's placeholder path (CustomEditorFields), same as any
 			// other unclaimed dynamically loaded slice. With the companion-designated set also empty,
 			// the companion strip stays hidden either way.

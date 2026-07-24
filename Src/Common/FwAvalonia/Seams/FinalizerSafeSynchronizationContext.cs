@@ -69,9 +69,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 
 		/// <summary>
 		/// True when the callback is a MicroCom finalizer post (the crash class this wrapper exists
-		/// for) — identified by the callback's declaring type living in the MicroCom runtime.
-		/// Pinned against the referenced Avalonia assemblies by FinalizerSafeSyncContextTests so an
-		/// Avalonia bump that relocates the namespace fails the build instead of reopening the crash.
+		/// for) — identified by the callback's declaring type living in the MicroCom runtime. A pin
+		/// test guards this namespace assumption so an Avalonia bump that relocates it fails loudly
+		/// instead of silently reclassifying every finalizer Release as a dropped post.
 		/// </summary>
 		public static bool IsMicroComCallback(SendOrPostCallback d) =>
 			d?.Method?.DeclaringType?.FullName?.StartsWith("MicroCom.", StringComparison.Ordinal) == true;
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 		/// <summary>
 		/// Invoked when a NON-MicroCom post is dropped (e.g. an async continuation that will now
 		/// never resume). Defaults to <see cref="Debug.Fail(string)"/> so Debug builds surface
-		/// teardown bugs loudly; Release builds only log. Tests substitute a recorder.
+		/// teardown bugs loudly; Release builds only log. Replaceable (e.g. by tests).
 		/// </summary>
 		public static Action<string> NonMicroComDropHandler = message => Debug.Fail(message);
 

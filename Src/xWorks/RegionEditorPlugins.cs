@@ -143,20 +143,14 @@ namespace SIL.FieldWorks.XWorks
 			return registry;
 		}
 
-		// The builtin plugin list. The Chorus notes bar (MessageSlice) is NOT migrated in this PR:
-		// with no plugin claiming AvaloniaCompanionSlices.MessageSliceClassName, the Messages node
-		// falls back to the D1 resolution order's next slot — the companion-designated set (currently
+		// The builtin plugin list. The Chorus notes bar (MessageSlice) is not yet migrated: with no
+		// plugin claiming AvaloniaCompanionSlices.MessageSliceClassName, the Messages node falls
+		// back to the D1 resolution order's next slot — the companion-designated set (currently
 		// empty), then the read-only placeholder/"unsupported" row (never a crash, never silently
-		// missing — see FullEntryRegionMessagesCompanionTests). A future PR adds that plugin and
-		// registers it here. Wave 3 (D3) is a composer route, not a plugin. Wave 4 (D4) landed the
-		// dialog-launcher plugins: value row + "..." button calling the host's ILegacyDialogLauncher
-		// seam. The LexemeEditorBurnDownTests census measures coverage as plugins land.
+		// missing).
 		internal static void RegisterBuiltins(RegionEditorPluginRegistry registry)
 		{
 			registry.Register(new ReversalIndexEntryPlugin());
-			// FUTURE PRs: the Chorus/FLExBridge notes bar plugin (see above), the interlinear editor,
-			// and the rule-formula editor family each add their plugin file(s) and register here,
-			// alongside the registry flip in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools.
 			registry.Register(DialogLauncherPlugins.CreateMsaInflectionFeatures());
 			registry.Register(DialogLauncherPlugins.CreatePhonologicalFeatures());
 			registry.Register(DialogLauncherPlugins.CreateAudioVisual());
@@ -201,11 +195,11 @@ namespace SIL.FieldWorks.XWorks
 				// the sense's reversal-entry forms now compose as an editable multi-WS text field through
 				// the D1 plugin route, retiring the lone Unsupported row. It is therefore PluginRouted, no
 				// longer deferred.
-				// MessageSlice (the Chorus notes bar) is not migrated in this PR: no plugin claims it, so
-				// the class rides this deferred route and the Messages node composes as the read-only
-				// placeholder row until a future PR adds a notes-bar plugin (see
+				// MessageSlice (the Chorus notes bar) is not yet migrated: no plugin claims it, so the
+				// class rides this deferred route and the Messages node composes as the read-only
+				// placeholder row until a notes-bar plugin is added (see
 				// RegionEditorPluginRegistry.RegisterBuiltins).
-				{ AvaloniaCompanionSlices.MessageSliceClassName, "Chorus notes bar not migrated in this PR (read-only placeholder row)" }
+				{ AvaloniaCompanionSlices.MessageSliceClassName, "Chorus notes bar not yet migrated (read-only placeholder row)" }
 			};
 
 		/// <summary>

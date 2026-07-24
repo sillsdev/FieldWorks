@@ -104,8 +104,8 @@ namespace FwAvaloniaTests
 		}
 
 		// --- Deferred edit surfaces (interlinear, rule-formula). Their tools are deliberately NOT
-		// registered, so even UIMode=New falls back to the legacy WinForms surface. A future PR
-		// activates each surface by moving its tool name(s) into the active registry list.
+		// registered, so even UIMode=New falls back to the legacy WinForms surface. Activating a
+		// surface means moving its tool name(s) into the active registry list.
 
 		[Test]
 		public void InertFollowUpSurfacesFallBackToLegacy_EditSurface()
@@ -113,7 +113,7 @@ namespace FwAvaloniaTests
 			foreach (var tool in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools)
 			{
 				Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.False,
-					$"deferred edit-surface tool '{tool}' must be inert (unregistered) in this PR");
+					$"deferred edit-surface tool '{tool}' must be inert (unregistered)");
 				Assert.That(
 					LexicalEditSurfaceResolver.Resolve(uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: tool),
 					Is.EqualTo(LexicalEditSurface.WinForms),
