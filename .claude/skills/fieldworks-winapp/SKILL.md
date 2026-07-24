@@ -8,9 +8,9 @@ description: >
   application.
 license: MIT
 compatibility: >
-  Requires a Windows/x64 FieldWorks workspace. Prefer WinForms MCP
-  for hidden-desktop UIA2 automation when available; use WinApp MCP as the UIA3
-  fallback and for visible desktop/window diagnostics.
+  Requires a Windows/x64 FieldWorks workspace. WinForms MCP drives FieldWorks
+  with UIA2 on the visible console desktop when available; use WinApp MCP as
+  the UIA3 fallback and for desktop/window diagnostics.
 metadata:
   author: FieldWorks team
   version: "1.0"
@@ -23,17 +23,49 @@ FieldWorks Language Explorer desktop app through WinForms MCP or WinApp MCP.
 Keep the workflow grounded in the live UI tree: inspect first, interact second,
 capture evidence after the target state is visible.
 
+**Scope: legacy WinForms only.** This skill always runs FieldWorks in **Legacy
+(WinForms) UI mode** to scrape the legacy surface for "truth" screenshots,
+workflows, and behaviour (the migration parity baseline). The WinForms UIA2 MCP
+can only see WinForms — the Avalonia (New) surface is captured by a SEPARATE
+headless skill, never through this MCP. ALWAYS run
+`scripts/Set-FieldWorksLegacyMode.ps1` before launching (see Setup First).
+
 This skill is intentionally organized as a small index plus route-specific
 navigation files. Read only the route files needed for the task.
+
+**Migration-doc screenshots.** Capturing the legacy "truth" PNGs for the Phase-1
+migration docs — UIA2 capture limits, the launch-per-tool silfw link, the dialog
+screenshot harness, and before/after pairing — is documented in
+`navigation/migration-doc-capture.md`. Read that route before any bulk capture campaign.
+
+## Setup First (if `winforms_*` tools are missing)
+
+If `ToolSearch "winforms"` finds no tools, the MCP server is not registered for
+**Claude Code** — most often because it is only in `.vscode/mcp.json` (VS Code's
+file), not the repo-root `.mcp.json` (Claude Code's file). Read
+`references/mcp-setup.md`, then:
+
+1. Ensure repo-root `.mcp.json` registers `winforms-mcp` (committed here; the
+   Windows-robust `cmd /c npx` form).
+2. Run `scripts/Preflight-WinFormsMcp.ps1` to confirm node/npx, the package, and
+   a built `Output/Debug/FieldWorks.exe`.
+3. **Reconnect/restart Claude Code** (MCP servers load at session start) and
+   **approve** the project server when prompted. Confirm with `claude mcp list`
+   and `ToolSearch "winforms"`.
+
+The MCP **client** launches the server — no script starts it; the preflight only
+verifies that launch will succeed.
 
 ## Core Rules
 
 - Prefer WinForms MCP UIA2 tools for fresh FieldWorks runtime automation because
-  FieldWorks is currently WinForms and the workspace config runs WinForms MCP in
-  hidden-desktop mode.
+  FieldWorks is currently WinForms and the workspace config (`.mcp.json`,
+  `HEADLESS=false`) runs FieldWorks on the visible console desktop —
+  hidden-desktop mode does not render FieldWorks (see
+  `references/headless-rendering.md`).
 - Use WinApp MCP UIA3 tools when WinForms MCP is unavailable, when a task needs
-  visible desktop/window diagnostics, or when UIA2 cannot see the target
-  surface.
+  desktop/window diagnostics (focus, foreground, window order), or when UIA2
+  cannot see the target surface.
 - Prefer UI Automation IDs and names over coordinates. Use coordinates only
   after snapshots and element searches fail.
 - Always inspect the current tree with `winforms_get_element_tree`,
@@ -56,10 +88,13 @@ navigation files. Read only the route files needed for the task.
   `winforms_click_element`, `winforms_type_text`, `winforms_set_value`,
   `winforms_select_item`, `winforms_click_menu_item`, and
   `winforms_take_screenshot`.
-- Use WinForms MCP headless-safe operations only. Avoid `winforms_send_keys`,
-  drag/drop, and double-clicks on hidden-desktop processes.
-- Use WinApp MCP for visible desktop/window diagnostics, UIA3 comparison,
-  fallback screenshots, or controls that WinForms MCP cannot operate.
+- Prefer element-targeted operations (`winforms_click_element`,
+  `winforms_type_text`, `winforms_set_value`, `winforms_select_item`) over
+  `winforms_send_keys`, drag/drop, and double-clicks — they are more reliable.
+  (The old blanket bans on input simulation applied to the abandoned
+  hidden-desktop mode; see `references/headless-rendering.md` for the history.)
+- Use WinApp MCP for desktop/window diagnostics, UIA3 comparison, fallback
+  screenshots, or controls that WinForms MCP cannot operate.
 - Read `references/mcp-selection.md` before changing a route from one MCP driver
   to the other.
 
@@ -72,7 +107,16 @@ navigation files. Read only the route files needed for the task.
   destination or workflow.
 - `references/how-to-update.md`: rules for adding or revising navigation paths.
 - `references/mcp-selection.md`: rules for choosing WinForms MCP or WinApp MCP.
+- `references/mcp-setup.md`: enabling the `winforms_*` tools for Claude Code (`.mcp.json`, reconnect).
 - `references/research.md`: source-backed rationale for this structure.
+- `scripts/Preflight-WinFormsMcp.ps1`: pre-session check (node/npx, package, build, `.mcp.json`).
+- `scripts/Set-FieldWorksLegacyMode.ps1`: forces `UIMode=Legacy` — run before EVERY launch.
+- `scripts/Resolve-FieldWorksDevRegistry.ps1`: aligns the dev registry (`RootCodeDir`/`RootDataDir`) to
+  this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
+- `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
+  invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; a Virtual Display Driver was tried
+  and abandoned — see the doc for why; use visible capture, or RDP for true invisibility). Starts with the
+  "three senses of headless" disambiguation — read that before reasoning about anything called "headless".
 
 When a task names a destination, read the matching navigation file. When a task
 discovers a better route or a fragile selector, read and update
@@ -85,13 +129,15 @@ discovers a better route or a fragile selector, read and update
 - Writing System Properties > Font tab: `navigation/writing-system-font-options.md`
 - Styles dialog > Font tab: `navigation/styles-font-tab.md`
 - Manual screenshot evidence: `navigation/screenshot-evidence.md`
+- Migration-doc capture campaign: `navigation/migration-doc-capture.md`
+- WinForms ↔ Avalonia parity capture: `navigation/winforms-avalonia-parity.md`
+- Enable the MCP tools for Claude Code: `references/mcp-setup.md`
 - MCP driver selection: `references/mcp-selection.md`
 
 ## Screenshot Evidence
 
-For evidence tasks, read `navigation/screenshot-evidence.md`. Prefer committed
-OpenSpec evidence only when the screenshot should be part of review history;
-otherwise use `Output/ManualEvidence/<ticket-or-change-id>/`.
+For evidence tasks, read `navigation/screenshot-evidence.md` — it owns the
+output folders (transient vs committed vs parity bundles) and the naming rules.
 
 For target detection, descriptive filenames, inline review, annotation, and
 retake quality gates, also use `../smart-screenshot-capture/SKILL.md`.

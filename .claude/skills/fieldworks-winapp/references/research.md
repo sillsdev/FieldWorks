@@ -72,3 +72,10 @@ sequence, cues, and safety notes to perform that route.
 Applied here: FieldWorks is currently WinForms, so WinForms MCP is the default
 for new live-app automation. WinApp MCP remains the UIA3 fallback and the right
 tool for visible desktop/window diagnostics.
+
+**FieldWorks-specific caveat (supersedes the upstream claim above):** empirically, on this
+codebase, `winforms-mcp` `HEADLESS=true` does **not** render FieldWorks — the native Views
+(C++/COM, GDI) engine requires a display-bound desktop for its first layout/paint, and the
+hidden-desktop mode's `CreateDesktop` desktop is never display-bound, with or without a virtual
+display driver. See `headless-rendering.md` in this skill for the full investigation and the
+supported alternative (visible console launch, or an RDP/second-session workaround).

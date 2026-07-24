@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:FwAvaloniaDialogs"
+             xmlns:res="clr-namespace:FwAvaloniaDialogs"
+             x:Class="FwAvaloniaDialogs.EntryGoDialogView"
+             x:DataType="vm:EntryGoDialogViewModel"
+             Classes="fwDialogRoot"
+             MinWidth="480" MinHeight="320">
+	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
+	     EntryGoDlg/BaseGoDlg family (Merge Entry is the first consumer). The advanced layout puts the search box on
+	     the LEFT with its matching-entries list as a focus-gated, ON-TOP dropdown (a Popup anchored to the box that
+	     escapes the dialog bounds, like a filter combo — visible only while the field is focused and there are
+	     matches), and an extended description region on the RIGHT that hosts rich content (formatted text, pictures,
+	     arbitrary controls) for the highlighted entry, degrading to the plain description string. The OK button
+	     text + title + prompts come from the launcher so each EntryGoDlg child re-skins the same dialog. Visible
+	     text is localized via FwAvaloniaDialogsStrings; AutomationIds stay stable + nonlocalized. -->
+	<DockPanel>
+		<!-- Commit-on-select: there is NO OK button. Picking a result (double-click a row, or Enter on the highlighted
+		     row) commits + closes accepted (wired in code-behind to the CommitCommand). The button strip keeps only a
+		     single Cancel affordance (Escape / the window close button also cancel, via IsCancel) plus the optional
+		     Help, so the strip never reads as an empty placeholder.
+		     EXCEPT in two-stage auxiliary mode (HasAuxiliarySelection): picking a result is stage 1, and PART_OkButton
+		     below commits stage 2 (gated on both selections). For single-stage consumers the code-behind REMOVES
+		     PART_OkButton from the tree entirely so the commit-on-select surface stays byte-identical. -->
+		<!-- TabIndex=1 pushes the button strip AFTER the content in tab order (A11Y-02); it is declared
+		     first only so DockPanel docks it to the bottom. Content stays at the default TabIndex 0. -->
+		<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" TabIndex="1"
+		            HorizontalAlignment="Right" Spacing="{StaticResource DialogButtonStripGap}"
+		            Margin="{StaticResource DialogControlGapAbove}">
+			<Button Name="PART_OkButton" Command="{Binding OkCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Ok">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.OkMnemonic}"/>
+			</Button>
+			<Button IsCancel="True" Command="{Binding CancelCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Cancel">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.CancelMnemonic}"/>
+			</Button>
+			<Button IsVisible="{Binding HasHelp}" Command="{Binding HelpCommand}"
+			        AutomationProperties.AutomationId="EntryGo.Help">
+				<AccessText Text="{x:Static res:FwAvaloniaDialogsStrings.HelpMnemonic}"/>
+			</Button>
+		</StackPanel>
+
+		<!-- Two regions side by side: the search column (left) and the extended description region (right),
+		     separated by the shared column-gutter token. -->
+		<Grid ColumnDefinitions="*,Auto,1.2*">
+			<!-- ===== LEFT: the search column (toggle + prompt + search box + the on-top results dropdown). ===== -->
+			<DockPanel Grid.Column="0">
+				<!-- Entry/Sense mode toggle (opt-in: the legacy LinkEntryOrSenseDlg "Entry"/"Specific Sense" radios).
+				     Hidden for entry-only consumers; disabled (but shown) when the consumer locks it to senses only. -->
+				<StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+				            Spacing="{StaticResource DialogButtonStripGap}"
+				            IsVisible="{Binding ShowModeToggle}"
+				            Margin="{StaticResource DialogLabelFieldGapBelow}"
+				            AutomationProperties.AutomationId="EntryGo.ModeToggle">
+					<RadioButton GroupName="EntryGoMode" Content="{Binding EntryModeLabel}"
+					             IsChecked="{Binding IsEntryMode, Mode=TwoWay}"
+					             IsEnabled="{Binding ModeToggleEnabled}"
+					             AutomationProperties.AutomationId="EntryGo.EntryMode"/>
+					<RadioButton GroupName="EntryGoMode" Content="{Binding SenseModeLabel}"
+					             IsChecked="{Binding IsSenseMode, Mode=TwoWay}"
+					             IsEnabled="{Binding ModeToggleEnabled}"
+					             AutomationProperties.AutomationId="EntryGo.SenseMode"/>
+				</StackPanel>
+
+				<!-- Search box (with optional prompt above it). The matching-entries list is NOT a permanently-open
+				     control below it — it is the focus-gated Popup anchored to the box (PART_ResultsPopup), so the
+				     space under the box stays clear until the user is in the field. -->
+				<TextBlock DockPanel.Dock="Top" Text="{Binding SearchPrompt}" TextWrapping="Wrap"
+				           IsVisible="{Binding HasSearchPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
+				           AutomationProperties.AutomationId="EntryGo.SearchPrompt"/>
+				<TextBox DockPanel.Dock="Top" Name="PART_SearchBox"
+				         Text="{Binding SearchText, Mode=TwoWay}"
+				         Watermark="{x:Static res:FwAvaloniaDialogsStrings.EntryGoSearchWatermark}"
+				         AutomationProperties.AutomationId="EntryGo.Search"/>
+
+				<!-- The matching-entries list as an ON-TOP, focus-gated dropdown: a Popup anchored to the search box
+				     (PlacementTarget) so it renders in its own top-level layer and is allowed to EXPAND PAST the
+				     dialog bounds rather than being clipped inside them (like a filter combo). It opens only when the
+				     field is focused AND there are matches (ShowResultsDropdown); light dismiss stays off so clicking
+				     a row selects it without the overlay stealing the dismiss. The bordered list mirrors the dialog
+				     style system's boxed-input look. IsHitTestVisible=False on the empty filler keeps the rest of the
+				     left column clear when the dropdown is closed. -->
+				<Popup Name="PART_ResultsPopup"
+				       PlacementTarget="{Binding #PART_SearchBox}"
+				       Placement="BottomEdgeAlignedLeft"
+				       IsLightDismissEnabled="False"
+				       IsOpen="{Binding ShowResultsDropdown}">
+					<Border Classes="fwFieldHost"
+					        Background="{DynamicResource ThemeBackgroundBrush}"
+					        MinWidth="220" MaxHeight="220"
+					        AutomationProperties.AutomationId="EntryGo.ResultsPopup">
+						<ListBox Name="PART_Results"
+						         ItemsSource="{Binding Results}"
+						         SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+						         AutomationProperties.AutomationId="EntryGo.Results">
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="vm:EntryGoSearchResult">
+									<!-- Headword, with the sense gloss as a quieter second line for sense rows (HasSubText). -->
+									<StackPanel>
+										<TextBlock Text="{Binding Text}"
+										           AutomationProperties.Name="{Binding Text}"/>
+										<TextBlock Text="{Binding SubText}" Opacity="0.7"
+										           IsVisible="{Binding HasSubText}"/>
+									</StackPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Border>
+				</Popup>
+
+				<!-- Dependent auxiliary picker (two-stage mode only): the per-entry option list the legacy
+				     LinkMSADlg/LinkAllomorphDlg combos showed under the matching list. Hidden until the consumer
+				     supplies an auxiliary spec AND an entry is selected (ShowAuxiliaryOptions); a lone option
+				     auto-selects in the VM, and OK stays gated until an option is chosen. -->
+				<StackPanel DockPanel.Dock="Top"
+				            IsVisible="{Binding ShowAuxiliaryOptions}"
+				            Margin="{StaticResource DialogControlGapAbove}"
+				            AutomationProperties.AutomationId="EntryGo.AuxiliarySection">
+					<TextBlock Text="{Binding AuxiliaryLabel}"
+					           Margin="{StaticResource DialogLabelFieldGapBelow}"
+					           AutomationProperties.AutomationId="EntryGo.AuxiliaryLabel"/>
+					<Border Classes="fwFieldHost">
+						<ListBox MaxHeight="120"
+						         ItemsSource="{Binding AuxiliaryOptions}"
+						         SelectedItem="{Binding SelectedAuxiliaryOption, Mode=TwoWay}"
+						         AutomationProperties.AutomationId="EntryGo.AuxiliaryOptions">
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="vm:EntryGoAuxiliaryOption">
+									<TextBlock Text="{Binding Text}"
+									           AutomationProperties.Name="{Binding Text}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</Border>
+				</StackPanel>
+
+				<!-- Filler so the left column claims its share of the grid even with the dropdown closed. -->
+				<Border DockPanel.Dock="Top"/>
+			</DockPanel>
+
+			<!-- The column gutter between the search column and the description region. -->
+			<Border Grid.Column="1" Margin="{StaticResource DialogColumnGutter}"/>
+
+			<!-- ===== RIGHT: the extended description region — rich content for the highlighted entry, with the
+			     plain description string as the graceful fallback. The region is a boxed, dense frame matching the
+			     dialog style system; it hosts arbitrary content via a ContentControl (formatted text, pictures, a
+			     composite preview) and shows the plain TextBlock only when no rich payload is supplied. ===== -->
+			<DockPanel Grid.Column="2">
+				<TextBlock DockPanel.Dock="Top" Text="{Binding DescriptionLabel}"
+				           IsVisible="{Binding HasDescriptionLabel}"
+				           Margin="{StaticResource DialogLabelFieldGapBelow}"
+				           AutomationProperties.AutomationId="EntryGo.DescriptionLabel"/>
+				<Border Classes="fwFieldHost"
+				        AutomationProperties.AutomationId="EntryGo.DescriptionRegion">
+					<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+						<Panel>
+							<!-- Rich content for the highlighted entry (formatted text / picture / arbitrary control). -->
+							<ContentControl Content="{Binding SelectedDescriptionContent}"
+							                IsVisible="{Binding HasDescriptionContent}"
+							                AutomationProperties.AutomationId="EntryGo.DescriptionContent"/>
+							<!-- Plain-text fallback for consumers that supply only a one-line description. -->
+							<TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+							           IsVisible="{Binding !HasDescriptionContent}"
+							           AutomationProperties.AutomationId="EntryGo.Description"/>
+						</Panel>
+					</ScrollViewer>
+				</Border>
+			</DockPanel>
+		</Grid>
+	</DockPanel>
+</UserControl>

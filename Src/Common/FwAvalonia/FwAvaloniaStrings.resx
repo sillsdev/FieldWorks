@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!--
+    Neutral (English) source of truth for FwAvalonia user-visible strings, resolved at runtime
+    through ResourceManager by the accessor class (the FieldWorks .resx localization strategy).
+    Translations arrive as satellite assemblies built by the localization pipeline
+    (Build/Src/FwBuildTasks/Localization/ProjectLocalizer.cs; the csproj's explicit
+    RootNamespace keeps the satellite resource names stable).
+  -->
+  <data name="FwAvalonia.NoEntrySelected" xml:space="preserve">
+    <value>No entry selected</value>
+  </data>
+  <data name="FwAvalonia.GenDateYear" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="FwAvalonia.GenDateEra" xml:space="preserve">
+    <value>Era</value>
+  </data>
+  <data name="FwAvalonia.GenDateEraAd" xml:space="preserve">
+    <value>AD</value>
+  </data>
+  <data name="FwAvalonia.GenDateEraBc" xml:space="preserve">
+    <value>BC</value>
+  </data>
+  <data name="FwAvalonia.GenDatePrecision" xml:space="preserve">
+    <value>Precision</value>
+  </data>
+  <data name="FwAvalonia.GenDatePrecisionBefore" xml:space="preserve">
+    <value>Before</value>
+  </data>
+  <data name="FwAvalonia.GenDatePrecisionOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="FwAvalonia.GenDatePrecisionAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="FwAvalonia.GenDatePrecisionAfter" xml:space="preserve">
+    <value>After</value>
+  </data>
+  <data name="FwAvalonia.EntryTypeUnsupported" xml:space="preserve">
+    <value>This entry type is not yet supported in the new view.</value>
+  </data>
+  <data name="FwAvalonia.UnsupportedEditor" xml:space="preserve">
+    <value>This field is not yet supported in the new view.</value>
+  </data>
+  <data name="FwAvalonia.EmbeddedObjectReadOnly" xml:space="preserve">
+    <value>This text contains formatting the new view cannot edit safely yet.</value>
+  </data>
+  <data name="FwAvalonia.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="FwAvalonia.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FwAvalonia.UndoEditEntry" xml:space="preserve">
+    <value>Undo Edit Entry</value>
+  </data>
+  <data name="FwAvalonia.RedoEditEntry" xml:space="preserve">
+    <value>Redo Edit Entry</value>
+  </data>
+  <data name="FwAvalonia.UndoChangeToFormat" xml:space="preserve">
+    <value>Undo change to {0}</value>
+  </data>
+  <data name="FwAvalonia.RedoChangeToFormat" xml:space="preserve">
+    <value>Redo change to {0}</value>
+  </data>
+  <data name="FwAvalonia.LexemeFormRequired" xml:space="preserve">
+    <value>Lexeme Form is required.</value>
+  </data>
+  <data name="FwAvalonia.PossibilityNameOrAbbreviationRequired" xml:space="preserve">
+    <value>A name or abbreviation is required.</value>
+  </data>
+  <data name="FwAvalonia.EditDiscardedInvalid" xml:space="preserve">
+    <value>Your edit was discarded because it is invalid: {0}</value>
+  </data>
+  <data name="FwAvalonia.EditDiscardedInvalidTitle" xml:space="preserve">
+    <value>Invalid edit discarded</value>
+  </data>
+  <data name="FwAvalonia.AudioRecordingReadOnly" xml:space="preserve">
+    <value>Audio recording (read-only in the new view)</value>
+  </data>
+  <data name="FwAvalonia.LexicalEditRegionName" xml:space="preserve">
+    <value>Lexical edit region</value>
+  </data>
+  <data name="FwAvalonia.AvaloniaHostName" xml:space="preserve">
+    <value>Avalonia host</value>
+  </data>
+  <data name="FwAvalonia.GhostAddPrompt" xml:space="preserve">
+    <value>Type to add {0}</value>
+  </data>
+  <data name="FwAvalonia.Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="FwAvalonia.Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="FwAvalonia.AddItem" xml:space="preserve">
+    <value>Add item</value>
+  </data>
+  <data name="FwAvalonia.SearchPrompt" xml:space="preserve">
+    <value>Type to search</value>
+  </data>
+  <data name="FwAvalonia.AddSelected" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="FwAvalonia.LaunchDialog" xml:space="preserve">
+    <value>Open dialog</value>
+  </data>
+  <data name="FwAvalonia.LauncherUnavailable" xml:space="preserve">
+    <value>This dialog is not available here.</value>
+  </data>
+  <data name="FwAvalonia.FieldSettings" xml:space="preserve">
+    <value>{0} settings</value>
+  </data>
+  <data name="FwAvalonia.EditListFormat" xml:space="preserve">
+    <value>Edit the {0} list</value>
+  </data>
+  <data name="FwAvalonia.LexemeFormLabel" xml:space="preserve">
+    <value>Lexeme Form</value>
+  </data>
+  <data name="FwAvalonia.MorphTypeLabel" xml:space="preserve">
+    <value>Morph Type</value>
+  </data>
+  <data name="FwAvalonia.GlossLabel" xml:space="preserve">
+    <value>Gloss</value>
+  </data>
+  <data name="FwAvalonia.FieldOptionsMenu" xml:space="preserve">
+    <value>Field options</value>
+  </data>
+  <data name="FwAvalonia.CharacterStyle" xml:space="preserve">
+    <value>Character Style</value>
+  </data>
+  <data name="FwAvalonia.DefaultCharacterStyle" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="FwAvalonia.WritingSystem" xml:space="preserve">
+    <value>Writing System</value>
+  </data>
+  <data name="FwAvalonia.Pos.NotSure" xml:space="preserve">
+    <value>&lt;Not sure&gt;</value>
+  </data>
+  <data name="FwAvalonia.Pos.Any" xml:space="preserve">
+    <value>&lt;Any&gt;</value>
+  </data>
+  <data name="FwAvalonia.Pos.CreateNew" xml:space="preserve">
+    <value>Create a new Part of Speech...</value>
+  </data>
+  <data name="FwAvalonia.Pos.ChooserName" xml:space="preserve">
+    <value>Part of Speech</value>
+  </data>
+  <data name="FwAvalonia.StText.AddParagraph" xml:space="preserve">
+    <value>Add paragraph</value>
+  </data>
+  <data name="FwAvalonia.StText.DeleteParagraph" xml:space="preserve">
+    <value>Delete paragraph</value>
+  </data>
+  <data name="FwAvalonia.StText.ParagraphStyle" xml:space="preserve">
+    <value>Paragraph Style</value>
+  </data>
+  <data name="FwAvalonia.StText.DefaultParagraphStyle" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="FwAvalonia.Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="FwAvalonia.LinkUrlPrompt" xml:space="preserve">
+    <value>Address (URL)</value>
+  </data>
+  <data name="FwAvalonia.LinkApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="FwAvalonia.DeleteEmbeddedObject" xml:space="preserve">
+    <value>Delete embedded object</value>
+  </data>
+  <data name="FwAvalonia.Picture.Insert" xml:space="preserve">
+    <value>Add a picture...</value>
+  </data>
+  <data name="FwAvalonia.Picture.Properties" xml:space="preserve">
+    <value>Picture properties...</value>
+  </data>
+  <data name="FwAvalonia.Picture.Delete" xml:space="preserve">
+    <value>Delete picture</value>
+  </data>
+  <data name="FwAvalonia.Audio.Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="FwAvalonia.Audio.Record" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="FwAvalonia.Audio.Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="FwAvalonia.Audio.RecordUnavailable" xml:space="preserve">
+    <value>Recording is available on Windows in the new view; use the classic view on this platform.</value>
+  </data>
+  <data name="FwAvalonia.Audio.NoRecording" xml:space="preserve">
+    <value>(no recording)</value>
+  </data>
+  <data name="FwAvalonia.StructuredText.ParagraphName" xml:space="preserve">
+    <value>{0} paragraph {1}</value>
+  </data>
+  <data name="FwAvalonia.FeatureGroup.LexicalEntryDialogs" xml:space="preserve">
+    <value>Dialogs (lexical entry)</value>
+  </data>
+  <data name="FwAvalonia.FeatureGroup.OtherRecordTypes" xml:space="preserve">
+    <value>Other record types</value>
+  </data>
+  <data name="FwAvalonia.Feature.LexiconEditName" xml:space="preserve">
+    <value>Lexicon Edit</value>
+  </data>
+  <data name="FwAvalonia.Feature.LexiconEditDescription" xml:space="preserve">
+    <value>The main entry-editing surface.</value>
+  </data>
+  <data name="FwAvalonia.Feature.LexiconEditPopupName" xml:space="preserve">
+    <value>Lexicon Edit (popup)</value>
+  </data>
+  <data name="FwAvalonia.Feature.LexiconEditPopupDescription" xml:space="preserve">
+    <value>The popup variant of entry editing.</value>
+  </data>
+  <data name="FwAvalonia.Feature.NotebookEditName" xml:space="preserve">
+    <value>Notebook</value>
+  </data>
+  <data name="FwAvalonia.Feature.NotebookEditDescription" xml:space="preserve">
+    <value>Notebook (RnGenericRec) entries.</value>
+  </data>
+  <data name="FwAvalonia.Feature.PosEditName" xml:space="preserve">
+    <value>Grammar / Part of Speech</value>
+  </data>
+  <data name="FwAvalonia.Feature.PosEditDescription" xml:space="preserve">
+    <value>The Part of Speech editor.</value>
+  </data>
+</root>

@@ -11,6 +11,12 @@
     <Setting Name="Update" Description="Setting controlling getting updates" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Settings.UpdateSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="UIMode" Description="Preferred lexical-edit UI mode (Legacy or New)" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Legacy</Value>
+    </Setting>
+    <Setting Name="UIModeDisabledTools" Description="Comma-separated tool names opted OUT of the New lexical-edit UI while UIMode=New (empty means every known tool is enabled)" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

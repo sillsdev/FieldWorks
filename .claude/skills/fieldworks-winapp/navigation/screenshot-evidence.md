@@ -32,8 +32,8 @@ alongside this route.
 
 ## MCP Choice
 
-- Prefer `winforms_take_screenshot` for fresh FieldWorks launches; hidden
-  desktop screenshots should not steal focus or require foregrounding.
+- Prefer `winforms_take_screenshot` for FieldWorks launched through WinForms
+  MCP; its `PrintWindow` capture does not require foregrounding the window.
 - Prefer passing the FieldWorks `pid` to WinForms MCP screenshots when the
   client exposes a process parameter.
 - Prefer `mcp_winapp_take_screenshot_optimized` for visible-desktop fallback
@@ -55,11 +55,22 @@ Use names that tell the story in sorted order:
 - `04-after-<related-screen>.png`
 - `sequence-<scenario>-001.png`, `sequence-<scenario>-002.png`, ...
 
+Parity bundles use the canonical layout from
+`../../fieldworks-winforms-to-avalonia-migration/references/parity-evidence.md` §6:
+`openspec/changes/<change-id>/evidence/parity/{scenarioId}/{bundleId}/` with
+`semantic.json`, `visual.legacy.png`, `visual.avalonia.png`, `visual.diff.png`,
+`workflow.legacy.md` / `workflow.avalonia.md`, `performance.json`, `failure-summary.md`. Manual captures use a `bundleId` like
+`manual-YYYYMMDD`.
+
+When the task is migration parity, capture matched WinForms and Avalonia framing for the same `scenarioId` and store them in that bundle layout so the visual evidence lines up with the semantic snapshot and the workflow/accessibility evidence.
+
 ## Expected Signals
 
 - Screenshots should show FieldWorks, not VS Code or another foreground app.
-- WinForms MCP screenshots can capture headless FieldWorks windows through
-  `PrintWindow`; foreground-window order should not matter for that path.
+- WinForms MCP screenshots capture through `PrintWindow`, so foreground-window
+  order does not matter — but FieldWorks must be on the visible desktop:
+  `PrintWindow` on a hidden desktop yields a blank FieldWorks window, which is
+  why `HEADLESS=false` is required (see `../references/headless-rendering.md`).
 - If `mcp_winapp_take_screenshot` captures the wrong surface, use the launch
   route's `ALT+ESCAPE` foregrounding workaround and capture again.
 - If a true before-state is not available in the current worktree, document why

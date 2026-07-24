@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2262,6 +2263,17 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
+			[MethodImpl(MethodImplOptions.NoInlining)]
+			private void ShowAvaloniaAddAllomorphDialog(ITsString tssFullForm)
+			{
+				var helpProvider = m_sandbox.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+				Form ownerNew = m_sandbox.FindForm();
+				ownerNew?.Activate(); // LT-2619: make the form active before showing the modal.
+				LcmAddAllomorphDialogLauncher.Show(m_caches.MainCache, m_sandbox.Mediator, m_sandbox.m_propertyTable,
+					tssFullForm, ownerNew, helpProvider);
+			}
+
 			internal void RunAddNewAllomorphDlg()
 			{
 				CheckDisposed();
@@ -2270,6 +2282,18 @@ namespace SIL.FieldWorks.IText
 				ITsString tssFullForm;
 				IMoMorphType morphType;
 				GetMorphInfo(out tssForm, out tssFullForm, out morphType);
+
+				// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the
+				// Avalonia Find-Entry-to-Add-Allomorph dialog (the reusable entry-search/"go" kit dialog), which adds
+				// the typed form as an allomorph to the chosen entry in one undoable step, including the legacy
+				// type-mismatch confirmation + MSA-ensure flow (see LcmAddAllomorphDialogLauncher's PARITY note);
+				// Legacy mode keeps the WinForms AddAllomorphDlg.
+				var uiMode = m_sandbox.m_propertyTable.GetStringProperty("UIMode", null);
+				if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
+				{
+					ShowAvaloniaAddAllomorphDialog(tssFullForm);
+					return;
+				}
 
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
@@ -2453,6 +2477,16 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
+			[MethodImpl(MethodImplOptions.NoInlining)]
+			private int ShowAvaloniaAddNewSenseDialog(ITsString tssForm, ILexEntry le)
+			{
+				Form ownerNew = m_sandbox.FindForm();
+				ownerNew?.Activate(); // LT-2619: make the form active before showing the modal.
+				return LcmAddNewSenseDialogLauncher.Show(m_caches.MainCache, m_sandbox.Mediator,
+					m_sandbox.m_propertyTable, le, tssForm, ownerNew, m_helpTopicProvider);
+			}
+
 			internal int RunAddNewSenseDlg(ITsString tssForm, ILexEntry le)
 			{
 				CheckDisposed();
@@ -2464,6 +2498,12 @@ namespace SIL.FieldWorks.IText
 					tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoForm, ktagSbNamedObjName, m_sandbox.RawWordformWs);
 				}
 				int newSenseID = 0;
+				// New-UI gate (mirrors the Insert Entry / Add Allomorph / Options dialog gates): in New mode launch
+				// the Avalonia Add New Sense dialog (gloss + grammatical-info box -> a new sense), created in one
+				// undoable step; Legacy mode keeps the WinForms AddNewSenseDlg.
+				var uiMode = m_sandbox.m_propertyTable.GetStringProperty("UIMode", null);
+				if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
+					return ShowAvaloniaAddNewSenseDialog(tssForm, le);
 				// This 'using' system is important,
 				// because it calls Dispose on the dlg,
 				// when it goes out of scope.

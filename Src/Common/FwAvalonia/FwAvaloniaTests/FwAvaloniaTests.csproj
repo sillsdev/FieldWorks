@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		FwAvaloniaTests (lexical-edit-avalonia-migration)
+
+		Headless Avalonia test suite for FwAvalonia: seams, typed view-definition IR, region
+		model, and first-slice control behavior (render, popup focus return, commit/cancel)
+		with no native Views or Graphite dependency. Part of the normal repo test path —
+		included in the FieldWorks.proj traversal (BuildTests=true) and FieldWorks.sln;
+		test.ps1 discovers the built FwAvaloniaTests.dll from the shared Output directory
+		(lexical-edit task 1.11).
+
+		NUnit, NUnit3TestAdapter, and Microsoft.NET.Test.Sdk are injected by Src/Directory.Build.props
+		because IsTestProject is true.
+	-->
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<!-- net48 BCL constraint applies (see FwAvalonia.csproj, NETFX-01): no records/init/Index/Range/DIM/IAsyncEnumerable. -->
+		<LangVersion>latest</LangVersion>
+		<Nullable>disable</Nullable>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);CS1591;NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Themes.Fluent" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless" ExcludeAssets="analyzers" />
+		<PackageReference Include="Avalonia.Headless.NUnit" ExcludeAssets="analyzers" />
+		<!-- Skia-backed headless drawing so rendered-frame parity capture works (task 6.9). -->
+		<PackageReference Include="Avalonia.Skia" ExcludeAssets="analyzers" />
+		<!-- Direct reference so this project's binding redirect matches the single pinned version in
+		     the shared Output folder regardless of which test project built last. -->
+		<PackageReference Include="System.Diagnostics.DiagnosticSource" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FwAvalonia.csproj" />
+	</ItemGroup>
+
+	<!-- Reuse the dialog visual-layout tripwire (DialogLayoutAssert) as the ONE shared layout standard, so
+	     region/browse surfaces get the same hard-fail overlap/zero-area/crowding checks the dialogs do —
+	     read-only link (owned by FwAvaloniaDialogsTests), no second competing guardrail. -->
+	<ItemGroup>
+		<Compile Include="..\..\FwAvaloniaDialogs\FwAvaloniaDialogsTests\DialogLayoutAssert.cs"
+		         Link="Visual\DialogLayoutAssert.cs" />
+	</ItemGroup>
+
+	<!-- FwAvalonia.csproj excludes Preview/** from its own compile (it's sample code, not shipped
+	     product behavior); LexicalEditPreviewTests.cs exercises it headlessly, referencing it here
+	     (not file-linking a duplicate compiled copy). -->
+	<ItemGroup>
+		<ProjectReference Include="..\Preview\FwAvalonia.Preview.csproj" />
+	</ItemGroup>
+
+	<!-- WinForms framework assembly: the AvaloniaDialogHost.ShowModal UI-thread-guard test passes a
+	     System.Windows.Forms.Control owner (IWin32Window). net48 SDK-style test projects need this explicit. -->
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
+	<!-- This isolated test project does not use FieldWorks' shared test bootstrap
+	     (SLDR/ICU/registry redirect and the RequiresSTAOnWindows/SetMessageBoxAdapter test
+	     attributes). The headless Avalonia tests do not touch LCModel, ICU, or the registry,
+	     so exclude the auto-injected shared AssemblyInfo files. -->
+	<ItemGroup>
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+		<Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+
+</Project>

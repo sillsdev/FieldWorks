@@ -58,10 +58,10 @@ is any risk of targeting the wrong window.
 
 ## Output Paths
 
-For this repository, default to:
+For this repository, FieldWorks evidence folders (transient vs committed vs
+parity bundles) are defined in
+`../fieldworks-winapp/navigation/screenshot-evidence.md` — use those. Otherwise:
 
-- transient evidence: `Output/ManualEvidence/<ticket-or-change-id>/`
-- OpenSpec review evidence: `openspec/changes/<change-id>/evidence/manual-winapp/`
 - ad hoc screenshots: `Output/ManualEvidence/screenshots/`
 
 Create the folder if needed. Do not put scratch screenshots in committed
@@ -73,6 +73,11 @@ Use sorted, descriptive names:
 
 - single capture: `<target>-<state>.png`
 - before/after: `01-before-<state>.png`, `02-after-<state>.png`
+- parity bundles: use the canonical names from the migration skill's
+  `references/parity-evidence.md` §6 (`visual.legacy.png`, `visual.avalonia.png`,
+  `visual.diff.png`, ...) under
+  `openspec/changes/<change-id>/evidence/parity/{scenarioId}/{bundleId}/`;
+  manual captures use a `bundleId` like `manual-YYYYMMDD`
 - sequence: `step-01-<state>.png`, `step-02-<state>.png`
 - app tour: `<app>-<window-or-dialog>.png`
 - temporary fallback: `screenshot-YYYY-MM-DD-HHMMSS.png`
@@ -84,7 +89,8 @@ words over timestamps unless ordering or uniqueness requires a timestamp.
 
 Use the best available tool for the current target:
 
-- FieldWorks/WinForms hidden desktop: `mcp_winforms-mcp_winforms_take_screenshot`.
+- FieldWorks/WinForms on the visible desktop via WinForms MCP:
+  `winforms_take_screenshot` (`PrintWindow` capture; no foregrounding needed).
 - WinApp visible desktop: `mcp_winapp_take_screenshot_optimized` when image size
   matters, otherwise `mcp_winapp_take_screenshot`.
 - UI callouts: `mcp_winapp_annotate_screenshot`.
@@ -120,6 +126,10 @@ Use multiple captures when one image cannot tell the story:
 - redraw/focus/modal timing: a short ordered sequence rather than a single
   screenshot;
 - comparison: capture both images, then run a screenshot diff when available.
+
+For migration parity bundles, keep framing, DPI, zoom, and window size matched across WinForms and Avalonia captures whenever density, wrapping, or spacing is under review.
+
+For a parity bundle, pair the visual captures with the matching semantic snapshot and workflow/accessibility evidence for the same `scenarioId` (folder layout and file names per the migration skill's `references/parity-evidence.md` §6); a screenshot pair alone is not a full parity claim.
 
 For sequences, keep the same target, window size, and framing across captures
 unless the task is specifically about responsive or layout behavior.

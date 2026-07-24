@@ -28,6 +28,9 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Writing system**: A configured language/script/orthography used to store and display text.
 - **Vernacular writing system**: A writing system used for source-language data.
 - **Analysis writing system**: A writing system used for glosses, definitions, translated labels, and analysis-oriented text.
+- **`ITsString` / TsString**: The LCModel-managed text model used for lexicon and Views text, including run-level writing-system and style properties. Cross-framework clipboard and drag/drop interchange serializes it through `TsStringWrapper` XML.
+- **Multi-writing-system text**: A text value or field that exposes one or more writing-system alternatives and may also preserve run-level writing-system and style metadata inside a single `ITsString`.
+- **IME composition**: The transient input-method editing state before text is committed. Treat composition behavior and committed text behavior as separate test and parity concerns.
 - **Lexicon**: The lexical data and editing experience in FLEx.
 - **Interlinear text**: Text annotated with multiple aligned linguistic analysis lines.
 - **Morphology**: The part of the system and data model concerned with morphemes, rules, and word analysis.
@@ -55,6 +58,16 @@ It is intentionally not a full architecture manual. It should stay biased toward
 - **Webonary**: An online dictionary publishing service that FieldWorks integrates with as an export target. Implemented in xWorks (`UploadToWebonaryController`, `WebonaryClient`).
 - **Utility**: A user-invoked data maintenance or migration tool (e.g. resetting homographs, removing parser annotations, fixing duplicate analyses). Utilities implement `IUtility` (`FwCoreDlgs`), are registered in `UtilityCatalogInclude.xml` via reflection, and run through `UtilityDlg` (Tools > Utilities menu).
 - **DistFiles**: Runtime assets copied into outputs or installers.
+- **Region**: In the Avalonia migration, the framework-neutral model of an editing surface: a flattened list of typed fields (`LexicalEditRegionModel`) composed from the view definition and rendered by the Avalonia region views. A region is data; the surface is its rendered form.
+- **Surface**: The rendered UI a tool shows for a record — the legacy WinForms `DataTree`/`BrowseViewer` or the Avalonia region host. Selected per tool from the `UIMode` setting via `LexicalEditSurfaceResolver`.
+- **Seam**: A framework-neutral interface that lets the Avalonia layer consume product behavior without referencing LCModel or WinForms — either in `FwAvalonia/Seams` (e.g. `IFwClipboard`) or carved into a legacy control (e.g. `IBrowseColumnSource`). Product implementations live at the xWorks edge.
+- **Fenced edit session**: One `IEditSession` wrapping one LCModel undo task, opened lazily on the first staged edit and ended exactly once by Commit or Cancel. Prevents orphaned undo tasks; implemented by `LcmRegionEditSession`.
+- **Settle**: The single auto-save policy for an open edit session — commit if valid, otherwise roll back and notify. Invoked on navigation, window deactivate, undo, and teardown (`RegionEditContextHolder.Settle`).
+- **Parity**: Behavioral/visual equivalence between a legacy WinForms surface or dialog and its Avalonia replacement. Deviations must be recorded as `// PARITY` deferrals in code or approved divergences, never left implicit.
+- **Preview vs POC**: In the Avalonia migration, **preview** means a lightweight sample or design-time path that reuses the shared region renderer; **POC** refers only to the retired spike/evidence vocabulary and should not name live runtime code paths.
+- **StringTable localization**: The singleton `StringTable` (FwUtils) loads `strings-<locale>.xml` from the Language Explorer configuration folder and localizes text that originates in XML configuration files — layout/part labels, browse column headings, and XCore menu/command labels. `StringTable.Table.LocalizeAttributeValue(...)` (and `XmlUtils.GetLocalizedAttributeValue(...)`) look the attribute value up in the file's `LocalizedAttributes` group and return the English value unchanged when no localization exists.
+- **`.resx` localization strategy**: FieldWorks-owned forms and controls keep their strings in project `.resx` resources, resolved through `ResourceManager` and shipped as satellite assemblies. New FieldWorks-owned UI — including the Avalonia surfaces and dialogs (`FwAvaloniaStrings.resx`, `FwAvaloniaDialogsStrings.resx`) — belongs in this strategy.
+- **L10NSharp localization strategy**: Dialogs and widgets that come from Palaso, FlexBridge, or Chorus — or FieldWorks UI hosting an L10NSharp localization widget — are localized through the XLIFF-backed `LocalizationManager`s created by `FieldWorks.InitializeLocalizationManager`. It supports runtime UI-language switching, but any host or test process that touches it must initialize at least one `LocalizationManager` first. Do not add new L10NSharp usage for FieldWorks-owned strings.
 ## Repo-Wide Invariants
 - Native C++ builds before managed code generation and managed projects.
 - `build.ps1` is the canonical build entry point.

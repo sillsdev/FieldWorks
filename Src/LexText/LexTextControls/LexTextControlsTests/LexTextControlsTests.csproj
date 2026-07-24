@@ -46,6 +46,7 @@
     <ProjectReference Include="../../../Utilities/SfmToXml/Sfm2Xml.csproj" />
     <ProjectReference Include="../../../Utilities/XMLUtils/XMLUtils.csproj" />
     <ProjectReference Include="../../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
+    <ProjectReference Include="../../../Common/FwAvaloniaDialogs/FwAvaloniaDialogs.csproj" />
     <ProjectReference Include="../LexTextControls.csproj" />
   </ItemGroup>
   <ItemGroup>

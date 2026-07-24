@@ -20,6 +20,11 @@
 
   <!-- FwBuildTasks is excluded; build.ps1 bootstraps it separately to avoid locking/cycles. -->
   <ItemGroup>
+    <!-- All Avalonia projects (including the XAML-compiled FwAvaloniaDialogs) build through the normal
+         Src glob: they are in FieldWorks.sln (so the solution-scoped restore produces their
+         project.assets.json) and build in parallel in dependency order. The Avalonia XAML compiler
+         runs after ResolveAssemblyReferences and is unaffected by the repo's customized targets, so no
+         isolated/serial build path is needed. -->
     <ProjectReference Include="Build\Src\NativeBuild\NativeBuild.csproj;Src\**\*.csproj;Lib\src\**\*.csproj"
                       Exclude="Src\**\*Tests.csproj;Lib\src\**\*Tests.csproj" />
     <ProjectReference Include="Src\**\*Tests.csproj;Lib\src\**\*Tests.csproj"

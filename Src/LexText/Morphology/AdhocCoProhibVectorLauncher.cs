@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -52,12 +53,37 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			base.Dispose( disposing );
 		}
 
+		// NoInlining keeps the Avalonia assembly load out of the gated caller's JIT (Legacy loader isolation).
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private void ShowAvaloniaLinkDialog(Form frm)
+		{
+			var helpProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider", null);
+			ICmObject chosen = m_obj is IMoAlloAdhocProhib
+				? (ICmObject)LcmLinkAllomorphDialogLauncher.Show(m_cache, m_mediator, m_propertyTable,
+					startingEntry: null, frm, helpProvider)
+				: LcmLinkMsaDialogLauncher.Show(m_cache, m_mediator, m_propertyTable,
+					startingEntry: null, frm, helpProvider);
+			if (chosen != null)
+				AddItem(chosen);
+		}
+
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries or senses.
 		/// </summary>
 		protected override void HandleChooser()
 		{
 			Form frm = FindForm();
+
+			// New-UI gate (mirrors the Merge / Insert Entry / Options dialog gates): in New mode launch the Avalonia
+			// Choose-Allomorph / Choose-MSA dialog (the reusable entry-search/"go" kit dialog); Legacy mode keeps the
+			// WinForms LinkAllomorphDlg / LinkMSADlg. Both paths AddItem the chosen object the same way.
+			var uiMode = m_propertyTable.GetStringProperty("UIMode", null);
+			if (UIModeGates.ShouldUseAvaloniaUI(uiMode))
+			{
+				ShowAvaloniaLinkDialog(frm);
+				return;
+			}
+
 			WaitCursor wc = null;
 			BaseGoDlg dlg = null;
 			try

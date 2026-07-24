@@ -9,20 +9,20 @@
 //------------------------------------------------------------------------------
 
 namespace SIL.FieldWorks.Common.FwUtils.Properties {
-    
-    
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
+
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
+
         public static Settings Default {
             get {
                 return defaultInstance;
             }
         }
-        
+
         /// <summary>
         /// Setting controlling the updating of the Global WS Store
         /// </summary>
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["UpdateGlobalWSStore"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting to store Reporting options
         /// </summary>
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["Reporting"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting controlling getting updates
         /// </summary>
@@ -71,7 +71,41 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["Update"] = value;
             }
         }
-        
+
+        /// <summary>
+        /// Preferred lexical-edit UI mode (Legacy or New)
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Preferred lexical-edit UI mode (Legacy or New)")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Legacy")]
+        public string UIMode {
+            get {
+                return ((string)(this["UIMode"]));
+            }
+            set {
+                this["UIMode"] = value;
+            }
+        }
+
+        /// <summary>
+        /// Comma-separated tool names opted OUT of the New lexical-edit UI while UIMode=New (empty means every known tool is enabled)
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Comma-separated tool names opted OUT of the New lexical-edit UI while UIMode=New (empty means every known tool is enabled)")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UIModeDisabledTools {
+            get {
+                return ((string)(this["UIModeDisabledTools"]));
+            }
+            set {
+                this["UIModeDisabledTools"] = value;
+            }
+        }
+
         /// <summary>
         /// Setting indicating that the Settings need to be upgraded
         /// </summary>
@@ -88,7 +122,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["CallUpgrade"] = value;
             }
         }
-        
+
         /// <summary>
         /// Setting to store current keyboard assignments for writing systems
         /// </summary>
@@ -105,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["LocalKeyboards"] = value;
             }
         }
-        
+
         /// <summary>
         /// Stores last used user for webonary export
         /// </summary>
@@ -122,7 +156,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
                 this["WebonaryUser"] = value;
             }
         }
-        
+
         /// <summary>
         /// stores last password for webonary export
         /// </summary>

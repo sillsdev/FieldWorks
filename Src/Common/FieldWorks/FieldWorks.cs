@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -27,6 +28,7 @@ using L10NSharp.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using static SIL.FieldWorks.Common.FwUtils.FwUtils;
@@ -2934,6 +2936,9 @@ namespace SIL.FieldWorks
 				EnsureValidReversalIndexConfigFile(app.Cache);
 				s_activeMainWnd.PropTable.SetProperty("AppSettings", s_appSettings, false);
 				s_activeMainWnd.PropTable.SetPropertyPersistence("AppSettings", false);
+				// The UIMode/UIModeDisabledTools properties are seeded by FwXWindow.InitMediatorValues
+				// BEFORE LoadUI creates the content views — seeding here would be too late for the
+				// initial surface resolution.
 			}
 			catch (StartupException ex)
 			{
@@ -3703,6 +3708,8 @@ namespace SIL.FieldWorks
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				// FieldWorks-owned Avalonia strings resolve through resx/ResourceManager (satellite
+				// assemblies), not L10NSharp, so only the Palaso-supplied namespaces register here.
 				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
 					userL10nBaseDir, null, new[] { "SIL.Windows.Forms" });
 			}

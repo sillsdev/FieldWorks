@@ -33,6 +33,12 @@ FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, whi
 
 - Prefer Serena symbolic tools for code discovery/navigation before broad file reads.
 
+## MCP servers
+
+- `.mcp.json` registers the winforms-mcp server (strict JSON — no comments);
+	setup and rationale live in
+	`.claude/skills/fieldworks-winapp/references/mcp-setup.md`.
+
 ## Issue tracking and Jira
 
 - Use GitHub issues/PRs (and Jira when required) for issue workflow.
