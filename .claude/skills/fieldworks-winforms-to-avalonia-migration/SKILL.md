@@ -44,7 +44,11 @@ off — it is the per-region definition of done.
 
 1. **Inventory and scope.** Identify the legacy surface, its entry points,
    layouts/parts, custom slice classes, dialogs, and command wiring.
-   Produce a coverage map (surface × behavior × test status). Apply
+   Produce a coverage map (surface × behavior × test status): map every
+   control and dialog behavior through
+   `references/control-exemplar-map.md` — it names the exemplar to copy
+   for each, and its §3 gap register governs anything with no exemplar
+   yet (the first implementation becomes the exemplar). Apply
    `fieldworks-migration-scope-review` when sizing the PR/branch.
 2. **Characterize before refactor.** Lock current behavior in executable
    tests (semantic baselines, timing baselines, UIA smoke) *before*
@@ -55,9 +59,11 @@ off — it is the per-region definition of done.
 3. **Extract seams.** Reuse the existing contracts in
    `Src/Common/FwAvalonia/Seams/ISeams.cs`; only add a new seam when
    `references/seam-catalog.md` has no fit, and record why there.
-4. **Select controls.** Default to the owned-control decisions in
-   architecture-patterns.md §4. Re-evaluate only when a pivot trigger in
-   seam-catalog.md §"Pivot triggers" has fired.
+4. **Select controls.** Look the control up in
+   `references/control-exemplar-map.md` first; default to the
+   owned-control decisions in architecture-patterns.md §4. Re-evaluate
+   only when a pivot trigger in seam-catalog.md §"Pivot triggers" has
+   fired.
 5. **Compose the region.** Walk the compiled IR in a composer, project into
    a region model, route custom classes through the plugin registry, and
    render unclaimed classes as explicit "unsupported" rows — never silent
