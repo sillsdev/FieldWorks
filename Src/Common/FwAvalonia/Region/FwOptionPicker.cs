@@ -26,9 +26,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// the chooser's single-select flyout, the reference vector's "+" add flyout, and preview
 	/// morph-type chooser. It is a small NATIVE composite — a <see cref="TextBox"/> filter box
 	/// stacked over a <see cref="ListBox"/> of options — shown INLINE inside the host flyout. The
-	/// host flyout is therefore the only popup; there is no second floating dropdown surface (the
-	/// AutoCompleteBox path used to spawn a separate grey-chromed <c>PART_SuggestionsContainer</c>
-	/// popup, which is what produced the heavy grey border and the focus/arrow-key flakiness).
+	/// host flyout is therefore the only popup; there is no second floating dropdown surface (an
+	/// AutoCompleteBox would spawn a separate grey-chromed <c>PART_SuggestionsContainer</c>
+	/// popup — the source of a heavy grey border and focus/arrow-key flakiness).
 	///
 	/// Keyboard handling is trivial because focus never leaves the filter box: the options list is
 	/// <see cref="InputElement.Focusable"/> = false, and Down/Up/Enter/Escape are handled directly

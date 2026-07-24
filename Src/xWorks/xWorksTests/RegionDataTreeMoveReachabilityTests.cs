@@ -11,7 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task C1 triage — <c>DTMenuHandler.OnDataTreeMove</c> (message="DataTreeMove") adds a
+	/// <c>DTMenuHandler.OnDataTreeMove</c> (message="DataTreeMove") adds a
 	/// <c>TreeCombo</c> to <c>CurrentSlice.Control</c> and drops a popup tree on it. On the Avalonia
 	/// surface the command target is the HIDDEN, detached, off-screen adapter DataTree, so that combo
 	/// would never appear and the move could not complete.

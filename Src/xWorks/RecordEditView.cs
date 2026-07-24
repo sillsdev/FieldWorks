@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_dataEntryForm != null)
 				{
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
-					// Always Dispose (previously skipped pre-init, leaking it): Control.Dispose() is safe unshown.
+					// Always Dispose, even pre-init (skipping would leak it): Control.Dispose() is safe unshown.
 					m_dataEntryForm.Dispose();
 				}
 				TearDownAvaloniaSurface();
@@ -288,11 +288,10 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			// Settle any open fenced session BEFORE flipping the surface — without this, flipping
-			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state
-			// (review round 2).
+			// UIMode mid-edit would let Clerk.SaveOnChangeRecord force-commit invalid staged state.
 			SettleRegionEdits();
 			SetLexicalEditSurface(newSurface);
-			// WIRE-01: flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
+			// Flipping AWAY from the Avalonia surface tears down its PropChanged/undo/deactivate
 			// listeners and host NOW (symmetric with RecordBrowseView), not deferred to Dispose — so the
 			// refresh controller does not keep walking the notification bus for the view's remaining life.
 			// TearDownAvaloniaSurface nulls the host + controller, so a later flip back to New rebuilds them.

@@ -10,7 +10,7 @@ using System.Threading;
 namespace SIL.FieldWorks.Common.FwAvalonia.Seams
 {
 	/// <summary>
-	/// Crash guard for hosting Avalonia inside WinForms (16.1). Avalonia's MicroCom COM proxies
+	/// Crash guard for hosting Avalonia inside WinForms. Avalonia's MicroCom COM proxies
 	/// capture the ambient <see cref="SynchronizationContext"/> at creation
 	/// (MicroComProxyBase._synchronizationContext) and their FINALIZERS post the native Release
 	/// back through it. When that post lands after the WinForms marshaling window is gone —

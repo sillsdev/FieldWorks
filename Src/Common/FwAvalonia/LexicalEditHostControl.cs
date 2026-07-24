@@ -17,10 +17,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	public sealed class LexicalEditHostControl : AvaloniaRegionHostControl
 	{
 		// The splitter (label/value column) width the user dragged, remembered across re-shows for
-		// THIS host only (11.15) — replaces the former process-global static on the view. Used only
+		// THIS host only (11.15) — deliberately per-instance, never a process-global static. Used only
 		// as the in-process fallback when the host (RecordEditView) supplies no session-persistence
 		// hooks; the product host routes a PropertyTable LocalSetting through ShowRegion so the width
-		// also survives across SESSIONS, mirroring legacy slice-splitter persistence (Task C2).
+		// also survives across SESSIONS, mirroring legacy slice-splitter persistence.
 		private double? _rememberedLabelColumnWidth;
 
 		public LexicalEditHostControl()
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			if (region == null) throw new ArgumentNullException(nameof(region));
 			// Splitter position persists per-HOST across re-shows (11.15): this long-lived host owns
 			// the in-process remembered width, so each window/preview keeps its own — no process-global
-			// field. When the product host supplies persistence hooks (Task C2) the read/write chains
+			// field. When the product host supplies persistence hooks, the read/write chains
 			// through them too, so a width dragged in one session is restored in the next; otherwise it
 			// falls back to the process-only field (e.g. the preview host / headless tests).
 			var view = new LexicalEditRegionView(region, editContext, writingSystemFocused,

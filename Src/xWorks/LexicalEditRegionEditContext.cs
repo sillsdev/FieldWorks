@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks
 		// addresses its writing system by the unique IETF tag (RegionWsValue.WsTag/ws.Id) first;
 		// the user-editable Abbreviation (which can collide) and the legacy "vern"/"anal" aliases
 		// from the fixed first-slice definition are accepted as fallbacks. Any OTHER unknown key is
-		// rejected (review round 2) — a silent write to the DEFAULT alternative is worse than no
+		// rejected — a silent write to the DEFAULT alternative is worse than no
 		// write, and it matches ComposedRegionEditContext, which also rejects unknown keys.
 		private bool TryResolveWsHandle(string ws, bool vernacular, out int wsHandle)
 		{

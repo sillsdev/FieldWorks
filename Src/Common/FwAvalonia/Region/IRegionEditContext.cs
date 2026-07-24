@@ -16,8 +16,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// `avalonia-edit-sessions` and `avalonia-undo-redo` seam specs require. This layer stays
 	/// LCModel-free so the Avalonia view can drive editing without a domain dependency; tests use a
 	/// fake context.
-	/// Extends <see cref="IEditSession"/> (the staging-neutral IsOpen/Commit/Cancel fence) so the two
-	/// previously-parallel edit-session contracts are one: any region context IS an edit session.
+	/// Extends <see cref="IEditSession"/> (the staging-neutral IsOpen/Commit/Cancel fence) so there
+	/// is one edit-session contract, not two parallel ones: any region context IS an edit session.
 	/// </summary>
 	public interface IRegionEditContext : IEditSession
 	{

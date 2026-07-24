@@ -1388,8 +1388,8 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Compose_BooleanFields_RenderAsCheckboxKind_AndToggle()
 		{
-			// Review task 2 made the enumComboBox-backed Allomorph Status row read-only, so this
-			// test now exercises a REAL checkbox slice: an alternate form's "Is Abstract Form"
+			// The enumComboBox-backed Allomorph Status row is a closed option chooser, not a
+			// checkbox, so this test exercises a REAL checkbox slice: an alternate form's "Is Abstract Form"
 			// (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows under
 			// show-hidden) over the persisted IsAbstract boolean flid.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -1607,9 +1607,9 @@ namespace SIL.FieldWorks.XWorks
 				"the new translation is typed Free Translation, like legacy");
 		}
 
-		// Review task 3: a ghost prompt whose layout authors NO ghost field (and no init method)
-		// must compose NON-editable — before this fix, typing into it called MakeNewObject and
-		// silently DISCARDED the typed text (nothing existed to receive the string). The shipped
+		// A ghost prompt whose layout authors NO ghost field (and no init method)
+		// must compose NON-editable — an editable one would call MakeNewObject on typing and
+		// silently DISCARD the typed text (nothing exists to receive the string). The shipped
 		// AlternateForms seq (LexEntryParts.xml:119, no ghost= attribute) is exactly that case.
 		[Test]
 		public void Compose_GhostWithoutGhostField_IsNotEditable_SoTypingCannotCreateAndDiscard()
@@ -2365,7 +2365,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sda.get_VecSize(m_example.Hvo, m_flidExampleListVector), Is.EqualTo(2));
 		}
 
-		// Review task 5: a plain String prop reads the WHOLE string (get_StringProp), so the
+		// A plain String prop reads the WHOLE string (get_StringProp), so the
 		// row's writing system must come from the STRING's own first run when there is content —
 		// not from the layout's ws= spec — and write-back must use that same ws (legacy
 		// StringSlice renders the string's own run properties). The layout ws only seeds an
@@ -2413,7 +2413,7 @@ namespace SIL.FieldWorks.XWorks
 				"an empty String prop seeds from the field's own ws selector (kwsAnal)");
 		}
 
-		// Review task 7: clearing an int box must be SAFE. Legacy IntegerSlice treats a
+		// Clearing an int box must be SAFE. Legacy IntegerSlice treats a
 		// non-numeric box — including empty — as invalid on focus loss (warn + restore the
 		// stored value; Convert.ToInt32("") throws), never committing empty as 0. The composed
 		// setter mirrors that: empty/whitespace stages NOTHING, and the last successfully staged

@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					"Object Replacement Character runs are not a structural feature of the default lexeme "
 					+ "string editors (census: multistring/string editors are plain; structural object "
 					+ "content lives in sttext). Editing them couples back to object editors/lifetime.",
-					"later text wave (revisit if real data shows common ORC runs in plain string fields)",
+					"text-editing follow-up (revisit if real data shows common ORC runs in plain string fields)",
 					"ORC-bearing values render read-only with an explicit affordance "
 					+ "(FwAvaloniaStrings.EmbeddedObjectReadOnly); the TsString is preserved losslessly and "
 					+ "remains editable in the legacy view."),

@@ -12,8 +12,8 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// The ONE LCModel-backed <see cref="IRegionEditContext"/> session/validation implementation
-	/// (review finding C): owns the lazily opened fenced <see cref="LcmRegionEditSession"/> (opened
+	/// The ONE LCModel-backed <see cref="IRegionEditContext"/> session/validation
+	/// implementation: owns the lazily opened fenced <see cref="LcmRegionEditSession"/> (opened
 	/// on the first staged edit, committed/cancelled as one global undo step) and the shared
 	/// required-lexeme validation rule, so the first-slice context and the full-entry composed
 	/// context cannot drift apart. Derived contexts supply only the field write routing.

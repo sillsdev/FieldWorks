@@ -102,10 +102,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia));
 		}
 
-		// WIRE-01 (LT-22582): flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
+		// LT-22582: flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
 		// (not defer to Dispose), and a subsequent flip back to New must rebuild a fresh surface rather than
-		// re-show a disposed one (the pre-fix bug: TearDownAvaloniaSurface disposed but did not null the host,
-		// so EnsureAvaloniaSurfaceActive's `== null` guard skipped recreation and .Show()'d a disposed control).
+		// re-show a disposed one (the bug pinned here: TearDownAvaloniaSurface disposing without nulling the
+		// host lets EnsureAvaloniaSurfaceActive's `== null` guard skip recreation and .Show() a disposed control).
 		[Test]
 		public void LexiconEditTool_FlipNewLegacyNew_TearsDownThenRebuildsAvaloniaSurface()
 		{
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(GetPrivateFieldValue(control, "m_avaloniaRefreshController"), Is.Not.Null,
 				"the Avalonia surface should own a refresh controller while active");
 
-			// Flip to Legacy: the host + refresh controller are disposed AND nulled now (WIRE-01).
+			// Flip to Legacy: the host + refresh controller are disposed AND nulled now.
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			DrainMediatorAndIdleQueues();
 			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.WinForms));
@@ -144,8 +144,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// §20.3 / §20.5.2: tools whose record-edit surface is NOT yet registered still fall back to legacy under
-		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate.) Analyses graduated
-		// to the Avalonia surface with the interlinear editor (avalonia-interlinear-editor W-4/W-5) — see
+		// New mode. (domainTypeEdit = a Lists CmPossibility tool pending the F-4 predicate.) Analyses rides
+		// the interlinear editor's Avalonia surface (avalonia-interlinear-editor W-4/W-5) — see
 		// RegisteredRecordEditTools_ResolveToAvalonia below.
 		[TestCase("domainTypeEdit")]
 		public void NonMigratedRecordEditTools_FallBackToLegacy_WhenUIModeIsNew(string toolValue)
@@ -165,11 +165,11 @@ namespace SIL.FieldWorks.XWorks
 				toolValue);
 		}
 
-		// §20.3 / §20.5.2: the detail-editor tools registered for the Avalonia surface in the BASE PR. They
+		// §20.3 / §20.5.2: the detail-editor tools registered for the Avalonia surface. They
 		// resolve to Avalonia under New mode. The interlinear (Analyses) and rule-formula tools (PhonologicalRuleEdit,
-		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are INERT in the
-		// base PR (see LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools); their follow-up PR re-registers them and
-		// adds the corresponding TestCase rows back here.
+		// EnvironmentEdit, compoundRuleAdvancedEdit, naturalClassedit, phonemeEdit, AdhocCoprohibEdit) are
+		// INERT (see LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools); activating one registers it and
+		// adds the corresponding TestCase row here.
 		[TestCase("notebookEdit")]
 		[TestCase("posEdit")]
 		public void RegisteredRecordEditTools_ResolveToAvalonia_WhenUIModeIsNew(string toolValue)

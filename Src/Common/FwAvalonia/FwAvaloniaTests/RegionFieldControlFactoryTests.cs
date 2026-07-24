@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Task 21: the shared <see cref="RegionFieldKind"/>→control dispatch both the detail-pane region view
+	/// The shared <see cref="RegionFieldKind"/>→control dispatch both the detail-pane region view
 	/// and the browse in-cell editor route through. These pin that one switch produces the right control
 	/// per kind, and that the all-nullable <see cref="RegionFieldControlContext"/> serves both surfaces —
 	/// the browse cell passes null menu/link callbacks and suppresses the WS-abbreviation gutter while the

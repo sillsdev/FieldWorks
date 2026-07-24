@@ -8,7 +8,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// Coverage for <see cref="EditorKindMap.Classify"/> (previously untested): the editor-string →
+	/// Coverage for <see cref="EditorKindMap.Classify"/>: the editor-string →
 	/// classification mapping that drives the importer's diagnostics for dynamic/obsolete/unknown editors
 	/// and the grouping-node decision. Pins null/empty, the known/dynamic/obsolete sets, case-insensitivity,
 	/// and the whitespace/unknown boundary.

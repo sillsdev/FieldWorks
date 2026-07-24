@@ -19,15 +19,15 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Editor-type parity for the lexical detail view (WinForms → Avalonia):
-	/// Task A — an editable Date/GenDate row stages + commits a parseable value and rejects garbage;
-	/// Task B — the importer carries an enumComboBox's stringList ids/group onto the node so the row
+	/// an editable Date/GenDate row stages + commits a parseable value and rejects garbage;
+	/// the importer carries an enumComboBox's stringList ids/group onto the node so the row
 	/// can render a closed option chooser instead of a raw read-only int;
-	/// Task C — FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
+	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
 	/// </summary>
 	[TestFixture]
 	public class RegionEditorParityTests
 	{
-		// ---- Task A: editable Date / GenDate ----
+		// ---- Editable Date / GenDate ----
 
 		private static LexicalEditRegionField DateField(IRegionEditContext editContext,
 			RegionDateKind dateKind, string display)
@@ -140,7 +140,7 @@ namespace FwAvaloniaTests
 			Assert.That(((TextBox)control).IsReadOnly, Is.True);
 		}
 
-		// ---- Task B: the importer carries the enumComboBox stringList ----
+		// ---- The importer carries the enumComboBox stringList ----
 
 		private static ViewDefinitionModel Import(string layoutXml, params (string id, string xml)[] parts)
 		{
@@ -182,7 +182,7 @@ namespace FwAvaloniaTests
 				&& d.Message.Contains("deParams")), Is.True, "a deParams without a stringList is reported, not silently dropped");
 		}
 
-		// ---- Task C: FwReferenceVectorField.Dispose detaches every handler ----
+		// ---- FwReferenceVectorField.Dispose detaches every handler ----
 
 		private static LexicalEditRegionField VectorFieldWithItems() => new LexicalEditRegionField(
 			"v1", "Publish In", "PublishIn", null, RegionFieldKind.ReferenceVector,

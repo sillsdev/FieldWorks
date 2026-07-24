@@ -11,11 +11,10 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Groundwork note: this composer-level test landed in the phase1-base spine PR, one PR ahead of where the
-	/// stack description says it belongs (avalonia-rule-formula-editor is a follow-up PR). Despite the composer
-	/// machinery proven here, the tool-level flip (naturalClassedit) stays correctly gated off via
-	/// LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools — the line below overstated this ("is flipped to
-	/// Avalonia"); corrected to describe what's actually proven, not the tool's live state.
+	/// Groundwork for the rule-formula editor (a follow-up surface). Despite the composer
+	/// machinery proven here, the tool-level flip (naturalClassedit) stays gated off via
+	/// LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools — this file describes what is actually
+	/// proven, not the tool's live state.
 	///
 	/// avalonia-rule-formula-editor (task 3.3) — the natural-class editor (tool `naturalClassedit`). A
 	/// PhNCFeatures composes its Features through the already-claimed phonological-feature launcher plugin;

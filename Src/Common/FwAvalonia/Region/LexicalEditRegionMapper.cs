@@ -126,9 +126,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// Maps a node's editor to a renderable kind. Obsolete editors are unsupported; the
 		/// chooser categories render as choosers; everything else is treated as text — the
 		/// deliberately small first-slice projection. The editor-string knowledge itself lives
-		/// ONCE, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/> (review consolidation:
-		/// this method previously kept its own substring heuristics, the third copy beside the
-		/// composer's switch and EditorKindMap's sets).
+		/// ONCE, in <see cref="EditorKindMap.ClassifyRegionFieldKind"/> — this method keeps no
+		/// heuristics of its own.
 		/// </summary>
 		private static RegionFieldKind ClassifyKind(ViewNode node)
 		{

@@ -19,8 +19,8 @@ namespace SIL.FieldWorks.XWorks
 	/// winforms-free-lexeme-editor.md — the native Avalonia Reversal Entries editor: claims the legacy
 	/// <c>SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice</c> layout identity through the D1 plugin
 	/// contract and renders the sense's reversal-entry forms as an editable multi-writing-system text
-	/// field (<see cref="FwMultiWsTextField"/>) at the slice's real in-tree position, retiring the lone
-	/// "Unsupported" row the slice used to compose as.
+	/// field (<see cref="FwMultiWsTextField"/>) at the slice's real in-tree position, rather than an
+	/// "Unsupported" placeholder row.
 	/// <para>A sense's reversal entries (<c>ILexSense.ReferringReversalIndexEntries</c>) are a set of
 	/// <c>IReversalIndexEntry</c>, each storing its form (<c>ReversalForm</c>, a multi-unicode string)
 	/// under its owning reversal index's writing system. The editor renders one row per EXISTING

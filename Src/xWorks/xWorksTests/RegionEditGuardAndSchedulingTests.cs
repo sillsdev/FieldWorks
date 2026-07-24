@@ -14,8 +14,8 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Review round-1 hardening of the fenced edit session against the rest of the app:
-	/// (1) global Undo/Redo while a session is open used to throw LockRecursionException
+	/// Hardening of the fenced edit session against the rest of the app:
+	/// (1) global Undo/Redo while a session is open would throw LockRecursionException
 	/// (UndoStack.Undo re-enters the non-recursive UOW write lock the open task already holds) —
 	/// the holder's undo guard settles the session and converts the gesture into "close the
 	/// pending edit"; (2) Settle is the one auto-save policy (commit when valid, cancel when not)
@@ -430,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The predicate RecordEditView injects: containment in the displayed entry via the owner
-		// chain, the behavior the controller used to hard-code.
+		// chain.
 		[Test]
 		public void IsChangeWithinEntry_WalksTheOwnerChainToTheDisplayedEntry()
 		{

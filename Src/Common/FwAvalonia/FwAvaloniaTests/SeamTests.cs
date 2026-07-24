@@ -10,7 +10,7 @@ using SIL.FieldWorks.Common.FwAvalonia.Seams;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// 16.1 — the crash guard for WinForms-hosted Avalonia: MicroCom proxy finalizers post their
+	/// The crash guard for WinForms-hosted Avalonia: MicroCom proxy finalizers post their
 	/// native Release through the captured SynchronizationContext; when the WinForms marshaling
 	/// window is gone that post throws on the FINALIZER thread and terminates the process. The
 	/// wrapper swallows exactly those marshal failures on POST (the finalizer path) and passes

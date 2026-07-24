@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Teardown actions registered as each handler/subscription is wired, so a recycled or
 		// active-cell-deactivated field can detach EVERY handler (several capture closures over box,
 		// currentRich, clipboard) and release its flyouts — preventing the handler-closure leak on the
-		// editor path when VirtualizingStackPanel discards the container (Task 4).
+		// editor path when VirtualizingStackPanel discards the container.
 		private readonly List<Action> _teardown = new List<Action>();
 		private bool _disposed;
 
@@ -931,7 +931,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// The count of still-attached handler/subscription teardowns — zero after <see cref="Dispose"/>.
-		/// Exposed so a recycling test can assert the editor released every handler it wired (Task 4).
+		/// Exposed so a recycling test can assert the editor released every handler it wired.
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
 
@@ -1120,7 +1120,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly TextBlock _valueText;
 		private readonly Button _gear;
 		// Teardown for the gear click and picker subscriptions so a recycled chooser cell releases the
-		// closures it wired and drops its option flyout (Task 4). Empty for read-only rows.
+		// closures it wired and drops its option flyout. Empty for read-only rows.
 		private readonly List<Action> _teardown = new List<Action>();
 		private bool _disposed;
 
@@ -1207,7 +1207,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// Detaches the picker subscriptions and drops the option flyout so a recycled chooser cell does
-		/// not retain its closures (Task 4). Idempotent; a no-op for read-only chooser rows (none wired).
+		/// not retain its closures. Idempotent; a no-op for read-only chooser rows (none wired).
 		/// </summary>
 		public void Dispose()
 		{
@@ -1261,7 +1261,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// Teardown for the per-item Remove handlers, the add picker's OptionCommitted/Dismissed
 		// subscriptions, the gear click, and the option flyout — so a recycled vector cell releases
 		// every closure it wired and drops its flyout, mirroring FwChooserField/FwMultiWsTextField
-		// (Task C: the field previously wired all of these with NO teardown, leaking the editor path
+		// (wiring these with NO teardown leaks the editor path
 		// when VirtualizingStackPanel discards the container). Empty for read-only rows.
 		private readonly List<Action> _teardown = new List<Action>();
 		private bool _disposed;
@@ -1410,13 +1410,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// The count of still-attached subscriptions/handlers — zero after <see cref="Dispose"/>.
-		/// Exposed so a recycling test can assert the editor released every handler it wired (Task C).
+		/// Exposed so a recycling test can assert the editor released every handler it wired.
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
 
 		/// <summary>
 		/// Detaches the per-item Remove handlers and the add picker's subscriptions and drops the option
-		/// flyout so a recycled reference-vector cell does not retain its closures (Task C). Idempotent;
+		/// flyout so a recycled reference-vector cell does not retain its closures. Idempotent;
 		/// a no-op for read-only rows (none wired). The host (LexicalEditRegionView / EditableCellHost)
 		/// already disposes IDisposable editors on teardown, so wiring IDisposable here is enough.
 		/// </summary>

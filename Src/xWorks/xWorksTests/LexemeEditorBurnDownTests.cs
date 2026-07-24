@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.XWorks
 					+ (routes.Count == 0 ? "none" : string.Join(" + ", routes))
 					+ ". A new custom slice in the lexeme-editor layouts must be consciously classified "
 					+ "before it ships: register an IRegionEditorPlugin for it, designate it for the "
-					+ "WinForms companion strip, list it launcher-routed (wave 4), or defer it explicitly "
+					+ "WinForms companion strip, list it launcher-routed (D4), or defer it explicitly "
 					+ "WITH the gate it rides (winforms-free-lexeme-editor.md D1/D5).");
 			}
 		}
@@ -127,12 +127,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ExplicitlyDeferredClasses_AreTheUnmigratedChorusNotesBar_WithCitations()
 		{
-			// D5: deferral is only legitimate with the gate it rides spelled out. Wave 4 (D4)
-			// graduated AudioVisualSlice into the launcher route, Wave 3 absorbed the ghost and
-			// multislice relation routes into the composer, and ReversalIndexEntrySlice graduated to
-			// a native Avalonia plugin (ReversalIndexEntryPlugin). MessageSlice (the Chorus notes bar)
-			// is not yet migrated: no plugin claims it, so the class rides this deferred route until
-			// a notes-bar plugin is added and registered.
+			// D5: deferral is only legitimate with the gate it rides spelled out. AudioVisualSlice
+			// rides the launcher route (D4), the ghost and multislice relation routes ride the
+			// composer (D3), and ReversalIndexEntrySlice rides a native Avalonia plugin
+			// (ReversalIndexEntryPlugin). MessageSlice (the Chorus notes bar) is not yet migrated:
+			// no plugin claims it, so the class rides this deferred route until a notes-bar plugin
+			// is added and registered.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{
@@ -148,13 +148,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ComposerAbsorbedClasses_AreTheD3ReferenceVectorRoute_WithCitations()
 		{
-			// Wave 3 (D3): EntrySequenceReferenceSlice graduated out of ExplicitlyDeferred — its
-			// nodes now compose as editable ReferenceVector rows with type-ahead lexicon search
-			// (no plugin: the composer recognizes them by metadata + the legacy class identity).
-			// GhostLexRefSlice joins the same absorbed family: empty Components / Variant of rows are
-			// search-backed reference vectors whose first add creates the missing LexEntryRef.
-			// LexReferenceMultiSlice joined once the composer walked ILexReference objects directly
-			// and emitted one Avalonia row per relation with forward/reverse label semantics.
+			// D3: EntrySequenceReferenceSlice's nodes compose as editable ReferenceVector rows with
+			// type-ahead lexicon search (no plugin: the composer recognizes them by metadata + the
+			// legacy class identity). GhostLexRefSlice is in the same absorbed family: empty
+			// Components / Variant of rows are search-backed reference vectors whose first add
+			// creates the missing LexEntryRef. LexReferenceMultiSlice too: the composer walks
+			// ILexReference objects directly and emits one Avalonia row per relation with
+			// forward/reverse label semantics.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector route" },
@@ -169,10 +169,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void LauncherRoutedClasses_AreTheD4LauncherRoute_WithCitations()
 		{
-			// Wave 4 (D4): the dialog-launcher slices render as an Avalonia value row + "..."
-			// button calling the host's ILegacyDialogLauncher seam. AudioVisualSlice graduated
-			// here from ExplicitlyDeferred; the MSA/phonological launchers live in MSA/FsFeatStruc
-			// part files beyond the LexEntry/LexSense census — registered anyway, forward-looking.
+			// D4: the dialog-launcher slices render as an Avalonia value row + "..."
+			// button calling the host's ILegacyDialogLauncher seam. The MSA/phonological launchers
+			// live in MSA/FsFeatStruc part files beyond the LexEntry/LexSense census — registered
+			// anyway, forward-looking.
 			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
 			{
 				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher route" },
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void DefaultRegistry_BuiltinsAreExactlyTheLandedWaves()
+		public void DefaultRegistry_BuiltinsAreExactlyTheAlwaysOnPlugins()
 		{
 			// The default registry's builtins: the reversal-entries plugin plus the three
 			// dialog-launcher plugins. The Chorus notes bar (MessageSlice) is not yet migrated — no

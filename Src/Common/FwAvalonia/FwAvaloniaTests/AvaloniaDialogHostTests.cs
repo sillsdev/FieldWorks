@@ -16,7 +16,7 @@ using FormBorderStyle = System.Windows.Forms.FormBorderStyle;
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// The dialog-host ownership/threading contract (Task 7): the host disposes the dialog body and the
+	/// The dialog-host ownership/threading contract: the host disposes the dialog body and the
 	/// view-model after close, and the compact-density styles apply once (idempotent). The full modal
 	/// <see cref="AvaloniaDialogHost.ShowModal"/> spins a real WinForms modal loop, which does not run under
 	/// the headless Avalonia host; these cover the extracted, deterministic pieces of that contract.
@@ -141,7 +141,7 @@ namespace FwAvaloniaTests
 			}
 		}
 
-		// --- Sizing / min-size / size-persistence (Task: resizable ShowModal). ShowModal itself spins a real
+		// --- Sizing / min-size / size-persistence. ShowModal itself spins a real
 		// modal loop (not headless-runnable), so these cover the extracted ApplySizing helper that ShowModal
 		// delegates to: border style, min-size, and the get-hook that seeds the initial (remembered) size.
 		// SANCTIONED EXCEPTION to the no-WinForms-Forms-in-tests rule: these are bare

@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SelectPromotions_PicksOnlyDesignatedCompanionClasses()
 		{
 			// The selection mechanism, exercised with a fake designated class (the product set is
-			// empty since wave 2; the mechanism remains for future tools).
+			// currently empty; the mechanism remains for future tools).
 			const string fakeDesignated = "Fake.Tool.WinFormsOnlySlice";
 			var designated = new ComposedCustomEditorField("id1", fakeDesignated, "FakeDll.dll", "Fake", 17);
 			var other = new ComposedCustomEditorField("id2",
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 				"only the designated companion classes promote; other dynamic editors keep their unsupported row");
 			Assert.That(AvaloniaCompanionSlices.SelectPromotions(null), Is.Empty);
 			Assert.That(AvaloniaCompanionSlices.SelectPromotions(new[] { designated, other }), Is.Empty,
-				"the product designated set is empty since wave 2 (D2)");
+				"the product designated set is empty (D2)");
 		}
 
 		[Test]

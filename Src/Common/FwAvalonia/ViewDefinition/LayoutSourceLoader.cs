@@ -11,7 +11,7 @@ using System.Xml.Linq;
 namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 {
 	/// <summary>
-	/// The ONE loader for the shipped layout/parts directory (review finding D): merges every
+	/// The ONE loader for the shipped layout/parts directory: merges every
 	/// <c>*Parts.xml</c> into a single <c>&lt;PartInventory&gt;</c> and loads the <c>*.fwlayout</c>
 	/// files, both in ordinal filename order so the merge is deterministic. Shared by
 	/// <c>LexicalEditFirstSlice</c> (FwAvalonia) and <c>FullEntryRegionComposer</c> (xWorks) so the
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 
 		/// <summary>
 		/// Indexes layouts by (class, type, name) with first-wins semantics matching
-		/// <see cref="FindLayout"/>, for callers that look layouts up repeatedly (review finding A).
+		/// <see cref="FindLayout"/>, for callers that look layouts up repeatedly.
 		/// </summary>
 		public static Dictionary<(string ClassName, string Type, string Name), XElement> IndexLayouts(
 			IEnumerable<XElement> layoutFiles)

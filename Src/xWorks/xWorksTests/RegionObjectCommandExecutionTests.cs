@@ -22,10 +22,10 @@ using XCore;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Task A (lexical-edit Avalonia migration) — END-TO-END execution + refresh proof for the core
-	/// OBJECT commands the Avalonia surface reuses from the legacy xCore machinery. There were ZERO
-	/// tests proving these commands actually mutate the model and that the composed region reflects
-	/// the mutation; this fixture closes that gap on the REAL product host.
+	/// END-TO-END execution + refresh proof for the core
+	/// OBJECT commands the Avalonia surface reuses from the legacy xCore machinery. This fixture
+	/// proves on the REAL product host that these commands actually mutate the model and that the
+	/// composed region reflects the mutation.
 	///
 	/// Seam: a real <see cref="RecordEditView"/> is loaded through <see cref="MockFwXWindow"/> in the
 	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the

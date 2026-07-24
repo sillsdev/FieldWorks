@@ -679,9 +679,9 @@ namespace FwAvaloniaTests
 		}
 
 		/// <summary>
-		/// B10 fixture: the real CmAnthroItem 'default' layout previously raised 9 unresolved-part
-		/// Errors because all its refs live on the CmPossibility base class. With the metadata map the
-		/// whole layout imports clean except the constructs other blockers own.
+		/// B10 fixture: the real CmAnthroItem 'default' layout has all its refs on the CmPossibility
+		/// base class — without base-class metadata resolution it raises 9 unresolved-part Errors.
+		/// With the metadata map the whole layout imports clean except the constructs other blockers own.
 		/// </summary>
 		[Test]
 		public void CmAnthroItemDefaultLayout_ResolvesAllParts_ViaCmPossibilityBaseClass()
@@ -778,8 +778,7 @@ namespace FwAvaloniaTests
 		/// <summary>
 		/// B2 fixture: the shipped lexeme-form ghost configuration must arrive complete on the typed
 		/// node — ghost/ghostWs/ghostLabel, the explicit ghostClass (MoStemAllomorph, differing from
-		/// the abstract MoForm field signature) AND the ghostInitMethod hook (SetMorphTypeToRoot) the
-		/// 14.1 import path used to drop.
+		/// the abstract MoForm field signature) AND the ghostInitMethod hook (SetMorphTypeToRoot).
 		/// </summary>
 		[Test]
 		public void ShippedLexEntryNormal_LexemeFormNode_CarriesTheFullGhostConfiguration()
