@@ -86,7 +86,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				Title = LexTextControls.ksFindLexEntry,
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				HelpTopic = "khtpFindLexicalEntry",
-				Search = BuildSearch(cache, mediator, propertyTable)
+				Search = BuildSearch(cache, mediator, propertyTable),
+				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
 			};
 		}
 

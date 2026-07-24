@@ -128,6 +128,55 @@ namespace SIL.FieldWorks.LexText.Controls
 			};
 		}
 
+		/// <summary>
+		/// Builds the writing-system presentation spec for the search box from the DEFAULT VERNACULAR writing
+		/// system — the parity contract for the legacy <c>BaseGoDlg</c>'s vernacular <c>FwTextBox</c>: the ws's
+		/// default font (<c>DefaultFontName</c>, the same per-ws font derivation the region surface's value rows
+		/// use), its right-to-left script flag, and a focus callback that activates the ws's keyboard (the legacy
+		/// <c>EditingHelper.SetKeyboardForWs</c> behavior). Internal so the derivation is unit-testable against a
+		/// real cache.
+		/// PARITY: the search box carries the default vernacular ws only; the legacy writing-system SELECTOR combo
+		/// (<c>BaseGoDlg.m_cbWritingSystems</c>, letting the user pick which ws to search) is not yet migrated.
+		/// </summary>
+		internal static EntryGoSearchFieldSpec BuildVernacularSearchFieldSpec(LcmCache cache)
+		{
+			var ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var wsId = ws.Id;
+			return new EntryGoSearchFieldSpec
+			{
+				FontFamily = ws.DefaultFontName,
+				RightToLeft = ws.RightToLeftScript,
+				Focused = () => ActivateKeyboardForWritingSystem(cache, wsId)
+			};
+		}
+
+		/// <summary>
+		/// Activates the writing system's configured keyboard (Keyman/Windows IME) when the search box gains
+		/// focus — the behavior the legacy vernacular FwTextBox gets from <c>EditingHelper.SetKeyboardForWs</c>.
+		/// Unknown tags fall back to the default keyboard, and every failure is swallowed: keyboard switching must
+		/// never take down the dialog.
+		/// </summary>
+		internal static void ActivateKeyboardForWritingSystem(LcmCache cache, string wsTag)
+		{
+			try
+			{
+				foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				{
+					if (ws.Id == wsTag)
+					{
+						ws.LocalKeyboard?.Activate();
+						return;
+					}
+				}
+
+				SIL.Keyboarding.Keyboard.Controller.ActivateDefaultKeyboard();
+			}
+			catch (Exception)
+			{
+				// Keyboard switching must never take down the dialog; legacy swallows comparable failures.
+			}
+		}
+
 		// The display gloss for a sense row (the best-analysis gloss; fall back to the chooser name's text).
 		private static string SenseGloss(ILexSense sense)
 		{

@@ -128,7 +128,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
 				SearchByMode = sensesEnabled
 					? BuildSearchByMode(cache, mediator, propertyTable, startingEntry)
-					: null
+					: null,
+				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
 			};
 		}
 

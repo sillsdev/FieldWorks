@@ -204,6 +204,22 @@ Canonical consumers: `LcmLinkMsaDialogLauncher` (all the entry's MSAs, `Interlin
 the CHOSEN MSA) and `LcmLinkAllomorphDialogLauncher` (the entry's non-abstract forms, lexeme form first,
 applies the CHOSEN form).
 
+## 2d. Writing-system-aware text input (Go-family search box)
+
+The exemplar for giving an Avalonia input the legacy `FwTextBox` writing-system behavior (vernacular
+font, RTL, keyboard switch on focus). The kit side is an LCModel-free spec —
+`EntryGoSearchFieldSpec` (`Src/Common/FwAvaloniaDialogs/EntryGoSearchFieldSpec.cs`: font family,
+point size with 0 = kit default, `RightToLeft`, and a `Focused` callback) — carried as the opt-in
+`EntryGoDialogInput.SearchField` and applied by `EntryGoDialogView.axaml.cs` when the VM arrives
+(FontFamily / FontSize / FlowDirection on `PART_SearchBox`; `Focused` fires on each GotFocus). Null
+spec → the box is untouched (pinned by test). The product side derives the values in
+`EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)`: the DEFAULT VERNACULAR ws's
+`DefaultFontName` + `RightToLeftScript` (the same per-ws derivation the region value rows use) and a
+fail-safe keyboard activation (`ws.LocalKeyboard?.Activate()`, default-keyboard fallback, all
+exceptions swallowed). Every Go-family launcher's `BuildInput` opts in. Deferred: the legacy
+writing-system SELECTOR combo (`BaseGoDlg.m_cbWritingSystems`, the user picking WHICH ws to search)
+is not yet migrated — the search box carries the default vernacular ws only.
+
 ## 3. Build wiring for a NEW dialog *project* (only when adding one; usually you just add files)
 
 `FwAvaloniaDialogs` already exists. If you ever add another XAML dialog project, replicate:

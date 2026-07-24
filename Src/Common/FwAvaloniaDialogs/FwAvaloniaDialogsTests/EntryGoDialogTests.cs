@@ -773,5 +773,69 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.SelectedAuxiliaryOption, Is.Null, "the stale option selection is cleared");
 			Assert.That(vm.OkCommand.CanExecute(null), Is.False, "no options: OK stays gated (legacy empty combo)");
 		}
+
+		// ===== Opt-in writing-system-aware search box (the legacy BaseGoDlg vernacular FwTextBox): the spec drives
+		// the box's font family/size and flow direction, and its Focused callback fires on each focus gain (the
+		// legacy keyboard switch). A null spec keeps the plain kit search box untouched. =====
+
+		private static TextBox SearchBox(Control view)
+			=> FindByAutomationId<TextBox>(view, "EntryGo.Search");
+
+		[AvaloniaTest]
+		public void SearchFieldSpec_AppliesFontAndFlowDirection()
+		{
+			var input = Input();
+			input.SearchField = new EntryGoSearchFieldSpec
+			{
+				FontFamily = "Charis SIL",
+				FontSize = 18,
+				RightToLeft = true
+			};
+			var (view, vm) = Show(input, "EntryGo-06-ws-search-box");
+			Assert.That(vm.SearchField, Is.SameAs(input.SearchField), "the VM passes the spec through to the view");
+
+			var box = SearchBox(view);
+			Assert.That(box.FontFamily.Name, Is.EqualTo("Charis SIL"), "the box renders in the ws's default font");
+			Assert.That(box.FontSize, Is.EqualTo(18), "the spec's point size is applied");
+			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.RightToLeft), "an RTL ws flips the box's flow");
+		}
+
+		[AvaloniaTest]
+		public void SearchFieldSpec_FocusGain_InvokesFocusedOncePerGain()
+		{
+			var focusCount = 0;
+			var input = Input();
+			input.SearchField = new EntryGoSearchFieldSpec { Focused = () => focusCount++ };
+			var (view, _) = Show(input);
+
+			FocusSearch(view);
+			Assert.That(focusCount, Is.EqualTo(1), "gaining focus invokes the keyboard callback exactly once");
+
+			// Move focus away and back: each new focus GAIN re-invokes the callback (the legacy keyboard switch
+			// happens on every entry into the field), with no invocation on the way out.
+			FindByAutomationId<Button>(view, "EntryGo.Cancel").Focus();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(focusCount, Is.EqualTo(1), "losing focus does not invoke the callback");
+
+			FocusSearch(view);
+			Assert.That(focusCount, Is.EqualTo(2), "a second focus gain invokes the callback again");
+		}
+
+		[AvaloniaTest]
+		public void SearchFieldSpec_Null_LeavesTheKitDefaults()
+		{
+			// The pin for every existing consumer path: without a spec the box carries no local font values and
+			// keeps the default flow direction, and focusing it is harmless.
+			var (view, vm) = Show(Input());
+			Assert.That(vm.SearchField, Is.Null, "the input's SearchField defaults to null");
+
+			var box = SearchBox(view);
+			Assert.That(box.IsSet(TextBox.FontFamilyProperty), Is.False, "no local font family is applied");
+			// The kit theme (DialogTheme density) styles dialog TextBoxes at 12px; a null spec must leave that
+			// styled value in charge rather than planting a local size on the box.
+			Assert.That(box.FontSize, Is.EqualTo(12), "the kit's density font size stays in charge");
+			Assert.That(box.FlowDirection, Is.EqualTo(FlowDirection.LeftToRight), "the flow stays left-to-right");
+			Assert.That(() => FocusSearch(view), Throws.Nothing, "focusing without a spec is a no-op");
+		}
 	}
 }

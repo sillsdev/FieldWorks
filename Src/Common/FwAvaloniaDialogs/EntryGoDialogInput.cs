@@ -48,6 +48,12 @@ namespace FwAvaloniaDialogs
 		/// <summary>The help topic id for the Help button (null/empty hides Help). The launcher wires the goto.</summary>
 		public string HelpTopic { get; set; }
 
+		/// <summary>
+		/// The opt-in writing-system presentation for the search box (font / right-to-left / keyboard-on-focus —
+		/// the legacy BaseGoDlg vernacular FwTextBox behavior). Null (the default) keeps the plain kit search box.
+		/// </summary>
+		public EntryGoSearchFieldSpec SearchField { get; set; }
+
 		// ----- Opt-in entry/sense capability (the legacy LinkEntryOrSenseDlg Entry/Sense radio). Entry-only
 		// consumers (Merge, AddAllomorph, LinkAllomorph, LinkMSA) leave these defaults and are unaffected. -----
 
