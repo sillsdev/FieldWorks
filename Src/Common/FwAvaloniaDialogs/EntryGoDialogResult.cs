@@ -13,10 +13,11 @@ namespace FwAvaloniaDialogs
 	/// </summary>
 	public sealed class EntryGoDialogResult
 	{
-		public EntryGoDialogResult(bool accepted, string chosenId)
+		public EntryGoDialogResult(bool accepted, string chosenId, string auxiliaryKey = null)
 		{
 			Accepted = accepted;
 			ChosenId = chosenId;
+			AuxiliaryKey = auxiliaryKey;
 		}
 
 		/// <summary>True when the user committed a pick; false on Cancel/close (<see cref="ChosenId"/> is null).</summary>
@@ -24,6 +25,10 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>The chosen result's id (the legacy hvo string), or null when cancelled/no selection.</summary>
 		public string ChosenId { get; }
+
+		/// <summary>The chosen auxiliary option's key (<see cref="EntryGoAuxiliaryOption.Key"/>) when the consumer
+		/// opted into the dependent auxiliary picker; null when the feature is off or the dialog was cancelled.</summary>
+		public string AuxiliaryKey { get; }
 
 		/// <summary>A not-accepted (Cancel/closed) result carrying no chosen id.</summary>
 		public static EntryGoDialogResult Cancelled => new EntryGoDialogResult(false, null);

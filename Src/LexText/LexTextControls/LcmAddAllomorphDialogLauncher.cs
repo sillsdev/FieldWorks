@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 using FwAvaloniaDialogs;
 using SIL.FieldWorks.Common.FwUtils;
@@ -31,12 +32,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// it is reused (<c>MorphServices.FindMatchingAllomorph</c>); otherwise a new <c>IMoForm</c> is created on the
 	/// entry from the typed full form (<c>MorphServices.MakeMorph</c>), in ONE undoable step.
 	///
-	/// PARITY: the legacy flow ALSO pops a type-mismatch warning dialog (<c>CreateAllomorphTypeMismatchDlg</c>) when
-	/// the morpheme type deduced from the typed form's punctuation disagrees with the entry's existing forms, and on
-	/// confirmation ensures an appropriate MSA exists before creating the allomorph. That warning + MSA-creation
-	/// branch is deferred here (it needs another modal + new model operations not exposed by the kit contract); this
-	/// slice creates/reuses the allomorph without the mismatch prompt. See the // PARITY comment on
-	/// <see cref="PerformAddAllomorph"/>.
+	/// PARITY: like the legacy flow's <c>CreateAllomorphTypeMismatchDlg</c>, when the morpheme type deduced from the
+	/// typed form's punctuation disagrees with the chosen entry's existing forms the launcher asks the user first
+	/// (an injectable confirmation seam defaulting to an <see cref="FwMessageBox"/> Yes/No warning with the legacy
+	/// wording): No adds nothing, Yes ensures an appropriate stem/unclassified-affix MSA exists and then creates
+	/// the allomorph. See <see cref="PerformAddAllomorph"/>.
 	/// </summary>
 	public sealed class LcmAddAllomorphDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmAddAllomorphDialogLauncher.AddAllomorphPayload>
@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IHelpTopicProvider _helpProvider;
 		private readonly ITsString _tssForm;
 		private EntryGoDialogViewModel _viewModel;
+		private IWin32Window _owner;
 
 		private LcmAddAllomorphDialogLauncher(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, ITsString tssForm)
@@ -82,6 +83,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (cache == null) throw new ArgumentNullException(nameof(cache));
 
 			var launcher = new LcmAddAllomorphDialogLauncher(cache, mediator, propertyTable, helpProvider, tssForm);
+			// Remember the owner so the type-mismatch confirmation (Apply) can parent its modal message box.
+			launcher._owner = owner;
 			var outcome = launcher.Run(owner);
 			return !outcome.Accepted ? null : launcher.Allomorph;
 		}
@@ -140,33 +143,66 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Applies the OK result: resolves the chosen entry and adds the typed form as an allomorph in ONE undoable
-		/// step. The created/reused allomorph is exposed via <see cref="Allomorph"/>.
+		/// step, asking the type-mismatch confirmation first when the deduced morpheme type disagrees with the
+		/// entry's existing forms. The created/reused allomorph is exposed via <see cref="Allomorph"/> (null when
+		/// the user declines the mismatch confirmation).
 		/// </summary>
 		protected override AddAllomorphPayload Apply(EntryGoDialogInput state)
 		{
 			var entry = EntryGoLauncherShared.ResolveEntry(_cache, _viewModel?.ChosenId);
 			if (entry != null && _tssForm != null)
 			{
-				Allomorph = PerformAddAllomorph(_cache, entry, _tssForm);
-				ChosenEntry = entry;
+				Allomorph = PerformAddAllomorph(_cache, entry, _tssForm, DefaultConfirmTypeMismatch);
+				ChosenEntry = Allomorph != null ? entry : null;
 			}
 			return new AddAllomorphPayload { Allomorph = Allomorph, Entry = ChosenEntry };
 		}
 
 		/// <summary>
-		/// Adds the typed form to <paramref name="entry"/> as an allomorph in ONE undoable step: if a matching
-		/// allomorph already exists it is reused (<c>FindMatchingAllomorph</c>, the legacy "Use Allomorph" path),
-		/// otherwise a new <c>IMoForm</c> is created from the form (<c>MakeMorph</c>). Returns the created/reused
-		/// allomorph.
-		///
-		/// PARITY: the legacy AddAllomorphDlg flow first pops a <c>CreateAllomorphTypeMismatchDlg</c> warning when
-		/// the deduced morpheme type disagrees with the entry's existing forms, and (on confirm) ensures an
-		/// appropriate stem/affix MSA exists before creating the allomorph. That extra modal + MSA-creation branch is
-		/// deferred; this slice creates/reuses the allomorph directly. Internal + static so the add is unit-testable
-		/// against a real cache inside a UOW.
+		/// The production type-mismatch confirmation: a modal Yes/No warning box parented to the remembered owner,
+		/// carrying the legacy <c>CreateAllomorphTypeMismatchDlg</c> title + warning + question. Returns true only
+		/// when the user confirms (Yes). Factored to a delegate seam so <see cref="PerformAddAllomorph"/> is
+		/// unit-testable without spinning the modal.
 		/// </summary>
-		internal static IMoForm PerformAddAllomorph(LcmCache cache, ILexEntry entry, ITsString tssForm)
+		private bool DefaultConfirmTypeMismatch(string warning, string question)
 		{
+			var message = warning + Environment.NewLine + question;
+			return FwMessageBox.Show(_owner, message, FwAvaloniaDialogsStrings.AddAllomorphMismatchTitle,
+				FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning) == FwMessageBoxResult.Yes;
+		}
+
+		/// <summary>
+		/// Adds the typed form to <paramref name="entry"/> as an allomorph, mirroring the legacy
+		/// <c>SandboxBase.RunAddNewAllomorphDlg</c> tail. When the morpheme type deduced from the form's punctuation
+		/// disagrees with the entry's existing forms (<see cref="HasTypeMismatch"/>), the user is asked via
+		/// <paramref name="confirmTypeMismatch"/> (warning, question) first: declining returns null with no change;
+		/// confirming ensures an appropriate stem/unclassified-affix MSA exists and creates the allomorph, in ONE
+		/// undoable step. Without a mismatch, a matching allomorph is reused (the legacy "Use Allomorph" path) or a
+		/// new one is created. Internal + static so the flow is unit-testable with a stub confirmation.
+		/// </summary>
+		internal static IMoForm PerformAddAllomorph(LcmCache cache, ILexEntry entry, ITsString tssForm,
+			Func<string, string, bool> confirmTypeMismatch = null)
+		{
+			if (HasTypeMismatch(cache, entry, tssForm, out var inferredType, out var strippedForm))
+			{
+				GetMismatchMessages(entry, inferredType, strippedForm, out var warning, out var question);
+				if (confirmTypeMismatch == null || !confirmTypeMismatch(warning, question))
+					return null; // the user declined (the legacy No/close): nothing is added.
+
+				// The legacy Yes path: ensure an appropriate MSA exists, then ALWAYS create a new form (the legacy
+				// flow never reuses a matching allomorph once the type disagrees), in one undoable step.
+				IMoForm created = null;
+				UndoableUnitOfWorkHelper.Do(FwAvaloniaDialogsStrings.AddAllomorphUndo,
+					FwAvaloniaDialogsStrings.AddAllomorphRedo,
+					cache.ServiceLocator.GetInstance<IActionHandler>(),
+					() =>
+					{
+						EnsureMsaForMorphType(cache, entry, inferredType);
+						created = MorphServices.MakeMorph(entry, tssForm);
+					});
+				return created;
+			}
+
 			var existing = MorphServices.FindMatchingAllomorph(entry, tssForm);
 			if (existing != null)
 				return existing;
@@ -177,6 +213,98 @@ namespace SIL.FieldWorks.LexText.Controls
 				cache.ServiceLocator.GetInstance<IActionHandler>(),
 				() => { allomorph = MorphServices.MakeMorph(entry, tssForm); });
 			return allomorph;
+		}
+
+		/// <summary>
+		/// The legacy <c>AddAllomorphDlg.HandleMatchingSelectionChanged</c> mismatch condition: the morpheme type
+		/// deduced from the typed form's punctuation (<c>MorphServices.FindMorphType</c>) matches none of the
+		/// entry's allomorphs (same type or ambiguous with it, walked exactly like the legacy loop), and the entry
+		/// has a lexeme form (the legacy gate for popping the warning). Also yields the deduced type and the form
+		/// text stripped of its morpheme markers for the messages. Internal so it is unit-testable.
+		/// </summary>
+		internal static bool HasTypeMismatch(LcmCache cache, ILexEntry entry, ITsString tssForm,
+			out IMoMorphType inferredType, out string strippedForm)
+		{
+			inferredType = null;
+			strippedForm = tssForm?.Text;
+			if (entry?.LexemeFormOA == null || string.IsNullOrEmpty(strippedForm))
+				return false;
+			var form = strippedForm;
+			inferredType = MorphServices.FindMorphType(cache, ref form, out _);
+			strippedForm = form;
+			if (inferredType == null)
+				return false; // no deducible type: the legacy hvoType==0 case never warns.
+
+			// The legacy loop verbatim: a form-match resets the type-match (unless the SAME form also matches the
+			// type) and stops the walk; any type-compatible allomorph before that satisfies the type.
+			var matchingType = false;
+			foreach (var mf in entry.AllAllomorphs)
+			{
+				var matchingForm = mf.Form.VernacularDefaultWritingSystem.Text == strippedForm;
+				if (matchingForm)
+					matchingType = false;
+				if (mf.MorphTypeRA != null
+					&& (inferredType.Hvo == mf.MorphTypeRA.Hvo || inferredType.IsAmbiguousWith(mf.MorphTypeRA)))
+				{
+					matchingType = true;
+				}
+				if (matchingForm)
+					break;
+			}
+			return !matchingType;
+		}
+
+		/// <summary>
+		/// Ensures <paramref name="entry"/> carries an MSA appropriate for <paramref name="morphType"/> before an
+		/// allomorph of that type is added — the legacy Yes-path tail: stem-like morph types (root/stem/clitic/
+		/// particle/phrase) get a <c>IMoStemMsa</c> when none exists; every other type gets a
+		/// <c>IMoUnclassifiedAffixMsa</c> when none exists. Must run inside an open unit of work. Internal so it is
+		/// unit-testable against a real cache.
+		/// </summary>
+		internal static void EnsureMsaForMorphType(LcmCache cache, ILexEntry entry, IMoMorphType morphType)
+		{
+			var haveStemMsa = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>().Any();
+			var haveUnclassifiedMsa = entry.MorphoSyntaxAnalysesOC.OfType<IMoUnclassifiedAffixMsa>().Any();
+			switch (morphType.Guid.ToString())
+			{
+				case MoMorphTypeTags.kMorphBoundRoot:
+				case MoMorphTypeTags.kMorphBoundStem:
+				case MoMorphTypeTags.kMorphClitic:
+				case MoMorphTypeTags.kMorphEnclitic:
+				case MoMorphTypeTags.kMorphProclitic:
+				case MoMorphTypeTags.kMorphStem:
+				case MoMorphTypeTags.kMorphRoot:
+				case MoMorphTypeTags.kMorphParticle:
+				case MoMorphTypeTags.kMorphPhrase:
+				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
+					if (!haveStemMsa)
+						entry.MorphoSyntaxAnalysesOC.Add(
+							cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create());
+					break;
+				default:
+					if (!haveUnclassifiedMsa)
+						entry.MorphoSyntaxAnalysesOC.Add(
+							cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create());
+					break;
+			}
+		}
+
+		// Builds the two confirmation messages with the legacy wording: the warning names the entry and its lexeme
+		// form's morph type; the question names the deduced type and the (marker-stripped) typed form.
+		private static void GetMismatchMessages(ILexEntry entry, IMoMorphType inferredType, string strippedForm,
+			out string warning, out string question)
+		{
+			var entryForm = entry.HeadWord?.Text;
+			if (string.IsNullOrEmpty(entryForm))
+				entryForm = FwAvaloniaDialogsStrings.AddAllomorphNoForm;
+			var entryType = entry.LexemeFormOA?.MorphTypeRA?.Name?.BestAnalysisAlternative?.Text
+				?? FwAvaloniaDialogsStrings.AddAllomorphNoMorphType;
+			var newType = inferredType?.Name?.BestAnalysisAlternative?.Text
+				?? FwAvaloniaDialogsStrings.AddAllomorphNoMorphType;
+			warning = string.Format(CultureInfo.CurrentCulture,
+				FwAvaloniaDialogsStrings.AddAllomorphMismatchWarning, entryForm, entryType);
+			question = string.Format(CultureInfo.CurrentCulture,
+				FwAvaloniaDialogsStrings.AddAllomorphMismatchQuestion, newType, strippedForm);
 		}
 
 		private void OnHelpRequested(string topic)

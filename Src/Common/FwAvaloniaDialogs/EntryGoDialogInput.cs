@@ -71,5 +71,21 @@ namespace FwAvaloniaDialogs
 		/// or sense rows (sense mode true). When null the dialog falls back to <see cref="Search"/> (entry-only).
 		/// </summary>
 		public Func<string, bool, IReadOnlyList<EntryGoSearchResult>> SearchByMode { get; set; }
+
+		// ----- Opt-in dependent auxiliary selection (the legacy per-entry combo an EntryGoDlg child showed under
+		// the matching list: LinkMSADlg's grammatical-info combo, LinkAllomorphDlg's allomorph combo). Consumers
+		// that leave AuxiliaryOptions null keep today's single-stage commit-on-select picker unchanged. -----
+
+		/// <summary>
+		/// The resolver for the dependent auxiliary picker: given the selected search result it returns the (key,
+		/// display) options for that entry (e.g. its MSAs or its non-abstract forms, in legacy combo order). When
+		/// non-null the dialog becomes TWO-STAGE — picking a result populates the auxiliary options and OK commits
+		/// only once both are chosen. Null (the default) keeps the single-stage commit-on-select behavior.
+		/// </summary>
+		public Func<EntryGoSearchResult, IReadOnlyList<EntryGoAuxiliaryOption>> AuxiliaryOptions { get; set; }
+
+		/// <summary>The label shown above the auxiliary picker (localized by the launcher, e.g. "Grammatical
+		/// Info."); only shown when <see cref="AuxiliaryOptions"/> is supplied.</summary>
+		public string AuxiliaryLabel { get; set; }
 	}
 }

@@ -188,6 +188,22 @@ Lexical Edit UI Mode — broadcasting the `PropertyTable` "UIMode" property re-r
 live, so the button says **"Apply"**, not "Restart to apply"). Only keep a restart prompt for settings
 that genuinely cannot apply mid-session (e.g. UI-language).
 
+## 2c. Go-family auxiliary selection (dependent picker under the matching list)
+
+The exemplar for legacy `BaseGoDlg`/`EntryGoDlg` children that add controls UNDER the matching list (the
+per-entry combo in `LinkMSADlg` / `LinkAllomorphDlg`): the shared `EntryGoDialogViewModel` has an opt-in
+**dependent auxiliary selection**. The launcher puts a label plus a resolver
+`Func<EntryGoSearchResult, IReadOnlyList<EntryGoAuxiliaryOption>>` on `EntryGoDialogInput`
+(`AuxiliaryLabel`/`AuxiliaryOptions`; options are LCModel-free key/display pairs — keys are the launcher's
+choice, e.g. Guid strings). With the spec present the dialog is **two-stage**: picking a result invokes the
+resolver and populates the auxiliary picker (a lone option auto-selects), Enter/double-click on the results
+list is stage-1 select (it no longer commits), and an OK button appears, gated until BOTH an entry and an
+option are chosen (`ChosenAuxiliaryKey` carries the pick). With the spec null the dialog stays the
+single-stage commit-on-select picker, byte-identical (the code-behind removes the OK button from the tree).
+Canonical consumers: `LcmLinkMsaDialogLauncher` (all the entry's MSAs, `InterlinearName` displays, applies
+the CHOSEN MSA) and `LcmLinkAllomorphDialogLauncher` (the entry's non-abstract forms, lexeme form first,
+applies the CHOSEN form).
+
 ## 3. Build wiring for a NEW dialog *project* (only when adding one; usually you just add files)
 
 `FwAvaloniaDialogs` already exists. If you ever add another XAML dialog project, replicate:

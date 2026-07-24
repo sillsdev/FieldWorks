@@ -169,6 +169,9 @@
   <data name="FwAvaloniaDialogs.EntryGoResultsLabel" xml:space="preserve">
     <value>Lexical Entries</value>
   </data>
+  <data name="FwAvaloniaDialogs.EntryGoMustSelectOption" xml:space="preserve">
+    <value>Select an option.</value>
+  </data>
   <data name="FwAvaloniaDialogs.Merge.Title" xml:space="preserve">
     <value>Merge Entry</value>
   </data>
@@ -187,14 +190,35 @@
   <data name="FwAvaloniaDialogs.AddAllomorph.Redo" xml:space="preserve">
     <value>Redo add allomorph</value>
   </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.MismatchTitle" xml:space="preserve">
+    <value>Add allomorph to lexical entry?</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.MismatchWarning" xml:space="preserve">
+    <value>The selected lexical entry ({0}) is a {1}.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.MismatchQuestion" xml:space="preserve">
+    <value>Are you sure you want to add the {0} allomorph ({1}) to this entry?</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.NoMorphType" xml:space="preserve">
+    <value>unknown morph type</value>
+  </data>
+  <data name="FwAvaloniaDialogs.AddAllomorph.NoForm" xml:space="preserve">
+    <value>there is no form!</value>
+  </data>
   <data name="FwAvaloniaDialogs.LinkEntryOrSense.Title" xml:space="preserve">
     <value>Choose Lexical Entry or Sense</value>
   </data>
   <data name="FwAvaloniaDialogs.LinkAllomorph.Title" xml:space="preserve">
     <value>Choose Allomorph</value>
   </data>
+  <data name="FwAvaloniaDialogs.LinkAllomorph.AllomorphLabel" xml:space="preserve">
+    <value>Allomorph</value>
+  </data>
   <data name="FwAvaloniaDialogs.LinkMsa.Title" xml:space="preserve">
     <value>Choose Morpheme and Grammatical Info.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.LinkMsa.GrammaticalInfoLabel" xml:space="preserve">
+    <value>Grammatical Info.</value>
   </data>
   <data name="FwAvaloniaDialogs.LinkEntryOrSense.EntryRadio" xml:space="preserve">
     <value>Entry</value>

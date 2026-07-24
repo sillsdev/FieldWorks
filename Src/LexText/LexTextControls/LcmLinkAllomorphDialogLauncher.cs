@@ -29,10 +29,10 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// The search applies the legacy <c>LinkAllomorphDlg.FilterLexEntry</c> rule (drop entries whose forms are ALL
 	/// abstract, since an abstract-only entry has no concrete allomorph to choose).
 	///
-	/// PARITY: the legacy dialog shows a combo of the chosen entry's NON-ABSTRACT forms (lexeme form first, then
-	/// alternates) and defaults to the first; this slice resolves to that same first form. Picking a non-first
-	/// allomorph from a multi-allomorph entry is deferred (the kit result list carries one row per entry) — see the
-	/// // PARITY comment on <see cref="ResolveSelectedAllomorph"/>.
+	/// PARITY: like the legacy dialog's combo of the chosen entry's NON-ABSTRACT forms (lexeme form first, then
+	/// alternates), this launcher supplies the kit's dependent auxiliary picker
+	/// (<see cref="EntryGoDialogInput.AuxiliaryOptions"/>) with one option per non-abstract form in that order
+	/// (keyed by the form's Guid) and resolves the CHOSEN form on OK — see <see cref="ResolveSelectedAllomorph"/>.
 	/// </summary>
 	public sealed class LcmLinkAllomorphDialogLauncher
 		: AvaloniaDialogLauncher<EntryGoDialogInput, EntryGoDialogViewModel, LcmLinkAllomorphDialogLauncher.LinkAllomorphPayload>
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			public IMoForm Allomorph;
 		}
 
-		/// <summary>The allomorph the user chose (the first non-abstract form of the chosen entry), or null.</summary>
+		/// <summary>The allomorph the user chose in the auxiliary picker, or null when cancelled.</summary>
 		public IMoForm SelectedObject { get; private set; }
 
 		/// <summary>
@@ -89,8 +89,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			BuildInput(_cache, _mediator, _propertyTable, _startingEntry);
 
 		/// <summary>
-		/// Builds the LCModel-free <see cref="EntryGoDialogInput"/> for the Link-Allomorph consumer. Internal so the
-		/// input + search are unit-testable against a real cache without running the modal.
+		/// Builds the LCModel-free <see cref="EntryGoDialogInput"/> for the Link-Allomorph consumer, including the
+		/// allomorph auxiliary picker (the legacy <c>m_fwcbAllomorphs</c> combo of the chosen entry's non-abstract
+		/// forms). Internal so the input + search are unit-testable against a real cache without running the modal.
 		/// </summary>
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ILexEntry startingEntry)
@@ -101,8 +102,44 @@ namespace SIL.FieldWorks.LexText.Controls
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				ExcludedId = startingEntry?.Hvo.ToString(System.Globalization.CultureInfo.InvariantCulture),
 				HelpTopic = "hktpInsertAllomorphChooseAllomorph",
-				Search = BuildSearch(cache, mediator, propertyTable, startingEntry)
+				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
+				AuxiliaryLabel = FwAvaloniaDialogsStrings.LinkAllomorphAllomorphLabel,
+				AuxiliaryOptions = result => GetAllomorphOptions(cache, result?.Id)
 			};
+		}
+
+		/// <summary>
+		/// The auxiliary options for a selected entry row: one option per NON-abstract form in the legacy combo's
+		/// order — the lexeme form first (if not abstract), then the non-abstract alternates (the order
+		/// LinkAllomorphDlg's <c>HandleMatchingSelectionChanged</c> added them) — displayed by the form's best
+		/// vernacular text and keyed by the form's Guid. Internal so it is unit-testable against a real cache.
+		/// </summary>
+		internal static IReadOnlyList<EntryGoAuxiliaryOption> GetAllomorphOptions(LcmCache cache, string entryId)
+		{
+			var entry = EntryGoLauncherShared.ResolveEntry(cache, entryId);
+			if (entry == null)
+				return new EntryGoAuxiliaryOption[0];
+			return ConcreteFormsInLegacyOrder(entry)
+				.Select(form => new EntryGoAuxiliaryOption(form.Guid.ToString(), FormText(form)))
+				.ToList();
+		}
+
+		// The legacy combo's display (LAllomorph.AsTss): the form's best vernacular alternative, hvo as fallback.
+		private static string FormText(IMoForm form)
+			=> form.Form?.BestVernacularAlternative?.Text
+				?? form.Hvo.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+		// The legacy combo's item order: the lexeme form (when not abstract), then each non-abstract alternate.
+		private static IEnumerable<IMoForm> ConcreteFormsInLegacyOrder(ILexEntry entry)
+		{
+			var lf = entry.LexemeFormOA;
+			if (lf != null && !lf.IsAbstract)
+				yield return lf;
+			foreach (var allo in entry.AlternateFormsOS)
+			{
+				if (!allo.IsAbstract)
+					yield return allo;
+			}
 		}
 
 		/// <summary>
@@ -142,31 +179,35 @@ namespace SIL.FieldWorks.LexText.Controls
 			new EntryGoDialogView { DataContext = viewModel };
 
 		/// <summary>
-		/// Applies the OK result: resolves the chosen entry to its (first non-abstract) allomorph and exposes it via
-		/// <see cref="SelectedObject"/>. No model mutation here — the caller performs the on-OK action.
+		/// Applies the OK result: resolves the chosen entry + the auxiliary pick to the CHOSEN allomorph and exposes
+		/// it via <see cref="SelectedObject"/>. No model mutation here — the caller performs the on-OK action.
 		/// </summary>
 		protected override LinkAllomorphPayload Apply(EntryGoDialogInput state)
 		{
-			SelectedObject = ResolveSelectedAllomorph(_cache, _viewModel?.ChosenId);
+			SelectedObject = ResolveSelectedAllomorph(_cache, _viewModel?.ChosenId, _viewModel?.ChosenAuxiliaryKey);
 			return new LinkAllomorphPayload { Allomorph = SelectedObject };
 		}
 
 		/// <summary>
-		/// Resolves the chosen entry's id to an allomorph. PARITY: the legacy LinkAllomorphDlg builds a combo of the
-		/// entry's NON-abstract forms — the lexeme form first (if not abstract), then the non-abstract alternates —
-		/// and default-selects the FIRST item; this slice returns that same first form. Choosing a non-first
-		/// allomorph is deferred (the kit's one-row-per-entry result list cannot carry per-allomorph rows cleanly).
-		/// Internal so it is unit-testable against a real cache.
+		/// Resolves the chosen entry's id + the auxiliary pick to an allomorph. PARITY: like the legacy
+		/// LinkAllomorphDlg combo of the entry's NON-abstract forms, the form whose Guid matches
+		/// <paramref name="formKey"/> (the chosen auxiliary option) is returned; a missing/unresolved key falls back
+		/// to the first non-abstract form — lexeme form first, then alternates (the legacy combo's default
+		/// selection). Internal so it is unit-testable against a real cache.
 		/// </summary>
-		internal static IMoForm ResolveSelectedAllomorph(LcmCache cache, string entryId)
+		internal static IMoForm ResolveSelectedAllomorph(LcmCache cache, string entryId, string formKey = null)
 		{
 			var entry = EntryGoLauncherShared.ResolveEntry(cache, entryId);
 			if (entry == null)
 				return null;
-			var lf = entry.LexemeFormOA;
-			if (lf != null && !lf.IsAbstract)
-				return lf;
-			return entry.AlternateFormsOS.FirstOrDefault(allo => !allo.IsAbstract);
+			var concreteForms = ConcreteFormsInLegacyOrder(entry).ToList();
+			if (!string.IsNullOrEmpty(formKey) && Guid.TryParse(formKey, out var formGuid))
+			{
+				var chosen = concreteForms.FirstOrDefault(form => form.Guid == formGuid);
+				if (chosen != null)
+					return chosen;
+			}
+			return concreteForms.FirstOrDefault();
 		}
 
 		private void OnHelpRequested(string topic)
