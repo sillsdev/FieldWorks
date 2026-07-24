@@ -2361,7 +2361,16 @@ namespace SIL.FieldWorks.IText
 			{
 				return null;
 			}
-			// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+			// Guess the word category from the morphemes' MSAs, matching
+			// SyncMonomorphemicGlossAndPos so the display and the sandbox agree:
+			//   - if there is more than one stem and they have different parts of
+			//     speech, give up (return null);
+			//   - if there is more than one derivational affix (DA), give up;
+			//   - if there is no stem, give up — a derived-to category is only
+			//     meaningful relative to the stem it attaches to, so a lone DA is
+			//     not enough to guess from;
+			//   - otherwise use the DA's 'to' POS if there is one, else the stem's POS.
+			//     (we don't insist that the DA's 'from' POS matches the stem)
 			IPartOfSpeech stemPOS = null;
 			IPartOfSpeech derivedPOS = null;
 			foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
