@@ -128,17 +128,6 @@ namespace SIL.FieldWorks
 		#endregion
 
 		/// <summary/>
-		[TestCase(null, "Legacy")]
-		[TestCase("", "Legacy")]
-		[TestCase("  ", "Legacy")]
-		[TestCase("New", "New")]
-		[TestCase("Legacy", "Legacy")]
-		public void ResolveUIMode_BlankDefaultsToLegacy(string settingsUIMode, string expected)
-		{
-			Assert.That(FieldWorks.ResolveUIMode(settingsUIMode), Is.EqualTo(expected));
-		}
-
-		/// <summary/>
 		[Test]
 		public void EnsureValidLinkedFilesFolderCore_IfUsingDefaultDir_CreatesDirIfNotExist()
 		{

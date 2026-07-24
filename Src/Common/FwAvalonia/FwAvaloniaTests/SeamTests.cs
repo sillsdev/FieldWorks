@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
@@ -40,12 +41,45 @@ namespace FwAvaloniaTests
 		[Test]
 		public void Post_SwallowsDeadMarshalingTargetFailures_InsteadOfKillingTheProcess()
 		{
-			var guarded = new FinalizerSafeSynchronizationContext(new DeadTargetContext());
-			Assert.DoesNotThrow(() => guarded.Post(_ => { }, null),
-				"the exact failure mode of MicroComProxyBase.Finalize must not propagate");
-			Assert.Throws<ObjectDisposedException>(() => guarded.Send(_ => { }, null),
-				"Send is synchronous caller work, not a finalizer Release — a silently skipped " +
-				"callback would corrupt the waiting caller, so the failure must surface");
+			var dropped = new System.Collections.Generic.List<string>();
+			var originalHandler = FinalizerSafeSynchronizationContext.NonMicroComDropHandler;
+			FinalizerSafeSynchronizationContext.NonMicroComDropHandler = dropped.Add;
+			try
+			{
+				var guarded = new FinalizerSafeSynchronizationContext(new DeadTargetContext());
+				Assert.DoesNotThrow(() => guarded.Post(_ => { }, null),
+					"the exact failure mode of MicroComProxyBase.Finalize must not propagate");
+				Assert.That(dropped, Has.Count.EqualTo(1),
+					"a dropped NON-MicroCom post (this test's lambda) must route through the " +
+					"loud-in-Debug drop handler — a silently vanished async continuation is a hang");
+				Assert.Throws<ObjectDisposedException>(() => guarded.Send(_ => { }, null),
+					"Send is synchronous caller work, not a finalizer Release — a silently skipped " +
+					"callback would corrupt the waiting caller, so the failure must surface");
+			}
+			finally
+			{
+				FinalizerSafeSynchronizationContext.NonMicroComDropHandler = originalHandler;
+			}
+		}
+
+		[Test]
+		public void IsMicroComCallback_NamespaceAssumption_StillMatchesTheReferencedAvalonia()
+		{
+			// The classifier assumes MicroCom finalizer posts come from callback methods declared
+			// under the "MicroCom." namespace. Pin that against the actual referenced assemblies:
+			// if an Avalonia bump relocates MicroComProxyBase, this fails loudly instead of the
+			// classifier silently treating every finalizer Release as a "dropped" post.
+			var proxyBase = Type.GetType("MicroCom.Runtime.MicroComProxyBase, MicroCom.Runtime", false)
+				?? AppDomain.CurrentDomain.GetAssemblies()
+					.Select(a => a.GetType("MicroCom.Runtime.MicroComProxyBase", false))
+					.FirstOrDefault(t => t != null);
+			Assert.That(proxyBase, Is.Not.Null,
+				"MicroCom.Runtime.MicroComProxyBase not found in the referenced assemblies — " +
+				"update FinalizerSafeSynchronizationContext.IsMicroComCallback's namespace check");
+			Assert.That(proxyBase.FullName, Does.StartWith("MicroCom."));
+
+			Assert.That(FinalizerSafeSynchronizationContext.IsMicroComCallback(_ => { }), Is.False,
+				"a test-declared callback is not MicroCom");
 		}
 
 		[Test]

@@ -140,7 +140,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			// UIMode (and its per-tool overrides) flips live — RecordEditView settles any open edit and
 			// re-resolves the surface on the spot, so unlike the settings below, this never needs a restart.
-			var oldUiMode = NormalizeUIMode(m_settings.UIMode);
+			// Compare against the PropertyTable's LIVE value (falling back to settings): if the table and
+			// the persisted setting ever disagree, OK re-broadcasts and heals the running surfaces.
+			var oldUiMode = NormalizeUIMode(m_propertyTable == null
+				? m_settings.UIMode
+				: m_propertyTable.GetStringProperty(UIModePropertyName, m_settings.UIMode));
 			var newUiMode = SelectedUIMode;
 			if (oldUiMode != newUiMode)
 			{
@@ -526,9 +530,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private static string NormalizeUIMode(string mode)
 		{
-			return string.Equals(mode, NewUIMode, StringComparison.OrdinalIgnoreCase)
-				? NewUIMode
-				: LegacyUIMode;
+			return SIL.FieldWorks.Common.FwAvalonia.LexicalEditSurfaceResolver.NormalizeUIMode(mode);
 		}
 
 		private static string GetOptionString(string resourceName, string fallback)

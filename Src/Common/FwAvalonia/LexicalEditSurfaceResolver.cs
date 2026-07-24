@@ -41,6 +41,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public const string NewUIMode = "New";
 
 		/// <summary>
+		/// Normalizes a persisted UI-mode value to exactly <see cref="NewUIMode"/> or
+		/// <see cref="LegacyUIMode"/>: only a case-insensitive "New" selects New; null, blank, or any
+		/// other value fails closed to Legacy. The single normalization shared by the settings seeding
+		/// (FwXWindow) and both Options dialogs.
+		/// </summary>
+		public static string NormalizeUIMode(string uiMode) =>
+			string.Equals(uiMode, NewUIMode, StringComparison.OrdinalIgnoreCase) ? NewUIMode : LegacyUIMode;
+
+		/// <summary>
 		/// Property/app-setting key storing the user's per-tool opt-outs from the New UI mode (the
 		/// "Manage Individual Features" dialog). Value is a comma-separated tool-name list; empty/blank
 		/// means every catalog tool is enabled — the master UIMode=New switch's "everything on" default.

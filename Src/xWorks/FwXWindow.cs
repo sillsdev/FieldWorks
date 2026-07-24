@@ -7,6 +7,7 @@ using SIL.Extensions;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
@@ -542,6 +543,28 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(path);
 			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
+			// LT-22625 review: seed the UI-mode properties BEFORE LoadUI creates the content views —
+			// RecordEditView resolves its surface during window construction, so seeding any later
+			// (or relying on the app to do it after NewMainAppWnd returns) leaves a persisted
+			// UIMode=New coming up on the Legacy surface until the setting is toggled again.
+			var settings = new FwApplicationSettings();
+			SeedUIModeProperties(m_propertyTable, settings.UIMode, settings.UIModeDisabledTools);
+		}
+
+		/// <summary>
+		/// Seeds the UI-mode selection properties from their persisted app-setting values, normalized
+		/// fail-closed (anything but "New" means Legacy). No broadcast: this runs before the content
+		/// views exist; later changes go through the Options dialogs, which broadcast.
+		/// </summary>
+		internal static void SeedUIModeProperties(PropertyTable propertyTable, string settingsUiMode,
+			string settingsDisabledTools)
+		{
+			propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModePropertyName,
+				LexicalEditSurfaceResolver.NormalizeUIMode(settingsUiMode), false);
+			propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModePropertyName, false);
+			propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName,
+				settingsDisabledTools ?? string.Empty, false);
+			propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
