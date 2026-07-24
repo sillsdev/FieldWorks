@@ -20,7 +20,6 @@ namespace FwAvaloniaDialogsTests
 	{
 		public static AppBuilder BuildAvaloniaApp()
 			{
-				FwAvaloniaLocalizationBootstrap.EnsureInitialized();
 				return AppBuilder.Configure<FwAvaloniaApp>()
 				.UseSkia()
 				.UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });

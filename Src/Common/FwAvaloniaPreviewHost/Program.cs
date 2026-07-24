@@ -53,7 +53,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.PreviewHost
 
 			PreviewHostLogging.Initialize();
 			PreviewOptions.Current = PreviewOptions.Parse(args);
-			FwAvaloniaLocalizationBootstrap.EnsureInitialized();
 			Trace.WriteLine("[FwAvaloniaPreviewHost] Starting. module='" + PreviewOptions.Current.ModuleId + "' data='" + PreviewOptions.Current.DataMode + "'");
 
 			BuildAvaloniaApp().StartWithClassicDesktopLifetime(Array.Empty<string>());

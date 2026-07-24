@@ -2,59 +2,71 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using L10NSharp;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using FwAvaloniaDialogs;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 
 namespace FwAvaloniaDialogsTests
 {
+	/// <summary>
+	/// Pins the .resx localization strategy for the FieldWorks-owned Avalonia strings: every
+	/// accessor property must resolve from its project's neutral resx (the accessors fall back to
+	/// the string id when an entry is missing, so a resolved value that looks like an id means the
+	/// resx and the accessor drifted apart), and resolution must survive a UI culture with no
+	/// satellite assembly by falling back to the neutral English resources.
+	/// </summary>
 	[TestFixture]
 	public sealed class AvaloniaLocalizationTests
 	{
-		[Test]
-		public void GetPalasoString_ReturnsTranslatedValue_WhenCatalogAndLanguageExist()
+		private static readonly Type[] AccessorClasses =
 		{
-			FwAvaloniaLocalizationBootstrap.EnsureInitialized();
-			var original = LocalizationManager.UILanguageId;
+			typeof(FwAvaloniaStrings),
+			typeof(FwAvaloniaDialogsStrings)
+		};
 
-			try
+		private static string[] AccessorProperties(Type accessor) =>
+			accessor.GetProperties(BindingFlags.Public | BindingFlags.Static)
+				.Where(p => p.PropertyType == typeof(string))
+				.Select(p => p.Name)
+				.ToArray();
+
+		[Test]
+		public void EveryAccessorProperty_ResolvesFromTheNeutralResx()
+		{
+			foreach (var accessor in AccessorClasses)
 			{
-				LocalizationManager.SetUILanguage("es");
-				Assert.That(
-					FwAvaloniaLocalization.GetPalasoString("AboutDialog.NoUpdates", "No Updates"),
-					Is.EqualTo("No hay actualizaciones"));
-			}
-			finally
-			{
-				LocalizationManager.SetUILanguage(original);
+				var propertyNames = AccessorProperties(accessor);
+				Assert.That(propertyNames, Is.Not.Empty, $"{accessor.Name} exposes string properties");
+				foreach (var name in propertyNames)
+				{
+					var value = (string)accessor.GetProperty(name).GetValue(null);
+					Assert.That(value, Is.Not.Null.And.Not.Empty,
+						$"{accessor.Name}.{name} must have a neutral resx entry");
+					Assert.That(value, Does.Not.StartWith("FwAvalonia.").And.Not.StartWith("FwAvaloniaDialogs."),
+						$"{accessor.Name}.{name} resolved to its id — the resx entry is missing or renamed");
+				}
 			}
 		}
 
 		[Test]
-		public void GetChorusString_ReturnsTranslatedValue_WhenCatalogAndLanguageExist()
+		public void AccessorProperties_FallBackToNeutralEnglish_ForACultureWithNoSatellite()
 		{
-			FwAvaloniaLocalizationBootstrap.EnsureInitialized();
-			var original = LocalizationManager.UILanguageId;
-
+			var original = Thread.CurrentThread.CurrentUICulture;
 			try
 			{
-				LocalizationManager.SetUILanguage("es");
-				Assert.That(
-					FwAvaloniaLocalization.GetChorusString("Common.Help", "Help"),
-					Is.EqualTo("Ayuda"));
+				Thread.CurrentThread.CurrentUICulture = new CultureInfo("de-DE");
+				Assert.That(FwAvaloniaStrings.Cancel, Is.EqualTo("Cancel"));
+				Assert.That(FwAvaloniaDialogsStrings.Help, Is.EqualTo("Help"));
 			}
 			finally
 			{
-				LocalizationManager.SetUILanguage(original);
+				Thread.CurrentThread.CurrentUICulture = original;
 			}
-		}
-
-		[Test]
-		public void GetString_ReturnsEnglishFallback_WhenAppManagerIsMissing()
-		{
-			Assert.That(
-				FwAvaloniaLocalization.GetString("Missing.Avalonia.Manager", "FwAvalonia.Test.Fallback", "English fallback"),
-				Is.EqualTo("English fallback"));
 		}
 	}
 }

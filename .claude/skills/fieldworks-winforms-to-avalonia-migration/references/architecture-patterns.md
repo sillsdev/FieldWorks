@@ -17,7 +17,7 @@ Contents:
 8. Undo/redo, edit sessions, and refresh
 9. Validation
 10. Custom fields and ghost rows
-11. Localization lanes
+11. Localization strategies
 12. Density and performance
 13. Headless integration-test harness (scenarios & workflows)
 
@@ -298,35 +298,36 @@ stored layout structure.
 composer expansion in `FullEntryRegionComposer.cs`.
 Tests: `RegionCustomFieldRenderingTests.cs`.
 
-## 11. Localization lanes
+## 11. Localization strategies
 
-**Decision.** Two runtime lanes:
+**Decision.** Three strategies:
 
-- **Field labels** resolve through the legacy StringTable lane
-  (`XmlUtils.GetLocalizedAttributeValue`, `strings-{locale}.xml`) at render
-  time; the IR carries `LocalizationKey` per node, never baked English.
-- **Avalonia chrome** (Save, Cancel, validation, unsupported-row text,
-  dialog labels, accessible names) joins the existing
-  LocalizationManager/L10NSharp XLIFF catalog already loaded by the
-  product host. Prefer existing `Palaso`/`Chorus` ids only when semantics
-  and markup truly match; otherwise add unique Avalonia-prefixed ids in
-  that same catalog so collisions do not leak `&` mnemonics or unrelated
-  translations into Avalonia surfaces.
+- **Field labels** (text originating in XML configuration) resolve through
+  the StringTable strategy (`XmlUtils.GetLocalizedAttributeValue`,
+  `strings-{locale}.xml`) at render time; the IR carries `LocalizationKey`
+  per node, never baked English.
+- **FieldWorks-owned UI text** — WinForms and Avalonia alike (Save, Cancel,
+  validation, unsupported-row text, dialog labels, accessible names) —
+  lives in the owning project's `.resx`, with translations shipped as
+  Crowdin-built satellite assemblies, per the Avalonia localization docs
+  and repo convention. `FwAvaloniaStrings`/`FwAvaloniaDialogsStrings`
+  resolve via `ResourceManager` over the neutral resx (the English source
+  of truth); `AvaloniaLocalizationTests` pins accessor and resx together.
+- **L10NSharp/XLIFF** only for Palaso/FlexBridge/Chorus-supplied UI; never
+  new FieldWorks-owned usage, and never borrowed `Palaso`/`Chorus` ids for
+  FieldWorks-owned strings.
 
-**Current source of truth.** The hand-written accessor classes
-(`FwAvaloniaStrings`, `FwAvaloniaDialogsStrings`) own the English defaults
-used at runtime. Any leftover Avalonia `.resx` files are legacy artifacts,
-not the active runtime lane.
+*(Decision revised 2026-07-23 in PR #964 review: the earlier
+XLIFF-accessor approach for FieldWorks-owned Avalonia strings was reversed
+— FieldWorks-owned UI text uses `.resx`, per the Avalonia localization docs
+and repo convention; L10NSharp remains only for
+Palaso/FlexBridge/Chorus-supplied UI.)*
 
 **Gotchas.** SDK-style csprojs need an explicit `<RootNamespace>` element
-or the Crowdin satellite-assembly build
-(`Build/Src/FwBuildTasks/Localization/ProjectLocalizer.cs`) fails — verify
-when adding any new Avalonia project while any legacy `.resx` artifact still exists.
-LocalizationManager must be initialized once per product, preview-host, or
-headless-test process before Avalonia chrome is requested; reuse the
-product startup path when available and use a minimal English bootstrap for
-non-product hosts. English-on-Avalonia where legacy shows translations is a
-parity failure, not cosmetics.
+for stable satellite resource names — see `fieldworks-localization-review`
+for the canonical statement of that rule and the ProjectLocalizer details.
+English-on-Avalonia where legacy shows translations is a parity failure,
+not cosmetics.
 
 ## 12. Density and performance
 

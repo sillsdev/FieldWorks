@@ -40,11 +40,10 @@ namespace SIL.FieldWorks.XWorks
 	/// composer-based xWorks test harness does not run that startup, so we mirror just enough of it
 	/// here.
 	///
-	/// Prefer the shared Avalonia bootstrap first so tests that exercise Avalonia chrome strings see
-	/// the real Palaso/Chorus catalogs. If that cannot find the installed XLIFF files, fall back to
-	/// a minimal temp-dir Chorus manager so legacy DataTree localization still stops throwing. It is
-	/// idempotent and best-effort: a failure to set up localization must not mask the real assertion
-	/// under test.
+	/// Registers a minimal temp-dir Chorus manager so legacy DataTree localization stops throwing
+	/// (Avalonia strings resolve through resx/ResourceManager and need no manager). It is idempotent
+	/// and best-effort: a failure to set up localization must not mask the real assertion under
+	/// test.
 	/// </summary>
 	internal static class TestLocalizationManagerBootstrap
 	{
@@ -61,11 +60,6 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				try
 				{
-					if (!HasAnyManager())
-					{
-						FwAvaloniaLocalizationBootstrap.EnsureInitialized();
-					}
-
 					if (!HasAnyManager())
 					{
 						// directoryOfInstalledFiles is an absolute (writable) temp dir; the
