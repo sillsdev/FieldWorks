@@ -5,6 +5,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace FwAvaloniaDialogs
 {
@@ -18,9 +19,12 @@ namespace FwAvaloniaDialogs
 	/// result (double-click a row, or Enter on the highlighted row) commits + closes accepted via the view-model's
 	/// <c>CommitCommand</c>; Cancel / Escape / the window close button cancel. Selection and search are MVVM; the
 	/// code-behind only (a) feeds the search box's focus into the view-model so the dropdown shows ONLY while the
-	/// field is focused, (b) translates the result list's double-click / Enter gesture into the commit command, and
+	/// field is focused, (b) translates the result list's double-click / Enter gesture into the commit command,
 	/// (c) removes the two-stage OK button from the tree for single-stage consumers (with an auxiliary spec the
-	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>).
+	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>), and
+	/// (d) applies the opt-in <see cref="EntryGoSearchFieldSpec"/> to the search box — the writing system's font,
+	/// right-to-left flow, and a keyboard-switch callback on focus (the legacy BaseGoDlg vernacular FwTextBox
+	/// behavior). A null spec leaves the box at kit defaults.
 	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
 	/// <c>AvaloniaDialogHost.ShowModal</c>.
 	/// </summary>
@@ -54,6 +58,29 @@ namespace FwAvaloniaDialogs
 			// The OK button exists only for two-stage auxiliary consumers; single-stage (commit-on-select) consumers
 			// keep their exact OK-less surface, so remove it from the tree (not merely hide it) once the VM arrives.
 			DataContextChanged += OnDataContextChangedRemoveOkIfSingleStage;
+
+			// The search box's writing-system presentation (font / RTL) comes from the opt-in spec on the VM, so
+			// apply it once the VM arrives; a null spec touches nothing (the plain kit search box).
+			DataContextChanged += OnDataContextChangedApplySearchFieldSpec;
+		}
+
+		// Applies the opt-in search-field spec to the realized search box: the writing system's font family/size and
+		// right-to-left flow (the same value-application rules the region surface uses for its per-ws rows — empty
+		// family / zero size keep the kit defaults). The keyboard-switch callback fires from OnSearchBoxGotFocus.
+		private void OnDataContextChangedApplySearchFieldSpec(object sender, System.EventArgs e)
+		{
+			var spec = ViewModel?.SearchField;
+			if (spec == null)
+				return;
+			var searchBox = this.FindControl<TextBox>("PART_SearchBox");
+			if (searchBox == null)
+				return;
+			if (!string.IsNullOrEmpty(spec.FontFamily))
+				searchBox.FontFamily = new FontFamily(spec.FontFamily);
+			if (spec.FontSize > 0)
+				searchBox.FontSize = spec.FontSize;
+			if (spec.RightToLeft)
+				searchBox.FlowDirection = FlowDirection.RightToLeft;
 		}
 
 		private void OnDataContextChangedRemoveOkIfSingleStage(object sender, System.EventArgs e)
@@ -96,6 +123,9 @@ namespace FwAvaloniaDialogs
 		{
 			if (ViewModel != null)
 				ViewModel.IsSearchFocused = true;
+			// The opt-in spec's focus callback: the launcher activates the writing system's keyboard here (the
+			// legacy vernacular FwTextBox switched keyboards on focus). Null spec/callback means no-op.
+			ViewModel?.SearchField?.Focused?.Invoke();
 		}
 
 		private void OnSearchBoxLostFocus(object sender, RoutedEventArgs e)

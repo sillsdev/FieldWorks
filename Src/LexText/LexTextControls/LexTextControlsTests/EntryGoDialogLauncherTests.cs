@@ -354,5 +354,39 @@ namespace LexTextControlsTests
 			Assert.That(() => LcmAddAllomorphDialogLauncher.Show(null, null, null, tssForm, null),
 				Throws.TypeOf<ArgumentNullException>());
 		}
+
+		// ----- Writing-system-aware search box (the legacy BaseGoDlg vernacular FwTextBox) -----
+
+		[Test]
+		public void BuildVernacularSearchFieldSpec_CarriesTheDefaultVernacularTypography()
+		{
+			var ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+
+			var spec = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(Cache);
+
+			Assert.That(spec.FontFamily, Is.EqualTo(ws.DefaultFontName),
+				"the default vernacular ws's default font drives the search box (legacy BaseGoDlg font)");
+			Assert.That(spec.RightToLeft, Is.EqualTo(ws.RightToLeftScript),
+				"the ws's right-to-left script flag flows through");
+			Assert.That(spec.Focused, Is.Not.Null, "the focus callback activates the ws's keyboard");
+			Assert.That(() => spec.Focused(), Throws.Nothing,
+				"keyboard activation is fail-safe — it must never take down the dialog");
+		}
+
+		[Test]
+		public void GoFamilyBuildInputs_CarryTheVernacularSearchField()
+		{
+			// Every Go-family consumer searches vernacular text, so each BuildInput opts into the ws-aware box.
+			var tssForm = TsStringUtils.MakeString("nuevo", Cache.DefaultVernWs);
+			Assert.That(LcmGoToEntryDialogLauncher.BuildInput(Cache, null, null).SearchField, Is.Not.Null);
+			Assert.That(LcmMergeEntryDialogLauncher.BuildInput(Cache, null, null, _casa).SearchField, Is.Not.Null);
+			Assert.That(LcmAddAllomorphDialogLauncher.BuildInput(Cache, null, null, tssForm).SearchField,
+				Is.Not.Null);
+			Assert.That(LcmLinkAllomorphDialogLauncher.BuildInput(Cache, null, null, _casa).SearchField,
+				Is.Not.Null);
+			Assert.That(LcmLinkMsaDialogLauncher.BuildInput(Cache, null, null, _casa).SearchField, Is.Not.Null);
+			Assert.That(LcmLinkEntryOrSenseDialogLauncher.BuildInput(Cache, null, null, _casa).SearchField,
+				Is.Not.Null);
+		}
 	}
 }

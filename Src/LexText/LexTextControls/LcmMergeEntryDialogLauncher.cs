@@ -125,7 +125,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				ExcludedId = currentEntry.Hvo.ToString(CultureInfo.InvariantCulture),
 				InitialQuery = currentEntry.HomographForm,
 				HelpTopic = "khtpMergeEntry",
-				Search = search
+				Search = search,
+				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
 			};
 		}
 

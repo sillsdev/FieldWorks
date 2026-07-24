@@ -116,7 +116,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				InitialQuery = tssForm?.Text,
 				HelpTopic = "khtpFindEntryToAddAllomorph",
-				Search = BuildSearch(cache, mediator, propertyTable)
+				Search = BuildSearch(cache, mediator, propertyTable),
+				// The search box types the vernacular form being added (see BuildVernacularSearchFieldSpec).
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
 			};
 		}
 

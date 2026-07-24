@@ -65,6 +65,7 @@ namespace FwAvaloniaDialogs
 			HasDescriptionLabel = !string.IsNullOrEmpty(DescriptionLabel);
 			HelpTopic = _input.HelpTopic;
 			HasHelp = !string.IsNullOrEmpty(_input.HelpTopic);
+			SearchField = _input.SearchField;
 
 			// Opt-in entry/sense capability (the legacy LinkEntryOrSenseDlg Entry/Sense radio). The toggle shows
 			// only when the consumer enables it AND supplies a mode-aware search; SensesOnly forces sense mode and
@@ -111,6 +112,12 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>True when a <see cref="HelpTopic"/> is present, so the Help button shows.</summary>
 		public bool HasHelp { get; }
+
+		/// <summary>
+		/// The opt-in writing-system presentation for the search box (font / right-to-left / keyboard-on-focus).
+		/// The view applies it to the realized search TextBox; null keeps the plain kit search box.
+		/// </summary>
+		public EntryGoSearchFieldSpec SearchField { get; }
 
 		/// <summary>
 		/// True when the Entry/Sense mode toggle is shown (the consumer opted into the Link-Entry-or-Sense

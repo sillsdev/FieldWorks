@@ -108,7 +108,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				HelpTopic = "khtpInsertMorphemeChooseFunction",
 				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
 				AuxiliaryLabel = FwAvaloniaDialogsStrings.LinkMsaGrammaticalInfoLabel,
-				AuxiliaryOptions = result => GetMsaOptions(cache, result?.Id)
+				AuxiliaryOptions = result => GetMsaOptions(cache, result?.Id),
+				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
+				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache)
 			};
 		}
 
