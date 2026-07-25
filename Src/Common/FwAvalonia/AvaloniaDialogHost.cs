@@ -86,7 +86,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					// without spinning a real modal window.
 					ApplySizing(form, width, height, resizable, minWidth, minHeight, getRememberedSize);
 
-					var host = new WinFormsAvaloniaControlHost { Dock = DockStyle.Fill, Content = dialogBody };
+					// Claim the navigation keys (arrows + Enter) for the hosted content: the modal Form would
+					// otherwise consume Up/Down as control navigation and Enter as the default button, so the
+					// dialog body's own list navigation / commit-on-Enter never saw them.
+					var host = new InputKeyClaimingAvaloniaHost(claimEnterKey: true)
+						{ Dock = DockStyle.Fill, Content = dialogBody };
 					// Headless (test) platform: make the host's Win32 HWND reparent a deliberate no-op (there
 					// is no native top-level to reparent). The dialog body still constructs and lays out
 					// off-screen. No-op on the real Win32 platform, so the modal behavior is unchanged there.
@@ -118,7 +122,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 						// existing (non-nested) caller, ActiveForm already equals the passed owner (nothing
 						// else is open), so this is a no-op there. See ResolveEffectiveOwner for the testable
 						// decision this makes.
-						form.ShowDialog(ResolveEffectiveOwner(Form.ActiveForm, owner));
+						var effectiveOwner = ResolveEffectiveOwner(Form.ActiveForm, owner);
+						ApplyOwnerIcon(form, effectiveOwner);
+						form.ShowDialog(effectiveOwner);
 					}
 
 					// Persist the final size (only meaningful for resizable dialogs with a set-hook).
@@ -146,6 +152,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public static IWin32Window ResolveEffectiveOwner(IWin32Window activeForm, IWin32Window owner) =>
 			activeForm ?? owner;
+
+		/// <summary>
+		/// Gives the host window the owner's title-bar icon so a hosted Avalonia dialog carries the same
+		/// icon as every legacy WinForms dialog (which inherit it from the application window). With no
+		/// owner icon available, no icon is shown rather than the stock default window icon. Factored out
+		/// so the behavior is unit-testable without spinning a real modal window.
+		/// </summary>
+		public static void ApplyOwnerIcon(Form form, IWin32Window effectiveOwner)
+		{
+			if (form == null)
+				return;
+			if (effectiveOwner is Form ownerForm && ownerForm.Icon != null)
+				form.Icon = ownerForm.Icon;
+			else
+				form.ShowIcon = false;
+		}
 
 		/// <summary>
 		/// Releases the resources <see cref="ShowModal"/> owns once the modal closes: the host owns the

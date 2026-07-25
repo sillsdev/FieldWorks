@@ -131,6 +131,12 @@ public partial class XyzDialogViewModel : ObservableObject, IDialogViewModel
 So a new dialog is genuinely **"view + VM + `ShowModal`."** (Avalonia init funnels through the single
 `FwAvaloniaRuntime.EnsureInitialized()` — don't add another init guard.)
 
+**Title-bar icon:** the host window must not show the stock default icon. `ShowModal` calls
+`ApplyOwnerIcon`, which copies the owner window's icon onto the host `Form` (so a hosted dialog carries
+the same icon as every legacy WinForms dialog, which inherit it from the application window) and shows
+none when no owner icon is available. This is automatic through `ShowModal`; a dialog hosted by some
+other path must do the same — never leave the default window icon on a converted dialog.
+
 ## 2a. Density — compact, matching the legacy WinForms dialogs
 
 Dialogs must match legacy WinForms density, **not** the roomy Fluent defaults. The baseline is

@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Reflection;
+using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 
@@ -11,16 +11,11 @@ namespace FwAvaloniaTests
 	[TestFixture]
 	public class LexicalEditHostControlTests
 	{
+		// A region pane host claims the arrow keys (never Enter) for the hosted Avalonia surface. The
+		// claiming decision is shared by every region host through InputKeyClaimPolicy; the pane case
+		// passes claimEnterKey:false so Enter keeps its normal meaning in the pane.
 		private static bool ShouldBypass(bool hostContainsFocus, int keyCode)
-		{
-			// Stage 2.1: the directional-key interop now lives in the reusable base host
-			// (AvaloniaRegionHostControl), shared by every region host — not the lexical-edit subclass.
-			var method = typeof(AvaloniaRegionHostControl).GetMethod(
-				"ShouldBypassWinFormsDirectionalKeyHandling",
-				BindingFlags.NonPublic | BindingFlags.Static);
-			Assert.That(method, Is.Not.Null, "test seam missing");
-			return (bool)method.Invoke(null, new object[] { hostContainsFocus, keyCode });
-		}
+			=> InputKeyClaimPolicy.ShouldClaimKey((Keys)keyCode, hostContainsFocus, claimEnterKey: false);
 
 		[Test]
 		public void DirectionalKeys_AreBypassed_WhenAvaloniaHostContainsFocus()

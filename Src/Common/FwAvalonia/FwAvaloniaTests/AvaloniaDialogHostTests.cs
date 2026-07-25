@@ -251,6 +251,36 @@ namespace FwAvaloniaTests
 				() => AvaloniaDialogHost.ApplySizing(null, 100, 100, resizable: true));
 		}
 
+		// --- Owner icon: a hosted Avalonia dialog carries the owner's title-bar icon (FLEx parity), or
+		// shows none rather than the stock default. Bare owner/host Forms, same sanctioned exception. ---
+
+		[Test]
+		public void ApplyOwnerIcon_OwnerFormWithIcon_CopiesItToTheHost()
+		{
+			using (var owner = new Form { Icon = SystemIcons.Application })
+			using (var form = new Form())
+			{
+				AvaloniaDialogHost.ApplyOwnerIcon(form, owner);
+				Assert.That(form.Icon, Is.SameAs(owner.Icon), "the host adopts the owner window's icon");
+			}
+		}
+
+		[Test]
+		public void ApplyOwnerIcon_NoOwnerForm_ShowsNoIconInsteadOfTheDefault()
+		{
+			using (var form = new Form())
+			{
+				AvaloniaDialogHost.ApplyOwnerIcon(form, null);
+				Assert.That(form.ShowIcon, Is.False, "with no owner icon, show none rather than the stock default");
+			}
+		}
+
+		[Test]
+		public void ApplyOwnerIcon_NullForm_DoesNotThrow()
+		{
+			Assert.DoesNotThrow(() => AvaloniaDialogHost.ApplyOwnerIcon(null, null));
+		}
+
 		// --- Nested-modal owner resolution (pointer-input bug fix). ShowModal itself spins a real modal
 		// loop, so this covers the extracted decision ShowModal delegates to: prefer whatever form is truly
 		// topmost/active right now over a possibly-stale caller-supplied owner. ---
