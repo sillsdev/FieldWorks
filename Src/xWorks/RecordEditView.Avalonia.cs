@@ -99,6 +99,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Settles any open fenced edit session before the window's save-on-tool-switch commit runs, so
+		/// the outgoing surface's open undo task never faults that commit. The same auto-save the surface
+		/// already performs on record navigation, UIMode flip, and go-away, exposed for the tool/area
+		/// switch (which reaches the surface from outside, not through a record/navigation path).
+		/// </summary>
+		public void SettlePendingEdits()
+		{
+			if (IsDisposed)
+				return;
+			SettleRegionEdits();
+		}
+
+		/// <summary>
 		/// ITEM 2 (invalid-edit-on-navigate UX): the host's response when <see cref="Settle"/> rolled
 		/// back a pending lexical edit because it failed validation. The data was already rolled back
 		/// safely; this only tells the user WHY, so a cleared-required-field edit is not silently lost

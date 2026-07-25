@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 	/// This version uses the DetailControls version of DataTree, and will eventually replace the
 	/// original.
 	/// </summary>
-	public partial class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion
+	public partial class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion, ISettlePendingEdits
 	{
 		#region Data members
 

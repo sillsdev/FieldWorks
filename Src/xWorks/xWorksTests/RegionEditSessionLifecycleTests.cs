@@ -44,6 +44,65 @@ namespace SIL.FieldWorks.XWorks
 		private void ShutdownStyleSave()
 			=> Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 
+		// The legacy save-on-tool-switch commit (the window commits the cache when the current tool/area
+		// changes): it faults the same way the shutdown Save does when an undo task is still open.
+		private void ToolSwitchCommit()
+			=> Cache.DomainDataByFlid.GetActionHandler().Commit();
+
+		// Characterizes the tool-switch crash: switching tools while a fenced session is still open makes
+		// the save-on-tool-switch commit throw "Commit at wrong place." (the reported crash on area switch).
+		[Test]
+		public void ToolSwitchCommit_WithAnOpenSession_ThrowsCommitAtWrongPlace()
+		{
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			context.TrySetText(FormField, "vern", "perro");
+			Assert.That(context.IsOpen, Is.True);
+
+			Assert.That(() => ToolSwitchCommit(),
+				Throws.InvalidOperationException.With.Message.Contains("Commit at wrong place"),
+				"characterization: the save-on-tool-switch commit faults while a fenced session is open");
+			// CheckReadyForCommit rolls the open task back before throwing, so the fixture is clean for the
+			// next test; the session object still thinks it is open, so close it (a safe no-op now).
+			context.Cancel();
+		}
+
+		// The fix: settle the open session (what the window now does before its save-on-tool-switch commit)
+		// and the commit no longer throws.
+		[Test]
+		public void ToolSwitchCommit_AfterSettlingTheOpenSession_DoesNotThrow()
+		{
+			var holder = new RegionEditContextHolder();
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			holder.Replace(context);
+			context.TrySetText(FormField, "vern", "perro");
+			Assert.That(context.IsOpen, Is.True);
+
+			holder.Settle();
+			Assert.That(context.IsOpen, Is.False, "the session settled before the commit");
+
+			Assert.That(() => ToolSwitchCommit(), Throws.Nothing,
+				"with the session settled, the save-on-tool-switch commit no longer faults");
+		}
+
+		// The settle must PRESERVE a valid staged edit as its own undo step (parity with save-on-navigate),
+		// never silently discard it. Checked before the commit above clears the undo buffer between tools.
+		[Test]
+		public void Settle_OnAToolSwitch_KeepsAValidStagedEditAsAnUndoableStep()
+		{
+			var holder = new RegionEditContextHolder();
+			var context = new LexicalEditRegionEditContext(m_entry, Cache);
+			holder.Replace(context);
+			context.TrySetText(FormField, "vern", "perro");
+
+			holder.Settle();
+
+			Assert.That(LexemeText, Is.EqualTo("perro"), "a valid staged edit is committed, not discarded");
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True,
+				"the committed edit is its own undo step");
+			Cache.ActionHandlerAccessor.Undo();
+			Assert.That(LexemeText, Is.EqualTo("casa"), "and it undoes as a single step");
+		}
+
 		// Characterizes the crash mechanism (the error report's stack): an undo task abandoned
 		// mid-edit makes the shutdown Save throw InvalidOperationException "Commit at wrong place."
 		[Test]
