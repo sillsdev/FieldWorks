@@ -2348,6 +2348,12 @@ namespace SIL.FieldWorks.XWorks
 			// Fixes (LT-4650)
 			if (name == "currentContentControl")
 			{
+				// The outgoing surface may still hold an open fenced region-edit undo task (the user was
+				// mid-edit when they switched). Settle it — committing a valid staged edit as its own undo
+				// step, rolling an invalid one back — BEFORE the save-on-tool-switch commit below: an open
+				// task makes that commit throw "Commit at wrong place." This is the same auto-save the
+				// surface performs on record navigation and go-away, applied to the tool/area switch too.
+				SettlePendingContentEdits(CurrentContentControl);
 				Cache.DomainDataByFlid.GetActionHandler().Commit();
 				// If we change tools, the FindReplaceDlg is no longer valid, as its rootsite
 				// is part of the previous tool, and will thus be disposed.  See FWR-2080.
@@ -2355,6 +2361,22 @@ namespace SIL.FieldWorks.XWorks
 					this.OwnedForms[0].Close();
 			}
 			base.OnPropertyChanged(name);
+		}
+
+		/// <summary>
+		/// Settles any open fenced region-edit session held by the outgoing content surface — or by a
+		/// surface nested inside it — so the save-on-tool-switch commit does not fault on an open undo
+		/// task. The detail surface is usually nested inside a record-list/detail container, so the whole
+		/// subtree is walked rather than only the top-level control.
+		/// </summary>
+		private static void SettlePendingContentEdits(Control root)
+		{
+			if (root == null)
+				return;
+			if (root is ISettlePendingEdits settleable)
+				settleable.SettlePendingEdits();
+			foreach (Control child in root.Controls)
+				SettlePendingContentEdits(child);
 		}
 
 		/// -----------------------------------------------------------------------------------
