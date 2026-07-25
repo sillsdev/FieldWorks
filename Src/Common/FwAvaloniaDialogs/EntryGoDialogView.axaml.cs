@@ -57,7 +57,10 @@ namespace FwAvaloniaDialogs
 				// (the legacy vernacular FwTextBox switched keyboards on focus). Null spec/callback means no-op.
 				searchBox.GotFocus += OnSearchBoxGotFocus;
 				// Up/Down move the matching-list selection without leaving the box; Enter commits (see handler).
-				searchBox.AddHandler(KeyDownEvent, OnSearchBoxKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// Bubble + handledEventsToo so the handler still runs when the TextBox marks a navigation key
+				// handled — the same routing the owned keyboard-nav controls use (FwPosChooser, FwOptionPicker).
+				searchBox.AddHandler(KeyDownEvent, OnSearchBoxKeyDown,
+					Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
 			}
 
 			// Commit-on-select gestures on the matching list itself: a double-click of a row, or Enter on the

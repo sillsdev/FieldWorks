@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Forms;
 using Avalonia.Win32.Interoperability;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
@@ -22,9 +21,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// </summary>
 	public abstract class AvaloniaRegionHostControl : System.Windows.Forms.UserControl
 	{
-		private static readonly TraceSwitch s_interopTrace =
-			new TraceSwitch("FwAvaloniaHostInterop", "WinForms/Avalonia keyboard interop diagnostics");
-
 		/// <summary>The Avalonia content host. Protected so derived region hosts can set content directly.</summary>
 		protected readonly WinFormsAvaloniaControlHost Host;
 		private readonly Panel _companionStrip;
@@ -39,7 +35,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Dock = DockStyle.Fill;
 			TabStop = true;
 
-			Host = new WinFormsAvaloniaControlHost
+			// The host claims the arrow keys for the Avalonia surface so WinForms does not consume them as
+			// control navigation before the hosted content sees them (Enter stays with WinForms in a pane).
+			Host = new InputKeyClaimingAvaloniaHost
 			{
 				Dock = DockStyle.Fill,
 				Name = "AvaloniaHost",
@@ -49,7 +47,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// deliberate no-op. The Avalonia content still constructs and lays out off-screen. No-op (and
 			// thus identical) on the real Win32 platform.
 			FwAvaloniaPlatform.GuardHeadlessEmbed(Host);
-			Host.PreviewKeyDown += OnHostPreviewKeyDown;
 
 			_companionStrip = new Panel
 			{
@@ -85,64 +82,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public Avalonia.Controls.Control HostedContent => CurrentContent;
 
-		private void LogInterop(string message)
-		{
-			if (s_interopTrace.TraceInfo)
-				Trace.WriteLine("[" + GetType().Name + "] " + message);
-		}
-
-		private static bool IsDirectionalKey(int keyCode)
-		{
-			switch (keyCode)
-			{
-				case 0x26:
-				case 0x28:
-				case 0x25:
-				case 0x27:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		private static bool ShouldBypassWinFormsDirectionalKeyHandling(bool hostContainsFocus, int keyCode)
-			=> hostContainsFocus && IsDirectionalKey(keyCode);
-
-		private void OnHostPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-		{
-			var keyCode = (int)(e.KeyData & Keys.KeyCode);
-			if (ShouldBypassWinFormsDirectionalKeyHandling(Host != null && Host.ContainsFocus, keyCode))
-			{
-				e.IsInputKey = true;
-				LogInterop("PreviewKeyDown -> IsInputKey=true for " + ((Keys)keyCode));
-			}
-		}
-
-		protected override bool IsInputKey(Keys keyData)
-		{
-			var keyCode = (int)(keyData & Keys.KeyCode);
-			if (ShouldBypassWinFormsDirectionalKeyHandling(Host != null && Host.ContainsFocus, keyCode))
-			{
-				LogInterop("IsInputKey -> true for " + ((Keys)keyCode));
-				return true;
-			}
-
-			return base.IsInputKey(keyData);
-		}
-
-		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-		{
-			var keyCode = (int)(keyData & Keys.KeyCode);
-			if (ShouldBypassWinFormsDirectionalKeyHandling(Host != null && Host.ContainsFocus, keyCode))
-			{
-				LogInterop("ProcessCmdKey bypass for " + ((Keys)keyCode)
-					+ " while Avalonia host contains focus.");
-				return false;
-			}
-
-			return base.ProcessCmdKey(ref msg, keyData);
-		}
-
 		public void SetCompanionControls(IReadOnlyList<Control> controls)
 		{
 			for (var i = _companionStrip.Controls.Count - 1; i >= 0; i--)
@@ -175,8 +114,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		{
 			if (disposing && _companionStrip != null)
 			{
-				if (Host != null)
-					Host.PreviewKeyDown -= OnHostPreviewKeyDown;
 				for (var i = _companionStrip.Controls.Count - 1; i >= 0; i--)
 				{
 					var companion = _companionStrip.Controls[i];
