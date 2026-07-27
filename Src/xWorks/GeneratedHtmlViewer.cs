@@ -1083,6 +1083,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			private void matchCase_CheckedChanged(object sender, EventArgs e)
 			{
+				if (geckoBrowser?.Window == null)
+				{
+					Close();
+					return;
+				}
 				InvokeSearch(SearchText, matchCase.Checked);
 				using (var executor = new AutoJSContext(geckoBrowser.Window))
 				{
