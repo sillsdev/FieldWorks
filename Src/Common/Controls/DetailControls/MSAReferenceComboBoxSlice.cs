@@ -270,6 +270,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							String.Format(DetailControlsStrings.ksRedoSet, m_fieldName), sense, () =>
 						{
 							sense.SandboxMSA = sandoxMSA;
+							// Clear features (see LT-22615).
+							if (sense.MorphoSyntaxAnalysisRA is IMoStemMsa moStemMsa)
+							{
+								moStemMsa.MsFeaturesOA = null;
+							}
+							if (sense.MorphoSyntaxAnalysisRA is IMoInflAffMsa moInflAffMsa)
+							{
+								moInflAffMsa.InflFeatsOA = null;
+							}
 						});
 					}
 					else if (sense.MorphoSyntaxAnalysisRA != obj)
