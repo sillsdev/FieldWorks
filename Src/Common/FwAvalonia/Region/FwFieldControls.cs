@@ -35,6 +35,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// mnuDataTree-LexemeForm with Swap/Convert commands) surfaces it on RIGHT-CLICK only (the
 	/// label/value right-click paths) — text rows draw NO gear. The gear is reserved for the
 	/// "configure the supporting list" jump on chooser/vector rows; it never opens a menu.
+	/// Rich-text operations (character style, per-run writing-system retag, insert/edit external link,
+	/// delete embedded object) are NOT always-visible inline controls: like the legacy detail slice, which
+	/// shows only the abbreviation + value with such operations reached off-row, they are offered as items
+	/// on the value box's right-click menu. A row with a bridged xCore ContextMenuId keeps that host menu as
+	/// its single right-click surface (it owns the field commands and Avalonia items cannot merge into it),
+	/// so the rich-text items are added only on rows WITHOUT a bridge. The abbreviation and value are laid
+	/// out in a fixed two-column Grid (a definite-width gutter column + the value column) so a bold value
+	/// can never crowd or overlap the raised abbreviation.
 	/// </summary>
 	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -74,15 +82,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				}
 
 				var currentRich = value.RichText;
-				// Legacy look (12.3): small raised blue abbreviation hanging at the value start.
+				// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
+				// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
+				// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
+				// rather than bleeding into the value column.
 				var abbrev = new TextBlock
 				{
 					Text = value.WsAbbrev,
 					MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
 					VerticalAlignment = VerticalAlignment.Top,
-					Margin = new Thickness(0, 1, 4, 0),
+					Margin = new Thickness(0, 1, FwAvaloniaDensity.WsAbbrevGutter, 0),
 					FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-					Foreground = FwAvaloniaDensity.WsAbbrevBrush
+					Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+					ClipToBounds = true
 				};
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
@@ -138,8 +150,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 				// Section 13: a row with a legacy `contextMenu=` binding shows the SAME xCore-defined
 				// menu the legacy string view shows (MultiStringSlice.HandleRightMouseClickedEvent
-				// path), routed through the host bridge. Rows without one keep the local Copy menu.
-				if (menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId))
+				// path), routed through the host bridge. That host menu owns this field's commands, so it
+				// stays the single right-click surface for a bridged row; the relocated rich-text operations
+				// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
+				var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
+				if (hasBridge)
 				{
 					EventHandler<PointerPressedEventArgs> menuPressed = (s2, e2) =>
 					{
@@ -164,19 +179,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						box.RemoveHandler(Control.ContextRequestedEvent, swallowContext);
 					});
 				}
-				else
-				{
-					// Viewing parity (11.17): a working local Copy menu.
-					var copyItem = new MenuItem { Header = FwAvaloniaStrings.Copy };
-					copyItem.Click += async (s2, e2) =>
-					{
-						await CopySelectionAsync(box, currentRich, clipboard);
-					};
-					box.ContextFlyout = new MenuFlyout { Items = { copyItem } };
-					// The flyout's MenuItem.Click closure captures box/clipboard; drop the flyout so the
-					// recycled cell does not retain them.
-					_teardown.Add(() => box.ContextFlyout = null);
-				}
 				// Both edits AND the per-row automation id (which RegionFocusMemory keys focus
 				// restore on) address the writing system by its unique IETF tag (WsTag): the
 				// abbreviation is user-editable and can collide across writing systems. Tag-less
@@ -185,17 +187,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(box, automationId + "." + wsKey);
 				AutomationProperties.SetName(box, (field.Label ?? automationId) + " " + value.WsAbbrev);
 
-				// Phase 3: the character-style picker affordance for THIS writing-system row, built only on an editable,
-				// non-lossy value that has available character styles to offer (else suppressed). Captured
-				// here so it can be added to the row panel after the editable wiring below populates it.
-				Control styleAffordance = null;
-				// Phase 4: the per-run writing-system picker affordance for THIS row (same pattern as the
-				// style affordance: editable + non-lossy + available writing systems to offer).
-				Control wsAffordance = null;
-				// §19c: the external-link insert/edit prompt and the generic ORC-delete affordance for THIS
-				// row (editable + non-lossy). The link is fully editable here; any ORC kind is deletable.
-				Control linkAffordance = null;
-				Control orcDeleteAffordance = null;
+				// The relocated rich-text operations for THIS writing-system row, each built as a right-click
+				// CONTEXT-MENU item (not an always-visible inline control) under the SAME gate that used to
+				// build its inline button: editable + non-lossy, plus per-op availability. Captured here so
+				// the local context menu can collect them after the editable wiring below populates them.
+				// Character style (has available styles), per-run writing-system retag (has available writing
+				// systems), external-link insert/edit and generic ORC-delete (any editable non-lossy row).
+				MenuItem styleMenuItem = null;
+				MenuItem wsMenuItem = null;
+				MenuItem linkMenuItem = null;
+				MenuItem orcDeleteMenuItem = null;
 
 				if (editContext != null && field.IsEditable && value.CanEditRichText)
 				{
@@ -371,15 +372,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					box.AddHandler(InputElement.KeyDownEvent, formatKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, formatKeyDown));
 
-					// Phase 3 — apply/clear a NAMED CHARACTER STYLE over the selection. The affordance is
-					// a small "Style" button that opens the shared FwOptionPicker (single-select) seeded
-					// with a leading "Default (no style)" entry that CLEARS the style, followed by the
-					// project's available character style names. It acts on the TextBox's current
+					// Phase 3 — apply/clear a NAMED CHARACTER STYLE over the selection. A right-click menu
+					// item "Character style…" opens the shared FwOptionPicker (single-select) seeded with a
+					// leading "Default (no style)" entry that CLEARS the style, followed by the project's
+					// available character style names. It acts on the TextBox's current
 					// SelectionStart..SelectionEnd; committing calls ApplySpanNamedStyle and stages through
 					// TrySetRichText — exactly the rich-text seam Ctrl+B/I/U uses. Only built when the field
-					// actually carries available styles (so plain-text-only projects show no affordance);
-					// the whole block is already gated on the editable, non-lossy value.
-					if (field.AvailableNamedStyles != null && field.AvailableNamedStyles.Count > 0)
+					// actually carries available styles (so plain-text-only projects show no item), and only
+					// off a bridged row (whose host menu owns the field commands); the whole block is already
+					// gated on the editable, non-lossy value.
+					if (!hasBridge && field.AvailableNamedStyles != null && field.AvailableNamedStyles.Count > 0)
 					{
 						// The picker's option set: a clear-style entry (empty key) plus one option per
 						// available character style (the style name is both key and display name).
@@ -393,29 +395,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								styleOptions.Add(new RegionChoiceOption(styleName, styleName));
 						}
 
-						var styleButton = new Button
-						{
-							Content = FwAvaloniaStrings.CharacterStyle,
-							// 19i.2: keep editor focus so the named-style applies to the live selection span
-							// (LostFocus collapses the TextBox selection to caret → empty span → no-op apply).
-							Focusable = false,
-							Padding = new Thickness(6, 0, 6, 0),
-							MinHeight = 0,
-							MinWidth = 0,
-							Background = Brushes.Transparent,
-							BorderThickness = new Thickness(0),
-							Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-							FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-							VerticalAlignment = VerticalAlignment.Top
-						};
+						var styleItem = new MenuItem { Header = FwAvaloniaStrings.CharacterStyle };
 						var styleAutomationId = automationId + "." + wsKey + ".Style";
-						AutomationProperties.SetAutomationId(styleButton, styleAutomationId);
-						AutomationProperties.SetName(styleButton, FwAvaloniaStrings.CharacterStyle);
-						ToolTip.SetTip(styleButton, FwAvaloniaStrings.CharacterStyle);
+						AutomationProperties.SetAutomationId(styleItem, styleAutomationId);
+						AutomationProperties.SetName(styleItem, FwAvaloniaStrings.CharacterStyle);
 
 						var stylePicker = new FwOptionPicker(styleOptions, null, styleAutomationId);
 						var styleFlyout = FwOptionPicker.CreateOptionFlyout(stylePicker,
 							PlacementMode.BottomEdgeAlignedLeft);
+						// The picker flyout the item opens, surfaced for automation/discovery.
+						styleItem.Tag = styleFlyout;
 
 						// The selection the gesture acts on, snapshotted when the picker opens (the click
 						// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -461,10 +450,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						EventHandler styleDismissed = (s2, e2) => styleFlyout.Hide();
 						stylePicker.Dismissed += styleDismissed;
 
-						// The button opens its assigned flyout on click (like FwChooserField); this handler
-						// only pre-selects the picker row matching the selection's current common style so
-						// the user sees what is applied (mixed/none -> the Default entry leads). No explicit
-						// ShowAt — that would double-open against the button's own flyout opening.
+						// Choosing the menu item snapshots the selection (the menu closes and moves focus off
+						// the TextBox, but SelectionStart..SelectionEnd persist), pre-selects the picker row
+						// matching the selection's current common style (mixed/none -> the Default entry leads),
+						// then opens the picker flyout anchored at the value box.
 						EventHandler<Avalonia.Interactivity.RoutedEventArgs> styleClicked = (s2, e2) =>
 						{
 							styleSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
@@ -476,17 +465,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								? 0
 								: styleOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 							stylePicker.OptionsList.SelectedIndex = index < 0 ? 0 : index;
+							styleFlyout.ShowAt(box);
 						};
-						styleButton.Click += styleClicked;
-
-						styleButton.Flyout = styleFlyout;
-						styleAffordance = styleButton;
+						styleItem.Click += styleClicked;
+						styleMenuItem = styleItem;
 						_teardown.Add(() =>
 						{
 							stylePicker.OptionCommitted -= styleCommitted;
 							stylePicker.Dismissed -= styleDismissed;
-							styleButton.Click -= styleClicked;
-							styleButton.Flyout = null;
+							styleItem.Click -= styleClicked;
+							styleItem.Tag = null;
 						});
 					}
 
@@ -498,7 +486,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					// picker use. Built only when the field carries available writing systems; the whole block
 					// is already gated on the editable, non-lossy value. There is no "clear" entry: a run must
 					// always carry a writing system, so the picker offers only real project writing systems.
-					if (field.AvailableWritingSystems != null && field.AvailableWritingSystems.Count > 0)
+					if (!hasBridge && field.AvailableWritingSystems != null && field.AvailableWritingSystems.Count > 0)
 					{
 						var wsOptions = new List<RegionChoiceOption>();
 						foreach (var wsOption in field.AvailableWritingSystems)
@@ -510,29 +498,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 						if (wsOptions.Count > 0)
 						{
-							var wsButton = new Button
-							{
-								Content = FwAvaloniaStrings.WritingSystem,
-								// 19i.2: keep editor focus so the per-run WS retag targets the live selection span
-								// (LostFocus collapses the TextBox selection to caret → empty span → no-op).
-								Focusable = false,
-								Padding = new Thickness(6, 0, 6, 0),
-								MinHeight = 0,
-								MinWidth = 0,
-								Background = Brushes.Transparent,
-								BorderThickness = new Thickness(0),
-								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-								VerticalAlignment = VerticalAlignment.Top
-							};
+							var wsItem = new MenuItem { Header = FwAvaloniaStrings.WritingSystem };
 							var wsAutomationId = automationId + "." + wsKey + ".WritingSystem";
-							AutomationProperties.SetAutomationId(wsButton, wsAutomationId);
-							AutomationProperties.SetName(wsButton, FwAvaloniaStrings.WritingSystem);
-							ToolTip.SetTip(wsButton, FwAvaloniaStrings.WritingSystem);
+							AutomationProperties.SetAutomationId(wsItem, wsAutomationId);
+							AutomationProperties.SetName(wsItem, FwAvaloniaStrings.WritingSystem);
 
 							var wsPicker = new FwOptionPicker(wsOptions, null, wsAutomationId);
 							var wsFlyout = FwOptionPicker.CreateOptionFlyout(wsPicker,
 								PlacementMode.BottomEdgeAlignedLeft);
+							// The picker flyout the item opens, surfaced for automation/discovery.
+							wsItem.Tag = wsFlyout;
 
 							// The selection the gesture acts on, snapshotted when the picker opens (the click
 							// moves focus off the TextBox; capturing here keeps the span the user had selected).
@@ -576,9 +551,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							EventHandler wsDismissed = (s2, e2) => wsFlyout.Hide();
 							wsPicker.Dismissed += wsDismissed;
 
-							// Like the style affordance: pre-select the picker row matching the selection's
-							// current common writing system so the user sees what is applied (mixed -> the
-							// first entry leads). No explicit ShowAt — the button opens its own flyout.
+							// Like the style item: snapshot the selection, pre-select the picker row matching the
+							// selection's current common writing system (mixed -> the first entry leads), then
+							// open the picker flyout anchored at the value box.
 							EventHandler<Avalonia.Interactivity.RoutedEventArgs> wsClicked = (s2, e2) =>
 							{
 								wsSpanStart = Math.Min(box.SelectionStart, box.SelectionEnd);
@@ -590,27 +565,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									? -1
 									: wsOptions.FindIndex(o => string.Equals(o.Key, current, StringComparison.Ordinal));
 								wsPicker.OptionsList.SelectedIndex = index < 0 ? 0 : index;
+								wsFlyout.ShowAt(box);
 							};
-							wsButton.Click += wsClicked;
-
-							wsButton.Flyout = wsFlyout;
-							wsAffordance = wsButton;
+							wsItem.Click += wsClicked;
+							wsMenuItem = wsItem;
 							_teardown.Add(() =>
 							{
 								wsPicker.OptionCommitted -= wsCommitted;
 								wsPicker.Dismissed -= wsDismissed;
-								wsButton.Click -= wsClicked;
-								wsButton.Flyout = null;
+								wsItem.Click -= wsClicked;
+								wsItem.Tag = null;
 							});
 						}
 					}
 
-						// §19c — external-link insert / edit prompt. A small "Link" button opens a flyout with
-						// a URL TextBox + Apply (the dialog-light prompt the decision calls for). On open it
-						// snapshots the selection and, when that selection sits on an existing link run,
-						// pre-fills the URL for editing. Apply over a real selection inserts/edits the link
-						// through RegionRichTextEditAlgorithms and stages via TrySetRichText (the same seam the
-						// style/ws pickers use). Built on every editable, non-lossy row (link needs no host list).
+						// §19c — external-link insert / edit prompt. A right-click menu item "Insert/edit link…"
+						// opens a flyout with a URL TextBox + Apply (the dialog-light prompt the decision calls
+						// for). On open it snapshots the selection and, when that selection sits on an existing
+						// link run, pre-fills the URL for editing. Apply over a real selection inserts/edits the
+						// link through RegionRichTextEditAlgorithms and stages via TrySetRichText (the same seam
+						// the style/ws pickers use). Built on every editable, non-lossy row that is not bridged
+						// (link needs no host list).
+						if (!hasBridge)
 						{
 							var urlBox = new TextBox
 							{
@@ -640,25 +616,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								Content = linkPanel,
 								Placement = PlacementMode.BottomEdgeAlignedLeft
 							};
-							var linkButton = new Button
-							{
-								Content = FwAvaloniaStrings.Link,
-								// 19i.2: keep editor focus so the selection span survives opening the flyout
-								// (LostFocus collapses the TextBox selection to caret → empty span → no-op apply).
-								Focusable = false,
-								Padding = new Thickness(6, 0, 6, 0),
-								MinHeight = 0,
-								MinWidth = 0,
-								Background = Brushes.Transparent,
-								BorderThickness = new Thickness(0),
-								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-								VerticalAlignment = VerticalAlignment.Top,
-								Flyout = linkFlyout
-							};
-							AutomationProperties.SetAutomationId(linkButton, automationId + "." + wsKey + ".Link");
-							AutomationProperties.SetName(linkButton, FwAvaloniaStrings.Link);
-							ToolTip.SetTip(linkButton, FwAvaloniaStrings.Link);
+							var linkItem = new MenuItem { Header = FwAvaloniaStrings.Link };
+							AutomationProperties.SetAutomationId(linkItem, automationId + "." + wsKey + ".Link");
+							AutomationProperties.SetName(linkItem, FwAvaloniaStrings.Link);
+							// The link flyout the item opens, surfaced for automation/discovery.
+							linkItem.Tag = linkFlyout;
 
 							var linkSpanStart = 0;
 							var linkSpanEnd = 0;
@@ -676,8 +638,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									if (run != null && run.OrcKind == RegionOrcKind.ExternalLink)
 										urlBox.Text = run.HyperlinkUrl ?? string.Empty;
 								}
+								linkFlyout.ShowAt(box);
 							};
-							linkButton.Click += linkOpened;
+							linkItem.Click += linkOpened;
 							EventHandler<Avalonia.Interactivity.RoutedEventArgs> linkApply = (s2, e2) =>
 							{
 								linkFlyout.Hide();
@@ -705,38 +668,24 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 								}
 							};
 							applyButton.Click += linkApply;
-							linkAffordance = linkButton;
+							linkMenuItem = linkItem;
 							_teardown.Add(() =>
 							{
-								linkButton.Click -= linkOpened;
+								linkItem.Click -= linkOpened;
 								applyButton.Click -= linkApply;
-								linkButton.Flyout = null;
+								linkItem.Tag = null;
 							});
 						}
 
 						// §19c — generic ORC delete. Removes the FIRST embedded object (ANY kind: link,
 						// picture, footnote, other) overlapping the current selection. Picture/footnote
 						// insert+edit are DEFERRED, but ANY ORC is deletable here so the new view is never
-						// stuck with an object it cannot remove.
+						// stuck with an object it cannot remove. A right-click menu item, off a bridged row.
+						if (!hasBridge)
 						{
-							var deleteButton = new Button
-							{
-								Content = FwAvaloniaStrings.DeleteEmbeddedObject,
-								// 19i.2: non-focusable so clicking does not blur the editor and collapse the
-								// selection before the handler locates the ORC overlapping it.
-								Focusable = false,
-								Padding = new Thickness(6, 0, 6, 0),
-								MinHeight = 0,
-								MinWidth = 0,
-								Background = Brushes.Transparent,
-								BorderThickness = new Thickness(0),
-								Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-								FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-								VerticalAlignment = VerticalAlignment.Top
-							};
-							AutomationProperties.SetAutomationId(deleteButton, automationId + "." + wsKey + ".OrcDelete");
-							AutomationProperties.SetName(deleteButton, FwAvaloniaStrings.DeleteEmbeddedObject);
-							ToolTip.SetTip(deleteButton, FwAvaloniaStrings.DeleteEmbeddedObject);
+							var deleteItem = new MenuItem { Header = FwAvaloniaStrings.DeleteEmbeddedObject };
+							AutomationProperties.SetAutomationId(deleteItem, automationId + "." + wsKey + ".OrcDelete");
+							AutomationProperties.SetName(deleteItem, FwAvaloniaStrings.DeleteEmbeddedObject);
 							EventHandler<Avalonia.Interactivity.RoutedEventArgs> orcDelete = (s2, e2) =>
 							{
 								if (currentRich == null)
@@ -755,9 +704,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									lastStaged = updated.PlainText;
 								}
 							};
-							deleteButton.Click += orcDelete;
-							orcDeleteAffordance = deleteButton;
-							_teardown.Add(() => deleteButton.Click -= orcDelete);
+							deleteItem.Click += orcDelete;
+							orcDeleteMenuItem = deleteItem;
+							_teardown.Add(() => deleteItem.Click -= orcDelete);
 						}
 
 					if (clipboard != null && currentRich != null && currentRich.CanEditRichText)
@@ -812,52 +761,68 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					_teardown.Add(() => box.GotFocus -= wsFocus);
 				}
 
-				var rowPanel = new DockPanel
+				// The value box's right-click menu (legacy MultiStringSlice parity: operations live OFF the
+				// row, not as always-visible inline controls). A non-bridged row carries a local menu — Copy
+				// plus whatever rich-text operations its gate built (character style / writing-system retag /
+				// insert-or-edit link / delete embedded object). A bridged row's host xCore menu is
+				// authoritative and already wired above, so it gets no local menu here.
+				if (!hasBridge)
+				{
+					var copyItem = new MenuItem { Header = FwAvaloniaStrings.Copy };
+					EventHandler<Avalonia.Interactivity.RoutedEventArgs> copyClick = async (s2, e2) =>
+						await CopySelectionAsync(box, currentRich, clipboard);
+					copyItem.Click += copyClick;
+
+					var contextMenu = new MenuFlyout();
+					contextMenu.Items.Add(copyItem);
+					var richTextOps = new[] { styleMenuItem, wsMenuItem, linkMenuItem, orcDeleteMenuItem }
+						.Where(op => op != null).ToList();
+					if (richTextOps.Count > 0)
+						contextMenu.Items.Add(new Separator());
+					foreach (var op in richTextOps)
+						contextMenu.Items.Add(op);
+					box.ContextFlyout = contextMenu;
+					// The Copy closure and the rich-text items capture box/clipboard/pickers; drop the flyout so
+					// a recycled cell does not retain them.
+					_teardown.Add(() =>
+					{
+						copyItem.Click -= copyClick;
+						box.ContextFlyout = null;
+					});
+				}
+
+				// §19c per-run font display: differing runs render a read-along per-run-font TextBlock
+				// swapping to the editable box on focus; a uniform value renders the bare box.
+				var valueContent = BuildValueContentWithFontSwap(field, automationId, wsKey, box,
+					currentRich, !valueIsReadOnly);
+
+				// Fixed two-column layout so the abbreviation and value never overlap: the raised WS
+				// abbreviation sits in a definite-width gutter column, the value fills the rest. A browse cell
+				// is single-writing-system per column, so the gutter is suppressed there (it would otherwise
+				// show "vern"/"anal" in front of every cell, which the WinForms browse never does) and the
+				// value spans the whole row.
+				var rowPanel = new Grid
 				{
 					// 14.2: a null background only hit-tests the glyphs — the whole row must
 					// receive hover/right-click over the gaps too.
 					Background = Brushes.Transparent
 				};
-				// A browse cell is single-writing-system per column, so the per-WS abbreviation gutter
-				// (a legacy detail-pane decoration) is suppressed there — it would otherwise show "vern"/"anal"
-				// in front of every editable cell, which the WinForms browse never does.
 				if (showWritingSystemAbbreviation)
 				{
-					DockPanel.SetDock(abbrev, Dock.Left);
+					rowPanel.ColumnDefinitions.Add(
+						new ColumnDefinition(new GridLength(FwAvaloniaDensity.WsAbbrevWidth, GridUnitType.Pixel)));
+					rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+					Grid.SetColumn(abbrev, 0);
 					rowPanel.Children.Add(abbrev);
+					Grid.SetColumn(valueContent, 1);
+					rowPanel.Children.Add(valueContent);
 				}
-				// Phase 4: the writing-system affordance docks at the row's trailing edge, added first so it
-				// sits at the outer edge (DockPanel fills with its last child). Present only on editable,
-				// non-lossy rows that carry available writing systems.
-				if (wsAffordance != null)
+				else
 				{
-					DockPanel.SetDock(wsAffordance, Dock.Right);
-					rowPanel.Children.Add(wsAffordance);
+					rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+					Grid.SetColumn(valueContent, 0);
+					rowPanel.Children.Add(valueContent);
 				}
-				// Phase 3: the character-style affordance docks at the row's trailing edge so the value box
-				// fills the remaining width (added before the box, since DockPanel fills with its last
-				// child). Present only on editable, non-lossy rows that carry available character styles.
-				// §19c: the generic ORC-delete and external-link affordances trail (right), before the
-				// style affordance, on editable non-lossy rows.
-				if (orcDeleteAffordance != null)
-				{
-					DockPanel.SetDock(orcDeleteAffordance, Dock.Right);
-					rowPanel.Children.Add(orcDeleteAffordance);
-				}
-				if (linkAffordance != null)
-				{
-					DockPanel.SetDock(linkAffordance, Dock.Right);
-					rowPanel.Children.Add(linkAffordance);
-				}
-				if (styleAffordance != null)
-				{
-					DockPanel.SetDock(styleAffordance, Dock.Right);
-					rowPanel.Children.Add(styleAffordance);
-				}
-				// §19c per-run font display: differing runs render a read-along per-run-font TextBlock
-				// swapping to the editable box on focus; a uniform value renders the bare box.
-				rowPanel.Children.Add(BuildValueContentWithFontSwap(field, automationId, wsKey, box,
-					currentRich, !valueIsReadOnly));
 				Children.Add(rowPanel);
 			}
 		}

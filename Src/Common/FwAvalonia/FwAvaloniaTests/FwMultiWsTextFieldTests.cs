@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
@@ -126,6 +127,56 @@ namespace FwAvaloniaTests
 				"every writing system gets its own row, in field order");
 			Assert.That(AbbrevLabels(control, "en", "fr", "es"),
 				Is.EqualTo(new[] { "en", "fr", "es" }), "the WS labels render in order");
+		}
+
+		// Legacy detail-slice parity: the row shows only the abbreviation + value, with rich-text operations
+		// reached OFF the row. So an editable row draws no inline affordance buttons; the operations
+		// (insert/edit link, delete embedded object) are items on the value box's right-click context menu.
+		[AvaloniaTest]
+		public void RichTextOperations_AreContextMenuItems_NotInlineRowButtons()
+		{
+			var field = Field(new List<RegionWsValue> { new RegionWsValue("en", "house", wsTag: "en") });
+			var context = new FakeRegionEditContext();
+			var control = new FwMultiWsTextField(field, field.AutomationId, context, null);
+			var window = new Window { Content = control, Width = 360, Height = 160 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(control.GetVisualDescendants().OfType<Button>().Any(), Is.False,
+				"a text row carries no always-visible inline affordance buttons");
+
+			var box = control.GetVisualDescendants().OfType<TextBox>().Single();
+			var menu = box.ContextFlyout as MenuFlyout;
+			Assert.That(menu, Is.Not.Null, "the value box carries a right-click menu");
+			var ids = menu.Items.OfType<MenuItem>()
+				.Select(mi => AutomationProperties.GetAutomationId(mi)).ToList();
+			Assert.That(ids, Does.Contain(field.AutomationId + ".en.Link"),
+				"insert/edit link is reachable as a right-click menu item");
+			Assert.That(ids, Does.Contain(field.AutomationId + ".en.OrcDelete"),
+				"delete embedded object is reachable as a right-click menu item");
+		}
+
+		// The abbreviation and value never overlap: they live in separate columns of the row Grid (a
+		// definite-width gutter column + the value column), so a bold value cannot crowd the raised label.
+		[AvaloniaTest]
+		public void Abbreviation_And_Value_AreInSeparateGridColumns_WithNoOverlap()
+		{
+			var field = Field(new List<RegionWsValue>
+			{
+				new RegionWsValue("Sŏ", "testes", wsTag: "seh", bold: true)
+			});
+			var (control, _) = Show(field);
+
+			var row = control.GetVisualChildren().OfType<Grid>().Single();
+			var abbrev = row.Children.OfType<TextBlock>().Single();
+			var value = row.Children.OfType<TextBox>().Single();
+
+			Assert.That(Grid.GetColumn(abbrev), Is.EqualTo(0), "the abbreviation sits in the gutter column");
+			Assert.That(Grid.GetColumn(value), Is.EqualTo(1), "the value sits in its own column");
+			Assert.That(abbrev.Bounds.Right, Is.LessThanOrEqualTo(value.Bounds.X + 0.01),
+				"the abbreviation and value do not overlap — the value starts at or after the gutter edge");
 		}
 	}
 }

@@ -15,8 +15,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Width of the field label column.</summary>
 		public const double LabelColumnWidth = 96d;
 
-		/// <summary>Width of the small writing-system abbreviation gutter.</summary>
+		/// <summary>Width of the small writing-system abbreviation gutter column. The abbreviation sits in a
+		/// fixed Grid column of this width so a bold value in the adjacent column cannot crowd it.</summary>
 		public const double WsAbbrevWidth = 28d;
+
+		/// <summary>The clear separation kept between the writing-system abbreviation and the value (the
+		/// abbreviation's trailing margin inside its gutter column), so the raised label reads as distinct.</summary>
+		public const double WsAbbrevGutter = 4d;
 
 		/// <summary>Vertical spacing between writing-system rows within a field.</summary>
 		public const double RowSpacing = 1d;

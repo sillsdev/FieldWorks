@@ -56,12 +56,19 @@ namespace FwAvaloniaTests
 			=> root.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == id);
 
+		// The link / delete-embedded-object operations moved off the row onto the value box's right-click
+		// menu, so they are MenuItems in the box's ContextFlyout, not visual-tree children. The link item
+		// carries the prompt flyout it opens in its Tag.
+		private static MenuItem FindMenuItem(TextBox box, string id)
+			=> (box.ContextFlyout as MenuFlyout)?.Items.OfType<MenuItem>()
+				.FirstOrDefault(mi => AutomationProperties.GetAutomationId(mi) == id);
+
 		// The link flyout content lives in a popup (not a visual descendant of the control), so reach the
 		// URL box / Apply button through the flyout content's LOGICAL tree (the StackPanel's children),
 		// which is populated independent of popup realization.
-		private static T FindInFlyout<T>(Button flyoutButton, string id) where T : Control
+		private static T FindInFlyout<T>(Flyout flyout, string id) where T : Control
 		{
-			var content = (StackPanel)((Flyout)flyoutButton.Flyout).Content;
+			var content = (StackPanel)flyout.Content;
 			return content.Children.OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == id);
 		}
@@ -76,25 +83,24 @@ namespace FwAvaloniaTests
 			var (control, context, window) = Show(FieldWith(rich));
 
 			var box = Find<TextBox>(control, "BibEditor.en");
-			var linkButton = Find<Button>(control, "BibEditor.en.Link");
-			Assert.That(linkButton, Is.Not.Null, "an editable row exposes the link affordance");
+			var linkItem = FindMenuItem(box, "BibEditor.en.Link");
+			Assert.That(linkItem, Is.Not.Null, "an editable row offers the link operation on its right-click menu");
 
 			box.SelectionStart = 4; // select "SIL"
 			box.SelectionEnd = 7;
 			Dispatcher.UIThread.RunJobs();
 
-			var flyout = (Flyout)linkButton.Flyout;
-			// The button's own Click opens the flyout AND runs the open handler (selection snapshot +
-			// URL pre-fill); raise it the same way a user click would.
-			linkButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
-			flyout.ShowAt(linkButton);
+			var flyout = (Flyout)linkItem.Tag;
+			// Choosing the menu item runs the open handler (selection snapshot + URL pre-fill) and opens the
+			// prompt flyout anchored at the box; raise it the same way a user click would.
+			linkItem.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			DialogSnapshot.Capture(window, "Region-LinkOrc-01-link-prompt");
 
-			var url = FindInFlyout<TextBox>(linkButton, "BibEditor.en.Link.Url");
+			var url = FindInFlyout<TextBox>(flyout, "BibEditor.en.Link.Url");
 			Assert.That(url, Is.Not.Null, "the link flyout prompts for a URL");
 			url.Text = "https://software.sil.org/fieldworks";
-			var ok = FindInFlyout<Button>(linkButton, "BibEditor.en.Link.Apply");
+			var ok = FindInFlyout<Button>(flyout, "BibEditor.en.Link.Apply");
 			ok.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
@@ -122,17 +128,16 @@ namespace FwAvaloniaTests
 			box.SelectionEnd = 5;
 			Dispatcher.UIThread.RunJobs();
 
-			var linkButton = Find<Button>(control, "BibEditor.en.Link");
-			var flyout = (Flyout)linkButton.Flyout;
-			linkButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
-			flyout.ShowAt(linkButton);
+			var linkItem = FindMenuItem(box, "BibEditor.en.Link");
+			var flyout = (Flyout)linkItem.Tag;
+			linkItem.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
-			var url = FindInFlyout<TextBox>(linkButton, "BibEditor.en.Link.Url");
+			var url = FindInFlyout<TextBox>(flyout, "BibEditor.en.Link.Url");
 			Assert.That(url.Text, Is.EqualTo("https://old.example"),
 				"the prompt pre-fills the existing link's URL for editing");
 			url.Text = "https://new.example";
-			FindInFlyout<Button>(linkButton, "BibEditor.en.Link.Apply")
+			FindInFlyout<Button>(flyout, "BibEditor.en.Link.Apply")
 				.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
@@ -152,12 +157,12 @@ namespace FwAvaloniaTests
 			box.SelectionEnd = 4;
 			Dispatcher.UIThread.RunJobs();
 
-			var linkButton = Find<Button>(control, "BibEditor.en.Link");
-			linkButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
-			((Flyout)linkButton.Flyout).ShowAt(linkButton);
+			var linkItem = FindMenuItem(box, "BibEditor.en.Link");
+			var flyout = (Flyout)linkItem.Tag;
+			linkItem.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
-			FindInFlyout<TextBox>(linkButton, "BibEditor.en.Link.Url").Text = "";
-			FindInFlyout<Button>(linkButton, "BibEditor.en.Link.Apply")
+			FindInFlyout<TextBox>(flyout, "BibEditor.en.Link.Url").Text = "";
+			FindInFlyout<Button>(flyout, "BibEditor.en.Link.Apply")
 				.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
@@ -183,10 +188,10 @@ namespace FwAvaloniaTests
 			box.SelectionEnd = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			// The delete-ORC affordance is enabled because the selection overlaps an ORC run.
-			var deleteOrc = Find<Button>(control, "BibEditor.en.OrcDelete");
-			Assert.That(deleteOrc, Is.Not.Null, "a selection over an ORC exposes the delete-embedded-object affordance");
-			deleteOrc.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+			// The delete-embedded-object operation is offered on the row's right-click menu.
+			var deleteOrc = FindMenuItem(box, "BibEditor.en.OrcDelete");
+			Assert.That(deleteOrc, Is.Not.Null, "a row offers the delete-embedded-object operation on its right-click menu");
+			deleteOrc.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 			DialogSnapshot.Capture(window, "Region-LinkOrc-02-orc-selected-for-delete");
 
@@ -212,8 +217,8 @@ namespace FwAvaloniaTests
 			box.SelectionEnd = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			Find<Button>(control, "BibEditor.en.OrcDelete")
-				.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+			FindMenuItem(box, "BibEditor.en.OrcDelete")
+				.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
 
 			Assert.That(context.RichTextEdits.Single().Value.PlainText, Is.EqualTo("xy"),
