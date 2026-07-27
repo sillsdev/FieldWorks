@@ -533,6 +533,38 @@ namespace SIL.FieldWorks.XWorks
 		/// kept HIDDEN purely as the command-target colleague chain, with CurrentSlice pointed at the
 		/// slice bound to the clicked row's object — never shown, never the active surface.
 		/// </summary>
+		/// <summary>The shared per-object menu group (Field Visibility / Move Field / Help).</summary>
+		internal const string ObjectMenuId = "mnuDataTree-Object";
+
+		/// <summary>
+		/// The multi-writing-system slice menu group: the Writing Systems submenu PLUS the same
+		/// Field Visibility / Move Field / Help leaves <see cref="ObjectMenuId"/> defines.
+		/// </summary>
+		internal const string MultiStringSliceMenuId = "mnuDataTree-MultiStringSlice";
+
+		/// <summary>
+		/// Composes the ordered menu-id list for an in-string right-click, mirroring the legacy
+		/// <c>DTMenuHandler.MakeSliceContextMenu</c> recipe: the field's own context menu, then
+		/// <see cref="MultiStringSliceMenuId"/> only for a multistring row, then
+		/// <see cref="ObjectMenuId"/> only when NEITHER shared group is already present. Both
+		/// mnuDataTree-MultiStringSlice and mnuDataTree-Object independently define Field Visibility /
+		/// Move Field / Help, so adding both would show that group twice; this guard adds exactly one.
+		/// Empty ids are dropped. Kept internal-static so the composition is unit-testable without a
+		/// live window.
+		/// </summary>
+		internal static IReadOnlyList<string> ComposeContextMenuIds(string fieldContextMenuId,
+			bool isMultiStringRow)
+		{
+			var menus = new List<string>();
+			if (!string.IsNullOrEmpty(fieldContextMenuId))
+				menus.Add(fieldContextMenuId);
+			if (isMultiStringRow)
+				menus.Add(MultiStringSliceMenuId);
+			if (menus.TrueForAll(id => id != MultiStringSliceMenuId && id != ObjectMenuId))
+				menus.Add(ObjectMenuId);
+			return menus;
+		}
+
 		private void OnRegionMenuRequested(RegionMenuRequest request)
 		{
 			try
@@ -553,9 +585,8 @@ namespace SIL.FieldWorks.XWorks
 				switch (request.Kind)
 				{
 					case RegionMenuKind.ContextMenu:
-						ids.Add(request.Field.ContextMenuId);
-						ids.Add("mnuDataTree-MultiStringSlice");
-						ids.Add("mnuDataTree-Object");
+						ids.AddRange(ComposeContextMenuIds(request.Field.ContextMenuId,
+							request.Field.IsMultiStringRow));
 						break;
 					case RegionMenuKind.Hotlinks:
 						ids.Add(request.Field.HotlinksId);
@@ -564,7 +595,7 @@ namespace SIL.FieldWorks.XWorks
 						ids.Add(request.Field.MenuId);
 						if (!string.IsNullOrEmpty(request.Field.HotlinksId))
 							ids.Add(request.Field.HotlinksId); // section link commands stay reachable
-						ids.Add("mnuDataTree-Object");
+						ids.Add(ObjectMenuId);
 						break;
 				}
 

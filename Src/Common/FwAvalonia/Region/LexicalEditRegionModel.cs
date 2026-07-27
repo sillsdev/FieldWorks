@@ -1668,6 +1668,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>Legacy hotlinks menu id for section headers.</summary>
 		public string HotlinksId { get; }
 
+		/// <summary>
+		/// True when this row is a multi-writing-system text row — the legacy <c>multistring</c> editor
+		/// (<c>MultiStringSlice</c>), as opposed to a single-ws <c>string</c> editor. It mirrors the
+		/// legacy <c>slice is MultiStringSlice</c> test so the in-string context menu can add the shared
+		/// <c>mnuDataTree-MultiStringSlice</c> group (with the Writing Systems submenu) for exactly those
+		/// rows. Set by the composer; false for every non-multistring row.
+		/// </summary>
+		public bool IsMultiStringRow { get; set; }
+
 		/// <summary>The LCModel object this row is bound to (command-target context for menus).</summary>
 		public int ObjectHvo { get; }
 

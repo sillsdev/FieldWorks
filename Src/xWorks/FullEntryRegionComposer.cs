@@ -1172,6 +1172,11 @@ namespace SIL.FieldWorks.XWorks
 					node.LocalizationKey, node.Routing, values, null, null, editable, depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo);
+				// A multistring editor is the legacy MultiStringSlice; its in-string context menu adds the
+				// shared mnuDataTree-MultiStringSlice group (Writing Systems submenu), a single-ws string
+				// editor does not. Carry that so the menu composition mirrors the legacy slice test.
+				textField.IsMultiStringRow = string.Equals(node.RawEditor,
+					EditorKindMap.MultiStringEditor, StringComparison.OrdinalIgnoreCase);
 				if (editable)
 				{
 					// Phase 3: an editable text row over a run-bearing TsString property (String/MultiString)
