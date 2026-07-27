@@ -243,11 +243,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 									? currentCaret
 									: box.SelectionStart;
 
-							var normalized = RegionBidirectionalTextNavigation.NormalizeSelectionToClusters(text,
-								selectionAnchor.Value, nextCaret);
-							box.SelectionStart = normalized.Start;
-							box.SelectionEnd = normalized.End;
+							// The moving edge (nextCaret) already lands on a whole grapheme-cluster boundary
+							// (MoveCaret steps by clusters) and the anchor is a cluster-aligned caret/selection
+							// edge, so the span [anchor..nextCaret] never splits a cluster. Set the caret FIRST:
+							// Avalonia's CaretIndex setter clears the selection, so assigning SelectionStart/
+							// SelectionEnd AFTER leaves the caret on the moving edge without re-collapsing — the
+							// original order (selection then CaretIndex) collapsed the span to an empty caret,
+							// which is why Shift+Arrow moved the caret with nothing selected.
 							box.CaretIndex = nextCaret;
+							box.SelectionStart = selectionAnchor.Value;
+							box.SelectionEnd = nextCaret;
 						}
 						else
 						{
