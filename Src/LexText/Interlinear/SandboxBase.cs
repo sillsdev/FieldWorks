@@ -1410,9 +1410,17 @@ namespace SIL.FieldWorks.IText
 						hasMf = true;
 					}
 				}
-				if (hasMf)
+				if (fGuessing != 0)
+				{
 					// Wait until all of the morphemes have been loaded (cf. LT-22235).
-					CopyLexEntryInfoToMonomorphemicWordGlossAndPos(fGuessing != 0);
+					if (gloss != null)
+					{
+						GuessWordCatAndGloss(gloss);
+					} else if (analysis != null)
+					{
+						GuessWordCatAndGloss(analysis);
+					}
+				}
 				if (bldrError.Length > 0)
 				{
 					var msg = bldrError.ToString().Trim();
@@ -1454,7 +1462,22 @@ namespace SIL.FieldWorks.IText
 			return fGuessing != 0;
 		}
 
-		internal void CopyLexEntryInfoToMonomorphemicWordGlossAndPos(bool usingGuess)
+		private void GuessWordCatAndGloss(IAnalysis analysis)
+		{
+			// Use the same guesses as InterlinVc to avoid confusing the user (LT-22616).
+			IPartOfSpeech wordCatGuess = InterlinVc.GuessWordPOS(analysis);
+			ILexSense wordSenseGuess = InterlinVc.GuessWordSense(analysis.Analysis);
+			if (wordCatGuess != null)
+			{
+				CopyLexPosToWordPos(true, wordCatGuess.Hvo);
+			}
+			if (wordSenseGuess != null)
+			{
+				CopySenseToWordGloss(true, wordSenseGuess.Hvo);
+			}
+		}
+
+		internal void CopyLexEntryInfoToWordGlossAndPosIfEmpty(bool usingGuess)
 		{
 			bool fDirty = Caches.DataAccess.IsDirty();
 			bool fApproved = !usingGuess;
@@ -1490,7 +1513,7 @@ namespace SIL.FieldWorks.IText
 
 			ISilDataAccess sda = m_caches.DataAccess;
 			int cmorphs = sda.get_VecSize(RootWordHvo, ktagSbWordMorphs);
-			int hvoSbRootSense = 0;
+			int hvoRealRootSense = 0;
 			int hvoStemPos = 0; // ID in real database of part-of-speech of stem.
 			bool fGiveUpOnPOS = false;
 			int hvoDerivedPos = 0; // real ID of POS output of derivational MSA.
@@ -1511,8 +1534,8 @@ namespace SIL.FieldWorks.IText
 
 				// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
 				// otherwise, use the first stem we find, if any.
-				if ((fStem && hvoSbRootSense == 0) || cmorphs == 1)
-					hvoSbRootSense = hvoSbSense;
+				if ((fStem && hvoRealRootSense == 0) || cmorphs == 1)
+					hvoRealRootSense = m_caches.RealHvo(hvoSbSense);
 
 				if (fStem)
 				{
@@ -1537,7 +1560,7 @@ namespace SIL.FieldWorks.IText
 			// If we found a sense to copy from, do it.  Replace the word gloss even there already is
 			// one, since users get confused/frustrated if we don't.  (See LT-6141.)  It's marked as a
 			// guess after all!
-			CopySenseToWordGloss(fCopyToWordGloss, hvoSbRootSense);
+			CopySenseToWordGloss(fCopyToWordGloss, hvoRealRootSense);
 
 			// If we didn't find a stem, we don't have enough information to find a POS.
 			if (hvoStemPos == 0)
@@ -1554,13 +1577,12 @@ namespace SIL.FieldWorks.IText
 			CopyLexPosToWordPos(fCopyToWordPos, hvoLexPos);
 		}
 
-		protected virtual void CopySenseToWordGloss(bool fCopyWordGloss, int hvoSbRootSense)
+		protected virtual void CopySenseToWordGloss(bool fCopyWordGloss, int hvoRealSense)
 		{
-			if (hvoSbRootSense != 0 && fCopyWordGloss)
+			if (hvoRealSense != 0 && fCopyWordGloss)
 			{
 				ISilDataAccess sda = m_caches.DataAccess;
 				m_caches.DataAccess.SetInt(RootWordHvo, ktagSbWordGlossGuess, 1);
-				int hvoRealSense = m_caches.RealHvo(hvoSbRootSense);
 				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					// Update the guess, by copying the glosses of the SbNamedObj representing the sense
@@ -1574,6 +1596,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 		}
+
 		protected virtual int CopyLexPosToWordPos(bool fCopyToWordCat, int hvoMsaPos)
 		{
 			int hvoPos = 0;
@@ -4258,7 +4281,11 @@ namespace SIL.FieldWorks.IText
 			base.HandleSelectionChange(rootb, vwselNew);
 			if (!vwselNew.IsValid)
 				return;
-			m_editMonitor.DoPendingMorphemeUpdates();
+			if (m_editMonitor.NeedMorphemeUpdate)
+			{
+				m_editMonitor.DoPendingMorphemeUpdates();
+				CopyLexEntryInfoToWordGlossAndPosIfEmpty(true);
+			}
 			if (!vwselNew.IsValid)
 				return;
 			DoActionOnIconSelection(vwselNew);
