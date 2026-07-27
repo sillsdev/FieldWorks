@@ -283,6 +283,13 @@ namespace FwAvaloniaTests
 			=> view.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
+		// The rich-text operations moved off the row onto the value box's right-click menu, so they are
+		// MenuItems in the box's ContextFlyout (a MenuFlyout), not visual-tree children. This locates one by
+		// its automation id.
+		private static MenuItem FindMenuItem(TextBox box, string automationId)
+			=> (box.ContextFlyout as MenuFlyout)?.Items.OfType<MenuItem>()
+				.FirstOrDefault(mi => AutomationProperties.GetAutomationId(mi) == automationId);
+
 		[AvaloniaTest]
 		public void TextChange_StagesThroughTheEditContext()
 		{
@@ -354,7 +361,10 @@ namespace FwAvaloniaTests
 			Dispatcher.UIThread.RunJobs();
 
 			var flyout = box.ContextFlyout as MenuFlyout;
-			var copyItem = flyout?.Items.OfType<MenuItem>().Single();
+			// The menu now also carries the relocated rich-text operations (Link / delete embedded object),
+			// so Copy is no longer the sole item — pick it out by header.
+			var copyItem = flyout?.Items.OfType<MenuItem>()
+				.FirstOrDefault(i => (string)i.Header == FwAvaloniaStrings.Copy);
 			Assert.That(copyItem, Is.Not.Null);
 			copyItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
@@ -1028,16 +1038,18 @@ namespace FwAvaloniaTests
 			Assert.That(box, Is.Not.Null);
 			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
 
-			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
-			Assert.That(styleButton, Is.Not.Null, "an editable styleable row exposes the style affordance");
+			var styleItem = FindMenuItem(box, "BibEditor.qaa-x-rich.Style");
+			Assert.That(styleItem, Is.Not.Null,
+				"an editable styleable row offers the style operation on its right-click menu");
 
 			box.SelectionStart = 0; // select "do"
 			box.SelectionEnd = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			var flyout = (Flyout)styleButton.Flyout;
-			flyout.ShowAt(styleButton);
+			// Choosing the menu item snapshots the selection and opens the picker flyout anchored at the box.
+			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
+			var flyout = (Flyout)styleItem.Tag;
 			var picker = (FwOptionPicker)flyout.Content;
 			// Options: [0]=Default(no style), [1]=Strong, [2]=Subtle Emphasis.
 			picker.OptionsList.SelectedIndex = 1; // "Strong"
@@ -1067,10 +1079,10 @@ namespace FwAvaloniaTests
 			box.SelectionEnd = 3;
 			Dispatcher.UIThread.RunJobs();
 
-			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
-			var flyout = (Flyout)styleButton.Flyout;
-			flyout.ShowAt(styleButton);
+			var styleItem = FindMenuItem(box, "BibEditor.qaa-x-rich.Style");
+			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
+			var flyout = (Flyout)styleItem.Tag;
 			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 0; // "Default (no style)" -> clears
 			picker.CommitHighlighted();
@@ -1093,10 +1105,10 @@ namespace FwAvaloniaTests
 			box.CaretIndex = 1;
 			Dispatcher.UIThread.RunJobs();
 
-			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
-			var flyout = (Flyout)styleButton.Flyout;
-			flyout.ShowAt(styleButton);
+			var styleItem = FindMenuItem(box, "BibEditor.qaa-x-rich.Style");
+			styleItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
+			var flyout = (Flyout)styleItem.Tag;
 			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 1;
 			picker.CommitHighlighted();
@@ -1110,8 +1122,9 @@ namespace FwAvaloniaTests
 		public void StyleAffordance_Absent_WhenNoAvailableStyles()
 		{
 			var (control, _, _) = ShowStyleable(StyleableField(/* none */));
-			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.Style"), Is.Null,
-				"a field with no available character styles shows no style picker");
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			Assert.That(FindMenuItem(box, "BibEditor.qaa-x-rich.Style"), Is.Null,
+				"a field with no available character styles offers no style menu item");
 		}
 
 		// Phase 3 test (b, gating): a lossy / read-only value exposes NO style affordance (the whole
@@ -1135,8 +1148,8 @@ namespace FwAvaloniaTests
 			var (control, context, _) = ShowStyleable(field);
 			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
 			Assert.That(box.IsReadOnly, Is.True, "a lossy value is read-only");
-			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.Style"), Is.Null,
-				"a lossy/read-only value exposes no style affordance");
+			Assert.That(FindMenuItem(box, "BibEditor.qaa-x-rich.Style"), Is.Null,
+				"a lossy/read-only value offers no style menu item");
 			Assert.That(context.RichTextEdits, Is.Empty);
 		}
 
@@ -1146,9 +1159,10 @@ namespace FwAvaloniaTests
 		public void StyleAffordance_HasAutomationIdAndAccessibleName()
 		{
 			var (control, _, _) = ShowStyleable(StyleableField("Strong"));
-			var styleButton = Find<Button>(control, "BibEditor.qaa-x-rich.Style");
-			Assert.That(styleButton, Is.Not.Null);
-			Assert.That(AutomationProperties.GetName(styleButton), Is.EqualTo(FwAvaloniaStrings.CharacterStyle));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			var styleItem = FindMenuItem(box, "BibEditor.qaa-x-rich.Style");
+			Assert.That(styleItem, Is.Not.Null);
+			Assert.That(AutomationProperties.GetName(styleItem), Is.EqualTo(FwAvaloniaStrings.CharacterStyle));
 		}
 	}
 
@@ -1202,6 +1216,12 @@ namespace FwAvaloniaTests
 			=> root.GetVisualDescendants().OfType<T>()
 				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == automationId);
 
+		// The per-run writing-system retag operation is a right-click MenuItem in the value box's
+		// ContextFlyout, not a visual-tree child; locate it by its automation id.
+		private static MenuItem FindMenuItem(TextBox box, string automationId)
+			=> (box.ContextFlyout as MenuFlyout)?.Items.OfType<MenuItem>()
+				.FirstOrDefault(mi => AutomationProperties.GetAutomationId(mi) == automationId);
+
 		[AvaloniaTest]
 		public void WritingSystemPicker_PickingAWs_RetagsItOverTheSelectedSpan()
 		{
@@ -1210,16 +1230,18 @@ namespace FwAvaloniaTests
 			Assert.That(box, Is.Not.Null);
 			Assert.That(context.RichTextEdits, Is.Empty, "construction must not stage");
 
-			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
-			Assert.That(wsButton, Is.Not.Null, "an editable retaggable row exposes the ws affordance");
+			var wsItem = FindMenuItem(box, "BibEditor.qaa-x-rich.WritingSystem");
+			Assert.That(wsItem, Is.Not.Null,
+				"an editable retaggable row offers the writing-system operation on its right-click menu");
 
 			box.SelectionStart = 0; // select "do"
 			box.SelectionEnd = 2;
 			Dispatcher.UIThread.RunJobs();
 
-			var flyout = (Flyout)wsButton.Flyout;
-			flyout.ShowAt(wsButton);
+			// Choosing the menu item snapshots the selection and opens the picker flyout anchored at the box.
+			wsItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
+			var flyout = (Flyout)wsItem.Tag;
 			var picker = (FwOptionPicker)flyout.Content;
 			// Options: [0]=French(fr), [1]=German(de).
 			picker.OptionsList.SelectedIndex = 1; // German -> de
@@ -1248,10 +1270,10 @@ namespace FwAvaloniaTests
 			box.CaretIndex = 1;
 			Dispatcher.UIThread.RunJobs();
 
-			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
-			var flyout = (Flyout)wsButton.Flyout;
-			flyout.ShowAt(wsButton);
+			var wsItem = FindMenuItem(box, "BibEditor.qaa-x-rich.WritingSystem");
+			wsItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
 			Dispatcher.UIThread.RunJobs();
+			var flyout = (Flyout)wsItem.Tag;
 			var picker = (FwOptionPicker)flyout.Content;
 			picker.OptionsList.SelectedIndex = 0;
 			picker.CommitHighlighted();
@@ -1264,17 +1286,19 @@ namespace FwAvaloniaTests
 		public void WritingSystemAffordance_Absent_WhenNoAvailableWritingSystems()
 		{
 			var (control, _, _) = ShowRetaggable(/* none */);
-			Assert.That(Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem"), Is.Null,
-				"a field with no available writing systems shows no ws picker");
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			Assert.That(FindMenuItem(box, "BibEditor.qaa-x-rich.WritingSystem"), Is.Null,
+				"a field with no available writing systems offers no ws menu item");
 		}
 
 		[AvaloniaTest]
 		public void WritingSystemAffordance_HasAutomationIdAndAccessibleName()
 		{
 			var (control, _, _) = ShowRetaggable(("fr", "French"));
-			var wsButton = Find<Button>(control, "BibEditor.qaa-x-rich.WritingSystem");
-			Assert.That(wsButton, Is.Not.Null);
-			Assert.That(AutomationProperties.GetName(wsButton), Is.EqualTo(FwAvaloniaStrings.WritingSystem));
+			var box = Find<TextBox>(control, "BibEditor.qaa-x-rich");
+			var wsItem = FindMenuItem(box, "BibEditor.qaa-x-rich.WritingSystem");
+			Assert.That(wsItem, Is.Not.Null);
+			Assert.That(AutomationProperties.GetName(wsItem), Is.EqualTo(FwAvaloniaStrings.WritingSystem));
 		}
 	}
 
