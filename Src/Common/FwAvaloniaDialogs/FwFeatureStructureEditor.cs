@@ -163,7 +163,7 @@ namespace FwAvaloniaDialogs
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
-				ItemContainerTheme = CompactTreeItemTheme(),
+				ItemContainerTheme = FilterableDropdownSupport.CompactTreeItemTheme(),
 				ItemTemplate = TreeNodeTemplate()
 			};
 			AutomationProperties.SetAutomationId(_tree, _automationId + ".Tree");
@@ -179,7 +179,7 @@ namespace FwAvaloniaDialogs
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
-				ItemContainerTheme = CompactListItemTheme(),
+				ItemContainerTheme = FilterableDropdownSupport.CompactListItemTheme(),
 				ItemTemplate = FilterRowTemplate()
 			};
 			AutomationProperties.SetAutomationId(_filterList, _automationId + ".Filtered");
@@ -545,39 +545,15 @@ namespace FwAvaloniaDialogs
 		private IReadOnlyList<FwFeatureNode> _filterResults = Array.Empty<FwFeatureNode>();
 
 		private void ApplyFilter()
-		{
-			var query = _filterBox.Text ?? string.Empty;
-			if (string.IsNullOrWhiteSpace(query))
-			{
-				_filterResults = Array.Empty<FwFeatureNode>();
-				_filterList.ItemsSource = null;
-				_filterList.IsVisible = false;
-				_tree.IsVisible = true;
-				return;
-			}
-
-			_filterResults = _nodes
-				.Where(n => n != null && n.Name != null
-					&& n.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
-				.ToList();
-			_filterList.ItemsSource = _filterResults;
-			_filterList.SelectedIndex = _filterResults.Count > 0 ? 0 : -1;
-			_filterList.IsVisible = true;
-			_tree.IsVisible = false;
-		}
+			=> _filterResults = FilterableDropdownSupport.ApplyNameFilter(
+				_filterBox.Text ?? string.Empty, _nodes, n => n.Name, _filterList, _tree);
 
 		private void OnFilterListPointerReleased(object sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton != MouseButton.Left || !IsReleaseOverOwnItem(e.Source))
+			if (e.InitialPressMouseButton != MouseButton.Left
+				|| !FilterableDropdownSupport.IsReleaseOverOwnItem(e.Source, _filterList))
 				return;
 			CommitHighlightedFilterRow();
-		}
-
-		private bool IsReleaseOverOwnItem(object source)
-		{
-			var item = (source as Visual)?.GetSelfAndVisualAncestors()
-				.OfType<ListBoxItem>().FirstOrDefault();
-			return item != null && item.GetVisualAncestors().Contains(_filterList);
 		}
 
 		// Picking a row in the filter list: if it is a value, select it in its group; otherwise reveal it in the
@@ -651,16 +627,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		private void MoveFilterHighlight(int delta)
-		{
-			if (_filterResults.Count == 0)
-				return;
-			var current = _filterList.SelectedIndex;
-			var next = current < 0 ? (delta > 0 ? 0 : _filterResults.Count - 1) : current + delta;
-			if (next < 0 || next >= _filterResults.Count)
-				return;
-			_filterList.SelectedIndex = next;
-			_filterList.ScrollIntoView(next);
-		}
+			=> FilterableDropdownSupport.MoveListHighlight(_filterList, _filterResults.Count, delta);
 
 		// ----- item templates / density -----
 
@@ -760,32 +727,6 @@ namespace FwAvaloniaDialogs
 					Margin = new Thickness(node.Depth * FwAvaloniaDensity.TreeIndentPerLevel, 0, 0, 0)
 				};
 			});
-		}
-
-		private static ControlTheme CompactTreeItemTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(TreeViewItem), null, out var found))
-				baseTheme = found as ControlTheme;
-			var theme = new ControlTheme(typeof(TreeViewItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(TreeViewItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
-			theme.Setters.Add(new Setter(TreeViewItem.MinHeightProperty, 0d));
-			theme.Setters.Add(new Setter(TreeViewItem.IsExpandedProperty,
-				new Avalonia.Data.Binding(nameof(FeatureTreeNode.IsExpanded)) { Mode = Avalonia.Data.BindingMode.TwoWay }));
-			return theme;
-		}
-
-		private static ControlTheme CompactListItemTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(ListBoxItem), null, out var found))
-				baseTheme = found as ControlTheme;
-			var theme = new ControlTheme(typeof(ListBoxItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
-			theme.Setters.Add(new Setter(ListBoxItem.MinHeightProperty, 0d));
-			return theme;
 		}
 
 		private static IEnumerable<FeatureTreeNode> EnumerateNodes(IEnumerable<FeatureTreeNode> roots)
