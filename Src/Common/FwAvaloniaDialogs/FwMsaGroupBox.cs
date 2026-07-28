@@ -141,7 +141,7 @@ namespace FwAvaloniaDialogs
 					{
 						Text = slot?.Name ?? string.Empty,
 						VerticalAlignment = VerticalAlignment.Center,
-						Foreground = Brushes.Black
+						Foreground = FwAvaloniaDensity.PickerForegroundBrush
 					})
 			};
 			AutomationProperties.SetAutomationId(_slotCombo, "MsaGroupBox.Slot");
@@ -168,7 +168,7 @@ namespace FwAvaloniaDialogs
 						// Indent nested subclasses two spaces per depth so the hierarchy reads (the WinForms tree indents).
 						Text = (cls == null ? string.Empty : new string(' ', cls.Depth * 2) + cls.Name),
 						VerticalAlignment = VerticalAlignment.Center,
-						Foreground = Brushes.Black
+						Foreground = FwAvaloniaDensity.PickerForegroundBrush
 					})
 			};
 			AutomationProperties.SetAutomationId(_inflClassCombo, "MsaGroupBox.InflClass");
@@ -183,7 +183,7 @@ namespace FwAvaloniaDialogs
 			// parity of the WinForms box's "Inflection Features" affordance. Shown only for infl/deriv affixes (where
 			// the legacy box opens MsaInflectionFeatureListDlg). The host feeds it the POS's inflectable-feature
 			// system; a value pick raises MsaChanged so the dialog's payload tracks the live assignment set. The
-			// create-feature / create-value affordances forward to the box's events (Stage 3 wires the dialogs).
+			// create-feature / create-value affordances forward to the box's events, which the host wires to its dialogs.
 			_inflFeaturesEditor = new FwFeatureStructureEditor("MsaGroupBox.InflFeatures");
 			_inflFeaturesEditor.AssignmentsChanged += _ =>
 			{
@@ -314,11 +314,11 @@ namespace FwAvaloniaDialogs
 			_inflFeaturesEditor.SetAssignments(assignments ?? Array.Empty<FwFeatureValueAssignment>());
 		}
 
-		/// <summary>Host callback after a successful create-feature flow (Stage 3): see <see cref="FwFeatureStructureEditor.AcceptCreatedFeature"/>.</summary>
+		/// <summary>Host callback after a successful create-feature flow: see <see cref="FwFeatureStructureEditor.AcceptCreatedFeature"/>.</summary>
 		public void AcceptCreatedInflectionFeature(FwFeatureNode created, IReadOnlyList<FwFeatureNode> valueChildren = null)
 			=> _inflFeaturesEditor.AcceptCreatedFeature(created, valueChildren);
 
-		/// <summary>Host callback after a successful add-value flow (Stage 3): see <see cref="FwFeatureStructureEditor.AcceptCreatedValue"/>.</summary>
+		/// <summary>Host callback after a successful add-value flow: see <see cref="FwFeatureStructureEditor.AcceptCreatedValue"/>.</summary>
 		public void AcceptCreatedInflectionFeatureValue(string closedFeatureId, FwFeatureNode createdValue)
 			=> _inflFeaturesEditor.AcceptCreatedValue(closedFeatureId, createdValue);
 
@@ -464,16 +464,15 @@ namespace FwAvaloniaDialogs
 		public event Action CreateNewPosRequested;
 
 		/// <summary>
-		/// Forwards the hosted inflection-feature editor's inline "Create a new feature..." request (Phase-1 §19b
-		/// Stage 2). The host opens its create-feature flow (Stage 3 wires the feature dialog) and calls
-		/// <see cref="AcceptCreatedInflectionFeature"/>. The box performs NO create.
+		/// Forwards the hosted inflection-feature editor's inline "Create a new feature..." request. The host opens
+		/// its create-feature flow and calls <see cref="AcceptCreatedInflectionFeature"/>. The box performs NO create.
 		/// </summary>
 		public event Action CreateNewFeatureRequested;
 
 		/// <summary>
 		/// Forwards the hosted inflection-feature editor's per-feature "Add a value..." request, carrying the closed
-		/// feature's id (Phase-1 §19b Stage 2). The host opens its add-value flow (Stage 3) and calls
-		/// <see cref="AcceptCreatedInflectionFeatureValue"/>. The box performs NO create.
+		/// feature's id. The host opens its add-value flow and calls <see cref="AcceptCreatedInflectionFeatureValue"/>.
+		/// The box performs NO create.
 		/// </summary>
 		public event Action<string> CreateNewValueRequested;
 
