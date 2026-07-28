@@ -133,6 +133,21 @@
   <data name="FwAvaloniaDialogs.InsertEntryLexFormNotEmpty" xml:space="preserve">
     <value>Lexeme Form is required.</value>
   </data>
+  <data name="FwAvaloniaDialogs.InsertEntryInvalidLexForm" xml:space="preserve">
+    <value>The lexeme form does not match the morpheme type.</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryCompleteCircumfix" xml:space="preserve">
+    <value>To create a circumfix, every non-blank alternative of the Lexeme Form must have two morphemes separated by a space or period(s).</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryInvalidForm" xml:space="preserve">
+    <value>Invalid Form</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferred" xml:space="preserve">
+    <value>Inflectional Affix Gloss Builder (not yet available)</value>
+  </data>
+  <data name="FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferredTooltip" xml:space="preserve">
+    <value>The Inflectional Affix Gloss Builder is not yet available in the new user interface. Use the legacy Insert Entry dialog to build an inflectional affix gloss.</value>
+  </data>
   <data name="FwAvaloniaDialogs.InsertEntryMatchingEntriesLabel" xml:space="preserve">
     <value>Similar Entries</value>
   </data>

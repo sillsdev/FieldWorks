@@ -44,8 +44,15 @@ namespace FwAvaloniaDialogs
 		private string _morphTypeKey;
 		// Guards re-entrancy when the derivation re-sets the adjusted form (mirrors legacy m_updateTextMonitor).
 		private bool _deriving;
-		// The launcher-supplied duplicate-detection search (P2); null disables/hides the matches pane.
-		private readonly Func<string, IReadOnlyList<EntryGoSearchResult>> _searchMatches;
+		// The launcher-supplied duplicate-detection search (P2); null disables/hides the matches pane. Takes the best
+		// lexeme form AND the best gloss (legacy GetFields searches both the form fields and the gloss).
+		private readonly Func<string, string, IReadOnlyList<EntryGoSearchResult>> _searchMatches;
+		// The launcher-supplied morphology validation (CheckMorphType + CircumfixProblem + invalid-form parse); null
+		// leaves only the empty-form OK gate.
+		private readonly Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> _validateMorphology;
+		// The launcher-supplied "re-mark the form with the morph type's markers" delegate (legacy FormWithMarkers on an
+		// explicit morph-type pick); null leaves the form untouched.
+		private readonly Func<string, string, string> _applyMorphTypeMarkers;
 		// Set true when OK runs because the user chose to use an existing matched entry (legacy DialogResult.Yes),
 		// so ApplyChanges snapshots the chosen existing-entry id instead of a create payload.
 		private bool _useExisting;
@@ -97,6 +104,15 @@ namespace FwAvaloniaDialogs
 				"InsertEntry.Gloss", _glossContext, writingSystemFocused: null);
 
 			_formContext.TextStaged += OnLexemeFormStaged;
+			// A gloss edit refreshes the duplicate-detection matches too (legacy tbGloss_TextChanged → UpdateMatches),
+			// since the search keys on the gloss field as well as the form fields.
+			_glossContext.TextStaged += OnGlossStaged;
+
+			// The launcher-supplied morphology validation + re-marking + initial focus (LCModel-aware; the VM stays
+			// LCModel-free by consuming them as plain delegates).
+			_validateMorphology = _input.ValidateMorphology;
+			_applyMorphTypeMarkers = _input.ApplyMorphTypeMarkers;
+			InitialFocus = _input.InitialFocus;
 
 			// The morph-type picker is the same single-select FwOptionPicker the chooser builds, but in COLLAPSED
 			// dropdown mode (morph type has ~15 values, so an always-open list wastes space): it shows the current
@@ -293,9 +309,10 @@ namespace FwAvaloniaDialogs
 			Matches.Clear();
 
 			var form = BestStagedForm();
-			if (!string.IsNullOrEmpty(form))
+			var gloss = BestStagedGloss();
+			if (!string.IsNullOrEmpty(form) || !string.IsNullOrEmpty(gloss))
 			{
-				var matches = _searchMatches(form) ?? Array.Empty<EntryGoSearchResult>();
+				var matches = _searchMatches(form, gloss) ?? Array.Empty<EntryGoSearchResult>();
 				foreach (var match in matches)
 				{
 					if (match != null)
@@ -325,12 +342,48 @@ namespace FwAvaloniaDialogs
 		{
 			_morphTypeKey = option?.Key;
 			OnPropertyChanged(nameof(MorphTypeKey));
+			// Re-mark the lexeme form with the chosen type's affix markers (the legacy cbMorphType_SelectedIndexChanged
+			// BestForm = m_morphType.FormWithMarkers(BestForm)); a circumfix is left untouched by the delegate.
+			RemarkFormForMorphType();
 			// Drive the MSA box's grammatical-info class from the chosen morph type (the legacy
 			// InsertEntryDlg → MSAGroupBox.MorphTypePreference wiring), reconfiguring its widgets live.
 			ApplyMorphTypeToMsaBox();
 			// Re-gate the complex-form picker for the new morph type (the lift of EnableComplexFormTypeCombo,
 			// which WinForms runs on every morph-type change via cbMorphType_SelectedIndexChanged).
 			ApplyComplexFormGating();
+			// The morph type feeds CheckMorphType / CircumfixProblem, so re-run validation + re-gate OK.
+			RefreshValidation();
+		}
+
+		// Re-marks the best staged lexeme form with the chosen morph type's affix markers (legacy FormWithMarkers on an
+		// explicit morph-type pick). Restages through the edit context (the same seam the derivation uses — NOT the
+		// field's selection internals), guarded so it does not recurse through OnLexemeFormStaged.
+		private void RemarkFormForMorphType()
+		{
+			if (_applyMorphTypeMarkers == null || _deriving)
+				return;
+			var field = _input.LexemeForm ?? EmptyField("LexemeForm");
+			foreach (var pair in _formContext.GetStaged(field))
+			{
+				var text = pair.Value?.Trim();
+				if (string.IsNullOrEmpty(text))
+					continue;
+				var marked = _applyMorphTypeMarkers(_morphTypeKey, text);
+				if (!string.IsNullOrEmpty(marked) && !string.Equals(marked, pair.Value, StringComparison.Ordinal))
+				{
+					_deriving = true;
+					try
+					{
+						_formContext.TrySetText(field, pair.Key, marked);
+					}
+					finally
+					{
+						_deriving = false;
+					}
+				}
+				// Only the best (first non-empty) form is re-marked, mirroring the legacy single BestForm setter.
+				break;
+			}
 		}
 
 		private void SelectMorphTypeInPicker(string key)
@@ -430,6 +483,8 @@ namespace FwAvaloniaDialogs
 				return;
 			MsaGroupBox.MsaType = ResolveMsaType(_morphTypeKey, MsaGroupBox.MsaType);
 			RefreshSlotsForCurrentPos();
+			// The MSA class drives whether the (deferred) glossing-assistant affordance shows (inflectional only).
+			OnPropertyChanged(nameof(ShowGlossingAssistantDeferred));
 		}
 
 		// Resolves a morph-type key to an MsaType through the launcher map, falling back to the supplied default when
@@ -478,6 +533,9 @@ namespace FwAvaloniaDialogs
 		{
 			if (_slotsForPos != null && !string.Equals(msa?.MainPosId, _lastSlotPosId, StringComparison.Ordinal))
 				RefreshSlotsForCurrentPos();
+			// A user affix-type pick inside the box can change the MSA class (e.g. to/from Inflectional), so re-evaluate
+			// the deferred glossing-assistant affordance's visibility.
+			OnPropertyChanged(nameof(ShowGlossingAssistantDeferred));
 		}
 
 		/// <summary>
@@ -521,13 +579,23 @@ namespace FwAvaloniaDialogs
 
 		// ----- live morph-type derivation on lexeme-form change (legacy tbLexicalForm_TextChanged) -----
 
+		// A gloss edit refreshes the duplicate-detection matches (legacy tbGloss_TextChanged → UpdateMatches). The
+		// gloss does not affect the form-derived morph type, so no derivation runs here.
+		private void OnGlossStaged(LexicalEditRegionField field, string ws, string value)
+		{
+			if (_deriving)
+				return;
+			RefreshMatches();
+		}
+
 		private void OnLexemeFormStaged(LexicalEditRegionField field, string ws, string value)
 		{
 			if (_deriving)
 				return;
 
-			// Re-gate OK first (best-form empty/non-empty is independent of the derivation delegate).
-			RefreshCanOk();
+			// Re-run validation + re-gate OK first (best-form empty/non-empty + morphology are independent of the
+			// derivation delegate).
+			RefreshValidation();
 
 			if (_input.DeriveMorphType == null)
 			{
@@ -574,7 +642,7 @@ namespace FwAvaloniaDialogs
 				}
 			}
 
-			RefreshCanOk();
+			RefreshValidation();
 
 			// Refresh the duplicate-detection matches AFTER any marker adjustment, so the list reflects the final
 			// (adjusted) form — the legacy UpdateMatches runs on the post-adjustment text. The _deriving re-stage
@@ -594,12 +662,80 @@ namespace FwAvaloniaDialogs
 			return string.Empty;
 		}
 
-		// ----- OK gating (kit convention): empty best lexeme form blocks OK (legacy LexFormNotEmpty) -----
+		// The best (first non-empty, trimmed) staged gloss across the analysis rows (used to also search glosses).
+		private string BestStagedGloss()
+		{
+			foreach (var pair in _glossContext.GetStaged(_input.Gloss ?? EmptyField("Gloss")))
+			{
+				var text = pair.Value?.Trim();
+				if (!string.IsNullOrEmpty(text))
+					return text;
+			}
+			return string.Empty;
+		}
+
+		// ----- OK gating (kit convention): empty best lexeme form + morphology block OK, surfaced inline -----
 
 		protected override IEnumerable<string> GetValidationErrors()
 		{
+			// The empty-form gate first (legacy LexFormNotEmpty / ksFillInLexForm), and short-circuit: the morphology
+			// checks are only meaningful for a non-empty form (the legacy runs LexFormNotEmpty before CheckMorphType).
 			if (string.IsNullOrEmpty(BestStagedForm()))
+			{
 				yield return FwAvaloniaDialogsStrings.InsertEntryLexFormNotEmpty;
+				yield break;
+			}
+
+			if (_validateMorphology == null)
+				yield break;
+
+			// The launcher-supplied CheckMorphType + CircumfixProblem + invalid-form parse (LCModel-aware). Map each
+			// verdict to its localized inline message (seeded from the legacy ksInvalidLexForm / ksCompleteCircumfix /
+			// ksInvalidForm wording) so the three morphology states surface inline AND gate OK.
+			var forms = _formContext.GetStaged(_input.LexemeForm ?? EmptyField("LexemeForm"));
+			switch (_validateMorphology(forms, _morphTypeKey))
+			{
+				case InsertEntryMorphValidation.InvalidLexForm:
+					yield return FwAvaloniaDialogsStrings.InsertEntryInvalidLexForm;
+					break;
+				case InsertEntryMorphValidation.IncompleteCircumfix:
+					yield return FwAvaloniaDialogsStrings.InsertEntryCompleteCircumfix;
+					break;
+				case InsertEntryMorphValidation.InvalidForm:
+					yield return FwAvaloniaDialogsStrings.InsertEntryInvalidForm;
+					break;
+			}
+		}
+
+		/// <summary>
+		/// The current inline validation message (the first validation error), or empty when the dialog is valid — the
+		/// text the view shows in its inline error surface (the CreateFeature pattern). Empty-form, morph-type mismatch,
+		/// incomplete circumfix, and invalid-form all flow through here.
+		/// </summary>
+		public string ValidationMessage => ValidationErrors.FirstOrDefault() ?? string.Empty;
+
+		/// <summary>
+		/// True when the (deferred) inflectional-affix glossing-assistant affordance should show — the SAME condition
+		/// the legacy <c>m_lnkAssistant</c> "Inflectional Affix Gloss Builder" link was enabled under (an inflectional
+		/// affix MSA). The affordance is rendered VISIBLE but DISABLED (the MGA dialog + GlossFeatures write path are a
+		/// documented deferral); it must be SEEN, not silently omitted.
+		/// </summary>
+		public bool ShowGlossingAssistantDeferred => MsaGroupBox != null && MsaGroupBox.MsaType == FwMsaType.Inflectional;
+
+		/// <summary>The disabled glossing-assistant affordance's label (legacy link seeded from the resx).</summary>
+		public string GlossingAssistantDeferredLabel => FwAvaloniaDialogsStrings.InsertEntryGlossingAssistantDeferred;
+
+		/// <summary>The disabled glossing-assistant affordance's tooltip (explains the deferral).</summary>
+		public string GlossingAssistantDeferredTooltip => FwAvaloniaDialogsStrings.InsertEntryGlossingAssistantDeferredTooltip;
+
+		/// <summary>Which field takes the initial focus on open (legacy SetInitialFocus): lexeme form or gloss.</summary>
+		public InsertEntryInitialFocus InitialFocus { get; }
+
+		// Re-runs validation, re-gates OK, and refreshes the inline validation message projection.
+		private void RefreshValidation()
+		{
+			RefreshCanOk();
+			OnPropertyChanged(nameof(ValidationMessage));
 		}
 
 		/// <summary>

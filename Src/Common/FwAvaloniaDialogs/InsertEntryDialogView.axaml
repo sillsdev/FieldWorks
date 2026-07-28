@@ -30,6 +30,15 @@
 			</Button>
 		</StackPanel>
 
+		<!-- Inline validation message (the CreateFeature pattern): shows the current OK-gate reason in red when the
+		     dialog is invalid — empty lexeme form (ksFillInLexForm), a lexeme form that does not match the morph type
+		     (ksInvalidLexForm), an incomplete circumfix (ksCompleteCircumfix), or an unparseable form (ksInvalidForm).
+		     Docked above the button strip so it reads next to Create. -->
+		<TextBlock DockPanel.Dock="Bottom" Text="{Binding ValidationMessage}"
+		           Foreground="Red" TextWrapping="Wrap" IsVisible="{Binding !IsValid}"
+		           Margin="{StaticResource DialogControlGapAbove}"
+		           AutomationProperties.AutomationId="InsertEntry.ValidationError"/>
+
 		<TextBlock DockPanel.Dock="Top" Text="{Binding Prompt}" TextWrapping="Wrap"
 		           IsVisible="{Binding HasPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
 		           AutomationProperties.AutomationId="InsertEntry.Prompt"/>
@@ -74,6 +83,18 @@
 			     it). -->
 			<Border Name="PART_MsaSection"
 			        AutomationProperties.AutomationId="InsertEntry.MsaSection"/>
+
+			<!-- Glossing Assistant (MGA) affordance — DEFERRED but VISIBLE. The legacy dialog shows an
+			     "Inflectional Affix Gloss Builder" link (m_lnkAssistant) enabled only for an inflectional-affix MSA;
+			     the MGA HTML dialog + GlossFeatures write path are not yet migrated. Rather than silently omit it, we
+			     render a clearly-labeled DISABLED affordance under the SAME condition so the user SEES the feature is
+			     deferred (the "unsupported = visible worklist" ethos). IsEnabled is hard-false; a tooltip explains. -->
+			<TextBlock Text="{Binding GlossingAssistantDeferredLabel}"
+			           IsVisible="{Binding ShowGlossingAssistantDeferred}"
+			           IsEnabled="False" Opacity="0.6" TextWrapping="Wrap"
+			           ToolTip.Tip="{Binding GlossingAssistantDeferredTooltip}"
+			           AutomationProperties.AutomationId="InsertEntry.GlossingAssistantDeferred"
+			           AutomationProperties.HelpText="{Binding GlossingAssistantDeferredTooltip}"/>
 
 			<!-- Duplicate-detection "matching entries" pane (P2): the existing entries whose form matches what the
 			     user typed, so they can pick an existing entry rather than create a duplicate (the legacy

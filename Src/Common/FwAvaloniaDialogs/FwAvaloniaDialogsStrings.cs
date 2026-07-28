@@ -86,6 +86,17 @@ namespace FwAvaloniaDialogs
 		public static string InsertEntryMorphTypeLabel => Text("FwAvaloniaDialogs.InsertEntryMorphTypeLabel");
 		public static string InsertEntryGlossLabel => Text("FwAvaloniaDialogs.InsertEntryGlossLabel");
 		public static string InsertEntryLexFormNotEmpty => Text("FwAvaloniaDialogs.InsertEntryLexFormNotEmpty");
+		// Morphology validation messages surfaced inline + gating OK (the legacy InsertEntryDlg OK-time checks). Seed
+		// text matches the canonical LexTextControls.resx wording (ksInvalidLexForm / ksCompleteCircumfix / ksInvalidForm)
+		// so the English fallback is identical and translation memory carries over. APPEND-ONLY.
+		public static string InsertEntryInvalidLexForm => Text("FwAvaloniaDialogs.InsertEntryInvalidLexForm");
+		public static string InsertEntryCompleteCircumfix => Text("FwAvaloniaDialogs.InsertEntryCompleteCircumfix");
+		public static string InsertEntryInvalidForm => Text("FwAvaloniaDialogs.InsertEntryInvalidForm");
+		// The VISIBLE-but-DEFERRED glossing-assistant affordance (the legacy m_lnkAssistant "Inflectional Affix Gloss
+		// Builder" link, shown for an inflectional-affix MSA). The MGA dialog + GlossFeatures write path are deferred,
+		// so the affordance is rendered disabled with a tooltip explaining it is not yet available. APPEND-ONLY.
+		public static string InsertEntryGlossingAssistantDeferred => Text("FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferred");
+		public static string InsertEntryGlossingAssistantDeferredTooltip => Text("FwAvaloniaDialogs.InsertEntryGlossingAssistantDeferredTooltip");
 		// Insert Entry duplicate-detection "matching entries" pane (P2). Seeded from the canonical legacy
 		// InsertEntryDlg.resx wording (the m_matchingEntriesGroupBox caption "Similar Entries" + the
 		// m_linkSimilarEntry link "Go to similar entry").

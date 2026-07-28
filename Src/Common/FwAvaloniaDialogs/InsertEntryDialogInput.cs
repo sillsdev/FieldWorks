@@ -57,15 +57,43 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// The duplicate-detection ("matching entries") search delegate — the P2 lift of the legacy
-		/// <c>InsertEntryDlg.UpdateMatches</c> / <c>MatchingObjectsBrowser</c>. Given the current best lexeme form it
-		/// returns the EXISTING entries whose lexeme/citation/alternate form matches (each a lightweight
-		/// <see cref="EntryGoSearchResult"/>: id = entry hvo string, text = headword, subText/description = gloss), so
-		/// the user can pick an existing entry rather than create a duplicate. The launcher supplies this by wrapping
-		/// the SAME matching the legacy dialog uses (the shared <c>EntryGoSearchEngine</c>) over the live entry
-		/// repository. Re-run as the lexeme form changes; an empty form clears the list. Null disables the matches
-		/// pane entirely (it is hidden), so existing consumers that never set it are unaffected.
+		/// <c>InsertEntryDlg.UpdateMatches</c> / <c>MatchingObjectsBrowser</c>. Given the current best lexeme form AND
+		/// the current best gloss it returns the EXISTING entries whose lexeme/citation/alternate form OR gloss matches
+		/// (each a lightweight <see cref="EntryGoSearchResult"/>: id = entry hvo string, text = headword,
+		/// subText/description = gloss), so the user can pick an existing entry rather than create a duplicate. The
+		/// launcher supplies this by wrapping the SAME matching the legacy dialog uses (the
+		/// <c>InsertEntrySearchEngine</c>, which searches the vernacular citation/lexeme/alternate forms AND the
+		/// analysis gloss — legacy <c>GetFields</c>) over the live entry repository. Re-run as the lexeme form OR the
+		/// gloss changes; both empty clears the list. Null disables the matches pane entirely (it is hidden), so
+		/// existing consumers that never set it are unaffected.
 		/// </summary>
-		public Func<string, IReadOnlyList<EntryGoSearchResult>> SearchMatches { get; set; }
+		public Func<string, string, IReadOnlyList<EntryGoSearchResult>> SearchMatches { get; set; }
+
+		/// <summary>
+		/// The launcher-supplied morphology validation — the LCModel-aware lift of the legacy
+		/// <c>InsertEntryDlg.CheckMorphType</c> (:1439) + <c>CircumfixProblem</c> (:1494) + the <c>ksInvalidForm</c>
+		/// parse (:1681) run on OK. Given the staged per-writing-system lexeme forms (keyed by WS tag) and the chosen
+		/// morph-type key it returns which morphology problem (if any) the form/type combination has, so the dialog can
+		/// gate OK AND surface the matching localized message inline (the CreateFeature pattern). Null leaves the
+		/// dialog with only the empty-form OK gate (older-caller parity).
+		/// </summary>
+		public Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> ValidateMorphology { get; set; }
+
+		/// <summary>
+		/// The launcher-supplied "re-mark the lexeme form with the morph type's markers" delegate — the LCModel-aware
+		/// lift of the legacy <c>cbMorphType_SelectedIndexChanged</c> (:1706) <c>BestForm = m_morphType.FormWithMarkers(BestForm)</c>.
+		/// Given the chosen morph-type key and the current best lexeme form it returns the form re-marked with that
+		/// type's affix markers (e.g. picking "suffix" turns "ed" into "-ed"); a circumfix returns the form unchanged
+		/// (as the legacy does, since a circumfix mixes prefix/infix/suffix). Null leaves the form untouched on an
+		/// explicit morph-type pick.
+		/// </summary>
+		public Func<string, string, string> ApplyMorphTypeMarkers { get; set; }
+
+		/// <summary>
+		/// Which field takes the initial focus (legacy <c>SetInitialFocus</c> :514): the lexeme form normally, the
+		/// gloss when the dialog was seeded from an analysis-writing-system initial string (legacy SetDlgInfo :864-871).
+		/// </summary>
+		public InsertEntryInitialFocus InitialFocus { get; set; } = InsertEntryInitialFocus.LexemeForm;
 
 		// ----- grammatical-info (MSA) section (Stage 3) -----
 
@@ -173,5 +201,36 @@ namespace FwAvaloniaDialogs
 		/// The WinForms <c>default</c> branch.
 		/// </summary>
 		EnabledNotApplicable
+	}
+
+	/// <summary>
+	/// The morphology-validation verdict the launcher-supplied <see cref="InsertEntryDialogInput.ValidateMorphology"/>
+	/// returns for the current lexeme form + morph-type combination — the data lift of the legacy
+	/// <c>InsertEntryDlg</c> OK-time checks. Each non-<see cref="Valid"/> verdict maps to a localized inline message
+	/// that also gates OK.
+	/// </summary>
+	public enum InsertEntryMorphValidation
+	{
+		/// <summary>No morphology problem (or the delegate had nothing to check).</summary>
+		Valid,
+
+		/// <summary>The typed affix markers do not match the chosen morph type (legacy <c>CheckMorphType</c> / <c>ksInvalidLexForm</c>).</summary>
+		InvalidLexForm,
+
+		/// <summary>A circumfix is missing its left or right part in some writing system (legacy <c>CircumfixProblem</c> / <c>ksCompleteCircumfix</c>).</summary>
+		IncompleteCircumfix,
+
+		/// <summary>The form could not be parsed into a morpheme type (legacy <c>FindMorphType</c> throw / <c>ksInvalidForm</c>).</summary>
+		InvalidForm
+	}
+
+	/// <summary>Which field the Insert Entry dialog focuses on open (legacy <c>SetInitialFocus</c>).</summary>
+	public enum InsertEntryInitialFocus
+	{
+		/// <summary>Focus the lexeme form (the normal create flow).</summary>
+		LexemeForm,
+
+		/// <summary>Focus the gloss (the dialog was seeded from an analysis-WS initial string).</summary>
+		Gloss
 	}
 }
