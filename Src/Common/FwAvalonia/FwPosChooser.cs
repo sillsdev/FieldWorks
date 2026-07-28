@@ -76,12 +76,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private readonly bool _allowEmpty;
 		private string _emptyLabelText;
 
-		// Collapsed presentation (the field-sized box the user sees when the popup is closed).
+		// Collapsed presentation (the field-sized box the user sees when the dropdown is closed).
 		private readonly ToggleButton _dropdownButton;
 		private readonly TextBlock _dropdownLabel;
-		private readonly Popup _popup;
+		private readonly Flyout _flyout;
+		private bool _open;
 
-		// Popup content: a filter box stacked over EITHER the tree (no filter) or a flat result list (filter).
+		// Dropdown content: a filter box stacked over EITHER the tree (no filter) or a flat result list (filter).
 		private readonly TextBox _filterBox;
 		private readonly TreeView _tree;
 		private readonly ListBox _filterList;
@@ -238,32 +239,29 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				MinWidth = FwAvaloniaDensity.DropdownMinWidth + 20,
 				Child = body
 			};
-			// The popup renders in its OWN top-level (PopupRoot), so keys typed in the filter box do not
-			// bubble to the chooser root. Register the navigation handler on the popup panel so
-			// Up/Down/Enter/Escape work while it is open (same pattern as FwOptionPicker dropdown mode).
+			AutomationProperties.SetAutomationId(_popupPanel, _automationId + ".Popup");
+			// The flyout body renders in its OWN top-level, so keys typed in the filter box do not bubble
+			// to the chooser root. Register the navigation handler on the panel so Up/Down/Enter/Escape
+			// work while it is open (same pattern as FwOptionPicker dropdown mode).
 			_popupPanel.AddHandler(InputElement.KeyDownEvent, OnPopupKeyDown,
 				RoutingStrategies.Bubble, handledEventsToo: true);
 
-			_popup = new Popup
+			// Host the tree on a Flyout anchored to the toggle button, not a free popup: a flyout
+			// positions itself in the trigger's own surface, so the dropdown stays correctly placed under
+			// fractional display scaling. The Fluent presenter chrome is stripped so the panel's own thin
+			// border is the only boundary the user sees.
+			_flyout = new Flyout
 			{
-				PlacementTarget = _dropdownButton,
 				Placement = PlacementMode.Bottom,
-				IsLightDismissEnabled = true,
-				// Zero footprint when closed so the layout tripwire never sees it overlapping the button.
-				Width = 0,
-				Height = 0,
-				HorizontalAlignment = HorizontalAlignment.Left,
-				VerticalAlignment = VerticalAlignment.Top,
-				Child = _popupPanel
+				Content = _popupPanel,
+				FlyoutPresenterTheme = ChromelessPresenterTheme()
 			};
-			AutomationProperties.SetAutomationId(_popup, _automationId + ".Popup");
-			_popup.Opened += OnPopupOpened;
-			_popup.Closed += OnPopupClosed;
+			_flyout.Opened += OnFlyoutOpened;
+			_flyout.Closed += OnFlyoutClosed;
 
-			var root = new Panel();
-			root.Children.Add(_dropdownButton);
-			root.Children.Add(_popup);
-			Child = root;
+			// The chooser's own visual content is just the collapsed toggle button; the tree lives in the
+			// flyout's separate top-level, shown on demand.
+			Child = _dropdownButton;
 
 			UpdateCollapsedLabel();
 		}
@@ -303,8 +301,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>The display name shown collapsed (the selected POS name, or the empty-row label).</summary>
 		public string SelectedDisplayText => _dropdownLabel.Text ?? string.Empty;
 
-		/// <summary>True when the tree popup is currently open.</summary>
-		public bool IsOpen => _popup.IsOpen;
+		/// <summary>True when the tree flyout is currently open.</summary>
+		public bool IsOpen => _open;
 
 		/// <summary>The collapsed toggle button (the field-sized box the user clicks). For tests/hosts.</summary>
 		public ToggleButton DropdownButton => _dropdownButton;
@@ -319,16 +317,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		public ListBox FilteredList => _filterList;
 
 		/// <summary>
-		/// Detaches and returns the on-top popup CONTENT panel (filter + tree/filter-list + create row)
-		/// for headless PNG capture only: a <see cref="Popup"/> renders in its own top-level, which the
-		/// host window's CaptureRenderedFrame does not include, so a snapshot of the chooser shows only the
-		/// collapsed box. Hosting THIS panel in a capture window renders the actual on-top tree the user
-		/// sees. The chooser is left non-functional afterward (the popup is emptied), so call it on a
-		/// throwaway instance — never in production.
+		/// Detaches and returns the on-top flyout CONTENT panel (filter + tree/filter-list + create row)
+		/// for headless PNG capture only: a flyout renders in its own top-level, which the host window's
+		/// CaptureRenderedFrame does not include, so a snapshot of the chooser shows only the collapsed
+		/// box. Hosting THIS panel in a capture window renders the actual on-top tree the user sees. The
+		/// chooser is left non-functional afterward (the flyout is emptied), so call it on a throwaway
+		/// instance — never in production.
 		/// </summary>
 		public Control DetachPopupContentForCapture()
 		{
-			_popup.Child = null;
+			_flyout.Hide();
+			_flyout.Content = null;
 			return _popupPanel;
 		}
 
@@ -478,13 +477,19 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private void OnDropdownButtonCheckedChanged(object sender, RoutedEventArgs e)
 		{
-			_popup.IsOpen = _dropdownButton.IsChecked == true;
+			if (_flyout == null)
+				return;
+			if (_dropdownButton.IsChecked == true)
+				_flyout.ShowAt(_dropdownButton);
+			else
+				_flyout.Hide();
 		}
 
-		private void OnPopupOpened(object sender, EventArgs e)
+		private void OnFlyoutOpened(object sender, EventArgs e)
 		{
 			// Start each open with a clean filter (tree shown), then focus the filter box so typing filters
-			// immediately. Posted at Input priority so it runs after the popup's own layout/template.
+			// immediately. Posted at Input priority so it runs after the flyout's own layout/template.
+			_open = true;
 			if (!string.IsNullOrEmpty(_filterBox.Text))
 				_filterBox.Text = string.Empty;
 			else
@@ -493,15 +498,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Avalonia.Threading.DispatcherPriority.Input);
 		}
 
-		private void OnPopupClosed(object sender, EventArgs e)
+		private void OnFlyoutClosed(object sender, EventArgs e)
 		{
+			// Keep the toggle button in sync when the flyout closes by light-dismiss (click-away).
+			_open = false;
 			if (_dropdownButton.IsChecked == true)
 				_dropdownButton.IsChecked = false;
 		}
 
 		private void CloseDropdown()
 		{
-			_popup.IsOpen = false;
+			_flyout.Hide();
 			_dropdownButton.IsChecked = false;
 		}
 
@@ -695,6 +702,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var theme = new ControlTheme(typeof(ListBoxItem)) { BasedOn = baseTheme };
 			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
 			theme.Setters.Add(new Setter(ListBoxItem.MinHeightProperty, 0d));
+			return theme;
+		}
+
+		// Strip the Fluent FlyoutPresenter's heavy grey padding/border/background to nothing, so the
+		// tree panel's own thin border is the only boundary the user sees (mirrors the option-picker
+		// flyout look, keeping the two dropdowns visually consistent).
+		private static ControlTheme ChromelessPresenterTheme()
+		{
+			ControlTheme baseTheme = null;
+			if (Application.Current != null
+				&& Application.Current.TryGetResource(typeof(FlyoutPresenter), null, out var found))
+				baseTheme = found as ControlTheme;
+			var theme = new ControlTheme(typeof(FlyoutPresenter)) { BasedOn = baseTheme };
+			theme.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(0)));
+			theme.Setters.Add(new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(0)));
+			theme.Setters.Add(new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent));
+			theme.Setters.Add(new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(0)));
 			return theme;
 		}
 
