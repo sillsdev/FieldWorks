@@ -39,7 +39,7 @@ namespace FwAvaloniaDialogs
 
 	/// <summary>
 	/// A lightweight, LCModel-FREE node in the feature system fed to <see cref="FwFeatureStructureEditor"/>.
-	/// The host (a later stage) builds these from the live feature system in DOCUMENT ORDER, tagging each with
+	/// The host builds these from the live feature system in DOCUMENT ORDER, tagging each with
 	/// its <see cref="Depth"/> (0 for a top-level feature, +1 per nesting) and its <see cref="Kind"/> — the same
 	/// depth-folding seam <c>FwPosNode</c>/<c>RegionChoiceOption</c> use, so the editor can rebuild the tree
 	/// without any model reference. A <see cref="Kind"/>=<see cref="FwFeatureNodeKind.Value"/> node attaches
@@ -108,14 +108,11 @@ namespace FwAvaloniaDialogs
 	/// current <see cref="SetAssignments">assignments</see>, and reads the chosen set back from
 	/// <see cref="Assignments"/>. The editor holds NO model reference and performs NO create — it just raises
 	/// <see cref="CreateNewFeatureRequested"/> / <see cref="CreateNewValueRequested"/> and accepts a returned new
-	/// node (a later stage wires the actual create flows). Built in pure C# (no XAML) to match the rest of the
+	/// node (the host wires the actual create flows). Built in pure C# (no XAML) to match the rest of the
 	/// FwAvalonia kit (<see cref="FwPosChooser"/>, <c>FwMsaGroupBox</c>).
 	/// </summary>
 	public sealed class FwFeatureStructureEditor : Border
 	{
-		// The reserved id of the auto-appended "<None>" / unspecified value radio under each closed feature.
-		private const string NoneValuePrefix = "\0none\0";
-
 		private readonly string _automationId;
 
 		private readonly TextBox _filterBox;
@@ -283,15 +280,15 @@ namespace FwAvaloniaDialogs
 
 		/// <summary>
 		/// Raised when the user clicks the inline "Create a new feature..." row. The host opens its create-feature
-		/// flow and, on success, calls <see cref="AcceptCreatedFeature"/>. The editor performs NO create.
-		/// TODO (later stage): the host wires this to the Avalonia replacement of MasterInflectionFeatureListDlg.
+		/// flow and, on success, calls <see cref="AcceptCreatedFeature"/>. The editor performs NO create — it holds
+		/// no model reference and only raises this request.
 		/// </summary>
 		public event Action CreateNewFeatureRequested;
 
 		/// <summary>
 		/// Raised when the user invokes a closed feature's "Add a value..." affordance. Carries the closed
 		/// feature's id; the host opens its add-value flow and calls <see cref="AcceptCreatedValue"/> on success.
-		/// TODO (later stage): the host wires this to the feature-system value editor.
+		/// The editor performs NO create — it only raises this request.
 		/// </summary>
 		public event Action<string> CreateNewValueRequested;
 
@@ -445,11 +442,14 @@ namespace FwAvaloniaDialogs
 			}
 
 			// Auto-append the "<None>" radio to every closed feature (the legacy "None of the above"), and seed it
-			// as the chosen value so an untouched closed feature reads as unspecified.
+			// as the chosen value so an untouched closed feature reads as unspecified. The unspecified radio is
+			// marked purely by its <see cref="FeatureTreeNode.IsNone"/> flag — the single signal every "is this the
+			// None pick?" test keys on — so its node needs no id (a None pick produces no assignment and is never
+			// looked up by id); a null id keeps the model free of any in-band "none" string sentinel.
 			foreach (var closed in EnumerateNodes(_roots).Where(n => n.Source.Kind == FwFeatureNodeKind.Closed).ToList())
 			{
 				var none = new FeatureTreeNode(
-					new FwFeatureNode(NoneValuePrefix + closed.Source.Id, FwAvaloniaDialogsStrings.FeatureEditorNone,
+					new FwFeatureNode(null, FwAvaloniaDialogsStrings.FeatureEditorNone,
 						FwFeatureNodeKind.Value, closed.Source.Depth + 1),
 					isNone: true);
 				closed.Children.Add(none);
@@ -687,7 +687,7 @@ namespace FwAvaloniaDialogs
 					MinHeight = 0,
 					Padding = new Thickness(0),
 					VerticalAlignment = VerticalAlignment.Center,
-					Foreground = Brushes.Black,
+					Foreground = FwAvaloniaDensity.PickerForegroundBrush,
 					IsChecked = node.IsChosen
 				};
 				AutomationProperties.SetAutomationId(radio, _automationId + ".Value");
@@ -705,7 +705,7 @@ namespace FwAvaloniaDialogs
 			{
 				Text = node.Source.Name,
 				VerticalAlignment = VerticalAlignment.Center,
-				Foreground = Brushes.Black,
+				Foreground = FwAvaloniaDensity.PickerForegroundBrush,
 				FontWeight = node.Source.Kind == FwFeatureNodeKind.Complex ? FontWeight.SemiBold : FontWeight.Normal
 			};
 			AutomationProperties.SetAutomationId(label, _automationId + ".Node");
@@ -715,25 +715,31 @@ namespace FwAvaloniaDialogs
 				return label;
 
 			var row = new DockPanel { LastChildFill = true };
-			var addValue = new TextBlock
+			// The per-feature "add a value" affordance: a real Button (focusable, keyboard-invokable, exposing the
+			// Invoke automation pattern) rather than a bare glyph label with a pointer handler. Styled flat and
+			// compact — transparent, borderless, no min-size floor — so the "+" sits inside the tree row without
+			// inflating it (the same restrained glyph affordance the choosers use for their chevron). Its accessible
+			// name carries the target feature so a screen reader announces which feature the value is added to.
+			var addValue = new Button
 			{
-				Text = "+",
+				Content = "+",
 				Foreground = FwAvaloniaDensity.LabelBrush,
+				Background = Brushes.Transparent,
+				BorderThickness = new Thickness(0),
+				Padding = new Thickness(FwAvaloniaDensity.CheckboxLabelGap, 0, 0, 0),
+				MinWidth = 0,
+				MinHeight = 0,
 				VerticalAlignment = VerticalAlignment.Center,
-				Margin = new Thickness(FwAvaloniaDensity.CheckboxLabelGap, 0, 0, 0),
 				Cursor = new Cursor(StandardCursorType.Hand)
 			};
 			AutomationProperties.SetAutomationId(addValue, _automationId + ".CreateValue");
 			AutomationProperties.SetName(addValue,
 				string.Format(FwAvaloniaDialogsStrings.FeatureEditorCreateValueFormat, node.Source.Name));
-			addValue.AddHandler(InputElement.PointerReleasedEvent, (s, e) =>
+			addValue.Click += (s, e) =>
 			{
-				if (e.InitialPressMouseButton == MouseButton.Left)
-				{
-					RaiseCreateNewValue(node.Source.Id);
-					e.Handled = true;
-				}
-			}, RoutingStrategies.Bubble, handledEventsToo: true);
+				RaiseCreateNewValue(node.Source.Id);
+				e.Handled = true;
+			};
 			DockPanel.SetDock(addValue, Dock.Right);
 			row.Children.Add(addValue);
 			row.Children.Add(label);
@@ -750,7 +756,7 @@ namespace FwAvaloniaDialogs
 				{
 					Text = node.Name,
 					VerticalAlignment = VerticalAlignment.Center,
-					Foreground = Brushes.Black,
+					Foreground = FwAvaloniaDensity.PickerForegroundBrush,
 					Margin = new Thickness(node.Depth * FwAvaloniaDensity.TreeIndentPerLevel, 0, 0, 0)
 				};
 			});
