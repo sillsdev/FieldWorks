@@ -22,7 +22,7 @@ using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 namespace FwAvaloniaTests
 {
 	/// <summary>Records edit-context traffic so view editing behavior can be asserted without LCModel.</summary>
-	internal sealed class FakeRegionEditContext : IRegionEditContext
+	internal sealed class FakeRegionEditContext : IRegionEditContext, IStructuredTextEditing
 	{
 		public readonly List<(string Field, string Ws, string Value)> TextEdits = new List<(string, string, string)>();
 		public readonly List<(string Field, string Ws, RegionRichTextValue Value)> RichTextEdits
@@ -117,50 +117,6 @@ namespace FwAvaloniaTests
 		{
 			ParagraphDeletes.Add((field.Field, paragraphIndex));
 			return ParagraphGestureResult;
-		}
-
-		// §19d: recorded picture traffic, so the picture field view can be asserted without LCModel.
-		public readonly List<(string Field, string SourceFile, RegionPictureMetadata Metadata)> PictureInserts
-			= new List<(string, string, RegionPictureMetadata)>();
-		public readonly List<(string Field, string SourceFile)> PictureReplaces = new List<(string, string)>();
-		public readonly List<string> PictureDeletes = new List<string>();
-		public readonly List<(string Field, RegionPictureMetadata Metadata)> PictureMetadataEdits
-			= new List<(string, RegionPictureMetadata)>();
-		public readonly List<(string Field, string Ws, int Caret, string SourceFile)> PictureOrcInserts
-			= new List<(string, string, int, string)>();
-
-		/// <summary>What the next picture gesture reports (false = rejected, e.g. a missing file).</summary>
-		public bool PictureGestureResult = true;
-
-		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
-		{
-			PictureInserts.Add((field.Field, sourceFile, metadata));
-			return PictureGestureResult;
-		}
-
-		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
-		{
-			PictureReplaces.Add((field.Field, sourceFile));
-			return PictureGestureResult;
-		}
-
-		public bool TryDeletePicture(LexicalEditRegionField field)
-		{
-			PictureDeletes.Add(field.Field);
-			return PictureGestureResult;
-		}
-
-		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
-		{
-			PictureMetadataEdits.Add((field.Field, metadata));
-			return PictureGestureResult;
-		}
-
-		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
-			string sourceFile, RegionPictureMetadata metadata)
-		{
-			PictureOrcInserts.Add((field.Field, ws, caretPosition, sourceFile));
-			return PictureGestureResult;
 		}
 
 		public IReadOnlyList<string> Validate() => ValidateResult;

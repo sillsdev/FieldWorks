@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 		public IRegionEditContext EditContext { get; }
 	}
 
-	internal sealed class PreviewRegionEditContext : IRegionEditContext
+	internal sealed class PreviewRegionEditContext : IRegionEditContext, IStructuredTextEditing
 	{
 		public bool IsOpen { get; private set; }
 
@@ -188,20 +188,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Preview
 			IsOpen = true;
 			return true;
 		}
-
-		// §19d: the preview support context stages pictures/audio as "accepted" so the preview renders the
-		// affordances; the preview never touches real LCModel/files (it is the detached preview path).
-		public bool TryInsertPicture(LexicalEditRegionField field, string sourceFile, RegionPictureMetadata metadata)
-		{ IsOpen = true; return true; }
-		public bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
-		{ IsOpen = true; return true; }
-		public bool TryDeletePicture(LexicalEditRegionField field)
-		{ IsOpen = true; return true; }
-		public bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
-		{ IsOpen = true; return true; }
-		public bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
-			string sourceFile, RegionPictureMetadata metadata)
-		{ IsOpen = true; return true; }
 
 		public IReadOnlyList<string> Validate()
 			=> Array.Empty<string>();
