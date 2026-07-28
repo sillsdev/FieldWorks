@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		/// <summary>
 		/// §19d: replaces the image FILE of the existing picture <paramref name="field"/> represents
-		/// (an Image row carries one <c>ICmPicture</c> via <see cref="LexicalEditRegionField.PictureHvo"/>)
+		/// (a picture row carries one <c>ICmPicture</c>)
 		/// with <paramref name="sourceFile"/>, leaving its caption/metadata intact. Returns false —
 		/// without opening the session — for a non-picture row, an unresolvable picture, or a missing file.
 		/// </summary>

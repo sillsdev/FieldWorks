@@ -17,12 +17,11 @@ using FwAvaloniaDialogsTests;        // DialogLayoutAssert — the shared geomet
 namespace FwAvaloniaTests
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D4 — the dialog-launcher row control: the field's
-	/// current value as read-only text plus the launcher button, drawn as the shared hover-revealed
-	/// settings gear (it replaced the legacy always-visible "..."). The button invokes the injected
-	/// callback (the host's ILegacyDialogLauncher seam on the xWorks side); without a callback the
-	/// button renders disabled with an explanatory tooltip, and the value still shows. Hover-reveal
-	/// behavior itself is pinned in <see cref="HoverRevealTests"/>.
+	/// The launcher-style row control (<see cref="FwDialogLauncherField"/>): the field's current value
+	/// as read-only text plus a launcher button, drawn as the shared hover-revealed settings gear. The
+	/// button invokes the injected callback; without a callback the button renders disabled with an
+	/// explanatory tooltip, and the value still shows. Hover-reveal behavior itself is pinned in
+	/// <see cref="HoverRevealTests"/>.
 	/// </summary>
 	[TestFixture]
 	public class DialogLauncherFieldTests

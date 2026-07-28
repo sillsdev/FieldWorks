@@ -590,17 +590,12 @@ namespace SIL.FieldWorks.XWorks
 				"the field appears once it has data");
 		}
 
-		// Parity update: the legacy enumComboBox is a CLOSED combo over the layout's stringList
-		// labels (EnumComboSlice) — legacy is EDITABLE. The importer now carries the
-		// <deParams><stringList> ids/group onto the node, so the composer renders an EDITABLE
-		// option Chooser fed by that localized list (FullEntryRegionComposer.WalkEnumCombo +
-		// EditorKindMap). The stored enum integer is the 0-based index into the ids; committing a
-		// valid option index sets the property, while the closed combo rejects any out-of-range
-		// index so it can never persist an invalid enum value. The Allomorph Status slice
-		// (Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus) is the
-		// enumComboBox the entry walk reaches; it is backed by the IsAbstract boolean flid.
+		// The closed enum-combo editor was dropped from the Avalonia region: the enumComboBox slice
+		// (Allomorph Status, Morphology.fwlayout AsLexemeFormBasic over MoForm-Detail-AllomorphStatus,
+		// backed by the IsAbstract boolean flid) now composes as the labeled Unsupported worklist row
+		// rather than an option chooser.
 		[Test]
-		public void Compose_EnumComboBox_ComposesAsEditableStringListChooser()
+		public void Compose_EnumComboBox_ComposesAsUnsupportedWorklistRow()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.LexemeFormOA.IsAbstract = true);
@@ -609,29 +604,9 @@ namespace SIL.FieldWorks.XWorks
 			var row = composed.Model.Fields.Single(f => f.Field == "IsAbstract"
 				&& f.ObjectHvo == m_entry.LexemeFormOA.Hvo);
 
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.EnumCombo),
-				"§19e: the enumComboBox composes as the dedicated closed enum-combo kind (a non-editable "
-				+ "drop-down), not the search/flyout chooser — so a free-form enum value can never be typed in");
-			Assert.That(row.IsEditable, Is.True, "legacy enum combos are editable");
-			Assert.That(row.Options, Is.Not.Null.And.Not.Empty,
-				"the localized stringList labels are exposed as the chooser options");
-			Assert.That(row.Options.Select(o => o.Key),
-				Is.EquivalentTo(row.Options.Select((o, i) => i.ToString(CultureInfo.InvariantCulture))),
-				"option keys are the 0-based enum indices the stored int maps to");
-			Assert.That(row.SelectedOptionKey, Is.EqualTo("1"),
-				"the stored enum int (IsAbstract == true -> 1) selects the matching option");
-
-			// An out-of-range index is rejected by the closed combo — no invalid enum persists.
-			Assert.That(composed.EditContext.TrySetOption(row,
-				row.Options.Count.ToString(CultureInfo.InvariantCulture)), Is.False,
-				"an out-of-range option index is rejected so no invalid enum value can persist");
-
-			// Committing a valid in-range option index sets the enum int.
-			Assert.That(composed.EditContext.TrySetOption(row, "0"), Is.True,
-				"a valid option index commits through the registered setter");
-			composed.EditContext.Commit();
-			Assert.That(m_entry.LexemeFormOA.IsAbstract, Is.False,
-				"option index 0 wrote the enum int back through the boolean-backed flid");
+			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the enumComboBox editor was dropped; it renders the labeled Unsupported worklist row");
+			Assert.That(row.IsEditable, Is.False, "an Unsupported row is not editable");
 		}
 
 		// Multi-run/styled content IS editable as plain-text-over-preserved-runs: the plain-text
@@ -1250,25 +1225,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(hidden.Any(f => f.Field == "DateCreated"), Is.True,
 				"visibility=never fields appear under show-hidden");
 			var created = hidden.First(f => f.Field == "DateCreated");
-			Assert.That(created.Values[0].Value, Is.Not.Empty, "Time fields render a formatted date");
+			Assert.That(created.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the date editor was dropped; a Time field composes the labeled Unsupported worklist row");
 			Assert.That(hidden.Any(f => f.Field == "Bibliography"), Is.True,
 				"empty ifdata fields appear under show-hidden");
-		}
-
-		// Finding-1 (parity, date): legacy DateSlice renders dt.ToString("f", CurrentUICulture)
-		// (the full pattern, carrying the day name) — the composer must match exactly.
-		[Test]
-		public void Compose_DateCreated_UsesTheLegacyFullDateTimePattern()
-		{
-			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields;
-			var created = hidden.First(f => f.Field == "DateCreated");
-
-			Assert.That(created.Values[0].Value,
-				Is.EqualTo(m_entry.DateCreated.ToString("f", CultureInfo.CurrentUICulture)),
-				"Time fields render exactly like legacy DateSlice (\"f\", CurrentUICulture)");
-			Assert.That(created.Values[0].Value,
-				Does.Contain(CultureInfo.CurrentUICulture.DateTimeFormat.GetDayName(m_entry.DateCreated.DayOfWeek)),
-				"the full pattern carries the day name");
 		}
 
 		// Finding-2 (WS spec resolution): the layout ws= spec resolves through the legacy pair —
@@ -1386,23 +1346,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_BooleanFields_RenderAsCheckboxKind_AndToggle()
+		public void Compose_BooleanFields_RenderAsUnsupportedWorklistRow()
 		{
-			// The enumComboBox-backed Allomorph Status row is a closed option chooser, not a
-			// checkbox, so this test exercises a REAL checkbox slice: an alternate form's "Is Abstract Form"
-			// (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows under
-			// show-hidden) over the persisted IsAbstract boolean flid.
+			// The checkbox editor was dropped from the Avalonia region. A boolean slice — e.g. an alternate
+			// form's "Is Abstract Form" (MoStemAllomorph/Normal, editor="Checkbox", visibility=never -> shows
+			// under show-hidden) — now composes as the labeled Unsupported worklist row rather than a checkbox.
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 				m_entry.AlternateFormsOS.Add(
 					Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create()));
 
 			var hidden = FullEntryRegionComposer.Compose(m_entry, Cache, showHiddenFields: true);
-			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Kind == RegionFieldKind.Boolean);
-			Assert.That(boolField, Is.Not.Null, "the entry layout carries at least one checkbox field");
-			var original = boolField.SelectedOptionKey;
-
-			Assert.That(hidden.EditContext.TrySetOption(boolField, original == "true" ? "false" : "true"), Is.True);
-			hidden.EditContext.Cancel(); // viewing test: roll the toggle back
+			var boolField = hidden.Model.Fields.FirstOrDefault(f => f.Field == "IsAbstract"
+				&& f.Kind == RegionFieldKind.Unsupported);
+			Assert.That(boolField, Is.Not.Null,
+				"the boolean checkbox slice composes as a labeled Unsupported worklist row");
+			Assert.That(boolField.IsEditable, Is.False, "an Unsupported row is not editable");
 		}
 
 		[Test]
@@ -1680,7 +1638,8 @@ namespace SIL.FieldWorks.XWorks
 			var after = FullEntryRegionComposer.Compose(m_entry, Cache).Model.Fields;
 			var row = after.FirstOrDefault(f => f.Field == "PublishAsMinorEntry");
 			Assert.That(row, Is.Not.Null, "with an EntryRef the lengthatleast=1 condition passes");
-			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Boolean), "it renders as the legacy checkbox");
+			Assert.That(row.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the checkbox editor was dropped; the conditionally-visible boolean row renders the Unsupported worklist row");
 		}
 
 		// B3 — <choice>/<where guidequals>: MoAffixAllomorph-Detail-AsPosition shows the infix
@@ -2117,19 +2076,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.IsEditable, Is.True);
 			Assert.That(single.Values.Single().Value, Is.EqualTo("from Smith"));
 
-			// GenDate: an editable Date row (parity — legacy GenDateSlice is editable). 19i.1: the value is the
-			// canonical YEAR-granular form the qualifier editor round-trips — NOT gen.ToLongString(). m_genDate is
-			// March 14, 2020; ToLongString() would interleave the DAY ("14"), which the year-granular editor would
-			// mis-read as the year and store on the next commit (silent corruption to year 14). The user sees
-			// year/precision/era combos, never this raw string.
+			// GenDate: the date editor was dropped from the Avalonia region, so the custom GenDate field
+			// composes as the labeled Unsupported worklist row (not silently omitted).
 			var date = fields.FirstOrDefault(f => f.Label == "Date Collected");
 			Assert.That(date, Is.Not.Null);
-			Assert.That(date.Kind, Is.EqualTo(RegionFieldKind.Date), "GenDate composes as an editable Date row");
-			Assert.That(date.IsEditable, Is.True, "GenDate is editable (matches existing GenDate rows)");
-			Assert.That(date.Values.Single().Value, Is.EqualTo("About AD 2020"),
-				"GenDate value is the year-granular canonical form, not the month/day long string");
-			Assert.That(date.Values.Single().Value, Does.Not.Contain("14"),
-				"the day must never leak into the year-granular value (19i.1 corruption guard)");
+			Assert.That(date.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the GenDate editor was dropped; it renders the labeled Unsupported worklist row");
 
 			// Possibility-list reference: the 6.3 chooser path makes custom reference rows
 			// editable too — options from the field's own list, current selection carried.
@@ -2140,11 +2092,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(listRef.Options.Select(o => o.Key), Does.Contain(m_listItem.Guid.ToString()),
 				"options come from the custom field's own possibility list");
 
-			// Integer: editable like the existing int rows.
+			// Integer: the integer editor was dropped, so the custom int field composes as the labeled
+			// Unsupported worklist row.
 			var number = fields.FirstOrDefault(f => f.Label == "Frequency Count");
 			Assert.That(number, Is.Not.Null);
-			Assert.That(number.IsEditable, Is.True);
-			Assert.That(number.Values.Single().Value, Is.EqualTo("42"));
+			Assert.That(number.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the Integer editor was dropped; it renders the labeled Unsupported worklist row");
 
 			// The sense-level custom field rides the sense's own placeholder, bound to the sense.
 			var senseField = fields.FirstOrDefault(f => f.Label == "Sense Source");
@@ -2224,12 +2177,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(fields.Count(f => f.Label == "Allomorph Note"), Is.EqualTo(2),
 				"one MoForm custom row is emitted per visited allomorph object");
 			Assert.That(rootAllomorphDate, Is.Not.Null,
-				"nested MoForm GenDate custom fields render in the lexeme-form layout");
-			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(RegionFieldKind.Date),
-				"GenDate composes as an editable Date row");
-			Assert.That(rootAllomorphDate.IsEditable, Is.True, "GenDate is editable (parity with legacy)");
-			// 19i.1: canonical year-granular value (m_moFormGenDate is Jan 2, 2018), not the month/day long string.
-			Assert.That(rootAllomorphDate.Values.Single().Value, Is.EqualTo("About AD 2018"));
+				"nested MoForm GenDate custom fields still compose a row in the lexeme-form layout");
+			Assert.That(rootAllomorphDate.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
 			Assert.That(rootAllomorphCategory, Is.Not.Null,
 				"nested MoForm atomic custom references render as chooser rows");
 			Assert.That(rootAllomorphCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
@@ -2245,9 +2195,9 @@ namespace SIL.FieldWorks.XWorks
 				"the example detail layout expands LexExampleSentence custom fields");
 			Assert.That(exampleField.Values.Single().Value, Is.EqualTo("example note"));
 			Assert.That(exampleDate, Is.Not.Null,
-				"example custom GenDate fields render in the nested example layout");
-			// 19i.1: canonical year-granular value (m_exampleGenDate is Jun 7, 2016), not the month/day long string.
-			Assert.That(exampleDate.Values.Single().Value, Is.EqualTo("About AD 2016"));
+				"example custom GenDate fields still compose a row in the nested example layout");
+			Assert.That(exampleDate.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the GenDate editor was dropped from the Avalonia region; it renders the labeled Unsupported worklist row");
 			Assert.That(exampleCategory, Is.Not.Null,
 				"example custom atomic references render as chooser rows");
 			Assert.That(exampleCategory.Kind, Is.EqualTo(RegionFieldKind.Chooser));
@@ -2411,36 +2361,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(single.Values.Single().WsTag,
 				Is.EqualTo(Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id),
 				"an empty String prop seeds from the field's own ws selector (kwsAnal)");
-		}
-
-		// Clearing an int box must be SAFE. Legacy IntegerSlice treats a
-		// non-numeric box — including empty — as invalid on focus loss (warn + restore the
-		// stored value; Convert.ToInt32("") throws), never committing empty as 0. The composed
-		// setter mirrors that: empty/whitespace stages NOTHING, and the last successfully staged
-		// value is what a commit applies.
-		[Test]
-		public void Edit_IntegerField_EmptyAndWhitespace_StageNothing()
-		{
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache);
-			var number = composed.Model.Fields.First(f => f.Label == "Frequency Count");
-			var sda = Cache.DomainDataByFlid;
-
-			Assert.That(composed.EditContext.TrySetText(number, "", ""), Is.False,
-				"clearing the box stages nothing (legacy: invalid, restore)");
-			Assert.That(composed.EditContext.TrySetText(number, "", "   "), Is.False);
-			Assert.That(composed.EditContext.TrySetText(number, "", "not-a-number"), Is.False);
-			Assert.That(composed.EditContext.IsOpen, Is.False,
-				"rejected values must not leave an empty fence open");
-			Assert.That(sda.get_IntProp(m_entry.Hvo, m_flidEntryNumber), Is.EqualTo(42),
-				"the stored value is untouched");
-
-			// Clear-then-retype: only the parseable states stage; commit applies the LAST one.
-			Assert.That(composed.EditContext.TrySetText(number, "", "5"), Is.True);
-			Assert.That(composed.EditContext.TrySetText(number, "", ""), Is.False,
-				"a clear after a valid stage still stages nothing");
-			Assert.That(composed.EditContext.TrySetText(number, "", "55"), Is.True);
-			composed.EditContext.Commit();
-			Assert.That(sda.get_IntProp(m_entry.Hvo, m_flidEntryNumber), Is.EqualTo(55));
 		}
 
 		[Test]

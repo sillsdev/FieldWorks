@@ -9,7 +9,6 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
-using SIL.FieldWorks.Common.FwAvalonia.ViewDefinition;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
@@ -17,16 +16,40 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D5 — the burn-down is enforced by tests, not intentions:
-	/// every dynamically loaded custom slice the lexeme editor's part files actually use must be
-	/// classified in exactly one migration route (plugin-routed / companion-designated /
-	/// launcher-routed / explicitly deferred WITH the gate it rides), and the companion-strip
-	/// designated set may only shrink. A new custom slice appearing in the layouts fails the
-	/// census until a developer consciously classifies it.
+	/// winforms-free-lexeme-editor.md — the trimmed lexeme editor's custom-slice census, enforced by
+	/// tests rather than intentions. After the amputation the region has exactly ONE native-conversion
+	/// route (the <see cref="IRegionEditorPlugin"/> contract with <see cref="ReversalIndexEntryPlugin"/>
+	/// as the sole exemplar) plus the composer's D3 reference-vector absorption; every OTHER dynamically
+	/// loaded custom slice composes as the labeled Unsupported worklist row — the visible conversion
+	/// backlog. This census pins that only ReversalIndexEntrySlice is plugin-claimed, that the D3 classes
+	/// are composer-absorbed, and that the formerly launcher-routed slices plus the Chorus notes bar are
+	/// unclaimed (so they render Unsupported).
 	/// </summary>
 	[TestFixture]
 	public class LexemeEditorBurnDownTests
 	{
+		// The legacy class identities the census parser and the route assertions reference. Held here
+		// (not on deleted plugin/companion types) so the census is self-contained.
+		private const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
+		private const string MsaFeatureSliceClassName =
+			"SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice";
+		private const string PhonologicalFeatureSliceClassName =
+			"SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice";
+		private const string AudioVisualSliceClassName =
+			"SIL.FieldWorks.Common.Framework.DetailControls.AudioVisualSlice";
+		private const string EntrySequenceSliceClassName =
+			"SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice";
+		private const string GhostLexRefSliceClassName = "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice";
+		private const string LexReferenceMultiSliceClassName =
+			"SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice";
+
+		// The D3 classes the composer recognizes by legacy identity and absorbs as native ReferenceVector
+		// rows (no plugin). Kept in one place so the census and the route tests agree.
+		private static readonly string[] ComposerAbsorbedClassNames =
+		{
+			EntrySequenceSliceClassName, GhostLexRefSliceClassName, LexReferenceMultiSliceClassName
+		};
+
 		private static string RepoRoot()
 		{
 			var dir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
@@ -37,12 +60,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The lexeme editor's custom-slice census (the table in winforms-free-lexeme-editor.md):
-		/// every dynamically loaded editor class in LexEntryParts.xml + LexSenseParts.xml. The
-		/// DynamicLoader signature is the class= + assemblyPath= attribute pair — a plain class=
-		/// attribute is a model-class bin/part declaration, not an editor. Non-UI handlers
-		/// (LexEntryChangeHandler and anything else ending ChangeHandler) have no editor to
-		/// migrate and are excluded.
+		/// The lexeme editor's custom-slice census: every dynamically loaded editor class in
+		/// LexEntryParts.xml + LexSenseParts.xml. The DynamicLoader signature is the class= +
+		/// assemblyPath= attribute pair — a plain class= attribute is a model-class bin/part declaration,
+		/// not an editor. Non-UI handlers (anything ending ChangeHandler) have no editor to migrate and
+		/// are excluded.
 		/// </summary>
 		private static IReadOnlyList<string> LexemeEditorCustomSliceCensus()
 		{
@@ -66,36 +88,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Census_EveryCustomSliceClass_IsClassifiedInExactlyOneLane()
+		public void Census_EveryCustomSliceClass_IsPluginRouted_ComposerAbsorbed_Or_Unsupported()
 		{
 			var census = LexemeEditorCustomSliceCensus();
 			Assert.That(census, Is.Not.Empty, "the lexeme editor part files ship custom slices");
 
 			foreach (var cls in census)
 			{
-				var routes = new List<string>();
-				// D4: a launcher-routed class is DELIVERED through the plugin registry (its
-				// LauncherRegionPlugin claims it), so the registry claim plus the launcher list
-				// count as the one "LauncherRouted" route, not two routes.
-				var launcherRouted = LexemeEditorBurnDown.LauncherRoutedClassNames.ContainsKey(cls);
-				if (RegionEditorPluginRegistry.Default.Resolve(cls) != null && !launcherRouted)
-					routes.Add("PluginRouted");
-				if (AvaloniaCompanionSlices.DesignatedClassNames.Contains(cls))
-					routes.Add("CompanionDesignated");
-				if (launcherRouted)
-					routes.Add("LauncherRouted");
-				if (LexemeEditorBurnDown.ExplicitlyDeferredClassNames.ContainsKey(cls))
-					routes.Add("ExplicitlyDeferred");
-				if (LexemeEditorBurnDown.ComposerAbsorbedClassNames.ContainsKey(cls))
-					routes.Add("ComposerAbsorbed");
+				var pluginRouted = RegionEditorPluginRegistry.Default.Resolve(cls) != null;
+				var composerAbsorbed = ComposerAbsorbedClassNames.Contains(cls, StringComparer.Ordinal);
 
-				Assert.That(routes.Count, Is.EqualTo(1),
-					$"'{cls}' must be classified in exactly one burn-down route, found "
-					+ (routes.Count == 0 ? "none" : string.Join(" + ", routes))
-					+ ". A new custom slice in the lexeme-editor layouts must be consciously classified "
-					+ "before it ships: register an IRegionEditorPlugin for it, designate it for the "
-					+ "WinForms companion strip, list it launcher-routed (D4), or defer it explicitly "
-					+ "WITH the gate it rides (winforms-free-lexeme-editor.md D1/D5).");
+				// A class is claimed by AT MOST one explicit route; everything else is the Unsupported
+				// worklist (the default). Plugin and composer-absorbed are mutually exclusive.
+				Assert.That(pluginRouted && composerAbsorbed, Is.False,
+					$"'{cls}' cannot be both plugin-routed and composer-absorbed");
 			}
 		}
 
@@ -103,99 +109,54 @@ namespace SIL.FieldWorks.XWorks
 		public void Census_FindsTheMeasuredProblemClasses()
 		{
 			// The census parser must keep seeing the classes the decision doc measured — if the
-			// attribute shapes in the part files ever change, the census must change with them
-			// rather than silently going empty (which would make every class "classified").
+			// attribute shapes in the part files ever change, the census must change with them rather
+			// than silently going empty (which would make every class "classified").
 			var census = LexemeEditorCustomSliceCensus();
-			Assert.That(census, Does.Contain(AvaloniaCompanionSlices.MessageSliceClassName));
-			Assert.That(census, Does.Contain("SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"));
+			Assert.That(census, Does.Contain(MessageSliceClassName));
+			Assert.That(census, Does.Contain(EntrySequenceSliceClassName));
 			Assert.That(census, Has.None.EndsWith("ChangeHandler"),
 				"non-UI change handlers are not editors and stay out of the census");
 		}
 
 		[Test]
-		public void CompanionDesignatedSet_IsEmpty_AndMayOnlyShrink()
+		public void DefaultRegistry_BuiltinsAreExactlyTheReversalIndexEntryPlugin()
 		{
-			// winforms-free-lexeme-editor.md D5: the companion-strip designated set may only SHRINK
-			// (a class graduates unsupported → companion → plugin, never the other way). It is
-			// currently empty, and the mechanism stays as the documented coexistence route for
-			// future tools' WinForms-only slices. If this assertion is failing because the set
-			// GREW, that is a new WinForms dependency inside the pane — do not edit this test
-			// without a written justification in the change doc.
-			Assert.That(AvaloniaCompanionSlices.DesignatedClassNames, Is.Empty);
+			// The single native-conversion exemplar. Every other custom slice not absorbed by a composer
+			// route renders the Unsupported worklist row — there is no launcher/companion fallback.
+			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
+				Is.EquivalentTo(new[] { ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName }));
+			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
+				Is.InstanceOf<ReversalIndexEntryPlugin>());
 		}
 
 		[Test]
-		public void ExplicitlyDeferredClasses_AreTheUnmigratedChorusNotesBar_WithCitations()
+		public void FormerlyLauncherRoutedClasses_AndTheChorusNotesBar_AreUnclaimed()
 		{
-			// D5: deferral is only legitimate with the gate it rides spelled out. AudioVisualSlice
-			// rides the launcher route (D4), the ghost and multislice relation routes ride the
-			// composer (D3), and ReversalIndexEntrySlice rides a native Avalonia plugin
-			// (ReversalIndexEntryPlugin). MessageSlice (the Chorus notes bar) is not yet migrated:
-			// no plugin claims it, so the class rides this deferred route until a notes-bar plugin
-			// is added and registered.
-			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
+			// The D4 launcher seam and the companion strip were removed: the MSA/phonological feature
+			// launchers, the audio-visual media slice, and the Chorus notes bar (MessageSlice) are no
+			// longer claimed by any plugin, so each composes as the labeled Unsupported worklist row.
+			foreach (var cls in new[]
 			{
-				{
-					AvaloniaCompanionSlices.MessageSliceClassName,
-					"Chorus notes bar not yet migrated (read-only placeholder row)"
-				}
-			};
-			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames, Is.EquivalentTo(expected));
-			Assert.That(LexemeEditorBurnDown.ExplicitlyDeferredClassNames.Values,
-				Has.All.Not.Empty, "a deferral without a citation is a forgotten class, not a decision");
-		}
-
-		[Test]
-		public void ComposerAbsorbedClasses_AreTheD3ReferenceVectorRoute_WithCitations()
-		{
-			// D3: EntrySequenceReferenceSlice's nodes compose as editable ReferenceVector rows with
-			// type-ahead lexicon search (no plugin: the composer recognizes them by metadata + the
-			// legacy class identity). GhostLexRefSlice is in the same absorbed family: empty
-			// Components / Variant of rows are search-backed reference vectors whose first add
-			// creates the missing LexEntryRef. LexReferenceMultiSlice too: the composer walks
-			// ILexReference objects directly and emits one Avalonia row per relation with
-			// forward/reverse label semantics.
-			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
+				MsaFeatureSliceClassName, PhonologicalFeatureSliceClassName,
+				AudioVisualSliceClassName, MessageSliceClassName
+			})
 			{
-				{ "SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice", "D3 ReferenceVector route" },
-				{ "SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice", "D3 ghost reference-vector route" },
-				{ "SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice", "D3 lexical relation route" }
-			};
-			Assert.That(LexemeEditorBurnDown.ComposerAbsorbedClassNames, Is.EquivalentTo(expected));
-			Assert.That(LexemeEditorBurnDown.ComposerAbsorbedClassNames.Values, Has.All.Not.Empty,
-				"an absorption without a citation is unverifiable");
-		}
-
-		[Test]
-		public void LauncherRoutedClasses_AreTheD4LauncherRoute_WithCitations()
-		{
-			// D4: the dialog-launcher slices render as an Avalonia value row + "..."
-			// button calling the host's ILegacyDialogLauncher seam. The MSA/phonological launchers
-			// live in MSA/FsFeatStruc part files beyond the LexEntry/LexSense census — registered
-			// anyway, forward-looking.
-			var expected = new Dictionary<string, string>(StringComparer.Ordinal)
-			{
-				{ DialogLauncherPlugins.MsaFeatureSliceClassName, "D4 launcher route" },
-				{ DialogLauncherPlugins.PhonologicalFeatureSliceClassName, "D4 launcher route" },
-				{ DialogLauncherPlugins.AudioVisualSliceClassName, "D4 launcher route" }
-			};
-			Assert.That(LexemeEditorBurnDown.LauncherRoutedClassNames, Is.EquivalentTo(expected));
-			Assert.That(LexemeEditorBurnDown.LauncherRoutedClassNames.Values, Has.All.Not.Empty,
-				"a launcher routing without a citation is unverifiable");
-		}
-
-		[Test]
-		public void LauncherRoutedClasses_AreEachClaimedByALauncherPlugin()
-		{
-			// The launcher route is delivered through the D1 plugin registry: every launcher-routed
-			// class must be claimed by a LauncherRegionPlugin in the default registry, or the row
-			// would silently fall back to the unsupported path while the burn-down claims victory.
-			foreach (var cls in LexemeEditorBurnDown.LauncherRoutedClassNames.Keys)
-			{
-				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls),
-					Is.InstanceOf<LauncherRegionPlugin>(),
-					$"'{cls}' is launcher-routed and must be claimed by a LauncherRegionPlugin");
+				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls), Is.Null,
+					$"'{cls}' is a dropped editor: nothing claims it, so it renders the Unsupported worklist row");
+				Assert.That(ComposerAbsorbedClassNames, Has.None.EqualTo(cls),
+					$"'{cls}' is not one of the D3 composer-absorbed reference-vector routes");
 			}
+		}
+
+		[Test]
+		public void ComposerAbsorbedClasses_AreNotPluginClaimed()
+		{
+			// D3: the entry/sense reference-vector, ghost reference-vector, and lexical-relation slices
+			// are recognized by the composer's own routing (no plugin) and compose as native
+			// ReferenceVector rows, so the registry must NOT claim them.
+			foreach (var cls in ComposerAbsorbedClassNames)
+				Assert.That(RegionEditorPluginRegistry.Default.Resolve(cls), Is.Null,
+					$"'{cls}' is composer-absorbed (D3), not plugin-routed");
 		}
 
 		private sealed class StubPlugin : IRegionEditorPlugin
@@ -235,39 +196,18 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(() => registry.Register(new StubPlugin("A.Class")), Throws.ArgumentException,
 				"a legacy class has exactly one owner (single resolution, D1)");
 		}
-
-		[Test]
-		public void DefaultRegistry_BuiltinsAreExactlyTheAlwaysOnPlugins()
-		{
-			// The default registry's builtins: the reversal-entries plugin plus the three
-			// dialog-launcher plugins. The Chorus notes bar (MessageSlice) is not yet migrated — no
-			// plugin claims it, so it stays in the ExplicitlyDeferred route (see the census test)
-			// rather than PluginRouted.
-			Assert.That(RegionEditorPluginRegistry.Default.RegisteredClassNames,
-				Is.EquivalentTo(new[]
-				{
-					ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName,
-					DialogLauncherPlugins.MsaFeatureSliceClassName,
-					DialogLauncherPlugins.PhonologicalFeatureSliceClassName,
-					DialogLauncherPlugins.AudioVisualSliceClassName
-				}));
-			Assert.That(RegionEditorPluginRegistry.Default.Resolve(AvaloniaCompanionSlices.MessageSliceClassName),
-				Is.Null, "the Chorus notes bar is not yet migrated, so nothing may claim MessageSlice");
-			Assert.That(RegionEditorPluginRegistry.Default.Resolve(ReversalIndexEntryPlugin.ReversalIndexEntrySliceClassName),
-				Is.InstanceOf<ReversalIndexEntryPlugin>());
-		}
 	}
 
 	/// <summary>
-	/// winforms-free-lexeme-editor.md D1 — the composer's resolution order for a custom slice is
-	/// plugin registry → companion strip (designated set) → unsupported row. A plugin claiming the
-	/// Messages slice's legacy class therefore wins over the companion strip: the node composes as a
-	/// RegionFieldKind.Custom row carrying the plugin's deferred control factory, and the
-	/// companion-promotion list no longer sees it.
+	/// winforms-free-lexeme-editor.md D1 — the composer's resolution order for a custom slice is now
+	/// plugin registry → Unsupported row. A plugin claiming a slice's legacy class composes it as a
+	/// RegionFieldKind.Custom row carrying the plugin's deferred control factory; an unclaimed custom
+	/// slice (with no launcher/companion fallback) composes as the labeled Unsupported worklist row.
 	/// </summary>
 	[TestFixture]
 	public class RegionEditorPluginResolutionOrderTests : MemoryOnlyBackendProviderTestBase
 	{
+		private const string MessageSliceClassName = "SIL.FieldWorks.XWorks.LexEd.MessageSlice";
 		private ILexEntry m_entry;
 
 		public override void TestSetup()
@@ -286,11 +226,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			public int BuildCalls;
 			public ICmObject LastObject;
-			public ViewNode LastNode;
+			public SIL.FieldWorks.Common.FwAvalonia.ViewDefinition.ViewNode LastNode;
 			public IRegionEditContext LastEditContext;
 			public LcmCache LastCache;
 
-			public string LegacyClassName => AvaloniaCompanionSlices.MessageSliceClassName;
+			public string LegacyClassName => MessageSliceClassName;
 
 			public Avalonia.Controls.Control BuildControl(RegionEditorBuildContext context)
 			{
@@ -304,7 +244,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_PluginClaim_WinsOverTheCompanionDesignatedSet()
+		public void Compose_UnclaimedCustomSlice_ComposesAsUnsupportedWorklistRow()
+		{
+			// No plugin claims the Chorus notes bar (MessageSlice), and there is no launcher/companion
+			// fallback, so the node composes as the labeled Unsupported worklist row — never a Custom row,
+			// never silently omitted.
+			var composed = FullEntryRegionComposer.Compose(m_entry, Cache,
+				plugins: new RegionEditorPluginRegistry());
+
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
+				"an unclaimed custom slice is not a Custom row");
+			var messages = composed.Model.Fields.FirstOrDefault(f => f.Label == "Messages");
+			Assert.That(messages, Is.Not.Null, "the Messages slice still composes a row (not silently dropped)");
+			Assert.That(messages.Kind, Is.EqualTo(RegionFieldKind.Unsupported),
+				"the unclaimed Messages slice renders the labeled Unsupported worklist row");
+		}
+
+		[Test]
+		public void Compose_PluginClaim_ComposesTheClaimedNodeAsACustomRow()
 		{
 			var registry = new RegionEditorPluginRegistry();
 			var plugin = new FakeMessagesPlugin();
@@ -321,10 +278,6 @@ namespace SIL.FieldWorks.XWorks
 				"the plugin row carries the layout's slice menu binding");
 			Assert.That(row.ObjectHvo, Is.EqualTo(m_entry.Hvo), "field='Self' binds the entry itself");
 			Assert.That(row.ControlFactory, Is.Not.Null, "the row carries the plugin's control factory");
-
-			Assert.That(composed.CustomEditorFields.Select(f => f.ClassName),
-				Has.No.Member(AvaloniaCompanionSlices.MessageSliceClassName),
-				"a plugin-claimed class never reaches the companion strip (D1 resolution order)");
 			Assert.That(plugin.BuildCalls, Is.EqualTo(0),
 				"compose defers control building to the view (factory, not control)");
 		}
@@ -343,24 +296,10 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(plugin.BuildCalls, Is.EqualTo(1));
 			Assert.That(plugin.LastObject?.Hvo, Is.EqualTo(m_entry.Hvo));
-			Assert.That(plugin.LastNode?.CustomEditorClass,
-				Is.EqualTo(AvaloniaCompanionSlices.MessageSliceClassName));
+			Assert.That(plugin.LastNode?.CustomEditorClass, Is.EqualTo(MessageSliceClassName));
 			Assert.That(plugin.LastCache, Is.SameAs(Cache));
 			Assert.That(plugin.LastEditContext, Is.SameAs(composed.EditContext),
 				"the deferred accessor resolves to the region's own composed edit context");
-		}
-
-		[Test]
-		public void Compose_WithoutAPluginClaim_KeepsTheCompanionLane()
-		{
-			// Second slot in the D1 order: an unclaimed designated class still rides the companion
-			// strip (and an unclaimed, undesignated class keeps its unsupported row).
-			var composed = FullEntryRegionComposer.Compose(m_entry, Cache,
-				plugins: new RegionEditorPluginRegistry());
-
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False);
-			Assert.That(composed.CustomEditorFields.Select(f => f.ClassName),
-				Has.Member(AvaloniaCompanionSlices.MessageSliceClassName));
 		}
 	}
 }

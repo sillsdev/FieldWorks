@@ -28,26 +28,15 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>A composed full-entry region: the renderable model plus its LCModel-bound edit context.</summary>
 	public sealed class ComposedEntryRegion
 	{
-		public ComposedEntryRegion(LexicalEditRegionModel model, IRegionEditContext editContext,
-			IReadOnlyList<ComposedCustomEditorField> customEditorFields = null)
+		public ComposedEntryRegion(LexicalEditRegionModel model, IRegionEditContext editContext)
 		{
 			Model = model;
 			EditContext = editContext;
-			CustomEditorFields = customEditorFields ?? Array.Empty<ComposedCustomEditorField>();
 		}
 
 		public LexicalEditRegionModel Model { get; }
 
 		public IRegionEditContext EditContext { get; }
-
-		/// <summary>
-		/// The legacy class/assembly identities of the dynamically loaded custom slices that composed
-		/// as placeholder rows (unsupported or best-effort read-only), keyed back to the model by each
-		/// row's StableId. The host uses this to promote designated WinForms-only slices (the Chorus
-		/// Messages notes bar) to the hybrid companion strip instead of showing the placeholder row
-		/// (see AvaloniaCompanionSlices).
-		/// </summary>
-		public IReadOnlyList<ComposedCustomEditorField> CustomEditorFields { get; }
 	}
 
 	/// <summary>
@@ -119,9 +108,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public static ComposedEntryRegion Compose(ILexEntry entry, LcmCache cache, bool showHiddenFields = false,
-			RegionEditorPluginRegistry plugins = null, RegionEditorServices services = null,
+			RegionEditorPluginRegistry plugins = null,
 			ViewDefinitionOverrideResolver overrides = null)
-			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, services, overrides);
+			=> Compose((ICmObject)entry, cache, "Normal", showHiddenFields, plugins, overrides);
 
 		/// <summary>
 		/// §20.1: compose the structured region for ANY record root + starting layout — the lexicon's
@@ -133,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static ComposedEntryRegion Compose(ICmObject obj, LcmCache cache, string layoutName = "Normal",
 			bool showHiddenFields = false, RegionEditorPluginRegistry plugins = null,
-			RegionEditorServices services = null, ViewDefinitionOverrideResolver overrides = null,
+			ViewDefinitionOverrideResolver overrides = null,
 			string layoutChoiceField = null)
 		{
 			if (obj == null) throw new ArgumentNullException(nameof(obj));
@@ -152,11 +141,9 @@ namespace SIL.FieldWorks.XWorks
 			// winforms-free-lexeme-editor.md D1: plugin rows close over the region's own edit
 			// context, which only exists after the walk has gathered every setter — a deferred
 			// accessor bridges the gap (plugin factories run at render time, never during compose).
-			// D4: host services (the legacy-dialog launcher seam) ride the same closure; null when
-			// the host supplies none, and service-aware plugins must tolerate that.
 			IRegionEditContext composedContext = null;
 			var state = new ComposeState(cache, showHiddenFields,
-				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, services, overrides);
+				plugins ?? RegionEditorPluginRegistry.Default, () => composedContext, overrides);
 			state.EnterModel(root);
 			foreach (var node in root.Roots)
 				state.Walk(node, obj, 0);
@@ -168,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 				state.ParagraphDeleteSetters);
 			composedContext = context;
 			var model = new LexicalEditRegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
-			return new ComposedEntryRegion(model, context, state.CustomEditorFields);
+			return new ComposedEntryRegion(model, context);
 		}
 
 		/// <summary>
@@ -303,10 +290,6 @@ namespace SIL.FieldWorks.XWorks
 				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
 			public readonly Dictionary<string, Func<int, bool>> ParagraphDeleteSetters
 				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
-			// Companion strip: the unsupported rows that are really legacy dynamic custom slices,
-			// keyed by the row's StableId (see ComposedEntryRegion.CustomEditorFields).
-			public readonly List<ComposedCustomEditorField> CustomEditorFields
-				= new List<ComposedCustomEditorField>();
 
 			private readonly bool _showHidden;
 			// advanced-entry-view: the per-project override resolver, threaded into every CompileForObject
@@ -322,8 +305,6 @@ namespace SIL.FieldWorks.XWorks
 			// receive (resolved when the factory runs, after Compose has built the context).
 			private readonly RegionEditorPluginRegistry _plugins;
 			private readonly Func<IRegionEditContext> _editContextAccessor;
-			// D4: the host-injected services handed to service-aware plugins (null when none).
-			private readonly RegionEditorServices _services;
 			// Finding A: per-compose memos — the morph-type option list is identical for every
 			// IMoForm, and an item layout's menu/hotlinks binding is identical per (class, layout).
 			private List<RegionChoiceOption> _morphTypeOptions;
@@ -357,13 +338,12 @@ namespace SIL.FieldWorks.XWorks
 
 			public ComposeState(LcmCache cache, bool showHiddenFields,
 				RegionEditorPluginRegistry plugins, Func<IRegionEditContext> editContextAccessor,
-				RegionEditorServices services = null, ViewDefinitionOverrideResolver overrides = null)
+				ViewDefinitionOverrideResolver overrides = null)
 			{
 				_cache = cache;
 				_showHidden = showHiddenFields;
 				_plugins = plugins;
 				_editContextAccessor = editContextAccessor;
-				_services = services;
 				_overrides = overrides;
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
@@ -930,11 +910,13 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// winforms-free-lexeme-editor.md D1: a custom slice resolves plugin registry →
-				// companion strip → unsupported row, in that order and never the other way. The
-				// registry is consulted FIRST so a migrated class composes as a real in-tree
-				// Avalonia editor (a RegionFieldKind.Custom row carrying the plugin's control
-				// factory); only unclaimed classes fall through to the companion strip or the
-				// unsupported row.
+				// Unsupported row, in that order and never the other way. The registry is consulted FIRST
+				// so a migrated class composes as a real in-tree Avalonia editor (a RegionFieldKind.Custom
+				// row carrying the plugin's control factory). The D3 reference-vector slices are recognized
+				// by legacy class identity and compose as native ReferenceVector rows: GhostLexRefSlice and
+				// LexReferenceMultiSlice via the early checks above, EntrySequenceReferenceSlice via the
+				// field-type dispatch below. Every OTHER unclaimed custom slice renders the labeled
+				// Unsupported worklist row — there is no launcher or companion-strip fallback.
 				if (!string.IsNullOrEmpty(node.CustomEditorClass))
 				{
 					var plugin = _plugins?.Resolve(node.CustomEditorClass);
@@ -945,9 +927,17 @@ namespace SIL.FieldWorks.XWorks
 							Walk(pluginChild, obj, depth + 1);
 						return;
 					}
+
+					if (!string.Equals(node.CustomEditorClass, EntrySequenceSliceClassName,
+						StringComparison.Ordinal))
+					{
+						WalkUnsupported(node, obj, depth);
+						foreach (var child in node.Children)
+							Walk(child, obj, depth + 1);
+						return;
+					}
 				}
 
-				var fieldCountBeforeDispatch = Fields.Count;
 				// The editor-string → category knowledge lives ONCE, in
 				// EditorKindMap (the same FwAvalonia home the importer's classification and the
 				// mapper's kind projection use); this switch only routes categories. Categories
@@ -975,7 +965,9 @@ namespace SIL.FieldWorks.XWorks
 						AddLiteralRow(node, obj, depth);
 						break;
 					case RegionEditorCategory.Picture:
-						WalkPictures(node, obj, depth);
+						// Picture/image editing was removed from the Avalonia region; the slice renders the
+						// labeled Unsupported worklist row (a future native picture editor graduates it).
+						WalkUnsupported(node, obj, depth);
 						break;
 					case RegionEditorCategory.EmbeddedView:
 						// §19e: an embedded formatted view (legacy jtview / ViewSlice + XmlView) composes the
@@ -990,35 +982,18 @@ namespace SIL.FieldWorks.XWorks
 						WalkEmbeddedView(node, obj, depth);
 						break;
 					case RegionEditorCategory.Command:
-						// Command slices render their button; execution arrives with the xCore
-						// command bridge (shell phase).
-						AddField(new LexicalEditRegionField(StableId(node, obj),
-							Localize(node.Label) ?? node.Field, node.Field, node.WritingSystem,
-							RegionFieldKind.Command, node.EditorClassification, node.AutomationId,
-							node.LocalizationKey, node.Routing, null, null, null,
-							isEditable: false, indent: depth));
+						// Command slices (button rows) are not rendered in the Avalonia region; the slice
+						// renders the labeled Unsupported worklist row.
+						WalkUnsupported(node, obj, depth);
 						break;
 					case RegionEditorCategory.EnumCombo:
-						WalkEnumCombo(node, obj, depth);
+						// Closed enum combos were removed from the Avalonia region; the slice renders the
+						// labeled Unsupported worklist row (a future native enum editor graduates it).
+						WalkUnsupported(node, obj, depth);
 						break;
 					default:
 						WalkOtherField(node, obj, depth);
 						break;
-				}
-
-				// Companion strip (second in the D1 resolution order, after the plugin registry
-				// claim above): a dynamically loaded custom slice (editor="Custom" class=...)
-				// keeps its legacy class/assembly identity, keyed by the StableId of the row the
-				// dispatch above produced for it — whether that was the explicit unsupported row or
-				// a best-effort read-only rendering (e.g. the Messages slice's field="Self" resolves
-				// to a reference-atomic flid and renders as read-only text). The host promotes
-				// designated classes (the Chorus Messages notes bar) to the WinForms companion strip
-				// and removes the row by this StableId.
-				if (!string.IsNullOrEmpty(node.CustomEditorClass) && Fields.Count > fieldCountBeforeDispatch)
-				{
-					var row = Fields[fieldCountBeforeDispatch];
-					CustomEditorFields.Add(new ComposedCustomEditorField(row.StableId,
-						node.CustomEditorClass, node.CustomEditorAssembly, row.Label, obj.Hvo));
 				}
 
 				// Caller children under a slice (e.g. MorphType under the lexeme form) are fields of
@@ -2404,126 +2379,6 @@ namespace SIL.FieldWorks.XWorks
 				=> !string.IsNullOrEmpty(text)
 					&& text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
 
-			// Legacy enumComboBox is a CLOSED combo over the layout's stringList
-			// labels (SliceFactory.cs case "enumcombobox" -> EnumComboSlice), never free-form
-			// input. The importer carries the <deParams><stringList> ids/group onto the node,
-			// so the row composes an EDITABLE option chooser fed by that list — the stored enum
-			// integer is the 0-based index into the ids (EnumComboSlice maps SelectedIndex straight
-			// to the property), and the labels resolve through the same StringTable lookup the legacy
-			// slice uses (GetStringsFromStringListNode). The option chooser is CLOSED, so it can
-			// never persist an out-of-range enum value (the free-form int editor regression). When
-			// the layout carries no stringList (none could be imported), the row degrades to a
-			// read-only display of the raw value rather than an unguarded int editor.
-			private void WalkEnumCombo(ViewNode node, ICmObject obj, int depth)
-			{
-				var flid = GetFlid(obj, node.Field);
-				if (flid == 0)
-				{
-					WalkUnsupported(node, obj, depth);
-					return;
-				}
-
-				var fieldType = (CellarPropertyType)_mdc.GetFieldType(flid);
-				int current;
-				switch (fieldType)
-				{
-					case CellarPropertyType.Integer:
-						current = _sda.get_IntProp(obj.Hvo, flid);
-						break;
-					case CellarPropertyType.Boolean:
-						// Legacy EnumComboSlice serves boolean-backed enums too (e.g. the
-						// Allomorph Status combo over IsAbstract), via IntBoolPropertyConverter.
-						current = IntBoolPropertyConverter.GetBoolean(_sda, obj.Hvo, flid) ? 1 : 0;
-						break;
-					default:
-						WalkUnsupported(node, obj, depth);
-						return;
-				}
-
-				if (current == 0 && HideWhenEmpty(node))
-					return;
-
-				var labels = ResolveEnumLabels(node.EnumStringList);
-				if (labels == null || labels.Count == 0)
-				{
-					// No importable stringList — keep the safe read-only display (never a free-form
-					// int editor that could persist an invalid enum value).
-					AddReadOnlyRow(node, obj, depth, current.ToString(CultureInfo.InvariantCulture));
-					return;
-				}
-
-				var options = new List<RegionChoiceOption>(labels.Count);
-				for (var i = 0; i < labels.Count; i++)
-					options.Add(new RegionChoiceOption(i.ToString(CultureInfo.InvariantCulture), labels[i]));
-
-				// An out-of-range stored value (the option index is unknown) selects nothing rather
-				// than mis-pointing at a real option; the chooser then shows blank, like the legacy
-				// combo whose SelectedIndex would be invalid.
-				var selectedKey = current >= 0 && current < labels.Count
-					? current.ToString(CultureInfo.InvariantCulture)
-					: null;
-
-				var stableId = StableId(node, obj);
-				// §19e: a dedicated closed-combo kind (legacy EnumComboSlice) — a non-editable drop-down
-				// over the stringList options, never a free-form chooser/text box. The option key is the
-				// 0-based enum index that IS the stored int.
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field, node.Field,
-					node.WritingSystem, RegionFieldKind.EnumCombo, node.EditorClassification, node.AutomationId,
-					node.LocalizationKey, node.Routing, null, options, selectedKey, isEditable: true,
-					indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo));
-
-				var hvo = obj.Hvo;
-				var optionCount = labels.Count;
-				var isBoolean = fieldType == CellarPropertyType.Boolean;
-				OptionSetters[stableId] = key =>
-				{
-					// Closed combo: reject anything that is not a known option index — the chooser's
-					// own keys are these indices, so a well-behaved UI never sends anything else, but
-					// a defensive reject keeps an invalid enum value from ever reaching the property.
-					if (!int.TryParse(key, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index)
-						|| index < 0 || index >= optionCount)
-					{
-						return false;
-					}
-					if (isBoolean)
-						IntBoolPropertyConverter.SetValueFromBoolean(_sda, hvo, flid, index == 1);
-					else
-						_sda.SetInt(hvo, flid, index);
-					return true;
-				};
-			}
-
-			// Resolve an enum stringList's localized labels the SAME way EnumComboSlice does
-			// (StringTable.GetStringsFromStringListNode over the ids within the group), by
-			// reconstructing the <stringList> node from the imported ids/group. Returns null when
-			// there is no list to resolve or resolution fails, so the caller can fall back safely.
-			private IReadOnlyList<string> ResolveEnumLabels(ViewStringList stringList)
-			{
-				if (stringList == null || stringList.Ids.Count == 0)
-					return null;
-				try
-				{
-					var doc = new System.Xml.XmlDocument();
-					var node = doc.CreateElement("stringList");
-					var idsAttr = doc.CreateAttribute("ids");
-					idsAttr.Value = string.Join(",", stringList.Ids);
-					node.Attributes.Append(idsAttr);
-					if (!string.IsNullOrEmpty(stringList.Group))
-					{
-						var groupAttr = doc.CreateAttribute("group");
-						groupAttr.Value = stringList.Group;
-						node.Attributes.Append(groupAttr);
-					}
-					return StringTable.Table.GetStringsFromStringListNode(node);
-				}
-				catch (Exception e)
-				{
-					SIL.Reporting.Logger.WriteEvent(
-						$"FullEntryRegionComposer: could not resolve enum stringList '{stringList}': {e.Message}");
-					return null;
-				}
-			}
-
 			// Viewing parity (11.x): every field type the legacy slices display has a rendering here:
 			// booleans as checkboxes (editable), integers editable, dates/gendates formatted,
 			// structured text as paragraph text, references as value rows; explicit unsupported rows
@@ -2669,205 +2524,11 @@ namespace SIL.FieldWorks.XWorks
 							AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
 							return;
 						}
-						case CellarPropertyType.Boolean:
-						{
-							var stableId = StableId(node, obj);
-							// §20.1.4 (F-7): a toggleValue= slice displays the logical INVERSE of the stored
-							// boolean (legacy BasicTypeSlices.cs:181-203 inverts on read AND write). Invert the
-							// displayed check and the committed value so the checkbox round-trips with the same
-							// sense the WinForms slice shows.
-							var toggle = node.ToggleValue;
-							var stored = _sda.get_BooleanProp(obj.Hvo, flid);
-							var isChecked = toggle ? !stored : stored;
-							AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
-								node.Field, node.WritingSystem, RegionFieldKind.Boolean,
-								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
-								null, null, isChecked ? "true" : "false", isEditable: true, indent: depth));
-							var hvo = obj.Hvo;
-							OptionSetters[stableId] = key =>
-							{
-								if (!bool.TryParse(key, out var value))
-									return false;
-								_sda.SetBoolean(hvo, flid, toggle ? !value : value);
-								return true;
-							};
-							return;
-						}
-						case CellarPropertyType.Integer:
-						{
-							var stableId = StableId(node, obj);
-							var current = _sda.get_IntProp(obj.Hvo, flid);
-							if (current == 0 && HideWhenEmpty(node))
-								return;
-							// §19e: a dedicated Integer kind (legacy IntegerSlice) — a numeric editor that
-							// rejects non-numeric keystrokes and restores on a rejected commit, instead of a
-							// plain Text editor whose only guard was the setter.
-							AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
-								node.Field, node.WritingSystem, RegionFieldKind.Integer,
-								node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
-								new List<RegionWsValue> { new RegionWsValue("", current.ToString()) },
-								null, null, isEditable: true, indent: depth));
-							var hvo = obj.Hvo;
-							TextSetters[stableId] = (ws, value) =>
-							{
-								// Clearing an int box: legacy IntegerSlice treats a
-								// non-numeric box — INCLUDING empty — as invalid on focus loss: it
-								// warns and restores the stored value, never committing empty as 0
-								// (BasicTypeSlices.cs, IntegerSlice.m_tb_LostFocus's
-								// Convert.ToInt32 FormatException path). Mirror that deliberately:
-								// empty/whitespace stages NOTHING (false), so the control restores
-								// the last committed value (its lastStaged advances only on
-								// success), and a clear-then-retype only ever stages the parseable
-								// intermediate states.
-								if (!int.TryParse(value, NumberStyles.Integer,
-									CultureInfo.InvariantCulture, out var parsed))
-								{
-									return false;
-								}
-								_sda.SetInt(hvo, flid, parsed);
-								return true;
-							};
-							return;
-						}
-						case CellarPropertyType.Time:
-						{
-							// DateCreated/DateModified are visibility="never" read-only by design; an
-							// always-shown user-editable Time field (legacy DateSlice) becomes an editable
-							// Date row. The display matches the legacy DateSlice full pattern ("f",
-							// CurrentUICulture, no UTC conversion).
-							if (node.Visibility == ViewVisibility.Never)
-							{
-								var silTimeRo = _sda.get_TimeProp(obj.Hvo, flid);
-								if (silTimeRo == 0 && HideWhenEmpty(node))
-									return;
-								AddReadOnlyRow(node, obj, depth, silTimeRo == 0
-									? string.Empty
-									: SilTime.ConvertFromSilTime(silTimeRo).ToString("f", CultureInfo.CurrentUICulture));
-								return;
-							}
-
-							var silTime = _sda.get_TimeProp(obj.Hvo, flid);
-							if (silTime == 0 && HideWhenEmpty(node))
-								return;
-							AddDateField(node, obj, depth, flid, RegionDateKind.Date);
-							return;
-						}
-						case CellarPropertyType.GenDate:
-						{
-							int genCurrent;
-							try
-							{
-								genCurrent = _sda.get_IntProp(obj.Hvo, flid);
-							}
-							catch (Exception)
-							{
-								genCurrent = 0;
-							}
-
-							if (genCurrent == 0 && HideWhenEmpty(node))
-								return;
-							AddDateField(node, obj, depth, flid, RegionDateKind.GenDate);
-							return;
-						}
 					}
 				}
 
 				if (!HideWhenEmpty(node))
 					WalkUnsupported(node, obj, depth);
-			}
-
-			// An editable date / generic-date row (legacy DateSlice/GenDateSlice). The row carries
-			// the current value formatted the way legacy renders it, plus a RegionDateKind so the owned
-			// control parses on commit. The setter is SAFE: an exact date round-trips through
-			// DateTime.TryParse + SilTime, a generic date through GenDate.TryParse (precision/era/
-			// approximation honored); unparseable input is rejected (false), never stored, so the box
-			// restores the committed value instead of corrupting the field. Empty clears the field.
-			private void AddDateField(ViewNode node, ICmObject obj, int depth, int flid, RegionDateKind dateKind)
-			{
-				var stableId = StableId(node, obj);
-				string display;
-				if (dateKind == RegionDateKind.GenDate)
-				{
-					GenDate gen;
-					try
-					{
-						gen = ((ISilDataAccessManaged)_sda).get_GenDateProp(obj.Hvo, flid);
-					}
-					catch (Exception)
-					{
-						gen = new GenDate();
-					}
-					// 19i.1 (data-loss fix): emit the YEAR-granular canonical form the GenDate qualifier editor
-					// round-trips (precision word + era + year), built from the model's STRUCTURED parts — never
-					// gen.ToLongString(). A long string with month/day ("Friday, June 15, 1990") would make the
-					// year-granular editor digit-scan the DAY ("15") as the year and overwrite the real year on
-					// the next commit. The qualifier editor edits at year granularity (month/day not surfaced —
-					// tracked as tasks.md 19i.8); the model keeps month/day until the user commits a change.
-					display = gen.IsEmpty
-						? string.Empty
-						: FwGenDateField.Compose(gen.Year, MapGenDatePrecision(gen.Precision), gen.IsAD);
-				}
-				else
-				{
-					var silTime = _sda.get_TimeProp(obj.Hvo, flid);
-					display = silTime == 0
-						? string.Empty
-						: SilTime.ConvertFromSilTime(silTime).ToString("f", CultureInfo.CurrentUICulture);
-				}
-
-				AddField(new LexicalEditRegionField(stableId, Localize(node.Label) ?? node.Field,
-					node.Field, node.WritingSystem, RegionFieldKind.Date, node.EditorClassification,
-					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<RegionWsValue> { new RegionWsValue("", display) }, null, null,
-					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
-					objectHvo: obj.Hvo, dateKind: dateKind));
-
-				var hvo = obj.Hvo;
-				OptionSetters[stableId] = value =>
-				{
-					var text = (value ?? string.Empty).Trim();
-					if (dateKind == RegionDateKind.GenDate)
-					{
-						if (text.Length == 0)
-						{
-							((ISilDataAccessManaged)_sda).SetGenDate(hvo, flid, new GenDate());
-							return true;
-						}
-						// GenDate.TryParse rejects unparseable input WITHOUT throwing — the safe
-						// structured editor (no silent corruption); it understands the long-string
-						// format ToLongString produces (precision word + era), so the value round-trips.
-						if (!GenDate.TryParse(text, out var gen))
-							return false;
-						((ISilDataAccessManaged)_sda).SetGenDate(hvo, flid, gen);
-						return true;
-					}
-
-					if (text.Length == 0)
-					{
-						_sda.SetTime(hvo, flid, 0);
-						return true;
-					}
-					if (!DateTime.TryParse(text, CultureInfo.CurrentUICulture,
-						DateTimeStyles.None, out var parsed))
-					{
-						return false;
-					}
-					_sda.SetTime(hvo, flid, SilTime.ConvertToSilTime(parsed));
-					return true;
-				};
-			}
-
-			// 19i.1: map the LCModel GenDate precision onto the view's LCModel-free GenDatePrecision so the
-			// composer can emit the canonical year-granular value the qualifier editor round-trips.
-			private static GenDatePrecision MapGenDatePrecision(GenDate.PrecisionType precision)
-			{
-				switch (precision)
-				{
-					case GenDate.PrecisionType.Before: return GenDatePrecision.Before;
-					case GenDate.PrecisionType.Approximate: return GenDatePrecision.Approximate;
-					case GenDate.PrecisionType.After: return GenDatePrecision.After;
-					default: return GenDatePrecision.Exact;
-				}
 			}
 
 			// §19e: a literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
@@ -3000,9 +2661,9 @@ namespace SIL.FieldWorks.XWorks
 			private void AddPluginRow(ViewNode node, ICmObject obj, int depth, IRegionEditorPlugin plugin)
 			{
 				// ONE plugin contract — the build context bundles everything a
-				// plugin can need (object, node, deferred edit-context accessor, cache, optional
-				// host services); there is no service-aware marker type test.
-				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache, _services);
+				// plugin can need (object, node, deferred edit-context accessor, cache); there is no
+				// service-aware marker type test.
+				var context = new RegionEditorBuildContext(obj, node, _editContextAccessor, _cache);
 				Func<Avalonia.Controls.Control> factory = () => plugin.BuildControl(context);
 				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Custom, node.EditorClassification,
@@ -3015,97 +2676,14 @@ namespace SIL.FieldWorks.XWorks
 
 			private void WalkUnsupported(ViewNode node, ICmObject obj, int depth)
 			{
+				// The Unsupported worklist row still binds its object and slice menus so a right-click
+				// keeps the legacy per-object commands (Field Visibility / Move Field / Help), and so the
+				// row is addressable by its object (menu targeting, override editing) like any other row.
 				AddField(new LexicalEditRegionField(StableId(node, obj), Localize(node.Label) ?? node.Field,
 					node.Field, node.WritingSystem, RegionFieldKind.Unsupported, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
-					isEditable: false, indent: depth));
-			}
-
-			// Viewing parity (11.6): picture fields render the actual image (caption + file path row);
-			// the view loads the bitmap when the file exists.
-			private void WalkPictures(ViewNode node, ICmObject obj, int depth)
-			{
-				var flid = GetFlid(obj, node.Field);
-				if (flid == 0)
-				{
-					WalkUnsupported(node, obj, depth);
-					return;
-				}
-
-				var count = _sda.get_VecSize(obj.Hvo, flid);
-				if (count == 0)
-				{
-					// §19d: an empty picture field shows an editable "insert a picture" ghost row (PictureHvo
-					// 0) so the user can add the first picture, instead of the field vanishing. The view's
-					// insert affordance routes through TryInsertPicture against this field's owner+flid.
-					if (!HideWhenEmpty(node))
-					{
-						var emptyField = new LexicalEditRegionField($"{StableId(node, obj)}/pic-empty",
-							Localize(node.Label) ?? node.Field, node.Field, null, RegionFieldKind.Image,
-							node.EditorClassification, node.AutomationId, node.LocalizationKey, node.Routing,
-							new List<RegionWsValue> { new RegionWsValue("", string.Empty) },
-							null, null, isEditable: true, indent: depth, objectHvo: obj.Hvo);
-						emptyField.PictureHvo = 0;
-						AddField(emptyField);
-					}
-					return;
-				}
-
-				for (var i = 0; i < count; i++)
-				{
-					if (!(_cache.ServiceLocator.ObjectRepository.GetObject(_sda.get_VecItem(obj.Hvo, flid, i))
-						is ICmPicture picture))
-					{
-						continue;
-					}
-
-					var caption = picture.Caption?.BestVernacularAnalysisAlternative?.Text
-						?? Localize(node.Label) ?? node.Field;
-					string path = null;
-					try
-					{
-						path = picture.PictureFileRA?.AbsoluteInternalPath;
-					}
-					catch (Exception)
-					{
-					}
-
-					// §19d: the picture row is now EDITABLE (replace/delete/edit-metadata + insert-another),
-					// carrying the picture's HVO (the edit context keys the replace/delete/metadata gestures
-					// on it) and its current metadata (the properties dialog seeds from it). owner+flid via
-					// ObjectHvo drives insert-another. The value column still shows the thumbnail/path.
-					var pictureField = new LexicalEditRegionField($"{StableId(node, obj)}/pic{i}", caption,
-						node.Field, null, RegionFieldKind.Image, node.EditorClassification,
-						node.AutomationId, node.LocalizationKey, node.Routing,
-						new List<RegionWsValue> { new RegionWsValue("", path ?? string.Empty) },
-						null, null, isEditable: true, indent: depth, objectHvo: obj.Hvo);
-					pictureField.PictureHvo = picture.Hvo;
-					pictureField.PictureMetadata = RegionPictureEditor.ReadMetadata(picture);
-					AddField(pictureField);
-
-					var layoutName = string.IsNullOrEmpty(node.TargetLayout) ? "Normal" : node.TargetLayout;
-					if (_visited.Add((picture.Hvo, layoutName)))
-					{
-						try
-						{
-							var compiled = CompileForObjectWithOverrides(picture, layoutName);
-							if (compiled != null)
-							{
-								EnterModel(compiled);
-								foreach (var child in compiled.Roots)
-								{
-									if (child.Kind == ViewNodeKind.CustomFieldPlaceholder)
-										Walk(child, picture, depth + 1);
-								}
-								ExitModel();
-							}
-						}
-						finally
-						{
-							_visited.Remove((picture.Hvo, layoutName));
-						}
-					}
-				}
+					isEditable: false, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					objectHvo: obj.Hvo));
 			}
 
 			// Viewing parity (11.14) + 14.1: empty always-visible object/sequence fields show the
@@ -3767,112 +3345,6 @@ namespace SIL.FieldWorks.XWorks
 			if (field == null || !_paragraphDeleteSetters.TryGetValue(field.StableId, out var setter))
 				return false;
 			return Stage(() => setter(paragraphIndex), FieldLabelFor(field));
-		}
-
-		// §19d: picture insert/replace/delete/metadata + ORC. Unlike the text/option setters (closures the
-		// composer captured), picture ops need the cache directly (create/delete the ICmPicture, resolve a
-		// file into the project's Pictures folder), so they run here against the shared Cache/owner. Each is
-		// one undoable step via the fenced Stage. A non-picture field rejects WITHOUT opening the session.
-		public override bool TryInsertPicture(LexicalEditRegionField field, string sourceFile,
-			RegionPictureMetadata metadata)
-		{
-			if (field == null || field.Kind != RegionFieldKind.Image)
-				return false;
-			var owner = ResolveObject(field.ObjectHvo);
-			var flid = ResolveFlid(owner, field.Field);
-			if (owner == null || flid == 0)
-				return false;
-			return Stage(() => RegionPictureEditor.CreatePicture(Cache, owner, flid, sourceFile, metadata) != null,
-				FieldLabelFor(field));
-		}
-
-		public override bool TryReplacePictureFile(LexicalEditRegionField field, string sourceFile)
-		{
-			var picture = ResolvePicture(field);
-			if (picture == null)
-				return false;
-			return Stage(() => RegionPictureEditor.ReplaceFile(Cache, picture, sourceFile), FieldLabelFor(field));
-		}
-
-		public override bool TryDeletePicture(LexicalEditRegionField field)
-		{
-			var picture = ResolvePicture(field);
-			if (picture == null)
-				return false;
-			return Stage(() => RegionPictureEditor.Delete(picture), FieldLabelFor(field));
-		}
-
-		public override bool TrySetPictureMetadata(LexicalEditRegionField field, RegionPictureMetadata metadata)
-		{
-			var picture = ResolvePicture(field);
-			if (picture == null)
-				return false;
-			return Stage(() => RegionPictureEditor.SetMetadata(Cache, picture, metadata), FieldLabelFor(field));
-		}
-
-		public override bool TryInsertPictureOrc(LexicalEditRegionField field, string ws, int caretPosition,
-			string sourceFile, RegionPictureMetadata metadata)
-		{
-			// §19c→§19d: the picture ORC rides the field's rich-text setter — we read the current value,
-			// let InsertORCAt build the ORC run, and write the new TsString back through the SAME run-aware
-			// setter the rich-text edits use, so it is one undoable step and re-shows from domain truth.
-			if (field == null || !_richTextSetters.TryGetValue(field.StableId, out var setter))
-				return false;
-			if (field.Values.Any(v => !v.CanEditRichText))
-				return false;
-			return Stage(() =>
-			{
-				var wsHandle = ResolveWsForField(field, ws);
-				if (wsHandle == 0)
-					return false;
-				var current = field.Values.FirstOrDefault(v => string.Equals(v.WsTag, ws, StringComparison.Ordinal))
-					?? field.Values.FirstOrDefault();
-				var currentTss = RegionRichTextAdapter.ToTsString(current?.RichText, Cache.WritingSystemFactory, wsHandle);
-				var withOrc = RegionPictureEditor.InsertPictureOrc(Cache, currentTss, caretPosition, sourceFile, metadata);
-				if (withOrc == null)
-					return false;
-				var rebuilt = RegionRichTextAdapter.FromTsString(withOrc, Cache.WritingSystemFactory);
-				return setter(ws, rebuilt);
-			}, FieldLabelFor(field));
-		}
-
-		private ICmObject ResolveObject(int hvo)
-		{
-			if (hvo == 0)
-				return Entry;
-			return Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var obj) ? obj : null;
-		}
-
-		private int ResolveFlid(ICmObject owner, string fieldName)
-		{
-			if (owner == null || string.IsNullOrEmpty(fieldName))
-				return 0;
-			try
-			{
-				var mdc = (IFwMetaDataCacheManaged)Cache.DomainDataByFlid.MetaDataCache;
-				return mdc.GetFieldId2(owner.ClassID, fieldName, true);
-			}
-			catch (Exception)
-			{
-				return 0;
-			}
-		}
-
-		private ICmPicture ResolvePicture(LexicalEditRegionField field)
-		{
-			if (field == null || field.Kind != RegionFieldKind.Image || field.PictureHvo == 0)
-				return null;
-			return Cache.ServiceLocator.ObjectRepository.TryGetObject(field.PictureHvo, out var obj)
-				? obj as ICmPicture
-				: null;
-		}
-
-		private int ResolveWsForField(LexicalEditRegionField field, string ws)
-		{
-			if (string.IsNullOrEmpty(ws))
-				return Cache.DefaultVernWs;
-			var resolved = Cache.WritingSystemFactory.GetWsFromStr(ws);
-			return resolved > 0 ? resolved : Cache.DefaultVernWs;
 		}
 
 		// ITEM 1: the human-readable field label that names the undo step, falling back to the
