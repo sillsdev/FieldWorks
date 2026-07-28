@@ -160,37 +160,48 @@ ReferenceVector, Custom), `FwOptionPicker.cs`, `RegionMenuFlyout.cs`,
 ## 5. Plugin registry for custom slice classes
 
 **Decision.** Legacy layouts reference custom slice classes by name (for
-example `SIL.FieldWorks.XWorks.LexEd.MessageSlice`). A plugin registry maps
+example `SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice`). A plugin registry maps
 those same class identities to factories that build Avalonia controls.
-Resolution order: plugin → companion-strip WinForms coexistence →
-explicit "unsupported" row. Never silent mis-render. Keying by legacy class
-identity means zero layout edits and measurable burn-down (census vs.
+Resolution order is exactly two steps: **plugin → labeled "Unsupported" row.**
+There is no launcher or companion-strip fallback. Never silent mis-render: a slice with no
+plugin (and not absorbed by a composer route such as the D2 reference-vector route) composes as
+a labeled Unsupported row — and the visible set of Unsupported rows IS the conversion worklist.
+Keying by legacy class identity means zero layout edits and a measurable burn-down (census vs.
 registry coverage).
 
-**Canonical code.** `Src/xWorks/RegionEditorPlugins.cs` (`RegisterBuiltins`),
-registry contracts in
-`Src/Common/FwAvalonia/Region/LexicalEditRegionModel.cs`.
-Registered plugins are `ReversalIndexEntryPlugin` and the dialog-launcher plugins
-`DialogLauncherPlugins.Create*` (MSA-inflection / phonological features / audio-visual).
-Future PRs add the Chorus notes-bar plugin, `InterlinearSlicePlugin` (Words `Analyses` — own
-openspec change `avalonia-interlinear-editor`), and the rule-formula family
-`RuleFormulaRegionEditorPlugin`/`MetaRuleFormulaRegionEditorPlugin`/
-`AffixRuleFormulaRegionEditorPlugin` + `PhEnvironmentRegionEditorPlugin` +
-`BasicIpaSymbolRegionEditorPlugin` (own openspec change `avalonia-rule-formula-editor`).
-Tests: `Src/xWorks/xWorksTests/DialogLauncherPluginTests.cs`,
-`LexemeEditorBurnDownTests.cs`, `MessagesCompanionStripTests.cs`,
-`InterlinearSlicePluginTests.cs`, `RecordEditViewSwitchTests.cs`.
+**Canonical code.** `Src/xWorks/RegionEditorPlugins.cs` (`IRegionEditorPlugin`,
+`RegionEditorBuildContext`, `RegionEditorPluginRegistry`, `RegisterBuiltins`). The single
+registered plugin is `ReversalIndexEntryPlugin` — the native-conversion exemplar. A future PR
+converts another Unsupported slice by adding its plugin the same way.
+Tests: `Src/xWorks/xWorksTests/LexemeEditorBurnDownTests.cs` (census + resolution order).
+
+**Converting a custom slice to a native Avalonia editor (worked example —
+`ReversalIndexEntryPlugin`).** The forward path needs no layout edits:
+
+1. **Claim the legacy `class=` identity.** Implement `IRegionEditorPlugin.LegacyClassName` with the
+   layout's class attribute (e.g. `SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice`) and register
+   the plugin in `RegisterBuiltins`. The composer's plugin step now claims that node instead of
+   dropping it to Unsupported.
+2. **Render in-tree.** `BuildControl(RegionEditorBuildContext)` builds an Avalonia control for
+   (target object, typed node, cache) and returns it; the view places it in the value column at the
+   slice's real position. Reuse the owned controls where you can — the reversal editor projects the
+   sense's reversal forms into a `LexicalEditRegionField` and hands it to `FwMultiWsTextField`.
+3. **Ride the fenced edit context.** Route the editor's writes through
+   `RegionEditorBuildContext.EditContext` (an `IRegionEditContext`) so plugin edits land as ONE
+   undoable step on the region's shared session, exactly like every other row. The reversal editor
+   wraps the host context in a small `IRegionEditContext` that routes `TrySetText`/`TrySetRichText`
+   to the matching reversal entry's `ReversalForm`, staging on the host's `RegionEditContextBase`.
+4. **Graduate the Unsupported row.** With the plugin registered, the slice that previously rendered
+   an Unsupported worklist row now renders the native editor — the row leaves the worklist.
 
 **Projectors and write-back belong in xWorks, not FwAvalonia or the domain assembly.**
-A plugin's view stays LCModel-free and binds an LCModel-free projection DTO; the projector
-that reads LCModel and the write-back that mutates it live in xWorks (which references both
-LCModel and FwAvalonia). Putting a projector in `Morphology` would be circular. Encode the
-legacy rendering as a parity oracle string (e.g. rule-formula `ToFormulaString()` →
-"p → [V] / [C] __ #") and test against it, not free-form output.
+A plugin's view stays LCModel-free and binds an LCModel-free projection; the projector that reads
+LCModel and the write-back that mutates it live in xWorks (which references both LCModel and
+FwAvalonia). Putting a projector in `Morphology` would be circular.
 
 **When migrating a new surface:** census its custom slice classes first,
 check the registry for existing plugins, and add plugins (with tests) for
-the rest. Add each new plugin to the burn-down tracking.
+the rest. Everything unclaimed renders Unsupported until its plugin lands — that is the burn-down.
 
 ## 6. Writing-system behavior (font, RTL, keyboard, multi-WS)
 

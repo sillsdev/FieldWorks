@@ -564,17 +564,13 @@ namespace FwAvaloniaTests
 				"tag-less rows keep the abbreviation-suffixed id");
 		}
 
-		// ITEM 3 (voice/sound writing systems): a voice/audio (IsVoice) alternative composes as a
-		// read-only audio-placeholder value. The view must render it as a READ-ONLY box showing the
-		// placeholder (with the audio tooltip), never a blank editable box that would corrupt the
-		// recording on edit.
+		// Voice/sound writing systems: a voice/audio alternative renders as READ-ONLY text (the audio
+		// filename) with no in-pane player. The media seam was removed, so there are no play/record
+		// affordances and the recording can never be corrupted by an edit — full audio editing stays
+		// in the classic view.
 		[AvaloniaTest]
-		public void AudioValue_RendersReadOnlyPlaceholder_NotAnEmptyEditableBox()
+		public void AudioValue_RendersReadOnlyText_WithNoPlayerAndNoStagedEdit()
 		{
-			// §19d: a voice/audio alternative is NO LONGER a blanket read-only placeholder. With no media
-			// seam (the browse-cell / preview path) it renders the filename label read-only (no editable box,
-			// no play/record buttons) — the recording stays visible/diagnosable, but never behind a fake
-			// editable TextBox whose first keystroke would corrupt it.
 			var field = new LexicalEditRegionField("LexEntry/x/#audio", "Pronunciation", "Pronunciation",
 				null, RegionFieldKind.Text, EditorClassification.Known, "AudioField", null,
 				SurfaceRouting.Inherit,
@@ -583,19 +579,18 @@ namespace FwAvaloniaTests
 					new RegionWsValue("aud", "casa.wav", wsTag: "qaa-Zxxx-x-audio", isAudio: true)
 				}, null, null, isEditable: true);
 			var context = new FakeRegionEditContext();
-			// No media seam supplied → read-only display.
 			var fieldControl = new FwMultiWsTextField(field, "AudioField", context, null);
 			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
 
-			Assert.That(fieldControl.GetVisualDescendants().OfType<TextBox>().Any(), Is.False,
-				"an audio alternative no longer renders an editable text box (no fake editor to corrupt the recording)");
+			var box = fieldControl.GetVisualDescendants().OfType<TextBox>().FirstOrDefault();
+			Assert.That(box, Is.Not.Null, "the audio filename renders in a text box, kept visible/diagnosable");
+			Assert.That(box.IsReadOnly, Is.True,
+				"an audio alternative is read-only text (no fake editor to corrupt the recording)");
+			Assert.That(box.Text, Is.EqualTo("casa.wav"), "the recording filename stays visible");
 			Assert.That(fieldControl.GetVisualDescendants().OfType<Button>().Any(), Is.False,
-				"with no media seam there are no play/record affordances (read-only display)");
-			var label = fieldControl.GetVisualDescendants().OfType<TextBlock>()
-				.FirstOrDefault(t => t.Text == "casa.wav");
-			Assert.That(label, Is.Not.Null, "the recording filename stays visible/diagnosable");
+				"the media seam was removed, so there are no play/record affordances");
 			Assert.That(context.TextEdits, Is.Empty, "a read-only audio row never stages a text edit");
 		}
 

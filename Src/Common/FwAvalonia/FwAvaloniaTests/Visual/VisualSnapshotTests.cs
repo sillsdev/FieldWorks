@@ -100,32 +100,12 @@ namespace FwAvaloniaTests.VisualChecks
 		[AvaloniaTest]
 		public void RegionEditView_RealisticMultiField_Editable_RendersCleanly()
 		{
-			// The same realistic field spread, now editable (an edit context makes the text/chooser/date/enum
-			// editors live). The dense flat look must survive: live editors, no per-field box, aligned columns.
+			// The same realistic field spread, now editable (an edit context makes the text/chooser editors
+			// live; dropped editors render Unsupported). The dense flat look must survive: live editors, no
+			// per-field box, aligned columns.
 			var view = new LexicalEditRegionView(RealisticRegionModel(), new FakeRegionEditContext());
 
 			DialogSnapshot.Capture(view, "Region-04-editable-multi", width: 520, height: 420);
-			DialogLayoutAssert.AssertNoCrowding(view);
-		}
-
-		[AvaloniaTest]
-		public void RegionEditView_DateAndEnum_RendersCleanly()
-		{
-			// A focused stage on the type-specific editors: an exact date, a generic (vague) date, and an
-			// enum/option chooser, editable — confirming the date entries and the option row render with
-			// WinForms density and no clipping at their own (narrower) widths.
-			var fields = new List<LexicalEditRegionField>
-			{
-				DateField("d/#date", "Date Created", "DateCreated", "3 Jun 2026", RegionDateKind.Date),
-				DateField("d/#gendate", "Date Of Birth", "DateOfBirth", "early 1900s", RegionDateKind.GenDate),
-				ChooserField("d/#enum", "Status", "Status", "s2",
-					new[] { ("s1", "Confirmed"), ("s2", "Pending"), ("s3", "Disproven") })
-			};
-			var view = new LexicalEditRegionView(
-				new LexicalEditRegionModel("LexEntry", "detail", fields, new List<ViewDiagnostic>()),
-				new FakeRegionEditContext());
-
-			DialogSnapshot.Capture(view, "Region-05-date-and-enum", width: 520, height: 220);
 			DialogLayoutAssert.AssertNoCrowding(view);
 		}
 
@@ -172,7 +152,7 @@ namespace FwAvaloniaTests.VisualChecks
 		}
 
 		// ----- realistic region fixture builders (fields built directly so kinds beyond Text/Chooser —
-		// Date, Boolean, ReferenceVector — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
+		// ReferenceVector, Unsupported — are exercised; the mapper only classifies Text/Chooser/Unsupported) -----
 
 		// A realistic lexeme-entry detail: 10 fields of varied kinds, mirroring what the lexical edit pane shows.
 		private static LexicalEditRegionModel RealisticRegionModel()
@@ -191,15 +171,14 @@ namespace FwAvaloniaTests.VisualChecks
 				// Part-of-speech chooser (atomic reference).
 				ChooserField("d/#3", "Grammatical Info.", "MorphoSyntaxAnalysis", "g2",
 					new[] { ("g1", "Verb"), ("g2", "Noun"), ("g3", "Adjective") }),
-				// Exact date.
-				DateField("d/#4", "Date Created", "DateCreated", "3 Jun 2026", RegionDateKind.Date),
-				// Generic (vague) date.
-				DateField("d/#5", "Date Of Birth", "DateOfBirth", "early 1900s", RegionDateKind.GenDate),
+				// Dropped editors (date/gendate) now render the labeled Unsupported worklist row.
+				UnsupportedField("d/#4", "Date Created", "DateCreated"),
+				UnsupportedField("d/#5", "Date Of Birth", "DateOfBirth"),
 				// Enum/option chooser.
 				ChooserField("d/#6", "Status", "Status", "s2",
 					new[] { ("s1", "Confirmed"), ("s2", "Pending"), ("s3", "Disproven") }),
-				// Boolean checkbox.
-				BooleanField("d/#7", "Exclude As Headword", "ExcludeAsHeadword", false),
+				// Dropped editor (boolean checkbox) now renders the labeled Unsupported worklist row.
+				UnsupportedField("d/#7", "Exclude As Headword", "ExcludeAsHeadword"),
 				// Reference vector (current items + add slot).
 				ReferenceVectorField("d/#8", "Publish In", "PublishIn",
 					new[] { ("p1", "Main Dictionary") },
@@ -231,17 +210,10 @@ namespace FwAvaloniaTests.VisualChecks
 				EditorClassification.Known, field + "Chooser", null, SurfaceRouting.Product, null, opts, selectedKey);
 		}
 
-		private static LexicalEditRegionField DateField(string stableId, string label, string field,
-			string value, RegionDateKind dateKind)
-			=> new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Date,
-				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product,
-				new List<RegionWsValue> { new RegionWsValue("en", value, wsTag: "en") }, null, null,
-				dateKind: dateKind);
-
-		private static LexicalEditRegionField BooleanField(string stableId, string label, string field, bool value)
-			=> new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Boolean,
-				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product, null, null,
-				value ? "true" : "false");
+		private static LexicalEditRegionField UnsupportedField(string stableId, string label, string field)
+			=> new LexicalEditRegionField(stableId, label, field, null, RegionFieldKind.Unsupported,
+				EditorClassification.Known, field + "Editor", null, SurfaceRouting.Product, null, null, null,
+				isEditable: false);
 
 		private static LexicalEditRegionField ReferenceVectorField(string stableId, string label, string field,
 			(string key, string name)[] items, (string key, string name)[] options)

@@ -61,7 +61,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<RegionMenuRequest> menuRequested = null,
 			IFwClipboard clipboard = null,
 			bool showWritingSystemAbbreviation = true,
-			IRegionMediaServices mediaServices = null,
 			Action save = null)
 		{
 			Spacing = FwAvaloniaDensity.RowSpacing;
@@ -70,17 +69,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 			foreach (var value in field.Values)
 			{
-				// §19d: a voice/audio (IsVoice) alternative renders the owned play/record/clear panel
-				// instead of a text editor — the recording is no longer a blanket read-only placeholder.
-				// The value's text is the audio FILENAME; play/record/clear route through the media seam +
-				// edit context (write/clear the filename through the SAME text setter every WS row uses).
-				if (value.IsAudio)
-				{
-					var audioRow = BuildAudioRow(field, automationId, value, editContext, mediaServices, save);
-					Children.Add(audioRow);
-					continue;
-				}
-
 				var currentRich = value.RichText;
 				// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
 				// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
@@ -106,7 +94,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// a TsString property the RegionTextRun model does not round-trip (e.g. fore/back colour,
 				// offset, superscript). The original TsString is preserved losslessly (RichXml), so the
 				// field round-trips and remains fully editable in the classic view.
-				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText;
+				// A voice/audio writing-system alternative renders as READ-ONLY text (the audio filename);
+				// there is no in-pane player. Full audio editing stays in the classic view.
+				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText
+					|| value.IsAudio;
 				var box = new TextBox
 				{
 					Text = value.Value,
@@ -905,98 +896,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// </summary>
 		public int AttachedHandlerCount => _teardown.Count;
 
-		// §19d: the owned play/record/clear panel for a voice (IsVoice) writing-system alternative. The
-		// value's text is the audio FILENAME (empty = no recording). Play is offered when a filename is
-		// present (the media seam resolves it to the project media folder and plays it); Record captures a
-		// new file (Windows; disabled with a tooltip where unavailable) and writes the returned filename
-		// through the text setter; Clear empties the value. Read-only display (no buttons) when no edit
-		// context or no media seam is supplied (the browse-cell / preview path). LCModel-free throughout.
-		private Control BuildAudioRow(LexicalEditRegionField field, string automationId, RegionWsValue value,
-			IRegionEditContext editContext, IRegionMediaServices mediaServices, Action save)
-		{
-			var wsKey = string.IsNullOrEmpty(value.WsTag) ? value.WsAbbrev : value.WsTag;
-			var row = new StackPanel
-			{
-				Orientation = Orientation.Horizontal,
-				Spacing = FwAvaloniaDensity.RowSpacing,
-				VerticalAlignment = VerticalAlignment.Center
-			};
-			AutomationProperties.SetAutomationId(row, automationId + "." + wsKey);
-			AutomationProperties.SetName(row, (field.Label ?? automationId) + " " + value.WsAbbrev);
-
-			var abbrev = new TextBlock
-			{
-				Text = value.WsAbbrev,
-				MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
-				VerticalAlignment = VerticalAlignment.Center,
-				Margin = new Thickness(0, 1, 4, 0),
-				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-				Foreground = FwAvaloniaDensity.WsAbbrevBrush
-			};
-			row.Children.Add(abbrev);
-
-			var hasRecording = !string.IsNullOrEmpty(value.Value);
-			var label = new TextBlock
-			{
-				Text = hasRecording ? value.Value : FwAvaloniaStrings.AudioNoRecording,
-				Foreground = hasRecording ? Brushes.Black : Brushes.Gray,
-				VerticalAlignment = VerticalAlignment.Center
-			};
-			AutomationProperties.SetAutomationId(label, automationId + "." + wsKey + ".file");
-			row.Children.Add(label);
-
-			var editable = editContext != null && field.IsEditable && mediaServices != null;
-			if (!editable)
-			{
-				// Read-only display: keep the audio recording visible/diagnosable (the prior placeholder
-				// case), but no longer behind a fake editable text box.
-				ToolTip.SetTip(label, FwAvaloniaStrings.AudioRecordingReadOnly);
-				return row;
-			}
-
-			if (hasRecording)
-			{
-				var play = MakeAudioButton(FwAvaloniaStrings.AudioPlay, automationId + "." + wsKey + ".play");
-				play.Click += (s, e) => mediaServices.PlayAudio(value.Value);
-				row.Children.Add(play);
-			}
-
-			var record = MakeAudioButton(FwAvaloniaStrings.AudioRecord, automationId + "." + wsKey + ".record");
-			record.IsEnabled = mediaServices.CanRecordAudio;
-			if (!mediaServices.CanRecordAudio)
-				ToolTip.SetTip(record, FwAvaloniaStrings.AudioRecordUnavailable);
-			record.Click += (s, e) =>
-			{
-				var fileName = mediaServices.RecordAudio();
-				if (string.IsNullOrEmpty(fileName))
-					return;
-				if (editContext.TrySetText(field, wsKey, fileName))
-					save?.Invoke();
-			};
-			row.Children.Add(record);
-
-			if (hasRecording)
-			{
-				var clear = MakeAudioButton(FwAvaloniaStrings.AudioClear, automationId + "." + wsKey + ".clear");
-				clear.Click += (s, e) =>
-				{
-					if (editContext.TrySetText(field, wsKey, string.Empty))
-						save?.Invoke();
-				};
-				row.Children.Add(clear);
-			}
-
-			return row;
-		}
-
-		private static Button MakeAudioButton(string text, string automationId)
-		{
-			var button = new Button { Content = text, MinHeight = 0, Padding = FwAvaloniaDensity.EditorPadding };
-			AutomationProperties.SetAutomationId(button, automationId);
-			AutomationProperties.SetName(button, text);
-			return button;
-		}
-
 		/// <summary>
 		/// Detaches every wired handler (the navigation/clipboard KeyDown, pointer, TextChanged, ghost
 		/// focus, context-menu, and WS-keyboard handlers) and drops the flyouts that retain closures over
@@ -1418,14 +1317,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
-	/// FieldWorks-owned dialog-launcher row (winforms-free-lexeme-editor.md D4): the legacy
-	/// <c>*DlgLauncherSlice</c> pattern — the field's current value as read-only text plus the
-	/// trailing launcher button, now the SAME hover-revealed settings gear the chooser and
-	/// reference vector draw (it replaced the always-visible legacy "..."). The button invokes a
-	/// host-injected callback (the ILegacyDialogLauncher seam on the xWorks side; this layer stays
-	/// LCModel-free, so the callback is a plain delegate). Without a callback the gear renders
-	/// DISABLED with an explanatory tooltip — the value still shows, the affordance is visibly
-	/// unavailable once hover reveals it.
+	/// FieldWorks-owned launcher-style row: the field's current value as read-only text plus a
+	/// trailing launcher button, drawn as the SAME hover-revealed settings gear the chooser and
+	/// reference vector draw. The button invokes a host-injected callback (a plain delegate; this
+	/// layer stays LCModel-free). Without a callback the gear renders DISABLED with an explanatory
+	/// tooltip — the value still shows, the affordance is visibly unavailable once hover reveals it.
 	/// </summary>
 	public sealed class FwDialogLauncherField : DockPanel, IHoverAffordanceProvider
 	{

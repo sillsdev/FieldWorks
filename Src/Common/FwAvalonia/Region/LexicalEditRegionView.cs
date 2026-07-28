@@ -45,7 +45,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private readonly Action<RegionMenuRequest> _menuRequested;
 		private readonly Action<RegionLinkRequest> _linkRequested;
 		private readonly IFwClipboard _clipboard;
-		private readonly IRegionMediaServices _mediaServices;
 
 		/// <summary>
 		/// Optional expansion-state hooks (11.8): <paramref name="getExpansionState"/> supplies the
@@ -64,8 +63,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Action<RegionLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null,
-			IRegionMediaServices mediaServices = null)
+			Action<double> labelColumnWidthChanged = null)
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model));
 			_editContext = editContext;
@@ -75,7 +73,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			_menuRequested = menuRequested;
 			_linkRequested = linkRequested;
 			_clipboard = clipboard;
-			_mediaServices = mediaServices;
 			_labelColumnWidthChanged = labelColumnWidthChanged;
 			var labelColumnWidth = getLabelColumnWidth?.Invoke() ?? FwAvaloniaDensity.LabelColumnWidth;
 
@@ -590,7 +587,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				linkRequested: _linkRequested,
 				clipboard: _clipboard,
 				save: _editContext == null ? (Action)null : OnSave,
-				showWritingSystemAbbreviation: true,
-				mediaServices: _mediaServices));
+				showWritingSystemAbbreviation: true));
 	}
 }

@@ -158,7 +158,7 @@ descriptor (`Src/Common/FwAvalonia/Region/RegionViewingServices.cs`).
 | Hit testing | `IVwRootBox.MakeSelAt` | Avalonia `TextBox` hit test, cluster-normalized by `RegionTextGraphemeClusters` | `RegionEditingTests`; `TreeSpikeAndRtlTests` |
 | Scrolling | `SimpleRootSite` auto-scroll | Avalonia `ScrollViewer` wrapper in `LexicalEditRegionView` (task 11.12) | viewing-parity suite (60-row overflow) |
 | Rendering | `IVwDrawRootBuffered` | Avalonia renderer (Skia); parity frame captured from it (task 6.9) | `VisualParityCaptureTests` |
-| Editor realization | `RootSiteControl` slices | Owned controls over the IR: `FwMultiWsTextField` / `FwChooserField` / `FwReferenceVectorField` / `FwDialogLauncherField` + `RegionRichTextEditAlgorithms` + `RegionImeCompositionState` | `RegionEditingTests`, `RegionModelTests`, foundation suites |
+| Editor realization | `RootSiteControl` slices | Owned controls over the IR: `FwMultiWsTextField` / `FwStructuredTextField` / `FwChooserField` / `FwReferenceVectorField` + `RegionRichTextEditAlgorithms` + `RegionImeCompositionState`; a native plugin editor via `IRegionEditorPlugin` (exemplar: `ReversalIndexEntryPlugin`). Every legacy editor without one of these routes composes a labeled Unsupported row (the conversion worklist). | `RegionEditingTests`, `RegionModelTests`, `LexemeEditorBurnDownTests`, foundation suites |
 
 **Deferred (named, not silent)** — recorded in `RegionViewingServices.Deferred` and asserted by the
 test:

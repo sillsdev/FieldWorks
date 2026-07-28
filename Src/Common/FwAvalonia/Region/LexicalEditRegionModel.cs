@@ -31,24 +31,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>A section/group header row (full-layout composition; not an editor).</summary>
 		Header,
 
-		/// <summary>A boolean field rendered as a checkbox.</summary>
-		Boolean,
-
-		/// <summary>A picture/image row: the value is the image file path, the label its caption.</summary>
-		Image,
-
-		/// <summary>A command row rendered as a button (execution rides command routing, shell phase).</summary>
-		Command,
-
-		/// <summary>
-		/// An editable date / generic-date row (legacy <c>DateSlice</c>/<c>GenDateSlice</c>): a text
-		/// entry whose committed string is parsed and staged through
-		/// <see cref="IRegionEditContext.TrySetOption"/>. <see cref="LexicalEditRegionField.DateKind"/>
-		/// selects exact-date vs generic-date (precision/approximation/era) parsing; both reject
-		/// unparseable input rather than corrupt the stored value.
-		/// </summary>
-		Date,
-
 		/// <summary>
 		/// An editable reference vector (6.3/B8): current items plus the possibility list's options
 		/// (hierarchy on <see cref="RegionChoiceOption.Depth"/>), edited through
@@ -79,46 +61,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		StructuredText,
 
 		/// <summary>
-		/// §19e: a closed enum combo (legacy <c>EnumComboSlice</c>) — a drop-down over the layout's
-		/// <c>stringList</c> labels carried as the field's <see cref="LexicalEditRegionField.Options"/>
-		/// (key = the 0-based option index that IS the stored enum integer). The owned closed
-		/// <c>ComboBox</c> commits the selected option's key through
-		/// <see cref="IRegionEditContext.TrySetOption"/>; it is non-editable by construction, so an
-		/// out-of-range / free-form enum value can never be typed in (the regression a free-form int
-		/// editor would allow). With no edit context the combo renders disabled (read-only display).
-		/// </summary>
-		EnumCombo,
-
-		/// <summary>
-		/// §19e: an integer field (legacy <c>IntegerSlice</c>) — a single-line numeric entry whose
-		/// committed text is staged through <see cref="IRegionEditContext.TrySetText"/> (the composer's
-		/// int-parsing setter). The owned editor rejects non-numeric keystrokes as you type and, like the
-		/// legacy slice, restores the last committed value when a commit is rejected (e.g. empty or
-		/// overflow), so a non-numeric/empty value can never reach the int property.
-		/// </summary>
-		Integer,
-
-		/// <summary>
 		/// §19e: a literal / "lit" slice (legacy <c>MessageSlice</c>) — static label text rendered
 		/// read-only in the value column (the label/message text IS the content). Carries no editable
 		/// value and no setter.
 		/// </summary>
 		Literal
-	}
-
-	/// <summary>
-	/// The date flavor of a <see cref="RegionFieldKind.Date"/> row: an exact calendar date (legacy
-	/// <c>DateSlice</c>, a <c>Time</c> LCModel property) or a generic/vague date (legacy
-	/// <c>GenDateSlice</c>, a <c>GenDate</c> LCModel property) that can be partial and carry a
-	/// precision/approximation/era qualifier.
-	/// </summary>
-	public enum RegionDateKind
-	{
-		/// <summary>An exact calendar date/time (LCModel <c>Time</c> property).</summary>
-		Date,
-
-		/// <summary>A generic (vague) date (LCModel <c>GenDate</c> property).</summary>
-		GenDate
 	}
 
 	/// <summary>
@@ -1408,6 +1355,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	}
 
 	/// <summary>
+	/// The result of the picture-properties dialog (LCModel-free): the edited metadata plus the chosen
+	/// image file. Consumed by the FwAvaloniaDialogs picture-properties dialog view-model.
+	/// </summary>
+	public sealed class RegionPictureDialogResult
+	{
+		public RegionPictureDialogResult(RegionPictureMetadata metadata, string sourceFile)
+		{
+			Metadata = metadata ?? new RegionPictureMetadata();
+			SourceFile = sourceFile;
+		}
+
+		/// <summary>The edited caption/description/license/creator.</summary>
+		public RegionPictureMetadata Metadata { get; }
+
+		/// <summary>
+		/// The chosen image file (absolute path) — non-null for a new picture or when the user replaced the
+		/// file of an existing one; null when only metadata changed on an existing picture.
+		/// </summary>
+		public string SourceFile { get; }
+	}
+
+	/// <summary>
 	/// §19a: one paragraph of an editable multi-paragraph structured-text (StText) field, projected
 	/// LCModel-free. The paragraph's text is the SAME run-aware <see cref="RegionRichTextValue"/> the
 	/// rest of the text path edits (so the lossless RichXml round-trip and the
@@ -1584,11 +1553,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			Func<Control> controlFactory = null,
 			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions = null,
 			IReadOnlyList<RegionChooserLink> chooserLinks = null,
-			RegionDateKind dateKind = RegionDateKind.Date,
 			IReadOnlyList<RegionParagraph> paragraphs = null)
 		{
 			Paragraphs = paragraphs ?? Array.Empty<RegionParagraph>();
-			DateKind = dateKind;
 			ChooserLinks = chooserLinks ?? new List<RegionChooserLink>();
 			Items = items ?? new List<RegionChoiceOption>();
 			ControlFactory = controlFactory;
@@ -1634,12 +1601,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		public IReadOnlyList<RegionWsValue> Values { get; }
 		public IReadOnlyList<RegionChoiceOption> Options { get; }
 		public string SelectedOptionKey { get; }
-
-		/// <summary>
-		/// For a <see cref="RegionFieldKind.Date"/> row, whether it edits an exact date or a generic
-		/// (vague) date. Ignored for every other kind. Defaults to <see cref="RegionDateKind.Date"/>.
-		/// </summary>
-		public RegionDateKind DateKind { get; }
 
 		/// <summary>
 		/// The CURRENT items of a <see cref="RegionFieldKind.ReferenceVector"/> row, in vector order
@@ -1745,20 +1706,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// the per-paragraph style picker affordance is then suppressed. A test can supply its own list.
 		/// </summary>
 		public IReadOnlyList<string> AvailableParagraphStyles { get; set; } = Array.Empty<string>();
-
-		/// <summary>
-		/// §19d: for a <see cref="RegionFieldKind.Image"/> row, the HVO of the <c>ICmPicture</c> the row
-		/// represents (0 for the empty "insert a picture" ghost row). The edit-context seam keys the
-		/// replace/delete/metadata gestures on this so they target the right picture. Set by the composer.
-		/// </summary>
-		public int PictureHvo { get; set; }
-
-		/// <summary>
-		/// §19d: for a <see cref="RegionFieldKind.Image"/> row, the current editable metadata of the
-		/// picture (caption/description/license/creator) the properties dialog seeds from. Null on a
-		/// non-picture row or the empty ghost row. Set by the composer.
-		/// </summary>
-		public RegionPictureMetadata PictureMetadata { get; set; }
 
 		/// <summary>
 		/// For a <see cref="RegionFieldKind.Custom"/> row (winforms-free-lexeme-editor.md D1): the

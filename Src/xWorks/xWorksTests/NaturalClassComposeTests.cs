@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void Compose_PhNCFeatures_ComposesViaFeatureLauncher()
+		public void Compose_PhNCFeatures_FeatureSliceComposesAsUnsupportedWorklistRow()
 		{
 			IPhNCFeatures nc = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -70,10 +70,14 @@ namespace SIL.FieldWorks.XWorks
 			var composed = FullEntryRegionComposer.Compose(nc, Cache, layoutName: "Edit",
 				plugins: RegionEditorPluginRegistry.Default);
 
+			// The phonological-feature dialog-launcher was removed when the region was trimmed. Its custom
+			// slice is now unclaimed, so the Features field composes as a labeled Unsupported worklist row
+			// (never a Custom/plugin row) until a native feature-structure editor plugin graduates it.
 			Assert.That(composed.Model.Fields, Is.Not.Empty, "the feature-based natural class composes");
-			var custom = composed.Model.Fields.FirstOrDefault(f => f.Kind == RegionFieldKind.Custom);
-			Assert.That(custom, Is.Not.Null, "the Features field composes through the phonological-feature launcher plugin");
-			Assert.That(custom.ControlFactory?.Invoke(), Is.Not.Null, "the launcher builds a real control (no Unsupported)");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Custom), Is.False,
+				"nothing claims the phonological-feature slice, so there is no Custom/plugin row");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+				"the phonological-feature slice composes as the labeled Unsupported worklist row");
 		}
 	}
 }

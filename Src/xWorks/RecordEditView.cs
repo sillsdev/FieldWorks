@@ -388,7 +388,6 @@ namespace SIL.FieldWorks.XWorks
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
 					m_regionEditContext.Clear();
 					EnsureAvaloniaSurfaceActive();
-					TearDownCompanionSlices();
 					m_avaloniaEntryForm.Clear();
 				}
 				else
@@ -510,9 +509,6 @@ namespace SIL.FieldWorks.XWorks
 			SyncActiveHostContract();
 
 			AttachLegacySurfaceToPanel();
-			// The legacy DataTree builds its own MessageSlice/ChorusSystem; release the Avalonia
-			// surface's companions so two Chorus systems never sit on the project at once.
-			TearDownCompanionSlices();
 			m_avaloniaEntryForm?.Hide();
 			m_dataEntryForm.Show();
 			m_dataEntryForm.BringToFront();

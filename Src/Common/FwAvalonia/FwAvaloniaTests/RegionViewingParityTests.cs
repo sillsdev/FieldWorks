@@ -230,42 +230,6 @@ namespace FwAvaloniaTests
 		}
 
 		[AvaloniaTest]
-		public void ImageAndCommandFields_RenderTheirControls()
-		{
-			// A real PNG produced by the Skia-backed renderer itself.
-			var png = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "fw-parity-test.png");
-			using (var rtb = new Avalonia.Media.Imaging.RenderTargetBitmap(new Avalonia.PixelSize(8, 8)))
-				rtb.Save(png);
-			Assert.That(System.IO.File.Exists(png) && new System.IO.FileInfo(png).Length > 0, Is.True,
-				"fixture png was written");
-			using (var probe = new Avalonia.Media.Imaging.Bitmap(png))
-				Assert.That(probe.PixelSize.Width, Is.EqualTo(8), "fixture png is decodable");
-
-			var image = new LexicalEditRegionField("pic", "A picture", "Pictures", null, RegionFieldKind.Image,
-				EditorClassification.Known, "PictureRow", null, SurfaceRouting.Inherit,
-				new List<RegionWsValue> { new RegionWsValue("", png) }, null, null, isEditable: false);
-			// §19d: an existing picture (PictureHvo != 0) renders its image; with no media seam supplied by
-			// this viewing-parity Show() there are no edit affordances, so the row IS the Image directly.
-			image.PictureHvo = 99;
-			var command = new LexicalEditRegionField("cmd", "Insert Sound", "Cmd", null, RegionFieldKind.Command,
-				EditorClassification.Known, "CommandRow", null, SurfaceRouting.Inherit, null, null, null,
-				isEditable: false);
-			var view = Show(image, command);
-
-			var pictureControl = view.GetVisualDescendants()
-				.OfType<Control>()
-				.FirstOrDefault(c => AutomationProperties.GetAutomationId(c) == "PictureRow");
-			Assert.That(pictureControl, Is.Not.Null, "the picture row rendered something");
-			Assert.That(pictureControl, Is.InstanceOf<Image>(),
-				"11.6: picture fields render the actual image, not the fallback "
-				+ (pictureControl is TextBlock tb ? $"(fallback text: '{tb.Text}')" : pictureControl.GetType().Name));
-			var button = view.GetVisualDescendants().OfType<Button>()
-				.First(b => AutomationProperties.GetAutomationId(b) == "CommandRow");
-			Assert.That(button.Content, Is.EqualTo("Insert Sound"), "11.6: command slices render their button");
-			Assert.That(button.IsEnabled, Is.False, "execution waits for command routing (shell phase)");
-		}
-
-		[AvaloniaTest]
 		public void VisualFidelity_FlatEditors_SliceRules_AndLegacyTokens()
 		{
 			var view = Show(Text("f1", "Lexeme Form", 0), Text("f2", "Citation Form", 0));
@@ -289,30 +253,6 @@ namespace FwAvaloniaTests
 			var label = view.GetVisualDescendants().OfType<TextBlock>()
 				.First(t => AutomationProperties.GetAutomationId(t) == "f1.Label");
 			Assert.That(label.Foreground, Is.EqualTo(SIL.FieldWorks.Common.FwAvalonia.FwAvaloniaDensity.LabelBrush));
-		}
-
-		[AvaloniaTest]
-		public void BooleanField_RendersAsCheckbox_AndStagesToggles()
-		{
-			var boolField = new LexicalEditRegionField("b1", "Exclude as headword", "Exclude", null,
-				RegionFieldKind.Boolean, EditorClassification.Known, "ExcludeBox", null,
-				SurfaceRouting.Inherit, null, null, "false");
-			var model = new LexicalEditRegionModel("LexEntry", "Normal",
-				new List<LexicalEditRegionField> { boolField }, new List<ViewDiagnostic>());
-			var context = new FakeRegionEditContext();
-			var view = new LexicalEditRegionView(model, context);
-			var window = new Window { Content = view, Width = 400, Height = 120 };
-			window.Show();
-			Dispatcher.UIThread.RunJobs();
-
-			var box = view.GetVisualDescendants().OfType<CheckBox>()
-				.First(c => AutomationProperties.GetAutomationId(c) == "ExcludeBox");
-			Assert.That(box.IsChecked, Is.False);
-
-			box.IsChecked = true;
-			Dispatcher.UIThread.RunJobs();
-			Assert.That(context.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(context.OptionEdits[0], Is.EqualTo(("Exclude", "true")));
 		}
 
 		// Layout parity (row-height-edit-parity): a field renders at the SAME row height whether the view
