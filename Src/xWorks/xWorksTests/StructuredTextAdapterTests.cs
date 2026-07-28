@@ -73,9 +73,9 @@ namespace SIL.FieldWorks.XWorks
 			var defaultWs = Cache.DefaultAnalWs;
 			var wsf = Cache.WritingSystemFactory;
 
-			var textSetters = new System.Collections.Generic.Dictionary<string, System.Func<int, RegionRichTextValue, bool>>
+			var handler = new FieldEditHandler
 			{
-				[stableId] = (index, value) =>
+				ParagraphText = (index, value) =>
 				{
 					if (value == null || index < 0)
 						return false;
@@ -84,11 +84,8 @@ namespace SIL.FieldWorks.XWorks
 					((IStTxtPara)m_stText.ParagraphsOS[index]).Contents =
 						RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
 					return true;
-				}
-			};
-			var styleSetters = new System.Collections.Generic.Dictionary<string, System.Func<int, string, bool>>
-			{
-				[stableId] = (index, style) =>
+				},
+				ParagraphStyle = (index, style) =>
 				{
 					if (index < 0 || index >= m_stText.ParagraphsOS.Count)
 						return false;
@@ -96,20 +93,14 @@ namespace SIL.FieldWorks.XWorks
 						? SIL.LCModel.DomainServices.StyleServices.NormalStyleName
 						: style;
 					return true;
-				}
-			};
-			var insertSetters = new System.Collections.Generic.Dictionary<string, System.Func<int, bool>>
-			{
-				[stableId] = afterIndex =>
+				},
+				ParagraphInsert = afterIndex =>
 				{
 					var pos = afterIndex < 0 ? 0 : System.Math.Min(afterIndex + 1, m_stText.ParagraphsOS.Count);
 					m_stText.InsertNewTextPara(pos, null);
 					return true;
-				}
-			};
-			var deleteSetters = new System.Collections.Generic.Dictionary<string, System.Func<int, bool>>
-			{
-				[stableId] = index =>
+				},
+				ParagraphDelete = index =>
 				{
 					if (index < 0 || index >= m_stText.ParagraphsOS.Count || m_stText.ParagraphsOS.Count <= 1)
 						return false;
@@ -119,10 +110,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			var context = new ComposedRegionEditContext(Cache, m_entry,
-				new System.Collections.Generic.Dictionary<string, System.Func<string, string, bool>>(),
-				new System.Collections.Generic.Dictionary<string, System.Func<string, bool>>(),
-				paragraphTextSetters: textSetters, paragraphStyleSetters: styleSetters,
-				paragraphInsertSetters: insertSetters, paragraphDeleteSetters: deleteSetters);
+				new System.Collections.Generic.Dictionary<string, FieldEditHandler> { [stableId] = handler });
 			return (field, context);
 		}
 
