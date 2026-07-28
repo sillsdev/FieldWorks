@@ -5,11 +5,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
@@ -286,6 +288,26 @@ namespace FwAvaloniaDialogsTests
 
 			editor.RaiseCreateNewValue("f-tense");
 			Assert.That(requestedFor, Is.EqualTo("f-tense"), "the add-value request carries the closed-feature id");
+		}
+
+		[AvaloniaTest]
+		public void AddValueAffordance_IsAButton_ThatRaisesTheRequest()
+		{
+			var (editor, window) = Show();
+			string requestedFor = null;
+			editor.CreateNewValueRequested += id => requestedFor = id;
+
+			// The per-closed-feature "add a value" affordance is a real, focusable Button (exposing the Invoke
+			// automation pattern) rather than a bare glyph label. Find it on the top-level "Tense" closed feature
+			// by its stable automation id and invoke it — the same commit path a real click drives.
+			var addButton = editor.Tree.GetVisualDescendants().OfType<Button>()
+				.FirstOrDefault(b => AutomationProperties.GetAutomationId(b) == "InflFeatures.CreateValue");
+			Assert.That(addButton, Is.Not.Null, "the closed feature exposes its add-value affordance as a Button");
+
+			addButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			Pump(window);
+			Assert.That(requestedFor, Is.EqualTo("f-tense"),
+				"invoking the add-value button raises the create-value request for that closed feature");
 		}
 
 		[AvaloniaTest]
