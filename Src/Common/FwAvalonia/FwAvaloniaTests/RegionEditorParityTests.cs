@@ -19,127 +19,13 @@ namespace FwAvaloniaTests
 {
 	/// <summary>
 	/// Editor-type parity for the lexical detail view (WinForms → Avalonia):
-	/// an editable Date/GenDate row stages + commits a parseable value and rejects garbage;
-	/// the importer carries an enumComboBox's stringList ids/group onto the node so the row
-	/// can render a closed option chooser instead of a raw read-only int;
+	/// the importer carries an enumComboBox's stringList ids/group onto the node (the metadata
+	/// survives even though the region no longer renders a closed enum combo);
 	/// FwReferenceVectorField.Dispose detaches every handler it wired (count >0 → 0).
 	/// </summary>
 	[TestFixture]
 	public class RegionEditorParityTests
 	{
-		// ---- Editable Date / GenDate ----
-
-		private static LexicalEditRegionField DateField(IRegionEditContext editContext,
-			RegionDateKind dateKind, string display)
-			=> new LexicalEditRegionField(
-				stableId: "d1", label: "When", field: "When", writingSystem: null,
-				kind: RegionFieldKind.Date, editorClassification: EditorClassification.Known,
-				automationId: "When.Auto", localizationKey: null, routing: SurfaceRouting.Product,
-				values: new List<RegionWsValue> { new RegionWsValue("", display) },
-				options: null, selectedOptionKey: null, isEditable: true, dateKind: dateKind);
-
-		// §19e: the exact-date editor is now a text box + calendar picker row; the text box (the
-		// canonical parse-on-commit entry) is extracted from that row for these parity assertions.
-		private static TextBox BuildDate(FakeRegionEditContext ctx, RegionDateKind kind, string display,
-			System.Action save = null)
-		{
-			var control = RegionFieldControlFactory.Build(DateField(ctx, kind, display), "When.Auto",
-				new RegionFieldControlContext(editContext: ctx, save: save));
-			var window = new Window { Content = control, Width = 320, Height = 80 };
-			window.Show();
-			Dispatcher.UIThread.RunJobs();
-			return control as TextBox
-				?? control.GetVisualDescendants().OfType<TextBox>().First();
-		}
-
-		[AvaloniaTest]
-		public void DateEdit_StagesAndCommitsOnEnter()
-		{
-			var ctx = new FakeRegionEditContext();
-			var commits = 0;
-			var box = BuildDate(ctx, RegionDateKind.Date, "January 1, 2000", () => commits++);
-
-			box.Text = "March 5, 2010";
-			box.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
-			Dispatcher.UIThread.RunJobs();
-
-			// A date stages through the option seam (a single string the composer setter parses).
-			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(ctx.OptionEdits[0], Is.EqualTo(("When", "March 5, 2010")));
-			Assert.That(commits, Is.EqualTo(1), "a successful date stage triggers the autosave (Save) once");
-		}
-
-		[AvaloniaTest]
-		public void DateEdit_CommitsOnFocusLoss()
-		{
-			// §19e: an EXACT date keeps the parse-on-commit text box; focus loss stages the typed string.
-			// (The generic-date row is now the structured qualifier editor — covered by FwGenDateField tests.)
-			var ctx = new FakeRegionEditContext();
-			var box = BuildDate(ctx, RegionDateKind.Date, "January 1, 2000");
-
-			box.Text = "March 5, 2010";
-			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
-			Dispatcher.UIThread.RunJobs();
-
-			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo("March 5, 2010"));
-		}
-
-		[AvaloniaTest]
-		public void GenDate_StructuredEditor_StagesAComposedQualifierString()
-		{
-			// §19e: the generic-date row is the structured qualifier editor (year + precision + era), not a
-			// free-text box. Changing a qualifier stages the recomposed GenDate.TryParse-compatible string.
-			var ctx = new FakeRegionEditContext();
-			var control = RegionFieldControlFactory.Build(DateField(ctx, RegionDateKind.GenDate, "AD 2000"),
-				"When.Auto", new RegionFieldControlContext(editContext: ctx, save: () => { }));
-			Assert.That(control, Is.InstanceOf<FwGenDateField>());
-			((FwGenDateField)control).SetForTest(1850, GenDatePrecision.Approximate, true);
-
-			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo("About AD 1850"));
-		}
-
-		[AvaloniaTest]
-		public void DateEdit_EmptyBox_StagesEmpty_ToClearTheField()
-		{
-			var ctx = new FakeRegionEditContext();
-			var box = BuildDate(ctx, RegionDateKind.Date, "January 1, 2000");
-
-			box.Text = string.Empty;
-			box.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
-			Dispatcher.UIThread.RunJobs();
-
-			// Empty is a real edit (the composer setter clears the field) — it must stage, not be swallowed.
-			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1));
-			Assert.That(ctx.OptionEdits[0].Key, Is.EqualTo(string.Empty));
-		}
-
-		[AvaloniaTest]
-		public void DateEdit_RejectedStage_RestoresTheCommittedValue()
-		{
-			// The factory restores the last committed text when the setter rejects the input — so an
-			// invalid date never lingers in the box as if it were saved.
-			var ctx = new FakeRegionEditContext { OptionResult = false };
-			var box = BuildDate(ctx, RegionDateKind.Date, "January 1, 2000");
-
-			box.Text = "not a date";
-			box.RaiseEvent(new RoutedEventArgs(InputElement.LostFocusEvent));
-			Dispatcher.UIThread.RunJobs();
-
-			Assert.That(ctx.OptionEdits, Has.Count.EqualTo(1), "the rejected value was still offered to the setter");
-			Assert.That(box.Text, Is.EqualTo("January 1, 2000"),
-				"a rejected stage restores the committed value rather than leaving bad text shown as saved");
-		}
-
-		[AvaloniaTest]
-		public void DateField_NoEditContext_IsReadOnly()
-		{
-			var control = RegionFieldControlFactory.Build(DateField(null, RegionDateKind.Date, "2000"),
-				"When.Auto", new RegionFieldControlContext(editContext: null));
-			Assert.That(((TextBox)control).IsReadOnly, Is.True);
-		}
-
 		// ---- The importer carries the enumComboBox stringList ----
 
 		private static ViewDefinitionModel Import(string layoutXml, params (string id, string xml)[] parts)

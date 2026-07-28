@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.XWorks
 			// Post-fix: the full non-headed compound detail composes editably.
 			Assert.That(composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Text), Is.GreaterThanOrEqualTo(2),
 				"Name and Description compose as editable text rows (the <if Disabled> active branch now imports)");
-			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Boolean),
-				"the Active flag composes as an editable checkbox");
+			Assert.That(composed.Model.Fields.Any(f => f.Kind == RegionFieldKind.Unsupported),
+				"the Active boolean flag composes as a labeled Unsupported worklist row (checkbox editing dropped)");
 			Assert.That(composed.Model.Fields.Count(f => f.Kind == RegionFieldKind.Chooser), Is.GreaterThanOrEqualTo(3),
 				"the Left Member / Right Member / Result CATEGORY pickers compose as editable choosers");
 		}

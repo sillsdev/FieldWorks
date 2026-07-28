@@ -99,9 +99,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(reverseRow.MenuId, Is.EqualTo("mnuDataTree-DeleteReplaceLexReference"));
 			});
 
-			Assert.That(forward.CustomEditorFields.Select(f => f.ClassName),
-				Has.No.Member(LexReferenceMultiSliceClassName),
-				"the composed relation rows should absorb the legacy multi-slice rather than leaving a deferred custom-slice placeholder");
+			Assert.That(forwardRow.Kind, Is.EqualTo(RegionFieldKind.ReferenceVector),
+				"the composed relation rows absorb the legacy multi-slice as native ReferenceVector rows rather than leaving an Unsupported placeholder");
 		}
 
 		[Test]

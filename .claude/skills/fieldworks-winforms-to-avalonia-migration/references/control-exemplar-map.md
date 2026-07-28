@@ -30,7 +30,7 @@ migration burden.
 | TableLayoutPanel (33) / FlowLayoutPanel (20) / Panel (40) | `Grid` / `StackPanel` / `WrapPanel` — translate layout *semantics*, not widget-for-widget | any kit view; spacing rules in dialog-conversion.md §2a-bis |
 | ToolTip (12) | `ToolTip.Tip` attached property | kit views |
 | ContextMenuStrip built in code (22 files) | `MenuFlyout` populated from data | `Src/Common/FwAvalonia/Region/RegionMenuFlyout.cs` |
-| PictureBox (21) | `Image` + edit affordances | `RegionFieldControlFactory.BuildImage` (`Src/Common/FwAvalonia/Region/RegionFieldControlFactory.cs`) |
+| PictureBox (21) | — (picture editing dropped from the region; a picture slice composes a labeled Unsupported worklist row until a native picture editor is added) | **conversion worklist** (see architecture-patterns.md §5) |
 | ProgressBar / ProgressDialogWithTask | — | **GAP §3.1** |
 | WizardDialog family | — | **GAP §3.2** |
 | DataGridView (3) / BrowseViewer (28 files) / RecordBrowseView (19 files) | — | **DEFERRED §3.6** |
@@ -43,7 +43,7 @@ migration burden.
 | SimpleListChooser (26) / ReallySimpleListChooser (22) | ChooserDialog kit (input/result DTOs, single- and multi-select) | `Src/Common/FwAvaloniaDialogs/ChooserDialog*` |
 | BaseGoDlg/EntryGoDlg family (Go, Merge, Link*, AddAllomorph); its embedded MatchingObjectsBrowser | EntryGo kit + per-consumer launcher; persistent multi-column matching list (column spec `EntryGoResultColumn`, arrow-key selection from the search box) | `Src/Common/FwAvaloniaDialogs/EntryGoDialog*`; matching list + dependent auxiliary picker: dialog-conversion.md §2c; WS-aware search box: §2d |
 | MessageBox / one-off confirmation Forms | `FwMessageBox` (owner-parented, Yes/No/OK/Cancel) | `Src/Common/FwAvaloniaDialogs/FwMessageBox.cs`; injectable-seam usage: `LcmAddAllomorphDialogLauncher.PerformAddAllomorph` |
-| DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls; plugin registry for custom slice classes | `Src/xWorks/FullEntryRegionComposer.cs`, `Src/Common/FwAvalonia/Region/LexicalEditRegionView.cs`, `Src/xWorks/RegionEditorPlugins.cs` (architecture-patterns.md §2, §5) |
+| DataTree + Slice subclasses (88/61) | region surface: composer → region model → owned field controls (Text / StructuredText / Chooser / ReferenceVector / Literal). Custom slices resolve plugin registry → labeled Unsupported row (the conversion worklist); the sole native plugin exemplar is `ReversalIndexEntryPlugin`. | `Src/xWorks/FullEntryRegionComposer.cs`, `Src/Common/FwAvalonia/Region/LexicalEditRegionView.cs`, `Src/xWorks/RegionEditorPlugins.cs`, `Src/xWorks/ReversalIndexEntryPlugin.cs` (architecture-patterns.md §2, §5) |
 | FwHelpButton (5) + per-dialog Help | VM `HelpRequested` event → launcher calls `ShowHelp.ShowHelpTopic` | `EntryGoDialogViewModel.cs` + any `Lcm*Launcher` `OnHelpRequested` |
 | TriStateTreeView (6) | — | **GAP §3.4** |
 | SimpleRootSite / RootSiteControl embedded views (72/26) | — | **DEFERRED §3.7** |

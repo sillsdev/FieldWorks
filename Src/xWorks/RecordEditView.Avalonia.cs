@@ -47,11 +47,6 @@ namespace SIL.FieldWorks.XWorks
 		// open undo task is never orphaned (an orphan makes the shutdown Save throw "Commit at wrong place").
 		private readonly RegionEditContextHolder m_regionEditContext = new RegionEditContextHolder();
 		private AvaloniaRegionRefreshController m_avaloniaRefreshController;
-		// winforms-free-lexeme-editor.md D4: the host services handed to region editor plugins —
-		// today only the legacy-dialog launcher seam (this view is the sanctioned WinForms
-		// carve-out; the pane itself stays WinForms-free).
-		private RegionEditorServices m_regionEditorServices;
-		private SIL.FieldWorks.Common.FwAvalonia.Region.IRegionMediaServices m_regionMediaServices;
 		// advanced-entry-view: the per-project home of the sparse view-definition override patches that
 		// drive the Avalonia surface's per-field Field Visibility / Move Field commands. Lazily built from
 		// the project ConfigurationSettings folder; the Avalonia surface reads it at Compose and the gear
@@ -69,12 +64,6 @@ namespace SIL.FieldWorks.XWorks
 		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips — a
 		// contract constructed at the assert site from the very id it then asserts could never fail.
 		private ActiveHostContract m_activeHostContract;
-		// Hybrid companion strip: the real WinForms slices (today the Chorus Messages notes bar)
-		// promoted out of the Avalonia model into the host's companion strip, plus their editor
-		// controls (reparented into the strip, so the slice's Dispose no longer reaches them).
-		// Recreated per shown record; torn down on record change/clear/dispose.
-		private readonly List<Slice> m_companionSlices = new List<Slice>();
-		private readonly List<Control> m_companionControls = new List<Control>();
 
 		// Viewing parity (11.8): expansion state persists per header stable id — in-session through the
 		// dictionary, across sessions through PropertyTable local settings, the legacy ExpansionStateKey
@@ -148,11 +137,6 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaRefreshController?.Dispose();
 			SettleRegionEdits();
 			m_regionEditContext.Clear();
-			TearDownCompanionSlices();
-			// The launcher may hold the last media player alive (legacy parity); release it with
-			// the surface that handed it to plugins.
-			(m_regionEditorServices?.LegacyDialogLauncher as IDisposable)?.Dispose();
-			m_regionEditorServices = null;
 			m_avaloniaEntryForm?.Dispose();
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaSurfaceInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
@@ -323,7 +307,6 @@ namespace SIL.FieldWorks.XWorks
 			if (obj == null)
 			{
 				m_regionEditContext.Clear();
-				TearDownCompanionSlices();
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
@@ -347,13 +330,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				composed = lexEntry != null
 					? FullEntryRegionComposer.Compose(lexEntry, Cache, showHidden,
-						services: EnsureRegionEditorServices(), overrides: ResolveViewOverride)
+						overrides: ResolveViewOverride)
 					// §20.1.3/§20.1.4: non-entry roots compose against the tool's configured layout
 					// (m_layoutName, default "Normal"); a type-selected layout (m_layoutChoiceField, e.g.
 					// Notebook RnGenericRec keyed on "Type") resolves to the right variant inside Compose.
 					: FullEntryRegionComposer.Compose(obj, Cache,
 						string.IsNullOrEmpty(m_layoutName) ? "Normal" : m_layoutName, showHidden,
-						services: EnsureRegionEditorServices(), overrides: ResolveViewOverride,
+						overrides: ResolveViewOverride,
 						layoutChoiceField: m_layoutChoiceField);
 				if (composed != null)
 				{
@@ -375,19 +358,12 @@ namespace SIL.FieldWorks.XWorks
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
 					// rather than crash. (This path is only reachable once a non-lexicon tool registers.)
 					m_regionEditContext.Clear();
-					TearDownCompanionSlices();
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
 				region = LexicalEditRegionBuilder.Build(lexEntry, Cache);
 				editContext = new LexicalEditRegionEditContext(lexEntry, Cache);
 			}
-
-			// Hybrid companion strip: WinForms-only custom slices (the Chorus Messages notes bar)
-			// are realized for real in the host's companion strip and their placeholder rows are
-			// removed from the Avalonia model. Always runs (also clears the strip on fallback or
-			// when the layout no longer reaches a companion slice).
-			region = PromoteCompanionSlices(composed, region);
 
 			// Re-showing mid-edit (record navigation, refresh delivery, Show Hidden Fields, window
 			// activation) must cancel the displaced context's open fenced session — orphaning the
@@ -406,122 +382,9 @@ namespace SIL.FieldWorks.XWorks
 				GetPersistedExpansionState, PersistExpansionState,
 				OnRegionMenuRequested, OnRegionLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
-				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
-				EnsureRegionMediaServices());
+				GetPersistedLabelColumnWidth, PersistLabelColumnWidth);
 		}
 
-		/// <summary>
-		/// winforms-free-lexeme-editor.md D4: the services region editor plugins may use beyond
-		/// (object, node, edit context, cache) — the legacy-dialog launcher seam, implemented here
-		/// because this host is the only place allowed to touch WinForms during coexistence. Any
-		/// open fenced edit session settles before a dialog launches (a legacy dialog opens its own
-		/// UOW; doing that under the fence's open write lock would throw, the undo-guard hazard).
-		/// The dialog commits through its own UOW, so the refresh controller's PropChanged
-		/// subscription re-renders the region after the dialog closes — no explicit refresh here.
-		/// </summary>
-		// §19d: the host media seam (picture file pick + properties dialog + audio play/record). Created
-		// lazily and reused; the file picker resolves the Avalonia IStorageProvider off the live hosted
-		// surface, the dialog is owned by this host's WinForms Form, and audio rides libpalaso's device.
-		private SIL.FieldWorks.Common.FwAvalonia.Region.IRegionMediaServices EnsureRegionMediaServices()
-		{
-			if (m_regionMediaServices == null)
-			{
-				m_regionMediaServices = new LcmRegionMediaServices(Cache,
-					() => FindForm(),
-					() => m_avaloniaEntryForm?.HostedContent);
-			}
-			return m_regionMediaServices;
-		}
-
-		private RegionEditorServices EnsureRegionEditorServices()
-		{
-			if (m_regionEditorServices == null)
-			{
-				m_regionEditorServices = new RegionEditorServices
-				{
-					LegacyDialogLauncher = new WinFormsLegacyDialogLauncher(Cache, m_mediator,
-						m_propertyTable, FindForm, SettleRegionEdits)
-				};
-			}
-			return m_regionEditorServices;
-		}
-
-		/// <summary>
-		/// Hybrid companion strip: tears down the previous companions, instantiates the real legacy
-		/// slice for each designated WinForms-only custom editor the composer found (today the
-		/// Chorus Messages notes bar — its NotesBarView cannot render inside Avalonia), hands the
-		/// slices' editor controls to the host's companion strip, and returns the region model with
-		/// the promoted placeholder rows removed. When the slice cannot be created (Chorus
-		/// unavailable) the row degrades to nothing — logged by AvaloniaCompanionSlices.
-		/// </summary>
-		private LexicalEditRegionModel PromoteCompanionSlices(ComposedEntryRegion composed,
-			LexicalEditRegionModel region)
-		{
-			TearDownCompanionSlices();
-
-			var promotions = AvaloniaCompanionSlices.SelectPromotions(composed?.CustomEditorFields);
-			if (promotions.Count == 0)
-				return region;
-
-			var companionControls = new List<Control>();
-			var promotedIds = new List<string>();
-			foreach (var binding in promotions)
-			{
-				// The unsupported row never renders for a designated companion slice, whether or
-				// not the real slice could be created.
-				promotedIds.Add(binding.FieldStableId);
-
-				var slice = AvaloniaCompanionSlices.CreateCompanionSlice(binding, Cache);
-				if (slice == null)
-					continue;
-				var control = slice.Control;
-				if (control == null)
-				{
-					slice.Dispose();
-					continue;
-				}
-
-				// Track both: the strip reparents the control out of the slice, so the slice's
-				// Dispose no longer disposes it — TearDownCompanionSlices owns both lifetimes.
-				m_companionSlices.Add(slice);
-				m_companionControls.Add(control);
-				companionControls.Add(control);
-			}
-
-			if (companionControls.Count > 0)
-				m_avaloniaEntryForm.SetCompanionControls(companionControls);
-			return AvaloniaCompanionSlices.RemovePromotedFields(region, promotedIds);
-		}
-
-		/// <summary>
-		/// Disposes the companion slices created for the previously shown record and empties the
-		/// host's companion strip. The strip never disposes anything itself; this view created the
-		/// slices, so it disposes them (the editor control first — it was reparented into the strip
-		/// and is no longer reachable from the slice — then the slice, which releases its backing
-		/// services, e.g. MessageSlice's ChorusSystem).
-		/// </summary>
-		private void TearDownCompanionSlices()
-		{
-			if (m_companionSlices.Count == 0 && m_companionControls.Count == 0)
-				return;
-
-			if (m_avaloniaEntryForm != null && !m_avaloniaEntryForm.IsDisposed)
-				m_avaloniaEntryForm.SetCompanionControls(null);
-
-			foreach (var control in m_companionControls)
-			{
-				if (!control.IsDisposed)
-					control.Dispose();
-			}
-			m_companionControls.Clear();
-
-			foreach (var slice in m_companionSlices)
-			{
-				if (!slice.IsDisposed)
-					slice.Dispose();
-			}
-			m_companionSlices.Clear();
-		}
 
 		/// <summary>
 		/// Section 13: shows the SAME xCore-defined context menu the legacy slice shows, over the

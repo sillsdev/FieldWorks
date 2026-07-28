@@ -38,8 +38,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Action<RegionLinkRequest> linkRequested = null,
 			IFwClipboard clipboard = null,
 			Func<double?> getLabelColumnWidth = null,
-			Action<double> labelColumnWidthChanged = null,
-			IRegionMediaServices mediaServices = null)
+			Action<double> labelColumnWidthChanged = null)
 		{
 			if (region == null) throw new ArgumentNullException(nameof(region));
 			// Splitter position persists per-HOST across re-shows (11.15): this long-lived host owns
@@ -54,8 +53,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				{
 					_rememberedLabelColumnWidth = w;
 					labelColumnWidthChanged?.Invoke(w);
-				},
-				mediaServices);
+				});
 			view.EditCompleted += (s, e) => RaiseRegionEditCompleted();
 
 			var focusMemento = RegionFocusMemory.Capture(CurrentContent);
