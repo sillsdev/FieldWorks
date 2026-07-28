@@ -13,40 +13,19 @@ namespace FwAvaloniaDialogs
 {
 	/// <summary>
 	/// View-model for the reusable Avalonia entry-search ("go") dialog — the kit replacement for the legacy
-	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list +
-	/// OK/Cancel/Help). Its first concrete consumer is Merge Entry; the same VM re-skins for the other EntryGoDlg
-	/// children with only title/button/prompt/filter differences (supplied through <see cref="EntryGoDialogInput"/>).
+	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family (writing-system-aware search box + persistent matching list). It is
+	/// LCModel-free: the launcher supplies an <see cref="EntryGoDialogInput"/> with a search delegate and the
+	/// configurable title/prompt/filter text, and reads <see cref="ChosenId"/> back when the user commits.
 	///
-	/// The VM is LCModel-free: the launcher hands it an <see cref="EntryGoDialogInput"/> carrying a
-	/// <see cref="EntryGoDialogInput.Search"/> delegate (the SAME matching the legacy EntryGoSearchEngine uses, with
-	/// the current entry already excluded) plus the configurable title/OK/prompt text, and reads a
-	/// <see cref="ChosenId"/> back when the user commits.
-	///
-	/// PARITY (MatchingObjectsBrowser): the <see cref="Results"/> list is a PERSISTENT, multi-column matching list
-	/// filling the dialog body — the shape of the legacy <c>BaseGoDlg</c>'s embedded <c>MatchingObjectsBrowser</c> —
-	/// live-updating as the user types (never a focus-gated overlay; an empty search shows an empty list area).
-	/// <see cref="Columns"/> carries the column presentation (the legacy default-visible columns Headword + Glosses
-	/// when the consumer supplies none), and <see cref="SelectNextResult"/>/<see cref="SelectPreviousResult"/> mirror
-	/// the legacy Up/Down-arrow-in-the-search-box selection moves (BaseGoDlg.m_tbForm_KeyDown →
-	/// MatchingObjectsBrowser.SelectNext/SelectPrevious).
-	///
-	/// This dialog is a COMMIT-ON-SELECT picker: there is no OK button. Picking a row IS accepting it — the view
-	/// raises <see cref="CommitCommand"/> on a double-click of a result or Enter (in the search box or on the list),
-	/// which snapshots the selection into <see cref="ChosenId"/> (via <see cref="ApplyChanges"/>) and closes the
-	/// dialog accepted. Cancel is Escape / the window close button (the inherited <c>CancelCommand</c>, surfaced as
-	/// a single Cancel affordance for discoverability). The excluded id never appears (defensive guard on top of the
-	/// launcher's filter).
-	///
-	/// EXCEPT when the consumer supplies <see cref="EntryGoDialogInput.AuxiliaryOptions"/> (the legacy per-entry
-	/// combo LinkMSADlg/LinkAllomorphDlg showed under the matching list): the dialog is then TWO-STAGE. Picking a
-	/// result is stage 1 — it invokes the resolver to populate <see cref="AuxiliaryOptions"/> (a single option
-	/// auto-selects) and <see cref="CommitCommand"/> does not commit — and the inherited OK commits stage 2, gated
-	/// on both an entry and an auxiliary option being chosen (<see cref="ChosenAuxiliaryKey"/> carries the option's
-	/// key). Consumers without the spec are unaffected.
-	///
-	/// The right-side description region is OPT-IN: it exists only when the consumer supplies a
-	/// <see cref="EntryGoDialogInput.DescriptionLabel"/> or rich per-row description content
-	/// (<see cref="HasDescriptionRegion"/>); otherwise the matching list takes the full dialog width.
+	/// Two non-obvious contracts:
+	/// - COMMIT-ON-SELECT (single-stage): there is no OK button. Picking a row IS accepting it —
+	///   <see cref="CommitCommand"/> snapshots the selection into <see cref="ChosenId"/> and closes accepted;
+	///   Cancel/Escape cancels.
+	/// - Auxiliary and description regions are OPT-IN. When the consumer supplies
+	///   <see cref="EntryGoDialogInput.AuxiliaryOptions"/> the dialog becomes TWO-STAGE: picking a result is
+	///   stage 1 (populates <see cref="AuxiliaryOptions"/> without committing) and the inherited OK commits stage 2,
+	///   gated on both an entry and an auxiliary option. The right-side description region exists only when the
+	///   consumer supplies a label or rich per-row content (<see cref="HasDescriptionRegion"/>).
 	/// </summary>
 	public partial class EntryGoDialogViewModel : DialogViewModelBase
 	{

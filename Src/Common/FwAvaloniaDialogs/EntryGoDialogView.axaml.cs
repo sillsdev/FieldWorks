@@ -12,31 +12,16 @@ using Avalonia.Media;
 namespace FwAvaloniaDialogs
 {
 	/// <summary>
-	/// The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
-	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. A XAML-authored UserControl bound to
-	/// <see cref="EntryGoDialogViewModel"/> with compiled bindings.
+	/// The reusable entry-search ("go") dialog body: a XAML-authored UserControl bound to
+	/// <see cref="EntryGoDialogViewModel"/>, the Avalonia replacement for the legacy
+	/// <c>EntryGoDlg</c>/<c>BaseGoDlg</c> family. Hosted as Avalonia content inside a WinForms-owned modal Form
+	/// during coexistence via <c>AvaloniaDialogHost.ShowModal</c>.
 	///
-	/// PARITY (MatchingObjectsBrowser): the matching entries fill the dialog body as a PERSISTENT, multi-column
-	/// list under the search box — the shape of the legacy BaseGoDlg's embedded <c>MatchingObjectsBrowser</c> —
-	/// live-updating as the user types. The header row and the row template are built here from the view-model's
-	/// <see cref="EntryGoDialogViewModel.Columns"/> (header text, result field, per-column writing-system
-	/// typography), so a vernacular column renders in the vernacular font and a gloss column in the analysis font.
-	/// Up/Down in the search box move the list selection while the caret stays in the box (the legacy
-	/// <c>BaseGoDlg.m_tbForm_KeyDown</c> → <c>SelectPrevious/SelectNext</c> behavior), and Enter commits the
-	/// highlighted row.
-	///
-	/// This is a COMMIT-ON-SELECT picker — there is no OK button: picking a result (double-click a row, or Enter)
-	/// commits + closes accepted via the view-model's <c>CommitCommand</c>; Cancel / Escape / the window close
-	/// button cancel. Selection and search are MVVM; the code-behind only (a) builds the column header + row cells
-	/// from the column spec, (b) translates the double-click / Enter / arrow-key gestures into VM calls,
-	/// (c) removes the two-stage OK button from the tree for single-stage consumers (with an auxiliary spec the
-	/// dialog is two-stage and OK commits; see <see cref="EntryGoDialogViewModel.HasAuxiliarySelection"/>),
-	/// (d) removes the opt-in right-side description region from the tree when the consumer supplies no label or
-	/// rich content, so the matching list takes the full width, and (e) applies the opt-in
-	/// <see cref="EntryGoSearchFieldSpec"/> to the search box — the writing system's font, right-to-left flow, and
-	/// a keyboard-switch callback on focus (the legacy BaseGoDlg vernacular FwTextBox behavior).
-	/// Hosted as Avalonia content inside a WinForms-owned modal Form during coexistence via
-	/// <c>AvaloniaDialogHost.ShowModal</c>.
+	/// Selection and search are MVVM; the code-behind only bridges to the view-model — building the column
+	/// header/row cells from the column spec, translating double-click / Enter / arrow-key gestures into VM calls,
+	/// pruning the opt-in OK button and description region from the tree when a consumer doesn't use them, and
+	/// applying the opt-in <see cref="EntryGoSearchFieldSpec"/> (font, flow direction, keyboard-switch callback)
+	/// to the search box.
 	/// </summary>
 	public partial class EntryGoDialogView : UserControl
 	{
