@@ -293,3 +293,17 @@ skill files changed.
 - **Section-sign / em-dash break exact-match Edits.** Anchor Edit old_string
   on ASCII-only lines (or use a Python byte-replace) when nearby code carries
   those chars; hit this several times this session.
+
+
+### 2026-07 - Avalonia text selection: two reusable gotchas
+
+- **`TextBox.CaretIndex` setter CLEARS the selection.** When wiring custom
+  caret movement (e.g. grapheme-cluster / bidi Shift+Arrow), set `CaretIndex`
+  FIRST, then `SelectionStart`/`SelectionEnd` (which do not move the caret) —
+  otherwise the selection you just built is collapsed to the caret.
+- **Test the wired-up input seam, not just the pure functions.** Headless
+  Avalonia CAN drive real keyboard input (`KeyPress` with modifiers), so
+  keyboard selection/caret wiring is headlessly testable and should be pinned
+  there. Pointer HIT-TESTING is NOT reproducible headlessly (the headless
+  backend does no text layout), so pointer-driven selection needs a rendered
+  window or a snapshot/diagnostic path instead.
