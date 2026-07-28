@@ -96,13 +96,16 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// chooser) is byte-for-byte unchanged: those mount the picker INLINE inside a host flyout and
 		// want the search box + list always visible. In dropdown mode the picker is instead a compact
 		// ComboBox-like control: the Border shows a toggle button with the current selection, and the
-		// existing filter+list panel is hosted in a focus-gated Popup that opens ON TOP (it may exceed
-		// the host bounds) and closes on pick — reusing the same filtering + keyboard behavior. Only the
-		// single-select path supports dropdown mode (the MorphType picker is single-select).
+		// existing filter+list panel is hosted in a focus-gated Flyout anchored to the toggle button —
+		// the very Flyout the inline consumers already open through CreateOptionFlyout — that opens on
+		// click and closes on pick, reusing the same filtering + keyboard behavior. A flyout positions
+		// itself in the trigger's own surface, so it stays correct under fractional display scaling; only
+		// the single-select path supports dropdown mode (the MorphType picker is single-select).
 		private readonly bool _dropdown;
 		private readonly ToggleButton _dropdownButton;
 		private readonly TextBlock _dropdownLabel;
-		private readonly Popup _dropdownPopup;
+		private readonly Flyout _dropdownFlyout;
+		private bool _dropdownOpen;
 		// The committed selection shown collapsed (dropdown mode); tracks OptionCommitted and external
 		// SelectedIndex moves (the VM's derive-on-type reselection) so the closed label stays in sync.
 		private RegionChoiceOption _selectedOption;
@@ -198,7 +201,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			else
 			{
 				// Dropdown mode: the picker collapses to a toggle button showing the current selection;
-				// the filter+list panel lives in a focus-gated Popup that opens ON TOP. The picker's own
+				// the filter+list panel is hosted in a Flyout anchored to that button. The picker's own
 				// border becomes invisible (the button supplies the box look) so it sits cleanly in
 				// the fwFieldHost frame.
 				Background = Brushes.Transparent;
@@ -238,7 +241,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				AutomationProperties.SetAutomationId(_dropdownButton, automationId + ".Dropdown");
 				_dropdownButton.IsCheckedChanged += OnDropdownButtonCheckedChanged;
 
-				// The filter+list panel, bordered as in inline mode, sits inside the Popup so the user
+				// The filter+list panel, bordered as in inline mode, becomes the flyout body so the user
 				// sees the same clean selection panel — just floating on top instead of inline.
 				var popupPanel = new Border
 				{
@@ -250,35 +253,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					MinWidth = 180,
 					Child = layout
 				};
-				// The popup renders in its own top-level (PopupRoot), so keys typed in the filter box do
-				// NOT bubble up to the picker root where OnPickerKeyDown is registered. Register the same
-				// navigation handler on the popup panel so Up/Down/Enter/Escape work while it is open.
+				AutomationProperties.SetAutomationId(popupPanel, automationId + ".Popup");
+				// The flyout body renders in its own top-level, so keys typed in the filter box do NOT
+				// bubble up to the picker root where OnPickerKeyDown is registered. Register the same
+				// navigation handler on the panel so Up/Down/Enter/Escape work while it is open.
 				popupPanel.AddHandler(InputElement.KeyDownEvent, OnPickerKeyDown,
 					RoutingStrategies.Bubble, handledEventsToo: true);
 
-				_dropdownPopup = new Popup
-				{
-					PlacementTarget = _dropdownButton,
-					Placement = PlacementMode.Bottom,
-					IsLightDismissEnabled = true,
-					// The closed popup must take NO layout footprint in the picker (its content lives in a
-					// separate top-level overlay). Pin it to a zero-size, top-left placeholder so the layout
-					// tripwire never sees it overlapping the toggle button it is anchored to.
-					Width = 0,
-					Height = 0,
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Top,
-					Child = popupPanel
-				};
-				AutomationProperties.SetAutomationId(_dropdownPopup, automationId + ".Popup");
-				_dropdownPopup.Opened += OnDropdownPopupOpened;
-				_dropdownPopup.Closed += OnDropdownPopupClosed;
+				// Reuse the inline consumers' flyout path: a chromeless, focus-posting Flyout anchored to
+				// the toggle button. Unlike a free popup, a flyout positions in the trigger's own surface,
+				// so the dropdown stays correctly placed under fractional display scaling.
+				_dropdownFlyout = BuildOptionFlyout(popupPanel, this, PlacementMode.Bottom);
+				_dropdownFlyout.Opened += OnDropdownFlyoutOpened;
+				_dropdownFlyout.Closed += OnDropdownFlyoutClosed;
 
-				// The picker's own visual content is the button + the (initially closed) popup.
-				var root = new Panel();
-				root.Children.Add(_dropdownButton);
-				root.Children.Add(_dropdownPopup);
-				Child = root;
+				// The picker's own visual content is just the collapsed toggle button; the filter+list
+				// live in the flyout's separate top-level, shown on demand.
+				Child = _dropdownButton;
 			}
 
 			// Navigation handled at the picker root (bubble + handledEventsToo) so Up/Down/Enter/
@@ -352,35 +343,38 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		private void OnDropdownButtonCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			// The toggle button IS the open/close gate (focus-gated like the EntryGo dropdown): checked
-			// opens the popup, unchecked closes it. Light-dismiss/Escape unchecks the button (see below),
+			// shows the flyout, unchecked hides it. Light-dismiss/Escape unchecks the button (see below),
 			// so the two stay in sync.
-			if (_dropdownPopup == null)
+			if (_dropdownFlyout == null)
 				return;
-			_dropdownPopup.IsOpen = _dropdownButton.IsChecked == true;
+			if (_dropdownButton.IsChecked == true)
+				_dropdownFlyout.ShowAt(_dropdownButton);
+			else
+				_dropdownFlyout.Hide();
 		}
 
-		private void OnDropdownPopupOpened(object sender, EventArgs e)
+		private void OnDropdownFlyoutOpened(object sender, EventArgs e)
 		{
-			// Restart the filter clean on each open and focus it, so typing filters immediately (the same
-			// auto-focus the inline flyout does on open). Posted at Input priority so it runs after the
-			// popup's own layout/template, matching CreateOptionFlyout's reliable-focus pattern.
+			// Restart the filter clean on each open, so typing filters immediately (the same reset the
+			// inline flyout does on open). The filter box is (re)focused by BuildOptionFlyout's own
+			// Opened handler, the shared reliable-focus path every option flyout uses.
+			_dropdownOpen = true;
 			if (!string.IsNullOrEmpty(_filterBox.Text))
 				_filterBox.Text = string.Empty;
-			Avalonia.Threading.Dispatcher.UIThread.Post(FocusFilter,
-				Avalonia.Threading.DispatcherPriority.Input);
 		}
 
-		private void OnDropdownPopupClosed(object sender, EventArgs e)
+		private void OnDropdownFlyoutClosed(object sender, EventArgs e)
 		{
-			// Keep the toggle button in sync when the popup closes by light-dismiss (click-away).
+			// Keep the toggle button in sync when the flyout closes by light-dismiss (click-away).
+			_dropdownOpen = false;
 			if (_dropdownButton != null && _dropdownButton.IsChecked == true)
 				_dropdownButton.IsChecked = false;
 		}
 
 		private void CloseDropdown()
 		{
-			if (_dropdownPopup != null)
-				_dropdownPopup.IsOpen = false;
+			if (_dropdownFlyout != null)
+				_dropdownFlyout.Hide();
 			if (_dropdownButton != null)
 				_dropdownButton.IsChecked = false;
 		}
@@ -408,18 +402,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// opens through here so the styling stays consistent.
 		/// </summary>
 		public static Flyout CreateOptionFlyout(FwOptionPicker picker, PlacementMode placement)
+			=> BuildOptionFlyout(picker, picker, placement);
+
+		/// <summary>
+		/// The single option-flyout construction path: a chromeless <see cref="Flyout"/> that re-requests
+		/// filter focus once open. The inline consumers pass the picker itself as content; dropdown mode
+		/// passes its filter+list panel and the same picker for focus — so both open through one flyout
+		/// implementation instead of a hand-placed popup.
+		/// A windowed desktop popup is shown non-activated (Win32 ShowNoActivate) and the flyout's own
+		/// auto-focus can no-op before the presenter template is applied. Re-request focus once the popup
+		/// is open, posted at Input priority so it runs AFTER layout/render — otherwise focus stays on the
+		/// launching button and the arrow keys never reach the picker.
+		/// </summary>
+		private static Flyout BuildOptionFlyout(object content, FwOptionPicker picker, PlacementMode placement)
 		{
 			var flyout = new Flyout
 			{
 				Placement = placement,
-				Content = picker,
+				Content = content,
 				FlyoutPresenterTheme = ChromelessPresenterTheme()
 			};
-			// Reliable focus into the filter box: a windowed desktop popup is shown non-activated
-			// (Win32 ShowNoActivate) and the flyout's own auto-focus can no-op before the presenter
-			// template is applied. Re-request focus once the popup is open, posted at Input priority
-			// so it runs AFTER layout/render — otherwise focus stays on the launching button and the
-			// arrow keys never reach the picker.
 			flyout.Opened += (s, e) =>
 			{
 				if (s_trace.TraceInfo)
@@ -458,8 +460,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>True when this picker was built in collapsed dropdown mode (opt-in; else inline).</summary>
 		public bool IsDropdown => _dropdown;
 
-		/// <summary>True when the dropdown's option-list popup is currently open (dropdown mode only).</summary>
-		public bool IsDropdownOpen => _dropdownPopup != null && _dropdownPopup.IsOpen;
+		/// <summary>True when the dropdown's option-list flyout is currently open (dropdown mode only).</summary>
+		public bool IsDropdownOpen => _dropdownOpen;
 
 		/// <summary>The text shown collapsed in dropdown mode (the current selection, or empty). Dropdown mode only.</summary>
 		public string DropdownText => _dropdownLabel?.Text ?? string.Empty;

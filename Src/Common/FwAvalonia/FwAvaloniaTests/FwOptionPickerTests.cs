@@ -12,6 +12,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -594,6 +595,33 @@ namespace FwAvaloniaTests
 			var toggle = picker.GetVisualDescendants().OfType<ToggleButton>()
 				.SingleOrDefault(b => AutomationProperties.GetAutomationId(b) == "Domains.Dropdown");
 			Assert.That(toggle, Is.Not.Null, "the collapsed dropdown exposes a stable toggle automation id");
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_IsHostedInAFlyout_NotAFreeStandingPopup()
+		{
+			// Parity/guidance guard: dropdown mode must open its filter+list on a Flyout anchored to the
+			// toggle button (the same CreateOptionFlyout path the inline consumers use), never a free
+			// Popup living in the picker's own tree. A free popup opens its own top-level and misplaces
+			// itself under fractional display scaling; a flyout positions itself in the trigger's surface.
+			// Assert the picker owns NO Popup element, collapsed AND while the dropdown is open.
+			var (picker, window, _) = ShowDropdown();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(picker.GetLogicalDescendants().OfType<Popup>(), Is.Empty,
+				"the collapsed dropdown hosts no free Popup");
+
+			picker.OpenDropdown();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(picker.IsDropdownOpen, Is.True, "the dropdown opens");
+			Assert.That(picker.GetLogicalDescendants().OfType<Popup>(), Is.Empty,
+				"opening adds no free Popup to the picker tree — the list rides a Flyout top-level");
+			Assert.That(picker.OptionsList.GetVisualDescendants().OfType<TextBlock>()
+				.Any(t => t.Text == "Universe"), Is.True,
+				"the option list is realized in the flyout overlay");
 		}
 
 		[AvaloniaTest]
