@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// replacement for the legacy <c>StTextSlice</c> RootSite rich editor. A vertical stack of one
 	/// bordered, dense editor row per paragraph; each row carries a run-aware text editor (the SAME
 	/// staging the single-WS <see cref="FwMultiWsTextField"/> uses — TextChanged replays the untouched
-	/// runs around the edit and stages through <see cref="IRegionEditContext.TrySetParagraphText"/>),
+	/// runs around the edit and stages through <see cref="IStructuredTextEditing.TrySetParagraphText"/>),
 	/// a per-paragraph named-style picker (the shared <see cref="FwOptionPicker"/>), and add/delete
 	/// paragraph affordances. Enter at a paragraph's end inserts a paragraph after it; Backspace in an
 	/// empty paragraph (when more than one remains) deletes it.
@@ -53,11 +53,15 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetAutomationId(this, automationId);
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
+			// Paragraph CRUD is the optional IStructuredTextEditing capability; a context without it leaves
+			// the rows displayed but inert (each gesture below no-ops), the same rejection the former core
+			// IRegionEditContext paragraph methods returned on a context with no StText rows.
+			var structuredText = editContext as IStructuredTextEditing;
 			var editable = editContext != null && field.IsEditable;
 			var paragraphs = field.Paragraphs;
 			for (var i = 0; i < paragraphs.Count; i++)
 			{
-				Children.Add(BuildParagraphRow(field, automationId, editContext, writingSystemFocused,
+				Children.Add(BuildParagraphRow(field, automationId, structuredText, writingSystemFocused,
 					gestureCompleted, clipboard, paragraphs[i], i, paragraphs.Count, editable));
 			}
 
@@ -66,13 +70,13 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// — the first keystroke materializes the StText through the edit-context setter (index 0).
 			if (paragraphs.Count == 0)
 			{
-				Children.Add(BuildParagraphRow(field, automationId, editContext, writingSystemFocused,
+				Children.Add(BuildParagraphRow(field, automationId, structuredText, writingSystemFocused,
 					gestureCompleted, clipboard, new RegionParagraph(null), 0, 1, editable));
 			}
 		}
 
 		private Control BuildParagraphRow(
-			LexicalEditRegionField field, string automationId, IRegionEditContext editContext,
+			LexicalEditRegionField field, string automationId, IStructuredTextEditing editContext,
 			Action<string> writingSystemFocused, Action gestureCompleted, IFwClipboard clipboard,
 			RegionParagraph paragraph, int index, int paragraphCount, bool fieldEditable)
 		{
@@ -129,7 +133,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				{
 					if (e.Key == Key.Enter)
 					{
-						if (editContext.TryInsertParagraph(field, index))
+						if (editContext != null && editContext.TryInsertParagraph(field, index))
 						{
 							gestureCompleted?.Invoke();
 							e.Handled = true;
@@ -142,7 +146,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						&& box.CaretIndex == 0
 						&& paragraphCount > 1)
 					{
-						if (editContext.TryDeleteParagraph(field, index))
+						if (editContext != null && editContext.TryDeleteParagraph(field, index))
 						{
 							gestureCompleted?.Invoke();
 							e.Handled = true;
@@ -158,7 +162,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				addAffordance = BuildIconButton(automationId + ".Para." + index + ".Add", "+",
 					FwAvaloniaStrings.AddParagraph, () =>
 					{
-						if (editContext.TryInsertParagraph(field, index))
+						if (editContext != null && editContext.TryInsertParagraph(field, index))
 							gestureCompleted?.Invoke();
 					});
 
@@ -169,7 +173,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					deleteAffordance = BuildIconButton(automationId + ".Para." + index + ".Delete", "×",
 						FwAvaloniaStrings.DeleteParagraph, () =>
 						{
-							if (editContext.TryDeleteParagraph(field, index))
+							if (editContext != null && editContext.TryDeleteParagraph(field, index))
 								gestureCompleted?.Invoke();
 						});
 				}
@@ -241,7 +245,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// a TextChanged stages a plain-text-over-preserved-runs edit through the paragraph seam. A
 		// last-staged guard keeps the template's initial set and no-op events from staging; the guard
 		// advances only on a successful stage so a failed write re-attempts.
-		private void WireParagraphTextEditing(LexicalEditRegionField field, IRegionEditContext editContext,
+		private void WireParagraphTextEditing(LexicalEditRegionField field, IStructuredTextEditing editContext,
 			TextBox box, RegionRichTextValue currentRich, int index, Action<RegionRichTextValue> onStaged)
 		{
 			var lastStaged = currentRich?.PlainText ?? string.Empty;
@@ -253,7 +257,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var updatedRich = RegionRichTextEditAlgorithms.ApplyPlainTextEdit(
 					currentRich ?? RegionRichTextEditAlgorithms.FromRuns(string.Empty, Array.Empty<RegionTextRun>()),
 					text);
-				if (editContext.TrySetParagraphText(field, index, updatedRich))
+				if (editContext != null && editContext.TrySetParagraphText(field, index, updatedRich))
 				{
 					lastStaged = text;
 					currentRich = updatedRich;
@@ -270,7 +274,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// seam and completes the gesture (structural: commit immediately + re-show). Built only when the
 		// field carries available paragraph styles.
 		private Control BuildStyleAffordance(LexicalEditRegionField field, string automationId,
-			IRegionEditContext editContext, Action gestureCompleted, RegionParagraph paragraph, int index)
+			IStructuredTextEditing editContext, Action gestureCompleted, RegionParagraph paragraph, int index)
 		{
 			if (field.AvailableParagraphStyles == null || field.AvailableParagraphStyles.Count == 0)
 				return null;
@@ -312,7 +316,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				styleFlyout.Hide();
 				var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
-				if (editContext.TrySetParagraphStyle(field, index, styleName))
+				if (editContext != null && editContext.TrySetParagraphStyle(field, index, styleName))
 					gestureCompleted?.Invoke();
 			};
 			stylePicker.OptionCommitted += styleCommitted;
@@ -401,7 +405,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// clear entry plus the project's character styles, acting on the box's current selection and
 		// staging ApplySpanNamedStyle through the paragraph-text seam. Null when no character styles.
 		private Control BuildCharStyleAffordance(LexicalEditRegionField field, string automationId,
-			IRegionEditContext editContext, Action gestureCompleted, TextBox box, int index,
+			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
 		{
 			if (field.AvailableNamedStyles == null || field.AvailableNamedStyles.Count == 0)
@@ -449,7 +453,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					var styleName = string.IsNullOrEmpty(option?.Key) ? null : option.Key;
 					var restyled = RegionRichTextEditAlgorithms.ApplySpanNamedStyle(rich, lo, hi, styleName);
 					if (!ReferenceEquals(restyled, rich)
-						&& editContext.TrySetParagraphText(field, index, restyled))
+						&& editContext != null && editContext.TrySetParagraphText(field, index, restyled))
 					{
 						setRich(restyled);
 						gestureCompleted?.Invoke();
@@ -463,7 +467,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// writing systems (no clear entry), acting on the box's current selection and staging
 		// RetagSpanWritingSystem through the paragraph-text seam. Null when no writing systems.
 		private Control BuildWsRetagAffordance(LexicalEditRegionField field, string automationId,
-			IRegionEditContext editContext, Action gestureCompleted, TextBox box, int index,
+			IStructuredTextEditing editContext, Action gestureCompleted, TextBox box, int index,
 			Func<RegionRichTextValue> getRich, Action<RegionRichTextValue> setRich)
 		{
 			if (field.AvailableWritingSystems == null || field.AvailableWritingSystems.Count == 0)
@@ -510,7 +514,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						new[] { new RegionTextRun(box.Text ?? string.Empty) });
 					var retagged = RegionRichTextEditAlgorithms.RetagSpanWritingSystem(rich, lo, hi, option.Key);
 					if (!ReferenceEquals(retagged, rich)
-						&& editContext.TrySetParagraphText(field, index, retagged))
+						&& editContext != null && editContext.TrySetParagraphText(field, index, retagged))
 					{
 						setRich(retagged);
 						gestureCompleted?.Invoke();

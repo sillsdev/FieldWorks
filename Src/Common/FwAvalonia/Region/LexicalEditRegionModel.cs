@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <see cref="RegionParagraph"/> with a per-paragraph named style); the owned
 		/// <c>FwStructuredTextField</c> edits paragraph text, adds/deletes paragraphs, and sets the
 		/// per-paragraph style, each as one undoable step through the edit context's paragraph CRUD
-		/// seam (<see cref="IRegionEditContext.TrySetParagraphText"/> et al.). An ORC-bearing paragraph
+		/// seam (<see cref="IStructuredTextEditing.TrySetParagraphText"/> et al.). An ORC-bearing paragraph
 		/// stays read-only/preserved (§19c.3), like the run-aware text path.
 		/// </summary>
 		StructuredText,
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// <summary>An external link / hyperlink (<c>kodtExternalPathName</c>, tag 4): insert/edit/delete here (§19c).</summary>
 		ExternalLink,
 
-		/// <summary>A picture/image (<c>kodtGuidMoveableObjDisp</c>, tag 8): render + deletable here; insert/caption DONE in §19d (picture insert flow + IRegionEditContext.TryInsertPictureOrc).</summary>
+		/// <summary>A picture/image (<c>kodtGuidMoveableObjDisp</c>, tag 8): render-only in the Avalonia region; insert/caption editing stays in the classic view.</summary>
 		Picture,
 
 		/// <summary>A footnote (<c>kodtOwnNameGuidHot</c> tag 5 / <c>kodtNameGuidHot</c> tag 3): render + deletable; full edit DEFERRED (scripture).</summary>

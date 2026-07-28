@@ -62,42 +62,6 @@ namespace SIL.FieldWorks.XWorks
 		public virtual bool TryRemoveReferenceItem(LexicalEditRegionField regionField, string optionKey) => false;
 
 		/// <inheritdoc />
-		/// <remarks>§19a: StText paragraph editing exists only on composed regions; the first-slice
-		/// fallback has no structured-text rows, so the base rejects.</remarks>
-		public virtual bool TrySetParagraphText(LexicalEditRegionField regionField, int paragraphIndex,
-			RegionRichTextValue value) => false;
-
-		/// <inheritdoc />
-		public virtual bool TrySetParagraphStyle(LexicalEditRegionField regionField, int paragraphIndex,
-			string styleName) => false;
-
-		/// <inheritdoc />
-		public virtual bool TryInsertParagraph(LexicalEditRegionField regionField, int afterParagraphIndex) => false;
-
-		/// <inheritdoc />
-		public virtual bool TryDeleteParagraph(LexicalEditRegionField regionField, int paragraphIndex) => false;
-
-		/// <inheritdoc />
-		/// <remarks>§19d: picture editing exists only on composed regions; the first-slice fallback has
-		/// no picture rows, so the base rejects.</remarks>
-		public virtual bool TryInsertPicture(LexicalEditRegionField regionField, string sourceFile,
-			RegionPictureMetadata metadata) => false;
-
-		/// <inheritdoc />
-		public virtual bool TryReplacePictureFile(LexicalEditRegionField regionField, string sourceFile) => false;
-
-		/// <inheritdoc />
-		public virtual bool TryDeletePicture(LexicalEditRegionField regionField) => false;
-
-		/// <inheritdoc />
-		public virtual bool TrySetPictureMetadata(LexicalEditRegionField regionField,
-			RegionPictureMetadata metadata) => false;
-
-		/// <inheritdoc />
-		public virtual bool TryInsertPictureOrc(LexicalEditRegionField regionField, string ws,
-			int caretPosition, string sourceFile, RegionPictureMetadata metadata) => false;
-
-		/// <inheritdoc />
 		public virtual IReadOnlyList<string> Validate()
 		{
 			// Validation seam (minimal rule set, deterministic order). §20.1: the lexeme/citation-form rule
