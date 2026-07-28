@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				MaxHeight = FwAvaloniaDensity.OptionListMaxHeight,
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
-				ItemContainerTheme = CompactTreeItemTheme(),
+				ItemContainerTheme = FilterableDropdownSupport.CompactTreeItemTheme(),
 				ItemTemplate = TreeNodeTemplate()
 			};
 			AutomationProperties.SetAutomationId(_tree, _automationId + ".Tree");
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 				Background = Brushes.Transparent,
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
-				ItemContainerTheme = CompactListItemTheme(),
+				ItemContainerTheme = FilterableDropdownSupport.CompactListItemTheme(),
 				ItemTemplate = FilterRowTemplate()
 			};
 			AutomationProperties.SetAutomationId(_filterList, _automationId + ".Filtered");
@@ -254,7 +254,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			{
 				Placement = PlacementMode.Bottom,
 				Content = _popupPanel,
-				FlyoutPresenterTheme = ChromelessPresenterTheme()
+				FlyoutPresenterTheme = FilterableDropdownSupport.ChromelessPresenterTheme()
 			};
 			_flyout.Opened += OnFlyoutOpened;
 			_flyout.Closed += OnFlyoutClosed;
@@ -517,26 +517,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		private IReadOnlyList<FwPosNode> _filterResults = Array.Empty<FwPosNode>();
 
 		private void ApplyFilter()
-		{
-			var query = _filterBox.Text ?? string.Empty;
-			if (string.IsNullOrWhiteSpace(query))
-			{
-				_filterResults = Array.Empty<FwPosNode>();
-				_filterList.ItemsSource = null;
-				_filterList.IsVisible = false;
-				_tree.IsVisible = true;
-				return;
-			}
-
-			_filterResults = _nodes
-				.Where(n => n != null && n.Name != null
-					&& n.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
-				.ToList();
-			_filterList.ItemsSource = _filterResults;
-			_filterList.SelectedIndex = _filterResults.Count > 0 ? 0 : -1;
-			_filterList.IsVisible = true;
-			_tree.IsVisible = false;
-		}
+			=> _filterResults = FilterableDropdownSupport.ApplyNameFilter(
+				_filterBox.Text ?? string.Empty, _nodes, n => n.Name, _filterList, _tree);
 
 		// ----- selection gestures -----
 
@@ -554,16 +536,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		private void OnFilterListPointerReleased(object sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton != MouseButton.Left || !IsReleaseOverOwnItem(e.Source))
+			if (e.InitialPressMouseButton != MouseButton.Left
+				|| !FilterableDropdownSupport.IsReleaseOverOwnItem(e.Source, _filterList))
 				return;
 			CommitHighlightedFilterRow();
-		}
-
-		private bool IsReleaseOverOwnItem(object source)
-		{
-			var item = (source as Visual)?.GetSelfAndVisualAncestors()
-				.OfType<ListBoxItem>().FirstOrDefault();
-			return item != null && item.GetVisualAncestors().Contains(_filterList);
 		}
 
 		private void CommitHighlightedFilterRow()
@@ -630,16 +606,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		private void MoveFilterHighlight(int delta)
-		{
-			if (_filterResults.Count == 0)
-				return;
-			var current = _filterList.SelectedIndex;
-			var next = current < 0 ? (delta > 0 ? 0 : _filterResults.Count - 1) : current + delta;
-			if (next < 0 || next >= _filterResults.Count)
-				return;
-			_filterList.SelectedIndex = next;
-			_filterList.ScrollIntoView(next);
-		}
+			=> FilterableDropdownSupport.MoveListHighlight(_filterList, _filterResults.Count, delta);
 
 		// ----- item templates / density -----
 
@@ -676,50 +643,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 					Margin = new Thickness(node.Depth * FwAvaloniaDensity.TreeIndentPerLevel, 0, 0, 0)
 				};
 			});
-		}
-
-		private static ControlTheme CompactTreeItemTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(TreeViewItem), null, out var found))
-				baseTheme = found as ControlTheme;
-			var theme = new ControlTheme(typeof(TreeViewItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(TreeViewItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
-			theme.Setters.Add(new Setter(TreeViewItem.MinHeightProperty, 0d));
-			// Bind each container's expansion to its node so ExpandAncestors/keyboard collapse work.
-			theme.Setters.Add(new Setter(TreeViewItem.IsExpandedProperty,
-				new Avalonia.Data.Binding(nameof(PosTreeNode.IsExpanded)) { Mode = Avalonia.Data.BindingMode.TwoWay }));
-			return theme;
-		}
-
-		private static ControlTheme CompactListItemTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(ListBoxItem), null, out var found))
-				baseTheme = found as ControlTheme;
-			var theme = new ControlTheme(typeof(ListBoxItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
-			theme.Setters.Add(new Setter(ListBoxItem.MinHeightProperty, 0d));
-			return theme;
-		}
-
-		// Strip the Fluent FlyoutPresenter's heavy grey padding/border/background to nothing, so the
-		// tree panel's own thin border is the only boundary the user sees (mirrors the option-picker
-		// flyout look, keeping the two dropdowns visually consistent).
-		private static ControlTheme ChromelessPresenterTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(FlyoutPresenter), null, out var found))
-				baseTheme = found as ControlTheme;
-			var theme = new ControlTheme(typeof(FlyoutPresenter)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(0)));
-			theme.Setters.Add(new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(0)));
-			theme.Setters.Add(new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent));
-			theme.Setters.Add(new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(0)));
-			return theme;
 		}
 
 		/// <summary>

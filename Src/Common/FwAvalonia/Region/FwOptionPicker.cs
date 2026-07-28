@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				BorderThickness = new Thickness(0),
 				Padding = new Thickness(0),
 				ItemsPanel = new FuncTemplate<Panel>(() => new VirtualizingStackPanel()),
-				ItemContainerTheme = CompactItemTheme(),
+				ItemContainerTheme = FilterableDropdownSupport.CompactListItemTheme(),
 				ItemTemplate = OptionTemplate()
 			};
 			AutomationProperties.SetAutomationId(_list, automationId + ".Options");
@@ -420,7 +420,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			{
 				Placement = placement,
 				Content = content,
-				FlyoutPresenterTheme = ChromelessPresenterTheme()
+				FlyoutPresenterTheme = FilterableDropdownSupport.ChromelessPresenterTheme()
 			};
 			flyout.Opened += (s, e) =>
 			{
@@ -430,23 +430,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					Avalonia.Threading.DispatcherPriority.Input);
 			};
 			return flyout;
-		}
-
-		private static ControlTheme ChromelessPresenterTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(FlyoutPresenter), null, out var found))
-			{
-				baseTheme = found as ControlTheme;
-			}
-
-			var theme = new ControlTheme(typeof(FlyoutPresenter)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(TemplatedControl.PaddingProperty, new Thickness(0)));
-			theme.Setters.Add(new Setter(TemplatedControl.BorderThicknessProperty, new Thickness(0)));
-			theme.Setters.Add(new Setter(TemplatedControl.BackgroundProperty, Brushes.Transparent));
-			theme.Setters.Add(new Setter(TemplatedControl.CornerRadiusProperty, new CornerRadius(0)));
-			return theme;
 		}
 
 		/// <summary>The search editor (auto-focused on open).</summary>
@@ -770,7 +753,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 
 		private void OnListPointerReleased(object sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton != MouseButton.Left || !IsReleaseOverOwnItem(e.Source))
+			if (e.InitialPressMouseButton != MouseButton.Left
+				|| !FilterableDropdownSupport.IsReleaseOverOwnItem(e.Source, _list))
 				return;
 			// Shift+click in multi-select does a range toggle from the anchor; otherwise a normal toggle/commit.
 			if (_multiSelect && e.KeyModifiers.HasFlag(KeyModifiers.Shift))
@@ -779,13 +763,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				return;
 			}
 			CommitHighlighted();
-		}
-
-		private bool IsReleaseOverOwnItem(object source)
-		{
-			var item = (source as Visual)?.GetSelfAndVisualAncestors()
-				.OfType<ListBoxItem>().FirstOrDefault();
-			return item != null && item.GetVisualAncestors().Contains(_list);
 		}
 
 		private IDataTemplate OptionTemplate()
@@ -831,21 +808,6 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					Children = { check, label }
 				};
 			});
-		}
-
-		private static ControlTheme CompactItemTheme()
-		{
-			ControlTheme baseTheme = null;
-			if (Application.Current != null
-				&& Application.Current.TryGetResource(typeof(ListBoxItem), null, out var found))
-			{
-				baseTheme = found as ControlTheme;
-			}
-
-			var theme = new ControlTheme(typeof(ListBoxItem)) { BasedOn = baseTheme };
-			theme.Setters.Add(new Setter(ListBoxItem.PaddingProperty, FwAvaloniaDensity.OptionItemPadding));
-			theme.Setters.Add(new Setter(ListBoxItem.MinHeightProperty, 0d));
-			return theme;
 		}
 	}
 }
