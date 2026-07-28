@@ -211,23 +211,110 @@ namespace LexTextControlsTests
 		{
 			var search = LcmInsertEntryDialogLauncher.BuildMatchSearch(Cache, mediator: null, propertyTable: null);
 
-			var results = search("ca"); // matches casa + cantar (prefix on the form fields)
+			var results = search("ca", string.Empty); // matches casa + cantar (prefix on the form fields)
 			Assert.That(results.Select(r => r.Id),
 				Is.EquivalentTo(new[]
 				{
 					_casa.Hvo.ToString(CultureInfo.InvariantCulture),
 					_cantar.Hvo.ToString(CultureInfo.InvariantCulture)
 				}),
-				"the match search returns existing entries whose form matches (legacy EntryGoSearchEngine matching)");
+				"the match search returns existing entries whose form matches (legacy InsertEntrySearchEngine matching)");
 			Assert.That(results.Any(r => r.Text == "casa"), Is.True, "the match row carries the headword");
+		}
+
+		[Test]
+		public void MatchSearch_FindsExistingEntriesByGloss()
+		{
+			// The gloss column (legacy GetFields :1030-1031): searching by gloss surfaces same-gloss entries even with
+			// an empty form. "house" is _casa's gloss.
+			var search = LcmInsertEntryDialogLauncher.BuildMatchSearch(Cache, mediator: null, propertyTable: null);
+
+			var results = search(string.Empty, "hous"); // prefix match on the gloss "house"
+			Assert.That(results.Select(r => r.Id), Does.Contain(_casa.Hvo.ToString(CultureInfo.InvariantCulture)),
+				"the match search returns entries whose GLOSS matches (the un-deferred gloss column)");
 		}
 
 		[Test]
 		public void MatchSearch_EmptyQuery_ReturnsNoFalsePositives()
 		{
-			// The VM never calls the search for an empty form, but the delegate must not throw on one.
+			// The VM never calls the search for an empty form + empty gloss, but the delegate must not throw on one.
 			var search = LcmInsertEntryDialogLauncher.BuildMatchSearch(Cache, null, null);
-			Assert.That(() => search(string.Empty), Throws.Nothing);
+			Assert.That(() => search(string.Empty, string.Empty), Throws.Nothing);
+			Assert.That(search(string.Empty, string.Empty), Is.Empty, "no form + no gloss surfaces nothing");
+		}
+
+		// ----- OK-time morphology validation (CheckMorphType + CircumfixProblem + invalid-form parse) -----
+
+		private static System.Collections.Generic.Dictionary<string, string> FormBag(string wsTag, string value)
+			=> new System.Collections.Generic.Dictionary<string, string> { [wsTag] = value };
+
+		[Test]
+		public void BuildInput_WiresTheMorphologyValidationAndReMarking()
+		{
+			var input = LcmInsertEntryDialogLauncher.BuildInput(Cache, tssForm: null);
+			Assert.That(input.ValidateMorphology, Is.Not.Null, "the morphology validation delegate is wired");
+			Assert.That(input.ApplyMorphTypeMarkers, Is.Not.Null, "the re-marking delegate is wired");
+			Assert.That(input.HelpTopic, Is.EqualTo("khtpInsertEntry"), "the Help topic is carried (legacy s_helpTopic)");
+		}
+
+		[Test]
+		public void ValidateMorphology_MatchingStemForm_ReturnsValid()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var verdict = LcmInsertEntryDialogLauncher.ValidateMorphology(Cache,
+				FormBag(vernTag, "perro"), MoMorphTypeTags.kguidMorphStem.ToString());
+			Assert.That(verdict, Is.EqualTo(InsertEntryMorphValidation.Valid),
+				"a plain stem form with the stem morph type validates");
+		}
+
+		[Test]
+		public void ValidateMorphology_EmptyForm_ReturnsValid()
+		{
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var verdict = LcmInsertEntryDialogLauncher.ValidateMorphology(Cache,
+				FormBag(vernTag, string.Empty), MoMorphTypeTags.kguidMorphStem.ToString());
+			Assert.That(verdict, Is.EqualTo(InsertEntryMorphValidation.Valid),
+				"an empty form is handled by the empty-form gate, not the morphology check");
+		}
+
+		[Test]
+		public void ValidateMorphology_IncompleteCircumfix_ReturnsIncompleteCircumfix()
+		{
+			// A circumfix needs two morphemes separated by a space; a single prefix part is incomplete
+			// (CircumfixProblem parity). This test fails without the ValidateMorphology delegate (OK would allow it).
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var verdict = LcmInsertEntryDialogLauncher.ValidateMorphology(Cache,
+				FormBag(vernTag, "ki-"), MoMorphTypeTags.kguidMorphCircumfix.ToString());
+			Assert.That(verdict, Is.EqualTo(InsertEntryMorphValidation.IncompleteCircumfix),
+				"a circumfix with only a left part is incomplete");
+		}
+
+		[Test]
+		public void ValidateMorphology_CompleteCircumfix_ReturnsValid()
+		{
+			// A circumfix with both a left and right part (separated by a space) is complete.
+			var vernTag = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var verdict = LcmInsertEntryDialogLauncher.ValidateMorphology(Cache,
+				FormBag(vernTag, "ki- -a"), MoMorphTypeTags.kguidMorphCircumfix.ToString());
+			Assert.That(verdict, Is.EqualTo(InsertEntryMorphValidation.Valid),
+				"a circumfix with both parts validates");
+		}
+
+		[Test]
+		public void ApplyMorphTypeMarkers_SuffixType_AddsTheSuffixMarker()
+		{
+			var marked = LcmInsertEntryDialogLauncher.ApplyMorphTypeMarkers(Cache,
+				MoMorphTypeTags.kguidMorphSuffix.ToString(), "ed");
+			Assert.That(marked, Is.EqualTo("-ed"), "picking the suffix type re-marks the bare form (FormWithMarkers)");
+		}
+
+		[Test]
+		public void ApplyMorphTypeMarkers_Circumfix_LeavesFormUnchanged()
+		{
+			var marked = LcmInsertEntryDialogLauncher.ApplyMorphTypeMarkers(Cache,
+				MoMorphTypeTags.kguidMorphCircumfix.ToString(), "ki- -a");
+			Assert.That(marked, Is.EqualTo("ki- -a"),
+				"a circumfix is left as-is (it mixes prefix/infix/suffix markers — legacy parity)");
 		}
 
 		// ----- the "use existing entry" outcome resolves the chosen id rather than creating -----

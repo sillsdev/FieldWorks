@@ -2,7 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 
 namespace FwAvaloniaDialogs
 {
@@ -33,6 +36,26 @@ namespace FwAvaloniaDialogs
 			_msaHost = this.FindControl<Border>("PART_MsaSection");
 			DataContextChanged += (s, e) => InjectControls();
 			InjectControls();
+			// Initial focus (legacy SetInitialFocus :514): the lexeme form normally, the gloss when the dialog was
+			// seeded from an analysis-WS initial string. Best-effort once the visual tree is realized; any failure is
+			// swallowed (focus must never take down the dialog).
+			AttachedToVisualTree += (s, e) => Dispatcher.UIThread.Post(SetInitialFocus);
+		}
+
+		private void SetInitialFocus()
+		{
+			try
+			{
+				var vm = DataContext as InsertEntryDialogViewModel;
+				var target = vm != null && vm.InitialFocus == InsertEntryInitialFocus.Gloss
+					? vm.GlossField
+					: vm?.LexemeFormField;
+				target?.GetVisualDescendants().OfType<TextBox>().FirstOrDefault()?.Focus();
+			}
+			catch
+			{
+				// Focus is cosmetic; never let it crash the dialog.
+			}
 		}
 
 		/// <summary>

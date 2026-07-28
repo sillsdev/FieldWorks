@@ -86,14 +86,18 @@ namespace FwAvaloniaDialogsTests
 
 		private static InsertEntryDialogInput BasicInput(
 			System.Func<string, (string, string)> derive = null,
-			System.Func<string, IReadOnlyList<EntryGoSearchResult>> searchMatches = null,
-			bool withMsa = false, bool withComplexForm = false) => new InsertEntryDialogInput
+			System.Func<string, string, IReadOnlyList<EntryGoSearchResult>> searchMatches = null,
+			bool withMsa = false, bool withComplexForm = false,
+			System.Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> validate = null,
+			System.Func<string, string, string> applyMarkers = null) => new InsertEntryDialogInput
 		{
 			LexemeForm = TextField("LexemeForm", "InsertEntry.LexemeForm", "fr", "es"),
 			Gloss = TextField("Gloss", "InsertEntry.Gloss", "en"),
 			MorphTypes = MorphTypes,
 			InitialMorphTypeKey = "guid-stem",
 			DeriveMorphType = derive,
+			ValidateMorphology = validate,
+			ApplyMorphTypeMarkers = applyMarkers,
 			SearchMatches = searchMatches,
 			PosNodes = withMsa ? PosNodes : System.Array.Empty<FwPosNode>(),
 			MorphTypeToMsaType = withMsa ? MorphTypeToMsa : null,
@@ -112,10 +116,15 @@ namespace FwAvaloniaDialogsTests
 			new EntryGoSearchResult("103", "perro", isSense: false, subText: "dog")
 		};
 
-		private static System.Func<string, IReadOnlyList<EntryGoSearchResult>> SampleSearch =>
-			form => string.IsNullOrEmpty(form)
+		// A "starts-with" match over the form AND the gloss (mirrors the launcher searching both the form fields and
+		// the gloss): a match on either the headword or the gloss (subtext) surfaces the entry.
+		private static System.Func<string, string, IReadOnlyList<EntryGoSearchResult>> SampleSearch =>
+			(form, gloss) => (string.IsNullOrEmpty(form) && string.IsNullOrEmpty(gloss))
 				? new List<EntryGoSearchResult>()
-				: SampleEntries.Where(e => e.Text.StartsWith(form, System.StringComparison.OrdinalIgnoreCase)).ToList();
+				: SampleEntries.Where(e =>
+					(!string.IsNullOrEmpty(form) && e.Text.StartsWith(form, System.StringComparison.OrdinalIgnoreCase))
+					|| (!string.IsNullOrEmpty(gloss) && e.SubText.StartsWith(gloss, System.StringComparison.OrdinalIgnoreCase)))
+					.ToList();
 
 		private static (InsertEntryDialogView view, InsertEntryDialogViewModel vm) Show(
 			InsertEntryDialogInput input, string stageName = "InsertEntry-01-initial")
@@ -329,6 +338,150 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.HasMatchSearch, Is.False, "without a search the matches pane stays hidden");
 			Assert.That(vm.Matches, Is.Empty);
 		}
+
+		[AvaloniaTest]
+		public void GlossEdit_RefreshesTheMatches()
+		{
+			// A gloss edit re-runs the duplicate-detection search (legacy tbGloss_TextChanged → UpdateMatches). The
+			// sample search matches "house" on the gloss subtext, surfacing casa even with an empty form.
+			var (view, vm) = Show(BasicInput(searchMatches: SampleSearch));
+			Assert.That(vm.Matches, Is.Empty, "no form + no gloss surfaces nothing");
+
+			GlossBox(vm, "en").Text = "house";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.Matches.Select(m => m.Text), Does.Contain("casa"),
+				"typing a gloss triggers a match refresh that searches glosses too");
+		}
+
+		// ----- validation states surface inline + gate OK (CreateFeature pattern) -----
+
+		// A trivial morphology validator keyed on sentinel forms so the three verdicts are reachable headlessly.
+		private static System.Func<IReadOnlyDictionary<string, string>, string, InsertEntryMorphValidation> SentinelValidate =>
+			(forms, key) =>
+			{
+				var best = forms.Values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v))?.Trim() ?? string.Empty;
+				if (best == "mismatch") return InsertEntryMorphValidation.InvalidLexForm;
+				if (best == "circ") return InsertEntryMorphValidation.IncompleteCircumfix;
+				if (best == "?!") return InsertEntryMorphValidation.InvalidForm;
+				return InsertEntryMorphValidation.Valid;
+			};
+
+		[AvaloniaTest]
+		public void Validation_EmptyForm_ShowsInlineMessage()
+		{
+			var (view, vm) = Show(BasicInput(validate: SentinelValidate));
+			Assert.That(vm.IsValid, Is.False);
+			Assert.That(vm.ValidationMessage, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryLexFormNotEmpty),
+				"the empty-form gate shows its message inline");
+			Assert.That(ValidationBlock(view).IsVisible, Is.True, "the inline validation surface is shown when invalid");
+		}
+
+		[AvaloniaTest]
+		public void Validation_CheckMorphTypeMismatch_ShowsInlineMessageAndGatesOk()
+		{
+			var (view, vm) = Show(BasicInput(validate: SentinelValidate));
+			FormBox(vm, "fr").Text = "mismatch";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.IsValid, Is.False, "a morph-type mismatch gates OK");
+			Assert.That(vm.OkCommand.CanExecute(null), Is.False);
+			Assert.That(vm.ValidationMessage, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryInvalidLexForm),
+				"the CheckMorphType message shows inline (ksInvalidLexForm parity)");
+			Assert.That(ValidationBlock(view).IsVisible, Is.True);
+		}
+
+		[AvaloniaTest]
+		public void Validation_IncompleteCircumfix_ShowsInlineMessageAndGatesOk()
+		{
+			var (_, vm) = Show(BasicInput(validate: SentinelValidate));
+			FormBox(vm, "fr").Text = "circ";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.IsValid, Is.False);
+			Assert.That(vm.ValidationMessage, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryCompleteCircumfix),
+				"an incomplete circumfix shows its message inline (ksCompleteCircumfix parity)");
+		}
+
+		[AvaloniaTest]
+		public void Validation_InvalidFormParse_ShowsInlineMessageAndGatesOk()
+		{
+			var (_, vm) = Show(BasicInput(validate: SentinelValidate));
+			FormBox(vm, "fr").Text = "?!";
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.IsValid, Is.False);
+			Assert.That(vm.ValidationMessage, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryInvalidForm),
+				"an unparseable form shows its message inline (ksInvalidForm parity) instead of being swallowed");
+		}
+
+		[AvaloniaTest]
+		public void Validation_ValidForm_ClearsTheInlineMessage()
+		{
+			var (view, vm) = Show(BasicInput(validate: SentinelValidate));
+			FormBox(vm, "fr").Text = "casa"; // not a sentinel -> Valid
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.IsValid, Is.True);
+			Assert.That(vm.ValidationMessage, Is.Empty);
+			Assert.That(ValidationBlock(view).IsVisible, Is.False, "the inline surface hides when the dialog is valid");
+		}
+
+		// ----- explicit morph-type pick re-marks the lexeme form (FormWithMarkers parity) -----
+
+		[AvaloniaTest]
+		public void MorphTypePick_RemarksTheForm()
+		{
+			// applyMarkers turns a bare form into a suffix-marked form when the suffix type is chosen.
+			var (view, vm) = Show(BasicInput(
+				applyMarkers: (key, form) => key == "guid-suffix" ? "-" + form : form));
+			FormBox(vm, "fr").Text = "ed";
+			Dispatcher.UIThread.RunJobs();
+
+			// Pick "suffix" through the picker -> the staged form is re-marked to "-ed".
+			vm.MorphTypePicker.OptionsList.SelectedIndex = 2; // suffix
+			vm.MorphTypePicker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+
+			vm.OkCommand.Execute(null);
+			Assert.That(vm.Result.LexemeFormByWs["fr"], Is.EqualTo("-ed"),
+				"an explicit morph-type pick re-marks the lexeme form with the type's markers");
+		}
+
+		// ----- the DEFERRED glossing-assistant affordance is VISIBLE + disabled for an inflectional affix -----
+
+		[AvaloniaTest]
+		public void GlossingAssistant_DeferredAffordance_IsVisibleButDisabled_ForInflectionalAffix_AndHiddenOtherwise()
+		{
+			var (view, vm) = Show(BasicInput(withMsa: true));
+			// Stem to start: the affordance is hidden (the legacy link was enabled only for an inflectional affix).
+			Assert.That(vm.ShowGlossingAssistantDeferred, Is.False, "hidden for a stem MSA");
+			Assert.That(GlossingAssistantBlock(view).IsVisible, Is.False);
+
+			// Drive to an inflectional affix (affix morph type -> Unclassified, then Affix Type -> Inflectional).
+			vm.MorphTypePicker.OptionsList.SelectedIndex = 2; // suffix -> Unclassified
+			vm.MorphTypePicker.CommitHighlighted();
+			Dispatcher.UIThread.RunJobs();
+			vm.MsaGroupBox.AffixTypeCombo.SelectedIndex = 1; // Inflectional
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.ShowGlossingAssistantDeferred, Is.True, "shown for an inflectional affix (legacy condition)");
+			var affordance = GlossingAssistantBlock(view);
+			Assert.That(affordance.IsVisible, Is.True, "the deferred affordance is VISIBLE (not silently omitted)");
+			Assert.That(affordance.IsEnabled, Is.False, "the deferred affordance is DISABLED (MGA not yet available)");
+			Assert.That(affordance.Text, Is.EqualTo(FwAvaloniaDialogsStrings.InsertEntryGlossingAssistantDeferred));
+		}
+
+		// The inline validation TextBlock, by automation id.
+		private static TextBlock ValidationBlock(Control view)
+			=> view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => Avalonia.Automation.AutomationProperties.GetAutomationId(t) == "InsertEntry.ValidationError");
+
+		// The deferred glossing-assistant TextBlock, by automation id.
+		private static TextBlock GlossingAssistantBlock(Control view)
+			=> view.GetVisualDescendants().OfType<TextBlock>()
+				.First(t => Avalonia.Automation.AutomationProperties.GetAutomationId(t)
+					== "InsertEntry.GlossingAssistantDeferred");
 
 		// ----- morph-type picker is a collapsed dropdown (not an always-open list) -----
 
