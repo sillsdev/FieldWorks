@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using FwAvaloniaDialogs;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Region;
 using SIL.FieldWorks.Common.FwUtils;
@@ -109,6 +110,47 @@ namespace SIL.FieldWorks.LexText.Controls
 		// (P2) below them — the legacy InsertEntryDlg is similarly tall to fit its similar-entries browser.
 		protected override int DialogHeight => 460;
 
+		/// <summary>
+		/// Reads the remembered client size from the SAME registry location + value names the legacy InsertEntryDlg
+		/// persisted (<c>FieldWorksRegistryKey\LingCmnDlgs</c> InsertWidth/InsertHeight — :1603-1618), so a
+		/// user's remembered size carries across the New/Legacy dialogs. Null (no stored value) uses the defaults.
+		/// </summary>
+		protected override System.Drawing.Size? GetRememberedSize()
+		{
+			try
+			{
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("LingCmnDlgs"))
+				{
+					var w = regKey?.GetValue("InsertWidth") as int?;
+					var h = regKey?.GetValue("InsertHeight") as int?;
+					if (w.HasValue && h.HasValue && w.Value > 0 && h.Value > 0)
+						return new System.Drawing.Size(w.Value, h.Value);
+				}
+			}
+			catch
+			{
+				// Size persistence must never take down the dialog; fall back to the defaults.
+			}
+			return null;
+		}
+
+		/// <summary>Records the final client size to the legacy registry location (parity with InsertEntryDlg_Closed).</summary>
+		protected override void OnRememberedSizeChanged(System.Drawing.Size size)
+		{
+			try
+			{
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("LingCmnDlgs"))
+				{
+					regKey?.SetValue("InsertWidth", size.Width);
+					regKey?.SetValue("InsertHeight", size.Height);
+				}
+			}
+			catch
+			{
+				// Best-effort persistence; ignore registry failures.
+			}
+		}
+
 		protected override InsertEntryDialogInput BuildState() =>
 			BuildInput(_cache, _tssForm, _mediator, _propertyTable);
 
@@ -124,31 +166,49 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var wsContainer = cache.ServiceLocator.WritingSystems;
 
-			// The optional initial form only seeds the lexeme form when it is a vernacular string (parity with the
-			// legacy SetDlgInfo, which routes a non-vernacular initial string to the gloss instead — deferred here:
-			// Phase 1 seeds only the vernacular lexeme form, leaving the gloss empty).
+			// The optional initial form routes by writing system, mirroring the legacy SetDlgInfo (:848-871): a
+			// VERNACULAR initial string seeds the lexeme form and shifts focus to the gloss (the form is done); an
+			// ANALYSIS initial string seeds the gloss and keeps focus on the (empty) lexeme form. A string in neither
+			// current set seeds nothing (focus stays on the lexeme form).
 			string initialForm = null;
+			string initialGloss = null;
+			var initialFocus = InsertEntryInitialFocus.LexemeForm;
 			if (tssForm != null && tssForm.Length > 0)
 			{
 				var wsForm = TsStringUtils.GetWsAtOffset(tssForm, 0);
 				if (wsContainer.CurrentVernacularWritingSystems.Any(ws => ws.Handle == wsForm))
+				{
 					initialForm = tssForm.Text;
+					initialFocus = InsertEntryInitialFocus.Gloss;
+				}
+				else if (wsContainer.CurrentAnalysisWritingSystems.Any(ws => ws.Handle == wsForm))
+				{
+					initialGloss = tssForm.Text;
+					initialFocus = InsertEntryInitialFocus.LexemeForm;
+				}
 			}
 
 			var lexemeForm = BuildTextField("LexemeForm", "InsertEntry.LexemeForm",
 				wsContainer.CurrentVernacularWritingSystems, initialForm,
 				FwAvaloniaDialogsStrings.InsertEntryLexemeFormLabel);
 			var gloss = BuildTextField("Gloss", "InsertEntry.Gloss",
-				wsContainer.CurrentAnalysisWritingSystems, initialForm: null,
+				wsContainer.CurrentAnalysisWritingSystems, initialGloss,
 				FwAvaloniaDialogsStrings.InsertEntryGlossLabel);
 
 			return new InsertEntryDialogInput
 			{
 				LexemeForm = lexemeForm,
 				Gloss = gloss,
+				InitialFocus = initialFocus,
 				MorphTypes = BuildMorphTypeOptions(cache),
 				InitialMorphTypeKey = MoMorphTypeTags.kguidMorphStem.ToString(),
 				DeriveMorphType = form => DeriveMorphType(cache, form),
+				// The LCModel-aware OK-time morphology validation (CheckMorphType + CircumfixProblem + invalid-form
+				// parse), surfaced inline + gating OK.
+				ValidateMorphology = (forms, morphTypeKey) => ValidateMorphology(cache, forms, morphTypeKey),
+				// Re-mark the lexeme form with the chosen type's affix markers on an explicit morph-type pick
+				// (FormWithMarkers parity).
+				ApplyMorphTypeMarkers = (morphTypeKey, form) => ApplyMorphTypeMarkers(cache, morphTypeKey, form),
 				SearchMatches = BuildMatchSearch(cache, mediator, propertyTable),
 				// Grammatical-info (MSA) section (Stage 3): the project POS hierarchy + the morph-type → MsaType map +
 				// the per-POS slot provider, so the LCModel-free FwMsaGroupBox can drive its layout live.
@@ -171,7 +231,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitialComplexFormTypeKey = null,
 				ComplexFormGatingByMorphType = BuildComplexFormGatingMap(cache),
 				Prompt = null,
-				HelpTopic = null
+				// The Help button opens the same topic the legacy dialog uses (InsertEntryDlg s_helpTopic :81).
+				HelpTopic = "khtpInsertEntry"
 			};
 		}
 
@@ -377,27 +438,65 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// <summary>
 		/// Builds the duplicate-detection ("matching entries") search delegate the dialog drives as the user types
-		/// the lexeme form — the P2 lift of <c>InsertEntryDlg.UpdateMatches</c>. It reuses the SAME matching the
-		/// legacy EntryGoDlg family uses (the shared <see cref="EntryGoSearchEngine"/> over the live entry repository,
-		/// the legacy vernacular citation/lexeme/alternate-form field set) via <see cref="EntryGoLauncherShared"/>,
-		/// with NO exclusion (a create flow has no "current" entry to exclude — every match is a candidate the user
-		/// may reuse instead of creating a duplicate). Each match maps to a lightweight headword + gloss row. Internal
-		/// so the match semantics are unit-testable against a real cache without running the modal.
-		///
-		/// NOTE on parity: the legacy dialog also searches the GLOSS field and runs MorphServices.EnsureNoMarkers on
-		/// the form before searching; here the VM's affix-marker derivation already adjusts the staged form before the
-		/// search runs, and the search keys on the vernacular form fields (the duplicate-by-form case that matters for
-		/// "do not create a second 'casa'"). The gloss-match column is the one piece deferred — see // PARITY below.
+		/// the lexeme form or gloss — the lift of <c>InsertEntryDlg.UpdateMatches</c> + <c>GetFields</c>. It uses the
+		/// SAME engine the legacy dialog uses (<see cref="InsertEntrySearchEngine"/> over the live entry repository),
+		/// keyed on the legacy field set: the vernacular citation/lexeme/alternate FORMS (the "do not create a second
+		/// 'casa'" case) AND the analysis GLOSS (legacy <c>:1030-1031</c> — typing a gloss surfaces same-gloss entries).
+		/// A create flow has no "current" entry to exclude, so every match is a reuse candidate. Each match maps to a
+		/// lightweight headword + gloss row. Internal so the match semantics are unit-testable against a real cache.
 		/// </summary>
-		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildMatchSearch(LcmCache cache,
+		internal static Func<string, string, IReadOnlyList<EntryGoSearchResult>> BuildMatchSearch(LcmCache cache,
 			Mediator mediator, PropertyTable propertyTable)
 		{
-			// PARITY: the legacy InsertEntrySearchEngine also matches on LexSenseTags.kflidGloss (so typing a gloss
-			// surfaces same-gloss entries). This slice reuses the shared EntryGoSearchEngine form-field matching
-			// (citation/lexeme/alternate forms) — the duplicate-FORM detection that drives the "do not duplicate this
-			// lexeme" case — and defers the gloss column. The matches list still populates from real entries by form.
-			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				excludedEntryHvo: 0, engineCacheKey: "AvaloniaInsertEntryMatchSearchEngine", filter: null);
+			var engine = GetMatchSearchEngine(cache, mediator, propertyTable);
+			var vernWs = cache.DefaultVernWs;
+			var analWs = cache.DefaultAnalWs;
+			var repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			return (form, gloss) =>
+			{
+				form = form ?? string.Empty;
+				gloss = gloss ?? string.Empty;
+				if (string.IsNullOrEmpty(form) && string.IsNullOrEmpty(gloss))
+					return Array.Empty<EntryGoSearchResult>();
+
+				// The legacy GetFields set: the vernacular form fields keyed on the typed form, plus the gloss field
+				// keyed on the typed gloss (added only when a gloss is present, as the legacy GetFields does).
+				var fields = new List<SearchField>();
+				var formKey = TsStringUtils.MakeString(form, vernWs);
+				fields.Add(new SearchField(LexEntryTags.kflidCitationForm, formKey));
+				fields.Add(new SearchField(LexEntryTags.kflidLexemeForm, formKey));
+				fields.Add(new SearchField(LexEntryTags.kflidAlternateForms, formKey));
+				if (!string.IsNullOrEmpty(gloss))
+					fields.Add(new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString(gloss, analWs)));
+
+				var results = new List<EntryGoSearchResult>();
+				foreach (var hvo in engine.Search(fields))
+				{
+					if (!repo.TryGetObject(hvo, out var entry))
+						continue;
+					results.Add(new EntryGoSearchResult(
+						hvo.ToString(System.Globalization.CultureInfo.InvariantCulture),
+						EntryGoLauncherShared.HeadwordText(entry))
+					{
+						LexemeForm = EntryGoLauncherShared.LexemeFormText(entry),
+						Gloss = EntryGoLauncherShared.GlossesText(entry)
+					});
+				}
+				return results.OrderBy(r => r.Text, StringComparer.CurrentCulture).ToList();
+			};
+		}
+
+		// Gets (creating + caching on the property table, like the legacy dialog) the InsertEntrySearchEngine — the
+		// same engine the legacy InsertEntryDlg uses, which searches the vernacular forms AND the analysis gloss. When
+		// no property table is supplied (tests) a fresh engine is built.
+		private static InsertEntrySearchEngine GetMatchSearchEngine(LcmCache cache, Mediator mediator,
+			PropertyTable propertyTable)
+		{
+			if (propertyTable == null)
+				return new InsertEntrySearchEngine(cache);
+			return (InsertEntrySearchEngine)SearchEngine.Get(mediator, propertyTable,
+				"AvaloniaInsertEntryMatchSearchEngine", () => new InsertEntrySearchEngine(cache));
 		}
 
 		/// <summary>
@@ -539,6 +638,145 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			return (mmt?.Guid.ToString(), adjusted);
+		}
+
+		/// <summary>
+		/// The LCModel-aware OK-time morphology validation — the lift of <c>InsertEntryDlg</c>'s
+		/// <c>CheckMorphType</c> (:1439) + <c>CircumfixProblem</c> (:1494) + the <c>ksInvalidForm</c> parse guard
+		/// (:1681). Given the staged per-writing-system lexeme forms (keyed by WS tag) and the chosen morph-type key it
+		/// returns which morphology problem the form/type combination has (if any). The empty-form case is handled by
+		/// the dialog's own empty-form gate, so an empty best form returns <see cref="InsertEntryMorphValidation.Valid"/>
+		/// here. Static so it is unit-testable against a real cache.
+		/// </summary>
+		internal static InsertEntryMorphValidation ValidateMorphology(LcmCache cache,
+			IReadOnlyDictionary<string, string> formsByWs, string morphTypeKey)
+		{
+			var best = BestFormOf(formsByWs);
+			if (string.IsNullOrEmpty(best))
+				return InsertEntryMorphValidation.Valid; // empty handled by the empty-form gate
+
+			var chosen = ResolveMorphType(cache, morphTypeKey);
+
+			// The ksInvalidForm parse guard: FindMorphType throws on a malformed form (e.g. mismatched circumfix
+			// markers). FindMorphType strips the markers off the ref form, which CheckMorphType then reuses.
+			var strippedForm = best;
+			IMoMorphType found;
+			try
+			{
+				found = MorphServices.FindMorphType(cache, ref strippedForm, out _);
+			}
+			catch
+			{
+				return InsertEntryMorphValidation.InvalidForm;
+			}
+
+			if (!CheckMorphType(chosen, found, best, strippedForm))
+				return InsertEntryMorphValidation.InvalidLexForm;
+
+			if (CircumfixProblem(cache, chosen, formsByWs))
+				return InsertEntryMorphValidation.IncompleteCircumfix;
+
+			return InsertEntryMorphValidation.Valid;
+		}
+
+		// The lift of InsertEntryDlg.CheckMorphType (:1439-1488): does the morph type FindMorphType deduced from the
+		// typed markers agree with the chosen morph type? The interfix/bound-root special cases mirror the legacy
+		// switch; the fallback tolerates a user who typed markers that make two distinct types look identical (LT-12378).
+		private static bool CheckMorphType(IMoMorphType chosen, IMoMorphType deduced, string originalForm,
+			string strippedForm)
+		{
+			if (chosen == null || deduced == null)
+				return true; // nothing resolvable to disagree about; do not block OK
+			bool result;
+			switch (chosen.Guid.ToString())
+			{
+				case MoMorphTypeTags.kMorphCircumfix:
+				case MoMorphTypeTags.kMorphPhrase:
+				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
+				case MoMorphTypeTags.kMorphStem:
+				case MoMorphTypeTags.kMorphRoot:
+				case MoMorphTypeTags.kMorphParticle:
+				case MoMorphTypeTags.kMorphClitic:
+					result = deduced.Guid == MoMorphTypeTags.kguidMorphStem
+						|| deduced.Guid == MoMorphTypeTags.kguidMorphPhrase;
+					break;
+				case MoMorphTypeTags.kMorphBoundRoot:
+					result = deduced.Guid == MoMorphTypeTags.kguidMorphBoundStem;
+					break;
+				case MoMorphTypeTags.kMorphSuffixingInterfix:
+					result = deduced.Guid == MoMorphTypeTags.kguidMorphSuffix;
+					break;
+				case MoMorphTypeTags.kMorphPrefixingInterfix:
+					result = deduced.Guid == MoMorphTypeTags.kguidMorphPrefix;
+					break;
+				case MoMorphTypeTags.kMorphInfixingInterfix:
+					result = deduced.Guid == MoMorphTypeTags.kguidMorphInfix;
+					break;
+				default:
+					result = deduced.Equals(chosen);
+					break;
+			}
+			if (result)
+				return true;
+			// The predicted form does not match, but the form the user chose would look identical (LT-12378).
+			var expected = deduced.Prefix + strippedForm + deduced.Postfix;
+			return expected == originalForm;
+		}
+
+		// The lift of InsertEntryDlg.CircumfixProblem (:1494-1521): a circumfix needs a left AND right part (two
+		// morphemes separated by a space/period) in EVERY non-blank writing-system alternative; otherwise it is
+		// incomplete. Non-circumfix morph types never have this problem.
+		private static bool CircumfixProblem(LcmCache cache, IMoMorphType chosen,
+			IReadOnlyDictionary<string, string> formsByWs)
+		{
+			if (chosen == null || chosen.Guid != MoMorphTypeTags.kguidMorphCircumfix)
+				return false;
+			if (formsByWs == null)
+				return false;
+			var wsFactory = cache.WritingSystemFactory;
+			foreach (var pair in formsByWs)
+			{
+				var text = pair.Value?.Trim();
+				if (string.IsNullOrEmpty(text))
+					continue;
+				var ws = wsFactory.GetWsFromStr(pair.Key);
+				if (ws == 0)
+					ws = cache.DefaultVernWs;
+				var tss = TsStringUtils.MakeString(text, ws);
+				if (!StringServices.GetCircumfixLeftAndRightParts(cache, tss, out _, out _))
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// The LCModel-aware "re-mark the form with the morph type's markers" — the lift of
+		/// <c>cbMorphType_SelectedIndexChanged</c>'s <c>BestForm = m_morphType.FormWithMarkers(BestForm)</c> (:1709).
+		/// A circumfix is returned unchanged (as the legacy leaves it, since a circumfix mixes prefix/infix/suffix
+		/// markers). An unresolvable key returns the form unchanged. Static so it is unit-testable against a real cache.
+		/// </summary>
+		internal static string ApplyMorphTypeMarkers(LcmCache cache, string morphTypeKey, string form)
+		{
+			form = form ?? string.Empty;
+			var mt = ResolveMorphType(cache, morphTypeKey);
+			if (mt == null || mt.Guid == MoMorphTypeTags.kguidMorphCircumfix)
+				return form;
+			return mt.FormWithMarkers(form);
+		}
+
+		// The best (first non-empty, trimmed) staged form across the alternatives — the launcher-side mirror of the
+		// VM's BestStagedForm (used by the validation delegate, which receives the whole per-WS bag).
+		private static string BestFormOf(IReadOnlyDictionary<string, string> formsByWs)
+		{
+			if (formsByWs == null)
+				return string.Empty;
+			foreach (var pair in formsByWs)
+			{
+				var text = pair.Value?.Trim();
+				if (!string.IsNullOrEmpty(text))
+					return text;
+			}
+			return string.Empty;
 		}
 
 		protected override InsertEntryDialogViewModel CreateViewModel(InsertEntryDialogInput state)
