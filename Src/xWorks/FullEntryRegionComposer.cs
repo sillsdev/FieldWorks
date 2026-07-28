@@ -3237,7 +3237,7 @@ namespace SIL.FieldWorks.XWorks
 	/// LCModel setters inside the fenced session owned by <see cref="RegionEditContextBase"/>
 	/// (finding C — one shared session lifecycle + required-lexeme validation).
 	/// </summary>
-	public sealed class ComposedRegionEditContext : RegionEditContextBase
+	public sealed class ComposedRegionEditContext : RegionEditContextBase, IStructuredTextEditing
 	{
 		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
 		private readonly IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> _richTextSetters;
@@ -3317,7 +3317,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
-		public override bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex,
+		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex,
 			RegionRichTextValue value)
 		{
 			if (field == null || !_paragraphTextSetters.TryGetValue(field.StableId, out var setter))
@@ -3325,7 +3325,7 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
 		}
 
-		public override bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex,
+		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex,
 			string styleName)
 		{
 			if (field == null || !_paragraphStyleSetters.TryGetValue(field.StableId, out var setter))
@@ -3333,14 +3333,14 @@ namespace SIL.FieldWorks.XWorks
 			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
 		}
 
-		public override bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
+		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
 		{
 			if (field == null || !_paragraphInsertSetters.TryGetValue(field.StableId, out var setter))
 				return false;
 			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
 		}
 
-		public override bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
+		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
 		{
 			if (field == null || !_paragraphDeleteSetters.TryGetValue(field.StableId, out var setter))
 				return false;
