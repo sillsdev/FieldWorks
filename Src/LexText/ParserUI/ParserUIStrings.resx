@@ -296,7 +296,7 @@
     <value>Num Changed Analyses</value>
   </data>
   <data name="ksTotalChangedAnalysesToolTip" xml:space="preserve">
-    <value>The total number of changed analyses since the last parse</value>
+    <value>The total number of analyses that have changed since the last parse</value>
   </data>
   <data name="ksTotalDisapprovedAnalyses" xml:space="preserve">
     <value>Disapproved Analyses</value>

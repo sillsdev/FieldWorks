@@ -655,7 +655,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The total number of changed analyses since the last parse.
+        ///   Looks up a localized string similar to The total number of analyses that have changed since the last parse.
         /// </summary>
         public static string ksTotalChangedAnalysesToolTip {
             get {
