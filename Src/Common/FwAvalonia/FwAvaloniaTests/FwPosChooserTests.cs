@@ -12,6 +12,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.NUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NUnit.Framework;
@@ -167,6 +168,32 @@ namespace FwAvaloniaTests
 
 			// Capture the actual on-top tree content (the host-window capture omits the popup top-level).
 			CaptureOpenPopupContent("FwPosChooser-02-open-tree", filtered: false);
+		}
+
+		[AvaloniaTest]
+		public void Dropdown_IsHostedInAFlyout_NotAFreeStandingPopup()
+		{
+			// Parity/guidance guard: the tree dropdown must ride on a Flyout anchored to the toggle
+			// button, never a free Popup living in the chooser's own tree. A free popup opens its own
+			// top-level and misplaces itself under fractional display scaling; a flyout positions itself
+			// in the trigger's surface. Assert the chooser owns NO Popup element, collapsed AND while the
+			// dropdown is open (the flyout's overlay is not a logical child of the chooser).
+			var (chooser, window, _, _) = Show();
+			window.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+			Assert.That(chooser.GetLogicalDescendants().OfType<Popup>(), Is.Empty,
+				"the collapsed chooser hosts no free Popup");
+
+			chooser.Open();
+			Dispatcher.UIThread.RunJobs();
+			AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(chooser.IsOpen, Is.True, "the dropdown opens");
+			Assert.That(chooser.GetLogicalDescendants().OfType<Popup>(), Is.Empty,
+				"opening adds no free Popup to the chooser tree — the tree rides a Flyout top-level");
+			Assert.That(chooser.Tree.GetVisualDescendants().OfType<TreeViewItem>().Any(), Is.True,
+				"the tree content is realized in the flyout overlay");
 		}
 
 		[AvaloniaTest]
