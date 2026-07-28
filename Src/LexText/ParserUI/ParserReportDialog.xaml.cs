@@ -31,6 +31,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserReportDialog(ParserReportViewModel parserReport, ParserListener parserListener, Mediator mediator, LcmCache cache, PropertyTable propertyTable)
 		{
 			InitializeComponent();
+			if (!parserReport.ParserReport.ChangesRecorded)
+			{
+				// Showing NumChangedAnalyses would be misleading.
+				NumChangedAnalyses.Visibility = Visibility.Collapsed;
+			}
 			ParserListener = parserListener;
 			Mediator = mediator;
 			Cache = cache;

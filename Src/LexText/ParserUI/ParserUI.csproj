@@ -80,7 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="ParserUIStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

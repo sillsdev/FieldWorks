@@ -764,7 +764,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		ParserReport CreateParserReport()
 		{
-			var parserReport = new ParserReport(m_cache)
+			var parserReport = new ParserReport(m_cache, m_propertyTable)
 			{
 				SourceText = m_sourceText
 			};
