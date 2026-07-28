@@ -109,63 +109,54 @@ namespace SIL.FieldWorks.XWorks
 			var defaultWs = Cache.DefaultAnalWs;
 			var wsf = Cache.WritingSystemFactory;
 
-			var textSetters = new Dictionary<string, Func<string, string, bool>>
+			var handlers = new Dictionary<string, FieldEditHandler>
 			{
-				[CitationStableId] = (ws, value) =>
+				[CitationStableId] = new FieldEditHandler
 				{
-					m_entry.CitationForm.set_String(Cache.DefaultVernWs,
-						TsStringUtils.MakeString(value ?? string.Empty, Cache.DefaultVernWs));
-					return true;
-				}
-			};
-			var paragraphTextSetters = new Dictionary<string, Func<int, RegionRichTextValue, bool>>
-			{
-				[StTextStableId] = (index, value) =>
+					Text = (ws, value) =>
+					{
+						m_entry.CitationForm.set_String(Cache.DefaultVernWs,
+							TsStringUtils.MakeString(value ?? string.Empty, Cache.DefaultVernWs));
+						return true;
+					}
+				},
+				[StTextStableId] = new FieldEditHandler
 				{
-					if (value == null || index < 0)
-						return false;
-					while (m_stText.ParagraphsOS.Count <= index)
-						m_stText.InsertNewTextPara(m_stText.ParagraphsOS.Count, null);
-					((IStTxtPara)m_stText.ParagraphsOS[index]).Contents =
-						RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
-					return true;
-				}
-			};
-			var paragraphStyleSetters = new Dictionary<string, Func<int, string, bool>>
-			{
-				[StTextStableId] = (index, style) =>
-				{
-					if (index < 0 || index >= m_stText.ParagraphsOS.Count)
-						return false;
-					((IStTxtPara)m_stText.ParagraphsOS[index]).StyleName =
-						string.IsNullOrEmpty(style) ? StyleServices.NormalStyleName : style;
-					return true;
-				}
-			};
-			var paragraphInsertSetters = new Dictionary<string, Func<int, bool>>
-			{
-				[StTextStableId] = afterIndex =>
-				{
-					var pos = afterIndex < 0 ? 0 : Math.Min(afterIndex + 1, m_stText.ParagraphsOS.Count);
-					m_stText.InsertNewTextPara(pos, null);
-					return true;
-				}
-			};
-			var paragraphDeleteSetters = new Dictionary<string, Func<int, bool>>
-			{
-				[StTextStableId] = index =>
-				{
-					if (index < 0 || index >= m_stText.ParagraphsOS.Count || m_stText.ParagraphsOS.Count <= 1)
-						return false;
-					m_stText.ParagraphsOS.RemoveAt(index);
-					return true;
+					ParagraphText = (index, value) =>
+					{
+						if (value == null || index < 0)
+							return false;
+						while (m_stText.ParagraphsOS.Count <= index)
+							m_stText.InsertNewTextPara(m_stText.ParagraphsOS.Count, null);
+						((IStTxtPara)m_stText.ParagraphsOS[index]).Contents =
+							RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
+						return true;
+					},
+					ParagraphStyle = (index, style) =>
+					{
+						if (index < 0 || index >= m_stText.ParagraphsOS.Count)
+							return false;
+						((IStTxtPara)m_stText.ParagraphsOS[index]).StyleName =
+							string.IsNullOrEmpty(style) ? StyleServices.NormalStyleName : style;
+						return true;
+					},
+					ParagraphInsert = afterIndex =>
+					{
+						var pos = afterIndex < 0 ? 0 : Math.Min(afterIndex + 1, m_stText.ParagraphsOS.Count);
+						m_stText.InsertNewTextPara(pos, null);
+						return true;
+					},
+					ParagraphDelete = index =>
+					{
+						if (index < 0 || index >= m_stText.ParagraphsOS.Count || m_stText.ParagraphsOS.Count <= 1)
+							return false;
+						m_stText.ParagraphsOS.RemoveAt(index);
+						return true;
+					}
 				}
 			};
 
-			var context = new ComposedRegionEditContext(Cache, m_entry,
-				textSetters, new Dictionary<string, Func<string, bool>>(),
-				paragraphTextSetters: paragraphTextSetters, paragraphStyleSetters: paragraphStyleSetters,
-				paragraphInsertSetters: paragraphInsertSetters, paragraphDeleteSetters: paragraphDeleteSetters);
+			var context = new ComposedRegionEditContext(Cache, m_entry, handlers);
 			return (model, context);
 		}
 
