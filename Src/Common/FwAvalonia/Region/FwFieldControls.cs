@@ -40,9 +40,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// shows only the abbreviation + value with such operations reached off-row, they are offered as items
 	/// on the value box's right-click menu. A row with a bridged xCore ContextMenuId keeps that host menu as
 	/// its single right-click surface (it owns the field commands and Avalonia items cannot merge into it),
-	/// so the rich-text items are added only on rows WITHOUT a bridge. The abbreviation and value are laid
-	/// out in a fixed two-column Grid (a definite-width gutter column + the value column) so a bold value
-	/// can never crowd or overlap the raised abbreviation.
+	/// so the rich-text items are added only on rows WITHOUT a bridge. The abbreviation sits in its own
+	/// fixed-width gutter so a bold value can never crowd or overlap it.
 	/// </summary>
 	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					Background = Brushes.Transparent,
 					TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
 				};
-				// ITEM 3: a voice/audio writing system has no sound player in this view yet, so the row
+				// A voice/audio writing system has no sound player in this view yet, so the row
 				// is read-only and says why (a distinct message from the rich-content read-only case).
 				if (value.IsAudio)
 					ToolTip.SetTip(box, FwAvaloniaStrings.AudioRecordingReadOnly);
@@ -575,7 +574,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						}
 					}
 
-						// §19c — external-link insert / edit prompt. A right-click menu item "Insert/edit link…"
+						// External-link insert / edit prompt. A right-click menu item "Insert/edit link…"
 						// opens a flyout with a URL TextBox + Apply (the dialog-light prompt the decision calls
 						// for). On open it snapshots the selection and, when that selection sits on an existing
 						// link run, pre-fills the URL for editing. Apply over a real selection inserts/edits the
@@ -673,7 +672,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							});
 						}
 
-						// §19c — generic ORC delete. Removes the FIRST embedded object (ANY kind: link,
+						// Generic ORC delete. Removes the FIRST embedded object (ANY kind: link,
 						// picture, footnote, other) overlapping the current selection. Picture/footnote
 						// insert+edit are DEFERRED, but ANY ORC is deletable here so the new view is never
 						// stuck with an object it cannot remove. A right-click menu item, off a bridged row.
@@ -787,7 +786,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					});
 				}
 
-				// §19c per-run font display: differing runs render a read-along per-run-font TextBlock
+				// Per-run font display: differing runs render a read-along per-run-font TextBlock
 				// swapping to the editable box on focus; a uniform value renders the bare box.
 				var valueContent = BuildValueContentWithFontSwap(field, automationId, wsKey, box,
 					currentRich, !valueIsReadOnly);
@@ -823,7 +822,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			}
 		}
 
-		// §19c: the per-run font display + focus swap (shared shape with FwStructuredTextField). When the
+		// The per-run font display + focus swap (shared shape with FwStructuredTextField). When the
 		// value's runs warrant a per-run font display, wrap the editable box and a read-along TextBlock in a
 		// Panel: the TextBlock (each run in its own ws/style font from the host map) shows while unfocused;
 		// the box swaps in on focus / out on blur. A uniform value returns the bare box.
@@ -872,7 +871,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			return panel;
 		}
 
-		// §19c: the run that STARTS at plain-text offset start, or null.
+		// The run that STARTS at plain-text offset start, or null.
 		private static RegionTextRun RunAt(RegionRichTextValue rich, int start)
 		{
 			if (rich?.Runs == null)
