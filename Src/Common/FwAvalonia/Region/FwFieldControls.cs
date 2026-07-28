@@ -45,11 +45,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// </summary>
 	public sealed class FwMultiWsTextField : StackPanel, IHoverAffordanceProvider, IDisposable
 	{
-		// Teardown actions registered as each handler/subscription is wired, so a recycled or
+		// Teardown registered as each handler/subscription is wired, so a recycled or
 		// active-cell-deactivated field can detach EVERY handler (several capture closures over box,
 		// currentRich, clipboard) and release its flyouts — preventing the handler-closure leak on the
 		// editor path when VirtualizingStackPanel discards the container.
-		private readonly List<Action> _teardown = new List<Action>();
+		private readonly CompositeDisposable _teardown = new CompositeDisposable();
 		private bool _disposed;
 
 		public FwMultiWsTextField(
@@ -67,22 +67,21 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			AutomationProperties.SetName(this, field.Label ?? field.Field ?? automationId);
 
 			foreach (var value in field.Values)
-			{
+				BuildValueRow(field, automationId, editContext, writingSystemFocused,
+					menuRequested, clipboard, showWritingSystemAbbreviation, value);
+		}
+
+		// Builds one writing-system row: the abbreviation gutter, the value editor (with its rich-text
+		// editing/clipboard/menu wiring when the field is editable), and the two-column row layout. One
+		// call per WS alternative; the shared per-row editor state (currentRich/lastStaged) lives here so
+		// the value box's handlers and its context-menu Copy see the same mutations.
+		private void BuildValueRow(LexicalEditRegionField field, string automationId,
+			IRegionEditContext editContext, Action<string> writingSystemFocused,
+			Action<RegionMenuRequest> menuRequested, IFwClipboard clipboard,
+			bool showWritingSystemAbbreviation, RegionWsValue value)
+		{
 				var currentRich = value.RichText;
-				// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
-				// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
-				// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
-				// rather than bleeding into the value column.
-				var abbrev = new TextBlock
-				{
-					Text = value.WsAbbrev,
-					MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
-					VerticalAlignment = VerticalAlignment.Top,
-					Margin = new Thickness(0, 1, FwAvaloniaDensity.WsAbbrevGutter, 0),
-					FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
-					Foreground = FwAvaloniaDensity.WsAbbrevBrush,
-					ClipToBounds = true
-				};
+				var abbrev = BuildWsAbbrev(value);
 
 				// Legacy look (12.2): values render flat like RootSite views — no box, no fill.
 				// Local values outrank the theme's pointer-over/focus setters, so the editor stays flat.
@@ -97,78 +96,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				// there is no in-pane player. Full audio editing stays in the classic view.
 				var valueIsReadOnly = editContext == null || !field.IsEditable || !value.CanEditRichText
 					|| value.IsAudio;
-				var box = new TextBox
-				{
-					Text = value.Value,
-					Padding = FwAvaloniaDensity.EditorPadding,
-					MinHeight = 0,
-					AcceptsReturn = false,
-					IsReadOnly = valueIsReadOnly,
-					FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
-					BorderThickness = new Thickness(0),
-					Background = Brushes.Transparent,
-					TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
-				};
-				// A voice/audio writing system has no sound player in this view yet, so the row
-				// is read-only and says why (a distinct message from the rich-content read-only case).
-				if (value.IsAudio)
-					ToolTip.SetTip(box, FwAvaloniaStrings.AudioRecordingReadOnly);
-				else if (!value.CanEditRichText)
-					ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
-				if (!string.IsNullOrEmpty(value.FontFamily))
-					box.FontFamily = new FontFamily(value.FontFamily);
-				if (value.FontSize > 0)
-					box.FontSize = value.FontSize;
-				if (value.Bold)
-					box.FontWeight = FontWeight.Bold; // legacy <properties><bold value='on'/> (11.15)
+				var box = BuildValueBox(field, value, valueIsReadOnly);
 
-				if (!string.IsNullOrEmpty(field.GhostPrompt))
-				{
-					// 14.1: the legacy ghost add-prompt is a watermark — it disappears the moment the
-					// user clicks in (focus), and reappears only if they leave without typing.
-					box.Watermark = field.GhostPrompt;
-					EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
-					EventHandler<Avalonia.Interactivity.RoutedEventArgs> ghostLost = (s2, e2) =>
-					{
-						if (string.IsNullOrEmpty(box.Text))
-							box.Watermark = field.GhostPrompt;
-					};
-					box.GotFocus += ghostGot;
-					box.LostFocus += ghostLost;
-					_teardown.Add(() => { box.GotFocus -= ghostGot; box.LostFocus -= ghostLost; });
-				}
+				WireGhostPrompt(box, field);
 
-				// Section 13: a row with a legacy `contextMenu=` binding shows the SAME xCore-defined
-				// menu the legacy string view shows (MultiStringSlice.HandleRightMouseClickedEvent
-				// path), routed through the host bridge. That host menu owns this field's commands, so it
-				// stays the single right-click surface for a bridged row; the relocated rich-text operations
-				// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
-				var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
-				if (hasBridge)
-				{
-					EventHandler<PointerPressedEventArgs> menuPressed = (s2, e2) =>
-					{
-						if (!e2.GetCurrentPoint(box).Properties.IsRightButtonPressed)
-							return;
-						var screen = box.PointToScreen(e2.GetPosition(box));
-						menuRequested(new RegionMenuRequest(field, RegionMenuKind.ContextMenu, screen.X, screen.Y));
-						e2.Handled = true;
-					};
-					EventHandler<ContextRequestedEventArgs> swallowContext = (s2, e2) => e2.Handled = true;
-					box.AddHandler(InputElement.PointerPressedEvent, menuPressed,
-						Avalonia.Interactivity.RoutingStrategies.Tunnel);
-					// 15.2: exactly ONE menu — drop the TextBox theme flyout (Cut/Copy/Paste, which
-					// opens from ContextRequested on right-button RELEASE) so only the bridged menu
-					// shows, and swallow the request so nothing else opens.
-					box.ContextFlyout = null;
-					box.AddHandler(Control.ContextRequestedEvent, swallowContext,
-						Avalonia.Interactivity.RoutingStrategies.Tunnel);
-					_teardown.Add(() =>
-					{
-						box.RemoveHandler(InputElement.PointerPressedEvent, menuPressed);
-						box.RemoveHandler(Control.ContextRequestedEvent, swallowContext);
-					});
-				}
+				var hasBridge = WireBridgeContextMenu(box, field, menuRequested);
 				// Both edits AND the per-row automation id (which RegionFocusMemory keys focus
 				// restore on) address the writing system by its unique IETF tag (WsTag): the
 				// abbreviation is user-editable and can collide across writing systems. Tag-less
@@ -746,15 +678,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					}
 				}
 
-				if (writingSystemFocused != null && !string.IsNullOrEmpty(value.WsTag))
-				{
-					// Per-WS keyboard switching (6.2): activate this writing system's keyboard when
-					// its editor gains focus, exactly as legacy slices do per selection.
-					var wsTag = value.WsTag;
-					EventHandler<GotFocusEventArgs> wsFocus = (s, e) => writingSystemFocused(wsTag);
-					box.GotFocus += wsFocus;
-					_teardown.Add(() => box.GotFocus -= wsFocus);
-				}
+				WireWritingSystemKeyboard(box, value, writingSystemFocused);
 
 				// The value box's right-click menu (legacy MultiStringSlice parity: operations live OFF the
 				// row, not as always-visible inline controls). A non-bridged row carries a local menu — Copy
@@ -791,35 +715,159 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				var valueContent = BuildValueContentWithFontSwap(field, automationId, wsKey, box,
 					currentRich, !valueIsReadOnly);
 
-				// Fixed two-column layout so the abbreviation and value never overlap: the raised WS
-				// abbreviation sits in a definite-width gutter column, the value fills the rest. A browse cell
-				// is single-writing-system per column, so the gutter is suppressed there (it would otherwise
-				// show "vern"/"anal" in front of every cell, which the WinForms browse never does) and the
-				// value spans the whole row.
-				var rowPanel = new Grid
-				{
-					// 14.2: a null background only hit-tests the glyphs — the whole row must
-					// receive hover/right-click over the gaps too.
-					Background = Brushes.Transparent
-				};
-				if (showWritingSystemAbbreviation)
-				{
-					rowPanel.ColumnDefinitions.Add(
-						new ColumnDefinition(new GridLength(FwAvaloniaDensity.WsAbbrevWidth, GridUnitType.Pixel)));
-					rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
-					Grid.SetColumn(abbrev, 0);
-					rowPanel.Children.Add(abbrev);
-					Grid.SetColumn(valueContent, 1);
-					rowPanel.Children.Add(valueContent);
-				}
-				else
-				{
-					rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
-					Grid.SetColumn(valueContent, 0);
-					rowPanel.Children.Add(valueContent);
-				}
+				var rowPanel = BuildRowPanel(abbrev, valueContent, showWritingSystemAbbreviation);
 				Children.Add(rowPanel);
+		}
+
+		// Legacy look (12.3): small raised blue abbreviation, a superscript-style label kept in its
+		// own fixed gutter column (see the row Grid below) so a bold vernacular value can never crowd
+		// or overlap it. ClipToBounds keeps an unusually long abbreviation inside the gutter width
+		// rather than bleeding into the value column.
+		private static TextBlock BuildWsAbbrev(RegionWsValue value)
+		{
+			return new TextBlock
+			{
+				Text = value.WsAbbrev,
+				MinWidth = FwAvaloniaDensity.WsAbbrevWidth,
+				VerticalAlignment = VerticalAlignment.Top,
+				Margin = new Thickness(0, 1, FwAvaloniaDensity.WsAbbrevGutter, 0),
+				FontSize = FwAvaloniaDensity.WsAbbrevFontSize,
+				Foreground = FwAvaloniaDensity.WsAbbrevBrush,
+				ClipToBounds = true
+			};
+		}
+
+		// The flat value editor: a voice/audio or rich-content-lossy value is read-only and carries the
+		// explanatory tooltip; project WS font, size, bold, and RTL flow ride the value's own metadata.
+		private static TextBox BuildValueBox(LexicalEditRegionField field, RegionWsValue value, bool valueIsReadOnly)
+		{
+			var box = new TextBox
+			{
+				Text = value.Value,
+				Padding = FwAvaloniaDensity.EditorPadding,
+				MinHeight = 0,
+				AcceptsReturn = false,
+				IsReadOnly = valueIsReadOnly,
+				FlowDirection = value.RightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight,
+				BorderThickness = new Thickness(0),
+				Background = Brushes.Transparent,
+				TextWrapping = TextWrapping.Wrap // 14.5: long values wrap; the row grows vertically
+			};
+			// A voice/audio writing system has no sound player in this view yet, so the row
+			// is read-only and says why (a distinct message from the rich-content read-only case).
+			if (value.IsAudio)
+				ToolTip.SetTip(box, FwAvaloniaStrings.AudioRecordingReadOnly);
+			else if (!value.CanEditRichText)
+				ToolTip.SetTip(box, FwAvaloniaStrings.EmbeddedObjectReadOnly);
+			if (!string.IsNullOrEmpty(value.FontFamily))
+				box.FontFamily = new FontFamily(value.FontFamily);
+			if (value.FontSize > 0)
+				box.FontSize = value.FontSize;
+			if (value.Bold)
+				box.FontWeight = FontWeight.Bold; // legacy <properties><bold value='on'/> (11.15)
+			return box;
+		}
+
+		private void WireGhostPrompt(TextBox box, LexicalEditRegionField field)
+		{
+			if (!string.IsNullOrEmpty(field.GhostPrompt))
+			{
+				// 14.1: the legacy ghost add-prompt is a watermark — it disappears the moment the
+				// user clicks in (focus), and reappears only if they leave without typing.
+				box.Watermark = field.GhostPrompt;
+				EventHandler<GotFocusEventArgs> ghostGot = (s2, e2) => box.Watermark = string.Empty;
+				EventHandler<Avalonia.Interactivity.RoutedEventArgs> ghostLost = (s2, e2) =>
+				{
+					if (string.IsNullOrEmpty(box.Text))
+						box.Watermark = field.GhostPrompt;
+				};
+				box.GotFocus += ghostGot;
+				box.LostFocus += ghostLost;
+				_teardown.Add(() => { box.GotFocus -= ghostGot; box.LostFocus -= ghostLost; });
 			}
+		}
+
+		// Section 13: a row with a legacy `contextMenu=` binding shows the SAME xCore-defined
+		// menu the legacy string view shows (MultiStringSlice.HandleRightMouseClickedEvent
+		// path), routed through the host bridge. That host menu owns this field's commands, so it
+		// stays the single right-click surface for a bridged row; the relocated rich-text operations
+		// are offered on the LOCAL menu only for rows WITHOUT a bridge (built after the editor wiring).
+		private bool WireBridgeContextMenu(TextBox box, LexicalEditRegionField field,
+			Action<RegionMenuRequest> menuRequested)
+		{
+			var hasBridge = menuRequested != null && !string.IsNullOrEmpty(field.ContextMenuId);
+			if (hasBridge)
+			{
+				EventHandler<PointerPressedEventArgs> menuPressed = (s2, e2) =>
+				{
+					if (!e2.GetCurrentPoint(box).Properties.IsRightButtonPressed)
+						return;
+					var screen = box.PointToScreen(e2.GetPosition(box));
+					menuRequested(new RegionMenuRequest(field, RegionMenuKind.ContextMenu, screen.X, screen.Y));
+					e2.Handled = true;
+				};
+				EventHandler<ContextRequestedEventArgs> swallowContext = (s2, e2) => e2.Handled = true;
+				box.AddHandler(InputElement.PointerPressedEvent, menuPressed,
+					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				// 15.2: exactly ONE menu — drop the TextBox theme flyout (Cut/Copy/Paste, which
+				// opens from ContextRequested on right-button RELEASE) so only the bridged menu
+				// shows, and swallow the request so nothing else opens.
+				box.ContextFlyout = null;
+				box.AddHandler(Control.ContextRequestedEvent, swallowContext,
+					Avalonia.Interactivity.RoutingStrategies.Tunnel);
+				_teardown.Add(() =>
+				{
+					box.RemoveHandler(InputElement.PointerPressedEvent, menuPressed);
+					box.RemoveHandler(Control.ContextRequestedEvent, swallowContext);
+				});
+			}
+			return hasBridge;
+		}
+
+		private void WireWritingSystemKeyboard(TextBox box, RegionWsValue value,
+			Action<string> writingSystemFocused)
+		{
+			if (writingSystemFocused != null && !string.IsNullOrEmpty(value.WsTag))
+			{
+				// Per-WS keyboard switching (6.2): activate this writing system's keyboard when
+				// its editor gains focus, exactly as legacy slices do per selection.
+				var wsTag = value.WsTag;
+				EventHandler<GotFocusEventArgs> wsFocus = (s, e) => writingSystemFocused(wsTag);
+				box.GotFocus += wsFocus;
+				_teardown.Add(() => box.GotFocus -= wsFocus);
+			}
+		}
+
+		// Fixed two-column layout so the abbreviation and value never overlap: the raised WS
+		// abbreviation sits in a definite-width gutter column, the value fills the rest. A browse cell
+		// is single-writing-system per column, so the gutter is suppressed there (it would otherwise
+		// show "vern"/"anal" in front of every cell, which the WinForms browse never does) and the
+		// value spans the whole row.
+		private static Grid BuildRowPanel(TextBlock abbrev, Control valueContent, bool showWritingSystemAbbreviation)
+		{
+			var rowPanel = new Grid
+			{
+				// 14.2: a null background only hit-tests the glyphs — the whole row must
+				// receive hover/right-click over the gaps too.
+				Background = Brushes.Transparent
+			};
+			if (showWritingSystemAbbreviation)
+			{
+				rowPanel.ColumnDefinitions.Add(
+					new ColumnDefinition(new GridLength(FwAvaloniaDensity.WsAbbrevWidth, GridUnitType.Pixel)));
+				rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+				Grid.SetColumn(abbrev, 0);
+				rowPanel.Children.Add(abbrev);
+				Grid.SetColumn(valueContent, 1);
+				rowPanel.Children.Add(valueContent);
+			}
+			else
+			{
+				rowPanel.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+				Grid.SetColumn(valueContent, 0);
+				rowPanel.Children.Add(valueContent);
+			}
+			return rowPanel;
 		}
 
 		// The per-run font display + focus swap (shared shape with FwStructuredTextField). When the
@@ -906,9 +954,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			if (_disposed)
 				return;
 			_disposed = true;
-			foreach (var detach in _teardown)
-				detach();
-			_teardown.Clear();
+			_teardown.Dispose();
 		}
 
 		private static async System.Threading.Tasks.Task CopySelectionAsync(TextBox box,
