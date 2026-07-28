@@ -149,10 +149,7 @@ namespace SIL.FieldWorks.XWorks
 				state.Walk(node, obj, 0);
 			state.ExitModel();
 
-			var context = new ComposedRegionEditContext(cache, obj, state.TextSetters, state.OptionSetters,
-				state.ReferenceAddSetters, state.ReferenceRemoveSetters, state.RichTextSetters,
-				state.ParagraphTextSetters, state.ParagraphStyleSetters, state.ParagraphInsertSetters,
-				state.ParagraphDeleteSetters);
+			var context = new ComposedRegionEditContext(cache, obj, state.Handlers);
 			composedContext = context;
 			var model = new LexicalEditRegionModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics);
 			return new ComposedEntryRegion(model, context);
@@ -269,27 +266,24 @@ namespace SIL.FieldWorks.XWorks
 			private readonly HashSet<(int hvo, string layout)> _visited = new HashSet<(int, string)>();
 
 			public readonly List<LexicalEditRegionField> Fields = new List<LexicalEditRegionField>();
-			public readonly Dictionary<string, Func<string, string, bool>> TextSetters
-				= new Dictionary<string, Func<string, string, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<string, RegionRichTextValue, bool>> RichTextSetters
-				= new Dictionary<string, Func<string, RegionRichTextValue, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<string, bool>> OptionSetters
-				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
-			// 6.3: reference-vector add/remove staging, keyed like the other setters by StableId.
-			public readonly Dictionary<string, Func<string, bool>> ReferenceAddSetters
-				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<string, bool>> ReferenceRemoveSetters
-				= new Dictionary<string, Func<string, bool>>(StringComparer.Ordinal);
-			// §19a: StText paragraph CRUD staging, keyed like the other setters by StableId. Text/style
-			// take the paragraph index plus the value; insert/delete take the index.
-			public readonly Dictionary<string, Func<int, RegionRichTextValue, bool>> ParagraphTextSetters
-				= new Dictionary<string, Func<int, RegionRichTextValue, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<int, string, bool>> ParagraphStyleSetters
-				= new Dictionary<string, Func<int, string, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<int, bool>> ParagraphInsertSetters
-				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
-			public readonly Dictionary<string, Func<int, bool>> ParagraphDeleteSetters
-				= new Dictionary<string, Func<int, bool>>(StringComparer.Ordinal);
+			// One edit handler per composed field, keyed by StableId. A field's text/rich-text/option/
+			// reference/paragraph write delegates live together on its handler (null where the field's kind
+			// does not support a gesture), replacing the former nine parallel setter dictionaries that had
+			// to be kept in sync by matching stable id across each one.
+			public readonly Dictionary<string, FieldEditHandler> Handlers
+				= new Dictionary<string, FieldEditHandler>(StringComparer.Ordinal);
+
+			// The handler for a field, created on first use so a walker registers whichever gestures the
+			// field's kind supports without pre-seeding every stable id.
+			public FieldEditHandler HandlerFor(string stableId)
+			{
+				if (!Handlers.TryGetValue(stableId, out var handler))
+				{
+					handler = new FieldEditHandler();
+					Handlers[stableId] = handler;
+				}
+				return handler;
+			}
 
 			private readonly bool _showHidden;
 			// advanced-entry-view: the per-project override resolver, threaded into every CompileForObject
@@ -1025,104 +1019,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var hvo = obj.Hvo;
-				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
-				// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems) restricts
-				// the resolved set to the authored subset (in the override's order), intersected with the
-				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
-				// the field entirely (defensive — a stale override must never blank a real field).
-				systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
-				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
-					&& systems.Count > 0)
-				{
-					// Single-alternative property: one row. Plain String props:
-					// get_StringProp reads the WHOLE string regardless of the layout ws= spec, so
-					// taking the spec's FIRST writing system for the row's display metadata
-					// (abbreviation/font/RTL) and write-back would be asymmetric when the stored
-					// string was typed in another ws (legacy StringSlice renders the string's own
-					// run properties). Derive the row's ws from the existing string's first run;
-					// the layout ws only seeds an EMPTY string.
-					var rowWs = systems[0];
-					if (type == CellarPropertyType.String)
-					{
-						var existing = _sda.get_StringProp(hvo, flid);
-						if (existing != null && existing.Length > 0)
-						{
-							var runWs = TsStringUtils.GetWsOfRun(existing, 0);
-							if (runWs > 0)
-							{
-								try
-								{
-									rowWs = _cache.ServiceLocator.WritingSystemManager.Get(runWs);
-								}
-								catch (Exception)
-								{
-									// Unknown run ws: keep the layout writing system.
-								}
-							}
-						}
-					}
-					systems = new[] { rowWs };
-				}
-
-				var anyData = false;
-				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
-				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
-				// The per-ws value rows build through the shared factory
-				// (LexicalEditRegionBuilder uses the same one), this path only supplies the text.
-				IReadOnlyList<RegionWsValue> values;
-				if (type == CellarPropertyType.Unicode)
-				{
-					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
-					{
-						var text = _sda.get_UnicodeProp(hvo, flid);
-						anyData |= !string.IsNullOrEmpty(text);
-						return text;
-					}, fontSize, node.BoldEmphasis);
-				}
-				else
-				{
-					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
-					{
-						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
-						anyData |= !string.IsNullOrEmpty(tss?.Text);
-						return tss;
-					}, _cache.WritingSystemFactory, fontSize, node.BoldEmphasis);
-				}
-
-				// ITEM 3 (voice/sound writing systems): a voice WS stores an audio recording, not text.
-				// The new view has no sound player yet, so an audio alternative renders as a READ-ONLY
-				// row carrying an explicit "audio recording - edit in the classic view" placeholder -
-				// the data stays visible and diagnosable instead of a blank editable box whose first
-				// keystroke would corrupt the recording (the value here is the audio file name). A full
-				// Avalonia sound player is deferred. Recompute the per-WS values, swapping any voice
-				// alternative for the placeholder and flagging it IsAudio so the row is held read-only.
-				var anyAudio = false;
-				if (systems.Any(ws => ws.IsVoice))
-				{
-					var rebuilt = new List<RegionWsValue>(values.Count);
-					for (var i = 0; i < values.Count; i++)
-					{
-						var ws = systems[i];
-						if (ws.IsVoice)
-						{
-							anyAudio = true;
-							// §19d: a voice (IsVoice) alternative stores the audio FILENAME as its value. We
-							// now keep the real filename (not a placeholder) so the owned audio field can play
-							// the file and clear/replace the value; isAudio:true tells the view to render the
-							// play/record affordances instead of a plain text box. The recording is no longer a
-							// blanket read-only placeholder.
-							rebuilt.Add(new RegionWsValue(ws.Abbreviation,
-								values[i]?.Value ?? string.Empty,
-								ws.DefaultFontName, fontSize,
-								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
-						}
-						else
-						{
-							rebuilt.Add(values[i]);
-						}
-					}
-					values = rebuilt;
-				}
+				var systems = ResolveTextRowWritingSystems(hvo, flid, type, node);
+				var values = BuildTextRowValues(hvo, flid, type, systems, node, out var anyData, out var anyAudio);
 
 				if (!anyData && !anyAudio && HideWhenEmpty(node))
 					return;
@@ -1170,6 +1068,133 @@ namespace SIL.FieldWorks.XWorks
 				if (!editable)
 					return;
 
+				RegisterTextRowEditHandler(stableId, hvo, flid, type, systems);
+			}
+
+			// The writing systems of a text row: the layout set restricted by the field's per-field
+			// visibleWritingSystems override (§19e), then collapsed to a single derived row ws for a
+			// single-alternative (String/Unicode) property. Split out of WalkTextField unchanged.
+			private IReadOnlyList<CoreWritingSystemDefinition> ResolveTextRowWritingSystems(int hvo, int flid,
+				CellarPropertyType type, ViewNode node)
+			{
+				IReadOnlyList<CoreWritingSystemDefinition> systems = ResolveWritingSystems(_cache, node.WritingSystem);
+				// §19e: a per-field writing-system visibility override (legacy visibleWritingSystems) restricts
+				// the resolved set to the authored subset (in the override's order), intersected with the
+				// field's valid writing systems. An empty intersection keeps the full set rather than hiding
+				// the field entirely (defensive — a stale override must never blank a real field).
+				systems = ApplyVisibleWritingSystems(systems, node.VisibleWritingSystems);
+				if ((type == CellarPropertyType.String || type == CellarPropertyType.Unicode)
+					&& systems.Count > 0)
+				{
+					// Single-alternative property: one row. Plain String props:
+					// get_StringProp reads the WHOLE string regardless of the layout ws= spec, so
+					// taking the spec's FIRST writing system for the row's display metadata
+					// (abbreviation/font/RTL) and write-back would be asymmetric when the stored
+					// string was typed in another ws (legacy StringSlice renders the string's own
+					// run properties). Derive the row's ws from the existing string's first run;
+					// the layout ws only seeds an EMPTY string.
+					var rowWs = systems[0];
+					if (type == CellarPropertyType.String)
+					{
+						var existing = _sda.get_StringProp(hvo, flid);
+						if (existing != null && existing.Length > 0)
+						{
+							var runWs = TsStringUtils.GetWsOfRun(existing, 0);
+							if (runWs > 0)
+							{
+								try
+								{
+									rowWs = _cache.ServiceLocator.WritingSystemManager.Get(runWs);
+								}
+								catch (Exception)
+								{
+									// Unknown run ws: keep the layout writing system.
+								}
+							}
+						}
+					}
+					systems = new[] { rowWs };
+				}
+				return systems;
+			}
+
+			// The per-writing-system display values of a text row, with any voice alternative swapped for
+			// its audio-flagged form (ITEM 3 / §19d). Reports whether any text/audio data was present so
+			// WalkTextField can honor HideWhenEmpty. Split out of WalkTextField unchanged.
+			private IReadOnlyList<RegionWsValue> BuildTextRowValues(int hvo, int flid, CellarPropertyType type,
+				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
+			{
+				var dataSeen = false;
+				// 11.15: the lexeme form's legacy bold/120% <properties> emphasis.
+				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// The per-ws value rows build through the shared factory
+				// (LexicalEditRegionBuilder uses the same one), this path only supplies the text.
+				IReadOnlyList<RegionWsValue> values;
+				if (type == CellarPropertyType.Unicode)
+				{
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					{
+						var text = _sda.get_UnicodeProp(hvo, flid);
+						dataSeen |= !string.IsNullOrEmpty(text);
+						return text;
+					}, fontSize, node.BoldEmphasis);
+				}
+				else
+				{
+					values = RegionValueFactory.BuildMultiWsValues(systems, ws =>
+					{
+						var tss = ReadTextProp(hvo, flid, ws.Handle, type);
+						dataSeen |= !string.IsNullOrEmpty(tss?.Text);
+						return tss;
+					}, _cache.WritingSystemFactory, fontSize, node.BoldEmphasis);
+				}
+
+				// ITEM 3 (voice/sound writing systems): a voice WS stores an audio recording, not text.
+				// The new view has no sound player yet, so an audio alternative renders as a READ-ONLY
+				// row carrying an explicit "audio recording - edit in the classic view" placeholder -
+				// the data stays visible and diagnosable instead of a blank editable box whose first
+				// keystroke would corrupt the recording (the value here is the audio file name). A full
+				// Avalonia sound player is deferred. Recompute the per-WS values, swapping any voice
+				// alternative for the placeholder and flagging it IsAudio so the row is held read-only.
+				var audioSeen = false;
+				if (systems.Any(ws => ws.IsVoice))
+				{
+					var rebuilt = new List<RegionWsValue>(values.Count);
+					for (var i = 0; i < values.Count; i++)
+					{
+						var ws = systems[i];
+						if (ws.IsVoice)
+						{
+							audioSeen = true;
+							// §19d: a voice (IsVoice) alternative stores the audio FILENAME as its value. We
+							// now keep the real filename (not a placeholder) so the owned audio field can play
+							// the file and clear/replace the value; isAudio:true tells the view to render the
+							// play/record affordances instead of a plain text box. The recording is no longer a
+							// blanket read-only placeholder.
+							rebuilt.Add(new RegionWsValue(ws.Abbreviation,
+								values[i]?.Value ?? string.Empty,
+								ws.DefaultFontName, fontSize,
+								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
+						}
+						else
+						{
+							rebuilt.Add(values[i]);
+						}
+					}
+					values = rebuilt;
+				}
+
+				anyData = dataSeen;
+				anyAudio = audioSeen;
+				return values;
+			}
+
+			// Registers the plain-text and rich-text write delegates of an editable text row on its field
+			// handler, keyed by the unique IETF tag (with unambiguous abbreviations as aliases). Split out
+			// of WalkTextField unchanged.
+			private void RegisterTextRowEditHandler(string stableId, int hvo, int flid, CellarPropertyType type,
+				IReadOnlyList<CoreWritingSystemDefinition> systems)
+			{
 				// Edits key on the unique IETF tag (ws.Id): the user-editable Abbreviation can
 				// collide across writing systems, which both crashed composition (ToDictionary)
 				// and could misroute an edit to the wrong alternative. Unambiguous abbreviations
@@ -1188,13 +1213,13 @@ namespace SIL.FieldWorks.XWorks
 						wsByKey.Add(ws.Abbreviation, ws.Handle);
 					}
 				}
-				TextSetters[stableId] = (wsKey, value) =>
+				HandlerFor(stableId).Text = (wsKey, value) =>
 				{
 					if (wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
 						return false;
 					return WriteTextProp(hvo, flid, wsHandle, type, value);
 				};
-				RichTextSetters[stableId] = (wsKey, value) =>
+				HandlerFor(stableId).RichText = (wsKey, value) =>
 				{
 					if (value == null || wsKey == null || !wsByKey.TryGetValue(wsKey, out var wsHandle))
 						return false;
@@ -1286,7 +1311,7 @@ namespace SIL.FieldWorks.XWorks
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, objectHvo: obj.Hvo,
 					chooserLinks: BuildChooserLinks(node, morphTypes)));
 
-				OptionSetters[stableId] = optionKey =>
+				HandlerFor(stableId).Option = optionKey =>
 				{
 					if (!Guid.TryParse(optionKey, out var guid))
 						return false;
@@ -1336,7 +1361,7 @@ namespace SIL.FieldWorks.XWorks
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, posList)));
 
-				OptionSetters[stableId] = key =>
+				HandlerFor(stableId).Option = key =>
 				{
 					if (!Guid.TryParse(key, out var guid)
 						|| !_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(guid, out var pos))
@@ -1387,7 +1412,7 @@ namespace SIL.FieldWorks.XWorks
 					objectHvo: obj.Hvo, chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
-				OptionSetters[stableId] = key =>
+				HandlerFor(stableId).Option = key =>
 				{
 					// The empty option clears the reference — legacy AddItem(null), i.e.
 					// SetObjProp(hvo, flid, 0) — inside the same fenced session (task 6).
@@ -1435,7 +1460,7 @@ namespace SIL.FieldWorks.XWorks
 					objectHvo: obj.Hvo));
 
 				var hvo = obj.Hvo;
-				OptionSetters[stableId] = key =>
+				HandlerFor(stableId).Option = key =>
 				{
 					if (string.IsNullOrEmpty(key))
 					{
@@ -1473,7 +1498,7 @@ namespace SIL.FieldWorks.XWorks
 					chooserLinks: BuildChooserLinks(node, list)));
 
 				var hvo = obj.Hvo;
-				ReferenceAddSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var possibility = ResolvePossibilityInList(list, key);
 					if (possibility == null)
@@ -1487,7 +1512,7 @@ namespace SIL.FieldWorks.XWorks
 					_sda.Replace(hvo, flid, size, size, new[] { possibility.Hvo }, 1);
 					return true;
 				};
-				ReferenceRemoveSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceRemove = key =>
 				{
 					var possibility = ResolvePossibilityInList(list, key);
 					if (possibility == null)
@@ -1540,7 +1565,7 @@ namespace SIL.FieldWorks.XWorks
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, items: items));
 
 				var hvo = obj.Hvo;
-				ReferenceAddSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					if (!Guid.TryParse(key, out var guid) || !candidateHvoByGuid.TryGetValue(guid, out var targetHvo))
 						return false;
@@ -1551,7 +1576,7 @@ namespace SIL.FieldWorks.XWorks
 					_sda.Replace(hvo, flid, size, size, new[] { targetHvo }, 1);
 					return true;
 				};
-				ReferenceRemoveSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceRemove = key =>
 				{
 					if (!Guid.TryParse(key, out var guid)
 						|| !_cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var target))
@@ -1667,8 +1692,8 @@ namespace SIL.FieldWorks.XWorks
 					if (!row.IsEditable)
 						continue;
 
-					ReferenceAddSetters[stableId] = key => TryAddLexicalRelationTarget(obj, relation, row.MappingType, key);
-					ReferenceRemoveSetters[stableId] = key => TryRemoveLexicalRelationTarget(relation, key);
+					HandlerFor(stableId).ReferenceAdd = key => TryAddLexicalRelationTarget(obj, relation, row.MappingType, key);
+					HandlerFor(stableId).ReferenceRemove = key => TryRemoveLexicalRelationTarget(relation, key);
 				}
 			}
 
@@ -1916,7 +1941,7 @@ namespace SIL.FieldWorks.XWorks
 					hotlinksId: node.HotlinksId, objectHvo: entry.Hvo, items: Array.Empty<RegionChoiceOption>(),
 					searchOptions: query => SearchGhostLexRefTargets(query, entry)));
 
-				ReferenceAddSetters[stableId] = key => TryCreateGhostEntryRef(entry, node.ForVariant, key);
+				HandlerFor(stableId).ReferenceAdd = key => TryCreateGhostEntryRef(entry, node.ForVariant, key);
 			}
 
 			private IReadOnlyList<RegionChoiceOption> SearchGhostLexRefTargets(string query, ILexEntry owningEntry)
@@ -2037,7 +2062,7 @@ namespace SIL.FieldWorks.XWorks
 					searchOptions: query => SearchLexicon(query, hvo, flid, owningEntry),
 					chooserLinks: BuildChooserLinks(node)));
 
-				ReferenceAddSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceAdd = key =>
 				{
 					var target = ResolveEntryOrSense(key);
 					if (target == null)
@@ -2067,7 +2092,7 @@ namespace SIL.FieldWorks.XWorks
 					ApplyComponentLexemesAddCoupling(obj, flid, target);
 					return true;
 				};
-				ReferenceRemoveSetters[stableId] = key =>
+				HandlerFor(stableId).ReferenceRemove = key =>
 				{
 					var target = ResolveEntryOrSense(key);
 					if (target == null)
@@ -2172,8 +2197,8 @@ namespace SIL.FieldWorks.XWorks
 					searchOptions: query => SearchBackRefCandidates(query, obj),
 					chooserLinks: BuildChooserLinks(node)));
 
-				ReferenceAddSetters[stableId] = key => TryAddBackRef(obj, kind, key);
-				ReferenceRemoveSetters[stableId] = key => TryRemoveBackRef(obj, flid, kind, key);
+				HandlerFor(stableId).ReferenceAdd = key => TryAddBackRef(obj, kind, key);
+				HandlerFor(stableId).ReferenceRemove = key => TryRemoveBackRef(obj, flid, kind, key);
 			}
 
 			// The owning complex-form entry of a back-ref vector item: the entry itself for the
@@ -2392,143 +2417,160 @@ namespace SIL.FieldWorks.XWorks
 					switch (type)
 					{
 						case CellarPropertyType.ReferenceAtomic:
-						{
-							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
-
-							// 6.3: an atomic ref whose target owner is a possibility list takes the
-							// chooser path (legacy PossibilityAtomicReferenceSlice), like morph type.
-							if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
-							{
-								if (targetHvo == 0 && HideWhenEmpty(node))
-									return;
-								AddAtomicPossibilityChooser(node, obj, depth, flid, list, targetHvo);
-								return;
-							}
-
-							// avalonia-rule-formula-editor: an atomic ref whose targets are enumerable (e.g. the
-							// ad-hoc Key FirstMorpheme/FirstAllomorph) composes as an editable chooser over its
-							// ReferenceTargetCandidates (the atomic analog of the generic editable vector).
-							var atomicCandidates = SafeReferenceTargetCandidates(obj, flid);
-							if (atomicCandidates != null && atomicCandidates.Count > 0)
-							{
-								if (targetHvo == 0 && HideWhenEmpty(node))
-									return;
-								AddGenericAtomicChooser(node, obj, depth, flid, atomicCandidates, targetHvo);
-								return;
-							}
-
-							if (targetHvo == 0)
-							{
-								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
-								return;
-							}
-
-							AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+							WalkReferenceAtomicField(node, obj, depth, flid);
 							return;
-						}
 						case CellarPropertyType.OwningAtomic:
-						{
-							var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
-							if (targetHvo == 0)
-							{
-								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
-								return;
-							}
-
-							// §19a: structured text is now an EDITABLE multi-paragraph row (the legacy
-							// StTextSlice rich editor) — paragraph text, add/delete paragraphs, and
-							// per-paragraph named style, each one undoable step. ORC-bearing paragraphs
-							// stay read-only/preserved (§19c.3). Replaces the old read-only flatten.
-							if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
-							{
-								var anyText = stText.ParagraphsOS.OfType<IStTxtPara>()
-									.Any(par => !string.IsNullOrWhiteSpace(par.Contents?.Text));
-								if (!anyText && HideWhenEmpty(node))
-									return;
-								AddStructuredText(node, obj, depth, flid, stText);
-								return;
-							}
-
-							AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+							WalkOwningAtomicField(node, obj, depth, flid);
 							return;
-						}
 						case CellarPropertyType.ReferenceSequence:
 						case CellarPropertyType.ReferenceCollection:
-						{
-							var count = _sda.get_VecSize(obj.Hvo, flid);
-
-							// 6.3/B8: a vector whose targets live in a possibility list becomes an
-							// editable ReferenceVector row (the legacy possibility-vector slice with
-							// its trailing type-ahead add slot) — even when empty, so an always-visible
-							// field still offers the add affordance.
-							if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
-							{
-								if (count == 0 && HideWhenEmpty(node))
-									return;
-								AddReferenceVector(node, obj, depth, flid, list, count);
-								return;
-							}
-
-							// winforms-free-lexeme-editor.md D3: a vector whose targets are
-							// entries/senses (the EntrySequenceReferenceSlice fields —
-							// ComponentLexemes, PrimaryLexemes, ... on LexEntryRef) composes as an
-							// editable ReferenceVector whose ADD is a type-ahead lexicon search
-							// (lexicons search, possibility lists enumerate).
-							if (IsEntryOrSenseReferenceVector(node, flid))
-							{
-								if (count == 0 && HideWhenEmpty(node))
-									return;
-								AddEntryReferenceVector(node, obj, depth, flid, count);
-								return;
-							}
-
-							// Virtual back-reference vectors (Subentries, VisibleComplexFormBackRefs):
-							// the relationship is OWNED by the OTHER entry's LexEntryRef, so add/remove
-							// route across objects exactly like the legacy
-							// EntrySequenceReferenceLauncher.AddNewObjectsToProperty /
-							// RemoveFromPropertyAt overrides. VariantFormEntryBackRefs stays read-only
-							// (its legacy add is "insert a NEW variant entry", not a chooser-add of an
-							// existing ref — out of scope for this safe increment).
-							var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
-							if (backRefKind != BackRefVectorKind.None)
-							{
-								if (count == 0 && HideWhenEmpty(node))
-									return;
-								AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
-								return;
-							}
-
-							// avalonia-rule-formula-editor: any remaining reference vector whose valid targets
-							// can be enumerated (e.g. natural-class Segments → phonemes, ad-hoc Others →
-							// allomorphs/morphemes) composes as an editable chooser-backed ReferenceVector,
-							// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
-							// handled above; the candidate cap guards any other large set into read-only.
-							var genericCandidates = SafeReferenceTargetCandidates(obj, flid);
-							if (genericCandidates != null && genericCandidates.Count > 0)
-							{
-								if (count == 0 && HideWhenEmpty(node))
-									return;
-								AddGenericReferenceVector(node, obj, depth, flid, count, genericCandidates);
-								return;
-							}
-
-							if (count == 0)
-							{
-								AddRowUnlessHiddenWhenEmpty(node, obj, depth);
-								return;
-							}
-
-							var names = new List<string>();
-							for (var i = 0; i < count; i++)
-								names.Add(ResolveShortName(_sda.get_VecItem(obj.Hvo, flid, i)));
-							AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
+							WalkReferenceVectorField(node, obj, depth, flid);
 							return;
-						}
 					}
 				}
 
 				if (!HideWhenEmpty(node))
 					WalkUnsupported(node, obj, depth);
+			}
+
+			// The atomic-reference dispatch of WalkOtherField, split out unchanged: a possibility-list or
+			// enumerable-target atomic ref composes as a chooser; anything else is a read-only short-name row.
+			private void WalkReferenceAtomicField(ViewNode node, ICmObject obj, int depth, int flid)
+			{
+				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+
+				// 6.3: an atomic ref whose target owner is a possibility list takes the
+				// chooser path (legacy PossibilityAtomicReferenceSlice), like morph type.
+				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
+				{
+					if (targetHvo == 0 && HideWhenEmpty(node))
+						return;
+					AddAtomicPossibilityChooser(node, obj, depth, flid, list, targetHvo);
+					return;
+				}
+
+				// avalonia-rule-formula-editor: an atomic ref whose targets are enumerable (e.g. the
+				// ad-hoc Key FirstMorpheme/FirstAllomorph) composes as an editable chooser over its
+				// ReferenceTargetCandidates (the atomic analog of the generic editable vector).
+				var atomicCandidates = SafeReferenceTargetCandidates(obj, flid);
+				if (atomicCandidates != null && atomicCandidates.Count > 0)
+				{
+					if (targetHvo == 0 && HideWhenEmpty(node))
+						return;
+					AddGenericAtomicChooser(node, obj, depth, flid, atomicCandidates, targetHvo);
+					return;
+				}
+
+				if (targetHvo == 0)
+				{
+					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					return;
+				}
+
+				AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+			}
+
+			// The owning-atomic dispatch of WalkOtherField, split out unchanged: an StText target composes
+			// as the editable multi-paragraph row (§19a); anything else is a read-only short-name row.
+			private void WalkOwningAtomicField(ViewNode node, ICmObject obj, int depth, int flid)
+			{
+				var targetHvo = _sda.get_ObjectProp(obj.Hvo, flid);
+				if (targetHvo == 0)
+				{
+					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					return;
+				}
+
+				// §19a: structured text is now an EDITABLE multi-paragraph row (the legacy
+				// StTextSlice rich editor) — paragraph text, add/delete paragraphs, and
+				// per-paragraph named style, each one undoable step. ORC-bearing paragraphs
+				// stay read-only/preserved (§19c.3). Replaces the old read-only flatten.
+				if (_cache.ServiceLocator.ObjectRepository.GetObject(targetHvo) is IStText stText)
+				{
+					var anyText = stText.ParagraphsOS.OfType<IStTxtPara>()
+						.Any(par => !string.IsNullOrWhiteSpace(par.Contents?.Text));
+					if (!anyText && HideWhenEmpty(node))
+						return;
+					AddStructuredText(node, obj, depth, flid, stText);
+					return;
+				}
+
+				AddReadOnlyRow(node, obj, depth, ResolveShortName(targetHvo));
+			}
+
+			// The reference-sequence/collection dispatch of WalkOtherField, split out unchanged: the vector
+			// composes as an editable chooser-backed ReferenceVector where its targets can be enumerated
+			// (possibility list, entry/sense search, editable back-ref, or generic candidates), else a
+			// read-only joined short-name row.
+			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
+			{
+				var count = _sda.get_VecSize(obj.Hvo, flid);
+
+				// 6.3/B8: a vector whose targets live in a possibility list becomes an
+				// editable ReferenceVector row (the legacy possibility-vector slice with
+				// its trailing type-ahead add slot) — even when empty, so an always-visible
+				// field still offers the add affordance.
+				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
+				{
+					if (count == 0 && HideWhenEmpty(node))
+						return;
+					AddReferenceVector(node, obj, depth, flid, list, count);
+					return;
+				}
+
+				// winforms-free-lexeme-editor.md D3: a vector whose targets are
+				// entries/senses (the EntrySequenceReferenceSlice fields —
+				// ComponentLexemes, PrimaryLexemes, ... on LexEntryRef) composes as an
+				// editable ReferenceVector whose ADD is a type-ahead lexicon search
+				// (lexicons search, possibility lists enumerate).
+				if (IsEntryOrSenseReferenceVector(node, flid))
+				{
+					if (count == 0 && HideWhenEmpty(node))
+						return;
+					AddEntryReferenceVector(node, obj, depth, flid, count);
+					return;
+				}
+
+				// Virtual back-reference vectors (Subentries, VisibleComplexFormBackRefs):
+				// the relationship is OWNED by the OTHER entry's LexEntryRef, so add/remove
+				// route across objects exactly like the legacy
+				// EntrySequenceReferenceLauncher.AddNewObjectsToProperty /
+				// RemoveFromPropertyAt overrides. VariantFormEntryBackRefs stays read-only
+				// (its legacy add is "insert a NEW variant entry", not a chooser-add of an
+				// existing ref — out of scope for this safe increment).
+				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
+				if (backRefKind != BackRefVectorKind.None)
+				{
+					if (count == 0 && HideWhenEmpty(node))
+						return;
+					AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
+					return;
+				}
+
+				// avalonia-rule-formula-editor: any remaining reference vector whose valid targets
+				// can be enumerated (e.g. natural-class Segments → phonemes, ad-hoc Others →
+				// allomorphs/morphemes) composes as an editable chooser-backed ReferenceVector,
+				// matching the legacy reference-vector slice. Entry/sense (huge) vectors were
+				// handled above; the candidate cap guards any other large set into read-only.
+				var genericCandidates = SafeReferenceTargetCandidates(obj, flid);
+				if (genericCandidates != null && genericCandidates.Count > 0)
+				{
+					if (count == 0 && HideWhenEmpty(node))
+						return;
+					AddGenericReferenceVector(node, obj, depth, flid, count, genericCandidates);
+					return;
+				}
+
+				if (count == 0)
+				{
+					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					return;
+				}
+
+				var names = new List<string>();
+				for (var i = 0; i < count; i++)
+					names.Add(ResolveShortName(_sda.get_VecItem(obj.Hvo, flid, i)));
+				AddReadOnlyRow(node, obj, depth, string.Join("; ", names));
 			}
 
 			// §19e: a literal/"lit" slice (legacy MessageSlice) — the slice's label/message text is the
@@ -2599,7 +2641,7 @@ namespace SIL.FieldWorks.XWorks
 				// when the StText was deleted out from under the still-shown view.
 				IStText Live() => repo.TryGetObject(stTextHvo, out var live) ? live : null;
 
-				ParagraphTextSetters[stableId] = (index, value) =>
+				HandlerFor(stableId).ParagraphText = (index, value) =>
 				{
 					var live = Live();
 					if (live == null || value == null || index < 0)
@@ -2615,7 +2657,7 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				};
 
-				ParagraphStyleSetters[stableId] = (index, styleName) =>
+				HandlerFor(stableId).ParagraphStyle = (index, styleName) =>
 				{
 					var live = Live();
 					if (live == null || index < 0 || index >= live.ParagraphsOS.Count)
@@ -2630,7 +2672,7 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				};
 
-				ParagraphInsertSetters[stableId] = afterIndex =>
+				HandlerFor(stableId).ParagraphInsert = afterIndex =>
 				{
 					var live = Live();
 					if (live == null)
@@ -2641,7 +2683,7 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				};
 
-				ParagraphDeleteSetters[stableId] = index =>
+				HandlerFor(stableId).ParagraphDelete = index =>
 				{
 					var live = Live();
 					if (live == null || index < 0 || index >= live.ParagraphsOS.Count)
@@ -2710,7 +2752,7 @@ namespace SIL.FieldWorks.XWorks
 					ghostPrompt: prompt));
 
 				if (ghost != null)
-					TextSetters[stableId] = ghost.Setter;
+					HandlerFor(stableId).Text = ghost.Setter;
 			}
 
 			private sealed class GhostCreation
@@ -3232,6 +3274,26 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 	/// <summary>
+	/// The edit operations of ONE composed field, keyed by StableId. Each delegate is null when the
+	/// field's kind does not support that gesture (a text row carries no paragraph delegates; an StText
+	/// row carries no option delegate), so <see cref="ComposedRegionEditContext"/> rejects an unsupported
+	/// gesture by finding a null slot. Gathers a field's write behavior into one object in place of the
+	/// nine parallel setter dictionaries that previously had to agree on the same stable id.
+	/// </summary>
+	public sealed class FieldEditHandler
+	{
+		public Func<string, string, bool> Text;
+		public Func<string, RegionRichTextValue, bool> RichText;
+		public Func<string, bool> Option;
+		public Func<string, bool> ReferenceAdd;
+		public Func<string, bool> ReferenceRemove;
+		public Func<int, RegionRichTextValue, bool> ParagraphText;
+		public Func<int, string, bool> ParagraphStyle;
+		public Func<int, bool> ParagraphInsert;
+		public Func<int, bool> ParagraphDelete;
+	}
+
+	/// <summary>
 	/// The composed region's edit context: staging keyed by composed stable id (unique per object
 	/// occurrence, so each sense's Gloss binds its own sense), writes applied through the registered
 	/// LCModel setters inside the fenced session owned by <see cref="RegionEditContextBase"/>
@@ -3239,48 +3301,32 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public sealed class ComposedRegionEditContext : RegionEditContextBase, IStructuredTextEditing
 	{
-		private readonly IReadOnlyDictionary<string, Func<string, string, bool>> _textSetters;
-		private readonly IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> _richTextSetters;
-		private readonly IReadOnlyDictionary<string, Func<string, bool>> _optionSetters;
-		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceAddSetters;
-		private readonly IReadOnlyDictionary<string, Func<string, bool>> _referenceRemoveSetters;
-		// §19a: StText paragraph CRUD setters, keyed by StableId.
-		private readonly IReadOnlyDictionary<string, Func<int, RegionRichTextValue, bool>> _paragraphTextSetters;
-		private readonly IReadOnlyDictionary<string, Func<int, string, bool>> _paragraphStyleSetters;
-		private readonly IReadOnlyDictionary<string, Func<int, bool>> _paragraphInsertSetters;
-		private readonly IReadOnlyDictionary<string, Func<int, bool>> _paragraphDeleteSetters;
+		// One handler per composed field, keyed by StableId; a null delegate slot means the field's kind
+		// does not support that gesture (rejected like an unknown field). Replaces the former nine parallel
+		// setter dictionaries — a field's edit behavior now lives in one object rather than being spread
+		// across nine maps kept in sync by matching stable id.
+		private readonly IReadOnlyDictionary<string, FieldEditHandler> _handlers;
 
 		public ComposedRegionEditContext(
 			LcmCache cache,
 			ICmObject root, // §20.1: any record root (LexEntry today; RnGenericRec/CmPossibility/PartOfSpeech once other tools are wired)
-			IReadOnlyDictionary<string, Func<string, string, bool>> textSetters,
-			IReadOnlyDictionary<string, Func<string, bool>> optionSetters,
-			IReadOnlyDictionary<string, Func<string, bool>> referenceAddSetters = null,
-			IReadOnlyDictionary<string, Func<string, bool>> referenceRemoveSetters = null,
-			IReadOnlyDictionary<string, Func<string, RegionRichTextValue, bool>> richTextSetters = null,
-			IReadOnlyDictionary<string, Func<int, RegionRichTextValue, bool>> paragraphTextSetters = null,
-			IReadOnlyDictionary<string, Func<int, string, bool>> paragraphStyleSetters = null,
-			IReadOnlyDictionary<string, Func<int, bool>> paragraphInsertSetters = null,
-			IReadOnlyDictionary<string, Func<int, bool>> paragraphDeleteSetters = null)
+			IReadOnlyDictionary<string, FieldEditHandler> handlers)
 			: base(cache, root)
 		{
-			_textSetters = textSetters;
-			_richTextSetters = richTextSetters ?? new Dictionary<string, Func<string, RegionRichTextValue, bool>>();
-			_optionSetters = optionSetters;
-			_referenceAddSetters = referenceAddSetters ?? new Dictionary<string, Func<string, bool>>();
-			_referenceRemoveSetters = referenceRemoveSetters ?? new Dictionary<string, Func<string, bool>>();
-			_paragraphTextSetters = paragraphTextSetters ?? new Dictionary<string, Func<int, RegionRichTextValue, bool>>();
-			_paragraphStyleSetters = paragraphStyleSetters ?? new Dictionary<string, Func<int, string, bool>>();
-			_paragraphInsertSetters = paragraphInsertSetters ?? new Dictionary<string, Func<int, bool>>();
-			_paragraphDeleteSetters = paragraphDeleteSetters ?? new Dictionary<string, Func<int, bool>>();
+			_handlers = handlers ?? new Dictionary<string, FieldEditHandler>();
 		}
+
+		// The field's handler, or null when the field is unknown or carries no delegate for this gesture.
+		private FieldEditHandler Handler(LexicalEditRegionField field)
+			=> field != null && _handlers.TryGetValue(field.StableId, out var handler) ? handler : null;
 
 		public override bool TrySetText(LexicalEditRegionField field, string ws, string value)
 		{
 			if (field != null && field.Values.Any(v => v.RequiresRichEditor))
 				return false;
 
-			if (field == null || !_textSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.Text;
+			if (setter == null)
 				return false;
 			// ITEM 1: a single field's edit names the undo label (e.g. "Undo change to Gloss").
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
@@ -3291,28 +3337,32 @@ namespace SIL.FieldWorks.XWorks
 			if (field != null && field.Values.Any(v => !v.CanEditRichText))
 				return false;
 
-			if (field == null || !_richTextSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.RichText;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(ws, value), FieldLabelFor(field));
 		}
 
 		public override bool TrySetOption(LexicalEditRegionField field, string optionKey)
 		{
-			if (field == null || !_optionSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.Option;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
 		public override bool TryAddReferenceItem(LexicalEditRegionField field, string optionKey)
 		{
-			if (field == null || !_referenceAddSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ReferenceAdd;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
 
 		public override bool TryRemoveReferenceItem(LexicalEditRegionField field, string optionKey)
 		{
-			if (field == null || !_referenceRemoveSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ReferenceRemove;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(optionKey), FieldLabelFor(field));
 		}
@@ -3320,7 +3370,8 @@ namespace SIL.FieldWorks.XWorks
 		public bool TrySetParagraphText(LexicalEditRegionField field, int paragraphIndex,
 			RegionRichTextValue value)
 		{
-			if (field == null || !_paragraphTextSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ParagraphText;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(paragraphIndex, value), FieldLabelFor(field));
 		}
@@ -3328,21 +3379,24 @@ namespace SIL.FieldWorks.XWorks
 		public bool TrySetParagraphStyle(LexicalEditRegionField field, int paragraphIndex,
 			string styleName)
 		{
-			if (field == null || !_paragraphStyleSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ParagraphStyle;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(paragraphIndex, styleName), FieldLabelFor(field));
 		}
 
 		public bool TryInsertParagraph(LexicalEditRegionField field, int afterParagraphIndex)
 		{
-			if (field == null || !_paragraphInsertSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ParagraphInsert;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(afterParagraphIndex), FieldLabelFor(field));
 		}
 
 		public bool TryDeleteParagraph(LexicalEditRegionField field, int paragraphIndex)
 		{
-			if (field == null || !_paragraphDeleteSetters.TryGetValue(field.StableId, out var setter))
+			var setter = Handler(field)?.ParagraphDelete;
+			if (setter == null)
 				return false;
 			return Stage(() => setter(paragraphIndex), FieldLabelFor(field));
 		}

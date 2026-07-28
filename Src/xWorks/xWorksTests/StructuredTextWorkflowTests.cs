@@ -84,9 +84,9 @@ namespace SIL.FieldWorks.XWorks
 			var defaultWs = Cache.DefaultAnalWs;
 			var wsf = Cache.WritingSystemFactory;
 
-			var textSetters = new Dictionary<string, Func<int, RegionRichTextValue, bool>>
+			var handler = new FieldEditHandler
 			{
-				[StableId] = (index, value) =>
+				ParagraphText = (index, value) =>
 				{
 					if (value == null || index < 0)
 						return false;
@@ -95,31 +95,22 @@ namespace SIL.FieldWorks.XWorks
 					((IStTxtPara)m_definition.ParagraphsOS[index]).Contents =
 						RegionRichTextAdapter.ToTsString(value, wsf, defaultWs);
 					return true;
-				}
-			};
-			var styleSetters = new Dictionary<string, Func<int, string, bool>>
-			{
-				[StableId] = (index, style) =>
+				},
+				ParagraphStyle = (index, style) =>
 				{
 					if (index < 0 || index >= m_definition.ParagraphsOS.Count)
 						return false;
 					((IStTxtPara)m_definition.ParagraphsOS[index]).StyleName =
 						string.IsNullOrEmpty(style) ? StyleServices.NormalStyleName : style;
 					return true;
-				}
-			};
-			var insertSetters = new Dictionary<string, Func<int, bool>>
-			{
-				[StableId] = afterIndex =>
+				},
+				ParagraphInsert = afterIndex =>
 				{
 					var pos = afterIndex < 0 ? 0 : Math.Min(afterIndex + 1, m_definition.ParagraphsOS.Count);
 					m_definition.InsertNewTextPara(pos, null);
 					return true;
-				}
-			};
-			var deleteSetters = new Dictionary<string, Func<int, bool>>
-			{
-				[StableId] = index =>
+				},
+				ParagraphDelete = index =>
 				{
 					if (index < 0 || index >= m_definition.ParagraphsOS.Count || m_definition.ParagraphsOS.Count <= 1)
 						return false;
@@ -129,10 +120,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			var context = new ComposedRegionEditContext(Cache, m_entry,
-				textSetters: new Dictionary<string, Func<string, string, bool>>(),
-				optionSetters: new Dictionary<string, Func<string, bool>>(),
-				paragraphTextSetters: textSetters, paragraphStyleSetters: styleSetters,
-				paragraphInsertSetters: insertSetters, paragraphDeleteSetters: deleteSetters);
+				new Dictionary<string, FieldEditHandler> { [StableId] = handler });
 			return (field, context);
 		}
 
