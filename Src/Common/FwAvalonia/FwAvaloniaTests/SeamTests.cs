@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
 
@@ -256,6 +257,48 @@ namespace FwAvaloniaTests
 			Assert.That(MorphTypeSwapLogic.Analyze(MorphTypeKind.Stem, MorphTypeKind.Root).RequiresDataLossPrompt, Is.False);
 			Assert.That(MorphTypeSwapLogic.Analyze(MorphTypeKind.Prefix, MorphTypeKind.Suffix).RequiresDataLossPrompt, Is.False);
 			Assert.That(MorphTypeSwapLogic.Analyze(MorphTypeKind.Stem, MorphTypeKind.Stem).RequiresDataLossPrompt, Is.False);
+		}
+	}
+
+	/// <summary>
+	/// FwAvaloniaPlatform.IsHeadless resolves Avalonia internals BY STRING NAME (AvaloniaLocator in
+	/// Avalonia.Base; IWindowingPlatform in Avalonia.Controls; AvaloniaLocator.Current + its GetService).
+	/// Unlike a public API, a version bump can relocate these without a compile break, which would leave
+	/// the reflection returning null forever — silently reporting "not headless" and disabling the
+	/// headless-embed no-op for the WHOLE suite. This pins each target against the referenced Avalonia,
+	/// failing loudly (mirroring the MicroCom pin above) so a bump forces an FwAvaloniaPlatform update.
+	/// </summary>
+	[TestFixture]
+	public class FwAvaloniaPlatformReflectionPinTests
+	{
+		[Test]
+		public void ReflectionTargets_StillResolve_InTheReferencedAvalonia()
+		{
+			var baseAsm = Assembly.Load("Avalonia.Base");
+			var controlsAsm = Assembly.Load("Avalonia.Controls");
+
+			var locatorType = baseAsm.GetType("Avalonia.AvaloniaLocator");
+			Assert.That(locatorType, Is.Not.Null,
+				"Avalonia.AvaloniaLocator no longer resolves in Avalonia.Base — update " +
+				"FwAvaloniaPlatform.ResolveWindowingPlatform's type lookup.");
+
+			var windowingPlatformType = controlsAsm.GetType("Avalonia.Platform.IWindowingPlatform");
+			Assert.That(windowingPlatformType, Is.Not.Null,
+				"Avalonia.Platform.IWindowingPlatform no longer resolves in Avalonia.Controls — update " +
+				"FwAvaloniaPlatform.ResolveWindowingPlatform's type lookup.");
+
+			var currentProperty = locatorType.GetProperty("Current", BindingFlags.Public | BindingFlags.Static);
+			Assert.That(currentProperty, Is.Not.Null,
+				"AvaloniaLocator.Current (public static) is gone — update " +
+				"FwAvaloniaPlatform.ResolveWindowingPlatform's Current lookup.");
+
+			var getService = currentProperty.PropertyType
+				.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+				.FirstOrDefault(m => m.Name == "GetService" && m.GetParameters().Length == 1
+					&& m.GetParameters()[0].ParameterType == typeof(Type));
+			Assert.That(getService, Is.Not.Null,
+				"AvaloniaLocator.Current no longer exposes GetService(Type) — update " +
+				"FwAvaloniaPlatform.ResolveWindowingPlatform's GetService invocation.");
 		}
 	}
 }
