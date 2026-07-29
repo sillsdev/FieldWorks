@@ -151,9 +151,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private string ShowManageFeaturesDialog(string disabledCsv)
 		{
-			var disabledNow = LexicalEditSurfaceResolver.ParseDisabledTools(disabledCsv);
+			var disabledNow = EditSurfaceResolver.ParseDisabledTools(disabledCsv);
 			var edited = LexicalEditFeatureManagerDialog.Show(_owner, LexicalEditFeatureCatalog.Features, disabledNow);
-			return edited == null ? disabledCsv : LexicalEditSurfaceResolver.SerializeDisabledTools(edited);
+			return edited == null ? disabledCsv : EditSurfaceResolver.SerializeDisabledTools(edited);
 		}
 
 		protected override OptionsDialogViewModel CreateViewModel(OptionsState state) =>
@@ -367,8 +367,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				settings.UIModeDisabledTools = newDisabledTools;
 				if (propertyTable != null)
 				{
-					propertyTable.SetProperty(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, newDisabledTools, true);
-					propertyTable.SetPropertyPersistence(LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
+					propertyTable.SetProperty(EditSurfaceResolver.UIModeDisabledToolsPropertyName, newDisabledTools, true);
+					propertyTable.SetPropertyPersistence(EditSurfaceResolver.UIModeDisabledToolsPropertyName, false);
 				}
 			}
 
@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		internal static string NormalizeUiMode(string mode) =>
-			LexicalEditSurfaceResolver.NormalizeUIMode(mode);
+			EditSurfaceResolver.NormalizeUIMode(mode);
 
 		internal static string NormalizeWs(string ws) => ws == "en-US" ? "en" : ws;
 

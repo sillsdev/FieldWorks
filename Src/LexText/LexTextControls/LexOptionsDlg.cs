@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private static string NormalizeUIMode(string mode)
 		{
-			return SIL.FieldWorks.Common.FwAvalonia.LexicalEditSurfaceResolver.NormalizeUIMode(mode);
+			return SIL.FieldWorks.Common.FwAvalonia.EditSurfaceResolver.NormalizeUIMode(mode);
 		}
 
 		private static string GetOptionString(string resourceName, string fallback)

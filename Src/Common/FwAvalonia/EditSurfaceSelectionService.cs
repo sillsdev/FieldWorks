@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>The resolved routing decision for a host: the concrete surface plus why it was chosen.</summary>
 	public sealed class SurfaceDecision
 	{
-		public SurfaceDecision(LexicalEditSurface surface, HostUiBehavior behavior, string reason)
+		public SurfaceDecision(EditSurface surface, HostUiBehavior behavior, string reason)
 		{
 			Surface = surface;
 			Behavior = behavior;
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		}
 
 		/// <summary>The concrete surface to render.</summary>
-		public LexicalEditSurface Surface { get; }
+		public EditSurface Surface { get; }
 
 		/// <summary>The deliberate behavior classification behind the surface choice.</summary>
 		public HostUiBehavior Behavior { get; }
@@ -47,10 +47,10 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// <summary>
 	/// Explicit, central mapping from the app-wide UI mode to per-host behavior. Hosts such as
 	/// <c>RecordEditView</c> consume this instead of inferring product routing ad hoc from settings and
-	/// <c>PropertyTable</c> state. Pure logic over <see cref="LexicalEditSurfaceResolver"/>, with no
+	/// <c>PropertyTable</c> state. Pure logic over <see cref="EditSurfaceResolver"/>, with no
 	/// Avalonia dependency, so it is unit-testable without a UI runtime.
 	/// </summary>
-	public sealed class LexicalEditSurfaceSelectionService
+	public sealed class EditSurfaceSelectionService
 	{
 		/// <summary>
 		/// Resolves the surface decision for a host from the persisted UI mode and the current tool.
@@ -60,27 +60,27 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <param name="overrideEnabled">Optional strong override (PropertyTable/registry).</param>
 		public SurfaceDecision Decide(string uiMode, string toolName, bool? overrideEnabled = null)
 		{
-			var supportsAvalonia = LexicalEditSurfaceResolver.SupportsAvaloniaForTool(toolName);
-			var surface = LexicalEditSurfaceResolver.Resolve(overrideEnabled, uiMode, toolName);
+			var supportsAvalonia = EditSurfaceResolver.SupportsAvaloniaForTool(toolName);
+			var surface = EditSurfaceResolver.Resolve(overrideEnabled, uiMode, toolName);
 
-			if (surface == LexicalEditSurface.Avalonia)
+			if (surface == EditSurface.Avalonia)
 			{
-				return new SurfaceDecision(LexicalEditSurface.Avalonia, HostUiBehavior.SupportedAvalonia,
+				return new SurfaceDecision(EditSurface.Avalonia, HostUiBehavior.SupportedAvalonia,
 					$"Avalonia is supported for tool '{toolName}' and the UI mode selects it.");
 			}
 
 			// Surface resolved to WinForms. Distinguish "legacy mode" from "new mode, tool not migrated".
 			var isNewMode = overrideEnabled == true
-				|| (!overrideEnabled.HasValue && string.Equals(uiMode, LexicalEditSurfaceResolver.NewUIMode,
+				|| (!overrideEnabled.HasValue && string.Equals(uiMode, EditSurfaceResolver.NewUIMode,
 					System.StringComparison.OrdinalIgnoreCase));
 
 			if (isNewMode && !supportsAvalonia)
 			{
-				return new SurfaceDecision(LexicalEditSurface.WinForms, HostUiBehavior.ExplicitLegacyFallback,
+				return new SurfaceDecision(EditSurface.WinForms, HostUiBehavior.ExplicitLegacyFallback,
 					$"Tool '{toolName}' is not migrated; it explicitly falls back to legacy under the New UI mode.");
 			}
 
-			return new SurfaceDecision(LexicalEditSurface.WinForms, HostUiBehavior.LegacyActive,
+			return new SurfaceDecision(EditSurface.WinForms, HostUiBehavior.LegacyActive,
 				"Legacy UI mode is selected.");
 		}
 	}

@@ -16,37 +16,37 @@ namespace FwAvaloniaTests
 	/// nothing Avalonia.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditSurfaceResolverTests
+	public class EditSurfaceResolverTests
 	{
 		[Test]
 		public void Resolve_DefaultsToWinForms_WhenFlagUnset()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve();
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms));
+			var surface = EditSurfaceResolver.Resolve();
+			Assert.That(surface, Is.EqualTo(EditSurface.WinForms));
 		}
 
 		[Test]
 		public void Resolve_OverrideWinsOverPersistedUIMode()
 		{
-			var winForms = LexicalEditSurfaceResolver.Resolve(
+			var winForms = EditSurfaceResolver.Resolve(
 				overrideEnabled: false,
-				uiMode: LexicalEditSurfaceResolver.NewUIMode);
-			Assert.That(winForms, Is.EqualTo(LexicalEditSurface.WinForms));
+				uiMode: EditSurfaceResolver.NewUIMode);
+			Assert.That(winForms, Is.EqualTo(EditSurface.WinForms));
 
-			var avalonia = LexicalEditSurfaceResolver.Resolve(
+			var avalonia = EditSurfaceResolver.Resolve(
 				overrideEnabled: true,
-				uiMode: LexicalEditSurfaceResolver.LegacyUIMode);
-			Assert.That(avalonia, Is.EqualTo(LexicalEditSurface.Avalonia));
+				uiMode: EditSurfaceResolver.LegacyUIMode);
+			Assert.That(avalonia, Is.EqualTo(EditSurface.Avalonia));
 		}
 
-		[TestCase(LexicalEditSurfaceResolver.LegacyUIMode, LexicalEditSurface.WinForms)]
-		[TestCase(LexicalEditSurfaceResolver.NewUIMode, LexicalEditSurface.Avalonia)]
-		[TestCase(null, LexicalEditSurface.WinForms)]
-		[TestCase("", LexicalEditSurface.WinForms)]
-		[TestCase("SomethingElse", LexicalEditSurface.WinForms)]
-		public void Resolve_UsesPersistedUIMode(string uiMode, LexicalEditSurface expected)
+		[TestCase(EditSurfaceResolver.LegacyUIMode, EditSurface.WinForms)]
+		[TestCase(EditSurfaceResolver.NewUIMode, EditSurface.Avalonia)]
+		[TestCase(null, EditSurface.WinForms)]
+		[TestCase("", EditSurface.WinForms)]
+		[TestCase("SomethingElse", EditSurface.WinForms)]
+		public void Resolve_UsesPersistedUIMode(string uiMode, EditSurface expected)
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(uiMode: uiMode);
+			var surface = EditSurfaceResolver.Resolve(uiMode: uiMode);
 			Assert.That(surface, Is.EqualTo(expected));
 		}
 
@@ -62,7 +62,7 @@ namespace FwAvaloniaTests
 		[TestCase("LEXICONEDIT", true)]      // case-insensitive
 		public void SupportsAvaloniaForTool_TrueForSupportedTools(string toolName, bool expected)
 		{
-			Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.EqualTo(expected));
+			Assert.That(EditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.EqualTo(expected));
 		}
 
 		[TestCase("interlinearEdit")]
@@ -70,7 +70,7 @@ namespace FwAvaloniaTests
 		[TestCase("someUnregisteredTool")]
 		public void SupportsAvaloniaForTool_FalseForUnregisteredTool(string toolName)
 		{
-			Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.False,
+			Assert.That(EditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.False,
 				"an unregistered tool must not advertise Avalonia support");
 		}
 
@@ -80,26 +80,26 @@ namespace FwAvaloniaTests
 		public void SupportsAvaloniaForTool_TrueForNoToolContext_DelegatesToPreference(string toolName)
 		{
 			// Documented contract: no tool context => not a tool gate, defer to UIMode/override.
-			Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.True);
+			Assert.That(EditSurfaceResolver.SupportsAvaloniaForTool(toolName), Is.True);
 		}
 
 		[Test]
 		public void Resolve_UnregisteredTool_NeverYieldsAvalonia_EvenWithNewUIMode()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode,
+			var surface = EditSurfaceResolver.Resolve(
+				uiMode: EditSurfaceResolver.NewUIMode,
 				currentToolName: "someUnregisteredTool");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
+			Assert.That(surface, Is.EqualTo(EditSurface.WinForms),
 				"the tool gate must defeat a New preference for an unregistered tool (no silent Avalonia)");
 		}
 
 		[Test]
 		public void Resolve_UnregisteredTool_NeverYieldsAvalonia_EvenWithExplicitOverride()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
+			var surface = EditSurfaceResolver.Resolve(
 				overrideEnabled: true,
 				currentToolName: "someUnregisteredTool");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
+			Assert.That(surface, Is.EqualTo(EditSurface.WinForms),
 				"the tool gate is checked first and must defeat an explicit override for an unregistered tool");
 		}
 
@@ -110,13 +110,13 @@ namespace FwAvaloniaTests
 		[Test]
 		public void InertFollowUpSurfacesFallBackToLegacy_EditSurface()
 		{
-			foreach (var tool in LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools)
+			foreach (var tool in EditSurfaceRegistry.Phase1FollowUpSurfaceTools)
 			{
-				Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.False,
+				Assert.That(EditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.False,
 					$"deferred edit-surface tool '{tool}' must be inert (unregistered)");
 				Assert.That(
-					LexicalEditSurfaceResolver.Resolve(uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: tool),
-					Is.EqualTo(LexicalEditSurface.WinForms),
+					EditSurfaceResolver.Resolve(uiMode: EditSurfaceResolver.NewUIMode, currentToolName: tool),
+					Is.EqualTo(EditSurface.WinForms),
 					$"deferred tool '{tool}' must fall back to WinForms even under UIMode=New");
 			}
 		}
@@ -126,24 +126,24 @@ namespace FwAvaloniaTests
 		[TestCase("posEdit")]
 		public void BaseDetailEditorTools_StayActive(string tool)
 		{
-			Assert.That(LexicalEditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.True,
+			Assert.That(EditSurfaceResolver.SupportsAvaloniaForTool(tool), Is.True,
 				$"base detail-editor tool '{tool}' must remain registered/active");
 		}
 
 		[Test]
 		public void Resolve_SupportedTool_WithNewUIMode_YieldsAvalonia()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode,
+			var surface = EditSurfaceResolver.Resolve(
+				uiMode: EditSurfaceResolver.NewUIMode,
 				currentToolName: "lexiconEdit");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.Avalonia));
+			Assert.That(surface, Is.EqualTo(EditSurface.Avalonia));
 		}
 
 		[Test]
 		public void Resolve_SupportedTool_DefaultsToWinForms_WhenPreferenceUnset()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(currentToolName: "lexiconEdit");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.WinForms),
+			var surface = EditSurfaceResolver.Resolve(currentToolName: "lexiconEdit");
+			Assert.That(surface, Is.EqualTo(EditSurface.WinForms),
 				"a supported tool still defaults to the safe WinForms surface until New is chosen");
 		}
 
@@ -157,7 +157,7 @@ namespace FwAvaloniaTests
 		[TestCase("garbage", "Legacy")]
 		public void NormalizeUIMode_FailsClosedToLegacy(string input, string expected)
 		{
-			Assert.That(LexicalEditSurfaceResolver.NormalizeUIMode(input), Is.EqualTo(expected));
+			Assert.That(EditSurfaceResolver.NormalizeUIMode(input), Is.EqualTo(expected));
 		}
 
 		// --- Disabled-tools CSV round-trip (the "Manage Individual Features" persistence format). ---
@@ -167,13 +167,13 @@ namespace FwAvaloniaTests
 		[TestCase("   ")]
 		public void ParseDisabledTools_NullOrBlank_ReturnsEmptySet(string csv)
 		{
-			Assert.That(LexicalEditSurfaceResolver.ParseDisabledTools(csv), Is.Empty);
+			Assert.That(EditSurfaceResolver.ParseDisabledTools(csv), Is.Empty);
 		}
 
 		[Test]
 		public void ParseDisabledTools_TrimsWhitespaceAroundEachEntry()
 		{
-			var result = LexicalEditSurfaceResolver.ParseDisabledTools(" lexiconEdit ,  notebookEdit  ");
+			var result = EditSurfaceResolver.ParseDisabledTools(" lexiconEdit ,  notebookEdit  ");
 			Assert.That(result, Is.EquivalentTo(new[] { "lexiconEdit", "notebookEdit" }));
 		}
 
@@ -182,7 +182,7 @@ namespace FwAvaloniaTests
 		{
 			// Split(',') on "a,,b," yields ["a", "", "b", ""] -- the blank entries must not become spurious
 			// "disabled" tool names (there is no tool named "").
-			var result = LexicalEditSurfaceResolver.ParseDisabledTools("lexiconEdit,,notebookEdit,");
+			var result = EditSurfaceResolver.ParseDisabledTools("lexiconEdit,,notebookEdit,");
 			Assert.That(result, Is.EquivalentTo(new[] { "lexiconEdit", "notebookEdit" }));
 		}
 
@@ -191,7 +191,7 @@ namespace FwAvaloniaTests
 		{
 			// disabled sets are looked up case-insensitively (IsToolDisabledByUser), so parsing must dedupe
 			// case-variant duplicates rather than keeping both as distinct entries.
-			var result = LexicalEditSurfaceResolver.ParseDisabledTools("lexiconEdit,LEXICONEDIT,LexiconEdit");
+			var result = EditSurfaceResolver.ParseDisabledTools("lexiconEdit,LEXICONEDIT,LexiconEdit");
 			Assert.That(result.Count, Is.EqualTo(1));
 			Assert.That(result.Contains("lexiconedit"), Is.True, "lookups must be case-insensitive");
 		}
@@ -199,8 +199,8 @@ namespace FwAvaloniaTests
 		[Test]
 		public void SerializeDisabledTools_NullOrEmpty_ReturnsEmptyString()
 		{
-			Assert.That(LexicalEditSurfaceResolver.SerializeDisabledTools(null), Is.EqualTo(string.Empty));
-			Assert.That(LexicalEditSurfaceResolver.SerializeDisabledTools(Array.Empty<string>()), Is.EqualTo(string.Empty));
+			Assert.That(EditSurfaceResolver.SerializeDisabledTools(null), Is.EqualTo(string.Empty));
+			Assert.That(EditSurfaceResolver.SerializeDisabledTools(Array.Empty<string>()), Is.EqualTo(string.Empty));
 		}
 
 		[Test]
@@ -208,7 +208,7 @@ namespace FwAvaloniaTests
 		{
 			// SerializeDisabledTools does not sort -- callers (the Feature Manager dialog) are responsible for
 			// supplying a deterministic order. This pins that it is a plain join, not an implicit sort.
-			var csv = LexicalEditSurfaceResolver.SerializeDisabledTools(new[] { "posEdit", "lexiconEdit" });
+			var csv = EditSurfaceResolver.SerializeDisabledTools(new[] { "posEdit", "lexiconEdit" });
 			Assert.That(csv, Is.EqualTo("posEdit,lexiconEdit"));
 		}
 
@@ -216,16 +216,16 @@ namespace FwAvaloniaTests
 		public void ParseThenSerialize_RoundTripsACanonicalCsv_Unchanged()
 		{
 			const string canonical = "lexiconEdit,notebookEdit";
-			var roundTripped = LexicalEditSurfaceResolver.SerializeDisabledTools(
-				LexicalEditSurfaceResolver.ParseDisabledTools(canonical));
+			var roundTripped = EditSurfaceResolver.SerializeDisabledTools(
+				EditSurfaceResolver.ParseDisabledTools(canonical));
 
 			// ParseDisabledTools returns a HashSet, whose enumeration order is an implementation detail, not a
 			// contract -- so a direct Parse->Serialize round trip is NOT guaranteed to preserve order or exact
 			// text for arbitrary input (the Feature Manager dialog avoids this by re-deriving the CSV from its
 			// own ordered rows, not from the parsed set -- see LexicalEditFeatureManagerDialogTests). What IS
 			// guaranteed, and what this pins, is that the round trip preserves the SET of names.
-			Assert.That(LexicalEditSurfaceResolver.ParseDisabledTools(roundTripped),
-				Is.EquivalentTo(LexicalEditSurfaceResolver.ParseDisabledTools(canonical)));
+			Assert.That(EditSurfaceResolver.ParseDisabledTools(roundTripped),
+				Is.EquivalentTo(EditSurfaceResolver.ParseDisabledTools(canonical)));
 		}
 
 		[TestCase("lexiconEdit,notebookEdit", "lexiconEdit", true)]
@@ -235,7 +235,7 @@ namespace FwAvaloniaTests
 		[TestCase(null, "lexiconEdit", false)]
 		public void IsToolDisabledByUser_LooksUpAgainstTheParsedSet(string csv, string toolName, bool expected)
 		{
-			Assert.That(LexicalEditSurfaceResolver.IsToolDisabledByUser(csv, toolName), Is.EqualTo(expected));
+			Assert.That(EditSurfaceResolver.IsToolDisabledByUser(csv, toolName), Is.EqualTo(expected));
 		}
 
 		[TestCase(null)]
@@ -244,7 +244,7 @@ namespace FwAvaloniaTests
 		public void IsToolDisabledByUser_BlankToolName_AlwaysFalse(string toolName)
 		{
 			// A blank tool name must never match, even against a CSV that (invalidly) contains a blank entry.
-			Assert.That(LexicalEditSurfaceResolver.IsToolDisabledByUser("lexiconEdit,,notebookEdit", toolName), Is.False);
+			Assert.That(EditSurfaceResolver.IsToolDisabledByUser("lexiconEdit,,notebookEdit", toolName), Is.False);
 		}
 	}
 
@@ -253,12 +253,12 @@ namespace FwAvaloniaTests
 	/// A tool opts into the Avalonia surface by registration; unregistered tools never resolve to Avalonia.
 	/// </summary>
 	[TestFixture]
-	public class LexicalEditSurfaceRegistryTests
+	public class EditSurfaceRegistryTests
 	{
 		[Test]
 		public void Default_SupportsShippedTools_NotUnregistered()
 		{
-			var registry = LexicalEditSurfaceRegistry.CreateDefault();
+			var registry = EditSurfaceRegistry.CreateDefault();
 			Assert.That(registry.SupportsAvalonia("lexiconEdit"), Is.True);
 			Assert.That(registry.SupportsAvalonia("lexiconEditPopup"), Is.True);
 			Assert.That(registry.SupportsAvalonia("interlinearEdit"), Is.False);
@@ -269,13 +269,13 @@ namespace FwAvaloniaTests
 		[TestCase("   ")]
 		public void Default_NoToolContext_DefersToPreference(string toolName)
 		{
-			Assert.That(LexicalEditSurfaceRegistry.CreateDefault().SupportsAvalonia(toolName), Is.True);
+			Assert.That(EditSurfaceRegistry.CreateDefault().SupportsAvalonia(toolName), Is.True);
 		}
 
 		[Test]
 		public void RegisterSupportedTool_OptsInANewTool()
 		{
-			var registry = LexicalEditSurfaceRegistry.CreateDefault();
+			var registry = EditSurfaceRegistry.CreateDefault();
 			Assert.That(registry.SupportsAvalonia("interlinearEdit"), Is.False);
 
 			registry.RegisterSupportedTool("interlinearEdit");
@@ -286,49 +286,49 @@ namespace FwAvaloniaTests
 		[Test]
 		public void RegisterSupportedTool_BlankName_Throws()
 		{
-			Assert.That(() => LexicalEditSurfaceRegistry.CreateDefault().RegisterSupportedTool("  "),
+			Assert.That(() => EditSurfaceRegistry.CreateDefault().RegisterSupportedTool("  "),
 				Throws.ArgumentException);
 		}
 
 		[Test]
 		public void Resolve_WithRegistry_NewlyRegisteredTool_NewUIMode_YieldsAvalonia()
 		{
-			var registry = LexicalEditSurfaceRegistry.CreateDefault();
+			var registry = EditSurfaceRegistry.CreateDefault();
 			registry.RegisterSupportedTool("interlinearEdit");
 
-			var withRegistration = LexicalEditSurfaceResolver.Resolve(
-				registry, uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "interlinearEdit");
-			Assert.That(withRegistration, Is.EqualTo(LexicalEditSurface.Avalonia));
+			var withRegistration = EditSurfaceResolver.Resolve(
+				registry, uiMode: EditSurfaceResolver.NewUIMode, currentToolName: "interlinearEdit");
+			Assert.That(withRegistration, Is.EqualTo(EditSurface.Avalonia));
 
 			// Without registering it, the same tool stays on WinForms (registration is required).
-			var withoutRegistration = LexicalEditSurfaceResolver.Resolve(
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "interlinearEdit");
-			Assert.That(withoutRegistration, Is.EqualTo(LexicalEditSurface.WinForms));
+			var withoutRegistration = EditSurfaceResolver.Resolve(
+				uiMode: EditSurfaceResolver.NewUIMode, currentToolName: "interlinearEdit");
+			Assert.That(withoutRegistration, Is.EqualTo(EditSurface.WinForms));
 		}
 
 		[Test]
 		public void Resolve_NullRegistry_UsesShippedDefault()
 		{
-			var surface = LexicalEditSurfaceResolver.Resolve(
-				(LexicalEditSurfaceRegistry)null,
-				uiMode: LexicalEditSurfaceResolver.NewUIMode, currentToolName: "lexiconEdit");
-			Assert.That(surface, Is.EqualTo(LexicalEditSurface.Avalonia));
+			var surface = EditSurfaceResolver.Resolve(
+				(EditSurfaceRegistry)null,
+				uiMode: EditSurfaceResolver.NewUIMode, currentToolName: "lexiconEdit");
+			Assert.That(surface, Is.EqualTo(EditSurface.Avalonia));
 		}
 	}
 
 	/// <summary>Tests that the factory never constructs the Avalonia surface when the flag is off.</summary>
 	[TestFixture]
-	public class LexicalEditSurfaceFactoryTests
+	public class EditSurfaceFactoryTests
 	{
 		[Test]
 		public void Create_FlagOff_DoesNotConstructAvaloniaRuntime()
 		{
 			var avaloniaBuilds = 0;
-			var factory = new LexicalEditSurfaceFactory(
+			var factory = new EditSurfaceFactory(
 				winFormsSurfaceBuilder: () => "winforms",
 				avaloniaSurfaceBuilder: () => { avaloniaBuilds++; return "avalonia"; });
 
-			var result = factory.Create(LexicalEditSurface.WinForms);
+			var result = factory.Create(EditSurface.WinForms);
 
 			Assert.That(result, Is.EqualTo("winforms"));
 			Assert.That(avaloniaBuilds, Is.EqualTo(0), "Avalonia builder must not run when the flag is off.");
@@ -339,11 +339,11 @@ namespace FwAvaloniaTests
 		public void Create_FlagOn_ConstructsAvaloniaOnce()
 		{
 			var avaloniaBuilds = 0;
-			var factory = new LexicalEditSurfaceFactory(
+			var factory = new EditSurfaceFactory(
 				winFormsSurfaceBuilder: () => "winforms",
 				avaloniaSurfaceBuilder: () => { avaloniaBuilds++; return "avalonia"; });
 
-			var result = factory.Create(LexicalEditSurface.Avalonia);
+			var result = factory.Create(EditSurface.Avalonia);
 
 			Assert.That(result, Is.EqualTo("avalonia"));
 			Assert.That(avaloniaBuilds, Is.EqualTo(1));

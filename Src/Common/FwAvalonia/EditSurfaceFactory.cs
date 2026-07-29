@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// never constructed. The Avalonia builder is supplied as a delegate so this factory
 	/// itself carries no Avalonia dependency and can be tested in isolation.
 	/// </summary>
-	public sealed class LexicalEditSurfaceFactory
+	public sealed class EditSurfaceFactory
 	{
 		private readonly Func<object> _winFormsSurfaceBuilder;
 		private readonly Func<object> _avaloniaSurfaceBuilder;
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// </summary>
 		public int AvaloniaConstructionCount { get; private set; }
 
-		public LexicalEditSurfaceFactory(
+		public EditSurfaceFactory(
 			Func<object> winFormsSurfaceBuilder,
 			Func<object> avaloniaSurfaceBuilder)
 		{
@@ -35,11 +35,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		/// <summary>
 		/// Builds the surface for the given resolution. The Avalonia builder is invoked only
-		/// when <paramref name="surface"/> is <see cref="LexicalEditSurface.Avalonia"/>.
+		/// when <paramref name="surface"/> is <see cref="EditSurface.Avalonia"/>.
 		/// </summary>
-		public object Create(LexicalEditSurface surface)
+		public object Create(EditSurface surface)
 		{
-			if (surface == LexicalEditSurface.Avalonia)
+			if (surface == EditSurface.Avalonia)
 			{
 				AvaloniaConstructionCount++;
 				return _avaloniaSurfaceBuilder();

@@ -38,9 +38,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public partial class RecordEditView
 	{
-		private LexicalEditSurface m_lexicalEditSurface;
-		private readonly LexicalEditSurfaceFactory m_lexicalEditSurfaceFactory;
-		private readonly LexicalEditSurfaceSelectionService m_surfaceSelectionService = new LexicalEditSurfaceSelectionService();
+		private EditSurface m_lexicalEditSurface;
+		private readonly EditSurfaceFactory m_lexicalEditSurfaceFactory;
+		private readonly EditSurfaceSelectionService m_surfaceSelectionService = new EditSurfaceSelectionService();
 		private LexicalEditHostControl m_avaloniaEntryForm;
 		private RecordClerkNavigationContext m_recordNavigationContext;
 		// Owns the fenced edit context; swapping/clearing through it cancels any open session so an
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
 		private static readonly string[] ApprovedBaselineAdapters = { CommandMenuRoutingAdapterId };
 		// The active-host contract for the CURRENT surface, kept in sync with every
-		// m_lexicalEditSurface assignment (SetLexicalEditSurface) from the approved set above.
+		// m_lexicalEditSurface assignment (SetEditSurface) from the approved set above.
 		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips — a
 		// contract constructed at the assert site from the very id it then asserts could never fail.
 		private ActiveHostContract m_activeHostContract;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool ShouldUseAvaloniaLexicalEdit
 		{
-			get { return m_lexicalEditSurface == LexicalEditSurface.Avalonia; }
+			get { return m_lexicalEditSurface == EditSurface.Avalonia; }
 		}
 
 		/// <summary>
@@ -158,13 +158,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private LexicalEditSurface ResolveConfiguredLexicalEditSurface()
+		private EditSurface ResolveConfiguredEditSurface()
 		{
 			// Route the per-host decision through the explicit selection service rather than
 			// inferring product routing ad hoc from settings/PropertyTable state.
 			var uiMode = m_propertyTable != null
-				? m_propertyTable.GetStringProperty(LexicalEditSurfaceResolver.UIModePropertyName, LexicalEditSurfaceResolver.LegacyUIMode)
-				: LexicalEditSurfaceResolver.LegacyUIMode;
+				? m_propertyTable.GetStringProperty(EditSurfaceResolver.UIModePropertyName, EditSurfaceResolver.LegacyUIMode)
+				: EditSurfaceResolver.LegacyUIMode;
 			var toolName = m_propertyTable != null
 				? m_propertyTable.GetStringProperty("currentContentControl", string.Empty)
 				: string.Empty;
@@ -175,8 +175,8 @@ namespace SIL.FieldWorks.XWorks
 			if (m_propertyTable != null)
 			{
 				var disabledTools = m_propertyTable.GetStringProperty(
-					LexicalEditSurfaceResolver.UIModeDisabledToolsPropertyName, string.Empty);
-				if (LexicalEditSurfaceResolver.IsToolDisabledByUser(disabledTools, toolName))
+					EditSurfaceResolver.UIModeDisabledToolsPropertyName, string.Empty);
+				if (EditSurfaceResolver.IsToolDisabledByUser(disabledTools, toolName))
 					overrideEnabled = false;
 			}
 
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_avaloniaEntryForm != null)
 				return;
 
-			m_avaloniaEntryForm = (LexicalEditHostControl)m_lexicalEditSurfaceFactory.Create(LexicalEditSurface.Avalonia);
+			m_avaloniaEntryForm = (LexicalEditHostControl)m_lexicalEditSurfaceFactory.Create(EditSurface.Avalonia);
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.RegionEditCompleted += OnAvaloniaRegionEditCompleted;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
@@ -853,7 +853,7 @@ namespace SIL.FieldWorks.XWorks
 		// Assigns the resolved surface and keeps the active-host contract in lockstep,
 		// so the contract reflects the resolved surface from construction on — not only after the
 		// first activation (which a headless host may never reach).
-		private void SetLexicalEditSurface(LexicalEditSurface surface)
+		private void SetEditSurface(EditSurface surface)
 		{
 			m_lexicalEditSurface = surface;
 			SyncActiveHostContract();
@@ -862,8 +862,8 @@ namespace SIL.FieldWorks.XWorks
 		private void SyncActiveHostContract()
 		{
 			var kind = ShouldUseAvaloniaLexicalEdit
-				? LexicalEditSurfaceKind.Avalonia
-				: LexicalEditSurfaceKind.Legacy;
+				? EditSurfaceKind.Avalonia
+				: EditSurfaceKind.Legacy;
 			if (m_activeHostContract == null || m_activeHostContract.ActiveSurface != kind)
 			{
 				m_activeHostContract = ShouldUseAvaloniaLexicalEdit

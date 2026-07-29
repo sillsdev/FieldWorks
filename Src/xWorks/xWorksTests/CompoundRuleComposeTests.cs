@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Groundwork for the rule-formula editor (a follow-up surface). The tool-level flip
-	/// (compoundRuleAdvancedEdit) stays gated off via LexicalEditSurfaceRegistry.Phase1FollowUpSurfaceTools
+	/// (compoundRuleAdvancedEdit) stays gated off via EditSurfaceRegistry.Phase1FollowUpSurfaceTools
 	/// regardless of what the composer can already do — this file only proves the composer machinery, not that
 	/// the tool is live.
 	///

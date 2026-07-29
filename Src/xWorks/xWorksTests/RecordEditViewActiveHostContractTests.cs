@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
 
-			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(LexicalEditSurface.Avalonia),
+			Assert.That(GetPrivateFieldValue(control, "m_lexicalEditSurface"), Is.EqualTo(EditSurface.Avalonia),
 				"Precondition: the lexicon edit tool should resolve to the Avalonia surface under the New UI mode.");
 
 			// Active-host contract: the legacy DataTree must not have been initialized or driven
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.XWorks
 			var contract = (ActiveHostContract)GetPrivateFieldValue(control, "m_activeHostContract");
 			Assert.That(contract, Is.Not.Null,
 				"Activating the Avalonia surface must build the host's active-host contract.");
-			Assert.That(contract.ActiveSurface, Is.EqualTo(LexicalEditSurfaceKind.Avalonia));
+			Assert.That(contract.ActiveSurface, Is.EqualTo(EditSurfaceKind.Avalonia));
 			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed(RecordEditView.CommandMenuRoutingAdapterId),
 				Throws.Nothing, "The approved command-menu-routing baseline adapter stays permitted.");
 			Assert.That(() => contract.AssertLegacyDataTreeDriveAllowed("unlisted-adapter"),
