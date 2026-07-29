@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			}
 
 			// The first focusable INPUT in tab order — never a command button. If a picker-driven dialog
-			// exposes no focusable field (the kit's owned FwOptionPicker is deliberately Focusable=false and
+			// exposes no focusable field (the kit's owned FwOptionChooser is deliberately Focusable=false and
 			// handles keys directly), focus nothing rather than landing on OK, where Enter would accept the
 			// dialog. So this is a no-op for picker dialogs (no regression) and focuses the first text field
 			// for text-first dialogs (InsertEntry/EntryGo).

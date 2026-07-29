@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					_teardown.Add(() => box.RemoveHandler(InputElement.KeyDownEvent, formatKeyDown));
 
 					// Apply/clear a NAMED CHARACTER STYLE over the selection. A right-click menu
-					// item "Character style…" opens the shared FwOptionPicker (single-select) seeded with a
+					// item "Character style…" opens the shared FwOptionChooser (single-select) seeded with a
 					// leading "Default (no style)" entry that CLEARS the style, followed by the project's
 					// available character style names. It acts on the TextBox's current
 					// SelectionStart..SelectionEnd; committing calls ApplySpanNamedStyle and stages through
@@ -327,8 +327,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 						AutomationProperties.SetAutomationId(styleItem, styleAutomationId);
 						AutomationProperties.SetName(styleItem, FwAvaloniaStrings.CharacterStyle);
 
-						var stylePicker = new FwOptionPicker(styleOptions, null, styleAutomationId);
-						var styleFlyout = FwOptionPicker.CreateOptionFlyout(stylePicker,
+						var stylePicker = new FwOptionChooser(styleOptions, null, styleAutomationId);
+						var styleFlyout = FwOptionChooser.CreateOptionFlyout(stylePicker,
 							PlacementMode.BottomEdgeAlignedLeft);
 						// The picker flyout the item opens, surfaced for automation/discovery.
 						styleItem.Tag = styleFlyout;
@@ -406,7 +406,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 					}
 
 					// Retag the WRITING SYSTEM of a selection. The affordance is a small "Writing
-					// System" button opening the shared FwOptionPicker (single-select) seeded with the
+					// System" button opening the shared FwOptionChooser (single-select) seeded with the
 					// project's available writing systems (tag = key, display name = caption). It acts on the
 					// TextBox's current SelectionStart..SelectionEnd; committing calls RetagSpanWritingSystem
 					// and stages through TrySetRichText — the same rich-text seam Ctrl+B/I/U and the style
@@ -430,8 +430,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 							AutomationProperties.SetAutomationId(wsItem, wsAutomationId);
 							AutomationProperties.SetName(wsItem, FwAvaloniaStrings.WritingSystem);
 
-							var wsPicker = new FwOptionPicker(wsOptions, null, wsAutomationId);
-							var wsFlyout = FwOptionPicker.CreateOptionFlyout(wsPicker,
+							var wsPicker = new FwOptionChooser(wsOptions, null, wsAutomationId);
+							var wsFlyout = FwOptionChooser.CreateOptionFlyout(wsPicker,
 								PlacementMode.BottomEdgeAlignedLeft);
 							// The picker flyout the item opens, surfaced for automation/discovery.
 							wsItem.Tag = wsFlyout;
@@ -1017,7 +1017,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// <summary>
 	/// FieldWorks-owned chooser field: a button opening a flyout of service-backed options
 	/// (the options come from the LCModel-sourced region model, not the control). The flyout is the
-	/// shared compact <see cref="FwOptionPicker"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
+	/// shared compact <see cref="FwOptionChooser"/> — an AutoCompleteBox-based OPTIONS ONLY selector,
 	/// no link items. Committing an
 	/// option stages it through the edit context, closes the flyout, and returns focus to the button
 	/// — the popup-focus-return behavior the seam specs require. Without an edit context the chooser
@@ -1084,8 +1084,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 				return;
 
 			// "+"/chooser click = OPTIONS ONLY: the one compact filterable picker, zero links.
-			var picker = new FwOptionPicker(field.Options, null, automationId);
-			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
+			var picker = new FwOptionChooser(field.Options, null, automationId);
+			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			Flyout = flyout;
 
 			Action<RegionChoiceOption> committed = option =>
@@ -1158,7 +1158,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// FieldWorks-owned editable reference-vector field: the current items rendered
 	/// inline, each followed by the thin grey separator bar legacy reference slices draw
 	/// (VwSeparatorBox), with the TRAILING bar fronting the add slot — a "+" launcher whose flyout
-	/// is the shared compact <see cref="FwOptionPicker"/> (AutoCompleteBox-based OPTIONS ONLY,
+	/// is the shared compact <see cref="FwOptionChooser"/> (AutoCompleteBox-based OPTIONS ONLY,
 	/// zero link items): the
 	/// possibility tree indented by <see cref="RegionChoiceOption.Depth"/> for enumerated lists,
 	/// or the host search delegate's results for search-backed vectors (lexicons search, lists
@@ -1268,9 +1268,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 			// (checkboxes + an "Add" button): the user checks several candidates and commits the
 			// whole set in ONE edit-context batch (one undoable step), like the legacy multi-check
 			// chooser. Atomic choosers (FwChooserField) stay single-select.
-			var picker = new FwOptionPicker(field.Options, field.SearchOptions, automationId,
+			var picker = new FwOptionChooser(field.Options, field.SearchOptions, automationId,
 				field.Items.Select(i => i.Key), multiSelect: true);
-			var flyout = FwOptionPicker.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
+			var flyout = FwOptionChooser.CreateOptionFlyout(picker, PlacementMode.BottomEdgeAlignedLeft);
 			addButton.Flyout = flyout;
 			// Commit the whole checked set as ONE batch: every staged add rides the SAME open edit
 			// context (the host commits once via gestureCompleted), so the multi-add is one undoable

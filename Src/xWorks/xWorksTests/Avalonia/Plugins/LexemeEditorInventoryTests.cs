@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 	/// feature-launcher slices plus the Chorus notes bar are unclaimed (so they render Unsupported).
 	/// </summary>
 	[TestFixture]
-	public class LexemeEditorBurnDownTests
+	public class LexemeEditorInventoryTests
 	{
 		// The legacy class identities the census parser and the route assertions reference. Held here
 		// so the census is self-contained.

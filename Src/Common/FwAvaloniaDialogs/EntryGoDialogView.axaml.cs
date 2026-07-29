@@ -43,7 +43,7 @@ namespace FwAvaloniaDialogs
 				searchBox.GotFocus += OnSearchBoxGotFocus;
 				// Up/Down move the matching-list selection without leaving the box; Enter commits (see handler).
 				// Bubble + handledEventsToo so the handler still runs when the TextBox marks a navigation key
-				// handled — the same routing the owned keyboard-nav controls use (FwPosChooser, FwOptionPicker).
+				// handled — the same routing the owned keyboard-nav controls use (FwPosChooser, FwOptionChooser).
 				searchBox.AddHandler(KeyDownEvent, OnSearchBoxKeyDown,
 					Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
 			}

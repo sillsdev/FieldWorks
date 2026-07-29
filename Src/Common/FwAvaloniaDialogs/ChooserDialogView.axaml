@@ -7,7 +7,7 @@
              x:Name="Root"
              Classes="fwDialogRoot"
              MinWidth="320" MinHeight="300">
-	<!-- The reusable chooser dialog. FLAT mode (Phase 1): a prompt over the shared FwOptionPicker (hosted as a
+	<!-- The reusable chooser dialog. FLAT mode (Phase 1): a prompt over the shared FwOptionChooser (hosted as a
 	     code-behind child since the picker is a native composite, not an MVVM-bindable control) + OK/Cancel/Help.
 	     HIERARCHICAL mode (Phase 2): a search box over a VIRTUALIZING TreeView of the candidates (folded from their
 	     Depth sequence); while a search term is active the tree is hidden and a FLAT filtered results list is shown
@@ -38,7 +38,7 @@
 		           IsVisible="{Binding HasPrompt}" Margin="{StaticResource DialogLabelFieldGapBelow}"
 		           AutomationProperties.AutomationId="Chooser.Prompt"/>
 
-		<!-- FLAT mode: the owned FwOptionPicker is injected here in code-behind (see ChooserDialogView.axaml.cs). -->
+		<!-- FLAT mode: the owned FwOptionChooser is injected here in code-behind (see ChooserDialogView.axaml.cs). -->
 		<Border Name="PART_PickerHost" Classes="fwFieldHost" IsVisible="{Binding !IsHierarchical}"
 		        AutomationProperties.AutomationId="Chooser.PickerHost"/>
 

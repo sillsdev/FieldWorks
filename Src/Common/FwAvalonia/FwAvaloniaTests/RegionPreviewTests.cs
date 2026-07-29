@@ -70,7 +70,7 @@ namespace FwAvaloniaTests
 			flyout.ShowAt(chooser);
 			Dispatcher.UIThread.RunJobs();
 
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			Assert.That(AutomationProperties.GetAutomationId(picker.FilterBox), Is.EqualTo("MorphTypeChooser.Search"));
 			Assert.That(AutomationProperties.GetAutomationId(picker.OptionsList), Is.EqualTo("MorphTypeChooser.Options"));
 			picker.OptionsList.SelectedIndex = 3;
