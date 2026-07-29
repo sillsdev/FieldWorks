@@ -2365,8 +2365,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (root == null)
 				return;
-			if (root is ISettlePendingEdits settleable)
-				settleable.SettlePendingEdits();
+			if (root is IPrepareToGoAway settleable)
+				settleable.PrepareToGoAway();
 			foreach (Control child in root.Controls)
 				SettlePendingContentEdits(child);
 		}

@@ -22,7 +22,7 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// The reusable chooser dialog (flat list): the Avalonia replacement for the legacy
-	/// ReallySimpleListChooser/SimpleListChooser. The view-model builds and drives a shared FwOptionPicker
+	/// ReallySimpleListChooser/SimpleListChooser. The view-model builds and drives a shared FwOptionChooser
 	/// (single or multi mode), mirrors the picker's commits into ChosenKeys, gates OK when a selection is
 	/// required, and snapshots the chosen set on OK. Runtime proof on a realized headless surface (compiled XAML
 	/// on net48 + source-generated commands + the owned native picker).
@@ -196,7 +196,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.OkCommand.CanExecute(null), Is.True);
 		}
 
-		[AvaloniaTest] // constructs the VM (builds a FwOptionPicker control) — must run on the UI thread
+		[AvaloniaTest] // constructs the VM (builds a FwOptionChooser control) — must run on the UI thread
 		public void ForbidEmptySelection_WithInitialSelection_IsImmediatelyValid()
 		{
 			var vm = new ChooserDialogViewModel(new ChooserDialogInput
@@ -209,7 +209,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(vm.ChosenKeys, Is.EqualTo(new[] { "g-verb" }));
 		}
 
-		[AvaloniaTest] // constructs the VM (builds a FwOptionPicker control) — must run on the UI thread
+		[AvaloniaTest] // constructs the VM (builds a FwOptionChooser control) — must run on the UI thread
 		public void NotForbidden_IsValidWithNothingChosen()
 		{
 			var vm = new ChooserDialogViewModel(new ChooserDialogInput { Candidates = Candidates() });
@@ -324,7 +324,7 @@ namespace FwAvaloniaDialogsTests
 			Assert.That(FwAvaloniaDialogsStrings.ChooserMustSelect, Is.Not.Null.And.Not.Empty);
 		}
 
-		[AvaloniaTest] // the VM ctor builds a FwOptionPicker (an Avalonia control) — must run on the UI thread
+		[AvaloniaTest] // the VM ctor builds a FwOptionChooser (an Avalonia control) — must run on the UI thread
 		public void CancelCommand_ClosesWithoutAccepting()
 		{
 			var vm = new ChooserDialogViewModel(new ChooserDialogInput { Candidates = Candidates() });

@@ -80,7 +80,7 @@ namespace FwAvaloniaDialogsTests
 		[AvaloniaTest]
 		public void FocusInitialControl_PickerDialog_DoesNotFocusOkButton()
 		{
-			// The flat Chooser's FwOptionPicker is intentionally Focusable=false (handles keys directly).
+			// The flat Chooser's FwOptionChooser is intentionally Focusable=false (handles keys directly).
 			// Whatever FocusInitialControl picks, it must NEVER be a command button (OK/Cancel) — otherwise
 			// Enter would accept the dialog the instant it opened.
 			var vm = new ChooserDialogViewModel(new ChooserDialogInput { Candidates = Candidates() });
@@ -142,7 +142,7 @@ namespace FwAvaloniaDialogsTests
 
 			// NOTE (verified 2026-06-23): this proves container-level TabIndex reorders Avalonia's NATIVE Tab
 			// engine when the content has a tab stop — so InsertEntry/EntryGo (text fields) tab fields-first.
-			// Picker-driven dialogs (Chooser/Options) are a separate case: their FwOptionPicker is
+			// Picker-driven dialogs (Chooser/Options) are a separate case: their FwOptionChooser is
 			// Focusable=false (handles keys directly), so they have NO tabbable content and Tab necessarily
 			// begins on the button strip — inherent to the picker design and pre-existing, not a regression
 			// introduced or removable by this TabIndex change.

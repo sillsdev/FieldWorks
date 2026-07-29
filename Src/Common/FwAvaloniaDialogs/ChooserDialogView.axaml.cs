@@ -13,7 +13,7 @@ namespace FwAvaloniaDialogs
 	/// <c>ReallySimpleListChooser</c>/<c>SimpleListChooser</c>. A XAML-authored UserControl bound to
 	/// <see cref="ChooserDialogViewModel"/> with compiled bindings for the prompt + OK/Cancel/Help.
 	///
-	/// FLAT mode: the shared <c>FwOptionPicker</c> is hosted as a code-behind child (the picker is a
+	/// FLAT mode: the shared <c>FwOptionChooser</c> is hosted as a code-behind child (the picker is a
 	/// native composite, not an MVVM-bindable control, so it cannot be set through a compiled binding).
 	///
 	/// HIERARCHICAL mode: a XAML-authored search box over a virtualizing <see cref="TreeView"/> (the
@@ -42,7 +42,7 @@ namespace FwAvaloniaDialogs
 		}
 
 		/// <summary>
-		/// Inserts the view-model's owned <c>FwOptionPicker</c> into the picker-host border (FLAT mode only; the
+		/// Inserts the view-model's owned <c>FwOptionChooser</c> into the picker-host border (FLAT mode only; the
 		/// picker is null in hierarchical mode). The picker is created and driven by the view-model; the view only
 		/// mounts it.
 		/// </summary>

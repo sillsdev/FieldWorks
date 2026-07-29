@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 	/// the typed search text visible while arrowing through results; it does not overwrite the query
 	/// with the highlighted row's display text.
 	/// </summary>
-	public sealed class FwOptionPicker : Border
+	public sealed class FwOptionChooser : Border
 	{
 		// Diagnostics for the picker's focus/keyboard routing (the historic arrow-key trouble spot).
 		// OFF by default. Enable either via the "FwOptionPicker" switch (value >= 3) in
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		// SelectedIndex moves (the VM's derive-on-type reselection) so the closed label stays in sync.
 		private RegionChoiceOption _selectedOption;
 
-		public FwOptionPicker(IReadOnlyList<RegionChoiceOption> options,
+		public FwOptionChooser(IReadOnlyList<RegionChoiceOption> options,
 			Func<string, IReadOnlyList<RegionChoiceOption>> searchOptions,
 			string automationId,
 			IEnumerable<string> unavailableKeys = null,
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// grey box wrapping it. Every option surface (chooser, "+" vector add, preview chooser)
 		/// opens through here so the styling stays consistent.
 		/// </summary>
-		public static Flyout CreateOptionFlyout(FwOptionPicker picker, PlacementMode placement)
+		public static Flyout CreateOptionFlyout(FwOptionChooser picker, PlacementMode placement)
 			=> BuildOptionFlyout(picker, picker, placement);
 
 		/// <summary>
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Region
 		/// is open, posted at Input priority so it runs AFTER layout/render — otherwise focus stays on the
 		/// launching button and the arrow keys never reach the picker.
 		/// </summary>
-		private static Flyout BuildOptionFlyout(object content, FwOptionPicker picker, PlacementMode placement)
+		private static Flyout BuildOptionFlyout(object content, FwOptionChooser picker, PlacementMode placement)
 		{
 			var flyout = new Flyout
 			{

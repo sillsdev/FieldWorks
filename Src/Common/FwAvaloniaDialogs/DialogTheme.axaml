@@ -119,7 +119,7 @@
 	</Style>
 
 	<!-- The injected native-control host frame: a real, visible 1px border + inner padding, so the embedded
-	     owned control (FwMultiWsTextField / FwOptionPicker) — whose inner TextBox is borderless/transparent —
+	     owned control (FwMultiWsTextField / FwOptionChooser) — whose inner TextBox is borderless/transparent —
 	     gets a visible WinForms-style input box and breathing room. Structural: any host border carrying the
 	     `fwFieldHost` class can't regress to no border. The brush is the CONCRETE gray above (not a Fluent
 	     DynamicResource) so the frame renders in the headless tests, not just at runtime. -->

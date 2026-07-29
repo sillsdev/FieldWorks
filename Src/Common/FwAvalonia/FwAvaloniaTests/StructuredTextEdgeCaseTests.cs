@@ -282,7 +282,7 @@ namespace FwAvaloniaTests
 			var flyout = (Flyout)styleButton.Flyout;
 			flyout.ShowAt(styleButton);
 			Dispatcher.UIThread.RunJobs();
-			var picker = (FwOptionPicker)flyout.Content;
+			var picker = (FwOptionChooser)flyout.Content;
 			picker.OptionsList.SelectedIndex = 0; // "Default" -> clears
 			picker.CommitHighlighted();
 			Dispatcher.UIThread.RunJobs();

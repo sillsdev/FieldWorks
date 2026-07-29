@@ -17,7 +17,7 @@ namespace FwAvaloniaDialogs
 	/// View-model for the reusable Avalonia Insert Entry dialog (the Avalonia analog of the legacy
 	/// <c>InsertEntryDlg</c> in New-UI mode). It hosts the owned controls the view mounts:
 	///   * a <see cref="FwMultiWsTextField"/> for the LEXEME FORM (one row per vernacular WS),
-	///   * a single-select <see cref="FwOptionPicker"/> for the MORPH TYPE, and
+	///   * a single-select <see cref="FwOptionChooser"/> for the MORPH TYPE, and
 	///   * a <see cref="FwMultiWsTextField"/> for the GLOSS (one row per analysis WS).
 	/// The text fields stage their edits into an in-memory <see cref="InMemoryRegionEditContext"/> (no LCModel
 	/// cache), so the VM stays LCModel-free and can read the staged values back on OK. On a lexeme-form edit the
@@ -114,11 +114,11 @@ namespace FwAvaloniaDialogs
 			_applyMorphTypeMarkers = _input.ApplyMorphTypeMarkers;
 			InitialFocus = _input.InitialFocus;
 
-			// The morph-type picker is the same single-select FwOptionPicker the chooser builds, but in COLLAPSED
+			// The morph-type picker is the same single-select FwOptionChooser the chooser builds, but in COLLAPSED
 			// dropdown mode (morph type has ~15 values, so an always-open list wastes space): it shows the current
 			// selection in a compact box and pops the option list up ON TOP when clicked/focused. Committing a row
 			// updates the chosen key. The VM drives it directly (selection is not staged through an edit context).
-			MorphTypePicker = new FwOptionPicker(_morphTypes, searchOptions: null,
+			MorphTypePicker = new FwOptionChooser(_morphTypes, searchOptions: null,
 				automationId: "InsertEntry.MorphType", dropdown: true);
 			MorphTypePicker.OptionCommitted += OnMorphTypeCommitted;
 			SelectMorphTypeInPicker(_morphTypeKey);
@@ -172,7 +172,7 @@ namespace FwAvaloniaDialogs
 				() => CreateNewPosRequested?.Invoke(FwPosTarget.Secondary);
 
 			// The Complex Form Type picker (WinForms m_cbComplexFormType parity, LT-21666): the same collapsed
-			// FwOptionPicker dropdown the morph type uses, populated from the launcher's complex-form types with a
+			// FwOptionChooser dropdown the morph type uses, populated from the launcher's complex-form types with a
 			// leading "<Not Applicable>" row (key = empty string, the legacy DummyEntryType slot at index 0). The
 			// chosen key flows into the payload; the picker's enabled state + selection follow the morph type via the
 			// launcher-supplied gating map (the lift of EnableComplexFormTypeCombo).
@@ -187,7 +187,7 @@ namespace FwAvaloniaDialogs
 			_complexFormTypeKey = string.IsNullOrEmpty(_input.InitialComplexFormTypeKey)
 				? ComplexFormNotApplicableKey
 				: _input.InitialComplexFormTypeKey;
-			ComplexFormTypePicker = new FwOptionPicker(_complexFormTypes, searchOptions: null,
+			ComplexFormTypePicker = new FwOptionChooser(_complexFormTypes, searchOptions: null,
 				automationId: "InsertEntry.ComplexFormType", dropdown: true);
 			ComplexFormTypePicker.OptionCommitted += OnComplexFormTypeCommitted;
 			SelectComplexFormTypeInPicker(_complexFormTypeKey);
@@ -200,7 +200,7 @@ namespace FwAvaloniaDialogs
 		public FwMultiWsTextField LexemeFormField { get; }
 
 		/// <summary>The owned single-select morph-type picker the view mounts.</summary>
-		public FwOptionPicker MorphTypePicker { get; }
+		public FwOptionChooser MorphTypePicker { get; }
 
 		/// <summary>The owned per-analysis-WS gloss editor the view mounts.</summary>
 		public FwMultiWsTextField GlossField { get; }
@@ -212,11 +212,11 @@ namespace FwAvaloniaDialogs
 		public MSAGroupBox MsaGroupBox { get; }
 
 		/// <summary>
-		/// The owned Complex Form Type picker the view mounts — a collapsed <see cref="FwOptionPicker"/> dropdown
+		/// The owned Complex Form Type picker the view mounts — a collapsed <see cref="FwOptionChooser"/> dropdown
 		/// (WinForms <c>m_cbComplexFormType</c> parity, LT-21666). Its enabled state + selection follow the morph
 		/// type via the launcher-supplied gating map; the chosen type id is snapshotted on OK.
 		/// </summary>
-		public FwOptionPicker ComplexFormTypePicker { get; }
+		public FwOptionChooser ComplexFormTypePicker { get; }
 
 		/// <summary>
 		/// The current chosen complex-form type key (complex-entry-type guid string); the empty string means

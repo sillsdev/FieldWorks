@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 	/// WinForms <c>TreeCombo</c> + <c>POSPopupTreeManager</c> pair (<c>MSAGroupBox</c>'s
 	/// <c>m_tcMainPOS</c>/<c>m_tcSecondaryPOS</c>). It is a COLLAPSED dropdown (a toggle button showing
 	/// the selected POS name, or a "not specified" prompt) that opens a hierarchical TREE popup ON TOP on
-	/// focus/click, exactly like the MorphType dropdown mode of <see cref="Region.FwOptionPicker"/>. The
+	/// focus/click, exactly like the MorphType dropdown mode of <see cref="Region.FwOptionChooser"/>. The
 	/// popup offers, top to bottom:
 	///   * an optional "&lt;Not sure&gt;"/"&lt;Any&gt;" empty row (when <paramref name="allowEmpty"/>),
 	///   * a type-ahead filter box,
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			_emptyLabelText = emptyLabel ?? FwAvaloniaStrings.PosNotSure;
 
 			// The collapsed control is a transparent host so it sits cleanly inside an fwFieldHost frame;
-			// the toggle button supplies the box look (mirrors FwOptionPicker dropdown mode).
+			// the toggle button supplies the box look (mirrors FwOptionChooser dropdown mode).
 			Background = Brushes.Transparent;
 			BorderThickness = new Thickness(0);
 			Padding = new Thickness(0);
@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			AutomationProperties.SetAutomationId(_popupPanel, _automationId + ".Popup");
 			// The flyout body renders in its OWN top-level, so keys typed in the filter box do not bubble
 			// to the chooser root. Register the navigation handler on the panel so Up/Down/Enter/Escape
-			// work while it is open (same pattern as FwOptionPicker dropdown mode).
+			// work while it is open (same pattern as FwOptionChooser dropdown mode).
 			_popupPanel.AddHandler(InputElement.KeyDownEvent, OnPopupKeyDown,
 				RoutingStrategies.Bubble, handledEventsToo: true);
 
