@@ -63,7 +63,7 @@ namespace FwAvaloniaDialogs
 
 			// The description region is opt-in; consumers that supply no label or rich content lose the entire
 			// right column (removed from the tree) and the matching list takes the full width.
-			DataContextChanged += OnDataContextChangedRemoveDescriptionRegionIfUnused;
+			DataContextChanged += OnDataContextChangedRemoveDescriptionPaneIfUnused;
 
 			// The matching list's header + row cells come from the VM's column spec, so build them on VM arrival.
 			DataContextChanged += OnDataContextChangedBuildResultColumns;
@@ -119,10 +119,10 @@ namespace FwAvaloniaDialogs
 		// Removes the opt-in description region (and its gutter) from the tree when the consumer supplied neither
 		// a description label nor rich row content, zeroing their grid columns so the persistent matching list
 		// takes the full dialog width (the legacy BaseGoDlg surface, which has no description pane).
-		private void OnDataContextChangedRemoveDescriptionRegionIfUnused(object sender, System.EventArgs e)
+		private void OnDataContextChangedRemoveDescriptionPaneIfUnused(object sender, System.EventArgs e)
 		{
 			var vm = ViewModel;
-			if (vm == null || vm.HasDescriptionRegion)
+			if (vm == null || vm.HasDescriptionPane)
 				return;
 			var grid = this.FindControl<Grid>("PART_BodyGrid");
 			var gutter = this.FindControl<Border>("PART_DescriptionGutter");

@@ -24,8 +24,8 @@ namespace FwAvaloniaTests
 	{
 		private static Window ShowPreview(string dataMode = "sample")
 		{
-			var provider = new RegionPreviewDataProvider();
-			var window = new RegionPreviewWindow
+			var provider = new DetailPreviewDataProvider();
+			var window = new DetailPreviewWindow
 			{
 				DataContext = provider.CreateDataContext(dataMode)
 			};

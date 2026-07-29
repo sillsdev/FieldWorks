@@ -125,7 +125,7 @@ namespace FwAvaloniaTests
 				{
 					new DetailWsValue("vern", "link", wsTag: "qaa-x-orc", richText: orcRich)
 				}, null, null);
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var fieldControl = new FwMultiWsTextField(field, "OrcField", context, null);
 			var window = new Window { Content = fieldControl, Width = 300, Height = 120 };
 			window.Show();

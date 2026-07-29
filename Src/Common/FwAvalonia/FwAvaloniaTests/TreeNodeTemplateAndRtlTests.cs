@@ -112,7 +112,7 @@ namespace FwAvaloniaTests
 		[AvaloniaTest]
 		public void RtlWritingSystem_GetsRtlFlowDirection_AndArabicTextRoundTripsThroughEditing()
 		{
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var focusedWs = new List<string>();
 			var field = new FwMultiWsTextField(RtlField(), "RtlEditor", context, focusedWs.Add);
 			var window = new Window { Content = field, Width = 400, Height = 80 };
@@ -153,7 +153,7 @@ namespace FwAvaloniaTests
 				},
 				null, null);
 
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var control = new FwMultiWsTextField(field, "MixedEditor", context, null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };
 			window.Show();
@@ -188,7 +188,7 @@ namespace FwAvaloniaTests
 				},
 				null, null);
 
-			var control = new FwMultiWsTextField(field, "MixedArrowEditor", new FakeRegionEditContext(), null);
+			var control = new FwMultiWsTextField(field, "MixedArrowEditor", new FakeDetailEditContext(), null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -222,7 +222,7 @@ namespace FwAvaloniaTests
 				},
 				null, null);
 
-			var control = new FwMultiWsTextField(field, "RtlParenEditor", new FakeRegionEditContext(), null);
+			var control = new FwMultiWsTextField(field, "RtlParenEditor", new FakeDetailEditContext(), null);
 			var window = new Window { Content = control, Width = 420, Height = 80 };
 			window.Show();
 			Dispatcher.UIThread.RunJobs();
@@ -237,7 +237,7 @@ namespace FwAvaloniaTests
 		public void MixedDirectionNumbers_EditAtBoundaryStagesExpectedLogicalText()
 		{
 			const string value = "\u05d0\u05d1\u05d2 123";
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var field = new DetailField(
 				"LexEntry/x/#0", "Lexeme Form", "Form", "vernacular", DetailFieldKind.Text,
 				EditorClassification.Known, "RtlNumbersEditor", null, SurfaceRouting.Product,

@@ -19,7 +19,7 @@ namespace FwAvaloniaDialogs
 	///   * a <see cref="FwMultiWsTextField"/> for the LEXEME FORM (one row per vernacular WS),
 	///   * a single-select <see cref="FwOptionChooser"/> for the MORPH TYPE, and
 	///   * a <see cref="FwMultiWsTextField"/> for the GLOSS (one row per analysis WS).
-	/// The text fields stage their edits into an in-memory <see cref="InMemoryRegionEditContext"/> (no LCModel
+	/// The text fields stage their edits into an in-memory <see cref="InMemoryDetailEditContext"/> (no LCModel
 	/// cache), so the VM stays LCModel-free and can read the staged values back on OK. On a lexeme-form edit the
 	/// VM runs the launcher-supplied <see cref="InsertEntryDlgInput.DeriveMorphType"/> (the live affix-marker →
 	/// morph-type derivation): it reselects the morph-type picker, records the marker-adjusted form, and re-gates
@@ -37,8 +37,8 @@ namespace FwAvaloniaDialogs
 	public partial class InsertEntryDlgViewModel : DialogViewModelBase
 	{
 		private readonly InsertEntryDlgInput _input;
-		private readonly InMemoryRegionEditContext _formContext = new InMemoryRegionEditContext();
-		private readonly InMemoryRegionEditContext _glossContext = new InMemoryRegionEditContext();
+		private readonly InMemoryDetailEditContext _formContext = new InMemoryDetailEditContext();
+		private readonly InMemoryDetailEditContext _glossContext = new InMemoryDetailEditContext();
 		private readonly IReadOnlyList<DetailChoiceOption> _morphTypes;
 		// The live chosen morph-type key (guid string); starts at the input's initial key.
 		private string _morphTypeKey;

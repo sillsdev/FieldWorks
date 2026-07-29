@@ -76,7 +76,7 @@ namespace FwAvaloniaTests
 			var definition = LexiconFirstSlice.CompileFromLayoutDirectory(ShippedPartsDirectory());
 			Assert.That(definition, Is.Not.Null);
 
-			var detail = DetailModelProjector.FromViewDefinition(definition, new FakeRegionValueProvider());
+			var detail = DetailModelProjector.FromViewDefinition(definition, new FakeDetailValueProvider());
 
 			Assert.That(detail.Fields, Has.Count.EqualTo(3));
 			Assert.That(detail.Fields[0].Kind, Is.EqualTo(DetailFieldKind.Text));

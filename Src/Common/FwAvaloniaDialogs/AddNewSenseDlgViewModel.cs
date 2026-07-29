@@ -15,7 +15,7 @@ namespace FwAvaloniaDialogs
 	/// <c>AddNewSenseDlg</c>). It hosts the owned controls the view mounts:
 	///   * a read-only CITATION FORM display string (the legacy <c>m_fwtbCitationForm</c>, never edited),
 	///   * a <see cref="FwMultiWsTextField"/> for the editable GLOSS (one row per analysis WS — <c>m_fwtbGloss</c>),
-	///     staged into an in-memory <see cref="InMemoryRegionEditContext"/> so the VM stays LCModel-free, and
+	///     staged into an in-memory <see cref="InMemoryDetailEditContext"/> so the VM stays LCModel-free, and
 	///   * the LCModel-free <see cref="MSAGroupBox"/> grammatical-info editor, seeded from the entry's morph type
 	///     and refined by the user (the legacy <c>m_msaGroupBox</c>).
 	///
@@ -27,7 +27,7 @@ namespace FwAvaloniaDialogs
 	public partial class AddNewSenseDlgViewModel : DialogViewModelBase
 	{
 		private readonly AddNewSenseDlgInput _input;
-		private readonly InMemoryRegionEditContext _glossContext = new InMemoryRegionEditContext();
+		private readonly InMemoryDetailEditContext _glossContext = new InMemoryDetailEditContext();
 		// The launcher-supplied slot provider (main-POS id -> slot options), re-run when the MSA box's main POS
 		// changes while inflectional; null leaves the slot list empty (the kit stays LCModel-free).
 		private readonly Func<string, IReadOnlyList<FwInflectionSlot>> _slotsForPos;

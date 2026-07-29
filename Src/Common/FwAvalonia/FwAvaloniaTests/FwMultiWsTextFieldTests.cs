@@ -136,7 +136,7 @@ namespace FwAvaloniaTests
 		public void RichTextOperations_AreContextMenuItems_NotInlineRowButtons()
 		{
 			var field = Field(new List<DetailWsValue> { new DetailWsValue("en", "house", wsTag: "en") });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var control = new FwMultiWsTextField(field, field.AutomationId, context, null);
 			var window = new Window { Content = control, Width = 360, Height = 160 };
 			window.Show();

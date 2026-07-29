@@ -89,7 +89,7 @@ namespace FwAvaloniaTests
 			// The composer can hand an empty paragraph list for a not-yet-materialized StText; the editor
 			// must still show ONE empty editable row (StTextSlice.OnEnter's create-on-edit path).
 			var field = Field(new List<DetailParagraph>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context, gestureCompleted: () => { });
 
 			DialogSnapshot.Capture(window, "Region-StText-05-empty-single-row");
@@ -105,7 +105,7 @@ namespace FwAvaloniaTests
 		public void EmptyStText_FirstKeystrokeMaterializesParagraph_StagesAtIndex0()
 		{
 			var field = Field(new List<DetailParagraph>());
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			// Typing into the lone empty row stages a text edit against paragraph index 0 — the seam the
@@ -124,7 +124,7 @@ namespace FwAvaloniaTests
 		public void OnlyParagraph_CannotBeDeleted_ByButtonOrBackspace()
 		{
 			var field = Field(new List<DetailParagraph> { Para(string.Empty) });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			Assert.That(DeleteButton(control, 0), Is.Null, "no delete affordance on the only paragraph");
@@ -153,7 +153,7 @@ namespace FwAvaloniaTests
 				Para(arabic, ws: "ar"),
 				Para(khmer, ws: "km")
 			});
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StText-06-rtl-khmer");
@@ -187,7 +187,7 @@ namespace FwAvaloniaTests
 			// to its one validation-gated commit + re-show). Interleaving them rapidly must remain
 			// one-completed-gesture-per-action — no missed or doubled completion (which would orphan undo).
 			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta."), Para("Gamma.") });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var gestures = 0;
 			var (control, _) = Show(field, context, gestureCompleted: () => gestures++);
 
@@ -214,7 +214,7 @@ namespace FwAvaloniaTests
 			// If the seam rejects a gesture (e.g. the edit-context guard), the host commit must NOT fire,
 			// so a rejected action can never leave a stray empty undo step.
 			var field = Field(new List<DetailParagraph> { Para("Alpha."), Para("Beta.") });
-			var context = new FakeRegionEditContext { ParagraphGestureResult = false };
+			var context = new FakeDetailEditContext { ParagraphGestureResult = false };
 			var gestures = 0;
 			var (control, _) = Show(field, context, gestureCompleted: () => gestures++);
 
@@ -240,7 +240,7 @@ namespace FwAvaloniaTests
 				LossyPara("Has an embedded object."),
 				Para("Editable tail.")
 			});
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, window) = Show(field, context);
 
 			DialogSnapshot.Capture(window, "Region-StText-07-orc-interleaved");
@@ -274,7 +274,7 @@ namespace FwAvaloniaTests
 			// the view stages the CLEAR (null) when Default is chosen on a currently-styled paragraph.
 			var field = Field(new List<DetailParagraph> { Para("Styled.", style: "Block Quote") },
 				paragraphStyles: new[] { "Block Quote", "Numbered List" });
-			var context = new FakeRegionEditContext();
+			var context = new FakeDetailEditContext();
 			var (control, _) = Show(field, context, gestureCompleted: () => { });
 
 			var styleButton = control.GetVisualDescendants().OfType<Button>()

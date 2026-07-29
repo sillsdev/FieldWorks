@@ -286,7 +286,7 @@ namespace FwAvaloniaTests
 			w1.UpdateLayout();
 			Dispatcher.UIThread.RunJobs();
 
-			var edView = new DataTree(model, new FakeRegionEditContext());
+			var edView = new DataTree(model, new FakeDetailEditContext());
 			var w2 = new Window { Content = edView, Width = 520, Height = 420 };
 			w2.Show();
 			Dispatcher.UIThread.RunJobs();
